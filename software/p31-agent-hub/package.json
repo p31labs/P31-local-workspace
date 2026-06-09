@@ -1,0 +1,16 @@
+{
+  "name": "p31-agent-hub",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Workers AI + service bindings to K₄ cage, personal, hubs; SQLite-backed AgentSession DO",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "deploy:internal": "wrangler deploy --env internal",
+    "check": "wrangler deploy --dry-run"
+  },
+  "devDependencies": {
+    "wrangler": "^4.82.2"
+  }
+}

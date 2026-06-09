@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub" style="color-scheme: dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>P31 Starfield — demo</title>
+    <link rel="stylesheet" href="p31-starfield.css" />
+    <style>
+      html,
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: #05080c;
+        color: #e8e6e3;
+        font-family: ui-sans-serif, system-ui, sans-serif;
+      }
+      #sf-wrap {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+      }
+      #sf {
+        width: 100%;
+        height: 100%;
+      }
+      #panel {
+        position: relative;
+        z-index: 2;
+        max-width: 52rem;
+        margin: 0 auto;
+        padding: 1.25rem;
+        pointer-events: auto;
+      }
+      .bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 0.75rem;
+      }
+      button {
+        padding: 0.5rem 0.85rem;
+        border-radius: 6px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: rgba(255, 255, 255, 0.04);
+        color: rgba(232, 230, 227, 0.85);
+        font-size: 12px;
+        font-family: ui-monospace, monospace;
+        cursor: pointer;
+      }
+      button:hover {
+        border-color: rgba(77, 184, 168, 0.35);
+      }
+      .grid2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem;
+        margin-bottom: 0.75rem;
+      }
+      @media (max-width: 640px) {
+        .grid2 {
+          grid-template-columns: 1fr;
+        }
+      }
+      .card {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 8px;
+        padding: 1rem;
+        font-size: 12px;
+        color: rgba(232, 230, 227, 0.55);
+        line-height: 1.7;
+      }
+      .hdr {
+        font-size: 10px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: rgba(232, 230, 227, 0.35);
+        margin-bottom: 0.5rem;
+      }
+      #state-label {
+        font-family: ui-monospace, monospace;
+        font-size: 11px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="sf-wrap"><canvas id="sf" class="p31-starfield-canvas" aria-hidden="true"></canvas></div>
+    <div id="panel">
+      <div
+        style="
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 1rem;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+          padding-bottom: 0.75rem;
+        "
+      >
+        <span style="font-family: monospace; font-size: 11px; letter-spacing: 0.18em; color: rgba(232, 230, 227, 0.4)"
+          >MOLECULAR STARFIELD — DEMO</span
+        >
+        <span id="state-label" style="color: rgba(59, 163, 114, 0.65)">STATE: NOMINAL</span>
+      </div>
+
+      <div class="bar">
+        <button type="button" data-state="nominal">Nominal (8+ spoons)</button>
+        <button type="button" data-state="moderate">Moderate (5–7)</button>
+        <button type="button" data-state="depleted">Depleted (≤3)</button>
+        <button type="button" data-state="safe">Safe mode</button>
+      </div>
+      <div class="bar">
+        <button type="button" data-burst="ping">Ping</button>
+        <button type="button" data-burst="med">Medication</button>
+        <button type="button" data-burst="agent">Agent</button>
+        <button type="button" data-burst="hostile">RED voltage</button>
+        <button type="button" data-burst="love">L.O.V.E.</button>
+        <button type="button" data-burst="bonding">BONDING</button>
+      </div>
+
+      <div class="grid2">
+        <div class="card">
+          <div class="hdr">Particle physics</div>
+          <div>Spoon mapping drives count, speed, conn radius, coral mix, dim factor.</div>
+        </div>
+        <div class="card">
+          <div class="hdr">Read the field</div>
+          <div>Bright + dense + teal = nominal. Sparse + coral = depleted. Bursts fade in ~2–3s.</div>
+        </div>
+      </div>
+    </div>
+
+    <script type="module">
+      import { configFromSpoons, DEFAULT_STARFIELD_CONFIG } from "./p31-starfield.js";
+      import { bootAtmosphereStarfieldCanvas } from "../atmosphere/p31-atmosphere-hints-boot.js";
+
+      const canvas = document.getElementById("sf");
+      const label = document.getElementById("state-label");
+
+      const { api } = await bootAtmosphereStarfieldCanvas("starfield-demo", canvas);
+      if (!api) {
+        throw new Error("starfield-demo: expected animated starfield");
+      }
+
+      const states = {
+        nominal: () => {
+          label.textContent = "STATE: NOMINAL";
+          label.style.color = "rgba(59,163,114,0.65)";
+          api.setConfig(configFromSpoons(10, false));
+        },
+        moderate: () => {
+          label.textContent = "STATE: MODERATE";
+          label.style.color = "rgba(205,168,82,0.65)";
+          api.setConfig(configFromSpoons(6, false));
+        },
+        depleted: () => {
+          label.textContent = "STATE: DEPLETED";
+          label.style.color = "rgba(204,98,71,0.65)";
+          api.setConfig(configFromSpoons(3, false));
+        },
+        safe: () => {
+          label.textContent = "STATE: SAFE MODE";
+          label.style.color = "rgba(90,107,124,0.65)";
+          api.setConfig(configFromSpoons(0, true));
+        },
+      };
+
+      document.querySelectorAll("[data-state]").forEach((b) => {
+        b.addEventListener("click", () => states[b.getAttribute("data-state")]?.());
+      });
+      document.querySelectorAll("[data-burst]").forEach((b) => {
+        b.addEventListener("click", () => api.fireBurst(b.getAttribute("data-burst"), {}));
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,559 @@
+/**
+ * p31-phos-effects.css — Holographic WOW Factor
+ * 
+ * Visual effects for PHOS Oracle:
+ * - Holographic glows and gradients
+ * - Particle animations
+ * - Glass morphism panels
+ * - Smooth transitions
+ * - Neon accents
+ */
+
+/* ═════════════════════════════════════════════════════════════════════════════
+   PHOS ORACLE PANEL — HOLOGRAPHIC
+   ═════════════════════════════════════════════════════════════════════════════ */
+
+.phos-oracle-panel {
+  position: fixed;
+  bottom: 100px;
+  right: 20px;
+  width: 360px;
+  max-height: 500px;
+  background: 
+    linear-gradient(135deg, rgba(10, 22, 40, 0.95) 0%, rgba(20, 40, 60, 0.95) 100%);
+  border: 1px solid rgba(34, 211, 238, 0.3);
+  border-radius: 20px;
+  box-shadow: 
+    0 0 0 1px rgba(34, 211, 238, 0.1),
+    0 20px 60px -10px rgba(0, 0, 0, 0.8),
+    0 0 40px rgba(34, 211, 238, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  overflow: hidden;
+  z-index: 9999;
+  transform-origin: bottom right;
+  animation: phos-panel-enter 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes phos-panel-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.8) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Holographic border glow animation */
+.phos-oracle-panel::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 21px;
+  padding: 1px;
+  background: linear-gradient(
+    135deg,
+    rgba(34, 211, 238, 0.6) 0%,
+    rgba(251, 191, 36, 0.3) 25%,
+    rgba(52, 211, 153, 0.3) 50%,
+    rgba(251, 113, 133, 0.3) 75%,
+    rgba(34, 211, 238, 0.6) 100%
+  );
+  -webkit-mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
+  mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: holographic-rotate 4s linear infinite;
+}
+
+@keyframes holographic-rotate {
+  0% { filter: hue-rotate(0deg); }
+  100% { filter: hue-rotate(360deg); }
+}
+
+/* ═════════════════════════════════════════════════════════════════════════════
+   PHOS ORACLE HEADER — GLOWING
+   ═════════════════════════════════════════════════════════════════════════════ */
+
+.phos-oracle-header {
+  padding: 16px 20px;
+  background: linear-gradient(
+    135deg,
+    rgba(34, 211, 238, 0.15) 0%,
+    rgba(34, 211, 238, 0.05) 100%
+  );
+  border-bottom: 1px solid rgba(34, 211, 238, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.phos-oracle-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: 
+    radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.2) 0%, transparent 50%),
+    linear-gradient(135deg, #22d3ee 0%, #0891b2 100%);
+  box-shadow: 
+    0 0 20px rgba(34, 211, 238, 0.5),
+    inset 0 0 10px rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  animation: phos-pulse 2s ease-in-out infinite;
+}
+
+@keyframes phos-pulse {
+  0%, 100% { 
+    box-shadow: 0 0 20px rgba(34, 211, 238, 0.5), inset 0 0 10px rgba(255, 255, 255, 0.2);
+    transform: scale(1);
+  }
+  50% { 
+    box-shadow: 0 0 30px rgba(34, 211, 238, 0.8), inset 0 0 15px rgba(255, 255, 255, 0.3);
+    transform: scale(1.02);
+  }
+}
+
+/* ═════════════════════════════════════════════════════════════════════════════
+   AKINATOR QUESTION CARD
+   ═════════════════════════════════════════════════════════════════════════════ */
+
+.phos-akin-card {
+  margin: 16px;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(34, 211, 238, 0.2);
+  border-radius: 16px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.phos-akin-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    rgba(34, 211, 238, 0.1) 60deg,
+    transparent 120deg
+  );
+  animation: card-shimmer 3s linear infinite;
+}
+
+@keyframes card-shimmer {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.phos-akin-question {
+  font-size: 18px;
+  font-weight: 500;
+  color: #fff;
+  margin-bottom: 20px;
+  line-height: 1.4;
+  position: relative;
+  z-index: 1;
+}
+
+.phos-akin-progress {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.phos-akin-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(34, 211, 238, 0.3);
+  transition: all 0.3s;
+}
+
+.phos-akin-dot.active {
+  background: #22d3ee;
+  box-shadow: 0 0 10px #22d3ee;
+}
+
+.phos-akin-buttons {
+  display: flex;
+  gap: 12px;
+  position: relative;
+  z-index: 1;
+}
+
+.phos-btn-akin {
+  flex: 1;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.phos-btn-yes {
+  background: linear-gradient(135deg, #22d3ee 0%, #0891b2 100%);
+  color: #000;
+  box-shadow: 0 4px 15px rgba(34, 211, 238, 0.3);
+}
+
+.phos-btn-yes:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(34, 211, 238, 0.5);
+}
+
+.phos-btn-no {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.phos-btn-no:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+}
+
+/* ═════════════════════════════════════════════════════════════════════════════
+   APP SUGGESTION CARDS
+   ═════════════════════════════════════════════════════════════════════════════ */
+
+.phos-suggestion-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 16px;
+}
+
+.phos-app-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.phos-app-card:hover {
+  background: rgba(34, 211, 238, 0.1);
+  border-color: rgba(34, 211, 238, 0.3);
+  transform: translateX(4px);
+}
+
+.phos-app-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+  transition: left 0.5s;
+}
+
+.phos-app-card:hover::after {
+  left: 100%;
+}
+
+.phos-app-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  background: linear-gradient(135deg, rgba(34, 211, 238, 0.2) 0%, rgba(34, 211, 238, 0.1) 100%);
+  box-shadow: 0 4px 15px rgba(34, 211, 238, 0.2);
+}
+
+.phos-app-info {
+  flex: 1;
+}
+
+.phos-app-name {
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 2px;
+}
+
+.phos-app-desc {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.phos-app-confidence {
+  padding: 4px 10px;
+  background: rgba(34, 211, 238, 0.2);
+  color: #22d3ee;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* ═════════════════════════════════════════════════════════════════════════════
+   SEARCH INPUT — GLOWING
+   ═════════════════════════════════════════════════════════════════════════════ */
+
+.phos-search-box {
+  margin: 16px;
+  position: relative;
+}
+
+.phos-search-input {
+  width: 100%;
+  padding: 14px 44px 14px 16px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(34, 211, 238, 0.3);
+  border-radius: 12px;
+  color: #fff;
+  font-size: 15px;
+  outline: none;
+  transition: all 0.3s;
+}
+
+.phos-search-input:focus {
+  border-color: #22d3ee;
+  box-shadow: 0 0 20px rgba(34, 211, 238, 0.2);
+}
+
+.phos-search-input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.phos-search-btn {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, #22d3ee 0%, #0891b2 100%);
+  border: none;
+  border-radius: 8px;
+  color: #000;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s;
+}
+
+.phos-search-btn:hover {
+  transform: translateY(-50%) scale(1.05);
+}
+
+/* ═════════════════════════════════════════════════════════════════════════════
+   FLOATING ACTION BUTTON — NEON
+   ═════════════════════════════════════════════════════════════════════════════ */
+
+.phos-fab {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #22d3ee 0%, #0891b2 100%);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  box-shadow: 
+    0 4px 20px rgba(34, 211, 238, 0.4),
+    0 0 0 4px rgba(34, 211, 238, 0.1);
+  z-index: 9998;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.phos-fab:hover {
+  transform: scale(1.1);
+  box-shadow: 
+    0 6px 30px rgba(34, 211, 238, 0.6),
+    0 0 0 6px rgba(34, 211, 238, 0.15);
+}
+
+.phos-fab:active {
+  transform: scale(0.95);
+}
+
+.phos-fab.pulse {
+  animation: fab-pulse-ring 2s ease-out infinite;
+}
+
+@keyframes fab-pulse-ring {
+  0% {
+    box-shadow: 
+      0 4px 20px rgba(34, 211, 238, 0.4),
+      0 0 0 0 rgba(34, 211, 238, 0.4);
+  }
+  70% {
+    box-shadow: 
+      0 4px 20px rgba(34, 211, 238, 0.4),
+      0 0 0 20px rgba(34, 211, 238, 0);
+  }
+  100% {
+    box-shadow: 
+      0 4px 20px rgba(34, 211, 238, 0.4),
+      0 0 0 0 rgba(34, 211, 238, 0);
+  }
+}
+
+/* ═════════════════════════════════════════════════════════════════════════════
+   PROACTIVE SUGGESTION CHIP
+   ═════════════════════════════════════════════════════════════════════════════ */
+
+.phos-proactive {
+  position: fixed;
+  bottom: 90px;
+  right: 24px;
+  background: linear-gradient(135deg, rgba(10, 22, 40, 0.98) 0%, rgba(20, 40, 60, 0.98) 100%);
+  border: 1px solid rgba(34, 211, 238, 0.3);
+  border-radius: 16px;
+  padding: 14px 18px;
+  max-width: 280px;
+  box-shadow: 
+    0 10px 40px rgba(0, 0, 0, 0.5),
+    0 0 30px rgba(34, 211, 238, 0.1);
+  backdrop-filter: blur(10px);
+  z-index: 9997;
+  animation: proactive-slide-in 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes proactive-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.phos-proactive-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 13px;
+  color: #22d3ee;
+  font-weight: 600;
+}
+
+.phos-proactive-text {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 10px;
+  line-height: 1.4;
+}
+
+.phos-proactive-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: rgba(34, 211, 238, 0.2);
+  color: #22d3ee;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.phos-proactive-action:hover {
+  background: rgba(34, 211, 238, 0.3);
+  transform: translateX(2px);
+}
+
+/* ═════════════════════════════════════════════════════════════════════════════
+   PARTICLE EFFECTS
+   ═════════════════════════════════════════════════════════════════════════════ */
+
+.phos-particle {
+  position: fixed;
+  pointer-events: none;
+  z-index: 10000;
+  border-radius: 50%;
+}
+
+/* Confetti burst */
+.phos-confetti {
+  position: fixed;
+  width: 10px;
+  height: 10px;
+  pointer-events: none;
+  z-index: 10001;
+}
+
+/* ═════════════════════════════════════════════════════════════════════════════
+   SCROLLBAR STYLING
+   ═════════════════════════════════════════════════════════════════════════════ */
+
+.phos-oracle-panel::-webkit-scrollbar {
+  width: 6px;
+}
+
+.phos-oracle-panel::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.phos-oracle-panel::-webkit-scrollbar-thumb {
+  background: rgba(34, 211, 238, 0.3);
+  border-radius: 3px;
+}
+
+.phos-oracle-panel::-webkit-scrollbar-thumb:hover {
+  background: rgba(34, 211, 238, 0.5);
+}
+
+/* ═════════════════════════════════════════════════════════════════════════════
+   RESPONSIVE
+   ═════════════════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 480px) {
+  .phos-oracle-panel {
+    right: 10px;
+    left: 10px;
+    width: auto;
+    bottom: 80px;
+  }
+  
+  .phos-fab {
+    right: 16px;
+    bottom: 16px;
+  }
+  
+  .phos-proactive {
+    right: 16px;
+    left: 16px;
+    max-width: none;
+  }
+}

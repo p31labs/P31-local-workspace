@@ -1,0 +1,147 @@
+# P31 Labs - Quantum Edge Worker Configuration
+# Production deployment configuration for Node One telemetry ingestion
+# 
+# WCD-QE-01: Quantum Edge Production Deployment
+# Deployed globally via Cloudflare Edge Compute
+
+name = "p31-quantum-edge"
+main = "worker.ts"
+compatibility_date = "2026-03-24"
+compatibility_flags = ["nodejs_compat"]
+
+# ═══════════════════════════════════════════════════════════════
+# OBSERVABILITY - Structured logging for edge operations
+# ═══════════════════════════════════════════════════════════════
+
+[observability]
+enabled = true
+
+# ═══════════════════════════════════════════════════════════════
+# EDGE COMPUTE - Smart placement for global latency optimization
+# ═══════════════════════════════════════════════════════════════
+
+[placement]
+mode = "smart"  # Runs worker physically closest to Node One user
+
+# ═══════════════════════════════════════════════════════════════
+# KV NAMESPACES - Telemetry storage for Node One metrics
+# ═══════════════════════════════════════════════════════════════
+
+# TELEMETRY_KV: Stores Node One device telemetry
+# Key format: node_one:{deviceId}:{timestamp}
+# Value: Encrypted telemetry payload (calcium, PTH, HRV, vitD)
+[[kv_namespaces]]
+binding = "TELEMETRY_KV"
+id = "8fb3666b4e284f1699656b27a16f083b"
+preview_id = "8fb3666b4e284f1699656b27a16f083b"
+
+# STATE_KV: Stores biological state snapshots for trend analysis
+# Key format: state:{deviceId}:{date}
+# Value: Aggregated state metrics (24h rolling)
+[[kv_namespaces]]
+binding = "STATE_KV"
+id = "2261d9dbfc324b2f97eed3669f20cb9b"
+preview_id = "2261d9dbfc324b2f97eed3669f20cb9b"
+
+# ALERTS_KV: Stores calcium crisis alerts
+# Key format: alert:{deviceId}:{timestamp}
+# Value: Alert payload with severity and actionable advice
+[[kv_namespaces]]
+binding = "ALERTS_KV"
+id = "bcec1290490843e28eb9c7529594e113"
+preview_id = "bcec1290490843e28eb9c7529594e113"
+
+# ═══════════════════════════════════════════════════════════════
+# DURABLE OBJECTS - For real-time state synchronization
+# ═══════════════════════════════════════════════════════════════
+
+# NodeOneCoordinator: Coordinates multiple Node One devices
+# per-user for family mesh topology
+[[durable_objects.bindings]]
+name = "NODE_ONE_COORDINATOR"
+class_name = "NodeOneCoordinator"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["NodeOneCoordinator"]
+
+# ═══════════════════════════════════════════════════════════════
+# ENVIRONMENT VARIABLES - Production secrets
+# ═══════════════════════════════════════════════════════════════
+
+[vars]
+P31_ENVIRONMENT = "production"
+EDGE_VERSION = "1.0.0"
+DEFAULT_STATUS = "OPTIMAL"
+CRASH_WARNING_THRESHOLD = 0.25
+ATTENTION_THRESHOLD = 0.50
+
+# ═══════════════════════════════════════════════════════════════
+# CORS - Handled in worker.ts code
+# ═══════════════════════════════════════════════════════════════
+
+# ═══════════════════════════════════════════════════════════════
+# ROUTES - Production domain binding
+# ═══════════════════════════════════════════════════════════════
+
+# Production route - uncomment after domain is configured
+# [[routes]]
+# pattern = "quantum-edge.p31ca.org"
+# zone_name = "p31ca.org"
+
+# ═══════════════════════════════════════════════════════════════
+# ENVIRONMENT: PRODUCTION
+# ═══════════════════════════════════════════════════════════════
+
+[env.production]
+name = "p31-quantum-edge-prod"
+
+[[env.production.kv_namespaces]]
+binding = "TELEMETRY_KV"
+id = "8fb3666b4e284f1699656b27a16f083b"
+
+[[env.production.kv_namespaces]]
+binding = "STATE_KV"
+id = "2261d9dbfc324b2f97eed3669f20cb9b"
+
+[[env.production.kv_namespaces]]
+binding = "ALERTS_KV"
+id = "bcec1290490843e28eb9c7529594e113"
+
+[env.production.vars]
+P31_ENVIRONMENT = "production"
+EDGE_VERSION = "1.0.0-prod"
+
+# ═══════════════════════════════════════════════════════════════
+# ENVIRONMENT: STAGING
+# ═══════════════════════════════════════════════════════════════
+
+[env.staging]
+name = "p31-quantum-edge-staging"
+
+[[env.staging.kv_namespaces]]
+binding = "TELEMETRY_KV"
+id = "d195fd7aa1fe4260ba9abf54ccbe3d84"
+
+[[env.staging.kv_namespaces]]
+binding = "STATE_KV"
+id = "04d9792308f64b90a37efad1a4d9c9a3"
+
+[[env.staging.kv_namespaces]]
+binding = "ALERTS_KV"
+id = "e205d8134f714216b124d22a1f6987af"
+
+[env.staging.vars]
+P31_ENVIRONMENT = "staging"
+EDGE_VERSION = "1.0.0-staging"
+DEFAULT_STATUS = "OPTIMAL"
+CRASH_WARNING_THRESHOLD = 0.25
+ATTENTION_THRESHOLD = 0.50
+
+[[env.staging.durable_objects.bindings]]
+name = "NODE_ONE_COORDINATOR"
+class_name = "NodeOneCoordinator"
+
+[[env.staging.migrations]]
+tag = "v1"
+new_sqlite_classes = ["NodeOneCoordinator"]

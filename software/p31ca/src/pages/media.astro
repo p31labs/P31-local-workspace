@@ -1,0 +1,14 @@
+---
+// @p31-layout: Gallery
+import AppShell from '../layouts/AppShell.astro';
+import MediaForge from '../components/MediaForge.jsx';
+---
+
+<AppShell
+  title="Media Forge | P31 Labs"
+  description="P31 branded media generation — posts, banners, social assets"
+  routeName="demo-labs"
+  phosPage="media"
+>
+  <MediaForge client:only="react" />
+</AppShell>

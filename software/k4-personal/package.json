@@ -1,0 +1,17 @@
+{
+  "name": "k4-personal",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Personal K₄ mesh (KV) + PersonalAgent Durable Object",
+  "scripts": {
+    "verify": "wrangler deploy --dry-run",
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev"
+  },
+  "devDependencies": {
+    "wrangler": "4.85.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

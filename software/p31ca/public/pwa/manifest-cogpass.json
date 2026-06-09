@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json.schemastore.org/web-manifest-combined.json",
+  "id": "p31.cogpass",
+  "name": "P31 Cognitive Passport",
+  "short_name": "CogPass",
+  "description": "A markdown + JSON identity slice for neurodivergent operators. Drop on a phone home screen. Generates a portable Cognitive Passport (p31.cognitivePassport/1.0.0) you can share with new contacts so they can adapt to you instead of the other way around.",
+  "start_url": "/cognitive-passport/",
+  "scope": "/cognitive-passport/",
+  "display": "standalone",
+  "display_override": ["standalone", "browser"],
+  "orientation": "portrait-primary",
+  "background_color": "#0f1115",
+  "theme_color": "#25897d",
+  "icons": [
+    {
+      "src": "/pwa/p31-tetra-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["productivity", "education", "health", "lifestyle"],
+  "lang": "en",
+  "dir": "ltr",
+  "prefer_related_applications": false,
+  "shortcuts": [
+    {
+      "name": "Generate Passport",
+      "short_name": "Generate",
+      "description": "Open the editor",
+      "url": "/cognitive-passport/?focus=generate"
+    }
+  ]
+}

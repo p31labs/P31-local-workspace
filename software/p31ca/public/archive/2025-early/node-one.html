@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#050505">
+    <title>Node One (The Totem) | P31 Labs</title>
+    <meta name="description" content="Physical Haptic Anchor & FDA Class II Exempt Device. 863 Hz Larmor frequency, Kailh Choc Navy switches, NXP SE050 cryptographic lock.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/assets/p31-operator-tailwind.js"></script>
+    <style>
+        body {
+            background-color: #050505;
+            color: #d8d6d0;
+            background-image: linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+        .matte-panel { background-color: #161920; border: 1px solid rgba(255,255,255,0.04); }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col text-cloud/90">
+
+    <header class="w-full border-b border-white/5 bg-void/95 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="/" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
+                <svg width="28" height="28" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="512" height="512" rx="112" fill="#25897d"/>
+                    <circle cx="390" cy="120" r="48" fill="#cc6247"/>
+                    <text x="256" y="340" font-family="system-ui" font-weight="900" font-size="220" fill="#d8d6d0" text-anchor="middle">P31</text>
+                    <rect x="156" y="380" width="200" height="16" rx="8" fill="#cda852"/>
+                </svg>
+                <span class="font-bold text-lg tracking-tight">P31 Labs</span>
+            </a>
+            <nav class="flex gap-4 font-mono text-sm">
+                <a href="/" class="text-cloud/50 hover:text-cloud transition-colors flex items-center gap-2">← Hub</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl mx-auto px-6 py-12 w-full flex flex-col gap-12">
+
+        <header class="border-b border-white/10 pb-8">
+            <div class="flex items-center gap-4 mb-4">
+                <div class="text-3xl bg-surface w-12 h-12 rounded flex items-center justify-center border border-white/5">📟</div>
+                <div class="px-2 py-0.5 rounded border text-[10px] font-mono tracking-wide text-butter/80 border-butter/20 bg-butter/5">🟡 PROTOTYPE</div>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-bold mb-4 text-cloud">Node One (The Totem)</h1>
+            <p class="text-xl text-butter/70 font-mono">Physical Haptic Anchor & Legal Perimeter</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            <div class="lg:col-span-2 flex flex-col gap-8">
+
+                <section class="matte-panel rounded-lg p-8">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center gap-3">
+                        <span class="text-butter">01.</span> Hardware Specifications
+                    </h2>
+                    <p class="text-cloud/70 leading-relaxed mb-6">
+                        Node One is engineered as the physical manifestation of the system's cognitive intent. It relies on precise mechanical and frequency-based feedback to ground the operator, purposefully severing the continuous biometric processing loop to avoid the FDA "Signal Trap."
+                    </p>
+                    <ul class="space-y-5 font-mono text-sm text-cloud/80">
+                        <li class="flex items-start gap-3">
+                            <span class="text-butter mt-0.5">▸</span>
+                            <div>
+                                <strong class="text-cloud block mb-1">863 Hz Larmor Frequency Resonance</strong>
+                                <span class="text-cloud/50">Haptic feedback calibrated to the Phosphorus-31 (³¹P) Larmor precession frequency in Earth's geomagnetic field. Maps physiological grounding directly to quantum chemical modeling — the same isotope tracked in the BONDING game.</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-butter mt-0.5">▸</span>
+                            <div>
+                                <strong class="text-cloud block mb-1">Kailh Choc Navy Switches (60gf actuation)</strong>
+                                <span class="text-cloud/50">Heavy tactile actuation force requiring deliberate physical engagement. Prevents accidental, frictionless inputs. The resistance is a cognitive interrupt — intentionality-as-hardware.</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-butter mt-0.5">▸</span>
+                            <div>
+                                <strong class="text-cloud block mb-1">NXP SE050 Cryptographic Secure Element</strong>
+                                <span class="text-cloud/50">Hardware-level encryption lock. Firmware is immutable and completely decoupled from general-purpose computing platforms. Keys never leave the secure enclave — the physical anchor for the digital sovereignty stack.</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-butter mt-0.5">▸</span>
+                            <div>
+                                <strong class="text-cloud block mb-1">Software Segregation (The Buffer)</strong>
+                                <span class="text-cloud/50">All cognitive decision support logic lives in The Buffer — standalone middleware, never compiled into firmware. This segregation is the compliance boundary that makes FDA Class II, 510(k)-exempt pathway classification possible.</span>
+                            </div>
+                        </li>
+                    </ul>
+                </section>
+
+                <section class="matte-panel rounded-lg p-8">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center gap-3">
+                        <span class="text-butter">02.</span> The Miller Shield (Jurisprudence)
+                    </h2>
+                    <p class="text-cloud/70 leading-relaxed mb-4">
+                        The physical existence of Node One is inextricably linked to its legal defense strategy. By design, the device establishes an unbreakable legal perimeter around the organization's core assets.
+                    </p>
+                    <div class="bg-void border border-white/5 rounded p-5 text-sm leading-relaxed text-cloud/60 mb-4">
+                        <p class="mb-3"><strong class="text-cloud/90">Asset Classification:</strong> The medical necessity of the haptic feedback and switch actuation is formally documented by a licensed practitioner via a <em>Letter of Medical Necessity (LMN)</em>.</p>
+                        <p class="mb-3">This clinical documentation, combined with the NXP SE050 cryptographic lock, mathematically guarantees that the system's entire value is classified strictly as <strong class="text-cloud/90">Personal (Functional) Goodwill</strong>.</p>
+                        <p>Personal Goodwill is non-transferable, non-divisible, and federally protected as a health aid. It is immune to standard corporate asset division proceedings.</p>
+                    </div>
+                    <div class="border border-butter/15 bg-butter/5 rounded p-4 text-sm">
+                        <p class="text-butter/80 font-mono text-xs mb-2">REGULATORY CLASSIFICATION</p>
+                        <p class="text-cloud/70">FDA Class II Exempt Medical Device — 21 CFR §890.3710 (Powered Communication System). The "Powered" classification covers the haptic actuation circuit. The "Communication" classification covers the intent-output interface.</p>
+                    </div>
+                </section>
+
+            </div>
+
+            <div class="flex flex-col gap-6">
+
+                <div class="matte-panel rounded-lg p-6">
+                    <h3 class="text-sm font-mono text-cloud/40 uppercase tracking-widest mb-4">Regulatory Status</h3>
+                    <div class="space-y-4 text-sm">
+                        <div>
+                            <div class="text-cloud font-bold mb-1">FDA Classification</div>
+                            <div class="text-cloud/60">Class II Exempt Medical Device</div>
+                        </div>
+                        <div>
+                            <div class="text-cloud font-bold mb-1">21 CFR Reference</div>
+                            <div class="text-cloud/60 font-mono">§890.3710</div>
+                        </div>
+                        <div>
+                            <div class="text-cloud font-bold mb-1">Clinical LMN</div>
+                            <div class="text-cloud/60">Required — practitioner documentation of haptic/tactile medical necessity.</div>
+                        </div>
+                        <div>
+                            <div class="text-cloud font-bold mb-1">Build Status</div>
+                            <div class="text-cloud/60">Prototype — Waveshare ESP32-S3-Touch-LCD-3.5B hardware platform selected.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="matte-panel rounded-lg p-6">
+                    <h3 class="text-sm font-mono text-cloud/40 uppercase tracking-widest mb-4">Repository</h3>
+                    <a href="https://github.com/p31labs/andromeda/tree/main/04_SOFTWARE/packages/node-one-firmware"
+                       target="_blank" rel="noopener"
+                       class="block p-4 bg-void border border-white/5 rounded hover:border-teal/30 transition-colors group mb-3">
+                        <div class="font-bold text-sm text-cloud group-hover:text-teal transition-colors mb-1">node-one-firmware</div>
+                        <div class="text-xs text-cloud/50 font-mono">04_SOFTWARE/packages/node-one-firmware</div>
+                    </a>
+                    <a href="https://github.com/p31labs/andromeda/tree/main/04_SOFTWARE/kilo-node"
+                       target="_blank" rel="noopener"
+                       class="block p-4 bg-void border border-white/5 rounded hover:border-teal/30 transition-colors group">
+                        <div class="font-bold text-sm text-cloud group-hover:text-teal transition-colors mb-1">kilo-node</div>
+                        <div class="text-xs text-cloud/50 font-mono">04_SOFTWARE/kilo-node (Somatic Shield)</div>
+                    </a>
+                </div>
+
+                <div class="matte-panel rounded-lg p-6">
+                    <h3 class="text-sm font-mono text-cloud/40 uppercase tracking-widest mb-4">Ecosystem Ties</h3>
+                    <a href="buffer.html" class="block p-4 bg-void border border-white/5 rounded hover:border-butter/30 transition-colors group mb-3">
+                        <div class="font-bold text-sm text-cloud group-hover:text-butter transition-colors mb-1">The Buffer</div>
+                        <div class="text-xs text-cloud/50">Companion middleware. Strictly segregated to maintain Class II, 510(k)-exempt pathway compliance.</div>
+                    </a>
+                    <a href="spaceship-earth.html" class="block p-4 bg-void border border-white/5 rounded hover:border-teal/30 transition-colors group mb-3">
+                        <div class="font-bold text-sm text-cloud group-hover:text-teal transition-colors mb-1">Spaceship Earth</div>
+                        <div class="text-xs text-cloud/50">Command dashboard surfaces Node One telemetry and session data.</div>
+                    </a>
+                    <a href="node-zero.html" class="block p-4 bg-void border border-white/5 rounded hover:border-butter/30 transition-colors group">
+                        <div class="font-bold text-sm text-cloud group-hover:text-butter transition-colors mb-1">Node Zero</div>
+                        <div class="text-xs text-cloud/50">Cryptographic primitives for the SE050 identity layer.</div>
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <footer class="border-t border-white/5 mt-12 py-6">
+        <div class="max-w-7xl mx-auto px-6 flex justify-between items-center text-xs text-cloud/30 font-mono">
+            <span>P31 Labs · 501(c)(3) · EIN 42-1888158</span>
+            <a href="/" class="hover:text-cloud/60 transition-colors">← Back to Hub</a>
+        </div>
+    </footer>
+
+</body>
+</html>

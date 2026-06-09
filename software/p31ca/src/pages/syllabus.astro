@@ -1,0 +1,18 @@
+---
+/**
+ * P31 Sovereign Syllabus Portal
+ * High-fashion interactive syllabus for the P31 Center.
+ * Features the Spoon Dial for cognitive load adaptation.
+ */
+import AppShell from '../layouts/AppShell.astro';
+import SyllabusPortal from '../components/SyllabusPortal';
+---
+
+<AppShell
+  title="P31 Sovereign Syllabus"
+  description="The P31 Center For Family Members Who Can't Tech Good — Sovereign Edge Syllabus"
+  routeName="syllabus"
+  suppressEbc={true}
+>
+  <SyllabusPortal client:load />
+</AppShell>

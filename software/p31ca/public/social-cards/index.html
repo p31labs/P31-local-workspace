@@ -1,0 +1,1174 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>P31 social cards — screenshot-ready, 1080×1080, P31 canon</title>
+  <meta name="description" content="Ten share-ready cards: stat flex, fleet status, the quote, perception vs reality, ethics-as-architecture, the closer, the dev flex, K4 geometry, the trim tab, ASCII tetrahedron. Open the page, screenshot a card, share it. The geometry holds." />
+  <meta name="color-scheme" content="dark" />
+  <meta name="theme-color" content="#5DCAA5" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='75' x='10' font-size='75' font-weight='bold' fill='%235DCAA5' font-family='monospace'%3E◍%3C/text%3E%3C/svg%3E" />
+  <!-- P31 PWA contract — installable to phone home screen for one-tap screenshot sessions. -->
+  <link rel="manifest" href="/pwa/manifest-social-cards.json" />
+  <link rel="apple-touch-icon" href="/pwa/p31-tetra-icon.svg" />
+  <script src="./p31-pwa.js" defer></script>
+  <style>
+    /* P31 canonical tokens (subset of cognitive-passport/p31-style.css) */
+    :root {
+      --p31-void: #0f1115;
+      --p31-surface: #161920;
+      --p31-surface2: #1c2028;
+      --p31-coral: #cc6247;
+      --p31-teal: #5DCAA5;
+      --p31-cyan: #4db8a8;
+      --p31-cloud: #d8d6d0;
+      --p31-amber: #cda852;
+      --p31-lavender: #8b7cc9;
+      --p31-phosphorus: #3ba372;
+      --p31-muted: #6b7280;
+      --p31-border: rgba(255, 255, 255, 0.06);
+      --p31-glass: rgba(255, 255, 255, 0.04);
+      --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+      --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+      --font-serif: "Cormorant Garamond", "Iowan Old Style", "Hoefler Text", Georgia, serif;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0; padding: 0;
+      background: var(--p31-void);
+      color: var(--p31-cloud);
+      font-family: var(--font-sans);
+      font-size: 16px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--p31-cyan); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .page {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 40px 20px 80px;
+    }
+
+    .page-header {
+      padding: 0 0 32px;
+      border-bottom: 1px solid var(--p31-border);
+      margin-bottom: 40px;
+    }
+    .page-header h1 {
+      font-family: var(--font-mono);
+      font-size: 22px;
+      letter-spacing: 0.04em;
+      margin: 0 0 8px;
+      color: var(--p31-cloud);
+    }
+    .page-header h1 .glow {
+      color: var(--p31-teal);
+      text-shadow: 0 0 14px rgba(37, 137, 125, 0.45);
+    }
+    .page-header p {
+      margin: 6px 0;
+      color: var(--p31-muted);
+      max-width: 760px;
+      font-size: 14.5px;
+    }
+    .page-header .badges {
+      display: flex; gap: 8px; flex-wrap: wrap;
+      margin-top: 14px;
+    }
+    .page-header .badge {
+      background: var(--p31-surface);
+      border: 1px solid var(--p31-border);
+      padding: 3px 10px;
+      border-radius: 99px;
+      font-size: 11px;
+      color: var(--p31-muted);
+      font-family: var(--font-mono);
+    }
+    .page-header .badge.live {
+      color: var(--p31-phosphorus);
+      border-color: rgba(59, 163, 114, 0.35);
+    }
+
+    .toolbar {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(15, 17, 21, 0.92);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      padding: 12px 16px;
+      margin: 0 -20px 30px;
+      border-bottom: 1px solid var(--p31-border);
+      display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
+      font-family: var(--font-mono);
+      font-size: 12px;
+    }
+    .toolbar .label { color: var(--p31-muted); margin-right: 4px; }
+    .toolbar button, .toolbar a {
+      background: var(--p31-surface);
+      color: var(--p31-cloud);
+      border: 1px solid var(--p31-border);
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      text-decoration: none;
+    }
+    .toolbar button:hover, .toolbar a:hover {
+      border-color: var(--p31-teal);
+      color: var(--p31-teal);
+    }
+    .toolbar button.primary {
+      background: rgba(37, 137, 125, 0.12);
+      color: var(--p31-teal);
+      border-color: rgba(37, 137, 125, 0.4);
+    }
+
+    /* Card grid: cards display at responsive size on screen,
+       but each card-canvas is fixed 1080x1080 for screenshot clarity. */
+    .card-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 40px;
+      max-width: 1080px;
+      margin: 0 auto;
+    }
+    @media (min-width: 1240px) {
+      .card-grid { grid-template-columns: 1fr; }
+    }
+
+    .card-frame {
+      display: flex; flex-direction: column; gap: 12px;
+    }
+    .card-frame .meta {
+      display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--p31-muted);
+    }
+    .card-frame .meta .num {
+      color: var(--p31-teal);
+      font-weight: 700;
+    }
+    .card-frame .meta .title {
+      color: var(--p31-cloud);
+      font-weight: 600;
+    }
+    .card-frame .meta .audience {
+      color: var(--p31-amber);
+    }
+
+    .card-canvas {
+      position: relative;
+      width: 100%;
+      max-width: 1080px;
+      aspect-ratio: 1 / 1;
+      background: var(--p31-void);
+      border: 1px solid var(--p31-border);
+      border-radius: 16px;
+      overflow: hidden;
+      isolation: isolate;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+      contain: layout style paint;
+    }
+    /* When a card is being captured, scale to a fixed 1080x1080 layout */
+    .card-canvas .canvas-inner {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      padding: 64px;
+      width: 1080px; height: 1080px;
+      transform-origin: top left;
+    }
+    /* Scale-to-fit on small screens so cards stay readable inline */
+    @media (max-width: 1180px) {
+      .card-canvas .canvas-inner {
+        transform: scale(calc(100vw / 1180));
+      }
+    }
+
+    /* ============= per-card aesthetics ============= */
+
+    /* Card 1: stat flex */
+    .card--stat .canvas-inner {
+      background:
+        radial-gradient(circle at 80% 10%, rgba(37, 137, 125, 0.18), transparent 40%),
+        radial-gradient(circle at 10% 90%, rgba(204, 98, 71, 0.10), transparent 50%),
+        var(--p31-void);
+    }
+    .card--stat .label {
+      font-family: var(--font-mono);
+      font-size: 24px;
+      letter-spacing: 0.12em;
+      color: var(--p31-muted);
+      text-transform: uppercase;
+    }
+    .card--stat h2 {
+      font-family: var(--font-sans);
+      font-size: 76px;
+      font-weight: 700;
+      line-height: 1.05;
+      margin: 18px 0 0;
+      letter-spacing: -0.02em;
+      color: var(--p31-cloud);
+      max-width: 88%;
+    }
+    .card--stat .stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 36px 56px;
+      margin: 64px 0 auto;
+    }
+    .card--stat .stat .num {
+      font-family: var(--font-mono);
+      font-size: 96px;
+      font-weight: 700;
+      line-height: 1;
+      color: var(--p31-teal);
+      letter-spacing: -0.04em;
+    }
+    .card--stat .stat .desc {
+      font-family: var(--font-sans);
+      font-size: 22px;
+      line-height: 1.35;
+      color: var(--p31-muted);
+      margin-top: 12px;
+    }
+    .card--stat .footer {
+      font-family: var(--font-mono);
+      font-size: 20px;
+      color: var(--p31-coral);
+      margin-top: 32px;
+      letter-spacing: 0.04em;
+    }
+    .card--stat .footer strong {
+      color: var(--p31-cloud);
+      font-weight: 700;
+    }
+
+    /* Card 2: fleet status (terminal) */
+    .card--fleet .canvas-inner {
+      background: linear-gradient(180deg, #07090a 0%, var(--p31-void) 100%);
+      padding: 72px 64px;
+    }
+    .card--fleet .term-bar {
+      display: flex; align-items: center; gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 18px;
+      color: var(--p31-muted);
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--p31-border);
+    }
+    .card--fleet .term-bar .dot {
+      width: 14px; height: 14px; border-radius: 50%;
+      background: var(--p31-coral);
+    }
+    .card--fleet .term-bar .dot:nth-child(2) { background: var(--p31-amber); }
+    .card--fleet .term-bar .dot:nth-child(3) { background: var(--p31-phosphorus); }
+    .card--fleet .term-bar .title {
+      margin-left: 16px;
+    }
+    .card--fleet pre {
+      font-family: var(--font-mono);
+      font-size: 26px;
+      line-height: 1.55;
+      color: var(--p31-cloud);
+      margin: 36px 0 0;
+      white-space: pre;
+    }
+    .card--fleet pre .ok { color: var(--p31-phosphorus); font-weight: 700; }
+    .card--fleet pre .label { color: var(--p31-muted); }
+    .card--fleet pre .num { color: var(--p31-teal); font-weight: 700; }
+    .card--fleet pre .accent { color: var(--p31-amber); }
+    .card--fleet pre .coral { color: var(--p31-coral); }
+    .card--fleet .signoff {
+      margin-top: auto;
+      font-family: var(--font-mono);
+      font-size: 22px;
+      color: var(--p31-muted);
+    }
+    .card--fleet .signoff .accent { color: var(--p31-teal); font-weight: 700; }
+
+    /* Card 3: the quote */
+    .card--quote .canvas-inner {
+      background:
+        radial-gradient(circle at 50% 50%, rgba(204, 98, 71, 0.10), transparent 60%),
+        var(--p31-void);
+      justify-content: center;
+      align-items: stretch;
+      padding: 96px;
+    }
+    .card--quote .marker {
+      font-family: var(--font-serif);
+      font-size: 200px;
+      line-height: 0.5;
+      color: var(--p31-coral);
+      opacity: 0.45;
+      margin-bottom: 24px;
+    }
+    .card--quote blockquote {
+      font-family: var(--font-serif);
+      font-size: 56px;
+      line-height: 1.25;
+      letter-spacing: -0.01em;
+      margin: 0 0 32px;
+      color: var(--p31-cloud);
+      font-style: italic;
+      max-width: 880px;
+    }
+    .card--quote blockquote .em {
+      color: var(--p31-coral);
+      font-style: italic;
+    }
+    .card--quote blockquote .em--teal { color: var(--p31-teal); }
+    .card--quote .attr {
+      font-family: var(--font-mono);
+      font-size: 22px;
+      color: var(--p31-muted);
+      letter-spacing: 0.06em;
+      margin-top: 12px;
+    }
+    .card--quote .attr .name { color: var(--p31-cloud); font-weight: 600; }
+
+    /* Card 4: perception vs reality */
+    .card--diptych .canvas-inner {
+      padding: 0;
+    }
+    .card--diptych .heads {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      flex: 1;
+    }
+    .card--diptych .col {
+      padding: 72px 56px;
+      display: flex; flex-direction: column; gap: 24px;
+    }
+    .card--diptych .col--left {
+      background: linear-gradient(180deg, rgba(204, 98, 71, 0.12), rgba(204, 98, 71, 0.02));
+      border-right: 1px solid var(--p31-border);
+    }
+    .card--diptych .col--right {
+      background: linear-gradient(180deg, rgba(37, 137, 125, 0.14), rgba(37, 137, 125, 0.02));
+    }
+    .card--diptych .col-head {
+      font-family: var(--font-mono);
+      font-size: 18px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    .card--diptych .col--left .col-head { color: var(--p31-coral); }
+    .card--diptych .col--right .col-head { color: var(--p31-teal); }
+    .card--diptych .col h3 {
+      font-family: var(--font-sans);
+      font-size: 44px;
+      font-weight: 700;
+      line-height: 1.1;
+      margin: 8px 0 18px;
+      color: var(--p31-cloud);
+      letter-spacing: -0.02em;
+    }
+    .card--diptych .col ul {
+      list-style: none;
+      padding: 0; margin: 12px 0 0;
+      display: flex; flex-direction: column; gap: 16px;
+    }
+    .card--diptych .col li {
+      font-family: var(--font-sans);
+      font-size: 22px;
+      line-height: 1.4;
+      color: var(--p31-cloud);
+      padding-left: 28px;
+      position: relative;
+    }
+    .card--diptych .col li::before {
+      content: "—";
+      position: absolute;
+      left: 0;
+      color: var(--p31-muted);
+    }
+    .card--diptych .col--left li { color: rgba(216, 214, 208, 0.78); }
+    .card--diptych .footer-strip {
+      padding: 28px 56px;
+      background: var(--p31-surface);
+      border-top: 1px solid var(--p31-border);
+      font-family: var(--font-mono);
+      font-size: 20px;
+      color: var(--p31-muted);
+      letter-spacing: 0.04em;
+    }
+    .card--diptych .footer-strip strong {
+      color: var(--p31-cloud);
+      font-weight: 700;
+    }
+
+    /* Card 5: ethics as architecture */
+    .card--ethics .canvas-inner {
+      background:
+        radial-gradient(circle at 100% 100%, rgba(139, 124, 201, 0.10), transparent 50%),
+        var(--p31-void);
+      padding: 72px 64px;
+    }
+    .card--ethics .label {
+      font-family: var(--font-mono);
+      font-size: 22px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--p31-lavender);
+    }
+    .card--ethics h2 {
+      font-family: var(--font-sans);
+      font-size: 64px;
+      font-weight: 700;
+      line-height: 1.1;
+      margin: 18px 0 32px;
+      color: var(--p31-cloud);
+      letter-spacing: -0.02em;
+      max-width: 90%;
+    }
+    .card--ethics .terminal {
+      background: var(--p31-surface);
+      border: 1px solid var(--p31-border);
+      border-radius: 12px;
+      padding: 32px 36px;
+      font-family: var(--font-mono);
+      font-size: 22px;
+      line-height: 1.55;
+      color: var(--p31-cloud);
+    }
+    .card--ethics .terminal .prompt { color: var(--p31-muted); }
+    .card--ethics .terminal .cmd { color: var(--p31-cyan); }
+    .card--ethics .terminal .out { color: var(--p31-coral); font-weight: 700; }
+    .card--ethics .terminal .ok { color: var(--p31-phosphorus); font-weight: 700; }
+    .card--ethics .rules {
+      margin-top: 36px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px 28px;
+    }
+    .card--ethics .rule {
+      font-family: var(--font-mono);
+      font-size: 18px;
+      color: var(--p31-cloud);
+      display: flex; gap: 12px; align-items: baseline;
+    }
+    .card--ethics .rule .x {
+      color: var(--p31-coral);
+      font-weight: 700;
+      font-size: 22px;
+    }
+    .card--ethics .signoff {
+      margin-top: auto;
+      padding-top: 32px;
+      font-family: var(--font-mono);
+      font-size: 20px;
+      color: var(--p31-muted);
+    }
+    .card--ethics .signoff .accent { color: var(--p31-lavender); font-weight: 700; }
+
+    /* Card 6: the closer (emotional) */
+    .card--closer .canvas-inner {
+      background:
+        radial-gradient(circle at 50% 30%, rgba(59, 163, 114, 0.18), transparent 55%),
+        radial-gradient(circle at 50% 80%, rgba(37, 137, 125, 0.12), transparent 60%),
+        var(--p31-void);
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 96px;
+    }
+    .card--closer .tag {
+      font-family: var(--font-mono);
+      font-size: 22px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--p31-phosphorus);
+    }
+    .card--closer h2 {
+      font-family: var(--font-serif);
+      font-size: 88px;
+      font-weight: 600;
+      line-height: 1.15;
+      margin: 32px 0 20px;
+      color: var(--p31-cloud);
+      letter-spacing: -0.02em;
+      max-width: 880px;
+      font-style: italic;
+    }
+    .card--closer .sub {
+      font-family: var(--font-sans);
+      font-size: 30px;
+      color: var(--p31-cloud);
+      max-width: 760px;
+      line-height: 1.4;
+      margin: 0 0 60px;
+    }
+    .card--closer .url {
+      font-family: var(--font-mono);
+      font-size: 28px;
+      color: var(--p31-teal);
+      margin-top: auto;
+      padding-top: 32px;
+      border-top: 1px solid var(--p31-border);
+      width: 100%;
+    }
+    .card--closer .url .heart { color: var(--p31-coral); }
+
+    /* Card 7: built on what (developer flex) */
+    .card--devflex .canvas-inner {
+      background: #050708;
+      padding: 64px;
+    }
+    .card--devflex .term-bar {
+      display: flex; align-items: center; gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 16px;
+      color: var(--p31-muted);
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--p31-border);
+    }
+    .card--devflex .term-bar .dot {
+      width: 12px; height: 12px; border-radius: 50%;
+      background: var(--p31-coral);
+    }
+    .card--devflex .term-bar .dot:nth-child(2) { background: var(--p31-amber); }
+    .card--devflex .term-bar .dot:nth-child(3) { background: var(--p31-phosphorus); }
+    .card--devflex .term-bar .title { margin-left: 16px; }
+    .card--devflex .stack {
+      margin: 36px 0 auto;
+      font-family: var(--font-mono);
+      font-size: 24px;
+      line-height: 1.7;
+      color: var(--p31-cloud);
+    }
+    .card--devflex .stack .key { color: var(--p31-teal); font-weight: 700; min-width: 280px; display: inline-block; }
+    .card--devflex .stack .val { color: var(--p31-cloud); }
+    .card--devflex .stack .accent { color: var(--p31-amber); }
+    .card--devflex .stack .coral { color: var(--p31-coral); }
+    .card--devflex .breaker {
+      margin: 28px 0;
+      border: none; border-top: 1px dashed var(--p31-border);
+    }
+    .card--devflex .why {
+      font-family: var(--font-sans);
+      font-size: 26px;
+      line-height: 1.45;
+      color: var(--p31-muted);
+      max-width: 92%;
+    }
+    .card--devflex .why strong { color: var(--p31-cloud); font-weight: 700; }
+    .card--devflex .why .accent { color: var(--p31-teal); }
+
+    /* Card 8: the geometry (K4 SVG) */
+    .card--geometry .canvas-inner {
+      background:
+        radial-gradient(circle at 50% 50%, rgba(37, 137, 125, 0.14), transparent 60%),
+        var(--p31-void);
+      align-items: center;
+      padding: 72px 64px;
+    }
+    .card--geometry .label {
+      font-family: var(--font-mono);
+      font-size: 22px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--p31-muted);
+      align-self: flex-start;
+    }
+    .card--geometry h2 {
+      font-family: var(--font-sans);
+      font-size: 60px;
+      font-weight: 700;
+      line-height: 1.1;
+      margin: 18px 0 0;
+      color: var(--p31-cloud);
+      letter-spacing: -0.02em;
+      align-self: flex-start;
+    }
+    .card--geometry .svg-wrap {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      margin: 24px 0;
+    }
+    .card--geometry svg {
+      width: 600px; height: 600px;
+      filter: drop-shadow(0 0 24px rgba(37, 137, 125, 0.35));
+    }
+    .card--geometry .legend {
+      font-family: var(--font-mono);
+      font-size: 20px;
+      color: var(--p31-muted);
+      align-self: flex-start;
+    }
+    .card--geometry .legend strong { color: var(--p31-cloud); font-weight: 700; }
+    .card--geometry .legend .accent { color: var(--p31-teal); }
+
+    /* K4 vertex circle pulse animation */
+    @keyframes pulse {
+      0%, 100% { r: 22; opacity: 1; }
+      50% { r: 28; opacity: 0.85; }
+    }
+
+    /* Card 9: trim tab */
+    .card--trimtab .canvas-inner {
+      background: #fdfcfa;
+      color: #1e293b;
+      padding: 96px;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: 48px;
+    }
+    .card--trimtab .topmark {
+      font-family: var(--font-mono);
+      font-size: 18px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #cc6247;
+    }
+    .card--trimtab .body {
+      display: flex; flex-direction: column; gap: 56px;
+      justify-content: center;
+    }
+    .card--trimtab .quote {
+      font-family: var(--font-serif);
+      font-size: 44px;
+      line-height: 1.3;
+      color: #1e293b;
+      font-style: italic;
+      letter-spacing: -0.01em;
+    }
+    .card--trimtab .quote .pull {
+      color: #5DCAA5;
+      font-weight: 600;
+    }
+    .card--trimtab .attr {
+      font-family: var(--font-mono);
+      font-size: 18px;
+      color: #6b7280;
+      margin-top: 12px;
+      letter-spacing: 0.04em;
+    }
+    .card--trimtab .attr .name { color: #1e293b; font-weight: 600; }
+    .card--trimtab .divider {
+      border: none;
+      border-top: 1px solid #1e293b22;
+      margin: 8px 0;
+    }
+    .card--trimtab .footer {
+      font-family: var(--font-mono);
+      font-size: 16px;
+      color: #6b7280;
+      letter-spacing: 0.06em;
+      display: flex; justify-content: space-between; align-items: baseline;
+    }
+    .card--trimtab .footer .right { color: #5DCAA5; font-weight: 600; }
+
+    /* Card 10: ASCII tetrahedron (copy-pasteable) */
+    .card--ascii .canvas-inner {
+      background: var(--p31-void);
+      padding: 64px;
+      align-items: stretch;
+    }
+    .card--ascii .label {
+      font-family: var(--font-mono);
+      font-size: 22px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--p31-muted);
+    }
+    .card--ascii h2 {
+      font-family: var(--font-sans);
+      font-size: 44px;
+      font-weight: 700;
+      line-height: 1.15;
+      margin: 14px 0 32px;
+      color: var(--p31-cloud);
+      letter-spacing: -0.02em;
+    }
+    .card--ascii pre.ascii {
+      font-family: var(--font-mono);
+      font-size: 26px;
+      line-height: 1.4;
+      color: var(--p31-teal);
+      background: var(--p31-surface);
+      border: 1px solid var(--p31-border);
+      border-radius: 12px;
+      padding: 32px;
+      margin: 0 0 32px;
+      white-space: pre;
+      text-align: center;
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .card--ascii .tagline {
+      font-family: var(--font-mono);
+      font-size: 22px;
+      color: var(--p31-cloud);
+      text-align: center;
+      letter-spacing: 0.04em;
+    }
+    .card--ascii .tagline .accent { color: var(--p31-coral); }
+    .card--ascii .url {
+      font-family: var(--font-mono);
+      font-size: 18px;
+      color: var(--p31-muted);
+      text-align: center;
+      margin-top: 12px;
+    }
+
+    /* Universal P31 footer mark on every card */
+    .card-canvas .corner-mark {
+      position: absolute;
+      bottom: 32px;
+      right: 40px;
+      font-family: var(--font-mono);
+      font-size: 18px;
+      color: var(--p31-muted);
+      letter-spacing: 0.06em;
+      opacity: 0.7;
+      pointer-events: none;
+    }
+    .card-canvas .corner-mark .heart { color: var(--p31-coral); }
+    .card-canvas .corner-mark .tetra { color: var(--p31-teal); }
+    /* light cards (trimtab) get a dark corner mark */
+    .card--trimtab .corner-mark { color: #6b7280; }
+    .card--trimtab .corner-mark .tetra { color: #5DCAA5; }
+
+    /* Print + screenshot helpers */
+    @media print {
+      body { background: white; }
+      .toolbar, .page-header, .card-frame .meta, .footer-help { display: none; }
+      .card-canvas { page-break-after: always; box-shadow: none; border: none; }
+    }
+
+    .footer-help {
+      margin-top: 60px;
+      padding: 30px 0;
+      border-top: 1px solid var(--p31-border);
+      color: var(--p31-muted);
+      font-size: 14px;
+      font-family: var(--font-mono);
+      max-width: 760px;
+    }
+    .footer-help h3 {
+      color: var(--p31-cloud);
+      font-size: 16px;
+      margin: 0 0 12px;
+    }
+    .footer-help code {
+      background: var(--p31-surface);
+      padding: 2px 8px;
+      border-radius: 4px;
+      color: var(--p31-cyan);
+    }
+  </style>
+  <link rel="preconnect" href="https://rsms.me/">
+  <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="page">
+
+<header class="page-header">
+  <h1>◍ <span class="glow">P31 social cards</span> — screenshot-ready, 1080×1080</h1>
+  <p>Ten share-ready cards built in the P31 canon palette. Each card is a fixed 1080×1080 div — screenshot it at native size, drop it into Twitter/Bluesky/LinkedIn/IG. Dark background pops on every feed. No telemetry, no tracking, no external font fetches. The master's tools, disassembling the master's house.</p>
+  <div class="badges">
+    <span class="badge live">live · 10 cards</span>
+    <span class="badge">P31 canonical palette</span>
+    <span class="badge">single-file HTML</span>
+    <span class="badge">screenshot or print</span>
+    <span class="badge">CC-BY 4.0 — share + remix</span>
+  </div>
+</header>
+
+<nav class="toolbar">
+  <span class="label">jump:</span>
+  <a href="#card-1">01 stat</a>
+  <a href="#card-2">02 fleet</a>
+  <a href="#card-3">03 quote</a>
+  <a href="#card-4">04 diptych</a>
+  <a href="#card-5">05 ethics</a>
+  <a href="#card-6">06 closer</a>
+  <a href="#card-7">07 devflex</a>
+  <a href="#card-8">08 geometry</a>
+  <a href="#card-9">09 trimtab</a>
+  <a href="#card-10">10 ascii</a>
+  <span class="label" style="margin-left:auto">action:</span>
+  <button class="primary" onclick="window.print()">⎙ print all (PDF)</button>
+</nav>
+
+<div class="card-grid">
+
+<!-- ============= Card 1: Stat flex ============= -->
+<div class="card-frame" id="card-1">
+  <div class="meta">
+    <span class="num">01</span>
+    <span class="title">By the numbers</span>
+    <span>·</span>
+    <span class="audience">audience: LinkedIn · tech Twitter · grant reviewers · "show me your receipts" crowd</span>
+  </div>
+  <div class="card-canvas card--stat">
+    <div class="canvas-inner">
+      <div class="label">P31 Labs · operator-built · 4 months</div>
+      <h2>What one neurodivergent operator shipped on $50/month and SNAP benefits.</h2>
+      <div class="stats">
+        <div class="stat">
+          <div class="num">22</div>
+          <div class="desc">papers on Zenodo<br/>with DOIs &amp; ORCID</div>
+        </div>
+        <div class="stat">
+          <div class="num">10</div>
+          <div class="desc">Cloudflare Workers<br/>in production</div>
+        </div>
+        <div class="stat">
+          <div class="num">83</div>
+          <div class="desc">automated verify gates<br/>green every commit</div>
+        </div>
+        <div class="stat">
+          <div class="num">23</div>
+          <div class="desc">application surfaces<br/>on $50/month infra</div>
+        </div>
+      </div>
+      <div class="footer">
+        Pro se in family court · 501(c)(3) filed · <strong>CogPass v3.0 · 32/32 tests passing</strong>
+      </div>
+    </div>
+    <div class="corner-mark"><span class="tetra">◍</span> p31labs · <span class="heart">💜🔺💜</span></div>
+  </div>
+</div>
+
+<!-- ============= Card 2: Fleet status (terminal) ============= -->
+<div class="card-frame" id="card-2">
+  <div class="meta">
+    <span class="num">02</span>
+    <span class="title">Fleet status</span>
+    <span>·</span>
+    <span class="audience">audience: developers · DevOps · infra people · "show me your monitoring" crowd</span>
+  </div>
+  <div class="card-canvas card--fleet">
+    <div class="canvas-inner">
+      <div class="term-bar">
+        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+        <span class="title">~/p31 — npm run verify · 2026-05-02</span>
+      </div>
+<pre>
+<span class="label">$</span> <span class="accent">npm run verify</span>
+
+  <span class="ok">✓</span> verify:alignment        <span class="label">71 derivation edges</span>
+  <span class="ok">✓</span> verify:facts            <span class="label">all invariants</span>
+  <span class="ok">✓</span> verify:passport         <span class="label">CogPass v3.0 · 32/32</span>
+  <span class="ok">✓</span> verify:constants        <span class="label">863 Hz · K₄ · ³¹P</span>
+  <span class="ok">✓</span> verify:cars-wire        <span class="label">mock WS ↔ engine</span>
+  <span class="ok">✓</span> verify:public-voice     <span class="label">identity-first</span>
+  <span class="ok">✓</span> verify:doc-index        <span class="label">274 documents</span>
+  <span class="ok">✓</span> verify:simplex          <span class="label">SIMPLEX v7</span>
+  <span class="ok">✓</span> verify:ground-truth     <span class="label">p31ca contract</span>
+  <span class="ok">✓</span> verify:k4-personal      <span class="label">mesh dry-run</span>
+
+  <span class="num">+ 73 more gates</span>
+
+  <span class="ok">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+  <span class="ok">  PASS  83 / 83 gates</span>
+  <span class="label">  duration: 2m 14s</span>
+</pre>
+      <div class="signoff"><span class="accent">$</span> _ &nbsp;<span class="label">running on a $200 Chromebook</span></div>
+    </div>
+    <div class="corner-mark"><span class="tetra">◍</span> p31labs · <span class="heart">💜🔺💜</span></div>
+  </div>
+</div>
+
+<!-- ============= Card 3: The quote ============= -->
+<div class="card-frame" id="card-3">
+  <div class="meta">
+    <span class="num">03</span>
+    <span class="title">The quote</span>
+    <span>·</span>
+    <span class="audience">audience: disability advocates · AuDHD community · anyone misread by a system that measured the channel instead of the signal</span>
+  </div>
+  <div class="card-canvas card--quote">
+    <div class="canvas-inner">
+      <div class="marker">"</div>
+      <blockquote>
+        The court called him manic.<br/>
+        The publication record showed <span class="em--teal">22 coherent papers</span>.<br/>
+        <span class="em">Same source. Different channels.<br/>
+        Different conclusions drawn by the observer.</span>
+      </blockquote>
+      <div class="attr">— <span class="name">The Phosphorus Thesis v2.0</span> · §4.3 transducer error as rate-distortion</div>
+    </div>
+    <div class="corner-mark"><span class="tetra">◍</span> p31labs · <span class="heart">💜🔺💜</span></div>
+  </div>
+</div>
+
+<!-- ============= Card 4: Perception vs reality (diptych) ============= -->
+<div class="card-frame" id="card-4">
+  <div class="meta">
+    <span class="num">04</span>
+    <span class="title">Perception vs reality</span>
+    <span>·</span>
+    <span class="audience">audience: anyone reduced to a label by someone who didn't have context</span>
+  </div>
+  <div class="card-canvas card--diptych">
+    <div class="canvas-inner" style="padding:0">
+      <div class="heads">
+        <div class="col col--left">
+          <div class="col-head">What the court saw</div>
+          <h3>"Manic. Order a psych eval."</h3>
+          <ul>
+            <li>Rapid speech</li>
+            <li>Dense conceptual jumps</li>
+            <li>High-volume output</li>
+            <li>Self-represented</li>
+            <li>Uses "geometric" too often</li>
+          </ul>
+        </div>
+        <div class="col col--right">
+          <div class="col-head">What the engineer built</div>
+          <h3>22 papers. 10 workers. 83 gates.</h3>
+          <ul>
+            <li>K₄ family mesh on Cloudflare</li>
+            <li>SIC-POVM agent fleet on a $200 GPU</li>
+            <li>Soulbound L.O.V.E. ledger</li>
+            <li>W3C-shaped Cognitive Passport</li>
+            <li>Chemistry game his kids actually play</li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-strip">
+        <strong>Same source.</strong> Different observers. Same quantum state, different bases.
+      </div>
+    </div>
+    <div class="corner-mark"><span class="tetra">◍</span> p31labs · <span class="heart">💜🔺💜</span></div>
+  </div>
+</div>
+
+<!-- ============= Card 5: Ethics as architecture ============= -->
+<div class="card-frame" id="card-5">
+  <div class="meta">
+    <span class="num">05</span>
+    <span class="title">Ethics as architecture</span>
+    <span>·</span>
+    <span class="audience">audience: product · UX · accessibility-curious eng · "we care about ethics" crowd (this one actually <code>grep</code>s for it)</span>
+  </div>
+  <div class="card-canvas card--ethics">
+    <div class="canvas-inner">
+      <div class="label">verify gate: ethical-rewards</div>
+      <h2>If the build contains a streak counter, the build fails.</h2>
+      <div class="terminal">
+<span class="prompt">$</span> <span class="cmd">npm run verify:ethical-rewards</span>
+<span class="out">  ✗ FAIL</span> · grep matched <span class="cmd">"streak"</span> in <span class="cmd">src/Garden.tsx:42</span>
+<span class="out">  ✗ FAIL</span> · grep matched <span class="cmd">"leaderboard"</span> in <span class="cmd">src/Hub.tsx:118</span>
+<span class="prompt">$</span> exit 1 — <span class="ok">build will not ship</span>
+      </div>
+      <div class="rules">
+        <div class="rule"><span class="x">✗</span> no streaks</div>
+        <div class="rule"><span class="x">✗</span> no leaderboards</div>
+        <div class="rule"><span class="x">✗</span> no variable-ratio rewards</div>
+        <div class="rule"><span class="x">✗</span> no loss mechanics</div>
+        <div class="rule"><span class="x">✗</span> no extrinsic gating</div>
+        <div class="rule"><span class="x">✗</span> no surveillance of children</div>
+      </div>
+      <div class="signoff">
+        Streak counters punish absence. Absence is a feature of <span class="accent">disability</span>, not a failure of character. The values are in the verify pipeline.
+      </div>
+    </div>
+    <div class="corner-mark"><span class="tetra">◍</span> p31labs · <span class="heart">💜🔺💜</span></div>
+  </div>
+</div>
+
+<!-- ============= Card 6: The closer (emotional) ============= -->
+<div class="card-frame" id="card-6">
+  <div class="meta">
+    <span class="num">06</span>
+    <span class="title">The closer</span>
+    <span>·</span>
+    <span class="audience">audience: families · the ones who'll click through · the ones who already know</span>
+  </div>
+  <div class="card-canvas card--closer">
+    <div class="canvas-inner">
+      <div class="tag">P31 Labs · 501(c)(3) determined May 2026</div>
+      <h2>For every family out there figuring it out as they go —</h2>
+      <p class="sub">Open source. No ads. No tracking. No streaks. The flowers don't wilt. The cage holds. The phosphorus is for all of us.</p>
+      <div class="url">
+        <span class="heart">💜</span> &nbsp;phosphorus31.org &nbsp;·&nbsp; p31ca.org &nbsp; <span class="heart">💜</span>
+      </div>
+    </div>
+    <div class="corner-mark"><span class="tetra">◍</span> p31labs · <span class="heart">💜🔺💜</span></div>
+  </div>
+</div>
+
+<!-- ============= Card 7: Built on what (developer flex) ============= -->
+<div class="card-frame" id="card-7">
+  <div class="meta">
+    <span class="num">07</span>
+    <span class="title">Built on what</span>
+    <span>·</span>
+    <span class="audience">audience: developers who understand exactly how absurd this stack is</span>
+  </div>
+  <div class="card-canvas card--devflex">
+    <div class="canvas-inner">
+      <div class="term-bar">
+        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+        <span class="title">~/p31 — uname -a · cat hardware.txt</span>
+      </div>
+      <div class="stack">
+        <div><span class="key">primary dev machine:</span> <span class="val">Acer Chromebook Spin 713</span> <span class="accent">($200, used)</span></div>
+        <div><span class="key">local AI inference:</span> <span class="val">AMD RX 6600 XT</span> <span class="accent">(8 GB VRAM)</span></div>
+        <div><span class="key">model fleet:</span> <span class="val">Qwen 2.5 7B + Qwen3 8B via Ollama</span></div>
+        <div><span class="key">cloud edge:</span> <span class="val">Cloudflare Workers · free tier</span></div>
+        <div><span class="key">database:</span> <span class="val">D1 (SQLite at the edge) + KV</span></div>
+        <div><span class="key">auth:</span> <span class="val">WebAuthn / passkeys · zero passwords</span></div>
+        <div><span class="key">mesh transport:</span> <span class="val">Tailscale + Durable Objects</span></div>
+        <div><span class="key">total infra cost:</span> <span class="accent">≈ $50 / month</span></div>
+        <hr class="breaker"/>
+        <div><span class="key">primary income:</span> <span class="coral">SNAP benefits</span></div>
+        <div><span class="key">healthcare:</span> <span class="coral">Medicaid</span></div>
+        <div><span class="key">attorney:</span> <span class="coral">none — pro se</span></div>
+        <div><span class="key">parent stack:</span> <span class="val">2 kids · separated · custody pending</span></div>
+      </div>
+      <div class="why">
+        <strong>Constraint is not a deficit.</strong> It's the boundary condition that forces the <span class="accent">minimum complete structure</span>. K₄. The tetrahedron. The cage that protects the phosphorus.
+      </div>
+    </div>
+    <div class="corner-mark"><span class="tetra">◍</span> p31labs · <span class="heart">💜🔺💜</span></div>
+  </div>
+</div>
+
+<!-- ============= Card 8: The geometry (K4 SVG) ============= -->
+<div class="card-frame" id="card-8">
+  <div class="meta">
+    <span class="num">08</span>
+    <span class="title">The geometry</span>
+    <span>·</span>
+    <span class="audience">audience: math people · physics nerds · anyone who's ever drawn K₄ on a napkin</span>
+  </div>
+  <div class="card-canvas card--geometry">
+    <div class="canvas-inner">
+      <div class="label">K₄ · the minimum complete graph</div>
+      <h2>Four vertices. Six edges. No central hub. No floating neutral.</h2>
+      <div class="svg-wrap">
+        <svg viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg" aria-label="K₄ tetrahedron — four vertices, six edges">
+          <!-- six edges, drawn first so vertices sit on top -->
+          <g stroke="#5DCAA5" stroke-width="3" stroke-linecap="round" opacity="0.85">
+            <!-- edges: top↔bot-left, top↔bot-right, top↔center, bot-left↔bot-right, bot-left↔center, bot-right↔center -->
+            <line x1="300" y1="80"  x2="100" y2="500" />
+            <line x1="300" y1="80"  x2="500" y2="500" />
+            <line x1="300" y1="80"  x2="300" y2="350" />
+            <line x1="100" y1="500" x2="500" y2="500" />
+            <line x1="100" y1="500" x2="300" y2="350" />
+            <line x1="500" y1="500" x2="300" y2="350" />
+          </g>
+          <!-- vertex glow halo -->
+          <g opacity="0.35">
+            <circle cx="300" cy="80"  r="40" fill="#5DCAA5" />
+            <circle cx="100" cy="500" r="40" fill="#cc6247" />
+            <circle cx="500" cy="500" r="40" fill="#3ba372" />
+            <circle cx="300" cy="350" r="40" fill="#cda852" />
+          </g>
+          <!-- vertex circles (the four nodes) -->
+          <circle cx="300" cy="80"  r="22" fill="#5DCAA5" stroke="#d8d6d0" stroke-width="2" />
+          <circle cx="100" cy="500" r="22" fill="#cc6247" stroke="#d8d6d0" stroke-width="2" />
+          <circle cx="500" cy="500" r="22" fill="#3ba372" stroke="#d8d6d0" stroke-width="2" />
+          <circle cx="300" cy="350" r="22" fill="#cda852" stroke="#d8d6d0" stroke-width="2" />
+          <!-- vertex labels -->
+          <g font-family="ui-monospace, monospace" font-size="22" font-weight="700" fill="#d8d6d0" text-anchor="middle">
+            <text x="300" y="55">Will</text>
+            <text x="100" y="555">S.J.</text>
+            <text x="500" y="555">W.J.</text>
+            <text x="300" y="395">Brenda</text>
+          </g>
+        </svg>
+      </div>
+      <div class="legend">
+        Same shape as <strong>SIC-POVM</strong> (d²=4). Same shape as <strong>fault-tolerant Delta topology</strong>. Same shape as the <span class="accent">cage of calcium ions</span> that protects coherent phosphorus in the brain. <strong>Not metaphor. Derivation.</strong>
+      </div>
+    </div>
+    <div class="corner-mark"><span class="tetra">◍</span> p31labs · <span class="heart">💜🔺💜</span></div>
+  </div>
+</div>
+
+<!-- ============= Card 9: Trim tab (literary) ============= -->
+<div class="card-frame" id="card-9">
+  <div class="meta">
+    <span class="num">09</span>
+    <span class="title">Trim tab</span>
+    <span>·</span>
+    <span class="audience">audience: poets · grant reviewers · the ones who read</span>
+  </div>
+  <div class="card-canvas card--trimtab">
+    <div class="canvas-inner">
+      <div class="topmark">trim tab · noun · the small surface that turns the whole ship</div>
+      <div class="body">
+        <div>
+          <div class="quote">"Something hit me very hard once, thinking about <span class="pull">what one little man could do.</span>"</div>
+          <div class="attr">— <span class="name">R. Buckminster Fuller</span></div>
+        </div>
+        <hr class="divider" />
+        <div>
+          <div class="quote">"With the right context I'm <span class="pull">an absolute genius.</span> With the wrong context I'm a hallucinating conspiracy theorist."</div>
+          <div class="attr">— <span class="name">William Rodger Johnson</span> · cognitive passport v3.0</div>
+        </div>
+      </div>
+      <div class="footer">
+        <span>P31 Labs · phosphorus31.org</span>
+        <span class="right">the geometry holds</span>
+      </div>
+    </div>
+    <div class="corner-mark"><span class="tetra">◍</span> p31labs</div>
+  </div>
+</div>
+
+<!-- ============= Card 10: ASCII tetrahedron (copy-pasteable) ============= -->
+<div class="card-frame" id="card-10">
+  <div class="meta">
+    <span class="num">10</span>
+    <span class="title">ASCII tetrahedron</span>
+    <span>·</span>
+    <span class="audience">audience: forum / Discord / Reddit / IRC — copy-pasteable, no image upload required</span>
+  </div>
+  <div class="card-canvas card--ascii">
+    <div class="canvas-inner">
+      <div class="label">paste this anywhere · monospace renders the cage</div>
+      <h2>The K₄ in ASCII. One line of <code>copy</code> · one line of <code>paste</code>.</h2>
+<pre class="ascii">
+       ◍                
+      / | \             
+     /  |  \            
+    /   |   \           
+   /    ◍    \          
+  /   /   \   \         
+ /  /       \  \        
+◍ /___________\ ◍       
+                        
+   K₄ · 4v · 6e · 0 hub 
+   the cage holds       
+</pre>
+      <div class="tagline">
+        <span class="accent">P31 Labs</span> · phosphorus31.org · <span class="accent">💜🔺💜</span>
+      </div>
+      <div class="url">copy the block above · paste into any monospace context · the geometry travels</div>
+    </div>
+    <div class="corner-mark"><span class="tetra">◍</span> p31labs</div>
+  </div>
+</div>
+
+</div><!-- /card-grid -->
+
+<section class="footer-help">
+  <h3>How to share these</h3>
+  <p><strong>Native screenshot</strong> (cleanest) · Open this page locally with <code>npm run demo</code>, then load <code>http://127.0.0.1:8080/social-cards/</code> on a desktop browser. Each card renders at the responsive size your screen allows; <code>cmd/ctrl + +</code> to zoom in for sharper screenshots, then crop to the square.</p>
+  <p><strong>PDF export</strong> · Click <code>⎙ print all (PDF)</code> in the toolbar. Each card prints on its own page, suitable for grant-application appendices or attaching to a PR.</p>
+  <p><strong>Direct edit</strong> · Open <code>social-cards/index.html</code> in your editor. Numbers, copy, and palette are all inline — no build step. Update once, regen all share assets.</p>
+  <p><strong>License</strong> · CC-BY 4.0 · share, remix, attribute. The master's tools, disassembling the master's house.</p>
+  <p style="margin-top:24px; opacity:0.7;">P31 Labs · 💜🔺💜 · the geometry holds</p>
+</section>
+
+</div><!-- /page -->
+</body>
+</html>

@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub" style="color-scheme: dark;">
+<head>
+  <meta charset="UTF-8">
+<script>(function(){var r=document.documentElement;if(/[?&]alive=1(?:&|$)/.test(location.search))return;r.classList.add("p31-gray-rock");function wake(){r.classList.remove("p31-gray-rock")}document.addEventListener("pointerdown",wake,{once:true,capture:true});document.addEventListener("keydown",wake,{once:true,capture:true})})();</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0f1115">
+  <title>Kids growth · S.J. &amp; W.J. | P31 Labs</title>
+  <meta name="description" content="Height and weight over time, milestone checklists, and print-friendly summaries. Data stays in this browser.">
+<link rel="canonical" href="https://p31ca.org/kids-growth.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Kids growth · S.J. &amp;amp; W.J.">
+<meta property="og:description" content="Height and weight over time, milestone checklists, and print-friendly summaries. Data stays in this browser.">
+<meta property="og:url" content="https://p31ca.org/kids-growth.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Kids growth · S.J. &amp;amp; W.J.">
+<meta name="twitter:description" content="Height and weight over time, milestone checklists, and print-friendly summaries. Data stays in this browser.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/p31-style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/p31-tailwind-extend.js"></script>
+  <script>
+    tailwind.config = { theme: { extend: { ...window.P31_TAILWIND_EXTEND } } } };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" defer></script>
+  <style>
+    .skip-kg { position: absolute; left: -9999px; }
+    .skip-kg:focus { left: 0.75rem; top: 0.75rem; z-index: 100; background: var(--p31-surface2); color: var(--p31-paper); padding: 0.5rem 1rem; border-radius: 0.5rem; }
+    .tab-active { color: var(--p31-paper); border-color: var(--p31-teal) !important; background: color-mix(in srgb, var(--p31-teal) 12%, transparent); }
+    @media print {
+      .no-print { display: none !important; }
+      body { background: #fff; color: #000; }
+      .print-main { max-width: 100%; }
+    }
+  </style>
+</head>
+<body class="bg-void text-cloud min-h-screen font-sans antialiased">
+  <a href="#main" class="skip-kg">Skip to main</a>
+
+  <header class="no-print border-b border-white/[0.07] bg-surface/90 backdrop-blur-md sticky top-0 z-40">
+    <div class="max-w-4xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-2">
+        <a href="/" class="text-paper text-sm font-semibold hover:text-teal/90 transition-colors">P31</a>
+        <span class="text-white/20">·</span>
+        <span class="font-mono text-[10px] uppercase tracking-widest text-butter/90">Kids growth</span>
+      </div>
+      <nav class="flex flex-wrap gap-2 text-xs font-mono">
+        <a href="/kids" class="text-muted hover:text-butter px-2 py-1 rounded border border-transparent hover:border-white/10">Kids home</a>
+        <a href="/vision.html" class="text-muted hover:text-teal px-2 py-1 rounded border border-transparent hover:border-white/10">Journey</a>
+        <a href="/mission-control.html" class="text-muted hover:text-coral px-2 py-1 rounded border border-transparent hover:border-white/10">Missions</a>
+        <a href="/" class="text-muted hover:text-cloud px-2 py-1 rounded border border-transparent hover:border-white/10">Hub</a>
+      </nav>
+    </div>
+  </header>
+
+  <div id="main" class="print-main max-w-4xl mx-auto px-4 py-8">
+    <p class="font-mono text-[10px] uppercase tracking-[0.15em] text-phosphorus mb-2">S.J. &amp; W.J. · household</p>
+    <h1 class="text-2xl sm:text-3xl font-bold text-paper tracking-tight">Growth &amp; milestones</h1>
+    <p class="mt-2 text-sm text-muted max-w-2xl leading-relaxed">
+      All data is stored in <strong class="text-cloud/90 font-medium">this browser only</strong> (localStorage). It is not medical advice, diagnosis, or a substitute for a pediatric visit. For concerns, see your care team.
+    </p>
+
+    <div class="no-print flex gap-1 mt-8 p-1 rounded-xl bg-surface2/80 border border-white/[0.06] w-full max-w-md" role="tablist" aria-label="Child">
+      <button type="button" id="tab-sj" class="tab-active flex-1 py-2.5 rounded-lg text-sm font-semibold border border-transparent transition-colors" data-tab="sj" role="tab" aria-selected="true">S.J.</button>
+      <button type="button" id="tab-wj" class="flex-1 py-2.5 rounded-lg text-sm text-muted font-semibold border border-transparent transition-colors" data-tab="wj" role="tab" aria-selected="false">W.J.</button>
+    </div>
+
+    <div class="mt-6 rounded-2xl border border-white/[0.08] bg-surface/60 p-5 sm:p-6">
+      <h2 class="font-sans text-xs uppercase tracking-widest text-teal/85 mb-3">Child profile</h2>
+      <div class="grid sm:grid-cols-2 gap-4 text-sm">
+        <label class="block">
+          <span class="text-muted text-xs font-mono">Date of birth</span>
+          <input type="date" id="dob" class="mt-1 w-full rounded-lg bg-void border border-white/15 px-3 py-2 text-cloud focus:outline-none focus:ring-2 focus:ring-teal/40" />
+        </label>
+        <p class="text-sm text-muted sm:col-span-1 flex items-end pb-1"><span class="text-xs font-mono text-butter/80" id="age-display">Age —</span></p>
+      </div>
+    </div>
+
+    <div class="no-print mt-6 rounded-2xl border border-white/[0.08] bg-surface/60 p-5 sm:p-6">
+      <h2 class="font-sans text-xs uppercase tracking-widest text-coral/85 mb-4">Add measurement</h2>
+      <div class="grid sm:grid-cols-2 md:grid-cols-4 gap-3">
+        <label class="block sm:col-span-1">
+          <span class="text-muted text-xs">Date</span>
+          <input type="date" id="m-date" class="mt-1 w-full rounded-lg bg-void border border-white/15 px-3 py-2 text-sm" />
+        </label>
+        <label class="block">
+          <span class="text-muted text-xs">Height (cm)</span>
+          <input type="number" step="0.1" min="50" max="220" id="m-h" class="mt-1 w-full rounded-lg bg-void border border-white/15 px-3 py-2 text-sm" placeholder="e.g. 142" />
+        </label>
+        <label class="block">
+          <span class="text-muted text-xs">Weight (kg)</span>
+          <input type="number" step="0.1" min="5" max="120" id="m-w" class="mt-1 w-full rounded-lg bg-void border border-white/15 px-3 py-2 text-sm" placeholder="e.g. 38" />
+        </label>
+        <div class="flex items-end">
+          <button type="button" id="m-add" class="w-full rounded-xl bg-teal text-paper font-semibold py-2.5 text-sm hover:opacity-95">Save</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-8 grid md:grid-cols-2 gap-6">
+      <div class="rounded-2xl border border-white/[0.08] bg-surface/40 p-4 min-h-[240px]">
+        <h3 class="font-sans text-xs uppercase tracking-widest text-muted mb-3">Height (cm)</h3>
+        <canvas id="chartH" height="200" aria-label="Height chart"></canvas>
+      </div>
+      <div class="rounded-2xl border border-white/[0.08] bg-surface/40 p-4 min-h-[240px]">
+        <h3 class="font-sans text-xs uppercase tracking-widest text-muted mb-3">Weight (kg)</h3>
+        <canvas id="chartW" height="200" aria-label="Weight chart"></canvas>
+      </div>
+    </div>
+
+    <div class="no-print mt-8 rounded-2xl border border-white/[0.08] bg-surface2/50 p-5 sm:p-6">
+      <h2 class="font-sans text-xs uppercase tracking-widest text-lavender/90 mb-3">Milestones (general)</h2>
+      <p class="text-xs text-muted mb-4">Check the boxes you want to track. Sourced for household memory only—not a screening tool.</p>
+      <ul id="milestone-list" class="space-y-2 text-sm"></ul>
+    </div>
+
+    <div class="no-print mt-6 flex flex-wrap gap-3">
+      <button type="button" id="btn-export" class="rounded-xl border border-white/15 px-4 py-2.5 text-sm font-mono text-teal hover:bg-white/[0.04]">Download JSON</button>
+      <button type="button" id="btn-print" class="rounded-xl border border-white/15 px-4 py-2.5 text-sm font-mono text-butter hover:bg-white/[0.04]">Print summary</button>
+    </div>
+
+    <div class="no-print mt-8 rounded-xl border border-coral/20 bg-coral/5 p-4 text-xs text-muted leading-relaxed">
+      <strong class="text-coral/90">Household use.</strong> You can clear this device’s data anytime via browser site settings. Export JSON before switching devices if you want to keep a copy.
+    </div>
+  </div>
+
+  <div id="toast" class="no-print fixed bottom-6 left-1/2 -translate-x-1/2 translate-y-20 opacity-0 transition-all duration-300 z-50 rounded-xl border border-teal/30 bg-surface2 px-4 py-2 text-sm text-teal font-mono pointer-events-none" role="status"></div>
+
+  <footer class="no-print border-t border-white/[0.07] mt-12 py-6 text-center text-xs text-muted font-mono">
+    P31 Labs, Inc. · EIN 42-1888158
+  </footer>
+
+  <script>
+(function () {
+  const KEY = 'p31.kidsGrowth/1.0.0';
+  const defaultChild = (id, label) => ({ id, label, dob: '', measurements: [], milestones: {} });
+  const MILESTONES = {
+    '0-5': ['Smiles socially', 'Babbling / early words', 'Sits with support', 'Tracks faces'],
+    '6-12': ['Crawls or scoots', 'Pulls to stand', 'First words', 'Pincer grasp'],
+    '13-24': ['Walks', 'Two-word phrases', 'Follows 1-step commands', 'Scribbles'],
+    '25-60': ['Runs, kicks ball', 'Sentences with 4+ words', 'Traces shapes', 'Plays with peers'],
+    '61+': ['School-age skills', 'Peer friendships', 'Sports / coordination', 'Independence in routines'],
+  };
+  let state = { version: 1, active: 'sj', children: { sj: defaultChild('sj', 'S.J.'), wj: defaultChild('wj', 'W.J.') } };
+  let chartH, chartW;
+  let chartJsReady = false;
+
+  function load() {
+    try {
+      const raw = localStorage.getItem(KEY);
+      if (raw) {
+        const p = JSON.parse(raw);
+        if (p && p.children) state = { ...state, ...p, children: { ...state.children, ...p.children } };
+      }
+    } catch (e) {}
+  }
+  function save() {
+    localStorage.setItem(KEY, JSON.stringify(state));
+  }
+  function active() { return state.children[state.active]; }
+  function ageYears(dob) {
+    if (!dob) return null;
+    const a = new Date(dob);
+    if (isNaN(a)) return null;
+    const t = (Date.now() - a) / 315576e5;
+    return Math.floor(t * 10) / 10;
+  }
+  function bucket(ys) {
+    if (ys == null) return '61+';
+    const m = ys * 12;
+    if (m <= 5) return '0-5';
+    if (m <= 12) return '6-12';
+    if (m <= 24) return '13-24';
+    if (m <= 60) return '25-60';
+    return '61+';
+  }
+  function showToast(t) {
+    const el = document.getElementById('toast');
+    el.textContent = t;
+    el.classList.remove('opacity-0', 'translate-y-20');
+    el.classList.add('translate-y-0', 'opacity-100');
+    clearTimeout(showToast.t);
+    showToast.t = setTimeout(() => {
+      el.classList.add('opacity-0', 'translate-y-20');
+      el.classList.remove('translate-y-0', 'opacity-100');
+    }, 2500);
+  }
+  function ensureCharts() {
+    if (typeof Chart === 'undefined') { setTimeout(ensureCharts, 50); return; }
+    chartJsReady = true;
+    const ch = active();
+    const sorted = [...ch.measurements].sort((a, b) => a.date.localeCompare(b.date));
+    if (sorted.length === 0) {
+      if (chartH) { chartH.destroy(); chartH = null; }
+      if (chartW) { chartW.destroy(); chartW = null; }
+      return;
+    }
+    const labels = sorted.map((m) => m.date);
+    const hData = sorted.map((m) => m.heightCm);
+    const wData = sorted.map((m) => m.weightKg);
+    const common = {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { color: '#6b7280', maxRotation: 45 }, grid: { color: 'rgba(255,255,255,0.04)' } },
+        y: { ticks: { color: '#6b7280' }, grid: { color: 'rgba(255,255,255,0.04)' } },
+      },
+    };
+    if (chartH) chartH.destroy();
+    if (chartW) chartW.destroy();
+    const teal = 'rgba(37, 137, 125, 0.85)';
+    const coral = 'rgba(204, 98, 71, 0.85)';
+    chartH = new Chart(document.getElementById('chartH'), {
+      type: 'line',
+      data: { labels, datasets: [{ label: 'cm', data: hData, borderColor: teal, backgroundColor: teal.replace('0.85', '0.12'), fill: true, tension: 0.25 }] },
+      options: common,
+    });
+    chartW = new Chart(document.getElementById('chartW'), {
+      type: 'line',
+      data: { labels, datasets: [{ label: 'kg', data: wData, borderColor: coral, backgroundColor: coral.replace('0.85', '0.12'), fill: true, tension: 0.25 }] },
+      options: common,
+    });
+  }
+  function updateAge() {
+    const ch = active();
+    document.getElementById('dob').value = ch.dob || '';
+    const ys = ageYears(ch.dob);
+    document.getElementById('age-display').textContent = ys != null ? 'Age: ' + ys + ' y (approx.)' : 'Set date of birth to see age';
+    renderMilestones();
+  }
+  function renderMilestones() {
+    const ch = active();
+    const ys = ageYears(ch.dob);
+    const b = bucket(ys);
+    const items = MILESTONES[b] || MILESTONES['61+'];
+    const ul = document.getElementById('milestone-list');
+    ul.innerHTML = '';
+    items.forEach((text) => {
+      const id = b + '::' + text;
+      const li = document.createElement('li');
+      li.className = 'flex items-start gap-2';
+      const checked = ch.milestones && ch.milestones[id];
+      li.innerHTML = '<input type="checkbox" class="mt-1 rounded border-white/20" data-id="' + id + '"' + (checked ? ' checked' : '') + ' />' +
+        '<span class="text-cloud/90">' + text + '</span>';
+      ul.appendChild(li);
+    });
+  }
+  function setTab(id) {
+    state.active = id;
+    state.children[id] = state.children[id] || defaultChild(id, id === 'sj' ? 'S.J.' : 'W.J.');
+    document.querySelectorAll('[role=tab]').forEach((b) => {
+      const on = b.getAttribute('data-tab') === id;
+      b.classList.toggle('tab-active', on);
+      b.setAttribute('aria-selected', on);
+    });
+    updateAge();
+    if (chartJsReady) ensureCharts();
+    save();
+  }
+  function todayISO() { return new Date().toISOString().slice(0, 10); }
+
+  load();
+  document.getElementById('m-date').value = todayISO();
+  document.querySelectorAll('[data-tab]').forEach((b) => b.addEventListener('click', () => setTab(b.getAttribute('data-tab'))));
+  document.getElementById('dob').addEventListener('change', () => {
+    const ch = active();
+    ch.dob = document.getElementById('dob').value;
+    save();
+    updateAge();
+  });
+  document.getElementById('m-add').addEventListener('click', () => {
+    const d = document.getElementById('m-date').value;
+    const h = parseFloat(document.getElementById('m-h').value);
+    const w = parseFloat(document.getElementById('m-w').value);
+    if (!d) { showToast('Pick a date.'); return; }
+    if (!Number.isFinite(h) || !Number.isFinite(w)) { showToast('Enter height and weight as numbers.'); return; }
+    const ch = active();
+    ch.measurements.push({ date: d, heightCm: h, weightKg: w });
+    ch.measurements.sort((a, b) => a.date.localeCompare(b.date));
+    save();
+    document.getElementById('m-h').value = '';
+    document.getElementById('m-w').value = '';
+    showToast('Saved for ' + ch.label);
+    ensureCharts();
+  });
+  document.getElementById('btn-export').addEventListener('click', () => {
+    const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'p31-kids-growth.json';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  });
+  document.getElementById('btn-print').addEventListener('click', () => window.print());
+  document.getElementById('milestone-list').addEventListener('change', (e) => {
+    const t = e.target;
+    if (t.type !== 'checkbox') return;
+    const ch = active();
+    const id = t.getAttribute('data-id');
+    if (!ch.milestones) ch.milestones = {};
+    ch.milestones[id] = t.checked;
+    save();
+  });
+  setTab(state.active);
+  window.addEventListener('load', () => { ensureCharts(); });
+})();
+  </script>
+</body>
+</html>

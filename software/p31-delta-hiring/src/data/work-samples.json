@@ -1,0 +1,117 @@
+{
+  "schema": "p31.workSamples/1.0.0",
+  "updated": "2026-04-26",
+  "defaults": { "timeBoundHours": 4, "allowResources": "Search + docs; cite unfamiliar snippets. If you use AI tools, name them in your notes." },
+  "samples": {
+    "WCD-FRONT-001": {
+      "title": "Accessible modal with motion",
+      "summary": "Build a modal that traps focus, restores focus on close, respects prefers-reduced-motion, and has visible focus states.",
+      "timeBoundHours": 4,
+      "goodLookLike": ["Documented focus trap and restore", "Test steps that cover keyboard and reduced-motion"],
+      "antiPatterns": ["Modal that cannot be closed with Esc", "Focus jumps to body with no return path"],
+      "deliverables": ["Source (repo or zip)", "2–3 sentence a11y notes", "List of test steps"],
+      "rubric": [
+        { "id": "a11y", "label": "Accessibility", "weight": 0.35, "scale": [1, 5], "anchors": { "1": "Missing focus trap or no keyboard path", "3": "Works with keyboard; minor gaps", "5": "Complete trap/restore, motion fallback" } },
+        { "id": "code", "label": "Code quality", "weight": 0.35, "scale": [1, 5], "anchors": { "1": "Unreadable or broken build", "3": "Clear enough for review", "5": "Idiomatic, typed, tested or documented" } },
+        { "id": "collaboration", "label": "Reviewability", "weight": 0.3, "scale": [1, 5], "anchors": { "1": "No README or tests", "3": "README with run + known limits", "5": "Run script + test matrix" } }
+      ]
+    },
+    "WCD-3D-001": {
+      "title": "2V icosahedron (55 nodes)",
+      "summary": "Implement a 2V geodesic icosahedral sphere with 55 struts/nodes, with documented vertex generation.",
+      "timeBoundHours": 8,
+      "goodLookLike": ["Reproducible vertex/strut list", "Stated complexity or FPS on one machine"],
+      "antiPatterns": ["No explanation of 2V subdivision", "Unbounded triangle count on entry hardware"],
+      "deliverables": ["Source", "Short note on edge count and subdivision rule", "FPS / triangle budget on one test machine"],
+      "rubric": [
+        { "id": "geometry", "label": "Geometric correctness", "weight": 0.4, "scale": [1, 5] },
+        { "id": "performance", "label": "Performance", "weight": 0.25, "scale": [1, 5] },
+        { "id": "code", "label": "Clarity of implementation", "weight": 0.2, "scale": [1, 5] },
+        { "id": "valuesFit", "label": "Doc + reproducibility", "weight": 0.15, "scale": [1, 5] }
+      ]
+    },
+    "WCD-GRANT-001": {
+      "title": "NIDILRR FIP concept sketch",
+      "summary": "Draft a 1–2 page concept for an assistive-tech aligned project, with aims, outcomes, and alignment to federal priorities.",
+      "timeBoundHours": 6,
+      "goodLookLike": ["Clear outcomes aligned to NIDILRR-style priorities", "Cited prior work (DOI preferred)"],
+      "antiPatterns": ["Aims without measurable outcomes", "Unverifiable or vanity citations"],
+      "deliverables": ["PDF or Markdown", "Reference list (DOI preferred)"],
+      "rubric": [
+        { "id": "writing", "label": "Clarity and structure", "weight": 0.35, "scale": [1, 5] },
+        { "id": "research", "label": "Source quality", "weight": 0.3, "scale": [1, 5] },
+        { "id": "alignment", "label": "P31 + mission fit", "weight": 0.25, "scale": [1, 5] },
+        { "id": "valuesFit", "label": "Inclusion + ethics", "weight": 0.1, "scale": [1, 5] }
+      ]
+    },
+    "WCD-HW-001": {
+      "title": "DRV2605L haptic pattern library",
+      "summary": "Implement a small C/C++ (ESP-IDF) module exposing named haptic patterns with safe defaults.",
+      "timeBoundHours": 8,
+      "goodLookLike": ["Safe defaults and limits documented", "Named patterns for integrators to call"],
+      "antiPatterns": ["Unbounded drive voltage", "Haptics without error handling or bounds"],
+      "deliverables": ["Source", "Build notes", "Safety: voltage/limit assumptions"],
+      "rubric": [
+        { "id": "code", "label": "Implementation", "weight": 0.4, "scale": [1, 5] },
+        { "id": "safety", "label": "Haptics safety notes", "weight": 0.25, "scale": [1, 5] },
+        { "id": "documentation", "label": "Docs for integrators", "weight": 0.2, "scale": [1, 5] },
+        { "id": "valuesFit", "label": "Values fit", "weight": 0.15, "scale": [1, 5] }
+      ]
+    },
+    "WCD-BE-001": {
+      "title": "Room presence API",
+      "summary": "Design a small Worker (or spec + pseudo-code) for room presence: join, leave, heartbeat, and abuse considerations.",
+      "timeBoundHours": 5,
+      "goodLookLike": ["Join/leave/heartbeat semantics are explicit", "Abuse: rate limit + scoped tokens discussed"],
+      "antiPatterns": ["Anonymous admin actions", "No abuse or room-leak path considered"],
+      "deliverables": ["Spec or code", "Threat notes (rate limit, token scope)"],
+      "rubric": [
+        { "id": "code", "label": "Correctness / API shape", "weight": 0.35, "scale": [1, 5] },
+        { "id": "security", "label": "Security posture", "weight": 0.3, "scale": [1, 5] },
+        { "id": "operability", "label": "Operability (logs, errors)", "weight": 0.2, "scale": [1, 5] },
+        { "id": "valuesFit", "label": "Values fit", "weight": 0.15, "scale": [1, 5] }
+      ]
+    },
+    "WCD-DES-001": {
+      "title": "Accessible room navigation UI",
+      "summary": "Redesign a multi-room nav pattern with focus order, mobile, and low cognitive load.",
+      "timeBoundHours": 4,
+      "goodLookLike": ["Obvious path per role", "Consistent focus order and touch targets"],
+      "antiPatterns": ["Hidden required steps", "Desktop-only or unclear labels"],
+      "deliverables": ["Figma or static HTML mock", "1 paragraph rationale"],
+      "rubric": [
+        { "id": "design", "label": "UX quality", "weight": 0.45, "scale": [1, 5] },
+        { "id": "a11y", "label": "Accessibility annotations", "weight": 0.3, "scale": [1, 5] },
+        { "id": "valuesFit", "label": "Narrative + fit", "weight": 0.25, "scale": [1, 5] }
+      ]
+    },
+    "WCD-COMM-001": {
+      "title": "Discord onboarding flow",
+      "summary": "Propose a written onboarding for new members (async-first), with 3 concrete steps and mod metrics.",
+      "timeBoundHours": 3,
+      "goodLookLike": ["Async-first steps a mod can run weekly", "Metrics that avoid engagement bait"],
+      "antiPatterns": ["Wall-of-text policy nobody reads", "No moderator workload estimate"],
+      "deliverables": ["Doc (MD)", "Success metric suggestions"],
+      "rubric": [
+        { "id": "communication", "label": "Clarity", "weight": 0.4, "scale": [1, 5] },
+        { "id": "process", "label": "Process design", "weight": 0.3, "scale": [1, 5] },
+        { "id": "inclusion", "label": "Inclusion", "weight": 0.2, "scale": [1, 5] },
+        { "id": "valuesFit", "label": "Values fit", "weight": 0.1, "scale": [1, 5] }
+      ]
+    },
+    "WCD-DOC-001": {
+      "title": "meshSync API reference",
+      "summary": "Write a short API reference (Markdown) for a fictitious `meshSync` service with one happy path and one error path.",
+      "timeBoundHours": 3,
+      "goodLookLike": ["Happy and error path both documented with examples", "Copy-pasteable request/response"],
+      "antiPatterns": ["200-only docs", "Missing auth or error code semantics"],
+      "deliverables": ["Markdown", "No external calls required"],
+      "rubric": [
+        { "id": "writing", "label": "Clarity", "weight": 0.4, "scale": [1, 5] },
+        { "id": "accuracy", "label": "Technical accuracy", "weight": 0.35, "scale": [1, 5] },
+        { "id": "structure", "label": "Structure and discoverability", "weight": 0.15, "scale": [1, 5] },
+        { "id": "valuesFit", "label": "Values fit", "weight": 0.1, "scale": [1, 5] }
+      ]
+    }
+  }
+}

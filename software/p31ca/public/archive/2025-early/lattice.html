@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#050505">
+    <title>Lattice View | P31 Labs</title>
+    <meta name="description" content="Interactive 3D lattice of 39 P31 Labs MVP nodes — rotating Fibonacci sphere. For the geodesic dome lattice (search, filters, detail), see observatory.html → dome.html.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background-color: #050505;
+            color: #d8d6d0;
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+        }
+        canvas { display: block; }
+        #navbar {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            background: rgba(15,17,21,0.85); backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding: 14px 24px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        #navbar a { text-decoration: none; color: #d8d6d0; }
+        .nav-logo { display: flex; align-items: center; gap: 10px; }
+        .nav-mono { font-family: 'Space Mono', monospace; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.7; }
+        .nav-back { font-family: 'Space Mono', monospace; font-size: 12px; opacity: 0.5; transition: opacity 0.15s; }
+        .nav-back:hover { opacity: 1; }
+        .logo-text { fill: #d8d6d0; }
+
+        #tooltip {
+            position: fixed; z-index: 200;
+            background: rgba(22,25,32,0.95); border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 10px; padding: 12px 16px;
+            pointer-events: none; opacity: 0; transition: opacity 0.15s;
+            min-width: 180px;
+        }
+        #tooltip.visible { opacity: 1; }
+        #tooltip .t-icon { font-size: 22px; margin-bottom: 4px; }
+        #tooltip .t-title { font-family: 'Space Mono', monospace; font-weight: 700; font-size: 13px; margin-bottom: 2px; }
+        #tooltip .t-status { font-family: 'Space Mono', monospace; font-size: 10px; opacity: 0.55; }
+        #tooltip .t-hint { font-family: 'Space Mono', monospace; font-size: 10px; opacity: 0.35; margin-top: 6px; }
+
+        #legend {
+            position: fixed; bottom: 24px; left: 24px; z-index: 100;
+            display: flex; flex-direction: column; gap: 8px;
+        }
+        .legend-row { display: flex; align-items: center; gap: 8px; font-family: 'Space Mono', monospace; font-size: 11px; opacity: 0.5; }
+        .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+        #counter {
+            position: fixed; bottom: 24px; right: 24px; z-index: 100;
+            font-family: 'Space Mono', monospace; font-size: 11px;
+            opacity: 0.35; text-align: right;
+        }
+
+        #hint {
+            position: fixed; top: 80px; left: 50%; transform: translateX(-50%);
+            font-family: 'Space Mono', monospace; font-size: 11px;
+            opacity: 0.3; pointer-events: none; white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+<nav id="navbar">
+    <a href="/" class="nav-logo">
+        <svg width="24" height="24" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+            <rect width="512" height="512" rx="112" fill="#25897d"/>
+            <circle cx="390" cy="120" r="48" fill="#cc6247"/>
+            <text x="256" y="340" font-family="system-ui" font-weight="900" font-size="220" class="logo-text" text-anchor="middle">P31</text>
+            <rect x="156" y="380" width="200" height="16" rx="8" fill="#cda852"/>
+        </svg>
+        <span class="nav-mono">P31 Labs</span>
+    </a>
+    <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;justify-content:flex-end">
+        <a href="/observatory.html" class="nav-back">Observatory dome</a>
+        <a href="/" class="nav-back">← Hub</a>
+    </div>
+</nav>
+
+<div id="hint">Drag to rotate &nbsp;·&nbsp; Click node to open</div>
+
+<div id="tooltip">
+    <div class="t-icon" id="tt-icon"></div>
+    <div class="t-title" id="tt-title"></div>
+    <div class="t-status" id="tt-status"></div>
+    <div class="t-hint">Click to open →</div>
+</div>
+
+<div id="legend">
+    <div class="legend-row"><div class="legend-dot" style="background:#00FF88"></div>Live</div>
+    <div class="legend-row"><div class="legend-dot" style="background:#cda852"></div>In Dev</div>
+    <div class="legend-row"><div class="legend-dot" style="background:#4db8a8"></div>Research</div>
+</div>
+
+<div id="counter">39 vectors<br>11 live</div>
+
+<canvas id="c"></canvas>
+
+<script>
+const N = 39;
+
+const mvpNodes = [
+    { id: 'bonding',           title: 'BONDING',           icon: '⚛️',  url: 'bonding.html',           color: '#00FF88', status: '🟢 LIVE' },
+    { id: 'spaceship-earth',   title: 'Spaceship Earth',   icon: '🌐',  url: 'spaceship-earth.html',   color: '#00FF88', status: '🟢 LIVE' },
+    { id: 'book',              title: 'Book',               icon: '📖',  url: 'book.html',              color: '#00FF88', status: '🟢 LIVE' },
+    { id: 'kenosis',           title: 'Project Kenosis',   icon: '🕸️',  url: 'kenosis.html',           color: '#00FF88', status: '🟢 EDGE-LIVE' },
+    { id: 'genesis-gate',      title: 'Genesis Gate',      icon: '🔬',  url: 'genesis-gate.html',      color: '#00FF88', status: '🟢 LIVE' },
+    { id: 'cortex',            title: 'p31-cortex',        icon: '🧠',  url: 'cortex.html',            color: '#00FF88', status: '🟢 LIVE' },
+    { id: 'donate',            title: 'Donate Pipeline',   icon: '💚',  url: 'donate.html',            color: '#00FF88', status: '🟢 LIVE' },
+    { id: 'discord-bot',       title: 'p31-bot',           icon: '🤖',  url: 'discord-bot.html',       color: '#00FF88', status: '🟢 LIVE' },
+    { id: 'buffer',            title: 'The Buffer',        icon: '🛡️',  url: 'guardian.html',          color: '#00FF88', status: '🟢 LIVE' },
+    { id: 'attractor',         title: 'NANO-07 Attractor', icon: '🌀',  url: 'attractor.html',         color: '#00FF88', status: '🟢 LIVE' },
+    { id: 'node-one',          title: 'Node One',          icon: '📟',  url: 'node-one.html',          color: '#cda852', status: '🟡 PROTOTYPE' },
+    { id: 'node-zero',         title: 'Node Zero',         icon: '📡',  url: 'node-zero.html',         color: '#cda852', status: '🟡 IN DEV' },
+    { id: 'axiom',             title: 'AXIOM',             icon: '⚗️',  url: 'axiom.html',             color: '#cda852', status: '🔵 PROTOTYPE' },
+    { id: 'liminal',           title: 'LIMINAL',           icon: '🌙',  url: 'liminal.html',           color: '#cda852', status: '🔵 PROTOTYPE' },
+    { id: 'signal',            title: 'SIGNAL',            icon: '🎮',  url: 'signal.html',            color: '#cda852', status: '🔵 PROTOTYPE' },
+    { id: 'echo',              title: 'ECHO',              icon: '🗣️',  url: 'echo.html',              color: '#cda852', status: '🔵 PROTOTYPE' },
+    { id: 'tether',            title: 'TETHER',            icon: '🪐',  url: 'tether.html',            color: '#cda852', status: '🔵 PROTOTYPE' },
+    { id: 'prism',             title: 'PRISM',             icon: '🌈',  url: 'prism.html',             color: '#cda852', status: '🔵 PROTOTYPE' },
+    { id: 'kinematics',        title: 'KINEMATICS',        icon: '🕺',  url: 'kinematics.html',        color: '#cda852', status: '🔵 PROTOTYPE' },
+    { id: 'forge',             title: 'FORGE',             icon: '🗄️',  url: 'forge.html',             color: '#cda852', status: '🔵 PROTOTYPE' },
+    { id: 'tactile',           title: 'TACTILE',           icon: '⌨️',  url: 'switches.html',          color: '#cda852', status: '🔵 PROTOTYPE' },
+    { id: 'observatory',       title: 'OBSERVATORY',       icon: '🔭',  url: 'observatory.html',       color: '#cda852', status: '🔵 PROTOTYPE' },
+    { id: 'collider',          title: 'COLLIDER',          icon: '💥',  url: 'collider.html',          color: '#cda852', status: '🔵 PROTOTYPE' },
+    { id: 'geodesic',          title: 'GEODESIC',          icon: '🔷',  url: 'geodesic.html',          color: '#cda852', status: '🔵 PROTOTYPE' },
+    { id: 'bridge',            title: 'BRIDGE',            icon: '🌉',  url: 'bridge.html',            color: '#cda852', status: '🔵 PROTOTYPE' },
+    { id: 'vault',             title: 'VAULT',             icon: '🔐',  url: 'vault-room.html',        color: '#cda852', status: '🔵 PROTOTYPE' },
+    { id: 'sovereign',         title: 'SOVEREIGN',         icon: '🔑',  url: 'sovereign.html',         color: '#cda852', status: '🔵 PROTOTYPE' },
+    { id: 'k4market',          title: 'K4 MARKET',         icon: '📊',  url: 'k4market.html',          color: '#cda852', status: '🔵 PROTOTYPE' },
+    { id: 'content-forge',     title: 'CONTENT FORGE',     icon: '✍️',  url: 'content-forge.html',     color: '#cda852', status: '🔵 PROTOTYPE' },
+    { id: 'resonance',         title: 'RESONANCE',         icon: '🎵',  url: 'resonance.html',         color: '#cda852', status: '🔵 PROTOTYPE' },
+    { id: 'qg-ide',            title: 'QG-IDE',            icon: '💻',  url: 'qg-ide.html',            color: '#cda852', status: '🔵 PROTOTYPE' },
+    { id: 'phenix-os',         title: 'Phenix OS',         icon: '◈',   url: 'phenix.html',            color: '#cda852', status: '🔵 PROTOTYPE' },
+    { id: 'quantum-family',    title: 'Quantum Family',    icon: '🔺',  url: 'family.html',            color: '#cda852', status: '🔵 PROTOTYPE' },
+    { id: 'simple-sovereignty',title: 'Simple Sovereignty',icon: '▲',   url: 'sovereignty.html',       color: '#cda852', status: '🔵 PROTOTYPE' },
+    { id: 'mission-control',   title: 'Mission Control',   icon: '🚀',  url: 'wonky.html',             color: '#cda852', status: '🔵 PROTOTYPE' },
+    { id: 'quantum-life-os',   title: 'Quantum Life OS',   icon: '✨',  url: 'quantum-os.html',        color: '#cda852', status: '🔵 PROTOTYPE' },
+    { id: 'quantum-core',      title: 'Quantum Core',      icon: '🔮',  url: 'quantum-core.html',      color: '#4db8a8', status: '🔵 RESEARCH' },
+    { id: 'alchemy',           title: 'Alchemy',           icon: '📐',  url: 'alchemy.html',           color: '#4db8a8', status: '🔵 PUBLISHED' },
+    { id: 'the-quantum-family',title: 'THE QUANTUM FAMILY',icon: '🔺',  url: 'quantum-family-about.html', color: '#00FF88', status: '🟢 LIVE' },
+];
+
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+const tooltip = document.getElementById('tooltip');
+
+let W, H, cx, cy;
+let rotX = 0.3, rotY = 0;
+let autoRotate = true;
+let dragging = false;
+let lastMX = 0, lastMY = 0;
+let hoveredNode = null;
+let animId;
+
+// Fibonacci sphere distribution
+const radius = 280;
+const coords3D = [];
+const goldenAngle = Math.PI * (3 - Math.sqrt(5));
+for (let i = 0; i < N; i++) {
+    const y = 1 - (i / (N - 1)) * 2;
+    const r = Math.sqrt(1 - y * y);
+    const theta = goldenAngle * i;
+    coords3D.push({ x: Math.cos(theta) * r * radius, y: y * radius, z: Math.sin(theta) * r * radius });
+}
+
+// Compute edges: connect each node to its 3 nearest neighbors
+function dist3(a, b) {
+    return Math.sqrt((a.x-b.x)**2 + (a.y-b.y)**2 + (a.z-b.z)**2);
+}
+const edges = new Set();
+for (let i = 0; i < N; i++) {
+    const dists = [];
+    for (let j = 0; j < N; j++) {
+        if (i !== j) dists.push({ j, d: dist3(coords3D[i], coords3D[j]) });
+    }
+    dists.sort((a, b) => a.d - b.d);
+    for (let k = 0; k < 3; k++) {
+        const key = [Math.min(i, dists[k].j), Math.max(i, dists[k].j)].join('-');
+        edges.add(key);
+    }
+}
+const edgeList = Array.from(edges).map(e => e.split('-').map(Number));
+
+function resize() {
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+    cx = W / 2; cy = H / 2;
+}
+
+function project(x, y, z) {
+    const cosY = Math.cos(rotY), sinY = Math.sin(rotY);
+    const x1 = x * cosY - z * sinY;
+    const z1 = x * sinY + z * cosY;
+    const cosX = Math.cos(rotX), sinX = Math.sin(rotX);
+    const y2 = y * cosX - z1 * sinX;
+    const z2 = y * sinX + z1 * cosX;
+    const fov = 900;
+    const scale = fov / (fov + z2 + 300);
+    return { sx: cx + x1 * scale, sy: cy + y2 * scale, z: z2, scale };
+}
+
+function getProjected() {
+    return coords3D.map((c, i) => ({ ...project(c.x, c.y, c.z), i }));
+}
+
+function hexToRgb(hex) {
+    const r = parseInt(hex.slice(1,3),16);
+    const g = parseInt(hex.slice(3,5),16);
+    const b = parseInt(hex.slice(5,7),16);
+    return `${r},${g},${b}`;
+}
+
+function draw() {
+    ctx.clearRect(0, 0, W, H);
+
+    const projected = getProjected();
+
+    // Draw edges
+    for (const [a, b] of edgeList) {
+        const pa = projected[a], pb = projected[b];
+        const avgZ = (pa.z + pb.z) / 2;
+        const alpha = Math.max(0.03, 0.15 * ((avgZ + radius) / (radius * 2)));
+        ctx.beginPath();
+        ctx.moveTo(pa.sx, pa.sy);
+        ctx.lineTo(pb.sx, pb.sy);
+        ctx.strokeStyle = `rgba(255,255,255,${alpha})`;
+        ctx.lineWidth = 0.7;
+        ctx.stroke();
+    }
+
+    // Sort nodes back-to-front
+    const sorted = projected.slice().sort((a, b) => a.z - b.z);
+
+    for (const p of sorted) {
+        const node = mvpNodes[p.i];
+        const r = (window.innerWidth < 768 ? 22 : 15) * p.scale;
+        const rgb = hexToRgb(node.color);
+        const isHovered = hoveredNode === p.i;
+        const alpha = Math.max(0.35, (p.z + radius) / (radius * 2));
+
+        // Glow
+        if (isHovered) {
+            const grd = ctx.createRadialGradient(p.sx, p.sy, 0, p.sx, p.sy, r * 3.5);
+            grd.addColorStop(0, `rgba(${rgb},0.3)`);
+            grd.addColorStop(1, `rgba(${rgb},0)`);
+            ctx.beginPath();
+            ctx.arc(p.sx, p.sy, r * 3.5, 0, Math.PI * 2);
+            ctx.fillStyle = grd;
+            ctx.fill();
+        }
+
+        // Node circle
+        ctx.beginPath();
+        ctx.arc(p.sx, p.sy, r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${rgb},${alpha * 0.22})`;
+        ctx.fill();
+        ctx.strokeStyle = `rgba(${rgb},${alpha * (isHovered ? 1 : 0.55)})`;
+        ctx.lineWidth = isHovered ? 1.8 : 1;
+        ctx.stroke();
+
+        // Icon
+        ctx.font = `${Math.round(11 * p.scale)}px sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(node.icon, p.sx, p.sy);
+
+        // Label on hover or for large enough scale
+        if (isHovered || p.scale > 0.92) {
+            ctx.font = `bold ${Math.round(9 * p.scale)}px 'Space Mono', monospace`;
+            ctx.fillStyle = `rgba(${rgb},${alpha})`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'top';
+            ctx.fillText(node.title, p.sx, p.sy + r + 3);
+        }
+    }
+
+    animId = requestAnimationFrame(draw);
+    if (autoRotate && !dragging) {
+        rotY += 0.0025;
+    }
+}
+
+function getHitNode(mx, my) {
+    const projected = getProjected();
+    const sorted = projected.slice().sort((a, b) => b.z - a.z);
+    for (const p of sorted) {
+        const r = 20 * p.scale;
+        const dx = mx - p.sx, dy = my - p.sy;
+        if (dx*dx + dy*dy < r*r) return p.i;
+    }
+    return null;
+}
+
+canvas.addEventListener('mousemove', e => {
+    lastMX = e.clientX; lastMY = e.clientY;
+    if (dragging) {
+        const dx = e.clientX - lastDragX;
+        const dy = e.clientY - lastDragY;
+        rotY += dx * 0.005;
+        rotX += dy * 0.005;
+        lastDragX = e.clientX;
+        lastDragY = e.clientY;
+        autoRotate = false;
+    } else {
+        const hit = getHitNode(e.clientX, e.clientY);
+        hoveredNode = hit;
+        if (hit !== null) {
+            const node = mvpNodes[hit];
+            document.getElementById('tt-icon').textContent = node.icon;
+            document.getElementById('tt-title').textContent = node.title;
+            document.getElementById('tt-status').textContent = node.status;
+            tooltip.style.left = (e.clientX + 16) + 'px';
+            tooltip.style.top = (e.clientY - 20) + 'px';
+            tooltip.classList.add('visible');
+            canvas.style.cursor = 'pointer';
+        } else {
+            tooltip.classList.remove('visible');
+            canvas.style.cursor = 'default';
+        }
+    }
+});
+
+let lastDragX = 0, lastDragY = 0;
+canvas.addEventListener('mousedown', e => {
+    dragging = true;
+    lastDragX = e.clientX;
+    lastDragY = e.clientY;
+});
+canvas.addEventListener('mouseup', e => {
+    if (!dragging) return;
+    dragging = false;
+    autoRotate = true;
+    const dx = Math.abs(e.clientX - lastDragX);
+    const dy = Math.abs(e.clientY - lastDragY);
+    if (dx < 4 && dy < 4) {
+        const hit = getHitNode(e.clientX, e.clientY);
+        if (hit !== null) window.location.href = mvpNodes[hit].url;
+    }
+});
+canvas.addEventListener('mouseleave', () => {
+    dragging = false;
+    hoveredNode = null;
+    tooltip.classList.remove('visible');
+});
+
+// Touch
+let lastTouchX = 0, lastTouchY = 0;
+canvas.addEventListener('touchstart', e => {
+    e.preventDefault();
+    lastTouchX = e.touches[0].clientX;
+    lastTouchY = e.touches[0].clientY;
+    autoRotate = false;
+}, { passive: false });
+canvas.addEventListener('touchmove', e => {
+    e.preventDefault();
+    const dx = e.touches[0].clientX - lastTouchX;
+    const dy = e.touches[0].clientY - lastTouchY;
+    rotY += dx * 0.005;
+    rotX += dy * 0.005;
+    lastTouchX = e.touches[0].clientX;
+    lastTouchY = e.touches[0].clientY;
+}, { passive: false });
+canvas.addEventListener('touchend', e => {
+    e.preventDefault();
+    autoRotate = true;
+    const dx = Math.abs(e.changedTouches[0].clientX - lastTouchX);
+    const dy = Math.abs(e.changedTouches[0].clientY - lastTouchY);
+    if (dx < 8 && dy < 8) {
+        const hit = getHitNode(lastTouchX, lastTouchY);
+        if (hit !== null) window.location.href = mvpNodes[hit].url;
+    }
+}, { passive: false });
+
+window.addEventListener('resize', resize);
+resize();
+draw();
+</script>
+</body>
+</html>

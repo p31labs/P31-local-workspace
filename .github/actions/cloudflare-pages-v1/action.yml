@@ -1,0 +1,30 @@
+name: Cloudflare Pages (pages-action v1)
+description: cloudflare/pages-action@v1 with shared wrangler version
+inputs:
+  api-token:
+    required: true
+  account-id:
+    required: true
+  project-name:
+    required: true
+  directory:
+    description: Path to static output (e.g. software/frontend/dist)
+    required: true
+  branch:
+    required: false
+    default: main
+  github-token:
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - uses: cloudflare/pages-action@v1
+      with:
+        apiToken: ${{ inputs.api-token }}
+        accountId: ${{ inputs.account-id }}
+        projectName: ${{ inputs.project-name }}
+        directory: ${{ inputs.directory }}
+        gitHubToken: ${{ inputs.github-token }}
+        wranglerVersion: ${{ env.WRANGLER_VERSION || '4.85.0' }}
+        branch: ${{ inputs.branch }}

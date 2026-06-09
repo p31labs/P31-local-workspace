@@ -1,0 +1,205 @@
+{
+  "$schema": "p31.nonprofit.people/1.0.0",
+  "_meta": {
+    "description": "Roles, staff, contractors, volunteers, advisors. Pairs governance.json (board) for the human layer of the org.",
+    "lastUpdated": "2026-05-01",
+    "owner": "operator@phosphorus31.org",
+    "verifier": "npm run verify:nonprofit"
+  },
+  "roleClassifications": {
+    "employee-w2": {
+      "definition": "Paid; org controls means + manner of work; receives W-2",
+      "currentCount": 0,
+      "implications": ["Workers comp", "Form 941 quarterly", "Unemployment insurance", "Benefits eligibility consideration"]
+    },
+    "contractor-1099": {
+      "definition": "Paid for deliverables; controls own means + manner; receives 1099-NEC if >= $600/year",
+      "currentCount": 0,
+      "implications": ["1099-NEC filing", "No tax withholding", "No benefits", "IRS 20-factor test compliance"]
+    },
+    "founder-officer": {
+      "definition": "Founder + family/founding officers; uncompensated until comp policy adopted",
+      "currentCount": 3
+    },
+    "board-member": {
+      "definition": "Volunteer governance role; no compensation; expense reimbursement only",
+      "currentCount": 3,
+      "vacant": 2,
+      "note": "Founder + Mom (Treasurer) + Tyler (Secretary) now seated; vice-chair + independent director still open"
+    },
+    "advisor": {
+      "definition": "Non-governance advisor; no fiduciary duty; quarterly informal touch-ins",
+      "currentCount": 0
+    },
+    "volunteer": {
+      "definition": "Time-only contributor; no payment; covered under D&O for governance volunteers",
+      "currentCount": 0
+    },
+    "intern": {
+      "definition": "Time-bounded learning role; paid OR unpaid per DOL fact-sheet 71 test",
+      "currentCount": 0
+    }
+  },
+  "openPositions": [
+    {
+      "id": "vice-chair-001",
+      "type": "board-member",
+      "title": "Vice-Chair · Operations Continuity",
+      "priority": "P0",
+      "criticalityRationale": "Single highest-risk gap per risk.json R-001; founder incapacitation succession depends on this seat being filled. With Treasurer + Secretary now seated, Vice-Chair becomes the last P0 governance gap.",
+      "skillsTarget": [
+        "Comfort with edge-only / zero-budget infrastructure",
+        "Operational continuity / interim leadership",
+        "Either: nonprofit governance experience OR willingness to learn quickly"
+      ],
+      "compensation": "uncompensated; expense reimbursement",
+      "termLength": "2 years",
+      "applicationProcess": "Operator-initiated outreach; not publicly recruited until board comp policy adopted"
+    },
+    {
+      "id": "independent-director-001",
+      "type": "board-member",
+      "title": "Independent Director (audit-ready)",
+      "priority": "P1",
+      "criticalityRationale": "IRS Form 990 governance section + future-audit independence ratio benefit from at least one fully-independent director (no family or business relationship to founder). With Mom seated, related-party concentration is non-trivial.",
+      "skillsTarget": [
+        "No family or business relationship to founder",
+        "Some combination of: nonprofit governance, finance/audit, mission-relevant subject matter",
+        "Willingness to constructively challenge founder when warranted"
+      ],
+      "compensation": "uncompensated; expense reimbursement",
+      "termLength": "2 years"
+    }
+  ],
+  "currentRoster": [
+    {
+      "id": "founder-001",
+      "displayName": "W. Johnson",
+      "type": "founder-officer",
+      "roles": ["President (interim)", "Board Chair (interim)", "Operator", "Engineer", "Author"],
+      "compensation": 0,
+      "compensationStatus": "deferred until comp policy adopted",
+      "joinDate": "2026-04-03",
+      "publicProfile": "https://phosphorus31.org/team",
+      "coiOnFile": true
+    },
+    {
+      "id": "mom-001",
+      "displayName": "TBD-legal-name-on-file (operator's mother)",
+      "type": "founder-officer",
+      "roles": ["Treasurer", "Director"],
+      "compensation": 0,
+      "compensationStatus": "uncompensated per nonprofit officer norms",
+      "joinDate": "TBD-operator-to-confirm",
+      "relationshipToFounder": "mother",
+      "independent": false,
+      "form990ScheduleLDisclosure": "required (related party — family member)",
+      "coiOnFile": false,
+      "_operatorNote": "Replace displayName with full legal name. Mom can be swapped to Secretary with Tyler as Treasurer if preferred — adjust governance.json officers.current alongside this entry."
+    },
+    {
+      "id": "tyler-001",
+      "displayName": "Tyler — TBD-last-name-on-file",
+      "type": "founder-officer",
+      "roles": ["Secretary", "Director"],
+      "compensation": 0,
+      "compensationStatus": "uncompensated per nonprofit officer norms",
+      "joinDate": "TBD-operator-to-confirm",
+      "relationshipToFounder": "TBD-operator-to-confirm-for-independence-classification",
+      "independent": true,
+      "form990ScheduleLDisclosure": "depends on relationship — operator to confirm",
+      "coiOnFile": false,
+      "_operatorNote": "Replace displayName with full legal name. If Tyler is family or has a business relationship with founder, set independent: false and add Schedule L disclosure."
+    }
+  ],
+  "onboarding": {
+    "boardMember": {
+      "checklist": [
+        "Sign + date conflict-of-interest disclosure",
+        "Sign confidentiality acknowledgment",
+        "Read: bylaws, governance.json, mission, last 4 board minutes",
+        "Receive D&O insurance details",
+        "Add to board email list",
+        "30-minute orientation call with Chair"
+      ],
+      "templates": "/scripts/nonprofit/templates/onboarding/board-member.md"
+    },
+    "contractor": {
+      "checklist": [
+        "Signed contractor agreement (1099 template)",
+        "W-9 on file",
+        "DPA if accessing donor or beneficiary data",
+        "Scope-of-work document with deliverable + payment milestones",
+        "Code-of-ethics acknowledgment"
+      ],
+      "templates": "/scripts/nonprofit/templates/onboarding/contractor.md"
+    },
+    "volunteer": {
+      "checklist": [
+        "Volunteer agreement signed",
+        "Background check if working with vulnerable populations",
+        "Code-of-ethics acknowledgment",
+        "Role-specific training materials"
+      ],
+      "templates": "/scripts/nonprofit/templates/onboarding/volunteer.md"
+    },
+    "employee": {
+      "checklist": [
+        "Offer letter (signed)",
+        "I-9 form + supporting documents",
+        "W-4 form",
+        "Direct deposit authorization",
+        "Benefits enrollment (when applicable)",
+        "Code-of-ethics acknowledgment",
+        "DPA / confidentiality agreement",
+        "First-week onboarding plan",
+        "30/60/90 day check-ins scheduled"
+      ],
+      "templates": "/scripts/nonprofit/templates/onboarding/employee.md"
+    }
+  },
+  "offboarding": {
+    "checklist": [
+      "Final paycheck (per state law deadline; GA: next regular pay date)",
+      "Return of org property + revocation of access",
+      "Knowledge transfer documented",
+      "Exit interview (offered, not required)",
+      "Update website + org chart",
+      "Continued obligations (NDA, IP) acknowledged in writing",
+      "Records archived per document-retention policy"
+    ],
+    "accessRevocation": {
+      "deadline": "within 4 hours of separation",
+      "scope": ["GitHub org membership", "Cloudflare account", "email forwards", "shared password vault", "Stripe access", "any AWS / GCP / etc."]
+    }
+  },
+  "performanceReview": {
+    "cadence": "annual for staff; quarterly check-ins",
+    "framework": "Mission-aligned outcomes + role-specific KPIs + qualitative feedback both directions",
+    "documented": true
+  },
+  "compensation": {
+    "philosophy": "Pay above-market for cognitive-accessibility-friendly conditions; pay below-market for legacy-tech high-burnout work we don't take on. Net result: market-rate or above for the work we actually do.",
+    "transparency": {
+      "salaryRangesPublished": "when first staff hired",
+      "Form990PartVII": "5 highest-paid named publicly (federal requirement) — embraced beyond minimum"
+    },
+    "benefits": {
+      "intent": "Health insurance, retirement match, mental-health support, flexible schedule, accommodation-by-default",
+      "phase": "available when first W-2 employee hired; SHOP marketplace or PEO partnership likely path"
+    }
+  },
+  "diversityAndInclusion": {
+    "principle": "Hire for skill-balanced lived-experience over pedigree. AuDHD-first design extends to hiring: accommodate executive-function variance in process; never demand 'culture fit' that excludes neurodivergence.",
+    "tracking": {
+      "demographicData": "voluntary self-disclosure only; aggregated for Form 990 disclosure when required",
+      "doNotTrack": "individual-level demographic in performance reviews"
+    },
+    "accessibilityCommitments": [
+      "Job descriptions reviewed for unnecessary requirements (degree-required-when-not-needed, etc.)",
+      "Interview processes accommodate sensory + cognitive variance",
+      "WFH-default; no commute requirement",
+      "Async-first communication; synchronous meetings limited and bounded"
+    ]
+  }
+}

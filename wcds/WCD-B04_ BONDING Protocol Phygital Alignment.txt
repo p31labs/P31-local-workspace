@@ -1,0 +1,15 @@
+﻿WCD-B04: BONDING PROTOCOL PHYGITAL ALIGNMENT
+Target: bonding.p31ca.org (React Game Repository)
+Objective: Synchronize the chemistry game's aesthetic with the Andromeda operating system, utilizing the new logo and coherence window.
+1. BRANDING INTEGRATION
+Agent Instructions:
+1. Save bonding-logo.svg to /assets.
+2. Replace the text-based TopBar title with this scalable SVG. Use it on the initial game splash/lobby screen.
+2. THE COHERENCE WINDOW
+Agent Instructions:
+1. Remove any static flat gray or generic CSS gradient backgrounds.
+2. The background <div> behind the Three.js canvas must transition from OLED Black (#000000) to Surface Void (#050308) over a 37-minute CSS animation loop to match the P31 biofield resonance described in the spec sheet.
+3. VSEPR NEON BLOOM
+Agent Instructions:
+1. Update the 11 Core Elements to utilize the strict hex codes defined in the WCD-A01 palette.
+2. When a bond forms between two atoms, the connecting cylinder material must momentarily spike its emissiveIntensity to 3.0 using Phosphor Cyan (#00FFFF), triggering the WebGL bloom effect as a visual dopamine reward.

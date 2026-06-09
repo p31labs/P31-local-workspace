@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Routing &amp; IA · P31 Stylebook</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/p31-style.css">
+  <link rel="stylesheet" href="/lib/p31-fluid.css">
+  <link rel="stylesheet" href="/stylebook/_chrome.css">
+  <style>
+    .nav-tier {
+      padding: 20px;
+      background: var(--p31-surface);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: 12px;
+      margin-bottom: 12px;
+    }
+    .nav-tier-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .nav-tier-name {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--p31-paper);
+    }
+    .nav-tier-count {
+      font-family: var(--p31-font-mono);
+      font-size: 12px;
+      color: var(--p31-muted);
+    }
+    .nav-tier-desc {
+      font-size: 14px;
+      color: var(--p31-cloud);
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+    .nav-tier-examples {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .nav-pill {
+      padding: 4px 10px;
+      background: var(--p31-surface2);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: 999px;
+      font-size: 12px;
+      color: var(--p31-cloud);
+      font-family: var(--p31-font-mono);
+    }
+    
+    .ia-diagram {
+      padding: 32px;
+      background: var(--p31-surface);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: 14px;
+      font-family: var(--p31-font-mono);
+      font-size: 12px;
+      color: var(--p31-cloud);
+    }
+    .ia-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      padding: 6px 0;
+    }
+    .ia-tier-tag {
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      flex-shrink: 0;
+    }
+    .ia-tier-tag.tier-1 { background: rgba(204,98,71,0.15); color: var(--p31-coral); }
+    .ia-tier-tag.tier-2 { background: rgba(37,137,125,0.15); color: var(--p31-cyan); }
+    .ia-tier-tag.tier-3 { background: rgba(205,168,82,0.12); color: var(--p31-amber); }
+    .ia-tier-tag.tier-utility { background: var(--p31-surface3); color: var(--p31-muted); }
+    
+    .deeplink-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 700px) { .deeplink-grid { grid-template-columns: 1fr; } }
+    .deeplink-card {
+      padding: 16px;
+      background: var(--p31-surface);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: 10px;
+    }
+    .deeplink-pattern {
+      font-family: var(--p31-font-mono);
+      font-size: 13px;
+      color: var(--p31-cyan);
+      margin-bottom: 8px;
+    }
+    .deeplink-desc {
+      font-size: 13px;
+      color: var(--p31-cloud);
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <script type="module">
+    import { renderShell, code, callout } from '/stylebook/_chrome.js';
+    import { P31ThemeController } from '/lib/p31-theme-engine.mjs';
+    window.p31Theme = new P31ThemeController({ defaultTheme: 'hub' });
+    
+    const content = `
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Information Architecture</div>
+          <h2 class="sb-h2">Three tiers, one utility row</h2>
+          <p class="sb-text">
+            Every navigable surface belongs to exactly one of these tiers.
+            Resist the urge to invent a fourth. Resist the urge to mix tiers in the same nav region.
+          </p>
+        </div>
+        
+        <div class="nav-tier">
+          <div class="nav-tier-header">
+            <div class="nav-tier-name">
+              <span class="ia-tier-tag tier-1" style="margin-right: 8px;">Tier 1</span>
+              Primary navigation
+            </div>
+            <div class="nav-tier-count">5–7 items max</div>
+          </div>
+          <div class="nav-tier-desc">
+            The top-level "what is this site?" answer. Lives in the topbar (desktop) or hamburger drawer (mobile).
+            Adding a sixth item should be debated; a seventh requires re-thinking the IA.
+          </div>
+          <div class="nav-tier-examples">
+            <span class="nav-pill">Hub</span>
+            <span class="nav-pill">Connect</span>
+            <span class="nav-pill">Build</span>
+            <span class="nav-pill">Stylebook</span>
+            <span class="nav-pill">Doc library</span>
+          </div>
+        </div>
+        
+        <div class="nav-tier">
+          <div class="nav-tier-header">
+            <div class="nav-tier-name">
+              <span class="ia-tier-tag tier-2" style="margin-right: 8px;">Tier 2</span>
+              Section navigation
+            </div>
+            <div class="nav-tier-count">unlimited (with grouping)</div>
+          </div>
+          <div class="nav-tier-desc">
+            Within a section, sidebar nav with grouped headings. Pattern: 3–6 sections of 3–8 items each.
+            If a single section has more than 10 items, split it into sub-sections.
+          </div>
+          <div class="nav-tier-examples">
+            <span class="nav-pill">Foundations</span>
+            <span class="nav-pill">Components</span>
+            <span class="nav-pill">Patterns</span>
+            <span class="nav-pill">Guidelines</span>
+            <span class="nav-pill">Resources</span>
+          </div>
+        </div>
+        
+        <div class="nav-tier">
+          <div class="nav-tier-header">
+            <div class="nav-tier-name">
+              <span class="ia-tier-tag tier-3" style="margin-right: 8px;">Tier 3</span>
+              In-page navigation
+            </div>
+            <div class="nav-tier-count">scoped to current page</div>
+          </div>
+          <div class="nav-tier-desc">
+            Anchor links, segmented controls, filters, breadcrumb. Operates within one page —
+            never used to navigate to a different section.
+          </div>
+          <div class="nav-tier-examples">
+            <span class="nav-pill">Anchor links</span>
+            <span class="nav-pill">Tabs</span>
+            <span class="nav-pill">Filters</span>
+            <span class="nav-pill">Breadcrumb</span>
+          </div>
+        </div>
+        
+        <div class="nav-tier">
+          <div class="nav-tier-header">
+            <div class="nav-tier-name">
+              <span class="ia-tier-tag tier-utility" style="margin-right: 8px;">Utility</span>
+              Side concerns
+            </div>
+            <div class="nav-tier-count">always present</div>
+          </div>
+          <div class="nav-tier-desc">
+            Search, theme toggle, profile. Right side of the topbar (LTR) or below tier 1 in mobile.
+            Visible on every screen, never the focus.
+          </div>
+          <div class="nav-tier-examples">
+            <span class="nav-pill">⌕ Search</span>
+            <span class="nav-pill">◐ Theme</span>
+            <span class="nav-pill">⚙ Settings</span>
+            <span class="nav-pill">@ Profile</span>
+          </div>
+        </div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">URL grammar</div>
+          <h2 class="sb-h2">Naming conventions</h2>
+        </div>
+        
+        <table class="sb-table">
+          <thead><tr><th>Pattern</th><th>Use for</th><th>Example</th></tr></thead>
+          <tbody>
+            <tr><td>Lowercase, hyphens</td><td>All paths</td><td><code>/empty-states</code> not <code>/emptyStates</code></td></tr>
+            <tr><td>Singular nouns</td><td>Top-level products</td><td><code>/passport</code> not <code>/passports</code></td></tr>
+            <tr><td>Plural nouns</td><td>Collections / lists</td><td><code>/products</code>, <code>/themes</code></td></tr>
+            <tr><td>Verb-based</td><td>Action pages only</td><td><code>/donate</code>, <code>/sign-in</code></td></tr>
+            <tr><td>Trailing slash</td><td>Multi-page sections (with index)</td><td><code>/stylebook/</code></td></tr>
+            <tr><td>No trailing slash</td><td>Single resources</td><td><code>/connect</code> not <code>/connect/</code></td></tr>
+            <tr><td><code>.html</code> suffix</td><td>Static individual pages (legacy + SEO)</td><td><code>/centaur-about.html</code></td></tr>
+            <tr><td>No file extension</td><td>Modern Astro / framework routes</td><td><code>/dome</code>, <code>/build</code></td></tr>
+          </tbody>
+        </table>
+        
+        ${callout('warn', 'Pick one and stick to it', 'Within a single domain, mixing trailing-slash and no-trailing-slash conventions is OK if intentional. Mixing camelCase and kebab-case is never OK.')}
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Deep linking</div>
+          <h2 class="sb-h2">Query params &amp; hashes</h2>
+          <p class="sb-text">
+            Every interactive state should be deep-linkable. If the user changes something visible,
+            they should be able to share the URL and have it reproduce.
+          </p>
+        </div>
+        
+        <div class="deeplink-grid">
+          <div class="deeplink-card">
+            <div class="deeplink-pattern">?theme=midnight</div>
+            <div class="deeplink-desc">Apply a theme on load. Useful for marketing screenshots and accessibility recommendations.</div>
+          </div>
+          <div class="deeplink-card">
+            <div class="deeplink-pattern">?welcome=kid</div>
+            <div class="deeplink-desc">Onboarding archetype. Threshold variant. See <code>planetary-onboard.html</code>.</div>
+          </div>
+          <div class="deeplink-card">
+            <div class="deeplink-pattern">?filter=offline+24h</div>
+            <div class="deeplink-desc">Compound filter state. Plus-separated, lowercase, alphabetical.</div>
+          </div>
+          <div class="deeplink-card">
+            <div class="deeplink-pattern">#section-id</div>
+            <div class="deeplink-desc">Anchor scroll on page load. Used by stylebook nav for sub-section jumps.</div>
+          </div>
+          <div class="deeplink-card">
+            <div class="deeplink-pattern">?room=ABC123</div>
+            <div class="deeplink-desc">Geodesic room invite code. Behind passkey gate.</div>
+          </div>
+          <div class="deeplink-card">
+            <div class="deeplink-pattern">?utm_source=...</div>
+            <div class="deeplink-desc"><strong style="color:var(--p31-coral);">Stripped on first paint.</strong> We don't track. Server normalizes the URL on render.</div>
+          </div>
+        </div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Wayfinding</div>
+          <h2 class="sb-h2">"Where am I?" answers</h2>
+          <p class="sb-text">Every page must answer three questions, instantly and without scrolling.</p>
+        </div>
+        
+        <table class="sb-table">
+          <thead><tr><th>Question</th><th>Answer mechanism</th><th>Required?</th></tr></thead>
+          <tbody>
+            <tr><td>What site am I on?</td><td>Topbar brand mark + name</td><td>Always</td></tr>
+            <tr><td>What section?</td><td>Active nav highlight + breadcrumb</td><td>Multi-page sections</td></tr>
+            <tr><td>What page?</td><td>Page title (h1) + tab title</td><td>Always</td></tr>
+            <tr><td>What's next?</td><td>Prev/Next nav at page end</td><td>Sequential content (docs)</td></tr>
+            <tr><td>What's related?</td><td>Sidebar with grouped links</td><td>Reference docs</td></tr>
+            <tr><td>How do I leave?</td><td>Back-to-hub or close button</td><td>Modal / focused flows</td></tr>
+          </tbody>
+        </table>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Mobile</div>
+          <h2 class="sb-h2">Responsive nav patterns</h2>
+        </div>
+        
+        <table class="sb-table">
+          <thead><tr><th>Tier</th><th>≥900px (desktop)</th><th>&lt;900px (mobile)</th></tr></thead>
+          <tbody>
+            <tr><td>Tier 1 primary</td><td>Topbar inline</td><td>Hamburger drawer</td></tr>
+            <tr><td>Tier 2 sidebar</td><td>Persistent left rail</td><td>Slide-in drawer (toggle in topbar)</td></tr>
+            <tr><td>Tier 3 in-page</td><td>Persistent right rail or sticky top</td><td>Sticky top bar, tabs scroll horizontally</td></tr>
+            <tr><td>Utility</td><td>Right side of topbar</td><td>Inline icons in topbar</td></tr>
+          </tbody>
+        </table>
+        
+        ${code(`@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "topbar"
+      "main";
+  }
+  .sidebar {
+    position: fixed;
+    left: -300px;          /* off-screen by default */
+    top: 0; bottom: 0;
+    width: 280px;
+    z-index: 100;
+    transition: left 0.3s var(--p31-ease-fluid);
+  }
+  .sidebar.open { left: 0; }
+  
+  .menu-toggle {
+    display: flex;          /* hamburger appears */
+  }
+}`, 'css', 'Mobile nav pattern')}
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Anti-patterns</div>
+          <h2 class="sb-h2">Don't</h2>
+        </div>
+        
+        <table class="sb-table">
+          <thead><tr><th>Pattern</th><th>Why not</th></tr></thead>
+          <tbody>
+            <tr><td>Mega-menus with 30+ links</td><td>Decision paralysis. Use grouped sections instead.</td></tr>
+            <tr><td>Hover-only dropdowns</td><td>Inaccessible to keyboard, touch, screen readers</td></tr>
+            <tr><td>Hiding nav on scroll</td><td>Forces scroll-up to navigate; surprises the user</td></tr>
+            <tr><td>Same icon for different actions</td><td>Three different ⚙ menus in one app is a smell</td></tr>
+            <tr><td>Auto-redirecting to last visited</td><td>Breaks browser back button, hostile to fresh-eyes review</td></tr>
+            <tr><td>Modal instead of page</td><td>Can't be deep-linked, can't be shared, can't be back-buttoned</td></tr>
+          </tbody>
+        </table>
+      </section>
+    `;
+    
+    renderShell({
+      activeId: 'routing',
+      breadcrumb: [
+        { href: '/stylebook/', label: 'Stylebook' },
+        { href: '/stylebook/', label: 'Guidelines' },
+        { label: 'Routing & IA' }
+      ],
+      title: 'Routing & IA',
+      subtitle: 'Three tiers of navigation, URL grammar, deep linking, mobile patterns. The information architecture rules.',
+      meta: [
+        { label: 'Tiers', value: '3 + utility' },
+        { label: 'Patterns', value: '5+' }
+      ],
+      content
+    });
+  </script>
+</body>
+</html>

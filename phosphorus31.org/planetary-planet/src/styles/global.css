@@ -1,0 +1,114 @@
+/* Google Fonts — must precede all other rules */
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&family=Lexend:wght@300;400;500;600&display=swap');
+
+/* Tailwind v4 — single import replaces all v3 directives */
+@import "tailwindcss";
+
+/* Load legacy config for custom colors/fonts */
+@config "../../tailwind.config.mjs";
+
+/* ── Tailwind v4 theme tokens ── */
+@theme {
+  --color-cloud: #F0EEE9;
+  --color-espresso: #264653;
+  --color-teal-600: #2A9D8F;
+  --color-coral-500: #E76F51;
+  --color-butter: #E9C46A;
+  --color-lavender: #C9B1FF;
+
+  --font-heading: 'Lato', sans-serif;
+  --font-body: 'Lexend', sans-serif;
+}
+
+/* Global body styles for neurodivergent legibility */
+body {
+  background-color: #F0EEE9;
+  color: #264653;
+  font-family: 'Lexend', sans-serif;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Lato', sans-serif;
+}
+
+/* Dyslexia Toggle Classes */
+.dyslexia-mode {
+  letter-spacing: 0.05em !important;
+  word-spacing: 0.05em !important;
+  line-height: 1.9 !important;
+  font-size: 105% !important;
+}
+
+/* Glass-box utility class */
+.glass-box {
+  background-color: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+}
+
+/* Organic blob animation for illustrations */
+.organic-blob {
+  border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+  animation: morph 8s ease-in-out infinite;
+}
+
+@keyframes pulse-slow {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.05); }
+}
+
+@keyframes orbit-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes orbit-medium {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes orbit-fast {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes morph {
+  0%, 100% { border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; }
+  25% { border-radius: 50% 50% 50% 50% / 60% 40% 70% 30%; }
+  50% { border-radius: 30% 70% 40% 60% / 50% 60% 40% 50%; }
+  75% { border-radius: 60% 40% 30% 70% / 30% 70% 50% 50%; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Brand-specific animation classes */
+.animate-pulse-slow { animation: pulse-slow 4s ease-in-out infinite; }
+.animate-orbit-slow { animation: orbit-slow 8s linear infinite; }
+.animate-orbit-medium { animation: orbit-medium 6s linear infinite; }
+.animate-orbit-fast { animation: orbit-fast 4s linear infinite; }
+
+/* Respect prefers-reduced-motion for sensory optimization */
+@media (prefers-reduced-motion: reduce) {
+  .organic-blob { animation: none; }
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+
+/* Accessibility */
+button { transition: all 0.2s ease; }
+:focus { outline: 2px solid #2A9D8F; outline-offset: 2px; }
+*:focus:not(:focus-visible) { outline: none; }

@@ -1,0 +1,43 @@
+# mautrix-whatsapp bridge config — WhatsApp multi-device
+homeserver:
+  address: http://synapse:8008
+  domain: p31ca.org
+  async_media: false
+
+appservice:
+  address: http://bridge-whatsapp:29318
+  hostname: 0.0.0.0
+  port: 29318
+  database:
+    type: sqlite3
+    uri: /data/whatsapp.db
+  id: whatsapp
+  bot_username: whatsappbot
+  bot_displayname: WhatsApp Bridge
+  as_token: "${BRIDGE_WHATSAPP_AS_TOKEN}"
+  hs_token: "${BRIDGE_WHATSAPP_HS_TOKEN}"
+
+bridge:
+  username_template: "whatsapp_{{.}}"
+  command_prefix: "!wa"
+  permissions:
+    "@will:p31ca.org": admin
+
+  history_sync:
+    request_full_sync: true
+    max_age: 7776000  # 90 days
+
+  encryption:
+    allow: true
+    default: true
+    require: true
+
+  # Media handling
+  url_previews: false
+  caption_in_message: false
+
+logging:
+  min_level: warn
+  writers:
+    - type: stdout
+      format: pretty-colored

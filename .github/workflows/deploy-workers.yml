@@ -1,0 +1,135 @@
+name: Deploy K4 Workers
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "software/k4-cage/**"
+      - "software/k4-personal/**"
+      - "software/k4-hubs/**"
+      - "software/p31-agent-hub/**"
+      - ".github/actions/**"
+      - ".github/workflows/deploy-workers.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-workers-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Deploy workers in dependency order
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/toolchain-constants
+
+      # Pre-install wrangler globally so wrangler-action finds it without
+      # running npm install inside the pnpm workspace (workspace:* protocol
+      # causes EUNSUPPORTEDPROTOCOL on plain npm).
+      - name: Install wrangler globally
+        run: npm install -g wrangler@${{ env.WRANGLER_VERSION }}
+
+      - name: Deploy k4-cage
+        uses: ./.github/actions/wrangler-run
+        with:
+          working-directory: software/k4-cage
+          command: deploy
+          api-token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          account-id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+      - name: Deploy k4-personal
+        uses: ./.github/actions/wrangler-run
+        with:
+          working-directory: software/k4-personal
+          command: deploy
+          api-token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          account-id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+      - name: Deploy k4-hubs
+        uses: ./.github/actions/wrangler-run
+        with:
+          working-directory: software/k4-hubs
+          command: deploy
+          api-token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          account-id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+      - name: Deploy p31-agent-hub
+        uses: ./.github/actions/wrangler-run
+        with:
+          working-directory: software/p31-agent-hub
+          command: deploy
+          api-token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          account-id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+      - name: Wait for propagation
+        run: sleep 30
+
+      - name: Health checks
+        run: |
+          fail=0
+          check() {
+            local name=$1 url=$2
+            local code attempt
+            for attempt in 1 2 3; do
+              code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 15 "$url" 2>/dev/null || echo 000)
+              [[ "$code" == "200" ]] && break
+              [[ $attempt -lt 3 ]] && sleep 10
+            done
+            if [[ "$code" == "200" ]]; then
+              echo "✅ $name"
+            else
+              echo "❌ $name ($code) — $url"
+              fail=1
+            fi
+          }
+          check k4-cage       https://k4-cage.trimtab-signal.workers.dev/health
+          check k4-personal   https://k4-personal.trimtab-signal.workers.dev/health
+          check k4-hubs       https://k4-hubs.trimtab-signal.workers.dev/health
+          check p31-agent-hub https://p31-agent-hub.trimtab-signal.workers.dev/api/health
+          exit $fail
+
+      - name: Health JSON body shape
+        run: |
+          set -e
+          python3 <<'PY'
+          import json, urllib.request, sys
+          def load(url: str) -> object:
+            with urllib.request.urlopen(url, timeout=15) as r:
+              return json.load(r)
+          d = load("https://k4-cage.trimtab-signal.workers.dev/health")
+          assert d.get("ok") is True, f"k4-cage: expected ok: true, got {d!r}"
+          t = d.get("topology", {})
+          assert t.get("topology") == "K4", f"k4-cage: expected topology K4, got {t!r}"
+          d = load("https://k4-personal.trimtab-signal.workers.dev/health")
+          assert d.get("status") == "healthy" and d.get("vertices") == 4, f"k4-personal: {d!r}"
+          d = load("https://k4-hubs.trimtab-signal.workers.dev/health")
+          assert d.get("status") == "healthy" and d.get("edges") == 6 and d.get("vertices") == 4, f"k4-hubs: {d!r}"
+          d = load("https://p31-agent-hub.trimtab-signal.workers.dev/api/health")
+          assert d.get("ok") is True and d.get("service") == "p31-agent-hub", f"p31-agent-hub: {d!r}"
+          print("✅ All health JSON contracts OK")
+          PY
+
+      - name: Verify K4 mesh topology
+        run: |
+          MESH=$(curl -sf --max-time 15 https://k4-cage.trimtab-signal.workers.dev/api/mesh)
+          echo "$MESH"
+          echo "$MESH" | python3 -c "
+          import json, sys
+          d = json.load(sys.stdin)
+          assert d.get('topology') == 'K4', f'topology={d.get(\"topology\")}'
+          v = d.get('vertices'); assert v == 4 or (isinstance(v, list) and len(v) == 4), f'vertices={v}'
+          e = d.get('edges');   assert e == 6 or (isinstance(e, list) and len(e) == 6), f'edges={e}'
+          print('✅ K4 mesh verified')"
+
+      - name: Verify ping (will → sj)
+        run: |
+          RESULT=$(curl -sf -X POST --max-time 15 https://k4-cage.trimtab-signal.workers.dev/api/ping/will/sj)
+          echo "$RESULT"
+          echo "$RESULT" | python3 -c "
+          import json, sys
+          d = json.load(sys.stdin)
+          assert 'ping' in d or d.get('ok') == True, f'unexpected ping response: {d}'
+          print('✅ Ping verified')"

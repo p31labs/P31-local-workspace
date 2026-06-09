@@ -1,0 +1,1028 @@
+/**
+ * P31 SHARED SURFACE LAYER — p31-shared-surface.css
+ * One file. Every local HTML surface imports it AFTER the canon
+ * (`cognitive-passport/p31-style.css`) and BEFORE page-specific styles.
+ * The job: make every room feel like it belongs in the same building.
+ *
+ * Canon tokens (defined in p31-style.css and generated from
+ * andromeda/04_SOFTWARE/design-tokens/p31-universal-canon.json) are the
+ * source of truth for colors. This file ALIASES them and adds the ONE-
+ * AND-ONLY component classes:
+ *
+ *   .p31-card       — the one card style (+ --teal / --coral / --phosphor)
+ *   .p31-pill       — the one chip / pill style (+ --active / --coral)
+ *   .p31-table      — the one data-table style (mono teal headers)
+ *   .p31-content    — page-content gutter (top-pad for header, bot for ribbon)
+ *   .p31-stack      — vertical rhythm (>* + * gap, with --tight / --section)
+ *   .p31-dot        — status dot (live / warn / down / idle)
+ *   .p31-section-label — small uppercase mono label (h3 alt)
+ *   .p31-header     — sticky surface header (when a surface needs one)
+ *
+ * The footer ribbon stays canonical: `cognitive-passport/lib/p31-return-
+ * ribbon.js` injects `.p31-return-ribbon`, styled by p31-style.css. This
+ * file does NOT introduce a competing ribbon.
+ */
+
+/* --- Token aliases (NEVER override canon — alias to it) --- */
+:root {
+  /* color aliases */
+  --p31-teal: var(--p31-cyan);
+  --p31-teal-dim: color-mix(in srgb, var(--p31-cyan) 30%, transparent);
+  --p31-teal-faint: color-mix(in srgb, var(--p31-cyan) 10%, transparent);
+  --p31-coral-dim: color-mix(in srgb, var(--p31-coral) 30%, transparent);
+  --p31-coral-faint: color-mix(in srgb, var(--p31-coral) 10%, transparent);
+  --p31-cloud-dim: color-mix(in srgb, var(--p31-cloud) 50%, transparent);
+  --p31-cloud-faint: color-mix(in srgb, var(--p31-cloud) 25%, transparent);
+  --p31-phosphor-dim: color-mix(in srgb, var(--p31-phosphorus) 30%, transparent);
+  /* `--p31-phosphor` already exists in canon (#00FF88 vibrant variant);
+     we keep it as-is and use --p31-phosphorus for the calmer status green. */
+
+  /* Spacing scale — one rhythm everywhere */
+  --p31-gap-tight: 4px;
+  --p31-gap-group: 12px;
+  --p31-gap-section: 24px;
+  --p31-gap-max: 32px;
+
+  /* Card tokens */
+  --p31-card-bg: rgba(255, 255, 255, 0.02);
+  --p31-card-border: rgba(255, 255, 255, 0.06);
+  --p31-card-radius: 8px;
+  --p31-card-padding: 16px 20px;
+
+  /* Pill tokens */
+  --p31-pill-radius: 4px;
+  --p31-pill-padding: 4px 10px;
+  --p31-pill-border-color: var(--p31-teal-dim);
+}
+
+/* --- CARD (the one card style) --- */
+.p31-card {
+  background: var(--p31-card-bg);
+  border: 0.5px solid var(--p31-card-border);
+  border-radius: var(--p31-card-radius);
+  padding: var(--p31-card-padding);
+  transition: border-color 200ms ease, background 200ms ease;
+}
+.p31-card:hover {
+  border-color: var(--p31-teal-dim);
+  background: var(--p31-teal-faint);
+}
+.p31-card--teal { border-left: 2px solid var(--p31-cyan); }
+.p31-card--coral { border-left: 2px solid var(--p31-coral); }
+.p31-card--phosphor { border-left: 2px solid var(--p31-phosphorus); }
+
+/* --- PILL / CHIP (the one chip style) --- */
+.p31-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45em;
+  padding: var(--p31-pill-padding);
+  border: 0.5px solid var(--p31-pill-border-color);
+  border-radius: var(--p31-pill-radius);
+  font-family: var(--p31-font-mono);
+  font-size: 11px;
+  letter-spacing: 0.03em;
+  color: var(--p31-cloud-dim);
+  text-transform: none;
+  text-decoration: none;
+  background: transparent;
+  cursor: pointer;
+  transition: border-color 180ms ease, color 180ms ease, background 180ms ease;
+  user-select: none;
+}
+.p31-pill:hover {
+  border-color: var(--p31-cyan);
+  color: var(--p31-cyan);
+}
+.p31-pill--active {
+  border-color: var(--p31-cyan);
+  color: var(--p31-cyan);
+  background: var(--p31-teal-faint);
+}
+.p31-pill--coral {
+  --p31-pill-border-color: var(--p31-coral-dim);
+  color: var(--p31-coral);
+}
+.p31-pill--coral:hover {
+  border-color: var(--p31-coral);
+  color: var(--p31-coral);
+  background: var(--p31-coral-faint);
+}
+.p31-pill--phosphor {
+  --p31-pill-border-color: var(--p31-phosphor-dim);
+  color: var(--p31-phosphorus);
+}
+
+/* --- SECTION LABEL (small uppercase mono — replaces ad-hoc h3 styling) --- */
+.p31-section-label {
+  display: block;
+  font-family: var(--p31-font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--p31-cloud-dim);
+  margin: 0 0 var(--p31-gap-tight);
+  font-weight: 500;
+}
+
+/* --- TABLE (the one data-table style) --- */
+.p31-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+.p31-table th {
+  text-align: left;
+  padding: 8px 12px;
+  font-family: var(--p31-font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--p31-cyan);
+  border-bottom: 0.5px solid var(--p31-card-border);
+}
+.p31-table td {
+  padding: 8px 12px;
+  font-size: 14px;
+  border-bottom: 0.5px solid rgba(255, 255, 255, 0.03);
+  vertical-align: top;
+}
+.p31-table tr:last-child td { border-bottom: none; }
+
+/* --- DISCLOSURE (the one collapsible style) --- */
+.p31-details,
+details.p31-details {
+  border-left: 2px solid var(--p31-card-border);
+  padding-left: 12px;
+  transition: border-color 180ms ease;
+}
+details.p31-details[open] { border-left-color: var(--p31-teal-dim); }
+details.p31-details > summary {
+  cursor: pointer;
+  font-weight: 500;
+  padding: 8px 0;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.45em;
+}
+details.p31-details > summary::-webkit-details-marker { display: none; }
+details.p31-details > summary::before {
+  content: "▸";
+  display: inline-block;
+  color: var(--p31-cloud-faint);
+  transition: transform 180ms ease, color 180ms ease;
+}
+details.p31-details[open] > summary::before {
+  transform: rotate(90deg);
+  color: var(--p31-cyan);
+}
+
+/* --- STATUS DOTS --- */
+.p31-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 6px;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+.p31-dot--live { background: var(--p31-phosphorus); }
+.p31-dot--warn { background: #cda852; }
+.p31-dot--down { background: var(--p31-coral); }
+.p31-dot--idle { background: var(--p31-cloud-faint); }
+
+/* --- LAYOUT CONSTRAINTS --- */
+.p31-content {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: clamp(40px, 6vw, 80px) clamp(16px, 3vw, 24px) clamp(96px, 14vw, 120px);
+  position: relative;
+  z-index: 1;
+}
+.p31-content--wide { max-width: 1180px; }
+
+/* Stack rhythm — controlled gap between siblings */
+.p31-stack > * + * { margin-top: var(--p31-gap-group); }
+.p31-stack--tight > * + * { margin-top: var(--p31-gap-tight); }
+.p31-stack--section > * + * { margin-top: var(--p31-gap-section); }
+
+/* --- HEADER (consistent across surfaces that adopt it) --- */
+.p31-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px clamp(16px, 3vw, 24px);
+  background: color-mix(in srgb, var(--p31-void) 88%, transparent);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 0.5px solid var(--p31-card-border);
+}
+.p31-header__title {
+  font-family: var(--p31-font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  color: var(--p31-cloud-dim);
+  text-transform: uppercase;
+}
+.p31-header__nav {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* --- ANCHORS / LINKS — only inside .p31-content (don't poison surfaces) --- */
+.p31-content a:not(.p31-pill):not(.p31-card) {
+  color: var(--p31-cyan);
+  text-decoration: none;
+  border-bottom: 1px solid color-mix(in srgb, var(--p31-cyan) 22%, transparent);
+  transition: color 180ms ease, border-color 180ms ease;
+}
+.p31-content a:not(.p31-pill):not(.p31-card):hover {
+  color: color-mix(in srgb, var(--p31-cyan) 75%, var(--p31-cloud));
+  border-bottom-color: var(--p31-cyan);
+}
+
+/* --- INLINE CODE (calm, on-canon) --- */
+.p31-content code,
+.p31-mono-inline {
+  font-family: var(--p31-font-mono);
+  font-size: 0.92em;
+  background: rgba(255, 255, 255, 0.04);
+  padding: 1px 5px;
+  border-radius: 3px;
+  color: color-mix(in srgb, var(--p31-cloud) 90%, transparent);
+}
+
+/* --- REDUCED MOTION (universal kill switch for the shared layer) --- */
+@media (prefers-reduced-motion: reduce) {
+  .p31-card,
+  .p31-pill,
+  details.p31-details,
+  details.p31-details > summary::before {
+    transition: none !important;
+  }
+}
+
+/* --- MOBILE TIDY-UP (cards stack, table scrolls) --- */
+@media (max-width: 600px) {
+  .p31-table { font-size: 13px; display: block; overflow-x: auto; }
+  .p31-content { padding-left: 16px; padding-right: 16px; }
+}
+
+/* ============================================================
+ * P31 DOC SURFACE — `.p31-doc-*` system
+ *
+ * The canonical layout for every operator runbook, instrumentation
+ * surface, and long-form doc page in the ecosystem. Promoted from
+ * the device-setup page (which was the only surface getting it
+ * right) so every room ends up in the same building.
+ *
+ * Usage:
+ *   <body class="p31-doc">
+ *     <a class="p31-doc-skip" href="#main">Skip to content</a>
+ *     <div class="p31-doc-wrap" id="main">
+ *       <header class="p31-doc-hero">
+ *         <span class="p31-doc-kicker">Surface kicker</span>
+ *         <h1>Title</h1>
+ *         <p class="p31-host-mind">Host mind: ...</p>
+ *         <p>Lede paragraph.</p>
+ *         <div class="p31-doc-meta">version · ship bar · source</div>
+ *         <ul class="p31-doc-toc">section anchors</ul>
+ *       </header>
+ *       <section class="p31-doc-section" id="x" aria-labelledby="hx">
+ *         <h2 id="hx">Section</h2>
+ *         <div class="p31-doc-card">
+ *           ...content (tables, code, links, callouts)...
+ *         </div>
+ *       </section>
+ *       ...
+ *       <footer class="p31-doc-foot">small print</footer>
+ *     </div>
+ *     <div class="p31-doc-toast" id="toast" role="status"></div>
+ *   </body>
+ *
+ * Kicker variants: `.p31-doc-kicker--coral` (operator), default = teal.
+ * All sizing, color, spacing flows from canon tokens
+ * (cognitive-passport/p31-style.css → p31-universal-canon.json).
+ * ============================================================ */
+
+body.p31-doc {
+  margin: 0;
+  min-height: 100dvh;
+  color-scheme: dark;
+  scroll-behavior: smooth;
+  font-family: var(--p31-font-sans);
+  color: var(--p31-cloud);
+  background: var(--p31-void);
+  line-height: var(--p31-leading-relaxed);
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  padding: max(var(--p31-space-3), env(safe-area-inset-top, 0px))
+    max(var(--p31-space-3), env(safe-area-inset-right, 0px))
+    max(var(--p31-space-8), env(safe-area-inset-bottom, 0px))
+    max(var(--p31-space-3), env(safe-area-inset-left, 0px));
+}
+@media (prefers-reduced-motion: reduce) {
+  body.p31-doc { scroll-behavior: auto; }
+}
+
+/* Subtle hub-glow pinned behind everything (above starfield, below content). */
+body.p31-doc::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.55;
+  background:
+    radial-gradient(ellipse 90% 50% at 50% 0%, rgba(77, 184, 168, 0.10) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 40% at 100% 80%, rgba(139, 124, 201, 0.07) 0%, transparent 50%);
+}
+
+/* Anchors — calm underline, no flicker on hover. */
+body.p31-doc a {
+  color: var(--p31-cyan);
+  text-decoration: none;
+  border-bottom: 1px solid color-mix(in srgb, var(--p31-cyan) 35%, transparent);
+  transition: color var(--p31-duration-fast) var(--p31-ease-standard),
+    border-color var(--p31-duration-fast) var(--p31-ease-standard);
+}
+body.p31-doc a:hover {
+  color: var(--p31-paper);
+  border-bottom-color: var(--p31-cyan);
+}
+
+.p31-doc-skip {
+  position: absolute;
+  left: -9999px;
+  z-index: var(--p31-z-modal);
+  padding: var(--p31-space-2) var(--p31-space-4);
+  background: var(--p31-surface);
+  color: var(--p31-cyan);
+  border-radius: var(--p31-radius-md);
+}
+.p31-doc-skip:focus {
+  left: max(var(--p31-space-3), env(safe-area-inset-left, 0px));
+  top: max(var(--p31-space-3), env(safe-area-inset-top, 0px));
+}
+
+.p31-doc-wrap {
+  max-width: 46rem;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+.p31-doc-wrap--wide { max-width: 62rem; }
+
+/* --- Hero (top of every doc surface) --- */
+.p31-doc-hero {
+  margin-bottom: var(--p31-space-8);
+  padding-bottom: var(--p31-space-6);
+  border-bottom: 1px solid var(--p31-glass-border);
+}
+.p31-doc-hero h1 {
+  margin: 0 0 var(--p31-space-2);
+  font-size: var(--p31-text-2xl);
+  font-weight: 700;
+  letter-spacing: var(--p31-tracking-tight);
+  color: var(--p31-paper);
+  line-height: var(--p31-leading-tight);
+}
+@media (min-width: 700px) {
+  .p31-doc-hero h1 { font-size: var(--p31-text-3xl); }
+}
+.p31-doc-hero p {
+  margin: var(--p31-space-2) 0 0;
+  font-size: var(--p31-text-sm);
+  color: color-mix(in srgb, var(--p31-cloud) 88%, var(--p31-void));
+  max-width: 40rem;
+}
+
+/* Kicker pill — teal by default; --coral for operator surfaces. */
+.p31-doc-kicker {
+  display: inline-block;
+  margin-bottom: var(--p31-space-3);
+  padding: 4px 10px;
+  font-family: var(--p31-font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--p31-cyan);
+  background: color-mix(in srgb, var(--p31-cyan) 10%, transparent);
+  border: 0.5px solid color-mix(in srgb, var(--p31-cyan) 35%, transparent);
+  border-radius: 4px;
+}
+.p31-doc-kicker--coral {
+  color: var(--p31-coral);
+  background: color-mix(in srgb, var(--p31-coral) 10%, transparent);
+  border-color: color-mix(in srgb, var(--p31-coral) 35%, transparent);
+}
+.p31-doc-kicker--phosphor {
+  color: var(--p31-phosphorus);
+  background: color-mix(in srgb, var(--p31-phosphorus) 10%, transparent);
+  border-color: color-mix(in srgb, var(--p31-phosphorus) 35%, transparent);
+}
+
+.p31-doc-meta {
+  margin-top: var(--p31-space-4);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--p31-space-2) var(--p31-space-4);
+  font-size: var(--p31-text-xs);
+  color: var(--p31-muted);
+  font-family: var(--p31-font-mono);
+}
+.p31-doc-meta a {
+  /* Keep meta-line links subtle — no underline confetti above the hero */
+  border-bottom: none;
+}
+
+.p31-doc-toc {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--p31-space-2);
+  margin: var(--p31-space-6) 0 0;
+  padding: 0;
+  list-style: none;
+}
+.p31-doc-toc a {
+  display: inline-block;
+  padding: var(--p31-space-2) var(--p31-space-3);
+  font-size: var(--p31-text-xs);
+  font-weight: 500;
+  border: 1px solid var(--p31-glass-border);
+  border-radius: var(--p31-radius-md);
+  background: var(--p31-surface);
+  border-bottom: 1px solid var(--p31-glass-border);
+  color: var(--p31-cloud);
+}
+.p31-doc-toc a:hover {
+  border-color: color-mix(in srgb, var(--p31-cyan) 50%, var(--p31-glass-border));
+  box-shadow: var(--p31-shadow-glowTeal);
+  color: var(--p31-cyan);
+}
+
+/* --- Section + card --- */
+.p31-doc-section {
+  margin-bottom: var(--p31-space-8);
+  scroll-margin-top: var(--p31-space-6);
+}
+.p31-doc-section h2 {
+  margin: 0 0 var(--p31-space-4);
+  font-size: var(--p31-text-lg);
+  font-weight: 700;
+  color: var(--p31-cyan);
+  letter-spacing: var(--p31-tracking-tight);
+}
+.p31-doc-section h3 {
+  margin: var(--p31-space-5) 0 var(--p31-space-2);
+  font-size: var(--p31-text-sm);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: var(--p31-tracking-caps);
+  color: var(--p31-amber);
+}
+
+.p31-doc-card {
+  padding: var(--p31-space-4) var(--p31-space-5);
+  background: color-mix(in srgb, var(--p31-surface) 96%, transparent);
+  border: 1px solid var(--p31-glass-border);
+  border-radius: var(--p31-radius-lg);
+  box-shadow: var(--p31-shadow-sm);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.p31-doc-card + .p31-doc-card { margin-top: var(--p31-space-4); }
+.p31-doc-card p { margin: 0 0 var(--p31-space-3); font-size: var(--p31-text-sm); }
+.p31-doc-card p:last-child { margin-bottom: 0; }
+
+/* --- Tables (cyan headers, mono code, no row-zebra noise) --- */
+.p31-doc-table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: var(--p31-space-3) 0 0;
+  border-radius: var(--p31-radius-md);
+  border: 1px solid var(--p31-border-subtle);
+}
+.p31-doc-card table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--p31-text-sm);
+}
+.p31-doc-card th,
+.p31-doc-card td {
+  text-align: left;
+  padding: var(--p31-space-3);
+  border-bottom: 1px solid var(--p31-border-subtle);
+  vertical-align: top;
+}
+.p31-doc-card th {
+  font-size: var(--p31-text-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--p31-cyan);
+  background: var(--p31-surface2);
+}
+.p31-doc-card tr:last-child td { border-bottom: none; }
+
+/* --- Numbered checklists --- */
+.p31-doc-checklist { margin: 0; padding-left: 1.25rem; }
+.p31-doc-checklist li {
+  margin-bottom: var(--p31-space-3);
+  font-size: var(--p31-text-sm);
+  padding-left: var(--p31-space-1);
+}
+.p31-doc-checklist li strong { color: var(--p31-paper); }
+
+/* --- Command blocks (one-liner with copy button) --- */
+.p31-doc-cmd {
+  display: block;
+  position: relative;
+  margin: var(--p31-space-2) 0;
+  padding: var(--p31-space-3) var(--p31-space-4);
+  padding-right: 4.5rem;
+  font-family: var(--p31-font-mono);
+  font-size: var(--p31-text-xs);
+  line-height: var(--p31-leading-snug);
+  color: var(--p31-paper);
+  background: var(--p31-void);
+  border: 1px solid var(--p31-glass-border);
+  border-radius: var(--p31-radius-md);
+  word-break: break-word;
+}
+.p31-doc-cmd .p31-doc-copy {
+  position: absolute;
+  top: var(--p31-space-2);
+  right: var(--p31-space-2);
+  padding: var(--p31-space-1) var(--p31-space-2);
+  font-family: inherit;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--p31-muted);
+  background: var(--p31-surface2);
+  border: 1px solid var(--p31-glass-border);
+  border-radius: var(--p31-radius-sm);
+  cursor: pointer;
+  transition: color var(--p31-duration-fast) var(--p31-ease-standard),
+    border-color var(--p31-duration-fast) var(--p31-ease-standard);
+}
+.p31-doc-cmd .p31-doc-copy:hover {
+  color: var(--p31-cyan);
+  border-color: var(--p31-cyan);
+}
+
+/* --- Inline code (calm butter on surface2) --- */
+body.p31-doc code,
+.p31-doc code {
+  font-family: var(--p31-font-mono);
+  font-size: 0.88em;
+  padding: 0.1em 0.35em;
+  background: var(--p31-surface2);
+  border-radius: var(--p31-radius-sm);
+  border: 1px solid var(--p31-border-subtle);
+  color: var(--p31-amber);
+}
+.p31-doc-cmd code {
+  background: transparent;
+  border: none;
+  padding: 0;
+  color: inherit;
+}
+
+/* --- Link rows (pill-style, full-radius, teal stroke) --- */
+.p31-doc-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--p31-space-2);
+  margin-top: var(--p31-space-4);
+}
+.p31-doc-links a {
+  padding: var(--p31-space-2) var(--p31-space-4);
+  font-size: var(--p31-text-sm);
+  font-weight: 600;
+  border: 1px solid var(--p31-teal);
+  border-radius: var(--p31-radius-full);
+  background: var(--p31-surface2);
+  border-bottom: 1px solid var(--p31-teal);
+  color: var(--p31-cloud);
+}
+.p31-doc-links a:hover {
+  box-shadow: var(--p31-shadow-glowTeal);
+  color: var(--p31-paper);
+}
+
+/* --- Callout (lavender-leaning, soft surface2) --- */
+.p31-doc-callout {
+  margin-top: var(--p31-space-4);
+  padding: var(--p31-space-3) var(--p31-space-4);
+  border-left: 3px solid var(--p31-lavender);
+  background: color-mix(in srgb, var(--p31-surface2) 80%, var(--p31-void));
+  border-radius: 0 var(--p31-radius-md) var(--p31-radius-md) 0;
+  font-size: var(--p31-text-sm);
+  color: color-mix(in srgb, var(--p31-cloud) 95%, var(--p31-void));
+}
+
+/* --- Bead — small coral inline tag (e.g. product badges) --- */
+.p31-doc-bead { color: var(--p31-coral); opacity: 0.9; }
+
+/* --- Footer (mono small print, top-bordered) --- */
+.p31-doc-foot {
+  margin-top: var(--p31-space-12);
+  padding-top: var(--p31-space-6);
+  border-top: 1px solid var(--p31-glass-border);
+  font-size: var(--p31-text-xs);
+  color: var(--p31-muted);
+  font-family: var(--p31-font-mono);
+}
+.p31-doc-foot p { margin: 0 0 var(--p31-space-2); }
+
+/* --- Toast (copy feedback) --- */
+.p31-doc-toast {
+  position: fixed;
+  bottom: max(var(--p31-space-4), env(safe-area-inset-bottom, 0px));
+  left: 50%;
+  transform: translateX(-50%) translateY(100%);
+  padding: var(--p31-space-3) var(--p31-space-5);
+  font-size: var(--p31-text-sm);
+  color: var(--p31-phosphorus);
+  background: var(--p31-surface2);
+  border: 1px solid color-mix(in srgb, var(--p31-phosphorus) 40%, var(--p31-glass-border));
+  border-radius: var(--p31-radius-lg);
+  box-shadow: var(--p31-shadow-lg);
+  opacity: 0;
+  pointer-events: none;
+  z-index: var(--p31-z-toast);
+  transition: opacity var(--p31-duration-normal) var(--p31-ease-decelerate),
+    transform var(--p31-duration-normal) var(--p31-ease-decelerate);
+}
+.p31-doc-toast--on { opacity: 1; transform: translateX(-50%) translateY(0); }
+@media (prefers-reduced-motion: reduce) {
+  .p31-doc-toast {
+    transition: opacity var(--p31-duration-instant) var(--p31-ease-standard);
+  }
+}
+
+/* ============================================================
+ * P31 DOC SURFACE — POLISH LAYER (motion, depth, scroll-spy)
+ *
+ * Everything below is additive. Each effect respects
+ * `prefers-reduced-motion: reduce` and degrades to the calm
+ * baseline above. GPU-cheap (transform / opacity / filter only).
+ * ============================================================ */
+
+/* --- Hero aurora: slow drifting gradient mesh behind the H1.
+       Two conic gradients counter-rotating; teal/lavender/coral; layered
+       on top of the page-glow but below content. */
+body.p31-doc .p31-doc-hero {
+  position: relative;
+  isolation: isolate;
+}
+body.p31-doc .p31-doc-hero::before,
+body.p31-doc .p31-doc-hero::after {
+  content: "";
+  position: absolute;
+  inset: -10% -5% -5% -5%;
+  z-index: -1;
+  pointer-events: none;
+  border-radius: inherit;
+  filter: blur(48px);
+  opacity: 0.45;
+  will-change: transform, opacity;
+}
+body.p31-doc .p31-doc-hero::before {
+  background:
+    radial-gradient(ellipse 60% 40% at 18% 22%, color-mix(in srgb, var(--p31-cyan) 38%, transparent), transparent 60%),
+    radial-gradient(ellipse 50% 35% at 82% 12%, color-mix(in srgb, var(--p31-lavender) 32%, transparent), transparent 60%);
+  animation: p31-doc-aurora-a 28s ease-in-out infinite alternate;
+}
+body.p31-doc .p31-doc-hero::after {
+  background:
+    radial-gradient(ellipse 45% 30% at 70% 75%, color-mix(in srgb, var(--p31-coral) 22%, transparent), transparent 60%),
+    radial-gradient(ellipse 35% 25% at 25% 80%, color-mix(in srgb, var(--p31-phosphorus) 18%, transparent), transparent 60%);
+  opacity: 0.35;
+  animation: p31-doc-aurora-b 36s ease-in-out infinite alternate;
+}
+@keyframes p31-doc-aurora-a {
+  0%   { transform: translate3d(0, 0, 0) scale(1); opacity: 0.42; }
+  50%  { transform: translate3d(2%, -1.5%, 0) scale(1.04); opacity: 0.56; }
+  100% { transform: translate3d(-1.5%, 1%, 0) scale(0.97); opacity: 0.42; }
+}
+@keyframes p31-doc-aurora-b {
+  0%   { transform: translate3d(0, 0, 0) scale(1); opacity: 0.30; }
+  50%  { transform: translate3d(-2%, 2%, 0) scale(1.05); opacity: 0.42; }
+  100% { transform: translate3d(2%, -1%, 0) scale(0.96); opacity: 0.30; }
+}
+@media (prefers-reduced-motion: reduce) {
+  body.p31-doc .p31-doc-hero::before,
+  body.p31-doc .p31-doc-hero::after {
+    animation: none;
+  }
+}
+
+/* --- Cards: subtle hover lift + cyan halo. Tactile, "I am here". */
+.p31-doc-card {
+  transition:
+    transform var(--p31-duration-normal) var(--p31-ease-standard),
+    border-color var(--p31-duration-normal) var(--p31-ease-standard),
+    box-shadow var(--p31-duration-normal) var(--p31-ease-standard);
+}
+@media (hover: hover) {
+  .p31-doc-card:hover {
+    transform: translateY(-2px);
+    border-color: color-mix(in srgb, var(--p31-cyan) 38%, var(--p31-glass-border));
+    box-shadow:
+      var(--p31-shadow-md, 0 8px 24px rgba(0,0,0,0.32)),
+      0 0 0 1px color-mix(in srgb, var(--p31-cyan) 18%, transparent),
+      0 18px 36px -18px color-mix(in srgb, var(--p31-cyan) 32%, transparent);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .p31-doc-card { transition: border-color var(--p31-duration-fast) var(--p31-ease-standard); }
+  .p31-doc-card:hover { transform: none; }
+}
+
+/* --- Section stagger fade-in on scroll (driven by JS adds .is-in).
+       First-load sections that are immediately visible bypass the gate
+       via .is-in being added on DOMContentLoaded for any in-viewport. */
+.p31-doc-section {
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity 480ms var(--p31-ease-decelerate),
+    transform 480ms var(--p31-ease-decelerate);
+}
+.p31-doc-section.is-in,
+body.p31-doc-no-spy .p31-doc-section {
+  opacity: 1;
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .p31-doc-section { opacity: 1; transform: none; transition: none; }
+}
+
+/* --- TOC scroll-spy: the chip whose section is active gets a cyan
+       gradient underline + soft inner glow. */
+.p31-doc-toc a {
+  position: relative;
+  transition:
+    color var(--p31-duration-fast) var(--p31-ease-standard),
+    border-color var(--p31-duration-fast) var(--p31-ease-standard),
+    background var(--p31-duration-fast) var(--p31-ease-standard);
+}
+.p31-doc-toc a[aria-current="location"],
+.p31-doc-toc a.is-active {
+  color: var(--p31-cyan);
+  border-color: color-mix(in srgb, var(--p31-cyan) 65%, var(--p31-glass-border));
+  background: color-mix(in srgb, var(--p31-cyan) 10%, var(--p31-surface));
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--p31-cyan) 18%, transparent),
+    var(--p31-shadow-glowTeal);
+}
+.p31-doc-toc a[aria-current="location"]::after,
+.p31-doc-toc a.is-active::after {
+  content: "";
+  position: absolute;
+  left: 12%;
+  right: 12%;
+  bottom: -1px;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--p31-cyan) 40%,
+    var(--p31-cyan) 60%,
+    transparent
+  );
+  opacity: 0.85;
+}
+
+/* --- Headline emphasis: the H1 gets a subtle paper-to-cyan gradient
+       fill so the title carries weight without becoming a billboard. */
+.p31-doc-hero h1 {
+  background: linear-gradient(
+    180deg,
+    var(--p31-paper) 0%,
+    color-mix(in srgb, var(--p31-paper) 88%, var(--p31-cyan)) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+/* --- Command block keyword tint. We don't tokenize JS — instead the
+       page can wrap meaningful tokens in <b class="p31-tok-*"> as a
+       lightweight hint. Default cmd colors stay legible without it. */
+.p31-doc-cmd b { font-weight: inherit; }
+.p31-tok-cmd  { color: var(--p31-cyan); font-weight: 600; }
+.p31-tok-flag { color: var(--p31-amber); }
+.p31-tok-env  { color: var(--p31-phosphorus); font-weight: 600; }
+.p31-tok-path { color: var(--p31-lavender); }
+
+/* --- Footer heartbeat: tiny coral dot to the left of the bead phrase.
+       Same pulse cadence as the howto AASO heart. */
+.p31-doc-foot .p31-doc-bead::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: 0.5em;
+  border-radius: 999px;
+  background: var(--p31-coral);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--p31-coral) 60%, transparent);
+  vertical-align: 1px;
+  animation: p31-doc-beat 2.4s ease-in-out infinite;
+}
+@keyframes p31-doc-beat {
+  0%, 100% { transform: scale(1);    opacity: 0.85; }
+  50%      { transform: scale(1.25); opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .p31-doc-foot .p31-doc-bead::before { animation: none; }
+}
+
+/* ============================================================
+   CANONICAL TOP APP BAR  (.p31-top-bar)
+   Sticky global brand identity strip — elevation 2 surface.
+   Companion to .p31-return-ribbon (bottom). Both inject via JS/
+   HTML; CSS here applies once either one hits the DOM.
+   ============================================================ */
+.p31-top-bar {
+  position: sticky;
+  top: 0;
+  z-index: 110;
+  display: flex;
+  align-items: center;
+  gap: var(--p31-space-4);
+  padding: 0 var(--p31-space-6);
+  height: 3rem;
+  background: color-mix(in srgb, var(--p31-void) 88%, transparent);
+  border-bottom: 1px solid var(--p31-border-subtle);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.p31-top-bar__wordmark {
+  font-family: var(--p31-font-mono);
+  font-size: var(--p31-text-sm);
+  font-weight: 600;
+  letter-spacing: var(--p31-tracking-caps);
+  text-transform: uppercase;
+  color: var(--p31-cloud);
+  text-decoration: none;
+  flex-shrink: 0;
+}
+.p31-top-bar__wordmark:hover { color: var(--p31-teal); }
+.p31-top-bar__accent { color: var(--p31-teal); }
+.p31-top-bar__nav {
+  display: flex;
+  align-items: center;
+  gap: var(--p31-space-5);
+  margin-left: auto;
+  font-family: var(--p31-font-mono);
+  font-size: var(--p31-text-xs);
+  letter-spacing: 0.05em;
+}
+.p31-top-bar__nav a {
+  color: var(--p31-muted);
+  text-decoration: none;
+  transition: color 150ms ease;
+}
+.p31-top-bar__nav a:hover,
+.p31-top-bar__nav a:focus-visible { color: var(--p31-cloud); }
+/* Page body padding: make room for the sticky top-bar + ribbon */
+body.p31-has-top-bar { padding-top: 3rem; }
+
+/* ============================================================
+   SKIP LINK  (.p31-skip-link)
+   Visually hidden until focused — screen reader + keyboard a11y.
+   ============================================================ */
+.p31-skip-link {
+  position: fixed;
+  top: -100%;
+  left: 0;
+  z-index: 9999;
+  padding: var(--p31-space-3) var(--p31-space-6);
+  background: var(--p31-teal);
+  color: var(--p31-void);
+  font-family: var(--p31-font-mono);
+  font-size: var(--p31-text-sm);
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 0 0 var(--p31-shape-md) 0;
+}
+.p31-skip-link:focus { top: 0; }
+
+/* ============================================================
+   CANONICAL PAGE CHROME
+   .ambient-radial-fixed — CSS ambient radial gradient layer
+   .nav / .nav-inner / .nav-brand / .nav-links — sticky top nav
+   Used on all non-Astro public HTML pages.
+   ============================================================ */
+.ambient-radial-fixed {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: radial-gradient(circle at top left, rgba(77, 184, 168, 0.12), transparent 42%);
+}
+
+.nav,
+.hero,
+.page-body { position: relative; z-index: 1; }
+
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: color-mix(in srgb, var(--p31-surface, #161920) 92%, transparent);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.nav-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: var(--p31-cloud, #e8e6e3);
+}
+.nav-brand:hover { text-decoration: none; }
+.nav-mark {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  border: 1px solid color-mix(in srgb, var(--p31-teal, #4db8a8) 40%, transparent);
+  background: color-mix(in srgb, var(--p31-teal, #4db8a8) 12%, transparent);
+  font-family: var(--p31-font-mono, "JetBrains Mono", monospace);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--p31-cyan, #4db8a8);
+}
+.nav-brand-label {
+  font-family: var(--p31-font-mono, "JetBrains Mono", monospace);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--p31-cloud, #e8e6e3) 82%, transparent);
+}
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 1.35rem;
+  flex-wrap: wrap;
+}
+.nav-prompt {
+  font-family: var(--p31-font-mono, "JetBrains Mono", monospace);
+  font-size: 11px;
+  color: color-mix(in srgb, var(--p31-teal, #4db8a8) 50%, transparent);
+}
+.nav-link {
+  font-family: var(--p31-font-mono, "JetBrains Mono", monospace);
+  font-size: 11px;
+  color: var(--p31-muted, #6b7280);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+.nav-link:hover { color: var(--p31-cloud, #e8e6e3); text-decoration: none; }
+.nav-link[aria-current="page"] { color: var(--p31-cloud, #e8e6e3); font-weight: 600; }
+.nav-cta {
+  font-family: var(--p31-font-mono, "JetBrains Mono", monospace);
+  font-size: 11px;
+  font-weight: 700;
+  background: transparent;
+  color: var(--p31-coral, #cc6247);
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: 1px solid var(--p31-coral, #cc6247);
+  text-decoration: none;
+  transition: background 0.18s, color 0.18s;
+}
+.nav-cta:hover { background: var(--p31-coral, #cc6247); color: var(--p31-void, #0f1115); text-decoration: none; }

@@ -1,0 +1,32 @@
+{
+  "name": "p31-hearing-ops",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "prebuild": "node scripts/generate-icons.mjs",
+    "build": "vite build",
+    "deploy": "npm run build && npx wrangler pages deploy dist --project-name p31-hearing-ops --branch=main --commit-dirty=true",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.4",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.1",
+    "eslint": "^9.39.4",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-react-refresh": "^0.5.2",
+    "globals": "^17.4.0",
+    "sharp": "^0.34.5",
+    "vite": "^8.0.4",
+    "wrangler": "^4.82.2",
+    "vite-plugin-pwa": "^1.2.0"
+  }
+}

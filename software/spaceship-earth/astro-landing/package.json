@@ -1,0 +1,12 @@
+{
+  "name": "spaceship-earth-astro-landing",
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "build": "astro build",
+    "preview": "astro preview --port 3000"
+  },
+  "dependencies": {
+    "astro": "^5.0.0"
+  }
+}

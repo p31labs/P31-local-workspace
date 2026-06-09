@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0f1115">
+  <title>Cards · P31 Stylebook</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/p31-style.css">
+  <link rel="stylesheet" href="/lib/p31-fluid.css">
+  <link rel="stylesheet" href="/stylebook/_chrome.css">
+  <style>
+    .p31-card {
+      background: var(--p31-surface);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: var(--p31-radius-xl);
+      padding: 20px;
+      transition: all var(--p31-duration-normal) var(--p31-ease-fluid);
+      position: relative;
+      overflow: hidden;
+    }
+    .p31-card-interactive { cursor: pointer; }
+    .p31-card-interactive:hover {
+      transform: translateY(-2px);
+      border-color: var(--p31-primary);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+    }
+    .p31-card-elevated {
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    }
+    .p31-card-glass {
+      background: var(--p31-glass-surface);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-color: var(--p31-glass-border);
+    }
+    .p31-card-feature {
+      background: linear-gradient(135deg, var(--p31-surface) 0%, var(--p31-surface2) 100%);
+      border-color: var(--p31-primary);
+      position: relative;
+    }
+    .p31-card-feature::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--p31-coral), var(--p31-teal), var(--p31-phosphor));
+    }
+    
+    .p31-card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .p31-card-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--p31-paper);
+      line-height: 1.3;
+    }
+    .p31-card-subtitle {
+      font-family: var(--p31-font-mono);
+      font-size: 11px;
+      color: var(--p31-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 4px;
+    }
+    .p31-card-body {
+      font-size: 14px;
+      line-height: 1.5;
+      color: var(--p31-cloud);
+    }
+    .p31-card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid var(--p31-border-subtle);
+      font-size: 12px;
+      color: var(--p31-muted);
+    }
+    .p31-card-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: var(--p31-surface2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      color: var(--p31-primary);
+      flex-shrink: 0;
+    }
+    
+    .p31-stat-card {
+      background: var(--p31-surface);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .p31-stat-label {
+      font-family: var(--p31-font-mono);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--p31-muted);
+      margin-bottom: 4px;
+    }
+    .p31-stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--p31-paper);
+      letter-spacing: -0.02em;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .p31-stat-delta {
+      font-size: 12px;
+      font-family: var(--p31-font-mono);
+    }
+    .p31-stat-delta.up { color: var(--p31-phosphorus); }
+    .p31-stat-delta.down { color: var(--p31-coral); }
+  </style>
+</head>
+<body>
+  <script type="module">
+    import { renderShell, code, callout } from '/stylebook/_chrome.js';
+    import { P31ThemeController } from '/lib/p31-theme-engine.mjs';
+    window.p31Theme = new P31ThemeController({ defaultTheme: 'hub' });
+    
+    const content = `
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Variants</div>
+          <h2 class="sb-h2">Five card types</h2>
+          <p class="sb-text">Cards are the workhorse of the system. They group related content
+          and create rhythm on a page. Use them sparingly — too many cards becomes noise.</p>
+        </div>
+        
+        <div class="sb-preview">
+          <div class="sb-preview-header"><span>Standard</span></div>
+          <div class="sb-preview-body" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
+            <div class="p31-card">
+              <div class="p31-card-title">Standard card</div>
+              <div class="p31-card-body" style="margin-top: 8px;">The default container. Subtle border, modest padding, no movement.</div>
+            </div>
+            <div class="p31-card p31-card-interactive">
+              <div class="p31-card-title">Interactive</div>
+              <div class="p31-card-body" style="margin-top: 8px;">Hover to lift. Use for clickable navigation tiles.</div>
+            </div>
+            <div class="p31-card p31-card-elevated">
+              <div class="p31-card-title">Elevated</div>
+              <div class="p31-card-body" style="margin-top: 8px;">Built-in shadow. Use to break the flat plane.</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="sb-preview">
+          <div class="sb-preview-header"><span>Special</span></div>
+          <div class="sb-preview-body" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
+            <div class="p31-card p31-card-glass">
+              <div class="p31-card-title">Glass</div>
+              <div class="p31-card-body" style="margin-top: 8px;">Translucent with backdrop blur. For overlays and HUDs.</div>
+            </div>
+            <div class="p31-card p31-card-feature">
+              <div class="p31-card-title">Feature</div>
+              <div class="p31-card-body" style="margin-top: 8px;">Top accent gradient. Highlight a single product or moment.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Composition</div>
+          <h2 class="sb-h2">Anatomy of a card</h2>
+          <p class="sb-text">Header, body, footer. Optional icon. Optional metadata. Build complex cards
+          from these primitives.</p>
+        </div>
+        
+        <div class="sb-preview">
+          <div class="sb-preview-header"><span>Full composition</span></div>
+          <div class="sb-preview-body" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
+            <div class="p31-card p31-card-interactive">
+              <div class="p31-card-header">
+                <div>
+                  <div class="p31-card-subtitle">Product</div>
+                  <div class="p31-card-title">Centaur EDE</div>
+                </div>
+                <div class="p31-card-icon">⚙</div>
+              </div>
+              <div class="p31-card-body">
+                Pair-programming environment for the P31 mesh. Local-first, agentic, and offline-capable.
+              </div>
+              <div class="p31-card-footer">
+                <span>v3.2.0</span>
+                <span style="color: var(--p31-phosphor);">● Stable</span>
+              </div>
+            </div>
+            <div class="p31-card p31-card-interactive">
+              <div class="p31-card-header">
+                <div>
+                  <div class="p31-card-subtitle">Service</div>
+                  <div class="p31-card-title">K4 Mesh</div>
+                </div>
+                <div class="p31-card-icon" style="color: var(--p31-coral);">◇</div>
+              </div>
+              <div class="p31-card-body">
+                Encrypted family graph synced across edge workers. Zero-trust, zero-budget.
+              </div>
+              <div class="p31-card-footer">
+                <span>4 vertices</span>
+                <span style="color: var(--p31-cyan);">● Online</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Stat cards</div>
+          <h2 class="sb-h2">Numbers worth seeing</h2>
+        </div>
+        
+        <div class="sb-preview">
+          <div class="sb-preview-header"><span>Metrics</span></div>
+          <div class="sb-preview-body" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; width: 100%;">
+            <div class="p31-stat-card">
+              <div class="p31-stat-label">Active mesh nodes</div>
+              <div class="p31-stat-value">12</div>
+              <div class="p31-stat-delta up">↑ 4 this week</div>
+            </div>
+            <div class="p31-stat-card">
+              <div class="p31-stat-label">Calcium · current</div>
+              <div class="p31-stat-value">8.4</div>
+              <div class="p31-stat-delta up">mg/dL · stable</div>
+            </div>
+            <div class="p31-stat-card">
+              <div class="p31-stat-label">CI status</div>
+              <div class="p31-stat-value" style="color: var(--p31-phosphor);">●</div>
+              <div class="p31-stat-delta up">All green</div>
+            </div>
+            <div class="p31-stat-card">
+              <div class="p31-stat-label">Spoons left</div>
+              <div class="p31-stat-value">3</div>
+              <div class="p31-stat-delta down">↓ 2 since 9am</div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">CSS</div>
+          <h2 class="sb-h2">Drop in</h2>
+        </div>
+        
+        ${code(`<div class="p31-card p31-card-interactive">
+  <div class="p31-card-header">
+    <div>
+      <div class="p31-card-subtitle">Product</div>
+      <div class="p31-card-title">Centaur EDE</div>
+    </div>
+    <div class="p31-card-icon">⚙</div>
+  </div>
+  <div class="p31-card-body">
+    Pair-programming environment for the P31 mesh.
+  </div>
+  <div class="p31-card-footer">
+    <span>v3.2.0</span>
+    <span style="color: var(--p31-phosphor);">● Stable</span>
+  </div>
+</div>`, 'html', 'Card markup')}
+        
+        ${callout('info', 'Hierarchy by elevation', 'Cards naturally create visual layers. Resist stacking glass-on-glass-on-glass. One layer of elevation per visual zone.')}
+      </section>
+    `;
+    
+    renderShell({
+      activeId: 'cards',
+      breadcrumb: [
+        { href: '/stylebook/', label: 'Stylebook' },
+        { href: '/stylebook/', label: 'Components' },
+        { label: 'Cards' }
+      ],
+      title: 'Cards',
+      subtitle: 'Five card variants for grouping related content. Standard, interactive, elevated, glass, feature.',
+      meta: [
+        { label: 'Variants', value: '5' },
+        { label: 'Composition', value: 'Header / Body / Footer' }
+      ],
+      content
+    });
+  </script>
+</body>
+</html>

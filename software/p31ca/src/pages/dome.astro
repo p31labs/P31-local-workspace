@@ -1,0 +1,582 @@
+---
+/**
+  * @p31-layout: Workshop
+ * Sovereign Cockpit Dome Page
+ * Full 3D interactive K4 topology visualization
+ */
+import AppShell from '../layouts/AppShell.astro';
+import { POSNER_PRISM_SVG } from '../lib/phos-assets';
+---
+
+<AppShell title="P31 Labs | Sovereign Cockpit" routeName="dome">
+  <!-- Noscript fallback for JS-disabled users -->
+  <noscript>
+    <div class="fixed inset-0 bg-black/90 flex flex-col items-center justify-center z-50 p-6 text-center">
+      <h2 class="text-2xl font-bold text-p31-cloud mb-4" data-i18n="noscript.title">JavaScript Required</h2>
+      <p class="text-p31-cloud-80 mb-6" data-i18n="noscript.description">
+        The Sovereign Cockpit Dome requires JavaScript to render the 3D visualization 
+        and interactive elements. Please enable JavaScript in your browser settings.
+      </p>
+      <a href="/" class="px-6 py-3 bg-white/20 hover:bg-white/30 text-p31-cloud rounded transition-colors" data-i18n="noscript.backLink">Back to hub</a>
+    </div>
+    <!-- CSS-only rotating tetrahedron SVG fallback -->
+    <div class="fixed inset-0 flex items-center justify-center bg-p31-void" aria-label="Fallback loading animation">
+      <svg class="w-48 h-48 text-cyan motion-safe:animate-spin" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M50 15 L85 85 L15 85 Z"/>
+      </svg>
+    </div>
+  </noscript>
+
+   <!-- Dev-only: axe-core for accessibility testing -->
+   <script>
+    (function() {
+      const isDev = location.hostname === 'localhost' || location.search.includes('dev=true');
+      if (!isDev) return;
+      
+      const script = document.createElement('script');
+      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/axe-core/4.10.2/axe.min.js';
+      script.integrity = 'sha512-7pGz0H1ggXYz8Y4lUYj3G01+n2xK4FukK4nYg9B1Dk+X3t0cE6zYjv3n4Ml+CKc+FL5Y5nBepzr8+fL0p5T+XQ==';
+      script.crossOrigin = 'anonymous';
+      script.referrerPolicy = 'no-referrer';
+      document.head.appendChild(script);
+    })();
+   </script>
+
+  <!-- THREE: fixed stacking context; shellBackdrop off above so surface grid does not sit on canvas -->
+  <div id="webgl-container" class="fixed inset-0 z-[20] isolate"></div>
+  <div class="ambient-grid fixed inset-0 z-[21] pointer-events-none"></div>
+
+   <!-- Boot Sequence -->
+   <div id="loading-screen" class="fixed inset-0 z-[200] bg-p31-void flex flex-col items-center justify-center font-mono text-cyan" role="status" aria-live="polite">
+     <svg width="64" height="64" viewBox="0 0 512 512" class="mb-8 animate-pulse"><rect width="512" height="512" rx="112" fill="var(--p31-teal)"/><circle cx="390" cy="120" r="48" fill="#cc6247"/><text x="256" y="340" font-family="system-ui" font-weight="900" font-size="220" fill="var(--p31-cloud)" text-anchor="middle">P31</text><rect x="156" y="380" width="200" height="16" rx="8" fill="#cda852"/></svg>
+     <div class="text-xs tracking-[0.3em] uppercase" data-i18n="loading.title">Materializing K4 Tetrahedron</div>
+     <div class="w-48 h-1 bg-surface mt-4 overflow-hidden rounded-full">
+       <div id="loading-bar" class="h-full bg-cyan w-0 transition-all duration-100"></div>
+     </div>
+     <div id="loading-text" class="text-xs mt-2 text-p31-cloud" data-i18n="loading.initializing">Initializing...</div>
+     <div id="loading-details" class="text-xs mt-1 text-p31-muted-60" data-i18n="loading.details">Loading 3D scene</div>
+     <!-- Skeleton loader for tetrahedron wireframe -->
+     <div id="skeleton-loader" class="mt-6 w-48 h-48 opacity-30">
+       <svg class="w-full h-full" viewBox="0 0 100 100" stroke="currentColor" stroke-width="1" fill="none">
+         <path d="M50 10 L90 80 L10 80 Z" stroke-dasharray="200" stroke-dashoffset="0">
+           <animate attributeName="stroke-dashoffset" from="200" to="0" dur="2s" repeatCount="indefinite"/>
+         </path>
+       </svg>
+     </div>
+   </div>
+
+   <!-- Keyboard Shortcuts Overlay -->
+   <div id="keyboard-shortcuts-overlay" class="fixed inset-0 z-[900] bg-black/80 flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-200" role="dialog" aria-label="Keyboard shortcuts" aria-modal="true">
+     <div class="glass-panel p-6 rounded-xl max-w-md w-full mx-4">
+       <div class="flex justify-between items-center mb-4">
+         <h2 class="text-lg font-bold text-p31-cloud" data-i18n="shortcuts.title">Keyboard Shortcuts</h2>
+         <button id="close-shortcuts" class="text-p31-muted hover:text-p31-cloud p-1" data-i18n-aria-label="shortcuts.close" aria-label="Close shortcuts">✕</button>
+       </div>
+       <div class="space-y-3 text-sm font-mono">
+         <div class="flex justify-between">
+           <span class="text-p31-cloud-70" data-i18n="shortcuts.focusSearch">Focus search</span>
+           <kbd class="px-2 py-1 bg-p31-void-50 border border-white/20 rounded">/</kbd>
+         </div>
+         <div class="flex justify-between">
+           <span class="text-p31-cloud-70" data-i18n="shortcuts.toggleUI">Toggle HUD</span>
+           <kbd class="px-2 py-1 bg-p31-void-50 border border-white/20 rounded">Tab</kbd>
+         </div>
+         <div class="flex justify-between">
+           <span class="text-p31-cloud-70" data-i18n="shortcuts.activateLayer0">Activate Layer 0</span>
+           <kbd class="px-2 py-1 bg-p31-void-50 border border-white/20 rounded">Esc</kbd>
+         </div>
+       </div>
+       <div class="mt-4 text-xs text-p31-muted-60" data-i18n="shorttips.prompt">Press any key to close</div>
+     </div>
+   </div>
+
+   <!-- TOP HUD: System Telemetry -->
+   <nav
+     class="fixed left-0 right-0 top-0 z-50 flex transform flex-col gap-3 border-b border-white/5 glass-panel pl-[max(0.75rem,env(safe-area-inset-left))] pr-[max(0.75rem,env(safe-area-inset-right))] pt-[max(0.5rem,env(safe-area-inset-top))] pb-2 text-sm font-mono text-p31-cloud transition-all duration-300 translate-y-0 md:flex-row md:items-center md:justify-between md:gap-4 md:px-4 md:py-2 md:text-xs"
+     id="top-hud"
+     aria-label="System telemetry and controls"
+   >
+     <!-- HUD Header -->
+     <div class="flex items-center justify-between w-full">
+       <!-- Left: Logo (Q lives in instrument strip + dock) -->
+       <div class="flex items-center gap-4">
+         <div class="flex items-center gap-2 font-bold text-p31-cloud tracking-widest uppercase">
+            <svg width="18" height="18" viewBox="0 0 512 512" class="opacity-90"><rect width="512" height="512" rx="112" fill="var(--p31-teal)"/><circle cx="390" cy="120" r="48" fill="#cc6247"/><text x="256" y="340" font-family="system-ui" font-weight="900" font-size="220" fill="var(--p31-cloud)" text-anchor="middle">P31</text><rect x="156" y="380" width="200" height="16" rx="8" fill="#cda852"/></svg>
+            <span data-i18n="hud.cockpit">Cockpit</span>
+         </div>
+       </div>
+       
+       <!-- Right: Volume Control & Status -->
+       <div class="flex items-center gap-4">
+          <!-- Volume Control with Mute Toggle -->
+          <div class="flex items-center gap-2" data-i18n-title="hud.volume.title" title="Ambient Volume">
+            <button id="volume-mute-btn" class="text-p31-muted hover:text-p31-cloud transition-colors p-1" aria-label="Toggle mute" data-i18n-aria-label="hud.volume.mute" type="button">
+             <svg id="volume-icon" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+               <path d="M11 5L6 9H2v6h4l5 4V5z"/>
+               <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+             </svg>
+             <svg id="mute-icon" class="w-4 h-4 hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+               <path d="M11 5L6 9H2v6h4l5 4V5z"/>
+               <line x1="23" y1="9" x2="17" y2="15"/>
+             </svg>
+           </button>
+            <div class="relative" data-i18n-title="hud.volume.title">
+              <button id="volume-slider-container" class="w-20 h-6 bg-p31-void-50 border border-white/20 rounded-lg overflow-hidden hover:bg-p31-void-70 transition-colors focus:outline-none focus:ring-2 focus:ring-cyan focus:ring-offset-2 focus:ring-offset-[var(--p31-void)]" type="button" aria-label="Volume control" data-i18n-aria-label="hud.volume.sliderLabel">
+                <div class="flex items-center h-full relative">
+                  <div id="volume-track" class="h-1 bg-surface rounded-full absolute inset-y-1 left-1 right-1"></div>
+                  <div id="volume-fill" class="h-1 bg-cyan rounded-full absolute inset-y-1 left-1 transition-all duration-100"></div>
+                  <div id="volume-thumb" class="w-3 h-3 bg-cyan rounded-full absolute top-1.5 transition-transform duration-100" style="left: calc(1px + 70% * 0.85);"></div>
+                </div>
+              </button>
+              <div id="volume-tooltip" class="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 bg-black/90 text-p31-cloud text-xs px-2 py-1 rounded opacity-0 pointer-events-none transition-opacity duration-100" data-i18n="hud.volume.tooltip">
+                70%
+              </div>
+            </div>
+         </div>
+         
+          <!-- Connection Status -->
+          <div class="flex items-center gap-1">
+            <div id="connection-status" class="w-2 h-2 rounded-full bg-emerald" title="Connection status" aria-label="Connected" data-i18n-title="hud.connection.status.title" data-i18n-aria-label="hud.connection.status.connected"></div>
+            <span class="text-p31-muted text-xs hidden sm:inline" data-i18n="hud.connection.label">SYNC</span>
+          </div>
+         
+          <!-- Dev Mode Performance Indicators -->
+          <div id="performance-indicators" class="hidden md:flex items-center gap-2 text-xs text-p31-cloud-60">
+            <span data-i18n="perf.render">Render: <span id="render-time">0</span>ms</span>
+            <span data-i18n="perf.fps">FPS: <span id="fps-counter">60</span></span>
+            <span id="webgl-status" class="text-emerald">✓</span>
+            <!-- Accessibility Scan Button (dev only) -->
+            <button id="a11y-scan-btn" class="ml-2 px-2 py-1 bg-white/5 hover:bg-white/10 rounded text-xs" data-i18n="a11y.scanButton" type="button">A11y Scan</button>
+            <!-- Theme Variant Switcher (A/B test) -->
+            <button id="theme-toggle-btn" class="ml-2 px-2 py-1 bg-white/5 hover:bg-white/10 rounded text-xs" data-i18n="theme.toggle" type="button">Theme: A</button>
+          </div>
+
+          <!-- View switcher: Cockpit ↔ Posner -->
+          <nav id="dome-view-nav" class="flex items-center gap-1" aria-label="Dome view switcher">
+            <a href="#dome" data-hash-nav="dome" class="px-1.5 py-0.5 rounded text-[9px] font-mono border border-white/15 text-p31-muted hover:text-p31-cloud hover:border-teal/30 transition-colors" aria-label="K4 cockpit view">K4</a>
+            <a href="#spatial" data-hash-nav="spatial" class="px-1.5 py-0.5 rounded text-[9px] font-mono border border-white/15 text-p31-muted hover:text-p31-cloud hover:border-emerald/30 transition-colors" aria-label="Posner molecule view">Ca₉</a>
+          </nav>
+
+          <!-- UI Toggle -->
+          <button id="ui-toggle-btn" class="text-p31-muted hover:text-p31-cloud transition-colors p-1" aria-label="Toggle heads-up display" data-i18n-aria-label="hud.toggleUI" type="button">[UI]</button>
+       </div>
+     </div>
+
+     <div class="w-full border-t border-white/5 px-1 py-1 md:border-t-0 md:px-4 md:py-0" role="status">
+       <span id="cockpit-instrument-strip" class="block text-[10px] md:text-[11px] text-p31-cloud/90 tracking-wide font-mono leading-snug" aria-live="polite">
+         COCKPIT · Q — · SPOONS —/12 · FERS —d · SENTINEL —
+       </span>
+       <span id="dome-mode-strip" class="mt-0.5 block text-[10px] text-p31-muted-60 tracking-wide font-mono leading-snug">
+         MODE: SELECT · orbit: Alt+drag or right-drag · zoom: scroll · touch: 1=tap face · 2=orbit/zoom
+       </span>
+     </div>
+     
+     <!-- Collapsible HUD Content -->
+     <div id="hud-content" class="w-full mt-2 space-y-2 opacity-100 transition-opacity duration-300">
+       <!-- Mesh + fleet (spoons · LOVE · Q on instrument strip + bottom dock) -->
+       <div class="flex flex-wrap items-center gap-4 bg-p31-void-50 px-5 py-1.5 rounded-md border border-white/5 shadow-center md:gap-6">
+          <div class="hidden md:flex items-center gap-2 cursor-help" title="Active K4 Vertices" data-i18n-title="hud.fleet.title">
+            <span class="text-p31-muted" data-i18n="hud.fleet.label">FLEET:</span>
+            <span class="text-p31-cloud font-bold" data-i18n="hud.fleet.value">4/4</span>
+          </div>
+          <div class="h-3 w-px bg-white/10 hidden lg:block"></div>
+          <div
+            class="hidden lg:flex items-center gap-2"
+            title="As above, so below — p31ca HUD ↔ k4-personal edge"
+          >
+            <span class="text-p31-muted">MESH</span>
+            <span id="hud-mesh-vit" class="font-bold text-lavender">—</span>
+            <span class="text-p31-muted text-[10px]">L♥</span>
+            <span id="hud-mesh-ve" class="text-p31-cloud text-[10px] font-mono">—</span>
+            <span id="hud-mesh-detail" class="text-p31-muted text-[9px] font-mono max-w-[6rem] truncate hidden xl:inline" title=""> </span>
+            <a href="/mesh-observatory/" class="text-lavender hover:text-lavender/80 hover:underline text-[10px] font-bold" title="Mesh Observatory">OBS</a>
+          </div>
+       </div>
+
+      <!-- Trimtab & Actions -->
+        <div class="flex items-center gap-4">
+         <div class="flex items-center gap-2 cursor-pointer group" id="trimtab-trigger" title="Drag to tune frequency · Click for Layer 0 Somatic Mode" role="slider" aria-label="Trimtab frequency control" data-i18n-aria-label="hud.trimtab.label" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50" tabindex="0">
+           <canvas id="trimtab-canvas" width="24" height="24" class="opacity-70 group-hover:opacity-100 transition-opacity" aria-hidden="true"></canvas>
+           <span id="trimtab-freq" class="text-amber font-bold w-12" data-i18n="hud.trimtab.frequency">863Hz</span>
+         </div>
+       </div>
+     </div>
+   </nav>
+
+   <!-- SIMPLEX instrument dock — 2D overlay (same telemetry as strip; tomograph when /api/agents CORS allows) -->
+   <div
+     id="dome-simplex-dock"
+     class="hud-element pointer-events-none fixed bottom-[max(4.25rem,env(safe-area-inset-bottom))] left-1/2 z-[32] flex w-[min(100vw-0.75rem,34rem)] -translate-x-1/2 flex-col gap-2 px-2 sm:bottom-[max(4.75rem,env(safe-area-inset-bottom))]"
+     aria-label="SIMPLEX instruments"
+   >
+     <div class="pointer-events-auto grid grid-cols-1 gap-2 sm:grid-cols-3">
+       <div class="glass-panel flex min-h-[5.75rem] flex-col rounded-lg border border-white/10 p-2 sm:col-span-1">
+         <div class="mb-1 flex items-center justify-between gap-1">
+           <span class="font-mono text-[9px] uppercase tracking-wider text-p31-muted">Tomograph</span>
+           <span class="inline-flex items-center gap-1 font-mono text-[9px] text-p31-muted" title="Q-Factor" data-i18n-title="hud.qFactor.title">
+             <span id="dock-q-dot" class="h-1.5 w-1.5 shrink-0 rounded-full bg-emerald"></span>
+             <span id="dock-q-mini" class="text-p31-cloud/90">—</span>
+           </span>
+         </div>
+         <pre
+           id="dock-tomograph-feed"
+           class="mb-0 max-h-[4.5rem] flex-1 overflow-y-auto whitespace-pre-wrap break-words font-mono text-[9px] leading-snug text-p31-cloud/85"
+         >—</pre>
+       </div>
+       <div class="glass-panel flex min-h-[5.75rem] flex-col items-center justify-center rounded-lg border border-teal/25 p-2 sm:col-span-1">
+         <span class="mb-1 font-mono text-[9px] uppercase tracking-wider text-p31-muted">Spoons</span>
+         <div class="relative flex h-[3.75rem] w-[3.75rem] items-center justify-center">
+           <svg width="60" height="60" viewBox="0 0 60 60" aria-hidden="true" class="text-coral">
+             <circle cx="30" cy="30" r="24" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="5" />
+             <circle
+               id="dock-spoon-arc"
+               cx="30"
+               cy="30"
+               r="24"
+               fill="none"
+               stroke="currentColor"
+               stroke-width="5"
+               stroke-linecap="round"
+               stroke-dasharray="0 150.8"
+               transform="rotate(-90 30 30)"
+             />
+           </svg>
+           <span id="dock-spoon-label" class="pointer-events-none absolute font-mono text-[11px] font-bold text-p31-cloud">—</span>
+         </div>
+       </div>
+       <div class="glass-panel flex min-h-[5.75rem] flex-col justify-center rounded-lg border border-white/10 p-2 sm:col-span-1">
+         <div class="mb-1 font-mono text-[9px] uppercase tracking-wider text-p31-muted">L.O.V.E. → 863</div>
+         <div class="mb-1 font-mono text-sm font-bold text-teal" id="dock-love-val">—</div>
+         <div class="h-1.5 w-full overflow-hidden rounded-full bg-white/10">
+           <div id="dock-love-bar" class="h-full rounded-full bg-phosphorus transition-all duration-500" style="width: 0%;"></div>
+         </div>
+         <p class="mb-0 mt-1 font-mono text-[8px] leading-tight text-p31-muted-60">Larmor ladder (static target)</p>
+       </div>
+     </div>
+     <div id="dock-fers-panel" class="pointer-events-auto glass-panel rounded-lg border px-3 py-2 fers-ok">
+       <div class="flex items-baseline justify-between gap-2">
+         <span class="font-mono text-[9px] uppercase tracking-wider text-p31-muted">FERS window</span>
+         <span id="dock-fers-val" class="font-mono text-lg font-bold tabular-nums text-p31-cloud">—</span>
+       </div>
+       <p class="mb-0 mt-0.5 font-mono text-[8px] leading-tight text-p31-muted-60">Days to 2026-09-30 filing close (UTC)</p>
+     </div>
+   </div>
+
+   <!-- LEFT HUD: Filters & Legend -->
+   <aside
+     class="hud-element fixed bottom-[max(1rem,env(safe-area-inset-bottom))] left-4 z-40 flex max-w-[min(100%,20rem)] flex-col gap-4 sm:left-6 md:bottom-6"
+     id="left-hud"
+     aria-label="Topology filters"
+   >
+     <!-- Controls -->
+     <div class="glass-panel p-4 rounded-xl flex flex-col gap-3">
+       <input type="text" id="search-input" placeholder="Search topology..." data-i18n-placeholder="search.placeholder" class="min-h-[2.75rem] w-full rounded-md border border-white/10 bg-p31-void-80 px-3 py-2 font-mono text-base text-p31-cloud outline-none transition-colors placeholder-muted focus:border-cyan md:min-h-0 md:py-1.5 md:text-xs" aria-label="Search topology nodes" data-i18n-aria-label="search.ariaLabel">
+
+      <div class="flex flex-wrap gap-1.5 max-w-[220px]" id="axis-filters" role="group" aria-label="Filter by axis" data-i18n-aria-label="filters.groupLabel">
+        <button class="px-2 py-1 text-[9px] font-mono tracking-wider uppercase rounded bg-white/10 border border-white/20 text-p31-cloud" data-axis="all" aria-label="Show all axes" aria-pressed="true" data-i18n="filters.all" data-i18n-aria-label="filters.allAria">ALL</button>
+        <button class="px-2 py-1 text-[9px] font-mono tracking-wider uppercase rounded bg-p31-void border border-white/5 text-[#ff9944] hover:bg-white/5" data-axis="a" aria-label="Show Body axis only" aria-pressed="false" data-i18n="filters.body" data-i18n-aria-label="filters.bodyAria">Body</button>
+        <button class="px-2 py-1 text-[9px] font-mono tracking-wider uppercase rounded bg-p31-void border border-white/5 text-[#44aaff] hover:bg-white/5" data-axis="b" aria-label="Show Mesh axis only" aria-pressed="false" data-i18n="filters.mesh" data-i18n-aria-label="filters.meshAria">Mesh</button>
+        <button class="px-2 py-1 text-[9px] font-mono tracking-wider uppercase rounded bg-p31-void border border-white/5 text-[#44ffaa] hover:bg-white/5" data-axis="c" aria-label="Show Forge axis only" aria-pressed="false" data-i18n="filters.forge" data-i18n-aria-label="filters.forgeAria">Forge</button>
+        <button class="px-2 py-1 text-[9px] font-mono tracking-wider uppercase rounded bg-p31-void border border-white/5 text-[#ff4466] hover:bg-white/5" data-axis="d" aria-label="Show Shield axis only" aria-pressed="false" data-i18n="filters.shield" data-i18n-aria-label="filters.shieldAria">Shield</button>
+      </div>
+     </div>
+
+     <!-- Legend -->
+     <div class="glass-panel p-4 rounded-xl text-[10px] font-mono">
+       <div class="text-p31-muted mb-2 pb-2 border-b border-white/10" id="node-count" data-i18n="stats.nodes">-- NODES</div>
+       <div class="flex flex-col gap-1.5">
+         <div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-emerald"></div><span data-i18n="legend.active">Active</span></div>
+         <div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-[var(--p31-teal)]"></div><span data-i18n="legend.deployed">Deployed</span></div>
+         <div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-amber"></div><span data-i18n="legend.countdown">Countdown</span></div>
+         <div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-cyan"></div><span data-i18n="legend.research">Research</span></div>
+         <div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-coral"></div><span data-i18n="legend.missing">Missing</span></div>
+       </div>
+       <a href="/geodesic-math/" class="mt-3 inline-block text-[10px] font-mono text-cyan/70 hover:text-cyan underline underline-offset-2">Geodesic math reference</a>
+       <p class="mt-1 text-[9px] font-mono text-p31-muted-50 leading-snug">Strict icosa subdivision stats (vs. observatory Three helper). <span class="text-p31-cloud-40">?perf=lite</span> · <span class="text-p31-cloud-40">localStorage p31:dome:perf=lite</span></p>
+     </div>
+  </aside>
+
+  <!-- RIGHT HUD: Node Inspector — mobile: bottom sheet; desktop (sm+): right side card -->
+  <aside
+     id="node-detail-panel"
+     class="hud-element pointer-events-none fixed bottom-0 left-0 right-0 z-40 w-full rounded-t-2xl border-t border-white/10 bg-p31-void-95 px-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-4 opacity-0 shadow-[0_-10px_40px_rgba(0,0,0,0.8)] backdrop-blur-sm transition-all duration-300 sm:bottom-auto sm:left-auto sm:right-6 sm:top-16 sm:w-80 sm:rounded-xl sm:shadow-[0_10px_40px_rgba(0,0,0,0.8)] glass-panel"
+   >
+     <!-- Drag handle — touch-swipe affordance on mobile only -->
+     <div id="node-detail-handle" class="sm:hidden mx-auto mb-4 h-1 w-10 rounded-full bg-white/25 cursor-grab active:cursor-grabbing touch-none" aria-hidden="true"></div>
+     <button id="node-detail-close" class="absolute top-4 right-4 text-p31-muted hover:text-p31-cloud transition-colors pointer-events-auto" data-i18n-aria-label="nodeDetail.close" aria-label="Close node details">✕</button>
+     <div class="text-cyan font-bold text-lg mb-1 tracking-tight" id="nd-title" data-i18n="nodeDetail.title">Node Name</div>
+     <div class="flex items-center gap-2 text-[10px] font-mono mb-4 pb-3 border-b border-white/10">
+       <span id="nd-axis" class="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-p31-cloud-70" data-i18n="nodeDetail.axis">Axis</span>
+       <span id="nd-state" class="px-2 py-0.5 rounded border uppercase" data-i18n="nodeDetail.state">State</span>
+       <span id="nd-bus" class="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-p31-cloud-70 uppercase" data-i18n="nodeDetail.bus">Bus</span>
+     </div>
+    <!-- Empty state: Posner Prism shown before any node is selected -->
+    <div id="nd-empty" class="flex flex-col items-center gap-3 py-4">
+      <div class="w-14 h-14 opacity-40" aria-hidden="true">
+        <Fragment set:html={POSNER_PRISM_SVG} />
+      </div>
+      <p class="font-mono text-[9px] tracking-widest uppercase text-center" style="color: rgba(16,185,129,0.5);">Ca₉(PO₄)₆ · Select a node</p>
+    </div>
+    <div id="nd-notes" class="text-sm text-p31-cloud-80 mb-5 leading-relaxed font-sans hidden">—</div>
+    <div class="text-[10px] font-mono text-p31-muted mb-2 uppercase tracking-widest hidden" id="nd-edges-label">Entangled Edges</div>
+    <div id="nd-conns" class="flex flex-wrap gap-2 pointer-events-auto hidden"></div>
+  </aside>
+
+  <!-- SPATIAL: Posner Molecule Ca₉(PO₄)₆ spring-physics navigator
+       z-[150] covers all HUD (z-40/50/100) but stays below keyboard-shortcuts (z-900).
+       Shown/hidden by hash-router; rAF loop starts only when this section is active. -->
+  <section
+    id="spatial"
+    class="hash-section hidden fixed inset-0 z-[150] bg-p31-void flex flex-col items-center justify-center gap-3 touch-none"
+    aria-label="Posner Molecule — Ca₉(PO₄)₆ spring physics"
+  >
+    <p class="font-mono text-[9px] tracking-widest uppercase select-none" style="color:rgba(167,139,250,0.6)">
+      Ca₉(PO₄)₆ · Posner Molecule · Spring Physics
+    </p>
+    <div style="width:min(88vw,540px);height:min(88vw,540px)">
+      <svg
+        id="spatial-svg"
+        viewBox="0 0 600 600"
+        class="w-full h-full"
+        style="touch-action:none;display:block"
+        role="img"
+        aria-label="Interactive Posner molecule — drag cyan Ca²⁺ and violet PO₄³⁻ nodes to perturb the spring lattice"
+      ></svg>
+    </div>
+    <p class="font-mono text-[9px] text-p31-muted tracking-widest select-none">
+      drag · <span style="color:rgba(14,165,233,0.7)">●</span> Ca²⁺ &nbsp;
+             <span style="color:rgba(167,139,250,0.7)">●</span> PO₄³⁻ &nbsp;·&nbsp;
+      <a href="#dome" class="underline underline-offset-2 hover:text-p31-cloud transition-colors">← cockpit</a>
+    </p>
+  </section>
+
+   <!-- LAYER 0: Somatic Breathing Mode (Full Screen Takeover) -->
+   <div id="layer0" class="fixed inset-0 z-[100] bg-p31-void-95 backdrop-blur-md flex flex-col items-center justify-center gap-6 transition-all duration-1000 opacity-0 pointer-events-none">
+     <div class="absolute top-12 left-1/2 -translate-x-1/2 flex items-center gap-4 font-mono text-xs text-p31-muted glass-panel px-6 py-3 rounded-full">
+       <span data-i18n="layer0.spoonsLabel">SPOONS</span>
+       <div class="w-48 h-1 bg-surface rounded-full overflow-hidden">
+         <div id="l0-spoon-fill" class="h-full bg-coral transition-all duration-500"></div>
+       </div>
+       <span id="l0-spoon-pct" class="text-coral font-bold">75%</span>
+     </div>
+
+     <!-- Central Breathing Dot -->
+     <div id="l0-dot" class="w-24 h-24 rounded-full bg-coral opacity-40 transform scale-75 shadow-[0_0_60px_rgba(232,99,111,0.3)]"></div>
+     <div id="l0-phase" class="text-3xl font-mono font-bold text-coral tracking-[0.3em] uppercase mt-8" data-i18n="layer0.inhale">INHALE</div>
+
+     <div class="absolute bottom-16 flex flex-col items-center gap-4 glass-panel px-8 py-4 rounded-xl">
+       <div class="w-40 h-1.5 bg-surface rounded-full overflow-hidden">
+         <div id="l0-escape-fill" class="h-full w-0 bg-coral shadow-[0_0_10px_#E8636F]"></div>
+       </div>
+       <div class="text-[10px] font-mono text-p31-muted tracking-widest uppercase" data-i18n="layer0.escapeHint">Hold ESC for 3 seconds to disengage</div>
+       <div class="text-[9px] font-mono text-cyan tracking-widest uppercase opacity-50 mt-2" data-i18n="layer0.larmorFreq">Larmor Frequency: 863Hz Active</div>
+     </div>
+   </div>
+</AppShell>
+
+<style is:global>
+  body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background-color: var(--p31-void); color: var(--p31-cloud); }
+  /* #webgl-container: fixed+z-index from markup — do not opacity-hide here; splash (#loading-screen) covers until JS dismisses */
+
+  .glass-panel {
+    background: rgba(12, 14, 20, 0.65);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  }
+
+  /*
+   * Node detail panel — CSS-driven transform for two-axis show/hide.
+   * Mobile: slides up from bottom (Y axis). Desktop (sm+): slides in from right (X axis).
+   * Kinematics sets inline style.transform during drag; clearing it reverts to CSS.
+   * No !important — translate-x-10 Tailwind class removed from HTML, so no conflict.
+   */
+  #node-detail-panel { transform: translateY(100%); }
+  #node-detail-panel:not(.opacity-0) { transform: translateY(0); }
+  @media (min-width: 640px) {
+    #node-detail-panel { transform: translateX(2.5rem); }
+    #node-detail-panel:not(.opacity-0) { transform: translateX(0); }
+  }
+
+  .ambient-grid {
+    background-image: radial-gradient(rgba(255, 255, 255, 0.2) 1px, transparent 1px);
+    background-size: 32px 32px;
+    opacity: 0.1;
+  }
+
+   /* Custom Scrollbar */
+   ::-webkit-scrollbar { width: 4px; height: 4px; }
+   ::-webkit-scrollbar-track { background: transparent; }
+   ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255,0.2); border-radius: 2px; }
+   
+   /* Reduced motion */
+   @media (prefers-reduced-motion: reduce) {
+     *, *::before, *::after {
+       animation-duration: 0.01ms !important;
+       animation-iteration-count: 1 !important;
+       transition-duration: 0.01ms !important;
+       scroll-behavior: auto !important;
+     }
+     .animate-spin {
+       animation: none !important;
+     }
+   }
+   
+   /* Focus-visible styling */
+   :focus-visible {
+     outline: 2px solid var(--p31-cyan);
+     outline-offset: 2px;
+   }
+   
+   /* Keyboard shortcuts overlay */
+   #keyboard-shortcuts-overlay {
+     backdrop-filter: blur(4px);
+     -webkit-backdrop-filter: blur(4px);
+   }
+   
+   #keyboard-shortcuts-overlay kbd {
+     font-family: 'JetBrains Mono', monospace;
+     background: rgba(12, 14, 20, 0.8);
+     border-color: rgba(255, 255, 255, 0.2);
+   }
+
+   #dock-fers-panel.fers-ok {
+     border-color: rgba(59, 163, 114, 0.35);
+   }
+   #dock-fers-panel.fers-warn {
+     border-color: rgba(205, 168, 82, 0.45);
+   }
+   #dock-fers-panel.fers-hot {
+     border-color: rgba(232, 99, 111, 0.45);
+   }
+   #dock-fers-panel.fers-critical {
+     border-color: rgba(232, 99, 111, 0.65);
+     box-shadow: 0 0 0 1px rgba(232, 99, 111, 0.25);
+   }
+
+  /* Layer 0 Animations */
+  @keyframes l0-inhale { to { transform: scale(1.4); opacity: 1; } }
+  @keyframes l0-hold   { from { transform: scale(1.4); opacity: 1; } to { transform: scale(1.4); opacity: 1; } }
+  @keyframes l0-exhale { to { transform: scale(0.6); opacity: 0.3; } }
+
+  #loading-screen {
+    transition: opacity 1s ease-in-out;
+  }
+
+   .hud-element {
+     transition: all 0.3s ease;
+   }
+   
+    /* Entrance animation: HUD only (#webgl-container never gated — avoids “grid-only” if body.loaded delays). */
+    body:not(.loaded) .hud-element,
+    body:not(.loaded) #top-hud {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    body.loaded .hud-element,
+    body.loaded #top-hud {
+      opacity: 1;
+      transform: translateY(0);
+      transition: opacity 600ms ease-out, transform 600ms ease-out;
+    }
+    /* ===============================================
+       A/B ACCENT PALETTES
+       Variant "tm" (teal-magenta, default) - current
+       Variant "cv" (cyan-violet) - alternate
+       =============================================== */
+    [data-palette="cv"] .text-cyan {
+      color: #8b5cf6 !important; /* violet */
+    }
+    [data-palette="cv"] .bg-cyan {
+      background-color: #8b5cf6 !important;
+    }
+    [data-palette="cv"] .border-cyan {
+      border-color: #8b5cf6 !important;
+    }
+    [data-palette="cv"] #volume-fill {
+      background-color: #ec4899 !important; /* magenta for volume */
+    }
+    [data-palette="cv"] #volume-thumb {
+      background-color: #ec4899 !important;
+    }
+    [data-palette="cv"] .text-emerald {
+      color: #a855f7 !important; /* violet alternative */
+    }
+    [data-palette="cv"] .bg-emerald {
+      background-color: #a855f7 !important;
+    }
+    /* Swap amber to magenta for trimtab */
+    [data-palette="cv"] #trimtab-freq,
+    [data-palette="cv"] #volume-icon path[stroke="currentColor"] {
+      color: #d946ef !important;
+    }
+    [data-palette="cv"] #trimtab-canvas {
+      stroke: #d946ef !important;
+    }
+
+    /* View switcher active states */
+    #dome-view-nav a[aria-current="true"][data-hash-nav="dome"]    { color:#0ea5e9; border-color:rgba(14,165,233,0.4); }
+    #dome-view-nav a[aria-current="true"][data-hash-nav="spatial"] { color:#a78bfa; border-color:rgba(167,139,250,0.4); }
+
+    /* Gray Rock — doctrine §1 / §7 (`?alive=1` skips 3D + HUD withholding in dome-cockpit.ts) */
+    body.dome-gray-rock #connection-status {
+      filter: grayscale(1);
+      opacity: 0.65;
+    }
+    body.dome-gray-rock #cockpit-instrument-strip,
+    body.dome-gray-rock #dome-mode-strip {
+      opacity: 0.78;
+    }
+    body.dome-gray-rock #hud-content {
+      opacity: 0.72;
+    }
+  </style>
+
+<!-- Client cockpit: src/scripts/dome-cockpit.ts; geometry: src/lib/dome/
+     Hash-router switches between #dome (Three.js cockpit) and #spatial (Posner physics).
+     rAF loops are mutually exclusive — only the active view consumes CPU. -->
+<script>
+  import '../scripts/dome-cockpit.ts';
+  import { mountHashRouter, type HashRouterHandle } from '../lib/hash-router';
+  import { createSpatialNavigator, type SpatialHandle } from '../scripts/spatial-navigator';
+
+  type DomeHandle = { unmount(): void; remount(): void };
+  const W = window as Record<string, unknown>;
+
+  // One spatial navigator per session (survives SPA navigations).
+  if (!W['__p31Spatial']) W['__p31Spatial'] = createSpatialNavigator();
+  const spatial = W['__p31Spatial'] as SpatialHandle;
+  let router: HashRouterHandle | null = null;
+
+  document.addEventListener('astro:page-load', () => {
+    const svgEl = document.getElementById('spatial-svg') as SVGSVGElement | null;
+
+    router = mountHashRouter([
+      {
+        id: 'dome',
+        // No el — cockpit elements are fixed/global; managed via DomeHandle only.
+        onEnter: () => (W['__p31Dome'] as DomeHandle | undefined)?.remount(),
+        onLeave: () => (W['__p31Dome'] as DomeHandle | undefined)?.unmount(),
+      },
+      {
+        id: 'spatial',
+        el: '#spatial',
+        title: 'P31 Labs | Posner Ca₉(PO₄)₆',
+        onEnter: () => {
+          // Stop Three.js rAF before starting physics loop.
+          (W['__p31Dome'] as DomeHandle | undefined)?.unmount();
+          if (svgEl) spatial.mount(svgEl);
+        },
+        onLeave: () => spatial.unmount(),
+      },
+    ], { defaultId: 'dome', navSelector: '#dome-view-nav a' });
+  });
+
+  document.addEventListener('astro:before-swap', () => {
+    router?.destroy(); router = null;
+    spatial.unmount();
+    (W['__p31Dome'] as DomeHandle | undefined)?.unmount();
+  }, { once: true });
+</script>

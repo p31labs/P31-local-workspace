@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub" style="color-scheme: dark;">
+<head>
+  <meta charset="UTF-8" />
+<script>(function(){var r=document.documentElement;if(/[?&]alive=1(?:&|$)/.test(location.search))return;r.classList.add("p31-gray-rock");function wake(){r.classList.remove("p31-gray-rock")}document.addEventListener("pointerdown",wake,{once:true,capture:true});document.addEventListener("keydown",wake,{once:true,capture:true})})();</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1115" />
+  <link rel="manifest" href="/p31-mesh.webmanifest" crossorigin="anonymous" />
+  <meta name="description" content="OQE Icosa — twenty curated forensic contradiction slots mapped to faces 1–20. Not Fate 20; not assistive orientation; not legal or medical advice." />
+<link rel="canonical" href="https://p31ca.org/oqe-icosa.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="OQE Icosa | P31">
+<meta property="og:description" content="OQE Icosa — twenty curated forensic contradiction slots mapped to faces 1–20. Not Fate 20; not assistive orientation; not legal or medical advice.">
+<meta property="og:url" content="https://p31ca.org/oqe-icosa.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="OQE Icosa | P31">
+<meta name="twitter:description" content="OQE Icosa — twenty curated forensic contradiction slots mapped to faces 1–20. Not Fate 20; not assistive orientation; not legal or medical advice.">
+  <title>OQE Icosa | P31</title>
+  <link rel="stylesheet" href="/p31-style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
+      background: radial-gradient(ellipse 100% 70% at 50% 0%, #1e1a2e 0%, var(--p31-void, #0f1115) 50%);
+      color: var(--p31-cloud, #d8d6d0);
+      font-family: var(--p31-font-sans, "Atkinson Hyperlegible"), system-ui, sans-serif;
+      padding: 1rem 1rem 3rem;
+    }
+    #banner {
+      max-width: 44rem; margin: 0 auto 1.25rem;
+      padding: 1rem 1.1rem;
+      border-radius: 12px;
+      border: 1px solid rgba(196, 92, 92, 0.45);
+      background: color-mix(in srgb, #4a2020 35%, transparent);
+      font-size: 0.85rem; line-height: 1.55;
+    }
+    #banner strong { color: #f0a8a8; font-weight: 700; }
+    #banner code { font-family: "JetBrains Mono", monospace; font-size: 0.78em; opacity: 0.9; }
+    h1 {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.85rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--p31-teal, #3d9b8c);
+      text-align: center;
+      margin-bottom: 0.35rem;
+    }
+    .sub {
+      text-align: center;
+      font-size: 0.8rem;
+      opacity: 0.65;
+      max-width: 36rem;
+      margin: 0 auto 1rem;
+      line-height: 1.45;
+    }
+    #nav {
+      display: flex; flex-wrap: wrap; gap: 0.6rem; justify-content: center;
+      margin-bottom: 1.25rem;
+      font-family: "JetBrains Mono", monospace; font-size: 0.62rem;
+      letter-spacing: 0.08em; text-transform: uppercase;
+    }
+    #nav a {
+      color: var(--p31-teal, #3d9b8c); text-decoration: none;
+      border-bottom: 1px solid transparent; padding: 0.15rem 0;
+    }
+    #nav a:hover, #nav a:focus-visible {
+      color: var(--p31-ice, #9ee7ff); border-color: var(--p31-ice, #9ee7ff);
+    }
+    #grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(4.5rem, 1fr));
+      gap: 0.45rem;
+      max-width: 36rem;
+      margin: 0 auto 1.25rem;
+    }
+    #grid button {
+      aspect-ratio: 1;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: color-mix(in srgb, var(--p31-surface, #161920) 88%, transparent);
+      color: var(--p31-cloud, #e8e6e0);
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.72rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    #grid button:hover, #grid button:focus-visible {
+      border-color: var(--p31-teal, #3d9b8c);
+      outline: none;
+    }
+    #grid button[aria-pressed="true"] {
+      border-color: var(--p31-coral, #e07a5f);
+      background: color-mix(in srgb, var(--p31-coral, #e07a5f) 18%, var(--p31-surface, #161920));
+    }
+    #detail {
+      max-width: 40rem;
+      margin: 0 auto;
+      padding: 1.1rem 1.2rem;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: color-mix(in srgb, var(--p31-surface, #161920) 92%, transparent);
+      min-height: 8rem;
+    }
+    #detail .face-label {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--p31-teal, #4db8a8);
+      margin-bottom: 0.5rem;
+    }
+    #detail h2 { font-size: 1.1rem; margin-bottom: 0.65rem; color: var(--p31-cloud, #f0eee8); }
+    #detail .body { font-size: 0.92rem; line-height: 1.5; opacity: 0.92; }
+    #detail .cite { margin-top: 0.85rem; font-family: "JetBrains Mono", monospace; font-size: 0.65rem; opacity: 0.5; }
+    #err { color: #f0a8a8; font-size: 0.85rem; text-align: center; max-width: 36rem; margin: 0 auto 1rem; }
+    #foot {
+      max-width: 40rem; margin: 1.5rem auto 0;
+      font-size: 0.72rem; line-height: 1.5; opacity: 0.5;
+    }
+  </style>
+</head>
+<body class="p31-mesh-m-first">
+<a href="#main" style="position:absolute;left:-9999px;top:0;padding:0.5rem 1rem;background:var(--p31-void);color:var(--p31-teal);font-size:0.875rem;z-index:9999;border-radius:0 0 4px 4px;text-decoration:none" onfocus="this.style.left='0'" onblur="this.style.left='-9999px'">Skip to main content</a>
+  <h1>OQE Icosa</h1>
+  <p class="sub">
+    <strong>Forensic</strong> map: twenty faces, twenty contradiction slots. Schema <code>p31.oqeTwenty/1.0.0</code>.
+    <strong>Not assistive orientation</strong> and <strong>not Fate 20</strong> — for tie-breaks use the
+    <a href="/oracle">Lattice Oracle</a> or <a href="/d20">Ultimate Decision Maker</a> (Fate 20 only).
+  </p>
+
+  <div id="banner" role="status">
+    <strong>This is not legal advice</strong>, not financial advice, and not medical advice.
+    This page loads curated rows from <code>/p31-oqe-twenty.json</code>. It is not a second RNG layer:
+    <strong>No randomness</strong> here — you choose a face to read the slot. The assistive
+    <strong>Fate 20</strong> lexicon lives in <code>p31-fate-twenty.json</code> — a different contract.
+  </div>
+
+  <nav id="nav" aria-label="Hub links">
+    <a href="/oracle">Oracle (Fate 20)</a>
+    <a href="/d20">D20 (Fate 20)</a>
+    <a href="/lattice.html">Lattice</a>
+    <a href="/">Hub</a>
+  </nav>
+
+  <p id="err" hidden></p>
+
+  <div id="grid" aria-label="Faces 1 through 20"></div>
+
+  <article id="detail" aria-live="polite">
+    <div class="face-label" id="d-face">Face —</div>
+    <h2 id="d-title">Loading…</h2>
+    <div class="body" id="d-body"></div>
+    <div class="cite" id="d-cite"></div>
+  </article>
+
+  <p id="foot">
+    Contract: <code>p31.oqeTwenty/1.0.0</code> in <code>/p31-oqe-twenty.json</code>. Short URL: <a href="/oqe">/oqe</a>.
+  </p>
+
+  <script>
+    const LEX = "/p31-oqe-twenty.json";
+    const elErr = document.getElementById("err");
+    const grid = document.getElementById("grid");
+    const dFace = document.getElementById("d-face");
+    const dTitle = document.getElementById("d-title");
+    const dBody = document.getElementById("d-body");
+    const dCite = document.getElementById("d-cite");
+    let rows = [];
+    let selected = 1;
+
+    function show(face) {
+      const row = rows.find((r) => r.face === face);
+      if (!row) return;
+      selected = face;
+      dFace.textContent = "Face " + face + " / 20 · " + row.slug;
+      dTitle.textContent = row.title;
+      dBody.innerHTML = row.summary;
+      dCite.textContent = row.citation && (row.citation.label || row.citation.url)
+        ? "Citation: " + JSON.stringify(row.citation, null, 0)
+        : "";
+      for (const btn of grid.querySelectorAll("button")) {
+        btn.setAttribute("aria-pressed", String(parseInt(btn.dataset.face, 10) === face));
+      }
+    }
+
+    fetch(LEX, { cache: "no-store" })
+      .then((r) => {
+        if (!r.ok) throw new Error("HTTP " + r.status);
+        return r.json();
+      })
+      .then((data) => {
+        if (data.schema !== "p31.oqeTwenty/1.0.0") {
+          throw new Error("Schema mismatch: expected p31.oqeTwenty/1.0.0");
+        }
+        rows = data.contradictions || [];
+        if (rows.length !== 20) throw new Error("Expected 20 contradictions");
+        grid.innerHTML = "";
+        for (let f = 1; f <= 20; f++) {
+          const b = document.createElement("button");
+          b.type = "button";
+          b.textContent = String(f);
+          b.dataset.face = String(f);
+          b.setAttribute("aria-label", "Face " + f);
+          b.addEventListener("click", () => show(f));
+          grid.appendChild(b);
+        }
+        show(1);
+      })
+      .catch((e) => {
+        elErr.hidden = false;
+        elErr.textContent = "Could not load " + LEX + ": " + (e && e.message ? e.message : e);
+        dTitle.textContent = "Error";
+        dBody.textContent = "";
+      });
+  </script>
+<script type="module">
+  import { startGrandfatherPhaseVar } from "/lib/p31-quantum-grandfather-boot.mjs";
+  startGrandfatherPhaseVar();
+</script>
+</body>
+</html>

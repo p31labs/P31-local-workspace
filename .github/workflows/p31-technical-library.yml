@@ -1,0 +1,40 @@
+name: p31-technical-library
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "software/docs/**"
+      - ".github/actions/**"
+      - ".github/workflows/p31-technical-library.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: p31-technical-library-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/toolchain-constants
+
+      - uses: ./.github/actions/npm-ci-project
+        with:
+          working-directory: software/docs
+          cache-dependency-path: software/docs/package-lock.json
+
+      - name: Build
+        working-directory: software/docs
+        run: npm run build
+
+      - name: Deploy to Cloudflare Pages
+        uses: ./.github/actions/wrangler-run
+        with:
+          working-directory: software/docs
+          command: pages deploy dist --project-name=p31-technical-library --branch=main
+          api-token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          account-id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

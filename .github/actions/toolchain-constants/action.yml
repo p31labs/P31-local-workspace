@@ -1,0 +1,24 @@
+# After actions/checkout: pins NODE + PNPM from repo package.json; WRANGLER is the edge pin (bump here).
+name: Toolchain constants
+description: Writes NODE_VERSION, PNPM_VERSION, WRANGLER_VERSION to GITHUB_ENV for the job
+
+runs:
+  using: composite
+  steps:
+    - name: Sync Node and pnpm from package.json
+      shell: bash
+      run: |
+        set -euo pipefail
+        cd "${GITHUB_WORKSPACE}"
+        if [[ ! -f package.json ]]; then
+          echo "NODE_VERSION=20" >> "$GITHUB_ENV"
+          echo "PNPM_VERSION=10.32.1" >> "$GITHUB_ENV"
+          echo "WRANGLER_VERSION=4.85.0" >> "$GITHUB_ENV"
+          exit 0
+        fi
+        PNPM_VER=$(node -p "String(require('./package.json').packageManager || 'pnpm@10.32.1').replace(/^pnpm@/, '')")
+        NODE_VER=$(node -p "const e=require('./package.json').engines?.node; const s=e!=null?String(e):'20'; const m=s.match(/(\d+)/); m?m[1]:'20'")
+        echo "NODE_VERSION=${NODE_VER}" >> "$GITHUB_ENV"
+        echo "PNPM_VERSION=${PNPM_VER}" >> "$GITHUB_ENV"
+        # Wrangler is not in package.json — keep aligned with cloudflare/wrangler-action pins across workflows.
+        echo "WRANGLER_VERSION=4.85.0" >> "$GITHUB_ENV"

@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Feedback · P31 Stylebook</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/p31-style.css">
+  <link rel="stylesheet" href="/lib/p31-fluid.css">
+  <link rel="stylesheet" href="/stylebook/_chrome.css">
+  <style>
+    .p31-alert {
+      display: flex;
+      gap: 12px;
+      padding: 14px 16px;
+      border-radius: 10px;
+      border-left: 3px solid;
+      background: var(--p31-surface);
+    }
+    .p31-alert-info { border-color: var(--p31-cyan); background: rgba(77, 184, 168, 0.06); }
+    .p31-alert-success { border-color: var(--p31-phosphorus); background: rgba(59, 163, 114, 0.06); }
+    .p31-alert-warning { border-color: var(--p31-amber); background: rgba(205, 168, 82, 0.06); }
+    .p31-alert-error { border-color: var(--p31-coral); background: rgba(204, 98, 71, 0.06); }
+    .p31-alert-icon { flex-shrink: 0; font-size: 18px; line-height: 1.4; }
+    .p31-alert-content { flex: 1; }
+    .p31-alert-title { font-weight: 600; color: var(--p31-paper); margin-bottom: 4px; }
+    .p31-alert-body { font-size: 13px; color: var(--p31-cloud); line-height: 1.5; }
+    
+    .p31-toast {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 18px;
+      background: var(--p31-surface2);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+      color: var(--p31-paper);
+      font-size: 14px;
+      max-width: 360px;
+    }
+    .p31-toast-icon { flex-shrink: 0; font-size: 16px; }
+    .p31-toast-close {
+      width: 24px; height: 24px;
+      background: transparent; border: none;
+      color: var(--p31-muted); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 4px;
+    }
+    .p31-toast-close:hover { color: var(--p31-paper); background: var(--p31-surface3); }
+    
+    .p31-progress {
+      width: 100%;
+      height: 6px;
+      background: var(--p31-surface2);
+      border-radius: 999px;
+      overflow: hidden;
+      position: relative;
+    }
+    .p31-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--p31-primary), var(--p31-coral));
+      border-radius: inherit;
+      transition: width 0.4s var(--p31-ease-fluid);
+    }
+    .p31-progress-indeterminate .p31-progress-fill {
+      width: 30% !important;
+      animation: indeterm 1.4s var(--p31-ease-fluid) infinite;
+    }
+    @keyframes indeterm {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(400%); }
+    }
+    
+    .p31-spinner {
+      width: 24px;
+      height: 24px;
+      border: 2px solid var(--p31-surface3);
+      border-top-color: var(--p31-primary);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    
+    .p31-skeleton {
+      background: linear-gradient(90deg, var(--p31-surface) 25%, var(--p31-surface2) 50%, var(--p31-surface) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+      border-radius: 6px;
+    }
+    @keyframes shimmer { to { background-position: -200% 0; } }
+    
+    .p31-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+      font-family: var(--p31-font-mono);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .p31-badge-info { background: rgba(77,184,168,0.15); color: var(--p31-cyan); }
+    .p31-badge-success { background: rgba(0,255,136,0.12); color: var(--p31-phosphor); }
+    .p31-badge-warning { background: rgba(205,168,82,0.12); color: var(--p31-amber); }
+    .p31-badge-error { background: rgba(204,98,71,0.12); color: var(--p31-coral); }
+    .p31-badge-neutral { background: var(--p31-surface2); color: var(--p31-muted); }
+    
+    .p31-modal {
+      background: var(--p31-surface);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: 14px;
+      padding: 24px;
+      max-width: 420px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    }
+    .p31-modal-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--p31-paper);
+      margin-bottom: 8px;
+    }
+    .p31-modal-body {
+      font-size: 14px;
+      color: var(--p31-cloud);
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+    .p31-modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+  </style>
+</head>
+<body>
+  <script type="module">
+    import { renderShell, code, callout } from '/stylebook/_chrome.js';
+    import { P31ThemeController } from '/lib/p31-theme-engine.mjs';
+    window.p31Theme = new P31ThemeController({ defaultTheme: 'hub' });
+    
+    const content = `
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Alerts</div>
+          <h2 class="sb-h2">Inline messages</h2>
+          <p class="sb-text">Four tones, one shape. Use sparingly — alerts compete with content.</p>
+        </div>
+        
+        <div class="sb-preview">
+          <div class="sb-preview-header"><span>Alert variants</span></div>
+          <div class="sb-preview-body dense" style="max-width: 600px;">
+            <div class="p31-alert p31-alert-info">
+              <div class="p31-alert-icon" style="color: var(--p31-cyan);">ℹ</div>
+              <div class="p31-alert-content">
+                <div class="p31-alert-title">Heads up</div>
+                <div class="p31-alert-body">Your mesh sync is paused. It will resume automatically when connectivity returns.</div>
+              </div>
+            </div>
+            <div class="p31-alert p31-alert-success">
+              <div class="p31-alert-icon" style="color: var(--p31-phosphorus);">✓</div>
+              <div class="p31-alert-content">
+                <div class="p31-alert-title">Saved</div>
+                <div class="p31-alert-body">Your changes have been pushed to the family mesh and synced across all 4 vertices.</div>
+              </div>
+            </div>
+            <div class="p31-alert p31-alert-warning">
+              <div class="p31-alert-icon" style="color: var(--p31-amber);">⚠</div>
+              <div class="p31-alert-content">
+                <div class="p31-alert-title">Calcium trending low</div>
+                <div class="p31-alert-body">Last reading 8.1 mg/dL — within range but approaching the lower bound. Consider a dose check.</div>
+              </div>
+            </div>
+            <div class="p31-alert p31-alert-error">
+              <div class="p31-alert-icon" style="color: var(--p31-coral);">✕</div>
+              <div class="p31-alert-content">
+                <div class="p31-alert-title">Sync failed</div>
+                <div class="p31-alert-body">Worker returned 503 after 3 retries. Your local changes are preserved — try again in a moment.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Toasts</div>
+          <h2 class="sb-h2">Transient notifications</h2>
+          <p class="sb-text">Float above content. Auto-dismiss after 4–6 seconds. Allow dismiss manually.</p>
+        </div>
+        
+        <div class="sb-preview">
+          <div class="sb-preview-header"><span>Toast</span></div>
+          <div class="sb-preview-body dense" style="background: transparent; padding: 32px;">
+            <div class="p31-toast">
+              <span class="p31-toast-icon" style="color: var(--p31-phosphor);">✓</span>
+              <span style="flex: 1;">Mesh sync complete · 4 nodes updated</span>
+              <button class="p31-toast-close" aria-label="Dismiss">✕</button>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Progress</div>
+          <h2 class="sb-h2">Show motion in time</h2>
+        </div>
+        
+        <div class="sb-preview">
+          <div class="sb-preview-header"><span>Progress bar</span></div>
+          <div class="sb-preview-body dense" style="max-width: 480px;">
+            <div style="margin-bottom: 16px;">
+              <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--p31-cloud); margin-bottom: 6px;">
+                <span>Uploading...</span>
+                <span style="font-family: var(--p31-font-mono);">68%</span>
+              </div>
+              <div class="p31-progress">
+                <div class="p31-progress-fill" style="width: 68%;"></div>
+              </div>
+            </div>
+            <div>
+              <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--p31-cloud); margin-bottom: 6px;">
+                <span>Indeterminate</span>
+              </div>
+              <div class="p31-progress p31-progress-indeterminate">
+                <div class="p31-progress-fill"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="sb-preview">
+          <div class="sb-preview-header"><span>Spinner</span></div>
+          <div class="sb-preview-body" style="gap: 32px;">
+            <div class="p31-spinner"></div>
+            <div class="p31-spinner" style="width: 18px; height: 18px;"></div>
+            <div class="p31-spinner" style="width: 32px; height: 32px;"></div>
+            <div style="display:flex; align-items:center; gap:8px; color: var(--p31-cloud); font-size: 14px;">
+              <div class="p31-spinner" style="width: 14px; height: 14px;"></div>
+              Loading mesh state...
+            </div>
+          </div>
+        </div>
+        
+        <div class="sb-preview">
+          <div class="sb-preview-header"><span>Skeleton</span></div>
+          <div class="sb-preview-body dense" style="max-width: 480px;">
+            <div style="background: var(--p31-surface); padding: 16px; border-radius: 12px; border: 1px solid var(--p31-border-subtle);">
+              <div class="p31-skeleton" style="width: 60%; height: 16px; margin-bottom: 12px;"></div>
+              <div class="p31-skeleton" style="width: 100%; height: 12px; margin-bottom: 6px;"></div>
+              <div class="p31-skeleton" style="width: 92%; height: 12px; margin-bottom: 6px;"></div>
+              <div class="p31-skeleton" style="width: 70%; height: 12px;"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Badges</div>
+          <h2 class="sb-h2">Status pills</h2>
+        </div>
+        
+        <div class="sb-preview">
+          <div class="sb-preview-header"><span>Status</span></div>
+          <div class="sb-preview-body">
+            <span class="p31-badge p31-badge-success">Active</span>
+            <span class="p31-badge p31-badge-info">New</span>
+            <span class="p31-badge p31-badge-warning">Draft</span>
+            <span class="p31-badge p31-badge-error">Failed</span>
+            <span class="p31-badge p31-badge-neutral">Archived</span>
+          </div>
+        </div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Modals</div>
+          <h2 class="sb-h2">Focused decisions</h2>
+        </div>
+        
+        <div class="sb-preview">
+          <div class="sb-preview-header"><span>Confirmation modal</span></div>
+          <div class="sb-preview-body" style="background: rgba(0,0,0,0.4); padding: 48px;">
+            <div class="p31-modal">
+              <div class="p31-modal-title">Delete this mesh node?</div>
+              <div class="p31-modal-body">This will remove all sync history with this vertex. Local data is preserved on each device. This action can't be undone.</div>
+              <div class="p31-modal-actions">
+                <button class="p31-btn p31-btn-ghost">Cancel</button>
+                <button class="p31-btn p31-btn-danger">Delete node</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        ${callout('warn', 'Modals interrupt', 'Reach for a modal only when the user must respond before continuing. For non-blocking confirmation, prefer toasts with undo.')}
+      </section>
+    `;
+    
+    renderShell({
+      activeId: 'feedback',
+      breadcrumb: [
+        { href: '/stylebook/', label: 'Stylebook' },
+        { href: '/stylebook/', label: 'Components' },
+        { label: 'Feedback' }
+      ],
+      title: 'Feedback',
+      subtitle: 'Alerts, toasts, progress, spinners, skeletons, badges, modals. How the system tells you what happened.',
+      meta: [{ label: 'Patterns', value: '7' }],
+      content
+    });
+  </script>
+</body>
+</html>

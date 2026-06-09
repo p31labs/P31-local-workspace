@@ -1,0 +1,139 @@
+---
+import AppShell from '../../layouts/AppShell.astro';
+import { GameShell } from '../../components/games/GameShell.tsx';
+import { CyberneticBonsaiScene } from '../../components/games/CyberneticBonsaiScene.tsx';
+import { FreezeBreakerOverlay } from '../../components/games/FreezeBreakerOverlay.tsx';
+---
+<AppShell routeName="cybernetic-bonsai" suppressEbc={true}>
+  <GameShell client:only routeName="cybernetic-bonsai" cameraZ={-0.4}>
+    <CyberneticBonsaiScene client:only />
+    <FreezeBreakerOverlay client:only />
+    
+    <!-- Invisible drop zone for grounding wire -->
+    <div id="drop-zone" class="fixed inset-0 z-0"
+         onDrop="handleDrop(event)" onDragOver="handleDragOver(event)"></div>
+
+    <!-- Draggable Grounding Wire -->
+    <div draggable="true" id="grounding-wire"
+         class="fixed bottom-4 left-4 z-30 p-3 bg-p31-amber/20 border border-p31-amber rounded cursor-move select-none">
+      <span class="text-p31-amber text-sm font-bold">⚡ Grounding Wire</span>
+    </div>
+    
+    <!-- PID controls panels -->
+    <div class="fixed inset-0 z-20 pointer-events-none flex flex-wrap gap-4 items-start justify-center pt-6 px-4">
+      <!-- P-Gain -->
+      <div class="glass-panel w-64 p-4 pointer-events-auto">
+        <h3 class="text-p31-amber text-sm font-bold mb-2">P-Gain: Immediate Regulation</h3>
+        <p class="text-p31-cloud-70 text-xs mb-2">5 deep physiological sighs calm spikes.</p>
+        <button data-action="sighs" class="w-full bg-p31-amber/20 hover:bg-p31-amber/30 text-p31-amber py-2 rounded text-xs transition-colors">Log Sighs</button>
+      </div>
+      
+      <!-- I-Accumulator -->
+      <div class="glass-panel w-64 p-4 pointer-events-auto">
+        <h3 class="text-p31-amber text-sm font-bold mb-2">I-Accumulator: Deep Rest</h3>
+        <p class="text-p31-cloud-70 text-xs mb-2">Sleeping clears historical sleep debt.</p>
+        <button data-action="sleep" class="w-full bg-p31-amber/20 hover:bg-p31-amber/30 text-p31-amber py-2 rounded text-xs transition-colors">Log Sleep</button>
+      </div>
+      
+      <!-- D-Filter -->
+      <div class="glass-panel w-64 p-4 pointer-events-auto">
+        <h3 class="text-p31-amber text-sm font-bold mb-2">D-Filter: Executive Planning</h3>
+        <p class="text-p31-cloud-70 text-xs mb-2">Writing tomorrow's core tasks predicts future error.</p>
+        <button data-action="tasks" class="w-full bg-p31-amber/20 hover:bg-p31-amber/30 text-p31-amber py-2 rounded text-xs transition-colors">Log Tasks</button>
+      </div>
+      
+      <!-- Chat with Spark -->
+      <div class="glass-panel w-80 h-80 flex flex-col p-3 pointer-events-auto mt-3">
+        <h3 class="text-p31-amber text-sm font-bold mb-2">Chat with Spark</h3>
+        <div id="chat-messages" class="flex-1 overflow-y-auto space-y-2 mb-2 text-xs font-mono"></div>
+        <form id="chat-form" class="flex space-x-2">
+          <input type="text" class="flex-1 bg-p31-void/50 border border-p31-amber/30 rounded px-2 py-1 text-p31-amber placeholder-p31-amber/50 text-xs focus:outline-none" placeholder="Describe system load..." />
+          <button type="submit" class="bg-p31-amber/20 hover:bg-p31-amber/30 text-p31-amber px-2 py-1 rounded text-xs">Send</button>
+        </form>
+      </div>
+    </div>
+  </GameShell>
+</AppShell>
+
+<script client:load>
+  import { logAction } from '../../lib/storage';
+
+  // --- Drag & Drop: Grounding Wire ---
+  const groundingWire = document.getElementById('grounding-wire');
+  const dropZone = document.getElementById('drop-zone');
+
+  groundingWire?.addEventListener('dragstart', (e) => {
+    e.dataTransfer.setData('text/plain', 'grounding-wire');
+    groundingWire.style.opacity = '0.5';
+  });
+
+  groundingWire?.addEventListener('dragend', () => {
+    groundingWire.style.opacity = '1';
+  });
+
+  window.handleDragOver = function(e) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  };
+
+  window.handleDrop = function(e) {
+    e.preventDefault();
+    const type = e.dataTransfer.getData('text/plain');
+    if (type === 'grounding-wire') {
+      window.dispatchEvent(new CustomEvent('p31:groundingWireDrop'));
+    }
+  };
+
+  // --- PID action logging + event emit ---
+  document.querySelectorAll('[data-action]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const action = btn.getAttribute('data-action');
+      try { await logAction('cybernetic-bonsai', action); } catch {}
+      window.dispatchEvent(new CustomEvent('p31:pidAction', { detail: { action } }));
+      btn.classList.add('bg-p31-amber/40');
+      setTimeout(() => btn.classList.remove('bg-p31-amber/40'), 500);
+    });
+  });
+
+  // --- Chat with Spark ---
+  const chatMessages = document.getElementById('chat-messages');
+  const chatForm = document.getElementById('chat-form');
+  const messages = [];
+
+  function addMessage(sender, text) {
+    messages.push({ role: sender === 'You' ? 'user' : 'assistant', content: text });
+    const p = document.createElement('p');
+    p.className = 'text-p31-cloud-60 leading-relaxed';
+    p.innerHTML = `<span class="text-p31-cyan">${sender}:</span> ${text}`;
+    chatMessages.appendChild(p);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+  addMessage('Spark', 'High task concurrency detected. Recommend immediate thread termination. Drop laundry.exe.');
+
+  chatForm?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const input = chatForm.querySelector('input');
+    const text = input.value.trim();
+    if (!text) return;
+    input.value = '';
+    addMessage('You', text);
+    messages.push({ role: 'user', content: text });
+
+    try {
+      const resp = await fetch('https://command-center.trimtab-signal.workers.dev/api/ai/spark', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages })
+      });
+      if (!resp.ok) throw new Error('HTTP ' + resp.status);
+      const data = await resp.json();
+      addMessage('Spark', data.reply || '');
+      messages.push({ role: 'assistant', content: data.reply || '' });
+    } catch (err) {
+      console.error('Spark AI error:', err);
+      addMessage('Spark', 'Spark module offline. Clear some tabs and retry.');
+    }
+  });
+</script>

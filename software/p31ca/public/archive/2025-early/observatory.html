@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub" style="color-scheme: dark;">
+<head>
+    <meta charset="UTF-8">
+<script>(function(){var r=document.documentElement;if(/[?&]alive=1(?:&|$)/.test(location.search))return;r.classList.add("p31-gray-rock");function wake(){r.classList.remove("p31-gray-rock")}document.addEventListener("pointerdown",wake,{once:true,capture:true});document.addEventListener("keydown",wake,{once:true,capture:true})})();</script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#0f1115">
+    <title>OBSERVATORY | Geodesic Data Dome | P31 Labs</title>
+    <link rel="stylesheet" href="/p31-style.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{background:#0f1115;color:#d8d6d0;font-family:'Atkinson Hyperlegible',sans-serif;height:100vh;display:flex;flex-direction:column;overflow:hidden}
+        header{padding:10px 20px;background:rgba(15,17,21,0.95);border-bottom:1px solid rgba(255,255,255,0.05);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;z-index:10}
+        .logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:#d8d6d0;font-weight:700;font-size:14px}
+        a.back{color:rgba(216,214,208,0.4);font-family:'JetBrains Mono',monospace;font-size:12px;text-decoration:none}
+        a.back:hover{color:#d8d6d0}
+        #mount{flex:1;position:relative}
+        .node-card{position:absolute;top:12px;right:12px;background:rgba(22,25,32,0.92);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:16px;font-family:'JetBrains Mono',monospace;font-size:11px;z-index:5;min-width:200px;display:none}
+        .node-card.show{display:block}
+        .nc-title{font-size:13px;font-weight:700;color:#4db8a8;margin-bottom:8px}
+        .nc-row{display:flex;justify-content:space-between;margin-bottom:4px}
+        .nc-key{color:rgba(216,214,208,0.4)}
+        .nc-val{color:#d8d6d0}
+        .search-bar{position:absolute;top:12px;left:12px;display:flex;gap:6px;z-index:5}
+        .search-bar input{background:rgba(22,25,32,0.9);border:1px solid rgba(255,255,255,0.08);color:#d8d6d0;padding:7px 12px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:11px;outline:none;width:180px}
+        .search-bar input:focus{border-color:#25897d}
+        .hud{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(216,214,208,0.25);pointer-events:none}
+        .legend{position:absolute;bottom:36px;left:12px;font-family:'JetBrains Mono',monospace;font-size:10px;background:rgba(22,25,32,0.8);border:1px solid rgba(255,255,255,0.05);border-radius:6px;padding:10px}
+        .leg-row{display:flex;align-items:center;gap:6px;margin-bottom:4px}
+        .leg-dot{width:8px;height:8px;border-radius:50%}
+    </style>
+<meta property="og:type" content="website">
+<meta property="og:title" content="OBSERVATORY | Geodesic Data Dome">
+<meta property="og:description" content="OBSERVATORY | Geodesic Data Dome">
+<meta property="og:url" content="https://p31ca.org/observatory.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="OBSERVATORY | Geodesic Data Dome">
+<meta name="twitter:description" content="OBSERVATORY | Geodesic Data Dome">
+<link rel="canonical" href="https://p31ca.org/observatory.html">
+</head>
+<body>
+<a href="#main" style="position:absolute;left:-9999px;top:0;padding:0.5rem 1rem;background:var(--p31-void);color:var(--p31-teal);font-size:0.875rem;z-index:9999;border-radius:0 0 4px 4px;text-decoration:none" onfocus="this.style.left='0'" onblur="this.style.left='-9999px'">Skip to main content</a>
+<header>
+    <a href="/" class="logo">
+        <svg width="22" height="22" viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#25897d"/><circle cx="390" cy="120" r="48" fill="#cc6247"/><text x="256" y="340" font-family="system-ui" font-weight="900" font-size="220" fill="#d8d6d0" text-anchor="middle">P31</text><rect x="156" y="380" width="200" height="16" rx="8" fill="#cda852"/></svg>
+        OBSERVATORY
+    </a>
+    <a href="/" class="back">← Hub</a>
+</header>
+
+<div id="mount">
+    <div class="search-bar">
+        <input id="search" placeholder="Search panels…">
+    </div>
+    <div class="node-card" id="node-card">
+        <div class="nc-title" id="nc-title">Panel</div>
+        <div class="nc-row"><span class="nc-key">Node</span><span class="nc-val" id="nc-node">—</span></div>
+        <div class="nc-row"><span class="nc-key">Axis</span><span class="nc-val" id="nc-axis">—</span></div>
+        <div class="nc-row"><span class="nc-key">State</span><span class="nc-val" id="nc-state">—</span></div>
+        <div class="nc-row"><span class="nc-key">Bus</span><span class="nc-val" id="nc-bus">—</span></div>
+        <div class="nc-row"><span class="nc-key">Load</span><span class="nc-val" id="nc-load">—</span></div>
+        <div style="margin-top:8px;font-size:9px;color:rgba(216,214,208,0.2)">Click dome panel to inspect</div>
+    </div>
+    <div class="legend">
+        <div class="leg-row"><div class="leg-dot" style="background:#3ba372"></div><span style="color:rgba(216,214,208,0.5)">Online</span></div>
+        <div class="leg-row"><div class="leg-dot" style="background:#cda852"></div><span style="color:rgba(216,214,208,0.5)">Degraded</span></div>
+        <div class="leg-row"><div class="leg-dot" style="background:#cc6247"></div><span style="color:rgba(216,214,208,0.5)">Offline</span></div>
+        <div class="leg-row"><div class="leg-dot" style="background:#8b7cc9"></div><span style="color:rgba(216,214,208,0.5)">Research</span></div>
+    </div>
+    <div class="hud">Drag to orbit · Scroll to zoom · Click panel to inspect</div>
+</div>
+
+<script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+const mount = document.getElementById('mount');
+const renderer = new THREE.WebGLRenderer({antialias:true});
+renderer.setPixelRatio(window.devicePixelRatio);
+renderer.setClearColor(0x060810,1);
+mount.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(60,1,0.1,500);
+camera.position.set(0,2,6);
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping=true;controls.dampingFactor=0.06;controls.minDistance=2;controls.maxDistance=15;
+
+scene.add(new THREE.AmbientLight(0x102030,3));
+const star=new THREE.DirectionalLight(0x4db8a8,1.5);star.position.set(3,10,5);scene.add(star);
+
+// Stars
+const starGeo=new THREE.BufferGeometry();
+const starPos=[];
+for(let i=0;i<2000;i++){
+    const theta=Math.random()*Math.PI*2,phi=Math.acos(2*Math.random()-1);
+    const r=40+Math.random()*20;
+    starPos.push(Math.sin(phi)*Math.cos(theta)*r,Math.cos(phi)*r,Math.sin(phi)*Math.sin(theta)*r);
+}
+starGeo.setAttribute('position',new THREE.BufferAttribute(new Float32Array(starPos),3));
+scene.add(new THREE.Points(starGeo,new THREE.PointsMaterial({color:0xd8d6d0,size:0.08,transparent:true,opacity:0.6})));
+
+// Node data
+const STATES=['online','online','online','degraded','online','offline','research'];
+const AXES=['SIC-1','SIC-2','SIC-3','SIC-4','SIC-5','SIC-6','SIC-7'];
+const BUSES=['K4A','K4B','K4C','K4D','K4A','K4B','K4C'];
+const STATE_COLORS={online:0x3ba372,degraded:0xcda852,offline:0xcc6247,research:0x8b7cc9};
+const STATE_LABELS={online:'Online',degraded:'Degraded',offline:'Offline',research:'Research'};
+
+// Build geodesic dome panels from icosahedron
+const icoGeo = new THREE.IcosahedronGeometry(3, 2);
+const posAttr = icoGeo.attributes.position;
+const faceCount = posAttr.count / 3;
+
+const panels = [];
+const panelGroup = new THREE.Group();
+scene.add(panelGroup);
+
+for (let i=0; i<faceCount; i++) {
+    const a=new THREE.Vector3().fromBufferAttribute(posAttr,i*3);
+    const b=new THREE.Vector3().fromBufferAttribute(posAttr,i*3+1);
+    const c=new THREE.Vector3().fromBufferAttribute(posAttr,i*3+2);
+
+    // Only use upper hemisphere for dome
+    const center=new THREE.Vector3().addVectors(a,b).add(c).divideScalar(3);
+    if(center.y<-0.5) continue;
+
+    const nodeIdx=i%7;
+    const state=STATES[nodeIdx];
+    const color=STATE_COLORS[state];
+
+    const geo=new THREE.BufferGeometry();
+    const verts=new Float32Array([a.x,a.y,a.z,b.x,b.y,b.z,c.x,c.y,c.z]);
+    geo.setAttribute('position',new THREE.BufferAttribute(verts,3));
+    geo.computeVertexNormals();
+
+    const mat=new THREE.MeshPhongMaterial({
+        color,transparent:true,opacity:0.35,side:THREE.DoubleSide,
+        emissive:color,emissiveIntensity:0.1
+    });
+    const mesh=new THREE.Mesh(geo,mat);
+    mesh.userData={panelIdx:i,node:`NODE-${nodeIdx}`,axis:AXES[nodeIdx],state,bus:BUSES[nodeIdx],load:Math.floor(Math.random()*80+10)+'%'};
+    panelGroup.add(mesh);
+    panels.push(mesh);
+
+    // Edge wireframe
+    const edges=new THREE.EdgesGeometry(geo);
+    const lineMat=new THREE.LineBasicMaterial({color:0x2a4040,transparent:true,opacity:0.4});
+    panelGroup.add(new THREE.LineSegments(edges,lineMat));
+}
+
+// Aurora band at equator
+const auroraGeo=new THREE.TorusGeometry(3,0.08,4,64);
+const auroraMat=new THREE.MeshBasicMaterial({color:0x25897d,transparent:true,opacity:0.3});
+scene.add(new THREE.Mesh(auroraGeo,auroraMat));
+
+// Dust motes
+const moteGeo=new THREE.BufferGeometry();
+const motePos=[];
+for(let i=0;i<300;i++){
+    motePos.push((Math.random()-0.5)*6,(Math.random()-0.5)*4,(Math.random()-0.5)*6);
+}
+moteGeo.setAttribute('position',new THREE.BufferAttribute(new Float32Array(motePos),3));
+const motes=new THREE.Points(moteGeo,new THREE.PointsMaterial({color:0x4db8a8,size:0.03,transparent:true,opacity:0.4}));
+scene.add(motes);
+
+// Raycaster for click
+const raycaster=new THREE.Raycaster();
+const mouse=new THREE.Vector2();
+renderer.domElement.addEventListener('click',e=>{
+    const r=renderer.domElement.getBoundingClientRect();
+    mouse.x=((e.clientX-r.left)/r.width)*2-1;
+    mouse.y=-((e.clientY-r.top)/r.height)*2+1;
+    raycaster.setFromCamera(mouse,camera);
+    const hits=raycaster.intersectObjects(panels);
+    if(hits.length){
+        const ud=hits[0].object.userData;
+        document.getElementById('nc-title').textContent=ud.node;
+        document.getElementById('nc-node').textContent=ud.node;
+        document.getElementById('nc-axis').textContent=ud.axis;
+        document.getElementById('nc-state').textContent=STATE_LABELS[ud.state]||ud.state;
+        document.getElementById('nc-bus').textContent=ud.bus;
+        document.getElementById('nc-load').textContent=ud.load;
+        document.getElementById('node-card').classList.add('show');
+
+        // Highlight
+        panels.forEach(p=>{p.material.emissiveIntensity=0.1;p.material.opacity=0.35;});
+        hits[0].object.material.emissiveIntensity=0.6;
+        hits[0].object.material.opacity=0.7;
+    }
+});
+
+// Search
+document.getElementById('search').addEventListener('input',e=>{
+    const q=e.target.value.toLowerCase();
+    panels.forEach(p=>{
+        const match=!q||p.userData.node.toLowerCase().includes(q)||p.userData.axis.toLowerCase().includes(q)||p.userData.state.includes(q)||p.userData.bus.toLowerCase().includes(q);
+        p.material.opacity=match?0.5:0.1;
+        p.material.emissiveIntensity=match?0.2:0;
+    });
+});
+
+function resize(){
+    const w=mount.offsetWidth,h=mount.offsetHeight;
+    renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();
+}
+resize();window.addEventListener('resize',resize);
+
+let t=0;
+function animate(){
+    requestAnimationFrame(animate);
+    t+=0.003;
+    panelGroup.rotation.y=t*0.1;
+    motes.rotation.y=t*0.05;
+    auroraMat.opacity=0.2+Math.sin(t*2)*0.1;
+    controls.update();
+    renderer.render(scene,camera);
+}
+animate();
+</script>
+</body>
+</html>

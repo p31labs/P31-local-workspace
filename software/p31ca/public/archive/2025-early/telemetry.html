@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub" style="color-scheme: dark;">
+<head>
+<meta charset="UTF-8">
+<script>(function(){var r=document.documentElement;if(/[?&]alive=1(?:&|$)/.test(location.search))return;r.classList.add("p31-gray-rock");function wake(){r.classList.remove("p31-gray-rock")}document.addEventListener("pointerdown",wake,{once:true,capture:true});document.addEventListener("keydown",wake,{once:true,capture:true})})();</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Telemetry — P31 Labs</title>
+<meta name="description" content="Real-time telemetry dashboard for the P31 Labs ecosystem — event stream, metrics, cognitive load, and user journeys.">
+<link rel="canonical" href="https://p31ca.org/telemetry.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Telemetry — P31 Labs">
+<meta property="og:description" content="Real-time telemetry dashboard for the P31 Labs ecosystem — event stream, metrics, cognitive load, and user journeys.">
+<meta property="og:url" content="https://p31ca.org/telemetry.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Telemetry — P31 Labs">
+<meta name="twitter:description" content="Real-time telemetry dashboard for the P31 Labs ecosystem — event stream, metrics, cognitive load, and user journeys.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap">
+<!-- R08: P31 telemetry -->
+<script src="/p31-telemetry.js" defer></script>
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --bg-void: #050505;
+  --bg-panel: #161921;
+  --bg-card: #1c2028;
+  --coral: #ff6b6b;
+  --teal: #4ecdc4;
+  --phosphor: #e8ff6b;
+  --green: #51cf66;
+  --red: #ff6b6b;
+  --purple: #cc99ff;
+  --amber: #ffa94d;
+  --text: #e2e8f0;
+  --text-dim: #718096;
+  --border: rgba(255,255,255,0.06);
+  --font: 'Space Mono', monospace;
+}
+html { background: var(--bg-void); color: var(--text); font-family: var(--font); }
+body { min-height: 100vh; padding: 24px 20px; max-width: 1100px; margin: 0 auto; }
+
+.header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 8px; }
+.header h1 { font-size: 1.1rem; font-weight: 700; letter-spacing: 0.15em; color: var(--coral); text-transform: uppercase; }
+.header .subtitle { font-size: 0.7rem; color: var(--text-dim); }
+
+/* Controls */
+.controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 20px; }
+.controls select, .controls button {
+  background: var(--bg-card); border: 1px solid var(--border); color: var(--text);
+  font-family: var(--font); font-size: 0.7rem; padding: 6px 12px; border-radius: 4px; cursor: pointer;
+}
+.controls button { transition: border-color 0.2s, color 0.2s; }
+.controls button:hover { border-color: var(--teal); color: var(--teal); }
+.controls label { font-size: 0.65rem; color: var(--text-dim); }
+.live-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--green); margin-right: 4px; animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+/* Metrics row */
+.metrics { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; margin-bottom: 20px; }
+.metric { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 14px; }
+.metric-val { font-size: 1.5rem; font-weight: 700; }
+.metric-label { font-size: 0.6rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 4px; }
+
+/* Two-column layout */
+.layout { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 700px) { .layout { grid-template-columns: 1fr; } }
+
+.panel { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+.panel-title { font-size: 0.7rem; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 12px; }
+
+/* Event stream */
+.event-stream { max-height: 320px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; }
+.event-row { display: flex; gap: 8px; font-size: 0.65rem; padding: 5px 8px; border-radius: 4px; background: var(--bg-panel); align-items: baseline; }
+.event-row:hover { background: rgba(255,255,255,0.04); }
+.ev-time { color: var(--text-dim); min-width: 54px; flex-shrink: 0; }
+.ev-source { color: var(--teal); min-width: 80px; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ev-type { color: var(--phosphor); min-width: 90px; flex-shrink: 0; }
+.ev-type.error { color: var(--red); }
+.ev-type.spoon_decay { color: var(--amber); }
+.ev-type.fawn_guard_trigger { color: var(--coral); }
+.ev-type.donation, .ev-type.kofi_donation, .ev-type.donation_processed { color: var(--green); }
+
+/* Bar chart */
+.bar-chart { display: flex; flex-direction: column; gap: 6px; }
+.bar-row { display: flex; gap: 8px; align-items: center; font-size: 0.65rem; }
+.bar-label { min-width: 120px; color: var(--text-dim); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bar-track { flex: 1; background: var(--bg-panel); border-radius: 2px; height: 8px; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 2px; background: var(--teal); transition: width 0.4s; }
+.bar-count { min-width: 28px; text-align: right; color: var(--text-dim); }
+
+/* Spoon economy */
+.spoon-meter { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 8px; }
+.spoon-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--bg-panel); transition: background 0.3s; }
+.spoon-dot.full { background: var(--teal); }
+.spoon-dot.low { background: var(--amber); }
+.spoon-dot.minimal { background: var(--red); }
+.spoon-tier { font-size: 0.75rem; font-weight: 700; margin-bottom: 4px; }
+.spoon-tier.FULL { color: var(--teal); }
+.spoon-tier.LOW { color: var(--amber); }
+.spoon-tier.MINIMAL { color: var(--red); }
+.spoon-count { font-size: 0.65rem; color: var(--text-dim); }
+
+/* No data */
+.no-data { font-size: 0.7rem; color: var(--text-dim); text-align: center; padding: 24px; }
+
+/* Nav */
+.nav { margin-top: 24px; font-size: 0.65rem; color: var(--text-dim); display: flex; gap: 16px; flex-wrap: wrap; }
+.nav a { color: var(--coral); text-decoration: none; }
+.nav a:hover { text-decoration: underline; }
+
+/* Auth notice */
+.auth-notice { background: rgba(255,107,107,0.08); border: 1px solid rgba(255,107,107,0.2); border-radius: 6px; padding: 12px 16px; font-size: 0.7rem; color: var(--text-dim); margin-bottom: 20px; display: none; }
+.auth-notice.visible { display: block; }
+</style>
+</head>
+<body>
+<a href="#main" style="position:absolute;left:-9999px;top:0;padding:0.5rem 1rem;background:var(--p31-void);color:var(--p31-teal);font-size:0.875rem;z-index:9999;border-radius:0 0 4px 4px;text-decoration:none" onfocus="this.style.left='0'" onblur="this.style.left='-9999px'">Skip to main content</a>
+
+<div class="header">
+  <div>
+    <h1>Telemetry</h1>
+    <div class="subtitle">P31 Labs Ecosystem Pulse</div>
+  </div>
+  <span style="font-size:0.65rem;color:var(--text-dim)"><span class="live-dot"></span>Live</span>
+</div>
+
+<div class="auth-notice" id="auth-notice">
+  Genesis Gate requires an ADMIN_TOKEN to read events. Set <code>window.P31_ADMIN_TOKEN</code> before loading, or events will not load.
+</div>
+
+<div class="controls">
+  <label>Window:</label>
+  <select id="window-select" onchange="refresh()">
+    <option value="3600000">Last 1 hour</option>
+    <option value="21600000">Last 6 hours</option>
+    <option value="86400000">Last 24 hours</option>
+  </select>
+  <button onclick="refresh()">↻ Refresh</button>
+  <span id="status-text" style="font-size:0.65rem;color:var(--text-dim)"></span>
+</div>
+
+<!-- Metrics row -->
+<div class="metrics">
+  <div class="metric">
+    <div class="metric-val" id="m-total" style="color:var(--teal)">—</div>
+    <div class="metric-label">Events</div>
+  </div>
+  <div class="metric">
+    <div class="metric-val" id="m-rate" style="color:var(--phosphor)">—</div>
+    <div class="metric-label">Events / hr</div>
+  </div>
+  <div class="metric">
+    <div class="metric-val" id="m-errors" style="color:var(--red)">—</div>
+    <div class="metric-label">Errors</div>
+  </div>
+  <div class="metric">
+    <div class="metric-val" id="m-sources" style="color:var(--purple)">—</div>
+    <div class="metric-label">Sources</div>
+  </div>
+</div>
+
+<div class="layout">
+  <!-- Event stream -->
+  <div class="panel">
+    <div class="panel-title">Event Stream</div>
+    <div class="event-stream" id="event-stream">
+      <div class="no-data">Loading…</div>
+    </div>
+  </div>
+
+  <!-- Top sources -->
+  <div class="panel">
+    <div class="panel-title">Events by Source</div>
+    <div class="bar-chart" id="sources-chart">
+      <div class="no-data">Loading…</div>
+    </div>
+  </div>
+
+  <!-- Event types -->
+  <div class="panel">
+    <div class="panel-title">Events by Type</div>
+    <div class="bar-chart" id="types-chart">
+      <div class="no-data">Loading…</div>
+    </div>
+  </div>
+
+  <!-- Spoon economy -->
+  <div class="panel">
+    <div class="panel-title">Cognitive Load (Spoon Economy)</div>
+    <div id="spoon-panel">
+      <div class="no-data">No spoon events in window</div>
+    </div>
+  </div>
+</div>
+
+<nav class="nav">
+  <a href="/">← Hub</a>
+  <a href="/health.html">System Health →</a>
+</nav>
+
+<script>
+const GENESIS_URL = window.P31_TELEMETRY_URL ?? 'https://genesis.p31ca.org';
+const ADMIN_TOKEN = window.P31_ADMIN_TOKEN ?? null;
+
+function fmtTime(iso) {
+  try { return new Date(iso).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }); }
+  catch { return '—'; }
+}
+
+async function fetchEvents(since) {
+  const headers = {};
+  if (ADMIN_TOKEN) headers['Authorization'] = 'Bearer ' + ADMIN_TOKEN;
+  const url = GENESIS_URL + '/events?since=' + encodeURIComponent(new Date(since).toISOString()) + '&limit=500';
+  const res = await fetch(url, { headers });
+  if (!res.ok) {
+    if (res.status === 401) document.getElementById('auth-notice').classList.add('visible');
+    throw new Error('HTTP ' + res.status);
+  }
+  const data = await res.json();
+  return data.events ?? [];
+}
+
+function renderBarChart(counts, colorVar) {
+  if (!counts.length) return '<div class="no-data">No data</div>';
+  const max = Math.max(...counts.map(([,n]) => n), 1);
+  return counts.slice(0, 10).map(([label, count]) => `
+    <div class="bar-row">
+      <span class="bar-label">${label}</span>
+      <div class="bar-track"><div class="bar-fill" style="width:${(count/max*100).toFixed(1)}%;background:var(${colorVar})"></div></div>
+      <span class="bar-count">${count}</span>
+    </div>`).join('');
+}
+
+function renderSpoonPanel(events) {
+  const spoonEvents = events.filter(e => e.type === 'spoon_decay');
+  if (!spoonEvents.length) return '<div class="no-data">No spoon events in window</div>';
+
+  // Latest tier from most recent event
+  const latest = spoonEvents[spoonEvents.length - 1];
+  const tier = latest.payload?.tier ?? 'UNKNOWN';
+  const spoons = typeof latest.payload?.spoons === 'number' ? latest.payload.spoons : null;
+  const maxSpoons = 12;
+
+  const dots = Array.from({ length: maxSpoons }, (_, i) => {
+    const filled = spoons !== null ? i < spoons : false;
+    const cls = filled ? (tier === 'MINIMAL' ? 'minimal' : tier === 'LOW' ? 'low' : 'full') : '';
+    return `<div class="spoon-dot${cls ? ' ' + cls : ''}"></div>`;
+  }).join('');
+
+  return `
+    <div class="spoon-tier ${tier}">${tier}</div>
+    <div class="spoon-meter">${dots}</div>
+    <div class="spoon-count">${spoons !== null ? spoons + ' / ' + maxSpoons + ' spoons' : spoonEvents.length + ' decay events'} in window</div>
+    <div style="font-size:0.6rem;color:var(--text-dim);margin-top:8px">
+      Fawn Guard triggers: ${events.filter(e => e.type === 'fawn_guard_trigger').length}
+    </div>`;
+}
+
+async function refresh() {
+  const windowMs = parseInt(document.getElementById('window-select').value, 10);
+  const since = Date.now() - windowMs;
+  const statusEl = document.getElementById('status-text');
+  statusEl.textContent = 'Fetching…';
+
+  let events = [];
+  try {
+    events = await fetchEvents(since);
+    statusEl.textContent = `${events.length} events · ${new Date().toLocaleTimeString()}`;
+  } catch (e) {
+    statusEl.textContent = 'Error: ' + e.message;
+    document.getElementById('event-stream').innerHTML = `<div class="no-data" style="color:var(--red)">${e.message}</div>`;
+    return;
+  }
+
+  // Metrics
+  const windowHrs = windowMs / 3600000;
+  const errorCount = events.filter(e => e.type === 'error').length;
+  const sources = new Set(events.map(e => e.source)).size;
+  document.getElementById('m-total').textContent = events.length;
+  document.getElementById('m-rate').textContent = (events.length / windowHrs).toFixed(1);
+  document.getElementById('m-errors').textContent = errorCount;
+  document.getElementById('m-sources').textContent = sources;
+
+  // Event stream (latest 60)
+  const streamEl = document.getElementById('event-stream');
+  if (!events.length) {
+    streamEl.innerHTML = '<div class="no-data">No events in window</div>';
+  } else {
+    const recent = events.slice(-60).reverse();
+    streamEl.innerHTML = recent.map(e => `
+      <div class="event-row">
+        <span class="ev-time">${fmtTime(e.timestamp)}</span>
+        <span class="ev-source">${e.source}</span>
+        <span class="ev-type ${e.type}">${e.type}</span>
+      </div>`).join('');
+  }
+
+  // Sources bar chart
+  const sourceCounts = Object.entries(
+    events.reduce((acc, e) => { acc[e.source] = (acc[e.source] ?? 0) + 1; return acc; }, {})
+  ).sort((a, b) => b[1] - a[1]);
+  document.getElementById('sources-chart').innerHTML = renderBarChart(sourceCounts, '--teal');
+
+  // Types bar chart
+  const typeCounts = Object.entries(
+    events.reduce((acc, e) => { acc[e.type] = (acc[e.type] ?? 0) + 1; return acc; }, {})
+  ).sort((a, b) => b[1] - a[1]);
+  document.getElementById('types-chart').innerHTML = renderBarChart(typeCounts, '--phosphor');
+
+  // Spoon economy
+  document.getElementById('spoon-panel').innerHTML = renderSpoonPanel(events);
+}
+
+refresh();
+setInterval(refresh, 10_000);
+</script>
+</body>
+</html>

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#050505">
+    <title>Spaceship Earth | P31 Labs</title>
+    <meta name="description" content="Immersive 3D Jitterbug cockpit PWA. Offline-capable, skin-adaptive, sovereign command center linking to the full P31 mesh.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/assets/p31-operator-tailwind.js"></script>
+    <style>
+        body {
+            background-color: #050505;
+            color: #d8d6d0;
+            background-image: linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+        .matte-panel { background-color: #161920; border: 1px solid rgba(255,255,255,0.04); }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col text-cloud/90">
+
+    <header class="w-full border-b border-white/5 bg-void/95 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="index.html" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
+                <svg width="28" height="28" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="512" height="512" rx="112" fill="#25897d"/>
+                    <circle cx="390" cy="120" r="48" fill="#cc6247"/>
+                    <text x="256" y="340" font-family="system-ui" font-weight="900" font-size="220" fill="#d8d6d0" text-anchor="middle">P31</text>
+                    <rect x="156" y="380" width="200" height="16" rx="8" fill="#cda852"/>
+                </svg>
+                <span class="font-bold text-lg tracking-tight">P31 Labs</span>
+            </a>
+            <nav class="flex gap-4 font-mono text-sm">
+                <a href="index.html" class="text-cloud/50 hover:text-cloud transition-colors flex items-center gap-2">← Hub</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl mx-auto px-6 py-12 w-full flex flex-col gap-12">
+
+        <header class="border-b border-white/10 pb-8">
+            <div class="flex items-center gap-4 mb-4">
+                <div class="text-3xl bg-surface w-12 h-12 rounded flex items-center justify-center border border-white/5">🌐</div>
+                <div class="px-2 py-0.5 rounded border text-[10px] font-mono tracking-wide text-phosphorus/80 border-phosphorus/20 bg-phosphorus/5">🟢 LIVE</div>
+                <div class="px-2 py-0.5 rounded border text-[10px] font-mono tracking-wide text-cloud/40 border-white/10">PWA · offline-capable</div>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-bold mb-4 text-cloud">Spaceship Earth</h1>
+            <p class="text-xl text-teal/70 font-mono">Jitterbug Cockpit — Immersive 3D Portal</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            <div class="lg:col-span-2 flex flex-col gap-8">
+
+                <section class="matte-panel rounded-lg p-8">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center gap-3">
+                        <span class="text-teal">01.</span> Architecture
+                    </h2>
+                    <p class="text-cloud/70 leading-relaxed mb-6">
+                        Built as a Progressive Web App with full offline capability. The data layer runs WebAssembly PostgreSQL (PGlite) entirely in-browser, persisted to IndexedDB. No backend required for core functionality. All P31 mesh apps are now sovereign standalone deployments — Spaceship Earth is the 3D portal that connects them.
+                    </p>
+                    <ul class="space-y-4">
+                        <li class="flex gap-3 text-sm">
+                            <span class="text-teal mt-0.5 flex-shrink-0">▸</span>
+                            <span><span class="font-mono text-phosphorus">React 19 + Tailwind v4 + vanilla Three.js</span> — immersive Jitterbug cockpit UI, direct WebGL, no R3F abstraction layer</span>
+                        </li>
+                        <li class="flex gap-3 text-sm">
+                            <span class="text-teal mt-0.5 flex-shrink-0">▸</span>
+                            <span><span class="font-mono text-phosphorus">PGlite (WebAssembly PostgreSQL)</span> — full SQL engine running in-browser, persisted via IndexedDB. Offline-capable by default.</span>
+                        </li>
+                        <li class="flex gap-3 text-sm">
+                            <span class="text-teal mt-0.5 flex-shrink-0">▸</span>
+                            <span><span class="font-mono text-phosphorus">Three skin themes</span> — OPERATOR (matte cockpit, dark), KIDS (warm, accessible), GRAY_ROCK (minimal, low-stimulus). Transient material lerp, bloom never unmounted.</span>
+                        </li>
+                        <li class="flex gap-3 text-sm">
+                            <span class="text-teal mt-0.5 flex-shrink-0">▸</span>
+                            <span><span class="font-mono text-phosphorus">Tri-state camera</span> — Free (full orbit), Dome (bounded 4–10 distance), Screen (parallel to 3 screens, scroll-between). Mode-specific orbit constraints.</span>
+                        </li>
+                        <li class="flex gap-3 text-sm">
+                            <span class="text-teal mt-0.5 flex-shrink-0">▸</span>
+                            <span><span class="font-mono text-phosphorus">Sovereign Store</span> — Zustand: skin theme, camera mode, accent color, portal open state. Session-scoped, no gamification pressure.</span>
+                        </li>
+                    </ul>
+                </section>
+
+                <section class="matte-panel rounded-lg p-8">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center gap-3">
+                        <span class="text-teal">02.</span> The Jitterbug Transformation
+                    </h2>
+                    <div class="space-y-4 text-sm text-cloud/70 leading-relaxed">
+                        <p>
+                            The "Jitterbug" is Buckminster Fuller's term for the continuous transformation between the cuboctahedron (Vector Equilibrium) and the octahedron — a topology that is never fixed, always in dynamic transition.
+                        </p>
+                        <p>
+                            In P31's architecture, it maps to the shift from <strong class="text-cloud/90">Wye topology</strong> (hub-and-spoke — all load passes through a central neutral point, which becomes a single point of failure) to <strong class="text-cloud/90">Delta topology</strong> (self-braced mesh — no floating neutral, every node load-bearing).
+                        </p>
+                        <div class="grid grid-cols-2 gap-4 my-4">
+                            <div class="bg-void border border-coral/10 rounded-lg p-4">
+                                <div class="font-mono text-xs text-coral/70 mb-2 uppercase tracking-widest">WYE (before)</div>
+                                <div class="text-xs text-cloud/50 leading-relaxed">Hub-spoke topology. Central neutral carries all load. Failure of neutral = full collapse. Vulnerable to institutional capture.</div>
+                            </div>
+                            <div class="bg-void border border-phosphorus/10 rounded-lg p-4">
+                                <div class="font-mono text-xs text-phosphorus/70 mb-2 uppercase tracking-widest">DELTA (after)</div>
+                                <div class="text-xs text-cloud/50 leading-relaxed">Mesh topology. No floating neutral. Every node self-braced. Maxwell isostatic: 3V − E = 6 for K₄ subsets. Byzantine fault tolerant.</div>
+                            </div>
+                        </div>
+                        <p>
+                            Vector Equilibrium achieved: all nodes self-braced, no floating neutral, cognitive sovereignty guaranteed even when fully disconnected from the network.
+                        </p>
+                    </div>
+                </section>
+
+            </div>
+
+            <div class="flex flex-col gap-6">
+
+                <div class="matte-panel rounded-lg p-6">
+                    <h3 class="text-sm font-mono text-cloud/40 uppercase tracking-widest mb-4">Launch</h3>
+                    <a href="https://spaceship-earth.pages.dev" target="_blank" rel="noopener"
+                       class="block p-5 bg-void border border-teal/30 rounded hover:border-teal/60 transition-colors group mb-3 text-center">
+                        <div class="text-2xl mb-2">🌐</div>
+                        <div class="font-bold text-sm text-teal group-hover:text-cyan transition-colors mb-1">Open Spaceship Earth</div>
+                        <div class="text-xs text-cloud/40 font-mono">spaceship-earth.pages.dev</div>
+                    </a>
+                </div>
+
+                <div class="matte-panel rounded-lg p-6">
+                    <h3 class="text-sm font-mono text-cloud/40 uppercase tracking-widest mb-4">Deployment</h3>
+                    <div class="space-y-3 text-sm">
+                        <div class="flex justify-between"><span class="opacity-50">Status</span><span class="font-mono text-phosphorus text-xs">🟢 LIVE</span></div>
+                        <div class="flex justify-between"><span class="opacity-50">Type</span><span class="font-mono text-xs">PWA · CF Pages</span></div>
+                        <div class="flex justify-between"><span class="opacity-50">Offline</span><span class="font-mono text-phosphorus text-xs">Yes — full</span></div>
+                        <div class="flex justify-between"><span class="opacity-50">Stack</span><span class="font-mono text-xs">React 19 · Vite</span></div>
+                    </div>
+                </div>
+
+                <div class="matte-panel rounded-lg p-6">
+                    <h3 class="text-sm font-mono text-cloud/40 uppercase tracking-widest mb-4">Tech Stack</h3>
+                    <div class="space-y-3 text-sm">
+                        <div><div class="text-cloud font-bold mb-1">Cockpit</div><div class="text-cloud/60">React 19 + Tailwind v4 + vanilla Three.js</div></div>
+                        <div><div class="text-cloud font-bold mb-1">Data</div><div class="text-cloud/60">PGlite (WebAssembly PostgreSQL) + IndexedDB</div></div>
+                        <div><div class="text-cloud font-bold mb-1">State</div><div class="text-cloud/60">Zustand v5 — skin, camera, portal</div></div>
+                        <div><div class="text-cloud font-bold mb-1">Deploy</div><div class="text-cloud/60">Cloudflare Pages, Vite build</div></div>
+                    </div>
+                </div>
+
+                <div class="matte-panel rounded-lg p-6">
+                    <h3 class="text-sm font-mono text-cloud/40 uppercase tracking-widest mb-4">Ecosystem Ties</h3>
+                    <a href="attractor.html" class="block p-4 bg-void border border-white/5 rounded hover:border-cyan/30 transition-colors group mb-3">
+                        <div class="font-bold text-sm text-cloud group-hover:text-cyan transition-colors mb-1">NANO-07 Attractor</div>
+                        <div class="text-xs text-cloud/50">Kenosis mesh simulation — extracted to standalone p31ca app.</div>
+                    </a>
+                    <a href="buffer.html" class="block p-4 bg-void border border-white/5 rounded hover:border-coral/30 transition-colors group mb-3">
+                        <div class="font-bold text-sm text-cloud group-hover:text-coral transition-colors mb-1">Fawn Guard Buffer</div>
+                        <div class="text-xs text-cloud/50">Trigger history and somatic event log.</div>
+                    </a>
+                    <a href="kenosis.html" class="block p-4 bg-void border border-white/5 rounded hover:border-teal/30 transition-colors group mb-3">
+                        <div class="font-bold text-sm text-cloud group-hover:text-teal transition-colors mb-1">Project Kenosis</div>
+                        <div class="text-xs text-cloud/50">Live 7-node CF Worker mesh this cockpit connects to.</div>
+                    </a>
+                    <a href="bonding.html" class="block p-4 bg-void border border-white/5 rounded hover:border-lavender/30 transition-colors group">
+                        <div class="font-bold text-sm text-cloud group-hover:text-lavender transition-colors mb-1">BONDING</div>
+                        <div class="text-xs text-cloud/50">Session sync + engagement telemetry.</div>
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <footer class="border-t border-white/5 mt-12 py-6">
+        <div class="max-w-7xl mx-auto px-6 flex justify-between items-center text-xs text-cloud/30 font-mono">
+            <span>P31 Labs · 501(c)(3) · EIN 42-1888158</span>
+            <a href="index.html" class="hover:text-cloud/60 transition-colors">← Back to Hub</a>
+        </div>
+    </footer>
+
+</body>
+</html>

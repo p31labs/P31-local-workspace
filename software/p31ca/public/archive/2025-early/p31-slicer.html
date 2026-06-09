@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html class="p31-slicer-root" lang="en" data-p31-appearance="hub">
+<head>
+  <meta charset="UTF-8" />
+<script>(function(){var r=document.documentElement;if(/[?&]alive=1(?:&|$)/.test(location.search))return;r.classList.add("p31-gray-rock");function wake(){r.classList.remove("p31-gray-rock")}document.addEventListener("pointerdown",wake,{once:true,capture:true});document.addEventListener("keydown",wake,{once:true,capture:true})})();</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="description" content="P31 — in-browser 3D print slicer shell (Kiri:Moto). FDM G-code locally in the browser; optional grid.space embed." />
+<link rel="canonical" href="https://p31ca.org/p31-slicer.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="P31 — browser slicer (Kiri:Moto)">
+<meta property="og:description" content="P31 — in-browser 3D print slicer shell (Kiri:Moto). FDM G-code locally in the browser; optional grid.space embed.">
+<meta property="og:url" content="https://p31ca.org/p31-slicer.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="P31 — browser slicer (Kiri:Moto)">
+<meta name="twitter:description" content="P31 — in-browser 3D print slicer shell (Kiri:Moto). FDM G-code locally in the browser; optional grid.space embed.">
+  <meta name="theme-color" content="#0f1115" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700&family=JetBrains+Mono:ital,wght@0,400;0,600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="cognitive-passport/p31-style.css" />
+  <link rel="stylesheet" href="cognitive-passport/p31-responsive-surface.css" />
+  <script src="cognitive-passport/lib/p31-subject-prefs.js"></script>
+  <link rel="apple-touch-icon" href="p31-bonding-icons/p31-icon.svg" />
+  <link rel="manifest" href="p31-bonding.webmanifest" crossorigin="anonymous" />
+  <title>P31 — browser slicer (Kiri:Moto)</title>
+  <style>
+    .p31-slicer-root { --p31-slicer-frame-h: min(78dvh, 820px); }
+    body.p31-slicer-body {
+      margin: 0;
+      min-height: 100dvh;
+      font-family: "Atkinson Hyperlegible", system-ui, sans-serif;
+      background: var(--p31-void, #0f1115);
+      color: var(--p31-cloud, #d8d6d0);
+      line-height: 1.5;
+    }
+    .p31-slicer-body a { color: var(--p31-cyan, #4db8a8); }
+    .p31-slicer-body a:hover { text-decoration: underline; }
+    .p31-slicer-wrap { max-width: 72rem; margin: 0 auto; padding: 1rem max(1rem, env(safe-area-inset-right)) 2rem max(1rem, env(safe-area-inset-left)); }
+    .p31-slicer-head h1 {
+      font-size: clamp(1.1rem, 2vw + 0.85rem, 1.35rem);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      margin: 0 0 0.35rem;
+    }
+    .p31-slicer-kicker {
+      font-family: "JetBrains Mono", ui-monospace, monospace;
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--p31-muted, #8b9aa8);
+      margin: 0 0 0.5rem;
+    }
+    .p31-slicer-nav {
+      display: flex; flex-wrap: wrap; gap: 0.5rem 1rem;
+      margin: 0.75rem 0 1rem;
+      font-size: 0.88rem;
+    }
+    .p31-slicer-panel {
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      border-radius: 12px;
+      padding: 1rem 1.1rem;
+      margin-bottom: 1rem;
+      background: rgba(15, 17, 21, 0.65);
+    }
+    .p31-slicer-panel h2 {
+      margin: 0 0 0.5rem;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--p31-muted, #8b9aa8);
+    }
+    .p31-slicer-panel p { margin: 0.4rem 0; font-size: 0.9rem; }
+    .p31-slicer-actions {
+      display: flex; flex-wrap: wrap; gap: 0.5rem;
+      margin-top: 0.75rem;
+    }
+    .p31-slicer-actions button,
+    .p31-slicer-actions a.p31-slicer-btn {
+      font: inherit;
+      font-size: 0.82rem;
+      padding: 0.45rem 0.85rem;
+      border-radius: 8px;
+      border: 1px solid rgba(77, 184, 168, 0.45);
+      background: rgba(37, 137, 125, 0.2);
+      color: var(--p31-cyan, #4db8a8);
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .p31-slicer-actions a.p31-slicer-btn--ghost {
+      border-color: rgba(148, 163, 184, 0.35);
+      background: transparent;
+      color: var(--p31-cloud, #d8d6d0);
+    }
+    .p31-slicer-actions button:hover,
+    .p31-slicer-actions a.p31-slicer-btn:hover {
+      border-color: var(--p31-cyan, #4db8a8);
+      background: rgba(77, 184, 168, 0.15);
+    }
+    .p31-slicer-code {
+      font-family: "JetBrains Mono", ui-monospace, monospace;
+      font-size: 0.78rem;
+      word-break: break-all;
+      padding: 0.5rem 0.65rem;
+      border-radius: 8px;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      margin: 0.5rem 0 0;
+    }
+    .p31-slicer-frame-wrap {
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      background: #000;
+      min-height: var(--p31-slicer-frame-h);
+    }
+    .p31-slicer-frame-wrap iframe {
+      display: block;
+      width: 100%;
+      height: var(--p31-slicer-frame-h);
+      border: 0;
+    }
+    .p31-slicer-toast {
+      position: fixed;
+      bottom: max(1rem, env(safe-area-inset-bottom));
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      background: rgba(37, 137, 125, 0.92);
+      color: #ecfdf5;
+      font-size: 0.85rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+      z-index: 50;
+    }
+    .p31-slicer-toast.show { opacity: 1; }
+  </style>
+</head>
+<body class="p31-mesh-m-first p31-responsive-surface p31-slicer-body">
+<a href="#main" style="position:absolute;left:-9999px;top:0;padding:0.5rem 1rem;background:var(--p31-void);color:var(--p31-teal);font-size:0.875rem;z-index:9999;border-radius:0 0 4px 4px;text-decoration:none" onfocus="this.style.left='0'" onblur="this.style.left='-9999px'">Skip to main content</a>
+  <a href="#p31-slicer-main" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden">Skip to slicer</a>
+  <div class="p31-slicer-wrap" id="p31-slicer-main">
+    <header class="p31-slicer-head">
+      <p class="p31-slicer-kicker">P31 · sovereign stack · manufacturing</p>
+      <h1>Browser slicer — Kiri:Moto</h1>
+      <p style="margin:0.35rem 0 0;font-size:0.92rem;opacity:0.92">
+        Full FDM/CAM/laser pipeline in your browser (slice → toolpath → G-code). Processing stays in the <strong>Kiri:Moto</strong> app context (GridSpace, MIT). This page only frames it and links repo assets.
+      </p>
+      <nav class="p31-slicer-nav" aria-label="Related">
+        <a href="https://bonding.p31ca.org/soup">C.A.R.S.</a>
+        <a href="p31-sovereign-lab.html">Sovereign Lab</a>
+        <a href="/doc-library/index.html">Doc library</a>
+        <a href="design-assets/stl/README.md">K₄ STL README</a>
+        <a href="https://grid.space/kiri/" rel="noopener" target="_blank">Open Kiri:Moto in a new tab</a>
+        <a href="https://docs.grid.space/kiri-moto/apis/" rel="noopener" target="_blank">Engine &amp; iframe API docs</a>
+        <a href="https://github.com/GridSpace/grid-apps" rel="noopener" target="_blank">grid-apps (source)</a>
+      </nav>
+    </header>
+
+    <section class="p31-slicer-panel" aria-labelledby="h-truth">
+      <h2 id="h-truth">What to expect</h2>
+      <p><strong>Embedded UI</strong> below loads <code>https://grid.space/kiri/</code>. You need a network path to GridSpace unless you <a href="https://github.com/GridSpace/grid-apps" rel="noopener" target="_blank">self-host</a> grid-apps and swap the iframe <code>src</code> in this file.</p>
+      <p><strong>K₄ tetrahedron STL</strong> in this repo: <code>design-assets/stl/P31_K4_Topology.stl</code>. Because the iframe is <strong>HTTPS</strong> and local demo is usually <strong>HTTP</strong>, do not expect “paste localhost URL” to import cleanly — use <strong>drag-and-drop</strong> or Kiri’s file picker on the downloaded file.</p>
+      <p><strong>Heavy work</strong>: slicing is CPU/RAM intensive (GridSpace recommends planning for enough RAM). Respect <code>prefers-reduced-motion</code> in your own overlays; Kiri has its own UI settings.</p>
+    </section>
+
+    <section class="p31-slicer-panel" aria-labelledby="h-actions">
+      <h2 id="h-actions">Quick actions</h2>
+      <p id="p31-slicer-path-desc">Repo-relative path (for your file manager or <code>npm run demo</code> then drag into Kiri):</p>
+      <p class="p31-slicer-code" id="p31-slicer-relpath" role="status">design-assets/stl/P31_K4_Topology.stl</p>
+      <div class="p31-slicer-actions">
+        <button type="button" id="p31-slicer-copy">Copy relative path</button>
+        <a class="p31-slicer-btn p31-slicer-btn--ghost" href="design-assets/stl/P31_K4_Topology.stl" download>Prompt download (same-origin only)</a>
+      </div>
+    </section>
+
+    <section class="p31-slicer-panel" aria-labelledby="h-frame" style="padding:0;border:none;background:transparent">
+      <h2 id="h-frame" class="visually-hidden" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)">Kiri:Moto</h2>
+      <div class="p31-slicer-frame-wrap">
+        <iframe
+          id="p31-slicer-iframe"
+          title="Kiri:Moto — browser slicer"
+          src="https://grid.space/kiri/"
+          loading="lazy"
+          referrerpolicy="strict-origin-when-cross-origin"
+          allow="clipboard-read; clipboard-write; fullscreen"
+        ></iframe>
+      </div>
+    </section>
+  </div>
+  <div class="p31-slicer-toast" id="p31-slicer-toast" role="status" aria-live="polite"></div>
+  <script>
+    (function () {
+      var btn = document.getElementById("p31-slicer-copy");
+      var toast = document.getElementById("p31-slicer-toast");
+      var rel = document.getElementById("p31-slicer-relpath");
+      if (!btn || !toast || !rel) return;
+      function show(msg) {
+        toast.textContent = msg;
+        toast.classList.add("show");
+        setTimeout(function () {
+          toast.classList.remove("show");
+        }, 2200);
+      }
+      btn.addEventListener("click", function () {
+        var t = rel.textContent || "";
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(t).then(
+            function () {
+              show("Copied path");
+            },
+            function () {
+              show("Copy failed — select text manually");
+            }
+          );
+        } else {
+          show("Clipboard API unavailable");
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

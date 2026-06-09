@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Elevation · P31 Stylebook</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/p31-style.css">
+  <link rel="stylesheet" href="/lib/p31-fluid.css">
+  <link rel="stylesheet" href="/stylebook/_chrome.css">
+  <style>
+    .elev-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 24px;
+      padding: 24px;
+      background: var(--p31-surface);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: 14px;
+    }
+    .elev-cell {
+      background: var(--p31-surface2);
+      border-radius: 12px;
+      padding: 24px;
+      text-align: center;
+      transition: all 0.3s var(--p31-ease-fluid);
+    }
+    .elev-cell:hover { transform: translateY(-2px); }
+    .elev-name { font-weight: 600; color: var(--p31-paper); margin-bottom: 4px; }
+    .elev-token { font-family: var(--p31-font-mono); font-size: 11px; color: var(--p31-muted); }
+    
+    .glass-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      padding: 32px;
+      border-radius: 14px;
+      background:
+        radial-gradient(circle at 30% 20%, rgba(204,98,71,0.3), transparent 50%),
+        radial-gradient(circle at 70% 80%, rgba(37,137,125,0.3), transparent 50%),
+        var(--p31-surface);
+    }
+    .glass-cell {
+      padding: 20px;
+      text-align: center;
+    }
+    .glass-cell.weak {
+      background: rgba(255,255,255,0.04);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 12px;
+    }
+    .glass-cell.medium {
+      background: rgba(255,255,255,0.06);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+    }
+    .glass-cell.strong {
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 12px;
+    }
+  </style>
+</head>
+<body>
+  <script type="module">
+    import { renderShell, code, callout } from '/stylebook/_chrome.js';
+    import { P31ThemeController } from '/lib/p31-theme-engine.mjs';
+    window.p31Theme = new P31ThemeController({ defaultTheme: 'hub' });
+    
+    const content = `
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Layered surfaces</div>
+          <h2 class="sb-h2">Depth via surface, not shadow</h2>
+          <p class="sb-text">P31 prefers stepped surface colors over heavy drop shadows.
+          Each surface token sits subtly above the last. Shadows are reserved for moments where elevation
+          must be unambiguous (modals, popovers, hover states).</p>
+        </div>
+        
+        <div class="elev-grid">
+          <div class="elev-cell" style="background: var(--p31-void);">
+            <div class="elev-name">Void</div>
+            <div class="elev-token">--p31-void</div>
+          </div>
+          <div class="elev-cell" style="background: var(--p31-surface);">
+            <div class="elev-name">Surface</div>
+            <div class="elev-token">--p31-surface</div>
+          </div>
+          <div class="elev-cell" style="background: var(--p31-surface2);">
+            <div class="elev-name">Surface 2</div>
+            <div class="elev-token">--p31-surface2</div>
+          </div>
+          <div class="elev-cell" style="background: var(--p31-surface3);">
+            <div class="elev-name">Surface 3</div>
+            <div class="elev-token">--p31-surface3</div>
+          </div>
+        </div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Shadows</div>
+          <h2 class="sb-h2">Five shadow tokens</h2>
+          <p class="sb-text">Shadows are subtle by default. Use them for hover states, modals, dropdowns —
+          never as decoration.</p>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 24px; padding: 32px;">
+          <div style="aspect-ratio: 1; background: var(--p31-surface); border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.1);">
+            <div style="font-weight:600; color: var(--p31-paper);">xs</div>
+            <div style="font-family: var(--p31-font-mono); font-size: 11px; color: var(--p31-muted);">--p31-shadow-xs</div>
+          </div>
+          <div style="aspect-ratio: 1; background: var(--p31-surface); border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
+            <div style="font-weight:600; color: var(--p31-paper);">sm</div>
+            <div style="font-family: var(--p31-font-mono); font-size: 11px; color: var(--p31-muted);">--p31-shadow-sm</div>
+          </div>
+          <div style="aspect-ratio: 1; background: var(--p31-surface); border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.2);">
+            <div style="font-weight:600; color: var(--p31-paper);">md</div>
+            <div style="font-family: var(--p31-font-mono); font-size: 11px; color: var(--p31-muted);">--p31-shadow-md</div>
+          </div>
+          <div style="aspect-ratio: 1; background: var(--p31-surface); border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 8px; box-shadow: 0 12px 30px rgba(0,0,0,0.25);">
+            <div style="font-weight:600; color: var(--p31-paper);">lg</div>
+            <div style="font-family: var(--p31-font-mono); font-size: 11px; color: var(--p31-muted);">--p31-shadow-lg</div>
+          </div>
+          <div style="aspect-ratio: 1; background: var(--p31-surface); border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 8px; box-shadow: 0 24px 60px rgba(0,0,0,0.4);">
+            <div style="font-weight:600; color: var(--p31-paper);">xl</div>
+            <div style="font-family: var(--p31-font-mono); font-size: 11px; color: var(--p31-muted);">--p31-shadow-xl</div>
+          </div>
+        </div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Glass</div>
+          <h2 class="sb-h2">Translucent layers</h2>
+          <p class="sb-text">Backdrop-filter blur creates depth on rich backgrounds (gradients, photography).
+          Three intensities: weak, medium, strong.</p>
+        </div>
+        
+        <div class="glass-grid">
+          <div class="glass-cell weak">
+            <div style="font-weight:600; color: white;">Weak</div>
+            <div style="font-family: var(--p31-font-mono); font-size: 11px; color: rgba(255,255,255,0.7); margin-top: 4px;">blur(4px)</div>
+          </div>
+          <div class="glass-cell medium">
+            <div style="font-weight:600; color: white;">Medium</div>
+            <div style="font-family: var(--p31-font-mono); font-size: 11px; color: rgba(255,255,255,0.7); margin-top: 4px;">blur(12px)</div>
+          </div>
+          <div class="glass-cell strong">
+            <div style="font-weight:600; color: white;">Strong</div>
+            <div style="font-family: var(--p31-font-mono); font-size: 11px; color: rgba(255,255,255,0.7); margin-top: 4px;">blur(20px)</div>
+          </div>
+        </div>
+        
+        ${callout('warn', 'Glass needs context', 'Backdrop-filter only works when there\'s something behind it to blur. On a solid surface, glass effects look identical to a translucent overlay — pointless visual cost.')}
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">When to elevate</div>
+          <h2 class="sb-h2">Decision rules</h2>
+        </div>
+        
+        <table class="sb-table">
+          <thead><tr><th>Scenario</th><th>Pattern</th></tr></thead>
+          <tbody>
+            <tr><td>Card grid on a page</td><td>Surface 1 cards on void</td></tr>
+            <tr><td>Card hover state</td><td>Border color change + shadow-md</td></tr>
+            <tr><td>Modal / dialog</td><td>Surface 2 + shadow-xl + dark backdrop</td></tr>
+            <tr><td>Dropdown / popover</td><td>Surface 2 + shadow-lg</td></tr>
+            <tr><td>Toast / notification</td><td>Surface 2 + shadow-md</td></tr>
+            <tr><td>Floating UI on photo/gradient</td><td>Glass medium</td></tr>
+            <tr><td>Sticky header on page</td><td>Glass weak (when scrolling)</td></tr>
+          </tbody>
+        </table>
+      </section>
+    `;
+    
+    renderShell({
+      activeId: 'elevation',
+      breadcrumb: [
+        { href: '/stylebook/', label: 'Stylebook' },
+        { href: '/stylebook/', label: 'Foundations' },
+        { label: 'Elevation' }
+      ],
+      title: 'Elevation',
+      subtitle: 'Depth through stepped surfaces, restrained shadows, and glass effects.',
+      meta: [
+        { label: 'Surfaces', value: '4' },
+        { label: 'Shadows', value: '5' },
+        { label: 'Glass', value: '3' }
+      ],
+      content
+    });
+  </script>
+</body>
+</html>

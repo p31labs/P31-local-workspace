@@ -1,0 +1,288 @@
+{
+  "_comment": "Single bundle of live sites + Worker fleet. Mesh/payment URLs MUST match p31-constants.json; allowlist names MUST match andromeda/software/p31ca/security/worker-allowlist.json. After changing constants: npm run apply:constants && npm run verify:constants. defaultWorkersDev uses account subdomain trimtab-signal — confirm with wrangler or live GET if a Worker uses another account.",
+  "schema": "p31.liveFleet/1.0.0",
+  "updated": "2026-05-04",
+  "sources": [
+    "p31-constants.json",
+    "p31-ecosystem.json",
+    "p31-discord-bot-swarm.json",
+    "andromeda/software/p31ca/public/p31-public-surface.json",
+    "andromeda/software/p31ca/public/p31-integrations.json",
+    "andromeda/software/p31ca/security/worker-allowlist.json",
+    "workers/p31-ecosystem-bridge/wrangler.toml",
+    "phosphorus31.org/apps/buffer-api/wrangler.toml"
+  ],
+  "sites": {
+    "technicalHub": {
+      "url": "https://p31ca.org/",
+      "kind": "cloudflare-pages",
+      "note": "Astro hub + static public/"
+    },
+    "operatorShell": {
+      "url": "https://p31ca.org/ops/",
+      "kind": "pages-route",
+      "note": "Glass probes, density dial; CWP-P31-UI"
+    },
+    "integrationsBridge": {
+      "url": "https://p31ca.org/integrations",
+      "kind": "pages-route",
+      "note": "OSS catalog + endpoint slots; driven by p31-constants.json integrations → p31-integrations.json"
+    },
+    "orgMarketing": {
+      "url": "https://phosphorus31.org/",
+      "kind": "separate-repo-deploy",
+      "statusJson": "https://phosphorus31.org/p31-status.json",
+      "note": "Not p31ca; parallel site. Serves p31-status.json for cross-site reads."
+    },
+    "bondingVertical": {
+      "url": "https://bonding.p31ca.org/",
+      "kind": "pages-or-worker-front",
+      "note": "p31-constants bonding.publicUrl"
+    },
+    "publicMachineIndexes": {
+      "publicSurface": "https://p31ca.org/p31-public-surface.json",
+      "creatorEconomy": "https://p31ca.org/creator-economy.json",
+      "contractRegistry": "https://p31ca.org/p31-contract-registry.json",
+      "meshConstants": "https://p31ca.org/p31-mesh-constants.json",
+      "note": "Hub ships JSON contracts; schema p31.publicSurface/1.0.0"
+    },
+    "featuredPublicPaths": [
+      { "path": "/demos", "note": "Demo labs index (static demos)" },
+      { "path": "/visuals", "note": "Mind-bending visual demos — K₄ mesh · alignment graph · Larmor pulse · glass box (p31.demosIndex)" },
+      { "path": "/glass-box", "note": "Public transparency terminal — synthetic CLI playbacks + verify pulse + promoted reports (p31.glassBox)" },
+      { "path": "/contracts", "note": "Contract builder UI + alignment-derived registry (p31.contractRegistry)" },
+      { "path": "/composer", "note": "Quantum composer — K₄ Web Audio partials on Larmor ladder (p31.quantumComposerPage)" },
+      { "path": "/cars", "note": "Social Molecules · C.A.R.S. operator shell (boot, load, settings, field chat, edge ribbon)" },
+      { "path": "/fleet", "note": "Live fleet map (sites + Workers)" },
+      { "path": "/agents", "note": "Fleet agents room — each Worker · bot · Cortex sub-agent interactive + probes (/fleet-agents)" },
+      { "path": "/delta", "note": "Wye→Delta narrative" },
+      { "path": "/why", "note": "short redirect" },
+      { "path": "/connect.html", "note": "K₄ Three.js navigator" },
+      { "path": "/passport", "note": "301 → passport generator" },
+      { "path": "/build", "note": "Initial Build CWP" },
+      { "path": "/family-pack", "note": "family sovereign pack" },
+      { "path": "/mesh-start.html", "note": "PAR landing" },
+      { "path": "/integrations", "note": "OSS integrations catalog + LAN endpoint slots" }
+    ]
+  },
+  "meshAndPayments": {
+    "_from": "p31-constants.json",
+    "mesh": {
+      "k4PersonalWorkerUrl": "https://k4-personal.trimtab-signal.workers.dev",
+      "k4CageWorkerUrl": "https://k4-cage.trimtab-signal.workers.dev",
+      "k4HubsWorkerUrl": "https://k4-hubs.trimtab-signal.workers.dev",
+      "k4AgentHubWorkerUrl": "https://k4-agent-hub.trimtab-signal.workers.dev",
+      "agentHubWorkerUrl": "https://p31-agent-hub.trimtab-signal.workers.dev",
+      "orchestratorWorkerUrl": "https://p31-orchestrator.trimtab-signal.workers.dev",
+      "passkeyApiBasePath": "/api/passkey",
+      "passkeySameOriginBase": "https://p31ca.org/api/passkey",
+       "edgeLabWorkerUrl": "https://cf-edge-lab.trimtab-signal.workers.dev",
+       "tetraHubWorkerUrl": "https://tetra-hub.trimtab-signal.workers.dev",
+       "geodesicRoomWorkerUrl": "https://geodesic-room.trimtab-signal.workers.dev",
+       "googleBridgeWorkerUrl": "https://p31-google-bridge.trimtab-signal.workers.dev",
+       "bondingRelayWorkerUrl": "https://bonding-relay.trimtab-signal.workers.dev",
+       "ecosystemBridgeWorkerUrl": "https://ecosystem-bridge.trimtab-signal.workers.dev",
+       "bufferApiWorkerUrl": "https://p31-buffer-api.trimtab-signal.workers.dev",
+       "telemetryWorkerUrl": "https://p31-telemetry.trimtab-signal.workers.dev",
+       "fhirWorkerUrl": "https://p31-fhir.trimtab-signal.workers.dev",
+       "syncWorkerUrl": "https://p31-sync.trimtab-signal.workers.dev",
+       "spaceshipRelayWorkerUrl": "https://spaceship-relay.trimtab-signal.workers.dev",
+      "remembranceWarmWhite": "#f5f0e8",
+      "remembranceBereavementKvKey": "mesh_bereavement_until",
+      "vertexStateRemembered": "remembered",
+      "note": "passkey Worker zone-routed on p31ca.org when deployed"
+    },
+    "payment": {
+      "donateApiHealthUrl": "https://donate-api.phosphorus31.org/health",
+      "donateApiWorkersDevUrl": "https://donate-api.trimtab-signal.workers.dev",
+      "stripeWorkerHost": "donate-api.phosphorus31.org"
+    }
+  },
+  "workersVerified": [
+    {
+      "id": "p31-ecosystem-bridge",
+      "workersDev": "https://ecosystem-bridge.trimtab-signal.workers.dev",
+      "healthPaths": ["/health"],
+      "publicPaths": ["/api/sync", "/api/status", "/api/fleet"],
+      "constantsKey": "mesh.ecosystemBridgeWorkerUrl",
+      "deploy": "workers/p31-ecosystem-bridge (wrangler deploy)",
+      "cors": ["https://phosphorus31.org", "https://p31ca.org"],
+      "note": "Cross-site nervous system. CORS bridge for phosphorus31.org ↔ p31ca.org. Serves org constants slice + aggregated health."
+    },
+    {
+      "id": "p31-telemetry",
+      "workersDev": "https://p31-telemetry.trimtab-signal.workers.dev",
+      "healthPaths": ["/health"],
+      "constantsKey": "mesh.telemetryWorkerUrl",
+      "deploy": "software/telemetry-worker",
+      "note": "Telemetry ingestion Worker; receives and processes mesh telemetry events"
+    },
+    {
+      "id": "p31-fhir",
+      "workersDev": "https://p31-fhir.trimtab-signal.workers.dev",
+      "healthPaths": ["/health"],
+      "constantsKey": "mesh.fhirWorkerUrl",
+      "deploy": "software/p31ca/workers/fhir",
+      "note": "FHIR Worker for medical data integration; D1: p31-fhir-db"
+    },
+    {
+      "id": "p31-sync",
+      "workersDev": "https://p31-sync.trimtab-signal.workers.dev",
+      "healthPaths": ["/health"],
+      "constantsKey": "mesh.syncWorkerUrl",
+      "deploy": "software/p31ca/workers/sync",
+      "note": "Yjs/PGLite sync Worker; real-time collaborative editing infrastructure"
+    },
+    {
+      "id": "spaceship-relay",
+      "workersDev": "https://spaceship-relay.trimtab-signal.workers.dev",
+      "healthPaths": ["/health"],
+      "constantsKey": "mesh.spaceshipRelayWorkerUrl",
+      "deploy": "software/spaceship-earth",
+      "note": "Spaceship Earth PWA relay Worker; GlobeRoom + Three.js coordination"
+    },
+    {
+      "id": "k4-cage",
+      "workersDev": "https://k4-cage.trimtab-signal.workers.dev",
+      "healthPaths": ["/api/health"],
+      "constantsKey": "mesh.k4CageWorkerUrl",
+      "deploy": "software/k4-cage"
+    },
+    {
+      "id": "k4-hubs",
+      "workersDev": "https://k4-hubs.trimtab-signal.workers.dev",
+      "healthPaths": ["/health"],
+      "constantsKey": "mesh.k4HubsWorkerUrl",
+      "deploy": "software/k4-hubs"
+    },
+    {
+      "id": "tetra-hub",
+      "workersDev": "https://tetra-hub.trimtab-signal.workers.dev",
+      "healthPaths": ["/api/health"],
+      "constantsKey": "mesh.tetraHubWorkerUrl",
+      "deploy": "workers/tetra-hub (bonding-soup home root)",
+      "note": "Read-only K₄ trio aggregator; service-binds k4-cage, k4-personal, k4-hubs"
+    },
+    {
+      "id": "k4-agent-hub",
+      "workersDev": "https://k4-agent-hub.trimtab-signal.workers.dev",
+      "healthPaths": ["/v1/manifest", "/v1/forge/health"],
+      "constantsKey": "mesh.k4AgentHubWorkerUrl",
+      "deploy": "packages/k4-agent-hub (wrangler deploy)",
+      "note": "K₄ agent worker tetrahedron — Ed25519 dock/call/anchor-pact/federation/family-cage; schema p31.k4AgentHub/1.1.0"
+    },
+    {
+      "id": "p31-agent-hub",
+      "workersDev": "https://p31-agent-hub.trimtab-signal.workers.dev",
+      "healthPaths": ["/api/health"],
+      "constantsKey": "mesh.agentHubWorkerUrl",
+      "deploy": "software/p31-agent-hub",
+      "note": "wrangler may define p31-agent-hub-internal; prod URL per constants"
+    },
+    {
+      "id": "p31-orchestrator",
+      "workersDev": "https://p31-orchestrator.trimtab-signal.workers.dev",
+      "statusPath": "/api/orchestrator/status",
+      "constantsKey": "mesh.orchestratorWorkerUrl",
+      "deploy": "workers/wrangler-orchestrator.toml",
+      "note": "May 401/403 without Cloudflare Access — still edge up"
+    },
+    {
+      "id": "command-center",
+      "workersDev": "https://command-center.trimtab-signal.workers.dev",
+      "healthPaths": ["/api/health"],
+      "publicPaths": ["/api/operator/shift"],
+      "deploy": "software/cloudflare-worker/command-center",
+      "note": "EPCP operator glass"
+    },
+    {
+      "id": "geodesic-room",
+      "workersDev": "https://geodesic-room.trimtab-signal.workers.dev",
+      "constantsKey": "mesh.geodesicRoomWorkerUrl",
+      "deploy": "software/geodesic-room",
+      "note": "DO v0.2; WS /api/geodesic/:id/ws; see GEODESIC-GAME-ENGINE-INTEGRATION.md"
+    },
+    {
+      "id": "p31-google-bridge",
+      "workersDev": "https://p31-google-bridge.trimtab-signal.workers.dev",
+      "healthPaths": ["/health"],
+      "constantsKey": "mesh.googleBridgeWorkerUrl",
+      "deploy": "software/p31-google-bridge",
+      "note": "Google OAuth + calendar.readonly; KV sessions"
+    },
+    {
+      "id": "bonding-relay",
+      "workersDev": "https://bonding-relay.trimtab-signal.workers.dev",
+      "healthPaths": ["/health"],
+      "constantsKey": "mesh.bondingRelayWorkerUrl",
+      "deploy": "software/bonding",
+      "note": "BONDING telemetry + rooms; not the vertical Pages front"
+    },
+    {
+      "id": "cf-edge-lab",
+      "workersDev": "https://cf-edge-lab.trimtab-signal.workers.dev",
+      "constantsKey": "mesh.edgeLabWorkerUrl",
+      "deploy": "packages/cf-edge-lab",
+      "note": "Workers AI + /api/edge (request.cf) + WebSocket /ws; GET / playground"
+    },
+    {
+      "id": "donate-api",
+      "workersDev": "https://donate-api.trimtab-signal.workers.dev",
+      "customDomain": "https://donate-api.phosphorus31.org",
+      "healthPaths": ["/health"],
+      "deploy": "software/donate-api"
+    },
+    {
+      "id": "p31-passkey",
+      "sameOriginOnHub": "https://p31ca.org/api/passkey",
+      "workersDev": "https://p31-passkey.trimtab-signal.workers.dev",
+      "deploy": "p31ca/workers/passkey",
+      "note": "Production mount: zone route p31ca.org/api/passkey/*; workers.dev may exist for direct tests"
+    },
+    {
+      "id": "p31-buffer-api",
+      "workersDev": "https://p31-buffer-api.trimtab-signal.workers.dev",
+      "healthPaths": ["/health"],
+      "publicPaths": ["/rewrite"],
+      "deploy": "phosphorus31.org/apps/buffer-api (wrangler deploy)",
+      "cors": ["https://phosphorus31.org"],
+      "note": "AI rewrite worker (Gemini) for phosphorus31.org — voltage-gated messaging buffer"
+    }
+  ],
+  "workersAllowlisted": [
+    { "id": "bonding-relay", "codePath": "software/bonding", "defaultWorkersDev": "https://bonding-relay.trimtab-signal.workers.dev" },
+    { "id": "p31-bouncer", "codePath": "software/cloudflare-worker/bouncer", "defaultWorkersDev": "https://p31-bouncer.trimtab-signal.workers.dev" },
+    { "id": "p31-social-worker", "codePath": "software/cloudflare-worker/social-drop-automation", "defaultWorkersDev": "https://p31-social-worker.trimtab-signal.workers.dev" },
+    { "id": "p31-social-broadcast", "codePath": "software/cloudflare-worker (multi-name wrangler)", "defaultWorkersDev": "https://p31-social-broadcast.trimtab-signal.workers.dev", "note": "Same file defines discord dev/staging names" },
+    { "id": "genesis-gate", "codePath": "software/genesis-gate", "defaultWorkersDev": "https://genesis-gate.trimtab-signal.workers.dev" },
+    { "id": "kenosis-mesh", "codePath": "software/kenosis-mesh", "defaultWorkersDev": "https://kenosis-mesh.trimtab-signal.workers.dev" },
+    { "id": "p31-google-bridge", "codePath": "software/p31-google-bridge", "defaultWorkersDev": "https://p31-google-bridge.trimtab-signal.workers.dev" },
+    { "id": "p31-cortex", "codePath": "software/p31-cortex", "defaultWorkersDev": "https://p31-cortex.trimtab-signal.workers.dev" },
+    { "id": "p31-forge", "codePath": "software/p31-forge", "defaultWorkersDev": "https://p31-forge.trimtab-signal.workers.dev" },
+    { "id": "p31-hearing-ops", "codePath": "software/p31-hearing-ops", "defaultWorkersDev": "https://p31-hearing-ops.trimtab-signal.workers.dev" },
+    { "id": "p31-state", "codePath": "software/p31-state", "defaultWorkersDev": "https://p31-state.trimtab-signal.workers.dev" },
+    { "id": "p31-pwa", "codePath": "software/packages/node-zero/pwa", "defaultWorkersDev": "https://p31-pwa.trimtab-signal.workers.dev" },
+    { "id": "p31-quantum-edge", "codePath": "software/packages/quantum-edge", "defaultWorkersDev": "https://p31-quantum-edge.trimtab-signal.workers.dev", "note": "wrangler defines prod/staging variants" },
+    { "id": "p31-command-center", "codePath": "software/sovereign-command-center", "defaultWorkersDev": "https://p31-command-center.trimtab-signal.workers.dev", "note": "Distinct from command-center EPCP Worker" },
+    { "id": "spaceship-relay", "codePath": "software/spaceship-earth", "defaultWorkersDev": "https://spaceship-relay.trimtab-signal.workers.dev" },
+    { "id": "p31-telemetry", "codePath": "software/telemetry-worker", "defaultWorkersDev": "https://p31-telemetry.trimtab-signal.workers.dev" },
+    { "id": "p31-workers", "codePath": "software/workers", "defaultWorkersDev": "https://p31-workers.trimtab-signal.workers.dev", "note": "Love ledger monolith; orchestrator is separate Worker p31-orchestrator" },
+    { "id": "p31ca", "codePath": "software/p31ca", "note": "Wrangler project for Pages/hub; public URL is https://p31ca.org not workers.dev" }
+  ],
+  "glassProbesIndex": {
+    "file": "p31-ecosystem.json",
+    "key": "glassProbes",
+    "command": "P31_GLASS_STRICT=1 npm run ecosystem:glass"
+  },
+  "wcd33Archive": {
+    "deployPath": "wcd33-global-archive",
+    "note": "Listed in p31-ecosystem deployables; URL not in constants — see package wrangler"
+  },
+  "discordBotSwarm": {
+    "schema": "p31.discordBotSwarm/1.0.0",
+    "summaryPath": "p31-discord-bot-swarm.json",
+    "codePath": "andromeda/software/discord/p31-bot",
+    "ecosystemDeployableId": "p31-discord-bot-swarm",
+    "note": "Command roster + registryFingerprint mirror the bot manifest; regenerate with npm run verify:discord-bot"
+  }
+}

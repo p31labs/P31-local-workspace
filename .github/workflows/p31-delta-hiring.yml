@@ -1,0 +1,63 @@
+# CI for p31-delta-hiring (Vite static app under software)
+name: p31-delta-hiring
+
+on:
+  # Any branch: path filters keep noise low; feature/wip PRs and pushes are covered
+  push:
+    paths:
+      - 'software/p31-delta-hiring/**'
+      - '.github/actions/pnpm-04-software/**'
+      - '.github/actions/toolchain-constants/**'
+      - '.github/workflows/p31-delta-hiring.yml'
+  pull_request:
+    paths:
+      - 'software/p31-delta-hiring/**'
+      - '.github/actions/pnpm-04-software/**'
+      - '.github/actions/toolchain-constants/**'
+      - '.github/workflows/p31-delta-hiring.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: p31-delta-hiring-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/toolchain-constants
+      - uses: ./.github/actions/pnpm-04-software
+      - name: Verify, test, lint, build (Turbo)
+        working-directory: software
+        run: pnpm run check:p31-delta-hiring
+      - name: Upload dist (for Pages deploy on main)
+        if: success() && github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v4
+        with:
+          name: p31-delta-hiring-dist
+          path: software/p31-delta-hiring/dist
+          if-no-files-found: error
+
+  deploy:
+    name: Deploy to Cloudflare Pages
+    needs: check
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: p31-delta-hiring-dist
+          path: dist
+      - uses: ./.github/actions/toolchain-constants
+      - uses: ./.github/actions/wrangler-run
+        with:
+          working-directory: .
+          command: pages deploy dist --project-name=p31-delta-hiring --branch=main
+          api-token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          account-id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

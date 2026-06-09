@@ -1,0 +1,16 @@
+name: SCE Edge Pacemaker
+
+on:
+  schedule:
+    - cron: '30 7,19 * * *'
+  workflow_dispatch:
+
+jobs:
+  pulse-the-mesh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Cloudflare SCE Broadcaster
+        run: |
+          curl -X POST https://p31-sce-broadcaster.trimtab-signal.workers.dev/trigger \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer ${{ secrets.SCE_BEARER_TOKEN }}"

@@ -1,0 +1,128 @@
+{
+  "$schema": "p31.nonprofit.donorPolicy/1.0.0",
+  "_meta": {
+    "description": "Gift acceptance policy + donor stewardship + receipt issuance + refund policy. Drives /donate page copy, Stripe webhook handlers, and tax-receipt generation.",
+    "lastUpdated": "2026-05-01",
+    "owner": "operator@phosphorus31.org",
+    "publicUrl": "https://phosphorus31.org/donor-policy",
+    "verifier": "npm run verify:nonprofit"
+  },
+  "giftAcceptance": {
+    "acceptedTypes": [
+      { "type": "cash-credit-debit", "channel": "Stripe", "minimum": 1, "maximum": null, "automatic": true },
+      { "type": "ach-transfer", "channel": "Stripe", "minimum": 100, "maximum": null, "automatic": true },
+      { "type": "wire-transfer", "channel": "bank", "minimum": 5000, "maximum": null, "automatic": false, "requiresApproval": "Treasurer" },
+      { "type": "check", "channel": "mail", "minimum": 1, "maximum": null, "automatic": false, "depositWithin": "5 business days" },
+      { "type": "stock-securities", "channel": "broker DTC", "minimum": 1000, "maximum": null, "automatic": false, "requiresApproval": "Treasurer + Chair", "policy": "sell on receipt; do not hold" },
+      { "type": "crypto", "channel": "TBD (likely The Giving Block)", "minimum": 100, "maximum": null, "automatic": false, "policy": "convert to USD on receipt; do not hold" },
+      { "type": "donor-advised-fund", "channel": "DAF sponsor", "minimum": 1, "maximum": null, "automatic": false },
+      { "type": "in-kind-goods", "channel": "case-by-case", "automatic": false, "requiresApproval": "Executive + Treasurer", "policy": "must align with mission; donor responsible for valuation" },
+      { "type": "in-kind-services", "channel": "case-by-case", "automatic": false, "policy": "track for transparency, not booked as revenue per GAAP" }
+    ],
+    "declinedTypes": [
+      { "type": "real-estate", "reason": "no infrastructure to evaluate, hold, or dispose; revisit when reserve > $500k" },
+      { "type": "private-equity", "reason": "valuation complexity + holding-period risk" },
+      { "type": "tobacco-industry-funds", "reason": "mission conflict — health-adjacent operator condition" },
+      { "type": "weapons-manufacturer-funds", "reason": "mission conflict — mesh-for-resilience values" },
+      { "type": "cash-via-mail", "reason": "audit-trail concerns" },
+      { "type": "bequests-from-estates-of-living-donors", "reason": "must wait until estate settles" }
+    ],
+    "anonymityRespect": {
+      "policy": "Anonymous gifts accepted at all amounts. Publicly listed donor recognition opt-in only.",
+      "internalRecord": "always kept for audit trail and tax compliance, even when public name is withheld"
+    },
+    "donorRecognition": {
+      "thresholds": [
+        { "minimum": 1, "tier": "Friend", "publicListing": "opt-in" },
+        { "minimum": 100, "tier": "Sustainer", "publicListing": "opt-in" },
+        { "minimum": 1000, "tier": "Advocate", "publicListing": "opt-in" },
+        { "minimum": 10000, "tier": "Patron", "publicListing": "opt-in" },
+        { "minimum": 100000, "tier": "Architect", "publicListing": "opt-in" }
+      ],
+      "namingRights": {
+        "policy": "No naming rights granted that constitute private benefit. Honorary recognition only — recipient's name may appear on a program or fund but P31 retains full control of the named asset.",
+        "minimumForNaming": 25000,
+        "boardApprovalRequired": true,
+        "reversible": "P31 retains right to re-name on documented breach of values or mission"
+      }
+    }
+  },
+  "recurringDonations": {
+    "supported": true,
+    "frequencies": ["monthly", "quarterly", "annual"],
+    "donorCanModify": true,
+    "donorCanCancel": true,
+    "cancellationDelay": "immediate",
+    "remindersBeforeCharge": "annually summarize prior year giving by January 31"
+  },
+  "refundPolicy": {
+    "windowDays": 30,
+    "fullRefundConditions": [
+      "Donor requests within 30 days for any reason",
+      "Charge made in error",
+      "Charge made fraudulently",
+      "Charge does not match donor intent (wrong amount, wrong frequency, wrong fund)"
+    ],
+    "partialRefundConditions": [
+      "Recurring donation cancellation outside 30-day window: future charges canceled, prior charges retained"
+    ],
+    "refundsAreNotTaxDeductible": "Donor must amend tax return if refund issued in following calendar year",
+    "processingTime": "5-10 business days back to original payment method"
+  },
+  "taxReceipts": {
+    "issuedFor": "every contribution >= $1, regardless of IRS threshold",
+    "channel": "email immediately + downloadable PDF in donor portal",
+    "annualSummary": "January 31 of year following contribution year",
+    "language": {
+      "header": "Tax-Deductible Donation Receipt",
+      "body": [
+        "Thank you for your contribution to P31 Labs, Inc., a Georgia nonprofit corporation.",
+        "EIN: 42-1888158",
+        "Contribution amount: ${amount}",
+        "Date received: ${date}",
+        "Method: ${method}",
+        "Designation: ${fund}",
+        "No goods or services were provided in exchange for this contribution.",
+        "P31 Labs, Inc. is a 501(c)(3) tax-exempt organization (status pending; receipts retroactive to incorporation date upon IRS determination).",
+        "Please retain this receipt for your tax records."
+      ]
+    },
+    "irsConditionalLanguage": {
+      "untilDeterminationLetter": "P31 Labs, Inc. has applied for 501(c)(3) status. Donations made before IRS determination are deductible retroactively to incorporation date if the application is approved. We will notify you upon receipt of the determination letter.",
+      "afterDeterminationLetter": "P31 Labs, Inc. is a 501(c)(3) tax-exempt organization. EIN: 42-1888158."
+    }
+  },
+  "stewardship": {
+    "newDonorWelcome": {
+      "deliverable": "thank-you email within 24h + onboarding-to-mission within 7d",
+      "content": "Mission summary, what their gift will do, how to follow progress, no upsell"
+    },
+    "anniversaryAcknowledgment": {
+      "monthly": "no — recurring donors should not be re-thanked monthly (annoyance)",
+      "annual": "yes — annual giving summary + impact recap"
+    },
+    "majorDonorTouches": {
+      "threshold": 1000,
+      "perYearMinimum": 4,
+      "channelMix": ["personal email", "video update", "annual call from Chair"]
+    },
+    "lapsedDonorReengagement": {
+      "lapsedDefinition": "no gift in 14 months (1 year + 60-day grace)",
+      "outreachAttempts": 2,
+      "thenStop": true,
+      "rationale": "Respect operator's no-FOMO ethos; never harass"
+    }
+  },
+  "privacy": {
+    "donorListNeverSold": true,
+    "donorListNeverRented": true,
+    "donorListNeverExchanged": true,
+    "thirdPartyAccess": "vendors required for processing only; under DPA",
+    "dataRetention": "7 years per IRS + state requirements; anonymized after retention period"
+  },
+  "ethicalScreening": {
+    "policy": "Major gifts (>= $10,000) screened against: known sanctions lists, demonstrated values misalignment, ongoing litigation alleging mission-relevant harm. Decline option always preserved.",
+    "process": "Treasurer + Chair review; majority vote of independent board members for declines",
+    "documentationRequired": "rationale for accept/decline of all major gifts, retained per document-retention policy"
+  }
+}

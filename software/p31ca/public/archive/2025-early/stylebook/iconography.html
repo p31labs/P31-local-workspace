@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0f1115">
+  <title>Iconography · P31 Stylebook</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/p31-style.css">
+  <link rel="stylesheet" href="/lib/p31-fluid.css">
+  <link rel="stylesheet" href="/stylebook/_chrome.css">
+  <style>
+    .icon-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+      gap: 8px;
+    }
+    .icon-cell {
+      padding: 16px 8px;
+      background: var(--p31-surface);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: 10px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.15s var(--p31-ease-fluid);
+    }
+    .icon-cell:hover {
+      border-color: var(--p31-primary);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+    }
+    .icon-glyph {
+      font-size: 28px;
+      color: var(--p31-paper);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .icon-name {
+      font-family: var(--p31-font-mono);
+      font-size: 10px;
+      color: var(--p31-muted);
+      word-break: break-all;
+    }
+    .icon-cell.copied {
+      border-color: var(--p31-phosphor);
+      background: rgba(0,255,136,0.05);
+    }
+    .icon-cell.copied .icon-name { color: var(--p31-phosphor); }
+    
+    .role-icons {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+    }
+    .role-icon {
+      padding: 16px;
+      background: var(--p31-surface);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .role-icon-box {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: var(--p31-surface2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+    .role-icon-info strong {
+      font-size: 13px;
+      color: var(--p31-paper);
+      font-weight: 600;
+      display: block;
+      margin-bottom: 2px;
+    }
+    .role-icon-info span {
+      font-size: 11px;
+      color: var(--p31-muted);
+      font-family: var(--p31-font-mono);
+    }
+  </style>
+</head>
+<body>
+  <script type="module">
+    import { renderShell, code, callout } from '/stylebook/_chrome.js';
+    import { P31ThemeController } from '/lib/p31-theme-engine.mjs';
+    window.p31Theme = new P31ThemeController({ defaultTheme: 'hub' });
+    
+    const ICONS = [
+      { glyph: '◇', name: 'diamond' },
+      { glyph: '◈', name: 'diamond.dot' },
+      { glyph: '◆', name: 'diamond.solid' },
+      { glyph: '○', name: 'circle' },
+      { glyph: '●', name: 'circle.solid' },
+      { glyph: '◐', name: 'circle.half' },
+      { glyph: '◉', name: 'circle.target' },
+      { glyph: '◯', name: 'circle.thin' },
+      { glyph: '□', name: 'square' },
+      { glyph: '■', name: 'square.solid' },
+      { glyph: '◰', name: 'square.tl' },
+      { glyph: '◳', name: 'square.tr' },
+      { glyph: '⊟', name: 'square.minus' },
+      { glyph: '⊞', name: 'square.plus' },
+      { glyph: '⊝', name: 'square.empty' },
+      { glyph: '△', name: 'triangle' },
+      { glyph: '▲', name: 'triangle.solid' },
+      { glyph: '▤', name: 'rect.filled' },
+      { glyph: '▦', name: 'rect.grid' },
+      { glyph: '⌘', name: 'command' },
+      { glyph: '⌥', name: 'option' },
+      { glyph: '⌃', name: 'control' },
+      { glyph: '⇧', name: 'shift' },
+      { glyph: '⏎', name: 'enter' },
+      { glyph: '⌫', name: 'delete' },
+      { glyph: '⎋', name: 'escape' },
+      { glyph: '⎘', name: 'paste' },
+      { glyph: '↑', name: 'up' },
+      { glyph: '↓', name: 'down' },
+      { glyph: '←', name: 'left' },
+      { glyph: '→', name: 'right' },
+      { glyph: '↝', name: 'flow' },
+      { glyph: '↩', name: 'return' },
+      { glyph: '⇣', name: 'download' },
+      { glyph: '⇡', name: 'upload' },
+      { glyph: '⊕', name: 'add' },
+      { glyph: '⊖', name: 'remove' },
+      { glyph: '⊗', name: 'close' },
+      { glyph: '✕', name: 'x' },
+      { glyph: '✓', name: 'check' },
+      { glyph: '✦', name: 'spark' },
+      { glyph: '✶', name: 'spark.6' },
+      { glyph: '★', name: 'star.solid' },
+      { glyph: '☆', name: 'star' },
+      { glyph: '⚙', name: 'settings' },
+      { glyph: '⚇', name: 'die.2' },
+      { glyph: '⚂', name: 'die.random' },
+      { glyph: '⏣', name: 'cube' },
+      { glyph: '⏲', name: 'clock' },
+      { glyph: '⏵', name: 'play' },
+      { glyph: '⏸', name: 'pause' },
+      { glyph: '⏹', name: 'stop' },
+      { glyph: '⌕', name: 'search' },
+      { glyph: '⌗', name: 'hash' },
+      { glyph: '⫶', name: 'kebab.v' },
+      { glyph: '☰', name: 'menu' },
+      { glyph: 'A', name: 'text' },
+      { glyph: 'i', name: 'info' },
+      { glyph: '!', name: 'alert' },
+      { glyph: '?', name: 'help' },
+      { glyph: '@', name: 'mention' },
+      { glyph: '#', name: 'tag' }
+    ];
+    
+    const SEMANTIC = [
+      { glyph: '✓', label: 'Success', tone: 'phosphorus' },
+      { glyph: '⚠', label: 'Warning', tone: 'butter' },
+      { glyph: 'ℹ', label: 'Info', tone: 'cyan' },
+      { glyph: '✕', label: 'Error', tone: 'coral' },
+      { glyph: '●', label: 'Active', tone: 'phosphor' },
+      { glyph: '○', label: 'Inactive', tone: 'muted' },
+      { glyph: '◐', label: 'Loading', tone: 'lavender' },
+      { glyph: '◇', label: 'Default', tone: 'cloud' }
+    ];
+    
+    const iconCells = ICONS.map(i => `
+      <div class="icon-cell" data-glyph="${i.glyph}" data-name="${i.name}"
+           onclick="navigator.clipboard.writeText('${i.glyph}').then(()=>{this.classList.add('copied');setTimeout(()=>this.classList.remove('copied'),1200)})">
+        <div class="icon-glyph">${i.glyph}</div>
+        <div class="icon-name">${i.name}</div>
+      </div>
+    `).join('');
+    
+    const semanticCells = SEMANTIC.map(s => `
+      <div class="role-icon">
+        <div class="role-icon-box" style="color: var(--p31-${s.tone}); background: rgba(255,255,255,0.05);">
+          ${s.glyph}
+        </div>
+        <div class="role-icon-info">
+          <strong>${s.label}</strong>
+          <span>--p31-${s.tone}</span>
+        </div>
+      </div>
+    `).join('');
+    
+    const content = `
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Philosophy</div>
+          <h2 class="sb-h2">Glyphs over images</h2>
+          <p class="sb-text">
+            P31 uses Unicode glyphs as the primary icon system. Why?
+            <strong>Zero bytes.</strong> No SVG sprite to maintain, no font file to load.
+            <strong>Universally readable.</strong> Every screen reader announces them.
+            <strong>Theme-aware.</strong> They inherit color from <code>color</code>, not <code>fill</code>.
+          </p>
+          ${callout('info', 'Click any glyph', 'Single click copies the glyph to your clipboard. Paste anywhere — they\'re plain text.')}
+        </div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Semantic</div>
+          <h2 class="sb-h2">Icons with a job</h2>
+          <p class="sb-text">When an icon carries meaning, pair it with a color role and screen-reader text.</p>
+        </div>
+        <div class="role-icons">${semanticCells}</div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">The catalog</div>
+          <h2 class="sb-h2">${ICONS.length}+ glyphs</h2>
+          <p class="sb-text">Browse and copy any glyph. Each is curated for a specific UI role.</p>
+        </div>
+        <div class="icon-grid">${iconCells}</div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Use it</div>
+          <h2 class="sb-h2">In code</h2>
+        </div>
+        
+        ${code(`<!-- Plain glyph -->
+<span class="icon">◇</span>
+
+<!-- With semantic color -->
+<span class="icon" style="color: var(--p31-phosphorus);">✓</span>
+<span class="icon" style="color: var(--p31-coral);">⚠</span>
+
+<!-- Pair with screen-reader text for accessibility -->
+<button aria-label="Settings">
+  <span aria-hidden="true">⚙</span>
+</button>
+
+<!-- For status, pair icon + text always -->
+<span style="display:inline-flex; gap: 6px; align-items: center;">
+  <span style="color: var(--p31-phosphor);">●</span>
+  <span>System operational</span>
+</span>`, 'html', 'Icon usage')}
+        
+        ${callout('warn', 'Color is not enough', 'Never carry meaning by color alone. The same dot at <code>--p31-phosphor</code> green and <code>--p31-coral</code> red is invisible to a colorblind user. Always pair with text or a distinct shape.')}
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">When you need real SVGs</div>
+          <h2 class="sb-h2">Fallback to assets</h2>
+          <p class="sb-text">
+            For brand marks, illustrations, or icons that need bespoke shapes (the P31 mark, K₄ tetrahedron),
+            use SVG inline or as <code>&lt;img&gt;</code>. Keep them in <code>/public/design-assets/</code>
+            and never inline base64 — the cost compounds quickly.
+          </p>
+        </div>
+      </section>
+    `;
+    
+    renderShell({
+      activeId: 'iconography',
+      breadcrumb: [
+        { href: '/stylebook/', label: 'Stylebook' },
+        { href: '/stylebook/', label: 'Foundations' },
+        { label: 'Iconography' }
+      ],
+      title: 'Iconography',
+      subtitle: 'Unicode-first icon system. Zero bytes, universally readable, theme-aware.',
+      meta: [
+        { label: 'Glyphs', value: ICONS.length + '+' },
+        { label: 'Bytes', value: '0' },
+        { label: 'A11y', value: 'Native' }
+      ],
+      content
+    });
+  </script>
+</body>
+</html>

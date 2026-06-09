@@ -1,0 +1,93 @@
+{
+  "schema": "p31.reportsIndex/0.1.0",
+  "version": "1.0.0",
+  "generatedAt": "2026-05-04T20:16:58.199Z",
+  "count": 10,
+  "byKind": {
+    "urgent": 1,
+    "psych-e2e": 7,
+    "midday": 2
+  },
+  "recent": [
+    {
+      "id": "midday-20260504-2016-oyce",
+      "kind": "midday",
+      "ts": "2026-05-04T20:16:58.185Z",
+      "severity": "ok",
+      "headline": "midday · 95/100 · 1 critical gate",
+      "refsLocal": true
+    },
+    {
+      "id": "midday-20260504-2016-opzc",
+      "kind": "midday",
+      "ts": "2026-05-04T20:16:48.016Z",
+      "severity": "ok",
+      "headline": "midday · 95/100 · 1 critical gate",
+      "refsLocal": true
+    },
+    {
+      "id": "psych-e2e-20260504-2016-fvcm",
+      "kind": "psych-e2e",
+      "ts": "2026-05-04T20:16:14.501Z",
+      "severity": "low",
+      "headline": "10 sessions · 48 steps · mean 86.3 [83.2–89.4] · worst: http://127.0.0.1:39369/glass-box.html (61)",
+      "refsLocal": true
+    },
+    {
+      "id": "psych-e2e-20260504-1824-qo22",
+      "kind": "psych-e2e",
+      "ts": "2026-05-04T18:24:32.611Z",
+      "severity": "low",
+      "headline": "20 sessions · 89 steps · mean 87.8 [86.3–89.2] · worst: http://127.0.0.1:45561/glass-box.html (74.5)",
+      "refsLocal": true
+    },
+    {
+      "id": "psych-e2e-20260504-1723-jt55",
+      "kind": "psych-e2e",
+      "ts": "2026-05-04T17:23:32.300Z",
+      "severity": "low",
+      "headline": "5 sessions · 25 steps · mean 89.7 [87.5–91.9] · worst: http://127.0.0.1:43869/fleet-portal.html (84)",
+      "refsLocal": true
+    },
+    {
+      "id": "psych-e2e-20260504-1721-9dy0",
+      "kind": "psych-e2e",
+      "ts": "2026-05-04T17:21:31.115Z",
+      "severity": "low",
+      "headline": "5 sessions · 20 steps · mean 84.6 [81.4–87.7] · worst: http://127.0.0.1:33745/soup.html (79)",
+      "refsLocal": true
+    },
+    {
+      "id": "psych-e2e-20260504-1645-dkl9",
+      "kind": "psych-e2e",
+      "ts": "2026-05-04T16:45:21.996Z",
+      "severity": "low",
+      "headline": "5 sessions · 20 steps · mean 82.4 [79.1–85.6] · worst: http://127.0.0.1:40251/soup.html (74.4)",
+      "refsLocal": true
+    },
+    {
+      "id": "psych-e2e-20260503-1334-oasy",
+      "kind": "psych-e2e",
+      "ts": "2026-05-03T13:34:28.299Z",
+      "severity": "low",
+      "headline": "2 sessions · 12 steps · mean 89.8 [87.4–92.1] · worst: http://127.0.0.1:36561/fleet-portal.html (85)",
+      "refsLocal": true
+    },
+    {
+      "id": "psych-e2e-20260503-1321-asjl",
+      "kind": "psych-e2e",
+      "ts": "2026-05-03T13:21:45.457Z",
+      "severity": "low",
+      "headline": "3 sessions · 10 steps · mean 92 [89.2–94.8] · worst: http://127.0.0.1:45157/fleet-portal.html (84.5)",
+      "refsLocal": true
+    },
+    {
+      "id": "urgent-20260430-2120-qoc3",
+      "kind": "urgent",
+      "ts": "2026-04-30T21:20:01.013Z",
+      "severity": "high",
+      "headline": "P31 Glass Box ships pulse + promoted + widget",
+      "refsLocal": true
+    }
+  ]
+}

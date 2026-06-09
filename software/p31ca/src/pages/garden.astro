@@ -1,0 +1,49 @@
+---
+/**
+  * @p31-layout: Focus
+ * /garden — isolated companion space.
+ *
+ * AppShell with routeName="garden" automatically suppresses the nav header,
+ * EBC footer, and molecular field. Low particle count (25), amber hue.
+ * This route is intentionally content-minimal — a low-stimulation refuge.
+ */
+import AppShell from '../layouts/AppShell.astro';
+---
+
+<AppShell title="The Garden — P31 Labs" routeName="garden">
+  <div class="min-h-[80vh] flex flex-col items-center justify-center text-center px-6">
+
+    <div class="p31-q-surface max-w-lg w-full" data-p31-elev="1" style="border-color: rgba(245,158,11,0.25); border-radius: var(--p31-shape-xl, 24px);">
+
+      <!-- Amber pulse indicator -->
+      <div class="w-12 h-12 mx-auto mb-6 rounded-full flex items-center justify-center" style="background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.3);">
+        <div class="w-3 h-3 rounded-full animate-pulse" style="background: var(--p31-amber, var(--p31-amber)); box-shadow: 0 0 12px var(--p31-amber, var(--p31-amber));"></div>
+      </div>
+
+      <h1 class="font-serif mb-3" style="font-size: clamp(2rem, 5vw, 3rem); color: var(--p31-cloud, #ede8e0);">The Garden</h1>
+
+      <p class="font-mono text-sm leading-relaxed mb-6" style="color: var(--p31-cloud-muted, rgba(237,232,224,0.55));">
+        A quiet, isolated companion space.<br/>
+        Telemetry suppressed. Navigation severed.
+      </p>
+
+      <div class="inline-flex items-center gap-3 px-5 py-2.5 rounded-full" style="background: rgba(0,0,0,0.4); border: 1px solid rgba(245,158,11,0.15);">
+        <div class="w-1.5 h-1.5 rounded-full animate-pulse" style="background: var(--p31-amber, var(--p31-amber));"></div>
+        <span class="font-mono text-[10px] tracking-[0.2em] uppercase" style="color: var(--p31-amber, var(--p31-amber));">Safe Surface Active</span>
+      </div>
+
+      <!-- Optional: Kids section entries (expand when /garden content is built) -->
+      <div class="mt-8 pt-6 grid grid-cols-2 gap-3 text-left" style="border-top: 1px solid rgba(245,158,11,0.1);">
+        <a href="#growth" class="p31-card p-3" aria-label="Kids growth tracker">
+          <p class="font-mono text-[10px] tracking-widest uppercase mb-1" style="color: var(--p31-amber, var(--p31-amber));">Growth</p>
+          <p class="text-xs" style="color: var(--p31-cloud-muted, rgba(237,232,224,0.5));">Milestone tracker</p>
+        </a>
+        <a href="#kids" class="p31-card p-3" aria-label="Kids home">
+          <p class="font-mono text-[10px] tracking-widest uppercase mb-1" style="color: var(--p31-amber, var(--p31-amber));">Home</p>
+          <p class="text-xs" style="color: var(--p31-cloud-muted, rgba(237,232,224,0.5));">Family hub</p>
+        </a>
+      </div>
+    </div>
+
+  </div>
+</AppShell>

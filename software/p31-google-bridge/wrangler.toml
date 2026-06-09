@@ -1,0 +1,53 @@
+# P31 Google Bridge — OAuth 2.0 for Google Workspace (Calendar read + OIDC)
+#
+# First-time setup (from this directory):
+#   npx wrangler kv namespace create GOOGLE_OAUTH
+#   → paste id below for [[kv_namespaces]] id
+#
+# Secrets:
+#   npx wrangler secret put GOOGLE_CLIENT_SECRET
+#
+# [vars] GOOGLE_CLIENT_ID = your Web client id (or use secret; here visible is OK for OAuth public client pattern)
+
+name = "p31-google-bridge"
+main = "src/index.js"
+compatibility_date = "2024-12-01"
+
+[observability]
+enabled = true
+
+# Replace with id from: npx wrangler kv namespace create GOOGLE_OAUTH
+[[kv_namespaces]]
+binding = "GOOGLE_OAUTH"
+id = "4a21fa7168864b4cb122c32ba416efcd"
+
+# Non-secret; matches OAuth "Web client" in Google Cloud Console
+[vars]
+GOOGLE_CLIENT_ID = "replace-me"
+# Full callback URL; must be listed in Google Console "Authorized redirect URIs"
+REDIRECT_URL = "http://127.0.0.1:8787/oauth/google/callback"
+# Comma-separated OAuth scopes
+DEFAULT_OAUTH_SCOPES = "openid,email,profile,https://www.googleapis.com/auth/calendar.readonly"
+# Browser redirect after success (or same-origin path)
+OAUTH_SUCCESS_URL = "http://127.0.0.1:8787/connected"
+# JSON list of allowed Origin headers for CORS (comma-separated, or * for dev only)
+CORS_ALLOW_ORIGIN = "http://127.0.0.1:8787,https://p31ca.org,https://p31ca.pages.dev"
+# Where OAuth/manual login may redirect the browser after Set-Cookie (prefix or origin)
+OAUTH_RETURN_ALLOWLIST = "https://p31ca.org,https://p31ca.org/,https://p31ca.pages.dev,http://127.0.0.1:4321,http://localhost:4321,http://127.0.0.1:8787"
+
+# Production: set real redirect + CORS; override in dashboard or [env.production]
+[env.production]
+name = "p31-google-bridge"
+
+[[env.production.kv_namespaces]]
+binding = "GOOGLE_OAUTH"
+id = "4a21fa7168864b4cb122c32ba416efcd"
+
+[env.production.vars]
+# GOOGLE_CLIENT_ID = set in Cloudflare or uncomment after wrangler
+REDIRECT_URL = "https://p31-google-bridge.trimtab-signal.workers.dev/oauth/google/callback"
+# Must be same host as REDIRECT_URL so session cookie is set (not p31ca.org unless worker is routed there)
+OAUTH_SUCCESS_URL = "https://p31-google-bridge.trimtab-signal.workers.dev/connected"
+CORS_ALLOW_ORIGIN = "https://p31ca.org,https://p31ca.pages.dev,https://workspaces.p31ca.org"
+OAUTH_RETURN_ALLOWLIST = "https://p31ca.org,https://p31ca.org/,https://p31ca.pages.dev,https://workspaces.p31ca.org"
+DEFAULT_OAUTH_SCOPES = "openid,email,profile,https://www.googleapis.com/auth/calendar.readonly"

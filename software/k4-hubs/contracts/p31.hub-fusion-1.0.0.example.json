@@ -1,0 +1,21 @@
+{
+  "schema": "p31.hubFusion/1.0.0",
+  "version": "1.0.0",
+  "hubLabel": "Family cohort",
+  "members": ["u_abc", "u_def", "u_ghi", "u_jkl"],
+  "channels": [
+    { "subjectId": "u_abc", "energy": { "spoons": 7, "max": 12 }, "weight": 0.25 },
+    { "subjectId": "u_def", "energy": { "spoons": 5, "max": 12 }, "weight": 0.25 },
+    { "subjectId": "u_ghi", "energy": { "spoons": 8, "max": 12 }, "weight": 0.25 },
+    { "subjectId": "u_jkl", "energy": { "spoons": 6, "max": 12 }, "weight": 0.25 }
+  ],
+  "aggregate": {
+    "meanSpoons": 6.5,
+    "minSpoons": 5,
+    "maxSpoons": 8,
+    "spread": 1.12,
+    "coherence": 0.85,
+    "sampleCount": 4
+  },
+  "sicPovmNote": "Symmetric four-channel read (equal weights). Hub stores roster only — no vertex chat or profile."
+}

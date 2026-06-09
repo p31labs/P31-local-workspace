@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub" style="color-scheme: dark;">
+<head>
+  <meta charset="UTF-8" />
+<script>(function(){var r=document.documentElement;if(/[?&]alive=1(?:&|$)/.test(location.search))return;r.classList.add("p31-gray-rock");function wake(){r.classList.remove("p31-gray-rock")}document.addEventListener("pointerdown",wake,{once:true,capture:true});document.addEventListener("keydown",wake,{once:true,capture:true})})();</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content" />
+  <meta name="color-scheme" content="dark" />
+  <title>Quantum composer | P31 Labs</title>
+  <meta name="description" content="K₄ Web Audio partials on the canonical 31P Larmor ladder — interference at Grandfather TRIM rate. Instrument + pedagogy; not a physics engine." />
+<link rel="canonical" href="https://p31ca.org/quantum-composer.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Quantum composer">
+<meta property="og:description" content="K₄ Web Audio partials on the canonical 31P Larmor ladder — interference at Grandfather TRIM rate. Instrument + pedagogy; not a physics engine.">
+<meta property="og:url" content="https://p31ca.org/quantum-composer.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Quantum composer">
+<meta name="twitter:description" content="K₄ Web Audio partials on the canonical 31P Larmor ladder — interference at Grandfather TRIM rate. Instrument + pedagogy; not a physics engine.">
+  <meta name="p31.quantumComposerPage" content="p31.quantumComposerPage/0.1.0" />
+  <meta name="theme-color" content="#0f1115" />
+  <link rel="stylesheet" href="/p31-style.css" />
+  <link rel="stylesheet" href="/p31-shared-surface.css" />
+  <link rel="stylesheet" href="/p31-responsive-surface.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/p31-tailwind-extend.js"></script>
+  <script>tailwind.config = { theme: { extend: { ...window.P31_TAILWIND_EXTEND } } };</script>
+  <style>
+    .qc-glow { filter: drop-shadow(0 0 12px rgba(45, 212, 191, 0.35)); }
+    .qc-vert { transition: r 0.12s ease, opacity 0.12s ease; }
+    @media (prefers-reduced-motion: reduce) {
+      .qc-vert { transition: none; }
+    }
+  </style>
+</head>
+<body class="font-sans antialiased bg-void text-cloud min-h-screen p31-mesh-m-first p31-doc-surface">
+<a href="#main" style="position:absolute;left:-9999px;top:0;padding:0.5rem 1rem;background:var(--p31-void);color:var(--p31-teal);font-size:0.875rem;z-index:9999;border-radius:0 0 4px 4px;text-decoration:none" onfocus="this.style.left='0'" onblur="this.style.left='-9999px'">Skip to main content</a>
+  <a class="p31-mesh-tap sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:px-4 focus:py-2 focus:rounded-md focus:bg-surface focus:text-teal" href="#qc-main">Skip to main</a>
+
+  <div class="max-w-3xl mx-auto px-4 py-8 md:py-12" id="qc-main">
+    <p class="font-mono text-[0.65rem] text-cloud/50 tracking-widest uppercase mb-2">P31 · Web Audio · K₄</p>
+    <h1 class="text-2xl md:text-4xl font-bold text-paper tracking-tight">Quantum composer</h1>
+    <p class="mt-2 text-sm text-butter/90 font-mono">p31.quantumComposerPage/0.1.0</p>
+    <p class="mt-4 text-cloud/85 leading-relaxed max-w-2xl">
+      Four partials live on a <strong class="text-paper">harmonic ladder</strong> derived from the same operator-locked line as the rest of the hub:
+      <strong class="text-teal">863Hz</strong> (31P Larmor in Earth field, <code class="text-lavender/90 text-xs">p31-constants.json</code>).
+      Sliders set vertex weights (displayed as Born-normalized probabilities). <strong class="text-paper">Interference</strong> wobbles pitch at the
+      <strong class="text-paper">Grandfather</strong> TRIM rate (~0.86&nbsp;Hz). <strong class="text-paper">Entangle</strong> couples opposite pairs.
+      <strong class="text-paper">Measure</strong> is a weighted spotlight — fun ear candy, not a claim about quantum hardware.
+    </p>
+
+    <div class="mt-8 flex flex-wrap gap-3 items-center">
+      <button type="button" id="qc-play"
+        class="p31-mesh-tap px-5 py-2.5 rounded-lg bg-teal/90 text-void font-semibold text-sm hover:bg-teal focus:outline-none focus-visible:ring-2 focus-visible:ring-teal focus-visible:ring-offset-2 focus-visible:ring-offset-void">
+        Play
+      </button>
+      <button type="button" id="qc-stop"
+        class="p31-mesh-tap px-5 py-2.5 rounded-lg bg-white/10 text-cloud font-medium text-sm hover:bg-white/15 border border-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-lavender">
+        Stop
+      </button>
+      <button type="button" id="qc-measure"
+        class="p31-mesh-tap px-5 py-2.5 rounded-lg bg-lavender/25 text-lavender font-medium text-sm border border-lavender/30 hover:bg-lavender/35 focus:outline-none focus-visible:ring-2 focus-visible:ring-lavender">
+        Measure
+      </button>
+      <span id="qc-status" class="text-xs font-mono text-cloud/50" aria-live="polite">Audio suspended — press Play</span>
+    </div>
+
+    <div class="mt-10 grid md:grid-cols-2 gap-8 items-start">
+      <div class="rounded-xl border border-white/10 bg-surface/40 p-4 md:p-5 qc-glow">
+        <p class="text-xs font-mono text-cloud/50 uppercase tracking-wider mb-3">Cage projection</p>
+        <svg id="qc-tetra" viewBox="0 0 240 220" class="w-full h-auto max-h-[280px]" aria-label="K4 tetrahedron — vertex brightness follows amplitude">
+          <!-- edges -->
+          <g stroke="rgba(148,163,184,0.35)" stroke-width="1.2" fill="none">
+            <line x1="120" y1="38" x2="52" y2="168" />
+            <line x1="120" y1="38" x2="188" y2="168" />
+            <line x1="120" y1="38" x2="120" y2="198" />
+            <line x1="52" y1="168" x2="188" y2="168" />
+            <line x1="52" y1="168" x2="120" y2="198" />
+            <line x1="188" y1="168" x2="120" y2="198" />
+          </g>
+          <g id="qc-vertices">
+            <circle class="qc-vert" data-i="0" cx="120" cy="38" r="14" fill="#2dd4bf" opacity="0.85" />
+            <circle class="qc-vert" data-i="1" cx="52" cy="168" r="14" fill="#818cf8" opacity="0.85" />
+            <circle class="qc-vert" data-i="2" cx="188" cy="168" r="14" fill="#c084fc" opacity="0.85" />
+            <circle class="qc-vert" data-i="3" cx="120" cy="198" r="14" fill="#f472b6" opacity="0.85" />
+          </g>
+          <text x="120" y="24" text-anchor="middle" class="fill-cloud/40 text-[9px] font-mono">863÷8</text>
+          <text x="38" y="182" text-anchor="middle" class="fill-cloud/40 text-[9px] font-mono">÷6</text>
+          <text x="202" y="182" text-anchor="middle" class="fill-cloud/40 text-[9px] font-mono">÷5</text>
+          <text x="120" y="216" text-anchor="middle" class="fill-cloud/40 text-[9px] font-mono">÷4</text>
+        </svg>
+        <p id="qc-born" class="mt-2 text-xs font-mono text-cloud/55 leading-relaxed"></p>
+      </div>
+
+      <div class="space-y-5">
+        <div>
+          <label class="text-xs font-mono text-cloud/50 uppercase tracking-wider">Vertex weights (linear → Born display)</label>
+          <div class="mt-3 space-y-3" id="qc-sliders"></div>
+        </div>
+        <div>
+          <label for="qc-interference" class="text-xs font-mono text-cloud/50 uppercase tracking-wider">Interference depth · TRIM-rate beats</label>
+          <input id="qc-interference" type="range" min="0" max="100" value="35" class="mt-2 w-full accent-teal" />
+        </div>
+        <div>
+          <label for="qc-entangle" class="text-xs font-mono text-cloud/50 uppercase tracking-wider">Entangle · opposite-pair coupling</label>
+          <input id="qc-entangle" type="range" min="0" max="100" value="50" class="mt-2 w-full accent-lavender" />
+        </div>
+      </div>
+    </div>
+
+    <ul class="mt-10 space-y-2 text-sm text-cloud/75">
+      <li>C.A.R.S. Soup uses a richer <code class="text-xs text-teal/90">SoundtrackEngine</code> (molecule zones, 8-voice cap) — same Web Audio family, different canvas.</li>
+      <li>Grandfather phase on other hub pages: <code class="text-xs">/lib/p31-quantum-grandfather-boot.mjs</code></li>
+    </ul>
+    <p class="mt-8 flex flex-wrap gap-x-4 gap-y-1 text-sm">
+      <a class="p31-mesh-tap text-teal hover:underline" href="/quantum-clock.html">Quantum clock</a>
+      <a class="p31-mesh-tap text-teal hover:underline" href="/quantum-deck.html">Quantum deck</a>
+      <a class="p31-mesh-tap text-teal hover:underline" href="/tomography.html">Tomography</a>
+      <a class="p31-mesh-tap text-teal hover:underline" href="/">Hub home</a>
+    </p>
+  </div>
+
+  <script type="module">
+    import {
+      QuantumComposerEngine,
+      LARMOR_HZ,
+      LARMOR_DIVISORS,
+      bornNormalize,
+      vertexFrequencyHz,
+    } from "/lib/p31-quantum-composer.mjs";
+
+    const labels = ["apex · ÷8", "left · ÷6", "right · ÷5", "base · ÷4"];
+    const sliderHost = document.getElementById("qc-sliders");
+    const sliders = [];
+    for (let i = 0; i < 4; i++) {
+      const row = document.createElement("div");
+      row.className = "flex items-center gap-3";
+      const lab = document.createElement("label");
+      lab.className = "text-xs font-mono text-cloud/60 w-28 shrink-0";
+      lab.textContent = labels[i];
+      const inp = document.createElement("input");
+      inp.type = "range";
+      inp.min = "0";
+      inp.max = "100";
+      inp.value = String([85, 78, 72, 80][i]);
+      inp.className = "flex-1 accent-teal";
+      inp.dataset.index = String(i);
+      row.appendChild(lab);
+      row.appendChild(inp);
+      sliderHost.appendChild(row);
+      sliders.push(inp);
+    }
+
+    const bornEl = document.getElementById("qc-born");
+    const verts = Array.from(document.querySelectorAll(".qc-vert"));
+    const statusEl = document.getElementById("qc-status");
+    const interferenceEl = document.getElementById("qc-interference");
+    const entangleEl = document.getElementById("qc-entangle");
+
+    const engine = new QuantumComposerEngine({
+      onFrame({ weights, phase }) {
+        bornEl.textContent =
+          "Born P = " +
+          weights.map((p, i) => `${["A", "B", "C", "D"][i]}:${(p * 100).toFixed(1)}%`).join(" · ") +
+          ` · φ trim ${(phase * 100).toFixed(0)}%`;
+        const maxW = Math.max(...weights, 1e-6);
+        for (let i = 0; i < 4; i++) {
+          const el = verts[i];
+          const r = 10 + (weights[i] / maxW) * 10;
+          el.setAttribute("r", r.toFixed(1));
+          el.setAttribute("opacity", String(0.35 + 0.55 * (weights[i] / maxW)));
+        }
+      },
+    });
+
+    function readWeights() {
+      return sliders.map((s) => Number(s.value) / 100);
+    }
+
+    engine.setWeights(readWeights());
+    engine.setInterference(Number(interferenceEl.value) / 100);
+    engine.setEntangle(Number(entangleEl.value) / 100);
+
+    for (const s of sliders) {
+      s.addEventListener("input", () => engine.setWeights(readWeights()));
+    }
+    interferenceEl.addEventListener("input", () =>
+      engine.setInterference(Number(interferenceEl.value) / 100)
+    );
+    entangleEl.addEventListener("input", () =>
+      engine.setEntangle(Number(entangleEl.value) / 100)
+    );
+
+    document.getElementById("qc-play").addEventListener("click", async () => {
+      const ok = await engine.resume();
+      if (!ok) {
+        statusEl.textContent = "Web Audio unavailable in this context";
+        return;
+      }
+      engine.setWeights(readWeights());
+      engine.start();
+      statusEl.textContent = "Playing — " + LARMOR_HZ + "Hz lattice · divisors /" + LARMOR_DIVISORS.join(", /");
+    });
+    document.getElementById("qc-stop").addEventListener("click", () => {
+      engine.stop();
+      statusEl.textContent = "Stopped";
+    });
+    document.getElementById("qc-measure").addEventListener("click", () => {
+      engine.measure();
+      statusEl.textContent = "Measurement (weighted spotlight)…";
+    });
+
+    /* expose for console tinkerers */
+    window.P31_QUANTUM_COMPOSER = {
+      LARMOR_HZ,
+      vertexFrequencyHz,
+      bornNormalize,
+      engine,
+    };
+  </script>
+</body>
+</html>

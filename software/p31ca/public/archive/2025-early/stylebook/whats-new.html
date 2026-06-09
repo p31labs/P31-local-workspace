@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>What's new · P31 Stylebook</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/p31-style.css">
+  <link rel="stylesheet" href="/lib/p31-fluid.css">
+  <link rel="stylesheet" href="/stylebook/_chrome.css">
+  <style>
+    .release {
+      padding: 24px;
+      background: var(--p31-surface);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: 14px;
+      margin-bottom: 16px;
+    }
+    .release-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--p31-border-subtle);
+    }
+    .release-version {
+      font-family: var(--p31-font-mono);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--p31-paper);
+    }
+    .release-date {
+      font-family: var(--p31-font-mono);
+      font-size: 12px;
+      color: var(--p31-muted);
+    }
+    .release-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-family: var(--p31-font-mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 600;
+      margin-left: 8px;
+    }
+    .release-tag.major { background: rgba(204,98,71,0.15); color: var(--p31-coral); }
+    .release-tag.minor { background: rgba(37,137,125,0.15); color: var(--p31-cyan); }
+    .release-tag.patch { background: rgba(205,168,82,0.15); color: var(--p31-amber); }
+    
+    .release-section {
+      margin-bottom: 16px;
+    }
+    .release-section h4 {
+      font-family: var(--p31-font-mono);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--p31-muted);
+      margin-bottom: 8px;
+    }
+    .release-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .release-list li {
+      padding: 6px 0;
+      color: var(--p31-cloud);
+      font-size: 14px;
+      line-height: 1.5;
+      display: flex;
+      gap: 10px;
+    }
+    .release-list li::before {
+      content: '';
+      flex-shrink: 0;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      margin-top: 8px;
+    }
+    .release-list.added li::before { background: var(--p31-phosphorus); }
+    .release-list.changed li::before { background: var(--p31-cyan); }
+    .release-list.fixed li::before { background: var(--p31-amber); }
+    .release-list.removed li::before { background: var(--p31-coral); }
+    .release-list code {
+      font-family: var(--p31-font-mono);
+      font-size: 12px;
+      padding: 1px 5px;
+      background: var(--p31-surface2);
+      border-radius: 3px;
+      color: var(--p31-cyan);
+    }
+  </style>
+</head>
+<body>
+  <script type="module">
+    import { renderShell, code, callout } from '/stylebook/_chrome.js';
+    import { P31ThemeController } from '/lib/p31-theme-engine.mjs';
+    window.p31Theme = new P31ThemeController({ defaultTheme: 'hub' });
+    
+    const content = `
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <p class="sb-text-lead">
+            P31 Stylebook is a living system. Below is the running log of every meaningful change.
+            Tokens, components, and patterns evolve — but the core principles don't.
+          </p>
+        </div>
+      </section>
+      
+      <div class="release">
+        <div class="release-header">
+          <div>
+            <span class="release-version">v2.1.0</span>
+            <span class="release-tag minor">Minor</span>
+          </div>
+          <span class="release-date">2026-05-01</span>
+        </div>
+        
+        <div class="release-section">
+          <h4>Added · the professional layer</h4>
+          <ul class="release-list added">
+            <li>New <strong>Guidelines</strong> section with 7 pages: Site map, Routing &amp; IA, Accessibility, SEO &amp; metadata, Performance, Voice &amp; tone, Brand.</li>
+            <li><code>/stylebook/sitemap.html</code> — canonical URL tree across all P31 domains, searchable catalog of every public route, sitemap.xml + llms.txt patterns.</li>
+            <li><code>/stylebook/routing.html</code> — three-tier IA, URL grammar conventions, deep-linking patterns, mobile nav, anti-patterns.</li>
+            <li><code>/stylebook/accessibility.html</code> — WCAG 2.1 AA checklist (20 criteria), keyboard map (12 bindings), ARIA usage, focus management, cognitive accessibility layer.</li>
+            <li><code>/stylebook/metadata.html</code> — head tag bar, OpenGraph, JSON-LD types (Org/Site/Breadcrumb/TechArticle), social preview mocks, robots.txt template.</li>
+            <li><code>/stylebook/performance.html</code> — Core Web Vitals targets, per-page asset budgets (≤350KB total), loading strategy, image format hierarchy, caching policy.</li>
+            <li><code>/stylebook/voice.html</code> — voice axes, side-by-side don't/do comparisons, banned vocabulary, punctuation rules.</li>
+            <li><code>/stylebook/error-pages.html</code> — 404/500/403/offline/maintenance mocks with anatomy + 14-code status reference.</li>
+            <li><code>/stylebook/brand.html</code> — naming hierarchy (P31/Phosphorus31/P31 Labs), 6 logo variants, lockups, clearspace, do/don't.</li>
+            <li><code>/stylebook/support-matrix.html</code> — 3 support tiers, 11 browsers, 8 devices, platform feature dependencies.</li>
+            <li><code>/stylebook/contributing.html</code> — 6 contribution paths, RFC template, PR checklist, semver policy, code style.</li>
+            <li>Generated <code>/llms.txt</code> at site root — curated entrypoint for AI/agent crawlers.</li>
+            <li>Expanded <code>/sitemap.xml</code> to include all 32 stylebook pages.</li>
+            <li>Updated <code>/robots.txt</code> with explicit AI crawler allows (GPTBot, ClaudeBot, Google-Extended, PerplexityBot, CCBot).</li>
+          </ul>
+        </div>
+        
+        <div class="release-section">
+          <h4>Changed</h4>
+          <ul class="release-list changed">
+            <li>Stylebook nav tree now has 6 sections (added <strong>Guidelines</strong>); existing sections unchanged.</li>
+            <li>Welcome page (index.html) surfaces the new Guidelines feature row.</li>
+            <li>Stats updated: 32 documentation pages, WCAG AA floor.</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="release">
+        <div class="release-header">
+          <div>
+            <span class="release-version">v2.0.0</span>
+            <span class="release-tag major">Major</span>
+          </div>
+          <span class="release-date">2026-05-01</span>
+        </div>
+        
+        <div class="release-section">
+          <h4>Added</h4>
+          <ul class="release-list added">
+            <li>Complete stylebook tree at <code>/stylebook/</code> with 18+ pages of documentation, components, patterns, and reference.</li>
+            <li>Theme engine v2 (<code>/lib/p31-theme-engine.mjs</code>) — six curated themes (Hub, Org, Midnight, Genesis, Paper, Matrix) with reactive controller.</li>
+            <li>Five adaptive modes: default, focus, calm, vibrant, muted — composable with any theme.</li>
+            <li>Live theme playground with token editor, geometry sliders, random theme generator, CSS export.</li>
+            <li>Fluid CSS framework (<code>/lib/p31-fluid.css</code>) — clamp()-based scales for type and spacing.</li>
+            <li>Theme switcher widget (<code>/lib/p31-theme-switcher.mjs</code>) — drop-in floating UI.</li>
+            <li>Iconography system using Unicode glyphs (50+ catalogued, click-to-copy).</li>
+            <li>Token reference with live values, search, and copy-to-clipboard for all 120+ tokens.</li>
+          </ul>
+        </div>
+        
+        <div class="release-section">
+          <h4>Changed</h4>
+          <ul class="release-list changed">
+            <li>Color tokens are now theme-reactive — same selector, different value across themes.</li>
+            <li>Spacing scale rebuilt on a fluid base unit (<code>--p31-space-unit</code>) instead of fixed pixels.</li>
+            <li>Motion tokens expanded from 4 to 8 easing curves and 7 durations.</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="release">
+        <div class="release-header">
+          <div>
+            <span class="release-version">v1.4.0</span>
+            <span class="release-tag minor">Minor</span>
+          </div>
+          <span class="release-date">2026-04-22</span>
+        </div>
+        
+        <div class="release-section">
+          <h4>Added</h4>
+          <ul class="release-list added">
+            <li>Canonical design specification at <code>p31ca/docs/DESIGN-SPEC.md</code> — first version of this stylebook in markdown form.</li>
+            <li>Style alignment verifier (<code>verify:style-alignment</code>) — fails CI on hardcoded hex.</li>
+            <li>Universal canon at <code>design-tokens/p31-universal-canon.json</code> — single source of truth for all tokens.</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="release">
+        <div class="release-header">
+          <div>
+            <span class="release-version">v1.3.0</span>
+            <span class="release-tag minor">Minor</span>
+          </div>
+          <span class="release-date">2026-04-08</span>
+        </div>
+        
+        <div class="release-section">
+          <h4>Added</h4>
+          <ul class="release-list added">
+            <li>Hub vs Org appearance system via <code>data-p31-appearance</code>.</li>
+            <li>Glass surface tokens for backdrop-filter overlays.</li>
+            <li>Atkinson Hyperlegible adopted as the canonical sans face.</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="release">
+        <div class="release-header">
+          <div>
+            <span class="release-version">v1.0.0</span>
+            <span class="release-tag major">Major</span>
+          </div>
+          <span class="release-date">2026-02-14</span>
+        </div>
+        
+        <div class="release-section">
+          <h4>Added</h4>
+          <ul class="release-list added">
+            <li>First public design system — <code>p31-style.css</code> with brand colors and base tokens.</li>
+            <li>Six brand colors anchored: coral, teal, cyan, butter, lavender, phosphorus.</li>
+            <li>Initial seven principles — Gray Rock, autonomy, dignity, proportion, access, ephemeralization (fluidity added later).</li>
+          </ul>
+        </div>
+      </div>
+      
+      <section class="sb-section" style="margin-top: 48px;">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Looking ahead</div>
+          <h2 class="sb-h2">Roadmap</h2>
+        </div>
+        
+        <table class="sb-table">
+          <thead><tr><th>What</th><th>When</th></tr></thead>
+          <tbody>
+            <tr><td>Auto-generated about pages from registry tokens</td><td>2026-Q2</td></tr>
+            <tr><td>Sketch / Figma plugin for token sync</td><td>2026-Q3</td></tr>
+            <tr><td>OKLCH color tokens (better perceptual uniformity)</td><td>2026-Q3</td></tr>
+            <tr><td>Animation choreography helpers (stagger, sequence)</td><td>2026-Q4</td></tr>
+            <tr><td>Print stylesheet variants</td><td>Backlog</td></tr>
+          </tbody>
+        </table>
+      </section>
+    `;
+    
+    renderShell({
+      activeId: 'whats-new',
+      breadcrumb: [
+        { href: '/stylebook/', label: 'Stylebook' },
+        { label: "What's new" }
+      ],
+      title: "What's new",
+      subtitle: 'Release notes for the P31 design system. The system is alive — it changes when it should.',
+      meta: [
+        { label: 'Latest', value: 'v2.0.0' },
+        { label: 'Released', value: '2026-05-01' }
+      ],
+      content
+    });
+  </script>
+</body>
+</html>

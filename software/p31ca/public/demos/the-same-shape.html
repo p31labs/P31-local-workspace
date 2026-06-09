@@ -1,0 +1,615 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>The Same Shape — K₄ at four orders of magnitude · P31</title>
+  <meta name="description" content="The same minimum-complete graph (K₄ — 4 vertices, 6 edges) rendered as a family mesh, a Platonic tetrahedron, a SIC-POVM, and a Posner phosphate cluster. Drag any panel: all four rotate in lockstep, because they ARE the same object. Schema p31.sameShapeDemo/0.1.0." />
+  <meta name="color-scheme" content="dark" />
+  <meta name="theme-color" content="#5DCAA5" />
+  <meta property="og:title" content="The Same Shape — K₄ at four orders of magnitude" />
+  <meta property="og:description" content="Drag any panel. They rotate together because they ARE the same object. From family mesh to phosphorus cluster, change the labels — keep the geometry." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='75' x='10' font-size='75' font-weight='bold' fill='%235DCAA5' font-family='monospace'%3E△%3C/text%3E%3C/svg%3E" />
+  <!-- P31 PWA contract — touch-friendly four-panel synced K₄ visualizer. Install to a tablet for kids + curious physics nerds. -->
+  <link rel="manifest" href="/pwa/manifest-same-shape.json" />
+  <link rel="apple-touch-icon" href="/pwa/p31-tetra-icon.svg" />
+  <script src="./p31-pwa.js" defer></script>
+  <style>
+    /* schema marker: p31.sameShapeDemo/0.1.0 — used by scripts/verify-demos.mjs */
+    :root {
+      --bg: #07090a;
+      --panel: #0f1411;
+      --panel-hi: #131a16;
+      --line: #20302480;
+      --ink: #e7eee9;
+      --teal: #5DCAA5;
+      --cyan: #4db8a8;
+      --coral: #cc6247;
+      --butter: #cda852;
+      --phos: #3ba372;
+      --lavender: #8b7cc9;
+      --grey: #aab2ad;
+      --grey-dim: #6c7773;
+      --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+      --vertex-a: #5DCAA5;
+      --vertex-b: #cc6247;
+      --vertex-c: #cda852;
+      --vertex-d: #8b7cc9;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin:0; padding:0; height:100%; background:var(--bg); color:var(--ink); font-family:var(--mono); font-size:13px; overflow:hidden; }
+    a { color:var(--cyan); text-decoration:none; }
+    a:hover { text-decoration:underline; }
+    .stage { position:fixed; inset:0; display:grid; grid-template: 1fr 1fr / 1fr 1fr; gap:1px; background:var(--line); }
+    .pane { position:relative; background:var(--panel); overflow:hidden; cursor:grab; touch-action:none; }
+    .pane.dragging { cursor:grabbing; }
+    .pane canvas { position:absolute; inset:0; width:100%; height:100%; display:block; }
+    .pane .head {
+      position:absolute; top:14px; left:16px; right:16px; pointer-events:none;
+      display:flex; gap:14px; align-items:baseline;
+    }
+    .pane .head .num {
+      font-family:var(--mono);
+      font-size:11px; letter-spacing:0.18em; text-transform:uppercase;
+      color:var(--grey-dim);
+    }
+    .pane .head h2 {
+      margin:0; font-size:15px; font-weight:600;
+      color:var(--ink); letter-spacing:0.02em;
+    }
+    .pane .body {
+      position:absolute; bottom:14px; left:16px; right:16px; pointer-events:none;
+      font-size:11.5px; color:var(--grey); line-height:1.45;
+      max-width:340px;
+    }
+    .pane .body .scale {
+      display:inline-block; margin-bottom:6px; font-size:10.5px;
+      color:var(--grey-dim); letter-spacing:0.04em; text-transform:uppercase;
+    }
+    .pane .body p { margin:2px 0; }
+    .pane[data-tone="teal"]   { box-shadow: inset 0 0 60px -20px rgba(37,137,125,0.35); }
+    .pane[data-tone="coral"]  { box-shadow: inset 0 0 60px -20px rgba(204,98,71,0.30); }
+    .pane[data-tone="butter"] { box-shadow: inset 0 0 60px -20px rgba(205,168,82,0.30); }
+    .pane[data-tone="lavender"] { box-shadow: inset 0 0 60px -20px rgba(139,124,201,0.30); }
+
+    /* center crosshair overlay (drag hint) */
+    .center-thesis {
+      position:fixed; left:50%; top:50%; transform:translate(-50%,-50%);
+      pointer-events:none; z-index:5;
+      background: rgba(7,9,10,0.88); border:1px solid var(--line);
+      border-radius:99px; padding:8px 18px;
+      font-size:11px; letter-spacing:0.16em; text-transform:uppercase;
+      color:var(--grey); backdrop-filter:blur(6px);
+      white-space:nowrap;
+      transition: opacity 0.6s ease;
+    }
+    .center-thesis.faded { opacity:0.25; }
+    .center-thesis .accent { color:var(--teal); }
+
+    /* Top-of-screen header — minimal, screenshot-friendly */
+    .topbar {
+      position:fixed; top:0; left:0; right:0; z-index:10;
+      display:flex; align-items:center; gap:14px; padding:10px 16px;
+      background: linear-gradient(180deg, rgba(7,9,10,0.92), rgba(7,9,10,0.0));
+      pointer-events:none;
+    }
+    .topbar .brand {
+      font-family:var(--mono); font-size:13px; letter-spacing:0.04em;
+      color:var(--ink); pointer-events:auto;
+    }
+    .topbar .brand .glow { color:var(--teal); text-shadow:0 0 12px rgba(37,137,125,0.45); }
+    .topbar .sub { color:var(--grey); font-size:11px; }
+    .topbar .spacer { flex:1; }
+    .topbar a, .topbar button {
+      pointer-events:auto;
+      background: rgba(15,20,17,0.8); color:var(--ink);
+      border:1px solid var(--line); border-radius:6px;
+      padding:6px 10px; font:inherit; font-size:11.5px; cursor:pointer; text-decoration:none;
+    }
+    .topbar a:hover, .topbar button:hover { border-color:var(--teal); color:var(--teal); }
+
+    /* Bottom controls */
+    .controls {
+      position:fixed; bottom:14px; left:50%; transform:translateX(-50%); z-index:10;
+      display:flex; gap:8px; flex-wrap:wrap; justify-content:center;
+      pointer-events:auto;
+    }
+    .controls button {
+      background: rgba(15,20,17,0.85); backdrop-filter:blur(6px);
+      color:var(--ink); border:1px solid var(--line);
+      border-radius:6px; padding:6px 12px; font:inherit; font-size:11.5px; cursor:pointer;
+    }
+    .controls button:hover { border-color:var(--teal); color:var(--teal); }
+    .controls button.on { color:var(--teal); border-color:rgba(37,137,125,0.5); background: rgba(37,137,125,0.10); }
+
+    /* Vertex selection callout (when a vertex is clicked) */
+    .vertex-callout {
+      position:fixed; bottom:60px; left:50%; transform:translateX(-50%); z-index:9;
+      pointer-events:none;
+      background: rgba(7,9,10,0.92); border:1px solid var(--line);
+      border-radius:8px; padding:10px 14px;
+      font-size:12px; color:var(--ink); backdrop-filter:blur(6px);
+      max-width:520px; text-align:center; line-height:1.45;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      opacity:0; transform:translateX(-50%) translateY(8px);
+    }
+    .vertex-callout.show { opacity:1; transform:translateX(-50%) translateY(0); }
+    .vertex-callout .label {
+      display:inline-block; margin-right:8px; padding:2px 10px;
+      border-radius:99px; font-weight:600; letter-spacing:0.04em;
+    }
+    .vertex-callout .label[data-c="a"] { background: rgba(37,137,125,0.18); color:var(--teal); }
+    .vertex-callout .label[data-c="b"] { background: rgba(204,98,71,0.18); color:var(--coral); }
+    .vertex-callout .label[data-c="c"] { background: rgba(205,168,82,0.18); color:var(--butter); }
+    .vertex-callout .label[data-c="d"] { background: rgba(139,124,201,0.18); color:var(--lavender); }
+    .vertex-callout .grey { color:var(--grey-dim); }
+
+    /* Edge count badge */
+    .edge-badge {
+      position:fixed; top:14px; right:16px; z-index:10;
+      pointer-events:none;
+      background: rgba(7,9,10,0.92); border:1px solid var(--line);
+      border-radius:99px; padding:6px 14px;
+      font-size:11px; color:var(--grey); letter-spacing:0.06em;
+      backdrop-filter:blur(6px);
+    }
+    .edge-badge .num { color:var(--teal); font-weight:700; }
+
+    @media (max-width: 780px) {
+      .stage { grid-template: 1fr 1fr 1fr 1fr / 1fr; }
+      .pane .body { max-width:none; font-size:11px; }
+      .center-thesis { display:none; }
+      .pane .head h2 { font-size:13px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">◍ <span class="glow">The Same Shape</span> <span class="sub">— K₄ at four orders of magnitude</span></div>
+  <div class="spacer"></div>
+  <a href="./the-pulse.html">→ the pulse</a>
+  <a href="./">↑ demos</a>
+</div>
+
+<div class="edge-badge">K₄ · <span class="num">4 vertices</span> · <span class="num">6 edges</span> · 0 hubs</div>
+
+<div class="stage" id="stage">
+  <div class="pane" data-pane="0" data-tone="teal">
+    <canvas></canvas>
+    <div class="head"><span class="num">01</span><h2>Family mesh</h2></div>
+    <div class="body">
+      <span class="scale">scale: human · meters</span>
+      <p>Will, S.J., W.J., Brenda. Every member touches every other directly. No platform in the middle.</p>
+    </div>
+  </div>
+  <div class="pane" data-pane="1" data-tone="coral">
+    <canvas></canvas>
+    <div class="head"><span class="num">02</span><h2>Tetrahedron</h2></div>
+    <div class="body">
+      <span class="scale">scale: geometric · Plato's element of fire</span>
+      <p>The minimum 3D solid. Maximally rigid. Every face a triangle. The cage that doesn't bend.</p>
+    </div>
+  </div>
+  <div class="pane" data-pane="2" data-tone="butter">
+    <canvas></canvas>
+    <div class="head"><span class="num">03</span><h2>SIC-POVM (d=2)</h2></div>
+    <div class="body">
+      <span class="scale">scale: quantum · Bloch sphere</span>
+      <p>Four pure states forming a regular tetrahedron in the Bloch sphere. The optimal symmetric measurement basis. d²=4 outcomes for d=2.</p>
+    </div>
+  </div>
+  <div class="pane" data-pane="3" data-tone="lavender">
+    <canvas></canvas>
+    <div class="head"><span class="num">04</span><h2>Posner cluster</h2></div>
+    <div class="body">
+      <span class="scale">scale: chemical · ³¹P spins · ångströms</span>
+      <p>Calcium phosphate Ca₉(PO₄)₆ — phosphorus-31 nuclei in tetrahedral arrangement. Matthew Fisher's quantum-cognition substrate. The phosphorus we're for.</p>
+    </div>
+  </div>
+</div>
+
+<div class="vertex-callout" id="callout"></div>
+
+<div class="center-thesis" id="thesis">drag any panel · <span class="accent">they rotate together because they ARE the same</span></div>
+
+<div class="controls">
+  <button id="btnSpin" class="on" type="button">auto-spin: on</button>
+  <button id="btnReset" type="button">reset orientation</button>
+  <button id="btnCelebrate" type="button">snap to vertex</button>
+  <button id="btnFull" type="button">full-screen</button>
+</div>
+
+<script>
+"use strict";
+/* p31.sameShapeDemo/0.1.0
+   Four panels share one global rotation (theta, phi).
+   Drag in any panel updates the global state.
+   Click any vertex anywhere — corresponding vertex highlights in all four.
+*/
+
+const PALETTE = ["#5DCAA5","#cc6247","#cda852","#8b7cc9"]; // a, b, c, d
+const LABELS  = [
+  ["Will","S.J.","W.J.","Brenda"],     // family
+  ["A","B","C","D"],                    // tetrahedron
+  ["|ψ₀⟩","|ψ₁⟩","|ψ₂⟩","|ψ₃⟩"],     // SIC-POVM
+  ["³¹P","³¹P","³¹P","³¹P"],            // Posner
+];
+const SUB = [
+  ["operator","child","child","cage"],
+  ["v₀","v₁","v₂","v₃"],
+  ["±x ±y ±z (tetra)","","",""],
+  ["Ca₉(PO₄)₆","","",""],
+];
+
+/* Canonical K4 vertices on the unit tetrahedron, centered at origin.
+   These four points are the corners of a regular tetrahedron inscribed in a cube. */
+const VERT = [
+  [ 1,  1,  1],
+  [ 1, -1, -1],
+  [-1,  1, -1],
+  [-1, -1,  1],
+];
+const EDGES = [[0,1],[0,2],[0,3],[1,2],[1,3],[2,3]]; // K4
+
+const state = {
+  theta: 0.5, // around Y
+  phi: -0.4,  // around X
+  spinning: true,
+  selected: -1, // -1 = none
+  lastPick: null,
+};
+
+/* === DOM setup === */
+const stage = document.getElementById("stage");
+const panes = Array.from(document.querySelectorAll(".pane"));
+const callout = document.getElementById("callout");
+const thesis = document.getElementById("thesis");
+const btnSpin = document.getElementById("btnSpin");
+const btnReset = document.getElementById("btnReset");
+const btnCelebrate = document.getElementById("btnCelebrate");
+const btnFull = document.getElementById("btnFull");
+
+const ctxs = panes.map(p => {
+  const c = p.querySelector("canvas");
+  return { canvas: c, ctx: c.getContext("2d", { alpha: true }), pane: p, idx: Number(p.dataset.pane) };
+});
+
+function resize() {
+  const dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+  for (const c of ctxs) {
+    const r = c.pane.getBoundingClientRect();
+    c.canvas.width  = Math.max(1, Math.floor(r.width  * dpr));
+    c.canvas.height = Math.max(1, Math.floor(r.height * dpr));
+    c.canvas.style.width  = r.width + "px";
+    c.canvas.style.height = r.height + "px";
+    c.W = c.canvas.width;
+    c.H = c.canvas.height;
+    c.dpr = dpr;
+  }
+}
+window.addEventListener("resize", resize);
+
+/* === Math === */
+function rotate(v, theta, phi) {
+  // theta = yaw (around Y), phi = pitch (around X)
+  const [x, y, z] = v;
+  const cy = Math.cos(theta), sy = Math.sin(theta);
+  const x1 = cy * x + sy * z;
+  const z1 = -sy * x + cy * z;
+  const cx = Math.cos(phi), sx = Math.sin(phi);
+  const y1 = cx * y - sx * z1;
+  const z2 = sx * y + cx * z1;
+  return [x1, y1, z2];
+}
+
+function project(v, W, H, scale, perspective = 4) {
+  // simple weak-perspective
+  const f = perspective / (perspective - v[2]);
+  return [W/2 + v[0] * scale * f, H/2 - v[1] * scale * f, v[2], f];
+}
+
+/* === Rendering: each panel has its own aesthetic, same vertex set === */
+
+function renderFamily(c) {
+  const { ctx, W, H } = c;
+  ctx.clearRect(0, 0, W, H);
+  const scale = Math.min(W, H) * 0.22;
+
+  // rotated points
+  const pts = VERT.map(v => rotate(v, state.theta, state.phi));
+  const proj = pts.map(v => project(v, W, H, scale));
+
+  // edges (sort back-to-front)
+  ctx.lineWidth = 1.5 * c.dpr;
+  for (const [i, j] of EDGES) {
+    const z = (proj[i][2] + proj[j][2]) / 2;
+    const alpha = 0.35 + (z + 1.5) * 0.25;
+    ctx.strokeStyle = `rgba(170,178,173,${alpha.toFixed(3)})`;
+    ctx.beginPath(); ctx.moveTo(proj[i][0], proj[i][1]); ctx.lineTo(proj[j][0], proj[j][1]); ctx.stroke();
+  }
+
+  // vertices
+  drawVertices(c, proj, 0);
+}
+
+function renderTetrahedron(c) {
+  const { ctx, W, H } = c;
+  ctx.clearRect(0, 0, W, H);
+  const scale = Math.min(W, H) * 0.24;
+  const pts = VERT.map(v => rotate(v, state.theta, state.phi));
+  const proj = pts.map(v => project(v, W, H, scale));
+
+  // four triangular faces, sorted back-to-front by avg z
+  const faces = [[0,1,2],[0,1,3],[0,2,3],[1,2,3]].map(f => ({
+    f,
+    z: (pts[f[0]][2] + pts[f[1]][2] + pts[f[2]][2]) / 3,
+  })).sort((a,b) => a.z - b.z);
+
+  for (const { f, z } of faces) {
+    const a = proj[f[0]], b = proj[f[1]], cc = proj[f[2]];
+    // shade by depth
+    const shade = Math.max(0, Math.min(1, (z + 1.5) / 3));
+    const alpha = 0.10 + shade * 0.18;
+    ctx.fillStyle = `rgba(204, 98, 71, ${alpha.toFixed(3)})`;
+    ctx.strokeStyle = `rgba(204, 98, 71, ${(0.4 + shade * 0.4).toFixed(3)})`;
+    ctx.lineWidth = 1.2 * c.dpr;
+    ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.lineTo(cc[0], cc[1]); ctx.closePath();
+    ctx.fill(); ctx.stroke();
+  }
+
+  drawVertices(c, proj, 1);
+}
+
+function renderSICPOVM(c) {
+  const { ctx, W, H } = c;
+  ctx.clearRect(0, 0, W, H);
+  const scale = Math.min(W, H) * 0.20;
+  const cx = W / 2, cy = H / 2;
+
+  // Bloch sphere outline (great circles)
+  ctx.strokeStyle = "rgba(170,178,173,0.18)";
+  ctx.lineWidth = 1.0 * c.dpr;
+  ctx.beginPath(); ctx.arc(cx, cy, scale * 1.55, 0, Math.PI * 2); ctx.stroke();
+  // equatorial ellipse
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.scale(1, Math.abs(Math.cos(state.phi)) * 0.55 + 0.05);
+  ctx.beginPath(); ctx.arc(0, 0, scale * 1.55, 0, Math.PI * 2); ctx.stroke();
+  ctx.restore();
+
+  // axes (x, y, z) tiny
+  ctx.strokeStyle = "rgba(205,168,82,0.45)";
+  for (const ax of [[1,0,0],[0,1,0],[0,0,1]]) {
+    const r = rotate(ax, state.theta, state.phi);
+    const p = project(r, W, H, scale * 1.55);
+    ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(p[0], p[1]); ctx.stroke();
+  }
+
+  // edges
+  const pts = VERT.map(v => rotate(v, state.theta, state.phi));
+  const proj = pts.map(v => project(v, W, H, scale * 1.5));
+  for (const [i, j] of EDGES) {
+    const z = (proj[i][2] + proj[j][2]) / 2;
+    const alpha = 0.30 + (z + 1.5) * 0.18;
+    ctx.strokeStyle = `rgba(205, 168, 82, ${alpha.toFixed(3)})`;
+    ctx.beginPath(); ctx.moveTo(proj[i][0], proj[i][1]); ctx.lineTo(proj[j][0], proj[j][1]); ctx.stroke();
+  }
+
+  drawVertices(c, proj, 2);
+}
+
+function renderPosner(c) {
+  const { ctx, W, H } = c;
+  ctx.clearRect(0, 0, W, H);
+  const scale = Math.min(W, H) * 0.20;
+  const cx = W / 2, cy = H / 2;
+
+  // suggested calcium "shell" — soft glowing dots scattered on sphere
+  // (illustrative only; not a precise crystal structure)
+  const calcium = [];
+  for (let i = 0; i < 9; i++) {
+    const t = i / 9 * Math.PI * 2;
+    const u = (i % 3) / 3 * Math.PI - Math.PI / 2;
+    calcium.push([
+      Math.cos(t) * Math.cos(u) * 1.7,
+      Math.sin(u) * 1.7,
+      Math.sin(t) * Math.cos(u) * 1.7,
+    ]);
+  }
+  for (const ca of calcium) {
+    const r = rotate(ca, state.theta, state.phi);
+    const p = project(r, W, H, scale);
+    const z = (r[2] + 1.7) / 3.4;
+    ctx.fillStyle = `rgba(139, 124, 201, ${(0.18 + z * 0.30).toFixed(3)})`;
+    ctx.beginPath(); ctx.arc(p[0], p[1], (3 + z * 4) * c.dpr, 0, Math.PI * 2); ctx.fill();
+  }
+
+  // edges (the K4 of phosphorus nuclei at the core)
+  const pts = VERT.map(v => rotate(v, state.theta, state.phi));
+  const proj = pts.map(v => project(v, W, H, scale));
+  ctx.lineWidth = 1.4 * c.dpr;
+  for (const [i, j] of EDGES) {
+    const z = (proj[i][2] + proj[j][2]) / 2;
+    const alpha = 0.28 + (z + 1.5) * 0.20;
+    ctx.strokeStyle = `rgba(139, 124, 201, ${alpha.toFixed(3)})`;
+    ctx.beginPath(); ctx.moveTo(proj[i][0], proj[i][1]); ctx.lineTo(proj[j][0], proj[j][1]); ctx.stroke();
+  }
+
+  drawVertices(c, proj, 3);
+}
+
+function drawVertices(c, proj, paneIdx) {
+  const { ctx, dpr } = c;
+  // sort back-to-front
+  const order = [0,1,2,3].slice().sort((a,b) => proj[a][2] - proj[b][2]);
+  for (const i of order) {
+    const [x, y, z, f] = proj[i];
+    const isSel = state.selected === i;
+    const r = (isSel ? 14 : 10) * dpr * (f * 0.6 + 0.7);
+    // halo
+    ctx.fillStyle = PALETTE[i] + "55";
+    ctx.beginPath(); ctx.arc(x, y, r * 1.7, 0, Math.PI * 2); ctx.fill();
+    // dot
+    ctx.fillStyle = PALETTE[i];
+    ctx.strokeStyle = isSel ? "#ffffff" : "rgba(231,238,233,0.35)";
+    ctx.lineWidth = (isSel ? 2 : 1) * dpr;
+    ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    // label
+    ctx.fillStyle = isSel ? "#ffffff" : "rgba(231,238,233,0.9)";
+    ctx.font = `${(isSel ? 13 : 11) * dpr}px ui-monospace, monospace`;
+    ctx.textAlign = "center"; ctx.textBaseline = "top";
+    ctx.fillText(LABELS[paneIdx][i], x, y + r + 6 * dpr);
+    if (SUB[paneIdx][i]) {
+      ctx.fillStyle = "rgba(170,178,173,0.55)";
+      ctx.font = `${10 * dpr}px ui-monospace, monospace`;
+      ctx.fillText(SUB[paneIdx][i], x, y + r + 22 * dpr);
+    }
+  }
+  // store proj for hit-testing
+  c.proj = proj;
+}
+
+const RENDERERS = [renderFamily, renderTetrahedron, renderSICPOVM, renderPosner];
+
+function renderAll() {
+  for (const c of ctxs) {
+    RENDERERS[c.idx](c);
+  }
+}
+
+/* === Drag handling: dragging in any pane updates global rotation === */
+let dragging = null;
+function onPointerDown(e, c) {
+  dragging = { c, x: e.clientX, y: e.clientY, theta0: state.theta, phi0: state.phi, moved: false };
+  c.pane.classList.add("dragging");
+  c.pane.setPointerCapture && c.pane.setPointerCapture(e.pointerId);
+  state.spinning = false;
+  btnSpin.classList.remove("on");
+  btnSpin.textContent = "auto-spin: off";
+  thesis.classList.add("faded");
+}
+function onPointerMove(e) {
+  if (!dragging) return;
+  const dx = e.clientX - dragging.x;
+  const dy = e.clientY - dragging.y;
+  if (Math.abs(dx) + Math.abs(dy) > 4) dragging.moved = true;
+  state.theta = dragging.theta0 + dx * 0.008;
+  state.phi   = Math.max(-1.4, Math.min(1.4, dragging.phi0 + dy * 0.008));
+  renderAll();
+}
+function onPointerUp(e) {
+  if (!dragging) return;
+  dragging.c.pane.classList.remove("dragging");
+  // if it was a click (not a drag), pick a vertex
+  if (!dragging.moved) pickVertex(e, dragging.c);
+  dragging = null;
+}
+
+function pickVertex(e, c) {
+  const r = c.canvas.getBoundingClientRect();
+  const px = (e.clientX - r.left) * c.dpr;
+  const py = (e.clientY - r.top)  * c.dpr;
+  let best = -1, bestD = Infinity;
+  if (!c.proj) return;
+  for (let i = 0; i < 4; i++) {
+    const [vx, vy] = c.proj[i];
+    const d = (vx - px) ** 2 + (vy - py) ** 2;
+    if (d < bestD) { bestD = d; best = i; }
+  }
+  const threshold = (24 * c.dpr) ** 2;
+  if (bestD < threshold) {
+    state.selected = (state.selected === best) ? -1 : best;
+    showCallout();
+  } else {
+    state.selected = -1;
+    showCallout();
+  }
+  renderAll();
+}
+
+function showCallout() {
+  if (state.selected < 0) {
+    callout.classList.remove("show");
+    return;
+  }
+  const i = state.selected;
+  const labels = [
+    `<span class="label" data-c="${"abcd"[i]}">${LABELS[0][i]}</span> · family vertex`,
+    `<span class="label" data-c="${"abcd"[i]}">${LABELS[1][i]}</span> · tetrahedron corner`,
+    `<span class="label" data-c="${"abcd"[i]}">${LABELS[2][i]}</span> · SIC pure state`,
+    `<span class="label" data-c="${"abcd"[i]}">${LABELS[3][i]}</span> · ³¹P nucleus`,
+  ];
+  callout.innerHTML = labels.join(' <span class="grey">·</span> ') +
+    '<br/><span class="grey" style="font-size:11px">same vertex · four scales · one rotation</span>';
+  callout.classList.add("show");
+}
+
+for (const c of ctxs) {
+  c.canvas.addEventListener("pointerdown", e => onPointerDown(e, c));
+  c.canvas.addEventListener("pointermove", onPointerMove);
+  c.canvas.addEventListener("pointerup", onPointerUp);
+  c.canvas.addEventListener("pointercancel", onPointerUp);
+  c.canvas.addEventListener("touchstart", e => e.preventDefault(), { passive: false });
+}
+
+/* === auto-spin === */
+let lastT = performance.now();
+function tick(t) {
+  const dt = (t - lastT) / 1000;
+  lastT = t;
+  if (state.spinning && !dragging) {
+    state.theta += dt * 0.18;
+    state.phi   = -0.4 + Math.sin(t * 0.0003) * 0.25;
+    renderAll();
+  }
+  requestAnimationFrame(tick);
+}
+
+/* === buttons === */
+btnSpin.addEventListener("click", () => {
+  state.spinning = !state.spinning;
+  btnSpin.classList.toggle("on", state.spinning);
+  btnSpin.textContent = "auto-spin: " + (state.spinning ? "on" : "off");
+  thesis.classList.toggle("faded", !state.spinning);
+});
+btnReset.addEventListener("click", () => {
+  state.theta = 0.5; state.phi = -0.4;
+  state.selected = -1;
+  showCallout();
+  renderAll();
+});
+btnCelebrate.addEventListener("click", () => {
+  // snap to a head-on view of vertex 0
+  state.theta = 0; state.phi = -0.6;
+  state.selected = 0;
+  state.spinning = false;
+  btnSpin.classList.remove("on");
+  btnSpin.textContent = "auto-spin: off";
+  showCallout();
+  renderAll();
+});
+btnFull.addEventListener("click", () => {
+  if (!document.fullscreenElement) document.documentElement.requestFullscreen?.();
+  else document.exitFullscreen?.();
+});
+
+/* === keyboard === */
+window.addEventListener("keydown", e => {
+  if (e.key === "ArrowLeft")  { state.theta -= 0.1; state.spinning = false; renderAll(); }
+  if (e.key === "ArrowRight") { state.theta += 0.1; state.spinning = false; renderAll(); }
+  if (e.key === "ArrowUp")    { state.phi   -= 0.1; state.spinning = false; renderAll(); }
+  if (e.key === "ArrowDown")  { state.phi   += 0.1; state.spinning = false; renderAll(); }
+  if (e.key === " ")          { btnSpin.click(); e.preventDefault(); }
+  if (e.key === "1" || e.key === "2" || e.key === "3" || e.key === "4") {
+    state.selected = Number(e.key) - 1; showCallout(); renderAll();
+  }
+});
+
+/* === init === */
+resize();
+renderAll();
+requestAnimationFrame(tick);
+</script>
+</body>
+</html>

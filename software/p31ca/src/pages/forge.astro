@@ -1,0 +1,14 @@
+---
+// @p31-layout: Gallery
+import AppShell from '../layouts/AppShell.astro';
+import DesignForge from '../components/DesignForge.jsx';
+---
+
+<AppShell
+  title="Design Forge | P31 Labs"
+  description="P31 design system: 25+ template generators, token preview, component forge"
+  routeName="demo-labs"
+  phosPage="forge"
+>
+  <DesignForge client:only="react" />
+</AppShell>

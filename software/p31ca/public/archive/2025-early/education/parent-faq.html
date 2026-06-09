@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Parent &amp; guardian FAQ | Education | P31 Labs</title>
+  <meta name="description" content="Non-technical FAQ: accounts, data, and how youth-related flows are documented — not a substitute for legal advice." />
+  <meta name="p31.labs-education" content="p31.labsEducation/0.2.0" />
+  <link rel="stylesheet" href="/p31-style.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/p31-tailwind-extend.js"></script>
+  <script>tailwind.config = { theme: { extend: { ...window.P31_TAILWIND_EXTEND } } };</script>
+</head>
+<body class="font-sans antialiased bg-void text-cloud min-h-screen p31-mesh-m-first">
+  <a class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50" href="#main">Skip to main</a>
+  <div class="min-h-screen max-w-3xl mx-auto px-4 py-8 md:py-10">
+    <p class="font-mono text-[0.65rem] text-cloud/50 tracking-widest uppercase mb-2">P31 Labs · education</p>
+    <h1 class="text-2xl font-bold text-paper">Parent &amp; guardian FAQ</h1>
+    <nav class="flex flex-wrap gap-2 text-xs font-mono text-cloud/70 border-b border-white/10 pb-4 my-4" aria-label="Education">
+      <a class="text-teal/90 hover:underline" href="/education/">Home</a>
+      <a class="text-teal/90 hover:underline" href="/education/about.html">About</a>
+      <a class="text-teal/90 hover:underline" href="/education/ethics.html">Ethics</a>
+    </nav>
+    <main id="main" class="space-y-6 text-sm text-cloud/85">
+      <section>
+        <h2 class="font-mono text-xs text-teal/85 uppercase tracking-wider mb-2">Accounts</h2>
+        <p>On <strong class="text-paper/90">E0–E2</strong> there is no sign-in for this education site. Labs use local storage or read-only public tools. Any future <strong>portal (E3)</strong> would need its own policy review before youth use.</p>
+      </section>
+      <section>
+        <h2 class="font-mono text-xs text-teal/85 uppercase tracking-wider mb-2">Data</h2>
+        <p>These pages do not collect learner PII in forms. If you use hub tools (passport generator, doc library) separately, see <a class="text-teal hover:underline" href="/privacy.html">Privacy</a> and product-specific copy.</p>
+      </section>
+      <section>
+        <h2 class="font-mono text-xs text-teal/85 uppercase tracking-wider mb-2">Youth &amp; COPPA</h2>
+        <p>Flows that could apply to children under 13 in the U.S. require a deliberate legal and product review. This static curriculum does not replace that work. The household coding plan in the home repo is the starting point for youth-facing engineering.</p>
+      </section>
+    </main>
+    <footer class="mt-10 text-xs text-cloud/45 text-center border-t border-white/10 pt-6">
+      <a class="text-teal/80 hover:underline" href="/education/">← Education home</a>
+    </footer>
+  </div>
+</body>
+</html>

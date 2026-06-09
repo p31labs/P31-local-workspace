@@ -1,0 +1,23 @@
+# P31 Andromeda — single workspace root (pnpm)
+# All install/build/test for JS/TS runs from repository root unless a package README says otherwise.
+
+packages:
+  # Turbo orchestrator (must be listed — software/* does not match this folder)
+  - 'software'
+  # Core applications & services (software top-level packages)
+  - 'software/*'
+  # Shared libraries & VS Code extensions
+  - 'software/packages/*'
+  - 'software/extensions/*'
+  # Nested app (PWA under node-zero)
+  - 'software/packages/node-zero/pwa'
+  # Workers grouped under cloudflare-worker and discord
+  - 'software/cloudflare-worker/*'
+  - 'software/discord/*'
+  # Landing site nested under spaceship-earth
+  - 'software/spaceship-earth/astro-landing'
+  # Repo-root satellite packages
+  - 'cli'
+  - 'p31labs/*'
+  - 'phosphorus31.org/planetary-planet'
+  - 'ecosystem/*'

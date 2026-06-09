@@ -1,0 +1,66 @@
+name: Social Dispatch - Operation Trimtab
+
+on:
+  workflow_dispatch:
+    inputs:
+      wave_selector:
+        description: 'Wave to deploy'
+        required: true
+        default: '1'
+        type: choice
+        options:
+          - '1'
+          - '2'
+          - '3'
+          - '4'
+          - '5'
+          - '6'
+          - 'all'
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install yq
+        run: |
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod a+x /usr/local/bin/yq
+
+      - name: Parse and Dispatch Wave
+        run: |
+          SELECTOR="${{ github.event.inputs.wave_selector }}"
+          FILE="admin/OPERATION_TRIMTAB_DEPLOYMENT.yaml"
+
+          echo "Initiating Quantum Egg Hunt Deployment Sequence..."
+
+          if [ "$SELECTOR" = "all" ]; then
+            echo "Dispatching ALL waves concurrently..."
+            # Mock dispatch for all
+            yq eval '.waves[] | "Target: " + .target_platform + " | Hint: " + .egg_hint' $FILE
+          else
+            # Arrays in yq are 0-indexed, wave input is 1-indexed
+            INDEX=$((SELECTOR - 1))
+
+            # WCD Aligned Field Extractions
+            PLATFORM=$(yq eval ".waves[$INDEX].target_platform" $FILE)
+            CONTENT=$(yq eval ".waves[$INDEX].content_block" $FILE)
+            HINT=$(yq eval ".waves[$INDEX].egg_hint" $FILE)
+            SCHEDULE=$(yq eval ".waves[$INDEX].scheduled_time" $FILE)
+
+            echo "========================================"
+            echo "WAVE $SELECTOR DISPATCH SECURED"
+            echo "========================================"
+            echo "Target Platform: $PLATFORM"
+            echo "Scheduled Time:  $SCHEDULE"
+            echo "Payload Content: $CONTENT"
+            echo "Active Egg Hint: $HINT"
+            echo "========================================"
+
+            # Mocking the actual API drop
+            echo "Sending payload to API..."
+            sleep 2
+            echo "Payload delivered successfully to $PLATFORM."
+          fi

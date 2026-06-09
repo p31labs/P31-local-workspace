@@ -1,0 +1,135 @@
+{
+  "schema": "p31.sovereignLayers/0.1.0",
+  "updated": "2026-04-30T12:00:00.000Z",
+  "humanDoc": "docs/P31-SOVEREIGN-LAYERS.md",
+  "chainPackage": "packages/p31-sovereign-chain",
+  "manifestUrls": {
+    "layers": "https://p31ca.org/p31-sovereign-layers.json",
+    "chainAnchor": "https://p31ca.org/p31-chain-anchor.json"
+  },
+  "layers": [
+    {
+      "id": "L1",
+      "title": "Edge compute & personal state",
+      "kind": "compute-storage",
+      "status": "shipped",
+      "primitives": ["cloudflare-workers", "durable-objects", "sqlite-do", "kv", "r2"],
+      "repoPaths": ["packages/cf-edge-lab", "simplex-v7"],
+      "pairsWith": ["L2", "L5"],
+      "note": "Low-latency path; DO isolation per cryptographic subject. Not replaced by chain—paired with L2/L7 for proofs and money."
+    },
+    {
+      "id": "L2",
+      "title": "EVM transparency anchor",
+      "kind": "chain-commitment",
+      "status": "shipped",
+      "primitives": ["evm", "solidity", "foundry"],
+      "repoPaths": ["packages/p31-sovereign-chain"],
+      "contract": "P31TransparencyAnchor",
+      "smartSuite": ["P31TransparencyAnchor", "P31ManifestRegistry", "P31AccessAllowlist", "P31ContentRoot", "P31TreasuryConfig"],
+      "pairsWith": ["L4", "L8"],
+      "note": "SMART five-pack: S/M/A/R/T — ABIs in p31-smart-evm.json and hub contract builder. Deploy addresses in p31-chain-anchor.json."
+    },
+    {
+      "id": "L3",
+      "title": "EVM content roots (IPFS / Arweave CIDs)",
+      "kind": "chain-pointer",
+      "status": "shipped",
+      "primitives": ["evm", "content-addressing"],
+      "repoPaths": ["packages/p31-sovereign-chain"],
+      "contract": "P31ContentRoot",
+      "pairsWith": ["L4", "L9"],
+      "note": "Operator-owned key→CID map for hub/dist snapshots; rotate owner to multisig (L10)."
+    },
+    {
+      "id": "L4",
+      "title": "Public HTTPS manifests",
+      "kind": "distribution",
+      "status": "shipped",
+      "primitives": ["static-json", "cloudflare-pages"],
+      "repoPaths": ["contracts/p31-contract-registry.json", "p31-chain-anchor.json", "p31-sovereign-layers.json"],
+      "pairsWith": ["L2", "L3"],
+      "note": "Canonical JSON contracts + verify bar; mirror to p31ca public/. Anchor digests on L2; CIDs on L3."
+    },
+    {
+      "id": "L5",
+      "title": "Cryptographic identity (WebAuthn / passkeys)",
+      "kind": "identity",
+      "status": "shipped",
+      "primitives": ["webauthn", "u_subject"],
+      "repoPaths": ["docs/RESEARCH-BRIEF-CRYPTOGRAPHIC-CONSCIOUSNESS-IDENTITY.md"],
+      "pairsWith": ["L1", "L6"],
+      "note": "Proof-of-possession routing; no ledger required. DID sidecar is L6."
+    },
+    {
+      "id": "L6",
+      "title": "Decentralized identifiers & attestations",
+      "kind": "identity",
+      "status": "planned",
+      "primitives": ["did-v1", "vc-jwt", "optional-ledger-anchor"],
+      "repoPaths": [],
+      "pairsWith": ["L2", "L5"],
+      "note": "Pairwise DIDs + selective disclosure; anchor DID doc hash via L2. No vendor lock-in for join keys."
+    },
+    {
+      "id": "L7",
+      "title": "Fiat payments & receipts",
+      "kind": "payments-fiat",
+      "status": "shipped",
+      "primitives": ["stripe", "payment-links"],
+      "repoPaths": ["docs/P31-CREATE-CONNECT-ETHICAL-MONETIZATION.md"],
+      "pairsWith": ["L8"],
+      "note": "Operator Grant / Sponsors; donate-api Worker. Receipt hashes can be anchored on L2."
+    },
+    {
+      "id": "L8",
+      "title": "On-chain payments & treasury",
+      "kind": "payments-chain",
+      "status": "planned",
+      "primitives": ["eip-3009", "usdc", "safe-multisig"],
+      "repoPaths": [],
+      "pairsWith": ["L2", "L7", "L10"],
+      "note": "Stablecoin treasuries on Base; multisig (Safe) as owner of L3 + upgrade keys; policy text in L4 JSON."
+    },
+    {
+      "id": "L9",
+      "title": "Content network pinning",
+      "kind": "storage-decentralized",
+      "status": "partial",
+      "primitives": ["ipfs", "filecoin", "arweave"],
+      "repoPaths": [],
+      "pairsWith": ["L3", "L11"],
+      "note": "Pin p31ca dist/ + contract-registry; store CID in P31ContentRoot. Automate in CI post-deploy."
+    },
+    {
+      "id": "L10",
+      "title": "On-chain governance & custody",
+      "kind": "governance",
+      "status": "partial",
+      "primitives": ["multisig", "timelock", "social-layer"],
+      "repoPaths": ["p31-chain-anchor.json"],
+      "pairsWith": ["L3", "L8"],
+      "note": "Transfer P31ContentRoot owner + deploy keys to Safe; document signers in nonprofit records (off-chain) + hash on L2."
+    },
+    {
+      "id": "L11",
+      "title": "Censorship-resistant frontends",
+      "kind": "distribution",
+      "status": "planned",
+      "primitives": ["ipfs-gateway", "ens", "tor-mirror-optional"],
+      "repoPaths": [],
+      "pairsWith": ["L3", "L9"],
+      "note": "Immutable build CID in L3; multiple gateways; ENS contenthash optional."
+    },
+    {
+      "id": "L12",
+      "title": "Indexing & auditability",
+      "kind": "observability",
+      "status": "partial",
+      "primitives": ["block-explorer", "subgraph-optional", "event-logs"],
+      "repoPaths": ["packages/p31-sovereign-chain"],
+      "pairsWith": ["L2"],
+      "note": "Index Anchored / RootSet events; correlate with git SHA in L4 manifests."
+    }
+  ]
+}

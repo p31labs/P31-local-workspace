@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>P31 Cognitive Passport Generator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/assets/p31-operator-tailwind.js"></script>
+  <style>
+    body { font-family: system-ui, sans-serif; background: #050505; color: #d8d6d0; }
+    .card { background: #161920; border: 1px solid rgba(255,255,255,0.05); }
+    textarea { background: #050505; border: 1px solid #333; color: #d8d6d0; font-family: monospace; }
+  </style>
+</head>
+<body class="min-h-screen p-8">
+  <div class="max-w-4xl mx-auto">
+    <header class="mb-8">
+      <h1 class="text-3xl font-bold text-teal">P31 Cognitive Passport Generator</h1>
+      <p class="opacity-60 mt-2">Generate safe AI interaction instructions from biological substrate data</p>
+    </header>
+
+    <div class="grid md:grid-cols-2 gap-8">
+      <div class="card rounded-xl p-6">
+        <h2 class="text-lg font-semibold mb-4">Operator Data</h2>
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm opacity-60 mb-1">Name</label>
+            <input type="text" id="name" value="William Rodger Johnson" class="w-full px-3 py-2 rounded bg-zinc-900 border border-zinc-700">
+          </div>
+          <div>
+            <label class="block text-sm opacity-60 mb-1">Primary Diagnosis</label>
+            <select id="diagnosis" class="w-full px-3 py-2 rounded bg-zinc-900 border border-zinc-700">
+              <option value="AuDHD">AuDHD (Autism + ADHD)</option>
+              <option value="Hypoparathyroidism">Hypoparathyroidism</option>
+              <option value="Both">Both</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm opacity-60 mb-1">Communication Style</label>
+            <select id="commStyle" class="w-full px-3 py-2 rounded bg-zinc-900 border border-zinc-700">
+              <option value="Direct">Direct - No corporate pleasantries</option>
+              <option value="Technical">Technical - Systems & geometry</option>
+              <option value="Metaphorical">Metaphorical - Electrical/quantum</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm opacity-60 mb-1">Executive Function Status</label>
+            <select id="execStatus" class="w-full px-3 py-2 rounded bg-zinc-900 border border-zinc-700">
+              <option value="Functional">Functional</option>
+              <option value="Depleted">Spoon Depleted</option>
+              <option value="Crisis">Crisis State</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm opacity-60 mb-1">Key Constraints</label>
+            <div class="space-y-2">
+              <label class="flex items-center gap-2"><input type="checkbox" id="noMilitary" checked> No naval/military metaphors</label>
+              <label class="flex items-center gap-2"><input type="checkbox" id="handwriting" checked> Prefers handwriting over typing</label>
+              <label class="flex items-center gap-2"><input type="checkbox" id="lowVerbal" checked> Verbal serialization is lossy</label>
+            </div>
+          </div>
+          <button onclick="generatePassport()" class="w-full mt-4 py-3 bg-teal-600 hover:bg-teal-500 rounded font-semibold">
+            Generate Passport
+          </button>
+        </div>
+      </div>
+
+      <div class="card rounded-xl p-6">
+        <h2 class="text-lg font-semibold mb-4">Generated Output</h2>
+        <textarea id="output" class="w-full h-[400px] p-4 rounded text-sm" readonly placeholder="Click Generate to create passport..."></textarea>
+        <button onclick="copyToClipboard()" class="mt-4 px-4 py-2 bg-zinc-700 hover:bg-zinc-600 rounded">
+          Copy to Clipboard
+        </button>
+      </div>
+    </div>
+
+    <div class="mt-8 card rounded-xl p-6">
+      <h2 class="text-lg font-semibold mb-4">Instructions for AI Agents</h2>
+      <div class="prose opacity-70 text-sm">
+        <p>This passport serves as a configuration file for the listener. Key directives:</p>
+        <ul class="list-disc ml-6 mt-2 space-y-1">
+          <li><strong>Direct over diplomatic</strong> — Don't hedge, don't apologize</li>
+          <li><strong>Technical over emotional</strong> — Use systems language</li>
+          <li><strong>Writing over speech</strong> — Handwriting is highest fidelity</li>
+          <li><strong>Geometry over hierarchy</strong> — K4 topology, not org charts</li>
+          <li><strong>Pause on distress</strong> — If mask slips, slow down</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function generatePassport() {
+      const name = document.getElementById('name').value;
+      const diagnosis = document.getElementById('diagnosis').value;
+      const commStyle = document.getElementById('commStyle').value;
+      const execStatus = document.getElementById('execStatus').value;
+      
+      const constraints = [];
+      if (document.getElementById('noMilitary').checked) constraints.push('NO military/naval metaphors');
+      if (document.getElementById('handwriting').checked) constraints.push('Prefers handwriting');
+      if (document.getElementById('lowVerbal').checked) constraints.push('Verbal serialization is lossy');
+      
+      const date = new Date().toISOString().split('T')[0];
+      
+      const output = `# P31 COGNITIVE PASSPORT — ${date}
+
+## The Operator
+
+**Name:** ${name}
+**Diagnosis:** ${diagnosis}
+**Communication Style:** ${commStyle}
+**Executive Function:** ${execStatus}
+
+## Constraints
+
+${constraints.map(c => `- ${c}`).join('\n')}
+
+## Instructions for AI
+
+When interacting with this node:
+1. **Be direct** — No corporate pleasantries, no hedging
+2. **Use systems language** — Geometry, topology, physics metaphors welcome
+3. **Respect the bottleneck** — Writing captures more than speech
+4. **Honor spoon economy** — If depleted, minimize decisions required
+5. **Never escalate** — If distress detected, pause and simplify
+
+## Contact
+
+- Email: will@p31ca.org
+- Phone: (912) 227-4980
+- Location: Saint Marys, GA 31558
+
+---
+
+*Generated: ${date} | P31 Labs*
+`;
+      
+      document.getElementById('output').value = output;
+    }
+
+    function copyToClipboard() {
+      const textarea = document.getElementById('output');
+      textarea.select();
+      document.execCommand('copy');
+      alert('Copied to clipboard!');
+    }
+
+    generatePassport();
+  </script>
+</body>
+</html>

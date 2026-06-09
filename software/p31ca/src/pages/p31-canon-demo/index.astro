@@ -1,0 +1,179 @@
+---
+// @p31-layout: Focus
+import AppShell from '../../layouts/AppShell.astro';
+---
+<AppShell
+  title="P31CA Design Canon Demo"
+  description="One Canon surface verification — live CSS token inspection, hub/org appearance toggle, and design system reference for P31 Labs."
+  routeName="p31-canon-demo"
+>
+  <style>
+    :root { --demo-gutter: clamp(1.5rem, 4vw, 3rem); }
+    .token-row { display:flex; justify-content:space-between; align-items:center; padding:0.5rem 0; border-bottom:1px solid rgba(255,255,255,0.06); }
+    .token-row:last-child { border-bottom:none; }
+    .token-swatch { width:1rem; height:1rem; border-radius:50%; border:1px solid rgba(255,255,255,0.15); flex-shrink:0; }
+    html[data-p31-appearance="hub"]  [data-appearance-toggle="hub"],
+    html[data-p31-appearance="org"]  [data-appearance-toggle="org"],
+    html[data-p31-appearance="auto"] [data-appearance-toggle="auto"] {
+      background: rgba(139,92,246,0.18);
+      color: var(--p31-violet, #8b5cf6);
+      border-color: rgba(139,92,246,0.45);
+    }
+    .glass-panel {
+      background: rgba(8,8,18,0.60);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255,255,255,0.09);
+      box-shadow: 0 10px 40px rgba(0,0,0,0.48);
+    }
+    .p31-q-surface {
+      background: rgba(0,0,0,0.28);
+      border-left: 3px solid var(--p31-violet, #8b5cf6);
+    }
+  </style>
+
+  <div class="max-w-5xl mx-auto flex flex-col gap-10 p-[var(--demo-gutter)]">
+
+    <!-- Header -->
+    <header class="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-white/10">
+      <div>
+        <p class="text-[10px] font-mono tracking-[0.2em] uppercase mb-2" style="color:var(--p31-emerald,var(--p31-teal))">Surface Verification</p>
+        <h1 class="text-4xl md:text-5xl font-sans font-bold tracking-tight" style="color:var(--p31-cloud,#ede8e0)">One Canon Demo</h1>
+        <p class="text-sm mt-1" style="color:rgba(255,255,255,0.45)">Design system reference — CSS custom properties, surfaces, and appearance axes</p>
+      </div>
+      <div class="flex items-center gap-2 glass-panel px-4 py-2 rounded-xl shrink-0" role="group" aria-label="Appearance switcher">
+        <span class="text-[9px] font-mono uppercase tracking-widest mr-1" style="color:rgba(255,255,255,0.35)">Appearance:</span>
+        <button type="button" data-appearance-toggle="hub"
+          class="px-3 py-1.5 rounded text-[10px] font-mono tracking-wider border border-transparent transition-all"
+          style="color:rgba(255,255,255,0.55)"
+          aria-pressed="true">Hub</button>
+        <button type="button" data-appearance-toggle="org"
+          class="px-3 py-1.5 rounded text-[10px] font-mono tracking-wider border border-transparent transition-all"
+          style="color:rgba(255,255,255,0.55)"
+          aria-pressed="false">Org</button>
+      </div>
+    </header>
+
+    <!-- Main grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+      <section aria-labelledby="palette-hd" class="flex flex-col gap-3">
+        <h2 id="palette-hd" class="font-sans text-xl font-bold pb-2 border-b border-white/10" style="color:rgba(255,255,255,0.75)">Palette</h2>
+        <div id="palette-list" class="flex flex-col gap-2"></div>
+      </section>
+
+      <section aria-labelledby="type-hd" class="flex flex-col gap-3">
+        <h2 id="type-hd" class="font-sans text-xl font-bold pb-2 border-b border-white/10" style="color:rgba(255,255,255,0.75)">Typography</h2>
+        <div class="glass-panel p-5 flex flex-col gap-5 rounded-xl">
+          <div>
+            <p class="text-[9px] font-mono uppercase tracking-widest mb-1.5" style="color:var(--p31-emerald,var(--p31-teal))">Display</p>
+            <p class="font-sans text-2xl font-bold leading-tight" style="color:var(--p31-cloud,#ede8e0)">The architecture operates under one sky.</p>
+          </div>
+          <div>
+            <p class="text-[9px] font-mono uppercase tracking-widest mb-1.5" style="color:var(--p31-emerald,var(--p31-teal))">Interface</p>
+            <p class="font-sans text-sm leading-relaxed" style="color:rgba(255,255,255,0.65)">System parameters verified. Local thresholds hold across all active nodes.</p>
+          </div>
+          <div>
+            <p class="text-[9px] font-mono uppercase tracking-widest mb-1.5" style="color:var(--p31-emerald,var(--p31-teal))">Telemetry</p>
+            <p class="font-mono text-xs" style="color:rgba(255,255,255,0.45)">0x9F4A…B82C [VERIFIED] 18ms</p>
+          </div>
+        </div>
+      </section>
+
+      <section aria-labelledby="surf-hd" class="flex flex-col gap-3">
+        <h2 id="surf-hd" class="font-sans text-xl font-bold pb-2 border-b border-white/10" style="color:rgba(255,255,255,0.75)">Surfaces</h2>
+        <div class="glass-panel p-5 rounded-xl flex flex-col justify-between" style="min-height:8rem">
+          <span class="font-mono text-[9px] uppercase tracking-widest" style="color:rgba(255,255,255,0.4)">.glass-panel</span>
+          <p class="font-sans text-base mt-4" style="color:var(--p31-cloud,#ede8e0)">Primary floating structural element.</p>
+        </div>
+        <div class="p31-q-surface p-5 rounded-xl flex flex-col justify-between" style="min-height:6rem">
+          <span class="font-mono text-[9px] uppercase tracking-widest" style="color:var(--p31-violet,#8b5cf6)">.p31-q-surface</span>
+          <p class="font-sans text-sm mt-4" style="color:rgba(255,255,255,0.75)">Secondary data container with violet border anchor.</p>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Live Tokens panel -->
+    <section aria-labelledby="tokens-hd" class="glass-panel p-6 rounded-2xl">
+      <div class="flex items-center justify-between mb-4">
+        <h2 id="tokens-hd" class="font-sans text-xl font-bold" style="color:var(--p31-cloud,#ede8e0)">Live Tokens</h2>
+        <span class="text-[9px] font-mono uppercase tracking-widest px-2 py-1 rounded" style="color:var(--p31-emerald,var(--p31-teal));background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2)">CSS Custom Properties</span>
+      </div>
+      <div id="token-table" class="font-mono text-[11px]" style="color:rgba(255,255,255,0.6)"></div>
+    </section>
+
+  </div>
+
+  <script>
+    const TOKENS = [
+      { name: '--p31-void',      label: 'Void'       },
+      { name: '--p31-cloud',     label: 'Cloud'      },
+      { name: '--p31-emerald',   label: 'Emerald'    },
+      { name: '--p31-violet',    label: 'Violet'     },
+      { name: '--p31-coral',     label: 'Coral'      },
+      { name: '--p31-teal',      label: 'Teal'       },
+      { name: '--p31-amber',     label: 'Amber'      },
+      { name: '--p31-phosphorus',label: 'Phosphorus' },
+    ];
+
+    function buildTokenUI() {
+      const root = document.documentElement;
+      const cs = getComputedStyle(root);
+
+      const paletteList = document.getElementById('palette-list');
+      if (paletteList) {
+        paletteList.innerHTML = '';
+        TOKENS.slice(0, 6).forEach(({ name, label }) => {
+          const val = cs.getPropertyValue(name).trim() || '#888';
+          const row = document.createElement('div');
+          row.className = 'token-row';
+          row.innerHTML = `
+            <div style="display:flex;align-items:center;gap:0.75rem">
+              <div class="token-swatch" style="background:${val}"></div>
+              <span style="color:rgba(255,255,255,0.75)">${label}</span>
+            </div>
+            <span style="color:rgba(255,255,255,0.35)">${name}</span>`;
+          paletteList.appendChild(row);
+        });
+      }
+
+      const table = document.getElementById('token-table');
+      if (table) {
+        table.innerHTML = '';
+        TOKENS.forEach(({ name }) => {
+          const val = cs.getPropertyValue(name).trim() || '—';
+          const row = document.createElement('div');
+          row.className = 'token-row';
+          row.style.cssText = 'display:flex;justify-content:space-between;align-items:center;padding:0.45rem 0;border-bottom:1px solid rgba(255,255,255,0.06)';
+          const id = 'tv-' + name.replace(/--/g,'').replace(/-/g,'_');
+          row.innerHTML = `<span style="color:rgba(255,255,255,0.5)">${name}</span><span id="${id}" style="color:rgba(255,255,255,0.85)">${val}</span>`;
+          table.appendChild(row);
+        });
+      }
+    }
+
+    function attachToggles() {
+      document.querySelectorAll('[data-appearance-toggle]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const val = btn.getAttribute('data-appearance-toggle');
+          document.documentElement.setAttribute('data-p31-appearance', val);
+          document.querySelectorAll('[data-appearance-toggle]').forEach(b => {
+            b.setAttribute('aria-pressed', b === btn ? 'true' : 'false');
+          });
+          const cs2 = getComputedStyle(document.documentElement);
+          TOKENS.forEach(({ name }) => {
+            const id = 'tv-' + name.replace(/--/g,'').replace(/-/g,'_');
+            const el = document.getElementById(id);
+            if (el) el.textContent = cs2.getPropertyValue(name).trim() || '—';
+          });
+        });
+      });
+    }
+
+    document.addEventListener('astro:page-load', () => {
+      buildTokenUI();
+      attachToggles();
+    });
+  </script>
+</AppShell>

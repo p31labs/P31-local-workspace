@@ -1,0 +1,45 @@
+---
+// @p31-layout: Gallery
+import AppShell from '../layouts/AppShell.astro';
+
+---
+<AppShell title="Demo Labs — P31 Labs" routeName="demo-labs">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <header class="mb-8 text-center">
+      <h1 class="text-3xl font-bold text-p31-cloud">Demo Labs</h1>
+      <p class="text-p31-emerald/70">Interactive demonstrations of P31's core technologies</p>
+    </header>
+    
+    <div class="space-y-8">
+      <div class="bg-p31-surface/50 backdrop-blur-sm rounded-xl border border-p31-emerald/20 p-6">
+        <h2 class="text-xl font-semibold mb-4">K₄ Mesh Navigator</h2>
+        <p class="text-p31-cloud/80 mb-4">Explore the live K₄ tetrahedron with real-time orbital mechanics and vertex connections.</p>
+        <a href="/connect" class="inline-flex items-center px-4 py-2 bg-p31-emerald/20 text-p31-emerald rounded-lg hover:bg-p31-emerald/30 transition-colors">
+          Launch Mesh Navigator →
+        </a>
+      </div>
+      
+      <div class="bg-p31-surface/50 backdrop-blur-sm rounded-xl border border-p31-emerald/20 p-6">
+        <h2 class="text-xl font-semibold mb-4">GEODESIC Builder</h2>
+        <p class="text-p31-cloud/80 mb-4">Design and test geodesic dome structures with physics-based validation.</p>
+        <a href="/geodesic.html" class="inline-flex items-center px-4 py-2 bg-p31-emerald/20 text-p31-emerald rounded-lg hover:bg-p31-emerald/30 transition-colors">
+          Open GEODESIC Builder →
+        </a>
+      </div>
+      
+      <div class="bg-p31-surface/50 backdrop-blur-sm rounded-xl border border-p31-emerald/20 p-6">
+        <h2 class="text-xl font-semibold mb-4">Passport Generator</h2>
+        <p class="text-p31-cloud/80 mb-4">Create and manage your Cognitive Passport with sovereign identity controls.</p>
+        <a href="/passport" class="inline-flex items-center px-4 py-2 bg-p31-emerald/20 text-p31-emerald rounded-lg hover:bg-p31-emerald/30 transition-colors">
+          Access Passport →
+        </a>
+      </div>
+    </div>
+    
+    <div class="mt-12 pt-8 border-t border-p31-emerald/10">
+      <p class="text-center text-p31-cloud/50 text-sm">
+        These demos showcase the core technologies that power the P31 sovereign mesh. Each demonstration is interconnected through the AppShell framework, sharing the persistent Smart Starfield visualization and PHOS Familiar navigation branding.
+      </p>
+    </div>
+  </div>
+</AppShell>

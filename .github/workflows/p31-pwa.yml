@@ -1,0 +1,41 @@
+name: p31-pwa
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "software/packages/node-zero/pwa/**"
+      - ".github/actions/**"
+      - ".github/workflows/p31-pwa.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: p31-pwa-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/toolchain-constants
+
+      - uses: ./.github/actions/npm-ci-project
+        with:
+          working-directory: software/packages/node-zero/pwa
+          cache-dependency-path: software/packages/node-zero/pwa/package-lock.json
+
+      - name: Build
+        working-directory: software/packages/node-zero/pwa
+        run: npm run build
+
+      - name: Deploy to Cloudflare Pages
+        if: github.ref == 'refs/heads/main'
+        uses: ./.github/actions/wrangler-run
+        with:
+          working-directory: software/packages/node-zero/pwa
+          command: pages deploy dist --project-name=p31-pwa --branch=main
+          api-token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          account-id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

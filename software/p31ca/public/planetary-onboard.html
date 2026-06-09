@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Planetary Onboard | P31 Labs</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/p31-style.css">
+</head>
+<body class="bg-[#05000a] text-cyan-400 font-mono min-h-screen flex flex-col">
+  <header class="p-6 border-b border-cyan-400/20">
+    <div class="max-w-6xl mx-auto flex justify-between items-center">
+      <h1 class="text-xl font-bold tracking-widest text-purple-400">P31 — Threshold Onboard</h1>
+      <a href="/passport" class="text-cyan-400 hover:text-purple-400 text-sm">Passport ↗</a>
+    </div>
+  </header>
+
+  <main class="flex-1 flex items-center justify-center p-8">
+    <div class="max-w-4xl w-full">
+      <section class="text-center mb-16">
+        <h2 class="text-3xl font-bold mb-4 text-purple-400">Four Doors. One Mesh.</h2>
+        <p class="text-cyan-400/70 max-w-2xl mx-auto">
+          P31 is a family-first, kid-safe research ecosystem. Choose your entry point.
+          All paths converge on the K₄ mesh — a complete graph of four vertices, six edges.
+        </p>
+      </section>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+
+        <div id="door-understand" data-door="understand" class="p-6 rounded-xl border border-cyan-400/30 bg-cyan-400/5 hover:bg-cyan-400/10 transition-colors cursor-pointer">
+          <h3 class="text-lg font-bold mb-2 text-purple-400">01 — Understand</h3>
+          <p class="text-sm text-cyan-400/70 mb-4">Read the research. See the architecture. Learn why K₄.</p>
+          <a href="/docs/P31-ENGINEERING-STANDARD.md" class="text-cyan-400 text-sm hover:underline">Read the standards</a>
+        </div>
+
+        <div id="door-use" class="p-6 rounded-xl border border-cyan-400/30 bg-cyan-400/5 hover:bg-cyan-400/10 transition-colors cursor-pointer">
+          <h3 class="text-lg font-bold mb-2 text-purple-400">02 — Use</h3>
+          <p class="text-sm text-cyan-400/70 mb-4">Play BONDING. Join the mesh. Try the tools.</p>
+          <a href="/bonding" class="text-cyan-400 text-sm hover:underline">Enter the lab</a>
+        </div>
+
+        <div id="door-build" class="p-6 rounded-xl border border-cyan-400/30 bg-cyan-400/5 hover:bg-cyan-400/10 transition-colors cursor-pointer">
+          <h3 class="text-lg font-bold mb-2 text-purple-400">03 — Build</h3>
+          <p class="text-sm text-cyan-400/70 mb-4">Deploy a worker. Forge a document. Run a simulation.</p>
+          <a href="/docs/START-BUILD.md" class="text-cyan-400 text-sm hover:underline">Open the shop</a>
+        </div>
+
+        <div id="door-know" class="p-6 rounded-xl border border-cyan-400/30 bg-cyan-400/5 hover:bg-cyan-400/10 transition-colors cursor-pointer">
+          <h3 class="text-lg font-bold mb-2 text-purple-400">04 — Know Someone</h3>
+          <p class="text-sm text-cyan-400/70 mb-4">Get a room code. Join a private geodesic session.</p>
+          <a href="/passport?invite=1" class="text-cyan-400 text-sm hover:underline">Request access</a>
+        </div>
+
+      </div>
+
+       <section class="mt-16 pt-8 border-t border-cyan-400/20 text-center text-sm text-cyan-400/50">
+        <p class="mb-2">
+          <strong>Passkey auth</strong> — powered by <code>PublicKeyCredential</code> WebAuthn API —
+          bound to <a href="https://bonding.p31ca.org" class="hover:text-purple-400">bonding.p31ca.org</a> —
+          identity at <a href="https://p31ca.org/passport" class="hover:text-purple-400">p31ca.org/passport</a>
+        </p>
+        <p class="mb-2">
+          Open source core — <a href="https://github.com/p31labs" class="hover:text-purple-400">github.com/p31labs</a>
+        </p>
+        <p>
+          P31 Labs, Inc. · EIN <span class="text-cyan-300">42-1888158</span> · Georgia nonprofit
+        </p>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    // Door interaction — tracks selection without cloud
+    document.querySelectorAll('[id^="door-"]').forEach(door => {
+      door.addEventListener('click', () => {
+        const choice = door.dataset.door || door.id.replace('door-', '');
+        console.log('[ψ] threshold door selected:', choice);
+        // Future: emit p31:onboard:choice event
+      });
+    });
+
+    // Quantum Egg archetype anchors — each string must appear verbatim in source
+    const archetype = { id: 'onboard', phase: 'threshold', doors: 4 };
+    const elder = 'elder';   // operator mode
+    const child = 'child';   // learner mode
+    const elderMode = 'elder-mode';
+    const childMode = 'child-mode';
+  </script>
+</body>
+</html>

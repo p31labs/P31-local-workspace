@@ -1,0 +1,423 @@
+---
+/**
+  * @p31-layout: Workshop
+ * /atmosphere — P31 Atmosphere system
+ *
+ * Six surfaces sharing one adaptive starfield canvas. Each surface
+ * independently tunes: particle density, color temperature, corner radius,
+ * motion budget, type scale, and sound profile.
+ *
+ * Surfaces: Garden · BONDING · Hub · Cockpit · Command Center · Legal
+ *
+ * AppShell starfield is suspended on this route (same pattern as /dome)
+ * because the Atmosphere canvas owns the full visual field.
+ */
+import AppShell from '../layouts/AppShell.astro';
+---
+
+<AppShell title="Atmosphere — P31 Labs" routeName="atmosphere" suppressEbc={true}>
+  <Fragment slot="head">
+    <link rel="canonical" href="https://p31ca.org/atmosphere" />
+    <meta property="og:title"       content="P31 Atmosphere — P31 Labs" />
+    <meta property="og:description" content="Six surfaces. One shared starfield. Cognitive, operational, legal, and family contexts, each tuned independently." />
+    <meta property="og:url"         content="https://p31ca.org/atmosphere" />
+    <style>
+      /* Full-bleed: no padding on this page */
+      body { overflow: hidden; }
+      #p31-bottom-ribbon { display: none !important; }
+    </style>
+  </Fragment>
+
+  <h2 class="sr-only">P31 Atmosphere system — six surfaces with shared smart starfield, each tuning particle density, color temperature, corner radius, motion budget, type scale, and sound profile independently</h2>
+
+  <style>
+    *{box-sizing:border-box;margin:0}
+    :root{--rad:8px;--warmth:0.5;--density:80;--text-color:#ede8e0;--sub-color:rgba(232,230,227,0.45);--void:#05080c;--teal:77,184,168;--coral:204,98,71;--phosphor:59,163,114;--amber:205,168,82}
+    .atm-wrap{width:100%;border-radius:0;overflow:hidden;position:fixed;inset:0;background:var(--void);font-family:'Helvetica Neue',system-ui,sans-serif;z-index:1}
+    canvas#atm-sky{position:absolute;inset:0;width:100%;height:100%;z-index:0}
+    .atm-ui{position:relative;z-index:2;display:flex;flex-direction:column;height:100vh}
+    .atm-nav{display:flex;gap:2px;padding:8px;flex-wrap:wrap}
+    .atm-nav button{padding:8px 14px;border:none;border-radius:var(--rad);cursor:pointer;font-size:12px;font-family:inherit;transition:all 0.4s;background:rgba(255,255,255,0.04);color:rgba(232,230,227,0.5)}
+    .atm-nav button.active{background:rgba(77,184,168,0.15);color:rgb(var(--teal))}
+    .atm-nav button:hover{background:rgba(255,255,255,0.08)}
+    .atm-surface{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;transition:all 0.6s ease;overflow:auto}
+    .atm-title{font-size:28px;font-weight:300;color:var(--text-color);margin-bottom:6px;transition:all 0.6s}
+    .atm-sub{font-size:14px;color:var(--sub-color);text-align:center;max-width:420px;line-height:1.6;transition:all 0.6s}
+    .atm-card{margin-top:20px;padding:16px 20px;background:rgba(255,255,255,0.025);border:0.5px solid rgba(255,255,255,0.06);transition:all 0.6s;width:100%;max-width:440px}
+    .atm-card-title{font-size:13px;font-weight:500;color:var(--text-color);letter-spacing:0.5px;margin-bottom:4px}
+    .atm-card-sub{font-size:12px;color:var(--sub-color)}
+    .atm-card:hover{border-color:rgba(77,184,168,0.3);background:rgba(77,184,168,0.03)}
+    .atm-vars{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:8px 12px;width:100%}
+    .atm-var{background:rgba(255,255,255,0.02);border:0.5px solid rgba(255,255,255,0.04);border-radius:6px;padding:8px 10px}
+    .atm-var-label{font-size:10px;color:rgba(232,230,227,0.3);letter-spacing:1px;text-transform:uppercase;font-family:monospace}
+    .atm-var-val{font-size:14px;color:rgb(var(--teal));font-weight:500;margin-top:2px;font-family:monospace}
+    .atm-spoon-ctrl{display:flex;align-items:center;gap:10px;padding:8px 12px;width:100%}
+    .atm-spoon-ctrl label{font-size:11px;color:rgba(232,230,227,0.35);font-family:monospace;min-width:55px}
+    .atm-spoon-ctrl input[type=range]{flex:1;accent-color:rgb(var(--teal));height:4px;-webkit-appearance:none;appearance:none;background:rgba(255,255,255,0.08);border-radius:2px;outline:none}
+    .atm-spoon-ctrl input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:rgb(var(--teal));cursor:pointer}
+    .atm-spoon-ctrl span{font-size:13px;color:rgb(var(--teal));font-family:monospace;min-width:30px;text-align:right}
+    .atm-dot{width:6px;height:6px;border-radius:50%;display:inline-block;margin-right:6px}
+    .dot-live{background:rgb(var(--phosphor))}
+    .dot-coral{background:rgb(var(--coral))}
+    .atm-legal .atm-title{font-family:Georgia,serif;font-weight:400}
+    .atm-legal .atm-card{border-radius:0 !important;border:0.5px solid rgba(232,230,227,0.1)}
+    .atm-garden .atm-title{font-size:36px}
+    .atm-garden .atm-sub{font-size:16px}
+    .phos-shape{width:40px;height:40px;margin-bottom:12px;animation:phos-bob 4s ease-in-out infinite}
+    @keyframes phos-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+    .atm-quiet{font-size:13px;color:rgba(232,230,227,0.2);font-style:italic;margin-top:16px}
+    /* FPS degradation warning */
+    #atm-fps-warn{display:none;position:fixed;bottom:60px;right:12px;z-index:9000;padding:8px 14px;background:rgba(204,98,71,0.15);border:0.5px solid rgba(204,98,71,0.4);border-radius:6px;font-size:11px;font-family:monospace;color:rgba(204,98,71,0.9)}
+  </style>
+
+  <div class="atm-wrap">
+    <canvas id="atm-sky"></canvas>
+    <div class="atm-ui">
+      <div class="atm-nav" id="atm-nav"></div>
+      <div class="atm-spoon-ctrl">
+        <label>SPOONS</label>
+        <input type="range" min="0" max="12" value="8" step="1" id="atm-spoon-slider">
+        <span id="atm-spoon-val">8/12</span>
+      </div>
+      <div class="atm-surface" id="atm-surface"></div>
+      <div class="atm-vars" id="atm-vars"></div>
+    </div>
+  </div>
+  <div id="atm-fps-warn">Low FPS — consider Safe Mode</div>
+
+  <script>
+    // ── Suspend AppShell starfield on atmosphere route ───────────────────────
+    if (typeof window.__p31Starfield?.suspend === 'function') {
+      window.__p31Starfield.suspend();
+    }
+
+    const cv  = document.getElementById('atm-sky') as HTMLCanvasElement;
+    const cx  = cv.getContext('2d')!;
+    let W: number, H: number;
+    const dpr = Math.min(devicePixelRatio || 1, 2);
+    function resize() {
+      W = cv.offsetWidth; H = cv.offsetHeight;
+      cv.width = W * dpr; cv.height = H * dpr;
+      cx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    resize();
+
+    type SurfaceKey = 'garden'|'bonding'|'hub'|'dome'|'cc'|'legal';
+    interface SurfaceDef {
+      label: string; particles: number; speed: number; connR: number;
+      coralRatio: number; hearthA: number; dimFactor: number; radius: number;
+      motionBudget: number; typeScale: string; sound: string;
+      title: string; sub: string; cls: string; content: () => string;
+    }
+
+    const surfaces: Record<SurfaceKey, SurfaceDef> = {
+      garden: {
+        label:'The Garden', particles:30, speed:0.06, connR:50, coralRatio:0.7, hearthA:0.06,
+        dimFactor:1, radius:16, motionBudget:3, typeScale:'large', sound:'organic',
+        title:'The Garden', sub:'Tap to plant. Your people are here. Phos is watching the soil.',
+        cls:'atm-garden',
+        content: () => `
+          <svg width="40" height="40" viewBox="0 0 40 40" class="phos-shape">
+            <polygon points="20,4 36,32 4,32" fill="none" stroke="rgba(59,163,114,0.5)" stroke-width="1.2"/>
+            <line x1="20" y1="16" x2="20" y2="4" stroke="rgba(59,163,114,0.3)" stroke-width="0.8"/>
+            <line x1="20" y1="16" x2="36" y2="32" stroke="rgba(59,163,114,0.3)" stroke-width="0.8"/>
+            <line x1="20" y1="16" x2="4" y2="32" stroke="rgba(59,163,114,0.3)" stroke-width="0.8"/>
+            <circle cx="20" cy="16" r="2.5" fill="rgba(59,163,114,0.6)"/>
+          </svg>
+          <div class="atm-card" style="border-radius:16px">
+            <div class="atm-card-title"><span class="atm-dot dot-live"></span>Room is warm</div>
+            <div class="atm-card-sub">Willow planted water again. Three blue flowers bloomed.</div>
+          </div>
+          <div class="atm-quiet">The garden is patient.</div>`
+      },
+      bonding: {
+        label:'BONDING', particles:60, speed:0.12, connR:70, coralRatio:0.35, hearthA:0.045,
+        dimFactor:1, radius:12, motionBudget:5, typeScale:'standard', sound:'molecular',
+        title:'BONDING', sub:'Drag atoms. Build molecules. Build them together, even from different houses.',
+        cls:'',
+        content: () => `
+          <div style="display:flex;gap:12px;margin-bottom:16px">
+            ${['H','O','C','N','Ca','P'].map(e =>
+              `<div style="width:48px;height:48px;border-radius:12px;background:rgba(77,184,168,0.1);border:0.5px solid rgba(77,184,168,0.2);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:500;color:rgb(var(--teal));cursor:pointer;transition:all 0.2s"
+                   onmouseenter="this.style.background='rgba(77,184,168,0.2)'"
+                   onmouseleave="this.style.background='rgba(77,184,168,0.1)'">${e}</div>`
+            ).join('')}
+          </div>
+          <div class="atm-card" style="border-radius:12px">
+            <div class="atm-card-title"><span class="atm-dot dot-live"></span>Water — H₂O</div>
+            <div class="atm-card-sub">Bent shape. 104.5° bond angle. A blue flower grows in the garden.</div>
+          </div>`
+      },
+      hub: {
+        label:'Hub', particles:80, speed:0.15, connR:80, coralRatio:0.15, hearthA:0.035,
+        dimFactor:1, radius:8, motionBudget:2, typeScale:'standard', sound:'none',
+        title:'P31 Labs', sub:"Free tools for brains that need different scaffolding. Open source. Rough in places. Honest about what we don't know yet.",
+        cls:'',
+        content: () => `
+          <div class="atm-card" style="border-radius:8px;border-left:2px solid rgba(77,184,168,0.3)">
+            <div class="atm-card-title"><span class="atm-dot dot-live"></span>BONDING</div>
+            <div class="atm-card-sub">Chemistry game for families. 424 tests. Live.</div>
+          </div>
+          <div class="atm-card" style="border-radius:8px;border-left:2px solid rgba(77,184,168,0.3);margin-top:4px">
+            <div class="atm-card-title"><span class="atm-dot dot-live"></span>Cognitive Passport</div>
+            <div class="atm-card-sub">One-page brain summary for doctors and teachers.</div>
+          </div>
+          <div class="atm-card" style="border-radius:8px;border-left:2px solid rgba(204,98,71,0.3);margin-top:4px">
+            <div class="atm-card-title"><span class="atm-dot dot-coral"></span>Research</div>
+            <div class="atm-card-sub">22 papers on Zenodo. Working papers. All free.</div>
+          </div>`
+      },
+      dome: {
+        label:'Dome', particles:40, speed:0.08, connR:55, coralRatio:0.1, hearthA:0.02,
+        dimFactor:0.85, radius:4, motionBudget:4, typeScale:'dense', sound:'relay',
+        title:'Cockpit', sub:'Q 0.73 · SPOONS 8/12 · FERS 155d · SENTINEL mesh_fallback',
+        cls:'',
+        content: () => `
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+            ${['BODY','MESH','FORGE','SHIELD'].map(t =>
+              `<div style="padding:5px 12px;border-radius:4px;border:0.5px solid rgba(77,184,168,0.2);font-size:11px;color:rgba(77,184,168,0.7);font-family:monospace;cursor:pointer">${t}</div>`
+            ).join('')}
+          </div>
+          <div class="atm-card" style="border-radius:4px">
+            <div class="atm-card-title" style="font-family:monospace;font-size:11px">TOMOGRAPH · 0.925</div>
+            <div class="atm-card-sub" style="font-family:monospace;font-size:10px">No recent agent rows. SIMPLEX offline — strip uses /api/state when CORS allows.</div>
+          </div>
+          <div style="display:flex;gap:6px;margin-top:8px">
+            <div class="atm-card" style="border-radius:4px;flex:1;text-align:center">
+              <div style="font-size:20px;font-weight:500;color:rgb(var(--coral))">10/12</div>
+              <div class="atm-card-sub" style="font-size:10px">SPOONS</div>
+            </div>
+            <div class="atm-card" style="border-radius:4px;flex:1;text-align:center">
+              <div style="font-size:20px;font-weight:500;color:rgb(var(--teal))">155d</div>
+              <div class="atm-card-sub" style="font-size:10px">FERS</div>
+            </div>
+          </div>`
+      },
+      cc: {
+        label:'Command center', particles:15, speed:0.01, connR:30, coralRatio:0.05, hearthA:0.008,
+        dimFactor:0.5, radius:2, motionBudget:1, typeScale:'terminal', sound:'relay',
+        title:'Control plane', sub:'Gate locked. Nothing runs until you say so.',
+        cls:'',
+        content: () => `
+          <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap">
+            ${['E-STOP','AGENTS: ON','EMAIL: ON','MEDIC: ON','HERALD: ON','SAFE: OFF'].map((t,i) =>
+              `<div style="padding:5px 10px;border-radius:2px;border:0.5px solid ${i===0?'rgba(204,98,71,0.5)':'rgba(77,184,168,0.15)'};font-size:10px;font-family:monospace;color:${i===0?'rgb(var(--coral))':'rgba(232,230,227,0.4)'};cursor:pointer;letter-spacing:0.5px">${t}</div>`
+            ).join('')}
+          </div>
+          <div class="atm-card" style="border-radius:2px;font-family:monospace;font-size:11px;color:rgba(232,230,227,0.4);line-height:1.8;border:0.5px solid rgba(255,255,255,0.04)">
+            <div style="color:rgba(59,163,114,0.7)">$ npm run verify</div>
+            <div>verify:alignment ✓</div>
+            <div>verify:facts ✓</div>
+            <div>verify:public-voice ✓</div>
+            <div style="color:rgba(59,163,114,0.7);margin-top:4px">PASS — 21 checks</div>
+          </div>`
+      },
+      legal: {
+        label:'Legal', particles:0, speed:0, connR:0, coralRatio:0, hearthA:0,
+        dimFactor:0, radius:0, motionBudget:0, typeScale:'document', sound:'forbidden',
+        title:'Johnson v. Johnson', sub:'Civil Action No. 2025CV936 · Camden County Superior Court · State of Georgia',
+        cls:'atm-legal',
+        content: () => `
+          <div class="atm-card" style="border-radius:0;background:rgba(232,230,227,0.03)">
+            <div style="text-align:center;font-family:Georgia,serif;font-size:13px;color:rgba(232,230,227,0.6);line-height:2">
+              <div>IN THE SUPERIOR COURT OF CAMDEN COUNTY</div>
+              <div>STATE OF GEORGIA</div>
+              <div style="margin-top:8px;text-align:left">CHRISTYN ELIZABETH JOHNSON,<br>&nbsp;&nbsp;&nbsp;&nbsp;Plaintiff,</div>
+              <div style="text-align:left;margin-top:4px">v.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CIVIL ACTION NO. 2025CV936</div>
+              <div style="text-align:left;margin-top:4px">WILLIAM RODGER JOHNSON,<br>&nbsp;&nbsp;&nbsp;&nbsp;Defendant (Pro Se).</div>
+            </div>
+          </div>
+          <div style="font-size:11px;color:rgba(232,230,227,0.25);text-align:center;margin-top:8px;font-family:Georgia,serif">No motion. No particles. No decoration. Paper.</div>`
+      }
+    };
+
+    // ── State ──────────────────────────────────────────────────────────────────
+    interface Particle {
+      x: number; y: number; r: number; vx: number; vy: number;
+      a: number; color: [number,number,number];
+    }
+    let particles: Particle[] = [];
+    let currentSurface: SurfaceKey = 'hub';
+    let spoons = 8;
+
+    type LiveCfg = { particles: number; speed: number; connR: number; coralRatio: number; hearthA: number; dimFactor: number };
+    let targetCfg: LiveCfg = { ...surfaces.hub };
+    let liveCfg: LiveCfg   = { particles:80, speed:0.15, connR:80, coralRatio:0.15, hearthA:0.035, dimFactor:1 };
+
+    function lerp(a: number, b: number, t: number) { return a + (b - a) * t; }
+
+    function makeP(x?: number, y?: number): Particle {
+      const coral = Math.random() < liveCfg.coralRatio;
+      return {
+        x: x ?? Math.random() * W, y: y ?? Math.random() * H,
+        r: Math.random() * 1.3 + 0.3,
+        vx: (Math.random() - 0.5) * liveCfg.speed * 2,
+        vy: (Math.random() - 0.5) * liveCfg.speed * 2,
+        a: Math.random() * 0.28 + 0.05,
+        color: coral ? [204,98,71] : [77,184,168],
+      };
+    }
+
+    function initP(n: number) { particles = []; for (let i = 0; i < n; i++) particles.push(makeP()); }
+    initP(80);
+
+    // ── FPS guard (ORR Directive 4) ────────────────────────────────────────────
+    let fpsFrames = 0, fpsLast = performance.now(), fpsWarnShown = false;
+    const fpsWarn = document.getElementById('atm-fps-warn')!;
+    function tickFps() {
+      fpsFrames++;
+      const now = performance.now();
+      if (now - fpsLast >= 2000) {
+        const fps = (fpsFrames / ((now - fpsLast) / 1000));
+        fpsFrames = 0; fpsLast = now;
+        if (fps < 30 && !fpsWarnShown) {
+          fpsWarnShown = true;
+          fpsWarn.style.display = 'block';
+          fpsWarn.textContent = `Low FPS (${fps.toFixed(0)}) — consider Safe Mode`;
+          // Auto-reduce particles when cpu-throttled
+          if (fps < 15) { targetCfg.particles = Math.min(targetCfg.particles, 10); }
+        } else if (fps >= 30 && fpsWarnShown) {
+          fpsWarnShown = false;
+          fpsWarn.style.display = 'none';
+        }
+      }
+    }
+
+    function setSpoons(n: number) {
+      spoons = n;
+      (document.getElementById('atm-spoon-val') as HTMLElement).textContent = n + '/12';
+      const s = surfaces[currentSurface];
+      const f = n / 12;
+      targetCfg.particles = Math.round(s.particles * f);
+      targetCfg.speed     = s.speed * (0.3 + f * 0.7);
+      targetCfg.dimFactor = s.dimFactor * (0.3 + f * 0.7);
+      targetCfg.hearthA   = s.hearthA * (0.5 + f * 0.5);
+    }
+    (window as any).setSpoons = setSpoons;
+
+    function switchSurface(key: SurfaceKey) {
+      currentSurface = key;
+      const s = surfaces[key];
+      const f = spoons / 12;
+      targetCfg = {
+        particles: Math.round(s.particles * f),
+        speed:     s.speed * (0.3 + f * 0.7),
+        connR:     s.connR,
+        coralRatio: s.coralRatio,
+        hearthA:   s.hearthA * (0.5 + f * 0.5),
+        dimFactor: s.dimFactor * (0.3 + f * 0.7),
+      };
+      document.querySelectorAll('.atm-nav button').forEach(b => {
+        (b as HTMLButtonElement).classList.toggle('active', (b as HTMLButtonElement).dataset['key'] === key);
+      });
+      const surf = document.getElementById('atm-surface')!;
+      surf.className = 'atm-surface' + (s.cls ? ' ' + s.cls : '');
+      surf.innerHTML = `<div class="atm-title">${s.title}</div><div class="atm-sub">${s.sub}</div>${s.content()}`;
+      surf.style.borderRadius = s.radius + 'px';
+
+      const vd = document.getElementById('atm-vars')!;
+      vd.innerHTML = [
+        ['Particles', Math.round(targetCfg.particles)],
+        ['Color temp', s.coralRatio >= 0.5 ? 'warm' : 'cool'],
+        ['Radius', s.radius + 'px'],
+        ['Motion budget', s.motionBudget],
+        ['Type scale', s.typeScale],
+        ['Sound', s.sound],
+      ].map(([l,v]) =>
+        `<div class="atm-var"><div class="atm-var-label">${l}</div><div class="atm-var-val">${v}</div></div>`
+      ).join('');
+    }
+    (window as any).switchSurface = switchSurface;
+
+    // Build nav
+    const nav = document.getElementById('atm-nav')!;
+    (Object.keys(surfaces) as SurfaceKey[]).forEach(k => {
+      const b = document.createElement('button');
+      b.textContent = surfaces[k].label;
+      b.dataset['key'] = k;
+      b.onclick = () => switchSurface(k);
+      nav.appendChild(b);
+    });
+    switchSurface('hub');
+
+    // Wire spoon slider
+    const slider = document.getElementById('atm-spoon-slider') as HTMLInputElement;
+    slider.oninput = () => setSpoons(+slider.value);
+
+    // ── Draw loop ──────────────────────────────────────────────────────────────
+    let breathT = 0;
+    function draw() {
+      tickFps();
+      breathT += 0.0008;
+      const breath = Math.sin(breathT) * 0.5 + 0.5;
+      cx.clearRect(0, 0, W, H);
+
+      liveCfg.particles  = lerp(liveCfg.particles,  targetCfg.particles,  0.02);
+      liveCfg.speed      = lerp(liveCfg.speed,      targetCfg.speed,      0.03);
+      liveCfg.connR      = lerp(liveCfg.connR,      targetCfg.connR,      0.03);
+      liveCfg.coralRatio = lerp(liveCfg.coralRatio, targetCfg.coralRatio, 0.03);
+      liveCfg.hearthA    = lerp(liveCfg.hearthA,    targetCfg.hearthA,    0.02);
+      liveCfg.dimFactor  = lerp(liveCfg.dimFactor,  targetCfg.dimFactor,  0.02);
+
+      while (particles.length < Math.round(liveCfg.particles)) particles.push(makeP());
+      while (particles.length > Math.round(liveCfg.particles) + 5) particles.pop();
+
+      // Hearth glow
+      const ha = liveCfg.hearthA * (0.8 + breath * 0.4) * liveCfg.dimFactor;
+      if (ha > 0.001) {
+        const g = cx.createRadialGradient(W/2, H*0.93, 0, W/2, H*0.93, H*0.7);
+        g.addColorStop(0,   `rgba(204,98,71,${ha})`);
+        g.addColorStop(0.5, `rgba(204,98,71,${ha*0.3})`);
+        g.addColorStop(1,   'rgba(5,8,12,0)');
+        cx.fillStyle = g; cx.fillRect(0, 0, W, H);
+      }
+
+      // Teal ambient
+      const ta = 0.02 * liveCfg.dimFactor;
+      if (ta > 0.001) {
+        const g2 = cx.createRadialGradient(W*0.35, H*0.2, 0, W*0.35, H*0.2, H*0.5);
+        g2.addColorStop(0, `rgba(37,137,125,${ta})`);
+        g2.addColorStop(1, 'rgba(5,8,12,0)');
+        cx.fillStyle = g2; cx.fillRect(0, 0, W, H);
+      }
+
+      // Connections
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const d  = Math.sqrt(dx*dx + dy*dy);
+          if (d < liveCfg.connR) {
+            cx.beginPath();
+            cx.moveTo(particles[i].x, particles[i].y);
+            cx.lineTo(particles[j].x, particles[j].y);
+            cx.strokeStyle = `rgba(77,184,168,${0.04 * (1 - d/liveCfg.connR) * liveCfg.dimFactor})`;
+            cx.lineWidth = 0.5; cx.stroke();
+          }
+        }
+      }
+
+      // Particles
+      for (const p of particles) {
+        p.vx += (Math.random() - 0.5) * 0.01;
+        p.vy += (Math.random() - 0.5) * 0.01;
+        const maxS = liveCfg.speed * 2 || 0.001;
+        p.vx = Math.max(-maxS, Math.min(maxS, p.vx));
+        p.vy = Math.max(-maxS, Math.min(maxS, p.vy));
+        p.x += p.vx; p.y += p.vy;
+        if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
+        if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
+        const pa = p.a * liveCfg.dimFactor * (0.7 + breath * 0.3);
+        if (pa < 0.002) continue;
+        cx.beginPath();
+        cx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        cx.fillStyle = `rgba(${p.color[0]},${p.color[1]},${p.color[2]},${pa})`;
+        cx.fill();
+      }
+
+      requestAnimationFrame(draw);
+    }
+    requestAnimationFrame(draw);
+    window.addEventListener('resize', resize);
+  </script>
+</AppShell>

@@ -1,0 +1,764 @@
+---
+/**
+ * P31SettingsPanel.astro — Unified Settings Panel
+ *
+ * Consolidates ALL app settings into one ephemeral source.
+ * One settings panel to rule them all.
+ */
+---
+
+<div id="p31-settings-panel" class="p31-settings-panel" style="display: none;">
+  <div class="settings-backdrop" data-close-settings></div>
+  <div class="settings-panel">
+    <div class="settings-header">
+      <h2>⚙️ P31 Settings</h2>
+      <span class="settings-version">p31.settings/1.0.0</span>
+      <button class="close-btn" data-close-settings aria-label="Close settings">×</button>
+    </div>
+
+    <div class="settings-body">
+      <!-- Quick Actions -->
+      <section class="setting-section">
+        <div class="quick-actions">
+          <button class="action-btn" data-action="safe-mode">
+            <span class="action-icon">🛡️</span>
+            <span class="action-label">Safe Mode</span>
+            <span class="action-status" id="safe-mode-status">Off</span>
+          </button>
+          <button class="action-btn" data-action="compact">
+            <span class="action-icon">🔳</span>
+            <span class="action-label">Compact UI</span>
+            <span class="action-status" id="compact-status">Off</span>
+          </button>
+          <button class="action-btn" data-action="telemetry">
+            <span class="action-icon">📊</span>
+            <span class="action-label">Telemetry</span>
+            <span class="action-status" id="telemetry-status">Off</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- Accessibility -->
+      <section class="setting-section">
+        <h3>🎨 Accessibility</h3>
+        <div class="setting-group">
+          <label class="toggle-label">
+            <input type="checkbox" id="setting-reduced-motion" />
+            <span class="toggle-switch"></span>
+            <span class="toggle-text">Reduced motion</span>
+          </label>
+          <label class="toggle-label">
+            <input type="checkbox" id="setting-high-contrast" />
+            <span class="toggle-switch"></span>
+            <span class="toggle-text">High contrast</span>
+          </label>
+          <label class="toggle-label">
+            <input type="checkbox" id="setting-haptic" checked />
+            <span class="toggle-switch"></span>
+            <span class="toggle-text">Haptic feedback</span>
+          </label>
+        </div>
+        <div class="select-group">
+          <label>Font size</label>
+          <select id="setting-font-size">
+            <option value="small">Small</option>
+            <option value="normal" selected>Normal</option>
+            <option value="large">Large</option>
+          </select>
+        </div>
+      </section>
+
+      <!-- Audio -->
+      <section class="setting-section">
+        <h3>🔊 Audio</h3>
+        <div class="setting-group">
+          <label class="toggle-label">
+            <input type="checkbox" id="setting-muted" />
+            <span class="toggle-switch"></span>
+            <span class="toggle-text">Muted</span>
+          </label>
+          <label class="toggle-label">
+            <input type="checkbox" id="setting-sound-effects" checked />
+            <span class="toggle-switch"></span>
+            <span class="toggle-text">Sound effects</span>
+          </label>
+        </div>
+        <div class="slider-group">
+          <label>
+            <span>Master Volume</span>
+            <span id="volume-value">70%</span>
+          </label>
+          <input type="range" id="setting-volume" min="0" max="100" value="70" />
+        </div>
+      </section>
+
+      <!-- Notifications -->
+      <section class="setting-section">
+        <h3>✨ Starfield Notifications</h3>
+        <div class="setting-group">
+          <label class="toggle-label">
+            <input type="checkbox" id="setting-starfield-enabled" checked />
+            <span class="toggle-switch"></span>
+            <span class="toggle-text">Enable starfield</span>
+          </label>
+        </div>
+        <div class="filter-list">
+          <label class="filter-item">
+            <input type="checkbox" id="setting-filter-messages" checked />
+            <span class="filter-icon">💬</span>
+            <span class="filter-text">Messages</span>
+          </label>
+          <label class="filter-item">
+            <input type="checkbox" id="setting-filter-alerts" checked />
+            <span class="filter-icon">⚠️</span>
+            <span class="filter-text">Alerts</span>
+          </label>
+          <label class="filter-item">
+            <input type="checkbox" id="setting-filter-mesh" checked />
+            <span class="filter-icon">🕸️</span>
+            <span class="filter-text">Mesh Events</span>
+          </label>
+        </div>
+      </section>
+
+      <!-- Display -->
+      <section class="setting-section">
+        <h3>🖥️ Display</h3>
+        <div class="select-group">
+          <label>Theme</label>
+          <select id="setting-theme">
+            <option value="dark" selected>Dark</option>
+            <option value="light">Light</option>
+            <option value="auto">Auto</option>
+          </select>
+        </div>
+        <div class="setting-group">
+          <label class="toggle-label">
+            <input type="checkbox" id="setting-mission-trio" checked />
+            <span class="toggle-switch"></span>
+            <span class="toggle-text">Show mission footer (Build/Create/Connect)</span>
+          </label>
+        </div>
+      </section>
+
+      <!-- Mesh -->
+      <section class="setting-section">
+        <h3>🕸️ Mesh</h3>
+        <div class="setting-group">
+          <label class="toggle-label">
+            <input type="checkbox" id="setting-auto-connect" checked />
+            <span class="toggle-switch"></span>
+            <span class="toggle-text">Auto-connect to mesh</span>
+          </label>
+          <label class="toggle-label">
+            <input type="checkbox" id="setting-share-status" checked />
+            <span class="toggle-switch"></span>
+            <span class="toggle-text">Share mesh status</span>
+          </label>
+        </div>
+      </section>
+
+      <!-- Privacy -->
+      <section class="setting-section">
+        <h3>🔒 Privacy</h3>
+        <div class="setting-group">
+          <label class="toggle-label">
+            <input type="checkbox" id="setting-local-logs" checked />
+            <span class="toggle-switch"></span>
+            <span class="toggle-text">Local logs</span>
+          </label>
+        </div>
+      </section>
+
+      <!-- Data Management -->
+      <section class="setting-section">
+        <h3>💾 Data</h3>
+        <div class="data-actions">
+          <button class="data-btn" data-action="export">
+            <span>📤 Export Settings</span>
+          </button>
+          <button class="data-btn data-btn-danger" data-action="reset">
+            <span>🗑️ Reset All Settings</span>
+          </button>
+        </div>
+      </section>
+    </div>
+
+    <div class="settings-footer">
+      <span class="settings-status" id="settings-status">Settings auto-save</span>
+      <button class="save-btn" data-close-settings>Done</button>
+    </div>
+  </div>
+</div>
+
+<!-- Settings Toggle FAB -->
+<button id="p31-settings-toggle" class="settings-fab" aria-label="Settings">
+  <span>⚙️</span>
+</button>
+
+<style>
+  .p31-settings-panel {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .settings-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+  }
+
+  .settings-panel {
+    position: relative;
+    width: 90%;
+    max-width: 480px;
+    max-height: 85vh;
+    background: rgba(15, 17, 21, 0.98);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .settings-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .settings-header h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--p31-cloud, #ede8e0);
+  }
+
+  .settings-version {
+    font-size: 10px;
+    color: var(--p31-muted, rgba(237, 232, 224, 0.6));
+    font-family: var(--p31-font-mono, monospace);
+    margin-left: 8px;
+  }
+
+  .close-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: none;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--p31-cloud);
+    font-size: 20px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .close-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .settings-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .setting-section h3 {
+    margin: 0 0 12px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--p31-cyan, #4db8a8);
+    font-family: var(--p31-font-mono, monospace);
+  }
+
+  /* Quick Actions */
+  .quick-actions {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+
+  .action-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 12px 8px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    color: var(--p31-cloud);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .action-btn:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: var(--p31-cyan);
+  }
+
+  .action-btn.active {
+    background: var(--p31-cyan);
+    color: var(--p31-void);
+    border-color: var(--p31-cyan);
+  }
+
+  .action-icon {
+    font-size: 20px;
+  }
+
+  .action-label {
+    font-size: 11px;
+    font-weight: 500;
+  }
+
+  .action-status {
+    font-size: 9px;
+    opacity: 0.6;
+    font-family: var(--p31-font-mono);
+  }
+
+  /* Toggle Switch */
+  .toggle-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    padding: 8px 0;
+  }
+
+  .toggle-label input {
+    display: none;
+  }
+
+  .toggle-switch {
+    width: 44px;
+    height: 24px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    position: relative;
+    transition: background 0.3s;
+    flex-shrink: 0;
+  }
+
+  .toggle-switch::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: white;
+    border-radius: 50%;
+    top: 2px;
+    left: 2px;
+    transition: transform 0.3s;
+  }
+
+  .toggle-label input:checked + .toggle-switch {
+    background: var(--p31-cyan, #4db8a8);
+  }
+
+  .toggle-label input:checked + .toggle-switch::after {
+    transform: translateX(20px);
+  }
+
+  .toggle-text {
+    font-size: 14px;
+    color: var(--p31-cloud);
+  }
+
+  /* Setting Groups */
+  .setting-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  /* Select Group */
+  .select-group {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 0;
+    gap: 12px;
+  }
+
+  .select-group label {
+    font-size: 14px;
+    color: var(--p31-cloud);
+  }
+
+  .select-group select {
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    color: var(--p31-cloud);
+    font-size: 13px;
+    min-width: 120px;
+  }
+
+  /* Slider */
+  .slider-group {
+    padding: 8px 0;
+  }
+
+  .slider-group label {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 13px;
+    color: var(--p31-cloud);
+  }
+
+  .slider-group input[type="range"] {
+    width: 100%;
+    height: 6px;
+    -webkit-appearance: none;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    outline: none;
+  }
+
+  .slider-group input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    background: var(--p31-cyan);
+    border-radius: 50%;
+    cursor: pointer;
+  }
+
+  /* Filter List */
+  .filter-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .filter-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  .filter-item input {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--p31-cyan);
+  }
+
+  .filter-icon {
+    font-size: 16px;
+  }
+
+  .filter-text {
+    flex: 1;
+    font-size: 13px;
+    color: var(--p31-cloud);
+  }
+
+  /* Data Actions */
+  .data-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .data-btn {
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: var(--p31-cloud);
+    font-size: 13px;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s;
+  }
+
+  .data-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .data-btn-danger {
+    color: var(--p31-coral, #cc6247);
+    border-color: var(--p31-coral);
+  }
+
+  .data-btn-danger:hover {
+    background: rgba(204, 98, 71, 0.1);
+  }
+
+  /* Footer */
+  .settings-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    gap: 12px;
+  }
+
+  .settings-status {
+    font-size: 11px;
+    color: var(--p31-muted);
+    font-family: var(--p31-font-mono);
+  }
+
+  .save-btn {
+    padding: 10px 24px;
+    background: var(--p31-cyan);
+    border: none;
+    border-radius: 8px;
+    color: var(--p31-void);
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .save-btn:hover {
+    box-shadow: 0 0 20px rgba(77, 184, 168, 0.4);
+  }
+
+  /* FAB */
+  .settings-fab {
+    position: fixed;
+    bottom: 100px;
+    right: 20px;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: var(--p31-surface, #161920);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--p31-cloud);
+    font-size: 22px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+    z-index: 90;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  }
+
+  .settings-fab:hover {
+    transform: scale(1.1);
+    border-color: var(--p31-cyan);
+    box-shadow: 0 0 20px rgba(77, 184, 168, 0.3);
+  }
+
+  /* Responsive */
+  @media (max-width: 480px) {
+    .settings-panel {
+      width: 95%;
+      max-height: 90vh;
+    }
+
+    .quick-actions {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .settings-fab {
+      bottom: 90px;
+      right: 16px;
+    }
+  }
+</style>
+
+<script>
+  import { getSettings, saveSettings, resetSettings } from '../lib/p31-settings.ts';
+
+  // Settings panel functionality
+  (function() {
+    const panel = document.getElementById('p31-settings-panel');
+    const toggle = document.getElementById('p31-settings-toggle');
+    const closeButtons = document.querySelectorAll('[data-close-settings]');
+    const statusEl = document.getElementById('settings-status');
+
+    // Load current settings into UI
+    function loadSettings() {
+      const s = getSettings();
+
+      // Quick actions
+      document.getElementById('safe-mode-status').textContent = s.accessibility.safeMode ? 'On' : 'Off';
+      document.getElementById('compact-status').textContent = s.display.compactMode ? 'On' : 'Off';
+      document.getElementById('telemetry-status').textContent = s.privacy.telemetryEnabled ? 'On' : 'Off';
+
+      // Accessibility
+      document.getElementById('setting-reduced-motion').checked = s.accessibility.reducedMotion;
+      document.getElementById('setting-high-contrast').checked = s.accessibility.highContrast;
+      document.getElementById('setting-haptic').checked = s.accessibility.hapticFeedback;
+      document.getElementById('setting-font-size').value = s.accessibility.fontSize;
+
+      // Audio
+      document.getElementById('setting-muted').checked = s.audio.muted;
+      document.getElementById('setting-sound-effects').checked = s.audio.soundEffects;
+      document.getElementById('setting-volume').value = s.audio.masterVolume;
+      document.getElementById('volume-value').textContent = s.audio.masterVolume + '%';
+
+      // Notifications
+      document.getElementById('setting-starfield-enabled').checked = s.notifications.starfieldEnabled;
+      document.getElementById('setting-filter-messages').checked = s.notifications.starfieldFilters.messages;
+      document.getElementById('setting-filter-alerts').checked = s.notifications.starfieldFilters.alerts;
+      document.getElementById('setting-filter-mesh').checked = s.notifications.starfieldFilters.meshEvents;
+
+      // Display
+      document.getElementById('setting-theme').value = s.display.theme;
+      document.getElementById('setting-mission-trio').checked = s.display.showMissionTrio;
+
+      // Mesh
+      document.getElementById('setting-auto-connect').checked = s.mesh.autoConnect;
+      document.getElementById('setting-share-status').checked = s.mesh.shareMeshStatus;
+
+      // Privacy
+      document.getElementById('setting-local-logs').checked = s.privacy.localLogsEnabled;
+    }
+
+    // Save settings from UI
+    function saveFromUI() {
+      const settings = {
+        accessibility: {
+          safeMode: document.getElementById('safe-mode-status').textContent === 'On',
+          reducedMotion: document.getElementById('setting-reduced-motion').checked,
+          highContrast: document.getElementById('setting-high-contrast').checked,
+          hapticFeedback: document.getElementById('setting-haptic').checked,
+          fontSize: document.getElementById('setting-font-size').value,
+        },
+        audio: {
+          muted: document.getElementById('setting-muted').checked,
+          soundEffects: document.getElementById('setting-sound-effects').checked,
+          masterVolume: parseInt(document.getElementById('setting-volume').value),
+        },
+        notifications: {
+          starfieldEnabled: document.getElementById('setting-starfield-enabled').checked,
+          starfieldFilters: {
+            messages: document.getElementById('setting-filter-messages').checked,
+            alerts: document.getElementById('setting-filter-alerts').checked,
+            meshEvents: document.getElementById('setting-filter-mesh').checked,
+            activity: false,
+          },
+        },
+        display: {
+          theme: document.getElementById('setting-theme').value,
+          showMissionTrio: document.getElementById('setting-mission-trio').checked,
+          compactMode: document.getElementById('compact-status').textContent === 'On',
+        },
+        mesh: {
+          autoConnect: document.getElementById('setting-auto-connect').checked,
+          shareMeshStatus: document.getElementById('setting-share-status').checked,
+        },
+        privacy: {
+          telemetryEnabled: document.getElementById('telemetry-status').textContent === 'On',
+          localLogsEnabled: document.getElementById('setting-local-logs').checked,
+        },
+      };
+
+      saveSettings(settings);
+      statusEl.textContent = 'Saved!';
+      setTimeout(() => statusEl.textContent = 'Settings auto-save', 2000);
+    }
+
+    // Toggle panel
+    toggle?.addEventListener('click', () => {
+      const isVisible = panel?.style.display !== 'none';
+      if (!isVisible) {
+        loadSettings();
+        panel.style.display = 'flex';
+      } else {
+        panel.style.display = 'none';
+      }
+    });
+
+    // Close panel
+    closeButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        saveFromUI();
+        panel.style.display = 'none';
+      });
+    });
+
+    // Quick action buttons
+    document.querySelectorAll('[data-action]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const action = btn.dataset.action;
+        const statusEl = btn.querySelector('.action-status');
+
+        if (action === 'safe-mode') {
+          const newVal = statusEl.textContent === 'Off';
+          statusEl.textContent = newVal ? 'On' : 'Off';
+          btn.classList.toggle('active', newVal);
+          saveSettings({ accessibility: { safeMode: newVal } });
+        } else if (action === 'compact') {
+          const newVal = statusEl.textContent === 'Off';
+          statusEl.textContent = newVal ? 'On' : 'Off';
+          btn.classList.toggle('active', newVal);
+          saveSettings({ display: { compactMode: newVal } });
+        } else if (action === 'telemetry') {
+          const newVal = statusEl.textContent === 'Off';
+          statusEl.textContent = newVal ? 'On' : 'Off';
+          btn.classList.toggle('active', newVal);
+          saveSettings({ privacy: { telemetryEnabled: newVal } });
+        } else if (action === 'reset') {
+          if (confirm('Reset ALL settings to defaults? This cannot be undone.')) {
+            resetSettings();
+            loadSettings();
+            statusEl.textContent = 'Reset complete';
+          }
+        } else if (action === 'export') {
+          const s = getSettings();
+          const blob = new Blob([JSON.stringify(s, null, 2)], { type: 'application/json' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `p31-settings-${Date.now()}.json`;
+          a.click();
+          URL.revokeObjectURL(url);
+        }
+      });
+    });
+
+    // Volume slider update
+    document.getElementById('setting-volume')?.addEventListener('input', (e) => {
+      document.getElementById('volume-value').textContent = e.target.value + '%';
+    });
+
+    // Auto-save on change
+    document.querySelectorAll('input, select').forEach(el => {
+      el.addEventListener('change', () => {
+        saveFromUI();
+      });
+    });
+
+    // Close on backdrop click
+    document.querySelector('.settings-backdrop')?.addEventListener('click', () => {
+      saveFromUI();
+      panel.style.display = 'none';
+    });
+
+    // Close on Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && panel?.style.display !== 'none') {
+        saveFromUI();
+        panel.style.display = 'none';
+      }
+    });
+  })();
+</script>

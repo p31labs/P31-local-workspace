@@ -1,0 +1,35 @@
+# Callable: full monorepo gate (lockfiles, guards, MAP, turbo build/test).
+name: Reusable monorepo verify
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+env:
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+  TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/toolchain-constants
+
+      - uses: ./.github/actions/pnpm-andromeda-full
+
+      - name: Deploy target guard (Pages)
+        run: node scripts/enterprise-deploy-guard.mjs
+
+      - name: MAP monetary surface (static)
+        run: node scripts/verify-monetary-surface.mjs
+
+      - name: Build (Turbo)
+        run: pnpm run build
+
+      - name: Test (Turbo)
+        run: pnpm run test

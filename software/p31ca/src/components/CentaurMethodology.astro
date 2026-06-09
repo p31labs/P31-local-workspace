@@ -1,0 +1,51 @@
+---
+/**
+ * Centaur Methodology — Grid-based HITL explanation.
+ * Human-in-the-Loop philosophy expressed through glass panels.
+ */
+
+const principles = [
+  {
+    icon: '🧠',
+    title: 'Cognitive Sovereignty',
+    description: 'Every tool respects the operator\'s attention budget. Spoon theory is architecture, not metaphor.',
+  },
+  {
+    icon: '🤝',
+    title: 'Human-in-the-Loop',
+    description: 'AI amplifies human intent. The centaur model — half organic intuition, half machine precision.',
+  },
+  {
+    icon: '🔬',
+    title: 'Defensible Research',
+    description: 'Every system publishes its methodology. Reproducible, testable, open to adversarial review.',
+  },
+  {
+    icon: '⚡',
+    title: 'Isostatically Rigid',
+    description: 'Minimum constraints for maximum stability. No redundant dependencies, no wasted cognitive load.',
+  },
+];
+---
+
+<section id="methodology" class="px-6 py-24 max-w-5xl mx-auto">
+  <div class="text-center mb-16">
+    <span class="font-mono text-xs text-phosphor/50 tracking-[0.2em] uppercase">Methodology</span>
+    <h2 class="text-3xl md:text-4xl font-bold mt-3 text-p31-cloud-90">The Centaur Model</h2>
+    <p class="text-p31-cloud-30 mt-3 max-w-lg mx-auto">
+      Neither fully human nor fully machine. The operator and the mesh think together.
+    </p>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    {principles.map((p) => (
+      <div class="glass-panel glass-panel-hover p-6 space-y-3">
+        <div class="flex items-center gap-3">
+          <span class="text-2xl">{p.icon}</span>
+          <h3 class="font-semibold text-p31-cloud-80">{p.title}</h3>
+        </div>
+        <p class="text-sm text-p31-cloud-30 leading-relaxed">{p.description}</p>
+      </div>
+    ))}
+  </div>
+</section>

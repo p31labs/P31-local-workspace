@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <!-- OLED Black Background -->
+  <rect width="512" height="512" fill="#000000" />
+  
+  <!-- Surface Void Gradient -->
+  <defs>
+    <linearGradient id="voidGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#000000" />
+      <stop offset="100%" stop-color="#050308" />
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" fill="url(#voidGradient)" />
+  
+  <!-- Digital Cathedral Structure -->
+  <g transform="translate(256, 256)">
+    <!-- Outer Ring -->
+    <circle r="200" fill="none" stroke="#00FFFF" stroke-width="4" opacity="0.3" />
+    
+    <!-- Inner Grid -->
+    <g stroke="#BF5FFF" stroke-width="2" opacity="0.4">
+      <line x1="-180" y1="0" x2="180" y2="0" />
+      <line x1="0" y1="-180" x2="0" y2="180" />
+      <line x1="-127" y1="-127" x2="127" y2="127" />
+      <line x1="127" y1="-127" x2="-127" y2="127" />
+    </g>
+    
+    <!-- Central Node -->
+    <circle r="24" fill="#FF00FF" />
+    
+    <!-- Orbiting Elements -->
+    <g>
+      <circle cx="140" cy="0" r="12" fill="#00FFFF" />
+      <circle cx="-140" cy="0" r="12" fill="#FFD700" />
+      <circle cx="0" cy="140" r="12" fill="#BF5FFF" />
+      <circle cx="0" cy="-140" r="12" fill="#00FFFF" />
+    </g>
+    
+    <!-- Data Streams -->
+    <g stroke="#00FFFF" stroke-width="1" opacity="0.6">
+      <path d="M -140 0 Q -100 40 -60 0" />
+      <path d="M 140 0 Q 100 -40 60 0" />
+      <path d="M 0 -140 Q 40 -100 0 -60" />
+      <path d="M 0 140 Q -40 100 0 60" />
+    </g>
+  </g>
+  
+  <!-- Brand Text -->
+  <text x="256" y="460" font-family="Oxanium, system-ui, sans-serif" font-weight="700" font-size="32" fill="#00FFFF" text-anchor="middle">SPACESHIP EARTH</text>
+</svg>

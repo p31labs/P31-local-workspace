@@ -1,0 +1,27 @@
+{
+  "name": "planetary-planet",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "deploy": "npm run build && npx wrangler pages deploy dist --project-name phosphorus31-org --branch=main --commit-dirty=true",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/react": "^4.4.2",
+    "@nanostores/react": "^1.0.0",
+    "@tailwindcss/vite": "^4.2.1",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "astro": "^5.17.1",
+    "nanostores": "^1.1.1",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "react-router-dom": "^7.13.1",
+    "stripe": "^20.4.1",
+    "tailwindcss": "^4.2.1",
+    "wrangler": "^4.97.0"
+  }
+}

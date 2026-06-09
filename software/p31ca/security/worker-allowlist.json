@@ -1,0 +1,333 @@
+{
+  "schema": "p31.workerAllowlist/1.0.0",
+  "note": "Known Cloudflare Workers under andromeda/software (and p31ca workers/). verify-worker-inventory walks andromeda/ but excludes */docs/files/* (Zenodo/attachment copies, not deployables). First `name` in each wrangler.toml is what the inventory indexes. Add entries as workers are promoted; P1 WARN for unlisted names is expected until filled.",
+  "workers": [
+    {
+      "name": "geodesic-room",
+      "path": "software/geodesic-room",
+      "bindings": [
+        "GEODESIC_ROOM (DO)"
+      ],
+      "vars": [
+        "WORKER_VERSION"
+      ],
+      "corsPolicy": "none — WebSocket only, no CORS headers set",
+      "authScheme": "none — rooms are public by name; no PII stored",
+      "notes": "Durable Object holding K₄ tetrahedron vertex positions (4 vertices, float xyz). WebSocket broadcast room. Clients drag vertices; DO is authoritative state. Room IDs are user-supplied; no auth required for POC. P2: add CF Access or Bearer token for private rooms."
+    },
+    {
+      "name": "p31-passkey",
+      "path": "workers/passkey",
+      "bindings": [
+        "CHALLENGES (KV)",
+        "DB (D1)"
+      ],
+      "vars": [
+        "RP_NAME",
+        "RP_ID"
+      ],
+      "corsPolicy": "wildcard — intentional, protected by WebAuthn rpId binding",
+      "authScheme": "WebAuthn FIDO2 (challenge/response)",
+      "notes": "WebAuthn (POST /api/passkey/*); education GET; Node Zero (POST /api/hardware/challenge|pair|telemetry). Same D1/KV. ECDSA/RSA for WebAuthn. Hardware pairing is opaque subject_id + Ed25519 pubkey—no Passkey on device. Education/hardware fetch use high-entropy ids; static pages gate UX. P2: narrow CORS for non-WebAuthn paths."
+    },
+    {
+      "name": "p31-node-zero-m2m",
+      "path": "workers/node-zero-m2m",
+      "bindings": [
+        "HARDWARE_CHALLENGES (KV)"
+      ],
+      "vars": [
+        "DEV_ALLOW_INSECURE"
+      ],
+      "corsPolicy": "preflight OPTIONS for lab tools — POST is device/machine (Bearer), not cookie-sessions",
+      "authScheme": "Bearer M2M_BEARER_TOKEN (wrangler secret); optional insecure dev mode when DEV_ALLOW_INSECURE=1 and secret unset — never prod",
+      "notes": "POST /api/hardware/challenge emits six-digit pairing display_code + ephemeral KV record. Companion firmware: packages/node-zero/firmware/esp32-m2m-stub. Routes: uncomment zone route in wrangler.toml for p31ca.org/api/hardware/*. Replace KV id placeholder before deploy."
+    },
+    {
+      "name": "k4-personal",
+      "path": "software/k4-personal",
+      "bindings": [
+        "PERSONAL_AGENT (DO)",
+        "K4_MESH (KV)",
+        "AI"
+      ],
+      "vars": [
+        "ENVIRONMENT",
+        "WORKER_VERSION",
+        "TOPOLOGY"
+      ],
+      "corsPolicy": "allowlist + *.pages.dev — see src/index.js corsHeaders",
+      "authScheme": "none on mesh read; /agent/* is per-user DO",
+      "notes": "Personal K₄ mesh API + PersonalAgent SQLite DO. Deploy requires DO migration list in wrangler.toml. See k4-personal/README.md."
+    },
+    {
+      "name": "k4-cage",
+      "path": "software/k4-cage",
+      "bindings": [
+        "K4_TOPOLOGY (DO)",
+        "FAMILY_MESH_ROOM (DO)",
+        "K4_MESH (KV)"
+      ],
+      "vars": [
+        "WORKER_VERSION",
+        "TOPOLOGY",
+        "ENVIRONMENT",
+        "MESH_ROOM_IDS",
+        "ORCHESTRATOR_WEBHOOK"
+      ],
+      "corsPolicy": "as implemented in worker",
+      "authScheme": "optional internal tokens",
+      "notes": "Family cage mesh + topology DOs. unified-k4-cage reuses this worker name; same allowlist entry."
+    },
+    {
+      "name": "k4-hubs",
+      "path": "software/k4-hubs",
+      "bindings": [
+        "HUB_FUSION (DO)",
+        "K4_CAGE (service)",
+        "K4_PERSONAL (service)"
+      ],
+      "vars": [
+        "ENVIRONMENT",
+        "WORKER_VERSION",
+        "PERSONAL_MESH_URL"
+      ],
+      "corsPolicy": "as implemented in worker",
+      "authScheme": "optional HUBS_WRITE_TOKEN",
+      "notes": "Life-context hub router; service-binds to k4-cage and k4-personal."
+    },
+    {
+      "name": "p31-google-bridge",
+      "path": "software/p31-google-bridge",
+      "bindings": [
+        "GOOGLE_OAUTH (KV)"
+      ],
+      "vars": [
+        "GOOGLE_CLIENT_ID",
+        "REDIRECT_URL",
+        "DEFAULT_OAUTH_SCOPES",
+        "OAUTH_SUCCESS_URL",
+        "CORS_ALLOW_ORIGIN",
+        "OAUTH_RETURN_ALLOWLIST"
+      ],
+      "corsPolicy": "configurable CORS — credentials for /api/*; set CORS_ALLOW_ORIGIN; no * in production",
+      "authScheme": "Google OAuth2 + session cookie; GOOGLE_CLIENT_SECRET in wrangler secret",
+      "notes": "User OAuth: calendar.readonly + OIDC. Tokens in KV. Session cookie p31_gb_sid. Callback and success URL must be same site for Set-Cookie. See docs/integrations/GOOGLE-WORKSPACE.md + p31-google-bridge/README.md."
+    },
+    {
+      "name": "bonding-relay",
+      "path": "software/bonding",
+      "bindings": [],
+      "vars": [],
+      "corsPolicy": "see bonding README",
+      "authScheme": "see package README",
+      "notes": "BONDING relay worker; allowlisted for inventory. Review CORS and bindings when changing."
+    },
+    {
+      "name": "p31-bouncer",
+      "path": "software/cloudflare-worker/bouncer",
+      "bindings": [],
+      "vars": [],
+      "corsPolicy": "see wrangler + src",
+      "authScheme": "see package README",
+      "notes": "Bouncer / edge gate; allowlisted for inventory."
+    },
+    {
+      "name": "command-center",
+      "path": "software/cloudflare-worker/command-center",
+      "bindings": [],
+      "vars": [],
+      "corsPolicy": "see wrangler + src",
+      "authScheme": "see package README",
+      "notes": "Command-center worker; allowlisted for inventory."
+    },
+    {
+      "name": "p31-social-worker",
+      "path": "software/cloudflare-worker/social-drop-automation",
+      "bindings": [],
+      "vars": [],
+      "corsPolicy": "see wrangler + src",
+      "authScheme": "see package README",
+      "notes": "Social-drop automation; allowlisted for inventory."
+    },
+    {
+      "name": "p31-social-broadcast",
+      "path": "software/cloudflare-worker",
+      "bindings": [],
+      "vars": [],
+      "corsPolicy": "see wrangler (multi-name file — first name indexed)",
+      "authScheme": "see package README",
+      "notes": "p31ca social / mesh broadcast stack; first name in parent wrangler.toml. Review multi-worker file."
+    },
+    {
+      "name": "donate-api",
+      "path": "software/donate-api",
+      "bindings": [],
+      "vars": [],
+      "corsPolicy": "see wrangler + src",
+      "authScheme": "see package README",
+      "notes": "Donate / payments edge API; allowlisted for inventory."
+    },
+    {
+      "name": "genesis-gate",
+      "path": "software/genesis-gate",
+      "bindings": [],
+      "vars": [],
+      "corsPolicy": "see wrangler (wildcard CORS may WARN — triage in security:check)",
+      "authScheme": "see package README",
+      "notes": "Genesis-gate; allowlisted for inventory."
+    },
+    {
+      "name": "kenosis-mesh",
+      "path": "software/kenosis-mesh",
+      "bindings": [],
+      "vars": [],
+      "corsPolicy": "see wrangler (multi DO names in file — first name indexed)",
+      "authScheme": "see package README",
+      "notes": "Kenosis mesh worker; allowlisted for inventory."
+    },
+    {
+      "name": "p31-agent-hub",
+      "path": "software/p31-agent-hub",
+      "bindings": [],
+      "vars": [],
+      "corsPolicy": "see src — AGENT_HUB_SECRET when set",
+      "authScheme": "optional secret for /api/chat",
+      "notes": "Edge agent / mesh chat; see worker README. Same allowlist covers internal variant name in file if second block."
+    },
+    {
+      "name": "p31-cortex",
+      "path": "software/p31-cortex",
+      "bindings": [],
+      "vars": [],
+      "corsPolicy": "see wrangler",
+      "authScheme": "see package README",
+      "notes": "Cortex / multi-agent; first name p31-cortex. Allowlisted for inventory."
+    },
+    {
+      "name": "p31-forge",
+      "path": "software/p31-forge",
+      "bindings": [],
+      "vars": [],
+      "corsPolicy": "see wrangler",
+      "authScheme": "see package README",
+      "notes": "P31 forge worker; allowlisted for inventory."
+    },
+    {
+      "name": "p31-hearing-ops",
+      "path": "software/p31-hearing-ops",
+      "bindings": [],
+      "vars": [],
+      "corsPolicy": "see wrangler",
+      "authScheme": "see package README",
+      "notes": "Hearing-ops; allowlisted for inventory."
+    },
+    {
+      "name": "p31-state",
+      "path": "software/p31-state",
+      "bindings": [],
+      "vars": [],
+      "corsPolicy": "see src — may use conditional * (inventory may WARN CORS)",
+      "authScheme": "see package README",
+      "notes": "P31 state worker; allowlisted for inventory."
+    },
+    {
+      "name": "p31ca",
+      "path": "software/p31ca",
+      "bindings": [],
+      "vars": [],
+      "corsPolicy": "static hub; passkey CORS in sub-worker",
+      "authScheme": "n/a (Pages-style)",
+      "notes": "p31ca.org static hub wrangler; allowlisted for inventory."
+    },
+    {
+      "name": "p31-pwa",
+      "path": "software/packages/node-zero/pwa",
+      "bindings": [],
+      "vars": [],
+      "corsPolicy": "see wrangler",
+      "authScheme": "see package README",
+      "notes": "PWA / node-zero; allowlisted for inventory."
+    },
+    {
+      "name": "p31-quantum-edge",
+      "path": "software/packages/quantum-edge",
+      "bindings": [],
+      "vars": [],
+      "corsPolicy": "see worker — * may WARN (triage)",
+      "authScheme": "see package README",
+      "notes": "Quantum edge package; first name p31-quantum-edge; allowlisted for inventory."
+    },
+    {
+      "name": "p31-command-center",
+      "path": "software/sovereign-command-center",
+      "bindings": [],
+      "vars": [],
+      "corsPolicy": "see wrangler",
+      "authScheme": "see package README",
+      "notes": "Sovereign command center; allowlisted for inventory."
+    },
+    {
+      "name": "spaceship-relay",
+      "path": "software/spaceship-earth",
+      "bindings": [],
+      "vars": [],
+      "corsPolicy": "see worker — * may WARN",
+      "authScheme": "see package README",
+      "notes": "Spaceship Earth relay; allowlisted for inventory."
+    },
+    {
+      "name": "p31-telemetry",
+      "path": "software/telemetry-worker",
+      "bindings": [],
+      "vars": [],
+      "corsPolicy": "see wrangler",
+      "authScheme": "see package README",
+      "notes": "Telemetry; allowlisted for inventory."
+    },
+    {
+      "name": "p31-workers",
+      "path": "software/workers",
+      "bindings": [],
+      "vars": [],
+      "corsPolicy": "see wrangler (multi DO names; first p31-workers)",
+      "authScheme": "see package README",
+      "notes": "Love ledger / shared workers monorepo; allowlisted for inventory."
+    },
+    {
+      "name": "cf-edge-lab",
+      "path": "home-root packages/cf-edge-lab (bonding-soup; not under andromeda/ — verify-worker-inventory does not scan this path)",
+      "bindings": [
+        "AI (Workers AI)"
+      ],
+      "vars": [],
+      "corsPolicy": "playground HTML same-origin; /api/* JSON; no cookie auth",
+      "authScheme": "none — lab only; rate-limit /api/vibe before public exposure",
+      "notes": "Edge introspection (/api/edge), Workers AI vibe POST, WebSocket /ws. Canonical URL mesh.edgeLabWorkerUrl. npm run edge-lab:deploy from home root."
+    },
+    {
+      "name": "k4-agent-hub",
+      "path": "packages/k4-agent-hub",
+      "bindings": [
+        "ForgeHub (DO + SQLite)",
+        "CounselHub (DO + SQLite)",
+        "ScholarHub (DO + SQLite)",
+        "ScribeHub (DO + SQLite)",
+        "K4_AGENT_SESSIONS (KV)",
+        "K4_AGENT_ANCHORS (KV)",
+        "K4_AGENT_PEERS (KV)"
+      ],
+      "vars": [
+        "ENVIRONMENT",
+        "WORKER_VERSION",
+        "OLLAMA_BASE_URL"
+      ],
+      "secrets": [
+        "OPERATOR_PUBLIC_KEY (Ed25519 pem or b64u for anchor verify)"
+      ],
+      "corsPolicy": "open on /v1/manifest, /v1/topology, /v1/*/health, /v1/*/skills; Bearer sessionId required on /v1/*/call",
+      "authScheme": "Ed25519 signed canonical strings (dock, call, anchor-pact, peer-dispatch, family-dock); sessionId Bearer on call routes",
+      "notes": "K₄ agent worker tetrahedron. Schema p31.k4AgentHub/1.1.0. Four DOs (forge/counsel/scholar/scribe) backed by SQLite. Ed25519 operator dock + anchor pact + family cage wire + P2P federation + hibernatable WS fanout. Deployed from bonding-soup home root (packages/k4-agent-hub/). Verify: npm run verify:k4-agent-hub."
+    }
+  ]
+}

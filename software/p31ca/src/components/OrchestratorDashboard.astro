@@ -1,0 +1,612 @@
+---
+import mesh from '../data/p31-mesh-constants.json'
+
+export interface Props {
+  className?: string
+}
+
+const { className = '' } = Astro.props
+const orchestratorBase = mesh.orchestratorWorkerUrl
+---
+
+<!-- egg-hunt ORCH-WORKER anchor (hostname must stay findable for verify-egg-hunt): p31-orchestrator.trimtab-signal.workers.dev -->
+<div id="orchestrator-dashboard" class={`orchestrator-dashboard ${className}`}>
+  <div class="dashboard-header">
+    <h2 class="dashboard-title">Orchestrator Control Panel</h2>
+    <div class="status-badge status-checking" id="orchestrator-conn-badge" title="Status from orchestrator Worker">
+      <span class="status-dot" id="orchestrator-conn-dot"></span>
+      <span id="orchestrator-conn-label">Checking…</span>
+    </div>
+  </div>
+
+  <!-- System Status Card -->
+  <div class="card status-card">
+    <h3>Biological State</h3>
+    <div class="status-grid">
+      <div class="metric">
+        <div class="metric-label">Spoons Available</div>
+        <div class="metric-value" id="spoons-value">--</div>
+        <div class="metric-bar">
+          <div class="metric-bar-fill" id="spoons-bar"></div>
+        </div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Guardrail Level</div>
+        <div class="metric-value" id="guardrail-level">--</div>
+        <div class="level-indicator" id="level-indicator">
+          <div class="level-dot"></div>
+          <div class="level-dot"></div>
+          <div class="level-dot"></div>
+          <div class="level-dot"></div>
+          <div class="level-dot"></div>
+        </div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Time Dilation</div>
+        <div class="metric-value" id="dilation-factor">x1.0</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Fawn Guard</div>
+        <div class="metric-value status" id="fawn-status">Inactive</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pending Queue Card -->
+  <div class="card queue-card">
+    <h3>Pending Action Queue</h3>
+    <div class="queue-list" id="queue-list">
+      <div class="empty-state">No pending actions</div>
+    </div>
+  </div>
+
+  <!-- Manual Review Card -->
+  <div class="card review-card">
+    <h3>Manual Review Required</h3>
+    <div class="review-list" id="review-list">
+      <div class="empty-state">No actions pending review</div>
+    </div>
+  </div>
+
+  <!-- Recent Activity -->
+  <div class="card activity-card">
+    <h3>Recent Activity</h3>
+    <div class="activity-list" id="activity-list">
+      <div class="empty-state">No recent activity</div>
+    </div>
+  </div>
+</div>
+
+<script define:vars={{ orchestratorBase }}>
+  class OrchestratorDashboard {
+    constructor() {
+      this.refreshInterval = 10000
+      this.init()
+    }
+
+    setConnectionBadge(state) {
+      const wrap = document.getElementById('orchestrator-conn-badge')
+      const dot = document.getElementById('orchestrator-conn-dot')
+      const label = document.getElementById('orchestrator-conn-label')
+      if (!wrap || !dot || !label) return
+      wrap.classList.remove('status-checking', 'status-online', 'status-offline')
+      if (state === 'ok') {
+        wrap.classList.add('status-online')
+        dot.classList.add('pulsing')
+        label.textContent = 'Orchestrator reachable'
+      } else if (state === 'fail') {
+        wrap.classList.add('status-offline')
+        dot.classList.remove('pulsing')
+        label.textContent = 'Orchestrator unavailable'
+        wrap.title = 'Worker may be down, blocked, or require Access — see EDGE-SECURITY.md'
+      } else {
+        wrap.classList.add('status-checking')
+        dot.classList.remove('pulsing')
+        label.textContent = 'Checking…'
+      }
+    }
+
+    async init() {
+      await this.refresh()
+      setInterval(() => this.refresh(), this.refreshInterval)
+    }
+
+    async refresh() {
+      await Promise.all([
+        this.refreshStatus(),
+        this.refreshQueue(),
+        this.refreshManualReview(),
+        this.refreshActivity()
+      ])
+    }
+
+    async refreshStatus() {
+      try {
+        const res = await fetch(orchestratorBase + '/api/orchestrator/status')
+        if (!res.ok) throw new Error('status ' + res.status)
+        const data = await res.json()
+
+        this.setConnectionBadge('ok')
+        document.getElementById('spoons-value').textContent = data.currentSpoons
+        document.getElementById('spoons-bar').style.width = `${(data.currentSpoons / 20) * 100}%`
+        
+        const levelNames = ['Fawn Guard', 'Constrained', 'Supervised', 'Assisted', 'Full Autonomy']
+        document.getElementById('guardrail-level').textContent = `${data.guardrailLevel} - ${levelNames[data.guardrailLevel]}`
+        
+        // Calculate dilation factor
+        const k = [0, 0.25, 0.5, 0.75, 1.0]
+        const dilation = data.guardrailLevel === 0 ? '∞' : `x${(1 / k[data.guardrailLevel]).toFixed(2)}`
+        document.getElementById('dilation-factor').textContent = dilation
+
+        // Update level indicator
+        const dots = document.querySelectorAll('#level-indicator .level-dot')
+        dots.forEach((dot, i) => {
+          dot.classList.toggle('active', i <= data.guardrailLevel)
+        })
+
+        document.getElementById('fawn-status').textContent = data.fawnGuardActive ? 'ACTIVE' : 'Inactive'
+        document.getElementById('fawn-status').classList.toggle('status-danger', data.fawnGuardActive)
+        document.getElementById('fawn-status').classList.toggle('status-success', !data.fawnGuardActive)
+
+      } catch (e) {
+        console.error('Failed to fetch status:', e)
+        this.setConnectionBadge('fail')
+      }
+    }
+
+    async refreshQueue() {
+      try {
+        const res = await fetch(orchestratorBase + '/api/orchestrator/queue')
+        const data = await res.json()
+        const container = document.getElementById('queue-list')
+
+        if (data.count === 0) {
+          container.innerHTML = '<div class="empty-state">No pending actions</div>'
+          return
+        }
+
+        container.innerHTML = data.items.map(item => `
+          <div class="queue-item">
+            <div class="queue-item-header">
+              <span class="action-name">${item.action}</span>
+              <span class="priority priority-${item.priority >= 7 ? 'high' : item.priority >= 4 ? 'medium' : 'low'}">P${item.priority}</span>
+            </div>
+            <div class="queue-item-meta">
+              Scheduled: ${new Date(item.scheduled_at).toLocaleTimeString()}
+              ${item.attempts > 0 ? ` | Attempts: ${item.attempts}` : ''}
+            </div>
+          </div>
+        `).join('')
+
+      } catch (e) {
+        console.error('Failed to fetch queue:', e)
+      }
+    }
+
+    async refreshManualReview() {
+      try {
+        const res = await fetch(orchestratorBase + '/api/orchestrator/manual-review')
+        const data = await res.json()
+        const container = document.getElementById('review-list')
+
+        if (data.count === 0) {
+          container.innerHTML = '<div class="empty-state">No actions pending review</div>'
+          return
+        }
+
+        container.innerHTML = data.items.map(item => `
+          <div class="review-item">
+            <div class="review-item-header">
+              <span class="action-name">${item.action}</span>
+              <span class="review-badge">REVIEW REQUIRED</span>
+            </div>
+            <div class="review-item-reason">${item.reason}</div>
+            <div class="review-item-meta">
+              Blocked at ${new Date(item.created_at).toLocaleString()}
+            </div>
+            <button 
+              class="approve-btn" 
+              onclick="orchestratorDashboard.approveAction('${item.id}')"
+            >
+              Approve & Execute
+            </button>
+          </div>
+        `).join('')
+
+      } catch (e) {
+        console.error('Failed to fetch review queue:', e)
+      }
+    }
+
+    async refreshActivity() {
+      try {
+        const res = await fetch(orchestratorBase + '/api/orchestrator/audit-log?limit=10')
+        const data = await res.json()
+        const container = document.getElementById('activity-list')
+
+        if (data.count === 0) {
+          container.innerHTML = '<div class="empty-state">No recent activity</div>'
+          return
+        }
+
+        container.innerHTML = data.items.map(item => `
+          <div class="activity-item ${item.approved ? 'approved' : 'blocked'}">
+            <div class="activity-icon">${item.approved ? '✓' : '🛡️'}</div>
+            <div class="activity-content">
+              <div class="activity-action">${item.action}</div>
+              <div class="activity-meta">
+                ${new Date(item.created_at).toLocaleString()}
+                ${item.delay_ms > 0 ? ` | Delay: ${Math.round(item.delay_ms / 60000)}m` : ''}
+              </div>
+              <div class="activity-reason">${item.reason}</div>
+            </div>
+          </div>
+        `).join('')
+
+      } catch (e) {
+        console.error('Failed to fetch activity:', e)
+      }
+    }
+
+    async approveAction(auditId) {
+      try {
+        await fetch(`${orchestratorBase}/api/orchestrator/approve/${auditId}`, {
+          method: 'POST'
+        })
+        await this.refresh()
+      } catch (e) {
+        console.error('Failed to approve action:', e)
+      }
+    }
+  }
+
+  window.orchestratorDashboard = new OrchestratorDashboard()
+</script>
+
+<style is:global>
+  /* Tokens: /p31-style.css (p31-universal-canon) — inherits passport contrast/density on :root */
+  @keyframes orchestrator-dash-pulse {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+
+  .orchestrator-dashboard {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: var(--p31-space-8) var(--p31-space-4);
+    font-family: var(--p31-font-sans);
+    color: var(--p31-cloud);
+  }
+
+  .orchestrator-dashboard .dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--p31-space-8);
+  }
+
+  .orchestrator-dashboard .dashboard-title {
+    margin: 0;
+    font-size: var(--p31-text-3xl);
+    font-weight: 600;
+    color: var(--p31-cloud);
+  }
+
+  .orchestrator-dashboard .status-badge {
+    display: flex;
+    align-items: center;
+    gap: var(--p31-space-2);
+    padding: var(--p31-space-2) var(--p31-space-4);
+    border-radius: var(--p31-radius-full);
+    font-weight: 500;
+    font-size: var(--p31-text-sm);
+  }
+
+  .orchestrator-dashboard .status-badge.status-checking {
+    background: color-mix(in srgb, var(--p31-muted) 14%, transparent);
+    color: var(--p31-muted);
+  }
+
+  .orchestrator-dashboard .status-badge.status-online {
+    background: color-mix(in srgb, var(--p31-teal) 16%, transparent);
+    color: var(--p31-teal);
+  }
+
+  .orchestrator-dashboard .status-badge.status-offline {
+    background: color-mix(in srgb, var(--p31-coral) 16%, transparent);
+    color: var(--p31-coral);
+  }
+
+  .orchestrator-dashboard .status-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--p31-muted);
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .orchestrator-dashboard .status-dot.pulsing {
+    background: var(--p31-teal);
+    animation: orchestrator-dash-pulse 2s infinite;
+  }
+
+  .orchestrator-dashboard .status-offline .status-dot {
+    background: var(--p31-coral);
+    animation: none;
+  }
+
+  .orchestrator-dashboard .card {
+    background: var(--p31-glass-surface);
+    border: 1px solid var(--p31-glass-border);
+    border-radius: var(--p31-radius-lg);
+    padding: var(--p31-space-6);
+    margin-bottom: var(--p31-space-6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  .orchestrator-dashboard .card h3 {
+    margin-top: 0;
+    margin-bottom: var(--p31-space-6);
+    font-size: var(--p31-text-lg);
+    font-weight: 600;
+    color: var(--p31-cloud);
+  }
+
+  .orchestrator-dashboard .status-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--p31-space-6);
+  }
+
+  .orchestrator-dashboard .metric {
+    text-align: center;
+  }
+
+  .orchestrator-dashboard .metric-label {
+    font-size: var(--p31-text-sm);
+    color: var(--p31-muted);
+    margin-bottom: var(--p31-space-2);
+    text-transform: uppercase;
+    letter-spacing: var(--p31-tracking-wide);
+  }
+
+  .orchestrator-dashboard .metric-value {
+    font-size: var(--p31-text-4xl);
+    font-weight: 700;
+    color: var(--p31-cloud);
+    margin-bottom: var(--p31-space-2);
+  }
+
+  .orchestrator-dashboard .metric-bar {
+    width: 100%;
+    height: 6px;
+    background: color-mix(in srgb, var(--p31-muted) 12%, transparent);
+    border-radius: var(--p31-radius-full);
+    overflow: hidden;
+  }
+
+  .orchestrator-dashboard .metric-bar-fill {
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      var(--p31-coral),
+      var(--p31-amber),
+      var(--p31-teal)
+    );
+    border-radius: var(--p31-radius-full);
+    transition: width var(--p31-duration-normal) var(--p31-ease-standard);
+  }
+
+  .orchestrator-dashboard .level-indicator {
+    display: flex;
+    justify-content: center;
+    gap: var(--p31-space-2);
+    margin-top: var(--p31-space-2);
+  }
+
+  .orchestrator-dashboard .level-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--p31-muted) 28%, transparent);
+    transition:
+      background var(--p31-duration-normal) var(--p31-ease-standard),
+      box-shadow var(--p31-duration-normal) var(--p31-ease-standard);
+  }
+
+  .orchestrator-dashboard .level-dot.active {
+    background: var(--p31-teal);
+    box-shadow: var(--p31-shadow-glowTeal);
+  }
+
+  .orchestrator-dashboard .status-success {
+    color: var(--p31-teal);
+  }
+  .orchestrator-dashboard .status-danger {
+    color: var(--p31-coral);
+  }
+
+  .orchestrator-dashboard .empty-state {
+    text-align: center;
+    padding: var(--p31-space-8);
+    color: var(--p31-muted);
+    font-size: var(--p31-text-sm);
+  }
+
+  .orchestrator-dashboard .queue-item {
+    padding: var(--p31-space-4);
+    background: color-mix(in srgb, var(--p31-muted) 6%, transparent);
+    border-radius: var(--p31-radius-md);
+    margin-bottom: var(--p31-space-3);
+  }
+
+  .orchestrator-dashboard .queue-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--p31-space-1);
+  }
+
+  .orchestrator-dashboard .action-name {
+    font-family: var(--p31-font-mono);
+    font-weight: 500;
+    color: var(--p31-cloud);
+  }
+
+  .orchestrator-dashboard .priority {
+    padding: var(--p31-space-1) var(--p31-space-2);
+    border-radius: var(--p31-radius-sm);
+    font-size: var(--p31-text-xs);
+    font-weight: 600;
+  }
+
+  .orchestrator-dashboard .priority-high {
+    background: color-mix(in srgb, var(--p31-coral) 22%, transparent);
+    color: var(--p31-coral);
+  }
+  .orchestrator-dashboard .priority-medium {
+    background: color-mix(in srgb, var(--p31-amber) 22%, transparent);
+    color: var(--p31-amber);
+  }
+  .orchestrator-dashboard .priority-low {
+    background: color-mix(in srgb, var(--p31-muted) 18%, transparent);
+    color: var(--p31-muted);
+  }
+
+  .orchestrator-dashboard .queue-item-meta {
+    font-size: var(--p31-text-xs);
+    color: var(--p31-muted);
+  }
+
+  .orchestrator-dashboard .review-item {
+    padding: var(--p31-space-4);
+    background: color-mix(in srgb, var(--p31-coral) 10%, transparent);
+    border: 1px solid color-mix(in srgb, var(--p31-coral) 28%, transparent);
+    border-radius: var(--p31-radius-md);
+    margin-bottom: var(--p31-space-3);
+  }
+
+  .orchestrator-dashboard .review-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--p31-space-2);
+  }
+
+  .orchestrator-dashboard .review-badge {
+    padding: var(--p31-space-1) var(--p31-space-2);
+    background: color-mix(in srgb, var(--p31-coral) 22%, transparent);
+    color: var(--p31-coral);
+    border-radius: var(--p31-radius-sm);
+    font-size: var(--p31-text-xs);
+    font-weight: 600;
+  }
+
+  .orchestrator-dashboard .review-item-reason {
+    font-size: var(--p31-text-sm);
+    color: var(--p31-muted);
+    margin-bottom: var(--p31-space-2);
+  }
+
+  .orchestrator-dashboard .review-item-meta {
+    font-size: var(--p31-text-xs);
+    color: var(--p31-muted);
+    margin-bottom: var(--p31-space-3);
+  }
+
+  .orchestrator-dashboard .approve-btn {
+    width: 100%;
+    padding: var(--p31-space-2) var(--p31-space-4);
+    background: linear-gradient(
+      135deg,
+      var(--p31-teal),
+      color-mix(in srgb, var(--p31-teal) 78%, black)
+    );
+    color: var(--p31-cloud);
+    border: none;
+    border-radius: var(--p31-radius-md);
+    font-family: var(--p31-font-sans);
+    font-weight: 500;
+    font-size: var(--p31-text-sm);
+    cursor: pointer;
+    transition:
+      transform var(--p31-duration-fast) var(--p31-ease-standard),
+      box-shadow var(--p31-duration-fast) var(--p31-ease-standard);
+  }
+
+  .orchestrator-dashboard .approve-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--p31-shadow-glowTeal);
+  }
+
+  .orchestrator-dashboard .approve-btn:focus-visible {
+    outline: var(--p31-focus-ring) solid var(--p31-focus-color-hub);
+    outline-offset: var(--p31-focus-offset);
+  }
+
+  .orchestrator-dashboard .activity-item {
+    display: flex;
+    gap: var(--p31-space-4);
+    padding: var(--p31-space-3);
+    border-radius: var(--p31-radius-md);
+    margin-bottom: var(--p31-space-2);
+  }
+
+  .orchestrator-dashboard .activity-item.approved {
+    background: color-mix(in srgb, var(--p31-teal) 8%, transparent);
+    border-left: 3px solid var(--p31-teal);
+  }
+
+  .orchestrator-dashboard .activity-item.blocked {
+    background: color-mix(in srgb, var(--p31-amber) 8%, transparent);
+    border-left: 3px solid var(--p31-amber);
+  }
+
+  .orchestrator-dashboard .activity-icon {
+    font-size: var(--p31-text-xl);
+    width: 24px;
+    text-align: center;
+  }
+
+  .orchestrator-dashboard .activity-action {
+    font-weight: 500;
+    color: var(--p31-cloud);
+    margin-bottom: var(--p31-space-1);
+  }
+
+  .orchestrator-dashboard .activity-meta {
+    font-size: var(--p31-text-xs);
+    color: var(--p31-muted);
+    margin-bottom: var(--p31-space-1);
+  }
+
+  .orchestrator-dashboard .activity-reason {
+    font-size: var(--p31-text-sm);
+    color: var(--p31-muted);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .orchestrator-dashboard .status-dot.pulsing {
+      animation: none;
+    }
+    .orchestrator-dashboard .metric-bar-fill {
+      transition: none;
+    }
+    .orchestrator-dashboard .level-dot {
+      transition: none;
+    }
+    .orchestrator-dashboard .approve-btn {
+      transition: none;
+    }
+    .orchestrator-dashboard .approve-btn:hover {
+      transform: none;
+    }
+  }
+</style>

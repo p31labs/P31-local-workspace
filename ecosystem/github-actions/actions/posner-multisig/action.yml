@@ -1,0 +1,175 @@
+# Posner Multi-Sig Assembly Action
+# Used by GitHub API Fallback Mechanism
+# Handles Ca9(PO4)6 assembly during GitHub API outages
+
+name: 'Posner Multi-Sig Assembly'
+description: 'Execute Posner Multi-Sig assembly process with fallback support'
+
+inputs:
+  commit-hash:
+    description: 'Git commit hash triggering the assembly'
+    required: true
+  commit-message:
+    description: 'Commit message containing assembly instructions'
+    required: true
+  fallback-mode:
+    description: 'Whether running in GitHub API fallback mode'
+    required: true
+    default: 'false'
+  trigger-source:
+    description: 'Source of the trigger (git-polling, webhook-simulation, etc.)'
+    required: true
+    default: 'unknown'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Parse Commit Message
+      id: parse
+      shell: bash
+      run: |
+        COMMIT_MSG="${{ inputs.commit-message }}"
+        
+        # Extract Posner assembly parameters
+        if echo "$COMMIT_MSG" | grep -i "posner"; then
+          echo "assembly-type=posner" >> $GITHUB_OUTPUT
+        elif echo "$COMMIT_MSG" | grep -i "multisig"; then
+          echo "assembly-type=multisig" >> $GITHUB_OUTPUT
+        elif echo "$COMMIT_MSG" | grep -i "ca9(po4)6"; then
+          echo "assembly-type=ca9po46" >> $GITHUB_OUTPUT
+        else
+          echo "assembly-type=unknown" >> $GITHUB_OUTPUT
+        fi
+        
+        # Extract ion contributions
+        ION_COUNT=$(echo "$COMMIT_MSG" | grep -o -E '[0-9]+.*ion' | head -1 | grep -o -E '[0-9]+' || echo "0")
+        echo "ion-count=$ION_COUNT" >> $GITHUB_OUTPUT
+        
+        # Extract spoon burns
+        SPOON_COUNT=$(echo "$COMMIT_MSG" | grep -o -E '[0-9]+.*spoon' | head -1 | grep -o -E '[0-9]+' || echo "0")
+        echo "spoon-count=$SPOON_COUNT" >> $GITHUB_OUTPUT
+        
+        echo "✅ Commit message parsed successfully"
+
+    - name: Validate Assembly Parameters
+      id: validate
+      shell: bash
+      run: |
+        ASSEMBLY_TYPE="${{ steps.parse.outputs.assembly-type }}"
+        ION_COUNT="${{ steps.parse.outputs.ion-count }}"
+        SPOON_COUNT="${{ steps.parse.outputs.spoon-count }}"
+        
+        if [ "$ASSEMBLY_TYPE" == "unknown" ]; then
+          echo "❌ No valid Posner assembly detected in commit"
+          exit 1
+        fi
+        
+        if [ "$ION_COUNT" -eq 0 ] && [ "$SPOON_COUNT" -eq 0 ]; then
+          echo "⚠️ Warning: No ion contributions or spoon burns detected"
+        fi
+        
+        echo "assembly-valid=true" >> $GITHUB_OUTPUT
+        echo "✅ Assembly parameters validated"
+
+    - name: Execute Assembly Process
+      shell: bash
+      run: |
+        ASSEMBLY_TYPE="${{ steps.parse.outputs.assembly-type }}"
+        ION_COUNT="${{ steps.parse.outputs.ion-count }}"
+        SPOON_COUNT="${{ steps.parse.outputs.spoon-count }}"
+        FALLBACK_MODE="${{ inputs.fallback-mode }}"
+        TRIGGER_SOURCE="${{ inputs.trigger-source }}"
+        
+        echo "🔧 Executing $ASSEMBLY_TYPE assembly..."
+        echo "   Ions: $ION_COUNT"
+        echo "   Spoons: $SPOON_COUNT"
+        echo "   Fallback Mode: $FALLBACK_MODE"
+        echo "   Trigger Source: $TRIGGER_SOURCE"
+        
+        # Simulate assembly process
+        sleep 2
+        
+        # Generate assembly report
+        cat > assembly-report.json << EOF
+        {
+          "assembly_type": "$ASSEMBLY_TYPE",
+          "ion_contributions": $ION_COUNT,
+          "spoon_burns": $SPOON_COUNT,
+          "commit_hash": "${{ inputs.commit-hash }}",
+          "trigger_source": "$TRIGGER_SOURCE",
+          "fallback_mode": $FALLBACK_MODE,
+          "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+          "status": "completed",
+          "ca9po46_assembled": true
+        }
+        EOF
+        
+        echo "✅ Assembly process completed successfully"
+        echo "📄 Assembly report generated: assembly-report.json"
+
+    - name: Update User Registry
+      shell: bash
+      run: |
+        # Update the user registry with assembly completion
+        USER_FINGERPRINT=$(git log -1 --pretty=%an | tr ' ' '_' | tr '[:upper:]' '[:lower:]')
+        
+        # Create or update user registry entry
+        cat > user-registry-update.json << EOF
+        {
+          "user": "$USER_FINGERPRINT",
+          "last_assembly": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+          "assembly_type": "${{ steps.parse.outputs.assembly-type }}",
+          "ion_contributions": ${{ steps.parse.outputs.ion-count }},
+          "spoon_burns": ${{ steps.parse.outputs.spoon-count }},
+          "fallback_mode": ${{ inputs.fallback-mode }}
+        }
+        EOF
+        
+        echo "✅ User registry updated for $USER_FINGERPRINT"
+
+    - name: Send Assembly Notification
+      shell: bash
+      run: |
+        ASSEMBLY_TYPE="${{ steps.parse.outputs.assembly-type }}"
+        ION_COUNT="${{ steps.parse.outputs.ion-count }}"
+        SPOON_COUNT="${{ steps.parse.outputs.spoon-count }}"
+        FALLBACK_MODE="${{ inputs.fallback-mode }}"
+        
+        # Send notification to Discord
+        if [ -n "${{ secrets.DISCORD_WEBHOOK_URL }}" ]; then
+          MESSAGE="✅ **Posner Multi-Sig Assembly Complete**"
+          if [ "$FALLBACK_MODE" == "true" ]; then
+            MESSAGE="$MESSAGE\n🔄 **Fallback Mode Active**"
+          fi
+          
+          curl -X POST \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"content\": \"$MESSAGE\n\n**Assembly Type:** $ASSEMBLY_TYPE\n**Ions:** $ION_COUNT\n**Spoons:** $SPOON_COUNT\n**Commit:** ${{ inputs.commit-hash }}\",
+              \"username\": \"P31 Assembly Monitor\"
+            }" \
+            "${{ secrets.DISCORD_WEBHOOK_URL }}"
+        fi
+        
+        echo "✅ Assembly notification sent"
+
+    - name: Commit Assembly Results
+      shell: bash
+      run: |
+        # Add assembly results to repository
+        git config user.name "P31 System Monitor"
+        git config user.email "system@p31ca.org"
+        
+        git add assembly-report.json user-registry-update.json
+        
+        # Create commit message
+        COMMIT_MSG="🤖 Assembly Complete: ${{ steps.parse.outputs.assembly-type }}"
+        if [ "${{ inputs.fallback-mode }}" == "true" ]; then
+          COMMIT_MSG="$COMMIT_MSG (Fallback Mode)"
+        fi
+        COMMIT_MSG="$COMMIT_MSG - ${{ inputs.commit-hash }}"
+        
+        git commit -m "$COMMIT_MSG" -m "Fallback Source: ${{ inputs.trigger-source }}"
+        git push
+        
+        echo "✅ Assembly results committed to repository"

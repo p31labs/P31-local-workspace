@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json.schemastore.org/web-manifest-combined.json",
+  "id": "p31.qfactor",
+  "name": "Q-Factor — P31",
+  "short_name": "Q-Factor",
+  "description": "Coherence dashboard: HRV + spoon economy + calcium → real-time cognitive load score with Home Assistant automation payload.",
+  "start_url": "/qfactor/",
+  "scope": "/qfactor/",
+  "display": "standalone",
+  "display_override": ["standalone", "browser"],
+  "orientation": "portrait-primary",
+  "background_color": "#050505",
+  "theme_color": "#050505",
+  "icons": [
+    {
+      "src": "/pwa/p31-tetra-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["health", "productivity"],
+  "shortcuts": [
+    {
+      "name": "Log Spoon",
+      "short_name": "-1 Spoon",
+      "url": "/qfactor/?action=spoon-minus",
+      "description": "Spend one spoon and sync Q-Factor"
+    },
+    {
+      "name": "Sync Now",
+      "url": "/qfactor/?action=sync",
+      "description": "Force Q-Factor state sync"
+    }
+  ]
+}

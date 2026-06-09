@@ -1,0 +1,83 @@
+{
+  "timestamp": "2026-03-23T07:48:52.058Z",
+  "multiSig": {
+    "status": "IN_PROGRESS",
+    "assemblyComplete": false,
+    "progress": 0,
+    "requirements": {
+      "totalIons": 15,
+      "calciumIons": 9,
+      "phosphateIons": 6,
+      "uniqueContributors": 5,
+      "maxIonsPerUser": 3
+    },
+    "current": {
+      "calciumIons": 0,
+      "phosphateIons": 0,
+      "totalIons": 0,
+      "uniqueContributors": 0
+    }
+  },
+  "contributors": {
+    "total": 0,
+    "active": 0,
+    "distribution": {
+      "0": 0,
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "3+": 0
+    }
+  },
+  "metrics": {
+    "ionsPerContributor": 0,
+    "timeToCompletion": {
+      "started": "2026-03-23T07:48:07.207Z",
+      "estimatedCompletion": "2026-03-30T07:48:52.058Z",
+      "timeRemaining": "7 days"
+    },
+    "complianceRate": 100
+  },
+  "visualization": {
+    "progressBars": {
+      "calcium": {
+        "current": 0,
+        "required": 9,
+        "progress": 0,
+        "status": "in_progress"
+      },
+      "phosphate": {
+        "current": 0,
+        "required": 6,
+        "progress": 0,
+        "status": "in_progress"
+      },
+      "contributors": {
+        "current": 0,
+        "required": 5,
+        "progress": 0,
+        "status": "in_progress"
+      },
+      "overall": {
+        "current": 0,
+        "required": 15,
+        "progress": 0,
+        "status": "in_progress"
+      }
+    },
+    "contributorChart": {
+      "labels": [],
+      "data": []
+    },
+    "timeline": {
+      "events": [
+        {
+          "timestamp": "2026-03-23T07:48:07.207Z",
+          "type": "assembly_started",
+          "description": "Posner molecule assembly initiated"
+        }
+      ],
+      "lastUpdate": "2026-03-23T07:48:07.207Z"
+    }
+  }
+}

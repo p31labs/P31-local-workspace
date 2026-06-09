@@ -1,0 +1,45 @@
+# P31 Unified Social Worker
+# Multi-platform social automation: scheduling, posting, Discord notifications
+#
+# Merges: social-drop-automation + p31-social-broadcast
+# Deploy: npx wrangler deploy
+name = "p31-social-worker"
+main = "worker.js"
+compatibility_date = "2024-06-12"
+
+# Environment Variables
+[vars]
+ENVIRONMENT = "production"
+
+# Secrets (set via wrangler):
+#   npx wrangler secret put DISCORD_WEBHOOK_URL
+#   npx wrangler secret put TWITTER_API_KEY
+#   npx wrangler secret put TWITTER_API_SECRET
+#   npx wrangler secret put TWITTER_ACCESS_TOKEN
+#   npx wrangler secret put TWITTER_ACCESS_TOKEN_SECRET
+#   npx wrangler secret put REDDIT_CLIENT_ID
+#   npx wrangler secret put REDDIT_CLIENT_SECRET
+#   npx wrangler secret put REDDIT_USERNAME
+#   npx wrangler secret put REDDIT_PASSWORD
+#   npx wrangler secret put BLUESKY_HANDLE
+#   npx wrangler secret put BLUESKY_APP_PASSWORD
+#   npx wrangler secret put MASTODON_INSTANCE
+#   npx wrangler secret put MASTODON_ACCESS_TOKEN
+#   npx wrangler secret put NOSTR_PRIVATE_KEY
+#   npx wrangler secret put SUBSTACK_API_KEY
+
+# Routes configured via Cloudflare dashboard:
+# Workers & Pages → p31-social-worker → Triggers → Custom Domains → Add custom domain
+# Add: social.p31ca.org
+
+# Recurring cron triggers
+# Single daily trigger at 1:00 PM EDT — worker determines day and fires appropriate wave
+# Ko-fi digest lives in wrangler-kofi.toml (separate worker, separate cron budget)
+[triggers]
+crons = [
+  "0 17 * * *",    # Daily 1:00 PM EDT — Mon=weekly wave, Wed=midweek, Fri=weekend, 1st=Zenodo
+]
+
+# Build configuration
+[build]
+command = "echo 'No build step required'"

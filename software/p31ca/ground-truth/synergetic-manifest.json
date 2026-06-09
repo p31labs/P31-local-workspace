@@ -1,0 +1,40 @@
+{
+  "schema": "p31.synergetic-manifest/1.0.0",
+  "version": "1.0.0",
+  "updated": "2026-04-25",
+  "note": "Dymaxion-style surface map for multi-dome stack. See docs/WORK-PACKAGE-SYNERGETIC-GEODESIC-STACK.md. Each p31.ground-truth.json threejs surface must have one entry with matching groundTruthThreejsKey.",
+  "entries": [
+     {
+       "id": "dome-astro",
+       "type": "pwa",
+       "path": "package.json",
+       "threeDependency": "^0.170.0",
+       "note": "Three.js imported via npm (dome-cockpit.ts). CDN importmap removed Phase 3 — version locked in package.json.",
+       "status": "LIVE"
+     },
+    {
+      "id": "spaceship-earth-pwa",
+      "type": "pwa",
+      "path": "../spaceship-earth/package.json",
+      "threeDependency": "^0.159.0",
+      "status": "LIVE",
+      "roomId": "observatory"
+    },
+     {
+       "id": "geodesic-math-astro",
+       "type": "astro",
+       "path": "src/pages/geodesic-math.astro",
+       "threeRevision": "0.170.0",
+       "status": "LIVE",
+       "groundTruthThreejsKey": "geodesic-math.astro"
+     },
+     {
+       "id": "mesh-observatory-astro",
+       "type": "astro",
+       "path": "src/pages/mesh-observatory.astro",
+       "threeRevision": "0.170.0",
+       "status": "LIVE",
+       "groundTruthThreejsKey": "mesh-observatory.astro"
+     }
+  ]
+}

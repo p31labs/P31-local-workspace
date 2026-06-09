@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub" style="color-scheme: dark;">
+<head>
+  <meta charset="UTF-8">
+<script>(function(){var r=document.documentElement;if(/[?&]alive=1(?:&|$)/.test(location.search))return;r.classList.add("p31-gray-rock");function wake(){r.classList.remove("p31-gray-rock")}document.addEventListener("pointerdown",wake,{once:true,capture:true});document.addEventListener("keydown",wake,{once:true,capture:true})})();</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0f1115">
+  <title>Status | P31 Labs — p31ca.org</title>
+  <meta name="description" content="P31 Labs live status — real probes against k4-personal, passkey worker, simplex, and other surfaces. No auth. Auto-refreshes.">
+<link rel="canonical" href="https://p31ca.org/status.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Status">
+<meta property="og:description" content="P31 Labs live status — real probes against k4-personal, passkey worker, simplex, and other surfaces. No auth. Auto-refreshes.">
+<meta property="og:url" content="https://p31ca.org/status.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Status">
+<meta name="twitter:description" content="P31 Labs live status — real probes against k4-personal, passkey worker, simplex, and other surfaces. No auth. Auto-refreshes.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/p31-style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/p31-tailwind-extend.js"></script>
+  <script>tailwind.config = { theme: { extend: { ...window.P31_TAILWIND_EXTEND } } };</script>
+  <style>
+    .pulse { animation: pulse-soft 2.4s ease-in-out infinite; }
+    @keyframes pulse-soft { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
+    @media (prefers-reduced-motion: reduce) { .pulse { animation: none; } }
+    .dot { width: 0.55rem; height: 0.55rem; display: inline-block; border-radius: 9999px; vertical-align: middle; }
+  </style>
+</head>
+<body class="bg-void text-cloud min-h-screen font-sans antialiased px-4 py-10 max-w-3xl mx-auto text-sm leading-relaxed">
+  <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 bg-teal text-void px-3 py-1 rounded font-mono text-xs">Skip to content</a>
+
+  <nav class="flex flex-wrap gap-3 text-teal/80 text-xs font-mono mb-8" aria-label="P31 governance pages">
+    <a href="/" class="hover:underline">Hub</a>
+    <a href="/manifesto" class="hover:underline">Manifesto</a>
+    <a href="/roadmap" class="hover:underline">Roadmap</a>
+    <a href="/code-of-conduct" class="hover:underline">Code of Conduct</a>
+    <a href="/security" class="hover:underline">Security</a>
+    <a href="/accessibility" class="hover:underline">Accessibility</a>
+    <a href="/status" class="hover:underline" aria-current="page">Status</a>
+    <a href="/financials" class="hover:underline">Financials</a>
+  </nav>
+
+  <main id="main">
+    <h1 class="text-2xl font-bold text-paper mb-2">Live status</h1>
+    <p class="text-cloud/50 text-xs mb-8">
+      Real-time probes against the public surfaces of <strong class="text-paper">P31 Labs, Inc.</strong> No authentication. No tracking. Source of truth: <code class="font-mono text-teal/80">/ops-glass-probes.json</code> (schema <code class="font-mono text-teal/80">p31.opsGlassProbes/1.0.0</code>) ingested from the home <code class="font-mono text-teal/80">p31-ecosystem.json</code>.
+    </p>
+
+    <div class="bg-white/5 border border-white/10 p-4 rounded mb-8 flex items-center justify-between gap-4 flex-wrap">
+      <div>
+        <div class="text-paper font-semibold text-base">
+          <span class="dot pulse" id="overall-dot" style="background:#888" aria-hidden="true"></span>
+          <span id="overall-label">Probing&hellip;</span>
+        </div>
+        <div class="text-cloud/60 text-xs mt-1" id="overall-detail">Loading probe definitions&hellip;</div>
+      </div>
+      <button id="refresh-btn" class="text-xs font-mono text-teal/90 hover:text-teal border border-teal/40 px-3 py-1 rounded">Refresh now</button>
+    </div>
+
+    <section id="probe-list" class="space-y-3" aria-live="polite" aria-busy="true">
+      <p class="text-cloud/60 text-xs">Loading&hellip;</p>
+    </section>
+
+    <section id="legend" class="mt-10 text-xs text-cloud/60">
+      <h2 class="text-paper font-semibold text-base mb-2">How to read this page</h2>
+      <ul class="list-disc pl-5 space-y-1">
+        <li><span class="dot" style="background:#3ba372" aria-hidden="true"></span> <strong class="text-paper">Up</strong> — probe returned a 2xx response within the timeout window</li>
+        <li><span class="dot" style="background:#cc6247" aria-hidden="true"></span> <strong class="text-paper">Down</strong> — probe failed or timed out</li>
+        <li><span class="dot" style="background:#d4b942" aria-hidden="true"></span> <strong class="text-paper">Degraded</strong> — probe returned an unexpected status that the surface documents as recoverable (e.g. 401 / 403 on auth-required endpoints)</li>
+        <li><span class="dot" style="background:#888" aria-hidden="true"></span> <strong class="text-paper">Unknown</strong> — not yet probed in this session, or CORS-restricted from the browser</li>
+      </ul>
+      <p class="mt-3">
+        Probes are issued from your browser. CORS-restricted endpoints (e.g. some Workers) cannot be probed in-browser; for those, the page shows the URL with the <strong class="text-paper">Unknown</strong> badge and a link to the operator's glass-box runner. See <a class="text-teal hover:underline" href="/glass-box">/glass-box</a> for the canonical operator view.
+      </p>
+    </section>
+
+    <section id="incidents" class="mt-10">
+      <h2 class="text-paper font-semibold text-base mb-2">Recent incidents</h2>
+      <p class="text-cloud/70">
+        No incidents in the last 30 days as of <strong class="text-paper">2026-05-02</strong>. When an incident occurs, it appears here with a timestamp, scope, and a link to the post-incident note. Critical incidents also receive a security advisory at <a class="text-teal hover:underline" href="https://github.com/p31labs/bonding-soup/tree/main/docs/security/advisories">docs/security/advisories/</a> using the <code class="font-mono text-teal/80">P31SA-YYYY-NNN</code> identifier scheme.
+      </p>
+    </section>
+
+    <p class="text-cloud/40 text-xs mt-10 border-t border-white/10 pt-4">
+      Companion: <a class="text-teal hover:underline" href="/manifesto">Manifesto</a> Commitment C6 &middot;
+      <a class="text-teal hover:underline" href="https://github.com/p31labs/bonding-soup/blob/main/docs/CWP-P31-PEER-COMP-2026-05.md">CWP-P31-PEER-COMP-2026-05</a> PEER-1I &middot;
+      Mirror of operator probes: <a class="text-teal hover:underline" href="/glass-box">/glass-box</a>.
+    </p>
+  </main>
+
+  <footer class="text-cloud/40 text-xs mt-10 pt-4 border-t border-white/10">
+    &copy; 2026 P31 Labs, Inc. &middot;
+    <a class="text-teal/60 hover:underline" href="/manifesto">Manifesto</a> &middot;
+    <a class="text-teal/60 hover:underline" href="/status">Status</a> &middot;
+    <a class="text-teal/60 hover:underline" href="/security">Security</a> &middot;
+    <a class="text-teal/60 hover:underline" href="/privacy">Privacy</a>
+  </footer>
+
+  <script type="module">
+    /**
+     * /status — public status page. Reads the committed probe registry and
+     * issues no-credentials fetches from the browser. CORS-restricted probes
+     * show as Unknown rather than Down.
+     *
+     * Companion: docs/CWP-P31-PEER-COMP-2026-05.md PEER-1I.
+     */
+    const list = document.getElementById('probe-list');
+    const overallDot = document.getElementById('overall-dot');
+    const overallLabel = document.getElementById('overall-label');
+    const overallDetail = document.getElementById('overall-detail');
+    const refreshBtn = document.getElementById('refresh-btn');
+
+    const COLORS = {
+      up: '#3ba372',
+      down: '#cc6247',
+      degraded: '#d4b942',
+      unknown: '#888',
+    };
+    const LABELS = {
+      up: 'All systems operational',
+      down: 'One or more probes failing',
+      degraded: 'Some probes degraded',
+      unknown: 'Probing&hellip;',
+    };
+
+    let probes = [];
+
+    async function loadProbes() {
+      try {
+        const res = await fetch('/ops-glass-probes.json', { cache: 'no-store' });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const j = await res.json();
+        probes = (j.probes || []).filter(p => /^https:\/\//i.test(p.url));
+      } catch (e) {
+        list.innerHTML =
+          '<p class="text-cloud/70">Failed to load probe registry: ' +
+          String(e.message || e) +
+          '</p>';
+        overallDot.style.background = COLORS.unknown;
+        overallLabel.textContent = 'Status unavailable';
+        overallDetail.textContent = 'The probe registry could not be loaded.';
+      }
+    }
+
+    function renderEmpty() {
+      list.setAttribute('aria-busy', 'true');
+      list.innerHTML = probes
+        .map(
+          (p, i) =>
+            `<div class="bg-white/5 border border-white/10 p-3 rounded flex items-start gap-3" data-probe-i="${i}">
+              <span class="dot mt-1" style="background:${COLORS.unknown}" aria-hidden="true"></span>
+              <div class="flex-1 min-w-0">
+                <div class="text-paper font-semibold text-sm break-all">${p.id}</div>
+                <div class="text-cloud/60 text-xs mt-0.5 break-all"><a class="hover:underline" href="${p.url}" target="_blank" rel="noopener">${p.url}</a></div>
+                ${p.note ? `<div class="text-cloud/50 text-xs mt-0.5">${p.note}</div>` : ''}
+              </div>
+              <span class="text-xs font-mono text-cloud/60" data-status>?</span>
+            </div>`
+        )
+        .join('');
+    }
+
+    async function probe(p) {
+      const ctrl = new AbortController();
+      const t = setTimeout(() => ctrl.abort(), 6000);
+      try {
+        const init = {
+          method: p.method || 'GET',
+          mode: 'cors',
+          credentials: 'omit',
+          cache: 'no-store',
+          signal: ctrl.signal,
+        };
+        if (init.method !== 'GET' && init.method !== 'HEAD') {
+          init.headers = { 'content-type': 'application/json' };
+          init.body = '{}';
+        }
+        const res = await fetch(p.url, init);
+        clearTimeout(t);
+        if (res.ok) return { state: 'up', detail: String(res.status) };
+        if (res.status === 401 || res.status === 403)
+          return { state: 'degraded', detail: String(res.status) + ' (auth-required)' };
+        return { state: 'down', detail: 'HTTP ' + res.status };
+      } catch (e) {
+        clearTimeout(t);
+        // CORS / network errors land here. Without knowing the cause, mark Unknown.
+        return { state: 'unknown', detail: 'no-cors / unreachable from browser' };
+      }
+    }
+
+    async function run() {
+      if (probes.length === 0) {
+        list.innerHTML = '<p class="text-cloud/70">No probes registered.</p>';
+        list.setAttribute('aria-busy', 'false');
+        overallDot.style.background = COLORS.unknown;
+        overallLabel.textContent = 'No probes';
+        overallDetail.textContent = '';
+        return;
+      }
+      renderEmpty();
+      const counts = { up: 0, down: 0, degraded: 0, unknown: 0 };
+      const results = await Promise.all(probes.map(probe));
+      results.forEach((r, i) => {
+        counts[r.state] = (counts[r.state] || 0) + 1;
+        const node = list.querySelector(`[data-probe-i="${i}"]`);
+        if (!node) return;
+        node.querySelector('.dot').style.background = COLORS[r.state];
+        node.querySelector('[data-status]').textContent = r.state.toUpperCase() + ' · ' + r.detail;
+      });
+      list.setAttribute('aria-busy', 'false');
+      let overall = 'up';
+      if (counts.down > 0) overall = 'down';
+      else if (counts.degraded > 0) overall = 'degraded';
+      else if (counts.up === 0) overall = 'unknown';
+      overallDot.style.background = COLORS[overall];
+      overallLabel.textContent = LABELS[overall].replace(/&hellip;/g, '…');
+      overallDetail.textContent =
+        `${counts.up} up · ${counts.down} down · ${counts.degraded} degraded · ${counts.unknown} unknown · ` +
+        `last refresh ${new Date().toISOString()}`;
+    }
+
+    refreshBtn.addEventListener('click', run);
+    await loadProbes();
+    await run();
+    // Auto-refresh every 60s; pause when the tab is hidden to be polite.
+    setInterval(() => {
+      if (!document.hidden) run();
+    }, 60_000);
+  </script>
+</body>
+</html>

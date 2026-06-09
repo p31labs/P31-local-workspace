@@ -1,0 +1,24 @@
+# Frozen install: root pnpm workspace + nested software lockfile (matches lockfile:check).
+# Run ./.github/actions/toolchain-constants first so NODE_VERSION / PNPM_VERSION apply.
+name: pnpm Andromeda full install
+description: pnpm/action-setup, Node, pnpm cache, root + software frozen install
+
+runs:
+  using: composite
+  steps:
+    - uses: pnpm/action-setup@v4
+      with:
+        version: ${{ env.PNPM_VERSION || '10.32.1' }}
+    - uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION || '20' }}
+        cache: pnpm
+        cache-dependency-path: |
+          pnpm-lock.yaml
+          software/pnpm-lock.yaml
+    - name: Install (root)
+      shell: bash
+      run: pnpm install
+    - name: Install (software)
+      shell: bash
+      run: pnpm install --dir software

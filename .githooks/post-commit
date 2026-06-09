@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+# P31 Andromeda: opt-in post-commit push — same as P31 home (see Andromeda CONTRIBUTING or npm run git:hooks).
+#
+# Triggers:  export P31_AUTO_PUSH=1   or   npm run git:autopush:on
+# Opt out:   P31_NO_AUTO_PUSH=1
+# main/master:  P31_AUTO_PUSH_MAIN=1  to allow
+set -euo pipefail
+ROOT=$(git rev-parse --show-toplevel 2>/dev/null) || exit 0
+cd "$ROOT"
+
+if [[ "${P31_NO_AUTO_PUSH:-}" == "1" ]]; then
+  exit 0
+fi
+
+AUTO=0
+if [[ "${P31_AUTO_PUSH:-}" == "1" ]]; then
+  AUTO=1
+fi
+if [[ -f .p31/auto-push ]]; then
+  AUTO=1
+fi
+if [[ "$AUTO" != "1" ]]; then
+  exit 0
+fi
+
+BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null) || exit 0
+if [[ "$BRANCH" == "HEAD" ]]; then
+  exit 0
+fi
+if [[ "$BRANCH" == "main" || "$BRANCH" == "master" ]]; then
+  if [[ "${P31_AUTO_PUSH_MAIN:-}" != "1" ]]; then
+    echo "P31 post-commit: on ${BRANCH} — skip auto push (set P31_AUTO_PUSH_MAIN=1 to allow)."
+    exit 0
+  fi
+fi
+
+if ! git remote get-url origin &>/dev/null; then
+  echo "P31 post-commit: no origin remote — skip" >&2
+  exit 0
+fi
+
+if git rev-parse --verify @{u} &>/dev/null; then
+  echo "P31 post-commit: git push (auto)"
+  git push
+else
+  echo "P31 post-commit: git push -u origin ${BRANCH} (auto)"
+  git push -u origin "$BRANCH"
+fi

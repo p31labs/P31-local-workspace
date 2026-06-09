@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PRISM | Sensory Diet Synthesizer</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { min-height: 100svh; display: flex; align-items: center; justify-content: center; padding: 1.5rem; background: #050505; color: #d8d6d0; font-family: 'Inter', sans-serif; transition: background 4s ease; overflow: hidden; }
+        .glass { background: rgba(22,25,32,0.7); backdrop-filter: blur(14px); border: 1px solid rgba(255,255,255,0.08); border-radius: 18px; padding: 2rem; width: 100%; max-width: 420px; position: relative; z-index: 10; }
+        h1 { font-size: 2rem; font-weight: 700; color: #4db8a8; font-family: 'Space Mono', monospace; margin-bottom: 2px; }
+        .sub { font-size: 10px; color: rgba(216,214,208,0.4); font-family: 'Space Mono', monospace; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 2rem; }
+        .start-btn { width: 100%; padding: 1rem; border: none; border-radius: 10px; font-size: 1.05rem; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; transition: 0.2s; margin-bottom: 1.75rem; background: #4db8a8; color: #050505; }
+        .start-btn.active { background: #cc6247; }
+        .controls { display: flex; flex-direction: column; gap: 1.25rem; transition: opacity 0.4s; }
+        .controls.dim { opacity: 0.4; pointer-events: none; }
+        label { font-size: 0.85rem; color: rgba(216,214,208,0.65); display: flex; justify-content: space-between; margin-bottom: 0.4rem; }
+        label span { color: #4db8a8; font-family: 'Space Mono', monospace; font-size: 0.8rem; }
+        input[type=range] { -webkit-appearance: none; width: 100%; height: 4px; background: rgba(255,255,255,0.15); border-radius: 2px; outline: none; cursor: pointer; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%; background: #4db8a8; cursor: pointer; }
+        .note { font-size: 11px; color: rgba(216,214,208,0.35); line-height: 1.5; margin-top: 0.5rem; }
+        .note strong { color: #4db8a8; }
+        .back { display: inline-block; margin-top: 1.25rem; color: rgba(77,184,168,0.5); font-family: 'Space Mono', monospace; font-size: 11px; text-decoration: none; letter-spacing: 0.08em; }
+        .back:hover { color: #4db8a8; }
+
+        /* Breath pacer */
+        #pacer {
+            position: fixed; top: 50%; left: 50%; width: 50vmin; height: 50vmin;
+            margin: -25vmin; border-radius: 50%;
+            background: radial-gradient(circle, rgba(77,184,168,0.35) 0%, rgba(77,184,168,0) 70%);
+            pointer-events: none; z-index: 1; opacity: 0; transition: opacity 1s;
+        }
+        #pacer.active { opacity: 1; animation: breathe 11s cubic-bezier(0.4,0,0.2,1) infinite; }
+        @keyframes breathe {
+            0%   { transform: scale(0.7); }
+            36%  { transform: scale(1.4); } /* inhale 4 counts */
+            64%  { transform: scale(1.4); } /* hold 7 counts */
+            100% { transform: scale(0.7); } /* exhale 8 counts */
+        }
+    </style>
+</head>
+<body>
+    <div id="pacer"></div>
+
+    <div class="glass">
+        <h1>PRISM</h1>
+        <p class="sub">Generative Sensory Diet Synthesizer</p>
+
+        <button id="toggle" class="start-btn">Begin Synthesis</button>
+
+        <div class="controls dim" id="controls">
+            <div>
+                <label>Brown Noise <span id="noise-label">50%</span></label>
+                <input type="range" id="noise" min="0" max="100" value="50">
+            </div>
+            <div>
+                <label>Binaural Beat — Theta 6 Hz <span id="bin-label">35%</span></label>
+                <input type="range" id="binaural" min="0" max="100" value="35">
+            </div>
+            <div>
+                <label>Arousal: over → under-stimulated <span id="arousal-label">50%</span></label>
+                <input type="range" id="arousal" min="0" max="100" value="50">
+            </div>
+            <p class="note"><strong>Headphones required</strong> for binaural beats. All audio synthesized locally — no streaming, no network calls. Visual pacer: 4-7-8 breathing ratio.</p>
+        </div>
+
+        <a href="prism.html" class="back">← PRISM about page</a>
+    </div>
+
+    <script>
+        let actx, noiseSource, noiseGain, leftOsc, rightOsc, binGain;
+        let running = false;
+
+        const toggleBtn = document.getElementById('toggle');
+        const controls = document.getElementById('controls');
+        const pacer = document.getElementById('pacer');
+        const noiseSlider = document.getElementById('noise');
+        const binSlider = document.getElementById('binaural');
+        const arousalSlider = document.getElementById('arousal');
+
+        function buildAudio() {
+            actx = new (window.AudioContext || window.webkitAudioContext)();
+
+            // Brown noise buffer (2 seconds, looped)
+            const sr = actx.sampleRate;
+            const buf = actx.createBuffer(1, sr * 2, sr);
+            const data = buf.getChannelData(0);
+            let last = 0;
+            for (let i = 0; i < data.length; i++) {
+                const w = Math.random() * 2 - 1;
+                data[i] = (last + 0.02 * w) / 1.02;
+                last = data[i];
+                data[i] *= 3.5;
+            }
+            noiseSource = actx.createBufferSource();
+            noiseSource.buffer = buf;
+            noiseSource.loop = true;
+            noiseGain = actx.createGain();
+            noiseGain.gain.value = 0;
+            noiseSource.connect(noiseGain).connect(actx.destination);
+            noiseSource.start();
+
+            // Binaural beats — 200 Hz base, 6 Hz theta differential
+            leftOsc = actx.createOscillator();
+            rightOsc = actx.createOscillator();
+            [leftOsc, rightOsc].forEach(o => { o.type = 'sine'; });
+            leftOsc.frequency.value = 200;
+            rightOsc.frequency.value = 206;
+
+            const lp = actx.createStereoPanner(); lp.pan.value = -1;
+            const rp = actx.createStereoPanner(); rp.pan.value = 1;
+            binGain = actx.createGain();
+            binGain.gain.value = 0;
+
+            leftOsc.connect(lp).connect(binGain).connect(actx.destination);
+            rightOsc.connect(rp).connect(binGain);
+
+            leftOsc.start(); rightOsc.start();
+        }
+
+        function ramp(param, target, t = 1.5) {
+            param.setTargetAtTime(target, actx.currentTime, t);
+        }
+
+        function updateArousal(val) {
+            // val 0–100: 0 = over-stimulated (brown noise, slow breathe), 100 = under-stimulated (higher freq, faster)
+            const v = val / 100;
+            // Shift binaural from 6 Hz theta (over) to 12 Hz alpha (under)
+            if (rightOsc) rightOsc.frequency.setTargetAtTime(200 + 6 + v * 6, actx.currentTime, 0.5);
+            // Breathe animation speed: slower when over-stimulated
+            pacer.style.animationDuration = `${11 - v * 4}s`;
+        }
+
+        toggleBtn.addEventListener('click', () => {
+            if (!running) {
+                if (!actx) buildAudio();
+                if (actx.state === 'suspended') actx.resume();
+
+                ramp(noiseGain.gain, noiseSlider.value / 100);
+                ramp(binGain.gain, binSlider.value / 100 * 0.15);
+
+                toggleBtn.textContent = 'Stop Synthesis';
+                toggleBtn.classList.add('active');
+                controls.classList.remove('dim');
+                pacer.classList.add('active');
+                document.body.style.background = '#0a1512';
+                running = true;
+            } else {
+                ramp(noiseGain.gain, 0);
+                ramp(binGain.gain, 0);
+                setTimeout(() => { if (!running) actx.suspend(); }, 2200);
+
+                toggleBtn.textContent = 'Begin Synthesis';
+                toggleBtn.classList.remove('active');
+                controls.classList.add('dim');
+                pacer.classList.remove('active');
+                document.body.style.background = '#050505';
+                running = false;
+            }
+        });
+
+        noiseSlider.addEventListener('input', e => {
+            document.getElementById('noise-label').textContent = `${e.target.value}%`;
+            if (running) ramp(noiseGain.gain, e.target.value / 100, 0.2);
+        });
+
+        binSlider.addEventListener('input', e => {
+            document.getElementById('bin-label').textContent = `${e.target.value}%`;
+            if (running) ramp(binGain.gain, e.target.value / 100 * 0.15, 0.2);
+        });
+
+        arousalSlider.addEventListener('input', e => {
+            document.getElementById('arousal-label').textContent = `${e.target.value}%`;
+            if (running) updateArousal(e.target.value);
+        });
+    </script>
+</body>
+</html>

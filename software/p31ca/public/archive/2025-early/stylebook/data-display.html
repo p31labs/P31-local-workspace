@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data display · P31 Stylebook</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/p31-style.css">
+  <link rel="stylesheet" href="/lib/p31-fluid.css">
+  <link rel="stylesheet" href="/stylebook/_chrome.css">
+  <style>
+    .p31-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--p31-surface);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .p31-table th {
+      text-align: left;
+      padding: 12px 16px;
+      background: var(--p31-surface2);
+      font-family: var(--p31-font-mono);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--p31-muted);
+      font-weight: 500;
+      border-bottom: 1px solid var(--p31-border-subtle);
+    }
+    .p31-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--p31-border-subtle);
+      font-size: 14px;
+      color: var(--p31-cloud);
+    }
+    .p31-table tr:last-child td { border-bottom: none; }
+    .p31-table tr:hover td { background: var(--p31-surface2); }
+    
+    .p31-list {
+      background: var(--p31-surface);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .p31-list-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--p31-border-subtle);
+      transition: background 0.15s;
+    }
+    .p31-list-item:last-child { border-bottom: none; }
+    .p31-list-item:hover { background: var(--p31-surface2); }
+    .p31-list-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: var(--p31-surface2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      color: var(--p31-primary);
+      flex-shrink: 0;
+    }
+    .p31-list-content { flex: 1; min-width: 0; }
+    .p31-list-title { font-size: 14px; font-weight: 500; color: var(--p31-paper); }
+    .p31-list-meta { font-size: 12px; color: var(--p31-muted); margin-top: 2px; font-family: var(--p31-font-mono); }
+    .p31-list-trail { color: var(--p31-muted); font-size: 12px; font-family: var(--p31-font-mono); }
+    
+    .p31-kv {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: 8px;
+      align-items: baseline;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--p31-border-subtle);
+    }
+    .p31-kv:last-child { border-bottom: none; }
+    .p31-kv-key {
+      font-family: var(--p31-font-mono);
+      font-size: 12px;
+      color: var(--p31-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .p31-kv-value {
+      font-size: 14px;
+      color: var(--p31-paper);
+    }
+    
+    .p31-bar-chart {
+      display: flex;
+      align-items: flex-end;
+      gap: 6px;
+      height: 120px;
+      padding: 16px;
+      background: var(--p31-surface);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: 12px;
+    }
+    .p31-bar {
+      flex: 1;
+      background: linear-gradient(0deg, var(--p31-primary) 0%, var(--p31-cyan) 100%);
+      border-radius: 4px 4px 0 0;
+      min-height: 4px;
+      transition: all 0.4s var(--p31-ease-fluid);
+      cursor: pointer;
+      position: relative;
+    }
+    .p31-bar:hover { opacity: 0.85; transform: translateY(-2px); }
+    .p31-bar::after {
+      content: attr(data-value);
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: var(--p31-font-mono);
+      font-size: 10px;
+      color: var(--p31-muted);
+      margin-bottom: 4px;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .p31-bar:hover::after { opacity: 1; }
+    
+    .p31-sparkline {
+      stroke: var(--p31-primary);
+      stroke-width: 2;
+      fill: none;
+      stroke-linejoin: round;
+      stroke-linecap: round;
+    }
+    .p31-sparkline-fill {
+      fill: var(--p31-primary);
+      opacity: 0.1;
+    }
+    
+    .p31-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--p31-coral), var(--p31-teal));
+      color: var(--p31-void);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 12px;
+    }
+    .p31-avatar-group {
+      display: inline-flex;
+    }
+    .p31-avatar-group .p31-avatar {
+      border: 2px solid var(--p31-surface);
+      margin-left: -8px;
+    }
+    .p31-avatar-group .p31-avatar:first-child { margin-left: 0; }
+  </style>
+</head>
+<body>
+  <script type="module">
+    import { renderShell, code, callout } from '/stylebook/_chrome.js';
+    import { P31ThemeController } from '/lib/p31-theme-engine.mjs';
+    window.p31Theme = new P31ThemeController({ defaultTheme: 'hub' });
+    
+    const data = [78, 92, 65, 88, 71, 95, 82, 90, 68, 85, 78, 96];
+    const max = Math.max(...data);
+    const bars = data.map(v => `<div class="p31-bar" style="height: ${(v/max)*100}%;" data-value="${v}"></div>`).join('');
+    
+    // Sparkline
+    const sparkW = 200, sparkH = 50;
+    const sparkPoints = data.map((v, i) => 
+      `${(i / (data.length - 1)) * sparkW},${sparkH - (v/max) * (sparkH - 4) - 2}`
+    ).join(' ');
+    const sparkFill = `0,${sparkH} ${sparkPoints} ${sparkW},${sparkH}`;
+    
+    const content = `
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Tables</div>
+          <h2 class="sb-h2">Tabular data</h2>
+        </div>
+        
+        <div class="sb-preview">
+          <div class="sb-preview-header"><span>Standard table</span></div>
+          <div class="sb-preview-body dense">
+            <table class="p31-table">
+              <thead>
+                <tr>
+                  <th>Vertex</th>
+                  <th>Status</th>
+                  <th>Last sync</th>
+                  <th>Owner</th>
+                  <th style="text-align:right;">Records</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong style="color:var(--p31-paper);">will</strong></td>
+                  <td><span class="p31-badge p31-badge-success">● Online</span></td>
+                  <td style="font-family:var(--p31-font-mono); font-size: 12px;">2 min ago</td>
+                  <td>Operator</td>
+                  <td style="text-align:right; font-family:var(--p31-font-mono);">1,247</td>
+                </tr>
+                <tr>
+                  <td><strong style="color:var(--p31-paper);">christyn</strong></td>
+                  <td><span class="p31-badge p31-badge-success">● Online</span></td>
+                  <td style="font-family:var(--p31-font-mono); font-size: 12px;">14 min ago</td>
+                  <td>Family</td>
+                  <td style="text-align:right; font-family:var(--p31-font-mono);">892</td>
+                </tr>
+                <tr>
+                  <td><strong style="color:var(--p31-paper);">S.J.</strong></td>
+                  <td><span class="p31-badge p31-badge-warning">● Idle</span></td>
+                  <td style="font-family:var(--p31-font-mono); font-size: 12px;">3 hr ago</td>
+                  <td>Family</td>
+                  <td style="text-align:right; font-family:var(--p31-font-mono);">456</td>
+                </tr>
+                <tr>
+                  <td><strong style="color:var(--p31-paper);">W.J.</strong></td>
+                  <td><span class="p31-badge p31-badge-neutral">○ Offline</span></td>
+                  <td style="font-family:var(--p31-font-mono); font-size: 12px;">2 days ago</td>
+                  <td>Family</td>
+                  <td style="text-align:right; font-family:var(--p31-font-mono);">312</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Lists</div>
+          <h2 class="sb-h2">Structured rows</h2>
+        </div>
+        
+        <div class="sb-preview">
+          <div class="sb-preview-header"><span>Activity list</span></div>
+          <div class="sb-preview-body dense" style="max-width: 540px;">
+            <div class="p31-list">
+              <div class="p31-list-item">
+                <div class="p31-list-icon">⚙</div>
+                <div class="p31-list-content">
+                  <div class="p31-list-title">Centaur EDE updated to v3.2.0</div>
+                  <div class="p31-list-meta">3 minutes ago</div>
+                </div>
+                <div class="p31-list-trail">→</div>
+              </div>
+              <div class="p31-list-item">
+                <div class="p31-list-icon" style="color: var(--p31-coral);">◇</div>
+                <div class="p31-list-content">
+                  <div class="p31-list-title">Mesh sync · 4 vertices, 247 records</div>
+                  <div class="p31-list-meta">14 minutes ago</div>
+                </div>
+                <div class="p31-list-trail">→</div>
+              </div>
+              <div class="p31-list-item">
+                <div class="p31-list-icon" style="color: var(--p31-amber);">⏲</div>
+                <div class="p31-list-content">
+                  <div class="p31-list-title">Calcium reading · 8.4 mg/dL</div>
+                  <div class="p31-list-meta">2 hours ago</div>
+                </div>
+                <div class="p31-list-trail">→</div>
+              </div>
+              <div class="p31-list-item">
+                <div class="p31-list-icon" style="color: var(--p31-phosphor);">✓</div>
+                <div class="p31-list-content">
+                  <div class="p31-list-title">CI pipeline passed · all checks green</div>
+                  <div class="p31-list-meta">Yesterday at 4:21 PM</div>
+                </div>
+                <div class="p31-list-trail">→</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Key-value</div>
+          <h2 class="sb-h2">Definition lists</h2>
+        </div>
+        
+        <div class="sb-preview">
+          <div class="sb-preview-header"><span>Metadata</span></div>
+          <div class="sb-preview-body dense" style="max-width: 480px;">
+            <div style="background: var(--p31-surface); border: 1px solid var(--p31-border-subtle); border-radius: 12px; padding: 16px;">
+              <div class="p31-kv">
+                <div class="p31-kv-key">Schema</div>
+                <div class="p31-kv-value" style="font-family: var(--p31-font-mono); font-size: 13px;">p31.alignment/1.0.0</div>
+              </div>
+              <div class="p31-kv">
+                <div class="p31-kv-key">Updated</div>
+                <div class="p31-kv-value">2026-05-01 17:29 UTC</div>
+              </div>
+              <div class="p31-kv">
+                <div class="p31-kv-key">Owner</div>
+                <div class="p31-kv-value">P31 Labs, Inc.</div>
+              </div>
+              <div class="p31-kv">
+                <div class="p31-kv-key">Status</div>
+                <div class="p31-kv-value"><span class="p31-badge p31-badge-success">● Verified</span></div>
+              </div>
+              <div class="p31-kv">
+                <div class="p31-kv-key">EIN</div>
+                <div class="p31-kv-value" style="font-family: var(--p31-font-mono);">42-1888158</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Charts</div>
+          <h2 class="sb-h2">Lightweight visualization</h2>
+          <p class="sb-text">For dashboards, embed minimal SVG charts. The system stays light — no chart library required.</p>
+        </div>
+        
+        <div class="sb-preview">
+          <div class="sb-preview-header"><span>Bar chart</span></div>
+          <div class="sb-preview-body dense" style="max-width: 480px;">
+            <div class="p31-bar-chart">${bars}</div>
+          </div>
+        </div>
+        
+        <div class="sb-preview">
+          <div class="sb-preview-header"><span>Sparkline</span></div>
+          <div class="sb-preview-body" style="gap: 24px;">
+            <div style="background: var(--p31-surface); border: 1px solid var(--p31-border-subtle); padding: 16px; border-radius: 10px; display: flex; flex-direction: column; gap: 8px;">
+              <div style="font-family: var(--p31-font-mono); font-size: 11px; color: var(--p31-muted); text-transform: uppercase;">Mesh activity · 12h</div>
+              <div style="font-size: 28px; font-weight: 700; color: var(--p31-paper);">96</div>
+              <svg viewBox="0 0 ${sparkW} ${sparkH}" width="${sparkW}" height="${sparkH}">
+                <polygon class="p31-sparkline-fill" points="${sparkFill}"/>
+                <polyline class="p31-sparkline" points="${sparkPoints}"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">People</div>
+          <h2 class="sb-h2">Avatars</h2>
+        </div>
+        
+        <div class="sb-preview">
+          <div class="sb-preview-header"><span>Avatar group</span></div>
+          <div class="sb-preview-body" style="gap: 24px;">
+            <div class="p31-avatar-group">
+              <div class="p31-avatar">W</div>
+              <div class="p31-avatar" style="background: linear-gradient(135deg, var(--p31-amber), var(--p31-lavender));">C</div>
+              <div class="p31-avatar" style="background: linear-gradient(135deg, var(--p31-cyan), var(--p31-phosphorus));">S</div>
+              <div class="p31-avatar" style="background: var(--p31-surface3); color: var(--p31-cloud);">+1</div>
+            </div>
+            <div class="p31-avatar" style="width: 48px; height: 48px; font-size: 16px;">WJ</div>
+            <div class="p31-avatar" style="width: 24px; height: 24px; font-size: 9px;">SJ</div>
+          </div>
+        </div>
+      </section>
+    `;
+    
+    renderShell({
+      activeId: 'data',
+      breadcrumb: [
+        { href: '/stylebook/', label: 'Stylebook' },
+        { href: '/stylebook/', label: 'Components' },
+        { label: 'Data display' }
+      ],
+      title: 'Data display',
+      subtitle: 'Tables, lists, key-value, charts, avatars. Patterns for showing structured information.',
+      meta: [{ label: 'Patterns', value: '6' }],
+      content
+    });
+  </script>
+</body>
+</html>

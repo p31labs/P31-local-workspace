@@ -1,0 +1,726 @@
+---
+/**
+ * StarfieldSettings.astro — Customization panel for notification starfield
+ *
+ * Allows users to configure:
+ * - Which events trigger star lights (messages, alerts, mesh, activity)
+ * - Colors for each event type
+ * - Pulse duration and intensity
+ * - Sound effects on/off
+ * - WebSocket connection settings
+ */
+---
+
+<div id="starfield-settings" class="starfield-settings" style="display: none;">
+  <div class="settings-backdrop" data-close-settings></div>
+  <div class="settings-panel">
+    <div class="settings-header">
+      <h2>✨ Starfield Notifications</h2>
+      <button class="close-btn" data-close-settings aria-label="Close settings">×</button>
+    </div>
+
+    <div class="settings-body">
+      <!-- Enable/Disable -->
+      <section class="setting-section">
+        <label class="toggle-label">
+          <input type="checkbox" id="sf-enabled" checked />
+          <span class="toggle-switch"></span>
+          <span class="toggle-text">Enable starfield notifications</span>
+        </label>
+      </section>
+
+      <!-- Connection Status -->
+      <section class="setting-section">
+        <h3>Connection</h3>
+        <div class="connection-status">
+          <span id="sf-status-indicator" class="status-dot"></span>
+          <span id="sf-status-text">Connecting...</span>
+        </div>
+        <div class="stats-grid">
+          <div class="stat">
+            <span class="stat-value" id="sf-pulse-count">0</span>
+            <span class="stat-label">Active Pulses</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value" id="sf-event-count">0</span>
+            <span class="stat-label">Total Events</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Event Filters -->
+      <section class="setting-section">
+        <h3>Event Types</h3>
+        <p class="section-desc">Choose which events light up stars</p>
+        <div class="filter-list">
+          <label class="filter-item">
+            <input type="checkbox" id="sf-filter-messages" checked />
+            <span class="filter-icon" style="color: #3b82f6">💬</span>
+            <span class="filter-text">Messages</span>
+            <span class="filter-color" style="background: #3b82f6"></span>
+          </label>
+          <label class="filter-item">
+            <input type="checkbox" id="sf-filter-alerts" checked />
+            <span class="filter-icon" style="color: #f43f5e">⚠️</span>
+            <span class="filter-text">Alerts</span>
+            <span class="filter-color" style="background: #f43f5e"></span>
+          </label>
+          <label class="filter-item">
+            <input type="checkbox" id="sf-filter-mesh" checked />
+            <span class="filter-icon" style="color: #10b981">🕸️</span>
+            <span class="filter-text">Mesh Events</span>
+            <span class="filter-color" style="background: #10b981"></span>
+          </label>
+          <label class="filter-item">
+            <input type="checkbox" id="sf-filter-activity" />
+            <span class="filter-icon" style="color: #8b5cf6">✨</span>
+            <span class="filter-text">Activity</span>
+            <span class="filter-color" style="background: #8b5cf6"></span>
+          </label>
+        </div>
+      </section>
+
+      <!-- Visual Settings -->
+      <section class="setting-section">
+        <h3>Visuals</h3>
+        <div class="slider-group">
+          <label>
+            <span>Duration</span>
+            <span id="sf-duration-value">3.0s</span>
+          </label>
+          <input type="range" id="sf-duration" min="0.5" max="10" step="0.5" value="3" />
+        </div>
+        <div class="slider-group">
+          <label>
+            <span>Intensity</span>
+            <span id="sf-intensity-value">80%</span>
+          </label>
+          <input type="range" id="sf-intensity" min="10" max="100" step="10" value="80" />
+        </div>
+      </section>
+
+      <!-- Audio Settings -->
+      <section class="setting-section">
+        <h3>Audio</h3>
+        <label class="toggle-label">
+          <input type="checkbox" id="sf-sound-enabled" />
+          <span class="toggle-switch"></span>
+          <span class="toggle-text">Enable sound effects</span>
+        </label>
+        <div class="slider-group" id="sf-volume-group" style="opacity: 0.5; pointer-events: none;">
+          <label>
+            <span>Volume</span>
+            <span id="sf-volume-value">30%</span>
+          </label>
+          <input type="range" id="sf-volume" min="0" max="100" step="10" value="30" />
+        </div>
+      </section>
+
+      <!-- Test Buttons -->
+      <section class="setting-section">
+        <h3>Test</h3>
+        <div class="test-buttons">
+          <button class="test-btn" data-test="message" style="--test-color: #3b82f6">
+            <span>💬</span> Message
+          </button>
+          <button class="test-btn" data-test="alert" style="--test-color: #f43f5e">
+            <span>⚠️</span> Alert
+          </button>
+          <button class="test-btn" data-test="mesh" style="--test-color: #10b981">
+            <span>🕸️</span> Mesh
+          </button>
+          <button class="test-btn" data-test="activity" style="--test-color: #8b5cf6">
+            <span>✨</span> Activity
+          </button>
+        </div>
+      </section>
+
+      <!-- Advanced -->
+      <section class="setting-section">
+        <details class="advanced-section">
+          <summary>Advanced Settings</summary>
+          <div class="advanced-content">
+            <label class="input-group">
+              <span>WebSocket URL</span>
+              <input type="text" id="sf-ws-url" value="wss://k4-cage.trimtab-signal.workers.dev/ws" />
+            </label>
+          </div>
+        </details>
+      </section>
+    </div>
+
+    <div class="settings-footer">
+      <button class="reset-btn" data-reset-settings>Reset to Defaults</button>
+      <button class="save-btn" data-save-settings>Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- Settings Toggle Button -->
+<button id="starfield-settings-toggle" class="settings-toggle" aria-label="Starfield settings">
+  <span class="toggle-icon">✨</span>
+  <span class="toggle-pulse" id="sf-toggle-pulse"></span>
+</button>
+
+<style>
+  .starfield-settings {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .settings-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+  }
+
+  .settings-panel {
+    position: relative;
+    width: 90%;
+    max-width: 420px;
+    max-height: 85vh;
+    background: rgba(15, 17, 21, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .settings-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .settings-header h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--p31-cloud, #ede8e0);
+    font-family: var(--p31-font-sans, system-ui);
+  }
+
+  .close-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: none;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--p31-cloud);
+    font-size: 20px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .close-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .settings-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .setting-section h3 {
+    margin: 0 0 12px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--p31-muted, rgba(237, 232, 224, 0.6));
+    font-family: var(--p31-font-mono, monospace);
+  }
+
+  .section-desc {
+    margin: -8px 0 12px;
+    font-size: 13px;
+    color: var(--p31-muted);
+  }
+
+  /* Toggle Switch */
+  .toggle-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+  }
+
+  .toggle-label input {
+    display: none;
+  }
+
+  .toggle-switch {
+    width: 48px;
+    height: 26px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 13px;
+    position: relative;
+    transition: background 0.3s;
+  }
+
+  .toggle-switch::after {
+    content: '';
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    background: white;
+    border-radius: 50%;
+    top: 2px;
+    left: 2px;
+    transition: transform 0.3s;
+  }
+
+  .toggle-label input:checked + .toggle-switch {
+    background: var(--p31-teal, #4db8a8);
+  }
+
+  .toggle-label input:checked + .toggle-switch::after {
+    transform: translateX(22px);
+  }
+
+  .toggle-text {
+    font-size: 14px;
+    color: var(--p31-cloud);
+  }
+
+  /* Connection Status */
+  .connection-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #fbbf24;
+    animation: pulse 2s infinite;
+  }
+
+  .status-dot.connected {
+    background: #10b981;
+    animation: none;
+  }
+
+  .status-dot.disconnected {
+    background: #f43f5e;
+    animation: none;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  #sf-status-text {
+    font-size: 13px;
+    color: var(--p31-cloud);
+    font-family: var(--p31-font-mono);
+  }
+
+  /* Stats Grid */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .stat {
+    text-align: center;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 8px;
+  }
+
+  .stat-value {
+    display: block;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--p31-teal);
+    font-family: var(--p31-font-mono);
+  }
+
+  .stat-label {
+    font-size: 11px;
+    color: var(--p31-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* Filter List */
+  .filter-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .filter-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .filter-item:hover {
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  .filter-item input {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--p31-teal);
+  }
+
+  .filter-icon {
+    font-size: 18px;
+  }
+
+  .filter-text {
+    flex: 1;
+    font-size: 14px;
+    color: var(--p31-cloud);
+  }
+
+  .filter-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+  }
+
+  /* Sliders */
+  .slider-group {
+    margin-bottom: 16px;
+  }
+
+  .slider-group label {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 13px;
+    color: var(--p31-cloud);
+  }
+
+  .slider-group input[type="range"] {
+    width: 100%;
+    height: 6px;
+    -webkit-appearance: none;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    outline: none;
+  }
+
+  .slider-group input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    background: var(--p31-teal);
+    border-radius: 50%;
+    cursor: pointer;
+  }
+
+  /* Test Buttons */
+  .test-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .test-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: var(--p31-cloud);
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .test-btn:hover {
+    background: color-mix(in srgb, var(--test-color) 20%, transparent);
+    border-color: var(--test-color);
+    box-shadow: 0 0 15px color-mix(in srgb, var(--test-color) 30%, transparent);
+  }
+
+  .test-btn span:first-child {
+    font-size: 16px;
+  }
+
+  /* Advanced Section */
+  .advanced-section summary {
+    font-size: 13px;
+    color: var(--p31-muted);
+    cursor: pointer;
+    padding: 8px 0;
+  }
+
+  .advanced-content {
+    padding-top: 12px;
+  }
+
+  .input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .input-group span {
+    font-size: 12px;
+    color: var(--p31-muted);
+    font-family: var(--p31-font-mono);
+  }
+
+  .input-group input {
+    padding: 10px 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    color: var(--p31-cloud);
+    font-size: 13px;
+    font-family: var(--p31-font-mono);
+  }
+
+  /* Footer */
+  .settings-footer {
+    display: flex;
+    gap: 12px;
+    padding: 16px 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .reset-btn, .save-btn {
+    flex: 1;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .reset-btn {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: var(--p31-muted);
+  }
+
+  .reset-btn:hover {
+    border-color: var(--p31-cloud);
+    color: var(--p31-cloud);
+  }
+
+  .save-btn {
+    background: var(--p31-teal);
+    border: none;
+    color: var(--p31-void);
+  }
+
+  .save-btn:hover {
+    box-shadow: 0 0 20px rgba(77, 184, 168, 0.4);
+  }
+
+  /* Settings Toggle Button */
+  .settings-toggle {
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(15, 17, 21, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--p31-cloud);
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+    z-index: 100;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  }
+
+  .settings-toggle:hover {
+    transform: scale(1.1);
+    border-color: var(--p31-teal);
+    box-shadow: 0 0 20px rgba(77, 184, 168, 0.3);
+  }
+
+  .toggle-pulse {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: #f43f5e;
+    border-radius: 50%;
+    top: 8px;
+    right: 8px;
+    display: none;
+  }
+
+  .toggle-pulse.active {
+    display: block;
+    animation: pulse-dot 2s infinite;
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.5); opacity: 0.5; }
+  }
+</style>
+
+<script>
+  // Settings panel functionality
+  (function() {
+    const panel = document.getElementById('starfield-settings');
+    const toggle = document.getElementById('starfield-settings-toggle');
+    const closeButtons = document.querySelectorAll('[data-close-settings]');
+    const saveBtn = document.querySelector('[data-save-settings]');
+    const resetBtn = document.querySelector('[data-reset-settings]');
+    const testButtons = document.querySelectorAll('[data-test]');
+
+    // Toggle panel visibility
+    toggle?.addEventListener('click', () => {
+      const isVisible = panel?.style.display !== 'none';
+      panel.style.display = isVisible ? 'none' : 'flex';
+    });
+
+    // Close panel
+    closeButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        panel.style.display = 'none';
+      });
+    });
+
+    // Test notification buttons
+    testButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const type = btn.dataset.test;
+        if (window.p31StarfieldNotifications) {
+          window.p31StarfieldNotifications.triggerNotification(type, 'normal');
+        }
+      });
+    });
+
+    // Sound enable/disable toggle
+    const soundToggle = document.getElementById('sf-sound-enabled');
+    const volumeGroup = document.getElementById('sf-volume-group');
+    soundToggle?.addEventListener('change', (e) => {
+      volumeGroup.style.opacity = e.target.checked ? '1' : '0.5';
+      volumeGroup.style.pointerEvents = e.target.checked ? 'auto' : 'none';
+    });
+
+    // Update slider value displays
+    const durationSlider = document.getElementById('sf-duration');
+    durationSlider?.addEventListener('input', (e) => {
+      document.getElementById('sf-duration-value').textContent = e.target.value + 's';
+    });
+
+    const intensitySlider = document.getElementById('sf-intensity');
+    intensitySlider?.addEventListener('input', (e) => {
+      document.getElementById('sf-intensity-value').textContent = e.target.value + '%';
+    });
+
+    const volumeSlider = document.getElementById('sf-volume');
+    volumeSlider?.addEventListener('input', (e) => {
+      document.getElementById('sf-volume-value').textContent = e.target.value + '%';
+    });
+
+    // Save settings
+    saveBtn?.addEventListener('click', () => {
+      if (!window.p31StarfieldNotifications) return;
+
+      const config = {
+        enabled: document.getElementById('sf-enabled')?.checked ?? true,
+        filters: {
+          messages: document.getElementById('sf-filter-messages')?.checked ?? true,
+          alerts: document.getElementById('sf-filter-alerts')?.checked ?? true,
+          meshEvents: document.getElementById('sf-filter-mesh')?.checked ?? true,
+          activity: document.getElementById('sf-filter-activity')?.checked ?? false,
+        },
+        starPulseDuration: parseFloat(durationSlider?.value ?? '3') * 1000,
+        starPulseIntensity: parseInt(intensitySlider?.value ?? '80') / 100,
+        enableSound: soundToggle?.checked ?? false,
+        soundVolume: parseInt(volumeSlider?.value ?? '30') / 100,
+        websocketUrl: document.getElementById('sf-ws-url')?.value ?? 'wss://k4-cage.trimtab-signal.workers.dev/ws',
+      };
+
+      window.p31StarfieldNotifications.updateConfig(config);
+      panel.style.display = 'none';
+    });
+
+    // Reset to defaults
+    resetBtn?.addEventListener('click', () => {
+      if (confirm('Reset all starfield notification settings to defaults?')) {
+        document.getElementById('sf-enabled').checked = true;
+        document.getElementById('sf-filter-messages').checked = true;
+        document.getElementById('sf-filter-alerts').checked = true;
+        document.getElementById('sf-filter-mesh').checked = true;
+        document.getElementById('sf-filter-activity').checked = false;
+        durationSlider.value = 3;
+        document.getElementById('sf-duration-value').textContent = '3.0s';
+        intensitySlider.value = 80;
+        document.getElementById('sf-intensity-value').textContent = '80%';
+        soundToggle.checked = false;
+        volumeGroup.style.opacity = '0.5';
+        volumeGroup.style.pointerEvents = 'none';
+        volumeSlider.value = 30;
+        document.getElementById('sf-volume-value').textContent = '30%';
+        document.getElementById('sf-ws-url').value = 'wss://k4-cage.trimtab-signal.workers.dev/ws';
+      }
+    });
+
+    // Update status display
+    function updateStatus() {
+      const status = window.p31StarfieldNotifications?.getStatus();
+      if (!status) return;
+
+      const indicator = document.getElementById('sf-status-indicator');
+      const statusText = document.getElementById('sf-status-text');
+
+      if (indicator && statusText) {
+        indicator.className = 'status-dot ' + (status.connected ? 'connected' : 'disconnected');
+        statusText.textContent = status.connected ? 'Connected to mesh' : 'Disconnected';
+      }
+
+      const pulseCount = document.getElementById('sf-pulse-count');
+      const eventCount = document.getElementById('sf-event-count');
+      if (pulseCount) pulseCount.textContent = status.activePulses;
+      if (eventCount) eventCount.textContent = status.eventCount;
+
+      // Show/hide toggle pulse indicator
+      const togglePulse = document.getElementById('sf-toggle-pulse');
+      if (togglePulse) {
+        togglePulse.classList.toggle('active', status.activePulses > 0);
+      }
+    }
+
+    // Update status every second
+    setInterval(updateStatus, 1000);
+    updateStatus();
+  })();
+</script>

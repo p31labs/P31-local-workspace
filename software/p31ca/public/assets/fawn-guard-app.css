@@ -1,0 +1,291 @@
+/**
+ * Fawn Guard analyzer panel — used by /fawn-guard.html (hub chrome + Worker API).
+ */
+.fawn-scope {
+  --f-bg: rgba(0, 0, 0, 0.28);
+  --f-border: rgba(255, 255, 255, 0.1);
+  --f-cyan: #22d3ee;
+  --f-teal: #2dd4bf;
+  --f-text: rgba(216, 214, 208, 0.92);
+  --f-muted: #94a3b8;
+}
+
+.fawn-scope .fawn-intro {
+  font-size: 14px;
+  color: rgba(216, 214, 208, 0.78);
+  line-height: 1.65;
+  margin-bottom: 0;
+}
+
+.fawn-scope .fawn-input-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.fawn-scope label.fawn-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+  font-family: var(--mono);
+}
+
+.fawn-scope textarea.fawn-textarea {
+  background: var(--f-bg);
+  border: 1px solid var(--f-border);
+  border-radius: 12px;
+  color: var(--f-text);
+  font-family: inherit;
+  font-size: 15px;
+  line-height: 1.65;
+  padding: 14px 16px;
+  resize: vertical;
+  min-height: 200px;
+  width: 100%;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.fawn-scope textarea.fawn-textarea:focus {
+  outline: none;
+  border-color: color-mix(in srgb, var(--f-cyan) 45%, var(--f-border));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--f-cyan) 20%, transparent);
+}
+
+.fawn-scope .fawn-btn-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.fawn-scope button.fawn-analyze {
+  background: linear-gradient(135deg, var(--hub-rose, #e8636f), color-mix(in srgb, var(--f-cyan) 40%, #0a0a12));
+  border: none;
+  border-radius: 10px;
+  color: #0a0a12;
+  cursor: pointer;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 10px 22px;
+  text-transform: uppercase;
+  transition: filter 0.15s, transform 0.1s;
+}
+.fawn-scope button.fawn-analyze:hover:not(:disabled) {
+  filter: brightness(1.06);
+}
+.fawn-scope button.fawn-analyze:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.fawn-scope button.fawn-clear {
+  background: transparent;
+  border: 1px solid var(--f-border);
+  border-radius: 10px;
+  color: var(--f-muted);
+  cursor: pointer;
+  font-size: 13px;
+  padding: 10px 18px;
+  transition: border-color 0.15s, color 0.15s;
+}
+.fawn-scope button.fawn-clear:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  color: var(--f-text);
+}
+
+.fawn-scope .fawn-char-count {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.35);
+  margin-left: auto;
+  font-family: var(--mono);
+}
+
+.fawn-scope .fawn-score-banner {
+  display: none;
+  border-radius: 14px;
+  border: 1px solid var(--f-border);
+  background: rgba(255, 255, 255, 0.03);
+  padding: 18px 20px;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.fawn-scope .fawn-score-banner.visible {
+  display: flex;
+}
+
+.fawn-scope .fawn-score-gauge {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  flex-shrink: 0;
+}
+.fawn-scope .fawn-score-gauge svg {
+  transform: rotate(-90deg);
+}
+.fawn-scope .fawn-score-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.35rem;
+  font-weight: 800;
+  line-height: 1;
+}
+.fawn-scope .fawn-score-text span {
+  font-size: 0.55rem;
+  font-weight: 400;
+  color: var(--f-muted);
+  letter-spacing: 0.05em;
+}
+
+.fawn-scope .fawn-score-label {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.fawn-scope .fawn-score-detail {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.45);
+  margin-bottom: 8px;
+}
+
+.fawn-scope .fawn-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 6px;
+}
+.fawn-scope .fawn-legend-item {
+  align-items: center;
+  display: flex;
+  gap: 6px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.45);
+}
+.fawn-scope .fawn-legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.fawn-scope .fawn-score-clear-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(45, 212, 191, 0.12);
+  border: 1px solid rgba(45, 212, 191, 0.35);
+  border-radius: 6px;
+  color: #5eead4;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+}
+
+.fawn-scope .fawn-output-section {
+  display: none;
+}
+.fawn-scope .fawn-output-section.visible {
+  display: block;
+}
+
+.fawn-scope .fawn-highlighted-text {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--f-border);
+  border-radius: 12px;
+  font-size: 14px;
+  line-height: 1.85;
+  padding: 14px 16px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.fawn-scope .fawn-mark {
+  border-radius: 4px;
+  cursor: default;
+  font-weight: 500;
+  padding: 1px 3px;
+}
+
+.fawn-scope .fawn-flags-section {
+  display: none;
+}
+.fawn-scope .fawn-flags-section.visible {
+  display: block;
+}
+
+.fawn-scope .fawn-flags-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.fawn-scope .fawn-flag-card {
+  border-radius: 10px;
+  border-left: 3px solid;
+  display: grid;
+  gap: 8px;
+  padding: 12px 14px;
+}
+
+.fawn-scope .fawn-flag-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  flex-wrap: wrap;
+}
+
+.fawn-scope .fawn-flag-category {
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.fawn-scope .fawn-flag-matched {
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 4px;
+  color: rgba(216, 214, 208, 0.75);
+  font-family: var(--mono);
+  font-size: 12px;
+  padding: 3px 8px;
+}
+
+.fawn-scope .fawn-flag-rewrite {
+  color: rgba(216, 214, 208, 0.78);
+  font-size: 13px;
+  line-height: 1.5;
+}
+.fawn-scope .fawn-flag-rewrite strong {
+  color: #5eead4;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-right: 6px;
+}
+
+.fawn-scope .fawn-empty-state {
+  display: none;
+  text-align: center;
+  padding: 24px;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 14px;
+}
+.fawn-scope .fawn-empty-state.visible {
+  display: block;
+}
+
+.fawn-scope .fawn-footnote {
+  margin-top: 20px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.32);
+  font-family: var(--mono);
+  text-align: center;
+}

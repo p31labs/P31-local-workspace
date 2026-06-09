@@ -1,0 +1,16 @@
+name = "bonding-relay"
+main = "worker/telemetry.ts"
+compatibility_date = "2024-02-28"
+
+[build]
+bundle_command = "wrangler build --outdir dist --minify"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "p31-state-db"
+database_id = "d7caa9c0-38d9-415e-8b2a-200013623275"
+
+[[kv_namespaces]]
+binding = "TELEMETRY_KV"
+id = "60a6817aed314eb0bc988d0ac5296f2c"
+preview_id = "60a6817aed314eb0bc988d0ac5296f2c"

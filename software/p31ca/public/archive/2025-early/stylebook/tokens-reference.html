@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Token reference · P31 Stylebook</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/p31-style.css">
+  <link rel="stylesheet" href="/lib/p31-fluid.css">
+  <link rel="stylesheet" href="/stylebook/_chrome.css">
+  <style>
+    .ref-search {
+      width: 100%;
+      padding: 12px 16px 12px 40px;
+      background: var(--p31-surface);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: 10px;
+      color: var(--p31-cloud);
+      font-family: var(--p31-font-sans);
+      font-size: 14px;
+      outline: none;
+    }
+    .ref-search:focus {
+      border-color: var(--p31-primary);
+      box-shadow: 0 0 0 3px rgba(37,137,125,0.15);
+    }
+    .ref-search-wrap {
+      position: relative;
+      margin-bottom: 32px;
+    }
+    .ref-search-wrap::before {
+      content: '⌕';
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--p31-muted);
+      pointer-events: none;
+    }
+    
+    .ref-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--p31-surface);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+    .ref-table th {
+      text-align: left;
+      padding: 12px 16px;
+      background: var(--p31-surface2);
+      font-family: var(--p31-font-mono);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--p31-muted);
+      font-weight: 500;
+      border-bottom: 1px solid var(--p31-border-subtle);
+    }
+    .ref-table td {
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--p31-border-subtle);
+      font-size: 13px;
+      vertical-align: middle;
+    }
+    .ref-table tr:last-child td { border-bottom: none; }
+    .ref-table tr:hover td { background: var(--p31-surface2); }
+    .ref-table tr.hidden { display: none; }
+    
+    .ref-token {
+      font-family: var(--p31-font-mono);
+      font-size: 12px;
+      color: var(--p31-cyan);
+    }
+    .ref-value {
+      font-family: var(--p31-font-mono);
+      font-size: 12px;
+      color: var(--p31-cloud);
+    }
+    .ref-preview {
+      width: 24px;
+      height: 24px;
+      border-radius: 4px;
+      border: 1px solid var(--p31-border-subtle);
+    }
+    .ref-copy-btn {
+      padding: 4px 10px;
+      background: transparent;
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: 6px;
+      color: var(--p31-muted);
+      font-family: var(--p31-font-mono);
+      font-size: 11px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .ref-copy-btn:hover { border-color: var(--p31-primary); color: var(--p31-primary); }
+    .ref-copy-btn.copied { border-color: var(--p31-phosphor); color: var(--p31-phosphor); }
+    
+    .ref-section-header {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--p31-paper);
+      margin-bottom: 12px;
+      margin-top: 32px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--p31-border-subtle);
+    }
+  </style>
+</head>
+<body>
+  <script type="module">
+    import { renderShell, code, callout } from '/stylebook/_chrome.js';
+    import { P31ThemeController } from '/lib/p31-theme-engine.mjs';
+    window.p31Theme = new P31ThemeController({ defaultTheme: 'hub' });
+    
+    const TOKENS = {
+      Color: [
+        ['--p31-void', 'Background base', 'color'],
+        ['--p31-surface', 'Card / chip background', 'color'],
+        ['--p31-surface2', 'Elevated card / hover', 'color'],
+        ['--p31-surface3', 'Higher elevation', 'color'],
+        ['--p31-paper', 'Headings, emphasized text', 'color'],
+        ['--p31-cloud', 'Body text', 'color'],
+        ['--p31-muted', 'Secondary text, placeholders', 'color'],
+        ['--p31-coral', 'Brand · warmth, secondary CTA', 'color'],
+        ['--p31-teal', 'Brand · trust, primary', 'color'],
+        ['--p31-cyan', 'Brand · clarity', 'color'],
+        ['--p31-amber', 'Brand · attention', 'color'],
+        ['--p31-lavender', 'Brand · curiosity', 'color'],
+        ['--p31-phosphorus', 'Brand · growth, success', 'color'],
+        ['--p31-phosphor', 'Brand · live state', 'color'],
+        ['--p31-primary', 'Role · current theme primary', 'color'],
+        ['--p31-border-subtle', 'Default borders', 'color'],
+        ['--p31-glass-surface', 'Glass overlay background', 'color'],
+        ['--p31-glass-border', 'Glass overlay border', 'color']
+      ],
+      Typography: [
+        ['--p31-font-sans', 'Body / UI font', 'value'],
+        ['--p31-font-mono', 'Code / data font', 'value'],
+        ['--p31-text-xs', 'Extra small text', 'value'],
+        ['--p31-text-sm', 'Small text', 'value'],
+        ['--p31-text-base', 'Default body', 'value'],
+        ['--p31-text-lg', 'Lead body', 'value'],
+        ['--p31-text-xl', 'Card title', 'value'],
+        ['--p31-text-2xl', 'Sub heading', 'value'],
+        ['--p31-text-3xl', 'Section title', 'value'],
+        ['--p31-text-4xl', 'Hero headline', 'value'],
+        ['--p31-leading-tight', 'Display line-height', 'value'],
+        ['--p31-leading-normal', 'Body line-height', 'value'],
+        ['--p31-leading-relaxed', 'Long-form line-height', 'value'],
+        ['--p31-tracking-tight', 'Display tracking', 'value'],
+        ['--p31-tracking-wide', 'UI label tracking', 'value'],
+        ['--p31-tracking-caps', 'Eyebrow tracking', 'value']
+      ],
+      Spacing: [
+        ['--p31-space-unit', 'Base fluid unit', 'value'],
+        ['--p31-space-1', '1× unit', 'value'],
+        ['--p31-space-2', '2× unit', 'value'],
+        ['--p31-space-3', '3× unit', 'value'],
+        ['--p31-space-4', '4× unit (default gap)', 'value'],
+        ['--p31-space-6', '6× unit (card padding)', 'value'],
+        ['--p31-space-8', '8× unit', 'value'],
+        ['--p31-space-12', '12× unit', 'value'],
+        ['--p31-space-16', '16× unit', 'value'],
+        ['--p31-section-sm', 'Small section padding', 'value'],
+        ['--p31-section-md', 'Standard section', 'value'],
+        ['--p31-section-lg', 'Hero section', 'value'],
+        ['--p31-container-sm', '640px', 'value'],
+        ['--p31-container-md', '768px', 'value'],
+        ['--p31-container-lg', '1024px', 'value'],
+        ['--p31-container-xl', '1280px', 'value']
+      ],
+      Geometry: [
+        ['--p31-radius-none', 'Sharp', 'value'],
+        ['--p31-radius-sm', 'Subtle 4px', 'value'],
+        ['--p31-radius-md', 'Default 8px', 'value'],
+        ['--p31-radius-lg', 'Cards 12px', 'value'],
+        ['--p31-radius-xl', 'Major cards 16px', 'value'],
+        ['--p31-radius-2xl', 'Hero cards 24px', 'value'],
+        ['--p31-radius-full', 'Pills / circles', 'value']
+      ],
+      Motion: [
+        ['--p31-duration-instant', '100ms', 'value'],
+        ['--p31-duration-fast', '150ms', 'value'],
+        ['--p31-duration-normal', '250ms', 'value'],
+        ['--p31-duration-slow', '400ms', 'value'],
+        ['--p31-duration-slower', '600ms', 'value'],
+        ['--p31-duration-cinematic', '800ms', 'value'],
+        ['--p31-ease-linear', 'Linear', 'value'],
+        ['--p31-ease-smooth', 'Default smooth', 'value'],
+        ['--p31-ease-fluid', 'Most polished', 'value'],
+        ['--p31-ease-bounce', 'Playful overshoot', 'value'],
+        ['--p31-ease-spring', 'Physical spring', 'value']
+      ]
+    };
+    
+    function renderToken([name, desc, kind]) {
+      let preview = '';
+      if (kind === 'color') {
+        preview = `<div class="ref-preview" style="background: var(${name});"></div>`;
+      } else {
+        preview = `<span style="font-family: var(--p31-font-mono); font-size: 11px; color: var(--p31-muted);" id="val-${name.replace(/-/g, '_')}">…</span>`;
+      }
+      return `
+        <tr data-search="${name.toLowerCase()} ${desc.toLowerCase()}">
+          <td>${preview}</td>
+          <td><code class="ref-token">${name}</code></td>
+          <td>${desc}</td>
+          <td><span class="ref-value" id="ref-${name.replace(/-/g, '_')}">…</span></td>
+          <td><button class="ref-copy-btn" data-token="${name}">⎘</button></td>
+        </tr>
+      `;
+    }
+    
+    let tablesHTML = '';
+    Object.entries(TOKENS).forEach(([category, tokens]) => {
+      tablesHTML += `<h3 class="ref-section-header">${category}</h3>`;
+      tablesHTML += `
+        <table class="ref-table">
+          <thead>
+            <tr><th width="40"></th><th>Token</th><th>Purpose</th><th>Value</th><th width="60"></th></tr>
+          </thead>
+          <tbody>
+            ${tokens.map(renderToken).join('')}
+          </tbody>
+        </table>
+      `;
+    });
+    
+    const content = `
+      <div class="ref-search-wrap">
+        <input type="search" class="ref-search" placeholder="Search tokens... (e.g. 'space', 'coral', 'radius')" id="ref-search-input" autofocus>
+      </div>
+      ${tablesHTML}
+    `;
+    
+    renderShell({
+      activeId: 'tokens-ref',
+      breadcrumb: [
+        { href: '/stylebook/', label: 'Stylebook' },
+        { href: '/stylebook/', label: 'Resources' },
+        { label: 'Token reference' }
+      ],
+      title: 'Token reference',
+      subtitle: 'Every token in the system. Search, browse, copy. The complete API.',
+      meta: [
+        { label: 'Tokens', value: '120+' },
+        { label: 'Categories', value: '5' }
+      ],
+      content
+    });
+    
+    // Resolve all values from CSS
+    function resolveAll() {
+      const cs = getComputedStyle(document.documentElement);
+      Object.values(TOKENS).flat().forEach(([name]) => {
+        const safeId = 'ref-' + name.replace(/-/g, '_');
+        const el = document.getElementById(safeId);
+        if (el) {
+          el.textContent = cs.getPropertyValue(name).trim();
+        }
+      });
+    }
+    setTimeout(resolveAll, 100);
+    window.p31Theme.onChange(() => setTimeout(resolveAll, 80));
+    
+    // Search filter
+    const searchInput = document.getElementById('ref-search-input');
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => {
+        const q = e.target.value.toLowerCase().trim();
+        document.querySelectorAll('tr[data-search]').forEach(row => {
+          row.classList.toggle('hidden', q && !row.dataset.search.includes(q));
+        });
+      });
+    }
+    
+    // Copy buttons
+    document.querySelectorAll('.ref-copy-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const token = btn.dataset.token;
+        try {
+          await navigator.clipboard.writeText('var(' + token + ')');
+          btn.classList.add('copied');
+          btn.textContent = '✓';
+          setTimeout(() => {
+            btn.classList.remove('copied');
+            btn.textContent = '⎘';
+          }, 1200);
+        } catch (e) {}
+      });
+    });
+  </script>
+</body>
+</html>

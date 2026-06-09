@@ -1,0 +1,308 @@
+{
+  "schema": "p31.universalCanon/1.0.0",
+  "version": "1.2.0",
+  "title": "P31 universal design canon — shared tokens, ring-local appearance",
+  "description": "Single source for typography, spacing, motion, and brand palette. Ring A (p31ca hub) defaults to appearance \"hub\" (dark). Ring D (phosphorus31.org) uses appearance \"org\" (light) via data-p31-appearance on <html> — same brand colors, inverted surfaces so it feels related but not identical. BONDING (bonding.p31ca.org) stays out of this file by operator policy.",
+  "rings": {
+    "hub": {
+      "hosts": [
+        "p31ca.org",
+        "www.p31ca.org",
+        "*.p31ca.pages.dev"
+      ],
+      "defaultAppearance": "hub",
+      "notes": "Technical hub, static tools, Astro + Tailwind CDN pages."
+    },
+    "org": {
+      "hosts": [
+        "phosphorus31.org",
+        "www.phosphorus31.org",
+        "api.phosphorus31.org"
+      ],
+      "defaultAppearance": "org",
+      "notes": "Public org narrative + MAP surfaces. Opt in with data-p31-appearance=\"org\" (or server-render default)."
+    }
+  },
+  "palette": {
+    "comment": "Brand anchors — appearances should keep these identical for cross-ring recognition.",
+    "coral": "#cc6247",
+    "teal": "#5DCAA5",
+    "cyan": "#4db8a8",
+    "amber": "#cda852",
+    "lavender": "#8b7cc9",
+    "phosphorus": "#3ba372",
+    "phosphor": "#00FF88",
+    "fuchsia": "#e879f9"
+  },
+  "typography": {
+    "fontFamilies": {
+      "sans": [
+        "Atkinson Hyperlegible",
+        "sans-serif"
+      ],
+      "mono": [
+        "JetBrains Mono",
+        "monospace"
+      ]
+    },
+    "scaleRem": {
+      "xs": "0.75rem",
+      "sm": "0.875rem",
+      "base": "1rem",
+      "md": "1.0625rem",
+      "lg": "1.125rem",
+      "xl": "1.25rem",
+      "2xl": "1.5rem",
+      "3xl": "1.875rem",
+      "4xl": "2.25rem"
+    },
+    "lineHeight": {
+      "tight": "1.25",
+      "snug": "1.4",
+      "normal": "1.6",
+      "relaxed": "1.75"
+    },
+    "letterSpacing": {
+      "tight": "-0.02em",
+      "normal": "0",
+      "wide": "0.08em",
+      "caps": "0.12em"
+    }
+  },
+  "space": {
+    "px": "1px",
+    "0": "0",
+    "1": "0.25rem",
+    "2": "0.5rem",
+    "3": "0.75rem",
+    "4": "1rem",
+    "5": "1.25rem",
+    "6": "1.5rem",
+    "8": "2rem",
+    "10": "2.5rem",
+    "12": "3rem",
+    "16": "4rem",
+    "20": "5rem",
+    "24": "6rem"
+  },
+  "radius": {
+    "none": "0",
+    "sm": "4px",
+    "md": "8px",
+    "lg": "12px",
+    "xl": "16px",
+    "2xl": "1.25rem",
+    "full": "9999px"
+  },
+  "shadow": {
+    "none": "none",
+    "sm": "0 1px 2px rgba(0, 0, 0, 0.06)",
+    "md": "0 4px 14px rgba(0, 0, 0, 0.08)",
+    "lg": "0 12px 40px rgba(0, 0, 0, 0.12)",
+    "glowTeal": "0 0 24px rgba(37, 137, 125, 0.25)"
+  },
+  "quantum": {
+    "comment": "P31 Extended Surface Styles — Material 3 grammar refracted through K₄ anchors. Optional, additive, opt-in via .p31-q-* classes. Never paints brand chroma at Layer 1 (Gray Rock); never self-starts motion. See docs/P31-SHARED-SURFACE-STYLES.md.",
+    "version": "1.0.0",
+    "tonalAnchors": [
+      "teal",
+      "coral",
+      "phosphorus",
+      "amber",
+      "lavender"
+    ],
+    "tonalSteps": [
+      6,
+      12,
+      22,
+      36,
+      54,
+      78
+    ],
+    "tonalNote": "Each anchor produces 6 calm tones via color-mix(srgb, var(--p31-{anchor}) STEP%, var(--p31-void)) on hub; org appearance mixes with --p31-paper. Step 0 is barely-visible (Gray Rock-friendly); step 5 is the loudest tone any quantum surface should touch.",
+    "elevation": {
+      "0": {
+        "tone": 0,
+        "shadow": "none"
+      },
+      "1": {
+        "tone": 4,
+        "shadow": "0 1px 2px rgba(0,0,0,0.20)"
+      },
+      "2": {
+        "tone": 8,
+        "shadow": "0 2px 6px rgba(0,0,0,0.22)"
+      },
+      "3": {
+        "tone": 12,
+        "shadow": "0 6px 14px rgba(0,0,0,0.24)"
+      },
+      "4": {
+        "tone": 16,
+        "shadow": "0 12px 24px rgba(0,0,0,0.26)"
+      },
+      "5": {
+        "tone": 22,
+        "shadow": "0 24px 40px rgba(0,0,0,0.28)"
+      }
+    },
+    "elevationNote": "tone is the % surface lift over --p31-surface (hub) / --p31-paper (org). shadow is hub-tuned; org appearance softens shadows via the generator.",
+    "stateLayer": {
+      "hover": 0.08,
+      "focus": 0.12,
+      "pressed": 0.16,
+      "selected": 0.1,
+      "dragged": 0.14,
+      "disabled": 0.38
+    },
+    "stateLayerNote": "Numeric overlay opacity for ::after state-layer pseudo on .p31-q-* components. disabled is alpha applied to text/icon foreground (per Material 3).",
+    "shape": {
+      "xs": "4px",
+      "sm": "8px",
+      "md": "12px",
+      "lg": "16px",
+      "xl": "20px",
+      "2xl": "24px",
+      "full": "9999px",
+      "asymmetric": "16px 16px 4px 16px"
+    },
+    "shapeNote": "Aliases canon.radius for .p31-shape-* tokens. asymmetric is the Material 3 expressive corner pattern; the bottom-right \"clipped\" corner reads as quantum vertex anchor.",
+    "motionBudget": {
+      "still": "100ms",
+      "within": "150ms",
+      "enter": "250ms",
+      "exit": "200ms",
+      "expressive": "400ms",
+      "ambient": "800ms"
+    },
+    "motionBudgetNote": "Material 3 motion grammar mapped onto canon.motion.durationMs. enter/exit pair Material 3 emphasized easing; within is standard; expressive is the longest the operator should ever wait for an honest UI response."
+  },
+  "starfield": {
+    "comment": "Layer 1.5 — luminance atmosphere between Gray Rock void and Alive chrome. Presets inform CSS vars + JS starfield/static-plate.",
+    "layer": "1.5",
+    "globalOffStorageKey": "p31.starfield.off",
+    "presets": {
+      "soup": {
+        "baseAlphaCap": 0.35,
+        "maxFps": 24,
+        "motion": "animated"
+      },
+      "hub": {
+        "baseAlphaCap": 0.22,
+        "maxFps": 20,
+        "motion": "animated"
+      },
+      "commandCenter": {
+        "baseAlphaCap": 0.14,
+        "dotCount": 140,
+        "motion": "staticPlate"
+      },
+      "operatorDesk": {
+        "baseAlphaCap": 0.11,
+        "dotCount": 120,
+        "motion": "staticPlate"
+      }
+    }
+  },
+  "returnRibbon": {
+    "comment": "Fixed spine: soup · hub · passport · connection · mesh —see cognitive-passport/lib/p31-return-ribbon.js",
+    "order": [
+      "soup",
+      "hub",
+      "passport",
+      "connection",
+      "mesh"
+    ],
+    "typography": {
+      "fontSizePx": 11,
+      "fontFamily": "mono"
+    }
+  },
+  "motion": {
+    "durationMs": {
+      "instant": "100",
+      "fast": "150",
+      "normal": "250",
+      "slow": "400",
+      "glacial": "800"
+    },
+    "easing": {
+      "standard": "cubic-bezier(0.4, 0, 0.2, 1)",
+      "emphasized": "cubic-bezier(0.2, 0, 0, 1)",
+      "decelerate": "cubic-bezier(0, 0, 0.2, 1)"
+    }
+  },
+  "zIndex": {
+    "base": "0",
+    "dropdown": "50",
+    "sticky": "100",
+    "overlay": "200",
+    "modal": "300",
+    "toast": "400"
+  },
+  "focus": {
+    "ringWidth": "2px",
+    "ringOffset": "2px",
+    "hubRingColor": "rgba(77, 184, 168, 0.55)",
+    "orgRingColor": "rgba(37, 137, 125, 0.45)"
+  },
+  "appearances": {
+    "hub": {
+      "colorScheme": "dark",
+      "themeColor": "#0f1115",
+      "colors": {
+        "void": "#0f1115",
+        "surface": "#161920",
+        "surface2": "#1c2028",
+        "coral": "#cc6247",
+        "teal": "#5DCAA5",
+        "cyan": "#4db8a8",
+        "cloud": "#d8d6d0",
+        "amber": "#cda852",
+        "lavender": "#8b7cc9",
+        "phosphorus": "#3ba372",
+        "paper": "#f4f4f5",
+        "ink": "#1e293b",
+        "muted": "#6b7280",
+        "phosphor": "#00FF88",
+        "fuchsia": "#e879f9"
+      },
+      "semantic": {
+        "borderSubtle": "rgba(255, 255, 255, 0.06)"
+      },
+      "glass": {
+        "border": "rgba(255, 255, 255, 0.08)",
+        "surface": "rgba(255, 255, 255, 0.04)"
+      }
+    },
+    "org": {
+      "colorScheme": "light",
+      "themeColor": "#f5f4f0",
+      "comment": "Light, warm paper field; ink-forward text. Brand hues MUST match palette.* — only neutrals (void/surface/cloud/ink/muted/paper) differ from hub.",
+      "colors": {
+        "void": "#f5f4f0",
+        "surface": "#ffffff",
+        "surface2": "#ebeae4",
+        "coral": "#cc6247",
+        "teal": "#5DCAA5",
+        "cyan": "#4db8a8",
+        "cloud": "#1e293b",
+        "amber": "#cda852",
+        "lavender": "#8b7cc9",
+        "phosphorus": "#3ba372",
+        "paper": "#fdfcfa",
+        "ink": "#0f172a",
+        "muted": "#64748b",
+        "phosphor": "#00FF88",
+        "fuchsia": "#e879f9"
+      },
+      "semantic": {
+        "borderSubtle": "rgba(15, 23, 42, 0.09)"
+      },
+      "glass": {
+        "border": "rgba(15, 23, 42, 0.07)",
+        "surface": "rgba(255, 255, 255, 0.82)"
+      }
+    }
+  }
+}

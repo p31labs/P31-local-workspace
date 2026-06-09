@@ -1,0 +1,15 @@
+﻿WCD-U02: SPATIAL RADAR & K4 HANDSHAKE UI
+Target: ImmersiveCockpit.tsx, New Component: HandshakeOverlay.tsx
+Prerequisites: M22 Suite C (handshake.test.ts) passes. Code Freeze Lifted.
+1. OBJECTIVE
+Render the physical proximity of other local mesh nodes (Atoms) in the 3D environment, and build the rhythm-based Larmor frequency handshake UI.
+2. 3D RADAR RENDERING
+* Data Source: Hook up the navigator.bluetooth.requestLEScan logic (from M22) to update an array of NearbyNodes in the store.
+* Canvas Update: In ImmersiveCockpit.tsx, replace the random MolecularStarfield stars with actual NearbyNodes.
+   * Map the rssi signal strength to the Z-axis (Depth). Strong signal = large orb in foreground. Weak signal = tiny point in background.
+   * Map the node's advertised Valency (Hydrogen, Oxygen, Carbon) to the orb's color (Cyan, Orange, White).
+3. THE HANDSHAKE OVERLAY
+* When a node's rssi crosses the interaction threshold (e.g., -50 dBm), trigger HandshakeOverlay.tsx at z-index: 60.
+* Visuals: A dark, focused overlay. A central pulsing circle.
+* Interaction: The user must tap the circle. Use the Rhythm Lock timing (86 BPM) logic verified in Suite C to measure the delta between onTouchStart events.
+* Success State: If the lock is achieved, trigger an aggressive visual flash (CSS animation), play the 172.35 Hz tone, and draw a glowing <line> in the 3D canvas connecting the user's camera to the target orb.

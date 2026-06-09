@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub" style="color-scheme: dark;">
+<head>
+  <meta charset="UTF-8" />
+<script>(function(){var r=document.documentElement;if(/[?&]alive=1(?:&|$)/.test(location.search))return;r.classList.add("p31-gray-rock");function wake(){r.classList.remove("p31-gray-rock")}document.addEventListener("pointerdown",wake,{once:true,capture:true});document.addEventListener("keydown",wake,{once:true,capture:true})})();</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1115" />
+  <meta name="description" content="Help P31 Labs keep building free tools for neurodivergent families. 0% platform fees taken by P31. No tracking. No donor data sold. 501(c)(3) application pending." />
+<link rel="canonical" href="https://p31ca.org/support.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Support · P31 Labs">
+<meta property="og:description" content="Help P31 Labs keep building free tools for neurodivergent families. 0% platform fees taken by P31. No tracking. No donor data sold. 501(c)(3) application pending.">
+<meta property="og:url" content="https://p31ca.org/support.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Support · P31 Labs">
+<meta name="twitter:description" content="Help P31 Labs keep building free tools for neurodivergent families. 0% platform fees taken by P31. No tracking. No donor data sold. 501(c)(3) application pending.">
+  <title>Support · P31 Labs</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/p31-style.css" />
+  <!-- Bus bar nervous system: subject-prefs (Layer 3 a11y) → cogpass-reader
+       (CogPass v1.1.0 → engines) → phos-guide (the FACE). PHOS will auto-
+       respect this page's voice key (/support) and greet with the §4 line
+       when opened: "Every dollar builds tools for neurodivergent families." -->
+  <script src="/lib/p31-subject-prefs.js" defer></script>
+  <script type="module" src="/lib/p31-cogpass-reader.mjs"></script>
+  <script type="module" src="/lib/p31-phos-guide.mjs"></script>
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: var(--p31-font-sans, "Atkinson Hyperlegible", system-ui, sans-serif);
+      background: var(--p31-void, #0f1115);
+      color: var(--p31-cloud, #d8d6d0);
+      padding: max(1.5rem, env(safe-area-inset-top))
+              max(1.25rem, env(safe-area-inset-right))
+              max(1.5rem, env(safe-area-inset-bottom))
+              max(1.25rem, env(safe-area-inset-left));
+    }
+    /* Layer 1 (Gray Rock) backdrop: void + faint grid + a single radial accent */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background:
+        radial-gradient(circle at top right, rgba(204, 98, 71, 0.06), transparent 45%),
+        linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: auto, 40px 40px, 40px 40px;
+    }
+    .wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 38rem;
+      margin: 0 auto;
+    }
+    .mark { display: inline-flex; align-items: center; gap: 0.6rem; opacity: 0.8; margin-bottom: 1.5rem; }
+    .mark svg { display: block; }
+    .mark-text { font-family: var(--p31-font-mono, "JetBrains Mono", monospace); font-size: 0.78rem; letter-spacing: 0.12em; color: var(--p31-muted, #6b7280); }
+    h1 {
+      font-size: clamp(1.6rem, 4vw, 2.1rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin: 0 0 0.85rem;
+      line-height: 1.2;
+    }
+    p.lede {
+      font-size: 1.05rem;
+      line-height: 1.55;
+      color: color-mix(in srgb, var(--p31-cloud, #d8d6d0) 85%, var(--p31-muted, #6b7280));
+      margin: 0 0 1.5rem;
+    }
+    .trust {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1rem;
+      margin: 0 0 2rem;
+      font-family: var(--p31-font-mono, "JetBrains Mono", monospace);
+      font-size: 0.78rem;
+      color: var(--p31-muted, #6b7280);
+    }
+    .trust span::before { content: "·"; margin-right: 0.4rem; opacity: 0.5; }
+    .trust span:first-child::before { content: ""; margin: 0; }
+
+    .channels {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-bottom: 2rem;
+    }
+    .channel {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1rem 1.15rem;
+      border-radius: 0.65rem;
+      text-decoration: none;
+      color: var(--p31-cloud, #d8d6d0);
+      transition: border-color 200ms ease, background-color 200ms ease;
+    }
+    .channel.primary {
+      background: color-mix(in srgb, var(--p31-teal, #25897d) 18%, transparent);
+      border: 1px solid color-mix(in srgb, var(--p31-teal, #25897d) 45%, transparent);
+    }
+    .channel.secondary {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+    }
+    .channel:hover { border-color: rgba(255, 255, 255, 0.30); }
+    .channel.primary:hover { border-color: var(--p31-teal, #25897d); }
+    .channel-body { flex: 1; min-width: 0; }
+    .channel-title { font-weight: 700; font-size: 1rem; margin: 0 0 0.15rem; }
+    .channel-desc { font-size: 0.85rem; color: var(--p31-muted, #6b7280); margin: 0; line-height: 1.5; }
+    .channel-arrow { font-family: var(--p31-font-mono, "JetBrains Mono", monospace); font-size: 1.1rem; opacity: 0.6; flex-shrink: 0; }
+
+    .what-money-buys {
+      background: rgba(255, 255, 255, 0.025);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 0.65rem;
+      padding: 1.25rem 1.35rem;
+      margin-bottom: 2rem;
+    }
+    .what-money-buys h2 {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--p31-muted, #6b7280);
+      margin: 0 0 0.75rem;
+    }
+    .what-money-buys ul { margin: 0; padding-left: 1.1rem; font-size: 0.92rem; line-height: 1.7; color: rgba(216, 214, 208, 0.92); }
+    .what-money-buys li { margin-bottom: 0.2rem; }
+    .what-money-buys p {
+      margin: 0.85rem 0 0;
+      font-size: 0.85rem;
+      color: var(--p31-muted, #6b7280);
+      line-height: 1.5;
+    }
+
+    .even-one {
+      font-style: italic;
+      color: var(--p31-coral, #cc6247);
+      font-size: 1rem;
+      margin: 0 0 2rem;
+      text-align: center;
+      padding: 1rem;
+      border-top: 1px solid rgba(204, 98, 71, 0.20);
+      border-bottom: 1px solid rgba(204, 98, 71, 0.20);
+    }
+
+    .legal {
+      background: rgba(0, 0, 0, 0.25);
+      border-left: 3px solid var(--p31-amber, #cda852);
+      padding: 1rem 1.15rem;
+      margin: 0 0 2rem;
+      border-radius: 0 0.4rem 0.4rem 0;
+    }
+    .legal h2 {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--p31-amber, #cda852);
+      margin: 0 0 0.65rem;
+    }
+    .legal p { margin: 0 0 0.55rem; font-size: 0.86rem; line-height: 1.55; color: rgba(216, 214, 208, 0.88); }
+    .legal p:last-child { margin-bottom: 0; }
+    .legal strong { color: var(--p31-cloud, #d8d6d0); }
+
+    .nav-back {
+      display: flex;
+      gap: 1.25rem;
+      flex-wrap: wrap;
+      font-family: var(--p31-font-mono, "JetBrains Mono", monospace);
+      font-size: 0.82rem;
+      margin-bottom: 1.5rem;
+    }
+    .nav-back a { color: var(--p31-cyan, #4db8a8); text-decoration: none; }
+    .nav-back a:hover { text-decoration: underline; }
+
+    .fine {
+      font-size: 0.74rem;
+      color: var(--p31-muted, #6b7280);
+      line-height: 1.6;
+      text-align: center;
+    }
+    .fine code { font-family: var(--p31-font-mono, "JetBrains Mono", monospace); font-size: 0.74rem; color: var(--p31-cyan, #4db8a8); }
+  </style>
+</head>
+<body>
+<a href="#main" style="position:absolute;left:-9999px;top:0;padding:0.5rem 1rem;background:var(--p31-void);color:var(--p31-teal);font-size:0.875rem;z-index:9999;border-radius:0 0 4px 4px;text-decoration:none" onfocus="this.style.left='0'" onblur="this.style.left='-9999px'">Skip to main content</a>
+  <div class="wrap">
+    <a class="mark" href="/welcome" aria-label="Back to P31 welcome">
+      <svg width="32" height="32" viewBox="-30 -30 60 60" aria-hidden="true">
+        <line x1="0" y1="22" x2="-19" y2="-11" stroke="#d8d6d0" stroke-width="1.4" opacity="0.85"/>
+        <line x1="0" y1="22" x2="19"  y2="-11" stroke="#d8d6d0" stroke-width="1.4" opacity="0.85"/>
+        <line x1="0" y1="22" x2="0"   y2="0"   stroke="#d8d6d0" stroke-width="1.4" opacity="0.85"/>
+        <line x1="-19" y1="-11" x2="19" y2="-11" stroke="#d8d6d0" stroke-width="1.4" opacity="0.85"/>
+        <line x1="-19" y1="-11" x2="0"  y2="0"   stroke="#d8d6d0" stroke-width="1.4" opacity="0.85"/>
+        <line x1="19"  y1="-11" x2="0"  y2="0"   stroke="#d8d6d0" stroke-width="1.4" opacity="0.85"/>
+        <circle cx="0"   cy="22"  r="2.6" fill="#d8d6d0"/>
+        <circle cx="-19" cy="-11" r="2.6" fill="#d8d6d0"/>
+        <circle cx="19"  cy="-11" r="2.6" fill="#d8d6d0"/>
+        <circle cx="0"   cy="0"   r="3.4" fill="#cc6247"/>
+      </svg>
+      <span class="mark-text">P31 LABS</span>
+    </a>
+
+    <h1>Every dollar builds tools for neurodivergent families.</h1>
+    <p class="lede">
+      P31 takes 0% platform fees. The full payment processor cost is the only thing
+      that comes off the top — about 2.9% + 30¢ per card transaction, set by Stripe.
+      Everything else goes to the work.
+    </p>
+    <div class="trust">
+      <span>0% platform fees</span>
+      <span>No tracking</span>
+      <span>No donor data sold</span>
+      <span>Open ledger</span>
+    </div>
+
+    <div class="channels">
+      <a class="channel primary" href="https://ko-fi.com/trimtab69420" target="_blank" rel="noopener noreferrer">
+        <div class="channel-body">
+          <p class="channel-title">Ko-fi · monthly or one-time</p>
+          <p class="channel-desc">Easiest path. Supports recurring giving. Ko-fi takes 0% on tips; payment processor fee passes through.</p>
+        </div>
+        <span class="channel-arrow">→</span>
+      </a>
+      <a class="channel secondary" href="https://donate-api.phosphorus31.org/health" target="_blank" rel="noopener noreferrer">
+        <div class="channel-body">
+          <p class="channel-title">Stripe direct · one-time, any amount</p>
+          <p class="channel-desc">Stripe Checkout via our Cloudflare Worker. Larger gifts are kindest here. No card data touches our origin.</p>
+        </div>
+        <span class="channel-arrow">→</span>
+      </a>
+      <a class="channel secondary" href="https://github.com/p31labs" target="_blank" rel="noopener noreferrer">
+        <div class="channel-body">
+          <p class="channel-title">GitHub Sponsors · for developers</p>
+          <p class="channel-desc">If code is your love language. Every star, issue, and PR also helps.</p>
+        </div>
+        <span class="channel-arrow">→</span>
+      </a>
+    </div>
+
+    <p class="even-one">Even $1 helps. Seriously.</p>
+
+    <section class="what-money-buys" aria-labelledby="wmb-h">
+      <h2 id="wmb-h">What your money buys</h2>
+      <ul>
+        <li>The 501(c)(3) determination filing fee with the IRS (Form 1023-EZ user fee, $275)</li>
+        <li>Georgia annual nonprofit registration ($30/year)</li>
+        <li>Domain renewals (~6 domains, ~$90/year total)</li>
+        <li>Cloudflare Workers Paid plan when free-tier limits arrive (~$5/month)</li>
+        <li>ESP32 boards, displays, and batteries for kids&rsquo; Node Zero builds (~$30 per kit)</li>
+        <li>Print runs of business cards, stickers, and elevator cards for the meatspace bridge (~$0.10 per sheet)</li>
+      </ul>
+      <p>
+        We don&rsquo;t pay salaries. The operator (William Johnson) builds this on disability income while pro se in active litigation. Every dollar is line-item visible in the public ledger.
+      </p>
+    </section>
+
+    <aside class="legal" aria-labelledby="legal-h">
+      <h2 id="legal-h">Honest legal disclosure</h2>
+      <p>
+        <strong>P31 Labs, Inc.</strong> is a Georgia domestic nonprofit corporation, EIN 42-1888158, incorporated April 3, 2026.
+      </p>
+      <p>
+        Our 501(c)(3) application (Form 1023-EZ, Pay.gov tracking ID 281TLBGO) was filed on April 30, 2026 and is <em>pending IRS determination</em>. Until a determination letter is issued, donations to P31 Labs, Inc. are <strong>not deductible</strong> as charitable contributions for U.S. federal income tax purposes.
+      </p>
+      <p>
+        We will update this page promptly upon receiving a determination letter. Until then, every dollar still goes to the work. See <a href="/terms#donations" style="color:var(--p31-cyan,#4db8a8);">terms §5</a> for the full language.
+      </p>
+    </aside>
+
+    <nav class="nav-back" aria-label="Back to elsewhere on P31">
+      <a href="/welcome">← back to welcome</a>
+      <a href="/donate">technical donate page →</a>
+      <a href="/lab">browse the lab →</a>
+      <a href="/terms#donations">full terms →</a>
+    </nav>
+
+    <p class="fine">
+      P31 Labs, Inc. · EIN 42-1888158 · Georgia domestic nonprofit corporation<br />
+      <code>p31ca.org/support</code> · <code>p31ca.org/welcome</code><br />
+      For all the parents and kids out there raw dogging life — help is on the way.
+    </p>
+  </div>
+</body>
+</html>

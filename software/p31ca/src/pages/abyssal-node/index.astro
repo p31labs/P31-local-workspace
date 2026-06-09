@@ -1,0 +1,104 @@
+---
+import AppShell from '../../layouts/AppShell.astro';
+import { GameShell } from '../../components/games/GameShell.tsx';
+import { AbyssalNodeScene } from '../../components/games/AbyssalNodeScene.tsx';
+import { FreezeBreakerOverlay } from '../../components/games/FreezeBreakerOverlay.tsx';
+---
+<AppShell routeName="abyssal-node" suppressEbc={true}>
+  <GameShell client:only routeName="abyssal-node" cameraZ={-0.6}>
+    <AbyssalNodeScene client:only />
+    <FreezeBreakerOverlay client:only />
+    
+    <!-- Glassmorphism UI panels -->
+    <div class="fixed inset-0 z-20 pointer-events-none flex flex-col items-center pt-6">
+      <!-- Nourishment (Rebalancing Chemical V) panel -->
+      <div class="glass-panel w-80 p-5 pointer-events-auto">
+        <h3 class="text-p31-lavender text-base font-bold mb-2">Nourishment</h3>
+        <p class="text-p31-cloud-70 text-xs mb-2">
+          Eating a meal drops a nutrient payload, triggering fractal growth.
+        </p>
+        <button data-action="meal" class="w-full bg-p31-lavender/20 hover:bg-p31-lavender/30 text-p31-lavender px-3 py-2 rounded text-sm transition-colors">
+          Log Meal
+        </button>
+      </div>
+      
+      <!-- Network Garbage Collection panel -->
+      <div class="glass-panel w-80 p-5 pointer-events-auto mt-3">
+        <h3 class="text-p31-lavender text-base font-bold mb-2">Clear Congestion</h3>
+        <p class="text-p31-cloud-70 text-xs mb-2">
+          Clear browser tabs, emails, physical trash to lift fog.
+        </p>
+        <button data-action="clear" class="w-full bg-p31-lavender/20 hover:bg-p31-lavender/30 text-p31-lavender px-3 py-2 rounded text-sm transition-colors">
+          Clean Tabs
+        </button>
+      </div>
+      
+      <!-- Chat with Nudi -->
+      <div class="glass-panel w-80 h-80 flex flex-col p-4 pointer-events-auto mt-4">
+        <h3 class="text-p31-lavender text-base font-bold mb-2">Chat with Nudi</h3>
+        <div id="chat-messages" class="flex-1 overflow-y-auto space-y-2 mb-2 text-xs font-mono"></div>
+        <form id="chat-form" class="flex space-x-2">
+          <input type="text" class="flex-1 bg-p31-void/50 border border-p31-lavender/30 rounded px-2 py-1 text-p31-lavender placeholder-p31-lavender/50 text-xs focus:outline-none" placeholder="Vent to the nudibranch..." />
+          <button type="submit" class="bg-p31-lavender/20 hover:bg-p31-lavender/30 text-p31-lavender px-2 py-1 rounded text-xs">Send</button>
+        </form>
+      </div>
+    </div>
+  </GameShell>
+</AppShell>
+
+<script client:load>
+  import { logAction } from '../../lib/storage';
+
+  const chatMessages = document.getElementById('chat-messages');
+  const chatForm = document.getElementById('chat-form');
+  const messages = [];
+
+  function addMessage(sender, text) {
+    messages.push({ role: sender === 'You' ? 'user' : 'assistant', content: text });
+    const p = document.createElement('p');
+    p.className = 'text-p31-cloud-60 leading-relaxed';
+    p.innerHTML = `<span class="text-p31-amber">${sender}:</span> ${text}`;
+    chatMessages.appendChild(p);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+  addMessage('Nudi', 'I\'m processing your existential dread. Converting to network expansion energy.');
+
+  chatForm?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const input = chatForm.querySelector('input');
+    const text = input.value.trim();
+    if (!text) return;
+    input.value = '';
+    addMessage('You', text);
+    messages.push({ role: 'user', content: text });
+
+    try {
+      const resp = await fetch('https://command-center.trimtab-signal.workers.dev/api/ai/nudi', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages })
+      });
+      if (!resp.ok) throw new Error('HTTP ' + resp.status);
+      const data = await resp.json();
+      addMessage('Nudi', data.reply || '');
+      messages.push({ role: 'assistant', content: data.reply || '' });
+    } catch (err) {
+      console.error('Nudi AI error:', err);
+      addMessage('Nudi', 'Nudi is currently offline.');
+    }
+  });
+
+  // Self-care buttons
+  document.querySelectorAll('[data-action]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const action = btn.getAttribute('data-action');
+      if (action === 'meal') {
+        window.dispatchEvent(new Event('p31:nutrientBurst'));
+      }
+      try { await logAction('abyssal-node', action); } catch {}
+      btn.classList.add('bg-p31-lavender/40');
+      setTimeout(() => btn.classList.remove('bg-p31-lavender/40'), 500);
+    });
+  });
+</script>

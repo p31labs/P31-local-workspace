@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Brand · P31 Stylebook</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/p31-style.css">
+  <link rel="stylesheet" href="/lib/p31-fluid.css">
+  <link rel="stylesheet" href="/stylebook/_chrome.css">
+  <style>
+    .logo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+    .logo-card {
+      padding: 32px;
+      background: var(--p31-surface);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+    .logo-card.dark { background: var(--p31-void); }
+    .logo-card.light { background: var(--p31-paper); }
+    .logo-card.color { background: linear-gradient(135deg, var(--p31-coral), var(--p31-teal)); }
+    .logo-meta {
+      font-family: var(--p31-font-mono);
+      font-size: 11px;
+      color: var(--p31-muted);
+    }
+    .logo-card.light .logo-meta { color: var(--p31-ink); }
+    .logo-card.color .logo-meta { color: rgba(255,255,255,0.8); }
+    
+    .lockup-mark {
+      width: 64px;
+      height: 64px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--p31-coral), var(--p31-teal), var(--p31-phosphor));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 22px;
+      letter-spacing: -0.04em;
+      color: white;
+      flex-shrink: 0;
+    }
+    .lockup-mark.mono-dark { background: var(--p31-paper); color: var(--p31-void); }
+    .lockup-mark.mono-light { background: var(--p31-void); color: var(--p31-paper); }
+    .lockup-mark.outline { background: transparent; border: 2px solid currentColor; color: var(--p31-paper); }
+    
+    .lockup-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .lockup-text {
+      display: flex;
+      flex-direction: column;
+    }
+    .lockup-name {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--p31-paper);
+      line-height: 1;
+    }
+    .lockup-tagline {
+      font-family: var(--p31-font-mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--p31-muted);
+      margin-top: 4px;
+    }
+    
+    .clearspace-demo {
+      position: relative;
+      padding: 80px;
+      background: var(--p31-surface);
+      border: 1px dashed var(--p31-border-subtle);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .clearspace-demo::before, .clearspace-demo::after {
+      content: '';
+      position: absolute;
+      background: var(--p31-coral);
+      opacity: 0.3;
+    }
+    .clearspace-demo::before {
+      top: 24px; bottom: 24px;
+      left: 24px; right: 24px;
+      border: 1px dashed var(--p31-coral);
+      background: transparent;
+    }
+    
+    .dont-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+    }
+    .dont-card {
+      padding: 24px;
+      background: var(--p31-surface);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: 10px;
+      position: relative;
+      text-align: center;
+    }
+    .dont-card::before {
+      content: '✕';
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 20px; height: 20px;
+      background: rgba(204,98,71,0.15);
+      color: var(--p31-coral);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .dont-text {
+      font-size: 12px;
+      color: var(--p31-cloud);
+      margin-top: 12px;
+    }
+  </style>
+</head>
+<body>
+  <script type="module">
+    import { renderShell, code, callout } from '/stylebook/_chrome.js';
+    import { P31ThemeController } from '/lib/p31-theme-engine.mjs';
+    window.p31Theme = new P31ThemeController({ defaultTheme: 'hub' });
+    
+    const content = `
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Names</div>
+          <h2 class="sb-h2">P31 · Phosphorus31 · P31 Labs</h2>
+          <p class="sb-text">
+            Three names, three jobs.
+          </p>
+        </div>
+        
+        <table class="sb-table">
+          <thead><tr><th>Name</th><th>Use for</th><th>Where</th></tr></thead>
+          <tbody>
+            <tr><td><strong>P31</strong></td><td>Short reference, internal, technical</td><td>Code, command center, file paths</td></tr>
+            <tr><td><strong>Phosphorus31</strong></td><td>Public, mission, organization</td><td>phosphorus31.org, org filings, public press</td></tr>
+            <tr><td><strong>P31 Labs, Inc.</strong></td><td>Legal entity</td><td>EIN 42-1888158 documents, contracts, IRS</td></tr>
+          </tbody>
+        </table>
+        
+        ${callout('warn', 'Never abbreviate further', 'Don\'t use "P", "P31L", "PL", or "Phos" in public copy. Either P31 or Phosphorus31 — never something else.')}
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">The mark</div>
+          <h2 class="sb-h2">Logo variants</h2>
+          <p class="sb-text">The brand mark is geometric: a rounded square containing the wordmark.
+          Six variants cover every background.</p>
+        </div>
+        
+        <div class="logo-grid">
+          <div class="logo-card dark">
+            <div class="lockup-mark">P31</div>
+            <div class="logo-meta">Color · on dark</div>
+          </div>
+          <div class="logo-card light">
+            <div class="lockup-mark">P31</div>
+            <div class="logo-meta">Color · on light</div>
+          </div>
+          <div class="logo-card dark">
+            <div class="lockup-mark mono-light">P31</div>
+            <div class="logo-meta">Mono light · on dark</div>
+          </div>
+          <div class="logo-card light">
+            <div class="lockup-mark mono-dark">P31</div>
+            <div class="logo-meta">Mono dark · on light</div>
+          </div>
+          <div class="logo-card dark">
+            <div class="lockup-mark outline">P31</div>
+            <div class="logo-meta">Outline</div>
+          </div>
+          <div class="logo-card color">
+            <div class="lockup-mark mono-light" style="background: white; color: var(--p31-coral);">P31</div>
+            <div class="logo-meta">Reversed · on color</div>
+          </div>
+        </div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Lockups</div>
+          <h2 class="sb-h2">Mark + wordmark</h2>
+          <p class="sb-text">When the brand name needs to appear with the mark.</p>
+        </div>
+        
+        <div class="logo-grid">
+          <div class="logo-card dark">
+            <div class="lockup-row">
+              <div class="lockup-mark">P31</div>
+              <div class="lockup-text">
+                <div class="lockup-name">P31 Labs</div>
+                <div class="lockup-tagline">Build · Create · Connect</div>
+              </div>
+            </div>
+            <div class="logo-meta">Horizontal lockup</div>
+          </div>
+          
+          <div class="logo-card dark" style="flex-direction: column; gap: 12px;">
+            <div class="lockup-mark">P31</div>
+            <div class="lockup-text" style="text-align: center;">
+              <div class="lockup-name" style="text-align:center;">P31 Labs</div>
+              <div class="lockup-tagline" style="text-align:center;">Build · Create · Connect</div>
+            </div>
+            <div class="logo-meta">Stacked lockup</div>
+          </div>
+        </div>
+        
+        <div style="margin-top: 16px;">
+          <div class="logo-card dark" style="align-items: stretch;">
+            <div style="font-family: var(--p31-font-mono); font-size: 11px; color: var(--p31-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px;">Phosphorus31 wordmark · primary</div>
+            <div style="font-size: 32px; font-weight: 700; letter-spacing: -0.02em; color: var(--p31-paper);">
+              Phosphorus<span style="background: linear-gradient(135deg, var(--p31-coral), var(--p31-teal)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">31</span>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Clearspace</div>
+          <h2 class="sb-h2">Breathing room</h2>
+          <p class="sb-text">The mark requires clearspace equal to one-third the mark's height on every side.
+          The dashed area below shows the minimum.</p>
+        </div>
+        
+        <div class="clearspace-demo">
+          <div class="lockup-mark" style="z-index: 1;">P31</div>
+        </div>
+        
+        ${callout('info', 'Why clearspace matters', 'The mark loses identity when crowded. A logo touched by competing visuals reads as a sticker, not a brand. The buffer is non-negotiable.')}
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Sizes</div>
+          <h2 class="sb-h2">Minimum sizes</h2>
+        </div>
+        
+        <table class="sb-table">
+          <thead><tr><th>Context</th><th>Minimum</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td>Favicon</td><td>16 × 16 px</td><td>Use the simplified glyph version (no wordmark)</td></tr>
+            <tr><td>App icon</td><td>32 × 32 px</td><td>Color variant, rounded corners</td></tr>
+            <tr><td>Topbar / nav</td><td>24 × 24 px</td><td>Include "P31" wordmark</td></tr>
+            <tr><td>Print / signage</td><td>0.5 inch</td><td>Color variant only</td></tr>
+            <tr><td>Hero / landing</td><td>96 × 96 px</td><td>For dramatic emphasis</td></tr>
+          </tbody>
+        </table>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Don't</div>
+          <h2 class="sb-h2">Brand abuse</h2>
+          <p class="sb-text">These violations hurt brand identity. The verifier flags some; reviewers catch the rest.</p>
+        </div>
+        
+        <div class="dont-grid">
+          <div class="dont-card">
+            <div class="lockup-mark" style="transform: rotate(-15deg); background: linear-gradient(135deg, var(--p31-coral), var(--p31-teal));">P31</div>
+            <div class="dont-text">Don't rotate the mark</div>
+          </div>
+          <div class="dont-card">
+            <div class="lockup-mark" style="background: var(--p31-coral);">P31</div>
+            <div class="dont-text">Don't use brand colors solo for the mark</div>
+          </div>
+          <div class="dont-card">
+            <div class="lockup-mark" style="border-radius: 50%; background: linear-gradient(135deg, var(--p31-coral), var(--p31-teal));">P31</div>
+            <div class="dont-text">Don't change the corner shape</div>
+          </div>
+          <div class="dont-card">
+            <div class="lockup-mark" style="font-family: serif; background: linear-gradient(135deg, var(--p31-coral), var(--p31-teal));">P31</div>
+            <div class="dont-text">Don't change the typeface</div>
+          </div>
+          <div class="dont-card">
+            <div class="lockup-mark" style="transform: scaleX(1.5); background: linear-gradient(135deg, var(--p31-coral), var(--p31-teal));">P31</div>
+            <div class="dont-text">Don't stretch or squash</div>
+          </div>
+          <div class="dont-card">
+            <div class="lockup-mark" style="filter: drop-shadow(0 0 8px var(--p31-phosphor)); background: linear-gradient(135deg, var(--p31-coral), var(--p31-teal));">P31</div>
+            <div class="dont-text">Don't add effects (glow, shadow, bevel)</div>
+          </div>
+        </div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Color rules</div>
+          <h2 class="sb-h2">Brand chroma</h2>
+        </div>
+        
+        <table class="sb-table">
+          <thead><tr><th>Use</th><th>Color</th><th>Token</th></tr></thead>
+          <tbody>
+            <tr><td>Mark gradient (left → right)</td><td>Coral → Teal → Phosphor</td><td><code>--p31-coral</code> + <code>--p31-teal</code> + <code>--p31-phosphor</code></td></tr>
+            <tr><td>Hub appearance</td><td>Dark · void background</td><td><code>data-p31-appearance="hub"</code></td></tr>
+            <tr><td>Org appearance</td><td>Light · paper background</td><td><code>data-p31-appearance="org"</code></td></tr>
+            <tr><td>Org primary accent</td><td>Coral (warmer for nonprofit)</td><td><code>--p31-coral</code></td></tr>
+            <tr><td>Hub primary accent</td><td>Teal (cooler for technical)</td><td><code>--p31-teal</code></td></tr>
+          </tbody>
+        </table>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Assets</div>
+          <h2 class="sb-h2">Where to get them</h2>
+        </div>
+        
+        <table class="sb-table">
+          <thead><tr><th>Asset</th><th>Path</th></tr></thead>
+          <tbody>
+            <tr><td>Logo SVG (color)</td><td><code>/design-assets/logo/p31-color.svg</code></td></tr>
+            <tr><td>Logo SVG (mono dark)</td><td><code>/design-assets/logo/p31-mono-dark.svg</code></td></tr>
+            <tr><td>Logo SVG (mono light)</td><td><code>/design-assets/logo/p31-mono-light.svg</code></td></tr>
+            <tr><td>Favicon (32px)</td><td><code>/favicon.ico</code></td></tr>
+            <tr><td>App icon (PNG, multiple sizes)</td><td><code>/design-assets/app-icons/</code></td></tr>
+            <tr><td>OG card template (1200×630)</td><td><code>/design-assets/og/template.svg</code></td></tr>
+            <tr><td>Press kit (zip)</td><td><code>/design-assets/press-kit.zip</code></td></tr>
+          </tbody>
+        </table>
+        
+        ${callout('info', 'Press &amp; partnership', 'For external use of the P31 mark (press, partnerships, conferences), email <code>brand@phosphorus31.org</code>. We grant freely to aligned use; we deny clearly to misuse.')}
+      </section>
+    `;
+    
+    renderShell({
+      activeId: 'brand',
+      breadcrumb: [
+        { href: '/stylebook/', label: 'Stylebook' },
+        { href: '/stylebook/', label: 'Guidelines' },
+        { label: 'Brand' }
+      ],
+      title: 'Brand',
+      subtitle: 'Logos, lockups, clearspace, color rules, do-and-don\'t. The mark of P31 Labs.',
+      meta: [
+        { label: 'Variants', value: '6' },
+        { label: 'Lockups', value: '2' },
+        { label: 'EIN', value: '42-1888158' }
+      ],
+      content
+    });
+  </script>
+</body>
+</html>

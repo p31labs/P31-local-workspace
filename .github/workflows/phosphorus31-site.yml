@@ -1,0 +1,61 @@
+# phosphorus31.org (planetary-planet) — build on every PR; deploy Pages on main only.
+# Parallel to software/p31ca (separate team/path); shared actions for toolchain + Wrangler.
+
+name: Phosphorus31 site
+
+on:
+  push:
+    branches: [main, "feat/**"]
+    paths:
+      - "phosphorus31.org/**"
+      - ".github/actions/**"
+      - ".github/workflows/phosphorus31-site.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "phosphorus31.org/**"
+      - ".github/actions/**"
+      - ".github/workflows/phosphorus31-site.yml"
+
+concurrency:
+  group: phosphorus31-site-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  SITE_DIR: phosphorus31.org/planetary-planet
+
+jobs:
+  build:
+    name: Build Astro (phosphorus31.org)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/toolchain-constants
+
+      - uses: ./.github/actions/npm-ci-project
+        with:
+          working-directory: ${{ env.SITE_DIR }}
+          cache-dependency-path: ${{ env.SITE_DIR }}/package-lock.json
+
+      - name: Build
+        working-directory: ${{ env.SITE_DIR }}
+        run: npm run build
+
+      - name: Upload dist (optional preview artifact)
+        uses: actions/upload-artifact@v4
+        with:
+          name: phosphorus31-org-dist
+          path: ${{ env.SITE_DIR }}/dist
+          retention-days: 14
+          if-no-files-found: error
+
+      - name: Deploy to Cloudflare Pages
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: ./.github/actions/wrangler-run
+        with:
+          working-directory: ${{ env.SITE_DIR }}
+          command: pages deploy dist --project-name=phosphorus31-org
+          api-token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          account-id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

@@ -1,0 +1,90 @@
+name = "p31-workers"
+main = "love-ledger.ts"
+compatibility_date = "2026-03-24"
+
+# Migrations for Durable Objects
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = [ "LoveTransactionDO" ]
+
+# KV namespaces - commented out until provisioned
+# [[kv_namespaces]]
+# binding = "PASSPORT_KV"
+# id = "your-passport-kv-id"
+
+[[kv_namespaces]]
+binding = "SPOONS_KV"
+id = "dbc13218ee314f0e988f51d2618e6061"
+
+# [[kv_namespaces]]
+# binding = "THRESHOLDS_KV"
+# id = "your-thresholds-kv-id"
+
+# R2 buckets - commented out until provisioned
+# [[r2_buckets]]
+# binding = "PASSPORT_R2"
+
+# [[r2_buckets]]
+# binding = "LEGAL_R2"
+
+# [[r2_buckets]]
+# binding = "MESH_R2"
+
+# D1 databases - commented out until provisioned
+[[d1_databases]]
+binding = "LOVE_D1"
+database_name = "love-ledger"
+database_id = "592e3e2e-3203-4e0a-8342-9e85215ec8a6"
+
+# [[d1_databases]]
+# binding = "SPOONS_D1"
+# database_name = "spoons-db"
+# database_id = "your-spoons-d1-id"
+
+# [[d1_databases]]
+# binding = "LEGAL_D1"
+# database_name = "legal-docs"
+# database_id = "your-legal-d1-id"
+
+# [[d1_databases]]
+# binding = "MESH_D1"
+# database_name = "mesh-db"
+# database_id = "your-mesh-d1-id"
+
+# [[d1_databases]]
+# binding = "TELEMETRY_D1"
+# database_name = "telemetry-db"
+# database_id = "your-telemetry-d1-id"
+
+[[durable_objects.bindings]]
+name = "LOVE_TRANSACTION"
+class_name = "LoveTransactionDO"
+
+# EventBusDO lives on p31-orchestrator only (wrangler-orchestrator.toml) — do not bind here.
+
+# [[d1_databases]]
+# binding = "ORCHESTRATOR_D1"
+# database_name = "orchestrator-db"
+# database_id = "your-orchestrator-d1-id"
+
+# Queues - commented out until implemented
+# [[queues.bindings]]
+# name = "TELEMETRY_QUEUE"
+# queue_name = "telemetry-queue"
+
+[vars]
+ENVIRONMENT = "production"
+BRENDA_PHONE = "+19122274980"
+BRENDA_USER_ID = "brenda-001"
+OPERATOR_USER_ID = "will-001"
+
+# Twilio (optional - for emergency notifications)
+# TWILIO_SID = "your-twilio-sid"
+# TWILIO_TOKEN = "your-twilio-token"
+# TWILIO_PHONE = "+19122274980"
+
+# Routes for love-ledger worker
+# Uncomment after Cloudflare account provisioning
+# routes = [
+#   { pattern = "love-ledger.*", zone_name = "trimtab-signal.workers.dev" },
+# ]

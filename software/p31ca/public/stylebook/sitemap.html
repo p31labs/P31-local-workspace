@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0f1115">
+  <title>Site map · P31 Stylebook</title>
+  <meta name="description" content="The complete canonical URL tree across the P31 ecosystem — p31ca.org, phosphorus31.org, hub products, and meshes.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/p31-style.css">
+  <link rel="stylesheet" href="/lib/p31-fluid.css">
+  <link rel="stylesheet" href="/stylebook/_chrome.css">
+  <style>
+    /* Tree visualization */
+    .smap-tree {
+      font-family: var(--p31-font-mono);
+      font-size: 13px;
+      line-height: 1.7;
+      background: var(--p31-void);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: 12px;
+      padding: 20px;
+      overflow-x: auto;
+    }
+    .smap-tree ul {
+      list-style: none;
+      padding-left: 24px;
+      margin: 0;
+      position: relative;
+    }
+    .smap-tree > ul { padding-left: 0; }
+    .smap-tree li {
+      position: relative;
+      padding-left: 24px;
+    }
+    .smap-tree li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: var(--p31-border-subtle);
+    }
+    .smap-tree li:last-child::before {
+      bottom: 50%;
+    }
+    .smap-tree li::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 14px;
+      width: 16px;
+      height: 1px;
+      background: var(--p31-border-subtle);
+    }
+    .smap-tree > ul > li::before,
+    .smap-tree > ul > li::after { display: none; }
+    .smap-tree > ul > li { padding-left: 0; }
+    
+    .smap-node {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 2px 10px;
+      border-radius: 6px;
+      transition: background 0.15s;
+    }
+    .smap-node:hover { background: var(--p31-surface); }
+    .smap-route {
+      color: var(--p31-cyan);
+      text-decoration: none;
+    }
+    .smap-route:hover { color: var(--p31-coral); }
+    .smap-label {
+      color: var(--p31-cloud);
+      font-family: var(--p31-font-sans);
+      font-size: 12px;
+    }
+    .smap-tag {
+      font-size: 10px;
+      padding: 1px 6px;
+      border-radius: 999px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+    }
+    .smap-tag.live { background: rgba(0,255,136,0.12); color: var(--p31-phosphor); }
+    .smap-tag.dev { background: rgba(205,168,82,0.12); color: var(--p31-amber); }
+    .smap-tag.draft { background: rgba(139,124,201,0.15); color: var(--p31-lavender); }
+    .smap-tag.api { background: rgba(77,184,168,0.12); color: var(--p31-cyan); }
+    .smap-tag.worker { background: rgba(204,98,71,0.12); color: var(--p31-coral); }
+    .smap-tag.redirect { background: var(--p31-surface2); color: var(--p31-muted); }
+    
+    .smap-domain {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      background: var(--p31-surface2);
+      border-radius: 8px;
+      margin-bottom: 12px;
+    }
+    .smap-domain-mark {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+    .smap-domain-name {
+      font-family: var(--p31-font-mono);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--p31-paper);
+    }
+    .smap-domain-meta {
+      font-size: 11px;
+      color: var(--p31-muted);
+    }
+    
+    /* Visual map (graph) */
+    .smap-graph {
+      width: 100%;
+      height: 480px;
+      background: var(--p31-surface);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: 14px;
+      position: relative;
+      overflow: hidden;
+    }
+    .smap-graph::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--p31-border-subtle) 1px, transparent 1px),
+        linear-gradient(90deg, var(--p31-border-subtle) 1px, transparent 1px);
+      background-size: 32px 32px;
+      mask-image: radial-gradient(ellipse at center, black 60%, transparent 100%);
+      -webkit-mask-image: radial-gradient(ellipse at center, black 60%, transparent 100%);
+      opacity: 0.4;
+    }
+    
+    /* Routes table */
+    .smap-routes {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--p31-surface);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .smap-routes th {
+      text-align: left;
+      padding: 10px 14px;
+      background: var(--p31-surface2);
+      font-family: var(--p31-font-mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--p31-muted);
+      font-weight: 500;
+      border-bottom: 1px solid var(--p31-border-subtle);
+    }
+    .smap-routes td {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--p31-border-subtle);
+      font-size: 13px;
+      vertical-align: top;
+    }
+    .smap-routes tr:last-child td { border-bottom: none; }
+    .smap-routes code {
+      font-family: var(--p31-font-mono);
+      font-size: 12px;
+      color: var(--p31-cyan);
+    }
+    .smap-routes tr.hidden { display: none; }
+    .smap-routes-search-wrap {
+      position: relative;
+      margin-bottom: 16px;
+    }
+    .smap-routes-search-wrap::before {
+      content: '⌕';
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--p31-muted);
+    }
+    .smap-routes-search {
+      width: 100%;
+      padding: 10px 12px 10px 38px;
+      background: var(--p31-surface);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: 10px;
+      color: var(--p31-cloud);
+      font-family: var(--p31-font-sans);
+      font-size: 14px;
+      outline: none;
+    }
+    .smap-routes-search:focus {
+      border-color: var(--p31-primary);
+      box-shadow: 0 0 0 3px rgba(37,137,125,0.15);
+    }
+  </style>
+</head>
+<body>
+  <script type="module">
+    import { renderShell, code, callout } from '/stylebook/_chrome.js';
+    import { P31ThemeController } from '/lib/p31-theme-engine.mjs';
+    window.p31Theme = new P31ThemeController({ defaultTheme: 'hub' });
+    
+    // ═══════════════════════════════════════════════════════════
+    // CANONICAL ROUTE CATALOG
+    // Source of truth: p31-constants.json + p31.ground-truth.json
+    // ═══════════════════════════════════════════════════════════
+    
+    const ROUTES = [
+      // p31ca.org (technical hub)
+      { domain: 'p31ca.org', path: '/', label: 'Hub home', tag: 'live', purpose: 'Product grid + onboarding entry' },
+      { domain: 'p31ca.org', path: '/connect', label: 'Connection navigator', tag: 'live', purpose: 'Three.js K₄ navigator' },
+      { domain: 'p31ca.org', path: '/ops', label: 'Operations console', tag: 'live', purpose: 'Glass box probes + ops UI' },
+      { domain: 'p31ca.org', path: '/build', label: 'Initial build site', tag: 'live', purpose: 'IB CWP production page' },
+      { domain: 'p31ca.org', path: '/passport', label: 'Cognitive passport', tag: 'live', purpose: 'Generator UI' },
+      { domain: 'p31ca.org', path: '/dome', label: 'Dome (Astro)', tag: 'live', purpose: 'Synergetic geodesic hub' },
+      { domain: 'p31ca.org', path: '/observatory', label: 'Observatory', tag: 'live', purpose: 'Static Three.js observatory' },
+      { domain: 'p31ca.org', path: '/geodesic', label: 'Geodesic campaign', tag: 'live', purpose: 'Coach + 5-track unlock' },
+      { domain: 'p31ca.org', path: '/k4market', label: 'K4 marketplace', tag: 'live', purpose: 'Creator economy front' },
+      { domain: 'p31ca.org', path: '/doc-library', label: 'Doc library', tag: 'live', purpose: 'Static markdown index' },
+      { domain: 'p31ca.org', path: '/fleet-portal', label: 'Fleet portal', tag: 'live', purpose: 'Mesh URL ATC' },
+      { domain: 'p31ca.org', path: '/visuals', label: 'Demos gallery', tag: 'live', purpose: 'K₄ mesh + alignment + Larmor + glass' },
+      { domain: 'p31ca.org', path: '/glass-box', label: 'Transparency', tag: 'live', purpose: 'CLI playbacks + verify reports' },
+      { domain: 'p31ca.org', path: '/transparency', label: 'Transparency (alias)', tag: 'redirect', purpose: '→ /glass-box' },
+      { domain: 'p31ca.org', path: '/glass', label: 'Glass (alias)', tag: 'redirect', purpose: '→ /glass-box' },
+      { domain: 'p31ca.org', path: '/centaur', label: 'Centaur starter (alias)', tag: 'redirect', purpose: '→ super-centaur-pack' },
+      { domain: 'p31ca.org', path: '/super-centaur', label: 'Super centaur (alias)', tag: 'redirect', purpose: '→ super-centaur-pack' },
+      { domain: 'p31ca.org', path: '/stylebook/', label: 'Stylebook (you are here)', tag: 'live', purpose: 'Design system docs' },
+      { domain: 'p31ca.org', path: '/[product]-about.html', label: 'Auto-generated about pages', tag: 'live', purpose: 'One per registry id' },
+      { domain: 'p31ca.org', path: '/creator-economy.json', label: 'Economy contract', tag: 'api', purpose: 'p31.creatorEconomy/1.0.0' },
+      { domain: 'p31ca.org', path: '/api/passkey/register-begin', label: 'Passkey register', tag: 'api', purpose: 'WebAuthn challenge' },
+      { domain: 'p31ca.org', path: '/api/passkey/register-finish', label: 'Passkey register finish', tag: 'api', purpose: 'WebAuthn registration' },
+      { domain: 'p31ca.org', path: '/api/passkey/auth-begin', label: 'Passkey auth begin', tag: 'api', purpose: 'WebAuthn challenge' },
+      { domain: 'p31ca.org', path: '/api/passkey/auth-finish', label: 'Passkey auth finish', tag: 'api', purpose: 'WebAuthn assertion' },
+      
+      // phosphorus31.org (org light)
+      { domain: 'phosphorus31.org', path: '/', label: 'Mission home', tag: 'live', purpose: '501(c)(3) public face' },
+      { domain: 'phosphorus31.org', path: '/donate', label: 'Donation page', tag: 'live', purpose: 'Stripe Checkout entry' },
+      { domain: 'donate-api.phosphorus31.org', path: '/checkout', label: 'Checkout Worker', tag: 'worker', purpose: 'Stripe session creation' },
+      
+      // K4 mesh workers
+      { domain: 'k4-cage.workers.dev', path: '/api/health', label: 'Cage health', tag: 'api', purpose: 'Family mesh status' },
+      { domain: 'k4-cage.workers.dev', path: '/api/mesh', label: 'Cage state', tag: 'api', purpose: 'Family graph snapshot' },
+      { domain: 'k4-personal.workers.dev', path: '/api/health', label: 'Personal health', tag: 'api', purpose: 'Personal mesh status' },
+      { domain: 'k4-personal.workers.dev', path: '/api/mesh', label: 'Personal state', tag: 'api', purpose: 'Personal graph (a/b/c/d)' },
+      { domain: 'k4-personal.workers.dev', path: '/agent/:userId/...', label: 'Per-user agent DO', tag: 'api', purpose: 'Personal DO endpoint' },
+      
+      // SIMPLEX-v7
+      { domain: 'simplex.workers.dev', path: '/api/agent/:lane/run', label: 'SIMPLEX dispatch', tag: 'worker', purpose: 'FORGE/COUNSEL/SCRIBE/etc.' },
+      
+      // Geodesic Room
+      { domain: 'geodesic-room.trimtab-signal.workers.dev', path: '/ws', label: 'Geodesic WebSocket', tag: 'worker', purpose: 'p31.geodesicRoomWire/0.2.1' },
+      
+      // Local development
+      { domain: 'localhost', path: ':3131/', label: 'Command center', tag: 'dev', purpose: 'Operator control plane' },
+      { domain: 'localhost', path: ':3131/desk', label: 'Operator desk', tag: 'dev', purpose: 'Read-only CONNECTION + glass' },
+      { domain: 'localhost', path: ':3131/api/health', label: 'CC health', tag: 'dev', purpose: 'GET liveness' },
+      { domain: 'localhost', path: ':3131/api/run', label: 'CC run', tag: 'dev', purpose: 'POST whitelisted action' },
+      { domain: 'localhost', path: ':8080/', label: 'Static demo', tag: 'dev', purpose: 'npm run demo (root)' }
+    ];
+    
+    const TREE = `
+      <ul>
+        <li>
+          <span class="smap-node">
+            <span class="smap-tag live">●</span>
+            <strong style="color: var(--p31-paper);">p31ca.org</strong>
+            <span class="smap-label">technical hub · dark · operator</span>
+          </span>
+          <ul>
+            <li><span class="smap-node"><a class="smap-route" href="/">/</a> <span class="smap-label">Hub home · product grid</span></span></li>
+            <li>
+              <span class="smap-node"><a class="smap-route" href="/connect">/connect</a> <span class="smap-label">Connection navigator</span></span>
+            </li>
+            <li><span class="smap-node"><a class="smap-route" href="/ops">/ops</a> <span class="smap-label">Operations console</span></span></li>
+            <li><span class="smap-node"><a class="smap-route" href="/build">/build</a> <span class="smap-label">Initial build site</span></span></li>
+            <li><span class="smap-node"><a class="smap-route" href="/passport">/passport</a> <span class="smap-label">Cognitive passport generator</span></span></li>
+            <li>
+              <span class="smap-node"><a class="smap-route" href="/dome">/dome</a> · <a class="smap-route" href="/observatory">/observatory</a> · <a class="smap-route" href="/geodesic">/geodesic</a> <span class="smap-label">Synergetic stack</span></span>
+            </li>
+            <li><span class="smap-node"><a class="smap-route" href="/k4market">/k4market</a> <span class="smap-label">Creator economy</span></span></li>
+            <li>
+              <span class="smap-node"><strong style="color: var(--p31-coral);">/stylebook/</strong> <span class="smap-label">Design system (you are here)</span></span>
+              <ul>
+                <li><span class="smap-node"><a class="smap-route" href="/stylebook/">/stylebook/</a> <span class="smap-label">22+ pages</span></span></li>
+              </ul>
+            </li>
+            <li><span class="smap-node"><a class="smap-route" href="/doc-library">/doc-library</a> · <a class="smap-route" href="/fleet-portal">/fleet-portal</a> · <a class="smap-route" href="/visuals">/visuals</a> · <a class="smap-route" href="/glass-box">/glass-box</a> <span class="smap-label">Reference surfaces</span></span></li>
+            <li>
+              <span class="smap-node"><span class="smap-tag api">api</span> <code style="color:var(--p31-cyan);">/api/passkey/*</code> <span class="smap-label">WebAuthn (Worker route)</span></span>
+            </li>
+            <li>
+              <span class="smap-node"><span class="smap-tag api">api</span> <code style="color:var(--p31-cyan);">/creator-economy.json</code> <span class="smap-label">Economy contract (CORS *)</span></span>
+            </li>
+            <li>
+              <span class="smap-node"><span class="smap-tag redirect">×N</span> <code>/[product]-about.html</code> <span class="smap-label">Auto-generated from registry.mjs</span></span>
+            </li>
+          </ul>
+        </li>
+        
+        <li style="margin-top: 16px;">
+          <span class="smap-node">
+            <span class="smap-tag live">●</span>
+            <strong style="color: var(--p31-paper);">phosphorus31.org</strong>
+            <span class="smap-label">org public · light · mission</span>
+          </span>
+          <ul>
+            <li><span class="smap-node"><span class="smap-route">/</span> <span class="smap-label">Mission home · 501(c)(3) public face</span></span></li>
+            <li><span class="smap-node"><span class="smap-route">/donate</span> <span class="smap-label">Stripe Checkout entry</span></span></li>
+            <li><span class="smap-node"><span class="smap-tag worker">worker</span> <code>donate-api.phosphorus31.org</code> <span class="smap-label">Stripe session Worker</span></span></li>
+          </ul>
+        </li>
+        
+        <li style="margin-top: 16px;">
+          <span class="smap-node">
+            <span class="smap-tag worker">●</span>
+            <strong style="color: var(--p31-paper);">K₄ mesh workers</strong>
+            <span class="smap-label">edge state, never raw to clients</span>
+          </span>
+          <ul>
+            <li><span class="smap-node"><code>k4-cage.workers.dev</code> <span class="smap-label">Family vertices (will/sj/wj/christyn)</span></span></li>
+            <li><span class="smap-node"><code>k4-personal.workers.dev</code> <span class="smap-label">Personal pillars (a/b/c/d)</span></span></li>
+            <li><span class="smap-node"><code>simplex.workers.dev</code> <span class="smap-label">SIMPLEX v7 dispatch (FORGE/COUNSEL/SCRIBE/ORACLE/HERALD/SCHOLAR)</span></span></li>
+            <li><span class="smap-node"><code>geodesic-room.trimtab-signal.workers.dev</code> <span class="smap-label">DO + WebSocket (Maxwell rigidity)</span></span></li>
+          </ul>
+        </li>
+        
+        <li style="margin-top: 16px;">
+          <span class="smap-node">
+            <span class="smap-tag dev">●</span>
+            <strong style="color: var(--p31-paper);">localhost</strong>
+            <span class="smap-label">operator-only, never public</span>
+          </span>
+          <ul>
+            <li><span class="smap-node"><code>:3131/</code> <span class="smap-label">Command center (npm run command-center)</span></span></li>
+            <li><span class="smap-node"><code>:3131/desk</code> <span class="smap-label">Operator desk (read-first)</span></span></li>
+            <li><span class="smap-node"><code>:8080/</code> <span class="smap-label">Static demo (npm run demo)</span></span></li>
+            <li><span class="smap-node"><code>:11434/</code> <span class="smap-label">Ollama fleet (10 personas)</span></span></li>
+          </ul>
+        </li>
+      </ul>
+    `;
+    
+    const routesByDomain = {};
+    ROUTES.forEach(r => {
+      if (!routesByDomain[r.domain]) routesByDomain[r.domain] = [];
+      routesByDomain[r.domain].push(r);
+    });
+    
+    const routesTable = `
+      <div class="smap-routes-search-wrap">
+        <input type="search" class="smap-routes-search" id="smap-search" placeholder="Search ${ROUTES.length} routes...">
+      </div>
+      <table class="smap-routes">
+        <thead>
+          <tr><th>Domain</th><th>Path</th><th>Purpose</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+          ${ROUTES.map(r => `
+            <tr data-search="${(r.domain + ' ' + r.path + ' ' + r.label + ' ' + r.purpose).toLowerCase()}">
+              <td><code>${r.domain}</code></td>
+              <td><code>${r.path}</code></td>
+              <td>
+                <strong style="color:var(--p31-paper); font-size:13px;">${r.label}</strong>
+                <div style="font-size:12px; color:var(--p31-muted); margin-top:2px;">${r.purpose}</div>
+              </td>
+              <td><span class="smap-tag ${r.tag}">${r.tag}</span></td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    `;
+    
+    const content = `
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Visual hierarchy</div>
+          <h2 class="sb-h2">The full ecosystem at a glance</h2>
+          <p class="sb-text">
+            Three domains, four worker fleets, and the local operator surface. This is the canonical tree —
+            anything claiming to be P31 lives somewhere on this map.
+          </p>
+        </div>
+        
+        <div class="smap-tree">${TREE}</div>
+        
+        ${callout('info', 'Single source of truth', 'Domains and worker URLs are pinned in <code>p31-constants.json</code> and <code>p31-live-fleet.json</code>. Adding a new public route means editing the constant + ground-truth, not just the HTML.')}
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">All routes</div>
+          <h2 class="sb-h2">Searchable catalog · ${ROUTES.length} routes</h2>
+          <p class="sb-text">Every public path. Type to filter — match against domain, path, label, or purpose.</p>
+        </div>
+        ${routesTable}
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Naming conventions</div>
+          <h2 class="sb-h2">URL grammar</h2>
+        </div>
+        
+        <table class="sb-table">
+          <thead><tr><th>Pattern</th><th>Use for</th><th>Example</th></tr></thead>
+          <tbody>
+            <tr><td><code>/[noun]</code></td><td>Top-level products / sections</td><td><code>/connect</code>, <code>/build</code>, <code>/ops</code></td></tr>
+            <tr><td><code>/[product]-about.html</code></td><td>Product detail pages (auto-generated)</td><td><code>/centaur-about.html</code></td></tr>
+            <tr><td><code>/[section]/</code></td><td>Multi-page sections (with index)</td><td><code>/stylebook/</code>, <code>/doc-library/</code></td></tr>
+            <tr><td><code>/api/[resource]/[action]</code></td><td>API endpoints (Worker routes)</td><td><code>/api/passkey/auth-begin</code></td></tr>
+            <tr><td><code>/[short]</code> → <code>/[long]</code></td><td>Memorable redirects</td><td><code>/glass</code> → <code>/glass-box</code></td></tr>
+            <tr><td><code>[name].workers.dev</code></td><td>Edge workers (private to client)</td><td><code>k4-cage.workers.dev</code></td></tr>
+            <tr><td><code>:port</code></td><td>Local services (operator-only)</td><td><code>localhost:3131</code></td></tr>
+          </tbody>
+        </table>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Production sitemap.xml</div>
+          <h2 class="sb-h2">Generate from this file</h2>
+          <p class="sb-text">Search engines and AI crawlers want a sitemap. Generate one mechanically from the
+          canonical route list — never hand-write.</p>
+        </div>
+        
+        ${code(`<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://p31ca.org/</loc>
+    <lastmod>2026-05-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://p31ca.org/connect</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://p31ca.org/stylebook/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <!-- ... auto-generated from ground-truth routes + registry ids ... -->
+</urlset>`, 'html', 'sitemap.xml')}
+
+        ${code(`# Generate from the canonical catalog
+node scripts/build-sitemap.mjs \\
+  --constants p31-constants.json \\
+  --ground-truth andromeda/04_SOFTWARE/p31ca/ground-truth/p31.ground-truth.json \\
+  --registry andromeda/04_SOFTWARE/p31ca/scripts/hub/registry.mjs \\
+  --out andromeda/04_SOFTWARE/p31ca/public/sitemap.xml
+
+# Verify in CI: every route in the sitemap must resolve to 200
+npm run verify:sitemap`, 'shell', 'Build script')}
+        
+        ${callout('info', 'robots.txt', 'Always pair sitemap.xml with a <code>robots.txt</code> that points to it: <code>Sitemap: https://p31ca.org/sitemap.xml</code>. Without that, most crawlers won\'t find it.')}
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">For agents</div>
+          <h2 class="sb-h2">llms.txt &amp; agentic crawl</h2>
+          <p class="sb-text">
+            LLM and agentic crawlers benefit from a curated entrypoint. Place an <code>llms.txt</code> at
+            domain root that summarizes the site in markdown.
+          </p>
+        </div>
+        
+        ${code(`# P31 Labs
+
+> Operator-led nonprofit building decentralized family infrastructure.
+> Mission: Build, Create, Connect.
+
+## Primary surfaces
+
+- [Hub](https://p31ca.org/): technical product grid
+- [Stylebook](https://p31ca.org/stylebook/): design system reference
+- [Cognitive passport](https://p31ca.org/passport): identity-first cognitive spec
+- [Mission](https://phosphorus31.org/): nonprofit public face
+
+## APIs
+
+- [Creator economy contract](https://p31ca.org/creator-economy.json)
+- [Passkey](https://p31ca.org/api/passkey/*): WebAuthn endpoints
+
+## What we don't do
+
+- No third-party tracking
+- No ad pixels  
+- No engagement-driven dark patterns
+
+EIN: 42-1888158 (501(c)(3) pending).`, 'plain', '/llms.txt')}
+      </section>
+    `;
+    
+    renderShell({
+      activeId: 'sitemap',
+      breadcrumb: [
+        { href: '/stylebook/', label: 'Stylebook' },
+        { href: '/stylebook/', label: 'Guidelines' },
+        { label: 'Site map' }
+      ],
+      title: 'Site map',
+      subtitle: `The complete canonical URL tree across the P31 ecosystem — ${ROUTES.length} routes, 4 domains, 4 worker fleets.`,
+      meta: [
+        { label: 'Routes', value: String(ROUTES.length) },
+        { label: 'Domains', value: '4' },
+        { label: 'Workers', value: '4 fleets' }
+      ],
+      content
+    });
+    
+    // Search filter
+    const searchInput = document.getElementById('smap-search');
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => {
+        const q = e.target.value.toLowerCase().trim();
+        document.querySelectorAll('tr[data-search]').forEach(row => {
+          row.classList.toggle('hidden', q && !row.dataset.search.includes(q));
+        });
+      });
+    }
+  </script>
+</body>
+</html>

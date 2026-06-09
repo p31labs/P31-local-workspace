@@ -1,0 +1,154 @@
+---
+// @p31-layout: Workshop
+import AppShell from '../layouts/AppShell.astro';
+---
+
+<AppShell
+  routeName="node-zero"
+  title="Node Zero — P31 Labs"
+  description="ESP32-S3 sovereign mesh node. SX1262 LoRa 915MHz. Meshtastic LONG_FAST. Q-Factor biometric telemetry."
+>
+  <section class="nz-hero">
+    <span class="nz-badge">BETA · HARDWARE</span>
+    <h1 class="nz-title">Node Zero</h1>
+    <p class="nz-sub">
+      ESP32-S3 sovereign mesh node. SX1262 LoRa 915 MHz.
+      Meshtastic LONG_FAST. Q-Factor biometric telemetry.
+      Your physical boundary in the P31 mesh.
+    </p>
+
+    <div class="nz-spec">
+      <div class="nz-spec-item">
+        <div class="nz-spec-label">MCU</div>
+        <div class="nz-spec-val">ESP32-S3 N16R8<br>16 MB Flash · 8 MB Octal PSRAM</div>
+      </div>
+      <div class="nz-spec-item">
+        <div class="nz-spec-label">DISPLAY</div>
+        <div class="nz-spec-val">3.5″ AXS15231B<br>480×320 QSPI Touch</div>
+      </div>
+      <div class="nz-spec-item">
+        <div class="nz-spec-label">MESH RADIO</div>
+        <div class="nz-spec-val">SX1262 · 915 MHz<br>SF11 BW250 CR4/5 LDRO</div>
+      </div>
+      <div class="nz-spec-item">
+        <div class="nz-spec-label">TELEMETRY</div>
+        <div class="nz-spec-val">Q-Factor API<br>5-min spoon sync</div>
+      </div>
+      <div class="nz-spec-item">
+        <div class="nz-spec-label">IDENTITY</div>
+        <div class="nz-spec-val">NVS DID · 6-byte<br>esp_random() on boot</div>
+      </div>
+      <div class="nz-spec-item">
+        <div class="nz-spec-label">FIRMWARE</div>
+        <div class="nz-spec-val">ESP-IDF 5.5.x<br>LVGL 8.4 · MIT</div>
+      </div>
+    </div>
+
+    <div class="nz-cta">
+      <a class="nz-btn" href="https://github.com/p31labs/node-zero" target="_blank" rel="noopener">
+        BUILD TRACK — GITHUB
+      </a>
+      <a class="nz-btn nz-btn--emerald" href="/qfactor/">Q-FACTOR PWA</a>
+    </div>
+
+    <p class="nz-seed">HARDWARE OFFLINE — CLOUD RELAY ACTIVE</p>
+  </section>
+</AppShell>
+
+<style>
+  .nz-hero {
+    min-height: calc(100vh - 4rem);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 5rem 2rem 3rem;
+    text-align: center;
+    gap: 1.5rem;
+  }
+  .nz-badge {
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    padding: 0.35rem 0.9rem;
+    border-radius: 9999px;
+    border: 1px solid rgba(205,168,82,0.4);
+    color: #cda852;
+    background: rgba(205,168,82,0.08);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .nz-title {
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    font-weight: 700;
+    margin: 0;
+    color: var(--p31-cloud, #ede8e0);
+  }
+  .nz-sub {
+    font-size: 0.95rem;
+    color: var(--p31-muted, #666688);
+    max-width: 480px;
+    line-height: 1.7;
+    margin: 0;
+  }
+  .nz-spec {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    max-width: 720px;
+    width: 100%;
+    margin-top: 1rem;
+  }
+  .nz-spec-item {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 12px;
+    padding: 1rem;
+    text-align: left;
+  }
+  .nz-spec-label {
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    color: var(--p31-muted, #444455);
+    margin-bottom: 0.4rem;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .nz-spec-val {
+    font-size: 0.82rem;
+    color: var(--p31-cloud, #ede8e0);
+    font-family: 'JetBrains Mono', monospace;
+    line-height: 1.5;
+  }
+  .nz-cta {
+    margin-top: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: center;
+  }
+  .nz-btn {
+    font-size: 0.72rem;
+    letter-spacing: 0.15em;
+    padding: 0.75rem 1.5rem;
+    border-radius: 10px;
+    border: 1px solid rgba(0,229,255,0.3);
+    color: #00e5ff;
+    background: rgba(0,229,255,0.07);
+    text-decoration: none;
+    transition: background 0.15s;
+    cursor: pointer;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .nz-btn:hover { background: rgba(0,229,255,0.14); }
+  .nz-btn--emerald {
+    border-color: rgba(16,185,129,0.3);
+    color: var(--p31-teal);
+    background: rgba(16,185,129,0.07);
+  }
+  .nz-btn--emerald:hover { background: rgba(16,185,129,0.14); }
+  .nz-seed {
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    color: var(--p31-muted, #333344);
+    font-family: 'JetBrains Mono', monospace;
+    opacity: 0.5;
+  }
+</style>

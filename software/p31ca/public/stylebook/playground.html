@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0f1115">
+  <title>Playground · P31 Stylebook</title>
+  <meta name="description" content="Live theme editor. Tweak any token and see the entire system respond instantly.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/p31-style.css">
+  <link rel="stylesheet" href="/lib/p31-fluid.css">
+  <link rel="stylesheet" href="/stylebook/_chrome.css">
+  <style>
+    .pg-layout {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 24px;
+      align-items: flex-start;
+    }
+    @media (max-width: 1100px) {
+      .pg-layout { grid-template-columns: 1fr; }
+    }
+    
+    .pg-controls {
+      position: sticky;
+      top: 88px;
+      background: var(--p31-surface);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: 14px;
+      padding: 20px;
+      max-height: calc(100vh - 120px);
+      overflow-y: auto;
+    }
+    .pg-controls::-webkit-scrollbar { width: 6px; }
+    .pg-controls::-webkit-scrollbar-thumb { background: var(--p31-surface3); border-radius: 3px; }
+    
+    .pg-control-group {
+      margin-bottom: 20px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--p31-border-subtle);
+    }
+    .pg-control-group:last-child { border-bottom: none; padding-bottom: 0; }
+    .pg-control-heading {
+      font-family: var(--p31-font-mono);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--p31-muted);
+      margin-bottom: 12px;
+    }
+    
+    .pg-color-field {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px;
+      border-radius: 8px;
+      background: var(--p31-surface2);
+      margin-bottom: 6px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .pg-color-field:hover { background: var(--p31-surface3); }
+    .pg-color-swatch {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      border: 1px solid var(--p31-border-subtle);
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+    .pg-color-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: var(--p31-cloud);
+      font-family: var(--p31-font-mono);
+      font-size: 11px;
+      outline: none;
+    }
+    .pg-color-label {
+      font-size: 12px;
+      color: var(--p31-paper);
+      font-family: var(--p31-font-mono);
+      flex-shrink: 0;
+      width: 80px;
+    }
+    
+    .pg-slider-field {
+      margin-bottom: 12px;
+    }
+    .pg-slider-meta {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+    .pg-slider-label { font-size: 12px; color: var(--p31-cloud); }
+    .pg-slider-value { font-family: var(--p31-font-mono); font-size: 11px; color: var(--p31-primary); }
+    .pg-slider {
+      width: 100%;
+      -webkit-appearance: none;
+      height: 4px;
+      background: var(--p31-surface3);
+      border-radius: 2px;
+      outline: none;
+    }
+    .pg-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      background: var(--p31-primary);
+      cursor: pointer;
+      transition: transform 0.15s;
+    }
+    .pg-slider::-webkit-slider-thumb:hover { transform: scale(1.2); }
+    .pg-slider::-moz-range-thumb {
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      background: var(--p31-primary);
+      cursor: pointer;
+      border: none;
+    }
+    
+    .pg-preset-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+    .pg-preset {
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid var(--p31-border-subtle);
+      background: var(--p31-surface2);
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.15s;
+    }
+    .pg-preset:hover { border-color: var(--p31-primary); transform: translateY(-1px); }
+    .pg-preset-preview {
+      width: 100%;
+      height: 24px;
+      border-radius: 4px;
+      margin-bottom: 4px;
+    }
+    .pg-preset-name {
+      font-size: 11px;
+      color: var(--p31-paper);
+    }
+    
+    .pg-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .pg-action {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px;
+      border-radius: 8px;
+      background: var(--p31-surface2);
+      border: 1px solid var(--p31-border-subtle);
+      color: var(--p31-cloud);
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .pg-action:hover { border-color: var(--p31-primary); color: var(--p31-primary); }
+    .pg-action.primary {
+      background: var(--p31-primary);
+      color: var(--p31-void);
+      border-color: var(--p31-primary);
+    }
+    
+    /* Preview canvas */
+    .pg-canvas {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .pg-canvas-section {
+      background: var(--p31-surface);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: 14px;
+      padding: 24px;
+    }
+    .pg-canvas-label {
+      font-family: var(--p31-font-mono);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--p31-muted);
+      margin-bottom: 16px;
+    }
+    
+    /* Mock UI */
+    .mock-hero {
+      padding: 32px;
+      background: linear-gradient(135deg, var(--p31-surface) 0%, var(--p31-surface2) 100%);
+      border-radius: 12px;
+      border: 1px solid var(--p31-border-subtle);
+    }
+    .mock-eyebrow {
+      font-family: var(--p31-font-mono);
+      font-size: 11px;
+      color: var(--p31-cyan);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 12px;
+    }
+    .mock-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--p31-paper);
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+    .mock-title .accent {
+      background: linear-gradient(135deg, var(--p31-coral), var(--p31-teal));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .mock-text {
+      font-size: 14px;
+      color: var(--p31-cloud);
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+    .mock-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      background: var(--p31-primary);
+      color: var(--p31-void);
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    
+    .mock-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+    }
+    .mock-card {
+      padding: 16px;
+      background: var(--p31-surface2);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: 10px;
+    }
+    .mock-card-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: var(--p31-surface3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 10px;
+      color: var(--p31-primary);
+    }
+    .mock-card-title {
+      font-size: 13px;
+      color: var(--p31-paper);
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .mock-card-meta {
+      font-size: 11px;
+      color: var(--p31-muted);
+      font-family: var(--p31-font-mono);
+    }
+    
+    .mock-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+    @media (max-width: 600px) { .mock-stats { grid-template-columns: repeat(2, 1fr); } }
+    .mock-stat {
+      padding: 12px;
+      background: var(--p31-surface2);
+      border-radius: 8px;
+      text-align: center;
+    }
+    .mock-stat-value {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--p31-paper);
+      margin-bottom: 2px;
+    }
+    .mock-stat-label {
+      font-size: 10px;
+      color: var(--p31-muted);
+      font-family: var(--p31-font-mono);
+      text-transform: uppercase;
+    }
+    
+    .pg-export {
+      background: var(--p31-void);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: 10px;
+      padding: 16px;
+      font-family: var(--p31-font-mono);
+      font-size: 12px;
+      color: var(--p31-cloud);
+      max-height: 300px;
+      overflow: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <script type="module">
+    import { renderShell, code, callout } from '/stylebook/_chrome.js';
+    import { P31ThemeController, P31_THEMES } from '/lib/p31-theme-engine.mjs';
+    window.p31Theme = new P31ThemeController({ defaultTheme: 'hub' });
+    
+    const COLOR_TOKENS = [
+      { key: 'void', label: 'Void' },
+      { key: 'surface', label: 'Surface' },
+      { key: 'surface2', label: 'Surface 2' },
+      { key: 'surface3', label: 'Surface 3' },
+      { key: 'paper', label: 'Paper' },
+      { key: 'cloud', label: 'Cloud' },
+      { key: 'muted', label: 'Muted' },
+      { key: 'coral', label: 'Coral' },
+      { key: 'teal', label: 'Teal' },
+      { key: 'cyan', label: 'Cyan' },
+      { key: 'butter', label: 'Butter' },
+      { key: 'lavender', label: 'Lavender' },
+      { key: 'phosphorus', label: 'Phos' },
+      { key: 'phosphor', label: 'Glow' }
+    ];
+    
+    const colorInputs = COLOR_TOKENS.map(t => `
+      <div class="pg-color-field">
+        <input type="color" class="pg-color-swatch" data-token="${t.key}" id="cs-${t.key}">
+        <span class="pg-color-label">${t.label}</span>
+        <input type="text" class="pg-color-input" data-token="${t.key}" id="ct-${t.key}">
+      </div>
+    `).join('');
+    
+    const themePresets = Object.values(P31_THEMES).map(t => `
+      <div class="pg-preset" data-theme="${t.id}">
+        <div class="pg-preset-preview" style="background: linear-gradient(135deg, ${t.colors.void}, ${t.colors.primary || t.colors.teal});"></div>
+        <div class="pg-preset-name">${t.label}</div>
+      </div>
+    `).join('');
+    
+    const content = `
+      <div class="pg-layout">
+        <aside class="pg-controls">
+          <div class="pg-control-group">
+            <div class="pg-control-heading">Quick presets</div>
+            <div class="pg-preset-grid">${themePresets}</div>
+          </div>
+          
+          <div class="pg-control-group">
+            <div class="pg-control-heading">Colors</div>
+            ${colorInputs}
+          </div>
+          
+          <div class="pg-control-group">
+            <div class="pg-control-heading">Geometry</div>
+            <div class="pg-slider-field">
+              <div class="pg-slider-meta">
+                <span class="pg-slider-label">Border radius</span>
+                <span class="pg-slider-value" id="radius-val">12px</span>
+              </div>
+              <input type="range" class="pg-slider" min="0" max="24" value="12" id="radius-slider">
+            </div>
+            <div class="pg-slider-field">
+              <div class="pg-slider-meta">
+                <span class="pg-slider-label">Spacing scale</span>
+                <span class="pg-slider-value" id="spacing-val">1.0×</span>
+              </div>
+              <input type="range" class="pg-slider" min="80" max="150" value="100" id="spacing-slider">
+            </div>
+          </div>
+          
+          <div class="pg-control-group">
+            <div class="pg-control-heading">Adaptive mode</div>
+            <select class="p31-select" id="mode-select" style="width:100%; padding: 8px 12px; background: var(--p31-surface2); border: 1px solid var(--p31-border-subtle); border-radius: 8px; color: var(--p31-cloud); font-size: 12px;">
+              <option value="default">Default</option>
+              <option value="focus">Focus (high contrast)</option>
+              <option value="calm">Calm (warm desaturate)</option>
+              <option value="vibrant">Vibrant (boost)</option>
+              <option value="muted">Muted (greyed)</option>
+            </select>
+          </div>
+          
+          <div class="pg-control-group">
+            <div class="pg-control-heading">Actions</div>
+            <div class="pg-actions">
+              <button class="pg-action primary" id="export-btn">⇣ Export theme</button>
+              <button class="pg-action" id="reset-btn">↺ Reset</button>
+              <button class="pg-action" id="random-btn">⚂ Random</button>
+            </div>
+          </div>
+        </aside>
+        
+        <div class="pg-canvas">
+          <div class="pg-canvas-section">
+            <div class="pg-canvas-label">Hero pattern</div>
+            <div class="mock-hero">
+              <div class="mock-eyebrow">● Live preview</div>
+              <div class="mock-title">Your custom <span class="accent">theme</span></div>
+              <div class="mock-text">Adjust tokens on the left. The entire interface — typography, color, spacing, motion — responds instantly.</div>
+              <button class="mock-cta">Continue →</button>
+            </div>
+          </div>
+          
+          <div class="pg-canvas-section">
+            <div class="pg-canvas-label">Stat row</div>
+            <div class="mock-stats">
+              <div class="mock-stat">
+                <div class="mock-stat-value">12</div>
+                <div class="mock-stat-label">Nodes</div>
+              </div>
+              <div class="mock-stat">
+                <div class="mock-stat-value">8.4</div>
+                <div class="mock-stat-label">mg/dL</div>
+              </div>
+              <div class="mock-stat">
+                <div class="mock-stat-value" style="color: var(--p31-phosphor);">●</div>
+                <div class="mock-stat-label">Online</div>
+              </div>
+              <div class="mock-stat">
+                <div class="mock-stat-value">3</div>
+                <div class="mock-stat-label">Spoons</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="pg-canvas-section">
+            <div class="pg-canvas-label">Card grid</div>
+            <div class="mock-cards">
+              <div class="mock-card">
+                <div class="mock-card-icon">⚙</div>
+                <div class="mock-card-title">Centaur EDE</div>
+                <div class="mock-card-meta">v3.2.0</div>
+              </div>
+              <div class="mock-card">
+                <div class="mock-card-icon" style="color: var(--p31-coral);">◇</div>
+                <div class="mock-card-title">K4 Mesh</div>
+                <div class="mock-card-meta">4 nodes</div>
+              </div>
+              <div class="mock-card">
+                <div class="mock-card-icon" style="color: var(--p31-amber);">★</div>
+                <div class="mock-card-title">Bonding Soup</div>
+                <div class="mock-card-meta">Ready</div>
+              </div>
+              <div class="mock-card">
+                <div class="mock-card-icon" style="color: var(--p31-lavender);">◳</div>
+                <div class="mock-card-title">Wonky</div>
+                <div class="mock-card-meta">Live</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="pg-canvas-section" id="export-section" style="display:none;">
+            <div class="pg-canvas-label">Export · CSS variables</div>
+            <pre class="pg-export" id="export-output"></pre>
+            <button class="pg-action" style="margin-top: 12px;" id="copy-export-btn">⎘ Copy to clipboard</button>
+          </div>
+        </div>
+      </div>
+    `;
+    
+    renderShell({
+      activeId: 'playground',
+      breadcrumb: [
+        { href: '/stylebook/', label: 'Stylebook' },
+        { href: '/stylebook/', label: 'Theme' },
+        { label: 'Playground' }
+      ],
+      title: 'Playground',
+      subtitle: 'Live theme editor. Tweak tokens, see the entire system respond instantly. Export when satisfied.',
+      meta: [
+        { label: 'Tokens', value: '14 colors' },
+        { label: 'Modes', value: '5' },
+        { label: 'Export', value: 'CSS' }
+      ],
+      content
+    });
+    
+    // === Playground logic ===
+    
+    function getCurrentTokens() {
+      const result = {};
+      const cs = getComputedStyle(document.documentElement);
+      COLOR_TOKENS.forEach(t => {
+        result[t.key] = cs.getPropertyValue('--p31-' + t.key).trim();
+      });
+      return result;
+    }
+    
+    function syncInputsFromCSS() {
+      const tokens = getCurrentTokens();
+      COLOR_TOKENS.forEach(t => {
+        const sw = document.getElementById('cs-' + t.key);
+        const tx = document.getElementById('ct-' + t.key);
+        if (sw && tx) {
+          const val = tokens[t.key];
+          if (val.startsWith('#')) {
+            sw.value = val;
+            tx.value = val;
+          } else {
+            tx.value = val;
+          }
+        }
+      });
+    }
+    
+    function applyTokenOverride(token, value) {
+      document.documentElement.style.setProperty('--p31-' + token, value);
+    }
+    
+    // Color inputs
+    COLOR_TOKENS.forEach(t => {
+      const sw = document.getElementById('cs-' + t.key);
+      const tx = document.getElementById('ct-' + t.key);
+      if (sw) {
+        sw.addEventListener('input', (e) => {
+          tx.value = e.target.value;
+          applyTokenOverride(t.key, e.target.value);
+        });
+      }
+      if (tx) {
+        tx.addEventListener('change', (e) => {
+          if (/^#[0-9a-f]{6}$/i.test(e.target.value)) sw.value = e.target.value;
+          applyTokenOverride(t.key, e.target.value);
+        });
+      }
+    });
+    
+    // Theme presets
+    document.querySelectorAll('.pg-preset').forEach(p => {
+      p.addEventListener('click', () => {
+        window.p31Theme.setTheme(p.dataset.theme);
+        setTimeout(syncInputsFromCSS, 100);
+      });
+    });
+    
+    // Mode select
+    document.getElementById('mode-select').addEventListener('change', (e) => {
+      window.p31Theme.setMode(e.target.value);
+      setTimeout(syncInputsFromCSS, 100);
+    });
+    
+    // Geometry sliders
+    document.getElementById('radius-slider').addEventListener('input', (e) => {
+      const v = e.target.value + 'px';
+      document.getElementById('radius-val').textContent = v;
+      document.documentElement.style.setProperty('--p31-radius-lg', v);
+      document.documentElement.style.setProperty('--p31-radius-xl', (parseInt(v) * 1.33) + 'px');
+    });
+    
+    document.getElementById('spacing-slider').addEventListener('input', (e) => {
+      const scale = e.target.value / 100;
+      document.getElementById('spacing-val').textContent = scale.toFixed(1) + '×';
+      document.documentElement.style.setProperty('--p31-space-unit', `calc(0.25rem * ${scale})`);
+    });
+    
+    // Reset
+    document.getElementById('reset-btn').addEventListener('click', () => {
+      COLOR_TOKENS.forEach(t => {
+        document.documentElement.style.removeProperty('--p31-' + t.key);
+      });
+      document.documentElement.style.removeProperty('--p31-radius-lg');
+      document.documentElement.style.removeProperty('--p31-radius-xl');
+      document.documentElement.style.removeProperty('--p31-space-unit');
+      document.getElementById('radius-slider').value = 12;
+      document.getElementById('radius-val').textContent = '12px';
+      document.getElementById('spacing-slider').value = 100;
+      document.getElementById('spacing-val').textContent = '1.0×';
+      window.p31Theme.setTheme('hub');
+      window.p31Theme.setMode('default');
+      document.getElementById('mode-select').value = 'default';
+      setTimeout(syncInputsFromCSS, 100);
+    });
+    
+    // Random
+    document.getElementById('random-btn').addEventListener('click', () => {
+      const themes = Object.keys(P31_THEMES);
+      const t = themes[Math.floor(Math.random() * themes.length)];
+      window.p31Theme.setTheme(t);
+      const radius = Math.floor(Math.random() * 24);
+      document.getElementById('radius-slider').value = radius;
+      document.getElementById('radius-val').textContent = radius + 'px';
+      document.documentElement.style.setProperty('--p31-radius-lg', radius + 'px');
+      setTimeout(syncInputsFromCSS, 100);
+    });
+    
+    // Export
+    document.getElementById('export-btn').addEventListener('click', () => {
+      const sec = document.getElementById('export-section');
+      const out = document.getElementById('export-output');
+      sec.style.display = 'block';
+      
+      const tokens = getCurrentTokens();
+      const css = ':root {\n' + 
+        COLOR_TOKENS.map(t => `  --p31-${t.key}: ${tokens[t.key]};`).join('\n') +
+        '\n  --p31-radius-lg: ' + getComputedStyle(document.documentElement).getPropertyValue('--p31-radius-lg').trim() +
+        ';\n  --p31-space-unit: ' + getComputedStyle(document.documentElement).getPropertyValue('--p31-space-unit').trim() +
+        ';\n}';
+      out.textContent = css;
+      sec.scrollIntoView({ behavior: 'smooth' });
+    });
+    
+    document.getElementById('copy-export-btn').addEventListener('click', async () => {
+      const text = document.getElementById('export-output').textContent;
+      try {
+        await navigator.clipboard.writeText(text);
+        const btn = document.getElementById('copy-export-btn');
+        btn.textContent = '✓ Copied to clipboard';
+        setTimeout(() => { btn.textContent = '⎘ Copy to clipboard'; }, 1500);
+      } catch (e) {}
+    });
+    
+    // Initial sync
+    setTimeout(syncInputsFromCSS, 200);
+    window.p31Theme.onChange(() => setTimeout(syncInputsFromCSS, 100));
+  </script>
+</body>
+</html>

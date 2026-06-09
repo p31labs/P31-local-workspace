@@ -1,0 +1,69 @@
+---
+/**
+ * BaseLayout.astro — P31 Command Center root layout.
+ *
+ * Enforces the dark-mode glassmorphism theme across all children.
+ * Void (#050505) baseline, Inter + Space Mono (matches operator static HTML).
+ * Google Fonts loaded via preconnect + display=swap for FOUT prevention.
+ */
+interface Props {
+  title: string;
+  description?: string;
+  /** Prefer absolute URL, e.g. https://p31ca.org/ — defaults from this page path on p31ca.org */
+  canonical?: string;
+}
+
+const { title, description = 'P31 Labs — Isostatically Rigid. Cognitively Sovereign.', canonical } = Astro.props;
+
+const canonicalHref =
+  canonical ??
+  new URL(Astro.url.pathname.replace(/\/index\.html$/, '/') || '/', 'https://p31ca.org').href;
+---
+
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalHref} />
+    <meta name="theme-color" content="#050505" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Fonts: Inter + Space Mono (hub + static p31ca) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <title>{title}</title>
+  </head>
+  <body class="bg-void min-h-screen text-white/85 font-sans antialiased">
+    <!-- Ambient grid background -->
+    <div
+      class="fixed inset-0 pointer-events-none opacity-[0.03]"
+      style="background-image: radial-gradient(rgba(255,255,255,0.3) 1px, transparent 1px); background-size: 32px 32px;"
+    >
+    </div>
+
+    <slot />
+    <!--
+      If another app (e.g. Hearing Ops PWA) was ever deployed to the same Pages project + domain,
+      browsers may keep a service worker that serves the wrong shell. Hub is static Astro — no hub SW.
+      Unregister so the current deployment’s HTML is what users see.
+    -->
+    <script is:inline>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(function (regs) {
+          regs.forEach(function (reg) {
+            reg.unregister();
+          });
+        });
+      }
+    </script>
+  </body>
+</html>

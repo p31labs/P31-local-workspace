@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub" style="color-scheme: dark;">
+<head>
+  <meta charset="UTF-8">
+<script>(function(){var r=document.documentElement;if(/[?&]alive=1(?:&|$)/.test(location.search))return;r.classList.add("p31-gray-rock");function wake(){r.classList.remove("p31-gray-rock")}document.addEventListener("pointerdown",wake,{once:true,capture:true});document.addEventListener("keydown",wake,{once:true,capture:true})})();</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0f1115">
+  <title>Live fleet map — sites & Workers | P31 Labs</title>
+  <meta name="description" content="Interactive index of p31ca.org surfaces, mesh Worker URLs, payments, and full allowlisted fleet. Data from p31-live-fleet.json.">
+<link rel="canonical" href="https://p31ca.org/live-fleet-demo.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Live fleet map — sites &amp; Workers">
+<meta property="og:description" content="Interactive index of p31ca.org surfaces, mesh Worker URLs, payments, and full allowlisted fleet. Data from p31-live-fleet.json.">
+<meta property="og:url" content="https://p31ca.org/live-fleet-demo.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Live fleet map — sites &amp; Workers">
+<meta name="twitter:description" content="Interactive index of p31ca.org surfaces, mesh Worker URLs, payments, and full allowlisted fleet. Data from p31-live-fleet.json.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/p31-style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/p31-tailwind-extend.js"></script>
+  <script>
+    tailwind.config = { theme: { extend: { ...window.P31_TAILWIND_EXTEND } } };
+  </script>
+  <style>
+    body { font-family: var(--p31-font-sans); background: var(--p31-void); color: var(--p31-cloud); }
+    .panel {
+      background: var(--p31-surface);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: var(--p31-radius-lg);
+    }
+    .mono { font-family: var(--p31-font-mono); font-size: var(--p31-text-xs); }
+    a.url { color: var(--p31-teal); word-break: break-all; }
+    a.url:hover { text-decoration: underline; }
+    table.data td, table.data th { padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--p31-border-subtle); vertical-align: top; }
+    table.data th { text-align: left; color: var(--p31-muted); font-weight: 600; }
+    .skip-link {
+      position: absolute;
+      left: -9999px;
+      z-index: 9999;
+      padding: 0.5rem 1rem;
+      background: #134e4a;
+      color: #fff;
+      border-radius: 0.375rem;
+      text-decoration: none;
+      font-size: 0.875rem;
+    }
+    .skip-link:focus {
+      left: 0.5rem;
+      top: 0.5rem;
+    }
+  </style>
+</head>
+<body class="bg-void text-cloud min-h-screen font-sans antialiased">
+  <a href="#main" class="skip-link">Skip to content</a>
+
+  <header class="border-b border-white/[0.07] bg-surface/90 backdrop-blur-sm sticky top-0 z-40">
+    <div class="max-w-5xl mx-auto px-4 py-4 flex flex-wrap items-center justify-between gap-3">
+      <div>
+        <p class="mono text-[var(--p31-phosphor)] uppercase tracking-widest text-[10px] mb-1">Demo · p31.liveFleet</p>
+        <h1 class="text-xl md:text-2xl font-bold text-paper tracking-tight">Live fleet map</h1>
+        <p class="text-sm text-[var(--p31-muted)] mt-1 max-w-xl">A single, readable map of what we ship on the hub and at the edge — live data from <code class="mono text-[var(--p31-teal)]">/p31-live-fleet.json</code>. Bookmark it for onboarding or audits.</p>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        <a href="/demos" class="px-3 py-1.5 rounded border border-white/15 text-xs font-mono uppercase tracking-wide hover:bg-white/5">All demos</a>
+        <a href="/agents" class="px-3 py-1.5 rounded border border-cyan-400/35 text-cyan-200 text-xs font-mono uppercase tracking-wide hover:bg-cyan-500/10">Fleet agents</a>
+        <a href="/ops/" class="px-3 py-1.5 rounded border border-violet-400/40 text-violet-200 text-xs font-mono uppercase tracking-wide hover:bg-violet-500/10">Ops shell</a>
+        <a href="/p31-live-fleet.json" class="px-3 py-1.5 rounded border border-teal-500/40 text-teal-200 text-xs font-mono uppercase tracking-wide hover:bg-teal-500/10">Raw JSON</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="main" class="max-w-5xl mx-auto px-4 py-8 space-y-10">
+    <div id="status" class="panel p-4 mono text-[var(--p31-muted)]">Loading bundle…</div>
+
+    <section id="sec-sites" class="hidden space-y-4">
+      <h2 class="text-lg font-bold text-white">Public sites</h2>
+      <div id="sites-grid" class="grid sm:grid-cols-2 gap-3"></div>
+      <div class="panel p-4">
+        <h3 class="text-sm font-semibold text-[var(--p31-muted)] mb-2">Featured paths (this hub)</h3>
+        <ul id="paths-list" class="mono text-sm space-y-1 text-[var(--p31-cloud)]"></ul>
+      </div>
+    </section>
+
+    <section id="sec-pay" class="hidden space-y-3">
+      <h2 class="text-lg font-bold text-white">Mesh & payments</h2>
+      <div class="panel overflow-x-auto">
+        <table class="data w-full text-sm" id="mesh-table"></table>
+      </div>
+    </section>
+
+    <section id="sec-verified" class="hidden space-y-3">
+      <h2 class="text-lg font-bold text-white">Verified Workers</h2>
+      <p class="text-sm text-[var(--p31-muted)]">These URLs match operator constants. Browsers may block cross-origin health checks; for a live glass table use <a class="url" href="/ops/">the operator shell</a> or run <span class="mono">npm run ecosystem:glass</span> from the P31 home repository.</p>
+      <div class="panel overflow-x-auto">
+        <table class="data w-full text-sm" id="verified-table"></table>
+      </div>
+    </section>
+
+    <section id="sec-allow" class="hidden space-y-3">
+      <h2 class="text-lg font-bold text-white">Allowlisted Workers</h2>
+      <p class="text-sm text-[var(--p31-muted)]">Inventory from security allowlist. Default <span class="mono">*.trimtab-signal.workers.dev</span> — confirm in wrangler if unsure.</p>
+      <div class="panel overflow-x-auto max-h-[28rem] overflow-y-auto">
+        <table class="data w-full text-sm" id="allow-table"></table>
+      </div>
+    </section>
+
+    <footer class="pt-8 border-t border-white/10 text-sm text-[var(--p31-muted)] space-y-4">
+      <nav class="flex flex-wrap gap-x-4 gap-y-2" aria-label="Trust and policies">
+        <a href="/privacy" class="url">Privacy</a>
+        <a href="/terms" class="url">Terms</a>
+        <a href="/contact" class="url">Contact</a>
+        <a href="/accessibility" class="url">Accessibility</a>
+        <a href="/security" class="url">Security</a>
+        <a href="/demos" class="url">All demos</a>
+      </nav>
+      <div class="flex flex-wrap gap-4 justify-between items-center">
+        <span>P31 Labs, Inc. — reference map only; not legal, medical, or investment advice.</span>
+        <a href="/" class="url whitespace-nowrap">← Cockpit home</a>
+      </div>
+    </footer>
+  </main>
+
+  <script>
+    function esc(s) {
+      const d = document.createElement('div');
+      d.textContent = s == null ? '' : String(s);
+      return d.innerHTML;
+    }
+    function linkify(url, label) {
+      if (!url) return '—';
+      const u = esc(url);
+      const t = esc(label || url);
+      return '<a class="url" href="' + u + '" target="_blank" rel="noopener">' + t + '</a>';
+    }
+
+    async function main() {
+      const status = document.getElementById('status');
+      let data;
+      try {
+        const r = await fetch('/p31-live-fleet.json', { cache: 'no-store' });
+        if (!r.ok) throw new Error(r.status + ' ' + r.statusText);
+        data = await r.json();
+      } catch (e) {
+        status.innerHTML = '<span class="text-red-400">Failed to load bundle: ' + esc(e.message) + '</span>';
+        return;
+      }
+      if (data.schema !== 'p31.liveFleet/1.0.0') {
+        status.innerHTML = '<span class="text-amber-400">Warning: unexpected schema ' + esc(data.schema) + '</span>';
+      } else {
+        status.innerHTML = '<span class="text-[var(--p31-phosphor)]">●</span> Loaded <span class="mono">p31.liveFleet/1.0.0</span> · updated ' + esc(data.updated || '—');
+      }
+
+      const sites = data.sites || {};
+      const sg = document.getElementById('sites-grid');
+      const siteCards = [
+        ['technicalHub', 'Technical hub'],
+        ['operatorShell', 'Operator shell'],
+        ['orgMarketing', 'Org site'],
+        ['bondingVertical', 'BONDING'],
+        ['publicMachineIndexes', 'Machine JSON'],
+      ];
+      for (const [key, label] of siteCards) {
+        const o = sites[key];
+        if (!o) continue;
+        const url = o.url || (o.publicSurface ? null : null);
+        let body = '';
+        if (key === 'publicMachineIndexes') {
+          body = '<ul class="mono text-xs space-y-1 mt-2">';
+          for (const [k, v] of Object.entries(o)) {
+            if (k === 'note' || typeof v !== 'string' || !v.startsWith('http')) continue;
+            body += '<li>' + linkify(v, k) + '</li>';
+          }
+          body += '</ul>';
+        } else {
+          body = '<p class="mono text-xs mt-2">' + linkify(url) + '</p>';
+        }
+        const card = document.createElement('div');
+        card.className = 'panel p-4';
+        card.innerHTML = '<h3 class="font-semibold text-white">' + esc(label) + '</h3><p class="text-xs text-[var(--p31-muted)] mt-1">' + esc(o.note || o.kind || '') + '</p>' + body;
+        sg.appendChild(card);
+      }
+      document.getElementById('sec-sites').classList.remove('hidden');
+
+      const paths = sites.featuredPublicPaths || [];
+      const pl = document.getElementById('paths-list');
+      for (const p of paths) {
+        const li = document.createElement('li');
+        const path = p.path.startsWith('/') ? p.path : '/' + p.path;
+        const u = esc(path);
+        li.innerHTML = '<a class="url" href="' + u + '">' + u + '</a> — <span class="text-[var(--p31-muted)]">' + esc(p.note || '') + '</span>';
+        pl.appendChild(li);
+      }
+
+      const mesh = data.meshAndPayments && data.meshAndPayments.mesh;
+      const pay = data.meshAndPayments && data.meshAndPayments.payment;
+      if (mesh || pay) {
+        const mt = document.getElementById('mesh-table');
+        let rows = '<thead><tr><th>Key</th><th>Value</th></tr></thead><tbody>';
+        if (mesh) {
+          for (const [k, v] of Object.entries(mesh)) {
+            if (k === 'note') { rows += '<tr><td class="mono">' + esc(k) + '</td><td>' + esc(v) + '</td></tr>'; continue; }
+            if (typeof v === 'string' && v.startsWith('http')) {
+              rows += '<tr><td class="mono">' + esc(k) + '</td><td>' + linkify(v) + '</td></tr>';
+            } else {
+              rows += '<tr><td class="mono">' + esc(k) + '</td><td>' + esc(v) + '</td></tr>';
+            }
+          }
+        }
+        if (pay) {
+          for (const [k, v] of Object.entries(pay)) {
+            if (typeof v === 'string' && v.startsWith('http')) {
+              rows += '<tr><td class="mono">payment.' + esc(k) + '</td><td>' + linkify(v) + '</td></tr>';
+            } else {
+              rows += '<tr><td class="mono">payment.' + esc(k) + '</td><td>' + esc(v) + '</td></tr>';
+            }
+          }
+        }
+        rows += '</tbody>';
+        mt.innerHTML = rows;
+        document.getElementById('sec-pay').classList.remove('hidden');
+      }
+
+      const ver = data.workersVerified || [];
+      if (ver.length) {
+        const vt = document.getElementById('verified-table');
+        let html = '<thead><tr><th>Worker</th><th>URL / paths</th><th>Deploy hint</th><th>Agent room</th></tr></thead><tbody>';
+        for (const w of ver) {
+          const urls = [];
+          if (w.workersDev) urls.push(linkify(w.workersDev, 'workers.dev'));
+          if (w.customDomain) urls.push(linkify(w.customDomain, 'custom'));
+          if (w.sameOriginOnHub) urls.push(linkify(w.sameOriginOnHub, 'hub API'));
+          const paths = []
+            .concat(w.healthPaths || [])
+            .concat(w.meshPaths || [])
+            .concat(w.publicPaths || [])
+            .concat(w.statusPath ? [w.statusPath] : [])
+            .map(function (p) { return '<code>' + esc(p) + '</code>'; })
+            .join(' ');
+          const slug = encodeURIComponent(w.id || '');
+          const room = '<a class="url" href="/fleet-agents.html#' + esc(w.id || '') + '">interactive</a> · <a class="url mono text-[10px]" href="/agent/' + slug + '/">/agent/…/</a>';
+          html += '<tr><td class="mono font-semibold">' + esc(w.id) + '</td><td>' + urls.join('<br>') + (paths ? '<div class="mt-1 text-[var(--p31-muted)]">' + paths + '</div>' : '') + '</td><td class="text-[var(--p31-muted)] mono text-xs">' + esc(w.deploy || '') + (w.note ? '<div class="mt-1">' + esc(w.note) + '</div>' : '') + '</td><td class="mono text-xs whitespace-nowrap">' + room + '</td></tr>';
+        }
+        html += '</tbody>';
+        vt.innerHTML = html;
+        document.getElementById('sec-verified').classList.remove('hidden');
+      }
+
+      const al = data.workersAllowlisted || [];
+      if (al.length) {
+        const at = document.getElementById('allow-table');
+        let html = '<thead><tr><th>id</th><th>default workers.dev</th><th>code path</th></tr></thead><tbody>';
+        for (const w of al) {
+          html += '<tr><td class="mono">' + esc(w.id) + '</td><td>' + (w.defaultWorkersDev ? linkify(w.defaultWorkersDev) : '—') + '</td><td class="mono text-[var(--p31-muted)]">' + esc(w.codePath || '') + (w.note ? '<div class="text-xs mt-1">' + esc(w.note) + '</div>' : '') + '</td></tr>';
+        }
+        html += '</tbody>';
+        at.innerHTML = html;
+        document.getElementById('sec-allow').classList.remove('hidden');
+      }
+    }
+    main();
+  </script>
+</body>
+</html>

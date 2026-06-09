@@ -1,0 +1,788 @@
+---
+/**
+ * AppShell.astro — Unified canonical AppShell layout.
+ *
+ * Mobile-first design with collapsible hamburger navigation and
+ * minimize-able EBC footer. Maximizes screen real estate.
+ *
+ * One persistent WebGL2 canvas survives all ClientRouter navigations via
+ * `transition:persist`. `starfield-singleton.ts` owns the GL context and
+ * lerps camera Z, hue, particle count, and speed per route (~600ms half-life).
+ *
+ * PHOS bus bar load order MUST NOT change — see BaseLayout / CWP-PHOS-2026-01.
+ * Garden isolation: `routeName="garden"` strips molecular field + EBC footer.
+ */
+import { ClientRouter } from 'astro:transitions';
+import type { RouteId } from '../lib/starfield-singleton';
+import { PHOS_FAMILIAR_SVG } from '../lib/phos-assets';
+import P31SettingsPanel from '../components/P31SettingsPanel.astro';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  routeName: RouteId;
+  phosPage?: string;
+  suppressEbc?: boolean;
+  preserveSW?: boolean;
+}
+
+const {
+  title = 'P31 Labs',
+  description = 'P31 Labs — Isostatically Rigid. Cognitively Sovereign.',
+  routeName,
+  phosPage,
+  suppressEbc = false,
+  preserveSW = false,
+} = Astro.props;
+
+const isGarden = routeName === 'garden';
+const isGame = routeName === 'cybernetic-bonsai' || routeName === 'abyssal-node' || routeName === 'quantum-lattice';
+
+// Navigation items - unified canonical nav (mobile-first: short labels)
+const navItems = [
+  { href: '/', label: 'Hub', route: 'home', short: 'Hub' },
+  { href: '/dome', label: 'Dome', route: 'dome', short: 'Dome' },
+  { href: '/arcade-hub-about.html', label: 'Arcade', route: 'arcade', short: 'Play' },
+  { href: '/bonding-about.html', label: 'BONDING', route: 'bonding', short: 'Bond' },
+  { href: '/syllabus', label: 'Syllabus', route: 'syllabus', short: 'Learn' },
+  { href: '/research', label: 'Research', route: 'research', short: 'R&D' },
+  { href: '/ops', label: 'Ops', route: 'ops', short: 'Ops' },
+  { href: '/connect', label: 'Mesh', route: 'connect', short: 'Mesh' },
+];
+
+// EBC mission links
+const ebcLinks = [
+  { id: 'build', href: '/build', verb: 'Build', desc: 'Intake and bake on the same verify chain' },
+  { id: 'create', href: '/geodesic.html', verb: 'Create', desc: 'One lab surface, honest rigidity' },
+  { id: 'connect', href: '/mesh', verb: 'Connect', desc: 'Live cage and edges: mesh, hubs, and money' },
+];
+---
+
+<!doctype html>
+<html
+  lang="en"
+  class="dark"
+  data-p31-appearance="hub"
+  data-p31-route={routeName}
+  style="color-scheme: dark;"
+>
+  <head>
+    <!-- P31 PWA Service Worker Registration -->
+    {!preserveSW && (
+      <script is:inline>
+        if ('serviceWorker' in navigator) {
+          window.addEventListener('load', function() {
+            navigator.serviceWorker.register('/sw.js')
+              .then(function(registration) {
+                console.log('[P31 PWA] SW registered:', registration.scope);
+                registration.addEventListener('updatefound', function() {
+                  var newWorker = registration.installing;
+                  if (newWorker) {
+                    newWorker.addEventListener('statechange', function() {
+                      if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                        console.log('[P31 PWA] New version available');
+                        window.dispatchEvent(new CustomEvent('p31:sw-update', { detail: { worker: newWorker } }));
+                      }
+                    });
+                  }
+                });
+              })
+              .catch(function(error) {
+                console.log('[P31 PWA] SW registration failed:', error);
+              });
+          });
+        }
+      </script>
+    )}
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#050505" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#0f1115" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/icons/p31-192.png" />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="stylesheet" href="/p31-style.css" />
+    <link rel="stylesheet" href="/lib/p31-qmu-tokens.css" />
+    {!isGarden && <link rel="stylesheet" href="/lib/p31-molecular-field.css" />}
+
+    <!-- Resource hints -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="dns-prefetch" href="https://glass-box-ws.trimtab-signal.workers.dev" />
+    <link rel="preconnect" href="https://glass-box-ws.trimtab-signal.workers.dev" />
+
+    <!-- Fonts: Atkinson + JetBrains Mono — P31 canon -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;500;700;800&display=swap"
+      rel="stylesheet"
+      media="print"
+      onload="this.media='all'"
+    />
+    <noscript>
+      <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;500;700;800&display=swap" rel="stylesheet" />
+    </noscript>
+
+    <!-- Preload critical font -->
+    <link rel="preload" href="https://fonts.gstatic.com/s/atkinsonhyperlegible/v11/9Bt23C1KxNDXMspQ1lPyU89-1h6ONbW8HnxB.woff2" as="font" type="font/woff2" crossorigin />
+
+    <title>{title}</title>
+
+    <!-- Critical CSS -->
+    <style is:inline>
+      html { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+      .fonts-loaded html { font-family: "Atkinson Hyperlegible", system-ui, sans-serif; }
+      .p31-hero-critical { min-height: 200px; contain: layout style; }
+      canvas[data-p31-appshell-canvas] { contain: strict; }
+      #ebc { contain: layout style; }
+      .p31-shell-content { padding-bottom: calc(2.25rem + env(safe-area-inset-bottom, 0px)); }
+
+      /* Mobile-first nav - compact by default */
+      #p31-top-nav {
+        contain: layout style paint;
+        will-change: transform;
+      }
+
+      /* Skip link for accessibility */
+      .p31-skip-link {
+        position: absolute;
+        top: -40px;
+        left: 0;
+        background: var(--p31-cyan, #4db8a8);
+        color: #000;
+        padding: 8px 16px;
+        z-index: 100;
+        transition: top 0.3s;
+        font-weight: 600;
+        text-decoration: none;
+        border-radius: 0 0 4px 0;
+      }
+      .p31-skip-link:focus {
+        top: 0;
+      }
+
+      /* Focus visible for keyboard navigation */
+      :focus-visible {
+        outline: 2px solid var(--p31-cyan, #4db8a8);
+        outline-offset: 2px;
+      }
+      .p31-skip-link:focus-visible {
+        outline: 3px solid #fff;
+        outline-offset: 0;
+      }
+
+      /* Reduced motion support */
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+
+      /* Loading state for shell */
+      .p31-shell-loading {
+        opacity: 0;
+        animation: p31-fade-in 0.3s ease-out forwards;
+      }
+      @keyframes p31-fade-in {
+        to { opacity: 1; }
+      }
+
+      /* Error boundary fallback */
+      .p31-error-fallback {
+        padding: 2rem;
+        text-align: center;
+        background: var(--p31-surface, #161920);
+        border: 1px solid var(--p31-coral, #cc6247);
+        border-radius: 8px;
+        margin: 1rem;
+      }
+
+      /* Hamburger menu animation */
+      .p31-hamburger-line {
+        transition: transform 0.2s ease, opacity 0.2s ease;
+        transform-origin: center;
+      }
+      [aria-expanded="true"] .p31-hamburger-line:first-child {
+        transform: translateY(6px) rotate(45deg);
+      }
+      [aria-expanded="true"] .p31-hamburger-line:nth-child(2) {
+        opacity: 0;
+      }
+      [aria-expanded="true"] .p31-hamburger-line:last-child {
+        transform: translateY(-6px) rotate(-45deg);
+      }
+
+      /* Collapsible footer states */
+      #ebc[data-collapsed="true"] {
+        transform: translateY(calc(100% - 2.5rem));
+      }
+      #ebc[data-collapsed="true"] .p31-mission-trio__link {
+        opacity: 0;
+        pointer-events: none;
+      }
+      #ebc[data-collapsed="true"] #ebc-toggle {
+        opacity: 1;
+      }
+
+      /* High contrast mode support */
+      @media (prefers-contrast: high) {
+        .nav { border-bottom-width: 2px; }
+        #ebc { border-top-width: 2px; }
+      }
+    </style>
+
+    <ClientRouter />
+
+    <script is:inline>
+      if ('fonts' in document) {
+        Promise.all([
+          document.fonts.load('400 1em "Atkinson Hyperlegible"'),
+          document.fonts.load('700 1em "Atkinson Hyperlegible"')
+        ]).then(function() {
+          document.documentElement.classList.add('fonts-loaded');
+        });
+      } else {
+        setTimeout(function() { document.documentElement.classList.add('fonts-loaded'); }, 100);
+      }
+    </script>
+
+    <!-- PHOS bus bar (load order is load-bearing) -->
+    <script is:inline src="/lib/p31-subject-prefs.js"></script>
+    <script type="module" src="/lib/p31-theme-engine.mjs"></script>
+    <script type="module" src="/lib/p31-cogpass-reader.mjs"></script>
+    <script type="module" src="/lib/p31-phos-guide.mjs"></script>
+    <script type="module" src="/lib/p31-theme-switcher.mjs"></script>
+
+    <!-- Starfield Notifications -->
+    <script type="module" src="/lib/starfield-notifications.ts"></script>
+    <script src="/lib/starfield-settings-ui.js" defer></script>
+
+    <slot name="head" />
+
+    <style is:global>
+      canvas[data-p31-appshell-canvas] {
+        position: fixed;
+        inset: 0;
+        width: 100vw;
+        height: 100vh;
+        display: block;
+        z-index: 0;
+        pointer-events: none;
+        view-transition-name: none;
+      }
+      .p31-shell-content {
+        position: relative;
+        z-index: 1;
+        padding-bottom: calc(2.25rem + env(safe-area-inset-bottom, 0px));
+      }
+
+      /* Mobile navigation menu - hidden by default */
+      #p31-mobile-menu {
+        transform: translateX(100%);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      #p31-mobile-menu[data-open="true"] {
+        transform: translateX(0);
+      }
+
+      /* Overlay backdrop */
+      #p31-menu-overlay {
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+      }
+      #p31-menu-overlay[data-open="true"] {
+        opacity: 1;
+        pointer-events: auto;
+      }
+    </style>
+  </head>
+
+  <body
+    class="bg-p31-void min-h-screen text-base leading-relaxed text-p31-cloud font-sans antialiased p31-root p31-safe-area p31-shell-loading"
+    data-p31-phos-page={phosPage}
+  >
+    <!-- Skip to main content link for accessibility -->
+    <a href="#main-content" class="p31-skip-link">Skip to main content</a>
+
+    <div class="ambient-radial-fixed" aria-hidden="true"></div>
+
+    <canvas
+      data-p31-appshell-canvas
+      transition:persist="appshell-canvas"
+      aria-hidden="true"
+      width="1920"
+      height="1080"
+      style="width: 100vw; height: 100vh; display: block;"
+    ></canvas>
+
+    <!-- Mobile-first Navigation -->
+    {!isGarden && (
+      <>
+        {/* Desktop: Full nav bar / Mobile: Compact header with hamburger */}
+        <nav
+          id="p31-top-nav"
+          class="nav fixed top-0 left-0 right-0 z-50 bg-p31-void/80 backdrop-blur-md border-b border-white/5"
+          style="padding-top: env(safe-area-inset-top, 0px);"
+        >
+          <div class="flex items-center justify-between px-3 py-2 md:px-4 md:py-3">
+            {/* Brand - always visible */}
+            <a href="/" class="flex items-center gap-2 text-p31-cloud hover:text-p31-cyan transition-colors" title="P31 Labs hub">
+              <span class="inline-flex w-7 h-5 items-center" style="image-rendering:pixelated;">
+                <Fragment set:html={PHOS_FAMILIAR_SVG} />
+              </span>
+              <span class="font-semibold text-sm md:text-base tracking-tight">P31 Labs</span>
+            </a>
+
+            {/* Desktop: Inline nav links - short labels on smaller screens */}
+            <div class="hidden md:flex items-center gap-0.5 lg:gap-1">
+              {navItems.map(item => (
+                <a
+                  href={item.href}
+                  class={`px-2 lg:px-3 py-1.5 text-sm rounded-md transition-colors whitespace-nowrap ${
+                    routeName === item.route
+                      ? 'bg-p31-cyan/20 text-p31-cyan'
+                      : 'text-p31-cloud-70 hover:text-p31-cloud hover:bg-white/5'
+                  }`}
+                  aria-current={routeName === item.route ? 'page' : undefined}
+                >
+                  <span class="lg:hidden">{item.short}</span>
+                  <span class="hidden lg:inline">{item.label}</span>
+                </a>
+              ))}
+              <a
+                href="https://github.com/p31labs/andromeda"
+                target="_blank"
+                rel="noopener"
+                class="ml-1 lg:ml-2 px-2 lg:px-3 py-1.5 text-sm text-p31-cloud-50 hover:text-p31-cloud rounded-md transition-colors"
+                aria-label="GitHub"
+              >
+                <span class="lg:hidden">GH</span>
+                <span class="hidden lg:inline">GH↗</span>
+              </a>
+            </div>
+
+            {/* Mobile: Hamburger button */}
+            <button
+              id="p31-hamburger"
+              class="md:hidden flex flex-col justify-center items-center w-10 h-10 gap-1.5 rounded-md hover:bg-white/5 transition-colors"
+              aria-label="Open menu"
+              aria-expanded="false"
+              aria-controls="p31-mobile-menu"
+              type="button"
+            >
+              <span class="p31-hamburger-line w-5 h-0.5 bg-current rounded-full"></span>
+              <span class="p31-hamburger-line w-5 h-0.5 bg-current rounded-full"></span>
+              <span class="p31-hamburger-line w-5 h-0.5 bg-current rounded-full"></span>
+            </button>
+          </div>
+        </nav>
+
+        {/* Mobile: Slide-out menu */}
+        <div
+          id="p31-menu-overlay"
+          class="fixed inset-0 z-40 bg-p31-void/60 backdrop-blur-sm md:hidden"
+          data-open="false"
+          aria-hidden="true"
+        ></div>
+
+        <div
+          id="p31-mobile-menu"
+          class="fixed top-0 right-0 bottom-0 w-64 max-w-[80vw] z-50 bg-p31-void/95 backdrop-blur-xl border-l border-white/10 md:hidden flex flex-col"
+          data-open="false"
+          style="padding-top: calc(env(safe-area-inset-top, 0px) + 3rem); padding-bottom: env(safe-area-inset-bottom, 0px);"
+        >
+          <div class="flex-1 overflow-y-auto px-4 py-4">
+            <div class="flex flex-col gap-1">
+              {navItems.map(item => (
+                <a
+                  href={item.href}
+                  class={`px-4 py-3 rounded-lg transition-colors flex items-center justify-between ${
+                    routeName === item.route
+                      ? 'bg-p31-cyan/20 text-p31-cyan font-medium'
+                      : 'text-p31-cloud-80 hover:text-p31-cloud hover:bg-white/5'
+                  }`}
+                  aria-current={routeName === item.route ? 'page' : undefined}
+                >
+                  <span class="text-base">{item.label}</span>
+                  <span class="text-xs text-p31-cloud-40 font-mono">{item.short}</span>
+                </a>
+              ))}
+              <div class="h-px bg-white/10 my-2"></div>
+              <a
+                href="https://github.com/p31labs/andromeda"
+                target="_blank"
+                rel="noopener"
+                class="px-4 py-3 text-p31-cloud-60 hover:text-p31-cloud rounded-lg transition-colors flex items-center gap-2"
+              >
+                <span>GitHub</span>
+                <span class="text-xs">↗</span>
+              </a>
+            </div>
+          </div>
+
+          {/* Menu footer */}
+          <div class="px-4 py-3 border-t border-white/10">
+            <div class="text-xs text-p31-cloud-40 font-mono">
+              <span class="text-p31-coral">●</span> Live
+            </div>
+          </div>
+        </div>
+      </>
+    )}
+
+    {/* Spacer for fixed nav (not on garden) */}
+    {!isGarden && <div class="h-12 md:h-14" aria-hidden="true"></div>}
+
+    {/* Page content with error boundary and main landmark */}
+    <main
+      id="main-content"
+      class={`p31-shell-content p31-inset-safe ${isGame ? 'h-screen overflow-hidden' : ''}`}
+      role="main"
+      aria-label="Main content"
+    >
+      {/* Error boundary fallback - shown if JS fails */}
+      <noscript>
+        <div class="p31-error-fallback" role="alert">
+          <h2>JavaScript Required</h2>
+          <p>P31 Labs uses modern web technologies for assistive interfaces. Please enable JavaScript for the best experience.</p>
+          <a href="/" style="color: var(--p31-cyan, #4db8a8);">Return to Home</a>
+        </div>
+      </noscript>
+
+      {/* React/Component error boundary will catch errors here */}
+      <div id="p31-root-slot" data-p31-route={routeName}>
+        <slot />
+      </div>
+    </main>
+
+    {/* Collapsible EBC footer */}
+    {!isGarden && !suppressEbc && (
+      <footer
+        id="ebc"
+        class="fixed bottom-0 left-0 right-0 z-40 bg-p31-void/90 backdrop-blur-md border-t border-white/10 transition-transform duration-300"
+        style="padding-bottom: env(safe-area-inset-bottom, 0px);"
+        data-collapsed="false"
+      >
+        {/* Toggle handle */}
+        <button
+          id="ebc-toggle"
+          class="absolute -top-3 left-1/2 -translate-x-1/2 w-12 h-6 flex items-center justify-center rounded-full bg-p31-void/90 border border-white/10 hover:border-p31-cyan/30 transition-colors"
+          aria-label="Toggle mission footer"
+          aria-expanded="true"
+          aria-controls="ebc-content"
+          type="button"
+        >
+          <svg class="w-4 h-4 text-p31-cloud-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" class="ebc-chevron-down" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" class="ebc-chevron-up hidden" />
+          </svg>
+        </button>
+
+        {/* EBC Content */}
+        <div id="ebc-content" class="p31-mission-trio p31-mission-trio--ebc px-4 py-3">
+          <div class="max-w-4xl mx-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-6">
+            {ebcLinks.map(link => (
+              <a
+                class="p31-mission-trio__link flex items-center gap-3 p-2 -m-2 rounded-lg hover:bg-white/5 transition-colors group"
+                href={link.href}
+              >
+                <span class="flex items-center gap-2">
+                  <span class="w-2 h-2 rounded-full bg-p31-cyan group-hover:scale-125 transition-transform"></span>
+                  <span class="font-semibold text-sm text-p31-cloud group-hover:text-p31-cyan transition-colors">{link.verb}</span>
+                </span>
+                <span class="text-xs text-p31-cloud-50 hidden sm:inline">{link.desc}</span>
+              </a>
+            ))}
+          </div>
+        </div>
+      </footer>
+    )}
+
+    {/* Enterprise Error Handling & Monitoring */}
+    <script is:inline>
+      (function() {
+        // Global error boundary
+        window.__p31Errors = [];
+        window.__p31Monitoring = { startTime: Date.now(), errors: 0, warnings: 0 };
+
+        // Capture unhandled errors
+        window.addEventListener('error', function(e) {
+          window.__p31Errors.push({
+            type: 'error',
+            message: e.message,
+            filename: e.filename,
+            lineno: e.lineno,
+            timestamp: Date.now()
+          });
+          window.__p31Monitoring.errors++;
+          console.error('[P31 Error Boundary]', e.message);
+        });
+
+        // Capture unhandled promise rejections
+        window.addEventListener('unhandledrejection', function(e) {
+          window.__p31Errors.push({
+            type: 'unhandledrejection',
+            reason: e.reason,
+            timestamp: Date.now()
+          });
+          window.__p31Monitoring.errors++;
+          console.error('[P31 Error Boundary] Unhandled Promise:', e.reason);
+        });
+
+        // Performance monitoring
+        if ('PerformanceObserver' in window) {
+          try {
+            var perfObserver = new PerformanceObserver(function(list) {
+              for (var entry of list.getEntries()) {
+                if (entry.entryType === 'largest-contentful-paint') {
+                  console.log('[P31 Perf] LCP:', entry.startTime.toFixed(0), 'ms');
+                }
+                if (entry.entryType === 'first-input') {
+                  console.log('[P31 Perf] FID:', entry.processingStart - entry.startTime, 'ms');
+                }
+              }
+            });
+            perfObserver.observe({ entryTypes: ['largest-contentful-paint', 'first-input'] });
+          } catch (e) {}
+        }
+
+        // Expose monitoring API
+        window.p31GetHealth = function() {
+          return {
+            uptime: Date.now() - window.__p31Monitoring.startTime,
+            errors: window.__p31Monitoring.errors,
+            warnings: window.__p31Monitoring.warnings,
+            recentErrors: window.__p31Errors.slice(-5)
+          };
+        };
+      })();
+    </script>
+
+    {/* Menu toggle script */}
+    <script is:inline>
+      (function() {
+        const hamburger = document.getElementById('p31-hamburger');
+        const mobileMenu = document.getElementById('p31-mobile-menu');
+        const overlay = document.getElementById('p31-menu-overlay');
+
+        function toggleMenu() {
+          const isOpen = mobileMenu?.getAttribute('data-open') === 'true';
+          const newState = !isOpen;
+
+          mobileMenu?.setAttribute('data-open', String(newState));
+          overlay?.setAttribute('data-open', String(newState));
+          hamburger?.setAttribute('aria-expanded', String(newState));
+
+          // Prevent body scroll when menu is open
+          document.body.style.overflow = newState ? 'hidden' : '';
+        }
+
+        function closeMenu() {
+          mobileMenu?.setAttribute('data-open', 'false');
+          overlay?.setAttribute('data-open', 'false');
+          hamburger?.setAttribute('aria-expanded', 'false');
+          document.body.style.overflow = '';
+        }
+
+        hamburger?.addEventListener('click', toggleMenu);
+        overlay?.addEventListener('click', closeMenu);
+
+        // Close menu on navigation
+        document.addEventListener('astro:before-swap', closeMenu);
+
+        // Close menu on escape key
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape') closeMenu();
+        });
+
+        // EBC footer toggle
+        const ebcToggle = document.getElementById('ebc-toggle');
+        const ebc = document.getElementById('ebc');
+        const chevronDown = ebcToggle?.querySelector('.ebc-chevron-down');
+        const chevronUp = ebcToggle?.querySelector('.ebc-chevron-up');
+
+        ebcToggle?.addEventListener('click', () => {
+          const isCollapsed = ebc?.getAttribute('data-collapsed') === 'true';
+          ebc?.setAttribute('data-collapsed', String(!isCollapsed));
+          ebcToggle.setAttribute('aria-expanded', String(isCollapsed));
+
+          // Swap chevrons
+          chevronDown?.classList.toggle('hidden');
+          chevronUp?.classList.toggle('hidden');
+        });
+
+        // Store EBC state in session
+        const savedEbcState = sessionStorage.getItem('p31:ebc-collapsed');
+        if (savedEbcState === 'true') {
+          ebc?.setAttribute('data-collapsed', 'true');
+          ebcToggle?.setAttribute('aria-expanded', 'false');
+          chevronDown?.classList.add('hidden');
+          chevronUp?.classList.remove('hidden');
+        }
+
+        // Save EBC state on toggle
+        ebcToggle?.addEventListener('click', () => {
+          const currentState = ebc?.getAttribute('data-collapsed');
+          sessionStorage.setItem('p31:ebc-collapsed', currentState || 'false');
+        });
+      })();
+    </script>
+
+    {/* Quantum grandfather boot */}
+    <script type="module" is:inline>
+      import { startGrandfatherPhaseVar } from "/lib/p31-quantum-grandfather-boot.mjs";
+      startGrandfatherPhaseVar();
+    </script>
+
+    {/* Touch gestures */}
+    <script type="module" src="/lib/p31-gestures.ts"></script>
+
+    {/* Battery awareness */}
+    <script type="module" src="/lib/p31-battery-aware.ts"></script>
+    <script is:inline>
+      (function() {
+        function updatePowerClasses(e) {
+          var detail = e.detail || {};
+          var body = document.body;
+          body.classList.remove('p31-low-power', 'p31-critical-power', 'p31-thermal-throttle');
+          if (detail.mode === 'low') body.classList.add('p31-low-power');
+          else if (detail.mode === 'critical') body.classList.add('p31-critical-power');
+          if (detail.thermal) body.classList.add('p31-thermal-throttle');
+        }
+        window.addEventListener('p31:power-mode', updatePowerClasses);
+        var motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+        function handleMotionChange() {
+          if (motionQuery.matches) document.body.classList.add('p31-low-power');
+          else if (!document.body.classList.contains('p31-critical-power')) {
+            document.body.classList.remove('p31-low-power');
+          }
+        }
+        motionQuery.addEventListener('change', handleMotionChange);
+        handleMotionChange();
+      })();
+    </script>
+
+    {/* Idle callback */}
+    <script is:inline>
+      (function() {
+        function scheduleIdleTasks() {
+          var idleTasks = [function() { console.log('[P31 Idle] Secondary modules loaded'); }];
+          function runTasks(deadline) {
+            while (deadline.timeRemaining() > 0 && idleTasks.length > 0) {
+              var task = idleTasks.shift();
+              if (task) task();
+            }
+            if (idleTasks.length > 0) {
+              requestIdleCallback(runTasks, { timeout: 5000 });
+            }
+          }
+          if ('requestIdleCallback' in window) requestIdleCallback(runTasks, { timeout: 5000 });
+          else setTimeout(function() { idleTasks.forEach(function(task) { task(); }); }, 2000);
+        }
+        if (document.readyState === 'complete') scheduleIdleTasks();
+        else window.addEventListener('load', scheduleIdleTasks);
+      })();
+    </script>
+
+    {/* CLS Monitoring */}
+    <script is:inline>
+      (function() {
+        if (!window.location.hostname.includes('p31ca.org') && !localStorage.getItem('p31_debug_metrics')) return;
+        var clsValue = 0, clsEntries = [];
+        if ('PerformanceObserver' in window) {
+          var observer = new PerformanceObserver(function(entryList) {
+            for (var entry of entryList.getEntries()) {
+              if (!entry.hadRecentInput) { clsValue += entry.value; clsEntries.push(entry); }
+            }
+          });
+          observer.observe({ entryTypes: ['layout-shift'] });
+          window.addEventListener('beforeunload', function() {
+            console.log('[P31 CLS] Total:', clsValue.toFixed(4), 'Entries:', clsEntries.length);
+            if (clsValue > 0.1) console.warn('[P31 CLS] Poor CLS detected:', clsValue.toFixed(4));
+          });
+        }
+      })();
+    </script>
+
+    {/* PWA Install */}
+    <script is:inline>
+      (function() {
+        let deferredPrompt = null;
+        window.addEventListener('beforeinstallprompt', function(e) {
+          e.preventDefault();
+          deferredPrompt = e;
+          window.dispatchEvent(new CustomEvent('p31:install-available', { detail: { prompt: e } }));
+        });
+        window.p31TriggerInstall = function() {
+          if (!deferredPrompt) return Promise.resolve(false);
+          deferredPrompt.prompt();
+          return deferredPrompt.userChoice.then(function(choice) {
+            deferredPrompt = null;
+            return choice.outcome === 'accepted';
+          });
+        };
+        window.addEventListener('appinstalled', function() {
+          deferredPrompt = null;
+          window.dispatchEvent(new CustomEvent('p31:app-installed'));
+        });
+        window.p31IsStandalone = function() {
+          return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+        };
+      })();
+    </script>
+
+    {/* Unified Settings Panel — ephemeral single source for all app settings */}
+    {!isGarden && <P31SettingsPanel />}
+
+    {/* Return ribbon */}
+    <script src="/lib/p31-return-ribbon.js" defer></script>
+
+    {/* Molecular field */}
+    {!isGarden && <script type="module" src="/lib/p31-molecular-field.js"></script>}
+
+    {/* Starfield + Fleet telemetry */}
+    <script>
+      import type { RouteId } from '../lib/starfield-singleton';
+      import { startStarfield, setStarfieldRoute, suspendStarfield, resumeStarfield } from '../lib/starfield-singleton';
+      import { startFleetTelemetry } from '../lib/fleet-telemetry';
+
+      const canvas = document.querySelector<HTMLCanvasElement>('canvas[data-p31-appshell-canvas]');
+      if (canvas) {
+        startStarfield(canvas);
+        const route = document.documentElement.getAttribute('data-p31-route') as RouteId | null;
+        if (route) setStarfieldRoute(route);
+        if (route === 'dome' || route === 'atmosphere') suspendStarfield();
+      }
+
+      document.addEventListener('astro:after-swap', () => {
+        const newRoute = document.documentElement.getAttribute('data-p31-route') as RouteId | null;
+        if (newRoute) setStarfieldRoute(newRoute);
+        if (newRoute === 'dome' || newRoute === 'atmosphere') suspendStarfield();
+        else resumeStarfield();
+      });
+
+      const W = window as Record<string, unknown>;
+      if (!W['__p31Fleet']) {
+        const currentRoute = document.documentElement.getAttribute('data-p31-route');
+        if (currentRoute !== 'garden') {
+          const handle = startFleetTelemetry();
+          W['__p31Fleet'] = handle;
+          document.addEventListener('astro:after-swap', () => {
+            const route = document.documentElement.getAttribute('data-p31-route');
+            const stored = W['__p31Fleet'] as typeof handle | null;
+            if (route === 'garden' && stored) { stored.stop(); W['__p31Fleet'] = null; }
+            else if (route !== 'garden' && !W['__p31Fleet']) W['__p31Fleet'] = startFleetTelemetry();
+          });
+        }
+      }
+    </script>
+  </body>
+</html>

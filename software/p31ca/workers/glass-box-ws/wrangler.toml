@@ -1,0 +1,41 @@
+name = "glass-box-ws"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+# KV Namespace for PQC session storage
+[[kv_namespaces]]
+binding = "GLASS_BOX_KV"
+id = "03148dd443014dc08d27dc83c6058823"
+preview_id = "2252a2c28b2a437092012588d9581c28"
+
+[build]
+command = "npm run build"
+
+[vars]
+ENVIRONMENT = "production"
+PQC_ENABLED = "true"
+DEFAULT_ALGORITHM = "ML-KEM-768"
+
+# Environment-specific configuration
+[env.staging]
+name = "glass-box-ws-staging"
+[[env.staging.kv_namespaces]]
+binding = "GLASS_BOX_KV"
+id = "51ceba20928540c3a1c2ff3b97d56689"
+preview_id = "2252a2c28b2a437092012588d9581c28"
+
+[env.staging.vars]
+ENVIRONMENT = "staging"
+PQC_ENABLED = "true"
+
+# Local development
+[env.local]
+name = "glass-box-ws-local"
+[[env.local.kv_namespaces]]
+binding = "GLASS_BOX_KV"
+id = "03148dd443014dc08d27dc83c6058823"
+
+[env.local.vars]
+ENVIRONMENT = "local"
+PQC_ENABLED = "true"

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Tool chain map | Education | P31 Labs</title>
+  <link rel="stylesheet" href="/p31-style.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/p31-tailwind-extend.js"></script>
+  <script>tailwind.config = { theme: { extend: { ...window.P31_TAILWIND_EXTEND } } };</script>
+</head>
+<body class="font-sans antialiased bg-void text-cloud min-h-screen p31-mesh-m-first">
+  <div class="max-w-3xl mx-auto px-4 py-8 text-sm space-y-3 text-cloud/85">
+    <a class="font-mono text-xs text-teal" href="/education/modules/index.html">Modules</a>
+    <h1 class="text-2xl font-bold text-paper">Tool chain map</h1>
+    <ol class="list-decimal pl-5 space-y-2">
+      <li><strong class="text-paper/90">Home repo:</strong> <code class="text-xs">npm run verify</code> = alignment, passport, constants, egg-hunt, doc index (when present), and TypeScript where configured.</li>
+      <li><strong class="text-paper/90">p31ca:</strong> <code class="text-xs">npm run prebuild</code> = style, ground truth, live fleet, economy, hub landing + <code class="text-xs">hub:verify</code> + <code class="text-xs">diff-index-sources</code> + <code class="text-xs">verify:education</code> (this series).</li>
+      <li><strong class="text-paper/90">Release:</strong> <code class="text-xs">release:public</code> in home ties hub build + <code class="text-xs">security:check</code> for operator cuts.</li>
+    </ol>
+  </div>
+</body>
+</html>

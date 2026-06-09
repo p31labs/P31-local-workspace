@@ -1,0 +1,47 @@
+name = "p31-fhir"
+main = "src/index.ts"
+compatibility_date = "2024-05-05"
+# Cron trigger runs via command-center's */5 cron (gated to :15 of each hour)
+# Free plan is at 5-cron limit; this saves the slot.
+
+# Non-sensitive vars — safe to commit
+[vars]
+EPIC_FHIR_BASE_URL  = "https://epicsoap.shands.ufl.edu/FHIR/api/FHIR/R4"
+EPIC_OAUTH_BASE_URL = "https://epicsoap.shands.ufl.edu/FHIR/oauth2"
+FHIR_REDIRECT_URI   = "https://api.p31ca.org/fhir/callback"
+HA_BASE_URL         = "https://home.p31ca.org"
+
+[[kv_namespaces]]
+binding = "FHIR_TOKENS"
+id      = "c22cde91911a44e794284e9ae41b5544"
+
+[[d1_databases]]
+binding       = "DB"
+database_name = "p31-fhir-db"
+database_id   = "28fe667d-efd1-4c34-9f47-55051182d4c7"
+
+# Secrets set via: wrangler secret put <NAME>
+# EPIC_CLIENT_ID      — from https://fhir.epic.com/developer (your app)
+# EPIC_CLIENT_SECRET  — from Epic app registration
+# HA_WEBHOOK_CRITICAL — HA webhook ID for Ca < 7.8 (haptic + urgent)
+# HA_WEBHOOK_WARNING  — HA webhook ID for Ca < 8.0 (notification)
+# P31_API_SECRET      — already set below
+
+[env.production.vars]
+EPIC_FHIR_BASE_URL  = "https://epicsoap.shands.ufl.edu/FHIR/api/FHIR/R4"
+EPIC_OAUTH_BASE_URL = "https://epicsoap.shands.ufl.edu/FHIR/oauth2"
+FHIR_REDIRECT_URI   = "https://api.p31ca.org/fhir/callback"
+HA_BASE_URL         = "https://home.p31ca.org"
+
+[[env.production.kv_namespaces]]
+binding = "FHIR_TOKENS"
+id      = "c22cde91911a44e794284e9ae41b5544"
+
+[[env.production.d1_databases]]
+binding       = "DB"
+database_name = "p31-fhir-db"
+database_id   = "28fe667d-efd1-4c34-9f47-55051182d4c7"
+
+[[env.production.routes]]
+pattern   = "api.p31ca.org/fhir/*"
+zone_name = "p31ca.org"

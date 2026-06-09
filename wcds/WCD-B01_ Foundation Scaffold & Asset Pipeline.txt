@@ -1,0 +1,31 @@
+﻿WCD-B01: FOUNDATION SCAFFOLD & ASSET PIPELINE
+Target: phosphorus31.org (Astro Repository)
+Objective: Initialize the Astro environment, establish the typography/color physics, and integrate the primary SVG logo.
+1. ASSET INTEGRATION
+Agent Instructions:
+1. Save the provided p31-foundation-logo.svg into the src/assets/ or public/ directory.
+2. This SVG completely replaces any text-based "P31" logo in the header and footer.
+2. TAILWIND & TYPOGRAPHY CONFIGURATION
+Agent Instructions:
+1. Update tailwind.config.mjs with the exact "Warm Tech Humanity" palette:
+   * cloud: '#F0EEE9'
+   * espresso: '#264653'
+   * teal-600: '#2A9D8F'
+   * coral-500: '#E76F51'
+   * butter: '#E9C46A'
+   * lavender: '#C9B1FF'
+2. Import Google Fonts in the global layout:
+   * Headings: Lato (400, 700, 900) -> Mapped to font-heading
+   * Body: Lexend (300, 400, 500, 600) -> Mapped to font-body
+3. Set the global base text size to 18px (text-lg) with leading-relaxed (1.6 to 1.75 line height). Ensure all text is strictly left-aligned.
+3. THE DYSLEXIA MATHEMATICS
+Agent Instructions:
+1. In the global CSS file, define the .dyslexia-mode class payload:
+.dyslexia-mode {
+ letter-spacing: 0.05em !important;
+ word-spacing: 0.05em !important;
+ line-height: 1.9 !important;
+ font-size: 105% !important;
+}
+
+2. Ensure this class cascades through all child text nodes when applied to the <body> tag.

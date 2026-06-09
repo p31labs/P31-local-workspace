@@ -1,0 +1,176 @@
+# Local P31 tooling (e.g. git post-commit auto-push marker)
+.p31/
+
+# Environment secrets - NEVER COMMIT
+.env
+.env.local
+.env.*.local
+.env.production
+.env.canonical
+.env.unified
+.admin-token.local
+
+# docs/files operator drop zone — keep Zenodo PDFs / legal blobs local (tooling is tracked)
+docs/files/*.pdf
+docs/files/*.docx
+docs/files/p31_fleet_deploy.tar.gz
+docs/files/mnt/
+
+# Legal discovery — never commit
+Discovery_Production_*/
+
+# Nested clone (not a submodule; do not commit as gitlink)
+public-release/cognitive-prosthetic/
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# Node
+node_modules/
+.turbo/
+npm-debug.log*
+
+# PlatformIO
+.pio/
+.pioenvs/
+.piolibdeps/
+
+# Build artifacts
+dist/
+build/
+# TypeScript incremental + Next.js (never commit)
+*.tsbuildinfo
+.tsbuildinfo
+**/.next/
+
+*.o
+*.elf
+*.bin
+.git-backup/
+software/docs/.astro/
+
+# Claude / AI agent artifacts
+.claude/
+software/.claude/
+roomodes
+
+# Google Drive numbered duplicates
+*\ (1).*
+*\ (2).*
+*\ (3).*
+*\ (7).*
+
+# Binary docs (keep in Google Drive, not git)
+*.docx
+
+# Research text files (Google Drive artifacts)
+-Gemini*.txt
+Gemini*.txt
+Quantum*.txt
+P31\ Data*.txt
+
+# Stale merge artifacts
+temp_merge_backup/
+
+# Binary tools - use package managers instead
+*.exe
+node.exe
+npm
+npm.cmd
+npm.ps1
+npx
+npx.cmd
+npx.ps1
+corepack
+corepack.cmd
+espefuse.exe
+espsecure.exe
+esptool.exe
+esp_rfc2217_server.exe
+
+# ESP-IDF and toolchains - clone separately
+esp-idf-v5.5.3/
+
+# Large firmware projects - use submodules
+GrokPhenix/
+firmware/maker-variant/
+firmware/nodezero-hal/
+
+# Node firmware variants
+node_one_firmware/
+phenix-xiaozhi-v2/
+
+# External SDKs (root-level only — not 04_SOFTWARE/p31ca/)
+/p31-sovereign-sdk/
+/p31-buffer/
+/p31ca/
+/love-ledger/
+/donation-wallet-v2/
+
+# Next.js export (local build artifact; not source of truth)
+software/sovereign-command-center/out/
+
+# WCD duplicates in root - keep in WCDs/ only
+/WCDs/eslint.config.mjs
+/WCDs/*_corrected*
+/WCDs/*_verified*
+/WCDs/compass_artifact*
+/WCDs/PHASE2_PATCH*
+
+# Cloudflare Workers
+phosphorus31.org/planetary-planet/wrangler.toml
+# Track public dyslexia toggle store; other store paths stay local
+phosphorus31.org/planetary-planet/src/store/*
+!phosphorus31.org/planetary-planet/src/store/accessibility.js
+phosphorus31.org/planetary-planet/src/worker/
+
+# Malformed filenames (Windows copy-paste errors)
+*\ \&\ cp*
+
+# Package lock - use yarn/pnpm or commit intentionally
+package-lock.json
+# npm-ci workflows use npm ci + setup-node cache for these standalone Workers
+!software/donate-api/package-lock.json
+!software/p31-google-bridge/package-lock.json
+
+# Research and documentation
+LICENSE
+P31-OS-Sovereign-Stack-Spec.md
+P31-Operations/
+REVIEW_SHIFT_REPORT.md
+
+# ESP-IDF project config
+esp_idf_project_configuration.json
+install_tools.bat
+nodevars.bat
+".env.production"
+
+# Sensitive credentials — NEVER COMMIT
+stripe_backup_code.txt
+*.backup_code.txt
+
+# DID / PQC private keys
+*.pem
+did-signing-key.pem
+
+# Wrangler local state
+.wrangler/
+
+# Local Zenodo inventory scan outputs (SCHOLAR tooling)
+/zenodo_scan_*.json
+/zenodo_scan_*.md

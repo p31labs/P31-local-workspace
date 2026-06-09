@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub" style="color-scheme: dark;">
+<head>
+  <meta charset="UTF-8" />
+  <!-- Gray Rock: no motion until operator reaches. Must be first script, before any render. -->
+  <script>(function(){var r=document.documentElement;if(/[?&]alive=1(?:&|$)/.test(location.search))return;r.classList.add("p31-gray-rock");function wake(){r.classList.remove("p31-gray-rock")}document.addEventListener("pointerdown",wake,{once:true,capture:true});document.addEventListener("keydown",wake,{once:true,capture:true})})();</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="description" content="{{DESCRIPTION}}" />
+  <meta name="theme-color" content="#0f1115" />
+  <meta name="color-scheme" content="dark" />
+
+  <!-- OpenGraph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="{{TITLE}} — P31 Labs" />
+  <meta property="og:description" content="{{DESCRIPTION}}" />
+  <meta property="og:site_name" content="P31 Labs" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="{{TITLE}}" />
+  <meta name="twitter:description" content="{{DESCRIPTION}}" />
+
+  <link rel="canonical" href="https://p31ca.org/{{SLUG}}" />
+  <link rel="manifest" href="/p31-bonding.webmanifest" crossorigin="anonymous" />
+  <title>{{TITLE}} — P31 Labs</title>
+
+  <!-- ── Canonical style stack (order is load-order; do not reorder) ──────── -->
+  <!-- 1. QMU tokens: Material U tonal roles, elevation, state-layer vars     -->
+  <link rel="stylesheet" href="/lib/p31-qmu-tokens.css" />
+  <!-- 2. Fonts: Atkinson Hyperlegible (a11y body) + JetBrains Mono (code)    -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <!-- 3. Canon: design-token CSS (auto-generated from p31-universal-canon.json) -->
+  <link rel="stylesheet" href="/p31-style.css" />
+  <!-- 4. Shared surface: .p31-card · .p31-pill · .p31-table · .p31-content   -->
+  <link rel="stylesheet" href="/p31-shared-surface.css" />
+  <!-- 5. Responsive surface: breakpoint grid, container, fluid type           -->
+  <link rel="stylesheet" href="/p31-responsive-surface.css" />
+  <!-- ── End canonical stack ─────────────────────────────────────────────── -->
+
+  <!-- Subject prefs: safe mode, reduced motion, font-size, color override    -->
+  <script src="/lib/p31-subject-prefs.js"></script>
+
+  <style>
+    /* Page-local layout only — use p31-q-* and p31-* canonical classes       */
+    /* for all components. Never hardcode colors, fonts, or spacing here.      */
+    body {
+      margin: 0;
+      min-height: 100dvh;
+      font-family: var(--p31-font-sans);
+      background: var(--p31-void);
+      color: var(--p31-cloud);
+      line-height: var(--p31-leading-normal);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Starfield ambient layer (Gray Rock until interaction) -->
+  <canvas id="starfield-canvas"
+    style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:0.45;"
+    aria-hidden="true"></canvas>
+
+  <a class="p31-skip-link" href="#main">Skip to content</a>
+
+  <!-- ── Top app bar ────────────────────────────────────────────────────── -->
+  <header class="p31-q-surface p31-top-bar" data-p31-elev="2" role="banner">
+    <a href="/" class="p31-top-bar__wordmark" aria-label="P31 Labs home">
+      P31 <span class="p31-top-bar__accent">Labs</span>
+    </a>
+    <nav class="p31-top-bar__nav" aria-label="Primary">
+      <!-- Add nav items as needed -->
+    </nav>
+  </header>
+
+  <!-- ── Page shell ─────────────────────────────────────────────────────── -->
+  <main id="main" class="p31-content p31-page-shell">
+
+    <!-- Page header -->
+    <section class="p31-page-header p31-stack">
+      <p class="p31-section-label">{{SECTION}}</p>
+      <h1 class="p31-h1">{{TITLE}}</h1>
+      <p class="p31-lede">{{DESCRIPTION}}</p>
+    </section>
+
+    <!-- Primary content — replace with page-specific content -->
+    <section class="p31-stack--section" aria-labelledby="content-heading">
+      <h2 id="content-heading" class="p31-h2">Content</h2>
+
+      <div class="p31-card-grid">
+        <!-- Example card using canonical p31-q-card -->
+        <article class="p31-q-card" data-p31-tone="teal" data-p31-elev="1">
+          <div class="p31-card__body p31-stack">
+            <h3 class="p31-h3">Card title</h3>
+            <p class="p31-body">Card body copy.</p>
+            <div class="p31-row">
+              <button class="p31-q-button p31-q-button--filled">
+                Primary action
+              </button>
+              <button class="p31-q-button p31-q-button--outlined">
+                Secondary
+              </button>
+            </div>
+          </div>
+        </article>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ── Starfield init (pairs with #starfield-canvas above) ─────────────── -->
+  <script type="module">
+    const cv = document.getElementById("starfield-canvas");
+    if (cv) {
+      import("/lib/p31-starfield-static-plate.js")
+        .then(({ initStaticStarPlate }) => initStaticStarPlate(cv, { preset: "hub" }))
+        .catch(() => {});
+    }
+  </script>
+  <!-- ── Atmosphere + return ribbon (always last) ───────────────────────── -->
+  <script src="/lib/atmosphere/p31-atmosphere-client.js" defer></script>
+  <script src="/lib/p31-return-ribbon.js" defer></script>
+
+</body>
+</html>

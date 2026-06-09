@@ -1,0 +1,50 @@
+{
+  "source_file": "status.json",
+  "d1_target_table": "fleet_status",
+  "fields": {
+    "updated": {
+      "action": "store_as_json",
+      "table": "fleet_status",
+      "key": "section:updated",
+      "note": "Object with keys <class 'str'>"
+    },
+    "workers": {
+      "action": "store_as_json",
+      "table": "fleet_status",
+      "key": "section:workers",
+      "note": "Array of 25 worker objects; store as JSON blob"
+    },
+    "legal": {
+      "action": "store_as_json",
+      "table": "fleet_status",
+      "key": "section:legal",
+      "note": "Object with keys ['case', 'next_hearing', 'judge', 'status', 'mcghan_deadline']"
+    },
+    "financial": {
+      "action": "store_as_json",
+      "table": "fleet_status",
+      "key": "section:financial",
+      "note": "Object with keys ['operating_buffer', 'grants_active', 'grants_pending', 'grants_dead', 'corp_status']"
+    },
+    "research": {
+      "action": "store_as_json",
+      "table": "fleet_status",
+      "key": "section:research",
+      "note": "Object with keys ['paper_xii', 'bonding_tests', 'deployed_workers', 'k4_phase', 'k4_viz_url', 'k4_api_url', 'phenix_url', 'hearing_ops_url']"
+    },
+    "dates": {
+      "action": "store_as_json",
+      "table": "fleet_status",
+      "key": "section:dates",
+      "note": "Array of 15 date entries"
+    }
+  },
+  "worker_to_event_example": {
+    "event_action": "status_update",
+    "event_target": "phosphorus31-org",
+    "event_meta": {
+      "status": "online",
+      "url": "https://phosphorus31.org"
+    }
+  }
+}

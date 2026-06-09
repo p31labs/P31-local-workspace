@@ -1,0 +1,85 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "p31.cogPassBridge/1.0.0",
+  "title": "P31 CogPass cross-origin bridge envelope",
+  "description": "Wire contract for the postMessage envelope used between the bridge endpoint at https://p31ca.org/cogpass-bridge.html and consumer pages at allowlisted cross-origin P31 surfaces (today: https://bonding.p31ca.org). Lives at andromeda/software/p31ca/ground-truth/cogpass-bridge.schema.json. Locked by scripts/verify-cogpass-bridge.mjs against the literal SCHEMA constant in cogpass-bridge.html and (when shipped) p31-cogpass-fetch.mjs. See docs/CWP-BUS4-COGPASS-BRIDGE-2026-05.md \u00a76.3 for the design rationale.",
+
+  "doctrine": {
+    "single_rule": "The bridge HTML imports normalize() from /lib/p31-cogpass-reader.mjs. It does NOT reimplement normalization. Any drift between the reader's normalizer and the bridge's normalizer would silently corrupt the bus bar promise on every consumer surface.",
+    "privacy": "The passport never leaves p31ca.org localStorage. Consumers MAY cache the postMessage reply in their own origin's sessionStorage (NOT localStorage \u2014 dies with tab) but MUST treat null as 'stranger mode' without server fallback.",
+    "origin_validation": "Both sides validate origins literally. Bridge: ALLOWED_ORIGINS.has(event.origin). Consumer: event.origin === 'https://p31ca.org'. No wildcards anywhere in the allowlist.",
+    "graceful_degradation": "Every failure path returns present:false, passport:null. Bridge never throws to the parent; consumer never crashes its host page on a missing passport."
+  },
+
+  "oneOf": [
+    { "$ref": "#/definitions/CogPassReady" },
+    { "$ref": "#/definitions/CogPassGet" },
+    { "$ref": "#/definitions/CogPassReply" }
+  ],
+
+  "definitions": {
+    "CogPassReady": {
+      "type": "object",
+      "description": "Unsolicited message sent by the bridge once on iframe load. Announces readiness to the parent so the consumer knows when to send the first cogpass:get. Targets '*' because the parent origin is unknown until a message arrives. Contains no operator data \u2014 safe to broadcast.",
+      "additionalProperties": false,
+      "required": ["type", "schema", "bridgeVersion"],
+      "properties": {
+        "type": { "type": "string", "const": "cogpass:ready" },
+        "schema": { "type": "string", "const": "p31.cogPassBridge/1.0.0" },
+        "bridgeVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" }
+      }
+    },
+
+    "CogPassGet": {
+      "type": "object",
+      "description": "Request from the consumer to the bridge. Sent after receiving cogpass:ready (or after a timeout, in case the consumer missed the ready message). Bridge validates event.origin against ALLOWED_ORIGINS before processing.",
+      "additionalProperties": false,
+      "required": ["type", "schema", "nonce"],
+      "properties": {
+        "type": { "type": "string", "const": "cogpass:get" },
+        "schema": { "type": "string", "const": "p31.cogPassBridge/1.0.0" },
+        "nonce": {
+          "type": "string",
+          "minLength": 8,
+          "maxLength": 128,
+          "description": "Consumer-generated correlation ID (recommended: crypto.randomUUID()). Echoed verbatim in the reply. Used for request/reply matching when multiple gets are in flight; NOT a security primitive (spoofing protection comes from origin validation)."
+        }
+      }
+    },
+
+    "CogPassReply": {
+      "type": "object",
+      "description": "Reply from the bridge to a single cogpass:get. Always sent to event.origin (never '*'). Contains either present:true with a normalized v1.1.0 passport, or present:false with passport:null when no passport is saved, the JSON is corrupt, or storage access was denied.",
+      "additionalProperties": false,
+      "required": ["type", "schema", "nonce", "present", "passport", "bridgeVersion"],
+      "properties": {
+        "type": { "type": "string", "const": "cogpass:reply" },
+        "schema": { "type": "string", "const": "p31.cogPassBridge/1.0.0" },
+        "nonce": {
+          "type": "string",
+          "description": "Echoes the nonce from the corresponding cogpass:get verbatim. Consumer uses this to correlate replies to in-flight requests."
+        },
+        "present": {
+          "type": "boolean",
+          "description": "true if a passport was saved at p31ca.org and successfully normalized. false for any failure including missing key, corrupt JSON, denied storage access. When false, passport MUST be null."
+        },
+        "passport": {
+          "oneOf": [
+            { "type": "null" },
+            {
+              "type": "object",
+              "description": "Normalized p31.cognitivePassport/1.1.0 document, as produced by /lib/p31-cogpass-reader.mjs normalize(). Contains identity, accessibility (with the screenComfort cascade resolved), stylePreferences, communication, and any v1.0.0 fields the legacy generator wrote. Consumer applies via window.p31SubjectPrefs.set(...) and window.p31Theme.set... mirrors of the same code paths the same-origin reader uses."
+            }
+          ]
+        },
+        "bridgeVersion": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+          "description": "Bridge implementation version (independent of envelope schema version). Allows consumers to log/branch on bridge vintage without breaking schema compatibility."
+        }
+      },
+      "if": { "properties": { "present": { "const": false } } },
+      "then": { "properties": { "passport": { "type": "null" } } }
+    }
+  }
+}

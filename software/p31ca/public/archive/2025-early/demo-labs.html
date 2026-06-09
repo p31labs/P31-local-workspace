@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub" style="color-scheme: dark;">
+<head>
+  <meta charset="UTF-8">
+<script>(function(){var r=document.documentElement;if(/[?&]alive=1(?:&|$)/.test(location.search))return;r.classList.add("p31-gray-rock");function wake(){r.classList.remove("p31-gray-rock")}document.addEventListener("pointerdown",wake,{once:true,capture:true});document.addEventListener("keydown",wake,{once:true,capture:true})})();</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0f1115">
+  <title>Welcome — demos &amp; entry points | P31 Labs</title>
+  <meta name="description" content="Curated, fast-loading demos on p31ca.org: fleet map, design system, operator shell, onboarding, and stories — no login required.">
+<link rel="canonical" href="https://p31ca.org/demo-labs.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Welcome — demos &amp;amp; entry points">
+<meta property="og:description" content="Curated, fast-loading demos on p31ca.org: fleet map, design system, operator shell, onboarding, and stories — no login required.">
+<meta property="og:url" content="https://p31ca.org/demo-labs.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Welcome — demos &amp;amp; entry points">
+<meta name="twitter:description" content="Curated, fast-loading demos on p31ca.org: fleet map, design system, operator shell, onboarding, and stories — no login required.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/p31-style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/p31-tailwind-extend.js"></script>
+  <script>
+    tailwind.config = { theme: { extend: { ...window.P31_TAILWIND_EXTEND } } };
+  </script>
+  <style>
+    body { font-family: var(--p31-font-sans); background: var(--p31-void); color: var(--p31-cloud); }
+    .card {
+      background: var(--p31-surface);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: var(--p31-radius-lg);
+      transition: box-shadow 0.25s var(--p31-ease-standard), transform 0.25s var(--p31-ease-standard);
+    }
+    .card:hover {
+      box-shadow: var(--p31-shadow-glowTeal);
+      transform: translateY(-2px);
+    }
+    .card h2 a { color: var(--p31-teal); }
+    .card h2 a:hover { text-decoration: underline; }
+    .nav-trust a { color: var(--p31-muted); font-size: 0.8125rem; }
+    .nav-trust a:hover { color: var(--p31-teal); }
+    .skip-link {
+      position: absolute;
+      left: -9999px;
+      z-index: 9999;
+      padding: 0.5rem 1rem;
+      background: #134e4a;
+      color: #fff;
+      border-radius: 0.375rem;
+      text-decoration: none;
+      font-size: 0.875rem;
+    }
+    .skip-link:focus { left: 0.5rem; top: 0.5rem; }
+  </style>
+</head>
+<body class="bg-void text-cloud min-h-screen font-sans antialiased">
+  <a href="#main" class="skip-link">Skip to demos</a>
+
+  <header class="border-b border-white/[0.07] bg-surface/90 backdrop-blur-sm">
+    <div class="max-w-3xl mx-auto px-4 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+      <a href="/" class="text-paper font-semibold tracking-tight hover:text-teal/90 transition-colors">P31 Labs — technical hub</a>
+      <nav class="nav-trust flex flex-wrap gap-x-4 gap-y-1" aria-label="Policies">
+        <a href="/fleet">Fleet map</a>
+        <a href="/agents">Agents room</a>
+        <a href="/privacy">Privacy</a>
+        <a href="/contact">Contact</a>
+        <a href="/accessibility">Accessibility</a>
+      </nav>
+    </div>
+  </header>
+
+  <div id="main" class="max-w-3xl mx-auto px-4 py-10">
+    <p class="font-mono text-[10px] uppercase tracking-widest text-[var(--p31-phosphor)] mb-2">Static demos · always free to open</p>
+    <h1 class="text-3xl font-bold text-paper mb-3">Welcome to the demo lobby</h1>
+    <p class="text-[var(--p31-muted)] mb-2 max-w-2xl leading-relaxed">Everything here loads from <strong class="text-[var(--p31-cloud)] font-medium">p31ca.org</strong> — no account, no paywall. Pick a tile to explore the design system, edge fleet, or onboarding flows. For the full product grid, start at the <a href="/" class="text-[var(--p31-teal)] hover:underline">Cockpit home</a>.</p>
+    <p class="text-sm text-[var(--p31-muted)] mb-10 max-w-2xl">Developers: machine indexes live at <a href="/p31-public-surface.json" class="text-[var(--p31-teal)] hover:underline">/p31-public-surface.json</a> and <a href="/p31-live-fleet.json" class="text-[var(--p31-teal)] hover:underline">/p31-live-fleet.json</a>.</p>
+
+    <ul class="space-y-4 list-none p-0 m-0">
+      <li class="card p-5 border-[var(--p31-phosphorus)]/20 ring-1 ring-[var(--p31-phosphorus)]/15">
+        <h2 class="font-bold text-paper text-lg"><a href="/cars">Social Molecules (C.A.R.S.) <span class="text-[var(--p31-muted)] font-mono text-sm font-normal">/cars</span></a></h2>
+        <p class="text-sm text-[var(--p31-muted)] mt-2 leading-relaxed">Boot screen, load menu (live soup, BONDING, mesh assistant), settings, and upgraded field chat — plus a live <strong class="text-[var(--p31-cloud)] font-medium">mesh edge</strong> ribbon (constants + k4-personal + hub health).</p>
+      </li>
+      <li class="card p-5 border-teal-500/15 ring-1 ring-teal-400/10">
+        <h2 class="font-bold text-paper text-lg"><a href="/lab">Sovereign Lab <span class="text-[var(--p31-muted)] font-mono text-sm font-normal">/lab</span></a></h2>
+        <p class="text-sm text-[var(--p31-muted)] mt-2 leading-relaxed">A calm bench for tuning: Three.js dome, coherence + load sliders, optional Web Serial, voice lines. Wire it to your mock room and <strong class="text-[var(--p31-cloud)] font-medium">Social Molecules</strong> sees trim moves as <code class="text-xs text-[var(--p31-teal)]">labTelemetry</code> in the <code class="text-xs">eventLog</code> — no extra soup build step.</p>
+      </li>
+      <li class="card p-5 border-slate-500/15 ring-1 ring-slate-400/10">
+        <h2 class="font-bold text-paper text-lg"><a href="/slicer">Browser slicer (Kiri) <span class="text-[var(--p31-muted)] font-mono text-sm font-normal">/slicer</span></a></h2>
+        <p class="text-sm text-[var(--p31-muted)] mt-2 leading-relaxed">Ship a print from the same topology you orbit in the lab: GridSpace Kiri in the page, same-origin <strong class="text-[var(--p31-cloud)] font-medium">K₄ STL</strong> for drag-and-drop (HTTPS iframe — download the file, then import).</p>
+      </li>
+      <li class="card p-5 border-[var(--p31-amber)]/20 ring-1 ring-[var(--p31-amber)]/15">
+        <h2 class="font-bold text-paper text-lg"><a href="/kids">Kids home base <span class="text-[var(--p31-muted)] font-mono text-sm font-normal">/kids</span></a></h2>
+        <p class="text-sm text-[var(--p31-muted)] mt-2 leading-relaxed">One calm screen: growth, missions, <strong class="text-[var(--p31-cloud)] font-medium">Make</strong> (EDE), mesh picture, and kid welcome — plus grown-up links.</p>
+      </li>
+      <li class="card p-5 border-[var(--p31-teal)]/20 ring-1 ring-[var(--p31-teal)]/15">
+        <h2 class="font-bold text-paper text-lg"><a href="/journey">Core journey <span class="text-[var(--p31-muted)] font-mono text-sm font-normal">/journey</span></a></h2>
+        <p class="text-sm text-[var(--p31-muted)] mt-2 leading-relaxed">The intended path: <strong class="text-[var(--p31-cloud)] font-medium">onboard → authenticate → EDE home</strong>, plus Wye→Delta and Mesh in one place.</p>
+      </li>
+      <li class="card p-5 border-cyan-500/15 ring-1 ring-cyan-400/15">
+        <h2 class="font-bold text-paper text-lg"><a href="/agents">Fleet agents room <span class="text-[var(--p31-muted)] font-mono text-sm font-normal">/agents</span></a></h2>
+        <p class="text-sm text-[var(--p31-muted)] mt-2 leading-relaxed">Every Worker, Cortex sub-agent, and the Discord bot — filterable roster, probes, hub links, stable <code class="text-xs text-[var(--p31-teal)]">/agent/&lt;slug&gt;/</code> entry points.</p>
+      </li>
+      <li class="card p-5">
+        <h2 class="font-bold text-paper text-lg"><a href="/fleet">Live fleet map</a></h2>
+        <p class="text-sm text-[var(--p31-muted)] mt-2 leading-relaxed">Sites, mesh Workers, payments, and the full allowlisted fleet — one screen, sourced from our live bundle.</p>
+      </li>
+      <li class="card p-5">
+        <h2 class="font-bold text-paper text-lg"><a href="/canon">Universal design canon</a></h2>
+        <p class="text-sm text-[var(--p31-muted)] mt-2 leading-relaxed">Hub and org appearances, color, type, and motion — tied to <code class="text-xs text-[var(--p31-teal)]">p31-style.css</code>.</p>
+      </li>
+      <li class="card p-5 border-indigo-500/15 ring-1 ring-indigo-400/10">
+        <h2 class="font-bold text-paper text-lg"><a href="/contracts">Contract builder <span class="text-[var(--p31-muted)] font-mono text-sm font-normal">/contracts</span></a></h2>
+        <p class="text-sm text-[var(--p31-muted)] mt-2 leading-relaxed">JSON contracts from <code class="text-xs text-[var(--p31-teal)]">p31-alignment.json</code> — schema anchors, paths, verify hints; raw <code class="text-xs text-[var(--p31-teal)]">p31-contract-registry.json</code>.</p>
+      </li>
+      <li class="card p-5 border-teal-500/20 ring-1 ring-teal-400/15">
+        <h2 class="font-bold text-paper text-lg"><a href="/composer">Quantum composer <span class="text-[var(--p31-muted)] font-mono text-sm font-normal">/composer</span></a></h2>
+        <p class="text-sm text-[var(--p31-muted)] mt-2 leading-relaxed">Four Web Audio partials on the <strong class="text-[var(--p31-cloud)]">863Hz</strong> ladder — K₄ weights, Grandfather-rate beats, honest “measure” solo. Sister to C.A.R.S. <code class="text-xs text-[var(--p31-teal)]">SoundtrackEngine</code>.</p>
+      </li>
+      <li class="card p-5">
+        <h2 class="font-bold text-paper text-lg"><a href="/ops/">Operator shell</a></h2>
+        <p class="text-sm text-[var(--p31-muted)] mt-2 leading-relaxed">Glass-style health probes and shift readouts for operators (G.O.D.).</p>
+      </li>
+      <li class="card p-5">
+        <h2 class="font-bold text-paper text-lg"><a href="/delta">Wye → Delta</a></h2>
+        <p class="text-sm text-[var(--p31-muted)] mt-2 leading-relaxed">A short, public story on resilient mesh design — readable in one sitting.</p>
+      </li>
+      <li class="card p-5">
+        <h2 class="font-bold text-paper text-lg"><a href="/mesh">The Mesh (K₄ navigator)</a></h2>
+        <p class="text-sm text-[var(--p31-muted)] mt-2 leading-relaxed">Interactive cage and product graph — <code class="text-xs">/mesh</code> redirects here for easy sharing.</p>
+      </li>
+      <li class="card p-5">
+        <h2 class="font-bold text-paper text-lg"><a href="/growth">Kids growth · missions</a></h2>
+        <p class="text-sm text-[var(--p31-muted)] mt-2 leading-relaxed">On-device growth charts (S.J. &amp; W.J.) and the token mission board — <code class="text-xs">/growth</code> and <code class="text-xs">mission-control.html</code>.</p>
+      </li>
+      <li class="card p-5">
+        <h2 class="font-bold text-paper text-lg"><a href="/onboard">Planetary onboarding</a></h2>
+        <p class="text-sm text-[var(--p31-muted)] mt-2 leading-relaxed">Five-phase, neuro-inclusive welcome — welcome packages and passkey-ready flow.</p>
+      </li>
+      <li class="card p-5">
+        <h2 class="font-bold text-paper text-lg"><a href="/centaur">Super-Centaur starter</a></h2>
+        <p class="text-sm text-[var(--p31-muted)] mt-2 leading-relaxed">Operator pack: MAP anchors, CWPs, and machine-readable entry points.</p>
+      </li>
+    </ul>
+
+    <footer class="mt-12 pt-8 border-t border-white/10 text-sm text-[var(--p31-muted)] flex flex-wrap gap-4 justify-between">
+      <nav class="flex flex-wrap gap-x-4 gap-y-1" aria-label="Footer">
+        <a href="/terms" class="text-[var(--p31-teal)] hover:underline">Terms</a>
+        <a href="/security" class="text-[var(--p31-teal)] hover:underline">Security</a>
+        <a href="/oss" class="text-[var(--p31-teal)] hover:underline">Open source</a>
+      </nav>
+      <span class="text-xs">P31 Labs, Inc.</span>
+    </footer>
+  </div>
+<!-- P31:mission-ebc:start -->
+<footer id="ebc" class="p31-mission-trio p31-mission-trio--ebc" role="contentinfo" aria-label="Mission — build, create, connect">
+    <a class="p31-mission-trio__link p31-mission-trio__link--build p31-mesh-tap" id="ebc-build" href="/build" title="Initial Build — intake, subject scope, verify-gated bake">
+        <span class="p31-mission-trio__head">
+            <span class="p31-mission-trio__dot" aria-hidden="true"></span>
+            <span class="p31-mission-trio__verb">Build</span>
+        </span>
+        <span class="p31-mission-trio__desc">Intake and bake on the same verify chain—not a decoupled mock.</span>
+    </a>
+    <a class="p31-mission-trio__link p31-mission-trio__link--create p31-mesh-tap" id="ebc-create" href="/geodesic.html" title="GEODESIC — snap grid, Maxwell rigidity, scene export">
+        <span class="p31-mission-trio__head">
+            <span class="p31-mission-trio__dot" aria-hidden="true"></span>
+            <span class="p31-mission-trio__verb">Create</span>
+        </span>
+        <span class="p31-mission-trio__desc">One lab surface, honest rigidity—generate or prove; don’t fork the same truth twice (ephemeralization).</span>
+    </a>
+    <a class="p31-mission-trio__link p31-mission-trio__link--connect p31-mesh-tap" id="ebc-connect" href="/mesh" title="Mesh navigator — K₄ cage and product graph">
+        <span class="p31-mission-trio__head">
+            <span class="p31-mission-trio__dot" aria-hidden="true"></span>
+            <span class="p31-mission-trio__verb">Connect</span>
+        </span>
+        <span class="p31-mission-trio__desc"><span class="p31-mission-trio__now">Now</span> — live cage and edges: mesh, hubs, and money follow the same published contracts (ethical monetization).</span>
+    </a>
+</footer>
+<!-- P31:mission-ebc:end -->
+</body>
+</html>

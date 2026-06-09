@@ -1,0 +1,8 @@
+name = "phosphorus31-org"
+pages_build_output_dir = "dist"
+compatibility_date = "2026-06-01"
+
+[vars]
+ALLOWED_ORIGINS = "https://phosphorus31.org,https://p31ca.org,http://localhost:4321"
+SUCCESS_URL = "https://phosphorus31.org/donate/success"
+CANCEL_URL = "https://phosphorus31.org/donate"

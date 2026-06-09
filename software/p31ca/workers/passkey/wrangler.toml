@@ -1,0 +1,68 @@
+# p31-passkey — Cloudflare Worker
+# KV namespace:  d9bf5ef388164afab701270f4d031590 (CHALLENGES)
+# D1 database:   9d284b07-50c9-434b-ae5e-975842bdb992 (p31-passkey-db)
+
+name       = "p31-passkey"
+main       = "src/index.ts"
+compatibility_date = "2025-01-01"
+
+# ── Top-level (local dev / default env) ─────────────────────────────────────
+[vars]
+RP_NAME = "P31 Labs"
+RP_ID   = "localhost"
+
+[[kv_namespaces]]
+binding = "CHALLENGES"
+id      = "d9bf5ef388164afab701270f4d031590"
+
+[[d1_databases]]
+binding       = "DB"
+database_name = "p31-passkey-db"
+database_id   = "9d284b07-50c9-434b-ae5e-975842bdb992"
+
+# ── Production ───────────────────────────────────────────────────────────────
+[env.production.vars]
+RP_NAME = "P31 Labs"
+RP_ID   = "p31ca.org"
+
+[[env.production.kv_namespaces]]
+binding = "CHALLENGES"
+id      = "d9bf5ef388164afab701270f4d031590"
+
+[[env.production.d1_databases]]
+binding       = "DB"
+database_name = "p31-passkey-db"
+database_id   = "9d284b07-50c9-434b-ae5e-975842bdb992"
+
+[[env.production.routes]]
+pattern   = "p31ca.org/api/passkey/*"
+zone_name = "p31ca.org"
+
+[[env.production.routes]]
+pattern   = "p31ca.org/api/education/*"
+zone_name = "p31ca.org"
+
+[[env.production.routes]]
+pattern   = "p31ca.org/api/hardware/*"
+zone_name = "p31ca.org"
+
+# ── Preview ──────────────────────────────────────────────────────────────────
+[env.preview.vars]
+RP_NAME = "P31 Labs"
+RP_ID   = "p31ca.pages.dev"
+
+[[env.preview.kv_namespaces]]
+binding = "CHALLENGES"
+id      = "d9bf5ef388164afab701270f4d031590"
+
+[[env.preview.d1_databases]]
+binding       = "DB"
+database_name = "p31-passkey-db"
+database_id   = "9d284b07-50c9-434b-ae5e-975842bdb992"
+
+# Preview / workers.dev: Worker fetch handler still matches /api/education/* at the script URL.
+# Production zone routes above also mount education progress on p31-passkey.
+
+[[rules]]
+type  = "ESModule"
+globs = ["**/*.ts"]

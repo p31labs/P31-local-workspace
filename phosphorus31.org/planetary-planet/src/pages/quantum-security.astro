@@ -1,0 +1,184 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const quantumJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "name": "Post-Quantum Cryptography at P31 Labs",
+  "description": "P31 Labs' approach to quantum-safe infrastructure: cryptographic agility, Delta topology mesh networks, and sovereignty-first security for neurodivergent assistive technology.",
+  "url": "https://phosphorus31.org/quantum-security",
+  "author": {
+    "@type": "Organization",
+    "name": "P31 Labs"
+  }
+};
+---
+
+<Layout
+  title="Post-Quantum Cryptography | P31 Labs"
+  description="P31 Labs' approach to quantum-safe infrastructure: cryptographic agility, Delta topology mesh networks, and sovereignty-first security."
+  jsonLd={quantumJsonLd}
+>
+  <main class="animate-[fadeIn_0.4s_ease-out] bg-white min-h-screen pb-24">
+    {/* Header */}
+    <div class="bg-espresso text-cloud pt-32 pb-20 px-6">
+      <div class="max-w-5xl mx-auto">
+        <div class="text-butter font-bold tracking-widest uppercase text-sm mb-4">Infrastructure & Security</div>
+        <h1 class="text-5xl font-heading font-black mb-6">Post-Quantum Cryptography</h1>
+        <p class="text-xl opacity-80 max-w-2xl">
+          Essential infrastructure, not theory. The quantum computing timeline is accelerating. The threat is already active.
+        </p>
+      </div>
+    </div>
+
+    <div class="max-w-5xl mx-auto px-6 -mt-10">
+
+      {/* The Threat Section */}
+      <div class="bg-white p-8 md:p-12 rounded-2xl shadow-xl border border-cloud mb-16">
+        <h2 class="text-3xl font-heading font-black text-espresso mb-8">The Threat: Harvest Now, Decrypt Later (HNDL)</h2>
+        <div class="space-y-5 text-espresso/80 leading-relaxed">
+          <p>
+            You do not need a fully fault-tolerant quantum computer today to compromise today's data. The primary threat vector is <strong>"Harvest Now, Decrypt Later" (HNDL).</strong> Adversaries — ranging from state actors to advanced persistent threats — are actively scraping and storing encrypted communications, health records, and legal data. The encryption holding that data is classical. When quantum hardware matures, that stored data will be decrypted retroactively.
+          </p>
+          <div class="bg-coral-50 border border-coral-200 p-6 rounded-xl">
+            <p class="text-lg text-coral-800 font-semibold">
+              If your sensitive data is transmitted today using legacy encryption, it is already compromised on a time delay.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Hardware Timeline */}
+      <div class="bg-white p-8 md:p-12 rounded-2xl shadow-xl border border-cloud mb-16">
+        <h2 class="text-3xl font-heading font-black text-espresso mb-6">The Hardware Timeline</h2>
+        <div class="space-y-5 text-espresso/80 leading-relaxed mb-6">
+          <p>
+            We are exiting the NISQ (Noisy Intermediate-Scale Quantum) era and entering the era of logical error correction.
+          </p>
+        </div>
+        <ul class="space-y-4 mb-6">
+          <li class="flex items-start gap-3">
+            <span class="text-teal-600 text-2xl">●</span>
+            <div class="text-espresso/80">
+              <strong class="text-espresso">Google Willow:</strong>
+              <span> Reached 105 qubits, demonstrating exponential error suppression — the first below-threshold error correction on a superconducting processor.</span>
+            </div>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="text-teal-600 text-2xl">●</span>
+            <div class="text-espresso/80">
+              <strong class="text-espresso">IBM Starling:</strong>
+              <span> Targeted for 200 logical qubits by 2028.</span>
+            </div>
+          </li>
+        </ul>
+        <p class="text-espresso/80 leading-relaxed">
+          Shor's algorithm is no longer just mathematical theory; the hardware required to execute it against RSA and ECC encryption is on a definitive roadmap. Scientists are calling this quantum technology's "transistor moment" — the transition from laboratory curiosity to engineered infrastructure.
+        </p>
+      </div>
+
+      {/* Regulatory Reality */}
+      <div class="bg-white p-8 md:p-12 rounded-2xl shadow-xl border border-cloud mb-16">
+        <h2 class="text-3xl font-heading font-black text-espresso mb-6">The Regulatory Reality</h2>
+        <div class="space-y-5 text-espresso/80 leading-relaxed">
+          <p>
+            The global infrastructure is already being forced to adapt. The <strong>European Union is mandating quantum-safe encryption standards by the end of 2026.</strong> This isn't a suggestion — it is a hard deadline for foundational digital infrastructure. Systems that fail to migrate will be fundamentally obsolete and legally non-compliant.
+          </p>
+          <p>
+            NIST has finalized Post-Quantum Cryptography standards: CRYSTALS-Kyber (ML-KEM, FIPS 203) for key encapsulation and CRYSTALS-Dilithium (ML-DSA, FIPS 204) for digital signatures. The migration path exists. The question is whether organizations will walk it before or after their data is compromised.
+          </p>
+        </div>
+      </div>
+
+      {/* P31 Position */}
+      <div class="mb-16">
+        <h2 class="text-3xl font-heading font-black text-espresso mb-8">The P31 Labs Position: Sovereignty and Topology</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div class="glass-box p-8 rounded-2xl border-l-4 border-l-teal-600">
+            <h3 class="font-heading font-bold text-xl text-espresso mb-3">Data Sovereignty</h3>
+            <p class="text-espresso/70">
+              At P31 Labs, we build assistive technology and cognitive dashboards for neurodivergent individuals. The data these systems handle — real-time self-regulation metrics, internal state logs, medical timelines — is highly sensitive. We cannot rely on centralized, legacy security models to protect it.
+            </p>
+          </div>
+          <div class="glass-box p-8 rounded-2xl border-l-4 border-l-coral-500">
+            <h3 class="font-heading font-bold text-xl text-espresso mb-3">Delta Topology</h3>
+            <p class="text-espresso/70">
+              Centralized systems rely on a <strong>Wye (Star) topology</strong>, presenting a single point of failure. We are engineering our tools — including the Node One mesh hardware and the BONDING relay infrastructure — toward a <strong>Delta (Mesh) topology.</strong>
+            </p>
+          </div>
+        </div>
+        <div class="mt-8 bg-teal-50 border border-teal-200 p-6 rounded-xl">
+          <h3 class="font-bold text-teal-800 mb-4">Our approach:</h3>
+          <ul class="space-y-2 text-teal-800">
+            <li><strong>Ed25519</strong> device identity via NXP SE050 hardware security module (current)</li>
+            <li><strong>Migration path</strong> to lattice-based algorithms (ML-KEM / ML-DSA) via firmware OTA</li>
+            <li><strong>LoRa mesh</strong> (Meshtastic on SX1262) for serverless device-to-device communication</li>
+            <li><strong>No certificate authority dependency</strong> — each node maintains sovereign key material</li>
+          </ul>
+        </div>
+        <p class="text-espresso/80 leading-relaxed mt-6">
+          Data sovereignty requires structural rigidity. We are building ahead of the curve because waiting for the centralized systems to upgrade is a vulnerability we cannot afford.
+        </p>
+      </div>
+
+      {/* Resources */}
+      <div class="bg-cloud/50 rounded-3xl p-8 md:p-12 mb-16">
+        <h2 class="text-2xl font-heading font-black text-espresso mb-6">Resources</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+          <a href="https://csrc.nist.gov/projects/post-quantum-cryptography" target="_blank" rel="noopener noreferrer"
+            class="bg-white p-5 rounded-xl border border-cloud hover:border-teal-600 transition-colors flex items-center gap-4 no-underline">
+            <div class="text-2xl">🔐</div>
+            <div>
+              <div class="font-bold text-espresso">NIST PQC Standardization</div>
+              <div class="text-espresso/50">Finalized standards: ML-KEM, ML-DSA</div>
+            </div>
+          </a>
+          <a href="https://doi.org/10.5281/zenodo.19004485" target="_blank" rel="noopener noreferrer"
+            class="bg-white p-5 rounded-xl border border-cloud hover:border-teal-600 transition-colors flex items-center gap-4 no-underline">
+            <div class="text-2xl">📄</div>
+            <div>
+              <div class="font-bold text-espresso">P31 Defensive Publication</div>
+              <div class="text-espresso/50">Cryptographic agility framework on Zenodo</div>
+            </div>
+          </a>
+          <a href="https://github.com/p31labs" target="_blank" rel="noopener noreferrer"
+            class="bg-white p-5 rounded-xl border border-cloud hover:border-teal-600 transition-colors flex items-center gap-4 no-underline">
+            <div class="text-2xl">💻</div>
+            <div>
+              <div class="font-bold text-espresso">P31 Labs GitHub</div>
+              <div class="text-espresso/50">All code public, security-first design</div>
+            </div>
+          </a>
+          <div class="bg-white p-5 rounded-xl border border-cloud flex items-center gap-4">
+            <div class="text-2xl">☯</div>
+            <div>
+              <div class="font-bold text-espresso">Quantum-Safe Migration</div>
+              <div class="text-espresso/50">NXP SE050 firmware-ready for ML-KEM/ML-DSA</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* CTAs */}
+      <div class="text-center">
+        <h2 class="text-2xl font-heading font-black text-espresso mb-4">Build Sovereign, Stay Secure</h2>
+        <p class="text-espresso/60 max-w-xl mx-auto mb-8">
+          Every P31 Labs tool is designed with cryptographic agility and post-quantum readiness from the ground up. Because the tools protecting our most vulnerable users cannot be rendered transparent by tomorrow's hardware.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a href="/products"
+            class="bg-teal-600 hover:bg-teal-700 text-white font-bold py-4 px-8 rounded-2xl shadow-lg transition-transform hover:-translate-y-1 text-center"
+            style="text-decoration:none;">
+            See the Products
+          </a>
+          <a href="https://github.com/p31labs"
+            class="bg-coral-500 hover:bg-coral-600 text-white font-bold py-4 px-8 rounded-2xl shadow-lg transition-transform hover:-translate-y-1 text-center"
+            style="text-decoration:none;">
+            View on GitHub
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</Layout>

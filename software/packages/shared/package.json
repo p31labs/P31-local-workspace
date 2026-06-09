@@ -1,0 +1,64 @@
+{
+  "name": "@p31/shared",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run --passWithNoTests",
+    "test:watch": "vitest"
+  },
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "dependencies": {
+    "@noble/post-quantum": "^0.2.1",
+    "idb-keyval": "^6.2.1",
+    "pino": "^9.0.0",
+    "pino-pretty": "^11.0.0",
+    "react": "^18.2.0",
+    "three": "^0.170.0",
+    "zustand": "^5.0.0"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "eslint": "^9.0.0",
+    "typescript": "^5.5.0",
+    "@sentry/types": "^7.81.1",
+    "@types/node": "^20.0.0",
+    "@types/react": "^19.0.0",
+    "@types/three": "^0.170.0",
+    "@vitest/coverage-v8": "4.1.1",
+    "vite": "^8.0.1",
+    "vitest": "^4.1.0"
+  },
+  "peerDependencies": {
+    "react": ">=18"
+  },
+  "peerDependenciesMeta": {
+    "react": { "optional": true }
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./events": "./src/events/index.ts",
+    "./economy": "./src/economy/index.ts",
+    "./telemetry": "./src/telemetry/index.ts",
+    "./types": "./src/types/index.ts",
+    "./net": "./src/net/index.ts",
+    "./ui": "./src/ui/index.ts",
+    "./sovereign": "./src/sovereign/index.ts",
+    "./geodesic-campaign": "./src/geodesic-campaign.ts",
+    "./geodesic-room-wire": "./src/geodesic-room-wire.ts",
+    "./geodesic-build-snapshot": "./src/geodesic-build-snapshot.ts",
+    "./cars-wire": "./src/cars-wire.ts",
+    "./cognitive-passport-schema": "./src/cognitive-passport-schema.ts",
+    "./cognitive-passport-profiles": "./src/cognitive-passport-profiles.ts",
+    "./qfactor": "./src/qfactor/index.ts",
+    "./buffer": "./src/buffer/scorer.ts",
+    "./crypto/pqc": "./src/crypto/postQuantum.ts",
+    "./telemetry/daubert": "./src/telemetry/daubert-export.ts",
+    "./trust": "./src/trust/index.ts"
+  }
+}

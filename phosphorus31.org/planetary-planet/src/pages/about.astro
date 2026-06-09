@@ -1,0 +1,174 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const aboutJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "NGO",
+  "name": "P31 Labs, Inc.",
+  "legalName": "P31 Labs, Inc.",
+  "url": "https://phosphorus31.org",
+  "logo": "https://phosphorus31.org/favicon.svg",
+  "description": "Open-source assistive technology for neurodivergent individuals. Georgia Nonprofit Corporation, 501(c)(3) pending.",
+  "foundingDate": "2026-04-03",
+  "address": { "@type": "PostalAddress", "addressRegion": "GA", "addressCountry": "US" },
+  "founder": {
+    "@type": "Person",
+    "name": "William R. Johnson",
+    "jobTitle": "President & Founder",
+    "sameAs": "https://orcid.org/0009-0002-2492-9079"
+  },
+  "sameAs": ["https://github.com/p31labs", "https://ko-fi.com/trimtab69420"]
+};
+---
+
+<Layout title="About | P31 Labs" description="P31 Labs, Inc. — open-source assistive technology for neurodivergent families. Georgia nonprofit corporation, founded April 2026." jsonLd={aboutJsonLd}>
+  <main class="animate-[fadeIn_0.4s_ease-out] bg-white min-h-screen pb-24">
+    <div class="bg-espresso text-cloud pt-32 pb-20 px-6">
+      <div class="max-w-5xl mx-auto">
+        <div class="text-butter font-bold tracking-widest uppercase text-sm mb-4">About P31 Labs, Inc.</div>
+        <h1 class="text-5xl font-heading font-black mb-6">Building tools that don't exist yet.</h1>
+        <p class="text-xl opacity-80 max-w-2xl">
+          P31 Labs, Inc. is a Georgia nonprofit corporation creating free, open-source assistive technology for neurodivergent families. 501(c)(3) application in process.
+        </p>
+      </div>
+    </div>
+
+    <div class="max-w-5xl mx-auto px-6 -mt-10">
+
+      {/* Founder Section */}
+      <div class="bg-white p-8 md:p-12 rounded-2xl shadow-xl border border-cloud mb-16">
+        <div class="flex flex-col md:flex-row gap-8 items-start">
+          <div class="flex-shrink-0 w-24 h-24 bg-gradient-to-br from-teal-600 via-coral-500 to-butter rounded-2xl flex items-center justify-center">
+            <span class="text-4xl font-heading font-black text-white">WJ</span>
+          </div>
+          <div class="flex-1">
+            <h2 class="text-3xl font-heading font-black text-espresso mb-2">Will Johnson</h2>
+            <p class="text-teal-600 font-bold mb-1">Founder &amp; President</p>
+            <p class="text-espresso/50 text-sm mb-6">
+              ORCID: <a href="https://orcid.org/0009-0002-2492-9079" target="_blank" rel="noopener noreferrer" class="text-teal-600 hover:underline">0009-0002-2492-9079</a>
+            </p>
+
+            <div class="space-y-4 text-espresso/80 leading-relaxed">
+              <p>
+                16 years as a civilian electrical engineering technician (GS-0802-12) for the Department of Defense at TRIREFFAC Kings Bay. Specialized in power systems, control theory, and safety-critical infrastructure. That background — grounding floating neutrals, building redundancy into systems that cannot fail — is exactly what P31 Labs applies to assistive technology.
+              </p>
+              <p>
+                Late-diagnosed AuDHD (autism + ADHD) at 39. Hypoparathyroidism since 2003 — a condition that creates measurable, well-documented Ca&#xB2;&#x207A; dysregulation with neurological consequences. That experience reframed everything: why standard productivity tools never worked, why sensory environments that other people tolerate are genuinely disabling, why the existing assistive technology market either infantilizes its users or prices them out.
+              </p>
+              <p>
+                P31 Labs exists because the tools neurodivergent families need don't exist yet. Not in the app store, not behind a $200/month subscription, not locked in a clinician's office. So we build them — free, open-source, designed for brains that work differently.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* P31 Naming Origin */}
+      <div class="bg-gradient-to-br from-teal-900 via-espresso to-teal-900 p-8 md:p-12 rounded-2xl shadow-xl mb-16">
+        <h2 class="text-2xl font-heading font-black text-white mb-4">Why Phosphorus-31?</h2>
+        <p class="text-white/80 leading-relaxed mb-4">
+          Phosphorus-31 (&#xB3;&#xB9;P) is the only stable isotope of phosphorus and the only biologically available spin-&#xBD; nucleus without an electric quadrupole moment. This makes it uniquely observable via nuclear magnetic resonance — you can non-invasively measure it in living tissue.
+        </p>
+        <p class="text-white/80 leading-relaxed mb-4">
+          Matthew Fisher's 2015 hypothesis in <em>Annals of Physics</em> proposes that Posner molecules (Ca&#x2079;(PO&#x2084;)&#x2086;) could maintain quantum coherence in biological systems long enough to influence cognition. Phosphorus-31 spin states are the proposed qubit. If Fisher is right, your brain runs quantum computation on phosphorus.
+        </p>
+        <p class="text-white/80 leading-relaxed">
+          We named the organization after that nucleus because: (1) the founder has hypoparathyroidism — a calcium regulation disorder with documented cognitive effects — making this personal; (2) the name forces the question of whether consciousness is computable, which is the right question for a cognitive prosthetics lab to be asking.
+        </p>
+      </div>
+
+      {/* Trimtab Philosophy */}
+      <div class="mb-16">
+        <h2 class="text-3xl font-heading font-black text-espresso mb-6">The Trimtab Principle</h2>
+        <div class="glass-box p-8 rounded-2xl border-l-4 border-l-teal-600">
+          <p class="text-espresso/80 leading-relaxed mb-4">
+            A trimtab is a tiny rudder on the trailing edge of a ship's main rudder. Moving the trimtab takes almost no force but creates a pressure differential that turns the main rudder, which then turns the entire ship. Buckminster Fuller used this as a metaphor for how individuals can create systemic change by acting at the right leverage point.
+          </p>
+          <p class="text-espresso/80 leading-relaxed">
+            P31 Labs operates as a trimtab. We don't fight the system — we find the leverage points. Free tools that families can use today. Research that creates precedent. Transparent operations that demonstrate the model works. The goal isn't to build a big organization; it's to shift the conditions so that better tools become inevitable.
+          </p>
+          <div class="mt-4 text-teal-600/60 italic text-sm">
+            — Fuller had "CALL ME TRIMTAB" inscribed on his tombstone. That's the level of commitment.
+          </div>
+        </div>
+      </div>
+
+      {/* Mission Section */}
+      <div class="mb-16">
+        <h2 class="text-3xl font-heading font-black text-espresso mb-8">Our Mission</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div class="glass-box p-8 rounded-2xl border-l-4 border-l-teal-600">
+            <h3 class="font-heading font-bold text-xl text-espresso mb-3">For Families</h3>
+            <p class="text-espresso/70">Free tools that help neurodivergent families manage energy, communicate safely, and stay connected across distance. No accounts, no tracking, no ads. Your data stays on your device.</p>
+          </div>
+          <div class="glass-box p-8 rounded-2xl border-l-4 border-l-coral-500">
+            <h3 class="font-heading font-bold text-xl text-espresso mb-3">For Kids</h3>
+            <p class="text-espresso/70">Educational technology designed for how kids actually learn — through play, discovery, and building things together. Difficulty modes that adapt to each child's age and ability.</p>
+          </div>
+          <div class="glass-box p-8 rounded-2xl border-l-4 border-l-butter">
+            <h3 class="font-heading font-bold text-xl text-espresso mb-3">For Co-Parents</h3>
+            <p class="text-espresso/70">Documented engagement tools that timestamp every interaction. When proximity isn't possible, technology can prove that a parent showed up — to the millisecond.</p>
+          </div>
+          <div class="glass-box p-8 rounded-2xl border-l-4 border-l-lavender">
+            <h3 class="font-heading font-bold text-xl text-espresso mb-3">Open Source</h3>
+            <p class="text-espresso/70">Every line of code is public. Every design decision is documented. We build in a glass box because accessibility is a human right, not a business model.</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Organizational Status */}
+      <div class="bg-cloud/50 rounded-3xl p-8 md:p-12 mb-16">
+        <h2 class="text-3xl font-heading font-black text-espresso mb-8">Organization</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="bg-white p-6 rounded-xl border border-cloud">
+            <div class="text-sm font-bold text-espresso/50 uppercase mb-2">Entity</div>
+            <div class="text-lg font-bold text-espresso">P31 Labs, Inc.</div>
+            <div class="text-sm text-espresso/60 mt-1">Georgia Domestic Nonprofit Corporation</div>
+          </div>
+          <div class="bg-white p-6 rounded-xl border border-cloud">
+            <div class="text-sm font-bold text-espresso/50 uppercase mb-2">Incorporation Date</div>
+            <div class="text-lg font-bold text-espresso">April 3, 2026</div>
+            <div class="text-sm text-espresso/60 mt-1">Articles filed with Georgia Secretary of State</div>
+          </div>
+          <div class="bg-white p-6 rounded-xl border border-cloud">
+            <div class="text-sm font-bold text-espresso/50 uppercase mb-2">Tax Status</div>
+            <div class="text-lg font-bold text-espresso">501(c)(3) Pending</div>
+            <div class="text-sm text-espresso/60 mt-1">Form 1023-EZ application in process. IRS determination expected Q3 2026.</div>
+          </div>
+          <div class="bg-white p-6 rounded-xl border border-cloud">
+            <div class="text-sm font-bold text-espresso/50 uppercase mb-2">Location</div>
+            <div class="text-lg font-bold text-espresso">SE Georgia, USA</div>
+            <div class="text-sm text-espresso/60 mt-1">Camden County</div>
+          </div>
+          <div class="bg-white p-6 rounded-xl border border-cloud">
+            <div class="text-sm font-bold text-espresso/50 uppercase mb-2">Board</div>
+            <div class="text-sm font-bold text-espresso space-y-1">
+              <div>Will Johnson — President</div>
+              <div>Brenda O'Dell — Director</div>
+              <div>Ashley — Secretary</div>
+              <div>Carrie — Treasurer</div>
+            </div>
+          </div>
+          <div class="bg-white p-6 rounded-xl border border-cloud">
+            <div class="text-sm font-bold text-espresso/50 uppercase mb-2">Source Code</div>
+            <a href="https://github.com/p31labs" target="_blank" rel="noopener noreferrer" class="text-lg font-bold text-teal-600 hover:underline">github.com/p31labs</a>
+            <div class="text-sm text-espresso/60 mt-1">All repositories public under MIT license</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Contact */}
+      <div class="text-center">
+        <h2 class="text-2xl font-heading font-black text-espresso mb-4">Contact</h2>
+        <p class="text-espresso/70 mb-2">
+          <a href="mailto:will@p31ca.org" class="text-teal-600 font-bold hover:underline">will@p31ca.org</a>
+        </p>
+        <p class="text-espresso/50 text-sm mt-2">
+          Support on <a href="https://ko-fi.com/trimtab69420" target="_blank" rel="noopener noreferrer" class="text-teal-600 font-bold hover:underline">Ko-fi</a> &#xB7;
+          <a href="https://discord.gg/uYW5rTCuZ" target="_blank" rel="noopener noreferrer" class="text-teal-600 font-bold hover:underline">Discord community</a>
+        </p>
+        <p class="text-espresso/50 text-sm">SE Georgia</p>
+      </div>
+    </div>
+  </main>
+</Layout>

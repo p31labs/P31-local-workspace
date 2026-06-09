@@ -1,0 +1,514 @@
+---
+// @p31-layout: Focus
+import AppShell from '../../layouts/AppShell.astro';
+---
+
+<AppShell
+  routeName="qfactor"
+  title="Q-Factor — P31"
+  description="Sovereign biometric coherence tracker. Q-score, spoon economy, calcium status — local-first with K₄ mesh sync."
+  suppressEbc={true}
+  preserveSW={true}
+>
+  <Fragment slot="head">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Q-Factor" />
+    <link rel="manifest" href="/pwa/manifest-qfactor.json" />
+    <link rel="apple-touch-icon" href="/pwa/p31-tetra-icon.svg" />
+  </Fragment>
+
+  <main class="qf-main" style="padding-top:calc(4rem + var(--safe-top,0px));padding-bottom:calc(148px + var(--safe-bottom,20px))">
+
+    <!-- Header -->
+    <div class="qf-header">
+      <div>
+        <div class="qf-status-row">
+          <div id="dot" class="qf-dot" style="background:#333"></div>
+          <span id="status-label" class="qf-status-label">CONNECTING</span>
+        </div>
+        <h1 class="qf-title">Q-Factor</h1>
+      </div>
+      <div class="qf-icon-wrap">
+        <svg viewBox="0 0 24 24" width="18" height="18" stroke="#8b5cf6" stroke-width="1.5" fill="none">
+          <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Ring card -->
+    <div class="qf-card">
+      <div class="qf-ring-wrap">
+        <svg viewBox="0 0 160 160" width="144" height="144" style="transform:rotate(-90deg)">
+          <circle class="rg" cx="80" cy="80" r="68"/>
+          <circle id="ring" class="rf" cx="80" cy="80" r="68" stroke-dasharray="427.26" stroke-dashoffset="427.26" stroke="var(--p31-teal)"/>
+        </svg>
+        <div class="qf-ring-center">
+          <span id="q-num" class="qf-q-num" style="color:var(--q)">—</span>
+          <span class="qf-q-label">Q-SCORE</span>
+        </div>
+      </div>
+      <div id="q-badge" class="qf-badge" style="color:var(--q);border-color:rgba(16,185,129,0.3);background:rgba(16,185,129,0.08)">LOADING</div>
+      <p id="q-summary" class="qf-summary">Fetching coherence state…</p>
+    </div>
+
+    <!-- HRV slider -->
+    <div class="qf-card">
+      <div class="qf-row-between">
+        <div>
+          <p class="qf-sublabel">HRV · RMSSD</p>
+          <h2 class="qf-card-title">Vagal Tone</h2>
+        </div>
+        <div>
+          <span id="val-hrv" class="qf-big-val" style="color:var(--q)">45</span>
+          <span class="qf-unit">ms</span>
+        </div>
+      </div>
+      <input type="range" id="sl-hrv" min="10" max="120" value="45" class="qf-slider" style="--sc:#8b5cf6">
+    </div>
+
+    <!-- Spoon economy -->
+    <div class="qf-card">
+      <div class="qf-row-between">
+        <div>
+          <p class="qf-sublabel">SPOON ECONOMY</p>
+          <h2 class="qf-card-title">Available Energy</h2>
+        </div>
+        <span id="spoon-count" class="qf-big-val" style="color:var(--q)">—</span>
+      </div>
+      <div class="qf-spoon-row">
+        <button class="sb" onclick="adjustSpoon(-1)" aria-label="Spend spoon">−</button>
+        <div id="pips" class="qf-pips"></div>
+        <button class="sb" onclick="adjustSpoon(1)" aria-label="Gain spoon">+</button>
+      </div>
+    </div>
+
+    <!-- Calcium -->
+    <div class="qf-card">
+      <div class="qf-row-between">
+        <div>
+          <p class="qf-sublabel">SERUM CALCIUM</p>
+          <h2 class="qf-card-title">Physiological</h2>
+        </div>
+        <div class="qf-ca-right">
+          <span id="ca-val" class="qf-big-val">—</span>
+          <span class="qf-unit">mg/dL</span>
+          <span id="ca-badge" class="qf-ca-badge">—</span>
+        </div>
+      </div>
+      <div class="ca-track"><div id="ca-fill" class="ca-fill" style="width:0%;background:var(--p31-teal)"></div></div>
+    </div>
+
+    <!-- Recommendations -->
+    <div id="recs-card" class="qf-card" style="display:none">
+      <p class="qf-sublabel" style="margin-bottom:0.25rem">RECOMMENDATIONS</p>
+      <div id="recs"></div>
+    </div>
+
+    <!-- HA payload -->
+    <div id="ha-card" class="qf-card" style="display:none">
+      <p class="qf-sublabel" style="margin-bottom:0.75rem">AUTOMATION PAYLOAD</p>
+      <div id="ha-grid" class="qf-ha-grid"></div>
+    </div>
+
+  </main>
+
+  <!-- Single bottom action bar — replaces all other footers on this page -->
+  <div class="qf-bottom">
+    <div class="qf-bottom-row">
+      <div>
+        <p class="qf-sublabel">STATE</p>
+        <p id="out-quad" class="qf-state-val" style="color:var(--q)">—</p>
+      </div>
+      <div style="text-align:right">
+        <p class="qf-sublabel">COHERENCE</p>
+        <p id="out-score" class="qf-score-val" style="color:var(--q)">—</p>
+      </div>
+    </div>
+    <button id="xmit" class="qf-xmit" onclick="pushUpdate()">TRANSMIT TO K₄</button>
+    <div class="age-bar"><div id="age-fill" class="age-fill" style="width:100%"></div></div>
+  </div>
+
+  <div id="toast" class="qf-toast"></div>
+</AppShell>
+
+<style>
+  :root { --q: var(--p31-teal); --safe-top: env(safe-area-inset-top, 0px); --safe-bottom: env(safe-area-inset-bottom, 20px); }
+  * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
+
+  /* Dot-grid overlay on this page only */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: radial-gradient(rgba(139,92,246,0.08) 1px, transparent 1px);
+    background-size: 24px 24px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .qf-main { display: flex; flex-direction: column; gap: 1rem; padding-inline: 1rem; position: relative; z-index: 1; }
+
+  /* Header */
+  .qf-header { display: flex; align-items: flex-start; justify-content: space-between; margin-top: 0.25rem; }
+  .qf-status-row { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.125rem; }
+  .qf-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; transition: background 0.3s; }
+  .qf-status-label { font-size: 9px; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.2em; text-transform: uppercase; color: var(--p31-muted, #666); }
+  .qf-title { font-size: 1.875rem; font-family: 'Atkinson Hyperlegible', sans-serif; font-weight: 700; margin: 0; color: var(--p31-cloud, #ede8e0); }
+  .qf-icon-wrap { width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(139,92,246,0.3); background: rgba(139,92,246,0.1); display: flex; align-items: center; justify-content: center; }
+
+  /* Cards */
+  .qf-card {
+    background: rgba(12,12,18,0.78);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 1rem;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    position: relative;
+    z-index: 1;
+  }
+  .qf-sublabel { font-size: 9px; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.15em; text-transform: uppercase; color: var(--p31-muted, #666); margin: 0; }
+  .qf-card-title { font-size: 0.875rem; font-weight: 600; color: var(--p31-cloud, #ede8e0); margin: 0; }
+  .qf-big-val { font-size: 1.5rem; font-family: 'JetBrains Mono', monospace; }
+  .qf-unit { font-size: 0.75rem; color: var(--p31-muted, #666); margin-left: 0.125rem; }
+  .qf-row-between { display: flex; justify-content: space-between; align-items: flex-end; }
+  .qf-ca-right { display: flex; align-items: baseline; gap: 0.375rem; flex-wrap: wrap; }
+  .qf-ca-badge { font-size: 10px; font-family: 'JetBrains Mono', monospace; padding: 0.125rem 0.5rem; border-radius: 9999px; border: 1px solid currentColor; background: rgba(100,116,139,0.1); color: #64748b; }
+  .qf-ha-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+
+  /* Q-ring */
+  .qf-ring-wrap { position: relative; width: 144px; height: 144px; }
+  .qf-ring-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.125rem; }
+  .qf-q-num { font-size: 3rem; font-family: 'Atkinson Hyperlegible', sans-serif; line-height: 1; }
+  .qf-q-label { font-size: 9px; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.2em; color: var(--p31-muted, #666); }
+  .qf-badge { font-size: 11px; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.15em; padding: 0.375rem 1rem; border-radius: 9999px; border: 1px solid; }
+  .qf-summary { font-size: 11px; color: var(--p31-muted, #666); text-align: center; line-height: 1.6; max-width: 280px; margin: 0 auto; }
+  .rg { fill: none; stroke: #16181f; stroke-width: 12; }
+  .rf { fill: none; stroke-width: 12; stroke-linecap: round; transition: stroke-dashoffset .8s ease, stroke .4s; }
+
+  /* Slider */
+  .qf-slider { -webkit-appearance: none; width: 100%; background: transparent; }
+  .qf-slider::-webkit-slider-thumb { -webkit-appearance: none; height: 26px; width: 26px; border-radius: 50%; background: var(--sc, #8b5cf6); cursor: pointer; margin-top: -11px; box-shadow: 0 0 10px var(--sc, #8b5cf6); border: 2px solid rgba(255,255,255,0.25); }
+  .qf-slider::-webkit-slider-runnable-track { height: 4px; background: rgba(255,255,255,0.08); border-radius: 2px; }
+  .qf-slider:focus { outline: none; }
+
+  /* Pips */
+  .qf-pips { display: flex; flex-wrap: wrap; gap: 0.25rem; flex: 1; justify-content: center; }
+  .pip { width: 13px; height: 13px; border-radius: 3px; background: #1e2229; transition: background .15s; flex-shrink: 0; }
+  .pip.on { background: var(--q); }
+
+  /* Spoon buttons */
+  .sb { width: 54px; height: 54px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.1); background: rgba(16,185,129,0.1); color: var(--p31-cloud, #ede8e0); font-size: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform .1s, background .15s; flex-shrink: 0; }
+  .sb:active { transform: scale(.88); background: rgba(16,185,129,0.25); }
+  .qf-spoon-row { display: flex; align-items: center; gap: 0.75rem; }
+
+  /* Calcium bar */
+  .ca-track { height: 5px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden; }
+  .ca-fill { height: 100%; border-radius: 3px; transition: width .6s ease, background .4s; }
+
+  /* Bottom action bar */
+  .qf-bottom {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(12,12,18,0.88);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(255,255,255,0.07);
+    border-radius: 1.5rem 1.5rem 0 0;
+    padding: 1rem 1.25rem calc(1.25rem + var(--safe-bottom, 20px));
+    z-index: 50;
+  }
+  .qf-bottom-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
+  .qf-state-val { font-size: 0.875rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.05em; margin: 0; }
+  .qf-score-val { font-size: 2.5rem; font-family: 'Atkinson Hyperlegible', sans-serif; line-height: 1; margin: 0; }
+  .qf-xmit { width: 100%; padding: 15px; border-radius: 14px; border: none; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 2px; font-weight: 700; color: #050505; cursor: pointer; text-transform: uppercase; background: var(--q); transition: opacity .15s, transform .1s, background .4s, box-shadow .4s; box-shadow: 0 0 20px rgba(16,185,129,0.2); }
+  .qf-xmit:active { transform: scale(.97); opacity: .85; }
+  .qf-xmit:disabled { background: #1e2229; color: #444; cursor: default; box-shadow: none; }
+  .age-bar { height: 2px; background: rgba(255,255,255,0.06); border-radius: 1px; margin-top: 8px; overflow: hidden; }
+  .age-fill { height: 100%; background: var(--q); transition: width 300s linear; }
+
+  /* Toast */
+  .qf-toast { position: fixed; bottom: calc(90px + var(--safe-bottom, 20px)); left: 50%; transform: translateX(-50%) translateY(10px); background: var(--p31-surface); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 1px; padding: 9px 16px; opacity: 0; transition: opacity .2s, transform .2s; pointer-events: none; white-space: nowrap; z-index: 100; }
+  .qf-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+
+<script>
+'use strict';
+
+const API = 'https://api.p31ca.org';
+const MAX_SPOONS = 10;
+
+function getLocalDid() {
+  let did = localStorage.getItem('p31-did');
+  if (!did) {
+    did = Array.from(crypto.getRandomValues(new Uint8Array(3)))
+      .map(b => b.toString(16).padStart(2, '0')).join('');
+    localStorage.setItem('p31-did', did);
+  }
+  return did;
+}
+const USER = getLocalDid();
+const CIRC = 427.26;
+
+const Q_COLORS = {
+  Q1_FLOW: 'var(--p31-teal)', Q2_BURN: '#f43f5e', Q3_DEPLETED: '#64748b', Q4_RECOVERY: '#8b5cf6',
+  Q2_ANXIOUS: 'var(--p31-amber)', Q3_EXHAUSTED: '#f43f5e', Q4_CALM: '#8b5cf6',
+};
+const Q_LABELS = {
+  Q1_FLOW: 'Q1 · FLOW', Q2_BURN: 'Q2 · BURN', Q3_DEPLETED: 'Q3 · DEPLETED', Q4_RECOVERY: 'Q4 · RECOVERY',
+  Q2_ANXIOUS: 'Q2 · BURN', Q3_EXHAUSTED: 'Q3 · DEPLETED', Q4_CALM: 'Q4 · RECOVERY',
+};
+
+let st = {
+  qScore: null, quadrant: null, spoonBalance: null, calciumMgDl: null,
+  calciumStatus: 'unknown', recommendations: [], haPayload: null,
+  lastFetch: null, offline: true, manualHrv: 45,
+};
+
+const S = {
+  get: k => { try { return JSON.parse(localStorage.getItem(k) ?? 'null'); } catch { return null; } },
+  set: (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} },
+};
+
+function localQ(hrv, spoons, ca) {
+  const norm = Math.max(0, Math.min(1, (hrv - 25) / 40));
+  const arousal = (1 - norm) * 100;
+  let valence = (spoons / MAX_SPOONS) * 100;
+  if (ca < 7.8) valence = Math.max(0, valence - (7.8 - ca) * 50);
+  else if (ca < 8.0) valence = Math.max(0, valence - (8.0 - ca) * 20);
+  const dx = arousal - 70, dy = valence - 75;
+  const score = Math.max(0, Math.round(100 - Math.sqrt(dx*dx + dy*dy) / Math.sqrt(9625) * 100));
+  const q = arousal >= 50 && valence >= 50 ? 'Q1_FLOW'
+          : arousal >= 50 ? 'Q2_BURN'
+          : valence < 50  ? 'Q3_DEPLETED'
+          : 'Q4_RECOVERY';
+  return { qScore: score, quadrant: q };
+}
+
+async function fetchState() {
+  try {
+    const r = await fetch(`${API}/qfactor/current?userId=${USER}`, { signal: AbortSignal.timeout(8000) });
+    if (!r.ok) throw 0;
+    const d = await r.json();
+    if (!d.offline) {
+      Object.assign(st, d, { offline: false, lastFetch: Date.now() });
+      if (d.hrv) { st.manualHrv = d.hrv; document.getElementById('sl-hrv').value = d.hrv; }
+      S.set('p31-qstate', st);
+    }
+    return true;
+  } catch {
+    const c = S.get('p31-qstate');
+    if (c) Object.assign(st, c, { offline: true });
+    else st.offline = true;
+    return false;
+  }
+}
+
+async function sendEvent(type, value) {
+  try {
+    const r = await fetch(`${API}/qfactor/event`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId: USER, source: 'mobile-pwa', type, value }),
+      signal: AbortSignal.timeout(8000),
+    });
+    if (!r.ok) throw 0;
+    const d = await r.json();
+    if (!d.offline) { Object.assign(st, d, { offline: false, lastFetch: Date.now() }); S.set('p31-qstate', st); }
+    return true;
+  } catch { return false; }
+}
+
+function adjustSpoon(delta) {
+  st.spoonBalance = Math.max(0, Math.min(MAX_SPOONS, (st.spoonBalance ?? 5) + delta));
+  S.set('p31-spoons', st.spoonBalance);
+  renderSpoons();
+  if (st.offline || st.qScore == null) recomputeLocal();
+  if (navigator.vibrate) navigator.vibrate(delta > 0 ? 25 : [12, 8, 12]);
+}
+
+function renderSpoons() {
+  const n = st.spoonBalance ?? S.get('p31-spoons') ?? 5;
+  const cnt = document.getElementById('spoon-count');
+  const pips = document.getElementById('pips');
+  if (cnt) cnt.textContent = n;
+  if (pips) {
+    pips.innerHTML = '';
+    for (let i = 0; i < MAX_SPOONS; i++) {
+      const d = document.createElement('div');
+      d.className = 'pip' + (i < n ? ' on' : '');
+      pips.appendChild(d);
+    }
+  }
+}
+
+function recomputeLocal() {
+  const spoons = st.spoonBalance ?? S.get('p31-spoons') ?? 5;
+  const ca = st.calciumMgDl ?? 8.5;
+  const { qScore, quadrant } = localQ(st.manualHrv, spoons, ca);
+  st.qScore = qScore;
+  st.quadrant = quadrant;
+  applyColor();
+  setRing(qScore, Q_COLORS[quadrant] || 'var(--p31-teal)');
+  const el = document.getElementById('q-num');
+  if (el) { el.textContent = qScore; el.style.color = Q_COLORS[quadrant] || 'var(--p31-teal)'; }
+  const osq = document.getElementById('out-score');
+  const oqd = document.getElementById('out-quad');
+  if (osq) osq.textContent = qScore;
+  if (oqd) oqd.textContent = Q_LABELS[quadrant] || quadrant;
+}
+
+function applyColor() {
+  const c = Q_COLORS[st.quadrant] || 'var(--p31-teal)';
+  document.documentElement.style.setProperty('--q', c);
+  return c;
+}
+
+function setRing(score, color) {
+  const ring = document.getElementById('ring');
+  if (!ring) return;
+  ring.style.strokeDashoffset = CIRC - (score / 100) * CIRC;
+  ring.style.stroke = color;
+}
+
+function render() {
+  const color = applyColor();
+  const score = st.qScore ?? 0;
+
+  const dot = document.getElementById('dot');
+  const lbl = document.getElementById('status-label');
+  if (dot) { dot.style.background = st.offline ? '#444' : color; dot.style.boxShadow = st.offline ? 'none' : `0 0 5px ${color}`; }
+  if (lbl) lbl.textContent = st.offline ? 'OFFLINE — LOCAL STORE' : 'HARDWARE OFFLINE — CLOUD RELAY ACTIVE';
+
+  setRing(score, color);
+  const qNum = document.getElementById('q-num');
+  if (qNum) { qNum.textContent = st.qScore != null ? Math.round(st.qScore) : '—'; qNum.style.color = color; }
+
+  const badge = document.getElementById('q-badge');
+  if (badge) {
+    badge.textContent = (Q_LABELS[st.quadrant] || st.quadrant || 'UNKNOWN').toUpperCase();
+    badge.style.color = color;
+    badge.style.borderColor = color + '4d';
+    badge.style.background = color + '14';
+  }
+
+  const sumEl = document.getElementById('q-summary');
+  if (sumEl) sumEl.textContent = st.offline ? 'Offline — local mode active' : (st.summary || '');
+
+  if (st.hrv != null) {
+    const sl = document.getElementById('sl-hrv');
+    const vl = document.getElementById('val-hrv');
+    if (sl) sl.value = st.hrv;
+    if (vl) vl.textContent = Math.round(st.hrv);
+    st.manualHrv = st.hrv;
+  }
+
+  renderSpoons();
+
+  const ca = st.calciumMgDl;
+  const caEl = document.getElementById('ca-val');
+  if (caEl) caEl.textContent = ca != null ? ca.toFixed(1) : '—';
+  const caFill = document.getElementById('ca-fill');
+  if (caFill && ca != null) {
+    caFill.style.width = Math.max(0, Math.min(100, ((ca - 7.0) / 3.5) * 100)) + '%';
+    caFill.style.background = ca < 7.8 ? '#f43f5e' : ca < 8.0 ? 'var(--p31-amber)' : 'var(--p31-teal)';
+  }
+  const caBadge = document.getElementById('ca-badge');
+  if (caBadge) {
+    const s = st.calciumStatus || 'unknown';
+    const map = { critical:['CRITICAL','#f43f5e'], warning:['WARNING','var(--p31-amber)'], normal:['NORMAL','var(--p31-teal)'], unknown:['—','#64748b'] };
+    const [txt, clr] = map[s] || map.unknown;
+    caBadge.textContent = txt; caBadge.style.color = clr;
+    caBadge.style.borderColor = clr + '4d'; caBadge.style.background = clr + '14';
+  }
+
+  const recs = st.recommendations || [];
+  const recsCard = document.getElementById('recs-card');
+  const recsEl = document.getElementById('recs');
+  if (recsCard) recsCard.style.display = recs.length ? 'flex' : 'none';
+  if (recsEl) recsEl.innerHTML = recs.map(r => {
+    const u = /CRITICAL|CALCIUM/.test(r);
+    return `<div style="font-size:12px;color:${u?'#f43f5e':'#9ca3af'};line-height:1.5;padding-left:14px;position:relative;margin-bottom:4px"><span style="position:absolute;left:0;font-size:10px;top:2px;color:${u?'#f43f5e':'var(--p31-teal)'}">${u?'!':'▸'}</span>${r}</div>`;
+  }).join('');
+
+  const ha = st.haPayload;
+  const haCard = document.getElementById('ha-card');
+  const haGrid = document.getElementById('ha-grid');
+  if (haCard) haCard.style.display = ha ? '' : 'none';
+  if (haGrid && ha) haGrid.innerHTML = [
+    ['SPOON TIER', ha.spoonTier], ['HAPTIC', ha.hapticPattern || 'none'],
+    ['LIGHT SCENE', (ha.lightScene || '').replace(/_/g,' ')], ['NOTIFY', ha.notificationLevel],
+  ].map(([k,v]) => `<div><p style="font-size:9px;letter-spacing:1px;color:#6b7280;margin-bottom:2px;font-family:'JetBrains Mono',monospace">${k}</p><p style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#ede8e0">${v||'—'}</p></div>`).join('');
+
+  const osq = document.getElementById('out-score');
+  const oqd = document.getElementById('out-quad');
+  if (osq) osq.textContent = st.qScore != null ? Math.round(st.qScore) : '—';
+  if (oqd) oqd.textContent = (Q_LABELS[st.quadrant] || st.quadrant || '—').toUpperCase();
+}
+
+async function pushUpdate() {
+  const btn = document.getElementById('xmit');
+  if (btn) { btn.disabled = true; btn.textContent = 'TRANSMITTING…'; }
+
+  const spoons = st.spoonBalance ?? S.get('p31-spoons') ?? 5;
+  const ok = await sendEvent('spoon', spoons);
+  if (ok) await fetchState();
+  render();
+  toast(ok ? 'STATE SYNCED ✓' : 'OFFLINE — SAVED LOCALLY');
+
+  if (btn) { btn.disabled = false; btn.textContent = 'TRANSMIT TO K₄'; }
+
+  const fill = document.getElementById('age-fill');
+  if (fill) {
+    fill.style.transition = 'none'; fill.style.width = '100%';
+    requestAnimationFrame(() => { fill.style.transition = 'width 300s linear'; fill.style.width = '0%'; });
+  }
+}
+
+document.getElementById('sl-hrv').addEventListener('input', function() {
+  st.manualHrv = +this.value;
+  const vl = document.getElementById('val-hrv');
+  if (vl) vl.textContent = Math.round(st.manualHrv);
+  recomputeLocal();
+});
+
+let toastTmr;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  if (!el) return;
+  el.textContent = msg; el.classList.add('show');
+  clearTimeout(toastTmr);
+  toastTmr = setTimeout(() => el.classList.remove('show'), 2500);
+}
+
+async function init() {
+  const saved = S.get('p31-spoons');
+  if (saved != null) st.spoonBalance = saved;
+
+  const cached = S.get('p31-qstate');
+  if (cached) { Object.assign(st, cached, { offline: true }); render(); }
+  else { renderSpoons(); }
+
+  if (new URLSearchParams(location.search).get('action') === 'spoon-minus') adjustSpoon(-1);
+
+  await fetchState();
+  render();
+
+  const fill = document.getElementById('age-fill');
+  if (fill) requestAnimationFrame(() => { fill.style.width = '0%'; });
+
+  setInterval(async () => { await fetchState(); render(); }, 300_000);
+}
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/qfactor/sw.js', { scope: '/qfactor/' }).catch(() => {});
+}
+
+init();
+</script>

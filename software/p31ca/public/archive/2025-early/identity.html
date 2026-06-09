@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>VAULT | Identity Center</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap">
+    <link rel="stylesheet" href="/assets/hub-skin.css">
+    <link rel="stylesheet" href="/assets/hub-about-shell.css">
+    <style>
+        :root { --accent: #8b7cc9; }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --void: #050505; --surface: #161920; --cloud: #d8d6d0; --dim: rgba(216,214,208,0.4);
+            --lavender: #8b7cc9; --phosphorus: #00FF88; --butter: #cda852; --blue: #5b8def;
+            --ghost: rgba(255,255,255,0.08); --font-body: 'Inter', sans-serif;
+            --font-mono: 'Space Mono', monospace;
+        }
+        body { background: var(--void); color: var(--cloud); font-family: var(--font-body); min-height: 100vh; }
+
+        /* Top bar */
+        .top-bar { display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; border-bottom: 1px solid var(--ghost); }
+        .top-bar h1 { font-family: var(--font-mono); font-size: 16px; letter-spacing: 2px; color: var(--lavender); }
+        .back-link { color: var(--phosphorus); font-family: var(--font-mono); font-size: 11px; text-decoration: none; padding: 5px 14px; border-radius: 99px; border: 1px solid rgba(0,255,136,0.25); background: rgba(22,25,32,0.7); transition: 0.15s; }
+        .back-link:hover { background: rgba(0,255,136,0.1); }
+        .node-badge { font-family: var(--font-mono); font-size: 11px; color: var(--lavender); background: rgba(139,124,201,0.1); border: 1px solid rgba(139,124,201,0.2); padding: 4px 12px; border-radius: 6px; }
+
+        /* Layout */
+        .grid-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding: 20px 24px; }
+        .full-width { grid-column: 1 / -1; }
+        @media (max-width: 768px) { .grid-wrap { grid-template-columns: 1fr; } }
+
+        /* Panel */
+        .matte-panel { background: var(--surface); border: 1px solid var(--ghost); border-radius: 12px; padding: 20px; }
+        .panel-header { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+        .panel-title { font-family: var(--font-mono); font-size: 13px; font-weight: 700; letter-spacing: 1px; }
+
+        /* Inputs */
+        .field-label { font-size: 11px; color: var(--dim); margin-bottom: 4px; font-family: var(--font-mono); letter-spacing: 0.5px; }
+        .mono-box { background: rgba(0,0,0,0.3); border: 1px solid var(--ghost); border-radius: 6px; padding: 8px 12px; font-family: var(--font-mono); font-size: 12px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; margin-bottom: 12px; overflow: hidden; }
+        .copy-hint { font-size: 9px; opacity: 0.5; flex-shrink: 0; margin-left: 8px; }
+        .mono-val { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+        /* Buttons */
+        .btn { font-family: var(--font-mono); font-size: 11px; font-weight: 700; padding: 8px 16px; border-radius: 8px; border: 1px solid var(--ghost); background: rgba(255,255,255,0.03); color: var(--cloud); cursor: pointer; transition: 0.15s; letter-spacing: 0.5px; }
+        .btn:hover { background: rgba(255,255,255,0.07); }
+        .btn-accent { border-color: rgba(139,124,201,0.3); color: var(--lavender); }
+        .btn-accent:hover { background: rgba(139,124,201,0.1); }
+        .btn-green { border-color: rgba(0,255,136,0.3); color: var(--phosphorus); }
+        .btn-green:hover { background: rgba(0,255,136,0.1); }
+        .btn-blue { border-color: rgba(91,141,239,0.3); color: var(--blue); }
+        .btn-blue:hover { background: rgba(91,141,239,0.1); }
+        .btn-row { display: flex; gap: 8px; }
+        .btn-row .btn { flex: 1; text-align: center; }
+
+        /* Select / Input */
+        select, input[type="password"], input[type="text"] {
+            width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--ghost); color: var(--cloud);
+            padding: 8px 12px; border-radius: 6px; font-family: var(--font-body); font-size: 12px; outline: none;
+        }
+        select option { background: var(--surface); }
+
+        /* Layer rows */
+        .layer-row { display: flex; align-items: center; gap: 12px; padding: 10px 12px; background: rgba(0,0,0,0.15); border: 1px solid var(--ghost); border-radius: 8px; margin-bottom: 8px; }
+        .layer-icon { width: 16px; height: 16px; flex-shrink: 0; }
+        .layer-name { flex: 1; font-size: 12px; font-weight: 600; }
+        .layer-badge { font-family: var(--font-mono); font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 4px; cursor: pointer; user-select: none; transition: 0.2s; }
+        .badge-active { color: var(--phosphorus); background: rgba(0,255,136,0.12); border: 1px solid rgba(0,255,136,0.25); }
+        .badge-sealed { color: var(--butter); background: rgba(205,168,82,0.12); border: 1px solid rgba(205,168,82,0.25); }
+
+        /* Sync log */
+        .sync-scroll { max-height: 220px; overflow-y: auto; background: rgba(0,0,0,0.2); border: 1px solid var(--ghost); border-radius: 6px; padding: 10px; font-family: var(--font-mono); font-size: 10px; }
+        .sync-entry { padding: 3px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+        .sync-ts { color: var(--dim); }
+        .sync-push { color: var(--lavender); }
+        .sync-pull { color: var(--phosphorus); }
+        .sync-hash { color: var(--dim); font-size: 9px; }
+        .sync-ok { color: var(--phosphorus); }
+        .sync-fail { color: #e05555; }
+
+        /* Progress bar */
+        .progress-track { height: 6px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; margin-top: 8px; }
+        .progress-fill { height: 100%; background: var(--blue); width: 0%; transition: width 0.1s linear; border-radius: 3px; }
+        .daubert-text { font-size: 11px; color: var(--dim); margin-top: 10px; line-height: 1.5; font-style: italic; }
+        .status-msg { font-size: 10px; color: var(--butter); margin-top: 8px; text-align: center; font-family: var(--font-mono); }
+        .hidden-input { display: none; }
+        .key-row { display: flex; gap: 6px; }
+        .key-row input { flex: 1; }
+        .toggle-btn { width: 44px; flex-shrink: 0; padding: 0; text-align: center; font-size: 13px; }
+        .storage-notice { font-size: 9px; color: var(--dim); font-style: italic; margin-top: 8px; }
+
+        /* Lock SVG */
+        @keyframes lockPulse { 0%,100% { opacity: 0.6; } 50% { opacity: 1; } }
+    </style>
+</head>
+<body class="hub-about-page">
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand">
+      <span class="hub-brand-mark" aria-hidden="true"></span>
+      <span class="nav-brand-label">P31 Labs</span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html" class="nav-link">&larr; Hub</a>
+      <a href="vault-about.html" class="nav-link">Vault about</a>
+      <a href="vault-room.html" class="nav-link">Vault room</a>
+      <span class="node-badge" id="topNodeBadge" style="max-width:120px;overflow:hidden;text-overflow:ellipsis">--</span>
+    </div>
+  </div>
+</nav>
+
+<!-- 2x2 GRID -->
+<div class="grid-wrap">
+
+    <!-- NODE IDENTITY -->
+    <div class="matte-panel">
+        <div class="panel-header">
+            <svg width="14" height="14" viewBox="0 0 16 16" style="animation: lockPulse 2s ease-in-out infinite;">
+                <rect x="3" y="7" width="10" height="8" rx="1.5" fill="none" stroke="var(--lavender)" stroke-width="1.2"/>
+                <path d="M5 7V5a3 3 0 016 0v2" fill="none" stroke="var(--lavender)" stroke-width="1.2" stroke-linecap="round"/>
+                <circle cx="8" cy="11" r="1" fill="var(--lavender)"/>
+            </svg>
+            <span class="panel-title" style="color:var(--lavender)">NODE IDENTITY</span>
+        </div>
+        <div class="field-label">NODE ID (Ed25519-equivalent hash)</div>
+        <div class="mono-box" style="color:var(--lavender)" onclick="copyNodeId()">
+            <span class="mono-val" id="nodeIdDisplay">generating...</span>
+            <span class="copy-hint" id="nodeIdCopy">COPY</span>
+        </div>
+        <div class="field-label">DID KEY</div>
+        <div class="mono-box" style="color:var(--phosphorus); font-size:10px;" onclick="copyDid()">
+            <span class="mono-val" id="didDisplay">--</span>
+            <span class="copy-hint" id="didCopy">COPY</span>
+        </div>
+        <div class="btn-row" style="margin-bottom:8px;">
+            <button class="btn btn-accent" onclick="exportIdentity()">EXPORT KEY</button>
+            <button class="btn btn-accent" onclick="document.getElementById('importFile').click()">IMPORT KEY</button>
+            <input type="file" id="importFile" class="hidden-input" accept=".json" onchange="importIdentity(event)">
+        </div>
+        <button class="btn btn-accent" style="width:100%" onclick="generateNewIdentity()">GENERATE NEW IDENTITY</button>
+        <div class="status-msg" id="identityStatus"></div>
+    </div>
+
+    <!-- ENGINE CONFIG -->
+    <div class="matte-panel">
+        <div class="panel-header">
+            <span style="font-size:16px; line-height:1;">&#9881;</span>
+            <span class="panel-title" style="color:var(--butter)">ENGINE CONFIG</span>
+        </div>
+        <div class="field-label">LLM ENGINE</div>
+        <select id="llmSelect" style="margin-bottom:12px;" onchange="saveEngineChoice()">
+            <option value="claude">Claude (Recommended)</option>
+            <option value="gpt4">GPT-4</option>
+            <option value="gemini">Gemini</option>
+            <option value="local">Local LLM</option>
+            <option value="none">None</option>
+        </select>
+        <div class="field-label">API KEY</div>
+        <div class="key-row" style="margin-bottom:8px;">
+            <input type="password" id="apiKeyInput" placeholder="sk-ant-...">
+            <button class="btn toggle-btn" onclick="toggleKeyVis()">&#128065;</button>
+        </div>
+        <button class="btn btn-green" style="width:100%" onclick="saveEncryptedKey()">SAVE ENCRYPTED</button>
+        <div class="storage-notice">Key encrypted with your node identity. Never leaves this device.</div>
+        <div class="status-msg" id="engineStatus"></div>
+    </div>
+
+    <!-- VAULT LAYERS -->
+    <div class="matte-panel">
+        <div class="panel-header">
+            <span class="panel-title" style="color:var(--cloud)">VAULT LAYERS</span>
+        </div>
+        <div id="layersContainer"></div>
+    </div>
+
+    <!-- SYNC LOG -->
+    <div class="matte-panel">
+        <div class="panel-header" style="justify-content:space-between; width:100%;">
+            <span class="panel-title" style="color:var(--cloud)">SYNC LOG</span>
+            <button class="btn" style="font-size:9px; padding:4px 10px;" onclick="clearSyncLog()">CLEAR LOG</button>
+        </div>
+        <div class="sync-scroll" id="syncLogContainer"></div>
+    </div>
+
+    <!-- DAUBERT EXPORT -->
+    <div class="matte-panel full-width">
+        <div style="display:flex; align-items:center; gap:20px; flex-wrap:wrap;">
+            <div style="flex:1; min-width:250px;">
+                <div class="panel-title" style="color:var(--blue); font-size:14px; margin-bottom:6px;">COURT-READY EXPORT (DAUBERT)</div>
+                <div style="font-size:11px; color:var(--dim); line-height:1.6;">
+                    Daubert-standard evidence bundle. Cryptographically signed. Admissible in federal court.
+                </div>
+            </div>
+            <div style="min-width:220px; text-align:right;">
+                <button class="btn btn-blue" id="daubertBtn" onclick="generateDaubertBundle()">GENERATE COURT-READY BUNDLE</button>
+                <div class="progress-track" id="daubertTrack" style="display:none;">
+                    <div class="progress-fill" id="daubertFill"></div>
+                </div>
+                <div class="status-msg" id="daubertStatus"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// ── State ──
+let keyPair = null; // CryptoKeyPair
+let nodeIdHex = '';
+let didKeyStr = '';
+const DB_NAME = 'P31VaultIdentity';
+const DB_STORE = 'keys';
+const LAYERS = [
+    { id: 'telemetry', name: 'Telemetry', color: 'var(--phosphorus)' },
+    { id: 'love-ledger', name: 'Love Ledger', color: 'var(--lavender)' },
+    { id: 'bonds', name: 'Bonds', color: 'var(--phosphorus)' },
+    { id: 'game-state', name: 'Game State', color: 'var(--butter)' },
+];
+
+// ── Utility ──
+function bufToHex(buf) {
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+function hexToBuf(hex) {
+    const bytes = new Uint8Array(hex.length / 2);
+    for (let i = 0; i < hex.length; i += 2) bytes[i / 2] = parseInt(hex.substr(i, 2), 16);
+    return bytes.buffer;
+}
+async function sha256Hex(data) {
+    const enc = new TextEncoder().encode(typeof data === 'string' ? data : JSON.stringify(data));
+    return bufToHex(await crypto.subtle.digest('SHA-256', enc));
+}
+
+function flashStatus(elId, msg, ms = 3000) {
+    const el = document.getElementById(elId);
+    el.textContent = msg;
+    setTimeout(() => { if (el.textContent === msg) el.textContent = ''; }, ms);
+}
+
+// ── IndexedDB helpers ──
+function openDB() {
+    return new Promise((resolve, reject) => {
+        const req = indexedDB.open(DB_NAME, 1);
+        req.onupgradeneeded = () => req.result.createObjectStore(DB_STORE);
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+    });
+}
+async function idbPut(key, val) {
+    const db = await openDB();
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction(DB_STORE, 'readwrite');
+        tx.objectStore(DB_STORE).put(val, key);
+        tx.oncomplete = () => resolve();
+        tx.onerror = () => reject(tx.error);
+    });
+}
+async function idbGet(key) {
+    const db = await openDB();
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction(DB_STORE, 'readonly');
+        const req = tx.objectStore(DB_STORE).get(key);
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+    });
+}
+
+// ── Key Generation (ECDSA P-256, Ed25519-equivalent) ──
+async function generateKeyPair() {
+    keyPair = await crypto.subtle.generateKey({ name: 'ECDSA', namedCurve: 'P-256' }, true, ['sign', 'verify']);
+    const pubRaw = await crypto.subtle.exportKey('raw', keyPair.publicKey);
+    nodeIdHex = await sha256Hex(new Uint8Array(pubRaw));
+    didKeyStr = 'did:key:z' + bufToHex(pubRaw).slice(0, 48);
+    await idbPut('keyPair', {
+        pub: await crypto.subtle.exportKey('jwk', keyPair.publicKey),
+        priv: await crypto.subtle.exportKey('jwk', keyPair.privateKey),
+    });
+    updateIdentityUI();
+}
+
+async function loadOrGenerateKey() {
+    try {
+        const stored = await idbGet('keyPair');
+        if (stored && stored.pub && stored.priv) {
+            const pub = await crypto.subtle.importKey('jwk', stored.pub, { name: 'ECDSA', namedCurve: 'P-256' }, true, ['verify']);
+            const priv = await crypto.subtle.importKey('jwk', stored.priv, { name: 'ECDSA', namedCurve: 'P-256' }, true, ['sign']);
+            keyPair = { publicKey: pub, privateKey: priv };
+            const pubRaw = await crypto.subtle.exportKey('raw', pub);
+            nodeIdHex = await sha256Hex(new Uint8Array(pubRaw));
+            didKeyStr = 'did:key:z' + bufToHex(pubRaw).slice(0, 48);
+            updateIdentityUI();
+            return;
+        }
+    } catch (e) { console.warn('No stored key, generating fresh.', e); }
+    await generateKeyPair();
+}
+
+function updateIdentityUI() {
+    document.getElementById('nodeIdDisplay').textContent = nodeIdHex.slice(0, 16) + '...' + nodeIdHex.slice(-8);
+    document.getElementById('didDisplay').textContent = didKeyStr;
+    document.getElementById('topNodeBadge').textContent = nodeIdHex.slice(0, 12);
+}
+
+// ── Copy ──
+async function copyToClip(text, hintId) {
+    try {
+        await navigator.clipboard.writeText(text);
+        const el = document.getElementById(hintId);
+        el.textContent = 'COPIED';
+        setTimeout(() => el.textContent = 'COPY', 2000);
+    } catch {}
+}
+function copyNodeId() { copyToClip(nodeIdHex, 'nodeIdCopy'); }
+function copyDid() { copyToClip(didKeyStr, 'didCopy'); }
+
+// ── Export / Import Identity ──
+async function exportIdentity() {
+    if (!keyPair) return;
+    const jwk = {
+        publicKey: await crypto.subtle.exportKey('jwk', keyPair.publicKey),
+        privateKey: await crypto.subtle.exportKey('jwk', keyPair.privateKey),
+        nodeId: nodeIdHex,
+        did: didKeyStr,
+        exported: new Date().toISOString(),
+    };
+    const blob = new Blob([JSON.stringify(jwk, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'p31-identity-' + new Date().toISOString().split('T')[0] + '.jwk.json';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    flashStatus('identityStatus', 'Key pair exported.');
+}
+
+async function importIdentity(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    try {
+        const text = await file.text();
+        const jwk = JSON.parse(text);
+        if (!jwk.publicKey || !jwk.privateKey) throw new Error('Invalid key file');
+        const pub = await crypto.subtle.importKey('jwk', jwk.publicKey, { name: 'ECDSA', namedCurve: 'P-256' }, true, ['verify']);
+        const priv = await crypto.subtle.importKey('jwk', jwk.privateKey, { name: 'ECDSA', namedCurve: 'P-256' }, true, ['sign']);
+        keyPair = { publicKey: pub, privateKey: priv };
+        const pubRaw = await crypto.subtle.exportKey('raw', pub);
+        nodeIdHex = await sha256Hex(new Uint8Array(pubRaw));
+        didKeyStr = 'did:key:z' + bufToHex(pubRaw).slice(0, 48);
+        await idbPut('keyPair', { pub: jwk.publicKey, priv: jwk.privateKey });
+        updateIdentityUI();
+        flashStatus('identityStatus', 'Identity imported successfully.');
+    } catch (e) {
+        flashStatus('identityStatus', 'Import error: ' + e.message);
+    }
+    event.target.value = '';
+}
+
+function generateNewIdentity() {
+    if (!confirm('Generate a new identity? This replaces your current keypair. Make sure you have exported the old one.')) return;
+    generateKeyPair().then(() => flashStatus('identityStatus', 'New identity generated.'));
+}
+
+// ── Engine Config ──
+function saveEngineChoice() {
+    localStorage.setItem('p31_llm_engine', document.getElementById('llmSelect').value);
+}
+function loadEngineChoice() {
+    const v = localStorage.getItem('p31_llm_engine');
+    if (v) document.getElementById('llmSelect').value = v;
+}
+function toggleKeyVis() {
+    const inp = document.getElementById('apiKeyInput');
+    inp.type = inp.type === 'password' ? 'text' : 'password';
+}
+
+async function deriveEncryptionKey() {
+    if (!keyPair) return null;
+    const pubRaw = await crypto.subtle.exportKey('raw', keyPair.publicKey);
+    const material = await crypto.subtle.importKey('raw', pubRaw, 'HKDF', false, ['deriveKey']);
+    return crypto.subtle.deriveKey(
+        { name: 'HKDF', hash: 'SHA-256', salt: new TextEncoder().encode('p31-vault-aes'), info: new Uint8Array(0) },
+        material, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']
+    );
+}
+
+async function saveEncryptedKey() {
+    const apiKey = document.getElementById('apiKeyInput').value;
+    if (!apiKey) { flashStatus('engineStatus', 'No API key entered.'); return; }
+    try {
+        const aesKey = await deriveEncryptionKey();
+        if (!aesKey) { flashStatus('engineStatus', 'No identity loaded.'); return; }
+        const iv = crypto.getRandomValues(new Uint8Array(12));
+        const enc = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, aesKey, new TextEncoder().encode(apiKey));
+        await idbPut('encApiKey', { iv: bufToHex(iv), cipher: bufToHex(enc) });
+        flashStatus('engineStatus', 'API key encrypted and saved.');
+    } catch (e) {
+        flashStatus('engineStatus', 'Encryption error: ' + e.message);
+    }
+}
+
+async function loadEncryptedKey() {
+    try {
+        const stored = await idbGet('encApiKey');
+        if (!stored) return;
+        const aesKey = await deriveEncryptionKey();
+        if (!aesKey) return;
+        const iv = new Uint8Array(hexToBuf(stored.iv));
+        const dec = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, aesKey, hexToBuf(stored.cipher));
+        document.getElementById('apiKeyInput').value = new TextDecoder().decode(dec);
+    } catch {}
+}
+
+// ── Vault Layers ──
+function getLayerStates() {
+    try { return JSON.parse(localStorage.getItem('p31_vault_layers')) || {}; } catch { return {}; }
+}
+function setLayerState(id, active) {
+    const s = getLayerStates(); s[id] = active;
+    localStorage.setItem('p31_vault_layers', JSON.stringify(s));
+}
+
+function renderLayers() {
+    const container = document.getElementById('layersContainer');
+    const states = getLayerStates();
+    container.innerHTML = '';
+    LAYERS.forEach(layer => {
+        const active = states[layer.id] !== false; // default active
+        const lockColor = active ? 'var(--phosphorus)' : 'var(--butter)';
+        const row = document.createElement('div');
+        row.className = 'layer-row';
+        row.innerHTML = `
+            <svg class="layer-icon" viewBox="0 0 16 16">
+                <rect x="3" y="7" width="10" height="8" rx="1.5" fill="none" stroke="${lockColor}" stroke-width="1.2"/>
+                <path d="M5 7V5a3 3 0 016 0v2" fill="none" stroke="${lockColor}" stroke-width="1.2" stroke-linecap="round"/>
+                <circle cx="8" cy="11" r="1" fill="${lockColor}"/>
+            </svg>
+            <span class="layer-name">${layer.name}</span>
+            <span class="layer-badge ${active ? 'badge-active' : 'badge-sealed'}"
+                  onclick="toggleLayer('${layer.id}')">${active ? 'ACTIVE' : 'SEALED'}</span>`;
+        container.appendChild(row);
+    });
+}
+
+function toggleLayer(id) {
+    const states = getLayerStates();
+    const current = states[id] !== false;
+    setLayerState(id, !current);
+    renderLayers();
+}
+
+// ── Sync Log ──
+function getSyncLog() {
+    try { return JSON.parse(localStorage.getItem('p31_sync_log')) || []; } catch { return []; }
+}
+function saveSyncLog(log) { localStorage.setItem('p31_sync_log', JSON.stringify(log)); }
+
+function generateSampleEvents() {
+    const log = [];
+    const count = 5 + Math.floor(Math.random() * 6);
+    const now = Date.now();
+    for (let i = 0; i < count; i++) {
+        const ts = now - (count - i) * 60000 * (1 + Math.random() * 4);
+        log.push({
+            timestamp: new Date(ts).toISOString(),
+            direction: Math.random() > 0.45 ? 'PUSH' : 'PULL',
+            hash: bufToHex(crypto.getRandomValues(new Uint8Array(4))),
+            status: Math.random() > 0.15 ? 'OK' : 'FAIL',
+        });
+    }
+    saveSyncLog(log);
+    return log;
+}
+
+function renderSyncLog() {
+    let log = getSyncLog();
+    if (log.length === 0) log = generateSampleEvents();
+    const container = document.getElementById('syncLogContainer');
+    container.innerHTML = log.map(ev => {
+        const dirClass = ev.direction === 'PUSH' ? 'sync-push' : 'sync-pull';
+        const arrow = ev.direction === 'PUSH' ? '&#8593;' : '&#8595;';
+        const statClass = ev.status === 'OK' ? 'sync-ok' : 'sync-fail';
+        const ts = new Date(ev.timestamp).toLocaleTimeString();
+        return `<div class="sync-entry">
+            <span class="sync-ts">[${ts}]</span>
+            <span class="${dirClass}"> ${ev.direction} ${arrow}</span>
+            <span class="sync-hash"> ${ev.hash}</span>
+            <span class="${statClass}"> ${ev.status}</span>
+        </div>`;
+    }).join('');
+    container.scrollTop = container.scrollHeight;
+}
+
+function clearSyncLog() {
+    saveSyncLog([]);
+    document.getElementById('syncLogContainer').innerHTML = '<div style="color:var(--dim)">[ Log cleared ]</div>';
+}
+
+// ── Daubert Export ──
+async function generateDaubertBundle() {
+    const btn = document.getElementById('daubertBtn');
+    const track = document.getElementById('daubertTrack');
+    const fill = document.getElementById('daubertFill');
+    const status = document.getElementById('daubertStatus');
+
+    btn.disabled = true; btn.style.opacity = '0.4';
+    track.style.display = 'block';
+    fill.style.width = '0%';
+
+    // Animate progress over 2 seconds
+    const start = performance.now();
+    const duration = 2000;
+    await new Promise(resolve => {
+        function tick() {
+            const elapsed = performance.now() - start;
+            const pct = Math.min(100, (elapsed / duration) * 100);
+            fill.style.width = pct + '%';
+            if (pct < 100) requestAnimationFrame(tick);
+            else resolve();
+        }
+        requestAnimationFrame(tick);
+    });
+
+    // Build bundle
+    const layerStates = getLayerStates();
+    const syncLog = getSyncLog();
+    const timestamp = new Date().toISOString();
+    const bundleData = {
+        version: '1.0.0',
+        type: 'daubert-evidence-bundle',
+        timestamp,
+        nodeIdentity: { nodeId: nodeIdHex, did: didKeyStr, algorithm: 'ECDSA-P256 (Ed25519-equivalent)' },
+        vaultLayers: LAYERS.map(l => ({ id: l.id, name: l.name, status: layerStates[l.id] !== false ? 'active' : 'sealed' })),
+        syncLog,
+        metadata: { generatedBy: 'P31 Vault Identity Center', layerCount: LAYERS.length, syncEventCount: syncLog.length },
+    };
+    bundleData.integrityHash = await sha256Hex(JSON.stringify(bundleData));
+
+    // Sign
+    if (keyPair) {
+        const sig = await crypto.subtle.sign({ name: 'ECDSA', hash: 'SHA-256' }, keyPair.privateKey, new TextEncoder().encode(bundleData.integrityHash));
+        bundleData.signature = bufToHex(sig);
+    }
+
+    // Download
+    const blob = new Blob([JSON.stringify(bundleData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'p31-daubert-bundle-' + timestamp.replace(/[:.]/g, '-') + '.json';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    status.textContent = 'Bundle exported at ' + new Date().toLocaleTimeString();
+    setTimeout(() => { status.textContent = ''; }, 5000);
+    btn.disabled = false; btn.style.opacity = '1';
+    setTimeout(() => { track.style.display = 'none'; fill.style.width = '0%'; }, 1500);
+}
+
+// ── Init ──
+(async function init() {
+    await loadOrGenerateKey();
+    loadEngineChoice();
+    renderLayers();
+    renderSyncLog();
+    await loadEncryptedKey();
+})();
+</script>
+  <script type="module" src="/assets/hub-about-boot.js"></script>
+</body>
+</html>

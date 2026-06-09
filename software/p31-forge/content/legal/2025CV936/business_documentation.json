@@ -1,0 +1,113 @@
+{
+  "kind": "court",
+  "filename": "P31_Labs_Business_Documentation.docx",
+  "title": "P31 LABS, INC. — BUSINESS DOCUMENTATION",
+  "subtitle": "(Supplemental — Updated April 14, 2026)",
+  "date": "14th day of April, 2026",
+  "preamble": "COMES NOW Defendant, WILLIAM RODGER JOHNSON, pro se, and provides the following updated business documentation for P31 Labs, Inc., a Georgia domestic nonprofit corporation.",
+  "body": [
+    { "type": "h1", "text": "I. BUSINESS ENTITY INFORMATION" },
+    { "type": "h2", "text": "A. Entity Details" },
+    { "type": "field", "label": "Business Name", "value": "P31 Labs, Inc." },
+    { "type": "field", "label": "Entity Type", "value": "Georgia Domestic Nonprofit Corporation" },
+    { "type": "field", "label": "Date of Incorporation", "value": "April 3, 2026" },
+    { "type": "field", "label": "Status", "value": "Active (Georgia Secretary of State)" },
+    { "type": "field", "label": "Registered Agent", "value": "William R. Johnson" },
+    { "type": "field", "label": "Registered Office", "value": "401 Powder Horn Rd, Saint Marys, Georgia 31558" },
+    { "type": "field", "label": "EIN", "value": "42-1888158 (assigned April 13, 2026)" },
+    { "type": "field", "label": "501(c)(3) Status", "value": "EIN assigned April 13, 2026; eligible to file Form 1023-EZ" },
+
+    { "type": "h2", "text": "B. Organizational Structure" },
+    { "type": "para", "text": "P31 Labs, Inc. is organized as a nonprofit corporation under O.C.G.A. Title 14, Chapter 3. It has no equity owners, no shareholders, and no members entitled to distributions. The corporation's Articles of Incorporation prohibit the distribution of net earnings to any private individual." },
+
+    { "type": "h2", "text": "C. Officers and Directors" },
+    { "type": "field", "label": "Sole Incorporator", "value": "William R. Johnson" },
+    { "type": "field", "label": "Board of Directors", "value": "Formation pending; independent director candidates identified" },
+
+    { "type": "h1", "text": "II. MISSION AND ACTIVITIES" },
+    { "type": "h2", "text": "A. Mission Statement" },
+    { "type": "para", "text": "P31 Labs, Inc. develops open-source assistive technology for neurodivergent individuals. The organization's work focuses on cognitive prosthetics, educational software, and communication tools designed for individuals with Autism Spectrum Disorder, ADHD, and related conditions." },
+
+    { "type": "h2", "text": "B. Current Products and Projects" },
+    { "type": "numbered", "text": "BONDING — An educational multiplayer chemistry game designed for children ages six and older. Players build molecules by dragging atoms onto a three-dimensional canvas. Deployed and publicly accessible at bonding.p31ca.org. Contains 413 automated tests. Aligned with Next Generation Science Standards (NGSS)." },
+    { "type": "numbered", "text": "The Buffer — A communication processing application approximately 85% complete. Designed to assist neurodivergent users with message composition, emotional regulation during written communication, and structured journaling." },
+    { "type": "numbered", "text": "Node One (The Totem) — A prototype ESP32-S3 palm device with haptic feedback for somatic regulation. Hardware prototype stage. No commercial production." },
+    { "type": "numbered", "text": "Node Zero (Phenix Navigator) — A maker-variant hardware prototype using the Waveshare ESP32-S3-Touch-LCD-3.5B. Firmware development stage. Hardware prototype stage. No FDA classification claimed." },
+    { "type": "numbered", "text": "Spaceship Earth — A React Three Fiber cognitive dashboard application. In development. Not deployed." },
+    { "type": "numbered", "text": "EDE (Empathy-Driven Editor) — A zero-dependency HTML cognitive prosthetic IDE. Deployed at p31ca.org/ede." },
+
+    { "type": "h1", "text": "III. FINANCIAL INFORMATION" },
+    { "type": "h2", "text": "A. Revenue and Income" },
+    { "type": "field", "label": "Total Revenue (all periods)", "value": "$0.00" },
+    { "type": "field", "label": "Total Donations Received", "value": "$0.00" },
+    { "type": "field", "label": "Total Grant Funding Received", "value": "$0.00" },
+    { "type": "field", "label": "Pending Contracts", "value": "None" },
+    { "type": "field", "label": "Outstanding Invoices", "value": "None" },
+
+    { "type": "h2", "text": "B. Expenses" },
+    { "type": "field", "label": "Incorporation Filing Fee (GA Secretary of State)", "value": "$100.00" },
+    { "type": "field", "label": "Domain Registrations (p31ca.org, phosphorus31.org)", "value": "Approximately $50.00" },
+    { "type": "field", "label": "Cloudflare Services", "value": "$0.00 (free tier)" },
+    { "type": "field", "label": "All other infrastructure", "value": "$0.00 (free tier services)" },
+    { "type": "field", "label": "Total Expenses to Date", "value": "Approximately $150.00" },
+
+    { "type": "h2", "text": "C. Assets" },
+    { "type": "field", "label": "Bank Accounts", "value": "None (EIN assigned April 13, 2026; account pending)" },
+    { "type": "field", "label": "Physical Assets", "value": "None owned by the corporation" },
+    { "type": "field", "label": "Intellectual Property", "value": "Open-source software (see Section IV)" },
+    { "type": "field", "label": "Total Distributable Asset Value", "value": "$0.00" },
+
+    { "type": "h2", "text": "D. Liabilities" },
+    { "type": "field", "label": "Total Liabilities", "value": "$0.00" },
+
+    { "type": "h1", "text": "IV. INTELLECTUAL PROPERTY" },
+    { "type": "h2", "text": "A. Software (Open Source)" },
+    { "type": "para", "text": "All P31 Labs software is released under open-source licenses (AGPLv3 or MIT). Open-source software has no proprietary commercial value because the license permits anyone to use, copy, modify, and distribute the code without restriction. The following repositories are publicly available at github.com/p31labs:" },
+    { "type": "numbered", "text": "BONDING — React + Three.js educational game (AGPLv3)" },
+    { "type": "numbered", "text": "PWA — Progressive Web Application shell (MIT)" },
+    { "type": "numbered", "text": "Apps/Web — Dashboard applications (MIT)" },
+
+    { "type": "h2", "text": "B. Research Publications" },
+    { "type": "para", "text": "Defendant has published five research papers via Zenodo (open-access repository). All are freely available to the public at no cost. These publications have no commercial value. DOIs:" },
+    { "type": "bullet", "text": "10.5281/zenodo.19004485 (prior 10.5281/zenodo.18627420)" },
+    { "type": "bullet", "text": "10.5281/zenodo.19411363" },
+    { "type": "bullet", "text": "10.5281/zenodo.19416491" },
+    { "type": "bullet", "text": "10.5281/zenodo.19432309" },
+    { "type": "bullet", "text": "10.5281/zenodo.19503542" },
+
+    { "type": "h2", "text": "C. Trademarks" },
+    { "type": "para", "text": "\"P31 Labs\" — Common law mark. Not registered. No application filed. Value: $0.00." },
+
+    { "type": "h2", "text": "D. Patents" },
+    { "type": "para", "text": "None filed. None pending." },
+
+    { "type": "h2", "text": "E. Cryptocurrency and Digital Assets" },
+    { "type": "para", "text": "P31 Labs does not own, hold, control, or issue any cryptocurrency, digital tokens, NFTs, or blockchain-based assets. The organization has no cryptocurrency wallets, no exchange accounts, and no digital asset holdings of any kind." },
+
+    { "type": "h1", "text": "V. WEBSITES AND ONLINE PRESENCE" },
+    { "type": "bullet", "text": "phosphorus31.org — Institutional website (Astro 5 static site, Cloudflare Pages free tier)" },
+    { "type": "bullet", "text": "p31ca.org — Application platform (React PWA, Cloudflare Pages free tier)" },
+    { "type": "bullet", "text": "bonding.p31ca.org — BONDING game (publicly accessible, free)" },
+    { "type": "bullet", "text": "github.com/p31labs — Open-source code repositories (publicly accessible, free)" },
+    { "type": "bullet", "text": "ko-fi.com/trimtab69420 — Donation page. Total donations received: $0.00" },
+
+    { "type": "h1", "text": "VI. GRANT APPLICATIONS" },
+    { "type": "para", "text": "Defendant has submitted inquiries to the following grant programs. No funding has been received." },
+    { "type": "bullet", "text": "Awesome Foundation — $1,000 micro-grant. Application submitted April 2026. Status: Under review." },
+    { "type": "bullet", "text": "NIDILRR Switzer Fellowship — $80,000. Inquiry email sent April 10, 2026. No response." },
+    { "type": "bullet", "text": "NIDILRR Field-Initiated Projects — Up to $250,000/year. Inquiry email sent April 10, 2026. No response." },
+
+    { "type": "h1", "text": "VII. MARITAL PROPERTY ANALYSIS" },
+    { "type": "para", "text": "P31 Labs, Inc. is a nonprofit corporation that cannot distribute earnings to any individual. It has zero revenue, zero distributable assets, and zero equity. Its software is open-source and freely available to anyone. Under Georgia equitable division principles, there is no marital property interest in P31 Labs, Inc. to divide because:" },
+    { "type": "para", "text": "(a) A nonprofit corporation has no equity owners and cannot make distributions;" },
+    { "type": "para", "text": "(b) All intellectual property is released under open-source licenses with no commercial restriction;" },
+    { "type": "para", "text": "(c) The organization has generated zero revenue since inception;" },
+    { "type": "para", "text": "(d) Under Miller v. Miller, 288 Ga. 274 (2010), personal goodwill attributable solely to an individual's unique skills is not a divisible marital asset." },
+
+    { "type": "h1", "text": "VIII. ONGOING DISCLOSURE OBLIGATION" },
+    { "type": "para", "text": "P31 Labs, Inc. was assigned EIN 42-1888158 by the Internal Revenue Service on April 13, 2026 (CP 575E on file). Defendant will supplement this disclosure if P31 Labs, Inc. obtains 501(c)(3) status, receives grant funding, generates revenue, or acquires assets of any kind." }
+  ],
+  "cert_of_service": {
+    "text": "I hereby certify that I have this day served a copy of the foregoing upon Plaintiff's counsel of record, Jennifer L. McGhan, Esq., McGhan Law, LLC, 575 E. King Avenue, Kingsland, Georgia 31548, via electronic mail to jenn@mcghanlaw.com."
+  }
+}

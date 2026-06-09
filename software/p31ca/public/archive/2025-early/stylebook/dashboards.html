@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboards · P31 Stylebook</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/p31-style.css">
+  <link rel="stylesheet" href="/lib/p31-fluid.css">
+  <link rel="stylesheet" href="/stylebook/_chrome.css">
+  <style>
+    .dash-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--p31-border-subtle);
+      margin-bottom: 16px;
+    }
+    .dash-stat {
+      padding: 16px;
+      background: var(--p31-surface);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: 12px;
+    }
+    .dash-stat-label {
+      font-family: var(--p31-font-mono);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--p31-muted);
+      margin-bottom: 4px;
+    }
+    .dash-stat-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--p31-paper);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .dash-stat-delta {
+      font-size: 11px;
+      font-family: var(--p31-font-mono);
+    }
+    .dash-stat-delta.up { color: var(--p31-phosphorus); }
+    .dash-stat-delta.down { color: var(--p31-coral); }
+    .dash-stat-delta.flat { color: var(--p31-muted); }
+    
+    .dash-mock {
+      background: var(--p31-void);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: 14px;
+      padding: 24px;
+    }
+    
+    .dash-stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    @media (max-width: 700px) { .dash-stats-row { grid-template-columns: repeat(2, 1fr); } }
+    
+    .dash-main {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 16px;
+    }
+    @media (max-width: 700px) { .dash-main { grid-template-columns: 1fr; } }
+    
+    .dash-chart {
+      padding: 20px;
+      background: var(--p31-surface);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: 12px;
+      min-height: 220px;
+    }
+    .dash-chart-bars {
+      display: flex;
+      align-items: flex-end;
+      gap: 4px;
+      height: 140px;
+      margin-top: 16px;
+    }
+    .dash-chart-bar {
+      flex: 1;
+      background: linear-gradient(0deg, var(--p31-primary) 0%, var(--p31-cyan) 100%);
+      border-radius: 3px 3px 0 0;
+    }
+    
+    .dash-feed {
+      padding: 0;
+      background: var(--p31-surface);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .dash-feed-header {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--p31-border-subtle);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--p31-paper);
+    }
+    .dash-feed-item {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--p31-border-subtle);
+      font-size: 13px;
+      color: var(--p31-cloud);
+    }
+    .dash-feed-item:last-child { border-bottom: none; }
+    .dash-feed-time {
+      font-family: var(--p31-font-mono);
+      font-size: 10px;
+      color: var(--p31-muted);
+      margin-top: 2px;
+    }
+  </style>
+</head>
+<body>
+  <script type="module">
+    import { renderShell, code, callout } from '/stylebook/_chrome.js';
+    import { P31ThemeController } from '/lib/p31-theme-engine.mjs';
+    window.p31Theme = new P31ThemeController({ defaultTheme: 'hub' });
+    
+    const data = [42, 68, 35, 78, 52, 89, 71, 95, 64, 82, 78, 91];
+    const max = Math.max(...data);
+    
+    const content = `
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Layout</div>
+          <h2 class="sb-h2">Operator dashboard</h2>
+          <p class="sb-text">A complete dashboard composed entirely from the design system.
+          Stats row + main visualization + side feed.</p>
+        </div>
+        
+        <div class="dash-mock">
+          <div class="dash-header">
+            <div>
+              <div style="font-family: var(--p31-font-mono); font-size: 11px; color: var(--p31-cyan); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px;">● Operations · Live</div>
+              <div style="font-size: 22px; font-weight: 700; color: var(--p31-paper);">Mesh overview</div>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <button class="p31-btn p31-btn-secondary p31-btn-sm">Last 24h ▾</button>
+              <button class="p31-btn p31-btn-secondary p31-btn-sm">⇣</button>
+            </div>
+          </div>
+          
+          <div class="dash-stats-row">
+            <div class="dash-stat">
+              <div class="dash-stat-label">Active nodes</div>
+              <div class="dash-stat-value">12</div>
+              <div class="dash-stat-delta up">↑ 2 from yesterday</div>
+            </div>
+            <div class="dash-stat">
+              <div class="dash-stat-label">Sync events</div>
+              <div class="dash-stat-value">847</div>
+              <div class="dash-stat-delta up">↑ 12% this week</div>
+            </div>
+            <div class="dash-stat">
+              <div class="dash-stat-label">CPU avg</div>
+              <div class="dash-stat-value">3.2<span style="font-size: 12px; color: var(--p31-muted);">ms</span></div>
+              <div class="dash-stat-delta flat">→ stable</div>
+            </div>
+            <div class="dash-stat">
+              <div class="dash-stat-label">Errors</div>
+              <div class="dash-stat-value" style="color: var(--p31-phosphor);">0</div>
+              <div class="dash-stat-delta up">↓ 3 from yesterday</div>
+            </div>
+          </div>
+          
+          <div class="dash-main">
+            <div class="dash-chart">
+              <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                <div>
+                  <div style="font-size: 13px; color: var(--p31-paper); font-weight: 600;">Sync activity · 12h</div>
+                  <div style="font-size: 11px; color: var(--p31-muted); font-family: var(--p31-font-mono); margin-top: 4px;">Avg 67/hr · Peak 95/hr</div>
+                </div>
+                <div style="display: flex; gap: 12px; font-size: 11px; font-family: var(--p31-font-mono); color: var(--p31-muted);">
+                  <span><span style="color: var(--p31-primary);">●</span> Push</span>
+                  <span><span style="color: var(--p31-coral);">●</span> Pull</span>
+                </div>
+              </div>
+              <div class="dash-chart-bars">
+                ${data.map(v => `<div class="dash-chart-bar" style="height: ${(v/max)*100}%;"></div>`).join('')}
+              </div>
+              <div style="display: flex; justify-content: space-between; margin-top: 8px; font-family: var(--p31-font-mono); font-size: 10px; color: var(--p31-muted);">
+                <span>0:00</span><span>3:00</span><span>6:00</span><span>9:00</span><span>12:00</span>
+              </div>
+            </div>
+            
+            <div class="dash-feed">
+              <div class="dash-feed-header">Recent events</div>
+              <div class="dash-feed-item">
+                <strong style="color: var(--p31-paper);">Sync · 4 vertices</strong>
+                <div class="dash-feed-time">2 min ago</div>
+              </div>
+              <div class="dash-feed-item">
+                <strong style="color: var(--p31-paper);">Calcium reading 8.4</strong>
+                <div class="dash-feed-time">14 min ago</div>
+              </div>
+              <div class="dash-feed-item">
+                <strong style="color: var(--p31-paper);">CI green</strong>
+                <div class="dash-feed-time">28 min ago</div>
+              </div>
+              <div class="dash-feed-item">
+                <strong style="color: var(--p31-paper);">Worker deploy</strong>
+                <div class="dash-feed-time">1 hr ago</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        ${callout('info', 'Modular by design', 'Every block above is a stand-alone component. Mix and match them — stat cards, charts, feeds — to build any operator surface.')}
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Layout principles</div>
+          <h2 class="sb-h2">Building dashboards</h2>
+        </div>
+        
+        <table class="sb-table">
+          <thead><tr><th>Principle</th><th>Why</th></tr></thead>
+          <tbody>
+            <tr><td>Stats row first</td><td>Glance-able numbers answer "is everything OK?" before "tell me more"</td></tr>
+            <tr><td>One main visual</td><td>Don't compete charts for attention — pick the headline metric</td></tr>
+            <tr><td>Sidebar for context</td><td>Recent activity, secondary metrics live to the side</td></tr>
+            <tr><td>Time selector at top</td><td>Always visible, never buried in a settings menu</td></tr>
+            <tr><td>Filters as chips</td><td>Show active filters as removable badges, not hidden state</td></tr>
+            <tr><td>Empty state &gt; loading state</td><td>If data is missing, say so — don't show skeletons forever</td></tr>
+          </tbody>
+        </table>
+      </section>
+    `;
+    
+    renderShell({
+      activeId: 'dashboards',
+      breadcrumb: [
+        { href: '/stylebook/', label: 'Stylebook' },
+        { href: '/stylebook/', label: 'Patterns' },
+        { label: 'Dashboards' }
+      ],
+      title: 'Dashboards',
+      subtitle: 'Composing dashboards from system primitives. Stat cards + chart + feed = operator surface.',
+      meta: [{ label: 'Anatomy', value: 'Stats / Chart / Feed' }],
+      content
+    });
+  </script>
+</body>
+</html>

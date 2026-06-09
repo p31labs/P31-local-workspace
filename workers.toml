@@ -1,0 +1,8 @@
+name = "p31-ens-relay"
+main = "src/index.js"
+compatibility_date = "2026-03-23"
+
+[env.production]
+ROUTE_ANDROMEDA = "andromeda.classicwilly.eth/*"
+ROUTE_BONDING = "bonding.classicwilly.eth/*"
+FALLBACK_GATEWAY = "https://ipfs.io/ipns/"

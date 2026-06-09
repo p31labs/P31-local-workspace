@@ -1,0 +1,158 @@
+{
+  "schema": "p31.superCentaurStarterPack/1.0.0",
+  "version": "1.0.0",
+  "updated": "2026-04-26",
+  "title": "P31 Super-Centaur — data, financial health, structural sovereignty starter pack",
+  "summary": "Machine index of CWPs, mesh fleet URLs (from Andromeda handoff), monetary pipeline anchors, and p31ca entrypoints. Does not replace the CWPs — read those for WBS and acceptance.",
+  "organization": {
+    "legalName": "P31 Labs, Inc.",
+    "ein": "42-1888158",
+    "status501c3": "pending",
+    "note": "Operator-locked copy also in home p31-constants.json"
+  },
+  "controlledWorkPackages": [
+    {
+      "id": "CWP-P31-SC-2026-01",
+      "title": "SUPER-CENTAUR ↔ mesh edge (phosphorus31.org Ring D)",
+      "repoPath": "andromeda/software/integration-handoff/CONTROLLED-WORK-PACKAGE-SUPER-CENTAUR.md",
+      "handoffSource": "andromeda/software/integration-handoff/CWP-30/mesh-bridge.ts",
+      "deployTarget": "phosphorus31.org — SUPER-CENTAUR Node server; meshProxy(app) in production only"
+    },
+    {
+      "id": "CWP-P31-MAP-2026-01",
+      "title": "Monetary pipeline (Stripe, webhooks, durable record, export)",
+      "repoPath": "andromeda/software/docs/CONTROLLED-WORK-PACKAGE-MONETARY-PIPELINE.md",
+      "verifyScript": "andromeda/software/scripts/verify-monetary-surface.mjs",
+      "donateApiPath": "andromeda/software/donate-api/"
+    },
+    {
+      "id": "CWP-P31-ECO-2026-01",
+      "title": "p31ca.org ecosystem (catalog, ground truth, inventory alignment)",
+      "repoPath": "andromeda/software/p31ca/docs/CONTROLLED-WORK-PACKAGE-ECOSYSTEM-INTEGRATION.md",
+      "note": "Sister to SC — Ring A only; R9 cross-links inventory with D-SC7"
+    }
+  ],
+  "structuralSovereignty": {
+    "principles": [
+      "K₄ / Open Delta topology — no single hub owns all truth (see public delta.html narrative).",
+      "p31.ground-truth.json is the machine spine for p31ca.org routes and redirects.",
+      "Personal scope stays isolated in k4-personal Durable Objects until explicit bridge.",
+      "SUPER-CENTAUR proxies to Workers — org server does not replace edge agents."
+    ],
+    "p31caEntrypoints": {
+      "hub": "https://p31ca.org/",
+      "deltaNarrative": "https://p31ca.org/delta.html",
+      "planetaryOnboard": "https://p31ca.org/planetary-onboard.html",
+      "meshStart": "https://p31ca.org/mesh-start.html",
+      "connectK4": "https://p31ca.org/connect.html",
+      "passport": "https://p31ca.org/passport",
+      "creatorEconomyContract": "https://p31ca.org/creator-economy.json",
+      "familySovereignPack": "https://p31ca.org/family-sovereign-pack.html",
+      "familySovereignPackShort": "https://p31ca.org/family-pack",
+      "publicSurfaceManifest": "https://p31ca.org/p31-public-surface.json",
+      "privacy": "https://p31ca.org/privacy.html",
+      "terms": "https://p31ca.org/terms.html",
+      "contact": "https://p31ca.org/contact.html",
+      "accessibility": "https://p31ca.org/accessibility.html",
+      "securityDisclosure": "https://p31ca.org/security-disclosure.html",
+      "openSource": "https://p31ca.org/open-source.html",
+      "securityTxt": "https://p31ca.org/.well-known/security.txt"
+    }
+  },
+  "dataHealth": {
+    "personalAgent": {
+      "workerName": "k4-personal",
+      "exampleBase": "https://k4-personal.trimtab-signal.workers.dev",
+      "workerLiveness": "GET /health",
+      "routes": ["GET /agent/:id/state", "PUT /agent/:id/state", "GET /agent/:id/energy", "PUT /agent/:id/energy", "POST /agent/:id/chat", "GET /agent/:id/tetra", "PUT /agent/:id/tetra"],
+      "repoPath": "andromeda/software/k4-personal/"
+    },
+    "hubFusion": {
+      "workerName": "k4-hubs",
+      "exampleBase": "https://k4-hubs.trimtab-signal.workers.dev",
+      "workerLiveness": "GET /health",
+      "routes": ["GET /hub/:id/roster", "PUT /hub/:id/roster", "GET /hub/:id/fusion"],
+      "repoPath": "andromeda/software/k4-hubs/"
+    },
+    "welcomePackages": {
+      "url": "https://p31ca.org/p31-welcome-packages.json",
+      "schema": "p31.welcomePackages/1.0.0"
+    },
+    "personalTetraSchema": "p31.personalTetra/1.0.0",
+    "hubFusionSchema": "p31.hubFusion/1.0.0"
+  },
+  "financialHealth": {
+    "stripeCheckoutUi": {
+      "path": "phosphorus31.org/planetary-planet/src/pages/donate.astro",
+      "note": "MAP as-built — tree may be outside partial clone"
+    },
+    "stripeWorker": {
+      "hostAsBuilt": "https://donate-api.phosphorus31.org",
+      "workersDevBase": "https://donate-api.trimtab-signal.workers.dev",
+      "canonicalPaymentApiPerConstants": "https://donate-api.phosphorus31.org",
+      "note": "As-built: payment.stripeWorkerHost and payment.stripeApiHealthUrl in p31-constants.json point at donate-api (no separate api.phosphorus31.org Worker). workersDevBase = account default URL; glass uses donate-api-health + donate-api-health-workers-dev."
+    },
+    "koFiPath": "Discord p31-bot per docs/adr/MAP-KOFI-001.md",
+    "complianceNote": "Pipeline code does not grant tax advice; 501(c)(3) language is operator-approved marketing only (MAP §1)."
+  },
+  "meshFleet": {
+    "sourceFile": "andromeda/software/integration-handoff/CWP-30/mesh-bridge.ts",
+    "MESH": {
+      "agentHub": "https://p31-agent-hub.trimtab-signal.workers.dev",
+      "cage": "https://k4-cage.trimtab-signal.workers.dev",
+      "personal": "https://k4-personal.trimtab-signal.workers.dev",
+      "hubs": "https://k4-hubs.trimtab-signal.workers.dev",
+      "bouncer": "https://p31-bouncer.trimtab-signal.workers.dev",
+      "chamber": "https://reflective-chamber.trimtab-signal.workers.dev"
+    },
+    "FLEET_HEALTH_PATHS": {
+      "bouncer": "/health",
+      "agentHub": "/api/health",
+      "cage": "/health",
+      "personal": "/health",
+      "hubs": "/health",
+      "chamber": "/health"
+    },
+    "centaurProxyExamples": [
+      "GET /api/mesh → k4-cage /api/mesh",
+      "GET /api/spoons → k4-personal /agent/:userId/energy",
+      "GET /api/fleet/health → aggregated liveness (see mesh-bridge.ts)"
+    ],
+    "bouncerNote": "mesh-bridge NOTE: p31-bouncer routes may not match /auth POST stubs — align in SC Phase 3 (CWP-P31-SC-2026-01)."
+  },
+  "starterChecklist": {
+    "structural": [
+      "Read P31-ROOT-MAP.md — Ring A (p31ca) vs Ring D (phosphorus31.org).",
+      "Run root npm run verify when home + Andromeda trees present.",
+      "Open delta.html — Wye → Delta narrative before editing mesh contracts."
+    ],
+    "data": [
+      "Deploy or probe k4-personal + k4-hubs; mesh-start seeds personalTetra from welcome package.",
+      "Copy CWP-30 mesh-bridge.ts to phosphorus SUPER-CENTAUR; call meshProxy(app) first in production (D-SC2)."
+    ],
+    "financial": [
+      "Read CONTROLLED-WORK-PACKAGE-MONETARY-PIPELINE.md §2 as-built.",
+      "Run scripts/verify-monetary-surface.mjs from software root when touching donate-api or donate UI.",
+      "Never commit sk_live / sk_test to client bundles (D-MAP-11)."
+    ],
+    "superCentaur": [
+      "Complete D-SC1–D-SC8 from CWP-P31-SC-2026-01; reconcile MESH URLs with live curl.",
+      "Cross-check ECO inventory task with D-SC7 single host list."
+    ]
+  },
+  "relatedDocs": [
+    "andromeda/software/design-tokens/p31-universal-canon.json",
+    "andromeda/software/design-tokens/PHOSPHORUS31-RING.md",
+    "andromeda/software/unified-k4-cage/README.md",
+    "andromeda/software/p31ca/docs/PARALLEL_AGENT_COORDINATION.md",
+    "docs/REVIEW-SUPPLEMENT-C-ECO-CWP-AND-INTEGRATIONS.md",
+    "P31-ROOT-MAP.md"
+  ],
+  "humanPage": "https://p31ca.org/p31-super-centaur-starter.html",
+  "humanPageAliases": [
+    "https://p31ca.org/centaur",
+    "https://p31ca.org/super-centaur",
+    "https://p31ca.org/family-pack",
+    "https://p31ca.org/family-sovereign-pack.html"
+  ]
+}

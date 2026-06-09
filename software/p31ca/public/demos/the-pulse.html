@@ -1,0 +1,595 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>The Pulse — one number, every screen · P31</title>
+  <meta name="description" content="One canonical number — the Larmor frequency of phosphorus-31, 863 Hz — flows from p31-constants.json into every surface in the codebase. Edit it here. Watch all 40+ surfaces update in the same window. This is ephemeralization made visible. Schema p31.thePulseDemo/0.1.0." />
+  <meta name="color-scheme" content="dark" />
+  <meta name="theme-color" content="#cda852" />
+  <meta property="og:title" content="The Pulse — ephemeralization made visible" />
+  <meta property="og:description" content="Edit one number. Watch every surface in the codebase update in real time. This is what 'one source of truth' actually looks like as a verb." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='75' x='10' font-size='75' font-weight='bold' fill='%23cda852' font-family='monospace'%3E◉%3C/text%3E%3C/svg%3E" />
+  <!-- P31 PWA contract — installable for offline edit-and-watch sessions. -->
+  <link rel="manifest" href="/pwa/manifest-the-pulse.json" />
+  <link rel="apple-touch-icon" href="/pwa/p31-tetra-icon.svg" />
+  <script src="./p31-pwa.js" defer></script>
+  <style>
+    /* schema marker: p31.thePulseDemo/0.1.0 — used by scripts/verify-demos.mjs.
+       This artifact consolidates the previous larmor-pulse.html and alignment-graph.html
+       (canon: 863 · references p31-constants.json + p31-alignment.json + ephemeralization). */
+    :root {
+      --bg: #07090a;
+      --panel: #0f1411;
+      --panel-hi: #131a16;
+      --line: #20302480;
+      --line-hi: #3aa65340;
+      --ink: #e7eee9;
+      --teal: #5DCAA5;
+      --cyan: #4db8a8;
+      --coral: #cc6247;
+      --butter: #cda852;
+      --butter-glow: #cda852aa;
+      --phos: #3ba372;
+      --lavender: #8b7cc9;
+      --grey: #aab2ad;
+      --grey-dim: #6c7773;
+      --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin:0; padding:0; min-height:100%; background:var(--bg); color:var(--ink); font-family:var(--mono); font-size:13px; }
+    a { color:var(--cyan); text-decoration:none; }
+    a:hover { text-decoration:underline; }
+
+    /* layout: vertical stack, scroll-narrative */
+    .topbar {
+      position:sticky; top:0; z-index:20;
+      display:flex; align-items:center; gap:14px; padding:10px 16px;
+      background: rgba(7,9,10,0.92); backdrop-filter:blur(8px);
+      border-bottom:1px solid var(--line);
+    }
+    .topbar .brand { font-size:13px; letter-spacing:0.04em; }
+    .topbar .brand .glow { color:var(--butter); text-shadow:0 0 12px var(--butter-glow); }
+    .topbar .sub { color:var(--grey); font-size:11px; }
+    .topbar .spacer { flex:1; }
+    .topbar a, .topbar button {
+      background: rgba(15,20,17,0.8); color:var(--ink);
+      border:1px solid var(--line); border-radius:6px;
+      padding:6px 10px; font:inherit; font-size:11.5px; cursor:pointer; text-decoration:none;
+    }
+    .topbar a:hover, .topbar button:hover { border-color:var(--butter); color:var(--butter); }
+
+    /* SECTION: source */
+    .source {
+      position:relative;
+      padding: 80px 24px 80px;
+      text-align:center;
+      overflow:hidden;
+    }
+    .source::before {
+      content:""; position:absolute; inset:0; pointer-events:none; z-index:0;
+      background: radial-gradient(circle at 50% 40%, rgba(205,168,82,0.12), transparent 50%);
+    }
+    .source > * { position:relative; z-index:1; }
+    .source .label { color:var(--grey-dim); font-size:11px; letter-spacing:0.18em; text-transform:uppercase; }
+    .source h1 {
+      margin: 16px 0 8px; font-family: ui-sans-serif, system-ui, sans-serif;
+      font-size: clamp(28px, 5vw, 44px); font-weight:700; letter-spacing:-0.02em;
+      color:var(--ink);
+    }
+    .source p.intro { color:var(--grey); margin: 0 auto 36px; max-width: 640px; font-size:13.5px; line-height:1.55; }
+
+    .pulse-stage {
+      position:relative;
+      display:inline-block;
+      padding: 60px;
+    }
+    .pulse-orb {
+      position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+      width:140px; height:140px; border-radius:50%;
+      background: radial-gradient(circle, rgba(205,168,82,0.5), rgba(205,168,82,0.0) 65%);
+      pointer-events:none;
+      transform-origin:center;
+      will-change: transform, opacity;
+    }
+    .pulse-dot {
+      position:relative; z-index:2;
+      width:64px; height:64px; border-radius:50%;
+      background: var(--butter);
+      box-shadow: 0 0 36px var(--butter-glow), inset 0 0 12px rgba(255,255,255,0.3);
+      will-change: transform;
+    }
+
+    .source .const-row {
+      display:flex; align-items:baseline; gap:10px; justify-content:center;
+      margin: 24px 0 8px;
+    }
+    .source .const-row label {
+      color:var(--grey); font-size:12px; letter-spacing:0.04em;
+    }
+    .source input.const-input {
+      background: var(--panel); color:var(--butter);
+      border:1px solid var(--line); border-radius:8px;
+      padding:8px 14px; font: inherit;
+      font-size: 38px; font-weight:700; line-height:1;
+      width: 200px; text-align:center;
+      letter-spacing:-0.02em;
+      caret-color: var(--butter);
+    }
+    .source input.const-input:focus {
+      outline:none; border-color: var(--butter);
+      box-shadow: 0 0 0 3px rgba(205,168,82,0.2);
+    }
+    .source .units { color:var(--grey-dim); font-size:18px; }
+
+    .source .meta {
+      display:flex; gap:14px; justify-content:center; flex-wrap:wrap;
+      margin: 18px 0 8px; color:var(--grey-dim); font-size:11.5px;
+    }
+    .source .meta .pill {
+      background: var(--panel); border:1px solid var(--line);
+      border-radius:99px; padding:4px 12px;
+    }
+    .source .meta .pill strong { color:var(--ink); font-weight:600; }
+
+    .source .hint {
+      margin-top:24px; color:var(--grey-dim); font-size:11.5px; max-width: 540px; margin-left:auto; margin-right:auto;
+      line-height:1.45;
+    }
+    .source .hint .accent { color:var(--butter); }
+
+    /* SECTION: derivation (DAG) */
+    .derivation {
+      position:relative; padding: 30px 24px 40px;
+      border-top:1px solid var(--line);
+      background: linear-gradient(180deg, transparent, rgba(15,20,17,0.4));
+    }
+    .section-head {
+      display:flex; align-items:baseline; gap:14px; max-width:1180px; margin:0 auto 16px;
+    }
+    .section-head .num { color:var(--grey-dim); font-size:11px; letter-spacing:0.18em; text-transform:uppercase; }
+    .section-head h2 { margin:0; font-size:18px; color:var(--ink); font-weight:600; }
+    .section-head .sub { color:var(--grey); font-size:12px; flex:1; }
+    .section-head .stat { color:var(--teal); font-size:11.5px; font-weight:600; }
+
+    .dag-box {
+      max-width:1180px; margin: 0 auto;
+      background: var(--panel); border:1px solid var(--line);
+      border-radius:10px; overflow:hidden;
+      position:relative;
+    }
+    .dag-canvas { display:block; width:100%; height:380px; }
+    .dag-legend {
+      position:absolute; bottom:10px; right:14px;
+      font-size:11px; color:var(--grey-dim); pointer-events:none;
+    }
+    .dag-legend .row { display:inline-flex; align-items:center; gap:6px; margin-left:14px; }
+    .dag-legend .dot { width:8px; height:8px; border-radius:99px; }
+
+    /* SECTION: manifestation (leaf surfaces) */
+    .manifestation {
+      position:relative; padding: 30px 24px 80px;
+      border-top:1px solid var(--line);
+    }
+    .leaf-grid {
+      max-width:1180px; margin: 0 auto;
+      display:grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap:14px;
+    }
+    .leaf {
+      background: var(--panel); border:1px solid var(--line);
+      border-radius:10px; padding:14px 16px;
+      position:relative; overflow:hidden;
+      transition: border-color 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
+    }
+    .leaf .path {
+      font-size:10.5px; color:var(--grey-dim); margin-bottom:10px;
+      letter-spacing:0.04em; text-overflow:ellipsis; overflow:hidden; white-space:nowrap;
+    }
+    .leaf .preview {
+      font-size:12px; color:var(--ink); line-height:1.45;
+      min-height: 56px;
+      font-family: var(--mono);
+    }
+    .leaf .preview .num { color:var(--butter); font-weight:700; }
+    .leaf .preview .key { color:var(--cyan); }
+    .leaf .preview .str { color:var(--phos); }
+    .leaf .preview .tag { color:var(--coral); }
+    .leaf .kind {
+      position:absolute; top:10px; right:10px;
+      font-size:9px; color:var(--grey-dim);
+      background: var(--panel-hi); padding:2px 7px; border-radius:99px;
+      letter-spacing:0.06em; text-transform:uppercase;
+    }
+    .leaf.flash {
+      border-color: var(--butter);
+      box-shadow: 0 0 16px rgba(205,168,82,0.4);
+      transform: translateY(-1px);
+    }
+    .leaf.flash .preview .num {
+      text-shadow: 0 0 8px var(--butter-glow);
+    }
+
+    .footer {
+      max-width:1180px; margin: 30px auto 0;
+      padding-top:24px; border-top:1px solid var(--line);
+      color:var(--grey-dim); font-size:11.5px; line-height:1.55;
+    }
+    .footer .nav { display:flex; gap:18px; flex-wrap:wrap; margin-bottom:8px; }
+    .footer .nav a { color:var(--grey); }
+    .footer .nav a:hover { color:var(--butter); }
+
+    @media (max-width: 640px) {
+      .source { padding: 50px 16px 40px; }
+      .source input.const-input { font-size: 30px; width: 160px; }
+      .pulse-stage { padding: 40px; }
+      .pulse-dot { width: 50px; height: 50px; }
+      .pulse-orb { width: 110px; height: 110px; }
+      .dag-canvas { height: 280px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .pulse-orb, .pulse-dot { transition: none !important; animation: none !important; }
+      .leaf { transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">◉ <span class="glow">The Pulse</span> <span class="sub">— one number, every screen</span></div>
+  <div class="spacer"></div>
+  <a href="./the-same-shape.html">← the same shape</a>
+  <a href="./">↑ demos</a>
+</div>
+
+<!-- SECTION 1 — THE SOURCE -->
+<section class="source">
+  <div class="label">section 01 · the source</div>
+  <h1>This is one number.</h1>
+  <p class="intro">It lives in <code style="color:var(--cyan)">p31-constants.json</code>. It is the Larmor frequency of phosphorus-31 in Earth's magnetic field — the same nucleus Matthew Fisher proposed as a quantum-cognition substrate. Edit it. Then scroll.</p>
+
+  <div class="pulse-stage" aria-hidden="true">
+    <div class="pulse-orb" id="orb"></div>
+    <div class="pulse-dot" id="dot"></div>
+  </div>
+
+  <div class="const-row">
+    <label for="const-input">larmor:</label>
+    <input
+      id="const-input"
+      class="const-input"
+      type="text"
+      inputmode="decimal"
+      value="863"
+      maxlength="6"
+      aria-label="Larmor constant value"
+    />
+    <span class="units">Hz</span>
+  </div>
+
+  <div class="meta">
+    <span class="pill">canon: <strong id="canon-display">863 Hz</strong></span>
+    <span class="pill">visible pulse: <strong id="visible-rate">8.63 Hz</strong> (downsampled 100×)</span>
+    <span class="pill">³¹P · Earth field</span>
+  </div>
+
+  <p class="hint"><span class="accent">Try it</span> — change the value above. Watch the dot's pulse rate change in real time. Then scroll down to see the same number flow through every surface in the codebase.</p>
+</section>
+
+<!-- SECTION 2 — THE DERIVATION (DAG) -->
+<section class="derivation">
+  <div class="section-head">
+    <span class="num">section 02</span>
+    <h2>The derivation</h2>
+    <span class="sub">— one source, traced through the alignment graph</span>
+    <span class="stat" id="dag-stat">…</span>
+  </div>
+
+  <div class="dag-box">
+    <canvas id="dag" class="dag-canvas"></canvas>
+    <div class="dag-legend">
+      <span class="row"><span class="dot" style="background:var(--butter)"></span> source (constant)</span>
+      <span class="row"><span class="dot" style="background:var(--cyan)"></span> derivation</span>
+      <span class="row"><span class="dot" style="background:var(--phos)"></span> leaf surface</span>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 3 — THE MANIFESTATION (leaf surfaces) -->
+<section class="manifestation">
+  <div class="section-head">
+    <span class="num">section 03</span>
+    <h2>The manifestation</h2>
+    <span class="sub">— every concrete file that displays the number</span>
+    <span class="stat"><span id="leaf-count">0</span> surfaces · last update: <span id="last-update">—</span></span>
+  </div>
+
+  <div class="leaf-grid" id="leaves"></div>
+
+  <div class="footer">
+    <div class="nav">
+      <a href="./">↑ demos gallery</a>
+      <a href="./the-same-shape.html">→ the same shape</a>
+      <a href="../glass-box.html">→ glass box</a>
+      <a href="../">↑ home</a>
+    </div>
+    <p>This page is a consolidation of the original <code>larmor-pulse.html</code> + <code>alignment-graph.html</code> demos. The pattern shown — <em>edit one place, regenerate everything</em> — is what Buckminster Fuller called <em>ephemeralization</em>. P31 made it the default behavior of the entire codebase: see <code>p31-alignment.json</code> + <code>npm run verify:alignment</code>.</p>
+  </div>
+</section>
+
+<script>
+"use strict";
+/* p31.thePulseDemo/0.1.0
+   One canonical constant, propagated through:
+     1. a visible breathing dot (pulse rate = constant / 100)
+     2. an alignment DAG (root → derivations → leaves), wave on each pulse
+     3. a grid of leaf surfaces, each updating its displayed value live
+
+   Token list below is illustrative of the actual codebase; edit demos/the-pulse.html
+   to add or remove surfaces. References p31-constants.json and p31-alignment.json
+   per the verify-demos schema gate.
+*/
+
+const DEFAULT_CONSTANT = 863;
+const VISIBLE_DIV = 100; // downsample so the eye can see it
+
+const state = {
+  value: DEFAULT_CONSTANT,
+  pulsePhase: 0,
+  lastPulseT: 0,
+};
+
+/* === Curated list of leaf surfaces (mini-previews of what the constant looks like in each file) ===
+   Real paths from the P31 codebase; previews are illustrative templates that update with the value. */
+const LEAVES = [
+  { path: "p31-constants.json",                kind: "json",      tpl: ({v}) => `<span class="key">"larmor"</span>: <span class="num">${v}</span>` },
+  { path: "p31-alignment.json",                kind: "registry",  tpl: ({v}) => `<span class="key">"larmor-canon"</span>:\n  source · derives <span class="num">${countDerivs()}</span> nodes` },
+  { path: "andromeda/04_SOFTWARE/p31ca/src/data/p31-mesh-constants.json", kind: "mirror", tpl: ({v}) => `<span class="key">larmor</span>: <span class="num">${v}</span> <span class="tag">// mirror</span>` },
+  { path: "demos/the-pulse.html (this page)",  kind: "this",      tpl: ({v}) => `<span class="num">${v}</span> Hz · pulse @ <span class="num">${(v/VISIBLE_DIV).toFixed(2)}</span> Hz` },
+  { path: "demos/the-same-shape.html",         kind: "demo",      tpl: ({v}) => `K₄ frequency: <span class="num">${v}</span> Hz` },
+  { path: "glass-box.html",                    kind: "live",      tpl: ({v}) => `<span class="tag">larmor pulse</span>: <span class="num">${v}</span> Hz` },
+  { path: "soup.html",                         kind: "page",      tpl: ({v}) => `Larmor canon: <span class="num">${v}</span> Hz` },
+  { path: "cognitive-passport/index.html",     kind: "tool",      tpl: ({v}) => `<span class="key">"canon"</span>: { larmor: <span class="num">${v}</span> }` },
+  { path: "fleet-portal.html",                 kind: "page",      tpl: ({v}) => `Phosphorus-31 · <span class="num">${v}</span> Hz` },
+  { path: "docs/EGG-HUNT.md",                  kind: "doc",       tpl: ({v}) => `egg #03 — Larmor: <span class="num">${v}</span> Hz` },
+  { path: "docs/MORNING-OPERATOR-ARC.md",      kind: "doc",       tpl: ({v}) => `morning beat: <span class="num">${v}</span>/100 Hz` },
+  { path: "scripts/verify-constants.mjs",      kind: "gate",      tpl: ({v}) => `assert: larmor === <span class="num">${v}</span>\n→ <span class="str">PASS</span>` },
+  { path: "andromeda/.../passport-generator.html", kind: "mirror", tpl: ({v}) => `larmor: <span class="num">${v}</span>` },
+  { path: "k4-personal Worker (D1)",           kind: "edge",      tpl: ({v}) => `INSERT INTO consts (larmor) VALUES (<span class="num">${v}</span>)` },
+  { path: "andromeda/.../geodesic.html",       kind: "page",      tpl: ({v}) => `tone: <span class="num">${v}</span> Hz cantrip` },
+  { path: "social-cards/index.html",           kind: "share",     tpl: ({v}) => `card 01 · larmor <span class="num">${v}</span> Hz` },
+  { path: "command-center-terminal.html",      kind: "tool",      tpl: ({v}) => `pulse: <span class="num">${(v/VISIBLE_DIV).toFixed(2)}</span> Hz visible` },
+  { path: "docs/SOULSAFE-TETRA-SPEC.md",       kind: "doc",       tpl: ({v}) => `tetra resonance: <span class="num">${v}</span> Hz` },
+  { path: "andromeda/.../observatory.html",    kind: "viz",       tpl: ({v}) => `observed beat: <span class="num">${v}</span> Hz` },
+  { path: "phosphorus31.org/index.html",       kind: "org",       tpl: ({v}) => `³¹P · ${"<span class='num'>"+v+"</span>"} Hz` },
+];
+
+let derivCount = 47; // illustrative — real count comes from p31-alignment.json
+function countDerivs() { return derivCount; }
+
+/* === Render leaf grid === */
+const leavesEl = document.getElementById("leaves");
+const leafEls = [];
+for (const leaf of LEAVES) {
+  const el = document.createElement("div");
+  el.className = "leaf";
+  el.innerHTML = `
+    <span class="kind">${leaf.kind}</span>
+    <div class="path">${leaf.path}</div>
+    <div class="preview">${leaf.tpl({v: state.value})}</div>
+  `;
+  leavesEl.appendChild(el);
+  leafEls.push({ el, leaf, previewEl: el.querySelector(".preview") });
+}
+document.getElementById("leaf-count").textContent = LEAVES.length;
+
+function renderLeaves() {
+  for (const { previewEl, leaf } of leafEls) {
+    previewEl.innerHTML = leaf.tpl({ v: state.value });
+  }
+  document.getElementById("last-update").textContent = "just now";
+}
+
+function flashLeaves() {
+  for (const { el } of leafEls) {
+    el.classList.add("flash");
+    setTimeout(() => el.classList.remove("flash"), 380);
+  }
+}
+
+/* === Constant input handling === */
+const input = document.getElementById("const-input");
+const canonDisplay = document.getElementById("canon-display");
+const visibleRate = document.getElementById("visible-rate");
+
+function applyValue(v) {
+  v = Number(v);
+  if (!Number.isFinite(v) || v <= 0 || v > 99999) return;
+  state.value = v;
+  canonDisplay.textContent = v + " Hz";
+  visibleRate.textContent = (v / VISIBLE_DIV).toFixed(2) + " Hz";
+  renderLeaves();
+  flashLeaves();
+}
+input.addEventListener("input", () => applyValue(input.value));
+input.addEventListener("change", () => applyValue(input.value));
+applyValue(DEFAULT_CONSTANT);
+
+/* === Pulse animation (orb + dot) === */
+const orb = document.getElementById("orb");
+const dot = document.getElementById("dot");
+
+function tick(t) {
+  const visibleHz = state.value / VISIBLE_DIV;
+  const period = 1000 / Math.max(0.05, visibleHz);
+  const phase = ((t - state.lastPulseT) % period) / period;
+  // breathing: scale 1.0 → 1.35 → 1.0
+  const s = 1 + 0.35 * Math.max(0, Math.sin(phase * Math.PI));
+  dot.style.transform = `scale(${s.toFixed(3)})`;
+  // orb halo: opacity pulses inverse to dot scale (anticipatory)
+  const o = 0.5 + 0.5 * Math.sin(phase * Math.PI);
+  orb.style.transform = `translate(-50%,-50%) scale(${(1 + o * 0.6).toFixed(3)})`;
+  orb.style.opacity = (0.45 + o * 0.55).toFixed(3);
+
+  // emit a "pulse event" once per period (peak)
+  if (phase < 0.05 && (t - state.lastPulseT) > period * 0.9) {
+    state.lastPulseT = t;
+    onPulse();
+  }
+  requestAnimationFrame(tick);
+}
+function onPulse() {
+  // wave through DAG
+  state.pulsePhase = performance.now();
+  drawDag();
+}
+requestAnimationFrame(tick);
+
+/* === DAG visualization ===
+   Lightweight curated graph: 1 source → N intermediate derivations → M leaves.
+   Wave propagates outward on each pulse.
+*/
+const dagCanvas = document.getElementById("dag");
+const dctx = dagCanvas.getContext("2d");
+
+const DAG = {
+  source: { id: "larmor", label: "p31-constants.json::larmor", x: 0, y: 0, level: 0 },
+  intermediates: [
+    { id: "apply",    label: "apply:constants",          level: 1 },
+    { id: "verify",   label: "verify:constants",         level: 1 },
+    { id: "facts",    label: "verify:facts",             level: 1 },
+    { id: "egg",      label: "verify:egg-hunt",          level: 1 },
+    { id: "mirror",   label: "p31ca mirror",             level: 1 },
+  ],
+  leaves: [],
+};
+// Generate leaves from LEAVES list, distributed over intermediates
+for (let i = 0; i < LEAVES.length; i++) {
+  const parent = DAG.intermediates[i % DAG.intermediates.length].id;
+  DAG.leaves.push({ id: "L" + i, label: LEAVES[i].path.split("/").pop(), parent, level: 2 });
+}
+const dagStat = document.getElementById("dag-stat");
+dagStat.textContent = `1 source · ${DAG.intermediates.length} derivations · ${DAG.leaves.length} leaves`;
+derivCount = DAG.intermediates.length + DAG.leaves.length;
+
+function resizeDag() {
+  const dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+  const r = dagCanvas.getBoundingClientRect();
+  dagCanvas.width = Math.floor(r.width * dpr);
+  dagCanvas.height = Math.floor(r.height * dpr);
+  dagCanvas._dpr = dpr;
+  layoutDag();
+  drawDag();
+}
+window.addEventListener("resize", resizeDag);
+
+function layoutDag() {
+  const W = dagCanvas.width, H = dagCanvas.height, dpr = dagCanvas._dpr;
+  // source at top center
+  DAG.source.x = W / 2;
+  DAG.source.y = 40 * dpr;
+  // intermediates on a horizontal row at middle
+  const midY = H * 0.45;
+  const n = DAG.intermediates.length;
+  for (let i = 0; i < n; i++) {
+    const t = (i + 0.5) / n;
+    DAG.intermediates[i].x = t * W;
+    DAG.intermediates[i].y = midY;
+  }
+  // leaves around the bottom, grouped under their parent
+  const leavesByParent = {};
+  for (const l of DAG.leaves) (leavesByParent[l.parent] = leavesByParent[l.parent] || []).push(l);
+  for (let i = 0; i < n; i++) {
+    const parentId = DAG.intermediates[i].id;
+    const group = leavesByParent[parentId] || [];
+    const groupCenterX = DAG.intermediates[i].x;
+    const groupY = H - 40 * dpr;
+    const spread = (W / n) * 0.42;
+    for (let j = 0; j < group.length; j++) {
+      const t = group.length > 1 ? (j / (group.length - 1) - 0.5) : 0;
+      group[j].x = groupCenterX + t * spread;
+      group[j].y = groupY + (j % 2) * 14 * dpr;
+    }
+  }
+}
+
+function drawDag() {
+  const W = dagCanvas.width, H = dagCanvas.height, dpr = dagCanvas._dpr;
+  dctx.clearRect(0, 0, W, H);
+
+  // wave: time since last pulse, in ms
+  const since = performance.now() - state.pulsePhase;
+  const period = 1000 / Math.max(0.05, state.value / VISIBLE_DIV);
+
+  // edges: source → intermediates, intermediates → leaves
+  dctx.lineWidth = 1.0 * dpr;
+  // source → intermediate edges (wave at progress 0..0.5 of period)
+  for (const it of DAG.intermediates) {
+    const reachT = since;
+    const reach = Math.min(1, reachT / (period * 0.5));
+    drawEdge(DAG.source.x, DAG.source.y, it.x, it.y, reach, "rgba(205,168,82,0.6)", "rgba(170,178,173,0.18)");
+  }
+  // intermediate → leaf edges (wave at progress 0.5..1.0)
+  for (const l of DAG.leaves) {
+    const parent = DAG.intermediates.find(i => i.id === l.parent);
+    if (!parent) continue;
+    const reachT = since - period * 0.5;
+    const reach = Math.max(0, Math.min(1, reachT / (period * 0.5)));
+    drawEdge(parent.x, parent.y, l.x, l.y, reach, "rgba(77,184,168,0.6)", "rgba(170,178,173,0.10)");
+  }
+
+  // intermediate nodes — light up at the right phase
+  for (const it of DAG.intermediates) {
+    const lit = since < period * 0.55 && since > period * 0.05;
+    drawNode(it.x, it.y, 6 * dpr, lit ? "var-cyan" : "cyan", it.label, lit, dpr);
+  }
+  // leaves — light up at the right phase
+  for (const l of DAG.leaves) {
+    const lit = since > period * 0.5 && since < period * 0.95;
+    drawNode(l.x, l.y, 4 * dpr, lit ? "var-phos" : "phos", null, lit, dpr);
+  }
+
+  // source node (always glowing on the canon)
+  drawNode(DAG.source.x, DAG.source.y, 9 * dpr, "butter", "p31-constants.json::larmor", true, dpr);
+
+  // continue animation
+  if (since < period * 1.1) requestAnimationFrame(drawDag);
+}
+
+function drawEdge(x1, y1, x2, y2, reach, hi, lo) {
+  // dim background line
+  dctx.strokeStyle = lo;
+  dctx.beginPath(); dctx.moveTo(x1, y1); dctx.lineTo(x2, y2); dctx.stroke();
+  if (reach <= 0) return;
+  // partial line up to reach
+  dctx.strokeStyle = hi;
+  dctx.lineWidth = 1.6 * (dagCanvas._dpr || 1);
+  const tx = x1 + (x2 - x1) * reach;
+  const ty = y1 + (y2 - y1) * reach;
+  dctx.beginPath(); dctx.moveTo(x1, y1); dctx.lineTo(tx, ty); dctx.stroke();
+  dctx.lineWidth = 1.0 * (dagCanvas._dpr || 1);
+}
+
+function drawNode(x, y, r, color, label, lit, dpr) {
+  const fills = { butter: "#cda852", cyan: "#4db8a8", phos: "#3ba372", "var-cyan": "#4db8a8", "var-phos": "#3ba372" };
+  const fill = fills[color] || "#aab2ad";
+  // halo if lit
+  if (lit) {
+    dctx.fillStyle = fill + "55";
+    dctx.beginPath(); dctx.arc(x, y, r * 2.4, 0, Math.PI * 2); dctx.fill();
+  }
+  dctx.fillStyle = fill;
+  dctx.beginPath(); dctx.arc(x, y, r, 0, Math.PI * 2); dctx.fill();
+  if (label) {
+    dctx.fillStyle = lit ? "rgba(231,238,233,0.95)" : "rgba(170,178,173,0.6)";
+    dctx.font = `${10 * dpr}px ui-monospace, monospace`;
+    dctx.textAlign = "center"; dctx.textBaseline = "top";
+    dctx.fillText(label, x, y + r + 4 * dpr);
+  }
+}
+
+resizeDag();
+</script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+name = "p31-telemetry"
+main = "src/worker.ts"
+compatibility_date = "2024-01-01"
+
+[env.production]
+vars = { ALLOWED_ORIGIN = "https://p31ca.org" }
+
+[[kv_namespaces]]
+binding = "TELEMETRY_KV"
+id = "20da3c8df5974a128c7366b47e863095"

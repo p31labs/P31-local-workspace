@@ -1,0 +1,43 @@
+{
+  "kind": "social-pack",
+  "description": "P31 Labs canonical social posts. Each entry includes content + platform targets. Render via: node forge.js social \"...\" <platform>",
+  "defaultTargets": ["bluesky", "mastodon", "linkedin"],
+  "posts": [
+    {
+      "id": "incorporation-april-3",
+      "occasion": "Incorporation day",
+      "content": "P31 Labs, Inc. \u2014 officially a Georgia 501(c)(3) in formation as of April 3, 2026. Open-source cognitive infrastructure for neurodivergent minds, built by neurodivergent hands. Phosphorus alone burns. Inside the cage, it's stable.",
+      "targets": ["bluesky", "mastodon", "linkedin"]
+    },
+    {
+      "id": "ein-assigned-april-13",
+      "occasion": "IRS EIN assignment",
+      "content": "EIN assigned today. 1023-EZ staged. Board expansion in progress. Open-source assistive tech for neurodivergent minds, on the record.",
+      "targets": ["bluesky", "mastodon"]
+    },
+    {
+      "id": "bonding-ship",
+      "occasion": "BONDING launch",
+      "content": "BONDING is live at bonding.p31ca.org. Educational multiplayer chemistry game for kids 6+. Build molecules by dragging atoms. 413 automated tests. NGSS-aligned. Free, open-source, AGPLv3. Built for my kids; shipped for yours.",
+      "targets": ["bluesky", "mastodon", "linkedin"]
+    },
+    {
+      "id": "forge-open-source",
+      "occasion": "P31 Forge release",
+      "content": "Shipped P31 Forge \u2014 the document-generation engine behind every legal filing, grant application, and board resolution we produce. One brand system. One content-pack schema. CLI + HTTP + Cloudflare Worker. AGPLv3. Fork it: github.com/p31labs",
+      "targets": ["bluesky", "mastodon", "linkedin"]
+    },
+    {
+      "id": "paper-iv-universal-bridge",
+      "occasion": "Paper IV publication",
+      "content": "Paper IV: Universal Bridge \u2014 now on Zenodo (DOI 10.5281/zenodo.19503542). Open-access, CC-BY-4.0. Part of the Cognitive Passport series documenting neurodivergent AI-assisted research methodology.",
+      "targets": ["bluesky", "mastodon", "linkedin"]
+    },
+    {
+      "id": "board-independence-call",
+      "occasion": "Board recruitment",
+      "content": "P31 Labs is seeking one independent director to complete our board for IRS 1023-EZ filing. Looking for a disability self-advocate with governance experience or interest. Unpaid, meets quarterly, fully remote. DM if interested.",
+      "targets": ["bluesky", "linkedin"]
+    }
+  ]
+}

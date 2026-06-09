@@ -1,0 +1,46 @@
+{
+  "schema": "p31.creatorEconomy/1.0.0",
+  "version": "1.0.0",
+  "updated": "2026-04-27",
+  "operator": {
+    "entity": "P31 Labs, Inc.",
+    "ein": "42-1888158",
+    "status": "Georgia domestic nonprofit, 501(c)(3) pending"
+  },
+  "platformFee": {
+    "rate": 0.0,
+    "unit": "fraction",
+    "note": "P31 Labs charges no platform fee. This file is the authoritative, CI-verified disclosure. Any change requires a commit and a passing verify:economy run."
+  },
+  "paymentProcessing": {
+    "provider": "Stripe",
+    "route": "p31ca MAP: Stripe Payment Link (buy.stripe.com) optional client_reference_id; donate-api Worker optional for programmatic Checkout + webhooks",
+    "processorFeeCard": "2.9% + $0.30 per successful charge (Stripe standard rate, not set by P31 Labs)",
+    "processorFeeACH": "0.8%, max $5.00 per transfer (Stripe ACH rate)",
+    "note": "Processor fees are set by Stripe and paid directly to Stripe. P31 Labs does not mark them up."
+  },
+  "revenueShare": {
+    "creator": 1.0,
+    "platform": 0.0,
+    "unit": "fraction",
+    "note": "Creators retain 100% of gross revenue minus processor fees. P31 Labs takes no revenue share in schema version 1.0.0."
+  },
+  "geodesicRoom": {
+    "accessFee": 0.0,
+    "note": "K4 live rooms are free. No paywall, no in-room purchases, no ads. Public rooms are open by room ID."
+  },
+  "transparency": {
+    "publicDisclosure": true,
+    "ciVerified": true,
+    "verifierScript": "scripts/verify-creator-economy.mjs",
+    "groundTruthPath": "ground-truth/creator-economy.json",
+    "publicEndpoint": "/creator-economy.json",
+    "changePolicy": "Any fee change requires: (1) commit to this file, (2) passing verify:economy in CI, (3) 30-day advance notice post to https://p31ca.org/changelog before taking effect."
+  },
+  "version1Constraints": [
+    "platformFee.rate must equal 0.0",
+    "revenueShare.creator must equal 1.0",
+    "revenueShare.platform must equal 0.0",
+    "geodesicRoom.accessFee must equal 0.0"
+  ]
+}

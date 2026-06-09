@@ -1,0 +1,1148 @@
+/* ═══════════════════════════════════════════════════════
+   SPACESHIP EARTH — P31 Labs
+   Brand-aligned: Oxanium + Space Mono, P31 color system
+   ═══════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Oxanium:wght@200;300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
+
+/* @property registrations for animatable CSS custom properties (Chrome/Edge) */
+@property --p31-bg { syntax: '<color>'; inherits: true; initial-value: #020617; }
+@property --p31-primary { syntax: '<color>'; inherits: true; initial-value: #22d3ee; }
+@property --p31-secondary { syntax: '<color>'; inherits: true; initial-value: #d946ef; }
+@property --p31-accent { syntax: '<color>'; inherits: true; initial-value: #C9B1FF; }
+@property --p31-glass { syntax: '<number>'; inherits: true; initial-value: 0.15; }
+
+:root {
+  --p31-bg: #020617;
+  --p31-primary: #22d3ee;
+  --p31-secondary: #d946ef;
+  --p31-accent: #C9B1FF;
+  --p31-glass: 0.15;
+  transition: --p31-bg 0.3s ease, --p31-primary 0.3s ease, --p31-secondary 0.3s ease, --p31-accent 0.3s ease;
+}
+
+/* Fallback for Firefox: transition actual properties */
+[data-theme] * {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Theme overrides */
+[data-theme="operator"] { --p31-bg: #020617; --p31-primary: #22d3ee; --p31-secondary: #d946ef; --p31-accent: #C9B1FF; }
+[data-theme="kids"] { --p31-bg: #1e1b4b; --p31-primary: #E9C46A; --p31-secondary: #E76F51; --p31-accent: #2A9D8F; }
+[data-theme="gray_rock"] { --p31-bg: #1a1a2e; --p31-primary: #64748B; --p31-secondary: #475569; --p31-accent: #94a3b8; }
+[data-theme="aurora"] { --p31-bg: #0f172a; --p31-primary: #a78bfa; --p31-secondary: #34d399; --p31-accent: #f472b6; }
+[data-theme="high_contrast"] { --p31-bg: #000000; --p31-primary: #00FFFF; --p31-secondary: #FF00FF; --p31-accent: #FFFF00; }
+[data-theme="low_motion"] { --p31-bg: #020617; --p31-primary: #22d3ee; --p31-secondary: #d946ef; --p31-accent: #C9B1FF; }
+
+[data-theme="low_motion"],
+[data-theme="gray_rock"] {
+  * { animation-duration: 0s !important; transition-duration: 0s !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0s !important; transition-duration: 0s !important; }
+}
+
+/* ── P31 Brand Tokens — Neon Phosphor Theme ──────── */
+/* OLED-black backgrounds + neon glow on all text/borders */
+:root {
+  --void: #000000;
+  /* Surface tiers */
+  --s1: #000000;
+  --s2: #0a0a0a;
+  --s3: #111111;
+  --s4: #1a1a1a;
+  
+  /* Brand Colors */
+  --text: #e0e0e0;
+  --dim: #555555;
+  --dim2: #333333;
+  --green: #00FFFF;
+  --cyan: #00FFFF;
+  --magenta: #FF00FF;
+  --violet: #BF5FFF;
+  --amber: #FFD700;
+  
+  /* Semantic Additions */
+  --mint: #00FF88;
+  --coral: #FF6B6B;
+  --orange: #FF8C42;
+  --blue: #00D4FF;
+  --lavender: #7A27FF;
+  --pink: #FF00CC;
+
+  /* Typography Scale (Fluid) */
+  --fs-xs: clamp(8px, 1vh, 10px);
+  --fs-sm: clamp(9px, 1.2vh, 11px);
+  --fs-md: clamp(10px, 1.3vh, 12px);
+  --fs-lg: clamp(12px, 1.6vh, 14px);
+  --fs-xl: clamp(16px, 2vh, 20px);
+  --fs-big: clamp(20px, 3.5vh, 32px);
+
+  /* Radius Tiers */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 20px;
+
+  /* Transitions */
+  --trans-fast: 0.15s ease-out;
+  --trans-base: 0.2s ease-out;
+  --trans-slow: 0.4s ease-out;
+
+  --font-display: 'Oxanium', sans-serif;
+  --font-data: 'Space Mono', monospace;
+
+  /* Glow Presets */
+  --glow-cyan: 0 0 6px #00FFFF, 0 0 20px rgba(0,255,255,0.3);
+  --glow-magenta: 0 0 6px #FF00FF, 0 0 20px rgba(255,0,255,0.3);
+  --glow-violet: 0 0 6px #BF5FFF, 0 0 20px rgba(191,95,255,0.3);
+  --glow-amber: 0 0 6px #FFD700, 0 0 20px rgba(255,215,0,0.3);
+  --glow-mint: 0 0 6px #00FF88, 0 0 20px rgba(0,255,136,0.3);
+  --glow-coral: 0 0 6px #FF6B6B, 0 0 20px rgba(255,107,107,0.3);
+
+  --neon: var(--cyan);
+  --neon-dim: rgba(0,255,255,0.35);
+  --neon-faint: rgba(0,255,255,0.08);
+  --neon-ghost: rgba(0,255,255,0.03);
+}
+
+/* ── D1.4: Polymorphic Skin — data-theme CSS overrides ── */
+
+[data-theme="operator"] {
+  --neon: var(--cyan);
+  --neon-dim: rgba(0,255,255,0.35);
+  --text: #e0e0e0;
+  --s1: #000000;
+}
+
+[data-theme="kids"] {
+  --neon: var(--amber);
+  --neon-dim: rgba(255,215,0,0.35);
+  --neon-faint: rgba(255,215,0,0.08);
+  --neon-ghost: rgba(255,215,0,0.03);
+  --text: #f5f0e0;
+  --cyan: var(--amber);
+  --magenta: #FF6B6B;
+  --s1: #0a0805;
+  --s2: #12100a;
+  --pink: #FF8C42;
+  --glow-cyan: 0 0 6px var(--amber), 0 0 20px rgba(255,215,0,0.3);
+  --glow-magenta: 0 0 6px #FF6B6B, 0 0 20px rgba(255,107,107,0.3);
+}
+
+[data-theme="aurora"] {
+  --neon: var(--mint);
+  --neon-dim: rgba(0,255,136,0.35);
+  --neon-faint: rgba(0,255,136,0.08);
+  --neon-ghost: rgba(0,255,136,0.03);
+  --cyan: #00FF88;
+  --magenta: #7700ff;
+  --violet: #00ccff;
+  --amber: #00ff88;
+  --glow-cyan: 0 0 6px #00FF88, 0 0 20px rgba(0,255,136,0.3);
+  --glow-magenta: 0 0 6px #7700ff, 0 0 20px rgba(119,0,255,0.3);
+  --glow-violet: 0 0 6px #00ccff, 0 0 20px rgba(0,204,255,0.3);
+}
+
+[data-theme="gray-rock"] {
+  --neon: #888888;
+  --neon-dim: rgba(136,136,136,0.25);
+  --neon-faint: rgba(136,136,136,0.05);
+  --neon-ghost: rgba(136,136,136,0.02);
+  --text: #aaaaaa;
+  --cyan: #888888;
+  --magenta: #888888;
+  --violet: #999999;
+  --amber: #999999;
+  --mint: #888888;
+  --coral: #999999;
+  --pink: #888888;
+  --s1: #0a0a0a;
+  --s2: #111111;
+  --glow-cyan: none;
+  --glow-magenta: none;
+  --glow-violet: none;
+  --glow-amber: none;
+  --glow-mint: none;
+  --glow-coral: none;
+}
+
+/* Gray Rock: kill all animations */
+[data-theme="gray-rock"] * {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.05s !important;
+}
+
+[data-theme="gray-rock"] .neon-flicker {
+  animation: none !important;
+  text-shadow: none !important;
+  box-shadow: none !important;
+}
+
+/* P04.6: Matte Cockpit — warm void, desaturated palette, sensory-safe */
+[data-theme="matte-cockpit"] {
+  --void: #0f1115;
+  --s1: #0f1115;
+  --s2: #161920;
+  --s3: #1c2028;
+  --s4: #242830;
+  --text: #b0b0b0;
+  --dim: #666666;
+  --dim2: #444444;
+  --cyan: #7a8a9a;
+  --magenta: #8a7a8a;
+  --violet: #7a7a9a;
+  --amber: #9a8a6a;
+  --mint: #6a9a8a;
+  --coral: #9a7a6a;
+  --orange: #9a8060;
+  --blue: #6a7a9a;
+  --lavender: #7a6a8a;
+  --pink: #8a6a7a;
+  --neon: #7a8a9a;
+  --neon-dim: rgba(122,138,154,0.25);
+  --neon-faint: rgba(122,138,154,0.05);
+  --neon-ghost: rgba(122,138,154,0.02);
+  --glow-cyan: none;
+  --glow-magenta: none;
+  --glow-violet: none;
+  --glow-amber: none;
+  --glow-mint: none;
+  --glow-coral: none;
+}
+
+/* Matte Cockpit: kill all animations — sensory-safe */
+[data-theme="matte-cockpit"] * {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.05s !important;
+}
+
+[data-theme="matte-cockpit"] .neon-flicker {
+  animation: none !important;
+  text-shadow: none !important;
+  box-shadow: none !important;
+}
+
+/* P04.7: Light mode — sensory toggle */
+[data-theme="light"] {
+  --void: #f0f2f5;
+  --s1: #ffffff;
+  --s2: #f5f5f5;
+  --s3: #e8eaed;
+  --s4: #dcdfe3;
+  --text: #1a1a2e;
+  --dim: #6b7280;
+  --dim2: #9ca3af;
+  --cyan: #0891b2;
+  --magenta: #a21caf;
+  --violet: #7c3aed;
+  --amber: #d97706;
+  --mint: #059669;
+  --coral: #dc2626;
+  --orange: #ea580c;
+  --blue: #2563eb;
+  --lavender: #7c3aed;
+  --pink: #db2777;
+  --neon: #0891b2;
+  --neon-dim: rgba(8,145,178,0.3);
+  --neon-faint: rgba(8,145,178,0.08);
+  --neon-ghost: rgba(8,145,178,0.04);
+  --glow-cyan: none;
+  --glow-magenta: none;
+  --glow-violet: none;
+  --glow-amber: none;
+  --glow-mint: none;
+  --glow-coral: none;
+}
+
+/* Light mode: kill all animations — clean, professional */
+[data-theme="light"] * {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.15s ease !important;
+}
+
+[data-theme="light"] .neon-flicker {
+  animation: none !important;
+  text-shadow: none !important;
+  box-shadow: none !important;
+}
+
+/* P04.7: Smooth transition between dark/light — no flash */
+:root {
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+html, body, #root {
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* ── Glass card ─────────────────────────────────────── */
+
+.glass-card {
+  background: var(--neon-ghost);
+  /* 12px max — 20px+ creates GPU memory pressure on Android tablets with shared VRAM */
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--neon-faint);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  transition: all var(--trans-base);
+}
+
+.glass-card:hover {
+  background: var(--neon-faint);
+  border-color: var(--neon-dim);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 12px var(--neon-ghost);
+}
+
+/* ── Glass nav bar ──────────────────────────────────── */
+
+.glass-nav {
+  background: rgba(0,0,0,0.45);
+  -webkit-backdrop-filter: blur(12px); /* reduced from 24px — Android GPU budget */
+  backdrop-filter: blur(12px);
+  border-top: 1px solid var(--neon-faint);
+  box-shadow: 0 -4px 24px rgba(0,0,0,0.3);
+}
+
+/* ── Glass input ────────────────────────────────────── */
+
+.glass-input {
+  background: var(--s2);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--neon-faint);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-family: var(--font-data);
+  font-size: 14px;
+  padding: 10px 14px;
+  outline: none;
+  transition: all var(--trans-fast);
+  line-height: 1.6;
+  resize: vertical;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.glass-input:focus {
+  border-color: var(--neon-dim);
+  box-shadow: 0 0 12px var(--neon-ghost);
+}
+
+/* ── Glass button ───────────────────────────────────── */
+
+.glass-btn {
+  background: var(--neon-ghost);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--neon-faint);
+  border-radius: var(--radius-md);
+  color: var(--text);
+  font-family: var(--font-display);
+  cursor: pointer;
+  transition: all var(--trans-fast);
+  min-height: 44px;
+  min-width: 44px;
+  padding: 8px 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.glass-btn:hover:not(:disabled) {
+  background: var(--neon-faint);
+  border-color: var(--neon-dim);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px var(--neon-ghost);
+}
+
+.glass-btn:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.glass-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* ── Accent borders (left glow) ─────────────────────── */
+
+.accent-teal    { border-left: 2px solid var(--cyan);    box-shadow: 0 4px 24px rgba(0,0,0,0.6), -4px 0 16px var(--neon-ghost); }
+.accent-violet  { border-left: 2px solid var(--violet);  box-shadow: 0 4px 24px rgba(0,0,0,0.6), -4px 0 16px rgba(191,95,255,0.12); }
+.accent-amber   { border-left: 2px solid var(--amber);   box-shadow: 0 4px 24px rgba(0,0,0,0.6), -4px 0 16px rgba(255,215,0,0.12); }
+.accent-blue    { border-left: 2px solid var(--blue);    box-shadow: 0 4px 24px rgba(0,0,0,0.6), -4px 0 16px var(--neon-ghost); }
+.accent-red     { border-left: 2px solid var(--coral);   box-shadow: 0 4px 24px rgba(0,0,0,0.6), -4px 0 16px rgba(255,107,107,0.12); }
+.accent-yellow  { border-left: 2px solid var(--amber);   box-shadow: 0 4px 24px rgba(0,0,0,0.6), -4px 0 16px rgba(255,215,0,0.12); }
+.accent-green   { border-left: 2px solid var(--mint);    box-shadow: 0 4px 24px rgba(0,0,0,0.6), -4px 0 16px rgba(0,255,136,0.12); }
+
+/* ── Animations: Entrance ───────────────────────────── */
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInScale {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(-20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes letterReveal {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.stagger-enter {
+  animation: fadeInUp 0.35s ease-out both;
+}
+
+/* ── Animations: Breathing / Pulse ──────────────────── */
+
+@keyframes breathe {
+  0%, 100% { opacity: 0.6; }
+  50%      { opacity: 1; }
+}
+
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 4px 0 rgba(0,255,255,0.05); }
+  50%      { box-shadow: 0 0 16px 4px rgba(0,255,255,0.2); }
+}
+@keyframes celebrationFlash {
+  0%   { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes lockPulse {
+  0%, 100% { opacity: 0.6; filter: drop-shadow(0 0 0 transparent); }
+  50%      { opacity: 1; filter: drop-shadow(0 0 4px currentColor); }
+}
+
+@keyframes flowPulse {
+  0%, 100% { opacity: 0.15; transform: scale(0.8); }
+  50%      { opacity: 0.7; transform: scale(1.2); }
+}
+
+@keyframes holdPulse {
+  0%, 100% { border-left-color: rgba(255,0,204,0.3); }
+  50%      { border-left-color: rgba(255,0,204,0.7); }
+}
+
+@keyframes spendFlash {
+  0%   { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,184,0,0.4); }
+  50%  { transform: scale(1.02); box-shadow: 0 0 12px 4px rgba(255,184,0,0.15); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,184,0,0); }
+}
+
+/* ── Animations: Functional ─────────────────────────── */
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes helixSpin {
+  0%   { transform: rotate(0deg) scaleX(1); }
+  25%  { transform: rotate(90deg) scaleX(0.4); }
+  50%  { transform: rotate(180deg) scaleX(1); }
+  75%  { transform: rotate(270deg) scaleX(0.4); }
+  100% { transform: rotate(360deg) scaleX(1); }
+}
+
+@keyframes scanLine {
+  0%   { left: 0; }
+  100% { left: 100%; }
+}
+
+/* exportScan: kept for backward compat but prefer .skeleton-shimmer (see below) */
+@keyframes exportScan {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* ── Skeleton shimmer — compositor-safe (transform, NOT background-position) ──
+   background-position animation triggers paint each frame and steals main-thread
+   budget from the R3F render loop. translateX() runs on the compositor thread. */
+.skeleton-shimmer {
+  position: relative;
+  overflow: hidden;
+  background: var(--s2);
+  border-radius: var(--radius-sm);
+  contain: layout paint; /* isolate repaint from WebGL canvas */
+}
+
+.skeleton-shimmer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.04) 50%,
+    transparent 100%
+  );
+  transform: translateX(-100%);
+  animation: shimmerSlide 1.5s ease-in-out infinite;
+  will-change: transform; /* promote to own layer — remove once loading ends */
+}
+
+@keyframes shimmerSlide {
+  to { transform: translateX(100%); }
+}
+
+@keyframes placePop {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+
+@keyframes xpGain {
+  0%   { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-12px); }
+}
+
+@keyframes fadeOut {
+  0%   { opacity: 1; }
+  70%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* Neon sign flicker — applied via .neon-flicker class */
+.neon-flicker {
+  color: var(--cyan) !important;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  font-family: var(--font-data);
+  font-size: 13px;
+  background: rgba(0,0,0,0.5);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--neon-dim);
+  border-radius: var(--radius-sm);
+  padding: 10px 16px;
+  text-decoration: none;
+  cursor: pointer;
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  animation: neonFlicker 3s infinite;
+}
+
+@keyframes neonFlicker {
+  0%, 17%, 22%, 25%, 52%, 59%, 100% {
+    opacity: 1;
+    text-shadow: 0 0 7px var(--cyan), 0 0 20px var(--cyan), 0 0 40px var(--cyan), 0 0 80px rgba(0,255,255,0.4);
+    border-color: var(--neon-dim);
+    box-shadow: 0 0 12px rgba(0,255,255,0.3), 0 0 30px rgba(0,255,255,0.1);
+  }
+  18% {
+    opacity: 0.08; text-shadow: none; border-color: rgba(0,255,255,0.05); box-shadow: none;
+  }
+  20% {
+    opacity: 1; text-shadow: 0 0 7px var(--cyan), 0 0 20px var(--cyan), 0 0 40px var(--cyan); border-color: var(--neon-dim);
+  }
+  23% {
+    opacity: 0.05; text-shadow: none; border-color: rgba(0,255,255,0.05); box-shadow: none;
+  }
+  53% {
+    opacity: 0.05; text-shadow: none; border-color: rgba(0,255,255,0.05); box-shadow: none;
+  }
+  55% {
+    opacity: 0.9; text-shadow: 0 0 4px var(--cyan), 0 0 12px var(--cyan); border-color: var(--neon-dim);
+  }
+  57% {
+    opacity: 0.1; text-shadow: none; border-color: rgba(0,255,255,0.05); box-shadow: none;
+  }
+}
+
+/* Breathing overlay animations */
+@keyframes expandPulse {
+  0% { transform: scale(0.6); opacity: 0.2; }
+  100% { transform: scale(1.15); opacity: 1; }
+}
+
+@keyframes holdShimmer {
+  0% { transform: scale(1.15); opacity: 0.9; filter: hue-rotate(0deg); }
+  50% { transform: scale(1.2); opacity: 1; filter: hue-rotate(15deg); }
+  100% { transform: scale(1.15); opacity: 0.9; filter: hue-rotate(0deg); }
+}
+
+@keyframes contractPulse {
+  0% { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(0.6); opacity: 0.2; }
+}
+
+@keyframes coreGlow {
+  0% { opacity: 0.3; box-shadow: 0 0 10px rgba(0, 255, 255, 0.3), 0 0 40px rgba(191,95,255,0.1); }
+  50% { opacity: 0.8; box-shadow: 0 0 30px rgba(0, 255, 255, 0.6), 0 0 60px rgba(191,95,255,0.3), 0 0 100px rgba(0,255,255,0.1); }
+  100% { opacity: 0.3; box-shadow: 0 0 10px rgba(0, 255, 255, 0.3), 0 0 40px rgba(191,95,255,0.1); }
+}
+
+@keyframes ringPulse {
+  0% { transform: scale(1); opacity: 0.08; }
+  50% { transform: scale(1.08); opacity: 0.35; }
+  100% { transform: scale(1); opacity: 0.08; }
+}
+
+@keyframes orbitalSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes orbitalSpinReverse {
+  0% { transform: rotate(360deg); }
+  100% { transform: rotate(0deg); }
+}
+
+@keyframes particleDrift {
+  0% { transform: translateY(0) scale(1); opacity: 0; }
+  20% { opacity: 1; }
+  80% { opacity: 0.6; }
+  100% { transform: translateY(-80px) scale(0.3); opacity: 0; }
+}
+
+@keyframes breatheRipple {
+  0% { transform: scale(0.5); opacity: 0.6; border-color: rgba(0,255,255,0.4); }
+  100% { transform: scale(2.5); opacity: 0; border-color: rgba(191,95,255,0.1); }
+}
+
+@keyframes phaseShift {
+  0% { filter: hue-rotate(0deg) brightness(1); }
+  33% { filter: hue-rotate(20deg) brightness(1.1); }
+  66% { filter: hue-rotate(-10deg) brightness(0.95); }
+  100% { filter: hue-rotate(0deg) brightness(1); }
+}
+
+/* ── Resonance Engine — typing dots ─────────────────── */
+
+@keyframes resPulse {
+  0%, 100% { opacity: 0.2; }
+  50%       { opacity: 0.6; }
+}
+
+/* ── Thermal throttle (Fawn Guard) ──────────────────── */
+
+.thermal-throttle-pulse {
+  animation: thermalBgPulse 2s ease-in-out infinite;
+}
+
+@keyframes thermalBgPulse {
+  0%, 100% { background-color: var(--void); }
+  50% { background-color: rgba(255, 170, 0, 0.08); }
+}
+
+@keyframes thermalPulse {
+  0%, 100% { transform: scale(1); opacity: 0.6; }
+  50% { transform: scale(1.15); opacity: 1; }
+}
+
+/* ── Helix spinner ──────────────────────────────────── */
+
+.helix-spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--neon-faint);
+  border-top-color: var(--neon-dim);
+  border-radius: 50%;
+  animation: helixSpin 0.8s ease-in-out infinite;
+  vertical-align: middle;
+  margin-right: 6px;
+}
+
+/* ── Scan underline (input decoration) ──────────────── */
+
+.scan-underline {
+  position: relative;
+}
+
+.scan-underline::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 30px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--neon-dim), transparent);
+  animation: scanLine 2.5s linear infinite;
+}
+
+/* ── Nav tab active glow ────────────────────────────── */
+
+.nav-tab-active {
+  animation: glowPulse 3s ease-in-out infinite;
+}
+
+/* ── Title gradient ─────────────────────────────────── */
+
+.title-gradient {
+  font-family: var(--font-display);
+  font-weight: 200;
+  letter-spacing: 6px;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+/* ── Progress bar track ─────────────────────────────── */
+
+.progress-track {
+  height: 3px;
+  border-radius: 2px;
+  background: var(--neon-ghost);
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.6s ease-out;
+}
+
+/* ── Scrollbar styling ──────────────────────────────── */
+
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--neon-faint);
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--neon-dim);
+}
+
+/* ── Cockpit HUD ───────────────────────────────────── */
+
+.cockpit-hud {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 10;
+  pointer-events: none;
+  /* max() fallback: env() returns 0px on most Android tablets today —
+     viewport-fit=cover is set in index.html but Chrome 135 edge-to-edge
+     currently excludes tablets. Always guarantee minimum 8px clearance. */
+  padding: max(8px, env(safe-area-inset-top, 0px)) 8px 8px 8px;
+}
+
+/* ── Spoon Gauge ───────────────────────────────────── */
+
+.spoon-gauge {
+  padding: 12px 16px;
+  font-family: var(--font-data);
+  color: var(--cyan);
+  font-size: 14px;
+  pointer-events: auto;
+  min-width: 180px;
+  max-width: 240px;
+  animation: fadeInUp 0.4s ease-out both;
+  text-shadow: 0 0 6px rgba(0,255,255,0.3);
+}
+
+.spoon-gauge-row {
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.spoon-gauge-label { opacity: 0.8; }
+.spoon-gauge-value { color: var(--cyan); font-weight: 700; text-shadow: 0 0 8px rgba(0,255,255,0.4); }
+.spoon-gauge-tier { font-weight: 700; margin-left: auto; letter-spacing: 1px; font-size: 13px; }
+.spoon-gauge-track { margin-bottom: 6px; }
+
+.spoon-gauge-love {
+  color: var(--violet);
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  text-shadow: 0 0 6px rgba(191,95,255,0.3);
+}
+
+.spoon-gauge-love-label { opacity: 0.5; }
+.spoon-gauge-love-value { font-weight: 600; }
+
+/* ── Nav bar + tabs ────────────────────────────────── */
+
+.nav-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 11;
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  padding: 6px 8px;
+  padding-bottom: max(6px, env(safe-area-inset-bottom));
+  pointer-events: auto;
+}
+
+.nav-tab {
+  background: transparent;
+  border: 1px solid var(--neon-ghost);
+  border-radius: var(--radius-md);
+  padding: 5px 6px;
+  min-height: 48px;
+  flex: 1 1 0;
+  max-width: 72px;
+  color: var(--dim);
+  font-family: var(--font-data);
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  transition: all var(--trans-base);
+  animation: fadeInUp 0.3s ease-out var(--delay, 0s) both;
+  box-shadow: none;
+  text-shadow: none;
+}
+
+.nav-tab.nav-tab-active {
+  background: var(--neon-ghost);
+  border-color: var(--neon-dim);
+  /* 2px bottom indicator line — visible on any background */
+  border-bottom: 2px solid var(--neon);
+  color: var(--cyan);
+  box-shadow: 0 0 12px var(--neon-ghost);
+  text-shadow: var(--glow-cyan);
+}
+
+.nav-tab-icon { font-size: 14px; transition: transform 0.2s; transform: scale(1); }
+.nav-tab-icon-active { transform: scale(1.15); }
+.nav-tab-label { transition: opacity 0.2s; opacity: 0.7; }
+.nav-tab-label-active { opacity: 1; }
+
+/* ── Sovereign Shell ───────────────────────────────── */
+
+.sov-topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
+  background: transparent;
+  border-bottom: none;
+  font-family: var(--font-display);
+  box-shadow: none;
+  pointer-events: none;
+}
+.sov-topbar > * {
+  pointer-events: auto;
+}
+
+.sov-btn {
+  --neon: var(--cyan);
+  padding: 12px 16px;
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.06em;
+  border: 1px solid var(--neon-ghost);
+  border-radius: var(--radius-md);
+  background: var(--neon-ghost);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  color: var(--cyan);
+  cursor: pointer;
+  font-family: var(--font-data);
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition: all var(--trans-base);
+  min-height: 48px;
+  min-width: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-shadow: var(--glow-cyan);
+}
+
+.sov-btn:hover {
+  border-color: var(--neon);
+  color: var(--neon);
+  text-shadow: 0 0 6px var(--neon);
+  background: var(--neon-faint);
+}
+
+/* Per-room neon palette — P31 phosphor colors */
+.sov-btn[data-room="OBSERVATORY"] { --neon: var(--cyan); }
+.sov-btn[data-room="COLLIDER"]    { --neon: var(--violet); }
+.sov-btn[data-room="BONDING"]     { --neon: var(--magenta); }
+.sov-btn[data-room="BRIDGE"]      { --neon: var(--cyan); }
+.sov-btn[data-room="BUFFER"]      { --neon: var(--amber); }
+.sov-btn[data-room="COPILOT"]     { --neon: var(--violet); }
+
+.nav-btn {
+  padding: 12px 16px;
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  border: 1px solid var(--neon-ghost);
+  border-radius: var(--radius-md);
+  background: rgba(0, 0, 0, 0.5);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  color: var(--dim);
+  cursor: pointer;
+  font-family: var(--font-data);
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition: all var(--trans-base);
+  min-height: 40px;
+  min-width: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-shadow: 0 0 6px rgba(0, 255, 255, 0.3);
+  text-decoration: none;
+}
+
+.nav-btn:hover {
+  border-color: var(--neon-dim);
+  color: var(--cyan);
+  text-shadow: var(--glow-cyan);
+  background: var(--neon-faint);
+}
+
+.sov-btn-active {
+  color: var(--neon);
+  border-color: var(--neon);
+  background: var(--neon-ghost);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--neon) 35%, transparent), 0 0 30px color-mix(in srgb, var(--neon) 10%, transparent);
+  text-shadow: 0 0 8px var(--neon), 0 0 20px color-mix(in srgb, var(--neon) 40%, transparent);
+}
+
+.sov-overlay-shell {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  padding-top: 48px;
+  background: var(--void);
+  display: flex;
+  flex-direction: column;
+  /* ── Entrance animation (no setTimeout, no race conditions) ──────────────
+     @starting-style fires when element is inserted into the DOM (Chrome 117+,
+     Android Chrome 145+). Pairs with transition for zero-JS enter animation.
+     Exit: overlay unmounts instantly — accept for now; add onTransitionEnd
+     exit later if needed. */
+  opacity: 1;
+  transform: scale(1) translateZ(0);
+  transition: opacity 0.2s ease-out, transform 0.2s ease-out;
+  contain: layout paint; /* isolate overlay repaint from WebGL canvas */
+  @starting-style {
+    opacity: 0;
+    transform: scale(0.97) translateZ(0);
+  }
+}
+
+.sov-overlay-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--neon-faint);
+  background: var(--void);
+  font-family: var(--font-display);
+}
+
+/* ═══════════════════════════════════════════════════════
+   ACCESSIBILITY
+   ═══════════════════════════════════════════════════════ */
+
+/* ── Screen-reader only (visually hidden) ──────────── */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* ── Skip navigation link ──────────────────────────── */
+
+.skip-nav {
+  position: fixed;
+  top: -100%;
+  left: 16px;
+  z-index: 9999;
+  padding: 8px 16px;
+  background: var(--void);
+  color: var(--cyan);
+  border: 2px solid var(--cyan);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-data);
+  font-size: 12px;
+  text-decoration: none;
+  letter-spacing: 1px;
+  text-shadow: var(--glow-cyan);
+  transition: top var(--trans-base);
+}
+
+.skip-nav:focus {
+  top: 8px;
+}
+
+/* ── Focus-visible ring for all interactive elements ── */
+/* WCAG 2.4.7 / 2.4.11: Focus indicator must be perceivable on any background.
+   - Use full-opacity neon (not var(--neon-dim) at 35% — fails 3:1 on light glass)
+   - Double-ring: 2px neon inner + 4px dark outer halo = visible on OLED AND light bg
+   - :focus-visible suppresses ring on touch taps (Chrome 86+, stable on Android) */
+
+button:focus-visible,
+a[href]:focus-visible,
+select:focus-visible,
+input:not([type="hidden"]):focus-visible,
+textarea:focus-visible,
+summary:focus-visible,
+[role="button"]:focus-visible,
+[tabindex]:not([tabindex="-1"]):focus-visible {
+  outline: 2px solid var(--neon);          /* full opacity — was var(--neon-dim) at 35% */
+  outline-offset: 3px;
+  /* Dark outer ring ensures contrast on any glass/light surface */
+  box-shadow: 0 0 0 5px rgba(0, 0, 0, 0.85), 0 0 12px var(--neon-ghost);
+  -webkit-tap-highlight-color: transparent; /* suppress Android default tap highlight */
+}
+
+/* ── Reduced motion ────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .helix-spinner {
+    animation: none;
+    border-color: var(--neon-dim);
+  }
+
+  .nav-tab-active {
+    animation: none;
+    box-shadow: 0 0 8px rgba(0,255,255,0.15);
+  }
+
+  /* ── Lock screen: breathe text → static glow (no opacity pulse) ── */
+  .lock-breathe-text {
+    animation: none !important;
+    opacity: 1 !important;
+    text-shadow: var(--glow-cyan) !important;
+  }
+
+  /* ── Celebration flash → instant opacity instead of CSS animation ── */
+  .celebration-flash {
+    animation: none !important;
+    opacity: 0 !important;
+  }
+
+  /* ── Scanline sweep → freeze on first frame ── */
+  .scanline-sweep {
+    animation: none !important;
+  }
+
+  /* ── Neon flicker → steady glow ── */
+  .neon-flicker {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+
+  /* ── Canvas overlay: hint to Three.js RAF via CSS custom property ──
+     ImmersiveCockpit reads --reduce-motion at startup to throttle RAF. */
+  :root {
+    --reduce-motion: 1;
+  }
+}
+
+/* ── Reduced transparency — replace glass with solid backgrounds ── */
+
+@media (prefers-reduced-transparency: reduce) {
+  .glass-card,
+  .glass-nav,
+  .glass-input,
+  .glass-btn,
+  .glass-panel,
+  .neon-flicker,
+  .sov-btn {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: var(--s2);
+  }
+}
+
+/* ── High contrast mode support ────────────────────── */
+
+@media (forced-colors: active) {
+  .glass-card,
+  .glass-nav,
+  .glass-input,
+  .glass-btn,
+  .nav-tab,
+  .sov-btn {
+    border: 1px solid ButtonText;
+  }
+
+  .glass-btn:hover,
+  .sov-btn:hover,
+  .nav-tab.nav-tab-active {
+    border-color: Highlight;
+    color: Highlight;
+  }
+}
+
+/* ── Glow Intensity Utilities ─────────────────────── */
+
+.glow-dim    { text-shadow: 0 0 4px currentColor; }
+.glow-medium { text-shadow: 0 0 8px currentColor, 0 0 16px var(--neon-faint); }
+.glow-bright { text-shadow: 0 0 8px currentColor, 0 0 24px var(--neon-dim); }
+
+/* ── Glass Panel Utility ──────────────────────────── */
+
+.glass-panel {
+  /* 70% opacity floor — WCAG contrast: blurred 3D scene creates mid-tone areas
+     where neither light nor dark text reliably hits 4.5:1 at lower opacity */
+  background: rgba(0,0,0,0.7);
+  border: 1px solid var(--neon-faint);
+  border-radius: var(--radius-md);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}

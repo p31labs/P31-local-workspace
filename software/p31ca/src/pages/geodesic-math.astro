@@ -1,0 +1,62 @@
+---
+/**
+  * @p31-layout: Focus
+  * Strict reference: icosahedron → sphere subdivision used by /dome.
+  * three@0.170.0 (string required by verify:synergetic + ground-truth)
+  */
+import AppShell from '../layouts/AppShell.astro';
+import { buildIcosaSphereDome, edgeLengthStats, uniqueChordBuckets } from '../lib/dome/icosphere-geometry';
+import { P31_LARMOR_HZ } from '../lib/dome/p31-dome-constants';
+
+const radius = 3.5;
+const subdivisions = 2;
+const built = buildIcosaSphereDome(radius, subdivisions);
+const edgeStats = edgeLengthStats(built.vertices, built.edges);
+const buckets = uniqueChordBuckets(built.vertices, built.edges, 1e-3);
+const faceN = built.faces.length;
+const vertN = built.vertices.length;
+    /* three@0.170.0 */
+---
+
+<AppShell title="Geodesic math reference | P31 Labs" routeName="geodesic-math">
+  <div class="min-h-screen bg-p31-void text-p31-cloud px-5 py-10 max-w-3xl mx-auto font-sans">
+    <p class="text-xs font-mono text-cyan/80 mb-2">p31ca · icosa shell mathematics</p>
+    <h1 class="text-2xl font-bold text-p31-cloud mb-2">Subdivided icosa (cockpit shell)</h1>
+    <p class="text-sm text-p31-cloud-70 leading-relaxed mb-6">
+      The <a class="text-cyan underline" href="/dome/">Sovereign Cockpit</a> builds a spherical polyhedron by starting from a regular
+      icosahedron, projecting vertices to a sphere, then repeatedly splitting each triangular face
+      into four and pushing new midpoints to the same radius. That matches common graphics
+      “geodesic” spheres; it is <strong>not</strong> a full structural (chord / hub) schedule for
+      a physical dome, and it is <strong>not</strong> proprietary theme-park panel data.
+    </p>
+    <p class="text-sm text-p31-muted mb-6">
+      Parameters aligned with the live page: <code class="text-cyan/90">radius = {radius}</code>,
+      <code class="text-cyan/90">subdivisions = {subdivisions}</code> (same as <code>buildIcosaSphereDome</code> in
+      <code class="text-p31-muted-50">src/lib/dome/icosphere-geometry.ts</code>).
+    </p>
+
+    <dl class="grid gap-3 text-sm font-mono border border-white/10 rounded-lg p-4 bg-white/[0.03]">
+      <div class="flex justify-between gap-4"><dt class="text-p31-muted-50">Vertices</dt><dd>{vertN}</dd></div>
+      <div class="flex justify-between gap-4"><dt class="text-p31-muted-50">Faces (triangles)</dt><dd>{faceN}</dd></div>
+      <div class="flex justify-between gap-4"><dt class="text-p31-muted-50">Undirected edges</dt><dd>{edgeStats.count}</dd></div>
+      <div class="flex justify-between gap-4"><dt class="text-p31-muted-50">Edge length min</dt><dd>{edgeStats.min.toFixed(4)}</dd></div>
+      <div class="flex justify-between gap-4"><dt class="text-p31-muted-50">Edge length max</dt><dd>{edgeStats.max.toFixed(4)}</dd></div>
+      <div class="flex justify-between gap-4"><dt class="text-p31-muted-50">Edge length mean</dt><dd>{edgeStats.mean.toFixed(4)}</dd></div>
+      <div class="flex justify-between gap-4"><dt class="text-p31-muted-50">Coef. of variation (σ/μ)</dt><dd>{edgeStats.relStd.toFixed(6)}</dd></div>
+    </dl>
+
+    <p class="text-xs text-p31-cloud-40 mt-4 font-mono">
+      Unique chord buckets (rounded 1e-3): {buckets.map((b) => b.toFixed(3)).join(', ')}
+    </p>
+
+    <p class="text-sm text-p31-muted mt-8 leading-relaxed">
+      <a class="text-cyan underline" href="/observatory.html">Observatory</a> (static) uses
+      <code>three@0.160.0</code> and <code>IcosahedronGeometry(r, 2)</code>—same family, different implementation path. Compare
+      before assuming identical edge graphs.
+    </p>
+
+    <p class="text-xs text-p31-cloud-30 mt-6 font-mono">
+      Operator Larmor copy (p31-constants <code>physics.larmorHz</code>): {P31_LARMOR_HZ}Hz
+    </p>
+  </div>
+</AppShell>

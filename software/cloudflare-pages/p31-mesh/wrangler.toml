@@ -1,0 +1,7 @@
+# Cloudflare Pages — static P31 Mesh (reskinned hub shell).
+# Deploy from this directory:
+#   npx wrangler pages deploy . --project-name=p31-mesh
+#
+# Optional project binding (adjust name to match the Pages project in the dashboard):
+name = "p31-mesh"
+compatibility_date = "2024-09-01"

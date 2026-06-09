@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub" style="color-scheme: dark;">
+<head>
+  <meta charset="UTF-8">
+<script>(function(){var r=document.documentElement;if(/[?&]alive=1(?:&|$)/.test(location.search))return;r.classList.add("p31-gray-rock");function wake(){r.classList.remove("p31-gray-rock")}document.addEventListener("pointerdown",wake,{once:true,capture:true});document.addEventListener("keydown",wake,{once:true,capture:true})})();</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0f1115">
+  <title>Financials | P31 Labs — p31ca.org</title>
+  <meta name="description" content="P31 Labs financial transparency — 990 publication commitment, donor mechanics, and the policy that money does not buy attention here.">
+<link rel="canonical" href="https://p31ca.org/financials.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Financials">
+<meta property="og:description" content="P31 Labs financial transparency — 990 publication commitment, donor mechanics, and the policy that money does not buy attention here.">
+<meta property="og:url" content="https://p31ca.org/financials.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Financials">
+<meta name="twitter:description" content="P31 Labs financial transparency — 990 publication commitment, donor mechanics, and the policy that money does not buy attention here.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/p31-style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/p31-tailwind-extend.js"></script>
+  <script>tailwind.config = { theme: { extend: { ...window.P31_TAILWIND_EXTEND } } };</script>
+</head>
+<body class="bg-void text-cloud min-h-screen font-sans antialiased px-4 py-10 max-w-2xl mx-auto text-sm leading-relaxed">
+  <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 bg-teal text-void px-3 py-1 rounded font-mono text-xs">Skip to content</a>
+
+  <nav class="flex flex-wrap gap-3 text-teal/80 text-xs font-mono mb-8" aria-label="P31 governance pages">
+    <a href="/" class="hover:underline">Hub</a>
+    <a href="/manifesto" class="hover:underline">Manifesto</a>
+    <a href="/roadmap" class="hover:underline">Roadmap</a>
+    <a href="/code-of-conduct" class="hover:underline">Code of Conduct</a>
+    <a href="/security" class="hover:underline">Security</a>
+    <a href="/accessibility" class="hover:underline">Accessibility</a>
+    <a href="/status" class="hover:underline">Status</a>
+    <a href="/financials" class="hover:underline" aria-current="page">Financials</a>
+  </nav>
+
+  <main id="main">
+    <h1 class="text-2xl font-bold text-paper mb-2">Financials</h1>
+    <p class="text-cloud/50 text-xs mb-8">
+      <strong class="text-paper">P31 Labs, Inc.</strong> &middot; EIN <strong class="text-paper">42-1888158</strong> &middot; Georgia nonprofit (501(c)(3) application pending) &middot; Last updated <strong class="text-paper">2026-05-02</strong>.
+    </p>
+
+    <!-- Status -->
+    <section id="status" class="mb-8">
+      <h2 class="text-paper font-semibold text-base mb-3">Where we stand today</h2>
+      <p class="text-cloud/80 mb-3">
+        P31 Labs incorporated in Georgia on April 3, 2026, and filed for 501(c)(3) recognition shortly after. The IRS determination letter has not yet been issued. Until it is, donations are not yet tax-deductible at the federal level; the Stripe Checkout flow at <a class="text-teal hover:underline" href="https://donate-api.phosphorus31.org">donate-api.phosphorus31.org</a> processes gifts and queues IRS-conditional receipts.
+      </p>
+      <p class="text-cloud/80">
+        We will publish IRS Form 990 annually as required. The first 990 will cover the period from incorporation forward and will appear on this page within <strong class="text-paper">30 days</strong> of filing. We borrow this commitment language from Signal Foundation's transparency posture.
+      </p>
+    </section>
+
+    <!-- Donor mechanics -->
+    <section id="donor-mechanics" class="mb-8">
+      <h2 class="text-paper font-semibold text-base mb-3">Donor mechanics</h2>
+      <ul class="text-cloud/80 list-disc pl-5 space-y-2">
+        <li><strong class="text-paper">No advertising</strong> on any P31 surface. Ever. This is doctrine, not preference.</li>
+        <li><strong class="text-paper">No surveillance monetization.</strong> We do not collect behavioral data to sell to anyone.</li>
+        <li><strong class="text-paper">0% platform fee</strong> on the creator-economy contract (<code class="font-mono text-teal/80"><a class="text-teal hover:underline" href="/creator-economy.json">/creator-economy.json</a></code>, schema <code class="font-mono text-teal/80">p31.creatorEconomy/1.0.0</code>).</li>
+        <li><strong class="text-paper">30-day notice</strong> before any change to the fee or revenue contract — published on this page and the creator-economy contract.</li>
+        <li><strong class="text-paper">Refunds</strong> available within 30 days of donation for any reason. Email the operator (channel below).</li>
+        <li><strong class="text-paper">Anonymous giving</strong> supported via Ko-fi without account creation; recurring giving requires the donor's chosen platform login.</li>
+      </ul>
+    </section>
+
+    <!-- Funding sources -->
+    <section id="sources" class="mb-8">
+      <h2 class="text-paper font-semibold text-base mb-3">Where the money comes from (planned)</h2>
+      <table class="w-full text-cloud/80 text-xs border border-white/10">
+        <thead>
+          <tr class="bg-white/5">
+            <th class="text-left p-2 font-mono text-teal/80">Source</th>
+            <th class="text-left p-2 font-mono text-teal/80">Status</th>
+            <th class="text-left p-2 font-mono text-teal/80">Notes</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-white/5">
+          <tr><td class="p-2">Individual donations (Ko-fi, Stripe)</td><td class="p-2">Live</td><td class="p-2">One-time + recurring</td></tr>
+          <tr><td class="p-2">Foundation grants (NLnet, OTF, family foundations)</td><td class="p-2">Applied / queued</td><td class="p-2">See <a class="text-teal hover:underline" href="https://github.com/p31labs/bonding-soup/blob/main/docs/FUNDING-GATED-ACTION-ITEMS.md"><code class="font-mono text-teal/80">FUNDING-GATED-ACTION-ITEMS.md</code></a></td></tr>
+          <tr><td class="p-2">Government funding</td><td class="p-2">Not pursued</td><td class="p-2">Off-doctrine for v1</td></tr>
+          <tr><td class="p-2">Advertising</td><td class="p-2">Cancelled</td><td class="p-2">Doctrine — see Manifesto Principle 9</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Where the money goes -->
+    <section id="uses" class="mb-8">
+      <h2 class="text-paper font-semibold text-base mb-3">Where the money goes (planned, as funding lands)</h2>
+      <table class="w-full text-cloud/80 text-xs border border-white/10">
+        <thead>
+          <tr class="bg-white/5">
+            <th class="text-left p-2 font-mono text-teal/80">Bucket</th>
+            <th class="text-left p-2 font-mono text-teal/80">Target share</th>
+            <th class="text-left p-2 font-mono text-teal/80">Examples</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-white/5">
+          <tr><td class="p-2"><strong class="text-paper">Programs</strong></td><td class="p-2 font-mono">75%</td><td class="p-2">Engineering hours, hardware for the family mesh, persona compute, accessibility audits, third-party security audit (Phase 2)</td></tr>
+          <tr><td class="p-2"><strong class="text-paper">Administration</strong></td><td class="p-2 font-mono">15%</td><td class="p-2">Filings, accounting, governance, board operations</td></tr>
+          <tr><td class="p-2"><strong class="text-paper">Fundraising</strong></td><td class="p-2 font-mono">10%</td><td class="p-2">Grant writing, donor stewardship, payment platform fees</td></tr>
+        </tbody>
+      </table>
+      <p class="text-cloud/60 text-xs mt-3">
+        These are target ratios from the nonprofit financials contract (<code class="font-mono text-teal/80">andromeda/04_SOFTWARE/p31ca/ground-truth/nonprofit/financials.json</code>, schema <code class="font-mono text-teal/80">p31.nonprofit.financials/1.0.0</code>). Actual ratios will be reported on the 990 each year.
+      </p>
+    </section>
+
+    <!-- 990 publication -->
+    <section id="990" class="mb-8">
+      <h2 class="text-paper font-semibold text-base mb-3">IRS Form 990 publication</h2>
+      <p class="text-cloud/80 mb-3">
+        Once the IRS issues our 501(c)(3) determination, we will file Form 990 (or 990-EZ / 990-N depending on annual gross receipts) for each fiscal year. Filed copies will appear here as PDF downloads with cover-page summaries, and will also be available on <a class="text-teal hover:underline" href="https://projects.propublica.org/nonprofits/" target="_blank" rel="noopener">ProPublica's Nonprofit Explorer</a> through the IRS public-data feed.
+      </p>
+      <div class="bg-white/5 border border-white/10 p-4 rounded font-mono text-xs text-cloud/70">
+        <div><strong class="text-paper">Status:</strong> Awaiting IRS determination letter</div>
+        <div><strong class="text-paper">Earliest 990:</strong> FY 2026 (covering April 3, 2026 onward)</div>
+        <div><strong class="text-paper">Publication target:</strong> Within 30 days of filing</div>
+        <div><strong class="text-paper">Format:</strong> Filed PDF + plain-language cover summary</div>
+      </div>
+    </section>
+
+    <!-- Reporting / accountability -->
+    <section id="report-concern" class="mb-8">
+      <h2 class="text-paper font-semibold text-base mb-3">Report a financial concern</h2>
+      <p class="text-cloud/80">
+        If you suspect funds are being mishandled, the receipt language is incorrect, or there is any other concern about how P31 Labs is using donor money, please email the operator at <a class="text-teal hover:underline" href="mailto:will@p31ca.org">will@p31ca.org</a> with the subject <code class="font-mono text-teal/80">[financial-concern]</code>. The Code of Conduct (<a class="text-teal hover:underline" href="/code-of-conduct">/code-of-conduct</a>) protects good-faith reporters.
+      </p>
+    </section>
+
+    <!-- Donor support -->
+    <section id="give" class="mb-8">
+      <h2 class="text-paper font-semibold text-base mb-3">If you would like to support this work</h2>
+      <p class="text-cloud/80 mb-3">
+        We do not run urgency loops or guilt copy. The work continues whether you give or not. If giving fits your budget and you trust the public record on this page, here are the channels:
+      </p>
+      <ul class="text-cloud/80 list-disc pl-5 space-y-2">
+        <li><strong class="text-paper">Ko-fi:</strong> <a class="text-teal hover:underline" href="https://ko-fi.com/p31labs" target="_blank" rel="noopener">ko-fi.com/p31labs</a> — one-time or monthly, no account required for one-time</li>
+        <li><strong class="text-paper">Stripe Checkout:</strong> via <a class="text-teal hover:underline" href="/donate">donate</a> — receipts include IRS-conditional language until the determination letter arrives</li>
+        <li><strong class="text-paper">Stock or planned giving:</strong> contact the operator at <a class="text-teal hover:underline" href="mailto:will@p31ca.org">will@p31ca.org</a></li>
+      </ul>
+    </section>
+
+    <p class="text-cloud/40 text-xs mt-10 border-t border-white/10 pt-4">
+      Companion: <a class="text-teal hover:underline" href="/manifesto">Manifesto</a> Commitment C7 &middot;
+      <a class="text-teal hover:underline" href="https://github.com/p31labs/bonding-soup/blob/main/docs/CWP-P31-PEER-COMP-2026-05.md">CWP-P31-PEER-COMP-2026-05</a> PEER-1H.
+    </p>
+  </main>
+
+  <footer class="text-cloud/40 text-xs mt-10 pt-4 border-t border-white/10">
+    &copy; 2026 P31 Labs, Inc. &middot;
+    <a class="text-teal/60 hover:underline" href="/manifesto">Manifesto</a> &middot;
+    <a class="text-teal/60 hover:underline" href="/financials">Financials</a> &middot;
+    <a class="text-teal/60 hover:underline" href="/security">Security</a> &middot;
+    <a class="text-teal/60 hover:underline" href="/privacy">Privacy</a>
+  </footer>
+</body>
+</html>

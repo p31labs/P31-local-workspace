@@ -1,0 +1,70 @@
+/* Additional styles for App.jsx specific components */
+.subtitle {
+  color: var(--muted);
+  margin-bottom: 20px;
+  font-size: 1.1rem;
+}
+
+.export-controls {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.modifiers {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.modifier-button {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  padding: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.modifier-button:hover {
+  background: #334155;
+}
+
+.modifier-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.modifier-button.active {
+  background: var(--text);
+  color: var(--bg);
+  border-color: var(--text);
+}
+
+/* Modal overlay */
+.card[style*="position: fixed"] {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .subtitle {
+    font-size: 1rem;
+  }
+  
+  .modifiers {
+    grid-template-columns: 1fr;
+  }
+  
+  .export-controls {
+    flex-direction: column;
+    width: 100%;
+  }
+}

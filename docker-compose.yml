@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  # 1. The Python FastAPI Backend (Q-Suite & Core Logic)
+  p31-backend:
+    build: 
+      context: ./software/backend
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      - ./software/backend:/app
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+
+  # 2. The Discord Bot
+  p31-discord-bot:
+    build:
+      context: ./software/discord/p31-bot
+    env_file:
+      - .env
+    depends_on:
+      - p31-backend
+
+  # 3. Local Cloudflare Edge (Miniflare/Wrangler)
+  p31-local-edge:
+    image: node:20-alpine
+    working_dir: /app
+    volumes:
+      - ./software/cloudflare-worker:/app
+    env_file:
+      - .env
+    ports:
+      - "8787:8787"
+    command: sh -c "npm install && npx wrangler dev --local --ip 0.0.0.0"
+    
+volumes:
+  p31_database_data:

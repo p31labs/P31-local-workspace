@@ -1,0 +1,19 @@
+name = "p31-state"
+main = "src/index.ts"
+compatibility_date = "2026-04-04"
+
+# Route: state.p31ca.org → p31-state worker
+# Set via Cloudflare dashboard → Workers & Pages → p31-state → Custom Domains
+
+[[kv_namespaces]]
+binding = "USER_STATE_KV"
+id = "ebe6d01578a443aca9158203f67a4344"
+# Create: npx wrangler kv namespace create P31_USER_STATE
+# Then replace id above
+
+[vars]
+ALLOWED_ORIGINS = "https://p31ca.org,https://phosphorus31.org,https://bonding.p31ca.org,https://spaceship-earth.pages.dev"
+STATE_TTL_DAYS = "90"
+
+# Secrets:
+#   npx wrangler secret put SESSION_SECRET  → for session token signing (future)

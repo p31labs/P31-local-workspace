@@ -1,0 +1,102 @@
+[
+  {
+    "title": "k4 — open family mesh protocol specification",
+    "funder": "NLnet Foundation",
+    "amount": {"requested": 15000, "currency": "EUR"},
+    "deadline": "2026-06-01",
+    "status": "draft_complete_operator_review_needed",
+    "notes": "Specification writing grant. k4-agent-hub is live; spec needed so others can implement compatible hubs without our infra. Operator must rewrite 'I built this because I needed it' paragraph in own voice.",
+    "archived": false
+  },
+  {
+    "title": "Phoenix Navigator (Node Zero) beta hardware + accessibility manual",
+    "funder": "Autistic Self Advocacy Network (ASAN)",
+    "amount": {"requested": 6250, "currency": "USD"},
+    "deadline": "2026-07-31",
+    "status": "draft_complete_narrative_pending",
+    "notes": "Hardware beta distribution grant. Operator is AuDHD + hypoparathyroidism. 500-word narrative must be written in operator's voice (no ghostwriting). Portal opens May 15.",
+    "budgetBreakdown": [
+      {"item": "Provisional patents × 2 (HERALD + Node One)", "cost": 130},
+      {"item": "Copyright registration (group unpublished works)", "cost": 65},
+      {"item": "WIPO PROOF timestamps × 5", "cost": 110},
+      {"item": "DOBE certification (Disability:IN)", "cost": 350},
+      {"item": "Home Assistant host (Pi 4 Starter)", "cost": 55},
+      {"item": "Bangle.js 2 wearable (HRV/spoon feed)", "cost": 65},
+      {"item": "Kids tablets × 2 (S.J., W.J.)", "cost": 200},
+      {"item": "Domain backup (p31.dev)", "cost": 12},
+      {"item": "3D print filament / prototyping", "cost": 25},
+      {"item": "Operator stipend (20 hrs × $25)", "cost": 500},
+      {"item": "Buffer", "cost": 4738}
+    ],
+    "archived": false
+  },
+  {
+    "title": "Node One (Totem) prototype + IP protection + DOBE cert",
+    "funder": "Stimpunks Foundation",
+    "amount": {"requested": 3000, "currency": "USD"},
+    "deadline": "2026-06-01",
+    "status": "draft_ready",
+    "notes": "Explicitly funds IP filings and hardware for neurodivergent builders. Strong fit: Node One is assistive tech for somatic regulation, built by an AuDHD operator. Reopens June 1.",
+    "archived": false
+  },
+  {
+    "title": "Cognitive Passport AI augmentation layer",
+    "funder": "Microsoft Corporation",
+    "amount": {"requested": 75000, "currency": "USD"},
+    "deadline": null,
+    "status": "draft_ready_submit_after_501c3",
+    "notes": "75K grant for AI augmentation of Cognitive Passport. Requires 501(c)(3) determination letter but pending status with CP575E is typically accepted.",
+    "archived": false
+  },
+  {
+    "title": "Physical layer completion for sentinel system",
+    "funder": "Awesome Foundation",
+    "amount": {"requested": 1000, "currency": "USD"},
+    "deadline": "2026-04-30",
+    "status": "submitted_awaiting_decision",
+    "notes": "Applied April 2026. Decision by ~May 15. If awarded, funds will purchase Home Assistant host, Bangle.js 2, and two kids tablets.",
+    "archived": false
+  },
+  {
+    "title": "NIDILRR Switzer Fellowship (early-career research training)",
+    "funder": "National Institute on Disability, Independent Living, and Rehabilitation Research",
+    "amount": {"requested": 80000, "currency": "USD"},
+    "deadline": "2027-02-01",
+    "status": "contact_initiated_track_fy2027",
+    "notes": "FY2027 cycle. Requires university partnership as host institution. Potential host: Georgia Tech Center for Assistive Technology.",
+    "archived": false
+  },
+  {
+    "title": "Field Initiated Projects (FIP) — three-year research program",
+    "funder": "NIDILRR",
+    "amount": {"requested": 250000, "currency": "USD"},
+    "deadline": "2027-03-15",
+    "status": "contact_initiated_track_fy2027",
+    "notes": "Major federal disability research grant (~$750K over 3 years). Requires university partnership as prime applicant with P31 Labs as sub-awardee.",
+    "archived": false
+  },
+  {
+    "title": "ESG Housing Grant",
+    "funder": "Unknown / ESG funder",
+    "deadline": "2026-05-08",
+    "status": "deadline_passed_not_submitted",
+    "notes": "Draft existed but was not submitted. Deadline passed.",
+    "archived": true
+  },
+  {
+    "title": "Gates Grand Challenges — AI to Accelerate Charitable Giving",
+    "funder": "Bill & Melinda Gates Foundation",
+    "amount": {"requested": 150000, "currency": "USD"},
+    "deadline": "2026-04-28",
+    "status": "deadline_passed_incomplete",
+    "notes": "Draft received but required 40% budget cut + citation verification. Deadline passed before edits completed.",
+    "archived": true
+  },
+  {
+    "title": "Shuttleworth Foundation Fellowship",
+    "funder": "Shuttleworth Foundation",
+    "status": "permanently_closed",
+    "notes": "Shuttleworth Fellowship program closed permanently in 2024.",
+    "archived": true
+  }
+]

@@ -1,0 +1,98 @@
+# P31 Matrix Homeserver — Synapse configuration
+# server_name determines user IDs: @will:p31ca.org
+server_name: "p31ca.org"
+public_baseurl: "https://matrix.p31ca.org"
+pid_file: /data/homeserver.pid
+
+# ── Listeners ────────────────────────────────────────────────────────
+listeners:
+  - port: 8008
+    tls: false
+    type: http
+    x_forwarded: true  # Trust X-Forwarded-For from Caddy
+    resources:
+      - names: [client, federation]
+        compress: false
+
+# ── Database ─────────────────────────────────────────────────────────
+database:
+  name: psycopg2
+  txn_limit: 10000
+  args:
+    user: synapse
+    password: "${POSTGRES_PASSWORD}"
+    database: synapse
+    host: postgres
+    port: 5432
+    cp_min: 5
+    cp_max: 10
+
+# ── Media storage ────────────────────────────────────────────────────
+media_store_path: /data/media_store
+max_upload_size: 50M
+dynamic_thumbnails: true
+
+# ── Logging ──────────────────────────────────────────────────────────
+log_config: /data/log.config
+
+# ── Registration ─────────────────────────────────────────────────────
+# Disabled — family mesh is invite-only
+enable_registration: false
+enable_registration_without_verification: false
+
+# ── Federation ───────────────────────────────────────────────────────
+federation_domain_whitelist: []  # Empty = federate with anyone
+allow_public_rooms_without_auth: false
+allow_public_rooms_over_federation: false
+
+# ── E2E encryption ───────────────────────────────────────────────────
+encryption_enabled_by_default_for_room_type: all
+
+# ── Rate limiting ────────────────────────────────────────────────────
+rc_message:
+  per_second: 0.2
+  burst_count: 10
+rc_registration:
+  per_second: 0.17
+  burst_count: 3
+rc_login:
+  address:
+    per_second: 0.17
+    burst_count: 3
+  account:
+    per_second: 0.17
+    burst_count: 3
+
+# ── User directory ───────────────────────────────────────────────────
+user_directory:
+  enabled: true
+  search_all_users: false  # Only search users in shared rooms
+
+# ── Retention ────────────────────────────────────────────────────────
+# Keep messages indefinitely (legal evidence chain)
+retention:
+  enabled: false
+
+# ── Bridge appservices ───────────────────────────────────────────────
+app_service_config_files:
+  - /data/bridges/gmessages.yaml
+  - /data/bridges/whatsapp.yaml
+  - /data/bridges/signal.yaml
+  - /data/bridges/meta.yaml
+  - /data/bridges/postmoogle.yaml
+
+# ── Metrics (Prometheus) ─────────────────────────────────────────────
+enable_metrics: true
+metrics_port: 9092
+
+# ── Signing key ──────────────────────────────────────────────────────
+signing_key_path: /data/homeserver.signing.key
+
+# ── Trusted key servers ──────────────────────────────────────────────
+trusted_key_servers:
+  - server_name: "matrix.org"
+
+suppress_key_server_warning: false
+
+# ── Report statistics ────────────────────────────────────────────────
+report_stats: false

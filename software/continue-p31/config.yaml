@@ -1,0 +1,161 @@
+name: P31 fleet (local Ollama)
+version: 0.1.0
+schema: v1
+
+# Canonical Continue.dev config for the P31 fleet-ten personas.
+# Source of truth: scripts/p31-fleet-ten/models.json + prompts/.
+# Sync to ~/.continue/config.yaml with:
+#   bash scripts/p31-fleet-ten/setup.sh --with-continue
+#
+# Continue runs entirely local: prompts go straight to Ollama at apiBase.
+# Use this lane for operator-confidential work (counsel drafts, triage of
+# hostile email, phos rehearsal) so prompts never leave 127.0.0.1.
+
+models:
+  - name: P31 Mechanic
+    provider: ollama
+    model: p31-mechanic
+    apiBase: http://localhost:11434
+    roles:
+      - chat
+      - edit
+      - apply
+    defaultCompletionOptions:
+      temperature: 0.3
+      topP: 0.9
+      contextLength: 8192
+
+  - name: P31 Firmware
+    provider: ollama
+    model: p31-firmware
+    apiBase: http://localhost:11434
+    roles:
+      - chat
+      - edit
+    defaultCompletionOptions:
+      temperature: 0.2
+      topP: 0.85
+      contextLength: 8192
+
+  - name: P31 Counsel
+    provider: ollama
+    model: p31-counsel
+    apiBase: http://localhost:11434
+    roles:
+      - chat
+    defaultCompletionOptions:
+      temperature: 0.4
+      topP: 0.9
+      contextLength: 8192
+
+  - name: P31 Narrator
+    provider: ollama
+    model: p31-narrator
+    apiBase: http://localhost:11434
+    roles:
+      - chat
+      - edit
+    defaultCompletionOptions:
+      temperature: 0.6
+      topP: 0.95
+      contextLength: 8192
+
+  - name: P31 Triage
+    provider: ollama
+    model: p31-triage
+    apiBase: http://localhost:11434
+    roles:
+      - chat
+    defaultCompletionOptions:
+      temperature: 0.2
+      topP: 0.8
+      contextLength: 4096
+
+  - name: P31 Quick
+    provider: ollama
+    model: p31-quick
+    apiBase: http://localhost:11434
+    roles:
+      - chat
+      - autocomplete
+    defaultCompletionOptions:
+      temperature: 0.2
+      topP: 0.8
+      contextLength: 2048
+
+  - name: P31 Phos
+    provider: ollama
+    model: p31-phos
+    apiBase: http://localhost:11434
+    roles:
+      - chat
+    defaultCompletionOptions:
+      temperature: 0.5
+      topP: 0.9
+      contextLength: 4096
+
+  - name: P31 Scribe
+    provider: ollama
+    model: p31-scribe
+    apiBase: http://localhost:11434
+    roles:
+      - chat
+      - edit
+    defaultCompletionOptions:
+      temperature: 0.3
+      topP: 0.9
+      contextLength: 8192
+
+  - name: P31 Oracle
+    provider: ollama
+    model: p31-oracle
+    apiBase: http://localhost:11434
+    roles:
+      - chat
+    defaultCompletionOptions:
+      temperature: 0.5
+      topP: 0.9
+      contextLength: 8192
+
+  - name: P31 Debrief
+    provider: ollama
+    model: p31-debrief
+    apiBase: http://localhost:11434
+    roles:
+      - chat
+    defaultCompletionOptions:
+      temperature: 0.4
+      topP: 0.9
+      contextLength: 8192
+
+  - name: P31 Mobile
+    provider: ollama
+    model: p31-mobile
+    apiBase: http://localhost:11434
+    roles:
+      - chat
+      - edit
+      - apply
+    defaultCompletionOptions:
+      temperature: 0.25
+      topP: 0.85
+      contextLength: 8192
+
+  - name: P31 Centaur
+    provider: ollama
+    model: p31-centaur
+    apiBase: http://localhost:11434
+    roles:
+      - chat
+    defaultCompletionOptions:
+      temperature: 0.45
+      topP: 0.9
+      contextLength: 8192
+
+context:
+  - provider: code
+  - provider: diff
+  - provider: docs
+  - provider: terminal
+  - provider: open
+  - provider: codebase

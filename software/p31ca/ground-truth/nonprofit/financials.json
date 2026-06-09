@@ -1,0 +1,155 @@
+{
+  "$schema": "p31.nonprofit.financials/1.0.0",
+  "_meta": {
+    "description": "Canonical financial structure — fund accounting, expense ratios, audit trail. Does NOT contain actual transaction-level data; that lives in the accounting system. This file describes the chart-of-accounts, ratio targets, and reporting cadence.",
+    "lastUpdated": "2026-05-01",
+    "owner": "treasurer@phosphorus31.org",
+    "verifier": "npm run verify:nonprofit"
+  },
+  "fiscalYear": {
+    "current": 2026,
+    "startDate": "2026-04-03",
+    "endDate": "2026-12-31",
+    "shortYear": true,
+    "nextFullYear": 2027
+  },
+  "bankingAndPayments": {
+    "primaryBank": {
+      "type": "nonprofit-checking",
+      "vendor": "TBD (HCB unresponsive — backup option needed)",
+      "accountStatus": "not-yet-opened",
+      "minimumDeposit": 0,
+      "monthlyFee": 0,
+      "fdic": true
+    },
+    "paymentProcessing": {
+      "donations": {
+        "vendor": "Stripe",
+        "feeStructure": "2.2% + $0.30 (nonprofit rate when verified)",
+        "endpoint": "https://donate-api.phosphorus31.org/checkout",
+        "webhook": "/webhooks/stripe",
+        "verificationStatus": "pending IRS determination"
+      },
+      "alternatives": {
+        "kofi": { "active": true, "fee": "0% platform + Stripe rate", "url": "TBD" },
+        "githubSponsors": { "active": false, "note": "personal account only; org account requires separate enrollment" }
+      }
+    },
+    "reservePolicy": {
+      "targetMonthsOperating": 6,
+      "currentMonthsOperating": 0,
+      "policyAdoptedDate": null
+    }
+  },
+  "chartOfAccounts": {
+    "revenue": {
+      "individualContributions": "4000",
+      "majorGifts": "4100",
+      "grantRevenue": "4200",
+      "corporateSponsorship": "4300",
+      "programServiceRevenue": "4400",
+      "specialEvents": "4500",
+      "investmentIncome": "4600",
+      "inkindContributions": "4700"
+    },
+    "expense": {
+      "programServices": {
+        "_purpose": "Direct mission delivery — should be >= 75% of total expenses for high-rated nonprofits",
+        "salaries": "5000",
+        "contractors": "5010",
+        "softwareAndInfrastructure": "5020",
+        "travelAndOutreach": "5030",
+        "programMaterials": "5040",
+        "directBeneficiaryAid": "5050"
+      },
+      "managementAndGeneral": {
+        "_purpose": "Operations — keep under 15% of total",
+        "executiveCompensation": "6000",
+        "accountingAndAudit": "6010",
+        "legal": "6020",
+        "insurance": "6030",
+        "officeAndAdmin": "6040"
+      },
+      "fundraising": {
+        "_purpose": "Cost of raising funds — keep under 10% of total",
+        "developmentStaff": "7000",
+        "fundraisingTools": "7010",
+        "donorEvents": "7020",
+        "donorMaterials": "7030"
+      }
+    }
+  },
+  "expenseRatioTargets": {
+    "programServices": { "min": 0.75, "warning": 0.70, "fail": 0.65 },
+    "managementAndGeneral": { "max": 0.15, "warning": 0.18, "fail": 0.20 },
+    "fundraising": { "max": 0.10, "warning": 0.12, "fail": 0.15 },
+    "rationale": "Charity Navigator 4-star bands; BBB Wise Giving Alliance standards align"
+  },
+  "fundAccounting": {
+    "unrestricted": {
+      "description": "General operating funds — board-discretionary",
+      "currentBalance": null,
+      "policy": "Default category; only re-classify with explicit donor restriction"
+    },
+    "temporarilyRestricted": {
+      "description": "Donor-restricted by purpose or time",
+      "currentBalance": null,
+      "examples": ["program-specific grants", "endowment match", "capital campaigns"]
+    },
+    "permanentlyRestricted": {
+      "description": "Endowment principal — only earnings spendable",
+      "currentBalance": null,
+      "policy": "Not solicited until reserve policy met"
+    }
+  },
+  "audit": {
+    "currentlyAudited": false,
+    "lastAudit": null,
+    "trigger": "annual revenue >= $250,000 OR per state requirement (CA, NY, etc.)",
+    "auditCommittee": {
+      "exists": false,
+      "members": [],
+      "note": "Required when external audit begins; chair must be independent of management"
+    },
+    "form990pPreparedBy": "TBD"
+  },
+  "reportingCadence": {
+    "boardFinancialReport": "quarterly",
+    "treasurerLogReview": "monthly",
+    "publicAnnualReport": "annual, published within 6 months of fiscal year end",
+    "form990Public": "as soon as filed",
+    "transparencyDashboard": "live at phosphorus31.org/financials/ (when launched)"
+  },
+  "compensation": {
+    "executiveCompensationPolicy": {
+      "exists": false,
+      "review": "annual, by independent board members",
+      "comparabilityData": "Form 990 filings of similar-mission orgs",
+      "reasonablenessTest": "IRS Rev. Proc. 53-160 safe harbor"
+    },
+    "founderCompensation": {
+      "current": 0,
+      "currentPeriod": "2026-04-03 to ongoing",
+      "rationale": "Founder is unpaid until reserve policy met AND board adopts compensation policy"
+    }
+  },
+  "donorAcknowledgments": {
+    "thresholdRequiringWrittenReceipt": 250,
+    "deadlineToProvide": "by January 31 of year following gift",
+    "automated": true,
+    "template": "/scripts/nonprofit/templates/tax-receipt.html",
+    "irsLanguageRequired": [
+      "Name of organization",
+      "Amount of cash contribution OR description of non-cash",
+      "Statement: \"No goods or services were provided in exchange for this contribution\" (when true)",
+      "Description and good-faith estimate of value of any goods/services (when applicable)"
+    ]
+  },
+  "transparencyCommitments": [
+    "All board members listed publicly on /governance/",
+    "Form 990 published within 30 days of filing",
+    "Annual report includes: revenue sources, expense breakdown, programs delivered, board roster, key staff",
+    "No paid endorsements; no quid-pro-quo donor recognition that constitutes private benefit",
+    "Salary range published (when staff hired); top 5 earners named on Form 990 Schedule J"
+  ]
+}

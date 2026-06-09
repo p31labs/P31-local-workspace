@@ -1,0 +1,24 @@
+{
+  "kind": "grant",
+  "filename": "P31_Grant_Awesome_Foundation.docx",
+  "program": "awesome-foundation",
+  "title": "Awesome Foundation Micro-Grant",
+  "deadline": "Rolling — April 2026 deliberation in progress",
+  "amount": "$1,000",
+  "body": [
+    { "type": "h1", "text": "ABSTRACT" },
+    { "type": "para", "text": "P31 Labs is an autistic-led nonprofit building sovereign communication infrastructure for neurodivergent families. We request $1,000 to complete the physical layer of our sentinel system: a Home Assistant host ($55), Bangle.js 2 wearable for biometric feedback ($63), and two kids' tablets for mesh-scoped device identity ($200 each). These tools enable a zero-surillance, family-centered communication mesh that works with — not against — neurodivergent cognition." },
+
+    { "type": "h1", "text": "PROJECT NEED" },
+    { "type": "para", "text": "The operator is AuDHD with hypoparathyroidism, late-diagnosed in 2025. Two children (ages 9 and 6) are in a custody situation where communication currently depends on commercial platforms that harvest behavioral data. Standard tools (FaceTime, Zoom, Facebook) assume neurotypical verbal fluency and create surveillance profiles on children. There is no open-protocol alternative that respects neurodivergent communication styles and providesguardian-gated minor vertex activation." },
+
+    { "type": "h1", "text": "PROPOSED USE OF FUNDS" },
+    { "type": "bullet", "text": "Home Assistant host (Raspberry Pi 4 or equivalent): $55 — local LAN controller for SENTINEL outward control plane" },
+    { "type": "bullet", "text": "Bangle.js 2 smartwatch with GadgetBridge: $63 — live HRV/spoon allocation feed for executive energy budgeting" },
+    { "type": "bullet", "text": "Android tablets × 2 for S.J. and W.J.: $400 — mesh-scoped device identity enabling kids profiles without commercial accounts" },
+    { "type": "bullet", "text": "Remaining buffer: $482 — allocated to 3D printing filament, domain redundancy (p31.dev), and operator time for integration" },
+
+    { "type": "h1", "text": "ORGANIZATION" },
+    { "type": "para", "text": "P31 Labs, Inc. is a Georgia nonprofit corporation (EIN 42-1888158, CP 575E on file), 501(c)(3) determination pending. We deploy on Cloudflare Workers free tier — zero monthly infrastructure cost. Every artifact is AGPLv3/MIT open source." }
+  ]
+}

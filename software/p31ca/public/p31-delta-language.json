@@ -1,0 +1,75 @@
+{
+  "schema": "p31.deltaLanguage/1.0.0",
+  "version": "1.0.0",
+  "title": "P31 Universal DELTA Language",
+  "canon": {
+    "humanSource": "docs/P31-DELTA-LANGUAGE.md",
+    "glossaryHtml": "docs/p31-delta-glossary.html"
+  },
+  "epigraph": "A small vocabulary for one institution, one sky, many altitudes. Easy to pick up; never finished; felt before it is optimized.",
+  "mnemonic": {
+    "DELTA": "Differential Embodied Language of Threshold and Affect — a handle, not a trademark. The math symbol Δ still means change; here it also means closed loop and return.",
+    "note": "If the mnemonic ever fights the geometry, the geometry (Wye → Delta, K₄, one sky) wins."
+  },
+  "anchors": [
+    {
+      "id": "same-void",
+      "label": "Same void",
+      "definition": "Layer 1 is one institution’s quiet floor — Gray Rock, no performative brand on first paint."
+    },
+    {
+      "id": "same-sky",
+      "label": "Same sky",
+      "definition": "One night field; teal/coral/hearth are one family; moving between seeds is change of altitude, not product-switching."
+    },
+    {
+      "id": "no-jarring-cut",
+      "label": "No jarring cut",
+      "definition": "Transitions feel like walking rooms in one building — ribbon, starfield layer, typography stay kin; no surprise light/dark whiplash without warning."
+    }
+  ],
+  "terms": [
+    { "id": "void", "label": "void", "group": "foundation", "definition": "The undifferentiated ground — background, not noise. In UI: Gray Rock base before Alive." },
+    { "id": "sky", "label": "sky", "group": "foundation", "definition": "The shared visual field across surfaces — not a component, the hemisphere you navigate." },
+    { "id": "altitude", "label": "altitude", "group": "scale", "definition": "How much of the system you see at once — hub = wide; bond = tight. Not a different product." },
+    { "id": "window", "label": "window", "group": "scale", "definition": "Any seed or page — a viewport onto the same sky, not a separate app icon in the head." },
+    { "id": "room", "label": "room", "group": "scale", "definition": "A coherent affordance space with a host mind; you walk, you don’t teleport." },
+    { "id": "walk", "label": "walk", "group": "scale", "definition": "A transition that preserves sky/void continuity; opposite of a jarring cut." },
+    { "id": "jarring-cut", "label": "jarring cut", "group": "scale", "definition": "When the user feels they changed apps; fix with shared sky, ribbon, and motion discipline." },
+    { "id": "layer-1", "label": "Layer 1", "group": "foundation", "definition": "Void / Gray Rock — default calm, no brand flex on first paint." },
+    { "id": "layer-1-5", "label": "Layer 1.5", "group": "foundation", "definition": "Starfield stratum — luminance atmosphere between void and Alive; weather, not logo." },
+    { "id": "layer-2", "label": "Layer 2", "group": "foundation", "definition": "Alive — interaction, focus, handoff; still one building." },
+    { "id": "gray-rock", "label": "Gray Rock", "group": "foundation", "definition": "Default steady state — cloud text, void field, no rush to reward." },
+    { "id": "alive", "label": "Alive", "group": "foundation", "definition": "Interactive engagement — brand chroma and motion enter with intent, not on autopilot hijack." },
+    { "id": "hearth", "label": "hearth", "group": "foundation", "definition": "Where warmth pools — BONDING, family tone, care without dashboardization." },
+    { "id": "starfield", "label": "starfield", "group": "foundation", "definition": "Ambient mesh — optional, pausable, respects reduced motion; static plate in breaker rooms." },
+    { "id": "instrument-glass", "label": "instrument glass", "group": "operator", "definition": "Command center / desk mode — same stars, lower motion; precision, not mood loop." },
+    { "id": "bridge", "label": "bridge", "group": "cognition", "definition": "A linked reading order between lenses — e.g. poet ↔ physicist, same K₄, different diction." },
+    { "id": "translate", "label": "translate", "group": "cognition", "definition": "Explicit affordance to re-read the same truth in another mind’s dialect." },
+    { "id": "host-mind", "label": "host mind", "group": "cognition", "definition": "Which mind owns the first screen — Poet, Physicist, Operator, Builder, Parent/Gate." },
+    { "id": "ribbon", "label": "return ribbon", "group": "navigation", "definition": "Fixed spine: soup · hub · passport · connection · mesh — never reorder; AuDHD-safe exits." },
+    { "id": "wye", "label": "Wye (Y)", "group": "topology", "definition": "Branchy stress topology — one center, three arms; open, divergent, higher tension." },
+    { "id": "delta", "label": "Delta (Δ)", "group": "topology", "definition": "Closed three-phase loop — resilient run; the operator’s return path; not ‘triangle’ as toy shape." },
+    { "id": "k4", "label": "K₄", "group": "topology", "definition": "Complete graph on four vertices — the cage; family mesh; remove one, rigidity can remain in the triangle (K₃)." },
+    { "id": "edge", "label": "edge", "group": "topology", "definition": "A relationship segment — load path, not decoration." },
+    { "id": "vertex", "label": "vertex", "group": "topology", "definition": "A person, pillar, or dock point — not a ‘user node’ in growth-hack copy." },
+    { "id": "mesh", "label": "mesh", "group": "topology", "definition": "The family/community substrate — Durable, honest latency, not omniscience." },
+    { "id": "cage", "label": "cage", "group": "topology", "definition": "K₄ family container — love totals, explicit boundaries, not a panopticon metaphor." },
+    { "id": "verify", "label": "verify", "group": "procedural", "definition": "The respect bar — ordered checks, no vibe-substitute for fact when a fact is claimable." },
+    { "id": "ship-bar", "label": "ship bar", "group": "procedural", "definition": "The same ordered proof ladder — one institution’s rhythm of ship." },
+    { "id": "connection", "label": "CONNECTION", "group": "procedural", "definition": "Deploy and ecosystem spine — not ‘networking’; wiring you can audit." },
+    { "id": "ephemeralization", "label": "ephemeralization", "group": "procedural", "definition": "One source, many surfaces — no parallel lore; Fuller discipline." }
+  ],
+  "forbidden": [
+    { "id": "naval-meta", "avoid": "Submarine / fleet command metaphors for people", "prefer": "instrument glass, same sky" },
+    { "id": "engagement", "avoid": "Growth-hack, streak shame, FOMO hooks in mission tone", "prefer": "spoons, calm defaults, opt-in Alive" },
+    { "id": "master-narrative", "avoid": "Mastery as identity performance", "prefer": "practice, loop, return, verify" },
+    { "id": "product-hop", "avoid": "Treating every page as a separate brand", "prefer": "altitude, room, one sky" }
+  ],
+  "surfacePhrases": [
+    { "id": "soup", "host": "Builder · Parent", "allowed": ["Hearth zoom on one sky", "Same bowl, different closeness, not a leaderboard"], "avoid": ["Addictive loop", "Grind", "Churn"] },
+    { "id": "command-center", "host": "Operator", "allowed": ["Static star plate — same sky, precision room", "Whitelist, no shell — respect as architecture"], "avoid": ["Mission control cosplay", "Punch it"] },
+    { "id": "poets", "host": "Poet / Sun", "allowed": ["Quiet band of the same night", "Line a day, shelf, local-only draft"], "avoid": ["Content pipeline", "Engagement"] },
+    { "id": "physics-learn", "host": "Physicist / Moon", "allowed": ["Same K₄, meter ↔ measure", "Codec rooms — proof without sneering at metaphor"], "avoid": ["Mastery quiz culture", "Gamified shame"] }
+  ]
+}

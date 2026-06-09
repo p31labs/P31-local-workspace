@@ -1,0 +1,28 @@
+{
+  "schema": "p31.fateTwenty/1.0.0",
+  "version": "1.0.0",
+  "label": "Canonical Fate Twenty — Lattice Oracle + Ultimate Decision Maker",
+  "note": "Single source of truth for twenty readings. Face index i (0–19) = face number i+1 on the icosahedron. magic-crystal.html and d20-omnibus-icosa.html fetch this file; do not duplicate the array in those pages.",
+  "readings": [
+    { "tag": "AFFIRM", "tone": "yes", "text": "The lattice brightens. A clear <strong>yes</strong>—step forward in calm." },
+    { "tag": "CONVERGENCE", "tone": "yes", "text": "All vertices hum in phase. The field says: <strong>proceed</strong>." },
+    { "tag": "COHERENCE", "tone": "yes", "text": "Coherence holds. You already know—this path <strong>opens</strong>." },
+    { "tag": "TRIMTAB", "tone": "yes", "text": "A small nudge, large effect: the reading leans <strong>yes</strong>—tune gently and go." },
+    { "tag": "REFRACTION", "tone": "yes", "text": "Light takes the warm edge. <strong>Trust the green branch.</strong>" },
+    { "tag": "MESH", "tone": "yes", "text": "Synchronicity in the mesh. The answer is a quiet, confident <strong>yes</strong>." },
+    { "tag": "CAGE RING", "tone": "yes", "text": "The K₄ ring answers without drama: <strong>affirmation</strong>." },
+    { "tag": "LUMEN", "tone": "yes", "text": "The core glows steady. <strong>Yes</strong>—with room to breathe." },
+    { "tag": "FLOW", "tone": "yes", "text": "The signal flows. <strong>Yes</strong>—and celebrate the small proof." },
+    { "tag": "DAWN", "tone": "yes", "text": "A thin gold line on the rim: <strong>yes</strong>—dawn, not blinding noon." },
+    { "tag": "HAZE", "tone": "maybe", "text": "The crystal clouds. <strong>Ask again</strong> when the static thins—go gently." },
+    { "tag": "SUPERPOSITION", "tone": "maybe", "text": "Indeterminate. The world hasn’t <strong>collapsed the bit</strong>—wait or reframe." },
+    { "tag": "THRESHOLD", "tone": "maybe", "text": "Signal below your threshold. <strong>Silence is data</strong>—not yet." },
+    { "tag": "RIPPLE", "tone": "maybe", "text": "The edge shimmers both ways. <strong>Neither branch claims you</strong> tonight." },
+    { "tag": "BREATHE", "tone": "maybe", "text": "Hold one slow breath, ask shorter. <strong>Then</strong> return to the stone." },
+    { "tag": "DIM", "tone": "no", "text": "The lattice dims. A soft <strong>no for now</strong>—not never; protect the spark." },
+    { "tag": "FRICTION", "tone": "no", "text": "Drag in the field. <strong>Do not push</strong> the river—stand aside." },
+    { "tag": "SCATTER", "tone": "no", "text": "The reading scatters. <strong>Guard your energy</strong>—choose repair over proof." },
+    { "tag": "DISSENT", "tone": "no", "text": "Vertices disagree. <strong>Defer</strong>—clarity is downstream." },
+    { "tag": "FROST", "tone": "no", "text": "A cool line through the heart of the glass: <strong>no, for this moment</strong>." }
+  ]
+}

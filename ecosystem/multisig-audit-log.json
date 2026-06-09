@@ -1,0 +1,51 @@
+[
+  {
+    "eventId": "event_1774252149276_selblbzpw",
+    "timestamp": "2026-03-23T07:49:09.276Z",
+    "eventType": "assembly_waiting",
+    "prInfo": {
+      "prNumber": "unknown",
+      "prTitle": "unknown",
+      "prAuthor": "unknown",
+      "prUrl": "unknown",
+      "branch": "unknown",
+      "repository": "unknown"
+    },
+    "status": {
+      "assembled": false,
+      "progress": {
+        "calcium": 0,
+        "phosphate": 0,
+        "contributors": 0,
+        "overall": 0
+      },
+      "current": {
+        "calciumIons": 0,
+        "phosphateIons": 0,
+        "totalIons": 0,
+        "uniqueContributors": 0
+      }
+    },
+    "contributors": {
+      "total": 0,
+      "active": 0,
+      "details": []
+    },
+    "verification": {
+      "calciumComplete": false,
+      "phosphateComplete": false,
+      "contributorsComplete": false,
+      "overallComplete": false
+    },
+    "metrics": {
+      "ionsPerContributor": 0,
+      "complianceRate": 100,
+      "timeElapsed": "0h 1m"
+    },
+    "signatures": {
+      "dataHash": "3831faf6715b255e60fc5a9471686e017849dc4f7aedce72a8d331cc1e4a6b8f",
+      "timestamp": "2026-03-23T07:49:09.276Z",
+      "verified": true
+    }
+  }
+]

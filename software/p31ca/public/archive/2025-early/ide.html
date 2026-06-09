@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub" style="color-scheme: dark;">
+<head>
+<meta charset="UTF-8">
+<script>(function(){var r=document.documentElement;if(/[?&]alive=1(?:&|$)/.test(location.search))return;r.classList.add("p31-gray-rock");function wake(){r.classList.remove("p31-gray-rock")}document.addEventListener("pointerdown",wake,{once:true,capture:true});document.addEventListener("keydown",wake,{once:true,capture:true})})();</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>QG-IDE | Quantum Geodesic IDE</title>
+<meta property="og:type" content="website">
+<meta property="og:title" content="QG-IDE | Quantum Geodesic IDE">
+<meta property="og:description" content="QG-IDE | Quantum Geodesic IDE">
+<meta property="og:url" content="https://p31ca.org/ide.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="QG-IDE | Quantum Geodesic IDE">
+<meta name="twitter:description" content="QG-IDE | Quantum Geodesic IDE">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --void: #050505; --surface: #161920; --surface2: #1c2028; --cloud: #d8d6d0;
+    --cyan: #4db8a8; --lavender: #8b7cc9; --phosphorus: #00FF88; --butter: #cda852;
+    --comment: #555; --red: #cc6247; --green: #00FF88; --yellow: #cda852;
+    --font-ui: 'Inter', sans-serif;
+    --font-mono: 'Space Mono', monospace;
+  }
+  html, body { height: 100%; background: var(--void); color: var(--cloud); font-family: var(--font-ui); overflow: hidden; }
+  button { cursor: pointer; font-family: var(--font-ui); border: none; background: none; color: var(--cloud); }
+  input, textarea { font-family: var(--font-mono); background: var(--void); color: var(--cloud); border: 1px solid #2a2d35; outline: none; }
+  input:focus, textarea:focus { border-color: var(--cyan); }
+
+  /* Layout */
+  #app { display: flex; flex-direction: column; height: 100vh; }
+  #topbar { display: flex; align-items: center; gap: 12px; padding: 6px 16px; background: var(--surface); border-bottom: 1px solid #2a2d35; min-height: 42px; flex-shrink: 0; }
+  #topbar .title { font-weight: 700; font-size: 15px; color: var(--cyan); letter-spacing: 1px; }
+  #topbar .back { color: #666; text-decoration: none; font-size: 13px; }
+  #topbar .back:hover { color: var(--cloud); }
+  #run-btn { background: var(--cyan); color: var(--void); font-weight: 700; font-size: 12px; padding: 4px 14px; border-radius: 3px; letter-spacing: 0.5px; }
+  #run-btn:hover { filter: brightness(1.15); }
+  .spacer { flex: 1; }
+  #entropy-meter { display: flex; align-items: center; gap: 6px; font-size: 12px; font-family: var(--font-mono); }
+  #entropy-bar { width: 80px; height: 6px; background: #2a2d35; border-radius: 3px; overflow: hidden; }
+  #entropy-fill { height: 100%; border-radius: 3px; transition: width 0.4s, background 0.4s; }
+  #board-badge { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 3px; letter-spacing: 1px; }
+
+  /* Tabs */
+  #tabbar { display: flex; background: var(--surface); border-bottom: 1px solid #2a2d35; flex-shrink: 0; }
+  .tab { padding: 8px 18px; font-size: 13px; border-bottom: 2px solid transparent; transition: all 0.15s; user-select: none; }
+  .tab:hover { background: var(--surface2); }
+  .tab.active { border-bottom-color: var(--cyan); color: var(--cyan); }
+  .tab-icon { margin-right: 5px; font-size: 12px; }
+
+  /* Main */
+  #main { flex: 1; overflow: hidden; position: relative; }
+  .panel { display: none; width: 100%; height: 100%; }
+  .panel.active { display: flex; }
+
+  /* Code Tab */
+  #code-panel { flex-direction: row; }
+  #gutter { width: 48px; background: var(--surface); border-right: 1px solid #2a2d35; overflow: hidden; padding: 10px 0; font-family: var(--font-mono); font-size: 13px; line-height: 20px; color: #444; text-align: right; user-select: none; }
+  #gutter .ln { padding-right: 10px; }
+  #editor { flex: 1; position: relative; }
+  #code-area { width: 100%; height: 100%; resize: none; background: var(--void); color: var(--cloud); font-family: var(--font-mono); font-size: 13px; line-height: 20px; padding: 10px 12px; border: none; tab-size: 2; white-space: pre; overflow: auto; }
+
+  /* View Tab */
+  #view-panel { flex-direction: column; align-items: center; justify-content: center; gap: 20px; background: var(--void); }
+  #tetra-svg { width: 340px; height: 340px; }
+  .vertex { transition: r 0.3s; }
+  .edge { stroke: var(--cyan); stroke-width: 1.2; opacity: 0.5; }
+  #sicpovm-readout { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; font-family: var(--font-mono); font-size: 12px; text-align: center; }
+  .sic-outcome { padding: 8px; background: var(--surface); border-radius: 4px; border: 1px solid #2a2d35; }
+  .sic-label { font-weight: 700; margin-bottom: 4px; }
+  .sic-prob { font-size: 16px; }
+
+  /* Term Tab */
+  #term-panel { flex-direction: column; background: var(--void); }
+  #term-output { flex: 1; overflow-y: auto; padding: 10px 14px; font-family: var(--font-mono); font-size: 13px; line-height: 1.6; }
+  .term-line { white-space: pre-wrap; word-break: break-all; }
+  .term-ts { color: #444; margin-right: 8px; font-size: 11px; }
+  .cls-info { color: var(--cyan); } .cls-warn { color: var(--butter); } .cls-err { color: var(--red); } .cls-sys { color: var(--lavender); } .cls-out { color: var(--cloud); }
+  #term-input-row { display: flex; border-top: 1px solid #2a2d35; }
+  #term-prompt { padding: 8px 10px; color: var(--cyan); font-family: var(--font-mono); font-size: 13px; user-select: none; }
+  #term-input { flex: 1; padding: 8px 6px; font-size: 13px; border: none; }
+
+  /* Copilot Tab */
+  #copilot-panel { flex-direction: column; background: var(--void); }
+  #copilot-header { padding: 10px 14px; background: var(--surface); border-bottom: 1px solid #2a2d35; font-size: 13px; font-weight: 700; color: var(--cyan); }
+  #copilot-msgs { flex: 1; overflow-y: auto; padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; }
+  .msg { padding: 8px 12px; border-radius: 6px; font-size: 13px; line-height: 1.5; max-width: 85%; }
+  .msg-user { background: var(--surface2); align-self: flex-end; border: 1px solid #2a2d35; }
+  .msg-bot { background: var(--surface); align-self: flex-start; border: 1px solid rgba(77,184,168,0.15); color: var(--cloud); }
+  #copilot-input-row { display: flex; border-top: 1px solid #2a2d35; }
+  #copilot-input { flex: 1; padding: 10px 12px; font-size: 13px; font-family: var(--font-ui); border: none; }
+  #copilot-send { padding: 10px 18px; color: var(--cyan); font-weight: 700; font-size: 13px; }
+
+  /* PHX Tab */
+  #phx-panel { flex-direction: column; padding: 24px; gap: 18px; background: var(--void); }
+  .phx-card { background: var(--surface); border: 1px solid #2a2d35; border-radius: 6px; padding: 16px; }
+  .phx-card h3 { font-size: 13px; color: var(--cyan); margin-bottom: 10px; letter-spacing: 0.5px; }
+  .phx-metric { font-family: var(--font-mono); font-size: 22px; font-weight: 700; }
+  .phx-sub { font-size: 12px; color: #666; margin-top: 4px; }
+  #pulse-btn { background: var(--cyan); color: var(--void); font-weight: 700; font-size: 13px; padding: 8px 24px; border-radius: 4px; margin-top: 8px; }
+  #pulse-btn:hover { filter: brightness(1.15); }
+  #phx-log { font-family: var(--font-mono); font-size: 12px; color: #666; line-height: 1.7; max-height: 180px; overflow-y: auto; }
+  .phx-log-line { padding: 2px 0; }
+
+  /* Files Tab */
+  #files-panel { flex-direction: column; background: var(--void); }
+  #files-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: var(--surface); border-bottom: 1px solid #2a2d35; }
+  #files-header h3 { font-size: 13px; color: var(--cyan); }
+  #new-file-btn { font-size: 12px; color: var(--cyan); padding: 4px 10px; border: 1px solid rgba(77,184,168,0.3); border-radius: 3px; }
+  #new-file-btn:hover { background: rgba(77,184,168,0.1); }
+  #file-tree { flex: 1; overflow-y: auto; padding: 8px 0; }
+  .file-item { display: flex; align-items: center; justify-content: space-between; padding: 6px 14px; font-family: var(--font-mono); font-size: 13px; cursor: pointer; transition: background 0.1s; }
+  .file-item:hover { background: var(--surface); }
+  .file-item.active { background: var(--surface2); color: var(--cyan); }
+  .file-del { color: #555; font-size: 11px; padding: 2px 6px; border-radius: 2px; }
+  .file-del:hover { color: var(--red); background: rgba(204,98,71,0.1); }
+</style>
+<link rel="canonical" href="https://p31ca.org/ide.html">
+</head>
+<body>
+<a href="#main" style="position:absolute;left:-9999px;top:0;padding:0.5rem 1rem;background:var(--p31-void);color:var(--p31-teal);font-size:0.875rem;z-index:9999;border-radius:0 0 4px 4px;text-decoration:none" onfocus="this.style.left='0'" onblur="this.style.left='-9999px'">Skip to main content</a>
+<div id="app">
+  <!-- Top Bar -->
+  <div id="topbar">
+    <a href="qg-ide.html" class="back">&larr; Back</a>
+    <span class="title">QG-IDE</span>
+    <button id="run-btn" onclick="runCode()">RUN</button>
+    <span class="spacer"></span>
+    <div id="entropy-meter">
+      <span>H:</span>
+      <div id="entropy-bar"><div id="entropy-fill"></div></div>
+      <span id="entropy-val">0.00</span>
+    </div>
+    <span id="board-badge">GREEN</span>
+  </div>
+
+  <!-- Tab Bar -->
+  <div id="tabbar">
+    <div class="tab active" data-tab="code" onclick="switchTab('code')"><span class="tab-icon">&#9000;</span>Code</div>
+    <div class="tab" data-tab="view" onclick="switchTab('view')"><span class="tab-icon">&#9651;</span>View</div>
+    <div class="tab" data-tab="term" onclick="switchTab('term')"><span class="tab-icon">&gt;</span>Term</div>
+    <div class="tab" data-tab="copilot" onclick="switchTab('copilot')"><span class="tab-icon">&#9881;</span>Copilot</div>
+    <div class="tab" data-tab="phx" onclick="switchTab('phx')"><span class="tab-icon">&#9889;</span>PHX</div>
+    <div class="tab" data-tab="files" onclick="switchTab('files')"><span class="tab-icon">&#128193;</span>Files</div>
+  </div>
+
+  <!-- Panels -->
+  <div id="main">
+    <!-- Code -->
+    <div id="code-panel" class="panel active">
+      <div id="gutter"></div>
+      <div id="editor"><textarea id="code-area" spellcheck="false"></textarea></div>
+    </div>
+    <!-- View -->
+    <div id="view-panel" class="panel">
+      <svg id="tetra-svg" viewBox="0 0 340 340"></svg>
+      <div id="sicpovm-readout"></div>
+    </div>
+    <!-- Term -->
+    <div id="term-panel" class="panel">
+      <div id="term-output"></div>
+      <div id="term-input-row">
+        <span id="term-prompt">&gt;</span>
+        <input id="term-input" type="text" placeholder="Enter command..." />
+      </div>
+    </div>
+    <!-- Copilot -->
+    <div id="copilot-panel" class="panel">
+      <div id="copilot-header">Centaur Engine</div>
+      <div id="copilot-msgs"></div>
+      <div id="copilot-input-row">
+        <input id="copilot-input" type="text" placeholder="Ask the Centaur..." />
+        <button id="copilot-send" onclick="sendCopilot()">SEND</button>
+      </div>
+    </div>
+    <!-- PHX -->
+    <div id="phx-panel" class="panel">
+      <div class="phx-card">
+        <h3>COHERENCE STATUS</h3>
+        <div class="phx-metric" id="phx-entropy">0.00</div>
+        <div class="phx-sub">System entropy</div>
+      </div>
+      <div class="phx-card">
+        <h3>COHERENCE METRIC</h3>
+        <div class="phx-metric" id="phx-coherence">0.350</div>
+        <div class="phx-sub">H value (Mark-1 attractor: 0.350)</div>
+      </div>
+      <div class="phx-card">
+        <h3>TRIMTAB SUGGESTION</h3>
+        <div id="phx-suggestion" style="font-size:14px;line-height:1.5;">System nominal. Full bandwidth available.</div>
+        <button id="pulse-btn" onclick="phxPulse()">PULSE</button>
+      </div>
+      <div class="phx-card">
+        <h3>SYSTEM LOG</h3>
+        <div id="phx-log"></div>
+      </div>
+    </div>
+    <!-- Files -->
+    <div id="files-panel" class="panel">
+      <div id="files-header">
+        <h3>FILE EXPLORER</h3>
+        <button id="new-file-btn" onclick="newFile()">+ New File</button>
+      </div>
+      <div id="file-tree"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Constants ──
+const QG = {
+  SQRT3: 1.7320508075688772,
+  INV_SQRT3: 0.5773502691896257,
+  SIC_OVERLAP: 1/3,
+  MARK1: 0.35,
+  GREEN_ENTROPY: 0.15,
+  YELLOW_ENTROPY: 0.40,
+};
+
+const VERTEX_COLORS = ['#4db8a8', '#8b7cc9', '#00FF88', '#cda852'];
+const SIC_LABELS = ['ALPHA', 'BETA', 'GAMMA', 'DELTA'];
+
+// ── Default files ──
+const DEFAULT_FILES = {
+  'main.ts': `// QG-IDE :: Quantum Geodesic Entry Point
+import { QuantumTetrahedron } from './tetrahedron';
+import { SICPOVMState } from './sicpovm';
+
+const MARK1 = 0.35;
+
+// Initialize the primary tetrahedron
+const tetra = { coherence: MARK1, scale: 1.0 };
+
+// SIC-POVM measurement outcomes
+const outcomes = ['ALPHA','BETA','GAMMA','DELTA'];
+const r = Math.random();
+const pick = outcomes[Math.floor(r * 4)];
+console.log('Outcome:', pick);
+console.log('Probability:', (0.25).toFixed(4));
+console.log('Purity:', 1.0);
+
+// Coherence game loop
+function update(trimtab, dt) {
+  const drift = (trimtab - 0.5) * dt * 0.1;
+  const coh = Math.max(0, Math.min(1, MARK1 + drift));
+  const entropy = Math.abs(coh - MARK1) / MARK1;
+  if (entropy < 0.15) return 'GREEN_BOARD';
+  if (entropy < 0.40) return 'YELLOW_BOARD';
+  return 'RED_BOARD';
+}
+
+console.log('[QG] Kernel initialized');
+console.log('[QG] Board state:', update(0.5, 0.016));
+`,
+  'tetrahedron.ts': `// Minimum structural system: 4 vertices, 6 edges, 4 faces
+
+const vertices = [
+  { x: 0, y: 1, z: 0 },
+  { x: 0.9428, y: -0.3333, z: 0 },
+  { x: -0.4714, y: -0.3333, z: 0.8165 },
+  { x: -0.4714, y: -0.3333, z: -0.8165 },
+];
+
+const edges = [[0,1],[0,2],[0,3],[1,2],[1,3],[2,3]];
+
+function rotateY(v, angle) {
+  const c = Math.cos(angle), s = Math.sin(angle);
+  return { x: v.x*c + v.z*s, y: v.y, z: -v.x*s + v.z*c };
+}
+
+function getEntropy(coherence) {
+  return Math.abs(coherence - 0.35) / 0.35;
+}
+
+function getBoardState(coherence) {
+  const e = getEntropy(coherence);
+  if (e < 0.15) return 'GREEN';
+  if (e < 0.40) return 'YELLOW';
+  return 'RED';
+}
+
+console.log('Tetrahedron vertices:', vertices.length);
+console.log('Edges:', edges.length);
+console.log('Board:', getBoardState(0.35));
+`,
+  'sicpovm.ts': `// SIC-POVM: Symmetric Informationally Complete
+// 4 outcomes at tetrahedral angles on Bloch sphere
+
+const labels = ['ALPHA','BETA','GAMMA','DELTA'];
+
+function normalize(v) {
+  const len = Math.sqrt(v.x*v.x + v.y*v.y + v.z*v.z);
+  return { x: v.x/len, y: v.y/len, z: v.z/len };
+}
+
+function measure(probabilities) {
+  let r = Math.random();
+  for (let i = 0; i < probabilities.length; i++) {
+    r -= probabilities[i];
+    if (r <= 0) return labels[i];
+  }
+  return labels[3];
+}
+
+// Equal superposition: each outcome 1/4
+const probs = [0.25, 0.25, 0.25, 0.25];
+const sum = probs.reduce((a,b) => a+b, 0);
+
+console.log('SIC-POVM outcomes:', labels.length);
+console.log('Probability sum:', sum.toFixed(4));
+console.log('Measurement:', measure(probs));
+console.log('Pairwise overlap |<pi|pj>|^2 = 1/3');
+`,
+};
+
+// ── State ──
+let state = {
+  activeTab: 'code',
+  files: {},
+  activeFile: 'main.ts',
+  consoleLines: [],
+  H: 0.35,
+  entropy: 0,
+  sicProbs: [0.25, 0.25, 0.25, 0.25],
+  copilotMsgs: [{ role: 'bot', text: 'Centaur Engine online. Ask about tetrahedra, SIC-POVM, entropy, coherence, or the Bloch sphere.' }],
+  phxLog: ['[BOOT] PHX companion initialized', '[BOOT] Coherence nominal'],
+  tetraAngle: 0,
+};
+
+// ── localStorage ──
+function lsGet(key, fallback) {
+  try { const v = localStorage.getItem('QGIDE_' + key); return v ? JSON.parse(v) : fallback; }
+  catch { return fallback; }
+}
+function lsSet(key, val) {
+  try { localStorage.setItem('QGIDE_' + key, JSON.stringify(val)); } catch {}
+}
+
+function loadState() {
+  state.files = lsGet('files', DEFAULT_FILES);
+  state.activeFile = lsGet('activeFile', 'main.ts');
+  state.consoleLines = lsGet('console', []);
+  state.entropy = lsGet('entropy', 0);
+  if (!state.files[state.activeFile]) state.activeFile = Object.keys(state.files)[0] || 'main.ts';
+}
+
+function saveFiles() { lsSet('files', state.files); }
+function saveActiveFile() { lsSet('activeFile', state.activeFile); }
+function saveConsole() { lsSet('console', state.consoleLines.slice(-200)); }
+function saveEntropy() { lsSet('entropy', state.entropy); }
+
+// ── Tab switching ──
+function switchTab(tab) {
+  state.activeTab = tab;
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById(tab + '-panel').classList.add('active');
+  if (tab === 'view') renderTetrahedron();
+  if (tab === 'files') renderFileTree();
+  if (tab === 'term') {
+    const out = document.getElementById('term-output');
+    out.scrollTop = out.scrollHeight;
+  }
+}
+
+// ── Code editor ──
+function loadFileIntoEditor() {
+  const area = document.getElementById('code-area');
+  area.value = state.files[state.activeFile] || '';
+  updateGutter();
+}
+
+function updateGutter() {
+  const area = document.getElementById('code-area');
+  const lines = (area.value || '').split('\n').length;
+  const gutter = document.getElementById('gutter');
+  let html = '';
+  for (let i = 1; i <= lines; i++) html += '<div class="ln">' + i + '</div>';
+  gutter.innerHTML = html;
+}
+
+function onCodeChange() {
+  const area = document.getElementById('code-area');
+  state.files[state.activeFile] = area.value;
+  saveFiles();
+  updateGutter();
+}
+
+function onCodeScroll() {
+  const area = document.getElementById('code-area');
+  document.getElementById('gutter').scrollTop = area.scrollTop;
+}
+
+// ── Run code ──
+function runCode() {
+  const ts = new Date().toLocaleTimeString('en-US', { hour12: false });
+  clog('Running ' + state.activeFile + '...', 'sys');
+  const code = state.files[state.activeFile] || '';
+
+  // Strip TypeScript syntax for eval
+  let js = code
+    .replace(/:\s*(number|string|boolean|any|void|never|Vector3|Outcome)\b/g, '')
+    .replace(/\b(interface|type|export|import)[^;\n]*/g, '// [stripped]')
+    .replace(/<[A-Z]\w*>/g, '');
+
+  try {
+    const logs = [];
+    const fakeConsole = {
+      log: function() { logs.push(Array.from(arguments).join(' ')); },
+      warn: function() { logs.push('[WARN] ' + Array.from(arguments).join(' ')); },
+      error: function() { logs.push('[ERR] ' + Array.from(arguments).join(' ')); },
+    };
+    new Function('console', 'Math', js)(fakeConsole, Math);
+    logs.forEach(function(l) { clog(l, 'out'); });
+    clog('Execution complete', 'info');
+  } catch (e) {
+    clog('Error: ' + (e.message || String(e)), 'err');
+  }
+
+  // Update entropy based on code complexity
+  const complexity = code.length / 2000;
+  const noise = (Math.random() - 0.5) * 0.1;
+  state.H = Math.max(0.05, Math.min(0.95, state.H + noise * 0.3));
+  state.entropy = Math.abs(state.H - QG.MARK1) / QG.MARK1;
+
+  // Update SIC-POVM probabilities with some variation
+  const raw = [0.25, 0.25, 0.25, 0.25].map(function(p) { return p + (Math.random() - 0.5) * 0.08; });
+  const sum = raw.reduce(function(a, b) { return a + b; }, 0);
+  state.sicProbs = raw.map(function(p) { return Math.max(0.01, p / sum); });
+
+  updateEntropyUI();
+  saveEntropy();
+  switchTab('term');
+}
+
+// ── Console ──
+function clog(text, cls) {
+  cls = cls || 'out';
+  const ts = new Date().toLocaleTimeString('en-US', { hour12: false });
+  state.consoleLines.push({ text: text, cls: cls, ts: ts });
+  if (state.consoleLines.length > 500) state.consoleLines = state.consoleLines.slice(-300);
+  saveConsole();
+  renderConsole();
+}
+
+function renderConsole() {
+  const out = document.getElementById('term-output');
+  let html = '';
+  state.consoleLines.forEach(function(line) {
+    html += '<div class="term-line cls-' + line.cls + '"><span class="term-ts">' + line.ts + '</span>' + escHtml(line.text) + '</div>';
+  });
+  out.innerHTML = html;
+  out.scrollTop = out.scrollHeight;
+}
+
+function evalTermInput() {
+  const input = document.getElementById('term-input');
+  const cmd = input.value.trim();
+  if (!cmd) return;
+  input.value = '';
+  clog('> ' + cmd, 'sys');
+
+  if (cmd === 'clear') { state.consoleLines = []; saveConsole(); renderConsole(); return; }
+  if (cmd === 'help') { clog('Commands: clear, help, ls, run, entropy, board, files', 'info'); return; }
+  if (cmd === 'ls' || cmd === 'files') {
+    Object.keys(state.files).forEach(function(f) { clog('  ' + f, 'out'); });
+    return;
+  }
+  if (cmd === 'entropy') { clog('H = ' + state.H.toFixed(4) + ' | Entropy = ' + (state.entropy * 100).toFixed(1) + '%', 'info'); return; }
+  if (cmd === 'board') {
+    const b = state.entropy < QG.GREEN_ENTROPY ? 'GREEN' : state.entropy < QG.YELLOW_ENTROPY ? 'YELLOW' : 'RED';
+    clog('Board state: ' + b, 'info'); return;
+  }
+  if (cmd === 'run') { runCode(); return; }
+
+  // Try eval
+  try {
+    const result = new Function('return ' + cmd)();
+    clog(String(result), 'out');
+  } catch (e) {
+    clog('Error: ' + e.message, 'err');
+  }
+}
+
+// ── Tetrahedron SVG ──
+function renderTetrahedron() {
+  const svg = document.getElementById('tetra-svg');
+  const cx = 170, cy = 160, scale = 110;
+  const angle = state.tetraAngle;
+
+  // 3D vertices of regular tetrahedron
+  const verts3d = [
+    { x: 0, y: 1, z: 0 },
+    { x: 0.9428, y: -0.3333, z: 0 },
+    { x: -0.4714, y: -0.3333, z: 0.8165 },
+    { x: -0.4714, y: -0.3333, z: -0.8165 },
+  ];
+
+  // Rotate Y
+  const ca = Math.cos(angle), sa = Math.sin(angle);
+  const projected = verts3d.map(function(v) {
+    const rx = v.x * ca + v.z * sa;
+    const rz = -v.x * sa + v.z * ca;
+    // Slight tilt on X for depth
+    const ct = Math.cos(0.3), st = Math.sin(0.3);
+    const ry = v.y * ct - rz * st;
+    const rz2 = v.y * st + rz * ct;
+    // Perspective projection
+    const d = 3.5 + rz2 * 0.3;
+    return { x: cx + rx * scale / d * 3, y: cy - ry * scale / d * 3, z: rz2 };
+  });
+
+  const edges = [[0,1],[0,2],[0,3],[1,2],[1,3],[2,3]];
+
+  let html = '';
+  // Edges
+  edges.forEach(function(e) {
+    const a = projected[e[0]], b = projected[e[1]];
+    const opacity = 0.3 + 0.3 * (1 - (a.z + b.z) / 4);
+    html += '<line x1="'+a.x+'" y1="'+a.y+'" x2="'+b.x+'" y2="'+b.y+'" class="edge" style="opacity:'+opacity.toFixed(2)+'"/>';
+  });
+  // Vertices
+  projected.forEach(function(v, i) {
+    const r = 6 + (1 - v.z) * 2;
+    html += '<circle cx="'+v.x+'" cy="'+v.y+'" r="'+r.toFixed(1)+'" fill="'+VERTEX_COLORS[i]+'" class="vertex" opacity="0.9"/>';
+    html += '<text x="'+v.x+'" y="'+(v.y - r - 6)+'" fill="'+VERTEX_COLORS[i]+'" text-anchor="middle" font-family="var(--font-mono)" font-size="11" font-weight="700">'+SIC_LABELS[i]+'</text>';
+  });
+
+  svg.innerHTML = html;
+
+  // SIC-POVM readout
+  const readout = document.getElementById('sicpovm-readout');
+  let rhtml = '';
+  state.sicProbs.forEach(function(p, i) {
+    rhtml += '<div class="sic-outcome"><div class="sic-label" style="color:'+VERTEX_COLORS[i]+'">'+SIC_LABELS[i]+'</div><div class="sic-prob">'+p.toFixed(4)+'</div></div>';
+  });
+  readout.innerHTML = rhtml;
+}
+
+// ── Tetrahedron animation ──
+let tetraAnimId = null;
+function animateTetrahedron() {
+  state.tetraAngle += 0.008;
+  if (state.activeTab === 'view') renderTetrahedron();
+  tetraAnimId = requestAnimationFrame(animateTetrahedron);
+}
+
+// ── Copilot (Centaur Engine) ──
+const COPILOT_KB = {
+  tetrahedron: 'The tetrahedron is the minimum structural system in Universe. 4 vertices, 6 edges, 4 faces. It is the simplest enclosure of space. In QG-IDE, the tetrahedron maps to 4 SIC-POVM measurement outcomes. Each vertex represents a pure quantum state. The geometry is not metaphor -- it is the actual measurement basis.',
+  'sic-povm': 'SIC-POVM (Symmetric Informationally Complete Positive Operator-Valued Measure) uses 4 measurement vectors arranged at tetrahedral angles on the Bloch sphere. Pairwise overlap |<pi|pj>|^2 = 1/3. This gives the most informationally efficient measurement of a qubit state. The 4 outcomes sum to identity.',
+  sicpovm: 'SIC-POVM uses 4 vectors at tetrahedral angles on the Bloch sphere. Each outcome has probability 1/4 for a maximally mixed state. The pairwise overlap is always 1/3. This is the most symmetric way to measure a qubit.',
+  entropy: 'Entropy in QG-IDE measures deviation from the Mark-1 attractor (H=0.35). Entropy = |H - 0.35| / 0.35. GREEN board when entropy < 0.15, YELLOW when 0.15-0.40, RED above 0.40. Low entropy means the system is coherent and near its natural attractor state.',
+  coherence: 'Coherence (H) drifts around the Mark-1 attractor at 0.35. This value comes from the inverse sqrt(3) relationship in tetrahedral geometry. When H is near 0.35, the system is coherent. Drift away increases entropy. The Pulse button recalibrates toward the attractor.',
+  'bloch sphere': 'The Bloch sphere represents all pure and mixed states of a qubit. Pure states live on the surface (radius 1). Mixed states are interior points. The 4 SIC-POVM vectors point to vertices of a regular tetrahedron inscribed in the Bloch sphere. This is the most symmetric measurement basis possible.',
+  bloch: 'The Bloch sphere is a geometric representation of qubit states. The SIC-POVM measurement vectors form a regular tetrahedron inscribed in the sphere. North pole = |0>, South pole = |1>, equator = equal superpositions with varying phase.',
+  geometry: 'In QG-IDE, geometry is primary. The tetrahedron is not a visualization -- it IS the measurement structure. Structure determines performance. Fuller\'s synergetics: the tetrahedron as minimum system, octahedron as dual, the jitterbug transformation between them.',
+  help: 'I can discuss: tetrahedron geometry, SIC-POVM measurement, entropy/coherence, Bloch sphere representation, quantum states, and the geometric foundations of this IDE. What would you like to explore?',
+};
+
+function copilotRespond(query) {
+  const lower = query.toLowerCase();
+  for (var key in COPILOT_KB) {
+    if (lower.includes(key)) return COPILOT_KB[key];
+  }
+  if (lower.includes('what') && lower.includes('can')) return COPILOT_KB['help'];
+  return 'Centaur is thinking... The geometry suggests your question touches on the relationship between measurement and structure. In this system, every observable is grounded in the tetrahedral basis. Could you be more specific about which aspect you want to explore?';
+}
+
+function sendCopilot() {
+  const input = document.getElementById('copilot-input');
+  const msg = input.value.trim();
+  if (!msg) return;
+  input.value = '';
+  state.copilotMsgs.push({ role: 'user', text: msg });
+  var response = copilotRespond(msg);
+  setTimeout(function() {
+    state.copilotMsgs.push({ role: 'bot', text: response });
+    renderCopilot();
+  }, 300 + Math.random() * 400);
+  renderCopilot();
+}
+
+function renderCopilot() {
+  const container = document.getElementById('copilot-msgs');
+  let html = '';
+  state.copilotMsgs.forEach(function(m) {
+    html += '<div class="msg msg-' + m.role + '">' + escHtml(m.text) + '</div>';
+  });
+  container.innerHTML = html;
+  container.scrollTop = container.scrollHeight;
+}
+
+// ── PHX Tab ──
+function phxPulse() {
+  // Recalibrate toward Mark-1
+  const delta = (QG.MARK1 - state.H) * 0.4;
+  state.H += delta;
+  state.entropy = Math.abs(state.H - QG.MARK1) / QG.MARK1;
+  updateEntropyUI();
+  updatePhxUI();
+  const ts = new Date().toLocaleTimeString('en-US', { hour12: false });
+  state.phxLog.push('[' + ts + '] PULSE: Recalibrated H -> ' + state.H.toFixed(4));
+  if (state.phxLog.length > 50) state.phxLog = state.phxLog.slice(-30);
+  renderPhxLog();
+  saveEntropy();
+}
+
+function updatePhxUI() {
+  document.getElementById('phx-entropy').textContent = (state.entropy * 100).toFixed(1) + '%';
+  document.getElementById('phx-entropy').style.color =
+    state.entropy < QG.GREEN_ENTROPY ? 'var(--green)' : state.entropy < QG.YELLOW_ENTROPY ? 'var(--yellow)' : 'var(--red)';
+  document.getElementById('phx-coherence').textContent = state.H.toFixed(4);
+
+  var suggestion = '';
+  if (state.entropy < QG.GREEN_ENTROPY) {
+    suggestion = 'System nominal. Full bandwidth available. Structure determines performance.';
+  } else if (state.entropy < QG.YELLOW_ENTROPY) {
+    suggestion = 'Elevated entropy detected. Consider: reduce context switching, ground in one task, pulse to recalibrate.';
+  } else {
+    suggestion = 'HIGH ENTROPY. Recommend immediate pulse. Narrow scope. Single-thread until green board restored.';
+  }
+  document.getElementById('phx-suggestion').textContent = suggestion;
+}
+
+function renderPhxLog() {
+  const el = document.getElementById('phx-log');
+  let html = '';
+  state.phxLog.forEach(function(line) {
+    html += '<div class="phx-log-line">' + escHtml(line) + '</div>';
+  });
+  el.innerHTML = html;
+  el.scrollTop = el.scrollHeight;
+}
+
+// ── Files Tab ──
+function renderFileTree() {
+  const tree = document.getElementById('file-tree');
+  const sorted = Object.keys(state.files).sort();
+  let html = '';
+  sorted.forEach(function(name) {
+    const active = name === state.activeFile ? ' active' : '';
+    html += '<div class="file-item' + active + '" onclick="openFile(\'' + escAttr(name) + '\')">';
+    html += '<span>' + escHtml(name) + '</span>';
+    html += '<button class="file-del" onclick="event.stopPropagation();deleteFile(\'' + escAttr(name) + '\')">x</button>';
+    html += '</div>';
+  });
+  tree.innerHTML = html;
+}
+
+function openFile(name) {
+  state.activeFile = name;
+  saveActiveFile();
+  loadFileIntoEditor();
+  switchTab('code');
+}
+
+function newFile() {
+  var name = prompt('File name (e.g. utils.ts):');
+  if (!name || !name.trim()) return;
+  name = name.trim();
+  if (state.files[name]) { alert('File already exists.'); return; }
+  state.files[name] = '// ' + name + '\n';
+  saveFiles();
+  openFile(name);
+}
+
+function deleteFile(name) {
+  if (Object.keys(state.files).length <= 1) { alert('Cannot delete the last file.'); return; }
+  if (!confirm('Delete ' + name + '?')) return;
+  delete state.files[name];
+  saveFiles();
+  if (state.activeFile === name) {
+    state.activeFile = Object.keys(state.files)[0];
+    saveActiveFile();
+    loadFileIntoEditor();
+  }
+  renderFileTree();
+}
+
+// ── Entropy UI ──
+function updateEntropyUI() {
+  const pct = Math.min(100, state.entropy * 100 / 0.6);
+  const fill = document.getElementById('entropy-fill');
+  fill.style.width = pct + '%';
+
+  var color, label;
+  if (state.entropy < QG.GREEN_ENTROPY) { color = 'var(--green)'; label = 'GREEN'; }
+  else if (state.entropy < QG.YELLOW_ENTROPY) { color = 'var(--yellow)'; label = 'YELLOW'; }
+  else { color = 'var(--red)'; label = 'RED'; }
+
+  fill.style.background = color;
+  document.getElementById('entropy-val').textContent = (state.entropy * 100).toFixed(1) + '%';
+  var badge = document.getElementById('board-badge');
+  badge.textContent = label;
+  badge.style.background = color;
+  badge.style.color = state.entropy < QG.GREEN_ENTROPY ? '#0a2a20' : state.entropy < QG.YELLOW_ENTROPY ? '#2a2200' : '#fff';
+}
+
+// ── Coherence drift ──
+function coherenceDrift() {
+  state.H += (Math.random() - 0.502) * 0.002;
+  state.H = Math.max(0.05, Math.min(0.95, state.H));
+  state.entropy = Math.abs(state.H - QG.MARK1) / QG.MARK1;
+  updateEntropyUI();
+  if (state.activeTab === 'phx') updatePhxUI();
+}
+
+// ── Helpers ──
+function escHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function escAttr(s) { return s.replace(/'/g, "\\'").replace(/"/g, '&quot;'); }
+
+// ── Boot ──
+function boot() {
+  loadState();
+  loadFileIntoEditor();
+
+  var area = document.getElementById('code-area');
+  area.addEventListener('input', onCodeChange);
+  area.addEventListener('scroll', onCodeScroll);
+  area.addEventListener('keydown', function(e) {
+    if (e.key === 'Tab') {
+      e.preventDefault();
+      var start = this.selectionStart, end = this.selectionEnd;
+      this.value = this.value.substring(0, start) + '  ' + this.value.substring(end);
+      this.selectionStart = this.selectionEnd = start + 2;
+      onCodeChange();
+    }
+  });
+
+  document.getElementById('term-input').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') evalTermInput();
+  });
+  document.getElementById('copilot-input').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') sendCopilot();
+  });
+
+  // Keyboard shortcut: Ctrl+Enter to run
+  document.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); runCode(); }
+  });
+
+  // Boot console
+  if (state.consoleLines.length === 0) {
+    var ts = new Date().toLocaleTimeString('en-US', { hour12: false });
+    var boot = [
+      { text: String.fromCharCode(9472).repeat(40), cls: 'sys', ts: ts },
+      { text: '  QUANTUM GEODESIC IDE v1.0', cls: 'sys', ts: ts },
+      { text: '  Kernel: TETRAHEDRAL', cls: 'sys', ts: ts },
+      { text: '  Physics: FISHER-ESCOLA', cls: 'sys', ts: ts },
+      { text: '  Verification: SIC-POVM', cls: 'sys', ts: ts },
+      { text: String.fromCharCode(9472).repeat(40), cls: 'sys', ts: ts },
+      { text: 'Quantum kernel initialized', cls: 'info', ts: ts },
+      { text: 'File system loaded (' + Object.keys(state.files).length + ' files)', cls: 'info', ts: ts },
+      { text: 'SIC-POVM calibrated: 4 outcomes nominal', cls: 'info', ts: ts },
+      { text: 'Hardware bridge: OFFLINE', cls: 'warn', ts: ts },
+      { text: 'Structure Determines Performance.', cls: 'sys', ts: ts },
+    ];
+    state.consoleLines = boot;
+    saveConsole();
+  }
+  renderConsole();
+  renderCopilot();
+  updateEntropyUI();
+  updatePhxUI();
+  renderPhxLog();
+  renderFileTree();
+
+  // Start animations
+  animateTetrahedron();
+  setInterval(coherenceDrift, 500);
+}
+
+document.addEventListener('DOMContentLoaded', boot);
+</script>
+</body>
+</html>

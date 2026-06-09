@@ -1,0 +1,297 @@
+---
+/**
+  * @p31-layout: Gallery
+  * Mesh Observatory — personal + family cage live JSON, p31.mesh.snapshot/1.0.0 aware.
+  * three@0.170.0 — fleet pin (no WebGL; synergetic manifest)
+  * Styling: p31.universalCanon/1.0.0 (Tailwind theme from design-tokens)
+  */
+import AppShell from '../layouts/AppShell.astro';
+import mesh from '../data/p31-mesh-constants.json';
+import { P31_LARMOR_HZ } from '../lib/dome/p31-dome-constants';
+
+const personalMesh = new URL('/api/mesh', mesh.k4PersonalWorkerUrl).href;
+const personalSnap = new URL('/api/snapshot', mesh.k4PersonalWorkerUrl).href;
+const cageMesh = new URL('/api/mesh', mesh.k4CageWorkerUrl).href;
+const larmorHz = P31_LARMOR_HZ;
+---
+
+<AppShell title="Mesh Observatory | P31" routeName="mesh-observatory">
+  <Fragment slot="head">
+    <link rel="preconnect" href={mesh.k4PersonalWorkerUrl} crossorigin />
+    <link rel="preconnect" href={mesh.k4CageWorkerUrl} crossorigin />
+  </Fragment>
+  <div
+    class="p31-mesh-obs p31-quantum-veil min-h-screen text-p31-cloud pb-[max(2rem,env(safe-area-inset-bottom))] pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))] pt-28 text-base sm:pt-32 md:px-8"
+  >
+    <header class="mx-auto mb-8 max-w-6xl sm:mb-10">
+      <p class="mb-2 font-mono text-xs uppercase tracking-widest text-lavender/90 sm:text-sm">p31.mesh.snapshot — K₄ fleet glass</p>
+      <h1 class="mb-3 text-3xl font-bold tracking-tight text-p31-cloud sm:text-4xl md:text-5xl">Mesh Observatory</h1>
+      <p class="max-w-3xl text-base leading-relaxed text-p31-cloud-80 sm:text-lg">
+        Live personal tetrahedron (<span class="text-teal font-mono text-sm">k4-personal</span>) plus family cage mirror
+        (<span class="text-coral font-mono text-sm">k4-cage</span>). Vitality scores and LOVE breakdown update in your
+        browser — no server render.
+      </p>
+      <p class="mt-4 font-mono text-sm leading-relaxed text-lavender/80">
+        p31.mirror/0.1.0 — <span class="text-cyan/90">as above, so below &lt;3</span>
+      </p>
+    </header>
+
+    <aside
+      class="mx-auto mb-6 max-w-6xl rounded-2xl border border-lavender/25 bg-surface2/40 px-4 py-4 text-sm leading-relaxed text-p31-cloud-90 backdrop-blur-sm sm:px-5 sm:text-base"
+      aria-label="Physics boundary"
+    >
+      <h2 class="mb-2 font-mono text-xs uppercase tracking-widest text-cyan/80 sm:text-sm">p31.meshPhysics/0.1.0</h2>
+      <p class="text-p31-cloud-80 mb-2">
+        Larmor reference <span class="font-mono text-butter font-bold">{larmorHz} Hz</span> — same anchor as the cockpit trim
+        and HUD. This panel is a <em class="text-cyan/90 not-italic">classical</em> vitality readout (graph + KV), not a qubit
+        register. Post-quantum app transport (ML-KEM / ML-DSA) lives in
+        <code class="text-xs text-lavender/90 sm:text-[11px]">@p31/quantum-core</code> and is orthogonal to mesh state.
+      </p>
+      <p id="mo-physics-echo" class="min-h-[1.25em] font-mono text-xs leading-relaxed text-p31-muted sm:text-[11px]">
+        <span class="text-p31-cloud-50">from snapshot: </span><span id="mo-physics-body">(GET /api/snapshot…)</span>
+      </p>
+    </aside>
+
+    <aside
+      class="max-w-6xl mx-auto mb-8 rounded-2xl border border-lavender/20 bg-surface/50 px-5 py-4 text-sm text-p31-cloud-80"
+      aria-label="Above and below"
+    >
+      <h2 class="text-xs font-mono tracking-widest text-lavender/80 uppercase mb-2">As above, so below</h2>
+      <p class="text-p31-cloud-80 mb-2">
+        <span class="text-cyan/90">Above</span> — p31ca.org static shell, HUD (
+        <code class="text-[10px] text-cyan/80">mesh-snapshot.ts</code>
+        ), this page.
+        <span class="text-phosphorus/90">Below</span> — <code class="text-[10px]">k4-personal</code> (KV, DO),
+        <code class="text-[10px]">k4-cage</code> (family topology). Same K₄ face lattice, different scopes.
+      </p>
+      <p id="mo-mirror" class="text-[11px] font-mono text-p31-cloud-50 leading-relaxed min-h-[1.25em]">
+        <span class="text-p31-cloud-30">edge echo: </span><span id="mo-mirror-body">(after GET /api/snapshot…)</span>
+      </p>
+    </aside>
+
+    <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-6 mb-10">
+      <section
+        class="rounded-2xl border border-lavender/30 bg-gradient-to-br from-lavender/10 to-void p-6 shadow-[0_0_60px_rgba(139,124,201,0.1)]"
+        aria-label="Personal K4 mesh"
+      >
+        <h2 class="text-xl font-bold text-p31-cloud mb-1 flex items-center gap-2">
+          Personal K₄
+          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-lavender/20 text-lavender">a · b · c · d</span>
+        </h2>
+        <p class="text-xs text-p31-cloud-50 font-mono mb-4 break-all">{personalMesh}</p>
+        <dl class="grid grid-cols-2 gap-3 text-sm mb-3">
+          <div class="bg-white/5 rounded-lg p-3 border border-white/10 col-span-2">
+            <dt class="text-[10px] uppercase tracking-wider text-p31-cloud-50">Vitality pulse</dt>
+            <dd class="mt-2">
+              <div class="h-2 rounded-full bg-white/10 overflow-hidden">
+                <div
+                  id="mo-vit-bar"
+                  class="h-full bg-gradient-to-r from-lavender to-teal rounded-full transition-[width] duration-500"
+                  style="width: 0%;"
+                >
+                </div>
+              </div>
+            </dd>
+            <dd id="mo-vit" class="text-2xl font-bold text-lavender font-mono mt-1">—</dd>
+          </div>
+          <div class="bg-white/5 rounded-lg p-3 border border-white/10">
+            <dt class="text-[10px] uppercase tracking-wider text-p31-cloud-50">Total L♥</dt>
+            <dd id="mo-tlove" class="text-3xl font-bold text-teal font-mono">—</dd>
+          </div>
+          <div class="bg-white/5 rounded-lg p-3 border border-white/10">
+            <dt class="text-[10px] uppercase tracking-wider text-p31-cloud-50">Online / Edge 24h</dt>
+            <dd id="mo-pers-activity" class="text-sm font-mono text-p31-cloud">—</dd>
+          </div>
+          <div class="bg-white/5 rounded-lg p-3 border border-white/10">
+            <dt class="text-[10px] uppercase tracking-wider text-p31-cloud-50">Vertex L♥</dt>
+            <dd id="mo-vlove" class="text-xl font-mono text-p31-cloud">—</dd>
+          </div>
+          <div class="bg-white/5 rounded-lg p-3 border border-white/10">
+            <dt class="text-[10px] uppercase tracking-wider text-p31-cloud-50">Edge L♥</dt>
+            <dd id="mo-elove" class="text-xl font-mono text-p31-cloud">—</dd>
+          </div>
+          <div class="bg-white/5 rounded-lg p-3 border border-white/10 col-span-2">
+            <dt class="text-[10px] uppercase tracking-wider text-p31-cloud-50">Registry (KV scopes)</dt>
+            <dd id="mo-reg" class="text-xs font-mono text-lavender/90 break-words">—</dd>
+          </div>
+        </dl>
+        <p class="text-[10px] text-p31-cloud-30 font-mono mb-2">parallel fetch · <span id="mo-lat">—</span></p>
+        <p id="mo-snap-status" class="text-xs text-p31-cloud-40 font-mono mb-2 min-h-[1rem]"></p>
+        <div class="flex flex-wrap gap-2 text-[10px]">
+          <a
+            href={personalSnap}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="px-3 py-1.5 rounded-lg bg-lavender/20 text-lavender hover:bg-lavender/30 border border-lavender/30"
+            >GET /api/snapshot</a
+          >
+          <a
+            href={personalMesh}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="px-3 py-1.5 rounded-lg bg-white/5 text-p31-cloud hover:bg-white/10 border border-white/10"
+            >GET /api/mesh</a
+          >
+        </div>
+      </section>
+
+      <section
+        class="rounded-2xl border border-teal/30 bg-gradient-to-br from-teal/10 to-void p-6"
+        aria-label="Family cage mesh"
+      >
+        <h2 class="text-xl font-bold text-p31-cloud mb-1">Family cage</h2>
+        <p class="text-xs text-p31-cloud-50 font-mono mb-4 break-all">{cageMesh}</p>
+        <dl class="grid grid-cols-2 gap-3 text-sm mb-4">
+          <div class="bg-white/5 rounded-lg p-3 border border-white/10 col-span-2">
+            <dt class="text-[10px] uppercase tracking-wider text-p31-cloud-50">Topology</dt>
+            <dd id="mo-cage-scope" class="text-lg font-mono text-teal/90">—</dd>
+          </div>
+          <div class="bg-white/5 rounded-lg p-3 border border-white/10">
+            <dt class="text-[10px] uppercase tracking-wider text-p31-cloud-50">Total L♥</dt>
+            <dd id="mo-cage-love" class="text-2xl font-mono text-teal">—</dd>
+          </div>
+          <div class="bg-white/5 rounded-lg p-3 border border-white/10">
+            <dt class="text-[10px] uppercase tracking-wider text-p31-cloud-50">Online</dt>
+            <dd id="mo-cage-on" class="text-2xl font-mono text-p31-cloud">—</dd>
+          </div>
+        </dl>
+        <a
+          href={cageMesh}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-block text-[10px] px-3 py-1.5 rounded-lg bg-teal/15 text-teal hover:bg-teal/25 border border-teal/25"
+          >Open JSON</a
+        >
+      </section>
+    </div>
+
+    <div class="max-w-6xl mx-auto">
+      <h3 class="text-sm font-mono text-p31-cloud-50 uppercase tracking-widest mb-2">Raw snapshot (personal)</h3>
+      <pre
+        id="mo-raw"
+        class="text-[11px] leading-relaxed p-4 rounded-xl bg-black/50 border border-white/10 overflow-x-auto text-phosphorus/90 font-mono min-h-[120px]"
+      >loading…</pre>
+    </div>
+  </div>
+
+  <script is:inline define:vars={{ personalMesh, personalSnap, cageMesh }}>
+    function load() {
+      const el = (id) => document.getElementById(id);
+      const set = (id, t) => {
+        const n = el(id);
+        if (n) n.textContent = t;
+      };
+      const t0 = performance.now();
+      const T = 8000;
+
+      const snapFetch = fetch(personalSnap, { signal: AbortSignal.timeout(T) })
+        .then((r) => (r.ok ? r.json() : Promise.reject(new Error("snap " + r.status))));
+
+      const meshFetch = fetch(personalMesh, { signal: AbortSignal.timeout(T) }).then((r) =>
+        r.ok ? r.json() : Promise.reject(new Error("mesh " + r.status))
+      );
+
+      const cageFetch = fetch(cageMesh, { signal: AbortSignal.timeout(T) }).then((r) =>
+        r.ok ? r.json() : Promise.reject(new Error("cage " + r.status))
+      );
+
+      Promise.allSettled([snapFetch, meshFetch, cageFetch]).then((results) => {
+        set("mo-lat", Math.max(0, Math.round(performance.now() - t0)) + "ms");
+
+        let j = null;
+        if (results[0].status === "fulfilled") {
+          j = results[0].value;
+        } else if (results[1].status === "fulfilled") {
+          j = { mesh: results[1].value, schema: "fallback:GET /api/mesh" };
+          const st = el("mo-snap-status");
+          if (st) st.textContent = "GET /api/snapshot unavailable — mesh body only (deploy k4-personal)";
+        } else {
+          set("mo-snap-status", "personal mesh unreachable");
+          const raw = el("mo-raw");
+          if (raw) raw.textContent = String(results[1].reason || results[0].reason);
+        }
+
+        if (j) {
+          const mesh = j.mesh || j;
+          const score =
+            mesh.vitality && mesh.vitality.score != null ? Number(mesh.vitality.score) : null;
+          set("mo-vit", score != null && !isNaN(score) ? String(score) : "—");
+          const bar = el("mo-vit-bar");
+          if (bar && score != null && !isNaN(score)) {
+            bar.style.width = Math.min(100, Math.max(0, score)) + "%";
+          }
+          set("mo-tlove", mesh.totalLove != null ? String(mesh.totalLove) : "—");
+          set("mo-vlove", mesh.love && mesh.love.vertices != null ? String(mesh.love.vertices) : "—");
+          set("mo-elove", mesh.love && mesh.love.edges != null ? String(mesh.love.edges) : "—");
+          const oc = mesh.onlineCount;
+          const e24 = mesh.edgeActivity24h;
+          set(
+            "mo-pers-activity",
+            (oc != null ? "on " + oc + "/4" : "—") + " · " + (e24 != null ? e24 + "/6 edges 24h" : "—")
+          );
+          const reg = mesh.registry;
+          if (reg && reg.error) {
+            set("mo-reg", "registry: " + reg.error);
+          } else if (reg && reg.scopes) {
+            set("mo-reg", (reg.count != null ? reg.count + " · " : "") + reg.scopes.join(", "));
+          } else {
+            set("mo-reg", "—");
+          }
+          const st = el("mo-snap-status");
+          if (st && j.schema === "p31.mesh.snapshot/1.0.0" && j.at) {
+            st.textContent = "p31.mesh.snapshot/1.0.0 · " + j.at;
+          } else if (st && !st.textContent) {
+            st.textContent = j.liveness && j.liveness.ok ? "liveness ok" : "";
+          }
+          const raw = el("mo-raw");
+          if (raw) raw.textContent = JSON.stringify(j, null, 2);
+          const mb = el("mo-mirror-body");
+          if (mb) {
+            const mir = j.mirror;
+            if (mir && mir.schema === "p31.mirror/0.1.0") {
+              mb.textContent = [mir.asBelow, mir.familyBelow, mir.tag]
+                .filter(Boolean)
+                .join(" — ");
+            } else {
+              mb.textContent =
+                "deploy k4-personal with p31.mirror in /api/snapshot for full echo";
+            }
+          }
+          const pb = el("mo-physics-body");
+          if (pb) {
+            const phys = j.physics;
+            if (phys && phys.schema === "p31.meshPhysics/0.1.0" && phys.note) {
+              pb.textContent = phys.note;
+            } else {
+              pb.textContent = "p31.meshPhysics/0.1.0 not in payload — refresh after edge deploy";
+            }
+          }
+        }
+
+        if (results[2].status === "fulfilled") {
+          const cage = results[2].value;
+          set(
+            "mo-cage-scope",
+            cage.scope != null ? String(cage.scope) : cage.topology != null ? String(cage.topology) : "—"
+          );
+          set("mo-cage-love", cage.totalLove != null ? String(cage.totalLove) : "—");
+          set("mo-cage-on", cage.onlineCount != null ? String(cage.onlineCount) : "—");
+        } else {
+          set("mo-cage-scope", "unreachable");
+        }
+      });
+    }
+    load();
+  </script>
+
+  <style is:global>
+    .p31-quantum-veil {
+      position: relative;
+      background-color: rgb(15 17 21);
+      background-image:
+        radial-gradient(ellipse 80% 50% at 18% 0%, rgba(139, 124, 201, 0.14) 0%, transparent 52%),
+        radial-gradient(ellipse 72% 45% at 100% 25%, rgba(37, 137, 125, 0.11) 0%, transparent 55%),
+        radial-gradient(ellipse 55% 55% at 50% 100%, rgba(77, 184, 168, 0.07) 0%, transparent 50%);
+    }
+  </style>
+</AppShell>

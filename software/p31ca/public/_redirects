@@ -1,0 +1,223 @@
+# Legacy /app/* paths — updated to bypass .html double-hop (Phase 2)
+/app/ede    /ops#ede      302
+/app/buffer /ops#buffer   302
+/app/larmor /dome#larmor  302
+/dome.html  /dome         301
+
+# Retired static legacy hub; canonical home is / (Astro + hub-landing)
+/legacy-mvp-hub.html  /  301
+/legacy-mvp-hub       /  301
+
+# /integrations/ — Astro static folder; short path without trailing slash
+/integrations  /integrations/  301
+
+# Short-path aliases — all single-hop to Astro routes; no .html targets
+# /passport — Astro serves /passport directly; rule omitted (would loop)
+/onboard       /ops#onboard        301
+/launch        /#launch            301
+/together      /#welcome           301
+/start         /connect#mesh       301
+/branding      /p31-canon-demo     301
+/kofi-forge    /ops#forge          301
+/mesh          /connect            301
+/why           /research#delta     301
+/oracle        /dome#oracle        301
+/doc-suite     /ops#docs           301
+/centaur       /ops#centaur        301
+/hiring        /ops                301
+
+# Trust & transparency layer (CWP-P31-PEER-COMP-2026-05 Phase 1)
+/manifesto          /phosphorus    301
+/code-of-conduct    /              301
+/coc                /              301
+/roadmap            /research      301
+/status             /god           301
+/financials         /grants        301
+/security-policy    /              301
+
+# Independent verification layer (CWP-P31-PEER-COMP-2026-05 Phase 2)
+/telemetry-policy    /             301
+/transparency-report /#transparency 301
+
+# Vibcoding tetra-hub (CWP-P31-VIBE-2026-06 Phase 1)
+/vibe          /god              301
+/vibcoding     /god              301
+/super-centaur /ops#centaur      301
+/cars          /connect#social   301
+/canon         /p31-canon-demo   301
+/tokens        /p31-canon-demo   301
+/dev           /god              301
+/build         /                 301
+/messages      /messaging-hub    301
+/comms         /messaging-hub    301
+/contracts     /ops              301
+/composer      /ops              301
+/family-pack   /connect#family   301
+/oss           /research         301
+/security      /                 301
+/fleet         /god              301
+/agents        /ops#agents       301
+/demos         /demo-labs        301
+/visuals       /demo-labs        301
+/demos-public  /demo-labs        301
+/glass         /dome             301
+/lab           /ops              301
+/lab2          /ops              301
+/slicer        /ops              301
+/journey       /research         301
+/growth        /garden#growth    301
+/kids          /garden#kids      301
+/oqe           /dome#d20         301
+/d20           /dome#d20         301
+/quantum-clock /dome#clock       301
+/deck          /dome#deck        301
+
+# Education — canonical trailing slash (static tree under public/education/)
+/education  /education/  301
+/learn      /education/  301
+/edu        /education/  301
+
+# Spaceship Earth legacy paths → PWA (public/spaceship-earth/)
+/spaceship-earth.html        /spaceship-earth/  301
+/spaceship-earth-about.html  /spaceship-earth/  301
+
+# Node Zero about page → Astro route
+/node-zero-about.html  /node-zero  301
+
+# =================================================================
+# Phase 2: Surface Consolidation — 105 HTML surfaces → Astro routes
+# Scaffold date: 2026-05-04
+# public/*.html deleted — _redirects is the single authority for all
+# legacy HTML URLs going forward.
+# =================================================================
+
+# Route: / (home)
+/donate.html                     /#donate         301
+/ecosystem.html                  /#ecosystem      301
+/fleet-portal.html               /#fleet          301
+/initial-build.html              /                301
+/launch-readiness.html           /#launch         301
+/launch.html                     /#launch         301
+/maintenance.html                /                301
+/transparency.html               /#transparency   301
+/welcome.html                    /#welcome        301
+
+# Route: /dome
+/attractor-sim.html              /dome#attractor-sim  301
+/cockpit.html                    /dome                301
+/d20-omnibus-icosa.html          /dome#d20            301
+/fluid.html                      /dome#fluid          301
+/geodesic-about.html             /dome#geodesic       301
+/geodesic.html                   /dome#geodesic       301
+/glass-box-widget.html           /dome#glass          301
+/glass-box.html                  /dome#glass          301
+/larmor.html                     /dome#larmor         301
+/lattice.html                    /dome#lattice        301
+/looper.html                     /dome#looper         301
+/magic-crystal.html              /dome#oracle         301
+/oqe-icosa.html                  /dome#d20            301
+/orbits.html                     /dome#orbits         301
+/spatial.html                    /dome#spatial        301
+
+# Route: /research
+/alchemy-about.html              /research#alchemy    301
+/alchemy.html                    /research#alchemy    301
+/book-about.html                 /research#book       301
+/book.html                       /research#book       301
+/delta-language.html             /research#delta      301
+/delta.html                      /research#delta      301
+/economy.html                    /research#economy    301
+/education-about.html            /research#education  301
+/phos.html                       /research#phos       301
+/psych-e2e-live.html             /research#psych      301
+/resonance-about.html            /research#resonance  301
+/resonance-engine.html           /research#resonance  301
+/resonance.html                  /research#resonance  301
+/sovereign-about.html            /research#sovereign  301
+/sovereign.html                  /research#sovereign  301
+
+# Route: /connect
+/bonding-about.html              /connect#bonding     301
+/bonding.html                    /connect#bonding     301
+/bridge-about.html               /connect#bridge      301
+/bridge.html                     /connect#bridge      301
+/connect-about.html              /connect             301
+/connect.html                    /connect             301
+/contact.html                    /connect#contact     301
+/echo-about.html                 /connect#echo        301
+/echo.html                       /connect#echo        301
+/family.html                     /connect#family      301
+/guardian.html                   /connect#guardian    301
+/mesh-start.html                 /connect#mesh        301
+/poets-about.html                /connect#poets       301
+/poets.html                      /connect#poets       301
+/quantum-family.html             /connect#family      301
+/signal-about.html               /connect#signal      301
+/signal.html                     /connect#signal      301
+/social-molecules-about.html     /connect#social      301
+/social-molecules.html           /connect#social      301
+/tactile-about.html              /connect#tactile     301
+/tactile.html                    /connect#tactile     301
+/tether-about.html               /connect#tether      301
+/tether.html                     /connect#tether      301
+
+# Route: /ops
+/agents.html                     /ops#agents              301
+/appointment-tracker-about.html  /ops#appointment-tracker 301
+/attractor-about.html            /ops#attractor           301
+/attractor.html                  /ops#attractor           301
+/axiom-about.html                /ops#axiom               301
+/axiom.html                      /ops#axiom               301
+/budget-tracker-about.html       /ops#budget-tracker      301
+/buffer-about.html               /ops#buffer              301
+/buffer.html                     /ops#buffer              301
+/builder.html                    /ops#builder             301
+/contact-locker-about.html       /ops#contact-locker      301
+/content-forge-about.html        /ops#content-forge       301
+/content-forge.html              /ops#content-forge       301
+/cortex-about.html               /ops#cortex              301
+/cortex.html                     /ops#cortex              301
+/discord-bot-about.html          /ops#discord             301
+/discord-bot.html                /ops#discord             301
+/ede-about.html                  /ops#ede                 301
+/ede.html                        /ops#ede                 301
+/editor.html                     /ops#editor              301
+/fleet-agents.html               /ops#agents              301
+/forge-about.html                /ops#forge               301
+/forge.html                      /ops#forge               301
+/integrations-about.html         /ops#integrations        301
+/legal-evidence-about.html       /ops#legal-evidence      301
+/medical-tracker-about.html      /ops#medical-tracker     301
+/observatory.html                /ops#observatory         301
+/open-doc-suite.html             /ops#docs                301
+/p31-super-centaur-starter.html  /ops#centaur             301
+/planetary-onboard-about.html    /ops#onboard             301
+/planetary-onboard.html          /ops#onboard             301
+/prism-about.html                /ops#prism               301
+/prism.html                      /ops#prism               301
+/sleep-tracker-about.html        /ops#sleep-tracker       301
+/somatic-anchor-about.html       /ops#somatic             301
+/style-generator.html            /ops#style               301
+/super-centaur-about.html        /ops#centaur             301
+/switches.html                   /ops#switches            301
+/theme-showcase.html             /ops#theme               301
+/vault.html                      /ops#vault               301
+
+# Route: /passport
+/cogpass-bridge.html             /passport#bridge         301
+/passport-generator.html         /passport                301
+
+# G.O.D. Operator shell — moved from /ops/ to /god (route collision resolved Phase 2)
+/ops/  /god  301
+
+# @generated begin worker-spa-launch — do not edit by hand; npm run sync:worker-spa-launch
+/appointment-tracker  https://p31-appointment-tracker.trimtab-signal.workers.dev  302
+/love-ledger  https://p31-love-ledger.trimtab-signal.workers.dev  302
+/medical-tracker  https://p31-medical-tracker.trimtab-signal.workers.dev  302
+/somatic-anchor  https://p31-somatic-anchor.trimtab-signal.workers.dev  302
+/legal-evidence  https://p31-legal-evidence.trimtab-signal.workers.dev  302
+/contact-locker  https://p31-contact-locker.trimtab-signal.workers.dev  302
+/sleep-tracker  https://p31-sleep-tracker.trimtab-signal.workers.dev  302
+/budget-tracker  https://p31-budget-tracker.trimtab-signal.workers.dev  302
+/genesis-gate  https://genesis-gate.trimtab-signal.workers.dev  302
+# @generated end worker-spa-launch

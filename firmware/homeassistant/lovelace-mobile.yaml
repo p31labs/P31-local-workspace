@@ -1,0 +1,231 @@
+# P31 Mobile Lovelace Dashboard — HA Companion App
+# Import: HA UI → Dashboard → ⋮ → Edit → Raw configuration editor → paste
+# Or: config/dashboards/p31-mobile.yaml (if using YAML mode)
+#
+# Requires:
+#   - HACS: mushroom-cards, mini-graph-card (for nice gauges)
+#   - Otherwise falls back to standard HA cards noted below
+
+title: P31 Sovereign
+views:
+
+  # ── View 1: Health command center ─────────────────────────────────────
+  - title: Health
+    icon: mdi:pulse
+    path: health
+    cards:
+
+      # Q-Factor score (mushroom chip if available, else gauge)
+      - type: custom:mushroom-template-card
+        primary: "Q-FACTOR"
+        secondary: "{{ states('sensor.p31_qscore') | default('—') }} · {{ states('sensor.p31_quadrant') | default('') }}"
+        icon: mdi:brain
+        icon_color: >
+          {% set q = states('sensor.p31_qscore') | float(0) %}
+          {% if q >= 70 %}green{% elif q >= 45 %}yellow{% else %}red{% endif %}
+        tap_action:
+          action: url
+          url_path: https://p31ca.org/qfactor/
+        # Fallback: replace with type: gauge if mushroom not installed
+        # type: gauge
+        # entity: sensor.p31_qscore
+        # min: 0
+        # max: 100
+        # severity:
+        #   green: 65
+        #   yellow: 35
+        #   red: 0
+
+      # Calcium level — critical safety card
+      - type: custom:mushroom-template-card
+        primary: "CALCIUM"
+        secondary: >
+          {{ states('sensor.fhir_calcium_mg_dl') | default('—') }} mg/dL ·
+          {% set ca = states('sensor.fhir_calcium_mg_dl') | float(0) %}
+          {% if ca < 7.8 %}CRITICAL{% elif ca < 8.0 %}WARNING{% elif ca > 0 %}NORMAL{% else %}UNKNOWN{% endif %}
+        icon: mdi:water
+        icon_color: >
+          {% set ca = states('sensor.fhir_calcium_mg_dl') | float(0) %}
+          {% if ca < 7.8 %}red{% elif ca < 8.0 %}orange{% elif ca > 0 %}green{% else %}grey{% endif %}
+        badge_icon: >
+          {% set ca = states('sensor.fhir_calcium_mg_dl') | float(0) %}
+          {% if ca < 7.8 %}mdi:alert-circle{% else %}{% endif %}
+        badge_color: red
+
+      # Spoon economy with +/- tap actions
+      - type: custom:mushroom-number-card
+        entity: input_number.p31_spoon_balance
+        name: SPOON BALANCE
+        icon: mdi:battery-heart
+        display_mode: buttons
+        # Fallback standard card:
+        # type: entities
+        # entities:
+        #   - entity: input_number.p31_spoon_balance
+        #     name: Spoon Balance
+
+      # Q-Factor history mini graph (last 12 hours)
+      - type: custom:mini-graph-card
+        name: Q-Factor 12h
+        entity: sensor.p31_qscore
+        hours_to_show: 12
+        points_per_hour: 4
+        line_color: "#5DCAA5"
+        fill_color: "rgba(93,202,165,.1)"
+        show:
+          labels: true
+          points: false
+          legend: false
+        # Fallback: history-graph card
+        # type: history-graph
+        # entities:
+        #   - entity: sensor.p31_qscore
+        # hours_to_show: 12
+
+      # HA automation state
+      - type: entities
+        title: Automations
+        entities:
+          - entity: automation.mesh_lora_matrix_relay
+            name: LoRa → Matrix
+          - entity: automation.bangle_hrv_q_factor_update
+            name: HRV → Q-Factor
+          - entity: automation.mesh_spoon_level_command
+            name: Spoon via LoRa
+          - entity: automation.mesh_emergency_keyword_alert
+            name: Emergency Alert
+
+  # ── View 2: Communications (Matrix status) ────────────────────────────
+  - title: Comms
+    icon: mdi:message-lock
+    path: comms
+    cards:
+      - type: markdown
+        content: |
+          ## Matrix Homeserver
+          Status: {{ 'Live' if is_state('binary_sensor.matrix_homeserver', 'on') else '⚠ Not yet deployed' }}
+
+          **Next step:** Provision Hetzner VPS → `bash matrix/scripts/deploy.sh`
+
+      - type: entities
+        title: Bridge Status
+        entities:
+          - entity: binary_sensor.matrix_bridge_gmessages
+            name: SMS/RCS Bridge
+          - entity: binary_sensor.matrix_bridge_whatsapp
+            name: WhatsApp Bridge
+          - entity: binary_sensor.matrix_bridge_signal
+            name: Signal Bridge
+          - entity: binary_sensor.matrix_bridge_postmoogle
+            name: Court Email Bridge
+
+      - type: weblink
+        name: Open Element
+        url: https://app.element.io/#/login
+        icon: mdi:matrix
+
+  # ── View 3: Mesh network ───────────────────────────────────────────────
+  - title: Mesh
+    icon: mdi:access-point-network
+    path: mesh
+    cards:
+      - type: entities
+        title: Meshtastic Nodes
+        entities:
+          - entity: sensor.meshtastic_node_count
+            name: Active Nodes
+          - entity: sensor.meshtastic_last_message
+            name: Last Message
+          - entity: sensor.meshtastic_last_snr
+            name: Signal (SNR)
+
+      - type: markdown
+        content: |
+          ## P31_FAMILY Channel
+          **Config:** `firmware/meshtastic/p31-mesh-config.yaml`
+          **iOS:** Install Meshtastic → Channels → + → scan QR
+
+          **Quick commands via LoRa:**
+          - `SPOON 3` — set spoon balance
+          - `EMERGENCY` — triggers urgent HA notification
+          - `SOS` — triggers urgent HA notification
+
+  # ── View 4: Quick actions ──────────────────────────────────────────────
+  - title: Actions
+    icon: mdi:lightning-bolt
+    path: actions
+    cards:
+      - type: grid
+        columns: 2
+        cards:
+          - type: button
+            name: -1 Spoon
+            icon: mdi:minus-circle
+            tap_action:
+              action: call-service
+              service: input_number.decrement
+              service_data:
+                entity_id: input_number.p31_spoon_balance
+            hold_action:
+              action: call-service
+              service: rest_command.qfactor_event
+              service_data:
+                type: spoon
+                value: "{{ states('input_number.p31_spoon_balance') | int }}"
+
+          - type: button
+            name: +1 Spoon
+            icon: mdi:plus-circle
+            tap_action:
+              action: call-service
+              service: input_number.increment
+              service_data:
+                entity_id: input_number.p31_spoon_balance
+
+          - type: button
+            name: Check Calcium
+            icon: mdi:flask
+            tap_action:
+              action: call-service
+              service: rest_command.fhir_check
+              service_data: {}
+
+          - type: button
+            name: Sync Q-Factor
+            icon: mdi:refresh
+            tap_action:
+              action: url
+              url_path: https://p31ca.org/qfactor/?action=sync
+
+          - type: button
+            name: BONDING Game
+            icon: mdi:gamepad-variant
+            tap_action:
+              action: url
+              url_path: https://bonding.p31ca.org
+
+          - type: button
+            name: Court Alerts
+            icon: mdi:gavel
+            tap_action:
+              action: url
+              url_path: https://app.element.io/#/room/#court-alerts:p31ca.org
+
+---
+# Required HA helpers (add via HA UI → Settings → Helpers):
+# input_number.p31_spoon_balance  (min:0, max:10, step:1, initial:5)
+
+# Required REST commands (add to configuration.yaml):
+# rest_command:
+#   fhir_check:
+#     url: "https://api.p31ca.org/fhir/check"
+#     method: POST
+#     headers:
+#       Authorization: "Bearer {{ states('input_text.p31_api_secret') }}"
+#   qfactor_event:
+#     url: "https://api.p31ca.org/qfactor/event"
+#     method: POST
+#     headers:
+#       Authorization: "Bearer {{ states('input_text.p31_api_secret') }}"
+#       Content-Type: "application/json"
+#     payload: '{"userId":"will","source":"ha","type":"{{ type }}","value":{{ value | float }}}'

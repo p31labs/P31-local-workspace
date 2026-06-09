@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub" style="color-scheme: dark;">
+<head>
+    <meta charset="UTF-8">
+<script>(function(){var r=document.documentElement;if(/[?&]alive=1(?:&|$)/.test(location.search))return;r.classList.add("p31-gray-rock");function wake(){r.classList.remove("p31-gray-rock")}document.addEventListener("pointerdown",wake,{once:true,capture:true});document.addEventListener("keydown",wake,{once:true,capture:true})})();</script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#0f1115">
+    <title>K4 MARKET | Tetrahedron Market Tomography | P31 Labs</title>
+    <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/p31-style.css">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{background:#0f1115;color:#d8d6d0;font-family:'Atkinson Hyperlegible',sans-serif;height:100vh;display:flex;flex-direction:column;overflow:hidden}
+        header{padding:10px 20px;background:rgba(15,17,21,0.95);border-bottom:1px solid rgba(255,255,255,0.05);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;z-index:10}
+        .logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:#d8d6d0;font-weight:700;font-size:14px}
+        a.back{color:rgba(216,214,208,0.4);font-family:'JetBrains Mono',monospace;font-size:12px;text-decoration:none}
+        a.back:hover{color:#d8d6d0}
+        .toolbar{display:flex;gap:10px;align-items:center;padding:10px 20px;background:rgba(22,25,32,0.8);border-bottom:1px solid rgba(255,255,255,0.04);flex-shrink:0;flex-wrap:wrap}
+        button{font-family:'JetBrains Mono',monospace;font-size:11px;padding:6px 12px;border-radius:6px;cursor:pointer;border:1px solid rgba(255,255,255,0.1);background:rgba(22,25,32,0.8);color:rgba(216,214,208,0.6);transition:all 0.2s}
+        button:hover{border-color:#4db8a8;color:#4db8a8}
+        button.active{border-color:#4db8a8;color:#4db8a8;background:rgba(77,184,168,0.1)}
+        #mount{flex:1;position:relative}
+        .price-panel{position:absolute;top:12px;left:12px;background:rgba(15,17,21,0.88);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:14px;font-family:'JetBrains Mono',monospace;font-size:11px;z-index:5;min-width:160px}
+        .price-title{font-size:10px;color:rgba(216,214,208,0.3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px}
+        .price-row{display:flex;justify-content:space-between;gap:12px;margin-bottom:6px;align-items:center}
+        .price-sym{font-weight:700}
+        .price-val{font-size:13px}
+        .up{color:#3ba372}.dn{color:#cc6247}.flat{color:#4db8a8}
+        .edge-panel{position:absolute;top:12px;right:12px;background:rgba(15,17,21,0.88);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:14px;font-family:'JetBrains Mono',monospace;font-size:11px;z-index:5;min-width:160px}
+        .hud{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(216,214,208,0.25);pointer-events:none}
+    </style>
+<meta property="og:type" content="website">
+<meta property="og:title" content="K4 MARKET | Tetrahedron Market Tomography">
+<meta property="og:description" content="K4 MARKET | Tetrahedron Market Tomography">
+<meta property="og:url" content="https://p31ca.org/k4market.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="K4 MARKET | Tetrahedron Market Tomography">
+<meta name="twitter:description" content="K4 MARKET | Tetrahedron Market Tomography">
+<link rel="canonical" href="https://p31ca.org/k4market.html">
+</head>
+<body>
+<a href="#main" style="position:absolute;left:-9999px;top:0;padding:0.5rem 1rem;background:var(--p31-void);color:var(--p31-teal);font-size:0.875rem;z-index:9999;border-radius:0 0 4px 4px;text-decoration:none" onfocus="this.style.left='0'" onblur="this.style.left='-9999px'">Skip to main content</a>
+<header>
+    <a href="/" class="logo">
+        <svg width="22" height="22" viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#25897d"/><circle cx="390" cy="120" r="48" fill="#cc6247"/><text x="256" y="340" font-family="system-ui" font-weight="900" font-size="220" fill="#d8d6d0" text-anchor="middle">P31</text><rect x="156" y="380" width="200" height="16" rx="8" fill="#cda852"/></svg>
+        K4 MARKET
+    </a>
+    <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;justify-content:flex-end">
+        <a href="/connect.html" class="back">Connect</a>
+        <a href="/delta.html" class="back">Delta</a>
+        <a href="/" class="back">← Hub</a>
+    </div>
+</header>
+
+<p id="k4market-disclaimer" style="font-size:10px;color:rgba(216,214,208,0.5);padding:6px 20px 0;margin:0;font-family:'JetBrains Mono',monospace;border-bottom:1px solid rgba(255,255,255,0.04)">Educational visualization only. Not financial advice.</p>
+<div class="toolbar">
+    <button class="active" id="btn-live" onclick="toggleLive(this)">⏺ Live Data</button>
+    <button id="btn-vol" onclick="toggleVolume(this)">Volume Pulses</button>
+    <button id="btn-flow" onclick="toggleFlow(this)">Edge Flow</button>
+    <button onclick="randomizeData()">Randomize</button>
+    <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(216,214,208,0.3)">K₄ maps OHLCV → tetrahedral coordinate space</span>
+</div>
+
+<div id="mount">
+    <div class="price-panel">
+        <div class="price-title">K4 Nodes</div>
+        <div class="price-row"><span class="price-sym" style="color:#4db8a8">O</span><span class="price-val up" id="p-open">—</span></div>
+        <div class="price-row"><span class="price-sym" style="color:#3ba372">H</span><span class="price-val up" id="p-high">—</span></div>
+        <div class="price-row"><span class="price-sym" style="color:#cc6247">L</span><span class="price-val dn" id="p-low">—</span></div>
+        <div class="price-row"><span class="price-sym" style="color:#cda852">C</span><span class="price-val" id="p-close">—</span></div>
+        <div style="border-top:1px solid rgba(255,255,255,0.05);margin-top:8px;padding-top:8px">
+            <div class="price-row"><span style="color:rgba(216,214,208,0.3)">Vol</span><span class="price-val flat" id="p-vol">—</span></div>
+        </div>
+    </div>
+    <div class="edge-panel">
+        <div class="price-title">K4 Edges (6)</div>
+        <div id="edge-list"></div>
+        <div style="margin-top:8px;font-size:9px;color:rgba(216,214,208,0.2);line-height:1.5">Edge weight = price spread<br>Flow direction = momentum</div>
+    </div>
+    <div class="hud">Drag to orbit · Scroll to zoom · K₄ maps O-H-L-C to vertices</div>
+</div>
+
+<script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+const mount = document.getElementById('mount');
+const renderer = new THREE.WebGLRenderer({antialias:true});
+renderer.setPixelRatio(window.devicePixelRatio);
+renderer.setClearColor(0x060810,1);
+mount.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(50,1,0.1,100);
+camera.position.set(0,3,8);
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping=true;controls.dampingFactor=0.06;
+
+scene.add(new THREE.AmbientLight(0x102040,3));
+const d1=new THREE.DirectionalLight(0x4db8a8,2);d1.position.set(5,8,3);scene.add(d1);
+const d2=new THREE.DirectionalLight(0xcda852,1);d2.position.set(-5,-2,5);scene.add(d2);
+
+// Stars
+const sg=new THREE.BufferGeometry();
+const sp=[];for(let i=0;i<1200;i++){sp.push((Math.random()-0.5)*60,(Math.random()-0.5)*60,(Math.random()-0.5)*60);}
+sg.setAttribute('position',new THREE.BufferAttribute(new Float32Array(sp),3));
+scene.add(new THREE.Points(sg,new THREE.PointsMaterial({color:0x3a4060,size:0.06})));
+
+// K4 vertices: OHLC
+const h=Math.sqrt(2/3)*2.5;
+const VERTS=[
+    new THREE.Vector3(0,h,0),        // Open (top)
+    new THREE.Vector3(-1.5,-h*0.5,0), // High
+    new THREE.Vector3(0.75,-h*0.5,1.3),// Low
+    new THREE.Vector3(0.75,-h*0.5,-1.3),// Close
+];
+const VERT_COLORS=[0x4db8a8,0x3ba372,0xcc6247,0xcda852];
+const VERT_LABELS=['O','H','L','C'];
+
+let ohlcv={o:100,h:108,l:96,c:103,v:2.4e6};
+let liveMode=true,volPulse=false,edgeFlow=true;
+let pulseT=0;
+
+// Node spheres
+const nodes=VERTS.map((v,i)=>{
+    const s=new THREE.Mesh(new THREE.SphereGeometry(0.22,20,20),new THREE.MeshPhongMaterial({color:VERT_COLORS[i],emissive:VERT_COLORS[i],emissiveIntensity:0.3}));
+    s.position.copy(v);scene.add(s);return s;
+});
+
+// Edges
+const EDGE_PAIRS=[[0,1],[0,2],[0,3],[1,2],[1,3],[2,3]];
+const edgeLines=[];
+const flowSpheres=[];
+
+EDGE_PAIRS.forEach(([a,b])=>{
+    const points=[VERTS[a].clone(),VERTS[b].clone()];
+    const geo=new THREE.BufferGeometry().setFromPoints(points);
+    const mat=new THREE.LineBasicMaterial({color:0x25897d,transparent:true,opacity:0.4,linewidth:2});
+    const line=new THREE.Line(geo,mat);
+    scene.add(line);edgeLines.push(line);
+
+    // Flow particle on each edge
+    const fsph=new THREE.Mesh(new THREE.SphereGeometry(0.07,8,8),new THREE.MeshBasicMaterial({color:0x4db8a8}));
+    scene.add(fsph);flowSpheres.push({mesh:fsph,a:VERTS[a],b:VERTS[b],t:Math.random()});
+});
+
+// Tetra face fill
+const faceGeo=new THREE.TetrahedronGeometry(2.5*0.866);
+const faceMat=new THREE.MeshPhongMaterial({color:0x4db8a8,transparent:true,opacity:0.05,side:THREE.DoubleSide});
+scene.add(new THREE.Mesh(faceGeo,faceMat));
+
+function updateDisplay(){
+    const {o,h,l,c,v}=ohlcv;
+    document.getElementById('p-open').textContent=o.toFixed(2);
+    document.getElementById('p-high').textContent=h.toFixed(2);
+    document.getElementById('p-low').textContent=l.toFixed(2);
+    const closeEl=document.getElementById('p-close');
+    closeEl.textContent=c.toFixed(2);
+    closeEl.className='price-val '+(c>o?'up':c<o?'dn':'flat');
+    document.getElementById('p-vol').textContent=(v/1e6).toFixed(2)+'M';
+
+    // Scale nodes by price
+    const prices=[o,h,l,c];
+    const maxP=Math.max(...prices),minP=Math.min(...prices);
+    nodes.forEach((n,i)=>{
+        const scale=0.8+0.8*(prices[i]-minP)/(maxP-minP+0.01);
+        n.scale.setScalar(scale);
+        n.material.emissiveIntensity=0.2+scale*0.3;
+    });
+
+    // Edge data
+    const edgeData=EDGE_PAIRS.map(([a,b])=>{
+        const spread=Math.abs(prices[a]-prices[b]);
+        return {a:VERT_LABELS[a],b:VERT_LABELS[b],spread};
+    });
+    document.getElementById('edge-list').innerHTML=edgeData.map(e=>`<div class="price-row"><span style="color:rgba(216,214,208,0.4)">${e.a}-${e.b}</span><span style="color:#4db8a8">${e.spread.toFixed(2)}</span></div>`).join('');
+
+    // Edge opacity = spread
+    edgeLines.forEach((line,i)=>{
+        const {a,b}=EDGE_PAIRS[i];
+        const spread=Math.abs(prices[a]-prices[b])/(maxP-minP+0.01);
+        line.material.opacity=0.15+spread*0.7;
+    });
+}
+
+function randomizeData(){
+    const base=ohlcv.c||100;
+    const o=base*(0.99+Math.random()*0.02);
+    const move=(Math.random()-0.45)*base*0.05;
+    const h=o+Math.abs(move)*1.2;
+    const l=o-Math.abs(move)*0.8;
+    const c=o+move;
+    ohlcv={o,h,l:Math.min(l,c-0.5),c,v:Math.random()*5e6+1e6};
+    updateDisplay();
+}
+window.randomizeData=randomizeData;
+
+let liveInterval;
+window.toggleLive=function(btn){
+    liveMode=!liveMode;
+    btn.classList.toggle('active',liveMode);
+    if(liveMode){liveInterval=setInterval(()=>randomizeData(),1500);}
+    else{clearInterval(liveInterval);}
+};
+window.toggleVolume=function(btn){volPulse=!volPulse;btn.classList.toggle('active',volPulse);};
+window.toggleFlow=function(btn){edgeFlow=!edgeFlow;btn.classList.toggle('active',edgeFlow);flowSpheres.forEach(fs=>fs.mesh.visible=edgeFlow);};
+
+function resize(){const w=mount.offsetWidth,h=mount.offsetHeight;renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();}
+resize();window.addEventListener('resize',resize);
+
+let t=0;
+randomizeData();
+liveInterval=setInterval(randomizeData,1500);
+
+function animate(){
+    requestAnimationFrame(animate);
+    t+=0.01;pulseT+=0.05;
+
+    if(volPulse){
+        const pulse=1+Math.sin(pulseT)*0.08*(ohlcv.v/3e6);
+        nodes.forEach(n=>n.scale.multiplyScalar(pulse/n.scale.x*n.scale.x));
+    }
+
+    if(edgeFlow){
+        flowSpheres.forEach(fs=>{
+            fs.t=(fs.t+0.008)%1;
+            fs.mesh.position.lerpVectors(fs.a,fs.b,fs.t);
+            fs.mesh.material.opacity=Math.sin(fs.t*Math.PI)*0.8;
+        });
+    }
+
+    // Gentle auto-rotation
+    scene.rotation.y=t*0.05;
+    controls.update();
+    renderer.render(scene,camera);
+}
+animate();
+</script>
+<!-- P31:mission-ebc:start -->
+<footer id="ebc" class="p31-mission-trio p31-mission-trio--ebc" role="contentinfo" aria-label="Mission — build, create, connect">
+    <a class="p31-mission-trio__link p31-mission-trio__link--build p31-mesh-tap" id="ebc-build" href="/build" title="Initial Build — intake, subject scope, verify-gated bake">
+        <span class="p31-mission-trio__head">
+            <span class="p31-mission-trio__dot" aria-hidden="true"></span>
+            <span class="p31-mission-trio__verb">Build</span>
+        </span>
+        <span class="p31-mission-trio__desc">Intake and bake on the same verify chain—not a decoupled mock.</span>
+    </a>
+    <a class="p31-mission-trio__link p31-mission-trio__link--create p31-mesh-tap" id="ebc-create" href="/geodesic.html" title="GEODESIC — snap grid, Maxwell rigidity, scene export">
+        <span class="p31-mission-trio__head">
+            <span class="p31-mission-trio__dot" aria-hidden="true"></span>
+            <span class="p31-mission-trio__verb">Create</span>
+        </span>
+        <span class="p31-mission-trio__desc">One lab surface, honest rigidity—generate or prove; don’t fork the same truth twice (ephemeralization).</span>
+    </a>
+    <a class="p31-mission-trio__link p31-mission-trio__link--connect p31-mesh-tap" id="ebc-connect" href="/mesh" title="Mesh navigator — K₄ cage and product graph">
+        <span class="p31-mission-trio__head">
+            <span class="p31-mission-trio__dot" aria-hidden="true"></span>
+            <span class="p31-mission-trio__verb">Connect</span>
+        </span>
+        <span class="p31-mission-trio__desc"><span class="p31-mission-trio__now">Now</span> — live cage and edges: mesh, hubs, and money follow the same published contracts (ethical monetization).</span>
+    </a>
+</footer>
+<!-- P31:mission-ebc:end -->
+<script type="module">
+  import { startGrandfatherPhaseVar } from "/lib/p31-quantum-grandfather-boot.mjs";
+  startGrandfatherPhaseVar();
+</script>
+</body>
+</html>

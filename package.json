@@ -1,0 +1,46 @@
+{
+  "name": "p31-andromeda",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "P31 Labs monorepo — software, research tooling, and infrastructure",
+  "license": "MIT",
+  "packageManager": "pnpm@10.32.1",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "install:all": "pnpm install",
+    "build": "pnpm --dir software run build",
+    "test": "pnpm --dir software run test",
+    "cf:verify": "node scripts/verify-cloudflare-token.mjs",
+    "lockfile:check": "pnpm install --frozen-lockfile && pnpm install --frozen-lockfile --dir software",
+    "verify:stack-links": "node software/scripts/verify-stack-links.mjs",
+    "verify:ci-local:static": "pnpm run lockfile:check && pnpm run quality",
+    "verify:ci-local": "pnpm run verify:ci-local:static && pnpm run verify:stack-links",
+    "build:phosphorus31": "pnpm -C phosphorus31.org/planetary-planet run build",
+    "ship:pr": "node scripts/ship-pr.mjs",
+    "gh:pr:automerge": "node scripts/gh-pr-automerge.mjs",
+    "pr": "node scripts/pr.mjs",
+    "fix:gh": "node scripts/gh-setup-git.mjs",
+    "git:hooks": "node scripts/git-hooks-config.mjs",
+    "git:autopush": "node scripts/git-autopush.mjs",
+    "git:autopush:on": "node scripts/git-autopush.mjs on",
+    "git:autopush:off": "node scripts/git-autopush.mjs off",
+    "git:autopush:status": "node scripts/git-autopush.mjs status",
+    "prepush:check": "node scripts/git-scrub-bad-gh-credential.mjs",
+    "verify:ground-truth": "node software/p31ca/scripts/verify-ground-truth.mjs",
+    "verify:monetary": "node scripts/verify-monetary-surface.mjs",
+    "polish": "npm run quality && npm run hub:ci --prefix software/p31ca && npm run security:check --prefix software/p31ca",
+    "quality": "node scripts/enterprise-deploy-guard.mjs && node software/p31ca/scripts/verify-ground-truth.mjs && node scripts/verify-monetary-surface.mjs",
+    "google-bridge:verify": "pnpm -C software/p31-google-bridge run verify",
+    "lint": "echo \"Lint per package: cd software/<project> && pnpm run lint (if defined)\"",
+    "audit": "pnpm audit"
+  },
+  "devDependencies": {},
+  "dependencies": {
+    "@types/web-bluetooth": "^0.0.21",
+    "@upstash/redis": "^1.37.0",
+    "@webgpu/types": "^0.1.69"
+  }
+}

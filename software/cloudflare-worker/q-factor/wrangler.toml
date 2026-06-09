@@ -1,0 +1,28 @@
+name = "p31-q-factor"
+main = "src/index.ts"
+compatibility_date = "2026-05-05"
+
+[observability]
+enabled = true
+
+[[kv_namespaces]]
+binding = "QFACTOR_KV"
+id = "92fb82b210f6498ea98dd1bf5179a6e4"
+
+[vars]
+FHIR_STATUS_URL = "https://api.p31ca.org/fhir/status"
+
+# Secrets (wrangler secret put):
+#   P31_API_SECRET   — shared HA/Worker auth token
+#   P31_FHIR_SECRET  — same as FHIR worker's P31_API_SECRET
+
+[[env.production.kv_namespaces]]
+binding = "QFACTOR_KV"
+id = "92fb82b210f6498ea98dd1bf5179a6e4"
+
+[env.production.vars]
+FHIR_STATUS_URL = "https://api.p31ca.org/fhir/status"
+
+[[env.production.routes]]
+pattern   = "api.p31ca.org/qfactor/*"
+zone_name = "p31ca.org"

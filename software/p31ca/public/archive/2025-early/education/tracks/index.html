@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Tracks | Education | P31 Labs</title>
+  <meta name="description" content="Three public tracks: edge & mesh, Build·Create·Connect, security & integrity literacy." />
+  <meta name="p31.labs-education" content="p31.labsEducation/0.2.0" />
+  <link rel="stylesheet" href="/p31-style.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/p31-tailwind-extend.js"></script>
+  <script>tailwind.config = { theme: { extend: { ...window.P31_TAILWIND_EXTEND } } };</script>
+</head>
+<body class="font-sans antialiased bg-void text-cloud min-h-screen p31-mesh-m-first">
+  <div class="max-w-3xl mx-auto px-4 py-8 md:py-10">
+    <p class="font-mono text-[0.65rem] text-cloud/50 uppercase tracking-widest mb-2">Catalog · tracks</p>
+    <h1 class="text-2xl font-bold text-paper">Tracks</h1>
+    <nav class="flex flex-wrap gap-2 text-xs font-mono border-b border-white/10 pb-4 my-4" aria-label="Education">
+      <a class="text-teal/90 hover:underline" href="/education/">Home</a>
+      <a class="text-teal/90 hover:underline" href="/education/modules/index.html">Modules</a>
+      <a class="text-teal/90 hover:underline" href="/education/labs/index.html">Labs</a>
+    </nav>
+    <ul class="space-y-4">
+      <li class="border border-white/10 rounded-xl p-4 bg-surface/50">
+        <a class="text-lg font-medium text-teal hover:underline" href="/education/tracks/edge-mesh.html">Edge &amp; mesh literacy</a>
+        <p class="text-sm text-cloud/70 mt-1">Fleet maps, K₄, and public tools without putting secrets in HTML.</p>
+      </li>
+      <li class="border border-white/10 rounded-xl p-4 bg-surface/50">
+        <a class="text-lg font-medium text-teal hover:underline" href="/education/tracks/build-create-connect.html">Build · Create · Connect</a>
+        <p class="text-sm text-cloud/70 mt-1">Mission language, narrative arc, and how hub products reinforce each other.</p>
+      </li>
+      <li class="border border-white/10 rounded-xl p-4 bg-surface/50">
+        <a class="text-lg font-medium text-teal hover:underline" href="/education/tracks/integrity-literacy.html">Security &amp; integrity literacy</a>
+        <p class="text-sm text-cloud/70 mt-1">Ground truth, PQC at a high level, and when Workers are appropriate.</p>
+      </li>
+    </ul>
+    <p class="mt-8 text-xs text-cloud/50"><a class="text-teal/80" href="/education/">← Home</a></p>
+  </div>
+</body>
+</html>

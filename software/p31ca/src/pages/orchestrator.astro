@@ -1,0 +1,20 @@
+---
+/**
+  * @p31-layout: Workshop
+ * orchestrator.astro — P31 Sovereign Cockpit
+ *
+ * Operator-internal surface. Uses BaseLayout (no starfield overhead —
+ * this is a dense telemetry view, not a public landing page).
+ * Layout: ../layouts/BaseLayout.astro
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import OrchestratorDashboard from '../components/OrchestratorDashboard.astro';
+---
+
+<BaseLayout
+  title="P31 Orchestrator | Sovereign Cockpit"
+  description="Orchestrator control panel · Workers-edge posture"
+  phosPage="orchestrator"
+>
+  <OrchestratorDashboard />
+</BaseLayout>

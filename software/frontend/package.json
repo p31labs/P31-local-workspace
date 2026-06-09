@@ -1,0 +1,43 @@
+{
+  "name": "p31-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "predev": "mkdir -p public/omnibus && cp ../p31-forge/out/*.docx public/omnibus/ 2>/dev/null || true",
+    "dev": "vite --port 3031",
+    "prebuild": "mkdir -p public/omnibus && cp ../p31-forge/out/*.docx public/omnibus/ 2>/dev/null || true",
+    "build": "tsc --noEmit && vite build",
+    "compile": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@lit-protocol/constants": "^7.4.0",
+    "@lit-protocol/lit-node-client": "^7.4.0",
+    "ethers": "^6.0.0",
+    "lucide-react": "^0.460.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^7.13.2",
+    "three": "0.128.0",
+    "y-websocket": "^1.5.4",
+    "yjs": "^13.5.0",
+    "zustand": "^5.0.12"
+  },
+  "devDependencies": {
+    "@webgpu/types": "^0.1.69",
+    "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
+    "@esbuild-plugins/node-modules-polyfill": "^0.2.2",
+    "@testing-library/react": "^16.0.0",
+    "@types/node": "^20.0.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^4.3.0",
+    "jsdom": "^25.0.0",
+    "typescript": "^5.0.0",
+    "vite": "^5.4.0",
+    "vitest": "^2.1.0"
+  }
+}

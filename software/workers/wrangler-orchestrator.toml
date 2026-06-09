@@ -1,0 +1,35 @@
+name = "p31-orchestrator"
+main = "orchestrator.ts"
+compatibility_date = "2026-03-24"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = [ "EventBusDO" ]
+
+[[kv_namespaces]]
+binding = "SPOONS_KV"
+id = "dbc13218ee314f0e988f51d2618e6061"
+
+[[d1_databases]]
+binding = "ORCHESTRATOR_D1"
+database_name = "orchestrator-db"
+database_id = "40671bb7-c82b-43b8-8290-503cc4f85280"
+
+[[durable_objects.bindings]]
+name = "ORCHESTRATOR_DO"
+class_name = "EventBusDO"
+
+[vars]
+ENVIRONMENT = "production"
+OPERATOR_USER_ID = "will-001"
+BRENDA_PHONE = "+19122274980"
+OPERATOR_PHONE = "ADD_YOUR_PHONE_HERE"
+
+# [vars.secrets]
+# COMMAND_CENTER_TOKEN = "p31-delta-cb430605d975bc4a7eb679d1"
+# TWILIO_SID = "your-twilio-sid"
+# TWILIO_TOKEN = "your-twilio-token"
+# TWILIO_PHONE = "+19122274980"
+
+# [triggers]
+# crons = [ "0 * * * *" ]

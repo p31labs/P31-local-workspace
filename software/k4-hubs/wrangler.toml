@@ -1,0 +1,34 @@
+# K4-Hubs — Life-context K₄ hub router + HubFusion DO (4 vertex roster, symmetric fusion reads).
+# Deploy: cd software/k4-hubs && npx wrangler deploy
+# Requires: same account bindings to k4-cage and k4-personal.
+
+name = "k4-hubs"
+main = "src/index.js"
+compatibility_date = "2025-10-01"
+
+[vars]
+ENVIRONMENT = "production"
+WORKER_VERSION = "1.1.0"
+PERSONAL_MESH_URL = "https://k4-personal.trimtab-signal.workers.dev"
+
+[durable_objects]
+bindings = [{ name = "HUB_FUSION", class_name = "HubFusionAgent" }]
+
+[[migrations]]
+tag = "v1-hub-fusion"
+new_sqlite_classes = ["HubFusionAgent"]
+
+# Same-account Worker-to-Worker bindings.
+[[services]]
+binding = "K4_CAGE"
+service = "k4-cage"
+
+[[services]]
+binding = "K4_PERSONAL"
+service = "k4-personal"
+
+# Optional: npx wrangler secret put HUBS_WRITE_TOKEN (required for PUT /hub/:id/roster in production)
+# Optional: npx wrangler secret put HUB_LIVE_RELAY_SECRET
+
+[observability]
+enabled = true

@@ -1,0 +1,22 @@
+{
+  "name": "@p31/k4-mesh-core",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Shared K4 scoped mesh (family + Sierpiński) for k4-cage and k4-personal Workers",
+  "scripts": {
+    "test": "node --test test/*.test.mjs"
+  },
+  "exports": {
+    "./scopes.js": "./scopes.js",
+    "./http.js": "./http.js",
+    "./personal-body.js": "./personal-body.js",
+    "./personal-handlers.js": "./personal-handlers.js",
+    "./personal-viz.js": "./personal-viz.js",
+    "./hub-store.js": "./hub-store.js",
+    "./hub-mesh.js": "./hub-mesh.js",
+    "./hub-handlers.js": "./hub-handlers.js",
+    "./hub-viz.js": "./hub-viz.js",
+    "./hub-live-relay.js": "./hub-live-relay.js"
+  }
+}

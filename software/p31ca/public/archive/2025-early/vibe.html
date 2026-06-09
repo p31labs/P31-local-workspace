@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub" style="color-scheme: dark;">
+<head>
+  <meta charset="UTF-8">
+<script>(function(){var r=document.documentElement;if(/[?&]alive=1(?:&|$)/.test(location.search))return;r.classList.add("p31-gray-rock");function wake(){r.classList.remove("p31-gray-rock")}document.addEventListener("pointerdown",wake,{once:true,capture:true});document.addEventListener("keydown",wake,{once:true,capture:true})})();</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0f1115">
+  <title>Vibcoding (preview) | P31 Labs &mdash; p31ca.org</title>
+  <meta name="description" content="The P31 vibcoding development environment &mdash; tetra-hub substrate from kid-button-click to operator-grade, with PHOS as guide. Phase 1 preview.">
+<link rel="canonical" href="https://p31ca.org/vibe.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Vibcoding (preview)">
+<meta property="og:description" content="The P31 vibcoding development environment &amp;mdash; tetra-hub substrate from kid-button-click to operator-grade, with PHOS as guide. Phase 1 preview.">
+<meta property="og:url" content="https://p31ca.org/vibe.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Vibcoding (preview)">
+<meta name="twitter:description" content="The P31 vibcoding development environment &amp;mdash; tetra-hub substrate from kid-button-click to operator-grade, with PHOS as guide. Phase 1 preview.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/p31-style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/p31-tailwind-extend.js"></script>
+  <script>tailwind.config = { theme: { extend: { ...window.P31_TAILWIND_EXTEND } } };</script>
+</head>
+<body class="bg-void text-cloud min-h-screen font-sans antialiased px-4 py-10 max-w-3xl mx-auto text-sm leading-relaxed">
+  <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 bg-teal text-void px-3 py-1 rounded font-mono text-xs">Skip to content</a>
+
+  <nav class="flex flex-wrap gap-3 text-teal/80 text-xs font-mono mb-8" aria-label="P31 governance pages">
+    <a href="/" class="hover:underline">Hub</a>
+    <a href="/manifesto" class="hover:underline">Manifesto</a>
+    <a href="/roadmap" class="hover:underline">Roadmap</a>
+    <a href="/onboard" class="hover:underline">Onboard</a>
+    <a href="/start" class="hover:underline">Mesh start</a>
+    <a href="/build" class="hover:underline">Initial build</a>
+    <a href="/vibe" class="hover:underline" aria-current="page">Vibcoding</a>
+  </nav>
+
+  <main id="main">
+    <p class="text-coral/85 font-mono text-[0.65rem] tracking-widest uppercase mb-1">Phase 2 &middot; PiP CLI substrate already exists &mdash; this page points at it</p>
+    <h1 class="text-2xl font-bold text-paper mb-2">Vibcoding</h1>
+    <p class="text-cloud/60 text-xs mb-8">
+      <strong class="text-paper">CWP-P31-VIBE-2026-06</strong> &middot; Edition <strong class="text-paper">1.0.0</strong> &middot; Authored <strong class="text-paper">2026-05-02</strong> &middot;
+      Canonical source: <a class="text-teal hover:underline" href="https://github.com/p31labs/bonding-soup/blob/main/docs/CWP-P31-VIBE-2026-06.md">docs/CWP-P31-VIBE-2026-06.md</a>.
+    </p>
+
+    <p class="text-cloud/85 mb-3">
+      The pieces are all here. This page lays them out so you can see what fits.
+    </p>
+    <p class="text-cloud/85 mb-8">
+      A vibcoding session is a <strong class="text-paper">tetra</strong> &mdash; four named contexts, six bidirectional edges, isolated to you. Four tetras link into a <strong class="text-paper">cluster</strong>. Four clusters link into a <strong class="text-paper">hub</strong>. PHOS guides at every level. The substrate scales from a 6-year-old building a button-click marble run through this very page, where a Cursor-equivalent will land in Phase 2.
+    </p>
+
+    <section id="start-here" class="mb-10">
+      <h2 class="text-paper font-semibold text-base mb-3">Start here &mdash; one of these matches you today</h2>
+      <div class="grid sm:grid-cols-3 gap-3 text-xs">
+        <a href="/onboard" class="block rounded-lg border border-white/10 bg-surface/80 p-4 hover:border-teal/40 transition">
+          <p class="text-teal/80 font-mono text-[0.6rem] tracking-widest uppercase mb-1">First time</p>
+          <p class="text-paper font-semibold mb-1">Threshold onboard</p>
+          <p class="text-cloud/55">Four doors, one of them is yours. No funnel.</p>
+        </a>
+        <a href="/start" class="block rounded-lg border border-white/10 bg-surface/80 p-4 hover:border-teal/40 transition">
+          <p class="text-teal/80 font-mono text-[0.6rem] tracking-widest uppercase mb-1">Coming back</p>
+          <p class="text-paper font-semibold mb-1">Mesh start</p>
+          <p class="text-cloud/55">Your private agent &middot; Wye &rarr; Delta home.</p>
+        </a>
+        <a href="/build" class="block rounded-lg border border-white/10 bg-surface/80 p-4 hover:border-teal/40 transition">
+          <p class="text-teal/80 font-mono text-[0.6rem] tracking-widest uppercase mb-1">First device</p>
+          <p class="text-paper font-semibold mb-1">Initial build</p>
+          <p class="text-cloud/55">Bake your personal tetra into k4-personal.</p>
+        </a>
+      </div>
+    </section>
+
+    <section id="spectrum" class="mb-10">
+      <h2 class="text-paper font-semibold text-base mb-3">The eight-level spectrum</h2>
+      <p class="text-cloud/65 text-xs mb-4">PHOS guides at every level. Your <a class="text-teal hover:underline" href="/passport">Cognitive Passport</a> remembers where you are without forcing the next step.</p>
+      <div class="overflow-x-auto">
+        <table class="w-full text-xs border-collapse">
+          <thead>
+            <tr class="text-cloud/70 border-b border-white/10">
+              <th class="text-left p-2 font-mono">Level</th>
+              <th class="text-left p-2 font-mono">Surface</th>
+              <th class="text-left p-2 font-mono">What you do</th>
+            </tr>
+          </thead>
+          <tbody class="text-cloud/75">
+            <tr class="border-b border-white/5"><td class="p-2 font-mono">0</td><td class="p-2">Witness</td><td class="p-2">Read. Watch a build run.</td></tr>
+            <tr class="border-b border-white/5"><td class="p-2 font-mono">1</td><td class="p-2">Button</td><td class="p-2">Click big colored buttons. Each one does one thing.</td></tr>
+            <tr class="border-b border-white/5"><td class="p-2 font-mono">2</td><td class="p-2">Glue</td><td class="p-2">Snap atom-blocks together in the geodesic room.</td></tr>
+            <tr class="border-b border-white/5"><td class="p-2 font-mono">3</td><td class="p-2">Type a word</td><td class="p-2">One word at a time. PHOS suggests, you choose.</td></tr>
+            <tr class="border-b border-white/5"><td class="p-2 font-mono">4</td><td class="p-2">Sentence</td><td class="p-2">Single-line code. Run. See output.</td></tr>
+            <tr class="border-b border-white/5"><td class="p-2 font-mono">5</td><td class="p-2">Project</td><td class="p-2">Multi-file. Real npm scripts. PiP CLI.</td></tr>
+            <tr class="border-b border-white/5"><td class="p-2 font-mono">6</td><td class="p-2">Tetra</td><td class="p-2">Four named contexts, pivot between them at will.</td></tr>
+            <tr class="border-b border-white/5"><td class="p-2 font-mono">7</td><td class="p-2">Cluster</td><td class="p-2">Coordinate four tetras. Lead a pod.</td></tr>
+            <tr><td class="p-2 font-mono">8</td><td class="p-2"><strong class="text-paper">Operator</strong></td><td class="p-2">This page, fully wired. PiP CLI. Monaco. Whitelisted shell. Ship bar.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="five-doctrines" class="mb-10 rounded border border-teal/25 bg-teal/5 p-5">
+      <h2 class="text-paper font-semibold text-base mb-3">The five doctrines hold here too</h2>
+      <p class="text-cloud/80 text-xs mb-2">
+        Vibcoding inherits the floor from the <a class="text-teal hover:underline" href="/manifesto">Manifesto</a> &mdash; one canonical source, never restated, never drifting:
+      </p>
+      <ol class="text-cloud/75 list-decimal pl-6 space-y-1 text-xs">
+        <li>Operator-condition-aware AI &mdash; PHOS carries your medical/cognitive context into every prompt.</li>
+        <li>K&#8324; family mesh as architectural primitive &mdash; the tetra IS a K&#8324;, at every level.</li>
+        <li>Cognitive Passport as portable personalization without surveillance.</li>
+        <li>A measurable voice &mdash; <code class="font-mono text-teal/80">verify:public-voice</code> + <code class="font-mono text-teal/80">verify:delta-language</code> at the build step.</li>
+        <li>Sub-medical-grade by design.</li>
+      </ol>
+      <p class="text-cloud/55 text-[0.7rem] mt-3 italic">
+        The list above is a courtesy summary. The <a class="text-teal/80 hover:underline" href="/manifesto#five-doctrines">Manifesto &sect;1</a> is canon &mdash; if these ever drift, that page wins.
+      </p>
+    </section>
+
+    <section id="run-it" class="mb-10 rounded border border-phosphorus/30 bg-phosphorus/5 p-5">
+      <h2 class="text-paper font-semibold text-base mb-3">Run the PiP CLI right now</h2>
+      <p class="text-cloud/80 text-xs mb-3">
+        The substrate already exists. <strong class="text-paper">Ephemeralization</strong>: one HTML file, three URLs, zero duplication.
+      </p>
+      <p class="text-cloud/85 text-xs mb-3 rounded border border-teal/30 bg-teal/5 px-3 py-2">
+        <span class="text-teal/85 font-mono text-[0.65rem] uppercase tracking-widest mr-1">Operator runbook</span>
+        Read the canonical 6-move loop:
+        <a class="text-teal hover:underline font-mono" href="https://github.com/p31labs/bonding-soup/blob/main/docs/operator/BOOT-UP-AND-USE.md">docs/operator/BOOT-UP-AND-USE.md</a>.
+        It is the same doc the substrate serves as the <code class="font-mono text-teal/85">boot-up</code> view slug, so the loop is self-describing once you are inside.
+      </p>
+      <ol class="text-cloud/80 text-xs list-decimal pl-6 space-y-1.5 mb-4">
+        <li>On your operator machine, run <code class="font-mono text-teal/90 bg-void/40 px-1.5 py-0.5 rounded">npm run command-center</code> from the <code class="font-mono text-teal/90">bonding-soup</code> repo root.</li>
+        <li>Open <a class="text-teal hover:underline font-mono" href="http://127.0.0.1:3131/vibe">http://127.0.0.1:3131/vibe</a> in your browser (alias of <code class="font-mono text-teal/90">/term</code>).</li>
+        <li>Pick a PHOS persona from the dropdown, or switch to <em>cmd</em> mode and type a whitelisted action like <code class="font-mono text-teal/90">npm run doctor</code>.</li>
+      </ol>
+      <p class="text-cloud/65 text-[0.7rem]">
+        Source of truth: <code class="font-mono">command-center-terminal.html</code> in <code class="font-mono">bonding-soup</code>. Served from <code class="font-mono">:3131/term</code>, <code class="font-mono">:3131/terminal</code>, and <code class="font-mono">:3131/vibe</code>. New URL in front of an existing service &mdash; no new code, no new attack surface.
+      </p>
+    </section>
+
+    <section id="phase" class="mb-10">
+      <h2 class="text-paper font-semibold text-base mb-3">Phase ladder</h2>
+      <ul class="text-cloud/80 list-disc pl-6 space-y-2 text-xs">
+        <li><strong class="text-paper">Phase 1 (shipped 2026-05-02).</strong> Operator entry surfaces &mdash; this page, <a class="text-teal hover:underline" href="/onboard">/onboard</a>, <a class="text-teal hover:underline" href="/start">/start</a>, <a class="text-teal hover:underline" href="/build">/build</a> &mdash; reachable in under 90 seconds from a fresh device boot.</li>
+        <li><strong class="text-paper">Phase 2 (shipped 2026-05-02).</strong> PiP CLI substrate adopted: the existing <code class="font-mono text-teal/80">/term</code> serves <code class="font-mono text-teal/80">/vibe</code> with no duplication. PHOS persona chat + whitelisted command runner already wired.</li>
+        <li><strong class="text-paper">Phase 3.</strong> Monaco editor pane next to the existing terminal; PHOS auto-guidance reads the last command output. No second PiP CLI &mdash; only the editor is new.</li>
+        <li><strong class="text-paper">Phase 4.</strong> Multi-vertex tetra collaboration. Operator + child collaborator on the same buffer; child on Level-2 Glue, operator on Level-8.</li>
+        <li><strong class="text-paper">Phase 5.</strong> Four tetras link into a cluster. PHOS coordinates as bridge persona. MLS-bearing edges (forward-secret cross-tetra collab; gated on PEER-3A).</li>
+        <li><strong class="text-paper">Phase 6+.</strong> Hub federation. Open mesh. Truly Everything AND Everyone.</li>
+      </ul>
+    </section>
+
+    <p class="text-cloud/40 text-xs mt-10 border-t border-white/10 pt-4">
+      &mdash; Authored 2026-05-02 by Cursor agent (Claude Opus 4.7) under operator command authority &middot; P31 Labs, Inc.
+    </p>
+  </main>
+
+  <footer class="text-cloud/40 text-xs mt-10 pt-4 border-t border-white/10 mb-12">
+    &copy; 2026 P31 Labs, Inc. &middot;
+    <a class="text-teal/60 hover:underline" href="/manifesto">Manifesto</a> &middot;
+    <a class="text-teal/60 hover:underline" href="/transparency">Transparency</a> &middot;
+    <a class="text-teal/60 hover:underline" href="/telemetry-policy">Telemetry posture</a> &middot;
+    <a class="text-teal/60 hover:underline" href="/security">Security</a>
+  </footer>
+</body>
+</html>

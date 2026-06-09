@@ -1,0 +1,24 @@
+{
+  "name": "kenosis-mesh",
+  "version": "1.0.0",
+  "description": "Serverless 7-node SIC-POVM topology on Cloudflare Workers",
+  "main": "src/index.js",
+  "scripts": {
+    "deploy": "npx wrangler deploy",
+    "dev": "npx wrangler dev",
+    "test": "node scripts/test-mesh.js"
+  },
+  "keywords": [
+    "cloudflare-workers",
+    "durable-objects",
+    "p31",
+    "cognitive-prosthetic",
+    "sic-povm"
+  ],
+  "author": "P31 Labs",
+  "license": "MIT",
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240620.0",
+    "wrangler": "^3.60.0"
+  }
+}

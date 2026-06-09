@@ -1,0 +1,1551 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub" style="color-scheme: dark;">
+<head>
+  <meta charset="UTF-8" />
+<script>(function(){var r=document.documentElement;if(/[?&]alive=1(?:&|$)/.test(location.search))return;r.classList.add("p31-gray-rock");function wake(){r.classList.remove("p31-gray-rock")}document.addEventListener("pointerdown",wake,{once:true,capture:true});document.addEventListener("keydown",wake,{once:true,capture:true})})();</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="description" content="P31 Sovereign Lab v2 — live worker fleet control, K₄ mesh routing, trim-tab tuning. The sovereign interface to the mesh." />
+<link rel="canonical" href="https://p31ca.org/p31-sovereign-lab-v2.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="P31 — Sovereign Lab v2 (fleet · mesh · routing)">
+<meta property="og:description" content="P31 Sovereign Lab v2 — live worker fleet control, K₄ mesh routing, trim-tab tuning. The sovereign interface to the mesh.">
+<meta property="og:url" content="https://p31ca.org/p31-sovereign-lab-v2.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="P31 — Sovereign Lab v2 (fleet · mesh · routing)">
+<meta name="twitter:description" content="P31 Sovereign Lab v2 — live worker fleet control, K₄ mesh routing, trim-tab tuning. The sovereign interface to the mesh.">
+  <meta name="theme-color" content="#0a0c12" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700&family=JetBrains+Mono:ital,wght@0,400;0,600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="cognitive-passport/p31-style.css" />
+  <link rel="stylesheet" href="cognitive-passport/p31-responsive-surface.css" />
+  <script src="cognitive-passport/lib/p31-subject-prefs.js"></script>
+  <link rel="manifest" href="p31-bonding.webmanifest" crossorigin="anonymous" />
+  <title>P31 — Sovereign Lab v2 (fleet · mesh · routing)</title>
+  <style>
+    :root {
+      --lab-void: #0a0c12;
+      --lab-void-dark: #050508;
+      --lab-surface: rgba(16, 20, 28, 0.85);
+      --lab-surface-hover: rgba(24, 30, 42, 0.9);
+      --lab-cyan: #4db8a8;
+      --lab-cyan-glow: rgba(77, 184, 168, 0.4);
+      --lab-phos: #a78bfa;
+      --lab-phos-glow: rgba(167, 139, 250, 0.4);
+      --lab-coral: #cc6247;
+      --lab-coral-glow: rgba(204, 98, 71, 0.4);
+      --lab-butter: #e8c547;
+      --lab-muted: #6b7a8a;
+      --lab-border: rgba(148, 163, 184, 0.15);
+      --lab-border-strong: rgba(148, 163, 184, 0.3);
+      --glass-bg: rgba(10, 14, 20, 0.7);
+      --glass-border: rgba(77, 184, 168, 0.2);
+    }
+    
+    * { box-sizing: border-box; }
+    
+    body.lab {
+      margin: 0;
+      min-height: 100dvh;
+      font-family: "Atkinson Hyperlegible", system-ui, sans-serif;
+      background: var(--lab-void);
+      color: #d8d6d0;
+      display: grid;
+      grid-template-columns: 340px 1fr 300px;
+      grid-template-rows: 64px 1fr 48px;
+      grid-template-areas:
+        "head head head"
+        "fleet stage mesh"
+        "foot foot foot";
+      gap: 0;
+      overflow: hidden;
+    }
+    
+    @media (max-width: 1300px) {
+      body.lab { grid-template-columns: 300px 1fr; grid-template-areas: "head head" "fleet stage" "foot foot"; }
+      .lab-mesh { display: none; }
+    }
+    @media (max-width: 900px) {
+      body.lab { grid-template-columns: 1fr; grid-template-areas: "head" "fleet" "stage" "foot"; grid-template-rows: auto auto 1fr auto; }
+      .lab-fleet { max-height: 40dvh; }
+    }
+
+    /* Starfield background */
+    #star-plate {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* Header - Glass morphism */
+    .lab-head {
+      grid-area: head;
+      padding: 0 1.25rem;
+      border-bottom: 1px solid var(--glass-border);
+      background: linear-gradient(180deg, rgba(16, 20, 28, 0.95) 0%, rgba(10, 14, 20, 0.9) 100%);
+      backdrop-filter: blur(12px);
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      position: relative;
+      z-index: 10;
+    }
+    
+    .lab-head::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-bottom: 1px solid transparent;
+      background: linear-gradient(90deg, var(--lab-cyan), var(--lab-phos), var(--lab-coral)) border-box;
+      -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      opacity: 0.3;
+    }
+    
+    .lab-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    
+    .lab-tetra {
+      width: 36px;
+      height: 36px;
+      position: relative;
+    }
+    
+    .lab-tetra svg {
+      width: 100%;
+      height: 100%;
+      filter: drop-shadow(0 0 8px var(--lab-cyan-glow));
+    }
+    
+    .lab-title {
+      margin: 0;
+      font-size: 1.15rem;
+      font-weight: 600;
+      background: linear-gradient(90deg, var(--lab-cyan), var(--lab-phos));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      letter-spacing: -0.01em;
+    }
+    
+    .lab-subtitle { 
+      margin: 0; 
+      font-size: 0.8rem; 
+      opacity: 0.7;
+      color: var(--lab-muted);
+    }
+    
+    .lab-badges {
+      margin-left: auto;
+      display: flex;
+      gap: 0.75rem;
+    }
+    
+    .lab-badge {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 4px 12px;
+      border-radius: 20px;
+      background: var(--glass-bg);
+      color: var(--lab-cyan);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+    
+    .lab-badge::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+      box-shadow: 0 0 6px currentColor;
+    }
+    
+    .lab-badge.warning { 
+      color: var(--lab-butter); 
+      border-color: rgba(232, 197, 71, 0.3);
+    }
+    .lab-badge.warning::before { background: var(--lab-butter); }
+    
+    .lab-badge.error { 
+      color: var(--lab-coral); 
+      border-color: rgba(204, 98, 71, 0.3);
+    }
+    .lab-badge.error::before { background: var(--lab-coral); }
+    
+    .lab-badge.online { color: #7dd3c0; border-color: rgba(125, 211, 192, 0.3); }
+    .lab-badge.online::before { background: #7dd3c0; }
+
+    /* Fleet Panel - Glass sidebar */
+    .lab-fleet {
+      grid-area: fleet;
+      padding: 1.25rem;
+      border-right: 1px solid var(--lab-border);
+      overflow-y: auto;
+      overflow-x: hidden;
+      background: var(--glass-bg);
+      backdrop-filter: blur(8px);
+      position: relative;
+      z-index: 5;
+    }
+    
+    .lab-section-title {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--lab-muted);
+      margin: 0 0 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .lab-section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, var(--lab-border), transparent);
+    }
+
+    .worker-card {
+      margin-bottom: 0.6rem;
+      padding: 0.85rem;
+      border-radius: 10px;
+      border: 1px solid var(--lab-border);
+      background: linear-gradient(135deg, rgba(16, 20, 28, 0.6) 0%, rgba(10, 14, 20, 0.4) 100%);
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .worker-card::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: var(--lab-muted);
+      transition: background 0.2s ease;
+    }
+    
+    .worker-card:hover { 
+      border-color: var(--lab-cyan); 
+      background: var(--lab-surface-hover);
+      transform: translateX(2px);
+    }
+    
+    .worker-card.active { 
+      border-color: var(--lab-phos); 
+      background: rgba(167, 139, 250, 0.08);
+    }
+    .worker-card.active::before { background: var(--lab-phos); }
+    
+    .worker-card.online::before { background: #7dd3c0; }
+    .worker-card.warning::before { background: var(--lab-butter); }
+    .worker-card.error::before { background: var(--lab-coral); }
+    
+    .worker-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.35rem;
+    }
+    
+    .worker-name { 
+      font-weight: 600; 
+      color: #e8e6e0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .worker-status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--lab-muted);
+      transition: all 0.3s ease;
+    }
+    
+    .worker-status-dot.online { 
+      background: #7dd3c0; 
+      box-shadow: 0 0 8px rgba(125, 211, 192, 0.6);
+    }
+    .worker-status-dot.warning { 
+      background: var(--lab-butter); 
+      box-shadow: 0 0 8px rgba(232, 197, 71, 0.4);
+    }
+    .worker-status-dot.error { 
+      background: var(--lab-coral); 
+      box-shadow: 0 0 8px rgba(204, 98, 71, 0.5);
+    }
+    
+    .worker-status-text { 
+      font-size: 0.7rem; 
+      color: var(--lab-muted);
+      font-family: "JetBrains Mono", monospace;
+    }
+    
+    .worker-actions {
+      margin-top: 0.6rem;
+      display: flex;
+      gap: 0.5rem;
+      opacity: 0;
+      transform: translateY(-4px);
+      transition: all 0.2s ease;
+    }
+    
+    .worker-card:hover .worker-actions {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    .worker-btn {
+      font-size: 0.65rem;
+      padding: 4px 10px;
+      border-radius: 6px;
+      border: 1px solid var(--lab-border);
+      background: rgba(0, 0, 0, 0.3);
+      color: var(--lab-muted);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      font-family: "JetBrains Mono", monospace;
+    }
+    
+    .worker-btn:hover { 
+      border-color: var(--lab-cyan); 
+      color: var(--lab-cyan);
+      background: rgba(77, 184, 168, 0.1);
+    }
+
+    /* Routing Panel */
+    .routing-panel {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      border: 1px dashed var(--lab-border-strong);
+      border-radius: 12px;
+      background: rgba(0, 0, 0, 0.2);
+    }
+    
+    .routing-panel h3 {
+      margin: 0 0 0.75rem;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--lab-butter);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .route-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      margin-bottom: 0.5rem;
+      padding: 0.55rem 0.75rem;
+      font-size: 0.72rem;
+      border-radius: 8px;
+      border: 1px solid rgba(232, 197, 71, 0.25);
+      background: linear-gradient(135deg, rgba(232, 197, 71, 0.08) 0%, transparent 100%);
+      color: var(--lab-butter);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      font-family: "JetBrains Mono", monospace;
+    }
+    
+    .route-btn:hover { 
+      border-color: var(--lab-butter);
+      background: rgba(232, 197, 71, 0.15);
+      transform: translateX(3px);
+    }
+    
+    .route-btn::after {
+      content: '→';
+      opacity: 0.5;
+      transition: all 0.15s ease;
+    }
+    
+    .route-btn:hover::after {
+      opacity: 1;
+      transform: translateX(3px);
+    }
+
+    /* Stage - Three.js canvas area */
+    .lab-stage {
+      grid-area: stage;
+      position: relative;
+      background: radial-gradient(ellipse at center, rgba(16, 20, 35, 0.3) 0%, var(--lab-void-dark) 70%);
+      overflow: hidden;
+    }
+    
+    .lab-stage canvas { 
+      display: block; 
+      width: 100%; 
+      height: 100%; 
+      touch-action: none; 
+    }
+
+    /* HUD Overlay */
+    .lab-hud {
+      position: absolute;
+      top: 1.25rem;
+      right: 1.25rem;
+      text-align: right;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.72rem;
+      color: rgba(232, 230, 227, 0.8);
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+      pointer-events: none;
+      z-index: 10;
+      background: rgba(5, 6, 8, 0.6);
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      border: 1px solid var(--lab-border);
+      backdrop-filter: blur(4px);
+    }
+    
+    .hud-line { 
+      margin-bottom: 0.4rem; 
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 0.75rem;
+    }
+    
+    .hud-label {
+      color: var(--lab-muted);
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    
+    .hud-value {
+      color: var(--lab-cyan);
+      font-weight: 600;
+      min-width: 4ch;
+    }
+
+    /* Controls - Glass panel */
+    .lab-controls {
+      position: absolute;
+      left: 1.25rem;
+      bottom: 1.25rem;
+      width: min(300px, 35%);
+      background: var(--glass-bg);
+      padding: 1.25rem;
+      border-radius: 16px;
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(16px);
+      z-index: 10;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    }
+    
+    .lab-controls h3 {
+      margin: 0 0 1rem;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--lab-cyan);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .lab-controls h3::before {
+      content: '◍';
+      font-size: 0.9em;
+    }
+    
+    .ctrl-row {
+      margin-bottom: 0.9rem;
+    }
+    
+    .ctrl-row label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--lab-muted);
+      margin-bottom: 0.4rem;
+    }
+    
+    .ctrl-val {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.75rem;
+      color: var(--lab-cyan);
+      background: rgba(77, 184, 168, 0.1);
+      padding: 2px 8px;
+      border-radius: 4px;
+      border: 1px solid rgba(77, 184, 168, 0.2);
+    }
+    
+    .slider-container {
+      position: relative;
+      height: 24px;
+      display: flex;
+      align-items: center;
+    }
+    
+    input[type="range"] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, rgba(77, 184, 168, 0.2), rgba(167, 139, 250, 0.2));
+      border-radius: 2px;
+      outline: none;
+    }
+    
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--lab-cyan);
+      cursor: pointer;
+      box-shadow: 0 0 12px var(--lab-cyan-glow);
+      border: 2px solid var(--lab-void);
+      transition: all 0.15s ease;
+    }
+    
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 16px var(--lab-cyan-glow);
+    }
+    
+    input[type="range"]::-moz-range-thumb {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--lab-cyan);
+      cursor: pointer;
+      border: 2px solid var(--lab-void);
+      box-shadow: 0 0 12px var(--lab-cyan-glow);
+    }
+    
+    .ctrl-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.6rem;
+      margin-top: 1rem;
+    }
+    
+    .ctrl-btn {
+      padding: 0.6rem 0.8rem;
+      font-size: 0.75rem;
+      border-radius: 10px;
+      border: 1px solid var(--lab-cyan);
+      background: linear-gradient(135deg, rgba(77, 184, 168, 0.15) 0%, transparent 100%);
+      color: var(--lab-cyan);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      font-family: "JetBrains Mono", monospace;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+    }
+    
+    .ctrl-btn:hover { 
+      background: rgba(77, 184, 168, 0.25);
+      box-shadow: 0 0 20px var(--lab-cyan-glow);
+      transform: translateY(-1px);
+    }
+    
+    .ctrl-btn:disabled { 
+      opacity: 0.4; 
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+    }
+    
+    .ctrl-btn.pulse-btn {
+      border-color: var(--lab-phos);
+      background: linear-gradient(135deg, rgba(167, 139, 250, 0.15) 0%, transparent 100%);
+      color: var(--lab-phos);
+    }
+    
+    .ctrl-btn.pulse-btn:hover {
+      background: rgba(167, 139, 250, 0.25);
+      box-shadow: 0 0 20px var(--lab-phos-glow);
+    }
+    
+    .trim-pulse {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+      opacity: 0.3;
+      transition: all 0.3s ease;
+    }
+    
+    .trim-pulse.active {
+      opacity: 1;
+      box-shadow: 0 0 12px currentColor;
+      animation: pulse-glow 1s ease-in-out infinite;
+    }
+    
+    @keyframes pulse-glow {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.3); opacity: 0.7; }
+    }
+
+    /* Console - Glass panel */
+    .lab-console {
+      position: absolute;
+      bottom: 1.25rem;
+      right: 1.25rem;
+      width: min(380px, 40%);
+      max-height: 220px;
+      background: rgba(5, 6, 8, 0.85);
+      border: 1px solid var(--lab-border);
+      border-radius: 12px;
+      padding: 1rem;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.72rem;
+      overflow-y: auto;
+      overflow-x: hidden;
+      z-index: 10;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    }
+    
+    .lab-console::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    .lab-console::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    
+    .lab-console::-webkit-scrollbar-thumb {
+      background: var(--lab-border-strong);
+      border-radius: 3px;
+    }
+    
+    .console-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--lab-border);
+    }
+    
+    .console-title {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--lab-muted);
+    }
+    
+    .console-clear {
+      font-size: 0.65rem;
+      color: var(--lab-muted);
+      cursor: pointer;
+      transition: color 0.15s ease;
+    }
+    
+    .console-clear:hover { color: var(--lab-cyan); }
+    
+    .log-entry { 
+      margin-bottom: 0.4rem;
+      display: flex;
+      gap: 0.5rem;
+      line-height: 1.4;
+    }
+    
+    .log-time { 
+      color: var(--lab-muted);
+      flex-shrink: 0;
+    }
+    
+    .log-cmd { color: var(--lab-cyan); }
+    .log-err { color: var(--lab-coral); }
+    .log-ok { color: #7dd3c0; }
+    .log-warn { color: var(--lab-butter); }
+
+    /* Mesh Panel */
+    .lab-mesh {
+      grid-area: mesh;
+      padding: 1.25rem;
+      border-left: 1px solid var(--lab-border);
+      overflow-y: auto;
+      background: var(--glass-bg);
+      backdrop-filter: blur(8px);
+      position: relative;
+      z-index: 5;
+    }
+    
+    .k4-vertex {
+      margin-bottom: 0.9rem;
+      padding: 1rem;
+      border-radius: 12px;
+      border: 1px solid var(--lab-border);
+      background: linear-gradient(135deg, rgba(16, 20, 28, 0.6) 0%, rgba(10, 14, 20, 0.3) 100%);
+      position: relative;
+      overflow: hidden;
+      transition: all 0.2s ease;
+    }
+    
+    .k4-vertex::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: var(--lab-muted);
+      transition: background 0.3s ease;
+    }
+    
+    .k4-vertex.personal::before { background: var(--lab-phos); }
+    .k4-vertex.cage::before { background: var(--lab-cyan); }
+    .k4-vertex.active::before { 
+      background: linear-gradient(180deg, var(--lab-cyan), var(--lab-phos));
+      box-shadow: 0 0 12px var(--lab-cyan-glow);
+    }
+    
+    .k4-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.4rem;
+    }
+    
+    .k4-name { 
+      font-size: 0.9rem; 
+      font-weight: 600; 
+      color: #e8e6e0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .k4-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--lab-cyan), var(--lab-phos));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--lab-void);
+    }
+    
+    .k4-state { 
+      font-size: 0.72rem; 
+      color: var(--lab-muted);
+      font-family: "JetBrains Mono", monospace;
+      margin-top: 0.3rem;
+    }
+    
+    .k4-edges { 
+      font-size: 0.68rem; 
+      color: var(--lab-muted);
+      margin-top: 0.5rem;
+      padding-top: 0.5rem;
+      border-top: 1px solid var(--lab-border);
+      display: flex;
+      gap: 1rem;
+    }
+    
+    .k4-metric {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    
+    .k4-metric-value {
+      color: var(--lab-cyan);
+      font-weight: 600;
+    }
+
+    /* Geodesic connection button */
+    .geo-connect {
+      margin-top: 1rem;
+      padding: 0.8rem;
+      border-radius: 10px;
+      border: 1px dashed var(--lab-border-strong);
+      background: rgba(0, 0, 0, 0.2);
+      text-align: center;
+    }
+    
+    .geo-btn {
+      width: 100%;
+      padding: 0.6rem;
+      font-size: 0.75rem;
+      border-radius: 8px;
+      border: 1px solid var(--lab-phos);
+      background: rgba(167, 139, 250, 0.1);
+      color: var(--lab-phos);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      font-family: "JetBrains Mono", monospace;
+    }
+    
+    .geo-btn:hover {
+      background: rgba(167, 139, 250, 0.2);
+      box-shadow: 0 0 16px var(--lab-phos-glow);
+    }
+    
+    .geo-status {
+      margin-top: 0.5rem;
+      font-size: 0.7rem;
+      color: var(--lab-muted);
+      font-family: "JetBrains Mono", monospace;
+    }
+
+    /* Footer */
+    .lab-foot {
+      grid-area: foot;
+      padding: 0 1.25rem;
+      font-size: 0.72rem;
+      border-top: 1px solid var(--lab-border);
+      color: var(--lab-muted);
+      background: rgba(10, 14, 20, 0.9);
+      backdrop-filter: blur(8px);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      z-index: 10;
+    }
+    
+    .lab-foot a { 
+      color: var(--lab-cyan);
+      text-decoration: none;
+      transition: color 0.15s ease;
+    }
+    
+    .lab-foot a:hover { color: var(--lab-phos); }
+    
+    .lab-foot-links {
+      display: flex;
+      gap: 1.25rem;
+    }
+
+    /* Loading overlay */
+    .loading-overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--lab-void);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      transition: opacity 0.5s ease;
+    }
+    
+    .loading-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    
+    .loading-tetra {
+      width: 60px;
+      height: 60px;
+      animation: rotate 3s linear infinite;
+    }
+    
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    
+    .loading-text {
+      margin-top: 1rem;
+      font-size: 0.8rem;
+      color: var(--lab-muted);
+      letter-spacing: 0.1em;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 900px) {
+      .lab-controls { width: calc(100% - 2.5rem); left: 1.25rem; right: 1.25rem; }
+      .lab-console { display: none; }
+      .lab-hud { top: auto; bottom: auto; right: 1.25rem; top: 5rem; }
+    }
+  </style>
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+    }
+  }
+  </script>
+</head>
+<body class="p31-mesh-m-first p31-responsive-surface lab">
+<a href="#main" style="position:absolute;left:-9999px;top:0;padding:0.5rem 1rem;background:var(--p31-void);color:var(--p31-teal);font-size:0.875rem;z-index:9999;border-radius:0 0 4px 4px;text-decoration:none" onfocus="this.style.left='0'" onblur="this.style.left='-9999px'">Skip to main content</a>
+  <!-- Smart Starfield Background -->
+  <canvas id="star-plate" width="4" height="4" aria-hidden="true"></canvas>
+  <script type="module">
+    const cv = document.getElementById("star-plate");
+    if (cv instanceof HTMLCanvasElement) {
+      try {
+        const mod = await import("./design-assets/starfield/p31-starfield-static-plate.js");
+        mod.initStaticStarPlate(cv, { preset: "hub" });
+      } catch (_e) {}
+    }
+  </script>
+
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" id="loading">
+    <svg class="loading-tetra" viewBox="0 0 100 100">
+      <polygon points="50,10 90,80 10,80" fill="none" stroke="#4db8a8" stroke-width="2"/>
+      <polygon points="50,10 90,80 50,50" fill="none" stroke="#a78bfa" stroke-width="1" opacity="0.5"/>
+      <polygon points="10,80 90,80 50,50" fill="none" stroke="#cc6247" stroke-width="1" opacity="0.5"/>
+    </svg>
+    <div class="loading-text">INITIALIZING SOVEREIGN LAB v2</div>
+  </div>
+
+  <header class="lab-head">
+    <div class="lab-logo">
+      <div class="lab-tetra">
+        <svg viewBox="0 0 100 100">
+          <defs>
+            <linearGradient id="tetra-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#4db8a8"/>
+              <stop offset="100%" style="stop-color:#a78bfa"/>
+            </linearGradient>
+          </defs>
+          <polygon points="50,15 85,75 15,75" fill="none" stroke="url(#tetra-grad)" stroke-width="3"/>
+          <circle cx="50" cy="45" r="4" fill="#4db8a8">
+            <animate attributeName="opacity" values="1;0.5;1" dur="2s" repeatCount="indefinite"/>
+          </circle>
+        </svg>
+      </div>
+      <div>
+        <h1 class="lab-title">Sovereign Lab <span style="opacity:0.6">v2</span></h1>
+        <p class="lab-subtitle">Live fleet · K₄ mesh · Trim-tab</p>
+      </div>
+    </div>
+    <div class="lab-badges">
+      <span class="lab-badge" id="mesh-status">MESH: STANDBY</span>
+      <span class="lab-badge" id="fleet-status">FLEET: SCANNING</span>
+    </div>
+  </header>
+
+  <!-- Fleet Panel -->
+  <aside class="lab-fleet" id="fleet-panel">
+    <h2 class="lab-section-title">Worker Fleet</h2>
+    <div id="worker-list"></div>
+    
+    <div class="routing-panel">
+      <h3>Quick Routes</h3>
+      <button class="route-btn" onclick="routeTo('tetra-hub', '/trio')">
+        <span>Tetra-Hub /trio</span>
+      </button>
+      <button class="route-btn" onclick="routeTo('k4-personal', '/api/mesh')">
+        <span>Personal /api/mesh</span>
+      </button>
+      <button class="route-btn" onclick="routeTo('k4-cage', '/api/mesh')">
+        <span>Cage /api/mesh</span>
+      </button>
+      <button class="route-btn" onclick="routeTo('geodesic-room', '/api/health')">
+        <span>Geodesic Health</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Stage -->
+  <main id="main" class="lab-stage" id="stage">
+    <canvas id="dome-canvas"></canvas>
+    
+    <!-- HUD -->
+    <div class="lab-hud">
+      <div class="hud-line">
+        <span class="hud-label">LARMOR</span>
+        <span class="hud-value" id="hud-larmor">17.235 MHz</span>
+      </div>
+      <div class="hud-line">
+        <span class="hud-label">COHERENCE</span>
+        <span class="hud-value" id="hud-coherence">0.00</span>
+      </div>
+      <div class="hud-line">
+        <span class="hud-label">VERTICES</span>
+        <span class="hud-value">4</span>
+      </div>
+      <div class="hud-line">
+        <span class="hud-label">EDGES</span>
+        <span class="hud-value">6</span>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="lab-controls">
+      <h3>Trim Tab</h3>
+      <div class="ctrl-row">
+        <label>
+          <span>Coherence</span>
+          <span class="ctrl-val" id="val-coherence">0.35</span>
+        </label>
+        <div class="slider-container">
+          <input type="range" id="slider-coherence" min="0" max="1" step="0.01" value="0.35">
+        </div>
+      </div>
+      <div class="ctrl-row">
+        <label>
+          <span>Voltage</span>
+          <span class="ctrl-val" id="val-voltage">0.50</span>
+        </label>
+        <div class="slider-container">
+          <input type="range" id="slider-voltage" min="0" max="1" step="0.01" value="0.50">
+        </div>
+      </div>
+      <div class="ctrl-row">
+        <label>
+          <span>Rotation</span>
+          <span class="ctrl-val" id="val-rotation">0.20</span>
+        </label>
+        <div class="slider-container">
+          <input type="range" id="slider-rotation" min="0" max="2" step="0.05" value="0.20">
+        </div>
+      </div>
+      <div class="ctrl-actions">
+        <button class="ctrl-btn" id="btn-sync-mesh" onclick="syncMesh()">
+          <span class="trim-pulse" id="trim-mesh"></span>
+          <span>Sync</span>
+        </button>
+        <button class="ctrl-btn pulse-btn" id="btn-pulse" onclick="sendPulse()">
+          <span class="trim-pulse" id="trim-pulse"></span>
+          <span>Pulse</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Console -->
+    <div class="lab-console" id="console">
+      <div class="console-header">
+        <span class="console-title">System Log</span>
+        <span class="console-clear" onclick="clearConsole()">Clear</span>
+      </div>
+      <div id="console-entries">
+        <div class="log-entry"><span class="log-time">[INIT]</span> <span class="log-cmd">Sovereign Lab v2 boot sequence...</span></div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Mesh Panel -->
+  <aside class="lab-mesh" id="mesh-panel">
+    <h2 class="lab-section-title">K₄ Mesh State</h2>
+    <div id="k4-vertices"></div>
+    
+    <h2 class="lab-section-title" style="margin-top: 1.5rem;">Geodesic Room</h2>
+    <div class="geo-connect">
+      <button class="geo-btn" onclick="connectGeodesic()">Connect WebSocket</button>
+      <div class="geo-status" id="geo-status">Disconnected</div>
+    </div>
+  </aside>
+
+  <footer class="lab-foot">
+    <div class="lab-foot-links">
+      <a href="p31-cheat-sheet.html">Cheat Sheet</a>
+      <a href="fleet-portal.html">Fleet Portal</a>
+      <a href="https://p31ca.org/geodesic" target="_blank">Geodesic</a>
+      <a href="https://p31ca.org/ops" target="_blank">Operator Shell</a>
+    </div>
+    <div>P31 Labs · EIN 42-1888158 · 💜🔺🌈</div>
+  </footer>
+
+  <script type="module">
+    // ==========================================
+    // SOVEREIGN LAB v2 - Worker Fleet Integration
+    // ==========================================
+    
+    import * as THREE from 'three';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+    // Worker Fleet Configuration
+    const WORKERS = [
+      { id: 'k4-personal', name: 'K4-Personal', url: 'https://k4-personal.trimtab-signal.workers.dev', paths: ['/api/health', '/api/mesh'], color: 0xa78bfa },
+      { id: 'k4-cage', name: 'K4-Cage', url: 'https://k4-cage.trimtab-signal.workers.dev', paths: ['/api/health', '/api/mesh'], color: 0x4db8a8 },
+      { id: 'k4-hubs', name: 'K4-Hubs', url: 'https://k4-hubs.trimtab-signal.workers.dev', paths: ['/health'], color: 0xe8c547 },
+      { id: 'tetra-hub', name: 'Tetra-Hub', url: 'https://tetra-hub.trimtab-signal.workers.dev', paths: ['/api/health', '/trio'], color: 0x7dd3c0 },
+      { id: 'k4-agent-hub', name: 'K4-Agent-Hub', url: 'https://k4-agent-hub.trimtab-signal.workers.dev', paths: ['/v1/manifest', '/v1/forge/health'], color: 0xcc6247 },
+      { id: 'p31-agent-hub', name: 'P31-Agent-Hub', url: 'https://p31-agent-hub.trimtab-signal.workers.dev', paths: ['/api/health'], color: 0x8b9aa8 },
+      { id: 'p31-orchestrator', name: 'Orchestrator', url: 'https://p31-orchestrator.trimtab-signal.workers.dev', paths: ['/api/orchestrator/status'], color: 0x6b7a8a },
+      { id: 'command-center', name: 'Command Center', url: 'https://command-center.trimtab-signal.workers.dev', paths: ['/api/health', '/api/operator/shift'], color: 0x4db8a8 },
+      { id: 'geodesic-room', name: 'Geodesic Room', url: 'https://geodesic-room.trimtab-signal.workers.dev', paths: ['/api/health'], color: 0xff8c00, ws: true },
+      { id: 'p31-google-bridge', name: 'Google Bridge', url: 'https://p31-google-bridge.trimtab-signal.workers.dev', paths: ['/health'], color: 0x4285f4 },
+      { id: 'bonding-relay', name: 'Bonding Relay', url: 'https://bonding-relay.trimtab-signal.workers.dev', paths: ['/health'], color: 0xa78bfa },
+      { id: 'cf-edge-lab', name: 'CF Edge Lab', url: 'https://cf-edge-lab.trimtab-signal.workers.dev', paths: ['/api/health'], color: 0xf59e0b },
+      { id: 'simplex-v7', name: 'SIMPLEX v7', url: 'https://simplex-v7.trimtab-signal.workers.dev', paths: ['/health'], color: 0x10b981 },
+      { id: 'passkey-api', name: 'Passkey API', url: 'https://p31ca.org/api/passkey', paths: ['/register-begin'], color: 0x3b82f6, sameOrigin: true }
+    ];
+
+    const K4_VERTICES = [
+      { id: 'will', label: 'will', name: 'will', initial: 'W', state: 'cage', love: 0, edges: 3 },
+      { id: 'sj', label: 'S.J.', name: 'S.J.', initial: 'S', state: 'cage', love: 0, edges: 3 },
+      { id: 'wj', label: 'W.J.', name: 'W.J.', initial: 'J', state: 'cage', love: 0, edges: 3 },
+      { id: 'christyn', label: 'christyn', name: 'christyn', initial: 'C', state: 'cage', love: 0, edges: 3 }
+    ];
+
+    const state = {
+      coherence: 0.35,
+      voltage: 0.50,
+      rotationSpeed: 0.20,
+      workerHealth: {},
+      selectedWorker: null,
+      geodesicWs: null,
+      meshData: null
+    };
+
+    function log(msg, type = 'info') {
+      const entriesEl = document.getElementById('console-entries');
+      const time = new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute:'2-digit', second:'2-digit' });
+      const entry = document.createElement('div');
+      entry.className = 'log-entry';
+      const typeClass = type === 'error' ? 'log-err' : type === 'ok' ? 'log-ok' : type === 'warn' ? 'log-warn' : 'log-cmd';
+      entry.innerHTML = `<span class="log-time">[${time}]</span> <span class="${typeClass}">${msg}</span>`;
+      entriesEl.appendChild(entry);
+      entriesEl.scrollTop = entriesEl.scrollHeight;
+    }
+
+    window.clearConsole = function() {
+      document.getElementById('console-entries').innerHTML = '';
+      log('Console cleared');
+    };
+
+    function initFleetPanel() {
+      const list = document.getElementById('worker-list');
+      list.innerHTML = '';
+      
+      WORKERS.forEach(worker => {
+        const card = document.createElement('div');
+        card.className = 'worker-card';
+        card.id = `worker-${worker.id}`;
+        card.innerHTML = `
+          <div class="worker-header">
+            <div class="worker-name">
+              <span class="worker-status-dot" id="dot-${worker.id}"></span>
+              ${worker.name}
+            </div>
+            <span class="worker-status-text" id="status-${worker.id}">●●●</span>
+          </div>
+          <div class="worker-actions">
+            <button class="worker-btn" onclick="event.stopPropagation(); probeWorker('${worker.id}')">Probe</button>
+            <button class="worker-btn" onclick="event.stopPropagation(); selectWorker('${worker.id}')">Select</button>
+          </div>
+        `;
+        card.onclick = () => selectWorker(worker.id);
+        list.appendChild(card);
+      });
+    }
+
+    function initK4Panel() {
+      const container = document.getElementById('k4-vertices');
+      container.innerHTML = '';
+      
+      K4_VERTICES.forEach(v => {
+        const div = document.createElement('div');
+        div.className = `k4-vertex cage`;
+        div.id = `vertex-${v.id}`;
+        div.innerHTML = `
+          <div class="k4-header">
+            <div class="k4-name">
+              <div class="k4-avatar">${v.initial}</div>
+              ${v.label}
+            </div>
+          </div>
+          <div class="k4-state" id="state-${v.id}">State: ${v.state}</div>
+          <div class="k4-edges">
+            <span class="k4-metric">Edges: <span class="k4-metric-value" id="edges-${v.id}">${v.edges}</span></span>
+            <span class="k4-metric">Love: <span class="k4-metric-value" id="love-${v.id}">${v.love}</span></span>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    window.probeWorker = async function(id) {
+      const worker = WORKERS.find(w => w.id === id);
+      if (!worker) return;
+      
+      const statusEl = document.getElementById(`status-${id}`);
+      const dotEl = document.getElementById(`dot-${id}`);
+      const cardEl = document.getElementById(`worker-${id}`);
+      
+      statusEl.textContent = '...';
+      
+      try {
+        const probePath = worker.paths[0];
+        const url = `${worker.url}${probePath}`;
+        
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 5000);
+        
+        const response = await fetch(url, { 
+          method: 'HEAD',
+          mode: 'cors',
+          signal: controller.signal
+        });
+        
+        clearTimeout(timeout);
+        
+        state.workerHealth[id] = 'online';
+        statusEl.textContent = 'ONLINE';
+        dotEl.className = 'worker-status-dot online';
+        cardEl.classList.remove('error');
+        cardEl.classList.add('online');
+        log(`${worker.name}: ONLINE`, 'ok');
+        
+      } catch (err) {
+        state.workerHealth[id] = 'offline';
+        statusEl.textContent = 'OFFLINE';
+        dotEl.className = 'worker-status-dot error';
+        cardEl.classList.add('error');
+        log(`${worker.name}: ${err.name === 'AbortError' ? 'TIMEOUT' : 'OFFLINE'}`, 'error');
+      }
+      
+      updateFleetStatus();
+    };
+
+    window.selectWorker = function(id) {
+      document.querySelectorAll('.worker-card').forEach(c => c.classList.remove('active'));
+      document.getElementById(`worker-${id}`).classList.add('active');
+      state.selectedWorker = id;
+      const worker = WORKERS.find(w => w.id === id);
+      log(`Selected: ${worker.name}`);
+    };
+
+    window.routeTo = async function(id, path) {
+      const worker = WORKERS.find(w => w.id === id);
+      if (!worker) return;
+      
+      log(`Routing to ${worker.name}...`);
+      
+      try {
+        const url = `${worker.url}${path}`;
+        const response = await fetch(url, { 
+          mode: 'cors',
+          headers: { 'Accept': 'application/json' }
+        });
+        
+        let data;
+        try { data = await response.json(); } catch { data = null; }
+        
+        log(`${worker.name}: HTTP ${response.status}`, response.ok ? 'ok' : 'warn');
+        
+        if (data && id === 'tetra-hub' && path === '/trio') {
+          updateK4FromMesh(data);
+        }
+        
+        return data;
+      } catch (err) {
+        log(`${worker.name}: ${err.message}`, 'error');
+        return null;
+      }
+    };
+
+    function updateK4FromMesh(data) {
+      if (data.vertices) {
+        data.vertices.forEach(v => {
+          const stateEl = document.getElementById(`state-${v.id}`);
+          const edgesEl = document.getElementById(`edges-${v.id}`);
+          const loveEl = document.getElementById(`love-${v.id}`);
+          const vertexEl = document.getElementById(`vertex-${v.id}`);
+          
+          if (stateEl) stateEl.textContent = `State: ${v.state || 'unknown'}`;
+          if (edgesEl) edgesEl.textContent = v.edges ? v.edges.length : '0';
+          if (loveEl) loveEl.textContent = v.love || '0';
+          if (vertexEl && v.state === 'active') vertexEl.classList.add('active');
+        });
+        log('K₄ mesh state updated', 'ok');
+      }
+    }
+
+    window.syncMesh = async function() {
+      log('Syncing mesh state...');
+      document.getElementById('trim-mesh').classList.add('active');
+      
+      const trio = await window.routeTo('tetra-hub', '/trio');
+      if (trio) {
+        state.meshData = trio;
+        updateK4FromMesh(trio);
+      }
+      
+      setTimeout(() => {
+        document.getElementById('trim-mesh').classList.remove('active');
+      }, 1000);
+    };
+
+    window.sendPulse = function() {
+      log('Sending LARMOR pulse...');
+      document.getElementById('trim-pulse').classList.add('active');
+      
+      if (window.domeScene) {
+        const pulseGeo = new THREE.IcosahedronGeometry(2.5, 0);
+        const pulseMat = new THREE.MeshBasicMaterial({ 
+          color: 0xa78bfa, 
+          wireframe: true,
+          transparent: true,
+          opacity: 0.8
+        });
+        const pulse = new THREE.Mesh(pulseGeo, pulseMat);
+        window.domeScene.add(pulse);
+        
+        let scale = 1;
+        const expand = () => {
+          scale += 0.08;
+          pulse.scale.set(scale, scale, scale);
+          pulse.material.opacity = Math.max(0, 0.8 - (scale - 1) * 0.25);
+          
+          if (scale < 4) {
+            requestAnimationFrame(expand);
+          } else {
+            window.domeScene.remove(pulse);
+          }
+        };
+        expand();
+      }
+      
+      setTimeout(() => {
+        document.getElementById('trim-pulse').classList.remove('active');
+      }, 1500);
+    };
+
+    window.connectGeodesic = function() {
+      const statusEl = document.getElementById('geo-status');
+      
+      if (state.geodesicWs) {
+        state.geodesicWs.close();
+        state.geodesicWs = null;
+        statusEl.textContent = 'Disconnected';
+        statusEl.style.color = 'var(--lab-muted)';
+        log('Geodesic WS disconnected');
+        return;
+      }
+      
+      log('Connecting to Geodesic Room...');
+      statusEl.textContent = 'Connecting...';
+      statusEl.style.color = 'var(--lab-butter)';
+      
+      try {
+        const ws = new WebSocket('wss://geodesic-room.trimtab-signal.workers.dev/api/geodesic/default/ws');
+        
+        ws.onopen = () => {
+          state.geodesicWs = ws;
+          statusEl.textContent = 'Connected';
+          statusEl.style.color = '#7dd3c0';
+          log('Geodesic WS connected', 'ok');
+          ws.send(JSON.stringify({ type: 'hello', client: 'sovereign-lab-v2' }));
+        };
+        
+        ws.onmessage = (event) => {
+          try {
+            const msg = JSON.parse(event.data);
+            log(`Geo: ${msg.type}`, 'info');
+          } catch {}
+        };
+        
+        ws.onerror = () => {
+          log('Geodesic WS error', 'error');
+          statusEl.textContent = 'Error';
+          statusEl.style.color = 'var(--lab-coral)';
+        };
+        
+        ws.onclose = () => {
+          state.geodesicWs = null;
+          statusEl.textContent = 'Closed';
+          statusEl.style.color = 'var(--lab-muted)';
+        };
+      } catch (err) {
+        log(`Geodesic failed: ${err.message}`, 'error');
+        statusEl.textContent = 'Failed';
+      }
+    };
+
+    function updateFleetStatus() {
+      const online = Object.values(state.workerHealth).filter(h => h === 'online').length;
+      const badge = document.getElementById('fleet-status');
+      badge.textContent = `FLEET: ${online}/14 ONLINE`;
+      badge.className = online >= 10 ? 'lab-badge online' : online >= 5 ? 'lab-badge warning' : 'lab-badge error';
+    }
+
+    function initThreeJS() {
+      const canvas = document.getElementById('dome-canvas');
+      const container = document.getElementById('stage');
+      
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x050508);
+      window.domeScene = scene;
+      
+      const camera = new THREE.PerspectiveCamera(60, container.clientWidth / container.clientHeight, 0.1, 100);
+      camera.position.set(0, 0, 6);
+      
+      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+      renderer.setSize(container.clientWidth, container.clientHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      
+      const controls = new OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.05;
+      
+      const ambientLight = new THREE.AmbientLight(0x404040, 1.5);
+      scene.add(ambientLight);
+      
+      const pointLight = new THREE.PointLight(0x4db8a8, 2, 50);
+      pointLight.position.set(5, 5, 5);
+      scene.add(pointLight);
+      
+      const pointLight2 = new THREE.PointLight(0xa78bfa, 2, 50);
+      pointLight2.position.set(-5, -5, 5);
+      scene.add(pointLight2);
+      
+      const domeGeo = new THREE.IcosahedronGeometry(2, 1);
+      const domeMat = new THREE.MeshStandardMaterial({
+        color: 0x1a1f2e,
+        emissive: 0x0f1419,
+        roughness: 0.3,
+        metalness: 0.8,
+        wireframe: false
+      });
+      const dome = new THREE.Mesh(domeGeo, domeMat);
+      scene.add(dome);
+      
+      const wireGeo = new THREE.IcosahedronGeometry(2.02, 1);
+      const wireMat = new THREE.MeshBasicMaterial({
+        color: 0x4db8a8,
+        wireframe: true,
+        transparent: true,
+        opacity: 0.3
+      });
+      const wireframe = new THREE.Mesh(wireGeo, wireMat);
+      scene.add(wireframe);
+      
+      const vertexGeo = new THREE.SphereGeometry(0.08, 16, 16);
+      const vertexColors = [0xa78bfa, 0x4db8a8, 0xe8c547, 0xcc6247];
+      
+      K4_VERTICES.forEach((v, i) => {
+        const mat = new THREE.MeshBasicMaterial({ 
+          color: vertexColors[i],
+          transparent: true,
+          opacity: 0.9
+        });
+        const sphere = new THREE.Mesh(vertexGeo, mat);
+        
+        const positions = [
+          [0, 1.5, 0],
+          [1.2, -0.8, 0.8],
+          [-1.2, -0.8, 0.8],
+          [0, -0.8, -1.2]
+        ];
+        sphere.position.set(...positions[i]);
+        scene.add(sphere);
+      });
+      
+      const edgePositions = [
+        [[0, 1.5, 0], [1.2, -0.8, 0.8]],
+        [[0, 1.5, 0], [-1.2, -0.8, 0.8]],
+        [[0, 1.5, 0], [0, -0.8, -1.2]],
+        [[1.2, -0.8, 0.8], [-1.2, -0.8, 0.8]],
+        [[1.2, -0.8, 0.8], [0, -0.8, -1.2]],
+        [[-1.2, -0.8, 0.8], [0, -0.8, -1.2]]
+      ];
+      
+      edgePositions.forEach(([start, end]) => {
+        const geo = new THREE.BufferGeometry().setFromPoints([
+          new THREE.Vector3(...start),
+          new THREE.Vector3(...end)
+        ]);
+        const line = new THREE.Line(geo, new THREE.LineBasicMaterial({ 
+          color: 0x4db8a8, transparent: true, opacity: 0.4 
+        }));
+        scene.add(line);
+      });
+      
+      function animate() {
+        requestAnimationFrame(animate);
+        
+        const speed = state.rotationSpeed * 0.01;
+        dome.rotation.y += speed;
+        dome.rotation.x += speed * 0.3;
+        wireframe.rotation.y += speed;
+        wireframe.rotation.x += speed * 0.3;
+        
+        const pulse = 1 + Math.sin(Date.now() * 0.001) * state.coherence * 0.05;
+        wireframe.scale.set(pulse, pulse, pulse);
+        
+        const hue = 0.45 + state.coherence * 0.1;
+        wireMat.color.setHSL(hue, 0.8, 0.6);
+        
+        document.getElementById('hud-coherence').textContent = state.coherence.toFixed(2);
+        
+        controls.update();
+        renderer.render(scene, camera);
+      }
+      
+      window.addEventListener('resize', () => {
+        camera.aspect = container.clientWidth / container.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(container.clientWidth, container.clientHeight);
+      });
+      
+      animate();
+    }
+
+    function initControls() {
+      document.getElementById('slider-coherence').addEventListener('input', (e) => {
+        state.coherence = parseFloat(e.target.value);
+        document.getElementById('val-coherence').textContent = state.coherence.toFixed(2);
+      });
+      
+      document.getElementById('slider-voltage').addEventListener('input', (e) => {
+        state.voltage = parseFloat(e.target.value);
+        document.getElementById('val-voltage').textContent = state.voltage.toFixed(2);
+      });
+      
+      document.getElementById('slider-rotation').addEventListener('input', (e) => {
+        state.rotationSpeed = parseFloat(e.target.value);
+        document.getElementById('val-rotation').textContent = state.rotationSpeed.toFixed(2);
+      });
+    }
+
+    function init() {
+      log('Initializing Sovereign Lab v2...');
+      
+      initFleetPanel();
+      initK4Panel();
+      initThreeJS();
+      initControls();
+      
+      setTimeout(() => {
+        WORKERS.forEach((w, i) => {
+          setTimeout(() => window.probeWorker(w.id), i * 300);
+        });
+      }, 1500);
+      
+      setTimeout(() => {
+        document.getElementById('loading').classList.add('hidden');
+        log('Sovereign Lab v2 initialized', 'ok');
+        document.getElementById('mesh-status').textContent = 'MESH: READY';
+      }, 2000);
+    }
+
+    init();
+  </script>
+</body>
+</html>

@@ -1,0 +1,75 @@
+{
+  "timestamp": "2026-03-23T07:51:44.309Z",
+  "summary": {
+    "ecosystemHealth": 54,
+    "keyMetrics": {
+      "totalRevenue": 25,
+      "activeUsers": 1,
+      "deploymentSuccess": 0.95,
+      "communityGrowth": 10
+    },
+    "trends": {
+      "revenueTrend": "Increasing",
+      "userGrowthTrend": "Stable",
+      "deploymentFrequencyTrend": "Increasing",
+      "engagementTrend": "Decreasing"
+    },
+    "riskFactors": [
+      {
+        "type": "Financial",
+        "severity": "High",
+        "description": "Low revenue may impact project sustainability",
+        "mitigation": "Diversify revenue streams and improve marketing"
+      }
+    ]
+  },
+  "detailed": {
+    "koFi": {
+      "totalPayments": 1,
+      "totalRevenue": 25,
+      "averagePayment": 25,
+      "tierDistribution": {
+        "Node": 1
+      },
+      "conversionRate": 0
+    },
+    "github": {
+      "workflowRuns": 1,
+      "successRate": 0.95,
+      "averageRuntime": 5,
+      "deploymentFrequency": 10
+    },
+    "ipfs": {
+      "deployments": 1,
+      "totalSize": 1024000,
+      "gatewayUptime": 0,
+      "pinningSuccess": 0.95
+    },
+    "gamification": {
+      "activeUsers": 1,
+      "karmaDistribution": {
+        "50-200": 1
+      },
+      "spoonsUsage": {
+        "0-25": 1
+      },
+      "achievementUnlocks": 0,
+      "challengeCompletion": 0
+    },
+    "community": {
+      "totalMembers": 100,
+      "growthRate": 10,
+      "engagementScore": 75,
+      "retentionRate": 80
+    }
+  },
+  "recommendations": [
+    {
+      "category": "Ko-Fi",
+      "priority": "High",
+      "recommendation": "Low conversion rate detected. Consider improving value proposition or reducing friction in payment flow.",
+      "impact": "Revenue Growth"
+    }
+  ],
+  "alerts": []
+}

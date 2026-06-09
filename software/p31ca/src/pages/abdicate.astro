@@ -1,0 +1,31 @@
+---
+import AppShell from '../layouts/AppShell.astro';
+import AbdicationCeremony from '../components/AbdicationCeremony.astro';
+
+// Get alias from query param or default
+const alias = Astro.url.searchParams.get('alias') || 'Family Member';
+const vertex = Astro.url.searchParams.get('vertex') || 'christyn';
+
+// Map vertex to surface
+const vertexToSurface: Record<string, string> = {
+  'will': 'warehouse-aj',
+  'sj': 'gray-rock',
+  'wj': 'pharma-nexus',
+  'christyn': 'culinary-matria',
+  'operator': 'warehouse-aj'
+};
+
+const targetSurface = vertexToSurface[vertex] || 'gray-rock';
+---
+
+<AppShell
+  title="Abdication Ceremony | Enter the Sanctuary"
+  description="The threshold from WYE extraction to DELTA sovereignty."
+  routeName="abdicate"
+>
+  <AbdicationCeremony 
+    alias={alias}
+    vertex={vertex as any}
+    onCompleteUrl={`/?surface=${targetSurface}&vertex=${vertex}`}
+  />
+</AppShell>

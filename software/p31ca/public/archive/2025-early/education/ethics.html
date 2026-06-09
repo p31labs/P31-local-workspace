@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1115" />
+  <title>Ethics for learners | Education | P31 Labs</title>
+  <meta name="description" content="How we design education UI: no dark patterns, calm defaults, clear boundaries for youth and adults." />
+  <meta name="p31.labs-education" content="p31.labsEducation/0.2.0" />
+  <link rel="stylesheet" href="/p31-style.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/p31-tailwind-extend.js"></script>
+  <script>tailwind.config = { theme: { extend: { ...window.P31_TAILWIND_EXTEND } } };</script>
+</head>
+<body class="font-sans antialiased bg-void text-cloud min-h-screen p31-mesh-m-first">
+  <a class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:px-4" href="#main">Skip to main</a>
+  <div class="min-h-screen flex flex-col max-w-3xl mx-auto px-4 py-8 md:py-10">
+    <header class="mb-2">
+      <p class="font-mono text-[0.65rem] text-cloud/50 tracking-widest uppercase mb-2">P31 Labs · education</p>
+      <h1 class="text-2xl font-bold text-paper">Ethics for learners</h1>
+      <p class="mt-2 text-sm text-cloud/70">Aligned with the universal UI canon and ethical style map — this page is non-technical.</p>
+    </header>
+    <nav class="flex flex-wrap gap-x-3 gap-y-2 text-xs font-mono text-cloud/70 border-b border-white/10 pb-4 mb-6" aria-label="Education">
+      <a class="text-teal/90 hover:underline" href="/education/">Home</a>
+      <a class="text-teal/90 hover:underline" href="/education/about.html">About</a>
+      <a class="text-teal/90 hover:underline" href="/education/ethics.html">Ethics</a>
+      <a class="text-teal/90 hover:underline" href="/education/parent-faq.html">Parents</a>
+      <a class="text-teal/90 hover:underline" href="/education/tracks/index.html">Tracks</a>
+      <a class="text-teal/90 hover:underline" href="/education/labs/index.html">Labs</a>
+    </nav>
+    <main id="main" class="space-y-5 text-sm text-cloud/85 leading-relaxed">
+      <ul class="list-disc pl-5 space-y-2">
+        <li><strong class="text-paper/90">No manufactured urgency.</strong> Learning paths are labeled by phase (E0–E2); we do not use streak pressure or loss aversion on this static tier.</li>
+        <li><strong class="text-paper/90">Clarity over hype.</strong> When we point to the mesh, PQC, or Workers, we name what is public HTML versus what needs a passkey, DO, or personal scope.</li>
+        <li><strong class="text-paper/90">Youth.</strong> Public pages stay age-appropriate; household youth flows are documented in <span class="font-mono text-xs">PLAN-KIDS-VIBE-CODING</span> and should stay local-first where possible.</li>
+        <li><strong class="text-paper/90">Accessibility.</strong> We keep contrast and motion in line with the hub token set; if a lab needs animation, we prefer reduced-motion respect patterns used elsewhere on p31ca.</li>
+      </ul>
+      <p>
+        <a class="text-teal hover:underline" href="/p31-ethical-gamification-showcase.html">Ethical pattern lab (hub)</a> demonstrates engagement patterns without “growth hacking” copy.
+      </p>
+    </main>
+    <footer class="mt-12 border-t border-white/10 pt-6 text-xs text-cloud/45 text-center">
+      <a class="text-teal/80 hover:underline" href="/education/">← Education home</a>
+    </footer>
+  </div>
+</body>
+</html>

@@ -1,0 +1,16 @@
+---
+// @p31-layout: Focus
+import AppShell from '../layouts/AppShell.astro';
+---
+
+<AppShell title="P31 Labs | 404 Not Found" routeName="404">
+  <div class="min-h-[60vh] flex flex-col items-center justify-center text-center px-4">
+    <p class="text-[10px] font-mono tracking-[0.2em] uppercase mb-3" style="color:var(--p31-coral,#f43f5e)">Error 404</p>
+    <h1 class="text-8xl font-bold mb-4" style="color:var(--p31-coral,#f43f5e)">404</h1>
+    <p class="text-xl mb-8" style="color:var(--p31-cloud,#ede8e0)">Page not found</p>
+    <a href="/" class="px-8 py-3 rounded-xl font-bold transition-colors"
+      style="background:rgba(244,63,94,0.15);border:1px solid rgba(244,63,94,0.4);color:var(--p31-coral,#f43f5e)">
+      Return to Hub →
+    </a>
+  </div>
+</AppShell>

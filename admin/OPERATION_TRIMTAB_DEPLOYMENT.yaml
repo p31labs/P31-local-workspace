@@ -1,0 +1,65 @@
+# OPERATION TRIMTAB DEPLOYMENT
+# Kilo-ready configuration for Quantum Egg Hunt Campaign
+
+# WCD Top-level Shorthand Keys
+tests: 558
+balance: 5.00
+days_remaining: 9
+
+metrics:
+  tests: 558
+  balance: 5.00
+  days_remaining: 9
+
+# WCD Aligned Block
+waves:
+  - target_platform: "kofi"
+    content_block: "Phase 1 initialized. The geometry is taking shape."
+    scheduled_time: "2026-03-26T12:00:00Z"
+    egg_hint: "Acoustic: lockTone() → 172.35 Hz"
+
+  - target_platform: "twitter"
+    content_block: "Check the console. Larmor frequency required for progression."
+    scheduled_time: "2026-03-27T12:00:00Z"
+    egg_hint: "DevTools: triggerLarmor() → 863 Hz"
+
+  - target_platform: "linkedin"
+    content_block: "Maxwell's rigidity math applies to networks as well as physical structures."
+    scheduled_time: "2026-03-28T12:00:00Z"
+    egg_hint: "K4: build tetrahedron → Minimal Rigidity Reached"
+
+  - target_platform: "reddit"
+    content_block: "Chemical bounds are forming. Post the formula to verify."
+    scheduled_time: "2026-03-29T12:00:00Z"
+    egg_hint: "Chemical: Bashium+Willium in #showcase → 39 Spoons"
+
+  - target_platform: "facebook"
+    content_block: "All eggs are now live. We need 39 active nodes."
+    scheduled_time: "2026-03-30T12:00:00Z"
+    egg_hint: "All 4 eggs active → 39 nodes needed"
+
+  - target_platform: "superstonk"
+    content_block: "Topology locked. The shape holds."
+    scheduled_time: "2026-03-31T12:00:00Z"
+    egg_hint: "K4 Geometric Egg: DRS = Delta topology"
+
+# Legacy block for backward compatibility (Deprecated)
+deployments:
+  - platform: "kofi"
+    content: "Phase 1 initialized. The geometry is taking shape."
+    delay_minutes: 0
+  - platform: "twitter"
+    content: "Check the console. Larmor frequency required for progression."
+    delay_minutes: 1440
+  - platform: "linkedin"
+    content: "Maxwell's rigidity math applies to networks as well as physical structures."
+    delay_minutes: 2880
+  - platform: "reddit"
+    content: "Chemical bounds are forming. Post the formula to verify."
+    delay_minutes: 4320
+  - platform: "facebook"
+    content: "All eggs are now live. We need 39 active nodes."
+    delay_minutes: 5760
+  - platform: "superstonk"
+    content: "Topology locked. The shape holds."
+    delay_minutes: 7200

@@ -1,0 +1,1168 @@
+diff --git a/.github/workflows/deploy-workers.yml b/.github/workflows/deploy-workers.yml
+index ac4be57..26cfe1d 100644
+--- a/.github/workflows/deploy-workers.yml
++++ b/.github/workflows/deploy-workers.yml
+@@ -27,7 +27,7 @@ jobs:
+       # running npm install inside the pnpm workspace (workspace:* protocol
+       # causes EUNSUPPORTEDPROTOCOL on plain npm).
+       - name: Install wrangler globally
+-        run: npm install -g wrangler@3.114.17
++        run: npm install -g wrangler@4.85.0
+ 
+       # ── 1. k4-cage (no deps) ────────────────────────────────────────
+       - name: Deploy k4-cage
+@@ -36,6 +36,7 @@ jobs:
+           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+           workingDirectory: 04_SOFTWARE/k4-cage
++          wranglerVersion: "4.85.0"
+ 
+       # ── 2. k4-personal (no deps) ────────────────────────────────────
+       - name: Deploy k4-personal
+@@ -44,6 +45,7 @@ jobs:
+           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+           workingDirectory: 04_SOFTWARE/k4-personal
++          wranglerVersion: "4.85.0"
+ 
+       # ── 3. k4-hubs (binds → k4-cage, k4-personal) ───────────────────
+       - name: Deploy k4-hubs
+@@ -52,6 +54,7 @@ jobs:
+           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+           workingDirectory: 04_SOFTWARE/k4-hubs
++          wranglerVersion: "4.85.0"
+ 
+       # ── 4. p31-agent-hub (binds → all three above) ──────────────────
+       - name: Deploy p31-agent-hub
+@@ -60,6 +63,7 @@ jobs:
+           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+           workingDirectory: 04_SOFTWARE/p31-agent-hub
++          wranglerVersion: "4.85.0"
+ 
+       # ── 5. Post-deploy verification ──────────────────────────────────
+       - name: Wait for propagation
+diff --git a/.github/workflows/omnibus-frontend.yml b/.github/workflows/omnibus-frontend.yml
+index a0e9f59..ac1fb90 100644
+--- a/.github/workflows/omnibus-frontend.yml
++++ b/.github/workflows/omnibus-frontend.yml
+@@ -80,5 +80,5 @@ jobs:
+           projectName: andromeda-ui
+           directory: 04_SOFTWARE/frontend/dist
+           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+-          wranglerVersion: '3'
++          wranglerVersion: "4.85.0"
+           branch: main
+diff --git a/.github/workflows/p31-automation.yml b/.github/workflows/p31-automation.yml
+index 7b9511e..6ba9785 100644
+--- a/.github/workflows/p31-automation.yml
++++ b/.github/workflows/p31-automation.yml
+@@ -118,6 +118,7 @@ jobs:
+           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+           workingDirectory: 04_SOFTWARE/cloudflare-worker/bouncer
+           command: deploy
++          wranglerVersion: "4.85.0"
+ 
+   deploy-command-center:
+     needs: paths
+@@ -135,6 +136,7 @@ jobs:
+           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+           workingDirectory: 04_SOFTWARE/cloudflare-worker/command-center
+           command: deploy
++          wranglerVersion: "4.85.0"
+ 
+   deploy-docs:
+     needs: paths
+@@ -159,6 +161,7 @@ jobs:
+           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+           workingDirectory: 04_SOFTWARE/docs
+           command: pages deploy dist --project-name=p31-technical-library
++          wranglerVersion: "4.85.0"
+ 
+   deploy-p31ca:
+     needs: paths
+@@ -173,8 +176,14 @@ jobs:
+         with:
+           node-version: '20'
+ 
++      - name: Install p31ca
++        run: cd 04_SOFTWARE/p31ca && npm install
++
++      - name: Verify passport mirror (skips on Andromeda-only checkouts)
++        run: cd 04_SOFTWARE/p31ca && npm run passport:verify
++
+       - name: Build p31ca.org
+-        run: cd 04_SOFTWARE/p31ca && npm install && npm run build
++        run: cd 04_SOFTWARE/p31ca && npm run build
+ 
+       - name: Deploy to Cloudflare Pages
+         uses: cloudflare/wrangler-action@v3
+@@ -183,6 +192,7 @@ jobs:
+           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+           workingDirectory: 04_SOFTWARE/p31ca
+           command: pages deploy dist --project-name=p31ca
++          wranglerVersion: "4.85.0"
+ 
+   deploy-phosphorus31:
+     needs: paths
+@@ -207,3 +217,4 @@ jobs:
+           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+           workingDirectory: phosphorus31.org/planetary-planet
+           command: pages deploy dist --project-name=phosphorus31-org
++          wranglerVersion: "4.85.0"
+diff --git a/04_SOFTWARE/p31ca/DEPLOY.md b/04_SOFTWARE/p31ca/DEPLOY.md
+index 7e60d08..effb89b 100644
+--- a/04_SOFTWARE/p31ca/DEPLOY.md
++++ b/04_SOFTWARE/p31ca/DEPLOY.md
+@@ -7,6 +7,8 @@
+ | **`p31ca`** | `04_SOFTWARE/p31ca/` | `p31ca.org`, `www.p31ca.org` |
+ | **`p31-hearing-ops`** | `04_SOFTWARE/p31-hearing-ops/` | `ops.p31ca.org` only |
+ 
++**Passport + deploy** — from `04_SOFTWARE/p31ca/`: `npm run deploy` runs `predeploy` → `passport:verify` (and build). Full P31 home: sync authoring first with `npm run sync:passport` at workspace root, or `npm run passport:sync` from `p31ca/`. Stale `public/passport-generator.html` fails the deploy. **Wrangler** is pinned in `package.json` (pages deploy: `project-name p31ca`).
++
+ Deploying **any other app’s `dist/`** to project **`p31ca`** replaces the hub for **every** domain on that project.
+ 
+ ## Recover if the apex shows Hearing Ops (or any wrong app)
+diff --git a/04_SOFTWARE/p31ca/package-lock.json b/04_SOFTWARE/p31ca/package-lock.json
+index 09d8e66..b9254f5 100644
+--- a/04_SOFTWARE/p31ca/package-lock.json
++++ b/04_SOFTWARE/p31ca/package-lock.json
+@@ -12,6 +12,9 @@
+         "astro": "^5.17.1",
+         "tailwindcss": "^3.4.19",
+         "three": "^0.183.0"
++      },
++      "devDependencies": {
++        "wrangler": "^4.85.0"
+       }
+     },
+     "node_modules/@alloc/quick-lru": {
+@@ -170,6 +173,141 @@
+         "node": ">=18"
+       }
+     },
++    "node_modules/@cloudflare/kv-asset-handler": {
++      "version": "0.4.2",
++      "resolved": "https://registry.npmjs.org/@cloudflare/kv-asset-handler/-/kv-asset-handler-0.4.2.tgz",
++      "integrity": "sha512-SIOD2DxrRRwQ+jgzlXCqoEFiKOFqaPjhnNTGKXSRLvp1HiOvapLaFG2kEr9dYQTYe8rKrd9uvDUzmAITeNyaHQ==",
++      "dev": true,
++      "license": "MIT OR Apache-2.0",
++      "engines": {
++        "node": ">=18.0.0"
++      }
++    },
++    "node_modules/@cloudflare/unenv-preset": {
++      "version": "2.16.1",
++      "resolved": "https://registry.npmjs.org/@cloudflare/unenv-preset/-/unenv-preset-2.16.1.tgz",
++      "integrity": "sha512-ECxObrMfyTl5bhQf/lZCXwo5G6xX9IAUo+nDMKK4SZ8m4Jvvxp52vilxyySSWh2YTZz8+HQ07qGH/2rEom1vDw==",
++      "dev": true,
++      "license": "MIT OR Apache-2.0",
++      "peerDependencies": {
++        "unenv": "2.0.0-rc.24",
++        "workerd": ">1.20260305.0 <2.0.0-0"
++      },
++      "peerDependenciesMeta": {
++        "workerd": {
++          "optional": true
++        }
++      }
++    },
++    "node_modules/@cloudflare/workerd-darwin-64": {
++      "version": "1.20260424.1",
++      "resolved": "https://registry.npmjs.org/@cloudflare/workerd-darwin-64/-/workerd-darwin-64-1.20260424.1.tgz",
++      "integrity": "sha512-yFR1XaJbSDLg/qbwtrYaU2xwFXatIPKR5nrMQCN1q/m6+Qe/j6r+kCnFEvOJjMZOm9iCKsE6Qly5clgl4u32qw==",
++      "cpu": [
++        "x64"
++      ],
++      "dev": true,
++      "license": "Apache-2.0",
++      "optional": true,
++      "os": [
++        "darwin"
++      ],
++      "engines": {
++        "node": ">=16"
++      }
++    },
++    "node_modules/@cloudflare/workerd-darwin-arm64": {
++      "version": "1.20260424.1",
++      "resolved": "https://registry.npmjs.org/@cloudflare/workerd-darwin-arm64/-/workerd-darwin-arm64-1.20260424.1.tgz",
++      "integrity": "sha512-LqWKcE7x/9KyC2iQvKPeb20hKST3dYXDZlYTvFymgR1DfLS0OFOCzVGTloVNd7WqvK4SkdzBYfxo7QMIAeBK0w==",
++      "cpu": [
++        "arm64"
++      ],
++      "dev": true,
++      "license": "Apache-2.0",
++      "optional": true,
++      "os": [
++        "darwin"
++      ],
++      "engines": {
++        "node": ">=16"
++      }
++    },
++    "node_modules/@cloudflare/workerd-linux-64": {
++      "version": "1.20260424.1",
++      "resolved": "https://registry.npmjs.org/@cloudflare/workerd-linux-64/-/workerd-linux-64-1.20260424.1.tgz",
++      "integrity": "sha512-YlEBFbAYZHe/ylzl8WEYQEU/jr+0XMqXaST2oBk5oVjksdb1NGuJaggluCdZAzuJJ8UqdTmyhY5u/qrasbiFWA==",
++      "cpu": [
++        "x64"
++      ],
++      "dev": true,
++      "license": "Apache-2.0",
++      "optional": true,
++      "os": [
++        "linux"
++      ],
++      "engines": {
++        "node": ">=16"
++      }
++    },
++    "node_modules/@cloudflare/workerd-linux-arm64": {
++      "version": "1.20260424.1",
++      "resolved": "https://registry.npmjs.org/@cloudflare/workerd-linux-arm64/-/workerd-linux-arm64-1.20260424.1.tgz",
++      "integrity": "sha512-qJ0X0m6cL8fWDUPDg8K4IxYZXNJI6XbeOihqjnqKbAClrjdPDn8VUSd+z2XiCQ5NylMtMrpa/skC9UfaR6mh8g==",
++      "cpu": [
++        "arm64"
++      ],
++      "dev": true,
++      "license": "Apache-2.0",
++      "optional": true,
++      "os": [
++        "linux"
++      ],
++      "engines": {
++        "node": ">=16"
++      }
++    },
++    "node_modules/@cloudflare/workerd-windows-64": {
++      "version": "1.20260424.1",
++      "resolved": "https://registry.npmjs.org/@cloudflare/workerd-windows-64/-/workerd-windows-64-1.20260424.1.tgz",
++      "integrity": "sha512-tZ7Z9qmYNAP6z1/+8r/zKbk8F8DZmpmwNzMeN+zkde2Wnhfr3FBqOkJXT/5zmli8HPoWrIXxSiyqcNDMy8V2Zg==",
++      "cpu": [
++        "x64"
++      ],
++      "dev": true,
++      "license": "Apache-2.0",
++      "optional": true,
++      "os": [
++        "win32"
++      ],
++      "engines": {
++        "node": ">=16"
++      }
++    },
++    "node_modules/@cspotcode/source-map-support": {
++      "version": "0.8.1",
++      "resolved": "https://registry.npmjs.org/@cspotcode/source-map-support/-/source-map-support-0.8.1.tgz",
++      "integrity": "sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==",
++      "dev": true,
++      "license": "MIT",
++      "dependencies": {
++        "@jridgewell/trace-mapping": "0.3.9"
++      },
++      "engines": {
++        "node": ">=12"
++      }
++    },
++    "node_modules/@cspotcode/source-map-support/node_modules/@jridgewell/trace-mapping": {
++      "version": "0.3.9",
++      "resolved": "https://registry.npmjs.org/@jridgewell/trace-mapping/-/trace-mapping-0.3.9.tgz",
++      "integrity": "sha512-3Belt6tdc8bPgAtbcmdtNJlirVoTmEb5e2gC94PnkwEW9jI6CAHUeoG85tjWP5WquqfavoMtMwiG4P926ZKKuQ==",
++      "dev": true,
++      "license": "MIT",
++      "dependencies": {
++        "@jridgewell/resolve-uri": "^3.0.3",
++        "@jridgewell/sourcemap-codec": "^1.4.10"
++      }
++    },
+     "node_modules/@emnapi/runtime": {
+       "version": "1.8.1",
+       "resolved": "https://registry.npmjs.org/@emnapi/runtime/-/runtime-1.8.1.tgz",
+@@ -600,8 +738,8 @@
+       "version": "1.1.0",
+       "resolved": "https://registry.npmjs.org/@img/colour/-/colour-1.1.0.tgz",
+       "integrity": "sha512-Td76q7j57o/tLVdgS746cYARfSyxk8iEfRxewL9h4OMzYhbW4TAcppl0mT4eyqXddh6L/jwoM75mo7ixa/pCeQ==",
++      "devOptional": true,
+       "license": "MIT",
+-      "optional": true,
+       "engines": {
+         "node": ">=18"
+       }
+@@ -1138,6 +1276,45 @@
+       "integrity": "sha512-70wQhgYmndg4GCPxPPxPGevRKqTIJ2Nh4OkiMWmDAVYsTQ+Ta7Sq+rPevXyXGdzr30/qZBnyOalCszoMxlyldQ==",
+       "license": "MIT"
+     },
++    "node_modules/@poppinss/colors": {
++      "version": "4.1.6",
++      "resolved": "https://registry.npmjs.org/@poppinss/colors/-/colors-4.1.6.tgz",
++      "integrity": "sha512-H9xkIdFswbS8n1d6vmRd8+c10t2Qe+rZITbbDHHkQixH5+2x1FDGmi/0K+WgWiqQFKPSlIYB7jlH6Kpfn6Fleg==",
++      "dev": true,
++      "license": "MIT",
++      "dependencies": {
++        "kleur": "^4.1.5"
++      }
++    },
++    "node_modules/@poppinss/colors/node_modules/kleur": {
++      "version": "4.1.5",
++      "resolved": "https://registry.npmjs.org/kleur/-/kleur-4.1.5.tgz",
++      "integrity": "sha512-o+NO+8WrRiQEE4/7nwRJhN1HWpVmJm511pBHUxPLtp0BUISzlBplORYSmTclCnJvQq2tKu/sgl3xVpkc7ZWuQQ==",
++      "dev": true,
++      "license": "MIT",
++      "engines": {
++        "node": ">=6"
++      }
++    },
++    "node_modules/@poppinss/dumper": {
++      "version": "0.6.5",
++      "resolved": "https://registry.npmjs.org/@poppinss/dumper/-/dumper-0.6.5.tgz",
++      "integrity": "sha512-NBdYIb90J7LfOI32dOewKI1r7wnkiH6m920puQ3qHUeZkxNkQiFnXVWoE6YtFSv6QOiPPf7ys6i+HWWecDz7sw==",
++      "dev": true,
++      "license": "MIT",
++      "dependencies": {
++        "@poppinss/colors": "^4.1.5",
++        "@sindresorhus/is": "^7.0.2",
++        "supports-color": "^10.0.0"
++      }
++    },
++    "node_modules/@poppinss/exception": {
++      "version": "1.2.3",
++      "resolved": "https://registry.npmjs.org/@poppinss/exception/-/exception-1.2.3.tgz",
++      "integrity": "sha512-dCED+QRChTVatE9ibtoaxc+WkdzOSjYTKi/+uacHWIsfodVfpsueo3+DKpgU5Px8qXjgmXkSvhXvSCz3fnP9lw==",
++      "dev": true,
++      "license": "MIT"
++    },
+     "node_modules/@rollup/pluginutils": {
+       "version": "5.3.0",
+       "resolved": "https://registry.npmjs.org/@rollup/pluginutils/-/pluginutils-5.3.0.tgz",
+@@ -1558,6 +1735,26 @@
+       "integrity": "sha512-83yeghZ2xxin3Nj8z1NMd/NCuca+gsYXswywDy5bHvwlWL8tpTQmzGeUuHd9FC3E/SBEMvzJRwWEOz5gGes9Qg==",
+       "license": "MIT"
+     },
++    "node_modules/@sindresorhus/is": {
++      "version": "7.2.0",
++      "resolved": "https://registry.npmjs.org/@sindresorhus/is/-/is-7.2.0.tgz",
++      "integrity": "sha512-P1Cz1dWaFfR4IR+U13mqqiGsLFf1KbayybWwdd2vfctdV6hDpUkgCY0nKOLLTMSoRd/jJNjtbqzf13K8DCCXQw==",
++      "dev": true,
++      "license": "MIT",
++      "engines": {
++        "node": ">=18"
++      },
++      "funding": {
++        "url": "https://github.com/sindresorhus/is?sponsor=1"
++      }
++    },
++    "node_modules/@speed-highlight/core": {
++      "version": "1.2.15",
++      "resolved": "https://registry.npmjs.org/@speed-highlight/core/-/core-1.2.15.tgz",
++      "integrity": "sha512-BMq1K3DsElxDWawkX6eLg9+CKJrTVGCBAWVuHXVUV2u0s2711qiChLSId6ikYPfxhdYocLNt3wWwSvDiTvFabw==",
++      "dev": true,
++      "license": "CC0-1.0"
++    },
+     "node_modules/@types/debug": {
+       "version": "4.1.12",
+       "resolved": "https://registry.npmjs.org/@types/debug/-/debug-4.1.12.tgz",
+@@ -1937,6 +2134,13 @@
+         "url": "https://github.com/sponsors/sindresorhus"
+       }
+     },
++    "node_modules/blake3-wasm": {
++      "version": "2.1.5",
++      "resolved": "https://registry.npmjs.org/blake3-wasm/-/blake3-wasm-2.1.5.tgz",
++      "integrity": "sha512-F1+K8EbfOZE49dtoPtmxUQrpXaBIl3ICvasLh+nJta0xkz+9kF/7uet9fLnwKqhDrmj6g+6K3Tw9yQPUg2ka5g==",
++      "dev": true,
++      "license": "MIT"
++    },
+     "node_modules/boolbase": {
+       "version": "1.0.0",
+       "resolved": "https://registry.npmjs.org/boolbase/-/boolbase-1.0.0.tgz",
+@@ -2348,8 +2552,8 @@
+       "version": "2.1.2",
+       "resolved": "https://registry.npmjs.org/detect-libc/-/detect-libc-2.1.2.tgz",
+       "integrity": "sha512-Btj2BOOO83o3WyH59e8MgXsxEQVcarkUOpEYrubB0urwnN10yQ364rsiByU11nZlqWYZm05i/of7io4mzihBtQ==",
++      "devOptional": true,
+       "license": "Apache-2.0",
+-      "optional": true,
+       "engines": {
+         "node": ">=8"
+       }
+@@ -2506,6 +2710,16 @@
+         "url": "https://github.com/fb55/entities?sponsor=1"
+       }
+     },
++    "node_modules/error-stack-parser-es": {
++      "version": "1.0.5",
++      "resolved": "https://registry.npmjs.org/error-stack-parser-es/-/error-stack-parser-es-1.0.5.tgz",
++      "integrity": "sha512-5qucVt2XcuGMcEGgWI7i+yZpmpByQ8J1lHhcL7PwqCwu9FPP3VUXzT4ltHe5i2z9dePwEHcDVOAfSnHsOlCXRA==",
++      "dev": true,
++      "license": "MIT",
++      "funding": {
++        "url": "https://github.com/sponsors/antfu"
++      }
++    },
+     "node_modules/es-module-lexer": {
+       "version": "1.7.0",
+       "resolved": "https://registry.npmjs.org/es-module-lexer/-/es-module-lexer-1.7.0.tgz",
+@@ -4055,6 +4269,27 @@
+         "url": "https://github.com/sponsors/jonschlinkert"
+       }
+     },
++    "node_modules/miniflare": {
++      "version": "4.20260424.0",
++      "resolved": "https://registry.npmjs.org/miniflare/-/miniflare-4.20260424.0.tgz",
++      "integrity": "sha512-B6MKBBd5TJ19daUc3Ae9rWctn1nDA/VCXykXfCsp9fTxyfGxnZY27tJs1caxgE9MWEMMKGbGHouqVtgKbKGxmw==",
++      "dev": true,
++      "license": "MIT",
++      "dependencies": {
++        "@cspotcode/source-map-support": "0.8.1",
++        "sharp": "^0.34.5",
++        "undici": "7.24.8",
++        "workerd": "1.20260424.1",
++        "ws": "8.18.0",
++        "youch": "4.1.0-beta.10"
++      },
++      "bin": {
++        "miniflare": "bootstrap.js"
++      },
++      "engines": {
++        "node": ">=18.0.0"
++      }
++    },
+     "node_modules/mrmime": {
+       "version": "2.0.1",
+       "resolved": "https://registry.npmjs.org/mrmime/-/mrmime-2.0.1.tgz",
+@@ -4297,6 +4532,20 @@
+       "integrity": "sha512-LDJzPVEEEPR+y48z93A0Ed0yXb8pAByGWo/k5YYdYgpY2/2EsOsksJrq7lOHxryrVOn1ejG6oAp8ahvOIQD8sw==",
+       "license": "MIT"
+     },
++    "node_modules/path-to-regexp": {
++      "version": "6.3.0",
++      "resolved": "https://registry.npmjs.org/path-to-regexp/-/path-to-regexp-6.3.0.tgz",
++      "integrity": "sha512-Yhpw4T9C6hPpgPeA28us07OJeqZ5EzQTkbfwuhsUg0c237RomFoETJgmp2sa3F/41gfLE6G5cqcYwznmeEeOlQ==",
++      "dev": true,
++      "license": "MIT"
++    },
++    "node_modules/pathe": {
++      "version": "2.0.3",
++      "resolved": "https://registry.npmjs.org/pathe/-/pathe-2.0.3.tgz",
++      "integrity": "sha512-WUjGcAqP1gQacoQe+OBJsFA7Ld4DyXuUIjZ5cc75cLHvJ7dtNsTugphxIADwspS+AraAUePCKrSVtPLFj/F88w==",
++      "dev": true,
++      "license": "MIT"
++    },
+     "node_modules/piccolore": {
+       "version": "0.1.3",
+       "resolved": "https://registry.npmjs.org/piccolore/-/piccolore-0.1.3.tgz",
+@@ -4917,9 +5166,9 @@
+       "version": "0.34.5",
+       "resolved": "https://registry.npmjs.org/sharp/-/sharp-0.34.5.tgz",
+       "integrity": "sha512-Ou9I5Ft9WNcCbXrU9cMgPBcCK8LiwLqcbywW3t4oDV37n1pzpuNLsYiAV8eODnjbtQlSDwZ2cUEeQz4E54Hltg==",
++      "devOptional": true,
+       "hasInstallScript": true,
+       "license": "Apache-2.0",
+-      "optional": true,
+       "dependencies": {
+         "@img/colour": "^1.0.0",
+         "detect-libc": "^2.1.2",
+@@ -5088,6 +5337,19 @@
+         "node": ">= 6"
+       }
+     },
++    "node_modules/supports-color": {
++      "version": "10.2.2",
++      "resolved": "https://registry.npmjs.org/supports-color/-/supports-color-10.2.2.tgz",
++      "integrity": "sha512-SS+jx45GF1QjgEXQx4NJZV9ImqmO2NPz5FNsIHrsDjh2YsHnawpan7SNQ1o8NuhrbHZy9AZhIoCUiCeaW/C80g==",
++      "dev": true,
++      "license": "MIT",
++      "engines": {
++        "node": ">=18"
++      },
++      "funding": {
++        "url": "https://github.com/chalk/supports-color?sponsor=1"
++      }
++    },
+     "node_modules/supports-preserve-symlinks-flag": {
+       "version": "1.0.0",
+       "resolved": "https://registry.npmjs.org/supports-preserve-symlinks-flag/-/supports-preserve-symlinks-flag-1.0.0.tgz",
+@@ -5389,6 +5651,26 @@
+       "integrity": "sha512-Ql87qFHB3s/De2ClA9e0gsnS6zXG27SkTiSJwjCc9MebbfapQfuPzumMIUMi38ezPZVNFcHI9sUIepeQfw8J8Q==",
+       "license": "MIT"
+     },
++    "node_modules/undici": {
++      "version": "7.24.8",
++      "resolved": "https://registry.npmjs.org/undici/-/undici-7.24.8.tgz",
++      "integrity": "sha512-6KQ/+QxK49Z/p3HO6E5ZCZWNnCasyZLa5ExaVYyvPxUwKtbCPMKELJOqh7EqOle0t9cH/7d2TaaTRRa6Nhs4YQ==",
++      "dev": true,
++      "license": "MIT",
++      "engines": {
++        "node": ">=20.18.1"
++      }
++    },
++    "node_modules/unenv": {
++      "version": "2.0.0-rc.24",
++      "resolved": "https://registry.npmjs.org/unenv/-/unenv-2.0.0-rc.24.tgz",
++      "integrity": "sha512-i7qRCmY42zmCwnYlh9H2SvLEypEFGye5iRmEMKjcGi7zk9UquigRjFtTLz0TYqr0ZGLZhaMHl/foy1bZR+Cwlw==",
++      "dev": true,
++      "license": "MIT",
++      "dependencies": {
++        "pathe": "^2.0.3"
++      }
++    },
+     "node_modules/unified": {
+       "version": "11.0.5",
+       "resolved": "https://registry.npmjs.org/unified/-/unified-11.0.5.tgz",
+@@ -6300,6 +6582,62 @@
+         "url": "https://github.com/sponsors/sindresorhus"
+       }
+     },
++    "node_modules/workerd": {
++      "version": "1.20260424.1",
++      "resolved": "https://registry.npmjs.org/workerd/-/workerd-1.20260424.1.tgz",
++      "integrity": "sha512-oKsB0Xo/mfkYMdSACoS06XZg09VUK4rXwHfF/1t3P++sMbwzf4UHQvMO57+zxpEB2nVrY/ZkW0bYFGq4GdAFSQ==",
++      "dev": true,
++      "hasInstallScript": true,
++      "license": "Apache-2.0",
++      "bin": {
++        "workerd": "bin/workerd"
++      },
++      "engines": {
++        "node": ">=16"
++      },
++      "optionalDependencies": {
++        "@cloudflare/workerd-darwin-64": "1.20260424.1",
++        "@cloudflare/workerd-darwin-arm64": "1.20260424.1",
++        "@cloudflare/workerd-linux-64": "1.20260424.1",
++        "@cloudflare/workerd-linux-arm64": "1.20260424.1",
++        "@cloudflare/workerd-windows-64": "1.20260424.1"
++      }
++    },
++    "node_modules/wrangler": {
++      "version": "4.85.0",
++      "resolved": "https://registry.npmjs.org/wrangler/-/wrangler-4.85.0.tgz",
++      "integrity": "sha512-93cwt2RPb1qdcmEgPzH7ybiLN4BIKoWpscIX6SywjHrQOeIZrQk2haoc3XMLKtQTmzapxza9OuDD+kMHpsuuhg==",
++      "dev": true,
++      "license": "MIT OR Apache-2.0",
++      "dependencies": {
++        "@cloudflare/kv-asset-handler": "0.4.2",
++        "@cloudflare/unenv-preset": "2.16.1",
++        "blake3-wasm": "2.1.5",
++        "esbuild": "0.27.3",
++        "miniflare": "4.20260424.0",
++        "path-to-regexp": "6.3.0",
++        "unenv": "2.0.0-rc.24",
++        "workerd": "1.20260424.1"
++      },
++      "bin": {
++        "wrangler": "bin/wrangler.js",
++        "wrangler2": "bin/wrangler.js"
++      },
++      "engines": {
++        "node": ">=20.3.0"
++      },
++      "optionalDependencies": {
++        "fsevents": "~2.3.2"
++      },
++      "peerDependencies": {
++        "@cloudflare/workers-types": "^4.20260424.1"
++      },
++      "peerDependenciesMeta": {
++        "@cloudflare/workers-types": {
++          "optional": true
++        }
++      }
++    },
+     "node_modules/wrap-ansi": {
+       "version": "9.0.2",
+       "resolved": "https://registry.npmjs.org/wrap-ansi/-/wrap-ansi-9.0.2.tgz",
+@@ -6317,6 +6655,28 @@
+         "url": "https://github.com/chalk/wrap-ansi?sponsor=1"
+       }
+     },
++    "node_modules/ws": {
++      "version": "8.18.0",
++      "resolved": "https://registry.npmjs.org/ws/-/ws-8.18.0.tgz",
++      "integrity": "sha512-8VbfWfHLbbwu3+N6OKsOMpBdT4kXPDDB9cJk2bJ6mh9ucxdlnNvH1e+roYkKmN9Nxw2yjz7VzeO9oOz2zJ04Pw==",
++      "dev": true,
++      "license": "MIT",
++      "engines": {
++        "node": ">=10.0.0"
++      },
++      "peerDependencies": {
++        "bufferutil": "^4.0.1",
++        "utf-8-validate": ">=5.0.2"
++      },
++      "peerDependenciesMeta": {
++        "bufferutil": {
++          "optional": true
++        },
++        "utf-8-validate": {
++          "optional": true
++        }
++      }
++    },
+     "node_modules/xxhash-wasm": {
+       "version": "1.1.0",
+       "resolved": "https://registry.npmjs.org/xxhash-wasm/-/xxhash-wasm-1.1.0.tgz",
+@@ -6386,6 +6746,31 @@
+         "url": "https://github.com/sponsors/sindresorhus"
+       }
+     },
++    "node_modules/youch": {
++      "version": "4.1.0-beta.10",
++      "resolved": "https://registry.npmjs.org/youch/-/youch-4.1.0-beta.10.tgz",
++      "integrity": "sha512-rLfVLB4FgQneDr0dv1oddCVZmKjcJ6yX6mS4pU82Mq/Dt9a3cLZQ62pDBL4AUO+uVrCvtWz3ZFUL2HFAFJ/BXQ==",
++      "dev": true,
++      "license": "MIT",
++      "dependencies": {
++        "@poppinss/colors": "^4.1.5",
++        "@poppinss/dumper": "^0.6.4",
++        "@speed-highlight/core": "^1.2.7",
++        "cookie": "^1.0.2",
++        "youch-core": "^0.3.3"
++      }
++    },
++    "node_modules/youch-core": {
++      "version": "0.3.3",
++      "resolved": "https://registry.npmjs.org/youch-core/-/youch-core-0.3.3.tgz",
++      "integrity": "sha512-ho7XuGjLaJ2hWHoK8yFnsUGy2Y5uDpqSTq1FkHLK4/oqKtyUU1AFbOOxY4IpC9f0fTLjwYbslUz0Po5BpD1wrA==",
++      "dev": true,
++      "license": "MIT",
++      "dependencies": {
++        "@poppinss/exception": "^1.2.2",
++        "error-stack-parser-es": "^1.0.5"
++      }
++    },
+     "node_modules/zod": {
+       "version": "3.25.76",
+       "resolved": "https://registry.npmjs.org/zod/-/zod-3.25.76.tgz",
+diff --git a/04_SOFTWARE/p31ca/package.json b/04_SOFTWARE/p31ca/package.json
+index f0541b5..7023244 100644
+--- a/04_SOFTWARE/p31ca/package.json
++++ b/04_SOFTWARE/p31ca/package.json
+@@ -5,7 +5,10 @@
+   "scripts": {
+     "dev": "astro dev",
+     "build": "astro build",
+-    "deploy": "npm run build && npx wrangler pages deploy dist --project-name p31ca --branch=main --commit-dirty=true",
++    "passport:verify": "node scripts/verify-passport.mjs",
++    "passport:sync": "node ../../../scripts/sync-passport-to-p31ca.mjs",
++    "predeploy": "npm run passport:verify",
++    "deploy": "npm run predeploy && npm run build && wrangler pages deploy dist --project-name p31ca --branch=main --commit-dirty=true",
+     "preview": "astro preview",
+     "astro": "astro",
+     "hub:about:enrich": "node scripts/enrich-mvp-about-pages.mjs",
+@@ -16,5 +19,8 @@
+     "astro": "^5.17.1",
+     "tailwindcss": "^3.4.19",
+     "three": "^0.183.0"
++  },
++  "devDependencies": {
++    "wrangler": "^4.85.0"
+   }
+ }
+diff --git a/04_SOFTWARE/p31ca/public/passport-generator.html b/04_SOFTWARE/p31ca/public/passport-generator.html
+index f4c11cb..e74257b 100644
+--- a/04_SOFTWARE/p31ca/public/passport-generator.html
++++ b/04_SOFTWARE/p31ca/public/passport-generator.html
+@@ -1,151 +1,362 @@
+ <!DOCTYPE html>
+ <html lang="en">
+ <head>
+-  <meta charset="UTF-8">
+-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+-  <title>P31 Cognitive Passport Generator</title>
+-  <script src="https://cdn.tailwindcss.com"></script>
++  <meta charset="UTF-8" />
++  <meta name="viewport" content="width=device-width, initial-scale=1" />
++  <meta name="description" content="P31 Cognitive Passport machine slice: Markdown, JSON (p31.cognitivePassport/1.0.0), and agent block. Not a replacement for the full v5 life document." />
++  <meta name="theme-color" content="#0a0a0e" />
++  <title>P31 Cognitive Passport — Generator (v1)</title>
+   <style>
+-    body { font-family: system-ui, sans-serif; background: #0f1115; color: #d8d6d0; }
+-    .card { background: #161920; border: 1px solid rgba(255,255,255,0.05); }
+-    textarea { background: #0f1115; border: 1px solid #333; color: #d8d6d0; font-family: monospace; }
++    :root {
++      --bg: #0a0a0e;
++      --card: #12121a;
++      --border: rgba(255,255,255,0.08);
++      --text: #e8e6e0;
++      --muted: #8a8798;
++      --accent: #2dd4bf;
++      --warn: #f59e0b;
++    }
++    * { box-sizing: border-box; }
++    body {
++      margin: 0; min-height: 100vh; font-family: system-ui, "Segoe UI", sans-serif;
++      background: var(--bg); color: var(--text);
++      line-height: 1.5;
++    }
++    a { color: var(--accent); }
++    .wrap { max-width: 1100px; margin: 0 auto; padding: 1.5rem; }
++    h1 { font-size: 1.5rem; font-weight: 700; margin: 0 0 0.25rem; }
++    .sub { color: var(--muted); font-size: 0.9rem; max-width: 60ch; }
++    .grid { display: grid; gap: 1rem; }
++    @media (min-width: 900px) { .grid-2 { grid-template-columns: 1fr 1fr; } }
++    .card {
++      background: var(--card); border: 1px solid var(--border);
++      border-radius: 12px; padding: 1.25rem;
++    }
++    label { display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); margin-bottom: 0.35rem; }
++    input, select, textarea {
++      width: 100%; padding: 0.5rem 0.65rem; border-radius: 8px;
++      border: 1px solid var(--border); background: #0d0d12; color: var(--text);
++      font-size: 0.9rem;
++    }
++    textarea { min-height: 12rem; font-family: ui-monospace, monospace; font-size: 0.8rem; }
++    .row { margin-bottom: 0.9rem; }
++    .checks label { text-transform: none; letter-spacing: 0; display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; color: var(--text); }
++    .btn {
++      display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;
++      padding: 0.55rem 1rem; border-radius: 8px; border: none; cursor: pointer;
++      font-weight: 600; font-size: 0.85rem; background: var(--accent); color: #041;
++    }
++    .btn:hover { filter: brightness(1.05); }
++    .btn-ghost { background: transparent; color: var(--text); border: 1px solid var(--border); }
++    .btn-bar { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.75rem; }
++    .tabs { display: flex; gap: 0.25rem; margin-bottom: 0.5rem; flex-wrap: wrap; }
++    .tab {
++      padding: 0.35rem 0.75rem; border-radius: 6px; border: 1px solid var(--border);
++      background: transparent; color: var(--muted); cursor: pointer; font-size: 0.8rem;
++    }
++    .tab.on { color: var(--text); border-color: var(--accent); background: rgba(45,212,191,0.1); }
++    .out-panel { display: none; }
++    .out-panel.on { display: block; }
++    .badge { display: inline-block; padding: 0.15rem 0.4rem; border-radius: 4px; background: #1e1e28; font-size: 0.7rem; color: var(--muted); }
++    footer { margin-top: 2rem; font-size: 0.75rem; color: var(--muted); }
+   </style>
+ </head>
+-<body class="min-h-screen p-8">
+-  <div class="max-w-4xl mx-auto">
+-    <header class="mb-8">
+-      <h1 class="text-3xl font-bold text-teal">P31 Cognitive Passport Generator</h1>
+-      <p class="opacity-60 mt-2">Generate safe AI interaction instructions from biological substrate data</p>
++<body>
++  <div class="wrap">
++    <header style="margin-bottom: 1.25rem;">
++      <h1>P31 Cognitive Passport — Generator</h1>
++      <p class="sub">
++        Produces a <strong>machine slice</strong> (AI/agent context) + <strong>JSON</strong> for tools — not a replacement for the full
++        <code>P31 COGNITIVE PASSPORT — v5.md</code> in the P31 / <code>andromeda</code> tree. No PII is required; contact fields are optional.
++      </p>
++      <span class="badge">schema p31.cognitivePassport/1.0.0</span>
+     </header>
+ 
+-    <div class="grid md:grid-cols-2 gap-8">
+-      <div class="card rounded-xl p-6">
+-        <h2 class="text-lg font-semibold mb-4">Operator Data</h2>
+-        <div class="space-y-4">
+-          <div>
+-            <label class="block text-sm opacity-60 mb-1">Name</label>
+-            <input type="text" id="name" value="William Rodger Johnson" class="w-full px-3 py-2 rounded bg-zinc-900 border border-zinc-700">
+-          </div>
+-          <div>
+-            <label class="block text-sm opacity-60 mb-1">Primary Diagnosis</label>
+-            <select id="diagnosis" class="w-full px-3 py-2 rounded bg-zinc-900 border border-zinc-700">
+-              <option value="AuDHD">AuDHD (Autism + ADHD)</option>
+-              <option value="Hypoparathyroidism">Hypoparathyroidism</option>
+-              <option value="Both">Both</option>
+-            </select>
+-          </div>
+-          <div>
+-            <label class="block text-sm opacity-60 mb-1">Communication Style</label>
+-            <select id="commStyle" class="w-full px-3 py-2 rounded bg-zinc-900 border border-zinc-700">
+-              <option value="Direct">Direct - No corporate pleasantries</option>
+-              <option value="Technical">Technical - Systems & geometry</option>
+-              <option value="Metaphorical">Metaphorical - Electrical/quantum</option>
+-            </select>
+-          </div>
+-          <div>
+-            <label class="block text-sm opacity-60 mb-1">Executive Function Status</label>
+-            <select id="execStatus" class="w-full px-3 py-2 rounded bg-zinc-900 border border-zinc-700">
+-              <option value="Functional">Functional</option>
+-              <option value="Depleted">Spoon Depleted</option>
+-              <option value="Crisis">Crisis State</option>
+-            </select>
+-          </div>
+-          <div>
+-            <label class="block text-sm opacity-60 mb-1">Key Constraints</label>
+-            <div class="space-y-2">
+-              <label class="flex items-center gap-2"><input type="checkbox" id="noMilitary" checked> No naval/military metaphors</label>
+-              <label class="flex items-center gap-2"><input type="checkbox" id="handwriting" checked> Prefers handwriting over typing</label>
+-              <label class="flex items-center gap-2"><input type="checkbox" id="lowVerbal" checked> Verbal serialization is lossy</label>
+-            </div>
+-          </div>
+-          <button onclick="generatePassport()" class="w-full mt-4 py-3 bg-teal-600 hover:bg-teal-500 rounded font-semibold">
+-            Generate Passport
+-          </button>
++    <div class="grid grid-2">
++      <div class="card">
++        <h2 style="font-size: 1.05rem; margin: 0 0 1rem;">Input</h2>
++        <div class="row">
++          <label for="displayName">Display name (or alias)</label>
++          <input type="text" id="displayName" placeholder="e.g. Operator" />
++        </div>
++        <div class="row">
++          <label for="diagnoses">Primary context</label>
++          <select id="diagnoses">
++            <option value="AuDHD">AuDHD (Autism + ADHD)</option>
++            <option value="Hypoparathyroidism">Hypoparathyroidism (calcium/PTH)</option>
++            <option value="AuDHD+Hypo">Both</option>
++            <option value="Custom">Custom (use notes)</option>
++          </select>
++        </div>
++        <div class="row">
++          <label for="commStyle">Communication</label>
++          <select id="commStyle">
++            <option value="Direct">Direct — no corporate hedging</option>
++            <option value="Technical">Technical — systems & geometry</option>
++            <option value="Sparse">Sparse — minimum words</option>
++          </select>
++        </div>
++        <div class="row">
++          <label for="spoon">Spoon / executive state</label>
++          <select id="spoon">
++            <option value="ok">Adequate</option>
++            <option value="low">Depleted — minimize decisions</option>
++            <option value="crisis">Crisis — commands only</option>
++          </select>
++        </div>
++        <div class="row checks" id="constraints">
++          <label class="flex"><input type="checkbox" data-key="noMilitary" checked /> No military / naval / submarine metaphors</label>
++          <label class="flex"><input type="checkbox" data-key="handwriting" checked /> Handwriting = highest-fidelity when applicable</label>
++          <label class="flex"><input type="checkbox" data-key="verbalLossy" checked /> Real-time speech is a lossy channel vs writing</label>
++          <label class="flex"><input type="checkbox" data-key="actionOverChat" checked /> Action over long explanation</label>
++        </div>
++        <div class="row">
++          <label for="customNotes">Custom notes (optional, included in export)</label>
++          <textarea id="customNotes" rows="3" placeholder="Triggers, access needs, K₄ mesh role, etc."></textarea>
++        </div>
++        <div class="row">
++          <label for="email">Email (optional — leave blank in shared exports)</label>
++          <input type="email" id="email" placeholder="" autocomplete="off" />
++        </div>
++        <div class="row">
++          <label for="orcid">ORCID (optional)</label>
++          <input type="text" id="orcid" placeholder="0000-0000-0000-0000" />
++        </div>
++        <div class="btn-bar">
++          <button type="button" class="btn" id="btnGen">Generate</button>
++          <button type="button" class="btn btn-ghost" id="btnSave">Save draft (local)</button>
++          <button type="button" class="btn btn-ghost" id="btnLoad">Load draft</button>
+         </div>
+       </div>
+ 
+-      <div class="card rounded-xl p-6">
+-        <h2 class="text-lg font-semibold mb-4">Generated Output</h2>
+-        <textarea id="output" class="w-full h-[400px] p-4 rounded text-sm" readonly placeholder="Click Generate to create passport..."></textarea>
+-        <button onclick="copyToClipboard()" class="mt-4 px-4 py-2 bg-zinc-700 hover:bg-zinc-600 rounded">
+-          Copy to Clipboard
+-        </button>
++      <div class="card">
++        <h2 style="font-size: 1.05rem; margin: 0 0 0.5rem;">Output</h2>
++        <div class="tabs" id="tabs">
++          <button type="button" class="tab on" data-panel="md">Markdown</button>
++          <button type="button" class="tab" data-panel="json">JSON</button>
++          <button type="button" class="tab" data-panel="agent">Agent block</button>
++        </div>
++        <div class="out-panel on" id="out-md">
++          <textarea id="outMd" readonly></textarea>
++        </div>
++        <div class="out-panel" id="out-json">
++          <textarea id="outJson" readonly></textarea>
++        </div>
++        <div class="out-panel" id="out-agent">
++          <textarea id="outAgent" readonly></textarea>
++        </div>
++        <div class="btn-bar">
++          <button type="button" class="btn" id="cpyMd">Copy MD</button>
++          <button type="button" class="btn" id="cpyJson">Copy JSON</button>
++          <button type="button" class="btn" id="cpyAgent">Copy agent block</button>
++          <button type="button" class="btn btn-ghost" id="dlMd">Download .md</button>
++          <button type="button" class="btn btn-ghost" id="dlJson">Download .json</button>
++        </div>
+       </div>
+     </div>
+ 
+-    <div class="mt-8 card rounded-xl p-6">
+-      <h2 class="text-lg font-semibold mb-4">Instructions for AI Agents</h2>
+-      <div class="prose opacity-70 text-sm">
+-        <p>This passport serves as a configuration file for the listener. Key directives:</p>
+-        <ul class="list-disc ml-6 mt-2 space-y-1">
+-          <li><strong>Direct over diplomatic</strong> — Don't hedge, don't apologize</li>
+-          <li><strong>Technical over emotional</strong> — Use systems language</li>
+-          <li><strong>Writing over speech</strong> — Handwriting is highest fidelity</li>
+-          <li><strong>Geometry over hierarchy</strong> — K4 topology, not org charts</li>
+-          <li><strong>Pause on distress</strong> — If mask slips, slow down</li>
+-        </ul>
+-      </div>
+-    </div>
++    <footer>
++      P31 Labs — you are on <code>passport-generator.html</code> · authoring source in the repo: <code>cognitive-passport/index.html</code> · localStorage <code>p31_passport_draft_v1</code> ·
++      full ground truth remains <code>P31 COGNITIVE PASSPORT — v5.md</code> at workspace root; this page only emits a safe machine slice.
++    </footer>
+   </div>
+ 
+   <script>
+-    function generatePassport() {
+-      const name = document.getElementById('name').value;
+-      const diagnosis = document.getElementById('diagnosis').value;
+-      const commStyle = document.getElementById('commStyle').value;
+-      const execStatus = document.getElementById('execStatus').value;
+-      
+-      const constraints = [];
+-      if (document.getElementById('noMilitary').checked) constraints.push('NO military/naval metaphors');
+-      if (document.getElementById('handwriting').checked) constraints.push('Prefers handwriting');
+-      if (document.getElementById('lowVerbal').checked) constraints.push('Verbal serialization is lossy');
+-      
+-      const date = new Date().toISOString().split('T')[0];
+-      
+-      const output = `# P31 COGNITIVE PASSPORT — ${date}
+-
+-## The Operator
+-
+-**Name:** ${name}
+-**Diagnosis:** ${diagnosis}
+-**Communication Style:** ${commStyle}
+-**Executive Function:** ${execStatus}
+-
+-## Constraints
+-
+-${constraints.map(c => `- ${c}`).join('\n')}
+-
+-## Instructions for AI
+-
+-When interacting with this node:
+-1. **Be direct** — No corporate pleasantries, no hedging
+-2. **Use systems language** — Geometry, topology, physics metaphors welcome
+-3. **Respect the bottleneck** — Writing captures more than speech
+-4. **Honor spoon economy** — If depleted, minimize decisions required
+-5. **Never escalate** — If distress detected, pause and simplify
+-
+-## Contact
+-
+-- Email: will@p31ca.org
+-- Phone: (912) 227-4980
+-- Location: Saint Marys, GA 31558
+-
+----
+-
+-*Generated: ${date} | P31 Labs*
+-`;
+-      
+-      document.getElementById('output').value = output;
++    const STORAGE_KEY = "p31_passport_draft_v1";
++    const SCHEMA = "p31.cognitivePassport/1.0.0";
++
++    function getForm() {
++      const boxes = document.querySelectorAll("#constraints input[type=checkbox]");
++      const constraints = {};
++      boxes.forEach((b) => {
++        constraints[b.dataset.key] = b.checked;
++      });
++      return {
++        displayName: document.getElementById("displayName").value.trim() || "Operator",
++        diagnoses: document.getElementById("diagnoses").value,
++        commStyle: document.getElementById("commStyle").value,
++        spoon: document.getElementById("spoon").value,
++        constraints,
++        customNotes: document.getElementById("customNotes").value.trim(),
++        email: document.getElementById("email").value.trim(),
++        orcid: document.getElementById("orcid").value.trim(),
++      };
++    }
++
++    function setForm(d) {
++      if (!d) return;
++      if (d.displayName != null) document.getElementById("displayName").value = d.displayName;
++      if (d.diagnoses) document.getElementById("diagnoses").value = d.diagnoses;
++      if (d.commStyle) document.getElementById("commStyle").value = d.commStyle;
++      if (d.spoon) document.getElementById("spoon").value = d.spoon;
++      if (d.customNotes) document.getElementById("customNotes").value = d.customNotes;
++      if (d.email) document.getElementById("email").value = d.email;
++      if (d.orcid) document.getElementById("orcid").value = d.orcid;
++      if (d.constraints) {
++        document.querySelectorAll("#constraints input[type=checkbox]").forEach((b) => {
++          if (d.constraints[b.dataset.key] != null) b.checked = !!d.constraints[b.dataset.key];
++        });
++      }
++    }
++
++    function buildPayload(f) {
++      const now = new Date().toISOString();
++      return {
++        schema: SCHEMA,
++        generatedAt: now,
++        operator: {
++          displayName: f.displayName,
++          diagnosisContext: f.diagnoses,
++          communicationStyle: f.commStyle,
++          executiveSpoonState: f.spoon,
++        },
++        constraints: f.constraints,
++        optionalContact: {
++          email: f.email || null,
++          orcid: f.orcid || null,
++        },
++        customNotes: f.customNotes || null,
++        familyMesh: {
++          useInitialsOnly: true,
++          label: "Use S.J. and W.J. for children in systems; never full names in public-facing or agent-distributed text.",
++        },
++        aiDirectives: {
++          directness: "high",
++          noMilitaryNavalMetaphors: f.constraints.noMilitary,
++          actionOverLengthyExplanation: f.constraints.actionOverChat,
++          preferWrittenChannelWhenLowSpoon: f.spoon !== "ok",
++        },
++      };
++    }
++
++    function toMarkdown(f, data) {
++      const lines = [];
++      const day = data.generatedAt.slice(0, 10);
++      lines.push(`# P31 COGNITIVE PASSPORT — machine slice (generated ${day})`);
++      lines.push("");
++      lines.push(`> **Schema:** \`${data.schema}\`  ·  **Not** a full life/court/benefits record — for AI and tooling only.`);
++      lines.push("");
++      lines.push("## Operator");
++      lines.push(`- **Name / alias:** ${f.displayName}`);
++      lines.push(`- **Context:** ${f.diagnoses.replace(/\+/g, " + ")}`);
++      lines.push(`- **Communication:** ${f.commStyle}`);
++      lines.push(`- **Spoon / executive:** ${f.spoon}`);
++      lines.push("");
++      lines.push("## Hard constraints for assistants");
++      if (f.constraints.noMilitary) lines.push("- **Never** use military, naval, or submarine metaphors.");
++      if (f.constraints.handwriting) lines.push("- **Writing** (incl. handwriting) &gt; real-time speech for fidelity when relevant.");
++      if (f.constraints.verbalLossy) lines.push("- Treat **verbal-only** interaction as a lossy channel.");
++      if (f.constraints.actionOverChat) lines.push("- Default to **action** (code, file paths, commands) over long prose.");
++      lines.push(`- If spoon state is **low** or **crisis**: reduce branching questions; one clear next step.`);
++      lines.push("");
++      lines.push("## Family / mesh (public-facing systems)");
++      lines.push(data.familyMesh.label);
++      lines.push("");
++      if (f.customNotes) {
++        lines.push("## Custom notes");
++        lines.push(f.customNotes);
++        lines.push("");
++      }
++      if (f.email || f.orcid) {
++        lines.push("## Optional contact (user-supplied)");
++        if (f.email) lines.push(`- **Email:** ${f.email}`);
++        if (f.orcid) lines.push(`- **ORCID:** ${f.orcid}`);
++        lines.push("");
++      }
++      lines.push("---");
++      lines.push(`*Generated: ${data.generatedAt}*`);
++      return lines.join("\n");
+     }
+ 
+-    function copyToClipboard() {
+-      const textarea = document.getElementById('output');
+-      textarea.select();
+-      document.execCommand('copy');
+-      alert('Copied to clipboard!');
++    function toAgentBlock(f, data) {
++      const c = f.constraints;
++      return [
++        "## P31 Cognitive Passport — agent block (paste into rules / system)",
++        `Operator: ${f.displayName} | Context: ${f.diagnoses} | Comms: ${f.commStyle} | Spoon: ${f.spoon}`,
++        `Constraints: no_military_naval_metaphors=${c.noMilitary} verbal_is_lossy=${c.verbalLossy} action_first=${c.actionOverChat}`,
++        "Children: use initials S.J., W.J. only in generated UI copy and agent-facing text.",
++        f.customNotes ? `Notes: ${f.customNotes}` : "",
++      ]
++        .filter(Boolean)
++        .join("\n");
+     }
+ 
+-    generatePassport();
++    function render() {
++      const f = getForm();
++      const data = buildPayload(f);
++      const json = JSON.stringify(data, null, 2);
++      document.getElementById("outJson").value = json;
++      document.getElementById("outMd").value = toMarkdown(f, data);
++      document.getElementById("outAgent").value = toAgentBlock(f, data);
++    }
++
++    function copyText(id) {
++      const el = document.getElementById(id);
++      el.select();
++      el.setSelectionRange(0, 99999);
++      navigator.clipboard.writeText(el.value).then(
++        () => {},
++        () => document.execCommand("copy")
++      );
++    }
++
++    function download(filename, text, mime) {
++      const a = document.createElement("a");
++      a.href = URL.createObjectURL(new Blob([text], { type: mime }));
++      a.download = filename;
++      a.click();
++      URL.revokeObjectURL(a.href);
++    }
++
++    // Tabs
++    document.getElementById("tabs").addEventListener("click", (e) => {
++      const btn = e.target.closest(".tab");
++      if (!btn) return;
++      const panel = btn.dataset.panel;
++      document.querySelectorAll(".tab").forEach((b) => b.classList.toggle("on", b === btn));
++      document.querySelectorAll(".out-panel").forEach((p) => p.classList.remove("on"));
++      document.getElementById("out-" + panel).classList.add("on");
++    });
++
++    document.getElementById("btnGen").addEventListener("click", render);
++    document.getElementById("btnSave").addEventListener("click", () => {
++      try {
++        localStorage.setItem(STORAGE_KEY, JSON.stringify(getForm()));
++        alert("Draft saved in this browser.");
++      } catch (e) {
++        alert("Could not save: " + e);
++      }
++    });
++    document.getElementById("btnLoad").addEventListener("click", () => {
++      try {
++        const raw = localStorage.getItem(STORAGE_KEY);
++        if (!raw) return alert("No draft found.");
++        setForm(JSON.parse(raw));
++        render();
++      } catch (e) {
++        alert("Could not load: " + e);
++      }
++    });
++
++    document.getElementById("cpyMd").addEventListener("click", () => copyText("outMd"));
++    document.getElementById("cpyJson").addEventListener("click", () => copyText("outJson"));
++    document.getElementById("cpyAgent").addEventListener("click", () => copyText("outAgent"));
++    document.getElementById("dlMd").addEventListener("click", () => {
++      const f = getForm();
++      const d = buildPayload(f);
++      download("P31_COGNITIVE_PASSPORT_SLICE.md", toMarkdown(f, d), "text/markdown");
++    });
++    document.getElementById("dlJson").addEventListener("click", () => {
++      const f = getForm();
++      download("p31_cognitive_passport.json", JSON.stringify(buildPayload(f), null, 2), "application/json");
++    });
++
++    // Load draft on open
++    try {
++      const raw = localStorage.getItem(STORAGE_KEY);
++      if (raw) setForm(JSON.parse(raw));
++    } catch (_) {}
++    render();
+   </script>
+ </body>
+ </html>
+diff --git a/04_SOFTWARE/package.json b/04_SOFTWARE/package.json
+index 57fc631..5d6e655 100644
+--- a/04_SOFTWARE/package.json
++++ b/04_SOFTWARE/package.json
+@@ -18,6 +18,6 @@
+   "devDependencies": {
+     "turbo": "^2.3.0",
+     "vitest": "^4.1.2",
+-    "wrangler": "^3.114.17"
++    "wrangler": "^4.85.0"
+   }
+ }

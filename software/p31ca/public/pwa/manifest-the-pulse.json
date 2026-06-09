@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json.schemastore.org/web-manifest-combined.json",
+  "id": "p31.thePulse",
+  "name": "P31 \u2014 The Pulse",
+  "short_name": "Pulse",
+  "description": "One canonical number (the Larmor frequency of phosphorus-31, 863 Hz) flows through every surface in the P31 codebase. Edit it on the page. Watch the alignment DAG light up. Watch 20+ surfaces update in real time. Ephemeralization made into a verb.",
+  "start_url": "/demos/the-pulse.html",
+  "scope": "/demos/",
+  "display": "standalone",
+  "display_override": ["standalone", "browser"],
+  "orientation": "any",
+  "background_color": "#07090a",
+  "theme_color": "#cda852",
+  "icons": [
+    {
+      "src": "/pwa/p31-tetra-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["education", "developer-tools", "productivity"],
+  "lang": "en",
+  "dir": "ltr",
+  "prefer_related_applications": false
+}

@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# P31 Andromeda: when MAP monetary paths are staged, run verify:monetary (verify-monetary-surface) before commit.
+# Bypass: P31_SKIP_MONETARY_HOOK=1 git commit
+# Install: npm run git:hooks
+set -euo pipefail
+ROOT=$(git rev-parse --show-toplevel 2>/dev/null) || exit 0
+cd "$ROOT"
+
+if [[ "${P31_SKIP_MONETARY_HOOK:-}" == "1" ]]; then
+  exit 0
+fi
+
+FILES=$(git diff --cached --name-only --diff-filter=ACMR 2>/dev/null || true)
+if [[ -z "$FILES" ]]; then
+  exit 0
+fi
+
+# Paths relative to Andromeda repo root
+PATTERN='^(04_SOFTWARE/donate-api/.*|04_SOFTWARE/p31ca/ground-truth/creator-economy\.json|04_SOFTWARE/p31ca/public/creator-economy\.json|04_SOFTWARE/p31ca/scripts/verify-creator-economy\.mjs|scripts/verify-monetary-surface\.mjs|phosphorus31\.org/planetary-planet/src/pages/donate\.astro)$'
+if ! printf '%s\n' "$FILES" | grep -qE "$PATTERN"; then
+  exit 0
+fi
+
+echo "P31 pre-commit: npm run verify:monetary (MAP / economy files staged)"
+exec npm run verify:monetary

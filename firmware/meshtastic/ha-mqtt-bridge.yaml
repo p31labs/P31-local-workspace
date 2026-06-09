@@ -1,0 +1,121 @@
+# Home Assistant — Meshtastic MQTT integration
+# EXEC-08 / Gap A — Meshtastic → HA → Q-Factor pipeline
+#
+# Place in: config/automations/ (or paste into automation editor)
+# Requires: Mosquitto broker add-on, MQTT integration
+#
+# Meshtastic publishes to: msh/US/2/<node-id>/json/LongFast/!<node-id>
+# Payload: JSON with { from, to, decoded: { text, portnum }, ... }
+
+# ── MQTT sensors ──────────────────────────────────────────────────────────
+mqtt:
+  sensor:
+    - name: "Meshtastic Last Message"
+      state_topic: "msh/US/2/+/json/LongFast/#"
+      value_template: "{{ value_json.decoded.text | default('') }}"
+      json_attributes_topic: "msh/US/2/+/json/LongFast/#"
+      json_attributes_template: >
+        {
+          "from": "{{ value_json.from }}",
+          "to": "{{ value_json.to }}",
+          "ts": "{{ value_json.rx_time }}",
+          "snr": "{{ value_json.rx_snr }}"
+        }
+      unique_id: meshtastic_last_message
+
+    - name: "P31 Mesh Node Count"
+      state_topic: "msh/US/2/+/json/LongFast/#"
+      value_template: "{{ value_json.hop_limit }}"
+      unique_id: meshtastic_hop_count
+
+---
+# Automations
+
+automation:
+  # ── Meshtastic → Matrix (relay LoRa messages to Matrix room) ─────────
+  - alias: "Mesh: LoRa → Matrix relay"
+    description: "Forward Meshtastic messages to P31 Matrix room via webhook"
+    trigger:
+      - platform: mqtt
+        topic: "msh/US/2/+/json/LongFast/#"
+    condition:
+      - condition: template
+        value_template: >
+          {{ trigger.payload_json.decoded.portnum == 'TEXT_MESSAGE_APP' and
+             trigger.payload_json.decoded.text | length > 0 }}
+    action:
+      - service: notify.matrix_notify
+        data:
+          message: >
+            [LoRa] {{ trigger.payload_json.decoded.text }}
+            (from node {{ trigger.payload_json.from }}, SNR {{ trigger.payload_json.rx_snr }})
+
+  # ── Meshtastic EMERGENCY keyword → urgent HA notification ─────────────
+  - alias: "Mesh: Emergency keyword alert"
+    trigger:
+      - platform: mqtt
+        topic: "msh/US/2/+/json/LongFast/#"
+    condition:
+      - condition: template
+        value_template: >
+          {{ 'EMERGENCY' in trigger.payload_json.decoded.text | default('') | upper or
+             'SOS' in trigger.payload_json.decoded.text | default('') | upper }}
+    action:
+      - service: notify.mobile_app_will_iphone
+        data:
+          title: "P31 MESH EMERGENCY"
+          message: "{{ trigger.payload_json.decoded.text }}"
+          data:
+            push:
+              sound:
+                name: default
+                critical: 1
+                volume: 1.0
+
+  # ── Spoon command via LoRa → Q-Factor event ───────────────────────────
+  # Send "SPOON 3" on the mesh to set spoon balance to 3
+  - alias: "Mesh: Spoon level command"
+    trigger:
+      - platform: mqtt
+        topic: "msh/US/2/+/json/LongFast/#"
+    condition:
+      - condition: template
+        value_template: >
+          {{ trigger.payload_json.decoded.text | default('') | upper | regex_match('^SPOON\s+\d+$') }}
+    action:
+      - service: rest_command.qfactor_event
+        data:
+          value: >
+            {{ trigger.payload_json.decoded.text.split()[1] | int }}
+          type: "spoon"
+
+  # ── HRV from Bangle.js (Tasker→HA→Q-Factor) ──────────────────────────
+  - alias: "Bangle: HRV → Q-Factor update"
+    trigger:
+      - platform: state
+        entity_id: sensor.bangle_hrv_rmssd
+    condition:
+      - condition: template
+        value_template: "{{ trigger.to_state.state | float(0) > 0 }}"
+    action:
+      - service: rest_command.qfactor_event
+        data:
+          value: "{{ trigger.to_state.state | float }}"
+          type: "hrv"
+
+---
+# REST commands
+rest_command:
+  qfactor_event:
+    url: "https://api.p31ca.org/qfactor/event"
+    method: POST
+    headers:
+      Authorization: "Bearer {{ states('input_text.p31_api_secret') }}"
+      Content-Type: "application/json"
+    payload: >
+      {
+        "userId": "will",
+        "source": "ha",
+        "type": "{{ type }}",
+        "value": {{ value | float }}
+      }

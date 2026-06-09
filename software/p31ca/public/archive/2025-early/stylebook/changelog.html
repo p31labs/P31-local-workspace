@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Changelog · P31 Stylebook</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/p31-style.css">
+  <link rel="stylesheet" href="/lib/p31-fluid.css">
+  <link rel="stylesheet" href="/stylebook/_chrome.css">
+</head>
+<body>
+  <script type="module">
+    import { renderShell, callout } from '/stylebook/_chrome.js';
+    import { P31ThemeController } from '/lib/p31-theme-engine.mjs';
+    window.p31Theme = new P31ThemeController({ defaultTheme: 'hub' });
+    
+    const content = `
+      <section class="sb-section">
+        <p class="sb-text-lead">For the human-readable release notes, see the <a href="/stylebook/whats-new.html" style="color: var(--p31-primary);">What's new</a> page.</p>
+        ${callout('info', 'Want machine-readable?', 'The full token derivation history lives in <code>p31-alignment.json</code> at the workspace root. Every change here is verified against that registry by <code>verify:alignment</code>.')}
+      </section>
+    `;
+    
+    renderShell({
+      activeId: 'changelog',
+      breadcrumb: [
+        { href: '/stylebook/', label: 'Stylebook' },
+        { label: 'Changelog' }
+      ],
+      title: 'Changelog',
+      content
+    });
+  </script>
+</body>
+</html>

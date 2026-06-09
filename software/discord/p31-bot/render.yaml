@@ -1,0 +1,9 @@
+{
+  "name": "p31-discord-bot",
+  "buildCommand": "npm install && npm run build",
+  "startCommand": "node dist/index.js",
+  "env": {
+    "NODE_ENV": "production"
+  },
+  "regions": ["atl"]
+}

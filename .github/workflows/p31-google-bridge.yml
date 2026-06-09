@@ -1,0 +1,37 @@
+# Config + bundle validation for software/p31-google-bridge (no Cloudflare auth required)
+name: p31-google-bridge
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - "software/p31-google-bridge/**"
+      - ".github/actions/**"
+      - ".github/workflows/p31-google-bridge.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "software/p31-google-bridge/**"
+      - ".github/actions/**"
+      - ".github/workflows/p31-google-bridge.yml"
+
+concurrency:
+  group: p31-google-bridge-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/toolchain-constants
+
+      - uses: ./.github/actions/npm-ci-project
+        with:
+          working-directory: software/p31-google-bridge
+          cache-dependency-path: software/p31-google-bridge/package-lock.json
+
+      - name: Verify (print redirect + preflight + wrangler dry-run)
+        working-directory: software/p31-google-bridge
+        run: node scripts/verify.mjs

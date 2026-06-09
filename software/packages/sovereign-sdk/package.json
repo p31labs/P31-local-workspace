@@ -1,0 +1,19 @@
+{
+  "name": "@p31/sovereign-sdk",
+  "version": "1.0.0",
+  "description": "P31 Labs W3C DID Layer with Post-Quantum Cryptography",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run --passWithNoTests"
+  },
+  "dependencies": {
+    "@p31/quantum-core": "workspace:*",
+    "crypto": "^1.0.1"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3",
+    "vitest": "^1.3.1"
+  }
+}

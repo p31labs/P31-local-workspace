@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub" style="color-scheme: dark;">
+<head>
+  <meta charset="UTF-8">
+<script>(function(){var r=document.documentElement;if(/[?&]alive=1(?:&|$)/.test(location.search))return;r.classList.add("p31-gray-rock");function wake(){r.classList.remove("p31-gray-rock")}document.addEventListener("pointerdown",wake,{once:true,capture:true});document.addEventListener("keydown",wake,{once:true,capture:true})})();</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0f1115">
+  <title>Family sovereign pack | P31 Labs</title>
+  <meta name="description" content="Household delivery: lobby links, welcome paths, edge anchors, and troubleshooting for the P31 mesh.">
+<link rel="canonical" href="https://p31ca.org/family-sovereign-pack.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Family sovereign pack">
+<meta property="og:description" content="Household delivery: lobby links, welcome paths, edge anchors, and troubleshooting for the P31 mesh.">
+<meta property="og:url" content="https://p31ca.org/family-sovereign-pack.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Family sovereign pack">
+<meta name="twitter:description" content="Household delivery: lobby links, welcome paths, edge anchors, and troubleshooting for the P31 mesh.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/p31-style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/p31-tailwind-extend.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          ...window.P31_TAILWIND_EXTEND,
+          boxShadow: {
+            ede: '0 0 0 1px rgba(255,255,255,0.06), 0 20px 50px -20px rgba(0,0,0,0.5)',
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    .url-mono { font-family: var(--p31-font-mono, ui-monospace, monospace); font-size: 0.8rem; word-break: break-all; }
+    @media print {
+      a[href]:after { content: " (" attr(href) ")"; font-size: 0.65rem; color: #555; }
+      .no-print { display: none !important; }
+      body { background: #fff !important; color: #111 !important; }
+    }
+  </style>
+</head>
+<body class="bg-void text-cloud min-h-screen font-sans antialiased">
+<a href="#main" style="position:absolute;left:-9999px;top:0;padding:0.5rem 1rem;background:var(--p31-void);color:var(--p31-teal);font-size:0.875rem;z-index:9999;border-radius:0 0 4px 4px;text-decoration:none" onfocus="this.style.left='0'" onblur="this.style.left='-9999px'">Skip to main content</a>
+  <div class="min-h-screen flex flex-col">
+    <header class="shrink-0 border-b border-white/[0.07] bg-surface/90 backdrop-blur-sm">
+      <div class="max-w-3xl mx-auto px-4 py-6">
+        <p class="font-mono text-[0.65rem] text-cloud/50 tracking-widest uppercase mb-2">P31 Labs · household handoff</p>
+        <h1 class="text-2xl md:text-3xl font-bold text-paper tracking-tight">Family sovereign pack</h1>
+        <p class="mt-3 text-cloud/75 max-w-prose leading-relaxed">
+          You shouldn&rsquo;t have to explain the whole vision aloud—the links below carry it. Print, PDF, or share. Pair with the
+          <a class="text-teal font-medium hover:text-teal/90 underline decoration-teal/30" href="/p31-super-centaur-pack.json">machine index (JSON)</a>.
+          Long-form checklist: repo <span class="url-mono text-cloud/55">docs/FAMILY-SOVEREIGN-PACK.md</span>.
+        </p>
+        <p class="mt-3 text-sm text-butter/90 no-print">Share short link: <strong class="url-mono text-cloud">https://p31ca.org/family-pack</strong></p>
+      </div>
+    </header>
+
+    <main id="main" class="flex-1 max-w-3xl mx-auto px-4 py-8 md:py-10 w-full space-y-8">
+
+      <section id="tonight" class="rounded-2xl border border-white/10 bg-surface shadow-ede p-5 md:p-6">
+        <h2 class="font-sans text-xs text-teal/85 uppercase tracking-wider mb-4">Tonight (~25 min)</h2>
+        <ol class="list-decimal pl-5 space-y-2 text-cloud/85 text-sm leading-relaxed">
+          <li>Confirm Wi‑Fi; open <a class="text-teal hover:text-teal/90 underline decoration-teal/30" href="https://p31ca.org/">p31ca.org</a> on one phone or laptop.</li>
+          <li>Household bookmarks: hub, <a class="text-teal hover:text-teal/90 underline decoration-teal/30" href="/delta.html">delta</a> (why mesh), <a class="text-teal hover:text-teal/90 underline decoration-teal/30" href="/connect.html">connect</a>, <a class="text-teal hover:text-teal/90 underline decoration-teal/30" href="https://bonding.p31ca.org">BONDING</a>, <a class="text-teal hover:text-teal/90 underline decoration-teal/30" href="/demos">demo lobby</a>, <a class="text-teal hover:text-teal/90 underline decoration-teal/30" href="/lab">Sovereign Lab</a>, <a class="text-teal hover:text-teal/90 underline decoration-teal/30" href="/slicer">browser slicer</a>.</li>
+          <li>Each person: pick a <a class="text-teal hover:text-teal/90 underline decoration-teal/30" href="#welcome">welcome path</a> → <a class="text-teal hover:text-teal/90 underline decoration-teal/30" href="/planetary-onboard.html">onboard</a> → <a class="text-teal hover:text-teal/90 underline decoration-teal/30" href="/start">/start</a> (mesh-start).</li>
+          <li>Optional adults: <a class="text-teal hover:text-teal/90 underline decoration-teal/30" href="/passport">Cognitive Passport</a> (advocacy JSON, not a medical record).</li>
+          <li>Privacy line: personal agent data stays in <strong class="text-paper">k4-personal</strong> until you explicitly bridge to the family cage.</li>
+        </ol>
+      </section>
+
+      <section id="lobby" class="rounded-2xl border border-white/10 bg-surface/80 p-5 md:p-6">
+        <h2 class="font-sans text-xs text-teal/85 uppercase tracking-wider mb-4">Lobby links</h2>
+        <ul class="space-y-2 text-sm text-cloud/85 leading-relaxed">
+          <li><a class="text-teal hover:text-teal/90 underline decoration-teal/30" href="https://p31ca.org/">Technical hub</a> <span class="url-mono text-cloud/45">https://p31ca.org/</span></li>
+          <li><a class="text-teal hover:text-teal/90 underline decoration-teal/30" href="/delta.html">Wye → Delta narrative</a></li>
+          <li><a class="text-teal hover:text-teal/90 underline decoration-teal/30" href="/connect.html">K₄ navigator</a></li>
+          <li><a class="text-teal hover:text-teal/90 underline decoration-teal/30" href="/planetary-onboard.html">Planetary onboard</a> · short <span class="url-mono text-cloud/50">/onboard</span></li>
+          <li><a class="text-teal hover:text-teal/90 underline decoration-teal/30" href="/mesh-start.html">Mesh start</a> · short <span class="url-mono text-cloud/50">/start</span></li>
+          <li><a class="text-teal hover:text-teal/90 underline decoration-teal/30" href="/passport">Passport</a></li>
+          <li><a class="text-teal hover:text-teal/90 underline decoration-teal/30" href="/creator-economy.json">Creator economy contract</a></li>
+          <li><a class="text-teal hover:text-teal/90 underline decoration-teal/30" href="https://bonding.p31ca.org">BONDING</a></li>
+          <li><a class="text-teal hover:text-teal/90 underline decoration-teal/30" href="/geodesic.html">Geodesic coach</a></li>
+          <li><a class="text-teal hover:text-teal/90 underline decoration-teal/30" href="/lab">Sovereign Lab</a> <span class="url-mono text-cloud/50">/lab</span></li>
+          <li><a class="text-teal hover:text-teal/90 underline decoration-teal/30" href="/slicer">Browser slicer</a> <span class="url-mono text-cloud/50">/slicer</span></li>
+          <li><a class="text-teal hover:text-teal/90 underline decoration-teal/30" href="/build">Initial build</a> <span class="url-mono text-cloud/50">/build</span></li>
+          <li><a class="text-teal hover:text-teal/90 underline decoration-teal/30" href="/p31-welcome-packages.json">Welcome packages (JSON)</a></li>
+        </ul>
+      </section>
+
+      <section id="welcome" class="rounded-2xl border border-white/10 bg-surface shadow-ede p-5 md:p-6">
+        <h2 class="font-sans text-xs text-teal/85 uppercase tracking-wider mb-2">Welcome packages → onboard</h2>
+        <p class="text-sm text-cloud/60 mb-4 leading-relaxed">Opens the picker with the right tone; then finish phases and land on mesh-start.</p>
+        <div class="overflow-x-auto rounded-xl border border-white/[0.08] bg-void/40">
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="border-b border-white/10 bg-surface2/80">
+                <th class="p-3 font-mono text-[0.65rem] uppercase tracking-wider text-cloud/50">Package</th>
+                <th class="p-3 font-mono text-[0.65rem] uppercase tracking-wider text-cloud/50">Onboard URL</th>
+              </tr>
+            </thead>
+            <tbody class="text-cloud/85">
+              <tr class="border-b border-white/[0.06]"><td class="p-3">Kid / teen</td><td class="p-3 url-mono"><a class="text-teal hover:text-teal/90 underline decoration-teal/30" href="/planetary-onboard.html?welcome=kid">…?welcome=kid</a></td></tr>
+              <tr class="border-b border-white/[0.06]"><td class="p-3">Adult · solo</td><td class="p-3 url-mono"><a class="text-teal hover:text-teal/90 underline decoration-teal/30" href="/planetary-onboard.html?welcome=adult">…?welcome=adult</a></td></tr>
+              <tr class="border-b border-white/[0.06]"><td class="p-3">Parent / caregiver</td><td class="p-3 url-mono"><a class="text-teal hover:text-teal/90 underline decoration-teal/30" href="/planetary-onboard.html?welcome=parent">…?welcome=parent</a></td></tr>
+              <tr class="border-b border-white/[0.06]"><td class="p-3">Neuro-inclusive</td><td class="p-3 url-mono"><a class="text-teal hover:text-teal/90 underline decoration-teal/30" href="/planetary-onboard.html?welcome=neuro">…?welcome=neuro</a></td></tr>
+              <tr class="border-b border-white/[0.06]"><td class="p-3">Builder</td><td class="p-3 url-mono"><a class="text-teal hover:text-teal/90 underline decoration-teal/30" href="/planetary-onboard.html?welcome=builder">…?welcome=builder</a></td></tr>
+              <tr><td class="p-3">Default</td><td class="p-3 url-mono"><a class="text-teal hover:text-teal/90 underline decoration-teal/30" href="/planetary-onboard.html?welcome=default">…?welcome=default</a></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="mt-3 text-xs text-cloud/45 leading-relaxed">After onboard, mesh-start honors the same <span class="url-mono">?welcome=</span> key when you pass it through (see ground-truth <span class="url-mono">routes.meshStart</span>).</p>
+      </section>
+
+      <section id="edge" class="rounded-2xl border border-white/10 bg-surface/80 p-5 md:p-6">
+        <h2 class="font-sans text-xs text-teal/85 uppercase tracking-wider mb-3">Edge bases (verify in <span class="url-mono">p31-constants.json</span>)</h2>
+        <ul class="text-sm space-y-2 text-cloud/80 url-mono leading-relaxed">
+          <li>Personal K₄ + agent — <code class="text-phosphorus/90">mesh.k4PersonalWorkerUrl</code> → e.g. <a class="text-teal hover:underline" href="https://k4-personal.trimtab-signal.workers.dev/api/health">/api/health</a></li>
+          <li>Family cage — <code class="text-phosphorus/90">mesh.k4CageWorkerUrl</code></li>
+          <li>Hub fusion — <code class="text-phosphorus/90">mesh.k4HubsWorkerUrl</code></li>
+        </ul>
+        <p class="mt-3 text-xs text-cloud/45">Do not invent live KPIs; use constants, ecosystem glass probes, or real HTTP responses.</p>
+      </section>
+
+      <section id="trouble" class="rounded-2xl border border-coral/20 bg-coral/[0.06] p-5 md:p-6">
+        <h2 class="font-sans text-xs text-coral/90 uppercase tracking-wider mb-3">If something fails</h2>
+        <ul class="list-disc pl-5 text-sm text-cloud/80 space-y-2 leading-relaxed">
+          <li>Blank or spinning: try another browser; disable strict blockers for <span class="url-mono">p31ca.org</span>.</li>
+          <li>Agent or mesh errors: confirm <span class="url-mono">mesh.k4PersonalWorkerUrl</span> in constants matches the Worker you expect; open <span class="url-mono">/api/health</span>.</li>
+          <li>SOULSAFE chat: adults only until the household reads <span class="url-mono">docs/SOULSAFE-TETRA-SPEC.md</span> (repo).</li>
+          <li>Passkeys: some flows still use a stub; follow <span class="url-mono">AGENTS.md</span> deploy notes.</li>
+        </ul>
+      </section>
+
+      <section id="invite" class="rounded-2xl border border-dashed border-teal/30 bg-teal/[0.04] p-5 md:p-6 text-sm text-cloud/80">
+        <h2 class="font-sans text-xs text-teal/85 uppercase tracking-wider mb-3">Copy — invite text</h2>
+        <p class="whitespace-pre-wrap font-mono text-xs bg-void/80 border border-white/[0.06] p-4 rounded-xl text-cloud/90 leading-relaxed">We set up P31 — a private “room” per person on the mesh plus a shared hub.
+Your link pack (save + open on Wi‑Fi): https://p31ca.org/family-pack
+Start your path: https://p31ca.org/planetary-onboard.html (pick kid/adult/parent when asked).
+Questions: reply here; we can screen-share.</p>
+      </section>
+
+      <footer class="text-xs text-cloud/40 pt-4 border-t border-white/[0.07] no-print pb-8">
+        <a class="text-teal/80 hover:text-teal underline decoration-teal/25" href="/">← Hub</a>
+        · <a class="text-teal/80 hover:text-teal underline decoration-teal/25" href="/centaur">Super-Centaur</a>
+        · <a class="text-teal/80 hover:text-teal underline decoration-teal/25" href="/privacy">Privacy</a>
+        · <a class="text-teal/80 hover:text-teal underline decoration-teal/25" href="/terms">Terms</a>
+        · <a class="text-teal/80 hover:text-teal underline decoration-teal/25" href="/contact">Contact</a>
+      </footer>
+    </main>
+  </div>
+</body>
+</html>

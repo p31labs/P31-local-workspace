@@ -1,0 +1,771 @@
+---
+/**
+  * @p31-layout: Focus
+ * /passport — Cognitive Passport v1.1.0 generator.
+ *
+ * Generates an ECDH P-256 keypair via window.crypto.subtle. The SHA-256
+ * fingerprint of the SPKI-encoded public key is the durable identity anchor.
+ * The full passport (v1.1.0 schema) is activated via window.p31CogPass.set(),
+ * wiring personalization across p31Theme, p31SubjectPrefs, and the bus bar.
+ *
+ * Export token format: P31-CPv2:<base64url(JSON({v,passport,fingerprint,pub,priv}))>
+ * Keypair stored separately: localStorage key "p31-cogpass-keypair"
+ * Passport stored at:        localStorage key "p31-cogpass-v1"  (via p31CogPass.set)
+ */
+import AppShell from '../layouts/AppShell.astro';
+---
+
+<AppShell title="Cognitive Passport — P31 Labs" routeName="passport">
+
+  <style>
+    .cp-section {
+      padding: var(--p31-space-4, 1rem);
+      border-radius: var(--p31-shape-lg, 16px);
+      background: rgba(0,0,0,0.25);
+      border: 1px solid var(--p31-border-subtle, rgba(237,232,224,0.08));
+    }
+    .cp-label {
+      display: block;
+      font-family: var(--p31-font-mono, 'JetBrains Mono', monospace);
+      font-size: 0.625rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--p31-cloud-muted, rgba(237,232,224,0.4));
+      margin-bottom: 0.5rem;
+    }
+    .cp-btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.375rem;
+    }
+    .cp-btn-group button {
+      padding: 0.3rem 0.7rem;
+      border-radius: 999px;
+      font-family: var(--p31-font-mono, 'JetBrains Mono', monospace);
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      background: rgba(237,232,224,0.04);
+      border: 1px solid rgba(237,232,224,0.12);
+      color: rgba(237,232,224,0.5);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .cp-btn-group button:hover {
+      border-color: rgba(167,139,250,0.4);
+      color: rgba(237,232,224,0.8);
+    }
+    .cp-btn-group button.active {
+      background: rgba(167,139,250,0.18);
+      border-color: rgba(167,139,250,0.6);
+      color: var(--p31-violet, #a78bfa);
+    }
+    /* amber-tinted group (access level operator) */
+    #cp-level-group button[data-value="operator"].active {
+      background: rgba(245,158,11,0.15);
+      border-color: rgba(245,158,11,0.5);
+      color: var(--p31-amber, var(--p31-amber));
+    }
+    .cp-fingerprint {
+      font-family: var(--p31-font-mono, 'JetBrains Mono', monospace);
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      color: var(--p31-violet, #a78bfa);
+      word-break: break-all;
+      line-height: 1.8;
+      min-height: 1.8em;
+    }
+    .cp-fingerprint.empty {
+      color: rgba(237,232,224,0.15);
+      letter-spacing: 0.05em;
+    }
+    .cp-status {
+      font-family: var(--p31-font-mono, 'JetBrains Mono', monospace);
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-top: 0.4rem;
+    }
+    .cp-input {
+      width: 100%;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid var(--p31-border-subtle, rgba(237,232,224,0.1));
+      padding-bottom: 0.4rem;
+      color: var(--p31-cloud, #ede8e0);
+      font-size: 1.1rem;
+      font-family: var(--p31-font-serif, Georgia, serif);
+    }
+    .cp-input::placeholder { opacity: 0.2; }
+    .cp-input:focus { outline: none; border-bottom-color: var(--p31-violet, #a78bfa); }
+    .cp-range {
+      width: 100%;
+      accent-color: var(--p31-violet, #a78bfa);
+      cursor: pointer;
+    }
+    .cp-toggle-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .cp-toggle-row input[type="checkbox"] {
+      accent-color: var(--p31-violet, #a78bfa);
+      width: 1rem;
+      height: 1rem;
+      cursor: pointer;
+    }
+    .cp-toggle-row label {
+      font-family: var(--p31-font-mono, 'JetBrains Mono', monospace);
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      color: rgba(237,232,224,0.6);
+      cursor: pointer;
+    }
+    .cp-action {
+      padding: 0.5rem 1rem;
+      border-radius: 0.6rem;
+      font-family: var(--p31-font-mono, 'JetBrains Mono', monospace);
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.15s;
+      border: 1px solid rgba(167,139,250,0.35);
+      background: rgba(167,139,250,0.08);
+      color: var(--p31-violet, #a78bfa);
+    }
+    .cp-action:hover {
+      background: rgba(167,139,250,0.18);
+      border-color: rgba(167,139,250,0.6);
+    }
+    .cp-action.secondary {
+      border-color: rgba(237,232,224,0.12);
+      background: rgba(237,232,224,0.04);
+      color: rgba(237,232,224,0.5);
+    }
+    .cp-action.secondary:hover {
+      border-color: rgba(237,232,224,0.25);
+      color: rgba(237,232,224,0.8);
+    }
+    .cp-action.danger {
+      border-color: rgba(239,68,68,0.3);
+      background: rgba(239,68,68,0.06);
+      color: rgba(239,68,68,0.7);
+    }
+    .cp-token-box {
+      font-family: var(--p31-font-mono, 'JetBrains Mono', monospace);
+      font-size: 0.6rem;
+      color: var(--p31-violet, #a78bfa);
+      word-break: break-all;
+      line-height: 1.7;
+      padding: 0.75rem;
+      background: rgba(0,0,0,0.3);
+      border-radius: 0.5rem;
+      border: 1px solid rgba(167,139,250,0.2);
+      max-height: 6rem;
+      overflow-y: auto;
+      white-space: pre-wrap;
+    }
+    .cp-textarea {
+      width: 100%;
+      min-height: 5rem;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid rgba(237,232,224,0.12);
+      border-radius: 0.5rem;
+      padding: 0.5rem;
+      color: var(--p31-cloud, #ede8e0);
+      font-family: var(--p31-font-mono, 'JetBrains Mono', monospace);
+      font-size: 0.6rem;
+      resize: vertical;
+    }
+    .cp-textarea:focus { outline: none; border-color: rgba(167,139,250,0.4); }
+    .cp-init-btn {
+      width: 100%;
+      padding: 0.875rem;
+      border-radius: 0.75rem;
+      font-family: var(--p31-font-mono, 'JetBrains Mono', monospace);
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: rgba(167,139,250,0.12);
+      border: 1px solid rgba(167,139,250,0.45);
+      color: var(--p31-violet, #a78bfa);
+    }
+    .cp-init-btn:hover {
+      background: rgba(167,139,250,0.22);
+      border-color: rgba(167,139,250,0.7);
+    }
+    .cp-init-btn:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+    .cp-init-btn.ready {
+      background: color-mix(in srgb, var(--p31-phosphorus) 10%, transparent);
+      border-color: color-mix(in srgb, var(--p31-phosphorus) 40%, transparent);
+      color: var(--p31-phosphorus);
+    }
+    .cp-init-btn.ready:hover {
+      background: rgba(74,222,128,0.2);
+      border-color: rgba(74,222,128,0.65);
+    }
+  </style>
+
+  <div class="max-w-xl mx-auto w-full px-4 md:px-6 pt-8 pb-16">
+    <div class="p31-q-surface" data-p31-elev="2" style="border-top: 3px solid var(--p31-violet, #a78bfa); border-radius: var(--p31-shape-xl, 24px); display:flex; flex-direction:column; gap:1.25rem;">
+
+      <!-- Header -->
+      <header style="text-align:center;">
+        <div style="display:flex; align-items:center; justify-content:center; gap:0.75rem; margin-bottom:0.25rem;">
+          <h1 class="font-serif text-3xl md:text-4xl" style="color:var(--p31-cloud,#ede8e0);">Cognitive Passport</h1>
+          <span style="font-family:var(--p31-font-mono,'JetBrains Mono',monospace);font-size:0.55rem;letter-spacing:0.15em;padding:0.2rem 0.5rem;border-radius:999px;background:rgba(167,139,250,0.12);border:1px solid rgba(167,139,250,0.3);color:var(--p31-violet,#a78bfa);margin-top:0.2rem;">v1.1.0</span>
+        </div>
+        <p class="font-mono text-[10px] tracking-[0.2em] uppercase" style="color:var(--p31-violet,#a78bfa);">Cross-Surface Identity Token</p>
+      </header>
+
+      <!-- Fingerprint display -->
+      <div class="cp-section" style="text-align:center;">
+        <div class="cp-label" style="text-align:center;">Key Fingerprint (ECDH P-256 · SHA-256)</div>
+        <div id="cp-fingerprint" class="cp-fingerprint empty">— — — — — — — — — —</div>
+        <div id="cp-status" class="cp-status" style="color:rgba(237,232,224,0.25);">Not initialized</div>
+      </div>
+
+      <!-- Identity -->
+      <div class="cp-section" style="display:flex;flex-direction:column;gap:0.875rem;">
+        <div>
+          <label class="cp-label" for="cp-alias">Operator Alias</label>
+          <input id="cp-alias" class="cp-input" type="text" placeholder="Enter designation..." autocomplete="off" />
+        </div>
+        <div>
+          <label class="cp-label">Pronouns <span style="opacity:0.5;">(optional)</span></label>
+          <input id="cp-pronouns" class="cp-input" type="text" placeholder="they/them, she/her, he/him…" autocomplete="off" style="font-size:0.9rem;" />
+        </div>
+        <div>
+          <label class="cp-label">Access Level</label>
+          <div id="cp-level-group" data-cp-group class="cp-btn-group">
+            <button data-value="user" class="active">User</button>
+            <button data-value="operator">Operator</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Accessibility -->
+      <div class="cp-section" style="display:flex;flex-direction:column;gap:0.875rem;">
+        <div class="cp-label" style="margin-bottom:0;font-size:0.7rem;color:rgba(237,232,224,0.6);">Accessibility</div>
+
+        <div>
+          <label class="cp-label" for="cp-comfort">Screen Comfort &nbsp;<span id="cp-comfort-val" style="color:var(--p31-violet,#a78bfa);">50</span></label>
+          <input id="cp-comfort" class="cp-range" type="range" min="0" max="100" value="50" />
+          <div style="display:flex;justify-content:space-between;font-family:var(--p31-font-mono,'JetBrains Mono',monospace);font-size:0.55rem;color:rgba(237,232,224,0.25);margin-top:0.2rem;">
+            <span>Low stim</span><span>Full engagement</span>
+          </div>
+        </div>
+
+        <div>
+          <label class="cp-label">Motion</label>
+          <div id="cp-motion-group" data-cp-group class="cp-btn-group">
+            <button data-value="auto" class="active">Auto</button>
+            <button data-value="reduced">Reduced</button>
+            <button data-value="none">None</button>
+            <button data-value="full">Full</button>
+          </div>
+        </div>
+
+        <div>
+          <label class="cp-label">Contrast</label>
+          <div id="cp-contrast-group" data-cp-group class="cp-btn-group">
+            <button data-value="standard" class="active">Standard</button>
+            <button data-value="high">High</button>
+            <button data-value="max">Max</button>
+          </div>
+        </div>
+
+        <div>
+          <label class="cp-label">Temperature</label>
+          <div id="cp-temp-group" data-cp-group class="cp-btn-group">
+            <button data-value="cool">Cool</button>
+            <button data-value="neutral" class="active">Neutral</button>
+            <button data-value="warm">Warm</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Style Preferences -->
+      <div class="cp-section" style="display:flex;flex-direction:column;gap:0.875rem;">
+        <div class="cp-label" style="margin-bottom:0;font-size:0.7rem;color:rgba(237,232,224,0.6);">Style Preferences</div>
+
+        <div>
+          <label class="cp-label">Theme</label>
+          <div id="cp-theme-group" data-cp-group class="cp-btn-group">
+            <button data-value="auto" class="active">Auto</button>
+            <button data-value="hub">Hub</button>
+            <button data-value="org">Org</button>
+            <button data-value="midnight">Midnight</button>
+            <button data-value="genesis">Genesis</button>
+            <button data-value="paper">Paper</button>
+            <button data-value="matrix">Matrix</button>
+          </div>
+        </div>
+
+        <div>
+          <label class="cp-label">Mode</label>
+          <div id="cp-mode-group" data-cp-group class="cp-btn-group">
+            <button data-value="default" class="active">Default</button>
+            <button data-value="focus">Focus</button>
+            <button data-value="calm">Calm</button>
+            <button data-value="vibrant">Vibrant</button>
+            <button data-value="muted">Muted</button>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:1.5rem;flex-wrap:wrap;">
+          <div class="cp-toggle-row">
+            <input id="cp-glass" type="checkbox" />
+            <label for="cp-glass">Glass Effects</label>
+          </div>
+          <div class="cp-toggle-row">
+            <input id="cp-anim" type="checkbox" checked />
+            <label for="cp-anim">Animations</label>
+          </div>
+          <div class="cp-toggle-row">
+            <input id="cp-phos" type="checkbox" checked />
+            <label for="cp-phos">PHOS Guide</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Crypto Actions -->
+      <div class="cp-section" style="display:flex;flex-direction:column;gap:0.875rem;">
+        <div class="cp-label" style="margin-bottom:0;font-size:0.7rem;color:rgba(237,232,224,0.6);">Cryptographic Key</div>
+
+        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+          <button id="cp-generate" class="cp-action">Generate Key</button>
+          <button id="cp-export-btn" class="cp-action secondary">Export Token</button>
+          <button id="cp-import-btn" class="cp-action secondary">Import Token</button>
+          <button id="cp-clear-btn" class="cp-action danger" style="margin-left:auto;">Clear</button>
+        </div>
+
+        <!-- Export panel -->
+        <div id="cp-export-panel" class="hidden" style="display:none;flex-direction:column;gap:0.5rem;">
+          <div class="cp-label">Portable Token (keep private — contains signing key)</div>
+          <div id="cp-token-display" class="cp-token-box" aria-live="polite"></div>
+          <div style="display:flex;gap:0.5rem;">
+            <button id="cp-copy" class="cp-action" style="flex:1;">Copy to Clipboard</button>
+          </div>
+        </div>
+
+        <!-- Import panel -->
+        <div id="cp-import-panel" class="hidden" style="display:none;flex-direction:column;gap:0.5rem;">
+          <label class="cp-label" for="cp-import-input">Paste Token (P31-CPv2:…)</label>
+          <textarea id="cp-import-input" class="cp-textarea" placeholder="P31-CPv2:…" spellcheck="false"></textarea>
+          <div style="display:flex;gap:0.5rem;">
+            <button id="cp-import-confirm" class="cp-action" style="flex:1;">Decode &amp; Restore</button>
+            <button id="cp-import-cancel" class="cp-action secondary">Cancel</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Initialize CTA -->
+      <button id="cp-init" class="cp-init-btn" disabled>
+        Initialize Passport
+      </button>
+
+      <!-- Footer -->
+      <footer style="text-align:center;padding-top:0.75rem;border-top:1px solid var(--p31-border-subtle,rgba(237,232,224,0.06));">
+        <p class="font-mono" style="font-size:0.55rem;line-height:1.8;color:rgba(237,232,224,0.25);text-transform:uppercase;letter-spacing:0.12em;">
+          Key generation and signing occur entirely client-side.<br />
+          No biometric telemetry or private key material leaves this device.
+        </p>
+      </footer>
+
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('astro:page-load', () => {
+      // ─── Types ──────────────────────────────────────────────────────────────
+      type AccessLevel    = 'user' | 'operator';
+      type MotionPref     = 'auto' | 'reduced' | 'none' | 'full';
+      type ContrastPref   = 'standard' | 'high' | 'max';
+      type TempPref       = 'cool' | 'neutral' | 'warm';
+      type ThemePref      = 'auto' | 'hub' | 'org' | 'midnight' | 'genesis' | 'paper' | 'matrix';
+      type ModePref       = 'default' | 'focus' | 'calm' | 'vibrant' | 'muted';
+
+      interface PassportPayload {
+        $schema: string;
+        identity: {
+          displayName: string;
+          pronouns?: string;
+          accessLevel: AccessLevel;
+          keyId?: string;
+        };
+        accessibility: {
+          screenComfort: number;
+          motionPreference: MotionPref;
+          contrastPreference: ContrastPref;
+          temperaturePreference: TempPref;
+          fontSize: 'standard';
+          informationDensity: 'standard';
+        };
+        stylePreferences: {
+          theme: ThemePref;
+          mode: ModePref;
+          appearance: 'auto';
+          glassEnabled: boolean;
+          animationsEnabled: boolean;
+          phosGuide: boolean;
+          phosRegister: 'auto';
+        };
+      }
+
+      interface P31CogPassAPI {
+        set(p: PassportPayload): PassportPayload | null;
+        get(): PassportPayload | null;
+        clear(): void;
+      }
+
+      // ─── State ──────────────────────────────────────────────────────────────
+      let fingerprint: string | null = null;
+      let pubJwk: JsonWebKey | null = null;
+      let privJwk: JsonWebKey | null = null;
+      let keyReady = false;
+
+      // ─── DOM ────────────────────────────────────────────────────────────────
+      const $  = (id: string) => document.getElementById(id);
+      const el = {
+        fingerprint:   $('cp-fingerprint'),
+        status:        $('cp-status'),
+        alias:         $('cp-alias')         as HTMLInputElement | null,
+        pronouns:      $('cp-pronouns')      as HTMLInputElement | null,
+        comfort:       $('cp-comfort')       as HTMLInputElement | null,
+        comfortVal:    $('cp-comfort-val'),
+        glass:         $('cp-glass')         as HTMLInputElement | null,
+        anim:          $('cp-anim')          as HTMLInputElement | null,
+        phos:          $('cp-phos')          as HTMLInputElement | null,
+        exportPanel:   $('cp-export-panel'),
+        tokenDisplay:  $('cp-token-display'),
+        importPanel:   $('cp-import-panel'),
+        importInput:   $('cp-import-input')  as HTMLTextAreaElement | null,
+        initBtn:       $('cp-init')          as HTMLButtonElement | null,
+      };
+
+      // ─── Crypto utils ────────────────────────────────────────────────────────
+      function b64urlEncode(str: string): string {
+        return btoa(str).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+      }
+
+      function b64urlDecode(str: string): string {
+        return atob(str.replace(/-/g, '+').replace(/_/g, '/'));
+      }
+
+      function bufToHex(buf: ArrayBuffer): string {
+        return Array.from(new Uint8Array(buf))
+          .map(b => b.toString(16).padStart(2, '0').toUpperCase())
+          .join('');
+      }
+
+      function formatHexFingerprint(hex: string): string {
+        const groups = hex.match(/.{1,4}/g) ?? [];
+        return groups.slice(0, 10).join(' ');
+      }
+
+      // ─── Button groups ────────────────────────────────────────────────────────
+      function getGroupValue(groupId: string): string {
+        const active = document.querySelector<HTMLElement>(`#${groupId} button.active`);
+        return active?.dataset.value ?? '';
+      }
+
+      function setGroupValue(groupId: string, value: string): void {
+        document.querySelectorAll<HTMLElement>(`#${groupId} button[data-value]`).forEach(btn => {
+          btn.classList.toggle('active', btn.dataset.value === value);
+        });
+      }
+
+      document.querySelectorAll<HTMLElement>('[data-cp-group] button[data-value]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const group = btn.closest('[data-cp-group]') as HTMLElement | null;
+          group?.querySelectorAll<HTMLElement>('button[data-value]').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+        });
+      });
+
+      // ─── Status display ───────────────────────────────────────────────────────
+      type StatusColor = 'muted' | 'violet' | 'amber' | 'green' | 'red';
+      function setStatus(msg: string, color: StatusColor = 'violet'): void {
+        if (!el.status) return;
+        const colors: Record<StatusColor, string> = {
+          muted:  'rgba(237,232,224,0.25)',
+          violet: 'var(--p31-violet,#a78bfa)',
+          amber:  'var(--p31-amber,var(--p31-amber))',
+          green:  'var(--p31-phosphorus)',
+          red:    'var(--p31-coral)',
+        };
+        el.status.textContent = msg;
+        el.status.style.color = colors[color];
+      }
+
+      function setFingerprint(hex: string): void {
+        if (!el.fingerprint) return;
+        el.fingerprint.textContent = formatHexFingerprint(hex);
+        el.fingerprint.classList.remove('empty');
+      }
+
+      function resetFingerprintDisplay(): void {
+        if (!el.fingerprint) return;
+        el.fingerprint.textContent = '— — — — — — — — — —';
+        el.fingerprint.classList.add('empty');
+      }
+
+      // ─── Init button state ─────────────────────────────────────────────────
+      function syncInitBtn(): void {
+        if (!el.initBtn) return;
+        el.initBtn.disabled = !keyReady;
+        el.initBtn.classList.toggle('ready', keyReady);
+      }
+
+      // ─── Build passport from UI ─────────────────────────────────────────────
+      function buildPassport(): PassportPayload {
+        const comfort = parseInt(el.comfort?.value ?? '50', 10);
+        const pronounsVal = el.pronouns?.value.trim() ?? '';
+        return {
+          $schema: 'p31.cognitivePassport/1.1.0',
+          identity: {
+            displayName: el.alias?.value.trim() ?? '',
+            ...(pronounsVal ? { pronouns: pronounsVal } : {}),
+            accessLevel: (getGroupValue('cp-level-group') as AccessLevel) || 'user',
+            ...(fingerprint ? { keyId: fingerprint } : {}),
+          },
+          accessibility: {
+            screenComfort:       comfort,
+            motionPreference:    (getGroupValue('cp-motion-group')   as MotionPref)   || 'auto',
+            contrastPreference:  (getGroupValue('cp-contrast-group') as ContrastPref) || 'standard',
+            temperaturePreference: (getGroupValue('cp-temp-group')   as TempPref)     || 'neutral',
+            fontSize:            'standard',
+            informationDensity:  'standard',
+          },
+          stylePreferences: {
+            theme:             (getGroupValue('cp-theme-group') as ThemePref) || 'auto',
+            mode:              (getGroupValue('cp-mode-group')  as ModePref)  || 'default',
+            appearance:        'auto',
+            glassEnabled:      el.glass?.checked ?? false,
+            animationsEnabled: el.anim?.checked  ?? true,
+            phosGuide:         el.phos?.checked  ?? true,
+            phosRegister:      'auto',
+          },
+        };
+      }
+
+      // ─── Restore UI from passport object ───────────────────────────────────
+      function restorePassportToUI(p: PassportPayload): void {
+        if (el.alias && p.identity.displayName)    el.alias.value    = p.identity.displayName;
+        if (el.pronouns && p.identity.pronouns)    el.pronouns.value = p.identity.pronouns;
+        setGroupValue('cp-level-group',    p.identity.accessLevel ?? 'user');
+        setGroupValue('cp-motion-group',   p.accessibility.motionPreference ?? 'auto');
+        setGroupValue('cp-contrast-group', p.accessibility.contrastPreference ?? 'standard');
+        setGroupValue('cp-temp-group',     p.accessibility.temperaturePreference ?? 'neutral');
+        setGroupValue('cp-theme-group',    p.stylePreferences.theme ?? 'auto');
+        setGroupValue('cp-mode-group',     p.stylePreferences.mode  ?? 'default');
+        const c = p.accessibility.screenComfort;
+        if (el.comfort    && c !== undefined) { el.comfort.value = String(c); }
+        if (el.comfortVal && c !== undefined) { el.comfortVal.textContent = String(c); }
+        if (el.glass) el.glass.checked = p.stylePreferences.glassEnabled ?? false;
+        if (el.anim)  el.anim.checked  = p.stylePreferences.animationsEnabled ?? true;
+        if (el.phos)  el.phos.checked  = p.stylePreferences.phosGuide ?? true;
+      }
+
+      // ─── Generate key ─────────────────────────────────────────────────────
+      async function generateKey(): Promise<void> {
+        const genBtn = $('cp-generate') as HTMLButtonElement | null;
+        if (genBtn) { genBtn.disabled = true; genBtn.textContent = 'Generating…'; }
+
+        try {
+          const kp = await crypto.subtle.generateKey(
+            { name: 'ECDH', namedCurve: 'P-256' },
+            true,
+            ['deriveKey', 'deriveBits']
+          );
+          const spki    = await crypto.subtle.exportKey('spki', kp.publicKey);
+          const hashBuf = await crypto.subtle.digest('SHA-256', spki);
+
+          fingerprint = bufToHex(hashBuf);
+          pubJwk      = await crypto.subtle.exportKey('jwk', kp.publicKey);
+          privJwk     = await crypto.subtle.exportKey('jwk', kp.privateKey);
+          keyReady    = true;
+
+          setFingerprint(fingerprint);
+          setStatus('Key generated — ready to initialize', 'violet');
+          syncInitBtn();
+
+          // Hide panels from previous session
+          if (el.exportPanel) el.exportPanel.style.display = 'none';
+          if (el.importPanel) el.importPanel.style.display = 'none';
+        } catch (e) {
+          setStatus('Key generation failed — browser crypto unavailable', 'red');
+          console.error('P31 CogPass keygen:', e);
+        } finally {
+          if (genBtn) { genBtn.disabled = false; genBtn.textContent = 'Generate Key'; }
+        }
+      }
+
+      // ─── Export token ─────────────────────────────────────────────────────
+      function exportToken(): void {
+        if (!keyReady || !fingerprint || !pubJwk || !privJwk) {
+          setStatus('Generate a key before exporting', 'amber');
+          return;
+        }
+        const payload = {
+          v: 2,
+          fingerprint,
+          passport: buildPassport(),
+          pub: pubJwk,
+          priv: privJwk,
+        };
+        const token = 'P31-CPv2:' + b64urlEncode(JSON.stringify(payload));
+        if (el.tokenDisplay) el.tokenDisplay.textContent = token;
+        if (el.exportPanel)  { el.exportPanel.style.display  = 'flex'; }
+        if (el.importPanel)  { el.importPanel.style.display  = 'none'; }
+      }
+
+      // ─── Import token ─────────────────────────────────────────────────────
+      function decodeToken(): void {
+        const raw = el.importInput?.value.trim() ?? '';
+        if (!raw.startsWith('P31-CPv2:')) {
+          setStatus('Invalid token — expected P31-CPv2:…', 'red');
+          return;
+        }
+        try {
+          const payload = JSON.parse(b64urlDecode(raw.slice(9))) as {
+            v: number;
+            fingerprint: string;
+            passport: PassportPayload;
+            pub: JsonWebKey;
+            priv: JsonWebKey;
+          };
+          fingerprint = payload.fingerprint;
+          pubJwk      = payload.pub;
+          privJwk     = payload.priv;
+          keyReady    = true;
+
+          restorePassportToUI(payload.passport);
+          setFingerprint(fingerprint);
+          setStatus('Token imported — initialize to activate', 'amber');
+          syncInitBtn();
+
+          if (el.importPanel) el.importPanel.style.display = 'none';
+          if (el.importInput) el.importInput.value = '';
+        } catch {
+          setStatus('Decode failed — token may be corrupted', 'red');
+        }
+      }
+
+      // ─── Activate passport ────────────────────────────────────────────────
+      function activate(): void {
+        if (!keyReady) return;
+        const passport = buildPassport();
+
+        // Persist keypair separately (private key never leaves localStorage)
+        if (pubJwk && privJwk) {
+          try {
+            localStorage.setItem('p31-cogpass-keypair', JSON.stringify({ pub: pubJwk, priv: privJwk }));
+          } catch { /* private browsing — degrade gracefully */ }
+        }
+
+        // Use the official bus-bar API if loaded, else write directly
+        const api = (window as Record<string, unknown>)['p31CogPass'] as P31CogPassAPI | undefined;
+        if (api?.set) {
+          const result = api.set(passport);
+          if (result) {
+            setStatus('Passport active ✓', 'green');
+            if (el.initBtn) el.initBtn.textContent = 'Passport Active ✓';
+            return;
+          }
+        }
+
+        // Direct write — cogpass-reader picks it up on next navigation
+        try {
+          localStorage.setItem('p31-cogpass-v1', JSON.stringify(passport));
+          setStatus('Passport saved — reload to activate personalization', 'green');
+          if (el.initBtn) el.initBtn.textContent = 'Saved — reload to activate';
+        } catch {
+          setStatus('Storage unavailable — private browsing mode?', 'red');
+        }
+      }
+
+      // ─── Clear ────────────────────────────────────────────────────────────
+      function clearPassport(): void {
+        fingerprint = null; pubJwk = null; privJwk = null; keyReady = false;
+        try {
+          localStorage.removeItem('p31-cogpass-v1');
+          localStorage.removeItem('p31-cogpass-keypair');
+        } catch { /* no-op */ }
+
+        const api = (window as Record<string, unknown>)['p31CogPass'] as P31CogPassAPI | undefined;
+        api?.clear?.();
+
+        resetFingerprintDisplay();
+        setStatus('Cleared — all passport data removed', 'muted');
+        syncInitBtn();
+        if (el.exportPanel) el.exportPanel.style.display = 'none';
+        if (el.importPanel) el.importPanel.style.display = 'none';
+        if (el.initBtn) el.initBtn.textContent = 'Initialize Passport';
+      }
+
+      // ─── Comfort slider live update ────────────────────────────────────────
+      el.comfort?.addEventListener('input', () => {
+        if (el.comfortVal && el.comfort) el.comfortVal.textContent = el.comfort.value;
+      });
+
+      // ─── Wire buttons ─────────────────────────────────────────────────────
+      $('cp-generate')?.addEventListener('click',      () => { void generateKey(); });
+      $('cp-export-btn')?.addEventListener('click',    exportToken);
+      $('cp-import-btn')?.addEventListener('click',    () => {
+        if (!el.importPanel) return;
+        const open = el.importPanel.style.display !== 'none';
+        el.importPanel.style.display = open ? 'none' : 'flex';
+        if (el.exportPanel) el.exportPanel.style.display = 'none';
+      });
+      $('cp-import-confirm')?.addEventListener('click', decodeToken);
+      $('cp-import-cancel')?.addEventListener('click',  () => {
+        if (el.importPanel) el.importPanel.style.display = 'none';
+      });
+      $('cp-copy')?.addEventListener('click', () => {
+        const text = el.tokenDisplay?.textContent ?? '';
+        navigator.clipboard.writeText(text).then(() => {
+          const btn = $('cp-copy') as HTMLButtonElement | null;
+          if (btn) {
+            btn.textContent = 'Copied ✓';
+            setTimeout(() => { btn.textContent = 'Copy to Clipboard'; }, 1800);
+          }
+        }).catch(() => {});
+      });
+      $('cp-clear-btn')?.addEventListener('click', clearPassport);
+      el.initBtn?.addEventListener('click', activate);
+
+      // ─── Load existing passport on mount ──────────────────────────────────
+      try {
+        const stored = localStorage.getItem('p31-cogpass-v1');
+        const keypairStored = localStorage.getItem('p31-cogpass-keypair');
+        if (stored) {
+          const p = JSON.parse(stored) as PassportPayload;
+          restorePassportToUI(p);
+          if (keypairStored) {
+            const kp = JSON.parse(keypairStored) as { pub: JsonWebKey; priv: JsonWebKey };
+            pubJwk = kp.pub; privJwk = kp.priv;
+          }
+          if (p.identity.keyId) {
+            fingerprint = p.identity.keyId;
+            keyReady = !!keypairStored;
+            setFingerprint(fingerprint);
+            setStatus(keyReady ? 'Passport loaded — key intact' : 'Passport loaded — no key (regenerate to sign)', keyReady ? 'violet' : 'amber');
+          } else {
+            setStatus('Passport loaded — no key fingerprint (legacy)', 'amber');
+          }
+          syncInitBtn();
+        }
+      } catch { /* no-op */ }
+    });
+  </script>
+
+</AppShell>

@@ -1,0 +1,246 @@
+# GitHub API Fallback Mechanism for P31 Andromeda Ecosystem
+# Addresses Critical Vulnerability: GitHub API Dependency
+# Ensures Posner Multi-Sig functionality during GitHub outages
+
+name: GitHub API Fallback Mechanism
+on:
+  # Primary trigger: GitHub Actions webhooks (normal operation)
+  workflow_dispatch:
+  
+  # Fallback triggers: Scheduled polling for Git repository changes
+  schedule:
+    # Poll every 5 minutes during active hours (8 AM - 10 PM EST)
+    - cron: '*/5 13-2 1-5,7-12 * *'  # 8 AM - 10 PM EST (13:00-02:00 UTC)
+    
+    # Reduced polling during off-hours (every 15 minutes)
+    - cron: '*/15 3-12 * * *'        # 10 PM - 8 AM EST (18:00-23:00 UTC)
+    
+  # Emergency trigger: Manual fallback activation
+  repository_dispatch:
+    types: [github_api_fallback]
+
+jobs:
+  # Job 1: Monitor GitHub API Health
+  monitor-github-api:
+    runs-on: ubuntu-latest
+    outputs:
+      api-status: ${{ steps.health-check.outputs.status }}
+      fallback-mode: ${{ steps.health-check.outputs.fallback-mode }}
+    
+    steps:
+      - name: Check GitHub API Health
+        id: health-check
+        run: |
+          # Test GitHub API availability
+          API_RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/${{ github.repository }}/rate_limit")
+          
+          if [ "$API_RESPONSE" -eq 200 ]; then
+            echo "status=healthy" >> $GITHUB_OUTPUT
+            echo "fallback-mode=false" >> $GITHUB_OUTPUT
+            echo "✅ GitHub API is healthy"
+          else
+            echo "status=unhealthy" >> $GITHUB_OUTPUT
+            echo "fallback-mode=true" >> $GITHUB_OUTPUT
+            echo "⚠️ GitHub API is unhealthy (Status: $API_RESPONSE)"
+          fi
+
+  # Job 2: Git Repository Polling (Fallback Mechanism)
+  git-polling-fallback:
+    needs: monitor-github-api
+    if: needs.monitor-github-api.outputs.fallback-mode == 'true' || github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 2  # Fetch last 2 commits for comparison
+      
+      - name: Check for New Commits
+        id: check-commits
+        run: |
+          # Get current and previous commit hashes
+          CURRENT_COMMIT=$(git rev-parse HEAD)
+          PREVIOUS_COMMIT=$(git rev-parse HEAD~1)
+          
+          # Check if this is a new commit (not just a workflow run)
+          if [ "$CURRENT_COMMIT" != "$PREVIOUS_COMMIT" ]; then
+            echo "new-commit=true" >> $GITHUB_OUTPUT
+            echo "commit-hash=$CURRENT_COMMIT" >> $GITHUB_OUTPUT
+            echo "previous-commit=$PREVIOUS_COMMIT" >> $GITHUB_OUTPUT
+            echo "✅ New commit detected: $CURRENT_COMMIT"
+          else
+            echo "new-commit=false" >> $GITHUB_OUTPUT
+            echo "ℹ️ No new commits since last check"
+          fi
+      
+      - name: Parse Commit for Posner Multi-Sig Triggers
+        if: steps.check-commits.outputs.new-commit == 'true'
+        id: parse-commit
+        run: |
+          # Get commit message
+          COMMIT_MSG=$(git log -1 --pretty=%B)
+          
+          # Check for Posner Multi-Sig triggers
+          if echo "$COMMIT_MSG" | grep -i "posner\|multisig\|ca9(po4)6\|ion.*contribution\|spoon.*burn"; then
+            echo "posner-trigger=true" >> $GITHUB_OUTPUT
+            echo "commit-message=$COMMIT_MSG" >> $GITHUB_OUTPUT
+            echo "✅ Posner Multi-Sig trigger detected in commit"
+          else
+            echo "posner-trigger=false" >> $GITHUB_OUTPUT
+            echo "ℹ️ Commit does not contain Posner Multi-Sig triggers"
+          fi
+      
+      - name: Execute Posner Multi-Sig Assembly
+        if: steps.parse-commit.outputs.posner-trigger == 'true'
+        uses: ./.github/actions/posner-multisig
+        with:
+          commit-hash: ${{ steps.check-commits.outputs.commit-hash }}
+          commit-message: ${{ steps.parse-commit.outputs.commit-message }}
+          fallback-mode: true
+          trigger-source: "git-polling"
+
+      - name: Synchronize KILO Hardware Buffer
+        if: steps.parse-commit.outputs.posner-trigger == 'true'
+        uses: ./.github/actions/kilo-hardware-sync
+        with:
+          fallback-mode: true
+          trigger-source: "git-polling"
+          assembly-status: "in_progress"
+
+  # Job 3: Webhook Simulation (Alternative Fallback)
+  webhook-simulation:
+    needs: monitor-github-api
+    if: needs.monitor-github-api.outputs.fallback-mode == 'true'
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Simulate Webhook Events
+        run: |
+          # Create simulated webhook payloads for critical events
+          echo "Simulating webhook events due to GitHub API outage..."
+          
+          # Simulate push event
+          curl -X POST \
+            -H "Content-Type: application/json" \
+            -H "X-GitHub-Event: push" \
+            -d '{
+              "ref": "refs/heads/main",
+              "head_commit": {
+                "id": "'$(git rev-parse HEAD)'",
+                "message": "Fallback: Simulated push event",
+                "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"
+              },
+              "repository": {
+                "full_name": "${{ github.repository }}"
+              }
+            }' \
+            "${{ secrets.WEBHOOK_SIMULATION_URL }}"
+          
+          echo "✅ Webhook simulation completed"
+
+  # Job 4: Status Reporting and Alerting
+  status-reporting:
+    needs: [monitor-github-api, git-polling-fallback, webhook-simulation]
+    if: always()
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Generate Status Report
+        id: status-report
+        run: |
+          API_STATUS="${{ needs.monitor-github-api.outputs.api-status }}"
+          FALLBACK_MODE="${{ needs.monitor-github-api.outputs.fallback-mode }}"
+          
+          echo "## GitHub API Fallback Status Report" > status.md
+          echo "" >> status.md
+          echo "**Timestamp:** $(date -u)" >> status.md
+          echo "**GitHub API Status:** $API_STATUS" >> status.md
+          echo "**Fallback Mode:** $FALLBACK_MODE" >> status.md
+          echo "" >> status.md
+          
+          if [ "$FALLBACK_MODE" == "true" ]; then
+            echo "⚠️ **ALERT: Operating in GitHub API Fallback Mode**" >> status.md
+            echo "" >> status.md
+            echo "The system is using Git polling and webhook simulation" >> status.md
+            echo "to maintain Posner Multi-Sig functionality during GitHub API issues." >> status.md
+          else
+            echo "✅ **Normal Operation: GitHub API is healthy**" >> status.md
+            echo "" >> status.md
+            echo "All systems operating normally with full GitHub API integration." >> status.md
+          fi
+          
+          echo "" >> status.md
+          echo "**Next Actions:**" >> status.md
+          if [ "$FALLBACK_MODE" == "true" ]; then
+            echo "- Monitor GitHub API recovery" >> status.md
+            echo "- Verify Git polling is detecting changes" >> status.md
+            echo "- Check Discord notifications for user updates" >> status.md
+          else
+            echo "- Continue normal monitoring" >> status.md
+            echo "- No immediate action required" >> status.md
+          fi
+          
+          cat status.md
+
+      - name: Send Discord Alert
+        if: needs.monitor-github-api.outputs.fallback-mode == 'true'
+        uses: ./.github/actions/discord-alert
+        with:
+          message: |
+            🚨 **GitHub API Fallback Mode Activated**
+            
+            The P31 Andromeda Ecosystem is now operating in fallback mode due to GitHub API issues.
+            
+            **Status:** Git polling and webhook simulation are active
+            **Impact:** Posner Multi-Sig functionality maintained
+            **Users:** No action required - system is handling automatically
+            
+            Monitoring GitHub API recovery...
+
+      - name: Update System Status
+        run: |
+          # Update a status file that other services can read
+          echo "{
+            \"timestamp\": \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\",
+            \"github_api_status\": \"${{ needs.monitor-github-api.outputs.api-status }}\",
+            \"fallback_mode\": ${{
+              needs.monitor-github-api.outputs.fallback-mode == 'true' && 'true' || 'false'
+            }},
+            \"last_check\": \"$(date -u)\",
+            \"next_poll\": \"$(date -u -d '+5 minutes')\"
+          }" > github-api-status.json
+          
+          # Commit status update if in fallback mode
+          if [ "${{ needs.monitor-github-api.outputs.fallback-mode }}" == "true" ]; then
+            git config user.name "P31 System Monitor"
+            git config user.email "system@p31ca.org"
+            git add github-api-status.json
+            git commit -m "🤖 System Status: GitHub API Fallback Mode Active"
+            git push
+          fi
+
+  # Job 5: Recovery Verification
+  recovery-verification:
+    needs: monitor-github-api
+    if: needs.monitor-github-api.outputs.fallback-mode == 'false' && needs.monitor-github-api.outputs.api-status == 'healthy'
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Verify Normal Operation Recovery
+        run: |
+          echo "✅ GitHub API has recovered - normal operation restored"
+          echo "✅ All Posner Multi-Sig functionality now using primary GitHub API"
+          echo "✅ Git polling fallback mechanisms remain active as backup"
+          
+          # Send recovery notification
+          curl -X POST \
+            -H "Content-Type: application/json" \
+            -d '{
+              "content": "✅ **GitHub API Recovery Confirmed**\n\nThe P31 Andromeda Ecosystem has restored normal operation. All systems are now using the primary GitHub API connection.",
+              "username": "P31 System Monitor"
+            }' \
+            "${{ secrets.DISCORD_WEBHOOK_URL }}"

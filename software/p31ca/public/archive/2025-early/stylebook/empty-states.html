@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Empty states · P31 Stylebook</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/p31-style.css">
+  <link rel="stylesheet" href="/lib/p31-fluid.css">
+  <link rel="stylesheet" href="/stylebook/_chrome.css">
+  <style>
+    .empty {
+      padding: 64px 32px;
+      text-align: center;
+      background: var(--p31-surface);
+      border: 1px dashed var(--p31-border-subtle);
+      border-radius: 12px;
+    }
+    .empty-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 20px;
+      background: var(--p31-surface2);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      color: var(--p31-muted);
+      margin-bottom: 20px;
+    }
+    .empty-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--p31-paper);
+      margin-bottom: 8px;
+    }
+    .empty-body {
+      font-size: 14px;
+      color: var(--p31-cloud);
+      max-width: 320px;
+      margin: 0 auto 20px;
+      line-height: 1.5;
+    }
+    .empty-action {
+      padding: 10px 18px;
+      background: var(--p31-primary);
+      color: var(--p31-void);
+      border: none;
+      border-radius: 10px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    .empty-secondary {
+      display: inline-block;
+      margin-top: 12px;
+      color: var(--p31-muted);
+      font-size: 12px;
+      text-decoration: none;
+    }
+    .empty-secondary:hover { color: var(--p31-cloud); }
+  </style>
+</head>
+<body>
+  <script type="module">
+    import { renderShell, code, callout } from '/stylebook/_chrome.js';
+    import { P31ThemeController } from '/lib/p31-theme-engine.mjs';
+    window.p31Theme = new P31ThemeController({ defaultTheme: 'hub' });
+    
+    const content = `
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Pattern 1</div>
+          <h2 class="sb-h2">First-time empty</h2>
+          <p class="sb-text">When a feature has never been used. Explain what it's for, then give one clear next action.</p>
+        </div>
+        
+        <div class="empty">
+          <div class="empty-icon">◇</div>
+          <div class="empty-title">No mesh nodes yet</div>
+          <div class="empty-body">Add your first family vertex to start syncing. Each node holds an encrypted slice of your shared graph.</div>
+          <button class="empty-action">Add first node →</button>
+          <div><a href="#" class="empty-secondary">What's a mesh node?</a></div>
+        </div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Pattern 2</div>
+          <h2 class="sb-h2">Search · no results</h2>
+          <p class="sb-text">When a query returned nothing. Acknowledge what they searched for, suggest alternatives.</p>
+        </div>
+        
+        <div class="empty">
+          <div class="empty-icon">⌕</div>
+          <div class="empty-title">No matches for "centaur 12"</div>
+          <div class="empty-body">Try fewer terms, or browse by category instead. The search is case-insensitive and matches partial words.</div>
+          <button class="empty-action">Browse all products</button>
+        </div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Pattern 3</div>
+          <h2 class="sb-h2">Filter · no results</h2>
+        </div>
+        
+        <div class="empty">
+          <div class="empty-icon" style="color: var(--p31-amber);">◐</div>
+          <div class="empty-title">Nothing matches your filters</div>
+          <div class="empty-body">You filtered to <span class="p31-badge p31-badge-neutral">offline</span> + <span class="p31-badge p31-badge-neutral">last 24h</span>, but no items match. Try widening your filters.</div>
+          <button class="empty-action">Clear filters</button>
+        </div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Pattern 4</div>
+          <h2 class="sb-h2">All caught up</h2>
+          <p class="sb-text">Positive empty — when there's genuinely nothing to do. Celebrate quietly.</p>
+        </div>
+        
+        <div class="empty">
+          <div class="empty-icon" style="color: var(--p31-phosphor); background: rgba(0,255,136,0.08);">✓</div>
+          <div class="empty-title">All caught up</div>
+          <div class="empty-body">No new alerts in the last 24 hours. Calcium readings within range. Mesh sync healthy.</div>
+        </div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Pattern 5</div>
+          <h2 class="sb-h2">Error state</h2>
+          <p class="sb-text">When something failed. Honest about what happened, clear about recovery.</p>
+        </div>
+        
+        <div class="empty">
+          <div class="empty-icon" style="color: var(--p31-coral); background: rgba(204,98,71,0.08);">!</div>
+          <div class="empty-title">Couldn't load mesh data</div>
+          <div class="empty-body">Worker returned 503 after 3 retries. This usually means the edge is restarting — wait 30 seconds and try again.</div>
+          <button class="empty-action">Try again</button>
+          <div><a href="#" class="empty-secondary">View status page →</a></div>
+        </div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Anatomy</div>
+          <h2 class="sb-h2">What every empty state needs</h2>
+        </div>
+        
+        <table class="sb-table">
+          <thead><tr><th>Element</th><th>Job</th><th>Required?</th></tr></thead>
+          <tbody>
+            <tr><td>Icon</td><td>Visual anchor, sets tone</td><td>Yes</td></tr>
+            <tr><td>Title</td><td>Tell user what's happening (5 words max)</td><td>Yes</td></tr>
+            <tr><td>Body</td><td>Explain why and what to do</td><td>Yes</td></tr>
+            <tr><td>Primary action</td><td>The most useful next step</td><td>Usually</td></tr>
+            <tr><td>Secondary link</td><td>Help / docs / alternative path</td><td>If helpful</td></tr>
+          </tbody>
+        </table>
+        
+        ${callout('warn', 'Resist apologies', 'Don\'t say "Sorry, no items" or "Oops!" Honest, neutral language is more dignifying. The system isn\'t apologizing for working correctly.')}
+      </section>
+    `;
+    
+    renderShell({
+      activeId: 'empty',
+      breadcrumb: [
+        { href: '/stylebook/', label: 'Stylebook' },
+        { href: '/stylebook/', label: 'Patterns' },
+        { label: 'Empty states' }
+      ],
+      title: 'Empty states',
+      subtitle: 'First-time, no-results, errors, and "all caught up". Five patterns for when there\'s nothing.',
+      meta: [{ label: 'Patterns', value: '5' }],
+      content
+    });
+  </script>
+</body>
+</html>

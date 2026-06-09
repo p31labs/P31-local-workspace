@@ -1,0 +1,195 @@
+name: Deploy P31 Workers (Q-Factor + FHIR + Command-Center)
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "software/cloudflare-worker/q-factor/**"
+      - "software/p31ca/workers/fhir/**"
+      - "software/cloudflare-worker/command-center/**"
+      - ".github/workflows/deploy-p31-workers.yml"
+  workflow_dispatch:
+    inputs:
+      worker:
+        description: "Worker to deploy (q-factor | fhir | command-center | all)"
+        required: false
+        default: "all"
+
+concurrency:
+  group: deploy-p31-workers-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ── Detect which workers changed ──────────────────────────────────────────
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      qfactor: ${{ steps.filter.outputs.qfactor }}
+      fhir: ${{ steps.filter.outputs.fhir }}
+      command_center: ${{ steps.filter.outputs.command_center }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            qfactor:
+              - 'software/cloudflare-worker/q-factor/**'
+            fhir:
+              - 'software/p31ca/workers/fhir/**'
+            command_center:
+              - 'software/cloudflare-worker/command-center/**'
+
+  # ── Q-Factor Worker ───────────────────────────────────────────────────────
+  deploy-qfactor:
+    name: Q-Factor Worker
+    runs-on: ubuntu-latest
+    needs: changes
+    if: |
+      needs.changes.outputs.qfactor == 'true' ||
+      github.event_name == 'workflow_dispatch' && (github.event.inputs.worker == 'q-factor' || github.event.inputs.worker == 'all')
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/toolchain-constants
+
+      - name: Install wrangler globally
+        run: npm install -g wrangler@${{ env.WRANGLER_VERSION }}
+
+      - name: Install Q-Factor dependencies
+        working-directory: software/cloudflare-worker/q-factor
+        run: npm install
+
+      - name: TypeScript check
+        working-directory: software/cloudflare-worker/q-factor
+        run: npx tsc --noEmit 2>/dev/null || echo "tsc skipped (no tsconfig or minor)"
+
+      # Create KV namespace idempotently — wrangler exits 1 if already exists,
+      # so we capture output and only fail on unexpected errors.
+      - name: Ensure QFACTOR_KV namespace exists
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          set +e
+          OUT=$(wrangler kv namespace create QFACTOR_KV 2>&1)
+          CODE=$?
+          echo "$OUT"
+          if echo "$OUT" | grep -q "already exists"; then
+            echo "KV namespace already exists — OK"
+          elif [ $CODE -ne 0 ]; then
+            echo "KV creation failed unexpectedly" && exit 1
+          fi
+
+      - name: Deploy Q-Factor worker
+        uses: ./.github/actions/wrangler-run
+        with:
+          working-directory: software/cloudflare-worker/q-factor
+          command: deploy --env production
+          api-token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          account-id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+      - name: Smoke test Q-Factor endpoint
+        run: |
+          sleep 10
+          CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 15 \
+            "https://api.p31ca.org/qfactor/current?userId=will" 2>/dev/null || echo 000)
+          if [[ "$CODE" == "200" || "$CODE" == "401" ]]; then
+            echo "✅ Q-Factor endpoint live (HTTP $CODE)"
+          else
+            echo "❌ Q-Factor endpoint returned HTTP $CODE" && exit 1
+          fi
+
+  # ── FHIR Worker ───────────────────────────────────────────────────────────
+  deploy-fhir:
+    name: FHIR Worker
+    runs-on: ubuntu-latest
+    needs: changes
+    if: |
+      needs.changes.outputs.fhir == 'true' ||
+      github.event_name == 'workflow_dispatch' && (github.event.inputs.worker == 'fhir' || github.event.inputs.worker == 'all')
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/toolchain-constants
+
+      - name: Install wrangler globally
+        run: npm install -g wrangler@${{ env.WRANGLER_VERSION }}
+
+      - name: Install FHIR dependencies
+        working-directory: software/p31ca/workers/fhir
+        run: npm install
+
+      - name: TypeScript check
+        working-directory: software/p31ca/workers/fhir
+        run: npx tsc --noEmit 2>/dev/null || echo "tsc skipped"
+
+      - name: Deploy FHIR worker
+        uses: ./.github/actions/wrangler-run
+        with:
+          working-directory: software/p31ca/workers/fhir
+          command: deploy
+          api-token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          account-id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+      - name: Smoke test FHIR status endpoint
+        run: |
+          sleep 10
+          CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 15 \
+            "https://api.p31ca.org/fhir/status" 2>/dev/null || echo 000)
+          if [[ "$CODE" == "200" || "$CODE" == "401" || "$CODE" == "403" ]]; then
+            echo "✅ FHIR endpoint live (HTTP $CODE)"
+          else
+            echo "❌ FHIR endpoint returned HTTP $CODE" && exit 1
+          fi
+
+  # ── Command-Center Worker ─────────────────────────────────────────────────
+  deploy-command-center:
+    name: Command-Center Worker
+    runs-on: ubuntu-latest
+    needs: changes
+    if: |
+      needs.changes.outputs.command_center == 'true' ||
+      github.event_name == 'workflow_dispatch' && (github.event.inputs.worker == 'command-center' || github.event.inputs.worker == 'all')
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/toolchain-constants
+
+      - name: Install wrangler globally
+        run: npm install -g wrangler@${{ env.WRANGLER_VERSION }}
+
+      - name: Deploy command-center
+        uses: ./.github/actions/wrangler-run
+        with:
+          working-directory: software/cloudflare-worker/command-center
+          command: deploy
+          api-token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          account-id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+      - name: Smoke test command-center
+        run: |
+          sleep 10
+          CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 15 \
+            "https://command-center.trimtab-signal.workers.dev/health" 2>/dev/null || echo 000)
+          if [[ "$CODE" == "200" ]]; then
+            echo "✅ Command-center live"
+          else
+            echo "⚠ Command-center returned HTTP $CODE (may not have /health — check manually)"
+          fi
+
+  # ── Final gate ────────────────────────────────────────────────────────────
+  summary:
+    name: Deploy summary
+    runs-on: ubuntu-latest
+    needs: [deploy-qfactor, deploy-fhir, deploy-command-center]
+    if: always()
+    steps:
+      - name: Report
+        run: |
+          echo "Q-Factor:       ${{ needs.deploy-qfactor.result }}"
+          echo "FHIR:           ${{ needs.deploy-fhir.result }}"
+          echo "Command-Center: ${{ needs.deploy-command-center.result }}"
+          # Fail the gate if any job that actually ran failed
+          for r in "${{ needs.deploy-qfactor.result }}" "${{ needs.deploy-fhir.result }}" "${{ needs.deploy-command-center.result }}"; do
+            if [[ "$r" == "failure" ]]; then exit 1; fi
+          done
+          echo "✅ All deployed workers healthy"

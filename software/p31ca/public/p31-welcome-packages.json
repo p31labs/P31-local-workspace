@@ -1,0 +1,213 @@
+{
+  "schema": "p31.welcomePackages/1.0.0",
+  "version": "1.0.0",
+  "welcomePhaseCaption": "Choose your P31 welcome package — then Wye → Delta in five calm steps.",
+  "paceSubtitle": "Five steps — pause anytime. Back returns one step.",
+  "explicitNegationLines": [
+    "No seed phrases to write down or store.",
+    "Not a cryptocurrency wallet.",
+    "Device-first lock — we don't keep your screen unlock or a reusable vault password.",
+    "Glass-box: ship bar and public routes are documented and version-checked in-repo."
+  ],
+  "wyeDeltaRibbonLines": [
+    "Quiet entry — settle before the mesh reroutes.",
+    "Anchor — match the pulse or ignore it; grace beats panic.",
+    "Rooms — place four corners; edges emerge between them.",
+    "Dial — set load today; degraded grace beats forced hustle.",
+    "Pact — close the Delta on-device; settings stay reversible."
+  ],
+  "phaseJobLines": {
+    "1": "Job: regulate first — bandwidth before rewiring.",
+    "2": "Job: anchor a repeatable tap — escalation stays gentle.",
+    "3": "Job: arrange corners — topology matches your workload.",
+    "4": "Job: choose fidelity — throttle chrome without quitting."
+  },
+  "packages": {
+    "kid": {
+      "id": "kid",
+      "label": "Kid / teen",
+      "cardSub": "Bigger taps, fewer words, gentle pace. Grown-up can finish the lock later.",
+      "topologyCaption": "Your path: room to grow · still part of the mesh.",
+      "voidLine1": "Hey. This is a calm screen. Nothing jumps at you.",
+      "voidLine2": "Tap or press Enter when you’re ready for the next bit.",
+      "phase2Prompt": "Feel the slow pulse. Tap when it feels right — close is good enough.",
+      "phase3Intro": "Slide the four bubbles where you like. There’s no wrong shape.",
+      "pactTitle": "Lock step (or skip for now)",
+      "dialDefault": 3,
+      "successLine": "You did it. Opening your kid-friendly home base…",
+      "successSub": "Small steps · your own assistant · Wye → Delta done.",
+      "meshStart": {
+        "headline": "Your corner of the mesh",
+        "sub": "Short words, big actions. Your assistant remembers what you need — only for you.",
+        "tetraTitle": "Your four shortcuts",
+        "tetraBlurb": "Tap a corner: build, connect, pace, or make stuff. All picked for you.",
+        "chips": [
+          "What’s one tiny homework or chore I can do in 10 minutes?",
+          "I feel overwhelmed. Break my day into 2 steps.",
+          "Tell me a joke, then one calm tip."
+        ]
+      },
+      "personalTetra": {
+        "docks": {
+          "structure": { "label": "Build", "href": "/geodesic.html", "hint": "Shapes & levels" },
+          "connection": { "label": "People", "href": "/connect.html", "hint": "The mesh picture" },
+          "rhythm": { "label": "Calm", "href": "/planetary-onboard.html", "hint": "Your pace" },
+          "creation": { "label": "Make", "href": "/ede.html", "hint": "Try the mini code play" }
+        }
+      }
+    },
+    "adult": {
+      "id": "adult",
+      "label": "Adult · solo",
+      "cardSub": "Standard pace, full EDE, your private agent and tetra.",
+      "topologyCaption": "Your path: steady mesh member.",
+      "voidLine1": "Take a breath. This is a safe space.",
+      "voidLine2": "Tap or press Enter when you are ready.",
+      "phase2Prompt": "Feel the pulse. Tap in sync.",
+      "phase3Intro": "Arrange your space.",
+      "pactTitle": "One last step — secure the lock.",
+      "dialDefault": 5,
+      "successLine": "Wye → Delta complete. Opening your workspace…",
+      "successSub": "Closed mesh loop · private edge · EDE assistant.",
+      "meshStart": {
+        "headline": "Your private assistant",
+        "sub": "Wye → Delta — you closed the star into a personal loop. Chat, energy, EDE — without mixing into the family cage unless you choose.",
+        "tetraTitle": "Personal tetra",
+        "tetraBlurb": "Four docks on your agent — Structure, Connection, Rhythm, Creation.",
+        "chips": [
+          "Help me break this task into 3 concrete coding steps.",
+          "I'm stuck on an error. Ask me for the stack trace, then suggest the smallest fix.",
+          "Draft a short conventional commit message for my current changes.",
+          "Given my low spoons today, what is the one smallest coding win in the next 25 minutes?"
+        ]
+      },
+      "personalTetra": null
+    },
+    "parent": {
+      "id": "parent",
+      "label": "Parent / caregiver",
+      "cardSub": "Larger targets, caregiver copy, mesh bridges for the whole household.",
+      "topologyCaption": "Your path: hold the mesh for others — and yourself.",
+      "voidLine1": "You carry a lot. This space is for you first.",
+      "voidLine2": "When you’re ready, we’ll set anchors for the household mesh.",
+      "phase2Prompt": "Find a rhythm that isn’t only crisis mode. Tap with the pulse.",
+      "phase3Intro": "Place Structure, Connection, Rhythm, Creation where your hands reach.",
+      "pactTitle": "Secure your lock — you can add others from settings.",
+      "dialDefault": 6,
+      "successLine": "Caregiver path locked in. Opening your command surface…",
+      "successSub": "Private agent first · family bridges next · Delta closed.",
+      "meshStart": {
+        "headline": "Caregiver home base",
+        "sub": "Your assistant is private. Family mesh links stay explicit — no accidental spill.",
+        "tetraTitle": "Household tetra",
+        "tetraBlurb": "Structure for routines, Connection for people, Rhythm for spoons, Creation for advocacy & docs.",
+        "chips": [
+          "I have 2 spoons left — what is the one thing to do before bed?",
+          "Draft a short school email from bullet points I’ll paste.",
+          "Help me split tomorrow between kids’ needs and my work."
+        ]
+      },
+      "personalTetra": {
+        "docks": {
+          "structure": { "label": "Routines", "href": "/geodesic.html", "hint": "Scaffold the week" },
+          "connection": { "label": "Family mesh", "href": "/connect.html", "hint": "K₄ cage view" },
+          "rhythm": { "label": "Pace", "href": "/planetary-onboard.html", "hint": "Dial & reset" },
+          "creation": { "label": "Advocacy", "href": "/passport", "hint": "Cognitive passport" }
+        }
+      }
+    },
+    "neuro": {
+      "id": "neuro",
+      "label": "Neuro-inclusive",
+      "cardSub": "Low noise, clear steps, spoon-aware nudges. No shame, skip anytime.",
+      "topologyCaption": "Your path: meet you where your nervous system is today.",
+      "voidLine1": "No rush. No pop-ups. Just this screen and your pace.",
+      "voidLine2": "When you’re ready, we go one step at a time.",
+      "phase2Prompt": "Tap when the ring feels steady — or skip. Close counts.",
+      "phase3Intro": "Drag only if it helps. Skip is always OK.",
+      "pactTitle": "Lock only if it feels safe — otherwise skip and come back.",
+      "dialDefault": 2,
+      "successLine": "You chose your pace. Opening a calmer home base…",
+      "successSub": "Same Delta loop · less chrome by default · your agent only.",
+      "meshStart": {
+        "headline": "Low-load home",
+        "sub": "Defaults lean calm. You can turn detail up anytime. Your thread stays in your object.",
+        "tetraTitle": "Four gentle docks",
+        "tetraBlurb": "Same four vertices — labels tuned for executive bandwidth.",
+        "chips": [
+          "I’m frozen. Give me exactly one 5-minute action.",
+          "Sensory overload — what do I turn off first?",
+          "Rewrite this paragraph in fewer, plainer sentences."
+        ]
+      },
+      "personalTetra": {
+        "docks": {
+          "structure": { "label": "One next step", "href": "/geodesic.html", "hint": "Tiny scaffold" },
+          "connection": { "label": "Mesh (optional)", "href": "/connect.html", "hint": "When you have capacity" },
+          "rhythm": { "label": "Dial & rest", "href": "/planetary-onboard.html", "hint": "Reset pace" },
+          "creation": { "label": "Words & code", "href": "/ede.html", "hint": "EDE when focused" }
+        }
+      }
+    },
+    "builder": {
+      "id": "builder",
+      "label": "Builder / contributor",
+      "cardSub": "Registry, EDE, geodesic — ship cadence first.",
+      "topologyCaption": "Your path: tools out front, mesh as backbone.",
+      "voidLine1": "Welcome, builder. This mesh is for shipping.",
+      "voidLine2": "Tap when you’re ready to wire your corner.",
+      "phase2Prompt": "Sync to the pulse — then we open the toolbox.",
+      "phase3Intro": "Arrange your stack: structure, people, rhythm, ship.",
+      "pactTitle": "Lock your dev identity to this edge.",
+      "dialDefault": 7,
+      "successLine": "Builder path armed. Opening EDE-forward home…",
+      "successSub": "Agents, workers, Pages — one Delta loop.",
+      "meshStart": {
+        "headline": "Builder desk",
+        "sub": "Personal agent + EDE + hub bridges. Keep cage data out until you bridge.",
+        "tetraTitle": "Ship tetra",
+        "tetraBlurb": "Geodesic, connect, hub, forge.",
+        "chips": [
+          "Summarize this diff for a PR description.",
+          "What’s the smallest deploy I can do in 15 minutes?",
+          "Lint my plan: am I missing an edge case?"
+        ]
+      },
+      "personalTetra": {
+        "docks": {
+          "structure": { "label": "Geodesic", "href": "/geodesic.html", "hint": "Builder room" },
+          "connection": { "label": "Mesh", "href": "/connect.html", "hint": "K₄ + products" },
+          "rhythm": { "label": "Hub", "href": "/", "hint": "Registry" },
+          "creation": { "label": "EDE", "href": "/ede.html", "hint": "Browser IDE" }
+        }
+      }
+    },
+    "default": {
+      "id": "default",
+      "label": "Surprise me / general",
+      "cardSub": "Balanced defaults — you can tune later.",
+      "topologyCaption": "Your path: standard P31 welcome.",
+      "voidLine1": "Take a breath. This is a safe space.",
+      "voidLine2": "Tap or press Enter when you are ready.",
+      "phase2Prompt": "Feel the pulse. Tap in sync.",
+      "phase3Intro": "Arrange your space.",
+      "pactTitle": "One last step — secure the lock.",
+      "dialDefault": 5,
+      "successLine": "Wye → Delta complete. Opening your workspace…",
+      "successSub": "Closed mesh loop · private edge · EDE assistant.",
+      "meshStart": {
+        "headline": "Your private assistant",
+        "sub": "Wye → Delta — one surface for your isolated agent, energy, and EDE.",
+        "tetraTitle": "Personal tetra",
+        "tetraBlurb": "Four docks — Structure, Connection, Rhythm, Creation.",
+        "chips": [
+          "Help me break this task into 3 concrete coding steps.",
+          "I'm stuck on an error. Ask me for the stack trace, then suggest the smallest fix.",
+          "Draft a short conventional commit message for my current changes.",
+          "Given my low spoons today, what is the one smallest coding win in the next 25 minutes?"
+        ]
+      },
+      "personalTetra": null
+    }
+  }
+}

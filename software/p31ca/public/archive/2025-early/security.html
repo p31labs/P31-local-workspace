@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub" style="color-scheme: dark;">
+<head>
+  <meta charset="UTF-8">
+<script>(function(){var r=document.documentElement;if(/[?&]alive=1(?:&|$)/.test(location.search))return;r.classList.add("p31-gray-rock");function wake(){r.classList.remove("p31-gray-rock")}document.addEventListener("pointerdown",wake,{once:true,capture:true});document.addEventListener("keydown",wake,{once:true,capture:true})})();</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0f1115">
+  <title>Security | P31 Labs — p31ca.org</title>
+  <meta name="description" content="P31 Labs security policy — how to report a vulnerability, our disclosure timeline, the public advisories archive, and the safe-harbor commitment.">
+<link rel="canonical" href="https://p31ca.org/security.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Security">
+<meta property="og:description" content="P31 Labs security policy — how to report a vulnerability, our disclosure timeline, the public advisories archive, and the safe-harbor commitment.">
+<meta property="og:url" content="https://p31ca.org/security.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Security">
+<meta name="twitter:description" content="P31 Labs security policy — how to report a vulnerability, our disclosure timeline, the public advisories archive, and the safe-harbor commitment.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/p31-style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/p31-tailwind-extend.js"></script>
+  <script>tailwind.config = { theme: { extend: { ...window.P31_TAILWIND_EXTEND } } };</script>
+</head>
+<body class="bg-void text-cloud min-h-screen font-sans antialiased px-4 py-10 max-w-2xl mx-auto text-sm leading-relaxed">
+  <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 bg-teal text-void px-3 py-1 rounded font-mono text-xs">Skip to content</a>
+
+  <nav class="flex flex-wrap gap-3 text-teal/80 text-xs font-mono mb-8" aria-label="P31 governance pages">
+    <a href="/" class="hover:underline">Hub</a>
+    <a href="/manifesto" class="hover:underline">Manifesto</a>
+    <a href="/roadmap" class="hover:underline">Roadmap</a>
+    <a href="/code-of-conduct" class="hover:underline">Code of Conduct</a>
+    <a href="/security" class="hover:underline" aria-current="page">Security</a>
+    <a href="/accessibility" class="hover:underline">Accessibility</a>
+    <a href="/status" class="hover:underline">Status</a>
+    <a href="/financials" class="hover:underline">Financials</a>
+  </nav>
+
+  <main id="main">
+    <h1 class="text-2xl font-bold text-paper mb-2">Security</h1>
+    <p class="text-cloud/50 text-xs mb-8">
+      <strong class="text-paper">P31 Labs, Inc.</strong> security policy. Last updated <strong class="text-paper">2026-05-02</strong>.
+    </p>
+
+    <section class="mb-8">
+      <h2 class="text-paper font-semibold text-base mb-3">Report a vulnerability</h2>
+      <p class="text-cloud/80 mb-3"><strong class="text-paper">Preferred:</strong> open a private security advisory:</p>
+      <ul class="text-cloud/80 list-disc pl-5 space-y-2 mb-3">
+        <li><a class="text-teal hover:underline" href="https://github.com/p31labs/bonding-soup/security/advisories/new" target="_blank" rel="noopener">github.com/p31labs/bonding-soup/security/advisories/new</a></li>
+        <li><a class="text-teal hover:underline" href="https://github.com/p31labs/andromeda/security/advisories/new" target="_blank" rel="noopener">github.com/p31labs/andromeda/security/advisories/new</a></li>
+      </ul>
+      <p class="text-cloud/80 mb-3">
+        <strong class="text-paper">Email:</strong> until <code class="font-mono text-teal/80">security@p31labs.org</code> is live (target: end of Q3 2026), email <a class="text-teal hover:underline" href="mailto:will@p31ca.org">will@p31ca.org</a> with subject <code class="font-mono text-teal/80">[security]</code>.
+      </p>
+      <p class="text-cloud/80">
+        <strong class="text-paper">Acknowledgment:</strong> within 72 hours. <strong class="text-paper">Triage decision:</strong> within 7 days. Full process at <a class="text-teal hover:underline" href="https://github.com/p31labs/bonding-soup/blob/main/docs/security/REPORTING.md">docs/security/REPORTING.md</a>.
+      </p>
+    </section>
+
+    <section class="mb-8">
+      <h2 class="text-paper font-semibold text-base mb-3">Safe harbor</h2>
+      <p class="text-cloud/80">
+        If you follow the guidelines in our reporting policy, we treat your research as authorized. We will not pursue legal action and we will defend your right to do this work in good faith. Same posture as the <a class="text-teal hover:underline" href="https://disclose.io" target="_blank" rel="noopener">Disclose.io</a> common framework.
+      </p>
+    </section>
+
+    <section class="mb-8">
+      <h2 class="text-paper font-semibold text-base mb-3">Public advisories</h2>
+      <p class="text-cloud/80 mb-3">
+        Every security issue that produces a fix gets a public advisory at <a class="text-teal hover:underline" href="https://github.com/p31labs/bonding-soup/tree/main/docs/security/advisories">docs/security/advisories/</a>. Identifier scheme: <code class="font-mono text-teal/80">P31SA-YYYY-NNN</code>.
+      </p>
+      <ul class="text-cloud/80 list-disc pl-5 space-y-1">
+        <li><a class="text-teal hover:underline" href="https://github.com/p31labs/bonding-soup/blob/main/docs/security/advisories/P31SA-2026-001.md"><code class="font-mono text-teal/80">P31SA-2026-001</code></a> — Ecosystem hardening pass (Low; defense-in-depth, no reachable defect). 2026-05-02.</li>
+      </ul>
+    </section>
+
+    <section class="mb-8">
+      <h2 class="text-paper font-semibold text-base mb-3">Hall of Fame</h2>
+      <p class="text-cloud/80">
+        Reporters are credited at <a class="text-teal hover:underline" href="https://github.com/p31labs/bonding-soup/blob/main/docs/security/HALL-OF-FAME.md">docs/security/HALL-OF-FAME.md</a>. We do not yet have funds for a paid bug bounty; recognition on the Hall of Fame and a real, dated public advisory are the recognition path until grants land.
+      </p>
+    </section>
+
+    <section class="mb-8">
+      <h2 class="text-paper font-semibold text-base mb-3">Independent audit</h2>
+      <p class="text-cloud/80">
+        Phase 2 of the peer-comparison CWP commits to commissioning an independent security audit (Trail of Bits, NCC Group, Cure53, Doyensec, or Open Privacy Research) and publishing the report in full. The RFP template is public at <a class="text-teal hover:underline" href="https://github.com/p31labs/bonding-soup/blob/main/docs/security/audit-rfp-template.md">docs/security/audit-rfp-template.md</a>; engagement is funding-gated.
+      </p>
+    </section>
+
+    <p class="text-cloud/40 text-xs mt-10 border-t border-white/10 pt-4">
+      Companion: <a class="text-teal hover:underline" href="/manifesto">Manifesto</a> Commitment C1 &middot;
+      <a class="text-teal hover:underline" href="https://github.com/p31labs/bonding-soup/blob/main/docs/CWP-P31-PEER-COMP-2026-05.md">CWP-P31-PEER-COMP-2026-05</a> PEER-1B + PEER-1C.
+    </p>
+  </main>
+
+  <footer class="text-cloud/40 text-xs mt-10 pt-4 border-t border-white/10">
+    &copy; 2026 P31 Labs, Inc. &middot;
+    <a class="text-teal/60 hover:underline" href="/manifesto">Manifesto</a> &middot;
+    <a class="text-teal/60 hover:underline" href="/security">Security</a> &middot;
+    <a class="text-teal/60 hover:underline" href="/code-of-conduct">Code of Conduct</a> &middot;
+    <a class="text-teal/60 hover:underline" href="/privacy">Privacy</a>
+  </footer>
+</body>
+</html>

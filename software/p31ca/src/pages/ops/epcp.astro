@@ -1,0 +1,15 @@
+---
+// @p31-layout: Focus
+import AppShell from '../../layouts/AppShell.astro';
+import EPCP from '../../components/EPCP.jsx';
+---
+
+<AppShell
+  title="EPCP | P31 Ops"
+  description="Electric Plant Control Panel — operator single pane of glass"
+  routeName="ops"
+  phosPage="epcp"
+>
+  <meta slot="head" name="robots" content="noindex" />
+  <EPCP client:only="react" />
+</AppShell>

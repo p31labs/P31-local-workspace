@@ -1,0 +1,15 @@
+---
+import Head from '../components/Head.astro';
+import Navbar from '../components/Navbar.jsx';
+import Footer from '../components/Footer.astro';
+const { hideNav = false, ...headProps } = Astro.props;
+---
+
+<html lang="en">
+  <Head {...headProps} />
+  <body class="min-h-screen flex flex-col relative selection:bg-teal-600 selection:text-white">
+    {!hideNav && <Navbar client:load />}
+    <slot />
+    <Footer />
+  </body>
+</html>

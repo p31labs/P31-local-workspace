@@ -1,0 +1,9 @@
+# Cloudflare Pages — p31ca.org technical hub / lattice MVP (Astro → dist/).
+# Custom domains: p31ca.org, www.p31ca.org (as configured in the dashboard).
+#
+# Do NOT deploy other apps to this project name. Each Pages project serves ONE
+# production bundle to every domain attached to it.
+
+name = "p31ca"
+pages_build_output_dir = "dist"
+compatibility_date = "2025-04-01"

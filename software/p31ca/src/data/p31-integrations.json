@@ -1,0 +1,188 @@
+{
+  "schema": "p31.integrationsBridge/1.0.0",
+  "bridgeDoc": "docs/P31-INTEGRATIONS-BRIDGE.md",
+  "openCatalog": [
+    {
+      "id": "home-assistant",
+      "label": "Home Assistant",
+      "role": "Automation + device UI (local-first)",
+      "docsUrl": "https://www.home-assistant.io/",
+      "license": "Apache-2.0"
+    },
+    {
+      "id": "mosquitto",
+      "label": "Eclipse Mosquitto",
+      "role": "MQTT broker",
+      "docsUrl": "https://mosquitto.org/",
+      "license": "EPL-2.0"
+    },
+    {
+      "id": "esphome",
+      "label": "ESPHome",
+      "role": "Firmware for ESP32 / sensors",
+      "docsUrl": "https://esphome.io/",
+      "license": "MIT"
+    },
+    {
+      "id": "zigbee2mqtt",
+      "label": "Zigbee2MQTT",
+      "role": "Zigbee ↔ MQTT",
+      "docsUrl": "https://www.zigbee2mqtt.io/",
+      "license": "GPL-3.0"
+    },
+    {
+      "id": "node-red",
+      "label": "Node-RED",
+      "role": "Flow automation / HITL routing",
+      "docsUrl": "https://nodered.org/",
+      "license": "Apache-2.0"
+    },
+    {
+      "id": "n8n",
+      "label": "n8n",
+      "role": "Workflow automation (fair-code)",
+      "docsUrl": "https://docs.n8n.io/",
+      "license": "Sustainable Use License"
+    },
+    {
+      "id": "grafana",
+      "label": "Grafana OSS",
+      "role": "Dashboards / history",
+      "docsUrl": "https://grafana.com/oss/grafana/",
+      "license": "AGPL-3.0"
+    },
+    {
+      "id": "prometheus",
+      "label": "Prometheus",
+      "role": "Metrics time-series",
+      "docsUrl": "https://prometheus.io/docs/",
+      "license": "Apache-2.0"
+    },
+    {
+      "id": "restic",
+      "label": "restic",
+      "role": "Encrypted backups",
+      "docsUrl": "https://restic.net/",
+      "license": "BSD-2-Clause"
+    },
+    {
+      "id": "syncthing",
+      "label": "Syncthing",
+      "role": "Peer-to-peer file sync",
+      "docsUrl": "https://syncthing.net/",
+      "license": "MPL-2.0"
+    },
+    {
+      "id": "gadgetbridge",
+      "label": "Gadgetbridge",
+      "role": "Android ↔ many wearables (no cloud required)",
+      "docsUrl": "https://codeberg.org/Freeyourgadget/Gadgetbridge",
+      "license": "GPL-3.0"
+    },
+    {
+      "id": "fasten",
+      "label": "Fasten (on-prem)",
+      "role": "FHIR health record aggregation (self-hosted)",
+      "docsUrl": "https://github.com/fastenhealth/fasten-onprem",
+      "license": "GPL-3.0"
+    },
+    {
+      "id": "meshtastic",
+      "label": "Meshtastic",
+      "role": "LoRa mesh comms (aligned with mesh research threads)",
+      "docsUrl": "https://meshtastic.org/docs/",
+      "license": "GPL-3.0"
+    },
+    {
+      "id": "sops",
+      "label": "Mozilla SOPS",
+      "role": "Encrypted secrets in git (with age)",
+      "docsUrl": "https://github.com/getsops/sops",
+      "license": "MPL-2.0"
+    }
+  ],
+  "endpoints": {
+    "_comment": "Operator fills LAN or bridge URLs locally; empty = disabled. Never commit tokens.",
+    "homeAssistantLanBase": "",
+    "mqttBrokerUrl": "",
+    "mqttTopicPrefix": "p31/",
+    "nodeRedBase": "",
+    "n8nBase": "",
+    "prometheusBase": "",
+    "grafanaBase": ""
+  },
+  "meshBridge": {
+    "k4PersonalIngest": "k4-personal Worker: see andromeda/software/k4-personal/README.md — /agent/:userId/*, optional bio/energy routes; post minimized events only.",
+    "commandCenterEdge": "https://command-center.trimtab-signal.workers.dev",
+    "trust": "No raw PHI on static p31ca pages. ETHICAL-STYLE-MAP + EDGE-SECURITY for consent and motion."
+  },
+  "edgeMesh": {
+    "schema": "p31.edgeMesh/0.1.0",
+    "k4PersonalWorkerUrl": "https://k4-personal.trimtab-signal.workers.dev",
+    "k4CageWorkerUrl": "https://k4-cage.trimtab-signal.workers.dev",
+    "k4HubsWorkerUrl": "https://k4-hubs.trimtab-signal.workers.dev",
+    "k4AgentHubWorkerUrl": "https://k4-agent-hub.trimtab-signal.workers.dev",
+    "agentHubWorkerUrl": "https://p31-agent-hub.trimtab-signal.workers.dev",
+    "orchestratorWorkerUrl": "https://p31-orchestrator.trimtab-signal.workers.dev",
+    "passkeyApiBasePath": "/api/passkey",
+    "edgeLabWorkerUrl": "https://cf-edge-lab.trimtab-signal.workers.dev",
+    "tetraHubWorkerUrl": "https://tetra-hub.trimtab-signal.workers.dev",
+    "geodesicRoomWorkerUrl": "https://geodesic-room.trimtab-signal.workers.dev",
+    "googleBridgeWorkerUrl": "https://p31-google-bridge.trimtab-signal.workers.dev",
+    "bondingRelayWorkerUrl": "https://bonding-relay.trimtab-signal.workers.dev",
+    "ecosystemBridgeWorkerUrl": "https://ecosystem-bridge.trimtab-signal.workers.dev",
+    "bufferApiWorkerUrl": "https://p31-buffer-api.trimtab-signal.workers.dev",
+    "telemetryWorkerUrl": "https://p31-telemetry.trimtab-signal.workers.dev",
+    "fhirWorkerUrl": "https://p31-fhir.trimtab-signal.workers.dev",
+    "syncWorkerUrl": "https://p31-sync.trimtab-signal.workers.dev",
+    "spaceshipRelayWorkerUrl": "https://spaceship-relay.trimtab-signal.workers.dev",
+    "passkeyHubApiRoot": "https://p31ca.org/api/passkey"
+  },
+  "sovereignWorkerSpas": [
+    {
+      "id": "appointment-tracker",
+      "hubLaunchUrl": "https://p31ca.org/appointment-tracker",
+      "workersDevUrl": "https://p31-appointment-tracker.trimtab-signal.workers.dev"
+    },
+    {
+      "id": "love-ledger",
+      "hubLaunchUrl": "https://p31ca.org/love-ledger",
+      "workersDevUrl": "https://p31-love-ledger.trimtab-signal.workers.dev"
+    },
+    {
+      "id": "medical-tracker",
+      "hubLaunchUrl": "https://p31ca.org/medical-tracker",
+      "workersDevUrl": "https://p31-medical-tracker.trimtab-signal.workers.dev"
+    },
+    {
+      "id": "somatic-anchor",
+      "hubLaunchUrl": "https://p31ca.org/somatic-anchor",
+      "workersDevUrl": "https://p31-somatic-anchor.trimtab-signal.workers.dev"
+    },
+    {
+      "id": "legal-evidence",
+      "hubLaunchUrl": "https://p31ca.org/legal-evidence",
+      "workersDevUrl": "https://p31-legal-evidence.trimtab-signal.workers.dev"
+    },
+    {
+      "id": "contact-locker",
+      "hubLaunchUrl": "https://p31ca.org/contact-locker",
+      "workersDevUrl": "https://p31-contact-locker.trimtab-signal.workers.dev"
+    },
+    {
+      "id": "sleep-tracker",
+      "hubLaunchUrl": "https://p31ca.org/sleep-tracker",
+      "workersDevUrl": "https://p31-sleep-tracker.trimtab-signal.workers.dev"
+    },
+    {
+      "id": "budget-tracker",
+      "hubLaunchUrl": "https://p31ca.org/budget-tracker",
+      "workersDevUrl": "https://p31-budget-tracker.trimtab-signal.workers.dev"
+    },
+    {
+      "id": "genesis-gate",
+      "hubLaunchUrl": "https://p31ca.org/genesis-gate",
+      "workersDevUrl": "https://genesis-gate.trimtab-signal.workers.dev"
+    }
+  ]
+}

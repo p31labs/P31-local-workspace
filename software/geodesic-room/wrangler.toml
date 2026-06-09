@@ -1,0 +1,28 @@
+# geodesic-room — authoritative K₄ tetrahedron room
+# P31 Labs, Inc. | EIN 42-1888158
+#
+# Deploy:
+#   npx wrangler deploy
+#
+# First-time migration note (Cloudflare free tier requires new_sqlite_classes):
+#   The [[migrations]] below creates GeodesicRoom on first wrangler deploy.
+#   If you see error 10097: re-run wrangler deploy (it applies automatically).
+
+name = "geodesic-room"
+main = "src/index.ts"
+compatibility_date = "2025-10-01"
+
+[durable_objects]
+bindings = [
+  { name = "GEODESIC_ROOM", class_name = "GeodesicRoom" }
+]
+
+[[migrations]]
+tag = "v1-init"
+new_sqlite_classes = ["GeodesicRoom"]
+
+[[migrations]]
+tag = "v2-shapes"
+
+[vars]
+WORKER_VERSION = "0.2.2"

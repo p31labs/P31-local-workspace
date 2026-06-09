@@ -1,0 +1,238 @@
+---
+// Magnetic Poetry — Arcade routing page
+import ArcadeShell from '../../layouts/ArcadeShell.astro';
+---
+
+<ArcadeShell
+  gameId="poetry"
+  gameTitle="Magnetic Poetry"
+  gameIcon="🧲"
+>
+  <div class="game-launcher">
+    <div class="launcher-content">
+      <div class="game-preview">
+        <div class="preview-icon">🧲</div>
+        <h1 class="pixel-title">MAGNETIC POETRY</h1>
+        <p class="game-desc">Word field interactions</p>
+        <div class="tech-stack">
+          <span>Physics.js</span>
+          <span>Magnetic Fields</span>
+          <span>Word2Vec</span>
+          <span>PWA</span>
+        </div>
+      </div>
+
+      <div class="launcher-actions">
+        <a
+          href="https://p31-magnetic-poetry.pages.dev"
+          class="play-btn"
+          target="_blank"
+          rel="noopener"
+        >
+          <span class="btn-icon">▶</span>
+          <span class="btn-text">PLAY NOW</span>
+        </a>
+
+        <button class="high-score-btn" id="view-scores">
+          <span>🏆 HIGH SCORES</span>
+        </button>
+      </div>
+
+      <div class="game-instructions">
+        <h3>How to Play</h3>
+        <ul>
+          <li>Drag magnetic word tiles</li>
+          <li>Fields attract related words</li>
+          <li>Poetic combinations score</li>
+          <li>Share haikus</li>
+        </ul>
+      </div>
+    </div>
+
+    <a href="/arcade/" class="back-link">← Arcade Hub</a>
+  </div>
+
+  <style>
+    .game-launcher {
+      min-height: calc(100vh - 48px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      background: linear-gradient(180deg, #0f1115 0%, #101a15 100%);
+      position: relative;
+    }
+
+    .launcher-content {
+      max-width: 480px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .game-preview {
+      margin-bottom: 40px;
+    }
+
+    .preview-icon {
+      font-size: 80px;
+      line-height: 1;
+      margin-bottom: 20px;
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .pixel-title {
+      font-family: 'Press Start 2P', cursive;
+      font-size: 24px;
+      color: #3ba372;
+      margin: 0 0 16px;
+      letter-spacing: 0.1em;
+    }
+
+    .game-desc {
+      font-size: 16px;
+      color: rgba(232, 230, 227, 0.7);
+      margin: 0 0 24px;
+    }
+
+    .tech-stack {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .tech-stack span {
+      font-size: 11px;
+      padding: 6px 12px;
+      background: rgba(59, 163, 114, 0.15);
+      border: 1px solid rgba(59, 163, 114, 0.3);
+      border-radius: 99px;
+      color: #3ba372;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .launcher-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 40px;
+    }
+
+    .play-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 20px 40px;
+      background: #3ba372;
+      color: #0f1115;
+      text-decoration: none;
+      border-radius: 12px;
+      font-family: 'Press Start 2P', cursive;
+      font-size: 14px;
+      transition: all 0.3s;
+      box-shadow: 0 10px 30px rgba(59, 163, 114, 0.3);
+    }
+
+    .play-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 15px 40px rgba(59, 163, 114, 0.5);
+    }
+
+    .btn-icon {
+      font-size: 18px;
+    }
+
+    .high-score-btn {
+      padding: 16px 32px;
+      background: transparent;
+      border: 2px solid rgba(205, 168, 82, 0.5);
+      border-radius: 12px;
+      color: #cda852;
+      font-family: 'Press Start 2P', cursive;
+      font-size: 10px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .high-score-btn:hover {
+      background: rgba(205, 168, 82, 0.1);
+      border-color: #cda852;
+    }
+
+    .game-instructions {
+      text-align: left;
+      padding: 24px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .game-instructions h3 {
+      font-family: 'Press Start 2P', cursive;
+      font-size: 10px;
+      color: #3ba372;
+      margin: 0 0 16px;
+    }
+
+    .game-instructions ul {
+      margin: 0;
+      padding-left: 20px;
+      color: rgba(232, 230, 227, 0.7);
+      font-size: 14px;
+      line-height: 1.8;
+    }
+
+    .game-instructions li {
+      margin-bottom: 8px;
+    }
+
+    .back-link {
+      position: absolute;
+      bottom: 24px;
+      left: 24px;
+      color: rgba(232, 230, 227, 0.5);
+      text-decoration: none;
+      font-size: 13px;
+      font-family: 'JetBrains Mono', monospace;
+      transition: color 0.2s;
+    }
+
+    .back-link:hover {
+      color: #4db8a8;
+    }
+
+    @media (max-width: 480px) {
+      .pixel-title {
+        font-size: 18px;
+      }
+
+      .preview-icon {
+        font-size: 60px;
+      }
+
+      .play-btn {
+        padding: 16px 32px;
+        font-size: 12px;
+      }
+    }
+  </style>
+
+  <script>
+    // Load high scores from localStorage
+    const scoresBtn = document.getElementById('view-scores');
+    scoresBtn?.addEventListener('click', () => {
+      const scores = JSON.parse(localStorage.getItem('p31-arcade-highscores') || '{}');
+      const poetry = scores.poetry || [];
+      alert('High Scores:\n' + (poetry.length > 0
+        ? poetry.map((s, i) => `${i + 1}. ${s.score.toLocaleString()} - ${s.date}`).join('\n')
+        : 'No scores yet! Play to set a record.'));
+    });
+  </script>
+</ArcadeShell>

@@ -1,0 +1,18 @@
+{
+  "name": "donate-api",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "export:pipeline": "node scripts/pipeline-export.mjs",
+    "verify": "node ../../../scripts/verify-monetary-surface.mjs"
+  },
+  "devDependencies": {
+    "@vitest/coverage-v8": "^4.1.2",
+    "typescript": "^6.0.2",
+    "vitest": "^4.1.2",
+    "wrangler": "^3.114.17"
+  }
+}

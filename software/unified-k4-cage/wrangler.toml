@@ -1,0 +1,42 @@
+# CWP-30 — Unified k4-cage (K₄ topology DO + family WebSocket room DO + optional D1 chain)
+# Canonical deploy path: copy into software/k4-cage/ or deploy from this folder with name k4-cage.
+#
+# Before first deploy:
+#   1. npx wrangler d1 create p31-telemetry   → paste database_id below
+#   2. npx wrangler d1 execute p31-telemetry --remote --file=schema.sql
+#   3. npx wrangler secret put ADMIN_TOKEN
+#   4. Optional: npx wrangler secret put INTERNAL_FANOUT_TOKEN  (Bearer for room /internal/broadcast)
+
+name = "k4-cage"
+main = "src/index.js"
+compatibility_date = "2025-10-01"
+
+[durable_objects]
+bindings = [
+  { name = "K4_TOPOLOGY", class_name = "K4Topology" },
+  { name = "FAMILY_MESH_ROOM", class_name = "FamilyMeshRoom" },
+]
+
+[[migrations]]
+tag = "unified-k4-v1"
+new_classes = ["K4Topology", "FamilyMeshRoom"]
+
+# D1 — replace database_id with output of: npx wrangler d1 list
+[[d1_databases]]
+binding = "DB"
+database_name = "p31-telemetry"
+database_id = "fc3b2ffb-4de4-4843-88b1-50e5c788dc50"
+
+# KV — same binding as legacy k4-cage (cache + fallback telemetry when DB unbound)
+[[kv_namespaces]]
+binding = "K4_MESH"
+id = "a8a2ab8f61174ff6b878eb74cb6bc91d"
+
+# Optional Workers AI binding (reserved for mesh-aware responses)
+# [ai]
+# binding = "AI"
+
+[vars]
+WORKER_VERSION = "2.0.0-unified"
+TOPOLOGY = "K4"
+ENVIRONMENT = "production"

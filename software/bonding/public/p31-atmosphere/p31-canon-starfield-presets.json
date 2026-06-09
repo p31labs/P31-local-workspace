@@ -1,0 +1,26 @@
+{
+  "schema": "p31.canonStarfieldPresetsSlice/1.0.0",
+  "source": "andromeda/software/design-tokens/p31-universal-canon.json#starfield.presets",
+  "presets": {
+    "soup": {
+      "baseAlphaCap": 0.35,
+      "maxFps": 24,
+      "motion": "animated"
+    },
+    "hub": {
+      "baseAlphaCap": 0.22,
+      "maxFps": 20,
+      "motion": "animated"
+    },
+    "commandCenter": {
+      "baseAlphaCap": 0.14,
+      "dotCount": 140,
+      "motion": "staticPlate"
+    },
+    "operatorDesk": {
+      "baseAlphaCap": 0.11,
+      "dotCount": 120,
+      "motion": "staticPlate"
+    }
+  }
+}

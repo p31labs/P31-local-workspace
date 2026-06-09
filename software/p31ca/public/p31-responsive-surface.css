@@ -1,0 +1,44 @@
+/**
+ * P31 home — shared responsive / safe-area layer for static HTML.
+ * Link after p31-style.css when design tokens are used; may be linked alone for overflow/text fixes.
+ *
+ * Paths from repo root: cognitive-passport/p31-responsive-surface.css
+ * From docs/*/: ../cognitive-passport/p31-responsive-surface.css (or ../../ for nested spikes)
+ */
+html {
+  overflow-x: clip;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body.p31-responsive-surface {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+/**
+ * Centered column with notch / home-indicator aware padding.
+ * Override: style="--p31-shell-max: 44rem; --p31-shell-pad: 1rem; --p31-shell-pad-bottom: 3rem"
+ */
+.p31-shell {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: var(--p31-shell-max, 72rem);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: max(var(--p31-shell-pad, 1rem), env(safe-area-inset-left, 0px));
+  padding-right: max(var(--p31-shell-pad, 1rem), env(safe-area-inset-right, 0px));
+  padding-top: max(var(--p31-shell-pad-top, var(--p31-shell-pad, 1rem)), env(safe-area-inset-top, 0px));
+  padding-bottom: max(var(--p31-shell-pad-bottom, var(--p31-shell-pad, 1.5rem)), env(safe-area-inset-bottom, 0px));
+}
+
+.p31-table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  width: 100%;
+}
+
+.p31-table-scroll table {
+  width: 100%;
+  min-width: min(100%, 36rem);
+}

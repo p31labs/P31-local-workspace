@@ -1,0 +1,14 @@
+---
+// @p31-layout: Focus
+import AppShell from '../layouts/AppShell.astro';
+import PHOSOrb from '../components/PHOSOrb.jsx';
+---
+
+<AppShell
+  title="PHOS | P31 Labs"
+  description="PHOS 7-state FSM navigation router — orbital demo with L7 psychological telemetry"
+  routeName="demo-labs"
+  phosPage="phos"
+>
+  <PHOSOrb client:only="react" />
+</AppShell>

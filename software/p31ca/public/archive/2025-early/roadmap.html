@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub" style="color-scheme: dark;">
+<head>
+  <meta charset="UTF-8">
+<script>(function(){var r=document.documentElement;if(/[?&]alive=1(?:&|$)/.test(location.search))return;r.classList.add("p31-gray-rock");function wake(){r.classList.remove("p31-gray-rock")}document.addEventListener("pointerdown",wake,{once:true,capture:true});document.addEventListener("keydown",wake,{once:true,capture:true})})();</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0f1115">
+  <title>Roadmap | P31 Labs — p31ca.org</title>
+  <meta name="description" content="P31 Labs public roadmap — quarterly cadence. Phase 1 trust and transparency, Phase 2 audit and report, Phase 3 protocol foundations.">
+<link rel="canonical" href="https://p31ca.org/roadmap.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Roadmap">
+<meta property="og:description" content="P31 Labs public roadmap — quarterly cadence. Phase 1 trust and transparency, Phase 2 audit and report, Phase 3 protocol foundations.">
+<meta property="og:url" content="https://p31ca.org/roadmap.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Roadmap">
+<meta name="twitter:description" content="P31 Labs public roadmap — quarterly cadence. Phase 1 trust and transparency, Phase 2 audit and report, Phase 3 protocol foundations.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/p31-style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/p31-tailwind-extend.js"></script>
+  <script>tailwind.config = { theme: { extend: { ...window.P31_TAILWIND_EXTEND } } };</script>
+</head>
+<body class="bg-void text-cloud min-h-screen font-sans antialiased px-4 py-10 max-w-3xl mx-auto text-sm leading-relaxed">
+  <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 bg-teal text-void px-3 py-1 rounded font-mono text-xs">Skip to content</a>
+
+  <nav class="flex flex-wrap gap-3 text-teal/80 text-xs font-mono mb-8" aria-label="P31 governance pages">
+    <a href="/" class="hover:underline">Hub</a>
+    <a href="/manifesto" class="hover:underline">Manifesto</a>
+    <a href="/roadmap" class="hover:underline" aria-current="page">Roadmap</a>
+    <a href="/code-of-conduct" class="hover:underline">Code of Conduct</a>
+    <a href="/security" class="hover:underline">Security</a>
+    <a href="/accessibility" class="hover:underline">Accessibility</a>
+    <a href="/status" class="hover:underline">Status</a>
+    <a href="/financials" class="hover:underline">Financials</a>
+  </nav>
+
+  <main id="main">
+    <h1 class="text-2xl font-bold text-paper mb-2">Public Roadmap</h1>
+    <p class="text-cloud/50 text-xs mb-8">
+      <strong class="text-paper">Version 1.0.0</strong> &middot; Quarterly review cadence &middot; Last updated <strong class="text-paper">2026-05-02</strong>.
+      Canonical source: <a class="text-teal hover:underline" href="https://github.com/p31labs/bonding-soup/blob/main/docs/ROADMAP.md">docs/ROADMAP.md</a>.
+    </p>
+
+    <p class="text-cloud/80 mb-6">
+      This roadmap is a public commitment, not a marketing surface. Items shipped link to commits. Items planned are honest about whether they need money or volunteer hours we do not yet have. Items removed are documented so that a future contributor can see why a thing went away.
+    </p>
+
+    <section class="mb-8">
+      <h2 class="text-paper font-semibold text-base mb-3">How to read this</h2>
+      <table class="w-full text-cloud/80 text-xs border border-white/10">
+        <thead><tr class="bg-white/5"><th class="text-left p-2 font-mono text-teal/80">Status</th><th class="text-left p-2 font-mono text-teal/80">Meaning</th></tr></thead>
+        <tbody class="divide-y divide-white/5">
+          <tr><td class="p-2 font-mono">Shipped</td><td class="p-2">Lives in the repo today; verifier exists where applicable</td></tr>
+          <tr><td class="p-2 font-mono">In progress</td><td class="p-2">Active work this quarter; commits visible on main</td></tr>
+          <tr><td class="p-2 font-mono">Queued</td><td class="p-2">Acknowledged, scoped, waiting on a dependency</td></tr>
+          <tr><td class="p-2 font-mono">Funding-gated</td><td class="p-2">Cannot ship without dollars</td></tr>
+          <tr><td class="p-2 font-mono">Held / Cancelled</td><td class="p-2">Decided not to do this quarter / ever; reason given</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="mb-8">
+      <h2 class="text-paper font-semibold text-base mb-3">Q3 2026 — Trust &amp; transparency layer (current)</h2>
+      <p class="text-cloud/70 text-xs mb-3">The small-scale version of practices Meta, Apple, Signal, and Mozilla have hardened over decades.</p>
+      <ul class="text-cloud/80 list-disc pl-5 space-y-2">
+        <li><strong class="text-paper">PEER-1A · Manifesto</strong> — <em>Shipped.</em> <a class="text-teal hover:underline" href="/manifesto">/manifesto</a></li>
+        <li><strong class="text-paper">PEER-1B · Security advisories framework</strong> — <em>Shipped.</em> First advisory <code class="font-mono text-teal/80">P31SA-2026-001</code>.</li>
+        <li><strong class="text-paper">PEER-1C · Hall of Fame + reporting + .github/SECURITY.md</strong> — <em>Shipped.</em></li>
+        <li><strong class="text-paper">PEER-1D · verify:reproducible gate</strong> — <em>Shipped.</em></li>
+        <li><strong class="text-paper">PEER-1E · This roadmap</strong> — <em>Shipped.</em></li>
+        <li><strong class="text-paper">PEER-1F · Code of Conduct</strong> — <em>Shipped.</em> <a class="text-teal hover:underline" href="/code-of-conduct">/code-of-conduct</a></li>
+        <li><strong class="text-paper">PEER-1G · WCAG 2.2 AA audit (static-check baseline)</strong> — <em>Shipped.</em> Browser-rendered + manual screen-reader audit in Phase 2.</li>
+        <li><strong class="text-paper">PEER-1H · /financials placeholder</strong> — <em>Shipped.</em> <a class="text-teal hover:underline" href="/financials">/financials</a></li>
+        <li><strong class="text-paper">PEER-1I · /status</strong> — <em>Shipped.</em> <a class="text-teal hover:underline" href="/status">/status</a></li>
+        <li><strong class="text-paper">PEER-1J · License clarity + verify:license-headers</strong> — <em>Shipped.</em></li>
+      </ul>
+    </section>
+
+    <section class="mb-8">
+      <h2 class="text-paper font-semibold text-base mb-3">Q4 2026 — Independent verification layer</h2>
+      <ul class="text-cloud/80 list-disc pl-5 space-y-2">
+        <li><strong class="text-paper">PEER-2A · First annual transparency report</strong> — <em>Queued.</em> Covers 2025-09 → 2026-08; Signal Foundation format.</li>
+        <li><strong class="text-paper">PEER-2B · Third-party security audit</strong> — <em>Funding-gated.</em> RFP template lives at <code class="font-mono text-teal/80"><a class="text-teal hover:underline" href="https://github.com/p31labs/bonding-soup/blob/main/docs/security/audit-rfp-template.md">docs/security/audit-rfp-template.md</a></code>.</li>
+        <li><strong class="text-paper">PEER-2C · MLS protocol research spike</strong> — <em>Queued.</em> Decision document, not a ship.</li>
+        <li><strong class="text-paper">PEER-2D · Telemetry posture + verify:no-telemetry gate</strong> — <em>Queued.</em></li>
+      </ul>
+    </section>
+
+    <section class="mb-8">
+      <h2 class="text-paper font-semibold text-base mb-3">Q1 2027 — Protocol foundations</h2>
+      <ul class="text-cloud/80 list-disc pl-5 space-y-2">
+        <li><strong class="text-paper">PEER-3A · MLS implementation skeleton</strong> — <em>Queued.</em></li>
+        <li><strong class="text-paper">PEER-3B · i18n framework + 5 languages</strong> — <em>Queued.</em></li>
+        <li><strong class="text-paper">PEER-3C · Cognitive Passport E2EE backup</strong> — <em>Queued.</em></li>
+        <li><strong class="text-paper">PEER-3D · Standards positions register</strong> — <em>Queued.</em></li>
+      </ul>
+    </section>
+
+    <section class="mb-8">
+      <h2 class="text-paper font-semibold text-base mb-3">Held / Cancelled</h2>
+      <p class="text-cloud/70 text-xs mb-3">We track these to make decisions visible.</p>
+      <table class="w-full text-cloud/80 text-xs border border-white/10">
+        <thead><tr class="bg-white/5"><th class="text-left p-2 font-mono text-teal/80">Item</th><th class="text-left p-2 font-mono text-teal/80">Decision</th><th class="text-left p-2 font-mono text-teal/80">Reason</th></tr></thead>
+        <tbody class="divide-y divide-white/5">
+          <tr><td class="p-2">Native iOS / Android without grant funding</td><td class="p-2 font-mono">Held</td><td class="p-2">PWA covers the same surface at zero cost</td></tr>
+          <tr><td class="p-2">Cloud LLM lane for operator-confidential personas</td><td class="p-2 font-mono">Cancelled</td><td class="p-2">Hard ban (fleet rule)</td></tr>
+          <tr><td class="p-2">Phone-number-based identity</td><td class="p-2 font-mono">Cancelled</td><td class="p-2">Manifesto principle 1</td></tr>
+          <tr><td class="p-2">Engagement metrics dashboard (DAU / MAU)</td><td class="p-2 font-mono">Cancelled</td><td class="p-2">Off-doctrine</td></tr>
+          <tr><td class="p-2">Centralized SFU we operate</td><td class="p-2 font-mono">Cancelled</td><td class="p-2">Voice on MLS or no voice</td></tr>
+          <tr><td class="p-2">Build a Signal / WhatsApp competitor</td><td class="p-2 font-mono">Cancelled</td><td class="p-2">Doctrine 2 — family-scale, not consumer chat</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <p class="text-cloud/40 text-xs mt-10 border-t border-white/10 pt-4">
+      Companion: <a class="text-teal hover:underline" href="/manifesto">Manifesto</a> Commitment C3 &middot;
+      <a class="text-teal hover:underline" href="https://github.com/p31labs/bonding-soup/blob/main/docs/CWP-P31-PEER-COMP-2026-05.md">CWP-P31-PEER-COMP-2026-05</a> PEER-1E.
+    </p>
+  </main>
+
+  <footer class="text-cloud/40 text-xs mt-10 pt-4 border-t border-white/10">
+    &copy; 2026 P31 Labs, Inc. &middot;
+    <a class="text-teal/60 hover:underline" href="/manifesto">Manifesto</a> &middot;
+    <a class="text-teal/60 hover:underline" href="/roadmap">Roadmap</a> &middot;
+    <a class="text-teal/60 hover:underline" href="/security">Security</a> &middot;
+    <a class="text-teal/60 hover:underline" href="/privacy">Privacy</a>
+  </footer>
+</body>
+</html>

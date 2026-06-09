@@ -1,0 +1,1216 @@
+{
+  "vulnerabilities": [
+    {
+      "file": "ecosystem\\analytics\\legal-compliance-dashboard.js",
+      "line": 797,
+      "vulnerability": "grover_vulnerable",
+      "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
+      "description": "Vulnerable to Grover's Algorithm - reduces effective security by half",
+      "replacement": "Double key sizes (AES-256), SPHINCS+ (Hash-based signatures), FIPS 205 SLH-DSA",
+      "risk_level": "HIGH",
+      "context": [
+        {
+          "line": 794,
+          "content": "     */\r",
+          "isVulnerable": false
+        },
+        {
+          "line": 795,
+          "content": "    calculateSHA256(data) {\r",
+          "isVulnerable": false
+        },
+        {
+          "line": 796,
+          "content": "        const crypto = require('crypto');\r",
+          "isVulnerable": false
+        },
+        {
+          "line": 797,
+          "content": "        return crypto.createHash('sha256').update(JSON.stringify(data)).digest('hex');\r",
+          "isVulnerable": true
+        },
+        {
+          "line": 798,
+          "content": "    }\r",
+          "isVulnerable": false
+        },
+        {
+          "line": 799,
+          "content": "\r",
+          "isVulnerable": false
+        },
+        {
+          "line": 800,
+          "content": "    /**\r",
+          "isVulnerable": false
+        }
+      ]
+    },
+    {
+      "file": "ecosystem\\discord\\oracle-bot.js",
+      "line": 1003,
+      "vulnerability": "grover_vulnerable",
+      "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
+      "description": "Vulnerable to Grover's Algorithm - reduces effective security by half",
+      "replacement": "Double key sizes (AES-256), SPHINCS+ (Hash-based signatures), FIPS 205 SLH-DSA",
+      "risk_level": "HIGH",
+      "context": [
+        {
+          "line": 1000,
+          "content": "    }\r",
+          "isVulnerable": false
+        },
+        {
+          "line": 1001,
+          "content": "\r",
+          "isVulnerable": false
+        },
+        {
+          "line": 1002,
+          "content": "    generateDecryptedCID(validation) {\r",
+          "isVulnerable": false
+        },
+        {
+          "line": 1003,
+          "content": "        const hash = crypto.createHash('sha256');\r",
+          "isVulnerable": true
+        },
+        {
+          "line": 1004,
+          "content": "        hash.update(JSON.stringify({\r",
+          "isVulnerable": false
+        },
+        {
+          "line": 1005,
+          "content": "            validation: validation.metrics,\r",
+          "isVulnerable": false
+        },
+        {
+          "line": 1006,
+          "content": "            timestamp: new Date().toISOString(),\r",
+          "isVulnerable": false
+        }
+      ]
+    },
+    {
+      "file": "ecosystem\\github-actions\\scripts\\decrypt-ipfs-payload.js",
+      "line": 80,
+      "vulnerability": "grover_vulnerable",
+      "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
+      "description": "Vulnerable to Grover's Algorithm - reduces effective security by half",
+      "replacement": "Double key sizes (AES-256), SPHINCS+ (Hash-based signatures), FIPS 205 SLH-DSA",
+      "risk_level": "HIGH",
+      "context": [
+        {
+          "line": 77,
+          "content": "            tolerance: 120\r",
+          "isVulnerable": false
+        },
+        {
+          "line": 78,
+          "content": "        };\r",
+          "isVulnerable": false
+        },
+        {
+          "line": 79,
+          "content": "        \r",
+          "isVulnerable": false
+        },
+        {
+          "line": 80,
+          "content": "        const syncHash = crypto.createHash('sha256');\r",
+          "isVulnerable": true
+        },
+        {
+          "line": 81,
+          "content": "        syncHash.update(JSON.stringify(syncData));\r",
+          "isVulnerable": false
+        },
+        {
+          "line": 82,
+          "content": "        const syncDigest = syncHash.digest('hex');\r",
+          "isVulnerable": false
+        },
+        {
+          "line": 83,
+          "content": "        \r",
+          "isVulnerable": false
+        }
+      ]
+    },
+    {
+      "file": "ecosystem\\github-actions\\scripts\\decrypt-ipfs-payload.js",
+      "line": 85,
+      "vulnerability": "grover_vulnerable",
+      "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
+      "description": "Vulnerable to Grover's Algorithm - reduces effective security by half",
+      "replacement": "Double key sizes (AES-256), SPHINCS+ (Hash-based signatures), FIPS 205 SLH-DSA",
+      "risk_level": "HIGH",
+      "context": [
+        {
+          "line": 82,
+          "content": "        const syncDigest = syncHash.digest('hex');\r",
+          "isVulnerable": false
+        },
+        {
+          "line": 83,
+          "content": "        \r",
+          "isVulnerable": false
+        },
+        {
+          "line": 84,
+          "content": "        // Use the hash to create the encryption key\r",
+          "isVulnerable": false
+        },
+        {
+          "line": 85,
+          "content": "        const key = crypto.createHash('sha256').update(syncDigest).digest();\r",
+          "isVulnerable": true
+        },
+        {
+          "line": 86,
+          "content": "        \r",
+          "isVulnerable": false
+        },
+        {
+          "line": 87,
+          "content": "        return {\r",
+          "isVulnerable": false
+        },
+        {
+          "line": 88,
+          "content": "            key: key,\r",
+          "isVulnerable": false
+        }
+      ]
+    },
+    {
+      "file": "ecosystem\\github-actions\\scripts\\decrypt-ipfs-payload.js",
+      "line": 268,
+      "vulnerability": "grover_vulnerable",
+      "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
+      "description": "Vulnerable to Grover's Algorithm - reduces effective security by half",
+      "replacement": "Double key sizes (AES-256), SPHINCS+ (Hash-based signatures), FIPS 205 SLH-DSA",
+      "risk_level": "HIGH",
+      "context": [
+        {
+          "line": 265,
+          "content": "            timestamp: new Date().toISOString()\r",
+          "isVulnerable": false
+        },
+        {
+          "line": 266,
+          "content": "        };\r",
+          "isVulnerable": false
+        },
+        {
+          "line": 267,
+          "content": "        \r",
+          "isVulnerable": false
+        },
+        {
+          "line": 268,
+          "content": "        const signature = crypto.createHash('sha256').update(JSON.stringify(signatureData)).digest('hex');\r",
+          "isVulnerable": true
+        },
+        {
+          "line": 269,
+          "content": "        \r",
+          "isVulnerable": false
+        },
+        {
+          "line": 270,
+          "content": "        return {\r",
+          "isVulnerable": false
+        },
+        {
+          "line": 271,
+          "content": "            signature: signature,\r",
+          "isVulnerable": false
+        }
+      ]
+    },
+    {
+      "file": "ecosystem\\github-actions\\scripts\\log-larmor-event.js",
+      "line": 212,
+      "vulnerability": "grover_vulnerable",
+      "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
+      "description": "Vulnerable to Grover's Algorithm - reduces effective security by half",
+      "replacement": "Double key sizes (AES-256), SPHINCS+ (Hash-based signatures), FIPS 205 SLH-DSA",
+      "risk_level": "HIGH",
+      "context": [
+        {
+          "line": 209,
+          "content": "     */\r",
+          "isVulnerable": false
+        },
+        {
+          "line": 210,
+          "content": "    generateIntegrityHash(syncTimestamps, decryptedCID) {\r",
+          "isVulnerable": false
+        },
+        {
+          "line": 211,
+          "content": "        const crypto = require('crypto');\r",
+          "isVulnerable": false
+        },
+        {
+          "line": 212,
+          "content": "        const hash = crypto.createHash('sha256');\r",
+          "isVulnerable": true
+        },
+        {
+          "line": 213,
+          "content": "        hash.update(JSON.stringify({\r",
+          "isVulnerable": false
+        },
+        {
+          "line": 214,
+          "content": "            timestamps: syncTimestamps,\r",
+          "isVulnerable": false
+        },
+        {
+          "line": 215,
+          "content": "            cid: decryptedCID,\r",
+          "isVulnerable": false
+        }
+      ]
+    },
+    {
+      "file": "ecosystem\\github-actions\\scripts\\log-larmor-event.js",
+      "line": 236,
+      "vulnerability": "grover_vulnerable",
+      "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
+      "description": "Vulnerable to Grover's Algorithm - reduces effective security by half",
+      "replacement": "Double key sizes (AES-256), SPHINCS+ (Hash-based signatures), FIPS 205 SLH-DSA",
+      "risk_level": "HIGH",
+      "context": [
+        {
+          "line": 233,
+          "content": "            precision: eventLog.user.precision\r",
+          "isVulnerable": false
+        },
+        {
+          "line": 234,
+          "content": "        };\r",
+          "isVulnerable": false
+        },
+        {
+          "line": 235,
+          "content": "        \r",
+          "isVulnerable": false
+        },
+        {
+          "line": 236,
+          "content": "        const hash = crypto.createHash('sha256');\r",
+          "isVulnerable": true
+        },
+        {
+          "line": 237,
+          "content": "        hash.update(JSON.stringify(signatureData));\r",
+          "isVulnerable": false
+        },
+        {
+          "line": 238,
+          "content": "        \r",
+          "isVulnerable": false
+        },
+        {
+          "line": 239,
+          "content": "        return {\r",
+          "isVulnerable": false
+        }
+      ]
+    },
+    {
+      "file": "ecosystem\\github-actions\\scripts\\log-larmor-event.js",
+      "line": 258,
+      "vulnerability": "grover_vulnerable",
+      "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
+      "description": "Vulnerable to Grover's Algorithm - reduces effective security by half",
+      "replacement": "Double key sizes (AES-256), SPHINCS+ (Hash-based signatures), FIPS 205 SLH-DSA",
+      "risk_level": "HIGH",
+      "context": [
+        {
+          "line": 255,
+          "content": "            compliance: auditEntry.compliance\r",
+          "isVulnerable": false
+        },
+        {
+          "line": 256,
+          "content": "        };\r",
+          "isVulnerable": false
+        },
+        {
+          "line": 257,
+          "content": "        \r",
+          "isVulnerable": false
+        },
+        {
+          "line": 258,
+          "content": "        const hash = crypto.createHash('sha256');\r",
+          "isVulnerable": true
+        },
+        {
+          "line": 259,
+          "content": "        hash.update(JSON.stringify(signatureData));\r",
+          "isVulnerable": false
+        },
+        {
+          "line": 260,
+          "content": "        \r",
+          "isVulnerable": false
+        },
+        {
+          "line": 261,
+          "content": "        return {\r",
+          "isVulnerable": false
+        }
+      ]
+    },
+    {
+      "file": "ecosystem\\github-actions\\scripts\\log-multisig-event.js",
+      "line": 241,
+      "vulnerability": "grover_vulnerable",
+      "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
+      "description": "Vulnerable to Grover's Algorithm - reduces effective security by half",
+      "replacement": "Double key sizes (AES-256), SPHINCS+ (Hash-based signatures), FIPS 205 SLH-DSA",
+      "risk_level": "HIGH",
+      "context": [
+        {
+          "line": 238,
+          "content": "        \r",
+          "isVulnerable": false
+        },
+        {
+          "line": 239,
+          "content": "        // Generate a simple hash signature\r",
+          "isVulnerable": false
+        },
+        {
+          "line": 240,
+          "content": "        const crypto = require('crypto');\r",
+          "isVulnerable": false
+        },
+        {
+          "line": 241,
+          "content": "        const hash = crypto.createHash('sha256');\r",
+          "isVulnerable": true
+        },
+        {
+          "line": 242,
+          "content": "        hash.update(JSON.stringify(signatureData));\r",
+          "isVulnerable": false
+        },
+        {
+          "line": 243,
+          "content": "        \r",
+          "isVulnerable": false
+        },
+        {
+          "line": 244,
+          "content": "        return {\r",
+          "isVulnerable": false
+        }
+      ]
+    },
+    {
+      "file": "ecosystem\\github-actions\\scripts\\publish-decrypted-content.js",
+      "line": 107,
+      "vulnerability": "grover_vulnerable",
+      "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
+      "description": "Vulnerable to Grover's Algorithm - reduces effective security by half",
+      "replacement": "Double key sizes (AES-256), SPHINCS+ (Hash-based signatures), FIPS 205 SLH-DSA",
+      "risk_level": "HIGH",
+      "context": [
+        {
+          "line": 104,
+          "content": "            timestamp: new Date().toISOString()\r",
+          "isVulnerable": false
+        },
+        {
+          "line": 105,
+          "content": "        };\r",
+          "isVulnerable": false
+        },
+        {
+          "line": 106,
+          "content": "        \r",
+          "isVulnerable": false
+        },
+        {
+          "line": 107,
+          "content": "        const hash = crypto.createHash('sha256');\r",
+          "isVulnerable": true
+        },
+        {
+          "line": 108,
+          "content": "        hash.update(JSON.stringify(integrityData));\r",
+          "isVulnerable": false
+        },
+        {
+          "line": 109,
+          "content": "        \r",
+          "isVulnerable": false
+        },
+        {
+          "line": 110,
+          "content": "        return {\r",
+          "isVulnerable": false
+        }
+      ]
+    },
+    {
+      "file": "ecosystem\\github-actions\\scripts\\publish-decrypted-content.js",
+      "line": 155,
+      "vulnerability": "grover_vulnerable",
+      "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
+      "description": "Vulnerable to Grover's Algorithm - reduces effective security by half",
+      "replacement": "Double key sizes (AES-256), SPHINCS+ (Hash-based signatures), FIPS 205 SLH-DSA",
+      "risk_level": "HIGH",
+      "context": [
+        {
+          "line": 152,
+          "content": "    async publishToIPFS(contentPackage) {\r",
+          "isVulnerable": false
+        },
+        {
+          "line": 153,
+          "content": "        try {\r",
+          "isVulnerable": false
+        },
+        {
+          "line": 154,
+          "content": "            // Simulate IPFS publishing (in real implementation, would use ipfs-http-client)\r",
+          "isVulnerable": false
+        },
+        {
+          "line": 155,
+          "content": "            const contentHash = crypto.createHash('sha256');\r",
+          "isVulnerable": true
+        },
+        {
+          "line": 156,
+          "content": "            contentHash.update(JSON.stringify(contentPackage));\r",
+          "isVulnerable": false
+        },
+        {
+          "line": 157,
+          "content": "            const simulatedCID = `bafybeih${contentHash.digest('hex').slice(0, 52)}`;\r",
+          "isVulnerable": false
+        },
+        {
+          "line": 158,
+          "content": "            \r",
+          "isVulnerable": false
+        }
+      ]
+    },
+    {
+      "file": "ecosystem\\github-actions\\scripts\\publish-decrypted-content.js",
+      "line": 210,
+      "vulnerability": "grover_vulnerable",
+      "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
+      "description": "Vulnerable to Grover's Algorithm - reduces effective security by half",
+      "replacement": "Double key sizes (AES-256), SPHINCS+ (Hash-based signatures), FIPS 205 SLH-DSA",
+      "risk_level": "HIGH",
+      "context": [
+        {
+          "line": 207,
+          "content": "            type: 'p31_decrypted_content'\r",
+          "isVulnerable": false
+        },
+        {
+          "line": 208,
+          "content": "        };\r",
+          "isVulnerable": false
+        },
+        {
+          "line": 209,
+          "content": "        \r",
+          "isVulnerable": false
+        },
+        {
+          "line": 210,
+          "content": "        const hash = crypto.createHash('sha256');\r",
+          "isVulnerable": true
+        },
+        {
+          "line": 211,
+          "content": "        hash.update(JSON.stringify(signatureData));\r",
+          "isVulnerable": false
+        },
+        {
+          "line": 212,
+          "content": "        \r",
+          "isVulnerable": false
+        },
+        {
+          "line": 213,
+          "content": "        return {\r",
+          "isVulnerable": false
+        }
+      ]
+    },
+    {
+      "file": "ecosystem\\ipfs\\ipns-manager.js",
+      "line": 288,
+      "vulnerability": "grover_vulnerable",
+      "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
+      "description": "Vulnerable to Grover's Algorithm - reduces effective security by half",
+      "replacement": "Double key sizes (AES-256), SPHINCS+ (Hash-based signatures), FIPS 205 SLH-DSA",
+      "risk_level": "HIGH",
+      "context": [
+        {
+          "line": 285,
+          "content": "        // Extract the base58 encoded public key from the PEM format\r",
+          "isVulnerable": false
+        },
+        {
+          "line": 286,
+          "content": "        // This is a simplified version - in production, you'd use proper IPNS key handling\r",
+          "isVulnerable": false
+        },
+        {
+          "line": 287,
+          "content": "        const publicKeyBuffer = Buffer.from(this.keyPair.publicKey, 'base64');\r",
+          "isVulnerable": false
+        },
+        {
+          "line": 288,
+          "content": "        return crypto.createHash('sha256').update(publicKeyBuffer).digest('hex').substring(0, 46);\r",
+          "isVulnerable": true
+        },
+        {
+          "line": 289,
+          "content": "    }\r",
+          "isVulnerable": false
+        },
+        {
+          "line": 290,
+          "content": "\r",
+          "isVulnerable": false
+        },
+        {
+          "line": 291,
+          "content": "    /**\r",
+          "isVulnerable": false
+        }
+      ]
+    },
+    {
+      "file": "pqc-audit-results.json",
+      "line": 29,
+      "vulnerability": "grover_vulnerable",
+      "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
+      "description": "Vulnerable to Grover's Algorithm - reduces effective security by half",
+      "replacement": "Double key sizes (AES-256), SPHINCS+ (Hash-based signatures), FIPS 205 SLH-DSA",
+      "risk_level": "HIGH",
+      "context": [
+        {
+          "line": 26,
+          "content": "        },",
+          "isVulnerable": false
+        },
+        {
+          "line": 27,
+          "content": "        {",
+          "isVulnerable": false
+        },
+        {
+          "line": 28,
+          "content": "          \"line\": 797,",
+          "isVulnerable": false
+        },
+        {
+          "line": 29,
+          "content": "          \"content\": \"        return crypto.createHash('sha256').update(JSON.stringify(data)).digest('hex');\\r\",",
+          "isVulnerable": true
+        },
+        {
+          "line": 30,
+          "content": "          \"isVulnerable\": true",
+          "isVulnerable": false
+        },
+        {
+          "line": 31,
+          "content": "        },",
+          "isVulnerable": false
+        },
+        {
+          "line": 32,
+          "content": "        {",
+          "isVulnerable": false
+        }
+      ]
+    },
+    {
+      "file": "pqc-audit-results.json",
+      "line": 75,
+      "vulnerability": "grover_vulnerable",
+      "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
+      "description": "Vulnerable to Grover's Algorithm - reduces effective security by half",
+      "replacement": "Double key sizes (AES-256), SPHINCS+ (Hash-based signatures), FIPS 205 SLH-DSA",
+      "risk_level": "HIGH",
+      "context": [
+        {
+          "line": 72,
+          "content": "        },",
+          "isVulnerable": false
+        },
+        {
+          "line": 73,
+          "content": "        {",
+          "isVulnerable": false
+        },
+        {
+          "line": 74,
+          "content": "          \"line\": 1003,",
+          "isVulnerable": false
+        },
+        {
+          "line": 75,
+          "content": "          \"content\": \"        const hash = crypto.createHash('sha256');\\r\",",
+          "isVulnerable": true
+        },
+        {
+          "line": 76,
+          "content": "          \"isVulnerable\": true",
+          "isVulnerable": false
+        },
+        {
+          "line": 77,
+          "content": "        },",
+          "isVulnerable": false
+        },
+        {
+          "line": 78,
+          "content": "        {",
+          "isVulnerable": false
+        }
+      ]
+    },
+    {
+      "file": "pqc-audit-results.json",
+      "line": 121,
+      "vulnerability": "grover_vulnerable",
+      "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
+      "description": "Vulnerable to Grover's Algorithm - reduces effective security by half",
+      "replacement": "Double key sizes (AES-256), SPHINCS+ (Hash-based signatures), FIPS 205 SLH-DSA",
+      "risk_level": "HIGH",
+      "context": [
+        {
+          "line": 118,
+          "content": "        },",
+          "isVulnerable": false
+        },
+        {
+          "line": 119,
+          "content": "        {",
+          "isVulnerable": false
+        },
+        {
+          "line": 120,
+          "content": "          \"line\": 80,",
+          "isVulnerable": false
+        },
+        {
+          "line": 121,
+          "content": "          \"content\": \"        const syncHash = crypto.createHash('sha256');\\r\",",
+          "isVulnerable": true
+        },
+        {
+          "line": 122,
+          "content": "          \"isVulnerable\": true",
+          "isVulnerable": false
+        },
+        {
+          "line": 123,
+          "content": "        },",
+          "isVulnerable": false
+        },
+        {
+          "line": 124,
+          "content": "        {",
+          "isVulnerable": false
+        }
+      ]
+    },
+    {
+      "file": "pqc-audit-results.json",
+      "line": 167,
+      "vulnerability": "grover_vulnerable",
+      "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
+      "description": "Vulnerable to Grover's Algorithm - reduces effective security by half",
+      "replacement": "Double key sizes (AES-256), SPHINCS+ (Hash-based signatures), FIPS 205 SLH-DSA",
+      "risk_level": "HIGH",
+      "context": [
+        {
+          "line": 164,
+          "content": "        },",
+          "isVulnerable": false
+        },
+        {
+          "line": 165,
+          "content": "        {",
+          "isVulnerable": false
+        },
+        {
+          "line": 166,
+          "content": "          \"line\": 85,",
+          "isVulnerable": false
+        },
+        {
+          "line": 167,
+          "content": "          \"content\": \"        const key = crypto.createHash('sha256').update(syncDigest).digest();\\r\",",
+          "isVulnerable": true
+        },
+        {
+          "line": 168,
+          "content": "          \"isVulnerable\": true",
+          "isVulnerable": false
+        },
+        {
+          "line": 169,
+          "content": "        },",
+          "isVulnerable": false
+        },
+        {
+          "line": 170,
+          "content": "        {",
+          "isVulnerable": false
+        }
+      ]
+    },
+    {
+      "file": "pqc-audit-results.json",
+      "line": 213,
+      "vulnerability": "grover_vulnerable",
+      "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
+      "description": "Vulnerable to Grover's Algorithm - reduces effective security by half",
+      "replacement": "Double key sizes (AES-256), SPHINCS+ (Hash-based signatures), FIPS 205 SLH-DSA",
+      "risk_level": "HIGH",
+      "context": [
+        {
+          "line": 210,
+          "content": "        },",
+          "isVulnerable": false
+        },
+        {
+          "line": 211,
+          "content": "        {",
+          "isVulnerable": false
+        },
+        {
+          "line": 212,
+          "content": "          \"line\": 268,",
+          "isVulnerable": false
+        },
+        {
+          "line": 213,
+          "content": "          \"content\": \"        const signature = crypto.createHash('sha256').update(JSON.stringify(signatureData)).digest('hex');\\r\",",
+          "isVulnerable": true
+        },
+        {
+          "line": 214,
+          "content": "          \"isVulnerable\": true",
+          "isVulnerable": false
+        },
+        {
+          "line": 215,
+          "content": "        },",
+          "isVulnerable": false
+        },
+        {
+          "line": 216,
+          "content": "        {",
+          "isVulnerable": false
+        }
+      ]
+    },
+    {
+      "file": "pqc-audit-results.json",
+      "line": 259,
+      "vulnerability": "grover_vulnerable",
+      "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
+      "description": "Vulnerable to Grover's Algorithm - reduces effective security by half",
+      "replacement": "Double key sizes (AES-256), SPHINCS+ (Hash-based signatures), FIPS 205 SLH-DSA",
+      "risk_level": "HIGH",
+      "context": [
+        {
+          "line": 256,
+          "content": "        },",
+          "isVulnerable": false
+        },
+        {
+          "line": 257,
+          "content": "        {",
+          "isVulnerable": false
+        },
+        {
+          "line": 258,
+          "content": "          \"line\": 212,",
+          "isVulnerable": false
+        },
+        {
+          "line": 259,
+          "content": "          \"content\": \"        const hash = crypto.createHash('sha256');\\r\",",
+          "isVulnerable": true
+        },
+        {
+          "line": 260,
+          "content": "          \"isVulnerable\": true",
+          "isVulnerable": false
+        },
+        {
+          "line": 261,
+          "content": "        },",
+          "isVulnerable": false
+        },
+        {
+          "line": 262,
+          "content": "        {",
+          "isVulnerable": false
+        }
+      ]
+    },
+    {
+      "file": "pqc-audit-results.json",
+      "line": 305,
+      "vulnerability": "grover_vulnerable",
+      "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
+      "description": "Vulnerable to Grover's Algorithm - reduces effective security by half",
+      "replacement": "Double key sizes (AES-256), SPHINCS+ (Hash-based signatures), FIPS 205 SLH-DSA",
+      "risk_level": "HIGH",
+      "context": [
+        {
+          "line": 302,
+          "content": "        },",
+          "isVulnerable": false
+        },
+        {
+          "line": 303,
+          "content": "        {",
+          "isVulnerable": false
+        },
+        {
+          "line": 304,
+          "content": "          \"line\": 236,",
+          "isVulnerable": false
+        },
+        {
+          "line": 305,
+          "content": "          \"content\": \"        const hash = crypto.createHash('sha256');\\r\",",
+          "isVulnerable": true
+        },
+        {
+          "line": 306,
+          "content": "          \"isVulnerable\": true",
+          "isVulnerable": false
+        },
+        {
+          "line": 307,
+          "content": "        },",
+          "isVulnerable": false
+        },
+        {
+          "line": 308,
+          "content": "        {",
+          "isVulnerable": false
+        }
+      ]
+    },
+    {
+      "file": "pqc-audit-results.json",
+      "line": 351,
+      "vulnerability": "grover_vulnerable",
+      "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
+      "description": "Vulnerable to Grover's Algorithm - reduces effective security by half",
+      "replacement": "Double key sizes (AES-256), SPHINCS+ (Hash-based signatures), FIPS 205 SLH-DSA",
+      "risk_level": "HIGH",
+      "context": [
+        {
+          "line": 348,
+          "content": "        },",
+          "isVulnerable": false
+        },
+        {
+          "line": 349,
+          "content": "        {",
+          "isVulnerable": false
+        },
+        {
+          "line": 350,
+          "content": "          \"line\": 258,",
+          "isVulnerable": false
+        },
+        {
+          "line": 351,
+          "content": "          \"content\": \"        const hash = crypto.createHash('sha256');\\r\",",
+          "isVulnerable": true
+        },
+        {
+          "line": 352,
+          "content": "          \"isVulnerable\": true",
+          "isVulnerable": false
+        },
+        {
+          "line": 353,
+          "content": "        },",
+          "isVulnerable": false
+        },
+        {
+          "line": 354,
+          "content": "        {",
+          "isVulnerable": false
+        }
+      ]
+    },
+    {
+      "file": "pqc-audit-results.json",
+      "line": 397,
+      "vulnerability": "grover_vulnerable",
+      "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
+      "description": "Vulnerable to Grover's Algorithm - reduces effective security by half",
+      "replacement": "Double key sizes (AES-256), SPHINCS+ (Hash-based signatures), FIPS 205 SLH-DSA",
+      "risk_level": "HIGH",
+      "context": [
+        {
+          "line": 394,
+          "content": "        },",
+          "isVulnerable": false
+        },
+        {
+          "line": 395,
+          "content": "        {",
+          "isVulnerable": false
+        },
+        {
+          "line": 396,
+          "content": "          \"line\": 241,",
+          "isVulnerable": false
+        },
+        {
+          "line": 397,
+          "content": "          \"content\": \"        const hash = crypto.createHash('sha256');\\r\",",
+          "isVulnerable": true
+        },
+        {
+          "line": 398,
+          "content": "          \"isVulnerable\": true",
+          "isVulnerable": false
+        },
+        {
+          "line": 399,
+          "content": "        },",
+          "isVulnerable": false
+        },
+        {
+          "line": 400,
+          "content": "        {",
+          "isVulnerable": false
+        }
+      ]
+    },
+    {
+      "file": "pqc-audit-results.json",
+      "line": 443,
+      "vulnerability": "grover_vulnerable",
+      "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
+      "description": "Vulnerable to Grover's Algorithm - reduces effective security by half",
+      "replacement": "Double key sizes (AES-256), SPHINCS+ (Hash-based signatures), FIPS 205 SLH-DSA",
+      "risk_level": "HIGH",
+      "context": [
+        {
+          "line": 440,
+          "content": "        },",
+          "isVulnerable": false
+        },
+        {
+          "line": 441,
+          "content": "        {",
+          "isVulnerable": false
+        },
+        {
+          "line": 442,
+          "content": "          \"line\": 107,",
+          "isVulnerable": false
+        },
+        {
+          "line": 443,
+          "content": "          \"content\": \"        const hash = crypto.createHash('sha256');\\r\",",
+          "isVulnerable": true
+        },
+        {
+          "line": 444,
+          "content": "          \"isVulnerable\": true",
+          "isVulnerable": false
+        },
+        {
+          "line": 445,
+          "content": "        },",
+          "isVulnerable": false
+        },
+        {
+          "line": 446,
+          "content": "        {",
+          "isVulnerable": false
+        }
+      ]
+    },
+    {
+      "file": "pqc-audit-results.json",
+      "line": 489,
+      "vulnerability": "grover_vulnerable",
+      "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
+      "description": "Vulnerable to Grover's Algorithm - reduces effective security by half",
+      "replacement": "Double key sizes (AES-256), SPHINCS+ (Hash-based signatures), FIPS 205 SLH-DSA",
+      "risk_level": "HIGH",
+      "context": [
+        {
+          "line": 486,
+          "content": "        },",
+          "isVulnerable": false
+        },
+        {
+          "line": 487,
+          "content": "        {",
+          "isVulnerable": false
+        },
+        {
+          "line": 488,
+          "content": "          \"line\": 155,",
+          "isVulnerable": false
+        },
+        {
+          "line": 489,
+          "content": "          \"content\": \"            const contentHash = crypto.createHash('sha256');\\r\",",
+          "isVulnerable": true
+        },
+        {
+          "line": 490,
+          "content": "          \"isVulnerable\": true",
+          "isVulnerable": false
+        },
+        {
+          "line": 491,
+          "content": "        },",
+          "isVulnerable": false
+        },
+        {
+          "line": 492,
+          "content": "        {",
+          "isVulnerable": false
+        }
+      ]
+    },
+    {
+      "file": "pqc-audit-results.json",
+      "line": 535,
+      "vulnerability": "grover_vulnerable",
+      "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
+      "description": "Vulnerable to Grover's Algorithm - reduces effective security by half",
+      "replacement": "Double key sizes (AES-256), SPHINCS+ (Hash-based signatures), FIPS 205 SLH-DSA",
+      "risk_level": "HIGH",
+      "context": [
+        {
+          "line": 532,
+          "content": "        },",
+          "isVulnerable": false
+        },
+        {
+          "line": 533,
+          "content": "        {",
+          "isVulnerable": false
+        },
+        {
+          "line": 534,
+          "content": "          \"line\": 210,",
+          "isVulnerable": false
+        },
+        {
+          "line": 535,
+          "content": "          \"content\": \"        const hash = crypto.createHash('sha256');\\r\",",
+          "isVulnerable": true
+        },
+        {
+          "line": 536,
+          "content": "          \"isVulnerable\": true",
+          "isVulnerable": false
+        },
+        {
+          "line": 537,
+          "content": "        },",
+          "isVulnerable": false
+        },
+        {
+          "line": 538,
+          "content": "        {",
+          "isVulnerable": false
+        }
+      ]
+    },
+    {
+      "file": "pqc-audit-results.json",
+      "line": 581,
+      "vulnerability": "grover_vulnerable",
+      "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
+      "description": "Vulnerable to Grover's Algorithm - reduces effective security by half",
+      "replacement": "Double key sizes (AES-256), SPHINCS+ (Hash-based signatures), FIPS 205 SLH-DSA",
+      "risk_level": "HIGH",
+      "context": [
+        {
+          "line": 578,
+          "content": "        },",
+          "isVulnerable": false
+        },
+        {
+          "line": 579,
+          "content": "        {",
+          "isVulnerable": false
+        },
+        {
+          "line": 580,
+          "content": "          \"line\": 288,",
+          "isVulnerable": false
+        },
+        {
+          "line": 581,
+          "content": "          \"content\": \"        return crypto.createHash('sha256').update(publicKeyBuffer).digest('hex').substring(0, 46);\\r\",",
+          "isVulnerable": true
+        },
+        {
+          "line": 582,
+          "content": "          \"isVulnerable\": true",
+          "isVulnerable": false
+        },
+        {
+          "line": 583,
+          "content": "        },",
+          "isVulnerable": false
+        },
+        {
+          "line": 584,
+          "content": "        {",
+          "isVulnerable": false
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "critical": 0,
+    "high": 26,
+    "medium": 0,
+    "low": 0,
+    "total": 26
+  },
+  "recommendations": [
+    {
+      "priority": "HIGH",
+      "category": "Grover's Algorithm Vulnerabilities",
+      "action": "Double key sizes for symmetric encryption and hash functions",
+      "timeline": "Within 6 months",
+      "impact": "Maintains security level against quantum-enhanced brute force attacks"
+    }
+  ]
+}

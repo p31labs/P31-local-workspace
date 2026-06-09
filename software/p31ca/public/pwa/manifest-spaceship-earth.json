@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json.schemastore.org/web-manifest-combined.json",
+  "id": "p31.spaceship-earth",
+  "name": "Spaceship Earth — P31",
+  "short_name": "Spaceship Earth",
+  "description": "Sovereign command center: K4 mesh topology, spoon ledger, legal timeline, and family telemetry rendered in Three.js.",
+  "start_url": "/spaceship-earth/",
+  "scope": "/spaceship-earth/",
+  "display": "standalone",
+  "display_override": ["standalone", "browser"],
+  "orientation": "any",
+  "background_color": "#030308",
+  "theme_color": "#030308",
+  "icons": [
+    {
+      "src": "/pwa/p31-tetra-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["productivity", "utilities"],
+  "shortcuts": [
+    {
+      "name": "Globe View",
+      "url": "/spaceship-earth/?view=GLOBE",
+      "description": "Open the world mesh globe"
+    },
+    {
+      "name": "Delta Mesh",
+      "url": "/spaceship-earth/?view=DELTA",
+      "description": "Open the K4 topology view"
+    }
+  ]
+}

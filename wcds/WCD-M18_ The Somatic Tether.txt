@@ -1,0 +1,22 @@
+﻿WCD-M18: THE SOMATIC TETHER (Biometric Relay)
+Target: Android OS (Termux), Gadgetbridge, P31-OS (Browser)
+Objective: Establish a localized, cloud-free data pipeline from a biological wearable to the browser-based operating system.
+1. SYSTEM TOPOLOGY
+The browser cannot natively read a smartwatch's Bluetooth protocol due to security sandboxing. Therefore, we utilize a local Android proxy.
+* Layer A (Hardware): Offline smartwatch (e.g., PineTime) connected via BLE to the Android device.
+* Layer B (Data Acquisition): Gadgetbridge running on Android. It reads the raw HR/HRV data and stores it in its local SQLite database.
+* Layer C (The Bridge): A lightweight background service (Node.js or Python) running inside Termux on the Android device.
+* Layer D (The Client): P31-OS running in Chrome on the same device.
+2. THE LOCAL WEBSOCKET ARCHITECTURE
+1. The Termux Service: A script runs locally on 127.0.0.1:8080. It utilizes Android logcat filtering or Gadgetbridge's intent-broadcasting API to capture live heart rate events.
+2. The Socket: The script spins up a WebSocket server. It formats the raw data into a standardized JSON payload:
+{ "type": "BIOMETRIC_TICK", "hr": 78, "hrv": 45, "timestamp": 171... }
+3. The Browser Connection: In P31-OS, we build a useSomaticTether hook. On boot, it attempts to connect to ws://localhost:8080.
+3. STATE INTEGRATION (The Spoon Ledger)
+   * The useSomaticTether hook feeds directly into the Sovereign Store.
+   * Autopoietic Trigger: If the rolling 60-second average of hr increases by 20% while hrv simultaneously drops by 15%, the system dispatches a FORCE_SPOON_DRAIN action.
+   * The UI updates immediately: The Spoon count drops, the screen tint shifts to Amber, and the "Cognitive Shield" engages.
+4. EXECUTION REQUIREMENTS (For Agent)
+   * Write the Node.js WebSocket server script designed to run in Termux.
+   * Write the useSomaticTether.ts React hook for P31-OS.
+   * Update ImmersiveCockpit.tsx to display a live somatic waveform in Slot 1 when the tether is active.

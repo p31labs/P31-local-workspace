@@ -1,0 +1,25 @@
+name: Cloudflare Wrangler
+description: cloudflare/wrangler-action@v3 with shared wrangler version from toolchain-constants
+inputs:
+  working-directory:
+    description: Wrangler working directory (use . for repo root)
+    default: "."
+    required: false
+  command:
+    description: Subcommand and args, e.g. deploy or pages deploy dist --project-name=x --branch=main
+    required: true
+  api-token:
+    required: true
+  account-id:
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - uses: cloudflare/wrangler-action@v3
+      with:
+        apiToken: ${{ inputs.api-token }}
+        accountId: ${{ inputs.account-id }}
+        workingDirectory: ${{ inputs.working-directory }}
+        command: ${{ inputs.command }}
+        wranglerVersion: ${{ env.WRANGLER_VERSION || '4.85.0' }}

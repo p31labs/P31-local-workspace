@@ -1,0 +1,159 @@
+{
+  "schema": "p31.securityAuditSuppressions/1.0.0",
+  "policy": "P0 = unsuppressed critical/high in prod runtime deps. P1 = all others (warn, don't fail CI). Items here are accepted-risk dev-build-tool deps — not deployed to CF Pages/Workers.",
+  "suppressions": [
+    {
+      "id": "GHSA-g735-7g2w-hh3f",
+      "package": "astro",
+      "severity": "moderate",
+      "reason": "Astro wildcard allowlist bypass — dev build tool only, not deployed. Monitor for patch.",
+      "scope": "dev",
+      "addedAt": "2026-04-25",
+      "expiresAt": "2026-10-01"
+    },
+    {
+      "id": "GHSA-737v-mqg7-c878",
+      "package": "defu",
+      "severity": "high",
+      "reason": "Prototype pollution in defaults — transitive dev dep via Vite/Astro. No user-controlled input in build pipeline.",
+      "scope": "dev",
+      "addedAt": "2026-04-25",
+      "expiresAt": "2026-10-01"
+    },
+    {
+      "id": "GHSA-cfw5-2vxh-hr84",
+      "package": "devalue",
+      "severity": "moderate",
+      "reason": "Prototype pollution in devalue.parse — dev dep via Astro SSR. Static build only, no runtime devalue.parse.",
+      "scope": "dev",
+      "addedAt": "2026-04-25",
+      "expiresAt": "2026-10-01"
+    },
+    {
+      "id": "GHSA-wr4h-v87w-p3r7",
+      "package": "h3",
+      "severity": "high",
+      "reason": "Path traversal via percent-encoded dots — dev dep via Vite dev server. Not exposed in production (CF Pages serves static dist/).",
+      "scope": "dev",
+      "addedAt": "2026-04-25",
+      "expiresAt": "2026-10-01"
+    },
+    {
+      "id": "GHSA-3v7f-55p6-f55p",
+      "package": "picomatch",
+      "severity": "high",
+      "reason": "Method injection in POSIX character classes — transitive dev dep via anymatch/micromatch in build tooling only.",
+      "scope": "dev",
+      "addedAt": "2026-04-25",
+      "expiresAt": "2026-10-01"
+    },
+    {
+      "id": "GHSA-qx2v-qp2m-jg93",
+      "package": "postcss",
+      "severity": "moderate",
+      "reason": "XSS via unescaped </style> in CSS stringify — dev dep in Tailwind/build pipeline. No runtime PostCSS.",
+      "scope": "dev",
+      "addedAt": "2026-04-25",
+      "expiresAt": "2026-10-01"
+    },
+    {
+      "id": "GHSA-v3rj-xjv7-4jmq",
+      "package": "smol-toml",
+      "severity": "moderate",
+      "reason": "DoS via thousands of commented lines — dev dep via wrangler. Not processing untrusted TOML at runtime.",
+      "scope": "dev",
+      "addedAt": "2026-04-25",
+      "expiresAt": "2026-10-01"
+    },
+    {
+      "id": "GHSA-xpqw-6gx7-v673",
+      "package": "svgo",
+      "severity": "high",
+      "reason": "DoS via entity expansion (Billion Laughs) — dev dep in Astro SVG processing. No untrusted SVG in build pipeline.",
+      "scope": "dev",
+      "addedAt": "2026-04-25",
+      "expiresAt": "2026-10-01"
+    },
+    {
+      "id": "GHSA-4w7w-66w2-5vf9",
+      "package": "vite",
+      "severity": "high",
+      "reason": "Path traversal in .map file handling — Vite dev server only. Production build served from CF Pages (static dist/), not Vite.",
+      "scope": "dev",
+      "addedAt": "2026-04-25",
+      "expiresAt": "2026-10-01"
+    },
+    {
+      "id": "GHSA-48c2-rrv3-qjmp",
+      "package": "yaml",
+      "severity": "moderate",
+      "reason": "Stack overflow in deeply-nested YAML — transitive dev dep. No untrusted YAML parsing at runtime.",
+      "scope": "dev",
+      "addedAt": "2026-04-25",
+      "expiresAt": "2026-10-01"
+    },
+    {
+      "id": "GHSA-22cc-p3c6-wpvm",
+      "package": "h3",
+      "severity": "high",
+      "reason": "SSE injection via unsanitized newlines — h3 is a transitive dep of Vite/Nitro used only during `npm run dev`. CF Pages serves static dist/, no h3 at runtime.",
+      "scope": "dev",
+      "addedAt": "2026-04-25",
+      "expiresAt": "2026-10-01"
+    },
+    {
+      "id": "GHSA-4hxc-9384-m385",
+      "package": "h3",
+      "severity": "moderate",
+      "reason": "SSE carriage-return injection (bypass of prior CVE fix) — same scope as GHSA-22cc-p3c6-wpvm above. Dev server only.",
+      "scope": "dev",
+      "addedAt": "2026-04-25",
+      "expiresAt": "2026-10-01"
+    },
+    {
+      "id": "GHSA-72gr-qfp7-vwhw",
+      "package": "h3",
+      "severity": "moderate",
+      "reason": "Double-decoding path traversal bypass — h3 dev server only, not deployed.",
+      "scope": "dev",
+      "addedAt": "2026-04-25",
+      "expiresAt": "2026-10-01"
+    },
+    {
+      "id": "GHSA-c2c7-rcm5-vvqj",
+      "package": "picomatch",
+      "severity": "high",
+      "reason": "ReDoS via extglob quantifiers — transitive dep via micromatch in build tooling. No user-controlled glob patterns at runtime.",
+      "scope": "dev",
+      "addedAt": "2026-04-25",
+      "expiresAt": "2026-10-01"
+    },
+    {
+      "id": "GHSA-j687-52p2-xcff",
+      "package": "astro",
+      "severity": "moderate",
+      "reason": "XSS in define:vars — Astro build tool only. We do not use define:vars with untrusted content. Static site, no SSR runtime.",
+      "scope": "dev",
+      "addedAt": "2026-04-25",
+      "expiresAt": "2026-10-01"
+    },
+    {
+      "id": "GHSA-mwv9-gp5h-frr4",
+      "package": "devalue",
+      "severity": "low",
+      "reason": "__proto__ emission in devalue — same scope as GHSA-cfw5-2vxh-hr84. Static build only, no runtime devalue.",
+      "scope": "dev",
+      "addedAt": "2026-04-25",
+      "expiresAt": "2026-10-01"
+    },
+    {
+      "id": "GHSA-p9ff-h696-f583",
+      "package": "vite",
+      "severity": "high",
+      "reason": "Arbitrary file read via Vite dev server WebSocket — affects `npm run dev` only. CF Pages serves static dist/ with no Vite process running.",
+      "scope": "dev",
+      "addedAt": "2026-04-25",
+      "expiresAt": "2026-10-01"
+    }
+  ]
+}

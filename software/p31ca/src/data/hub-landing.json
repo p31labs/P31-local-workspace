@@ -1,0 +1,660 @@
+{
+  "meta": {
+    "schema": "p31.hub-landing/1.0.0",
+    "registry": "scripts/hub/registry.mjs",
+    "hubCardIds": "scripts/hub/hub-app-ids.mjs",
+    "alignment": "P31 home: p31-alignment.json (p31.alignment/1.0.0); human: docs/P31-ALIGNMENT-SYSTEM.md; verify: npm run verify:alignment (root)",
+    "prsPosture": null
+  },
+  "coreProducts": [
+    {
+      "id": "bonding",
+      "title": "BONDING",
+      "status": "LIVE",
+      "category": "social",
+      "icon": "⚛️",
+      "desc": "Molecular Social Protocol",
+      "tags": [
+        "React 19",
+        "Three.js r183",
+        "Zustand v5",
+        "Vitest 4"
+      ],
+      "url": "/bonding-about.html"
+    },
+    {
+      "id": "arcade-hub",
+      "title": "P31 Arcade",
+      "status": "LIVE",
+      "category": "arcade",
+      "icon": "🎮",
+      "desc": "Four physics games at 10000%",
+      "tags": [
+        "Cloudflare Pages",
+        "Astro",
+        "React",
+        "PGLite"
+      ],
+      "url": "/arcade-hub-about.html"
+    },
+    {
+      "id": "arcade-smallball",
+      "title": "Smallball",
+      "status": "LIVE",
+      "category": "arcade",
+      "icon": "⚾",
+      "desc": "2.5D baseball with Spoon Theory UX",
+      "tags": [
+        "React 18",
+        "PGLite",
+        "Markov Chains",
+        "Three.js"
+      ],
+      "url": "/arcade-smallball-about.html"
+    },
+    {
+      "id": "arcade-gridiron",
+      "title": "Gridiron",
+      "status": "LIVE",
+      "category": "arcade",
+      "icon": "🏈",
+      "desc": "Strategic football with energy management",
+      "tags": [
+        "React 18",
+        "PGLite",
+        "Spoon Shell",
+        "CF Pages"
+      ],
+      "url": "/arcade-gridiron-about.html"
+    },
+    {
+      "id": "arcade-strategy",
+      "title": "Strategy Board",
+      "status": "LIVE",
+      "category": "arcade",
+      "icon": "♟️",
+      "desc": "Turn-based tactical warfare",
+      "tags": [
+        "React 18",
+        "Canvas API",
+        "Pathfinding",
+        "CF Pages"
+      ],
+      "url": "/arcade-strategy-about.html"
+    },
+    {
+      "id": "arcade-cards",
+      "title": "Card Table",
+      "status": "LIVE",
+      "category": "arcade",
+      "icon": "🃏",
+      "desc": "Strategic card game collection",
+      "tags": [
+        "React 18",
+        "Game Theory",
+        "Probability Engine",
+        "CF Pages"
+      ],
+      "url": "/arcade-cards-about.html"
+    },
+    {
+      "id": "arcade-liquid-sculptor",
+      "title": "Liquid Sculptor",
+      "status": "LIVE",
+      "category": "arcade",
+      "icon": "💧",
+      "desc": "Fluid dynamics sandbox",
+      "tags": [
+        "WebGL",
+        "Navier-Stokes",
+        "React 18",
+        "Three.js"
+      ],
+      "url": "/arcade-liquid-sculptor-about.html"
+    },
+    {
+      "id": "social-molecules",
+      "title": "Social Molecules",
+      "status": "LIVE",
+      "category": "social",
+      "icon": "⚗️",
+      "desc": "C.A.R.S. — Collaborative Affective Realtime Sim",
+      "tags": [
+        "SoupEngine",
+        "p31.carsWire/0.1.0",
+        "WebSocket",
+        "Three.js"
+      ],
+      "url": "/social-molecules-about.html"
+    },
+    {
+      "id": "spaceship-earth",
+      "title": "Spaceship Earth",
+      "status": "LIVE",
+      "category": "core",
+      "icon": "🌐",
+      "desc": "Sovereign Command Center",
+      "tags": [
+        "PWA",
+        "PGlite (WASM PostgreSQL)",
+        "Three.js R3F",
+        "IndexedDB"
+      ],
+      "url": "/spaceship-earth-about.html"
+    },
+    {
+      "id": "ede",
+      "title": "EDE",
+      "status": "LIVE",
+      "category": "core",
+      "icon": "⬡",
+      "desc": "Everything Development Environment",
+      "tags": [
+        "Babel Standalone",
+        "Sandboxed iframe",
+        "Samson's Law Linter",
+        "Q Distribution"
+      ],
+      "url": "/ede-about.html"
+    },
+    {
+      "id": "buffer",
+      "title": "The Buffer",
+      "status": "LIVE",
+      "category": "core",
+      "icon": "🛡️",
+      "desc": "Message Guardian & Fawn Guard",
+      "tags": [
+        "Voltage Scoring",
+        "Fawn Guard Algorithm",
+        "BLUF Extraction",
+        "4-2-6 Breathwork"
+      ],
+      "url": "/buffer-about.html"
+    },
+    {
+      "id": "alchemy",
+      "title": "Neuro-Cognition Alchemy",
+      "status": "RESEARCH",
+      "category": "research",
+      "icon": "📐",
+      "desc": "Theoretical Research Framework",
+      "tags": [
+        "Thermodynamics",
+        "Periodic Table Mapping",
+        "K₄ Graph Theory",
+        "Zenodo DOI"
+      ],
+      "url": "/alchemy-about.html"
+    },
+    {
+      "id": "attractor",
+      "title": "NANO-07 Attractor",
+      "status": "LIVE",
+      "category": "research",
+      "icon": "🌀",
+      "desc": "Kenosis Mesh Visualizer",
+      "tags": [
+        "Three.js",
+        "SIC-POVM",
+        "Byzantine Fault Sim",
+        "Chaos Injector"
+      ],
+      "url": "/attractor-about.html"
+    },
+    {
+      "id": "axiom",
+      "title": "AXIOM",
+      "status": "LIVE",
+      "category": "research",
+      "icon": "⚛️",
+      "desc": "Physics & Chemistry Lab",
+      "tags": [
+        "Rapier.js",
+        "Three.js",
+        "NIST ASD Data",
+        "Offline-First"
+      ],
+      "url": "/axiom-about.html"
+    },
+    {
+      "id": "content-forge",
+      "title": "CONTENT FORGE",
+      "status": "LIVE",
+      "category": "core",
+      "icon": "✍️",
+      "desc": "Editorial Publishing Suite",
+      "tags": [
+        "Markdown Editor",
+        "Seed Bank",
+        "8-Point Checklist",
+        "LocalStorage"
+      ],
+      "url": "/content-forge-about.html"
+    },
+    {
+      "id": "geodesic",
+      "title": "GEODESIC",
+      "status": "LIVE",
+      "category": "core",
+      "icon": "🔷",
+      "desc": "3D Structure Builder",
+      "tags": [
+        "Three.js r183",
+        "OrbitControls",
+        "Snap Grid",
+        "Rigidity Scoring"
+      ],
+      "url": "/geodesic-about.html"
+    },
+    {
+      "id": "resonance",
+      "title": "RESONANCE",
+      "status": "LIVE",
+      "category": "research",
+      "icon": "🎵",
+      "desc": "Conversation-to-Music Engine",
+      "tags": [
+        "Web Audio API",
+        "Pentatonic Synthesis",
+        "172.35 Hz P31 NMR",
+        "SVG Molecule"
+      ],
+      "url": "/resonance-about.html"
+    },
+    {
+      "id": "signal",
+      "title": "SIGNAL",
+      "status": "LIVE",
+      "category": "core",
+      "icon": "🎮",
+      "desc": "Stim Room & Mini Games",
+      "tags": [
+        "WebGL Shaders",
+        "Cellular Automaton",
+        "Rapier.js",
+        "12-Spoon Budget"
+      ],
+      "url": "/signal-about.html"
+    },
+    {
+      "id": "tactile",
+      "title": "TACTILE",
+      "status": "LIVE",
+      "category": "utility",
+      "icon": "⌨️",
+      "desc": "Mechanical Keyboard Builder & Typing Lab",
+      "tags": [
+        "Web Audio API",
+        "Haptics",
+        "Keyboard Layout Engine",
+        "Typing Games"
+      ],
+      "url": "/tactile-about.html"
+    },
+    {
+      "id": "discord-bot",
+      "title": "p31-bot",
+      "status": "LIVE",
+      "category": "social",
+      "icon": "🤖",
+      "desc": "Community Command Plane",
+      "tags": [
+        "Discord.js v14",
+        "TypeScript",
+        "Railway Deploy",
+        "CF Workers KV"
+      ],
+      "url": "/discord-bot-about.html"
+    },
+    {
+      "id": "cortex",
+      "title": "p31-cortex",
+      "status": "LIVE",
+      "category": "infra",
+      "icon": "🧠",
+      "desc": "AI Agent Orchestration",
+      "tags": [
+        "Cloudflare Durable Objects",
+        "D1 Database",
+        "CF AI Bindings",
+        "Workers Analytics"
+      ],
+      "url": "/cortex-about.html"
+    },
+    {
+      "id": "node-zero",
+      "title": "Node Zero",
+      "status": "LIVE",
+      "category": "infra",
+      "icon": "📡",
+      "desc": "Sovereign Mesh Hardware Node",
+      "tags": [
+        "ESP-IDF 5.5.x",
+        "LVGL 8.4",
+        "AXS15231B QSPI",
+        "SX1262 LoRa 915MHz"
+      ],
+      "url": "/node-zero-about.html"
+    },
+    {
+      "id": "connect",
+      "title": "THE MESH",
+      "status": "LIVE",
+      "category": "core",
+      "icon": "⬡",
+      "desc": "K₄ cage + product graph",
+      "tags": [
+        "Three.js r160",
+        "K₄ tetrahedron",
+        "Product satellites",
+        "Static HTML"
+      ],
+      "url": "/connect-about.html"
+    },
+    {
+      "id": "planetary-onboard",
+      "title": "Planetary onboard",
+      "status": "LIVE",
+      "category": "core",
+      "icon": "🜂",
+      "desc": "Threshold — four doors, no funnel",
+      "tags": [
+        "Static HTML",
+        "Gray Rock first paint",
+        "No analytics",
+        "Door 4 invite / room gates"
+      ],
+      "url": "/planetary-onboard-about.html"
+    },
+    {
+      "id": "integrations",
+      "title": "Integrations bridge",
+      "status": "LIVE",
+      "category": "infra",
+      "icon": "🔗",
+      "desc": "OSS home, wearables, operator endpoints",
+      "tags": [
+        "Astro",
+        "p31.integrationsBridge/1.0.0",
+        "apply:constants",
+        "p31-constants.json"
+      ],
+      "url": "/integrations-about.html"
+    },
+    {
+      "id": "poets",
+      "title": "Poets Room",
+      "status": "LIVE",
+      "category": "social",
+      "icon": "🪶",
+      "desc": "Void, a daily line, a shelf — nothing to verify here but the door",
+      "tags": [
+        "Static",
+        "No crew APIs",
+        "localStorage only",
+        "Quotes JSON"
+      ],
+      "url": "/poets-about.html"
+    },
+    {
+      "id": "appointment-tracker",
+      "title": "Appointment Tracker",
+      "status": "LIVE",
+      "category": "utility",
+      "icon": "📅",
+      "desc": "Legal & Family Calendar",
+      "tags": [
+        "Cloudflare Worker",
+        "LocalStorage",
+        "CSV Export",
+        "Recurring Events"
+      ],
+      "url": "/appointment-tracker-about.html"
+    },
+    {
+      "id": "book",
+      "title": "Mother Nature & Father Time",
+      "status": "LIVE",
+      "category": "social",
+      "icon": "📖",
+      "desc": "Children's Picture Book",
+      "tags": [
+        "Vite 8",
+        "React 19",
+        "CF Pages",
+        "Touch Navigation"
+      ],
+      "url": "/book-about.html"
+    },
+    {
+      "id": "bridge",
+      "title": "BRIDGE",
+      "status": "LIVE",
+      "category": "core",
+      "icon": "🌐",
+      "desc": "LOVE Economy Dashboard",
+      "tags": [
+        "SVG Gauges",
+        "Phenix Wallet",
+        "Vesting Schedules",
+        "Stealth Addresses"
+      ],
+      "url": "/bridge-about.html"
+    },
+    {
+      "id": "budget-tracker",
+      "title": "Budget Tracker",
+      "status": "LIVE",
+      "category": "utility",
+      "icon": "💰",
+      "desc": "Zero-Based Budgeting",
+      "tags": [
+        "Cloudflare Worker",
+        "Chart.js",
+        "LocalStorage",
+        "SNAP-Friendly Categories"
+      ],
+      "url": "/budget-tracker-about.html"
+    },
+    {
+      "id": "contact-locker",
+      "title": "Contact Locker",
+      "status": "LIVE",
+      "category": "utility",
+      "icon": "🔐",
+      "desc": "AES-256-GCM Encrypted Directory",
+      "tags": [
+        "Cloudflare Worker",
+        "WebCrypto AES-256-GCM",
+        "PBKDF2",
+        "Room Code Auth"
+      ],
+      "url": "/contact-locker-about.html"
+    },
+    {
+      "id": "echo",
+      "title": "ECHO",
+      "status": "LIVE",
+      "category": "utility",
+      "icon": "🗣️",
+      "desc": "Vocal Looper & Script Rehearsal",
+      "tags": [
+        "Web Audio API",
+        "MediaRecorder",
+        "BufferSource playbackRate",
+        "Offline-First"
+      ],
+      "url": "/echo-about.html"
+    },
+    {
+      "id": "forge",
+      "title": "FORGE",
+      "status": "LIVE",
+      "category": "social",
+      "icon": "🗄️",
+      "desc": "Special Interest Vault",
+      "tags": [
+        "SQLite WASM",
+        "D3.js Skill Tree",
+        "Local-First",
+        "RPG Aesthetic"
+      ],
+      "url": "/forge-about.html"
+    },
+    {
+      "id": "legal-evidence",
+      "title": "Legal Evidence",
+      "status": "LIVE",
+      "category": "utility",
+      "icon": "🛣",
+      "desc": "SHA-256 Tamper-Evident Chain",
+      "tags": [
+        "Cloudflare Worker",
+        "WebCrypto SHA-256",
+        "Hash Chain",
+        "JSON chain export"
+      ],
+      "url": "/legal-evidence-about.html"
+    },
+    {
+      "id": "medical-tracker",
+      "title": "Medical Tracker",
+      "status": "LIVE",
+      "category": "utility",
+      "icon": "🩺",
+      "desc": "Hypoparathyroidism HPT-SD Monitor",
+      "tags": [
+        "Cloudflare Worker",
+        "Chart.js",
+        "WebCrypto",
+        "0-4 Symptom Scaling"
+      ],
+      "url": "/medical-tracker-about.html"
+    },
+    {
+      "id": "prism",
+      "title": "PRISM",
+      "status": "LIVE",
+      "category": "utility",
+      "icon": "🌈",
+      "desc": "Sensory Diet Synthesizer",
+      "tags": [
+        "Web Audio API",
+        "WebGL",
+        "Binaural Beats",
+        "Offline PWA"
+      ],
+      "url": "/prism-about.html"
+    },
+    {
+      "id": "sleep-tracker",
+      "title": "Sleep Tracker",
+      "status": "LIVE",
+      "category": "utility",
+      "icon": "😴",
+      "desc": "Sleep log (HPT-aware notes, not a medical device)",
+      "tags": [
+        "Cloudflare Worker",
+        "Chart.js",
+        "LocalStorage",
+        "7-Day Trend Analysis"
+      ],
+      "url": "/sleep-tracker-about.html"
+    },
+    {
+      "id": "somatic-anchor",
+      "title": "Somatic Anchor",
+      "status": "LIVE",
+      "category": "utility",
+      "icon": "🕸️",
+      "desc": "863 Hz Larmor Grounding Tool",
+      "tags": [
+        "Cloudflare Worker",
+        "Web Audio API",
+        "Vibration API",
+        "4-4-6 Breathwork"
+      ],
+      "url": "/somatic-anchor-about.html"
+    },
+    {
+      "id": "larmor",
+      "title": "LARMOR",
+      "status": "LIVE",
+      "category": "core",
+      "icon": "╯",
+      "desc": "863 Hz Somatic Regulation",
+      "tags": [
+        "Web Audio API",
+        "863 Hz Oscillator",
+        "Vibration API",
+        "4-4-6 Breathwork"
+      ],
+      "url": "/larmor-about.html"
+    },
+    {
+      "id": "sovereign",
+      "title": "SOVEREIGN",
+      "status": "LIVE",
+      "category": "core",
+      "icon": "🔑",
+      "desc": "Sovereign OS 3D Cockpit",
+      "tags": [
+        "Three.js r183",
+        "Bloom Postprocessing",
+        "Jitterbug Transform",
+        "SIC-POVM"
+      ],
+      "url": "/sovereign-about.html"
+    },
+    {
+      "id": "super-centaur",
+      "title": "Super-Centaur pack",
+      "status": "LIVE",
+      "category": "infra",
+      "icon": "🜊",
+      "desc": "Data health · MAP · mesh fleet · sovereignty",
+      "tags": [
+        "Static HTML",
+        "Machine JSON",
+        "CWP index",
+        "mesh-bridge sync"
+      ],
+      "url": "/super-centaur-about.html"
+    },
+    {
+      "id": "tether",
+      "title": "TETHER",
+      "status": "LIVE",
+      "category": "core",
+      "icon": "🪐",
+      "desc": "Spatial Executive Function Map",
+      "tags": [
+        "Matter.js",
+        "Canvas API",
+        "IndexedDB",
+        "Gravity Well Physics"
+      ],
+      "url": "/tether-about.html"
+    }
+  ],
+  "prototypes": [],
+  "research": [
+    {
+      "title": "The Tetrahedron Protocol: A Grand Unified Theory of Structural Resilience",
+      "doi": "10.5281/zenodo.19004485"
+    },
+    {
+      "title": "Strategic Convergence of Geometric Security and Cognitive Resilience: P31 Labs Genesis Whitepaper",
+      "doi": "10.5281/zenodo.19411363"
+    },
+    {
+      "title": "Consciousness, Memory, and the Architecture of Self-Preservation: Neuroscientific Foundations for Cognitive Prosthetic Design",
+      "doi": "10.5281/zenodo.19416491"
+    },
+    {
+      "title": "The Universal Bridge at the Phase Transition: Kuramoto Criticality, Maxwell Rigidity, and the Topology of Neurodivergent Cognition",
+      "doi": "10.5281/zenodo.19503542"
+    }
+  ]
+}

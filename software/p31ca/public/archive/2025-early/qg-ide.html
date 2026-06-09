@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#050505">
+    <title>QG-IDE | P31 Labs</title>
+    <meta name="description" content="Quantum Geodesic IDE. 6-workspace development environment for quantum geometry exploration with SIC-POVM measurement code, tetrahedron visualizer, and Centaur AI copilot.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/assets/p31-operator-tailwind.js"></script>
+    <style>
+        body {
+            background-color: #050505;
+            color: #d8d6d0;
+            background-image: linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+        .matte-panel { background-color: #161920; border: 1px solid rgba(255,255,255,0.04); }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col text-cloud/90">
+
+    <header class="w-full border-b border-white/5 bg-void/95 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="/" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
+                <svg width="28" height="28" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="512" height="512" rx="112" fill="#25897d"/>
+                    <circle cx="390" cy="120" r="48" fill="#cc6247"/>
+                    <text x="256" y="340" font-family="system-ui" font-weight="900" font-size="220" fill="#d8d6d0" text-anchor="middle">P31</text>
+                    <rect x="156" y="380" width="200" height="16" rx="8" fill="#cda852"/>
+                </svg>
+                <span class="font-bold text-lg tracking-tight">P31 Labs</span>
+            </a>
+            <nav class="flex gap-4 font-mono text-sm">
+                <a href="/" class="text-cloud/50 hover:text-cloud transition-colors flex items-center gap-2">&larr; Hub</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl mx-auto px-6 py-12 w-full flex flex-col gap-12">
+
+        <header class="border-b border-white/10 pb-8">
+            <div class="flex items-center gap-4 mb-4">
+                <div class="text-3xl bg-surface w-12 h-12 rounded flex items-center justify-center border border-white/5">&#128187;</div>
+                <div class="px-2 py-0.5 rounded border text-[10px] font-mono tracking-wide text-cyan/80 border-cyan/20 bg-cyan/5">&#128309; PROTOTYPE</div>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-bold mb-4 text-cloud">QG-IDE</h1>
+            <p class="text-xl text-cyan/70 font-mono">Quantum Geodesic IDE &mdash; 6-Workspace Development Environment</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            <div class="lg:col-span-2 flex flex-col gap-8">
+
+                <section class="matte-panel rounded-lg p-8">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center gap-3">
+                        <span class="text-cyan">01.</span> What It Does
+                    </h2>
+                    <p class="text-cloud/70 leading-relaxed mb-6">
+                        A full development environment for quantum geometry exploration. Six workspace tabs: <strong class="text-cloud/85">Code</strong> editor, <strong class="text-cloud/85">tetrahedron visualizer</strong>, <strong class="text-cloud/85">terminal</strong>, <strong class="text-cloud/85">Centaur AI</strong> copilot, <strong class="text-cloud/85">PHX</strong> coherence companion, and <strong class="text-cloud/85">file browser</strong>. Pre-seeded with SIC-POVM measurement code ready to run.
+                    </p>
+                    <ul class="space-y-2 text-sm text-cloud/65">
+                        <li class="flex items-start gap-2"><span class="text-cyan mt-0.5">&#9679;</span> 6 workspace tabs (Code / View / Term / Copilot / PHX / Files)</li>
+                        <li class="flex items-start gap-2"><span class="text-cyan mt-0.5">&#9679;</span> SVG tetrahedron with SIC-POVM readout</li>
+                        <li class="flex items-start gap-2"><span class="text-cyan mt-0.5">&#9679;</span> Board state indicator (GREEN / YELLOW / RED)</li>
+                        <li class="flex items-start gap-2"><span class="text-cyan mt-0.5">&#9679;</span> Pre-seeded files (main.ts / tetrahedron.ts / sicpovm.ts)</li>
+                        <li class="flex items-start gap-2"><span class="text-cyan mt-0.5">&#9679;</span> Centaur AI copilot (pre-programmed Q&amp;A)</li>
+                        <li class="flex items-start gap-2"><span class="text-cyan mt-0.5">&#9679;</span> PHX coherence companion</li>
+                        <li class="flex items-start gap-2"><span class="text-cyan mt-0.5">&#9679;</span> Entropy tracking + trimtab suggestions</li>
+                        <li class="flex items-start gap-2"><span class="text-cyan mt-0.5">&#9679;</span> localStorage persistence</li>
+                    </ul>
+                </section>
+
+                <section class="matte-panel rounded-lg p-8">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center gap-3">
+                        <span class="text-cyan">02.</span> Workspace Architecture
+                    </h2>
+                    <div class="space-y-4">
+                        <div class="bg-void border border-cyan/10 rounded p-5">
+                            <p class="text-cyan/80 font-mono text-xs mb-2 uppercase tracking-widest">Code + View</p>
+                            <p class="text-cloud/70 text-sm leading-relaxed">Code tab provides a monospace editor with line numbers and syntax highlighting. View tab renders an SVG tetrahedron with live SIC-POVM measurement outcomes &mdash; four vertices, six edges, probability amplitudes mapped to vertex opacity.</p>
+                        </div>
+                        <div class="bg-void border border-cyan/10 rounded p-5">
+                            <p class="text-cyan/80 font-mono text-xs mb-2 uppercase tracking-widest">Term + Files</p>
+                            <p class="text-cloud/70 text-sm leading-relaxed">Term tab captures console output from code execution. Files tab provides a virtual filesystem browser with three pre-seeded TypeScript files: <code class="font-mono text-xs text-cyan/60">main.ts</code>, <code class="font-mono text-xs text-cyan/60">tetrahedron.ts</code>, and <code class="font-mono text-xs text-cyan/60">sicpovm.ts</code>.</p>
+                        </div>
+                        <div class="bg-void border border-cyan/10 rounded p-5">
+                            <p class="text-cyan/80 font-mono text-xs mb-2 uppercase tracking-widest">Copilot + PHX</p>
+                            <p class="text-cloud/70 text-sm leading-relaxed">Centaur AI copilot provides pre-programmed Q&amp;A about quantum geometry, SIC-POVM theory, and tetrahedral topology. PHX coherence companion tracks system entropy and surfaces trimtab suggestions &mdash; small adjustments with disproportionate effect.</p>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+
+            <div class="flex flex-col gap-6">
+
+                <div class="matte-panel rounded-lg p-6">
+                    <h3 class="text-sm font-mono text-cloud/40 uppercase tracking-widest mb-4">Launch</h3>
+                    <a href="ide.html"
+                       class="block p-5 bg-void border border-cyan/30 rounded hover:border-cyan/60 transition-colors group mb-3 text-center">
+                        <div class="text-2xl mb-2">&#128187;</div>
+                        <div class="font-bold text-sm text-cyan group-hover:text-cyan transition-colors mb-1">Open QG-IDE</div>
+                        <div class="text-xs text-cloud/40 font-mono">ide.html</div>
+                    </a>
+                </div>
+
+                <div class="matte-panel rounded-lg p-6">
+                    <h3 class="text-sm font-mono text-cloud/40 uppercase tracking-widest mb-4">Technical Stack</h3>
+                    <div class="space-y-3 text-sm">
+                        <div>
+                            <div class="text-cloud font-bold mb-1">Code Editor</div>
+                            <div class="text-cloud/60">Monospace textarea with line numbers and tab support</div>
+                        </div>
+                        <div>
+                            <div class="text-cloud font-bold mb-1">SVG Visualization</div>
+                            <div class="text-cloud/60">Tetrahedron geometry with SIC-POVM probability mapping</div>
+                        </div>
+                        <div>
+                            <div class="text-cloud font-bold mb-1">localStorage</div>
+                            <div class="text-cloud/60">File persistence, editor state, and PHX entropy history</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="matte-panel rounded-lg p-6">
+                    <h3 class="text-sm font-mono text-cloud/40 uppercase tracking-widest mb-4">Ecosystem Ties</h3>
+                    <a href="spaceship-earth.html" class="block p-4 bg-void border border-white/5 rounded hover:border-teal/30 transition-colors group mb-3">
+                        <div class="font-bold text-sm text-cloud group-hover:text-teal transition-colors mb-1">Spaceship Earth</div>
+                        <div class="text-xs text-cloud/50">Host application for the sovereign mesh tools.</div>
+                    </a>
+                    <a href="alchemy.html" class="block p-4 bg-void border border-white/5 rounded hover:border-cyan/30 transition-colors group mb-3">
+                        <div class="font-bold text-sm text-cloud group-hover:text-cyan transition-colors mb-1">Quantum Core</div>
+                        <div class="text-xs text-cloud/50">SIC-POVM theory and tetrahedral measurement geometry.</div>
+                    </a>
+                    <a href="kenosis.html" class="block p-4 bg-void border border-white/5 rounded hover:border-teal/30 transition-colors group">
+                        <div class="font-bold text-sm text-cloud group-hover:text-teal transition-colors mb-1">Sovereign</div>
+                        <div class="text-xs text-cloud/50">Sovereign mesh topology that the IDE models.</div>
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <footer class="border-t border-white/5 mt-12 py-6">
+        <div class="max-w-7xl mx-auto px-6 flex justify-between items-center text-xs text-cloud/30 font-mono">
+            <span>P31 Labs &middot; 501(c)(3) &middot; EIN 42-1888158</span>
+            <a href="/" class="hover:text-cloud/60 transition-colors">&larr; Back to Hub</a>
+        </div>
+    </footer>
+
+</body>
+</html>

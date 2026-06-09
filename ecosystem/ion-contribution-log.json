@@ -1,0 +1,103 @@
+[
+  {
+    "timestamp": "2026-03-23T07:48:30.695Z",
+    "validation": {
+      "valid": false,
+      "issues": [
+        "Missing 9 Calcium ions",
+        "Missing 6 Phosphate ions"
+      ],
+      "calcium": {
+        "required": 9,
+        "current": 0,
+        "missing": 9,
+        "contributors": 0,
+        "avgPerContributor": 0,
+        "overContributors": 0,
+        "complete": false
+      },
+      "phosphate": {
+        "required": 6,
+        "current": 0,
+        "missing": 6,
+        "contributors": 0,
+        "avgPerContributor": 0,
+        "overContributors": 0,
+        "complete": false
+      },
+      "overall": {
+        "totalIons": 0,
+        "requiredIons": 15,
+        "missingIons": 15,
+        "uniqueContributors": 0,
+        "requiredContributors": 5,
+        "ionDistribution": {},
+        "usersOverLimit": 0,
+        "complete": false
+      }
+    },
+    "report": {
+      "timestamp": "2026-03-23T07:48:30.693Z",
+      "summary": {
+        "valid": false,
+        "totalIssues": 2,
+        "calciumComplete": false,
+        "phosphateComplete": false,
+        "contributorsComplete": false
+      },
+      "details": {
+        "calcium": {
+          "status": "INCOMPLETE",
+          "progress": 0,
+          "current": 0,
+          "required": 9,
+          "missing": 9,
+          "contributors": 0
+        },
+        "phosphate": {
+          "status": "INCOMPLETE",
+          "progress": 0,
+          "current": 0,
+          "required": 6,
+          "missing": 6,
+          "contributors": 0
+        },
+        "overall": {
+          "status": "INCOMPLETE",
+          "progress": 0,
+          "totalIons": 0,
+          "requiredIons": 15,
+          "uniqueContributors": 0,
+          "requiredContributors": 5
+        }
+      },
+      "issues": [
+        "Missing 9 Calcium ions",
+        "Missing 6 Phosphate ions"
+      ],
+      "recommendations": [
+        {
+          "priority": "HIGH",
+          "category": "Calcium Ions",
+          "action": "Need 9 more Calcium ions",
+          "current": 0,
+          "required": 9
+        },
+        {
+          "priority": "HIGH",
+          "category": "Phosphate Ions",
+          "action": "Need 6 more Phosphate ions",
+          "current": 0,
+          "required": 6
+        },
+        {
+          "priority": "MEDIUM",
+          "category": "Contributors",
+          "action": "Need 5 more unique contributors",
+          "current": 0,
+          "required": 5
+        }
+      ]
+    }
+  }
+]

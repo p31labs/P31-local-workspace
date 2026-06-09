@@ -1,0 +1,75 @@
+---
+/**
+ * Active Deployments — Status grid for live P31 projects.
+ * BONDING and Spaceship Earth.
+ */
+
+const deployments = [
+  {
+    name: 'BONDING',
+    description: 'Molecule-building chemistry game for children ages 6+. AuDHD-optimized haptics, sonification, and spoon-aware cognitive load management.',
+    stack: ['React', 'Three.js', 'Zustand', 'Cloudflare Workers'],
+    status: 'live' as const,
+    metrics: { tests: 485, achievements: 12, molecules: 33 },
+  },
+  {
+    name: 'Spaceship Earth',
+    description: 'Environmental systems simulator. Planetary-scale resource management with real-time feedback loops.',
+    stack: ['Astro', 'D3.js', 'WebGL'],
+    status: 'dev' as const,
+    metrics: null,
+  },
+];
+---
+
+<section id="deployments" class="px-6 py-24 max-w-5xl mx-auto">
+  <div class="text-center mb-16">
+    <span class="font-mono text-xs text-phosphor/50 tracking-[0.2em] uppercase">Systems</span>
+    <h2 class="text-3xl md:text-4xl font-bold mt-3 text-p31-cloud-90">Active Deployments</h2>
+    <p class="text-p31-cloud-30 mt-3 max-w-lg mx-auto">
+      Production systems built with the P31 methodology.
+    </p>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    {deployments.map((d) => (
+      <div class="glass-panel glass-panel-hover p-6 flex flex-col gap-4">
+        <div class="flex items-center justify-between">
+          <h3 class="font-bold text-lg text-p31-cloud-90 font-mono tracking-wide">{d.name}</h3>
+          <span class={`text-[10px] font-mono uppercase tracking-wider px-2.5 py-1 rounded-full border ${d.status === 'live' ? 'status-live' : 'status-dev'}`}>
+            {d.status}
+          </span>
+        </div>
+
+        <p class="text-sm text-p31-cloud-30 leading-relaxed">{d.description}</p>
+
+        <!-- Stack tags -->
+        <div class="flex flex-wrap gap-2">
+          {d.stack.map((s) => (
+            <span class="text-[11px] font-mono text-p31-cloud-30 bg-white/[0.04] px-2 py-0.5 rounded">
+              {s}
+            </span>
+          ))}
+        </div>
+
+        <!-- Metrics (if live) -->
+        {d.metrics && (
+          <div class="flex gap-6 pt-2 border-t border-white/[0.04]">
+            <div class="text-center">
+              <div class="font-mono text-phosphor text-lg font-bold">{d.metrics.tests}</div>
+              <div class="text-[10px] text-p31-cloud-30 uppercase">Tests</div>
+            </div>
+            <div class="text-center">
+              <div class="font-mono text-amber text-lg font-bold">{d.metrics.achievements}</div>
+              <div class="text-[10px] text-p31-cloud-30 uppercase">Achievements</div>
+            </div>
+            <div class="text-center">
+              <div class="font-mono text-p31-muted text-lg font-bold">{d.metrics.molecules}</div>
+              <div class="text-[10px] text-p31-cloud-30 uppercase">Molecules</div>
+            </div>
+          </div>
+        )}
+      </div>
+    ))}
+  </div>
+</section>

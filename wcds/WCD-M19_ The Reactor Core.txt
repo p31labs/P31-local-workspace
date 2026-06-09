@@ -1,0 +1,21 @@
+﻿WCD-M19: THE REACTOR CORE (Fabrication Pipeline)
+Target: Cloudflare Edge Worker, OctoPrint (Raspberry Pi), cloudflared
+Objective: Securely trigger a physical 3D print upon the completion of a digital cryptographic mesh handshake without opening local router ports.
+1. SYSTEM TOPOLOGY
+* The Edge: The existing bonding-relay Cloudflare Worker.
+* The Tunnel: A Cloudflare Zero Trust Tunnel (cloudflared) running on the local 3D printer server, exposing the OctoPrint API securely to printer.p31ca.org.
+* The Fabricator: A 3D printer loaded with filament, pre-warmed, and waiting for G-code execution.
+2. THE SMART CONTRACT (CF Worker)
+1. The Endpoint: Create POST /api/mint-k4 on the CF Worker.
+2. The Payload: The worker expects a JSON array of 4 distinct Ed25519 signatures, representing the 4 nodes of the    tetrahedron.
+{ "molecule": "K4", "signatures": [ { "did": "...", "sig": "..." }, ... ] }
+3. Verification: The CF Worker verifies all 4 signatures against their respective DIDs and checks the timestamp to ensure the handshake occurred simultaneously (within a 5-second window).
+4. The Webhook: If verification passes, the CF Worker acts as an authenticated client. It sends a POST request to https://printer.p31ca.org/api/job containing the OctoPrint API key in the header.
+{ "command": "start", "file": "k4_node_v1.gcode" }
+3. SECURITY & DAUBERT COMPLIANCE
+   * The Cloudflare Tunnel ensures the printer is completely invisible to the public internet; it only accepts traffic explicitly routed through the CF Worker.
+   * The CF Worker logs the successful    synthesis to its KV store, creating an immutable record of the community achievement.
+4. EXECUTION REQUIREMENTS (For Agent)
+      * Update the CF Worker index.ts to include the /api/mint-k4 route.
+      * Write the logic to execute the outbound fetch to the OctoPrint API.
+      * Define the environmental variables required in wrangler.toml (e.g., OCTOPRINT_URL, OCTOPRINT_API_KEY).

@@ -1,0 +1,16 @@
+{
+  "name": "p31-fhir-worker",
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev --env local",
+    "deploy": "wrangler deploy --env production",
+    "db:init": "wrangler d1 execute p31-fhir-db --file=schema.sql --env production",
+    "db:init:local": "wrangler d1 execute p31-fhir-db --local --file=schema.sql"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240505.0",
+    "typescript": "^5.4.5",
+    "wrangler": "^3.57.0"
+  }
+}

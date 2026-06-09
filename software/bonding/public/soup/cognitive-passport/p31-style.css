@@ -1,0 +1,500 @@
+/* AUTO-GENERATED from andromeda/04_SOFTWARE/design-tokens/p31-universal-canon.json */
+/* Hub (p31ca): default. Org (phosphorus31.org): set <html data-p31-appearance="org"> */
+:root {
+  --p31-appearance: hub;
+  --p31-font-sans: "Atkinson Hyperlegible", sans-serif;
+  --p31-font-mono: "JetBrains Mono", monospace;
+  --p31-text-xs: 0.75rem;
+  --p31-text-sm: 0.875rem;
+  --p31-text-base: 1rem;
+  --p31-text-md: 1.0625rem;
+  --p31-text-lg: 1.125rem;
+  --p31-text-xl: 1.25rem;
+  --p31-text-2xl: 1.5rem;
+  --p31-text-3xl: 1.875rem;
+  --p31-text-4xl: 2.25rem;
+  --p31-leading-tight: 1.25;
+  --p31-leading-snug: 1.4;
+  --p31-leading-normal: 1.6;
+  --p31-leading-relaxed: 1.75;
+  --p31-tracking-tight: -0.02em;
+  --p31-tracking-normal: 0;
+  --p31-tracking-wide: 0.08em;
+  --p31-tracking-caps: 0.12em;
+  --p31-space-0: 0;
+  --p31-space-1: 0.25rem;
+  --p31-space-2: 0.5rem;
+  --p31-space-3: 0.75rem;
+  --p31-space-4: 1rem;
+  --p31-space-5: 1.25rem;
+  --p31-space-6: 1.5rem;
+  --p31-space-8: 2rem;
+  --p31-space-10: 2.5rem;
+  --p31-space-12: 3rem;
+  --p31-space-16: 4rem;
+  --p31-space-20: 5rem;
+  --p31-space-24: 6rem;
+  --p31-space-px: 1px;
+  --p31-radius-none: 0;
+  --p31-radius-sm: 4px;
+  --p31-radius-md: 8px;
+  --p31-radius-lg: 12px;
+  --p31-radius-xl: 16px;
+  --p31-radius-2xl: 1.25rem;
+  --p31-radius-full: 9999px;
+  --p31-shadow-none: none;
+  --p31-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06);
+  --p31-shadow-md: 0 4px 14px rgba(0, 0, 0, 0.08);
+  --p31-shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.12);
+  --p31-shadow-glowTeal: 0 0 24px rgba(37, 137, 125, 0.25);
+  --p31-duration-instant: 100ms;
+  --p31-duration-fast: 150ms;
+  --p31-duration-normal: 250ms;
+  --p31-duration-slow: 400ms;
+  --p31-duration-glacial: 800ms;
+  --p31-ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --p31-ease-emphasized: cubic-bezier(0.2, 0, 0, 1);
+  --p31-ease-decelerate: cubic-bezier(0, 0, 0.2, 1);
+  --p31-z-base: 0;
+  --p31-z-dropdown: 50;
+  --p31-z-sticky: 100;
+  --p31-z-overlay: 200;
+  --p31-z-modal: 300;
+  --p31-z-toast: 400;
+  --p31-focus-ring: 2px;
+  --p31-focus-offset: 2px;
+  --p31-focus-color-hub: rgba(77, 184, 168, 0.55);
+  --p31-focus-color-org: rgba(37, 137, 125, 0.45);
+
+  --p31-void: #0f1115;
+  --p31-surface: #161920;
+  --p31-surface2: #1c2028;
+  --p31-coral: #cc6247;
+  --p31-teal: #25897d;
+  --p31-cyan: #4db8a8;
+  --p31-cloud: #d8d6d0;
+  --p31-amber: #cda852;
+  --p31-lavender: #8b7cc9;
+  --p31-phosphorus: #3ba372;
+  --p31-paper: #f4f4f5;
+  --p31-ink: #1e293b;
+  --p31-muted: #6b7280;
+  --p31-phosphor: #00FF88;
+  --p31-border-subtle: rgba(255, 255, 255, 0.06);
+  --p31-glass-border: rgba(255, 255, 255, 0.08);
+  --p31-glass-surface: rgba(255, 255, 255, 0.04);
+  --p31-theme-color: #0f1115;
+
+  --void: var(--p31-void);
+  --surface: var(--p31-surface);
+  --surface2: var(--p31-surface2);
+  --coral: var(--p31-coral);
+  --teal: var(--p31-teal);
+  --cyan: var(--p31-cyan);
+  --phosphorus: var(--p31-phosphorus);
+  --cloud: var(--p31-cloud);
+  --muted: var(--p31-muted);
+  --amber: var(--p31-amber);
+  --border: var(--p31-border-subtle);
+}
+
+[data-p31-appearance="org"] {
+  color-scheme: light;
+  --p31-theme-color: #f5f4f0;
+  --p31-void: #f5f4f0;
+  --p31-surface: #ffffff;
+  --p31-surface2: #ebeae4;
+  --p31-coral: #cc6247;
+  --p31-teal: #25897d;
+  --p31-cyan: #4db8a8;
+  --p31-cloud: #1e293b;
+  --p31-amber: #cda852;
+  --p31-lavender: #8b7cc9;
+  --p31-phosphorus: #3ba372;
+  --p31-paper: #fdfcfa;
+  --p31-ink: #0f172a;
+  --p31-muted: #64748b;
+  --p31-phosphor: #00FF88;
+  --p31-border-subtle: rgba(15, 23, 42, 0.09);
+  --p31-glass-border: rgba(15, 23, 42, 0.07);
+  --p31-glass-surface: rgba(255, 255, 255, 0.82);
+
+  --void: var(--p31-void);
+  --surface: var(--p31-surface);
+  --surface2: var(--p31-surface2);
+  --coral: var(--p31-coral);
+  --teal: var(--p31-teal);
+  --cyan: var(--p31-cyan);
+  --phosphorus: var(--p31-phosphorus);
+  --cloud: var(--p31-cloud);
+  --muted: var(--p31-muted);
+  --amber: var(--p31-amber);
+  --border: var(--p31-border-subtle);
+}
+
+/* Prefer org when user wants light system UI on org host only (optional; set on <html>) */
+@media (prefers-color-scheme: light) {
+  html[data-p31-appearance="auto"] {
+    color-scheme: light;
+    --p31-void: #f5f4f0;
+    --p31-surface: #ffffff;
+    --p31-surface2: #ebeae4;
+    --p31-coral: #cc6247;
+    --p31-teal: #25897d;
+    --p31-cyan: #4db8a8;
+    --p31-cloud: #1e293b;
+    --p31-amber: #cda852;
+    --p31-lavender: #8b7cc9;
+    --p31-phosphorus: #3ba372;
+    --p31-paper: #fdfcfa;
+    --p31-ink: #0f172a;
+    --p31-muted: #64748b;
+    --p31-phosphor: #00FF88;
+    --p31-border-subtle: rgba(15, 23, 42, 0.09);
+    --p31-glass-border: rgba(15, 23, 42, 0.07);
+    --p31-glass-surface: rgba(255, 255, 255, 0.82);
+    --p31-theme-color: #f5f4f0;
+    --void: var(--p31-void);
+    --surface: var(--p31-surface);
+    --surface2: var(--p31-surface2);
+    --coral: var(--p31-coral);
+    --teal: var(--p31-teal);
+    --cyan: var(--p31-cyan);
+    --phosphorus: var(--p31-phosphorus);
+    --cloud: var(--p31-cloud);
+    --muted: var(--p31-muted);
+    --amber: var(--p31-amber);
+    --border: var(--p31-border-subtle);
+  }
+}
+
+html { color-scheme: dark; }
+[data-p31-appearance="org"] { color-scheme: light; }
+
+
+/* p31.missionTrio — Build / Create / Connect (EBC + hub index rail) */
+.p31-mission-trio--ebc {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-top: 1px solid var(--p31-glass-border);
+  background: var(--p31-glass-surface);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.p31-mission-trio--hub {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--p31-space-3);
+}
+.p31-mission-trio__link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  padding: var(--p31-space-4) var(--p31-space-4);
+  min-width: 0;
+  transition: background var(--p31-duration-base, 200ms) var(--p31-ease-out, ease);
+}
+.p31-mission-trio--ebc .p31-mission-trio__link:last-child { border-right: none; }
+.p31-mission-trio__link[aria-current="page"] {
+  background: rgba(77, 184, 168, 0.1);
+  cursor: default;
+}
+.p31-mission-trio__head {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-bottom: 0.35rem;
+}
+.p31-mission-trio__dot {
+  width: 0.35rem;
+  height: 0.35rem;
+  border-radius: 999px;
+  background: var(--p31-teal);
+  flex-shrink: 0;
+}
+.p31-mission-trio__link--build .p31-mission-trio__dot { background: var(--p31-phosphorus); }
+.p31-mission-trio__link--create .p31-mission-trio__dot { background: var(--p31-amber); }
+.p31-mission-trio__link--connect .p31-mission-trio__dot { background: var(--p31-coral); }
+.p31-mission-trio__verb {
+  font-family: var(--p31-font-mono);
+  font-size: var(--p31-text-2xs, 0.6rem);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--p31-cloud);
+}
+.p31-mission-trio__desc {
+  display: block;
+  font-size: var(--p31-text-xs, 0.7rem);
+  line-height: 1.45;
+  color: var(--p31-muted);
+}
+.p31-mission-trio__now { font-weight: 600; color: var(--p31-cyan); margin-right: 0.15em; }
+.p31-mission-trio__link--build { }
+.p31-mission-trio__link--create { }
+.p31-mission-trio__link--connect { }
+@media (prefers-reduced-motion: reduce) {
+  .p31-mission-trio, .p31-mission-trio * {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+
+/* p31.designDoctrine — Gray Rock → Alive */
+
+/* Gray Rock: default state for all surfaces */
+.p31-gray-rock {
+  color: var(--p31-cloud);
+  background: var(--p31-void);
+  font-family: var(--p31-font-sans);
+  font-size: var(--p31-text-md);
+  line-height: var(--p31-leading-normal);
+  letter-spacing: var(--p31-tracking-normal);
+}
+
+/* Layout: Focus (single column, centered) */
+.p31-layout-focus {
+  max-width: 42rem;
+  margin-inline: auto;
+  padding-inline: var(--p31-space-5);
+  padding-block: var(--p31-space-8);
+}
+
+/* Layout: Workshop (sidebar + main) */
+.p31-layout-workshop {
+  display: flex;
+  gap: var(--p31-space-6);
+  padding: var(--p31-space-6);
+  min-height: 100dvh;
+}
+.p31-layout-workshop__sidebar {
+  flex: 0 0 14rem;
+  position: sticky;
+  top: var(--p31-space-6);
+  align-self: flex-start;
+  max-height: calc(100dvh - var(--p31-space-12));
+  overflow-y: auto;
+}
+.p31-layout-workshop__main {
+  flex: 1 1 0%;
+  min-width: 0;
+}
+@media (max-width: 639px) {
+  .p31-layout-workshop {
+    flex-direction: column;
+  }
+  .p31-layout-workshop__main {
+    order: 1;
+  }
+  .p31-layout-workshop__sidebar {
+    position: static;
+    flex: none;
+    max-height: none;
+    order: 2;
+  }
+}
+
+/* Layout: Gallery (grid, progressive reveal) */
+.p31-layout-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr));
+  gap: var(--p31-space-6);
+  padding: var(--p31-space-6);
+}
+
+/* Glass panel (one per viewport section) */
+.p31-glass {
+  background: var(--p31-glass-surface);
+  border: 1px solid var(--p31-glass-border);
+  border-radius: var(--p31-radius-lg);
+  padding: var(--p31-space-6);
+}
+
+/* Card (gallery item — Gray Rock default, Alive on hover) */
+.p31-card {
+  border: 1px solid var(--p31-border-subtle);
+  border-radius: var(--p31-radius-lg);
+  padding: var(--p31-space-5);
+  transition: border-color var(--p31-duration-fast) var(--p31-ease-standard),
+              background var(--p31-duration-fast) var(--p31-ease-standard);
+}
+.p31-card:hover,
+.p31-card:focus-within {
+  border-color: var(--p31-teal);
+  background: var(--p31-glass-surface);
+}
+@media (prefers-reduced-motion: reduce) {
+  .p31-card { transition: none; }
+}
+
+.p31-card__title {
+  font-size: var(--p31-text-lg);
+  font-weight: 700;
+  line-height: var(--p31-leading-tight);
+  color: var(--p31-cloud);
+  margin: 0 0 var(--p31-space-2) 0;
+}
+.p31-card__desc {
+  font-size: var(--p31-text-sm);
+  color: var(--p31-muted);
+  line-height: var(--p31-leading-normal);
+  margin: 0;
+}
+
+/* Status badge (pill) */
+.p31-badge {
+  display: inline-block;
+  font-size: var(--p31-text-xs);
+  font-weight: 600;
+  letter-spacing: var(--p31-tracking-caps);
+  text-transform: uppercase;
+  padding: 0.125rem var(--p31-space-3);
+  border-radius: var(--p31-radius-full);
+  background: var(--p31-surface2);
+  color: var(--p31-muted);
+}
+.p31-badge--live { background: color-mix(in srgb, var(--p31-phosphorus) 15%, transparent); color: var(--p31-phosphorus); }
+.p31-badge--research { background: color-mix(in srgb, var(--p31-lavender) 15%, transparent); color: var(--p31-lavender); }
+.p31-badge--prototype { background: color-mix(in srgb, var(--p31-amber) 15%, transparent); color: var(--p31-amber); }
+.p31-badge--pending { background: var(--p31-surface2); color: var(--p31-muted); }
+
+/* Buttons */
+.p31-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: var(--p31-space-3) var(--p31-space-5);
+  font-family: var(--p31-font-sans);
+  font-size: var(--p31-text-sm);
+  font-weight: 600;
+  line-height: 1;
+  border-radius: var(--p31-radius-md);
+  border: none;
+  cursor: pointer;
+  transition: background var(--p31-duration-fast) var(--p31-ease-standard),
+              color var(--p31-duration-fast) var(--p31-ease-standard),
+              border-color var(--p31-duration-fast) var(--p31-ease-standard);
+  text-decoration: none;
+}
+.p31-btn:focus-visible {
+  outline: var(--p31-focus-ring) solid var(--p31-focus-color-hub);
+  outline-offset: var(--p31-focus-offset);
+}
+.p31-btn--primary {
+  background: var(--p31-teal);
+  color: var(--p31-void);
+}
+.p31-btn--primary:hover { background: var(--p31-cyan); }
+.p31-btn--secondary {
+  background: transparent;
+  border: 1px solid var(--p31-border-subtle);
+  color: var(--p31-cloud);
+}
+.p31-btn--secondary:hover {
+  border-color: var(--p31-teal);
+  color: var(--p31-teal);
+}
+@media (prefers-reduced-motion: reduce) {
+  .p31-btn { transition: none; }
+}
+
+/* Heading hierarchy (doctrine) */
+.p31-h1 {
+  font-size: var(--p31-text-3xl);
+  font-weight: 700;
+  line-height: var(--p31-leading-tight);
+  letter-spacing: var(--p31-tracking-tight);
+  color: var(--p31-cloud);
+  margin: 0 0 var(--p31-space-4) 0;
+}
+.p31-h2 {
+  font-size: var(--p31-text-xl);
+  font-weight: 700;
+  line-height: var(--p31-leading-tight);
+  color: var(--p31-cloud);
+  margin: var(--p31-space-8) 0 var(--p31-space-3) 0;
+}
+.p31-h3 {
+  font-size: var(--p31-text-lg);
+  font-weight: 600;
+  line-height: var(--p31-leading-snug);
+  color: var(--p31-cloud);
+  margin: var(--p31-space-6) 0 var(--p31-space-2) 0;
+}
+
+.p31-caps {
+  font-size: var(--p31-text-xs);
+  font-weight: 600;
+  letter-spacing: var(--p31-tracking-caps);
+  text-transform: uppercase;
+  color: var(--p31-muted);
+}
+
+/* Section spacing (breathing room) */
+.p31-section {
+  margin-block: var(--p31-space-8);
+}
+.p31-section + .p31-section {
+  padding-top: var(--p31-space-8);
+  border-top: 1px solid var(--p31-border-subtle);
+}
+
+/* User preference overrides (passport-driven) */
+:root[data-p31-density="compact"] {
+  --p31-space-section: var(--p31-space-4);
+  --p31-text-body: var(--p31-text-base);
+}
+:root[data-p31-density="spacious"] {
+  --p31-space-section: var(--p31-space-10);
+  --p31-text-body: var(--p31-text-lg);
+}
+:root[data-p31-contrast="high"] {
+  --p31-cloud: #ffffff;
+  --p31-muted: #9ca3af;
+  --p31-border-subtle: rgba(255, 255, 255, 0.15);
+}
+:root[data-p31-contrast="max"] {
+  --p31-void: #000000;
+  --p31-cloud: #ffffff;
+  --p31-muted: #d1d5db;
+  --p31-border-subtle: #ffffff;
+}
+:root[data-p31-motion='none'] *,
+:root[data-p31-motion='none'] *::before,
+:root[data-p31-motion='none'] *::after {
+  animation-duration: 0s !important;
+  transition-duration: 0s !important;
+}
+
+/* Progressive disclosure (show more) */
+.p31-reveal {
+  display: none;
+}
+.p31-reveal[data-revealed="true"] {
+  display: block;
+}
+.p31-reveal-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--p31-space-2);
+  color: var(--p31-muted);
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: var(--p31-font-sans);
+  font-size: var(--p31-text-sm);
+  padding: var(--p31-space-3) 0;
+}
+.p31-reveal-trigger:hover,
+.p31-reveal-trigger:focus-visible {
+  color: var(--p31-teal);
+}

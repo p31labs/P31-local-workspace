@@ -1,0 +1,192 @@
+---
+// @p31-layout: Workshop
+import AppShell from '../layouts/AppShell.astro';
+
+const CHANNELS = [
+  { id: 'k4-global', name: 'K₄ Global', type: 'mesh', active: true, unread: 0 },
+  { id: 'ops-bridge', name: 'Ops Bridge', type: 'system', active: false, unread: 3 },
+  { id: 'direct-will', name: 'Will (Direct)', type: 'peer', active: false, unread: 0 },
+  { id: 'direct-sj', name: 'S.J. (Direct)', type: 'peer', active: false, unread: 1 },
+];
+---
+
+<AppShell title="Messaging Hub — P31 Labs" routeName="messaging-hub">
+  <div class="max-w-7xl mx-auto w-full px-4 md:px-6 flex flex-col min-h-[80vh] h-full pb-8">
+
+    <header class="mb-6 pt-2 flex items-end justify-between shrink-0 relative z-10">
+      <div>
+        <p class="text-[10px] font-mono tracking-[0.2em] uppercase text-p31-emerald mb-1 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-p31-emerald animate-pulse inline-block"></span>
+          E2E Quantum Link
+        </p>
+        <h1 class="text-3xl md:text-4xl font-serif text-p31-cloud">Messaging Hub</h1>
+      </div>
+      <div class="text-right hidden md:block">
+        <div class="glass-panel px-3 py-1.5 rounded-lg border border-p31-emerald/20 shadow-[0_0_15px_rgba(16,185,129,0.1)]">
+          <span class="text-[9px] font-mono uppercase tracking-widest text-white/40 block">Crypto Status</span>
+          <span class="text-xs font-mono font-bold text-p31-emerald">ECDH P-256 SECURED</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="flex flex-col md:flex-row gap-4 flex-grow relative z-10">
+
+      <aside class="md:w-56 shrink-0 flex flex-row md:flex-col gap-2 overflow-x-auto md:overflow-y-auto" style="scrollbar-width: none;">
+        {CHANNELS.map((ch) => (
+          <button 
+            type="button"
+            class={`shrink-0 text-left p-3 rounded-xl transition-all border flex items-center justify-between ${
+              ch.active 
+                ? 'bg-white/10 border-p31-emerald/30 shadow-[0_0_15px_rgba(16,185,129,0.1)]' 
+                : 'glass-panel border-transparent hover:bg-white/5 hover:border-white/10'
+            }`}
+          >
+            <div>
+              <div class={`font-bold text-sm ${ch.active ? 'text-p31-emerald' : 'text-white'}`}>
+                {ch.type === 'peer' ? '@ ' : '# '}{ch.name}
+              </div>
+              <div class="text-[9px] font-mono text-white/40 uppercase tracking-widest mt-1">
+                {ch.type} link
+              </div>
+            </div>
+            {ch.unread > 0 && (
+              <div class="w-5 h-5 rounded-full bg-p31-violet text-white text-[10px] font-bold flex items-center justify-center">
+                {ch.unread}
+              </div>
+            )}
+          </button>
+        ))}
+      </aside>
+
+      <main class="flex-grow flex flex-col min-h-[50vh] p31-q-surface rounded-2xl border-l-2 border-p31-emerald bg-black/40 overflow-hidden relative shadow-2xl">
+        
+        <div class="flex-grow overflow-y-auto p-4 md:p-6 flex flex-col gap-6 relative z-10" id="chat-history">
+          
+          <div class="flex flex-col items-center my-4 opacity-50">
+            <div class="text-[10px] font-mono tracking-widest uppercase text-white/60 mb-1">Session Initialized</div>
+            <div class="h-px w-24 bg-white/20"></div>
+          </div>
+
+          <div class="flex gap-4 max-w-[85%]">
+            <div class="w-8 h-8 rounded-full bg-white/10 border border-white/20 flex items-center justify-center shrink-0 font-serif text-sm">W</div>
+            <div class="flex flex-col gap-1">
+              <div class="flex items-baseline gap-2">
+                <span class="text-xs font-bold text-white">Will</span>
+                <span class="text-[9px] font-mono text-white/40">12:44 PM</span>
+              </div>
+              <div class="glass-panel p-3 rounded-2xl rounded-tl-sm text-sm text-p31-cloud leading-relaxed">
+                The AppShell merge is complete. Starfield kinematics are running perfectly on mobile.
+              </div>
+            </div>
+          </div>
+
+          <div class="flex gap-4 max-w-[85%] self-end flex-row-reverse">
+            <div class="w-8 h-8 rounded-full bg-p31-emerald/20 border border-p31-emerald/50 flex items-center justify-center shrink-0 font-serif text-sm text-p31-emerald shadow-[0_0_10px_rgba(16,185,129,0.2)]">O</div>
+            <div class="flex flex-col gap-1 items-end">
+              <div class="flex items-baseline gap-2 flex-row-reverse">
+                <span class="text-xs font-bold text-p31-emerald">Operator</span>
+                <span class="text-[9px] font-mono text-white/40">12:45 PM</span>
+              </div>
+              <div class="p-3 rounded-2xl rounded-tr-sm text-sm text-white leading-relaxed" style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3);">
+                Confirmed. Deploying the final Messaging Hub matrix now. Verifiers are running.
+              </div>
+            </div>
+          </div>
+
+          <div id="typing-indicator" class="hidden flex gap-4 max-w-[85%]">
+            <div class="w-8 h-8 rounded-full bg-white/10 border border-p31-violet/40 flex items-center justify-center shrink-0 font-serif text-sm text-p31-violet shadow-[0_0_10px_rgba(139,92,246,0.2)] animate-pulse">K</div>
+            <div class="flex flex-col gap-1">
+              <div class="flex items-baseline gap-2">
+                <span class="text-xs font-bold text-p31-violet">K₄-Cage (Automated)</span>
+              </div>
+              <div id="typing-text" class="font-mono text-xs text-p31-violet leading-relaxed bg-p31-violet/10 px-3 py-2 rounded-lg border border-p31-violet/20">
+                </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="p-4 bg-black/60 backdrop-blur-md border-t border-white/10 shrink-0 relative z-10">
+          <div class="relative flex items-end gap-2">
+            <textarea 
+              rows="1" 
+              class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/30 focus:outline-none focus:border-p31-emerald focus:bg-white/10 transition-all resize-none font-sans"
+              placeholder="Transmit securely to K₄ Global..."
+              style="min-height: 46px; max-height: 120px;"
+            ></textarea>
+            <button class="shrink-0 h-[46px] w-[46px] rounded-xl bg-p31-emerald/20 text-p31-emerald hover:bg-p31-emerald/40 border border-p31-emerald/50 flex items-center justify-center transition-colors">
+              <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="22" y1="2" x2="11" y2="13"></line>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+              </svg>
+            </button>
+          </div>
+          <div class="flex justify-between items-center mt-2 px-1">
+            <span class="text-[9px] font-mono text-white/30 uppercase tracking-widest">Enter to send · Shift+Enter for newline</span>
+            <span class="text-[9px] font-mono text-p31-emerald uppercase tracking-widest flex items-center gap-1">
+              <svg viewBox="0 0 24 24" width="10" height="10" stroke="currentColor" stroke-width="2" fill="none"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+              E2E Active
+            </span>
+          </div>
+        </div>
+      </main>
+
+      <aside class="hidden lg:flex w-64 shrink-0 flex-col gap-4 relative z-10">
+        <div class="glass-panel p-4 rounded-xl border border-white/5">
+          <h3 class="text-[10px] font-mono uppercase tracking-widest text-white/40 mb-3 border-b border-white/10 pb-2">Session Identity</h3>
+          <div class="flex items-center gap-3 mb-3">
+            <div class="w-10 h-10 rounded bg-p31-emerald/20 border border-p31-emerald/50" style="background-image: repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(16,185,129,0.2) 2px, rgba(16,185,129,0.2) 4px);"></div>
+            <div class="flex flex-col min-w-0">
+              <span class="text-xs font-bold text-white truncate">Local Operator</span>
+              <span class="text-[9px] font-mono text-white/50 truncate">0x9F4A...B82C</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass-panel p-4 rounded-xl border border-white/5 flex-grow">
+          <h3 class="text-[10px] font-mono uppercase tracking-widest text-white/40 mb-3 border-b border-white/10 pb-2">Link Diagnostics</h3>
+          <ul class="flex flex-col gap-3 font-mono text-[9px] tracking-wider text-white/60">
+            <li class="flex justify-between"><span>Protocol</span><span class="text-white">P31-WSS-v2</span></li>
+            <li class="flex justify-between"><span>Lattice</span><span class="text-p31-emerald">VERIFIED</span></li>
+            <li class="flex justify-between"><span>Latency</span><span class="text-white">18ms</span></li>
+            <li class="flex justify-between"><span>Q_Factor</span><span class="text-white">0.9992</span></li>
+            <li class="flex justify-between pt-2 border-t border-white/10 mt-1"><span>Dropped</span><span class="text-white">0</span></li>
+          </ul>
+        </div>
+        
+        <div class="text-[8px] font-mono text-white/20 text-center uppercase tracking-widest opacity-50">
+          p31.messagingHub/0.1.0
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('astro:page-load', () => {
+      const indicator = document.getElementById('typing-indicator');
+      const textContainer = document.getElementById('typing-text');
+      const history = document.getElementById('chat-history');
+      
+      if (!indicator || !textContainer || !history) return;
+
+      const message = "> SYSTEM: E2E tests verified. File missing error resolved. AppShell integration complete. Operator, you are cleared for deployment.";
+      
+      setTimeout(() => {
+        indicator.classList.remove('hidden');
+        history.scrollTop = history.scrollHeight;
+        
+        let charIndex = 0;
+        const typeInterval = setInterval(() => {
+          textContainer.textContent += message.charAt(charIndex);
+          charIndex++;
+          history.scrollTop = history.scrollHeight;
+          
+          if (charIndex >= message.length) {
+            clearInterval(typeInterval);
+            indicator.querySelector('.animate-pulse')?.classList.remove('animate-pulse');
+          }
+        }, 35);
+      }, 1500);
+    });
+  </script>
+</AppShell>

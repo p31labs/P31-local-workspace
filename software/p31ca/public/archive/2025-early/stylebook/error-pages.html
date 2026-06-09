@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Error pages · P31 Stylebook</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/p31-style.css">
+  <link rel="stylesheet" href="/lib/p31-fluid.css">
+  <link rel="stylesheet" href="/stylebook/_chrome.css">
+  <style>
+    .err-mock {
+      padding: 64px 32px;
+      background: var(--p31-void);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: 14px;
+      text-align: center;
+    }
+    .err-code {
+      font-family: var(--p31-font-mono);
+      font-size: 14px;
+      color: var(--p31-coral);
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      margin-bottom: 16px;
+    }
+    .err-glyph {
+      font-size: 96px;
+      line-height: 1;
+      color: var(--p31-surface3);
+      margin-bottom: 24px;
+      font-family: var(--p31-font-mono);
+    }
+    .err-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--p31-paper);
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+    .err-body {
+      font-size: 15px;
+      color: var(--p31-cloud);
+      max-width: 480px;
+      margin: 0 auto 24px;
+      line-height: 1.5;
+    }
+    .err-actions {
+      display: inline-flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .err-action {
+      padding: 10px 18px;
+      background: var(--p31-paper);
+      color: var(--p31-void);
+      border: none;
+      border-radius: 10px;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    .err-action.ghost {
+      background: transparent;
+      color: var(--p31-cloud);
+      border: 1px solid var(--p31-border-subtle);
+    }
+    .err-meta {
+      font-family: var(--p31-font-mono);
+      font-size: 11px;
+      color: var(--p31-muted);
+      margin-top: 32px;
+      padding-top: 16px;
+      border-top: 1px solid var(--p31-border-subtle);
+    }
+  </style>
+</head>
+<body>
+  <script type="module">
+    import { renderShell, code, callout } from '/stylebook/_chrome.js';
+    import { P31ThemeController } from '/lib/p31-theme-engine.mjs';
+    window.p31Theme = new P31ThemeController({ defaultTheme: 'hub' });
+    
+    const content = `
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">404</div>
+          <h2 class="sb-h2">Page not found</h2>
+          <p class="sb-text">The classic. Honest about what happened. Offers paths forward, not apology.</p>
+        </div>
+        
+        <div class="err-mock">
+          <div class="err-code">404 · Not found</div>
+          <div class="err-glyph">⊘</div>
+          <div class="err-title">This URL doesn't exist</div>
+          <div class="err-body">The page you're looking for either moved, was renamed, or never existed. The URL above is exactly what was requested — check it for typos, or start from a known surface below.</div>
+          <div class="err-actions">
+            <a href="/" class="err-action">Hub home</a>
+            <a href="/stylebook/sitemap.html" class="err-action ghost">View site map</a>
+          </div>
+          <div class="err-meta">requested · /accidentally-deleted-page</div>
+        </div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">500</div>
+          <h2 class="sb-h2">Server error</h2>
+          <p class="sb-text">When the system itself failed. Acknowledge that <em>we</em> broke it, not the user.</p>
+        </div>
+        
+        <div class="err-mock">
+          <div class="err-code" style="color: var(--p31-amber);">500 · Internal error</div>
+          <div class="err-glyph" style="color: var(--p31-amber);">!</div>
+          <div class="err-title">We hit a snag</div>
+          <div class="err-body">The server returned an error processing this request. This isn't your fault — the system is being checked. Your data is safe. Try refreshing in a moment, or check the live status page.</div>
+          <div class="err-actions">
+            <a href="javascript:location.reload()" class="err-action">Try again</a>
+            <a href="/glass-box" class="err-action ghost">View status</a>
+          </div>
+          <div class="err-meta">trace · 2026-05-01T17:42:09Z · req-x9k7</div>
+        </div>
+        
+        ${callout('info', 'Trace ID matters', 'Always show a request/trace ID on 500. If a user reports the issue, the operator can find that exact trace in logs without playing detective.')}
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Offline</div>
+          <h2 class="sb-h2">No connection</h2>
+          <p class="sb-text">Mobile, train tunnel, flaky cafe wifi. Recognize the state, hint at recovery.</p>
+        </div>
+        
+        <div class="err-mock">
+          <div class="err-code" style="color: var(--p31-muted);">○ Offline</div>
+          <div class="err-glyph" style="color: var(--p31-muted);">◌</div>
+          <div class="err-title">You're offline</div>
+          <div class="err-body">No network connection. Local edits are preserved and will sync automatically when connectivity returns. Mesh state below is from your last sync.</div>
+          <div class="err-actions">
+            <a href="javascript:location.reload()" class="err-action">Try again</a>
+          </div>
+          <div class="err-meta">last sync · 14 minutes ago</div>
+        </div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">403</div>
+          <h2 class="sb-h2">Forbidden</h2>
+          <p class="sb-text">User is authenticated but doesn't have permission. Don't reveal what they're missing.</p>
+        </div>
+        
+        <div class="err-mock">
+          <div class="err-code">403 · Forbidden</div>
+          <div class="err-glyph">⊗</div>
+          <div class="err-title">You don't have access to this</div>
+          <div class="err-body">This resource exists, but isn't available to your account. If you think this is a mistake, contact the operator who shared the link with you.</div>
+          <div class="err-actions">
+            <a href="/" class="err-action">Hub home</a>
+          </div>
+          <div class="err-meta">requested · /family/private-graph</div>
+        </div>
+        
+        ${callout('warn', 'Don\'t leak structure', 'Never tell a 403\'d user "Only admins can see this" — that confirms the resource type and the role gating it. Just say "you don\'t have access" and stop.')}
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Maintenance</div>
+          <h2 class="sb-h2">Planned downtime</h2>
+        </div>
+        
+        <div class="err-mock">
+          <div class="err-code" style="color: var(--p31-cyan);">503 · Maintenance</div>
+          <div class="err-glyph" style="color: var(--p31-cyan);">⏲</div>
+          <div class="err-title">Brief maintenance · back at 18:00 UTC</div>
+          <div class="err-body">We're applying a planned update. Estimated time: 12 minutes. Operator-only surfaces (command center) remain available locally.</div>
+          <div class="err-actions">
+            <a href="/glass-box" class="err-action">View status</a>
+          </div>
+          <div class="err-meta">started · 2026-05-01T17:48Z · ETA · 18:00Z</div>
+        </div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Anatomy</div>
+          <h2 class="sb-h2">What every error page needs</h2>
+        </div>
+        
+        <table class="sb-table">
+          <thead><tr><th>Element</th><th>Purpose</th><th>Required?</th></tr></thead>
+          <tbody>
+            <tr><td>HTTP status code</td><td>What technically happened (404, 500, 403)</td><td>Yes</td></tr>
+            <tr><td>Plain-language status</td><td>What the operator sees in plain English</td><td>Yes</td></tr>
+            <tr><td>Glyph / icon</td><td>Visual anchor — sets tone</td><td>Yes</td></tr>
+            <tr><td>Honest title</td><td>What's actually wrong</td><td>Yes</td></tr>
+            <tr><td>Body explanation</td><td>Why this happened, what's safe, what to do</td><td>Yes</td></tr>
+            <tr><td>Primary action</td><td>The most useful next step</td><td>Yes</td></tr>
+            <tr><td>Secondary action</td><td>Sitemap, status page, or escape hatch</td><td>Usually</td></tr>
+            <tr><td>Trace / request ID</td><td>Operator support reference</td><td>For 500-class errors</td></tr>
+            <tr><td>Timestamp</td><td>When this happened (for support)</td><td>For 500-class errors</td></tr>
+          </tbody>
+        </table>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Implementation</div>
+          <h2 class="sb-h2">Cloudflare Pages config</h2>
+        </div>
+        
+        ${code(`# /public/_redirects — handles 404 fallback for SPA
+/* /404.html 404
+
+# Worker error handler for API surfaces
+async function handleError(err, request, env) {
+  const status = err.status || 500;
+  const traceId = crypto.randomUUID().slice(0, 8);
+  
+  // Log the actual error with trace
+  console.error(\`[\${traceId}] \${err.message}\`, err.stack);
+  
+  // User-safe response
+  return new Response(JSON.stringify({
+    error: err.userMessage || 'Internal server error',
+    traceId,
+    timestamp: new Date().toISOString()
+  }), {
+    status,
+    headers: { 'content-type': 'application/json' }
+  });
+}`, 'js', 'Error handler')}
+        
+        ${code(`<!-- /public/404.html — minimal, fast, themed -->
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Not found · P31</title>
+  <link rel="stylesheet" href="/p31-style.css">
+  <link rel="stylesheet" href="/lib/p31-fluid.css">
+</head>
+<body>
+  <main class="error-page">
+    <div class="err-code">404</div>
+    <h1>This URL doesn't exist</h1>
+    <p>The page you're looking for either moved or never existed.</p>
+    <a href="/" class="btn-primary">Hub home</a>
+    <a href="/stylebook/sitemap.html" class="btn-ghost">Site map</a>
+  </main>
+</body>
+</html>`, 'html', '/public/404.html')}
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Status codes</div>
+          <h2 class="sb-h2">When to use which</h2>
+        </div>
+        
+        <table class="sb-table">
+          <thead><tr><th>Code</th><th>Meaning</th><th>Use when</th></tr></thead>
+          <tbody>
+            <tr><td><code>200</code></td><td>OK</td><td>Default success</td></tr>
+            <tr><td><code>201</code></td><td>Created</td><td>POST that created a resource</td></tr>
+            <tr><td><code>204</code></td><td>No content</td><td>DELETE success, or PUT with no body</td></tr>
+            <tr><td><code>301</code></td><td>Permanent redirect</td><td>Renamed URL, will never come back</td></tr>
+            <tr><td><code>302</code></td><td>Temporary redirect</td><td>Login flow, A/B test, short URL</td></tr>
+            <tr><td><code>304</code></td><td>Not modified</td><td>If-None-Match matched (cache valid)</td></tr>
+            <tr><td><code>400</code></td><td>Bad request</td><td>Malformed input the user can fix</td></tr>
+            <tr><td><code>401</code></td><td>Unauthorized</td><td>Authentication required (sign in)</td></tr>
+            <tr><td><code>403</code></td><td>Forbidden</td><td>Authenticated but lacks permission</td></tr>
+            <tr><td><code>404</code></td><td>Not found</td><td>URL doesn't map to a resource</td></tr>
+            <tr><td><code>410</code></td><td>Gone</td><td>Deliberately removed, won't return</td></tr>
+            <tr><td><code>429</code></td><td>Too many requests</td><td>Rate limit hit</td></tr>
+            <tr><td><code>500</code></td><td>Internal server error</td><td>Our bug</td></tr>
+            <tr><td><code>503</code></td><td>Service unavailable</td><td>Maintenance, overload</td></tr>
+          </tbody>
+        </table>
+      </section>
+    `;
+    
+    renderShell({
+      activeId: 'error-pages',
+      breadcrumb: [
+        { href: '/stylebook/', label: 'Stylebook' },
+        { href: '/stylebook/', label: 'Patterns' },
+        { label: 'Error pages' }
+      ],
+      title: 'Error pages',
+      subtitle: '404, 500, 403, offline, maintenance. The pages we hope you never see — designed to be honest when you do.',
+      meta: [
+        { label: 'Patterns', value: '5' },
+        { label: 'Status codes', value: '14' }
+      ],
+      content
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,216 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const researchJsonLd = [
+  {
+    "@context": "https://schema.org",
+    "@type": "ScholarlyArticle",
+    "name": "Tetrahedron Protocol: K4 Complete Graph as a Stability Framework for Decentralized Systems",
+    "author": { "@type": "Person", "name": "William R. Johnson", "sameAs": "https://orcid.org/0009-0002-2492-9079" },
+    "url": "https://doi.org/10.5281/zenodo.19004485",
+    "sameAs": "https://doi.org/10.5281/zenodo.19004485",
+    "publisher": { "@type": "Organization", "name": "Zenodo" },
+    "datePublished": "2026-01-26"
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "ScholarlyArticle",
+    "name": "Genesis Whitepaper v1.1: SIC-POVM Measurement Framework and EDE Architecture",
+    "author": { "@type": "Person", "name": "William R. Johnson", "sameAs": "https://orcid.org/0009-0002-2492-9079" },
+    "url": "https://doi.org/10.5281/zenodo.19411363",
+    "sameAs": "https://doi.org/10.5281/zenodo.19411363",
+    "publisher": { "@type": "Organization", "name": "Zenodo" },
+    "datePublished": "2026"
+  }
+];
+---
+
+<Layout title="Research | P31 Labs" description="Published research from P31 Labs — 22 open-access Zenodo deposits (P31 Research Series I–XX + two standalone analyses). ORCID 0009-0002-2492-9079." jsonLd={researchJsonLd}>
+  <main class="animate-[fadeIn_0.4s_ease-out] bg-white min-h-screen pb-24">
+
+    {/* Header */}
+    <div class="bg-gradient-to-br from-teal-900 via-espresso to-teal-900 text-white pt-32 pb-20 px-6">
+      <div class="max-w-5xl mx-auto">
+        <div class="inline-block bg-cyan-500/20 text-cyan-400 font-bold text-xs px-4 py-1.5 rounded-full border border-cyan-500/30 mb-6">
+          Open-Access Publications
+        </div>
+        <h1 class="text-5xl font-heading font-black mb-6">Research</h1>
+        <p class="text-xl opacity-80 max-w-2xl">
+          Mathematical frameworks grounding the P31 ecosystem. All publications open-access. ORCID: <a href="https://orcid.org/0009-0002-2492-9079" target="_blank" rel="noopener noreferrer" class="text-cyan-400 hover:text-cyan-300 font-bold">0009-0002-2492-9079</a>
+        </p>
+      </div>
+    </div>
+
+    <div class="max-w-5xl mx-auto px-6 -mt-10">
+
+      {/* ── PEER-REVIEWED ZENODO PUBLICATIONS ─────────────────────── */}
+      <div class="mb-4">
+        <div class="inline-flex items-center gap-2 bg-cyan-500/20 text-cyan-700 text-xs font-bold px-4 py-2 rounded-full mb-8 border border-cyan-500/30">
+          <span class="w-2 h-2 bg-cyan-500 rounded-full"></span>
+          ZENODO PUBLICATIONS
+        </div>
+      </div>
+
+      {/* Tetrahedron Protocol */}
+      <div class="bg-white p-8 md:p-12 rounded-2xl shadow-xl border border-cloud mb-8">
+        <div class="flex items-start gap-4 mb-6">
+          <div class="w-14 h-14 bg-cyan-500/10 rounded-2xl flex items-center justify-center text-3xl flex-shrink-0">&#x25B2;</div>
+          <div class="flex-1">
+            <div class="flex flex-wrap items-center gap-3 mb-2">
+              <h2 class="text-2xl font-heading font-black text-espresso">Tetrahedron Protocol (K4)</h2>
+              <span class="bg-teal-600 text-white text-xs font-bold px-3 py-1 rounded-full">PUBLISHED</span>
+            </div>
+            <div class="flex flex-wrap gap-3 text-xs text-espresso/50 font-mono mb-4">
+              <span>DOI: 10.5281/zenodo.19004485</span>
+              <span>&#xB7;</span>
+              <span>prior v1: 18627420</span>
+              <span>&#xB7;</span>
+              <span>280+ views</span>
+              <span>&#xB7;</span>
+              <span>240+ downloads</span>
+            </div>
+          </div>
+        </div>
+
+        <p class="text-espresso/80 leading-relaxed mb-4">
+          A geometric proof demonstrating that the K4 complete graph — the tetrahedron — represents the minimum isostatic structure (Maxwell's condition: 3V&#x2212;E=6 satisfied at V=4, E=6). The paper extends this to argue that decentralized systems built on K4 topology are inherently more stable than hub-and-spoke architectures under the same load, because each node maintains three independent load paths.
+        </p>
+        <p class="text-espresso/80 leading-relaxed mb-6">
+          Companion open-source implementation demonstrates the topology applied to OHLCV price data mapping in K-space, revealing structural patterns invisible in standard 2D charts. Published on Zenodo with open-source code included.
+        </p>
+
+        <div class="flex flex-wrap gap-4">
+          <a href="https://doi.org/10.5281/zenodo.19004485" target="_blank" rel="noopener noreferrer" class="bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 px-6 rounded-xl transition-colors">
+            Read on Zenodo &#x2192;
+          </a>
+          <a href="https://zenodo.org/search?q=creators.name:%22Johnson%2C%20William%20R.%22&l=list&p=1&s=25&sort=newest" target="_blank" rel="noopener noreferrer" class="bg-white hover:bg-cloud text-espresso font-bold py-3 px-6 rounded-xl border-2 border-espresso/10 transition-colors">
+            Full portfolio (22)
+          </a>
+        </div>
+      </div>
+
+      {/* Genesis Whitepaper */}
+      <div class="bg-white p-8 md:p-12 rounded-2xl shadow-xl border border-cloud mb-16">
+        <div class="flex items-start gap-4 mb-6">
+          <div class="w-14 h-14 bg-coral-500/10 rounded-2xl flex items-center justify-center text-3xl flex-shrink-0">&#x2B21;</div>
+          <div class="flex-1">
+            <div class="flex flex-wrap items-center gap-3 mb-2">
+              <h2 class="text-2xl font-heading font-black text-espresso">Genesis Whitepaper v1.1</h2>
+              <span class="bg-teal-600 text-white text-xs font-bold px-3 py-1 rounded-full">PUBLISHED</span>
+            </div>
+            <div class="flex flex-wrap gap-3 text-xs text-espresso/50 font-mono mb-4">
+              <span>DOI: 10.5281/zenodo.19411363</span>
+              <span>&#xB7;</span>
+              <span>April 2026</span>
+            </div>
+          </div>
+        </div>
+
+        <p class="text-espresso/80 leading-relaxed mb-4">
+          Formal specification of the P31 ecosystem's theoretical foundations. Covers the SIC-POVM (Symmetric Informationally Complete Positive Operator-Valued Measure) measurement framework adapted for cognitive prosthetics, the EDE (Everything Development Environment) architecture, Q Distribution spoon tracking, and Samson's Law entropy formalization.
+        </p>
+
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
+          {["SIC-POVM Measurement", "EDE Architecture", "Q Distribution", "Samson's Law", "Jitterbug Compiler", "Kenosis Mesh K4"].map(system => (
+            <div class="bg-cloud/50 text-espresso/70 text-xs font-bold px-3 py-2 rounded-lg text-center">{system}</div>
+          ))}
+        </div>
+
+        <div class="flex flex-wrap gap-4">
+          <a href="https://doi.org/10.5281/zenodo.19411363" target="_blank" rel="noopener noreferrer" class="bg-coral-500 hover:bg-coral-600 text-white font-bold py-3 px-6 rounded-xl transition-colors">
+            Read on Zenodo &#x2192;
+          </a>
+          <a href="https://doi.org/10.5281/zenodo.19411363" target="_blank" rel="noopener noreferrer" class="bg-white hover:bg-cloud text-espresso font-bold py-3 px-6 rounded-xl border-2 border-espresso/10 transition-colors">
+            Download PDF
+          </a>
+        </div>
+      </div>
+
+      {/* ── DEFENSIVE PUBLICATIONS ────────────────────────────────── */}
+      <div class="mb-4">
+        <div class="inline-flex items-center gap-2 bg-butter text-espresso text-xs font-bold px-4 py-2 rounded-full mb-8">
+          <span class="w-2 h-2 bg-espresso rounded-full"></span>
+          DEFENSIVE PUBLICATIONS (PRIOR ART)
+        </div>
+      </div>
+
+      <div class="bg-cloud/30 p-8 md:p-10 rounded-2xl border border-cloud mb-16">
+        <p class="text-espresso/70 mb-6 leading-relaxed">
+          Five white papers deposited to the Internet Archive on February 25, 2026 as defensive prior art publications. Purpose: establish public record of invention dates and prevent future patent claims from blocking open-source implementations of these systems.
+        </p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {[
+            { title: "Floating Neutral Hypothesis", desc: "Electrical systems theory applied to cognitive sovereignty and grounded identity formation." },
+            { title: "Haptic Chemistry Prior Art", desc: "Touch-based molecule bonding interaction patterns; prior art for haptic AT interfaces." },
+            { title: "FPGA Lattice Decoding Matrix", desc: "Hardware decoding architecture for SIC-POVM measurement in embedded systems." },
+            { title: "Iron Lung Analogy", desc: "Structural framing of assistive technology as life-critical infrastructure, not luxury." },
+            { title: "Alice Constraints", desc: "Analysis of 35 U.S.C. §101 abstract idea doctrine applied to cognitive prosthetic software." },
+          ].map(pub => (
+            <div class="bg-white p-5 rounded-xl border border-cloud">
+              <div class="font-bold text-espresso text-sm mb-1">{pub.title}</div>
+              <p class="text-espresso/60 text-xs leading-relaxed">{pub.desc}</p>
+            </div>
+          ))}
+          <div class="bg-white p-5 rounded-xl border border-cloud flex items-center justify-center">
+            <div class="text-center">
+              <div class="text-xs text-espresso/40 font-mono mb-1">Internet Archive</div>
+              <div class="text-xs text-espresso/60">Deposited Feb 25, 2026</div>
+              <div class="text-xs text-espresso/60">5 publications · Freedom to Operate</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── THE GEODESIC SELF ──────────────────────────────────────── */}
+      <div class="mb-4">
+        <div class="inline-flex items-center gap-2 bg-teal-600/10 text-teal-700 text-xs font-bold px-4 py-2 rounded-full mb-8 border border-teal-600/20">
+          <span class="w-2 h-2 bg-teal-600 rounded-full animate-pulse"></span>
+          ONGOING PUBLICATION SERIES
+        </div>
+      </div>
+
+      <div class="bg-gradient-to-br from-teal-900 via-espresso to-teal-900 p-8 rounded-2xl shadow-xl mb-8">
+        <div class="text-center mb-8">
+          <h2 class="text-2xl font-heading font-bold text-white mb-2">The Geodesic Self</h2>
+          <p class="text-white/60 text-sm max-w-xl mx-auto">
+            Real-time documentation of re-engineering the human operator. Research that grounds our tools — ion channel biophysics, cognitive sovereignty, assistive technology.
+          </p>
+          <a href="https://thegeodesicself.substack.com" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 mt-4 bg-teal-600 hover:bg-teal-500 text-white font-bold py-2.5 px-5 rounded-xl transition-colors text-sm no-underline">
+            Subscribe on Substack
+          </a>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <article class="bg-white/5 border border-white/10 rounded-xl p-6 hover:border-teal-400/30 transition-colors">
+            <div class="flex items-center gap-3 mb-3">
+              <span class="bg-teal-600 text-white text-xs font-bold px-3 py-1 rounded-full">v0.2.0</span>
+              <span class="text-white/40 text-xs">Feb 12, 2026</span>
+            </div>
+            <h3 class="text-lg font-heading font-bold text-white mb-2">The Static</h3>
+            <p class="text-white/60 text-sm mb-3 leading-relaxed">
+              There is a wire inside your body that keeps the noise from becoming signal. It is not a metaphor. It is calcium. 56.7% of hypoparathyroidism patients show clinically significant deficits in attention and processing speed &#x2014; a seventeen-fold increase.
+            </p>
+            <a href="https://thegeodesicself.substack.com/p/system-update-v020-the-static" target="_blank" rel="noopener noreferrer" class="text-teal-400 text-sm font-bold hover:text-teal-300">
+              Read &#x2192;
+            </a>
+          </article>
+
+          <article class="bg-white/5 border border-white/10 rounded-xl p-6 hover:border-teal-400/30 transition-colors">
+            <div class="flex items-center gap-3 mb-3">
+              <span class="bg-teal-600 text-white text-xs font-bold px-3 py-1 rounded-full">v0.1.0</span>
+              <span class="text-white/40 text-xs">Dec 10, 2025</span>
+            </div>
+            <h3 class="text-lg font-heading font-bold text-white mb-2">The Uncalibrated Operator</h3>
+            <p class="text-white/60 text-sm mb-3 leading-relaxed">
+              We are not things that break; we are frequencies that become misaligned. Sixteen years maintaining critical power systems &#x2014; diagnosed AuDHD at 39 &#x2014; applying systems thinking to rebuild from the ground up.
+            </p>
+            <a href="https://thegeodesicself.substack.com/p/system-update-v010-the-uncalibrated" target="_blank" rel="noopener noreferrer" class="text-teal-400 text-sm font-bold hover:text-teal-300">
+              Read &#x2192;
+            </a>
+          </article>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</Layout>

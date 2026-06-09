@@ -1,0 +1,313 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const productsJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": "P31 Labs Products",
+  "description": "Free, open-source assistive technology for neurodivergent families.",
+  "url": "https://phosphorus31.org/products",
+  "numberOfItems": 10,
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "item": { "@type": "SoftwareApplication", "name": "EDE — Everything Development Environment", "url": "https://p31ca.org/ede", "applicationCategory": "DeveloperApplication", "operatingSystem": "Web" }},
+    { "@type": "ListItem", "position": 2, "item": { "@type": "SoftwareApplication", "name": "BONDING", "url": "https://bonding.p31ca.org", "applicationCategory": "EducationalApplication", "operatingSystem": "Web" }},
+    { "@type": "ListItem", "position": 3, "item": { "@type": "SoftwareApplication", "name": "Spaceship Earth", "url": "https://p31ca.org/spaceship-earth-about.html", "applicationCategory": "LifestyleApplication", "operatingSystem": "Web" }},
+    { "@type": "ListItem", "position": 4, "item": { "@type": "SoftwareApplication", "name": "Larmor", "url": "https://p31ca.org/larmor", "applicationCategory": "HealthApplication", "operatingSystem": "Web" }},
+    { "@type": "ListItem", "position": 5, "item": { "@type": "SoftwareApplication", "name": "TACTILE", "url": "https://p31ca.org/switches", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Web" }},
+    { "@type": "ListItem", "position": 6, "item": { "@type": "SoftwareApplication", "name": "Kenosis Mesh", "url": "https://p31ca.org/kenosis", "applicationCategory": "CommunicationApplication", "operatingSystem": "Cloudflare Workers" }},
+    { "@type": "ListItem", "position": 7, "item": { "@type": "SoftwareApplication", "name": "Genesis Gate", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Node.js" }},
+    { "@type": "ListItem", "position": 8, "item": { "@type": "SoftwareApplication", "name": "The Buffer", "applicationCategory": "CommunicationApplication", "operatingSystem": "Web" }},
+    { "@type": "ListItem", "position": 9, "item": { "@type": "SoftwareApplication", "name": "Node Zero", "applicationCategory": "HealthApplication", "operatingSystem": "ESP-IDF" }},
+    { "@type": "ListItem", "position": 10, "item": { "@type": "SoftwareApplication", "name": "Node One (Phenix Navigator)", "applicationCategory": "HealthApplication", "operatingSystem": "ESP-IDF" }}
+  ]
+};
+---
+
+<Layout title="Products | P31 Labs" description="Free, open-source assistive technology. Every tool designed for neurodivergent families." jsonLd={productsJsonLd} canonical="https://phosphorus31.org/products">
+  <main class="animate-[fadeIn_0.4s_ease-out] bg-white min-h-screen pb-24">
+    <div class="bg-espresso text-cloud pt-32 pb-20 px-6">
+      <div class="max-w-5xl mx-auto">
+        <div class="text-butter font-bold tracking-widest uppercase text-sm mb-4">What We Build</div>
+        <h1 class="text-5xl font-heading font-black mb-6">Products</h1>
+        <p class="text-xl opacity-80 max-w-2xl">
+          Free, open-source assistive technology. Every tool is designed for neurodivergent families and built to work offline, on any device, with zero accounts required.
+        </p>
+        <div class="mt-8 flex flex-wrap items-center gap-4 text-sm">
+          <a href="https://p31ca.org/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 bg-teal-600 hover:bg-teal-700 text-white font-bold px-5 py-2.5 rounded-xl no-underline transition-colors">
+            Technical hub ↗
+          </a>
+          <span class="text-cloud/50">Repos, fleet status, onboarding pages</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="max-w-5xl mx-auto px-6 -mt-10">
+
+      {/* ── LIVE PRODUCTS ─────────────────────────────────────────── */}
+      <div class="mb-4">
+        <div class="inline-flex items-center gap-2 bg-teal-600 text-white text-xs font-bold px-4 py-2 rounded-full mb-8">
+          <span class="w-2 h-2 bg-white rounded-full animate-pulse"></span>
+          LIVE DEPLOYMENTS
+        </div>
+      </div>
+
+      {/* EDE */}
+      <div class="bg-white p-8 md:p-12 rounded-2xl shadow-xl border border-cloud mb-8">
+        <div class="flex items-center gap-4 mb-6">
+          <div class="w-14 h-14 bg-coral-500/10 rounded-2xl flex items-center justify-center text-3xl">&#x2B21;</div>
+          <div>
+            <div class="flex items-center gap-3">
+              <h2 class="text-3xl font-heading font-black text-espresso">EDE</h2>
+              <span class="bg-teal-600 text-white text-xs font-bold px-3 py-1 rounded-full">LIVE</span>
+            </div>
+            <p class="text-espresso/60">Everything Development Environment</p>
+          </div>
+        </div>
+        <p class="text-espresso/80 leading-relaxed mb-6">
+          A browser-native cognitive prosthetic that happens to include a code editor. JSX transpilation via the Jitterbug Compiler (Babel in-browser), sandboxed execution, Samson's Law entropy linter, Q Distribution spoon tracking, and 4-tier progressive disclosure. Zero npm install. Zero build step. Works fully offline. Designed for neurodivergent developers who need the environment to respect their cognitive load.
+        </p>
+        <div class="flex flex-wrap gap-3 mb-6">
+          {["Jitterbug Compiler", "Q Distribution", "Samson's Law", "Offline-First", "Zero Dependencies"].map(tag => (
+            <span class="bg-coral-500/10 text-coral-500 text-xs font-bold px-3 py-1 rounded-full">{tag}</span>
+          ))}
+        </div>
+        <a href="https://p31ca.org/ede-about.html" target="_blank" rel="noopener noreferrer" class="inline-block bg-coral-500 hover:bg-coral-600 text-white font-bold py-3 px-6 rounded-xl shadow-md transition-transform hover:-translate-y-0.5">
+          Learn About EDE &#x2192;
+        </a>
+      </div>
+
+      {/* BONDING */}
+      <div class="bg-white p-8 md:p-12 rounded-2xl shadow-xl border border-cloud mb-8">
+        <div class="flex items-center gap-4 mb-6">
+          <div class="w-14 h-14 bg-teal-600/10 rounded-2xl flex items-center justify-center text-3xl">&#x269B;&#xFE0F;</div>
+          <div>
+            <div class="flex items-center gap-3">
+              <h2 class="text-3xl font-heading font-black text-espresso">BONDING</h2>
+              <span class="bg-teal-600 text-white text-xs font-bold px-3 py-1 rounded-full">LIVE</span>
+            </div>
+            <p class="text-espresso/60">Multiplayer Chemistry Education Game</p>
+          </div>
+        </div>
+        <p class="text-espresso/80 leading-relaxed mb-6">
+          A multiplayer chemistry game where players drag atoms, snap bonds, and build molecules together — even when they're apart. Designed so a parent can play alongside their kids from any distance. 413 tests across 30 suites. Molecule soundtracks, neurotransmitter quest chains, remote multiplayer relay. Every atom placed is timestamped as parental engagement evidence.
+        </p>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+          <div class="bg-cloud/50 p-4 rounded-xl text-center">
+            <div class="text-2xl font-heading font-black text-teal-600">413</div>
+            <div class="text-xs text-espresso/60 mt-1">Tests Passing</div>
+          </div>
+          <div class="bg-cloud/50 p-4 rounded-xl text-center">
+            <div class="text-2xl font-heading font-black text-coral-500">13</div>
+            <div class="text-xs text-espresso/60 mt-1">Elements</div>
+          </div>
+          <div class="bg-cloud/50 p-4 rounded-xl text-center">
+            <div class="text-2xl font-heading font-black text-butter">5</div>
+            <div class="text-xs text-espresso/60 mt-1">Quest Chains</div>
+          </div>
+          <div class="bg-cloud/50 p-4 rounded-xl text-center">
+            <div class="text-2xl font-heading font-black text-lavender">Live</div>
+            <div class="text-xs text-espresso/60 mt-1">Multiplayer</div>
+          </div>
+        </div>
+        <a href="https://bonding.p31ca.org" target="_blank" rel="noopener noreferrer" class="inline-block bg-coral-500 hover:bg-coral-600 text-white font-bold py-3 px-6 rounded-xl shadow-md transition-transform hover:-translate-y-0.5">
+          Play BONDING &#x2192;
+        </a>
+      </div>
+
+      {/* Spaceship Earth */}
+      <div class="bg-white p-8 md:p-12 rounded-2xl shadow-xl border border-cloud mb-8">
+        <div class="flex items-center gap-4 mb-6">
+          <div class="w-14 h-14 bg-teal-600/10 rounded-2xl flex items-center justify-center text-3xl">&#x1F680;</div>
+          <div>
+            <div class="flex items-center gap-3">
+              <h2 class="text-3xl font-heading font-black text-espresso">Spaceship Earth</h2>
+              <span class="bg-teal-600 text-white text-xs font-bold px-3 py-1 rounded-full">LIVE</span>
+            </div>
+            <p class="text-espresso/60">Sovereign Cognitive Cockpit — 34 deployed vectors</p>
+          </div>
+        </div>
+        <p class="text-espresso/80 leading-relaxed mb-6">
+          A sovereign cognitive cockpit for AuDHD adults. Spoon tracking, breathing pacer, sensory buffer zone, Fawn Guard voltage processor, Jitterbug geometry visualizer, and executive function tools. 185 tests. Polymorphic skin engine (Operator / Solar / Gray Rock). Offline-first PWA.
+        </p>
+        <a href="https://p31ca.org" target="_blank" rel="noopener noreferrer" class="inline-block bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 px-6 rounded-xl shadow-md transition-transform hover:-translate-y-0.5">
+          Open Spaceship Earth &#x2192;
+        </a>
+      </div>
+
+      {/* Larmor + TACTILE side by side */}
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+        <div class="bg-white p-8 rounded-2xl shadow-xl border border-cloud">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-12 h-12 bg-butter/20 rounded-xl flex items-center justify-center text-2xl">&#x1F4F6;</div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h3 class="text-xl font-heading font-black text-espresso">Larmor</h3>
+                <span class="bg-teal-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">LIVE</span>
+              </div>
+              <p class="text-xs text-espresso/60">863 Hz Somatic Regulation</p>
+            </div>
+          </div>
+          <p class="text-espresso/70 text-sm leading-relaxed mb-4">
+            Browser-native somatic regulation tool tuned to the Larmor precession frequency of phosphorus-31 at 20T. Binaural beats, breath pacer, haptic feedback.
+          </p>
+          <a href="https://p31ca.org/larmor" target="_blank" rel="noopener noreferrer" class="text-teal-600 font-bold text-sm hover:underline">Open Larmor &#x2192;</a>
+        </div>
+
+        <div class="bg-white p-8 rounded-2xl shadow-xl border border-cloud">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-12 h-12 bg-lavender/20 rounded-xl flex items-center justify-center text-2xl">&#x2328;&#xFE0F;</div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h3 class="text-xl font-heading font-black text-espresso">TACTILE</h3>
+                <span class="bg-teal-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">LIVE</span>
+              </div>
+              <p class="text-xs text-espresso/60">Keyboard Builder &amp; Typing Simulator</p>
+            </div>
+          </div>
+          <p class="text-espresso/70 text-sm leading-relaxed mb-4">
+            Build custom keyboard layouts, simulate switch feel (tactile/linear/clicky), and practice touch typing. Designed for sensory-seeking typists who need to get the haptics right.
+          </p>
+          <a href="https://p31ca.org/switches" target="_blank" rel="noopener noreferrer" class="text-teal-600 font-bold text-sm hover:underline">Open TACTILE &#x2192;</a>
+        </div>
+      </div>
+
+      {/* Kenosis + Genesis Gate side by side */}
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+        <div class="bg-white p-8 rounded-2xl shadow-xl border border-cloud">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-12 h-12 bg-teal-600/10 rounded-xl flex items-center justify-center text-2xl">&#x1F578;&#xFE0F;</div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h3 class="text-xl font-heading font-black text-espresso">Kenosis Mesh</h3>
+                <span class="bg-teal-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">LIVE</span>
+              </div>
+              <p class="text-xs text-espresso/60">7-Node K&#x2084; Topology</p>
+            </div>
+          </div>
+          <p class="text-espresso/70 text-sm leading-relaxed mb-4">
+            Serverless SIC-POVM message routing on Cloudflare Durable Objects. Root node R fans out to inner trinity (A,B,C) which fan to leaves (D,E,F). Complete K4 graph — any 3 nodes still brace the structure.
+          </p>
+          <a href="https://p31ca.org/kenosis" target="_blank" rel="noopener noreferrer" class="text-teal-600 font-bold text-sm hover:underline">View Kenosis &#x2192;</a>
+        </div>
+
+        <div class="bg-white p-8 rounded-2xl shadow-xl border border-cloud">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-12 h-12 bg-coral-500/10 rounded-xl flex items-center justify-center text-2xl">&#x1F511;</div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h3 class="text-xl font-heading font-black text-espresso">Genesis Gate</h3>
+                <span class="bg-teal-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">LIVE</span>
+              </div>
+              <p class="text-xs text-espresso/60">Telemetry + Governance Control Plane</p>
+            </div>
+          </div>
+          <p class="text-espresso/70 text-sm leading-relaxed mb-4">
+            Node.js TypeScript ESM control plane. TelemetryModule, InterceptModule with injectable RegExp patterns, GovernanceHook, GenesisOrchestrator. 4 tests green. v4.1.0.
+          </p>
+          <a href="https://github.com/p31labs" target="_blank" rel="noopener noreferrer" class="text-teal-600 font-bold text-sm hover:underline">View Source &#x2192;</a>
+        </div>
+      </div>
+
+      {/* ── IN DEVELOPMENT ──────────────────────────────────────────── */}
+      <div class="mb-4">
+        <div class="inline-flex items-center gap-2 bg-butter text-espresso text-xs font-bold px-4 py-2 rounded-full mb-8">
+          <span class="w-2 h-2 bg-espresso rounded-full"></span>
+          IN DEVELOPMENT
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+        <div class="bg-white p-8 rounded-2xl shadow-xl border border-cloud">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-12 h-12 bg-butter/20 rounded-xl flex items-center justify-center text-2xl">&#x1F6E1;&#xFE0F;</div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h3 class="text-xl font-heading font-black text-espresso">The Buffer</h3>
+                <span class="bg-butter text-espresso text-xs font-bold px-2 py-0.5 rounded-full">~92%</span>
+              </div>
+            </div>
+          </div>
+          <p class="text-espresso/70 text-sm leading-relaxed">
+            Fawn Guard passive-aggression detector, Chaos ingestion pipeline, BLUF extractor, voltage scoring. 53 tests passing. Communication shield for high-conflict co-parenting.
+          </p>
+        </div>
+
+        <div class="bg-white p-8 rounded-2xl shadow-xl border border-cloud">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-12 h-12 bg-teal-600/10 rounded-xl flex items-center justify-center text-2xl">&#x1F4E1;</div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h3 class="text-xl font-heading font-black text-espresso">Node Zero</h3>
+                <span class="bg-teal-600/20 text-teal-800 text-xs font-bold px-2 py-0.5 rounded-full">BETA</span>
+              </div>
+            </div>
+          </div>
+          <p class="text-espresso/70 text-sm leading-relaxed">
+            ESP32-S3 N16R8 with Waveshare 3.5&#x22; QSPI touch display, SX1262 LoRa 915MHz, AXP2101 PMIC. LVGL 8.4, Meshtastic LONG_FAST mesh, Q-Factor biometric telemetry. Firmware complete — flashing now.
+          </p>
+        </div>
+
+        <div class="bg-white p-8 rounded-2xl shadow-xl border border-cloud">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-12 h-12 bg-lavender/20 rounded-xl flex items-center justify-center text-2xl">&#x1F3AE;</div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h3 class="text-xl font-heading font-black text-espresso">Node One</h3>
+                <span class="bg-espresso/10 text-espresso text-xs font-bold px-2 py-0.5 rounded-full">DESIGN</span>
+              </div>
+            </div>
+          </div>
+          <p class="text-espresso/70 text-sm leading-relaxed">
+            Phenix Navigator — handheld cognitive prosthetic. PQC encryption (ML-KEM-768), LoRa mesh networking, biometric bridge, sovereign identity. Node Zero firmware complete — Node One design begins.
+          </p>
+        </div>
+      </div>
+
+      {/* ── RESEARCH ──────────────────────────────────────────────── */}
+      <div class="mb-4">
+        <div class="inline-flex items-center gap-2 bg-cyan-500/20 text-cyan-700 text-xs font-bold px-4 py-2 rounded-full mb-8 border border-cyan-500/30">
+          <span class="w-2 h-2 bg-cyan-500 rounded-full"></span>
+          PUBLISHED RESEARCH
+        </div>
+      </div>
+
+      <div class="bg-gradient-to-br from-espresso to-espresso/90 p-8 md:p-12 rounded-2xl shadow-xl border border-cyan-400/30 mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div>
+            <div class="flex items-center gap-3 mb-3">
+              <span class="bg-cyan-500 text-espresso text-xs font-bold px-3 py-1 rounded-full">DOI</span>
+              <span class="text-white/50 text-xs font-mono">10.5281/zenodo.19004485</span>
+            </div>
+            <h3 class="text-xl font-heading font-bold text-white mb-3">Tetrahedron Protocol (K4)</h3>
+            <p class="text-white/70 text-sm leading-relaxed mb-4">
+              Geometric proof of K4 decentralized topology stability. 280+ views, 240+ downloads. Open-source implementation included.
+            </p>
+            <a href="https://doi.org/10.5281/zenodo.19004485" target="_blank" rel="noopener noreferrer" class="text-cyan-400 font-bold text-sm hover:text-cyan-300">
+              Read Paper (Zenodo) &#x2192;
+            </a>
+          </div>
+          <div>
+            <div class="flex items-center gap-3 mb-3">
+              <span class="bg-cyan-500 text-espresso text-xs font-bold px-3 py-1 rounded-full">DOI</span>
+              <span class="text-white/50 text-xs font-mono">10.5281/zenodo.19411363</span>
+            </div>
+            <h3 class="text-xl font-heading font-bold text-white mb-3">Genesis Whitepaper v1.1</h3>
+            <p class="text-white/70 text-sm leading-relaxed mb-4">
+              SIC-POVM measurement framework, EDE architecture, Q Distribution, Samson's Law entropy formalization. Six implemented systems.
+            </p>
+            <a href="https://doi.org/10.5281/zenodo.19411363" target="_blank" rel="noopener noreferrer" class="text-cyan-400 font-bold text-sm hover:text-cyan-300">
+              Read Paper (Zenodo) &#x2192;
+            </a>
+          </div>
+        </div>
+        <div class="mt-6 pt-6 border-t border-white/10">
+          <p class="text-white/40 text-xs">Five additional defensive publications deposited February 25, 2026. ORCID: 0009-0002-2492-9079.</p>
+          <a href="/research" class="text-cyan-400 font-bold text-sm hover:text-cyan-300 mt-2 inline-block">
+            All Publications &#x2192;
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</Layout>

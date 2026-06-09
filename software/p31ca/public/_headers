@@ -1,0 +1,150 @@
+# Cloudflare Pages Headers
+/*
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://unpkg.com https://cdn.jsdelivr.net https://cdn.tailwindcss.com https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https: wss: blob: data:; worker-src 'self' blob:; frame-ancestors 'none';
+
+# Disable directory listing
+/indexes/
+  X-Robots-Tag: noindex, nofollow
+
+# Static assets
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Creator economy contract — public, versioned, CI-verified
+/creator-economy.json
+  Cache-Control: no-cache, must-revalidate
+  Content-Type: application/json; charset=utf-8
+  Access-Control-Allow-Origin: *
+
+# HTML pages
+/*.html
+  Cache-Control: no-cache, no-store, must-revalidate
+
+# Static assets below — no Clear-Site-Data (navigation semantics belong on HTML only).
+# Helps DevTools: avoids attributing Clear-Site-Data warnings to favicon.svg subresource fetches.
+
+# ────────────────────────────────────────────────────────────────────
+# PWA-installable surfaces — exempt from Clear-Site-Data so the
+# service worker can persist its cache between navigations.
+# Source of truth: docs/LAUNCH-PACKAGE-2026-05.md §3 (operator-approved
+# narrow tradeoff; the rest of the hub keeps the wipe-on-nav posture).
+# Manifests: pwa/manifest-{cogpass,social-cards,same-shape,the-pulse}.json
+# Verified by: bonding-soup verify:pwa
+# ────────────────────────────────────────────────────────────────────
+
+/spaceship-earth/index.html
+  Cache-Control: no-cache, must-revalidate
+
+/spaceship-earth/sw.js
+  Cache-Control: no-cache, must-revalidate
+  Content-Type: application/javascript; charset=utf-8
+
+/pwa/manifest-spaceship-earth.json
+  Cache-Control: public, max-age=600
+  Content-Type: application/manifest+json; charset=utf-8
+
+# ────────────────────────────────────────────────────────────────────
+
+/qfactor/index.html
+  Cache-Control: no-cache, must-revalidate
+
+/qfactor/sw.js
+  Cache-Control: no-cache, must-revalidate
+  Content-Type: application/javascript; charset=utf-8
+
+/pwa/manifest-qfactor.json
+  Cache-Control: public, max-age=600
+  Content-Type: application/manifest+json; charset=utf-8
+
+/cognitive-passport/index.html
+  Cache-Control: no-cache, must-revalidate
+
+/cognitive-passport/sw.js
+  Cache-Control: no-cache, must-revalidate
+  Content-Type: application/javascript; charset=utf-8
+
+/cognitive-passport/p31-pwa.js
+  Cache-Control: public, max-age=600
+  Content-Type: application/javascript; charset=utf-8
+
+/social-cards/index.html
+  Cache-Control: no-cache, must-revalidate
+
+/social-cards/sw.js
+  Cache-Control: no-cache, must-revalidate
+  Content-Type: application/javascript; charset=utf-8
+
+/social-cards/p31-pwa.js
+  Cache-Control: public, max-age=600
+  Content-Type: application/javascript; charset=utf-8
+
+/demos/the-same-shape.html
+  Cache-Control: no-cache, must-revalidate
+
+/demos/the-pulse.html
+  Cache-Control: no-cache, must-revalidate
+
+/demos/sw.js
+  Cache-Control: no-cache, must-revalidate
+  Content-Type: application/javascript; charset=utf-8
+
+/demos/p31-pwa.js
+  Cache-Control: public, max-age=600
+  Content-Type: application/javascript; charset=utf-8
+
+# Canonical PWA assets at /pwa/ — long-cached SVG icon, short-cached manifests.
+/pwa/p31-tetra-icon.svg
+  Cache-Control: public, max-age=86400
+  Content-Type: image/svg+xml
+
+/pwa/manifest-cogpass.json
+  Cache-Control: public, max-age=600
+  Content-Type: application/manifest+json; charset=utf-8
+
+/pwa/manifest-social-cards.json
+  Cache-Control: public, max-age=600
+  Content-Type: application/manifest+json; charset=utf-8
+
+/pwa/manifest-same-shape.json
+  Cache-Control: public, max-age=600
+  Content-Type: application/manifest+json; charset=utf-8
+
+/pwa/manifest-the-pulse.json
+  Cache-Control: public, max-age=600
+  Content-Type: application/manifest+json; charset=utf-8
+
+/pwa/sw.js
+  Cache-Control: no-cache, must-revalidate
+  Content-Type: application/javascript; charset=utf-8
+
+/pwa/p31-pwa.js
+  Cache-Control: public, max-age=600
+  Content-Type: application/javascript; charset=utf-8
+
+/favicon.svg
+  Cache-Control: public, max-age=604800, immutable
+
+/p31-delta-language.json
+  Cache-Control: public, max-age=600
+  Content-Type: application/json; charset=utf-8
+
+# Matrix federation delegation — required for @will:p31ca.org to resolve to matrix.p31ca.org
+/.well-known/did.json
+  Content-Type: application/json; charset=utf-8
+  Access-Control-Allow-Origin: *
+  Cache-Control: public, max-age=3600
+
+/.well-known/matrix/server
+  Content-Type: application/json; charset=utf-8
+  Access-Control-Allow-Origin: *
+  Cache-Control: public, max-age=3600
+
+/.well-known/matrix/client
+  Content-Type: application/json; charset=utf-8
+  Access-Control-Allow-Origin: *
+  Cache-Control: public, max-age=3600

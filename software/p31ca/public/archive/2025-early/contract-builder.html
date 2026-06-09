@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub" style="color-scheme: dark;">
+<head>
+  <meta charset="UTF-8" />
+<script>(function(){var r=document.documentElement;if(/[?&]alive=1(?:&|$)/.test(location.search))return;r.classList.add("p31-gray-rock");function wake(){r.classList.remove("p31-gray-rock")}document.addEventListener("pointerdown",wake,{once:true,capture:true});document.addEventListener("keydown",wake,{once:true,capture:true})})();</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content" />
+  <meta name="color-scheme" content="dark" />
+  <title>P31 — contract builder</title>
+  <meta name="description" content="Machine index of JSON contracts from p31-alignment.json plus SMART on-chain suite (EVM ABIs) — filterable tables, verify hints, raw registry." />
+<link rel="canonical" href="https://p31ca.org/contract-builder.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="P31 — contract builder">
+<meta property="og:description" content="Machine index of JSON contracts from p31-alignment.json plus SMART on-chain suite (EVM ABIs) — filterable tables, verify hints, raw registry.">
+<meta property="og:url" content="https://p31ca.org/contract-builder.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="P31 — contract builder">
+<meta name="twitter:description" content="Machine index of JSON contracts from p31-alignment.json plus SMART on-chain suite (EVM ABIs) — filterable tables, verify hints, raw registry.">
+  <meta name="theme-color" content="#0f1115" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700&family=JetBrains+Mono:ital,wght@0,400;0,600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/p31-style.css" />
+  <link rel="stylesheet" href="/p31-shared-surface.css" />
+  <link rel="stylesheet" href="/p31-responsive-surface.css" />
+  <script src="/lib/p31-subject-prefs.js"></script>
+  <style>
+    .cb-wrap { max-width: 72rem; margin: 0 auto; padding: var(--p31-space-4) var(--p31-space-3) var(--p31-space-6); }
+    .cb-hero { margin-bottom: var(--p31-space-4); }
+    .cb-hero h1 { font-size: 1.65rem; font-weight: 700; letter-spacing: -0.02em; margin: 0 0 var(--p31-space-2); }
+    .cb-hero p { margin: 0; color: var(--p31-fg-muted, #9ca3af); max-width: 48rem; line-height: 1.55; }
+    .cb-toolbar {
+      display: flex; flex-wrap: wrap; gap: var(--p31-space-2); align-items: center;
+      margin-bottom: var(--p31-space-3);
+    }
+    .cb-toolbar label { font-size: 0.8rem; color: var(--p31-fg-muted, #9ca3af); }
+    .cb-search {
+      flex: 1 1 14rem;
+      padding: 0.5rem 0.75rem;
+      border-radius: 0.375rem;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      background: rgba(15, 17, 21, 0.85);
+      color: var(--p31-fg, #e5e7eb);
+      font-family: inherit;
+      font-size: 0.95rem;
+    }
+    .cb-search:focus { outline: 2px solid var(--p31-cyan, #2dd4bf); outline-offset: 1px; border-color: transparent; }
+    .cb-meta { font-size: 0.8rem; color: var(--p31-fg-muted, #9ca3af); font-family: "JetBrains Mono", ui-monospace, monospace; }
+    .cb-table-wrap { overflow-x: auto; border-radius: 0.5rem; border: 1px solid rgba(148, 163, 184, 0.2); }
+    table.cb-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+    .cb-table th, .cb-table td { text-align: left; padding: 0.65rem 0.75rem; vertical-align: top; border-bottom: 1px solid rgba(148, 163, 184, 0.12); }
+    .cb-table th { font-weight: 600; background: rgba(45, 212, 191, 0.06); position: sticky; top: 0; z-index: 1; }
+    .cb-table tr:last-child td { border-bottom: none; }
+    .cb-table tr:hover td { background: rgba(255, 255, 255, 0.03); }
+    .cb-mono { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 0.8rem; word-break: break-all; }
+    .cb-pill {
+      display: inline-block; font-size: 0.7rem; padding: 0.15rem 0.45rem; border-radius: 999px;
+      background: rgba(251, 191, 36, 0.15); color: #fcd34d; margin-left: 0.35rem; vertical-align: middle;
+    }
+    .cb-hint { color: #a5b4fc; }
+    .cb-err { padding: var(--p31-space-3); border-radius: 0.5rem; background: rgba(239, 68, 68, 0.12); color: #fecaca; }
+    .cb-foot { margin-top: var(--p31-space-4); font-size: 0.8rem; color: var(--p31-fg-muted, #9ca3af); }
+    .cb-foot a { color: var(--p31-cyan, #2dd4bf); }
+    .cb-section-title {
+      font-size: 1.15rem; font-weight: 700; margin: var(--p31-space-5) 0 var(--p31-space-2);
+      letter-spacing: -0.02em;
+    }
+    .cb-section-lede { margin: 0 0 var(--p31-space-3); color: var(--p31-fg-muted, #9ca3af); line-height: 1.55; max-width: 48rem; }
+    .cb-letter {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 1.65rem; height: 1.65rem; border-radius: 0.25rem;
+      background: rgba(45, 212, 191, 0.12); color: var(--p31-cyan, #2dd4bf);
+      font-weight: 700; font-size: 0.8rem; font-family: var(--p31-font-mono, "JetBrains Mono", monospace);
+    }
+    details.cb-abi { margin-top: 0.25rem; }
+    details.cb-abi summary {
+      cursor: pointer; color: var(--p31-cyan, #2dd4bf); font-size: 0.8rem;
+      list-style: none;
+    }
+    details.cb-abi summary::-webkit-details-marker { display: none; }
+    .cb-abi-pre {
+      margin: 0.5rem 0 0; padding: 0.65rem 0.75rem; border-radius: 0.375rem;
+      background: rgba(15, 17, 21, 0.9); border: 1px solid rgba(148, 163, 184, 0.2);
+      max-height: 14rem; overflow: auto; font-size: 0.72rem; line-height: 1.4;
+    }
+  </style>
+</head>
+<body class="p31-doc-surface">
+<a href="#main" style="position:absolute;left:-9999px;top:0;padding:0.5rem 1rem;background:var(--p31-void);color:var(--p31-teal);font-size:0.875rem;z-index:9999;border-radius:0 0 4px 4px;text-decoration:none" onfocus="this.style.left='0'" onblur="this.style.left='-9999px'">Skip to main content</a>
+  <div class="cb-wrap">
+    <header class="cb-hero">
+      <h1>Contract builder</h1>
+      <p>
+        Live rollup of JSON sources registered in <span class="cb-mono">p31-alignment.json</span> — schema anchors,
+        repo paths, and verify hints — plus the <strong>SMART</strong> EVM suite (Sovereign · Manifest · Access · Root · Treasury)
+        embedded from <span class="cb-mono">contracts/p31-smart-evm.json</span> when present in the registry payload.
+        Registry: <span class="cb-mono">p31.contractRegistry/1.0.0</span>.
+        Rebuild: <span class="cb-mono">npm run build:contract-registry</span> (refreshes ABIs via solc).
+      </p>
+    </header>
+
+    <div id="cb-state"></div>
+
+    <div class="cb-toolbar" id="cb-toolbar" hidden>
+      <input type="search" id="cb-filter" class="cb-search" placeholder="Filter by path, schema, role, verify…" autocomplete="off" aria-label="Filter contracts" />
+      <span class="cb-meta" id="cb-count"></span>
+    </div>
+
+    <h2 class="cb-section-title" id="cb-json-heading">JSON contracts</h2>
+    <p class="cb-section-lede" id="cb-json-lede">Alignment sources (<span class="cb-mono">*.json</span>) — filter matches this table and the SMART suite below.</p>
+
+    <div class="cb-table-wrap" id="cb-table-host" hidden>
+      <table class="cb-table" id="cb-table">
+        <thead>
+          <tr>
+            <th>Schema</th>
+            <th>Path</th>
+            <th>Role</th>
+            <th>Verify</th>
+          </tr>
+        </thead>
+        <tbody id="cb-tbody"></tbody>
+      </table>
+    </div>
+
+    <h2 class="cb-section-title" id="cb-smart-heading" hidden>SMART — EVM suite</h2>
+    <p class="cb-section-lede" id="cb-smart-lede" hidden>
+      On-chain contracts from <span class="cb-mono">packages/p31-sovereign-chain</span>.
+      Deploy addresses: <a href="/p31-chain-anchor.json">p31-chain-anchor.json</a> ·
+      verify: <span class="cb-mono">npm run verify:sovereign-chain</span>
+    </p>
+    <div class="cb-table-wrap" id="cb-smart-table-host" hidden>
+      <table class="cb-table" id="cb-smart-table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Contract</th>
+            <th>Role</th>
+            <th>Source</th>
+            <th>ABI</th>
+          </tr>
+        </thead>
+        <tbody id="cb-smart-tbody"></tbody>
+      </table>
+    </div>
+
+    <footer class="cb-foot">
+      <p>
+        Short URL <a href="/contracts">/contracts</a> ·
+        Raw JSON <a href="/p31-contract-registry.json">/p31-contract-registry.json</a> ·
+        SMART ABIs <a href="/p31-smart-evm.json">/p31-smart-evm.json</a> ·
+        Alignment <a href="https://github.com/p31labs/bonding-soup/blob/main/p31-alignment.json">p31-alignment.json</a> (home repo)
+      </p>
+    </footer>
+  </div>
+
+  <script>
+    (function () {
+      var state = document.getElementById("cb-state");
+      var toolbar = document.getElementById("cb-toolbar");
+      var filterEl = document.getElementById("cb-filter");
+      var countEl = document.getElementById("cb-count");
+      var tableHost = document.getElementById("cb-table-host");
+      var tbody = document.getElementById("cb-tbody");
+      var smartHeading = document.getElementById("cb-smart-heading");
+      var smartLede = document.getElementById("cb-smart-lede");
+      var smartTableHost = document.getElementById("cb-smart-table-host");
+      var smartTbody = document.getElementById("cb-smart-tbody");
+      var allRows = [];
+      var allSmart = [];
+
+      function esc(s) {
+        if (s == null) return "";
+        return String(s)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+
+      function rowMatches(c, q) {
+        if (!q) return true;
+        var blob = [
+          c.path,
+          c.role,
+          c.primarySchema,
+          (c.schemas || []).join(" "),
+          (c.verifyHints || []).join(" "),
+          c.optional ? "optional" : ""
+        ].join(" ").toLowerCase();
+        return blob.indexOf(q) !== -1;
+      }
+
+      function smartRowMatches(s, q) {
+        if (!q) return true;
+        var blob = [
+          s.letter || "",
+          s.name || "",
+          s.role || "",
+          s.source || "",
+          "smart evm solidity"
+        ].join(" ").toLowerCase();
+        return blob.indexOf(q) !== -1;
+      }
+
+      function renderSmart(q) {
+        var frag = document.createDocumentFragment();
+        var ns = 0;
+        for (var j = 0; j < allSmart.length; j++) {
+          if (!smartRowMatches(allSmart[j], q)) continue;
+          ns++;
+          var s = allSmart[j];
+          var tr = document.createElement("tr");
+          var abiLen = (s.abi && s.abi.length) ? s.abi.length : 0;
+          var abiJson = abiLen ? JSON.stringify(s.abi, null, 2) : "[]";
+          var letter = s.letter ? '<span class="cb-letter" title="SMART letter">' + esc(s.letter) + "</span>" : "—";
+          tr.innerHTML =
+            "<td>" + letter + "</td>" +
+            '<td class="cb-mono">' + esc(s.name || "—") + "</td>" +
+            "<td>" + esc(s.role || "—") + "</td>" +
+            '<td class="cb-mono">' + esc(s.source || "—") + "</td>" +
+            "<td>" +
+            '<details class="cb-abi"><summary>' + esc(String(abiLen)) + " ABI item(s)</summary>" +
+            '<pre class="cb-abi-pre cb-mono">' + esc(abiJson) + "</pre></details>" +
+            "</td>";
+          frag.appendChild(tr);
+        }
+        smartTbody.innerHTML = "";
+        smartTbody.appendChild(frag);
+        return ns;
+      }
+
+      function render(filter) {
+        var q = (filter || "").trim().toLowerCase();
+        var n = 0;
+        var frag = document.createDocumentFragment();
+        for (var i = 0; i < allRows.length; i++) {
+          if (!rowMatches(allRows[i], q)) continue;
+          n++;
+          var c = allRows[i];
+          var tr = document.createElement("tr");
+          var sch = c.primarySchema || "—";
+          var opt = c.optional ? '<span class="cb-pill">optional</span>' : "";
+          var hints = (c.verifyHints && c.verifyHints.length)
+            ? c.verifyHints.map(function (h) { return '<span class="cb-hint">' + esc(h) + '</span>'; }).join(" · ")
+            : "—";
+          var schemasExtra = "";
+          if (c.schemas && c.schemas.length > 1) {
+            schemasExtra = '<div class="cb-mono" style="margin-top:0.35rem;opacity:0.85">' + esc(c.schemas.join(", ")) + "</div>";
+          }
+          tr.innerHTML =
+            '<td class="cb-mono">' + esc(sch) + opt + schemasExtra + "</td>" +
+            '<td class="cb-mono">' + esc(c.path) + "</td>" +
+            "<td>" + esc(c.role) + "</td>" +
+            "<td class=\"cb-mono\">" + hints + "</td>";
+          frag.appendChild(tr);
+        }
+        tbody.innerHTML = "";
+        tbody.appendChild(frag);
+        var ns = renderSmart(q);
+        var parts = n + " JSON shown · " + allRows.length + " JSON total";
+        if (allSmart.length) parts += " · " + ns + " SMART shown · " + allSmart.length + " SMART total";
+        countEl.textContent = parts;
+      }
+
+      fetch("/p31-contract-registry.json", { credentials: "same-origin" })
+        .then(function (r) {
+          if (!r.ok) throw new Error("HTTP " + r.status);
+          return r.json();
+        })
+        .then(function (data) {
+          if (data.schema !== "p31.contractRegistry/1.0.0") {
+            throw new Error("unexpected registry schema");
+          }
+          allRows = data.contracts || [];
+          var evm = data.evm;
+          if (evm && evm.schema === "p31.evmContractSuite/0.1.0" && evm.contracts && evm.contracts.length) {
+            allSmart = evm.contracts;
+            smartHeading.hidden = false;
+            smartLede.hidden = false;
+            smartTableHost.hidden = false;
+          }
+          var b = data.builder || {};
+          var metaLine =
+            "Generated " + esc(data.generatedAt || "") +
+            " · " + esc(b.anchor || "") +
+            (b.smartSuite ? " · <strong>" + esc(b.smartSuite) + "</strong> EVM suite" : "");
+          state.innerHTML = '<p class="cb-meta">' + metaLine + "</p>";
+          toolbar.hidden = false;
+          tableHost.hidden = false;
+          render("");
+          filterEl.addEventListener("input", function () {
+            render(filterEl.value);
+          });
+        })
+        .catch(function (e) {
+          state.innerHTML = '<div class="cb-err" role="alert">Could not load <code>p31-contract-registry.json</code>. ' + esc(e.message || e) + "</div>";
+        });
+    })();
+  </script>
+</body>
+</html>

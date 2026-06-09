@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub" style="color-scheme: dark;">
+<head>
+<meta charset="UTF-8">
+<script>(function(){var r=document.documentElement;if(/[?&]alive=1(?:&|$)/.test(location.search))return;r.classList.add("p31-gray-rock");function wake(){r.classList.remove("p31-gray-rock")}document.addEventListener("pointerdown",wake,{once:true,capture:true});document.addEventListener("keydown",wake,{once:true,capture:true})})();</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>P31 Collider — Particle Physics Sandbox</title>
+<meta property="og:type" content="website">
+<meta property="og:title" content="P31 Collider — Particle Physics Sandbox">
+<meta property="og:description" content="P31 Collider — Particle Physics Sandbox">
+<meta property="og:url" content="https://p31ca.org/particles.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="P31 Collider — Particle Physics Sandbox">
+<meta name="twitter:description" content="P31 Collider — Particle Physics Sandbox">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --void: #050505; --surface: #161920; --cloud: #d8d6d0;
+    --coral: #cc6247; --green: #00FF88; --glass: rgba(22,25,32,0.85);
+    --border: rgba(255,255,255,0.06);
+  }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: var(--void); color: var(--cloud);
+    font-family: 'Inter', sans-serif; touch-action: none; user-select: none; }
+  canvas { display: block; width: 100%; height: 100%; position: fixed; inset: 0; }
+
+  .panel { position: fixed; background: var(--glass); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px;
+    font-family: 'Space Mono', monospace; font-size: 13px; z-index: 10; }
+
+  /* Top-left back link */
+  .back { position: fixed; top: 14px; left: 16px; z-index: 20; color: var(--coral);
+    font-family: 'Space Mono', monospace; font-size: 14px; font-weight: 700;
+    text-decoration: none; opacity: 0.8; transition: opacity 0.2s; }
+  .back:hover { opacity: 1; }
+
+  /* Element selector — top right */
+  .elem-bar { position: fixed; top: 12px; right: 16px; display: flex; gap: 6px; flex-wrap: wrap;
+    z-index: 10; max-width: 420px; justify-content: flex-end; }
+  .elem-pill { width: 38px; height: 38px; border-radius: 50%; border: 2px solid transparent;
+    display: flex; align-items: center; justify-content: center; cursor: pointer;
+    font-family: 'Space Mono', monospace; font-size: 12px; font-weight: 700;
+    transition: border-color 0.15s, transform 0.15s; background: var(--surface); }
+  .elem-pill:hover { transform: scale(1.12); }
+  .elem-pill.active { border-color: var(--coral); transform: scale(1.15); }
+
+  /* Bottom-left controls */
+  .controls { position: fixed; bottom: 16px; left: 16px; display: flex; gap: 8px; align-items: center; z-index: 10; }
+  .btn { background: var(--glass); backdrop-filter: blur(10px); border: 1px solid var(--border);
+    border-radius: 6px; padding: 8px 14px; color: var(--cloud); cursor: pointer;
+    font-family: 'Space Mono', monospace; font-size: 12px; transition: background 0.15s; }
+  .btn:hover { background: rgba(30,34,44,0.95); }
+  .btn.active { border-color: var(--coral); color: var(--coral); }
+  .badge { background: var(--glass); backdrop-filter: blur(10px); border: 1px solid var(--border);
+    border-radius: 6px; padding: 8px 12px; font-family: 'Space Mono', monospace; font-size: 12px; }
+
+  /* Center-bottom formula display */
+  .formula-bar { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%);
+    text-align: center; z-index: 10; pointer-events: none; }
+  .formula-text { font-family: 'Space Mono', monospace; font-size: 22px; font-weight: 700;
+    color: var(--cloud); text-shadow: 0 0 12px rgba(204,98,71,0.4); margin-bottom: 6px; }
+  .formula-name { font-size: 13px; color: var(--coral); margin-bottom: 6px; }
+  .stability-track { width: 200px; height: 6px; background: rgba(255,255,255,0.08);
+    border-radius: 3px; margin: 0 auto; overflow: hidden; }
+  .stability-fill { height: 100%; background: var(--green); border-radius: 3px;
+    transition: width 0.3s ease; }
+
+  /* Bottom-right quest panel */
+  .quest-panel { position: fixed; bottom: 16px; right: 16px; width: 240px; max-height: 320px;
+    overflow-y: auto; z-index: 10; }
+  .quest-panel .panel { width: 100%; }
+  .quest-title { font-size: 13px; font-weight: 700; color: var(--coral); margin-bottom: 8px;
+    cursor: pointer; }
+  .quest-chain { margin-bottom: 10px; }
+  .quest-chain-name { font-size: 12px; font-weight: 700; margin-bottom: 4px; }
+  .quest-step { font-size: 11px; color: rgba(216,214,208,0.5); margin-left: 8px; }
+  .quest-step.done { color: var(--green); text-decoration: line-through; }
+
+  /* Toast */
+  .toast { position: fixed; top: 60px; left: 50%; transform: translateX(-50%);
+    background: var(--coral); color: #fff; padding: 10px 20px; border-radius: 6px;
+    font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700;
+    z-index: 100; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+  .toast.show { opacity: 1; }
+</style>
+<link rel="canonical" href="https://p31ca.org/particles.html">
+</head>
+<body>
+<a href="#main" style="position:absolute;left:-9999px;top:0;padding:0.5rem 1rem;background:var(--p31-void);color:var(--p31-teal);font-size:0.875rem;z-index:9999;border-radius:0 0 4px 4px;text-decoration:none" onfocus="this.style.left='0'" onblur="this.style.left='-9999px'">Skip to main content</a>
+<canvas id="c"></canvas>
+<a class="back" href="collider.html">&larr; COLLIDER</a>
+
+<div class="elem-bar" id="elemBar"></div>
+
+<div class="controls">
+  <button class="btn" id="cyclotronBtn" onclick="toggleCyclotron()">CYCLOTRON</button>
+  <button class="btn" id="launchBtn" onclick="launchCyclotron()" style="display:none">LAUNCH</button>
+  <button class="btn" onclick="clearAll()">CLEAR</button>
+  <div class="badge" id="countBadge">0 atoms</div>
+  <div class="badge" id="discBadge">0 / 20</div>
+</div>
+
+<div class="formula-bar" id="formulaBar" style="display:none">
+  <div class="formula-name" id="formulaName"></div>
+  <div class="formula-text" id="formulaText"></div>
+  <div class="stability-track"><div class="stability-fill" id="stabilityFill"></div></div>
+</div>
+
+<div class="quest-panel"><div class="panel" id="questPanel"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ── Element Data ──
+const ELEMENTS = {
+  H:  { sym:'H',  name:'Hydrogen',   valence:1, color:'#FFFFFF', radius:14, mass:1 },
+  C:  { sym:'C',  name:'Carbon',     valence:4, color:'#555555', radius:20, mass:12 },
+  N:  { sym:'N',  name:'Nitrogen',   valence:3, color:'#3753D6', radius:18, mass:14 },
+  O:  { sym:'O',  name:'Oxygen',     valence:2, color:'#FF2020', radius:18, mass:16 },
+  P:  { sym:'P',  name:'Phosphorus', valence:5, color:'#FF8000', radius:20, mass:31 },
+  Ca: { sym:'Ca', name:'Calcium',    valence:2, color:'#3DFF00', radius:22, mass:40 },
+  Na: { sym:'Na', name:'Sodium',     valence:1, color:'#AB5CF2', radius:22, mass:23 },
+  Cl: { sym:'Cl', name:'Chlorine',   valence:1, color:'#1FF01F', radius:18, mass:35 },
+  S:  { sym:'S',  name:'Sulfur',     valence:2, color:'#FFFF30', radius:20, mass:32 },
+  Fe: { sym:'Fe', name:'Iron',       valence:3, color:'#E06633', radius:22, mass:56 },
+};
+
+// ── Molecule Recipes ──
+const sub = n => n <= 1 ? '' : String(n).split('').map(d => '\u2080\u2081\u2082\u2083\u2084\u2085\u2086\u2087\u2088\u2089'[+d]).join('');
+
+const RECIPES = [
+  { atoms:{H:2},            display:'H\u2082',       name:'Hydrogen Gas' },
+  { atoms:{O:2},            display:'O\u2082',       name:'Oxygen Gas' },
+  { atoms:{N:2},            display:'N\u2082',       name:'Nitrogen Gas' },
+  { atoms:{H:2,O:1},        display:'H\u2082O',      name:'Water' },
+  { atoms:{C:1,O:2},        display:'CO\u2082',      name:'Carbon Dioxide' },
+  { atoms:{Na:1,Cl:1},      display:'NaCl',          name:'Table Salt' },
+  { atoms:{C:1,H:4},        display:'CH\u2084',      name:'Methane' },
+  { atoms:{N:1,H:3},        display:'NH\u2083',      name:'Ammonia' },
+  { atoms:{H:2,O:2},        display:'H\u2082O\u2082',name:'Hydrogen Peroxide' },
+  { atoms:{Ca:1,C:1,O:3},   display:'CaCO\u2083',    name:'Calcium Carbonate' },
+  { atoms:{Fe:2,O:3},       display:'Fe\u2082O\u2083',name:'Iron Oxide' },
+  { atoms:{P:4,O:10},       display:'P\u2084O\u2081\u2080', name:'Phosphorus Decaoxide' },
+  { atoms:{H:1,Cl:1},       display:'HCl',           name:'Hydrochloric Acid' },
+  { atoms:{S:1,O:2},        display:'SO\u2082',      name:'Sulfur Dioxide' },
+  { atoms:{H:2,S:1},        display:'H\u2082S',      name:'Hydrogen Sulfide' },
+  { atoms:{C:1,O:1},        display:'CO',            name:'Carbon Monoxide' },
+  { atoms:{N:1,O:1},        display:'NO',            name:'Nitric Oxide' },
+  { atoms:{Ca:1,O:1},       display:'CaO',           name:'Quicklime' },
+  { atoms:{Na:2,O:1},       display:'Na\u2082O',     name:'Sodium Oxide' },
+  { atoms:{P:1,Cl:3},       display:'PCl\u2083',     name:'Phosphorus Trichloride' },
+];
+
+// Build formula key from atoms record
+function recipeKey(atoms) {
+  return Object.keys(atoms).sort().map(s => s + atoms[s]).join('');
+}
+const RECIPE_MAP = {};
+RECIPES.forEach(r => { r.key = recipeKey(r.atoms); RECIPE_MAP[r.key] = r; });
+
+// ── Quest Chains ──
+const QUESTS = [
+  { id:'genesis', name:'Genesis',  color:'#00FF88',
+    steps:['H\u2082O','CO\u2082','O\u2082'], desc:'The first molecules' },
+  { id:'kitchen', name:'Kitchen Chemistry', color:'#cc6247',
+    steps:['NaCl','H\u2082O\u2082','CH\u2084'], desc:'Everyday compounds' },
+  { id:'forge',   name:'The Forge', color:'#E06633',
+    steps:['CaCO\u2083','Fe\u2082O\u2083','P\u2084O\u2081\u2080'], desc:'Extreme matter' },
+];
+
+// ── State ──
+let atoms = [];
+let bonds = [];
+let nextId = 1;
+let selectedElement = 'H';
+let cyclotronMode = false;
+let discoveries = new Set();
+let questProgress = {};
+QUESTS.forEach(q => questProgress[q.id] = new Set());
+let toastTimer = null;
+let flashes = [];
+
+// Persistence
+try {
+  const saved = localStorage.getItem('p31_collider_discoveries');
+  if (saved) { const arr = JSON.parse(saved); arr.forEach(d => discoveries.add(d)); }
+  const qp = localStorage.getItem('p31_collider_quests');
+  if (qp) { const obj = JSON.parse(qp); for (const k in obj) if (questProgress[k]) questProgress[k] = new Set(obj[k]); }
+} catch(e) {}
+
+function saveState() {
+  try {
+    localStorage.setItem('p31_collider_discoveries', JSON.stringify([...discoveries]));
+    const qp = {}; for (const k in questProgress) qp[k] = [...questProgress[k]];
+    localStorage.setItem('p31_collider_quests', JSON.stringify(qp));
+  } catch(e) {}
+}
+
+// ── Canvas setup ──
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+let W, H, dpr;
+
+function resize() {
+  dpr = window.devicePixelRatio || 1;
+  W = window.innerWidth; H = window.innerHeight;
+  canvas.width = W * dpr; canvas.height = H * dpr;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+resize();
+window.addEventListener('resize', resize);
+
+// ── Background stars ──
+const stars = Array.from({length:120}, () => ({
+  x: Math.random() * 2000, y: Math.random() * 2000,
+  vx: (Math.random()-0.5)*0.12, vy: (Math.random()-0.5)*0.12,
+  r: Math.random()*1.2+0.3, alpha: Math.random()*0.25+0.05
+}));
+
+// ── Element bar ──
+function buildElemBar() {
+  const bar = document.getElementById('elemBar');
+  bar.innerHTML = '';
+  for (const sym in ELEMENTS) {
+    const el = ELEMENTS[sym];
+    const pill = document.createElement('div');
+    pill.className = 'elem-pill' + (sym === selectedElement ? ' active' : '');
+    pill.style.color = el.color;
+    pill.style.borderColor = sym === selectedElement ? '#cc6247' : 'transparent';
+    pill.textContent = sym;
+    pill.onclick = () => { selectedElement = sym; buildElemBar(); };
+    bar.appendChild(pill);
+  }
+}
+buildElemBar();
+
+// ── Quest panel ──
+function buildQuestPanel() {
+  const panel = document.getElementById('questPanel');
+  const total = RECIPES.length;
+  document.getElementById('discBadge').textContent = discoveries.size + ' / ' + total;
+  let html = '<div class="quest-title">QUESTS (' + discoveries.size + '/' + total + ')</div>';
+  QUESTS.forEach(q => {
+    const done = questProgress[q.id];
+    const complete = done.size === q.steps.length;
+    html += '<div class="quest-chain"><div class="quest-chain-name" style="color:' + q.color + '">'
+      + q.name + (complete ? ' \u2713' : '') + '</div>'
+      + '<div style="font-size:11px;color:rgba(216,214,208,0.4);margin-bottom:4px">' + q.desc + '</div>';
+    q.steps.forEach(step => {
+      const recipe = RECIPES.find(r => r.display === step);
+      const isDone = recipe && discoveries.has(recipe.key);
+      html += '<div class="quest-step' + (isDone ? ' done' : '') + '">' + step
+        + (recipe ? ' ' + recipe.name : '') + '</div>';
+    });
+    html += '</div>';
+  });
+  panel.innerHTML = html;
+}
+buildQuestPanel();
+
+// ── Toast ──
+function showToast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2500);
+}
+
+// ── Spawn atom ──
+function spawnAtom(x, y) {
+  const el = ELEMENTS[selectedElement];
+  atoms.push({
+    id: nextId++, sym: selectedElement,
+    x, y, vx: (Math.random()-0.5)*0.8, vy: (Math.random()-0.5)*0.8,
+    bondsUsed: 0, inRing: false, ringAngle: 0, ringSpeed: 0
+  });
+  updateCount();
+}
+
+function updateCount() {
+  document.getElementById('countBadge').textContent = atoms.length + ' atom' + (atoms.length !== 1 ? 's' : '');
+}
+
+// ── Input handlers ──
+canvas.addEventListener('pointerdown', e => {
+  e.preventDefault();
+  spawnAtom(e.clientX, e.clientY);
+});
+
+// ── Cyclotron ──
+const RING_CX = () => W * 0.5;
+const RING_CY = () => H * 0.48;
+const RING_R  = () => Math.min(W, H) * 0.22;
+
+function toggleCyclotron() {
+  cyclotronMode = !cyclotronMode;
+  const btn = document.getElementById('cyclotronBtn');
+  const launch = document.getElementById('launchBtn');
+  btn.classList.toggle('active', cyclotronMode);
+  launch.style.display = cyclotronMode ? '' : 'none';
+  if (cyclotronMode) {
+    // Pull free atoms into ring
+    const cx = RING_CX(), cy = RING_CY(), r = RING_R();
+    let angle = 0;
+    const step = (Math.PI * 2) / Math.max(1, atoms.filter(a => !a.inRing).length);
+    atoms.forEach(a => {
+      if (!a.inRing) {
+        a.inRing = true;
+        a.ringAngle = angle;
+        a.ringSpeed = 0.015 + Math.random() * 0.01;
+        angle += step;
+      }
+    });
+  } else {
+    atoms.forEach(a => { a.inRing = false; });
+  }
+}
+
+function launchCyclotron() {
+  const cx = RING_CX(), cy = RING_CY();
+  atoms.forEach(a => {
+    if (a.inRing) {
+      a.inRing = false;
+      // Launch toward center with high velocity
+      const dx = cx - a.x, dy = cy - a.y;
+      const d = Math.sqrt(dx*dx+dy*dy) || 1;
+      const speed = 4 + Math.random() * 3;
+      a.vx = (dx/d) * speed + (Math.random()-0.5)*2;
+      a.vy = (dy/d) * speed + (Math.random()-0.5)*2;
+    }
+  });
+  // Spawn collision flashes at center
+  for (let i = 0; i < 30; i++) {
+    const angle = Math.random() * Math.PI * 2;
+    const spd = Math.random() * 3 + 1;
+    flashes.push({ x: cx, y: cy, vx: Math.cos(angle)*spd, vy: Math.sin(angle)*spd,
+      life: 1, color: ['#cc6247','#00FF88','#FFFFFF','#FF8000'][Math.floor(Math.random()*4)] });
+  }
+  cyclotronMode = false;
+  document.getElementById('cyclotronBtn').classList.remove('active');
+  document.getElementById('launchBtn').style.display = 'none';
+}
+
+function clearAll() {
+  atoms = []; bonds = []; flashes = [];
+  updateCount(); updateFormula();
+}
+
+// ── Formula detection ──
+function updateFormula() {
+  const bar = document.getElementById('formulaBar');
+  if (atoms.length < 2 || bonds.length === 0) { bar.style.display = 'none'; return; }
+
+  // Find connected clusters
+  const clusters = findClusters();
+  // Use largest cluster
+  let best = clusters[0] || [];
+  for (const cl of clusters) if (cl.length > best.length) best = cl;
+  if (best.length < 2) { bar.style.display = 'none'; return; }
+
+  const counts = {};
+  best.forEach(a => counts[a.sym] = (counts[a.sym]||0)+1);
+  const key = recipeKey(counts);
+  const recipe = RECIPE_MAP[key];
+
+  // Build display formula (Hill order: C, H, then alphabetical)
+  const ordered = [];
+  if (counts['C']) ordered.push('C');
+  if (counts['H']) ordered.push('H');
+  Object.keys(counts).sort().forEach(s => { if (s!=='C' && s!=='H') ordered.push(s); });
+  let display = ordered.map(s => s + sub(counts[s])).join('');
+
+  // Stability
+  let totalV = 0, filledV = 0;
+  best.forEach(a => { const el = ELEMENTS[a.sym]; totalV += el.valence; filledV += a.bondsUsed; });
+  const pct = totalV > 0 ? Math.round((filledV / totalV) * 100) : 0;
+
+  bar.style.display = '';
+  document.getElementById('formulaText').textContent = recipe ? recipe.display : display;
+  document.getElementById('formulaName').textContent = recipe ? recipe.name : (pct === 100 ? 'Unknown Compound' : '');
+  document.getElementById('stabilityFill').style.width = pct + '%';
+
+  // Discovery check
+  if (recipe && pct === 100 && !discoveries.has(key)) {
+    discoveries.add(key);
+    showToast(recipe.name + ' discovered!');
+    // Quest progress
+    QUESTS.forEach(q => {
+      if (q.steps.includes(recipe.display)) {
+        questProgress[q.id].add(recipe.display);
+        if (questProgress[q.id].size === q.steps.length) {
+          setTimeout(() => showToast('Quest "' + q.name + '" complete!'), 2600);
+        }
+      }
+    });
+    saveState();
+    buildQuestPanel();
+  }
+}
+
+function findClusters() {
+  const adj = new Map();
+  atoms.forEach(a => adj.set(a.id, []));
+  bonds.forEach(b => { adj.get(b.from)?.push(b.to); adj.get(b.to)?.push(b.from); });
+  const visited = new Set();
+  const clusters = [];
+  atoms.forEach(a => {
+    if (visited.has(a.id)) return;
+    const cluster = [];
+    const queue = [a.id];
+    visited.add(a.id);
+    while (queue.length) {
+      const id = queue.shift();
+      cluster.push(atoms.find(x => x.id === id));
+      (adj.get(id)||[]).forEach(n => { if (!visited.has(n)) { visited.add(n); queue.push(n); } });
+    }
+    clusters.push(cluster);
+  });
+  return clusters;
+}
+
+// ── Physics + Render Loop ──
+const BOND_DIST = 60;
+const REPEL_DIST = 35;
+const DAMPING = 0.985;
+const JITTER = 0.06;
+let ringPulse = 0;
+
+function tick() {
+  requestAnimationFrame(tick);
+  const cx = RING_CX(), cy = RING_CY(), rr = RING_R();
+
+  // ── Physics ──
+  for (const a of atoms) {
+    if (a.inRing) {
+      a.ringAngle += a.ringSpeed;
+      a.x = cx + Math.cos(a.ringAngle) * rr;
+      a.y = cy + Math.sin(a.ringAngle) * rr;
+      continue;
+    }
+    a.vx += (Math.random()-0.5) * JITTER;
+    a.vy += (Math.random()-0.5) * JITTER;
+    a.vx *= DAMPING; a.vy *= DAMPING;
+    a.x += a.vx; a.y += a.vy;
+    const pad = 30;
+    if (a.x < pad) { a.x = pad; a.vx = Math.abs(a.vx)*0.5; }
+    if (a.x > W-pad) { a.x = W-pad; a.vx = -Math.abs(a.vx)*0.5; }
+    if (a.y < pad) { a.y = pad; a.vy = Math.abs(a.vy)*0.5; }
+    if (a.y > H-pad) { a.y = H-pad; a.vy = -Math.abs(a.vy)*0.5; }
+  }
+
+  // ── Auto-bonding ──
+  const bondSet = new Set(bonds.map(b => Math.min(b.from,b.to)+'-'+Math.max(b.from,b.to)));
+
+  for (let i = 0; i < atoms.length; i++) {
+    for (let j = i+1; j < atoms.length; j++) {
+      const a = atoms[i], b = atoms[j];
+      const dx = a.x-b.x, dy = a.y-b.y;
+      const dist = Math.sqrt(dx*dx+dy*dy);
+
+      // Repulsion
+      if (dist < REPEL_DIST && dist > 0) {
+        const f = (REPEL_DIST-dist)*0.04;
+        const nx = dx/dist, ny = dy/dist;
+        a.vx += nx*f; a.vy += ny*f;
+        b.vx -= nx*f; b.vy -= ny*f;
+      }
+
+      // Bond attraction for atoms with free valence
+      const elA = ELEMENTS[a.sym], elB = ELEMENTS[b.sym];
+      const freeA = elA.valence - a.bondsUsed, freeB = elB.valence - b.bondsUsed;
+      if (freeA > 0 && freeB > 0 && dist < BOND_DIST * 2.5 && dist > BOND_DIST) {
+        const pull = 0.008;
+        const nx = dx/dist, ny = dy/dist;
+        a.vx -= nx*pull; a.vy -= ny*pull;
+        b.vx += nx*pull; b.vy += ny*pull;
+      }
+
+      // Auto-bond
+      if (dist < BOND_DIST && dist > 0) {
+        const key = Math.min(a.id,b.id)+'-'+Math.max(a.id,b.id);
+        if (!bondSet.has(key) && freeA > 0 && freeB > 0) {
+          bonds.push({ from: a.id, to: b.id, age: 0 });
+          bondSet.add(key);
+          a.bondsUsed++; b.bondsUsed++;
+          // Flash
+          const mx = (a.x+b.x)/2, my = (a.y+b.y)/2;
+          for (let k = 0; k < 6; k++) {
+            const ang = Math.random()*Math.PI*2;
+            flashes.push({ x:mx, y:my, vx:Math.cos(ang)*1.5, vy:Math.sin(ang)*1.5,
+              life:1, color:'#00FF88' });
+          }
+        }
+      }
+
+      // Bonded spring force
+      if (bondSet.has(Math.min(a.id,b.id)+'-'+Math.max(a.id,b.id))) {
+        const target = (elA.radius + elB.radius) * 0.9;
+        const spring = (dist - target) * 0.02;
+        if (dist > 0) {
+          const nx = dx/dist, ny = dy/dist;
+          a.vx -= nx*spring; a.vy -= ny*spring;
+          b.vx += nx*spring; b.vy += ny*spring;
+        }
+      }
+    }
+  }
+
+  // Age bonds
+  bonds.forEach(b => b.age = Math.min(b.age + 0.02, 1));
+
+  // Update flashes
+  flashes = flashes.filter(f => {
+    f.x += f.vx; f.y += f.vy; f.life -= 0.025; f.vx *= 0.97; f.vy *= 0.97;
+    return f.life > 0;
+  });
+
+  updateFormula();
+
+  // ── Render ──
+  ctx.clearRect(0, 0, W, H);
+
+  // Background stars
+  for (const s of stars) {
+    s.x += s.vx; s.y += s.vy;
+    if (s.x < 0) s.x = W; if (s.x > W) s.x = 0;
+    if (s.y < 0) s.y = H; if (s.y > H) s.y = 0;
+    ctx.globalAlpha = s.alpha;
+    ctx.fillStyle = '#d8d6d0';
+    ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI*2); ctx.fill();
+  }
+
+  // Cyclotron ring (always visible, brighter when active)
+  ringPulse += 0.02;
+  const ringAlpha = cyclotronMode ? 0.25 + Math.sin(ringPulse)*0.08 : 0.06 + Math.sin(ringPulse)*0.02;
+  ctx.globalAlpha = ringAlpha;
+  ctx.strokeStyle = '#00FF88';
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.arc(cx, cy, rr, 0, Math.PI*2); ctx.stroke();
+
+  // Inner guide ring
+  ctx.globalAlpha = ringAlpha * 0.4;
+  ctx.strokeStyle = '#cc6247';
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.arc(cx, cy, rr*0.85, 0, Math.PI*2); ctx.stroke();
+
+  // Magnetic field arcs
+  ctx.globalAlpha = cyclotronMode ? 0.08 : 0.03;
+  ctx.strokeStyle = '#cc6247';
+  ctx.lineWidth = 0.8;
+  for (let i = 0; i < 8; i++) {
+    const a = (i/8)*Math.PI*2 + ringPulse*0.3;
+    ctx.beginPath();
+    ctx.arc(cx, cy, rr+10+Math.sin(a*3+ringPulse)*6, a, a+Math.PI/3);
+    ctx.stroke();
+  }
+
+  // Energy arcs when cyclotron active
+  if (cyclotronMode && atoms.some(a => a.inRing)) {
+    ctx.globalAlpha = 0.12 + Math.sin(ringPulse*3)*0.04;
+    ctx.strokeStyle = '#00FF88';
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([4,8]);
+    ctx.beginPath(); ctx.arc(cx, cy, rr, 0, Math.PI*2); ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  // ── Bonds ──
+  ctx.lineCap = 'round';
+  for (const bond of bonds) {
+    const a = atoms.find(x => x.id === bond.from);
+    const b = atoms.find(x => x.id === bond.to);
+    if (!a || !b) continue;
+    // Glow
+    ctx.globalAlpha = 0.15 * bond.age;
+    ctx.strokeStyle = '#00FF88';
+    ctx.lineWidth = 6;
+    ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+    // Core
+    ctx.globalAlpha = 0.6 * bond.age;
+    ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+  }
+
+  // ── Atoms ──
+  for (const a of atoms) {
+    const el = ELEMENTS[a.sym];
+    const r = el.radius;
+    // Outer glow
+    ctx.globalAlpha = 0.15;
+    ctx.fillStyle = el.color;
+    ctx.beginPath(); ctx.arc(a.x, a.y, r+6, 0, Math.PI*2); ctx.fill();
+    // Core
+    ctx.globalAlpha = 0.85;
+    ctx.beginPath(); ctx.arc(a.x, a.y, r, 0, Math.PI*2); ctx.fill();
+    // Inner highlight
+    ctx.globalAlpha = 0.25;
+    ctx.fillStyle = '#FFFFFF';
+    ctx.beginPath(); ctx.arc(a.x - r*0.25, a.y - r*0.25, r*0.4, 0, Math.PI*2); ctx.fill();
+    // Label
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = el.color === '#FFFFFF' || el.color === '#FFFF30' || el.color === '#3DFF00' || el.color === '#1FF01F' ? '#111' : '#FFF';
+    ctx.font = 'bold ' + (r < 16 ? 10 : 12) + 'px "Space Mono", monospace';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(a.sym, a.x, a.y);
+    // Valence indicator
+    const free = el.valence - a.bondsUsed;
+    if (free > 0) {
+      ctx.globalAlpha = 0.4;
+      ctx.strokeStyle = el.color;
+      ctx.lineWidth = 1;
+      ctx.setLineDash([2,3]);
+      ctx.beginPath(); ctx.arc(a.x, a.y, r+10, 0, Math.PI*2); ctx.stroke();
+      ctx.setLineDash([]);
+    }
+  }
+
+  // ── Flashes ──
+  for (const f of flashes) {
+    ctx.globalAlpha = f.life * 0.8;
+    ctx.fillStyle = f.color;
+    ctx.beginPath(); ctx.arc(f.x, f.y, 2 + f.life*3, 0, Math.PI*2); ctx.fill();
+  }
+
+  ctx.globalAlpha = 1;
+  updateCount();
+}
+
+requestAnimationFrame(tick);
+</script>
+</body>
+</html>

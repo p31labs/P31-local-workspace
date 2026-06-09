@@ -1,0 +1,7 @@
+name = "spaceship-relay"
+main = "worker/index.ts"
+compatibility_date = "2024-01-01"
+
+[[kv_namespaces]]
+binding = "SPACESHIP_TELEMETRY"
+id = "cb2cbcad85a54b959f5fc81cb9fc21bb"

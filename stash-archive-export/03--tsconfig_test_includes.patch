@@ -1,0 +1,11 @@
+diff --git a/04_SOFTWARE/p31-delta-hiring/tsconfig.json b/04_SOFTWARE/p31-delta-hiring/tsconfig.json
+index eb10561..847be4f 100644
+--- a/04_SOFTWARE/p31-delta-hiring/tsconfig.json
++++ b/04_SOFTWARE/p31-delta-hiring/tsconfig.json
+@@ -10,5 +10,5 @@
+     "isolatedModules": true,
+     "lib": ["ES2022", "DOM", "DOM.Iterable"]
+   },
+-  "include": ["src/**/*.ts"]
++  "include": ["src/**/*.ts", "tests/**/*.ts", "vitest.config.ts"]
+ }

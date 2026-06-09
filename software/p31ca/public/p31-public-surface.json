@@ -1,0 +1,115 @@
+{
+  "schema": "p31.publicSurface/1.0.0",
+  "version": "1.0.0",
+  "updated": "2026-04-30",
+  "note": "Machine index of generic public deliverables on p31ca.org. Sync entity/contact copy with P31 home p31-constants.json.",
+  "organization": {
+    "legalName": "P31 Labs, Inc.",
+    "ein": "42-1888158",
+    "stateOfIncorporation": "GA",
+    "status501c3": "application-filed",
+    "filedDate501c3": "2026-04-30",
+    "trackingId501c3": "281TLBGO"
+  },
+  "contact": {
+    "primaryEmail": "will@p31ca.org",
+    "githubOrg": "https://github.com/p31labs",
+    "kofiUrl": "https://ko-fi.com/trimtab69420"
+  },
+  "trustAndGovernance": {
+    "privacy": { "path": "/privacy.html", "shortPath": "/privacy" },
+    "terms": { "path": "/terms.html", "shortPath": "/terms" },
+    "contact": { "path": "/contact.html", "shortPath": "/contact" },
+    "accessibility": { "path": "/accessibility.html", "shortPath": "/accessibility" },
+    "securityDisclosure": { "path": "/security-disclosure.html", "shortPath": "/security" },
+    "openSource": { "path": "/open-source.html", "shortPath": "/oss" }
+  },
+  "householdHandoff": {
+    "familyPack": { "path": "/family-sovereign-pack.html", "shortPath": "/family-pack" }
+  },
+  "carsSocialMolecules": {
+    "path": "/social-molecules.html",
+    "shortPath": "/cars",
+    "registryId": "social-molecules",
+    "note": "C.A.R.S. operator shell on the technical hub; live soup sim remains on bonding vertical; wire catalog p31.carsWire in bonding-soup repo"
+  },
+  "quantumComposer": {
+    "path": "/quantum-composer.html",
+    "shortPath": "/composer",
+    "schemaAnchor": "p31.quantumComposerPage/0.1.0",
+    "note": "Web Audio instrument; LARMOR_HZ locked to p31-constants via verify:quantum-clock; module /lib/p31-quantum-composer.mjs"
+  },
+  "messagingHub": {
+    "path": "/messaging-hub.html",
+    "shortPaths": ["/messages", "/comms"],
+    "schemaAnchor": "p31.messagingHub/0.1.0",
+    "note": "Static index of hub messaging surfaces; no unified inbox; Phos handoff stays on kids/onboard."
+  },
+  "sovereignLab": {
+    "path": "/p31-sovereign-lab.html",
+    "shortPath": "/lab",
+    "note": "Sovereign Lab mirror from P31 home; npm run sync:sovereign-p31ca; optional labTelemetry → mock WS eventLog"
+  },
+  "browserSlicer": {
+    "path": "/p31-slicer.html",
+    "shortPath": "/slicer",
+    "note": "Kiri:Moto shell + K₄ STL; synced with Sovereign Lab pipeline"
+  },
+  "machineIndexes": {
+    "creatorEconomy": "/creator-economy.json",
+    "contractRegistry": "/p31-contract-registry.json",
+    "contractBuilderPage": "/contract-builder.html",
+    "contractBuilderShort": "/contracts",
+    "superCentaurPack": "/p31-super-centaur-pack.json",
+    "welcomePackages": "/p31-welcome-packages.json",
+    "liveFleetBundle": "/p31-live-fleet.json",
+    "groundTruthSchema": "p31.ground-truth/1.0.0",
+    "cognitivePassportGenerator": "/passport-generator.html",
+    "cognitivePassportShort": "/passport"
+  },
+  "webAuthnPasskey": {
+    "relativeApiBase": "/api/passkey",
+    "postEndpoints": [
+      "register-begin",
+      "register-finish",
+      "auth-begin",
+      "auth-finish"
+    ],
+    "implementation": "andromeda/software/p31ca/workers/passkey",
+    "mount": "Cloudflare zone route p31ca.org/api/passkey/* (not Pages Functions)",
+    "note": "Same-origin fetch from p31ca.org when Worker is deployed; RP_ID p31ca.org in production."
+  },
+  "wellKnown": {
+    "securityTxt": "/.well-known/security.txt"
+  },
+  "mapPrimaryHubDonatePage": {
+    "path": "/donate.html",
+    "stripePaymentLink": "https://buy.stripe.com/5kQ14g827gmpcHFb0W8Ra00",
+    "githubSponsors": "https://github.com/sponsors/p31labs",
+    "note": "Canonical static MAP surface. Optional query client_reference_id when localStorage p31_subject_id matches derivation; no Stripe.js."
+  },
+  "donateApi": {
+    "customDomain": "https://donate-api.phosphorus31.org",
+    "workersDev": "https://donate-api.trimtab-signal.workers.dev",
+    "healthPath": "/health",
+    "createCheckoutPath": "/create-checkout",
+    "stripeWebhookPath": "/stripe-webhook",
+    "constantsKeys": [
+      "payment.donateApiHealthUrl",
+      "payment.donateApiWorkersDevUrl"
+    ],
+    "deployDoc": "andromeda/software/donate-api/DEPLOY.md"
+  },
+  "ecosystemIntegration": {
+    "schema": "p31.ecosystem/1.0.0",
+    "meshConstantsUrl": "/p31-mesh-constants.json",
+    "glassReportHint": "Home repo: npm run ecosystem:glass → /tmp/p31_glass_report.json",
+    "verificationLadder": [
+      "npm run apply:constants",
+      "npm run release:check",
+      "MESH_LIVE_STRICT=1 npm run p31:ci",
+      "P31_GLASS_STRICT=1 npm run ecosystem:glass"
+    ],
+    "normativeMatrix": "docs/ECOSYSTEM-PRODUCTION-11.md (P31 home workspace)"
+  }
+}

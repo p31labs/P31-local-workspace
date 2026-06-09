@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#050505">
+    <title>Node Zero | P31 Labs</title>
+    <meta name="description" content="Pure TypeScript cryptographic mesh node primitives. WebCrypto identity, channel management, transport adapters, and an encrypted IndexedDB vault.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/assets/p31-operator-tailwind.js"></script>
+    <style>
+        body {
+            background-color: #050505;
+            color: #d8d6d0;
+            background-image: linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+        .matte-panel { background-color: #161920; border: 1px solid rgba(255,255,255,0.04); }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col text-cloud/90">
+
+    <header class="w-full border-b border-white/5 bg-void/95 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="/" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
+                <svg width="28" height="28" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="512" height="512" rx="112" fill="#25897d"/>
+                    <circle cx="390" cy="120" r="48" fill="#cc6247"/>
+                    <text x="256" y="340" font-family="system-ui" font-weight="900" font-size="220" fill="#d8d6d0" text-anchor="middle">P31</text>
+                    <rect x="156" y="380" width="200" height="16" rx="8" fill="#cda852"/>
+                </svg>
+                <span class="font-bold text-lg tracking-tight">P31 Labs</span>
+            </a>
+            <nav class="flex gap-4 font-mono text-sm">
+                <a href="/" class="text-cloud/50 hover:text-cloud transition-colors flex items-center gap-2">← Hub</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl mx-auto px-6 py-12 w-full flex flex-col gap-12">
+
+        <header class="border-b border-white/10 pb-8">
+            <div class="flex items-center gap-4 mb-4">
+                <div class="text-3xl bg-surface w-12 h-12 rounded flex items-center justify-center border border-white/5">📡</div>
+                <div class="px-2 py-0.5 rounded border text-[10px] font-mono tracking-wide text-butter/80 border-butter/20 bg-butter/5">🟡 IN DEV</div>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-bold mb-4 text-cloud">Node Zero</h1>
+            <p class="text-xl text-butter/70 font-mono">Cryptographic Mesh Node Primitives</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            <div class="lg:col-span-2 flex flex-col gap-8">
+
+                <section class="matte-panel rounded-lg p-8">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center gap-3">
+                        <span class="text-butter">01.</span> Architecture
+                    </h2>
+                    <p class="text-cloud/70 leading-relaxed mb-6">
+                        Node Zero is the atomic unit of the Kenosis mesh — a pure TypeScript library with zero runtime dependencies. Every Cloudflare Worker in the Kenosis topology is effectively a Node Zero instance. It provides all the primitives needed for a sovereign, cryptographically-identified mesh participant.
+                    </p>
+                    <ul class="space-y-5 font-mono text-sm text-cloud/80">
+                        <li class="flex items-start gap-3">
+                            <span class="text-butter mt-0.5">▸</span>
+                            <div>
+                                <strong class="text-cloud block mb-1">WebCrypto Identity (<code class="text-butter/70">src/backends/webcrypto-identity.ts</code>)</strong>
+                                <span class="text-cloud/50">Ed25519 key generation via the Web Cryptography API. Private keys are non-exportable — they never leave the secure context. Works identically in Cloudflare Workers, browsers, and Node 20+.</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-butter mt-0.5">▸</span>
+                            <div>
+                                <strong class="text-cloud block mb-1">Channel Manager (<code class="text-butter/70">src/primitives/channel-manager.ts</code>)</strong>
+                                <span class="text-cloud/50">Multiplexed logical channels over a single transport connection. Each bond relationship, spoon event, and telemetry stream runs on its own isolated channel.</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-butter mt-0.5">▸</span>
+                            <div>
+                                <strong class="text-cloud block mb-1">Vault Store (<code class="text-butter/70">src/primitives/vault-store.ts</code>)</strong>
+                                <span class="text-cloud/50">Encrypted IndexedDB storage for key material, bond records, and session tokens. AES-GCM encryption with keys derived from the WebCrypto identity. Data is unreadable without the local identity key.</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-butter mt-0.5">▸</span>
+                            <div>
+                                <strong class="text-cloud block mb-1">Transport Adapters (<code class="text-butter/70">src/transports/</code>)</strong>
+                                <span class="text-cloud/50">Pluggable transport layer. WebSocket transport included. Workers use the fetch transport. The same node logic runs on any transport without modification.</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-butter mt-0.5">▸</span>
+                            <div>
+                                <strong class="text-cloud block mb-1">Forwarder (<code class="text-butter/70">src/forwarder.ts</code>)</strong>
+                                <span class="text-cloud/50">Mesh packet routing with TTL management and loop detection. Implements the Delta topology routing rules — packets travel the K₄ shortest path, not through a hub.</span>
+                            </div>
+                        </li>
+                    </ul>
+                </section>
+
+                <section class="matte-panel rounded-lg p-8">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center gap-3">
+                        <span class="text-butter">02.</span> PWA & Demos
+                    </h2>
+                    <p class="text-cloud/70 leading-relaxed mb-4">
+                        Node Zero ships with a full PWA subdirectory (<code class="text-butter/60 font-mono text-sm">pwa/</code>) — a production-ready Vite + React 19 + Cloudflare Pages deployment demonstrating the mesh node in a browser context.
+                    </p>
+                    <div class="space-y-3">
+                        <div class="bg-void border border-white/5 rounded p-4 text-sm">
+                            <p class="text-butter/80 font-mono text-xs mb-2">QUANTUM HELLO WORLD</p>
+                            <p class="text-cloud/60"><code class="font-mono">pwa/src/views/QuantumHelloWorld.tsx</code> — interactive SIC-POVM measurement demonstration. Visualizes the tetrahedral Bloch sphere geometry that underpins the Kenosis topology.</p>
+                        </div>
+                        <div class="bg-void border border-white/5 rounded p-4 text-sm">
+                            <p class="text-butter/80 font-mono text-xs mb-2">SHELTER DEMO</p>
+                            <p class="text-cloud/60"><code class="font-mono">pwa/src/views/Shelter.tsx</code> — demonstrates Node Zero's application to housing navigation. A P31 mesh node used for resource access, not just cryptographic identity.</p>
+                        </div>
+                        <div class="bg-void border border-white/5 rounded p-4 text-sm">
+                            <p class="text-butter/80 font-mono text-xs mb-2">TEST COVERAGE</p>
+                            <p class="text-cloud/60">9 test files: channel-manager, codec, forwarder, identity-provider, node-integration, state-engine, transport-adapter, vault-store, webcrypto-identity. Full integration test validates end-to-end node-to-node communication.</p>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+
+            <div class="flex flex-col gap-6">
+
+                <div class="matte-panel rounded-lg p-6">
+                    <h3 class="text-sm font-mono text-cloud/40 uppercase tracking-widest mb-4">Package Info</h3>
+                    <div class="space-y-4 text-sm">
+                        <div>
+                            <div class="text-cloud font-bold mb-1">Runtime</div>
+                            <div class="text-cloud/60">Workers / Browser / Node 20+</div>
+                        </div>
+                        <div>
+                            <div class="text-cloud font-bold mb-1">Dependencies</div>
+                            <div class="text-cloud/60 font-mono">Zero runtime deps</div>
+                        </div>
+                        <div>
+                            <div class="text-cloud font-bold mb-1">PWA Deploy</div>
+                            <div class="text-cloud/60">Cloudflare Pages (<code class="font-mono text-xs">pwa/wrangler.toml</code>)</div>
+                        </div>
+                        <div>
+                            <div class="text-cloud font-bold mb-1">Tests</div>
+                            <div class="text-cloud/60">9 suites — Vitest</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="matte-panel rounded-lg p-6">
+                    <h3 class="text-sm font-mono text-cloud/40 uppercase tracking-widest mb-4">Repository</h3>
+                    <a href="https://github.com/p31labs/andromeda/tree/main/04_SOFTWARE/packages/node-zero"
+                       target="_blank" rel="noopener"
+                       class="block p-4 bg-void border border-white/5 rounded hover:border-teal/30 transition-colors group">
+                        <div class="font-bold text-sm text-cloud group-hover:text-teal transition-colors mb-1">packages/node-zero</div>
+                        <div class="text-xs text-cloud/50 font-mono">04_SOFTWARE/packages/node-zero</div>
+                    </a>
+                </div>
+
+                <div class="matte-panel rounded-lg p-6">
+                    <h3 class="text-sm font-mono text-cloud/40 uppercase tracking-widest mb-4">Ecosystem Ties</h3>
+                    <a href="kenosis.html" class="block p-4 bg-void border border-white/5 rounded hover:border-teal/30 transition-colors group mb-3">
+                        <div class="font-bold text-sm text-cloud group-hover:text-teal transition-colors mb-1">Project Kenosis</div>
+                        <div class="text-xs text-cloud/50">Each Kenosis worker IS a Node Zero instance in the mesh.</div>
+                    </a>
+                    <a href="quantum-core.html" class="block p-4 bg-void border border-white/5 rounded hover:border-cyan/30 transition-colors group mb-3">
+                        <div class="font-bold text-sm text-cloud group-hover:text-cyan transition-colors mb-1">Quantum Core</div>
+                        <div class="text-xs text-cloud/50">FIPS-203/204 PQC primitives for post-quantum identity signing.</div>
+                    </a>
+                    <a href="spaceship-earth.html" class="block p-4 bg-void border border-white/5 rounded hover:border-teal/30 transition-colors group">
+                        <div class="font-bold text-sm text-cloud group-hover:text-teal transition-colors mb-1">Spaceship Earth</div>
+                        <div class="text-xs text-cloud/50">Vault UI surfaces encrypted bond records from Node Zero store.</div>
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <footer class="border-t border-white/5 mt-12 py-6">
+        <div class="max-w-7xl mx-auto px-6 flex justify-between items-center text-xs text-cloud/30 font-mono">
+            <span>P31 Labs · 501(c)(3) · EIN 42-1888158</span>
+            <a href="/" class="hover:text-cloud/60 transition-colors">← Back to Hub</a>
+        </div>
+    </footer>
+
+</body>
+</html>

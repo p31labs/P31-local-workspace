@@ -1,0 +1,162 @@
+{
+  "$schema": "p31.nonprofit.grants/1.0.0",
+  "_meta": {
+    "description": "Grant pipeline + active applications + post-award deliverable tracking. Drives /grants reporting and the operator's deadline calendar. Restricted-fund accounting hooks into financials.json.",
+    "lastUpdated": "2026-05-01",
+    "owner": "operator@phosphorus31.org",
+    "verifier": "npm run verify:nonprofit"
+  },
+  "pipelineStages": [
+    "researching",
+    "drafting",
+    "submitted",
+    "interview",
+    "awarded",
+    "active",
+    "reporting",
+    "closed",
+    "rejected",
+    "withdrawn"
+  ],
+  "fitCriteria": {
+    "mustHave": [
+      "Aligns with stated mission (privacy, family infrastructure, lived-experience advocacy)",
+      "Permits open-source publication of funded artifacts",
+      "Does not require operator to disclose protected health information",
+      "Does not require client/beneficiary tracking incompatible with privacy commitments",
+      "Reporting burden < 10% of grant value in operator-time"
+    ],
+    "shouldHave": [
+      "Multi-year (reduces re-application burden)",
+      "Capacity-building component (general operating, not just project)",
+      "Funder values aligned with edge-only / open-source ethos"
+    ],
+    "automaticDecline": [
+      "Requires moving data to cloud-vendor controlled by funder",
+      "Requires demographic data collection beyond what mission requires",
+      "Mission-incompatible co-marketing requirements"
+    ]
+  },
+  "activePipeline": [],
+  "submitted": [],
+  "awarded": [],
+  "rejected": [],
+  "candidateFunders": [
+    {
+      "name": "Mozilla Foundation — MIECO / Open Source Support",
+      "fit": "high",
+      "estimatedAmount": "5000-50000",
+      "deadline": "rolling",
+      "researched": false
+    },
+    {
+      "name": "NLnet Foundation — NGI0 Core Fund",
+      "fit": "high",
+      "estimatedAmount": "5000-50000",
+      "deadline": "bimonthly",
+      "researched": false,
+      "note": "Edge-only / privacy fit excellent"
+    },
+    {
+      "name": "Sloan Foundation — Better Software for Science",
+      "fit": "medium",
+      "estimatedAmount": "10000-250000",
+      "deadline": "rolling",
+      "researched": false
+    },
+    {
+      "name": "Ford Foundation — Public Interest Tech",
+      "fit": "high",
+      "estimatedAmount": "25000-200000",
+      "deadline": "annual",
+      "researched": false
+    },
+    {
+      "name": "Knight Foundation — Tech for Engagement",
+      "fit": "medium",
+      "estimatedAmount": "25000-150000",
+      "deadline": "rolling",
+      "researched": false
+    },
+    {
+      "name": "Reset.tech / Reset Australia",
+      "fit": "medium",
+      "estimatedAmount": "10000-100000",
+      "deadline": "TBD",
+      "researched": false
+    },
+    {
+      "name": "Internet Society Foundation",
+      "fit": "high",
+      "estimatedAmount": "10000-100000",
+      "deadline": "annual",
+      "researched": false
+    },
+    {
+      "name": "Georgia state nonprofit support (DCA, GAFCP)",
+      "fit": "medium",
+      "estimatedAmount": "5000-25000",
+      "deadline": "varies",
+      "researched": false
+    },
+    {
+      "name": "AuDHD / disability-focused funders (RWJF, Ruderman, Kessler)",
+      "fit": "high",
+      "estimatedAmount": "10000-100000",
+      "deadline": "varies",
+      "researched": false
+    },
+    {
+      "name": "Patrick J. McGovern Foundation — AI for Good",
+      "fit": "medium",
+      "estimatedAmount": "50000-500000",
+      "deadline": "rolling",
+      "researched": false
+    },
+    {
+      "name": "Open Society Foundations",
+      "fit": "medium",
+      "estimatedAmount": "varies",
+      "deadline": "by-invitation",
+      "researched": false
+    },
+    {
+      "name": "Cloud-vendor nonprofit credits (Cloudflare Project Galileo, Pages free tier)",
+      "fit": "high",
+      "estimatedAmount": "in-kind credits",
+      "deadline": "rolling",
+      "researched": false,
+      "note": "Already on free tier; formal Galileo enrollment available post-determination"
+    }
+  ],
+  "templates": {
+    "letterOfInquiry": "/scripts/nonprofit/templates/letter-of-inquiry.md",
+    "fullProposal": "/scripts/nonprofit/templates/grant-proposal.md",
+    "budget": "/scripts/nonprofit/templates/grant-budget.json",
+    "logicModel": "/scripts/nonprofit/templates/logic-model.md",
+    "interimReport": "/scripts/nonprofit/templates/interim-report.md",
+    "finalReport": "/scripts/nonprofit/templates/final-report.md"
+  },
+  "postAwardDiscipline": {
+    "kickoffMeetingWithin": "30 days of award",
+    "trackerCreatedFor": [
+      "deliverables (with due dates)",
+      "metrics (with measurement plan)",
+      "expense allocation (restricted-fund accounting)",
+      "interim reports (with draft deadlines internal to funder deadlines)",
+      "final report (90 days before grant period end)"
+    ],
+    "burnRateAlerts": "monthly check; flag if spend deviates >15% from plan",
+    "scopeChangeProtocol": "any deviation from funded scope > $1000 or > 10% of budget requires documented funder approval"
+  },
+  "ethicalConsiderations": {
+    "fundingDeclines": {
+      "policy": "We document and publish (anonymized if required by funder) all funding declined for ethical reasons. Builds peer-organization knowledge base.",
+      "log": []
+    },
+    "donorAdvisedFundsAndIntermediaries": {
+      "policy": "Accept gifts via DAF without question; the underlying donor's identity may not be known to us, which is acceptable.",
+      "exception": "If we have specific knowledge of misalignment with named DAF advisor, may decline."
+    }
+  }
+}

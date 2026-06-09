@@ -1,0 +1,198 @@
+{
+  "$schema": "p31.nonprofit.legal/1.0.0",
+  "_meta": {
+    "description": "Legal scaffolding — IP, trademarks, contracts, data processing, privacy, terms. Pairs phosphorus31.org/legal/ public surfaces.",
+    "lastUpdated": "2026-05-01",
+    "owner": "operator@phosphorus31.org",
+    "verifier": "npm run verify:nonprofit",
+    "disclaimer": "This is the operator's own organizational policy file, not legal advice. Material changes should be reviewed by counsel."
+  },
+  "intellectualProperty": {
+    "ownership": {
+      "principle": "Work-for-hire and contributor-license-agreement frame all IP; nonprofit retains copyright on funded artifacts; nothing belongs to the operator personally except pre-existing personal projects clearly delimited in /home/p31 outside the nonprofit corpus.",
+      "founderContributions": "Pre-incorporation founder code is being progressively assigned to P31 Labs, Inc. via documented IP-assignment agreement; tracker in legal/ip-assignment-log.md"
+    },
+    "licenses": {
+      "code": {
+        "default": "AGPL-3.0",
+        "rationale": "Copyleft prevents enterprise extraction without contribution back",
+        "alternatives": {
+          "MIT": "for utility libraries that benefit from broad adoption",
+          "CC0": "for documentation snippets and configuration examples"
+        }
+      },
+      "documentation": {
+        "default": "CC BY 4.0",
+        "rationale": "Maximize reuse with attribution"
+      },
+      "designAssets": {
+        "default": "CC BY-NC 4.0",
+        "rationale": "Brand mark stays controlled; visual canon shareable for non-commercial use"
+      },
+      "researchPapers": {
+        "default": "CC BY 4.0",
+        "preprintFirst": true
+      }
+    },
+    "thirdPartyDependencies": {
+      "licenseAuditFrequency": "per release",
+      "tool": "scripts/license-audit.mjs (runs in CI as part of security:check)",
+      "compatibilityMatrix": "AGPL-3.0 + MIT + Apache-2.0 + BSD-3 OK; LGPL OK with care; GPL-2-only excluded; SSPL excluded"
+    }
+  },
+  "trademarks": {
+    "marks": [
+      {
+        "name": "P31",
+        "type": "wordmark",
+        "registered": false,
+        "useDate": "2025-01",
+        "class": "9 (software) + 41 (educational services) + 45 (advocacy)",
+        "intentToRegister": true,
+        "estimatedFilingFee": 350
+      },
+      {
+        "name": "Phosphorus31",
+        "type": "wordmark",
+        "registered": false,
+        "useDate": "2026-04-03",
+        "class": "9 + 41 + 45",
+        "intentToRegister": true,
+        "estimatedFilingFee": 350
+      },
+      {
+        "name": "Phosphorus31 device mark (logo)",
+        "type": "device-mark",
+        "registered": false,
+        "useDate": "2026-04-03",
+        "class": "9 + 41 + 45",
+        "intentToRegister": true,
+        "estimatedFilingFee": 350
+      }
+    ],
+    "useGuidelines": "/stylebook/brand.html",
+    "infringementResponse": "Polite cease-and-desist (operator-drafted) before counsel engagement; document everything"
+  },
+  "domainPortfolio": [
+    { "domain": "phosphorus31.org", "registrar": "TBD", "expires": null, "purpose": "primary org", "lockEnabled": true, "renewalAutomatic": true },
+    { "domain": "p31ca.org", "registrar": "TBD", "expires": null, "purpose": "technical hub", "lockEnabled": true, "renewalAutomatic": true }
+  ],
+  "contracts": {
+    "templateLibrary": "/scripts/nonprofit/templates/contracts/",
+    "required": [
+      "MSA-master-services-agreement",
+      "NDA-mutual",
+      "NDA-one-way",
+      "DPA-data-processing-addendum",
+      "BAA-business-associate-agreement-when-PHI-involved",
+      "contractor-1099",
+      "volunteer-agreement",
+      "sponsorship-agreement",
+      "license-grant-narrow-purpose",
+      "joint-venture-when-applicable"
+    ],
+    "approvalThresholds": [
+      { "annualValue": 1000, "approver": "Treasurer" },
+      { "annualValue": 10000, "approver": "Treasurer + Chair" },
+      { "annualValue": 50000, "approver": "Board majority" },
+      { "annualValue": 100000, "approver": "Board supermajority + audit committee review" }
+    ],
+    "review": {
+      "principle": "Operator self-drafts using templates; counsel-of-record (TBD) reviews any contract > $10k OR with novel structure",
+      "redLineRules": [
+        "No indemnification giving away nonprofit status protections",
+        "No exclusive licenses to nonprofit's mission-critical IP",
+        "No arbitration clauses that prevent class participation",
+        "No automatic renewal without 30+ day notice window"
+      ]
+    }
+  },
+  "privacy": {
+    "publicPolicy": "https://phosphorus31.org/privacy",
+    "lastUpdated": "TBD",
+    "principles": [
+      "We do not track. No third-party analytics, no ad pixels, no tracking cookies.",
+      "We do not sell or share donor data.",
+      "Operator-only surfaces are local-first (command center, ops console).",
+      "Public surfaces collect only what's necessary for the immediate purpose (donation, contact form, passkey)."
+    ],
+    "regulations": {
+      "GDPR": {
+        "applicability": "EU data subjects (donors, newsletter subscribers)",
+        "compliance": [
+          "Lawful basis: consent for marketing; legitimate interest for transactional",
+          "Data subject rights: access, rectification, erasure, portability — all honored within 30 days",
+          "Data Processing Agreement with all processors (Stripe, Cloudflare, etc.)"
+        ]
+      },
+      "CCPA": {
+        "applicability": "California residents",
+        "compliance": [
+          "'Do not sell' link present on all donation pages (we don't sell, but link required for transparency)",
+          "Privacy policy includes CCPA-mandated disclosures",
+          "Verified consumer requests honored within 45 days"
+        ]
+      },
+      "HIPAA": {
+        "applicability": "Only if we ever store PHI; currently we do not",
+        "ifTriggered": "Sign BAA with all processors; implement HIPAA security rule technical safeguards"
+      },
+      "COPPA": {
+        "applicability": "Children under 13",
+        "compliance": "Currently no surface targets under-13; if youth-vibe-coding scales beyond household, parental consent flow must be added"
+      }
+    },
+    "dataSubjectRequests": {
+      "channel": "privacy@phosphorus31.org",
+      "responseSLA": "30 days (GDPR) or 45 days (CCPA), whichever applies first",
+      "verification": "email confirmation + (for sensitive deletions) one-time code"
+    },
+    "breachNotificationProtocol": {
+      "discoveryToContainmentSLA": "24 hours",
+      "discoveryToNotificationSLA": "72 hours (GDPR Article 33)",
+      "regulatorsNotified": ["state AG of any affected resident", "EU DPA if EU subjects affected"],
+      "subjectsNotified": "all affected within 72 hours; method: email + public notice on /privacy/incidents/"
+    }
+  },
+  "terms": {
+    "publicTerms": "https://phosphorus31.org/terms",
+    "lastUpdated": "TBD",
+    "venue": "Camden County, GA (operator domicile)",
+    "governingLaw": "Georgia state law",
+    "noClassActionWaiver": true,
+    "rationale": "Pro-operator, pro-litigant terms; we don't trade away rights as a precondition of using free tools"
+  },
+  "openSourceCompliance": {
+    "contributorLicenseAgreement": {
+      "required": false,
+      "rationale": "AGPL itself preserves rights; CLAs add friction without commensurate benefit at our scale",
+      "revisitWhen": "we have multiple non-employee staff contributors"
+    },
+    "developerCertificateOfOrigin": {
+      "required": true,
+      "enforcement": "git commit signed-off-by line; CI checks for it"
+    }
+  },
+  "regulatoryFilings": {
+    "secretaryOfStateGA": "annual registration — see compliance.json",
+    "irs": "Form 990 — see compliance.json",
+    "fincenBeneficialOwnership": {
+      "required": "as of 2024 CTA",
+      "filed": false,
+      "deadline": "within 90 days of incorporation",
+      "applicable": "verify nonprofit exemption — most 501(c)(3) orgs are exempt"
+    }
+  },
+  "disputesAndLitigation": {
+    "current": [
+      {
+        "id": "operator-2025CV936",
+        "captionRedacted": "Johnson v. Johnson",
+        "court": "Camden County Superior Court, GA",
+        "relevanceToNonprofit": "operator's pro-se case; informs operator-advocacy program; no nonprofit funds expended on personal litigation",
+        "disclosureNote": "Visible on operator's public record; nonprofit maintains arms-length"
+      }
+    ],
+    "policy": "Nonprofit funds may not be expended on operator personal litigation. Educational use of operator's litigation experience (templates, blog posts, advocacy) is permissible and expected — that is mission-aligned."
+  }
+}

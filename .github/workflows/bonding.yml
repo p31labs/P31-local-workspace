@@ -1,0 +1,39 @@
+name: bonding
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "software/bonding/**"
+      - "software/packages/shared/**"
+      - ".github/actions/**"
+      - ".github/workflows/bonding.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: bonding-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/toolchain-constants
+
+      - uses: ./.github/actions/pnpm-04-software
+
+      - name: Build
+        working-directory: software
+        run: pnpm --filter @p31/bonding run build
+
+      - name: Deploy to Cloudflare Pages
+        if: github.ref == 'refs/heads/main'
+        uses: ./.github/actions/wrangler-run
+        with:
+          working-directory: software/bonding
+          command: pages deploy dist --project-name=bonding --branch=main
+          api-token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          account-id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

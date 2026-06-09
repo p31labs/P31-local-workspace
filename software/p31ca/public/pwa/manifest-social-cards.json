@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json.schemastore.org/web-manifest-combined.json",
+  "id": "p31.socialCards",
+  "name": "P31 Social Cards",
+  "short_name": "P31 Cards",
+  "description": "Ten share-ready 1080\u00d71080 cards in P31 canonical palette: stat flex, fleet status, the quote, perception/reality diptych, ethics-as-architecture, emotional closer, dev flex, K\u2084 SVG geometry, trim-tab literary, ASCII tetrahedron. Open the page, screenshot a card, share it. The master's tools, disassembling the master's house.",
+  "start_url": "/social-cards/",
+  "scope": "/social-cards/",
+  "display": "standalone",
+  "display_override": ["standalone", "browser"],
+  "orientation": "any",
+  "background_color": "#0f1115",
+  "theme_color": "#25897d",
+  "icons": [
+    {
+      "src": "/pwa/p31-tetra-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["social", "graphics", "productivity"],
+  "lang": "en",
+  "dir": "ltr",
+  "prefer_related_applications": false
+}

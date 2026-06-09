@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  P31 PWA icon  K„ tetrahedron in canonical teal.
+  Single source for all P31 mobile-installable surfaces.
+  Sized as 512×512 with a generous safe zone (e80px from edge) so it
+  passes PWA "maskable" requirements: the central K„ stays visible
+  inside any platform mask (circle, squircle, rounded square).
+  CC-BY 4.0 · P31 Labs · the geometry holds.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="P31 K„ tetrahedron">
+  <title>P31 K„ tetrahedron icon</title>
+  <desc>Four vertices, six edges, no central hub  the minimum complete graph.</desc>
+
+  <!-- background fill (canonical p31-void) -->
+  <rect width="512" height="512" fill="#0f1115"/>
+
+  <!-- subtle radial vertex glow (atmospheric, decorative) -->
+  <defs>
+    <radialGradient id="halo" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#25897d" stop-opacity="0.30"/>
+      <stop offset="60%" stop-color="#25897d" stop-opacity="0.05"/>
+      <stop offset="100%" stop-color="#25897d" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <circle cx="256" cy="256" r="220" fill="url(#halo)"/>
+
+  <!-- K„ edges (six edges of a tetrahedron, projected from a 3D unit
+       tetrahedron at vertices (1,1,1), (1,-1,-1), (-1,1,-1), (-1,-1,1)
+       under a 30° tilt + simple weak-perspective projection  same math
+       as demos/the-same-shape.html). All within the 352×352 safe zone. -->
+  <g stroke="#25897d" stroke-width="6" stroke-linecap="round" fill="none" opacity="0.95">
+    <line x1="256" y1="120" x2="120" y2="392"/>
+    <line x1="256" y1="120" x2="392" y2="392"/>
+    <line x1="256" y1="120" x2="256" y2="296"/>
+    <line x1="120" y1="392" x2="392" y2="392"/>
+    <line x1="120" y1="392" x2="256" y2="296"/>
+    <line x1="392" y1="392" x2="256" y2="296"/>
+  </g>
+
+  <!-- K„ vertices (4 nodes  colored by the canonical operator, child, child, cage palette) -->
+  <g stroke="#d8d6d0" stroke-width="3">
+    <circle cx="256" cy="120" r="28" fill="#25897d"/>
+    <circle cx="120" cy="392" r="28" fill="#cc6247"/>
+    <circle cx="392" cy="392" r="28" fill="#cda852"/>
+    <circle cx="256" cy="296" r="28" fill="#8b7cc9"/>
+  </g>
+
+  <!-- micro brand mark (corner, small enough not to dominate) -->
+  <text x="256" y="475" text-anchor="middle"
+        fill="#6b7280"
+        font-family="ui-monospace, 'SF Mono', monospace"
+        font-size="22" font-weight="700"
+        letter-spacing="0.16em">P31</text>
+</svg>

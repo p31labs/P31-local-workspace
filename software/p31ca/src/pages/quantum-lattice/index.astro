@@ -1,0 +1,114 @@
+---
+import AppShell from '../../layouts/AppShell.astro';
+import { GameShell } from '../../components/games/GameShell.tsx';
+import { PosnerLatticeScene } from '../../components/games/PosnerLatticeScene.tsx';
+import { FreezeBreakerOverlay } from '../../components/games/FreezeBreakerOverlay.tsx';
+---
+<AppShell routeName="quantum-lattice" suppressEbc={true}>
+  <GameShell client:only routeName="quantum-lattice" cameraZ={-0.8}>
+    <PosnerLatticeScene client:only decoherence={0.5} particleCount={3000} />
+    <FreezeBreakerOverlay client:only />
+    
+    <!-- Decoherence meter + Freeze-breaker trigger -->
+    <div class="fixed inset-0 z-20 pointer-events-none flex flex-col items-center pt-6">
+      <div class="glass-panel w-80 p-4 pointer-events-auto">
+        <h2 class="text-p31-cyan text-lg font-bold mb-2">Lattice Coherence</h2>
+        <div class="w-full h-2 bg-p31-void-50 rounded-full overflow-hidden mb-2">
+          <div id="decoherence-bar" class="h-full bg-gradient-to-r from-p31-teal via-p31-amber to-p31-coral transition-all duration-500" style="width: 50%"></div>
+        </div>
+        <p class="text-xs text-p31-cloud-60 mb-3">High decoherence = stress. Press SPACE to collapse wave function.</p>
+      </div>
+      
+      <!-- Self-care + AI chat row -->
+      <div class="flex flex-wrap gap-6 mt-4 justify-center w-full max-w-4xl">
+        <!-- Self-care -->
+        <div class="glass-panel w-80 p-5 pointer-events-auto">
+          <h3 class="text-p31-cyan text-base font-bold mb-3">Self-Care</h3>
+          <div class="grid grid-cols-2 gap-2">
+            <button data-action="water" class="bg-p31-teal/20 hover:bg-p31-teal/30 text-p31-teal py-2 rounded text-sm transition-colors">💧 Water</button>
+            <button data-action="break" class="bg-p31-teal/20 hover:bg-p31-teal/30 text-p31-teal py-2 rounded text-sm transition-colors">🌿 Break</button>
+            <button data-action="meds" class="bg-p31-teal/20 hover:bg-p31-teal/30 text-p31-teal py-2 rounded text-sm transition-colors">💊 Meds</button>
+            <button data-action="breathing" class="bg-p31-teal/20 hover:bg-p31-teal/30 text-p31-teal py-2 rounded text-sm transition-colors">🫁 Breathe</button>
+          </div>
+        </div>
+        
+        <!-- Chat with Quark -->
+        <div class="glass-panel w-80 h-80 flex flex-col p-4 pointer-events-auto">
+          <h3 class="text-p31-cyan text-base font-bold mb-2">Chat with Quark</h3>
+          <div id="chat-messages" class="flex-1 overflow-y-auto space-y-2 text-xs mb-2 font-mono"></div>
+          <form id="chat-form" class="flex space-x-2">
+            <input type="text" class="flex-1 bg-p31-void/50 border border-p31-teal/30 rounded px-2 py-1 text-p31-cyan placeholder-p31-cyan/50 text-xs focus:outline-none" placeholder="Vent..." />
+            <button type="submit" class="bg-p31-teal/20 hover:bg-p31-teal/30 text-p31-teal px-2 py-1 rounded text-xs">Send</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </GameShell>
+</AppShell>
+
+<script client:load>
+  import { logAction } from '../../lib/storage';
+
+  // Chat state + simple mock AI
+  const chatMessages = document.getElementById('chat-messages');
+  const chatForm = document.getElementById('chat-form');
+  const messages = [];
+
+  function addMessage(sender, text) {
+    messages.push({ role: sender === 'You' ? 'user' : 'assistant', content: text });
+    const p = document.createElement('p');
+    p.className = 'text-p31-cloud-60 leading-relaxed';
+    p.innerHTML = `<span class="text-p31-amber">${sender}:</span> ${text}`;
+    chatMessages.appendChild(p);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+  addMessage('Quark', 'Thermal noise in your prefrontal cortex is critical. I\'d suggest coolant injection, but I\'m just a massless particle. What do I know?');
+
+  chatForm?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const input = chatForm.querySelector('input');
+    const text = input.value.trim();
+    if (!text) return;
+    input.value = '';
+    addMessage('You', text);
+    messages.push({ role: 'user', content: text });
+
+    try {
+      const resp = await fetch('https://command-center.trimtab-signal.workers.dev/api/ai/quark', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages })
+      });
+      if (!resp.ok) throw new Error('HTTP ' + resp.status);
+      const data = await resp.json();
+      addMessage('Quark', data.reply || '');
+      messages.push({ role: 'assistant', content: data.reply || '' });
+    } catch (err) {
+      console.error('Quark AI error:', err);
+      addMessage('Quark', 'Quark is momentarily offline. Try again.');
+    }
+  });
+
+  // Self-care buttons → log to IndexedDB (namespace: quantum-lattice)
+  document.querySelectorAll('[data-action]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const action = btn.getAttribute('data-action');
+      try { await logAction('quantum-lattice', action); } catch {}
+      btn.classList.add('bg-p31-teal/40');
+      setTimeout(() => btn.classList.remove('bg-p31-teal/40'), 500);
+    });
+  });
+
+  // Decoherence bar demo
+  let t = 0;
+  function animateBar() {
+    t += 0.02;
+    const p = 0.3 + 0.3 * Math.sin(t);
+    const bar = document.getElementById('decoherence-bar');
+    if (bar) bar.style.width = (p * 100) + '%';
+    requestAnimationFrame(animateBar);
+  }
+  requestAnimationFrame(animateBar);
+</script>

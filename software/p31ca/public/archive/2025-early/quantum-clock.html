@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub" style="color-scheme: dark;">
+<head>
+  <link rel="manifest" href="/p31-mesh.webmanifest" crossorigin="anonymous" />
+
+  <meta charset="UTF-8" />
+<script>(function(){var r=document.documentElement;if(/[?&]alive=1(?:&|$)/.test(location.search))return;r.classList.add("p31-gray-rock");function wake(){r.classList.remove("p31-gray-rock")}document.addEventListener("pointerdown",wake,{once:true,capture:true});document.addEventListener("keydown",wake,{once:true,capture:true})})();</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Quantum clock | P31 Labs</title>
+  <meta name="description" content="P31 Grandfather and Cuckoo: Larmor display coherence, TRIM slow rhythm, episodic chimes. Pedagogy, not metrology." />
+<link rel="canonical" href="https://p31ca.org/quantum-clock.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Quantum clock">
+<meta property="og:description" content="P31 Grandfather and Cuckoo: Larmor display coherence, TRIM slow rhythm, episodic chimes. Pedagogy, not metrology.">
+<meta property="og:url" content="https://p31ca.org/quantum-clock.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Quantum clock">
+<meta name="twitter:description" content="P31 Grandfather and Cuckoo: Larmor display coherence, TRIM slow rhythm, episodic chimes. Pedagogy, not metrology.">
+  <meta name="p31.quantumClockPage" content="p31.quantumClockPage/0.1.0" />
+  <link rel="stylesheet" href="/p31-style.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/p31-tailwind-extend.js"></script>
+  <script>tailwind.config = { theme: { extend: { ...window.P31_TAILWIND_EXTEND } } };</script>
+</head>
+<body class="font-sans antialiased bg-void text-cloud min-h-screen p31-mesh-m-first">
+  <a class="p31-mesh-tap sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:px-4 focus:py-2 focus:rounded-md focus:bg-surface focus:text-teal" href="#main">Skip to main</a>
+  <div class="max-w-2xl mx-auto px-4 py-10 md:py-14">
+    <p class="font-mono text-[0.65rem] text-cloud/50 tracking-widest uppercase mb-2">P31 · physics display</p>
+    <h1 class="text-2xl md:text-3xl font-bold text-paper">Quantum clock</h1>
+    <p class="mt-1 text-sm text-butter/90 font-mono">p31.quantumClockPage/0.1.0</p>
+    <p class="mt-4 text-cloud/85 leading-relaxed" id="main">
+      <strong>Grandfather</strong> = continuous slow rhythm: <code class="text-lavender/90">TRIM_HZ_MIN</code> (0.86 Hz) up through Larmor, visualised as
+      <code class="text-lavender/90">--p31-grandfather-phase</code> on <code class="text-lavender/90">/</code>, <code class="text-lavender/90">/dome</code>,
+      Tier-S1 navigators (<code class="text-lavender/90">connect</code>, planetary onboard, <code class="text-lavender/90">geodesic</code>, quantum deck,
+      tomography, delta, oracle crystal, Fate d20/OQE, quantum family, …) via shared
+      <code class="text-lavender/90">/lib/p31-quantum-grandfather-boot.mjs</code> (machine-checked against dome constants).
+      <strong>Cuckoo</strong> = episodic: telemetry refresh, mesh HUD line, breath phases—surfaced as
+      <code class="text-lavender/90">p31:quantum-clock</code> on <code class="text-lavender/90">document</code>.
+    </p>
+    <p class="mt-3 text-sm text-cloud/70 leading-relaxed">
+      Canonical ³¹P Larmor <strong>863 Hz</strong> lives in <code class="text-xs">p31-constants.json</code> (operator-locked);
+      the egg-hunt enforces the same string on the hub trim UI. <strong>Not</strong> medical timing, NTP, or atomic time.
+    </p>
+    <ul class="mt-6 list-disc pl-5 space-y-2 text-sm text-cloud/80">
+      <li>Try: <a class="p31-mesh-tap text-teal hover:underline" href="/dome/">Sovereign dome</a> (HUD + trim)</li>
+      <li>Try: <a class="p31-mesh-tap text-teal hover:underline" href="/tomography.html">Tomography</a> (slow 0.86 Hz ring, verify-linked)</li>
+      <li>Try: <a class="p31-mesh-tap text-teal hover:underline" href="/quantum-deck.html">Quantum Deck</a> (Web Crypto shuffle, same verify chain)</li>
+      <li>Try: <a class="p31-mesh-tap text-teal hover:underline" href="/quantum-composer.html">Quantum composer</a> (K₄ Web Audio · Larmor ladder · short <code class="text-xs">/composer</code>)</li>
+      <li>Code: P31 home <code class="text-xs">docs/PLAN-QUANTUM-CLOCK.md</code></li>
+    </ul>
+    <p class="mt-8">
+      <a class="p31-mesh-tap text-teal/90 hover:underline" href="/education/">← Education</a>
+      <span class="text-cloud/40 mx-2">·</span>
+      <a class="p31-mesh-tap text-teal/90 hover:underline" href="/">Hub home</a>
+    </p>
+    <script type="module">
+      import { startGrandfatherPhaseVar } from "/lib/p31-quantum-grandfather-boot.mjs";
+      startGrandfatherPhaseVar();
+    </script>
+  </div>
+</body>
+</html>

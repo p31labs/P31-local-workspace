@@ -1,0 +1,124 @@
+---
+// P31 Warehouse — AJ's Inventory Scanner
+// Zero-tap, edge-first, PWA-ready
+// Astro page wrapper for ZeroTapWarehouse React component
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const title = 'Warehouse Scanner';
+const description = 'Zero-tap inventory management for used furniture warehouse';
+---
+
+<BaseLayout title={title} description={description}>
+  <head slot="head">
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/warehouse-manifest.json" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Warehouse" />
+    <meta name="theme-color" content="#0f1115" />
+
+    <!-- Preconnect to reduce latency -->
+    <link rel="preconnect" href="https://k4-personal.trimtab-signal.workers.dev" />
+    <link rel="preconnect" href="https://p31-state.trimtab-signal.workers.dev" />
+  </head>
+
+  <!-- Full-bleed container — no Astro layout constraints -->
+  <div id="warehouse-root" style="position: fixed; inset: 0; z-index: 1000;">
+    <!-- React component mounts here -->
+    <div id="loading" style="
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #0f1115;
+      color: #5DCAA5;
+      font-family: system-ui, sans-serif;
+    ">
+      <div style="font-size: 48px; margin-bottom: 16px;">📦</div>
+      <div style="font-size: 18px;">Loading Warehouse Scanner...</div>
+    </div>
+  </div>
+
+  <script>
+    // Service worker registration for offline support
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/warehouse-sw.js')
+          .then(reg => console.log('Warehouse SW registered:', reg.scope))
+          .catch(err => console.error('SW registration failed:', err));
+      });
+    }
+
+    // Dynamically load the React component (to keep Astro bundle light)
+    async function loadWarehouse() {
+      try {
+        const { ZeroTapWarehouse } = await import('../components/ZeroTapWarehouse.tsx');
+        const React = await import('react');
+        const { createRoot } = await import('react-dom/client');
+
+        const container = document.getElementById('warehouse-root');
+        if (!container) return;
+
+        // Clear loading state
+        container.innerHTML = '';
+
+        // Mount React component
+        const root = createRoot(container);
+        root.render(
+          React.createElement(ZeroTapWarehouse, {
+            onSync: async (items) => {
+              // Push to p31-state Worker
+              const response = await fetch('/api/state/sync', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ items, source: 'warehouse-aj' }),
+              });
+              if (!response.ok) throw new Error('Sync failed');
+            },
+          })
+        );
+      } catch (err) {
+        console.error('Failed to load warehouse:', err);
+        document.getElementById('warehouse-root')!.innerHTML = `
+          <div style="
+            position: fixed;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #0f1115;
+            color: #cc6247;
+            font-family: system-ui, sans-serif;
+            padding: 20px;
+            text-align: center;
+          ">
+            <div style="font-size: 48px; margin-bottom: 16px;">⚠️</div>
+            <div style="font-size: 18px; margin-bottom: 8px;">Failed to load scanner</div>
+            <div style="font-size: 14px; opacity: 0.7;">${err.message}</div>
+            <button onclick="location.reload()" style="
+              margin-top: 24px;
+              padding: 12px 24px;
+              background: #5DCAA5;
+              color: #0f1115;
+              border: none;
+              border-radius: 8px;
+              font-size: 16px;
+              cursor: pointer;
+            ">Retry</button>
+          </div>
+        `;
+      }
+    }
+
+    // Load when DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', loadWarehouse);
+    } else {
+      loadWarehouse();
+    }
+  </script>
+</BaseLayout>

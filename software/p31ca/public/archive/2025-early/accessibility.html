@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub" style="color-scheme: dark;">
+<head>
+  <meta charset="UTF-8">
+<script>(function(){var r=document.documentElement;if(/[?&]alive=1(?:&|$)/.test(location.search))return;r.classList.add("p31-gray-rock");function wake(){r.classList.remove("p31-gray-rock")}document.addEventListener("pointerdown",wake,{once:true,capture:true});document.addEventListener("keydown",wake,{once:true,capture:true})})();</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0f1115">
+  <title>Accessibility | P31 Labs — p31ca.org</title>
+  <meta name="description" content="P31 Labs accessibility commitment, current WCAG 2.1 conformance status, known limitations, and how to report a barrier on p31ca.org.">
+<link rel="canonical" href="https://p31ca.org/accessibility.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Accessibility">
+<meta property="og:description" content="P31 Labs accessibility commitment, current WCAG 2.1 conformance status, known limitations, and how to report a barrier on p31ca.org.">
+<meta property="og:url" content="https://p31ca.org/accessibility.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Accessibility">
+<meta name="twitter:description" content="P31 Labs accessibility commitment, current WCAG 2.1 conformance status, known limitations, and how to report a barrier on p31ca.org.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/p31-style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/p31-tailwind-extend.js"></script>
+  <script>tailwind.config = { theme: { extend: { ...window.P31_TAILWIND_EXTEND } } };</script>
+</head>
+<body class="bg-void text-cloud min-h-screen font-sans antialiased px-4 py-10 max-w-2xl mx-auto text-sm leading-relaxed">
+<a href="#main" style="position:absolute;left:-9999px;top:0;padding:0.5rem 1rem;background:var(--p31-void);color:var(--p31-teal);font-size:0.875rem;z-index:9999;border-radius:0 0 4px 4px;text-decoration:none" onfocus="this.style.left='0'" onblur="this.style.left='-9999px'">Skip to main content</a>
+  <nav class="flex flex-wrap gap-3 text-teal/80 text-xs font-mono mb-8 no-print">
+    <a href="/" class="hover:underline">Hub</a>
+    <a href="/privacy" class="hover:underline">Privacy</a>
+    <a href="/terms" class="hover:underline">Terms</a>
+    <a href="/contact" class="hover:underline">Contact</a>
+    <a href="/accessibility" class="hover:underline">Accessibility</a>
+    <a href="/security" class="hover:underline">Security</a>
+    <a href="/oss" class="hover:underline">Open source</a>
+  </nav>
+
+  <h1 class="text-2xl font-bold text-paper mb-2">Accessibility</h1>
+  <p class="text-cloud/50 text-xs mb-8">
+    <strong class="text-paper">P31 Labs, Inc.</strong> accessibility statement and conformance report.<br>
+    Effective date: <strong class="text-paper">2026-05-01</strong>.
+  </p>
+
+  <!-- 1. Our commitment -->
+  <section class="space-y-3 mb-8" id="commitment">
+    <h2 class="text-paper font-semibold text-base">1. Our commitment</h2>
+    <p class="text-cloud/80">
+      <strong class="text-paper">P31 Labs, Inc.</strong> is a nonprofit founded on the principle that
+      technology should be accessible to everyone, including people with disabilities and neurodivergent
+      individuals. Accessibility is not a compliance checkbox for us &mdash; it is core to our mission.
+    </p>
+    <p class="text-cloud/80">
+      Our design tokens use <strong class="text-paper">Atkinson Hyperlegible</strong>, a typeface
+      specifically designed for low-vision readers. Our dark-mode color scheme targets sufficient
+      contrast ratios on text and interactive elements. We use semantic HTML heading hierarchies,
+      descriptive link text, and keyboard-accessible navigation on new static deliverables.
+    </p>
+    <p class="text-cloud/80">
+      We target <strong class="text-paper">WCAG 2.1 Level AA</strong> conformance on all new static
+      pages published to <strong class="text-paper">p31ca.org</strong>. We measure this against
+      WCAG 2.1 &mdash; the stable, widely-adopted W3C standard for web content accessibility.
+    </p>
+  </section>
+
+  <!-- 2. Current conformance -->
+  <section class="space-y-3 mb-8" id="conformance">
+    <h2 class="text-paper font-semibold text-base">2. Current conformance status</h2>
+    <p class="text-cloud/80">
+      <strong class="text-paper">Conformance claim:</strong>
+      Partial conformance with WCAG 2.1 Level AA. This means some parts of the content do not
+      fully conform to the standard. The specific limitations are described in Section 3 below.
+    </p>
+    <p class="text-cloud/80">
+      <strong class="text-paper">Applies to:</strong>
+      Static HTML pages published at <strong class="text-paper">p31ca.org</strong> under our
+      design system (Atkinson Hyperlegible, JetBrains Mono, P31 dark token set).
+    </p>
+
+    <h3 class="text-paper font-semibold mt-4">What we have done</h3>
+    <ul class="text-cloud/80 list-disc pl-5 space-y-1">
+      <li>Semantic heading hierarchy (<code class="font-mono text-teal/80">h1</code> &rarr; <code class="font-mono text-teal/80">h2</code> &rarr; <code class="font-mono text-teal/80">h3</code>) on all new static pages.</li>
+      <li>All meaningful images include descriptive <code class="font-mono text-teal/80">alt</code> text; decorative images use <code class="font-mono text-teal/80">alt=""</code>.</li>
+      <li>Color is not used as the sole means of conveying information on new deliverables.</li>
+      <li>Focus indicators are visible on keyboard-navigable elements (Tailwind focus-visible ring).</li>
+      <li>Text contrast ratio: our primary body text (<code class="font-mono text-teal/80">text-cloud</code> on <code class="font-mono text-teal/80">bg-void</code>) targets at least 4.5:1. Interactive links and nav items target at least 3:1 against their background.</li>
+      <li>Language declared in <code class="font-mono text-teal/80">&lt;html lang="en"&gt;</code>.</li>
+      <li>Skip-to-main-content links will be added to pages with extensive navigation as they are built.</li>
+      <li>The Cognitive Passport generator is entirely client-side, uses labeled form controls, and is operable by keyboard.</li>
+    </ul>
+  </section>
+
+  <!-- 3. Known limitations -->
+  <section class="space-y-3 mb-8" id="limitations">
+    <h2 class="text-paper font-semibold text-base">3. Known limitations</h2>
+    <p class="text-cloud/80">
+      The following known limitations exist as of the effective date. We are working to address them.
+    </p>
+    <ul class="text-cloud/80 list-disc pl-5 space-y-2">
+      <li>
+        <strong class="text-paper">BONDING 3D builder (bonding.p31ca.org)</strong> &mdash;
+        The 3D molecular visualization (React Three Fiber / WebGL canvas) does not have a
+        screen-reader-accessible text alternative for the rendered molecular structure.
+        Keyboard navigation within the 3D canvas is limited. This is a known gap for users
+        who rely on screen readers or cannot use a mouse/pointer device for 3D manipulation.
+        We are tracking an accessible data-table fallback for molecular data as a future feature.
+      </li>
+      <li>
+        <strong class="text-paper">Legacy demo pages</strong> &mdash;
+        Older prototype and demo pages (including some Worker status and mesh visualization pages)
+        were not built to the current design system and may have contrast ratios below WCAG AA,
+        missing alt text, or incomplete keyboard operability. These pages are not considered
+        production deliverables under our accessibility bar.
+      </li>
+      <li>
+        <strong class="text-paper">Reduced-motion</strong> &mdash;
+        Some animated UI elements do not currently respond to the
+        <code class="font-mono text-teal/80">prefers-reduced-motion</code> media query.
+        We are adding this support to new components.
+      </li>
+      <li>
+        <strong class="text-paper">Skip navigation</strong> &mdash;
+        Skip-to-content links are not yet present on all pages. They are being added as pages
+        are updated or newly published.
+      </li>
+      <li>
+        <strong class="text-paper">Mobile touch targets</strong> &mdash;
+        Some navigation links in the top nav bar may fall below the 44&times;44 CSS pixel
+        target size on small-screen devices. We are reviewing and correcting these.
+      </li>
+    </ul>
+  </section>
+
+  <!-- 4. Feedback -->
+  <section class="space-y-3 mb-8" id="feedback">
+    <h2 class="text-paper font-semibold text-base">4. Feedback and reporting a barrier</h2>
+    <p class="text-cloud/80">
+      If you encounter an accessibility barrier on any P31 Labs surface, we want to know about it.
+      We cannot guarantee a specific timeline, but we will log every report and prioritize fixes
+      on production pages.
+    </p>
+    <p class="text-cloud/80">
+      Please email <a class="text-teal underline hover:text-teal/90" href="mailto:will@p31ca.org">will@p31ca.org</a>
+      with the subject line <code class="font-mono text-teal/80">[accessibility]</code> and include:
+    </p>
+    <ul class="text-cloud/80 list-disc pl-5 space-y-1">
+      <li>The URL of the page or feature where you hit the barrier.</li>
+      <li>A description of what you were trying to do and what happened instead.</li>
+      <li>The browser and version you were using.</li>
+      <li>If applicable, the assistive technology you were using (for example: NVDA 2024.1, VoiceOver iOS 17, JAWS 2025).</li>
+    </ul>
+    <p class="text-cloud/80">
+      If the barrier prevents you from completing a task and you need an accessible alternative
+      right now, tell us that in your message. We will do our best to provide the information
+      or functionality in an alternative format.
+    </p>
+  </section>
+
+  <!-- 5. Assistive technology tested -->
+  <section class="space-y-3 mb-8" id="tested">
+    <h2 class="text-paper font-semibold text-base">5. Assistive technology tested</h2>
+    <p class="text-cloud/80">
+      New static pages are spot-checked against the following combinations before publication.
+      We are a small team; formal third-party audits have not yet been conducted.
+    </p>
+    <ul class="text-cloud/80 list-disc pl-5 space-y-1">
+      <li><strong class="text-paper">NVDA</strong> (latest stable) with Firefox on Windows 11 &mdash; primary screen reader test.</li>
+      <li><strong class="text-paper">VoiceOver</strong> with Safari on macOS &mdash; secondary test for new content pages.</li>
+      <li><strong class="text-paper">Keyboard-only navigation</strong> (Chrome, Firefox) &mdash; tab order, focus visibility, form submission.</li>
+      <li><strong class="text-paper">Windows High Contrast mode</strong> &mdash; checked for focus ring and icon visibility.</li>
+      <li><strong class="text-paper">200% browser zoom</strong> &mdash; layout reflow and text legibility.</li>
+    </ul>
+    <p class="text-cloud/80">
+      We have not conducted formal testing with TalkBack (Android) or Switch Access.
+      Reports from users of those technologies are especially welcome.
+    </p>
+  </section>
+
+  <!-- 6. Third-party content -->
+  <section class="space-y-3 mb-8" id="third-party">
+    <h2 class="text-paper font-semibold text-base">6. Third-party content</h2>
+    <p class="text-cloud/80">
+      Some content or functionality on our surfaces is provided by third parties and may not
+      be fully under our control:
+    </p>
+    <ul class="text-cloud/80 list-disc pl-5 space-y-1">
+      <li>
+        <strong class="text-paper">Tailwind CSS (CDN)</strong> &mdash; Loaded from
+        <code class="font-mono text-teal/80">cdn.tailwindcss.com</code>. We configure
+        Tailwind via our design token extension; the CSS output is under our control.
+      </li>
+      <li>
+        <strong class="text-paper">Google Fonts</strong> &mdash; Font files from
+        <code class="font-mono text-teal/80">fonts.googleapis.com</code>. The typefaces themselves
+        (Atkinson Hyperlegible, JetBrains Mono) were selected in part for legibility;
+        however, the font loading mechanism is third-party.
+      </li>
+      <li>
+        <strong class="text-paper">Stripe Checkout</strong> &mdash; The donation flow redirects
+        to Stripe&rsquo;s hosted checkout page, which is governed by
+        <a class="text-teal underline hover:text-teal/90" href="https://stripe.com/accessibility" target="_blank" rel="noopener">Stripe&rsquo;s accessibility policy</a>.
+        We do not control that page&rsquo;s conformance.
+      </li>
+      <li>
+        <strong class="text-paper">Cloudflare challenge pages</strong> &mdash; If Cloudflare
+        presents a CAPTCHA or challenge, that UI is controlled by Cloudflare. We are aware
+        that CAPTCHA presents accessibility challenges; we have not configured mandatory
+        CAPTCHA challenges on standard visitor flows.
+      </li>
+    </ul>
+  </section>
+
+  <!-- Contact repeat -->
+  <section class="space-y-3 mb-8" id="contact">
+    <h2 class="text-paper font-semibold text-base">Contact</h2>
+    <address class="not-italic text-cloud/80 space-y-1 pl-4 border-l border-teal/30">
+      <div><strong class="text-paper">P31 Labs, Inc.</strong></div>
+      <div>EIN 42-1888158 &mdash; Georgia domestic nonprofit</div>
+      <div>
+        Email:
+        <a class="text-teal underline hover:text-teal/90" href="mailto:will@p31ca.org">will@p31ca.org</a>
+        &mdash; subject <code class="font-mono text-teal/80">[accessibility]</code>
+      </div>
+    </address>
+  </section>
+
+  <p class="text-cloud/40 text-xs mt-10">
+    &copy; 2026 P31 Labs, Inc. &mdash;
+    <a class="text-teal/60 hover:underline" href="/privacy">Privacy</a> &middot;
+    <a class="text-teal/60 hover:underline" href="/terms">Terms</a> &middot;
+    <a class="text-teal/60 hover:underline" href="/security">Security</a>
+  </p>
+</body>
+</html>

@@ -1,0 +1,354 @@
+{
+  "_comment": "Single updatable source for operator-locked numbers, public URLs, and schema ids. After edits: npm run apply:constants && npm run verify:constants",
+  "updated": "2026-04-29",
+  "organization": {
+    "legalName": "P31 Labs, Inc.",
+    "ein": "42-1888158",
+    "stateOfIncorporation": "GA",
+    "incorporationDate": "2026-04-03",
+    "einAssignedDate": "2026-04-13",
+    "status501c3": "determined_active",
+    "determinationDate": "2026-05-04"
+  },
+  "contact": {
+    "primaryEmail": "will@p31ca.org",
+    "githubOrg": "p31labs",
+    "kofiUrl": "https://ko-fi.com/trimtab69420"
+  },
+  "payment": {
+    "stripeWorkerHost": "donate-api.phosphorus31.org",
+    "stripeApiHealthUrl": "https://donate-api.phosphorus31.org/health",
+    "donateApiHealthUrl": "https://donate-api.phosphorus31.org/health",
+    "donateApiWorkersDevUrl": "https://donate-api.trimtab-signal.workers.dev",
+    "hcbReference": "4XDUXX",
+    "hcbStatus": "unresponsive_pivot_to_stripe"
+  },
+  "bonding": {
+    "shippedDate": "2026-03-10",
+    "testBaseline": { "tests": 424, "suites": 32 },
+    "publicUrl": "https://bonding.p31ca.org"
+  },
+  "physics": {
+    "larmorHz": 863,
+    "larmorLabel": "31P Larmor in Earth field (P31 canonical copy)"
+  },
+  "cognitivePassport": {
+    "longFormFilename": "P31 COGNITIVE PASSPORT — v5.md",
+    "longFormEdition": "5.1",
+    "jsonSchema": "p31.cognitivePassport/1.0.0",
+    "htmlGeneratorTitle": "P31 Cognitive Passport — Generator (v1)"
+  },
+  "groundTruth": {
+    "schema": "p31.ground-truth/1.0.0",
+    "fileVersion": "1.0.0"
+  },
+  "edge": {
+    "workerFleetCount": 11,
+    "notes": "Production Worker count (operator snapshot); includes cf-edge-lab when shipped; not auto-verified against Cloudflare API here."
+  },
+  "mesh": {
+    "_comment": "Canonical worker URLs for K₄ edge; keep in sync with k4-hubs PERSONAL_MESH_URL and mesh-start default. orchestrator + agent URLs: OrchestratorDashboard.astro, public/dev-workbench.html, src/data/p31-mesh-constants.json (from npm run apply:constants). passkeyApiBasePath: same-origin API mounted by Cloudflare Worker zone route p31ca.org/api/passkey/* (workers/passkey/wrangler.toml); static pages use fetch(passkeyApiBasePath + '/register-begin', …). edgeLabWorkerUrl: home packages/cf-edge-lab (Workers AI + request.cf + WS demo).",
+    "k4PersonalWorkerUrl": "https://k4-personal.trimtab-signal.workers.dev",
+    "k4CageWorkerUrl": "https://k4-cage.trimtab-signal.workers.dev",
+    "k4HubsWorkerUrl": "https://k4-hubs.trimtab-signal.workers.dev",
+    "agentHubWorkerUrl": "https://p31-agent-hub.trimtab-signal.workers.dev",
+    "orchestratorWorkerUrl": "https://p31-orchestrator.trimtab-signal.workers.dev",
+    "passkeyApiBasePath": "/api/passkey",
+    "edgeLabWorkerUrl": "https://cf-edge-lab.trimtab-signal.workers.dev",
+    "remembranceWarmWhite": "#f5f0e8",
+    "remembranceBereavementKvKey": "mesh_bereavement_until",
+    "vertexStateRemembered": "remembered"
+  },
+  "research": {
+    "orcid": "0009-0002-2492-9079",
+    "zenodoPublicationCount": 22,
+    "researchSeriesCount": 20,
+    "standalonePublicationCount": 2,
+    "paperXiiStatus": "published",
+    "zenodoSearchUrl": "https://zenodo.org/search?q=creators.name:%22Johnson%2C%20William%20R.%22&l=list&p=1&s=25&sort=newest",
+    "papers": [
+      {
+        "id": "defensive",
+        "series": "I",
+        "doi": "10.5281/zenodo.19004485",
+        "title": "The Tetrahedron Protocol: A Grand Unified Theory of Structural Resilience",
+        "published": "2026-01-26"
+      },
+      {
+        "id": "II",
+        "series": "II",
+        "doi": "10.5281/zenodo.19411363",
+        "title": "Strategic Convergence of Geometric Security and Cognitive Resilience: P31 Labs Genesis Whitepaper",
+        "published": "2026-04-04"
+      },
+      {
+        "id": "III",
+        "series": "III",
+        "doi": "10.5281/zenodo.19416491",
+        "title": "Consciousness, Memory, and the Architecture of Self-Preservation: Neuroscientific Foundations for Cognitive Prosthetic Design",
+        "published": "2026-04-04"
+      },
+      {
+        "id": "IV",
+        "series": "IV",
+        "doi": "10.5281/zenodo.19503542",
+        "title": "The Universal Bridge at the Phase Transition: Kuramoto Criticality, Maxwell Rigidity, and the Topology of Neurodivergent Cognition",
+        "published": "2026-04-10"
+      },
+      {
+        "id": "V",
+        "series": "V",
+        "doi": "10.5281/zenodo.19782977",
+        "title": "The Borderland Strategy and Estuarine Sensory Gating: Environmental Psychology as Cognitive Infrastructure",
+        "published": "2026-04-26"
+      },
+      {
+        "id": "VI",
+        "series": "VI",
+        "doi": "10.5281/zenodo.19782979",
+        "title": "Topological History of Camden County: Institutional Capture and the K₄ Counter-Architecture",
+        "published": "2026-04-26"
+      },
+      {
+        "id": "VII",
+        "series": "VII",
+        "doi": "10.5281/zenodo.19782981",
+        "title": "Neuro-Kinship and the Impedance Mismatch: Communication Topology Across Divergent Neurotypes",
+        "published": "2026-04-26"
+      },
+      {
+        "id": "VIII",
+        "series": "VIII",
+        "doi": "10.5281/zenodo.19782983",
+        "title": "The Value-Form Problem: Self-Domestication, Proactive Strategy, and the L.O.V.E. Use-Value Ledger",
+        "published": "2026-04-26"
+      },
+      {
+        "id": "IX",
+        "series": "IX",
+        "doi": "10.5281/zenodo.19782985",
+        "title": "Quantum Social Science: The Authorized Observer Problem and the Spinning Coin Phenomenology",
+        "published": "2026-04-26"
+      },
+      {
+        "id": "X",
+        "series": "X",
+        "doi": "10.5281/zenodo.19782987",
+        "title": "Linguistic Thermodynamics and Synergetic Accounting: The Landauer Limit of Zero-Work Syntax",
+        "published": "2026-04-26"
+      },
+      {
+        "id": "XI",
+        "series": "XI",
+        "doi": "10.5281/zenodo.19782971",
+        "title": "The L.O.V.E. Protocol: Biometric Consensus and the Financialization of Care in Assistive Technology",
+        "published": "2026-04-26"
+      },
+      {
+        "id": "XII",
+        "series": "XII",
+        "doi": "10.5281/zenodo.19782969",
+        "title": "The Sovereign Stack: Open-Source Hardware–Software Architecture for Neurodivergent Assistive Technology",
+        "published": "2026-04-26"
+      },
+      {
+        "id": "XIII",
+        "series": "XIII",
+        "doi": "10.5281/zenodo.19782989",
+        "title": "The Abdication Protocol and Legal Faraday Cage: Structural Containment for High-Conflict Jurisdictions",
+        "published": "2026-04-26"
+      },
+      {
+        "id": "XIV",
+        "series": "XIV",
+        "doi": "10.5281/zenodo.19782991",
+        "title": "Centennial Sync: Fuller's 50-Year Prediction and the P31 Implementation Timeline",
+        "published": "2026-04-26"
+      },
+      {
+        "id": "XV",
+        "series": "XV",
+        "doi": "10.5281/zenodo.19782993",
+        "title": "The Resonant Mind: HRV Biofeedback and the 0.1 Hz Cognitive Anchor",
+        "published": "2026-04-26"
+      },
+      {
+        "id": "XVI",
+        "series": "XVI",
+        "doi": "10.5281/zenodo.19782995",
+        "title": "The Incense Metaphor: Olfactory Anchoring and Ritual in Cognitive Prosthetic Design",
+        "published": "2026-04-26"
+      },
+      {
+        "id": "XVII",
+        "series": "XVII",
+        "doi": "10.5281/zenodo.19782997",
+        "title": "The Architecture of Chaos: Structured Entropy and the Parking Lot Protocol",
+        "published": "2026-04-26"
+      },
+      {
+        "id": "XVIII",
+        "series": "XVIII",
+        "doi": "10.5281/zenodo.19782999",
+        "title": "The G.O.D. DAO Constitution and the Slashing Engine: Governance Primitives for Assistive-Technology Commons",
+        "published": "2026-04-26"
+      },
+      {
+        "id": "XIX",
+        "series": "XIX",
+        "doi": "10.5281/zenodo.19782973",
+        "title": "The SOULSAFE Protocol: High-Reliability Engineering for Human–AI Cognitive Symbiosis",
+        "published": "2026-04-26"
+      },
+      {
+        "id": "XX",
+        "series": "XX",
+        "doi": "10.5281/zenodo.19783001",
+        "title": "The Trimtab Declaration and Safe Geometry: Minimum Leverage for Maximum Human Flourishing",
+        "published": "2026-04-26"
+      },
+      {
+        "id": "legal-ga-procedures",
+        "doi": "10.5281/zenodo.19432309",
+        "title": "Procedural Anomalies, Inchoate Judgments, and ADA Title II Violations in Georgia Domestic Relations Proceedings: A Public Interest Analysis",
+        "published": "2026-04-05",
+        "standalone": true
+      },
+      {
+        "id": "legal-coercive-control",
+        "doi": "10.5281/zenodo.19432313",
+        "title": "The Architecture of Coercive Control: Systemic Abuse in High-Conflict Domestic Relations Proceedings - A Case Study in Neurodivergent Targeting, Legal Weaponization, and Institutional Failure",
+        "published": "2026-04-05",
+        "standalone": true
+      }
+    ]
+  },
+  "operations": {
+    "masterOpsManual": { "lines": 1445, "cwps": 11, "wcds": 41 },
+    "wcdBatch3": { "from": 26, "to": 32, "status": "closed" }
+  },
+  "documentation": {
+    "canonicalNumbering": "docs/CANONICAL-NUMBERING.md",
+    "reviewBundle": "docs/GEMINI-OPUS-REVIEW-BUNDLE.md",
+    "mvpInventory": "docs/MVP-DELIVERABLES-INVENTORY.md"
+  },
+  "integrations": {
+    "schema": "p31.integrationsBridge/1.0.0",
+    "bridgeDoc": "docs/P31-INTEGRATIONS-BRIDGE.md",
+    "openCatalog": [
+      {
+        "id": "home-assistant",
+        "label": "Home Assistant",
+        "role": "Automation + device UI (local-first)",
+        "docsUrl": "https://www.home-assistant.io/",
+        "license": "Apache-2.0"
+      },
+      {
+        "id": "mosquitto",
+        "label": "Eclipse Mosquitto",
+        "role": "MQTT broker",
+        "docsUrl": "https://mosquitto.org/",
+        "license": "EPL-2.0"
+      },
+      {
+        "id": "esphome",
+        "label": "ESPHome",
+        "role": "Firmware for ESP32 / sensors",
+        "docsUrl": "https://esphome.io/",
+        "license": "MIT"
+      },
+      {
+        "id": "zigbee2mqtt",
+        "label": "Zigbee2MQTT",
+        "role": "Zigbee ↔ MQTT",
+        "docsUrl": "https://www.zigbee2mqtt.io/",
+        "license": "GPL-3.0"
+      },
+      {
+        "id": "node-red",
+        "label": "Node-RED",
+        "role": "Flow automation / HITL routing",
+        "docsUrl": "https://nodered.org/",
+        "license": "Apache-2.0"
+      },
+      {
+        "id": "n8n",
+        "label": "n8n",
+        "role": "Workflow automation (fair-code)",
+        "docsUrl": "https://docs.n8n.io/",
+        "license": "Sustainable Use License"
+      },
+      {
+        "id": "grafana",
+        "label": "Grafana OSS",
+        "role": "Dashboards / history",
+        "docsUrl": "https://grafana.com/oss/grafana/",
+        "license": "AGPL-3.0"
+      },
+      {
+        "id": "prometheus",
+        "label": "Prometheus",
+        "role": "Metrics time-series",
+        "docsUrl": "https://prometheus.io/docs/",
+        "license": "Apache-2.0"
+      },
+      {
+        "id": "restic",
+        "label": "restic",
+        "role": "Encrypted backups",
+        "docsUrl": "https://restic.net/",
+        "license": "BSD-2-Clause"
+      },
+      {
+        "id": "syncthing",
+        "label": "Syncthing",
+        "role": "Peer-to-peer file sync",
+        "docsUrl": "https://syncthing.net/",
+        "license": "MPL-2.0"
+      },
+      {
+        "id": "gadgetbridge",
+        "label": "Gadgetbridge",
+        "role": "Android ↔ many wearables (no cloud required)",
+        "docsUrl": "https://codeberg.org/Freeyourgadget/Gadgetbridge",
+        "license": "GPL-3.0"
+      },
+      {
+        "id": "fasten",
+        "label": "Fasten (on-prem)",
+        "role": "FHIR health record aggregation (self-hosted)",
+        "docsUrl": "https://github.com/fastenhealth/fasten-onprem",
+        "license": "GPL-3.0"
+      },
+      {
+        "id": "meshtastic",
+        "label": "Meshtastic",
+        "role": "LoRa mesh comms (aligned with mesh research threads)",
+        "docsUrl": "https://meshtastic.org/docs/",
+        "license": "GPL-3.0"
+      },
+      {
+        "id": "sops",
+        "label": "Mozilla SOPS",
+        "role": "Encrypted secrets in git (with age)",
+        "docsUrl": "https://github.com/getsops/sops",
+        "license": "MPL-2.0"
+      }
+    ],
+    "endpoints": {
+      "_comment": "Operator fills LAN or bridge URLs locally; empty = disabled. Never commit tokens.",
+      "homeAssistantLanBase": "",
+      "mqttBrokerUrl": "",
+      "mqttTopicPrefix": "p31/",
+      "nodeRedBase": "",
+      "n8nBase": "",
+      "prometheusBase": "",
+      "grafanaBase": ""
+    },
+    "meshBridge": {
+      "k4PersonalIngest": "k4-personal Worker: see andromeda/software/k4-personal/README.md — /agent/:userId/*, optional bio/energy routes; post minimized events only.",
+      "commandCenterEdge": "https://command-center.trimtab-signal.workers.dev",
+      "trust": "No raw PHI on static p31ca pages. ETHICAL-STYLE-MAP + EDGE-SECURITY for consent and motion."
+    }
+  }
+}

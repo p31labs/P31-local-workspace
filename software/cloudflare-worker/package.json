@@ -1,0 +1,33 @@
+{
+  "name": "p31-mesh-discord-worker",
+  "version": "1.0.0",
+  "description": "Cloudflare Worker for Discord Interactions and KV Integration",
+  "main": "worker.js",
+  "scripts": {
+    "build": "echo 'Build complete - Workers are JS only'",
+    "dev": "wrangler dev",
+    "publish": "wrangler publish",
+    "kv:create": "wrangler kv:namespace create P31_MESH_STATE",
+    "kv:delete": "wrangler kv:namespace delete P31_MESH_STATE",
+    "kv:bulk": "wrangler kv:bulk put --binding=P31_MESH_STATE",
+    "secret:put": "wrangler secret put",
+    "register:commands": "node register-commands.js"
+  },
+  "dependencies": {
+    "discord-interactions": "^3.4.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240612.0",
+    "wrangler": "^3.114.17"
+  },
+  "keywords": [
+    "cloudflare",
+    "discord",
+    "kv",
+    "p31",
+    "mesh",
+    "quantum"
+  ],
+  "author": "P31 Labs",
+  "license": "MIT"
+}

@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub" style="color-scheme: dark;">
+<head>
+    <meta charset="UTF-8">
+<script>(function(){var r=document.documentElement;if(/[?&]alive=1(?:&|$)/.test(location.search))return;r.classList.add("p31-gray-rock");function wake(){r.classList.remove("p31-gray-rock")}document.addEventListener("pointerdown",wake,{once:true,capture:true});document.addEventListener("keydown",wake,{once:true,capture:true})})();</script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#0f1115">
+    <title>COLLIDER | Particle Physics Sandbox | P31 Labs</title>
+    <link rel="stylesheet" href="/p31-style.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        :root{--void:#0f1115;--surface:#161920;--teal:#25897d;--cyan:#4db8a8;--cloud:#d8d6d0;--butter:#cda852;--lav:#8b7cc9;--coral:#cc6247;--phos:#3ba372}
+        body{background:var(--void);color:var(--cloud);font-family:'Atkinson Hyperlegible',sans-serif;height:100vh;display:flex;flex-direction:column;overflow:hidden}
+        header{padding:10px 20px;background:rgba(15,17,21,0.95);border-bottom:1px solid rgba(255,255,255,0.05);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;z-index:10}
+        .logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--cloud);font-weight:700;font-size:14px}
+        a.back{color:rgba(216,214,208,0.4);font-family:'JetBrains Mono',monospace;font-size:12px;text-decoration:none}
+        a.back:hover{color:var(--cloud)}
+        .toolbar{display:flex;gap:8px;align-items:center;padding:10px 20px;background:rgba(22,25,32,0.8);border-bottom:1px solid rgba(255,255,255,0.04);flex-shrink:0;flex-wrap:wrap}
+        button{font-family:'JetBrains Mono',monospace;font-size:11px;padding:6px 12px;border-radius:6px;cursor:pointer;border:1px solid rgba(255,255,255,0.1);background:rgba(22,25,32,0.8);color:rgba(216,214,208,0.6);transition:all 0.2s}
+        button:hover{border-color:var(--teal);color:var(--teal)}
+        button.active{border-color:var(--teal);color:var(--teal);background:rgba(37,137,125,0.15)}
+        .elem-btn{min-width:48px}
+        #canvas{flex:1;display:block;cursor:crosshair}
+        .hud{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(216,214,208,0.3);pointer-events:none}
+        .bond-label{position:fixed;top:60px;right:20px;font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(216,214,208,0.4);background:rgba(22,25,32,0.9);border:1px solid rgba(255,255,255,0.06);border-radius:6px;padding:10px 14px;min-width:160px}
+        .bond-row{margin-bottom:4px}
+        .bond-sym{color:var(--teal)}
+    </style>
+<meta property="og:type" content="website">
+<meta property="og:title" content="COLLIDER | Particle Physics Sandbox">
+<meta property="og:description" content="COLLIDER | Particle Physics Sandbox">
+<meta property="og:url" content="https://p31ca.org/collider.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="COLLIDER | Particle Physics Sandbox">
+<meta name="twitter:description" content="COLLIDER | Particle Physics Sandbox">
+<link rel="canonical" href="https://p31ca.org/collider.html">
+</head>
+<body>
+<a href="#main" style="position:absolute;left:-9999px;top:0;padding:0.5rem 1rem;background:var(--p31-void);color:var(--p31-teal);font-size:0.875rem;z-index:9999;border-radius:0 0 4px 4px;text-decoration:none" onfocus="this.style.left='0'" onblur="this.style.left='-9999px'">Skip to main content</a>
+<header>
+    <a href="/" class="logo">
+        <svg width="22" height="22" viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#25897d"/><circle cx="390" cy="120" r="48" fill="#cc6247"/><text x="256" y="340" font-family="system-ui" font-weight="900" font-size="220" fill="#d8d6d0" text-anchor="middle">P31</text><rect x="156" y="380" width="200" height="16" rx="8" fill="#cda852"/></svg>
+        COLLIDER
+    </a>
+    <a href="/" class="back">← Hub</a>
+</header>
+
+<div class="toolbar">
+    <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(216,214,208,0.3)">Element:</span>
+    <button class="elem-btn active" data-elem="H">H</button>
+    <button class="elem-btn" data-elem="He">He</button>
+    <button class="elem-btn" data-elem="C">C</button>
+    <button class="elem-btn" data-elem="N">N</button>
+    <button class="elem-btn" data-elem="O">O</button>
+    <button class="elem-btn" data-elem="Na">Na</button>
+    <button class="elem-btn" data-elem="P">P</button>
+    <button class="elem-btn" data-elem="Cl">Cl</button>
+    <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(216,214,208,0.3);margin-left:8px">Mode:</span>
+    <button id="btn-normal" class="active" onclick="setMode('normal',this)">Normal</button>
+    <button id="btn-cyclotron" onclick="setMode('cyclotron',this)">Cyclotron ⚡</button>
+    <button onclick="clearAtoms()">Clear</button>
+    <button onclick="spawnRandom()">Spawn Random</button>
+</div>
+
+<canvas id="canvas"></canvas>
+<div class="hud" id="hud">Click to place atom · Atoms bond automatically by valence</div>
+<div class="bond-label" id="bond-label">
+    <div style="font-size:10px;color:rgba(216,214,208,0.3);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.1em">Bonds formed</div>
+    <div id="bond-list">None yet</div>
+</div>
+
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+let W, H;
+function resize() { W=canvas.width=canvas.offsetWidth; H=canvas.height=canvas.offsetHeight; }
+resize(); window.addEventListener('resize', resize);
+
+const ELEMENTS = {
+    H:  {name:'Hydrogen',  valence:1, mass:1,  color:'#d8d6d0', radius:12},
+    He: {name:'Helium',    valence:0, mass:4,  color:'#4db8a8', radius:14},
+    C:  {name:'Carbon',    valence:4, mass:12, color:'#8b7cc9', radius:16},
+    N:  {name:'Nitrogen',  valence:3, mass:14, color:'#3ba372', radius:16},
+    O:  {name:'Oxygen',    valence:2, mass:16, color:'#cc6247', radius:16},
+    Na: {name:'Sodium',    valence:1, mass:23, color:'#cda852', radius:18},
+    P:  {name:'Phosphorus',valence:5, mass:31, color:'#25897d', radius:18},
+    Cl: {name:'Chlorine',  valence:1, mass:35, color:'#4db8a8', radius:18},
+};
+
+let atoms = [];
+let bonds = [];
+let selectedElem = 'H';
+let mode = 'normal'; // 'normal' | 'cyclotron'
+let cyclotronAngle = 0;
+let cyclotronSpeed = 0;
+let bondLog = [];
+
+document.querySelectorAll('[data-elem]').forEach(b => b.addEventListener('click', () => {
+    document.querySelectorAll('[data-elem]').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    selectedElem = b.dataset.elem;
+}));
+
+function setMode(m, btn) {
+    mode = m;
+    document.querySelectorAll('.toolbar button:not([data-elem])').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('hud').textContent = m==='cyclotron'
+        ? 'Cyclotron mode · Atoms accelerate and collide · Can fuse!'
+        : 'Click to place atom · Atoms bond automatically by valence';
+}
+
+function clearAtoms() { atoms=[]; bonds=[]; bondLog=[]; renderBondLog(); }
+
+function spawnRandom() {
+    const keys = Object.keys(ELEMENTS);
+    for (let i=0; i<8; i++) {
+        const elem = keys[Math.floor(Math.random()*keys.length)];
+        addAtom(Math.random()*W*0.8+W*0.1, Math.random()*H*0.7+H*0.15, elem);
+    }
+}
+
+canvas.addEventListener('click', e => {
+    const r=canvas.getBoundingClientRect();
+    addAtom(e.clientX-r.left, e.clientY-r.top, selectedElem);
+});
+
+function addAtom(x, y, elem) {
+    const el = ELEMENTS[elem];
+    atoms.push({
+        x, y, vx:(Math.random()-0.5)*1.5, vy:(Math.random()-0.5)*1.5,
+        elem, name:el.name, valence:el.valence, mass:el.mass,
+        color:el.color, radius:el.radius,
+        bonds:0, id:Date.now()+Math.random()
+    });
+}
+
+function tryBond(a, b) {
+    if (a.bonds>=a.valence||b.bonds>=b.valence) return false;
+    if (bonds.some(bo=>(bo.a===a&&bo.b===b)||(bo.a===b&&bo.b===a))) return false;
+    const dist=Math.hypot(a.x-b.x,a.y-b.y);
+    if (dist<(a.radius+b.radius)*2.2) {
+        bonds.push({a,b,strength:1});
+        a.bonds++; b.bonds++;
+        const key=`${[a.elem,b.elem].sort().join('-')}`;
+        const existing=bondLog.find(l=>l.key===key);
+        if(existing) existing.count++;
+        else bondLog.push({key,count:1});
+        renderBondLog();
+        return true;
+    }
+    return false;
+}
+
+function renderBondLog() {
+    const el=document.getElementById('bond-list');
+    if(!bondLog.length){el.textContent='None yet';return;}
+    el.innerHTML=bondLog.slice(-8).map(l=>`<div class="bond-row"><span class="bond-sym">${l.key}</span> × ${l.count}</div>`).join('');
+}
+
+function tick() {
+    cyclotronAngle += 0.02;
+    cyclotronSpeed = mode==='cyclotron' ? 3 : 0;
+
+    atoms.forEach(a => {
+        if (mode==='cyclotron') {
+            // Circular field pushes atoms tangentially
+            const dx=a.x-W/2, dy=a.y-H/2;
+            const r=Math.hypot(dx,dy)||1;
+            a.vx += (-dy/r)*0.15;
+            a.vy += (dx/r)*0.15;
+            const spd=Math.hypot(a.vx,a.vy);
+            if(spd>8){a.vx=a.vx/spd*8;a.vy=a.vy/spd*8;}
+        } else {
+            a.vx*=0.99; a.vy*=0.99;
+        }
+
+        a.x+=a.vx; a.y+=a.vy;
+        if(a.x-a.radius<0){a.x=a.radius;a.vx*=-0.7;}
+        if(a.x+a.radius>W){a.x=W-a.radius;a.vx*=-0.7;}
+        if(a.y-a.radius<0){a.y=a.radius;a.vy*=-0.7;}
+        if(a.y+a.radius>H){a.y=H-a.radius;a.vy*=-0.7;}
+    });
+
+    // Collision / bonding
+    for (let i=0;i<atoms.length;i++) {
+        for (let j=i+1;j<atoms.length;j++) {
+            const a=atoms[i],b=atoms[j];
+            const dx=a.x-b.x,dy=a.y-b.y;
+            const dist=Math.hypot(dx,dy)||0.01;
+            const minD=a.radius+b.radius;
+            if(dist<minD) {
+                // Bounce
+                const nx=dx/dist,ny=dy/dist;
+                const relV=(a.vx-b.vx)*nx+(a.vy-b.vy)*ny;
+                if(relV<0) {
+                    const impulse=2*relV/(a.mass+b.mass);
+                    if(mode==='cyclotron'&&Math.abs(relV)>4) {
+                        // Fusion attempt — combine if allowed
+                        fusionAttempt(a,b,i,j);
+                    } else {
+                        a.vx-=impulse*b.mass*nx;a.vy-=impulse*b.mass*ny;
+                        b.vx+=impulse*a.mass*nx;b.vy+=impulse*a.mass*ny;
+                        tryBond(a,b);
+                    }
+                }
+                const overlap=(minD-dist)/2;
+                a.x+=nx*overlap;a.y+=ny*overlap;
+                b.x-=nx*overlap;b.y-=ny*overlap;
+            }
+        }
+    }
+
+    // Bond spring forces
+    bonds.forEach(bo=>{
+        const dx=bo.b.x-bo.a.x,dy=bo.b.y-bo.a.y;
+        const dist=Math.hypot(dx,dy)||0.01;
+        const target=(bo.a.radius+bo.b.radius)*1.8;
+        const force=(dist-target)*0.05;
+        const fx=dx/dist*force,fy=dy/dist*force;
+        bo.a.vx+=fx/bo.a.mass;bo.a.vy+=fy/bo.a.mass;
+        bo.b.vx-=fx/bo.b.mass;bo.b.vy-=fy/bo.b.mass;
+    });
+}
+
+function fusionAttempt(a,b,ai,bi) {
+    const totalMass=a.mass+b.mass;
+    const newElem=Object.entries(ELEMENTS).reduce((best,[k,v])=>{
+        return Math.abs(v.mass-totalMass)<Math.abs(best[1].mass-totalMass)?[k,v]:best;
+    },Object.entries(ELEMENTS)[0]);
+    const nx=(a.x+b.x)/2, ny=(a.y+b.y)/2;
+    atoms.splice(Math.max(ai,bi),1);
+    atoms.splice(Math.min(ai,bi),1);
+    bonds=bonds.filter(bo=>bo.a!==a&&bo.b!==a&&bo.a!==b&&bo.b!==b);
+    addAtom(nx,ny,newElem[0]);
+    bondLog.push({key:`FUSION→${newElem[0]}`,count:1});
+    renderBondLog();
+}
+
+function draw() {
+    ctx.fillStyle='rgba(15,17,21,0.2)';
+    ctx.fillRect(0,0,W,H);
+
+    if(mode==='cyclotron') {
+        // Draw cyclotron rings
+        ctx.strokeStyle='rgba(205,168,82,0.06)';
+        ctx.lineWidth=1;
+        for(let r=80;r<Math.min(W,H)/2;r+=60){
+            ctx.beginPath();ctx.arc(W/2,H/2,r,0,Math.PI*2);ctx.stroke();
+        }
+        // Rotation arrow
+        const ar=Math.min(W,H)*0.42;
+        ctx.strokeStyle='rgba(205,168,82,0.15)';ctx.lineWidth=2;
+        ctx.beginPath();
+        ctx.arc(W/2,H/2,ar,cyclotronAngle,cyclotronAngle+Math.PI*1.7);
+        ctx.stroke();
+    }
+
+    // Draw bonds
+    bonds.forEach(bo=>{
+        ctx.strokeStyle='rgba(77,184,168,0.3)';
+        ctx.lineWidth=2;
+        ctx.beginPath();ctx.moveTo(bo.a.x,bo.a.y);ctx.lineTo(bo.b.x,bo.b.y);ctx.stroke();
+    });
+
+    // Draw atoms
+    atoms.forEach(a=>{
+        const grd=ctx.createRadialGradient(a.x-a.radius*0.3,a.y-a.radius*0.3,0,a.x,a.y,a.radius);
+        grd.addColorStop(0,a.color);grd.addColorStop(1,a.color+'66');
+        ctx.beginPath();ctx.arc(a.x,a.y,a.radius,0,Math.PI*2);
+        ctx.fillStyle=grd;ctx.fill();
+        if(a.bonds<a.valence){ctx.strokeStyle=a.color+'aa';ctx.lineWidth=1.5;ctx.stroke();}
+
+        // Electron orbits for valence
+        if(a.valence>0&&a.valence<=5) {
+            for(let e=0;e<a.valence;e++){
+                const ang=cyclotronAngle*2+e*(Math.PI*2/a.valence);
+                const er=a.radius+6;
+                const ex=a.x+Math.cos(ang)*er,ey=a.y+Math.sin(ang)*er;
+                ctx.beginPath();ctx.arc(ex,ey,2,0,Math.PI*2);
+                ctx.fillStyle=e<a.bonds?a.color+'44':a.color;
+                ctx.fill();
+            }
+        }
+
+        ctx.fillStyle='#0f1115';
+        ctx.font=`bold ${a.radius>15?11:9}px "JetBrains Mono"`;
+        ctx.textAlign='center';ctx.textBaseline='middle';
+        ctx.fillText(a.elem,a.x,a.y);
+    });
+}
+
+function loop() { tick(); draw(); requestAnimationFrame(loop); }
+loop();
+
+// Seed some atoms
+setTimeout(()=>{
+    ['H','H','O','C','H','H','C','N'].forEach((e,i)=>{
+        addAtom(100+i*80, H/2+(Math.random()-0.5)*100, e);
+    });
+},100);
+</script>
+</body>
+</html>

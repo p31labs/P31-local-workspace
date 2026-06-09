@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0f1115">
+  <title>Buttons · P31 Stylebook</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/p31-style.css">
+  <link rel="stylesheet" href="/lib/p31-fluid.css">
+  <link rel="stylesheet" href="/stylebook/_chrome.css">
+  <style>
+    /* Button system — canonical for the stylebook */
+    .p31-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 18px;
+      font-family: var(--p31-font-sans);
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 1;
+      border-radius: 10px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all var(--p31-duration-fast, 150ms) var(--p31-ease-fluid);
+      text-decoration: none;
+      white-space: nowrap;
+      user-select: none;
+      position: relative;
+      overflow: hidden;
+    }
+    .p31-btn:focus-visible {
+      outline: 2px solid var(--p31-primary);
+      outline-offset: 2px;
+    }
+    .p31-btn:disabled, .p31-btn[aria-disabled="true"] {
+      opacity: 0.5;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+    
+    /* Variants */
+    .p31-btn-primary {
+      background: var(--p31-primary);
+      color: var(--p31-void);
+    }
+    .p31-btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(37,137,125,0.35); }
+    .p31-btn-primary:active { transform: translateY(0); }
+    
+    .p31-btn-secondary {
+      background: var(--p31-surface);
+      color: var(--p31-paper);
+      border-color: var(--p31-border-subtle);
+    }
+    .p31-btn-secondary:hover { background: var(--p31-surface2); border-color: var(--p31-primary); }
+    
+    .p31-btn-ghost {
+      background: transparent;
+      color: var(--p31-cloud);
+    }
+    .p31-btn-ghost:hover { background: var(--p31-surface); color: var(--p31-paper); }
+    
+    .p31-btn-danger {
+      background: var(--p31-coral);
+      color: var(--p31-void);
+    }
+    .p31-btn-danger:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(204,98,71,0.35); }
+    
+    .p31-btn-link {
+      background: transparent;
+      color: var(--p31-primary);
+      padding: 4px 0;
+    }
+    .p31-btn-link:hover { color: var(--p31-coral); text-decoration: underline; text-underline-offset: 4px; }
+    
+    /* Sizes */
+    .p31-btn-xs { padding: 4px 10px; font-size: 11px; border-radius: 6px; }
+    .p31-btn-sm { padding: 6px 12px; font-size: 12px; border-radius: 8px; }
+    .p31-btn-lg { padding: 14px 24px; font-size: 16px; border-radius: 12px; }
+    .p31-btn-xl { padding: 18px 32px; font-size: 18px; border-radius: 14px; }
+    
+    /* Icon button */
+    .p31-btn-icon {
+      width: 36px;
+      height: 36px;
+      padding: 0;
+    }
+    .p31-btn-icon.p31-btn-sm { width: 28px; height: 28px; }
+    .p31-btn-icon.p31-btn-lg { width: 44px; height: 44px; }
+    
+    /* Loading state */
+    .p31-btn-loading {
+      pointer-events: none;
+      color: transparent !important;
+    }
+    .p31-btn-loading::before {
+      content: '';
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      border: 2px solid currentColor;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      color: var(--p31-paper);
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    
+    /* Shimmer (special) */
+    .p31-btn-shimmer::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,0.25) 50%, transparent 70%);
+      transform: translateX(-100%);
+      transition: transform 0.6s;
+    }
+    .p31-btn-shimmer:hover::after { transform: translateX(100%); }
+    
+    /* Group */
+    .p31-btn-group {
+      display: inline-flex;
+      align-items: center;
+      gap: 0;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--p31-border-subtle);
+    }
+    .p31-btn-group .p31-btn {
+      border-radius: 0;
+      border: none;
+      border-right: 1px solid var(--p31-border-subtle);
+    }
+    .p31-btn-group .p31-btn:last-child { border-right: none; }
+  </style>
+</head>
+<body>
+  <script type="module">
+    import { renderShell, code, callout } from '/stylebook/_chrome.js';
+    import { P31ThemeController } from '/lib/p31-theme-engine.mjs';
+    window.p31Theme = new P31ThemeController({ defaultTheme: 'hub' });
+    
+    const content = `
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Variants</div>
+          <h2 class="sb-h2">Five variants</h2>
+          <p class="sb-text">Each variant has a job. <strong>Primary</strong> is the action you want.
+          <strong>Secondary</strong> is the alternate. <strong>Ghost</strong> is for rare actions.
+          <strong>Danger</strong> is for destruction. <strong>Link</strong> is for navigation.</p>
+        </div>
+        
+        <div class="sb-preview">
+          <div class="sb-preview-header"><span>Variants</span></div>
+          <div class="sb-preview-body">
+            <button class="p31-btn p31-btn-primary">Primary action</button>
+            <button class="p31-btn p31-btn-secondary">Secondary</button>
+            <button class="p31-btn p31-btn-ghost">Ghost</button>
+            <button class="p31-btn p31-btn-danger">Delete account</button>
+            <a href="#" class="p31-btn p31-btn-link">Learn more →</a>
+          </div>
+        </div>
+        
+        ${code(`<button class="p31-btn p31-btn-primary">Primary action</button>
+<button class="p31-btn p31-btn-secondary">Secondary</button>
+<button class="p31-btn p31-btn-ghost">Ghost</button>
+<button class="p31-btn p31-btn-danger">Delete account</button>
+<a href="#" class="p31-btn p31-btn-link">Learn more →</a>`, 'html', 'Variants')}
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Sizes</div>
+          <h2 class="sb-h2">Five sizes</h2>
+          <p class="sb-text">From dense data tables to hero CTAs. Default size is medium — reach for it most.</p>
+        </div>
+        
+        <div class="sb-preview">
+          <div class="sb-preview-header"><span>Size scale</span></div>
+          <div class="sb-preview-body">
+            <button class="p31-btn p31-btn-primary p31-btn-xs">Extra small</button>
+            <button class="p31-btn p31-btn-primary p31-btn-sm">Small</button>
+            <button class="p31-btn p31-btn-primary">Medium</button>
+            <button class="p31-btn p31-btn-primary p31-btn-lg">Large</button>
+            <button class="p31-btn p31-btn-primary p31-btn-xl">Extra large</button>
+          </div>
+        </div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">States</div>
+          <h2 class="sb-h2">Every state, designed</h2>
+        </div>
+        
+        <div class="sb-preview">
+          <div class="sb-preview-header"><span>States</span></div>
+          <div class="sb-preview-body">
+            <button class="p31-btn p31-btn-primary">Default</button>
+            <button class="p31-btn p31-btn-primary" style="transform: translateY(-1px); box-shadow: 0 4px 14px rgba(37,137,125,0.35);">Hover</button>
+            <button class="p31-btn p31-btn-primary p31-btn-loading">Loading</button>
+            <button class="p31-btn p31-btn-primary" disabled>Disabled</button>
+            <button class="p31-btn p31-btn-primary p31-btn-shimmer">With shimmer</button>
+          </div>
+        </div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">With icons</div>
+          <h2 class="sb-h2">Icon + label, or icon-only</h2>
+        </div>
+        
+        <div class="sb-preview">
+          <div class="sb-preview-header"><span>Composed</span></div>
+          <div class="sb-preview-body">
+            <button class="p31-btn p31-btn-primary">
+              <span>↓</span> Download
+            </button>
+            <button class="p31-btn p31-btn-secondary">
+              <span>★</span> Star
+              <span style="margin-left:8px;padding:2px 6px;background:var(--p31-surface3);border-radius:4px;font-size:11px;">42</span>
+            </button>
+            <button class="p31-btn p31-btn-ghost p31-btn-icon" aria-label="Settings">⚙</button>
+            <button class="p31-btn p31-btn-ghost p31-btn-icon p31-btn-sm" aria-label="Close">✕</button>
+            <button class="p31-btn p31-btn-secondary p31-btn-icon p31-btn-lg" aria-label="Menu">☰</button>
+          </div>
+        </div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Groups</div>
+          <h2 class="sb-h2">Button groups</h2>
+        </div>
+        
+        <div class="sb-preview">
+          <div class="sb-preview-header"><span>Segmented</span></div>
+          <div class="sb-preview-body">
+            <div class="p31-btn-group">
+              <button class="p31-btn p31-btn-secondary">Day</button>
+              <button class="p31-btn p31-btn-secondary" style="background:var(--p31-surface2);">Week</button>
+              <button class="p31-btn p31-btn-secondary">Month</button>
+              <button class="p31-btn p31-btn-secondary">Year</button>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Anatomy</div>
+          <h2 class="sb-h2">CSS spec</h2>
+        </div>
+        
+        ${code(`/* Base */
+.p31-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 18px;
+  font-family: var(--p31-font-sans);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1;
+  border-radius: var(--p31-radius-lg);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all var(--p31-duration-fast) var(--p31-ease-fluid);
+  text-decoration: none;
+}
+
+.p31-btn:focus-visible {
+  outline: 2px solid var(--p31-primary);
+  outline-offset: 2px;
+}
+
+/* Primary */
+.p31-btn-primary {
+  background: var(--p31-primary);
+  color: var(--p31-void);
+}
+.p31-btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(37,137,125,0.35);
+}
+
+/* Secondary */
+.p31-btn-secondary {
+  background: var(--p31-surface);
+  color: var(--p31-paper);
+  border-color: var(--p31-border-subtle);
+}
+.p31-btn-secondary:hover {
+  background: var(--p31-surface2);
+  border-color: var(--p31-primary);
+}`, 'css', 'Button system')}
+        
+        ${callout('info', 'Accessibility', 'All buttons have a visible focus ring (2px outline + 2px offset). Icon-only buttons require an <code>aria-label</code>. Disabled buttons should be paired with a tooltip explaining why — never just disable without context.')}
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Decision tree</div>
+          <h2 class="sb-h2">Which variant?</h2>
+        </div>
+        
+        <table class="sb-table">
+          <thead><tr><th>If the action...</th><th>Use</th></tr></thead>
+          <tbody>
+            <tr><td>Is the most important on this view</td><td><code>primary</code></td></tr>
+            <tr><td>Is an alternative or secondary path</td><td><code>secondary</code></td></tr>
+            <tr><td>Is rarely used (more options, settings)</td><td><code>ghost</code></td></tr>
+            <tr><td>Destroys data permanently</td><td><code>danger</code> + confirmation modal</td></tr>
+            <tr><td>Navigates to another view</td><td><code>link</code></td></tr>
+          </tbody>
+        </table>
+        
+        ${callout('warn', 'One primary per view', 'Only one primary button should exist per visible viewport. If you have two equally important actions, you have a UX problem — pick the more important one.')}
+      </section>
+    `;
+    
+    renderShell({
+      activeId: 'buttons',
+      breadcrumb: [
+        { href: '/stylebook/', label: 'Stylebook' },
+        { href: '/stylebook/', label: 'Components' },
+        { label: 'Buttons' }
+      ],
+      title: 'Buttons',
+      subtitle: 'Five variants, five sizes, every state. Click any example to interact.',
+      meta: [
+        { label: 'Variants', value: '5' },
+        { label: 'Sizes', value: '5' },
+        { label: 'States', value: '5+' }
+      ],
+      content
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0f1115">
+  <title>Typography · P31 Stylebook</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/p31-style.css">
+  <link rel="stylesheet" href="/lib/p31-fluid.css">
+  <link rel="stylesheet" href="/stylebook/_chrome.css">
+  <style>
+    .type-spec {
+      display: flex;
+      align-items: baseline;
+      gap: 24px;
+      padding: 24px 0;
+      border-bottom: 1px solid var(--p31-border-subtle);
+    }
+    .type-spec:last-child { border-bottom: none; }
+    .type-meta {
+      flex-shrink: 0;
+      width: 200px;
+      font-family: var(--p31-font-mono);
+      font-size: 12px;
+      color: var(--p31-muted);
+    }
+    .type-meta strong { color: var(--p31-paper); display: block; margin-bottom: 4px; }
+    .type-display { color: var(--p31-paper); flex: 1; }
+    
+    .pangram-card {
+      padding: 48px;
+      background: var(--p31-surface);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: 14px;
+      margin: 16px 0;
+    }
+    .pangram-display {
+      font-family: var(--p31-font-sans);
+      font-size: clamp(2rem, 6vw, 5rem);
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      color: var(--p31-paper);
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+    .pangram-meta {
+      font-family: var(--p31-font-mono);
+      font-size: 13px;
+      color: var(--p31-muted);
+    }
+    
+    .glyph-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+      gap: 4px;
+      padding: 16px;
+      background: var(--p31-surface);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: 10px;
+    }
+    .glyph {
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--p31-surface2);
+      border-radius: 6px;
+      font-size: 24px;
+      color: var(--p31-cloud);
+    }
+    .glyph.mono { font-family: var(--p31-font-mono); }
+    
+    .demo-text {
+      padding: 24px;
+      background: var(--p31-surface);
+      border-radius: 10px;
+      margin: 16px 0;
+      max-width: 65ch;
+      color: var(--p31-cloud);
+      line-height: 1.65;
+    }
+    .demo-text h1 { color: var(--p31-paper); font-size: 2.5rem; line-height: 1.1; margin-bottom: 16px; letter-spacing: -0.02em; }
+    .demo-text h2 { color: var(--p31-paper); font-size: 1.75rem; line-height: 1.2; margin-bottom: 12px; margin-top: 32px; }
+    .demo-text h3 { color: var(--p31-paper); font-size: 1.25rem; line-height: 1.3; margin-bottom: 8px; margin-top: 24px; }
+    .demo-text p { margin-bottom: 16px; }
+    .demo-text code { font-family: var(--p31-font-mono); font-size: 0.875em; padding: 2px 6px; background: var(--p31-surface2); border-radius: 4px; color: var(--p31-cyan); }
+    .demo-text blockquote { border-left: 3px solid var(--p31-primary); padding-left: 16px; margin: 16px 0; color: var(--p31-cloud); font-style: italic; }
+  </style>
+</head>
+<body>
+  <script type="module">
+    import { renderShell, code, callout } from '/stylebook/_chrome.js';
+    import { P31ThemeController } from '/lib/p31-theme-engine.mjs';
+    window.p31Theme = new P31ThemeController({ defaultTheme: 'hub' });
+    
+    const content = `
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">The faces</div>
+          <h2 class="sb-h2">Two fonts, every job</h2>
+          <p class="sb-text">
+            <strong>Atkinson Hyperlegible</strong> for everything human-readable. Designed by the
+            Braille Institute for low-vision readers, with distinct letterforms (b/d, p/q, 1/I/l).
+            <strong>JetBrains Mono</strong> for code, data, timestamps, and metadata.
+          </p>
+        </div>
+        
+        <div class="pangram-card">
+          <div class="pangram-display" style="font-family: var(--p31-font-sans);">
+            The quick brown fox<br>jumps over the lazy dog.
+          </div>
+          <div class="pangram-meta">
+            Atkinson Hyperlegible · 700 weight · -0.02em tracking · 1.05 line-height
+          </div>
+        </div>
+        
+        <div class="pangram-card">
+          <div class="pangram-display" style="font-family: var(--p31-font-mono); font-weight: 500; letter-spacing: 0;">
+            const result = await<br>fetch('/api/health');
+          </div>
+          <div class="pangram-meta">
+            JetBrains Mono · 500 weight · 0 tracking · 1.05 line-height
+          </div>
+        </div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Type scale</div>
+          <h2 class="sb-h2">Fluid by default</h2>
+          <p class="sb-text">
+            Every size uses <code>clamp()</code> — small on phones, generous on desktops, no breakpoint jumps.
+          </p>
+        </div>
+        
+        <div style="background: var(--p31-surface); border: 1px solid var(--p31-border-subtle); border-radius: 12px; padding: 0 32px;">
+          <div class="type-spec">
+            <div class="type-meta">
+              <strong>4xl</strong>
+              --p31-text-4xl<br>
+              clamp(2.25rem · 4rem)
+            </div>
+            <div class="type-display" style="font-size: var(--p31-text-4xl); font-weight: 700; letter-spacing: -0.02em;">Hero headline</div>
+          </div>
+          <div class="type-spec">
+            <div class="type-meta">
+              <strong>3xl</strong>
+              --p31-text-3xl<br>
+              clamp(1.875rem · 3rem)
+            </div>
+            <div class="type-display" style="font-size: var(--p31-text-3xl); font-weight: 600;">Section title</div>
+          </div>
+          <div class="type-spec">
+            <div class="type-meta">
+              <strong>2xl</strong>
+              --p31-text-2xl<br>
+              clamp(1.5rem · 2.25rem)
+            </div>
+            <div class="type-display" style="font-size: var(--p31-text-2xl); font-weight: 600;">Sub-heading</div>
+          </div>
+          <div class="type-spec">
+            <div class="type-meta">
+              <strong>xl</strong>
+              --p31-text-xl<br>
+              clamp(1.25rem · 1.75rem)
+            </div>
+            <div class="type-display" style="font-size: var(--p31-text-xl);">Card title or lead paragraph</div>
+          </div>
+          <div class="type-spec">
+            <div class="type-meta">
+              <strong>lg</strong>
+              --p31-text-lg<br>
+              clamp(1.125rem · 1.5rem)
+            </div>
+            <div class="type-display" style="font-size: var(--p31-text-lg);">Lead body text or large UI labels</div>
+          </div>
+          <div class="type-spec">
+            <div class="type-meta">
+              <strong>base</strong>
+              --p31-text-base<br>
+              clamp(1rem · 1.125rem)
+            </div>
+            <div class="type-display" style="font-size: var(--p31-text-base);">Standard body text. The default reading size.</div>
+          </div>
+          <div class="type-spec">
+            <div class="type-meta">
+              <strong>sm</strong>
+              --p31-text-sm<br>
+              clamp(0.875rem · 1rem)
+            </div>
+            <div class="type-display" style="font-size: var(--p31-text-sm);">Secondary text, captions, helper copy</div>
+          </div>
+          <div class="type-spec">
+            <div class="type-meta">
+              <strong>xs</strong>
+              --p31-text-xs<br>
+              clamp(0.75rem · 0.875rem)
+            </div>
+            <div class="type-display" style="font-size: var(--p31-text-xs);">Timestamps, badges, fine print</div>
+          </div>
+        </div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">In context</div>
+          <h2 class="sb-h2">A typical article</h2>
+          <p class="sb-text">How the scale composes when you actually write something.</p>
+        </div>
+        
+        <div class="demo-text">
+          <h1>The shape of stable systems</h1>
+          <p>Lead paragraph sits at <code>--p31-text-base</code> with relaxed line-height (1.65). 
+          Long-form content stays under 65ch wide so the eye doesn't lose its place returning from line to line.</p>
+          
+          <h2>Section break</h2>
+          <p>H2 introduces a new conceptual area. Notice the breathing room above (32px margin) and below (12px). 
+          Sectioning is structural — it tells the reader "we're moving."</p>
+          
+          <h3>Sub-section</h3>
+          <p>H3 organizes within a section. Code references like <code>verify:p31-style</code> use mono 
+          to clearly distinguish from prose. Inline emphasis is achieved via weight, not color.</p>
+          
+          <blockquote>
+            "Style is not a luxury. Constraints are choreography." — A pulled quote uses the primary color 
+            as a left bar plus italic body. Used sparingly, never decoratively.
+          </blockquote>
+          
+          <p>Final paragraph closes the example. Notice how <code>--p31-cloud</code> body never 
+          overpowers <code>--p31-paper</code> headings — but it remains comfortable to read.</p>
+        </div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Tracking</div>
+          <h2 class="sb-h2">Letter spacing</h2>
+        </div>
+        
+        <table class="sb-table">
+          <thead><tr><th>Token</th><th>Value</th><th>Usage</th><th>Example</th></tr></thead>
+          <tbody>
+            <tr><td><code>--p31-tracking-tight</code></td><td>-0.02em</td><td>Display headings</td><td style="letter-spacing:-0.02em; font-size:18px;">Headline</td></tr>
+            <tr><td><code>--p31-tracking-normal</code></td><td>0</td><td>Body text</td><td>Standard reading</td></tr>
+            <tr><td><code>--p31-tracking-wide</code></td><td>0.08em</td><td>Small labels</td><td style="letter-spacing:0.08em; font-size:13px;">METADATA</td></tr>
+            <tr><td><code>--p31-tracking-caps</code></td><td>0.16em</td><td>All-caps eyebrows</td><td style="letter-spacing:0.16em; font-size:11px; text-transform:uppercase;">section eyebrow</td></tr>
+          </tbody>
+        </table>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Use it</div>
+          <h2 class="sb-h2">CSS reference</h2>
+        </div>
+        
+        ${code(`/* Display headline */
+h1 {
+  font-family: var(--p31-font-sans);
+  font-size: var(--p31-text-4xl);
+  font-weight: 700;
+  line-height: var(--p31-leading-tight);
+  letter-spacing: var(--p31-tracking-tight);
+  color: var(--p31-paper);
+}
+
+/* Body */
+p {
+  font-family: var(--p31-font-sans);
+  font-size: var(--p31-text-base);
+  line-height: var(--p31-leading-relaxed);
+  color: var(--p31-cloud);
+  max-width: 65ch;  /* readability cap */
+}
+
+/* Code */
+code {
+  font-family: var(--p31-font-mono);
+  font-size: 0.875em;
+}
+
+/* Eyebrow / overline */
+.eyebrow {
+  font-family: var(--p31-font-mono);
+  font-size: var(--p31-text-xs);
+  text-transform: uppercase;
+  letter-spacing: var(--p31-tracking-caps);
+  color: var(--p31-primary);
+}`, 'css', 'Typography')}
+        
+        ${callout('info', 'Why Atkinson?', 'Atkinson Hyperlegible was commissioned by the Braille Institute specifically to be readable for people with low vision. The b/d, p/q, 1/I/l forms are visually distinct in ways most fonts merely approximate. Choosing it as the default isn\'t accessibility theater — it\'s a structural choice.')}
+      </section>
+    `;
+    
+    renderShell({
+      activeId: 'typography',
+      breadcrumb: [
+        { href: '/stylebook/', label: 'Stylebook' },
+        { href: '/stylebook/', label: 'Foundations' },
+        { label: 'Typography' }
+      ],
+      title: 'Typography',
+      subtitle: 'Atkinson Hyperlegible for humans, JetBrains Mono for code. Fluid scales that respond to viewport.',
+      meta: [
+        { label: 'Faces', value: '2' },
+        { label: 'Sizes', value: '8' },
+        { label: 'Fluid', value: 'clamp()' }
+      ],
+      content
+    });
+  </script>
+</body>
+</html>

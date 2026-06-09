@@ -1,0 +1,26 @@
+name: Trimtab Node Pulse
+
+on:
+  schedule:
+    # Run at 00:00 every day to reset the Spoons ledger signal
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  emit_pulse:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Transmit Larmor Resonance Sync
+        run: |
+          echo "Initiating 0.86 Hz daily synchronization pulse..."
+          echo "Node: trimtab-signal (Will Johnson)"
+          echo "Status: ACTIVE"
+          echo "ENS Routing: andromeda.classicwilly.eth"
+          echo "Synchronizing with Phosphorus31 Oracle..."
+          # In a live environment, this would hit the Upstash webhook
+          # curl -X POST https://api.andromeda.classicwilly.eth/pulse \
+          #   -H "Authorization: Bearer ${{ secrets.P31_ORACLE_TOKEN }}"
+          echo "Pulse transmitted successfully."

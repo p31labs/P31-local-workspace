@@ -1,0 +1,193 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const whyJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "MedicalWebPage",
+  "name": "Why P31 Labs Exists — Hypoparathyroidism & Neurodivergent Families",
+  "description": "The founder's 22-year journey with hypoparathyroidism and how it drove the creation of P31 Labs — free assistive technology for neurodivergent families.",
+  "url": "https://phosphorus31.org/why",
+  "about": {
+    "@type": "MedicalCondition",
+    "name": "Hypoparathyroidism",
+    "code": { "@type": "MedicalCode", "codeSystem": "ICD-10", "codeValue": "E20" },
+    "signOrSymptom": [
+      { "@type": "MedicalSymptom", "name": "Hypocalcemia" },
+      { "@type": "MedicalSymptom", "name": "Cognitive impairment" },
+      { "@type": "MedicalSymptom", "name": "Executive dysfunction" }
+    ]
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Will Johnson",
+    "jobTitle": "Founder, P31 Labs"
+  }
+};
+---
+
+<Layout
+  title="Why P31 Labs Exists | Hypoparathyroidism & Neurodivergent Families"
+  description="22 years with hypoparathyroidism. A 2025 JCEM study confirmed what Will already knew — calcium dysregulation causes measurable cognitive deficits. P31 Labs exists because the tools these families need don't exist yet."
+  jsonLd={whyJsonLd}
+>
+  <main class="animate-[fadeIn_0.4s_ease-out] bg-white min-h-screen pb-24">
+
+    {/* Hero */}
+    <div class="bg-espresso text-cloud pt-32 pb-20 px-6">
+      <div class="max-w-5xl mx-auto">
+        <div class="text-butter font-bold tracking-widest uppercase text-sm mb-4">Origin Story</div>
+        <h1 class="text-5xl font-heading font-black mb-6">Why P31 Labs Exists</h1>
+        <p class="text-xl opacity-80 max-w-2xl">
+          22 years. One diagnosis that changed the question — from <em>"what's wrong with me?"</em> to <em>"what does this system need to do?"</em>
+        </p>
+      </div>
+    </div>
+
+    <div class="max-w-5xl mx-auto px-6 -mt-10">
+
+      {/* Founder story card */}
+      <div class="bg-white p-8 md:p-12 rounded-2xl shadow-xl border border-cloud mb-16">
+        <h2 class="text-3xl font-heading font-black text-espresso mb-8">The Calcium Problem</h2>
+
+        <div class="space-y-5 text-espresso/80 leading-relaxed">
+          <p>
+            In 2003, at age 18, Will Johnson had a seizure. The cause: severe hypocalcemia — dangerously low serum calcium — from a condition called <strong>hypoparathyroidism</strong>. The parathyroid glands had failed. PTH (parathyroid hormone) was absent. Without PTH, the body cannot regulate calcium, and calcium is load-bearing for almost every biological system: nerve conduction, muscle contraction, cardiac rhythm, and — it turns out — cognition.
+          </p>
+          <p>
+            For 22 years, the management was blunt: high-dose calcium and vitamin D supplements taken multiple times daily. Serum calcium levels would drift. On bad days, cognitive performance degraded visibly — slower processing, working memory gaps, difficulty converting internal state into speech. The symptoms were real. The mechanism wasn't fully understood. Clinicians had few tools beyond "take more calcium."
+          </p>
+          <p>
+            Then in 2024, the FDA approved <strong>Yorvipath</strong> (palopegteriparatide) — the first prodrug of PTH(1-34) for chronic hypoparathyroidism in adults. The PaTHway trial showed 95% of patients achieved independence from conventional calcium/vitamin D therapy. Annual cost: $150,000–$285,000. For Will, it remains inaccessible.
+          </p>
+          <p>
+            Also in 2025, a prospective study published in the <em>Journal of Clinical Endocrinology & Metabolism</em> confirmed what Will had known from the inside for two decades: <strong>56.7% of hypoparathyroidism patients show measurable attention and processing speed deficits</strong> (p&lt;0.001), and 60% show executive function deficits. Processing speed correlates directly with serum calcium levels (r=0.53, p=0.023). The cognitive load is not imagined — it is physiologically grounded and now measurable.
+          </p>
+        </div>
+
+        <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="bg-cloud/50 p-5 rounded-xl text-center">
+            <div class="text-3xl font-heading font-black text-teal-600">77,000</div>
+            <div class="text-sm text-espresso/60 mt-1">Estimated U.S. patients with hypoparathyroidism</div>
+          </div>
+          <div class="bg-cloud/50 p-5 rounded-xl text-center">
+            <div class="text-3xl font-heading font-black text-coral-500">56.7%</div>
+            <div class="text-sm text-espresso/60 mt-1">Show attention/processing speed deficits (JCEM 2025)</div>
+          </div>
+          <div class="bg-cloud/50 p-5 rounded-xl text-center">
+            <div class="text-3xl font-heading font-black text-butter">22 yrs</div>
+            <div class="text-sm text-espresso/60 mt-1">Will's lived experience before Yorvipath approval</div>
+          </div>
+        </div>
+      </div>
+
+      {/* The Posner Molecule */}
+      <div class="bg-white p-8 md:p-12 rounded-2xl shadow-xl border border-cloud mb-16">
+        <h2 class="text-3xl font-heading font-black text-espresso mb-6">The Posner Molecule and the Name</h2>
+        <div class="space-y-4 text-espresso/80 leading-relaxed">
+          <p>
+            The Posner molecule is Ca₉(PO₄)₆ — a calcium phosphate cluster found in biological systems. It's a calcium cage that protects a core of phosphate groups, including phosphorus-31 (<sup>31</sup>P), the only stable isotope of phosphorus.
+          </p>
+          <p>
+            <strong>Phosphorus-31 is the element</strong> that gives P31 Labs its name. In bone mineral and in Posner clusters, calcium and phosphorus are structurally coupled — you cannot have one without the other. In hypoparathyroidism, the calcium regulation system fails, and the phosphate system dysregulates with it. The body cannot maintain the geometry it needs.
+          </p>
+          <p>
+            The metaphor extends: P31 Labs is the calcium cage. The tools we build — BONDING, The Buffer, Spaceship Earth — are the structure that protects what matters inside. The organization's entire architecture is designed to hold together when the external system fails.
+          </p>
+          <p class="text-sm text-espresso/50 italic">
+            Note: The S₆ symmetry of Posner clusters at physiological temperature is currently contested in the literature (Agarwal et al., JPCL 2021). The structural coupling between calcium and phosphorus chemistry is not.
+          </p>
+        </div>
+      </div>
+
+      {/* AuDHD intersection */}
+      <div class="mb-16">
+        <h2 class="text-3xl font-heading font-black text-espresso mb-8">The Intersection</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div class="glass-box p-8 rounded-2xl border-l-4 border-l-teal-600">
+            <h3 class="font-heading font-bold text-xl text-espresso mb-3">Chronic Illness + Cognitive Tools</h3>
+            <p class="text-espresso/70">
+              When cognition is physiologically variable — not just "having a bad day" but <em>measured calcium-correlated processing speed degradation</em> — the tools you use need to work with you, not demand a baseline you cannot always provide. Standard productivity software assumes a consistent operator.
+            </p>
+          </div>
+          <div class="glass-box p-8 rounded-2xl border-l-4 border-l-coral-500">
+            <h3 class="font-heading font-bold text-xl text-espresso mb-3">AuDHD + Chronic Illness Overlap</h3>
+            <p class="text-espresso/70">
+              AuDHD (autism + ADHD) was diagnosed at age 39. Late diagnosis is the norm, not the exception, and it frequently co-occurs with chronic conditions that have neurological components. The tools that exist for one rarely account for the other. P31 Labs designs for both simultaneously.
+            </p>
+          </div>
+          <div class="glass-box p-8 rounded-2xl border-l-4 border-l-butter">
+            <h3 class="font-heading font-bold text-xl text-espresso mb-3">Open Source When Access Is Denied</h3>
+            <p class="text-espresso/70">
+              Yorvipath exists. It works. It costs $150,000–$285,000 per year and is inaccessible. When the approved treatment is financially out of reach, you build compensatory systems. Every P31 Labs tool is free and open-source because accessibility is not a business model — it's a design constraint.
+            </p>
+          </div>
+          <div class="glass-box p-8 rounded-2xl border-l-4 border-l-lavender">
+            <h3 class="font-heading font-bold text-xl text-espresso mb-3">BONDING: Parenting From a Failing Body</h3>
+            <p class="text-espresso/70">
+              BONDING was built so a father can play chemistry alongside his kids from any distance, at any time, even when executive dysfunction or calcium crisis makes leaving the house impossible. Every atom placed is a timestamped record that a parent showed up. Technology as evidence that love crosses the gap.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Resources */}
+      <div class="bg-cloud/50 rounded-3xl p-8 md:p-12 mb-16">
+        <h2 class="text-2xl font-heading font-black text-espresso mb-6">Resources</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+          <a href="https://www.hypoparathyroidism.org" target="_blank" rel="noopener noreferrer"
+            class="bg-white p-5 rounded-xl border border-cloud hover:border-teal-600 transition-colors flex items-center gap-4 no-underline">
+            <div class="text-2xl">🏥</div>
+            <div>
+              <div class="font-bold text-espresso">HypoPARAthyroidism Association</div>
+              <div class="text-espresso/50">Patient advocacy, research, and community</div>
+            </div>
+          </a>
+          <a href="https://rarediseases.org/rare-diseases/hypoparathyroidism/" target="_blank" rel="noopener noreferrer"
+            class="bg-white p-5 rounded-xl border border-cloud hover:border-teal-600 transition-colors flex items-center gap-4 no-underline">
+            <div class="text-2xl">📚</div>
+            <div>
+              <div class="font-bold text-espresso">NORD — Hypoparathyroidism</div>
+              <div class="text-espresso/50">National Organization for Rare Disorders</div>
+            </div>
+          </a>
+          <a href="https://rarediseases.info.nih.gov/diseases/2716/hypoparathyroidism" target="_blank" rel="noopener noreferrer"
+            class="bg-white p-5 rounded-xl border border-cloud hover:border-teal-600 transition-colors flex items-center gap-4 no-underline">
+            <div class="text-2xl">🔬</div>
+            <div>
+              <div class="font-bold text-espresso">NIH GARD — Hypoparathyroidism</div>
+              <div class="text-espresso/50">Genetic and Rare Diseases Information Center</div>
+            </div>
+          </a>
+          <div class="bg-white p-5 rounded-xl border border-cloud flex items-center gap-4">
+            <div class="text-2xl">📄</div>
+            <div>
+              <div class="font-bold text-espresso">JCEM 2025 — Cognitive Deficits in HypoPT</div>
+              <div class="text-espresso/50">Prospective study: 56.7% attention/processing speed deficits, p&lt;0.001</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* CTAs */}
+      <div class="text-center">
+        <h2 class="text-2xl font-heading font-black text-espresso mb-4">What We Built Because of This</h2>
+        <p class="text-espresso/60 max-w-xl mx-auto mb-8">
+          Every product P31 Labs ships is a direct response to a gap that existed in Will's life. Free, open-source, and designed for brains that the standard toolkit doesn't serve.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a href="/products"
+            class="bg-teal-600 hover:bg-teal-700 text-white font-bold py-4 px-8 rounded-2xl shadow-lg transition-transform hover:-translate-y-1 text-center"
+            style="text-decoration:none;">
+            See the Products
+          </a>
+          <a href="/donate"
+            class="bg-coral-500 hover:bg-coral-600 text-white font-bold py-4 px-8 rounded-2xl shadow-lg transition-transform hover:-translate-y-1 text-center"
+            style="text-decoration:none;">
+            Support the Work
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</Layout>

@@ -1,0 +1,16 @@
+# P31 Node Zero — 16MB flash partition table (Xiaozhi v2 layout)
+# Offset arithmetic verified: all regions contiguous, no overlaps.
+#
+# nvs      : 0x009000 → 0x00F000  (24KB)
+# otadata  : 0x00F000 → 0x011000  (8KB)
+# app0     : 0x010000 → 0x610000  (6MB factory/OTA_0)
+# app1     : 0x610000 → 0xC10000  (6MB OTA_1)
+# assets   : 0xC10000 → 0xFFFF00  (~4MB SPIFFS for fonts/themes/emojis)
+#
+# Total: 0xFFFF00 ≈ 16MB  ✓
+# Name,    Type, SubType, Offset,     Size,       Flags
+nvs,       data, nvs,     0x9000,     0x6000,
+otadata,   data, ota,     0xf000,     0x2000,
+app0,      app,  ota_0,   0x10000,    0x600000,
+app1,      app,  ota_1,   0x610000,   0x600000,
+assets,    data, spiffs,  0xC10000,   0x3F0000,

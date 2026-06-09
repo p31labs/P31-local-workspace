@@ -1,0 +1,1256 @@
+/**
+ * C.A.R.S. — static molecular surface. soup.html · bonding.p31ca.org/soup/
+ * Depends: cognitive-passport/p31-style.css (p31.universalCanon)
+ */
+
+html.soup-app {
+  color-scheme: dark;
+  overflow-x: clip;
+  scroll-padding-bottom: max(5.5rem, env(safe-area-inset-bottom, 0px));
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+html.soup-app body {
+  position: relative;
+  margin: 0;
+  padding-top: max(var(--p31-space-3), env(safe-area-inset-top, 0px));
+  padding-right: max(var(--p31-space-3), env(safe-area-inset-right, 0px));
+  padding-left: max(var(--p31-space-3), env(safe-area-inset-left, 0px));
+  padding-bottom: max(
+    calc(var(--p31-space-3) + 4.25rem),
+    calc(env(safe-area-inset-bottom, 0px) + 4.25rem)
+  );
+  min-height: 100dvh;
+  min-height: 100vh;
+  font-family: var(--p31-font-sans);
+  color: var(--p31-cloud);
+  background: var(--p31-void);
+  overflow-x: hidden;
+  overflow-y: auto;
+  line-height: var(--p31-leading-relaxed);
+  -webkit-tap-highlight-color: rgba(77, 184, 168, 0.15);
+}
+
+@media (min-width: 900px) {
+  html.soup-app {
+    scroll-padding-bottom: 0;
+  }
+  html.soup-app body {
+    padding: var(--p31-space-5);
+    line-height: var(--p31-leading-normal);
+  }
+}
+
+/* —— Physics layer: dual gradients + “interference” grid (visual metaphor only) —— */
+html.soup-app body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 100% 70% at 50% 0%, rgba(77, 184, 168, 0.14) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 50% at 100% 60%, rgba(139, 124, 201, 0.11) 0%, transparent 50%),
+    radial-gradient(ellipse 50% 40% at 0% 80%, rgba(37, 137, 125, 0.09) 0%, transparent 45%),
+    linear-gradient(180deg, var(--p31-void) 0%, #0a0c12 100%);
+  animation: soup-quantum-phase 18s var(--p31-ease-standard) infinite alternate;
+}
+
+html.soup-app body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.38;
+  background-image:
+    linear-gradient(
+      90deg,
+      rgba(77, 184, 168, 0.055) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      rgba(77, 184, 168, 0.055) 1px,
+      transparent 1px
+    );
+  background-size: 40px 40px;
+  mask-image: radial-gradient(
+    ellipse 75% 65% at 50% 35%,
+    #000 0%,
+    transparent 72%
+  );
+  animation: soup-grid-drift 32s linear infinite;
+}
+
+@keyframes soup-quantum-phase {
+  from {
+    filter: hue-rotate(-6deg) saturate(1.02);
+  }
+  to {
+    filter: hue-rotate(6deg) saturate(1.12);
+  }
+}
+
+@keyframes soup-grid-drift {
+  to {
+    background-position: 40px 40px;
+  }
+}
+
+@keyframes soup-pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.08);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* App header — base + optional “ethical psych” welcome + pillars (see end of file) */
+.soup-app-header {
+  margin: 0 0 var(--p31-space-3) 0;
+  padding: var(--p31-space-3) var(--p31-space-4);
+  background: var(--p31-surface);
+  border: 1px solid var(--p31-glass-border);
+  border-radius: var(--p31-radius-lg);
+  box-shadow: var(--p31-shadow-sm);
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.soup-app-header--minimal {
+  margin-bottom: var(--p31-space-2);
+  padding: var(--p31-space-2) var(--p31-space-3);
+}
+
+.soup-app-header--psych {
+  border-left: 4px solid var(--p31-teal);
+  background: linear-gradient(
+    125deg,
+    var(--p31-surface) 0%,
+    rgba(37, 137, 125, 0.07) 48%,
+    var(--p31-surface) 100%
+  );
+  box-shadow: var(--p31-shadow-sm), 0 0 0 1px rgba(77, 184, 168, 0.12) inset;
+}
+
+.soup-app-header__welcome {
+  margin: var(--p31-space-2) 0 0 0;
+  max-width: 40rem;
+  font-size: var(--p31-text-sm);
+  line-height: var(--p31-leading-relaxed);
+  color: var(--p31-cloud);
+}
+
+.soup-app-header__welcome strong {
+  color: var(--p31-cyan);
+  font-weight: 600;
+}
+
+.soup-psych-pillars {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--p31-space-2) var(--p31-space-4);
+  margin: var(--p31-space-3) 0 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--p31-text-xs);
+  line-height: var(--p31-leading-snug);
+  color: rgba(233, 236, 240, 0.82);
+}
+
+.soup-psych-dot {
+  display: inline-block;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: var(--p31-radius-full);
+  margin-right: 0.35rem;
+  vertical-align: 0.08em;
+  box-shadow: 0 0 6px currentColor;
+}
+
+.soup-psych-dot--calm {
+  color: var(--p31-cyan);
+  background: var(--p31-cyan);
+}
+
+.soup-psych-dot--warm {
+  color: var(--p31-coral);
+  background: var(--p31-coral);
+}
+
+.soup-psych-dot--belong {
+  color: var(--p31-phosphorus);
+  background: var(--p31-phosphorus);
+}
+
+.soup-aaso {
+  margin: var(--p31-space-3) 0 0;
+  font-size: var(--p31-text-sm);
+  line-height: 1.55;
+  color: color-mix(in srgb, var(--p31-cloud) 78%, var(--p31-muted) 22%);
+  max-width: 42rem;
+}
+@supports not (color: color-mix(in srgb, red, blue)) {
+  .soup-aaso {
+    color: #b5b3ad;
+  }
+}
+.soup-aaso a {
+  color: var(--p31-cyan, #4db8a8);
+  text-decoration: none;
+  border-bottom: 1px solid color-mix(in srgb, var(--p31-cyan) 32%, transparent);
+}
+.soup-aaso a:hover {
+  color: var(--p31-amber, #cda852);
+  border-bottom-color: color-mix(in srgb, var(--p31-amber) 50%, transparent);
+}
+.soup-aaso .aaso-love,
+.soup-aaso .aaso-3 {
+  color: var(--p31-coral, #cc6247);
+  font-style: normal;
+  white-space: nowrap;
+}
+
+.soup-app-header__title {
+  margin: 0;
+  font-size: var(--p31-text-xl);
+  font-weight: 700;
+  color: var(--p31-paper);
+  line-height: var(--p31-leading-tight);
+  letter-spacing: var(--p31-tracking-tight);
+}
+
+.soup-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Larmor: familiar label + detail from p31-constants.json (quantum twist, optional) */
+.soup-larmor {
+  margin: 0 0 var(--p31-space-4) 0;
+  padding: var(--p31-space-3) var(--p31-space-4);
+  line-height: var(--p31-leading-relaxed);
+  word-wrap: break-word;
+  background: linear-gradient(
+    90deg,
+    rgba(77, 184, 168, 0.08) 0%,
+    rgba(139, 124, 201, 0.06) 100%
+  );
+  border: 1px solid var(--p31-glass-border);
+  border-radius: var(--p31-radius-lg);
+  box-shadow: var(--p31-shadow-glowTeal);
+}
+
+.soup-larmor__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--p31-space-2);
+}
+
+@media (min-width: 520px) {
+  .soup-larmor__inner {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: baseline;
+    column-gap: var(--p31-space-3);
+    row-gap: var(--p31-space-1);
+  }
+}
+
+.soup-larmor__familiar {
+  display: inline-block;
+  font-family: var(--p31-font-sans);
+  font-size: var(--p31-text-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: var(--p31-tracking-wide);
+  color: var(--p31-cyan);
+}
+
+.soup-larmor__detail {
+  font-family: var(--p31-font-mono);
+  font-size: max(0.875rem, var(--p31-text-sm));
+  color: var(--p31-paper);
+  letter-spacing: var(--p31-tracking-normal);
+}
+
+html.soup-app #container {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  flex: 1 1 auto;
+  width: 100%;
+  max-width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+@media (min-width: 900px) {
+  html.soup-app #container {
+    height: calc(100vh - var(--p31-space-8));
+    min-height: calc(100vh - var(--p31-space-8));
+  }
+}
+
+/* —— Parents / kids heroes —— */
+.soup-hero--parents,
+.soup-hero--kids {
+  display: none;
+  margin: 0 0 var(--p31-space-3) 0;
+  padding: var(--p31-space-4) max(var(--p31-space-4), env(safe-area-inset-left))
+    var(--p31-space-4) max(var(--p31-space-4), env(safe-area-inset-right));
+  border-radius: var(--p31-radius-xl);
+  font-size: clamp(1rem, 2.8vw, 1.1rem);
+  line-height: var(--p31-leading-relaxed);
+  color: var(--p31-cloud);
+  border: 1px solid var(--p31-glass-border);
+  background: var(--p31-glass-surface);
+  backdrop-filter: blur(8px);
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.soup-hero--parents h2,
+.soup-hero--kids > div strong {
+  color: var(--p31-cyan);
+}
+
+.soup-hero--parents h2 {
+  font-size: var(--p31-text-lg);
+  font-weight: 700;
+  margin: 0 0 var(--p31-space-3) 0;
+}
+
+.soup-hero--parents code,
+.soup-hero--kids code {
+  font-family: var(--p31-font-mono);
+  background: var(--p31-void);
+  padding: 2px 8px;
+  border-radius: var(--p31-radius-sm);
+  font-size: 0.9em;
+  border: 1px solid var(--p31-border-subtle);
+}
+
+.soup-hero--parents .ph-run {
+  display: block;
+  margin: 0.25em 0;
+  font-size: 0.9em;
+}
+
+.soup-hero--parents .parents-actions,
+.soup-hero--kids .kids-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--p31-space-2) var(--p31-space-3);
+  margin-top: var(--p31-space-3);
+}
+
+.soup-hero--parents .parents-actions a,
+.soup-hero--parents .parents-actions button,
+.soup-hero--kids .kids-actions button {
+  font: inherit;
+  font-size: var(--p31-text-sm);
+  font-weight: 600;
+  padding: var(--p31-space-2) var(--p31-space-4);
+  border-radius: var(--p31-radius-full);
+  border: 1px solid var(--p31-teal);
+  background: var(--p31-surface2);
+  color: var(--p31-cyan);
+  cursor: pointer;
+  text-decoration: none;
+  transition:
+    background var(--p31-duration-fast) var(--p31-ease-standard),
+    box-shadow var(--p31-duration-fast) var(--p31-ease-standard);
+}
+
+.soup-hero--parents .parents-actions a:hover,
+.soup-hero--parents .parents-actions button:hover,
+.soup-hero--kids .kids-actions button:hover {
+  background: var(--p31-surface);
+  box-shadow: var(--p31-shadow-glowTeal);
+}
+
+@media (max-width: 599px) {
+  .soup-hero--parents .parents-actions,
+  .soup-hero--kids .kids-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .soup-hero--parents .parents-actions a,
+  .soup-hero--parents .parents-actions button,
+  .soup-hero--kids .kids-actions button {
+    min-height: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    box-sizing: border-box;
+  }
+}
+
+.soup-hero--kids {
+  background: linear-gradient(
+    135deg,
+    rgba(22, 25, 32, 0.95) 0%,
+    rgba(16, 20, 28, 0.98) 100%
+  );
+  border-color: rgba(77, 184, 168, 0.35);
+}
+
+html.soup-app.kids-mode .soup-hero--kids {
+  display: block;
+}
+html.soup-app.parents-mode .soup-hero--parents {
+  display: block;
+}
+
+html.soup-app.parents-mode:not(.kids-mode) body {
+  font-size: var(--p31-text-md);
+}
+html.soup-app.parents-mode:not(.kids-mode) #info {
+  font-size: var(--p31-text-sm);
+  line-height: var(--p31-leading-relaxed);
+}
+
+.soup-hero__p-tight {
+  margin: 0 0 8px 0;
+}
+
+.soup-hero__p-secondary {
+  margin: 8px 0 0 0;
+  opacity: 0.88;
+}
+
+.soup-kids-hint {
+  margin: 0.4em 0 0;
+  opacity: 0.9;
+  font-size: 0.9em;
+}
+
+.soup-kids-label {
+  align-self: center;
+  opacity: 0.85;
+  font-size: 0.88em;
+}
+
+.soup-runbook {
+  display: none;
+  margin-top: var(--p31-space-3);
+  font-size: var(--p31-text-sm);
+  line-height: var(--p31-leading-relaxed);
+  color: var(--p31-cloud);
+}
+
+.soup-runbook.soup-panel-visible {
+  display: block;
+}
+
+.soup-runbook-line {
+  margin: 0.35em 0;
+}
+
+/* —— Canvas stage —— */
+html.soup-app #canvas-wrap {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  border-radius: var(--p31-radius-lg);
+  box-shadow: var(--p31-shadow-lg), 0 0 48px rgba(77, 184, 168, 0.08);
+  overflow: hidden;
+  border: 1px solid var(--p31-glass-border);
+}
+
+html.soup-app #canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: min(56vh, 1000px);
+  border: none;
+  background: var(--p31-surface);
+  image-rendering: auto;
+}
+
+@media (min-width: 600px) {
+  html.soup-app #canvas {
+    max-height: min(70vh, 1000px);
+  }
+}
+
+html.soup-app .zone {
+  position: absolute;
+  border: 2px solid rgba(77, 184, 168, 0.35);
+  border-radius: 50%;
+  pointer-events: none;
+}
+html.soup-app .zone.calm {
+  border-color: rgba(77, 184, 168, 0.55);
+}
+html.soup-app .zone.lab {
+  border-color: rgba(204, 98, 71, 0.55);
+}
+html.soup-app .zone.kitchen {
+  border-color: rgba(59, 163, 114, 0.5);
+}
+html.soup-app .zone.deep {
+  border-color: rgba(139, 124, 201, 0.55);
+}
+
+/* Presence HUD */
+html.soup-app #presence-hud {
+  position: absolute;
+  top: var(--p31-space-3);
+  left: var(--p31-space-3);
+  right: var(--p31-space-3);
+  z-index: 5;
+  display: none;
+  pointer-events: none;
+}
+
+html.soup-app #presence-hud.soup-hud--visible {
+  display: block;
+}
+html.soup-app #presence-hud .ph-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--p31-space-2) var(--p31-space-3);
+  font-size: var(--p31-text-sm);
+  text-shadow: 0 1px 3px var(--p31-void);
+}
+
+@media (min-width: 900px) {
+  html.soup-app #presence-hud .ph-inner {
+    font-size: var(--p31-text-xs);
+  }
+}
+
+html.soup-app #presence-hud .ph-title {
+  color: var(--p31-cyan);
+  text-transform: uppercase;
+  letter-spacing: var(--p31-tracking-caps);
+  font-weight: 600;
+  font-size: inherit;
+}
+html.soup-app .presence-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: var(--p31-space-2) var(--p31-space-3);
+  border-radius: var(--p31-radius-full);
+  border: 1px solid var(--p31-cyan);
+  color: var(--p31-paper);
+  background: rgba(15, 17, 21, 0.72);
+  backdrop-filter: blur(10px);
+  font-size: inherit;
+}
+
+html.soup-app .presence-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+/* Info panel — mobile-first: larger type, relaxed leading; compact on wide screens */
+html.soup-app #info {
+  flex: 0 1 auto;
+  min-height: 12rem;
+  max-height: min(52vh, 28rem);
+  height: auto;
+  background: var(--p31-surface);
+  border: 1px solid var(--p31-glass-border);
+  border-radius: var(--p31-radius-md);
+  padding: var(--p31-space-4);
+  overflow-y: auto;
+  overflow-x: auto;
+  font-size: var(--p31-text-sm);
+  line-height: var(--p31-leading-relaxed);
+  color: var(--p31-cloud);
+  font-family: var(--p31-font-mono);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (min-width: 900px) {
+  html.soup-app #info {
+    height: 200px;
+    min-height: 200px;
+    max-height: none;
+    padding: var(--p31-space-3);
+    font-size: var(--p31-text-xs);
+    line-height: var(--p31-leading-snug);
+  }
+}
+
+html.soup-app .stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(9.75rem, 1fr));
+  gap: var(--p31-space-2);
+  margin-bottom: var(--p31-space-3);
+  align-items: start;
+}
+
+@media (min-width: 600px) {
+  html.soup-app .stats {
+    gap: var(--p31-space-3);
+  }
+}
+
+html.soup-app .stat {
+  background: var(--p31-surface2);
+  padding: var(--p31-space-3) var(--p31-space-3);
+  border-radius: var(--p31-radius-md);
+  border: 1px solid var(--p31-border-subtle);
+  font-size: max(0.875rem, var(--p31-text-xs));
+  line-height: var(--p31-leading-snug);
+  min-height: 44px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+@media (min-width: 900px) {
+  html.soup-app .stat {
+    padding: var(--p31-space-2) var(--p31-space-3);
+    font-size: var(--p31-text-xs);
+    min-height: 0;
+  }
+}
+
+html.soup-app #event-log,
+html.soup-app #log,
+html.soup-app .soup-event-stream {
+  margin-top: var(--p31-space-3);
+  font-size: var(--p31-text-sm);
+  line-height: var(--p31-leading-relaxed);
+  word-break: break-word;
+}
+
+html.soup-app .stats--connection {
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+html.soup-app .stat--connection {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  max-width: 100%;
+}
+
+html.soup-app .connection-status {
+  display: inline-block;
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+  border-radius: var(--p31-radius-full);
+  margin-right: var(--p31-space-2);
+  box-shadow: 0 0 6px currentColor;
+}
+html.soup-app .connected {
+  background: var(--p31-phosphorus);
+}
+html.soup-app .disconnected {
+  background: var(--p31-coral);
+}
+html.soup-app .reconnecting {
+  background: var(--p31-amber);
+}
+
+html.soup-app #as-above-so-below {
+  display: none;
+  max-width: 100%;
+  background: var(--p31-void) !important;
+  border: 1px solid rgba(77, 184, 168, 0.35) !important;
+  color: var(--p31-cyan) !important;
+  font-size: var(--p31-text-sm) !important;
+  font-family: var(--p31-font-mono) !important;
+  line-height: var(--p31-leading-snug) !important;
+}
+
+html.soup-app #as-above-so-below.soup-panel-visible {
+  display: inline-flex !important;
+  align-items: center;
+}
+
+@media (min-width: 900px) {
+  html.soup-app #as-above-so-below {
+    font-size: var(--p31-text-xs) !important;
+  }
+}
+
+html.soup-app #network-family-row {
+  display: none;
+  flex-direction: column;
+  align-items: stretch !important;
+  background: var(--p31-void) !important;
+  border: 1px solid rgba(59, 163, 114, 0.35) !important;
+  color: var(--p31-cloud) !important;
+  padding: var(--p31-space-3) !important;
+  flex-wrap: nowrap;
+  gap: var(--p31-space-2);
+  font-size: max(0.875rem, var(--p31-text-xs)) !important;
+  font-family: var(--p31-font-mono) !important;
+}
+
+html.soup-app #network-family-row.soup-visible {
+  display: flex;
+}
+
+@media (min-width: 520px) {
+  html.soup-app #network-family-row.soup-visible {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center !important;
+    padding: var(--p31-space-1) var(--p31-space-2) !important;
+    font-size: var(--p31-text-xs) !important;
+  }
+}
+html.soup-app #family-room-label {
+  color: var(--p31-phosphorus) !important;
+  font-size: var(--p31-text-xs) !important;
+}
+html.soup-app #new-family-room {
+  font-family: inherit;
+  font-size: max(0.875rem, var(--p31-text-xs));
+  padding: var(--p31-space-2) var(--p31-space-3);
+  min-height: 44px;
+  border-radius: var(--p31-radius-md);
+  border: 1px solid rgba(204, 98, 71, 0.45) !important;
+  background: var(--p31-surface2) !important;
+  color: var(--p31-amber) !important;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+html.soup-app #copy-family-link {
+  font-family: inherit;
+  font-size: max(0.875rem, var(--p31-text-xs));
+  padding: var(--p31-space-2) var(--p31-space-3);
+  min-height: 44px;
+  border-radius: var(--p31-radius-md);
+  border: 1px solid var(--p31-cyan) !important;
+  background: var(--p31-surface) !important;
+  color: var(--p31-cyan) !important;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+@media (min-width: 900px) {
+  html.soup-app #new-family-room,
+  html.soup-app #copy-family-link {
+    font-size: var(--p31-text-xs);
+    padding: var(--p31-space-1) var(--p31-space-2);
+    min-height: 0;
+    border-radius: var(--p31-radius-sm);
+  }
+}
+
+html.soup-app #info a {
+  color: var(--p31-cyan);
+  text-decoration: none;
+}
+html.soup-app #info a:hover {
+  text-decoration: underline;
+  color: var(--p31-paper);
+}
+
+html.soup-app .soup-perf-hdr {
+  font-size: var(--p31-text-sm);
+  color: var(--p31-cyan);
+  margin: var(--p31-space-2) 0 var(--p31-space-2) 0;
+  font-weight: 600;
+}
+
+@media (min-width: 900px) {
+  html.soup-app .soup-perf-hdr {
+    font-size: var(--p31-text-xs);
+  }
+}
+
+html.soup-app #performance-canvas {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--p31-radius-sm);
+  border: 1px solid var(--p31-glass-border);
+  background: var(--p31-void);
+}
+
+html.soup-app .soup-perf-block {
+  margin: var(--p31-space-2) 0;
+}
+
+html.soup-app .soup-dev-meta {
+  opacity: 0.9;
+  font-size: var(--p31-text-sm);
+  margin-top: var(--p31-space-1);
+}
+
+@media (min-width: 900px) {
+  html.soup-app .soup-dev-meta {
+    font-size: var(--p31-text-xs);
+  }
+}
+html.soup-app .soup-dev-stat {
+  background: var(--p31-void) !important;
+  border: 0 !important;
+  color: var(--p31-cloud) !important;
+}
+html.soup-app .soup-dev-stat code {
+  font-size: 0.65rem;
+}
+html.soup-app .soup-dev-sep {
+  color: var(--p31-cloud);
+  opacity: 0.4;
+  margin: 0 0.12em;
+}
+
+/* Tutorial highlight */
+html.soup-app .tutorial-highlight {
+  position: relative;
+  z-index: var(--p31-z-overlay);
+}
+html.soup-app .tutorial-highlight::after {
+  content: "";
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  border: 2px solid var(--p31-cyan);
+  border-radius: var(--p31-radius-md);
+  animation: tutorial-glow 2.5s var(--p31-ease-standard) infinite alternate;
+  pointer-events: none;
+}
+@keyframes tutorial-glow {
+  from {
+    box-shadow: 0 0 12px rgba(77, 184, 168, 0.35);
+    border-color: var(--p31-cyan);
+  }
+  to {
+    box-shadow: 0 0 24px rgba(139, 124, 201, 0.45);
+    border-color: var(--p31-lavender);
+  }
+}
+
+/* kids-mode density */
+html.soup-app.kids-mode body {
+  padding: var(--p31-space-3) var(--p31-space-4) var(--p31-space-6);
+  -webkit-tap-highlight-color: transparent;
+}
+html.soup-app.kids-mode #container {
+  min-height: 0;
+}
+html.soup-app.kids-mode #canvas-wrap {
+  transform: scale(1.12);
+  transform-origin: top center;
+  margin-bottom: var(--p31-space-4);
+}
+
+@media (max-width: 639px) {
+  html.soup-app.kids-mode #canvas-wrap {
+    transform: none;
+    margin-bottom: var(--p31-space-3);
+  }
+}
+html.soup-app.kids-mode #info {
+  min-height: 300px;
+  max-height: 40vh;
+  font-size: var(--p31-text-sm);
+  line-height: var(--p31-leading-relaxed);
+  padding: var(--p31-space-4);
+}
+html.soup-app.kids-mode .stat {
+  padding: var(--p31-space-2) var(--p31-space-4);
+  font-size: var(--p31-text-sm);
+  border-radius: var(--p31-radius-md);
+}
+html.soup-app.kids-mode .stats {
+  gap: var(--p31-space-3) var(--p31-space-4);
+}
+html.soup-app.kids-mode .connection-status {
+  width: 16px;
+  height: 16px;
+}
+html.soup-app.kids-mode #presence-hud .ph-title {
+  font-size: var(--p31-text-sm);
+}
+html.soup-app.kids-mode .presence-pill {
+  font-size: var(--p31-text-sm);
+  padding: var(--p31-space-2) var(--p31-space-4);
+}
+html.soup-app.kids-mode:not(.parents-mode) .adults-only {
+  display: none !important;
+}
+html.soup-app.kids-mode #network-family-row,
+html.soup-app.kids-mode #network-family-row button {
+  font-size: var(--p31-text-sm);
+  padding: var(--p31-space-2) var(--p31-space-3);
+}
+html.soup-app.kids-mode #event-log,
+html.soup-app.kids-mode #log {
+  font-size: var(--p31-text-sm);
+}
+html.soup-app.kids-mode [data-kids-tbar] {
+  font-size: var(--p31-text-sm) !important;
+  padding: var(--p31-space-3) var(--p31-space-5) !important;
+  min-height: 48px;
+  font-family: var(--p31-font-sans) !important;
+  border-radius: var(--p31-radius-md) !important;
+  border: 1px solid var(--p31-cyan) !important;
+  box-shadow: var(--p31-shadow-sm);
+}
+
+#parents-runbook-below {
+  border-top: 1px solid var(--p31-glass-border) !important;
+  margin-top: var(--p31-space-3) !important;
+  padding-top: var(--p31-space-3) !important;
+}
+#parents-runbook-below > div:first-child {
+  color: var(--p31-cyan) !important;
+  font-size: var(--p31-text-sm) !important;
+  letter-spacing: var(--p31-tracking-wide) !important;
+}
+
+@media (min-width: 900px) {
+  #parents-runbook-below > div:first-child {
+    font-size: var(--p31-text-xs) !important;
+  }
+}
+#parents-runbook-lines p {
+  font-size: var(--p31-text-sm) !important;
+  font-family: var(--p31-font-mono) !important;
+  color: var(--p31-cloud) !important;
+}
+
+/* Floating actions: bottom dock on narrow viewports, top-right strip on large */
+html.soup-app .soup-tbar-dock {
+  position: fixed;
+  z-index: var(--p31-z-sticky);
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: stretch;
+  gap: var(--p31-space-2);
+  padding: var(--p31-space-2) max(var(--p31-space-3), env(safe-area-inset-right, 0px))
+    max(var(--p31-space-2), env(safe-area-inset-bottom, 0px))
+    max(var(--p31-space-3), env(safe-area-inset-left, 0px));
+  background: linear-gradient(180deg, transparent 0%, rgba(15, 17, 21, 0.94) 38%);
+  pointer-events: none;
+}
+
+html.soup-app .soup-tbar-dock .soup-tbar {
+  position: static;
+  flex: 1 1 calc(33.333% - var(--p31-space-2));
+  min-width: min(100%, 5.5rem);
+  min-height: 48px;
+  padding: var(--p31-space-2) var(--p31-space-3) !important;
+  font-family: var(--p31-font-mono) !important;
+  font-size: var(--p31-text-sm) !important;
+  color: var(--p31-paper) !important;
+  border: 1px solid var(--p31-glass-border) !important;
+  border-radius: var(--p31-radius-md) !important;
+  cursor: pointer;
+  background: var(--p31-surface2) !important;
+  box-shadow: var(--p31-shadow-md);
+  transition: box-shadow var(--p31-duration-fast) var(--p31-ease-standard);
+  pointer-events: auto;
+  touch-action: manipulation;
+}
+
+html.soup-app .soup-tbar-dock .soup-tbar:hover {
+  box-shadow: var(--p31-shadow-glowTeal);
+}
+
+html.soup-app .soup-tbar--tutorial {
+  background: linear-gradient(135deg, var(--p31-teal), #1a4a45) !important;
+}
+html.soup-app .soup-tbar--sync {
+  border-color: rgba(37, 137, 125, 0.5) !important;
+  background: var(--p31-surface2) !important;
+}
+html.soup-app .soup-tbar--memory {
+  border-color: rgba(139, 124, 201, 0.45) !important;
+}
+
+@media (min-width: 900px) {
+  html.soup-app .soup-tbar-dock {
+    left: auto;
+    top: var(--p31-space-3);
+    right: var(--p31-space-3);
+    bottom: auto;
+    width: auto;
+    max-width: min(24rem, calc(100vw - 2rem));
+    padding: 0;
+    background: none;
+    pointer-events: auto;
+    flex-wrap: nowrap;
+    justify-content: flex-end;
+    gap: var(--p31-space-2);
+  }
+
+  html.soup-app .soup-tbar-dock .soup-tbar {
+    flex: 0 0 auto;
+    min-width: 0;
+    min-height: 44px;
+    font-size: var(--p31-text-xs) !important;
+    padding: var(--p31-space-2) var(--p31-space-4) !important;
+  }
+}
+
+/* Scrollbar (webkit) */
+html.soup-app #info::-webkit-scrollbar {
+  width: 8px;
+}
+html.soup-app #info::-webkit-scrollbar-track {
+  background: var(--p31-void);
+  border-radius: var(--p31-radius-sm);
+}
+html.soup-app #info::-webkit-scrollbar-thumb {
+  background: var(--p31-teal);
+  border-radius: var(--p31-radius-sm);
+  opacity: 0.5;
+}
+
+/* Keyboard / switch: clear focus, no mystery meat navigation */
+html.soup-app a:focus-visible,
+html.soup-app button:focus-visible {
+  outline: 2px solid var(--p31-cyan);
+  outline-offset: 3px;
+}
+
+html.soup-app a:focus:not(:focus-visible),
+html.soup-app button:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* —— Ethical “psych” layer: color semantics, soft motion, honest rewards (no dark patterns) ——
+ * Map: calm/trust = teal + cyan; attention/warmth = coral; growth/belonging = phosphorus.
+ * Live co-presence: data-soup-live=1 nudges canvas “breath”; data-soup-family=1 nudges family row.
+ * Rewards: one-shot stat ring + short toast on new reaction count—informational, not variable-ratio.
+ * Tuning: keep durations ≤3s; respect prefers-reduced-motion below.
+ */
+@keyframes soup-bowl-breathe {
+  0%,
+  100% {
+    box-shadow: var(--p31-shadow-lg), 0 0 36px rgba(77, 184, 168, 0.07);
+  }
+  50% {
+    box-shadow: var(--p31-shadow-lg), 0 0 52px rgba(77, 184, 168, 0.14);
+  }
+}
+
+@keyframes soup-stat-moment {
+  0% {
+    border-color: var(--p31-border-subtle);
+    box-shadow: 0 0 0 0 rgba(77, 184, 168, 0);
+  }
+  35% {
+    border-color: rgba(77, 184, 168, 0.65);
+    box-shadow:
+      0 0 0 1px rgba(77, 184, 168, 0.35),
+      0 0 22px rgba(139, 124, 201, 0.18);
+  }
+  100% {
+    border-color: var(--p31-border-subtle);
+    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+  }
+}
+
+@keyframes soup-toast-in {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+html.soup-app[data-soup-live="1"] #canvas-wrap.soup-canvas-shell {
+  animation: soup-bowl-breathe 5.5s var(--p31-ease-standard) infinite;
+}
+
+html.soup-app .stat.soup-stat--moment {
+  animation: soup-stat-moment 1.2s var(--p31-ease-standard);
+}
+
+html.soup-app .soup-reward-toast {
+  position: fixed;
+  left: 50%;
+  right: auto;
+  bottom: max(5.25rem, calc(env(safe-area-inset-bottom, 0px) + 4.5rem));
+  z-index: 110;
+  max-width: min(22rem, calc(100vw - var(--p31-space-4) * 2));
+  margin: 0;
+  padding: var(--p31-space-2) var(--p31-space-3);
+  border-radius: var(--p31-radius-md);
+  font-size: var(--p31-text-sm);
+  line-height: var(--p31-leading-snug);
+  text-align: center;
+  color: var(--p31-cloud);
+  background: linear-gradient(180deg, var(--p31-surface2) 0%, var(--p31-surface) 100%);
+  border: 1px solid rgba(77, 184, 168, 0.45);
+  box-shadow: var(--p31-shadow-glowTeal);
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+html.soup-app .soup-reward-toast:not([hidden]) {
+  animation: soup-toast-in 0.42s var(--p31-ease-standard) both;
+}
+
+html.soup-app[data-soup-family="1"][data-soup-live="1"] #network-family-row {
+  /* When the row is shown (JS toggles display), reinforce “we’re in this together” */
+  box-shadow:
+    0 0 0 1px rgba(59, 163, 114, 0.35),
+    0 0 20px rgba(59, 163, 114, 0.12);
+}
+
+html.soup-app.kids-mode .soup-app-header__welcome {
+  font-size: var(--p31-text-md);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.soup-app body::before,
+  html.soup-app body::after {
+    animation: none !important;
+  }
+
+  html.soup-app .tutorial-highlight::after {
+    animation: none !important;
+    box-shadow: 0 0 14px rgba(77, 184, 168, 0.45);
+  }
+
+  html.soup-app[data-soup-live="1"] #canvas-wrap.soup-canvas-shell {
+    animation: none !important;
+  }
+
+  html.soup-app .stat.soup-stat--moment {
+    animation: none !important;
+    border-color: rgba(77, 184, 168, 0.55);
+    box-shadow: 0 0 0 1px rgba(77, 184, 168, 0.2);
+  }
+
+  html.soup-app .soup-reward-toast:not([hidden]) {
+    animation: none !important;
+    opacity: 1;
+    transform: translateX(-50%);
+  }
+
+  html.soup-app * {
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Mobile mesh: larger tap targets in family + dev link rows (uses canon --p31-touch-min from p31-style) */
+.soup-tap a[href],
+.soup-tap button {
+  min-height: max(2.75rem, var(--p31-touch-min, 2.75rem));
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: manipulation;
+  box-sizing: border-box;
+  padding: 0.2em 0.5em;
+  -webkit-tap-highlight-color: rgba(77, 184, 168, 0.18);
+}
+
+/* ── Gray Rock (initial paint): calm void, no ambient brand gradients; chroma after first interaction ── */
+html.soup-app.soup-app--gray-rock body::before {
+  background: linear-gradient(180deg, var(--p31-void) 0%, #0a0c12 100%);
+  animation: none !important;
+  filter: none !important;
+}
+
+html.soup-app.soup-app--gray-rock body::after {
+  opacity: 0 !important;
+  animation: none !important;
+}
+
+html.soup-app.soup-app--gray-rock .soup-app-header--psych {
+  border-left-color: var(--p31-border-subtle);
+  background: var(--p31-surface);
+  box-shadow: var(--p31-shadow-sm);
+}
+
+html.soup-app.soup-app--gray-rock .soup-app-header__welcome strong {
+  color: var(--p31-cloud);
+  font-weight: 600;
+}
+
+html.soup-app.soup-app--gray-rock .soup-psych-dot--calm,
+html.soup-app.soup-app--gray-rock .soup-psych-dot--warm,
+html.soup-app.soup-app--gray-rock .soup-psych-dot--belong {
+  color: var(--p31-muted);
+  background: var(--p31-muted);
+  box-shadow: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.soup-app.soup-app--gray-rock body::before,
+  html.soup-app.soup-app--gray-rock body::after {
+    animation: none !important;
+  }
+}
+
+/* ── Dev telemetry (FPS, perf graph, streams): ?dev=1 or ?debug — public face stays calm ── */
+html.soup-app:not(.soup-dev-panel) .soup-dev-telemetry {
+  display: none !important;
+}
+
+/* Hearth rings — subtle calm/warm/belong concentric hint behind playfield (not gameplay HUD) */
+html.soup-app #canvas-wrap.soup-canvas-shell::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 38% 36% at 50% 52%, transparent 58%, rgba(77, 184, 168, 0.055) 59%, transparent 61%),
+    radial-gradient(ellipse 56% 54% at 50% 52%, transparent 58%, rgba(204, 98, 71, 0.045) 59%, transparent 61%),
+    radial-gradient(ellipse 78% 74% at 50% 52%, transparent 58%, rgba(59, 163, 114, 0.038) 59%, transparent 61%);
+  opacity: 0.9;
+}
+
+html.soup-app #canvas-wrap.soup-canvas-shell canvas.p31-soup-starfield-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
+}
+
+html.soup-app #canvas-wrap.soup-canvas-shell canvas#canvas {
+  position: relative;
+  z-index: 1;
+}
+
+html.soup-app #canvas-wrap #presence-hud {
+  z-index: 4;
+}

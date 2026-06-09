@@ -1,0 +1,152 @@
+/**
+ * P31 Technical Hub — portable skin for static HTML + external Pages (e.g. p31-mesh).
+ * Load after Inter + Space Mono. Matches Astro hub (index.astro).
+ *
+ * <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap">
+ * <link rel="stylesheet" href="/assets/hub-skin.css">
+ */
+:root {
+  --hub-void: #050505;
+  --hub-nav: #080810;
+  --hub-rose: #e8636f;
+  --hub-coral: #cc6247;
+  --hub-phosphor: #00ff88;
+  --hub-amber: #fbbf24;
+  --hub-emerald: #34d399;
+  --hub-cyan: #22d3ee;
+  --hub-cloud: #d8d6d0;
+  --hub-glass: rgba(255, 255, 255, 0.04);
+  --hub-glass-border: rgba(255, 255, 255, 0.08);
+  --hub-radius-lg: 1rem;
+  --hub-font-sans: 'Inter', system-ui, sans-serif;
+  --hub-font-mono: 'Space Mono', ui-monospace, monospace;
+}
+
+.hub-body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--hub-void);
+  color: rgba(255, 255, 255, 0.85);
+  font-family: var(--hub-font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+.hub-ambient-grid {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.03;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.3) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+.hub-nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(8, 8, 16, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.hub-glass {
+  background: var(--hub-glass);
+  border: 1px solid var(--hub-glass-border);
+  border-radius: var(--hub-radius-lg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.hub-mark {
+  width: 32px;
+  height: 32px;
+  border-radius: 9999px;
+  border: 1px solid rgba(232, 99, 111, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.hub-mark::after {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--hub-rose);
+  box-shadow: 0 0 8px rgba(232, 99, 111, 0.5);
+}
+
+.hub-btn-donate {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: var(--hub-rose);
+  color: #fff;
+  text-decoration: none;
+  transition: filter 0.15s ease;
+}
+.hub-btn-donate:hover {
+  filter: brightness(1.08);
+}
+
+.hub-title {
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #fff;
+}
+
+.hub-muted {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.hub-mono {
+  font-family: var(--hub-font-mono);
+}
+
+/** Log / telemetry — match hub (avoid unrelated accent colors) */
+.hub-log {
+  font-family: var(--hub-font-mono);
+  font-size: 0.75rem;
+  line-height: 1.6;
+  color: rgba(216, 214, 208, 0.75);
+  background: rgba(8, 8, 16, 0.9);
+  border: 1px solid var(--hub-glass-border);
+  border-radius: 12px;
+  padding: 12px 14px;
+  max-height: 240px;
+  overflow-y: auto;
+}
+.hub-log .ts {
+  color: var(--hub-phosphor);
+  opacity: 0.85;
+}
+
+.hub-accent-link {
+  color: var(--hub-cyan);
+  text-decoration: none;
+}
+.hub-accent-link:hover {
+  text-decoration: underline;
+}
+
+.hub-cta-primary {
+  display: inline-block;
+  font-family: var(--hub-font-mono);
+  font-weight: 700;
+  font-size: 0.8125rem;
+  letter-spacing: 0.06em;
+  padding: 0.85rem 2rem;
+  border-radius: 8px;
+  background: var(--hub-rose);
+  color: var(--hub-void);
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: filter 0.15s ease;
+}
+.hub-cta-primary:hover {
+  filter: brightness(1.08);
+}

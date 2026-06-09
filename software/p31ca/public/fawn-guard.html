@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#050505" />
+    <title>Fawn Guard | P31 Labs</title>
+    <meta
+      name="description"
+      content="Draft message pattern analysis — fawn-response flags before you send. Hub-styled client; Worker API."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap"
+    />
+    <link rel="stylesheet" href="/assets/hub-skin.css" />
+    <link rel="stylesheet" href="/assets/hub-about-shell.css" />
+    <link rel="stylesheet" href="/assets/fawn-guard-app.css" />
+    <style>
+      :root {
+        --accent: #22d3ee;
+      }
+    </style>
+  </head>
+  <body class="hub-about-page">
+    <nav class="nav">
+      <div class="nav-inner">
+        <a href="index.html" class="nav-brand">
+          <span class="hub-brand-mark" aria-hidden="true"></span>
+          <span class="nav-brand-label">P31 Labs</span>
+        </a>
+        <div class="nav-links">
+          <a href="index.html" class="nav-link">&larr; Hub</a>
+          <a href="lattice.html" class="nav-link">Lattice &#x2B21;</a>
+          <a href="fawn-guard-about.html" class="nav-link">About</a>
+          <a href="https://github.com/p31labs/andromeda" target="_blank" rel="noopener" class="nav-link">GitHub</a>
+          <a href="guardian.html" class="nav-cta">Buffer Guardian</a>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container">
+      <div class="hero" style="padding-bottom: 28px; margin-bottom: 28px">
+        <h1>Fawn Guard</h1>
+        <div class="subtitle">Draft pattern analysis</div>
+        <p class="tagline">
+          Rule-based flags for trauma-adaptive language patterns. Analysis request goes to the Fawn Guard Worker; enable CORS for
+          this origin on the Worker if you self-host.
+        </p>
+      </div>
+
+      <div class="detail-card fawn-scope" style="margin-bottom: 20px">
+        <h3>How to use</h3>
+        <p class="fawn-intro">
+          Fawn response is a trauma-adaptive pattern: over-apologizing, hedging, absorbing blame, collapsing boundaries to avoid
+          conflict. Paste a draft; the analyzer scores and highlights before you send. Not therapy or legal advice.
+        </p>
+      </div>
+
+      <div class="detail-card fawn-scope">
+        <div class="fawn-input-section">
+          <label class="fawn-label" for="msg-input">Draft message</label>
+          <textarea
+            id="msg-input"
+            class="fawn-textarea"
+            placeholder="Paste your draft message here…"
+            spellcheck="true"
+          ></textarea>
+          <div class="fawn-btn-row">
+            <button type="button" class="fawn-analyze" id="analyze-btn">Analyze</button>
+            <button type="button" class="fawn-clear" id="clear-btn">Clear</button>
+            <span class="fawn-char-count" id="char-count">0 chars</span>
+          </div>
+        </div>
+
+        <div style="margin-top: 22px" id="score-banner" class="fawn-score-banner">
+          <div class="fawn-score-gauge">
+            <svg width="72" height="72" viewBox="0 0 72 72">
+              <circle cx="36" cy="36" r="28" fill="none" stroke="#1e293b" stroke-width="7" />
+              <circle
+                id="score-arc"
+                cx="36"
+                cy="36"
+                r="28"
+                fill="none"
+                stroke="#06b6d4"
+                stroke-width="7"
+                stroke-linecap="round"
+                stroke-dasharray="175.93"
+                stroke-dashoffset="175.93"
+              />
+            </svg>
+            <div class="fawn-score-text" id="score-num">0<span>%</span></div>
+          </div>
+          <div style="flex: 1; min-width: 200px">
+            <div class="fawn-score-label" id="score-label">—</div>
+            <div class="fawn-score-detail" id="score-detail"></div>
+            <div class="fawn-legend" id="legend"></div>
+          </div>
+        </div>
+
+        <div class="fawn-output-section" id="output-section">
+          <p class="fawn-label" style="margin-bottom: 8px">Annotated message</p>
+          <div class="fawn-highlighted-text" id="highlighted-output"></div>
+        </div>
+
+        <div class="fawn-flags-section" id="flags-section" style="margin-top: 18px">
+          <p class="fawn-label" style="margin-bottom: 8px">Flags &amp; rewrites</p>
+          <div class="fawn-flags-list" id="flags-list"></div>
+        </div>
+
+        <div class="fawn-empty-state" id="empty-state">
+          No fawn patterns detected. Message reads as direct and boundaried.
+        </div>
+
+        <p class="fawn-footnote">
+          P31 Labs · Analysis via Worker API · Prefer not to paste privileged content you cannot process on third-party infra
+        </p>
+      </div>
+    </div>
+
+    <script type="module" src="/assets/hub-about-boot.js"></script>
+    <script defer src="/assets/fawn-guard-app.js"></script>
+  </body>
+</html>

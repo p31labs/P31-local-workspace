@@ -1,0 +1,38 @@
+name: spaceship-earth
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "software/spaceship-earth/**"
+      - ".github/actions/**"
+      - ".github/workflows/spaceship-earth.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: spaceship-earth-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/toolchain-constants
+
+      - uses: ./.github/actions/pnpm-04-software
+
+      - name: Build
+        working-directory: software
+        run: pnpm --filter @p31/spaceship-earth run build
+
+      - name: Deploy to Cloudflare Pages
+        if: github.ref == 'refs/heads/main'
+        uses: ./.github/actions/wrangler-run
+        with:
+          working-directory: software/spaceship-earth
+          command: pages deploy dist --project-name=spaceship-earth --branch=main
+          api-token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          account-id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

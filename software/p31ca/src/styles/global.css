@@ -1,0 +1,61 @@
+@import './hub-tokens.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── P31 Design Tokens ── */
+
+@layer base {
+  html {
+    background-color: var(--hub-void);
+    color: rgba(255, 255, 255, 0.85);
+    font-family: 'Inter', system-ui, sans-serif;
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::selection {
+    background: rgba(0, 255, 136, 0.2);
+    color: #fff;
+  }
+}
+
+/* ── Glassmorphism primitives ── */
+
+@layer components {
+  .glass-panel {
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 1rem;
+  }
+
+  .glass-panel-hover {
+    transition: border-color 0.2s ease, background 0.2s ease;
+  }
+
+  .glass-panel-hover:hover {
+    border-color: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  .phosphor-glow {
+    text-shadow: 0 0 20px rgba(0, 255, 136, 0.3),
+                 0 0 40px rgba(0, 255, 136, 0.1);
+  }
+
+  .status-live {
+    background: rgba(0, 255, 136, 0.1);
+    border-color: rgba(0, 255, 136, 0.25);
+    color: #00FF88;
+  }
+
+  .status-dev {
+    background: rgba(255, 215, 0, 0.1);
+    border-color: rgba(255, 215, 0, 0.25);
+    color: #FFD700;
+  }
+}

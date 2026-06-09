@@ -1,0 +1,242 @@
+---
+/**
+ * BusBarNav.astro — ground-truth-driven, role-gated bus bar navigation.
+ *
+ * WCD-PHOS-2026-01 BUS2. Reads `busBar.slots` and `busBar.navByRole` from
+ * `ground-truth/p31.ground-truth.json` at build time and emits a single
+ * <nav> with one <a> per slot. Each link carries a `data-p31-slot-roles`
+ * attribute listing which roles see it ("stranger user operator"). The
+ * cogpass-reader (loaded in BaseLayout) sets `data-p31-cogpass-role` on
+ * <html> on every page; the CSS in this component then hides any link
+ * whose role list doesn't include the current role.
+ *
+ * Result without JavaScript:
+ *   - Stranger sees 5 slots (welcome, passport, bonding, research, support)
+ *   - User sees 7 slots (+ lab, stylebook)
+ *   - Operator sees 11 slots (+ ops, ede, buffer, glass-box)
+ *
+ * No re-render is needed when the role changes — CSS handles the visibility
+ * shift. (cogpass-reader's onChange event toggles the [data-p31-cogpass-role]
+ * value on <html>; selectors below react instantly.)
+ *
+ * ────────────────────────────────────────────────────────────────────────────
+ * Opt-in adoption
+ *
+ * BUS2 ships this component but does NOT auto-inject it into BaseLayout.
+ * Multiple existing pages (index.astro, dome.astro, grants.astro, …) already
+ * render their own nav structures, and a global injection would duplicate.
+ * Pages adopt the bus bar nav by replacing their own nav with:
+ *
+ *   ---
+ *   import BusBarNav from '../components/BusBarNav.astro';
+ *   ---
+ *   <BusBarNav current="/lab" />
+ *
+ * The `current` prop highlights one slot. Pass the page's own pathname.
+ * Set `compact` for a tighter layout (suitable for header bars).
+ *
+ * ────────────────────────────────────────────────────────────────────────────
+ * Stranger-first ordering
+ *
+ * The 11 slots render in `navByRole.operator` order so all slots are present
+ * in the DOM (CSS just hides the role-restricted ones). This means a stranger
+ * arriving cold sees:
+ *
+ *     welcome · passport · bonding · research · support
+ *
+ * not
+ *
+ *     welcome · passport · bonding · LAB · research · STYLEBOOK · support
+ *                                    ↑ hidden            ↑ hidden
+ *
+ * because the slots between them are display:none. Strangers never see a
+ * gap.
+ *
+ * ────────────────────────────────────────────────────────────────────────────
+ * Source of truth
+ *
+ * busBar.slots[id]                  → label + href
+ * busBar.navByRole[role]            → which slot ids each role sees
+ * busBar.navByRole.operator         → DOM render order (superset)
+ *
+ * Edit ground-truth/p31.ground-truth.json to add/reorder/remove a slot.
+ * The component picks it up on next build. No code change here required for
+ * routine slot edits.
+ */
+
+import groundTruth from '../../ground-truth/p31.ground-truth.json';
+
+interface Props {
+  /** Pathname of the current page; the matching slot gets aria-current="page" + a highlight. */
+  current?: string;
+  /** Compact mode collapses padding for header-bar use. Default false (full-row mode). */
+  compact?: boolean;
+  /** Optional aria label override (defaults to "Primary navigation"). */
+  ariaLabel?: string;
+}
+
+const { current = '', compact = false, ariaLabel = 'Primary navigation' } = Astro.props;
+
+const slots = groundTruth?.busBar?.slots ?? {};
+const navByRole = groundTruth?.busBar?.navByRole ?? {};
+
+// DOM render order = operator's full slot list (superset of all roles).
+// CSS hides role-restricted slots when the active role doesn't include them.
+const renderOrder: string[] = Array.isArray(navByRole.operator) ? navByRole.operator : [];
+
+// For each slot, compute the space-separated role list (which roles see it).
+const ROLES = ['stranger', 'user', 'operator'] as const;
+function rolesForSlot(slotId: string): string {
+  return ROLES.filter((role) => {
+    const list = navByRole[role];
+    return Array.isArray(list) && list.includes(slotId);
+  }).join(' ');
+}
+
+// Normalize current pathname for matching (strip trailing slash for compare,
+// then also exact-match support trailing-slash hrefs like "/passport/").
+function isCurrent(href: string): boolean {
+  if (!current || !href) return false;
+  if (current === href) return true;
+  const stripCur = current.replace(/\/$/, '');
+  const stripHref = href.replace(/\/$/, '');
+  return stripCur === stripHref;
+}
+---
+
+<nav
+  class:list={['p31-bus-bar-nav', compact && 'p31-bus-bar-nav--compact']}
+  aria-label={ariaLabel}
+  data-p31-bus-bar-nav
+>
+  <ul class="p31-bus-bar-nav__list">
+    {renderOrder.map((slotId) => {
+      const slot = slots[slotId];
+      if (!slot) return null;
+      const roles = rolesForSlot(slotId);
+      const href = slot.href ?? '#';
+      const label = slot.label ?? slotId;
+      const external = !!slot.external;
+      const cur = isCurrent(href);
+      return (
+        <li
+          class="p31-bus-bar-nav__item"
+          data-p31-slot={slotId}
+          data-p31-slot-roles={roles}
+        >
+          <a
+            href={href}
+            class:list={['p31-bus-bar-nav__link', cur && 'is-current']}
+            aria-current={cur ? 'page' : undefined}
+            target={external ? '_blank' : undefined}
+            rel={external ? 'noopener noreferrer' : undefined}
+          >
+            {label}
+            {external && <span class="p31-bus-bar-nav__ext" aria-hidden="true">↗</span>}
+          </a>
+        </li>
+      );
+    })}
+  </ul>
+</nav>
+
+<style is:global>
+  /*
+   * Bus bar nav — visual + role gating.
+   *
+   * Visual style follows /p31-style.css tokens (--p31-void, --p31-cloud,
+   * --p31-teal). Adapts to data-p31-screen-comfort on <html> set by the
+   * cogpass-reader: at low comfort, motion is removed and contrast tightens.
+   */
+  .p31-bus-bar-nav {
+    width: 100%;
+    padding: 12px 16px;
+    background: var(--p31-void, #0f1115);
+    border-bottom: 1px solid rgba(216, 214, 208, 0.08);
+    color: var(--p31-cloud, var(--p31-cloud));
+    font-family: 'Atkinson Hyperlegible', system-ui, sans-serif;
+  }
+  .p31-bus-bar-nav--compact { padding: 6px 12px; }
+
+  .p31-bus-bar-nav__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    align-items: center;
+  }
+
+  .p31-bus-bar-nav__item { display: inline-flex; }
+
+  .p31-bus-bar-nav__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 10px;
+    font-size: 0.95rem;
+    color: var(--p31-cloud, var(--p31-cloud));
+    text-decoration: none;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    transition: border-color 180ms ease, background 180ms ease;
+  }
+  .p31-bus-bar-nav__link:hover,
+  .p31-bus-bar-nav__link:focus-visible {
+    border-color: var(--p31-teal, var(--p31-teal));
+    background: rgba(37, 137, 125, 0.10);
+    outline: none;
+  }
+  .p31-bus-bar-nav__link.is-current {
+    border-color: var(--p31-teal, var(--p31-teal));
+    background: rgba(37, 137, 125, 0.18);
+    font-weight: 700;
+  }
+
+  .p31-bus-bar-nav__ext {
+    font-size: 0.85em;
+    opacity: 0.7;
+  }
+
+  /*
+   * Role gating — the only piece that depends on the cogpass-reader.
+   *
+   * cogpass-reader sets data-p31-cogpass-role on <html>:
+   *   - "stranger" when no CogPass loaded (default)
+   *   - "user" or "operator" when CogPass.accessLevel is set
+   *
+   * Each slot's <li> carries data-p31-slot-roles with the space-separated
+   * roles allowed to see it. We hide any slot whose role list does not
+   * include the current role using attribute substring matching.
+   *
+   * If <html> has no data-p31-cogpass-role at all (script disabled or
+   * not yet loaded), the cogpass-reader has not run and we treat the
+   * visitor as a stranger by default — same effect as having JS disabled.
+   */
+  html:not([data-p31-cogpass-role]) [data-p31-bus-bar-nav] [data-p31-slot-roles]:not([data-p31-slot-roles~="stranger"]) {
+    display: none;
+  }
+  html[data-p31-cogpass-role="stranger"] [data-p31-bus-bar-nav] [data-p31-slot-roles]:not([data-p31-slot-roles~="stranger"]) {
+    display: none;
+  }
+  html[data-p31-cogpass-role="user"] [data-p31-bus-bar-nav] [data-p31-slot-roles]:not([data-p31-slot-roles~="user"]) {
+    display: none;
+  }
+  html[data-p31-cogpass-role="operator"] [data-p31-bus-bar-nav] [data-p31-slot-roles]:not([data-p31-slot-roles~="operator"]) {
+    display: none;
+  }
+
+  /* Low Screen Comfort (court mode) — kill all transitions */
+  html.p31-low-stim .p31-bus-bar-nav__link,
+  html.p31-gray-rock .p31-bus-bar-nav__link {
+    transition: none;
+  }
+
+  /* Pinned Gray Rock — desaturate hover state to nothing */
+  html.p31-gray-rock .p31-bus-bar-nav__link:hover,
+  html.p31-gray-rock .p31-bus-bar-nav__link:focus-visible {
+    background: transparent;
+    border-color: rgba(216, 214, 208, 0.18);
+  }
+</style>

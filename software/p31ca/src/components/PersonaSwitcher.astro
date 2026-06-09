@@ -1,0 +1,80 @@
+---
+/**
+ * PersonaSwitcher.astro — PHOS Bros Phase Component
+ * 4-persona selector: W.J. (operator), S.J. (youth), C.J. (guardian), Wi.J. (child)
+ */
+
+interface Props {
+  currentPersona?: 'wj' | 'sj' | 'cj' | 'wij';
+  size?: 'sm' | 'md' | 'lg';
+  showLabels?: boolean;
+}
+
+const { currentPersona = 'wj', size = 'md', showLabels = true } = Astro.props;
+
+const personas = {
+  wj: { name: 'W.J.', mode: 'operator', color: '#4db8a8', icon: '👤' },
+  sj: { name: 'S.J.', mode: 'youth', color: '#10b981', icon: '🎮' },
+  cj: { name: 'C.J.', mode: 'guardian', color: '#f59e0b', icon: '🛡️' },
+  wij: { name: 'Wi.J.', mode: 'child', color: '#f43f5e', icon: '⭐' }
+};
+
+const sizeClasses = {
+  sm: { button: 'w-10 h-10 text-lg', label: 'text-xs' },
+  md: { button: 'w-14 h-14 text-2xl', label: 'text-sm' },
+  lg: { button: 'w-20 h-20 text-3xl', label: 'text-base' }
+};
+
+const ringColors = {
+  wj: 'ring-cyan-400',
+  sj: 'ring-emerald-400',
+  cj: 'ring-amber-400',
+  wij: 'ring-rose-400'
+};
+---
+
+<div class="flex flex-wrap items-center gap-3" data-persona-switcher>
+  {Object.entries(personas).map(([key, persona]) => (
+    <button
+      class={[
+        'relative rounded-full flex items-center justify-center transition-all duration-200',
+        'hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-zinc-900',
+        'bg-zinc-800/80 backdrop-blur-sm border border-zinc-700',
+        sizeClasses[size].button,
+        key === currentPersona ? `ring-2 ${ringColors[key]} ring-offset-2 ring-offset-zinc-900 opacity-100` : 'opacity-70 hover:opacity-100'
+      ].join(' ')}
+      data-persona={key}
+      data-active={key === currentPersona ? 'true' : 'false'}
+      style={`--persona-color: ${persona.color}`}
+    >
+      <span>{persona.icon}</span>
+      {key === currentPersona && (
+        <span class="absolute -bottom-1 -right-1 w-4 h-4 bg-zinc-900 rounded-full flex items-center justify-center border border-zinc-600">
+          <span class="w-2 h-2 rounded-full" style={`background: ${persona.color}`}></span>
+        </span>
+      )}
+    </button>
+  ))}
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var buttons = document.querySelectorAll('[data-persona]');
+    buttons.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var persona = btn.getAttribute('data-persona');
+        buttons.forEach(function(b) {
+          b.setAttribute('data-active', 'false');
+          b.classList.remove('opacity-100', 'ring-2', 'ring-cyan-400', 'ring-emerald-400', 'ring-amber-400', 'ring-rose-400');
+          b.classList.add('opacity-70');
+        });
+        btn.setAttribute('data-active', 'true');
+        btn.classList.remove('opacity-70');
+        btn.classList.add('opacity-100');
+        window.dispatchEvent(new CustomEvent('phos:persona:switch', {
+          detail: { persona: persona }
+        }));
+      });
+    });
+  });
+</script>

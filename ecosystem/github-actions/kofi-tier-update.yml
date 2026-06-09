@@ -1,0 +1,148 @@
+# Ko-fi Tier Update Workflow
+# Automatically processes Ko-fi webhook events and updates user status in the repository
+# This workflow is triggered by repository_dispatch events from the Ko-fi middleware
+
+name: Ko-fi Tier Update
+
+on:
+  repository_dispatch:
+    types: [kofi_payment_received]
+
+jobs:
+  process-kofi-payment:
+    name: Process Ko-fi Payment and Update User Status
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        fetch-depth: 0
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Install Dependencies
+      run: npm install
+
+    - name: Process Ko-fi Payment
+      id: process_payment
+      run: |
+        # Extract payload data
+        echo "Processing Ko-fi payment for user: ${{ github.event.client_payload.user.name }}"
+        echo "Tier: ${{ github.event.client_payload.user.tier }}"
+        echo "Amount: ${{ github.event.client_payload.user.amount }}"
+        
+        # Create user registry if it doesn't exist
+        if [ ! -f "user-registry.json" ]; then
+          echo '{}' > user-registry.json
+        fi
+        
+        # Process each action
+        node scripts/process-kofi-payment.js
+        
+        # Output results
+        echo "payment_processed=true" >> $GITHUB_OUTPUT
+
+    - name: Update User Registry
+      run: |
+        # Update the user registry with new data
+        node scripts/update-user-registry.js
+
+    - name: Create Pull Request for User Updates
+      uses: peter-evans/create-pull-request@v5
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        commit-message: |
+          Update user status for Ko-fi payment: ${{ github.event.client_payload.user.name }}
+          
+          Tier: ${{ github.event.client_payload.user.tier }}
+          Amount: ${{ github.event.client_payload.user.amount }} ${{ github.event.client_payload.user.currency }}
+          Timestamp: ${{ github.event.client_payload.user.timestamp }}
+        title: "Update user status: ${{ github.event.client_payload.user.name }}"
+        body: |
+          ## Ko-fi Payment Processed
+          
+          **User:** ${{ github.event.client_payload.user.name }}
+          **Email:** ${{ github.event.client_payload.user.email }}
+          **Tier:** ${{ github.event.client_payload.user.tier }}
+          **Amount:** ${{ github.event.client_payload.user.amount }} ${{ github.event.client_payload.user.currency }}
+          **Timestamp:** ${{ github.event.client_payload.user.timestamp }}
+          
+          **Actions Taken:**
+          ${{ github.event.client_payload.actions }}
+          
+          **Discord ID:** ${{ github.event.client_payload.user.discordId || 'Not provided' }}
+          **P31 Wallet:** ${{ github.event.client_payload.user.p31Wallet || 'Not provided' }}
+          
+          ---
+          *This PR was automatically created by the Ko-fi integration workflow.*
+        branch: kofi-payment-${{ github.event.client_payload.user.kofiId }}
+        delete-branch: true
+
+    - name: Update Node Count Display
+      run: |
+        # Update the main README or dashboard with current node count
+        node scripts/update-node-count.js
+
+    - name: Notify Discord
+      if: github.event.client_payload.user.discordId
+      run: |
+        # Send notification to Discord about the new supporter
+        node scripts/notify-discord.js
+
+    - name: Create Issue for Manual Review
+      if: github.event.client_payload.user.tier == 'Guild Leader' || github.event.client_payload.user.tier == 'Core Team'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          github.rest.issues.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            title: `Manual Review Required: ${context.payload.client_payload.user.name} - ${context.payload.client_payload.user.tier}`,
+            body: `
+            ## Manual Review Required
+            
+            **User:** ${context.payload.client_payload.user.name}
+            **Email:** ${context.payload.client_payload.user.email}
+            **Tier:** ${context.payload.client_payload.user.tier}
+            **Amount:** ${context.payload.client_payload.user.amount} ${context.payload.client_payload.user.currency}
+            **Discord ID:** ${context.payload.client_payload.user.discordId || 'Not provided'}
+            **P31 Wallet:** ${context.payload.client_payload.user.p31Wallet || 'Not provided'}
+            
+            **Actions Required:**
+            - [ ] Verify Discord role assignment
+            - [ ] Confirm wallet address
+            - [ ] Update community channels
+            - [ ] Send welcome message
+            
+            **Ko-fi Payment ID:** ${context.payload.client_payload.user.kofiId}
+            **Timestamp:** ${context.payload.client_payload.user.timestamp}
+            
+            ---
+            *This issue was automatically created by the Ko-fi integration workflow.*
+            `,
+            labels: ['ko-fi', 'manual-review', context.payload.client_payload.user.tier.toLowerCase().replace(' ', '-')]
+          });
+
+    - name: Update Community Metrics
+      run: |
+        # Update community metrics and statistics
+        node scripts/update-metrics.js
+
+    - name: Commit and Push Changes
+      run: |
+        git config --local user.email "noreply@p31labs.org"
+        git config --local user.name "P31 Bot"
+        git add .
+        git commit -m "Update community metrics after Ko-fi payment processing" || echo "No changes to commit"
+        git push origin HEAD:${{ github.ref_name }} || echo "Push failed, changes may have been merged already"

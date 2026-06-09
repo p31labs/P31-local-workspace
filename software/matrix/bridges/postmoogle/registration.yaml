@@ -1,0 +1,14 @@
+id: postmoogle
+url: http://bridge-postmoogle:25252
+as_token: "${BRIDGE_POSTMOOGLE_AS_TOKEN}"
+hs_token: "${BRIDGE_POSTMOOGLE_HS_TOKEN}"
+sender_localpart: postmoogle
+rate_limited: false
+namespaces:
+  users:
+    - exclusive: true
+      regex: '@postmoogle_.*:p31ca\.org'
+    - exclusive: false
+      regex: '@postmoogle:p31ca\.org'
+  aliases: []
+  rooms: []

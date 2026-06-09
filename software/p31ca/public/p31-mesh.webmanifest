@@ -1,0 +1,21 @@
+{
+  "id": "https://p31ca.org/p31-mesh.webmanifest",
+  "name": "P31 Labs — technical hub",
+  "short_name": "P31 mesh",
+  "description": "Build, create, connect — ephemeralized sources (one truth, verify-gated) and ethical monetization (public creator-economy, CI). Browser-first mesh: TLS, static hub, Workers.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0f1115",
+  "theme_color": "#0f1115",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "categories": ["utilities", "productivity"],
+  "lang": "en"
+}

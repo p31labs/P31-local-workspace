@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Local-first setup | Education | P31 Labs</title>
+  <link rel="stylesheet" href="/p31-style.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/p31-tailwind-extend.js"></script>
+  <script>tailwind.config = { theme: { extend: { ...window.P31_TAILWIND_EXTEND } } };</script>
+</head>
+<body class="font-sans antialiased bg-void text-cloud min-h-screen p31-mesh-m-first">
+  <div class="max-w-3xl mx-auto px-4 py-8 text-sm text-cloud/85 space-y-4">
+    <p class="font-mono text-xs"><a class="text-teal" href="/education/modules/index.html">Modules</a></p>
+    <h1 class="text-2xl font-bold text-paper">Local-first setup</h1>
+    <p>Clone the P31 home repo (BONDING Soup) and run <code class="text-lavender/90">npm run setup</code> per <span class="font-mono text-xs">AGENTS.md</span>. You need a current <strong>Node 20</strong> LTS line and <strong>git</strong>. The monorepo path <code class="text-xs">andromeda/04_SOFTWARE/p31ca</code> is where hub CI and ground truth live.</p>
+    <p><strong class="text-paper/90">No cloud account is required</strong> to read docs, run <code class="text-xs">npm run verify</code> (when the tree is complete), or open static pages with <code class="text-xs">npm run demo</code> for the passport.</p>
+    <p>Pair with lab: <a class="text-teal" href="/education/labs/doc-library-tour.html">doc library tour</a>.</p>
+  </div>
+</body>
+</html>

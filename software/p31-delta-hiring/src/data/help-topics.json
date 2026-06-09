@@ -1,0 +1,160 @@
+{
+  "schema": "p31.helpTopics/1.0.0",
+  "updated": "2026-04-26",
+  "topics": [
+    {
+      "id": "start-15m",
+      "title": "First 15 minutes: what to read first",
+      "section": "Getting started",
+      "tags": ["onboarding", "time"],
+      "summary": "Read the role packet, then the WCD rubric, before you write code or prose.",
+      "relatedWcd": [],
+      "relatedRoleId": [],
+      "lastReviewed": "2026-04-26",
+      "blocks": [
+        { "type": "p", "text": "Open the role, scroll to “Evaluation weights” and “Work sample.” If the rubric does not make sense, stop and re-read: reviewers will score against those words, not against generic “seniority.”" },
+        { "type": "h3", "text": "Order of operations" },
+        { "type": "ul", "items": ["Role packet (outcomes, constraints, accommodation line)", "WCD detail (time box, deliverables, good vs anti-patterns)", "Build proof in My proofs, export JSON when ready"] }
+      ]
+    },
+    {
+      "id": "no-resume",
+      "title": "Degrees, résumés, and titles",
+      "section": "Getting started",
+      "tags": ["inclusion", "pedigree"],
+      "summary": "We publish evaluation criteria; bring evidence, not only credentials.",
+      "relatedWcd": [],
+      "relatedRoleId": [],
+      "lastReviewed": "2026-04-26",
+      "blocks": [
+        { "type": "p", "text": "This program is designed so that a bounded work sample and rubric-aligned proof record carry most of the signal. Titles and schools are weak proxies compared to the artifact you submit." },
+        { "type": "callout", "tone": "info", "text": "If you are early-career, focus on the deliverables list and a clean narrative in candidate notes. If you are senior, show judgment and edge-case handling, not a bigger feature list than asked." }
+      ]
+    },
+    {
+      "id": "wcd-what",
+      "title": "What is a WCD?",
+      "section": "WCD",
+      "tags": ["wcd", "definition"],
+      "summary": "A bounded, time-limited work sample tied to a public rubric.",
+      "relatedWcd": [],
+      "relatedRoleId": [],
+      "lastReviewed": "2026-04-26",
+      "blocks": [
+        { "type": "p", "text": "WCD (work challenge definition) = the challenge text, time box, deliverables, and rubric dimensions for a role. The catalog lives under wcds in this app; each open role points at one WCD id." },
+        { "type": "h3", "text": "Time box" },
+        { "type": "p", "text": "Time is guidance. In candidate notes, say how long you spent and if you had interruptions—reviewers are humans." }
+      ]
+    },
+    {
+      "id": "rubric",
+      "title": "How rubrics are used",
+      "section": "WCD",
+      "tags": ["rubric", "scoring"],
+      "summary": "Weights sum to 100% per WCD. Self-assessment is alignment, not a score you submit to a leaderboard.",
+      "relatedWcd": [],
+      "relatedRoleId": [],
+      "lastReviewed": "2026-04-26",
+      "blocks": [
+        { "type": "p", "text": "Each WCD’s rubric lines have weights; together they add to 1.0. The proof builder offers self-assessment sliders so you can see how you map to the same dimensions a reviewer will use." },
+        { "type": "callout", "tone": "legal", "text": "This tool does not perform automated pass/fail. P31 (or a partner) may use your exported JSON in a separate review system subject to their policies and applicable law." }
+      ]
+    },
+    {
+      "id": "proof-export",
+      "title": "Building and exporting a proof",
+      "section": "Proof",
+      "tags": ["export", "json", "p31.proofRecord"],
+      "summary": "Consent, artifacts, self-assessment, and notes. Export is a file you own.",
+      "relatedWcd": [],
+      "relatedRoleId": [],
+      "lastReviewed": "2026-04-26",
+      "blocks": [
+        { "type": "h3", "text": "Artifacts" },
+        { "type": "p", "text": "Use repo, URL, or file host links. Optional commit SHA helps reviewers pick an exact tree state. In notes, list commands to run and known caveats." },
+        { "type": "h3", "text": "Backup" },
+        { "type": "p", "text": "Data lives in this browser’s local storage. Export often; use Import to restore on a new device. Clearing site data will delete local drafts—export first." }
+      ]
+    },
+    {
+      "id": "import-backup",
+      "title": "Import, merge, and backup policy",
+      "section": "Proof",
+      "tags": ["import", "backup", "json"],
+      "summary": "Validated imports are stored as new records to avoid clobbering local state.",
+      "relatedWcd": [],
+      "relatedRoleId": [],
+      "lastReviewed": "2026-04-26",
+      "blocks": [
+        { "type": "p", "text": "When you import a `p31.proofRecord` JSON, the app validates the schema, generates a new local id, and stores it. The original file is unchanged on disk. If you need a straight clone with the same id, keep your exported files in version control you control—this UI prioritizes non-destructive recovery." }
+      ]
+    },
+    {
+      "id": "love-tokens",
+      "title": "L.O.V.E. tokens and equity tiers (read carefully)",
+      "section": "Tokens",
+      "tags": ["love", "equity", "guild"],
+      "summary": "Tokens document motivation; they are not a substitute for employment law, contracts, or securities advice.",
+      "relatedWcd": [],
+      "relatedRoleId": [],
+      "lastReviewed": "2026-04-26",
+      "blocks": [
+        { "type": "p", "text": "The app surfaces L.O.V.E. and tier tables to match the Delta narrative in P31’s docs. Nothing in this static tool grants equity, pay, or employment status. Those require separate legal and governance steps." },
+        { "type": "callout", "tone": "warn", "text": "If any production task is indistinguishable from paid work, the org’s policy (not this app) must address compensation and worker classification. Ask before you ship to prod under someone else’s account." }
+      ]
+    },
+    {
+      "id": "a11y-async",
+      "title": "Accommodation and async-first review",
+      "section": "Policy",
+      "tags": ["a11y", "async", "nd"],
+      "summary": "Default path is written, async, and time-boxed. You may request alternatives in your candidate notes and through official P31 contact channels when published.",
+      "relatedWcd": [],
+      "relatedRoleId": [],
+      "lastReviewed": "2026-04-26",
+      "blocks": [
+        { "type": "p", "text": "Each role packet includes an accommodation line. The proof builder and help content avoid requiring video. If a role must require sync evaluation, that must be clearly stated in the role packet; otherwise assume async." }
+      ]
+    },
+    {
+      "id": "ai-use",
+      "title": "AI tools and provenance",
+      "section": "Policy",
+      "tags": ["ai", "citation", "integrity"],
+      "summary": "Disclose tool use; keep ownership and licensing of submitted work clear.",
+      "relatedWcd": [],
+      "relatedRoleId": [],
+      "lastReviewed": "2026-04-26",
+      "blocks": [
+        { "type": "p", "text": "P31’s default is transparency: in candidate notes, list AI tools or pair-programming you used. Reviewers are evaluating your judgment, integration, and verification—not generic model output. Plagiarism or license-violating reuse is a hard fail when discovered." }
+      ]
+    },
+    {
+      "id": "submissions-where",
+      "title": "Where do proofs go when submitted?",
+      "section": "Operations",
+      "tags": ["submit", "github", "discord"],
+      "summary": "This app has no org inbox. Use the public channel P31 advertises (e.g. GitHub issue, form, or email) when that exists.",
+      "relatedWcd": [],
+      "relatedRoleId": [],
+      "lastReviewed": "2026-04-26",
+      "blocks": [
+        { "type": "p", "text": "The export is a file you can attach to a ticket or email. Treat the JSON and links as you would a portfolio: if posted publicly, assume the world can see it. Redact secrets before you attach anything." }
+      ]
+    },
+    {
+      "id": "for-reviewers",
+      "title": "If you received a p31.proofRecord",
+      "section": "Reviewers",
+      "tags": ["review", "rubric", "blind"],
+      "summary": "Check consent flags, then score against the WCD rubric; calibrate to anchors.",
+      "relatedWcd": [],
+      "relatedRoleId": [],
+      "lastReviewed": "2026-04-26",
+      "blocks": [
+        { "type": "h3", "text": "Checklist" },
+        { "type": "ul", "items": ["Validate JSON opens and matches the published schema (use org tooling if available)", "Open artifacts in order; if repo, pin to commit when commitSha is set", "Score each rubric line independently, then reason about overall fit", "Blind or identity-reduced review: follow org policy, not this app’s defaults"] }
+      ]
+    }
+  ]
+}

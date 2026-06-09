@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub" style="color-scheme: dark;">
+<head>
+  <meta charset="UTF-8" />
+  <script>
+    (function () {
+      var r = document.documentElement;
+      if (/[?&]alive=1(?:&|$)/.test(location.search)) return;
+      r.classList.add("p31-gray-rock");
+      function wake() { r.classList.remove("p31-gray-rock"); }
+      document.addEventListener("pointerdown", wake, { once: true, capture: true });
+      document.addEventListener("keydown", wake, { once: true, capture: true });
+    })();
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="description" content="P31 K₄ agent worker tetrahedron — four cooperating Cloudflare Workers (Forge, Counsel, Scholar, Scribe) that the personal tetrahedron docks to. Make · protect · understand · remember." />
+  <meta name="theme-color" content="#0f1115" />
+  <meta name="color-scheme" content="dark" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="P31 K₄ agent hubs — Forge · Counsel · Scholar · Scribe" />
+  <meta property="og:description" content="Four hubs. One mesh. Your tetrahedron, their anvil-shield-book-quill." />
+  <meta property="og:site_name" content="P31 Labs" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="P31 K₄ agent hubs" />
+  <meta name="twitter:description" content="Four cooperating workers — make, protect, understand, remember — that your personal tetrahedron docks to." />
+  <link rel="canonical" href="https://p31ca.org/agents" />
+  <link rel="manifest" href="p31-bonding.webmanifest" crossorigin="anonymous" />
+  <title>P31 K₄ agent hubs — Forge · Counsel · Scholar · Scribe</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="/public/lib/p31-qmu-tokens.css">
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700&family=JetBrains+Mono:ital,wght@0,400;0,600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/p31-style.css" />
+  <link rel="stylesheet" href="/p31-shared-surface.css" />
+  <link rel="stylesheet" href="/p31-responsive-surface.css" />
+  <script src="/public/lib/p31-subject-prefs.js"></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "P31 K₄ agent hubs",
+    "url": "https://p31ca.org/agents",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Any",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "description": "Four cooperating Cloudflare Workers (Forge, Counsel, Scholar, Scribe) that the personal tetrahedron docks to. Schema p31.k4AgentHub/1.1.0.",
+    "publisher": { "@type": "Organization", "name": "P31 Labs", "url": "https://p31ca.org" }
+  }
+  </script>
+  <style>
+    :root {
+      --ag-shell-max: 1200px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100dvh;
+      font-family: var(--p31-font-sans);
+      background: var(--p31-void);
+      color: var(--p31-cloud);
+      line-height: var(--p31-leading-normal);
+      -webkit-font-smoothing: antialiased;
+    }
+    body::before {
+      content: '';
+      pointer-events: none;
+      position: fixed; inset: 0;
+      background:
+        radial-gradient(circle at 20% 0%, rgba(77,184,168,0.08), transparent 45%),
+        radial-gradient(circle at 80% 100%, rgba(204,98,71,0.05), transparent 50%),
+        radial-gradient(circle at 0% 100%, rgba(139,124,201,0.05), transparent 50%);
+      z-index: 0;
+      transition: opacity var(--p31-q-motion-enter, 250ms) ease;
+    }
+    html.p31-gray-rock body::before { opacity: 0.35; }
+
+    a { color: var(--p31-cyan); }
+
+    .ag-skip {
+      position: absolute; left: -999px; top: 0;
+      padding: var(--p31-space-2) var(--p31-space-4);
+      background: var(--p31-teal); color: var(--p31-void);
+      border-radius: var(--p31-shape-sm); font-weight: 600;
+    }
+    .ag-skip:focus { left: var(--p31-space-3); top: var(--p31-space-3); }
+
+    .ag-shell {
+      position: relative; z-index: 1;
+      max-width: var(--ag-shell-max);
+      margin: 0 auto;
+      padding: clamp(0.75rem, 2vw, 1.5rem) clamp(0.75rem, 2vw, 1.25rem) calc(var(--p31-space-16) + 2rem);
+    }
+
+    .ag-hero { margin-bottom: var(--p31-space-6); }
+    .ag-hero h1 {
+      margin: 0 0 var(--p31-space-2) 0;
+      font-size: clamp(1.65rem, 2.5vw + 1rem, 2.2rem);
+      letter-spacing: var(--p31-tracking-tight);
+      color: var(--p31-cloud);
+    }
+    .ag-hero p.lede {
+      max-width: 60ch;
+      font-size: var(--p31-text-md);
+      color: color-mix(in srgb, var(--p31-cloud) 88%, var(--p31-muted));
+      margin: 0;
+    }
+    .ag-tagline {
+      margin-top: var(--p31-space-3);
+      font-style: italic;
+      color: var(--p31-muted);
+      max-width: 60ch;
+    }
+    .ag-trust {
+      list-style: none; padding: 0;
+      margin: var(--p31-space-4) 0 var(--p31-space-2) 0;
+      display: flex; flex-wrap: wrap; gap: var(--p31-space-2);
+    }
+
+    .ag-canvas-wrap {
+      position: relative;
+      margin: var(--p31-space-6) 0;
+      aspect-ratio: 16 / 10;
+      max-height: 560px;
+      border-radius: var(--p31-shape-lg);
+      overflow: hidden;
+      background: linear-gradient(180deg, var(--p31-tone-teal-1, var(--p31-surface)), var(--p31-void));
+      border: 1px solid var(--p31-border-subtle);
+    }
+    .ag-canvas-wrap canvas {
+      display: block; width: 100%; height: 100%;
+    }
+    .ag-canvas-fallback {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--p31-font-mono);
+      font-size: var(--p31-text-sm);
+      color: var(--p31-muted);
+      padding: var(--p31-space-6);
+      text-align: center;
+    }
+    .ag-legend {
+      position: absolute;
+      left: var(--p31-space-3); bottom: var(--p31-space-3);
+      display: flex; flex-wrap: wrap; gap: var(--p31-space-2);
+      pointer-events: none;
+    }
+    .ag-legend .p31-q-chip { pointer-events: none; cursor: default; }
+
+    .ag-grid {
+      display: grid; gap: var(--p31-space-4);
+      grid-template-columns: 1fr;
+      margin: var(--p31-space-6) 0;
+    }
+    @media (min-width: 800px) {
+      .ag-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    .ag-hub-card {
+      position: relative;
+      padding: var(--p31-space-5);
+      border-radius: var(--p31-shape-lg);
+    }
+    .ag-hub-card[data-hub="forge"]   { background: var(--p31-tone-teal-1);       border: 1px solid color-mix(in srgb, var(--p31-teal) 38%, transparent); }
+    .ag-hub-card[data-hub="counsel"] { background: var(--p31-tone-coral-1);      border: 1px solid color-mix(in srgb, var(--p31-coral) 38%, transparent); }
+    .ag-hub-card[data-hub="scholar"] { background: var(--p31-tone-phosphorus-1); border: 1px solid color-mix(in srgb, var(--p31-phosphorus) 38%, transparent); }
+    .ag-hub-card[data-hub="scribe"]  { background: var(--p31-tone-lavender-1);   border: 1px solid color-mix(in srgb, var(--p31-lavender) 38%, transparent); }
+
+    .ag-hub-card h3 {
+      margin: 0 0 var(--p31-space-1) 0;
+      font-size: var(--p31-text-lg);
+      letter-spacing: var(--p31-tracking-caps);
+      font-family: var(--p31-font-mono);
+    }
+    .ag-hub-card .verb {
+      font-size: var(--p31-text-xs);
+      letter-spacing: var(--p31-tracking-caps);
+      font-family: var(--p31-font-mono);
+      color: var(--p31-muted);
+    }
+    .ag-hub-card p.subtitle {
+      margin: var(--p31-space-2) 0 var(--p31-space-3) 0;
+      font-size: var(--p31-text-sm);
+      color: color-mix(in srgb, var(--p31-cloud) 80%, var(--p31-muted));
+    }
+    .ag-skill-list {
+      list-style: none; padding: 0; margin: 0;
+      display: flex; flex-direction: column; gap: var(--p31-space-2);
+    }
+    .ag-skill-list li {
+      font-size: var(--p31-text-sm);
+      display: flex; align-items: baseline; gap: var(--p31-space-2);
+      flex-wrap: wrap;
+    }
+    .ag-skill-list code {
+      font-family: var(--p31-font-mono);
+      font-size: var(--p31-text-xs);
+      color: var(--p31-cyan);
+    }
+    .ag-skill-list .gate {
+      font-family: var(--p31-font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.06em;
+      padding: 0 0.5rem;
+      border-radius: var(--p31-shape-full);
+      background: color-mix(in srgb, var(--p31-coral) 20%, transparent);
+      color: var(--p31-coral);
+      text-transform: uppercase;
+    }
+
+    .ag-edges {
+      margin: var(--p31-space-6) 0;
+      padding: var(--p31-space-5);
+      border-radius: var(--p31-shape-lg);
+      border: 1px dashed var(--p31-border-subtle);
+      background: color-mix(in srgb, var(--p31-surface) 60%, transparent);
+    }
+    .ag-edges h2 { margin: 0 0 var(--p31-space-3) 0; }
+    .ag-edge-list {
+      list-style: none; padding: 0; margin: 0;
+      display: grid; gap: var(--p31-space-2);
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 720px) {
+      .ag-edge-list { grid-template-columns: 1fr 1fr; }
+    }
+    .ag-edge-list li {
+      padding: var(--p31-space-3);
+      border-radius: var(--p31-shape-md);
+      background: var(--p31-surface2);
+      border: 1px solid var(--p31-border-subtle);
+      font-size: var(--p31-text-sm);
+    }
+    .ag-edge-list li code {
+      font-family: var(--p31-font-mono);
+      font-size: var(--p31-text-xs);
+      color: var(--p31-muted);
+      display: block;
+      margin-bottom: var(--p31-space-1);
+    }
+
+    pre.ag-code {
+      background: var(--p31-surface2);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: var(--p31-shape-md);
+      padding: var(--p31-space-4);
+      font-family: var(--p31-font-mono);
+      font-size: var(--p31-text-xs);
+      overflow-x: auto;
+      line-height: 1.5;
+    }
+
+    .ag-status {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      font-family: var(--p31-font-mono);
+      font-size: var(--p31-text-xs);
+      color: var(--p31-muted);
+    }
+    .ag-status::before {
+      content: ""; display: inline-block;
+      width: 0.5rem; height: 0.5rem; border-radius: 999px;
+      background: var(--p31-muted);
+    }
+    .ag-status[data-state="ok"]::before    { background: var(--p31-phosphorus); }
+    .ag-status[data-state="warn"]::before  { background: var(--p31-amber); }
+    .ag-status[data-state="down"]::before  { background: var(--p31-coral); }
+    .ag-status[data-state="unknown"]::before { background: var(--p31-muted); }
+
+    footer {
+      margin-top: var(--p31-space-12);
+      font-size: var(--p31-text-sm);
+      color: var(--p31-muted);
+      max-width: 64ch;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      body::before { transition: none; }
+    }
+  </style>
+  <style>
+    .safe-toggle { position: fixed; top: 1rem; right: 1rem; z-index: 9999; padding: 0.5rem 0.75rem; border: 1px solid rgba(204,98,71,0.3); border-radius: 6px; background: rgba(204,98,71,0.08); color: var(--p31-coral); font-family: var(--p31-font-mono); font-size: 0.75rem; text-transform: uppercase; cursor: pointer; transition: all 150ms; }
+    .safe-toggle:hover { background: rgba(204,98,71,0.15); }
+    body.safe-mode { --p31-void: #000; --p31-surface: #0a0a0a; --p31-cloud: #fff; }
+    body.safe-mode * { animation: none !important; transition: none !important; }
+  </style>
+  <style>
+    .safe-toggle { position: fixed; top: 1rem; right: 1rem; z-index: 9999; padding: 0.5rem 0.75rem; border: 1px solid rgba(204,98,71,0.3); border-radius: 6px; background: rgba(204,98,71,0.08); color: var(--p31-coral); font-family: var(--p31-font-mono); font-size: 0.75rem; text-transform: uppercase; cursor: pointer; transition: all 150ms; }
+    .safe-toggle:hover { background: rgba(204,98,71,0.15); }
+    body.safe-mode { --p31-void: #000; --p31-surface: #0a0a0a; --p31-cloud: #fff; }
+    body.safe-mode * { animation: none !important; transition: none !important; }
+    body.safe-mode #starfield-canvas { display: none !important; }
+  </style>
+</head>
+<body class="p31-mesh-m-first p31-responsive-surface">
+  <canvas id="ds-star-plate" width="4" height="4" aria-hidden="true" style="position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;display:block"></canvas>
+  <script type="module">
+    const cv = document.getElementById("ds-star-plate");
+    if (cv instanceof HTMLCanvasElement) {
+      try {
+        const mod = await import("/design-assets/starfield/p31-starfield-static-plate.js");
+        mod.initStaticStarPlate(cv, { preset: "hub" });
+      } catch (_e) { /* offline-friendly */ }
+    }
+  </script>
+  <a class="ag-skip" href="#hubs">Skip to hub list</a>
+
+  <div class="ag-shell">
+    <header class="ag-hero p31-q-card" data-p31-tone="teal">
+      <h1>K₄ agent hubs</h1>
+      <p class="lede">
+        Four cooperating Cloudflare Workers — <strong>Forge</strong>, <strong>Counsel</strong>, <strong>Scholar</strong>, <strong>Scribe</strong> —
+        that your personal tetrahedron docks to. Each hub speaks one verb: <em>make, protect, understand, remember</em>.
+        The six K₄ edges let them brief each other so a single ask reaches the right pair without you having to route it.
+      </p>
+      <p class="ag-tagline">Four hubs. One mesh. Your tetrahedron, their anvil-shield-book-quill.</p>
+
+      <ul class="ag-trust" aria-label="Properties of the hub">
+        <li class="p31-q-chip p31-q-chip--assist">Schema <code style="font-family:inherit">p31.k4AgentHub/1.1.0</code></li>
+        <li class="p31-q-chip p31-q-chip--assist">4 vertices · 6 edges (K₄)</li>
+        <li class="p31-q-chip p31-q-chip--assist">K₄,₄,₄ triadic cover (family · personal · agent)</li>
+        <li class="p31-q-chip p31-q-chip--assist">Signed Ed25519 dock</li>
+        <li class="p31-q-chip p31-q-chip--assist">Federation across operator instances</li>
+        <li class="p31-q-chip p31-q-chip--assist">Cloudflare Workers + Durable Objects</li>
+      </ul>
+    </header>
+
+    <div class="ag-canvas-wrap" aria-label="K₄ agent tetrahedron with personal tetrahedron docking below">
+      <canvas id="ag-tetra-canvas"></canvas>
+      <div class="ag-canvas-fallback" hidden id="ag-canvas-fallback">
+        Live K₄ visualization needs WebGL. The structured topology below is the same content, in text form.
+      </div>
+      <div class="ag-legend" aria-hidden="true">
+        <span class="p31-q-chip p31-q-chip--assist" style="background: color-mix(in srgb, var(--p31-teal) 22%, transparent);">forge · make</span>
+        <span class="p31-q-chip p31-q-chip--assist" style="background: color-mix(in srgb, var(--p31-coral) 22%, transparent);">counsel · protect</span>
+        <span class="p31-q-chip p31-q-chip--assist" style="background: color-mix(in srgb, var(--p31-phosphorus) 22%, transparent);">scholar · understand</span>
+        <span class="p31-q-chip p31-q-chip--assist" style="background: color-mix(in srgb, var(--p31-lavender) 22%, transparent);">scribe · remember</span>
+      </div>
+    </div>
+
+    <section id="hubs" class="ag-grid" aria-label="The four hubs">
+      <article class="ag-hub-card p31-q-card" data-hub="forge" data-p31-tone="teal" data-p31-elev="2">
+        <span class="ag-status" id="ag-status-forge" data-state="unknown">forge · live status pending</span>
+        <h3>FORGE</h3>
+        <span class="verb">make · structure dock</span>
+        <p class="subtitle">Code, deploy, scaffold, firmware. Where personal structure meets the anvil.</p>
+        <ul class="ag-skill-list">
+          <li><strong>TypeScript / Workers / Pages / D1</strong> — <code>p31-mechanic</code></li>
+          <li><strong>ESP-IDF / Node Zero firmware</strong> — <code>p31-firmware</code></li>
+          <li><strong>Commit messages and one-liners</strong> — <code>p31-quick</code></li>
+        </ul>
+      </article>
+
+      <article class="ag-hub-card p31-q-card" data-hub="counsel" data-p31-tone="coral" data-p31-elev="2">
+        <span class="ag-status" id="ag-status-counsel" data-state="unknown">counsel · live status pending</span>
+        <h3>COUNSEL</h3>
+        <span class="verb">protect · connection dock</span>
+        <p class="subtitle">Legal drafting, hostile-mail triage, post-incident debrief. Where personal connection meets the shield.</p>
+        <ul class="ag-skill-list">
+          <li><strong>Pro se Georgia drafting</strong> — <code>p31-counsel</code></li>
+          <li><strong>Voltage triage (4-tier strict JSON)</strong> — <code>p31-triage</code></li>
+          <li><strong>Post-incident debrief</strong> — <code>p31-debrief</code></li>
+        </ul>
+      </article>
+
+      <article class="ag-hub-card p31-q-card" data-hub="scholar" data-p31-tone="phosphorus" data-p31-elev="2">
+        <span class="ag-status" id="ag-status-scholar" data-state="unknown">scholar · live status pending</span>
+        <h3>SCHOLAR</h3>
+        <span class="verb">understand · rhythm dock</span>
+        <p class="subtitle">Research synthesis, grants, pattern detection. Where personal rhythm meets the long view.</p>
+        <ul class="ag-skill-list">
+          <li><strong>Grants and research synthesis</strong> — <code>p31-narrator</code></li>
+          <li><strong>Q-factor / trimtab pattern detection</strong> — <code>p31-oracle</code></li>
+        </ul>
+      </article>
+
+      <article class="ag-hub-card p31-q-card" data-hub="scribe" data-p31-tone="lavender" data-p31-elev="2">
+        <span class="ag-status" id="ag-status-scribe" data-state="unknown">scribe · live status pending</span>
+        <h3>SCRIBE</h3>
+        <span class="verb">remember · creation dock</span>
+        <p class="subtitle">Cognitive Passport assembly, accommodation log, foundry, child companion. Where personal creation meets the archive.</p>
+        <ul class="ag-skill-list">
+          <li><strong>Cognitive Passport assembly</strong> — <code>p31-scribe</code></li>
+          <li><strong>Phos children companion-as-memory</strong> — <code>p31-phos</code> <span class="gate">child-gated</span></li>
+        </ul>
+      </article>
+    </section>
+
+    <section aria-labelledby="ag-triadic-heading" class="p31-q-card" data-p31-tone="butter" style="margin-bottom: var(--p31-space-6);">
+      <h2 id="ag-triadic-heading" class="p31-h2">Family layer · K₄,₄,₄ triadic cover</h2>
+      <p style="max-width:60ch;">
+        The agent tetrahedron sits above your personal tetrahedron, which sits above the family cage. Every family vertex pairs with one personal dock and (transitively) with one agent guardian.
+        Children's vertices route to <code>scribe</code> through the <code>child-mesh-unlock</code> gate so phos-companion stays gated.
+      </p>
+      <ul class="ag-edge-list" aria-label="Family triadic cover">
+        <li><code>W (operator)</code><strong>structure → forge.</strong> Make.</li>
+        <li><code>S.J. (child)</code><strong>rhythm → scholar.</strong> Understand. <span class="gate" style="font-family:var(--p31-font-mono); font-size:0.65rem; padding:0 0.5rem; border-radius:var(--p31-shape-full); background:color-mix(in srgb, var(--p31-coral) 20%, transparent); color:var(--p31-coral); text-transform:uppercase; margin-left:0.4rem;">child-gated</span></li>
+        <li><code>W.J. (child)</code><strong>creation → scribe.</strong> Remember. <span class="gate" style="font-family:var(--p31-font-mono); font-size:0.65rem; padding:0 0.5rem; border-radius:var(--p31-shape-full); background:color-mix(in srgb, var(--p31-coral) 20%, transparent); color:var(--p31-coral); text-transform:uppercase; margin-left:0.4rem;">child-gated</span></li>
+        <li><code>C (co-parent)</code><strong>connection → counsel.</strong> Protect.</li>
+      </ul>
+    </section>
+
+    <section class="ag-edges" aria-labelledby="ag-edges-heading">
+      <h2 id="ag-edges-heading" class="p31-h2">The six K₄ edges</h2>
+      <p style="max-width:60ch; color: var(--p31-muted); font-size: var(--p31-text-sm); margin: 0 0 var(--p31-space-4) 0;">
+        Every K₄ vertex pairs with every other. These are the cooperation paths the hubs use when one ask reaches across two verbs.
+      </p>
+      <ul class="ag-edge-list">
+        <li><code>forge ↔ counsel</code><strong>Safe to ship.</strong> Build it; what could be sued over?</li>
+        <li><code>forge ↔ scholar</code><strong>Design from research.</strong> Read these papers; scaffold what they imply.</li>
+        <li><code>forge ↔ scribe</code><strong>Write what you build.</strong> Assemble the runbook from this PR's diff.</li>
+        <li><code>counsel ↔ scholar</code><strong>Brief the brief.</strong> What does the case law say about the situation?</li>
+        <li><code>counsel ↔ scribe</code><strong>File the protect.</strong> Log the letter, classify the voltage, store the response.</li>
+        <li><code>scholar ↔ scribe</code><strong>Publish the understanding.</strong> Take the synthesis; turn it into a record.</li>
+      </ul>
+    </section>
+
+    <section aria-labelledby="ag-dock-heading" class="p31-q-card" data-p31-tone="phosphorus" style="margin-bottom: var(--p31-space-6);">
+      <h2 id="ag-dock-heading" class="p31-h2">Dock your personal tetrahedron</h2>
+      <p style="max-width: 60ch;">
+        One POST. The hub returns a 24h sessionId and four hub baseUrls.
+        Use the sessionId via <code>Authorization: Bearer …</code> on every subsequent call.
+        Pass <code>publicKey · ts · nonce · sig</code> for an <strong>Ed25519-signed dock</strong>; per-call signed envelopes are required when the session is signed.
+      </p>
+      <pre class="ag-code"><code>curl -X POST https://k4-agent-hub.trimtab-signal.workers.dev/v1/dock \
+  -H 'content-type: application/json' \
+  -d '{
+    "clientId": "your-personal-tetra-uuid",
+    "personalTetra": {
+      "schema": "p31.personalTetra/1.0.0",
+      "docks": { "structure": {}, "connection": {}, "rhythm": {}, "creation": {} }
+    },
+    "capabilities": ["ts-worker", "voltage-triage", "passport-mirror"],
+    "publicKey": "<base64url 32-byte Ed25519 pub>",
+    "ts": 1760000000000,
+    "nonce": "abc12345",
+    "sig": "<base64url 64-byte signature>"
+  }'</code></pre>
+      <p style="margin-top: var(--p31-space-4); font-size: var(--p31-text-sm); color: var(--p31-muted);">
+        Full spec: <a href="https://github.com/p31labs/andromeda/blob/main/docs/P31-K4-AGENT-HUBS.md" target="_blank" rel="noopener">docs/P31-K4-AGENT-HUBS.md</a> ·
+        Manifest: <a href="https://github.com/p31labs/andromeda/blob/main/p31-k4-agent-hub.json" target="_blank" rel="noopener">p31-k4-agent-hub.json</a> ·
+        Worker source: <a href="https://github.com/p31labs/andromeda/tree/main/packages/k4-agent-hub" target="_blank" rel="noopener">packages/k4-agent-hub/</a> ·
+        Smoke runner: <code>npm run k4-agent-hub:smoke</code>
+      </p>
+    </section>
+
+    <section aria-labelledby="ag-fed-heading" class="p31-q-card" data-p31-tone="lavender" style="margin-bottom: var(--p31-space-6);">
+      <h2 id="ag-fed-heading" class="p31-h2">Federation · multiple operator instances</h2>
+      <p style="max-width: 60ch;">
+        Run another K₄ agent tetrahedron next to yours and let them peer.
+        <code>POST /v1/federation/peer</code> with a signed instanceId; <code>GET /v1/federation</code> returns the aggregated topology
+        (your local hub + every cached peer manifest).
+      </p>
+      <pre class="ag-code"><code>curl -X POST https://k4-agent-hub.trimtab-signal.workers.dev/v1/federation/peer \
+  -H 'content-type: application/json' \
+  -d '{
+    "instanceId":"alpha-cluster",
+    "manifestUrl":"https://other-hub.example/v1/manifest",
+    "publicKey":"&lt;base64url 32-byte Ed25519 pub&gt;",
+    "ts":1760000000000,
+    "sig":"&lt;base64url Ed25519 signature&gt;"
+  }'</code></pre>
+    </section>
+
+    <footer>
+      P31 K₄ agent worker tetrahedron · schema <code>p31.k4AgentHub/1.1.0</code> ·
+      <a href="https://github.com/p31labs/andromeda/blob/main/docs/P31-K4-AGENT-HUBS.md" target="_blank" rel="noopener">spec</a> ·
+      <a href="agents.html?alive=1">live mode</a> ·
+      <a href="/passport-generator.html">cognitive passport</a> ·
+      <a href="fleet-portal.html">fleet portal</a> ·
+      <a href="https://bonding.p31ca.org" target="_blank" rel="noopener">C.A.R.S.</a>
+    </footer>
+  </div>
+
+  <script type="module">
+    /* Live status — best-effort poll of /v1/{hub}/health when the production
+       URL is configured. In offline / preview mode, the status chip stays
+       "unknown" (Gray Rock) and does not error. */
+    const HUB_BASE = window.P31_K4_AGENT_HUB_BASE || "https://k4-agent-hub.trimtab-signal.workers.dev";
+    const HUBS = ["forge", "counsel", "scholar", "scribe"];
+    function setStatus(hub, state, label) {
+      const el = document.getElementById(`ag-status-${hub}`);
+      if (!el) return;
+      el.dataset.state = state;
+      el.textContent = label;
+    }
+    async function probe(hub) {
+      try {
+        const r = await fetch(`${HUB_BASE}/v1/${hub}/health`, { method: "GET", cache: "no-store" });
+        if (!r.ok) {
+          setStatus(hub, "warn", `${hub} · http ${r.status}`);
+          return;
+        }
+        const j = await r.json();
+        if (j.ok === false) {
+          setStatus(hub, "down", `${hub} · ${j.error ?? "down"}`);
+          return;
+        }
+        const load = (typeof j.load === "number") ? Math.round(j.load * 100) : null;
+        setStatus(hub, "ok", load !== null ? `${hub} · ok · load ${load}%` : `${hub} · ok`);
+      } catch (_e) {
+        setStatus(hub, "unknown", `${hub} · offline`);
+      }
+    }
+    /* Don't probe in Gray Rock first paint — wait for operator wake. */
+    function poll() {
+      Promise.all(HUBS.map(probe));
+    }
+    if (document.documentElement.classList.contains("p31-gray-rock")) {
+      const wake = () => poll();
+      document.addEventListener("pointerdown", wake, { once: true });
+      document.addEventListener("keydown", wake, { once: true });
+    } else {
+      poll();
+    }
+  </script>
+
+  <script type="module">
+    /* K₄ tetrahedron visualization — Three.js r160. Loaded only when the
+       browser supports WebGL2 and the user wakes Gray Rock. Falls back
+       to the structured text topology below when import fails. */
+    async function bootTetra() {
+      const cv = document.getElementById("ag-tetra-canvas");
+      const fallback = document.getElementById("ag-canvas-fallback");
+      if (!cv) return;
+
+      let THREE;
+      try {
+        THREE = await import("https://esm.sh/three@0.160.0");
+      } catch (_e) {
+        if (fallback) fallback.hidden = false;
+        return;
+      }
+
+      const scene = new THREE.Scene();
+      const renderer = new THREE.WebGLRenderer({ canvas: cv, antialias: true, alpha: true });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      const resize = () => {
+        const { clientWidth: w, clientHeight: h } = cv;
+        renderer.setSize(w, h, false);
+        camera.aspect = w / h;
+        camera.updateProjectionMatrix();
+      };
+      const camera = new THREE.PerspectiveCamera(45, 16 / 10, 0.1, 100);
+      camera.position.set(0, -0.6, 7.6);
+      camera.lookAt(0, -1.4, 0);
+
+      // K4 vertex positions — regular tetrahedron at radius 1.2.
+      const r = 1.4;
+      const tetra = [
+        new THREE.Vector3( r,  r,  r),
+        new THREE.Vector3( r, -r, -r),
+        new THREE.Vector3(-r,  r, -r),
+        new THREE.Vector3(-r, -r,  r),
+      ];
+      const ANCHOR_HEX = {
+        forge:   0x4db8a8,
+        counsel: 0xcc6247,
+        scholar: 0x3ba372,
+        scribe:  0x8b7cc9,
+      };
+      const VERTEX_KEY = ["forge", "counsel", "scholar", "scribe"];
+
+      // Agent vertices
+      const vertexMeshes = tetra.map((p, i) => {
+        const geom = new THREE.SphereGeometry(0.18, 32, 32);
+        const mat = new THREE.MeshStandardMaterial({
+          color: ANCHOR_HEX[VERTEX_KEY[i]],
+          emissive: ANCHOR_HEX[VERTEX_KEY[i]],
+          emissiveIntensity: 0.45,
+          roughness: 0.4,
+          metalness: 0.2,
+        });
+        const mesh = new THREE.Mesh(geom, mat);
+        mesh.position.copy(p);
+        scene.add(mesh);
+        return mesh;
+      });
+
+      // K4 edges — six lines between every pair
+      const edgeMat = new THREE.LineBasicMaterial({ color: 0x6e7d8a, transparent: true, opacity: 0.55 });
+      for (let i = 0; i < tetra.length; i++) {
+        for (let j = i + 1; j < tetra.length; j++) {
+          const g = new THREE.BufferGeometry().setFromPoints([tetra[i], tetra[j]]);
+          scene.add(new THREE.Line(g, edgeMat));
+        }
+      }
+
+      // Personal tetrahedron — smaller, below, butter-muted; the K₄,₄ cover.
+      const personalScale = 0.55;
+      const personalOffset = new THREE.Vector3(0, -1.8, 0);
+      const personal = tetra.map((p) => p.clone().multiplyScalar(personalScale).add(personalOffset));
+      const personalMat = new THREE.MeshStandardMaterial({
+        color: 0xf4e9c8,
+        emissive: 0xf4e9c8,
+        emissiveIntensity: 0.22,
+        roughness: 0.6,
+      });
+      personal.forEach((p) => {
+        const m = new THREE.Mesh(new THREE.SphereGeometry(0.12, 24, 24), personalMat);
+        m.position.copy(p);
+        scene.add(m);
+      });
+      const personalEdgeMat = new THREE.LineBasicMaterial({ color: 0x8b7cc9, transparent: true, opacity: 0.30 });
+      for (let i = 0; i < personal.length; i++) {
+        for (let j = i + 1; j < personal.length; j++) {
+          const g = new THREE.BufferGeometry().setFromPoints([personal[i], personal[j]]);
+          scene.add(new THREE.Line(g, personalEdgeMat));
+        }
+      }
+      // Bipartite K₄,₄ docking edges — every personal vertex up to its agent counterpart
+      const dockMat = new THREE.LineBasicMaterial({ color: 0xf4e9c8, transparent: true, opacity: 0.45 });
+      for (let i = 0; i < tetra.length; i++) {
+        const g = new THREE.BufferGeometry().setFromPoints([personal[i], tetra[i]]);
+        scene.add(new THREE.Line(g, dockMat));
+      }
+
+      // Family cage — third layer, smaller still, deeper; the K₄,₄,₄ triadic cover.
+      // Order matches FAMILY_VERTICES: [will, sj, wj, christyn] aligned with [structure, rhythm, creation, connection]
+      // which corresponds to agent indices [forge=0, scholar=2, scribe=3, counsel=1].
+      const FAMILY_TO_AGENT_IDX = [0, 2, 3, 1];
+      const familyScale = 0.30;
+      const familyOffset = new THREE.Vector3(0, -3.2, 0);
+      const family = tetra.map((p) => p.clone().multiplyScalar(familyScale).add(familyOffset));
+      const FAMILY_HEX = [0xf4e9c8, 0xc7a3d6, 0xb8e0c8, 0xff9d8a];
+      family.forEach((p, i) => {
+        const m = new THREE.Mesh(
+          new THREE.SphereGeometry(0.075, 18, 18),
+          new THREE.MeshStandardMaterial({
+            color: FAMILY_HEX[i], emissive: FAMILY_HEX[i],
+            emissiveIntensity: 0.16, roughness: 0.7,
+          }),
+        );
+        m.position.copy(p);
+        scene.add(m);
+      });
+      const familyEdgeMat = new THREE.LineBasicMaterial({ color: 0xc7a3d6, transparent: true, opacity: 0.22 });
+      for (let i = 0; i < family.length; i++) {
+        for (let j = i + 1; j < family.length; j++) {
+          const g = new THREE.BufferGeometry().setFromPoints([family[i], family[j]]);
+          scene.add(new THREE.Line(g, familyEdgeMat));
+        }
+      }
+      // Triadic dock edges — family vertex → personal vertex (same dock index)
+      const triadicMat = new THREE.LineBasicMaterial({ color: 0xc7a3d6, transparent: true, opacity: 0.35 });
+      for (let i = 0; i < family.length; i++) {
+        const g = new THREE.BufferGeometry().setFromPoints([family[i], personal[i]]);
+        scene.add(new THREE.Line(g, triadicMat));
+      }
+      // Family → guardian agent — direct cross-stack hint (faded teal)
+      const guardianMat = new THREE.LineBasicMaterial({ color: 0x4db8a8, transparent: true, opacity: 0.18 });
+      for (let i = 0; i < family.length; i++) {
+        const g = new THREE.BufferGeometry().setFromPoints([family[i], tetra[FAMILY_TO_AGENT_IDX[i]]]);
+        scene.add(new THREE.Line(g, guardianMat));
+      }
+
+      // Operator pillar — butter line through agent · personal · family centroids
+      const agentCentroid = tetra.reduce((acc, p) => acc.add(p), new THREE.Vector3()).divideScalar(4);
+      const personalCentroid = personal.reduce((acc, p) => acc.add(p), new THREE.Vector3()).divideScalar(4);
+      const familyCentroid = family.reduce((acc, p) => acc.add(p), new THREE.Vector3()).divideScalar(4);
+      const pillarMat = new THREE.LineBasicMaterial({ color: 0xf4e9c8, transparent: true, opacity: 0.7 });
+      scene.add(new THREE.Line(
+        new THREE.BufferGeometry().setFromPoints([agentCentroid, personalCentroid, familyCentroid]),
+        pillarMat,
+      ));
+
+      // Lights
+      scene.add(new THREE.AmbientLight(0xffffff, 0.55));
+      const key = new THREE.DirectionalLight(0xffffff, 0.45);
+      key.position.set(3, 4, 5);
+      scene.add(key);
+
+      window.addEventListener("resize", resize);
+      resize();
+
+      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const t0 = performance.now();
+      function loop(now) {
+        const t = (now - t0) / 1000;
+        if (!reduced) {
+          scene.rotation.y = Math.sin(t * 0.18) * 0.45;
+          scene.rotation.x = Math.cos(t * 0.10) * 0.18;
+          // Subtle vertex breath
+          vertexMeshes.forEach((m, i) => {
+            const phase = i * 0.6;
+            m.material.emissiveIntensity = 0.45 + Math.sin(t * 1.2 + phase) * 0.15;
+          });
+        }
+        renderer.render(scene, camera);
+        requestAnimationFrame(loop);
+      }
+      requestAnimationFrame(loop);
+    }
+    /* Defer until operator wakes Gray Rock — keeps first paint quiet. */
+    if (document.documentElement.classList.contains("p31-gray-rock")) {
+      const wake = () => bootTetra();
+      document.addEventListener("pointerdown", wake, { once: true });
+      document.addEventListener("keydown", wake, { once: true });
+    } else {
+      bootTetra();
+    }
+  </script>
+  
+  <!-- PHOS Atmosphere Core — Voice-first navigation wrapper -->
+  <script src="public/lib/p31-smart-starfield.js"></script>
+<script src="public/lib/p31-atmosphere-core.js"></script>
+  <script>
+    // Safe Mode Toggle with WebGL destruction for tetra canvas
+    const safeToggle = document.createElement('button');
+    safeToggle.className = 'safe-toggle';
+    safeToggle.innerText = 'Safe Mode';
+    safeToggle.style.cssText = 'position:fixed;top:1rem;right:1rem;z-index:9999;padding:0.5rem 0.75rem;border:1px solid rgba(204,98,71,0.3);border-radius:6px;background:rgba(204,98,71,0.08);color:#cc6247;font-family:"JetBrains Mono",monospace;font-size:0.75rem;text-transform:uppercase;cursor:pointer;transition:all 150ms;';
+    safeToggle.onclick = () => {
+      const isSafe = document.body.classList.toggle('safe-mode');
+      const tetra = document.getElementById('tetra-canvas');
+      if (isSafe && tetra) {
+        // WebGL destruction protocol
+        const gl = tetra.getContext('webgl') || tetra.getContext('webgl2');
+        if (gl) {
+          const ext = gl.getExtension('WEBGL_lose_context');
+          if (ext) ext.loseContext();
+        }
+        tetra.style.display = 'none';
+      }
+    };
+    document.body.appendChild(safeToggle);
+    
+    if (localStorage.getItem('p31_safe_mode') === 'true') document.body.classList.add('safe-mode');
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      document.body.classList.add('safe-mode');
+      const tetra = document.getElementById('tetra-canvas');
+      if (tetra) tetra.style.display = 'none';
+    }
+  </script>
+<script>
+    // Initialize Smart Starfield
+    const starfield = new SmartStarfield('starfield-canvas', {
+      surfaceId: 'surface-agents',
+      meshSync: true,
+      starCount: 100
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1115" />
+  <title>Program overview | Education | P31 Labs</title>
+  <meta name="description" content="What P31 Labs education is for: operators, architects, grant reviewers — static-first, no accounts on this tier." />
+  <meta name="p31.labs-education" content="p31.labsEducation/0.2.0" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=optional" rel="stylesheet" />
+  <link rel="stylesheet" href="/p31-style.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/p31-tailwind-extend.js"></script>
+  <script>tailwind.config = { theme: { extend: { ...window.P31_TAILWIND_EXTEND } } };</script>
+</head>
+<body class="font-sans antialiased bg-void text-cloud min-h-screen p31-mesh-m-first">
+  <a class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:px-4 focus:py-2 focus:rounded-md focus:bg-surface focus:text-teal focus:ring-2 focus:ring-teal/50" href="#main">Skip to main</a>
+  <div class="min-h-screen flex flex-col max-w-3xl mx-auto px-4 py-8 md:py-10">
+    <header class="mb-2">
+      <p class="font-mono text-[0.65rem] text-cloud/50 tracking-widest uppercase mb-2">P31 Labs · education</p>
+      <h1 class="text-2xl md:text-3xl font-bold text-paper tracking-tight">Program overview</h1>
+      <p class="mt-2 text-sm text-cloud/70">Discover tier — public, calm copy. No login on E0–E2.</p>
+    </header>
+    <nav class="flex flex-wrap gap-x-3 gap-y-2 text-xs font-mono text-cloud/70 border-b border-white/10 pb-4 mb-6" aria-label="Education">
+      <a class="text-teal/90 hover:underline" href="/education/">Home</a>
+      <a class="text-teal/90 hover:underline" href="/education/about.html">About</a>
+      <a class="text-teal/90 hover:underline" href="/education/ethics.html">Ethics</a>
+      <a class="text-teal/90 hover:underline" href="/education/parent-faq.html">Parents</a>
+      <a class="text-teal/90 hover:underline" href="/education/tracks/index.html">Tracks</a>
+      <a class="text-teal/90 hover:underline" href="/education/modules/index.html">Modules</a>
+      <a class="text-teal/90 hover:underline" href="/education/labs/index.html">Labs</a>
+      <a class="text-teal/90 hover:underline" href="/education/portal/index.html">Portal (E3+)</a>
+    </nav>
+    <main id="main" class="space-y-6 text-sm text-cloud/85 leading-relaxed">
+      <p>
+        This education area is a <strong class="text-paper/90">progressive</strong> front door: read-only first, then catalog search, then short labs
+        that point to real hub tools (connect, Geodesic, doc library) without making the static site pretend to be an LMS.
+      </p>
+      <p>
+        <strong class="text-paper/90">Who it is for:</strong> operators who ship on Cloudflare, architects who need an honest “what runs where” map, and
+        grant or partner reviewers who want a security-aligned narrative tied to the same <code class="text-lavender/90 text-xs">verify</code> bar as the rest
+        of the P31 home + p31ca monorepo path.
+      </p>
+      <p>
+        <strong class="text-paper/90">What it is not:</strong> a place to paste API keys, cage tokens, or payment material. Donor and MAP flows stay on the
+        existing monetary surfaces. Youth-facing coaching stays in the <strong>personal mesh</strong> and local-first tools described in
+        <span class="font-mono text-xs">PLAN-KIDS-VIBE-CODING</span> — not in anonymous public chat.
+      </p>
+      <p>
+        <a class="text-teal hover:underline" href="/education/curriculum.json">Machine index</a> (JSON) lists tracks, modules, and lab pages for CI.
+        The human plan lives in the P31 home repo: <code class="text-butter/90 text-xs">docs/PLAN-P31-LABS-EDUCATION-SITE.md</code>.
+      </p>
+    </main>
+    <footer class="mt-12 border-t border-white/[0.06] pt-6 text-center text-xs text-cloud/45">
+      <p><a class="text-teal/80 hover:underline" href="/education/">← Education home</a> · <a class="text-teal/80 hover:underline" href="/privacy.html">Privacy</a></p>
+    </footer>
+  </div>
+</body>
+</html>

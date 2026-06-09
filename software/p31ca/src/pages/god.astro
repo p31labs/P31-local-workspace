@@ -1,0 +1,802 @@
+---
+/**
+  * @p31-layout: Workshop
+ * CWP-P31-UI-2026-01 — Operator shell
+ * Phase A: density dial, ambient status strip, focus mode (WBS UI-A.1–A.3)
+ */
+import AppShell from '../layouts/AppShell.astro'
+import mesh from '../data/p31-mesh-constants.json'
+import opsGlass from '../data/ops-glass-probes.json'
+
+const commandCenterBase = 'https://command-center.trimtab-signal.workers.dev'
+const commandCenterHealth = `${commandCenterBase}/api/health`
+const operatorShiftApiUrl = `${commandCenterBase}/api/operator/shift`
+const k4HealthUrl = new URL('/api/health', mesh.k4PersonalWorkerUrl).toString()
+const orchestratorStatusUrl = new URL('/api/orchestrator/status', mesh.orchestratorWorkerUrl).toString()
+---
+
+<AppShell
+  title="G.O.D. / Operator shell | p31ca"
+  description="Grounded Operator Deck — /ops/ glass + local 127.0.0.1:3131 + EPCP edge. CWP-P31-UI-2026-01."
+  routeName="god"
+  suppressEbc={true}
+>
+  <div
+    class="ops-root relative z-10 max-w-6xl mx-auto px-4 py-8 transition-[padding,gap] duration-200"
+    id="ops-root"
+    data-density="standard"
+  >
+    <div
+      class="ops-chrome flex flex-col sm:flex-row sm:flex-wrap sm:items-center sm:justify-between gap-3 mb-4 pb-3 border-b border-white/10"
+    >
+      <p
+        class="ops-aux text-xs font-mono uppercase tracking-widest text-teal-400/90"
+        data-cwp="CWP-P31-UI-2026-01"
+      >
+        CWP-P31-UI-2026-01 · operator shell
+      </p>
+      <div class="flex flex-wrap items-center gap-2" role="group" aria-label="Interface density">
+        <span class="hidden sm:inline text-[10px] uppercase tracking-wider text-p31-cloud-40 mr-1">Density</span>
+        <div class="inline-flex rounded-lg border border-white/15 p-0.5 bg-black/20">
+          <button
+            type="button"
+            class="ops-density-btn px-2.5 py-1.5 text-xs font-medium rounded-md text-p31-cloud-70 hover:text-p31-cloud"
+            data-density-value="calm"
+            >Calm</button
+          >
+          <button
+            type="button"
+            class="ops-density-btn px-2.5 py-1.5 text-xs font-medium rounded-md text-p31-cloud-70 hover:text-p31-cloud"
+            data-density-value="standard"
+            >Standard</button
+          >
+          <button
+            type="button"
+            class="ops-density-btn px-2.5 py-1.5 text-xs font-medium rounded-md text-p31-cloud-70 hover:text-p31-cloud"
+            data-density-value="deep"
+            >Deep</button
+          >
+        </div>
+        <button
+          type="button"
+          class="px-2.5 py-1.5 text-xs font-medium rounded-lg border border-white/15 text-amber-200/90 hover:bg-white/5"
+          id="ops-focus-toggle"
+          aria-pressed="false"
+        >
+          Focus
+        </button>
+      </div>
+    </div>
+
+    <div
+      class="ops-ambient mb-6 rounded-lg border px-3 py-2.5 text-sm font-mono flex flex-wrap items-center gap-x-4 gap-y-1"
+      id="ops-ambient"
+      role="status"
+      aria-live="polite"
+      data-state="loading"
+    >
+      <span class="text-p31-muted-60 text-xs uppercase tracking-wide">System pulse</span>
+      <span class="h-1.5 w-1.5 rounded-full bg-white/30 shrink-0" id="ops-ambient-dot" aria-hidden="true"
+      ></span>
+      <span id="ops-ambient-line" class="text-p31-cloud-80">Checking edge…</span>
+    </div>
+
+    <header class="mb-8 border-b border-white/10 pb-6 ops-prose">
+      <h1 class="text-2xl md:text-3xl font-semibold text-p31-cloud mb-1">G.O.D. — operator shell</h1>
+      <p class="text-xs text-indigo-200/80 font-mono uppercase tracking-widest mb-2">Grounded Operator Deck</p>
+      <p class="text-p31-muted text-sm max-w-2xl ops-aux">
+        One frame for day-to-day work: same nav model everywhere, glass-box health readouts, and tag in/out
+        when you need explicit on-call focus. This page only issues <strong class="text-p31-cloud-80">GET</strong> probes from your
+        browser (no <code class="text-p31-muted-50">POST</code> to command-center — shift writes go through EPCP Access or home
+        <code class="text-indigo-200/80">npm run operator:shift-in</code> / <code class="text-indigo-200/80">out</code>).
+        Trust boundary: mutations are enforced on Workers (see
+        <code class="text-teal-300/80">p31ca/docs/EDGE-SECURITY.md</code>;
+        mesh-red order: <code class="text-teal-300/80">p31ca/docs/OPS-GLASS-OPERATOR-RUNBOOK.md</code>), not in static HTML alone.
+        Pair with <code class="text-indigo-200/80">npm run command-center</code> on
+        <strong class="text-p31-cloud-80">127.0.0.1:3131</strong> and the
+        <a href="https://command-center.trimtab-signal.workers.dev/" class="text-teal-300/80 hover:underline" rel="noopener"
+          >EPCP (G.O.D. edge) dashboard</a
+        >.
+      </p>
+      <nav
+        class="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-xs text-p31-muted-50 border-t border-white/5 pt-4"
+        aria-label="Hub shortcuts"
+      >
+        <a href="/" class="hover:text-teal-300/90 transition-colors">Cockpit home</a>
+        <a href="/demos" class="hover:text-teal-300/90 transition-colors">Demo lobby</a>
+        <a href="/glass-box" class="hover:text-teal-300/90 transition-colors">Glass Box</a>
+        <a href="/integrations" class="hover:text-teal-300/90 transition-colors">Integrations</a>
+        <a href="/contact" class="hover:text-teal-300/90 transition-colors">Contact</a>
+      </nav>
+    </header>
+
+    <section
+      class="mb-8 rounded-xl border border-indigo-500/35 bg-indigo-950/25 p-5 ops-aux"
+      aria-labelledby="god-lattice-title"
+    >
+      <h2 id="god-lattice-title" class="text-lg font-medium text-p31-cloud mb-2">Local + lattice (never leave the stack)</h2>
+      <p class="text-sm text-p31-muted mb-4 max-w-3xl">
+        Three surfaces — <strong class="text-indigo-200/90">this machine</strong> (whitelisted local API), <strong>this
+          page / p31ca</strong> (read-mostly glass), <strong>edge EPCP</strong> (Access, fleet, audit) — all mapped here so
+        agents and humans pick the right surface without spelunking the repo.
+      </p>
+      <div class="flex flex-wrap gap-2 mb-5">
+        <a
+          href="http://127.0.0.1:3131/"
+          class="inline-flex items-center rounded-lg border border-indigo-400/45 bg-indigo-500/15 px-3 py-2.5 text-sm text-indigo-100 hover:bg-indigo-500/25"
+          >Local command center (127.0.0.1:3131)</a
+        >
+        <a
+          href={commandCenterBase + '/'}
+          class="inline-flex items-center rounded-lg border border-white/15 px-3 py-2.5 text-sm text-p31-cloud-80 hover:border-teal-500/40"
+          >G.O.D. edge (EPCP)</a
+        >
+        <a
+          href="https://github.com/p31labs/andromeda"
+          class="inline-flex items-center rounded-lg border border-white/10 px-3 py-2.5 text-sm text-p31-cloud-70 hover:border-white/25"
+          rel="noopener">andromeda (monorepo)</a
+        >
+      </div>
+      <dl class="space-y-3 text-sm text-p31-cloud-70">
+        <div class="grid sm:grid-cols-[5.5rem_1fr] gap-1 border-b border-white/5 pb-3">
+          <dt class="text-[10px] uppercase tracking-widest text-p31-cloud-40 font-mono pt-0.5">Local</dt>
+          <dd class="text-p31-muted">
+            In the <strong class="text-p31-cloud-80">P31 home</strong> (bonding-soup) repo: <code
+              class="text-teal-300/90 text-xs">npm run command-center</code> — grouped whitelisted actions (verify, <code
+              class="text-p31-muted-50 text-xs">p31:all</code>, <code class="text-p31-muted-50 text-xs">validate:full</code>,
+            release, mesh, glass, operator shift, <code class="text-p31-muted-50 text-xs">hub:ci</code>, PR). Stays on your
+            machine; start the server, then use the top link.
+          </dd>
+        </div>
+        <div class="grid sm:grid-cols-[5.5rem_1fr] gap-1 border-b border-white/5 pb-3">
+          <dt class="text-[10px] uppercase tracking-widest text-p31-cloud-40 font-mono pt-0.5">Hub</dt>
+          <dd class="text-p31-muted">
+            You are on <code class="text-teal-300/85 text-xs">/ops</code> on p31ca — full glass table below. Ingested from
+            home <code class="text-p31-muted-50 text-xs">p31-ecosystem.json</code> (see CWP).
+          </dd>
+        </div>
+        <div class="grid sm:grid-cols-[5.5rem_1fr] gap-1">
+          <dt class="text-[10px] uppercase tracking-widest text-p31-cloud-40 font-mono pt-0.5">Edge</dt>
+          <dd class="text-p31-muted">
+            <a href={commandCenterHealth} class="text-teal-300/80 hover:underline">EPCP <code>GET /api/health</code></a
+            > ·
+            <a href={operatorShiftApiUrl} class="text-teal-300/80 hover:underline">operator shift (public state)</a> — tag
+            in/out via POST + Access.
+          </dd>
+        </div>
+      </dl>
+    </section>
+
+    <nav
+      class="ops-nav grid grid-cols-2 md:grid-cols-4 gap-2 mb-10"
+      aria-label="Primary operator areas"
+    >
+      <a
+        href="/passport"
+        class="block rounded-lg border border-white/10 bg-white/5 px-3 py-4 hover:border-teal-500/40 transition-colors"
+      >
+        <span class="text-xs text-p31-muted-50 uppercase tracking-wide">Personal</span>
+        <span class="block text-sm font-medium mt-1">Cognitive passport</span>
+      </a>
+      <a
+        href="/mesh"
+        class="block rounded-lg border border-white/10 bg-white/5 px-3 py-4 hover:border-teal-500/40 transition-colors"
+      >
+        <span class="text-xs text-p31-muted-50 uppercase tracking-wide">Mesh</span>
+        <span class="block text-sm font-medium mt-1">K₄ navigator</span>
+      </a>
+      <a
+        href="/orchestrator"
+        class="block rounded-lg border border-white/10 bg-white/5 px-3 py-4 hover:border-teal-500/40 transition-colors"
+      >
+        <span class="text-xs text-p31-muted-50 uppercase tracking-wide">Actions</span>
+        <span class="block text-sm font-medium mt-1">Orchestrator</span>
+      </a>
+      <a
+        href="/lab"
+        class="block rounded-lg border border-white/10 bg-white/5 px-3 py-4 hover:border-teal-500/40 transition-colors"
+      >
+        <span class="text-xs text-p31-muted-50 uppercase tracking-wide">Explore</span>
+        <span class="block text-sm font-medium mt-1">Lab</span>
+      </a>
+    </nav>
+
+    <!-- ORR DIRECTIVE 2+5: SEV-tiered fleet probes + one-click re-check -->
+    <section
+      class="mb-8 rounded-xl border border-rose-500/25 bg-rose-950/10 p-5"
+      aria-labelledby="orr-diag-title"
+      id="orr-diag"
+    >
+      <div class="flex items-center justify-between mb-3">
+        <h2 id="orr-diag-title" class="text-sm font-mono uppercase tracking-widest text-rose-300/80">
+          Fleet diagnostics · SEV tiers
+        </h2>
+        <button
+          type="button"
+          id="orr-recheck"
+          class="text-xs font-mono px-3 py-1.5 rounded border border-teal-500/30 text-teal-300/80 hover:bg-teal-500/10 transition-colors"
+        >Re-check all</button>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-3">
+        <div class="rounded-lg border border-rose-500/30 bg-rose-500/5 p-3">
+          <div class="text-[10px] font-mono uppercase tracking-widest text-rose-400/70 mb-1">SEV-0 CRITICAL</div>
+          <div class="text-[10px] text-rose-300/60 leading-relaxed">Ca²⁺ &lt; 7.8 · Node Zero offline &gt;5m<br>Haptics + DND override + Discord/SMS</div>
+          <div id="orr-sev0-probes" class="mt-2 space-y-1"></div>
+        </div>
+        <div class="rounded-lg border border-amber-500/20 bg-amber-950/10 p-3">
+          <div class="text-[10px] font-mono uppercase tracking-widest text-amber-400/70 mb-1">SEV-1 WARNING</div>
+          <div class="text-[10px] text-amber-300/60 leading-relaxed">Matrix bridge · Worker 500s<br>Silent push → Ops Desk</div>
+          <div id="orr-sev1-probes" class="mt-2 space-y-1"></div>
+        </div>
+        <div class="rounded-lg border border-white/8 bg-white/[0.02] p-3">
+          <div class="text-[10px] font-mono uppercase tracking-widest text-p31-cloud-40 mb-1">SEV-2 INFO</div>
+          <div class="text-[10px] text-p31-muted-50 leading-relaxed">Background syncs · Routine backups<br>Log only — no alert</div>
+          <div id="orr-sev2-probes" class="mt-2 space-y-1"></div>
+        </div>
+      </div>
+      <div class="text-[10px] text-p31-cloud-30 font-mono">
+        Live data from <code>window.__p31Fleet</code> · Severity source: fleet-telemetry.ts ProbeTier →
+        critical=SEV-0, high=SEV-1, monitor=SEV-2
+      </div>
+    </section>
+
+    <section
+      class="mb-10 rounded-xl border border-white/10 bg-white/[0.03] p-5 ops-aux"
+      aria-labelledby="glass-title"
+    >
+      <h2 id="glass-title" class="text-lg font-medium text-p31-cloud mb-1">Glass box (read-only GETs)</h2>
+      <p class="text-xs text-p31-cloud-40 font-mono mb-2" id="ops-glass-meta">
+        Ingest: {opsGlass.source} · {opsGlass.probes.length} probes ·
+        {opsGlass.ingested ? opsGlass.ingested.slice(0, 10) : "—"} 
+        <span class="text-p31-cloud-30">(single source: home <code class="text-teal-500/80">p31-ecosystem.json</code> →
+        <code class="text-teal-500/80">npm run ops:ingest</code> in p31ca; CLI aggregate:
+        <code class="text-teal-500/80">npm run ecosystem:glass</code>)</span>
+      </p>
+      <p class="text-sm font-mono text-indigo-200/85 mb-4 min-h-[1.25rem]" id="ops-glass-summary" aria-live="polite"></p>
+      <p class="text-sm text-p31-muted mb-4">
+        Live GETs from your browser. CLI aggregate with no CORS limits:
+        <code class="text-teal-300/90">npm run ecosystem:glass</code> (repo root) →
+        <code class="text-p31-muted-50">/tmp/p31_glass_report.json</code>.
+      </p>
+      <div class="overflow-x-auto rounded-lg border border-white/10">
+        <table class="w-full text-left text-sm" id="ops-glass-table" aria-label="Ecosystem health probes">
+          <thead>
+            <tr class="border-b border-white/10 text-p31-muted-50 text-xs uppercase tracking-wide">
+              <th class="p-2 pl-3">Id</th>
+              <th class="p-2">Group</th>
+              <th class="p-2">Level</th>
+              <th class="p-2">HTTP</th>
+              <th class="p-2">ms</th>
+              <th class="p-2 pr-3">URL</th>
+            </tr>
+          </thead>
+          <tbody id="ops-glass-tbody">
+            {opsGlass.probes.map((p) => (
+              <tr class="border-b border-white/5" data-glass-probe={p.id}>
+                <td class="p-2 pl-3 font-mono text-teal-200/90 text-xs align-top whitespace-nowrap">{p.id}</td>
+                <td class="p-2 text-p31-muted text-xs align-top whitespace-nowrap">{p.group}</td>
+                <td class="p-2 font-mono text-p31-muted-50 align-top" data-glass-level>…</td>
+                <td class="p-2 font-mono text-p31-muted-50 align-top" data-glass-code>—</td>
+                <td class="p-2 font-mono text-p31-muted-50 align-top" data-glass-ms>—</td>
+                <td class="p-2 pr-3 font-mono text-[11px] text-p31-muted-60 break-all align-top">{p.url}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section
+      class="mb-8 rounded-xl border border-white/10 bg-white/[0.03] p-5 ops-aux"
+      aria-labelledby="tag-title"
+    >
+      <h2 id="tag-title" class="text-lg font-medium text-p31-cloud mb-2">Tag in / tag out</h2>
+      <div
+        class="rounded-lg border border-teal-500/25 bg-teal-500/[0.06] p-4 mb-4"
+        id="ops-edge-shift-block"
+      >
+        <h3 class="text-xs font-mono uppercase tracking-wider text-teal-300/80 mb-2">Live (edge)</h3>
+        <p class="text-sm text-p31-cloud-80 mb-1" id="ops-edge-shift-line" role="status" aria-live="polite">
+          Loading edge state…
+        </p>
+        <p class="text-xs text-p31-muted-60">
+          <code class="text-teal-300/80">GET {operatorShiftApiUrl}</code> — public PII-free state.{' '}
+          <code class="text-teal-300/80">POST</code> JSON body: <code>action</code> = <code>in</code> or
+          <code>out</code>, optional <code>note</code> (requires Cloudflare Access + <strong>operator</strong> role).
+        </p>
+        <a
+          class="inline-block mt-3 text-sm text-teal-400 hover:underline"
+          href={commandCenterBase + '/'}
+          rel="noreferrer"
+          >Open EPCP command center (Access)</a
+        >
+      </div>
+      <p class="text-sm text-p31-muted">
+        <span class="text-p31-cloud-70">Local</span> (home repo only):{' '}
+        <code class="text-teal-300/90">npm run operator:shift-in</code> ·
+        <code class="text-teal-300/90">npm run operator:shift-out</code> ·
+        <code class="text-teal-300/90">npm run operator:shift-status</code> →
+        <code class="text-p31-muted-50">~/.p31/operator-shift.jsonl</code>
+      </p>
+    </section>
+
+    <section
+      class="ops-aux rounded-xl border border-amber-500/20 bg-amber-500/5 p-5 text-sm text-p31-cloud-70"
+    >
+      <p>
+        <strong class="text-amber-200/90">EPCP command center</strong> (Worker) is a separate glass surface:
+        <a
+          class="text-teal-400 hover:underline break-all"
+          href={commandCenterHealth}
+          rel="noreferrer"
+          >command-center health</a
+        > · see
+        <code class="text-p31-muted-50">andromeda/.../command-center/CLOSURE.md</code>
+      </p>
+    </section>
+
+    <!-- iPhone thumb rail — P31 lavender glass strip -->
+    <div
+      class="md:hidden fixed bottom-0 left-0 right-0 z-40 border-t border-lavender/30 bg-p31-void-92 backdrop-blur-md supports-[padding:max(0px)]:pb-[max(0.35rem,env(safe-area-inset-bottom))]"
+      id="ops-thumb-rail"
+      role="navigation"
+      aria-label="Primary thumb shortcuts"
+    >
+      <div class="grid max-w-6xl grid-cols-4 gap-0 mx-auto">
+        <a
+          href="/"
+          class="flex min-h-[3.4rem] flex-col items-center justify-center gap-0.5 border-r border-white/[0.06] py-2 text-center text-[0.7rem] font-medium text-paper/90 active:bg-lavender/15"
+        >
+          <span class="text-[0.9rem] leading-none text-phosphorus/80" aria-hidden="true">⌂</span>
+          <span>Hub</span>
+        </a>
+        <a
+          href="/glass-box"
+          class="flex min-h-[3.4rem] flex-col items-center justify-center gap-0.5 border-r border-white/[0.06] py-2 text-center text-[0.7rem] font-medium text-paper/90 active:bg-lavender/15"
+        >
+          <span class="text-[0.9rem] leading-none text-lavender/80" aria-hidden="true">◇</span>
+          <span>Glass</span>
+        </a>
+        <a
+          href="/orchestrator"
+          class="flex min-h-[3.4rem] flex-col items-center justify-center gap-0.5 border-r border-white/[0.06] py-2 text-center text-[0.7rem] font-medium text-paper/90 active:bg-lavender/15"
+        >
+          <span class="text-[0.9rem] leading-none text-butter/80" aria-hidden="true">◎</span>
+          <span>Orch</span>
+        </a>
+        <a
+          href={commandCenterBase + "/"}
+          class="flex min-h-[3.4rem] flex-col items-center justify-center gap-0.5 py-2 text-center text-[0.7rem] font-semibold text-coral/90 active:bg-coral/10"
+          rel="noreferrer"
+        >
+          <span class="text-[0.9rem] leading-none" aria-hidden="true">✦</span>
+          <span>EPCP</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script
+    define:vars={{
+      k4Health: k4HealthUrl,
+      orchStatus: orchestratorStatusUrl,
+      ccHealth: commandCenterHealth,
+      glassProbes: opsGlass.probes,
+      operatorShiftUrl: operatorShiftApiUrl,
+    }}
+  >
+    ;(function () {
+      var root = document.getElementById('ops-root')
+      var storageKey = 'p31-ops-density'
+      var focusKey = 'p31-ops-focus'
+      if (!root) return
+
+      var mqReduce = window.matchMedia('(prefers-reduced-motion: reduce)')
+
+      function applyDensity(d) {
+        if (d !== 'calm' && d !== 'standard' && d !== 'deep') d = 'standard'
+        root.setAttribute('data-density', d)
+        try {
+          sessionStorage.setItem(storageKey, d)
+        } catch (e) {}
+        var u = new URL(window.location.href)
+        u.searchParams.set('density', d)
+        window.history.replaceState({}, '', u.toString())
+        document.querySelectorAll('.ops-density-btn').forEach(function (btn) {
+          btn.setAttribute('data-on', btn.getAttribute('data-density-value') === d ? '1' : '')
+        })
+      }
+
+      var params = new URLSearchParams(window.location.search)
+      var initial = params.get('density') || (function () {
+        try {
+          return sessionStorage.getItem(storageKey)
+        } catch (e) {
+          return null
+        }
+      })() || 'standard'
+      applyDensity(initial)
+
+      document.querySelectorAll('.ops-density-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          applyDensity(btn.getAttribute('data-density-value') || 'standard')
+        })
+      })
+
+      var focusBtn = document.getElementById('ops-focus-toggle')
+      function setFocus(on) {
+        root.classList.toggle('ops-focus', on)
+        if (focusBtn) {
+          focusBtn.setAttribute('aria-pressed', on ? 'true' : 'false')
+          focusBtn.textContent = on ? 'Exit focus' : 'Focus'
+        }
+        try {
+          if (on) sessionStorage.setItem(focusKey, '1')
+          else sessionStorage.removeItem(focusKey)
+        } catch (e) {}
+      }
+      try {
+        if (sessionStorage.getItem(focusKey) === '1') setFocus(true)
+      } catch (e) {}
+      if (focusBtn) {
+        focusBtn.addEventListener('click', function () {
+          setFocus(!root.classList.contains('ops-focus'))
+        })
+      }
+      document.addEventListener('keydown', function (ev) {
+        if (ev.key === 'Escape' && root.classList.contains('ops-focus')) {
+          setFocus(false)
+        }
+      })
+
+      if (mqReduce.matches) root.setAttribute('data-reduced-motion', '1')
+      mqReduce.addEventListener('change', function () {
+        root.setAttribute('data-reduced-motion', mqReduce.matches ? '1' : '')
+      })
+
+      var amb = document.getElementById('ops-ambient')
+      var ambLine = document.getElementById('ops-ambient-line')
+      var ambDot = document.getElementById('ops-ambient-dot')
+      if (!amb || !ambLine) return
+
+      var ambBaseClass =
+        'ops-ambient mb-6 rounded-lg border px-3 py-2.5 text-sm font-mono flex flex-wrap items-center gap-x-4 gap-y-1 '
+
+      function setAmbientState(state, line) {
+        amb.setAttribute('data-state', state)
+        ambLine.textContent = line
+        if (ambDot) {
+          ambDot.className =
+            'h-1.5 w-1.5 rounded-full shrink-0 ' +
+            (state === 'ok' ? 'bg-emerald-400' : state === 'warn' ? 'bg-amber-400' : 'bg-rose-400')
+        }
+        if (state === 'ok') amb.className = ambBaseClass + 'border-emerald-500/35 bg-emerald-500/5'
+        else if (state === 'warn') amb.className = ambBaseClass + 'border-amber-500/40 bg-amber-500/5'
+        else amb.className = ambBaseClass + 'border-rose-500/40 bg-rose-500/5'
+      }
+
+      var timeoutMs = 12000
+      function probeOne(url) {
+        return fetch(url, { method: 'GET', credentials: 'omit' })
+          .then(function (r) {
+            return { ok: r.ok, code: r.status, auth: r.status === 401 || r.status === 403 }
+          })
+          .catch(function (e) {
+            return { ok: false, code: 0, err: String(e && e.message) }
+          })
+      }
+      var probeRace = new Promise(function (resolve, reject) {
+        setTimeout(function () {
+          reject(new Error('timeout'))
+        }, timeoutMs)
+      })
+      Promise.race([Promise.all([probeOne(k4Health), probeOne(orchStatus), probeOne(ccHealth)]), probeRace])
+        .then(function (results) {
+          var names = ['k4-personal', 'orchestrator', 'command-center']
+          var ok = 0
+          var auth = 0
+          var down = 0
+          var parts = []
+          for (var i = 0; i < results.length; i++) {
+            var r = results[i]
+            if (r.ok) {
+              ok++
+              parts.push(names[i] + ' · ' + (r.code || 200))
+            } else if (r.auth) {
+              auth++
+              parts.push(names[i] + ' · auth ' + (r.code || '—') + ' (edge up)')
+            } else {
+              down++
+              parts.push(names[i] + ' · down' + (r.code ? ' ' + r.code : ''))
+            }
+          }
+          var line = parts.join(' · ')
+          if (down === 0 && auth === 0) setAmbientState('ok', line)
+          else if (down === 0) setAmbientState('warn', line)
+          else setAmbientState('error', line)
+        })
+        .catch(function () {
+          setAmbientState(
+            'error',
+            'Pulse probe failed (network, CORS, or timeout). Run: npm run ecosystem:glass from repo root.'
+          )
+        })
+
+      function probeUrl(url) {
+        var t0 = Date.now()
+        return fetch(url, { method: 'GET', credentials: 'omit' })
+          .then(function (r) {
+            return {
+              level: r.ok
+                ? 'ok'
+                : r.status === 401 || r.status === 403
+                  ? 'auth'
+                  : r.status >= 500
+                    ? 'down'
+                    : 'warn',
+              code: r.status,
+              ms: Date.now() - t0,
+            }
+          })
+          .catch(function () {
+            return { level: 'down', code: 0, ms: Date.now() - t0 }
+          })
+      }
+
+      function probeGlassRow(p) {
+        var t0 = Date.now()
+        var method = (p.method || 'GET').toUpperCase()
+        var opts = {
+          method: method,
+          credentials: 'omit',
+          headers: { Accept: 'application/json, text/html;q=0.9, */*;q=0.1' },
+        }
+        if (method === 'POST') {
+          opts.headers['Content-Type'] = 'application/json'
+          opts.body = p.body !== undefined ? p.body : '{}'
+        }
+        return fetch(p.url, opts)
+          .then(function (r) {
+            var code = r.status
+            var ct = r.headers.get('content-type') || ''
+            function simple(level) {
+              return { level: level, code: code, ms: Date.now() - t0 }
+            }
+            if (r.ok) {
+              if (p.expectJsonKey) {
+                if (!ct.includes('application/json')) return simple('warn')
+                return r.json().then(function (j) {
+                  var ok =
+                    j &&
+                    typeof j === 'object' &&
+                    Object.prototype.hasOwnProperty.call(j, p.expectJsonKey)
+                  return { level: ok ? 'ok' : 'warn', code: code, ms: Date.now() - t0 }
+                }).catch(function () {
+                  return { level: 'warn', code: code, ms: Date.now() - t0 }
+                })
+              }
+              return simple('ok')
+            }
+            if (code === 401 || code === 403) return simple('auth')
+            if (code >= 500) return simple('down')
+            return simple('warn')
+          })
+          .catch(function () {
+            return { level: 'down', code: 0, ms: Date.now() - t0 }
+          })
+      }
+
+      function escProbeId(id) {
+        if (typeof CSS !== 'undefined' && typeof CSS.escape === 'function') return CSS.escape(id)
+        return String(id).replace(/\\/g, '\\\\').replace(/"/g, '\\"')
+      }
+
+      function runGlassTable(probes) {
+        if (!probes || !probes.length) return
+        var summaryEl = document.getElementById('ops-glass-summary')
+        if (summaryEl) summaryEl.textContent = 'Probing ' + probes.length + ' endpoints…'
+        var jobs = probes.map(function (p) {
+          var nodes = document.querySelectorAll('[data-glass-probe="' + escProbeId(p.id) + '"]')
+          nodes.forEach(function (el) {
+            var L0 = el.querySelector('[data-glass-level]')
+            if (L0) L0.textContent = '…'
+          })
+          return probeGlassRow(p).then(function (r) {
+            var levelColor =
+              r.level === 'ok'
+                ? 'text-phosphorus/95'
+                : r.level === 'auth'
+                  ? 'text-butter/90'
+                  : r.level === 'warn'
+                    ? 'text-lavender/90'
+                    : 'text-coral/90'
+            nodes.forEach(function (row) {
+              var L = row.querySelector('[data-glass-level]')
+              var C = row.querySelector('[data-glass-code]')
+              var M = row.querySelector('[data-glass-ms]')
+              if (L) {
+                L.textContent = r.level
+                L.className =
+                  row.tagName === 'TR'
+                    ? 'p-2 font-mono align-top ' + levelColor
+                    : 'text-xs font-mono ' + levelColor
+              }
+              if (C) C.textContent = r.code ? String(r.code) : '—'
+              if (M) M.textContent = r.ms != null ? String(r.ms) : '—'
+            })
+            return r.level
+          })
+        })
+        Promise.all(jobs).then(function (levels) {
+          var ok = 0
+          var auth = 0
+          var warn = 0
+          var down = 0
+          for (var i = 0; i < levels.length; i++) {
+            var lv = levels[i]
+            if (lv === 'ok') ok++
+            else if (lv === 'auth') auth++
+            else if (lv === 'warn') warn++
+            else down++
+          }
+          if (!summaryEl) return
+          summaryEl.textContent =
+            'Glass summary: ' +
+            ok +
+            ' ok' +
+            (auth ? ' · ' + auth + ' auth (edge up)' : '') +
+            (warn ? ' · ' + warn + ' warn' : '') +
+            (down ? ' · ' + down + ' down' : '') +
+            ' — full report: npm run ecosystem:glass'
+        })
+      }
+      if (typeof glassProbes !== 'undefined' && glassProbes && glassProbes.length) {
+        runGlassTable(glassProbes)
+      }
+
+      var shiftLine = document.getElementById('ops-edge-shift-line')
+      if (shiftLine && typeof operatorShiftUrl !== 'undefined' && operatorShiftUrl) {
+        fetch(operatorShiftUrl, { method: 'GET', credentials: 'omit' })
+          .then(function (r) {
+            return r.json().then(function (j) {
+              return { ok: r.ok, j: j }
+            })
+          })
+          .then(function (x) {
+            if (!x || !x.j) {
+              shiftLine.textContent = 'Edge shift: empty response.'
+              return
+            }
+            var p = x.j.public
+            if (!p) {
+              shiftLine.textContent = 'Edge shift: no public field (API schema drift).'
+              return
+            }
+            if (p.state === 'unknown' || p.state == null) {
+              shiftLine.textContent = 'Edge shift: unknown (no in/out recorded yet).'
+            } else {
+              shiftLine.textContent =
+                'Edge shift: ' +
+                String(p.state).toUpperCase() +
+                (p.at ? ' · ' + p.at : '')
+            }
+          })
+          .catch(function () {
+            shiftLine.textContent = 'Edge shift: unavailable (network or CORS). Deploy /api/operator/shift on command-center.'
+          })
+      }
+    })()
+
+    // ── ORR Directive 2+5: Fleet diagnostics panel ─────────────────────────
+    ;(function () {
+      var SEV_MAP = { critical: 'sev0', high: 'sev1', monitor: 'sev2' }
+      var STATUS_COLOR = { healthy:'text-teal-300', degraded:'text-amber-300', down:'text-rose-400', unknown:'text-p31-cloud-30' }
+
+      function renderProbe(id, status, latencyMs) {
+        var color = STATUS_COLOR[status] || STATUS_COLOR.unknown
+        var lat   = latencyMs > 0 ? ' · ' + latencyMs + 'ms' : ''
+        return '<div class="text-[10px] font-mono flex items-center gap-1.5"><span class="' + color + '">' +
+          (status === 'healthy' ? '✓' : status === 'down' ? '✗' : status === 'degraded' ? '⚡' : '?') +
+          '</span><span class="text-p31-cloud-60">' + id + '</span><span class="text-p31-cloud-30">' + lat + '</span></div>'
+      }
+
+      function populateDiag() {
+        var fleet = (window).__p31Fleet
+        if (!fleet) {
+          ['orr-sev0-probes','orr-sev1-probes','orr-sev2-probes'].forEach(function (id) {
+            var el = document.getElementById(id)
+            if (el) el.innerHTML = '<div class="text-[10px] font-mono text-p31-cloud-30">Fleet not started</div>'
+          })
+          return
+        }
+        var snap = fleet.snapshot()
+        var buckets = { sev0: '', sev1: '', sev2: '' }
+        snap.forEach(function (v, id) {
+          // Derive tier from id: criticals match k4-cage, k4-personal, command-center; high=bonding-relay,social-worker; rest=monitor
+          var tier = 'monitor'
+          if (id === 'command-center' || id === 'k4-cage' || id === 'k4-personal') tier = 'critical'
+          else if (id === 'bonding-relay' || id === 'social-worker') tier = 'high'
+          var sev = SEV_MAP[tier] || 'sev2'
+          buckets[sev] += renderProbe(id, v.status, v.latencyMs)
+        })
+        Object.keys(buckets).forEach(function (sev) {
+          var el = document.getElementById('orr-' + sev + '-probes')
+          if (el) el.innerHTML = buckets[sev] || '<div class="text-[10px] font-mono text-p31-cloud-20">—</div>'
+        })
+      }
+
+      // Populate on load + on re-check button
+      setTimeout(populateDiag, 1500) // give fleet telemetry time to first-poll
+      var recheckBtn = document.getElementById('orr-recheck')
+      if (recheckBtn) {
+        recheckBtn.addEventListener('click', function () {
+          recheckBtn.textContent = 'Checking…'
+          recheckBtn.disabled = true
+          setTimeout(function () {
+            populateDiag()
+            recheckBtn.textContent = 'Re-check all'
+            recheckBtn.disabled = false
+          }, 2000)
+        })
+      }
+    })()
+  </script>
+
+  <style is:global>
+    .ops-root {
+      --ops-pad: 1rem;
+      --ops-gap: 0.5rem;
+      --ops-text: 0.875rem;
+      --ops-chrome-display: flex;
+    }
+    .ops-root[data-density='calm'] {
+      --ops-pad: 0.75rem;
+      --ops-gap: 0.375rem;
+      --ops-text: 0.8125rem;
+    }
+    .ops-root[data-density='standard'] {
+      --ops-pad: 1rem;
+      --ops-gap: 0.5rem;
+      --ops-text: 0.875rem;
+    }
+    .ops-root[data-density='deep'] {
+      --ops-pad: 1.25rem;
+      --ops-gap: 0.75rem;
+      --ops-text: 0.9375rem;
+    }
+    .ops-root .ops-nav a {
+      padding: var(--ops-pad);
+      font-size: var(--ops-text);
+    }
+    .ops-root[data-reduced-motion='1'] * {
+      transition: none !important;
+      animation: none !important;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .ops-root * {
+        transition: none !important;
+        animation: none !important;
+      }
+    }
+    .ops-root.ops-focus .ops-aux {
+      display: none;
+    }
+    .ops-root.ops-focus .ops-ambient,
+    .ops-root.ops-focus .ops-chrome {
+      display: flex;
+    }
+    .ops-root.ops-focus .ops-ambient {
+      flex-wrap: wrap;
+    }
+    .ops-root.ops-focus .ops-prose p.ops-aux {
+      display: none;
+    }
+    .ops-root.ops-focus #ops-thumb-rail {
+      display: none;
+    }
+    .ops-density-btn[data-on='1'] {
+      background: rgba(45, 212, 191, 0.25);
+      color: rgb(255 255 255);
+    }
+  </style>
+</AppShell>

@@ -1,0 +1,192 @@
+---
+/**
+  * @p31-layout: Gallery
+ * OSS smart home + wearables + operator tools — catalog from p31-constants.json (apply:constants).
+ */
+import AppShell from '../layouts/AppShell.astro';
+import integ from '../data/p31-integrations.json';
+
+const catalog = integ.openCatalog || [];
+const endpoints = integ.endpoints || {};
+const meshBridge = integ.meshBridge || {};
+const edgeMesh = integ.edgeMesh || {};
+const sovereignWorkerSpas = integ.sovereignWorkerSpas || [];
+---
+
+<AppShell
+  title="Integrations bridge | p31ca"
+  description="Open-source smart home, wearables, and operator tools — catalog and LAN endpoint slots from p31-constants.json."
+  routeName="integrations"
+>
+  <div class="max-w-4xl mx-auto px-4 py-10 text-p31-cloud-90">
+    <p class="text-xs font-mono uppercase tracking-widest text-teal-400/90 mb-2">p31.integrationsBridge/1.0.0</p>
+    <h1 class="text-2xl md:text-3xl font-semibold text-p31-cloud mb-2">OSS integrations bridge</h1>
+    <p class="text-p31-cloud-60 text-sm max-w-2xl mb-8">
+      Machine-routable catalog and <strong class="text-p31-cloud-80">empty endpoint slots</strong> for your LAN (Home
+      Assistant, MQTT, n8n, …). Source: P31 home <code class="text-teal-300/90">p31-constants.json</code> →
+      <code class="text-p31-muted-50">npm run apply:constants</code>. Full pattern:
+      <span class="text-teal-300/80">docs/P31-INTEGRATIONS-BRIDGE.md</span> in the bonding-soup repo. No secrets in git;
+      fill endpoints in a <strong class="text-amber-200/90">private</strong> overlay or local env — not here.
+    </p>
+
+    <section class="mb-10 rounded-xl border border-white/10 bg-white/[0.03] p-5">
+      <h2 class="text-lg font-medium text-p31-cloud mb-3">Open catalog (docs + license)</h2>
+      <div class="overflow-x-auto rounded-lg border border-white/10">
+        <table class="w-full text-left text-sm">
+          <thead>
+            <tr class="border-b border-white/10 text-p31-muted-50 text-xs uppercase tracking-wide">
+              <th class="p-2 pl-3">Id</th>
+              <th class="p-2">Label</th>
+              <th class="p-2">Role</th>
+              <th class="p-2">License</th>
+              <th class="p-2 pr-3">Docs</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              catalog.map((row: { id: string; label: string; role?: string; docsUrl: string; license?: string }) => (
+                <tr class="border-b border-white/5">
+                  <td class="p-2 pl-3 font-mono text-teal-200/90 text-xs whitespace-nowrap">{row.id}</td>
+                  <td class="p-2 text-p31-cloud-80">{row.label}</td>
+                  <td class="p-2 text-p31-muted text-xs">{row.role || '—'}</td>
+                  <td class="p-2 text-p31-muted-60 text-xs font-mono">{row.license || '—'}</td>
+                  <td class="p-2 pr-3">
+                    <a
+                      href={row.docsUrl}
+                      class="text-teal-400/90 hover:underline text-xs break-all"
+                      rel="noopener noreferrer"
+                    >
+                      {row.docsUrl}
+                    </a>
+                  </td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="mb-10 rounded-xl border border-amber-500/20 bg-amber-500/[0.06] p-5">
+      <h2 class="text-lg font-medium text-amber-100 mb-2">Endpoint slots (operator)</h2>
+      <p class="text-xs text-p31-muted-50 mb-4">
+        Empty string = disabled. Set in <code class="text-p31-cloud-60">p31-constants.json</code> only on trusted machines;
+        use SOPS/age for team sharing if needed.
+      </p>
+      <dl class="space-y-2 text-sm font-mono">
+        {
+          Object.entries(endpoints)
+            .filter(([k]) => !k.startsWith('_'))
+            .map(([k, v]) => (
+              <div class="flex flex-wrap gap-2 border-b border-white/5 pb-2">
+                <dt class="text-p31-muted-50 shrink-0">{k}</dt>
+                <dd class="text-teal-200/80 break-all">{v === '' ? '— (disabled)' : String(v)}</dd>
+              </div>
+            ))
+        }
+      </dl>
+    </section>
+
+    <section class="rounded-xl border border-white/10 bg-white/[0.03] p-5 text-sm text-p31-cloud-70">
+      <h2 class="text-lg font-medium text-p31-cloud mb-2">Mesh & edge</h2>
+      <p class="mb-2 whitespace-pre-wrap">{meshBridge.k4PersonalIngest || '—'}</p>
+      <p class="mb-2">
+        <span class="text-p31-muted-50">EPCP (read):</span>{' '}
+        <a
+          href={meshBridge.commandCenterEdge}
+          class="text-teal-400/90 hover:underline break-all"
+          rel="noopener noreferrer"
+        >
+          {meshBridge.commandCenterEdge}
+        </a>
+      </p>
+      <p class="text-xs text-p31-muted-60">{meshBridge.trust || ''}</p>
+    </section>
+
+    {
+      Object.keys(edgeMesh).length > 1 && (
+        <section class="mb-10 rounded-xl border border-teal-500/20 bg-teal-500/[0.04] p-5 text-sm text-p31-cloud-70">
+          <h2 class="text-lg font-medium text-p31-cloud mb-2">Canonical mesh URLs</h2>
+          <p class="text-xs text-p31-muted-50 mb-3">
+            From <code class="text-teal-300/80">p31-constants.json</code> <code>mesh.*</code> (mirrored as{' '}
+            <code class="text-p31-muted-50">edgeMesh</code> for this page). Same values as{' '}
+            <a href="/p31-mesh-constants.json" class="text-teal-400/90 hover:underline">
+              /p31-mesh-constants.json
+            </a>
+            .
+          </p>
+          <dl class="space-y-2 font-mono text-xs">
+            {Object.entries(edgeMesh)
+              .filter(([k]) => k !== 'schema')
+              .map(([k, v]) => (
+                <div class="flex flex-wrap gap-x-2 gap-y-1 border-b border-white/5 pb-2">
+                  <dt class="text-p31-muted-50 shrink-0">{k}</dt>
+                  <dd class="text-teal-200/85 break-all">
+                    {typeof v === 'string' && /^https?:\/\//.test(v) ? (
+                      <a href={v} class="hover:underline" rel="noopener noreferrer">
+                        {v}
+                      </a>
+                    ) : (
+                      String(v)
+                    )}
+                  </dd>
+                </div>
+              ))}
+          </dl>
+        </section>
+      )
+    }
+
+    {
+      sovereignWorkerSpas.length > 0 && (
+        <section class="mb-10 rounded-xl border border-white/10 bg-white/[0.03] p-5">
+          <h2 class="text-lg font-medium text-p31-cloud mb-2">Sovereign Worker SPAs</h2>
+          <p class="text-xs text-p31-muted-50 mb-4 max-w-2xl">
+            Local-first bundles on Cloudflare Workers; <code class="text-teal-300/80">p31ca.org</code> short paths 302 to{' '}
+            <code class="text-p31-muted-50">*.trimtab-signal.workers.dev</code>. Hub registry cards use the same launch URLs.
+          </p>
+          <div class="overflow-x-auto rounded-lg border border-white/10">
+            <table class="w-full text-left text-sm">
+              <thead>
+                <tr class="border-b border-white/10 text-p31-muted-50 text-xs uppercase tracking-wide">
+                  <th class="p-2 pl-3">Id</th>
+                  <th class="p-2">Hub launch</th>
+                  <th class="p-2 pr-3">workers.dev</th>
+                </tr>
+              </thead>
+              <tbody>
+                {sovereignWorkerSpas.map(
+                  (row: { id: string; hubLaunchUrl: string; workersDevUrl: string }) => (
+                    <tr class="border-b border-white/5">
+                      <td class="p-2 pl-3 font-mono text-teal-200/90 text-xs whitespace-nowrap">{row.id}</td>
+                      <td class="p-2">
+                        <a href={row.hubLaunchUrl} class="text-teal-400/90 hover:underline text-xs break-all">
+                          {row.hubLaunchUrl}
+                        </a>
+                      </td>
+                      <td class="p-2 pr-3">
+                        <a
+                          href={row.workersDevUrl}
+                          class="text-p31-muted hover:text-teal-300/90 hover:underline text-xs break-all"
+                          rel="noopener noreferrer"
+                        >
+                          {row.workersDevUrl}
+                        </a>
+                      </td>
+                    </tr>
+                  )
+                )}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      )
+    }
+
+    <p class="mt-8 text-xs text-p31-cloud-40">
+      <a href="/ops/" class="text-teal-400/80 hover:underline">← Operator shell</a>
+      ·
+      <a href="/" class="text-teal-400/80 hover:underline">Cockpit home</a>
+    </p>
+  </div>
+</AppShell>

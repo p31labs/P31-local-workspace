@@ -1,0 +1,270 @@
+{
+  "updated": "2026-05-31T18:30:00-04:00",
+  "audit": {
+    "probed_at": "2026-05-31T18:30:00-04:00",
+    "method": "curl — GET -L, 5–8s timeout; OPTIONS/POST where noted",
+    "environment": "win32 workspace (real network)",
+    "summary": "26 fleet rows. All 22 probed roots return 2xx. New: phos-btn Pages project live.",
+    "anomalies": []
+  },
+  "workers": [
+    {
+      "name": "phosphorus31-org",
+      "status": "online",
+      "url": "https://phosphorus31.org"
+    },
+    {
+      "name": "p31ca-org",
+      "status": "online",
+      "url": "https://p31ca.org"
+    },
+    {
+      "name": "ops-p31ca-org",
+      "status": "online",
+      "url": "https://ops.p31ca.org"
+    },
+    {
+      "name": "bonding-p31ca-org",
+      "status": "online",
+      "url": "https://bonding.p31ca.org"
+    },
+    {
+      "name": "command-center",
+      "status": "online",
+      "url": "https://command-center.trimtab-signal.workers.dev"
+    },
+    {
+      "name": "phos",
+      "status": "online",
+      "url": "https://phos.p31ca.org",
+      "note": "PHOS-01 Cognitive Prosthetic Platform — Astro+React+PGlite, 85 tests, spoon-aware UI, PWA-ready"
+    },
+    {
+      "name": "carrie-agent",
+      "status": "online",
+      "url": "https://carrie-agent.trimtab-signal.workers.dev"
+    },
+    {
+      "name": "p31-social-engine",
+      "status": "online",
+      "url": "https://p31-social-engine.trimtab-signal.workers.dev"
+    },
+    {
+      "name": "genesis-gate",
+      "status": "online",
+      "url": "https://genesis-gate.trimtab-signal.workers.dev/health"
+    },
+    {
+      "name": "p31-bonding-relay",
+      "status": "online",
+      "url": "https://p31-bonding-relay.trimtab-signal.workers.dev"
+    },
+    {
+      "name": "p31-telemetry",
+      "status": "online",
+      "url": "https://p31-telemetry.trimtab-signal.workers.dev"
+    },
+    {
+      "name": "donate-api",
+      "status": "online",
+      "url": "https://donate-api.phosphorus31.org/health"
+    },
+    {
+      "name": "p31-stripe-webhook",
+      "status": "online",
+      "url": "https://p31-stripe-webhook.trimtab-signal.workers.dev"
+    },
+    {
+      "name": "api-phosphorus31-org",
+      "status": "online",
+      "url": "https://api-phosphorus31-org.trimtab-signal.workers.dev"
+    },
+    {
+      "name": "fawn-guard",
+      "status": "online",
+      "url": "https://fawn-guard.trimtab-signal.workers.dev"
+    },
+    {
+      "name": "p31-signaling",
+      "status": "online",
+      "url": "https://p31-signaling.trimtab-signal.workers.dev"
+    },
+    {
+      "name": "p31-vault",
+      "status": "online",
+      "url": "https://p31-vault.pages.dev"
+    },
+    {
+      "name": "p31-mesh",
+      "status": "online",
+      "url": "https://p31-mesh.pages.dev"
+    },
+    {
+      "name": "p31-lab",
+      "status": "online",
+      "url": "https://p31-lab.trimtab-signal.workers.dev"
+    },
+    {
+      "name": "will-workshop",
+      "status": "online",
+      "url": "https://will-workshop.trimtab-signal.workers.dev"
+    },
+    {
+      "name": "bash-lab",
+      "status": "online",
+      "url": "https://bash-lab.trimtab-signal.workers.dev"
+    },
+    {
+      "name": "willow-garden",
+      "status": "online",
+      "url": "https://willow-garden.trimtab-signal.workers.dev"
+    },
+    {
+      "name": "christyn-corner",
+      "status": "online",
+      "url": "https://christyn-corner.trimtab-signal.workers.dev"
+    },
+    {
+      "name": "k4-cage",
+      "status": "online",
+      "url": "https://k4-cage.trimtab-signal.workers.dev"
+    },
+    {
+      "name": "p31-bouncer",
+      "status": "online",
+      "url": "https://p31-bouncer.trimtab-signal.workers.dev"
+    },
+    {
+      "name": "p31-phenix",
+      "status": "online",
+      "url": "https://p31-phenix.pages.dev"
+    },
+    {
+      "name": "p31-technical-library",
+      "status": "online",
+      "url": "https://p31-technical-library.pages.dev"
+    },
+    {
+      "name": "node-zero-firmware",
+      "status": "beta",
+      "url": "local://node-zero",
+      "note": "ESP32-S3 N16R8 hardware node. Telemetry POSTs to api.p31ca.org/qfactor/event every 5min. DID auto-generated from esp_random() on first boot. Flash: firmware/node-zero/flash.sh. Provision WiFi: provision.sh."
+    }
+  ],
+  "legal": {
+    "case": "Johnson v. Johnson, 2025CV936",
+    "next_hearing": "AWAITING WRITTEN ORDER per O.C.G.A. \u00a7 9-11-58(b)",
+    "judge": "Chief Judge Scarlett",
+    "status": "Post-hearing \u2014 April 16 hearing completed, written order pending",
+    "mcghan_deadline": "PASSED (April 17, 2026)"
+  },
+  "financial": {
+    "operating_buffer": "$530 (Ko-fi + Stripe) + Mercury bank account ACTIVE (approved 4/20/2026)",
+    "grants_active": "Awesome Foundation $1K (April deliberation)",
+    "grants_pending": "NIDILRR Switzer $80K, FIP $250K/yr (inquiries sent, no response)",
+    "grants_dead": "ESG, Microsoft AI, Pollination, NDEP, Mission.Earth, Shuttleworth",
+    "corp_status": "P31 Labs Inc \u2014 Active (GA SoS). EIN: 42-1888158 (assigned Apr 13, 2026). 501(c)(3) not filed."
+  },
+  "research": {
+    "paper_xii": "Sovereign Stack \u2014 11pp, triple-gated, Zenodo-ready",
+    "bonding_tests": "413 / 30 suites",
+    "deployed_workers": 25,
+    "http_probe_2xx_roots": 22,
+    "http_probe_degraded": 0,
+    "k4_phase": 3,
+    "k4_viz_url": "https://k4-cage.trimtab-signal.workers.dev/viz",
+    "k4_api_url": "https://k4-cage.trimtab-signal.workers.dev/api",
+    "phenix_url": "https://p31-phenix.pages.dev",
+    "hearing_ops_url": "https://ops.p31ca.org"
+  },
+  "dates": [
+    {
+      "date": "2026-04-13",
+      "event": "EIN 42-1888158 assigned by IRS (CP 575E)"
+    },
+    {
+      "date": "2026-04-14",
+      "event": "Discovery sent to McGhan (3 docs)"
+    },
+    {
+      "date": "2026-04-14",
+      "event": "K4 Phase 3 + Phenix Weave woven into fleet"
+    },
+    {
+      "date": "2026-04-15",
+      "event": "Quantum Weave refactor: p31ca ABOUT + hub/lattice; phosphorus31 Layout strip + footer"
+    },
+    {
+      "date": "2026-04-15",
+      "event": "Hearing Ops PWA build + deploy (p31-hearing-ops \u2192 ops.p31ca.org)"
+    },
+    {
+      "date": "2026-04-15",
+      "event": "P31 Technical Library (Starlight) first deploy"
+    },
+    {
+      "date": "2026-04-16",
+      "event": "CONTEMPT HEARING \u2014 Woodbine (11AM)"
+    },
+    {
+      "date": "2026-04-17",
+      "event": "Pages deploy: p31ca hub + Hearing Ops PWA"
+    },
+    {
+      "date": "2026-04-18",
+      "event": "UF Health Jax ER \u2014 hypocalcemia event (Ca 7.5, Phos 5.8)"
+    },
+    {
+      "date": "2026-04-20",
+      "event": "Mercury bank account APPROVED & ACTIVE"
+    },
+    {
+      "date": "2026-04-24",
+      "event": "Temporal sync \u2014 Command Center state grounded"
+    },
+    {
+      "date": "2026-04-24",
+      "event": "Routing fix deployed: CRDT Session WebSocket + Cloudflare Resources API"
+    },
+    {
+      "date": "2026-04-26",
+      "event": "Fleet HTTP audit: genesis /health, vault + tech library Pages 404, telemetry API-only"
+    },
+    {
+      "date": "2026-04-26",
+      "event": "p31-vault: deployments confirmed live (fix-bonding-csp branch 200); prod alias needs CF Pages branch set"
+    },
+    {
+      "date": "2026-04-30",
+      "event": "Camden County wellness baseline"
+    },
+    {
+      "date": "2026-04-30",
+      "event": "Georgia Tech Summit"
+    },
+    {
+      "date": "2026-05-17",
+      "event": "SSDI Reconsideration appeal deadline (using April 18 ER visit as evidence)"
+    },
+    {
+      "date": "2026-05-19",
+      "event": "Neurotech Frontiers Summit"
+    },
+    {
+      "date": "2026-06-01",
+      "event": "Stimpunks $3K opens"
+    },
+    {
+      "date": "2026-09-30",
+      "event": "FERS filing deadline"
+    },
+    {
+      "date": "2026-05-22",
+      "event": "Hub + about-page refactor: larmor first-class (K4 Hub), 29 about-page design-token alignment, fawn-guard→Buffer merge, pnpm migration, CI/CD pnpm-aligned pipeline, ZeroTapWarehouse exports fixed, extensions/pkg alignment"
+    },
+    {
+      "date": "2026-04-26",
+      "event": "p31-vault + p31-technical-library: fresh build + deploy, CI workflows wired"
+    }
+  ]
+}

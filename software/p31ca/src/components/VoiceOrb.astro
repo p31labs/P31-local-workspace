@@ -1,0 +1,319 @@
+---
+/**
+ * VoiceOrb.astro — PHOS Voice Phase Component
+ * Voice activation button with waveform visualization
+ *
+ * Triggers: 'phos:voice:start', 'phos:voice:stop', 'phos:voice:transcript'
+ */
+
+interface Props {
+  size?: 'sm' | 'md' | 'lg';
+  persona?: 'wj' | 'sj' | 'cj' | 'wij';
+  autoStart?: boolean;
+}
+
+const { size = 'md', persona = 'wj', autoStart = false } = Astro.props;
+
+const sizeClasses = {
+  sm: 'w-12 h-12',
+  md: 'w-16 h-16',
+  lg: 'w-24 h-24'
+};
+
+const personaColors: Record<string, { primary: string; glow: string }> = {
+  wj: { primary: '#4db8a8', glow: 'rgba(77, 184, 168, 0.5)' },
+  sj: { primary: '#10b981', glow: 'rgba(16, 185, 129, 0.5)' },
+  cj: { primary: '#f59e0b', glow: 'rgba(245, 158, 11, 0.5)' },
+  wij: { primary: '#f43f5e', glow: 'rgba(244, 63, 94, 0.5)' }
+};
+
+const color = personaColors[persona];
+---
+
+<div
+  class:list={['voice-orb relative', sizeClasses[size]]}
+  data-voice-orb
+  data-persona={persona}
+  data-auto-start={autoStart ? 'true' : 'false'}
+  style={`--orb-primary: ${color.primary}; --orb-glow: ${color.glow}`}
+>
+  <button
+    class="voice-btn w-full h-full rounded-full bg-zinc-800/90 border-2 border-zinc-700 flex items-center justify-center transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-zinc-900"
+    aria-label="Activate voice control"
+    aria-pressed="false"
+  >
+    <svg class="voice-icon w-1/2 h-1/2 text-zinc-400 transition-colors duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M12 2a3 3 0 0 1 3 3v7a3 3 0 0 1-6 0V5a3 3 0 0 1 3-3Z" />
+      <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+      <line x1="12" y1="19" x2="12" y2="22" />
+    </svg>
+
+    {/* Waveform visualization - hidden when inactive */}
+    <div class="waveform absolute inset-0 flex items-center justify-center gap-0.5 opacity-0 pointer-events-none">
+      {[...Array(5)].map((_, i) => (
+        <div
+          class="wave-bar w-1 bg-current rounded-full transition-all duration-100"
+          data-bar-index={i}
+          style={`height: 20%; animation-delay: ${i * 0.1}s`}
+        />
+      ))}
+    </div>
+  </button>
+
+  {/* Status indicator */}
+  <div class="status-badge absolute -bottom-1 -right-1 w-5 h-5 bg-zinc-900 rounded-full flex items-center justify-center border border-zinc-700">
+    <span class="status-dot w-2 h-2 rounded-full bg-zinc-600 transition-colors duration-300"></span>
+  </div>
+
+  {/* Transcript display */}
+  <div class="transcript-display absolute top-full left-1/2 -translate-x-1/2 mt-3 px-3 py-1.5 bg-zinc-800/95 backdrop-blur-sm rounded-lg border border-zinc-700 text-xs text-zinc-300 whitespace-nowrap opacity-0 pointer-events-none transition-opacity duration-300">
+    <span class="transcript-text">Listening...</span>
+  </div>
+</div>
+
+<style>
+  .voice-btn {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  }
+
+  .voice-btn:hover {
+    border-color: var(--orb-primary);
+    box-shadow: 0 0 30px var(--orb-glow);
+  }
+
+  .voice-btn[data-listening="true"] {
+    border-color: var(--orb-primary);
+    background: linear-gradient(145deg, rgba(39, 39, 42, 0.95), rgba(24, 24, 27, 0.98));
+    box-shadow: 0 0 50px var(--orb-glow), inset 0 0 20px rgba(0, 0, 0, 0.5);
+    animation: orb-pulse 2s ease-in-out infinite;
+  }
+
+  .voice-btn[data-listening="true"] .voice-icon {
+    color: var(--orb-primary);
+    opacity: 0;
+  }
+
+  .voice-btn[data-listening="true"] .waveform {
+    opacity: 1;
+    color: var(--orb-primary);
+  }
+
+  .voice-btn[data-listening="true"] .wave-bar {
+    animation: wave-bounce 0.6s ease-in-out infinite;
+  }
+
+  @keyframes orb-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+  }
+
+  @keyframes wave-bounce {
+    0%, 100% { height: 20%; }
+    50% { height: 70%; }
+  }
+
+  .voice-orb[data-active="true"] .status-dot {
+    background: var(--orb-primary);
+    box-shadow: 0 0 8px var(--orb-primary);
+    animation: status-blink 1.5s ease-in-out infinite;
+  }
+
+  @keyframes status-blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  .voice-orb[data-transcribing="true"] .transcript-display {
+    opacity: 1;
+    pointer-events: auto;
+  }
+</style>
+
+<script>
+  // VoiceOrb client-side logic
+  (function initVoiceOrb() {
+    const orbs = document.querySelectorAll('[data-voice-orb]');
+
+    orbs.forEach(orb => {
+      const btn = orb.querySelector<HTMLButtonElement>('.voice-btn');
+      const statusDot = orb.querySelector('.status-dot');
+      const transcriptDisplay = orb.querySelector('.transcript-display');
+      const transcriptText = orb.querySelector('.transcript-text');
+      const waveBars = orb.querySelectorAll<HTMLDivElement>('.wave-bar');
+
+      let isListening = false;
+      let audioContext: AudioContext | null = null;
+      let analyser: AnalyserNode | null = null;
+      let microphone: MediaStreamAudioSourceNode | null = null;
+      let animationId: number | null = null;
+
+      // Persona-aware voice triggers
+      const personaTriggers: Record<string, string[]> = {
+        wj: ['operator', 'adult', 'W.J.', 'will'],
+        sj: ['S.J.', 'youth', 'teen', 'bash', 'sebastian'],
+        cj: ['C.J.', 'guardian', 'parent', 'christyn'],
+        wij: ['Wi.J.', 'child', 'kid', 'willow']
+      };
+
+      function updateWaveform() {
+        if (!analyser || !isListening) return;
+
+        const dataArray = new Uint8Array(analyser.frequencyBinCount);
+        analyser.getByteFrequencyData(dataArray);
+
+        // Map frequency data to wave bars
+        waveBars.forEach((bar, i) => {
+          const index = Math.floor((i / waveBars.length) * dataArray.length);
+          const value = dataArray[index] || 0;
+          const height = Math.max(20, (value / 255) * 100);
+          bar.style.height = `${height}%`;
+        });
+
+        if (isListening) {
+          animationId = requestAnimationFrame(updateWaveform);
+        }
+      }
+
+      async function startListening() {
+        if (isListening) return;
+
+        try {
+          // Request microphone access
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+          audioContext = new AudioContext();
+          analyser = audioContext.createAnalyser();
+          analyser.fftSize = 64;
+
+          microphone = audioContext.createMediaStreamSource(stream);
+          microphone.connect(analyser);
+
+          isListening = true;
+          btn?.setAttribute('data-listening', 'true');
+          btn?.setAttribute('aria-pressed', 'true');
+          orb.setAttribute('data-active', 'true');
+
+          // Start waveform animation
+          updateWaveform();
+
+          // Broadcast event
+          window.dispatchEvent(new CustomEvent('phos:voice:start', {
+            detail: { persona: orb.getAttribute('data-persona'), timestamp: Date.now() }
+          }));
+
+          console.log('[VoiceOrb] Listening started');
+
+          // Simulate transcription (until Whisper WASM is ready)
+          setTimeout(() => simulateTranscription(), 2000);
+
+        } catch (err) {
+          console.error('[VoiceOrb] Microphone access denied:', err);
+          showTranscript('Microphone access required');
+        }
+      }
+
+      function stopListening() {
+        if (!isListening) return;
+
+        isListening = false;
+        btn?.setAttribute('data-listening', 'false');
+        btn?.setAttribute('aria-pressed', 'false');
+        orb.setAttribute('data-active', 'false');
+
+        if (animationId) {
+          cancelAnimationFrame(animationId);
+          animationId = null;
+        }
+
+        microphone?.disconnect();
+        audioContext?.close();
+
+        microphone = null;
+        analyser = null;
+        audioContext = null;
+
+        // Reset wave bars
+        waveBars.forEach(bar => {
+          bar.style.height = '20%';
+        });
+
+        // Broadcast event
+        window.dispatchEvent(new CustomEvent('phos:voice:stop', {
+          detail: { timestamp: Date.now() }
+        }));
+
+        console.log('[VoiceOrb] Listening stopped');
+      }
+
+      function showTranscript(text: string) {
+        if (transcriptText) {
+          transcriptText.textContent = text;
+        }
+        orb.setAttribute('data-transcribing', 'true');
+
+        setTimeout(() => {
+          orb.setAttribute('data-transcribing', 'false');
+        }, 3000);
+      }
+
+      function simulateTranscription() {
+        const currentPersona = orb.getAttribute('data-persona') || 'wj';
+        const personaName = personaTriggers[currentPersona]?.[0] || currentPersona;
+
+        // Simulate detecting a persona switch command
+        const phrases = [
+          `Switch to ${personaName} mode`,
+          'Open bonding soup',
+          'Check mesh health',
+          'What is my current persona?'
+        ];
+
+        const phrase = phrases[Math.floor(Math.random() * phrases.length)];
+        showTranscript(`"${phrase}"`);
+
+        // Broadcast transcript for Bros phase to catch
+        window.dispatchEvent(new CustomEvent('phos:voice:transcript', {
+          detail: {
+            text: phrase,
+            persona: currentPersona,
+            confidence: 0.85 + Math.random() * 0.1,
+            timestamp: Date.now()
+          }
+        }));
+
+        // Check for persona triggers
+        const normalizedPhrase = phrase.toLowerCase();
+        for (const [personaKey, triggers] of Object.entries(personaTriggers)) {
+          if (triggers.some(t => normalizedPhrase.includes(t.toLowerCase()))) {
+            // Trigger persona switch
+            window.dispatchEvent(new CustomEvent('phos:voice:persona', {
+              detail: { persona: personaKey, trigger: phrase }
+            }));
+            break;
+          }
+        }
+
+        // Auto-stop after transcription
+        setTimeout(() => stopListening(), 1500);
+      }
+
+      btn?.addEventListener('click', () => {
+        if (isListening) {
+          stopListening();
+        } else {
+          startListening();
+        }
+      });
+
+      // Listen for external stop events
+      window.addEventListener('phos:voice:stop', () => {
+        stopListening();
+      });
+
+      // Auto-start if requested (for testing)
+      if (orb.getAttribute('data-auto-start') === 'true') {
+        setTimeout(() => startListening(), 500);
+      }
+    });
+  })();
+</script>

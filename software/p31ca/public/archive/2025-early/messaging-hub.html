@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub" style="color-scheme: dark;">
+<head>
+  <meta charset="UTF-8">
+<script>(function(){var r=document.documentElement;if(/[?&]alive=1(?:&|$)/.test(location.search))return;r.classList.add("p31-gray-rock");function wake(){r.classList.remove("p31-gray-rock")}document.addEventListener("pointerdown",wake,{once:true,capture:true});document.addEventListener("keydown",wake,{once:true,capture:true})})();</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0f1115">
+  <title>Messaging hub | P31 Labs</title>
+  <meta name="description" content="One screen: mesh assistant, C.A.R.S. field chat, geodesic room, operator automation, and mail ingest — each on its own edge, indexed here.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Messaging hub">
+<meta property="og:description" content="One screen: mesh assistant, C.A.R.S. field chat, geodesic room, operator automation, and mail ingest — each on its own edge, indexed here.">
+<meta property="og:url" content="https://p31ca.org/messaging-hub.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Messaging hub">
+<meta name="twitter:description" content="One screen: mesh assistant, C.A.R.S. field chat, geodesic room, operator automation, and mail ingest — each on its own edge, indexed here.">
+  <!-- p31.messagingHub/0.1.0 — static index; no shared chat bus -->
+  <link rel="canonical" href="https://p31ca.org/messaging-hub.html">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/p31-style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/p31-tailwind-extend.js"></script>
+  <script>
+    tailwind.config = { darkMode: 'class', theme: { extend: { ...window.P31_TAILWIND_EXTEND } } } };
+  </script>
+  <style>
+    .mh-aurora {
+      position: fixed; inset: 0; z-index: -1;
+      background:
+        radial-gradient(ellipse 65% 45% at 15% 15%, rgba(37, 137, 125, 0.14) 0%, transparent 55%),
+        radial-gradient(ellipse 55% 40% at 95% 70%, rgba(139, 124, 201, 0.1) 0%, transparent 50%),
+        var(--p31-void);
+    }
+    @media (prefers-reduced-motion: reduce) { .mh-aurora { background: var(--p31-void); } }
+    .mh-card {
+      background: color-mix(in srgb, var(--p31-surface) 88%, transparent);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: var(--p31-radius-xl);
+      transition: transform 0.2s var(--p31-ease-standard), border-color 0.2s;
+    }
+    @media (hover: hover) {
+      .mh-card:hover { transform: translateY(-2px); border-color: color-mix(in srgb, var(--p31-teal) 35%, var(--p31-border-subtle)); }
+    }
+    .mh-card:focus-within { outline: 2px solid var(--p31-focus-color-hub); outline-offset: 2px; }
+    .mh-kicker { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 0.65rem; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(216,214,208,0.45); }
+    .skip-mh { position: absolute; left: -9999px; z-index: 100; }
+    .skip-mh:focus { left: 0.75rem; top: 0.75rem; background: var(--p31-surface2); color: var(--p31-paper); padding: 0.5rem 1rem; border-radius: 0.5rem; }
+  </style>
+</head>
+<body class="bg-void text-cloud min-h-screen font-sans antialiased">
+<a href="#main" style="position:absolute;left:-9999px;top:0;padding:0.5rem 1rem;background:var(--p31-void);color:var(--p31-teal);font-size:0.875rem;z-index:9999;border-radius:0 0 4px 4px;text-decoration:none" onfocus="this.style.left='0'" onblur="this.style.left='-9999px'">Skip to main content</a>
+  <a href="#mh-main" class="skip-mh">Skip to index</a>
+  <div class="mh-aurora" aria-hidden="true"></div>
+
+  <header class="border-b border-white/[0.07] bg-surface/85 backdrop-blur-md">
+    <div class="max-w-3xl mx-auto px-4 py-4 flex flex-wrap items-center justify-between gap-3">
+      <div>
+        <p class="mh-kicker mb-0.5">P31 · Comms index</p>
+        <p class="text-xs text-muted font-mono">Short URLs: <a class="text-teal/90 hover:underline" href="/messages">/messages</a> · <a class="text-teal/90 hover:underline" href="/comms">/comms</a></p>
+      </div>
+      <div class="flex flex-wrap gap-2 text-xs font-mono">
+        <a href="/mesh" class="px-3 py-1.5 rounded-lg border border-white/10 text-teal/90 hover:border-teal/35">K₄ mesh</a>
+        <a href="/" class="px-3 py-1.5 rounded-lg border border-white/10 text-muted hover:text-cloud/90 hover:border-white/20">Hub</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="main" id="mh-main" class="max-w-3xl mx-auto px-4 py-8 sm:py-10">
+    <h1 class="text-2xl sm:text-3xl font-bold text-paper leading-tight">Messaging hub</h1>
+    <p class="mt-3 text-sm text-muted leading-relaxed max-w-2xl">
+      Each lane keeps its own trust boundary. This page is only a map: where to talk, build, and hand off — without pretending every channel is one inbox.
+    </p>
+
+    <section class="mt-8 rounded-2xl border border-coral/25 bg-coral/[0.06] p-4 sm:p-5" aria-label="Household handoff">
+      <h2 class="mh-kicker text-coral/90 mb-2">Phos · S.J. &amp; W.J.</h2>
+      <p class="text-sm text-cloud/80 leading-relaxed">
+        Child-facing companion and household flows stay on dedicated surfaces with parent gates — not merged into generic operator chat buses.
+      </p>
+      <div class="mt-3 flex flex-wrap gap-2">
+        <a href="/kids" class="inline-flex items-center px-3 py-2 rounded-xl bg-surface border border-white/10 text-sm font-semibold text-paper hover:border-teal/30">Kids home →</a>
+        <a href="/onboard?welcome=kid" class="inline-flex items-center px-3 py-2 rounded-xl border border-white/10 text-sm text-teal/90 hover:border-teal/25">Calm onboard (kid path) →</a>
+      </div>
+    </section>
+
+    <ul class="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-3 list-none p-0 m-0" role="list">
+      <li>
+        <a href="/start" class="mh-card block p-5 no-underline text-inherit">
+          <span class="text-2xl" aria-hidden="true">⬡</span>
+          <span class="mt-2 block text-lg font-bold text-paper">Mesh start</span>
+          <span class="text-xs text-muted mt-1 block leading-snug">Assistant + passkey context; offline chat lines queue locally and flush when the mesh answers again.</span>
+        </a>
+      </li>
+      <li>
+        <a href="/cars" class="mh-card block p-5 no-underline text-inherit">
+          <span class="text-2xl" aria-hidden="true">⚛️</span>
+          <span class="mt-2 block text-lg font-bold text-paper">C.A.R.S. field</span>
+          <span class="text-xs text-muted mt-1 block leading-snug">Social molecules shell on the hub; pairs with bonding vertical + <span class="font-mono text-[0.65rem]">p31.carsWire</span> when you wire the mock WS.</span>
+        </a>
+      </li>
+      <li>
+        <a href="/geodesic.html" class="mh-card block p-5 no-underline text-inherit">
+          <span class="text-2xl" aria-hidden="true">📐</span>
+          <span class="mt-2 block text-lg font-bold text-paper">Geodesic room</span>
+          <span class="text-xs text-muted mt-1 block leading-snug">Shared builder + live K₄ room over WebSocket when <span class="font-mono text-[0.65rem]">?room=</span> is set — authoritative shape state in the DO.</span>
+        </a>
+      </li>
+      <li>
+        <a href="/dev" class="mh-card block p-5 no-underline text-inherit">
+          <span class="text-2xl" aria-hidden="true">🛠️</span>
+          <span class="mt-2 block text-lg font-bold text-paper">Dev workbench</span>
+          <span class="text-xs text-muted mt-1 block leading-snug">Read-only mesh probes, agent hub, orchestrator — browser session only; secrets stay off the client.</span>
+        </a>
+      </li>
+      <li>
+        <a href="/integrations/" class="mh-card block p-5 no-underline text-inherit">
+          <span class="text-2xl" aria-hidden="true">🔌</span>
+          <span class="mt-2 block text-lg font-bold text-paper">Integrations bridge</span>
+          <span class="text-xs text-muted mt-1 block leading-snug">OSS smart-home and wearable catalog — machine links + docs for wiring external message sinks.</span>
+        </a>
+      </li>
+      <li>
+        <a href="/ops/" class="mh-card block p-5 no-underline text-inherit">
+          <span class="text-2xl" aria-hidden="true">◎</span>
+          <span class="mt-2 block text-lg font-bold text-paper">Operator shell</span>
+          <span class="text-xs text-muted mt-1 block leading-snug">Glass summary and whitelisted actions on the workstation that runs the local command center — not a public chat endpoint.</span>
+        </a>
+      </li>
+    </ul>
+
+    <section class="mt-10 pt-8 border-t border-white/[0.08]" aria-label="Sovereign Worker SPAs">
+      <h2 class="mh-kicker mb-3">Sovereign edge apps</h2>
+      <p class="text-sm text-muted mb-4 max-w-2xl leading-relaxed">
+        Local-first SPAs on Workers; hub short paths 302 to <span class="font-mono text-[0.7rem] text-teal/80">*.trimtab-signal.workers.dev</span>.
+        Full table with <span class="font-mono text-[0.7rem]">workers.dev</span> targets: <a class="text-teal/90 hover:underline" href="/integrations/">Integrations bridge →</a>
+      </p>
+      <ul class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm list-none p-0 m-0 font-mono">
+        <li><a class="text-teal/90 hover:underline" href="/appointment-tracker">/appointment-tracker</a></li>
+        <li><a class="text-teal/90 hover:underline" href="/love-ledger">/love-ledger</a></li>
+        <li><a class="text-teal/90 hover:underline" href="/medical-tracker">/medical-tracker</a></li>
+        <li><a class="text-teal/90 hover:underline" href="/somatic-anchor">/somatic-anchor</a></li>
+        <li><a class="text-teal/90 hover:underline" href="/legal-evidence">/legal-evidence</a></li>
+        <li><a class="text-teal/90 hover:underline" href="/contact-locker">/contact-locker</a></li>
+        <li><a class="text-teal/90 hover:underline" href="/sleep-tracker">/sleep-tracker</a></li>
+        <li><a class="text-teal/90 hover:underline" href="/budget-tracker">/budget-tracker</a></li>
+        <li><a class="text-teal/90 hover:underline" href="/genesis-gate">/genesis-gate</a></li>
+      </ul>
+    </section>
+
+    <section class="mt-8 pt-6 border-t border-white/[0.06]" aria-label="Mesh and bridge Workers">
+      <h2 class="mh-kicker mb-3">Mesh · geodesic · OAuth · BONDING relay</h2>
+      <p class="text-xs text-muted mb-3 max-w-xl">Canonical roots from <span class="font-mono">p31-constants.json</span> → <a class="text-teal/80 hover:underline" href="/p31-mesh-constants.json">/p31-mesh-constants.json</a>.</p>
+      <dl class="space-y-2 text-xs font-mono text-cloud/80">
+        <div class="flex flex-wrap gap-x-2"><dt class="text-muted shrink-0">k4-personal</dt><dd><a class="text-teal/85 hover:underline break-all" href="https://k4-personal.trimtab-signal.workers.dev/api/health">/api/health</a></dd></div>
+        <div class="flex flex-wrap gap-x-2"><dt class="text-muted shrink-0">geodesic-room</dt><dd><a class="text-teal/85 hover:underline break-all" href="https://geodesic-room.trimtab-signal.workers.dev/">DO root</a></dd></div>
+        <div class="flex flex-wrap gap-x-2"><dt class="text-muted shrink-0">google-bridge</dt><dd><a class="text-teal/85 hover:underline break-all" href="https://p31-google-bridge.trimtab-signal.workers.dev/health">/health</a></dd></div>
+        <div class="flex flex-wrap gap-x-2"><dt class="text-muted shrink-0">bonding-relay</dt><dd><a class="text-teal/85 hover:underline break-all" href="https://bonding-relay.trimtab-signal.workers.dev/health">/health</a></dd></div>
+      </dl>
+    </section>
+
+    <section class="mt-10 pt-8 border-t border-white/[0.08]" aria-label="Automation and mail">
+      <h2 class="mh-kicker mb-3">Automation · mail · proof</h2>
+      <div class="space-y-3 text-sm text-cloud/75 leading-relaxed">
+        <p>
+          <strong class="text-paper/95">SIMPLEX</strong> (cloud worker) can run skills with an optional local <strong class="text-paper/95">Ollama</strong> fallback when Anthropic is unavailable — configured at deploy time on the worker, not in this static file.
+        </p>
+        <p>
+          <strong class="text-paper/95">Mail ingest</strong> uses an HMAC-signed path on the SIMPLEX worker; the Email Worker fans out when <span class="font-mono text-xs text-teal/80">SIMPLEX_INGEST_URL</span> is set. Treat keys like production secrets.
+        </p>
+        <p>
+          <strong class="text-paper/95">Delta hiring</strong> and portable proof records live at <a class="text-teal/90 hover:underline" href="/hiring">/hiring</a> — separate product surface, same hub origin.
+        </p>
+      </div>
+    </section>
+
+    <footer class="mt-12 pt-6 border-t border-white/[0.06] text-xs text-muted font-mono">
+      <p>p31.messagingHub/0.1.0 · <a href="/delta.html" class="text-teal/80 hover:underline">Wye→Delta</a> · <a href="/connect.html" class="text-teal/80 hover:underline">connect.html</a></p>
+    </footer>
+  </main>
+</body>
+</html>

@@ -1,0 +1,41 @@
+name: spoon-calculator
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "software/spoon-calculator/**"
+      - ".github/actions/**"
+      - ".github/workflows/spoon-calculator.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: spoon-calculator-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/toolchain-constants
+
+      - uses: ./.github/actions/npm-ci-project
+        with:
+          working-directory: software/spoon-calculator
+          cache-dependency-path: software/spoon-calculator/package-lock.json
+
+      - name: Build
+        working-directory: software/spoon-calculator
+        run: npm run build
+
+      - name: Deploy to Cloudflare Pages
+        if: github.ref == 'refs/heads/main'
+        uses: ./.github/actions/wrangler-run
+        with:
+          working-directory: software/spoon-calculator
+          command: pages deploy dist --project-name=spoon-calculator --branch=main
+          api-token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          account-id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

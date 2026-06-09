@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#050505">
+    <title>Simple Sovereignty | Home</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/assets/p31-operator-tailwind.js"></script>
+    <style>
+        :root { color-scheme: dark; }
+        body {
+            background-color: #050505;
+            color: #d8d6d0;
+            background-image: linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+            background-size: 40px 40px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        body.light {
+            background-color: #f4f4f5;
+            color: #1e293b;
+            background-image: linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px);
+        }
+        .glass-card {
+            background: rgba(22, 25, 32, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            transition: all 0.3s ease;
+        }
+        body.light .glass-card {
+            background: rgba(255,255,255,0.8);
+            border-color: rgba(0,0,0,0.08);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        .portal-card:hover {
+            border-color: #4db8a8;
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(77, 184, 168, 0.1);
+        }
+        .terminal-blink { animation: blink 1s step-end infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
+        body.light .terminal-section {
+            background: rgba(240,240,245,0.8);
+            border-color: rgba(0,0,0,0.08);
+        }
+        body.light .terminal-text { color: #1e293b; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col" id="sov-body">
+
+    <header class="w-full border-b border-white/5 bg-void/90 backdrop-blur-md sticky top-0 z-50" id="sov-header">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-4">
+                <a href="sovereignty.html" class="font-mono text-xs text-cloud/30 hover:text-cloud/70 transition-colors">← About</a>
+                <div class="font-bold text-xl tracking-widest" style="background: linear-gradient(90deg, #4db8a8, #8b7cc9); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                    ▲ SIMPLE SOVEREIGNTY
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <button onclick="toggleDark()" id="theme-btn" class="font-mono text-xs px-3 py-1.5 border border-white/10 rounded hover:border-white/30 transition-colors">☀</button>
+                <div class="flex items-center gap-3 font-mono text-xs text-phosphorus">
+                    <div class="w-2 h-2 rounded-full bg-phosphorus shadow-[0_0_8px_#00FF88]"></div>
+                    SYSTEM ACTIVE
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl mx-auto px-6 py-12 w-full flex flex-col gap-12">
+
+        <section class="text-center mt-8">
+            <h1 class="text-4xl md:text-5xl font-light mb-4 text-white" id="hero-title">Welcome Home, Operator</h1>
+            <p class="text-cloud/60 text-lg" id="hero-sub">Lost Ground is resolved. You are now in the Sovereign Stack.</p>
+        </section>
+
+        <!-- Quick Stats -->
+        <section class="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div class="glass-card p-6 text-center">
+                <div class="text-3xl font-bold text-cyan mb-2" id="sovereignty-level">30%</div>
+                <div class="font-mono text-xs text-cloud/50 uppercase tracking-widest">Sovereignty Level</div>
+            </div>
+            <div class="glass-card p-6 text-center">
+                <div class="text-3xl font-bold text-phosphorus mb-2">STABLE</div>
+                <div class="font-mono text-xs text-cloud/50 uppercase tracking-widest">Metabolic Status</div>
+            </div>
+            <div class="glass-card p-6 text-center">
+                <div class="text-3xl font-bold text-cyan mb-2">ACTIVE</div>
+                <div class="font-mono text-xs text-cloud/50 uppercase tracking-widest">Legal Shield</div>
+            </div>
+            <div class="glass-card p-6 text-center">
+                <div class="text-3xl font-bold text-lavender mb-2">4</div>
+                <div class="font-mono text-xs text-cloud/50 uppercase tracking-widest">Tetrahedron Vertices</div>
+            </div>
+        </section>
+
+        <!-- Portal Grid -->
+        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <a href="mission-control.html" class="glass-card portal-card p-8 block group">
+                <div class="text-4xl mb-4 transition-transform group-hover:scale-110">🚀</div>
+                <h3 class="text-xl font-bold text-white mb-2">Mission Control</h3>
+                <p class="text-cloud/60 text-sm leading-relaxed">Founder node access. Token economy and gamified operations.</p>
+            </a>
+            <a href="quantum-family.html" class="glass-card portal-card p-8 block group">
+                <div class="text-4xl mb-4 transition-transform group-hover:scale-110">🏠</div>
+                <h3 class="text-xl font-bold text-white mb-2">Family Tetrahedron</h3>
+                <p class="text-cloud/60 text-sm leading-relaxed">Trustee protocols, health tracking, and caregiver coordination.</p>
+            </a>
+            <a href="guardian.html" class="glass-card portal-card p-8 block group">
+                <div class="text-4xl mb-4 transition-transform group-hover:scale-110">🩺</div>
+                <h3 class="text-xl font-bold text-white mb-2">Medical Evidence</h3>
+                <p class="text-cloud/60 text-sm leading-relaxed">Clinical validation, ADA accommodations, and device specs.</p>
+            </a>
+            <a href="phenix-os.html" class="glass-card portal-card p-8 block group">
+                <div class="text-4xl mb-4 transition-transform group-hover:scale-110">🎛️</div>
+                <h3 class="text-xl font-bold text-white mb-2">Phenix OS</h3>
+                <p class="text-cloud/60 text-sm leading-relaxed">Operator command console. SIC-POVM navigator, Fawn Guard, Focus Timer.</p>
+            </a>
+            <a href="quantum-life-os.html" class="glass-card portal-card p-8 block group">
+                <div class="text-4xl mb-4 transition-transform group-hover:scale-110">✨</div>
+                <h3 class="text-xl font-bold text-white mb-2">Quantum Life OS</h3>
+                <p class="text-cloud/60 text-sm leading-relaxed">Quantum-coherent life operating system with consciousness integration.</p>
+            </a>
+            <a href="vault-room.html" class="glass-card portal-card p-8 block group">
+                <div class="text-4xl mb-4 transition-transform group-hover:scale-110">🔐</div>
+                <h3 class="text-xl font-bold text-white mb-2">Vault</h3>
+                <p class="text-cloud/60 text-sm leading-relaxed">Stealth addresses, encrypted identity, and Daubert-standard evidence export.</p>
+            </a>
+        </section>
+
+        <!-- Terminal -->
+        <section class="glass-card p-6 bg-black/40 border border-white/10 font-mono text-sm terminal-section">
+            <div class="flex gap-2 mb-6">
+                <div class="w-3 h-3 rounded-full bg-coral"></div>
+                <div class="w-3 h-3 rounded-full bg-butter"></div>
+                <div class="w-3 h-3 rounded-full bg-phosphorus"></div>
+            </div>
+            <div class="text-phosphorus flex flex-col gap-2 terminal-text">
+                <div><span class="text-cyan">$ sovereignty init</span> <span class="text-cloud/40">// Initializing stack...</span></div>
+                <div><span class="text-cyan">$ status check</span> <span class="text-cloud/40">// System operational</span></div>
+                <div><span class="text-cyan">$ cat manifest.json</span></div>
+                <div class="text-cloud">
+                    {<br>
+                    &nbsp;&nbsp;"operator": "Will",<br>
+                    &nbsp;&nbsp;"status": "Grounded",<br>
+                    &nbsp;&nbsp;"protocol": "TETRAHEDRON_V1",<br>
+                    &nbsp;&nbsp;"legal_shield": "USCR_25.3_ACTIVE",<br>
+                    &nbsp;&nbsp;"devices": ["P31 Compass", "P31 Buffer"]<br>
+                    }
+                </div>
+                <div><span class="text-cyan">$ _</span><span class="terminal-blink">█</span></div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="border-t border-white/5 py-8 text-center text-cloud/40 text-sm font-mono mt-auto">
+        <p class="mb-4">"Structure determines performance. Grounding determines connection."</p>
+        <div class="flex justify-center gap-6">
+            <a href="sovereignty.html" class="hover:text-cyan transition-colors">← About</a>
+            <a href="index.html" class="hover:text-cyan transition-colors">Hub</a>
+            <a href="phenix-os.html" class="hover:text-coral transition-colors">Phenix OS</a>
+        </div>
+    </footer>
+
+    <script>
+        let isDark = true;
+        function toggleDark() {
+            isDark = !isDark;
+            const body = document.getElementById('sov-body');
+            const btn = document.getElementById('theme-btn');
+            const header = document.getElementById('sov-header');
+            const title = document.getElementById('hero-title');
+            const sub = document.getElementById('hero-sub');
+            if (isDark) {
+                body.classList.remove('light');
+                header.style.background = 'rgba(15,17,21,0.92)';
+                if(title) { title.style.color = 'white'; }
+                if(sub) { sub.style.color = ''; }
+                btn.textContent = '☀';
+            } else {
+                body.classList.add('light');
+                header.style.background = 'rgba(244,244,245,0.92)';
+                if(title) { title.style.color = '#1e293b'; }
+                if(sub) { sub.style.color = '#475569'; }
+                btn.textContent = '🌙';
+            }
+        }
+        function updateStats() {
+            const level = Math.floor(Math.random() * 20) + 30;
+            document.getElementById('sovereignty-level').textContent = level + '%';
+        }
+        setInterval(updateStats, 30000);
+    </script>
+</body>
+</html>

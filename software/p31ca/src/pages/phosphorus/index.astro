@@ -1,0 +1,184 @@
+---
+/**
+ * WCD-27: Phosphorus.org — The Manifesto Front.
+ *
+ * Articulates the rejection of the "Attention Economy" and the
+ * embrace of "Cognitive Sovereignty." Phosphorus as the Light Bringer,
+ * backbone of ATP/DNA. Screen time as a cockpit for real-world agency.
+ *
+ * Imports the LivingVoid starfield concept and a central
+ * Phosphorus Hero Atom description (R3F integration placeholder —
+ * actual Three.js components require React island hydration in future WCD).
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Phosphorus — The Light Bringer"
+  description="Screen time is a cockpit, not a sinkhole. Cognitive sovereignty for the neurodivergent builder."
+  canonical="https://p31ca.org/phosphorus/"
+>
+  <main class="relative">
+
+    <!-- ═══ THE VOID ═══ -->
+    <!-- Starfield placeholder: in production, this becomes an R3F Canvas
+         with LivingVoid + a central Phosphorus Hero Atom (WCD-18/19).
+         For now, a CSS starfield approximation. -->
+    <div class="fixed inset-0 -z-10 overflow-hidden">
+      <div class="absolute inset-0 bg-void" />
+      <div
+        class="absolute inset-0 opacity-30"
+        style="background-image: radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.8), transparent), radial-gradient(1px 1px at 40% 70%, rgba(255,255,255,0.6), transparent), radial-gradient(1px 1px at 60% 20%, rgba(255,255,255,0.7), transparent), radial-gradient(1px 1px at 80% 60%, rgba(255,255,255,0.5), transparent), radial-gradient(2px 2px at 15% 85%, rgba(180,128,255,0.9), transparent), radial-gradient(1px 1px at 70% 40%, rgba(255,255,255,0.4), transparent); background-size: 250px 250px;"
+      />
+    </div>
+
+    <!-- ═══ HERO: THE LIGHT BRINGER ═══ -->
+    <section class="relative min-h-screen flex flex-col items-center justify-center px-6 text-center">
+
+      <!-- Phosphorus atom placeholder (future: R3F island) -->
+      <div class="relative w-48 h-48 mb-12">
+        <div class="absolute inset-0 rounded-full bg-[#B080FF]/5 animate-pulse" />
+        <div class="absolute inset-4 rounded-full bg-[#B080FF]/10" />
+        <div class="absolute inset-10 rounded-full bg-[#B080FF]/20" />
+        <div class="absolute inset-16 rounded-full bg-[#B080FF]/40 shadow-[0_0_60px_rgba(180,128,255,0.3)]" />
+        <div class="absolute inset-0 flex items-center justify-center">
+          <span class="text-5xl font-black text-[#B080FF] font-mono" style="text-shadow: 0 0 30px rgba(180,128,255,0.5);">P</span>
+        </div>
+      </div>
+
+      <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight leading-none mb-6">
+        <span class="text-white">The Light</span>
+        <br />
+        <span class="text-[#B080FF]" style="text-shadow: 0 0 40px rgba(180,128,255,0.3);">Bringer.</span>
+      </h1>
+
+      <p class="text-xl md:text-2xl text-white/40 font-light max-w-2xl mx-auto leading-relaxed mb-8">
+        Phosphorus. Element 15. The backbone of every ATP molecule
+        that powers your cells and every strand of DNA that makes you, you.
+      </p>
+
+      <p class="text-sm text-white/20 font-mono tracking-wider max-w-lg mx-auto">
+        From the Greek <em class="text-white/30">phōsphoros</em> — "bearer of light."
+      </p>
+    </section>
+
+    <!-- ═══ THE MANIFESTO ═══ -->
+    <section class="relative px-6 py-32 max-w-3xl mx-auto">
+      <div class="space-y-16 text-lg text-white/50 leading-relaxed">
+
+        <div>
+          <h2 class="text-3xl font-bold text-white/90 mb-6">
+            We Reject the Attention Economy.
+          </h2>
+          <p>
+            The dominant paradigm treats your attention as a commodity to be extracted.
+            Every notification, every infinite scroll, every autoplay video is a pickpocket
+            reaching into the finite budget of your cognitive day.
+          </p>
+          <p class="mt-4">
+            For neurodivergent minds — the ones running ADHD, autism, dyslexia, or any
+            combination the DSM hasn't bothered to name yet — this extraction is not
+            an inconvenience. It is an <span class="text-white/80 font-semibold">existential threat</span>.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="text-3xl font-bold text-white/90 mb-6">
+            Screen Time Is a Cockpit.
+          </h2>
+          <p>
+            A cockpit is not a sinkhole. A cockpit is where an operator sits to
+            exercise agency over a system. The instruments exist to serve the pilot.
+            The pilot does not exist to serve the instruments.
+          </p>
+          <p class="mt-4">
+            Every tool we build at P31 Labs treats screen time as cockpit time.
+            The screen is there to amplify your reach into the real world —
+            to build molecules, to understand chemistry, to connect with another human
+            who is also building. When the building is done, the screen should let you go.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="text-3xl font-bold text-white/90 mb-6">
+            Cognitive Sovereignty.
+          </h2>
+          <p>
+            Spoon theory is not a metaphor in our architecture. It is a
+            <span class="font-mono text-[#B080FF]">first-class constraint</span>.
+            Every interaction has a cognitive cost. Every reward loop has a
+            measured half-life. Every session has a graceful exit.
+          </p>
+          <p class="mt-4">
+            We do not optimize for "engagement." We optimize for
+            <span class="text-white/80 font-semibold">understanding</span>.
+            A child who builds H₂O and feels the atoms snap together has learned more
+            about covalent bonding in thirty seconds than a textbook teaches in thirty pages.
+          </p>
+          <p class="mt-4">
+            That is the mission. That is the light we carry.
+          </p>
+        </div>
+
+        <!-- The Phosphorus Connection -->
+        <div class="glass-panel p-8">
+          <h3 class="font-mono text-sm text-[#B080FF]/60 uppercase tracking-[0.2em] mb-4">
+            Why Phosphorus?
+          </h3>
+          <p class="text-white/40 leading-relaxed">
+            Phosphorus is element 15 — a quiet backbone that makes loud things possible.
+            It does not demand attention. It enables it. Every thought you've ever had
+            was powered by adenosine <em>tri<span class="text-[#B080FF]">phosphate</span></em>.
+            Every instruction in your genome is written on a
+            <span class="text-[#B080FF]">phosphate</span> backbone.
+          </p>
+          <p class="text-white/40 leading-relaxed mt-4">
+            P31 — the only stable isotope of phosphorus — is our namesake because
+            stability is not the absence of energy. It is energy that has found
+            its structure. <span class="text-white/60 font-semibold">Isostatically rigid.</span>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ THE SIGNAL ═══ -->
+    <section class="px-6 py-24 text-center">
+      <div class="max-w-xl mx-auto space-y-6">
+        <p class="font-mono text-xs text-white/15 tracking-[0.3em] uppercase">
+          The Light Bringer · Element 15 · P31 Labs
+        </p>
+        <div class="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-3">
+          <a
+            href="/"
+            class="inline-block glass-panel glass-panel-hover px-8 py-3 font-mono text-sm text-[#B080FF]/70 hover:text-[#B080FF] transition-colors"
+          >
+            Technical hub home
+          </a>
+          <a
+            href="https://phosphorus31.org/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-block glass-panel glass-panel-hover px-8 py-3 font-mono text-sm text-white/50 hover:text-white/80 transition-colors"
+          >
+            Nonprofit portal ↗
+          </a>
+          <a
+            href="https://github.com/p31labs"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-block glass-panel glass-panel-hover px-8 py-3 font-mono text-sm text-white/40 hover:text-white/70 transition-colors"
+          >
+            GitHub ↗
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="py-8 text-center border-t border-white/[0.04] space-y-3">
+    <p class="font-mono text-[10px] text-white/10 tracking-wider">
+      MANIFESTO · P31 LABS — ALSO SEE PHOSPHORUS31.ORG
+    </p>
+  </footer>
+</BaseLayout>

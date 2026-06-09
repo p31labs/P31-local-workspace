@@ -1,0 +1,74 @@
+{
+  "schema": "p31.chainAnchor/0.1.0",
+  "updated": "2026-04-30T00:00:00.000Z",
+  "sovereignLayersManifest": "p31-sovereign-layers.json",
+  "contracts": [
+    {
+      "name": "P31TransparencyAnchor",
+      "source": "packages/p31-sovereign-chain/src/P31TransparencyAnchor.sol",
+      "solidity": "0.8.24",
+      "role": "Append-only digest + URI commitments (manifest proofs).",
+      "note": "digest in anchor() is operator-chosen bytes32 (typically sha256 of UTF-8 JSON)."
+    },
+    {
+      "name": "P31ContentRoot",
+      "source": "packages/p31-sovereign-chain/src/P31ContentRoot.sol",
+      "solidity": "0.8.24",
+      "role": "Owner-managed key → CID map for IPFS/Arweave hub snapshots.",
+      "note": "Transfer owner to Safe multisig for production (see p31-sovereign-layers L10)."
+    },
+    {
+      "name": "P31ManifestRegistry",
+      "source": "packages/p31-sovereign-chain/src/P31ManifestRegistry.sol",
+      "solidity": "0.8.24",
+      "role": "SMART M — manifest id → latest digest + URI (permissionless publish).",
+      "note": "manifestId e.g. keccak256(bytes(schema string))."
+    },
+    {
+      "name": "P31AccessAllowlist",
+      "source": "packages/p31-sovereign-chain/src/P31AccessAllowlist.sol",
+      "solidity": "0.8.24",
+      "role": "SMART A — capability → address allowlist (owner).",
+      "note": "Use for gated hooks; rotate owner to multisig."
+    },
+    {
+      "name": "P31TreasuryConfig",
+      "source": "packages/p31-sovereign-chain/src/P31TreasuryConfig.sol",
+      "solidity": "0.8.24",
+      "role": "SMART T — Safe + USDC + chain id; lock after configure.",
+      "note": "Pairs with L8 on-chain payments in p31-sovereign-layers.json."
+    }
+  ],
+  "networks": [
+    {
+      "chainId": 84532,
+      "name": "base-sepolia",
+      "registryAddress": null,
+      "deployTxHash": null,
+      "explorer": "https://sepolia.basescan.org",
+      "note": "Testnet — set address after first deploy."
+    },
+    {
+      "chainId": 8453,
+      "name": "base",
+      "registryAddress": null,
+      "deployTxHash": null,
+      "explorer": "https://basescan.org",
+      "note": "Production EVM anchor home (low fee, public explorers)."
+    }
+  ],
+  "defaultIndexedManifests": [
+    {
+      "label": "contract-registry",
+      "url": "https://p31ca.org/p31-contract-registry.json"
+    },
+    {
+      "label": "creator-economy",
+      "url": "https://p31ca.org/creator-economy.json"
+    },
+    {
+      "label": "public-surface",
+      "url": "https://p31ca.org/p31-public-surface.json"
+    }
+  ]
+}

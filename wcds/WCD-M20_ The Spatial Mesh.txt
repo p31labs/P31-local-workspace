@@ -1,0 +1,20 @@
+﻿WCD-M20: THE SPATIAL MESH (Proximity Radar)
+Target: P31-OS (Browser), Web Bluetooth API
+Objective: Utilize the browser's Bluetooth API to detect nearby participants and render them spatially on the UI based on signal strength.
+1. THE WEB BLUETOOTH CONSTRAINT
+The navigator.bluetooth API is powerful but heavily sandboxed. It requires a manual user gesture to initiate a scan, and it cannot advertise (broadcast) as a peripheral directly from the browser.
+* The Solution: The P31-OS will act as the "Central" scanner. Players will rely on their device's underlying OS (or an ESP32 proxy tag in their pocket) to act as the "Peripheral" broadcaster emitting a specific UUID.
+2. THE RADAR LOGIC
+1. Activation: The UI features an [ ACTIVATE SPATIAL RADAR ] button. Clicking it triggers navigator.bluetooth.requestLEScan({ filters: [{ services: ['P31_SERVICE_UUID'] }] }).
+2. The Polling Loop: As the browser detects advertisement packets, it extracts the rssi (Received Signal Strength Indicator).
+3. Spatial Calculation: * rssi > -50 dBm = Immediate Proximity (within 3 feet, eligible for Handshake).
+   * rssi > -70 dBm = Mid Range (visible on screen).
+   * rssi < -85 dBm = Distant (fading out).
+4. Rendering: The ImmersiveCockpit.tsx 3D canvas maps these RSSI values to the Z-axis (depth). Nearby nodes appear as large, bright orbs. Distant nodes appear as faint stars.
+3. THE VALENCY OVERLAY
+* The BLE advertisement packet includes a few bytes of manufacturer data detailing the player's Valency (Hydrogen, Oxygen, Carbon).
+* The UI color-codes the glowing orbs based on this data (e.g., Carbon nodes glow cyan, Hydrogen nodes glow white).
+4. EXECUTION REQUIREMENTS (For Agent)
+* Write the useSpatialRadar.ts hook utilizing the navigator.bluetooth API.
+* Implement the RSSI-to-Distance mathematical smoothing function (to prevent the orbs from violently jittering due to signal noise).
+* Update the 3D Canvas to render the array of detected nodes in real-time.

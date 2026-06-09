@@ -1,0 +1,41 @@
+name: p31-hearing-ops
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "software/p31-hearing-ops/**"
+      - ".github/actions/**"
+      - ".github/workflows/p31-hearing-ops.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: p31-hearing-ops-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/toolchain-constants
+
+      - uses: ./.github/actions/npm-ci-project
+        with:
+          working-directory: software/p31-hearing-ops
+          cache-dependency-path: software/p31-hearing-ops/package-lock.json
+
+      - name: Build
+        working-directory: software/p31-hearing-ops
+        run: npm run build
+
+      - name: Deploy to Cloudflare Pages
+        if: github.ref == 'refs/heads/main'
+        uses: ./.github/actions/wrangler-run
+        with:
+          working-directory: software/p31-hearing-ops
+          command: pages deploy dist --project-name=p31-hearing-ops --branch=main
+          api-token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          account-id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

@@ -1,0 +1,46 @@
+[
+  {
+    "timestamp": "2026-03-23T07:48:41.485Z",
+    "validation": {
+      "valid": false,
+      "issues": [
+        "Overall spoons compliance below 100%: 0%"
+      ],
+      "users": {},
+      "summary": {
+        "totalContributors": 0,
+        "totalSpoonsRequired": 0,
+        "totalSpoonsSpent": 0,
+        "complianceRate": 0
+      }
+    },
+    "report": {
+      "timestamp": "2026-03-23T07:48:41.484Z",
+      "summary": {
+        "valid": false,
+        "totalIssues": 1,
+        "complianceRate": 0,
+        "totalContributors": 0
+      },
+      "details": {
+        "spoonsRequired": 0,
+        "spoonsSpent": 0,
+        "spoonsBalance": 0,
+        "averageCompliance": 0
+      },
+      "users": [],
+      "issues": [
+        "Overall spoons compliance below 100%: 0%"
+      ],
+      "recommendations": [
+        {
+          "priority": "HIGH",
+          "category": "Spoons Compliance",
+          "action": "Ensure all contributors have spent required spoons for their ion contributions",
+          "current": "0%",
+          "required": "100%"
+        }
+      ]
+    }
+  }
+]

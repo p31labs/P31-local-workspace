@@ -1,0 +1,157 @@
+services:
+
+  # ── Reverse proxy + TLS ──────────────────────────────────────────────
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8448:8448"   # Matrix federation port
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    environment:
+      - DOMAIN=${DOMAIN}
+      - LETSENCRYPT_EMAIL=${LETSENCRYPT_EMAIL}
+    depends_on:
+      synapse:
+        condition: service_healthy
+
+  # ── Database ─────────────────────────────────────────────────────────
+  postgres:
+    image: postgres:15-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Synapse homeserver ────────────────────────────────────────────────
+  synapse:
+    image: ghcr.io/element-hq/synapse:latest
+    restart: unless-stopped
+    environment:
+      SYNAPSE_CONFIG_PATH: /data/homeserver.yaml
+    volumes:
+      - ./data/synapse:/data
+      - ./config/homeserver.yaml:/data/homeserver.yaml:ro
+      - ./config/log.config:/data/log.config:ro
+      # Bridge registration files
+      - ./bridges/gmessages/registration.yaml:/data/bridges/gmessages.yaml:ro
+      - ./bridges/whatsapp/registration.yaml:/data/bridges/whatsapp.yaml:ro
+      - ./bridges/signal/registration.yaml:/data/bridges/signal.yaml:ro
+      - ./bridges/meta/registration.yaml:/data/bridges/meta.yaml:ro
+      - ./bridges/postmoogle/registration.yaml:/data/bridges/postmoogle.yaml:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8008/health || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 6
+      start_period: 30s
+
+  # ── Bridge: Google Messages (SMS/RCS via Android companion) ──────────
+  bridge-gmessages:
+    image: dock.mau.dev/mautrix/gmessages:latest
+    restart: unless-stopped
+    volumes:
+      - ./bridges/gmessages:/data
+    depends_on:
+      synapse:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:29336/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # ── Bridge: WhatsApp ─────────────────────────────────────────────────
+  bridge-whatsapp:
+    image: dock.mau.dev/mautrix/whatsapp:latest
+    restart: unless-stopped
+    volumes:
+      - ./bridges/whatsapp:/data
+    depends_on:
+      synapse:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:29318/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # ── Bridge: Signal ───────────────────────────────────────────────────
+  bridge-signal:
+    image: dock.mau.dev/mautrix/signal:latest
+    restart: unless-stopped
+    volumes:
+      - ./bridges/signal:/data
+    depends_on:
+      synapse:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:29328/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # ── Bridge: Meta (Messenger + Instagram) ────────────────────────────
+  bridge-meta:
+    image: dock.mau.dev/mautrix/meta:latest
+    restart: unless-stopped
+    volumes:
+      - ./bridges/meta:/data
+    depends_on:
+      synapse:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:29319/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # ── Bridge: Postmoogle (Email ↔ Matrix) — Gap G court notification ──
+  bridge-postmoogle:
+    image: registry.gitlab.com/etke.cc/postmoogle:latest
+    restart: unless-stopped
+    ports:
+      - "25:25"    # SMTP receive (court email forwarding)
+    volumes:
+      - ./bridges/postmoogle:/data
+      - caddy_data:/data/tls:ro   # Reuse Caddy's TLS certs
+    environment:
+      POSTMOOGLE_GMAIL_APP_PASSWORD: ${POSTMOOGLE_GMAIL_APP_PASSWORD}
+    depends_on:
+      synapse:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z localhost 25252 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  postgres_data:
+  caddy_data:
+  caddy_config:
+
+networks:
+  default:
+    name: p31-matrix

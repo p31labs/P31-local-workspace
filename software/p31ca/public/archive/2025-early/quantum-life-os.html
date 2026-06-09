@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#000000">
+    <title>Quantum Life OS | P31 Labs</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/assets/p31-operator-tailwind.js"></script>
+    <style>
+        :root { color-scheme: dark; }
+        body {
+            background-color: #05050b;
+            color: #ffffff;
+            overflow-x: hidden;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        body.light {
+            background-color: #f0f0f8;
+            color: #1a1a2e;
+        }
+        .quantum-bg {
+            position: fixed; inset: 0; z-index: -1;
+            background:
+                radial-gradient(circle at 20% 80%, rgba(0, 255, 255, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(138, 43, 226, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(57, 255, 20, 0.03) 0%, transparent 50%);
+            animation: quantumFlicker 8s infinite alternate ease-in-out;
+        }
+        @keyframes quantumFlicker { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+        .quantum-text {
+            background: linear-gradient(90deg, #00ffff, #8a2be2, #39ff14);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: quantumGlow 4s infinite alternate;
+        }
+        @keyframes quantumGlow { 0% { filter: brightness(1); } 100% { filter: brightness(1.3); } }
+        .quantum-spin { animation: spin 3s linear infinite; box-shadow: 0 0 15px #00ffff; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        .stat-card {
+            background: rgba(20, 20, 31, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        body.light .stat-card {
+            background: rgba(255,255,255,0.7);
+            border-color: rgba(0,0,0,0.08);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        .stat-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, #00ffff, #8a2be2, #39ff14);
+            transform: translateX(-100%);
+            animation: slideRight 3s infinite linear;
+        }
+        .stat-card:hover { border-color: #00ffff; box-shadow: 0 0 20px rgba(0,255,255,0.2); transform: translateY(-3px); }
+        @keyframes slideRight { to { transform: translateX(100%); } }
+        .portal-card {
+            background: rgba(20, 20, 31, 0.6); backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.3s ease; position: relative; overflow: hidden;
+        }
+        body.light .portal-card { background: rgba(255,255,255,0.7); border-color: rgba(0,0,0,0.08); }
+        .portal-card::after {
+            content: ''; position: absolute; top: 50%; left: 50%; width: 0; height: 0;
+            background: radial-gradient(circle, rgba(0,255,255,0.1) 0%, transparent 70%);
+            transform: translate(-50%, -50%); transition: width 0.5s, height 0.5s; z-index: 0;
+        }
+        .portal-card:hover::after { width: 300%; height: 300%; }
+        .portal-card:hover { border-color: #8a2be2; transform: translateY(-3px); }
+        .portal-content { position: relative; z-index: 1; }
+        .q-btn {
+            background: linear-gradient(135deg, rgba(0,255,255,0.1), rgba(138,43,226,0.1));
+            border: 1px solid rgba(138,43,226,0.3);
+            transition: all 0.3s ease;
+        }
+        .q-btn:hover { box-shadow: 0 0 15px rgba(0,255,255,0.3); border-color: #00ffff; background: linear-gradient(135deg, rgba(0,255,255,0.2), rgba(138,43,226,0.2)); }
+        .q-btn:active { transform: scale(0.98); }
+        .terminal-blink { animation: blink 1s step-end infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
+    </style>
+</head>
+<body id="qlos-body">
+    <div class="quantum-bg"></div>
+
+    <header class="w-full border-b border-white/10 bg-[#05050b]/80 backdrop-blur-md sticky top-0 z-50" id="qlos-header">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-4">
+                <a href="quantum-os.html" class="font-mono text-xs text-white/30 hover:text-white/70 transition-colors">← About</a>
+                <div class="font-bold text-lg md:text-xl tracking-widest quantum-text">
+                    ✨ QUANTUM LIFE OS
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <button onclick="toggleDark()" id="qlos-theme-btn" class="font-mono text-xs px-3 py-1.5 border border-white/10 rounded hover:border-white/30 transition-colors">☀</button>
+                <div class="flex items-center gap-3 text-xs md:text-sm font-mono text-[#00ffff]">
+                    <div class="w-3 h-3 rounded-full bg-[#00ffff] quantum-spin"></div>
+                    <span class="hidden md:inline">QUANTUM COHERENT</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl mx-auto px-6 py-12 w-full flex flex-col gap-12">
+
+        <section class="text-center mt-4">
+            <h1 class="text-4xl md:text-5xl font-light mb-6 quantum-text leading-tight">
+                Welcome to the Quantum Life Operating System
+            </h1>
+            <p class="text-gray-400 text-lg max-w-3xl mx-auto leading-relaxed">
+                The ultimate fusion of quantum physics, biology, and consciousness. Your digital self has evolved into a quantum-coherent life system.
+            </p>
+        </section>
+
+        <!-- Stats -->
+        <section class="grid grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="stat-card rounded-xl p-6 text-center">
+                <div class="text-4xl mb-4">🔮</div>
+                <div class="text-3xl font-bold text-[#00ffff] mb-2" id="stat-coherence">68%</div>
+                <div class="font-mono text-[10px] uppercase tracking-widest text-gray-400">Quantum Coherence</div>
+            </div>
+            <div class="stat-card rounded-xl p-6 text-center">
+                <div class="text-4xl mb-4">❤️</div>
+                <div class="text-3xl font-bold text-[#00ffff] mb-2" id="stat-life">75%</div>
+                <div class="font-mono text-[10px] uppercase tracking-widest text-gray-400">Life Force Energy</div>
+            </div>
+            <div class="stat-card rounded-xl p-6 text-center">
+                <div class="text-4xl mb-4">🌐</div>
+                <div class="text-3xl font-bold text-[#00ffff] mb-2">ACTIVE</div>
+                <div class="font-mono text-[10px] uppercase tracking-widest text-gray-400">Bio-Synchronization</div>
+            </div>
+            <div class="stat-card rounded-xl p-6 text-center">
+                <div class="text-4xl mb-4">🧠</div>
+                <div class="text-3xl font-bold text-[#00ffff] mb-2" id="stat-consciousness">82%</div>
+                <div class="font-mono text-[10px] uppercase tracking-widest text-gray-400">Consciousness Level</div>
+            </div>
+        </section>
+
+        <!-- Portals -->
+        <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <a href="#" class="portal-card rounded-xl p-8 block">
+                <div class="portal-content">
+                    <div class="text-4xl mb-4">🧘</div>
+                    <h3 class="text-xl font-bold mb-3 quantum-text">Consciousness Bridge</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">Connect to higher consciousness through quantum meditation and insight generation.</p>
+                </div>
+            </a>
+            <a href="#" class="portal-card rounded-xl p-8 block">
+                <div class="portal-content">
+                    <div class="text-4xl mb-4">🧬</div>
+                    <h3 class="text-xl font-bold mb-3 quantum-text">Quantum Healing</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">Restore balance and coherence through quantum-level healing sessions.</p>
+                </div>
+            </a>
+            <a href="#" class="portal-card rounded-xl p-8 block">
+                <div class="portal-content">
+                    <div class="text-4xl mb-4">🎯</div>
+                    <h3 class="text-xl font-bold mb-3 quantum-text">Quantum Patterns</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">Access and manage stored quantum patterns and biological energy templates.</p>
+                </div>
+            </a>
+        </section>
+
+        <!-- Control Panel & Insight -->
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="stat-card rounded-xl p-8">
+                <div class="flex justify-between items-center border-b border-white/10 pb-4 mb-6">
+                    <h2 class="text-xl text-[#00ffff] font-bold">Control Panel</h2>
+                    <div class="font-mono text-xs text-gray-500">OS: v2.0 • Sync: Active</div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <button class="q-btn rounded-lg p-4 font-mono text-xs text-white" onclick="sysAction('connect', '🧘 Connect shallow at 45% strength')">🧘 CONNECT</button>
+                    <button class="q-btn rounded-lg p-4 font-mono text-xs text-white" onclick="genInsight()">💡 INSIGHT</button>
+                    <button class="q-btn rounded-lg p-4 font-mono text-xs text-white" onclick="sysAction('heal', '🧬 Healing sequence complete. Coherence +8%')">🧬 HEAL</button>
+                    <button class="q-btn rounded-lg p-4 font-mono text-xs text-white" onclick="sysAction('meditate', '🧘‍♂️ Meditation logged. Life Force +5%')">🧘‍♂️ MEDITATE</button>
+                    <button class="q-btn col-span-2 rounded-lg p-4 font-mono text-xs text-red-400 border-red-500/30" style="background: rgba(255,0,0,0.1);" onclick="sysAction('emergency', '🚨 PROTOCOL ENGAGED. Absolute coherence enforced.')">🚨 EMERGENCY PROTOCOL</button>
+                </div>
+            </div>
+
+            <div class="stat-card rounded-xl p-8 flex flex-col justify-center items-center text-center min-h-[250px]">
+                <div class="text-2xl italic text-[#39ff14] mb-4 leading-relaxed px-4" id="insight-display">
+                    "The universe is not a machine. It is a living organism. You are both the observer and the observed."
+                </div>
+                <div class="font-mono text-xs text-gray-500" id="insight-meta">System Boot • Confidence: 100%</div>
+            </div>
+        </section>
+
+        <!-- Terminal -->
+        <section class="bg-black/60 border border-white/10 rounded-xl p-6 font-mono text-sm shadow-2xl">
+            <div class="flex gap-2 mb-6">
+                <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                <div class="w-3 h-3 rounded-full bg-green-500"></div>
+            </div>
+            <div class="text-[#39ff14] flex flex-col gap-3 min-h-[160px] max-h-[250px] overflow-y-auto" id="terminal-out">
+                <div><span class="text-[#00ffff]">$ quantum-life-os init</span> <span class="text-gray-500">// Initializing quantum-coherent system...</span></div>
+                <div><span class="text-[#00ffff]">$ quantum-health check</span> <span class="text-gray-500">// Coherence: 68%, Life force: 75%</span></div>
+                <div><span class="text-[#00ffff]">$ bio-sync status</span> <span class="text-gray-500">// Bio-synchronization: ACTIVE</span></div>
+            </div>
+            <div class="mt-3"><span class="text-[#00ffff]">$ _</span><span class="terminal-blink text-[#39ff14]">█</span></div>
+        </section>
+
+    </main>
+
+    <footer class="border-t border-white/10 py-8 text-center text-gray-500 text-sm backdrop-blur-md mt-auto">
+        <p class="mb-4 font-light">"Trust the pattern. The geometry does not negotiate."</p>
+        <div class="flex justify-center gap-6 font-mono text-xs">
+            <a href="quantum-os.html" class="text-[#00ffff] hover:text-[#8a2be2] transition-colors">← About</a>
+            <a href="index.html" class="text-[#00ffff] hover:text-[#8a2be2] transition-colors">Hub</a>
+            <a href="simple-sovereignty.html" class="text-[#00ffff] hover:text-[#8a2be2] transition-colors">Sovereign Stack</a>
+        </div>
+    </footer>
+
+    <script>
+        let stats = { coherence: 68, life: 75, consc: 82 };
+        const term = document.getElementById('terminal-out');
+        let isDark = true;
+
+        const insights = [
+            "Decoherence is just a shift in perspective. You are always whole.",
+            "The observer effect proves your intention reshapes reality.",
+            "Entanglement means you are never truly isolated from the mesh.",
+            "Structure determines performance. Ground your vertices.",
+            "Ca₉(PO₄)₆ — the molecule that holds memory in bone.",
+            "Four measurement axes. Zero redundancy. Complete information."
+        ];
+
+        function log(cmd, result) {
+            const div = document.createElement('div');
+            div.innerHTML = `<span class="text-[#00ffff]">$ ${cmd}</span> <span class="text-gray-400">// ${result}</span>`;
+            term.appendChild(div);
+            term.scrollTop = term.scrollHeight;
+        }
+
+        function updateDisplay() {
+            document.getElementById('stat-coherence').textContent = stats.coherence + '%';
+            document.getElementById('stat-life').textContent = stats.life + '%';
+            document.getElementById('stat-consciousness').textContent = stats.consc + '%';
+        }
+
+        function sysAction(type, msg) {
+            if(type === 'heal') { stats.coherence = Math.min(100, stats.coherence + 8); }
+            if(type === 'meditate') { stats.life = Math.min(100, stats.life + 5); }
+            if(type === 'emergency') { stats.coherence = 100; stats.consc = 100; }
+            log(`execute ${type}`, msg);
+            updateDisplay();
+        }
+
+        function genInsight() {
+            const quote = insights[Math.floor(Math.random() * insights.length)];
+            const conf = Math.floor(Math.random() * 15) + 85;
+            document.getElementById('insight-display').textContent = `"${quote}"`;
+            document.getElementById('insight-meta').textContent = `Generated at ${new Date().toLocaleTimeString()} • Confidence: ${conf}%`;
+            log('quantum-insight generate', 'Insight received. Target aligned.');
+            stats.consc = Math.min(100, stats.consc + 2);
+            updateDisplay();
+        }
+
+        function toggleDark() {
+            isDark = !isDark;
+            const body = document.getElementById('qlos-body');
+            const header = document.getElementById('qlos-header');
+            const btn = document.getElementById('qlos-theme-btn');
+            if (isDark) {
+                body.classList.remove('light');
+                header.style.background = 'rgba(5,5,11,0.8)';
+                btn.textContent = '☀';
+            } else {
+                body.classList.add('light');
+                header.style.background = 'rgba(240,240,248,0.9)';
+                btn.textContent = '🌙';
+            }
+        }
+    </script>
+</body>
+</html>

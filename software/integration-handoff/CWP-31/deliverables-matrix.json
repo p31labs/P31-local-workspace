@@ -1,0 +1,89 @@
+{
+  "cwp": "CWP-P31-PAR-2026-01",
+  "version": "1.0.0",
+  "updated": "2026-04-26",
+  "deliverables": [
+    {
+      "id": "D-PA1",
+      "title": "subject_id contract documented",
+      "status": "done",
+      "pr": null,
+      "verify": "CWP-31/identity.md; comment on persistSubjectAndMeta (planetary-onboard); onboard implements u_*/guest_*",
+      "notes": "Passkey: SHA-256(rawId) → u_<32 hex>; skip: guest_<20> — see identity.md line map"
+    },
+    {
+      "id": "D-PA2",
+      "title": "Onboard → mesh-start welcome/dial + first-time tetra merge",
+      "status": "done",
+      "pr": null,
+      "verify": "Redirect ?dial=&welcome= (planetary L1470-1473); seedPersonalTetra merge (mesh-start L372-384)",
+      "notes": "URL params + localStorage meta; first PUT /tetra when state lacks personalTetra"
+    },
+    {
+      "id": "D-PA3",
+      "title": "GET /agent/:id/manifest stable + documented",
+      "status": "done",
+      "pr": null,
+      "verify": "CWP-31/manifest.md + docs/PERSONAL-TETRA-UNIFIED-WORKER.md; k4-personal _manifest()",
+      "notes": "Schema p31.personalAgentManifest/0.1.0"
+    },
+    {
+      "id": "D-PA4",
+      "title": "Retention / delete story (code or runbook)",
+      "status": "done",
+      "pr": null,
+      "verify": "CWP-31/operator-data-lifecycle.md (runbook: retention truth table, delete honestly deferred, marketing gate)",
+      "notes": "MESSAGES_MAX_ROWS soft cap in PersonalAgent (trim oldest) + manifest retention; time TTL / user wipe still future"
+    },
+    {
+      "id": "D-PA5",
+      "title": "Export path (GET /history + UI or runbook)",
+      "status": "done",
+      "pr": null,
+      "verify": "operator-data-lifecycle.md; GET /agent/:id/history documented",
+      "notes": "Full UI export button optional; API path is canonical"
+    },
+    {
+      "id": "D-PA6",
+      "title": "Minors: agent-hub not primary; secrets on public chat in prod",
+      "status": "done",
+      "pr": null,
+      "verify": "CWP-31/governance-youth.md; dev-workbench discloses secret",
+      "notes": "mesh-start has no p31-agent-hub link"
+    },
+    {
+      "id": "D-PA7",
+      "title": "Constants / mesh-start worker URL alignment",
+      "status": "done",
+      "pr": null,
+      "verify": "npm run verify:constants (2026-04-26 green)",
+      "notes": "mesh-start default string must contain mesh.k4PersonalWorkerUrl"
+    },
+    {
+      "id": "D-PA8",
+      "title": "Ground truth routes onboard / meshStart / welcomePackages",
+      "status": "done",
+      "pr": null,
+      "verify": "p31ca: npm run verify:ground-truth (2026-04-26 green)",
+      "notes": null
+    },
+    {
+      "id": "D-PA9",
+      "title": "Optional cage bridge or explicit defer",
+      "status": "deferred",
+      "pr": null,
+      "verify": "N/A — see CWP-30 mesh-bridge when/if Phase 6",
+      "notes": "Explicit defer; R13 read-only for PAR until opt-in design"
+    }
+  ],
+  "phases": [
+    { "id": "PA-0", "name": "Baseline audit" },
+    { "id": "PA-1", "name": "Identity + subject binding" },
+    { "id": "PA-2", "name": "k4-personal hardening" },
+    { "id": "PA-3", "name": "p31ca static alignment" },
+    { "id": "PA-4", "name": "Governance + youth path" },
+    { "id": "PA-5", "name": "Build surface (optional same-origin)" },
+    { "id": "PA-6", "name": "Cage bridge (optional)" },
+    { "id": "PA-7", "name": "Verification + closure" }
+  ]
+}

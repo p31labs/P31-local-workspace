@@ -1,0 +1,498 @@
+/**
+ * P31 Technical Hub — unified ABOUT pages (BLUF + Observatory structure + hub “poppiness”).
+ * Pair with hub-skin.css and a per-page :root { --accent: ... } override.
+ */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap");
+
+.hub-about-page {
+  --void: #050505;
+  --surface: rgba(255, 255, 255, 0.035);
+  --surface2: rgba(255, 255, 255, 0.055);
+  --coral: var(--hub-coral, #cc6247);
+  --teal: #25897d;
+  --cyan: #4db8a8;
+  --cloud: var(--hub-cloud, #d8d6d0);
+  --muted: #6b7280;
+  --border: rgba(255, 255, 255, 0.06);
+  --font: var(--hub-font-sans, "Inter", system-ui, sans-serif);
+  --mono: var(--hub-font-mono, "Space Mono", ui-monospace, monospace);
+  position: relative;
+  min-height: 100%;
+  background: var(--void);
+  color: var(--cloud);
+  font-family: var(--font);
+  line-height: 1.6;
+}
+
+.hub-about-ambient {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 1;
+  background-image:
+    radial-gradient(ellipse 120% 80% at 50% -20%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 55%),
+    radial-gradient(circle at 85% 20%, rgba(232, 99, 111, 0.06), transparent 40%),
+    radial-gradient(circle at 10% 80%, color-mix(in srgb, var(--accent) 8%, transparent), transparent 45%),
+    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 100% 100%, 48px 48px, 48px 48px;
+}
+
+.hub-about-page > *:not(.hub-about-ambient) {
+  position: relative;
+  z-index: 1;
+}
+
+.hub-about-page a {
+  color: var(--coral);
+  text-decoration: none;
+}
+.hub-about-page a:hover {
+  text-decoration: underline;
+}
+
+/* Nav — align with Astro hub */
+.hub-about-page .nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(8, 8, 16, 0.88);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.hub-about-page .nav-inner {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.hub-about-page .nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: var(--cloud);
+}
+.hub-about-page .nav-brand:hover {
+  text-decoration: none;
+}
+.hub-brand-mark {
+  width: 32px;
+  height: 32px;
+  border-radius: 9999px;
+  border: 1px solid rgba(232, 99, 111, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 0 20px rgba(232, 99, 111, 0.12);
+}
+.hub-brand-mark::after {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--hub-rose, #e8636f);
+  box-shadow: 0 0 10px rgba(232, 99, 111, 0.55);
+}
+.hub-about-page .nav-brand-label {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  opacity: 0.88;
+}
+.hub-about-page .nav-links {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.hub-about-page .nav-link {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+.hub-about-page .nav-link:hover {
+  color: var(--cloud);
+  text-decoration: none;
+}
+.hub-about-page .nav-cta {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  background: rgba(232, 99, 111, 0.12);
+  color: var(--hub-rose, #e8636f);
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: 1px solid rgba(232, 99, 111, 0.35);
+  text-decoration: none;
+  transition: background 0.15s, box-shadow 0.15s;
+  box-shadow: 0 0 0 1px rgba(232, 99, 111, 0.08);
+}
+.hub-about-page .nav-cta:hover {
+  background: rgba(232, 99, 111, 0.2);
+  text-decoration: none;
+}
+
+.hub-about-page .nav-links .hub-btn-donate {
+  font-size: 11px;
+  padding: 6px 14px;
+  border-radius: 8px;
+}
+
+/* Fleet strip (populated by hub-about-boot.js) */
+.about-fleet-wrap {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 12px 24px 0;
+}
+.about-fleet-inner {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 14px 16px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.35);
+}
+.about-fleet-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.about-fleet-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.about-fleet-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
+}
+.about-fleet-dot.ok {
+  background: #34d399;
+  box-shadow: 0 0 10px rgba(52, 211, 153, 0.55);
+}
+.about-fleet-dot.warn {
+  background: #fbbf24;
+  box-shadow: 0 0 10px rgba(251, 191, 36, 0.45);
+}
+.about-fleet-title {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+}
+.about-fleet-ts {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.28);
+  font-family: var(--mono);
+}
+.about-fleet-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
+  gap: 8px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+.about-fleet-chip {
+  display: block;
+  text-align: center;
+  padding: 8px 6px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  text-decoration: none;
+  transition: border-color 0.15s, background 0.15s;
+}
+.about-fleet-chip:hover {
+  border-color: rgba(232, 99, 111, 0.35);
+  background: rgba(255, 255, 255, 0.04);
+  text-decoration: none;
+}
+.about-fleet-chip-name {
+  font-size: 9px;
+  color: rgba(255, 255, 255, 0.38);
+  margin-bottom: 6px;
+  word-break: break-all;
+  line-height: 1.25;
+}
+.about-fleet-chip-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  margin: 0 auto;
+  background: rgba(255, 255, 255, 0.2);
+}
+.about-fleet-chip-dot.up {
+  background: #34d399;
+  box-shadow: 0 0 6px rgba(52, 211, 153, 0.45);
+}
+.about-fleet-chip-dot.down {
+  background: #f87171;
+  box-shadow: 0 0 6px rgba(248, 113, 113, 0.45);
+}
+
+.hub-about-page .container {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 48px 24px 96px;
+}
+
+/* Hero — BLUF: white headline, accent only in subtitle + glow */
+.hub-about-page .hero {
+  text-align: center;
+  padding: 40px 0 40px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 40px;
+}
+.hub-about-page .hero-mark {
+  font-size: 52px;
+  line-height: 1;
+  margin-bottom: 16px;
+  filter: drop-shadow(0 0 28px color-mix(in srgb, var(--accent) 45%, transparent));
+}
+.hub-about-page .hero h1 {
+  font-size: clamp(1.65rem, 4.5vw, 2.35rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  text-transform: none;
+  font-family: var(--font);
+  color: #fff;
+  margin-bottom: 8px;
+  text-shadow: 0 0 48px color-mix(in srgb, var(--accent) 15%, transparent);
+}
+.hub-about-page .hero .subtitle {
+  font-size: 11px;
+  font-family: var(--mono);
+  color: var(--accent);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+  font-weight: 600;
+}
+.hub-about-page .hero .tagline {
+  font-size: 17px;
+  color: rgba(216, 214, 208, 0.88);
+  max-width: 520px;
+  margin: 0 auto;
+  line-height: 1.65;
+}
+.hub-about-page .hero .badge {
+  display: inline-block;
+  margin-top: 16px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  letter-spacing: 0.06em;
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  color: var(--accent);
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+}
+
+.hub-about-page .cta-wrap {
+  text-align: center;
+  margin: 32px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.hub-about-page .cta-btn {
+  display: inline-block;
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--accent) 92%, #000),
+    color-mix(in srgb, var(--accent) 75%, #0a0a12)
+  );
+  color: var(--void);
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  padding: 13px 36px;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: filter 0.15s, box-shadow 0.15s;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 40%, transparent), 0 12px 40px rgba(0, 0, 0, 0.45);
+}
+.hub-about-page .cta-btn:hover {
+  filter: brightness(1.08);
+  text-decoration: none;
+}
+.hub-about-page .cta-secondary {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+.hub-about-page .cta-secondary:hover {
+  color: var(--cloud);
+  text-decoration: none;
+}
+
+.hub-about-page h2 {
+  font-size: 10px;
+  font-family: var(--mono);
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 36px 0 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+.hub-about-page p {
+  font-size: 15px;
+  color: rgba(216, 214, 208, 0.84);
+  margin-bottom: 14px;
+  line-height: 1.7;
+}
+
+.hub-about-page .stack {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin: 4px 0 32px;
+}
+.hub-about-page .stack th {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 8px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+.hub-about-page .stack td {
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  vertical-align: top;
+}
+.hub-about-page .stack td:first-child {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--accent);
+  white-space: nowrap;
+  width: 100px;
+}
+.hub-about-page .stack tr:last-child td {
+  border-bottom: none;
+}
+.hub-about-page .stack tr:hover td {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.hub-about-page .footer {
+  margin-top: 64px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: 11px;
+  font-family: var(--mono);
+  color: var(--muted);
+}
+.hub-about-page .footer a {
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+.hub-about-page .footer a:hover {
+  color: var(--cloud);
+  text-decoration: none;
+}
+.hub-about-page .footer-links {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.hub-about-page .detail-grid {
+  display: grid;
+  gap: 20px;
+  margin: 28px 0;
+}
+@media (min-width: 640px) {
+  .hub-about-page .detail-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.hub-about-page .detail-card {
+  background: var(--surface2);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 20px 22px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.32);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.hub-about-page .detail-card:hover {
+  border-color: color-mix(in srgb, var(--accent) 28%, rgba(255, 255, 255, 0.08));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 12%, transparent), 0 20px 56px rgba(0, 0, 0, 0.38);
+}
+.hub-about-page .detail-card h3 {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 12px;
+  border: none;
+  padding: 0;
+}
+.hub-about-page .detail-card p {
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+.hub-about-page .detail-card p:last-child {
+  margin-bottom: 0;
+}
+.hub-about-page .detail-card ul {
+  margin: 0;
+  padding-left: 18px;
+  color: rgba(216, 214, 208, 0.88);
+  font-size: 14px;
+  line-height: 1.65;
+}
+.hub-about-page .detail-card li {
+  margin-bottom: 8px;
+}
+
+.hub-about-page .callout-p31 {
+  font-size: 13px;
+  color: rgba(216, 214, 208, 0.78);
+  border-left: 3px solid var(--teal);
+  padding: 14px 18px;
+  margin: 28px 0;
+  background: rgba(37, 137, 125, 0.09);
+  border-radius: 0 12px 12px 0;
+  line-height: 1.65;
+}
+.hub-about-page .callout-p31 a {
+  color: var(--cyan);
+}

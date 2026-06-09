@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Accessibility · P31 Stylebook</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/p31-style.css">
+  <link rel="stylesheet" href="/lib/p31-fluid.css">
+  <link rel="stylesheet" href="/stylebook/_chrome.css">
+  <style>
+    .check-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .check-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 16px;
+      background: var(--p31-surface);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: 8px;
+    }
+    .check-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+      background: rgba(0,255,136,0.12);
+      color: var(--p31-phosphor);
+    }
+    .check-content {
+      flex: 1;
+    }
+    .check-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--p31-paper);
+      margin-bottom: 2px;
+    }
+    .check-desc {
+      font-size: 12px;
+      color: var(--p31-cloud);
+      line-height: 1.5;
+    }
+    .check-criterion {
+      font-family: var(--p31-font-mono);
+      font-size: 10px;
+      color: var(--p31-muted);
+      margin-left: 8px;
+    }
+    
+    .kbd-map {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 12px;
+    }
+    .kbd-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 16px;
+      background: var(--p31-surface);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: 8px;
+    }
+    .kbd-keys {
+      display: flex;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+    .kbd-key {
+      padding: 4px 8px;
+      background: var(--p31-surface2);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: 4px;
+      font-family: var(--p31-font-mono);
+      font-size: 11px;
+      color: var(--p31-paper);
+      box-shadow: 0 1px 0 var(--p31-border-subtle);
+      min-width: 24px;
+      text-align: center;
+    }
+    .kbd-action {
+      font-size: 13px;
+      color: var(--p31-cloud);
+      text-align: right;
+    }
+  </style>
+</head>
+<body>
+  <script type="module">
+    import { renderShell, code, callout } from '/stylebook/_chrome.js';
+    import { P31ThemeController } from '/lib/p31-theme-engine.mjs';
+    window.p31Theme = new P31ThemeController({ defaultTheme: 'hub' });
+    
+    const WCAG = [
+      ['Atkinson Hyperlegible default', 'Designed for low-vision readers. Distinct b/d, p/q, 1/I/l.', '1.4.3'],
+      ['Body text ≥ 4.5:1 contrast', 'All theme/text combinations verified. Token reference shows ratios.', '1.4.3'],
+      ['Large text ≥ 3:1 contrast', 'Display sizes (24px+) and bold weights (18px+).', '1.4.3'],
+      ['Visible focus indicator', '2px outline + 2px offset on every focusable element.', '2.4.7'],
+      ['Color is never the only signal', 'State always paired with text or icon.', '1.4.1'],
+      ['Touch targets ≥ 44×44px', 'All interactive elements meet WCAG 2.5.5 minimum.', '2.5.5'],
+      ['Keyboard navigable end-to-end', 'Every action reachable without a mouse.', '2.1.1'],
+      ['Skip-to-content link', 'First focusable element on every page.', '2.4.1'],
+      ['Headings in order (h1 > h2 > h3)', 'No skipping levels. Verified in ship-bar.', '1.3.1'],
+      ['Form labels above inputs', 'Programmatically associated via for/id or wrapping.', '1.3.1'],
+      ['ARIA only when HTML can\'t', 'First rule of ARIA: don\'t. Use native elements.', 'Best practice'],
+      ['prefers-reduced-motion respected', 'All animations honor the system preference.', '2.3.3'],
+      ['prefers-color-scheme honored', 'Optional auto-sync; never overrides user manual choice.', 'Best practice'],
+      ['No autoplay video/audio', 'Period.', '1.4.2'],
+      ['Page has lang attribute', '<code>&lt;html lang="en"&gt;</code> on every page.', '3.1.1'],
+      ['Alt text on every image', 'Decorative images use empty alt="". No "image of...".', '1.1.1'],
+      ['SVG icons have title or aria-label', 'Icon-only buttons require aria-label.', '1.1.1'],
+      ['Tables have th elements', 'Use scope="col" / scope="row" for complex tables.', '1.3.1'],
+      ['Tab order matches visual order', 'No positive tabindex values. DOM order = visual order.', '2.4.3'],
+      ['Page title is unique &amp; descriptive', 'Format: "Section · Site name".', '2.4.2']
+    ];
+    
+    const KEYBOARD = [
+      [['Tab'], 'Move forward through interactive elements'],
+      [['Shift', 'Tab'], 'Move backward'],
+      [['Enter'], 'Activate focused button or link'],
+      [['Space'], 'Activate button, toggle checkbox'],
+      [['Esc'], 'Close modal, dismiss menu, clear search'],
+      [['↑', '↓'], 'Navigate within tab/menu/list'],
+      [['Home'], 'Jump to first item'],
+      [['End'], 'Jump to last item'],
+      [['⌘', 'K'], 'Focus search'],
+      [['/'], 'Focus search (alt)'],
+      [['T'], 'Cycle theme (stylebook only)'],
+      [['M'], 'Cycle mode (stylebook only)']
+    ];
+    
+    const checkList = WCAG.map(([title, desc, crit]) => `
+      <div class="check-item">
+        <div class="check-icon">✓</div>
+        <div class="check-content">
+          <div class="check-title">${title}<span class="check-criterion">WCAG ${crit}</span></div>
+          <div class="check-desc">${desc}</div>
+        </div>
+      </div>
+    `).join('');
+    
+    const kbdMap = KEYBOARD.map(([keys, action]) => `
+      <div class="kbd-row">
+        <div class="kbd-keys">
+          ${keys.map(k => `<span class="kbd-key">${k}</span>`).join('')}
+        </div>
+        <div class="kbd-action">${action}</div>
+      </div>
+    `).join('');
+    
+    const content = `
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Standard</div>
+          <h2 class="sb-h2">WCAG 2.1 AA · always</h2>
+          <p class="sb-text-lead">
+            Accessibility isn't a feature. It's the floor. Every component below ships with these guarantees,
+            and the verifier blocks merges that regress them.
+          </p>
+        </div>
+        
+        <div class="check-list">${checkList}</div>
+        
+        ${callout('info', 'Why AA, not just A?', 'Single-A is the legal minimum in most jurisdictions. Double-A is the practical minimum. We don\'t ship for the legal floor.')}
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Keyboard map</div>
+          <h2 class="sb-h2">Universal shortcuts</h2>
+          <p class="sb-text">These bindings are stable across every P31 surface. Local pages may add more,
+          but never override these.</p>
+        </div>
+        
+        <div class="kbd-map">${kbdMap}</div>
+        
+        ${callout('warn', 'Test without a mouse', 'Unplug your mouse for a day. The bugs you find are the bugs every screen-reader user lives with daily.')}
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">ARIA</div>
+          <h2 class="sb-h2">First rule: don't</h2>
+          <p class="sb-text">
+            Native HTML is more accessible than ARIA-on-divs. Use <code>&lt;button&gt;</code>,
+            not <code>&lt;div role="button"&gt;</code>. Use <code>&lt;nav&gt;</code>, not
+            <code>&lt;div role="navigation"&gt;</code>. ARIA is the last resort.
+          </p>
+        </div>
+        
+        ${code(`<!-- BAD: invented from scratch with ARIA -->
+<div role="button" tabindex="0" onclick="..." onkeydown="...">
+  Save
+</div>
+
+<!-- GOOD: native element does it all -->
+<button type="button" onclick="...">
+  Save
+</button>
+
+<!-- WHEN ARIA IS NECESSARY: provide context HTML can't -->
+
+<!-- Live region for toast notifications -->
+<div role="status" aria-live="polite" aria-atomic="true">
+  Saved · 3 nodes synced
+</div>
+
+<!-- Custom widget that has no native equivalent -->
+<div role="tablist" aria-label="View modes">
+  <button role="tab" aria-selected="true" aria-controls="day-panel" id="day-tab">
+    Day
+  </button>
+</div>
+
+<!-- Icon-only button needs accessible name -->
+<button aria-label="Settings">
+  <span aria-hidden="true">⚙</span>
+</button>
+
+<!-- Decorative icon that has nothing to convey -->
+<span aria-hidden="true">✦</span> Welcome back`, 'html', 'ARIA usage')}
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Focus management</div>
+          <h2 class="sb-h2">Where the keyboard cursor lives</h2>
+        </div>
+        
+        <table class="sb-table">
+          <thead><tr><th>Action</th><th>Focus moves to</th></tr></thead>
+          <tbody>
+            <tr><td>Page load</td><td>Stays at document start (no auto-focus on inputs)</td></tr>
+            <tr><td>Modal open</td><td>First focusable element in the modal</td></tr>
+            <tr><td>Modal close</td><td>Element that triggered the modal</td></tr>
+            <tr><td>Toast appears</td><td>Stays in place — toasts use aria-live, not focus theft</td></tr>
+            <tr><td>Form submit success</td><td>Success message (with role="status")</td></tr>
+            <tr><td>Form submit error</td><td>First invalid field (with aria-invalid)</td></tr>
+            <tr><td>Tab change</td><td>Stays on the tab; arrow keys move within tablist</td></tr>
+            <tr><td>Route navigation (SPA)</td><td>h1 of new page (with tabindex="-1")</td></tr>
+          </tbody>
+        </table>
+        
+        ${code(`/* Required for every page using the system */
+
+/* 1. Skip link visible on focus only */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 8px;
+  padding: 8px 16px;
+  background: var(--p31-primary);
+  color: var(--p31-void);
+  border-radius: 8px;
+  text-decoration: none;
+  z-index: 1000;
+}
+.skip-link:focus {
+  top: 8px;
+}
+
+/* 2. Focus visible everywhere */
+*:focus-visible {
+  outline: 2px solid var(--p31-primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* 3. Reduced motion respected globally */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}`, 'css', 'A11y essentials')}
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Test it</div>
+          <h2 class="sb-h2">Verification</h2>
+        </div>
+        
+        <table class="sb-table">
+          <thead><tr><th>Tool</th><th>What it catches</th><th>How to run</th></tr></thead>
+          <tbody>
+            <tr><td>axe-core (Playwright)</td><td>Programmatic WCAG violations</td><td><code>npm run test:a11y</code></td></tr>
+            <tr><td>Lighthouse</td><td>A11y score + best practices</td><td>Chrome DevTools or CI</td></tr>
+            <tr><td>VoiceOver (macOS)</td><td>Screen reader experience</td><td><code>⌘ + F5</code></td></tr>
+            <tr><td>NVDA (Windows)</td><td>Screen reader (Firefox)</td><td>Free download</td></tr>
+            <tr><td>Tab through page</td><td>Keyboard order &amp; focus visibility</td><td>Just press Tab. Repeatedly.</td></tr>
+            <tr><td>200% zoom</td><td>Layout breaks at high zoom</td><td>Browser zoom 200%</td></tr>
+            <tr><td>Greyscale screenshot</td><td>Color-only meaning</td><td>System color filter</td></tr>
+          </tbody>
+        </table>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Cognitive accessibility</div>
+          <h2 class="sb-h2">Beyond physical</h2>
+          <p class="sb-text">
+            P31 accessibility extends past sensory considerations. Cognitive load, executive function,
+            and processing speed all factor in.
+          </p>
+        </div>
+        
+        <table class="sb-table">
+          <thead><tr><th>Need</th><th>Pattern</th></tr></thead>
+          <tbody>
+            <tr><td>Low spoons / executive dysfunction</td><td>Spoon deficit mode → terminal-only output, no chrome</td></tr>
+            <tr><td>Memory load</td><td>Persistent state across sessions; never re-prompt for the same info</td></tr>
+            <tr><td>Decision fatigue</td><td>Smart defaults; opt-in to complexity, not opt-out</td></tr>
+            <tr><td>Time pressure</td><td>No artificial countdowns. Save drafts automatically.</td></tr>
+            <tr><td>Reading load</td><td>65ch line length. Atkinson font. Optional dyslexia-friendly mode.</td></tr>
+            <tr><td>Anxiety / overwhelm</td><td>Calm mode (warm desaturate). Confirm-then-do for irreversible actions.</td></tr>
+          </tbody>
+        </table>
+      </section>
+    `;
+    
+    renderShell({
+      activeId: 'accessibility',
+      breadcrumb: [
+        { href: '/stylebook/', label: 'Stylebook' },
+        { href: '/stylebook/', label: 'Guidelines' },
+        { label: 'Accessibility' }
+      ],
+      title: 'Accessibility',
+      subtitle: 'WCAG 2.1 AA is the floor, not the ceiling. Twenty checks, twelve keyboard bindings, and the cognitive layer most systems forget.',
+      meta: [
+        { label: 'Standard', value: 'WCAG 2.1 AA' },
+        { label: 'Checks', value: '20' },
+        { label: 'Keys', value: '12' }
+      ],
+      content
+    });
+  </script>
+</body>
+</html>

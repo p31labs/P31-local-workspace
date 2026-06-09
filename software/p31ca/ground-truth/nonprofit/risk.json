@@ -1,0 +1,248 @@
+{
+  "$schema": "p31.nonprofit.risk/1.0.0",
+  "_meta": {
+    "description": "Risk register + incident response + business continuity + insurance. Drives /security-disclosure responses and incident-response runbook.",
+    "lastUpdated": "2026-05-01",
+    "owner": "operator@phosphorus31.org",
+    "verifier": "npm run verify:nonprofit"
+  },
+  "riskRegister": [
+    {
+      "id": "R-001",
+      "category": "key-person",
+      "title": "Founder medical incapacitation",
+      "description": "Operator has hypoparathyroidism (E20.9) with critical Ca limits 8.0-9.0 mg/dL. Acute episode could remove sole executor for days to weeks.",
+      "likelihood": "medium",
+      "impact": "critical",
+      "mitigation": [
+        "Recruit Vice-Chair with operational signing authority (governance.json successionPlanning)",
+        "Document all canonical processes in /docs/runbooks/ so any board member can execute",
+        "Treasurer + Secretary jointly authorized for 90-day continuity per bylaws",
+        "Operator maintains <$1000 daily-operations buffer accessible via dual-control"
+      ],
+      "currentMitigationStatus": "partial — runbooks exist, Vice-Chair seat vacant",
+      "owner": "Board Chair"
+    },
+    {
+      "id": "R-002",
+      "category": "infrastructure",
+      "title": "Cloudflare free-tier policy change",
+      "description": "Mission depends on free-tier Workers, Pages, KV, D1. Pricing or limit changes could force budget infrastructure spend.",
+      "likelihood": "medium",
+      "impact": "high",
+      "mitigation": [
+        "Stay under all free-tier limits (10ms CPU, 1000 subrequests, 100k req/day)",
+        "Architecture is portable to other edge providers (Deno Deploy, Vercel, Bun)",
+        "Project Galileo enrollment when 501(c)(3) determination received",
+        "Reserve fund target: 12 months of paid-tier equivalent ($2400/year estimate)"
+      ],
+      "currentMitigationStatus": "good — within free-tier; portability untested",
+      "owner": "Treasurer + Operator"
+    },
+    {
+      "id": "R-003",
+      "category": "legal",
+      "title": "Charitable solicitation registration lapse in active state",
+      "description": "Soliciting donations from residents of a state where unregistered exposes org to state AG action and donor refund obligations.",
+      "likelihood": "medium",
+      "impact": "medium",
+      "mitigation": [
+        "Compliance.json tracks all 41 states requiring registration",
+        "Filing calendar generates annual reminders 60 days before each renewal",
+        "Initial deferral: register only in GA + states donating $1000+; expand from there",
+        "Geo-block donation flow from unregistered states until registered (ethical-degradation pattern)"
+      ],
+      "currentMitigationStatus": "deferred until donations begin; tracker ready",
+      "owner": "Secretary"
+    },
+    {
+      "id": "R-004",
+      "category": "data",
+      "title": "Donor data breach",
+      "description": "Donor PII (name, address, payment method, gift history) compromise could trigger GDPR/state breach notification + donor trust loss.",
+      "likelihood": "low",
+      "impact": "high",
+      "mitigation": [
+        "Stripe holds all payment-method data; we never store card numbers",
+        "Donor names + amounts stored in encrypted KV with access control",
+        "Quarterly review of who has access (principle of least privilege)",
+        "Cyber insurance once revenue threshold permits"
+      ],
+      "currentMitigationStatus": "good — minimal data stored; insurance pending",
+      "owner": "Treasurer"
+    },
+    {
+      "id": "R-005",
+      "category": "reputation",
+      "title": "Mission drift toward enterprise SaaS",
+      "description": "Pressure (from founders, donors, or board) to monetize mesh tools as B2B SaaS contradicts copyleft/edge-only ethos.",
+      "likelihood": "medium",
+      "impact": "high",
+      "mitigation": [
+        "Mission statement encoded in canon; programs.json values are publicly committed",
+        "Board adopts written 'mission lock' — material mission changes require supermajority + 60-day public-comment period",
+        "AGPL licensing makes enterprise extraction without contribution-back economically unattractive"
+      ],
+      "currentMitigationStatus": "structurally good — bylaws-flavored protection in canon",
+      "owner": "Board"
+    },
+    {
+      "id": "R-006",
+      "category": "financial",
+      "title": "Single major donor dependency",
+      "description": "If first major gift comes from one donor, premature dependency creates governance risk (donor exits = org collapse) and mission-capture risk.",
+      "likelihood": "medium",
+      "impact": "high",
+      "mitigation": [
+        "Target: no donor > 25% of annual revenue after year 2",
+        "Diversify funding sources (grants, individual, recurring, events)",
+        "Restricted-fund mechanics tracked in financials.json",
+        "Decline-policy enforces this when alignment is at risk (donor-policy.json ethicalScreening)"
+      ],
+      "currentMitigationStatus": "no donors yet — pre-empt by structuring this from day one",
+      "owner": "Board + Operator"
+    },
+    {
+      "id": "R-007",
+      "category": "operational",
+      "title": "Burnout / operator spoon deficit",
+      "description": "AuDHD + chronic illness + sole-executor status compounds. Crisis episodes deplete capacity for weeks.",
+      "likelihood": "high",
+      "impact": "medium",
+      "mitigation": [
+        "Cognitive-passport practice for self (the dogfood)",
+        "Spoon-deficit mode in tooling (terminal-only output, no chrome)",
+        "No artificial deadlines; canonical sources let work be paused without loss",
+        "Operator self-care is a fundable activity, not a luxury"
+      ],
+      "currentMitigationStatus": "structural mitigations strong; recovery still requires real time",
+      "owner": "Operator + Board (oversight)"
+    },
+    {
+      "id": "R-008",
+      "category": "legal",
+      "title": "IRS denial of 501(c)(3) determination",
+      "description": "Application could be rejected for any reason; would invalidate retroactive deductibility of contributions made under 'pending' status.",
+      "likelihood": "low",
+      "impact": "high",
+      "mitigation": [
+        "All Form 1023 narrative drawn from canon (programs.json, governance.json) — verifiable claims",
+        "Conservative interpretation of substantial-mission test",
+        "Donor-policy explicitly notes pending status; no false claim of current 501(c)(3)",
+        "If denied: convert to 501(c)(4) or for-profit B-corp; refund deductibility-conditioned gifts"
+      ],
+      "currentMitigationStatus": "application not yet filed; canon supports strong narrative",
+      "owner": "Operator + counsel TBD"
+    },
+    {
+      "id": "R-009",
+      "category": "external",
+      "title": "Hostile regulatory change (encryption ban, decentralized-tech restrictions)",
+      "description": "Mission depends on regulatory protection of encryption + private-by-default tech.",
+      "likelihood": "low",
+      "impact": "critical",
+      "mitigation": [
+        "Mission could pivot to advocacy if technical layer is foreclosed",
+        "Diversify across jurisdictions when scale permits",
+        "Public-record canon ensures continuity of intent even if implementation must change"
+      ],
+      "currentMitigationStatus": "monitoring; advocacy fallback acknowledged",
+      "owner": "Board"
+    }
+  ],
+  "incidentResponse": {
+    "classes": [
+      { "class": "P0", "criteria": "Active data breach, payment system fraud, operator medical emergency", "responseSLA": "immediate" },
+      { "class": "P1", "criteria": "Service outage, security vuln with active exploit, regulatory deadline missed", "responseSLA": "24h" },
+      { "class": "P2", "criteria": "Non-active vuln, contractual breach, donor complaint", "responseSLA": "72h" },
+      { "class": "P3", "criteria": "Minor bug, doc inaccuracy, low-impact dispute", "responseSLA": "2 weeks" }
+    ],
+    "responseTeam": {
+      "incidentCommander": "Operator (or designated alternate during incapacitation)",
+      "technicalLead": "Operator",
+      "communicationsLead": "Secretary",
+      "legalLead": "Counsel-of-record (TBD)",
+      "noteOnFlatStructure": "All roles currently held by Operator; succession plan activates dual-control on incapacitation"
+    },
+    "playbook": "/docs/runbooks/nonprofit/incident-response.md"
+  },
+  "businessContinuity": {
+    "scenarios": [
+      {
+        "scenario": "Operator unavailable < 24h",
+        "response": "No action needed; canonical sources keep ship-bar passing"
+      },
+      {
+        "scenario": "Operator unavailable 24h - 7d",
+        "response": "Treasurer + Secretary maintain operations; no policy changes; no funds movement >$1000; statement to public if revenue depends on visible activity"
+      },
+      {
+        "scenario": "Operator unavailable 7d - 90d",
+        "response": "Vice-Chair (when seated) acts as Chair; full operational continuity; board considers 90-day plan if extended"
+      },
+      {
+        "scenario": "Operator unavailable >90d or permanent",
+        "response": "Full board meeting within 30d to assess: continue, transfer mission to allied org, or wind down. Bylaws govern dissolution clause."
+      }
+    ],
+    "dataBackups": {
+      "canonical": {
+        "primary": "GitHub (p31labs/bonding-soup, p31labs/.github + others)",
+        "secondary": "Cloudflare R2 nightly snapshots (when configured)",
+        "operator-local": "/home/p31 git working tree"
+      },
+      "donorRecords": {
+        "primary": "Cloudflare KV (encrypted)",
+        "secondary": "weekly export to encrypted local + offsite copy",
+        "retention": "7 years per IRS"
+      },
+      "testRestoreCadence": "quarterly"
+    }
+  },
+  "insurance": {
+    "currentPolicies": [],
+    "neededPolicies": [
+      {
+        "type": "directors-and-officers",
+        "priority": "P0",
+        "trigger": "before first board member outside founder is seated",
+        "estimatedAnnualPremium": 800,
+        "minimumCoverage": "$1M",
+        "vendors": ["Hiscox", "The Hartford", "USLI"]
+      },
+      {
+        "type": "general-liability",
+        "priority": "P1",
+        "trigger": "first in-person event OR first physical office",
+        "estimatedAnnualPremium": 500,
+        "minimumCoverage": "$1M per occurrence"
+      },
+      {
+        "type": "cyber-liability",
+        "priority": "P1",
+        "trigger": "annual revenue > $50k OR storing donor PII > 1000 records",
+        "estimatedAnnualPremium": 1200,
+        "minimumCoverage": "$1M"
+      },
+      {
+        "type": "workers-comp",
+        "priority": "P2",
+        "trigger": "first employee (not contractor)",
+        "estimatedAnnualPremium": "varies",
+        "stateRequirement": true
+      }
+    ]
+  },
+  "securityDisclosure": {
+    "policyUrl": "https://p31ca.org/security-disclosure.html",
+    "contactEmail": "security@phosphorus31.org",
+    "pgpKey": "TBD",
+    "responseSLA": {
+      "acknowledgment": "48 hours",
+      "triageDecision": "5 days",
+      "patchTimeline": "varies by severity (P0: 24h, P1: 7d, P2: 30d, P3: next release)"
+    },
+    "safeHarborForResearchers": true,
+    "bountyProgram": false
+  }
+}

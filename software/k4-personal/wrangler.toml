@@ -1,0 +1,60 @@
+# K4-Personal — Per-user agent with SQLite-backed state, energy, reminders.
+# From monorepo: cd software && pnpm install && pnpm --filter k4-personal verify
+# Deploy: pnpm --filter k4-personal deploy   (or npm run deploy inside this folder after npm install)
+
+name = "k4-personal"
+main = "src/index.js"
+compatibility_date = "2025-10-01"
+
+[vars]
+ENVIRONMENT = "production"
+WORKER_VERSION = "1.0.0"
+TOPOLOGY = "K4_PERSONAL"
+# SOULSAFE tetra: "1" = fusion on by default when POST /chat omits `soulsafe` (still requires ≥3 spoons).
+SOULSAFE_CHAT_DEFAULT = "0"
+# Max rows in per-user `messages` table; after each /chat, oldest rows are deleted if over cap (PA-2.4).
+MESSAGES_MAX_ROWS = "2000"
+# SOULSAFE fusion audit (`soulsafe_runs`): row cap + optional max age — see soulsafe-retention.js
+SOULSAFE_RUNS_MAX_ROWS = "800"
+# Omit or "0" to disable age eviction. Else milliseconds (min 86400000 = 24h): delete runs with ts older than now−age before FIFO cap pass.
+SOULSAFE_RUNS_MAX_AGE_MS = "0"
+
+[ai]
+binding = "AI"
+
+[durable_objects]
+bindings = [{ name = "PERSONAL_AGENT", class_name = "PersonalAgent" }]
+
+# Migration v1 already applied
+# [[migrations]]
+# tag = "v1"
+# new_sqlite_classes = ["PersonalAgent"]
+# v2-personal-agent is the tag applied in Cloudflare (free plan: new_sqlite_classes required).
+[[migrations]]
+tag = "v2-personal-agent"
+new_sqlite_classes = ["PersonalAgent"]
+
+# Retired legacy DO classes from earlier k4-personal iterations (pre–current PersonalAgent).
+[[migrations]]
+tag = "v3-delete-legacy-do-classes"
+deleted_classes = [
+  "OperatorStateDO",
+  "ContextEngineDO",
+  "ShieldEngineDO",
+  "SignalProcessorDO",
+]
+
+# D1 for telemetry flush (optional)
+# [[d1_databases]]
+# binding = "DB"
+# database_name = "p31-telemetry"
+# database_id = "fc3b2ffb-4de4-4843-88b1-50e5c788dc50"
+
+# Same physical namespace as k4-cage; logical isolation via `k4s:personal:*` keys.
+# To use a dedicated namespace: `wrangler kv:namespace create K4_MESH` and paste the id.
+[[kv_namespaces]]
+binding = "K4_MESH"
+id = "a8a2ab8f61174ff6b878eb74cb6bc91d"
+
+[observability]
+enabled = true

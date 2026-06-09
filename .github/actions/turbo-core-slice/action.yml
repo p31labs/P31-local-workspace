@@ -1,0 +1,24 @@
+# Filtered typecheck, build, test, and optional remote cache for the core software packages.
+# Caller should set TURBO_TOKEN / TURBO_TEAM on the job (e.g. from secrets) for remote step to run.
+name: Turbo software core slice
+description: typecheck + build + test + optional `turbo --remote` when TURBO_TOKEN is set
+
+runs:
+  using: composite
+  steps:
+    - name: Type check (core packages)
+      shell: bash
+      run: cd software && pnpm turbo run typecheck --filter=@p31/shared --filter=@p31/bonding --filter=@p31/spaceship-earth --filter=@p31/node-zero
+
+    - name: Build packages
+      shell: bash
+      run: cd software && pnpm turbo run build --filter=@p31/shared --filter=@p31/bonding --filter=@p31/node-zero
+
+    - name: Run tests
+      shell: bash
+      run: cd software && pnpm turbo run test --filter=@p31/bonding --filter=@p31/node-zero
+
+    - name: Turborepo remote cache
+      if: ${{ env.TURBO_TOKEN != '' }}
+      shell: bash
+      run: cd software && pnpm turbo run build --filter=@p31/bonding --filter=@p31/node-zero --remote

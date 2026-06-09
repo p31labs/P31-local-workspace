@@ -1,0 +1,63 @@
+# P31 FORGE — Cloudflare Worker config
+name = "p31-forge"
+main = "worker/index.js"
+compatibility_date = "2026-04-14"
+compatibility_flags = ["nodejs_compat"]
+
+# Worker URL (after deploy): https://p31-forge.<subdomain>.workers.dev
+# Custom domain (optional):  forge.phosphorus31.org
+
+[vars]
+ALLOWED_ORIGINS = "https://phosphorus31.org,https://p31ca.org,http://localhost:5173,http://localhost:5188"
+
+# ─── Secrets (set via CLI, not committed) ────────────────────────────
+#   wrangler secret put FORGE_API_KEY
+#   wrangler secret put DISCORD_WEBHOOK_SECRET
+#   wrangler secret put GITHUB_WEBHOOK_SECRET
+#   wrangler secret put KOFI_SECRET                # Ko-fi webhook verification token
+#
+# Per-channel publish secrets (only needed for channels you use):
+#   wrangler secret put BLUESKY_HANDLE
+#   wrangler secret put BLUESKY_APP_PASSWORD
+#   wrangler secret put MASTODON_INSTANCE
+#   wrangler secret put MASTODON_ACCESS_TOKEN
+#   wrangler secret put DEVTO_API_KEY
+#   wrangler secret put HASHNODE_TOKEN
+#   wrangler secret put HASHNODE_PUBLICATION_ID
+#   wrangler secret put ZENODO_TOKEN
+#   wrangler secret put TWITTER_API_KEY
+#   wrangler secret put TWITTER_API_SECRET
+#   wrangler secret put TWITTER_ACCESS_TOKEN
+#   wrangler secret put TWITTER_ACCESS_TOKEN_SECRET
+#
+# Discord outbound webhooks (at least DISCORD_WEBHOOK_URL; aliases optional):
+#   wrangler secret put DISCORD_WEBHOOK_URL          # default channel
+#   wrangler secret put DISCORD_PAYMENT_WEBHOOK_URL  # Ko-fi payment feed
+#   wrangler secret put DISCORD_ACTIVITY_WEBHOOK_URL # activity feed
+
+# ─── KV (activity log + grants.gov scan snapshots) ───────────────────
+# Create once, then paste the id here:
+#   wrangler kv:namespace create FORGE_KV
+# [[kv_namespaces]]
+# binding = "FORGE_KV"
+# id      = "<paste-namespace-id-here>"
+
+# ─── Scheduled triggers ──────────────────────────────────────────────
+# "0 9 * * *"  → daily 09:00 UTC grants.gov watchlist scan
+# "0 * * * *"  → hourly Substack RSS scan (+ auto-fanout if
+#                SUBSTACK_AUTO_TARGETS is set, e.g. "bluesky,mastodon")
+# Handler dispatches in worker/index.js → runScheduled(event, env)
+# Free-tier Workers cron budget is tight across the whole account; leave empty locally
+# and use manual/webhook triggers, or re-enable on a paid plan / after reducing other crons.
+[triggers]
+crons = []
+# crons = ["0 9 * * *", "0 * * * *"]
+
+# Observability
+[observability]
+enabled = true
+
+# Uncomment for R2 storage of generated docs (if archiving becomes needed):
+# [[r2_buckets]]
+# binding     = "FORGE_ARCHIVE"
+# bucket_name = "p31-forge-archive"

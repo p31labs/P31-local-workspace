@@ -1,0 +1,131 @@
+---
+/**
+ * About P31 Labs - Institutional Page
+ * p31ca.org/about
+ * 
+ * Grant-ready institutional narrative
+ */
+
+import AppShell from '../layouts/AppShell.astro';
+
+const stats = [
+  { number: "104", label: "Applications", description: "In the P31 constellation ecosystem" },
+  { number: "200+", label: "Edge Locations", description: "Cloudflare Points of Presence worldwide" },
+  { number: "4", label: "Core Vertices", description: "Family mesh topology (K₄ architecture)" },
+  { number: "0%", label: "Platform Fee", description: "Ethical monetization commitment" }
+];
+
+const principles = [
+  {
+    title: "Build",
+    description: "Open-source assistive technology for neurodivergent families. Edge-native infrastructure requiring no data center.",
+    icon: "🔧"
+  },
+  {
+    title: "Create", 
+    description: "Tools for cognitive sovereignty: Cognitive Passport, spoon tracking, and K₄ family mesh architecture.",
+    icon: "✨"
+  },
+  {
+    title: "Connect",
+    description: "Decentralized family coordination with zero surveillance. Private cages on the public internet.",
+    icon: "🌐"
+  }
+];
+
+const legal = {
+  name: "P31 Labs, Inc.",
+  ein: "42-1888158",
+  status: "Georgia nonprofit corporation",
+  irs: "501(c)(3) pending",
+  founded: "2026",
+  mission: "Build, create, connect — establishing decentralized family mesh networks"
+};
+---
+
+<AppShell
+  title="About P31 Labs"
+  description="P31 Labs, Inc. is a Georgia nonprofit (EIN 42-1888158) building open-source assistive technology for neurodivergent families. 501(c)(3) pending."
+  routeName="about"
+>
+  <div class="max-w-4xl mx-auto space-y-16 py-12">
+    
+    <!-- Hero -->
+    <div class="text-center space-y-6">
+      <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">
+        P31 Labs, Inc.
+      </h1>
+      <p class="text-xl text-zinc-400 max-w-2xl mx-auto leading-relaxed">
+        {legal.mission}
+      </p>
+      <div class="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-zinc-900/80 border border-zinc-800 text-sm">
+        <span class="text-zinc-500">EIN:</span>
+        <span class="text-zinc-300 font-mono">{legal.ein}</span>
+        <span class="text-zinc-700">|</span>
+        <span class="text-emerald-400">{legal.irs}</span>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-4 gap-4">
+      {stats.map((stat) => (
+        <div class="text-center p-6 bg-zinc-900/50 rounded-xl border border-zinc-800">
+          <div class="text-3xl font-bold text-white mb-1">{stat.number}</div>
+          <div class="text-sm font-medium text-zinc-400 mb-2">{stat.label}</div>
+          <div class="text-xs text-zinc-500">{stat.description}</div>
+        </div>
+      ))}
+    </div>
+
+    <!-- Three Principles -->
+    <div class="space-y-6">
+      <h2 class="text-2xl font-semibold text-white text-center">Our Principles</h2>
+      <div class="grid grid-cols-3 gap-6">
+        {principles.map((p) => (
+          <div class="p-6 bg-zinc-900/50 rounded-xl border border-zinc-800">
+            <div class="text-3xl mb-4">{p.icon}</div>
+            <h3 class="text-lg font-semibold text-white mb-2">{p.title}</h3>
+            <p class="text-sm text-zinc-400 leading-relaxed">{p.description}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- Legal Structure -->
+    <div class="bg-zinc-900/50 rounded-xl border border-zinc-800 p-8">
+      <h2 class="text-xl font-semibold text-white mb-6">Legal Structure</h2>
+      <div class="grid grid-cols-2 gap-6 text-sm">
+        <div>
+          <div class="text-zinc-500 mb-1">Legal Name</div>
+          <div class="text-zinc-300">{legal.name}</div>
+        </div>
+        <div>
+          <div class="text-zinc-500 mb-1">EIN</div>
+          <div class="text-zinc-300 font-mono">{legal.ein}</div>
+        </div>
+        <div>
+          <div class="text-zinc-500 mb-1">Status</div>
+          <div class="text-zinc-300">{legal.status}</div>
+        </div>
+        <div>
+          <div class="text-zinc-500 mb-1">IRS Status</div>
+          <div class="text-emerald-400">{legal.irs}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Links -->
+    <div class="flex flex-wrap justify-center gap-4">
+      <a href="https://phosphorus31.org/transparency" class="px-6 py-3 bg-zinc-800 hover:bg-zinc-700 rounded-lg text-zinc-300 transition-colors">
+        Transparency Report →
+      </a>
+      <a href="https://phosphorus31.org/vertices" class="px-6 py-3 bg-zinc-800 hover:bg-zinc-700 rounded-lg text-zinc-300 transition-colors">
+        Our Team →
+      </a>
+      <a href="/grants" class="px-6 py-3 bg-zinc-800 hover:bg-zinc-700 rounded-lg text-zinc-300 transition-colors">
+        Funding →
+      </a>
+    </div>
+
+  </div>
+</AppShell>

@@ -1,0 +1,21 @@
+# Focused turbo + compliance — implementation in reusable-ci-focused.yml
+name: P31 Labs CI
+
+permissions:
+  contents: read
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: p31-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    uses: ./.github/workflows/reusable-ci-focused.yml
+    secrets: inherit

@@ -1,0 +1,32 @@
+# P31 Ko-fi Webhook Worker
+# Receives Ko-fi webhooks, tracks node count, forwards Discord notifications
+# Deploy: npx wrangler deploy --config wrangler-kofi.toml
+name = "p31-kofi-webhook"
+main = "p31_kofi_webhook_worker.js"
+compatibility_date = "2024-06-12"
+workers_dev = true
+
+# Environment Variables
+[vars]
+ENVIRONMENT = "production"
+
+# KV namespace for node count tracking
+[[kv_namespaces]]
+binding = "NODE_COUNT_KV"
+id = "ee153bbfc8c5427288ab9dddf9a1c9a9"
+
+# Secrets (set via wrangler):
+#   npx wrangler secret put KOFI_SECRET --config wrangler-kofi.toml
+#   npx wrangler secret put DISCORD_WEBHOOK_URL --config wrangler-kofi.toml
+
+# Custom Domains (add via Cloudflare dashboard):
+#   webhook.p31ca.org → p31-kofi-webhook
+#   kofi.p31ca.org → p31-kofi-webhook
+
+# Daily cron for node count digest
+[triggers]
+crons = ["20 17 * * *"]  # Daily 1:20 PM EDT (17:20 UTC)
+
+# Build configuration
+[build]
+command = "echo 'No build step required'"

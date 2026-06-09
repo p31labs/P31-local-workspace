@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub" style="color-scheme: dark;">
+<head>
+  <meta charset="UTF-8">
+<script>(function(){var r=document.documentElement;if(/[?&]alive=1(?:&|$)/.test(location.search))return;r.classList.add("p31-gray-rock");function wake(){r.classList.remove("p31-gray-rock")}document.addEventListener("pointerdown",wake,{once:true,capture:true});document.addEventListener("keydown",wake,{once:true,capture:true})})();</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0f1115">
+  <title>Telemetry Posture | P31 Labs &mdash; p31ca.org</title>
+  <meta name="description" content="P31 collects no client-side telemetry. CI-enforced. The deny list, the why, and the future-exception process &mdash; all documented.">
+<link rel="canonical" href="https://p31ca.org/telemetry-policy.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Telemetry Posture">
+<meta property="og:description" content="P31 collects no client-side telemetry. CI-enforced. The deny list, the why, and the future-exception process &amp;mdash; all documented.">
+<meta property="og:url" content="https://p31ca.org/telemetry-policy.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Telemetry Posture">
+<meta name="twitter:description" content="P31 collects no client-side telemetry. CI-enforced. The deny list, the why, and the future-exception process &amp;mdash; all documented.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/p31-style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/p31-tailwind-extend.js"></script>
+  <script>tailwind.config = { theme: { extend: { ...window.P31_TAILWIND_EXTEND } } };</script>
+</head>
+<body class="bg-void text-cloud min-h-screen font-sans antialiased px-4 py-10 max-w-3xl mx-auto text-sm leading-relaxed">
+  <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 bg-teal text-void px-3 py-1 rounded font-mono text-xs">Skip to content</a>
+
+  <nav class="flex flex-wrap gap-3 text-teal/80 text-xs font-mono mb-8" aria-label="P31 governance pages">
+    <a href="/" class="hover:underline">Hub</a>
+    <a href="/manifesto" class="hover:underline">Manifesto</a>
+    <a href="/roadmap" class="hover:underline">Roadmap</a>
+    <a href="/code-of-conduct" class="hover:underline">Code of Conduct</a>
+    <a href="/security" class="hover:underline">Security</a>
+    <a href="/transparency" class="hover:underline">Transparency</a>
+    <a href="/telemetry-policy" class="hover:underline" aria-current="page">Telemetry posture</a>
+    <a href="/status" class="hover:underline">Status</a>
+    <a href="/financials" class="hover:underline">Financials</a>
+  </nav>
+
+  <main id="main">
+    <h1 class="text-2xl font-bold text-paper mb-2">Telemetry Posture</h1>
+    <p class="text-cloud/50 text-xs mb-8">
+      <strong class="text-paper">Edition 1.0.0</strong> &middot; Effective <strong class="text-paper">2026-05-02</strong> &middot;
+      Companion to <a class="text-teal hover:underline" href="https://github.com/p31labs/bonding-soup/blob/main/docs/CWP-P31-PEER-COMP-2026-05.md"><code class="font-mono text-teal/80">CWP-P31-PEER-COMP-2026-05</code></a>.
+      Canonical source: <a class="text-teal hover:underline" href="https://github.com/p31labs/bonding-soup/blob/main/docs/TELEMETRY.md">docs/TELEMETRY.md</a>.
+    </p>
+
+    <section class="mb-10 rounded border border-teal/30 bg-teal/5 p-5">
+      <h2 class="text-paper font-semibold text-base mb-3">The one-line answer</h2>
+      <p class="text-cloud text-base">
+        <strong class="text-paper">P31 collects no client-side telemetry. Period. CI fails if any is added without a documented exception.</strong>
+      </p>
+    </section>
+
+    <section class="mb-10">
+      <h2 class="text-paper font-semibold text-base mb-3">What this means concretely</h2>
+      <p class="text-cloud/80 mb-3">No Google Analytics. No Google Tag Manager. No Plausible, Fathom, Simple Analytics, Umami, GoatCounter. No Mixpanel, Amplitude, Segment, PostHog, Heap. No Sentry, Bugsnag, Rollbar, Datadog browser RUM, New Relic browser. No Hotjar, FullStory, LogRocket, Microsoft Clarity, Smartlook. No Facebook Pixel, TikTok Pixel, Pinterest Tag, LinkedIn Insight, Twitter Analytics. No Cloudflare Web Analytics. No A/B testing platforms. No session replay tools. No advertising pixels of any kind.</p>
+      <p class="text-cloud/60 text-xs">
+        The full deny list is enforced by <code class="font-mono text-teal/80">scripts/verify-no-telemetry.mjs</code> &middot; updated when a new vendor pattern needs to be added.
+      </p>
+    </section>
+
+    <section class="mb-10">
+      <h2 class="text-paper font-semibold text-base mb-3">What this does NOT mean</h2>
+      <ul class="text-cloud/80 list-disc pl-6 space-y-2">
+        <li>Cloudflare Pages and Cloudflare Workers retain their own access logs under Cloudflare's policy. We do not separately collect or analyze them.</li>
+        <li>Browsers retain their own histories. That is the user's browser, not ours.</li>
+        <li>The Cognitive Passport stays in <code class="font-mono text-teal/80">localStorage</code> on the user's device and is read by hub pages there. The hub never transmits the passport to a P31 server.</li>
+        <li>Stripe Checkout runs on Stripe's domain when a user clicks &ldquo;donate&rdquo;; Stripe collects what Stripe collects per its own policy.</li>
+        <li>The local command center (<code class="font-mono text-teal/80">http://127.0.0.1:3131</code>, operator-only) writes audit logs to <code class="font-mono text-teal/80">~/.p31/operator-shift.jsonl</code>. That is on the operator's machine, not transmitted off-device.</li>
+        <li>The internal P31 ecosystem dashboard at <code class="font-mono text-teal/80">/telemetry</code> is an operator-facing visualization of the local mesh state, not user telemetry. It does not collect or transmit anything from public visitors.</li>
+      </ul>
+    </section>
+
+    <section class="mb-10">
+      <h2 class="text-paper font-semibold text-base mb-3">Why no telemetry</h2>
+      <ol class="text-cloud/80 list-decimal pl-6 space-y-2">
+        <li><strong class="text-paper">The operator is the product.</strong> Behavior surveillance of an operator with hypoparathyroidism, AuDHD, and an active civil case would be hostile.</li>
+        <li><strong class="text-paper">The K&#8324; family mesh holds children.</strong> Surveillance of their navigation patterns would be a betrayal even if the data never left our servers.</li>
+        <li><strong class="text-paper">The public hub serves cold strangers.</strong> Anyone walking in deserves the same treatment we give the operator.</li>
+        <li><strong class="text-paper">Telemetry is the foundation of engagement-maximization.</strong> P31's voice doctrine bans the patterns; you cannot ban the patterns and collect the data that feeds them.</li>
+        <li><strong class="text-paper">Transparency reports are easier when the answer is &ldquo;we don't have it.&rdquo;</strong> See <a class="text-teal hover:underline" href="/transparency">/transparency</a>.</li>
+      </ol>
+    </section>
+
+    <section class="mb-10">
+      <h2 class="text-paper font-semibold text-base mb-3">Reporting a violation</h2>
+      <p class="text-cloud/80">
+        If you find P31 collecting telemetry that is not on our exception list, please report it via <a class="text-teal hover:underline" href="https://github.com/p31labs/bonding-soup/blob/main/docs/security/REPORTING.md">docs/security/REPORTING.md</a>. We treat undisclosed telemetry the same as an undisclosed security defect.
+      </p>
+    </section>
+
+    <p class="text-cloud/40 text-xs mt-10 border-t border-white/10 pt-4">
+      &mdash; Operator-reviewed annually with the transparency report &middot; P31 Labs, Inc. &middot; 2026-05-02
+    </p>
+  </main>
+
+  <footer class="text-cloud/40 text-xs mt-10 pt-4 border-t border-white/10">
+    &copy; 2026 P31 Labs, Inc. &middot;
+    <a class="text-teal/60 hover:underline" href="/manifesto">Manifesto</a> &middot;
+    <a class="text-teal/60 hover:underline" href="/transparency">Transparency</a> &middot;
+    <a class="text-teal/60 hover:underline" href="/telemetry-policy" aria-current="page">Telemetry posture</a> &middot;
+    <a class="text-teal/60 hover:underline" href="/security">Security</a>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,176 @@
+---
+// Warehouse QR Sticker Print Station
+// Generate and print thermal labels for inventory tagging
+// Route: /warehouse-print
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { WAREHOUSE_BATCHES, generateStickerBatch } from '../utils/qr-printable';
+
+const title = 'Print QR Stickers';
+const description = 'Generate thermal labels for warehouse inventory';
+
+// Pre-generate batch options
+const batchOptions = WAREHOUSE_BATCHES.map(b => ({
+  ...b,
+  preview: generateStickerBatch(b.zoneId, b.category, b.prefix, 1, 5) // First 5 for preview
+}));
+---
+
+<BaseLayout title={title} description={description}>
+  <div class="print-station" style="
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: system-ui, sans-serif;
+  ">
+    <h1 style="
+      font-size: 28px;
+      margin-bottom: 8px;
+      color: #0f1115;
+    ">📦 QR Sticker Print Station</h1>
+    <p style="
+      color: #666;
+      margin-bottom: 24px;
+    ">Generate thermal labels for AJ's warehouse. Select a category, preview, then print.</p>
+
+    <div class="batch-grid" style="
+      display: grid;
+      gap: 16px;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    ">
+      {batchOptions.map(batch => (
+        <div class="batch-card" data-zone-id={batch.zoneId} style="
+          background: white;
+          border-radius: 12px;
+          padding: 16px;
+          border: 1px solid #e0e0e0;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        ">
+          <div style="
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+          ">
+            <div style="
+              width: 40px;
+              height: 40px;
+              border-radius: 8px;
+              background: #5DCAA5;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-weight: bold;
+              color: #0f1115;
+            ">{batch.pluPrefix}</div>
+            <div>
+              <h3 style="margin: 0; font-size: 16px;">{batch.name}</h3>
+              <p style="margin: 0; font-size: 13px; color: #666;">{batch.count} labels</p>
+            </div>
+          </div>
+
+          <div class="preview-list" style="
+            background: #f5f5f5;
+            border-radius: 6px;
+            padding: 8px 12px;
+            margin-bottom: 12px;
+            font-family: monospace;
+            font-size: 12px;
+          ">
+            {batch.preview.map(s => (
+              <div style="padding: 2px 0;">{s.pluCode}</div>
+            ))}
+            <div style="color: #999; font-style: italic;">... and {batch.count - 5} more</div>
+          </div>
+
+          <button
+            class="print-btn"
+            data-zone-id={batch.zoneId}
+            data-prefix={batch.prefix}
+            data-category={batch.category}
+            data-count={batch.count}
+            style="
+              width: 100%;
+              padding: 12px;
+              background: #0f1115;
+              color: white;
+              border: none;
+              border-radius: 8px;
+              font-size: 14px;
+              cursor: pointer;
+              font-weight: 500;
+            "
+          >
+            🖨️ Print {batch.name} Labels
+          </button>
+        </div>
+      ))}
+    </div>
+
+    <div class="instructions" style="
+      margin-top: 32px;
+      padding: 20px;
+      background: #f8f9fa;
+      border-radius: 12px;
+      border-left: 4px solid #5DCAA5;
+    ">
+      <h3 style="margin-top: 0;">📝 Printing Instructions</h3>
+      <ol style="line-height: 1.8; padding-left: 20px;">
+        <li>Load <strong>2" × 1"</strong> thermal labels in your printer</li>
+        <li>Select category above, click Print</li>
+        <li>From print dialog, set paper size to <strong>50mm × 25mm</strong></li>
+        <li>Disable margins and headers/footers</li>
+        <li>Peel and stick QR labels to furniture tags</li>
+        <li>Scan with warehouse app to log inventory</li>
+      </ol>
+    </div>
+
+    <div class="download-section" style="
+      margin-top: 24px;
+      text-align: center;
+    ">
+      <button id="download-all" style="
+        padding: 14px 28px;
+        background: #5DCAA5;
+        color: #0f1115;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        cursor: pointer;
+        font-weight: 600;
+      ">
+        ⬇️ Download All Labels (1,225 stickers)
+      </button>
+      <p style="font-size: 13px; color: #666; margin-top: 12px;">
+        Generates complete warehouse sticker set as HTML file
+      </p>
+    </div>
+  </div>
+
+  <script>
+    import { generateStickerBatch, generatePrintableHTML, downloadLabelsPDF } from '../utils/qr-printable';
+
+    // Print button handlers
+    document.querySelectorAll('.print-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const zoneId = parseInt(btn.dataset.zoneId);
+        const prefix = btn.dataset.prefix;
+        const category = btn.dataset.category;
+        const count = parseInt(btn.dataset.count);
+
+        // Generate stickers
+        const stickers = generateStickerBatch(zoneId, category, prefix, 1, count);
+
+        // Download/open printable HTML
+        await downloadLabelsPDF(stickers, `warehouse-${prefix.toLowerCase()}`);
+      });
+    });
+
+    // Download all button
+    document.getElementById('download-all')?.addEventListener('click', async () => {
+      const { generateAllWarehouseStickers } = await import('../utils/qr-printable');
+      const allStickers = generateAllWarehouseStickers();
+      await downloadLabelsPDF(allStickers, 'warehouse-complete');
+    });
+  </script>
+</BaseLayout>

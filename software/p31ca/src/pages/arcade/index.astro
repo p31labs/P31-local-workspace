@@ -1,0 +1,482 @@
+---
+// Arcade Hub — The game launcher
+import ArcadeShell from '../../layouts/ArcadeShell.astro';
+---
+
+<ArcadeShell
+  gameId="hub"
+  gameTitle="Game Hub"
+  showSelector={false}
+>
+  <div class="arcade-hub">
+    {/* Hero */}
+    <div class="hub-hero">
+      <div class="hero-content">
+        <h1 class="hero-title">
+          <span class="pixel-text">P31</span>
+          <span class="arcade-text">ARCADE</span>
+        </h1>
+        <p class="hero-tagline">Four physics games at 10000%</p>
+        <div class="hero-stats">
+          <div class="stat">
+            <span class="stat-value">12</span>
+            <span class="stat-label">Games</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value">∞</span>
+            <span class="stat-label">Physics</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value">0</span>
+            <span class="stat-label">Tracking</span>
+          </div>
+        </div>
+      </div>
+      <div class="hero-grid-bg"></div>
+    </div>
+
+    {/* Featured Games */}
+    <section class="game-section">
+      <h2 class="section-title">
+        <span class="pixel-badge">NEW</span>
+        <span>Featured Games</span>
+      </h2>
+      <div class="game-grid featured">
+        <a href="/cybernetic-bonsai/" class="game-card large" style="--card-color: #4db8a8;">
+          <div class="card-icon">🌳</div>
+          <div class="card-info">
+            <h3>Cybernetic Bonsai</h3>
+            <p>Digital garden cultivation with freeze mechanics</p>
+            <div class="card-tags">
+              <span>React</span>
+              <span>Three.js</span>
+              <span>PGLite</span>
+            </div>
+          </div>
+          <div class="card-play">▶ PLAY</div>
+        </a>
+
+        <a href="/abyssal-node/" class="game-card large" style="--card-color: #cc6247;">
+          <div class="card-icon">🌊</div>
+          <div class="card-info">
+            <h3>Abyssal Node</h3>
+            <p>Deep sea pressure simulation</p>
+            <div class="card-tags">
+              <span>WebGL</span>
+              <span>Physics</span>
+              <span>Survival</span>
+            </div>
+          </div>
+          <div class="card-play">▶ PLAY</div>
+        </a>
+
+        <a href="/quantum-lattice/" class="game-card large" style="--card-color: #8b7cc9;">
+          <div class="card-icon">⚛️</div>
+          <div class="card-info">
+            <h3>Quantum Lattice</h3>
+            <p>Posner molecule decoherence</p>
+            <div class="card-tags">
+              <span>Quantum</span>
+              <span>QMU</span>
+              <span>Science</span>
+            </div>
+          </div>
+          <div class="card-play">▶ PLAY</div>
+        </a>
+      </div>
+    </section>
+
+    {/* Arcade Classics */}
+    <section class="game-section">
+      <h2 class="section-title">
+        <span class="pixel-badge">ARCADE</span>
+        <span>Sports & Strategy</span>
+      </h2>
+      <div class="game-grid">
+        <a href="/arcade/smallball/" class="game-card" style="--card-color: #cc6247;">
+          <div class="card-icon">⚾</div>
+          <h3>Smallball</h3>
+          <p>2.5D baseball with spoon theory</p>
+          <div class="card-meta">⚡ Markov Chains</div>
+        </a>
+
+        <a href="/arcade/gridiron/" class="game-card" style="--card-color: #3ba372;">
+          <div class="card-icon">🏈</div>
+          <h3>Gridiron</h3>
+          <p>Strategic football with energy</p>
+          <div class="card-meta">⚡ Spoon Shell</div>
+        </a>
+
+        <a href="/arcade/cards/" class="game-card" style="--card-color: #8b7cc9;">
+          <div class="card-icon">🃏</div>
+          <h3>Card Table</h3>
+          <p>Strategic card collection</p>
+          <div class="card-meta">⚡ Game Theory</div>
+        </a>
+
+        <a href="/arcade/strategy/" class="game-card" style="--card-color: #cda852;">
+          <div class="card-icon">♟️</div>
+          <h3>Strategy Board</h3>
+          <p>Tactical warfare simulation</p>
+          <div class="card-meta">⚡ Pathfinding</div>
+        </a>
+      </div>
+    </section>
+
+    {/* Creative Suite */}
+    <section class="game-section">
+      <h2 class="section-title">
+        <span class="pixel-badge">PHYSICS</span>
+        <span>Creative Suite</span>
+      </h2>
+      <div class="game-grid">
+        <a href="/arcade/liquid/" class="game-card" style="--card-color: #4db8a8;">
+          <div class="card-icon">💧</div>
+          <h3>Liquid Sculptor</h3>
+          <p>Fluid dynamics playground</p>
+          <div class="card-meta">⚡ WebGL</div>
+        </a>
+
+        <a href="/arcade/resonance/" class="game-card" style="--card-color: #cc6247;">
+          <div class="card-icon">🌊</div>
+          <h3>Resonance Rings</h3>
+          <p>Wave harmonic visualization</p>
+          <div class="card-meta">⚡ Audio API</div>
+        </a>
+
+        <a href="/arcade/poetry/" class="game-card" style="--card-color: #3ba372;">
+          <div class="card-icon">🧲</div>
+          <h3>Magnetic Poetry</h3>
+          <p>Word field interactions</p>
+          <div class="card-meta">⚡ Physics</div>
+        </a>
+
+        <a href="/arcade/orbital/" class="game-card" style="--card-color: #8b7cc9;">
+          <div class="card-icon">🪐</div>
+          <h3>Orbital Drift</h3>
+          <p>Gravity simulation sandbox</p>
+          <div class="card-meta">⚡ n-body</div>
+        </a>
+      </div>
+    </section>
+
+    {/* Footer */}
+    <footer class="arcade-footer">
+      <div class="footer-links">
+        <a href="/">← P31 Hub</a>
+        <a href="/bonding-about.html">BONDING →</a>
+      </div>
+      <div class="footer-brand">
+        <span class="pixel-text">P31 LABS</span>
+        <span>Open-source assistive technology</span>
+      </div>
+    </footer>
+  </div>
+
+  <style>
+    .arcade-hub {
+      min-height: calc(100vh - 48px);
+      background: linear-gradient(180deg, #0f1115 0%, #161920 100%);
+    }
+
+    /* Hero */
+    .hub-hero {
+      position: relative;
+      padding: 60px 20px 40px;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    .hero-grid-bg {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(77, 184, 168, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(77, 184, 168, 0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-title {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 16px;
+    }
+
+    .pixel-text {
+      font-family: 'Press Start 2P', cursive;
+      font-size: 14px;
+      color: #4db8a8;
+      letter-spacing: 0.2em;
+    }
+
+    .arcade-text {
+      font-family: 'Press Start 2P', cursive;
+      font-size: 32px;
+      background: linear-gradient(90deg, #4db8a8, #cc6247, #8b7cc9);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-tagline {
+      font-size: 14px;
+      color: rgba(232, 230, 227, 0.6);
+      margin: 0 0 32px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .hero-stats {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+    }
+
+    .stat {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .stat-value {
+      font-family: 'Press Start 2P', cursive;
+      font-size: 18px;
+      color: #cda852;
+    }
+
+    .stat-label {
+      font-size: 10px;
+      color: rgba(232, 230, 227, 0.4);
+      text-transform: uppercase;
+    }
+
+    /* Sections */
+    .game-section {
+      padding: 32px 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #e8e6e3;
+      margin: 0 0 20px;
+    }
+
+    .pixel-badge {
+      font-family: 'Press Start 2P', cursive;
+      font-size: 8px;
+      padding: 6px 10px;
+      background: #cc6247;
+      color: #0f1115;
+      border-radius: 4px;
+    }
+
+    /* Game Grid */
+    .game-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+    }
+
+    .game-grid.featured {
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    }
+
+    /* Game Cards */
+    .game-card {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 2px solid transparent;
+      border-radius: 16px;
+      text-decoration: none;
+      color: #e8e6e3;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .game-card:hover {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: var(--card-color);
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4),
+                  0 0 30px color-mix(in srgb, var(--card-color) 20%, transparent);
+    }
+
+    .game-card.large {
+      min-height: 200px;
+      justify-content: space-between;
+    }
+
+    .card-icon {
+      font-size: 48px;
+      line-height: 1;
+    }
+
+    .game-card.large .card-icon {
+      font-size: 64px;
+    }
+
+    .card-info h3 {
+      margin: 0 0 8px;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .card-info p {
+      margin: 0;
+      font-size: 13px;
+      color: rgba(232, 230, 227, 0.6);
+      line-height: 1.5;
+    }
+
+    .card-tags {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+
+    .card-tags span {
+      font-size: 10px;
+      padding: 4px 10px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 99px;
+      color: rgba(232, 230, 227, 0.7);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .card-play {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      font-family: 'Press Start 2P', cursive;
+      font-size: 10px;
+      padding: 12px 16px;
+      background: var(--card-color);
+      color: #0f1115;
+      border-radius: 8px;
+      opacity: 0;
+      transform: translateX(20px);
+      transition: all 0.3s;
+    }
+
+    .game-card:hover .card-play {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .card-meta {
+      font-size: 10px;
+      color: rgba(232, 230, 227, 0.4);
+      font-family: 'JetBrains Mono', monospace;
+      margin-top: auto;
+      padding-top: 12px;
+    }
+
+    /* Footer */
+    .arcade-footer {
+      padding: 40px 20px;
+      text-align: center;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      margin-top: 40px;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      margin-bottom: 24px;
+    }
+
+    .footer-links a {
+      color: #4db8a8;
+      text-decoration: none;
+      font-size: 13px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .footer-links a:hover {
+      text-decoration: underline;
+    }
+
+    .footer-brand {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .footer-brand .pixel-text {
+      font-size: 12px;
+      color: #cda852;
+    }
+
+    .footer-brand span:last-child {
+      font-size: 12px;
+      color: rgba(232, 230, 227, 0.4);
+    }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      .hub-hero {
+        padding: 40px 16px 32px;
+      }
+
+      .arcade-text {
+        font-size: 24px;
+      }
+
+      .hero-stats {
+        gap: 24px;
+      }
+
+      .game-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+      }
+
+      .game-grid.featured {
+        grid-template-columns: 1fr;
+      }
+
+      .game-card {
+        padding: 16px;
+      }
+
+      .card-icon {
+        font-size: 36px;
+      }
+
+      .card-info h3 {
+        font-size: 14px;
+      }
+
+      .card-info p {
+        display: none;
+      }
+
+      .card-play {
+        display: none;
+      }
+    }
+  </style>
+</ArcadeShell>

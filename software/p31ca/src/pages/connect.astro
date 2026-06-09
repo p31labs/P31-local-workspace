@@ -1,0 +1,547 @@
+---
+// @p31-layout: Workshop
+import AppShell from '../layouts/AppShell.astro';
+
+const SECTIONS = [
+  { id: 'mesh',     label: 'Mesh Start'   },
+  { id: 'auth',     label: 'Identify'     },
+  { id: 'bonding',  label: 'BONDING'      },
+  { id: 'bridge',   label: 'Bridge'       },
+  { id: 'echo',     label: 'Echo'         },
+  { id: 'signal',   label: 'Signal'       },
+  { id: 'social',   label: 'Social Mol.'  },
+  { id: 'family',   label: 'Family'       },
+  { id: 'contact',  label: 'Contact'      },
+  { id: 'poets',    label: 'Poets'        },
+  { id: 'tactile',  label: 'Tactile'      },
+  { id: 'tether',   label: 'Tether'       },
+  { id: 'agents',   label: 'Agents'       },
+  { id: 'guardian', label: 'Guardian'     },
+];
+---
+
+<AppShell title="The Mesh — P31 Labs" routeName="connect">
+  <div class="max-w-6xl mx-auto w-full px-4 md:px-6 flex flex-col min-h-[80vh]">
+
+    <header class="mb-6 pt-2 flex items-end justify-between shrink-0">
+      <div>
+        <p class="text-[10px] font-mono tracking-[0.2em] uppercase text-[color:var(--p31-violet,#8b5cf6)] mb-1 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-[color:var(--p31-violet,#8b5cf6)] animate-ping inline-block"></span>
+          Connection Topology
+        </p>
+        <h1 class="text-3xl md:text-4xl font-serif text-[color:var(--p31-cloud,#ede8e0)]">The Mesh</h1>
+      </div>
+      <div class="text-right hidden md:block">
+        <div class="p31-glass px-3 py-1.5 rounded-lg border border-[color:var(--p31-violet,#8b5cf6)]/20">
+          <span class="text-[9px] font-mono uppercase tracking-widest text-white/40 block">Cage Status</span>
+          <span class="text-xs font-mono font-bold text-[color:var(--p31-violet,#8b5cf6)]" id="cage-status-text">SYNCING...</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="flex flex-col md:flex-row gap-4 flex-grow relative">
+
+      <!-- Sidebar nav -->
+      <nav
+        id="connect-nav"
+        aria-label="Connect sections"
+        class="p31-glass flex flex-row md:flex-col gap-1 overflow-x-auto md:overflow-y-auto p-2 rounded-xl h-fit md:w-48 shrink-0 relative z-20"
+      >
+        {SECTIONS.map(({ id, label }) => (
+          <a
+            href={`#${id}`}
+            class="shrink-0 px-3 py-2 rounded-lg text-[10px] font-mono tracking-widest uppercase text-[color:var(--p31-cloud-muted,rgba(237,232,224,0.5))] hover:bg-white/5 hover:text-[color:var(--p31-cloud,#ede8e0)] transition-all whitespace-nowrap aria-[current=true]:bg-[color:var(--p31-violet,#8b5cf6)]/15 aria-[current=true]:text-[color:var(--p31-violet,#8b5cf6)] aria-[current=true]:font-bold aria-[current=true]:border aria-[current=true]:border-[color:var(--p31-violet,#8b5cf6)]/30 border border-transparent"
+          >
+            {label}
+          </a>
+        ))}
+      </nav>
+
+      <!-- Section container -->
+      <div class="relative flex-grow min-h-[60vh] md:min-h-0">
+        {SECTIONS.map(({ id, label }) => (
+          <section
+            id={id}
+            class="hash-section hidden absolute inset-0 w-full h-full"
+            aria-label={label}
+          >
+            {id === 'mesh' ? (
+              <div
+                class="p31-q-surface h-full w-full relative overflow-hidden flex flex-col"
+                data-p31-elev="1"
+                style="border: 1px solid rgba(139,92,246,0.2); border-left: 3px solid var(--p31-violet,#8b5cf6); border-radius: var(--p31-shape-lg,16px); background: radial-gradient(circle at center, rgba(139,92,246,0.05) 0%, rgba(0,0,0,0.4) 100%);"
+              >
+                <div class="absolute inset-0 pointer-events-none opacity-20" style="background-image: radial-gradient(var(--p31-violet,#8b5cf6) 1px, transparent 1px); background-size: 30px 30px;"></div>
+
+                <div class="absolute top-4 left-4 z-10 pointer-events-none">
+                  <h2 class="text-xl md:text-2xl font-serif mb-0.5 text-white drop-shadow-md">K₄ Active Network</h2>
+                  <p class="text-[9px] font-mono tracking-widest uppercase text-[color:var(--p31-violet,#8b5cf6)]">Live Force Graph · d3-force physics</p>
+                </div>
+
+                <div id="mesh-graph-container" class="absolute inset-0 w-full h-full" style="touch-action: none;" aria-label="K4 topology force graph">
+                  <!-- Orbital loader — fades out once sim settles (JS clears opacity-0) -->
+                  <div id="phos-graph-loader" class="absolute inset-0 flex flex-col items-center justify-center gap-4 transition-opacity duration-700" style="z-index: 10;" aria-live="polite">
+                    <div class="relative w-20 h-20" role="status" aria-label="Initialising K₄ topology">
+                      <svg viewBox="0 0 100 100" class="absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg">
+                        <ellipse cx="50" cy="50" rx="40" ry="12" fill="none" stroke="#0ea5e9" stroke-width="2" opacity="0.6" style="animation: phos-orbit 3s linear infinite; transform-origin: 50px 50px;"/>
+                        <g transform="rotate(60 50 50)">
+                          <ellipse cx="50" cy="50" rx="40" ry="12" fill="none" stroke="#8b5cf6" stroke-width="2" opacity="0.6" style="animation: phos-orbit 4s linear infinite reverse; transform-origin: 50px 50px;"/>
+                        </g>
+                        <g transform="rotate(120 50 50)">
+                          <ellipse cx="50" cy="50" rx="40" ry="12" fill="none" stroke="var(--p31-teal)" stroke-width="2" opacity="0.6" style="animation: phos-orbit 5s linear infinite; transform-origin: 50px 50px;"/>
+                        </g>
+                        <circle cx="50" cy="50" r="6" fill="#f43f5e"/>
+                        <circle cx="50" cy="50" r="2" fill="#fff"/>
+                      </svg>
+                    </div>
+                    <span class="font-mono text-[9px] tracking-widest uppercase" style="color: rgba(139,92,246,0.6);">Resolving K₄ topology</span>
+                  </div>
+                  <svg id="mesh-links" class="absolute inset-0 w-full h-full overflow-visible" style="pointer-events: none;" aria-hidden="true"></svg>
+                  <div id="mesh-nodes" class="absolute inset-0 w-full h-full" style="pointer-events: none;"></div>
+                </div>
+
+                <div class="absolute bottom-4 right-4 z-10 pointer-events-none flex items-center gap-2 rounded-full px-3 py-1.5 border border-white/10" style="background: rgba(0,0,0,0.6); backdrop-filter: blur(12px);">
+                  <div class="w-1.5 h-1.5 rounded-full bg-[var(--p31-teal)] animate-pulse"></div>
+                  <span id="mesh-footer-stat" class="text-[8px] font-mono text-white/50 uppercase tracking-widest">Polling k4-cage.trimtab-signal</span>
+                </div>
+              </div>
+            ) : id === 'auth' ? (
+              <div class="p31-q-surface h-full flex flex-col p-6 md:p-10" data-p31-elev="1" style="border-left: 2px solid var(--p31-violet,#8b5cf6); border-radius: var(--p31-shape-lg,16px); background: rgba(0,0,0,0.3);">
+                <h2 class="text-2xl md:text-3xl font-serif mb-2" style="color: var(--p31-cloud,#ede8e0);">Identify</h2>
+                <p class="text-[10px] font-mono tracking-widest uppercase mb-8" style="color: var(--p31-violet,#8b5cf6);">Passkey Identity Anchor</p>
+
+                <div class="flex-grow flex flex-col items-center justify-center rounded-2xl gap-8" style="border: 1px dashed var(--p31-violet); background: rgba(139,92,246,0.02);">
+                   <div class="flex flex-col gap-4 w-full max-w-xs">
+                     <button id="passkey-register" class="p31-btn p31-btn--primary py-4 text-xs tracking-[0.2em] font-bold uppercase transition-all hover:scale-[1.02] active:scale-[0.98]">
+                       Register Passkey
+                     </button>
+                     <button id="passkey-login" class="p31-btn border border-white/10 py-4 text-xs tracking-[0.2em] font-bold uppercase transition-all hover:bg-white/5 hover:scale-[1.02] active:scale-[0.98]">
+                       Login with Passkey
+                     </button>
+                   </div>
+                   <div id="auth-result-box" class="hidden w-full max-w-sm p-4 rounded-xl border border-white/5 bg-black/20 font-mono text-[10px] overflow-auto max-h-48">
+                     <p id="auth-status" class="text-[color:var(--p31-violet,#8b5cf6)] mb-2 uppercase tracking-widest">Ready</p>
+                     <pre id="auth-json" class="text-white/40 whitespace-pre-wrap break-all"></pre>
+                   </div>
+                </div>
+              </div>
+            ) : (
+              <div class="p31-q-surface h-full flex flex-col p-6 md:p-10" data-p31-elev="1" style="border-left: 2px solid var(--p31-violet,#8b5cf6); border-radius: var(--p31-shape-lg,16px); background: rgba(0,0,0,0.3);">
+                <h2 class="text-2xl md:text-3xl font-serif mb-2" style="color: var(--p31-cloud,#ede8e0);">{label}</h2>
+                <p class="text-[10px] font-mono tracking-widest uppercase mb-8" style="color: var(--p31-violet,#8b5cf6);">Surface Absorbed</p>
+
+                <div class="flex-grow flex flex-col items-center justify-center rounded-2xl" style="border: 1px dashed var(--p31-violet); background: rgba(139,92,246,0.02);">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" class="w-8 h-8 mb-4 opacity-30" style="color: var(--p31-violet);">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                  </svg>
+                  <p class="font-mono text-xs text-center max-w-sm leading-relaxed" style="color: var(--p31-cloud-muted,rgba(237,232,224,0.5));">
+                    [{id.toUpperCase()}] protocol structurally consolidated into AppShell.
+                  </p>
+                </div>
+              </div>
+            )}
+          </section>
+        ))}
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    import { mountHashRouterAuto } from '../lib/hash-router';
+
+    const FALLBACK = {
+      ok: true,
+      topology: {
+        mesh: {
+          vertices: {
+            will:     { id: 'will',     name: 'Will',     love: 92, status: 'online',  lastSeen: null, metadata: { q_factor: 0.920 } },
+            sj:       { id: 'sj',       name: 'S.J.',     love: 47, status: 'offline', lastSeen: null, metadata: { q_factor: 0.850 } },
+            wj:       { id: 'wj',       name: 'W.J.',     love: 36, status: 'offline', lastSeen: null, metadata: { q_factor: 0.880 } },
+            christyn: { id: 'christyn', name: 'Christyn', love: 74, status: 'offline', lastSeen: null, metadata: { q_factor: 0.910 } },
+          },
+          edges: {
+            'will-sj':       { vertices: ['will',     'sj'      ], key: 'will-sj',       love: 139, messageCount: 45 },
+            'will-wj':       { vertices: ['will',     'wj'      ], key: 'will-wj',       love:  84, messageCount: 22 },
+            'will-christyn': { vertices: ['will',     'christyn'], key: 'will-christyn', love:  53, messageCount: 17 },
+            'sj-wj':         { vertices: ['sj',       'wj'      ], key: 'sj-wj',         love:   0, messageCount:  0 },
+            'christyn-sj':   { vertices: ['christyn', 'sj'      ], key: 'christyn-sj',   love:   0, messageCount:  0 },
+            'christyn-wj':   { vertices: ['christyn', 'wj'      ], key: 'christyn-wj',   love:   0, messageCount:  0 },
+          },
+        },
+        totalLove: 276,
+        qFactor: 1,
+      },
+    };
+
+    let sim = null;
+
+    function abbrev(id) {
+      if (id === 'sj') return 'SJ';
+      if (id === 'wj') return 'WJ';
+      return id.charAt(0).toUpperCase();
+    }
+
+    async function fetchCage() {
+      try {
+        const res = await fetch('https://k4-cage.trimtab-signal.workers.dev/api/health', {
+          signal: AbortSignal.timeout(5000),
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const raw = await res.json();
+        if (!raw.ok || !raw.topology?.mesh?.vertices) throw new Error('Unexpected API shape');
+        return { data: raw, live: true };
+      } catch (err) {
+        console.warn('[P31CA] k4-cage unreachable — mounting local topology clone.', err);
+        return { data: FALLBACK, live: false };
+      }
+    }
+
+    function parseMesh(data) {
+      const { vertices, edges } = data.topology.mesh;
+      const nodes = Object.values(vertices).map(v => ({
+        id:      v.id,
+        name:    v.name,
+        love:    v.love,
+        status:  v.status,
+        qFactor: v.metadata?.q_factor ?? 0.999,
+      }));
+      const links = Object.values(edges).map(e => ({
+        source:       e.vertices[0],
+        target:       e.vertices[1],
+        key:          e.key,
+        love:         e.love,
+        messageCount: e.messageCount,
+      }));
+      return { nodes, links, totalLove: data.topology.totalLove, qFactor: data.topology.qFactor };
+    }
+
+    function setupDrag(el, node, container) {
+      el.addEventListener('pointerdown', (e) => {
+        e.preventDefault();
+        el.setPointerCapture(e.pointerId);
+        el.style.borderColor = 'var(--p31-violet,#8b5cf6)';
+        el.style.zIndex = '50';
+
+        if (sim) sim.alphaTarget(0.3).restart();
+        node.fx = node.x;
+        node.fy = node.y;
+
+        function onMove(ev) {
+          const rect = container.getBoundingClientRect();
+          node.fx = ev.clientX - rect.left;
+          node.fy = ev.clientY - rect.top;
+        }
+
+        function onUp(ev) {
+          node.fx = null;
+          node.fy = null;
+          el.style.borderColor = 'rgba(139,92,246,0.28)';
+          el.style.zIndex = '';
+          el.releasePointerCapture(ev.pointerId);
+          if (sim) sim.alphaTarget(0);
+          el.removeEventListener('pointermove', onMove);
+        }
+
+        el.addEventListener('pointermove',   onMove);
+        el.addEventListener('pointerup',     onUp, { once: true });
+        el.addEventListener('pointercancel', onUp, { once: true });
+      });
+    }
+
+    async function initMeshGraph() {
+      const container = document.getElementById('mesh-graph-container');
+      const svgEl     = document.getElementById('mesh-links');
+      const nodesDiv  = document.getElementById('mesh-nodes');
+      const statusEl  = document.getElementById('cage-status-text');
+      const footerEl  = document.getElementById('mesh-footer-stat');
+
+      if (!container || !svgEl || !nodesDiv) return;
+
+      if (container.clientWidth === 0) await new Promise(r => requestAnimationFrame(r));
+      const W = container.clientWidth  || 600;
+      const H = container.clientHeight || 400;
+
+      const { data, live } = await fetchCage();
+      const { nodes, links, totalLove, qFactor } = parseMesh(data);
+
+      if (statusEl) statusEl.textContent = live
+        ? `LIVE · Q=${qFactor.toFixed(2)}`
+        : `CACHED · Q=${qFactor.toFixed(2)}`;
+      if (footerEl) footerEl.textContent = live
+        ? `k4-cage live · ♡ ${totalLove} total love`
+        : `local clone · ♡ ${totalLove} total love`;
+
+      // ── SVG bonds ────────────────────────────────────────────────────────────
+      svgEl.innerHTML = '';
+      const NS       = 'http://www.w3.org/2000/svg';
+      const lineEls  = [];
+      const emojiEls = [];
+
+      links.forEach(link => {
+        const strokeW = link.love > 0 ? Math.max(1.5, Math.min(5, link.love / 35)) : 1;
+        const opacity = link.love > 0 ? 0.55 : 0.12;
+
+        const line = document.createElementNS(NS, 'line');
+        line.setAttribute('stroke',           'var(--p31-violet,#8b5cf6)');
+        line.setAttribute('stroke-width',     String(strokeW));
+        line.setAttribute('stroke-opacity',   String(opacity));
+        line.setAttribute('stroke-dasharray', link.love > 0 ? '8 4' : '3 6');
+        svgEl.appendChild(line);
+        lineEls.push(line);
+
+        const lbl = document.createElementNS(NS, 'text');
+        lbl.setAttribute('font-size',         '13');
+        lbl.setAttribute('text-anchor',       'middle');
+        lbl.setAttribute('dominant-baseline', 'central');
+        lbl.textContent = link.love > 0 ? '♡' : '';
+        lbl.style.cssText = 'fill: rgba(139,92,246,0.65); text-shadow: 0 0 10px rgba(139,92,246,0.8);';
+        svgEl.appendChild(lbl);
+        emojiEls.push(lbl);
+      });
+
+      // ── DOM nodes ────────────────────────────────────────────────────────────
+      nodesDiv.innerHTML = '';
+      const nodeEls = new Map();
+
+      nodes.forEach(node => {
+        const div = document.createElement('div');
+        div.className = 'absolute top-0 left-0 flex items-center gap-2.5 px-3 py-2.5 rounded-2xl select-none p31-glass';
+        div.style.cssText = `
+          background: rgba(8,8,18,0.75);
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
+          border: 1px solid rgba(139,92,246,0.28);
+          box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+          will-change: transform;
+          cursor: grab;
+          pointer-events: auto;
+          transition: box-shadow 150ms ease, border-color 150ms ease;
+        `;
+
+        const online   = node.status === 'online';
+        const dotColor = online ? 'var(--p31-teal)' : '#6b7280';
+        const glowCol  = online ? 'rgba(16,185,129,0.35)' : 'rgba(107,114,128,0.25)';
+
+        div.innerHTML = `
+          <div class="relative w-9 h-9 rounded-full flex items-center justify-center text-[11px] font-bold text-white shrink-0 pointer-events-none"
+               style="background:rgba(139,92,246,0.18);border:1px solid rgba(139,92,246,0.5);box-shadow:0 0 14px ${glowCol};">
+            ${abbrev(node.id)}
+            <div class="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2"
+                 style="background:${dotColor};border-color:#080812;"></div>
+          </div>
+          <div class="flex flex-col min-w-0 pr-1 pointer-events-none">
+            <span class="text-[11px] font-semibold text-white leading-tight truncate uppercase">${node.name}</span>
+            <span class="text-[9px] font-mono leading-tight" style="color:var(--p31-violet,#8b5cf6);">Q ${node.qFactor.toFixed(3)} · ♡ ${node.love}</span>
+          </div>
+        `;
+
+        nodesDiv.appendChild(div);
+        nodeEls.set(node.id, div);
+        setupDrag(div, node, container);
+      });
+
+      if (sim) sim.stop();
+
+      // Dynamic import — Vite code-splits d3-force, loaded only when the user hits /connect.
+      const { forceSimulation, forceLink, forceManyBody, forceCenter, forceCollide } =
+        await import('d3-force');
+
+      sim = forceSimulation(nodes)
+        .force('link',    forceLink(links).id(d => d.id).distance(155).strength(0.9))
+        .force('charge',  forceManyBody().strength(-700))
+        .force('center',  forceCenter(W / 2, H / 2).strength(0.08))
+        .force('collide', forceCollide().radius(72))
+        .alphaDecay(0.025);
+
+      // Dismiss the orbital loader after the sim has run enough ticks to be legible.
+      const loaderEl = document.getElementById('phos-graph-loader');
+      let tickCount = 0;
+
+      sim.on('tick', () => {
+        if (tickCount === 20 && loaderEl) {
+          loaderEl.style.opacity = '0';
+          loaderEl.style.pointerEvents = 'none';
+          setTimeout(() => { if (loaderEl.parentNode) loaderEl.remove(); }, 750);
+        }
+        tickCount++;
+
+        nodes.forEach(n => {
+          n.x = Math.max(65, Math.min(W - 65, n.x ?? W / 2));
+          n.y = Math.max(50, Math.min(H - 50, n.y ?? H / 2));
+        });
+
+        links.forEach((link, i) => {
+          lineEls[i].setAttribute('x1', String(link.source.x ?? 0));
+          lineEls[i].setAttribute('y1', String(link.source.y ?? 0));
+          lineEls[i].setAttribute('x2', String(link.target.x ?? 0));
+          lineEls[i].setAttribute('y2', String(link.target.y ?? 0));
+          emojiEls[i].setAttribute('x', String(((link.source.x ?? 0) + (link.target.x ?? 0)) / 2));
+          emojiEls[i].setAttribute('y', String(((link.source.y ?? 0) + (link.target.y ?? 0)) / 2 - 12));
+        });
+
+        nodes.forEach(node => {
+          const el = nodeEls.get(node.id);
+          if (el) el.style.transform =
+            `translate3d(calc(${node.x ?? 0}px - 50%),calc(${node.y ?? 0}px - 50%),0)`;
+        });
+      });
+    }
+
+    document.addEventListener('astro:page-load', () => {
+      if (document.documentElement.getAttribute('data-p31-route') !== 'connect') return;
+
+      mountHashRouterAuto({
+        defaultHash:     'mesh',
+        navSelector:     '#connect-nav',
+        sectionSelector: '.hash-section',
+      });
+
+      initMeshGraph();
+      setupAuthHandlers();
+    });
+
+    function setupAuthHandlers() {
+      const regBtn = document.getElementById('passkey-register');
+      const logBtn = document.getElementById('passkey-login');
+      if (regBtn) regBtn.addEventListener('click', handleRegister);
+      if (logBtn) logBtn.addEventListener('click', handleLogin);
+    }
+
+    const API_BASE = '/api/passkey';
+    const PERSONAL_URL = 'https://k4-personal.trimtab-signal.workers.dev';
+
+    function b64url(buf) {
+      const bytes = new Uint8Array(buf);
+      return btoa(String.fromCharCode(...bytes))
+        .replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+    }
+
+    function fromB64url(s) {
+      const b = s.replace(/-/g, '+').replace(/_/g, '/');
+      const pad = (4 - (b.length % 4)) % 4;
+      const str = atob(b + '='.repeat(pad));
+      const bin = new Uint8Array(str.length);
+      for (let i = 0; i < str.length; i++) bin[i] = str.charCodeAt(i);
+      return bin;
+    }
+
+    async function handleRegister() {
+      const status = document.getElementById('auth-status');
+      const json   = document.getElementById('auth-json');
+      const box    = document.getElementById('auth-result-box');
+      if (status) status.textContent = 'REGISTERING...';
+      if (box) box.classList.remove('hidden');
+
+      try {
+        const beginRes = await fetch(`${API_BASE}/register-begin`, { method: 'POST' });
+        const options = await beginRes.json();
+        
+        // Fix up options for WebAuthn API
+        options.challenge = fromB64url(options.challenge);
+        options.user.id   = fromB64url(options.user.id);
+        if (options.excludeCredentials) {
+          for (const cred of options.excludeCredentials) cred.id = fromB64url(cred.id);
+        }
+
+        const cred = await navigator.credentials.create({ publicKey: options });
+        const attestation = {
+          id: cred.id,
+          rawId: b64url(cred.rawId),
+          type: cred.type,
+          response: {
+            attestationObject: b64url(cred.response.attestationObject),
+            clientDataJSON:    b64url(cred.response.clientDataJSON),
+          },
+        };
+
+        const finishRes = await fetch(`${API_BASE}/register-finish`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(attestation),
+        });
+        const result = await finishRes.json();
+        
+        if (json) json.textContent = JSON.stringify(result, null, 2);
+        if (result.ok) {
+          if (status) status.textContent = 'REGISTERED · BINDING...';
+          await bindSubjectId(result.userId);
+          if (status) status.textContent = 'LIVE · IDENTITY ANCHORED';
+        } else {
+          if (status) status.textContent = 'ERROR: ' + (result.error || 'Unknown');
+        }
+      } catch (err) {
+        console.error('[P31] Register failed', err);
+        if (status) status.textContent = 'FAILED: ' + err.message;
+      }
+    }
+
+    async function handleLogin() {
+      const status = document.getElementById('auth-status');
+      const json   = document.getElementById('auth-json');
+      const box    = document.getElementById('auth-result-box');
+      if (status) status.textContent = 'AUTHENTICATING...';
+      if (box) box.classList.remove('hidden');
+
+      try {
+        const beginRes = await fetch(`${API_BASE}/auth-begin`, { method: 'POST' });
+        const options = await beginRes.json();
+        
+        options.challenge = fromB64url(options.challenge);
+        if (options.allowCredentials) {
+          for (const cred of options.allowCredentials) cred.id = fromB64url(cred.id);
+        }
+
+        const assertion = await navigator.credentials.get({ publicKey: options });
+        const response = {
+          id: assertion.id,
+          rawId: b64url(assertion.rawId),
+          type: assertion.type,
+          response: {
+            authenticatorData: b64url(assertion.response.authenticatorData),
+            clientDataJSON:    b64url(assertion.response.clientDataJSON),
+            signature:         b64url(assertion.response.signature),
+            userHandle:        assertion.response.userHandle ? b64url(assertion.response.userHandle) : null,
+          },
+        };
+
+        const finishRes = await fetch(`${API_BASE}/auth-finish`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(response),
+        });
+        const result = await finishRes.json();
+
+        if (json) json.textContent = JSON.stringify(result, null, 2);
+        if (result.ok) {
+          if (status) status.textContent = 'LOGGED IN · BINDING...';
+          await bindSubjectId(result.userId);
+          if (status) status.textContent = 'LIVE · IDENTITY ANCHORED';
+        } else {
+          if (status) status.textContent = 'ERROR: ' + (result.error || 'Unknown');
+        }
+      } catch (err) {
+        console.error('[P31] Login failed', err);
+        if (status) status.textContent = 'FAILED: ' + err.message;
+      }
+    }
+
+    async function bindSubjectId(userId) {
+      try {
+        const res = await fetch(`${PERSONAL_URL}/api/identity/anchor`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ subject_id: userId }),
+        });
+        const out = await res.json();
+        console.log('[P31] Identity anchored to k4-personal', out);
+      } catch (err) {
+        console.warn('[P31] k4-personal identity binding failed', err);
+      }
+    }
+
+    document.addEventListener('astro:before-swap', () => {
+      if (sim) { sim.stop(); sim = null; }
+    }, { once: true });
+  </script>
+</AppShell>

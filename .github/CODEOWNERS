@@ -1,0 +1,17 @@
+# P31 Andromeda CODEOWNERS
+
+# Default review required for all changes
+* @trimtab69420
+
+# Clinical/Regulatory files require lead architect
+/CLINICAL_VALIDATION_REPORT.md @trimtab69420
+/01_ADMIN/WCD-* @trimtab69420
+
+# Backend changes require security review
+/04_SOFTWARE/backend/ @trimtab69420
+
+# Hardware/Firmware changes require hardware lead
+/04_SOFTWARE/bonding/ @trimtab69420
+
+# Reviewers can dismiss reviews after 7 days if no objections
+# All changes require Q-Suite Agent RED/BLUE status checks passing

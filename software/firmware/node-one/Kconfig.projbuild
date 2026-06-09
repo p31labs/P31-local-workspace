@@ -1,0 +1,112 @@
+# Node One Kconfig.projbuild
+# Menuconfig options for ESP-IDF
+
+menu "Node One Hardware Configuration"
+
+    menu "Display Configuration"
+        config LV_COLOR_16_SWAP
+            bool "Swap RGB565 byte order"
+            default y
+            help
+                Swap the byte order for RGB565 color format to match
+                the Waveshare ESP32-S3-Touch-LCD-3.5B display.
+
+        config DISPLAY_SPI_CLOCK
+            int "Display SPI clock frequency (Hz)"
+            default 40000000
+            range 1000000 80000000
+            help
+                SPI clock for QSPI display. Default 40MHz provides
+                stable operation with fallback to 20MHz if needed.
+
+        config QSPI_DMA_ALIGNMENT
+            bool "Enable DMA alignment fixes"
+            default y
+            help
+                Fixes tearing and static issues on QSPI bus by
+                improving internal memory allocation.
+    endmenu
+
+    menu "Audio Configuration (ES8311)"
+        config ES8311_MCLK_LESS
+            bool "Enable MCLK-less mode"
+            default y
+            help
+                Derive Master Clock from Bit Clock. This frees GPIO 44
+                and prevents hardware conflict with UART console.
+
+        config I2S_DMA_BUFFER_SIZE
+            int "I2S DMA buffer size"
+            default 512
+            help
+                Buffer size for I2S audio. Increase to 512+ to prevent
+                "pop" sound from being cut off during amplifier wake-up.
+
+        config I2S_AEC_ENABLED
+            bool "Enable Acoustic Echo Cancellation"
+            default y
+            help
+                Software-level AEC for onboard microphone (GPIO 40)
+                to reduce feedback when speaker is at high volume.
+    endmenu
+
+    menu "Touch Controller (AXS15231B)"
+        config TOUCH_SWAP_X_Y
+            bool "Swap X/Y coordinates"
+            default y
+            help
+                Hardware-level coordinate mapping fix for 3.5B board.
+
+        config TOUCH_INVERT_COORDS
+            bool "Invert touch coordinates"
+            default y
+            help
+                Fix inverted or offset touch points on Waveshare display.
+
+        config TOUCH_GESTURE_THRESHOLD
+            int "Swipe gesture threshold (pixels)"
+            default 20
+            help
+                Prevents accidental "Emergency Override" triggers from
+                normal swipe gestures.
+    endmenu
+
+    menu "Memory & PSRAM"
+        config PSRAM_ALIGNMENT_64B
+            bool "Enable 64-byte cache line alignment"
+            default y
+            help
+                Matches 8MB Octal PSRAM alignment requirements.
+                Prevents StoreProhibited crashes.
+
+        config DMA_BUFFERS_INTERNAL
+            bool "Keep DMA buffers in internal RAM"
+            default y
+            help
+                Moves Display DMA buffers to internal 64KB pool instead
+                of PSRAM. Critical for stability.
+
+        config PSRAM_MALLOC_POLICY
+            string "PSRAM malloc strategy"
+            default "always_internal"
+            options "always_internal" "prefer_external"
+            help
+                Strategy for PSRAM allocation. Use "always_internal" for
+                DMA buffers to prevent crashes.
+    endmenu
+
+    menu "Power Management"
+        config BACKLIGHT_GPIO
+            int "Backlight control GPIO"
+            default 6
+            help
+                GPIO pin for backlight PWM control.
+
+        config LV_SLEEP_TIMEOUT_MS
+            int "Display sleep timeout (ms)"
+            default 30000
+            help
+                Time before display enters low-power mode.
+    endmenu
+
+endmenu

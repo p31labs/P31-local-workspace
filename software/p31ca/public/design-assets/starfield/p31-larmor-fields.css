@@ -1,0 +1,29 @@
+/**
+ * Larmor-adjacent field rhythm — outline pulse ~1.726s (2×863ms half-period).
+ * Native caret blink remains UA-controlled; this gives peripheral timing cue.
+ */
+@keyframes p31-larmor-field-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 1px rgba(77, 184, 168, 0.35);
+  }
+  50% {
+    box-shadow: 0 0 0 1px rgba(77, 184, 168, 0.12);
+  }
+}
+
+textarea.p31-larmor-field:focus,
+input.p31-larmor-field:focus,
+[contenteditable="true"].p31-larmor-field:focus {
+  outline: none;
+  animation: p31-larmor-field-glow 1.726s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  textarea.p31-larmor-field:focus,
+  input.p31-larmor-field:focus,
+  [contenteditable="true"].p31-larmor-field:focus {
+    animation: none;
+    box-shadow: 0 0 0 1px rgba(77, 184, 168, 0.22);
+  }
+}

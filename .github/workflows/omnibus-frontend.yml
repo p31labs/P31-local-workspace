@@ -1,0 +1,82 @@
+# Forge 25 omnibus papers → copy .docx via prebuild → Vite build.
+
+name: Omnibus frontend
+
+on:
+  push:
+    branches: [main, "feat/**"]
+    paths:
+      - "software/frontend/**"
+      - "software/p31-forge/**"
+      - "software/ops/update-dois.js"
+      - "software/scripts/forge-omnibus-all.cjs"
+      - "software/package.json"
+      - ".github/actions/**"
+      - ".github/workflows/omnibus-frontend.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "software/frontend/**"
+      - "software/p31-forge/**"
+      - "software/ops/update-dois.js"
+      - "software/scripts/forge-omnibus-all.cjs"
+      - "software/package.json"
+      - ".github/actions/**"
+      - ".github/workflows/omnibus-frontend.yml"
+
+concurrency:
+  group: omnibus-frontend-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Forge + Vite + DOI health
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      deployments: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/toolchain-constants
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: software/frontend/package-lock.json
+
+      - name: Install p31-forge (docx)
+        run: cd software/p31-forge && npm install
+
+      - name: Forge omnibus 25 papers
+        run: node software/scripts/forge-omnibus-all.cjs
+
+      - name: Install frontend
+        run: cd software/frontend && npm ci
+
+      - name: Build frontend
+        run: cd software/frontend && npm run build
+
+      - name: update-dois.js (empty map, exit 0)
+        run: cd software && node ops/update-dois.js
+
+      - name: Upload dist (Pages artifact)
+        uses: actions/upload-artifact@v4
+        with:
+          name: omnibus-frontend-dist
+          path: software/frontend/dist
+          retention-days: 14
+          if-no-files-found: error
+
+      - name: Deploy to Cloudflare Pages
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: ./.github/actions/cloudflare-pages-v1
+        with:
+          api-token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          account-id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          project-name: andromeda-ui
+          directory: software/frontend/dist
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          branch: main

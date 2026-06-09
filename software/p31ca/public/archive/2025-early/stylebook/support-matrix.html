@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Browser support · P31 Stylebook</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/p31-style.css">
+  <link rel="stylesheet" href="/lib/p31-fluid.css">
+  <link rel="stylesheet" href="/stylebook/_chrome.css">
+  <style>
+    .matrix-grid {
+      display: grid;
+      grid-template-columns: 220px repeat(4, 1fr);
+      gap: 1px;
+      background: var(--p31-border-subtle);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .matrix-cell {
+      background: var(--p31-surface);
+      padding: 14px 16px;
+      font-size: 13px;
+    }
+    .matrix-cell.header {
+      background: var(--p31-surface2);
+      font-family: var(--p31-font-mono);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--p31-muted);
+      font-weight: 500;
+      text-align: center;
+    }
+    .matrix-cell.row-label {
+      background: var(--p31-surface2);
+      color: var(--p31-paper);
+      font-weight: 500;
+    }
+    .matrix-cell.tier-1 { color: var(--p31-phosphor); text-align: center; font-weight: 600; }
+    .matrix-cell.tier-2 { color: var(--p31-cyan); text-align: center; }
+    .matrix-cell.tier-3 { color: var(--p31-amber); text-align: center; }
+    .matrix-cell.tier-x { color: var(--p31-coral); text-align: center; }
+    
+    .device-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+    }
+    .device {
+      padding: 16px;
+      background: var(--p31-surface);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: 10px;
+    }
+    .device-name {
+      font-weight: 600;
+      color: var(--p31-paper);
+      margin-bottom: 4px;
+    }
+    .device-spec {
+      font-family: var(--p31-font-mono);
+      font-size: 11px;
+      color: var(--p31-muted);
+      margin-bottom: 8px;
+    }
+    .device-tier {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+  <script type="module">
+    import { renderShell, code, callout } from '/stylebook/_chrome.js';
+    import { P31ThemeController } from '/lib/p31-theme-engine.mjs';
+    window.p31Theme = new P31ThemeController({ defaultTheme: 'hub' });
+    
+    const content = `
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Tiers</div>
+          <h2 class="sb-h2">Three support levels</h2>
+          <p class="sb-text">Not every browser gets the same care. We define support tiers explicitly
+          so the cost of supporting older targets stays bounded.</p>
+        </div>
+        
+        <table class="sb-table">
+          <thead><tr><th>Tier</th><th>Promise</th><th>What we test</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><span class="tier-pill" style="color: var(--p31-phosphor); font-weight: 600;">Tier 1 · Full</span></td>
+              <td>Every feature works flawlessly</td>
+              <td>Every release, automated + manual</td>
+            </tr>
+            <tr>
+              <td><span class="tier-pill" style="color: var(--p31-cyan);">Tier 2 · Functional</span></td>
+              <td>All core flows work; minor visual variance OK</td>
+              <td>Major releases, automated</td>
+            </tr>
+            <tr>
+              <td><span class="tier-pill" style="color: var(--p31-amber);">Tier 3 · Best effort</span></td>
+              <td>Critical paths work; some features may be unavailable</td>
+              <td>Quarterly spot-checks</td>
+            </tr>
+            <tr>
+              <td><span class="tier-pill" style="color: var(--p31-coral);">Unsupported</span></td>
+              <td>Page may not load correctly</td>
+              <td>Show graceful fallback message</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Browsers</div>
+          <h2 class="sb-h2">Desktop · mobile · platform</h2>
+          <p class="sb-text">Versions are minimum supported. Older versions degrade gracefully but aren't tested.</p>
+        </div>
+        
+        <div class="matrix-grid">
+          <div class="matrix-cell header">Browser</div>
+          <div class="matrix-cell header">Tier</div>
+          <div class="matrix-cell header">Min version</div>
+          <div class="matrix-cell header">Released</div>
+          <div class="matrix-cell header">Notes</div>
+          
+          <div class="matrix-cell row-label">Chrome</div>
+          <div class="matrix-cell tier-1">Tier 1</div>
+          <div class="matrix-cell">120+</div>
+          <div class="matrix-cell">Dec 2023</div>
+          <div class="matrix-cell">Primary dev target</div>
+          
+          <div class="matrix-cell row-label">Edge</div>
+          <div class="matrix-cell tier-1">Tier 1</div>
+          <div class="matrix-cell">120+</div>
+          <div class="matrix-cell">Dec 2023</div>
+          <div class="matrix-cell">Chromium-based, parity with Chrome</div>
+          
+          <div class="matrix-cell row-label">Firefox</div>
+          <div class="matrix-cell tier-1">Tier 1</div>
+          <div class="matrix-cell">121+</div>
+          <div class="matrix-cell">Dec 2023</div>
+          <div class="matrix-cell">Tested every release</div>
+          
+          <div class="matrix-cell row-label">Safari (macOS)</div>
+          <div class="matrix-cell tier-1">Tier 1</div>
+          <div class="matrix-cell">17+</div>
+          <div class="matrix-cell">Sep 2023</div>
+          <div class="matrix-cell">backdrop-filter requires -webkit prefix</div>
+          
+          <div class="matrix-cell row-label">Safari (iOS)</div>
+          <div class="matrix-cell tier-1">Tier 1</div>
+          <div class="matrix-cell">17+</div>
+          <div class="matrix-cell">Sep 2023</div>
+          <div class="matrix-cell">Operator's primary mobile</div>
+          
+          <div class="matrix-cell row-label">Chrome (Android)</div>
+          <div class="matrix-cell tier-1">Tier 1</div>
+          <div class="matrix-cell">120+</div>
+          <div class="matrix-cell">Dec 2023</div>
+          <div class="matrix-cell">—</div>
+          
+          <div class="matrix-cell row-label">Samsung Internet</div>
+          <div class="matrix-cell tier-2">Tier 2</div>
+          <div class="matrix-cell">23+</div>
+          <div class="matrix-cell">2024</div>
+          <div class="matrix-cell">Common on Samsung devices</div>
+          
+          <div class="matrix-cell row-label">Firefox (Android)</div>
+          <div class="matrix-cell tier-2">Tier 2</div>
+          <div class="matrix-cell">121+</div>
+          <div class="matrix-cell">Dec 2023</div>
+          <div class="matrix-cell">—</div>
+          
+          <div class="matrix-cell row-label">Opera</div>
+          <div class="matrix-cell tier-3">Tier 3</div>
+          <div class="matrix-cell">100+</div>
+          <div class="matrix-cell">2023</div>
+          <div class="matrix-cell">Chromium-based, usually fine</div>
+          
+          <div class="matrix-cell row-label">Brave</div>
+          <div class="matrix-cell tier-3">Tier 3</div>
+          <div class="matrix-cell">1.50+</div>
+          <div class="matrix-cell">2023</div>
+          <div class="matrix-cell">Chromium-based</div>
+          
+          <div class="matrix-cell row-label">IE 11</div>
+          <div class="matrix-cell tier-x">Unsupported</div>
+          <div class="matrix-cell">—</div>
+          <div class="matrix-cell">—</div>
+          <div class="matrix-cell">EOL by Microsoft, blocked at edge</div>
+        </div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Devices</div>
+          <h2 class="sb-h2">Tested on</h2>
+          <p class="sb-text">Devices we manually verify on. The operator uses an iPhone, a Chromebook,
+          and a Linux desktop daily — those are tier 1 hardware.</p>
+        </div>
+        
+        <div class="device-grid">
+          <div class="device">
+            <div class="device-name">Linux desktop</div>
+            <div class="device-spec">Crostini + Chrome 120+</div>
+            <span class="device-tier" style="background: rgba(0,255,136,0.12); color: var(--p31-phosphor);">Tier 1 · primary dev</span>
+          </div>
+          <div class="device">
+            <div class="device-name">Chromebook</div>
+            <div class="device-spec">ChromeOS 120+, Crostini, 4GB RAM</div>
+            <span class="device-tier" style="background: rgba(0,255,136,0.12); color: var(--p31-phosphor);">Tier 1 · operator</span>
+          </div>
+          <div class="device">
+            <div class="device-name">iPhone</div>
+            <div class="device-spec">iOS 17+, Safari + iMessage</div>
+            <span class="device-tier" style="background: rgba(0,255,136,0.12); color: var(--p31-phosphor);">Tier 1 · operator</span>
+          </div>
+          <div class="device">
+            <div class="device-name">macBook</div>
+            <div class="device-spec">macOS 14+, Safari + Chrome</div>
+            <span class="device-tier" style="background: rgba(77,184,168,0.15); color: var(--p31-cyan);">Tier 2</span>
+          </div>
+          <div class="device">
+            <div class="device-name">iPad</div>
+            <div class="device-spec">iPadOS 17+, Safari</div>
+            <span class="device-tier" style="background: rgba(77,184,168,0.15); color: var(--p31-cyan);">Tier 2</span>
+          </div>
+          <div class="device">
+            <div class="device-name">Android phone</div>
+            <div class="device-spec">Android 13+, Chrome / Samsung Internet</div>
+            <span class="device-tier" style="background: rgba(77,184,168,0.15); color: var(--p31-cyan);">Tier 2</span>
+          </div>
+          <div class="device">
+            <div class="device-name">Windows laptop</div>
+            <div class="device-spec">Windows 11, Edge / Chrome / Firefox</div>
+            <span class="device-tier" style="background: rgba(205,168,82,0.12); color: var(--p31-amber);">Tier 3 · spot</span>
+          </div>
+          <div class="device">
+            <div class="device-name">Older devices (4+ years)</div>
+            <div class="device-spec">2GB RAM, dual-core CPU</div>
+            <span class="device-tier" style="background: rgba(205,168,82,0.12); color: var(--p31-amber);">Tier 3 · perf budget</span>
+          </div>
+        </div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Web platform features</div>
+          <h2 class="sb-h2">What we depend on</h2>
+        </div>
+        
+        <table class="sb-table">
+          <thead><tr><th>Feature</th><th>Used for</th><th>Fallback</th></tr></thead>
+          <tbody>
+            <tr><td>CSS Custom Properties</td><td>All theming</td><td>None — required</td></tr>
+            <tr><td>CSS Grid</td><td>All layouts</td><td>Flex-based fallback for IE 11 era (skipped)</td></tr>
+            <tr><td>CSS clamp()</td><td>Fluid typography &amp; spacing</td><td>Static fallback values via @supports</td></tr>
+            <tr><td>backdrop-filter</td><td>Glass surfaces</td><td>Solid color background when unsupported</td></tr>
+            <tr><td>ES Modules</td><td>JavaScript</td><td>None — required</td></tr>
+            <tr><td>Fetch API</td><td>HTTP requests</td><td>None — required</td></tr>
+            <tr><td>WebAuthn (passkey)</td><td>Authentication</td><td>Show "this browser doesn't support passkeys" + use email magic link</td></tr>
+            <tr><td>localStorage</td><td>Theme persistence</td><td>In-memory only (preference doesn't persist)</td></tr>
+            <tr><td>WebSockets</td><td>Geodesic Room realtime</td><td>Show "realtime requires WebSocket support"</td></tr>
+            <tr><td>Service Workers</td><td>Offline-capable surfaces</td><td>Online-only mode</td></tr>
+            <tr><td>WebGL (Three.js)</td><td>/dome, /connect, /tomography</td><td>Static SVG fallback</td></tr>
+            <tr><td>prefers-color-scheme</td><td>Auto-theme</td><td>Default to hub theme</td></tr>
+            <tr><td>prefers-reduced-motion</td><td>Disable animations</td><td>Always honored when present</td></tr>
+          </tbody>
+        </table>
+        
+        ${callout('info', 'Progressive enhancement', 'When a feature isn\'t supported, the page should still work — just with less. Never block content access on a non-essential capability.')}
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Browser detection</div>
+          <h2 class="sb-h2">Feature detection, never UA sniffing</h2>
+        </div>
+        
+        ${code(`/* CSS: detect via @supports */
+@supports (backdrop-filter: blur(12px)) {
+  .glass {
+    backdrop-filter: blur(12px);
+  }
+}
+@supports not (backdrop-filter: blur(12px)) {
+  .glass {
+    background: var(--p31-surface);  /* solid fallback */
+  }
+}
+
+/* JS: feature detect, then act */
+if ('credentials' in navigator && 'PublicKeyCredential' in window) {
+  // Passkey-capable
+  showPasskeyOption();
+} else {
+  showEmailLinkOption();
+}
+
+/* User-agent strings: NEVER */
+// Bad: if (navigator.userAgent.includes('Safari')) { ... }
+// User agents lie. Browsers fork. UA detection is broken by design.`, 'js', 'Detection')}
+      </section>
+    `;
+    
+    renderShell({
+      activeId: 'support',
+      breadcrumb: [
+        { href: '/stylebook/', label: 'Stylebook' },
+        { href: '/stylebook/', label: 'Resources' },
+        { label: 'Browser support' }
+      ],
+      title: 'Browser support',
+      subtitle: 'Three support tiers across browsers, devices, and platform features. What works, what degrades gracefully, what we don\'t support.',
+      meta: [
+        { label: 'Tier 1', value: '6 browsers' },
+        { label: 'Tier 2', value: '3 browsers' },
+        { label: 'Detection', value: '@supports + JS feature' }
+      ],
+      content
+    });
+  </script>
+</body>
+</html>

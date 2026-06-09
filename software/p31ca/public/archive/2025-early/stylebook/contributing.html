@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contributing · P31 Stylebook</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/p31-style.css">
+  <link rel="stylesheet" href="/lib/p31-fluid.css">
+  <link rel="stylesheet" href="/stylebook/_chrome.css">
+  <style>
+    .step {
+      display: flex;
+      gap: 16px;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--p31-border-subtle);
+    }
+    .step:last-child { border-bottom: none; }
+    .step-num {
+      flex-shrink: 0;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--p31-primary);
+      color: var(--p31-void);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--p31-font-mono);
+      font-weight: 700;
+      font-size: 14px;
+    }
+    .step-content { flex: 1; }
+    .step-title {
+      font-weight: 600;
+      color: var(--p31-paper);
+      margin-bottom: 4px;
+    }
+    .step-body {
+      font-size: 14px;
+      color: var(--p31-cloud);
+      line-height: 1.5;
+    }
+    .step-body code {
+      font-family: var(--p31-font-mono);
+      font-size: 12px;
+      padding: 1px 6px;
+      background: var(--p31-surface2);
+      border-radius: 4px;
+      color: var(--p31-cyan);
+    }
+  </style>
+</head>
+<body>
+  <script type="module">
+    import { renderShell, code, callout } from '/stylebook/_chrome.js';
+    import { P31ThemeController } from '/lib/p31-theme-engine.mjs';
+    window.p31Theme = new P31ThemeController({ defaultTheme: 'hub' });
+    
+    const content = `
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Adding to the system</div>
+          <h2 class="sb-h2">Three contribution paths</h2>
+          <p class="sb-text">Different changes go through different channels. Pick the right one to avoid review-cycle pain.</p>
+        </div>
+        
+        <table class="sb-table">
+          <thead><tr><th>Type</th><th>Where</th><th>Reviewer</th></tr></thead>
+          <tbody>
+            <tr><td>Bug fix in existing component</td><td>Direct PR with test</td><td>1 review</td></tr>
+            <tr><td>New variant of existing component</td><td>PR + stylebook page update</td><td>1 review</td></tr>
+            <tr><td>New token (color, space, motion)</td><td>Edit canon JSON + apply + verify</td><td>2 reviews (must include operator)</td></tr>
+            <tr><td>New component</td><td>RFC issue first, then PR</td><td>2 reviews + design walkthrough</td></tr>
+            <tr><td>Breaking change to public API</td><td>RFC + deprecation period</td><td>Operator approval required</td></tr>
+            <tr><td>Voice / tone change</td><td>Edit guardrails JSON</td><td>2 reviews</td></tr>
+          </tbody>
+        </table>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Adding a token</div>
+          <h2 class="sb-h2">The canonical change flow</h2>
+        </div>
+        
+        <div style="background: var(--p31-surface); border: 1px solid var(--p31-border-subtle); border-radius: 12px; padding: 24px;">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <div class="step-title">Edit the canon</div>
+              <div class="step-body">Open <code>andromeda/04_SOFTWARE/design-tokens/p31-universal-canon.json</code>. Add the token in the right category. Stay alphabetical.</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <div class="step-title">Run apply</div>
+              <div class="step-body"><code>npm run apply:p31-style</code> regenerates <code>p31-style.css</code> + Tailwind extension + cognitive-passport mirror.</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <div class="step-title">Document in the stylebook</div>
+              <div class="step-body">Add the token to the relevant foundation page (color/space/motion/etc.). The token reference auto-discovers — no manual update needed there.</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">4</div>
+            <div class="step-content">
+              <div class="step-title">Use it somewhere</div>
+              <div class="step-body">A token without a consumer is dead weight. Refactor at least one component to use the new token in the same PR.</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">5</div>
+            <div class="step-content">
+              <div class="step-title">Verify</div>
+              <div class="step-body"><code>npm run verify</code> from the workspace root. Catches alignment drift, contrast violations, banned-word usage, and broken canon refs.</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">6</div>
+            <div class="step-content">
+              <div class="step-title">Commit canon + derived together</div>
+              <div class="step-body">Both files in one commit. Splitting them produces a temporarily-broken intermediate state.</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">7</div>
+            <div class="step-content">
+              <div class="step-title">Open PR with screenshot</div>
+              <div class="step-body">Show the token in three themes (hub, midnight, paper) so reviewers can verify color choice without checking out the branch.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">RFC process</div>
+          <h2 class="sb-h2">For new components</h2>
+          <p class="sb-text">If you're adding a component the system doesn't have, write an RFC first.
+          Saves everyone from "we already had this, named differently" pain.</p>
+        </div>
+        
+        ${code(`# RFC: <Component name>
+
+**Status:** Draft  
+**Author:** @username  
+**Created:** 2026-05-01
+
+## Problem
+
+What can't users currently do? Why is the existing system insufficient?
+
+## Proposed component
+
+- **Name:** <something specific, e.g. "p31-tooltip">
+- **Variants:** <list>
+- **States:** <list>
+- **Props / attributes:** <table>
+
+## Anatomy
+
+ASCII or screenshot showing the structure.
+
+## Comparable systems
+
+What does Material/Radix/HIG/Linear do? Why are we different?
+
+## Tokens needed
+
+- New tokens? (and their values)
+- Existing tokens reused
+
+## Accessibility
+
+- Keyboard interactions
+- ARIA attributes
+- Screen reader behavior
+
+## Test plan
+
+- Unit / visual / a11y / cross-browser
+
+## Migration / impact
+
+Does anything need to change in existing pages?`, 'plain', 'RFC template')}
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">PR checklist</div>
+          <h2 class="sb-h2">Before requesting review</h2>
+        </div>
+        
+        ${code(`Self-review pass:
+
+[ ] Branch named pr/<slug>-<shortsha>
+[ ] Commit message explains the why, not just the what
+[ ] verify passes (npm run verify from root)
+[ ] release:check passes (npm run release:check)
+[ ] No hardcoded hex anywhere — verified by verify:style-alignment
+[ ] No new banned words — verified by verify:public-voice
+[ ] Tested in all 6 themes (hub, org, midnight, genesis, paper, matrix)
+[ ] Tested with reduced-motion enabled
+[ ] Tested with VoiceOver / NVDA on at least one component
+[ ] Tab order makes sense (tab through it)
+[ ] Screenshot in PR description for visual changes
+[ ] Stylebook page added or updated if pattern is new
+[ ] No console.log() or debugger statements left
+[ ] No commented-out code
+[ ] No TODO comments without an issue link
+
+If a token was added:
+[ ] Lives in p31-universal-canon.json
+[ ] Generated outputs committed (p31-style.css, etc.)
+[ ] Used by at least one component`, 'plain', 'PR checklist')}
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Versioning</div>
+          <h2 class="sb-h2">Semver for the design system</h2>
+        </div>
+        
+        <table class="sb-table">
+          <thead><tr><th>Change type</th><th>Version bump</th><th>Examples</th></tr></thead>
+          <tbody>
+            <tr><td>Major</td><td>X.0.0</td><td>Token renamed; component API changed; principle reversed</td></tr>
+            <tr><td>Minor</td><td>0.X.0</td><td>New theme; new component; new variant; new token</td></tr>
+            <tr><td>Patch</td><td>0.0.X</td><td>Bug fix; copy correction; doc improvement</td></tr>
+          </tbody>
+        </table>
+        
+        ${callout('warn', 'Deprecation, not deletion', 'When removing a token or component, mark it deprecated for one minor version before removal. The old token continues to work; <code>verify:style-alignment</code> warns on use; release notes call out the deadline.')}
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Local dev</div>
+          <h2 class="sb-h2">Setting up</h2>
+        </div>
+        
+        ${code(`# 1. Clone (root home + p31ca only — partial clone)
+git clone <home-repo>
+cd <home>
+
+# 2. Install
+npm run setup
+
+# 3. Run the demo server
+npm run demo
+# → opens http://127.0.0.1:8080/stylebook/
+
+# 4. Edit a stylebook page
+# Files live in andromeda/04_SOFTWARE/p31ca/public/stylebook/
+# Just save — refresh browser. No build step.
+
+# 5. When changing tokens
+npm run apply:p31-style
+# Regenerates from canon
+
+# 6. Before opening a PR
+npm run verify
+npm run release:check`, 'shell', 'Local setup')}
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Code style</div>
+          <h2 class="sb-h2">House conventions</h2>
+        </div>
+        
+        <table class="sb-table">
+          <thead><tr><th>Concern</th><th>Rule</th></tr></thead>
+          <tbody>
+            <tr><td>Indentation</td><td>2 spaces, never tabs</td></tr>
+            <tr><td>Quotes (JS)</td><td>Single, double for JSX/HTML attributes</td></tr>
+            <tr><td>Quotes (HTML)</td><td>Double</td></tr>
+            <tr><td>Quotes (CSS)</td><td>None for unitless; double for url()/content</td></tr>
+            <tr><td>CSS class naming</td><td>Kebab-case, prefixed with <code>p31-</code> for system classes</td></tr>
+            <tr><td>JS variable naming</td><td>camelCase</td></tr>
+            <tr><td>Constants</td><td>SCREAMING_SNAKE_CASE</td></tr>
+            <tr><td>File names</td><td>kebab-case.html, kebab-case.mjs</td></tr>
+            <tr><td>Trailing commas</td><td>Yes (multi-line)</td></tr>
+            <tr><td>Comments</td><td>Only for non-obvious intent. Never narrate the code.</td></tr>
+            <tr><td>Console statements</td><td>None in committed code</td></tr>
+            <tr><td>Async</td><td>async/await &gt; .then(). No callbacks.</td></tr>
+          </tbody>
+        </table>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Communication</div>
+          <h2 class="sb-h2">Where to ask</h2>
+        </div>
+        
+        <table class="sb-table">
+          <thead><tr><th>Question</th><th>Where</th></tr></thead>
+          <tbody>
+            <tr><td>"Should I use X or Y here?"</td><td>Comment in PR or open a discussion thread</td></tr>
+            <tr><td>"This breaks for me"</td><td>Issue with reproduction steps, browser, console errors</td></tr>
+            <tr><td>"I want to add a new component"</td><td>RFC issue first, then PR</td></tr>
+            <tr><td>"I'm confused about a principle"</td><td>Email <code>operator@phosphorus31.org</code></td></tr>
+            <tr><td>"Press / partnership"</td><td><code>brand@phosphorus31.org</code></td></tr>
+            <tr><td>"Security disclosure"</td><td><code>security@phosphorus31.org</code> (private)</td></tr>
+          </tbody>
+        </table>
+      </section>
+    `;
+    
+    renderShell({
+      activeId: 'contributing',
+      breadcrumb: [
+        { href: '/stylebook/', label: 'Stylebook' },
+        { href: '/stylebook/', label: 'Resources' },
+        { label: 'Contributing' }
+      ],
+      title: 'Contributing',
+      subtitle: 'How to extend the system, write RFCs, version changes, and pass review.',
+      meta: [
+        { label: 'Paths', value: '6 types' },
+        { label: 'PR checklist', value: '12 gates' }
+      ],
+      content
+    });
+  </script>
+</body>
+</html>

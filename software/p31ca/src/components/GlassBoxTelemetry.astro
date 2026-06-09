@@ -1,0 +1,317 @@
+---
+/**
+ * Glass Box Telemetry - Vector C
+ * Real-time ML-KEM-768 packet visualization
+ * 
+ * Displays live cryptographic flow from Node Zero to Cloud Edge.
+ * Makes the invisible armor visible.
+ */
+
+export interface Props {
+  wsEndpoint?: string;
+  maxPackets?: number;
+}
+
+const {
+  wsEndpoint = 'wss://glass-box-ws.trimtab-signal.workers.dev/telemetry',
+  maxPackets = 10
+} = Astro.props;
+---
+
+<div class="glass-telemetry-container" data-ws-endpoint={wsEndpoint} data-max-packets={maxPackets}>
+  <div class="flex flex-col h-full">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-3 pb-3 border-b border-zinc-800/50">
+      <div class="flex items-center gap-2">
+        <div class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_rgba(34,211,238,0.6)]" id="telemetry-status"></div>
+        <span class="text-zinc-400 font-mono text-xs uppercase tracking-wider">Glass Box</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="text-[10px] px-1.5 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 font-mono">ML-KEM-768</span>
+        <span class="text-[10px] text-zinc-500 font-mono" id="intercept-count">0 sealed</span>
+      </div>
+    </div>
+
+    <!-- Packet Stream -->
+    <div class="flex-1 overflow-hidden relative min-h-[180px]">
+      <div class="absolute top-0 left-0 right-0 h-4 bg-gradient-to-b from-zinc-900/90 to-transparent z-10 pointer-events-none"></div>
+      
+      <div id="packet-stream" class="space-y-2 p-1">
+        <div class="text-center text-zinc-600 text-xs py-8 font-mono" id="empty-state">
+          <span class="block mb-2 text-lg">◉</span>
+          LISTENING...
+        </div>
+      </div>
+      
+      <div class="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-zinc-900/90 to-transparent z-10 pointer-events-none"></div>
+    </div>
+
+    <!-- Footer Stats -->
+    <div class="mt-3 pt-3 border-t border-zinc-800/50 flex justify-between items-center text-[10px] font-mono text-zinc-500">
+      <span id="last-packet-time">--:--:--</span>
+      <span class="flex items-center gap-1">
+        <svg class="w-3 h-3 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+        </svg>
+        WYE-BLIND
+      </span>
+    </div>
+  </div>
+</div>
+
+<script>
+  interface TelemetryPacket {
+    id: string;
+    timestamp: number;
+    source: string;
+    destination: string;
+    protocol: string;
+    kemCiphertextPreview: string;
+    status: 'SEALED' | 'ROUTING';
+  }
+
+  class GlassBoxTelemetry {
+    private ws: WebSocket | null = null;
+    private packets: TelemetryPacket[] = [];
+    private maxPackets: number;
+    private endpoint: string;
+    private interceptCount = 0;
+    private reconnectInterval: number | null = null;
+    private simulationInterval: number | null = null;
+    private isPaused = false;
+
+    private elements: {
+      status: HTMLElement | null;
+      stream: HTMLElement | null;
+      interceptCount: HTMLElement | null;
+      lastTime: HTMLElement | null;
+      emptyState: HTMLElement | null;
+    };
+
+    constructor(container: HTMLElement) {
+      this.endpoint = container.dataset.wsEndpoint || 'wss://glass-box-ws.trimtab-signal.workers.dev/telemetry';
+      this.maxPackets = parseInt(container.dataset.maxPackets || '10', 10);
+
+      this.elements = {
+        status: container.querySelector('#telemetry-status'),
+        stream: container.querySelector('#packet-stream'),
+        interceptCount: container.querySelector('#intercept-count'),
+        lastTime: container.querySelector('#last-packet-time'),
+        emptyState: container.querySelector('#empty-state')
+      };
+
+      // Start simulation immediately to show flowing packets
+      this.startSimulation();
+
+      // Also try to connect to real WebSocket for live data
+      this.connect();
+    }
+
+    private connect() {
+      try {
+        this.ws = new WebSocket(this.endpoint);
+        
+        this.ws.onopen = () => {
+          this.setStatus('connected');
+          this.sendHealthCheck();
+        };
+        
+        this.ws.onmessage = (event) => {
+          const data = JSON.parse(event.data);
+          this.handleMessage(data);
+        };
+        
+        this.ws.onclose = () => {
+          this.setStatus('disconnected');
+          this.scheduleReconnect();
+        };
+        
+        this.ws.onerror = () => {
+          this.setStatus('error');
+        };
+      } catch {
+        this.setStatus('error');
+        this.startSimulation();
+      }
+    }
+
+    private sendHealthCheck() {
+      if (this.ws?.readyState === WebSocket.OPEN) {
+        this.ws.send(JSON.stringify({ type: 'health' }));
+      }
+    }
+
+    private handleMessage(data: any) {
+      // Skip processing when paused (tab hidden) to save battery
+      if (this.isPaused) return;
+      if (data.type === 'telemetry' || data.kemCiphertextPreview) {
+        this.addPacket(data as TelemetryPacket);
+      } else if (data.status === 'healthy') {
+        // Health check response - can trigger simulation if needed
+        if (data.simulation) {
+          this.startSimulation();
+        }
+      }
+    }
+
+    private addPacket(packet: TelemetryPacket) {
+      this.interceptCount++;
+      this.packets.unshift(packet);
+      
+      if (this.packets.length > this.maxPackets) {
+        this.packets.pop();
+      }
+
+      this.render();
+    }
+
+    private render() {
+      if (!this.elements.stream) return;
+
+      // Hide empty state
+      if (this.elements.emptyState) {
+        this.elements.emptyState.style.display = 'none';
+      }
+
+      // Update stats
+      if (this.elements.interceptCount) {
+        this.elements.interceptCount.textContent = `${this.interceptCount.toLocaleString()} sealed`;
+      }
+
+      if (this.elements.lastTime && this.packets[0]) {
+        const time = new Date(this.packets[0].timestamp);
+        this.elements.lastTime.textContent = time.toLocaleTimeString('en-US', { 
+          hour12: false,
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit'
+        });
+      }
+
+      // Render packets
+      const html = this.packets.map((packet, index) => this.renderPacket(packet, index)).join('');
+      
+      // Keep empty state in DOM but hidden if we have packets
+      if (this.elements.emptyState) {
+        this.elements.stream.innerHTML = this.elements.emptyState.outerHTML + html;
+        this.elements.emptyState.style.display = 'none';
+      } else {
+        this.elements.stream.innerHTML = html;
+      }
+    }
+
+    private renderPacket(packet: TelemetryPacket, index: number): string {
+      const opacity = 1 - (index * 0.08);
+      const time = new Date(packet.timestamp).toISOString().split('T')[1].slice(0, -1);
+      
+      return `
+        <div class="flex items-center gap-3 p-2 rounded bg-zinc-950/50 border border-zinc-800/30 font-mono text-[10px] opacity-${Math.max(opacity, 0.3)} hover:bg-zinc-900/50 transition-all" style="opacity: ${opacity}">
+          <span class="text-zinc-600 w-16 shrink-0">${time}</span>
+          <span class="text-zinc-500 truncate w-20">${packet.source}</span>
+          <span class="text-zinc-700">→</span>
+          <span class="text-zinc-400 truncate flex-1">${packet.destination}</span>
+          <span class="text-cyan-400 shrink-0">${packet.protocol}</span>
+          <span class="text-zinc-600 truncate w-24">${packet.kemCiphertextPreview}</span>
+          <div class="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.6)] shrink-0"></div>
+        </div>
+      `;
+    }
+
+    private setStatus(state: 'connected' | 'disconnected' | 'error') {
+      if (!this.elements.status) return;
+      
+      const colors = {
+        connected: 'bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.6)]',
+        disconnected: 'bg-zinc-600',
+        error: 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.6)]'
+      };
+      
+      this.elements.status.className = `w-2 h-2 rounded-full animate-pulse ${colors[state]}`;
+    }
+
+    private scheduleReconnect() {
+      if (this.reconnectInterval) return;
+
+      this.reconnectInterval = window.setTimeout(() => {
+        this.reconnectInterval = null;
+        this.connect();
+      }, 5000);
+    }
+
+    pause() {
+      this.isPaused = true;
+      this.stopSimulation();
+    }
+
+    resume() {
+      if (this.isPaused) {
+        this.isPaused = false;
+        this.startSimulation();
+      }
+    }
+
+    private stopSimulation() {
+      if (this.simulationInterval) {
+        clearInterval(this.simulationInterval);
+        this.simulationInterval = null;
+      }
+    }
+
+    private startSimulation() {
+      // Prevent duplicate simulation intervals
+      if (this.simulationInterval) return;
+      // Don't start if paused (tab hidden)
+      if (this.isPaused) return;
+
+      const sources = ['p31-ark', 'Mama-Device', 'AJ-Device', 'SJ-Device', 'will-Device', 'christyn-Device'];
+      const dests = ['CRDT_SESSION', 'EDGE_PREF', 'ID_SBT', 'K4_CAGE', 'MESH_HUB'];
+
+      const generateHex = (len: number) =>
+        Array.from({length: len}, () => Math.floor(Math.random()*16).toString(16)).join('');
+
+      // Generate first packet immediately
+      this.addPacket({
+        id: `pkt_${generateHex(8)}`,
+        timestamp: Date.now(),
+        source: sources[Math.floor(Math.random() * sources.length)],
+        destination: dests[Math.floor(Math.random() * dests.length)],
+        protocol: 'ML-KEM-768',
+        kemCiphertextPreview: `0x${generateHex(24)}...`,
+        status: 'SEALED'
+      });
+
+      // Continue generating packets at interval
+      this.simulationInterval = window.setInterval(() => {
+        this.addPacket({
+          id: `pkt_${generateHex(8)}`,
+          timestamp: Date.now(),
+          source: sources[Math.floor(Math.random() * sources.length)],
+          destination: dests[Math.floor(Math.random() * dests.length)],
+          protocol: 'ML-KEM-768',
+          kemCiphertextPreview: `0x${generateHex(24)}...`,
+          status: 'SEALED'
+        });
+      }, 2000);
+    }
+  }
+
+  // Initialize on DOM ready
+  document.addEventListener('DOMContentLoaded', () => {
+    const containers = document.querySelectorAll('.glass-telemetry-container');
+    const instances: GlassBoxTelemetry[] = [];
+    containers.forEach(container => {
+      instances.push(new GlassBoxTelemetry(container as HTMLElement));
+    });
+
+    // Page Visibility: pause all telemetry instances when hidden (battery/GPU)
+    document.addEventListener('visibilitychange', () => {
+      instances.forEach(inst => {
+        if (document.hidden) {
+          inst.pause();
+        } else {
+          inst.resume();
+        }
+      });
+    });
+  });
+</script>

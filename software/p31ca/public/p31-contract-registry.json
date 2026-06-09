@@ -1,0 +1,1444 @@
+{
+  "schema": "p31.contractRegistry/1.0.0",
+  "version": "1.0.0",
+  "builder": {
+    "uiPath": "/contract-builder.html",
+    "shortPath": "/contracts",
+    "anchor": "p31.contractBuilder/0.1.0",
+    "note": "JSON rows from p31-alignment.json; EVM SMART suite from contracts/p31-smart-evm.json — npm run build:contract-registry",
+    "smartSuite": "SMART",
+    "smartSuiteExpanded": "Sovereign · Manifest · Access · Root · Treasury"
+  },
+  "count": 62,
+  "contracts": [
+    {
+      "id": "cognitive-passport-v1-1-overlay-schema",
+      "path": "andromeda/software/p31ca/ground-truth/cognitive-passport-v1-1.schema.json",
+      "role": "p31.cognitivePassport/1.1.0 — additive overlay JSON Schema (Draft 7) for the v1.0.0 base. Documents optional identity / cognition / communication / accessibility / stylePreferences / context blocks introduced by WCD-PHOS-2026-01 (bus bar + face). LIVE as of WCD-PHOS C-4: SCHEMA constant in cognitive-passport/index.html and COGNITIVE_PASSPORT_SCHEMA in @p31/shared atomically bumped to 1.1.0; live generator now emits accessibility.{screenComfort, motionPreference, contrastPreference, informationDensity, temperaturePreference} alongside the legacy uiComfort block (backward compatible — every v1.0.0 reader can still read v1.1.0 documents).",
+      "schemas": [],
+      "primarySchema": null,
+      "verifyHints": [
+        "verify:cognitive-passport-schema (atomic SCHEMA equality, html ≡ @p31/shared); npm run verify:passport (mirror parity); npm run verify:cognitive-passport-profiles (audience matrix types unbroken). JSON Schema Draft 7 validity is manual today; npm run verify:cognitive-passport-overlay remains planned.",
+        "verify:cogpass-reader — structural + behavioral guards (node --check; required public API window.p31CogPass.{get,set,clear,getRole,getDisplayName,onChange}; required events p31:cogpass-{loaded,cleared,error}; screenComfort cascade thresholds 30/10 with gray-rock pin; STORAGE_KEY 'p31-cogpass-v1' matches privacy.html §2f; schema URI 'p31.cognitivePassport/1.1.0' matches constants.cognitivePassport.jsonSchema). Partial-clone-friendly (skips when andromeda missing); strict via P31_VERIFY_COGPASS_READER_STRICT=1. Manual round-trip: load a v1.1.0 document into localStorage 'p31-cogpass-v1' on a page that includes p31-subject-prefs.js + p31-theme-engine.mjs + p31-cogpass-reader.mjs; verify <html> data-* attributes match passport, document.dispatchEvent fires p31:cogpass-loaded once."
+      ],
+      "optional": true
+    },
+    {
+      "id": "nonprofit-compliance-json",
+      "path": "andromeda/software/p31ca/ground-truth/nonprofit/compliance.json",
+      "role": "p31.nonprofit.compliance/1.0.0 — Form 1023 + 990 schedule, GA annual registration, 39-state charitable solicitation tracker, filing calendar; drives npm run nonprofit:calendar",
+      "schemas": [],
+      "primarySchema": null,
+      "verifyHints": [
+        "verify:nonprofit (schema shape + cross-references); also runs as part of npm run verify"
+      ],
+      "optional": true
+    },
+    {
+      "id": "nonprofit-donor-policy-json",
+      "path": "andromeda/software/p31ca/ground-truth/nonprofit/donor-policy.json",
+      "role": "p31.nonprofit.donorPolicy/1.0.0 — gift acceptance (9 types accepted, 6 declined), recognition tiers, refund policy (30d window), receipt language with IRS conditional, ethical screening",
+      "schemas": [],
+      "primarySchema": null,
+      "verifyHints": [
+        "verify:nonprofit (schema shape + cross-references); also runs as part of npm run verify"
+      ],
+      "optional": true
+    },
+    {
+      "id": "nonprofit-financials-json",
+      "path": "andromeda/software/p31ca/ground-truth/nonprofit/financials.json",
+      "role": "p31.nonprofit.financials/1.0.0 — chart of accounts, expense ratio targets (75/15/10), fund accounting, audit triggers, donor-acknowledgment thresholds, transparency commitments",
+      "schemas": [],
+      "primarySchema": null,
+      "verifyHints": [
+        "verify:nonprofit (schema shape + cross-references); also runs as part of npm run verify"
+      ],
+      "optional": true
+    },
+    {
+      "id": "nonprofit-governance-json",
+      "path": "andromeda/software/p31ca/ground-truth/nonprofit/governance.json",
+      "role": "p31.nonprofit.governance/1.0.0 — canonical board, officers, COI, meeting cadence, document retention, succession planning. Single source of truth for governance pages, board portals, audit trails.",
+      "schemas": [],
+      "primarySchema": null,
+      "verifyHints": [
+        "verify:nonprofit (schema shape + cross-references); also runs as part of npm run verify"
+      ],
+      "optional": true
+    },
+    {
+      "id": "nonprofit-grants-json",
+      "path": "andromeda/software/p31ca/ground-truth/nonprofit/grants.json",
+      "role": "p31.nonprofit.grants/1.0.0 — 10-stage pipeline, fit criteria (must-have + automatic-decline), 12-funder candidate pool, post-award discipline, ethical declines log",
+      "schemas": [],
+      "primarySchema": null,
+      "verifyHints": [
+        "verify:nonprofit (schema shape + cross-references); also runs as part of npm run verify"
+      ],
+      "optional": true
+    },
+    {
+      "id": "nonprofit-legal-json",
+      "path": "andromeda/software/p31ca/ground-truth/nonprofit/legal.json",
+      "role": "p31.nonprofit.legal/1.0.0 — IP licensing (AGPL+CC-BY default), 3 trademark filings planned, contract template library, GDPR/CCPA/HIPAA/COPPA matrix, breach notification protocol",
+      "schemas": [],
+      "primarySchema": null,
+      "verifyHints": [
+        "verify:nonprofit (schema shape + cross-references); also runs as part of npm run verify"
+      ],
+      "optional": true
+    },
+    {
+      "id": "nonprofit-people-json",
+      "path": "andromeda/software/p31ca/ground-truth/nonprofit/people.json",
+      "role": "p31.nonprofit.people/1.0.0 — role classifications, current roster, P0 open positions (Vice-Chair + Treasurer + Secretary), onboarding checklists per role type, comp philosophy, accessibility commitments",
+      "schemas": [],
+      "primarySchema": null,
+      "verifyHints": [
+        "verify:nonprofit (schema shape + cross-references); also runs as part of npm run verify"
+      ],
+      "optional": true
+    },
+    {
+      "id": "nonprofit-programs-json",
+      "path": "andromeda/software/p31ca/ground-truth/nonprofit/programs.json",
+      "role": "p31.nonprofit.programs/1.0.0 — mission, vision, theory of change (problem/intervention/short-medium-long outcomes), 5-program portfolio, KPIs, impact-measurement framework",
+      "schemas": [],
+      "primarySchema": null,
+      "verifyHints": [
+        "verify:nonprofit (schema shape + cross-references); also runs as part of npm run verify"
+      ],
+      "optional": true
+    },
+    {
+      "id": "nonprofit-risk-json",
+      "path": "andromeda/software/p31ca/ground-truth/nonprofit/risk.json",
+      "role": "p31.nonprofit.risk/1.0.0 — 9-risk register (R-001 to R-009), incident response classes (P0–P3), business continuity scenarios, insurance roadmap (D&O P0, GL/cyber P1, workers-comp P2)",
+      "schemas": [],
+      "primarySchema": null,
+      "verifyHints": [
+        "verify:nonprofit (schema shape + cross-references); also runs as part of npm run verify"
+      ],
+      "optional": true
+    },
+    {
+      "id": "phos-voice-json",
+      "path": "andromeda/software/p31ca/public/lib/p31-phos-voice.json",
+      "role": "Built artifact (NOT hand-edited) — schema p31.phosVoice/1.0.0. Generated from PHOS-VOICE-DRAFT.md §4 by scripts/build-phos-voice-json.mjs. Top-level _meta declares schema/source/generator/slot counts/doctrine. Other top-level keys are pathnames (slots) with shape { _tag, _tagSource?, greeting, hint, fallback, links }. Fetched at runtime by /lib/p31-phos-guide.mjs tryLoadVoiceJson() and merged over baked-in DEFAULT_VOICE via setVoice() — JSON wins for every defined slot, defaults stand for everything else. Deterministic build (no generatedAt timestamp; verify:phos-voice asserts byte-equality with --check). Production URL: https://p31ca.org/lib/p31-phos-voice.json.",
+      "schemas": [],
+      "primarySchema": null,
+      "verifyHints": [],
+      "optional": true
+    },
+    {
+      "id": "p31ca-research-public-mirror",
+      "path": "andromeda/software/p31ca/public/p31-research.json",
+      "role": "Public mirror of p31-constants.json `research` for cross-origin / programmatic consumers. Generated by scripts/apply-constants.mjs alongside the src/data copy. URL: https://p31ca.org/p31-research.json (CORS open for *).",
+      "schemas": [],
+      "primarySchema": null,
+      "verifyHints": [],
+      "optional": true
+    },
+    {
+      "id": "p31ca-research-data-mirror",
+      "path": "andromeda/software/p31ca/src/data/p31-research.json",
+      "role": "Mirror of p31-constants.json `research` (papers + zenodoSearchUrl) generated by scripts/apply-constants.mjs. Imported by src/pages/research.astro at build time. Not hand-edited.",
+      "schemas": [],
+      "primarySchema": null,
+      "verifyHints": [],
+      "optional": true
+    },
+    {
+      "id": "phos-voice-lock",
+      "path": "docs/PHOS-VOICE-DRAFT.lock.json",
+      "role": "SHA-256 lock for OPERATOR-VOICE slots in PHOS-VOICE-DRAFT.md §4. Schema p31.phosVoiceLock/1.0.0. Maintained by `npm run verify:phos-voice -- --update-lock`. Any change to an OPERATOR-VOICE slot's content (greeting/hint/fallback/links) without a matching SHA update fails verify:phos-voice — making silent agent rewrites impossible. Bootstrap state: 1 SHA (/welcome, derived from §3.2). When operator promotes a DRAFT-AGENT-SIMULATED slot to OPERATOR-VOICE, run --update-lock and commit the lock alongside the §4 edit so the diff is reviewable.",
+      "schemas": [],
+      "primarySchema": null,
+      "verifyHints": [],
+      "optional": false
+    },
+    {
+      "id": "p31-passport-anchor-pact-fingerprint",
+      "path": "p31-passport-anchor-pact.json",
+      "role": "Public anchor pact fingerprint stub (schema p31.anchorPactFingerprint/1.0.0); populate by running: p31 agent-hub anchor create; full signed pact at ~/.p31/anchor-pact.json",
+      "schemas": [
+        "p31.anchorPactFingerprint/1.0.0"
+      ],
+      "primarySchema": "p31.anchorPactFingerprint/1.0.0",
+      "verifyHints": [],
+      "optional": false
+    },
+    {
+      "id": "p31-atmosphere-ramp-json",
+      "path": "docs/p31-atmosphere-ramp.json",
+      "role": "p31.atmosphereRamp/1.0.0 — per-surface motion/type/starfield/sound posture vs universal canon; npm run verify:atmosphere-ramp",
+      "schemas": [
+        "p31.atmosphereRamp/1.0.0"
+      ],
+      "primarySchema": "p31.atmosphereRamp/1.0.0",
+      "verifyHints": [
+        "verify:atmosphere-ramp"
+      ],
+      "optional": false
+    },
+    {
+      "id": "p31-atmosphere-hub-lib-json-ramp",
+      "path": "andromeda/software/p31ca/public/lib/atmosphere/p31-atmosphere-ramp.json",
+      "role": "Hub mirror of docs ramp JSON (verify:atmosphere-ramp drift vs design-assets)",
+      "schemas": [
+        "p31.atmosphereRamp/1.0.0"
+      ],
+      "primarySchema": "p31.atmosphereRamp/1.0.0",
+      "verifyHints": [],
+      "optional": true
+    },
+    {
+      "id": "p31-atmosphere-routes-json",
+      "path": "docs/p31-atmosphere-routes.json",
+      "role": "p31.atmosphereRoutes/1.0.0 — surfaceId → rampId + starfieldAOD (on|off|degraded); pairs docs/p31-atmosphere-ramp.json",
+      "schemas": [
+        "p31.atmosphereRoutes/1.0.0"
+      ],
+      "primarySchema": "p31.atmosphereRoutes/1.0.0",
+      "verifyHints": [
+        "verify:atmosphere-ramp",
+        "verify:quantum-clock"
+      ],
+      "optional": false
+    },
+    {
+      "id": "bonding-atmosphere-routes-json",
+      "path": "andromeda/software/bonding/public/p31-atmosphere/p31-atmosphere-routes.json",
+      "role": "Bonding React cockpit fetch BASE + p31-atmosphere/*; kept in sync by npm run sync:atmosphere",
+      "schemas": [
+        "p31.atmosphereRoutes/1.0.0"
+      ],
+      "primarySchema": "p31.atmosphereRoutes/1.0.0",
+      "verifyHints": [],
+      "optional": true
+    },
+    {
+      "id": "p31-atmosphere-preset-slice-json",
+      "path": "design-assets/atmosphere/p31-canon-starfield-presets.json",
+      "role": "Canon starfield.presets slice for browsers; regenerated by sync:atmosphere",
+      "schemas": [
+        "p31.canonStarfieldPresetsSlice/1.0.0"
+      ],
+      "primarySchema": "p31.canonStarfieldPresetsSlice/1.0.0",
+      "verifyHints": [],
+      "optional": false
+    },
+    {
+      "id": "cars-wire-contract",
+      "path": "cars-contract/p31.carsWire.json",
+      "role": "p31.carsWire/0.1.0 — WebSocket message-type catalog for mock server + SoupEngine; verify:cars-wire",
+      "schemas": [
+        "p31.carsWire/0.1.0"
+      ],
+      "primarySchema": "p31.carsWire/0.1.0",
+      "verifyHints": [
+        "verify:cars-wire"
+      ],
+      "optional": false
+    },
+    {
+      "id": "p31-chain-anchor",
+      "path": "p31-chain-anchor.json",
+      "role": "p31.chainAnchor/0.1.0 — EVM transparency anchor registry addresses + default manifest URLs; pairs with packages/p31-sovereign-chain; npm run verify:sovereign-chain",
+      "schemas": [
+        "p31.chainAnchor/0.1.0"
+      ],
+      "primarySchema": "p31.chainAnchor/0.1.0",
+      "verifyHints": [],
+      "optional": false
+    },
+    {
+      "id": "p31-constants",
+      "path": "p31-constants.json",
+      "role": "Operator-locked numbers, mission snippet, ground-truth version/schema pins, mesh URLs",
+      "schemas": [
+        "p31.cognitivePassport/1.1.0",
+        "p31.integrationsBridge/1.0.0",
+        "p31.ground-truth/1.0.0"
+      ],
+      "primarySchema": "p31.cognitivePassport/1.1.0",
+      "verifyHints": [
+        "verify:facts",
+        "verify:alignment -- --verify (shape + sink mtime check)",
+        "verify:edge-lab",
+        "verify:shipbox",
+        "verify:fleet-portal + verify:facts pathsMustExist fleet-portal.html + scripts/build-fleet-portal.mjs",
+        "verify:constants",
+        "verify:simplex",
+        "verify:starfield",
+        "implicit in bonding build; run hub build after sync when shipping",
+        "(part of `npm run verify:constants` indirectly via apply:constants golden behavior — mirrors must match home source).",
+        "p31ca prebuild: scripts/hub/verify.mjs",
+        "verify:ecosystem; hub `verify-live-fleet-mesh.mjs` in p31ca matches mesh block to shipped `p31-mesh-constants.json`",
+        "verify:constants (integrations schema, openCatalog https, src/public/json parity)",
+        "test:triper:cert"
+      ],
+      "optional": false
+    },
+    {
+      "id": "cogpass-bridge-schema",
+      "path": "andromeda/software/p31ca/ground-truth/cogpass-bridge.schema.json",
+      "role": "BUS4 Phase 1 — JSON Schema Draft 7 for the postMessage envelope p31.cogPassBridge/1.0.0. Defines cogpass:get / cogpass:reply / cogpass:ready message shapes with nonce + schema fields and conditional 'present:false implies passport:null' constraint. Doctrine block embedded (single_rule, privacy, origin_validation, graceful_degradation). $id locked atomically against bridge HTML SCHEMA constant by verify:cogpass-bridge.",
+      "schemas": [
+        "p31.cogPassBridge/1.0.0"
+      ],
+      "primarySchema": "p31.cogPassBridge/1.0.0",
+      "verifyHints": [],
+      "optional": true
+    },
+    {
+      "id": "p31-contract-registry",
+      "path": "contracts/p31-contract-registry.json",
+      "role": "p31.contractRegistry/1.0.0 — JSON contract index derived from alignment sources; npm run build:contract-registry; verify:contract-registry; hub /contract-builder.html",
+      "schemas": [
+        "p31.contractRegistry/1.0.0"
+      ],
+      "primarySchema": "p31.contractRegistry/1.0.0",
+      "verifyHints": [],
+      "optional": false
+    },
+    {
+      "id": "p31-delta-language-json",
+      "path": "docs/p31-delta-language.json",
+      "role": "p31.deltaLanguage/1.0.0 machine registry (terms, anchors, forbidden, surface phrase packs); npm run verify:delta-language; sync → p31ca public via npm run sync:delta-language",
+      "schemas": [
+        "p31.deltaLanguage/1.0.0"
+      ],
+      "primarySchema": "p31.deltaLanguage/1.0.0",
+      "verifyHints": [
+        "verify:delta-language"
+      ],
+      "optional": false
+    },
+    {
+      "id": "p31-delta-language-hub-json",
+      "path": "andromeda/software/p31ca/public/p31-delta-language.json",
+      "role": "Hub mirror of docs/p31-delta-language.json — kept in sync by npm run sync:delta-language / polish",
+      "schemas": [
+        "p31.deltaLanguage/1.0.0"
+      ],
+      "primarySchema": "p31.deltaLanguage/1.0.0",
+      "verifyHints": [],
+      "optional": true
+    },
+    {
+      "id": "doc-index-manifest",
+      "path": "docs/doc-index.manifest.json",
+      "role": "Allowlist of markdown roots for docs/doc-library search index (p31.docIndexManifest/1.0.0)",
+      "schemas": [
+        "p31.docIndexManifest/1.0.0"
+      ],
+      "primarySchema": "p31.docIndexManifest/1.0.0",
+      "verifyHints": [
+        "verify:doc-index (after build:doc-index in root verify; Node uses npm minisearch, browser uses vendor UMD + worker). Browser e2e: npm run test:doc-library:e2e; also run in p31:all unless --skip-e2e",
+        "verify:doc-library:p31ca-mirror (after verify:doc-index; fails if Andromeda mirror not committed). p31ca verify:ground-truth fileSnippets docLibrary.hubMirror, edgeRedirect /doc-library"
+      ],
+      "optional": false
+    },
+    {
+      "id": "p31-env-manifest",
+      "path": "p31-env-manifest.json",
+      "role": "p31.envManifest/1.0.0 — catalog of P31_* env vars (names + semantics only); npm run verify:p31-env; npm run list:p31-env",
+      "schemas": [
+        "p31.envManifest/1.0.0"
+      ],
+      "primarySchema": "p31.envManifest/1.0.0",
+      "verifyHints": [
+        "verify:p31-env"
+      ],
+      "optional": false
+    },
+    {
+      "id": "p31-facts",
+      "path": "p31-facts.json",
+      "role": "p31.facts/1.0.0 — machine-verified paths/keys; npm run verify:facts (mesh URLs, @p31/mesh, policy-file substring guard)",
+      "schemas": [
+        "p31.facts/1.0.0"
+      ],
+      "primarySchema": "p31.facts/1.0.0",
+      "verifyHints": [
+        "verify:facts",
+        "verify:shipbox"
+      ],
+      "optional": false
+    },
+    {
+      "id": "p31-fleet-entities-json",
+      "path": "andromeda/software/p31ca/public/p31-fleet-entities.json",
+      "role": "p31.fleetEntities/1.0.0 — merged Workers + supplemental bots/agents + probe hints; npm run build:fleet-entities in p31ca; NOT fleet-portal or live-fleet raw bundle",
+      "schemas": [
+        "p31.fleetEntities/1.0.0"
+      ],
+      "primarySchema": "p31.fleetEntities/1.0.0",
+      "verifyHints": [],
+      "optional": true
+    },
+    {
+      "id": "p31-ground-truth",
+      "path": "andromeda/software/p31ca/ground-truth/p31.ground-truth.json",
+      "role": "p31.ground-truth/1.0.0 — edgeRedirects (+ Worker SPA 302 triple from worker-spa-launches.mjs), registry invariants, Three pins",
+      "schemas": [
+        "p31.ground-truth/1.0.0"
+      ],
+      "primarySchema": "p31.ground-truth/1.0.0",
+      "verifyHints": [
+        "verify:alignment -- --verify (shape + sink mtime check)",
+        "verify:cogpass-bridge — atomic locks across cogpass-bridge.html SCHEMA + ALLOWED_ORIGINS, cogpass-bridge.schema.json $id, busBar.crossOriginBridge.{schema, allowedOrigins} in ground-truth, privacy.html §2g sentinel. Drift in any of the 4 surfaces fails CI.",
+        "from p31ca: npm run verify:ground-truth",
+        "verify:education",
+        "from p31ca: npm run verify:oqe-icosa (includes dome-cockpit OQE node check)"
+      ],
+      "optional": true
+    },
+    {
+      "id": "p31-k4-agent-hub-manifest",
+      "path": "p31-k4-agent-hub.json",
+      "role": "p31.k4AgentHub/1.1.0 — K₄ agent worker tetrahedron canon (4 vertices, 6 edges, dock protocol, skill registry, federation, family-cage-wire); source for packages/k4-agent-hub/, agents.html, verify:k4-agent-hub",
+      "schemas": [
+        "p31.k4AgentHub/1.1.0"
+      ],
+      "primarySchema": "p31.k4AgentHub/1.1.0",
+      "verifyHints": [
+        "verify:k4-agent-hub (manifest + wrangler + topology.js + crypto + dispatcher + smoke + agents.html + p31ca mirror parity); npm run test:k4-agent-hub (K₄ invariant + skill registry + family triadic cover + Ed25519 sign/verify + dispatcher priority chain + federation P2P); npm run k4-agent-hub:client:test (anchor pact unit + Worker anchor route tests); npm run k4-agent-hub:smoke against a running hub (signed dock, signed call envelope, cross-edge, federation)"
+      ],
+      "optional": false
+    },
+    {
+      "id": "p31ca-education-curriculum",
+      "path": "andromeda/software/p31ca/public/education/curriculum.json",
+      "role": "p31.labsEducationCurriculum/0.2.0 — tracks, modules, labs; verify:education",
+      "schemas": [
+        "p31.labsEducationCurriculum/0.2.0"
+      ],
+      "primarySchema": "p31.labsEducationCurriculum/0.2.0",
+      "verifyHints": [
+        "from p31ca: npm run verify:ground-truth",
+        "verify:education"
+      ],
+      "optional": true
+    },
+    {
+      "id": "p31-launch-checklist",
+      "path": "p31-launch-checklist.json",
+      "role": "p31.launchChecklist/0.1.0 — human-gate sign-off rows for launch; flip via npm run launch:check",
+      "schemas": [
+        "p31.launchChecklist/0.1.0"
+      ],
+      "primarySchema": "p31.launchChecklist/0.1.0",
+      "verifyHints": [],
+      "optional": false
+    },
+    {
+      "id": "p31-launch-lane",
+      "path": "p31-launch-lane.json",
+      "role": "p31.launchLane/0.1.0 derived index for governed Workers + p31ca; npm run generate:launch-lane after PRS or fleet URL edits",
+      "schemas": [
+        "p31.launchLane/0.1.0"
+      ],
+      "primarySchema": "p31.launchLane/0.1.0",
+      "verifyHints": [],
+      "optional": false
+    },
+    {
+      "id": "p31-launch-readiness-config",
+      "path": "p31-launch-readiness-config.json",
+      "role": "p31.launchReadinessConfig/0.1.0 — ten-lane market launch audit config; npm run verify:launch-readiness-config; runner npm run launch:audit / launch:gate / launch:rehearsal",
+      "schemas": [
+        "p31.launchReadinessConfig/0.1.0"
+      ],
+      "primarySchema": "p31.launchReadinessConfig/0.1.0",
+      "verifyHints": [],
+      "optional": false
+    },
+    {
+      "id": "p31-live-fleet",
+      "path": "p31-live-fleet.json",
+      "role": "Sites + mesh/payment snapshot; `sources[]` and mesh URLs must match `p31-constants.json` and worker-allowlist names",
+      "schemas": [
+        "p31.liveFleet/1.0.0"
+      ],
+      "primarySchema": "p31.liveFleet/1.0.0",
+      "verifyHints": [
+        "verify:production-readiness",
+        "verify:launch-lane-sync",
+        "verify:edge-lab",
+        "verify:fleet-portal + verify:facts pathsMustExist fleet-portal.html + scripts/build-fleet-portal.mjs",
+        "verify:live-fleet:p31ca-mirror (home vs hub mirror + entities) then verify:p31ca-contracts; hub prebuild verify-live-fleet-mesh locks mesh block to public/p31-mesh-constants.json",
+        "verify:live-fleet:p31ca-mirror",
+        "verify:doc-index (the wiring diagram is in the searchable doc library); verify:alignment (catches missing source rows when a new system is added without doc update). The PDF itself has no CI verifier — it is a print artifact derived from the markdown.",
+        "validate:full includes npm run quantum:cloud and npm run pqc:verify when p31ca is present",
+        "test:triper:cert"
+      ],
+      "optional": false
+    },
+    {
+      "id": "p31-mission-trio",
+      "path": "andromeda/software/p31ca/src/data/p31-mission-trio.json",
+      "role": "p31.missionTrio/1.0.0 — Build / Create / Connect: ephemeralization (create) + ethical monetization (connect) in hub copy and EBC; single source for sync’d footers",
+      "schemas": [
+        "p31.missionTrio/1.0.0"
+      ],
+      "primarySchema": "p31.missionTrio/1.0.0",
+      "verifyHints": [
+        "from p31ca: node scripts/verify-mission-trio.mjs"
+      ],
+      "optional": true
+    },
+    {
+      "id": "p31-oqe-twenty-lexicon",
+      "path": "andromeda/software/p31ca/public/p31-oqe-twenty.json",
+      "role": "p31.oqeTwenty/1.0.0 — forensic 20-face contradiction slots; oqe-icosa.html; not Fate 20",
+      "schemas": [
+        "p31.oqeTwenty/1.0.0"
+      ],
+      "primarySchema": "p31.oqeTwenty/1.0.0",
+      "verifyHints": [
+        "from p31ca: npm run verify:oqe-icosa (includes dome-cockpit OQE node check)"
+      ],
+      "optional": true
+    },
+    {
+      "id": "p31-production-readiness",
+      "path": "p31-production-readiness.json",
+      "role": "p31.productionReadiness/1.0.0 — PRS scoring for hub cards + Workers; verify:production-readiness + verify:launch-lane-sync; launchGovernance enforces governed Workers + pages floor",
+      "schemas": [
+        "p31.productionReadiness/1.0.0"
+      ],
+      "primarySchema": "p31.productionReadiness/1.0.0",
+      "verifyHints": [
+        "verify:production-readiness",
+        "verify:launch-lane-sync"
+      ],
+      "optional": false
+    },
+    {
+      "id": "p31-protocol-registry",
+      "path": "p31-protocol-registry.json",
+      "role": "p31.protocolRegistry/1.0.0 — unified source for TRIPER, launch readiness, verification tiers; verify:protocol-registry",
+      "schemas": [
+        "p31.protocolRegistry/1.0.0"
+      ],
+      "primarySchema": "p31.protocolRegistry/1.0.0",
+      "verifyHints": [],
+      "optional": false
+    },
+    {
+      "id": "p31-public-voice-guardrails-json",
+      "path": "docs/p31-public-voice-guardrails.json",
+      "role": "p31.publicVoiceGuardrails/1.0.0 — watched paths + regex guardrails for verify:public-voice (pairs docs/PUBLIC-VOICE.md)",
+      "schemas": [
+        "p31.publicVoiceGuardrails/1.0.0"
+      ],
+      "primarySchema": "p31.publicVoiceGuardrails/1.0.0",
+      "verifyHints": [
+        "verify:alignment -- --verify (shape + sink mtime check)",
+        "verify:public-voice"
+      ],
+      "optional": false
+    },
+    {
+      "id": "p31-quantum-deck-save-schema",
+      "path": "packages/quantum-deck/schema/quantum-deck-save.schema.json",
+      "role": "p31.quantumDeckSave/0.1.0 JSON Schema envelope (opaque state until rules engine ships)",
+      "schemas": [
+        "p31.quantumDeckSave/0.1.0"
+      ],
+      "primarySchema": "p31.quantumDeckSave/0.1.0",
+      "verifyHints": [
+        "verify:quantum-deck; future: Playwright smoke + verify:public-app-shell"
+      ],
+      "optional": false
+    },
+    {
+      "id": "p31-reports-index",
+      "path": "docs/reports/index.json",
+      "role": "p31.reportsIndex/0.1.0 — committed metadata for operator reports (full bodies live in ~/.p31/reports/); rebuild via npm run reports:index; verify:reports-index",
+      "schemas": [
+        "p31.reportsIndex/0.1.0"
+      ],
+      "primarySchema": "p31.reportsIndex/0.1.0",
+      "verifyHints": [],
+      "optional": false
+    },
+    {
+      "id": "p31-reports-promoted-index",
+      "path": "docs/reports/promoted/index.json",
+      "role": "p31.reportsPromoted/0.1.0 — generated index of published reports (markdowns the operator opted in via npm run reports:promote). Build via npm run build:reports-promoted; verify:reports-promoted gates shape + every entry's .md exists.",
+      "schemas": [
+        "p31.reportsPromoted/0.1.0"
+      ],
+      "primarySchema": "p31.reportsPromoted/0.1.0",
+      "verifyHints": [],
+      "optional": false
+    },
+    {
+      "id": "p31-sovereign-layers",
+      "path": "p31-sovereign-layers.json",
+      "role": "p31.sovereignLayers/0.1.0 — full decentralized stack index (L1–L12); npm run verify:sovereign-layers; human map docs/P31-SOVEREIGN-LAYERS.md",
+      "schemas": [
+        "p31.sovereignLayers/0.1.0"
+      ],
+      "primarySchema": "p31.sovereignLayers/0.1.0",
+      "verifyHints": [],
+      "optional": false
+    },
+    {
+      "id": "p31-subscriptions",
+      "path": "p31-subscriptions.json",
+      "role": "p31.subscriptions/1.0.0 — canonical AI subscription stack (Opus + Gemini + Composer 2) + API budget; verify:subscriptions",
+      "schemas": [
+        "p31.subscriptions/1.0.0"
+      ],
+      "primarySchema": "p31.subscriptions/1.0.0",
+      "verifyHints": [
+        "verify:subscriptions"
+      ],
+      "optional": false
+    },
+    {
+      "id": "p31-universal-canon",
+      "path": "andromeda/software/design-tokens/p31-universal-canon.json",
+      "role": "Colors, type scale, motion, focus — hub/org; mobileMeshFirst (touch, safe areas) in generated p31-style.css",
+      "schemas": [
+        "p31.universalCanon/1.0.0"
+      ],
+      "primarySchema": "p31.universalCanon/1.0.0",
+      "verifyHints": [
+        "verify:atmosphere-ramp",
+        "verify:p31-style",
+        "verify:quantum-material-u",
+        "verify:style-alignment (about pages); visual doctrine compliance is manual.",
+        "verify:style-alignment (from P31 home or p31ca/)",
+        "verify:doc-index (the wiring diagram is in the searchable doc library); verify:alignment (catches missing source rows when a new system is added without doc update). The PDF itself has no CI verifier — it is a print artifact derived from the markdown."
+      ],
+      "optional": true
+    },
+    {
+      "id": "p31-verify-pulse",
+      "path": "docs/verify-pulse.json",
+      "role": "p31.verifyPulse/0.1.0 — committed heartbeat of last 20 successful root verify runs (ts, git head, durationMs, stepCount). Operator records via npm run pulse or npm run verify:pulse. verify:verify-pulse gates shape; mirrored to p31ca/public/verify-pulse.json.",
+      "schemas": [
+        "p31.verifyPulse/0.1.0"
+      ],
+      "primarySchema": "p31.verifyPulse/0.1.0",
+      "verifyHints": [],
+      "optional": false
+    },
+    {
+      "id": "p31ca-worker-allowlist",
+      "path": "andromeda/software/p31ca/security/worker-allowlist.json",
+      "role": "p31.workerAllowlist/1.0.0 — named Workers + paths; inventory compares to all `wrangler.toml` under andromeda/software",
+      "schemas": [
+        "p31.workerAllowlist/1.0.0"
+      ],
+      "primarySchema": "p31.workerAllowlist/1.0.0",
+      "verifyHints": [
+        "from p31ca: npm run security:workers (also in npm run security:check after hub build in release paths)"
+      ],
+      "optional": true
+    },
+    {
+      "id": "p31-k4-agent-hub-client-package",
+      "path": "packages/k4-agent-hub-client/package.json",
+      "role": "@p31/k4-agent-hub-client — operator-side client (Ed25519 keypair, signed dock + per-call envelope, dock/call/cross/topology/federation methods); pairs with packages/k4-agent-hub/",
+      "schemas": [],
+      "primarySchema": null,
+      "verifyHints": [],
+      "optional": false
+    },
+    {
+      "id": "p31-k4-agent-hub-package",
+      "path": "packages/k4-agent-hub/package.json",
+      "role": "@p31/k4-agent-hub — Cloudflare Worker hosting four agent hub Durable Objects (FORGE/COUNSEL/SCHOLAR/SCRIBE); verify:k4-agent-hub + test:k4-agent-hub",
+      "schemas": [],
+      "primarySchema": null,
+      "verifyHints": [],
+      "optional": false
+    },
+    {
+      "id": "p31-mesh-sdk",
+      "path": "packages/p31-mesh/package.json",
+      "role": "@p31/mesh — mesh fleet probe (personal+cage+hubs), agent client, `src/browser.mjs` (no fs); `scripts/verify-mesh-live.mjs`, `p31-mesh` / `p31 mesh` CLI",
+      "schemas": [],
+      "primarySchema": null,
+      "verifyHints": [],
+      "optional": false
+    },
+    {
+      "id": "p31-quantum-deck-package",
+      "path": "packages/quantum-deck/package.json",
+      "role": "@p31/quantum-deck — standard deck, Web Crypto shuffle, saved-game schema stub; verify:quantum-deck",
+      "schemas": [],
+      "primarySchema": null,
+      "verifyHints": [
+        "verify:quantum-deck; future: Playwright smoke + verify:public-app-shell"
+      ],
+      "optional": false
+    },
+    {
+      "id": "p31-pwa-manifest-cogpass",
+      "path": "pwa/manifest-cogpass.json",
+      "role": "Web app manifest for Cognitive Passport. id p31.cogpass; scope /cognitive-passport/. Validated by verify:pwa.",
+      "schemas": [],
+      "primarySchema": null,
+      "verifyHints": [
+        "verify:pwa",
+        "launch:status  (read-only) or npm run launch -- --dry-run"
+      ],
+      "optional": false
+    },
+    {
+      "id": "p31-pwa-manifest-same-shape",
+      "path": "pwa/manifest-same-shape.json",
+      "role": "Web app manifest for The Same Shape demo (K₄ × 4 panels). id p31.sameShape; scope /demos/. Validated by verify:pwa.",
+      "schemas": [],
+      "primarySchema": null,
+      "verifyHints": [
+        "verify:pwa",
+        "launch:status  (read-only) or npm run launch -- --dry-run"
+      ],
+      "optional": false
+    },
+    {
+      "id": "p31-pwa-manifest-social-cards",
+      "path": "pwa/manifest-social-cards.json",
+      "role": "Web app manifest for the 10-card social kit. id p31.socialCards; scope /social-cards/. Validated by verify:pwa.",
+      "schemas": [],
+      "primarySchema": null,
+      "verifyHints": [
+        "verify:pwa",
+        "launch:status  (read-only) or npm run launch -- --dry-run"
+      ],
+      "optional": false
+    },
+    {
+      "id": "p31-pwa-manifest-the-pulse",
+      "path": "pwa/manifest-the-pulse.json",
+      "role": "Web app manifest for The Pulse demo (editable Larmor canon). id p31.thePulse; scope /demos/. Validated by verify:pwa.",
+      "schemas": [],
+      "primarySchema": null,
+      "verifyHints": [
+        "verify:pwa",
+        "launch:status  (read-only) or npm run launch -- --dry-run"
+      ],
+      "optional": false
+    },
+    {
+      "id": "p31-fleet-ten-local-ollama",
+      "path": "scripts/p31-fleet-ten/models.json",
+      "role": "Ten Ollama personas (merged prompts + setup.sh/verify.sh/benchmark.sh); static gate npm run verify:fleet-ten",
+      "schemas": [],
+      "primarySchema": null,
+      "verifyHints": [
+        "verify:fleet-ten",
+        "verify:fleet-llm-bridge",
+        "verify:ollama-mcp",
+        "verify:ollama-tunnel-config",
+        "verify:doc-index (the wiring diagram is in the searchable doc library); verify:alignment (catches missing source rows when a new system is added without doc update). The PDF itself has no CI verifier — it is a print artifact derived from the markdown."
+      ],
+      "optional": false
+    },
+    {
+      "id": "simplex-email-worker",
+      "path": "simplex-email/package.json",
+      "role": "Inbound Email Worker (HERALD/tomograph ingest); npm run verify:simplex-email; see simplex-email/README.md and simplex-v7/DEPLOY.md §9",
+      "schemas": [],
+      "primarySchema": null,
+      "verifyHints": [],
+      "optional": false
+    },
+    {
+      "id": "simplex-v7-worker",
+      "path": "simplex-v7/package.json",
+      "role": "SIMPLEX v7 Cloudflare Worker — D1 crew + SENTINEL; verify via npm run verify:simplex; deploy: simplex-v7/DEPLOY.md",
+      "schemas": [],
+      "primarySchema": null,
+      "verifyHints": [
+        "verify:passport; npm run verify:cognitive-passport-schema; npm run verify:cognitive-passport-profiles; npm run verify:simplex; npm run verify:simplex-email; npm run verify:simplex-bootstrap when SENTINEL / Context / HERALD email or simplex bootstrap / wrangler scaffold contract changes"
+      ],
+      "optional": false
+    }
+  ],
+  "evm": {
+    "schema": "p31.evmContractSuite/0.1.0",
+    "suite": "SMART",
+    "suiteExpanded": "Sovereign · Manifest · Access · Root · Treasury",
+    "solidity": "0.8.24",
+    "package": "packages/p31-sovereign-chain",
+    "verifyScript": "verify:sovereign-chain",
+    "sourceFingerprint": "d0ef0cee7840dd85a2c93f56abbe7e2f57a4d8e613e611e99adf08c1256b1472",
+    "contracts": [
+      {
+        "letter": "S",
+        "name": "P31TransparencyAnchor",
+        "source": "packages/p31-sovereign-chain/src/P31TransparencyAnchor.sol",
+        "role": "Sovereign — append-only digest + URI commitments.",
+        "abi": [
+          {
+            "anonymous": false,
+            "inputs": [
+              {
+                "indexed": true,
+                "internalType": "uint256",
+                "name": "id",
+                "type": "uint256"
+              },
+              {
+                "indexed": true,
+                "internalType": "bytes32",
+                "name": "digest",
+                "type": "bytes32"
+              },
+              {
+                "indexed": false,
+                "internalType": "string",
+                "name": "uri",
+                "type": "string"
+              },
+              {
+                "indexed": true,
+                "internalType": "address",
+                "name": "sender",
+                "type": "address"
+              },
+              {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "blockNumber",
+                "type": "uint256"
+              },
+              {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "timestamp",
+                "type": "uint256"
+              }
+            ],
+            "name": "Anchored",
+            "type": "event"
+          },
+          {
+            "inputs": [
+              {
+                "internalType": "bytes32",
+                "name": "digest",
+                "type": "bytes32"
+              },
+              {
+                "internalType": "string",
+                "name": "uri",
+                "type": "string"
+              }
+            ],
+            "name": "anchor",
+            "outputs": [
+              {
+                "internalType": "uint256",
+                "name": "id",
+                "type": "uint256"
+              }
+            ],
+            "stateMutability": "nonpayable",
+            "type": "function"
+          },
+          {
+            "inputs": [],
+            "name": "anchorCount",
+            "outputs": [
+              {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
+            "inputs": [
+              {
+                "internalType": "uint256",
+                "name": "id",
+                "type": "uint256"
+              }
+            ],
+            "name": "getAnchor",
+            "outputs": [
+              {
+                "components": [
+                  {
+                    "internalType": "bytes32",
+                    "name": "digest",
+                    "type": "bytes32"
+                  },
+                  {
+                    "internalType": "string",
+                    "name": "uri",
+                    "type": "string"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "sender",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "uint64",
+                    "name": "blockNumber",
+                    "type": "uint64"
+                  },
+                  {
+                    "internalType": "uint64",
+                    "name": "timestamp",
+                    "type": "uint64"
+                  }
+                ],
+                "internalType": "struct P31TransparencyAnchor.Anchor",
+                "name": "",
+                "type": "tuple"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "letter": "M",
+        "name": "P31ManifestRegistry",
+        "source": "packages/p31-sovereign-chain/src/P31ManifestRegistry.sol",
+        "role": "Manifest — stable manifest id → latest digest + URI head.",
+        "abi": [
+          {
+            "anonymous": false,
+            "inputs": [
+              {
+                "indexed": true,
+                "internalType": "bytes32",
+                "name": "manifestId",
+                "type": "bytes32"
+              },
+              {
+                "indexed": false,
+                "internalType": "bytes32",
+                "name": "digest",
+                "type": "bytes32"
+              },
+              {
+                "indexed": false,
+                "internalType": "string",
+                "name": "uri",
+                "type": "string"
+              },
+              {
+                "indexed": true,
+                "internalType": "address",
+                "name": "publisher",
+                "type": "address"
+              },
+              {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "timestamp",
+                "type": "uint256"
+              }
+            ],
+            "name": "ManifestPublished",
+            "type": "event"
+          },
+          {
+            "inputs": [
+              {
+                "internalType": "bytes32",
+                "name": "manifestId",
+                "type": "bytes32"
+              }
+            ],
+            "name": "head",
+            "outputs": [
+              {
+                "components": [
+                  {
+                    "internalType": "bytes32",
+                    "name": "digest",
+                    "type": "bytes32"
+                  },
+                  {
+                    "internalType": "string",
+                    "name": "uri",
+                    "type": "string"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "publisher",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "uint64",
+                    "name": "updatedAt",
+                    "type": "uint64"
+                  }
+                ],
+                "internalType": "struct P31ManifestRegistry.Head",
+                "name": "",
+                "type": "tuple"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
+            "inputs": [
+              {
+                "internalType": "bytes32",
+                "name": "manifestId",
+                "type": "bytes32"
+              },
+              {
+                "internalType": "bytes32",
+                "name": "digest",
+                "type": "bytes32"
+              },
+              {
+                "internalType": "string",
+                "name": "uri",
+                "type": "string"
+              }
+            ],
+            "name": "publish",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "letter": "A",
+        "name": "P31AccessAllowlist",
+        "source": "packages/p31-sovereign-chain/src/P31AccessAllowlist.sol",
+        "role": "Access — owner-managed capability allowlist per address.",
+        "abi": [
+          {
+            "inputs": [],
+            "stateMutability": "nonpayable",
+            "type": "constructor"
+          },
+          {
+            "anonymous": false,
+            "inputs": [
+              {
+                "indexed": true,
+                "internalType": "bytes32",
+                "name": "capability",
+                "type": "bytes32"
+              },
+              {
+                "indexed": true,
+                "internalType": "address",
+                "name": "who",
+                "type": "address"
+              },
+              {
+                "indexed": false,
+                "internalType": "bool",
+                "name": "allowed",
+                "type": "bool"
+              }
+            ],
+            "name": "AllowanceSet",
+            "type": "event"
+          },
+          {
+            "anonymous": false,
+            "inputs": [
+              {
+                "indexed": true,
+                "internalType": "address",
+                "name": "previousOwner",
+                "type": "address"
+              },
+              {
+                "indexed": true,
+                "internalType": "address",
+                "name": "newOwner",
+                "type": "address"
+              }
+            ],
+            "name": "OwnershipTransferred",
+            "type": "event"
+          },
+          {
+            "inputs": [
+              {
+                "internalType": "bytes32",
+                "name": "capability",
+                "type": "bytes32"
+              },
+              {
+                "internalType": "address",
+                "name": "who",
+                "type": "address"
+              }
+            ],
+            "name": "isAllowed",
+            "outputs": [
+              {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
+            "inputs": [],
+            "name": "owner",
+            "outputs": [
+              {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
+            "inputs": [
+              {
+                "internalType": "bytes32",
+                "name": "capability",
+                "type": "bytes32"
+              },
+              {
+                "internalType": "address",
+                "name": "who",
+                "type": "address"
+              },
+              {
+                "internalType": "bool",
+                "name": "allowed",
+                "type": "bool"
+              }
+            ],
+            "name": "setAllowed",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+          },
+          {
+            "inputs": [
+              {
+                "internalType": "address",
+                "name": "next",
+                "type": "address"
+              }
+            ],
+            "name": "transferOwnership",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "letter": "R",
+        "name": "P31ContentRoot",
+        "source": "packages/p31-sovereign-chain/src/P31ContentRoot.sol",
+        "role": "Root — owner-managed key → content CID (IPFS / Arweave).",
+        "abi": [
+          {
+            "inputs": [],
+            "stateMutability": "nonpayable",
+            "type": "constructor"
+          },
+          {
+            "anonymous": false,
+            "inputs": [
+              {
+                "indexed": true,
+                "internalType": "address",
+                "name": "previousOwner",
+                "type": "address"
+              },
+              {
+                "indexed": true,
+                "internalType": "address",
+                "name": "newOwner",
+                "type": "address"
+              }
+            ],
+            "name": "OwnershipTransferred",
+            "type": "event"
+          },
+          {
+            "anonymous": false,
+            "inputs": [
+              {
+                "indexed": true,
+                "internalType": "bytes32",
+                "name": "key",
+                "type": "bytes32"
+              },
+              {
+                "indexed": false,
+                "internalType": "string",
+                "name": "cid",
+                "type": "string"
+              },
+              {
+                "indexed": true,
+                "internalType": "address",
+                "name": "sender",
+                "type": "address"
+              }
+            ],
+            "name": "RootSet",
+            "type": "event"
+          },
+          {
+            "inputs": [
+              {
+                "internalType": "bytes32",
+                "name": "key",
+                "type": "bytes32"
+              }
+            ],
+            "name": "cidOf",
+            "outputs": [
+              {
+                "internalType": "string",
+                "name": "",
+                "type": "string"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
+            "inputs": [],
+            "name": "owner",
+            "outputs": [
+              {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
+            "inputs": [
+              {
+                "internalType": "bytes32",
+                "name": "key",
+                "type": "bytes32"
+              },
+              {
+                "internalType": "string",
+                "name": "cid",
+                "type": "string"
+              }
+            ],
+            "name": "setRoot",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+          },
+          {
+            "inputs": [
+              {
+                "internalType": "address",
+                "name": "next",
+                "type": "address"
+              }
+            ],
+            "name": "transferOwnership",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "letter": "T",
+        "name": "P31TreasuryConfig",
+        "source": "packages/p31-sovereign-chain/src/P31TreasuryConfig.sol",
+        "role": "Treasury — Safe + USDC + home chain id; lockable.",
+        "abi": [
+          {
+            "inputs": [],
+            "stateMutability": "nonpayable",
+            "type": "constructor"
+          },
+          {
+            "anonymous": false,
+            "inputs": [],
+            "name": "Locked",
+            "type": "event"
+          },
+          {
+            "anonymous": false,
+            "inputs": [
+              {
+                "indexed": true,
+                "internalType": "address",
+                "name": "previousOwner",
+                "type": "address"
+              },
+              {
+                "indexed": true,
+                "internalType": "address",
+                "name": "newOwner",
+                "type": "address"
+              }
+            ],
+            "name": "OwnershipTransferred",
+            "type": "event"
+          },
+          {
+            "anonymous": false,
+            "inputs": [
+              {
+                "indexed": true,
+                "internalType": "address",
+                "name": "safe",
+                "type": "address"
+              },
+              {
+                "indexed": true,
+                "internalType": "address",
+                "name": "usdc",
+                "type": "address"
+              },
+              {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "homeChainId",
+                "type": "uint256"
+              }
+            ],
+            "name": "TreasuryConfigured",
+            "type": "event"
+          },
+          {
+            "inputs": [
+              {
+                "internalType": "address",
+                "name": "safe_",
+                "type": "address"
+              },
+              {
+                "internalType": "address",
+                "name": "usdc_",
+                "type": "address"
+              },
+              {
+                "internalType": "uint256",
+                "name": "chainId_",
+                "type": "uint256"
+              }
+            ],
+            "name": "configure",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+          },
+          {
+            "inputs": [],
+            "name": "homeChainId",
+            "outputs": [
+              {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
+            "inputs": [],
+            "name": "lock",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+          },
+          {
+            "inputs": [],
+            "name": "locked",
+            "outputs": [
+              {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
+            "inputs": [],
+            "name": "owner",
+            "outputs": [
+              {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
+            "inputs": [],
+            "name": "safe",
+            "outputs": [
+              {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
+            "inputs": [
+              {
+                "internalType": "address",
+                "name": "next",
+                "type": "address"
+              }
+            ],
+            "name": "transferOwnership",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+          },
+          {
+            "inputs": [],
+            "name": "usdc",
+            "outputs": [
+              {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          }
+        ]
+      }
+    ]
+  },
+  "evmContractCount": 5
+}

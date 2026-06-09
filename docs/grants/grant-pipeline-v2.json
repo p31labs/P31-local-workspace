@@ -1,0 +1,211 @@
+{
+  "schema": "p31.grantPipeline/2.0.0",
+  "updated": "2026-05-31",
+  "entity": {
+    "legalName": "P31 Labs, Inc.",
+    "ein": "42-1888158",
+    "stateOfIncorporation": "GA",
+    "incorporationDate": "2026-04-03",
+    "einAssignedDate": "2026-04-13",
+    "status": "501(c)(3) determined May 2026",
+    "determinationDate": "2026-05-04",
+    "fiscalSponsor": null,
+    "website": "https://phosphorus31.org",
+    "github": "https://github.com/p31labs"
+  },
+  "contact": {
+    "primary": "William R. Johnson",
+    "email": "will@p31ca.org",
+    "orcid": "0009-0002-2492-9079",
+    "phone": "(912) 227-4980"
+  },
+  "grants": [
+    {
+      "id": "nlnet-ngi-zero-commons",
+      "program": "NLnet NGI Zero Commons Fund",
+      "title": "K4-Mesh-Core: Open Standard for Sovereign Peer-to-Peer Mesh Networks",
+      "requestedAmount": "€35,000",
+      "currency": "EUR",
+      "deadline": "2026-06-01",
+      "deadlineTime": "12:00 CEST",
+      "status": "ready_for_submission",
+      "priority": "critical",
+      "category": "open_standard",
+      "url": "https://nlnet.nl/commonsfund/",
+      "submissionPackage": "docs/grants/payloads/nlnet-submission-checklist.md",
+      "technicalProposal": "docs/grants/payloads/ngi-zero-commons-proposal.md",
+      "demoUrl": "https://phos-btn.pages.dev",
+      "repoUrl": "https://github.com/p31labs/andromeda",
+      "phases": [
+        {"phase": 1, "title": "Core System Stabilization", "budget": "€14,000", "months": "1-3", "deliverables": ["QSPI boot stable", "Haptic waveform library", "v1.0-core-stable tag"]},
+        {"phase": 2, "title": "Mesh Networking & UX Testing", "budget": "€11,000", "months": "4-6", "deliverables": ["SX1262 LoRa P2P verified", "Mesh topology visualization", "15 beta tester UX report", "Accessibility audit"]},
+        {"phase": 3, "title": "Open Hardware Documentation", "budget": "€10,000", "months": "7-9", "deliverables": ["KiCad schematics", "Gerber files", "OSHWA certification", "Replication guide"]}
+      ]
+    },
+    {
+      "id": "nlnet-ngi-fediversity",
+      "program": "NLnet NGI Fediversity",
+      "title": "PHOS-Sovereign: Service-Portable Cognitive Prosthetic Platform with Data Decoupling",
+      "requestedAmount": "€25,000",
+      "currency": "EUR",
+      "deadline": "2026-06-01",
+      "deadlineTime": "12:00 CEST",
+      "status": "ready_for_submission",
+      "priority": "critical",
+      "category": "service_portability",
+      "url": "https://nlnet.nl/fediversity/",
+      "submissionPackage": "docs/grants/payloads/ngi-fediversity-proposal.md",
+      "demoUrl": "https://phos-btn.pages.dev",
+      "repoUrl": "https://github.com/p31labs/andromeda",
+      "phases": [
+        {"phase": 1, "title": "Data Decoupling Layer", "budget": "€10,000", "months": "1-3", "deliverables": ["PGLite export/import pipeline", "Standardized data portability API", "NixOS module for PHOS deployment"]},
+        {"phase": 2, "title": "Service Portability & Fediverse Bridge", "budget": "€8,000", "months": "4-6", "deliverables": ["ActivityPub bridge for family mesh", "NixOS reproducible deployment", "Multi-instance migration tool"]},
+        {"phase": 3, "title": "Validation & Documentation", "budget": "€7,000", "months": "7-9", "deliverables": ["Fediverse integration demo", "Replication guide", "NixOS configuration published"]}
+      ]
+    },
+    {
+      "id": "nlnet-ngi-taler",
+      "program": "NLnet NGI TALER",
+      "title": "LOVE-Ledger: Privacy-Preserving Micro-Payments for the Care Economy",
+      "requestedAmount": "€15,000",
+      "currency": "EUR",
+      "deadline": "2026-06-01",
+      "deadlineTime": "12:00 CEST",
+      "status": "ready_for_submission",
+      "priority": "critical",
+      "category": "digital_payments",
+      "url": "https://nlnet.nl/taler/",
+      "submissionPackage": "docs/grants/payloads/ngi-taler-proposal.md",
+      "demoUrl": "https://phos-btn.pages.dev",
+      "repoUrl": "https://github.com/p31labs/andromeda",
+      "phases": [
+        {"phase": 1, "title": "Taler Integration Core", "budget": "€6,000", "months": "1-3", "deliverables": ["GNU Taler merchant backend integration", "LOVE-to-fiat exchange mechanism", "Privacy-preserving receipt system"]},
+        {"phase": 2, "title": "Care Economy Payment Flows", "budget": "€5,000", "months": "4-6", "deliverables": ["Family mesh micropayment channel", "Caregiver compensation flows", "Ko-fi/Taler bridge"]},
+        {"phase": 3, "title": "Validation & Open Documentation", "budget": "€4,000", "months": "7-9", "deliverables": ["Live payment demo", "Integration guide for FOSS apps", "Published Taler extension docs"]}
+      ]
+    },
+    {
+      "id": "nidilrr-switzer",
+      "program": "NIDILRR Switzer Fellowship",
+      "title": "Cognitive Prosthetic Infrastructure for Neurodivergent Self-Advocacy",
+      "requestedAmount": "$80,000",
+      "currency": "USD",
+      "deadline": "2027-01-15",
+      "status": "inquiry_sent",
+      "priority": "high",
+      "category": "research",
+      "fiscalYear": "FY2027",
+      "contact": "linda.vo@acl.hhs.gov",
+      "url": "https://acl.gov/programs/research-and-development",
+      "notes": "Inquiry sent, no response. Track for FY2027 cycle."
+    },
+    {
+      "id": "nidilrr-fip",
+      "program": "NIDILRR Field-Initiated Projects (FIP)",
+      "title": "SOULSAFE: High-Reliability Cognitive Prosthetic Protocol",
+      "requestedAmount": "$250,000/year",
+      "currency": "USD",
+      "deadline": "2027-03-01",
+      "status": "passed_this_cycle",
+      "priority": "medium",
+      "category": "research",
+      "fiscalYear": "FY2027",
+      "contact": "radha.holavanahalli@acl.hhs.gov",
+      "url": "https://acl.gov/programs/research-and-development",
+      "notes": "Passed for current cycle (April 13). Track for FY2027."
+    },
+    {
+      "id": "asan-grant",
+      "program": "Autistic Self Advocacy Network",
+      "title": "PHOS OS: Zero-Telemetry Cognitive Operating System for Autistic Adults",
+      "requestedAmount": "$6,250",
+      "currency": "USD",
+      "deadline": "2026-06-15",
+      "status": "drafting",
+      "priority": "high",
+      "category": "program",
+      "url": "https://autisticadvocacy.org/",
+      "narrativeDoc": "docs/grants/payloads/asan-narrative.md"
+    },
+    {
+      "id": "stimpunks",
+      "program": "Stimpunks Foundation",
+      "title": "PHOS Mesh: Offline-First Cognitive Prosthetic Platform",
+      "requestedAmount": "$5,000",
+      "currency": "USD",
+      "deadline": "2026-07-01",
+      "status": "drafting",
+      "priority": "medium",
+      "category": "program",
+      "url": "https://stimpunks.org/",
+      "applicationDoc": "docs/grants/payloads/stimpunks-application.md"
+    },
+    {
+      "id": "pollination-project",
+      "program": "Pollination Project",
+      "title": "Open-Source Assistive Technology for Neurodivergent Individuals",
+      "requestedAmount": "$500",
+      "currency": "USD",
+      "deadline": "2026-04-01",
+      "status": "submitted",
+      "priority": "low",
+      "category": "seed_grant",
+      "url": "https://pollinationproject.org/",
+      "submittedDate": "2026-03-10"
+    },
+    {
+      "id": "awesome-foundation",
+      "program": "Awesome Foundation",
+      "title": "Cognitive Prosthetic Mesh for Neurodivergent Sovereignty",
+      "requestedAmount": "$1,000",
+      "currency": "USD",
+      "deadline": "2026-04-15",
+      "status": "submitted",
+      "priority": "low",
+      "category": "seed_grant",
+      "url": "https://www.awesomefoundation.org/",
+      "submittedDate": "2026-03-10"
+    }
+  ],
+  "immediateActions": [
+    {"id": "ia-1", "action": "Submit NGI Zero Commons — K4-Mesh-Core proposal (€35K, deadline June 1)", "deadline": "2026-05-31", "status": "in_progress", "owner": "William R. Johnson"},
+    {"id": "ia-1b", "action": "Submit NGI Fediversity — PHOS-Sovereign service portability proposal (€25K, deadline June 1)", "deadline": "2026-05-31", "status": "in_progress", "owner": "William R. Johnson"},
+    {"id": "ia-1c", "action": "Submit NGI TALER — LOVE-Ledger care economy payments proposal (€15K, deadline June 1)", "deadline": "2026-05-31", "status": "in_progress", "owner": "William R. Johnson"},
+    {"id": "ia-2", "action": "Deploy PHOS demo to Cloudflare Pages and verify demo URL for submission", "deadline": "2026-05-31", "status": "completed", "owner": "system"},
+    {"id": "ia-3", "action": "Complete ASAN narrative draft and submit application ($6,250)", "deadline": "2026-06-15", "status": "drafting", "owner": "William R. Johnson"},
+    {"id": "ia-4", "action": "Wire ARCHIVE RAG to local Ollama endpoint for live demo capability", "deadline": "2026-06-07", "status": "pending", "owner": "William R. Johnson"},
+    {"id": "ia-5", "action": "Prepare Stimpunks application materials", "deadline": "2026-07-01", "status": "pending", "owner": "William R. Johnson"},
+    {"id": "ia-6", "action": "Follow up with Linda Vo (NIDILRR Switzer) for FY2027 cycle", "deadline": "2026-09-01", "status": "pending", "owner": "William R. Johnson"}
+  ],
+  "documentPackage": {
+    "version": "2.0.0",
+    "compiledDate": "2026-05-31",
+    "documents": [
+      {"id": "ngi-zero-commons-proposal", "title": "NGI Zero Commons — K4-Mesh-Core Proposal", "file": "docs/grants/payloads/ngi-zero-commons-proposal.md", "status": "complete"},
+      {"id": "ngi-fediversity-proposal", "title": "NGI Fediversity — PHOS-Sovereign Proposal", "file": "docs/grants/payloads/ngi-fediversity-proposal.md", "status": "complete"},
+      {"id": "ngi-taler-proposal", "title": "NGI TALER — LOVE-Ledger Proposal", "file": "docs/grants/payloads/ngi-taler-proposal.md", "status": "complete"},
+      {"id": "nlnet-checklist", "title": "NLnet Submission Checklist", "file": "docs/grants/payloads/nlnet-submission-checklist.md", "status": "complete"},
+      {"id": "asan-narrative", "title": "ASAN Grant Narrative", "file": "docs/grants/payloads/asan-narrative.md", "status": "complete"},
+      {"id": "stimpunks-app", "title": "Stimpunks Application", "file": "docs/grants/payloads/stimpunks-application.md", "status": "complete"},
+      {"id": "grant-calendar", "title": "2026 Grant Calendar", "file": "docs/grants/GRANT-CALENDAR-2026-v2.md", "status": "complete"},
+      {"id": "cognitive-passport", "title": "Cognitive Passport v3.3", "file": "Cognitive_Passport.md", "status": "complete"},
+      {"id": "whitepapers", "title": "22 White Papers (Zenodo)", "url": "https://zenodo.org/search?q=creators.name:%22Johnson%2C%20William%20R.%22", "status": "published"},
+      {"id": "bonding-demo", "title": "BONDING Live Demo", "url": "https://bonding.p31ca.org", "status": "live"},
+      {"id": "phos-demo", "title": "PHOS Live Demo", "url": "https://phos-btn.pages.dev", "status": "live"}
+    ]
+  },
+  "metrics": {
+    "totalRequested": "$392,750",
+    "totalEURRequested": "€75,000",
+    "totalUSDRequested": "$342,750",
+    "totalSubmitted": "$1,500",
+    "totalPendingEUR": "€75,000",
+    "totalPendingUSD": "$37,250",
+    "totalFuture": "$330,000",
+    "activeGrants": 10,
+    "readyToSubmit": 3,
+    "drafting": 2,
+    "submitted": 2,
+    "inquiryOnly": 2
+  }
+}

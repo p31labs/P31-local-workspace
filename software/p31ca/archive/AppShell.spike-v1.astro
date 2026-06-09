@@ -1,0 +1,177 @@
+---
+/**
+ * AppShell.astro — Track 2.5 spike: persistent shell with one canvas + ClientRouter.
+ *
+ * The architectural question: can a single WebGL2 canvas survive route navigation
+ * (e.g. `/spike/appshell/` ↔ `/spike/appshell/dome/`) under Astro's ClientRouter
+ * without re-creating the canvas, losing the WebGL context, or flashing black?
+ *
+ * Pattern under test:
+ *   - One <canvas data-p31-appshell-canvas> mounted at body level with
+ *     `transition:persist` so Astro keeps the same DOM node across navigations.
+ *   - One module-level singleton (src/lib/starfield-singleton.ts) that owns the
+ *     canvas + the WebGL2 context, exposes a `setRoute(name)` to lerp the camera
+ *     when the URL changes, and emits diagnostics via window.__p31AppShell.
+ *
+ * Acceptance criteria are in docs/SPIKE-APPSHELL-PERSISTENCE.md (home repo).
+ *
+ * NOT YET WIRED INTO PRODUCTION ROUTES. Spike-only paths live under /spike/.
+ */
+import { ClientRouter } from 'astro:transitions';
+
+interface Props {
+  title: string;
+  routeName: 'home' | 'dome';
+}
+
+const { title, routeName } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en" data-p31-appearance="hub" data-p31-spike-route={routeName}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{title}</title>
+
+    <ClientRouter />
+
+    <style is:global>
+      :root {
+        color-scheme: dark;
+        --p31-void: #0f1115;
+        --p31-cyan: #4db8a8;
+        --p31-coral: #cc6247;
+        --p31-cloud: var(--p31-cloud);
+      }
+      html, body {
+        margin: 0;
+        padding: 0;
+        background: var(--p31-void);
+        color: var(--p31-cloud);
+        font-family: system-ui, sans-serif;
+        min-height: 100vh;
+      }
+      /* The persistent canvas — one DOM node, lives across routes.
+       *
+       * `view-transition-name: none` opts the canvas out of the View
+       * Transitions API ghost-snapshot animation. transition:persist still
+       * keeps the same DOM node across navs; this just prevents the browser
+       * from rasterising the canvas into a transition snapshot, which on
+       * SwiftShader (headless Chromium) reliably triggers WebGL context
+       * loss. With this rule the canvas renders continuously through the
+       * navigation animation. */
+      canvas[data-p31-appshell-canvas] {
+        position: fixed;
+        inset: 0;
+        width: 100vw;
+        height: 100vh;
+        display: block;
+        z-index: 0;
+        pointer-events: none;
+        view-transition-name: none;
+      }
+      .p31-spike-content {
+        position: relative;
+        z-index: 1;
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 4rem 1.5rem;
+      }
+      .p31-spike-content h1 {
+        font-weight: 300;
+        font-size: clamp(2rem, 5vw, 3.5rem);
+        margin: 0 0 1rem;
+        background: linear-gradient(120deg, var(--p31-cloud), var(--p31-cyan));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+      .p31-spike-content p {
+        line-height: 1.6;
+        opacity: 0.9;
+      }
+      .p31-spike-nav {
+        display: flex;
+        gap: 1rem;
+        margin: 2rem 0;
+      }
+      .p31-spike-nav a {
+        color: var(--p31-cyan);
+        text-decoration: none;
+        padding: 0.5rem 1rem;
+        border: 1px solid color-mix(in oklab, var(--p31-cyan) 50%, transparent);
+        border-radius: 8px;
+        transition: background-color 200ms ease;
+      }
+      .p31-spike-nav a:hover {
+        background: color-mix(in oklab, var(--p31-cyan) 15%, transparent);
+      }
+      .p31-spike-nav a[aria-current="page"] {
+        background: color-mix(in oklab, var(--p31-cyan) 25%, transparent);
+        border-color: var(--p31-cyan);
+      }
+      .p31-spike-stats {
+        font-family: ui-monospace, monospace;
+        font-size: 0.75rem;
+        opacity: 0.6;
+        margin-top: 2rem;
+        border-top: 1px solid color-mix(in oklab, var(--p31-cloud) 10%, transparent);
+        padding-top: 1rem;
+      }
+    </style>
+  </head>
+  <body>
+    {/* Persistent canvas: same DOM node across every spike route navigation. */}
+    <canvas data-p31-appshell-canvas transition:persist="appshell-canvas"></canvas>
+
+    <main class="p31-spike-content">
+      <slot />
+      <p class="p31-spike-stats" id="p31-spike-stats" aria-live="polite">
+        canvas identity: <span data-stat="canvasId">—</span> ·
+        attach-count: <span data-stat="canvasAttachCount">0</span> ·
+        navs: <span data-stat="navCount">0</span> ·
+        ctx (lost / restored / healthy):
+        <span data-stat="ctxLost">0</span> /
+        <span data-stat="ctxRestored">0</span> /
+        <span data-stat="ctxHealthy">true</span> ·
+        fps: <span data-stat="fps">—</span>
+      </p>
+    </main>
+
+    <script>
+      import { startStarfield, setStarfieldRoute, snapshotStarfieldStats } from '../lib/starfield-singleton';
+
+      const canvas = document.querySelector<HTMLCanvasElement>('canvas[data-p31-appshell-canvas]');
+      if (canvas) {
+        startStarfield(canvas);
+        const route = document.documentElement.getAttribute('data-p31-spike-route') as 'home' | 'dome' | null;
+        if (route) setStarfieldRoute(route);
+      }
+
+      function paintStats() {
+        const stats = snapshotStarfieldStats();
+        const root = document.getElementById('p31-spike-stats');
+        if (!root || !stats) return;
+        const map = root.querySelectorAll<HTMLElement>('[data-stat]');
+        map.forEach((el) => {
+          const k = el.getAttribute('data-stat');
+          if (k && k in stats) el.textContent = String((stats as Record<string, unknown>)[k]);
+        });
+      }
+      paintStats();
+      setInterval(paintStats, 500);
+
+      /* On Astro navigation: the canvas DOM node persists (transition:persist),
+       * but the page script re-runs. Re-bind the route. */
+      document.addEventListener('astro:after-swap', () => {
+        const newRoute = document.documentElement.getAttribute('data-p31-spike-route') as
+          | 'home'
+          | 'dome'
+          | null;
+        if (newRoute) setStarfieldRoute(newRoute);
+        paintStats();
+      });
+    </script>
+  </body>
+</html>

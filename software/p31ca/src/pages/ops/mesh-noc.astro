@@ -1,0 +1,15 @@
+---
+// @p31-layout: Workshop
+import AppShell from '../../layouts/AppShell.astro';
+import SovereignMesh from '../../components/SovereignMesh.jsx';
+---
+
+<AppShell
+  title="Mesh NOC | P31 Ops"
+  description="Network operations: device fleet, CF Workers, K₄ mesh, resilience"
+  routeName="ops"
+  phosPage="mesh-noc"
+>
+  <meta slot="head" name="robots" content="noindex" />
+  <SovereignMesh client:only="react" />
+</AppShell>

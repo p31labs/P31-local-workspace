@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>KINEMATICS | Movement Synthesizer</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root { --coral: #cc6247; }
+        body { min-height: 100svh; background: #050505; color: #d8d6d0; font-family: 'Inter', sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1.5rem; transition: filter 2s ease; overflow: hidden; }
+        body.dim { filter: brightness(0.08); }
+        .glass { background: rgba(22,25,32,0.85); backdrop-filter: blur(14px); border: 1px solid rgba(255,255,255,0.08); border-radius: 18px; padding: 2rem; width: 100%; max-width: 400px; position: relative; z-index: 10; }
+        h1 { font-size: 2rem; font-weight: 700; color: var(--coral); font-family: 'Space Mono', monospace; margin-bottom: 2px; }
+        .sub { font-size: 10px; color: rgba(216,214,208,0.4); font-family: 'Space Mono', monospace; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 1.5rem; }
+        .start-btn { width: 100%; padding: 1rem; border: none; border-radius: 10px; font-size: 1.05rem; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; transition: 0.2s; background: var(--coral); color: #050505; margin-bottom: 1.5rem; }
+        .start-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+        .start-btn.active { background: rgba(204,98,71,0.3); color: var(--coral); border: 1px solid var(--coral); }
+
+        /* Intensity orb */
+        #orb {
+            width: 120px; height: 120px; border-radius: 50%; margin: 0 auto 1.5rem;
+            background: radial-gradient(circle, rgba(204,98,71,0.6) 0%, rgba(204,98,71,0) 70%);
+            transition: transform 0.15s ease, opacity 0.3s;
+            opacity: 0.2;
+        }
+        #orb.active { opacity: 1; }
+
+        /* Waveform canvas */
+        #waveform { width: 100%; height: 60px; border-radius: 8px; display: block; }
+
+        .stat-row { display: flex; justify-content: space-between; margin-top: 1rem; font-size: 11px; font-family: 'Space Mono', monospace; }
+        .stat { text-align: center; }
+        .stat-val { color: var(--coral); font-size: 1.1rem; font-weight: 700; }
+        .stat-lbl { color: rgba(216,214,208,0.35); font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; }
+
+        .note { font-size: 11px; color: rgba(216,214,208,0.35); line-height: 1.5; margin-top: 1rem; }
+        .note strong { color: var(--coral); }
+        .back { display: inline-block; margin-top: 1.25rem; color: rgba(204,98,71,0.5); font-family: 'Space Mono', monospace; font-size: 11px; text-decoration: none; letter-spacing: 0.08em; }
+        .back:hover { color: var(--coral); }
+
+        #archive { margin-top: 1rem; max-height: 80px; overflow-y: auto; }
+        .arc-item { font-size: 10px; color: rgba(216,214,208,0.3); font-family: 'Space Mono', monospace; padding: 2px 0; display: flex; justify-content: space-between; }
+        .arc-item span { color: rgba(204,98,71,0.6); }
+    </style>
+</head>
+<body>
+    <div class="glass">
+        <h1>KINEMATICS</h1>
+        <p class="sub">Proprioceptive Movement Synthesizer</p>
+
+        <div id="orb"></div>
+        <canvas id="waveform"></canvas>
+
+        <div class="stat-row">
+            <div class="stat"><div class="stat-val" id="stat-mag">0.0</div><div class="stat-lbl">Magnitude</div></div>
+            <div class="stat"><div class="stat-val" id="stat-peak">0.0</div><div class="stat-lbl">Peak</div></div>
+            <div class="stat"><div class="stat-val" id="stat-time">0:00</div><div class="stat-lbl">Session</div></div>
+        </div>
+
+        <button id="toggle" class="start-btn" style="margin-top:1.5rem">Begin Session</button>
+
+        <p class="note"><strong>Pocket the device.</strong> Movement drives generative music — acceleration magnitude maps to pitch, rhythm, and density. Screen auto-dims after 3 s. Tap anywhere to restore.</p>
+
+        <div id="archive"></div>
+
+        <a href="kinematics.html" class="back">← KINEMATICS about page</a>
+    </div>
+
+    <script>
+        let running = false, startTime = 0, sessionTimer = null, dimTimer = null;
+        let synth, reverb, filter, lfo, loop;
+        let peakMag = 0, currentMag = 0;
+        const wfCanvas = document.getElementById('waveform');
+        const wfCtx = wfCanvas.getContext('2d');
+        const wfData = new Float32Array(200).fill(0);
+        const orb = document.getElementById('orb');
+        const toggleBtn = document.getElementById('toggle');
+
+        // IndexedDB
+        let db;
+        const dbReq = indexedDB.open('kinematics', 1);
+        dbReq.onupgradeneeded = e => {
+            e.target.result.createObjectStore('sessions', { keyPath: 'id', autoIncrement: true });
+        };
+        dbReq.onsuccess = e => { db = e.target.result; loadArchive(); };
+
+        function saveSession(duration, peak) {
+            if (!db) return;
+            const tx = db.transaction('sessions', 'readwrite');
+            tx.objectStore('sessions').add({ ts: Date.now(), duration, peak: peak.toFixed(1) });
+            loadArchive();
+        }
+
+        function loadArchive() {
+            if (!db) return;
+            const tx = db.transaction('sessions', 'readonly');
+            const req = tx.objectStore('sessions').getAll();
+            req.onsuccess = e => {
+                const sessions = e.target.result.slice(-5).reverse();
+                const arc = document.getElementById('archive');
+                if (!sessions.length) return;
+                arc.innerHTML = sessions.map(s => {
+                    const d = new Date(s.ts);
+                    const label = d.toLocaleDateString([], { month:'short', day:'numeric' }) + ' ' + d.toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' });
+                    const dur = Math.floor(s.duration / 60) + ':' + String(Math.floor(s.duration % 60)).padStart(2,'0');
+                    return `<div class="arc-item"><span>${label}</span><span>${dur} · peak ${s.peak}</span></div>`;
+                }).join('');
+            };
+        }
+
+        async function buildAudio() {
+            await Tone.start();
+            reverb = new Tone.Reverb({ decay: 4, wet: 0.55 }).toDestination();
+            filter = new Tone.Filter(400, 'lowpass').connect(reverb);
+            synth = new Tone.PolySynth(Tone.Synth, {
+                oscillator: { type: 'sine' },
+                envelope: { attack: 0.4, decay: 0.2, sustain: 0.8, release: 1.2 },
+                volume: -18
+            }).connect(filter);
+
+            lfo = new Tone.LFO({ frequency: '0.3', min: 300, max: 800 }).start();
+            lfo.connect(filter.frequency);
+
+            // Generative loop — pentatonic in A
+            const scale = [220, 246.9, 293.7, 329.6, 392, 440, 493.9, 587.3];
+            let step = 0;
+            loop = new Tone.Loop(time => {
+                const mag = currentMag;
+                if (mag < 0.5) return; // silence when still
+                const density = Math.min(Math.ceil(mag * 1.5), 3);
+                for (let i = 0; i < density; i++) {
+                    const idx = (step + i * 2) % scale.length;
+                    const freq = scale[idx] * (mag > 8 ? 2 : 1);
+                    const dur = mag > 6 ? '8n' : '4n';
+                    synth.triggerAttackRelease(freq, dur, time + i * Tone.Time('16n').toSeconds());
+                }
+                step = (step + 1) % scale.length;
+                lfo.frequency.rampTo(0.1 + mag * 0.08, 0.3);
+                filter.frequency.rampTo(300 + mag * 60, 0.2);
+            }, '4n');
+            loop.start(0);
+            Tone.Transport.start();
+        }
+
+        function destroyAudio() {
+            if (loop) { loop.stop(); loop.dispose(); }
+            if (synth) synth.dispose();
+            if (reverb) reverb.dispose();
+            if (filter) filter.dispose();
+            if (lfo) lfo.dispose();
+            Tone.Transport.stop();
+            loop = synth = reverb = filter = lfo = null;
+        }
+
+        function resetDimTimer() {
+            clearTimeout(dimTimer);
+            document.body.classList.remove('dim');
+            if (running) {
+                dimTimer = setTimeout(() => document.body.classList.add('dim'), 3000);
+            }
+        }
+
+        document.body.addEventListener('click', e => {
+            if (e.target !== toggleBtn) resetDimTimer();
+        });
+        document.body.addEventListener('touchstart', e => {
+            if (!e.target.closest('button') && !e.target.closest('a')) resetDimTimer();
+        }, { passive: true });
+
+        function updateWaveform(mag) {
+            wfData.copyWithin(0, 1);
+            wfData[wfData.length - 1] = Math.min(mag / 20, 1);
+            const w = wfCanvas.width, h = wfCanvas.height;
+            wfCtx.fillStyle = '#050505';
+            wfCtx.fillRect(0, 0, w, h);
+            wfCtx.beginPath();
+            const step = w / wfData.length;
+            wfCtx.moveTo(0, h);
+            for (let i = 0; i < wfData.length; i++) {
+                wfCtx.lineTo(i * step, h - wfData[i] * h * 0.9);
+            }
+            wfCtx.lineTo(w, h);
+            wfCtx.fillStyle = 'rgba(204,98,71,0.35)';
+            wfCtx.fill();
+            wfCtx.beginPath();
+            for (let i = 0; i < wfData.length; i++) {
+                const x = i * step, y = h - wfData[i] * h * 0.9;
+                i === 0 ? wfCtx.moveTo(x, y) : wfCtx.lineTo(x, y);
+            }
+            wfCtx.strokeStyle = '#cc6247';
+            wfCtx.lineWidth = 1.5;
+            wfCtx.stroke();
+        }
+
+        function handleMotion(e) {
+            if (!running) return;
+            const a = e.acceleration || e.accelerationIncludingGravity;
+            if (!a) return;
+            const mag = Math.sqrt((a.x||0)**2 + (a.y||0)**2 + (a.z||0)**2);
+            currentMag = mag;
+            if (mag > peakMag) peakMag = mag;
+            document.getElementById('stat-mag').textContent = mag.toFixed(1);
+            document.getElementById('stat-peak').textContent = peakMag.toFixed(1);
+            const orbScale = 0.8 + Math.min(mag / 10, 1) * 0.8;
+            orb.style.transform = `scale(${orbScale})`;
+            updateWaveform(mag);
+        }
+
+        let rafId;
+        function sessionTick() {
+            const elapsed = (Date.now() - startTime) / 1000;
+            const m = Math.floor(elapsed / 60), s = Math.floor(elapsed % 60);
+            document.getElementById('stat-time').textContent = `${m}:${String(s).padStart(2,'0')}`;
+            rafId = requestAnimationFrame(sessionTick);
+        }
+
+        async function requestMotion() {
+            if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
+                const perm = await DeviceMotionEvent.requestPermission();
+                if (perm !== 'granted') {
+                    alert('Motion access required. Please allow in Settings → Safari → Motion & Orientation Access.');
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        toggleBtn.addEventListener('click', async () => {
+            if (!running) {
+                const ok = await requestMotion();
+                if (!ok) return;
+                await buildAudio();
+                window.addEventListener('devicemotion', handleMotion);
+                peakMag = 0; currentMag = 0;
+                startTime = Date.now();
+                running = true;
+                orb.classList.add('active');
+                toggleBtn.textContent = 'End Session';
+                toggleBtn.classList.add('active');
+                sessionTick();
+                resetDimTimer();
+                // resize waveform
+                wfCanvas.width = wfCanvas.offsetWidth;
+                wfCanvas.height = wfCanvas.offsetHeight;
+            } else {
+                const duration = (Date.now() - startTime) / 1000;
+                window.removeEventListener('devicemotion', handleMotion);
+                destroyAudio();
+                cancelAnimationFrame(rafId);
+                clearTimeout(dimTimer);
+                document.body.classList.remove('dim');
+                running = false;
+                orb.classList.remove('active');
+                orb.style.transform = 'scale(1)';
+                toggleBtn.textContent = 'Begin Session';
+                toggleBtn.classList.remove('active');
+                currentMag = 0;
+                saveSession(duration, peakMag);
+            }
+        });
+
+        window.addEventListener('resize', () => {
+            wfCanvas.width = wfCanvas.offsetWidth;
+            wfCanvas.height = wfCanvas.offsetHeight;
+        });
+        setTimeout(() => {
+            wfCanvas.width = wfCanvas.offsetWidth;
+            wfCanvas.height = wfCanvas.offsetHeight;
+            updateWaveform(0);
+        }, 100);
+    </script>
+</body>
+</html>

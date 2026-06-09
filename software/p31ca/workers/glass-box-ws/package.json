@@ -1,0 +1,35 @@
+{
+  "name": "glass-box-ws",
+  "version": "1.0.0",
+  "description": "P31 Glass Box WebSocket Worker - ML-KEM-768 Post-Quantum Encrypted Telemetry",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "deploy:staging": "wrangler deploy --env staging",
+    "tail": "wrangler tail",
+    "build": "tsc --noEmit",
+    "check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@cloudflare/workers-types": "^4.20240419.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0",
+    "wrangler": "^3.55.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "p31",
+    "glass-box",
+    "websocket",
+    "post-quantum",
+    "ml-kem-768",
+    "cloudflare-workers"
+  ],
+  "license": "MIT",
+  "private": true
+}

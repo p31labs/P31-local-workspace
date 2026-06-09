@@ -1,0 +1,445 @@
+<!doctype html>
+<html lang="en" data-p31-appearance="hub" style="color-scheme: dark;">
+<head>
+  <meta charset="utf-8" />
+<script>(function(){var r=document.documentElement;if(/[?&]alive=1(?:&|$)/.test(location.search))return;r.classList.add("p31-gray-rock");function wake(){r.classList.remove("p31-gray-rock")}document.addEventListener("pointerdown",wake,{once:true,capture:true});document.addEventListener("keydown",wake,{once:true,capture:true})})();</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>P31 launch readiness — 2026-05 · the geometry holds</title>
+  <meta name="description" content="Launch readiness dashboard for the P31 market launch package. 17 surfaces · 4 PWAs · 83 verify gates · 10 social cards · 22 papers · one thesis. Run npm run launch to refresh." />
+<link rel="canonical" href="https://p31ca.org/launch.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="P31 launch readiness — 2026-05 · the geometry holds">
+<meta property="og:description" content="Launch readiness dashboard for the P31 market launch package. 17 surfaces · 4 PWAs · 83 verify gates · 10 social cards · 22 papers · one thesis. Run npm run launch to refresh.">
+<meta property="og:url" content="https://p31ca.org/launch.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="P31 launch readiness — 2026-05 · the geometry holds">
+<meta name="twitter:description" content="Launch readiness dashboard for the P31 market launch package. 17 surfaces · 4 PWAs · 83 verify gates · 10 social cards · 22 papers · one thesis. Run npm run launch to refresh.">
+  <meta name="color-scheme" content="dark" />
+  <meta name="theme-color" content="#25897d" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='75' x='10' font-size='75' font-weight='bold' fill='%2325897d' font-family='monospace'%3E\u25cd%3C/text%3E%3C/svg%3E" />
+  <style>
+    /* schema marker: p31.launchReadiness/1.0.0 — referenced by scripts/p31-launch.mjs.
+       This page is a static readiness dashboard. The launch verb (npm run launch) MAY
+       rewrite the data-row attributes below to reflect the current sweep result. */
+    :root {
+      --void: #0f1115;
+      --surface: #161920;
+      --surface2: #1c2028;
+      --line: rgba(255, 255, 255, 0.08);
+      --ink: #d8d6d0;
+      --teal: #25897d;
+      --cyan: #4db8a8;
+      --coral: #cc6247;
+      --butter: #cda852;
+      --phos: #3ba372;
+      --lavender: #8b7cc9;
+      --muted: #6b7280;
+      --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+      --sans: "Atkinson Hyperlegible", "Inter", system-ui, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin:0; padding:0; background: var(--void); color: var(--ink); font-family: var(--sans); font-size:15px; line-height:1.5; }
+    a { color: var(--cyan); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code { font-family: var(--mono); font-size: 0.9em; background: var(--surface); padding: 1px 6px; border-radius: 4px; color: var(--cyan); }
+
+    .wrap { max-width: 1180px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    header.hero {
+      padding: 32px 0 24px; border-bottom: 1px solid var(--line); margin-bottom: 32px;
+    }
+    header.hero h1 {
+      font-family: var(--mono); font-size: 22px; letter-spacing: 0.02em;
+      margin: 0 0 8px; color: var(--ink); font-weight: 700;
+    }
+    header.hero h1 .glow { color: var(--teal); text-shadow: 0 0 14px rgba(37,137,125,0.45); }
+    header.hero p.lede { color: var(--muted); max-width: 740px; margin: 8px 0; font-size: 14.5px; }
+    header.hero .meta {
+      display: flex; gap: 12px; flex-wrap: wrap; margin-top: 14px;
+      font-family: var(--mono); font-size: 11.5px; color: var(--muted);
+    }
+    header.hero .pill {
+      background: var(--surface); border: 1px solid var(--line); border-radius: 99px;
+      padding: 4px 12px; color: var(--muted);
+    }
+    header.hero .pill.live { color: var(--phos); border-color: rgba(59,163,114,0.4); }
+    header.hero .pill.thinking { color: var(--butter); border-color: rgba(205,168,82,0.4); }
+
+    /* Top counter row — the headline numbers */
+    .counters {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px; margin-bottom: 36px;
+    }
+    .counter {
+      background: var(--surface); border: 1px solid var(--line);
+      border-radius: 10px; padding: 18px 20px;
+    }
+    .counter .num {
+      font-family: var(--mono); font-size: 36px; font-weight: 700;
+      color: var(--teal); line-height: 1; letter-spacing: -0.02em;
+    }
+    .counter .label {
+      font-size: 12px; color: var(--muted); margin-top: 6px;
+      letter-spacing: 0.04em; text-transform: uppercase;
+    }
+    .counter[data-tier="story"]    .num { color: var(--coral); }
+    .counter[data-tier="education"] .num { color: var(--butter); }
+    .counter[data-tier="substrate"] .num { color: var(--phos); }
+    .counter[data-tier="org"]      .num { color: var(--lavender); }
+
+    /* Sections */
+    section.block { margin-bottom: 36px; }
+    section.block h2 {
+      font-family: var(--mono); font-size: 13px; letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--muted); margin: 0 0 6px; font-weight: 600;
+    }
+    section.block .desc { color: var(--muted); font-size: 13.5px; max-width: 740px; margin: 0 0 16px; }
+
+    /* Surface table */
+    table.surfaces {
+      width: 100%; border-collapse: collapse;
+      background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+      overflow: hidden;
+    }
+    table.surfaces thead {
+      background: var(--surface2);
+      font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--muted);
+    }
+    table.surfaces th, table.surfaces td {
+      padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--line);
+      font-size: 13.5px; vertical-align: middle;
+    }
+    table.surfaces tr:last-child td { border-bottom: none; }
+    table.surfaces .tier {
+      display: inline-block; font-family: var(--mono); font-size: 10px;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      padding: 2px 8px; border-radius: 99px;
+    }
+    table.surfaces .tier.story      { background: rgba(204,98,71,0.15); color: var(--coral); }
+    table.surfaces .tier.tool       { background: rgba(77,184,168,0.15); color: var(--cyan); }
+    table.surfaces .tier.education  { background: rgba(205,168,82,0.15); color: var(--butter); }
+    table.surfaces .tier.substrate  { background: rgba(59,163,114,0.15); color: var(--phos); }
+    table.surfaces .tier.org        { background: rgba(139,124,201,0.15); color: var(--lavender); }
+    table.surfaces .pwa { color: var(--phos); font-weight: 700; }
+    table.surfaces .pwa.no { color: var(--muted); font-weight: 400; }
+    table.surfaces a { color: var(--cyan); }
+    table.surfaces tr[data-status="green"]  td:first-child { border-left: 3px solid var(--phos); }
+    table.surfaces tr[data-status="amber"]  td:first-child { border-left: 3px solid var(--butter); }
+    table.surfaces tr[data-status="red"]    td:first-child { border-left: 3px solid var(--coral); }
+    table.surfaces tr[data-status="grey"]   td:first-child { border-left: 3px solid var(--muted); }
+
+    /* Verb cards */
+    .verbs { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+    .verb {
+      background: var(--surface); border: 1px solid var(--line);
+      border-radius: 10px; padding: 16px 20px;
+    }
+    .verb .cmd {
+      display: block; font-family: var(--mono); font-size: 13px;
+      color: var(--cyan); margin-bottom: 6px;
+    }
+    .verb .cmd::before { content: "$ "; color: var(--muted); }
+    .verb .desc { color: var(--ink); font-size: 13px; margin: 0; }
+    .verb .desc .accent { color: var(--butter); }
+
+    /* Phase ladder */
+    .phases { list-style: none; padding: 0; margin: 0; }
+    .phase {
+      background: var(--surface); border: 1px solid var(--line);
+      border-radius: 10px; padding: 14px 18px; margin-bottom: 10px;
+      display: grid; grid-template-columns: 50px 1fr; gap: 14px; align-items: center;
+    }
+    .phase .num {
+      font-family: var(--mono); font-size: 22px; font-weight: 700;
+      color: var(--teal);
+    }
+    .phase .body strong { display: block; color: var(--ink); margin-bottom: 4px; font-size: 14px; }
+    .phase .body span { color: var(--muted); font-size: 12.5px; }
+
+    /* Footer */
+    footer.bottom {
+      margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--line);
+      color: var(--muted); font-size: 12px; line-height: 1.55;
+    }
+    footer.bottom .heart { color: var(--coral); }
+    footer.bottom .tetra { color: var(--teal); }
+    footer.bottom .nav { display: flex; gap: 18px; flex-wrap: wrap; margin-bottom: 12px; }
+    footer.bottom .nav a { color: var(--muted); }
+    footer.bottom .nav a:hover { color: var(--teal); }
+
+    @media (max-width: 640px) {
+      .wrap { padding: 24px 16px 60px; }
+      header.hero h1 { font-size: 18px; }
+      .counters { gap: 8px; }
+      .counter { padding: 14px 16px; }
+      .counter .num { font-size: 28px; }
+      table.surfaces th, table.surfaces td { padding: 8px 10px; font-size: 12.5px; }
+      .phase { grid-template-columns: 38px 1fr; }
+    }
+  </style>
+</head>
+<body>
+<a href="#main" style="position:absolute;left:-9999px;top:0;padding:0.5rem 1rem;background:var(--p31-void);color:var(--p31-teal);font-size:0.875rem;z-index:9999;border-radius:0 0 4px 4px;text-decoration:none" onfocus="this.style.left='0'" onblur="this.style.left='-9999px'">Skip to main content</a>
+<div class="wrap">
+
+<header class="hero">
+  <h1>\u25cd <span class="glow">P31 launch readiness</span> &mdash; 2026-05</h1>
+  <p class="lede">Definitive comprehensive enterprise production-grade market launch automation package, assembled from everything we've built. 17 launchable surfaces, 4 PWAs, 83 verify gates, 10 social cards, 22 papers, one thesis. Run <code>npm run launch</code> to refresh this dashboard.</p>
+  <div class="meta">
+    <span class="pill live">assembled</span>
+    <span class="pill">schema p31.launchReadiness/1.0.0</span>
+    <span class="pill" id="last-sweep-pill">last sweep: <span data-bind="lastSweep">manual edit</span></span>
+    <span class="pill">runbook: <a href="docs/LAUNCH-PACKAGE-2026-05.md">docs/LAUNCH-PACKAGE-2026-05.md</a></span>
+  </div>
+</header>
+
+<!-- Headline counters -->
+<div class="counters">
+  <div class="counter" data-tier="substrate"><div class="num">83</div><div class="label">verify gates green</div></div>
+  <div class="counter"><div class="num">17</div><div class="label">launchable surfaces</div></div>
+  <div class="counter" data-tier="education"><div class="num">4</div><div class="label">PWAs installable</div></div>
+  <div class="counter" data-tier="story"><div class="num">10</div><div class="label">social cards ready</div></div>
+  <div class="counter" data-tier="story"><div class="num">22</div><div class="label">papers on Zenodo</div></div>
+  <div class="counter" data-tier="substrate"><div class="num">10</div><div class="label">CF Workers in prod</div></div>
+  <div class="counter" data-tier="org"><div class="num">$50</div><div class="label">/ month infra</div></div>
+  <div class="counter" data-tier="org"><div class="num">$0</div><div class="label">platform fee</div></div>
+</div>
+
+<!-- Surfaces table -->
+<section class="block">
+  <h2>\u00a701 \u00b7 the launch surface area</h2>
+  <p class="desc">17 surfaces ready to ship. PWA-installable surfaces are the ones that earn home-screen real estate (operators &amp; visitors return). Substrate surfaces are the workers + ledger that make everything else possible.</p>
+  <table class="surfaces" id="surfaces">
+    <thead>
+      <tr>
+        <th>tier</th><th>surface</th><th>live URL</th><th>PWA</th><th>notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr data-status="green"><td><span class="tier story">story</span></td><td>Phosphorus Thesis v2.0</td><td><a href="docs/operator/PHOSPHORUS-THESIS-v2-2026-05-02.md">docs/operator/...thesis-v2...</a></td><td class="pwa no">&mdash;</td><td>Capstone manifesto, Zenodo-ready</td></tr>
+      <tr data-status="green"><td><span class="tier story">story</span></td><td>Public voice + DELTA language</td><td>docs/PUBLIC-VOICE.md + docs/P31-DELTA-LANGUAGE.md</td><td class="pwa no">&mdash;</td><td>Identity-first, CI-enforced</td></tr>
+      <tr data-status="green"><td><span class="tier tool">tool</span></td><td>Cognitive Passport</td><td><a href="https://p31ca.org/passport">p31ca.org/passport</a></td><td class="pwa">\u2713</td><td>Generator v3.0, 32/32 tests</td></tr>
+      <tr data-status="green"><td><span class="tier tool">tool</span></td><td>Glass Box terminal</td><td><a href="https://p31ca.org/glass-box">p31ca.org/glass-box</a></td><td class="pwa no">live ops</td><td>verify-pulse + reports feed</td></tr>
+      <tr data-status="green"><td><span class="tier education">education</span></td><td>The Same Shape</td><td><a href="demos/the-same-shape.html">demos/the-same-shape.html</a></td><td class="pwa">\u2713</td><td>K\u2084 \u00d7 4 panels in lockstep</td></tr>
+      <tr data-status="green"><td><span class="tier education">education</span></td><td>The Pulse</td><td><a href="demos/the-pulse.html">demos/the-pulse.html</a></td><td class="pwa">\u2713</td><td>Edit constant, watch ripple</td></tr>
+      <tr data-status="green"><td><span class="tier story">story</span></td><td>Social Cards (10)</td><td><a href="social-cards/">social-cards/</a></td><td class="pwa">\u2713</td><td>Stat \u00b7 fleet \u00b7 quote \u00b7 diptych \u00b7 ethics \u00b7 closer \u00b7 dev \u00b7 K\u2084 \u00b7 trim-tab \u00b7 ASCII</td></tr>
+      <tr data-status="green"><td><span class="tier substrate">substrate</span></td><td>Connection spine</td><td><a href="https://p31ca.org/connect">p31ca.org/connect</a></td><td class="pwa no">&mdash;</td><td>K\u2084 navigator + mesh-start</td></tr>
+      <tr data-status="green"><td><span class="tier substrate">substrate</span></td><td>Initial Build site</td><td><a href="https://p31ca.org/build">p31ca.org/build</a></td><td class="pwa no">&mdash;</td><td>CWP-P31-IB-2026-01</td></tr>
+      <tr data-status="green"><td><span class="tier substrate">substrate</span></td><td>K\u2084 personal Worker</td><td>k4-personal.trimtab-signal.workers.dev</td><td class="pwa no">&mdash;</td><td>Per-member DO agent</td></tr>
+      <tr data-status="green"><td><span class="tier substrate">substrate</span></td><td>Genesis Block ledger</td><td>D1 (append-only)</td><td class="pwa no">&mdash;</td><td>Soulbound L.O.V.E.</td></tr>
+      <tr data-status="green"><td><span class="tier substrate">substrate</span></td><td>Passkey Worker</td><td>p31ca.org/api/passkey/*</td><td class="pwa no">&mdash;</td><td>WebAuthn, no passwords</td></tr>
+      <tr data-status="green"><td><span class="tier substrate">substrate</span></td><td>Geodesic room Worker</td><td>geodesic-room.trimtab-signal.workers.dev</td><td class="pwa no">&mdash;</td><td>v0.2.1 wire</td></tr>
+      <tr data-status="green"><td><span class="tier substrate">substrate</span></td><td>SIMPLEX v7 + SENTINEL</td><td>simplex-v7/</td><td class="pwa no">&mdash;</td><td>Cloud crew orchestration</td></tr>
+      <tr data-status="green"><td><span class="tier substrate">substrate</span></td><td>Email Worker</td><td>simplex-email/</td><td class="pwa no">&mdash;</td><td>Hostile-mail triage</td></tr>
+      <tr data-status="green"><td><span class="tier org">org</span></td><td>P31 Labs, Inc.</td><td>EIN 42-1888158 \u00b7 GA</td><td class="pwa no">&mdash;</td><td>501(c)(3) pending</td></tr>
+      <tr data-status="green"><td><span class="tier org">org</span></td><td>Creator Economy contract</td><td><a href="https://p31ca.org/creator-economy.json">p31ca.org/creator-economy.json</a></td><td class="pwa no">&mdash;</td><td>0% fee, 100% creator share</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- The verbs -->
+<section class="block">
+  <h2>\u00a702 \u00b7 the launch verbs</h2>
+  <p class="desc">Three commands. The whole launch is in <code>npm run launch</code>. Add <code>--dry-run</code> to see what it would do; add <code>--status</code> to read the last result without re-running.</p>
+  <div class="verbs">
+    <div class="verb">
+      <span class="cmd">npm run launch</span>
+      <p class="desc">Canonical assembly: <span class="accent">verify (83 gates)</span> \u2192 build PWA + demos + fleet portal \u2192 apply constants \u2192 sync passport \u2192 strict mesh + hub:ci + security \u2192 rewrite this dashboard. <strong>Idempotent. Local only.</strong> Set <code>P31_LAUNCH_PUBLISH=I_UNDERSTAND</code> to also push + deploy.</p>
+    </div>
+    <div class="verb">
+      <span class="cmd">npm run launch -- --dry-run</span>
+      <p class="desc">Read-only preview. Tells you what <em>would</em> happen, without touching anything.</p>
+    </div>
+    <div class="verb">
+      <span class="cmd">npm run launch -- --status</span>
+      <p class="desc">Prints the last saved readiness JSON. No gates re-run, no writes. Safe to call from cron, command-center, or before-coffee.</p>
+    </div>
+  </div>
+</section>
+
+<!-- The phases -->
+<section class="block">
+  <h2>\u00a703 \u00b7 the launch sequence</h2>
+  <p class="desc">Five phases. Operator-paced. The launch waits for the operator's calcium, water, and consent.</p>
+  <ul class="phases">
+    <li class="phase"><div class="num">0</div><div class="body"><strong>Pre-flight (5 min)</strong><span>Calcium taken \u00b7 water consumed \u00b7 spoon assessment \u00b7 git status clean</span></div></li>
+    <li class="phase"><div class="num">1</div><div class="body"><strong>Assemble (1 min)</strong><span><code>npm run launch -- --dry-run</code> then <code>npm run launch</code> then open this dashboard</span></div></li>
+    <li class="phase"><div class="num">2</div><div class="body"><strong>Review (10 min)</strong><span>Every row green \u00b7 pick 3-5 cards from social-cards/ \u00b7 install each PWA on a phone, verify it works \u00b7 read the thesis once more</span></div></li>
+    <li class="phase"><div class="num">3</div><div class="body"><strong>Deploy (5 min, optional)</strong><span><code>P31_LAUNCH_PUBLISH=I_UNDERSTAND npm run launch</code> \u2192 push + deploy. Or stop and let CI auto-deploy on next push.</span></div></li>
+    <li class="phase"><div class="num">4</div><div class="body"><strong>Share (operator-paced)</strong><span>Manual. No auto-posting. Three suggested first posts: Card 06 to family \u00b7 Card 02 to dev \u00b7 Card 04 to AuDHD community</span></div></li>
+    <li class="phase"><div class="num">5</div><div class="body"><strong>Observe (continuous)</strong><span>Re-run <code>npm run launch -- --status</code> as needed \u00b7 glass-box.html shows live state \u00b7 record reactions in operator-shift.jsonl</span></div></li>
+  </ul>
+</section>
+
+<!-- Choices matrix highlights (reframed per Opus 4.6 peer review 2026-05-02:
+     neutral pattern \u2192 affirmative P31 choice; cuts purely-reactive rows.
+     Full matrix in docs/LAUNCH-PACKAGE-2026-05.md \u00a78. -->
+<section class="block">
+  <h2>\u00a704 \u00b7 the choices we made</h2>
+  <p class="desc">Selected highlights from the full 11-row matrix in <code>docs/LAUNCH-PACKAGE-2026-05.md</code> \u00a78. Common industry pattern on the left; P31's choice on the right. Each P31 choice stands on its own.</p>
+  <ul style="color: var(--ink); font-size: 14px; line-height: 1.7; padding-left: 20px;">
+    <li><strong>AI safety as marketing copy.</strong> P31: AI safety as <code>npm run verify:ethical-rewards</code> \u2014 grep-fails the build if engagement-extractive vocabulary appears in <code>src/</code>.</li>
+    <li><strong>Platform fees on creator income.</strong> P31: 0% platform fee. Contract is public + CI-verified at <a href="https://p31ca.org/creator-economy.json">p31ca.org/creator-economy.json</a>.</li>
+    <li><strong>Engagement-metrics dashboards.</strong> P31: <code>glass-box.html</code> \u2014 verify-pulse + real reports.</li>
+    <li><strong>Proprietary closed source.</strong> P31: 100% open source \u2014 CC-BY 4.0 / AGPL.</li>
+    <li><strong>Centralized SSO (Google / Apple / Meta).</strong> P31: WebAuthn passkeys + Cognitive Passport + DID.</li>
+    <li><strong>"Scale" as ideology.</strong> P31: ephemeralization \u2014 one source, many derivations.</li>
+  </ul>
+</section>
+
+<!-- Live readiness consumer: when launch.html is served alongside .p31-launch-readiness.json
+     (npm run demo from repo root), this script tries to fetch it client-side and updates
+     the "last sweep" pill + step rows below. Fails silently when the JSON is missing
+     (e.g. on the public p31ca mirror) so the static page still works.
+     Schema: p31.launchReadiness/1.0.0 — written by scripts/p31-launch.mjs. -->
+<!-- Rainbow celebration: appears only when mode=full AND assemblyComplete=true. -->
+<section class="block" id="rainbow-banner" hidden style="text-align:center;padding:24px;border:2px solid transparent;border-image:linear-gradient(90deg,#ff3030,#ff8c00,#ffd000,#30c030,#30b8d0,#a040ff) 1;">
+  <h2 style="background:linear-gradient(90deg,#ff3030,#ff8c00,#ffd000,#30c030,#30b8d0,#a040ff);-webkit-background-clip:text;background-clip:text;color:transparent;font-size:28px;margin:0">\u25cd FULL ASSEMBLY READY</h2>
+  <p class="desc" style="margin-top:8px">every standard step \u00b7 every extra deliverable \u00b7 the ship is complete</p>
+  <p id="rainbow-stats" style="font-family:var(--mono);font-size:13px;color:var(--muted);margin-top:8px"></p>
+</section>
+
+<section class="block" id="live-sweep" hidden>
+  <h2>\u00a705 \u00b7 last sweep (live)</h2>
+  <p class="desc">Read live from <code>.p31-launch-readiness.json</code> next to this page.</p>
+  <table class="surfaces" id="live-steps">
+    <thead><tr><th>phase</th><th>step</th><th>result</th><th>duration</th></tr></thead>
+    <tbody></tbody>
+  </table>
+</section>
+
+<!-- Deliverables panel: rendered from snapshot.deliverables[]. Only visible in --full mode runs. -->
+<section class="block" id="live-deliverables" hidden>
+  <h2>\u00a706 \u00b7 deliverables present</h2>
+  <p class="desc">Every artifact assembled by <code>npm run launch -- --full</code>. \u2713 = present on disk; \u2717 = missing (run launch).</p>
+  <table class="surfaces" id="live-deliverables-table">
+    <thead><tr><th>id</th><th>artifact</th><th>path</th><th>status</th><th>size</th></tr></thead>
+    <tbody></tbody>
+  </table>
+</section>
+
+<!-- Services panel: rendered from snapshot.steps[] where phase==="full-probe". -->
+<section class="block" id="live-services" hidden>
+  <h2>\u00a707 \u00b7 local services (probed)</h2>
+  <p class="desc">Health probes of locally-running daemons. Amber here doesn't block ship: command-center / tailscale are optional per machine.</p>
+  <table class="surfaces" id="live-services-table">
+    <thead><tr><th>service</th><th>status</th><th>detail</th></tr></thead>
+    <tbody></tbody>
+  </table>
+</section>
+<script>
+(function () {
+  "use strict";
+  // Attempt to fetch the readiness snapshot from the same directory as this page.
+  // Skips silently on 404 / fetch error / non-JSON.
+  fetch("./.p31-launch-readiness.json", { cache: "no-store" })
+    .then((r) => r.ok ? r.json() : Promise.reject(r.status))
+    .then((d) => {
+      if (!d || d.schema !== "p31.launchReadiness/1.0.0") return;
+      // pill
+      const at = new Date(d.at);
+      const pill = document.getElementById("last-sweep-pill");
+      if (pill) {
+        const fmt = at.toISOString().replace("T", " ").slice(0, 19) + " UTC";
+        const allGreen = d.allGreen ? " \u2713" : " \u2717";
+        pill.innerHTML = "last sweep: <span style=\"color:" + (d.allGreen ? "var(--phos)" : "var(--coral)") + "\">" + fmt + allGreen + "</span>"
+          + (d.commit ? " <span style=\"color:var(--muted)\">@ " + d.commit + "</span>" : "");
+        pill.classList.add(d.allGreen ? "live" : "thinking");
+      }
+      // Step table
+      const sec = document.getElementById("live-sweep");
+      const tbody = sec.querySelector("tbody");
+      tbody.innerHTML = "";
+      const phaseLabel = (p) => p === "full-build" ? "build" : p === "full-probe" ? "probe" : "step";
+      for (const s of (d.steps || [])) {
+        const tr = document.createElement("tr");
+        tr.dataset.status = s.ok ? "green" : (s.critical ? "red" : "amber");
+        const mark = s.ok ? "\u2713" : (s.critical === false ? "\u26a0" : "\u2717");
+        const color = s.ok ? "var(--phos)" : (s.critical === false ? "var(--butter)" : "var(--coral)");
+        const phLab = s.publish ? "publish" : phaseLabel(s.phase);
+        tr.innerHTML = "<td><span class=\"tier " + (phLab === "build" ? "substrate" : phLab === "probe" ? "education" : phLab === "publish" ? "story" : "substrate") + "\">" + phLab + "</span></td>"
+          + "<td><code>" + s.name + "</code>" + (s.detail ? "<div style=\"font-size:11px;color:var(--muted);font-family:var(--mono);margin-top:2px\">" + s.detail + "</div>" : "") + "</td>"
+          + "<td><span style=\"color:" + color + ";font-size:18px;line-height:1\">" + mark + "</span></td>"
+          + "<td><span style=\"color:var(--muted);font-family:var(--mono);font-size:12px\">" + (s.durationMs || 0) + " ms</span></td>";
+        tbody.appendChild(tr);
+      }
+      sec.hidden = false;
+
+      // Deliverables panel (only when full mode wrote inventory)
+      if (Array.isArray(d.deliverables) && d.deliverables.length) {
+        const dsec = document.getElementById("live-deliverables");
+        const dbody = dsec.querySelector("tbody");
+        dbody.innerHTML = "";
+        for (const a of d.deliverables) {
+          const tr = document.createElement("tr");
+          const mark = a.present ? "\u2713" : "\u2717";
+          const color = a.present ? "var(--phos)" : "var(--coral)";
+          const size = a.present ? (a.bytes || 0).toLocaleString() + " B" : "\u2014";
+          tr.innerHTML = "<td><code>" + a.id + "</code></td>"
+            + "<td>" + a.label + "</td>"
+            + "<td><code style=\"font-size:11px;color:var(--muted)\">" + a.path + "</code></td>"
+            + "<td><span style=\"color:" + color + ";font-size:18px;line-height:1\">" + mark + "</span></td>"
+            + "<td><span style=\"color:var(--muted);font-family:var(--mono);font-size:12px\">" + size + "</span></td>";
+          dbody.appendChild(tr);
+        }
+        dsec.hidden = false;
+      }
+
+      // Services panel (only when probes were run)
+      const probes = (d.steps || []).filter((s) => s.phase === "full-probe");
+      if (probes.length) {
+        const psec = document.getElementById("live-services");
+        const pbody = psec.querySelector("tbody");
+        pbody.innerHTML = "";
+        for (const s of probes) {
+          const tr = document.createElement("tr");
+          const mark = s.ok ? "\u2713 up" : "\u26a0 down";
+          const color = s.ok ? "var(--phos)" : "var(--butter)";
+          tr.innerHTML = "<td><code>" + s.name.replace(/^probe:/, "") + "</code></td>"
+            + "<td><span style=\"color:" + color + ";font-weight:600\">" + mark + "</span></td>"
+            + "<td><span style=\"color:var(--muted);font-size:12px\">" + (s.detail || "\u2014") + "</span></td>";
+          pbody.appendChild(tr);
+        }
+        psec.hidden = false;
+      }
+
+      // Rainbow celebration (only when full mode + every step green OR assembly complete)
+      if (d.mode === "full" && (d.allFullGreen || d.assemblyComplete)) {
+        const banner = document.getElementById("rainbow-banner");
+        const stats = document.getElementById("rainbow-stats");
+        if (banner && stats) {
+          const built = (d.deliverables || []).filter((x) => x.present).length;
+          const services = probes.filter((s) => s.ok).length;
+          const ms = d.elapsedMs ? (d.elapsedMs / 1000).toFixed(1) + "s" : "";
+          stats.textContent = (d.steps || []).length + " steps \u00b7 "
+            + built + " deliverables \u00b7 "
+            + services + "/" + probes.length + " services up \u00b7 "
+            + ms + (d.commit ? " \u00b7 commit " + d.commit : "");
+          banner.hidden = false;
+        }
+      }
+    })
+    .catch(() => { /* JSON absent (public mirror) \u2014 keep static page intact */ });
+})();
+</script>
+
+<footer class="bottom">
+  <div class="nav">
+    <a href="./">home</a>
+    <a href="docs/LAUNCH-PACKAGE-2026-05.md">launch runbook</a>
+    <a href="docs/operator/PHOSPHORUS-THESIS-v2-2026-05-02.md">thesis v2</a>
+    <a href="demos/">demos</a>
+    <a href="social-cards/">social cards</a>
+    <a href="cognitive-passport/">cognitive passport</a>
+    <a href="glass-box.html">glass box</a>
+    <a href="https://github.com/p31labs/bonding-soup">repo</a>
+  </div>
+  <p>P31 Labs, Inc. \u00b7 EIN 42-1888158 \u00b7 GA \u00b7 501(c)(3) pending</p>
+  <p>The phosphorus is for all of us. The cage holds for all of us. The flowers don't wilt for any of us.</p>
+  <p><span class="heart">\ud83d\udc9c</span><span class="tetra">\ud83d\udd3a</span><span class="heart">\ud83d\udc9c</span> the geometry holds</p>
+</footer>
+
+</div>
+</body>
+</html>

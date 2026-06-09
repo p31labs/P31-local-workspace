@@ -1,0 +1,30 @@
+name: Uptime Monitor
+
+on:
+  schedule:
+    # Every 30 minutes
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping bonding.p31ca.org
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 15 https://bonding.p31ca.org)
+          echo "bonding: $STATUS"
+          [ "$STATUS" -eq 200 ] || echo "::warning::bonding.p31ca.org returned $STATUS"
+
+      - name: Ping phosphorus31.org
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 15 https://phosphorus31.org)
+          echo "phosphorus31.org: $STATUS"
+          [ "$STATUS" -eq 200 ] || echo "::warning::phosphorus31.org returned $STATUS"
+
+      - name: Ping bonding relay
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 15 https://bonding-relay.trimtab-signal.workers.dev)
+          echo "relay: $STATUS"
+          # Relay returns 404 when no room exists — that is correct behavior
+          [ "$STATUS" -eq 200 ] || [ "$STATUS" -eq 404 ] || echo "::warning::relay returned $STATUS"

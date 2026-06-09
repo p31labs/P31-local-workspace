@@ -1,0 +1,28 @@
+{
+  "schema": "p31.verifyPulse/0.1.0",
+  "version": "1.0.0",
+  "generatedAt": "2026-04-30T21:19:40.477Z",
+  "limit": 20,
+  "count": 1,
+  "lastSuccess": {
+    "ts": "2026-04-30T21:19:40.477Z",
+    "git": {
+      "head": "5d18beb",
+      "branch": "main"
+    },
+    "command": "verify"
+  },
+  "history": [
+    {
+      "ts": "2026-04-30T21:19:40.477Z",
+      "command": "verify",
+      "exit": 0,
+      "durationMs": 12345,
+      "stepCount": 22,
+      "git": {
+        "head": "5d18beb",
+        "branch": "main"
+      }
+    }
+  ]
+}

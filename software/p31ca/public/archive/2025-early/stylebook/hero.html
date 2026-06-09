@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hero patterns · P31 Stylebook</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/p31-style.css">
+  <link rel="stylesheet" href="/lib/p31-fluid.css">
+  <link rel="stylesheet" href="/stylebook/_chrome.css">
+  <style>
+    .hero-grid-bg {
+      position: relative;
+      padding: 64px 32px;
+      border-radius: 16px;
+      overflow: hidden;
+      background: var(--p31-void);
+    }
+    .hero-grid-bg::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--p31-border-subtle) 1px, transparent 1px),
+        linear-gradient(90deg, var(--p31-border-subtle) 1px, transparent 1px);
+      background-size: 40px 40px;
+      mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+      -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+    }
+    .hero-grid-bg > * { position: relative; z-index: 1; }
+    
+    .hero-aurora-bg {
+      position: relative;
+      padding: 64px 32px;
+      border-radius: 16px;
+      overflow: hidden;
+      background: var(--p31-void);
+    }
+    .hero-aurora-bg::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at top right, rgba(204, 98, 71, 0.2), transparent 50%),
+        radial-gradient(ellipse at bottom left, rgba(37, 137, 125, 0.2), transparent 50%);
+    }
+    .hero-aurora-bg > * { position: relative; z-index: 1; }
+    
+    .hero-mesh-bg {
+      position: relative;
+      padding: 64px 32px;
+      border-radius: 16px;
+      overflow: hidden;
+      background: linear-gradient(135deg, var(--p31-surface) 0%, var(--p31-void) 100%);
+    }
+    .hero-mesh-bg::after {
+      content: '';
+      position: absolute;
+      top: -50%; right: -20%;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(0, 255, 136, 0.08) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .hero-mesh-bg > * { position: relative; z-index: 1; }
+    
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      background: var(--p31-surface);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: 999px;
+      font-family: var(--p31-font-mono);
+      font-size: 11px;
+      color: var(--p31-cyan);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 20px;
+    }
+    .hero-eyebrow::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      background: var(--p31-phosphor);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--p31-phosphor);
+    }
+    .hero-title {
+      font-size: clamp(1.75rem, 4vw, 3rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1;
+      color: var(--p31-paper);
+      margin-bottom: 16px;
+      max-width: 600px;
+    }
+    .hero-title .accent {
+      background: linear-gradient(135deg, var(--p31-coral), var(--p31-teal));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-text {
+      font-size: 16px;
+      line-height: 1.5;
+      color: var(--p31-cloud);
+      max-width: 480px;
+      margin-bottom: 24px;
+    }
+    .hero-cta {
+      display: inline-flex;
+      gap: 8px;
+    }
+    .hero-cta-primary {
+      padding: 12px 22px;
+      background: var(--p31-paper);
+      color: var(--p31-void);
+      border: none;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .hero-cta-secondary {
+      padding: 12px 22px;
+      background: transparent;
+      color: var(--p31-cloud);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: 10px;
+      font-weight: 500;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    
+    .hero-split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      align-items: center;
+    }
+    @media (max-width: 700px) { .hero-split { grid-template-columns: 1fr; } }
+    .hero-visual {
+      aspect-ratio: 1;
+      background: linear-gradient(135deg, var(--p31-surface) 0%, var(--p31-surface2) 100%);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 96px;
+      color: var(--p31-primary);
+      border: 1px solid var(--p31-border-subtle);
+    }
+  </style>
+</head>
+<body>
+  <script type="module">
+    import { renderShell, code, callout } from '/stylebook/_chrome.js';
+    import { P31ThemeController } from '/lib/p31-theme-engine.mjs';
+    window.p31Theme = new P31ThemeController({ defaultTheme: 'hub' });
+    
+    const content = `
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Pattern 1</div>
+          <h2 class="sb-h2">Grid background</h2>
+          <p class="sb-text">Subtle grid with center fade. Quiet, technical, inviting curiosity. The default for product pages.</p>
+        </div>
+        
+        <div class="hero-grid-bg">
+          <div class="hero-eyebrow">P31 Hub · Live</div>
+          <div class="hero-title">Build a calm <span class="accent">family mesh</span> — without the cloud lock-in.</div>
+          <div class="hero-text">Encrypted graph. Edge-only. Zero budget. The technical hub for everything operator-led.</div>
+          <div class="hero-cta">
+            <button class="hero-cta-primary">Start building →</button>
+            <button class="hero-cta-secondary">View architecture</button>
+          </div>
+        </div>
+        
+        ${code(`<div class="hero-grid-bg">
+  <div class="hero-eyebrow">P31 Hub · Live</div>
+  <h1 class="hero-title">Build a calm <span class="accent">family mesh</span></h1>
+  <p class="hero-text">Encrypted graph. Edge-only. Zero budget.</p>
+  <div class="hero-cta">
+    <button class="hero-cta-primary">Start building →</button>
+    <button class="hero-cta-secondary">View architecture</button>
+  </div>
+</div>`, 'html', 'Grid hero')}
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Pattern 2</div>
+          <h2 class="sb-h2">Aurora gradient</h2>
+          <p class="sb-text">Dual radial gradients in opposite corners. Warmer, more emotional. Use for landings,
+          marketing pages, "welcome" moments.</p>
+        </div>
+        
+        <div class="hero-aurora-bg">
+          <div class="hero-eyebrow">P31 Labs · 501(c)(3)</div>
+          <div class="hero-title">Calm comes from <span class="accent">structure</span>, not silence.</div>
+          <div class="hero-text">A nonprofit building tools for cognitive sovereignty. We make pieces of mind that you actually own.</div>
+          <div class="hero-cta">
+            <button class="hero-cta-primary">Read mission</button>
+            <button class="hero-cta-secondary">Support →</button>
+          </div>
+        </div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Pattern 3</div>
+          <h2 class="sb-h2">Mesh glow</h2>
+          <p class="sb-text">Asymmetric radial glow from one corner. Subtler than aurora, hints at activity without
+          shouting. Use for sparing emphasis.</p>
+        </div>
+        
+        <div class="hero-mesh-bg">
+          <div class="hero-eyebrow">SIMPLEX v7 · Online</div>
+          <div class="hero-title">Six agents, one operator, <span class="accent">infinite execution</span>.</div>
+          <div class="hero-text">Local-first AI personas. No cloud round-trip. Counsel never leaves your machine.</div>
+          <div class="hero-cta">
+            <button class="hero-cta-primary">Open command center</button>
+            <button class="hero-cta-secondary">View fleet</button>
+          </div>
+        </div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Pattern 4</div>
+          <h2 class="sb-h2">Split with visual</h2>
+          <p class="sb-text">Text on one side, visual on the other. The visual can be an image, illustration, glyph,
+          or interactive demo. Stack on mobile.</p>
+        </div>
+        
+        <div style="background: var(--p31-surface); border: 1px solid var(--p31-border-subtle); border-radius: 16px; padding: 48px;">
+          <div class="hero-split">
+            <div>
+              <div class="hero-eyebrow">Cognitive Passport · v5.1</div>
+              <div class="hero-title">A <span class="accent">spec sheet</span> for your mind.</div>
+              <div class="hero-text">Standardize how you communicate cognitive context to clinicians, advocates, and AI.</div>
+              <div class="hero-cta">
+                <button class="hero-cta-primary">Generate yours →</button>
+              </div>
+            </div>
+            <div class="hero-visual">◇</div>
+          </div>
+        </div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Anti-patterns</div>
+          <h2 class="sb-h2">What hero sections shouldn't do</h2>
+        </div>
+        
+        <table class="sb-table">
+          <thead><tr><th>Don't</th><th>Why</th></tr></thead>
+          <tbody>
+            <tr><td>Auto-play full-screen video</td><td>Bandwidth cost, accessibility burden, distracts from the headline</td></tr>
+            <tr><td>Carousel of "key features"</td><td>Users don't carousel. Pick one message.</td></tr>
+            <tr><td>Pop a modal newsletter signup</td><td>Hostile. Place a quiet CTA inline instead.</td></tr>
+            <tr><td>Mountain of badges (Featured On X, As Seen In Y)</td><td>Erodes trust. One trust signal does more than five.</td></tr>
+            <tr><td>Animated text typewriter effects</td><td>Feels gimmicky. Lets visitors finish reading before continuing.</td></tr>
+          </tbody>
+        </table>
+        
+        ${callout('info', 'One headline, one CTA', 'A hero section\'s job is to explain who this is for and what to do next. Anything else is decoration.')}
+      </section>
+    `;
+    
+    renderShell({
+      activeId: 'hero',
+      breadcrumb: [
+        { href: '/stylebook/', label: 'Stylebook' },
+        { href: '/stylebook/', label: 'Patterns' },
+        { label: 'Hero sections' }
+      ],
+      title: 'Hero patterns',
+      subtitle: 'Four hero patterns for landing pages — grid, aurora, mesh glow, and split. Pick the tone that matches.',
+      meta: [{ label: 'Patterns', value: '4' }],
+      content
+    });
+  </script>
+</body>
+</html>

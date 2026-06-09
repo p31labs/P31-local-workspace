@@ -1,0 +1,25 @@
+name = "genesis-gate"
+main = "src/index.ts"
+compatibility_date = "2026-04-04"
+
+[observability]
+enabled = true
+
+# Routes (set custom domain via Cloudflare dashboard):
+#   genesis.p31ca.org → genesis-gate worker
+
+[[kv_namespaces]]
+binding = "EVENTS_KV"
+id = "51b6a114acd8497d8b9091fd238c11e4"
+# Create: npx wrangler kv namespace create EVENTS_KV
+# Then replace the id above with the output id
+
+[vars]
+ALLOWED_ORIGINS = "https://p31ca.org,https://phosphorus31.org,https://bonding.p31ca.org,https://spaceship-earth.pages.dev"
+EVENT_TTL_DAYS = "30"
+MAX_PAYLOAD_BYTES = "4096"
+governance_ERROR_THRESHOLD = "5"
+governance_WINDOW_SECONDS = "60"
+
+# Secrets (set via wrangler CLI):
+#   npx wrangler secret put ADMIN_TOKEN   → for /events read access

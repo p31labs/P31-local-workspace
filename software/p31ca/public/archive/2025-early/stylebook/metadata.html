@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SEO &amp; metadata · P31 Stylebook</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/p31-style.css">
+  <link rel="stylesheet" href="/lib/p31-fluid.css">
+  <link rel="stylesheet" href="/stylebook/_chrome.css">
+  <style>
+    .meta-preview {
+      background: var(--p31-surface);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: 12px;
+      padding: 16px;
+      max-width: 540px;
+    }
+    .meta-preview-img {
+      width: 100%;
+      aspect-ratio: 1.91 / 1;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--p31-surface2), var(--p31-surface3));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--p31-paper);
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+      position: relative;
+      overflow: hidden;
+    }
+    .meta-preview-img::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at top right, rgba(204, 98, 71, 0.2), transparent 50%),
+        radial-gradient(ellipse at bottom left, rgba(37, 137, 125, 0.2), transparent 50%);
+    }
+    .meta-preview-domain {
+      font-size: 12px;
+      color: var(--p31-muted);
+      font-family: var(--p31-font-mono);
+      margin-bottom: 4px;
+    }
+    .meta-preview-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--p31-paper);
+      margin-bottom: 4px;
+      line-height: 1.3;
+    }
+    .meta-preview-desc {
+      font-size: 13px;
+      color: var(--p31-cloud);
+      line-height: 1.4;
+    }
+    
+    .twitter-preview {
+      max-width: 540px;
+      background: var(--p31-surface);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+    .twitter-preview .meta-preview-img { 
+      border-radius: 0; 
+      margin-bottom: 0;
+      border-bottom: 1px solid var(--p31-border-subtle);
+    }
+    .twitter-preview-body { padding: 12px 16px; }
+  </style>
+</head>
+<body>
+  <script type="module">
+    import { renderShell, code, callout } from '/stylebook/_chrome.js';
+    import { P31ThemeController } from '/lib/p31-theme-engine.mjs';
+    window.p31Theme = new P31ThemeController({ defaultTheme: 'hub' });
+    
+    const content = `
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">The minimum bar</div>
+          <h2 class="sb-h2">Every page · always</h2>
+          <p class="sb-text">These nine tags are the non-negotiable head metadata. Add them to every page.
+          The verifier blocks ships that drop one.</p>
+        </div>
+        
+        ${code(`<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub">
+<head>
+  <!-- 1. Encoding & viewport (always first) -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- 2. Theme color for browser chrome -->
+  <meta name="theme-color" content="#0f1115">
+  
+  <!-- 3. Page identity -->
+  <title>Page name · Site name</title>
+  <meta name="description" content="160-char max. Honest. Not keyword-stuffed.">
+  
+  <!-- 4. Canonical URL (avoid duplicate-content penalties) -->
+  <link rel="canonical" href="https://p31ca.org/this-page">
+  
+  <!-- 5. Open Graph (Facebook, LinkedIn, Slack, Discord) -->
+  <meta property="og:title" content="Page name · Site name">
+  <meta property="og:description" content="Same as meta description.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://p31ca.org/this-page">
+  <meta property="og:image" content="https://p31ca.org/og/this-page.png">
+  
+  <!-- 6. Twitter (uses og: as fallback but explicit is better) -->
+  <meta name="twitter:card" content="summary_large_image">
+  
+  <!-- 7. Favicon -->
+  <link rel="icon" href="/favicon.ico">
+  
+  <!-- 8. CSS (theme tokens before everything) -->
+  <link rel="stylesheet" href="/p31-style.css">
+</head>`, 'html', 'Required head')}
+        
+        ${callout('warn', 'Description truncates at 160', 'Search engines and social cards usually display ~155–160 characters. Plan the cut. The first 60 are most important.')}
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Social preview</div>
+          <h2 class="sb-h2">How it looks shared</h2>
+          <p class="sb-text">When someone pastes a P31 link into Slack, Discord, iMessage, or Twitter,
+          they should see exactly what we want them to see.</p>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px;">
+          <div>
+            <div style="font-family: var(--p31-font-mono); font-size: 11px; color: var(--p31-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px;">iMessage / Slack</div>
+            <div class="meta-preview">
+              <div class="meta-preview-img">
+                <span style="position: relative; z-index: 1;">P31</span>
+              </div>
+              <div class="meta-preview-domain">p31ca.org</div>
+              <div class="meta-preview-title">Stylebook · Welcome</div>
+              <div class="meta-preview-desc">The complete design system for p31ca.org. Six themes, smart adaptive engine, fluid motion.</div>
+            </div>
+          </div>
+          
+          <div>
+            <div style="font-family: var(--p31-font-mono); font-size: 11px; color: var(--p31-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px;">Twitter / X</div>
+            <div class="twitter-preview">
+              <div class="meta-preview-img">
+                <span style="position: relative; z-index: 1;">P31</span>
+              </div>
+              <div class="twitter-preview-body">
+                <div class="meta-preview-domain">p31ca.org</div>
+                <div class="meta-preview-title">Stylebook · Welcome</div>
+                <div class="meta-preview-desc">The complete design system for p31ca.org.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        ${callout('info', 'OG image dimensions', 'Use 1200 × 630 (1.91:1 ratio). Smaller will get pixelated; larger gets cropped. Keep critical text within the central 1080 × 540 safe area.')}
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Structured data</div>
+          <h2 class="sb-h2">JSON-LD for the things that matter</h2>
+          <p class="sb-text">Search engines parse JSON-LD to surface rich results — knowledge panels,
+          breadcrumb trails, FAQ accordions. Use the schema.org vocabulary.</p>
+        </div>
+        
+        ${code(`<!-- Organization (place once on home + about pages) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "P31 Labs",
+  "alternateName": "Phosphorus31",
+  "url": "https://phosphorus31.org",
+  "logo": "https://phosphorus31.org/logo.png",
+  "founder": {
+    "@type": "Person",
+    "name": "W. Johnson"
+  },
+  "foundingDate": "2026-04-03",
+  "taxID": "42-1888158",
+  "nonprofitStatus": "Nonprofit501c3"
+}
+<\/script>
+
+<!-- WebSite + SearchAction (helps Google sitelinks search) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "P31 Hub",
+  "url": "https://p31ca.org",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://p31ca.org/search?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+<\/script>
+
+<!-- BreadcrumbList (per page) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://p31ca.org/" },
+    { "@type": "ListItem", "position": 2, "name": "Stylebook", "item": "https://p31ca.org/stylebook/" },
+    { "@type": "ListItem", "position": 3, "name": "SEO & metadata" }
+  ]
+}
+<\/script>
+
+<!-- TechArticle (for product / docs pages) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Centaur EDE — pair-programming environment",
+  "datePublished": "2026-04-22",
+  "dateModified": "2026-05-01",
+  "author": { "@type": "Organization", "name": "P31 Labs" }
+}
+<\/script>`, 'html', 'JSON-LD')}
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Crawlers</div>
+          <h2 class="sb-h2">robots.txt &amp; sitemap.xml</h2>
+        </div>
+        
+        ${code(`# robots.txt — at p31ca.org/robots.txt
+User-agent: *
+Allow: /
+
+# AI-specific (keep these or block; never both quietly)
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+# Operator-only surfaces never indexed
+Disallow: /api/
+Disallow: /ops/
+Disallow: /admin/
+
+Sitemap: https://p31ca.org/sitemap.xml
+Sitemap: https://p31ca.org/llms.txt`, 'plain', '/robots.txt')}
+        
+        ${code(`<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://p31ca.org/</loc>
+    <lastmod>2026-05-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://p31ca.org/stylebook/</loc>
+    <lastmod>2026-05-01</lastmod>
+    <priority>0.9</priority>
+  </url>
+  <!-- ... auto-generated from canonical route catalog ... -->
+</urlset>`, 'html', '/sitemap.xml')}
+        
+        ${callout('info', 'Generate, never hand-write', 'Both files should derive from <code>p31-constants.json</code> + ground-truth + registry. See the Site map page for the canonical generator.')}
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Quality gates</div>
+          <h2 class="sb-h2">What we check in CI</h2>
+        </div>
+        
+        <table class="sb-table">
+          <thead><tr><th>Check</th><th>Failure</th></tr></thead>
+          <tbody>
+            <tr><td>Every public page has &lt;title&gt;</td><td>Hard fail</td></tr>
+            <tr><td>Every public page has meta description</td><td>Hard fail</td></tr>
+            <tr><td>Title length 30–60 chars</td><td>Warning</td></tr>
+            <tr><td>Description length 120–160 chars</td><td>Warning</td></tr>
+            <tr><td>Canonical URL matches actual URL</td><td>Hard fail</td></tr>
+            <tr><td>OG image exists at the URL declared</td><td>Hard fail (build-time fetch)</td></tr>
+            <tr><td>OG image is 1200×630 ± 5%</td><td>Warning</td></tr>
+            <tr><td>JSON-LD parses</td><td>Hard fail</td></tr>
+            <tr><td>JSON-LD has @context, @type</td><td>Hard fail</td></tr>
+            <tr><td>sitemap.xml lists every public route</td><td>Hard fail</td></tr>
+            <tr><td>No tracking pixels (gtag, fbq, etc.)</td><td>Hard fail (security:check)</td></tr>
+          </tbody>
+        </table>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">What we don't do</div>
+          <h2 class="sb-h2">No dark SEO</h2>
+        </div>
+        
+        <table class="sb-table">
+          <thead><tr><th>Banned</th><th>Why</th></tr></thead>
+          <tbody>
+            <tr><td>Keyword-stuffed descriptions</td><td>Reads as spam to humans, demoted by Google anyway</td></tr>
+            <tr><td>Hidden text (color: var(--bg))</td><td>Cloaking. Manual penalty.</td></tr>
+            <tr><td>Misleading titles ("FREE!!!")</td><td>Erodes trust the moment they click</td></tr>
+            <tr><td>Doorway pages</td><td>Multiple URLs targeting the same intent dilute everyone</td></tr>
+            <tr><td>Auto-generated SEO content</td><td>If a human wouldn't write it, don't publish it</td></tr>
+            <tr><td>Tracking on /donate</td><td>Donation pages must be private. No analytics, no pixels.</td></tr>
+          </tbody>
+        </table>
+      </section>
+    `;
+    
+    renderShell({
+      activeId: 'metadata',
+      breadcrumb: [
+        { href: '/stylebook/', label: 'Stylebook' },
+        { href: '/stylebook/', label: 'Guidelines' },
+        { label: 'SEO & metadata' }
+      ],
+      title: 'SEO & metadata',
+      subtitle: 'Head tags, OpenGraph, JSON-LD, robots.txt, sitemap.xml. The complete page-metadata bar.',
+      meta: [
+        { label: 'Required tags', value: '9' },
+        { label: 'JSON-LD types', value: '4' },
+        { label: 'CI checks', value: '11' }
+      ],
+      content
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,146 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "schema": "p31.rolePackets/1.0.0",
+  "updated": "2026-04-26",
+  "org": {
+    "id": "p31-labs",
+    "name": "P31 Labs, Inc.",
+    "equityTiers": [
+      { "id": "guild-member", "tokensRequired": 50, "equityPercent": 0.1, "voting": true, "label": "Guild Member" },
+      { "id": "guild-leader", "tokensRequired": 200, "equityPercent": 0.5, "voting": true, "label": "Guild Leader", "extra": "Budget" },
+      { "id": "core-team", "tokensRequired": 500, "equityPercent": 1.0, "voting": true, "label": "Core Team", "extra": "Board seat" }
+    ]
+  },
+  "roles": [
+    {
+      "id": "react-frontend-001",
+      "title": "React Frontend Developer",
+      "guild": "frontend",
+      "location": "remote",
+      "priority": "high",
+      "summary": "Build accessible React components for Spaceship Earth and the BONDING experience.",
+      "tags": ["React", "TypeScript", "Zustand", "Tailwind"],
+      "monthOutcomes": [
+        { "window": "0-30d", "items": ["Ship one production-ready UI surface with a11y audit notes", "Pair with design on one component spec"] },
+        { "window": "30-90d", "items": ["Own a small feature area in the hub static/Astro tree", "Document patterns for other guild members"] }
+      ],
+      "constraints": { "workStyle": "async-first", "timeZones": "overlap 4h/week with Core", "stack": ["React 18+", "TypeScript", "Vite or Astro"] },
+      "evaluationWeights": { "code": 0.4, "a11y": 0.2, "collaboration": 0.2, "valuesFit": 0.2 },
+      "accommodation": "Structured written feedback; async review by default. Request alternatives for live sessions.",
+      "workSample": { "wcdId": "WCD-FRONT-001", "loveReward": 10, "difficulty": 2 }
+    },
+    {
+      "id": "three-r3f-001",
+      "title": "3D Developer (Three.js / R3F)",
+      "guild": "frontend",
+      "location": "remote",
+      "priority": "high",
+      "summary": "Immersive 3D for Observatory and Collider experiences (geodesic, particles).",
+      "tags": ["Three.js", "R3F", "WebGL", "GLSL"],
+      "monthOutcomes": [
+        { "window": "0-30d", "items": ["Deliver one scene with performance budget documented", "Cross-browser test matrix for WebGL"] },
+        { "window": "30-90d", "items": ["Integrate with shared design tokens and hub loading strategy"] }
+      ],
+      "constraints": { "workStyle": "async-first", "gpu": "WebGL2 capable test device available" },
+      "evaluationWeights": { "code": 0.45, "performance": 0.2, "visualCommunication": 0.15, "valuesFit": 0.2 },
+      "accommodation": "Time-boxed take-home; no live shader coding unless candidate opts in.",
+      "workSample": { "wcdId": "WCD-3D-001", "loveReward": 25, "difficulty": 4 }
+    },
+    {
+      "id": "grant-writer-001",
+      "title": "Grant Writer",
+      "guild": "operations",
+      "location": "remote",
+      "priority": "high",
+      "summary": "Federal and foundation grants (NIDILRR, NSF, DOE) with assistive-tech alignment.",
+      "tags": ["NSF", "NIDILRR", "Grant writing"],
+      "monthOutcomes": [
+        { "window": "0-30d", "items": ["One concept paper in house template", "Source alignment with P31 research citations"] }
+      ],
+      "constraints": { "workStyle": "async", "citations": "Must use repo-approved DOI / Zenodo refs where applicable" },
+      "evaluationWeights": { "writing": 0.4, "research": 0.3, "alignment": 0.2, "valuesFit": 0.1 },
+      "accommodation": "Extended deadlines available on request for written work.",
+      "workSample": { "wcdId": "WCD-GRANT-001", "loveReward": 50, "difficulty": 5 }
+    },
+    {
+      "id": "firmware-esp32-001",
+      "title": "Firmware Engineer (ESP32)",
+      "guild": "hardware",
+      "location": "remote",
+      "priority": "medium",
+      "summary": "Node One firmware: haptics, LoRa, BLE (ESP32-S3).",
+      "tags": ["ESP-IDF", "C++", "BLE", "LoRa"],
+      "monthOutcomes": [
+        { "window": "0-30d", "items": ["Haptic or radio milestone with hardware-in-loop notes"] }
+      ],
+      "constraints": { "workStyle": "async with lab blocks", "hardware": "Board or dev kit access documented" },
+      "evaluationWeights": { "code": 0.45, "safety": 0.2, "documentation": 0.15, "valuesFit": 0.2 },
+      "accommodation": "Written test plan accepted in lieu of live demo if needed.",
+      "workSample": { "wcdId": "WCD-HW-001", "loveReward": 30, "difficulty": 4 }
+    },
+    {
+      "id": "backend-001",
+      "title": "Backend Engineer",
+      "guild": "backend",
+      "location": "remote",
+      "priority": "medium",
+      "summary": "Cloudflare Workers, D1/Durable Objects, presence and sync patterns.",
+      "tags": ["Cloudflare", "Workers", "PostgreSQL", "CRDT"],
+      "monthOutcomes": [
+        { "window": "0-30d", "items": ["One API with tests and wrangler dry-run", "Document threat model for one endpoint"] }
+      ],
+      "constraints": { "workStyle": "async-first", "stack": "Workers-first; no surprise production deploys" },
+      "evaluationWeights": { "code": 0.4, "security": 0.2, "operability": 0.2, "valuesFit": 0.2 },
+      "accommodation": "Take-home over live coding; rubric published in advance.",
+      "workSample": { "wcdId": "WCD-BE-001", "loveReward": 20, "difficulty": 3 }
+    },
+    {
+      "id": "ui-ux-001",
+      "title": "UI/UX Designer",
+      "guild": "design",
+      "location": "remote",
+      "priority": "medium",
+      "summary": "Accessible, low cognitive load UI for neurodivergent users.",
+      "tags": ["Figma", "Accessibility", "Design systems"],
+      "monthOutcomes": [
+        { "window": "0-30d", "items": ["One flow with motion and focus states", "a11y annotations"] }
+      ],
+      "constraints": { "workStyle": "async", "tools": "Figma or equivalent" },
+      "evaluationWeights": { "design": 0.45, "a11y": 0.3, "documentation": 0.1, "valuesFit": 0.15 },
+      "accommodation": "Written critique of an existing P31 flow instead of greenfield if requested.",
+      "workSample": { "wcdId": "WCD-DES-001", "loveReward": 15, "difficulty": 2 }
+    },
+    {
+      "id": "community-001",
+      "title": "Community Manager",
+      "guild": "operations",
+      "location": "remote",
+      "priority": "medium",
+      "summary": "Discord, GitHub, and events; onboarding for contributors.",
+      "tags": ["Discord", "Events", "Social"],
+      "monthOutcomes": [
+        { "window": "0-30d", "items": ["Publish one onboarding improvement with metrics", "Run one async feedback round"] }
+      ],
+      "constraints": { "workStyle": "async with sync office hours" },
+      "evaluationWeights": { "communication": 0.4, "process": 0.25, "inclusion": 0.2, "valuesFit": 0.15 },
+      "accommodation": "Text-first communication norms by default.",
+      "workSample": { "wcdId": "WCD-COMM-001", "loveReward": 10, "difficulty": 1 }
+    },
+    {
+      "id": "tech-writer-001",
+      "title": "Technical Writer",
+      "guild": "operations",
+      "location": "remote",
+      "priority": "low",
+      "summary": "API, firmware, and user docs with the same bar as code.",
+      "tags": ["Markdown", "API docs", "GitHub"],
+      "monthOutcomes": [
+        { "window": "0-30d", "items": ["One end-user path documented with screenshots or ASCII", "Link validation script or checklist"] }
+      ],
+      "constraints": { "workStyle": "async" },
+      "evaluationWeights": { "writing": 0.4, "accuracy": 0.35, "structure": 0.1, "valuesFit": 0.15 },
+      "accommodation": "Editorial review async; no oral-only interviews.",
+      "workSample": { "wcdId": "WCD-DOC-001", "loveReward": 10, "difficulty": 1 }
+    }
+  ]
+}

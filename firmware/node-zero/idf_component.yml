@@ -1,0 +1,18 @@
+## P31 Node Zero — ESP-IDF Component Manager manifest
+dependencies:
+  idf: ">=5.3.0"
+
+  # AXS15231B display driver (QSPI, verified v2.1.0)
+  espressif/esp_lcd_axs15231b: "^2.1.0"
+
+  # AXS15231B touch driver (I2C, integrated DDIC)
+  espressif/esp_lcd_touch_axs15231b: ">=1.0.0"
+
+  # LVGL 8.4 — do NOT upgrade to 9.x (30% more SRAM overhead, breaking API)
+  lvgl/lvgl: "~8.4.0"
+
+  # Audio codec abstraction (ES8311 via esp_codec_dev)
+  espressif/esp_codec_dev: ">=1.5.5"
+
+  # cJSON — flat MCP JSON parsing (avoid deep nesting → stack overflow)
+  espressif/cjson: ">=1.7.15"

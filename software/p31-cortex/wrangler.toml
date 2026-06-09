@@ -1,0 +1,52 @@
+name = "p31-cortex"
+main = "src/index.ts"
+compatibility_date = "2025-03-01"
+compatibility_flags = ["nodejs_compat"]
+
+[triggers]
+crons = ["0 7,18 * * *"]  # Combined: 07:00 and 18:00 UTC daily
+
+[[d1_databases]]
+binding = "DB"
+database_name = "p31-cortex"
+database_id = "6a645125-23c6-4c35-86c9-eeea5744301a"
+
+[[durable_objects.bindings]]
+name = "ORCHESTRATOR"
+class_name = "OrchestratorDO"
+
+[[durable_objects.bindings]]
+name = "LEGAL_AGENT"
+class_name = "LegalAgentDO"
+
+[[durable_objects.bindings]]
+name = "GRANT_AGENT"
+class_name = "GrantAgentDO"
+
+[[durable_objects.bindings]]
+name = "CONTENT_AGENT"
+class_name = "ContentAgentDO"
+
+[[durable_objects.bindings]]
+name = "FINANCE_AGENT"
+class_name = "FinanceAgentDO"
+
+[[durable_objects.bindings]]
+name = "BENEFITS_AGENT"
+class_name = "BenefitsAgentDO"
+
+[[durable_objects.bindings]]
+name = "KOFI_AGENT"
+class_name = "KofiAgentDO"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["OrchestratorDO", "LegalAgentDO", "GrantAgentDO", "ContentAgentDO", "FinanceAgentDO", "BenefitsAgentDO", "KofiAgentDO"]
+
+[vars]
+ENVIRONMENT = "production"
+ALERT_EMAIL = "will@p31ca.org"
+MAILCHANNELS_API = "https://api.mailchannels.net/tx/v1/send"
+
+[ai]
+binding = "AI"

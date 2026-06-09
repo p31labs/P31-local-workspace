@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#050505">
+    <title>Mission Control | P31 Labs</title>
+    <meta name="description" content="Wonky Sprout gamified kids mission app. Willow and Bash character cards. Genesis token economy with mission completion and secret base rewards.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/assets/p31-operator-tailwind.js"></script>
+    <style>
+        body {
+            background-color: #050505;
+            color: #d8d6d0;
+            background-image: linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+        .matte-panel { background-color: #161920; border: 1px solid rgba(255,255,255,0.04); }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col text-cloud/90">
+
+    <header class="w-full border-b border-white/5 bg-void/95 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="/" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
+                <svg width="28" height="28" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="512" height="512" rx="112" fill="#25897d"/>
+                    <circle cx="390" cy="120" r="48" fill="#cc6247"/>
+                    <text x="256" y="340" font-family="system-ui" font-weight="900" font-size="220" fill="#d8d6d0" text-anchor="middle">P31</text>
+                    <rect x="156" y="380" width="200" height="16" rx="8" fill="#cda852"/>
+                </svg>
+                <span class="font-bold text-lg tracking-tight">P31 Labs</span>
+            </a>
+            <nav class="flex gap-4 font-mono text-sm">
+                <a href="/" class="text-cloud/50 hover:text-cloud transition-colors flex items-center gap-2">← Hub</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl mx-auto px-6 py-12 w-full flex flex-col gap-12">
+
+        <header class="border-b border-white/10 pb-8">
+            <div class="flex items-center gap-4 mb-4">
+                <div class="text-3xl bg-surface w-12 h-12 rounded flex items-center justify-center border border-white/5">🚀</div>
+                <div class="px-2 py-0.5 rounded border text-[10px] font-mono tracking-wide text-cyan/80 border-cyan/20 bg-cyan/5">🔵 PROTOTYPE</div>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-bold mb-4 text-cloud">Mission Control</h1>
+            <p class="text-xl text-cyan/70 font-mono">Wonky Sprout Token Economy</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            <div class="lg:col-span-2 flex flex-col gap-8">
+
+                <section class="matte-panel rounded-lg p-8">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center gap-3">
+                        <span class="text-cyan">01.</span> What It Is
+                    </h2>
+                    <p class="text-cloud/70 leading-relaxed mb-6">
+                        Mission Control is the Wonky Sprout gamified token economy app for Willow and Bash. It uses pixel RPG aesthetics (Press Start 2P font, neon on dark) to make task completion feel like a game — without any of the manipulative mechanics.
+                    </p>
+                    <p class="text-cloud/70 leading-relaxed">
+                        No streaks. No punishments. No time pressure. Missions are completed when they are completed. Tokens accumulate. Rewards unlock.
+                    </p>
+                </section>
+
+                <section class="matte-panel rounded-lg p-8">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center gap-3">
+                        <span class="text-cyan">02.</span> Character Cards
+                    </h2>
+                    <p class="text-cloud/70 leading-relaxed mb-6">
+                        Two character cards — one per kid. Each has a title, an emoji icon, a token balance, and a mission list. Completing a mission awards tokens and triggers a particle burst from the bottom of the screen.
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-void border border-[#ff69b4]/20 rounded p-5">
+                            <div class="text-3xl mb-2">🦄</div>
+                            <div class="font-mono text-sm text-[#ff69b4] mb-1">WILLOW</div>
+                            <div class="text-xs text-cloud/50 font-mono mb-3">Chief Chaos Officer</div>
+                            <div class="text-xs text-cloud/60">Pink neon theme. Missions: creative tasks, self-care, connection moments.</div>
+                        </div>
+                        <div class="bg-void border border-[#00ff88]/20 rounded p-5">
+                            <div class="text-3xl mb-2">⚡</div>
+                            <div class="font-mono text-sm text-[#00ff88] mb-1">BASH</div>
+                            <div class="text-xs text-cloud/50 font-mono mb-3">Chief Science Officer</div>
+                            <div class="text-xs text-cloud/60">Green neon theme. Missions: science tasks, curiosity quests, build challenges.</div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="matte-panel rounded-lg p-8">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center gap-3">
+                        <span class="text-cyan">03.</span> Token Economy
+                    </h2>
+                    <div class="space-y-3">
+                        <div class="bg-void border border-white/5 rounded p-4 text-sm">
+                            <p class="text-cyan/80 font-mono text-xs mb-2">GENESIS TOKENS</p>
+                            <p class="text-cloud/60">The currency. Earned by completing missions. Displayed as a running total on each character card. Persist in localStorage between sessions.</p>
+                        </div>
+                        <div class="bg-void border border-white/5 rounded p-4 text-sm">
+                            <p class="text-cyan/80 font-mono text-xs mb-2">MISSION COMPLETION</p>
+                            <p class="text-cloud/60">Tap a mission button. It disables, token balance increments, a toast shows the reward, and particles float up from the bottom. No alert() — zero UI interruption.</p>
+                        </div>
+                        <div class="bg-void border border-white/5 rounded p-4 text-sm">
+                            <p class="text-cyan/80 font-mono text-xs mb-2">SECRET BASE REWARDS</p>
+                            <p class="text-cloud/60">A grid of locked rewards that unlock at token thresholds. Reveal what's behind each tile when the balance crosses the threshold. No spoilers until earned.</p>
+                        </div>
+                        <div class="bg-void border border-white/5 rounded p-4 text-sm">
+                            <p class="text-cyan/80 font-mono text-xs mb-2">NO PUNISHMENTS</p>
+                            <p class="text-cloud/60">Tokens never decrease. Missions never expire. There is no "streak broken" state. The economy only moves forward.</p>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+
+            <div class="flex flex-col gap-6">
+
+                <div class="matte-panel rounded-lg p-6">
+                    <h3 class="text-sm font-mono text-cloud/40 uppercase tracking-widest mb-4">Launch</h3>
+                    <a href="mission-control.html"
+                       class="block p-5 bg-void border border-[#ff00ff]/30 rounded hover:border-[#ff00ff]/60 transition-colors group mb-3 text-center">
+                        <div class="text-2xl mb-2">🚀</div>
+                        <div class="font-bold text-sm text-[#ff00ff] group-hover:text-[#ff00ff] transition-colors mb-1">Open Mission Control</div>
+                        <div class="text-xs text-cloud/40 font-mono">Wonky Sprout HQ</div>
+                    </a>
+                </div>
+
+                <div class="matte-panel rounded-lg p-6">
+                    <h3 class="text-sm font-mono text-cloud/40 uppercase tracking-widest mb-4">Technical Stack</h3>
+                    <div class="space-y-3 text-sm">
+                        <div>
+                            <div class="text-cloud font-bold mb-1">Aesthetic</div>
+                            <div class="text-cloud/60">Press Start 2P + Space Grotesk. Neon on dark. Pixel RPG without the cruelty.</div>
+                        </div>
+                        <div>
+                            <div class="text-cloud font-bold mb-1">Particles</div>
+                            <div class="text-cloud/60">CSS keyframe floatUp animation — no canvas, no library. Pure DOM particles.</div>
+                        </div>
+                        <div>
+                            <div class="text-cloud font-bold mb-1">Storage</div>
+                            <div class="text-cloud/60">localStorage — token balances, completed missions, unlocked rewards.</div>
+                        </div>
+                        <div>
+                            <div class="text-cloud font-bold mb-1">Notifications</div>
+                            <div class="text-cloud/60">Custom toast system. Zero alert(), confirm(), or prompt() calls.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="matte-panel rounded-lg p-6">
+                    <h3 class="text-sm font-mono text-cloud/40 uppercase tracking-widest mb-4">Ecosystem Ties</h3>
+                    <a href="family.html" class="block p-4 bg-void border border-white/5 rounded hover:border-lavender/30 transition-colors group mb-3">
+                        <div class="font-bold text-sm text-cloud group-hover:text-lavender transition-colors mb-1">Quantum Family</div>
+                        <div class="text-xs text-cloud/50">Companion regulation app for the same kids.</div>
+                    </a>
+                    <a href="sovereignty.html" class="block p-4 bg-void border border-white/5 rounded hover:border-teal/30 transition-colors group">
+                        <div class="font-bold text-sm text-cloud group-hover:text-teal transition-colors mb-1">Simple Sovereignty</div>
+                        <div class="text-xs text-cloud/50">Parent portal — Mission Control linked from Kids tile.</div>
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <footer class="border-t border-white/5 mt-12 py-6">
+        <div class="max-w-7xl mx-auto px-6 flex justify-between items-center text-xs text-cloud/30 font-mono">
+            <span>P31 Labs · 501(c)(3) · EIN 42-1888158</span>
+            <a href="/" class="hover:text-cloud/60 transition-colors">← Back to Hub</a>
+        </div>
+    </footer>
+
+</body>
+</html>

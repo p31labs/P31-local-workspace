@@ -1,0 +1,35 @@
+# build output
+dist/
+# generated types
+.astro/
+
+# dependencies
+node_modules/
+
+# Playwright test artefacts (default output dir + custom spike results)
+test-results/
+e2e/results/
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+
+# environment variables
+.env
+.env.production
+
+# macOS-specific files
+.DS_Store
+
+# jetbrains setting folder
+.idea/
+build/security-report.json
+build/security-inventory.json
+
+# Playwright
+playwright-report/
+test-results/
+blob-report/

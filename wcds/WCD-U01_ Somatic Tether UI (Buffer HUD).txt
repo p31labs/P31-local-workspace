@@ -1,0 +1,15 @@
+﻿WCD-U01: SOMATIC TETHER UI RENDERING
+Target: BufferRoom.tsx, useSovereignStore.ts
+Prerequisites: M22 Suite B (tether.test.ts) passes. Code Freeze Lifted.
+1. OBJECTIVE
+Render the live somatic data (Heart Rate, HRV) originating from Gadgetbridge via the local Termux WebSocket directly into the P31-OS UI, specifically anchoring it to the Fawn Guard within the Buffer.
+2. STATE INTEGRATION
+* Wire the useSomaticTether() hook (built during M22) into App.jsx to maintain a global connection to ws://localhost:8080.
+* Map tetherState.hr and tetherState.hrv to the Sovereign Store.
+3. UI RENDERING (The Buffer)
+* Slot 1 (Buffer HUD): Replace the static 12/12 Spoons read-out with a dynamic Somatic Waveform component.
+* The Waveform: Use an HTML5 <canvas> or minimal SVG line chart that draws the rolling 60-second HR buffer.
+* Thermal Throttle Visuals: If the tether.test.ts logic flags a THERMAL_THROTTLE event:
+   1. The entire Buffer background must pulse an alarming Amber (#FFaa00).
+   2. The PROCESS — safe to read button in the INGEST tab must automatically disable.
+   3. Render an overlay: [ SOMATIC OVERLOAD DETECTED. COMMUNICATION PROTOCOLS LOCKED FOR 180s. ]

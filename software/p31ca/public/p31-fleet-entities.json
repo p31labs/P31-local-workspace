@@ -1,0 +1,880 @@
+{
+  "schema": "p31.fleetEntities/1.0.0",
+  "updated": "2026-05-04",
+  "sourceNotes": "Merged from published p31-live-fleet.json (verified + allowlisted Workers) plus static bot/cortex-agents roster. Probe GETs may be CORS-blocked from the hub origin.",
+  "entities": [
+    {
+      "slug": "bonding-relay",
+      "kind": "worker",
+      "title": "bonding-relay",
+      "subtitle": "BONDING telemetry + rooms; not the vertical Pages front",
+      "tier": "verified_allowlisted",
+      "workersDevUrl": "https://bonding-relay.trimtab-signal.workers.dev",
+      "prodUrl": "",
+      "healthPaths": [
+        "/health"
+      ],
+      "meshPaths": [],
+      "constantsKey": "mesh.bondingRelayWorkerUrl",
+      "deployHints": [
+        "software/bonding"
+      ],
+      "probeUrls": [
+        "https://bonding-relay.trimtab-signal.workers.dev/health"
+      ],
+      "hubPagePath": null,
+      "registryId": null
+    },
+    {
+      "slug": "cf-edge-lab",
+      "kind": "worker",
+      "title": "cf-edge-lab",
+      "subtitle": "Workers AI + /api/edge (request.cf) + WebSocket /ws; GET / playground",
+      "tier": "verified",
+      "workersDevUrl": "https://cf-edge-lab.trimtab-signal.workers.dev",
+      "prodUrl": "",
+      "healthPaths": [],
+      "meshPaths": [],
+      "constantsKey": "mesh.edgeLabWorkerUrl",
+      "deployHints": [
+        "packages/cf-edge-lab"
+      ],
+      "probeUrls": [
+        "https://cf-edge-lab.trimtab-signal.workers.dev/api/health",
+        "https://cf-edge-lab.trimtab-signal.workers.dev/health"
+      ],
+      "hubPagePath": null,
+      "registryId": null
+    },
+    {
+      "slug": "command-center",
+      "kind": "worker",
+      "title": "command-center",
+      "subtitle": "EPCP operator glass",
+      "tier": "verified",
+      "workersDevUrl": "https://command-center.trimtab-signal.workers.dev",
+      "prodUrl": "",
+      "healthPaths": [
+        "/api/health"
+      ],
+      "meshPaths": [],
+      "constantsKey": null,
+      "deployHints": [
+        "software/cloudflare-worker/command-center"
+      ],
+      "probeUrls": [
+        "https://command-center.trimtab-signal.workers.dev/api/health"
+      ],
+      "hubPagePath": null,
+      "registryId": null
+    },
+    {
+      "slug": "cortex-benefits",
+      "kind": "agent",
+      "title": "Cortex agent — Benefits",
+      "subtitle": "Enrollment + subsidy flows",
+      "parentWorkerSlug": "p31-cortex",
+      "registryId": "cortex",
+      "hubPagePath": "/cortex.html",
+      "deployHints": [
+        "Durable Object in p31-cortex",
+        "POST /api/agent/benefits/task queues work"
+      ],
+      "probeUrls": [
+        "https://p31-cortex.trimtab-signal.workers.dev/api/health",
+        "https://p31-cortex.trimtab-signal.workers.dev/health"
+      ],
+      "tier": "supplement"
+    },
+    {
+      "slug": "cortex-content",
+      "kind": "agent",
+      "title": "Cortex agent — Content",
+      "subtitle": "Publishing + canon alignment",
+      "parentWorkerSlug": "p31-cortex",
+      "registryId": "cortex",
+      "hubPagePath": "/cortex.html",
+      "deployHints": [
+        "Durable Object in p31-cortex",
+        "POST /api/agent/content/task queues work"
+      ],
+      "probeUrls": [
+        "https://p31-cortex.trimtab-signal.workers.dev/api/health",
+        "https://p31-cortex.trimtab-signal.workers.dev/health"
+      ],
+      "tier": "supplement"
+    },
+    {
+      "slug": "cortex-finance",
+      "kind": "agent",
+      "title": "Cortex agent — Finance",
+      "subtitle": "Cashflow projections + receipts",
+      "parentWorkerSlug": "p31-cortex",
+      "registryId": "cortex",
+      "hubPagePath": "/cortex.html",
+      "deployHints": [
+        "Durable Object in p31-cortex",
+        "POST /api/agent/finance/task queues work"
+      ],
+      "probeUrls": [
+        "https://p31-cortex.trimtab-signal.workers.dev/api/health",
+        "https://p31-cortex.trimtab-signal.workers.dev/health"
+      ],
+      "tier": "supplement"
+    },
+    {
+      "slug": "cortex-grant",
+      "kind": "agent",
+      "title": "Cortex agent — Grant",
+      "subtitle": "Grant timelines + dossiers",
+      "parentWorkerSlug": "p31-cortex",
+      "registryId": "cortex",
+      "hubPagePath": "/cortex.html",
+      "deployHints": [
+        "Durable Object in p31-cortex",
+        "POST /api/agent/grant/task queues work"
+      ],
+      "probeUrls": [
+        "https://p31-cortex.trimtab-signal.workers.dev/api/health",
+        "https://p31-cortex.trimtab-signal.workers.dev/health"
+      ],
+      "tier": "supplement"
+    },
+    {
+      "slug": "cortex-kofi",
+      "kind": "agent",
+      "title": "Cortex agent — Ko-fi relay",
+      "subtitle": "Supporter pings + payouts",
+      "parentWorkerSlug": "p31-cortex",
+      "registryId": "cortex",
+      "hubPagePath": "/cortex.html",
+      "deployHints": [
+        "Durable Object in p31-cortex",
+        "Ko-fi channel"
+      ],
+      "probeUrls": [
+        "https://p31-cortex.trimtab-signal.workers.dev/api/health",
+        "https://p31-cortex.trimtab-signal.workers.dev/health"
+      ],
+      "tier": "supplement"
+    },
+    {
+      "slug": "cortex-legal",
+      "kind": "agent",
+      "title": "Cortex agent — Legal",
+      "subtitle": "Citation-safe drafts + timelines",
+      "parentWorkerSlug": "p31-cortex",
+      "registryId": "cortex",
+      "hubPagePath": "/cortex.html",
+      "deployHints": [
+        "Durable Object in p31-cortex",
+        "POST /api/agent/legal/task queues work"
+      ],
+      "probeUrls": [
+        "https://p31-cortex.trimtab-signal.workers.dev/api/health",
+        "https://p31-cortex.trimtab-signal.workers.dev/health"
+      ],
+      "tier": "supplement"
+    },
+    {
+      "slug": "discord-bot",
+      "kind": "bot",
+      "title": "p31-bot",
+      "subtitle": "Community Command Plane · Discord slash commands + ledger",
+      "registryId": "discord-bot",
+      "hubPagePath": "/discord-bot.html",
+      "deployHints": [
+        "Discord.js · Railway deploy",
+        "KV-backed state"
+      ],
+      "probeUrls": [],
+      "tier": "supplement"
+    },
+    {
+      "slug": "donate-api",
+      "kind": "worker",
+      "title": "donate-api",
+      "subtitle": "software/donate-api",
+      "tier": "verified",
+      "workersDevUrl": "https://donate-api.trimtab-signal.workers.dev",
+      "prodUrl": "https://donate-api.phosphorus31.org",
+      "healthPaths": [
+        "/health"
+      ],
+      "meshPaths": [],
+      "constantsKey": null,
+      "deployHints": [
+        "software/donate-api"
+      ],
+      "probeUrls": [
+        "https://donate-api.trimtab-signal.workers.dev/health"
+      ],
+      "hubPagePath": null,
+      "registryId": null
+    },
+    {
+      "slug": "genesis-gate",
+      "kind": "worker",
+      "title": "genesis-gate",
+      "subtitle": "software/genesis-gate",
+      "tier": "allowlisted",
+      "workersDevUrl": "https://genesis-gate.trimtab-signal.workers.dev",
+      "prodUrl": "",
+      "healthPaths": [
+        "/health",
+        "/api/health"
+      ],
+      "meshPaths": [],
+      "constantsKey": null,
+      "deployHints": [
+        "software/genesis-gate"
+      ],
+      "probeUrls": [
+        "https://genesis-gate.trimtab-signal.workers.dev/api/health",
+        "https://genesis-gate.trimtab-signal.workers.dev/health"
+      ],
+      "hubPagePath": null,
+      "registryId": null
+    },
+    {
+      "slug": "geodesic-room",
+      "kind": "worker",
+      "title": "geodesic-room",
+      "subtitle": "DO v0.2; WS /api/geodesic/:id/ws; see GEODESIC-GAME-ENGINE-INTEGRATION.md",
+      "tier": "verified",
+      "workersDevUrl": "https://geodesic-room.trimtab-signal.workers.dev",
+      "prodUrl": "",
+      "healthPaths": [],
+      "meshPaths": [],
+      "constantsKey": "mesh.geodesicRoomWorkerUrl",
+      "deployHints": [
+        "software/geodesic-room"
+      ],
+      "probeUrls": [
+        "https://geodesic-room.trimtab-signal.workers.dev/api/health",
+        "https://geodesic-room.trimtab-signal.workers.dev/health"
+      ],
+      "hubPagePath": null,
+      "registryId": null
+    },
+    {
+      "slug": "k4-agent-hub",
+      "kind": "worker",
+      "title": "k4-agent-hub",
+      "subtitle": "K₄ agent worker tetrahedron — Ed25519 dock/call/anchor-pact/federation/family-cage; schema p31.k4AgentHub/1.1.0",
+      "tier": "verified",
+      "workersDevUrl": "https://k4-agent-hub.trimtab-signal.workers.dev",
+      "prodUrl": "",
+      "healthPaths": [
+        "/v1/manifest",
+        "/v1/forge/health"
+      ],
+      "meshPaths": [],
+      "constantsKey": "mesh.k4AgentHubWorkerUrl",
+      "deployHints": [
+        "packages/k4-agent-hub (wrangler deploy)"
+      ],
+      "probeUrls": [
+        "https://k4-agent-hub.trimtab-signal.workers.dev/v1/manifest",
+        "https://k4-agent-hub.trimtab-signal.workers.dev/v1/forge/health"
+      ],
+      "hubPagePath": null,
+      "registryId": null
+    },
+    {
+      "slug": "k4-cage",
+      "kind": "worker",
+      "title": "k4-cage",
+      "subtitle": "software/k4-cage",
+      "tier": "verified",
+      "workersDevUrl": "https://k4-cage.trimtab-signal.workers.dev",
+      "prodUrl": "",
+      "healthPaths": [
+        "/api/health"
+      ],
+      "meshPaths": [],
+      "constantsKey": "mesh.k4CageWorkerUrl",
+      "deployHints": [
+        "software/k4-cage"
+      ],
+      "probeUrls": [
+        "https://k4-cage.trimtab-signal.workers.dev/api/health"
+      ],
+      "hubPagePath": null,
+      "registryId": null
+    },
+    {
+      "slug": "k4-hubs",
+      "kind": "worker",
+      "title": "k4-hubs",
+      "subtitle": "software/k4-hubs",
+      "tier": "verified",
+      "workersDevUrl": "https://k4-hubs.trimtab-signal.workers.dev",
+      "prodUrl": "",
+      "healthPaths": [
+        "/health"
+      ],
+      "meshPaths": [],
+      "constantsKey": "mesh.k4HubsWorkerUrl",
+      "deployHints": [
+        "software/k4-hubs"
+      ],
+      "probeUrls": [
+        "https://k4-hubs.trimtab-signal.workers.dev/health"
+      ],
+      "hubPagePath": null,
+      "registryId": null
+    },
+    {
+      "slug": "kenosis-mesh",
+      "kind": "worker",
+      "title": "kenosis-mesh",
+      "subtitle": "software/kenosis-mesh",
+      "tier": "allowlisted",
+      "workersDevUrl": "https://kenosis-mesh.trimtab-signal.workers.dev",
+      "prodUrl": "",
+      "healthPaths": [
+        "/health",
+        "/api/health"
+      ],
+      "meshPaths": [],
+      "constantsKey": null,
+      "deployHints": [
+        "software/kenosis-mesh"
+      ],
+      "probeUrls": [
+        "https://kenosis-mesh.trimtab-signal.workers.dev/api/health",
+        "https://kenosis-mesh.trimtab-signal.workers.dev/health"
+      ],
+      "hubPagePath": null,
+      "registryId": null
+    },
+    {
+      "slug": "p31-agent-hub",
+      "kind": "worker",
+      "title": "p31-agent-hub",
+      "subtitle": "wrangler may define p31-agent-hub-internal; prod URL per constants",
+      "tier": "verified",
+      "workersDevUrl": "https://p31-agent-hub.trimtab-signal.workers.dev",
+      "prodUrl": "",
+      "healthPaths": [
+        "/api/health"
+      ],
+      "meshPaths": [],
+      "constantsKey": "mesh.agentHubWorkerUrl",
+      "deployHints": [
+        "software/p31-agent-hub"
+      ],
+      "probeUrls": [
+        "https://p31-agent-hub.trimtab-signal.workers.dev/api/health"
+      ],
+      "hubPagePath": null,
+      "registryId": null
+    },
+    {
+      "slug": "p31-bouncer",
+      "kind": "worker",
+      "title": "p31-bouncer",
+      "subtitle": "software/cloudflare-worker/bouncer",
+      "tier": "allowlisted",
+      "workersDevUrl": "https://p31-bouncer.trimtab-signal.workers.dev",
+      "prodUrl": "",
+      "healthPaths": [
+        "/health",
+        "/api/health"
+      ],
+      "meshPaths": [],
+      "constantsKey": null,
+      "deployHints": [
+        "software/cloudflare-worker/bouncer"
+      ],
+      "probeUrls": [
+        "https://p31-bouncer.trimtab-signal.workers.dev/api/health",
+        "https://p31-bouncer.trimtab-signal.workers.dev/health"
+      ],
+      "hubPagePath": null,
+      "registryId": null
+    },
+    {
+      "slug": "p31-buffer-api",
+      "kind": "worker",
+      "title": "p31-buffer-api",
+      "subtitle": "AI rewrite worker (Gemini) for phosphorus31.org — voltage-gated messaging buffer",
+      "tier": "verified",
+      "workersDevUrl": "https://p31-buffer-api.trimtab-signal.workers.dev",
+      "prodUrl": "",
+      "healthPaths": [
+        "/health"
+      ],
+      "meshPaths": [],
+      "constantsKey": null,
+      "deployHints": [
+        "phosphorus31.org/apps/buffer-api (wrangler deploy)"
+      ],
+      "probeUrls": [
+        "https://p31-buffer-api.trimtab-signal.workers.dev/health"
+      ],
+      "hubPagePath": null,
+      "registryId": null
+    },
+    {
+      "slug": "p31-command-center",
+      "kind": "worker",
+      "title": "p31-command-center",
+      "subtitle": "Distinct from command-center EPCP Worker",
+      "tier": "allowlisted",
+      "workersDevUrl": "https://p31-command-center.trimtab-signal.workers.dev",
+      "prodUrl": "",
+      "healthPaths": [
+        "/health",
+        "/api/health"
+      ],
+      "meshPaths": [],
+      "constantsKey": null,
+      "deployHints": [
+        "software/sovereign-command-center"
+      ],
+      "probeUrls": [
+        "https://p31-command-center.trimtab-signal.workers.dev/api/health",
+        "https://p31-command-center.trimtab-signal.workers.dev/health"
+      ],
+      "hubPagePath": null,
+      "registryId": null
+    },
+    {
+      "slug": "p31-cortex",
+      "kind": "worker",
+      "title": "p31-cortex",
+      "subtitle": "software/p31-cortex",
+      "tier": "allowlisted",
+      "workersDevUrl": "https://p31-cortex.trimtab-signal.workers.dev",
+      "prodUrl": "",
+      "healthPaths": [
+        "/health",
+        "/api/health"
+      ],
+      "meshPaths": [],
+      "constantsKey": null,
+      "deployHints": [
+        "software/p31-cortex"
+      ],
+      "probeUrls": [
+        "https://p31-cortex.trimtab-signal.workers.dev/api/health",
+        "https://p31-cortex.trimtab-signal.workers.dev/health"
+      ],
+      "hubPagePath": null,
+      "registryId": null
+    },
+    {
+      "slug": "p31-ecosystem-bridge",
+      "kind": "worker",
+      "title": "p31-ecosystem-bridge",
+      "subtitle": "Cross-site nervous system. CORS bridge for phosphorus31.org ↔ p31ca.org. Serves org constants slice + aggregated health.",
+      "tier": "verified",
+      "workersDevUrl": "https://ecosystem-bridge.trimtab-signal.workers.dev",
+      "prodUrl": "",
+      "healthPaths": [
+        "/health"
+      ],
+      "meshPaths": [],
+      "constantsKey": "mesh.ecosystemBridgeWorkerUrl",
+      "deployHints": [
+        "workers/p31-ecosystem-bridge (wrangler deploy)"
+      ],
+      "probeUrls": [
+        "https://ecosystem-bridge.trimtab-signal.workers.dev/health"
+      ],
+      "hubPagePath": null,
+      "registryId": null
+    },
+    {
+      "slug": "p31-fhir",
+      "kind": "worker",
+      "title": "p31-fhir",
+      "subtitle": "FHIR Worker for medical data integration; D1: p31-fhir-db",
+      "tier": "verified",
+      "workersDevUrl": "https://p31-fhir.trimtab-signal.workers.dev",
+      "prodUrl": "",
+      "healthPaths": [
+        "/health"
+      ],
+      "meshPaths": [],
+      "constantsKey": "mesh.fhirWorkerUrl",
+      "deployHints": [
+        "software/p31ca/workers/fhir"
+      ],
+      "probeUrls": [
+        "https://p31-fhir.trimtab-signal.workers.dev/health"
+      ],
+      "hubPagePath": null,
+      "registryId": null
+    },
+    {
+      "slug": "p31-forge",
+      "kind": "worker",
+      "title": "p31-forge",
+      "subtitle": "software/p31-forge",
+      "tier": "allowlisted",
+      "workersDevUrl": "https://p31-forge.trimtab-signal.workers.dev",
+      "prodUrl": "",
+      "healthPaths": [
+        "/health",
+        "/api/health"
+      ],
+      "meshPaths": [],
+      "constantsKey": null,
+      "deployHints": [
+        "software/p31-forge"
+      ],
+      "probeUrls": [
+        "https://p31-forge.trimtab-signal.workers.dev/api/health",
+        "https://p31-forge.trimtab-signal.workers.dev/health"
+      ],
+      "hubPagePath": null,
+      "registryId": null
+    },
+    {
+      "slug": "p31-google-bridge",
+      "kind": "worker",
+      "title": "p31-google-bridge",
+      "subtitle": "Google OAuth + calendar.readonly; KV sessions",
+      "tier": "verified_allowlisted",
+      "workersDevUrl": "https://p31-google-bridge.trimtab-signal.workers.dev",
+      "prodUrl": "",
+      "healthPaths": [
+        "/health"
+      ],
+      "meshPaths": [],
+      "constantsKey": "mesh.googleBridgeWorkerUrl",
+      "deployHints": [
+        "software/p31-google-bridge"
+      ],
+      "probeUrls": [
+        "https://p31-google-bridge.trimtab-signal.workers.dev/health"
+      ],
+      "hubPagePath": null,
+      "registryId": null
+    },
+    {
+      "slug": "p31-hearing-ops",
+      "kind": "worker",
+      "title": "p31-hearing-ops",
+      "subtitle": "software/p31-hearing-ops",
+      "tier": "allowlisted",
+      "workersDevUrl": "https://p31-hearing-ops.trimtab-signal.workers.dev",
+      "prodUrl": "",
+      "healthPaths": [
+        "/health",
+        "/api/health"
+      ],
+      "meshPaths": [],
+      "constantsKey": null,
+      "deployHints": [
+        "software/p31-hearing-ops"
+      ],
+      "probeUrls": [
+        "https://p31-hearing-ops.trimtab-signal.workers.dev/api/health",
+        "https://p31-hearing-ops.trimtab-signal.workers.dev/health"
+      ],
+      "hubPagePath": null,
+      "registryId": null
+    },
+    {
+      "slug": "p31-orchestrator",
+      "kind": "worker",
+      "title": "p31-orchestrator",
+      "subtitle": "May 401/403 without Cloudflare Access — still edge up",
+      "tier": "verified",
+      "workersDevUrl": "https://p31-orchestrator.trimtab-signal.workers.dev",
+      "prodUrl": "",
+      "healthPaths": [
+        "/api/orchestrator/status"
+      ],
+      "meshPaths": [],
+      "constantsKey": "mesh.orchestratorWorkerUrl",
+      "deployHints": [
+        "workers/wrangler-orchestrator.toml"
+      ],
+      "probeUrls": [
+        "https://p31-orchestrator.trimtab-signal.workers.dev/api/orchestrator/status"
+      ],
+      "hubPagePath": null,
+      "registryId": null
+    },
+    {
+      "slug": "p31-passkey",
+      "kind": "worker",
+      "title": "p31-passkey",
+      "subtitle": "Production mount: zone route p31ca.org/api/passkey/*; workers.dev may exist for direct tests",
+      "tier": "verified",
+      "workersDevUrl": "https://p31-passkey.trimtab-signal.workers.dev",
+      "prodUrl": "https://p31ca.org/api/passkey",
+      "healthPaths": [],
+      "meshPaths": [],
+      "constantsKey": null,
+      "deployHints": [
+        "p31ca/workers/passkey"
+      ],
+      "probeUrls": [
+        "https://p31ca.org/api/health",
+        "https://p31-passkey.trimtab-signal.workers.dev/api/health",
+        "https://p31-passkey.trimtab-signal.workers.dev/health"
+      ],
+      "hubPagePath": null,
+      "registryId": null
+    },
+    {
+      "slug": "p31-pwa",
+      "kind": "worker",
+      "title": "p31-pwa",
+      "subtitle": "software/packages/node-zero/pwa",
+      "tier": "allowlisted",
+      "workersDevUrl": "https://p31-pwa.trimtab-signal.workers.dev",
+      "prodUrl": "",
+      "healthPaths": [
+        "/health",
+        "/api/health"
+      ],
+      "meshPaths": [],
+      "constantsKey": null,
+      "deployHints": [
+        "software/packages/node-zero/pwa"
+      ],
+      "probeUrls": [
+        "https://p31-pwa.trimtab-signal.workers.dev/api/health",
+        "https://p31-pwa.trimtab-signal.workers.dev/health"
+      ],
+      "hubPagePath": null,
+      "registryId": null
+    },
+    {
+      "slug": "p31-quantum-edge",
+      "kind": "worker",
+      "title": "p31-quantum-edge",
+      "subtitle": "wrangler defines prod/staging variants",
+      "tier": "allowlisted",
+      "workersDevUrl": "https://p31-quantum-edge.trimtab-signal.workers.dev",
+      "prodUrl": "",
+      "healthPaths": [
+        "/health",
+        "/api/health"
+      ],
+      "meshPaths": [],
+      "constantsKey": null,
+      "deployHints": [
+        "software/packages/quantum-edge"
+      ],
+      "probeUrls": [
+        "https://p31-quantum-edge.trimtab-signal.workers.dev/api/health",
+        "https://p31-quantum-edge.trimtab-signal.workers.dev/health"
+      ],
+      "hubPagePath": null,
+      "registryId": null
+    },
+    {
+      "slug": "p31-social-broadcast",
+      "kind": "worker",
+      "title": "p31-social-broadcast",
+      "subtitle": "Same file defines discord dev/staging names",
+      "tier": "allowlisted",
+      "workersDevUrl": "https://p31-social-broadcast.trimtab-signal.workers.dev",
+      "prodUrl": "",
+      "healthPaths": [
+        "/health",
+        "/api/health"
+      ],
+      "meshPaths": [],
+      "constantsKey": null,
+      "deployHints": [
+        "software/cloudflare-worker (multi-name wrangler)"
+      ],
+      "probeUrls": [
+        "https://p31-social-broadcast.trimtab-signal.workers.dev/api/health",
+        "https://p31-social-broadcast.trimtab-signal.workers.dev/health"
+      ],
+      "hubPagePath": null,
+      "registryId": null
+    },
+    {
+      "slug": "p31-social-worker",
+      "kind": "worker",
+      "title": "p31-social-worker",
+      "subtitle": "software/cloudflare-worker/social-drop-automation",
+      "tier": "allowlisted",
+      "workersDevUrl": "https://p31-social-worker.trimtab-signal.workers.dev",
+      "prodUrl": "",
+      "healthPaths": [
+        "/health",
+        "/api/health"
+      ],
+      "meshPaths": [],
+      "constantsKey": null,
+      "deployHints": [
+        "software/cloudflare-worker/social-drop-automation"
+      ],
+      "probeUrls": [
+        "https://p31-social-worker.trimtab-signal.workers.dev/api/health",
+        "https://p31-social-worker.trimtab-signal.workers.dev/health"
+      ],
+      "hubPagePath": null,
+      "registryId": null
+    },
+    {
+      "slug": "p31-state",
+      "kind": "worker",
+      "title": "p31-state",
+      "subtitle": "software/p31-state",
+      "tier": "allowlisted",
+      "workersDevUrl": "https://p31-state.trimtab-signal.workers.dev",
+      "prodUrl": "",
+      "healthPaths": [
+        "/health",
+        "/api/health"
+      ],
+      "meshPaths": [],
+      "constantsKey": null,
+      "deployHints": [
+        "software/p31-state"
+      ],
+      "probeUrls": [
+        "https://p31-state.trimtab-signal.workers.dev/api/health",
+        "https://p31-state.trimtab-signal.workers.dev/health"
+      ],
+      "hubPagePath": null,
+      "registryId": null
+    },
+    {
+      "slug": "p31-sync",
+      "kind": "worker",
+      "title": "p31-sync",
+      "subtitle": "Yjs/PGLite sync Worker; real-time collaborative editing infrastructure",
+      "tier": "verified",
+      "workersDevUrl": "https://p31-sync.trimtab-signal.workers.dev",
+      "prodUrl": "",
+      "healthPaths": [
+        "/health"
+      ],
+      "meshPaths": [],
+      "constantsKey": "mesh.syncWorkerUrl",
+      "deployHints": [
+        "software/p31ca/workers/sync"
+      ],
+      "probeUrls": [
+        "https://p31-sync.trimtab-signal.workers.dev/health"
+      ],
+      "hubPagePath": null,
+      "registryId": null
+    },
+    {
+      "slug": "p31-telemetry",
+      "kind": "worker",
+      "title": "p31-telemetry",
+      "subtitle": "Telemetry ingestion Worker; receives and processes mesh telemetry events",
+      "tier": "verified_allowlisted",
+      "workersDevUrl": "https://p31-telemetry.trimtab-signal.workers.dev",
+      "prodUrl": "",
+      "healthPaths": [
+        "/health"
+      ],
+      "meshPaths": [],
+      "constantsKey": "mesh.telemetryWorkerUrl",
+      "deployHints": [
+        "software/telemetry-worker"
+      ],
+      "probeUrls": [
+        "https://p31-telemetry.trimtab-signal.workers.dev/health"
+      ],
+      "hubPagePath": null,
+      "registryId": null
+    },
+    {
+      "slug": "p31-workers",
+      "kind": "worker",
+      "title": "p31-workers",
+      "subtitle": "Love ledger monolith; orchestrator is separate Worker p31-orchestrator",
+      "tier": "allowlisted",
+      "workersDevUrl": "https://p31-workers.trimtab-signal.workers.dev",
+      "prodUrl": "",
+      "healthPaths": [
+        "/health",
+        "/api/health"
+      ],
+      "meshPaths": [],
+      "constantsKey": null,
+      "deployHints": [
+        "software/workers"
+      ],
+      "probeUrls": [
+        "https://p31-workers.trimtab-signal.workers.dev/api/health",
+        "https://p31-workers.trimtab-signal.workers.dev/health"
+      ],
+      "hubPagePath": null,
+      "registryId": null
+    },
+    {
+      "slug": "p31ca",
+      "kind": "worker",
+      "title": "p31ca",
+      "subtitle": "Wrangler project for Pages/hub; public URL is https://p31ca.org not workers.dev",
+      "tier": "allowlisted",
+      "workersDevUrl": "",
+      "prodUrl": "",
+      "healthPaths": [
+        "/health",
+        "/api/health"
+      ],
+      "meshPaths": [],
+      "constantsKey": null,
+      "deployHints": [
+        "software/p31ca"
+      ],
+      "probeUrls": [],
+      "hubPagePath": null,
+      "registryId": null
+    },
+    {
+      "slug": "spaceship-relay",
+      "kind": "worker",
+      "title": "spaceship-relay",
+      "subtitle": "Spaceship Earth PWA relay Worker; GlobeRoom + Three.js coordination",
+      "tier": "verified_allowlisted",
+      "workersDevUrl": "https://spaceship-relay.trimtab-signal.workers.dev",
+      "prodUrl": "",
+      "healthPaths": [
+        "/health"
+      ],
+      "meshPaths": [],
+      "constantsKey": "mesh.spaceshipRelayWorkerUrl",
+      "deployHints": [
+        "software/spaceship-earth"
+      ],
+      "probeUrls": [
+        "https://spaceship-relay.trimtab-signal.workers.dev/health"
+      ],
+      "hubPagePath": null,
+      "registryId": null
+    },
+    {
+      "slug": "tetra-hub",
+      "kind": "worker",
+      "title": "tetra-hub",
+      "subtitle": "Read-only K₄ trio aggregator; service-binds k4-cage, k4-personal, k4-hubs",
+      "tier": "verified",
+      "workersDevUrl": "https://tetra-hub.trimtab-signal.workers.dev",
+      "prodUrl": "",
+      "healthPaths": [
+        "/api/health"
+      ],
+      "meshPaths": [],
+      "constantsKey": "mesh.tetraHubWorkerUrl",
+      "deployHints": [
+        "workers/tetra-hub (bonding-soup home root)"
+      ],
+      "probeUrls": [
+        "https://tetra-hub.trimtab-signal.workers.dev/api/health"
+      ],
+      "hubPagePath": null,
+      "registryId": null
+    }
+  ]
+}

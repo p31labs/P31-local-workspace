@@ -1,0 +1,51 @@
+{
+  "services": {
+    "discord-bot": {
+      "path": "discord",
+      "script": "oracle-bot.js",
+      "port": 3000,
+      "dependencies": [],
+      "autoStart": true,
+      "healthCheck": "/status"
+    },
+    "middleware": {
+      "path": "middleware",
+      "script": "kofi-github-bridge.js",
+      "port": 3001,
+      "dependencies": ["discord-bot"],
+      "autoStart": true,
+      "healthCheck": "/health"
+    },
+    "ipfs-manager": {
+      "path": "ipfs",
+      "script": "ipns-manager.js",
+      "port": 3002,
+      "dependencies": [],
+      "autoStart": true,
+      "healthCheck": "/status"
+    },
+    "analytics": {
+      "path": "analytics",
+      "script": "dashboard.js",
+      "port": 3003,
+      "dependencies": ["discord-bot", "middleware"],
+      "autoStart": true,
+      "healthCheck": "/metrics"
+    },
+    "gamification": {
+      "path": "gamification",
+      "script": "achievement-service.js",
+      "port": 3004,
+      "dependencies": ["discord-bot"],
+      "autoStart": true,
+      "healthCheck": "/achievements"
+    }
+  },
+  "orchestration": {
+    "startupOrder": ["discord-bot", "middleware", "ipfs-manager", "analytics", "gamification"],
+    "shutdownOrder": ["gamification", "analytics", "ipfs-manager", "middleware", "discord-bot"],
+    "healthCheckInterval": 30000,
+    "restartAttempts": 3,
+    "restartDelay": 5000
+  }
+}

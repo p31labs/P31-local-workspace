@@ -1,0 +1,27 @@
+{
+  "name": "p31-forge",
+  "version": "0.1.0",
+  "description": "P31 Labs document generation engine — single source of truth for every court filing, letter, grant, resolution, memo, and social post.",
+  "main": "forge.js",
+  "bin": {
+    "forge": "./forge.js"
+  },
+  "scripts": {
+    "brand": "node forge.js brand",
+    "brand:tokens": "node scripts/export-brand-tokens.cjs",
+    "compile": "node forge.js compile",
+    "build:discovery": "node scripts/build-discovery.js",
+    "pdf": "python scripts/docx_to_pdf.py",
+    "worker:dev": "wrangler dev worker/index.js",
+    "worker:deploy": "wrangler deploy worker/index.js"
+  },
+  "dependencies": {
+    "docx": "^9.0.0"
+  },
+  "devDependencies": {
+    "wrangler": "^3.114.17"
+  },
+  "keywords": ["p31", "document-forge", "legal", "grants", "brand-system"],
+  "author": "William R. Johnson <will@p31ca.org>",
+  "license": "CC-BY-4.0"
+}

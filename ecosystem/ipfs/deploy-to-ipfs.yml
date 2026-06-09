@@ -1,0 +1,122 @@
+# IPFS Deployment Workflow
+# Automatically deploys releases to IPFS for data sovereignty
+# This workflow is triggered on new releases and ensures decentralized backup
+
+name: IPFS Deployment
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  deploy-to-ipfs:
+    name: Deploy Release to IPFS
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Install IPFS Dependencies
+      run: |
+        npm install ipfs-car
+        npm install @web3-storage/ipfs-car
+
+    - name: Build Project
+      run: |
+        npm install
+        npm run build
+
+    - name: Create IPFS Archive
+      id: ipfs-car
+      run: |
+        # Create content-addressable archive of the build
+        npx ipfs-car pack ./dist --output release.car
+        
+        # Calculate CID
+        CID=$(npx ipfs-car info release.car | grep "Root CID" | awk '{print $4}')
+        echo "CID=$CID" >> $GITHUB_OUTPUT
+        echo "Release CID: $CID"
+
+    - name: Pin to Multiple IPFS Providers
+      run: |
+        # Pin to Pinata
+        curl -X POST https://api.pinata.cloud/pinning/pinFileToIPFS \
+          -H "Authorization: Bearer ${{ secrets.PINATA_JWT }}" \
+          -F file=@release.car
+        
+        # Pin to Storacha
+        curl -X POST https://api.storacha.io/v1/content \
+          -H "Authorization: Bearer ${{ secrets.STORACHA_API_KEY }}" \
+          -F file=@release.car
+
+    - name: Update Release with IPFS Links
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const fs = require('fs');
+          const cid = process.env.CID;
+          
+          const release = await github.rest.repos.getReleaseByTag({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            tag: context.payload.release.tag_name
+          });
+          
+          const updatedBody = `${release.data.body}
+          
+          ---
+          
+          ## 🌐 Decentralized Access
+          
+          **IPFS Content Identifier (CID):** \`${cid}\`
+          
+          **Direct IPFS Gateway Links:**
+          - [Cloudflare IPFS Gateway](https://cloudflare-ipfs.com/ipfs/${cid}/)
+          - [Pinata IPFS Gateway](https://gateway.pinata.cloud/ipfs/${cid}/)
+          - [Infura IPFS Gateway](https://ipfs.io/ipfs/${cid}/)
+          
+          **IPFS Desktop/CLI Access:**
+          \`\`\`bash
+          ipfs get ${cid}
+          \`\`\`
+          
+          **Permanent Archive:** This release is now permanently available on the InterPlanetary File System, ensuring data sovereignty and censorship resistance.
+          `;
+          
+          await github.rest.repos.updateRelease({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            release_id: release.data.id,
+            body: updatedBody
+          });
+
+    - name: Update README with Latest IPFS Link
+      run: |
+        # Update main README with latest IPFS link
+        node scripts/update-readme-ipfs.js
+
+    - name: Create IPFS Status Report
+      run: |
+        # Generate and commit IPFS status report
+        node scripts/generate-ipfs-report.js
+
+    - name: Commit IPFS Updates
+      run: |
+        git config --local user.email "noreply@p31labs.org"
+        git config --local user.name "P31 Bot"
+        git add .
+        git commit -m "Update IPFS links for release ${GITHUB_REF_NAME}" || echo "No changes to commit"
+        git push origin HEAD:${{ github.ref_name }} || echo "Push failed, changes may have been merged already"

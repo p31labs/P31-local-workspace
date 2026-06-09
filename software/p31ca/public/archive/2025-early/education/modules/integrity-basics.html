@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Ground truth &amp; PQC | Education | P31 Labs</title>
+  <link rel="stylesheet" href="/p31-style.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/p31-tailwind-extend.js"></script>
+  <script>tailwind.config = { theme: { extend: { ...window.P31_TAILWIND_EXTEND } } };</script>
+</head>
+<body class="font-sans antialiased bg-void text-cloud min-h-screen p31-mesh-m-first">
+  <div class="max-w-3xl mx-auto px-4 py-8 text-sm text-cloud/85 space-y-3">
+    <a class="font-mono text-xs text-teal" href="/education/modules/index.html">Modules</a>
+    <h1 class="text-2xl font-bold text-paper">Ground truth &amp; PQC (high level)</h1>
+    <p><code class="text-lavender/90">p31.ground-truth.json</code> is the contract spine: redirects, registry URL invariants, and pin snippets. It is not a second product registry for copy — that stays in <code class="text-xs">registry.mjs</code>.</p>
+    <p>Post-quantum primitives (ML-KEM / ML-DSA) ship in the <a class="text-teal" href="/quantum-core.html">quantum-core</a> surface; education does not re-teach the math — it points to the same verifiers the monorepo uses.</p>
+  </div>
+</body>
+</html>

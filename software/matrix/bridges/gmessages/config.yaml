@@ -1,0 +1,41 @@
+# mautrix-gmessages bridge config — Google Messages (SMS/RCS via Android companion)
+homeserver:
+  address: http://synapse:8008
+  domain: p31ca.org
+  async_media: false
+
+appservice:
+  address: http://bridge-gmessages:29336
+  hostname: 0.0.0.0
+  port: 29336
+  database:
+    type: sqlite3
+    uri: /data/gmessages.db
+  id: gmessages
+  bot_username: gmessagesbot
+  bot_displayname: Google Messages Bridge
+  as_token: "${BRIDGE_GMESSAGES_AS_TOKEN}"
+  hs_token: "${BRIDGE_GMESSAGES_HS_TOKEN}"
+
+# Bridge permissions: will is admin
+bridge:
+  username_template: "google_{{.}}{{if .}}_{{end}}sms"
+  command_prefix: "!gm"
+  permissions:
+    "@will:p31ca.org": admin
+
+  # Message settings
+  delivery_receipts: true
+  message_status_events: false
+  sync_direct_chat_list: true
+
+  encryption:
+    allow: true
+    default: true
+    require: true
+
+logging:
+  min_level: warn
+  writers:
+    - type: stdout
+      format: pretty-colored

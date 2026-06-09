@@ -1,0 +1,80 @@
+name: WCD Broadcast
+
+on:
+  push:
+    branches: [main, develop]
+    tags: [WCD-*]
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+    inputs:
+      wcd_id:
+        description: WCD ID (e.g. WCD-M16)
+        required: true
+        type: string
+      message:
+        description: Custom message
+        required: false
+        type: string
+
+env:
+  TWITTER_BEARER_TOKEN: ${{ secrets.TWITTER_BEARER_TOKEN }}
+  TWITTER_API_KEY: ${{ secrets.TWITTER_API_KEY }}
+  TWITTER_API_SECRET: ${{ secrets.TWITTER_API_SECRET }}
+  TWITTER_ACCESS_TOKEN: ${{ secrets.TWITTER_ACCESS_TOKEN }}
+  TWITTER_ACCESS_SECRET: ${{ secrets.TWITTER_ACCESS_SECRET }}
+
+jobs:
+  broadcast:
+    runs-on: ubuntu-latest
+    if: "contains(github.event.head_commit.message, 'WCD-') || github.event_name == 'workflow_dispatch'"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install tweepy
+        run: pip install tweepy
+
+      - name: Extract WCD info
+        id: wcd
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "id=${{ inputs.wcd_id }}" >> $GITHUB_OUTPUT
+          else
+            WCD=$(echo "${{ github.event.head_commit.message }}" | grep -oP 'WCD-[A-Z0-9]+' | head -1)
+            echo "id=$WCD" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Post tweet
+        env:
+          WCD: ${{ steps.wcd.outputs.id }}
+        run: |
+          python - << PY
+          import os
+          import tweepy
+          
+          wcd = os.environ.get("WCD", "WCD")
+          tweet = f"WCD {wcd} shipped. Open-source assistive technology for neurodivergent individuals. #P31Labs #AuDHD"
+          tweet = tweet[:280]
+          
+          try:
+              client = tweepy.Client(
+                  bearer_token=os.environ.get("TWITTER_BEARER_TOKEN"),
+                  consumer_key=os.environ.get("TWITTER_API_KEY"),
+                  consumer_secret=os.environ.get("TWITTER_API_SECRET"),
+                  access_token=os.environ.get("TWITTER_ACCESS_TOKEN"),
+                  access_token_secret=os.environ.get("TWITTER_ACCESS_SECRET"),
+              )
+              resp = client.create_tweet(text=tweet)
+              print(f"Posted: {resp.data['id']}")
+          except Exception as e:
+              print(f"Skipped: {e}")
+          PY
+
+      - name: Log
+        run: |
+          echo "Broadcast complete: ${{ steps.wcd.outputs.id }}"

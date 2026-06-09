@@ -1,0 +1,35 @@
+{
+  "name": "p31-analytics",
+  "version": "1.0.0",
+  "description": "P31 Ecosystem Analytics Dashboard - Community metrics and performance monitoring",
+  "main": "dashboard.js",
+  "scripts": {
+    "start": "node dashboard.js",
+    "dev": "nodemon dashboard.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "p31",
+    "analytics",
+    "dashboard",
+    "metrics",
+    "monitoring",
+    "visualization"
+  ],
+  "author": "P31 Labs",
+  "license": "MIT",
+  "dependencies": {
+    "chart.js": "^4.4.1",
+    "d3": "^7.8.5",
+    "redis": "^4.6.10",
+    "express": "^4.18.2",
+    "dotenv": "^16.4.5",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

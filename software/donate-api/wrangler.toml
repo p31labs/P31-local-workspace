@@ -1,0 +1,25 @@
+# Deploy name → default URL https://donate-api.<account>.workers.dev (this account: donate-api.trimtab-signal.workers.dev).
+# Custom domain: donate-api.phosphorus31.org (route donate-api.phosphorus31.org/*). See DEPLOY.md.
+name = "donate-api"
+main = "src/worker.ts"
+compatibility_date = "2024-12-01"
+
+[vars]
+ALLOWED_ORIGIN = "https://phosphorus31.org"
+SUCCESS_URL = "https://phosphorus31.org/donate?success=1"
+CANCEL_URL = "https://phosphorus31.org/donate"
+
+# Optional: idempotency for Stripe webhooks (D-MAP-5) — run:
+#   npx wrangler kv namespace create DONATE_EVENTS
+# then uncomment and set `id` from the output:
+# [[kv_namespaces]]
+# binding = "DONATE_EVENTS"
+# id = "<your-kv-id>"
+
+# Secrets (set via wrangler CLI):
+#   npx wrangler secret put STRIPE_SECRET_KEY     → sk_live_...
+#   npx wrangler secret put STRIPE_WEBHOOK_SECRET → whsec_... (Stripe Dashboard → Webhooks)
+#   npx wrangler secret put DISCORD_WEBHOOK_URL   → https://webhook.p31ca.org/webhook/stripe
+#
+# Stripe Dashboard: add endpoint https://donate-api.phosphorus31.org/stripe-webhook
+# Events to subscribe: checkout.session.completed

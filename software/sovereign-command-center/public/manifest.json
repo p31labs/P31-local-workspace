@@ -1,0 +1,23 @@
+{
+  "name": "Sovereign Command Center",
+  "short_name": "Sovereign Cmd",
+  "description": "P31 Labs Sovereign Command Center - Mobile-First Social Media Management Dashboard",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#10b981",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

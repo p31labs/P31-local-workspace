@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#F8F5F0">
+    <title>Quantum Family | P31 Labs</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/p31-style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/p31-tailwind-extend.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    ...window.P31_TAILWIND_EXTEND,
+                    boxShadow: { 'soft': '0 6px 30px rgba(93,78,55,0.07)', 'inner-soft': 'inset 0 2px 8px rgba(93,78,55,0.06)' }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #F8F5F0; color: #3A3632; overflow-x: hidden; transition: background-color 0.3s, color 0.3s; }
+        body.dark { background-color: #050505; color: #d8d6d0; }
+        body.dark .soft-card { background: #161920; border-color: rgba(255,255,255,0.06); box-shadow: 0 6px 30px rgba(0,0,0,0.4); }
+        body.dark nav { background: rgba(15,17,21,0.95); border-color: rgba(255,255,255,0.06); }
+        body.dark .nav-pill { background: #161920; border-color: rgba(255,255,255,0.08); color: #d8d6d0; }
+        body.dark .nav-pill.active { background: #8B6BAE; border-color: #8B6BAE; color: white; }
+        .soft-card { background: white; border-radius: 28px; box-shadow: 0 6px 30px rgba(93,78,55,0.07); border: 2px solid transparent; transition: border-color 0.3s; }
+        .soft-card:hover { border-color: rgba(139,107,174,0.2); }
+        .nav-pill { transition: all 0.3s; white-space: nowrap; }
+        .nav-pill.active { background: #8B6BAE; color: white; border-color: #8B6BAE; box-shadow: 0 4px 12px rgba(139,107,174,0.25); }
+        .page { display: none; animation: fadeIn 0.4s ease; }
+        .page.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        #breath-ring { transition: transform 0.1s, background 0.5s; }
+        .b-pulse { animation: bPulse 4s ease infinite; }
+        @keyframes bPulse { 0%,100%{transform:scale(1);opacity:0.3} 50%{transform:scale(1.06);opacity:0.15} }
+        .sound-pad { transition: transform 0.2s; border: 3px solid transparent; }
+        .sound-pad:active { transform: scale(0.95); }
+        .sound-pad.playing { border-color: rgba(255,255,255,0.6); box-shadow: 0 0 20px rgba(255,255,255,0.3); }
+        #draw-canvas { touch-action: none; cursor: crosshair; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <nav class="sticky top-0 z-50 bg-[#F8F5F0]/90 backdrop-blur-md px-4 py-3 flex items-center gap-3 overflow-x-auto border-b border-[#5D4E37]/10" style="-webkit-overflow-scrolling:touch;">
+        <a href="family.html" class="nav-pill px-4 py-2.5 rounded-2xl border-2 border-[#F0EBE3] bg-white font-display font-semibold text-[#7A7570] text-sm shrink-0">← Hub</a>
+        <button onclick="toggleDark()" id="darkToggle" class="nav-pill px-3 py-2.5 rounded-2xl border-2 border-[#F0EBE3] bg-white font-display font-semibold text-[#7A7570] text-sm shrink-0" title="Toggle dark mode">🌙</button>
+        <button class="nav-pill active px-4 py-2.5 rounded-2xl border-2 border-[#F0EBE3] bg-white font-display font-semibold text-[#7A7570] text-sm" data-target="home">🏠 Home</button>
+        <button class="nav-pill px-4 py-2.5 rounded-2xl border-2 border-[#F0EBE3] bg-white font-display font-semibold text-[#7A7570] text-sm" data-target="breathe">🌬️ Breathe</button>
+        <button class="nav-pill px-4 py-2.5 rounded-2xl border-2 border-[#F0EBE3] bg-white font-display font-semibold text-[#7A7570] text-sm" data-target="ground">🌿 Ground</button>
+        <button class="nav-pill px-4 py-2.5 rounded-2xl border-2 border-[#F0EBE3] bg-white font-display font-semibold text-[#7A7570] text-sm" data-target="sounds">🎵 Sounds</button>
+        <button class="nav-pill px-4 py-2.5 rounded-2xl border-2 border-[#F0EBE3] bg-white font-display font-semibold text-[#7A7570] text-sm" data-target="draw">🎨 Draw</button>
+        <button class="nav-pill px-4 py-2.5 rounded-2xl border-2 border-[#F0EBE3] bg-white font-display font-semibold text-[#7A7570] text-sm" data-target="family">🔺 Family</button>
+        <button class="nav-pill px-4 py-2.5 rounded-2xl border-2 border-[#F0EBE3] bg-white font-display font-semibold text-[#7A7570] text-sm" data-target="calcium">🦴 Calcium</button>
+        <button class="nav-pill px-4 py-2.5 rounded-2xl border-2 border-[#F0EBE3] bg-white font-display font-semibold text-[#7A7570] text-sm" data-target="love">💌 Love Notes</button>
+    </nav>
+
+    <main class="flex-grow max-w-3xl mx-auto w-full px-4 py-8 md:py-12">
+
+        <!-- HOME -->
+        <div id="page-home" class="page active text-center">
+            <h1 class="font-display text-4xl text-[#5D4E37] mb-2">🔺 Welcome!</h1>
+            <p class="text-[#7A7570] mb-8">This app was made with love and physics. Tap the buttons to explore.</p>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <button onclick="document.querySelector('[data-target=\'breathe\']').click()" class="soft-card p-6 flex flex-col items-center hover:-translate-y-1 transition-transform">
+                    <span class="text-4xl mb-2">🌬️</span><span class="font-display font-bold text-[#5D4E37]">Breathe</span><span class="text-xs text-[#7A7570]">Calm your engine</span>
+                </button>
+                <button onclick="document.querySelector('[data-target=\'ground\']').click()" class="soft-card p-6 flex flex-col items-center hover:-translate-y-1 transition-transform">
+                    <span class="text-4xl mb-2">🌿</span><span class="font-display font-bold text-[#5D4E37]">Ground</span><span class="text-xs text-[#7A7570]">Find your center</span>
+                </button>
+                <button onclick="document.querySelector('[data-target=\'sounds\']').click()" class="soft-card p-6 flex flex-col items-center hover:-translate-y-1 transition-transform">
+                    <span class="text-4xl mb-2">🎵</span><span class="font-display font-bold text-[#5D4E37]">Sounds</span><span class="text-xs text-[#7A7570]">Nature's music</span>
+                </button>
+                <button onclick="document.querySelector('[data-target=\'draw\']').click()" class="soft-card p-6 flex flex-col items-center hover:-translate-y-1 transition-transform">
+                    <span class="text-4xl mb-2">🎨</span><span class="font-display font-bold text-[#5D4E37]">Draw</span><span class="text-xs text-[#7A7570]">Blank canvas</span>
+                </button>
+                <button onclick="document.querySelector('[data-target=\'family\']').click()" class="soft-card p-6 flex flex-col items-center hover:-translate-y-1 transition-transform">
+                    <span class="text-4xl mb-2">🔺</span><span class="font-display font-bold text-[#5D4E37]">Family</span><span class="text-xs text-[#7A7570]">The tetrahedron</span>
+                </button>
+                <button onclick="document.querySelector('[data-target=\'love\']').click()" class="soft-card p-6 flex flex-col items-center hover:-translate-y-1 transition-transform">
+                    <span class="text-4xl mb-2">💌</span><span class="font-display font-bold text-[#5D4E37]">Love Notes</span><span class="text-xs text-[#7A7570]">From the jar</span>
+                </button>
+            </div>
+            <div class="mt-8 p-6 soft-card border-t-4 border-t-[#8B6BAE] text-left">
+                <h3 class="font-display text-xl text-[#8B6BAE] mb-2">🧠 Your Amazing Brain</h3>
+                <p class="text-[#5D4E37]">Some brains are wired differently. It's called being <strong>neurodivergent</strong>. It's not a bug — it's a feature! Your brain is a Ferrari in a world built for minivans. We just need to find your racetrack.</p>
+            </div>
+        </div>
+
+        <!-- BREATHE -->
+        <div id="page-breathe" class="page">
+            <h1 class="font-display text-3xl text-[#5D4E37] mb-2">🌬️ The Calm Engine</h1>
+            <p class="text-[#7A7570] mb-6">Your breathing is the one thing you can always control.</p>
+            <div class="soft-card p-8 flex flex-col items-center">
+                <div id="breath-ring" class="w-64 h-64 rounded-full bg-[#8B6BAE] relative flex flex-col items-center justify-center text-white shadow-xl">
+                    <div class="absolute inset-0 rounded-full border-4 border-white/30 b-pulse"></div>
+                    <div class="font-display text-2xl font-bold drop-shadow-md" id="b-phase">Ready</div>
+                    <div class="font-mono text-4xl font-bold drop-shadow-md mt-2" id="b-time">•</div>
+                </div>
+                <div class="flex flex-wrap justify-center gap-3 mt-8">
+                    <button class="px-5 py-2.5 rounded-full border-2 border-[#8B6BAE] bg-[#8B6BAE] text-white font-display font-semibold" onclick="setBreath('box', this)">📦 Box (4-4-4-4)</button>
+                    <button class="px-5 py-2.5 rounded-full border-2 border-[#F0EBE3] bg-white text-[#7A7570] font-display font-semibold hover:border-[#A8E6CF]" onclick="setBreath('calm', this)">🌊 Calm (4-7-8)</button>
+                </div>
+                <button id="btn-breathe-toggle" onclick="toggleBreath()" class="mt-8 px-8 py-3 rounded-full bg-[#5D4E37] text-white font-display font-bold text-lg hover:bg-black transition-colors">Start Breathing</button>
+            </div>
+        </div>
+
+        <!-- GROUND -->
+        <div id="page-ground" class="page">
+            <h1 class="font-display text-3xl text-[#5D4E37] mb-2">🌿 Grounding Game</h1>
+            <p class="text-[#7A7570] mb-6">When everything feels too much, use your senses to come back to right now.</p>
+            <div class="flex justify-center gap-3 mb-8" id="ground-dots">
+                <div class="w-4 h-4 rounded-full border-2 border-[#5D4E37]/20"></div>
+                <div class="w-4 h-4 rounded-full border-2 border-[#5D4E37]/20"></div>
+                <div class="w-4 h-4 rounded-full border-2 border-[#5D4E37]/20"></div>
+                <div class="w-4 h-4 rounded-full border-2 border-[#5D4E37]/20"></div>
+                <div class="w-4 h-4 rounded-full border-2 border-[#5D4E37]/20"></div>
+            </div>
+            <div id="ground-container"></div>
+            <div class="text-center mt-8">
+                <button onclick="resetGround()" class="px-6 py-2 rounded-full bg-white border-2 border-[#5D4E37]/20 font-display font-semibold text-[#7A7570] hover:bg-gray-50">🔄 Start Over</button>
+            </div>
+        </div>
+
+        <!-- SOUNDS -->
+        <div id="page-sounds" class="page">
+            <h1 class="font-display text-3xl text-[#5D4E37] mb-2">🎵 Sound Garden</h1>
+            <p class="text-[#7A7570] mb-6">Tap pads to layer sounds. Sounds can calm your nervous system.</p>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <button class="sound-pad bg-gradient-to-br from-[#2d6a4f] to-[#40916c] text-white p-6 rounded-2xl" onclick="toggleSnd('rain', this)"><div class="text-4xl mb-2">🌧️</div><div class="font-display font-semibold">Rain</div></button>
+                <button class="sound-pad bg-gradient-to-br from-[#1a365d] to-[#2c5282] text-white p-6 rounded-2xl" onclick="toggleSnd('ocean', this)"><div class="text-4xl mb-2">🌊</div><div class="font-display font-semibold">Ocean</div></button>
+                <button class="sound-pad bg-gradient-to-br from-[#92400e] to-[#b45309] text-white p-6 rounded-2xl" onclick="toggleSnd('fire', this)"><div class="text-4xl mb-2">🔥</div><div class="font-display font-semibold">Campfire</div></button>
+                <button class="sound-pad bg-gradient-to-br from-[#553c9a] to-[#7c3aed] text-white p-6 rounded-2xl" onclick="toggleSnd('night', this)"><div class="text-4xl mb-2">🦗</div><div class="font-display font-semibold">Night</div></button>
+                <button class="sound-pad bg-gradient-to-br from-[#065f46] to-[#047857] text-white p-6 rounded-2xl" onclick="toggleSnd('wind', this)"><div class="text-4xl mb-2">🍃</div><div class="font-display font-semibold">Wind</div></button>
+                <button class="sound-pad bg-gradient-to-br from-[#5b21b6] to-[#7c3aed] text-white p-6 rounded-2xl" onclick="toggleSnd('hum', this)"><div class="text-4xl mb-2">🎵</div><div class="font-display font-semibold">Quantum Hum</div></button>
+            </div>
+            <div class="mt-8 flex items-center justify-center gap-4 soft-card p-4">
+                <span>🔈</span><input type="range" min="0" max="100" value="50" oninput="setVol(this.value)" class="w-full max-w-[200px] accent-[#8B6BAE]"><span>🔊</span>
+            </div>
+        </div>
+
+        <!-- DRAW -->
+        <div id="page-draw" class="page">
+            <h1 class="font-display text-3xl text-[#5D4E37] mb-2">🎨 Blank Canvas</h1>
+            <p class="text-[#7A7570] mb-4">No rules. No grades. Just colors and you.</p>
+            <canvas id="draw-canvas" class="w-full h-[400px] bg-white rounded-3xl border-2 border-[#F0EBE3]" style="box-shadow:inset 0 2px 8px rgba(93,78,55,0.06)"></canvas>
+            <div class="flex flex-wrap justify-center gap-3 mt-6">
+                <button class="w-10 h-10 rounded-full border-4 border-white shadow-md bg-[#F4845F] draw-color-btn transform scale-110 border-[#5D4E37]" onclick="setDrawColor('#F4845F', this)"></button>
+                <button class="w-10 h-10 rounded-full border-4 border-white shadow-md bg-[#F0B547] draw-color-btn" onclick="setDrawColor('#F0B547', this)"></button>
+                <button class="w-10 h-10 rounded-full border-4 border-white shadow-md bg-[#7EC8E3] draw-color-btn" onclick="setDrawColor('#7EC8E3', this)"></button>
+                <button class="w-10 h-10 rounded-full border-4 border-white shadow-md bg-[#A8E6CF] draw-color-btn" onclick="setDrawColor('#A8E6CF', this)"></button>
+                <button class="w-10 h-10 rounded-full border-4 border-white shadow-md bg-[#8B6BAE] draw-color-btn" onclick="setDrawColor('#8B6BAE', this)"></button>
+                <button class="w-10 h-10 rounded-full border-4 border-white shadow-md bg-[#5D4E37] draw-color-btn" onclick="setDrawColor('#5D4E37', this)"></button>
+                <button class="w-10 h-10 rounded-full border-4 border-gray-200 shadow-md bg-white draw-color-btn flex items-center justify-center text-[10px]" onclick="setDrawColor('#FFFFFF', this)">Eraser</button>
+            </div>
+            <div class="text-center mt-4">
+                <button onclick="clearCanvas()" class="px-6 py-2 rounded-full bg-white border-2 border-[#5D4E37]/20 font-display font-semibold text-[#7A7570] hover:bg-gray-50">🗑️ Clear Canvas</button>
+            </div>
+        </div>
+
+        <!-- FAMILY -->
+        <div id="page-family" class="page">
+            <h1 class="font-display text-3xl text-[#5D4E37] mb-2">🔺 The Tetrahedron</h1>
+            <p class="text-[#7A7570] mb-6">The strongest shape in the universe. Four points, six connections. That's your family.</p>
+            <div id="fam-tetra-container" class="w-full h-[350px] bg-[#0f0f1a] rounded-3xl overflow-hidden cursor-grab active:cursor-grabbing relative" style="box-shadow:inset 0 2px 8px rgba(93,78,55,0.06)">
+                <div class="absolute bottom-4 w-full text-center text-white/50 text-xs">Touch and drag to spin.</div>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6 text-center">
+                <div class="soft-card p-4"><div class="text-3xl mb-1">🔧</div><div class="font-display font-bold text-[#5D4E37] text-sm">Dad</div></div>
+                <div class="soft-card p-4"><div class="text-3xl mb-1">🌿</div><div class="font-display font-bold text-[#5D4E37] text-sm">Willow</div></div>
+                <div class="soft-card p-4"><div class="text-3xl mb-1">🚀</div><div class="font-display font-bold text-[#5D4E37] text-sm">Bash</div></div>
+                <div class="soft-card p-4"><div class="text-3xl mb-1">💜</div><div class="font-display font-bold text-[#5D4E37] text-sm">Mom</div></div>
+            </div>
+        </div>
+
+        <!-- CALCIUM -->
+        <div id="page-calcium" class="page">
+            <h1 class="font-display text-3xl text-[#5D4E37] mb-2">🦴 Calcium Power</h1>
+            <p class="text-[#7A7570] mb-6">The building blocks inside your bones — and your thoughts.</p>
+            <div class="soft-card p-6 mb-6">
+                <h3 class="font-display text-xl text-[#F0B547] mb-4">The Calcium Meter</h3>
+                <div class="h-10 bg-[#F0EBE3] rounded-full relative overflow-hidden mb-2">
+                    <div id="cal-fill" class="h-full bg-gradient-to-r from-[#F4845F] to-[#F0B547] flex items-center justify-center font-display font-bold text-white transition-all duration-700" style="width: 74%;">7.8</div>
+                </div>
+                <div class="flex justify-between font-mono text-[10px] text-[#7A7570] px-2 mb-6"><span>6.0</span><span>8.5</span><span>10.5</span></div>
+                <div class="flex flex-wrap gap-2 justify-center">
+                    <button onclick="updateCal(7.8, this, 'bg-red-200')" class="cal-btn px-4 py-2 rounded-full font-display font-bold text-sm bg-red-200 border-2 border-red-300">⚠️ Low (7.8)</button>
+                    <button onclick="updateCal(9.0, this, 'bg-green-200')" class="cal-btn px-4 py-2 rounded-full font-display font-bold text-sm bg-white border-2 border-gray-200">😊 Healthy (9.0)</button>
+                    <button onclick="updateCal(10.0, this, 'bg-emerald-200')" class="cal-btn px-4 py-2 rounded-full font-display font-bold text-sm bg-white border-2 border-gray-200">💪 Strong (10.0)</button>
+                </div>
+                <div id="cal-msg" class="mt-6 p-4 bg-[#FFF8F0] border-l-4 border-[#F0B547] rounded-xl text-sm text-[#5D4E37]">
+                    <strong class="font-display block mb-1">⚠️ Low Calcium Zone</strong>
+                    Muscles get tight. Words get stuck. Fingers tingle. This is why taking calcium pills every day matters!
+                </div>
+            </div>
+            <div class="soft-card p-6">
+                <h3 class="font-display text-xl text-[#7EC8E3] mb-4">⚛️ The Posner Molecule</h3>
+                <p class="text-sm text-[#5D4E37] mb-4">Deep inside your bones are tiny clusters of calcium and phosphorus. Scientists think they might be quantum computers made of bone!</p>
+                <div id="mol-container" class="w-full h-[250px] bg-[#0f0f1a] rounded-2xl cursor-grab active:cursor-grabbing mb-4"></div>
+                <div class="flex justify-center gap-2">
+                    <button class="mol-ctrl-btn active px-4 py-1.5 rounded-full font-display text-xs bg-[#7EC8E3] text-white" onclick="setMol('spin', this)">🌀 Spin</button>
+                    <button class="mol-ctrl-btn px-4 py-1.5 rounded-full font-display text-xs bg-white border border-gray-300 text-[#7A7570]" onclick="setMol('explode', this)">💥 Explode</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- LOVE NOTES -->
+        <div id="page-love" class="page text-center">
+            <h1 class="font-display text-3xl text-[#5D4E37] mb-2">💌 Love Notes</h1>
+            <p class="text-[#7A7570] mb-8">Whenever you miss someone, pull a note from the jar.</p>
+            <div class="bg-[#FFF8F0] border border-[#5D4E37]/5 rounded-3xl p-8 max-w-md mx-auto min-h-[250px] flex flex-col items-center justify-center" style="box-shadow:inset 0 2px 8px rgba(93,78,55,0.06)">
+                <div id="note-emoji" class="text-6xl mb-4 transition-transform duration-500">💜</div>
+                <div id="note-text" class="text-lg text-[#5D4E37] leading-relaxed font-medium transition-opacity duration-500">Tap the button to pull a love note...</div>
+            </div>
+            <button onclick="pullNote()" class="mt-8 px-8 py-4 rounded-full bg-[#8B6BAE] text-white font-display font-bold text-lg hover:opacity-90 transition-all shadow-lg hover:-translate-y-1 active:translate-y-0">Pull a Note 💌</button>
+        </div>
+
+    </main>
+
+    <script>
+        document.querySelectorAll('.nav-pill[data-target]').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.nav-pill[data-target]').forEach(b => { b.classList.remove('active'); b.style.background='white'; b.style.color='#7A7570'; b.style.borderColor='#F0EBE3'; b.style.boxShadow=''; });
+                e.target.classList.add('active'); e.target.style.background='#8B6BAE'; e.target.style.color='white'; e.target.style.borderColor='#8B6BAE'; e.target.style.boxShadow='0 4px 12px rgba(139,107,174,0.25)';
+                document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+                document.getElementById('page-' + e.target.dataset.target).classList.add('active');
+                window.scrollTo(0,0);
+                if(e.target.dataset.target === 'family') initFamilyTetra();
+                if(e.target.dataset.target === 'calcium') initMolecule();
+                if(e.target.dataset.target === 'draw') initDraw();
+            });
+        });
+
+        let bTimer = null; let bPhase = 0; let bSec = 0;
+        const bPats = {
+            box: [{n:'Breathe In',d:4,c:'#C3AED6'},{n:'Hold',d:4,c:'#8B6BAE'},{n:'Breathe Out',d:4,c:'#7EC8E3'},{n:'Hold',d:4,c:'#4A90B8'}],
+            calm: [{n:'Breathe In',d:4,c:'#A8E6CF'},{n:'Hold',d:7,c:'#7FB898'},{n:'Breathe Out',d:8,c:'#7EC8E3'}]
+        };
+        let cPat = 'box';
+
+        function setBreath(k, btn) {
+            cPat = k;
+            document.querySelectorAll('#page-breathe button').forEach(b => { if(b.id!=='btn-breathe-toggle') { b.style.background='white'; b.style.color='#7A7570'; b.style.borderColor='#F0EBE3'; }});
+            btn.style.background='#8B6BAE'; btn.style.color='white'; btn.style.borderColor='#8B6BAE';
+            if(bTimer) { toggleBreath(); toggleBreath(); }
+        }
+
+        function toggleBreath() {
+            const btn = document.getElementById('btn-breathe-toggle');
+            if(bTimer) {
+                clearInterval(bTimer); bTimer = null;
+                btn.innerText = 'Start Breathing'; btn.style.background = '#5D4E37';
+                document.getElementById('breath-ring').style.transform = 'scale(1)';
+                document.getElementById('breath-ring').style.background = '#8B6BAE';
+                document.getElementById('b-phase').innerText = 'Ready'; document.getElementById('b-time').innerText = '•';
+            } else {
+                bPhase = 0; bSec = 0;
+                btn.innerText = 'Stop'; btn.style.background = '#F4845F';
+                tickBreath(); bTimer = setInterval(tickBreath, 1000);
+            }
+        }
+
+        function tickBreath() {
+            const p = bPats[cPat][bPhase]; bSec++;
+            if(bSec > p.d) { bSec = 1; bPhase = (bPhase + 1) % bPats[cPat].length; }
+            const curr = bPats[cPat][bPhase];
+            document.getElementById('b-phase').innerText = curr.n;
+            document.getElementById('b-time').innerText = (curr.d - bSec + 1);
+            let scale = 1; const prog = bSec/curr.d;
+            if(curr.n.includes('In')) scale = 0.8 + (prog*0.4);
+            else if(curr.n.includes('Out')) scale = 1.2 - (prog*0.4);
+            else scale = 1.2;
+            const ring = document.getElementById('breath-ring');
+            ring.style.transform = `scale(${scale})`;
+            ring.style.background = curr.c;
+        }
+
+        const gData = [
+            { c: 5, s: 'SEE', p: 'Name 5 things you can see', col: 'background:#7EC8E3;color:white', i: ['A shadow','Something blue','A shape','My hands','A plant'] },
+            { c: 4, s: 'HEAR', p: 'Name 4 things you can hear', col: 'background:#A8E6CF;color:#5D4E37', i: ['My breathing','A fan','Traffic','Silence'] },
+            { c: 3, s: 'TOUCH', p: 'Name 3 things you can feel', col: 'background:#C3AED6;color:#5D4E37', i: ['My clothes','Air on skin','The floor'] },
+            { c: 2, s: 'SMELL', p: 'Name 2 things you can smell', col: 'background:#F0B547;color:#5D4E37', i: ['Fresh air','Nothing!'] },
+            { c: 1, s: 'TASTE', p: 'Name 1 thing you can taste', col: 'background:#F4845F;color:white', i: ['My own mouth'] }
+        ];
+        let gStep = 0;
+
+        function renderGround() {
+            const cont = document.getElementById('ground-container');
+            cont.innerHTML = gData.map((d, i) => `
+                <div class="soft-card p-6 mb-4 transition-all duration-500 ${i !== gStep ? 'opacity-40 grayscale pointer-events-none' : 'transform scale-105 my-6'}" id="g-card-${i}">
+                    <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 rounded-full font-display text-2xl font-bold flex items-center justify-center shrink-0" style="${d.col}">${d.c}</div>
+                        <div>
+                            <h3 class="font-display font-bold text-lg text-[#5D4E37] mb-1">👀 ${d.s}</h3>
+                            <p class="text-sm text-[#7A7570] mb-3">${d.p}</p>
+                            <div class="flex flex-wrap gap-2">
+                                ${d.i.map(item => `<button onclick="advGround(${i}, this)" class="px-3 py-1.5 rounded-full bg-[#F0EBE3] text-[#5D4E37] text-xs font-semibold hover:bg-[#A8E6CF] transition-colors">${item}</button>`).join('')}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            const dots = document.getElementById('ground-dots').children;
+            for(let i=0; i<5; i++) {
+                dots[i].className = i < gStep ? 'w-4 h-4 rounded-full border-2 border-[#A8E6CF] bg-[#A8E6CF]' : i === gStep ? 'w-4 h-4 rounded-full border-2 border-[#A8E6CF] bg-[#A8E6CF] animate-ping' : 'w-4 h-4 rounded-full border-2 border-[#5D4E37]/20';
+            }
+        }
+        function advGround(step, btn) {
+            if(step !== gStep) return;
+            btn.style.background = '#A8E6CF'; btn.style.color = '#5D4E37';
+            setTimeout(() => {
+                gStep++;
+                if(gStep >= 5) {
+                    document.getElementById('ground-container').innerHTML = '<div class="soft-card p-8 text-center"><div class="text-6xl mb-4">🌟</div><h3 class="font-display text-2xl text-[#A8E6CF] mb-2">You did it!</h3><p class="text-[#7A7570]">You used all 5 senses to come back to now. You are safe.</p></div>';
+                    const dots = document.getElementById('ground-dots').children;
+                    for(let i=0; i<5; i++) dots[i].className = 'w-4 h-4 rounded-full border-2 border-[#A8E6CF] bg-[#A8E6CF]';
+                } else { renderGround(); }
+            }, 300);
+        }
+        function resetGround() { gStep = 0; renderGround(); }
+        renderGround();
+
+        function toggleSnd(k, btn) { btn.classList.toggle('playing'); }
+        function setVol(v) {}
+
+        let drawCtx, isDrawing = false, dColor = '#F4845F';
+        function initDraw() {
+            if(drawCtx) return;
+            const c = document.getElementById('draw-canvas');
+            drawCtx = c.getContext('2d');
+            const resize = () => { const r = c.getBoundingClientRect(); c.width=r.width; c.height=r.height; drawCtx.fillStyle='white'; drawCtx.fillRect(0,0,c.width,c.height); };
+            resize(); window.addEventListener('resize', resize);
+            const getPos = (e) => { const r = c.getBoundingClientRect(); const t = e.touches ? e.touches[0] : e; return { x: t.clientX - r.left, y: t.clientY - r.top }; };
+            c.addEventListener('pointerdown', e => { isDrawing=true; const p=getPos(e); drawCtx.beginPath(); drawCtx.moveTo(p.x, p.y); });
+            c.addEventListener('pointermove', e => { if(!isDrawing) return; const p=getPos(e); drawCtx.strokeStyle=dColor; drawCtx.lineWidth=5; drawCtx.lineCap='round'; drawCtx.lineTo(p.x, p.y); drawCtx.stroke(); });
+            window.addEventListener('pointerup', () => isDrawing=false);
+        }
+        function setDrawColor(c, btn) { dColor = c; document.querySelectorAll('.draw-color-btn').forEach(b => { b.style.transform=''; b.style.borderColor='white'; }); btn.style.transform='scale(1.1)'; btn.style.borderColor='#5D4E37'; }
+        function clearCanvas() { const c = document.getElementById('draw-canvas'); drawCtx.fillStyle='white'; drawCtx.fillRect(0,0,c.width,c.height); }
+
+        const notes = [
+            {e:'💜', t:"I am so proud of you. Not for what you do — for who you are."},
+            {e:'🌟', t:"The strongest shape in the universe? A triangle. Our family? A tetrahedron."},
+            {e:'🧬', t:"The calcium in your bones was forged inside an ancient star. You are stardust."},
+            {e:'🌊', t:"Feelings are like waves. You don't have to fight the wave — just float."},
+            {e:'🧠', t:"Your brain is not broken. It's a Ferrari in a world built for minivans."},
+            {e:'🤗', t:"Here's a virtual hug. *HUG* Physics says it works across any distance."},
+            {e:'🔺', t:"Four points. Six connections. Zero broken links. That's us."},
+            {e:'⚛️', t:"You are made of atoms that have existed since the Big Bang. Ancient and new at once."}
+        ];
+        function pullNote() {
+            const n = notes[Math.floor(Math.random() * notes.length)];
+            const txt = document.getElementById('note-text'); const emj = document.getElementById('note-emoji');
+            txt.style.opacity = 0; emj.style.transform = 'scale(0)';
+            setTimeout(() => { txt.innerText = n.t; emj.innerText = n.e; txt.style.opacity = 1; emj.style.transform = 'scale(1)'; }, 300);
+        }
+
+        function updateCal(v, btn, colClass) {
+            document.querySelectorAll('.cal-btn').forEach(b => { b.className = 'cal-btn px-4 py-2 rounded-full font-display font-bold text-sm bg-white border-2 border-gray-200'; });
+            btn.className = `cal-btn px-4 py-2 rounded-full font-display font-bold text-sm border-2 border-transparent ${colClass}`;
+            const pct = ((v-6)/6)*100;
+            document.getElementById('cal-fill').style.width = pct + '%';
+            document.getElementById('cal-fill').innerText = v;
+            const msgs = {
+                7.8: { t: '⚠️ Low Calcium Zone', d: 'Muscles get tight. Words get stuck. Fingers tingle. This is why taking calcium pills every day matters!' },
+                9.0: { t: '😊 Healthy Zone!', d: 'This is the sweet spot! Muscles work great. Brain is sharp. Everything is in balance.' },
+                10.0: { t: '💪 Strong Zone!', d: 'Maximum bone power! Calcium is flowing perfectly.' }
+            };
+            document.getElementById('cal-msg').innerHTML = `<strong class="font-display block mb-1">${msgs[v].t}</strong>${msgs[v].d}`;
+        }
+
+        let tInited = false, mInited = false;
+        function initFamilyTetra() {
+            if(tInited) return; tInited = true;
+            const c = document.getElementById('fam-tetra-container');
+            const scene = new THREE.Scene(); const cam = new THREE.PerspectiveCamera(50, c.clientWidth/c.clientHeight, 0.1, 100); cam.position.z = 6;
+            const ren = new THREE.WebGLRenderer({alpha:true, antialias:true}); ren.setSize(c.clientWidth, c.clientHeight); c.appendChild(ren.domElement);
+            const grp = new THREE.Group(); scene.add(grp);
+            const geo = new THREE.TetrahedronGeometry(2);
+            grp.add(new THREE.Mesh(geo, new THREE.MeshBasicMaterial({color: 0x8B6BAE, wireframe:true, transparent:true, opacity:0.4})));
+            const cols = [0x5D4E37, 0x8B6BAE, 0xA8E6CF, 0x7EC8E3];
+            const pos = geo.attributes.position.array;
+            for(let i=0; i<4; i++) {
+                const m = new THREE.Mesh(new THREE.SphereGeometry(0.25, 16, 16), new THREE.MeshBasicMaterial({color: cols[i]}));
+                m.position.set(pos[i*3], pos[i*3+1], pos[i*3+2]); grp.add(m);
+            }
+            let drag=false, pm={x:0,y:0}, rv={x:0,y:0};
+            c.addEventListener('pointerdown', e=>{drag=true; pm={x:e.clientX, y:e.clientY}});
+            window.addEventListener('pointermove', e=>{if(drag){rv.x+=(e.clientY-pm.y)*0.005; rv.y+=(e.clientX-pm.x)*0.005; pm={x:e.clientX, y:e.clientY}}});
+            window.addEventListener('pointerup', ()=>drag=false);
+            const anim = () => { requestAnimationFrame(anim); if(!drag){grp.rotation.y+=0.005; grp.rotation.x+=0.002} grp.rotation.x+=rv.x; grp.rotation.y+=rv.y; rv.x*=0.9; rv.y*=0.9; ren.render(scene,cam); };
+            anim();
+        }
+
+        function initMolecule() {
+            if(mInited) return; mInited = true;
+            const c = document.getElementById('mol-container');
+            const scene = new THREE.Scene(); const cam = new THREE.PerspectiveCamera(50, c.clientWidth/c.clientHeight, 0.1, 100); cam.position.z = 8;
+            const ren = new THREE.WebGLRenderer({alpha:true, antialias:true}); ren.setSize(c.clientWidth, c.clientHeight); c.appendChild(ren.domElement);
+            const grp = new THREE.Group(); scene.add(grp);
+            const caGeo = new THREE.SphereGeometry(0.4, 16, 16); const caMat = new THREE.MeshBasicMaterial({color: 0xF0B547});
+            const pGeo = new THREE.SphereGeometry(0.3, 16, 16); const pMat = new THREE.MeshBasicMaterial({color: 0xF4845F});
+            const oGeo = new THREE.SphereGeometry(0.2, 16, 16); const oMat = new THREE.MeshBasicMaterial({color: 0x7EC8E3});
+            window.molMeshes = [];
+            for(let i=0; i<4; i++) { const m = new THREE.Mesh(caGeo, caMat); m.position.set((Math.random()-0.5)*4, (Math.random()-0.5)*4, (Math.random()-0.5)*4); m.userData = { orig: m.position.clone() }; grp.add(m); window.molMeshes.push(m); }
+            for(let i=0; i<3; i++) { const m = new THREE.Mesh(pGeo, pMat); m.position.set((Math.random()-0.5)*4, (Math.random()-0.5)*4, (Math.random()-0.5)*4); m.userData = { orig: m.position.clone() }; grp.add(m); window.molMeshes.push(m); }
+            for(let i=0; i<8; i++) { const m = new THREE.Mesh(oGeo, oMat); m.position.set((Math.random()-0.5)*6, (Math.random()-0.5)*6, (Math.random()-0.5)*6); m.userData = { orig: m.position.clone() }; grp.add(m); window.molMeshes.push(m); }
+            let drag=false, pm={x:0,y:0}, rv={x:0,y:0};
+            c.addEventListener('pointerdown', e=>{drag=true; pm={x:e.clientX, y:e.clientY}});
+            window.addEventListener('pointermove', e=>{if(drag){rv.x+=(e.clientY-pm.y)*0.005; rv.y+=(e.clientX-pm.x)*0.005; pm={x:e.clientX, y:e.clientY}}});
+            window.addEventListener('pointerup', ()=>drag=false);
+            window.molMode = 'spin';
+            const anim = () => {
+                requestAnimationFrame(anim);
+                if(!drag){grp.rotation.y+=0.005; grp.rotation.x+=0.002}
+                grp.rotation.x+=rv.x; grp.rotation.y+=rv.y; rv.x*=0.9; rv.y*=0.9;
+                if(window.molMode === 'explode') { window.molMeshes.forEach(m => { m.position.lerp(m.userData.orig.clone().multiplyScalar(2), 0.05); }); }
+                else { window.molMeshes.forEach(m => { m.position.lerp(m.userData.orig, 0.05); }); }
+                ren.render(scene,cam);
+            };
+            anim();
+        }
+
+        function toggleDark() {
+            document.body.classList.toggle('dark');
+            document.getElementById('darkToggle').textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
+        }
+
+        function setMol(mode, btn) {
+            window.molMode = mode;
+            document.querySelectorAll('.mol-ctrl-btn').forEach(b => { b.className = 'mol-ctrl-btn px-4 py-1.5 rounded-full font-display text-xs bg-white border border-gray-300 text-[#7A7570]'; });
+            btn.className = 'mol-ctrl-btn active px-4 py-1.5 rounded-full font-display text-xs bg-[#7EC8E3] text-white border-transparent';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,588 @@
+{
+  "schema": "p31.gardenZone/1.0.0",
+  "version": "1.0.0",
+  "updated": "2026-04-30",
+  "operator": {
+    "entity": "P31 Labs, Inc.",
+    "household": "Camden County, GA"
+  },
+  "zone": {
+    "usdaHardiness": "8b/9a",
+    "region": "Coastal Plain, southeast Georgia",
+    "soilCharacter": "sandy, slightly acidic (pH 5.5-6.5), excellent drainage, low organic matter without amendment",
+    "summerExtremes": "humid, 90-95°F daytime, afternoon thunderstorms common Jun-Sep",
+    "winterExtremes": "mild, occasional frost Dec-Feb, hard freezes rare",
+    "monarchFlywayWindow": "Sep 25 - Nov 5 (peak migration through Camden / Cumberland Island)",
+    "darkSkyAccess": "Cumberland Island National Seashore — Bortle 3 within 20 miles",
+    "note": "Zone is generous. Full sun is the operator's main constraint, not cold. Most plants below tolerate -8°C / 18°F minimums; satsuma and fig are the cold-edge cases."
+  },
+  "audience": {
+    "primary": "S.J., W.J. — operator children (initials only, per .cursorrules)",
+    "secondary": "operator (Will), garden-aware household visitors",
+    "agePoseStanding": "knee-high to waist-high planting elevations preferred so children can plant, water, and harvest unaided"
+  },
+  "designPrinciples": [
+    {
+      "name": "enclosure",
+      "rule": "Children need a place to enter, not just walk past. Sunflower fortress, willow tunnel, or bean teepee is non-negotiable.",
+      "satisfiedBy": ["sunflower-fortress", "moonlight-bed-trellis"]
+    },
+    {
+      "name": "tasteable-by-month",
+      "rule": "Something ripe to taste in every month of the year. Stagger plantings so the garden is always returning a small reward.",
+      "satisfiedBy": ["rabbiteye-blueberry", "satsuma", "brown-turkey-fig", "strawberry", "mint", "nasturtium"]
+    },
+    {
+      "name": "kid-sized-tools",
+      "rule": "A 'do' garden, not a 'watch' garden. Digging zone with kid-scale shovels and gloves. No off-limits beds in the kid-territory zones.",
+      "satisfiedBy": ["digging-zone", "yes-zone"]
+    },
+    {
+      "name": "sit-and-look",
+      "rule": "A bench, stump, or stone for sustained observation. Bumblebee-watching, monarch-watching, beetle-watching all require pausing.",
+      "satisfiedBy": ["grandmother-bench", "stone-circle"]
+    },
+    {
+      "name": "sensory-zoning",
+      "rule": "Each sensory channel (smell, touch, taste, sound, sight) gets its own intentional zone — AuDHD-friendly opt-in/out. No overstimulating mix-and-mash.",
+      "satisfiedBy": ["sensory-barefoot-path", "wind-library", "moonlight-bed", "pollinator-flyway"]
+    },
+    {
+      "name": "ownership-square",
+      "rule": "Each child gets a marked plot they fully own. Inside the square: their decisions. Outside: family-shared. Sovereignty practice.",
+      "satisfiedBy": ["sj-square", "wj-square"]
+    },
+    {
+      "name": "yes-zone",
+      "rule": "One bed where children can pick anything anytime, no permission. Cut-and-come-again flowers + soft herbs. Teaches that other zones have rules without making rules feel like rejection.",
+      "satisfiedBy": ["yes-zone"]
+    },
+    {
+      "name": "calendar-ritual",
+      "rule": "Plant one new thing together every solstice and equinox. Garden becomes the year. Four times = four memories per year.",
+      "satisfiedBy": ["seasonal-planting-calendar"]
+    }
+  ],
+  "plants": [
+    {
+      "id": "rabbiteye-blueberry",
+      "common": "Rabbiteye blueberry",
+      "scientific": "Vaccinium virgatum",
+      "cultivars": ["Climax", "Premier", "Tifblue"],
+      "type": "edible-shrub",
+      "kidActivity": "harvest",
+      "harvestWindow": "late June - mid July",
+      "kidHeightAtMaturity": "shoulder-height for child by year 3",
+      "soilPh": "4.5-5.5",
+      "sunNeed": "full",
+      "waterNeed": "moderate",
+      "pollinationNote": "plant at least two cultivars within 50 ft for cross-pollination",
+      "reasonHere": "Camden's sandy acidic Coastal Plain soil is rabbiteye paradise. Three bushes outproduce a household — every July you have jam ingredients.",
+      "tier": "A"
+    },
+    {
+      "id": "brown-turkey-fig",
+      "common": "Brown Turkey fig",
+      "scientific": "Ficus carica 'Brown Turkey'",
+      "type": "edible-tree",
+      "kidActivity": "harvest",
+      "harvestWindow": "August - early September",
+      "kidHeightAtMaturity": "fruit reachable from ground; tree is multi-stem 8-15 ft",
+      "soilPh": "6.0-6.5",
+      "sunNeed": "full",
+      "waterNeed": "low once established",
+      "reasonHere": "One tree outproduces a family. Fruit ripens to soft sweetness right off the limb. Kids will eat them faster than you can pick them.",
+      "tier": "B"
+    },
+    {
+      "id": "satsuma",
+      "common": "Satsuma orange",
+      "scientific": "Citrus unshiu",
+      "cultivars": ["Owari", "Brown Select"],
+      "type": "edible-tree",
+      "kidActivity": "harvest",
+      "harvestWindow": "November - January (cold-sweetened)",
+      "kidHeightAtMaturity": "child-height fruit by year 3",
+      "soilPh": "6.0-6.5",
+      "sunNeed": "full",
+      "waterNeed": "moderate",
+      "coldTolerance": "hardy to ~15°F; protect first 2 winters",
+      "reasonHere": "Cold-hardy citrus on the zone-9a edge. Fragrant in spring bloom. Easy-peel kid-friendly fruit in winter. Doubles as kid's named tree.",
+      "tier": "B"
+    },
+    {
+      "id": "swamp-milkweed",
+      "common": "Swamp milkweed",
+      "scientific": "Asclepias incarnata",
+      "type": "native-perennial",
+      "kidActivity": "watch",
+      "ecologicalRole": "monarch host plant + nectar",
+      "kidHeightAtMaturity": "3-4 ft, eye-level for child",
+      "soilPh": "5.5-7.0",
+      "sunNeed": "full to part-sun",
+      "waterNeed": "moist (tolerates wet feet)",
+      "reasonHere": "Native — feeds monarchs without the disease pressure of tropical milkweed. Camden is on the fall migration corridor. Caterpillar → chrysalis → butterfly visible Sep-Nov in your own yard.",
+      "tier": "A",
+      "doNotSubstituteWith": "Asclepias curassavica (tropical milkweed) — disrupts monarch migration timing, accumulates OE pathogen"
+    },
+    {
+      "id": "butterfly-milkweed",
+      "common": "Butterfly milkweed",
+      "scientific": "Asclepias tuberosa",
+      "type": "native-perennial",
+      "kidActivity": "watch",
+      "ecologicalRole": "monarch host plant + dry-soil nectar",
+      "kidHeightAtMaturity": "1-3 ft",
+      "soilPh": "5.5-7.5",
+      "sunNeed": "full",
+      "waterNeed": "low (drought-tolerant once established)",
+      "reasonHere": "Pairs with swamp milkweed for the dry edges of the pollinator flyway. Bright orange flat-topped flowers — monarchs land like a runway.",
+      "tier": "A"
+    },
+    {
+      "id": "sweetshrub",
+      "common": "Sweetshrub / Carolina allspice",
+      "scientific": "Calycanthus floridus",
+      "type": "native-shrub",
+      "kidActivity": "smell",
+      "kidHeightAtMaturity": "6-9 ft",
+      "soilPh": "5.5-6.5",
+      "sunNeed": "part-sun",
+      "waterNeed": "moderate",
+      "reasonHere": "Native, indestructible. Crush a leaf — smells like fruit punch. Maroon spring flowers smell like pineapple-banana-strawberry. A smell-zone anchor.",
+      "tier": "B"
+    },
+    {
+      "id": "fringe-tree",
+      "common": "Fringe tree / Old man's beard",
+      "scientific": "Chionanthus virginicus",
+      "type": "native-tree",
+      "kidActivity": "watch",
+      "kidHeightAtMaturity": "12-20 ft",
+      "soilPh": "5.5-6.5",
+      "sunNeed": "full to part-sun",
+      "waterNeed": "moderate",
+      "reasonHere": "Native. Drips with white spring blooms — looks like snow that didn't reach the ground. Excellent candidate for a child's named tree (slow-grow, hugged-trunk-friendly).",
+      "tier": "B"
+    },
+    {
+      "id": "redbud",
+      "common": "Eastern redbud",
+      "scientific": "Cercis canadensis",
+      "type": "native-tree",
+      "kidActivity": "watch",
+      "kidHeightAtMaturity": "20-30 ft",
+      "soilPh": "6.0-7.5",
+      "sunNeed": "full to part-sun",
+      "waterNeed": "low to moderate",
+      "reasonHere": "First color of spring — bare branches break out in magenta-pink. Native. Good named-tree candidate; flowers are edible (slightly sweet, kids love picking).",
+      "tier": "B"
+    },
+    {
+      "id": "mammoth-russian-sunflower",
+      "common": "Mammoth Russian sunflower",
+      "scientific": "Helianthus annuus 'Mammoth Russian'",
+      "type": "annual-edible",
+      "kidActivity": "build",
+      "kidHeightAtMaturity": "9-12 ft",
+      "soilPh": "6.0-7.5",
+      "sunNeed": "full",
+      "waterNeed": "moderate",
+      "reasonHere": "Build-material for the sunflower fortress. By August it's a 9-foot ring of stalks with a child-sized doorway gap. Pole beans climb the stalks (Three Sisters style).",
+      "tier": "A",
+      "structuralUse": "sunflower-fortress"
+    },
+    {
+      "id": "kentucky-wonder-pole-bean",
+      "common": "Kentucky Wonder pole bean",
+      "scientific": "Phaseolus vulgaris 'Kentucky Wonder'",
+      "type": "annual-edible",
+      "kidActivity": "harvest",
+      "kidHeightAtMaturity": "vines up to 8-10 ft on support",
+      "soilPh": "6.0-6.5",
+      "sunNeed": "full",
+      "waterNeed": "moderate",
+      "reasonHere": "Climbs sunflower stalks (Three Sisters companion). Productive enough kids snap-pick all summer. Edible green.",
+      "tier": "A",
+      "structuralUse": "sunflower-fortress"
+    },
+    {
+      "id": "moonflower-vine",
+      "common": "Moonflower vine",
+      "scientific": "Ipomoea alba",
+      "type": "annual-vine",
+      "kidActivity": "watch",
+      "openingTime": "sunset (~30 min)",
+      "kidHeightAtMaturity": "10-15 ft on trellis",
+      "soilPh": "6.0-7.5",
+      "sunNeed": "full",
+      "waterNeed": "moderate",
+      "reasonHere": "Anchors the moonlight-bed trellis. Watching a flower open in 30 seconds at dusk is the after-dinner ritual. Fragrant.",
+      "tier": "B",
+      "structuralUse": "moonlight-bed-trellis"
+    },
+    {
+      "id": "white-nicotiana",
+      "common": "Flowering tobacco (white)",
+      "scientific": "Nicotiana sylvestris",
+      "type": "annual-flower",
+      "kidActivity": "smell",
+      "kidHeightAtMaturity": "3-5 ft",
+      "soilPh": "5.5-7.0",
+      "sunNeed": "part-sun",
+      "waterNeed": "moderate",
+      "reasonHere": "Moonlight-bed companion. Tall white tubular flowers, fragrant after dusk. Hawkmoth visitors at twilight.",
+      "tier": "B"
+    },
+    {
+      "id": "lambs-ear",
+      "common": "Lamb's ear",
+      "scientific": "Stachys byzantina",
+      "type": "perennial-foliage",
+      "kidActivity": "touch",
+      "kidHeightAtMaturity": "6-12 inches",
+      "soilPh": "6.0-7.5",
+      "sunNeed": "full",
+      "waterNeed": "low (drought-tolerant)",
+      "reasonHere": "Silver-soft fuzzy leaves, irresistible to pet. Anchors the touch-zone of the moonlight bed. Mirrors lunar light.",
+      "tier": "B"
+    },
+    {
+      "id": "creeping-thyme",
+      "common": "Creeping thyme",
+      "scientific": "Thymus serpyllum",
+      "type": "perennial-groundcover",
+      "kidActivity": "step / smell",
+      "kidHeightAtMaturity": "2-4 inches",
+      "soilPh": "6.0-7.5",
+      "sunNeed": "full",
+      "waterNeed": "low",
+      "reasonHere": "Releases herbal smell when stepped on barefoot. One of the six tiles in the sensory barefoot path.",
+      "tier": "A",
+      "structuralUse": "sensory-barefoot-path"
+    },
+    {
+      "id": "mint",
+      "common": "Spearmint / Peppermint",
+      "scientific": "Mentha spicata, Mentha × piperita",
+      "type": "perennial-herb",
+      "kidActivity": "taste / smell",
+      "kidHeightAtMaturity": "1-2 ft",
+      "soilPh": "6.0-7.5",
+      "sunNeed": "part-sun",
+      "waterNeed": "moderate",
+      "containmentRule": "Plant in container or bed bordered with deep edge — runners spread aggressively in zone 8b.",
+      "reasonHere": "Tasteable any time. Resilient to picking. Pair with the yes-zone or smell zone.",
+      "tier": "A"
+    },
+    {
+      "id": "nasturtium",
+      "common": "Nasturtium",
+      "scientific": "Tropaeolum majus",
+      "type": "annual-edible-flower",
+      "kidActivity": "harvest / taste",
+      "harvestWindow": "Apr - Oct",
+      "kidHeightAtMaturity": "1 ft trailing",
+      "soilPh": "6.0-7.5",
+      "sunNeed": "full to part-sun",
+      "waterNeed": "moderate",
+      "reasonHere": "Edible peppery flowers — kids pick and eat directly. Round leaves catch dewdrops kids love. Pair with the yes-zone.",
+      "tier": "A"
+    },
+    {
+      "id": "cherry-tomato",
+      "common": "Cherry tomato",
+      "scientific": "Solanum lycopersicum (cv. 'Sungold' / 'Sweet 100')",
+      "type": "annual-edible",
+      "kidActivity": "harvest / taste",
+      "harvestWindow": "Jun - Oct",
+      "kidHeightAtMaturity": "4-6 ft caged",
+      "soilPh": "6.0-6.8",
+      "sunNeed": "full",
+      "waterNeed": "moderate",
+      "reasonHere": "Picked-and-popped reward. The bridge between yes-zone and pizza-circle. Sungold is the operator's likely first pick — kids prefer sweet.",
+      "tier": "A"
+    },
+    {
+      "id": "zinnia",
+      "common": "Zinnia",
+      "scientific": "Zinnia elegans",
+      "type": "annual-flower",
+      "kidActivity": "harvest / cut",
+      "harvestWindow": "Jun - Oct",
+      "kidHeightAtMaturity": "2-3 ft",
+      "soilPh": "5.5-7.5",
+      "sunNeed": "full",
+      "waterNeed": "low to moderate",
+      "reasonHere": "Yes-zone anchor. Cut-and-come-again — picking actually triggers more flowers. Pollinator magnet.",
+      "tier": "A"
+    },
+    {
+      "id": "cosmos",
+      "common": "Cosmos",
+      "scientific": "Cosmos bipinnatus",
+      "type": "annual-flower",
+      "kidActivity": "harvest / cut",
+      "harvestWindow": "Jul - Oct",
+      "kidHeightAtMaturity": "3-5 ft",
+      "soilPh": "6.0-7.5",
+      "sunNeed": "full",
+      "waterNeed": "low",
+      "reasonHere": "Yes-zone tall layer. Self-seeds — once planted, returns. Lacy foliage moves in wind, contributes to wind-library visual.",
+      "tier": "A"
+    },
+    {
+      "id": "snapdragon",
+      "common": "Snapdragon",
+      "scientific": "Antirrhinum majus",
+      "type": "annual-flower",
+      "kidActivity": "play (snap)",
+      "harvestWindow": "Mar - Jun (cool-season)",
+      "kidHeightAtMaturity": "1-3 ft",
+      "soilPh": "6.0-7.5",
+      "sunNeed": "full",
+      "waterNeed": "moderate",
+      "reasonHere": "Pinch the flower sides — it snaps open like a tiny dragon mouth. Cool-season — flowers when zinnias and cosmos are not yet up.",
+      "tier": "A"
+    },
+    {
+      "id": "bee-balm",
+      "common": "Bee balm",
+      "scientific": "Monarda didyma",
+      "type": "perennial-herb",
+      "kidActivity": "watch / smell",
+      "kidHeightAtMaturity": "2-4 ft",
+      "soilPh": "6.0-7.0",
+      "sunNeed": "full to part-sun",
+      "waterNeed": "moderate",
+      "reasonHere": "Pollinator-flyway nectar layer. Bumblebees and hummingbirds visit constantly. Crushed leaf smells like Earl Grey.",
+      "tier": "B"
+    },
+    {
+      "id": "purple-coneflower",
+      "common": "Purple coneflower",
+      "scientific": "Echinacea purpurea",
+      "type": "native-perennial",
+      "kidActivity": "watch",
+      "kidHeightAtMaturity": "2-4 ft",
+      "soilPh": "6.0-7.0",
+      "sunNeed": "full",
+      "waterNeed": "low to moderate",
+      "reasonHere": "Pollinator-flyway anchor. Goldfinches strip the seed heads in fall — bird-watching included free with the bloom.",
+      "tier": "A"
+    },
+    {
+      "id": "ornamental-grass-muhly",
+      "common": "Pink muhly grass",
+      "scientific": "Muhlenbergia capillaris",
+      "type": "native-grass",
+      "kidActivity": "listen / watch",
+      "kidHeightAtMaturity": "2-3 ft",
+      "soilPh": "5.5-7.0",
+      "sunNeed": "full",
+      "waterNeed": "low (very drought-tolerant)",
+      "reasonHere": "Wind-library visual + sound. Pink fall flower haze — ethereal. Native. Whispers in wind, predictable sound.",
+      "tier": "A",
+      "structuralUse": "wind-library"
+    },
+    {
+      "id": "strawberry",
+      "common": "Strawberry (everbearing)",
+      "scientific": "Fragaria × ananassa",
+      "type": "perennial-edible",
+      "kidActivity": "harvest",
+      "harvestWindow": "Apr - Jun + Sep flush in zone 8b",
+      "kidHeightAtMaturity": "8-12 inches",
+      "soilPh": "5.5-6.5",
+      "sunNeed": "full",
+      "waterNeed": "moderate",
+      "reasonHere": "Ground-level kid harvest. Pair with rabbiteye blueberry for staggered ripening. Use straw mulch — runners root and spread.",
+      "tier": "A"
+    },
+    {
+      "id": "yaupon-holly",
+      "common": "Yaupon holly",
+      "scientific": "Ilex vomitoria",
+      "type": "native-shrub",
+      "kidActivity": "watch (NOT eat berries)",
+      "kidHeightAtMaturity": "10-20 ft (or hedge)",
+      "soilPh": "5.5-7.0",
+      "sunNeed": "full to part-sun",
+      "waterNeed": "low",
+      "reasonHere": "Native screen / hedge. Red winter berries feed birds (NOT children — operator-only tea from leaves possible later, not in the kid zone). Indestructible structural backbone.",
+      "tier": "C",
+      "kidSafetyNote": "Berries are mildly toxic if eaten in quantity — site this where kids do not graze. Leaves OK (true source of caffeine in North American native flora) but operator-only."
+    }
+  ],
+  "structures": [
+    {
+      "id": "sunflower-fortress",
+      "label": "Sunflower fortress",
+      "tier": "A",
+      "shape": "circle, 6-foot diameter, one doorway gap (2 ft wide), stalks plant on 12-inch centers",
+      "componentPlants": ["mammoth-russian-sunflower", "kentucky-wonder-pole-bean"],
+      "buildSeason": "April direct-seed; harvest mid-August through October",
+      "kidExperience": "Children duck through doorway into a green room you can't quite see into from outside. Inside is shaded, hum of bees, edible walls.",
+      "operatorBuildSteps": [
+        "Mark a 6-foot circle in the chosen full-sun bed. Mark one 2-foot doorway gap.",
+        "Direct-seed Mammoth Russian sunflower seeds 12 inches apart along the marked circle (skipping the doorway gap).",
+        "Two weeks after sunflower germination, plant 2-3 Kentucky Wonder pole bean seeds at the base of every other sunflower.",
+        "Water deeply twice a week for first month, then weekly."
+      ]
+    },
+    {
+      "id": "sensory-barefoot-path",
+      "label": "Sensory barefoot path",
+      "tier": "A",
+      "shape": "linear path, 6 stepping zones each ~18 inches square",
+      "zones": [
+        { "id": "stone", "material": "smooth river stones, set flush", "sensation": "cool / hard / smooth" },
+        { "id": "gravel", "material": "warm pea gravel 1-2 inch deep", "sensation": "warm / loose / texture" },
+        { "id": "thyme", "material": "creeping-thyme planted carpet", "sensation": "soft / aromatic / yielding" },
+        { "id": "wood-rounds", "material": "cedar wood rounds set flush, sealed end-grain", "sensation": "warm / smooth / dry" },
+        { "id": "moss", "material": "moss patch (sheet moss in shade pocket)", "sensation": "cool / soft / damp" },
+        { "id": "sand", "material": "soft white sand 2 inch deep, contained", "sensation": "warm / fine / shifting" }
+      ],
+      "componentPlants": ["creeping-thyme"],
+      "kidExperience": "Each square is one clear sensation. AuDHD-friendly: predictable, opt-in. Walk the whole path or pick one zone."
+    },
+    {
+      "id": "moonlight-bed",
+      "label": "Moonlight bed",
+      "tier": "B",
+      "shape": "rectangular bed, ~4 ft × 8 ft, with central trellis arch",
+      "componentPlants": ["moonflower-vine", "white-nicotiana", "lambs-ear", "yaupon-holly"],
+      "kidExperience": "After-dinner walk destination. Sunset open of moonflowers, fragrance of nicotiana, lamb's-ear petting, hawkmoth visitors. Quiet hour between dinner and bedtime."
+    },
+    {
+      "id": "pollinator-flyway",
+      "label": "Pollinator flyway",
+      "tier": "A",
+      "shape": "long border, 3-4 ft wide, ideally running south side",
+      "componentPlants": ["swamp-milkweed", "butterfly-milkweed", "purple-coneflower", "bee-balm"],
+      "kidExperience": "Watch-only zone. Caterpillar → chrysalis → butterfly cycle visible Sep-Nov. Bumblebees, hummingbirds, goldfinches all on the same strip.",
+      "criticalNote": "ONLY native milkweeds (Asclepias incarnata, A. tuberosa). Tropical milkweed (A. curassavica) disrupts monarch migration timing in southern zones — do not plant."
+    },
+    {
+      "id": "wind-library",
+      "label": "Wind library",
+      "tier": "B",
+      "shape": "vertical cluster — three sound sources at three heights",
+      "components": [
+        { "id": "copper-chime", "type": "wind-chime", "tone": "deep", "height": "8 ft" },
+        { "id": "bamboo-chime", "type": "wind-chime", "tone": "hollow / mid", "height": "5 ft" },
+        { "id": "muhly-grass-mass", "type": "ornamental-grass", "tone": "whisper", "height": "2-3 ft", "plant": "ornamental-grass-muhly" }
+      ],
+      "kidExperience": "Three predictable sounds layered by wind speed. AuDHD: predictable = safe. The wind tells them about itself."
+    },
+    {
+      "id": "yes-zone",
+      "label": "Yes zone",
+      "tier": "A",
+      "shape": "single bed, 4 × 6 ft minimum",
+      "rule": "Children may pick anything in this zone, anytime, with no permission required.",
+      "componentPlants": ["zinnia", "cosmos", "snapdragon", "nasturtium", "cherry-tomato", "mint"],
+      "kidExperience": "Sovereignty practice in miniature. The zone teaches that other zones have rules without making rules feel like rejection."
+    },
+    {
+      "id": "sj-square",
+      "label": "S.J.'s square",
+      "tier": "A",
+      "shape": "marked plot, 4 × 4 ft, stones or hand-painted sign at corners",
+      "rule": "Inside the square, S.J. decides. Outside, the family decides together.",
+      "componentPlants": [],
+      "kidExperience": "First arena of garden agency. Children pick the plants, watering schedule, layout. Failure is a feature — they learn what works by trying."
+    },
+    {
+      "id": "wj-square",
+      "label": "W.J.'s square",
+      "tier": "A",
+      "shape": "marked plot, 4 × 4 ft, stones or hand-painted sign at corners",
+      "rule": "Inside the square, W.J. decides. Outside, the family decides together.",
+      "componentPlants": [],
+      "kidExperience": "Same as S.J.'s square. Distinct location so each child has visible territory."
+    },
+    {
+      "id": "digging-zone",
+      "label": "Digging zone",
+      "tier": "A",
+      "shape": "open bed or sand pit, 4 × 4 ft minimum, kid-sized tools nearby",
+      "rule": "No plants required. Dig, fill, dig again. Tools: child-scale shovel, trowel, watering can, gloves.",
+      "kidExperience": "The 'do' garden. Especially important for younger / dysregulated moments — physical labor is grounding."
+    },
+    {
+      "id": "grandmother-bench",
+      "label": "Grandmother bench",
+      "tier": "B",
+      "shape": "bench or large flat stone, shaded, with a view of the whole garden",
+      "rule": "A quiet sit-and-look spot. For when one of them needs to leave the action.",
+      "kidExperience": "Co-regulation anchor. Operator can sit beside without facing — side-by-side reduces sensory load vs. eye contact."
+    },
+    {
+      "id": "stone-circle",
+      "label": "Stone circle (outdoor classroom)",
+      "tier": "C",
+      "shape": "5-7 flat seating stones in a ~6 ft diameter circle, optional fire-pit center",
+      "kidExperience": "Telescope station for night sky (Cumberland Island darkness is 20 min away). Storytime. S'mores."
+    }
+  ],
+  "seasonalPlantingCalendar": {
+    "ritual": "Plant one new thing together every solstice and equinox — four times a year. The garden becomes the calendar.",
+    "events": [
+      {
+        "name": "Spring equinox",
+        "approxDate": "Mar 20",
+        "candidates": ["snapdragon", "strawberry", "cherry-tomato", "nasturtium", "redbud (transplant)"]
+      },
+      {
+        "name": "Summer solstice",
+        "approxDate": "Jun 21",
+        "candidates": ["zinnia", "cosmos", "mammoth-russian-sunflower (mid-summer succession)", "kentucky-wonder-pole-bean"]
+      },
+      {
+        "name": "Fall equinox",
+        "approxDate": "Sep 22",
+        "candidates": ["fringe-tree (transplant)", "satsuma (transplant)", "swamp-milkweed (last call before freeze)", "moonflower-vine seed for next year"]
+      },
+      {
+        "name": "Winter solstice",
+        "approxDate": "Dec 21",
+        "candidates": ["rabbiteye-blueberry (bare-root)", "brown-turkey-fig (dormant transplant)", "yaupon-holly", "named-tree planting ceremony"]
+      }
+    ]
+  },
+  "phosBridge": {
+    "schemaCompatibility": "p31.phos.gardenState/1.0.0",
+    "sourceWorker": "POST https://api.phosphorus31.org/api/phos/respond",
+    "sourceCode": "simplex-v7/src/skills/phos-handler.ts",
+    "fieldMapping": {
+      "molecules_today": "Plants encountered, e.g. ['rabbiteye-blueberry', 'monarch-chrysalis', 'C5H8 isoprene from bee balm']",
+      "current_action": "What kid is doing in the physical garden: 'building' (sunflower fortress), 'watching' (pollinator flyway), 'planting' (seasonal), 'tasting' (yes-zone), 'sitting' (grandmother bench)",
+      "current_element": "Focus element of the moment: 'carbon' for compost, 'phosphorus' for blueberries (leaf), 'calcium' for eggshells in soil",
+      "sensory_profile": "Active sensory zone if kid is in one: 'cloud_soft_some' (lamb's ear), 'thyme_warm', 'sand_warm', 'moss_cool'"
+    },
+    "operatorFlow": "1. Kid logs garden observation in quantum-family.html → Garden Log page. 2. Page builds garden_state JSON. 3. Operator runs `npm run phos:probe` (or pastes via garden-phos-probe.html) to feed Phos. 4. Phos responds with companion text appropriate to what was observed.",
+    "constraints": [
+      "child_id is per-kid stable id, set by operator (not the children's real names per .cursorrules)",
+      "Worker requires PHOS_HMAC_SECRET; static page does not hold the secret",
+      "garden_state never includes adult names, court terms, school details (matches phos-safety.ts FORBIDDEN list)"
+    ]
+  },
+  "transparency": {
+    "publicDisclosure": true,
+    "ciVerified": true,
+    "verifierScript": "scripts/verify-garden-zone-8b.mjs",
+    "groundTruthPath": "ground-truth/garden-zone-8b.json",
+    "publicEndpoint": "/garden-zone-8b.json",
+    "changePolicy": "Edit ground-truth, mirror to public/, run npm run verify:garden-zone-8b. Operator approval required for plant additions/removals — this is the household plan, not random landscaping."
+  },
+  "version1Constraints": [
+    "schema must equal 'p31.gardenZone/1.0.0'",
+    "zone.usdaHardiness must equal '8b/9a'",
+    "every plant must have a tier in {A, B, C}",
+    "every structure must have a tier in {A, B, C}",
+    "milkweed plants must be native (incarnata, tuberosa) — never curassavica",
+    "designPrinciples must include 'enclosure', 'tasteable-by-month', 'ownership-square', 'yes-zone'",
+    "phosBridge.schemaCompatibility must equal 'p31.phos.gardenState/1.0.0'"
+  ]
+}

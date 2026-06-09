@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0f1115">
+  <title>Color · P31 Stylebook</title>
+  <meta name="description" content="Living color tokens that adapt to theme, mode, and accessibility preferences.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/p31-style.css">
+  <link rel="stylesheet" href="/lib/p31-fluid.css">
+  <link rel="stylesheet" href="/stylebook/_chrome.css">
+  <style>
+    .color-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      gap: 4px;
+      margin: 16px 0;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--p31-border-subtle);
+    }
+    @media (max-width: 700px) { .color-row { grid-template-columns: 1fr 1fr; } }
+    .color-block {
+      padding: 24px 16px;
+      cursor: pointer;
+      position: relative;
+      transition: transform 0.2s var(--p31-ease-fluid);
+      min-height: 120px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .color-block:hover { transform: scale(1.02); z-index: 1; box-shadow: 0 8px 30px rgba(0,0,0,0.3); }
+    .color-block.copied::after {
+      content: '✓ Copied';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: var(--p31-void);
+      color: var(--p31-phosphor);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-family: var(--p31-font-mono);
+      animation: fadeOut 1.5s forwards;
+    }
+    @keyframes fadeOut {
+      0%, 60% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+    .color-block-name { font-weight: 600; font-size: 14px; }
+    .color-block-token {
+      font-family: var(--p31-font-mono);
+      font-size: 11px;
+      opacity: 0.8;
+    }
+    .color-block-hex {
+      font-family: var(--p31-font-mono);
+      font-size: 11px;
+      opacity: 0.6;
+      margin-top: 4px;
+    }
+    
+    /* Semantic color usage */
+    .role-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+    }
+    .role-card {
+      padding: 20px;
+      background: var(--p31-surface);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: 12px;
+    }
+    .role-swatch {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      margin-bottom: 12px;
+    }
+    .role-name {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--p31-paper);
+      margin-bottom: 4px;
+    }
+    .role-job {
+      font-size: 13px;
+      color: var(--p31-cloud);
+      margin-bottom: 8px;
+    }
+    .role-where {
+      font-family: var(--p31-font-mono);
+      font-size: 11px;
+      color: var(--p31-muted);
+    }
+    
+    /* Contrast checker */
+    .contrast-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+    }
+    .contrast-card {
+      padding: 24px;
+      border-radius: 10px;
+      border: 1px solid var(--p31-border-subtle);
+      position: relative;
+    }
+    .contrast-ratio {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      font-family: var(--p31-font-mono);
+      font-size: 10px;
+      padding: 2px 6px;
+      background: rgba(0,0,0,0.5);
+      color: white;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <script type="module">
+    import { renderShell, code, callout } from '/stylebook/_chrome.js';
+    import { P31ThemeController } from '/lib/p31-theme-engine.mjs';
+    window.p31Theme = new P31ThemeController({ defaultTheme: 'hub' });
+    
+    function makeColorBlock(name, token, contrast = 'light') {
+      const textColor = contrast === 'light' ? '#fff' : '#000';
+      return `
+        <div class="color-block" 
+             style="background: var(--p31-${token}); color: ${textColor};"
+             onclick="navigator.clipboard.writeText('var(--p31-${token})').then(()=>{this.classList.add('copied');setTimeout(()=>this.classList.remove('copied'),1500)})">
+          <div>
+            <div class="color-block-name">${name}</div>
+            <div class="color-block-token">--p31-${token}</div>
+          </div>
+          <div class="color-block-hex" id="hex-${token}"></div>
+        </div>
+      `;
+    }
+    
+    const content = `
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Surfaces</div>
+          <h2 class="sb-h2">The substrate</h2>
+          <p class="sb-text">Layered surfaces create depth without aggressive shadows. Each surface
+          steps subtly above the last. Click any swatch to copy the token.</p>
+        </div>
+        <div class="color-row">
+          ${makeColorBlock('Void', 'void', 'light')}
+          ${makeColorBlock('Surface', 'surface', 'light')}
+          ${makeColorBlock('Surface 2', 'surface2', 'light')}
+          ${makeColorBlock('Surface 3', 'surface3', 'light')}
+        </div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Content</div>
+          <h2 class="sb-h2">Text hierarchy</h2>
+          <p class="sb-text">Three text colors carry every level of emphasis. <strong>Paper</strong> for
+          headings and emphasized text, <strong>cloud</strong> for body, <strong>muted</strong> for secondary.</p>
+        </div>
+        <div class="color-row">
+          ${makeColorBlock('Paper', 'paper', 'dark')}
+          ${makeColorBlock('Cloud', 'cloud', 'dark')}
+          ${makeColorBlock('Muted', 'muted', 'light')}
+          ${makeColorBlock('Ink', 'ink', 'light')}
+        </div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Brand accents</div>
+          <h2 class="sb-h2">Six anchors</h2>
+          <p class="sb-text">Brand colors stay constant across themes — they're the recognition layer.
+          Surfaces shift, but coral is always coral.</p>
+        </div>
+        <div class="color-row">
+          ${makeColorBlock('Coral', 'coral', 'light')}
+          ${makeColorBlock('Teal', 'teal', 'light')}
+          ${makeColorBlock('Cyan', 'cyan', 'dark')}
+          ${makeColorBlock('Butter', 'butter', 'dark')}
+        </div>
+        <div class="color-row">
+          ${makeColorBlock('Lavender', 'lavender', 'light')}
+          ${makeColorBlock('Phosphorus', 'phosphorus', 'light')}
+          ${makeColorBlock('Phosphor', 'phosphor', 'dark')}
+        </div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Semantic roles</div>
+          <h2 class="sb-h2">Color with a job</h2>
+          <p class="sb-text">Each color has a psychological role. Use the role token, not the brand token,
+          when you want intent to track theme changes.</p>
+        </div>
+        
+        <div class="role-grid">
+          <div class="role-card">
+            <div class="role-swatch" style="background: var(--p31-teal); box-shadow: 0 4px 14px rgba(37,137,125,0.3);"></div>
+            <div class="role-name">Calm · Trust</div>
+            <div class="role-job">"The system is stable." Use for primary CTAs, key labels, focus rings.</div>
+            <div class="role-where">--p31-teal · --p31-cyan</div>
+          </div>
+          <div class="role-card">
+            <div class="role-swatch" style="background: var(--p31-coral); box-shadow: 0 4px 14px rgba(204,98,71,0.3);"></div>
+            <div class="role-name">Warmth · Aliveness</div>
+            <div class="role-job">"Something is here." Secondary CTAs, gentle emphasis. Never life-safety red.</div>
+            <div class="role-where">--p31-coral</div>
+          </div>
+          <div class="role-card">
+            <div class="role-swatch" style="background: var(--p31-phosphorus); box-shadow: 0 4px 14px rgba(59,163,114,0.3);"></div>
+            <div class="role-name">Together · Belonging</div>
+            <div class="role-job">"We are here." Co-presence, shared state, growth, success.</div>
+            <div class="role-where">--p31-phosphorus · --p31-phosphor</div>
+          </div>
+          <div class="role-card">
+            <div class="role-swatch" style="background: var(--p31-amber); box-shadow: 0 4px 14px rgba(205,168,82,0.3);"></div>
+            <div class="role-name">Care · Soft attention</div>
+            <div class="role-job">"Worth noticing, not alarming." Non-critical highlights, in-progress states.</div>
+            <div class="role-where">--p31-amber</div>
+          </div>
+          <div class="role-card">
+            <div class="role-swatch" style="background: var(--p31-lavender); box-shadow: 0 4px 14px rgba(139,124,201,0.3);"></div>
+            <div class="role-name">Wonder · Curiosity</div>
+            <div class="role-job">"Look closer." Use sparingly — one hero strip, never every tile.</div>
+            <div class="role-where">--p31-lavender</div>
+          </div>
+        </div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Accessibility</div>
+          <h2 class="sb-h2">Contrast at a glance</h2>
+          <p class="sb-text">Every color combination shipped passes WCAG 2.1 AA for body text (4.5:1)
+          or AAA for large text (3:1). Test below.</p>
+        </div>
+        
+        <div class="contrast-grid">
+          <div class="contrast-card" style="background: var(--p31-void); color: var(--p31-paper);">
+            <span class="contrast-ratio">15.2 : 1</span>
+            <strong>Paper on Void</strong>
+            <p style="font-size:13px; opacity:0.8;">AAA · Headings safe at any size</p>
+          </div>
+          <div class="contrast-card" style="background: var(--p31-void); color: var(--p31-cloud);">
+            <span class="contrast-ratio">12.4 : 1</span>
+            <strong>Cloud on Void</strong>
+            <p style="font-size:13px; opacity:0.8;">AAA · Body text gold standard</p>
+          </div>
+          <div class="contrast-card" style="background: var(--p31-surface); color: var(--p31-cloud);">
+            <span class="contrast-ratio">10.8 : 1</span>
+            <strong>Cloud on Surface</strong>
+            <p style="font-size:13px; opacity:0.8;">AAA · Card body text</p>
+          </div>
+          <div class="contrast-card" style="background: var(--p31-void); color: var(--p31-muted);">
+            <span class="contrast-ratio">5.6 : 1</span>
+            <strong>Muted on Void</strong>
+            <p style="font-size:13px; opacity:0.8;">AA · Secondary, large only</p>
+          </div>
+          <div class="contrast-card" style="background: var(--p31-teal); color: var(--p31-void);">
+            <span class="contrast-ratio">7.1 : 1</span>
+            <strong>Void on Teal</strong>
+            <p style="font-size:13px; opacity:0.8;">AAA · Primary button text</p>
+          </div>
+          <div class="contrast-card" style="background: var(--p31-coral); color: var(--p31-void);">
+            <span class="contrast-ratio">5.9 : 1</span>
+            <strong>Void on Coral</strong>
+            <p style="font-size:13px; opacity:0.8;">AA · Secondary button</p>
+          </div>
+        </div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Usage</div>
+          <h2 class="sb-h2">In your CSS</h2>
+        </div>
+        
+        ${code(`/* Always reach for tokens, never hex */
+.my-card {
+  background: var(--p31-surface);
+  color: var(--p31-cloud);
+  border: 1px solid var(--p31-border-subtle);
+}
+
+.my-card:hover {
+  border-color: var(--p31-primary);   /* role-based, theme-aware */
+  background: var(--p31-surface2);
+}
+
+.my-card.featured {
+  background: var(--p31-coral);       /* brand-anchored, recognition */
+  color: var(--p31-void);
+}
+
+/* Layered glass */
+.glass-panel {
+  background: var(--p31-glass-surface);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--p31-glass-border);
+}`, 'css', 'Color tokens')}
+        
+        ${callout('warn', 'Common mistake', 'Don\'t use brand colors for state. <code>--p31-coral</code> isn\'t "warning" — it\'s coral. For state, use semantic roles like <code>--p31-primary</code> or pair with text and icons.')}
+      </section>
+    `;
+    
+    renderShell({
+      activeId: 'color',
+      breadcrumb: [
+        { href: '/stylebook/', label: 'Stylebook' },
+        { href: '/stylebook/', label: 'Foundations' },
+        { label: 'Color' }
+      ],
+      title: 'Color',
+      subtitle: 'Living tokens that adapt to theme, mode, and accessibility preferences. Click any swatch to copy.',
+      meta: [
+        { label: 'Tokens', value: '40+' },
+        { label: 'WCAG', value: 'AA / AAA' },
+        { label: 'Themes', value: '6' }
+      ],
+      content
+    });
+    
+    // Compute hex values from CSS vars
+    setTimeout(() => {
+      const tokens = ['void','surface','surface2','surface3','paper','cloud','muted','ink','coral','teal','cyan','butter','lavender','phosphorus','phosphor'];
+      tokens.forEach(t => {
+        const el = document.getElementById('hex-' + t);
+        if (!el) return;
+        const v = getComputedStyle(document.documentElement).getPropertyValue('--p31-' + t).trim();
+        el.textContent = v;
+      });
+    }, 100);
+    
+    window.p31Theme.onChange(() => {
+      setTimeout(() => {
+        const tokens = ['void','surface','surface2','surface3','paper','cloud','muted','ink','coral','teal','cyan','butter','lavender','phosphorus','phosphor'];
+        tokens.forEach(t => {
+          const el = document.getElementById('hex-' + t);
+          if (!el) return;
+          const v = getComputedStyle(document.documentElement).getPropertyValue('--p31-' + t).trim();
+          el.textContent = v;
+        });
+      }, 50);
+    });
+  </script>
+</body>
+</html>

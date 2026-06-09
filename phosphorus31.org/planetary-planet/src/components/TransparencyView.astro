@@ -1,0 +1,245 @@
+---
+import LiveLedger from './LiveLedger.jsx';
+---
+
+<main class="animate-[fadeIn_0.4s_ease-out] bg-white min-h-screen pb-24">
+  {/* Header */}
+  <div class="bg-espresso text-cloud pt-32 pb-20 px-6">
+    <div class="max-w-5xl mx-auto">
+      <div class="text-butter font-bold tracking-widest uppercase text-sm mb-4">Radical Transparency</div>
+      <h1 class="text-5xl font-heading font-black mb-6">The Glass Box</h1>
+      <p class="text-xl opacity-80 max-w-2xl">
+        <strong class="text-teal-600">Bottom Line Up Front:</strong> P31 Labs, Inc. operates at zero cost to families. We don't hide our numbers because there's nothing to hide. Every dollar, every line of code, every decision is public.
+      </p>
+    </div>
+  </div>
+
+  <div class="max-w-5xl mx-auto px-6 -mt-10">
+
+    {/* Top Level Stats */}
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+      <div class="bg-white p-6 rounded-2xl shadow-xl border border-cloud">
+        <div class="text-sm font-bold text-espresso/50 uppercase mb-2">Revenue to Date</div>
+        <div class="text-4xl font-heading font-black text-teal-600">$0</div>
+        <div class="text-sm text-espresso/50 mt-4">Pre-revenue. Development is volunteer labor.</div>
+      </div>
+      <div class="bg-white p-6 rounded-2xl shadow-xl border border-cloud">
+        <div class="text-sm font-bold text-espresso/50 uppercase mb-2">Operating Expenses</div>
+        <div class="text-4xl font-heading font-black text-espresso">$0<span class="text-lg opacity-50">/mo</span></div>
+        <div class="text-sm text-espresso/50 mt-4">Cloudflare free tier. No paid services.</div>
+      </div>
+      <div class="bg-white p-6 rounded-2xl shadow-xl border border-cloud">
+        <div class="text-sm font-bold text-espresso/50 uppercase mb-2">Entity Status</div>
+        <div class="text-lg font-heading font-black text-coral-500">P31 Labs, Inc.</div>
+        <div class="text-sm text-espresso/50 mt-4">GA Nonprofit Corp. &#xB7; 501(c)(3) application pending</div>
+      </div>
+    </div>
+
+    {/* Test Counts */}
+    <div class="mb-16">
+      <h3 class="text-2xl font-heading font-bold text-espresso mb-6">Test Coverage</h3>
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+        <div class="bg-cloud/30 p-5 rounded-xl border border-cloud">
+          <div class="text-2xl font-heading font-black text-teal-600 mb-1">413</div>
+          <div class="font-bold text-espresso text-sm">BONDING</div>
+          <div class="text-xs text-espresso/50">30 test suites</div>
+        </div>
+        <div class="bg-cloud/30 p-5 rounded-xl border border-cloud">
+          <div class="text-2xl font-heading font-black text-coral-500 mb-1">185</div>
+          <div class="font-bold text-espresso text-sm">Spaceship Earth</div>
+          <div class="text-xs text-espresso/50">Core systems</div>
+        </div>
+        <div class="bg-cloud/30 p-5 rounded-xl border border-cloud">
+          <div class="text-2xl font-heading font-black text-butter mb-1">53</div>
+          <div class="font-bold text-espresso text-sm">The Buffer</div>
+          <div class="text-xs text-espresso/50">8 suites — Fawn Guard + Chaos</div>
+        </div>
+        <div class="bg-cloud/30 p-5 rounded-xl border border-cloud">
+          <div class="text-2xl font-heading font-black text-lavender mb-1">43</div>
+          <div class="font-bold text-espresso text-sm">Discord Bot</div>
+          <div class="text-xs text-espresso/50">p31-bot commands</div>
+        </div>
+        <div class="bg-cloud/30 p-5 rounded-xl border border-cloud">
+          <div class="text-2xl font-heading font-black text-teal-600 mb-1">4</div>
+          <div class="font-bold text-espresso text-sm">Genesis Gate</div>
+          <div class="text-xs text-espresso/50">v4.1.0 ESM preset</div>
+        </div>
+        <div class="bg-teal-600/10 p-5 rounded-xl border border-teal-600/30">
+          <div class="text-2xl font-heading font-black text-teal-600 mb-1">659+</div>
+          <div class="font-bold text-espresso text-sm">Total</div>
+          <div class="text-xs text-espresso/50">Across all packages</div>
+        </div>
+      </div>
+    </div>
+
+    {/* GitHub Repos */}
+    <div class="mb-16">
+      <h3 class="text-2xl font-heading font-bold text-espresso mb-6">Source Code</h3>
+      <div class="bg-espresso p-8 rounded-2xl">
+        <div class="flex items-center gap-4 mb-6">
+          <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+          <div>
+            <a href="https://github.com/p31labs" target="_blank" rel="noopener noreferrer" class="text-xl font-heading font-bold text-white hover:text-teal-400 transition-colors">github.com/p31labs</a>
+            <div class="text-white/50 text-sm">All repositories public &#xB7; MIT License</div>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+          {["andromeda (monorepo)", "bonding", "spaceship-earth", "kenosis-mesh", "genesis-gate", "p31-bot"].map(repo => (
+            <div class="bg-white/10 text-white/70 text-xs font-mono px-3 py-2 rounded-lg">{repo}</div>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    {/* Zenodo Metrics */}
+    <div class="mb-16">
+      <h3 class="text-2xl font-heading font-bold text-espresso mb-6">Research Impact</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-white p-6 rounded-xl border border-cloud">
+          <div class="text-sm font-bold text-espresso/50 uppercase mb-2">Tetrahedron Protocol</div>
+          <div class="font-mono text-xs text-espresso/40 mb-3">DOI: 10.5281/zenodo.19004485 (Paper I)</div>
+          <div class="flex gap-6">
+            <div>
+              <div class="text-2xl font-heading font-black text-teal-600">280+</div>
+              <div class="text-xs text-espresso/50">Views</div>
+            </div>
+            <div>
+              <div class="text-2xl font-heading font-black text-teal-600">240+</div>
+              <div class="text-xs text-espresso/50">Downloads</div>
+            </div>
+          </div>
+        </div>
+        <div class="bg-white p-6 rounded-xl border border-cloud">
+          <div class="text-sm font-bold text-espresso/50 uppercase mb-2">Genesis Whitepaper v1.1</div>
+          <div class="font-mono text-xs text-espresso/40 mb-3">DOI: 10.5281/zenodo.19411363</div>
+          <div class="flex gap-6">
+            <div>
+              <div class="text-2xl font-heading font-black text-coral-500">April</div>
+              <div class="text-xs text-espresso/50">2026</div>
+            </div>
+            <div>
+              <div class="text-2xl font-heading font-black text-coral-500">Live</div>
+              <div class="text-xs text-espresso/50">Open Access</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {/* CWP/WCD Framework */}
+    <div class="mb-16">
+      <h3 class="text-2xl font-heading font-bold text-espresso mb-4">Work Control Framework</h3>
+      <div class="bg-cloud/30 p-8 rounded-2xl border border-cloud">
+        <p class="text-espresso/70 mb-4 leading-relaxed">
+          P31 Labs uses a Controlled Work Package (CWP) system with Work Control Documents (WCDs) to track every task. Every feature, every bug fix, every legal filing, every grant application has a WCD with explicit acceptance criteria. 88+ WCDs documented in the public registry.
+        </p>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div class="bg-white p-4 rounded-xl text-center border border-cloud">
+            <div class="text-xl font-heading font-black text-teal-600">10+</div>
+            <div class="text-xs text-espresso/50">Active CWPs</div>
+          </div>
+          <div class="bg-white p-4 rounded-xl text-center border border-cloud">
+            <div class="text-xl font-heading font-black text-teal-600">88+</div>
+            <div class="text-xs text-espresso/50">Total WCDs</div>
+          </div>
+          <div class="bg-white p-4 rounded-xl text-center border border-cloud">
+            <div class="text-xl font-heading font-black text-teal-600">4</div>
+            <div class="text-xs text-espresso/50">Parallel Axes</div>
+          </div>
+          <div class="bg-white p-4 rounded-xl text-center border border-cloud">
+            <div class="text-xl font-heading font-black text-teal-600">100%</div>
+            <div class="text-xs text-espresso/50">Public</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {/* How We Operate */}
+    <div class="mb-16">
+      <h3 class="text-2xl font-heading font-bold text-espresso mb-6">How P31 Labs, Inc. Operates at $0</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-cloud/30 p-6 rounded-xl border border-cloud">
+          <div class="font-bold text-espresso mb-2">Hosting</div>
+          <p class="text-sm text-espresso/70">Cloudflare Pages (free tier) — static site hosting for phosphorus31.org, p31ca.org, and bonding.p31ca.org. Auto-SSL, global CDN.</p>
+        </div>
+        <div class="bg-cloud/30 p-6 rounded-xl border border-cloud">
+          <div class="font-bold text-espresso mb-2">Multiplayer Relay</div>
+          <p class="text-sm text-espresso/70">Cloudflare Workers + KV (free tier) — 100K reads/day, 1K writes/day. Sufficient for BONDING's bulletin-board multiplayer.</p>
+        </div>
+        <div class="bg-cloud/30 p-6 rounded-xl border border-cloud">
+          <div class="font-bold text-espresso mb-2">Development</div>
+          <p class="text-sm text-espresso/70">100% volunteer. TypeScript, React, Three.js. 659+ automated tests. Zero paid dependencies.</p>
+        </div>
+        <div class="bg-cloud/30 p-6 rounded-xl border border-cloud">
+          <div class="font-bold text-espresso mb-2">Source Code</div>
+          <p class="text-sm text-espresso/70">GitHub (free). All repositories public under MIT license. Anyone can audit, fork, or contribute.</p>
+        </div>
+      </div>
+    </div>
+
+    {/* Financial section */}
+    <div class="mb-16">
+      <h3 class="text-2xl font-heading font-bold text-espresso mb-2">Financials</h3>
+      <p class="text-sm text-espresso/50 mb-6">
+        Pre-revenue. Donation channels: Stripe (phosphorus31.org/donate) and Ko-fi (0% platform fee). Fiscal sponsorship via Mission.Earth pending acceptance.
+      </p>
+      <div class="bg-white rounded-2xl border border-cloud overflow-hidden shadow-sm">
+        <LiveLedger client:load />
+      </div>
+    </div>
+
+    {/* Governance Documents */}
+    <div class="bg-cloud/50 rounded-3xl p-8 md:p-12">
+      <h3 class="text-2xl font-heading font-bold text-espresso mb-4">Governance Documents</h3>
+      <p class="text-espresso/70 mb-8 max-w-2xl">
+        P31 Labs, Inc. incorporated as a Georgia Domestic Nonprofit Corporation on April 3, 2026. Form 1023-EZ (501(c)(3) determination) in process.
+      </p>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="flex items-center gap-3 bg-white p-4 rounded-xl border border-cloud">
+          <div class="text-teal-600">&#x1F4C4;</div>
+          <div>
+            <div class="font-bold text-sm text-espresso">Articles of Incorporation</div>
+            <div class="text-xs text-espresso/50">Filed April 3, 2026 &#xB7; Georgia SoS</div>
+          </div>
+        </div>
+        <div class="flex items-center gap-3 bg-white p-4 rounded-xl border border-cloud">
+          <div class="text-espresso/40">&#x1F4C4;</div>
+          <div>
+            <div class="font-bold text-sm text-espresso/60">Form 1023-EZ</div>
+            <div class="text-xs text-espresso/50">501(c)(3) application in process</div>
+          </div>
+        </div>
+        <div class="flex items-center gap-3 bg-white p-4 rounded-xl border border-cloud">
+          <div class="text-espresso/40">&#x1F4C4;</div>
+          <div>
+            <div class="font-bold text-sm text-espresso/60">Bylaws</div>
+            <div class="text-xs text-espresso/50">In preparation</div>
+          </div>
+        </div>
+        <div class="flex items-center gap-3 bg-white p-4 rounded-xl border border-cloud">
+          <div class="text-espresso/40">&#x1F4C4;</div>
+          <div>
+            <div class="font-bold text-sm text-espresso/60">Annual Report</div>
+            <div class="text-xs text-espresso/50">Q2 2026</div>
+          </div>
+        </div>
+        <div class="flex items-center gap-3 bg-white p-4 rounded-xl border border-cloud">
+          <div class="text-teal-600">&#x1F4C4;</div>
+          <div>
+            <a href="https://github.com/p31labs" target="_blank" rel="noopener noreferrer" class="font-bold text-sm text-teal-600 hover:underline">Open Source Licenses</a>
+            <div class="text-xs text-espresso/50">MIT &#xB7; all repositories</div>
+          </div>
+        </div>
+        <div class="flex items-center gap-3 bg-white p-4 rounded-xl border border-cloud">
+          <div class="text-espresso/40">&#x1F4C4;</div>
+          <div>
+            <div class="font-bold text-sm text-espresso/60">Conflict of Interest Policy</div>
+            <div class="text-xs text-espresso/50">In preparation</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>

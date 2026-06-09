@@ -1,0 +1,29 @@
+# Cloudflare Worker Configuration
+name = "p31-social-broadcast"
+main = "p31_social_broadcast_worker.js"
+compatibility_date = "2024-06-12"
+
+# Environment Variables
+[vars]
+ENVIRONMENT = "production"
+UPSTASH_REST_URL = "https://upstash.redisflare.com"
+
+# Upstash Redis credentials - set as secrets
+# npx wrangler secret put UPSTASH_TOKEN
+
+# Environment-specific configurations
+[env.development]
+name = "p31-mesh-discord-worker-dev"
+
+[env.staging]
+name = "p31-mesh-discord-worker-staging"
+
+# Routes
+routes = [
+  { pattern = "mesh.p31ca.org/*", zone_name = "p31ca.org" }
+]
+
+# Build configuration
+[build]
+command = "npm run build"
+watch_dir = "src"

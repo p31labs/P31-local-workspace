@@ -1,0 +1,33 @@
+{
+  "name": "p31-software",
+  "private": true,
+  "packageManager": "pnpm@10.32.1",
+  "pnpm": {
+    "overrides": {
+      "@vitest/mocker>vite": "npm:vite@^6.0.0"
+    }
+  },
+  "scripts": {
+    "lint": "node -e \"process.exit(0)\"",
+    "update-dois": "node ops/update-dois.js",
+    "forge:omnibus": "node scripts/forge-omnibus-all.cjs",
+    "build:frontend": "npm run build --prefix frontend",
+    "omnibus:ship": "npm run forge:omnibus && npm run build:frontend",
+    "manifest:workers": "node scripts/generate-worker-manifest.mjs",
+    "turbo": "turbo",
+    "typecheck": "turbo run typecheck",
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "check:p31-delta-hiring": "turbo run check --filter=p31-delta-hiring",
+    "dev": "turbo run dev --parallel",
+    "clean": "turbo run clean",
+    "google-bridge:preflight": "npm run preflight --prefix p31-google-bridge",
+    "google-bridge:dry": "npm run deploy --prefix p31-google-bridge -- --dry-run",
+    "google-bridge:verify": "npm run verify --prefix p31-google-bridge"
+  },
+  "devDependencies": {
+    "turbo": "^2.3.0",
+    "vitest": "^4.1.2",
+    "wrangler": "^4.85.0"
+  }
+}

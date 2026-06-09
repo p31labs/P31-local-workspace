@@ -1,0 +1,131 @@
+{
+  "schema": "p31.labsEducationCurriculum/0.2.0",
+  "updated": "2026-04-27",
+  "title": "P31 Labs education — machine index",
+  "narrative": "Static curriculum (E0–E2) plus gated E3+ portal at education/portal/ — Workers GET /api/education/progress/:subject_id (opaque p31_subject_id, D1). Normative plan: P31 home docs/PLAN-P31-LABS-EDUCATION-SITE.md",
+  "phases": { "E0": true, "E1": true, "E2": true, "E3": true, "E4": false },
+  "tracks": [
+    {
+      "id": "edge-mesh",
+      "title": "Edge & mesh literacy",
+      "summary": "Read the fleet, understand K₄, and use public hub tools without leaking secrets into static pages.",
+      "href": "/education/tracks/edge-mesh.html",
+      "order": 1,
+      "moduleIds": ["local-first-setup", "mesh-maps"]
+    },
+    {
+      "id": "build-create-connect",
+      "title": "Build · Create · Connect",
+      "summary": "Ephemeralization, ethical engagement, and how hub products relate to the mission.",
+      "href": "/education/tracks/build-create-connect.html",
+      "order": 2,
+      "moduleIds": ["mission-arc", "tools-map"]
+    },
+    {
+      "id": "integrity-literacy",
+      "title": "Security & integrity literacy",
+      "summary": "PQC at a glance, verified bundles, and when Workers belong in the story.",
+      "href": "/education/tracks/integrity-literacy.html",
+      "order": 3,
+      "moduleIds": ["integrity-basics", "when-workers"]
+    }
+  ],
+  "modules": [
+    {
+      "id": "local-first-setup",
+      "title": "Local-first setup",
+      "summary": "What to install (Node, git, editor) to follow labs without cloud accounts.",
+      "trackId": "edge-mesh",
+      "href": "/education/modules/local-first-setup.html",
+      "order": 1,
+      "labIds": ["lab-doc-library-tour", "lab-mesh-snapshot"]
+    },
+    {
+      "id": "mesh-maps",
+      "title": "Maps of the mesh",
+      "summary": "Connect, fleet demo, and where live URLs are grounded (p31-constants, not ad-hoc).",
+      "trackId": "edge-mesh",
+      "href": "/education/modules/mesh-maps.html",
+      "order": 2,
+      "labIds": ["lab-mesh-snapshot", "lab-geodesic-first-room"]
+    },
+    {
+      "id": "mission-arc",
+      "title": "Mission & narrative arc",
+      "summary": "Wye → Delta, onboarding, and why the public site stays calm.",
+      "trackId": "build-create-connect",
+      "href": "/education/modules/mission-arc.html",
+      "order": 1,
+      "labIds": ["lab-cognitive-passport-slice"]
+    },
+    {
+      "id": "tools-map",
+      "title": "Tool chain map",
+      "summary": "How verify, hub:ci, and alignment registry relate — without becoming a second LMS.",
+      "trackId": "build-create-connect",
+      "href": "/education/modules/tools-map.html",
+      "order": 2,
+      "labIds": ["lab-doc-library-tour"]
+    },
+    {
+      "id": "integrity-basics",
+      "title": "Ground truth & PQC",
+      "summary": "What ground-truth locks, and where quantum-core fits in the stack.",
+      "trackId": "integrity-literacy",
+      "href": "/education/modules/integrity-basics.html",
+      "order": 1,
+      "labIds": []
+    },
+    {
+      "id": "when-workers",
+      "title": "When to add a Worker",
+      "summary": "State, auth, and allowlist discipline — E3 is optional and not shipped here.",
+      "trackId": "integrity-literacy",
+      "href": "/education/modules/when-workers.html",
+      "order": 2,
+      "labIds": []
+    }
+  ],
+  "labs": [
+    {
+      "id": "lab-mesh-snapshot",
+      "title": "Lab: mesh snapshot (read-only)",
+      "moduleId": "mesh-maps",
+      "href": "/education/labs/mesh-snapshot.html",
+      "objectives": [
+        "Open the fleet demo and name one mesh URL you expect to be live in prod",
+        "Avoid pasting personal tokens into the education pages"
+      ]
+    },
+    {
+      "id": "lab-cognitive-passport-slice",
+      "title": "Lab: cognitive passport — machine slice",
+      "moduleId": "mission-arc",
+      "href": "/education/labs/cognitive-passport-slice.html",
+      "objectives": [
+        "Download JSON from the passport generator and confirm schema id",
+        "Store drafts locally; no cloud upload in this static tier"
+      ]
+    },
+    {
+      "id": "lab-doc-library-tour",
+      "title": "Lab: doc library search",
+      "moduleId": "local-first-setup",
+      "href": "/education/labs/doc-library-tour.html",
+      "objectives": [
+        "Run one search in /doc-library and open one normative doc from results",
+        "Note the hub vs home repo layout from AGENTS or P31-ROOT-MAP"
+      ]
+    },
+    {
+      "id": "lab-geodesic-first-room",
+      "title": "Lab: Geodesic first room (optional network)",
+      "moduleId": "mesh-maps",
+      "href": "/education/labs/geodesic-first-room.html",
+      "objectives": [
+        "Complete one track step in the geodesic coach (local storage)",
+        "If opening live room, stay within public, non-PII use"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0a0c10" />
+  <meta name="description" content="P31 Universal DELTA Language — searchable glossary: same void, same sky, no jarring cuts." />
+  <meta name="p31-delta-json-href" content="/p31-delta-language.json" />
+  <title>DELTA Language · P31</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <!-- No external fonts — avoids net::ERR_NAME_NOT_RESOLVED when fonts.googleapis.com is blocked/offline. -->
+  <style>
+    :root {
+      --font-sans: system-ui, ui-sans-serif, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --font-mono: ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, Consolas, "DejaVu Sans Mono", monospace;
+      --void: #0a0c10;
+      --panel: #12151c;
+      --cloud: #d8d6d0;
+      --cloud-dim: rgba(216, 214, 208, 0.55);
+      --teal: #5DCAA5;
+      --teal-dim: rgba(37, 137, 125, 0.35);
+      --coral: #cc6247;
+      --hearth: #cda852;
+      --border: rgba(255, 255, 255, 0.06);
+      --radius: 12px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: var(--font-sans);
+      background: var(--void);
+      color: var(--cloud);
+      line-height: 1.55;
+      font-size: 16px;
+    }
+    .sky-gradient {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background:
+        radial-gradient(ellipse 120% 80% at 50% -20%, rgba(37, 137, 125, 0.12), transparent 50%),
+        radial-gradient(ellipse 80% 50% at 100% 50%, rgba(204, 98, 71, 0.06), transparent 45%),
+        radial-gradient(ellipse 60% 40% at 0% 80%, rgba(205, 168, 82, 0.05), transparent 40%);
+    }
+    .wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 52rem;
+      margin: 0 auto;
+      padding: 2.5rem 1.25rem 4rem;
+    }
+    header.hero {
+      margin-bottom: 2.5rem;
+    }
+    .delta-mark {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 0.75rem;
+    }
+    h1 {
+      font-size: clamp(1.75rem, 4vw, 2.35rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin: 0 0 0.75rem;
+      line-height: 1.15;
+    }
+    .lede {
+      color: var(--cloud-dim);
+      font-size: 1.05rem;
+      max-width: 42em;
+    }
+    .epigraph {
+      margin-top: 1.25rem;
+      padding-left: 1rem;
+      border-left: 3px solid var(--teal-dim);
+      font-style: italic;
+      color: var(--cloud-dim);
+      font-size: 0.95rem;
+    }
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: center;
+      margin: 2rem 0 1.5rem;
+    }
+    label.sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      border: 0;
+    }
+    #q {
+      flex: 1;
+      min-width: 200px;
+      padding: 0.65rem 1rem;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: var(--panel);
+      color: var(--cloud);
+      font-family: inherit;
+      font-size: 1rem;
+    }
+    #q:focus {
+      outline: 2px solid var(--teal);
+      outline-offset: 2px;
+    }
+    #q::placeholder { color: rgba(216, 214, 208, 0.35); }
+    .pill {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.35rem 0.65rem;
+      border-radius: 999px;
+      background: rgba(37, 137, 125, 0.15);
+      color: var(--teal);
+      border: 1px solid var(--teal-dim);
+    }
+    section {
+      margin-bottom: 2.75rem;
+    }
+    h2 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      margin: 0 0 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    h2 .n {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      font-weight: 500;
+      color: var(--cloud-dim);
+    }
+    .anchor-grid {
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    }
+    .anchor-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.1rem 1.25rem;
+    }
+    .anchor-card h3 {
+      margin: 0 0 0.5rem;
+      font-size: 1rem;
+      color: var(--hearth);
+    }
+    .anchor-card p {
+      margin: 0;
+      font-size: 0.9rem;
+      color: var(--cloud-dim);
+    }
+    .group {
+      margin-bottom: 1.75rem;
+    }
+    .group-title {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 0.75rem;
+    }
+    dl.term-list {
+      margin: 0;
+      display: grid;
+      gap: 0.65rem;
+    }
+    .term-row {
+      display: grid;
+      grid-template-columns: minmax(7rem, 10rem) 1fr;
+      gap: 0.75rem 1rem;
+      padding: 0.65rem 0;
+      border-bottom: 1px solid var(--border);
+      align-items: baseline;
+    }
+    @media (max-width: 560px) {
+      .term-row { grid-template-columns: 1fr; gap: 0.25rem; }
+    }
+    .term-row dt {
+      margin: 0;
+      font-weight: 600;
+      color: var(--cloud);
+      font-size: 0.95rem;
+    }
+    .term-row dd {
+      margin: 0;
+      font-size: 0.88rem;
+      color: var(--cloud-dim);
+    }
+    .term-row.hidden { display: none; }
+    .group.hidden .term-row:not(.hidden) ~ .group-title,
+    .group.hidden { display: none; }
+    table.forbidden {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+    table.forbidden th {
+      text-align: left;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--coral);
+      padding: 0.5rem 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+    table.forbidden td {
+      padding: 0.65rem 0.75rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    table.forbidden td:first-child { color: var(--cloud-dim); }
+    table.forbidden td:last-child { color: var(--teal); }
+    .surface-grid {
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    }
+    .surface-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem 1.15rem;
+    }
+    .surface-card h3 {
+      margin: 0 0 0.35rem;
+      font-size: 0.95rem;
+    }
+    .surface-card .host {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--hearth);
+      letter-spacing: 0.06em;
+      margin-bottom: 0.65rem;
+    }
+    .surface-card ul {
+      margin: 0;
+      padding-left: 1.1rem;
+      font-size: 0.82rem;
+      color: var(--cloud-dim);
+    }
+    .surface-card ul.allow { border-left: 2px solid var(--teal); padding-left: 0.85rem; margin-left: 0.15rem; list-style: none; }
+    .surface-card ul.avoid { border-left: 2px solid var(--coral); padding-left: 0.85rem; margin-left: 0.15rem; list-style: none; margin-top: 0.5rem; }
+    .error-banner {
+      background: rgba(204, 98, 71, 0.12);
+      border: 1px solid rgba(204, 98, 71, 0.35);
+      color: var(--cloud);
+      padding: 1rem 1.25rem;
+      border-radius: var(--radius);
+      margin-bottom: 1.5rem;
+    }
+    footer.doc {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.82rem;
+      color: var(--cloud-dim);
+    }
+    footer.doc a {
+      color: var(--teal);
+      text-decoration: none;
+    }
+    footer.doc a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="sky-gradient" aria-hidden="true"></div>
+  <div class="wrap">
+    <header class="hero">
+      <p class="delta-mark">P31 · Universal DELTA</p>
+      <h1>Same void. Same sky. Walk the rooms.</h1>
+      <p class="lede">
+        A compact vocabulary for how P31 surfaces feel — altitude instead of app-hopping,
+        bridges between minds, and topology words shared with power and mesh canon.
+      </p>
+      <p class="epigraph" id="epigraph-slot"></p>
+    </header>
+
+    <div id="load-error" class="error-banner" hidden role="alert"></div>
+
+    <div class="toolbar">
+      <label class="sr-only" for="q">Filter terms</label>
+      <input type="search" id="q" placeholder="Filter terms, labels, definitions…" autocomplete="off" />
+      <span class="pill" id="count-pill">…</span>
+    </div>
+
+    <section aria-labelledby="anchors-h">
+      <h2 id="anchors-h">Anchors <span class="n">non-negotiable</span></h2>
+      <div class="anchor-grid" id="anchors-root"></div>
+    </section>
+
+    <section aria-labelledby="terms-h">
+      <h2 id="terms-h">Terms <span class="n">by group</span></h2>
+      <div id="terms-root"></div>
+    </section>
+
+    <section aria-labelledby="forbidden-h">
+      <h2 id="forbidden-h">Forbidden <span class="n">substitutions</span></h2>
+      <table class="forbidden" id="forbidden-root">
+        <thead><tr><th>Avoid</th><th>Prefer</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <section aria-labelledby="surface-h">
+      <h2 id="surface-h">Surface phrase packs <span class="n">host minds</span></h2>
+      <div class="surface-grid" id="surface-root"></div>
+    </section>
+
+    <footer class="doc">
+      Normative spec: <a id="delta-spec-md" href="https://github.com/p31labs/bonding-soup/blob/main/docs/P31-DELTA-LANGUAGE.md">docs/P31-DELTA-LANGUAGE.md</a>
+      · Registry <code>p31.deltaLanguage/1.0.0</code>
+      · Hub narrative: <a href="/delta.html">Wye → Delta</a>
+    </footer>
+  </div>
+
+  <script type="module">
+    const meta = document.querySelector('meta[name="p31-delta-json-href"]');
+    const href = meta && meta.getAttribute("content");
+    const errEl = document.getElementById("load-error");
+
+    function fail(msg) {
+      errEl.hidden = false;
+      errEl.textContent = msg;
+    }
+
+    if (!href) {
+      fail("Missing meta p31-delta-json-href.");
+    } else {
+      try {
+        const res = await fetch(href, { credentials: "same-origin" });
+        if (!res.ok) throw new Error(res.status + " " + res.statusText);
+        const data = await res.json();
+
+        document.getElementById("epigraph-slot").textContent = data.epigraph || "";
+
+        const anchorsRoot = document.getElementById("anchors-root");
+        for (const a of data.anchors || []) {
+          const el = document.createElement("article");
+          el.className = "anchor-card";
+          el.innerHTML = "<h3>" + escapeHtml(a.label) + "</h3><p>" + escapeHtml(a.definition) + "</p>";
+          anchorsRoot.appendChild(el);
+        }
+
+        const byGroup = {};
+        for (const t of data.terms || []) {
+          const g = t.group || "general";
+          if (!byGroup[g]) byGroup[g] = [];
+          byGroup[g].push(t);
+        }
+
+        const termsRoot = document.getElementById("terms-root");
+        const groupOrder = ["foundation", "scale", "cognition", "topology", "operator", "navigation", "procedural"];
+        const sortedGroups = Object.keys(byGroup).sort((a, b) => {
+          const ia = groupOrder.indexOf(a);
+          const ib = groupOrder.indexOf(b);
+          const sa = ia === -1 ? 99 : ia;
+          const sb = ib === -1 ? 99 : ib;
+          if (sa !== sb) return sa - sb;
+          return a.localeCompare(b);
+        });
+
+        for (const g of sortedGroups) {
+          const wrap = document.createElement("div");
+          wrap.className = "group";
+          wrap.dataset.group = g;
+          const gt = document.createElement("div");
+          gt.className = "group-title";
+          gt.textContent = g;
+          wrap.appendChild(gt);
+          const dl = document.createElement("dl");
+          dl.className = "term-list";
+          for (const t of byGroup[g]) {
+            const row = document.createElement("div");
+            row.className = "term-row";
+            row.dataset.search = (t.label + " " + t.definition + " " + (t.id || "")).toLowerCase();
+            row.innerHTML = "<dt>" + escapeHtml(t.label) + "</dt><dd>" + escapeHtml(t.definition) + "</dd>";
+            dl.appendChild(row);
+          }
+          wrap.appendChild(dl);
+          termsRoot.appendChild(wrap);
+        }
+
+        const tb = document.querySelector("#forbidden-root tbody");
+        for (const f of data.forbidden || []) {
+          const tr = document.createElement("tr");
+          tr.dataset.search = ((f.avoid || "") + " " + (f.prefer || "")).toLowerCase();
+          tr.innerHTML = "<td>" + escapeHtml(f.avoid) + "</td><td>" + escapeHtml(f.prefer) + "</td>";
+          tb.appendChild(tr);
+        }
+
+        const surfRoot = document.getElementById("surface-root");
+        for (const s of data.surfacePhrases || []) {
+          const card = document.createElement("article");
+          card.className = "surface-card";
+          card.dataset.search = ((s.id || "") + " " + (s.host || "") + (s.allowed || []).join(" ") + (s.avoid || []).join(" ")).toLowerCase();
+          let inner = "<p class=\"host\">" + escapeHtml(s.host || "") + "</p><h3>" + escapeHtml(s.id || "") + "</h3>";
+          inner += "<ul class=\"allow\">";
+          for (const line of s.allowed || []) inner += "<li>" + escapeHtml(line) + "</li>";
+          inner += "</ul><ul class=\"avoid\">";
+          for (const line of s.avoid || []) inner += "<li>" + escapeHtml(line) + "</li>";
+          inner += "</ul>";
+          card.innerHTML = inner;
+          surfRoot.appendChild(card);
+        }
+
+        const q = document.getElementById("q");
+        const pill = document.getElementById("count-pill");
+
+        function applyFilter() {
+          const needle = (q.value || "").trim().toLowerCase();
+          let n = 0;
+          document.querySelectorAll(".term-row").forEach((row) => {
+            const ok = !needle || row.dataset.search.includes(needle);
+            row.classList.toggle("hidden", !ok);
+            if (ok) n++;
+          });
+          document.querySelectorAll("#forbidden-root tbody tr").forEach((row) => {
+            const ok = !needle || row.dataset.search.includes(needle);
+            row.style.display = ok ? "" : "none";
+          });
+          document.querySelectorAll(".surface-card").forEach((card) => {
+            const ok = !needle || card.dataset.search.includes(needle);
+            card.style.display = ok ? "" : "none";
+          });
+          document.querySelectorAll(".group").forEach((g) => {
+            if (!needle) {
+              g.classList.remove("hidden");
+              return;
+            }
+            const visible = g.querySelectorAll(".term-row:not(.hidden)").length;
+            g.classList.toggle("hidden", visible === 0);
+          });
+          pill.textContent = needle ? n + " terms" : data.terms.length + " terms";
+        }
+
+        q.addEventListener("input", applyFilter);
+        pill.textContent = (data.terms || []).length + " terms";
+      } catch (e) {
+        fail("Could not load " + href + ": " + (e && e.message ? e.message : e));
+      }
+    }
+
+    function escapeHtml(s) {
+      return String(s)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+  </script>
+</body>
+</html>

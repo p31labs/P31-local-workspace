@@ -1,0 +1,43 @@
+name = "kenosis-mesh"
+main = "src/index.js"
+account_id = "ee05f70c889cb6f876b9925257e3a2fa"
+compatibility_date = "2026-03-17"
+workers_dev = true
+
+# AUTH_TOKEN: set via `npx wrangler secret put AUTH_TOKEN` — rotate the old value
+# (was erroneously committed as plaintext [vars]; see bouncer/SECURITY_SECRETS_MANIFEST.md)
+
+[build]
+command = ""
+
+[[durable_objects.bindings]]
+name = "R_NODE"
+class_name = "RNode"
+
+[[durable_objects.bindings]]
+name = "ANODE"
+class_name = "ANODE"
+
+[[durable_objects.bindings]]
+name = "BNODE"
+class_name = "BNODE"
+
+[[durable_objects.bindings]]
+name = "CNODE"
+class_name = "CNODE"
+
+[[durable_objects.bindings]]
+name = "DNODE"
+class_name = "DNODE"
+
+[[durable_objects.bindings]]
+name = "ENODE"
+class_name = "ENODE"
+
+[[durable_objects.bindings]]
+name = "FNODE"
+class_name = "FNODE"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = [ "RNode", "ANODE", "BNODE", "CNODE", "DNODE", "ENODE", "FNODE" ]

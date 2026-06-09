@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0f1115">
+  <title>P31 Stylebook · Welcome</title>
+  <meta name="description" content="The definitive design system for p31ca.org — 6 themes, smart adaptive engine, fluid motion, complete component library.">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="/p31-style.css">
+  <link rel="stylesheet" href="/lib/p31-fluid.css">
+  <link rel="stylesheet" href="/stylebook/_chrome.css">
+
+  <style>
+    /* Index-specific hero */
+    .home-hero {
+      position: relative;
+      padding: 64px 0 96px;
+      overflow: hidden;
+      margin: -48px -48px 0;
+      padding-left: 48px;
+      padding-right: 48px;
+    }
+    .home-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at top right, rgba(204, 98, 71, 0.15), transparent 50%),
+        radial-gradient(ellipse at bottom left, rgba(37, 137, 125, 0.15), transparent 50%);
+      pointer-events: none;
+    }
+    .home-hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--p31-border-subtle) 1px, transparent 1px),
+        linear-gradient(90deg, var(--p31-border-subtle) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+      -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+      pointer-events: none;
+      opacity: 0.5;
+    }
+    .home-hero-inner { position: relative; z-index: 1; max-width: 720px; }
+    .home-hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      background: var(--p31-surface);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: 999px;
+      font-family: var(--p31-font-mono);
+      font-size: 11px;
+      color: var(--p31-cyan);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 24px;
+    }
+    .home-hero-eyebrow::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      background: var(--p31-phosphor);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--p31-phosphor);
+    }
+    .home-hero-title {
+      font-size: clamp(2.5rem, 6vw, 5rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 0.95;
+      margin-bottom: 24px;
+      color: var(--p31-paper);
+    }
+    .home-hero-title .gradient {
+      background: linear-gradient(135deg, var(--p31-coral), var(--p31-teal), var(--p31-phosphor));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-size: 200% 200%;
+      animation: gradient-shift 8s ease infinite;
+    }
+    @keyframes gradient-shift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+    .home-hero-lead {
+      font-size: clamp(1.125rem, 2vw, 1.375rem);
+      line-height: 1.55;
+      color: var(--p31-cloud);
+      max-width: 560px;
+      margin-bottom: 32px;
+    }
+    .home-hero-cta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 24px;
+      background: var(--p31-paper);
+      color: var(--p31-void);
+      border: none;
+      border-radius: 10px;
+      font-family: var(--p31-font-sans);
+      font-size: 15px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s var(--p31-ease-fluid);
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 24px;
+      background: transparent;
+      color: var(--p31-cloud);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: 10px;
+      font-family: var(--p31-font-sans);
+      font-size: 15px;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .btn-ghost:hover { background: var(--p31-surface); border-color: var(--p31-primary); color: var(--p31-primary); }
+
+    /* Quick stats */
+    .home-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--p31-border-subtle);
+    }
+    @media (max-width: 700px) {
+      .home-stats { grid-template-columns: repeat(2, 1fr); }
+    }
+    .home-stat-num {
+      font-family: var(--p31-font-mono);
+      font-size: clamp(1.75rem, 3vw, 2.5rem);
+      font-weight: 700;
+      color: var(--p31-paper);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .home-stat-label {
+      font-size: 13px;
+      color: var(--p31-muted);
+    }
+
+    /* Feature cards */
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin: 32px 0;
+    }
+    .feature-card {
+      padding: 24px;
+      background: var(--p31-surface);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: 14px;
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.3s var(--p31-ease-fluid);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      position: relative;
+      overflow: hidden;
+    }
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      background: linear-gradient(135deg, var(--p31-primary), transparent 50%);
+      border-radius: 14px;
+      opacity: 0;
+      z-index: -1;
+      transition: opacity 0.3s;
+    }
+    .feature-card:hover {
+      transform: translateY(-4px);
+      border-color: transparent;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+    }
+    .feature-card:hover::before { opacity: 1; }
+    .feature-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: var(--p31-surface2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      color: var(--p31-primary);
+    }
+    .feature-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--p31-paper);
+    }
+    .feature-desc {
+      font-size: 14px;
+      line-height: 1.5;
+      color: var(--p31-cloud);
+      opacity: 0.85;
+    }
+    .feature-arrow {
+      margin-top: auto;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--p31-primary);
+      font-weight: 500;
+    }
+    .feature-arrow::after {
+      content: '→';
+      transition: transform 0.2s;
+    }
+    .feature-card:hover .feature-arrow::after {
+      transform: translateX(4px);
+    }
+
+    /* Theme preview strip */
+    .theme-strip {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 8px;
+      margin: 24px 0 48px;
+    }
+    @media (max-width: 700px) {
+      .theme-strip { grid-template-columns: repeat(3, 1fr); }
+    }
+    .theme-chip {
+      padding: 16px 12px;
+      background: var(--p31-surface);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s var(--p31-ease-fluid);
+      text-align: center;
+    }
+    .theme-chip:hover {
+      transform: translateY(-2px);
+      border-color: var(--p31-primary);
+    }
+    .theme-chip.active {
+      border-color: var(--p31-primary);
+      background: var(--p31-surface2);
+    }
+    .theme-chip-preview {
+      width: 100%;
+      height: 48px;
+      border-radius: 6px;
+      margin-bottom: 8px;
+    }
+    .theme-chip-name {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--p31-paper);
+    }
+    .theme-chip-scheme {
+      font-size: 10px;
+      color: var(--p31-muted);
+      font-family: var(--p31-font-mono);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+  </style>
+</head>
+<body>
+  <script type="module">
+    import { renderShell, code, callout, section } from '/stylebook/_chrome.js';
+    import { P31ThemeController, P31_THEMES } from '/lib/p31-theme-engine.mjs';
+    
+    window.p31Theme = new P31ThemeController({ defaultTheme: 'hub' });
+    
+    const themeStrip = Object.values(P31_THEMES).map(t => `
+      <div class="theme-chip" data-theme-id="${t.id}" onclick="window.p31Theme.setTheme('${t.id}')">
+        <div class="theme-chip-preview" style="background: linear-gradient(135deg, ${t.colors.void}, ${t.colors.primary || t.colors.teal}); border: 1px solid ${t.colors.surface};"></div>
+        <div class="theme-chip-name">${t.label}</div>
+        <div class="theme-chip-scheme">${t.scheme}</div>
+      </div>
+    `).join('');
+    
+    const content = `
+      <div class="home-hero">
+        <div class="home-hero-inner">
+          <div class="home-hero-eyebrow">Stylebook · v2.0</div>
+          <h1 class="home-hero-title">
+            The complete<br>
+            <span class="gradient">design system</span><br>
+            for p31ca.
+          </h1>
+          <p class="home-hero-lead">
+            Six themes, five adaptive modes, fluid motion, and a complete component library.
+            Built for accessibility. Engineered for delight.
+          </p>
+          <div class="home-hero-cta">
+            <a href="/stylebook/principles.html" class="btn-primary">
+              Read principles →
+            </a>
+            <a href="/stylebook/playground.html" class="btn-ghost">
+              ⏣ Open playground
+            </a>
+          </div>
+          
+          <div class="home-stats">
+            <div>
+              <div class="home-stat-num">32</div>
+              <div class="home-stat-label">Documentation pages</div>
+            </div>
+            <div>
+              <div class="home-stat-num">6</div>
+              <div class="home-stat-label">Curated themes</div>
+            </div>
+            <div>
+              <div class="home-stat-num">120+</div>
+              <div class="home-stat-label">Design tokens</div>
+            </div>
+            <div>
+              <div class="home-stat-num">WCAG AA</div>
+              <div class="home-stat-label">Accessibility floor</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Try it now</div>
+          <h2 class="sb-h2">Switch themes instantly</h2>
+          <p class="sb-text">Click any theme below — every page in the stylebook updates immediately.
+          Your choice persists across sessions.</p>
+        </div>
+        <div class="theme-strip">${themeStrip}</div>
+        ${callout('info', 'Tip', 'Press <code>T</code> anywhere to cycle themes, <code>M</code> for modes, or <code>⌘K</code> to search.')}
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Explore</div>
+          <h2 class="sb-h2">Start anywhere</h2>
+        </div>
+        
+        <div class="feature-grid">
+          <a href="/stylebook/principles.html" class="feature-card">
+            <div class="feature-icon">◈</div>
+            <div class="feature-title">Principles</div>
+            <div class="feature-desc">The why behind every decision. Gray Rock, fluidity, dignity, autonomy.</div>
+            <div class="feature-arrow">Read principles</div>
+          </a>
+          
+          <a href="/stylebook/color.html" class="feature-card">
+            <div class="feature-icon">●</div>
+            <div class="feature-title">Color</div>
+            <div class="feature-desc">Living tokens that breathe with theme and mode. WCAG-compliant by default.</div>
+            <div class="feature-arrow">Browse palette</div>
+          </a>
+          
+          <a href="/stylebook/typography.html" class="feature-card">
+            <div class="feature-icon">A</div>
+            <div class="feature-title">Typography</div>
+            <div class="feature-desc">Atkinson Hyperlegible + JetBrains Mono. Fluid scale that responds to viewport.</div>
+            <div class="feature-arrow">View type system</div>
+          </a>
+          
+          <a href="/stylebook/motion.html" class="feature-card">
+            <div class="feature-icon">↝</div>
+            <div class="feature-title">Motion</div>
+            <div class="feature-desc">8 easing curves, 6 animation presets. Respects reduced motion preferences.</div>
+            <div class="feature-arrow">Explore motion</div>
+          </a>
+          
+          <a href="/stylebook/buttons.html" class="feature-card">
+            <div class="feature-icon">⊟</div>
+            <div class="feature-title">Components</div>
+            <div class="feature-desc">Buttons, cards, forms, navigation. Every state, every theme, every mode.</div>
+            <div class="feature-arrow">Browse components</div>
+          </a>
+          
+          <a href="/stylebook/playground.html" class="feature-card">
+            <div class="feature-icon">⏣</div>
+            <div class="feature-title">Playground</div>
+            <div class="feature-desc">Live editor for tokens. Build your own theme. Export instantly.</div>
+            <div class="feature-arrow">Open playground</div>
+          </a>
+        </div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Guidelines</div>
+          <h2 class="sb-h2">The professional layer</h2>
+          <p class="sb-text">A design system isn't just colors and components. The site map, navigation IA,
+          accessibility floor, SEO contract, and voice — all canonical, all verified, all here.</p>
+        </div>
+        
+        <div class="feature-grid">
+          <a href="/stylebook/sitemap.html" class="feature-card">
+            <div class="feature-icon">⊞</div>
+            <div class="feature-title">Site map</div>
+            <div class="feature-desc">The complete canonical URL tree across the P31 ecosystem. 4 domains, 4 worker fleets, every public route.</div>
+            <div class="feature-arrow">View map</div>
+          </a>
+          
+          <a href="/stylebook/routing.html" class="feature-card">
+            <div class="feature-icon">↹</div>
+            <div class="feature-title">Routing &amp; IA</div>
+            <div class="feature-desc">Three-tier navigation, URL grammar, deep-linking conventions, mobile patterns.</div>
+            <div class="feature-arrow">Read patterns</div>
+          </a>
+          
+          <a href="/stylebook/accessibility.html" class="feature-card">
+            <div class="feature-icon">◉</div>
+            <div class="feature-title">Accessibility</div>
+            <div class="feature-desc">WCAG 2.1 AA checklist, keyboard map, ARIA usage, focus management, cognitive layer.</div>
+            <div class="feature-arrow">See requirements</div>
+          </a>
+          
+          <a href="/stylebook/metadata.html" class="feature-card">
+            <div class="feature-icon">⌗</div>
+            <div class="feature-title">SEO &amp; metadata</div>
+            <div class="feature-desc">Required head tags, OpenGraph, JSON-LD types, robots.txt, sitemap.xml.</div>
+            <div class="feature-arrow">View bar</div>
+          </a>
+          
+          <a href="/stylebook/performance.html" class="feature-card">
+            <div class="feature-icon">⏵</div>
+            <div class="feature-title">Performance</div>
+            <div class="feature-desc">Core Web Vitals targets, asset budgets (≤350KB), loading strategy, image hierarchy.</div>
+            <div class="feature-arrow">See budgets</div>
+          </a>
+          
+          <a href="/stylebook/voice.html" class="feature-card">
+            <div class="feature-icon">"</div>
+            <div class="feature-title">Voice &amp; tone</div>
+            <div class="feature-desc">Calm. Direct. Honest. The way P31 talks to operators, families, and the public.</div>
+            <div class="feature-arrow">Read guidelines</div>
+          </a>
+        </div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Get started</div>
+          <h2 class="sb-h2">Drop in three files</h2>
+          <p class="sb-text">The entire system loads with three lines. Zero build step. No npm install.
+          Everything cascades through CSS custom properties.</p>
+        </div>
+        
+        ${code(`<!-- Base tokens (canonical from p31-universal-canon.json) -->
+<link rel="stylesheet" href="/p31-style.css">
+
+<!-- Fluid design system (utilities + animations) -->
+<link rel="stylesheet" href="/lib/p31-fluid.css">
+
+<!-- Theme engine (smart switching, mode adaptation) -->
+<script type="module">
+  import { P31ThemeController } from '/lib/p31-theme-engine.mjs';
+  window.p31Theme = new P31ThemeController({ defaultTheme: 'hub' });
+<\/script>`, 'html', 'Setup')}
+        
+        ${callout('success', 'That\'s it.', 'Every page now has access to all 120+ tokens, 6 themes, and the fluid motion library. Add <code>data-p31-appearance="hub"</code> to your <code>&lt;html&gt;</code> tag to opt into theme synchronization.')}
+      </section>
+    `;
+    
+    renderShell({
+      activeId: 'home',
+      title: null,
+      content
+    });
+    
+    // Update active theme chip on theme change
+    function updateActiveChip() {
+      const current = window.p31Theme.state.theme;
+      document.querySelectorAll('.theme-chip').forEach(chip => {
+        chip.classList.toggle('active', chip.dataset.themeId === current);
+      });
+    }
+    updateActiveChip();
+    window.p31Theme.onChange(updateActiveChip);
+  </script>
+</body>
+</html>

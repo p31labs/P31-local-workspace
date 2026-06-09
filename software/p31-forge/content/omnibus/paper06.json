@@ -1,0 +1,23 @@
+{
+  "kind": "paper",
+  "filename": "P31_Paper_06_Cognitive_Passport_Protocol.docx",
+  "program": "research",
+  "title": "Cognitive Passport Protocol",
+  "abstract": "Accountability chain for AI-generated content",
+  "doi": "10.5281/zenodo.19432309",
+  "body": [
+    { "type": "h1", "text": "ABSTRACT" },
+    { "type": "para", "text": "The Cognitive Passport Protocol establishes accountability and provenance for AI-generated content in cognitive prosthetics, ensuring the human operator remains the legal author while using AI as a cognitive prosthetic." },
+    { "type": "h1", "text": "INTRODUCTION" },
+    { "type": "para", "text": "As AI becomes increasingly integrated into cognitive prosthetics, this protocol establishes clear attribution and provenance chains to maintain human agency and legal responsibility." },
+    { "type": "h1", "text": "PROTOCOL COMPONENTS" },
+    { "type": "bullet", "text": "Human operator as legal author of all deliverables" },
+    { "type": "bullet", "text": "Cryptographic finality attestation for all AI-generated output" },
+    { "type": "bullet", "text": "Training data provenance documentation" },
+    { "type": "bullet", "text": "Prohibition on fine-tuning with protected-class user data" },
+    { "type": "h1", "text": "IMPLEMENTATION" },
+    { "type": "para", "text": "All P31 Labs artifacts include Cognitive Passport metadata, establishing an immutable chain of custody from conception to deployment." },
+    { "type": "h1", "text": "ETHICAL FRAMEWORK" },
+    { "type": "para", "text": "This protocol ensures AI remains a tool for human empowerment rather than replacement, aligning with neurodivergent-designed principles of autonomy and sovereignty." }
+  ]
+}

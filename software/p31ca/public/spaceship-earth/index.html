@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <!--
+      Content Security Policy — WCD-30
+      Notes:
+        'unsafe-inline' (script): Vite module preload injections in production build.
+        'unsafe-eval'  (script): Babel standalone (Jitterbug cartridge compiler)
+                                  uses Function() internally to parse/transform code.
+        'unsafe-inline' (style): Inline styles throughout the component tree.
+        connect-src https: wss:: User-configured LLM endpoints + relay WebSocket.
+        frame-src blob::  Cartridge srcdoc iframes + Bonding overlay iframe.
+        frame-ancestors:  Must be set via HTTP header (Cloudflare Pages _headers),
+                          not meta tag — see public/_headers.
+    -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: wss: blob: data:; worker-src 'self' blob:; frame-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self';" />
+    <title>Spaceship Earth — P31 Labs</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body, #root {
+        width: 100%; height: 100%;
+        overflow: hidden;
+        background: #000000;
+        position: fixed;
+        inset: 0;
+        touch-action: none;
+        overscroll-behavior: none;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        user-select: none;
+      }
+      @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+    <!-- R08: P31 telemetry — CWP-2026-014 -->
+    <script src="https://p31ca.org/p31-telemetry.js" defer></script>
+    <script type="module" crossorigin src="/assets/index-C-F9YhFu.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-CX9428sy.js">
+    <link rel="modulepreload" crossorigin href="/assets/vendor-react-_2IRAoZD.js">
+    <link rel="modulepreload" crossorigin href="/assets/vendor-three-Bj0TXaug.js">
+    <link rel="modulepreload" crossorigin href="/assets/vendor-utils-B4ptH8h_.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-Cm47yzH8.css">
+  <link rel="manifest" href="/manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="/registerSW.js"></script></head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>

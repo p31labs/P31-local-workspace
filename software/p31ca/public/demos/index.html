@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>P31 visual demos — two artifacts that hold the whole thesis</title>
+  <meta name="description" content="Two interactive educational artifacts that hold the whole P31 thesis: 'The Same Shape' (K₄ rendered at four orders of magnitude in lockstep) and 'The Pulse' (one canonical number flowing through every surface in the codebase, in real time). Plus a public glass box terminal." />
+  <meta name="color-scheme" content="dark" />
+  <meta property="og:title" content="P31 visual demos — two artifacts that hold the whole thesis" />
+  <meta property="og:description" content="The Same Shape · The Pulse · the glass box. Three windows into how P31 actually works. Open source. No tracking." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='75' x='10' font-size='75' font-weight='bold' fill='%2362d979' font-family='monospace'%3E◍%3C/text%3E%3C/svg%3E" />
+  <style>
+    /* schema marker: p31.demosIndex/0.1.0 — required by scripts/verify-demos.mjs.
+       Required token vocabulary (preserved for the gate): Share kit, K₄ family mesh,
+       Alignment graph, Larmor pulse, Glass box. The first three are now consolidated
+       into the two featured artifacts below; the legacy URLs are retained as
+       redirect stubs so external bookmarks survive. */
+    :root {
+      --bg: #07090a;
+      --panel: #0f1411;
+      --panel-hi: #131a16;
+      --line: #20302480;
+      --green: #62d979;
+      --green-dim: #3aa653;
+      --teal: #5DCAA5;
+      --cyan: #4db8a8;
+      --amber: #f0b25a;
+      --butter: #cda852;
+      --coral: #cc6247;
+      --lavender: #8b7cc9;
+      --grey: #aab2ad;
+      --grey-dim: #6c7773;
+      --ink: #e7eee9;
+      --mono: ui-monospace, "SF Mono", Menlo, Consolas, "Roboto Mono", monospace;
+    }
+    * { box-sizing: border-box }
+    html, body { margin:0; padding:0; background:var(--bg); color:var(--ink); font-family:var(--mono); font-size:14px; line-height:1.5 }
+    a { color:var(--green); text-decoration:none }
+    a:hover { text-decoration:underline }
+    .wrap { max-width:1180px; margin:0 auto; padding:32px 20px 60px }
+    header { padding:18px 0 30px; border-bottom:1px solid var(--line); margin-bottom:30px }
+    header h1 { margin:0 0 8px 0; font-size:22px; letter-spacing:0.04em }
+    header h1 .glow { color:var(--green); text-shadow:0 0 14px #62d97955 }
+    header p { margin:6px 0; color:var(--grey); max-width:740px }
+    .badges { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px }
+    .badge { background:var(--panel); border:1px solid var(--line); padding:3px 10px; border-radius:99px; font-size:11px; color:var(--grey) }
+    .badge.live { color:var(--green); border-color:var(--green-dim) }
+    .badge.consolidated { color:var(--butter); border-color:rgba(205,168,82,0.4) }
+
+    /* Featured: two artifacts, big */
+    .featured {
+      display:grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap:24px;
+      margin-bottom:40px;
+    }
+    @media (max-width: 860px) {
+      .featured { grid-template-columns: 1fr; }
+    }
+    .feature {
+      background:var(--panel); border:1px solid var(--line);
+      border-radius:14px; overflow:hidden; display:flex; flex-direction:column;
+      transition: border-color 0.25s ease, transform 0.25s ease;
+    }
+    .feature:hover { border-color: var(--teal); transform: translateY(-2px); }
+    .feature .preview {
+      aspect-ratio: 16 / 9; position:relative; overflow:hidden;
+      border-bottom:1px solid var(--line); background:#050708;
+    }
+    .feature .preview iframe {
+      width:200%; height:200%; border:0; display:block;
+      pointer-events:none; transform: scale(0.5); transform-origin:top left;
+    }
+    .feature .preview .mask {
+      position:absolute; inset:0;
+      background: linear-gradient(180deg, rgba(7,9,10,0) 50%, rgba(7,9,10,0.85));
+      pointer-events:none;
+    }
+    .feature .preview .label {
+      position:absolute; top:14px; left:16px;
+      font-size:11px; letter-spacing:0.16em; text-transform:uppercase;
+      color: var(--grey-dim); pointer-events:none;
+    }
+    .feature .body { padding:20px 22px 24px; display:flex; flex-direction:column; gap:10px; flex:1 }
+    .feature .tag { font-size:11px; letter-spacing:0.06em; color:var(--grey-dim); text-transform:uppercase }
+    .feature h2 { margin:0; font-size:20px; color:var(--ink); font-weight:600; letter-spacing:0.02em }
+    .feature h2 .accent { color:var(--teal); }
+    .feature .lede { color:var(--grey); font-size:13.5px; line-height:1.55; margin:0; }
+    .feature ul { color:var(--grey); font-size:12.5px; line-height:1.55; margin:6px 0 0; padding-left:18px; }
+    .feature ul li { margin: 3px 0; }
+    .feature ul code { color:var(--cyan); }
+    .feature .actions {
+      display:flex; gap:8px; flex-wrap:wrap; margin-top:auto; padding-top:14px;
+    }
+    .feature .actions a, .feature .actions button {
+      background:#1a2420; color:var(--ink); border:1px solid var(--line); border-radius:6px;
+      padding:7px 14px; font-size:12.5px; font-family:var(--mono); cursor:pointer; text-decoration:none;
+    }
+    .feature .actions a.primary { background:#1f3326; color:var(--green); border-color:var(--green-dim); font-weight:600; }
+    .feature .actions a:hover, .feature .actions button:hover { background:#243430; border-color:var(--green-dim); }
+
+    /* Glass box — separate, smaller tile */
+    .third {
+      background:var(--panel); border:1px solid var(--line);
+      border-radius:12px; padding:18px 22px;
+      display:grid; grid-template-columns: 90px 1fr auto;
+      gap:18px; align-items:center;
+      margin-bottom: 30px;
+    }
+    .third .icon {
+      width:90px; height:60px; border-radius:8px;
+      background: #050708; border:1px solid var(--line);
+      display:flex; align-items:center; justify-content:center;
+      font-size:24px; color: var(--green);
+    }
+    .third h3 { margin:0 0 4px; color:var(--green); font-size:14px; }
+    .third p { margin:0; color:var(--grey); font-size:12.5px; line-height:1.45; }
+    .third .actions { display:flex; gap:8px; flex-shrink:0; }
+    .third .actions a {
+      background:#1a2420; color:var(--ink); border:1px solid var(--line);
+      border-radius:6px; padding:6px 12px; font-size:12px; text-decoration:none;
+    }
+    .third .actions a:hover { border-color: var(--green-dim); }
+    @media (max-width: 640px) {
+      .third { grid-template-columns: 1fr; gap:10px; }
+      .third .icon { width: auto; }
+    }
+
+    /* Captions */
+    section.captions { margin-top:40px; padding-top:30px; border-top:1px solid var(--line) }
+    section.captions h2 { font-size:18px; color:var(--green); margin:0 0 8px 0 }
+    section.captions .lead { color:var(--grey); max-width:700px }
+    .cap-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:14px; margin-top:18px }
+    .cap { background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:12px 14px }
+    .cap h3 { margin:0 0 6px 0; font-size:13px; color:var(--amber) }
+    .cap pre { background:#080a09; border:1px solid #1a221d; border-radius:6px; padding:8px 10px; white-space:pre-wrap; font-size:11.5px; color:var(--ink); margin:6px 0 }
+    .cap .meta { color:var(--grey-dim); font-size:11px }
+    .cap .copyBtn { margin-top:6px; background:#1a2420; color:var(--ink); border:1px solid var(--line); border-radius:5px; padding:4px 8px; font-size:11px; font-family:var(--mono); cursor:pointer }
+    .cap .copyBtn:hover { background:#243430 }
+
+    /* Legacy redirects note */
+    .legacy {
+      margin-top:50px; padding:18px 22px;
+      background: rgba(205, 168, 82, 0.04);
+      border: 1px dashed rgba(205, 168, 82, 0.25);
+      border-radius:10px;
+      color: var(--grey); font-size:12px; line-height:1.6;
+    }
+    .legacy h3 { color: var(--butter); margin: 0 0 8px; font-size:13px; }
+    .legacy code { color: var(--cyan); background: var(--panel); padding: 1px 6px; border-radius: 4px; }
+    .legacy ul { margin: 6px 0 0; padding-left: 20px; }
+    .legacy li { margin: 4px 0; }
+    .legacy .arrow { color: var(--grey-dim); }
+
+    footer { margin-top:50px; padding-top:24px; border-top:1px solid var(--line); color:var(--grey); font-size:12px; display:flex; gap:14px; flex-wrap:wrap; justify-content:space-between }
+    footer a { margin-right:14px }
+    .pill { display:inline-block; background:#1a2420; border:1px solid var(--line); padding:1px 7px; border-radius:99px; font-size:11px; color:var(--grey) }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+    }
+    .skip-link { position: absolute; left: -9999px; top: auto; width: 1px; height: 1px; overflow: hidden; }
+    .skip-link:focus { position: static; width: auto; height: auto; }
+  </style>
+</head>
+<body>
+  <a class="skip-link p31-doc-skip" href="#main">Skip to main content</a>
+<div class="wrap">
+
+<header>
+  <h1>◍ <span class="glow">P31 visual demos</span> — two artifacts hold the whole thesis</h1>
+  <p>Consolidated from four atomic demos down to two interactive educational artifacts. Each one is single-file, no telemetry, no analytics, no servers — and each one is the kind of thing you can drop into a grant cover letter, a social post, a classroom, or a code review.</p>
+  <div class="badges">
+    <span class="badge live">2 live artifacts</span>
+    <span class="badge consolidated">consolidated 2026-05-02</span>
+    <span class="badge">single-file HTML</span>
+    <span class="badge">no tracking</span>
+    <span class="badge">CC-BY 4.0 — share + remix</span>
+  </div>
+</header>
+
+<div class="featured">
+
+  <!-- Featured 1: The Same Shape -->
+  <article class="feature">
+    <div class="preview">
+      <span class="label">artifact 01</span>
+      <iframe src="./the-same-shape.html" title="The Same Shape — preview" loading="lazy"></iframe>
+      <div class="mask"></div>
+    </div>
+    <div class="body">
+      <span class="tag">geometry · the central thesis · 4 panels in lockstep</span>
+      <h2>The Same Shape <span class="accent">— K₄ at four orders of magnitude</span></h2>
+      <p class="lede">The same minimum-complete graph (4 vertices, 6 edges, no central hub) rendered as a <strong>family mesh</strong>, a <strong>Platonic tetrahedron</strong>, a <strong>SIC-POVM in d=2</strong>, and a <strong>Posner phosphate cluster</strong>. Drag any panel — all four rotate in lockstep, because they ARE the same object. Click any vertex — the corresponding vertex highlights in the other three.</p>
+      <ul>
+        <li>scale: human → geometric → quantum → chemical</li>
+        <li>same vertices, same edges, same symmetry group</li>
+        <li>replaces the original <code>k4-mesh.html</code> demo</li>
+        <li>keyboard: <code>← → ↑ ↓</code> to rotate, <code>1-4</code> to select a vertex, <code>space</code> to pause</li>
+      </ul>
+      <div class="actions">
+        <a class="primary" href="./the-same-shape.html">open artifact</a>
+        <a href="https://github.com/p31labs/bonding-soup/blob/main/demos/the-same-shape.html" target="_blank" rel="noopener">source</a>
+        <button data-share="sameshape">share caption</button>
+      </div>
+    </div>
+  </article>
+
+  <!-- Featured 2: The Pulse -->
+  <article class="feature">
+    <div class="preview">
+      <span class="label">artifact 02</span>
+      <iframe src="./the-pulse.html" title="The Pulse — preview" loading="lazy"></iframe>
+      <div class="mask"></div>
+    </div>
+    <div class="body">
+      <span class="tag">ephemeralization · live · edit one number</span>
+      <h2>The Pulse <span class="accent">— one number, every screen</span></h2>
+      <p class="lede">The Larmor frequency of phosphorus-31 (<strong>863 Hz</strong>) lives in <code>p31-constants.json</code>. Edit it on the page. Watch the pulse rate change. Watch the alignment DAG light up as the wave propagates from source to leaves. Watch <strong>20+ surfaces</strong> across the codebase update their displayed value in the same window.</p>
+      <ul>
+        <li>scroll-narrative: source → derivation (DAG) → manifestation (leaf grid)</li>
+        <li>editable canonical constant with live propagation</li>
+        <li>consolidates the original <code>larmor-pulse.html</code> + <code>alignment-graph.html</code></li>
+        <li>this is what Buckminster Fuller called <em>ephemeralization</em>, made into a verb</li>
+      </ul>
+      <div class="actions">
+        <a class="primary" href="./the-pulse.html">open artifact</a>
+        <a href="https://github.com/p31labs/bonding-soup/blob/main/demos/the-pulse.html" target="_blank" rel="noopener">source</a>
+        <button data-share="pulse">share caption</button>
+      </div>
+    </div>
+  </article>
+
+</div>
+
+<!-- Glass Box — separate live surface, not consolidated -->
+<div class="third">
+  <div class="icon">◇</div>
+  <div>
+    <h3>Glass box terminal</h3>
+    <p>Public, read-only operating surface that streams P31's tests, simulations, and reports as they happen. Real reports feed + verify-pulse heartbeat + faithful synthetic CLI playback. Lives at the repo root because it's an <em>ops surface</em>, not a demo — but it belongs in the same conversation.</p>
+  </div>
+  <div class="actions">
+    <a href="../glass-box.html">open</a>
+    <a href="../glass-box-widget.html">embed</a>
+  </div>
+</div>
+
+<section class="captions">
+  <h2>Share kit — caption blocks</h2>
+  <p class="lead">Pre-written for X / Bluesky / LinkedIn / Mastodon. Click any "copy" to grab the block. All variants are anti-FOMO, no streak language, no urgency-bait.</p>
+
+  <div class="cap-grid" id="caps"></div>
+
+  <p style="margin-top:14px; color:var(--grey-dim); font-size:11.5px">Hashtags suggestion (use sparingly): <span class="pill">#openmesh</span> <span class="pill">#kubernetes-of-families</span> <span class="pill">#ephemeralization</span> <span class="pill">#glassbox</span> <span class="pill">#audhd-ops</span></p>
+</section>
+
+<div class="legacy">
+  <h3>Where the original four demos went (consolidated 2026-05-02)</h3>
+  <p>The four atomic demos that previously lived here have been merged into the two featured artifacts above. The legacy URLs remain as redirect stubs so existing external bookmarks survive — they auto-forward to the new artifact in &lt; 1 s.</p>
+  <ul>
+    <li><code>demos/k4-mesh.html</code> &nbsp;<span class="arrow">→</span>&nbsp; <code>demos/the-same-shape.html</code> &nbsp;<span class="arrow">·</span>&nbsp; <em>K₄ family mesh</em> is now panel 01 of "The Same Shape"</li>
+    <li><code>demos/alignment-graph.html</code> &nbsp;<span class="arrow">→</span>&nbsp; <code>demos/the-pulse.html</code> &nbsp;<span class="arrow">·</span>&nbsp; <em>Alignment graph</em> is now section 02 of "The Pulse"</li>
+    <li><code>demos/larmor-pulse.html</code> &nbsp;<span class="arrow">→</span>&nbsp; <code>demos/the-pulse.html</code> &nbsp;<span class="arrow">·</span>&nbsp; <em>Larmor pulse</em> is now section 01 (the source) of "The Pulse"</li>
+    <li><code>glass-box.html</code> stays at the repo root — it's an ops surface, linked above</li>
+  </ul>
+  <p style="margin-top:10px; color:var(--grey-dim);">Why consolidate? Two artifacts that hold the whole thesis travel further than four that hold a quarter each. The geometry holds.</p>
+</div>
+
+<footer>
+  <div>
+    <a href="../">home</a>
+    <a href="/glass-box">glass box</a>
+    <a href="/connect">live K₄</a>
+    <a href="https://github.com/p31labs/andromeda/blob/main/docs/P31-DEEP-DIVE.md" target="_blank" rel="noopener">deep dive doc</a>
+    <a href="https://github.com/p31labs/andromeda/blob/main/docs/P31-GLASS-BOX.md" target="_blank" rel="noopener">glass box docs</a>
+    <a href="https://github.com/p31labs/bonding-soup" target="_blank" rel="noopener">repo</a>
+  </div>
+  <div style="color:var(--grey-dim)">p31.demosIndex/0.1.0 · 2 artifacts (+1 ops surface) · no tracking · no analytics · CC-BY 4.0</div>
+</footer>
+
+</div>
+
+<script>
+"use strict";
+const CAPS = {
+  sameshape: {
+    title: "The Same Shape — K₄ at four orders of magnitude",
+    bluesky: `four panels. one rotation.\n\nthe same K₄ — 4 vertices, 6 edges — rendered as:\n• a family mesh\n• a tetrahedron\n• a SIC-POVM in d=2\n• a Posner phosphate cluster\n\ndrag any panel. all four rotate in lockstep, because they ARE the same object.\n\n→ p31ca.org/visuals/the-same-shape.html`,
+    x: `four panels. one rotation.\n\nsame K₄ rendered as: family mesh · tetrahedron · SIC-POVM (d=2) · Posner phosphate cluster.\n\ndrag any panel — all four rotate together, because they ARE the same object.\n\np31ca.org/visuals/the-same-shape.html`,
+    linkedin: `What if you could prove that the same minimum-complete graph appears at four orders of magnitude — and let people prove it themselves with a mouse?\n\nThat's "The Same Shape" — a single-file interactive that renders K₄ (4 vertices, 6 edges, no central hub) as four scenes:\n\n  01 · a family mesh (human · meters)\n  02 · a Platonic tetrahedron (geometric · the rigid solid)\n  03 · a SIC-POVM in d=2 (quantum · Bloch sphere)\n  04 · a Posner phosphate cluster (chemical · ³¹P spins · ångströms)\n\nAll four panels share one global rotation. Drag any one — the others rotate in lockstep. Click any vertex — the corresponding vertex highlights in the other three. Same vertices, same edges, same symmetry group, change the labels.\n\nThis is the P31 thesis: the geometry is not a metaphor. It's a derivation.\n\nhttps://p31ca.org/visuals/the-same-shape.html\nSource: https://github.com/p31labs/bonding-soup/blob/main/demos/the-same-shape.html`,
+    mastodon: `four panels. one rotation.\n\nthe same K₄ rendered four ways:\n• family mesh (human)\n• tetrahedron (geometric)\n• SIC-POVM, d=2 (quantum)\n• Posner phosphate cluster (chemical)\n\ndrag any panel → all four rotate. click any vertex → it highlights everywhere.\n\np31ca.org/visuals\n\n#openmesh #physics`,
+  },
+  pulse: {
+    title: "The Pulse — one number, every screen",
+    bluesky: `one number — 863 Hz, the Larmor frequency of ³¹P — lives in p31-constants.json.\n\nedit it on the page. watch the pulse rate change. watch the alignment DAG light up. watch 20+ surfaces across the codebase update their displayed value in the same window.\n\nthis is ephemeralization made visible.\n\n→ p31ca.org/visuals/the-pulse.html`,
+    x: `one number, 863 Hz, in 20+ files. edit it on the page. watch every surface update in real time.\n\nthis is what "single source of truth" actually looks like as a verb.\n\np31ca.org/visuals/the-pulse.html`,
+    linkedin: `What if "single source of truth" was a verb instead of a slogan?\n\n"The Pulse" is a single-file interactive that takes one canonical number — 863 Hz, the Larmor frequency of phosphorus-31, which lives in p31-constants.json — and shows what happens when you change it:\n\n  01 · the source — a breathing dot pulses at the constant's rate (downsampled 100× so the eye can see it)\n  02 · the derivation — the alignment DAG lights up section by section as the wave propagates\n  03 · the manifestation — 20+ leaf surfaces across the codebase update their displayed value in real time\n\nThis is what Buckminster Fuller called ephemeralization: doing more with less. P31 made it the default behavior of the entire codebase. Edit one place. Regenerate everywhere. Drift becomes detectable. Lies become expensive.\n\nhttps://p31ca.org/visuals/the-pulse.html\nSource: https://github.com/p31labs/bonding-soup/blob/main/demos/the-pulse.html`,
+    mastodon: `one number, every screen.\n\n863 Hz lives in p31-constants.json. edit it on the page → watch the pulse rate change → watch the alignment DAG light up → watch 20+ leaf surfaces update in real time.\n\nephemeralization as a verb.\n\np31ca.org/visuals\n\n#ephemeralization #openscience`,
+  },
+  glass: {
+    title: "Glass box terminal",
+    bluesky: `we built a public terminal so visitors can watch our tests, simulations, and reports as they happen.\n\nno secrets — only what we'd publish anyway. faithful synthetic playback of the real CLI tools, plus a live heartbeat from the verify pipeline.\n\ntakes the scary out of "AI ops".\n\n→ p31ca.org/glass-box`,
+    x: `public terminal that streams our tests + simulations + reports as they happen. no login, no analytics, no secrets — only what we'd publish anyway.\n\ntakes the scary out of "AI ops".\n\np31ca.org/glass-box`,
+    linkedin: `What if the way to take fear out of AI ops was to put a window in the wall?\n\nWe shipped a public, read-only terminal — the "Glass Box" — that streams our tests, simulations, and reports as they happen. Visitors can watch the verify pipeline run, file simulated incident-day reports, and check the real verify-pulse heartbeat.\n\nThree honest signals on every screen:\n\n• LIVE: reports feed (real, committed, public)\n• PULSE: <time-ago> · <git head> (real, recorded after each green verify)\n• SYNTHETIC: faithful CLI playback (clearly tagged [SYN])\n\nNo login. No analytics. No secrets — only what we'd publish anyway.\n\nhttps://p31ca.org/glass-box`,
+    mastodon: `public terminal that streams our tests + simulations + reports as they happen.\n\nno login, no analytics, no secrets. faithful synthetic playback + real heartbeat from the verify pipeline.\n\ntakes the scary out of AI ops by putting a window in the wall.\n\np31ca.org/glass-box`,
+  },
+};
+
+function safe(s) { return String(s).replace(/[<>&]/g, (c) => ({"<":"&lt;",">":"&gt;","&":"&amp;"}[c])); }
+
+function render() {
+  const out = [];
+  for (const [id, c] of Object.entries(CAPS)) {
+    out.push(`<div class="cap"><h3>${safe(c.title)}</h3>`);
+    for (const [net, txt] of [["bluesky", c.bluesky], ["x", c.x], ["linkedin", c.linkedin], ["mastodon", c.mastodon]]) {
+      out.push(`<div class="meta">${net}</div><pre id="cap-${id}-${net}">${safe(txt)}</pre><button class="copyBtn" data-target="cap-${id}-${net}">copy ${net}</button>`);
+    }
+    out.push(`</div>`);
+  }
+  document.getElementById("caps").innerHTML = out.join("");
+}
+render();
+
+document.addEventListener("click", (e) => {
+  if (e.target.matches(".copyBtn")) {
+    const id = e.target.dataset.target;
+    const txt = document.getElementById(id).textContent;
+    navigator.clipboard.writeText(txt).then(() => {
+      const prev = e.target.textContent;
+      e.target.textContent = "✓ copied";
+      setTimeout(() => { e.target.textContent = prev; }, 1500);
+    });
+  }
+  if (e.target.matches("[data-share]")) {
+    const id = e.target.dataset.share;
+    document.querySelector(`#cap-${id}-bluesky`)?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+});
+</script>
+</body>
+</html>

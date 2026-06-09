@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0f1115">
+  <title>Motion · P31 Stylebook</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/p31-style.css">
+  <link rel="stylesheet" href="/lib/p31-fluid.css">
+  <link rel="stylesheet" href="/stylebook/_chrome.css">
+  <style>
+    .motion-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+    .motion-card {
+      padding: 20px;
+      background: var(--p31-surface);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: 12px;
+      cursor: pointer;
+      overflow: hidden;
+      position: relative;
+    }
+    .motion-card:hover {
+      border-color: var(--p31-primary);
+    }
+    .motion-track {
+      height: 60px;
+      background: var(--p31-surface2);
+      border-radius: 8px;
+      margin: 12px 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .motion-ball {
+      width: 24px;
+      height: 24px;
+      background: var(--p31-primary);
+      border-radius: 50%;
+      position: absolute;
+      top: 50%;
+      left: 12px;
+      transform: translateY(-50%);
+      box-shadow: 0 4px 12px rgba(37,137,125,0.4);
+    }
+    .motion-card.playing .motion-ball {
+      animation: motion-demo 1.2s var(--motion-curve, linear) infinite;
+    }
+    @keyframes motion-demo {
+      0% { left: 12px; }
+      50% { left: calc(100% - 36px); }
+      100% { left: 12px; }
+    }
+    .motion-name {
+      font-weight: 600;
+      color: var(--p31-paper);
+      margin-bottom: 4px;
+    }
+    .motion-curve-fn {
+      font-family: var(--p31-font-mono);
+      font-size: 11px;
+      color: var(--p31-muted);
+    }
+    .motion-usage {
+      font-size: 12px;
+      color: var(--p31-cloud);
+      opacity: 0.85;
+      margin-top: 8px;
+    }
+    
+    .duration-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .duration-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 12px 16px;
+      background: var(--p31-surface);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .duration-row:hover { border-color: var(--p31-primary); }
+    .duration-meta {
+      flex-shrink: 0;
+      width: 200px;
+      font-family: var(--p31-font-mono);
+      font-size: 13px;
+      color: var(--p31-paper);
+    }
+    .duration-meta small { color: var(--p31-muted); margin-left: 8px; }
+    .duration-track {
+      flex: 1;
+      height: 24px;
+      background: var(--p31-surface2);
+      border-radius: 4px;
+      position: relative;
+      overflow: hidden;
+    }
+    .duration-fill {
+      position: absolute;
+      inset: 0;
+      width: 0;
+      background: linear-gradient(90deg, var(--p31-primary), var(--p31-coral));
+      border-radius: inherit;
+    }
+    .duration-row.playing .duration-fill {
+      animation: dur-fill var(--play-duration) var(--p31-ease-fluid) forwards;
+    }
+    @keyframes dur-fill {
+      to { width: 100%; }
+    }
+    
+    .anim-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 16px;
+    }
+    .anim-card {
+      padding: 24px;
+      background: var(--p31-surface);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: 12px;
+      text-align: center;
+      cursor: pointer;
+      overflow: hidden;
+    }
+    .anim-target {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 12px;
+      background: linear-gradient(135deg, var(--p31-teal), var(--p31-coral));
+      border-radius: 12px;
+    }
+    .anim-card.playing .anim-target {
+      animation: var(--anim-name) 1.2s var(--p31-ease-fluid);
+    }
+    .anim-name {
+      font-weight: 500;
+      color: var(--p31-paper);
+      font-size: 13px;
+    }
+    .anim-token {
+      font-family: var(--p31-font-mono);
+      font-size: 10px;
+      color: var(--p31-muted);
+      margin-top: 4px;
+    }
+    
+    @keyframes p31-fade-up { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes p31-fade-in { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes p31-scale-in { from { opacity: 0; transform: scale(0.92); } to { opacity: 1; transform: scale(1); } }
+    @keyframes p31-slide-right { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes p31-pulse-glow {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(37,137,125,0.5); }
+      50% { box-shadow: 0 0 0 16px rgba(37,137,125,0); }
+    }
+    @keyframes p31-float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+    @keyframes p31-spin { to { transform: rotate(360deg); } }
+    @keyframes p31-bounce {
+      0%, 100% { transform: translateY(0); }
+      25% { transform: translateY(-12px); }
+      50% { transform: translateY(0); }
+      75% { transform: translateY(-6px); }
+    }
+  </style>
+</head>
+<body>
+  <script type="module">
+    import { renderShell, code, callout } from '/stylebook/_chrome.js';
+    import { P31ThemeController } from '/lib/p31-theme-engine.mjs';
+    window.p31Theme = new P31ThemeController({ defaultTheme: 'hub' });
+    
+    const EASINGS = [
+      { name: 'Linear', token: '--p31-ease-linear', fn: 'linear', usage: 'Loops, indeterminate progress' },
+      { name: 'Smooth', token: '--p31-ease-smooth', fn: 'cubic-bezier(0.4, 0, 0.2, 1)', usage: 'Default for everything' },
+      { name: 'Anticipate', token: '--p31-ease-anticipate', fn: 'cubic-bezier(0.2, 0, 0, 1)', usage: 'Quick start, slow finish' },
+      { name: 'Settle', token: '--p31-ease-settle', fn: 'cubic-bezier(0, 0, 0.2, 1)', usage: 'Slow start, quick finish' },
+      { name: 'Bounce', token: '--p31-ease-bounce', fn: 'cubic-bezier(0.34, 1.56, 0.64, 1)', usage: 'Playful overshoot' },
+      { name: 'Fluid', token: '--p31-ease-fluid', fn: 'cubic-bezier(0.23, 1, 0.32, 1)', usage: 'Most polished feel' },
+      { name: 'Snap', token: '--p31-ease-snap', fn: 'cubic-bezier(0.77, 0, 0.175, 1)', usage: 'Confident transitions' },
+      { name: 'Spring', token: '--p31-ease-spring', fn: 'cubic-bezier(0.175, 0.885, 0.32, 1.275)', usage: 'Natural physical feel' }
+    ];
+    
+    const DURATIONS = [
+      { token: '--p31-duration-instant', value: '100ms', use: 'Hover state, focus ring' },
+      { token: '--p31-duration-fast', value: '150ms', use: 'Button press, micro-feedback' },
+      { token: '--p31-duration-normal', value: '250ms', use: 'Default for most transitions' },
+      { token: '--p31-duration-slow', value: '400ms', use: 'Modal open, panel slide' },
+      { token: '--p31-duration-slower', value: '600ms', use: 'Page transitions' },
+      { token: '--p31-duration-cinematic', value: '800ms', use: 'Story moments, hero reveals' },
+      { token: '--p31-duration-ambient', value: '1200ms', use: 'Background loops, ambient pulse' }
+    ];
+    
+    const ANIMATIONS = [
+      { name: 'Fade up', anim: 'p31-fade-up' },
+      { name: 'Fade in', anim: 'p31-fade-in' },
+      { name: 'Scale in', anim: 'p31-scale-in' },
+      { name: 'Slide right', anim: 'p31-slide-right' },
+      { name: 'Pulse glow', anim: 'p31-pulse-glow' },
+      { name: 'Float', anim: 'p31-float' },
+      { name: 'Spin', anim: 'p31-spin' },
+      { name: 'Bounce', anim: 'p31-bounce' }
+    ];
+    
+    const easingsHTML = EASINGS.map(e => `
+      <div class="motion-card" style="--motion-curve: ${e.fn};" 
+           onclick="this.classList.add('playing'); setTimeout(()=>this.classList.remove('playing'), 1200);">
+        <div class="motion-name">${e.name}</div>
+        <div class="motion-curve-fn">${e.token}</div>
+        <div class="motion-track">
+          <div class="motion-ball"></div>
+        </div>
+        <div class="motion-usage">${e.usage}</div>
+      </div>
+    `).join('');
+    
+    const durationsHTML = DURATIONS.map(d => `
+      <div class="duration-row" style="--play-duration: ${d.value};"
+           onclick="this.classList.remove('playing'); void this.offsetWidth; this.classList.add('playing'); setTimeout(()=>this.classList.remove('playing'), parseInt('${d.value}'));">
+        <div class="duration-meta">${d.token} <small>${d.value}</small></div>
+        <div class="duration-track"><div class="duration-fill"></div></div>
+        <div style="font-size:12px;color:var(--p31-cloud);width:200px;">${d.use}</div>
+      </div>
+    `).join('');
+    
+    const animsHTML = ANIMATIONS.map(a => `
+      <div class="anim-card" style="--anim-name: ${a.anim};" 
+           onclick="this.classList.remove('playing'); void this.offsetWidth; this.classList.add('playing'); setTimeout(()=>this.classList.remove('playing'), 1200);">
+        <div class="anim-target"></div>
+        <div class="anim-name">${a.name}</div>
+        <div class="anim-token">${a.anim}</div>
+      </div>
+    `).join('');
+    
+    const content = `
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Easing curves</div>
+          <h2 class="sb-h2">Eight curves for every job</h2>
+          <p class="sb-text">Click any card to see the motion. Each curve has personality — pick the one
+          whose feel matches your action's intent.</p>
+        </div>
+        <div class="motion-grid">${easingsHTML}</div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Duration</div>
+          <h2 class="sb-h2">Time, calibrated</h2>
+          <p class="sb-text">Click a row to see the timing. Fast feels responsive. Slow feels deliberate.
+          Match duration to the importance of what's happening.</p>
+        </div>
+        <div class="duration-list">${durationsHTML}</div>
+        
+        ${callout('warn', 'A note on speed', 'Anything over 400ms starts to feel slow on hover/click. Reserve longer durations for moments where the user is watching, not waiting.')}
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Animations</div>
+          <h2 class="sb-h2">Composed presets</h2>
+          <p class="sb-text">Eight ready-to-use animations cover most needs. Click any one to see it play.</p>
+        </div>
+        <div class="anim-grid">${animsHTML}</div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Use it</div>
+          <h2 class="sb-h2">In CSS</h2>
+        </div>
+        
+        ${code(`/* Standard transition */
+.button {
+  transition: all var(--p31-duration-fast) var(--p31-ease-fluid);
+}
+
+.button:hover {
+  transform: translateY(-2px);
+}
+
+/* Entrance animation */
+.modal {
+  animation: p31-fade-up var(--p31-duration-normal) var(--p31-ease-anticipate);
+}
+
+/* Continuous loop */
+.indicator {
+  animation: p31-pulse-glow var(--p31-duration-ambient) var(--p31-ease-smooth) infinite;
+}
+
+/* Always check for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}`, 'css', 'Motion tokens')}
+        
+        ${callout('success', 'Already handled', 'The fluid system automatically respects <code>prefers-reduced-motion</code>. You don\'t need to add the media query yourself unless you have custom animations outside the token system.')}
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">When not to animate</div>
+          <h2 class="sb-h2">Restraint</h2>
+          <p class="sb-text">Motion is a tool, not a flourish. The rule: <strong>animate only what changed,
+          only when it changed.</strong> Initial paint should be still. Background animation should be rare.</p>
+        </div>
+        
+        <table class="sb-table">
+          <thead><tr><th>Don't animate</th><th>Why</th></tr></thead>
+          <tbody>
+            <tr><td>Heroes on first paint</td><td>Gray Rock principle — the page should be inert until invited</td></tr>
+            <tr><td>Decorative loops</td><td>Background motion competes with attention</td></tr>
+            <tr><td>Color cycling</td><td>Distracting; can trigger photosensitivity</td></tr>
+            <tr><td>Long hover transitions</td><td>>200ms feels broken; users move quickly</td></tr>
+            <tr><td>Loading skeletons that pulse forever</td><td>Set a max duration; if data isn't loaded in 5s, change state</td></tr>
+          </tbody>
+        </table>
+      </section>
+    `;
+    
+    renderShell({
+      activeId: 'motion',
+      breadcrumb: [
+        { href: '/stylebook/', label: 'Stylebook' },
+        { href: '/stylebook/', label: 'Foundations' },
+        { label: 'Motion' }
+      ],
+      title: 'Motion',
+      subtitle: '8 easing curves, 7 durations, 8 ready-made animations. Every motion respects reduced-motion preferences.',
+      meta: [
+        { label: 'Curves', value: '8' },
+        { label: 'Durations', value: '7' },
+        { label: 'Animations', value: '8' }
+      ],
+      content
+    });
+  </script>
+</body>
+</html>

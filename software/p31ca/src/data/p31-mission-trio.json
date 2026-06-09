@@ -1,0 +1,54 @@
+{
+  "schema": "p31.missionTrio/1.0.0",
+  "ariaLabel": "Mission — build, create, connect",
+  "hubSubtitle": [
+    {
+      "text": "We run the same loop in product: "
+    },
+    {
+      "text": "Build",
+      "verb": "build"
+    },
+    {
+      "text": " hardens intake on the same ship bar you verify in CI. "
+    },
+    {
+      "text": "Create",
+      "verb": "create"
+    },
+    {
+      "text": " is GEODESIC and ephemeralized—one source for rigging and scores, not hand-maintained duplicate lore. "
+    },
+    {
+      "text": "Connect",
+      "verb": "connect"
+    },
+    {
+      "text": " is the live K₄ mesh and the trust fabric: same constants, same ground truth, same public economics (ethical monetization). Three routes; one ethic."
+    }
+  ],
+  "pills": {
+    "build": {
+      "href": "/build",
+      "label": "Build",
+      "title": "Initial Build — intake, subject scope, verify-gated bake"
+    },
+    "create": {
+      "href": "/geodesic.html",
+      "label": "Create",
+      "title": "GEODESIC — snap grid, Maxwell rigidity, scene export"
+    },
+    "connect": {
+      "href": "/mesh",
+      "label": "Connect",
+      "title": "Mesh navigator — K₄ cage and product graph"
+    }
+  },
+  "pillOrder": ["build", "create", "connect"],
+  "ebc": {
+    "build": "Intake and bake on the same verify chain—not a decoupled mock.",
+    "create": "One lab surface, honest rigidity—generate or prove; don’t fork the same truth twice (ephemeralization).",
+    "connectLead": "Now",
+    "connect": " — live cage and edges: mesh, hubs, and money follow the same published contracts (ethical monetization)."
+  }
+}

@@ -1,0 +1,14 @@
+﻿WCD-U03: REACTOR CORE TRIGGER FEEDBACK
+Target: SystemScreen (Canvas rendering inside ImmersiveCockpit.tsx)
+Prerequisites: M22 Suite D (worker.test.ts) passes. Code Freeze Lifted.
+1. OBJECTIVE
+Provide absolute visual confirmation to the players when their digital topology successfully triggers the physical 3D printer via the Cloudflare Edge Worker.
+2. EVENT LISTENER
+* The P31-OS client must listen for the CF Worker's 200 OK response from the /api/mint-k4 endpoint.
+3. CANVAS RENDERING (System Screen)
+* Modify the 2D Canvas drawing logic for the System Screen (Slot 4/5).
+* Add a "FABRICATION QUEUE" module.
+* State Updates:
+   * When mint-k4 fires: Render [ K4 MESH ACHIEVED. EXECUTING SMART CONTRACT... ]
+   * On 200 OK from CF Worker: Render [ WEBHOOK FIRED -> PRINTER.P31CA.ORG ]
+   * Display an animated ASCII-art progress bar or a spinning 3D tetrahedron icon to signify that the physical object is currently printing in the physical world.

@@ -1,0 +1,70 @@
+{
+  "name": "@p31/game-engine",
+  "version": "0.1.0-alpha.0",
+  "description": "Geodesic building game engine for the P31 assistive technology platform. Maxwell rigidity, 7 seed challenges, player progression.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./geometry": {
+      "types": "./dist/geometry.d.ts",
+      "import": "./dist/geometry.js"
+    },
+    "./structures": {
+      "types": "./dist/structures.d.ts",
+      "import": "./dist/structures.js"
+    },
+    "./challenges": {
+      "types": "./dist/challenges.d.ts",
+      "import": "./dist/challenges.js"
+    },
+    "./player": {
+      "types": "./dist/player.d.ts",
+      "import": "./dist/player.js"
+    },
+    "./engine": {
+      "types": "./dist/engine.d.ts",
+      "import": "./dist/engine.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "clean": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\"",
+    "build": "tsc",
+    "test": "vitest run --passWithNoTests",
+    "prepublishOnly": "npm run clean && npm run build && npm run test"
+  },
+  "keywords": [
+    "p31",
+    "geodesic",
+    "maxwell",
+    "rigidity",
+    "fuller",
+    "game-engine",
+    "assistive-technology"
+  ],
+  "author": "P31 Labs",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/p31labs/game-engine"
+  },
+  "homepage": "https://github.com/p31labs/game-engine#readme",
+  "bugs": {
+    "url": "https://github.com/p31labs/game-engine/issues"
+  },
+  "sideEffects": false,
+  "devDependencies": {
+    "typescript": "^5.7.0",
+    "vitest": "^4.1.0",
+    "vite": "^8.0.1"
+  }
+}

@@ -1,0 +1,229 @@
+diff --git a/04_SOFTWARE/p31-delta-hiring/src/data/work-samples.json b/04_SOFTWARE/p31-delta-hiring/src/data/work-samples.json
+index 584c8a8..24b9731 100644
+--- a/04_SOFTWARE/p31-delta-hiring/src/data/work-samples.json
++++ b/04_SOFTWARE/p31-delta-hiring/src/data/work-samples.json
+@@ -1,13 +1,23 @@
+ {
+   "schema": "p31.workSamples/1.0.0",
+   "updated": "2026-04-26",
+-  "defaults": { "timeBoundHours": 4, "allowResources": "Search + docs; cite unfamiliar snippets." },
++  "defaults": { "timeBoundHours": 4, "allowResources": "Search + docs; cite unfamiliar snippets. AI tools allowed if you list prompts/tools used in notes." },
+   "samples": {
+     "WCD-FRONT-001": {
+       "title": "Accessible modal with motion",
+       "summary": "Build a modal that traps focus, restores focus on close, respects prefers-reduced-motion, and has visible focus states.",
+       "timeBoundHours": 4,
+       "deliverables": ["Source (repo or zip)", "2–3 sentence a11y notes", "List of test steps"],
++      "goodLookLike": [
++        "Tab order: trigger → modal content → first focusable in modal; Esc closes; focus returns to trigger.",
++        "Documented `prefers-reduced-motion: reduce` behavior (e.g. cross-fade or instant show).",
++        "Keyboard-only test list (browser + OS) with pass/fail notes."
++      ],
++      "antiPatterns": [
++        "Relying on pointer-only `onClick` with no `role`, `tabIndex`, or key handlers.",
++        "Leaving `aria-hidden` on body when modal is open (without correct inert/scroll lock).",
++        "Dropping a generic animation library in without a reduced-motion path."
++      ],
+       "rubric": [
+         { "id": "a11y", "label": "Accessibility", "weight": 0.35, "scale": [1, 5], "anchors": { "1": "Missing focus trap or no keyboard path", "3": "Works with keyboard; minor gaps", "5": "Complete trap/restore, motion fallback" } },
+         { "id": "code", "label": "Code quality", "weight": 0.35, "scale": [1, 5], "anchors": { "1": "Unreadable or broken build", "3": "Clear enough for review", "5": "Idiomatic, typed, tested or documented" } },
+@@ -19,6 +29,15 @@
+       "summary": "Implement a 2V geodesic icosahedral sphere with 55 struts/nodes, with documented vertex generation.",
+       "timeBoundHours": 8,
+       "deliverables": ["Source", "Short note on edge count and subdivision rule", "FPS / triangle budget on one test machine"],
++      "goodLookLike": [
++        "Short derivation or reference for vertex/strut count vs subdivision.",
++        "Frame-time note at a fixed camera on mid-tier hardware.",
++        "Disposal of geometries/materials on hot reload (if using Three)."
++      ],
++      "antiPatterns": [
++        "55 unrelated meshes with no clear geodesic construction story.",
++        "Omitted performance note when triangle count is high."
++      ],
+       "rubric": [
+         { "id": "geometry", "label": "Geometric correctness", "weight": 0.4, "scale": [1, 5] },
+         { "id": "performance", "label": "Performance", "weight": 0.25, "scale": [1, 5] },
+@@ -31,6 +50,14 @@
+       "summary": "Draft a 1–2 page concept for an assistive-tech aligned project, with aims, outcomes, and alignment to federal priorities.",
+       "timeBoundHours": 6,
+       "deliverables": ["PDF or Markdown", "Reference list (DOI preferred)"],
++      "goodLookLike": [
++        "Clear problem statement, population, and measurable aim.",
++        "Tie to a federal priority or program language without copying boilerplate from unrelated grants."
++      ],
++      "antiPatterns": [
++        "Vague 'AI will help everyone' with no access or safety angle.",
++        "Unverifiable claims or mis-cited prior work."
++      ],
+       "rubric": [
+         { "id": "writing", "label": "Clarity and structure", "weight": 0.35, "scale": [1, 5] },
+         { "id": "research", "label": "Source quality", "weight": 0.3, "scale": [1, 5] },
+@@ -43,6 +70,14 @@
+       "summary": "Implement a small C/C++ (ESP-IDF) module exposing named haptic patterns with safe defaults.",
+       "timeBoundHours": 8,
+       "deliverables": ["Source", "Build notes", "Safety: voltage/limit assumptions"],
++      "goodLookLike": [
++        "Named patterns map to bounded drive strengths and durations; fails safe on bad input.",
++        "Build reproduces with documented IDF and chip rev assumptions."
++      ],
++      "antiPatterns": [
++        "Stiff driving without thermal or voltage guardrails documented.",
++        "Unbuildable or missing `CMake`/`idf` notes."
++      ],
+       "rubric": [
+         { "id": "code", "label": "Implementation", "weight": 0.4, "scale": [1, 5] },
+         { "id": "safety", "label": "Haptics safety notes", "weight": 0.25, "scale": [1, 5] },
+@@ -55,6 +90,14 @@
+       "summary": "Design a small Worker (or spec + pseudo-code) for room presence: join, leave, heartbeat, and abuse considerations.",
+       "timeBoundHours": 5,
+       "deliverables": ["Spec or code", "Threat notes (rate limit, token scope)"],
++      "goodLookLike": [
++        "Idempotent join; explicit leave; heartbeats with TTL; rate limits sketched.",
++        "Authn/z boundary stated (e.g. session vs room token) even if minimal."
++      ],
++      "antiPatterns": [
++        "Room IDs guessable and enumerable without throttles described.",
++        "Omitted abuse/DoS discussion."
++      ],
+       "rubric": [
+         { "id": "code", "label": "Correctness / API shape", "weight": 0.35, "scale": [1, 5] },
+         { "id": "security", "label": "Security posture", "weight": 0.3, "scale": [1, 5] },
+@@ -67,6 +110,13 @@
+       "summary": "Redesign a multi-room nav pattern with focus order, mobile, and low cognitive load.",
+       "timeBoundHours": 4,
+       "deliverables": ["Figma or static HTML mock", "1 paragraph rationale"],
++      "goodLookLike": [
++        "Visible focus, logical order, mobile thumb reach, reduced clutter.",
++        "Annotation of landmarks/regions and motion reduction option."
++      ],
++      "antiPatterns": [
++        "Color-only wayfinding; tiny touch targets; dense chrome without rest states."
++      ],
+       "rubric": [
+         { "id": "design", "label": "UX quality", "weight": 0.45, "scale": [1, 5] },
+         { "id": "a11y", "label": "Accessibility annotations", "weight": 0.3, "scale": [1, 5] },
+@@ -78,6 +128,14 @@
+       "summary": "Propose a written onboarding for new members (async-first), with 3 concrete steps and mod metrics.",
+       "timeBoundHours": 3,
+       "deliverables": ["Doc (MD)", "Success metric suggestions"],
++      "goodLookLike": [
++        "First week has async-only path; time zones called out; mod escalation is explicit.",
++        "One measurable metric (e.g. 7-day return, support ticket deflection) with collection cost noted."
++      ],
++      "antiPatterns": [
++        "Mandatory live voice onboarding as the only path.",
++        "Vague 'be nice' with no process."
++      ],
+       "rubric": [
+         { "id": "communication", "label": "Clarity", "weight": 0.4, "scale": [1, 5] },
+         { "id": "process", "label": "Process design", "weight": 0.3, "scale": [1, 5] },
+@@ -90,6 +148,14 @@
+       "summary": "Write a short API reference (Markdown) for a fictitious `meshSync` service with one happy path and one error path.",
+       "timeBoundHours": 3,
+       "deliverables": ["Markdown", "No external calls required"],
++      "goodLookLike": [
++        "Request/response tables; auth section; at least one error with remediation.",
++        "Versioning or compatibility note, even if hypothetical."
++      ],
++      "antiPatterns": [
++        "Copy-paste of unrelated API with find-replace.",
++        "Omitted error or auth sections."
++      ],
+       "rubric": [
+         { "id": "writing", "label": "Clarity", "weight": 0.4, "scale": [1, 5] },
+         { "id": "accuracy", "label": "Technical accuracy", "weight": 0.35, "scale": [1, 5] },
+diff --git a/04_SOFTWARE/p31-delta-hiring/src/storage.ts b/04_SOFTWARE/p31-delta-hiring/src/storage.ts
+index 33379d7..38fadda 100644
+--- a/04_SOFTWARE/p31-delta-hiring/src/storage.ts
++++ b/04_SOFTWARE/p31-delta-hiring/src/storage.ts
+@@ -75,13 +75,18 @@ export function makeArtifact(
+   kind: ProofArtifact['kind'],
+   label: string,
+   url: string,
+-  notes?: string
++  notes?: string,
++  commitSha?: string
+ ): ProofArtifact {
+-  return {
++  const a: ProofArtifact = {
+     id: uuid(),
+     kind,
+     label: label.slice(0, 200),
+     url: url.slice(0, 2000),
+     notes: notes?.slice(0, 4000)
+   };
++  if (commitSha && /^[a-f0-9]{7,40}$/i.test(commitSha)) {
++    a.commitSha = commitSha;
++  }
++  return a;
+ }
+diff --git a/04_SOFTWARE/p31-delta-hiring/src/types.ts b/04_SOFTWARE/p31-delta-hiring/src/types.ts
+index e9e58ce..f4cd52c 100644
+--- a/04_SOFTWARE/p31-delta-hiring/src/types.ts
++++ b/04_SOFTWARE/p31-delta-hiring/src/types.ts
+@@ -49,7 +49,10 @@ export type WorkSampleDetail = {
+   title: string;
+   summary: string;
+   timeBoundHours: number;
++  allowResourcesOverride?: string;
+   deliverables: string[];
++  goodLookLike: string[];
++  antiPatterns: string[];
+   rubric: RubricLine[];
+ };
+ 
+@@ -72,6 +75,7 @@ export type ProofArtifact = {
+   label: string;
+   url: string;
+   notes?: string;
++  commitSha?: string;
+ };
+ 
+ export type ProofRecord = {
+@@ -86,3 +90,46 @@ export type ProofRecord = {
+   selfAssessment: Record<string, number>;
+   candidateNotes: string;
+ };
++
++export type HelpBlock =
++  | { type: 'p'; text: string }
++  | { type: 'h3'; text: string }
++  | { type: 'ul'; items: string[] }
++  | { type: 'callout'; tone: 'info' | 'warn' | 'legal'; text: string };
++
++export type HelpTopic = {
++  id: string;
++  title: string;
++  section: string;
++  tags: string[];
++  summary: string;
++  relatedWcd: string[];
++  relatedRoleId: string[];
++  lastReviewed: string;
++  blocks: HelpBlock[];
++};
++
++export type HelpData = { schema: string; updated: string; topics: HelpTopic[] };
++
++export type GlossaryEntry = {
++  id: string;
++  term: string;
++  definition: string;
++  seeAlso: string[];
++};
++
++export type GlossaryData = { schema: string; updated: string; entries: GlossaryEntry[] };
++
++export type ChangelogEntry = {
++  version: string;
++  date: string;
++  items: string[];
++};
++
++export type ChangelogData = { schema: string; entries: ChangelogEntry[] };
++
++export type HashRoute = {
++  name: string;
++  id?: string;
++  query?: string;
++};

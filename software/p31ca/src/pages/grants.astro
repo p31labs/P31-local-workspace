@@ -1,0 +1,359 @@
+---
+/**
+  * @p31-layout: Focus
+ * /grants — P31 Labs grant pipeline (public transparency surface).
+ *
+ * Source of truth: src/data/grants.json (pure JSON). When the operator
+ * (or the Discord bot's CORTEX_URL GrantAgent DO) updates a grant entry,
+ * edit the JSON here, run `npm run hub:ci`, and the page re-renders with
+ * the new pipeline.
+ *
+ * Convention parity with /research: this page uses BaseLayout + BusBarNav
+ * so the bus bar nav + PHOS guide + theme cascade all activate. The page
+ * is public (stranger role) — no operator-only data.
+ *
+ * Doctrine: every grant in active[] is publicly visible because P31 Labs
+ * publishes its funding journey as part of the transparency commitment in
+ * `nonprofit/financials.json` (open-books policy). Archived[] preserves
+ * historic context (deadlines passed, programs closed) for accountability.
+ *
+ * Companion: docs/runbooks/nonprofit/grant-application.md (P31 home)
+ * walks the operator from "candidate funder identified" through "award
+ * received + reporting closed-out".
+ */
+import AppShell from '../layouts/AppShell.astro';
+import grantsData from '../data/grants.json';
+
+interface GrantEntry {
+  title: string;
+  funder: string;
+  amount?: { requested?: number; currency?: string } | number;
+  deadline?: string | null;
+  status?: string;
+  notes?: string;
+  budgetBreakdown?: { item: string; cost: number }[];
+  archived?: boolean;
+}
+
+const grants = grantsData as GrantEntry[];
+const active = grants.filter((g) => !g.archived);
+const archived = grants.filter((g) => g.archived);
+
+const totalRequested = active.reduce((sum, g) => {
+  const amt = typeof g.amount === 'number' ? g.amount : g.amount?.requested ?? 0;
+  return sum + amt;
+}, 0);
+
+const upcomingDeadlines = active.filter(
+  (g) => g.deadline && new Date(g.deadline) > new Date()
+).length;
+
+function statusLabel(status?: string): string {
+  if (!status) return 'Researching';
+  const map: Record<string, string> = {
+    draft_complete_operator_review_needed: 'Draft — Review Needed',
+    draft_complete_narrative_pending: 'Draft — Narrative Pending',
+    draft_ready: 'Draft Ready',
+    draft_ready_submit_after_501c3: 'Draft Ready (post-501c3)',
+    submitted_awaiting_decision: 'Submitted — Awaiting',
+    contact_initiated_track_fy2027: 'Researching — FY2027',
+    deadline_passed_not_submitted: 'Deadline Passed',
+    deadline_passed_incomplete: 'Deadline Passed — Incomplete',
+    permanently_closed: 'Program Closed',
+  };
+  return map[status] ?? status.replace(/_/g, ' ');
+}
+
+function statusBadgeClass(status?: string): string {
+  if (!status) return 'badge-researching';
+  if (status.startsWith('draft_')) return 'badge-pending';
+  if (status === 'submitted_awaiting_decision') return 'badge-submitted';
+  if (status.startsWith('awarded')) return 'badge-awarded';
+  return 'badge-researching';
+}
+
+const description =
+  'P31 Labs active grant applications, funding sources, and pipeline status. Transparent view of the funding journey.';
+---
+
+<AppShell title="Grant Pipeline | P31 Labs" description={description} routeName="grants">
+
+  <style>
+    .pipeline-hero {
+      background: linear-gradient(135deg, #0a0a14, #1e293b);
+      padding: 60px 20px;
+      text-align: center;
+    }
+    .pipeline-hero h1 {
+      font-size: 2.5rem;
+      background: linear-gradient(90deg, #22d3ee, #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 10px;
+    }
+    .pipeline-hero p {
+      color: #94a3b8;
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+    .kpi-row {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin: -40px auto 40px;
+      max-width: 900px;
+      position: relative;
+      z-index: 1;
+    }
+    .kpi-card {
+      background: var(--p31-surface);
+      border: 1px solid #1e293b;
+      border-radius: 12px;
+      padding: 20px;
+      min-width: 150px;
+      flex: 1;
+      text-align: center;
+    }
+    .kpi-card .value { font-size: 2rem; font-weight: 700; color: #e2e8f0; }
+    .kpi-card .label {
+      font-size: 11px;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 8px;
+    }
+    .section { max-width: 900px; margin: 40px auto; padding: 0 20px; }
+    .section h2 {
+      font-size: 1.5rem;
+      color: #e2e8f0;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #22d3ee;
+    }
+    .grant-card {
+      background: var(--p31-surface);
+      border: 1px solid #1e293b;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .grant-card .header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      gap: 12px;
+    }
+    .grant-card h3 { font-size: 1.1rem; color: #e2e8f0; margin: 0; }
+    .badge {
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .badge-pending { background: #eab30820; color: #eab308; border: 1px solid #eab308; }
+    .badge-submitted { background: color-mix(in srgb, var(--p31-phosphorus) 12%, transparent); color: var(--p31-phosphorus); border: 1px solid var(--p31-phosphorus); }
+    .badge-awarded { background: #3b82f620; color: var(--p31-phosphorus); border: 1px solid var(--p31-phosphorus); }
+    .badge-researching { background: #6366f120; color: #818cf8; border: 1px solid #6366f1; }
+    .grant-card .meta {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+      font-size: 13px;
+      color: #94a3b8;
+    }
+    .grant-card .notes {
+      font-size: 13px;
+      color: #cbd5e1;
+      line-height: 1.5;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid #1e293b;
+    }
+    .budget-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      font-size: 13px;
+    }
+    .budget-table th {
+      text-align: left;
+      padding: 8px;
+      color: #64748b;
+      border-bottom: 1px solid #1e293b;
+      font-size: 11px;
+      text-transform: uppercase;
+    }
+    .budget-table td {
+      padding: 8px;
+      color: #cbd5e1;
+      border-bottom: 1px solid #1e293b;
+    }
+    .budget-table tr:last-child td { border-bottom: none; }
+    .timeline { position: relative; padding-left: 30px; margin: 20px 0; }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 10px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: #1e293b;
+    }
+    .timeline-item { position: relative; margin-bottom: 20px; }
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -25px;
+      top: 5px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #22d3ee;
+      border: 2px solid #0a0a14;
+    }
+    .timeline-item .date { font-size: 11px; color: #64748b; margin-bottom: 4px; }
+    .timeline-item .event { font-size: 14px; color: #e2e8f0; }
+    .nonprofit-footer {
+      max-width: 900px;
+      margin: 60px auto 40px;
+      padding: 20px;
+      text-align: center;
+      color: #64748b;
+      font-size: 13px;
+      border-top: 1px solid #1e293b;
+    }
+  </style>
+
+  <div class="pipeline-hero">
+    <h1>Grant Pipeline</h1>
+    <p>
+      Transparent view of P31 Labs' funding journey. We publish active
+      applications, awarded grants, and our strategic funding roadmap so
+      anyone can audit the work.
+    </p>
+  </div>
+
+  <div class="kpi-row">
+    <div class="kpi-card">
+      <div class="value" style="color: #22d3ee;">{active.length}</div>
+      <div class="label">Active Grants</div>
+    </div>
+    <div class="kpi-card">
+      <div class="value" style="color: var(--p31-phosphorus);">${totalRequested.toLocaleString()}</div>
+      <div class="label">Total Requested (USD-equiv)</div>
+    </div>
+    <div class="kpi-card">
+      <div class="value" style="color: #eab308;">{upcomingDeadlines}</div>
+      <div class="label">Upcoming Deadlines</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Active Grants</h2>
+    {active.length === 0 && (
+      <p style="color: #94a3b8;">No active grants at this time. Check back soon.</p>
+    )}
+    {active.map((g) => {
+      const amt = typeof g.amount === 'number' ? g.amount : g.amount?.requested;
+      const currency = (typeof g.amount === 'object' && g.amount?.currency) || 'USD';
+      return (
+        <div class="grant-card">
+          <div class="header-row">
+            <h3>{g.title}</h3>
+            <span class={`badge ${statusBadgeClass(g.status)}`}>{statusLabel(g.status)}</span>
+          </div>
+          <div class="meta">
+            <span>Funder: {g.funder}</span>
+            {amt && <span>Requested: ${amt.toLocaleString()} {currency}</span>}
+            {g.deadline && (
+              <span>
+                Deadline: {new Date(g.deadline).toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'short',
+                  day: 'numeric',
+                })}
+              </span>
+            )}
+          </div>
+          {g.notes && <div class="notes">{g.notes}</div>}
+          {g.budgetBreakdown && (
+            <table class="budget-table">
+              <thead>
+                <tr><th>Item</th><th>Cost (USD)</th></tr>
+              </thead>
+              <tbody>
+                {g.budgetBreakdown.map((item) => (
+                  <tr>
+                    <td>{item.item}</td>
+                    <td>${item.cost.toLocaleString()}</td>
+                  </tr>
+                ))}
+                <tr>
+                  <td><strong>Total</strong></td>
+                  <td>
+                    <strong>
+                      ${g.budgetBreakdown.reduce((s, i) => s + i.cost, 0).toLocaleString()}
+                    </strong>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          )}
+        </div>
+      );
+    })}
+  </div>
+
+  <div class="section">
+    <h2>Pipeline Timeline</h2>
+    <div class="timeline">
+      {active
+        .filter((g) => g.deadline)
+        .sort((a, b) => new Date(a.deadline!).getTime() - new Date(b.deadline!).getTime())
+        .map((g) => (
+          <div class="timeline-item">
+            <div class="date">
+              {new Date(g.deadline!).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+              })}
+            </div>
+            <div class="event">{g.title} — {g.funder}</div>
+          </div>
+        ))}
+    </div>
+  </div>
+
+  {archived.length > 0 && (
+    <div class="section">
+      <h2>Archived / Past Cycles</h2>
+      {archived.map((g) => (
+        <div class="grant-card">
+          <div class="header-row">
+            <h3>{g.title}</h3>
+            <span class="badge badge-researching">Archived</span>
+          </div>
+          <div class="meta">
+            <span>Funder: {g.funder}</span>
+          </div>
+          {g.notes && <div class="notes">{g.notes}</div>}
+        </div>
+      ))}
+    </div>
+  )}
+
+  <footer class="nonprofit-footer">
+    <p>P31 Labs, Inc. — 501(c)(3) pending — EIN 42-1888158</p>
+    <p>
+      Data sourced from <code>src/data/grants.json</code>. Canonical contract:
+      <code>ground-truth/nonprofit/grants.json</code> + companion runbook
+      <code>docs/runbooks/nonprofit/grant-application.md</code>.
+    </p>
+  </footer>
+</AppShell>

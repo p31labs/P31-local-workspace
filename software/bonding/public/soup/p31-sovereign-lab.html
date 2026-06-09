@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="description" content="P31 Sovereign Lab — local Three.js dome panes, trim-tab tuning, optional Web Serial + voice guide. Not medical or scientific instrumentation." />
+  <meta name="theme-color" content="#0f1115" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700&family=JetBrains+Mono:ital,wght@0,400;0,600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="cognitive-passport/p31-style.css" />
+  <link rel="stylesheet" href="cognitive-passport/p31-responsive-surface.css" />
+  <script src="cognitive-passport/lib/p31-subject-prefs.js"></script>
+  <link rel="manifest" href="p31-bonding.webmanifest" crossorigin="anonymous" />
+  <title>P31 — Sovereign Lab (dome · trim tab · foundry)</title>
+  <style>
+    body.slab {
+      margin: 0;
+      min-height: 100dvh;
+      font-family: "Atkinson Hyperlegible", system-ui, sans-serif;
+      background: var(--p31-void, #0f1115);
+      color: var(--p31-cloud, #d8d6d0);
+      display: grid;
+      grid-template-columns: minmax(280px, 340px) 1fr;
+      grid-template-rows: auto 1fr auto;
+      gap: 0;
+    }
+    @media (max-width: 900px) {
+      body.slab { grid-template-columns: 1fr; grid-template-rows: auto auto 1fr auto; }
+    }
+    .slab-head {
+      grid-column: 1 / -1;
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+      background: rgba(10, 12, 18, 0.92);
+    }
+    .slab-head h1 {
+      margin: 0;
+      font-size: clamp(1rem, 1.5vw + 0.75rem, 1.2rem);
+      font-weight: 600;
+    }
+    .slab-head p { margin: 0.35rem 0 0; font-size: 0.82rem; opacity: 0.88; max-width: 62rem; }
+    .slab-aside {
+      padding: 1rem;
+      border-right: 1px solid rgba(148, 163, 184, 0.15);
+      overflow: auto;
+      max-height: 100dvh;
+    }
+    @media (max-width: 900px) {
+      .slab-aside { border-right: none; border-bottom: 1px solid rgba(148, 163, 184, 0.15); max-height: none; }
+    }
+    .slab-aside h2 {
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--p31-muted, #8b9aa8);
+      margin: 1rem 0 0.4rem;
+    }
+    .slab-aside h2:first-child { margin-top: 0; }
+    .slab-field { margin-bottom: 0.65rem; }
+    .slab-field label { display: block; font-size: 0.78rem; margin-bottom: 0.2rem; color: var(--p31-muted, #8b9aa8); }
+    .slab-field input[type="range"] { width: 100%; }
+    .slab-val { font-family: "JetBrains Mono", monospace; font-size: 0.75rem; opacity: 0.9; }
+    .slab-btn {
+      font: inherit;
+      font-size: 0.8rem;
+      padding: 0.4rem 0.7rem;
+      margin: 0.2rem 0.35rem 0.2rem 0;
+      border-radius: 8px;
+      border: 1px solid rgba(77, 184, 168, 0.45);
+      background: rgba(37, 137, 125, 0.25);
+      color: var(--p31-cyan, #4db8a8);
+      cursor: pointer;
+    }
+    .slab-btn:hover { border-color: var(--p31-cyan, #4db8a8); }
+    .slab-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+    .slab-btn--ghost {
+      border-color: rgba(148, 163, 184, 0.35);
+      background: transparent;
+      color: var(--p31-cloud, #d8d6d0);
+    }
+    .slab-links a {
+      display: inline-block;
+      margin: 0.25rem 0.6rem 0.25rem 0;
+      font-size: 0.85rem;
+      color: var(--p31-cyan, #4db8a8);
+    }
+    .slab-stage-wrap {
+      position: relative;
+      min-height: min(72dvh, 720px);
+      background: #050508;
+    }
+    .slab-stage-wrap canvas { display: block; width: 100%; height: 100%; touch-action: none; }
+    .slab-hud {
+      position: absolute;
+      left: 0.5rem;
+      bottom: 0.5rem;
+      right: 0.5rem;
+      pointer-events: none;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.68rem;
+      color: rgba(232, 230, 227, 0.75);
+      text-shadow: 0 1px 2px #000;
+    }
+    .slab-foot {
+      grid-column: 1 / -1;
+      padding: 0.6rem 1rem;
+      font-size: 0.72rem;
+      border-top: 1px solid rgba(148, 163, 184, 0.15);
+      color: var(--p31-muted, #8b9aa8);
+    }
+    details.slab-details {
+      margin: 0.5rem 0;
+      padding: 0.5rem 0.65rem;
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      border-radius: 8px;
+      background: rgba(0, 0, 0, 0.25);
+      font-size: 0.82rem;
+    }
+    details.slab-details summary { cursor: pointer; color: var(--p31-cyan, #4db8a8); }
+    .slab-warn {
+      margin-top: 0.5rem;
+      padding: 0.45rem 0.55rem;
+      border-radius: 6px;
+      background: rgba(204, 98, 71, 0.12);
+      border: 1px solid rgba(204, 98, 71, 0.35);
+      font-size: 0.78rem;
+      color: #e8c4bc;
+    }
+  </style>
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+    }
+  }
+  </script>
+</head>
+<body class="p31-mesh-m-first p31-responsive-surface slab">
+  <header class="slab-head">
+    <h1>Sovereign Lab</h1>
+    <p>
+      <strong>Research-doc implementable slice:</strong> exploded icosahedron faces (each triangle pickable), coherence + “voltage” sliders, optional
+      <strong>Web Serial</strong> (newline-delimited JSON), <strong>Web Speech</strong> voice line, links to the <a href="p31-slicer.html">browser slicer</a> and live
+      <a href="https://p31ca.org/geodesic" rel="noopener" target="_blank">Geodesic room</a> (hub). Coherence band around <strong>0.35</strong> is a <em>visual tuning metaphor</em> from your notes — not a medical or physics instrument.
+    </p>
+  </header>
+
+  <aside class="slab-aside" aria-label="Controls">
+    <h2>Coherence · trim tab</h2>
+    <div class="slab-field">
+      <label for="slab-h">Coherence H (0–1)</label>
+      <input type="range" id="slab-h" min="0" max="1" step="0.01" value="0.35" />
+      <div class="slab-val" id="slab-h-disp">H = 0.35 · band near 0.35 = calmer palette</div>
+    </div>
+    <div class="slab-field">
+      <label for="slab-v">Voltage / load (0–100)</label>
+      <input type="range" id="slab-v" min="0" max="100" step="1" value="30" />
+      <div class="slab-val" id="slab-v-disp">30</div>
+    </div>
+
+    <h2>Voice guide (local)</h2>
+    <p style="font-size:0.78rem;margin:0 0 0.5rem;opacity:0.88">Uses browser Speech Synthesis. One line at a time; cancels overlap.</p>
+    <button type="button" class="slab-btn" id="slab-speak-intro">Hear intro</button>
+    <button type="button" class="slab-btn slab-btn--ghost" id="slab-speak-band">Coherence band tip</button>
+    <button type="button" class="slab-btn slab-btn--ghost" id="slab-speak-design">Design the future</button>
+
+    <h2>Hardware bridge (optional)</h2>
+    <p style="font-size:0.78rem;margin:0 0 0.5rem;opacity:0.88">
+      Chromium: connect a device that prints <code>{"q":0.35,"v":40,"btn":0}\n</code> per line (115200 baud). Maps <code>q</code> → H, <code>v</code> → voltage.
+    </p>
+    <button type="button" class="slab-btn" id="slab-serial-open">Connect serial…</button>
+    <button type="button" class="slab-btn slab-btn--ghost" id="slab-serial-close" disabled>Disconnect</button>
+    <div class="slab-val" id="slab-serial-status">Serial: idle</div>
+
+    <h2>C.A.R.S. mesh (optional)</h2>
+    <p style="font-size:0.78rem;margin:0 0 0.5rem;line-height:1.45;opacity:0.88">
+      Stream coherence sliders into the mock WebSocket as <code>labTelemetry</code> (appears in room <code>eventLog</code>). Start the mock:
+      <code>cd spikes/mock-ws-server &amp;&amp; node server.js</code> (default <strong>:8082</strong>). Open <a href="soup.html">soup</a> on the same port if you want molecules + log together.
+      Override URL with <code>?carsWs=ws://127.0.0.1:8082</code>.
+    </p>
+    <button type="button" class="slab-btn" id="slab-cars-connect">Connect C.A.R.S. WS</button>
+    <button type="button" class="slab-btn slab-btn--ghost" id="slab-cars-disconnect" disabled>Disconnect</button>
+    <div class="slab-val" id="slab-cars-status">C.A.R.S.: idle</div>
+
+    <h2>Foundry · mesh</h2>
+    <div class="slab-links">
+      <a href="p31-slicer.html">Kiri:Moto slicer shell</a>
+      <a href="design-assets/stl/P31_K4_Topology.stl" download>K₄ STL</a>
+      <a href="https://p31ca.org/geodesic" rel="noopener" target="_blank">Hub geodesic</a>
+    </div>
+
+    <h2>Geodesic room · live state</h2>
+    <p style="font-size:0.82rem;margin:0 0 0.5rem;line-height:1.45;opacity:0.9">
+      Vite spike polls <code>GET /api/geodesic/:room/state</code> (read-only). Run
+      <code>npm run demo:geodesic-preview</code> from repo root (port <strong>5174</strong>), then open the printed URL
+      — proxy avoids CORS to the Worker. Types in <code>spikes/sovereign-geodesic-preview/src/types.ts</code> mirror the wire when Andromeda is absent.
+    </p>
+    <div class="slab-links">
+      <a href="http://127.0.0.1:5174/" target="_blank" rel="noopener">Open preview (with dev server)</a>
+      <span style="font-size:0.82rem;opacity:0.85"><code>spikes/sovereign-geodesic-preview/README.md</code></span>
+    </div>
+
+    <details class="slab-details">
+      <summary>Wye vs Delta (metaphor)</summary>
+      <p style="margin:0.4rem 0 0;line-height:1.45">
+        Electrical <strong>Wye</strong> has a common neutral; <strong>Delta</strong> closes phases in a loop. As <em>software metaphor</em>: centralized hubs vs peer mesh resilience.
+        This page does not run power systems — it is a calm visual for thinking about where you anchor trust (local file, serial device, hub room).
+      </p>
+    </details>
+
+    <div class="slab-warn" role="note">
+      Not therapy, not diagnosis, not quantum hardware. If the 3D view is uncomfortable, use <code>prefers-reduced-motion</code> in OS settings — motion scales down automatically.
+    </div>
+  </aside>
+
+  <div class="slab-stage-wrap" id="slab-stage">
+    <div class="slab-hud" id="slab-hud">Click a face · drag to orbit</div>
+  </div>
+
+  <footer class="slab-foot">
+    Three.js r160 (import map). With <code>npm run demo</code>: <code>/p31-sovereign-lab.html</code>. GeodesicRoom wire stays on the hub worker — use the Geodesic link for shared K₄ + shapes (<code>?room=</code>).
+  </footer>
+
+  <script type="module">
+    import * as THREE from "three";
+    import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+
+    const TARGET_H = 0.35;
+    const BAND = 0.1;
+
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const stage = document.getElementById("slab-stage");
+    const hud = document.getElementById("slab-hud");
+    const hEl = document.getElementById("slab-h");
+    const vEl = document.getElementById("slab-v");
+    const hDisp = document.getElementById("slab-h-disp");
+    const vDisp = document.getElementById("slab-v-disp");
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.setSize(stage.clientWidth, stage.clientHeight, false);
+    renderer.setClearColor(0x050508, 1);
+    stage.insertBefore(renderer.domElement, hud);
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(50, stage.clientWidth / stage.clientHeight, 0.05, 80);
+    camera.position.set(0, 1.1, 3.2);
+
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.target.set(0, 0.2, 0);
+
+    scene.add(new THREE.AmbientLight(0xffffff, 0.35));
+    const key = new THREE.DirectionalLight(0xffffff, 0.85);
+    key.position.set(3, 5, 4);
+    scene.add(key);
+
+    const dome = new THREE.Group();
+    scene.add(dome);
+
+    const base = new THREE.IcosahedronGeometry(1.15, 0).toNonIndexed();
+    const pos = base.attributes.position;
+    const faces = [];
+    const teal = 0x25897d;
+    const coral = 0xcc6247;
+    const cyan = 0x4db8a8;
+
+    for (let i = 0; i < pos.count; i += 3) {
+      const g = new THREE.BufferGeometry();
+      const v = new Float32Array(9);
+      for (let j = 0; j < 3; j++) {
+        v[j * 3] = pos.getX(i + j);
+        v[j * 3 + 1] = pos.getY(i + j);
+        v[j * 3 + 2] = pos.getZ(i + j);
+      }
+      g.setAttribute("position", new THREE.BufferAttribute(v, 3));
+      g.computeVertexNormals();
+      const mat = new THREE.MeshStandardMaterial({
+        color: teal,
+        metalness: 0.15,
+        roughness: 0.42,
+        emissive: 0x000000,
+        emissiveIntensity: 0,
+        side: THREE.DoubleSide,
+      });
+      const mesh = new THREE.Mesh(g, mat);
+      mesh.userData.faceId = i / 3;
+      mesh.castShadow = false;
+      mesh.receiveShadow = false;
+      dome.add(mesh);
+      faces.push(mesh);
+    }
+
+    const raycaster = new THREE.Raycaster();
+    const pointer = new THREE.Vector2();
+    let hovered = null;
+
+    function paletteForH(H) {
+      const d = Math.abs(H - TARGET_H);
+      if (d < BAND) return { base: teal, em: cyan, emInt: 0.12 };
+      return { base: coral, em: coral, emInt: 0.08 + Math.min(0.35, d) };
+    }
+
+    /** Mock WS — cars-contract labTelemetry → eventLog (not sent by soup.ts). */
+    const slabCarsConnect = document.getElementById("slab-cars-connect");
+    const slabCarsDisconnect = document.getElementById("slab-cars-disconnect");
+    const slabCarsStatus = document.getElementById("slab-cars-status");
+    const carsWsParam = new URLSearchParams(location.search).get("carsWs") || "ws://127.0.0.1:8082";
+    let carsWs = null;
+    let carsThrottleAt = 0;
+
+    function buildCarsWsUrl(raw) {
+      try {
+        const u = new URL(raw);
+        if (!u.searchParams.has("room")) u.searchParams.set("room", "mock");
+        if (!u.searchParams.has("name")) u.searchParams.set("name", "Lab");
+        return u.toString();
+      } catch {
+        return raw;
+      }
+    }
+
+    function sendCarsTelemetry(force) {
+      if (!carsWs || carsWs.readyState !== WebSocket.OPEN) return;
+      const now = Date.now();
+      if (!force && now - carsThrottleAt < 280) return;
+      carsThrottleAt = now;
+      const H = Number(hEl.value);
+      const V = Number(vEl.value);
+      try {
+        carsWs.send(
+          JSON.stringify({
+            type: "labTelemetry",
+            q: H,
+            v: V,
+            source: "sovereign-lab",
+            message: "H=" + H.toFixed(2) + " V=" + V,
+          })
+        );
+      } catch {
+        /* */
+      }
+    }
+
+    function applyHV() {
+      const H = Number(hEl.value);
+      const V = Number(vEl.value);
+      hDisp.textContent = "H = " + H.toFixed(2) + (Math.abs(H - TARGET_H) < BAND ? " · in band" : " · outside band");
+      vDisp.textContent = String(V);
+      const pal = paletteForH(H);
+      const vBoost = reducedMotion ? 0 : (V / 100) * 0.25;
+      for (const mesh of faces) {
+        mesh.material.color.setHex(pal.base);
+        mesh.material.emissive.setHex(pal.em);
+        mesh.material.emissiveIntensity = pal.emInt + vBoost;
+      }
+      sendCarsTelemetry();
+    }
+
+    slabCarsConnect.addEventListener("click", () => {
+      if (carsWs && (carsWs.readyState === WebSocket.OPEN || carsWs.readyState === WebSocket.CONNECTING)) return;
+      slabCarsStatus.textContent = "C.A.R.S.: connecting…";
+      carsWs = new WebSocket(buildCarsWsUrl(carsWsParam));
+      carsWs.addEventListener("open", () => {
+        slabCarsStatus.textContent = "C.A.R.S.: connected · labTelemetry → eventLog";
+        slabCarsConnect.disabled = true;
+        slabCarsDisconnect.disabled = false;
+        sendCarsTelemetry(true);
+      });
+      carsWs.addEventListener("error", () => {
+        slabCarsStatus.textContent = "C.A.R.S.: connection error";
+      });
+      carsWs.addEventListener("close", () => {
+        slabCarsStatus.textContent = "C.A.R.S.: disconnected";
+        slabCarsConnect.disabled = false;
+        slabCarsDisconnect.disabled = true;
+        carsWs = null;
+      });
+    });
+
+    slabCarsDisconnect.addEventListener("click", () => {
+      try {
+        if (carsWs) carsWs.close();
+      } catch {
+        /* */
+      }
+      carsWs = null;
+      slabCarsConnect.disabled = false;
+      slabCarsDisconnect.disabled = true;
+      slabCarsStatus.textContent = "C.A.R.S.: idle";
+    });
+
+    hEl.addEventListener("input", applyHV);
+    vEl.addEventListener("input", applyHV);
+    applyHV();
+
+    function onMove(ev) {
+      const r = stage.getBoundingClientRect();
+      pointer.x = ((ev.clientX - r.left) / r.width) * 2 - 1;
+      pointer.y = -((ev.clientY - r.top) / r.height) * 2 + 1;
+      raycaster.setFromCamera(pointer, camera);
+      const hits = raycaster.intersectObjects(faces, false);
+      if (hovered && (!hits.length || hits[0].object !== hovered)) {
+        hovered.material.color.setHex(paletteForH(Number(hEl.value)).base);
+        hovered = null;
+      }
+      if (hits.length) {
+        hovered = hits[0].object;
+        hovered.material.color.setHex(cyan);
+        hud.textContent = "Face " + hovered.userData.faceId + " · H " + Number(hEl.value).toFixed(2);
+      } else {
+        hud.textContent = "Click a face · drag to orbit";
+      }
+    }
+
+    stage.addEventListener("pointermove", onMove);
+    stage.addEventListener("pointerdown", (ev) => {
+      const r = stage.getBoundingClientRect();
+      pointer.x = ((ev.clientX - r.left) / r.width) * 2 - 1;
+      pointer.y = -((ev.clientY - r.top) / r.height) * 2 + 1;
+      raycaster.setFromCamera(pointer, camera);
+      const hits = raycaster.intersectObjects(faces, false);
+      if (hits.length) {
+        const f = hits[0].object.userData.faceId;
+        speakShort("Face " + f + ". Coherence " + Number(hEl.value).toFixed(2) + ".");
+        if (carsWs && carsWs.readyState === WebSocket.OPEN) {
+          try {
+            carsWs.send(
+              JSON.stringify({
+                type: "labTelemetry",
+                q: Number(hEl.value),
+                v: Number(vEl.value),
+                btn: String(f),
+                source: "sovereign-lab",
+                message: "face_pick",
+              })
+            );
+          } catch {
+            /* */
+          }
+        }
+      }
+    });
+
+    function onResize() {
+      const w = stage.clientWidth;
+      const h = stage.clientHeight;
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+      renderer.setSize(w, h, false);
+    }
+    window.addEventListener("resize", onResize);
+
+    let t0 = 0;
+    function tick(t) {
+      const dt = (t - t0) * 0.001;
+      t0 = t;
+      if (!reducedMotion) {
+        dome.rotation.y += dt * 0.08 * (0.25 + Number(vEl.value) / 200);
+      }
+      controls.update();
+      renderer.render(scene, camera);
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+
+    /* ---- Voice (research: calm rate/pitch, cancel overlap) ---- */
+    function speakShort(text) {
+      if (!window.speechSynthesis) return;
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.rate = 0.92;
+      u.pitch = 0.95;
+      u.lang = "en-US";
+      window.speechSynthesis.speak(u);
+    }
+
+    document.getElementById("slab-speak-intro").addEventListener("click", () => {
+      speakShort(
+        "Sovereign Lab. Coherence H near point three five softens the palette. Voltage adds emissive load. This is a browser demo, not a medical device."
+      );
+    });
+    document.getElementById("slab-speak-band").addEventListener("click", () => {
+      speakShort("Move H into the band near zero point three five for the calmer teal state.");
+    });
+    document.getElementById("slab-speak-design").addEventListener("click", () => {
+      speakShort("The best way to predict the future is to design it.");
+    });
+
+    /* ---- Web Serial (research: line-delimited JSON, flow-safe) ---- */
+    let port = null;
+    let reader = null;
+    let serialBuf = "";
+    const serialStatus = document.getElementById("slab-serial-status");
+    const btnOpen = document.getElementById("slab-serial-open");
+    const btnClose = document.getElementById("slab-serial-close");
+
+    function applySerialPayload(obj) {
+      if (typeof obj.q === "number" && Number.isFinite(obj.q)) {
+        const qh = Math.max(0, Math.min(1, obj.q));
+        hEl.value = String(qh);
+      }
+      if (typeof obj.v === "number" && Number.isFinite(obj.v)) {
+        const vv = Math.max(0, Math.min(100, obj.v));
+        vEl.value = String(vv);
+      }
+      applyHV();
+    }
+
+    function feedSerialText(chunk) {
+      serialBuf += chunk;
+      const parts = serialBuf.split("\n");
+      serialBuf = parts.pop() || "";
+      for (const line of parts) {
+        const s = line.trim();
+        if (!s) continue;
+        try {
+          applySerialPayload(JSON.parse(s));
+        } catch {
+          /* ignore bad line */
+        }
+      }
+    }
+
+    async function closeSerial() {
+      try {
+        if (reader) await reader.cancel();
+      } catch {
+        /* */
+      }
+      reader = null;
+      try {
+        if (port) await port.close();
+      } catch {
+        /* */
+      }
+      port = null;
+      serialBuf = "";
+      btnOpen.disabled = false;
+      btnClose.disabled = true;
+      serialStatus.textContent = "Serial: idle";
+    }
+
+    btnOpen.addEventListener("click", async () => {
+      if (!("serial" in navigator)) {
+        serialStatus.textContent = "Serial: unsupported (use Chromium desktop)";
+        speakShort("Web Serial is not available in this browser.");
+        return;
+      }
+      try {
+        port = await navigator.serial.requestPort();
+        await port.open({ baudRate: 115200 });
+        const textStream = port.readable.pipeThrough(new TextDecoderStream());
+        reader = textStream.getReader();
+        btnOpen.disabled = true;
+        btnClose.disabled = false;
+        serialStatus.textContent = "Serial: reading…";
+        speakShort("Serial connected.");
+        (async function loop() {
+          try {
+            for (;;) {
+              const { value, done } = await reader.read();
+              if (done) break;
+              if (value) feedSerialText(value);
+            }
+          } catch {
+            /* */
+          }
+          await closeSerial();
+        })();
+      } catch (e) {
+        serialStatus.textContent = "Serial: " + ((e && e.message) || "error");
+      }
+    });
+
+    btnClose.addEventListener("click", () => {
+      closeSerial();
+    });
+  </script>
+</body>
+</html>

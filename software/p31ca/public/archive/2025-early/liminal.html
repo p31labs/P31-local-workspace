@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#050505">
+    <title>LIMINAL | P31 Labs</title>
+    <meta name="description" content="Poetry, astrology, and drawing sanctuary. Voice-to-poem, wabi-sabi canvas, offline ephemeris, constellation drawing. No grades, no scores. Breath-locked sessions.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/assets/p31-operator-tailwind.js"></script>
+    <style>
+        body {
+            background-color: #050505;
+            color: #d8d6d0;
+            background-image: linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+        .matte-panel { background-color: #161920; border: 1px solid rgba(255,255,255,0.04); }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col text-cloud/90">
+
+    <header class="w-full border-b border-white/5 bg-void/95 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="/" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
+                <svg width="28" height="28" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="512" height="512" rx="112" fill="#25897d"/>
+                    <circle cx="390" cy="120" r="48" fill="#cc6247"/>
+                    <text x="256" y="340" font-family="system-ui" font-weight="900" font-size="220" fill="#d8d6d0" text-anchor="middle">P31</text>
+                    <rect x="156" y="380" width="200" height="16" rx="8" fill="#cda852"/>
+                </svg>
+                <span class="font-bold text-lg tracking-tight">P31 Labs</span>
+            </a>
+            <nav class="flex gap-4 font-mono text-sm">
+                <a href="/" class="text-cloud/50 hover:text-cloud transition-colors flex items-center gap-2">← Hub</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl mx-auto px-6 py-12 w-full flex flex-col gap-12">
+
+        <header class="border-b border-white/10 pb-8">
+            <div class="flex items-center gap-4 mb-4">
+                <div class="text-3xl bg-surface w-12 h-12 rounded flex items-center justify-center border border-white/5">🌙</div>
+                <div class="px-2 py-0.5 rounded border text-[10px] font-mono tracking-wide text-lavender/80 border-lavender/20 bg-lavender/5">🔵 PROTOTYPE</div>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-bold mb-4 text-cloud">LIMINAL</h1>
+            <p class="text-xl text-lavender/70 font-mono">Poetry · Astrology · Drawing — Creative Regulation Sanctuary</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            <div class="lg:col-span-2 flex flex-col gap-8">
+
+                <section class="matte-panel rounded-lg p-8">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center gap-3">
+                        <span class="text-lavender">01.</span> What It Is
+                    </h2>
+                    <p class="text-cloud/70 leading-relaxed mb-6">
+                        LIMINAL is a low-pressure creative sanctuary. It exists because autistic and AuDHD individuals often experience <strong class="text-cloud/85">alexithymia</strong> — difficulty identifying and naming internal emotional states. Visual and metaphorical expression bypasses the cognitive bottleneck of direct verbalization. The research literature on expressive writing (Pennebaker's paradigm) and art therapy for AuDHD adults consistently shows reduced allostatic load through creative output — not despite the mess, but because of it.
+                    </p>
+                    <div class="space-y-3">
+                        <div class="bg-void border border-lavender/10 rounded p-5">
+                            <p class="text-lavender/80 font-mono text-xs mb-2 uppercase tracking-widest">The Breath Gate</p>
+                            <p class="text-cloud/70 text-sm leading-relaxed">Every session begins with a pre-creative regulation gate — a soft, expanding geometric shape guiding 3 rounds of physiological sigh (double inhale, long exhale). This is the fastest known intervention for down-regulating the sympathetic nervous system. It takes 90 seconds. You cannot skip it. You can always exit.</p>
+                        </div>
+                        <div class="bg-void border border-lavender/10 rounded p-5">
+                            <p class="text-lavender/80 font-mono text-xs mb-2 uppercase tracking-widest">Astrology Framing Rule</p>
+                            <p class="text-cloud/70 text-sm leading-relaxed">LIMINAL treats astrology as a structured framework for pattern recognition, not prediction. Baron-Cohen's Empathizing-Systemizing (E-S) theory notes that neurodivergent individuals often benefit from highly structured, systemic frameworks for processing chaotic emotional or interpersonal concepts. Archetypes and degrees provide that structure safely. Language is always curiosity, never determinism.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="matte-panel rounded-lg p-8">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center gap-3">
+                        <span class="text-lavender">02.</span> The Four Modes
+                    </h2>
+                    <div class="space-y-6">
+                        <div>
+                            <h3 class="font-bold text-cloud mb-2 flex items-center gap-2">
+                                <span class="text-xs font-mono px-2 py-0.5 rounded bg-lavender/10 border border-lavender/20 text-lavender">Perfect Freehand</span>
+                                Wabi-Sabi Canvas
+                            </h3>
+                            <p class="text-cloud/65 text-sm leading-relaxed">A pressure-sensitive drawing canvas where strokes slowly fade or blur over time. Not a permanent artifact — the canvas is alive. This design choice breaks the perfectionism loop: you cannot obsessively refine what has already dissolved. The focus shifts to the kinetic act of the stroke itself — a stim in motion. Built on Perfect Freehand + Canvas Pointer API for smooth, pressure-responsive lines.</p>
+                        </div>
+                        <div class="border-t border-white/5 pt-6">
+                            <h3 class="font-bold text-cloud mb-2 flex items-center gap-2">
+                                <span class="text-xs font-mono px-2 py-0.5 rounded bg-lavender/10 border border-lavender/20 text-lavender">Web Speech API</span>
+                                Voice-to-Poem
+                            </h3>
+                            <p class="text-cloud/65 text-sm leading-relaxed">Record your voice. Line breaks appear on breath pauses; stanza breaks on silence longer than 1 second. The poem structures itself from the rhythm of your speech without editorial judgment. Offline when Google language packs are downloaded; keyboard mode always available as fallback. Optional: Claude API for metaphor suggestions on lines you flag.</p>
+                        </div>
+                        <div class="border-t border-white/5 pt-6">
+                            <h3 class="font-bold text-cloud mb-2 flex items-center gap-2">
+                                <span class="text-xs font-mono px-2 py-0.5 rounded bg-lavender/10 border border-lavender/20 text-lavender">SwissEph-JS</span>
+                                Ephemeris Pattern Finder
+                            </h3>
+                            <p class="text-cloud/65 text-sm leading-relaxed">A simplified visual transit dial — offline, ±5 year planetary positions bundled in under 2MB. Users can log mood and energy alongside current transits to discover personal patterns over time, satisfying the AuDHD drive for systemizing without adopting fatalistic astrology. All data stays in IndexedDB.</p>
+                        </div>
+                        <div class="border-t border-white/5 pt-6">
+                            <h3 class="font-bold text-cloud mb-2 flex items-center gap-2">
+                                <span class="text-xs font-mono px-2 py-0.5 rounded bg-lavender/10 border border-lavender/20 text-lavender">IndexedDB</span>
+                                Constellation Drawing
+                            </h3>
+                            <p class="text-cloud/65 text-sm leading-relaxed">Touch-draw freehand constellations on a live star field. Name them. Save them. Each constellation is a named, timestamped artifact stored offline. Share via QR code. Stars are procedurally generated (same shader family as BONDING's Starfield) — never the same sky twice, but always stable within a session.</p>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+
+            <div class="flex flex-col gap-6">
+
+                <div class="matte-panel rounded-lg p-6">
+                    <h3 class="text-sm font-mono text-cloud/40 uppercase tracking-widest mb-4">Status</h3>
+                    <div class="p-4 bg-void border border-lavender/20 rounded text-center">
+                        <div class="text-2xl mb-2">🌙</div>
+                        <div class="font-bold text-sm text-lavender mb-1">In Design</div>
+                        <div class="text-xs text-cloud/40 font-mono">Post-research phase</div>
+                    </div>
+                </div>
+
+                <div class="matte-panel rounded-lg p-6">
+                    <h3 class="text-sm font-mono text-cloud/40 uppercase tracking-widest mb-4">Modes</h3>
+                    <div class="space-y-3 text-sm font-mono">
+                        <div class="flex justify-between items-center">
+                            <span class="text-cloud/50">Wabi-Sabi Canvas</span>
+                            <span class="text-lavender/70">0 spoons</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-cloud/50">Voice-to-Poem</span>
+                            <span class="text-lavender/70">0 spoons</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-cloud/50">Ephemeris Finder</span>
+                            <span class="text-lavender/70">0 spoons</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-cloud/50">Constellation Draw</span>
+                            <span class="text-lavender/70">0 spoons</span>
+                        </div>
+                        <div class="border-t border-white/5 pt-3 flex justify-between items-center">
+                            <span class="text-cloud/50">Breath Gate</span>
+                            <span class="text-cloud/40">required entry</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="matte-panel rounded-lg p-6">
+                    <h3 class="text-sm font-mono text-cloud/40 uppercase tracking-widest mb-4">Technical Stack</h3>
+                    <div class="space-y-3 text-sm">
+                        <div>
+                            <div class="text-cloud font-bold mb-1">Drawing</div>
+                            <div class="text-cloud/60">Perfect Freehand + Canvas 2D Pointer API</div>
+                        </div>
+                        <div>
+                            <div class="text-cloud font-bold mb-1">Ephemeris</div>
+                            <div class="text-cloud/60">SwissEph-JS — ±5 yr table, ~2MB, fully offline</div>
+                        </div>
+                        <div>
+                            <div class="text-cloud font-bold mb-1">Star Field</div>
+                            <div class="text-cloud/60">Starfield.tsx — reused from BONDING</div>
+                        </div>
+                        <div>
+                            <div class="text-cloud font-bold mb-1">Breath Pacer</div>
+                            <div class="text-cloud/60">BreathingPacer.jsx — reused from frontend</div>
+                        </div>
+                        <div>
+                            <div class="text-cloud font-bold mb-1">Persistence</div>
+                            <div class="text-cloud/60">IndexedDB — all data stays on device</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="matte-panel rounded-lg p-6">
+                    <h3 class="text-sm font-mono text-cloud/40 uppercase tracking-widest mb-4">Launch</h3>
+                    <a href="poetry.html" class="block p-5 bg-void border border-lavender/30 rounded hover:border-lavender/70 transition-colors group text-center mb-3">
+                        <div class="text-2xl mb-2">🌙</div>
+                        <div class="font-bold text-sm text-lavender mb-1 group-hover:text-lavender transition-colors">Node Poetry Canvas</div>
+                        <div class="text-xs text-cloud/40 font-mono">Physics word bubbles · Matter.js</div>
+                    </a>
+                </div>
+
+                <div class="matte-panel rounded-lg p-6">
+                    <h3 class="text-sm font-mono text-cloud/40 uppercase tracking-widest mb-4">Ecosystem Ties</h3>
+                    <a href="spaceship-earth.html" class="block p-4 bg-void border border-white/5 rounded hover:border-lavender/30 transition-colors group mb-3">
+                        <div class="font-bold text-sm text-cloud group-hover:text-lavender transition-colors mb-1">Spaceship Earth</div>
+                        <div class="text-xs text-cloud/50">The sovereign shell that hosts LIMINAL as a room.</div>
+                    </a>
+                    <a href="bonding.html" class="block p-4 bg-void border border-white/5 rounded hover:border-teal/30 transition-colors group">
+                        <div class="font-bold text-sm text-cloud group-hover:text-teal transition-colors mb-1">BONDING</div>
+                        <div class="text-xs text-cloud/50">Starfield.tsx and BreathingPacer shared with LIMINAL.</div>
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <footer class="border-t border-white/5 mt-12 py-6">
+        <div class="max-w-7xl mx-auto px-6 flex justify-between items-center text-xs text-cloud/30 font-mono">
+            <span>P31 Labs · 501(c)(3) · EIN 42-1888158</span>
+            <a href="/" class="hover:text-cloud/60 transition-colors">← Back to Hub</a>
+        </div>
+    </footer>
+
+</body>
+</html>

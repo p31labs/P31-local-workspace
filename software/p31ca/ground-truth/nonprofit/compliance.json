@@ -1,0 +1,174 @@
+{
+  "$schema": "p31.nonprofit.compliance/1.0.0",
+  "_meta": {
+    "description": "Canonical compliance contract — federal Form 990 schedule, state charitable-solicitation registrations, deadline calendar. Drives npm run nonprofit:calendar and the public /compliance page.",
+    "lastUpdated": "2026-05-01",
+    "owner": "operator@phosphorus31.org",
+    "verifier": "npm run verify:nonprofit"
+  },
+  "federal": {
+    "form1023": {
+      "filed": true,
+      "filedDate": "TBD-operator-to-confirm",
+      "status": "submitted-awaiting-determination",
+      "expedite": false,
+      "userFee": 600,
+      "form": "Form 1023 (long-form)",
+      "userFeeIfShortForm": 275,
+      "note": "Form 1023 has been filed with the IRS; awaiting determination letter. Donations made between incorporation date and determination date are deductible retroactively to incorporation date if/when IRS approves. Donor receipts include the conditional-deductibility language until determination letter received.",
+      "expectedDeterminationWindow": "3-6 months typical for long-form, may extend to 12 months",
+      "trackingHistoryAvailable": "operator can check status at irs.gov/charities-non-profits/where-is-my-application-for-tax-exempt-status"
+    },
+    "stateLevelRecognition": {
+      "georgia": {
+        "nonprofitCorporationStatus": "approved",
+        "nonprofitCorporationApprovedDate": "2026-04-03",
+        "stateTaxExemption501Status": "approved",
+        "stateTaxExemption501ApprovedDate": "TBD-operator-to-confirm",
+        "note": "GA state has confirmed 501-equivalent state-level recognition; some state benefits (sales/use tax exemption) typically require federal IRS determination first — operator to confirm scope of GA approval"
+      }
+    },
+    "form990": {
+      "schedule": [
+        {
+          "fiscalYear": 2026,
+          "form": "990-N (e-postcard)",
+          "threshold": "gross receipts <= $50,000",
+          "dueDate": "2027-05-15",
+          "filed": false,
+          "extensionAvailable": "6 months via Form 8868"
+        },
+        {
+          "fiscalYear": 2027,
+          "form": "TBD based on revenue",
+          "threshold": "990-N if <=50k, 990-EZ if 50k-200k, 990 if >200k",
+          "dueDate": "2028-05-15",
+          "filed": false
+        }
+      ],
+      "publicDisclosureRequired": true,
+      "disclosureWindow": "3 most recent years"
+    },
+    "form941": {
+      "applicable": false,
+      "appliesWhen": "first W-2 employee hired",
+      "frequency": "quarterly"
+    },
+    "form1099Misc": {
+      "applicable": false,
+      "appliesWhen": "any contractor paid >= $600 in calendar year",
+      "deadline": "January 31 following year"
+    }
+  },
+  "state": {
+    "incorporationState": "GA",
+    "georgiaAnnualRegistration": {
+      "agency": "Georgia Secretary of State, Corporations Division",
+      "filing": "Annual Registration",
+      "fee": 30,
+      "dueWindow": "January 1 - April 1",
+      "lastFiled": null,
+      "nextDue": "2027-04-01"
+    },
+    "charitableSolicitation": {
+      "principle": "Register before soliciting in any state requiring it. Solicitation includes a website asking for donations from residents of that state.",
+      "tracker": [
+        { "state": "AL", "required": true, "registered": false, "annualRenewal": true, "fee": 25 },
+        { "state": "AK", "required": true, "registered": false, "annualRenewal": true, "fee": 40 },
+        { "state": "AZ", "required": false, "note": "exempt for organizations with revenue under threshold" },
+        { "state": "AR", "required": true, "registered": false, "annualRenewal": true, "fee": 0 },
+        { "state": "CA", "required": true, "registered": false, "annualRenewal": true, "fee": 50, "note": "RRF-1 + initial CT-1" },
+        { "state": "CO", "required": true, "registered": false, "annualRenewal": true, "fee": 10 },
+        { "state": "CT", "required": true, "registered": false, "annualRenewal": true, "fee": 50 },
+        { "state": "DE", "required": false },
+        { "state": "DC", "required": true, "registered": false, "annualRenewal": true, "fee": 80 },
+        { "state": "FL", "required": true, "registered": false, "annualRenewal": true, "fee": 10 },
+        { "state": "GA", "required": true, "registered": false, "annualRenewal": true, "fee": 35, "note": "home state — register first" },
+        { "state": "HI", "required": true, "registered": false, "annualRenewal": true, "fee": 25 },
+        { "state": "ID", "required": false },
+        { "state": "IL", "required": true, "registered": false, "annualRenewal": true, "fee": 15 },
+        { "state": "IN", "required": false },
+        { "state": "IA", "required": false },
+        { "state": "KS", "required": true, "registered": false, "annualRenewal": true, "fee": 35 },
+        { "state": "KY", "required": true, "registered": false, "annualRenewal": true, "fee": 0 },
+        { "state": "LA", "required": true, "registered": false, "annualRenewal": true, "fee": 25 },
+        { "state": "ME", "required": true, "registered": false, "annualRenewal": true, "fee": 50 },
+        { "state": "MD", "required": true, "registered": false, "annualRenewal": true, "fee": 200 },
+        { "state": "MA", "required": true, "registered": false, "annualRenewal": true, "fee": 0 },
+        { "state": "MI", "required": true, "registered": false, "annualRenewal": true, "fee": 0 },
+        { "state": "MN", "required": true, "registered": false, "annualRenewal": true, "fee": 25 },
+        { "state": "MS", "required": true, "registered": false, "annualRenewal": true, "fee": 50 },
+        { "state": "MO", "required": false },
+        { "state": "MT", "required": false },
+        { "state": "NE", "required": false },
+        { "state": "NV", "required": true, "registered": false, "annualRenewal": true, "fee": 50 },
+        { "state": "NH", "required": true, "registered": false, "annualRenewal": true, "fee": 75 },
+        { "state": "NJ", "required": true, "registered": false, "annualRenewal": true, "fee": 60 },
+        { "state": "NM", "required": true, "registered": false, "annualRenewal": true, "fee": 0 },
+        { "state": "NY", "required": true, "registered": false, "annualRenewal": true, "fee": 25, "note": "CHAR500 — most prescriptive state" },
+        { "state": "NC", "required": true, "registered": false, "annualRenewal": true, "fee": 0 },
+        { "state": "ND", "required": true, "registered": false, "annualRenewal": true, "fee": 25 },
+        { "state": "OH", "required": true, "registered": false, "annualRenewal": true, "fee": 50 },
+        { "state": "OK", "required": true, "registered": false, "annualRenewal": true, "fee": 15 },
+        { "state": "OR", "required": true, "registered": false, "annualRenewal": true, "fee": 0 },
+        { "state": "PA", "required": true, "registered": false, "annualRenewal": true, "fee": 15 },
+        { "state": "RI", "required": true, "registered": false, "annualRenewal": true, "fee": 75 },
+        { "state": "SC", "required": true, "registered": false, "annualRenewal": true, "fee": 50 },
+        { "state": "SD", "required": false },
+        { "state": "TN", "required": true, "registered": false, "annualRenewal": true, "fee": 50 },
+        { "state": "TX", "required": false },
+        { "state": "UT", "required": true, "registered": false, "annualRenewal": true, "fee": 100 },
+        { "state": "VT", "required": false },
+        { "state": "VA", "required": true, "registered": false, "annualRenewal": true, "fee": 30 },
+        { "state": "WA", "required": true, "registered": false, "annualRenewal": true, "fee": 60 },
+        { "state": "WV", "required": true, "registered": false, "annualRenewal": true, "fee": 15 },
+        { "state": "WI", "required": true, "registered": false, "annualRenewal": true, "fee": 15 },
+        { "state": "WY", "required": false }
+      ],
+      "summary": {
+        "totalStatesRequiringRegistration": 39,
+        "currentlyRegistered": 0,
+        "estimatedFirstYearFees": 1338,
+        "estimatedAnnualRenewalFees": 1338,
+        "_note": "39 states (50 + DC minus 12 with no registration requirement). Refreshed mechanically — edit tracker entries and re-count if states change their requirements."
+      },
+      "shortcutPath": {
+        "service": "Harbor Compliance OR multi-state registration handled in-house",
+        "estimatedAnnualCost": 4000,
+        "tradeoff": "Save ~50 hours/year of operator time"
+      }
+    },
+    "salesAndUseTaxExemption": {
+      "georgia": { "appliesAfterIRS": true, "filed": false },
+      "note": "Most states grant sales-tax exemption only after IRS 501(c)(3) determination"
+    }
+  },
+  "filingCalendar": {
+    "_note": "Auto-rendered by npm run nonprofit:calendar; sorted by deadline",
+    "deadlines": [
+      { "date": "2026-12-31", "type": "fiscal-year-end", "action": "close books", "owner": "Treasurer" },
+      { "date": "2027-01-31", "type": "1099-MISC", "action": "issue if any contractors >= $600", "owner": "Treasurer", "conditional": true },
+      { "date": "2027-04-01", "type": "GA-annual-registration", "action": "file with SOS", "owner": "Secretary", "fee": 30 },
+      { "date": "2027-05-15", "type": "form-990-N", "action": "file e-postcard", "owner": "Treasurer", "extensionPossible": true },
+      { "date": "2027-04-03", "type": "annual-coi-attestation", "action": "all board members re-sign", "owner": "Secretary" },
+      { "date": "2027-04-03", "type": "annual-board-meeting", "action": "schedule + notice 14d prior", "owner": "Secretary" }
+    ]
+  },
+  "publicDisclosure": {
+    "publishOnWebsite": [
+      "form-990 (last 3 years)",
+      "irs-determination-letter (when received)",
+      "audit-report (when audited)",
+      "annual-report",
+      "board-list",
+      "executive-compensation"
+    ],
+    "publishedAt": "/financials/ on phosphorus31.org",
+    "rationale": "501(c)(3) public-inspection requirement + transparency commitment beyond minimum"
+  },
+  "lobbyingPolicy": {
+    "engages": false,
+    "election501h": false,
+    "noteIfTriggered": "If lobbying becomes substantial, file Form 5768 to elect 501(h) safe harbor"
+  }
+}

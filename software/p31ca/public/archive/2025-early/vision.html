@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub" style="color-scheme: dark;">
+<head>
+  <meta charset="UTF-8">
+<script>(function(){var r=document.documentElement;if(/[?&]alive=1(?:&|$)/.test(location.search))return;r.classList.add("p31-gray-rock");function wake(){r.classList.remove("p31-gray-rock")}document.addEventListener("pointerdown",wake,{once:true,capture:true});document.addEventListener("keydown",wake,{once:true,capture:true})})();</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0f1115">
+  <title>Core journey — build, create, connect | P31 Labs</title>
+  <meta name="description" content="One path through the technical hub: planetary onboarding, passkey sign-in, and your private EDE home — with the family mesh and tools one click away.">
+<link rel="canonical" href="https://p31ca.org/vision.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Core journey — build, create, connect">
+<meta property="og:description" content="One path through the technical hub: planetary onboarding, passkey sign-in, and your private EDE home — with the family mesh and tools one click away.">
+<meta property="og:url" content="https://p31ca.org/vision.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Core journey — build, create, connect">
+<meta name="twitter:description" content="One path through the technical hub: planetary onboarding, passkey sign-in, and your private EDE home — with the family mesh and tools one click away.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/p31-style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/p31-tailwind-extend.js"></script>
+  <script>
+    tailwind.config = { theme: { extend: { ...window.P31_TAILWIND_EXTEND } } } };
+  </script>
+  <style>
+    .vision-aurora {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background:
+        radial-gradient(ellipse 80% 50% at 20% 0%, rgba(37, 137, 125, 0.14) 0%, transparent 55%),
+        radial-gradient(ellipse 70% 45% at 100% 30%, rgba(204, 98, 71, 0.1) 0%, transparent 50%),
+        radial-gradient(ellipse 60% 40% at 50% 100%, rgba(205, 168, 82, 0.07) 0%, transparent 45%),
+        var(--p31-void);
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .vision-aurora { background: var(--p31-void); }
+      .vision-step-arrow { opacity: 0.35; }
+    }
+    .vision-step-card {
+      background: color-mix(in srgb, var(--p31-surface) 88%, transparent);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: var(--p31-radius-xl);
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.25);
+    }
+    a.vision-cta-primary:focus-visible,
+    a.vision-cta-secondary:focus-visible,
+    .skip-vision:focus-visible {
+      outline: var(--p31-focus-ring) solid var(--p31-focus-color-hub);
+      outline-offset: var(--p31-focus-offset);
+    }
+    .skip-vision {
+      position: absolute;
+      left: -9999px;
+      z-index: 1000;
+      padding: 0.5rem 1rem;
+      background: var(--p31-surface2);
+      color: var(--p31-paper);
+      border-radius: var(--p31-radius-md);
+    }
+    .skip-vision:focus { left: 0.75rem; top: 0.75rem; }
+    .journey-connector {
+      display: none;
+    }
+    @media (min-width: 768px) {
+      .journey-connector {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--p31-muted);
+        font-size: 0.75rem;
+        line-height: 1;
+        padding: 0 0.25rem;
+        user-select: none;
+      }
+    }
+  </style>
+</head>
+<body class="bg-void text-cloud min-h-screen font-sans antialiased text-base leading-normal">
+<a href="#main" style="position:absolute;left:-9999px;top:0;padding:0.5rem 1rem;background:var(--p31-void);color:var(--p31-teal);font-size:0.875rem;z-index:9999;border-radius:0 0 4px 4px;text-decoration:none" onfocus="this.style.left='0'" onblur="this.style.left='-9999px'">Skip to main content</a>
+  <a href="#vision-main" class="skip-vision">Skip to journey</a>
+  <div class="vision-aurora" aria-hidden="true"></div>
+
+  <header class="sticky top-0 z-50 border-b border-white/[0.07] bg-surface/85 backdrop-blur-md">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 py-3.5 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-3 min-w-0">
+        <a href="/" class="text-paper font-semibold text-sm sm:text-base tracking-tight hover:text-teal/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal/60 rounded transition-colors">P31 Labs</a>
+        <span class="text-white/20 hidden sm:inline" aria-hidden="true">/</span>
+        <span class="font-mono text-[10px] sm:text-xs uppercase tracking-[0.2em] text-butter/90 truncate">Core mesh journey</span>
+      </div>
+      <nav class="flex flex-wrap items-center gap-2 sm:gap-3 text-xs font-mono" aria-label="Journey shortcuts">
+        <a href="/onboard" class="px-2.5 py-1 rounded-md text-teal/90 border border-teal/25 bg-teal/5 hover:bg-teal/10 transition-colors">/onboard</a>
+        <a href="/auth" class="px-2.5 py-1 rounded-md text-coral/90 border border-coral/20 bg-coral/5 hover:bg-coral/10 transition-colors">/auth</a>
+        <a href="/cars" class="px-2.5 py-1 rounded-md text-teal/90 border border-teal/25 bg-teal/5 hover:bg-teal/10 transition-colors">/cars</a>
+        <a href="/lab" class="px-2.5 py-1 rounded-md text-cyan/90 border border-cyan-500/25 bg-cyan-500/5 hover:bg-cyan-500/10 transition-colors">/lab</a>
+        <a href="/slicer" class="px-2.5 py-1 rounded-md text-cloud/80 border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] transition-colors">/slicer</a>
+        <a href="/start" class="px-2.5 py-1 rounded-md text-phosphorus/90 border border-phosphorus/25 bg-phosphorus/5 hover:bg-phosphorus/10 transition-colors">/start</a>
+    </div>
+  </header>
+
+  <main id="main" id="vision-main" class="max-w-5xl mx-auto px-4 sm:px-6 py-10 sm:py-14 md:py-20">
+    <p class="font-mono text-[10px] sm:text-xs uppercase tracking-[0.2em] text-phosphorus mb-3">Build · create · connect</p>
+    <h1 class="text-3xl sm:text-4xl md:text-[2.5rem] font-bold text-paper leading-tight tracking-tight max-w-3xl">
+      One path through the hub
+    </h1>
+    <p class="mt-4 text-[var(--p31-muted)] text-sm sm:text-base max-w-2xl leading-relaxed">
+      This is the <strong class="text-cloud font-medium">intended first run</strong>: close the Wye into your personal loop, verify your device, then land in your isolated edge room. Everything else—family map, geodesic, passport—is reachable without losing the thread.
+    </p>
+
+    <!-- Three steps: horizontal on md+ with connectors -->
+    <div class="mt-12 sm:mt-16 flex flex-col md:flex-row md:items-stretch gap-4 md:gap-0">
+      <article class="vision-step-card flex-1 p-5 sm:p-6 flex flex-col min-h-[280px]">
+        <div class="flex items-center gap-3 mb-4">
+          <span class="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-coral/15 text-coral font-mono text-sm font-bold border border-coral/25" aria-hidden="true">1</span>
+          <h2 class="text-lg sm:text-xl font-bold text-paper">Anchor</h2>
+        </div>
+        <p class="text-sm text-muted leading-relaxed flex-1">
+          Planetary onboarding: pick a welcome package, walk five short phases, and prepare passkeys on <span class="text-cloud/90">this device</span>. Your thread gets a stable subject id for the personal worker.
+        </p>
+        <a href="/onboard" class="vision-cta-primary mt-6 inline-flex items-center justify-center rounded-xl bg-coral/90 text-paper font-semibold text-sm py-3 px-4 hover:bg-coral transition-colors shadow-lg shadow-coral/10">
+          Start onboarding
+        </a>
+        <p class="mt-3 text-[11px] font-mono text-muted/80">Short URL: <code class="text-teal/80">/onboard</code></p>
+      </article>
+
+      <div class="journey-connector vision-step-arrow" aria-hidden="true">→</div>
+
+      <article class="vision-step-card flex-1 p-5 sm:p-6 flex flex-col min-h-[280px]">
+        <div class="flex items-center gap-3 mb-4">
+          <span class="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-butter/15 text-butter font-mono text-sm font-bold border border-butter/30" aria-hidden="true">2</span>
+          <h2 class="text-lg sm:text-xl font-bold text-paper">Verify</h2>
+        </div>
+        <p class="text-sm text-muted leading-relaxed flex-1">
+          Returning? Use passkey auth when the API route is live; the page tells you if the worker is not reachable. Optional Google bridge links for workspace helpers—same <code class="text-xs text-teal/90">/auth</code> surface.
+        </p>
+        <a href="/auth" class="vision-cta-primary mt-6 inline-flex items-center justify-center rounded-xl bg-butter/90 text-ink font-semibold text-sm py-3 px-4 hover:bg-butter transition-colors">
+          Open authenticate
+        </a>
+        <p class="mt-3 text-[11px] font-mono text-muted/80">Passkey API: <code class="text-teal/80">/api/passkey/*</code> (zone route when deployed)</p>
+      </article>
+
+      <div class="journey-connector vision-step-arrow" aria-hidden="true">→</div>
+
+      <article class="vision-step-card flex-1 p-5 sm:p-6 flex flex-col min-h-[280px]">
+        <div class="flex items-center gap-3 mb-4">
+          <span class="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-teal/15 text-teal font-mono text-sm font-bold border border-teal/25" aria-hidden="true">3</span>
+          <h2 class="text-lg sm:text-xl font-bold text-paper">Home</h2>
+        </div>
+        <p class="text-sm text-muted leading-relaxed flex-1">
+          Mesh-start is your <abbr title="Evolving Development Environment" class="no-underline border-b border-dotted border-teal/40 cursor-help">EDE</abbr> home: private assistant, personal tetra docks, and links forward—without folding your state into the shared family cage.
+        </p>
+        <a href="/start" class="vision-cta-primary mt-6 inline-flex items-center justify-center rounded-xl bg-teal text-paper font-semibold text-sm py-3 px-4 hover:opacity-95 transition-opacity shadow-lg shadow-teal/15">
+          Go to EDE home
+        </a>
+        <p class="mt-3 text-[11px] font-mono text-muted/80">Short URL: <code class="text-teal/80">/start</code></p>
+      </article>
+    </div>
+
+    <!-- Story + map -->
+    <section class="mt-14 sm:mt-20 grid md:grid-cols-2 gap-6" aria-labelledby="vision-why">
+      <div class="rounded-2xl border border-white/[0.08] bg-surface2/50 p-6 sm:p-8">
+        <h2 id="vision-why" class="font-sans text-xs uppercase tracking-widest text-butter/90 mb-3">Why this shape</h2>
+        <p class="text-sm text-muted leading-relaxed mb-4">
+          Centralized “everything apps” ask for trust before they earn it. A <span class="text-cloud/90">Wye</span> topology routes everyone through one hub. A <span class="text-cloud/90">Delta</span> gives each person a closed loop: edge, keys, and mesh where it belongs.
+        </p>
+        <a href="/why" class="vision-cta-secondary inline-flex text-sm font-semibold text-teal hover:underline decoration-teal/40 underline-offset-4">
+          Read the Wye → Delta story
+        </a>
+      </div>
+      <div class="rounded-2xl border border-white/[0.08] bg-surface2/50 p-6 sm:p-8">
+        <h2 class="font-sans text-xs uppercase tracking-widest text-teal/90 mb-3">Family &amp; fleet</h2>
+        <p class="text-sm text-muted leading-relaxed mb-4">
+          The <strong class="text-cloud/85 font-medium">K₄ cage navigator</strong> is the public map of products and the family graph—separate from your private EDE home.
+        </p>
+        <a href="/mesh" class="vision-cta-secondary inline-flex text-sm font-semibold text-teal hover:underline decoration-teal/40 underline-offset-4">
+          Open the Mesh (K₄)
+        </a>
+      </div>
+    </section>
+
+    <!-- Tertiary grid -->
+    <section class="mt-10" aria-labelledby="vision-more">
+      <h2 id="vision-more" class="font-sans text-xs uppercase tracking-widest text-muted mb-4">More surfaces</h2>
+      <ul class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 list-none p-0 m-0">
+        <li>
+          <a href="/" class="group block rounded-xl border border-white/[0.07] bg-surface/60 p-4 hover:border-teal/30 hover:bg-surface transition-colors min-h-[5.5rem]">
+            <span class="font-semibold text-paper group-hover:text-teal/90 transition-colors">Cockpit</span>
+            <span class="block text-xs text-muted mt-1 leading-relaxed">Full product grid, dome, and telemetry</span>
+          </a>
+        </li>
+        <li>
+          <a href="/geodesic.html" class="group block rounded-xl border border-white/[0.07] bg-surface/60 p-4 hover:border-phosphorus/30 hover:bg-surface transition-colors min-h-[5.5rem]">
+            <span class="font-semibold text-paper group-hover:text-phosphorus/90 transition-colors">Geodesic</span>
+            <span class="block text-xs text-muted mt-1 leading-relaxed">Builder + live room (when connected)</span>
+          </a>
+        </li>
+        <li>
+          <a href="/lab" class="group block rounded-xl border border-white/[0.07] bg-surface/60 p-4 hover:border-cyan/30 hover:bg-surface transition-colors min-h-[5.5rem]">
+            <span class="font-semibold text-paper group-hover:text-cyan/90 transition-colors">Sovereign Lab</span>
+            <span class="block text-xs text-muted mt-1 leading-relaxed">Static trim dome · optional mock WS bridge</span>
+          </a>
+        </li>
+        <li>
+          <a href="/slicer" class="group block rounded-xl border border-white/[0.07] bg-surface/60 p-4 hover:border-white/20 hover:bg-surface transition-colors min-h-[5.5rem]">
+            <span class="font-semibold text-paper group-hover:text-cloud/90 transition-colors">Browser slicer</span>
+            <span class="block text-xs text-muted mt-1 leading-relaxed">Kiri shell + K₄ STL on this origin</span>
+          </a>
+        </li>
+        <li>
+          <a href="/kids" class="group block rounded-xl border border-white/[0.07] bg-surface/60 p-4 hover:border-butter/30 hover:bg-surface transition-colors min-h-[5.5rem]">
+            <span class="font-semibold text-paper group-hover:text-butter/90 transition-colors">Kids home</span>
+            <span class="block text-xs text-muted mt-1 leading-relaxed">All kid tiles in one place · S.J. &amp; W.J.</span>
+          </a>
+        </li>
+        <li>
+          <a href="/growth" class="group block rounded-xl border border-white/[0.07] bg-surface/60 p-4 hover:border-coral/30 hover:bg-surface transition-colors min-h-[5.5rem]">
+            <span class="font-semibold text-paper group-hover:text-coral/90 transition-colors">Kids growth</span>
+            <span class="block text-xs text-muted mt-1 leading-relaxed">Charts only · on-device</span>
+          </a>
+        </li>
+        <li>
+          <a href="/mission-control.html" class="group block rounded-xl border border-white/[0.07] bg-surface/60 p-4 hover:border-lavender/30 hover:bg-surface transition-colors min-h-[5.5rem] sm:col-span-2 lg:col-span-1">
+            <span class="font-semibold text-paper group-hover:text-lavender/90 transition-colors">Mission Control</span>
+            <span class="block text-xs text-muted mt-1 leading-relaxed">Token missions (same household)</span>
+          </a>
+        </li>
+        <li>
+          <a href="/passport" class="group block rounded-xl border border-white/[0.07] bg-surface/60 p-4 hover:border-lavender/30 hover:bg-surface transition-colors min-h-[5.5rem] sm:col-span-2 lg:col-span-1">
+            <span class="font-semibold text-paper group-hover:text-lavender/90 transition-colors">Cognitive Passport</span>
+            <span class="block text-xs text-muted mt-1 leading-relaxed">Author and export a machine-readable profile</span>
+          </a>
+        </li>
+        <li>
+          <a href="/demos" class="group block rounded-xl border border-white/[0.07] bg-surface/60 p-4 hover:border-butter/30 hover:bg-surface transition-colors min-h-[5.5rem]">
+            <span class="font-semibold text-paper group-hover:text-butter/90 transition-colors">Demo lobby</span>
+            <span class="block text-xs text-muted mt-1 leading-relaxed">Fleet map, canon, C.A.R.S. + foundry tiles</span>
+          </a>
+        </li>
+        <li>
+          <a href="/dome/" class="group block rounded-xl border border-white/[0.07] bg-surface/60 p-4 hover:border-cyan/30 hover:bg-surface transition-colors min-h-[5.5rem]">
+            <span class="font-semibold text-paper group-hover:text-cyan/90 transition-colors">Sovereign dome</span>
+            <span class="block text-xs text-muted mt-1 leading-relaxed">Interactive K₄ cockpit (WebGL)</span>
+          </a>
+        </li>
+        <li>
+          <a href="/ops/" class="group block rounded-xl border border-white/[0.07] bg-surface/60 p-4 hover:border-lavender/30 hover:bg-surface transition-colors min-h-[5.5rem]">
+            <span class="font-semibold text-paper group-hover:text-lavender/90 transition-colors">Operator shell</span>
+            <span class="block text-xs text-muted mt-1 leading-relaxed">Glass probes and shift context</span>
+          </a>
+        </li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="border-t border-white/[0.07] bg-surface/40 mt-12">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 py-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 text-xs text-muted font-mono">
+      <p>P31 Labs, Inc. · EIN 42-1888158</p>
+      <div class="flex flex-wrap gap-x-5 gap-y-1">
+        <a href="/privacy" class="hover:text-teal/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal/50 rounded">Privacy</a>
+        <a href="/contact" class="hover:text-teal/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal/50 rounded">Contact</a>
+        <a href="/accessibility" class="hover:text-teal/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal/50 rounded">Accessibility</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

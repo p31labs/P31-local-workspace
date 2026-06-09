@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0f1115">
+  <title>Forms · P31 Stylebook</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/p31-style.css">
+  <link rel="stylesheet" href="/lib/p31-fluid.css">
+  <link rel="stylesheet" href="/stylebook/_chrome.css">
+  <style>
+    .p31-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+    .p31-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--p31-paper);
+    }
+    .p31-label-helper {
+      font-size: 12px;
+      color: var(--p31-muted);
+      margin-top: 2px;
+      font-weight: 400;
+    }
+    .p31-input, .p31-textarea, .p31-select {
+      padding: 10px 14px;
+      background: var(--p31-surface);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: var(--p31-radius-lg);
+      color: var(--p31-cloud);
+      font-family: var(--p31-font-sans);
+      font-size: 14px;
+      transition: all var(--p31-duration-fast) var(--p31-ease-fluid);
+      outline: none;
+      width: 100%;
+    }
+    .p31-input::placeholder, .p31-textarea::placeholder {
+      color: var(--p31-muted);
+    }
+    .p31-input:focus, .p31-textarea:focus, .p31-select:focus {
+      border-color: var(--p31-primary);
+      box-shadow: 0 0 0 3px rgba(37,137,125,0.15);
+    }
+    .p31-input:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .p31-input.error {
+      border-color: var(--p31-coral);
+    }
+    .p31-input.success {
+      border-color: var(--p31-phosphorus);
+    }
+    .p31-helper {
+      font-size: 12px;
+      color: var(--p31-muted);
+    }
+    .p31-helper.error { color: var(--p31-coral); }
+    .p31-helper.success { color: var(--p31-phosphorus); }
+    
+    .p31-textarea {
+      min-height: 100px;
+      resize: vertical;
+      font-family: var(--p31-font-sans);
+      line-height: 1.5;
+    }
+    
+    .p31-input-wrap {
+      position: relative;
+    }
+    .p31-input-icon {
+      position: absolute;
+      top: 50%;
+      left: 12px;
+      transform: translateY(-50%);
+      color: var(--p31-muted);
+      pointer-events: none;
+      font-size: 14px;
+    }
+    .p31-input-wrap .p31-input { padding-left: 36px; }
+    .p31-input-wrap .p31-input-action {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: transparent;
+      border: none;
+      color: var(--p31-muted);
+      cursor: pointer;
+      padding: 4px 8px;
+      font-size: 12px;
+    }
+    .p31-input-wrap .p31-input-action:hover { color: var(--p31-paper); }
+    
+    /* Checkbox / Radio */
+    .p31-check {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 8px;
+      transition: background var(--p31-duration-fast);
+    }
+    .p31-check:hover { background: var(--p31-surface); }
+    .p31-check-input {
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: 4px;
+      background: var(--p31-surface);
+      cursor: pointer;
+      transition: all var(--p31-duration-fast);
+      flex-shrink: 0;
+      margin-top: 2px;
+      position: relative;
+    }
+    .p31-check-input[type="radio"] { border-radius: 50%; }
+    .p31-check-input:checked {
+      background: var(--p31-primary);
+      border-color: var(--p31-primary);
+    }
+    .p31-check-input[type="checkbox"]:checked::after {
+      content: '✓';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      color: var(--p31-void);
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .p31-check-input[type="radio"]:checked::after {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 8px;
+      height: 8px;
+      background: var(--p31-void);
+      border-radius: 50%;
+    }
+    .p31-check-content {
+      flex: 1;
+    }
+    .p31-check-label {
+      font-size: 14px;
+      color: var(--p31-paper);
+      font-weight: 500;
+    }
+    .p31-check-desc {
+      font-size: 12px;
+      color: var(--p31-muted);
+      margin-top: 2px;
+    }
+    
+    /* Toggle */
+    .p31-toggle {
+      appearance: none;
+      width: 36px;
+      height: 20px;
+      background: var(--p31-surface3);
+      border-radius: 999px;
+      position: relative;
+      cursor: pointer;
+      transition: background var(--p31-duration-fast);
+    }
+    .p31-toggle::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 16px;
+      height: 16px;
+      background: var(--p31-paper);
+      border-radius: 50%;
+      transition: left var(--p31-duration-fast) var(--p31-ease-fluid);
+    }
+    .p31-toggle:checked {
+      background: var(--p31-primary);
+    }
+    .p31-toggle:checked::after {
+      left: 18px;
+    }
+    
+    /* Select */
+    .p31-select {
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      background-size: 16px;
+      padding-right: 36px;
+      cursor: pointer;
+    }
+    
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+    }
+  </style>
+</head>
+<body>
+  <script type="module">
+    import { renderShell, code, callout } from '/stylebook/_chrome.js';
+    import { P31ThemeController } from '/lib/p31-theme-engine.mjs';
+    window.p31Theme = new P31ThemeController({ defaultTheme: 'hub' });
+    
+    const content = `
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Inputs</div>
+          <h2 class="sb-h2">Text fields</h2>
+          <p class="sb-text">Every input has consistent padding, focus ring, and validation states.
+          Labels above inputs (never beside) for predictable scanning.</p>
+        </div>
+        
+        <div class="sb-preview">
+          <div class="sb-preview-header"><span>Standard input</span></div>
+          <div class="sb-preview-body dense" style="max-width: 480px;">
+            <div class="p31-field">
+              <label class="p31-label" for="email">Email address</label>
+              <input class="p31-input" type="email" id="email" placeholder="you@example.com">
+              <span class="p31-helper">We'll never share this.</span>
+            </div>
+            
+            <div class="p31-field">
+              <label class="p31-label" for="search">Search <span class="p31-label-helper">⌘K to focus</span></label>
+              <div class="p31-input-wrap">
+                <span class="p31-input-icon">⌕</span>
+                <input class="p31-input" type="search" id="search" placeholder="Search the mesh...">
+              </div>
+            </div>
+            
+            <div class="p31-field">
+              <label class="p31-label" for="bad">Email (with error)</label>
+              <input class="p31-input error" type="email" id="bad" value="not-valid">
+              <span class="p31-helper error">Please enter a valid email address.</span>
+            </div>
+            
+            <div class="p31-field">
+              <label class="p31-label" for="good">Email (validated)</label>
+              <input class="p31-input success" type="email" id="good" value="valid@example.com">
+              <span class="p31-helper success">✓ Looks good.</span>
+            </div>
+            
+            <div class="p31-field">
+              <label class="p31-label" for="message">Message</label>
+              <textarea class="p31-textarea" id="message" placeholder="What's on your mind?"></textarea>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Selection</div>
+          <h2 class="sb-h2">Checkbox, radio, toggle</h2>
+        </div>
+        
+        <div class="sb-preview">
+          <div class="sb-preview-header"><span>Choices</span></div>
+          <div class="sb-preview-body dense" style="max-width: 520px;">
+            <div class="p31-field">
+              <label class="p31-label">Notifications</label>
+              <label class="p31-check">
+                <input type="checkbox" class="p31-check-input" checked>
+                <div class="p31-check-content">
+                  <div class="p31-check-label">Email updates</div>
+                  <div class="p31-check-desc">Major changes only — no marketing.</div>
+                </div>
+              </label>
+              <label class="p31-check">
+                <input type="checkbox" class="p31-check-input">
+                <div class="p31-check-content">
+                  <div class="p31-check-label">Push notifications</div>
+                  <div class="p31-check-desc">Real-time alerts on this device.</div>
+                </div>
+              </label>
+            </div>
+            
+            <div class="p31-field">
+              <label class="p31-label">Theme preference</label>
+              <label class="p31-check">
+                <input type="radio" name="theme" class="p31-check-input" checked>
+                <div class="p31-check-content">
+                  <div class="p31-check-label">System</div>
+                  <div class="p31-check-desc">Match my device.</div>
+                </div>
+              </label>
+              <label class="p31-check">
+                <input type="radio" name="theme" class="p31-check-input">
+                <div class="p31-check-content">
+                  <div class="p31-check-label">Always dark</div>
+                </div>
+              </label>
+              <label class="p31-check">
+                <input type="radio" name="theme" class="p31-check-input">
+                <div class="p31-check-content">
+                  <div class="p31-check-label">Always light</div>
+                </div>
+              </label>
+            </div>
+            
+            <div class="p31-field">
+              <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px; background: var(--p31-surface); border-radius: 10px; border: 1px solid var(--p31-border-subtle);">
+                <div>
+                  <div style="font-size: 14px; font-weight: 500; color: var(--p31-paper);">Auto-sync mesh</div>
+                  <div style="font-size: 12px; color: var(--p31-muted);">Push changes every 5 minutes.</div>
+                </div>
+                <input type="checkbox" class="p31-toggle" checked>
+              </div>
+            </div>
+            
+            <div class="p31-field">
+              <label class="p31-label" for="role">Role</label>
+              <select class="p31-select" id="role">
+                <option>Operator</option>
+                <option>Family</option>
+                <option>Reviewer</option>
+                <option>Guest</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Form layout</div>
+          <h2 class="sb-h2">Composing a form</h2>
+        </div>
+        
+        <div class="sb-preview">
+          <div class="sb-preview-header"><span>Settings panel</span></div>
+          <div class="sb-preview-body dense" style="max-width: 640px;">
+            <div style="background: var(--p31-surface); border: 1px solid var(--p31-border-subtle); border-radius: 14px; padding: 24px;">
+              <div style="margin-bottom: 24px;">
+                <div style="font-size: 18px; font-weight: 600; color: var(--p31-paper); margin-bottom: 4px;">Account settings</div>
+                <div style="font-size: 13px; color: var(--p31-muted);">Personal information for your operator profile.</div>
+              </div>
+              
+              <div class="form-grid">
+                <div class="p31-field">
+                  <label class="p31-label">First name</label>
+                  <input class="p31-input" type="text" value="Will">
+                </div>
+                <div class="p31-field">
+                  <label class="p31-label">Last name</label>
+                  <input class="p31-input" type="text" value="Johnson">
+                </div>
+              </div>
+              
+              <div class="p31-field">
+                <label class="p31-label">Email</label>
+                <input class="p31-input" type="email" value="will@phosphorus31.org">
+              </div>
+              
+              <div class="p31-field">
+                <label class="p31-label">Bio <span class="p31-label-helper">280 characters max</span></label>
+                <textarea class="p31-textarea" placeholder="Brief description...">Operator. Hypoparathyroidism. Building toward calm.</textarea>
+              </div>
+              
+              <div style="display: flex; gap: 8px; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--p31-border-subtle);">
+                <button class="p31-btn p31-btn-primary">Save changes</button>
+                <button class="p31-btn p31-btn-ghost">Cancel</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">CSS</div>
+          <h2 class="sb-h2">Drop in</h2>
+        </div>
+        
+        ${code(`<div class="p31-field">
+  <label class="p31-label" for="email">Email address</label>
+  <input class="p31-input" type="email" id="email" placeholder="you@example.com">
+  <span class="p31-helper">We'll never share this.</span>
+</div>
+
+<!-- With icon -->
+<div class="p31-field">
+  <label class="p31-label" for="search">Search</label>
+  <div class="p31-input-wrap">
+    <span class="p31-input-icon">⌕</span>
+    <input class="p31-input" type="search" id="search">
+  </div>
+</div>
+
+<!-- Toggle -->
+<input type="checkbox" class="p31-toggle">`, 'html', 'Form fields')}
+        
+        ${callout('info', 'Always label', 'Every form control must have a label, even if visually hidden via <code>.sr-only</code>. <code>placeholder</code> is not a label — it disappears the moment the user starts typing.')}
+      </section>
+    `;
+    
+    renderShell({
+      activeId: 'forms',
+      breadcrumb: [
+        { href: '/stylebook/', label: 'Stylebook' },
+        { href: '/stylebook/', label: 'Components' },
+        { label: 'Forms' }
+      ],
+      title: 'Forms',
+      subtitle: 'Inputs, textareas, selects, checkboxes, radios, toggles. Every state, every error, every success.',
+      meta: [
+        { label: 'Field types', value: '8' },
+        { label: 'States', value: '6' },
+        { label: 'Validated', value: 'A11y' }
+      ],
+      content
+    });
+  </script>
+</body>
+</html>

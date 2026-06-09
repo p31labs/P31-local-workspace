@@ -1,0 +1,43 @@
+/**
+ * P31 QMU Tokens — Quantum Motion Unit design-token layer.
+ * Loaded before /p31-style.css. Core color/type/space tokens live in
+ * p31-style.css; this file extends with motion, starfield, and
+ * surface-specific preset variables.
+ */
+
+:root {
+  /* ── Motion ──────────────────────────────────────────────────────── */
+  --p31-dur-instant:  80ms;
+  --p31-dur-fast:    150ms;
+  --p31-dur-normal:  240ms;
+  --p31-dur-slow:    400ms;
+  --p31-dur-crawl:   700ms;
+
+  --p31-ease-out:    cubic-bezier(0.0, 0.0, 0.2, 1);
+  --p31-ease-in:     cubic-bezier(0.4, 0.0, 1.0, 1);
+  --p31-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* ── Starfield presets (used by p31-starfield-static-plate.js) ───── */
+  --p31-sf-preset-hub-dot-count:          140;
+  --p31-sf-preset-hub-base-alpha-cap:     0.11;
+  --p31-sf-preset-operator-desk-dot-count:  120;
+  --p31-sf-preset-operator-desk-base-alpha-cap: 0.09;
+  --p31-sf-preset-command-center-dot-count: 140;
+  --p31-sf-preset-command-center-base-alpha-cap: 0.11;
+  --p31-sf-preset-soup-dot-count:         160;
+  --p31-sf-preset-soup-base-alpha-cap:    0.13;
+
+  /* ── Molecular field ─────────────────────────────────────────────── */
+  --p31-mol-z:       30;
+  --p31-mol-lifespan: 8000ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --p31-dur-instant:  0ms;
+    --p31-dur-fast:     0ms;
+    --p31-dur-normal:   0ms;
+    --p31-dur-slow:     0ms;
+    --p31-dur-crawl:    0ms;
+  }
+}

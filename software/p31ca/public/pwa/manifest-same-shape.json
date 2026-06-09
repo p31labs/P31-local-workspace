@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json.schemastore.org/web-manifest-combined.json",
+  "id": "p31.sameShape",
+  "name": "P31 — The Same Shape",
+  "short_name": "K\u2084",
+  "description": "Four-panel synced visualizer: K\u2084 rendered as a family mesh, a Platonic tetrahedron, a SIC-POVM in d=2, and a Posner phosphate cluster. Drag any panel \u2014 all four rotate in lockstep. Touch-friendly; install to a tablet for kids and curious physics nerds.",
+  "start_url": "/demos/the-same-shape.html",
+  "scope": "/demos/",
+  "display": "standalone",
+  "display_override": ["standalone", "browser"],
+  "orientation": "any",
+  "background_color": "#07090a",
+  "theme_color": "#25897d",
+  "icons": [
+    {
+      "src": "/pwa/p31-tetra-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["education", "graphics", "science"],
+  "lang": "en",
+  "dir": "ltr",
+  "prefer_related_applications": false
+}

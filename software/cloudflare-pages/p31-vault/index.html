@@ -1,0 +1,1696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P31 Sovereign Vault | EIN 42-1888158</title>
+  <meta name="description" content="P31 Labs live command vault — breathing engine, K4 tetrahedron, mesh loom, L.O.V.E. ledger, fleet status." />
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Import map: React 18 + lucide-react via esm.sh -->
+  <script type="importmap">
+  {
+    "imports": {
+      "react":             "https://esm.sh/react@18.2.0",
+      "react/jsx-runtime": "https://esm.sh/react@18.2.0/jsx-runtime",
+      "react-dom":         "https://esm.sh/react-dom@18.2.0",
+      "react-dom/client":  "https://esm.sh/react-dom@18.2.0/client",
+      "lucide-react":      "https://esm.sh/lucide-react@0.312.0"
+    }
+  }
+  </script>
+
+  <!-- Babel standalone for JSX transform -->
+  <script src="https://unpkg.com/@babel/standalone@7.23.9/babel.min.js"></script>
+
+  <style>
+    html, body, #root {
+      background: #050510 !important;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      font-family: monospace;
+    }
+    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel" data-type="module">
+    import React, { useState, useEffect, useRef, useCallback } from 'react';
+    import { createRoot } from 'react-dom/client';
+    import {
+      Heart, Triangle, Share2, Database, Shield, Terminal, Cpu, Activity,
+      Zap, Lock, Wifi, Server, RefreshCw, Copy, Check, CheckCircle, XCircle
+    } from 'lucide-react';
+
+// ─── CONSTANTS ──────────────────────────────────────────────────────────────
+
+const ENDPOINTS = {
+  commandCenter: 'https://command-center.trimtab-signal.workers.dev',
+  commandStatus: 'https://command-center.trimtab-signal.workers.dev/api/status',
+  bondingRelay:  'https://bonding-relay.trimtab-signal.workers.dev',
+  carrieAgent:   'https://carrie-agent.trimtab-signal.workers.dev',
+  carrieWellness:'https://carrie-wellness.trimtab-signal.workers.dev',
+  p31Mesh:       'https://p31-mesh.pages.dev',
+  donateApi:     'https://donate-api.phosphorus31.org',
+  p31Site:       'https://phosphorus31.org',
+  k4Cage:        'https://k4-cage.trimtab-signal.workers.dev/viz',
+  k4MeshApi:     'https://k4-cage.trimtab-signal.workers.dev/api/mesh',
+  phenix:        'https://p31-phenix.pages.dev',
+  support:       'https://phosphorus31.org/support',
+}
+
+const FLEET_NODES = [
+  { id: 'command-center', name: 'Command Center',   url: ENDPOINTS.commandCenter, color: '#06b6d4', role: 'HUD' },
+  { id: 'carrie-agent',   name: 'Carrie Agent',     url: ENDPOINTS.carrieAgent,   color: '#f59e0b', role: 'Mobile Hub' },
+  { id: 'carrie-wellness', name: 'Carrie (public)', url: ENDPOINTS.carrieWellness, color: '#fbbf24', role: 'Wellness' },
+  { id: 'k4-cage',        name: 'K4 Cage (live viz)', url: ENDPOINTS.k4Cage,      color: '#fb923c', role: 'K4 topology' },
+  { id: 'p31-phenix',    name: 'Phenix Weave',     url: ENDPOINTS.phenix,      color: '#fda4af', role: 'Donation wallet' },
+  { id: 'bonding-relay',  name: 'BONDING Relay',    url: ENDPOINTS.bondingRelay,  color: '#22c55e', role: 'Multiplayer' },
+  { id: 'p31-mesh',       name: 'P31 Mesh',         url: ENDPOINTS.p31Mesh,       color: '#a855f7', role: 'P2P Loom' },
+  { id: 'donate-api',     name: 'Donate API',        url: ENDPOINTS.donateApi,     color: '#E8636F', role: 'Financials' },
+  { id: 'p31-site',       name: 'phosphorus31.org', url: ENDPOINTS.p31Site,       color: '#06b6d4', role: 'Public' },
+]
+
+const CARE_PAYLOADS = [
+  'PRESENCE_SIGNAL', 'BREATH_SYNC', 'ANCHOR_HOLD', 'WITNESS_MARK',
+  'RESONANCE_LOCK', 'CARE_PULSE', 'BOND_REFRESH', 'VIGIL_TICK',
+]
+
+const GENESIS_BLOCK = {
+  index: 0,
+  ts: new Date('2026-01-01T00:00:00Z').toISOString(),
+  payload: 'GENESIS — L.O.V.E. LEDGER INITIALIZED',
+  hash: '0000000000000000P31GENESIS4N0D3Z3R0C4R3',
+  confirmed: true,
+  local: false,
+}
+
+// ─── HELPERS ─────────────────────────────────────────────────────────────────
+
+function hashBlock(index, ts, payload, prevHash) {
+  const raw = `${index}${ts}${payload}${prevHash}`
+  let h = 0
+  for (let i = 0; i < raw.length; i++) {
+    h = ((h << 5) - h + raw.charCodeAt(i)) | 0
+  }
+  const hex = Math.abs(h).toString(16).padStart(8, '0').toUpperCase()
+  return `P31${hex}${Date.now().toString(16).toUpperCase().slice(-8)}`
+}
+
+function shortUrl(url) {
+  try {
+    const u = new URL(url)
+    return u.hostname + (u.pathname !== '/' ? u.pathname.slice(0, 12) + '…' : '')
+  } catch {
+    return url.slice(0, 24) + '…'
+  }
+}
+
+function fmtTs(iso) {
+  const d = new Date(iso)
+  return d.toLocaleTimeString('en-US', { hour12: false }) + ' UTC'
+}
+
+// ─── CUSTOM HOOKS ─────────────────────────────────────────────────────────────
+
+function useBreathing() {
+  // 4-2-6 cycle: inhale 4s, hold 2s, exhale 6s = 12s total
+  const PHASES = [
+    { name: 'INHALE', duration: 4 },
+    { name: 'HOLD',   duration: 2 },
+    { name: 'EXHALE', duration: 6 },
+  ]
+
+  const [phaseIdx, setPhaseIdx] = useState(0)
+  const [timer, setTimer] = useState(PHASES[0].duration)
+  const [pulse, setPulse] = useState(false)
+  const [cycleCount, setCycleCount] = useState(0)
+  const timerRef = useRef(null)
+
+  useEffect(() => {
+    timerRef.current = setInterval(() => {
+      setTimer(prev => {
+        if (prev <= 1) {
+          setPhaseIdx(idx => {
+            const next = (idx + 1) % 3
+            // exhale start = index 2
+            if (next === 2) {
+              try { navigator.vibrate([100, 50, 100]) } catch {}
+            }
+            // full cycle completes when we loop back to 0
+            if (next === 0) {
+              setCycleCount(c => c + 1)
+            }
+            setPulse(p => !p)
+            return next
+          })
+          return PHASES[(phaseIdx + 1) % 3].duration
+        }
+        return prev - 1
+      })
+    }, 1000)
+    return () => clearInterval(timerRef.current)
+  }, [phaseIdx])
+
+  const phase = PHASES[phaseIdx].name
+  return { phase, timer, pulse, cycleCount }
+}
+
+function useFleetStatus() {
+  const [nodeStatus, setNodeStatus] = useState({})
+  const [commandData, setCommandData] = useState(null)
+  const [lastSync, setLastSync] = useState(null)
+  const pingIntervalRef = useRef(null)
+
+  const pingNode = useCallback(async (node) => {
+    const start = performance.now()
+    try {
+      const resp = await fetch(node.url, {
+        method: 'HEAD',
+        mode: 'cors',
+        signal: AbortSignal.timeout(5000),
+      })
+      const latencyMs = Math.round(performance.now() - start)
+      return { online: resp.ok || resp.status < 500, latencyMs, statusCode: resp.status }
+    } catch {
+      // Try GET as fallback for HEAD-unfriendly endpoints
+      try {
+        const resp2 = await fetch(node.url, {
+          method: 'GET',
+          mode: 'cors',
+          signal: AbortSignal.timeout(5000),
+        })
+        const latencyMs = Math.round(performance.now() - start)
+        return { online: true, latencyMs, statusCode: resp2.status }
+      } catch {
+        const latencyMs = Math.round(performance.now() - start)
+        return { online: false, latencyMs: latencyMs > 5000 ? 5000 : latencyMs, statusCode: 0 }
+      }
+    }
+  }, [])
+
+  const fetchCommandStatus = useCallback(async () => {
+    try {
+      const resp = await fetch(ENDPOINTS.commandStatus, {
+        method: 'GET',
+        mode: 'cors',
+        signal: AbortSignal.timeout(5000),
+      })
+      if (resp.ok) {
+        const data = await resp.json()
+        setCommandData(data)
+      }
+    } catch {
+      // silent
+    }
+  }, [])
+
+  const pingAll = useCallback(async () => {
+    const results = await Promise.all(
+      FLEET_NODES.map(async (node) => {
+        const status = await pingNode(node)
+        return [node.id, status]
+      })
+    )
+    const statusMap = Object.fromEntries(results)
+    setNodeStatus(statusMap)
+    setLastSync(Date.now())
+  }, [pingNode])
+
+  const refresh = useCallback(() => {
+    pingAll()
+    fetchCommandStatus()
+  }, [pingAll, fetchCommandStatus])
+
+  useEffect(() => {
+    refresh()
+    pingIntervalRef.current = setInterval(pingAll, 30000)
+    return () => clearInterval(pingIntervalRef.current)
+  }, [refresh, pingAll])
+
+  const onlineCount = Object.values(nodeStatus).filter(s => s?.online).length
+
+  return { nodeStatus, commandData, onlineCount, lastSync, refresh }
+}
+
+function useLedger() {
+  const [blocks, setBlocks] = useState([GENESIS_BLOCK])
+
+  const mint = useCallback(async (payload) => {
+    const ts = new Date().toISOString()
+    const prevBlock = blocks[blocks.length - 1] || GENESIS_BLOCK
+
+    const newBlock = {
+      index: prevBlock.index + 1,
+      ts,
+      payload: payload || CARE_PAYLOADS[Math.floor(Math.random() * CARE_PAYLOADS.length)],
+      hash: hashBlock(prevBlock.index + 1, ts, payload || '', prevBlock.hash),
+      confirmed: false,
+      local: false,
+    }
+
+    setBlocks(prev => [...prev, newBlock])
+
+    try {
+      const resp = await fetch(`${ENDPOINTS.bondingRelay}/room/love-ledger`, {
+        method: 'POST',
+        mode: 'cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'CARE_EVENT',
+          payload: newBlock.payload,
+          hash: newBlock.hash,
+          ts: newBlock.ts,
+        }),
+        signal: AbortSignal.timeout(5000),
+      })
+      setBlocks(prev =>
+        prev.map(b => b.hash === newBlock.hash ? { ...b, confirmed: resp.ok } : b)
+      )
+    } catch {
+      setBlocks(prev =>
+        prev.map(b => b.hash === newBlock.hash ? { ...b, confirmed: false, local: true } : b)
+      )
+    }
+  }, [blocks])
+
+  return { blocks, mint }
+}
+
+function useMesh() {
+  const peerIdRef = useRef(`P31-${Math.random().toString(36).substring(2, 8).toUpperCase()}`)
+  const [packets, setPackets] = useState([])
+  const [relayConnected, setRelayConnected] = useState(false)
+  const [roomId] = useState(`vault-${Date.now().toString(36).toUpperCase()}`)
+  const animFrameRef = useRef(null)
+  const packetIdRef = useRef(0)
+
+  // Paths: 3 distinct routes
+  const PATHS = [
+    { from: [50, 30],  to: [80, 70],  via: [65, 50],  color: '#06b6d4' },
+    { from: [50, 30],  to: [20, 70],  via: [35, 50],  color: '#22c55e' },
+    { from: [20, 70],  to: [80, 70],  via: [50, 90],  color: '#a855f7' },
+  ]
+
+  // Simulate packet animation
+  useEffect(() => {
+    let lastTime = 0
+    const INTERVAL = 600
+
+    const tick = (time) => {
+      if (time - lastTime > INTERVAL) {
+        lastTime = time
+        const path = PATHS[packetIdRef.current % 3]
+        const id = packetIdRef.current++
+        setPackets(prev => [
+          ...prev.slice(-30),
+          { id, path, progress: 0, ts: Date.now() },
+        ])
+      }
+
+      setPackets(prev =>
+        prev
+          .map(p => ({ ...p, progress: p.progress + 0.025 }))
+          .filter(p => p.progress <= 1)
+      )
+
+      animFrameRef.current = requestAnimationFrame(tick)
+    }
+
+    animFrameRef.current = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(animFrameRef.current)
+  }, [])
+
+  // Attempt relay registration
+  useEffect(() => {
+    const register = async () => {
+      try {
+        const resp = await fetch(`${ENDPOINTS.bondingRelay}/room/${roomId}`, {
+          method: 'POST',
+          mode: 'cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ peerId: peerIdRef.current, ts: Date.now() }),
+          signal: AbortSignal.timeout(5000),
+        })
+        setRelayConnected(resp.ok || resp.status === 409)
+      } catch {
+        setRelayConnected(false)
+      }
+    }
+    register()
+  }, [roomId])
+
+  const totalPackets = packets.length + packetIdRef.current
+
+  return {
+    peerId: peerIdRef.current,
+    packets,
+    relayConnected,
+    roomId,
+    totalPackets,
+    PATHS,
+  }
+}
+
+// ─── SUB-COMPONENTS ───────────────────────────────────────────────────────────
+
+function GlassCard({ children, className = '' }) {
+  return (
+    <div
+      className={`bg-black/40 border border-cyan-900/30 rounded-2xl p-4 ${className}`}
+      style={{ backdropFilter: 'blur(12px)' }}
+    >
+      {children}
+    </div>
+  )
+}
+
+function Label({ children, color = '#06b6d4' }) {
+  return (
+    <span
+      style={{
+        color,
+        fontFamily: 'monospace',
+        fontSize: '0.65rem',
+        letterSpacing: '0.15em',
+        textTransform: 'uppercase',
+        fontWeight: 700,
+      }}
+    >
+      {children}
+    </span>
+  )
+}
+
+function OnlineDot({ online, color, pulse = true }) {
+  return (
+    <span
+      style={{
+        display: 'inline-block',
+        width: 8,
+        height: 8,
+        borderRadius: '50%',
+        background: online ? color || '#22c55e' : '#ef4444',
+        boxShadow: online && pulse ? `0 0 8px ${color || '#22c55e'}` : 'none',
+        animation: online && pulse ? 'vaultPulse 2s ease-in-out infinite' : 'none',
+        flexShrink: 0,
+      }}
+    />
+  )
+}
+
+// ─── TAB 1: VAGAL CORE ───────────────────────────────────────────────────────
+
+function TabVagalCore({ phase, timer, cycleCount }) {
+  const PHASE_COLORS = {
+    INHALE: '#06b6d4',
+    HOLD:   '#f59e0b',
+    EXHALE: '#818cf8',
+  }
+  const color = PHASE_COLORS[phase]
+
+  // Outer ring radius: expands on inhale, contracts on exhale
+  const ringScale = phase === 'INHALE' ? 1 + (1 - timer / 4) * 0.25
+    : phase === 'HOLD' ? 1.25
+    : 1 + (timer / 6) * 0.25
+
+  const TOTAL = phase === 'INHALE' ? 4 : phase === 'HOLD' ? 2 : 6
+  const progress = 1 - timer / TOTAL
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+      <GlassCard>
+        <div style={{ textAlign: 'center', padding: '16px 0' }}>
+          {/* Outer ring */}
+          <div style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginBottom: 24 }}>
+            <svg width={220} height={220} viewBox="0 0 220 220">
+              {/* Background ring */}
+              <circle
+                cx={110} cy={110} r={90}
+                fill="none"
+                stroke="#1e293b"
+                strokeWidth={8}
+              />
+              {/* Progress ring */}
+              <circle
+                cx={110} cy={110} r={90}
+                fill="none"
+                stroke={color}
+                strokeWidth={8}
+                strokeDasharray={`${2 * Math.PI * 90}`}
+                strokeDashoffset={`${2 * Math.PI * 90 * (1 - progress)}`}
+                strokeLinecap="round"
+                transform="rotate(-90 110 110)"
+                style={{
+                  transition: 'stroke-dashoffset 0.9s linear, stroke 0.4s ease',
+                  filter: `drop-shadow(0 0 8px ${color})`,
+                }}
+              />
+              {/* Middle ring that pulses */}
+              <circle
+                cx={110} cy={110} r={70}
+                fill="none"
+                stroke={color}
+                strokeWidth={2}
+                opacity={0.3}
+                style={{
+                  transform: `scale(${ringScale})`,
+                  transformOrigin: '110px 110px',
+                  transition: 'transform 0.8s ease-in-out, opacity 0.4s',
+                }}
+              />
+              {/* Center circle */}
+              <circle
+                cx={110} cy={110} r={52}
+                fill="rgba(0,0,0,0.7)"
+                stroke={color}
+                strokeWidth={1.5}
+                style={{ filter: `drop-shadow(0 0 10px ${color}40)` }}
+              />
+            </svg>
+
+            {/* Center text overlay */}
+            <div style={{
+              position: 'absolute',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              pointerEvents: 'none',
+            }}>
+              <span style={{
+                fontFamily: 'monospace',
+                fontSize: '0.6rem',
+                letterSpacing: '0.2em',
+                textTransform: 'uppercase',
+                color,
+                fontWeight: 700,
+                marginBottom: 4,
+              }}>
+                {phase}
+              </span>
+              <span style={{
+                fontFamily: 'monospace',
+                fontSize: '2.5rem',
+                fontWeight: 700,
+                color: '#f8fafc',
+                lineHeight: 1,
+              }}>
+                {timer}
+              </span>
+              <span style={{
+                fontFamily: 'monospace',
+                fontSize: '0.55rem',
+                color: '#475569',
+                letterSpacing: '0.1em',
+                marginTop: 4,
+              }}>
+                CYCLE {cycleCount}
+              </span>
+            </div>
+          </div>
+
+          {/* Phase indicator bar */}
+          <div style={{ display: 'flex', justifyContent: 'center', gap: 8, marginBottom: 16 }}>
+            {['INHALE', 'HOLD', 'EXHALE'].map(p => (
+              <div key={p} style={{
+                padding: '3px 10px',
+                borderRadius: 999,
+                border: `1px solid ${p === phase ? PHASE_COLORS[p] : '#1e293b'}`,
+                background: p === phase ? `${PHASE_COLORS[p]}20` : 'transparent',
+                fontFamily: 'monospace',
+                fontSize: '0.6rem',
+                letterSpacing: '0.12em',
+                color: p === phase ? PHASE_COLORS[p] : '#475569',
+                fontWeight: p === phase ? 700 : 400,
+                transition: 'all 0.3s',
+              }}>
+                {p} {p === 'INHALE' ? '4s' : p === 'HOLD' ? '2s' : '6s'}
+              </div>
+            ))}
+          </div>
+        </div>
+      </GlassCard>
+
+      <GlassCard>
+        <div style={{ textAlign: 'center' }}>
+          <Label>Autonomic Protocol</Label>
+          <p style={{
+            fontFamily: 'monospace',
+            fontSize: '0.65rem',
+            color: '#64748b',
+            marginTop: 8,
+            letterSpacing: '0.05em',
+          }}>
+            0.1 HZ BAROREFLEX RESONANCE — DRV2605L PROTOCOL
+          </p>
+          <p style={{
+            fontFamily: 'monospace',
+            fontSize: '0.6rem',
+            color: '#334155',
+            marginTop: 4,
+          }}>
+            VAGAL TONE ENTRAINMENT / HRV COHERENCE TARGET: 0.1 Hz
+          </p>
+        </div>
+      </GlassCard>
+    </div>
+  )
+}
+
+// ─── TAB 2: K₄ SEAL ──────────────────────────────────────────────────────────
+
+const K4_NODES = [
+  { id: 'wrj', label: 'W.R.J.', color: '#06b6d4', x: 110, y: 30  },
+  { id: 'sj',  label: 'S.J.',   color: '#22c55e', x: 200, y: 155 },
+  { id: 'wj',  label: 'W.J.',   color: '#f59e0b', x: 20,  y: 155 },
+  { id: 'cej', label: 'C.E.J.', color: '#E8636F', x: 110, y: 210 },
+]
+
+function TabK4Seal({ breathingPhase, nodeStatus, commandData }) {
+  const SCALE = breathingPhase === 'INHALE' ? 1.06 : breathingPhase === 'HOLD' ? 1.06 : 0.97
+
+  // Map fleet nodes to K4 nodes for glow
+  const fleetMap = {
+    wrj:  nodeStatus['command-center'],
+    sj:   nodeStatus['bonding-relay'],
+    wj:   nodeStatus['p31-mesh'],
+    cej:  nodeStatus['donate-api'],
+  }
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      <GlassCard>
+        <div style={{ textAlign: 'center', padding: '8px 0' }}>
+          <Label>K₄ Complete Graph — Family Seal</Label>
+          <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', marginTop: 16 }}>
+            <svg
+              width={240}
+              height={250}
+              viewBox="0 0 240 250"
+              style={{
+                transform: `scale(${SCALE})`,
+                transition: 'transform 0.8s ease-in-out',
+                overflow: 'visible',
+              }}
+            >
+              {/* 6 edges: all pairs */}
+              {K4_NODES.flatMap((a, i) =>
+                K4_NODES.slice(i + 1).map((b) => (
+                  <line
+                    key={`${a.id}-${b.id}`}
+                    x1={a.x} y1={a.y}
+                    x2={b.x} y2={b.y}
+                    stroke="#334155"
+                    strokeWidth={1.5}
+                    style={{
+                      filter: 'drop-shadow(0 0 3px #06b6d420)',
+                    }}
+                  />
+                ))
+              )}
+
+              {/* Nodes */}
+              {K4_NODES.map((node) => {
+                const fleet = fleetMap[node.id]
+                const isLive = fleet?.online ?? false
+                const glowStrength = isLive ? 18 : 6
+                return (
+                  <g key={node.id}>
+                    <circle
+                      cx={node.x}
+                      cy={node.y}
+                      r={22}
+                      fill="rgba(0,0,0,0.7)"
+                      stroke={node.color}
+                      strokeWidth={isLive ? 2 : 1}
+                      style={{
+                        filter: `drop-shadow(0 0 ${glowStrength}px ${node.color})`,
+                        transition: 'filter 0.6s ease',
+                      }}
+                    />
+                    {/* Inner dot */}
+                    <circle
+                      cx={node.x}
+                      cy={node.y}
+                      r={isLive ? 5 : 3}
+                      fill={node.color}
+                      opacity={isLive ? 1 : 0.4}
+                      style={{ transition: 'r 0.5s, opacity 0.5s' }}
+                    />
+                    <text
+                      x={node.x}
+                      y={node.y + 36}
+                      textAnchor="middle"
+                      style={{
+                        fontFamily: 'monospace',
+                        fontSize: '0.62rem',
+                        fill: node.color,
+                        letterSpacing: '0.1em',
+                        fontWeight: 700,
+                      }}
+                    >
+                      {node.label}
+                    </text>
+                  </g>
+                )
+              })}
+            </svg>
+          </div>
+
+          {/* Bottom stats */}
+          <div style={{
+            marginTop: 12,
+            fontFamily: 'monospace',
+            fontSize: '0.6rem',
+            color: '#475569',
+            letterSpacing: '0.12em',
+          }}>
+            4 NODES | 6 EDGES | K₄ COMPLETE
+          </div>
+          <div style={{
+            marginTop: 4,
+            fontFamily: 'monospace',
+            fontSize: '0.55rem',
+            color: '#334155',
+            letterSpacing: '0.08em',
+          }}>
+            NO SINGLE EDGE SEVERS ALL PATHS
+          </div>
+        </div>
+      </GlassCard>
+
+      <GlassCard>
+        <Label>Breathing Phase Sync</Label>
+        <div style={{
+          display: 'flex',
+          gap: 8,
+          marginTop: 8,
+          alignItems: 'center',
+        }}>
+          <span style={{
+            fontFamily: 'monospace',
+            fontSize: '0.75rem',
+            color: breathingPhase === 'INHALE' ? '#06b6d4' : breathingPhase === 'HOLD' ? '#f59e0b' : '#818cf8',
+            fontWeight: 700,
+            letterSpacing: '0.15em',
+            transition: 'color 0.4s',
+          }}>
+            {breathingPhase}
+          </span>
+          <div style={{
+            flex: 1,
+            height: 2,
+            background: breathingPhase === 'INHALE' ? '#06b6d4' : breathingPhase === 'HOLD' ? '#f59e0b' : '#818cf8',
+            borderRadius: 1,
+            transition: 'background 0.4s',
+            opacity: 0.5,
+          }} />
+          <span style={{ fontFamily: 'monospace', fontSize: '0.55rem', color: '#334155' }}>
+            TETRAHEDRON LOCKED
+          </span>
+        </div>
+      </GlassCard>
+    </div>
+  )
+}
+
+// ─── TAB 3: MESH LOOM ────────────────────────────────────────────────────────
+
+function PacketDot({ packet }) {
+  const { path, progress } = packet
+  // Quadratic bezier interpolation
+  const t = progress
+  const x = (1 - t) * (1 - t) * path.from[0] + 2 * (1 - t) * t * path.via[0] + t * t * path.to[0]
+  const y = (1 - t) * (1 - t) * path.from[1] + 2 * (1 - t) * t * path.via[1] + t * t * path.to[1]
+
+  return (
+    <circle
+      cx={`${x}%`}
+      cy={`${y}%`}
+      r={3}
+      fill={path.color}
+      style={{ filter: `drop-shadow(0 0 5px ${path.color})` }}
+    />
+  )
+}
+
+function TabMeshLoom({ peerId, packets, relayConnected, roomId, totalPackets, PATHS, nodeStatus }) {
+  const [copied, setCopied] = useState(false)
+  const [connectInput, setConnectInput] = useState('')
+  const [handshakeStatus, setHandshakeStatus] = useState(null)
+  const bondingOnline = nodeStatus['bonding-relay']?.online
+
+  const copyPeerId = useCallback(async () => {
+    try {
+      await navigator.clipboard.writeText(peerId)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch {
+      // silent
+    }
+  }, [peerId])
+
+  const simulateHandshake = useCallback(() => {
+    if (!connectInput.trim()) return
+    setHandshakeStatus('connecting')
+    setTimeout(() => {
+      setHandshakeStatus(connectInput.startsWith('P31-') ? 'success' : 'failed')
+      setTimeout(() => setHandshakeStatus(null), 3000)
+    }, 1200)
+  }, [connectInput])
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      {/* Peer ID */}
+      <GlassCard>
+        <Label>Your Peer ID</Label>
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 8,
+          marginTop: 8,
+          background: 'rgba(0,0,0,0.5)',
+          borderRadius: 8,
+          padding: '8px 12px',
+          border: '1px solid #164e63',
+        }}>
+          <span style={{
+            flex: 1,
+            fontFamily: 'monospace',
+            fontSize: '1rem',
+            color: '#06b6d4',
+            letterSpacing: '0.15em',
+            fontWeight: 700,
+          }}>
+            {peerId}
+          </span>
+          <button
+            onClick={copyPeerId}
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              color: copied ? '#22c55e' : '#475569',
+              padding: 4,
+              display: 'flex',
+              alignItems: 'center',
+              transition: 'color 0.2s',
+            }}
+          >
+            {copied ? <Check size={16} /> : <Copy size={16} />}
+          </button>
+        </div>
+
+        {/* Relay status */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 10 }}>
+          <OnlineDot online={relayConnected && bondingOnline} color="#22c55e" />
+          <span style={{
+            fontFamily: 'monospace',
+            fontSize: '0.62rem',
+            color: (relayConnected && bondingOnline) ? '#22c55e' : '#ef4444',
+            letterSpacing: '0.1em',
+          }}>
+            RELAY: BONDING-RELAY {(relayConnected && bondingOnline) ? '✓ LIVE' : '✗ OFFLINE'}
+          </span>
+        </div>
+      </GlassCard>
+
+      {/* Packet animation */}
+      <GlassCard>
+        <Label>Packet Flow — 3-Path Distributed Routing</Label>
+        <div style={{ position: 'relative', height: 140, marginTop: 12, borderRadius: 8, overflow: 'hidden', background: 'rgba(0,0,0,0.4)' }}>
+          <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style={{ position: 'absolute', inset: 0 }}>
+            {/* Path curves */}
+            {PATHS.map((path, i) => (
+              <path
+                key={i}
+                d={`M ${path.from[0]}% ${path.from[1]}% Q ${path.via[0]}% ${path.via[1]}% ${path.to[0]}% ${path.to[1]}%`}
+                fill="none"
+                stroke={path.color}
+                strokeWidth="0.5"
+                opacity={0.25}
+              />
+            ))}
+            {/* Packets */}
+            {packets.map(p => <PacketDot key={p.id} packet={p} />)}
+            {/* Node endpoints */}
+            {[[50, 30], [80, 70], [20, 70]].map(([x, y], i) => (
+              <circle key={i} cx={`${x}%`} cy={`${y}%`} r={4} fill="#050510" stroke="#06b6d4" strokeWidth={1} />
+            ))}
+          </svg>
+        </div>
+        <div style={{
+          marginTop: 8,
+          fontFamily: 'monospace',
+          fontSize: '0.6rem',
+          color: '#475569',
+          letterSpacing: '0.1em',
+        }}>
+          {totalPackets} PACKETS ROUTED
+        </div>
+      </GlassCard>
+
+      {/* Connect to peer */}
+      <GlassCard>
+        <Label>Connect to Peer</Label>
+        <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+          <input
+            value={connectInput}
+            onChange={e => setConnectInput(e.target.value)}
+            placeholder="P31-XXXXXX"
+            style={{
+              flex: 1,
+              background: 'rgba(0,0,0,0.5)',
+              border: '1px solid #164e63',
+              borderRadius: 8,
+              padding: '6px 10px',
+              fontFamily: 'monospace',
+              fontSize: '0.75rem',
+              color: '#e2e8f0',
+              outline: 'none',
+              letterSpacing: '0.1em',
+            }}
+          />
+          <button
+            onClick={simulateHandshake}
+            disabled={!connectInput.trim() || handshakeStatus === 'connecting'}
+            style={{
+              background: '#06b6d420',
+              border: '1px solid #06b6d4',
+              borderRadius: 8,
+              padding: '6px 12px',
+              color: '#06b6d4',
+              fontFamily: 'monospace',
+              fontSize: '0.7rem',
+              cursor: 'pointer',
+              letterSpacing: '0.1em',
+              opacity: (!connectInput.trim() || handshakeStatus === 'connecting') ? 0.5 : 1,
+            }}
+          >
+            {handshakeStatus === 'connecting' ? 'LINKING…' : 'CONNECT'}
+          </button>
+        </div>
+        {handshakeStatus === 'success' && (
+          <div style={{ marginTop: 6, fontFamily: 'monospace', fontSize: '0.6rem', color: '#22c55e', letterSpacing: '0.1em' }}>
+            ✓ HANDSHAKE COMPLETE — PEER LINKED
+          </div>
+        )}
+        {handshakeStatus === 'failed' && (
+          <div style={{ marginTop: 6, fontFamily: 'monospace', fontSize: '0.6rem', color: '#ef4444', letterSpacing: '0.1em' }}>
+            ✗ INVALID PEER ID FORMAT (EXPECTED P31-XXXXXX)
+          </div>
+        )}
+        <div style={{
+          marginTop: 10,
+          fontFamily: 'monospace',
+          fontSize: '0.55rem',
+          color: '#334155',
+          letterSpacing: '0.08em',
+        }}>
+          ROOM: {roomId}
+        </div>
+      </GlassCard>
+    </div>
+  )
+}
+
+// ─── TAB 4: L.O.V.E. LEDGER ─────────────────────────────────────────────────
+
+function LedgerBlock({ block }) {
+  const isGenesis = block.index === 0
+  return (
+    <div style={{
+      background: 'rgba(0,0,0,0.5)',
+      border: `1px solid ${isGenesis ? '#f59e0b40' : '#164e63'}`,
+      borderRadius: 10,
+      padding: '10px 12px',
+      marginBottom: 8,
+    }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <span style={{
+          fontFamily: 'monospace',
+          fontSize: '0.6rem',
+          color: isGenesis ? '#f59e0b' : '#06b6d4',
+          letterSpacing: '0.12em',
+          fontWeight: 700,
+        }}>
+          BLOCK {block.index}
+        </span>
+        <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+          {block.confirmed ? (
+            <CheckCircle size={12} color="#22c55e" />
+          ) : block.local ? (
+            <span style={{ fontFamily: 'monospace', fontSize: '0.55rem', color: '#f59e0b' }}>LOCAL</span>
+          ) : (
+            <span style={{ fontFamily: 'monospace', fontSize: '0.55rem', color: '#475569' }}>PENDING</span>
+          )}
+        </span>
+      </div>
+      <div style={{
+        fontFamily: 'monospace',
+        fontSize: '0.7rem',
+        color: '#e2e8f0',
+        marginTop: 4,
+        letterSpacing: '0.05em',
+      }}>
+        {block.payload}
+      </div>
+      <div style={{
+        fontFamily: 'monospace',
+        fontSize: '0.55rem',
+        color: '#475569',
+        marginTop: 4,
+        letterSpacing: '0.08em',
+      }}>
+        {fmtTs(block.ts)}
+      </div>
+      <div style={{
+        fontFamily: 'monospace',
+        fontSize: '0.5rem',
+        color: '#334155',
+        marginTop: 2,
+        wordBreak: 'break-all',
+        letterSpacing: '0.05em',
+      }}>
+        {block.hash}
+      </div>
+    </div>
+  )
+}
+
+function TabLedger({ blocks, mint, breathingPhase, nodeStatus }) {
+  const bondingOnline = nodeStatus['bonding-relay']?.online
+  const careTokenCount = blocks.filter(b => b.index > 0).length
+  const listRef = useRef(null)
+
+  // Auto-scroll to bottom when new blocks added
+  useEffect(() => {
+    if (listRef.current) {
+      listRef.current.scrollTop = listRef.current.scrollHeight
+    }
+  }, [blocks.length])
+
+  const mintRandom = useCallback(() => {
+    mint(CARE_PAYLOADS[Math.floor(Math.random() * CARE_PAYLOADS.length)])
+  }, [mint])
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      {/* Header */}
+      <GlassCard>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div>
+            <Label>L.O.V.E. Ledger</Label>
+            <div style={{
+              fontFamily: 'monospace',
+              fontSize: '0.6rem',
+              color: '#475569',
+              marginTop: 4,
+              letterSpacing: '0.08em',
+            }}>
+              {careTokenCount} CARE TOKEN{careTokenCount !== 1 ? 'S' : ''} MINTED
+            </div>
+          </div>
+          <div style={{ textAlign: 'right' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 4, justifyContent: 'flex-end' }}>
+              <OnlineDot online={bondingOnline} color="#22c55e" />
+              <span style={{
+                fontFamily: 'monospace',
+                fontSize: '0.55rem',
+                color: bondingOnline ? '#22c55e' : '#ef4444',
+                letterSpacing: '0.08em',
+              }}>
+                {bondingOnline ? 'BONDING-RELAY' : 'LOCAL ONLY'}
+              </span>
+            </div>
+            <div style={{ fontFamily: 'monospace', fontSize: '0.5rem', color: '#334155', marginTop: 2 }}>
+              EXHALE AUTO-MINTS
+            </div>
+          </div>
+        </div>
+
+        <button
+          onClick={mintRandom}
+          style={{
+            marginTop: 12,
+            width: '100%',
+            padding: '10px 0',
+            background: 'rgba(232,99,111,0.1)',
+            border: '1px solid #E8636F',
+            borderRadius: 10,
+            color: '#E8636F',
+            fontFamily: 'monospace',
+            fontSize: '0.7rem',
+            letterSpacing: '0.15em',
+            cursor: 'pointer',
+            fontWeight: 700,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 8,
+            transition: 'background 0.2s',
+          }}
+          onMouseEnter={e => e.currentTarget.style.background = 'rgba(232,99,111,0.2)'}
+          onMouseLeave={e => e.currentTarget.style.background = 'rgba(232,99,111,0.1)'}
+        >
+          <Heart size={14} /> MINT CARE TOKEN
+        </button>
+      </GlassCard>
+
+      {/* Block list */}
+      <GlassCard style={{ padding: 0 }}>
+        <div
+          ref={listRef}
+          style={{
+            maxHeight: 340,
+            overflowY: 'auto',
+            padding: '12px',
+            scrollbarWidth: 'thin',
+            scrollbarColor: '#164e63 transparent',
+          }}
+        >
+          {[...blocks].reverse().map(block => (
+            <LedgerBlock key={block.hash} block={block} />
+          ))}
+        </div>
+      </GlassCard>
+    </div>
+  )
+}
+
+// ─── TAB 5: FLEET ────────────────────────────────────────────────────────────
+
+function FleetCard({ node, status }) {
+  const online = status?.online ?? false
+  const latency = status?.latencyMs ?? '—'
+
+  return (
+    <div style={{
+      background: 'rgba(0,0,0,0.5)',
+      border: `1px solid ${online ? node.color + '40' : '#1e293b'}`,
+      borderRadius: 12,
+      padding: '12px',
+      transition: 'border-color 0.4s',
+    }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
+        <OnlineDot online={online} color={node.color} />
+        <span style={{
+          fontFamily: 'monospace',
+          fontSize: '0.55rem',
+          color: online ? '#22c55e' : '#ef4444',
+          letterSpacing: '0.1em',
+          fontWeight: 700,
+        }}>
+          {online ? `${latency}ms` : 'OFFLINE'}
+        </span>
+      </div>
+      <div style={{
+        fontFamily: 'monospace',
+        fontSize: '0.7rem',
+        color: node.color,
+        fontWeight: 700,
+        letterSpacing: '0.05em',
+        marginBottom: 2,
+      }}>
+        {node.name}
+      </div>
+      <div style={{
+        fontFamily: 'monospace',
+        fontSize: '0.55rem',
+        color: '#475569',
+        letterSpacing: '0.08em',
+        marginBottom: 4,
+      }}>
+        {node.role}
+      </div>
+      <div style={{
+        fontFamily: 'monospace',
+        fontSize: '0.5rem',
+        color: '#334155',
+        wordBreak: 'break-all',
+      }}>
+        {shortUrl(node.url)}
+      </div>
+    </div>
+  )
+}
+
+function TabFleet({ nodeStatus, commandData, onlineCount, lastSync, refresh }) {
+  const secondsAgo = lastSync ? Math.round((Date.now() - lastSync) / 1000) : null
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      {/* Header */}
+      <GlassCard>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div>
+            <Label>Fleet Status</Label>
+            <div style={{
+              fontFamily: 'monospace',
+              fontSize: '0.6rem',
+              color: '#475569',
+              marginTop: 4,
+              letterSpacing: '0.08em',
+            }}>
+              {onlineCount}/{FLEET_NODES.length} ONLINE
+              {secondsAgo !== null && ` — LAST PING: ${secondsAgo}s AGO`}
+            </div>
+          </div>
+          <button
+            onClick={refresh}
+            style={{
+              background: 'none',
+              border: '1px solid #164e63',
+              borderRadius: 8,
+              padding: '6px 10px',
+              color: '#06b6d4',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 4,
+              fontFamily: 'monospace',
+              fontSize: '0.6rem',
+              letterSpacing: '0.1em',
+            }}
+          >
+            <RefreshCw size={12} /> REFRESH
+          </button>
+        </div>
+      </GlassCard>
+
+      {/* Fleet grid */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(2, 1fr)',
+        gap: 10,
+      }}>
+        {FLEET_NODES.map(node => (
+          <FleetCard key={node.id} node={node} status={nodeStatus[node.id]} />
+        ))}
+      </div>
+
+      {/* Command data panel */}
+      {commandData && (
+        <GlassCard>
+          <Label>Command Center Data</Label>
+          {commandData.corp_status && (
+            <div style={{ marginTop: 8 }}>
+              <div style={{ fontFamily: 'monospace', fontSize: '0.6rem', color: '#06b6d4', letterSpacing: '0.1em', marginBottom: 4 }}>
+                CORP STATUS
+              </div>
+              <div style={{ fontFamily: 'monospace', fontSize: '0.65rem', color: '#e2e8f0' }}>
+                {String(commandData.corp_status)}
+              </div>
+            </div>
+          )}
+          {commandData.financial_summary && (
+            <div style={{ marginTop: 10 }}>
+              <div style={{ fontFamily: 'monospace', fontSize: '0.6rem', color: '#22c55e', letterSpacing: '0.1em', marginBottom: 4 }}>
+                FINANCIAL SUMMARY
+              </div>
+              <div style={{ fontFamily: 'monospace', fontSize: '0.65rem', color: '#e2e8f0' }}>
+                {typeof commandData.financial_summary === 'object'
+                  ? JSON.stringify(commandData.financial_summary, null, 2)
+                  : String(commandData.financial_summary)}
+              </div>
+            </div>
+          )}
+          {commandData.key_dates && (
+            <div style={{ marginTop: 10 }}>
+              <div style={{ fontFamily: 'monospace', fontSize: '0.6rem', color: '#f59e0b', letterSpacing: '0.1em', marginBottom: 4 }}>
+                KEY DATES
+              </div>
+              {Array.isArray(commandData.key_dates)
+                ? commandData.key_dates.map((d, i) => (
+                  <div key={i} style={{ fontFamily: 'monospace', fontSize: '0.6rem', color: '#94a3b8', marginBottom: 2 }}>{String(d)}</div>
+                ))
+                : <div style={{ fontFamily: 'monospace', fontSize: '0.6rem', color: '#94a3b8' }}>{String(commandData.key_dates)}</div>
+              }
+            </div>
+          )}
+          {/* Fallback: show all keys if none of the above */}
+          {!commandData.corp_status && !commandData.financial_summary && !commandData.key_dates && (
+            <pre style={{
+              fontFamily: 'monospace',
+              fontSize: '0.55rem',
+              color: '#475569',
+              marginTop: 8,
+              whiteSpace: 'pre-wrap',
+              wordBreak: 'break-all',
+            }}>
+              {JSON.stringify(commandData, null, 2).slice(0, 600)}
+            </pre>
+          )}
+        </GlassCard>
+      )}
+    </div>
+  )
+}
+
+// ─── SIDEBAR ─────────────────────────────────────────────────────────────────
+
+const TABS = [
+  { id: 'vagal',  label: 'VAGAL CORE', icon: Activity },
+  { id: 'k4',    label: 'K₄ SEAL',    icon: Triangle },
+  { id: 'mesh',  label: 'MESH LOOM',  icon: Share2 },
+  { id: 'ledger',label: 'LEDGER',     icon: Database },
+  { id: 'fleet', label: 'FLEET',      icon: Server },
+]
+
+function Sidebar({ activeTab, setActiveTab, onlineCount, phase, careTokenCount }) {
+  const PHASE_COLORS = { INHALE: '#06b6d4', HOLD: '#f59e0b', EXHALE: '#818cf8' }
+
+  return (
+    <div style={{
+      width: 220,
+      flexShrink: 0,
+      background: 'rgba(0,0,0,0.6)',
+      borderRight: '1px solid #164e63',
+      display: 'flex',
+      flexDirection: 'column',
+      padding: '20px 0',
+      height: '100vh',
+      position: 'sticky',
+      top: 0,
+      overflowY: 'auto',
+    }}>
+      {/* Header */}
+      <div style={{ padding: '0 16px 16px', borderBottom: '1px solid #164e6330' }}>
+        <div style={{
+          fontFamily: 'monospace',
+          fontSize: '0.9rem',
+          color: '#06b6d4',
+          fontWeight: 700,
+          letterSpacing: '0.15em',
+          textTransform: 'uppercase',
+        }}>
+          P31 VAULT
+        </div>
+        <div style={{
+          fontFamily: 'monospace',
+          fontSize: '0.55rem',
+          color: '#334155',
+          letterSpacing: '0.08em',
+          marginTop: 2,
+        }}>
+          EIN 42-1888158
+        </div>
+      </div>
+
+      {/* Fleet health */}
+      <div style={{ padding: '14px 16px', borderBottom: '1px solid #164e6330' }}>
+        <Label>Fleet Health</Label>
+        <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap', marginTop: 8 }}>
+          {FLEET_NODES.map((node, i) => (
+            <OnlineDot
+              key={node.id}
+              online={i < onlineCount}
+              color={node.color}
+              pulse={false}
+            />
+          ))}
+        </div>
+        <div style={{
+          fontFamily: 'monospace',
+          fontSize: '0.6rem',
+          color: onlineCount >= 4 ? '#22c55e' : onlineCount >= 2 ? '#f59e0b' : '#ef4444',
+          marginTop: 6,
+          letterSpacing: '0.08em',
+        }}>
+          {onlineCount}/{FLEET_NODES.length} ONLINE
+        </div>
+      </div>
+
+      {/* Breathing phase */}
+      <div style={{ padding: '14px 16px', borderBottom: '1px solid #164e6330' }}>
+        <Label>Breath Phase</Label>
+        <div style={{
+          fontFamily: 'monospace',
+          fontSize: '0.75rem',
+          color: PHASE_COLORS[phase],
+          fontWeight: 700,
+          letterSpacing: '0.15em',
+          marginTop: 6,
+          transition: 'color 0.4s',
+        }}>
+          {phase}
+        </div>
+      </div>
+
+      {/* Care tokens */}
+      <div style={{ padding: '14px 16px', borderBottom: '1px solid #164e6330' }}>
+        <Label>Care Tokens</Label>
+        <div style={{
+          fontFamily: 'monospace',
+          fontSize: '1.2rem',
+          color: '#E8636F',
+          fontWeight: 700,
+          marginTop: 4,
+        }}>
+          {careTokenCount}
+        </div>
+        <div style={{
+          fontFamily: 'monospace',
+          fontSize: '0.5rem',
+          color: '#334155',
+          letterSpacing: '0.08em',
+          marginTop: 2,
+        }}>
+          MINTED THIS SESSION
+        </div>
+      </div>
+
+      {/* Nav */}
+      <nav style={{ flex: 1, padding: '12px 0' }}>
+        {TABS.map(tab => {
+          const Icon = tab.icon
+          const active = activeTab === tab.id
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              style={{
+                width: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 10,
+                padding: '10px 16px',
+                background: active ? 'rgba(6,182,212,0.1)' : 'none',
+                border: 'none',
+                borderLeft: `2px solid ${active ? '#06b6d4' : 'transparent'}`,
+                color: active ? '#06b6d4' : '#475569',
+                cursor: 'pointer',
+                fontFamily: 'monospace',
+                fontSize: '0.62rem',
+                letterSpacing: '0.12em',
+                textAlign: 'left',
+                transition: 'all 0.2s',
+              }}
+            >
+              <Icon size={14} />
+              {tab.label}
+            </button>
+          )
+        })}
+      </nav>
+
+      {/* Footer */}
+      <div style={{ padding: '14px 16px', borderTop: '1px solid #164e6330', display: 'flex', alignItems: 'center', gap: 6 }}>
+        <Lock size={12} color="#334155" />
+        <span style={{
+          fontFamily: 'monospace',
+          fontSize: '0.5rem',
+          color: '#334155',
+          letterSpacing: '0.08em',
+          textTransform: 'uppercase',
+          lineHeight: 1.3,
+        }}>
+          ISOSTATIC RIGIDITY MAINTAINED
+        </span>
+      </div>
+    </div>
+  )
+}
+
+// ─── MOBILE NAV ──────────────────────────────────────────────────────────────
+
+function MobileNav({ activeTab, setActiveTab, phase, onlineCount, careTokenCount }) {
+  const PHASE_COLORS = { INHALE: '#06b6d4', HOLD: '#f59e0b', EXHALE: '#818cf8' }
+  return (
+    <div style={{
+      position: 'fixed',
+      bottom: 0,
+      left: 0,
+      right: 0,
+      background: 'rgba(5,5,16,0.95)',
+      borderTop: '1px solid #164e63',
+      padding: '8px 0 env(safe-area-inset-bottom, 8px)',
+      zIndex: 100,
+      backdropFilter: 'blur(12px)',
+    }}>
+      {/* Mini stats */}
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        gap: 16,
+        marginBottom: 4,
+        fontFamily: 'monospace',
+        fontSize: '0.5rem',
+        color: '#334155',
+        letterSpacing: '0.08em',
+      }}>
+        <span style={{ color: PHASE_COLORS[phase] }}>{phase}</span>
+        <span>{onlineCount}/6 ONLINE</span>
+        <span style={{ color: '#E8636F' }}>{careTokenCount} TOKENS</span>
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+        {TABS.map(tab => {
+          const Icon = tab.icon
+          const active = activeTab === tab.id
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              style={{
+                background: 'none',
+                border: 'none',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: 2,
+                padding: '4px 8px',
+                color: active ? '#06b6d4' : '#475569',
+                cursor: 'pointer',
+                fontFamily: 'monospace',
+                fontSize: '0.45rem',
+                letterSpacing: '0.08em',
+                textTransform: 'uppercase',
+                transition: 'color 0.2s',
+              }}
+            >
+              <Icon size={16} />
+              {tab.label.split(' ')[0]}
+            </button>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+// ─── ROOT COMPONENT ──────────────────────────────────────────────────────────
+
+function P31SovereignVault() {
+  const [activeTab, setActiveTab] = useState('vagal')
+  const [isMobile, setIsMobile] = useState(false)
+
+  // Shared hooks
+  const { phase, timer, pulse, cycleCount } = useBreathing()
+  const { nodeStatus, commandData, onlineCount, lastSync, refresh } = useFleetStatus()
+  const { blocks, mint } = useLedger()
+  const { peerId, packets, relayConnected, roomId, totalPackets, PATHS } = useMesh()
+
+  // Auto-mint on each EXHALE
+  const lastCycleRef = useRef(-1)
+  useEffect(() => {
+    if (phase === 'EXHALE' && cycleCount !== lastCycleRef.current) {
+      lastCycleRef.current = cycleCount
+      mint('BREATH_SYNC')
+    }
+  }, [phase, cycleCount, mint])
+
+  // Responsive
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 700px)')
+    const handler = e => setIsMobile(e.matches)
+    setIsMobile(mq.matches)
+    mq.addEventListener('change', handler)
+    return () => mq.removeEventListener('change', handler)
+  }, [])
+
+  const careTokenCount = blocks.filter(b => b.index > 0).length
+
+  return (
+    <>
+      {/* Global style injection */}
+      <style>{`
+        @keyframes vaultPulse {
+          0%, 100% { opacity: 1; transform: scale(1); }
+          50% { opacity: 0.5; transform: scale(0.85); }
+        }
+        *, *::before, *::after { box-sizing: border-box; }
+        html, body, #__next, #root {
+          background: #050510 !important;
+          margin: 0;
+          padding: 0;
+          height: 100%;
+        }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #164e63; border-radius: 2px; }
+      `}</style>
+
+      <div style={{
+        minHeight: '100vh',
+        background: '#050510',
+        color: '#e2e8f0',
+        fontFamily: 'monospace',
+        display: 'flex',
+        flexDirection: 'column',
+        position: 'relative',
+        // Scanline texture
+        backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(6,182,212,0.012) 2px, rgba(6,182,212,0.012) 4px)',
+      }}>
+
+        {/* Layout */}
+        <div style={{
+          display: 'flex',
+          flex: 1,
+          minHeight: '100vh',
+        }}>
+          {/* Sidebar — desktop only */}
+          {!isMobile && (
+            <Sidebar
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
+              onlineCount={onlineCount}
+              phase={phase}
+              careTokenCount={careTokenCount}
+            />
+          )}
+
+          {/* Main area */}
+          <div style={{
+            flex: 1,
+            display: 'flex',
+            flexDirection: 'column',
+            overflowY: 'auto',
+            paddingBottom: isMobile ? 80 : 0,
+          }}>
+            {/* Top bar */}
+            <div style={{
+              padding: '16px 20px',
+              borderBottom: '1px solid #164e6340',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              background: 'rgba(0,0,0,0.4)',
+              backdropFilter: 'blur(8px)',
+              position: 'sticky',
+              top: 0,
+              zIndex: 50,
+            }}>
+              <div>
+                {isMobile && (
+                  <div style={{
+                    fontFamily: 'monospace',
+                    fontSize: '0.85rem',
+                    color: '#06b6d4',
+                    fontWeight: 700,
+                    letterSpacing: '0.15em',
+                    marginBottom: 2,
+                  }}>
+                    P31 VAULT
+                  </div>
+                )}
+                <div style={{
+                  fontFamily: 'monospace',
+                  fontSize: '0.65rem',
+                  color: '#06b6d4',
+                  letterSpacing: '0.15em',
+                  fontWeight: 700,
+                }}>
+                  {TABS.find(t => t.id === activeTab)?.label}
+                </div>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                  <OnlineDot online={onlineCount > 0} color="#22c55e" />
+                  <span style={{ fontFamily: 'monospace', fontSize: '0.55rem', color: '#475569', letterSpacing: '0.08em' }}>
+                    {onlineCount}/6
+                  </span>
+                </div>
+                <div style={{
+                  fontFamily: 'monospace',
+                  fontSize: '0.6rem',
+                  color: phase === 'INHALE' ? '#06b6d4' : phase === 'HOLD' ? '#f59e0b' : '#818cf8',
+                  letterSpacing: '0.12em',
+                  fontWeight: 700,
+                  transition: 'color 0.4s',
+                }}>
+                  {phase} {timer}s
+                </div>
+              </div>
+            </div>
+
+            {/* Tab content */}
+            <div style={{ padding: '20px', flex: 1 }}>
+              {activeTab === 'vagal' && (
+                <TabVagalCore phase={phase} timer={timer} cycleCount={cycleCount} />
+              )}
+              {activeTab === 'k4' && (
+                <TabK4Seal
+                  breathingPhase={phase}
+                  nodeStatus={nodeStatus}
+                  commandData={commandData}
+                />
+              )}
+              {activeTab === 'mesh' && (
+                <TabMeshLoom
+                  peerId={peerId}
+                  packets={packets}
+                  relayConnected={relayConnected}
+                  roomId={roomId}
+                  totalPackets={totalPackets}
+                  PATHS={PATHS}
+                  nodeStatus={nodeStatus}
+                />
+              )}
+              {activeTab === 'ledger' && (
+                <TabLedger
+                  blocks={blocks}
+                  mint={mint}
+                  breathingPhase={phase}
+                  nodeStatus={nodeStatus}
+                />
+              )}
+              {activeTab === 'fleet' && (
+                <TabFleet
+                  nodeStatus={nodeStatus}
+                  commandData={commandData}
+                  onlineCount={onlineCount}
+                  lastSync={lastSync}
+                  refresh={refresh}
+                />
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile nav */}
+        {isMobile && (
+          <MobileNav
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+            phase={phase}
+            onlineCount={onlineCount}
+            careTokenCount={careTokenCount}
+          />
+        )}
+      </div>
+    </>
+  )
+}
+
+
+    const root = createRoot(document.getElementById('root'));
+    root.render(<P31SovereignVault />);
+  </script>
+</body>
+</html>

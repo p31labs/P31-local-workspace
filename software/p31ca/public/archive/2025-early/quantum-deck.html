@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub" style="color-scheme: dark;">
+<head>
+    <meta charset="UTF-8">
+<script>(function(){var r=document.documentElement;if(/[?&]alive=1(?:&|$)/.test(location.search))return;r.classList.add("p31-gray-rock");function wake(){r.classList.remove("p31-gray-rock")}document.addEventListener("pointerdown",wake,{once:true,capture:true});document.addEventListener("keydown",wake,{once:true,capture:true})})();</script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#0f1115">
+    <meta name="description" content="P31 Quantum Deck — Web Crypto shuffle demo; @p31/quantum-deck core mirrored from the home package. Pedagogy, not gambling.">
+<link rel="canonical" href="https://p31ca.org/quantum-deck.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Quantum Deck">
+<meta property="og:description" content="P31 Quantum Deck — Web Crypto shuffle demo; @p31/quantum-deck core mirrored from the home package. Pedagogy, not gambling.">
+<meta property="og:url" content="https://p31ca.org/quantum-deck.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Quantum Deck">
+<meta name="twitter:description" content="P31 Quantum Deck — Web Crypto shuffle demo; @p31/quantum-deck core mirrored from the home package. Pedagogy, not gambling.">
+    <meta name="p31.quantumDeckPage" content="p31.quantumDeckPage/0.1.0">
+    <title>Quantum Deck | P31 Labs</title>
+    <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/p31-style.css">
+    <style>
+        body {
+            margin: 0;
+            min-height: 100dvh;
+            background: var(--p31-void);
+            color: var(--p31-cloud);
+            font-family: var(--p31-font-sans), "Atkinson Hyperlegible", sans-serif;
+            line-height: 1.55;
+        }
+        .wrap { max-width: 42rem; margin: 0 auto; padding: 2rem 1.25rem 5rem; }
+        h1 { font-size: 1.65rem; font-weight: 700; letter-spacing: -0.02em; margin: 0 0 0.5rem; }
+        .mono { font-family: var(--p31-font-mono), "JetBrains Mono", monospace; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.12em; color: rgba(216,214,208,0.45); margin-bottom: 0.75rem; }
+        .deck-row { font-family: var(--p31-font-mono), "JetBrains Mono", monospace; font-size: 0.8rem; word-break: break-all; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: var(--p31-radius-md, 8px); padding: 0.85rem 1rem; margin: 1rem 0; min-height: 2.75rem; }
+        button.shuffle {
+            font-family: var(--p31-font-mono), "JetBrains Mono", monospace;
+            font-size: 0.78rem;
+            padding: 0.65rem 1.25rem;
+            border-radius: var(--p31-radius-sm, 6px);
+            border: 1px solid rgba(77,184,168,0.45);
+            background: rgba(77,184,168,0.12);
+            color: var(--p31-cloud);
+            cursor: pointer;
+        }
+        button.shuffle:hover { border-color: rgba(77,184,168,0.75); background: rgba(77,184,168,0.2); }
+        a.teal { color: var(--p31-accent-teal, #4db8a8); text-decoration: none; }
+        a.teal:hover { text-decoration: underline; }
+        .muted { color: rgba(216,214,208,0.65); font-size: 0.9rem; }
+        ul.links { margin: 1rem 0; padding-left: 1.2rem; font-size: 0.88rem; }
+    </style>
+</head>
+<body>
+<a href="#main" style="position:absolute;left:-9999px;top:0;padding:0.5rem 1rem;background:var(--p31-void);color:var(--p31-teal);font-size:0.875rem;z-index:9999;border-radius:0 0 4px 4px;text-decoration:none" onfocus="this.style.left='0'" onblur="this.style.left='-9999px'">Skip to main content</a>
+    <a class="mono" href="/" style="display:inline-block;margin:1rem 1.25rem 0;text-decoration:none;color:rgba(216,214,208,0.5);">← Hub</a>
+    <main id="main" class="wrap">
+        <p class="mono">p31.quantumDeckPage/0.1.0 · @p31/quantum-deck</p>
+        <h1 id="deck-heading">Quantum Deck</h1>
+        <p class="muted">Shuffle uses <strong>crypto.getRandomValues</strong> — same honesty line as Fate surfaces (“not destiny”). Suite core is mirrored here from <code class="mono" style="text-transform:none;letter-spacing:0;color:rgba(216,214,208,0.85)">packages/quantum-deck</code> on every <code class="mono" style="text-transform:none">verify:quantum-deck</code>.</p>
+        <p style="margin:1rem 0;">
+            <button type="button" class="shuffle" id="btn-shuffle" aria-describedby="out" aria-label="Shuffle deck">Shuffle deck</button>
+        </p>
+        <div class="deck-row" id="out" role="status" aria-live="polite">— tap shuffle —</div>
+        <p class="muted" style="margin-top:1.25rem">Saved-game JSON schema: <code class="mono" style="text-transform:none">p31.quantumDeckSave/0.1.0</code> · No wagering or paid random drops.</p>
+        <ul class="links muted">
+            <li><a class="teal p31-mesh-tap" href="/quantum-clock.html">Quantum clock</a> — Grandfather ↔ Cuckoo</li>
+            <li><a class="teal p31-mesh-tap" href="/tomography.html">K4 Tomography</a> · <a class="teal p31-mesh-tap" href="/k4market.html">K4 Market</a></li>
+            <li><a class="teal p31-mesh-tap" href="/magic-crystal.html">Oracle crystal</a> (assistive CSPRNG)</li>
+            <li>Plan: <a class="teal p31-mesh-tap" href="https://github.com/p31labs/bonding-soup/blob/main/docs/PLAN-QUANTUM-CARD-SUITE.md">PLAN-QUANTUM-CARD-SUITE.md</a></li>
+        </ul>
+    </main>
+<!-- P31:mission-ebc:start -->
+<footer id="ebc" class="p31-mission-trio p31-mission-trio--ebc" role="contentinfo" aria-label="Mission — build, create, connect">
+    <a class="p31-mission-trio__link p31-mission-trio__link--build p31-mesh-tap" id="ebc-build" href="/build" title="Initial Build — intake, subject scope, verify-gated bake">
+        <span class="p31-mission-trio__head">
+            <span class="p31-mission-trio__dot" aria-hidden="true"></span>
+            <span class="p31-mission-trio__verb">Build</span>
+        </span>
+        <span class="p31-mission-trio__desc">Intake and bake on the same verify chain—not a decoupled mock.</span>
+    </a>
+    <a class="p31-mission-trio__link p31-mission-trio__link--create p31-mesh-tap" id="ebc-create" href="/geodesic.html" title="GEODESIC — snap grid, Maxwell rigidity, scene export">
+        <span class="p31-mission-trio__head">
+            <span class="p31-mission-trio__dot" aria-hidden="true"></span>
+            <span class="p31-mission-trio__verb">Create</span>
+        </span>
+        <span class="p31-mission-trio__desc">One lab surface, honest rigidity—generate or prove; don’t fork the same truth twice (ephemeralization).</span>
+    </a>
+    <a class="p31-mission-trio__link p31-mission-trio__link--connect p31-mesh-tap" id="ebc-connect" href="/mesh" title="Mesh navigator — K₄ cage and product graph">
+        <span class="p31-mission-trio__head">
+            <span class="p31-mission-trio__dot" aria-hidden="true"></span>
+            <span class="p31-mission-trio__verb">Connect</span>
+        </span>
+        <span class="p31-mission-trio__desc"><span class="p31-mission-trio__now">Now</span> — live cage and edges: mesh, hubs, and money follow the same published contracts (ethical monetization).</span>
+    </a>
+</footer>
+<!-- P31:mission-ebc:end -->
+<script type="module">
+  import { createShuffledDeck } from "/lib/p31-quantum-deck-core.mjs";
+  import { startGrandfatherPhaseVar } from "/lib/p31-quantum-grandfather-boot.mjs";
+  startGrandfatherPhaseVar();
+
+  const out = document.getElementById("out");
+  const btn = document.getElementById("btn-shuffle");
+
+  function render() {
+    if (!out || !btn) return;
+    btn.disabled = true;
+    btn.setAttribute("aria-busy", "true");
+    try {
+      const d = createShuffledDeck();
+      const slice = d.slice(0, 13).map((c) => c.id).join(" ");
+      out.textContent = slice.length ? slice : "(empty)";
+    } catch (e) {
+      const msg = e && typeof e.message === "string" ? e.message : String(e);
+      out.textContent = "Shuffle unavailable — " + msg;
+      console.warn("quantum-deck:", e);
+    } finally {
+      btn.disabled = false;
+      btn.removeAttribute("aria-busy");
+    }
+  }
+
+  btn.addEventListener("click", render);
+</script>
+<script src="/lib/p31-return-ribbon.js" defer></script>
+</body>
+</html>

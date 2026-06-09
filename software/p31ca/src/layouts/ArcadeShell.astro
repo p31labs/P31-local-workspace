@@ -1,0 +1,487 @@
+---
+/**
+ * ArcadeShell.astro — Dedicated housing for all P31 Arcade games
+ *
+ * Specialized shell for the arcade vertical:
+ * - Game selector drawer (minimized by default)
+ * - High score display
+ * - Quick settings for games
+ * - Unified arcade navigation
+ * - Distinct from main P31 shell to create "arcade cabinet" feel
+ *
+ * Frees main app screens for content while giving games their own space.
+ */
+import { ClientRouter } from 'astro:transitions';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  gameId: string;
+  gameTitle: string;
+  gameIcon?: string;
+  showSelector?: boolean;
+  fullscreen?: boolean;
+}
+
+const {
+  title = 'P31 Arcade',
+  description = 'Four physics games at 10000%',
+  gameId,
+  gameTitle,
+  gameIcon = '🎮',
+  showSelector = true,
+  fullscreen = false,
+} = Astro.props;
+
+// Arcade game registry
+const arcadeGames = [
+  { id: 'hub', title: 'Arcade Hub', icon: '🏛️', href: '/arcade/', color: '#4db8a8', desc: 'All games' },
+  { id: 'smallball', title: 'Smallball', icon: '⚾', href: '/arcade/smallball/', color: '#cc6247', desc: '2.5D baseball' },
+  { id: 'gridiron', title: 'Gridiron', icon: '🏈', href: '/arcade/gridiron/', color: '#3ba372', desc: 'Strategic football' },
+  { id: 'cards', title: 'Card Table', icon: '🃏', href: '/arcade/cards/', color: '#8b7cc9', desc: 'Card strategy' },
+  { id: 'strategy', title: 'Strategy Board', icon: '♟️', href: '/arcade/strategy/', color: '#cda852', desc: 'Tactical warfare' },
+  { id: 'liquid', title: 'Liquid Sculptor', icon: '💧', href: '/arcade/liquid/', color: '#4db8a8', desc: 'Fluid physics' },
+  { id: 'resonance', title: 'Resonance Rings', icon: '🌊', href: '/arcade/resonance/', color: '#cc6247', desc: 'Wave harmonics' },
+  { id: 'poetry', title: 'Magnetic Poetry', icon: '🧲', href: '/arcade/poetry/', color: '#3ba372', desc: 'Word fields' },
+  { id: 'orbital', title: 'Orbital Drift', icon: '🪐', href: '/arcade/orbital/', color: '#8b7cc9', desc: 'Gravity sim' },
+  { id: 'cybernetic-bonsai', title: 'Cybernetic Bonsai', icon: '🌳', href: '/cybernetic-bonsai/', color: '#4db8a8', desc: 'Digital garden' },
+  { id: 'abyssal-node', title: 'Abyssal Node', icon: '🌊', href: '/abyssal-node/', color: '#cc6247', desc: 'Deep sea sim' },
+  { id: 'quantum-lattice', title: 'Quantum Lattice', icon: '⚛️', href: '/quantum-lattice/', color: '#8b7cc9', desc: 'Posner molecules' },
+];
+
+const currentGame = arcadeGames.find(g => g.id === gameId) || arcadeGames[0];
+---
+
+<!doctype html>
+<html
+  lang="en"
+  class="dark"
+  data-p31-appearance="hub"
+  data-arcade-game={gameId}
+  style="color-scheme: dark;"
+>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#0f1115" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/icons/p31-192.png" />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="stylesheet" href="/p31-style.css" />
+
+    <!-- Arcade-specific fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+
+    <title>{gameTitle} | P31 Arcade</title>
+
+    <ClientRouter />
+
+    <style is:inline>
+      /* Arcade-specific critical CSS */
+      html {
+        font-family: 'JetBrains Mono', system-ui, sans-serif;
+        background: #0f1115;
+        color: #e8e6e3;
+      }
+
+      /* Arcade skip link */
+      .arcade-skip-link {
+        position: absolute;
+        top: -40px;
+        left: 0;
+        background: #4db8a8;
+        color: #000;
+        padding: 8px 16px;
+        z-index: 1000;
+        font-weight: 600;
+        text-decoration: none;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 12px;
+      }
+      .arcade-skip-link:focus {
+        top: 0;
+      }
+
+      /* Arcade header - compact */
+      .arcade-header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 48px;
+        background: rgba(15, 17, 21, 0.95);
+        border-bottom: 2px solid var(--game-color, #4db8a8);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 16px;
+        z-index: 100;
+        backdrop-filter: blur(8px);
+      }
+
+      /* Game selector drawer */
+      .arcade-selector {
+        position: fixed;
+        top: 48px;
+        left: 0;
+        right: 0;
+        background: rgba(15, 17, 21, 0.98);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        transform: translateY(-100%);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 99;
+        max-height: 60vh;
+        overflow-y: auto;
+      }
+      .arcade-selector[data-open="true"] {
+        transform: translateY(0);
+      }
+
+      /* Arcade game grid */
+      .arcade-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 12px;
+        padding: 16px;
+      }
+
+      /* Arcade game card */
+      .arcade-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        padding: 16px 12px;
+        background: rgba(255, 255, 255, 0.03);
+        border: 2px solid transparent;
+        border-radius: 12px;
+        text-decoration: none;
+        color: #e8e6e3;
+        transition: all 0.2s;
+        cursor: pointer;
+      }
+      .arcade-card:hover {
+        background: rgba(255, 255, 255, 0.06);
+        border-color: var(--card-color, #4db8a8);
+        transform: translateY(-2px);
+      }
+      .arcade-card.active {
+        background: rgba(77, 184, 168, 0.15);
+        border-color: var(--card-color, #4db8a8);
+      }
+      .arcade-card-icon {
+        font-size: 32px;
+        line-height: 1;
+      }
+      .arcade-card-title {
+        font-size: 11px;
+        font-weight: 600;
+        text-align: center;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      .arcade-card-desc {
+        font-size: 9px;
+        color: rgba(232, 230, 227, 0.5);
+        text-align: center;
+      }
+
+      /* Toggle button */
+      .arcade-toggle {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        color: #e8e6e3;
+        cursor: pointer;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 12px;
+        transition: all 0.2s;
+      }
+      .arcade-toggle:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: var(--game-color, #4db8a8);
+      }
+      .arcade-toggle[aria-expanded="true"] {
+        background: var(--game-color, #4db8a8);
+        color: #0f1115;
+        border-color: var(--game-color, #4db8a8);
+      }
+
+      /* Arcade content area */
+      .arcade-content {
+        margin-top: 48px;
+        min-height: calc(100vh - 48px);
+        position: relative;
+      }
+      .arcade-content.fullscreen {
+        margin-top: 0;
+        min-height: 100vh;
+      }
+
+      /* Retro pixel font for headers */
+      .pixel-font {
+        font-family: 'Press Start 2P', cursive;
+        font-size: 10px;
+        line-height: 1.6;
+      }
+
+      /* High score display */
+      .high-score {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 4px 12px;
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 6px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 11px;
+      }
+      .high-score-label {
+        color: rgba(232, 230, 227, 0.5);
+        text-transform: uppercase;
+      }
+      .high-score-value {
+        color: #cda852;
+        font-weight: 700;
+      }
+
+      /* Arcade branding */
+      .arcade-brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+        color: #e8e6e3;
+      }
+      .arcade-brand-icon {
+        font-size: 20px;
+      }
+      .arcade-brand-text {
+        display: flex;
+        flex-direction: column;
+      }
+      .arcade-brand-name {
+        font-family: 'Press Start 2P', cursive;
+        font-size: 8px;
+        color: var(--game-color, #4db8a8);
+      }
+      .arcade-brand-game {
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      /* Quick actions */
+      .arcade-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .arcade-btn {
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        color: #e8e6e3;
+        cursor: pointer;
+        font-size: 16px;
+        transition: all 0.2s;
+      }
+      .arcade-btn:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: var(--game-color, #4db8a8);
+      }
+
+      /* Responsive */
+      @media (max-width: 480px) {
+        .arcade-grid {
+          grid-template-columns: repeat(3, 1fr);
+          gap: 8px;
+          padding: 12px;
+        }
+        .arcade-card {
+          padding: 12px 8px;
+        }
+        .arcade-card-icon {
+          font-size: 24px;
+        }
+        .high-score {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+
+  <body style={`--game-color: ${currentGame.color};`}>
+    <a href="#game-content" class="arcade-skip-link">Skip to game</a>
+
+    {!fullscreen && (
+      <>
+        {/* Arcade Header */}
+        <header class="arcade-header" style={`border-color: ${currentGame.color};`}>
+          <a href="/arcade/" class="arcade-brand">
+            <span class="arcade-brand-icon">🎮</span>
+            <div class="arcade-brand-text">
+              <span class="arcade-brand-name">P31 ARCADE</span>
+              <span class="arcade-brand-game">{gameTitle}</span>
+            </div>
+          </a>
+
+          {showSelector && (
+            <button
+              id="arcade-selector-toggle"
+              class="arcade-toggle"
+              aria-label="Select game"
+              aria-expanded="false"
+              aria-controls="arcade-selector"
+              type="button"
+            >
+              <span>🎯</span>
+              <span>Games</span>
+              <span id="game-count">{arcadeGames.length - 1}</span>
+            </button>
+          )}
+
+          <div class="arcade-actions">
+            {/* High Score - populated by games */}
+            <div class="high-score" id="arcade-high-score" style="display: none;">
+              <span class="high-score-label">HI</span>
+              <span class="high-score-value" id="high-score-value">0</span>
+            </div>
+
+            {/* Home */}
+            <a href="/" class="arcade-btn" aria-label="P31 Hub" title="P31 Hub">🏠</a>
+
+            {/* Fullscreen toggle */}
+            <button
+              id="arcade-fullscreen"
+              class="arcade-btn"
+              aria-label="Toggle fullscreen"
+              title="Fullscreen"
+            >
+              ⛶
+            </button>
+          </div>
+        </header>
+
+        {/* Game Selector Drawer */}
+        {showSelector && (
+          <nav
+            id="arcade-selector"
+            class="arcade-selector"
+            data-open="false"
+            aria-label="Game selection"
+          >
+            <div class="arcade-grid">
+              {arcadeGames.map(game => (
+                <a
+                  href={game.href}
+                  class={`arcade-card ${game.id === gameId ? 'active' : ''}`}
+                  style={`--card-color: ${game.color};`}
+                  aria-current={game.id === gameId ? 'page' : undefined}
+                >
+                  <span class="arcade-card-icon">{game.icon}</span>
+                  <span class="arcade-card-title">{game.title}</span>
+                  <span class="arcade-card-desc">{game.desc}</span>
+                </a>
+              ))}
+            </div>
+          </nav>
+        )}
+      </>
+    )}
+
+    {/* Game Content Area */}
+    <main
+      id="game-content"
+      class={`arcade-content ${fullscreen ? 'fullscreen' : ''}`}
+      role="main"
+      aria-label={`${gameTitle} game`}
+    >
+      <slot />
+    </main>
+
+    {/* Arcade Scripts */}
+    <script is:inline>
+      (function() {
+        // Game selector toggle
+        const toggle = document.getElementById('arcade-selector-toggle');
+        const selector = document.getElementById('arcade-selector');
+
+        toggle?.addEventListener('click', () => {
+          const isOpen = selector?.getAttribute('data-open') === 'true';
+          selector?.setAttribute('data-open', String(!isOpen));
+          toggle.setAttribute('aria-expanded', String(!isOpen));
+        });
+
+        // Close selector on game selection
+        selector?.querySelectorAll('.arcade-card').forEach(card => {
+          card.addEventListener('click', () => {
+            selector.setAttribute('data-open', 'false');
+            toggle?.setAttribute('aria-expanded', 'false');
+          });
+        });
+
+        // Fullscreen toggle
+        const fsBtn = document.getElementById('arcade-fullscreen');
+        fsBtn?.addEventListener('click', () => {
+          if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch(() => {});
+          } else {
+            document.exitFullscreen().catch(() => {});
+          }
+        });
+
+        // Listen for high score updates from games
+        window.addEventListener('p31:arcade-highscore', (e) => {
+          const scoreEl = document.getElementById('high-score-value');
+          const container = document.getElementById('arcade-high-score');
+          if (scoreEl && e.detail?.score) {
+            scoreEl.textContent = e.detail.score.toLocaleString();
+            container.style.display = 'flex';
+          }
+        });
+
+        // Close selector on Escape
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape') {
+            selector?.setAttribute('data-open', 'false');
+            toggle?.setAttribute('aria-expanded', 'false');
+          }
+        });
+
+        // Arcade health check
+        window.p31ArcadeHealth = function() {
+          return {
+            game: document.documentElement.getAttribute('data-arcade-game'),
+            fullscreen: !!document.fullscreenElement,
+            selector: selector?.getAttribute('data-open') === 'true',
+          };
+        };
+      })();
+    </script>
+
+    {/* Expose high score setter for games */}
+    <script is:inline>
+      window.p31SetHighScore = function(score) {
+        window.dispatchEvent(new CustomEvent('p31:arcade-highscore', {
+          detail: { score: score }
+        }));
+      };
+    </script>
+  </body>
+</html>

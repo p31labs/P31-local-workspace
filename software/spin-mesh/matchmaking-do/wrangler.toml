@@ -1,0 +1,19 @@
+name = "spin-matchmaking"
+main = "./index.ts"
+compatibility_date = "2024-10-22"
+
+durable_objects = { bindings = [
+  { name = "MATCHMAKING", class_name = "MatchmakingDO" },
+  { name = "LOGISTICS", class_name = "HandoverDO", script_name = "spin-logistics" }
+]}
+
+[build]
+command = "npm run build"
+
+[[migrations]]
+tag = "v1"
+new_classes = ["MatchmakingDO"]
+
+[[migrations]]
+tag = "v1"
+new_classes = ["HandoverDO"]

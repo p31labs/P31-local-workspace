@@ -1,0 +1,22 @@
+﻿WCD-B03: SPACESHIP EARTH (ANDROMEDA) ALIGNMENT
+Target: p31ca.org (React PWA Repository)
+Objective: Purge legacy colors, inject the spaceship-earth-logo.svg, and establish the "Digital Cathedral" aesthetic.
+1. THE PHOSPHOR PURGE
+Agent Instructions:
+1. Search the codebase for legacy colors (e.g., #39FF14, #00FF88, #FF00CC).
+2. Replace all values with the strict Andromeda token set:
+   * Void Black: #000000
+   * Surface Void: #050308
+   * Phosphor Cyan: #00FFFF
+   * Phosphor Magenta: #FF00FF
+   * Phosphor Violet: #BF5FFF
+   * Phosphor Amber: #FFD700
+2. TYPOGRAPHY & LOGO INJECTION
+Agent Instructions:
+1. Import Oxanium (Display) and Space Mono (Data) from Google Fonts. Apply them to global variables.
+2. Save spaceship-earth-logo.svg to /assets.
+3. Integrate this logo into the Boot Sequence (z-100 lock screen) and as the primary "Home" button in the z-11 Navigation bar.
+3. MATERIAL UPGRADES
+Agent Instructions:
+1. Ensure all standard DOM overlay panels (Z-10 to Z-60) use a dark frosted glass effect: background: rgba(10, 10, 31, 0.4); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.12);.
+2. Ensure the Three.js <Bloom> post-processing effect requires luminanceThreshold={1.0} so the void remains pitch black while active data glows.

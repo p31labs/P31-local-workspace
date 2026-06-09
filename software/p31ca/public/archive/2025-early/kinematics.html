@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub" style="color-scheme: dark;">
+<head>
+    <meta charset="UTF-8">
+<script>(function(){var r=document.documentElement;if(/[?&]alive=1(?:&|$)/.test(location.search))return;r.classList.add("p31-gray-rock");function wake(){r.classList.remove("p31-gray-rock")}document.addEventListener("pointerdown",wake,{once:true,capture:true});document.addEventListener("keydown",wake,{once:true,capture:true})})();</script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#0f1115">
+    <title>KINEMATICS | Motion Soundscape | P31 Labs</title>
+    <link rel="stylesheet" href="/p31-style.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        :root{--void:#0f1115;--surface:#161920;--teal:#25897d;--cyan:#4db8a8;--cloud:#d8d6d0;--butter:#cda852;--lav:#8b7cc9;--coral:#cc6247;--phos:#3ba372}
+        body{background:var(--void);color:var(--cloud);font-family:'Atkinson Hyperlegible',sans-serif;height:100vh;display:flex;flex-direction:column;overflow:hidden}
+        header{padding:10px 20px;background:rgba(15,17,21,0.95);border-bottom:1px solid rgba(255,255,255,0.05);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;z-index:10}
+        .logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--cloud);font-weight:700;font-size:14px}
+        a.back{color:rgba(216,214,208,0.4);font-family:'JetBrains Mono',monospace;font-size:12px;text-decoration:none}
+        a.back:hover{color:var(--cloud)}
+        .stage{flex:1;position:relative;overflow:hidden}
+        canvas#stage-cv{position:absolute;inset:0;width:100%;height:100%}
+        .controls{position:absolute;bottom:0;left:0;right:0;padding:16px;background:linear-gradient(transparent,rgba(15,17,21,0.95));z-index:5}
+        .ctrl-row{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;margin-bottom:10px}
+        button{font-family:'JetBrains Mono',monospace;font-size:11px;padding:7px 14px;border-radius:20px;cursor:pointer;border:1px solid rgba(255,255,255,0.1);background:rgba(22,25,32,0.8);color:rgba(216,214,208,0.6);transition:all 0.2s}
+        button:hover{border-color:var(--teal);color:var(--teal)}
+        button.on{border-color:var(--teal);color:var(--teal);background:rgba(37,137,125,0.15)}
+        .status{text-align:center;font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(216,214,208,0.3);margin-bottom:8px}
+        .meter-row{display:flex;gap:16px;justify-content:center}
+        .meter{text-align:center;font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(216,214,208,0.4)}
+        .meter-bar{width:80px;height:4px;background:rgba(255,255,255,0.06);border-radius:2px;margin:4px auto}
+        .meter-fill{height:4px;border-radius:2px;transition:width 0.1s}
+        .axis-display{display:flex;gap:20px;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:12px}
+        .axis-val{text-align:center}
+        .axis-lbl{font-size:9px;color:rgba(216,214,208,0.3);text-transform:uppercase;margin-bottom:2px}
+    </style>
+<meta property="og:type" content="website">
+<meta property="og:title" content="KINEMATICS | Motion Soundscape">
+<meta property="og:description" content="KINEMATICS | Motion Soundscape">
+<meta property="og:url" content="https://p31ca.org/kinematics.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="KINEMATICS | Motion Soundscape">
+<meta name="twitter:description" content="KINEMATICS | Motion Soundscape">
+<link rel="canonical" href="https://p31ca.org/kinematics.html">
+</head>
+<body>
+<a href="#main" style="position:absolute;left:-9999px;top:0;padding:0.5rem 1rem;background:var(--p31-void);color:var(--p31-teal);font-size:0.875rem;z-index:9999;border-radius:0 0 4px 4px;text-decoration:none" onfocus="this.style.left='0'" onblur="this.style.left='-9999px'">Skip to main content</a>
+<header>
+    <a href="/" class="logo">
+        <svg width="22" height="22" viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#25897d"/><circle cx="390" cy="120" r="48" fill="#cc6247"/><text x="256" y="340" font-family="system-ui" font-weight="900" font-size="220" fill="#d8d6d0" text-anchor="middle">P31</text><rect x="156" y="380" width="200" height="16" rx="8" fill="#cda852"/></svg>
+        KINEMATICS
+    </a>
+    <a href="/" class="back">← Hub</a>
+</header>
+
+<div class="stage">
+    <canvas id="stage-cv"></canvas>
+    <div class="controls">
+        <div class="status" id="status">Click Start to activate soundscape</div>
+        <div class="axis-display">
+            <div class="axis-val"><div class="axis-lbl">α</div><span id="v-alpha" style="color:#4db8a8">0.0</span></div>
+            <div class="axis-val"><div class="axis-lbl">β</div><span id="v-beta" style="color:#cda852">0.0</span></div>
+            <div class="axis-val"><div class="axis-lbl">γ</div><span id="v-gamma" style="color:#cc6247">0.0</span></div>
+        </div>
+        <div class="ctrl-row">
+            <button id="btn-start" onclick="start()">▶ Start</button>
+            <button id="btn-mode" class="on" onclick="toggleMode(this)" data-mode="accel">Accelerometer</button>
+            <button id="btn-mouse" onclick="toggleMouse(this)">Mouse Mode</button>
+            <button id="btn-mute" onclick="toggleMute(this)">Mute</button>
+        </div>
+        <div class="meter-row">
+            <div class="meter">Pitch<div class="meter-bar"><div class="meter-fill" id="mf-pitch" style="background:#4db8a8;width:50%"></div></div></div>
+            <div class="meter">Filter<div class="meter-bar"><div class="meter-fill" id="mf-filter" style="background:#cda852;width:40%"></div></div></div>
+            <div class="meter">Volume<div class="meter-bar"><div class="meter-fill" id="mf-vol" style="background:#cc6247;width:60%"></div></div></div>
+        </div>
+    </div>
+</div>
+
+<script>
+const cv = document.getElementById('stage-cv');
+const ctx = cv.getContext('2d');
+let W, H;
+function resize() { W=cv.width=cv.offsetWidth; H=cv.height=cv.offsetHeight; }
+resize(); window.addEventListener('resize', resize);
+
+let audioCtx = null;
+let osc1 = null, osc2 = null, masterGain = null, filter = null;
+let muted = false;
+let running = false;
+let useAccel = true;
+let useMouse = false;
+
+// Motion state
+let alpha=0, beta=0, gamma=0;
+let mouseX=0.5, mouseY=0.5;
+let smoothAlpha=0, smoothBeta=0, smoothGamma=0;
+
+// Viz particles
+let particles = [];
+
+function initAudio() {
+    if (audioCtx) return;
+    audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+    masterGain = audioCtx.createGain();
+    masterGain.gain.value = 0.3;
+    filter = audioCtx.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.frequency.value = 800;
+    filter.Q.value = 2;
+
+    osc1 = audioCtx.createOscillator();
+    osc1.type = 'sine';
+    osc1.frequency.value = 220;
+    osc2 = audioCtx.createOscillator();
+    osc2.type = 'triangle';
+    osc2.frequency.value = 330;
+
+    osc1.connect(filter); osc2.connect(filter);
+    filter.connect(masterGain);
+    masterGain.connect(audioCtx.destination);
+    osc1.start(); osc2.start();
+}
+
+function start() {
+    if (running) return;
+    initAudio();
+    running = true;
+    document.getElementById('status').textContent = 'Active — move device or mouse';
+    document.getElementById('btn-start').textContent = '■ Stop';
+    document.getElementById('btn-start').onclick = stop;
+
+    if (useAccel && window.DeviceOrientationEvent) {
+        if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+            DeviceOrientationEvent.requestPermission().then(s => {
+                if (s==='granted') window.addEventListener('deviceorientation', handleOrientation);
+                else { useMouse=true; enableMouse(); }
+            });
+        } else {
+            window.addEventListener('deviceorientation', handleOrientation);
+        }
+    } else {
+        useMouse=true; enableMouse();
+    }
+}
+
+function stop() {
+    running = false;
+    document.getElementById('btn-start').textContent = '▶ Start';
+    document.getElementById('btn-start').onclick = start;
+    document.getElementById('status').textContent = 'Stopped';
+    if (masterGain) masterGain.gain.setTargetAtTime(0, audioCtx.currentTime, 0.1);
+}
+
+function handleOrientation(e) {
+    alpha = e.alpha||0;
+    beta = e.beta||0;
+    gamma = e.gamma||0;
+}
+
+function enableMouse() {
+    document.getElementById('stage-cv').addEventListener('mousemove', e => {
+        const r = cv.getBoundingClientRect();
+        mouseX = (e.clientX - r.left) / r.width;
+        mouseY = (e.clientY - r.top) / r.height;
+    });
+    cv.addEventListener('touchmove', e => {
+        e.preventDefault();
+        const r = cv.getBoundingClientRect();
+        mouseX = (e.touches[0].clientX - r.left) / r.width;
+        mouseY = (e.touches[0].clientY - r.top) / r.height;
+    }, {passive:false});
+}
+
+window.toggleMode = function(btn) {
+    useAccel = !useAccel;
+    btn.textContent = useAccel ? 'Accelerometer' : 'Gyroscope';
+};
+window.toggleMouse = function(btn) {
+    useMouse = !useMouse;
+    btn.classList.toggle('on', useMouse);
+    if (useMouse) enableMouse();
+};
+window.toggleMute = function(btn) {
+    muted = !muted;
+    btn.classList.toggle('on', muted);
+    if (masterGain) masterGain.gain.setTargetAtTime(muted?0:0.3, audioCtx.currentTime, 0.05);
+};
+
+function lerp(a,b,t){return a+(b-a)*t;}
+
+function updateSound() {
+    if (!audioCtx || !running) return;
+
+    let normAlpha, normBeta, normGamma;
+    if (useMouse) {
+        normAlpha = mouseX;
+        normBeta = mouseY;
+        normGamma = (mouseX+mouseY)/2;
+    } else {
+        normAlpha = ((alpha+180)/360);
+        normBeta = Math.max(0,Math.min(1,(beta+90)/180));
+        normGamma = Math.max(0,Math.min(1,(gamma+90)/180));
+    }
+
+    smoothAlpha = lerp(smoothAlpha, normAlpha, 0.1);
+    smoothBeta = lerp(smoothBeta, normBeta, 0.1);
+    smoothGamma = lerp(smoothGamma, normGamma, 0.1);
+
+    const freq1 = 80 + smoothAlpha * 400;
+    const freq2 = 100 + smoothBeta * 500;
+    const filterFreq = 200 + smoothGamma * 2000;
+    const vol = muted ? 0 : 0.15 + smoothBeta * 0.25;
+
+    osc1.frequency.setTargetAtTime(freq1, audioCtx.currentTime, 0.05);
+    osc2.frequency.setTargetAtTime(freq2, audioCtx.currentTime, 0.05);
+    filter.frequency.setTargetAtTime(filterFreq, audioCtx.currentTime, 0.08);
+    masterGain.gain.setTargetAtTime(vol, audioCtx.currentTime, 0.05);
+
+    document.getElementById('v-alpha').textContent = (smoothAlpha*360-180).toFixed(1);
+    document.getElementById('v-beta').textContent = (smoothBeta*180-90).toFixed(1);
+    document.getElementById('v-gamma').textContent = (smoothGamma*180-90).toFixed(1);
+    document.getElementById('mf-pitch').style.width = (smoothAlpha*100)+'%';
+    document.getElementById('mf-filter').style.width = (smoothGamma*100)+'%';
+    document.getElementById('mf-vol').style.width = (vol/0.4*100)+'%';
+
+    // Spawn particle based on motion
+    const intensity = Math.abs(smoothAlpha-0.5)+Math.abs(smoothBeta-0.5);
+    if (Math.random() < 0.3+intensity*0.5) {
+        const px = W*smoothAlpha + (Math.random()-0.5)*40;
+        const py = H*smoothBeta + (Math.random()-0.5)*40;
+        const hue = 120+smoothAlpha*120;
+        particles.push({x:px,y:py,vx:(Math.random()-0.5)*4,vy:(Math.random()-0.5)*4-1,life:1,hue});
+    }
+}
+
+function drawViz() {
+    ctx.fillStyle='rgba(15,17,21,0.12)';
+    ctx.fillRect(0,0,W,H);
+
+    // Lissajous curve
+    if (running) {
+        const cx=W/2, cy=H/2;
+        const scx=W*0.35, scy=H*0.25;
+        ctx.strokeStyle='rgba(37,137,125,0.15)';ctx.lineWidth=1;ctx.beginPath();
+        const N=200;
+        for(let i=0;i<N;i++){
+            const t=i/N*Math.PI*8;
+            const x=cx+Math.sin(t*smoothAlpha*3+1)*scx;
+            const y=cy+Math.sin(t*smoothBeta*4)*scy;
+            i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+        }
+        ctx.stroke();
+    }
+
+    // Particles
+    particles=particles.filter(p=>p.life>0);
+    particles.forEach(p=>{
+        p.x+=p.vx;p.y+=p.vy;p.vy+=0.05;p.vx*=0.96;p.life-=0.02;
+        ctx.globalAlpha=p.life;
+        ctx.beginPath();ctx.arc(p.x,p.y,2,0,Math.PI*2);
+        ctx.fillStyle=`hsl(${p.hue},70%,60%)`;ctx.fill();
+    });
+    ctx.globalAlpha=1;
+
+    // Center indicator
+    if (running) {
+        const ix=W*smoothAlpha, iy=H*smoothBeta;
+        ctx.beginPath();ctx.arc(ix,iy,8,0,Math.PI*2);
+        ctx.fillStyle='rgba(77,184,168,0.6)';ctx.fill();
+        ctx.beginPath();ctx.arc(ix,iy,20,0,Math.PI*2);
+        ctx.strokeStyle='rgba(77,184,168,0.2)';ctx.lineWidth=1;ctx.stroke();
+    }
+
+    requestAnimationFrame(() => { updateSound(); drawViz(); });
+}
+drawViz();
+</script>
+</body>
+</html>

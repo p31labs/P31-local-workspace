@@ -1,0 +1,40 @@
+name: Deploy Spaceship Earth
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'spaceship-earth/**'
+      - 'packages/**'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build Spaceship Earth
+        run: |
+          cd spaceship-earth
+          npm run build
+
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: spaceship-earth
+          directory: spaceship-earth/dist
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}

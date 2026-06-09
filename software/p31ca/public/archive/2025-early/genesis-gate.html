@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#050505">
+    <title>Genesis Gate | Governance Control Plane | P31 Labs</title>
+    <meta name="description" content="v4.1.0 governance engine. TelemetryModule, InterceptModule, GovernanceHook, and GenesisOrchestrator form the operational boundary layer.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/assets/p31-operator-tailwind.js"></script>
+    <link rel="stylesheet" href="/assets/hub-skin.css">
+    <link rel="stylesheet" href="/assets/hub-about-shell.css">
+    <style>
+        :root { --accent: #00FF88; }
+        body {
+            background-color: #050505;
+            color: #d8d6d0;
+            background-image: linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+        .matte-panel { background-color: #161920; border: 1px solid rgba(255,255,255,0.04); }
+        .logo-text { fill: #d8d6d0; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col text-cloud/90 hub-about-page">
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand">
+      <span class="hub-brand-mark" aria-hidden="true"></span>
+      <span class="nav-brand-label">P31 Labs</span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html" class="nav-link">&larr; Hub</a>
+      <a href="lattice.html" class="nav-link">Lattice</a>
+      <a href="genesis-gate-about.html" class="nav-link">About</a>
+      <a href="https://github.com/p31labs/andromeda" target="_blank" rel="noopener" class="nav-link">GitHub</a>
+    </div>
+  </div>
+</nav>
+
+<main class="max-w-6xl mx-auto px-6 py-16 flex flex-col gap-12 flex-1">
+
+    <header class="border-b border-white/5 pb-10">
+        <div class="flex items-start gap-6 mb-6">
+            <div class="text-5xl">🔬</div>
+            <div class="flex-1">
+                <div class="flex items-center gap-3 mb-3 flex-wrap">
+                    <span class="font-mono text-xs px-2 py-1 rounded" style="background:#00FF8815;color:#00FF88;border:1px solid #00FF8830">🟢 LIVE</span>
+                    <span class="font-mono text-xs opacity-30">v4.1.0 — deployed 2026-03-30</span>
+                </div>
+                <h1 class="text-4xl md:text-5xl font-bold mb-3">Genesis Gate</h1>
+                <p class="text-xl text-teal/80 font-mono">Governance Control Plane</p>
+            </div>
+        </div>
+        <p class="text-base text-cloud/60 leading-relaxed max-w-3xl">
+            The operational boundary layer of the P31 stack. No deployment crosses without telemetry capture and governance hook clearance. v4.1.0 marks Gate Zero — the moment the system became self-governing.
+        </p>
+    </header>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+        <div class="lg:col-span-2 flex flex-col gap-8">
+
+            <section class="matte-panel rounded-xl p-8">
+                <h2 class="font-mono text-xs tracking-widest uppercase text-teal/60 mb-6">01. Architecture</h2>
+                <div class="flex flex-col gap-4">
+                    <p class="text-sm text-cloud/70 leading-relaxed">
+                        Four modules wired by the GenesisOrchestrator. Each module has a single responsibility; the orchestrator sequences them and enforces the governance contract at every event boundary.
+                    </p>
+
+                    <div class="grid grid-cols-2 gap-3 my-2">
+                        <div class="matte-panel rounded-lg p-4 border border-teal/10">
+                            <div class="font-mono text-xs text-teal/70 mb-1">TelemetryModule</div>
+                            <div class="text-xs text-cloud/50">Structured event capture with environment-bound config. Every event gets a timestamp, source tag, and environment label.</div>
+                        </div>
+                        <div class="matte-panel rounded-lg p-4 border border-teal/10">
+                            <div class="font-mono text-xs text-teal/70 mb-1">InterceptModule</div>
+                            <div class="text-xs text-cloud/50">Constructor-injectable <code class="font-mono bg-white/5 px-1 rounded">RegExp[]</code> patterns. Filters events before they reach the governance hook — configurable per deployment context.</div>
+                        </div>
+                        <div class="matte-panel rounded-lg p-4 border border-teal/10">
+                            <div class="font-mono text-xs text-teal/70 mb-1">GovernanceHook</div>
+                            <div class="text-xs text-cloud/50">Post-event enforcement layer. Receives filtered telemetry and applies governance rules. Throws on policy violation — hard stop, not silent fail.</div>
+                        </div>
+                        <div class="matte-panel rounded-lg p-4 border border-teal/10">
+                            <div class="font-mono text-xs text-teal/70 mb-1">GenesisOrchestrator</div>
+                            <div class="text-xs text-cloud/50">Top-level coordinator. Wires all modules together, manages lifecycle sequencing, exposes the single public API surface.</div>
+                        </div>
+                    </div>
+
+                    <ul class="flex flex-col gap-3 mt-2">
+                        <li class="flex gap-3 text-sm">
+                            <span class="text-teal mt-0.5 flex-shrink-0">▸</span>
+                            <span><span class="font-mono text-phosphorus">TypeScript ESM, Node 20+</span> — <code class="font-mono text-xs bg-white/5 px-1 rounded">module: Node16</code>, <code class="font-mono text-xs bg-white/5 px-1 rounded">moduleResolution: Node16</code>, <code class="font-mono text-xs bg-white/5 px-1 rounded">isolatedModules: true</code>. pnpm workspace under <code class="font-mono text-xs bg-white/5 px-1 rounded">packages/*</code>.</span>
+                        </li>
+                        <li class="flex gap-3 text-sm">
+                            <span class="text-teal mt-0.5 flex-shrink-0">▸</span>
+                            <span><span class="font-mono text-phosphorus">Required env var</span> — <code class="font-mono text-xs bg-white/5 px-1 rounded">BRIDGE_FUNDING_AMOUNT_USD</code> throws on startup if missing. CI sets <code class="font-mono text-xs bg-white/5 px-1 rounded">??= 'TEST_OVERRIDE'</code> in <code class="font-mono text-xs bg-white/5 px-1 rounded">jest.config.js</code>.</span>
+                        </li>
+                        <li class="flex gap-3 text-sm">
+                            <span class="text-teal mt-0.5 flex-shrink-0">▸</span>
+                            <span><span class="font-mono text-phosphorus">ts-jest ESM preset</span> — <code class="font-mono text-xs bg-white/5 px-1 rounded">@jest/globals</code> import required for ESM compatibility. Tests excluded from tsc build via tsconfig.</span>
+                        </li>
+                        <li class="flex gap-3 text-sm">
+                            <span class="text-teal mt-0.5 flex-shrink-0">▸</span>
+                            <span><span class="font-mono text-phosphorus">4 tests, all green</span> — covers orchestrator init, telemetry capture, intercept pattern matching, and governance hook enforcement.</span>
+                        </li>
+                        <li class="flex gap-3 text-sm">
+                            <span class="text-teal mt-0.5 flex-shrink-0">▸</span>
+                            <span><span class="font-mono text-phosphorus">Docs included</span> — <code class="font-mono text-xs bg-white/5 px-1 rounded">docs/RUNBOOK.md</code> (operational procedures) + <code class="font-mono text-xs bg-white/5 px-1 rounded">docs/kofi-phase2-post.md</code> (Ko-fi Phase 2 bridge post with <code class="font-mono text-xs bg-white/5 px-1 rounded">${{BRIDGE_FUNDING_AMOUNT_USD}}</code> placeholder).</span>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="matte-panel rounded-xl p-8">
+                <h2 class="font-mono text-xs tracking-widest uppercase text-teal/60 mb-6">02. Governance Model</h2>
+                <div class="flex flex-col gap-4 text-sm text-cloud/70 leading-relaxed">
+                    <p>
+                        Gate Zero deployed 2026-03-30. This marks the transition from ad-hoc operations to governed operations — every significant system event is now captured, filtered, and cleared before propagation.
+                    </p>
+                    <p>
+                        The "gate" metaphor is literal: no deployment, no funding event, no social dispatch crosses the boundary without passing through the telemetry-intercept-governance pipeline. Silent failures are rejected by design — if the governance hook cannot clear an event, it throws.
+                    </p>
+                    <div class="matte-panel rounded-lg p-4 border-l-2 border-butter/40 my-2">
+                        <div class="font-mono text-xs text-butter/60 mb-2">KO-FI PHASE 2 BRIDGE</div>
+                        <p class="text-xs text-cloud/60">
+                            The <code class="font-mono bg-white/5 px-1 rounded">kofi-phase2-post.md</code> document uses a <code class="font-mono bg-white/5 px-1 rounded">${{BRIDGE_FUNDING_AMOUNT_USD}}</code> placeholder. Substitute the dollar target before publishing. This is the governance layer's connection to the funding circuit — every Ko-fi event fires telemetry here.
+                        </p>
+                    </div>
+                    <p>
+                        The InterceptModule's injectable <code class="font-mono text-xs bg-white/5 px-1 rounded">RegExp[]</code> pattern system means governance rules can be tightened or loosened without modifying core module code — the rules are configuration, not implementation.
+                    </p>
+                </div>
+            </section>
+
+        </div>
+
+        <div class="flex flex-col gap-6">
+
+            <div class="matte-panel rounded-xl p-6">
+                <div class="font-mono text-xs text-teal/60 mb-4 tracking-widest uppercase">Deployment</div>
+                <div class="flex flex-col gap-3 text-sm">
+                    <div class="flex justify-between">
+                        <span class="opacity-50">Status</span>
+                        <span class="font-mono text-phosphorus text-xs">🟢 LIVE</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="opacity-50">Version</span>
+                        <span class="font-mono text-xs">v4.1.0</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="opacity-50">Deployed</span>
+                        <span class="font-mono text-xs">2026-03-30</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="opacity-50">Tests</span>
+                        <span class="font-mono text-xs text-phosphorus">4 / 4 green</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="opacity-50">Runtime</span>
+                        <span class="font-mono text-xs">Node 20+</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="matte-panel rounded-xl p-6">
+                <div class="font-mono text-xs text-teal/60 mb-4 tracking-widest uppercase">Repository</div>
+                <a href="https://github.com/p31labs/andromeda/tree/main/04_SOFTWARE/packages/genesis-gate" target="_blank" class="font-mono text-xs text-cloud/50 hover:text-teal transition-colors break-all">
+                    github.com/p31labs/andromeda<br>/packages/genesis-gate ↗
+                </a>
+            </div>
+
+            <div class="matte-panel rounded-xl p-6">
+                <div class="font-mono text-xs text-teal/60 mb-4 tracking-widest uppercase">Ecosystem</div>
+                <div class="flex flex-col gap-3">
+                    <a href="kenosis.html" class="flex items-center gap-2 text-sm hover:text-teal transition-colors">
+                        <span>🕸️</span><span class="text-xs">Kenosis <span class="opacity-40">— mesh governance</span></span>
+                    </a>
+                    <a href="cortex.html" class="flex items-center gap-2 text-sm hover:text-teal transition-colors">
+                        <span>🧠</span><span class="text-xs">p31-cortex <span class="opacity-40">— telemetry consumer</span></span>
+                    </a>
+                    <a href="spaceship-earth.html" class="flex items-center gap-2 text-sm hover:text-teal transition-colors">
+                        <span>🌐</span><span class="text-xs">Spaceship Earth <span class="opacity-40">— status feed</span></span>
+                    </a>
+                    <a href="donate.html" class="flex items-center gap-2 text-sm hover:text-teal transition-colors">
+                        <span>💚</span><span class="text-xs">Donate Pipeline <span class="opacity-40">— funding events</span></span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="matte-panel rounded-xl p-6">
+                <div class="font-mono text-xs text-teal/60 mb-3 tracking-widest uppercase">Tech Stack</div>
+                <div class="flex flex-wrap gap-2">
+                    <span class="font-mono text-xs bg-white/5 px-2 py-1 rounded">TypeScript ESM</span>
+                    <span class="font-mono text-xs bg-white/5 px-2 py-1 rounded">Node 20</span>
+                    <span class="font-mono text-xs bg-white/5 px-2 py-1 rounded">ts-jest</span>
+                    <span class="font-mono text-xs bg-white/5 px-2 py-1 rounded">pnpm</span>
+                    <span class="font-mono text-xs bg-white/5 px-2 py-1 rounded">Node16 modules</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</main>
+
+<footer class="border-t border-white/5 mt-auto">
+    <div class="max-w-6xl mx-auto px-6 py-8 flex items-center justify-between">
+        <div class="font-mono text-xs opacity-30">P31 Labs — EIN 42-1888158</div>
+        <a href="index.html" class="font-mono text-xs opacity-40 hover:opacity-80 transition-opacity">← Back to Hub</a>
+    </div>
+</footer>
+
+  <script type="module" src="/assets/hub-about-boot.js"></script>
+</body>
+</html>

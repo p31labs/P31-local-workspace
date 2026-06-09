@@ -1,0 +1,255 @@
+---
+/**
+  * @p31-layout: Gallery
+ * /research — the P31 Labs research index (BUS3 partial; WCD-PHOS-2026-01).
+ *
+ * Lists the 22-paper Zenodo canon. Source of truth: p31-constants.json
+ * `research.papers` in the home repo, mirrored to src/data/p31-research.json
+ * by `npm run apply:constants`. Edit the home file, run apply, rebuild.
+ *
+ * The page is intentionally minimal — three layers in one render:
+ *
+ *   1. Bus bar nav (BusBarNav) — same nav object on every adopted page.
+ *   2. PHOS-driven hero — voice copy comes from the runtime fetch of
+ *      /lib/p31-phos-voice.json (built from PHOS-VOICE-DRAFT.md §4).
+ *      Static fallback strings are hardcoded here in the same shape so
+ *      the page is intelligible if the JS is blocked or the JSON 404s.
+ *   3. Paper list — table-shaped, sorted newest-first, with title + series
+ *      + DOI link. Includes a Zenodo author-search link as an escape hatch.
+ *
+ * Bus bar nav role gating works automatically: this is a public page, so
+ * it appears in `navByRole.stranger` and is reachable from every role.
+ */
+import AppShell from '../layouts/AppShell.astro';
+import researchData from '../data/p31-research.json';
+import groundTruth from '../../ground-truth/p31.ground-truth.json';
+
+const papers = (researchData as { papers?: Array<{ id: string; series?: string; doi: string; title: string; published?: string; standalone?: boolean }> }).papers ?? [];
+const zenodoSearchUrl = (researchData as { zenodoSearchUrl?: string }).zenodoSearchUrl
+  ?? 'https://zenodo.org/search?q=creators.name:%22Johnson%2C%20William%20R.%22&sort=newest';
+
+const sorted = [...papers].sort((a, b) => {
+  const dateA = a.published ?? '';
+  const dateB = b.published ?? '';
+  return dateB.localeCompare(dateA);
+});
+
+const seriesPapers = sorted.filter((p) => !p.standalone);
+const standalonePapers = sorted.filter((p) => p.standalone);
+
+const totalCount = papers.length;
+const seriesCount = seriesPapers.length;
+const standaloneCount = standalonePapers.length;
+
+const phosKey = '/research';
+const phosVoiceFromGround = (groundTruth as { busBar?: { slots?: Record<string, { phosVoiceKey?: string; description?: string }> } })
+  .busBar?.slots?.research;
+const groundDescription = phosVoiceFromGround?.description ?? '';
+---
+
+<AppShell title="Research — P31 Labs" routeName="research">
+
+  <main class="p31-research" data-p31-phos-voice-key={phosKey}>
+    {/*
+      Hero. PHOS guide reads /lib/p31-phos-voice.json on boot and renders
+      its panel with the right per-page copy. The static H1/lede here is
+      the no-JavaScript fallback; matches DRAFT-AGENT-SIMULATED voice in
+      PHOS-VOICE-DRAFT.md §4 entry for /research.
+    */}
+    <header class="p31-research__hero">
+      <p class="p31-research__eyebrow">P31 Labs research</p>
+      <h1 class="p31-research__h1">{totalCount} papers, all open access.</h1>
+      <p class="p31-research__lede">
+        P31's research lives here. Nothing behind a paywall. Browse, download, cite.
+        {groundDescription && (
+          <span class="p31-research__source-note"> · {groundDescription}</span>
+        )}
+      </p>
+      <p class="p31-research__counts">
+        {seriesCount} in the main series · {standaloneCount} standalone ·
+        {' '}<a href={zenodoSearchUrl} rel="noopener noreferrer" target="_blank">browse on Zenodo ↗</a>
+      </p>
+    </header>
+
+    {seriesCount > 0 && (
+      <section class="p31-research__section" aria-labelledby="series-heading">
+        <h2 id="series-heading" class="p31-research__h2">Main series</h2>
+        <ol class="p31-research__list">
+          {seriesPapers.map((paper) => (
+            <li class="p31-research__item">
+              <article class="p31-research__paper">
+                <p class="p31-research__paper-meta">
+                  {paper.series && <span class="p31-research__paper-series">Series {paper.series}</span>}
+                  {paper.published && <time datetime={paper.published}>{paper.published}</time>}
+                </p>
+                <h3 class="p31-research__paper-title">
+                  <a href={`https://doi.org/${paper.doi}`} rel="noopener noreferrer" target="_blank">
+                    {paper.title} ↗
+                  </a>
+                </h3>
+                <p class="p31-research__paper-doi">DOI: <code>{paper.doi}</code></p>
+              </article>
+            </li>
+          ))}
+        </ol>
+      </section>
+    )}
+
+    {standaloneCount > 0 && (
+      <section class="p31-research__section" aria-labelledby="standalone-heading">
+        <h2 id="standalone-heading" class="p31-research__h2">Standalone</h2>
+        <ol class="p31-research__list">
+          {standalonePapers.map((paper) => (
+            <li class="p31-research__item">
+              <article class="p31-research__paper">
+                <p class="p31-research__paper-meta">
+                  {paper.published && <time datetime={paper.published}>{paper.published}</time>}
+                </p>
+                <h3 class="p31-research__paper-title">
+                  <a href={`https://doi.org/${paper.doi}`} rel="noopener noreferrer" target="_blank">
+                    {paper.title} ↗
+                  </a>
+                </h3>
+                <p class="p31-research__paper-doi">DOI: <code>{paper.doi}</code></p>
+              </article>
+            </li>
+          ))}
+        </ol>
+      </section>
+    )}
+
+    <footer class="p31-research__footer">
+      <p>
+        Source of truth: <code>p31-constants.json → research.papers</code>. Mirror via
+        <code> npm run apply:constants</code>. To submit corrections, open an issue at
+        <a href="https://github.com/p31labs" rel="noopener noreferrer" target="_blank"> github.com/p31labs ↗</a>.
+      </p>
+      <p class="p31-research__small">
+        DOIs are the canonical citation. Zenodo guarantees long-term availability under the same identifier.
+      </p>
+    </footer>
+  </main>
+
+  <style>
+    .p31-research {
+      max-width: 880px;
+      margin: 0 auto;
+      padding: 32px 20px 64px;
+      color: var(--p31-cloud, var(--p31-cloud));
+      font-family: 'Atkinson Hyperlegible', system-ui, sans-serif;
+      line-height: 1.6;
+    }
+    .p31-research__hero {
+      padding: 24px 0 28px;
+      border-bottom: 1px solid rgba(216, 214, 208, 0.08);
+      margin-bottom: 24px;
+    }
+    .p31-research__eyebrow {
+      font-size: 0.85rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--p31-teal, var(--p31-teal));
+      margin: 0 0 8px;
+    }
+    .p31-research__h1 {
+      font-size: clamp(1.6rem, 3.2vw, 2.4rem);
+      font-weight: 700;
+      margin: 0 0 12px;
+      color: var(--p31-cloud, #f5f3ee);
+    }
+    .p31-research__lede {
+      font-size: 1.05rem;
+      margin: 0 0 8px;
+    }
+    .p31-research__source-note {
+      opacity: 0.75;
+      font-size: 0.95rem;
+    }
+    .p31-research__counts {
+      font-size: 0.95rem;
+      opacity: 0.85;
+      margin: 8px 0 0;
+    }
+    .p31-research__counts a {
+      color: var(--p31-teal, var(--p31-teal));
+      text-decoration: underline;
+    }
+    .p31-research__h2 {
+      font-size: 1.25rem;
+      margin: 32px 0 16px;
+      font-weight: 700;
+      color: var(--p31-cloud, #f5f3ee);
+    }
+    .p31-research__list {
+      list-style: decimal;
+      padding-left: 1.5em;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .p31-research__item {
+      padding-left: 4px;
+    }
+    .p31-research__paper {
+      background: rgba(15, 17, 21, 0.6);
+      border: 1px solid rgba(216, 214, 208, 0.08);
+      border-radius: 8px;
+      padding: 14px 16px;
+    }
+    .p31-research__paper-meta {
+      font-size: 0.85rem;
+      opacity: 0.8;
+      margin: 0 0 6px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .p31-research__paper-series {
+      color: var(--p31-teal, var(--p31-teal));
+      font-weight: 700;
+    }
+    .p31-research__paper-title {
+      font-size: 1.05rem;
+      margin: 0 0 6px;
+      font-weight: 600;
+      line-height: 1.4;
+    }
+    .p31-research__paper-title a {
+      color: var(--p31-cloud, #f5f3ee);
+      text-decoration: none;
+    }
+    .p31-research__paper-title a:hover,
+    .p31-research__paper-title a:focus-visible {
+      color: var(--p31-teal, var(--p31-teal));
+      text-decoration: underline;
+      outline: none;
+    }
+    .p31-research__paper-doi {
+      font-size: 0.85rem;
+      margin: 0;
+      opacity: 0.75;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+    }
+    .p31-research__paper-doi code {
+      background: rgba(255, 255, 255, 0.04);
+      padding: 1px 6px;
+      border-radius: 3px;
+    }
+    .p31-research__footer {
+      margin-top: 48px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(216, 214, 208, 0.08);
+      font-size: 0.9rem;
+      opacity: 0.85;
+    }
+    .p31-research__footer a { color: var(--p31-teal, var(--p31-teal)); }
+    .p31-research__small { font-size: 0.82rem; opacity: 0.7; }
+
+    /* Court mode: low Screen Comfort kills hover transitions */
+    html.p31-low-stim .p31-research__paper-title a,
+    html.p31-gray-rock .p31-research__paper-title a {
+      transition: none;
+    }
+  </style>
+</AppShell>

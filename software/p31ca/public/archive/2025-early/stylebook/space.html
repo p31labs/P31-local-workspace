@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0f1115">
+  <title>Space · P31 Stylebook</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/p31-style.css">
+  <link rel="stylesheet" href="/lib/p31-fluid.css">
+  <link rel="stylesheet" href="/stylebook/_chrome.css">
+  <style>
+    .space-row {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--p31-border-subtle);
+    }
+    .space-row:last-child { border-bottom: none; }
+    .space-meta {
+      flex-shrink: 0;
+      width: 220px;
+      font-family: var(--p31-font-mono);
+      font-size: 12px;
+      color: var(--p31-muted);
+    }
+    .space-meta strong { color: var(--p31-paper); display: block; margin-bottom: 4px; font-size: 13px; }
+    .space-bar {
+      background: var(--p31-primary);
+      height: 24px;
+      border-radius: 4px;
+      position: relative;
+    }
+    .space-bar::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        45deg,
+        rgba(0,0,0,0.08),
+        rgba(0,0,0,0.08) 4px,
+        transparent 4px,
+        transparent 8px
+      );
+      border-radius: inherit;
+    }
+    
+    .radius-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 16px;
+    }
+    .radius-card {
+      padding: 16px;
+      background: var(--p31-surface);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: 12px;
+      text-align: center;
+    }
+    .radius-shape {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 12px;
+      background: linear-gradient(135deg, var(--p31-teal), var(--p31-coral));
+    }
+    .radius-name {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--p31-paper);
+      margin-bottom: 2px;
+    }
+    .radius-value {
+      font-family: var(--p31-font-mono);
+      font-size: 11px;
+      color: var(--p31-muted);
+    }
+    
+    .layout-demo {
+      padding: 20px;
+      background: var(--p31-surface);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: 12px;
+      margin: 16px 0;
+    }
+    .layout-block {
+      background: var(--p31-surface2);
+      border: 1px dashed var(--p31-border-subtle);
+      border-radius: 6px;
+      padding: 12px;
+      color: var(--p31-cloud);
+      font-family: var(--p31-font-mono);
+      font-size: 12px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <script type="module">
+    import { renderShell, code, callout } from '/stylebook/_chrome.js';
+    import { P31ThemeController } from '/lib/p31-theme-engine.mjs';
+    window.p31Theme = new P31ThemeController({ defaultTheme: 'hub' });
+    
+    function spaceRow(token, multiplier, usage) {
+      return `
+        <div class="space-row">
+          <div class="space-meta">
+            <strong>--p31-space-${token}</strong>
+            ${multiplier}× base · ${usage}
+          </div>
+          <div class="space-bar" style="width: var(--p31-space-${token});"></div>
+        </div>
+      `;
+    }
+    
+    const content = `
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">The grid</div>
+          <h2 class="sb-h2">Space breathes with viewport</h2>
+          <p class="sb-text">
+            The base unit is fluid: <code>clamp(0.25rem, 0.2rem + 0.25vw, 0.5rem)</code>.
+            On phones it's tight (4px). On desktops it expands (8px). The whole scale follows.
+          </p>
+        </div>
+        
+        <div style="background: var(--p31-surface); border: 1px solid var(--p31-border-subtle); border-radius: 12px; padding: 24px;">
+          ${spaceRow('1', 1, 'Tight inline gaps, icon padding')}
+          ${spaceRow('2', 2, 'Compact UI, badge padding')}
+          ${spaceRow('3', 3, 'Component internal padding')}
+          ${spaceRow('4', 4, 'Standard gaps between items')}
+          ${spaceRow('5', 5, 'Card padding')}
+          ${spaceRow('6', 6, 'Section internal spacing')}
+          ${spaceRow('8', 8, 'Major separators')}
+          ${spaceRow('10', 10, 'Hero internal spacing')}
+          ${spaceRow('12', 12, 'Page section padding')}
+          ${spaceRow('16', 16, 'Major section breaks')}
+          ${spaceRow('20', 20, 'Landing zones')}
+          ${spaceRow('24', 24, 'Maximum rhythm')}
+        </div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Section spacing</div>
+          <h2 class="sb-h2">Vertical rhythm</h2>
+          <p class="sb-text">For page-level sections, use the dedicated section tokens. They scale more aggressively
+          than space tokens — sections feel different on phone vs desktop on purpose.</p>
+        </div>
+        
+        <table class="sb-table">
+          <thead><tr><th>Token</th><th>Phone</th><th>Desktop</th><th>Usage</th></tr></thead>
+          <tbody>
+            <tr><td><code>--p31-section-sm</code></td><td>2rem</td><td>4rem</td><td>Sub-section padding</td></tr>
+            <tr><td><code>--p31-section-md</code></td><td>4rem</td><td>8rem</td><td>Standard section padding</td></tr>
+            <tr><td><code>--p31-section-lg</code></td><td>6rem</td><td>12rem</td><td>Hero / major sections</td></tr>
+          </tbody>
+        </table>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Containers</div>
+          <h2 class="sb-h2">Width caps</h2>
+          <p class="sb-text">Content has a maximum width. Beyond it, lines become too long for comfortable reading.
+          Containers handle that constraint.</p>
+        </div>
+        
+        <div class="layout-demo">
+          <div style="max-width: var(--p31-container-sm); margin: 0 auto;">
+            <div class="layout-block">--p31-container-sm · 640px · narrow forms</div>
+          </div>
+        </div>
+        <div class="layout-demo">
+          <div style="max-width: var(--p31-container-md); margin: 0 auto;">
+            <div class="layout-block">--p31-container-md · 768px · article body</div>
+          </div>
+        </div>
+        <div class="layout-demo">
+          <div style="max-width: var(--p31-container-lg); margin: 0 auto;">
+            <div class="layout-block">--p31-container-lg · 1024px · standard pages</div>
+          </div>
+        </div>
+        <div class="layout-demo">
+          <div style="max-width: var(--p31-container-xl); margin: 0 auto;">
+            <div class="layout-block">--p31-container-xl · 1280px · wide dashboards</div>
+          </div>
+        </div>
+        
+        ${callout('info', 'Reading width', 'For long-form prose, prefer <code>max-width: 65ch</code> over a container token. Character-based widths track the actual font size, not pixels.')}
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Corners</div>
+          <h2 class="sb-h2">Border radius</h2>
+          <p class="sb-text">Soft, organic rounding. The system avoids sharp 90° corners on interactive surfaces —
+          they read as aggressive in a humane interface.</p>
+        </div>
+        
+        <div class="radius-grid">
+          <div class="radius-card">
+            <div class="radius-shape" style="border-radius: var(--p31-radius-none);"></div>
+            <div class="radius-name">none</div>
+            <div class="radius-value">0px</div>
+          </div>
+          <div class="radius-card">
+            <div class="radius-shape" style="border-radius: var(--p31-radius-sm);"></div>
+            <div class="radius-name">sm</div>
+            <div class="radius-value">4px</div>
+          </div>
+          <div class="radius-card">
+            <div class="radius-shape" style="border-radius: var(--p31-radius-md);"></div>
+            <div class="radius-name">md</div>
+            <div class="radius-value">8px</div>
+          </div>
+          <div class="radius-card">
+            <div class="radius-shape" style="border-radius: var(--p31-radius-lg);"></div>
+            <div class="radius-name">lg</div>
+            <div class="radius-value">12px</div>
+          </div>
+          <div class="radius-card">
+            <div class="radius-shape" style="border-radius: var(--p31-radius-xl);"></div>
+            <div class="radius-name">xl</div>
+            <div class="radius-value">16px</div>
+          </div>
+          <div class="radius-card">
+            <div class="radius-shape" style="border-radius: var(--p31-radius-2xl);"></div>
+            <div class="radius-name">2xl</div>
+            <div class="radius-value">24px</div>
+          </div>
+          <div class="radius-card">
+            <div class="radius-shape" style="border-radius: var(--p31-radius-3xl);"></div>
+            <div class="radius-name">3xl</div>
+            <div class="radius-value">32px</div>
+          </div>
+          <div class="radius-card">
+            <div class="radius-shape" style="border-radius: var(--p31-radius-full);"></div>
+            <div class="radius-name">full</div>
+            <div class="radius-value">9999px</div>
+          </div>
+        </div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">In code</div>
+          <h2 class="sb-h2">Use it</h2>
+        </div>
+        
+        ${code(`/* Component padding */
+.card {
+  padding: var(--p31-space-6);
+  border-radius: var(--p31-radius-xl);
+  margin-bottom: var(--p31-space-4);
+}
+
+/* Stacked layout helper */
+.stack > * + * {
+  margin-top: var(--p31-space-4);
+}
+
+/* Section padding */
+section {
+  padding-top: var(--p31-section-md);
+  padding-bottom: var(--p31-section-md);
+}
+
+/* Container with sensible width cap */
+.container {
+  max-width: var(--p31-container-lg);
+  margin: 0 auto;
+  padding: 0 var(--p31-space-6);
+}
+
+/* Reading prose */
+.prose {
+  max-width: 65ch;  /* character-based, scales with font-size */
+}`, 'css', 'Spacing tokens')}
+      </section>
+    `;
+    
+    renderShell({
+      activeId: 'space',
+      breadcrumb: [
+        { href: '/stylebook/', label: 'Stylebook' },
+        { href: '/stylebook/', label: 'Foundations' },
+        { label: 'Space' }
+      ],
+      title: 'Space',
+      subtitle: 'A fluid spacing system that breathes with the viewport. One scale, infinite responsive layouts.',
+      meta: [
+        { label: 'Tokens', value: '12' },
+        { label: 'Base', value: 'fluid clamp()' },
+        { label: 'Containers', value: '5' }
+      ],
+      content
+    });
+  </script>
+</body>
+</html>

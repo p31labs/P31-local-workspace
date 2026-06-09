@@ -1,0 +1,396 @@
+---
+/**
+ * P31CA.ORG — Technical Hub Landing Page
+ * Redesigned: structured layout, live fleet status, coral accent, correct EIN.
+ * Cross-linked to phosphorus31.org (nonprofit portal).
+ */
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SharedFooter from '../components/SharedFooter.astro';
+import {
+  liveProducts,
+  suiteProducts,
+  devProducts,
+  researchApps,
+  liveDeploymentCount,
+} from '../data/hub-products';
+
+const researchItems = [
+  { title: 'Tetrahedron Protocol (K4)', doi: '10.5281/zenodo.18627420', desc: 'Geometric proof of K4 minimum isostatic structure. 280+ views, 240+ downloads.' },
+  { title: 'Genesis Whitepaper v1.1', doi: '10.5281/zenodo.19411363', desc: 'SIC-POVM measurement framework, EDE architecture, Q Distribution, Samson\'s Law.' },
+  { title: 'Papers V-XIX', doi: null, desc: '13 additional papers styled and ready for Zenodo batch upload. Topics: calcium biophysics, cognitive sovereignty, AT design.' },
+  { title: '5 Defensive Publications', doi: null, desc: 'Prior art deposited to Internet Archive Feb 25, 2026. Freedom-to-operate protection.' },
+];
+---
+
+<BaseLayout
+  title="P31 Labs | Technical Hub"
+  description="Technical hub for P31 Labs — open-source assistive tools, fleet status, and links to edge deployments. EIN 42-1888158."
+  canonical="https://p31ca.org/"
+>
+  <!-- Navbar -->
+  <nav class="sticky top-0 z-50 bg-hubNav/85 backdrop-blur-md border-b border-white/[0.05]">
+    <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+      <a href="/" class="flex items-center gap-3" style="text-decoration:none;">
+        <div class="w-8 h-8 rounded-full border border-hubRose/30 flex items-center justify-center">
+          <div class="w-2 h-2 rounded-full bg-hubRose" style="box-shadow:0 0 8px rgba(232,99,111,0.5);"></div>
+        </div>
+        <div>
+          <span class="text-white font-bold text-sm tracking-tight">P31 Labs</span>
+          <span class="text-gray-500 text-xs ml-2 hidden sm:inline">Technical Hub</span>
+        </div>
+      </a>
+      <div class="flex items-center gap-6 text-xs">
+        <a href="https://phosphorus31.org" class="text-gray-400 hover:text-white transition-colors" style="text-decoration:none;">Nonprofit portal</a>
+        <a href="https://github.com/p31labs" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white transition-colors" style="text-decoration:none;">GitHub</a>
+        <a href="https://phosphorus31.org/donate" class="px-4 py-2 rounded-lg text-xs font-bold transition-all hover:brightness-110 bg-hubRose text-white no-underline">Donate</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="max-w-6xl mx-auto px-6 pb-16">
+    <!-- Hero -->
+    <section class="pt-16 pb-12">
+      <div class="text-xs font-medium text-gray-500 tracking-wider uppercase mb-4">
+        P31 Labs, Inc. / EIN 42-1888158
+      </div>
+      <h1 class="text-4xl md:text-5xl font-extrabold text-white leading-tight mb-4">
+        Open-Source Assistive<br/>Technology.
+      </h1>
+      <p class="text-base text-white/55 max-w-xl leading-relaxed mb-6">
+        Free tools for neurodivergent families. Every system is edge-deployed, offline-capable, and open source. No accounts, no tracking, no cloud dependency.
+      </p>
+      <div class="flex flex-wrap items-center gap-4 text-xs text-white/40">
+        <span>{liveDeploymentCount} live deployments</span>
+        <span>{devProducts.length} in development</span>
+        <span>{researchApps.length} research tools</span>
+        <span>{researchItems.length} publications</span>
+        <span class="text-white/25">|</span>
+        <a href="/lattice.html" class="text-rose-400/90 hover:text-rose-300 font-medium transition-colors" style="text-decoration:none;">Lattice (sphere)</a>
+        <span class="text-white/25">·</span>
+        <a href="/observatory.html" class="text-cyan-400/90 hover:text-cyan-300 font-medium transition-colors" style="text-decoration:none;">Observatory (dome)</a>
+      </div>
+    </section>
+
+    <!-- Ecosystem bridge: nonprofit ↔ technical ↔ edge (see docs/SITE_MAP_AND_OWNERSHIP.md) -->
+    <section class="mb-12" aria-labelledby="eco-heading">
+      <div class="glass-panel p-5 rounded-xl border border-white/[0.06]">
+        <h2 id="eco-heading" class="sr-only">Ecosystem</h2>
+        <p class="text-[11px] font-semibold text-white/35 uppercase tracking-wider mb-3">Three layers</p>
+        <div class="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-3 sm:gap-6 text-sm">
+          <a
+            href="https://phosphorus31.org"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-cyan-400/95 hover:text-cyan-300 font-medium no-underline"
+          >
+            Nonprofit portal
+          </a>
+          <span class="hidden sm:inline text-white/20">·</span>
+          <span class="text-white/50">
+            Technical hub <span class="text-white/35">(this site)</span>
+          </span>
+          <span class="hidden sm:inline text-white/20">·</span>
+          <span class="text-white/45 text-xs sm:text-sm">
+            Mesh &amp; agents on Cloudflare Workers — linked from cards below; not served by this Pages build.
+          </span>
+        </div>
+        <p class="text-[11px] text-white/30 mt-3">
+          Mission, donate, and publications:{' '}
+          <a href="https://phosphorus31.org/research" target="_blank" rel="noopener noreferrer" class="text-hubRose/80 hover:text-hubRose no-underline">phosphorus31.org/research</a>
+          {' · '}
+          <a href="https://phosphorus31.org/donate" target="_blank" rel="noopener noreferrer" class="text-hubRose/80 hover:text-hubRose no-underline">Donate</a>
+        </p>
+      </div>
+    </section>
+
+    <!-- Fleet Status Bar -->
+    <section class="mb-12" id="fleet-section">
+      <div class="glass-panel p-4 rounded-xl">
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center gap-2">
+            <div class="w-2 h-2 rounded-full bg-emerald-400" id="fleet-indicator" style="box-shadow:0 0 6px rgba(52,211,153,0.6);"></div>
+            <span class="text-xs font-semibold text-white/70">Fleet Status</span>
+          </div>
+          <span class="text-[10px] text-white/30" id="fleet-timestamp">Checking...</span>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2" id="fleet-grid">
+          <div class="text-center py-2 px-3 rounded-lg bg-white/[0.02] border border-white/[0.04]">
+            <div class="text-[10px] text-white/40 mb-1">p31-bonding-relay</div>
+            <div class="w-1.5 h-1.5 rounded-full bg-white/20 mx-auto" data-fleet="p31-bonding-relay"></div>
+          </div>
+          <div class="text-center py-2 px-3 rounded-lg bg-white/[0.02] border border-white/[0.04]">
+            <div class="text-[10px] text-white/40 mb-1">command-center</div>
+            <div class="w-1.5 h-1.5 rounded-full bg-white/20 mx-auto" data-fleet="command-center"></div>
+          </div>
+          <div class="text-center py-2 px-3 rounded-lg bg-white/[0.02] border border-white/[0.04]">
+            <div class="text-[10px] text-white/40 mb-1">api-phosphorus31-org</div>
+            <div class="w-1.5 h-1.5 rounded-full bg-white/20 mx-auto" data-fleet="api-phosphorus31-org"></div>
+          </div>
+          <div class="text-center py-2 px-3 rounded-lg bg-white/[0.02] border border-white/[0.04]">
+            <div class="text-[10px] text-white/40 mb-1">fawn-guard</div>
+            <div class="w-1.5 h-1.5 rounded-full bg-white/20 mx-auto" data-fleet="fawn-guard"></div>
+          </div>
+          <div class="text-center py-2 px-3 rounded-lg bg-white/[0.02] border border-white/[0.04]">
+            <div class="text-[10px] text-white/40 mb-1">p31-signaling</div>
+            <div class="w-1.5 h-1.5 rounded-full bg-white/20 mx-auto" data-fleet="p31-signaling"></div>
+          </div>
+          <div class="text-center py-2 px-3 rounded-lg bg-white/[0.02] border border-white/[0.04]">
+            <div class="text-[10px] text-white/40 mb-1">carrie-agent</div>
+            <div class="w-1.5 h-1.5 rounded-full bg-white/20 mx-auto" data-fleet="carrie-agent"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Live Products -->
+    <section class="mb-16">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-2 h-2 rounded-full bg-emerald-400" style="box-shadow:0 0 6px rgba(52,211,153,0.6);"></div>
+        <h2 class="text-sm font-semibold text-white/70 uppercase tracking-wider">Live Deployments</h2>
+        <span class="text-xs text-white/30">{liveProducts.length} core</span>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {liveProducts.map((p) => (
+          <a
+            href={p.url}
+            target={p.url.startsWith('http') ? '_blank' : undefined}
+            rel={p.url.startsWith('http') ? 'noopener noreferrer' : undefined}
+            class="group glass-panel p-5 rounded-xl block transition-all"
+            style="text-decoration:none;"
+          >
+            <div class="flex items-start justify-between mb-3">
+              <h3 class="text-sm font-bold text-white group-hover:text-hubRose transition-colors">{p.title}</h3>
+              <div class="w-2 h-2 rounded-full bg-emerald-400 flex-shrink-0 mt-1" style="box-shadow:0 0 4px rgba(52,211,153,0.5);"></div>
+            </div>
+            <p class="text-xs text-white/50 leading-relaxed mb-3">{p.subtitle}</p>
+            <div class="flex flex-wrap gap-1.5">
+              {p.stack.map((tag) => (
+                <span class="text-[10px] px-2 py-0.5 rounded-md bg-white/[0.05] text-white/30">{tag}</span>
+              ))}
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <!-- Production Suite (edge Workers) -->
+    <section class="mb-16">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-2 h-2 rounded-full bg-violet-400" style="box-shadow:0 0 6px rgba(167,139,250,0.5);"></div>
+        <h2 class="text-sm font-semibold text-white/70 uppercase tracking-wider">Production Suite</h2>
+        <span class="text-xs text-white/30">{suiteProducts.length} edge apps</span>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {suiteProducts.map((p) => (
+          <a
+            href={p.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="group glass-panel p-5 rounded-xl block transition-all border border-violet-500/10"
+            style="text-decoration:none;"
+          >
+            <div class="flex items-start justify-between mb-3">
+              <h3 class="text-sm font-bold text-white group-hover:text-violet-300 transition-colors">{p.title}</h3>
+              <span class="text-[10px] px-2 py-0.5 rounded-full border border-violet-400/35 text-violet-300/90">Edge</span>
+            </div>
+            <p class="text-xs text-white/50 leading-relaxed mb-3">{p.subtitle}</p>
+            <div class="flex flex-wrap gap-1.5">
+              {p.stack.map((tag) => (
+                <span class="text-[10px] px-2 py-0.5 rounded-md bg-white/[0.05] text-white/30">{tag}</span>
+              ))}
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <!-- In Development -->
+    <section class="mb-16">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-2 h-2 rounded-full bg-amber-400"></div>
+        <h2 class="text-sm font-semibold text-white/70 uppercase tracking-wider">In Development</h2>
+        <span class="text-xs text-white/30">{devProducts.length} building</span>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {devProducts.map((p) => (
+          <a
+            href={p.url}
+            target={p.url.startsWith('http') ? '_blank' : undefined}
+            rel={p.url.startsWith('http') ? 'noopener noreferrer' : undefined}
+            class="glass-panel p-5 rounded-xl opacity-80 block transition-opacity hover:opacity-100 cursor-pointer"
+            style="text-decoration:none;"
+          >
+            <div class="flex items-start justify-between mb-3">
+              <h3 class="text-sm font-bold text-white">{p.title}</h3>
+              <span class={`text-[10px] px-2 py-0.5 rounded-full border ${
+                p.status === 'research'
+                  ? 'border-cyan-400/35 text-cyan-400'
+                  : 'border-amber-400/30 text-amber-400'
+              }`}>
+                {p.status === 'prototype' ? 'Prototype' : p.status === 'research' ? 'Research' : 'Building'}
+              </span>
+            </div>
+            <p class="text-xs text-white/50 leading-relaxed mb-3">{p.subtitle}</p>
+            <div class="flex flex-wrap gap-1.5">
+              {p.stack.map((tag) => (
+                <span class="text-[10px] px-2 py-0.5 rounded-md bg-white/[0.05] text-white/30">{tag}</span>
+              ))}
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <!-- Research tools (interactive) -->
+    <section class="mb-16">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-2 h-2 rounded-full bg-fuchsia-400/90"></div>
+        <h2 class="text-sm font-semibold text-white/70 uppercase tracking-wider">Research Tools</h2>
+        <span class="text-xs text-white/30">{researchApps.length} frameworks</span>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {researchApps.map((p) => (
+          <a
+            href={p.url}
+            target={p.url.startsWith('http') ? '_blank' : undefined}
+            rel={p.url.startsWith('http') ? 'noopener noreferrer' : undefined}
+            class="glass-panel p-5 rounded-xl opacity-90 block transition-opacity hover:opacity-100 border border-fuchsia-500/15 cursor-pointer"
+            style="text-decoration:none;"
+          >
+            <div class="flex items-start justify-between mb-3">
+              <h3 class="text-sm font-bold text-white">{p.title}</h3>
+              <span class="text-[10px] px-2 py-0.5 rounded-full border border-fuchsia-400/35 text-fuchsia-300/90">Research</span>
+            </div>
+            <p class="text-xs text-white/50 leading-relaxed mb-3">{p.subtitle}</p>
+            <div class="flex flex-wrap gap-1.5">
+              {p.stack.map((tag) => (
+                <span class="text-[10px] px-2 py-0.5 rounded-md bg-white/[0.05] text-white/30">{tag}</span>
+              ))}
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <!-- Publications -->
+    <section class="mb-16">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-2 h-2 rounded-full bg-cyan-400"></div>
+        <h2 class="text-sm font-semibold text-white/70 uppercase tracking-wider">Publications</h2>
+        <span class="text-xs text-white/30">4 published, 13 ready</span>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {researchItems.map((r) => (
+          <div class="glass-panel p-5 rounded-xl">
+            <h3 class="text-sm font-bold text-white mb-2">{r.title}</h3>
+            {r.doi && (
+              <a href={`https://doi.org/${r.doi}`} target="_blank" rel="noopener noreferrer" class="text-[10px] text-cyan-400 hover:text-cyan-300 transition-colors mb-2 inline-block" style="text-decoration:none;">
+                DOI: {r.doi}
+              </a>
+            )}
+            <p class="text-xs text-white/50 leading-relaxed">{r.desc}</p>
+          </div>
+        ))}
+      </div>
+      <div class="mt-4 text-center">
+        <a href="https://phosphorus31.org/research" class="text-xs text-hubRose/90 hover:text-hubRose transition-colors no-underline">
+          View all publications on phosphorus31.org &rarr;
+        </a>
+      </div>
+    </section>
+
+    <!-- Stats Bar -->
+    <section class="mb-16">
+      <div class="glass-panel p-6 rounded-xl">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+          <div>
+            <div class="text-2xl font-extrabold text-white">{liveDeploymentCount}</div>
+            <div class="text-[10px] text-white/40 mt-1 uppercase tracking-wider">Live + Suite</div>
+          </div>
+          <div>
+            <div class="text-2xl font-extrabold text-white">413</div>
+            <div class="text-[10px] text-white/40 mt-1 uppercase tracking-wider">Tests Passing</div>
+          </div>
+          <div>
+            <div class="text-2xl font-extrabold text-white">4</div>
+            <div class="text-[10px] text-white/40 mt-1 uppercase tracking-wider">Papers Published</div>
+          </div>
+          <div>
+            <div class="text-2xl font-extrabold text-white">0</div>
+            <div class="text-[10px] text-white/40 mt-1 uppercase tracking-wider">Uncorrected Hallucinations</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <SharedFooter />
+</BaseLayout>
+
+<script>
+  // Fleet status — vanilla JS fetch from command-center API
+  (function() {
+    const API = 'https://command-center.trimtab-signal.workers.dev/api/status';
+    const TIMEOUT = 5000;
+
+    async function fetchFleet() {
+      try {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), TIMEOUT);
+        const res = await fetch(API, { signal: controller.signal });
+        clearTimeout(timer);
+
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+
+        // Update fleet dots
+        if (data.workers && Array.isArray(data.workers)) {
+          let upCount = 0;
+          data.workers.forEach((w: any) => {
+            const dot = document.querySelector(`[data-fleet="${w.name}"]`);
+            if (dot) {
+              const isUp =
+              w.status === 'up' || w.status === 'ok' || w.status === 'online';
+              (dot as HTMLElement).className = `w-1.5 h-1.5 rounded-full mx-auto ${
+                isUp ? 'bg-emerald-400' : 'bg-red-400'
+              }`;
+              if (isUp) {
+                (dot as HTMLElement).style.boxShadow = '0 0 4px rgba(52,211,153,0.5)';
+              } else {
+                (dot as HTMLElement).style.boxShadow = '0 0 4px rgba(248,113,113,0.5)';
+              }
+              if (isUp) upCount++;
+            }
+          });
+
+          // Update indicator
+          const indicator = document.getElementById('fleet-indicator');
+          if (indicator) {
+            const allUp = upCount === data.workers.length;
+            indicator.className = `w-2 h-2 rounded-full ${allUp ? 'bg-emerald-400' : 'bg-amber-400'}`;
+            indicator.style.boxShadow = allUp
+              ? '0 0 6px rgba(52,211,153,0.6)'
+              : '0 0 6px rgba(251,191,36,0.6)';
+          }
+        }
+
+        // Update timestamp
+        const ts = document.getElementById('fleet-timestamp');
+        if (ts) {
+          ts.textContent = `Last checked: ${new Date().toLocaleTimeString()}`;
+        }
+      } catch (e) {
+        const ts = document.getElementById('fleet-timestamp');
+        if (ts) ts.textContent = 'Fleet status unavailable';
+      }
+    }
+
+    // Fetch on load
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', fetchFleet);
+    } else {
+      fetchFleet();
+    }
+  })();
+</script>

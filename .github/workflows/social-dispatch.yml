@@ -1,0 +1,99 @@
+name: Social Dispatch - Operation Trimtab
+
+# DEPRECATED — Social scheduling is now handled by p31-social-worker
+# (Cloudflare Worker with recurring cron triggers at social.p31ca.org).
+# This workflow is manual-only (cron removed 2026-04 so GitHub does not imply live posting).
+# Primary automation: social.p31ca.org (Mon/Wed/Fri + daily digest)
+
+on:
+  workflow_dispatch:
+    inputs:
+      wave_selector:
+        description: 'Wave to deploy (1-6, all) — leave blank for date-auto mode'
+        required: false
+        default: ''
+        type: choice
+        options:
+          - ''
+          - '1'
+          - '2'
+          - '3'
+          - '4'
+          - '5'
+          - '6'
+          - 'all'
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install yq
+        run: |
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod a+x /usr/local/bin/yq
+
+      - name: Parse and Dispatch Wave
+        run: |
+          FILE="admin/OPERATION_TRIMTAB_DEPLOYMENT.yaml"
+          SELECTOR="${{ github.event.inputs.wave_selector }}"
+
+          echo "========================================"
+          echo "OPERATION TRIMTAB — Dispatch Sequence"
+          echo "========================================"
+
+          # Auto-mode: no manual selector provided (blank workflow_dispatch input)
+          if [ -z "$SELECTOR" ]; then
+            TODAY=$(date -u +"%Y-%m-%d")
+            echo "Auto-mode: searching for wave scheduled on $TODAY..."
+
+            MATCHED_INDEX=$(yq eval '.waves[].scheduled_time' "$FILE" | grep -n "^$TODAY" | head -1 | cut -d: -f1)
+            [ -n "$MATCHED_INDEX" ] && MATCHED_INDEX=$((MATCHED_INDEX - 1)) || MATCHED_INDEX=""
+
+            if [ -z "$MATCHED_INDEX" ]; then
+              echo "No wave scheduled for $TODAY. Going back to sleep."
+              exit 0
+            fi
+
+            echo "Wave found at index $MATCHED_INDEX."
+
+            PLATFORM=$(yq eval ".waves[$MATCHED_INDEX].target_platform" "$FILE")
+            CONTENT=$(yq eval  ".waves[$MATCHED_INDEX].content_block"   "$FILE")
+            HINT=$(yq eval     ".waves[$MATCHED_INDEX].egg_hint"         "$FILE")
+            SCHEDULE=$(yq eval ".waves[$MATCHED_INDEX].scheduled_time"  "$FILE")
+            WAVE_NUM=$((MATCHED_INDEX + 1))
+
+            echo "WAVE $WAVE_NUM — AUTO DISPATCH"
+            echo "Target Platform: $PLATFORM"
+            echo "Scheduled Time:  $SCHEDULE"
+            echo "Payload Content: $CONTENT"
+            echo "Active Egg Hint: $HINT"
+            echo "========================================"
+            echo "Sending payload to $PLATFORM..."
+            sleep 2
+            echo "Payload delivered."
+
+          elif [ "$SELECTOR" = "all" ]; then
+            echo "Manual override: dispatching ALL waves..."
+            yq eval '.waves[] | "Target: " + .target_platform + " | Time: " + .scheduled_time + " | Hint: " + .egg_hint' "$FILE"
+
+          else
+            INDEX=$((SELECTOR - 1))
+
+            PLATFORM=$(yq eval ".waves[$INDEX].target_platform" "$FILE")
+            CONTENT=$(yq eval  ".waves[$INDEX].content_block"   "$FILE")
+            HINT=$(yq eval     ".waves[$INDEX].egg_hint"         "$FILE")
+            SCHEDULE=$(yq eval ".waves[$INDEX].scheduled_time"  "$FILE")
+
+            echo "Manual override: WAVE $SELECTOR"
+            echo "Target Platform: $PLATFORM"
+            echo "Scheduled Time:  $SCHEDULE"
+            echo "Payload Content: $CONTENT"
+            echo "Active Egg Hint: $HINT"
+            echo "========================================"
+            echo "Sending payload to $PLATFORM..."
+            sleep 2
+            echo "Payload delivered to $PLATFORM."
+          fi

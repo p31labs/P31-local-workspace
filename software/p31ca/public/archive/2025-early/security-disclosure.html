@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub" style="color-scheme: dark;">
+<head>
+  <meta charset="UTF-8">
+<script>(function(){var r=document.documentElement;if(/[?&]alive=1(?:&|$)/.test(location.search))return;r.classList.add("p31-gray-rock");function wake(){r.classList.remove("p31-gray-rock")}document.addEventListener("pointerdown",wake,{once:true,capture:true});document.addEventListener("keydown",wake,{once:true,capture:true})})();</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0f1115">
+  <title>Security disclosure | P31 Labs — p31ca.org</title>
+  <meta name="description" content="Responsible security disclosure policy for P31 Labs, Inc. — how to report vulnerabilities in p31ca.org, bonding.p31ca.org, and associated Cloudflare Workers.">
+<link rel="canonical" href="https://p31ca.org/security-disclosure.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Security disclosure">
+<meta property="og:description" content="Responsible security disclosure policy for P31 Labs, Inc. — how to report vulnerabilities in p31ca.org, bonding.p31ca.org, and associated Cloudflare Workers.">
+<meta property="og:url" content="https://p31ca.org/security-disclosure.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Security disclosure">
+<meta name="twitter:description" content="Responsible security disclosure policy for P31 Labs, Inc. — how to report vulnerabilities in p31ca.org, bonding.p31ca.org, and associated Cloudflare Workers.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/p31-style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/p31-tailwind-extend.js"></script>
+  <script>tailwind.config = { theme: { extend: { ...window.P31_TAILWIND_EXTEND } } };</script>
+</head>
+<body class="bg-void text-cloud min-h-screen font-sans antialiased px-4 py-10 max-w-2xl mx-auto text-sm leading-relaxed">
+<a href="#main" style="position:absolute;left:-9999px;top:0;padding:0.5rem 1rem;background:var(--p31-void);color:var(--p31-teal);font-size:0.875rem;z-index:9999;border-radius:0 0 4px 4px;text-decoration:none" onfocus="this.style.left='0'" onblur="this.style.left='-9999px'">Skip to main content</a>
+  <nav class="flex flex-wrap gap-3 text-teal/80 text-xs font-mono mb-8 no-print">
+    <a href="/" class="hover:underline">Hub</a>
+    <a href="/privacy" class="hover:underline">Privacy</a>
+    <a href="/terms" class="hover:underline">Terms</a>
+    <a href="/contact" class="hover:underline">Contact</a>
+    <a href="/accessibility" class="hover:underline">Accessibility</a>
+    <a href="/security" class="hover:underline">Security</a>
+    <a href="/oss" class="hover:underline">Open source</a>
+  </nav>
+
+  <h1 class="text-2xl font-bold text-paper mb-2">Security disclosure policy</h1>
+  <p class="text-cloud/50 text-xs mb-8">
+    Responsible disclosure for <strong class="text-paper">P31 Labs, Inc.</strong> public surfaces and open-source repositories.<br>
+    Effective date: <strong class="text-paper">2026-05-01</strong>.
+    Machine-readable: <a class="text-teal/70 hover:underline font-mono" href="/.well-known/security.txt">/.well-known/security.txt</a>
+  </p>
+
+  <!-- 1. Scope -->
+  <section class="space-y-3 mb-8" id="scope">
+    <h2 class="text-paper font-semibold text-base">1. Scope</h2>
+
+    <h3 class="text-paper font-semibold mt-2">In scope</h3>
+    <p class="text-cloud/80">The following surfaces are in scope for security reports:</p>
+    <ul class="text-cloud/80 list-disc pl-5 space-y-1">
+      <li><strong class="text-paper">p31ca.org</strong> &mdash; static hub, all published HTML/JS pages and JSON contracts.</li>
+      <li><strong class="text-paper">bonding.p31ca.org</strong> &mdash; BONDING chemistry builder (client-side app + multiplayer KV backend).</li>
+      <li><strong class="text-paper">donate-api.phosphorus31.org</strong> &mdash; Stripe Checkout Worker (authentication, parameter validation, redirect logic).</li>
+      <li><strong class="text-paper">k4-personal, k4-cage, k4-hubs, k4-agent-hub Workers</strong> &mdash; authentication, authorization, session management, data isolation between users/vertices.</li>
+      <li><strong class="text-paper">github.com/p31labs</strong> &mdash; published packages and public repositories for issues such as supply-chain vulnerabilities, hardcoded secrets in committed code, or unsafe dependency resolution.</li>
+    </ul>
+
+    <h3 class="text-paper font-semibold mt-4">Out of scope</h3>
+    <ul class="text-cloud/80 list-disc pl-5 space-y-1">
+      <li>Cloudflare platform-level infrastructure issues &mdash; report those to <a class="text-teal underline hover:text-teal/90" href="https://www.cloudflare.com/disclosure/" target="_blank" rel="noopener">Cloudflare&rsquo;s disclosure program</a>.</li>
+      <li>Stripe payment processing vulnerabilities &mdash; report those to <a class="text-teal underline hover:text-teal/90" href="https://stripe.com/docs/security" target="_blank" rel="noopener">Stripe&rsquo;s security team</a>.</li>
+      <li>Theoretical or hypothetical vulnerabilities without a clear, demonstrated exploit path.</li>
+      <li>Denial-of-service or load-testing attacks &mdash; do not test against production endpoints. Contact us first if you want to test resilience.</li>
+      <li>Social engineering attacks targeting P31 Labs personnel.</li>
+      <li>Physical access attacks.</li>
+      <li>Reports generated by automated scanners without manual verification of exploitability.</li>
+      <li>Third-party library CVEs that have no practical exploit path in our deployment.</li>
+      <li>Missing security headers on static pages where there is no demonstrated attack scenario (we welcome these as low-priority suggestions, not vulnerabilities).</li>
+    </ul>
+  </section>
+
+  <!-- 2. How to report -->
+  <section class="space-y-3 mb-8" id="how-to-report">
+    <h2 class="text-paper font-semibold text-base">2. How to report</h2>
+    <p class="text-cloud/80">
+      Send your report to:
+    </p>
+    <div class="pl-4 border-l border-teal/30 space-y-1 text-cloud/80">
+      <div>
+        <strong class="text-paper">Email:</strong>
+        <a class="text-teal underline hover:text-teal/90" href="mailto:will@p31ca.org">will@p31ca.org</a>
+      </div>
+      <div>
+        <strong class="text-paper">Subject line:</strong>
+        <code class="font-mono text-teal/80">[security] &lt;brief description&gt;</code>
+      </div>
+      <div>
+        <strong class="text-paper">Machine-readable contact:</strong>
+        <a class="text-teal underline hover:text-teal/90" href="/.well-known/security.txt">/.well-known/security.txt</a>
+      </div>
+    </div>
+    <p class="text-cloud/80">
+      We do not currently operate a formal bug bounty program and cannot promise financial rewards,
+      but we do commit to acknowledging valid reports, coordinating on a fix timeline, and crediting
+      researchers who want to be acknowledged (with their permission) in a public disclosure or changelog.
+    </p>
+  </section>
+
+  <!-- 3. What to include -->
+  <section class="space-y-3 mb-8" id="what-to-include">
+    <h2 class="text-paper font-semibold text-base">3. What to include in your report</h2>
+    <p class="text-cloud/80">A useful report includes:</p>
+    <ul class="text-cloud/80 list-disc pl-5 space-y-1">
+      <li><strong class="text-paper">Affected surface:</strong> Full URL, Worker host name, or repository and file path.</li>
+      <li><strong class="text-paper">Type of vulnerability:</strong> For example, authentication bypass, data isolation failure, stored XSS, insecure direct object reference, exposed secret, SSRF, etc.</li>
+      <li><strong class="text-paper">Reproduction steps:</strong> Step-by-step instructions to reproduce the issue. Include HTTP requests, payloads, or screenshots where helpful.</li>
+      <li><strong class="text-paper">Impact assessment:</strong> What data or functionality is at risk? Could this affect other users? Is there potential for privilege escalation?</li>
+      <li><strong class="text-paper">Environment:</strong> Browser, OS, any tools used.</li>
+      <li><strong class="text-paper">Optional &mdash; suggested fix:</strong> If you have a patch or mitigation idea, we welcome it.</li>
+      <li><strong class="text-paper">Optional &mdash; your PGP key:</strong> If you want an encrypted reply, include a public key or key ID.</li>
+    </ul>
+    <p class="text-cloud/80">
+      Please limit your testing to what is necessary to demonstrate the vulnerability.
+      Do not access, modify, or exfiltrate data beyond what is needed to prove the issue.
+    </p>
+  </section>
+
+  <!-- 4. Response timeline -->
+  <section class="space-y-3 mb-8" id="timeline">
+    <h2 class="text-paper font-semibold text-base">4. Response timeline</h2>
+    <ul class="text-cloud/80 list-disc pl-5 space-y-1">
+      <li><strong class="text-paper">Acknowledgment:</strong> We will acknowledge your report within <strong class="text-paper">5 business days</strong> of receipt.</li>
+      <li><strong class="text-paper">Triage:</strong> We will assess severity and scope and provide an initial triage response within <strong class="text-paper">10 business days</strong>.</li>
+      <li><strong class="text-paper">Fix timeline:</strong> We will work with you to agree on a remediation timeline proportional to severity. Critical issues (active data exposure, authentication bypass) will be treated as the highest priority.</li>
+      <li><strong class="text-paper">Coordinated disclosure:</strong> We ask that you refrain from public disclosure until we have shipped a fix or until a mutually agreed disclosure date has passed, whichever comes first.</li>
+    </ul>
+    <p class="text-cloud/80">
+      We are a small nonprofit team. We will be transparent with you about our capacity and timeline.
+      If you do not receive an acknowledgment within 5 business days, please follow up.
+    </p>
+  </section>
+
+  <!-- 5. Safe harbor -->
+  <section class="space-y-3 mb-8" id="safe-harbor">
+    <h2 class="text-paper font-semibold text-base">5. Safe harbor</h2>
+    <p class="text-cloud/80">
+      P31 Labs, Inc. extends the following good-faith safe harbor to security researchers who
+      comply with this policy:
+    </p>
+    <ul class="text-cloud/80 list-disc pl-5 space-y-1">
+      <li>We will not pursue civil or criminal action against you for security research conducted in accordance with this policy.</li>
+      <li>We will not refer your report to law enforcement unless you engage in conduct that goes materially beyond what is necessary to demonstrate the vulnerability (for example, exfiltrating large amounts of production data, or accessing data belonging to third parties).</li>
+      <li>We consider research conducted under this policy to be authorized access for purposes of the Computer Fraud and Abuse Act and analogous state computer crime laws, to the extent our authorization is legally meaningful.</li>
+    </ul>
+    <p class="text-cloud/80">
+      This safe harbor does not extend to attacks on third-party infrastructure (Cloudflare, Stripe, Google) or to conduct that violates third-party terms of service. We cannot authorize access to systems we do not own or operate.
+    </p>
+  </section>
+
+  <!-- 6. Coordinated disclosure -->
+  <section class="space-y-3 mb-8" id="coordinated-disclosure">
+    <h2 class="text-paper font-semibold text-base">6. Coordinated disclosure</h2>
+    <p class="text-cloud/80">
+      We follow a <strong class="text-paper">coordinated disclosure</strong> model. This means:
+    </p>
+    <ul class="text-cloud/80 list-disc pl-5 space-y-1">
+      <li>We will keep you informed of our progress and share a draft of any public security advisory with you before publishing.</li>
+      <li>We will credit you in any public advisory unless you request anonymity.</li>
+      <li>If we are unable to ship a fix within a reasonable period and you wish to disclose, we will work with you to agree on a disclosure date and will attempt to publish a mitigation note simultaneously.</li>
+      <li>We will not publish details of your report in a way that could harm you or your employer without your consent.</li>
+    </ul>
+    <p class="text-cloud/80">
+      Our default target for coordinated disclosure is <strong class="text-paper">90 days</strong> from
+      acknowledgment, consistent with common industry practice. For critical issues affecting live
+      user data, we will aim for a shorter timeline.
+    </p>
+  </section>
+
+  <!-- 7. Out of scope (expanded) -->
+  <section class="space-y-3 mb-8" id="out-of-scope">
+    <h2 class="text-paper font-semibold text-base">7. Additional out-of-scope guidance</h2>
+    <p class="text-cloud/80">
+      The following will not be treated as valid security reports under this policy:
+    </p>
+    <ul class="text-cloud/80 list-disc pl-5 space-y-1">
+      <li>Clickjacking on pages that have no sensitive actions or authenticated state.</li>
+      <li>Self-XSS (where you can inject script only into your own browser).</li>
+      <li>CSRF on logout or non-sensitive actions.</li>
+      <li>Email header injection with no demonstrated exploit in our mail flow (we do not operate a mail server).</li>
+      <li>Content injection on static pages with no authentication context.</li>
+      <li>SSL/TLS configuration findings that are not practically exploitable against our users (Cloudflare manages our TLS termination).</li>
+      <li>Lack of rate limiting on non-sensitive, unauthenticated endpoints where no personal data is at risk.</li>
+    </ul>
+  </section>
+
+  <!-- 8. Contact -->
+  <section class="space-y-3 mb-8" id="contact">
+    <h2 class="text-paper font-semibold text-base">8. Contact</h2>
+    <address class="not-italic text-cloud/80 space-y-1 pl-4 border-l border-teal/30">
+      <div><strong class="text-paper">P31 Labs, Inc.</strong></div>
+      <div>EIN 42-1888158 &mdash; Georgia domestic nonprofit</div>
+      <div>
+        Security email:
+        <a class="text-teal underline hover:text-teal/90" href="mailto:will@p31ca.org">will@p31ca.org</a>
+        &mdash; subject line <code class="font-mono text-teal/80">[security]</code>
+      </div>
+      <div>
+        Machine-readable:
+        <a class="text-teal underline hover:text-teal/90" href="/.well-known/security.txt">/.well-known/security.txt</a>
+      </div>
+      <div>
+        GitHub:
+        <a class="text-teal underline hover:text-teal/90" href="https://github.com/p31labs" target="_blank" rel="noopener">github.com/p31labs</a>
+        &mdash; private advisories accepted via GitHub Security Advisory
+      </div>
+    </address>
+  </section>
+
+  <p class="text-cloud/40 text-xs mt-10">
+    &copy; 2026 P31 Labs, Inc. &mdash;
+    <a class="text-teal/60 hover:underline" href="/privacy">Privacy</a> &middot;
+    <a class="text-teal/60 hover:underline" href="/terms">Terms</a> &middot;
+    <a class="text-teal/60 hover:underline" href="/accessibility">Accessibility</a>
+  </p>
+</body>
+</html>

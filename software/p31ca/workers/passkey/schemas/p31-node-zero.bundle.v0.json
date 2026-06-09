@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://p31ca.org/schemas/p31-node-zero.bundle.v0.json",
+  "title": "Node Zero Phase 4 — pairing + telemetry schemas (bundle v0)",
+  "$defs": {
+    "pairChallengeRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema", "ed25519_public_key_b64url"],
+      "properties": {
+        "schema": { "const": "p31.nodeZero.pairChallenge/0.1.0" },
+        "ed25519_public_key_b64url": { "type": "string", "minLength": 40 },
+        "device_label": { "type": "string", "maxLength": 80 }
+      }
+    },
+    "pairChallengeResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema", "pairing_code", "expires_in_sec"],
+      "properties": {
+        "schema": { "const": "p31.nodeZero.pairChallengeResponse/0.1.0" },
+        "pairing_code": { "type": "string", "pattern": "^[0-9]{6}$" },
+        "expires_in_sec": { "type": "integer", "minimum": 60, "maximum": 3600 },
+        "device_label_ack": { "type": ["string", "null"] }
+      }
+    },
+    "pairApproveRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema", "pairing_code", "subject_id", "ed25519_public_key_b64url"],
+      "properties": {
+        "schema": { "const": "p31.nodeZero.pairApprove/0.1.0" },
+        "pairing_code": { "type": "string", "pattern": "^[0-9]{6}$" },
+        "subject_id": { "type": "string", "pattern": "^u_[a-f0-9]{32}$|^guest_[a-f0-9]{20}$" },
+        "ed25519_public_key_b64url": { "type": "string", "minLength": 40 }
+      }
+    },
+    "telemetry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema", "device_id", "uptime_sec", "sensor_state", "larmor_hz", "ts_ms"],
+      "properties": {
+        "schema": { "const": "p31.nodeZero.telemetry/0.1.0" },
+        "device_id": { "type": "string", "minLength": 4 },
+        "uptime_sec": { "type": "number", "minimum": 0 },
+        "sensor_state": {
+          "type": "string",
+          "enum": ["nominal", "warn", "fault", "unknown"]
+        },
+        "larmor_hz": { "type": "number" },
+        "ts_ms": { "type": "number", "minimum": 1 }
+      }
+    }
+  }
+}

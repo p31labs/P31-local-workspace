@@ -1,0 +1,179 @@
+{
+  "$schema": "p31.nonprofit.governance/1.0.0",
+  "_meta": {
+    "description": "Canonical governance contract for P31 Labs, Inc. — board structure, officers, conflict-of-interest declarations, meeting cadence, document retention. Single source of truth; all governance pages, board portals, and audit trails derive from this.",
+    "lastUpdated": "2026-05-01",
+    "owner": "operator@phosphorus31.org",
+    "verifier": "npm run verify:nonprofit"
+  },
+  "entity": {
+    "legalName": "P31 Labs, Inc.",
+    "doingBusinessAs": ["Phosphorus31", "P31"],
+    "ein": "42-1888158",
+    "stateOfIncorporation": "GA",
+    "incorporationDate": "2026-04-03",
+    "fiscalYearEnd": "12-31",
+    "type": "nonprofit-corporation",
+    "irsClassification": "501(c)(3)",
+    "irsStatus": "filed-awaiting-determination",
+    "irsApplicationFiled": true,
+    "irsApplicationFiledDate": "TBD-operator-to-confirm",
+    "irsDeterminationLetter": null,
+    "stateNonprofitStatus": "approved",
+    "stateNonprofitApprovedDate": "TBD-operator-to-confirm",
+    "stateNonprofitNote": "GA state has approved 501 status (state-level nonprofit recognition); federal IRS determination letter still pending issuance",
+    "registeredAgent": {
+      "name": "TBD",
+      "address": "TBD",
+      "state": "GA"
+    },
+    "principalOffice": {
+      "addressKnown": false,
+      "note": "Operator address withheld for safety; mail forwarded via registered agent until office established"
+    }
+  },
+  "board": {
+    "minimumMembers": 3,
+    "maximumMembers": 11,
+    "quorum": "majority of seated members",
+    "termLengthYears": 2,
+    "termsStaggered": true,
+    "termLimit": 3,
+    "compensation": "uncompensated; reasonable expense reimbursement only",
+    "currentMembers": [
+      {
+        "id": "founder-001",
+        "name": "W. Johnson",
+        "role": "Founder · Chair (interim)",
+        "electedDate": "2026-04-03",
+        "termEnds": "2028-04-02",
+        "voting": true,
+        "independent": false,
+        "coiOnFile": true,
+        "skills": ["technology", "operator", "founder"]
+      },
+      {
+        "id": "mom-001",
+        "name": "TBD-legal-name-on-file (operator's mother)",
+        "role": "Director · Treasurer",
+        "electedDate": "TBD-operator-to-confirm",
+        "termEnds": "TBD",
+        "voting": true,
+        "independent": false,
+        "coiOnFile": false,
+        "skills": ["finance", "family-stability", "operator-support"],
+        "_operatorNote": "Family member; independence test fails for IRS purposes — note for Form 990 Schedule L disclosure of related-party. Replace placeholder with legal name before first board minutes published. Default role Treasurer; swap with tyler-001 in officers.current if Mom would prefer Secretary."
+      },
+      {
+        "id": "tyler-001",
+        "name": "Tyler — TBD-last-name-on-file",
+        "role": "Director · Secretary",
+        "electedDate": "TBD-operator-to-confirm",
+        "termEnds": "TBD",
+        "voting": true,
+        "independent": true,
+        "coiOnFile": false,
+        "skills": ["records", "communication"],
+        "_operatorNote": "Independence depends on relationship to founder/family — operator confirms 'independent' before applying. Replace placeholder with full legal name before first board minutes published."
+      }
+    ],
+    "vacantSeats": 2,
+    "recruitmentStatus": "active",
+    "recruitmentPriority": "Vice-Chair (succession protection) + at least 1 fully-independent director (audit-ready independence ratio)",
+    "diversityTargets": {
+      "principle": "Skill-balanced, geographically distributed, lived-experience prioritized over pedigree",
+      "skillCoverage": ["finance", "legal", "fundraising", "technology", "programs", "community"],
+      "currentCoverage": ["technology", "operator", "finance", "records"]
+    }
+  },
+  "officers": {
+    "required": ["President", "Secretary", "Treasurer"],
+    "current": [
+      { "title": "President", "personId": "founder-001", "appointedDate": "2026-04-03" },
+      { "title": "Treasurer", "personId": "mom-001", "appointedDate": "TBD-operator-to-confirm", "note": "Default assignment; operator can swap with tyler-001 by editing this file" },
+      { "title": "Secretary", "personId": "tyler-001", "appointedDate": "TBD-operator-to-confirm", "note": "Default assignment; operator can swap with mom-001 by editing this file" }
+    ],
+    "presidentCannotBeSecretary": true,
+    "presidentCannotBeTreasurer": true
+  },
+  "meetings": {
+    "boardCadence": "quarterly minimum (4 per year)",
+    "annualMeeting": "required, separate from quarterlies",
+    "noticeRequiredDays": 14,
+    "minutesRetained": "permanently",
+    "minutesPublic": "redacted summary published within 30 days; full minutes available on request",
+    "scheduled": [],
+    "executive_session_topics": [
+      "personnel matters",
+      "litigation strategy",
+      "individual donor solicitation",
+      "real-estate negotiation"
+    ]
+  },
+  "conflictOfInterest": {
+    "policyEffectiveDate": "2026-04-03",
+    "annualAttestationRequired": true,
+    "lastReviewDate": "2026-04-03",
+    "nextReviewDate": "2027-04-03",
+    "disclosures": [],
+    "recusalLogged": []
+  },
+  "policies": {
+    "required": [
+      "conflict-of-interest",
+      "whistleblower",
+      "document-retention",
+      "gift-acceptance",
+      "executive-compensation-review",
+      "code-of-ethics"
+    ],
+    "adopted": [
+      "conflict-of-interest"
+    ],
+    "pending": [
+      "whistleblower",
+      "document-retention",
+      "gift-acceptance",
+      "executive-compensation-review",
+      "code-of-ethics"
+    ]
+  },
+  "documentRetention": {
+    "policy": "P31-NONPROFIT-DOCUMENT-RETENTION-1.0",
+    "categories": [
+      { "type": "articles-of-incorporation", "retainFor": "permanent" },
+      { "type": "bylaws", "retainFor": "permanent" },
+      { "type": "irs-determination-letter", "retainFor": "permanent" },
+      { "type": "form-990", "retainFor": "permanent" },
+      { "type": "board-minutes", "retainFor": "permanent" },
+      { "type": "audit-reports", "retainFor": "permanent" },
+      { "type": "tax-receipts", "retainFor": "7 years" },
+      { "type": "donor-records", "retainFor": "7 years" },
+      { "type": "grant-records", "retainFor": "7 years after closeout" },
+      { "type": "contracts", "retainFor": "7 years after expiration" },
+      { "type": "personnel-records", "retainFor": "7 years after separation" },
+      { "type": "i-9-forms", "retainFor": "later of 3 years after hire or 1 year after separation" },
+      { "type": "general-correspondence", "retainFor": "3 years" },
+      { "type": "drafts", "retainFor": "discard when superseded unless legal hold" }
+    ],
+    "legalHoldOverridesAllRetention": true,
+    "destructionMethod": "secure-delete + paper-shred"
+  },
+  "successionPlanning": {
+    "founderUnavailableProtocol": "Vice-Chair (when seated) becomes acting Chair; Treasurer + Secretary jointly authorized to maintain continuity for 90 days while board convenes",
+    "operatorMedicalContingency": {
+      "trigger": "operator hypoparathyroidism crisis or hospitalization >72h",
+      "delegate": "Vice-Chair + Secretary jointly",
+      "scope": "operations only; no policy changes, no fund disbursement >$1000",
+      "duration": "until operator returns OR 90 days, whichever is first"
+    },
+    "keyPersonRiskAcknowledged": true,
+    "mitigationStatus": "founder is currently sole executor; recruitment of vice-chair is the highest-priority governance gap"
+  },
+  "auditFrequency": {
+    "internal": "annual",
+    "external": "when annual revenue exceeds $250,000 OR per state requirement",
+    "currentlyAudited": false,
+    "lastAuditDate": null
+  }
+}

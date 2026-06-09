@@ -1,0 +1,1738 @@
+{
+  "schema": "p31.ground-truth/1.0.0",
+  "version": "1.0.0",
+  "updated": "2026-05-04",
+  "mission": "Build, create, connect — decentralized family mesh. This file is the machine-routable spine for p31ca.org; human narrative stays in root CLAUDE.md, P31 COGNITIVE PASSPORT — v5.md, and docs/. Version namespaces: P31 home docs/CANONICAL-NUMBERING.md; values: P31 home p31-constants.json. Source→sink alignment: P31 home p31-alignment.json (p31.alignment/1.0.0) and docs/P31-ALIGNMENT-SYSTEM.md (ephemeralization; verify: npm run verify:alignment).",
+  "canonicalNumbering": {
+    "spec": "P31 home: docs/CANONICAL-NUMBERING.md",
+    "passportLongForm": {
+      "edition": "5.1",
+      "sourceFile": "P31 COGNITIVE PASSPORT — v5.md",
+      "h1Authoritative": true
+    },
+    "jsonSchemaIds": {
+      "cognitivePassport": "p31.cognitivePassport/1.1.0",
+      "groundTruth": "p31.ground-truth/1.0.0",
+      "cogPassBridge": "p31.cogPassBridge/1.0.0",
+      "phosVoice": "p31.phosVoice/1.0.0",
+      "phosVoiceLock": "p31.phosVoiceLock/1.0.0",
+      "creatorEconomy": "p31.creatorEconomy/1.0.0",
+      "wiringDiagram": "p31.wiringDiagram/1.0.0"
+    },
+    "bondingTestBaseline": {
+      "tests": 424,
+      "suites": 32,
+      "asOf": "2026-05-04"
+    }
+  },
+  "sites": {
+    "p31ca": {
+      "label": "Technical hub (p31ca.org)",
+      "publicRoot": "https://p31ca.org",
+      "repoPath": "andromeda/software/p31ca (this tree)"
+    },
+    "phosphorus31": {
+      "label": "Public org / programs (phosphorus31.org)",
+      "publicRoot": "https://phosphorus31.org",
+      "repoPath": "separate tree — not governed by this file"
+    },
+    "andromedaCorporate": {
+      "label": "P31 Open Doc Suite + corporate one-pager (Andromeda repo, not a separate deploy)",
+      "repoPath": "andromeda/docs/corporate",
+      "githubTree": "https://github.com/p31labs/andromeda/tree/main/docs/corporate",
+      "publicSurfaceOnP31ca": "https://p31ca.org/open-doc-suite.html"
+    },
+    "homeVertical": {
+      "label": "P31 home — Soup, passport authoring, wcd33",
+      "repoPath": "workspace above this monorepo"
+    }
+  },
+  "routes": {
+    "glassBox": {
+      "path": "/glass-box.html",
+      "implementation": "public/glass-box.html (mirrored from P31 home glass-box.html via npm run build:glass-box)",
+      "label": "P31 Glass Box — public live transparency terminal",
+      "note": "Schema p31.glassBox/0.1.0. Streams synthetic CLI playbacks (verify:*, launch:audit, reports:simulate, ecosystem:glass) + a real-time poll of the public reports/index.json. No tracking, no analytics, no operator secrets — only what we'd publish anyway. Short routes /glass and /glass-box in edgeRedirects (the /transparency short formerly aliased here now serves the formal annual transparency report at /transparency.html, PEER-2A). Not the operator UI (CWP-P31-UI-2026-01) which is at /ops and is gated."
+    },
+    "demosPublic": {
+      "path": "/demos/index.html",
+      "implementation": "public/demos/ (mirrored from P31 home demos/ via npm run build:demos)",
+      "label": "P31 visual demos — mind-bending walkthroughs",
+      "note": "Schema p31.demosIndex/0.1.0. Four self-contained visualizations (K₄ family mesh · alignment graph · Larmor pulse · glass box) + share-kit captions. Reads real data from p31-alignment.json + p31-constants.json. Short routes /visuals and /demos-public in edgeRedirects (the existing /demos points at demo-labs.html, a different product — see routes.demoLabs in this file)."
+    },
+    "canonicalDome": {
+      "path": "/dome/",
+      "implementation": "src/pages/dome.astro",
+      "label": "Sovereign Cockpit Dome (K₄ interactive)",
+      "note": "Primary CTA from hub home. Not the same product as observatory. Astro uses trailingSlash:'always'; bare /dome redirects to /dome/. Do not add _redirects that send /dome/ back to /dome."
+    },
+    "observatory": {
+      "path": "/observatory.html",
+      "implementation": "public/observatory.html",
+      "label": "OBSERVATORY — geodesic panel inspector",
+      "registryId": "observatory",
+      "note": "Hub registry appUrl must stay observatory.html."
+    },
+    "k4market": {
+      "path": "/k4market.html",
+      "implementation": "public/k4market.html",
+      "label": "K4 MARKET — tetrahedral price geometry (Three.js r160)",
+      "registryId": "k4market",
+      "note": "Main viz surface. Symbol search and Larmor ring live in tomography.html."
+    },
+    "tomography": {
+      "path": "/tomography.html",
+      "implementation": "public/archive/2025-early/tomography.html",
+      "label": "K4 TOMOGRAPHY — ARCHIVED 2026-05-03",
+      "registryId": "tomography",
+      "note": "Depth companion to k4market.html. Linked from k4market nav."
+    },
+    "quantumDeck": {
+      "path": "/quantum-deck.html",
+      "implementation": "public/quantum-deck.html",
+      "label": "QUANTUM DECK — fair shuffle demo (@p31/quantum-deck)",
+      "registryId": "quantum-deck",
+      "note": "Schema meta p31.quantumDeckPage/0.1.0. Browser core mirrored from packages/quantum-deck/src/deck.mjs via verify:quantum-deck. Short /deck in _redirects. crypto.getRandomValues — not destiny; no gambling UX."
+    },
+    "quantumComposer": {
+      "path": "/quantum-composer.html",
+      "implementation": "public/quantum-composer.html",
+      "label": "Quantum composer — K₄ Web Audio partials on the Larmor ladder",
+      "registryId": "quantum-composer",
+      "note": "Meta p31.quantumComposerPage/0.1.0. Four oscillators at Larmor/divisors; TRIM-rate interference via p31-quantum-grandfather-boot; verify:quantum-clock locks LARMOR_HZ to p31-constants.json. Short /composer. Pedagogy, not a physics engine."
+    },
+    "planetaryOnboard": {
+      "path": "/planetary-onboard.html",
+      "implementation": "public/planetary-onboard.html",
+      "label": "Planetary onboard — threshold (four doors, Gray Rock first paint)",
+      "note": "Static threshold: void + K₄ + tagline → understand | use | build | know. No welcome JSON fetch on this page; p31.welcomePackages still consumed by mesh-start.html. ?fast=1 skips timers; ?welcome=kid&?a=child opens Door 2 parent path. Passkey / pact on mesh-start + auth when invited."
+    },
+    "welcomePackages": {
+      "path": "/p31-welcome-packages.json",
+      "implementation": "public/p31-welcome-packages.json",
+      "label": "Welcome package definitions (onboard + mesh-start)",
+      "note": "Schema p31.welcomePackages/1.0.0. Drives copy, dial default, personalTetra dock overrides, mesh-start chips. Fetched by planetary-onboard.html and mesh-start.html."
+    },
+    "superCentaurStarter": {
+      "path": "/p31-super-centaur-starter.html",
+      "implementation": "public/p31-super-centaur-starter.html",
+      "label": "Super-Centaur starter pack — data, finance, structural sovereignty (human page)",
+      "note": "Tailwind CDN. Indexes CWP-P31-SC / MAP / ECO, mesh-bridge MESH table, onboarding links. Short /centaur and /super-centaur in _redirects. Pair with p31-super-centaur-pack.json."
+    },
+    "superCentaurPack": {
+      "path": "/p31-super-centaur-pack.json",
+      "implementation": "public/p31-super-centaur-pack.json",
+      "label": "Super-Centaur starter pack — machine manifest",
+      "note": "Schema p31.superCentaurStarterPack/1.0.0. CWPs, mesh fleet URLs from CWP-30, MAP anchors, p31ca URLs, condensed checklist."
+    },
+    "familySovereignPack": {
+      "path": "/family-sovereign-pack.html",
+      "implementation": "public/family-sovereign-pack.html",
+      "label": "Family sovereign pack — printable household delivery",
+      "note": "Lobby URLs, welcome-package entry points, edge anchors, troubleshooting. Canonical prose: P31 home docs/FAMILY-SOVEREIGN-PACK.md. Short /family-pack in _redirects. Pairs with p31-super-centaur-pack.json."
+    },
+    "p31StyleCss": {
+      "path": "/p31-style.css",
+      "implementation": "public/p31-style.css",
+      "label": "P31 canonical design tokens (CSS variables)",
+      "note": "Generated from andromeda/software/design-tokens/p31-universal-canon.json via npm run apply:p31-style. Hub default dark; org/light via data-p31-appearance=org. Linked by static pages, about template, cognitive-passport mirror."
+    },
+    "p31TailwindCdn": {
+      "path": "/p31-tailwind-extend.js",
+      "implementation": "public/p31-tailwind-extend.js",
+      "label": "Tailwind CDN preset (window.P31_TAILWIND_EXTEND)",
+      "note": "Generated with p31-style.css; static HTML loads after cdn.tailwindcss.com."
+    },
+    "p31CanonDemo": {
+      "path": "/p31-canon-demo.html",
+      "implementation": "public/p31-canon-demo.html",
+      "label": "Universal canon — interactive hub/org switch + token gallery",
+      "note": "Tailwind CDN. Short /canon. Showcases p31-universal-canon.json via p31-style.css."
+    },
+    "liveFleetBundle": {
+      "path": "/p31-live-fleet.json",
+      "implementation": "public/p31-live-fleet.json",
+      "label": "Live fleet bundle — sites + Worker URLs (machine)",
+      "note": "Schema p31.liveFleet/1.0.0. Mirror P31 home p31-live-fleet.json; verify-live-fleet-mesh vs p31-mesh-constants.json in prebuild."
+    },
+    "liveFleetDemo": {
+      "path": "/live-fleet-demo.html",
+      "implementation": "public/live-fleet-demo.html",
+      "label": "Live fleet map — interactive demo page",
+      "note": "Short /fleet in _redirects. Fetches p31-live-fleet.json (schema p31.liveFleet). For Workers/bots/agents interactive room + probes use routes.fleetAgentsConsole (/agents); do not conflate the two products."
+    },
+    "fleetEntitiesBundle": {
+      "path": "/p31-fleet-entities.json",
+      "implementation": "public/p31-fleet-entities.json",
+      "label": "Fleet entities — Workers, bots, Cortex sub-agents — machine roster",
+      "note": "Schema p31.fleetEntities/1.0.0. Built by npm run build:fleet-entities (merged from published p31-live-fleet.json + supplemental agents/bots)."
+    },
+    "fleetAgentsConsole": {
+      "path": "/fleet-agents.html",
+      "implementation": "public/fleet-agents.html",
+      "label": "Fleet agents room — interactive directory + probes",
+      "note": "Short /agents in _redirects. Loads p31-fleet-entities.json; not the same as liveFleetDemo (raw liveFleet map) or fleet portal (URL roster from build:fleet-portal). Stub pages public/agent/<slug>/ canonical to this UI."
+    },
+    "demoLabs": {
+      "path": "/demo-labs.html",
+      "implementation": "public/demo-labs.html",
+      "label": "Demo labs — curated static demos index",
+      "note": "Short /demos in _redirects. Lobby links fleet map, agents (/agents), canon, contract builder (/contracts), quantum composer (/composer), ops, delta, connect, onboard, centaur, kids, journey, /cars (Social Molecules · C.A.R.S.)."
+    },
+    "sovereignLab": {
+      "path": "/p31-sovereign-lab.html",
+      "implementation": "public/p31-sovereign-lab.html",
+      "label": "Sovereign Lab — dome trim · Web Serial · optional C.A.R.S. labTelemetry bridge",
+      "note": "Mirrored from P31 home; npm run sync:sovereign-p31ca (root). Short /lab. Optional ?carsWs= → mock WS streams coherence into eventLog (cars-contract)."
+    },
+    "sovereignLabV2": {
+      "path": "/p31-sovereign-lab-v2.html",
+      "implementation": "public/p31-sovereign-lab-v2.html",
+      "label": "Sovereign Lab v2 — live worker fleet control, K4 mesh routing, trim-tab tuning",
+      "note": "Three-panel interface: fleet panel (14 Workers), Three.js K4 tetrahedron stage, mesh state panel. Probes Worker health, routes to endpoints, connects to Geodesic Room WS. P31 home source: p31-sovereign-lab-v2.html. Short /lab2."
+    },
+    "browserSlicer": {
+      "path": "/p31-slicer.html",
+      "implementation": "public/p31-slicer.html",
+      "label": "Browser slicer — Kiri:Moto shell + K₄ STL",
+      "note": "Mirrored from P31 home; sync:sovereign-p31ca. Short /slicer. STL under public/design-assets/stl/."
+    },
+    "visionJourney": {
+      "path": "/vision.html",
+      "implementation": "public/vision.html",
+      "label": "Core journey — onboard → auth → EDE home (static narrative + CTAs)",
+      "note": "Canonical P31 hub path in one page: /onboard, /auth, /start with Wye→Delta and Mesh links. Short /journey in _redirects. No medical or legal advice."
+    },
+    "meshStart": {
+      "path": "/mesh-start.html",
+      "implementation": "public/mesh-start.html",
+      "label": "EDE Personal — private assistant + EDE entry (k4-personal)",
+      "note": "Loads /p31-welcome-packages.json from meta.welcomeKey or ?welcome=. Personalizes headline, tetra blurb, prompt chips; merges package docks into first-time PUT /tetra. Hub fusion ?hub=&hubs=. ?agent= staging. Short /start in _redirects."
+    },
+    "socialMoleculesCars": {
+      "path": "/social-molecules.html",
+      "implementation": "public/social-molecules.html",
+      "label": "Social Molecules — C.A.R.S. operator shell (boot, load, settings, field chat)",
+      "registryId": "social-molecules",
+      "note": "Hub card + about; short /cars in edgeRedirects. Live sim: bonding.p31ca.org/soup. Wire catalog: P31 home cars-contract/p31.carsWire.json."
+    },
+    "kidsGrowth": {
+      "path": "/kids-growth.html",
+      "implementation": "public/archive/2025-early/kids-growth.html",
+      "label": "Kids growth — S.J. & W.J. height/weight, milestones, export",
+      "note": "Static hub app; localStorage; Chart.js. Short /growth in _redirects. Not medical advice."
+    },
+    "kidsHome": {
+      "path": "/kids-home.html",
+      "implementation": "public/kids-home.html",
+      "label": "Household kids home — one screen to growth, missions, EDE, mesh, kid onboard",
+      "note": "p31.householdKidsHome/0.1.0. Short /kids. Large tiles; grown-up links below."
+    },
+    "initialBuild": {
+      "path": "/initial-build.html",
+      "implementation": "public/initial-build.html",
+      "label": "Initial Build — production entry for CWP-P31-IB-2026-01 (intake → subject_id → bake personal tetra)",
+      "note": "Short /build in _redirects. Normative spec: integration-handoff/INITIAL-BUILD-SITE-STRICT-PLAN.md. Phased UI: shell today; full intake and PUT sequence per CWP WBS. Sister to CWP-P31-PAR (Personal Agent Room)."
+    },
+    "connect": {
+      "path": "/connect.html",
+      "implementation": "public/connect.html",
+      "label": "The Mesh — K₄ cage + product graph (Three.js r160)",
+      "note": "Envision / Build / Connect navigator. Family cage + product satellites. Click nodes to open products."
+    },
+    "contractBuilder": {
+      "path": "/contract-builder.html",
+      "implementation": "public/contract-builder.html",
+      "label": "Contract builder — JSON contract registry from alignment sources",
+      "registryId": "contract-builder",
+      "note": "Loads /p31-contract-registry.json (p31.contractRegistry/1.0.0). Built by P31 home npm run build:contract-registry; verify:contract-registry. Short /contracts in _redirects. Anchor p31.contractBuilder/0.1.0."
+    },
+    "cognitivePassportGenerator": {
+      "path": "/passport-generator.html",
+      "implementation": "public/passport-generator.html",
+      "label": "Cognitive Passport — static generator",
+      "note": "Schema p31.cognitivePassport/1.1.0 (CWP-PHOS-2026-01 C-4 atomic bump). Short /passport in _redirects (AGENTS live URL). Mirror: npm run sync:passport from P31 home cognitive-passport/index.html. verify:passport."
+    },
+    "welcomeStranger": {
+      "path": "/welcome.html",
+      "implementation": "public/welcome.html",
+      "label": "Welcome — meat-space & household door",
+      "note": "Connection-first CTAs (household kit, mesh, passport, onboard); optional /why, /start, lab. Clean URL /welcome from welcome.html (no _redirects row — avoids CF Pages redirect loop). Short /together → /welcome (301). Ko-fi."
+    },
+    "delta": {
+      "path": "/delta.html",
+      "implementation": "public/delta.html",
+      "label": "Wye→Delta — public narrative page explaining mesh resilience and onboarding",
+      "note": "No Three.js. Uses Tailwind CDN + small inline script: Wye↔Delta crossfade slider (same topology story as planetary-onboard ribbon). Links to onboard, connect, geodesic, mesh-start, family pack. Canonical /delta (Pages); /why in _redirects → delta.html."
+    },
+    "accessibility": {
+      "path": "/accessibility.html",
+      "implementation": "public/accessibility.html",
+      "label": "Accessibility statement — p31ca.org",
+      "note": "WCAG-oriented practices; barrier reporting. Canonical /accessibility (Pages); do not add /accessibility → accessibility.html in _redirects (308 loop)."
+    },
+    "contact": {
+      "path": "/contact.html",
+      "implementation": "public/contact.html",
+      "label": "Contact & imprint — P31 Labs",
+      "note": "Entity, EIN, channels. Sync copy with p31-constants.json organization + contact. Canonical /contact (Pages)."
+    },
+    "openSource": {
+      "path": "/open-source.html",
+      "implementation": "public/open-source.html",
+      "label": "Open source — GitHub org and licenses",
+      "note": "Short /oss in _redirects."
+    },
+    "privacy": {
+      "path": "/privacy.html",
+      "implementation": "public/privacy.html",
+      "label": "Privacy — data practices for hub static tools and edge Workers",
+      "note": "Canonical /privacy (Pages). High-level; not legal advice."
+    },
+    "publicSurfaceManifest": {
+      "path": "/p31-public-surface.json",
+      "implementation": "public/p31-public-surface.json",
+      "label": "Public surface manifest — generic deliverable index",
+      "note": "Schema p31.publicSurface/1.0.0. Trust/legal URLs + key JSON endpoints + .well-known/security.txt path."
+    },
+    "securityDisclosure": {
+      "path": "/security-disclosure.html",
+      "implementation": "public/security-disclosure.html",
+      "label": "Security disclosure — responsible reporting",
+      "note": "Short /security. Pairs with public/.well-known/security.txt."
+    },
+    "terms": {
+      "path": "/terms.html",
+      "implementation": "public/terms.html",
+      "label": "Terms of use — p31ca.org",
+      "note": "Canonical /terms (Pages)."
+    },
+    "p31DeltaHiring": {
+      "path": "/delta-hiring/index.html",
+      "implementation": "public/delta-hiring/index.html",
+      "label": "P31 Delta — proof-based hiring (role packets, wcds, p31.proofRecord)",
+      "note": "Vite static SPA: build in software/p31-delta-hiring, run sync:p31ca, deploy with p31ca. Short /hiring in _redirects."
+    },
+    "messagingHub": {
+      "path": "/messaging-hub.html",
+      "implementation": "public/messaging-hub.html",
+      "label": "Messaging hub — static index of mesh, C.A.R.S., geodesic, operator, and mail-ingest paths",
+      "note": "No shared chat bus. Short /messages and /comms in _redirects. Schema anchor p31.messagingHub/0.1.0. Manifest: p31-public-surface.json messagingHub."
+    },
+    "auth": {
+      "path": "/auth.html",
+      "implementation": "public/auth.html",
+      "label": "Authenticate — passkey verification page for returning mesh members",
+      "note": "No Three.js. Calls /api/passkey/auth-begin + auth-finish. Falls back gracefully when Worker zone route is not live. Canonical /auth (Pages)."
+    },
+    "passkeyApi": {
+      "path": "/api/passkey/*",
+      "implementation": "workers/passkey/src/index.ts",
+      "label": "WebAuthn passkey API — register + auth (Worker)",
+      "note": "Not a static file. Production: zone route pattern p31ca.org/api/passkey/* → Worker p31-passkey (wrangler.toml env.production.routes). Endpoints: POST register-begin, register-finish, auth-begin, auth-finish. Hub static pages use same-origin relative paths (see mesh.passkeyApiBasePath in p31-constants.json). README: workers/passkey/README.md."
+    },
+    "educationProgressApi": {
+      "path": "/api/education/*",
+      "implementation": "workers/passkey/src/index.ts",
+      "label": "Education E3+ progress API — opaque subject key (Worker + D1)",
+      "note": "GET /api/education/progress/:subject_id returns p31.educationProgress/0.1.0; first-touch inserts D1 education_progress row. Same Worker mount as passkey — production route p31ca.org/api/education/*. Static portal: public/education/portal/index.html."
+    },
+    "nodeZeroHardwareApi": {
+      "path": "/api/hardware/*",
+      "implementation": "workers/passkey/src/node-zero.ts (+ src/index.ts router)",
+      "label": "Node Zero Phase 4 — hardware pairing challenge, operator bind, telemetry v0 ack",
+      "note": "POST /api/hardware/challenge (KV hw_pair:+6-digit code), POST /api/hardware/pair (D1 hardware_pairings), POST /api/hardware/telemetry (shape-validated stub). HTTPS only — no MQTT or cloud IoT. Contract docs/NODE-ZERO-FIRMWARE-CONTRACT.md — production zone route p31ca.org/api/hardware/* → p31-passkey."
+    },
+    "latticeOracle": {
+      "path": "/dome#oracle",
+      "implementation": "src/pages/dome.astro",
+      "label": "Lattice Oracle — toy crystallomancy (CSPRNG, client-only)",
+      "note": "Hosted inside /dome Astro route. Short URL /oracle via _redirects → /dome#oracle. Not medical, legal, or financial advice."
+    },
+    "creatorEconomy": {
+      "path": "/creator-economy.json",
+      "implementation": "public/creator-economy.json",
+      "label": "Creator Economy Contract — p31.creatorEconomy/1.0.0",
+      "note": "CI-verified fee/split disclosure. Source: ground-truth/creator-economy.json. Verifier: scripts/verify-creator-economy.mjs. Runs in prebuild. Public endpoint: /creator-economy.json (CORS *). Version 1.0.0 constraints: platform fee = 0, creator share = 1.0, room access free."
+    },
+    "geodesic": {
+      "path": "/geodesic.html",
+      "implementation": "public/geodesic.html",
+      "label": "GEODESIC — 3D structure builder + K₄ live room",
+      "doc": "P31 home docs/GEODESIC-CAMPAIGN.md",
+      "note": "Three.js r160. Static mode: 5-track progressive coach (BONDING-style tutor + tool unlocks, localStorage geodesic:progress:v1; skip=full unlock). ?room=<id> bypasses coach and enables K4 live: wss to GeodesicRoom DO (e.g. geodesic-room.trimtab-signal.workers.dev) for authoritative vertices (v0–v3) plus Phase-1 shared builder shapes (tet/oct/ico/cube) persisted in the DO, Maxwell rigidity summary on /state and in hello, 50-shape cap. Full spec: workspace docs/GEODESIC-CAMPAIGN.md when P31 home tree is present."
+    },
+    "openDocSuite": {
+      "path": "/open-doc-suite.html",
+      "implementation": "public/open-doc-suite.html",
+      "label": "P31 Open Doc Suite (git-native office pack + Forge bridge)",
+      "note": "Source tree: andromeda/docs/corporate. .docx via software/p31-forge. Short path: /doc-suite (redirect)."
+    },
+    "devWorkbench": {
+      "path": "/dev-workbench.html",
+      "implementation": "public/dev-workbench.html",
+      "label": "P31 Dev Workbench — ephemeral mesh reads + edge agent + orchestrator (read)",
+      "note": "Single static page; sessionStorage only; fetches p31-constants mesh URLs + p31-agent-hub + p31-orchestrator. No secrets. Short /dev in _redirects. AGENT_HUB_SECRET blocks browser chat; mesh GETs always work when CORS allows."
+    },
+    "operatorShell": {
+      "path": "/ops/",
+      "implementation": "src/pages/ops/index.astro",
+      "label": "Operator shell — unified interactive frame (CWP-P31-UI-2026-01)",
+      "doc": "p31ca/docs/CONTROLLED-WORK-PACKAGE-INTERACTIVE-OPERATOR-UI.md",
+      "note": "Phase A–C + v1.1.0 closure: hub / nav+banner → /ops/; glass summary; home npm run command-center actions. CWP v1.1.0. Trust: EDGE-SECURITY.md; POST shift on command-center only."
+    },
+    "integrationsBridge": {
+      "path": "/integrations",
+      "implementation": "src/pages/integrations.astro",
+      "label": "OSS smart home, wearables, and operator tool catalog (machine + doc links)",
+      "doc": "docs/P31-INTEGRATIONS-BRIDGE.md",
+      "note": "Data from p31-constants.json integrations; apply:constants → public/p31-integrations.json. No secrets; empty endpoint slots = disabled."
+    },
+    "oqeTwentyLexicon": {
+      "path": "/p31-oqe-twenty.json",
+      "implementation": "public/p31-oqe-twenty.json",
+      "label": "OQE twenty-face lexicon (forensic, not Fate 20)",
+      "note": "Schema p31.oqeTwenty/1.0.0. Short /oqe → oqe-icosa.html in _redirects."
+    },
+    "oqeIcosa": {
+      "path": "/oqe-icosa.html",
+      "implementation": "public/oqe-icosa.html",
+      "label": "OQE Icosa — twenty-face forensic map",
+      "note": "Static HTML; fetches p31-oqe-twenty.json. No CSPRNG. Verifier: scripts/verify-oqe-icosa.mjs. Short /d20 → d20-omnibus-icosa.html in _redirects (Fate 20 vs OQE icosa)."
+    },
+    "quantumClock": {
+      "path": "/quantum-clock.html",
+      "implementation": "public/quantum-clock.html",
+      "label": "Quantum clock — Grandfather / Cuckoo explainer (pedagogy, not metrology)",
+      "registryId": "quantum-clock",
+      "note": "Schema meta p31.quantumClockPage/0.1.0. Short /quantum-clock in _redirects. Hub registry card quantum-clock. See docs/PLAN-QUANTUM-CLOCK.md; verify:quantum-clock links tomography TRIM + grandfather boot to dome-constants."
+    },
+    "p31LabsEducation": {
+      "path": "/education/",
+      "implementation": "public/education/index.html",
+      "label": "P31 Labs Education — curriculum E0–E2 + gated E3+ portal",
+      "note": "Discover, tracks, modules, labs; schemas p31.labsEducation/0.2.0, p31.labsEducationCatalog/0.2.0, p31.labsEducationCurriculum/0.2.0. verify:education in prebuild. E3+ stateful portal: public/education/portal/index.html (requires p31_subject_id; progress GET /api/education/progress/:id Worker+D1). Short /learn, /edu, /education in _redirects."
+    },
+    "poetsLobby": {
+      "path": "/poets.html",
+      "implementation": "public/poets.html",
+      "label": "Poets Room — void, daily quote, shelf, private local writing",
+      "note": "No crew APIs; quotes from public/poets-room-quotes.json; localStorage only for draft/photo. Clean URL /poets served from poets.html — no _redirects row /poets→poets.html (CF Pages 308 ping-pong). Hub registry id poets."
+    },
+    "arcadeHub": {
+      "path": "/arcade",
+      "implementation": "public/arcade/index.html",
+      "label": "P31 Arcade — Four physics games at 10000%",
+      "note": "Arcade hub linking four physics games: Gridiron, Smallball, Strategy, Cards, and Liquid Sculptor. Schema p31.arcadeHub/1.0.0. Short /arcade in _redirects. Live at https://p31-arcade-hub.pages.dev",
+      "registryId": "arcade-hub"
+    },
+    "arcadeSmallball": {
+      "path": "/arcade/smallball",
+      "implementation": "https://p31-smallball.pages.dev",
+      "label": "Smallball — 2.5D baseball simulation with Spoon Theory UX",
+      "note": "Local-first baseball simulation with PGLite database, Markov chain pitching, and AAA graphics. Schema p31.arcadeGame/1.0.0. Live at https://p31-smallball.pages.dev",
+      "registryId": "arcade-smallball"
+    },
+    "arcadeGridiron": {
+      "path": "/arcade/gridiron",
+      "implementation": "https://p31-gridiron.pages.dev",
+      "label": "Gridiron — Strategic football with spoon-based play calling",
+      "note": "American football strategy game with energy management, play calling, and franchise persistence. Schema p31.arcadeGame/1.0.0. Live at https://p31-gridiron.pages.dev",
+      "registryId": "arcade-gridiron"
+    },
+    "arcadeStrategy": {
+      "path": "/arcade/strategy",
+      "implementation": "https://p31-strategy.pages.dev",
+      "label": "Strategy Board — Turn-based tactical strategy",
+      "note": "Turn-based strategy game with unit positioning, resource management, and tactical decision making. Schema p31.arcadeGame/1.0.0. Live at https://p31-strategy.pages.dev",
+      "registryId": "arcade-strategy"
+    },
+    "arcadeCards": {
+      "path": "/arcade/cards",
+      "implementation": "https://p31-cards.pages.dev",
+      "label": "Card Table — Strategic card games",
+      "note": "Strategic card game collection with probability-based decision making and game theory mechanics. Schema p31.arcadeGame/1.0.0. Live at https://p31-cards.pages.dev",
+      "registryId": "arcade-cards"
+    },
+    "arcadeLiquidSculptor": {
+      "path": "/arcade/liquid-sculptor",
+      "implementation": "https://p31-liquid-sculptor.pages.dev",
+      "label": "Liquid Sculptor — Fluid dynamics sandbox",
+      "note": "WebGL-based fluid dynamics simulation with interactive sculpting and physics-based particle systems. Schema p31.arcadeGame/1.0.0. Live at https://p31-liquid-sculptor.pages.dev",
+      "registryId": "arcade-liquid-sculptor"
+    }
+  },
+  "edgeRedirects": [
+    {
+      "from": "/app/ede",
+      "to": "/ops#ede",
+      "status": 302
+    },
+    {
+      "from": "/app/buffer",
+      "to": "/ops#buffer",
+      "status": 302
+    },
+    {
+      "from": "/app/larmor",
+      "to": "/dome#larmor",
+      "status": 302
+    },
+    {
+      "from": "/dome.html",
+      "to": "/dome",
+      "status": 301
+    },
+    {
+      "from": "/legacy-mvp-hub.html",
+      "to": "/",
+      "status": 301
+    },
+    {
+      "from": "/legacy-mvp-hub",
+      "to": "/",
+      "status": 301
+    },
+    {
+      "from": "/integrations",
+      "to": "/integrations/",
+      "status": 301
+    },
+    {
+      "from": "/onboard",
+      "to": "/ops#onboard",
+      "status": 301
+    },
+    {
+      "from": "/launch",
+      "to": "/#launch",
+      "status": 301
+    },
+    {
+      "from": "/together",
+      "to": "/#welcome",
+      "status": 301
+    },
+    {
+      "from": "/start",
+      "to": "/connect#mesh",
+      "status": 301
+    },
+    {
+      "from": "/branding",
+      "to": "/p31-canon-demo",
+      "status": 301
+    },
+    {
+      "from": "/kofi-forge",
+      "to": "/ops#forge",
+      "status": 301
+    },
+    {
+      "from": "/mesh",
+      "to": "/connect",
+      "status": 301
+    },
+    {
+      "from": "/why",
+      "to": "/research#delta",
+      "status": 301
+    },
+    {
+      "from": "/oracle",
+      "to": "/dome#oracle",
+      "status": 301
+    },
+    {
+      "from": "/doc-suite",
+      "to": "/ops#docs",
+      "status": 301
+    },
+    {
+      "from": "/centaur",
+      "to": "/ops#centaur",
+      "status": 301
+    },
+    {
+      "from": "/manifesto",
+      "to": "/phosphorus",
+      "status": 301
+    },
+    {
+      "from": "/code-of-conduct",
+      "to": "/",
+      "status": 301
+    },
+    {
+      "from": "/coc",
+      "to": "/",
+      "status": 301
+    },
+    {
+      "from": "/roadmap",
+      "to": "/research",
+      "status": 301
+    },
+    {
+      "from": "/status",
+      "to": "/god",
+      "status": 301
+    },
+    {
+      "from": "/financials",
+      "to": "/grants",
+      "status": 301
+    },
+    {
+      "from": "/security-policy",
+      "to": "/",
+      "status": 301
+    },
+    {
+      "from": "/telemetry-policy",
+      "to": "/",
+      "status": 301
+    },
+    {
+      "from": "/transparency-report",
+      "to": "/#transparency",
+      "status": 301
+    },
+    {
+      "from": "/vibe",
+      "to": "/god",
+      "status": 301
+    },
+    {
+      "from": "/vibcoding",
+      "to": "/god",
+      "status": 301
+    },
+    {
+      "from": "/super-centaur",
+      "to": "/ops#centaur",
+      "status": 301
+    },
+    {
+      "from": "/cars",
+      "to": "/connect#social",
+      "status": 301
+    },
+    {
+      "from": "/canon",
+      "to": "/p31-canon-demo",
+      "status": 301
+    },
+    {
+      "from": "/tokens",
+      "to": "/p31-canon-demo",
+      "status": 301
+    },
+    {
+      "from": "/dev",
+      "to": "/god",
+      "status": 301
+    },
+    {
+      "from": "/build",
+      "to": "/",
+      "status": 301
+    },
+    {
+      "from": "/hiring",
+      "to": "/ops",
+      "status": 301
+    },
+    {
+      "from": "/messages",
+      "to": "/messaging-hub",
+      "status": 301
+    },
+    {
+      "from": "/comms",
+      "to": "/messaging-hub",
+      "status": 301
+    },
+    {
+      "from": "/contracts",
+      "to": "/ops",
+      "status": 301
+    },
+    {
+      "from": "/composer",
+      "to": "/ops",
+      "status": 301
+    },
+    {
+      "from": "/family-pack",
+      "to": "/connect#family",
+      "status": 301
+    },
+    {
+      "from": "/oss",
+      "to": "/research",
+      "status": 301
+    },
+    {
+      "from": "/security",
+      "to": "/",
+      "status": 301
+    },
+    {
+      "from": "/fleet",
+      "to": "/god",
+      "status": 301
+    },
+    {
+      "from": "/agents",
+      "to": "/ops#agents",
+      "status": 301
+    },
+    {
+      "from": "/demos",
+      "to": "/demo-labs",
+      "status": 301
+    },
+    {
+      "from": "/visuals",
+      "to": "/demo-labs",
+      "status": 301
+    },
+    {
+      "from": "/demos-public",
+      "to": "/demo-labs",
+      "status": 301
+    },
+    {
+      "from": "/glass",
+      "to": "/dome",
+      "status": 301
+    },
+    {
+      "from": "/lab",
+      "to": "/ops",
+      "status": 301
+    },
+    {
+      "from": "/lab2",
+      "to": "/ops",
+      "status": 301
+    },
+    {
+      "from": "/slicer",
+      "to": "/ops",
+      "status": 301
+    },
+    {
+      "from": "/journey",
+      "to": "/research",
+      "status": 301
+    },
+    {
+      "from": "/growth",
+      "to": "/garden#growth",
+      "status": 301
+    },
+    {
+      "from": "/kids",
+      "to": "/garden#kids",
+      "status": 301
+    },
+    {
+      "from": "/oqe",
+      "to": "/dome#d20",
+      "status": 301
+    },
+    {
+      "from": "/d20",
+      "to": "/dome#d20",
+      "status": 301
+    },
+    {
+      "from": "/quantum-clock",
+      "to": "/dome#clock",
+      "status": 301
+    },
+    {
+      "from": "/deck",
+      "to": "/dome#deck",
+      "status": 301
+    },
+    {
+      "from": "/education",
+      "to": "/education/",
+      "status": 301
+    },
+    {
+      "from": "/learn",
+      "to": "/education/",
+      "status": 301
+    },
+    {
+      "from": "/edu",
+      "to": "/education/",
+      "status": 301
+    },
+    {
+      "from": "/donate.html",
+      "to": "/#donate",
+      "status": 301
+    },
+    {
+      "from": "/ecosystem.html",
+      "to": "/#ecosystem",
+      "status": 301
+    },
+    {
+      "from": "/fleet-portal.html",
+      "to": "/#fleet",
+      "status": 301
+    },
+    {
+      "from": "/initial-build.html",
+      "to": "/",
+      "status": 301
+    },
+    {
+      "from": "/launch-readiness.html",
+      "to": "/#launch",
+      "status": 301
+    },
+    {
+      "from": "/launch.html",
+      "to": "/#launch",
+      "status": 301
+    },
+    {
+      "from": "/maintenance.html",
+      "to": "/",
+      "status": 301
+    },
+    {
+      "from": "/transparency.html",
+      "to": "/#transparency",
+      "status": 301
+    },
+    {
+      "from": "/welcome.html",
+      "to": "/#welcome",
+      "status": 301
+    },
+    {
+      "from": "/attractor-sim.html",
+      "to": "/dome#attractor-sim",
+      "status": 301
+    },
+    {
+      "from": "/cockpit.html",
+      "to": "/dome",
+      "status": 301
+    },
+    {
+      "from": "/d20-omnibus-icosa.html",
+      "to": "/dome#d20",
+      "status": 301
+    },
+    {
+      "from": "/fluid.html",
+      "to": "/dome#fluid",
+      "status": 301
+    },
+    {
+      "from": "/geodesic-about.html",
+      "to": "/dome#geodesic",
+      "status": 301
+    },
+    {
+      "from": "/geodesic.html",
+      "to": "/dome#geodesic",
+      "status": 301
+    },
+    {
+      "from": "/glass-box-widget.html",
+      "to": "/dome#glass",
+      "status": 301
+    },
+    {
+      "from": "/glass-box.html",
+      "to": "/dome#glass",
+      "status": 301
+    },
+    {
+      "from": "/larmor.html",
+      "to": "/dome#larmor",
+      "status": 301
+    },
+    {
+      "from": "/lattice.html",
+      "to": "/dome#lattice",
+      "status": 301
+    },
+    {
+      "from": "/looper.html",
+      "to": "/dome#looper",
+      "status": 301
+    },
+    {
+      "from": "/magic-crystal.html",
+      "to": "/dome#oracle",
+      "status": 301
+    },
+    {
+      "from": "/oqe-icosa.html",
+      "to": "/dome#d20",
+      "status": 301
+    },
+    {
+      "from": "/orbits.html",
+      "to": "/dome#orbits",
+      "status": 301
+    },
+    {
+      "from": "/spatial.html",
+      "to": "/dome#spatial",
+      "status": 301
+    },
+    {
+      "from": "/alchemy-about.html",
+      "to": "/research#alchemy",
+      "status": 301
+    },
+    {
+      "from": "/alchemy.html",
+      "to": "/research#alchemy",
+      "status": 301
+    },
+    {
+      "from": "/book-about.html",
+      "to": "/research#book",
+      "status": 301
+    },
+    {
+      "from": "/book.html",
+      "to": "/research#book",
+      "status": 301
+    },
+    {
+      "from": "/delta-language.html",
+      "to": "/research#delta",
+      "status": 301
+    },
+    {
+      "from": "/delta.html",
+      "to": "/research#delta",
+      "status": 301
+    },
+    {
+      "from": "/economy.html",
+      "to": "/research#economy",
+      "status": 301
+    },
+    {
+      "from": "/education-about.html",
+      "to": "/research#education",
+      "status": 301
+    },
+    {
+      "from": "/phos.html",
+      "to": "/research#phos",
+      "status": 301
+    },
+    {
+      "from": "/psych-e2e-live.html",
+      "to": "/research#psych",
+      "status": 301
+    },
+    {
+      "from": "/resonance-about.html",
+      "to": "/research#resonance",
+      "status": 301
+    },
+    {
+      "from": "/resonance-engine.html",
+      "to": "/research#resonance",
+      "status": 301
+    },
+    {
+      "from": "/resonance.html",
+      "to": "/research#resonance",
+      "status": 301
+    },
+    {
+      "from": "/sovereign-about.html",
+      "to": "/research#sovereign",
+      "status": 301
+    },
+    {
+      "from": "/sovereign.html",
+      "to": "/research#sovereign",
+      "status": 301
+    },
+    {
+      "from": "/bonding-about.html",
+      "to": "/connect#bonding",
+      "status": 301
+    },
+    {
+      "from": "/bonding.html",
+      "to": "/connect#bonding",
+      "status": 301
+    },
+    {
+      "from": "/bridge-about.html",
+      "to": "/connect#bridge",
+      "status": 301
+    },
+    {
+      "from": "/bridge.html",
+      "to": "/connect#bridge",
+      "status": 301
+    },
+    {
+      "from": "/connect-about.html",
+      "to": "/connect",
+      "status": 301
+    },
+    {
+      "from": "/connect.html",
+      "to": "/connect",
+      "status": 301
+    },
+    {
+      "from": "/contact.html",
+      "to": "/connect#contact",
+      "status": 301
+    },
+    {
+      "from": "/echo-about.html",
+      "to": "/connect#echo",
+      "status": 301
+    },
+    {
+      "from": "/echo.html",
+      "to": "/connect#echo",
+      "status": 301
+    },
+    {
+      "from": "/family.html",
+      "to": "/connect#family",
+      "status": 301
+    },
+    {
+      "from": "/guardian.html",
+      "to": "/connect#guardian",
+      "status": 301
+    },
+    {
+      "from": "/mesh-start.html",
+      "to": "/connect#mesh",
+      "status": 301
+    },
+    {
+      "from": "/poets-about.html",
+      "to": "/connect#poets",
+      "status": 301
+    },
+    {
+      "from": "/poets.html",
+      "to": "/connect#poets",
+      "status": 301
+    },
+    {
+      "from": "/quantum-family.html",
+      "to": "/connect#family",
+      "status": 301
+    },
+    {
+      "from": "/signal-about.html",
+      "to": "/connect#signal",
+      "status": 301
+    },
+    {
+      "from": "/signal.html",
+      "to": "/connect#signal",
+      "status": 301
+    },
+    {
+      "from": "/social-molecules-about.html",
+      "to": "/connect#social",
+      "status": 301
+    },
+    {
+      "from": "/social-molecules.html",
+      "to": "/connect#social",
+      "status": 301
+    },
+    {
+      "from": "/tactile-about.html",
+      "to": "/connect#tactile",
+      "status": 301
+    },
+    {
+      "from": "/tactile.html",
+      "to": "/connect#tactile",
+      "status": 301
+    },
+    {
+      "from": "/tether-about.html",
+      "to": "/connect#tether",
+      "status": 301
+    },
+    {
+      "from": "/tether.html",
+      "to": "/connect#tether",
+      "status": 301
+    },
+    {
+      "from": "/agents.html",
+      "to": "/ops#agents",
+      "status": 301
+    },
+    {
+      "from": "/appointment-tracker-about.html",
+      "to": "/ops#appointment-tracker",
+      "status": 301
+    },
+    {
+      "from": "/attractor-about.html",
+      "to": "/ops#attractor",
+      "status": 301
+    },
+    {
+      "from": "/attractor.html",
+      "to": "/ops#attractor",
+      "status": 301
+    },
+    {
+      "from": "/axiom-about.html",
+      "to": "/ops#axiom",
+      "status": 301
+    },
+    {
+      "from": "/axiom.html",
+      "to": "/ops#axiom",
+      "status": 301
+    },
+    {
+      "from": "/budget-tracker-about.html",
+      "to": "/ops#budget-tracker",
+      "status": 301
+    },
+    {
+      "from": "/buffer-about.html",
+      "to": "/ops#buffer",
+      "status": 301
+    },
+    {
+      "from": "/buffer.html",
+      "to": "/ops#buffer",
+      "status": 301
+    },
+    {
+      "from": "/builder.html",
+      "to": "/ops#builder",
+      "status": 301
+    },
+    {
+      "from": "/contact-locker-about.html",
+      "to": "/ops#contact-locker",
+      "status": 301
+    },
+    {
+      "from": "/content-forge-about.html",
+      "to": "/ops#content-forge",
+      "status": 301
+    },
+    {
+      "from": "/content-forge.html",
+      "to": "/ops#content-forge",
+      "status": 301
+    },
+    {
+      "from": "/cortex-about.html",
+      "to": "/ops#cortex",
+      "status": 301
+    },
+    {
+      "from": "/cortex.html",
+      "to": "/ops#cortex",
+      "status": 301
+    },
+    {
+      "from": "/discord-bot-about.html",
+      "to": "/ops#discord",
+      "status": 301
+    },
+    {
+      "from": "/discord-bot.html",
+      "to": "/ops#discord",
+      "status": 301
+    },
+    {
+      "from": "/ede-about.html",
+      "to": "/ops#ede",
+      "status": 301
+    },
+    {
+      "from": "/ede.html",
+      "to": "/ops#ede",
+      "status": 301
+    },
+    {
+      "from": "/editor.html",
+      "to": "/ops#editor",
+      "status": 301
+    },
+    {
+      "from": "/fleet-agents.html",
+      "to": "/ops#agents",
+      "status": 301
+    },
+    {
+      "from": "/forge-about.html",
+      "to": "/ops#forge",
+      "status": 301
+    },
+    {
+      "from": "/forge.html",
+      "to": "/ops#forge",
+      "status": 301
+    },
+    {
+      "from": "/integrations-about.html",
+      "to": "/ops#integrations",
+      "status": 301
+    },
+    {
+      "from": "/legal-evidence-about.html",
+      "to": "/ops#legal-evidence",
+      "status": 301
+    },
+    {
+      "from": "/medical-tracker-about.html",
+      "to": "/ops#medical-tracker",
+      "status": 301
+    },
+    {
+      "from": "/observatory.html",
+      "to": "/ops#observatory",
+      "status": 301
+    },
+    {
+      "from": "/open-doc-suite.html",
+      "to": "/ops#docs",
+      "status": 301
+    },
+    {
+      "from": "/p31-super-centaur-starter.html",
+      "to": "/ops#centaur",
+      "status": 301
+    },
+    {
+      "from": "/planetary-onboard-about.html",
+      "to": "/ops#onboard",
+      "status": 301
+    },
+    {
+      "from": "/planetary-onboard.html",
+      "to": "/ops#onboard",
+      "status": 301
+    },
+    {
+      "from": "/prism-about.html",
+      "to": "/ops#prism",
+      "status": 301
+    },
+    {
+      "from": "/prism.html",
+      "to": "/ops#prism",
+      "status": 301
+    },
+    {
+      "from": "/sleep-tracker-about.html",
+      "to": "/ops#sleep-tracker",
+      "status": 301
+    },
+    {
+      "from": "/somatic-anchor-about.html",
+      "to": "/ops#somatic",
+      "status": 301
+    },
+    {
+      "from": "/style-generator.html",
+      "to": "/ops#style",
+      "status": 301
+    },
+    {
+      "from": "/super-centaur-about.html",
+      "to": "/ops#centaur",
+      "status": 301
+    },
+    {
+      "from": "/switches.html",
+      "to": "/ops#switches",
+      "status": 301
+    },
+    {
+      "from": "/theme-showcase.html",
+      "to": "/ops#theme",
+      "status": 301
+    },
+    {
+      "from": "/vault.html",
+      "to": "/ops#vault",
+      "status": 301
+    },
+    {
+      "from": "/cogpass-bridge.html",
+      "to": "/passport#bridge",
+      "status": 301
+    },
+    {
+      "from": "/passport-generator.html",
+      "to": "/passport",
+      "status": 301
+    },
+    {
+      "from": "/ops/",
+      "to": "/god",
+      "status": 301
+    },
+    {
+      "from": "/appointment-tracker",
+      "to": "https://p31-appointment-tracker.trimtab-signal.workers.dev",
+      "status": 302
+    },
+    {
+      "from": "/love-ledger",
+      "to": "https://p31-love-ledger.trimtab-signal.workers.dev",
+      "status": 302
+    },
+    {
+      "from": "/medical-tracker",
+      "to": "https://p31-medical-tracker.trimtab-signal.workers.dev",
+      "status": 302
+    },
+    {
+      "from": "/somatic-anchor",
+      "to": "https://p31-somatic-anchor.trimtab-signal.workers.dev",
+      "status": 302
+    },
+    {
+      "from": "/legal-evidence",
+      "to": "https://p31-legal-evidence.trimtab-signal.workers.dev",
+      "status": 302
+    },
+    {
+      "from": "/contact-locker",
+      "to": "https://p31-contact-locker.trimtab-signal.workers.dev",
+      "status": 302
+    },
+    {
+      "from": "/sleep-tracker",
+      "to": "https://p31-sleep-tracker.trimtab-signal.workers.dev",
+      "status": 302
+    },
+    {
+      "from": "/budget-tracker",
+      "to": "https://p31-budget-tracker.trimtab-signal.workers.dev",
+      "status": 302
+    },
+    {
+      "from": "/genesis-gate",
+      "to": "https://genesis-gate.trimtab-signal.workers.dev",
+      "status": 302
+    },
+    {
+      "from": "/spaceship-earth.html",
+      "to": "/spaceship-earth/",
+      "status": 301
+    },
+    {
+      "from": "/spaceship-earth-about.html",
+      "to": "/spaceship-earth/",
+      "status": 301
+    },
+    {
+      "from": "/node-zero-about.html",
+      "to": "/node-zero",
+      "status": 301
+    }
+  ],
+  "fileSnippets": [
+    {
+      "id": "p31-style-void-token",
+      "path": "public/p31-style.css",
+      "mustIncludeSubstring": "--p31-void:"
+    },
+    {
+      "id": "dome.noscriptBackToHub",
+      "path": "src/pages/dome.astro",
+      "mustIncludeSubstring": "<a href=\"/\" class=\"px-6 py-3 bg-white/20"
+    },
+    {
+      "id": "_devWorkbench.archived",
+      "path": "public/archive/2025-early/dev-workbench.html",
+      "mustIncludeSubstring": "P31 Dev Workbench",
+      "note": "ARCHIVED 2026-05-03 — moved to archive"
+    },
+    {
+      "id": "_visionJourney.archived",
+      "path": "public/archive/2025-early/vision.html",
+      "mustIncludeSubstring": "Core mesh journey",
+      "note": "ARCHIVED 2026-05-03"
+    },
+    {
+      "id": "_kidsGrowth.archived",
+      "path": "public/archive/2025-early/kids-growth.html",
+      "mustIncludeSubstring": "p31.kidsGrowth/1.0.0",
+      "note": "ARCHIVED 2026-05-03"
+    },
+    {
+      "id": "_kidsHome.archived",
+      "path": "public/archive/2025-early/kids-home.html",
+      "mustIncludeSubstring": "p31.householdKidsHome/0.1.0",
+      "note": "ARCHIVED 2026-05-03"
+    },
+    {
+      "id": "_quantumClock.archived",
+      "path": "public/archive/2025-early/quantum-clock.html",
+      "mustIncludeSubstring": "p31.quantumClockPage/0.1.0",
+      "note": "ARCHIVED 2026-05-03"
+    },
+    {
+      "id": "_quantumDeck.archived",
+      "path": "public/archive/2025-early/quantum-deck.html",
+      "mustIncludeSubstring": "p31.quantumDeckPage/0.1.0",
+      "note": "ARCHIVED 2026-05-03 — concept status, not live"
+    },
+    {
+      "id": "subjectIdDerivation.lib",
+      "path": "public/lib/p31-subject-id.js",
+      "mustIncludeSubstring": "p31.subjectIdDerivation/0.1.0"
+    },
+    {
+      "id": "initialBuild.bakeModule",
+      "path": "public/lib/p31-initial-build-bake.js",
+      "mustIncludeSubstring": "p31.buildRecord/0.1.0"
+    },
+    {
+      "id": "_p31DeltaHiring.archived",
+      "path": "public/archive/2025-early/delta-hiring/index.html",
+      "mustIncludeSubstring": "P31 Delta · Proof-based hiring",
+      "note": "ARCHIVED 2026-05-03 — moved to archive"
+    },
+    {
+      "id": "_messagingHub.archived",
+      "path": "public/archive/2025-early/messaging-hub.html",
+      "mustIncludeSubstring": "p31.messagingHub/0.1.0",
+      "note": "ARCHIVED 2026-05-03 — moved to archive"
+    },
+    {
+      "id": "publicSurface.manifest",
+      "path": "public/p31-public-surface.json",
+      "mustIncludeSubstring": "p31.publicSurface/1.0.0"
+    },
+    {
+      "id": "publicSurface.ecosystemIntegration",
+      "path": "public/p31-public-surface.json",
+      "mustIncludeSubstring": "ecosystemIntegration"
+    },
+    {
+      "id": "publicSurface.messagingHub",
+      "path": "public/p31-public-surface.json",
+      "mustIncludeSubstring": "\"messagingHub\""
+    },
+    {
+      "id": "meshConstants.publicMirror",
+      "path": "public/p31-mesh-constants.json",
+      "mustIncludeSubstring": "passkeyApiBasePath"
+    },
+    {
+      "id": "passkeyApiBase.lib",
+      "path": "public/lib/p31-passkey-api-base.js",
+      "mustIncludeSubstring": "p31GetPasskeyApiBase"
+    },
+    {
+      "id": "liveFleet.bundle",
+      "path": "public/p31-live-fleet.json",
+      "mustIncludeSubstring": "p31.liveFleet/1.0.0"
+    },
+    {
+      "id": "_liveFleetDemo.archived",
+      "path": "public/archive/2025-early/live-fleet-demo.html",
+      "mustIncludeSubstring": "p31-live-fleet.json",
+      "note": "ARCHIVED 2026-05-03 — moved to archive"
+    },
+    {
+      "id": "fleet.entities.bundle",
+      "path": "public/p31-fleet-entities.json",
+      "mustIncludeSubstring": "p31.fleetEntities/1.0.0"
+    },
+    {
+      "id": "_demoLabs.archived",
+      "path": "public/archive/2025-early/demo-labs.html",
+      "mustIncludeSubstring": "Welcome to the demo lobby",
+      "note": "ARCHIVED 2026-05-03 — moved to archive"
+    },
+    {
+      "id": "meshObservatory.page",
+      "path": "src/pages/mesh-observatory.astro",
+      "mustIncludeSubstring": "p31.mesh.snapshot/1.0.0"
+    },
+    {
+      "id": "meshObservatory.mirror",
+      "path": "src/pages/mesh-observatory.astro",
+      "mustIncludeSubstring": "p31.mirror/0.1.0"
+    },
+    {
+      "id": "meshObservatory.physics",
+      "path": "src/pages/mesh-observatory.astro",
+      "mustIncludeSubstring": "p31.meshPhysics/0.1.0"
+    },
+    {
+      "id": "p31Labs.educationIndex",
+      "path": "public/education/index.html",
+      "mustIncludeSubstring": "p31.labsEducation/0.2.0"
+    },
+    {
+      "id": "p31Labs.educationCurriculum",
+      "path": "public/education/curriculum.json",
+      "mustIncludeSubstring": "p31.labsEducationCurriculum/0.2.0"
+    }
+  ],
+  "registryAppUrlInvariants": [
+    {
+      "id": "ede",
+      "appUrl": "/ops#ede"
+    },
+    {
+      "id": "sovereign",
+      "appUrl": "/research#sovereign"
+    },
+    {
+      "id": "quantum-clock",
+      "appUrl": "quantum-clock.html"
+    },
+    {
+      "id": "super-centaur",
+      "appUrl": "/ops#centaur"
+    },
+    {
+      "id": "integrations",
+      "appUrl": "/integrations/"
+    },
+    {
+      "id": "education",
+      "appUrl": "/education/"
+    },
+    {
+      "id": "poets",
+      "appUrl": "/connect#poets"
+    },
+    {
+      "id": "social-molecules",
+      "appUrl": "/connect#social"
+    }
+  ],
+  "busBar": {
+    "schema": "p31.busBar/1.0.0",
+    "label": "Bus bar — unified personalization + navigation contract",
+    "doctrine": "Nine MVPs around one operator. K₄ topology applied to UX: every product binds to the same nervous system (CogPass + PHOS + theme engine + BaseLayout) instead of running parallel onboarding, parallel style, parallel state. The bus bar is the consolidation that lets PHOS speak with one voice across every surface.",
+    "doctrineSource": "docs/PHOS-VOICE-DRAFT.md §3.3 — 9 calcium = 9 MVPs",
+    "roles": {
+      "stranger": {
+        "label": "Stranger",
+        "description": "No CogPass loaded. Default state. Sees only the front door and the public products. PHOS uses warm register.",
+        "isDefault": true,
+        "cogPassLoaded": false
+      },
+      "user": {
+        "label": "User",
+        "description": "CogPass loaded with accessLevel=user (default). Personalized experience. Sees the lab and design system.",
+        "cogPassLoaded": true,
+        "cogPassAccessLevel": "user"
+      },
+      "operator": {
+        "label": "Operator",
+        "description": "CogPass loaded with accessLevel=operator. Sees operations surfaces (ops, ede, buffer, glass-box). Self-attestation only — true operator-only systems still gate via Ed25519.",
+        "cogPassLoaded": true,
+        "cogPassAccessLevel": "operator"
+      }
+    },
+    "slots": {
+      "welcome": {
+        "label": "Welcome",
+        "href": "/welcome",
+        "phosVoiceKey": "/welcome",
+        "description": "Front door. PHOS greets and offers the next step. Fast load, no jargon, ≤200 words first paint.",
+        "wcd": "WCD-PHOS-2026-01 C-2"
+      },
+      "passport": {
+        "label": "Your card",
+        "href": "/passport/",
+        "phosVoiceKey": "/passport/",
+        "description": "CogPass v1.1.0 generator + saved profile. Source: cognitive-passport/index.html (home root).",
+        "wcd": "WCD-PHOS-2026-01 C-4"
+      },
+      "bonding": {
+        "label": "BONDING",
+        "href": "https://bonding.p31ca.org",
+        "external": true,
+        "description": "Chemistry game bridging distance between parents and children. Separate origin (Vite+React+R3F). CogPass crosses via the postMessage iframe bridge at /cogpass-bridge.html (CWP-BUS4-COGPASS-BRIDGE-2026-05). The previous URL param bridge plan was rejected for privacy reasons; see the spec §4 strategy comparison."
+      },
+      "lab": {
+        "label": "Lab",
+        "href": "/lab",
+        "phosVoiceKey": "/lab",
+        "description": "Full product catalog. Currently the hub home page (/); rename pending route migration in WCD-PHOS-2026-01 BUS3."
+      },
+      "research": {
+        "label": "Research",
+        "href": "/research",
+        "phosVoiceKey": "/research",
+        "description": "22 open-access papers, filterable. Consolidation of Zenodo entries.",
+        "wcd": "WCD-PHOS-2026-01 BUS3"
+      },
+      "support": {
+        "label": "Support",
+        "href": "/support",
+        "phosVoiceKey": "/support",
+        "description": "Ko-fi + Stripe. 0% platform fees, accurate 501c3-pending language matching terms.html §5.",
+        "wcd": "WCD-PHOS-2026-01 C-3"
+      },
+      "stylebook": {
+        "label": "Stylebook",
+        "href": "/stylebook/",
+        "phosVoiceKey": "/stylebook/",
+        "description": "Design system reference. From the in-flight stylebook agent's work."
+      },
+      "ops": {
+        "label": "Ops",
+        "href": "/ops/",
+        "phosVoiceKey": "/ops/",
+        "description": "Operator dashboard. Wraps command-center + EPCP data. CWP-P31-UI-2026-01."
+      },
+      "ede": {
+        "label": "EDE",
+        "href": "/ede.html",
+        "phosVoiceKey": "/ede.html",
+        "description": "Everything Development Environment. Operator IDE."
+      },
+      "buffer": {
+        "label": "Buffer",
+        "href": "/buffer",
+        "phosVoiceKey": "/buffer",
+        "description": "Communications processing. ~85% complete; reads CogPass communication.preferredTone + avoidList on load."
+      },
+      "glass-box": {
+        "label": "Glass box",
+        "href": "/glass-box.html",
+        "phosVoiceKey": "/glass-box.html",
+        "description": "Public transparency dashboard. Visible to operator role in nav for one-click access; remains publicly reachable for everyone."
+      }
+    },
+    "navByRole": {
+      "_comment": "Slot IDs in the order they render in BaseLayout nav. Stranger sees 5; user sees 7; operator sees 11. WCD-PHOS-2026-01 BUS2 implements the rendering.",
+      "stranger": [
+        "welcome",
+        "passport",
+        "bonding",
+        "research",
+        "support"
+      ],
+      "user": [
+        "welcome",
+        "passport",
+        "bonding",
+        "lab",
+        "research",
+        "stylebook",
+        "support"
+      ],
+      "operator": [
+        "welcome",
+        "passport",
+        "bonding",
+        "lab",
+        "research",
+        "stylebook",
+        "support",
+        "ops",
+        "ede",
+        "buffer",
+        "glass-box"
+      ]
+    },
+    "productSlots": {
+      "_comment": "Maps registry product IDs (from registryAppUrlInvariants + scripts/hub/registry.mjs) to the bus bar slot that contains them. Seed list — extend as products are reviewed for bus bar membership. WCD-PHOS-2026-01 BUS3 completes the map.",
+      "bonding": "bonding",
+      "spaceship-earth": "lab",
+      "ede": "ede",
+      "buffer": "buffer",
+      "cortex": "ops",
+      "sovereign": "ops",
+      "k4market": "lab",
+      "tomography": "lab",
+      "geodesic": "lab",
+      "observatory": "lab",
+      "quantum-deck": "lab",
+      "quantum-clock": "research",
+      "super-centaur": "lab",
+      "social-molecules": "lab",
+      "poets": "lab",
+      "education": "lab",
+      "integrations": "lab",
+      "p31-delta-hiring": "lab",
+      "canon-demo": "stylebook",
+      "alchemy": "lab",
+      "attractor": "lab",
+      "axiom": "lab",
+      "book": "lab"
+    },
+    "crossOriginBridge": {
+      "schema": "p31.cogPassBridge/1.0.0",
+      "label": "Cross-origin Cognitive Passport bridge",
+      "doctrine": "The bus bar promise — one CogPass, all surfaces — works inside p31ca.org because localStorage is shared at the same origin. It breaks at bonding.p31ca.org (and any future cross-origin P31 surface) because localStorage is origin-scoped. The bridge solves this without a server, without a cookie, and without copying the JSON across origins: a postMessage iframe loaded from p31ca.org reads the passport in its own origin and replies to allowlisted parents only. See docs/CWP-BUS4-COGPASS-BRIDGE-2026-05.md.",
+      "doctrineSource": "docs/CWP-BUS4-COGPASS-BRIDGE-2026-05.md",
+      "endpoint": {
+        "host": "p31ca.org",
+        "path": "/cogpass-bridge.html",
+        "url": "https://p31ca.org/cogpass-bridge.html",
+        "file": "andromeda/software/p31ca/public/cogpass-bridge.html"
+      },
+      "schemaFile": "andromeda/software/p31ca/ground-truth/cogpass-bridge.schema.json",
+      "singleRule": "The bridge HTML imports normalize() from /lib/p31-cogpass-reader.mjs. It does NOT reimplement normalization. Locked by scripts/verify-cogpass-bridge.mjs.",
+      "allowedOrigins": [
+        "https://bonding.p31ca.org"
+      ],
+      "allowedOriginsPolicy": "Hardcoded in this file AND in cogpass-bridge.html ALLOWED_ORIGINS Set. verify:cogpass-bridge enforces the two lists are identical — drift fails CI. New origins require: (1) operator approval logged in the commit message, (2) privacy policy update naming the partner, (3) verify:cogpass-bridge green. No runtime config; no wildcards.",
+      "rolloutPhase": 1,
+      "rolloutPhaseLabel": "Phase 1 of 5: bridge HTML + schema + ground-truth + privacy disclosure shipped. No consumer wired yet (Phase 3). See spec §12 for phase gates."
+    },
+    "constraints": {
+      "maxProducts": 9,
+      "maxProductsRationale": "Nine calcium atoms per Posner molecule (Ca₉(PO₄)₆). The cage is complete at 9. A 10th MVP would break the symmetry and require an explicit cage-expansion CWP that re-derives the geometry. See docs/PHOS-VOICE-DRAFT.md §3.3.",
+      "constraintEnforcedAt": "Architectural review. Future CI gate: verify:bus-bar (planned) audits scripts/hub/hub-app-ids.mjs against this constraint."
+    },
+    "phos": {
+      "absorbsThemeSwitcher": true,
+      "absorbsThemeSwitcherRationale": "PHOS becomes the single personalization affordance — greeting + hint + theme controls + 'create your context card' link. The theme engine stays the engine; PHOS is its face. Resolves the position collision (both wanted bottom-right). See docs/PHOS-VOICE-DRAFT.md §1 and andromeda/software/p31ca/public/lib/p31-theme-switcher.mjs (to be unified into PHOS guide component in WCD-PHOS-2026-01 C-1).",
+      "panelPosition": "bottom-right",
+      "collapsedSize": "48px",
+      "alwaysAvailable": true,
+      "voiceSource": "docs/PHOS-VOICE-DRAFT.md (operator hand) → andromeda/software/p31ca/public/lib/p31-phos-voice.json (mirror, planned)"
+    },
+    "verify": "npm run verify:bus-bar (planned) — checks that productSlots covers all registry IDs, navByRole references only declared slots, and product count ≤ constraints.maxProducts. Until that script lands, validate manually: every key in productSlots must exist in registryAppUrlInvariants OR be flagged as 'subdomain-only' (e.g. bonding); every value in productSlots must be a key in slots; every entry in navByRole must be a key in slots."
+  },
+   "threejs": {
+     "geodesic-math.astro": {
+       "path": "src/pages/geodesic-math.astro",
+       "mustIncludeSubstring": "three@0.170.0"
+     },
+     "mesh-observatory.astro": {
+       "path": "src/pages/mesh-observatory.astro",
+       "mustIncludeSubstring": "three@0.170.0"
+     }
+   }
+}

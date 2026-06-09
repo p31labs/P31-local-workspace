@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nonprofit operations scaffold · P31 Stylebook</title>
+  <meta name="description" content="The complete operations layer for P31 Labs, Inc. — 9 canonical contracts, 6 runbooks, 5 automation commands.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/p31-style.css">
+  <link rel="stylesheet" href="/lib/p31-fluid.css">
+  <link rel="stylesheet" href="/stylebook/_chrome.css">
+  <style>
+    .contract-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 12px;
+    }
+    .contract {
+      padding: 18px;
+      background: var(--p31-surface);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .contract-name {
+      font-family: var(--p31-font-mono);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--p31-paper);
+    }
+    .contract-schema {
+      font-family: var(--p31-font-mono);
+      font-size: 10px;
+      color: var(--p31-cyan);
+      letter-spacing: 0.04em;
+    }
+    .contract-desc {
+      font-size: 13px;
+      color: var(--p31-cloud);
+      line-height: 1.5;
+    }
+    .contract-stats {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      font-family: var(--p31-font-mono);
+      font-size: 11px;
+      color: var(--p31-muted);
+      padding-top: 8px;
+      border-top: 1px solid var(--p31-border-subtle);
+      margin-top: auto;
+    }
+    .contract-stat {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    
+    .gap-card {
+      padding: 14px 16px;
+      background: var(--p31-surface);
+      border: 1px solid var(--p31-border-subtle);
+      border-left: 3px solid var(--p31-coral);
+      border-radius: 8px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .gap-card.warn { border-left-color: var(--p31-amber); }
+    .gap-card.ok { border-left-color: var(--p31-phosphor); }
+    .gap-id {
+      font-family: var(--p31-font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--p31-coral);
+      flex-shrink: 0;
+      width: 32px;
+    }
+    .gap-card.warn .gap-id { color: var(--p31-amber); }
+    .gap-card.ok .gap-id { color: var(--p31-phosphor); }
+    .gap-content { flex: 1; }
+    .gap-title {
+      font-weight: 600;
+      color: var(--p31-paper);
+      font-size: 14px;
+    }
+    .gap-detail {
+      font-size: 12px;
+      color: var(--p31-cloud);
+      margin-top: 4px;
+      line-height: 1.5;
+    }
+    
+    .terminal {
+      background: #000;
+      color: #c8e6ce;
+      padding: 16px 20px;
+      border-radius: 10px;
+      font-family: var(--p31-font-mono);
+      font-size: 12px;
+      line-height: 1.6;
+      overflow-x: auto;
+      border: 1px solid #0f1115;
+    }
+    .terminal .prompt { color: var(--p31-coral); }
+    .terminal .header { color: var(--p31-paper); font-weight: 700; }
+    .terminal .dim { color: #666; }
+    .terminal .red { color: #ff6347; }
+    .terminal .yellow { color: #ffd700; }
+    .terminal .green { color: #88ff88; }
+    .terminal .cyan { color: #5ee5e5; }
+    
+    .runbook-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 12px;
+    }
+    .runbook {
+      padding: 16px;
+      background: var(--p31-surface);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: 10px;
+    }
+    .runbook-name {
+      font-weight: 600;
+      color: var(--p31-paper);
+      margin-bottom: 4px;
+    }
+    .runbook-when {
+      font-size: 12px;
+      color: var(--p31-muted);
+      margin-bottom: 8px;
+    }
+    .runbook-link {
+      font-family: var(--p31-font-mono);
+      font-size: 11px;
+      color: var(--p31-cyan);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <script type="module">
+    import { renderShell, code, callout } from '/stylebook/_chrome.js';
+    import { P31ThemeController } from '/lib/p31-theme-engine.mjs';
+    window.p31Theme = new P31ThemeController({ defaultTheme: 'hub' });
+    
+    const CONTRACTS = [
+      { name: 'governance.json', schema: 'p31.nonprofit.governance/1.0.0', desc: 'Board, officers, COI, meetings, document retention, succession.', stats: ['1 founder', '4 vacant seats', '6 policies'] },
+      { name: 'compliance.json', schema: 'p31.nonprofit.compliance/1.0.0', desc: 'Form 990 schedule, GA annual registration, 39-state charitable solicitation tracker, filing calendar.', stats: ['39 states', '6 deadlines', '$1338 first-yr'] },
+      { name: 'financials.json', schema: 'p31.nonprofit.financials/1.0.0', desc: 'Chart of accounts, expense ratio targets (75/15/10), fund accounting, audit triggers, transparency commitments.', stats: ['75% program', '15% G&A', '10% fundraising'] },
+      { name: 'donor-policy.json', schema: 'p31.nonprofit.donorPolicy/1.0.0', desc: 'Gift acceptance (9 types), recognition tiers (5), refund policy, IRS receipt language, ethical screening.', stats: ['9 accepted types', '6 declined', '30d refund'] },
+      { name: 'programs.json', schema: 'p31.nonprofit.programs/1.0.0', desc: 'Mission, vision, theory of change, 5-program portfolio with KPIs, impact measurement framework.', stats: ['5 programs', '11 KPIs', '6 values'] },
+      { name: 'grants.json', schema: 'p31.nonprofit.grants/1.0.0', desc: '10-stage pipeline, fit criteria, 12 candidate funders, post-award discipline, ethical declines log.', stats: ['12 candidates', '10 stages', '6 templates'] },
+      { name: 'legal.json', schema: 'p31.nonprofit.legal/1.0.0', desc: 'IP licensing (AGPL+CC-BY), 3 trademark filings planned, contract templates, GDPR/CCPA matrix.', stats: ['3 trademarks', '10 contracts', '4 regulations'] },
+      { name: 'risk.json', schema: 'p31.nonprofit.risk/1.0.0', desc: '9-risk register, P0–P3 incident response, business continuity, insurance roadmap.', stats: ['9 risks', '4 P-classes', '4 policies'] },
+      { name: 'people.json', schema: 'p31.nonprofit.people/1.0.0', desc: 'Role classifications, current roster, P0 open positions, onboarding checklists per role type.', stats: ['7 role types', '3 P0 positions', '5 onboardings'] }
+    ];
+    
+    const RUNBOOKS = [
+      { name: 'Board meeting', when: 'Quarterly + annual + special', file: 'docs/runbooks/nonprofit/board-meeting.md' },
+      { name: 'Donor receipt', when: 'New gift, Jan 31 batch, replacements', file: 'docs/runbooks/nonprofit/donor-receipt.md' },
+      { name: 'Grant application', when: 'New funder pursued', file: 'docs/runbooks/nonprofit/grant-application.md' },
+      { name: 'Incident response', when: 'P0–P3 trigger', file: 'docs/runbooks/nonprofit/incident-response.md' },
+      { name: 'Filing calendar', when: 'Monthly review', file: 'docs/runbooks/nonprofit/filing-calendar.md' },
+      { name: 'Onboarding', when: 'New board / staff / contractor', file: 'docs/runbooks/nonprofit/onboarding.md' }
+    ];
+    
+    const contractGrid = CONTRACTS.map(c => `
+      <div class="contract">
+        <div class="contract-name">${c.name}</div>
+        <div class="contract-schema">${c.schema}</div>
+        <div class="contract-desc">${c.desc}</div>
+        <div class="contract-stats">
+          ${c.stats.map(s => `<span class="contract-stat">${s}</span>`).join('')}
+        </div>
+      </div>
+    `).join('');
+    
+    const runbookList = RUNBOOKS.map(r => `
+      <div class="runbook">
+        <div class="runbook-name">${r.name}</div>
+        <div class="runbook-when">${r.when}</div>
+        <code class="runbook-link">${r.file}</code>
+      </div>
+    `).join('');
+    
+    const content = `
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Why this exists</div>
+          <h2 class="sb-h2">Built for the friction we haven't paid yet</h2>
+          <p class="sb-text-lead">
+            P31 Labs intends to scale to a meaningful nonprofit. At meaningful scale, operational friction
+            compounds. This is the scaffolding for that future — built before it's needed,
+            so it's there <em>when</em> it's needed. Better to have it and not need it than the other way around.
+          </p>
+        </div>
+        
+        ${callout('info', 'The mental model', 'Each <strong>contract</strong> is the canonical source of truth for one operational concern. Each <strong>runbook</strong> tells you what to <em>do</em> with the contract. Each <strong>automation</strong> executes the routine work. Edit the JSON; everything else follows.')}
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Nine canonical contracts</div>
+          <h2 class="sb-h2">The operational map</h2>
+          <p class="sb-text">All under <code>andromeda/04_SOFTWARE/p31ca/ground-truth/nonprofit/</code>.
+          Each governs one concern. None overlap. The verifier enforces cross-contract consistency.</p>
+        </div>
+        
+        <div class="contract-grid">${contractGrid}</div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Live status (run it)</div>
+          <h2 class="sb-h2">One screen, every gap</h2>
+          <p class="sb-text"><code>npm run nonprofit:status</code> — produces this dashboard from
+          the canonical contracts. No external services. No SaaS tools. Just JSON + Node.</p>
+        </div>
+        
+        <div class="terminal"><span class="header">  P31 Labs, Inc. · Operations Status</span>
+<span class="dim">  P31 Labs, Inc. · EIN 42-1888158
+  fiscal year 12-31 · 2026-05-01</span>
+
+<span class="cyan">  ENTITY</span>
+    State of incorporation:  GA
+    Incorporation date:      2026-04-03
+    IRS 501(c)(3) status:    <span class="yellow">pending</span>
+
+<span class="cyan">  CRITICAL GAPS</span> <span class="dim">(P0 blockers)</span>
+    <span class="red">✗</span> Board: 1 of 3 minimum seated
+    <span class="red">✗</span> Officers vacant: Secretary, Treasurer
+    <span class="red">✗</span> Form 1023 not yet filed
+    <span class="red">✗</span> Primary bank account: not-yet-opened
+    <span class="yellow">◯</span> Board policies pending adoption: 5
+    <span class="yellow">◯</span> Insurance pending: directors-and-officers
+
+<span class="cyan">  PROGRAMS</span>
+    cognitive-passport            <span class="green">shipping (v5.1)</span>       25% staff time
+    k4-mesh                       <span class="yellow">alpha</span>                 30% staff time
+    doc-library                   <span class="green">shipping</span>               10% staff time
+    operator-advocacy             active                25% staff time
+    youth-vibe-coding             <span class="yellow">alpha</span>                 10% staff time
+
+<span class="cyan">  TOP RISKS</span> <span class="dim">(by impact)</span>
+    R-001  Founder medical incapacitation        <span class="yellow">partial</span>
+    R-002  Cloudflare free-tier policy change    <span class="green">good</span>
+    R-004  Donor data breach                     <span class="green">good</span>
+    R-005  Mission drift toward enterprise SaaS  <span class="green">structurally good</span>
+    R-006  Single major donor dependency         <span class="green">pre-empted</span>
+
+<span class="cyan">  STATE REGISTRATIONS</span>
+    Required:    <span class="dim">39 states</span>
+    Registered:  <span class="red">0</span>
+    Pending est. first-year fees: <span class="dim">$1338</span></div>
+        
+        ${callout('info', 'No external services', 'This dashboard is generated from local JSON files. No QuickBooks, no Salesforce, no Bonterra, no Bloomerang. Edge-friendly and zero-budget by design — same as the rest of P31.')}
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Critical-path gaps right now</div>
+          <h2 class="sb-h2">In dependency order</h2>
+          <p class="sb-text">Each gap blocks the next one. Address them in order; don't try to parallelize.</p>
+        </div>
+        
+        <div class="gap-card">
+          <div class="gap-id">1</div>
+          <div class="gap-content">
+            <div class="gap-title">Vice-Chair seat</div>
+            <div class="gap-detail">Blocks succession plan activation, IRS application narrative, first board meeting quorum. Highest-priority recruitment.</div>
+          </div>
+        </div>
+        
+        <div class="gap-card">
+          <div class="gap-id">2</div>
+          <div class="gap-content">
+            <div class="gap-title">Treasurer + Secretary seats</div>
+            <div class="gap-detail">Required by GA code + bylaws. Blocks: bank account (most banks require 3 separate officers), board minutes legitimacy, donation deposits.</div>
+          </div>
+        </div>
+        
+        <div class="gap-card">
+          <div class="gap-id">3</div>
+          <div class="gap-content">
+            <div class="gap-title">Banking</div>
+            <div class="gap-detail">HCB unresponsive; needs alternative path. Without an account, no Stripe verification, no donations, no expense reimbursements.</div>
+          </div>
+        </div>
+        
+        <div class="gap-card">
+          <div class="gap-id">4</div>
+          <div class="gap-content">
+            <div class="gap-title">Form 1023 filing</div>
+            <div class="gap-detail">Without 501(c)(3) determination, donor deductibility is conditional. Application requires programs.json narrative + governance.json structure (both ready). $600 user fee.</div>
+          </div>
+        </div>
+        
+        <div class="gap-card warn">
+          <div class="gap-id">5</div>
+          <div class="gap-content">
+            <div class="gap-title">GA charitable solicitation registration</div>
+            <div class="gap-detail">Required before any GA donation. $35 fee. Must register before soliciting from GA residents (operator's home state).</div>
+          </div>
+        </div>
+        
+        <div class="gap-card warn">
+          <div class="gap-id">6</div>
+          <div class="gap-content">
+            <div class="gap-title">D&O insurance</div>
+            <div class="gap-detail">Required before any non-founder board member is seated. Estimated $800/year for $1M coverage. Hiscox, The Hartford, USLI are vendors to evaluate.</div>
+          </div>
+        </div>
+        
+        <div class="gap-card warn">
+          <div class="gap-id">7</div>
+          <div class="gap-content">
+            <div class="gap-title">Five board-policy adoptions pending</div>
+            <div class="gap-detail">whistleblower, document-retention, gift-acceptance, executive-compensation-review, code-of-ethics. All drafted in canon; need formal board adoption at first quorate meeting.</div>
+          </div>
+        </div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Six runbooks</div>
+          <h2 class="sb-h2">What to do, in order</h2>
+          <p class="sb-text">Each runbook assumes operator spoon-deficit: terminal-readable,
+          copy-paste commands, no tribal knowledge required.</p>
+        </div>
+        
+        <div class="runbook-list">${runbookList}</div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Five automation commands</div>
+          <h2 class="sb-h2">Routine work, mechanically</h2>
+        </div>
+        
+        ${code(`# One-screen ops dashboard — entity, gaps, deadlines, programs, grants, risks
+npm run nonprofit:status
+
+# Filing calendar — upcoming federal + state deadlines, sorted by urgency
+npm run nonprofit:calendar
+npm run nonprofit:calendar -- --window 90    # only next 90 days
+npm run nonprofit:calendar -- --all          # full history
+
+# Tax-deductible donation receipt
+npm run nonprofit:receipt -- \\
+  --donor "Jane Doe" \\
+  --email "jane@example.com" \\
+  --amount 100 \\
+  --date 2026-05-01 \\
+  --method check \\
+  --fund unrestricted \\
+  --out receipts/2026/jane-doe.html
+
+# Annual impact report skeleton (assembled from canon)
+npm run nonprofit:report -- --year 2026 --out reports/annual-2026.md
+
+# Verifier — schema shape + cross-contract references
+# (also runs as part of npm run verify)
+npm run verify:nonprofit`, 'shell', 'Automation commands')}
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">What the verifier catches</div>
+          <h2 class="sb-h2">Cross-contract guards</h2>
+        </div>
+        
+        <table class="sb-table">
+          <thead><tr><th>Check</th><th>Why</th></tr></thead>
+          <tbody>
+            <tr><td>EIN matches across all contracts</td><td>One typo in donor-policy.json invalidates every receipt</td></tr>
+            <tr><td>Officer person IDs exist in board roster</td><td>Can't be Treasurer if you're not seated</td></tr>
+            <tr><td>President ≠ Secretary, President ≠ Treasurer</td><td>Separation-of-duties is a GA code requirement</td></tr>
+            <tr><td>State codes are real US states</td><td>Typo "GAA" instead of "GA" silently breaks tracker</td></tr>
+            <tr><td>Filing dates are valid YYYY-MM-DD</td><td>Calendar generation depends on parseable dates</td></tr>
+            <tr><td>Past deadlines must be marked filed</td><td>Surfaces missed filings as warnings</td></tr>
+            <tr><td>Risk IDs unique and match R-NNN format</td><td>Cross-references in incident-response runbook stay sound</td></tr>
+            <tr><td>Every risk has mitigation entries</td><td>A risk without mitigation is just panic</td></tr>
+            <tr><td>Expense ratios within Charity Navigator bands</td><td>≥65% program; ≤15% fundraising; ≤20% G&A</td></tr>
+            <tr><td>Donor list privacy commitments unchanged</td><td>Drift here erodes trust silently; verifier blocks</td></tr>
+          </tbody>
+        </table>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Mission lock</div>
+          <h2 class="sb-h2">Structurally biased against drift</h2>
+        </div>
+        
+        <table class="sb-table">
+          <thead><tr><th>Pressure</th><th>Mechanism</th></tr></thead>
+          <tbody>
+            <tr><td>"Let's pivot to enterprise SaaS"</td><td>AGPL licensing makes extraction without contribution-back economically unattractive</td></tr>
+            <tr><td>"Take the big check from this misaligned donor"</td><td>donor-policy.json ethicalScreening enforces decline by independent board majority</td></tr>
+            <tr><td>"Just collect a little user analytics"</td><td>donor-policy.json + legal.json privacy commitments locked; verifier blocks regression</td></tr>
+            <tr><td>"Quietly drop this difficult program"</td><td>programs.json is canonical; mission changes require board supermajority + 60-day public-comment period</td></tr>
+            <tr><td>"Skip the 990 this year, no one will notice"</td><td>Filing calendar surfaces overdue items; 3 years of non-filing automatically revokes 501(c)(3)</td></tr>
+            <tr><td>"Pay the founder a six-figure salary"</td><td>governance.json executive-compensation-review policy + IRS reasonableness test + Form 990 Schedule J transparency</td></tr>
+          </tbody>
+        </table>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Cross-system coupling</div>
+          <h2 class="sb-h2">How this fits with the rest of P31</h2>
+        </div>
+        
+        <table class="sb-table">
+          <thead><tr><th>P31 system</th><th>Coupling</th></tr></thead>
+          <tbody>
+            <tr><td>Engineering ship bar (<code>npm run verify</code>)</td><td>Runs <code>verify:nonprofit</code> alongside <code>verify:alignment</code>; blocks ship on schema drift</td></tr>
+            <tr><td>Stylebook</td><td>Public-facing surfaces (/governance/, /financials/, /impact/) inherit stylebook tokens</td></tr>
+            <tr><td>Voice & tone</td><td>Donor receipts, grant applications, public reports use docs/PUBLIC-VOICE.md rules</td></tr>
+            <tr><td>Alignment registry</td><td>Every contract registered as canonical source; bundle derivation tracks 9 contracts → 8 runbooks</td></tr>
+            <tr><td>Cognitive passport</td><td>Operator's own passport informs incident response calibration; board members can dogfood</td></tr>
+            <tr><td>K₄ mesh</td><td>Donor records stored encrypted in mesh KV; operator-only surfaces stay local</td></tr>
+            <tr><td>SIMPLEX agents</td><td>COUNSEL persona drafts grant applications; SCRIBE assembles annual reports; HERALD triages hostile mail</td></tr>
+          </tbody>
+        </table>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Operator note</div>
+          <h2 class="sb-h2">For when the day-of-doing arrives</h2>
+        </div>
+        
+        ${callout('success', 'You don\'t have to do all of this today.', 'The contracts are the map; the runbooks are the path; the automation is the vehicle. Use <code>npm run nonprofit:status</code> to see what is <em>actually</em> due in the next 30 days. Everything else is for the future-you (or future-board-member) who will need it. The point of the scaffolding is that it\'s there <em>when</em> you need it, not that you use it now.')}
+      </section>
+    `;
+    
+    renderShell({
+      activeId: 'nonprofit',
+      breadcrumb: [
+        { href: '/stylebook/', label: 'Stylebook' },
+        { href: '/stylebook/', label: 'Operations' },
+        { label: 'Nonprofit scaffold' }
+      ],
+      title: 'Nonprofit operations scaffold',
+      subtitle: 'Nine canonical contracts, six runbooks, five automation commands. The complete operational layer for P31 Labs as a 501(c)(3), built before the friction.',
+      meta: [
+        { label: 'Contracts', value: '9' },
+        { label: 'Runbooks', value: '6' },
+        { label: 'Automation', value: '5 commands' },
+        { label: 'Verifier', value: 'CI gate' }
+      ],
+      content
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+# k4-cage — CWP-30 unified (K4Topology + FamilyMeshRoom DOs, D1 telemetry)
+# P31 Labs, Inc. | EIN 42-1888158
+#
+# Free-plan note: Cloudflare free tier requires new_sqlite_classes (code 10097).
+# K4Topology + FamilyMeshRoom use ctx.storage.get/put — fully compatible.
+#
+# DO migration history (as-applied in Cloudflare):
+#   v2-hibernation — created FamilyMeshRoom (already exists)
+#   v3-production  — creates K4Topology (does not yet exist)
+#
+# First-time D1 setup (optional telemetry chain):
+#   npx wrangler d1 create p31-telemetry  → paste database_id below
+#   npx wrangler d1 execute p31-telemetry --remote --file=../unified-k4-cage/schema.sql
+#   npx wrangler secret put ADMIN_TOKEN
+# Optional:
+#   npx wrangler secret put INTERNAL_FANOUT_TOKEN
+
+name = "k4-cage"
+main = "src/index.js"
+compatibility_date = "2025-10-01"
+
+[durable_objects]
+bindings = [
+  { name = "K4_TOPOLOGY",      class_name = "K4Topology" },
+  { name = "FAMILY_MESH_ROOM", class_name = "FamilyMeshRoom" },
+]
+
+# FamilyMeshRoom was created under this tag — already applied, wrangler skips it.
+[[migrations]]
+tag = "v2-hibernation"
+new_sqlite_classes = ["FamilyMeshRoom"]
+
+# K4Topology was never created — this migration adds it.
+[[migrations]]
+tag = "v3-production"
+new_sqlite_classes = ["K4Topology"]
+
+# Present on the published k4-cage worker in Cloudflare; include so wrangler’s
+# migration list matches the script (avoids "tag not in wrangler" + API 10074 drift).
+[[migrations]]
+tag = "v4-messaging"
+
+# [[d1_databases]]
+# binding = "DB"
+# database_name = "p31-telemetry"
+# database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+
+[[kv_namespaces]]
+binding = "K4_MESH"
+id = "a8a2ab8f61174ff6b878eb74cb6bc91d"
+
+[vars]
+WORKER_VERSION = "2.0.0-unified"
+TOPOLOGY = "K4"
+ENVIRONMENT = "production"
+MESH_ROOM_IDS = "family-mesh"
+ORCHESTRATOR_WEBHOOK = "https://p31-orchestrator.trimtab-signal.workers.dev/api/webhook/k4-cage"

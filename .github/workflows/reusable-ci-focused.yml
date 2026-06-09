@@ -1,0 +1,43 @@
+# Callable: filtered turbo + compliance checks.
+name: Reusable CI (focused turbo)
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+env:
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+  TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/toolchain-constants
+
+       - uses: ./.github/actions/pnpm-andromeda-full
+
+       - uses: ./.github/actions/eslint-bonding-shared
+
+      - name: Security audit (high+, informational)
+        continue-on-error: true
+        run: pnpm audit --audit-level=high
+
+      - uses: ./.github/actions/turbo-core-slice
+
+      - name: WCD documentation check
+        run: |
+          test -d "wcds" || exit 1
+          ls wcds/*.md | wc -l | xargs -I{} sh -c 'test {} -ge 10 || exit 1'
+
+      - name: ADA compliance check
+        run: grep -r "aria-" software/bonding/src/ || exit 1
+
+      - name: Spoon Economy safety check
+        run: |
+          grep -r "spoon" software/packages/ --include="*.ts" -l | wc -l | xargs -I{} sh -c 'test {} -ge 1 || exit 1'

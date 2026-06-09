@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub" style="color-scheme: dark;">
+<head>
+<meta charset="utf-8" />
+<script>(function(){var r=document.documentElement;if(/[?&]alive=1(?:&|$)/.test(location.search))return;r.classList.add("p31-gray-rock");function wake(){r.classList.remove("p31-gray-rock")}document.addEventListener("pointerdown",wake,{once:true,capture:true});document.addEventListener("keydown",wake,{once:true,capture:true})})();</script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#0f1115" />
+<meta name="description" content="P31 Labs research index — cognitive architecture, mesh protocols, and open tooling for neurodivergent families." />
+<meta name="robots" content="index, follow" />
+<link rel="canonical" href="https://p31ca.org/research" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Research · P31 Labs" />
+<meta property="og:description" content="Cognitive architecture, mesh protocols, and open tooling for neurodivergent families." />
+<meta property="og:url" content="https://p31ca.org/research" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Research · P31 Labs" />
+<meta name="twitter:description" content="Cognitive architecture, mesh protocols, and open tooling for neurodivergent families." />
+<title>Research · P31 Labs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="/p31-style.css" />
+<script src="/lib/p31-subject-prefs.js" defer></script>
+<script type="module" src="/lib/p31-cogpass-reader.mjs"></script>
+<script type="module" src="/lib/p31-phos-guide.mjs"></script>
+<style>
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--p31-font-sans, 'Atkinson Hyperlegible', system-ui, sans-serif);
+  background: var(--p31-void, #0f1115);
+  color: var(--p31-cloud, #d8d6d0);
+  line-height: 1.6;
+}
+a[href="#main"]:focus {
+  position: fixed;
+  left: 0;
+  top: 0;
+  padding: 0.5rem 1rem;
+  background: var(--p31-void, #0f1115);
+  color: var(--p31-teal, #25897d);
+  font-size: 0.875rem;
+  z-index: 9999;
+  border-radius: 0 0 4px 4px;
+  text-decoration: none;
+}
+a[href="#main"]:not(:focus) {
+  position: absolute;
+  left: -9999px;
+}
+main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 4rem;
+}
+header {
+  margin-bottom: 2.5rem;
+}
+h1 {
+  font-size: clamp(1.6rem, 5vw, 2rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 0 0 0.5rem;
+  line-height: 1.2;
+}
+.lede {
+  font-size: 1.05rem;
+  color: color-mix(in srgb, var(--p31-cloud, #d8d6d0) 85%, transparent);
+  margin: 0;
+}
+nav.toc {
+  margin: 2rem 0;
+  padding: 1.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.75rem;
+  background: rgba(255, 255, 255, 0.02);
+}
+nav.toc h2 {
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--p31-muted, #808080);
+  margin: 0 0 1rem;
+}
+nav.toc ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+nav.toc li + li {
+  margin-top: 0.6rem;
+}
+nav.toc a {
+  color: var(--p31-teal, #25897d);
+  text-decoration: none;
+  font-weight: 500;
+}
+nav.toc a:hover {
+  text-decoration: underline;
+}
+section {
+  margin: 2.5rem 0;
+}
+section h2 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 0 0 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+section p {
+  margin: 0.75rem 0;
+  color: color-mix(in srgb, var(--p31-cloud, #d8d6d0) 90%, transparent);
+}
+.card-grid {
+  display: grid;
+  gap: 1rem;
+  margin: 1.25rem 0;
+}
+@media (min-width: 480px) {
+  .card-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+.card {
+  display: block;
+  padding: 1.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.65rem;
+  background: rgba(255, 255, 255, 0.03);
+  text-decoration: none;
+  color: inherit;
+  transition: background-color 140ms ease, border-color 140ms ease;
+}
+.card:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(37, 137, 125, 0.4);
+}
+.card h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 0.35rem;
+  color: var(--p31-teal, #25897d);
+}
+.card p {
+  font-size: 0.875rem;
+  margin: 0;
+  color: var(--p31-muted, #808080);
+}
+.mono {
+  font-family: var(--p31-font-mono, 'JetBrains Mono', monospace);
+  font-size: 0.875em;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0.15em 0.35em;
+  border-radius: 4px;
+}
+footer {
+  margin-top: 4rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 0.8rem;
+  color: var(--p31-muted, #808080);
+}
+</style>
+</head>
+<body>
+<a href="#main">Skip to main content</a>
+
+<main id="main">
+  <header>
+    <h1>Research</h1>
+    <p class="lede">Cognitive architecture, mesh protocols, and open tooling for neurodivergent families. Published as we build.</p>
+  </header>
+
+  <nav class="toc" aria-labelledby="toc-heading">
+    <h2 id="toc-heading">On this page</h2>
+    <ul>
+      <li><a href="#architecture">System Architecture</a></li>
+      <li><a href="#cognitive">Cognitive Science</a></li>
+      <li><a href="#accessibility">Accessibility &amp; WCAG</a></li>
+      <li><a href="#publications">Publications &amp; Specs</a></li>
+    </ul>
+  </nav>
+
+  <section id="architecture">
+    <h2>System Architecture</h2>
+    <p>The P31 mesh is built on a <strong>K₄ tetrahedral topology</strong> — four vertices, six edges, one center. Every family member is a vertex; every relationship is an edge. The cage structure provides isostatic rigidity: no single point of failure can collapse the whole.</p>
+    
+    <div class="card-grid">
+      <a class="card" href="/docs/SIC-POVM-K4-ARCHITECTURE.md">
+        <h3>K₄ Cage Architecture</h3>
+        <p>Four-vector physical / network / compliance / UX design.</p>
+      </a>
+      <a class="card" href="/docs/MESH-ARCHITECTURE-CANON.md">
+        <h3>Mesh Canon</h3>
+        <p>Grant-safe technical documentation of the edge substrate.</p>
+      </a>
+      <a class="card" href="/glass-box.html">
+        <h3>Glass Box</h3>
+        <p>Live system telemetry and public transparency.</p>
+      </a>
+      <a class="card" href="/fleet-portal.html">
+        <h3>Fleet Portal</h3>
+        <p>URL index and health status of all P31 surfaces.</p>
+      </a>
+    </div>
+  </section>
+
+  <section id="cognitive">
+    <h2>Cognitive Science</h2>
+    <p>Our interfaces are designed for <strong>working memory limits</strong>, <strong>sensory processing sensitivity</strong>, and <strong>executive function support</strong>. The psychological E2E testing system simulates neurodivergent personas against every public surface.</p>
+    
+    <div class="card-grid">
+      <a class="card" href="/cognitive-passport/">
+        <h3>Cognitive Passport</h3>
+        <p>Personal context cards for LLM interactions.</p>
+      </a>
+      <a class="card" href="/psych-e2e-live.html">
+        <h3>Psych E2E Live</h3>
+        <p>Real-time accessibility simulation results.</p>
+      </a>
+    </div>
+  </section>
+
+  <section id="accessibility">
+    <h2>Accessibility &amp; WCAG</h2>
+    <p>Every public page passes <strong>WCAG 2.2 AA</strong> and targets AAA where feasible. We measure cognitive load, not just color contrast.</p>
+    
+    <ul style="margin: 1rem 0; padding-left: 1.25rem; color: color-mix(in srgb, var(--p31-cloud, #d8d6d0) 90%, transparent);">
+      <li>Skip links and focus indicators on every page</li>
+      <li>Gray Rock mode for sensory overwhelm (no motion, no sound)</li>
+      <li>Reduced motion honored at the browser level</li>
+      <li>Cognitive Load Index scoring per interaction</li>
+    </ul>
+  </section>
+
+  <section id="publications">
+    <h2>Publications &amp; Specs</h2>
+    <p>We publish specifications as we stabilize them. Each carries a version, a schema, and a verification script.</p>
+    
+    <table style="width:100%;border-collapse:collapse;margin:1rem 0;font-size:0.9rem;">
+      <thead>
+        <tr style="border-bottom:1px solid rgba(255,255,255,0.1);">
+          <th style="text-align:left;padding:0.5rem;font-weight:600;">Spec</th>
+          <th style="text-align:left;padding:0.5rem;font-weight:600;">Version</th>
+          <th style="text-align:left;padding:0.5rem;font-weight:600;">Verify</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+          <td style="padding:0.5rem;">p31.publicLine</td>
+          <td style="padding:0.5rem;"><span class="mono">1.0.0</span></td>
+          <td style="padding:0.5rem;"><span class="mono">npm run verify:public-line</span></td>
+        </tr>
+        <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+          <td style="padding:0.5rem;">p31.phosGuide</td>
+          <td style="padding:0.5rem;"><span class="mono">2.0.0</span></td>
+          <td style="padding:0.5rem;"><span class="mono">npm run verify:phos-voice</span></td>
+        </tr>
+        <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+          <td style="padding:0.5rem;">p31.glassBox</td>
+          <td style="padding:0.5rem;"><span class="mono">0.1.0</span></td>
+          <td style="padding:0.5rem;"><span class="mono">npm run verify:glass-box</span></td>
+        </tr>
+        <tr>
+          <td style="padding:0.5rem;">p31.cognitivePassport</td>
+          <td style="padding:0.5rem;"><span class="mono">1.0.0</span></td>
+          <td style="padding:0.5rem;"><span class="mono">npm run verify:passport</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <footer>
+    <p>P31 Labs · Georgia nonprofit · EIN 42-1888158 · <a href="/support" style="color:var(--p31-teal,#25897d);">Support this work →</a></p>
+  </footer>
+</main>
+</body>
+</html>

@@ -1,0 +1,360 @@
+---
+/**
+ * PHOS Week 1 Convergence Demo
+ * Voice + Bros + Router — Core Runtime Integration
+ *
+ * Demo: Voice command switches Bros persona → triggers Router mesh update
+ */
+
+import VoiceOrb from '../../components/VoiceOrb.astro';
+import PersonaSwitcher from '../../components/PersonaSwitcher.astro';
+
+const title = 'PHOS Week 1 — Core Runtime';
+const description = 'Voice + Bros + Router convergence demo';
+
+// Simulated mesh vertex status
+const meshVertices = [
+  { id: 'wj', name: 'W.J.', status: 'online', lastSeen: 'now' },
+  { id: 'sj', name: 'S.J.', status: 'online', lastSeen: '2m ago' },
+  { id: 'cj', name: 'C.J.', status: 'away', lastSeen: '15m ago' },
+  { id: 'wij', name: 'Wi.J.', status: 'online', lastSeen: 'now' }
+];
+---
+
+<!doctype html>
+<html lang="en" data-p31-appearance="hub">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+
+    <style is:global>
+      :root {
+        color-scheme: dark;
+        --p31-void: #0f1115;
+        --p31-cyan: #4db8a8;
+        --p31-coral: #cc6247;
+        --p31-cloud: #e5e7eb;
+      }
+
+      html, body {
+        margin: 0;
+        padding: 0;
+        background: var(--p31-void);
+        color: var(--p31-cloud);
+        font-family: system-ui, -apple-system, sans-serif;
+        min-height: 100vh;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+    </style>
+  </head>
+
+  <body class="antialiased">
+    <div class="min-h-screen bg-gradient-to-b from-zinc-950 via-zinc-900 to-zinc-950">
+      {/* Header */}
+      <header class="border-b border-zinc-800/50 backdrop-blur-sm sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-6 py-4">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500/20 to-coral-500/20 border border-zinc-700 flex items-center justify-center">
+                <span class="text-xl">◉</span>
+              </div>
+              <div>
+                <h1 class="text-lg font-semibold text-zinc-100">PHOS</h1>
+                <p class="text-xs text-zinc-500">Week 1 Convergence — Core Runtime</p>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2 px-3 py-1.5 bg-zinc-900/80 rounded-full border border-zinc-800">
+              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span class="text-xs text-zinc-400 font-mono">CONVERGENCE_W1</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="max-w-6xl mx-auto px-6 py-8">
+        {/* Hero Section */}
+        <section class="text-center mb-12">
+          <h2 class="text-3xl md:text-4xl font-bold mb-3 bg-gradient-to-r from-zinc-100 via-cyan-200 to-zinc-400 bg-clip-text text-transparent">
+            Voice → Bros → Router
+          </h2>
+          <p class="text-zinc-400 max-w-2xl mx-auto mb-6">
+            Week 1 convergence demo: Voice recognition triggers persona switching,
+            which updates the mesh routing layer.
+          </p>
+
+          <div class="flex flex-wrap items-center justify-center gap-4 text-sm text-zinc-500">
+            <span class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-cyan-500"></span>
+              Phase 1: Voice
+            </span>
+            <span class="text-zinc-700">→</span>
+            <span class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+              Phase 2: Bros
+            </span>
+            <span class="text-zinc-700">→</span>
+            <span class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+              Phase 3: Router
+            </span>
+          </div>
+        </section>
+
+        {/* Main Demo Grid */}
+        <div class="grid lg:grid-cols-3 gap-6 mb-12">
+          {/* Voice Activation */}
+          <div class="lg:col-span-1 bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6 backdrop-blur-sm">
+            <h3 class="text-lg font-semibold mb-4 text-zinc-200 flex items-center gap-2">
+              <span class="text-cyan-400">◉</span> Voice
+            </h3>
+
+            <div class="flex flex-col items-center gap-4">
+              <VoiceOrb size="lg" persona="wj" />
+
+              <div class="text-center">
+                <p class="text-sm text-zinc-400 mb-2">Click to activate voice</p>
+                <p class="text-xs text-zinc-600">Try: "Switch to S.J. mode"</p>
+              </div>
+            </div>
+
+            <div class="mt-6 p-3 bg-zinc-950/50 rounded-lg border border-zinc-800/50">
+              <p class="text-xs text-zinc-500 mb-2">Voice Triggers</p>
+              <ul class="text-xs text-zinc-400 space-y-1">
+                <li>• "Switch to [persona] mode"</li>
+                <li>• "Open bonding soup"</li>
+                <li>• "Check mesh health"</li>
+              </ul>
+            </div>
+          </div>
+
+          {/* Persona Selection */}
+          <div class="lg:col-span-1 bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6 backdrop-blur-sm">
+            <h3 class="text-lg font-semibold mb-4 text-zinc-200 flex items-center gap-2">
+              <span class="text-emerald-400">◉</span> Bros
+            </h3>
+
+            <div class="mb-4">
+              <p class="text-sm text-zinc-400 mb-4">Select active persona:</p>
+              <PersonaSwitcher size="md" showLabels={true} />
+            </div>
+
+            <div id="persona-info" class="mt-6 p-4 bg-zinc-950/50 rounded-lg border border-zinc-800/50">
+              <div class="flex items-center gap-3 mb-3">
+                <span id="current-persona-icon" class="text-2xl">👤</span>
+                <div>
+                  <p id="current-persona-name" class="text-sm font-medium text-zinc-200">W.J.</p>
+                  <p id="current-persona-mode" class="text-xs text-cyan-400">operator mode</p>
+                </div>
+              </div>
+              <p id="current-persona-desc" class="text-xs text-zinc-500">Operator mode. Full system access.</p>
+
+              <div class="mt-3 pt-3 border-t border-zinc-800/50">
+                <p class="text-xs text-zinc-600 mb-2">Available features:</p>
+                <div id="current-persona-features" class="flex flex-wrap gap-1">
+                  <span class="px-2 py-0.5 bg-zinc-800 rounded text-xs text-zinc-400">voice</span>
+                  <span class="px-2 py-0.5 bg-zinc-800 rounded text-xs text-zinc-400">router</span>
+                  <span class="px-2 py-0.5 bg-zinc-800 rounded text-xs text-zinc-400">visual</span>
+                  <span class="px-2 py-0.5 bg-zinc-800 rounded text-xs text-zinc-400">predictive</span>
+                  <span class="px-2 py-0.5 bg-zinc-800 rounded text-xs text-zinc-400">guardian</span>
+                  <span class="px-2 py-0.5 bg-zinc-800 rounded text-xs text-zinc-400">bridge</span>
+                  <span class="px-2 py-0.5 bg-zinc-800 rounded text-xs text-zinc-400">memory</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Mesh Status */}
+          <div class="lg:col-span-1 bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6 backdrop-blur-sm">
+            <h3 class="text-lg font-semibold mb-4 text-zinc-200 flex items-center gap-2">
+              <span class="text-amber-400">◉</span> Router
+            </h3>
+
+            <div class="mb-4">
+              <p class="text-sm text-zinc-400 mb-3">Mesh vertex status:</p>
+
+              <div class="space-y-2" id="mesh-vertices">
+                {meshVertices.map(vertex => (
+                  <div
+                    class="flex items-center justify-between p-3 bg-zinc-950/50 rounded-lg border border-zinc-800/50 mesh-vertex"
+                    data-vertex={vertex.id}
+                  >
+                    <div class="flex items-center gap-3">
+                      <div class={`w-2 h-2 rounded-full ${
+                        vertex.status === 'online' ? 'bg-emerald-500' :
+                        vertex.status === 'away' ? 'bg-amber-500' :
+                        'bg-zinc-600'
+                      }`}></div>
+                      <span class="text-sm text-zinc-300 font-medium">{vertex.name}</span>
+                    </div>
+                    <div class="text-xs text-zinc-500">{vertex.status}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div class="mt-4 p-3 bg-zinc-950/50 rounded-lg border border-zinc-800/50">
+              <p class="text-xs text-zinc-500 mb-2">Routing Log</p>
+              <div id="routing-log" class="space-y-1 text-xs font-mono max-h-32 overflow-y-auto">
+                <p class="text-zinc-600">[System] Router initialized</p>
+                <p class="text-zinc-600">[Mesh] 4 vertices discovered</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Event Log */}
+        <section class="bg-zinc-900/30 border border-zinc-800 rounded-2xl p-6 backdrop-blur-sm">
+          <h3 class="text-sm font-semibold mb-4 text-zinc-300 flex items-center gap-2">
+            <span class="text-zinc-500">◉</span> Convergence Event Log
+          </h3>
+
+          <div id="convergence-log" class="font-mono text-sm space-y-1 max-h-64 overflow-y-auto">
+            <p class="text-zinc-600"><span class="text-zinc-500">[00:00:00]</span> PHOS Week 1 convergence initialized</p>
+            <p class="text-zinc-600"><span class="text-zinc-500">[00:00:00]</span> Voice phase: microphone ready</p>
+            <p class="text-zinc-600"><span class="text-zinc-500">[00:00:00]</span> Bros phase: 4 personas loaded</p>
+            <p class="text-zinc-600"><span class="text-zinc-500">[00:00:00]</span> Router phase: mesh topology mapped</p>
+          </div>
+        </section>
+      </main>
+
+      {/* Footer */}
+      <footer class="border-t border-zinc-800/50 mt-12">
+        <div class="max-w-6xl mx-auto px-6 py-6">
+          <div class="flex items-center justify-between text-xs text-zinc-600">
+            <span>PHOS v2.0 — Week 1 Convergence</span>
+            <span class="font-mono">Convergence Point: CORE_RUNTIME</span>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script>
+      // Week 1 Convergence Logic: Voice → Bros → Router
+      (function initWeek1Convergence() {
+        const logEl = document.getElementById('convergence-log');
+        const routingLog = document.getElementById('routing-log');
+        const personaIcon = document.getElementById('current-persona-icon');
+        const personaName = document.getElementById('current-persona-name');
+        const personaMode = document.getElementById('current-persona-mode');
+        const personaDesc = document.getElementById('current-persona-desc');
+        const personaFeatures = document.getElementById('current-persona-features');
+
+        const personas = {
+          wj: { icon: '👤', name: 'W.J.', mode: 'operator', color: 'cyan', desc: 'Operator mode. Full system access.', features: ['voice', 'router', 'visual', 'predictive', 'guardian', 'bridge', 'memory'] },
+          sj: { icon: '🎮', name: 'S.J.', mode: 'youth', color: 'emerald', desc: 'Youth mode. Teen-friendly interface.', features: ['voice', 'router', 'visual', 'memory'] },
+          cj: { icon: '🛡️', name: 'C.J.', mode: 'guardian', color: 'amber', desc: 'Guardian mode. Family oversight.', features: ['voice', 'router', 'guardian', 'predictive'] },
+          wij: { icon: '⭐', name: 'Wi.J.', mode: 'child', color: 'rose', desc: 'Child mode. Safe, simple, fun.', features: ['voice', 'visual'] }
+        };
+
+        function addLog(message: string, type: 'voice' | 'bros' | 'router' | 'system' = 'system') {
+          const time = new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+          const colors = {
+            voice: 'text-cyan-400',
+            bros: 'text-emerald-400',
+            router: 'text-amber-400',
+            system: 'text-zinc-500'
+          };
+
+          const p = document.createElement('p');
+          p.className = 'animate-fadeIn';
+          p.innerHTML = `<span class="${colors[type]}">[${time}]</span> ${message}`;
+
+          logEl?.appendChild(p);
+          logEl?.scrollTo({ top: logEl.scrollHeight, behavior: 'smooth' });
+
+          // Also add to routing log
+          if (type === 'router' && routingLog) {
+            const rp = document.createElement('p');
+            rp.className = 'text-amber-400/80';
+            rp.textContent = `[Router] ${message.replace('[Router] ', '')}`;
+            routingLog.appendChild(rp);
+            routingLog.scrollTo({ top: routingLog.scrollHeight, behavior: 'smooth' });
+          }
+        }
+
+        function updatePersonaDisplay(personaKey: string) {
+          const p = personas[personaKey as keyof typeof personas];
+          if (!p) return;
+
+          if (personaIcon) personaIcon.textContent = p.icon;
+          if (personaName) personaName.textContent = p.name;
+          if (personaMode) {
+            personaMode.textContent = `${p.mode} mode`;
+            personaMode.className = `text-xs text-${p.color}-400`;
+          }
+          if (personaDesc) personaDesc.textContent = p.desc;
+
+          if (personaFeatures) {
+            personaFeatures.innerHTML = p.features
+              .map(f => `<span class="px-2 py-0.5 bg-zinc-800 rounded text-xs text-zinc-400">${f}</span>`)
+              .join('');
+          }
+
+          // Highlight active vertex in mesh
+          document.querySelectorAll('.mesh-vertex').forEach(el => {
+            el.classList.remove('border-cyan-500/50', 'border-emerald-500/50', 'border-amber-500/50', 'border-rose-500/50');
+          });
+
+          const activeVertex = document.querySelector(`[data-vertex="${personaKey}"]`);
+          if (activeVertex) {
+            activeVertex.classList.add(`border-${p.color}-500/50`);
+          }
+        }
+
+        // Listen for voice events
+        window.addEventListener('phos:voice:start', (e: CustomEvent) => {
+          addLog('Voice activation started', 'voice');
+        });
+
+        window.addEventListener('phos:voice:transcript', (e: CustomEvent) => {
+          const { text, confidence } = e.detail;
+          addLog(`Voice heard: "${text}" (${(confidence * 100).toFixed(0)}%)`, 'voice');
+        });
+
+        window.addEventListener('phos:voice:stop', () => {
+          addLog('Voice activation ended', 'voice');
+        });
+
+        // Listen for persona switches
+        window.addEventListener('phos:persona:switch', (e: CustomEvent) => {
+          const { persona } = e.detail;
+          const p = personas[persona as keyof typeof personas];
+
+          addLog(`Persona switched to ${p.name} (${p.mode})`, 'bros');
+          updatePersonaDisplay(persona);
+
+          // Trigger router update
+          setTimeout(() => {
+            addLog(`Router: Priority vertex set to ${p.name}`, 'router');
+            addLog(`Router: Applied ${p.mode} routing policy`, 'router');
+          }, 100);
+        });
+
+        // Listen for voice-triggered persona switches
+        window.addEventListener('phos:voice:persona', (e: CustomEvent) => {
+          const { persona, trigger } = e.detail;
+          addLog(`Voice trigger matched: "${trigger}" → ${personas[persona as keyof typeof personas]?.name}`, 'voice');
+        });
+
+        console.log('[Week1] Convergence initialized');
+        addLog('Week 1 convergence active — Voice → Bros → Router');
+      })();
+    </script>
+
+    <style>
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-4px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .animate-fadeIn {
+        animation: fadeIn 0.3s ease-out;
+      }
+    </style>
+  </body>
+</html>

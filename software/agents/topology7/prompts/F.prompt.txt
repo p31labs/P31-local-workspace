@@ -1,0 +1,9 @@
+PROMPT: Node F (F) [Big Pickle]
+- Objective: process inputs from B and C; emit final leaves’ outputs to R or sink
+- Topology: B -> F, C -> F
+- Execution: merge inputs from B and C; emit final outputs to R or sink
+- Outputs: Logs; final status to R
+- Validation criteria:
+- Consistent final outputs; all edges exercised
+- Notes:
+- Provide a final completion signal to the orchestrator when both parents ack

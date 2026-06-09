@@ -1,0 +1,21 @@
+﻿WCD-M21: THE    HANDSHAKE (Biometric Consensus)
+Target: P31-OS UI, Ed25519 Cryptography
+Objective: Enforce physical and rhythmic synchronization ("Impedance Matching") before allowing a cryptographic key exchange between two nodes.
+1. THE IMPEDANCE MATCH INTERFACE
+When the Spatial Radar detects a node within the immediate interaction threshold (RSSI > -50 dBm), the P31-OS UI transitions.
+1. The Prompt: The screen darkens. A central circle appears with the text: [ ALIGN FREQUENCY: 172.35 Hz ].
+2. The Mechanic: Both users must physically tap their screens to a specific rhythm. Because 172.35 taps per second is physically impossible for a human, the game scales the Larmor frequency to a macroscopic harmonic: 86 BPM (beats per minute), which represents a calm, parasympathetic heart rate.
+3. The Math: The React component tracks onTouchStart. It calculates the delta between taps. If the user maintains a steady delta of ~697ms (86 BPM) for 4 consecutive taps, their local frequency is "LOCKED."
+2. THE DOUBLE EMPATHY EXCHANGE
+1. Synchronization Check: Both devices (via localized WebSocket or WebRTC data channel) compare their lock states.
+2. The Cryptographic Trigger: If both devices lock simultaneously, the Ed25519 WebCrypto engine fires.
+3. The Payload: Device A signs: { "target": "DeviceB_PubKey", "timestamp": 123... }
+Device B signs: { "target": "DeviceA_PubKey", "timestamp": 123... }
+4. The Bond: They exchange these signed payloads. The UI flashes violently, and a permanent covalent line is drawn between them on the Radar.
+3. THE K4 SYNTHESIS (   Mesh)
+   * To form the    Tetrahedron, this handshake must be executed successfully among 4 people until 6 total bonds are drawn between them.
+   * When the local OS detects that its key exists in a fully connected 4-node graph, it automatically initiates the POST request defined in WCD-M19 to trigger the 3D Printer.
+4. EXECUTION REQUIREMENTS (For Agent)
+      * Build the HandshakeOverlay.tsx component with the rhythm-tracking math.
+      * Integrate the Ed25519 signing function directly into the successful completion of the rhythm lock.
+      * Build the K4_Graph_Check utility function to determine if a local cluster has achieved Maxwell's Isostatic Rigidity.

@@ -1,0 +1,44 @@
+# CWP-P31-MAP-2026-01 (D-MAP-14) — tests + static surface checks, no live Stripe
+name: donate-api (MAP pipeline)
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - "software/donate-api/**"
+      - "phosphorus31.org/planetary-planet/src/pages/donate.astro"
+      - "scripts/verify-monetary-surface.mjs"
+      - ".github/actions/**"
+      - ".github/workflows/donate-api.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "software/donate-api/**"
+      - "phosphorus31.org/planetary-planet/src/pages/donate.astro"
+      - "scripts/verify-monetary-surface.mjs"
+      - ".github/actions/**"
+      - ".github/workflows/donate-api.yml"
+
+concurrency:
+  group: donate-api-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  map:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/toolchain-constants
+
+      - uses: ./.github/actions/npm-ci-project
+        with:
+          working-directory: software/donate-api
+          cache-dependency-path: software/donate-api/package-lock.json
+
+      - name: Test (vitest)
+        working-directory: software/donate-api
+        run: npm test
+
+      - name: MAP static verify (from repo root)
+        run: node scripts/verify-monetary-surface.mjs

@@ -1,0 +1,27 @@
+{
+  "schema": "p31.styleAlignmentExclude/1.0.0",
+  "globs": [
+    "doc-library/**",
+    "archive/**",
+    "agent/**",
+    "demos/**",
+    "fawn-guard.html",
+    "cogpass-bridge.html",
+    "delta-language.html",
+    "dome-generator.html",
+    "fleet-agents.html",
+    "launch-readiness.html",
+    "lib/starfield-demo.html",
+    "mvp-hub-legacy.html",
+    "offline.html",
+    "passport-generator.html",
+    "planetary-onboard.html",
+    "quantum-family.html",
+    "social-cards/**",
+    "spaceship-earth/**",
+    "stylebook/**",
+    "support.html",
+    "theme-showcase.html"
+  ],
+  "note": "When P31_STYLE_ALIGN_GLOB=all, skip these paths. Add a path here for legacy static HTML; prefer fixing the page. See verify-style-alignment.mjs."
+}

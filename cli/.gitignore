@@ -1,0 +1,15 @@
+
+# CLI-specific ignores
+node_modules/
+.env.local
+.env.production
+secrets/encrypted.json
+tokens/jwt.json
+logs/*.log
+dist/
+coverage/
+.DS_Store
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

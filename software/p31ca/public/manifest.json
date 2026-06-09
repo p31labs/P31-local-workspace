@@ -1,0 +1,117 @@
+{
+  "$schema": "https://json.schemastore.org/web-manifest-combined.json",
+  "name": "P31 Constellation",
+  "short_name": "P31",
+  "description": "A 104-app technical ecosystem for decentralized family coordination. Edge-native infrastructure with zero surveillance.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "portrait-primary",
+  "background_color": "#0f1115",
+  "theme_color": "#050505",
+  "categories": ["productivity", "utilities", "developer"],
+  "lang": "en",
+  "dir": "ltr",
+  "icons": [
+    {
+      "src": "/icons/p31-72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/p31-96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/p31-128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/p31-144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/p31-152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/p31-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/p31-384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/p31-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshots/hub-mobile.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "P31 Hub - Mobile view"
+    },
+    {
+      "src": "/screenshots/hub-desktop.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "P31 Hub - Desktop view"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Dome",
+      "short_name": "Dome",
+      "description": "Synergetic geodesic observatory",
+      "url": "/dome",
+      "icons": [{ "src": "/icons/shortcut-dome.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Ops Center",
+      "short_name": "Ops",
+      "description": "Operator command interface",
+      "url": "/ops",
+      "icons": [{ "src": "/icons/shortcut-ops.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Research",
+      "short_name": "Research",
+      "description": "Knowledge base and publications",
+      "url": "/research",
+      "icons": [{ "src": "/icons/shortcut-research.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Connect",
+      "short_name": "Connect",
+      "description": "Mesh and K4 cage navigator",
+      "url": "/connect",
+      "icons": [{ "src": "/icons/shortcut-connect.png", "sizes": "192x192" }]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "edge_side_panel": {
+    "preferred_width": 400
+  }
+}

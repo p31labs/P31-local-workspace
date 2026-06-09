@@ -1,0 +1,192 @@
+---
+// @p31-layout: Gallery
+import AppShell from '../layouts/AppShell.astro';
+import { registry } from '../../scripts/hub/registry.mjs';
+
+// Build lookup by registry id
+const byId = Object.fromEntries(registry.map((p) => [p.id, p]));
+
+// Ops tool manifest: section hash → registry id (or inline fallback)
+const TOOLS = [
+  { hash: 'agents',              label: 'Agents',           regId: null,                  icon: '🤖', accent: '#4db8a8', tagline: 'Agent Fleet dispatch layer',      appUrl: '/fleet', status: 'live'    },
+  { hash: 'appointment-tracker', label: 'Appt Tracker',     regId: 'appointment-tracker'                                                                                                                  },
+  { hash: 'attractor',           label: 'Attractor',        regId: 'attractor'                                                                                                                            },
+  { hash: 'axiom',               label: 'Axiom',            regId: 'axiom'                                                                                                                                },
+  { hash: 'budget-tracker',      label: 'Budget',           regId: 'budget-tracker'                                                                                                                       },
+  { hash: 'buffer',              label: 'Buffer',           regId: 'buffer'                                                                                                                               },
+  { hash: 'builder',             label: 'Builder',          regId: null,                  icon: '🔧', accent: '#cda852', tagline: 'Local component scaffold',        appUrl: 'builder.html', status: 'concept' },
+  { hash: 'contact-locker',      label: 'Contact Locker',   regId: 'contact-locker'                                                                                                                       },
+  { hash: 'content-forge',       label: 'Content Forge',    regId: 'content-forge'                                                                                                                        },
+  { hash: 'cortex',              label: 'Cortex',           regId: 'cortex'                                                                                                                               },
+  { hash: 'discord',             label: 'Discord Bot',      regId: 'discord-bot'                                                                                                                          },
+  { hash: 'docs',                label: 'Doc Suite',        regId: null,                  icon: '📄', accent: '#4db8a8', tagline: 'P31 Open Doc Suite',             appUrl: '/doc-suite', status: 'live'  },
+  { hash: 'spaceship-earth',                 label: 'Spaceship Earth',              regId: 'spaceship-earth'                                                                                                                                  },
+  { hash: 'editor',              label: 'Editor',           regId: null,                  icon: '✏️', accent: '#8b7cc9', tagline: 'Minimal markdown editor',        appUrl: 'editor.html', status: 'concept' },
+  { hash: 'forge',               label: 'Forge',            regId: 'forge'                                                                                                                                },
+  { hash: 'integrations',        label: 'Integrations',     regId: 'integrations'                                                                                                                         },
+  { hash: 'legal-evidence',      label: 'Legal Evidence',   regId: 'legal-evidence'                                                                                                                       },
+  { hash: 'medical-tracker',     label: 'Medical',          regId: 'medical-tracker'                                                                                                                       },
+  { hash: 'observatory',         label: 'Observatory',      regId: 'observatory'                                                                                                                           },
+  { hash: 'centaur',             label: 'Super Centaur',    regId: 'super-centaur'                                                                                                                        },
+  { hash: 'onboard',             label: 'Onboard',          regId: 'planetary-onboard'                                                                                                                    },
+  { hash: 'prism',               label: 'Prism',            regId: 'prism'                                                                                                                                },
+  { hash: 'sleep-tracker',       label: 'Sleep',            regId: 'sleep-tracker'                                                                                                                        },
+  { hash: 'somatic',             label: 'Somatic',          regId: 'somatic-anchor'                                                                                                                       },
+  { hash: 'style',               label: 'Style Gen',        regId: null,                  icon: '🎨', accent: '#cc6247', tagline: 'Token-aware style generator',    appUrl: 'style-generator.html', status: 'concept' },
+  { hash: 'switches',            label: 'Switches',         regId: null,                  icon: '⌨️', accent: '#cda852', tagline: 'Keyboard layout configurator',   appUrl: 'switches.html', status: 'live' },
+  { hash: 'theme',               label: 'Theme',            regId: null,                  icon: '🌙', accent: '#8b7cc9', tagline: 'Live theme showcase',            appUrl: 'theme-showcase.html', status: 'live' },
+  { hash: 'vault',               label: 'Vault',            regId: 'vault'                                                                                                                                },
+];
+
+// Merge registry data into each tool entry
+const tools = TOOLS.map((t) => {
+  const reg = t.regId ? byId[t.regId] : null;
+  return {
+    hash:    t.hash,
+    label:   t.label,
+    icon:    reg?.icon    ?? t.icon    ?? '◈',
+    accent:  reg?.accent  ?? t.accent  ?? '#4db8a8',
+    title:   reg?.title   ?? t.label,
+    tagline: reg?.tagline ?? t.tagline ?? '',
+    status:  reg?.status  ?? t.status  ?? 'concept',
+    statusLabel: reg?.statusLabel ?? (t.status === 'live' ? 'LIVE' : 'CONCEPT'),
+    features: reg?.features ?? [],
+    tech:    reg?.tech    ?? [],
+    appUrl:  reg?.appUrl  ?? t.appUrl  ?? null,
+  };
+});
+
+const statusColor: Record<string, string> = {
+  live:    'var(--p31-phosphorus, var(--p31-phosphorus))',
+  concept: 'var(--p31-slate, #64748b)',
+  dev:     'var(--p31-amber, #cda852)',
+};
+---
+
+<AppShell title="Command Ops — P31 Labs" routeName="ops">
+  <div class="max-w-7xl mx-auto w-full px-4 md:px-6 flex flex-col">
+
+    <header class="mb-4 pb-4 flex justify-between items-end" style="border-bottom: 1px solid var(--p31-border-subtle);">
+      <h1 class="text-3xl md:text-4xl font-serif" style="color: var(--p31-cloud, #ede8e0);">Command</h1>
+      <a
+        href="/god"
+        class="font-mono text-[10px] tracking-widest uppercase px-3 py-1 rounded transition-colors hover:bg-white/5"
+        style="color: var(--p31-teal, var(--p31-teal)); border: 1px solid rgba(37,137,125,0.4);"
+      >Command Center →</a>
+    </header>
+
+    <div class="flex flex-col md:flex-row gap-4 flex-grow">
+
+      <!-- Tool nav — horizontal scroll on mobile, sticky sidebar on desktop -->
+      <nav
+        id="ops-nav"
+        aria-label="Ops tools"
+        class="md:w-48 shrink-0 p31-glass p-2 rounded-xl flex flex-row md:flex-col gap-1 overflow-x-auto md:overflow-y-auto md:max-h-[75vh] md:sticky md:top-4"
+        style="scrollbar-width: none;"
+      >
+        {tools.map(({ hash, label, accent, status }) => (
+          <a
+            href={`#${hash}`}
+            class="shrink-0 px-3 py-2 rounded-lg text-[10px] font-mono tracking-widest uppercase whitespace-nowrap transition-all hover:bg-white/5 flex items-center gap-2"
+            style={`color: var(--p31-cloud-muted, rgba(237,232,224,0.5));`}
+            data-ops-nav-item={hash}
+          >
+            {status === 'live' && (
+              <span class="inline-block w-1.5 h-1.5 rounded-full shrink-0" style={`background: ${accent}; opacity: 0.7;`} />
+            )}
+            {label}
+          </a>
+        ))}
+      </nav>
+
+      <!-- Section panels -->
+      <div class="relative flex-grow min-h-[55vh]" id="ops-panels">
+        {tools.map(({ hash, icon, accent, title, tagline, status, statusLabel, features, tech, appUrl }) => {
+          const dotColor = statusColor[status] ?? statusColor.concept;
+          const launchHref = appUrl?.startsWith('http') ? appUrl
+            : appUrl?.startsWith('/') ? appUrl
+            : appUrl ? `/${appUrl}` : null;
+          const isExternal = appUrl?.startsWith('http') ?? false;
+
+          return (
+            <section
+              id={hash}
+              class="hash-section hidden absolute inset-0 w-full overflow-y-auto"
+              aria-label={title}
+            >
+              <div class="p31-q-surface flex flex-col min-h-full" data-p31-elev="1" style={`border-color: ${accent}22;`}>
+
+                <!-- Header row -->
+                <div class="flex items-start justify-between gap-4 mb-5">
+                  <div class="flex items-center gap-3">
+                    <span class="text-2xl" aria-hidden="true">{icon}</span>
+                    <div>
+                      <h2 class="text-xl md:text-2xl font-serif" style={`color: ${accent};`}>{title}</h2>
+                      {tagline && <p class="font-mono text-[10px] tracking-widest uppercase mt-0.5" style="color: var(--p31-cloud-muted, rgba(237,232,224,0.5));">{tagline}</p>}
+                    </div>
+                  </div>
+                  <span
+                    class="font-mono text-[9px] tracking-widest uppercase px-2 py-1 rounded shrink-0"
+                    style={`color: ${dotColor}; border: 1px solid ${dotColor}40; background: ${dotColor}10;`}
+                  >{statusLabel}</span>
+                </div>
+
+                <!-- Features -->
+                {features.length > 0 && (
+                  <ul class="flex flex-col gap-2 mb-5">
+                    {features.slice(0, 4).map((f) => (
+                      <li class="flex gap-2 text-sm leading-relaxed" style="color: var(--p31-cloud-muted, rgba(237,232,224,0.65));">
+                        <span class="shrink-0 mt-1 w-1 h-1 rounded-full" style={`background: ${accent}; margin-top: 0.45rem;`} />
+                        {f}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+
+                <!-- Tech stack pills -->
+                {tech.length > 0 && (
+                  <div class="flex flex-wrap gap-1.5 mb-5">
+                    {tech.slice(0, 5).map((t) => (
+                      <span
+                        class="font-mono text-[9px] tracking-widest uppercase px-2 py-0.5 rounded"
+                        style={`color: ${accent}; background: ${accent}12; border: 1px solid ${accent}25;`}
+                      >{t}</span>
+                    ))}
+                  </div>
+                )}
+
+                <!-- Launch -->
+                {launchHref && (
+                  <div class="mt-auto pt-4" style="border-top: 1px solid var(--p31-border-subtle);">
+                    <a
+                      href={launchHref}
+                      target={isExternal ? '_blank' : '_self'}
+                      rel={isExternal ? 'noopener noreferrer' : undefined}
+                      class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-mono tracking-widest uppercase transition-all hover:opacity-90"
+                      style={`background: ${accent}18; border: 1px solid ${accent}45; color: ${accent};`}
+                    >
+                      Launch {isExternal && <span aria-hidden="true">↗</span>}
+                    </a>
+                  </div>
+                )}
+
+              </div>
+            </section>
+          );
+        })}
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    import { mountHashRouterAuto } from '../lib/hash-router';
+    document.addEventListener('astro:page-load', () => {
+      mountHashRouterAuto({
+        defaultHash: 'ede',
+        navSelector: '#ops-nav',
+        sectionSelector: '.hash-section',
+      });
+    });
+  </script>
+</AppShell>

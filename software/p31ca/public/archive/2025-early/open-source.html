@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub" style="color-scheme: dark;">
+<head>
+  <meta charset="UTF-8">
+<script>(function(){var r=document.documentElement;if(/[?&]alive=1(?:&|$)/.test(location.search))return;r.classList.add("p31-gray-rock");function wake(){r.classList.remove("p31-gray-rock")}document.addEventListener("pointerdown",wake,{once:true,capture:true});document.addEventListener("keydown",wake,{once:true,capture:true})})();</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0f1115">
+  <title>Open source | P31 Labs</title>
+  <meta name="description" content="P31 Labs open-source repositories and license expectations.">
+<link rel="canonical" href="https://p31ca.org/open-source.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Open source">
+<meta property="og:description" content="P31 Labs open-source repositories and license expectations.">
+<meta property="og:url" content="https://p31ca.org/open-source.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Open source">
+<meta name="twitter:description" content="P31 Labs open-source repositories and license expectations.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/p31-style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/p31-tailwind-extend.js"></script>
+  <script>tailwind.config = { theme: { extend: { ...window.P31_TAILWIND_EXTEND } } };</script>
+</head>
+<body class="bg-void text-cloud min-h-screen font-sans antialiased px-4 py-10 max-w-2xl mx-auto text-sm leading-relaxed">
+<a href="#main" style="position:absolute;left:-9999px;top:0;padding:0.5rem 1rem;background:var(--p31-void);color:var(--p31-teal);font-size:0.875rem;z-index:9999;border-radius:0 0 4px 4px;text-decoration:none" onfocus="this.style.left='0'" onblur="this.style.left='-9999px'">Skip to main content</a>
+  <nav class="flex flex-wrap gap-3 text-teal/80 text-xs font-mono mb-8 no-print">
+    <a href="/" class="hover:underline">Hub</a>
+    <a href="/privacy" class="hover:underline">Privacy</a>
+    <a href="/terms" class="hover:underline">Terms</a>
+    <a href="/contact" class="hover:underline">Contact</a>
+    <a href="/accessibility" class="hover:underline">Accessibility</a>
+    <a href="/security" class="hover:underline">Security</a>
+  </nav>
+  <h1 class="text-2xl font-bold text-paper mb-2">Open source</h1>
+  <p class="text-cloud/60 mb-8"><strong class="text-paper">P31 Labs</strong> ships many components as open source. Each repository carries its own <strong class="text-paper">LICENSE</strong> file — check the repo before you redistribute.</p>
+
+  <section class="space-y-3 mb-8">
+    <h2 class="text-paper font-semibold">GitHub organization</h2>
+    <p class="text-cloud/80">Primary org: <a class="text-teal underline hover:text-teal/90" href="https://github.com/p31labs" target="_blank" rel="noopener noreferrer">github.com/p31labs</a> — includes the <strong>Andromeda</strong> monorepo (workers, p31ca hub source, packages) and related projects.</p>
+  </section>
+
+  <section class="space-y-3 mb-8">
+    <h2 class="text-paper font-semibold">Public contracts (machine-readable)</h2>
+    <ul class="text-cloud/80 list-disc pl-5 space-y-1">
+      <li><a class="text-teal underline hover:text-teal/90" href="/creator-economy.json">Creator economy</a> — fee/split transparency</li>
+      <li><a class="text-teal underline hover:text-teal/90" href="/p31-super-centaur-pack.json">Super-Centaur pack</a> — CWP / mesh index</li>
+      <li><a class="text-teal underline hover:text-teal/90" href="/p31-public-surface.json">Public surface manifest</a> — this trust bundle</li>
+    </ul>
+  </section>
+
+  <section class="space-y-3">
+    <h2 class="text-paper font-semibold">Contributing</h2>
+    <p class="text-cloud/80">Open an issue or PR on the relevant repository. For security-sensitive findings, use <a class="text-teal underline hover:text-teal/90" href="/security-disclosure.html">Security disclosure</a> instead of public issues.</p>
+  </section>
+</body>
+</html>

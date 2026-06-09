@@ -1,0 +1,60 @@
+# P31 Labs
+
+> Operator-led nonprofit building decentralized family infrastructure.
+> Mission: Build, Create, Connect.
+> Phosphorus31 is the public face; P31 is the technical hub.
+
+P31 Labs, Inc. is a Georgia 501(c)(3) (pending) founded April 3, 2026.
+EIN 42-1888158. Founder: W. Johnson. Operator condition: hypoparathyroidism + AuDHD.
+
+We do not track, sell data, or run ad pixels. Every public surface is crawlable.
+Operator-only surfaces (command center, ops console) are local-only.
+
+## Primary surfaces
+
+- [Hub home](https://p31ca.org/): technical product grid, dark theme
+- [Stylebook](https://p31ca.org/stylebook/): complete design system reference (32+ pages)
+- [Cognitive passport](https://p31ca.org/passport): identity-first cognitive context generator
+- [Connection navigator](https://p31ca.org/connect): K₄ mesh visualization
+- [Initial build](https://p31ca.org/build): production site builder
+- [Doc library](https://p31ca.org/doc-library): searchable markdown index
+- [Mission home](https://phosphorus31.org/): nonprofit public face, light theme
+- [Donate](https://phosphorus31.org/donate): Stripe Checkout (no tracking)
+
+## Public APIs
+
+- [Creator economy contract](https://p31ca.org/creator-economy.json): platform fee = 0, creator share = 1.0
+- [Passkey API](https://p31ca.org/api/passkey/*): WebAuthn endpoints
+
+## Design system
+
+The P31 Stylebook documents 6 themes, 5 adaptive modes, 120+ tokens, and the complete component library.
+Live at https://p31ca.org/stylebook/. Built from canonical sources in /home/p31/p31-alignment.json.
+
+## What we don't do
+
+- No third-party analytics or tracking pixels
+- No ad networks
+- No engagement-driven dark patterns (FOMO, streaks-as-identity, scarcity timers)
+- No naval / military / submarine metaphors
+- No anthropomorphic AI (system is a tool, not a friend)
+
+## Architecture
+
+- Edge-only (Cloudflare Workers + Pages)
+- Encrypted family graph via K₄ mesh (k4-cage, k4-personal Workers)
+- Local-first AI personas (Ollama fleet of 10)
+- Zero-budget infrastructure (free tier all the way down)
+
+## License
+
+- Code: AGPL-3.0
+- Docs: CC BY 4.0
+- Brand mark: All rights reserved (contact brand@phosphorus31.org)
+
+## Contact
+
+- Operator: operator@phosphorus31.org
+- Press / brand: brand@phosphorus31.org
+- Security: security@phosphorus31.org
+- General: hello@phosphorus31.org

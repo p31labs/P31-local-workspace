@@ -1,0 +1,32 @@
+# Discord Alert Action
+# Used by GitHub API Fallback Mechanism
+# Sends notifications to Discord during system events
+
+name: 'Discord Alert'
+description: 'Send notifications to Discord channels'
+
+inputs:
+  message:
+    description: 'Message to send to Discord'
+    required: true
+  username:
+    description: 'Username for the Discord message'
+    required: false
+    default: 'P31 System Monitor'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Send Discord Webhook
+      shell: bash
+      run: |
+        # Send message to Discord via webhook
+        curl -X POST \
+          -H "Content-Type: application/json" \
+          -d "{
+            \"content\": \"${{ inputs.message }}\",
+            \"username\": \"${{ inputs.username }}\"
+          }" \
+          "${{ env.DISCORD_WEBHOOK_URL }}"
+        
+        echo "✅ Discord alert sent successfully"

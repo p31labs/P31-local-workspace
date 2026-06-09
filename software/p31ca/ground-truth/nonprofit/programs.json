@@ -1,0 +1,163 @@
+{
+  "$schema": "p31.nonprofit.programs/1.0.0",
+  "_meta": {
+    "description": "Theory of change + program portfolio + KPIs + impact measurement. The map of HOW P31 delivers mission. Drives /impact public reporting and grant-application program descriptions.",
+    "lastUpdated": "2026-05-01",
+    "owner": "operator@phosphorus31.org",
+    "verifier": "npm run verify:nonprofit"
+  },
+  "mission": {
+    "statement": "Build, Create, Connect — establish decentralized family infrastructure that strengthens vulnerable households through privacy-respecting, edge-only technology and lived-experience advocacy.",
+    "vision": "Every family has the cognitive, technical, and legal scaffolding to weather crisis without surrendering autonomy.",
+    "values": [
+      "Lived experience over credentials",
+      "Privacy as default, not feature",
+      "Edge-only architecture (no central data hoarding)",
+      "Zero-budget bootstrapping (compounds without investor capture)",
+      "Cognitive accessibility (AuDHD-first design)",
+      "Open source by default, copyleft for hub products"
+    ]
+  },
+  "theoryOfChange": {
+    "problemStatement": "Vulnerable families (medically complex, neurodivergent, mid-litigation, financially constrained) face compounding friction from siloed services, surveillance-default tech, and credential-based gatekeeping. The result is loss of autonomy at exactly the moment autonomy matters most.",
+    "intervention": "Provide a decentralized, edge-only mesh of tools + documents + cognitive-passport infrastructure that families self-host on free-tier infrastructure, with operator-led advocacy to translate lived experience into policy.",
+    "shortTermOutcomes": [
+      "Families adopt at least one P31 tool (passport, mesh, planetary-onboard)",
+      "Operators report reduced cognitive load in crisis episodes",
+      "Public artifacts (passport, doc-library) reach external audiences without conversion friction"
+    ],
+    "mediumTermOutcomes": [
+      "Family mesh becomes default infrastructure for at least 100 households",
+      "Cognitive-passport adopted by 3+ healthcare/legal/educational institutions",
+      "Open-source ecosystem self-sustains with non-operator contributors"
+    ],
+    "longTermOutcomes": [
+      "Decentralized-by-default becomes a meaningful alternative to surveillance-tech monopolies for family-scale infrastructure",
+      "Lived-experience operators are recognized as legitimate technical authorities in their domains",
+      "Replicable model exists for other operator-led nonprofits in adjacent fields"
+    ],
+    "assumptions": [
+      "Free-tier edge infrastructure remains viable at modest scale",
+      "Open-source contribution norms remain healthy enough to sustain non-operator development",
+      "Privacy-respecting tech retains regulatory protection (e.g. encryption is not banned)"
+    ],
+    "risks": [
+      "Founder key-person risk (operator medical condition)",
+      "Free-tier policy changes that force budget infrastructure",
+      "Mission drift toward saleable enterprise SaaS"
+    ]
+  },
+  "programs": [
+    {
+      "id": "cognitive-passport",
+      "name": "Cognitive Passport",
+      "shortDescription": "Identity-first cognitive context document that travels with an individual across providers, employers, schools, courts.",
+      "phase": "shipping (v5.1)",
+      "yearStarted": 2025,
+      "directBudgetAnnual": 0,
+      "indirectStaffTimePctOfTotal": 25,
+      "primaryBeneficiary": "individuals with neurodivergence, chronic illness, or complex needs requiring repeated context-handoffs",
+      "estimatedReach": { "current": null, "target1Year": 1000, "target3Year": 25000 },
+      "outcomeKpis": [
+        { "kpi": "passports generated", "current": null, "target": 1000 },
+        { "kpi": "institutions accepting passport format", "current": 0, "target": 3 },
+        { "kpi": "operator-reported friction reduction in 30-day post-passport survey", "target": "70% report reduction" }
+      ],
+      "publicSurface": "https://p31ca.org/passport"
+    },
+    {
+      "id": "k4-mesh",
+      "name": "K₄ Family Mesh",
+      "shortDescription": "Edge-only encrypted family communication and state-sync infrastructure on Cloudflare Workers + Durable Objects.",
+      "phase": "alpha (operator family + close-circle)",
+      "yearStarted": 2025,
+      "directBudgetAnnual": 0,
+      "indirectStaffTimePctOfTotal": 30,
+      "primaryBeneficiary": "vulnerable families (medical, legal, neurodivergent) needing coordination without surveillance",
+      "estimatedReach": { "current": 1, "target1Year": 10, "target3Year": 100 },
+      "outcomeKpis": [
+        { "kpi": "active family meshes", "current": 1, "target": 10 },
+        { "kpi": "median operator spoon-cost per crisis episode (self-reported)", "target": "30% reduction vs baseline" },
+        { "kpi": "data sovereignty audit pass-rate (no plaintext at rest at any vertex)", "target": "100%" }
+      ],
+      "publicSurface": "https://p31ca.org/connect"
+    },
+    {
+      "id": "doc-library",
+      "name": "Open Document Library",
+      "shortDescription": "Searchable static markdown index of P31 canon — design, governance, philosophy, advocacy. Public, CC-BY licensed.",
+      "phase": "shipping",
+      "yearStarted": 2025,
+      "directBudgetAnnual": 0,
+      "indirectStaffTimePctOfTotal": 10,
+      "primaryBeneficiary": "researchers, journalists, allied organizations, AI/agent crawlers",
+      "estimatedReach": { "current": null, "target1Year": 10000, "target3Year": 100000 },
+      "outcomeKpis": [
+        { "kpi": "documents in canon", "current": null, "target": 200 },
+        { "kpi": "external citations / inbound links", "current": null, "target": 50 },
+        { "kpi": "agentic crawler adoption (llms.txt presence + indexed)", "target": "verified in major LLMs" }
+      ],
+      "publicSurface": "https://p31ca.org/doc-library"
+    },
+    {
+      "id": "operator-advocacy",
+      "name": "Operator-Led Advocacy",
+      "shortDescription": "Translation of lived-experience operations into policy artifacts — court filings, accommodation guidance, replicable advocacy templates.",
+      "phase": "active (operator pro-se case ongoing)",
+      "yearStarted": 2025,
+      "directBudgetAnnual": 0,
+      "indirectStaffTimePctOfTotal": 25,
+      "primaryBeneficiary": "self-represented litigants with disabilities or executive-function constraints",
+      "estimatedReach": { "current": 1, "target1Year": 25, "target3Year": 200 },
+      "outcomeKpis": [
+        { "kpi": "case-template artifacts published", "current": null, "target": 12 },
+        { "kpi": "downstream operators citing P31 templates in court filings", "current": 0, "target": 10 }
+      ],
+      "publicSurface": "https://p31ca.org/doc-library (legal section)"
+    },
+    {
+      "id": "youth-vibe-coding",
+      "name": "Household Youth Vibe-Coding",
+      "shortDescription": "Local-first technical apprenticeship for the operator's children and similarly-positioned youth — building real systems on real infrastructure.",
+      "phase": "alpha (household)",
+      "yearStarted": 2026,
+      "directBudgetAnnual": 0,
+      "indirectStaffTimePctOfTotal": 10,
+      "primaryBeneficiary": "AuDHD/2e youth in operator-led households",
+      "estimatedReach": { "current": 2, "target1Year": 5, "target3Year": 20 },
+      "outcomeKpis": [
+        { "kpi": "youth-shipped artifacts on production infrastructure", "current": null, "target": 12 }
+      ],
+      "publicSurface": "https://p31ca.org/doc-library/PLAN-KIDS-VIBE-CODING"
+    }
+  ],
+  "impactMeasurement": {
+    "framework": "Outcomes-over-outputs; lived-experience attestation prioritized over external validation",
+    "qualitativeMethods": [
+      "Operator-narrative case studies (with consent)",
+      "Allied-organization interviews",
+      "Public-artifact citation tracking"
+    ],
+    "quantitativeMethods": [
+      "Tool-adoption metrics (privacy-respecting: aggregate counts only, no individual tracking)",
+      "Search visibility (curl + open APIs, not surveillance analytics)",
+      "Form 990 program-expense ratio"
+    ],
+    "annualImpactReport": {
+      "deliverable": "Markdown + PDF, published at /impact/ within 6 months of fiscal year end",
+      "sections": [
+        "Mission progress (theory-of-change pulse-check)",
+        "Per-program updates (KPIs + qualitative narrative)",
+        "Financials summary",
+        "Board + governance update",
+        "Lessons learned (publicly + honestly stated)",
+        "Roadmap for following year"
+      ]
+    }
+  },
+  "evaluationCadence": {
+    "perProgramQuarterly": "internal — staff/operator review of each program's KPIs",
+    "boardAnnual": "board reviews program portfolio + considers wind-down/expansion",
+    "externalEvaluation": "when annual revenue exceeds $500k OR per major-funder requirement"
+  }
+}

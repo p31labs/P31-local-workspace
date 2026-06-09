@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Performance · P31 Stylebook</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/p31-style.css">
+  <link rel="stylesheet" href="/lib/p31-fluid.css">
+  <link rel="stylesheet" href="/stylebook/_chrome.css">
+  <style>
+    .vital-card {
+      padding: 24px;
+      background: var(--p31-surface);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: 14px;
+      position: relative;
+      overflow: hidden;
+    }
+    .vital-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+    }
+    .vital-name {
+      font-size: 14px;
+      color: var(--p31-cloud);
+      margin-bottom: 4px;
+    }
+    .vital-acronym {
+      font-family: var(--p31-font-mono);
+      font-size: 11px;
+      color: var(--p31-muted);
+      margin-bottom: 12px;
+    }
+    .vital-targets {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .vital-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .vital-bar-fill {
+      flex: 1;
+      height: 8px;
+      border-radius: 4px;
+      background: var(--p31-surface2);
+      position: relative;
+      overflow: hidden;
+    }
+    .vital-bar-good { background: var(--p31-phosphorus); height: 100%; }
+    .vital-bar-needs { background: var(--p31-amber); height: 100%; }
+    .vital-bar-poor { background: var(--p31-coral); height: 100%; }
+    .vital-bar-label {
+      font-family: var(--p31-font-mono);
+      font-size: 11px;
+      color: var(--p31-muted);
+      width: 60px;
+      flex-shrink: 0;
+    }
+    .vital-bar-value {
+      font-family: var(--p31-font-mono);
+      font-size: 11px;
+      color: var(--p31-cloud);
+      width: 80px;
+      flex-shrink: 0;
+      text-align: right;
+    }
+    .vital-target {
+      font-size: 13px;
+      color: var(--p31-paper);
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    
+    .budget-row {
+      display: grid;
+      grid-template-columns: 1fr 100px 100px 80px;
+      gap: 12px;
+      align-items: center;
+      padding: 10px 16px;
+      background: var(--p31-surface);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: 8px;
+      margin-bottom: 4px;
+    }
+    .budget-row.header {
+      background: var(--p31-surface2);
+      font-family: var(--p31-font-mono);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--p31-muted);
+    }
+    .budget-name { font-size: 13px; color: var(--p31-cloud); }
+    .budget-value { font-family: var(--p31-font-mono); font-size: 12px; color: var(--p31-paper); text-align: right; }
+    .budget-status {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 600;
+      text-align: center;
+    }
+    .budget-status.under { background: rgba(0,255,136,0.12); color: var(--p31-phosphor); }
+    .budget-status.warn { background: rgba(205,168,82,0.12); color: var(--p31-amber); }
+    .budget-status.over { background: rgba(204,98,71,0.12); color: var(--p31-coral); }
+  </style>
+</head>
+<body>
+  <script type="module">
+    import { renderShell, code, callout } from '/stylebook/_chrome.js';
+    import { P31ThemeController } from '/lib/p31-theme-engine.mjs';
+    window.p31Theme = new P31ThemeController({ defaultTheme: 'hub' });
+    
+    const content = `
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Core Web Vitals</div>
+          <h2 class="sb-h2">The four metrics</h2>
+          <p class="sb-text">Google's user-experience yardsticks. Every public P31 page must hit
+          "Good" on all four — measured against real users on the median connection.</p>
+        </div>
+        
+        <div class="vital-grid">
+          <div class="vital-card">
+            <div class="vital-name">Largest Contentful Paint</div>
+            <div class="vital-acronym">LCP · time to render the main content</div>
+            <div class="vital-target">Target ≤ 2.5s</div>
+            <div class="vital-targets">
+              <div class="vital-bar">
+                <span class="vital-bar-label">Good</span>
+                <div class="vital-bar-fill"><div class="vital-bar-good" style="width: 50%;"></div></div>
+                <span class="vital-bar-value">≤ 2.5s</span>
+              </div>
+              <div class="vital-bar">
+                <span class="vital-bar-label">Needs</span>
+                <div class="vital-bar-fill"><div class="vital-bar-needs" style="width: 80%;"></div></div>
+                <span class="vital-bar-value">≤ 4.0s</span>
+              </div>
+              <div class="vital-bar">
+                <span class="vital-bar-label">Poor</span>
+                <div class="vital-bar-fill"><div class="vital-bar-poor" style="width: 100%;"></div></div>
+                <span class="vital-bar-value">&gt; 4.0s</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="vital-card">
+            <div class="vital-name">Interaction to Next Paint</div>
+            <div class="vital-acronym">INP · responsiveness to input</div>
+            <div class="vital-target">Target ≤ 200ms</div>
+            <div class="vital-targets">
+              <div class="vital-bar">
+                <span class="vital-bar-label">Good</span>
+                <div class="vital-bar-fill"><div class="vital-bar-good" style="width: 40%;"></div></div>
+                <span class="vital-bar-value">≤ 200ms</span>
+              </div>
+              <div class="vital-bar">
+                <span class="vital-bar-label">Needs</span>
+                <div class="vital-bar-fill"><div class="vital-bar-needs" style="width: 70%;"></div></div>
+                <span class="vital-bar-value">≤ 500ms</span>
+              </div>
+              <div class="vital-bar">
+                <span class="vital-bar-label">Poor</span>
+                <div class="vital-bar-fill"><div class="vital-bar-poor" style="width: 100%;"></div></div>
+                <span class="vital-bar-value">&gt; 500ms</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="vital-card">
+            <div class="vital-name">Cumulative Layout Shift</div>
+            <div class="vital-acronym">CLS · visual stability</div>
+            <div class="vital-target">Target ≤ 0.1</div>
+            <div class="vital-targets">
+              <div class="vital-bar">
+                <span class="vital-bar-label">Good</span>
+                <div class="vital-bar-fill"><div class="vital-bar-good" style="width: 30%;"></div></div>
+                <span class="vital-bar-value">≤ 0.1</span>
+              </div>
+              <div class="vital-bar">
+                <span class="vital-bar-label">Needs</span>
+                <div class="vital-bar-fill"><div class="vital-bar-needs" style="width: 60%;"></div></div>
+                <span class="vital-bar-value">≤ 0.25</span>
+              </div>
+              <div class="vital-bar">
+                <span class="vital-bar-label">Poor</span>
+                <div class="vital-bar-fill"><div class="vital-bar-poor" style="width: 100%;"></div></div>
+                <span class="vital-bar-value">&gt; 0.25</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="vital-card">
+            <div class="vital-name">First Contentful Paint</div>
+            <div class="vital-acronym">FCP · first byte visible</div>
+            <div class="vital-target">Target ≤ 1.8s</div>
+            <div class="vital-targets">
+              <div class="vital-bar">
+                <span class="vital-bar-label">Good</span>
+                <div class="vital-bar-fill"><div class="vital-bar-good" style="width: 40%;"></div></div>
+                <span class="vital-bar-value">≤ 1.8s</span>
+              </div>
+              <div class="vital-bar">
+                <span class="vital-bar-label">Needs</span>
+                <div class="vital-bar-fill"><div class="vital-bar-needs" style="width: 70%;"></div></div>
+                <span class="vital-bar-value">≤ 3.0s</span>
+              </div>
+              <div class="vital-bar">
+                <span class="vital-bar-label">Poor</span>
+                <div class="vital-bar-fill"><div class="vital-bar-poor" style="width: 100%;"></div></div>
+                <span class="vital-bar-value">&gt; 3.0s</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Asset budgets</div>
+          <h2 class="sb-h2">Per-page weight ceiling</h2>
+          <p class="sb-text">Every page on a P31 surface stays under these budgets.
+          Going over is not "we'll fix it later" — the build fails.</p>
+        </div>
+        
+        <div class="budget-row header">
+          <div>Resource</div>
+          <div style="text-align:right;">Budget</div>
+          <div style="text-align:right;">Current</div>
+          <div style="text-align:center;">Status</div>
+        </div>
+        <div class="budget-row">
+          <div class="budget-name">HTML (gzipped)</div>
+          <div class="budget-value">≤ 14 KB</div>
+          <div class="budget-value">~12 KB</div>
+          <div style="text-align:center;"><span class="budget-status under">UNDER</span></div>
+        </div>
+        <div class="budget-row">
+          <div class="budget-name">CSS (gzipped, blocking)</div>
+          <div class="budget-value">≤ 30 KB</div>
+          <div class="budget-value">~22 KB</div>
+          <div style="text-align:center;"><span class="budget-status under">UNDER</span></div>
+        </div>
+        <div class="budget-row">
+          <div class="budget-name">JavaScript (gzipped, blocking)</div>
+          <div class="budget-value">≤ 80 KB</div>
+          <div class="budget-value">~45 KB</div>
+          <div style="text-align:center;"><span class="budget-status under">UNDER</span></div>
+        </div>
+        <div class="budget-row">
+          <div class="budget-name">Images per page</div>
+          <div class="budget-value">≤ 200 KB</div>
+          <div class="budget-value">~0 KB*</div>
+          <div style="text-align:center;"><span class="budget-status under">UNDER</span></div>
+        </div>
+        <div class="budget-row">
+          <div class="budget-name">Web fonts</div>
+          <div class="budget-value">≤ 100 KB</div>
+          <div class="budget-value">~80 KB</div>
+          <div style="text-align:center;"><span class="budget-status under">UNDER</span></div>
+        </div>
+        <div class="budget-row">
+          <div class="budget-name">Total page weight</div>
+          <div class="budget-value">≤ 350 KB</div>
+          <div class="budget-value">~160 KB</div>
+          <div style="text-align:center;"><span class="budget-status under">UNDER</span></div>
+        </div>
+        <div class="budget-row">
+          <div class="budget-name">Time to Interactive (4G)</div>
+          <div class="budget-value">≤ 3.0s</div>
+          <div class="budget-value">~1.2s</div>
+          <div style="text-align:center;"><span class="budget-status under">UNDER</span></div>
+        </div>
+        <div class="budget-row">
+          <div class="budget-name">DOM nodes on first paint</div>
+          <div class="budget-value">≤ 800</div>
+          <div class="budget-value">~400</div>
+          <div style="text-align:center;"><span class="budget-status under">UNDER</span></div>
+        </div>
+        
+        <p style="font-size: 12px; color: var(--p31-muted); margin-top: 12px;">
+          * P31 prefers Unicode glyphs and SVG primitives over raster images. When images appear, they're WebP/AVIF.
+        </p>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Loading strategy</div>
+          <h2 class="sb-h2">Critical path discipline</h2>
+        </div>
+        
+        ${code(`<head>
+  <!-- 1. Preconnect to font origins (DNS + TLS warmup) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  
+  <!-- 2. Preload the most critical asset (LCP) -->
+  <link rel="preload" href="/p31-style.css" as="style">
+  
+  <!-- 3. Async fonts so they don't block render -->
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible..." 
+        rel="stylesheet" media="print" onload="this.media='all'">
+  
+  <!-- 4. Critical CSS (theme tokens) inline or top -->
+  <link rel="stylesheet" href="/p31-style.css">
+  
+  <!-- 5. Component CSS after tokens -->
+  <link rel="stylesheet" href="/lib/p31-fluid.css">
+</head>
+<body>
+  <!-- 6. Content first, scripts last -->
+  
+  <!-- 7. JS modules at body end (defer by default) -->
+  <script type="module" src="/lib/p31-theme-engine.mjs"><\/script>
+  
+  <!-- 8. Heavy below-the-fold images: lazy load -->
+  <img src="hero.webp" alt="..." loading="lazy" decoding="async" 
+       width="800" height="600">
+</body>`, 'html', 'Critical path')}
+        
+        ${callout('info', 'Width &amp; height on every image', 'Always set <code>width</code> and <code>height</code> on <code>&lt;img&gt;</code>. Even with CSS scaling, the attributes prevent Cumulative Layout Shift when the image loads.')}
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Image strategy</div>
+          <h2 class="sb-h2">Format hierarchy</h2>
+        </div>
+        
+        <table class="sb-table">
+          <thead><tr><th>Use case</th><th>Format</th><th>Why</th></tr></thead>
+          <tbody>
+            <tr><td>UI iconography</td><td>Unicode glyph</td><td>0 bytes, theme-aware, screen-reader friendly</td></tr>
+            <tr><td>Logos / brand marks</td><td>SVG inline</td><td>Sharp at any zoom, theme-aware via currentColor</td></tr>
+            <tr><td>Diagrams / illustrations</td><td>SVG file</td><td>Scales without loss, edit-friendly</td></tr>
+            <tr><td>Photos</td><td>AVIF (with WebP fallback)</td><td>30–50% smaller than JPEG at same quality</td></tr>
+            <tr><td>Animated</td><td>Lottie or CSS animation</td><td>GIFs are 10× the size for inferior quality</td></tr>
+            <tr><td>OG / social cards</td><td>PNG 1200×630</td><td>Universal compatibility, no format negotiation</td></tr>
+          </tbody>
+        </table>
+        
+        ${code(`<!-- Modern format with fallback chain -->
+<picture>
+  <source srcset="hero.avif" type="image/avif">
+  <source srcset="hero.webp" type="image/webp">
+  <img src="hero.jpg" alt="P31 mesh visualization"
+       width="1200" height="675"
+       loading="lazy" decoding="async">
+</picture>`, 'html', 'Modern image')}
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Caching</div>
+          <h2 class="sb-h2">Cache-Control headers</h2>
+        </div>
+        
+        <table class="sb-table">
+          <thead><tr><th>Asset type</th><th>Cache-Control</th></tr></thead>
+          <tbody>
+            <tr><td>HTML pages</td><td><code>public, max-age=300, must-revalidate</code> (5 min)</td></tr>
+            <tr><td>CSS / JS (versioned)</td><td><code>public, max-age=31536000, immutable</code> (1 year)</td></tr>
+            <tr><td>CSS / JS (unversioned)</td><td><code>public, max-age=3600</code> (1 hour)</td></tr>
+            <tr><td>Images</td><td><code>public, max-age=2592000</code> (30 days)</td></tr>
+            <tr><td>Fonts</td><td><code>public, max-age=31536000, immutable</code> (1 year)</td></tr>
+            <tr><td>API JSON</td><td><code>public, max-age=60, s-maxage=300</code> (1 min browser, 5 min edge)</td></tr>
+            <tr><td>HTML behind auth</td><td><code>private, no-cache, no-store, must-revalidate</code></td></tr>
+          </tbody>
+        </table>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Measurement</div>
+          <h2 class="sb-h2">How we know</h2>
+        </div>
+        
+        <table class="sb-table">
+          <thead><tr><th>Tool</th><th>What it tells you</th></tr></thead>
+          <tbody>
+            <tr><td>PageSpeed Insights</td><td>Real-user CWV from Chrome UX Report</td></tr>
+            <tr><td>Lighthouse CI</td><td>Synthetic perf score in pull requests</td></tr>
+            <tr><td>WebPageTest</td><td>Filmstrip + waterfall on real devices</td></tr>
+            <tr><td>web-vitals.js</td><td>Live RUM (operator-only, never tracked publicly)</td></tr>
+            <tr><td>Cloudflare Workers Analytics</td><td>p50/p75/p95 latency by route</td></tr>
+            <tr><td>Bundle visualizer</td><td>What blew up the JS budget last week</td></tr>
+          </tbody>
+        </table>
+        
+        ${callout('warn', 'Real users, not synthetic', 'Lighthouse on a fast machine paints a rosy picture. Real users on Chromebooks on flaky 4G are the ground truth — that\'s what CrUX measures.')}
+      </section>
+    `;
+    
+    renderShell({
+      activeId: 'performance',
+      breadcrumb: [
+        { href: '/stylebook/', label: 'Stylebook' },
+        { href: '/stylebook/', label: 'Guidelines' },
+        { label: 'Performance' }
+      ],
+      title: 'Performance',
+      subtitle: 'Core Web Vitals targets, asset budgets, loading strategy. The numbers we don\'t exceed.',
+      meta: [
+        { label: 'Vitals', value: 'CWV target' },
+        { label: 'Total weight', value: '≤350 KB' },
+        { label: 'TTI 4G', value: '≤3.0s' }
+      ],
+      content
+    });
+  </script>
+</body>
+</html>

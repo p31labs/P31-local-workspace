@@ -1,0 +1,175 @@
+{
+  "services": {
+    "Discord Bot": {
+      "status": "online",
+      "version": "1.0.0",
+      "dependencies": [
+        "discord.js",
+        "dotenv",
+        "ioredis"
+      ],
+      "scripts": [
+        "start",
+        "dev",
+        "test"
+      ]
+    },
+    "Middleware": {
+      "status": "online",
+      "version": "1.0.0",
+      "dependencies": [
+        "axios",
+        "express",
+        "crypto",
+        "dotenv",
+        "cors"
+      ],
+      "scripts": [
+        "start",
+        "dev",
+        "test"
+      ]
+    },
+    "Gamification": {
+      "status": "online",
+      "version": "1.0.0",
+      "dependencies": [
+        "crypto",
+        "redis",
+        "mathjs",
+        "dotenv",
+        "uuid"
+      ],
+      "scripts": [
+        "start",
+        "dev",
+        "test"
+      ]
+    },
+    "Analytics": {
+      "status": "online",
+      "version": "1.0.0",
+      "dependencies": [
+        "chart.js",
+        "d3",
+        "redis",
+        "express",
+        "dotenv",
+        "cors"
+      ],
+      "scripts": [
+        "start",
+        "dev",
+        "test"
+      ]
+    },
+    "IPFS Manager": {
+      "status": "online",
+      "version": "1.0.0",
+      "dependencies": [
+        "ipfs-http-client",
+        "ipns",
+        "axios",
+        "dotenv",
+        "fs-extra"
+      ],
+      "scripts": [
+        "start",
+        "dev",
+        "test"
+      ]
+    }
+  },
+  "connections": {
+    "Discord Bot → Redis": {
+      "status": "success",
+      "message": "Redis connection configuration verified",
+      "details": "Upstash Redis URL format validated"
+    },
+    "Middleware → GitHub API": {
+      "status": "success",
+      "message": "GitHub API accessible",
+      "rateLimit": "60"
+    },
+    "IPFS Manager → IPFS Gateway": {
+      "status": "failed",
+      "message": "IPFS gateway returned status 410"
+    },
+    "Analytics → Data Sources": {
+      "status": "success",
+      "message": "Data source configurations verified",
+      "details": "Redis, file system, and API endpoints configured"
+    }
+  },
+  "endpoints": {
+    "GitHub API": {
+      "status": "failed",
+      "message": "Endpoint returned status 403",
+      "statusCode": 403
+    },
+    "IPFS Gateway": {
+      "status": "failed",
+      "message": "Endpoint returned status 301",
+      "statusCode": 301
+    },
+    "Zenodo API": {
+      "status": "failed",
+      "message": "Endpoint returned status 403",
+      "statusCode": 403
+    },
+    "Upstash Redis": {
+      "status": "success",
+      "message": "Endpoint accessible (status: 200)",
+      "statusCode": 200
+    },
+    "Discord API": {
+      "status": "failed",
+      "message": "Endpoint returned status 403",
+      "statusCode": 403
+    }
+  },
+  "dependencies": {
+    "Node.js Version": {
+      "status": "success",
+      "message": "Node.js v24.14.0 - Compatible",
+      "version": "v24.14.0"
+    },
+    "NPM Packages": {
+      "status": "success",
+      "message": "All packages have valid dependencies",
+      "issues": []
+    },
+    "Environment Variables": {
+      "status": "warning",
+      "message": "Missing env vars: DISCORD_BOT_TOKEN, DISCORD_CLIENT_ID, UPSTASH_REDIS_URL",
+      "missing": [
+        "DISCORD_BOT_TOKEN",
+        "DISCORD_CLIENT_ID",
+        "UPSTASH_REDIS_URL"
+      ]
+    },
+    "File Permissions": {
+      "status": "warning",
+      "message": "Permission issues: ecosystem/discord/oracle-bot.js: File not found, ecosystem/middleware/kofi-github-bridge.js: File not found, ecosystem/gamification/dual-ledger-economy.js: File not found",
+      "issues": [
+        "ecosystem/discord/oracle-bot.js: File not found",
+        "ecosystem/middleware/kofi-github-bridge.js: File not found",
+        "ecosystem/gamification/dual-ledger-economy.js: File not found"
+      ]
+    }
+  },
+  "overall": {
+    "status": "failed",
+    "issues": [
+      "IPFS Manager → IPFS Gateway: IPFS gateway returned status 410",
+      "GitHub API: Endpoint returned status 403",
+      "IPFS Gateway: Endpoint returned status 301",
+      "Zenodo API: Endpoint returned status 403",
+      "Discord API: Endpoint returned status 403"
+    ],
+    "warnings": [
+      "Environment Variables: Missing env vars: DISCORD_BOT_TOKEN, DISCORD_CLIENT_ID, UPSTASH_REDIS_URL",
+      "File Permissions: Permission issues: ecosystem/discord/oracle-bot.js: File not found, ecosystem/middleware/kofi-github-bridge.js: File not found, ecosystem/gamification/dual-ledger-economy.js: File not found"
+    ]
+  }
+}

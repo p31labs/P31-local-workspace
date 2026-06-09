@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Voice &amp; tone · P31 Stylebook</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/p31-style.css">
+  <link rel="stylesheet" href="/lib/p31-fluid.css">
+  <link rel="stylesheet" href="/stylebook/_chrome.css">
+  <style>
+    .compare {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 700px) { .compare { grid-template-columns: 1fr; } }
+    .compare-cell {
+      padding: 16px;
+      border-radius: 10px;
+      border: 1px solid;
+    }
+    .compare-cell.bad {
+      background: rgba(204,98,71,0.04);
+      border-color: rgba(204,98,71,0.3);
+    }
+    .compare-cell.good {
+      background: rgba(0,255,136,0.04);
+      border-color: rgba(0,255,136,0.3);
+    }
+    .compare-tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-family: var(--p31-font-mono);
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 8px;
+    }
+    .compare-cell.bad .compare-tag { background: rgba(204,98,71,0.15); color: var(--p31-coral); }
+    .compare-cell.good .compare-tag { background: rgba(0,255,136,0.12); color: var(--p31-phosphor); }
+    .compare-text {
+      font-size: 14px;
+      color: var(--p31-paper);
+      line-height: 1.5;
+      font-style: italic;
+    }
+    .compare-cell.bad .compare-text { color: var(--p31-cloud); }
+    .compare-note {
+      font-size: 12px;
+      color: var(--p31-muted);
+      margin-top: 8px;
+      font-style: normal;
+    }
+    
+    .voice-axes {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+    }
+    .voice-axis {
+      padding: 20px;
+      background: var(--p31-surface);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: 12px;
+    }
+    .voice-axis-name {
+      font-weight: 600;
+      color: var(--p31-paper);
+      margin-bottom: 8px;
+    }
+    .voice-axis-scale {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .voice-axis-end {
+      font-size: 11px;
+      color: var(--p31-muted);
+      flex: 0 0 auto;
+    }
+    .voice-axis-track {
+      flex: 1;
+      height: 4px;
+      background: var(--p31-surface2);
+      border-radius: 2px;
+      position: relative;
+    }
+    .voice-axis-marker {
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 12px;
+      height: 12px;
+      background: var(--p31-primary);
+      border-radius: 50%;
+      box-shadow: 0 0 0 4px rgba(37,137,125,0.2);
+    }
+    .voice-axis-desc {
+      font-size: 12px;
+      color: var(--p31-cloud);
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <script type="module">
+    import { renderShell, code, callout } from '/stylebook/_chrome.js';
+    import { P31ThemeController } from '/lib/p31-theme-engine.mjs';
+    window.p31Theme = new P31ThemeController({ defaultTheme: 'hub' });
+    
+    const content = `
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">The voice</div>
+          <h2 class="sb-h2">Calm. Direct. Honest.</h2>
+          <p class="sb-text-lead">
+            P31 sounds like an operator who respects your time. We don't shout. We don't apologize.
+            We don't cheer. We tell you what's true and what to do next.
+          </p>
+        </div>
+        
+        <div class="voice-axes">
+          <div class="voice-axis">
+            <div class="voice-axis-name">Tone</div>
+            <div class="voice-axis-scale">
+              <span class="voice-axis-end">Casual</span>
+              <div class="voice-axis-track"><div class="voice-axis-marker" style="left: 65%;"></div></div>
+              <span class="voice-axis-end">Formal</span>
+            </div>
+            <div class="voice-axis-desc">Slightly formal but never stiff. We use full sentences. We don't say "y'all" but we don't say "henceforth" either.</div>
+          </div>
+          
+          <div class="voice-axis">
+            <div class="voice-axis-name">Authority</div>
+            <div class="voice-axis-scale">
+              <span class="voice-axis-end">Tentative</span>
+              <div class="voice-axis-track"><div class="voice-axis-marker" style="left: 80%;"></div></div>
+              <span class="voice-axis-end">Confident</span>
+            </div>
+            <div class="voice-axis-desc">Confident about facts. Modest about claims. "It does X." not "It probably does X." or "It revolutionizes X."</div>
+          </div>
+          
+          <div class="voice-axis">
+            <div class="voice-axis-name">Energy</div>
+            <div class="voice-axis-scale">
+              <span class="voice-axis-end">Low</span>
+              <div class="voice-axis-track"><div class="voice-axis-marker" style="left: 35%;"></div></div>
+              <span class="voice-axis-end">High</span>
+            </div>
+            <div class="voice-axis-desc">Calm energy. We are not "AMAZING!" or "GAME-CHANGING!" We are accurate.</div>
+          </div>
+          
+          <div class="voice-axis">
+            <div class="voice-axis-name">Humor</div>
+            <div class="voice-axis-scale">
+              <span class="voice-axis-end">None</span>
+              <div class="voice-axis-track"><div class="voice-axis-marker" style="left: 30%;"></div></div>
+              <span class="voice-axis-end">Constant</span>
+            </div>
+            <div class="voice-axis-desc">Dry, occasional. Never quirky. Never at the user's expense. Easter eggs are OK; clown copy is not.</div>
+          </div>
+        </div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Comparisons</div>
+          <h2 class="sb-h2">Don't write that · write this</h2>
+          <p class="sb-text">Side by side. The pattern repeats: cut the apology, cut the hedge, cut the exclamation point.</p>
+        </div>
+        
+        <h3 class="sb-h3">Buttons / CTAs</h3>
+        <div class="compare">
+          <div class="compare-cell bad">
+            <div class="compare-tag">don't</div>
+            <div class="compare-text">"Get Started Now! 🚀"</div>
+            <div class="compare-note">Exclamation, emoji, urgency theater.</div>
+          </div>
+          <div class="compare-cell good">
+            <div class="compare-tag">do</div>
+            <div class="compare-text">"Start building"</div>
+            <div class="compare-note">Verb. Object. Period.</div>
+          </div>
+        </div>
+        
+        <h3 class="sb-h3">Errors</h3>
+        <div class="compare">
+          <div class="compare-cell bad">
+            <div class="compare-tag">don't</div>
+            <div class="compare-text">"Oops! Something went wrong 😬 Please try again later or contact support."</div>
+            <div class="compare-note">Anthropomorphic apology. Hides the actual error.</div>
+          </div>
+          <div class="compare-cell good">
+            <div class="compare-tag">do</div>
+            <div class="compare-text">"Worker returned 503 after 3 retries. Your local changes are preserved. Try again in a moment."</div>
+            <div class="compare-note">What happened. What's safe. What to do.</div>
+          </div>
+        </div>
+        
+        <h3 class="sb-h3">Empty states</h3>
+        <div class="compare">
+          <div class="compare-cell bad">
+            <div class="compare-tag">don't</div>
+            <div class="compare-text">"Nothing here yet! 📭 Why not add your first node?"</div>
+            <div class="compare-note">Patronizing. Emoji as decoration.</div>
+          </div>
+          <div class="compare-cell good">
+            <div class="compare-tag">do</div>
+            <div class="compare-text">"No mesh nodes yet. Add your first family vertex to start syncing."</div>
+            <div class="compare-note">Tell me what's missing and what to do about it.</div>
+          </div>
+        </div>
+        
+        <h3 class="sb-h3">Marketing copy</h3>
+        <div class="compare">
+          <div class="compare-cell bad">
+            <div class="compare-tag">don't</div>
+            <div class="compare-text">"Revolutionize your family's digital life with our cutting-edge AI-powered mesh!"</div>
+            <div class="compare-note">Hype words. Vague benefit. Buzzword stack.</div>
+          </div>
+          <div class="compare-cell good">
+            <div class="compare-tag">do</div>
+            <div class="compare-text">"Encrypted family graph. Edge-only. Zero budget."</div>
+            <div class="compare-note">Three concrete claims. Each verifiable.</div>
+          </div>
+        </div>
+        
+        <h3 class="sb-h3">Confirmations</h3>
+        <div class="compare">
+          <div class="compare-cell bad">
+            <div class="compare-tag">don't</div>
+            <div class="compare-text">"Awesome! Your changes have been successfully saved! 🎉"</div>
+            <div class="compare-note">Celebrating mundane operations.</div>
+          </div>
+          <div class="compare-cell good">
+            <div class="compare-tag">do</div>
+            <div class="compare-text">"Saved · 4 nodes synced"</div>
+            <div class="compare-note">Confirmation. Receipt. Move on.</div>
+          </div>
+        </div>
+        
+        <h3 class="sb-h3">Onboarding</h3>
+        <div class="compare">
+          <div class="compare-cell bad">
+            <div class="compare-tag">don't</div>
+            <div class="compare-text">"Welcome aboard! We're so excited to have you. Let's get you set up in just a few quick steps!"</div>
+            <div class="compare-note">Performance of warmth. "Just a few" is always a lie.</div>
+          </div>
+          <div class="compare-cell good">
+            <div class="compare-tag">do</div>
+            <div class="compare-text">"Welcome. Three things to set up: profile, mesh, passkey. About 4 minutes."</div>
+            <div class="compare-note">What's coming. How long. No fanfare.</div>
+          </div>
+        </div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Word list</div>
+          <h2 class="sb-h2">Vocabulary</h2>
+        </div>
+        
+        <table class="sb-table">
+          <thead><tr><th>Avoid</th><th>Prefer</th><th>Why</th></tr></thead>
+          <tbody>
+            <tr><td>Awesome / amazing / incredible</td><td>(omit, or be specific)</td><td>Empty intensifiers</td></tr>
+            <tr><td>Just / simply / easy</td><td>(omit)</td><td>Often condescending; assumes user perspective</td></tr>
+            <tr><td>Sorry / oops / whoops</td><td>(state the situation)</td><td>Apologies don't fix problems</td></tr>
+            <tr><td>Please</td><td>(direct ask)</td><td>"Please" before every request reads as begging</td></tr>
+            <tr><td>Users</td><td>Operator, family, member, you</td><td>"User" reduces a person to consumption</td></tr>
+            <tr><td>Engagement / retention</td><td>Use, return, active</td><td>Engagement is metrics-speak; we focus on usefulness</td></tr>
+            <tr><td>Legacy</td><td>Earlier / previous / older</td><td>"Legacy" disparages without informing</td></tr>
+            <tr><td>Killer feature</td><td>(name it)</td><td>If it's a killer feature, describing it is enough</td></tr>
+            <tr><td>FOMO / scarcity / limited time</td><td>(don't manufacture urgency)</td><td>Hostile</td></tr>
+            <tr><td>Unlock / supercharge</td><td>(say what changes)</td><td>Vague magic words</td></tr>
+            <tr><td>Game-changer / disrupt</td><td>(specifics)</td><td>Buzzword fatigue</td></tr>
+            <tr><td>Submarine / cockpit / captain</td><td>(literal terms)</td><td>Naval metaphors are operator-banned</td></tr>
+          </tbody>
+        </table>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Punctuation</div>
+          <h2 class="sb-h2">House rules</h2>
+        </div>
+        
+        <table class="sb-table">
+          <thead><tr><th>Mark</th><th>Rule</th></tr></thead>
+          <tbody>
+            <tr><td>Exclamation point</td><td>Maximum one per page. Usually zero.</td></tr>
+            <tr><td>Em dash (—)</td><td>Use for parenthetical asides — like this. With spaces.</td></tr>
+            <tr><td>Ellipsis (…)</td><td>Single Unicode character, not three periods. Reserve for trailing thought.</td></tr>
+            <tr><td>Quotation marks</td><td>Curly ("smart") in body copy. Straight in code blocks.</td></tr>
+            <tr><td>Apostrophes</td><td>Curly ('). Always.</td></tr>
+            <tr><td>Oxford comma</td><td>Always present.</td></tr>
+            <tr><td>Sentence case in UI</td><td>"Save changes" not "Save Changes"</td></tr>
+            <tr><td>Title Case in titles</td><td>Page H1s and section headings only</td></tr>
+            <tr><td>ALL CAPS</td><td>Eyebrow labels, badges. Never body.</td></tr>
+            <tr><td>Numbers</td><td>"3" in UI, "three" in prose for &lt;10. "247 records" in metrics.</td></tr>
+          </tbody>
+        </table>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Identity</div>
+          <h2 class="sb-h2">First, second, third person</h2>
+        </div>
+        
+        <table class="sb-table">
+          <thead><tr><th>Pronoun</th><th>When</th><th>Example</th></tr></thead>
+          <tbody>
+            <tr><td>"You" (second)</td><td>Talking to the operator</td><td>"Your mesh sync paused."</td></tr>
+            <tr><td>"We" (first plural)</td><td>P31 Labs as an organization</td><td>"We don't track."</td></tr>
+            <tr><td>"I" (first singular)</td><td>Almost never</td><td>—</td></tr>
+            <tr><td>System / It</td><td>Describing the software's state</td><td>"The mesh is online."</td></tr>
+            <tr><td>"Users" / "they"</td><td>Never (in product UI)</td><td>—</td></tr>
+          </tbody>
+        </table>
+        
+        ${callout('info', 'No artificial agency', 'The system isn\'t a friend ("I noticed something..."). The system is a tool ("Calcium reading: 8.4 mg/dL"). Anthropomorphism erodes trust the moment something goes wrong.')}
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Source</div>
+          <h2 class="sb-h2">Canonical voice files</h2>
+          <p class="sb-text">Voice rules are mechanically enforced. The verifier scans copy against
+          a banned-words list and flags violations.</p>
+        </div>
+        
+        <table class="sb-table">
+          <thead><tr><th>Source</th><th>What's in it</th></tr></thead>
+          <tbody>
+            <tr><td><code>docs/PUBLIC-VOICE.md</code></td><td>Identity-first guardrails, tier B/C copy patterns</td></tr>
+            <tr><td><code>docs/p31-public-voice-guardrails.json</code></td><td>Machine-readable banned words and required phrases</td></tr>
+            <tr><td><code>docs/P31-DELTA-LANGUAGE.md</code></td><td>Topology vocabulary (void, sky, layers, bridges)</td></tr>
+            <tr><td><code>docs/p31-delta-language.json</code></td><td>DELTA term registry · <code>verify:delta-language</code></td></tr>
+            <tr><td><code>docs/ETHICAL-STYLE-MAP.md</code></td><td>Color psychology + copy ethics integration</td></tr>
+          </tbody>
+        </table>
+      </section>
+    `;
+    
+    renderShell({
+      activeId: 'voice',
+      breadcrumb: [
+        { href: '/stylebook/', label: 'Stylebook' },
+        { href: '/stylebook/', label: 'Guidelines' },
+        { label: 'Voice & tone' }
+      ],
+      title: 'Voice & tone',
+      subtitle: 'Calm. Direct. Honest. The way P31 talks to operators, families, and the public.',
+      meta: [
+        { label: 'Axes', value: '4' },
+        { label: 'Banned words', value: '12+' },
+        { label: 'Verifier', value: 'public-voice' }
+      ],
+      content
+    });
+  </script>
+</body>
+</html>

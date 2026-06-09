@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub" style="color-scheme: dark;">
+<head>
+  <meta charset="UTF-8">
+<script>(function(){var r=document.documentElement;if(/[?&]alive=1(?:&|$)/.test(location.search))return;r.classList.add("p31-gray-rock");function wake(){r.classList.remove("p31-gray-rock")}document.addEventListener("pointerdown",wake,{once:true,capture:true});document.addEventListener("keydown",wake,{once:true,capture:true})})();</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0f1115">
+  <meta name="description" content="Interactive P31 universal design canon — hub vs org appearance, tokens, and Ring D hookup.">
+<link rel="canonical" href="https://p31ca.org/p31-canon-demo.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Universal canon — live hub ↔ org">
+<meta property="og:description" content="Interactive P31 universal design canon — hub vs org appearance, tokens, and Ring D hookup.">
+<meta property="og:url" content="https://p31ca.org/p31-canon-demo.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Universal canon — live hub ↔ org">
+<meta name="twitter:description" content="Interactive P31 universal design canon — hub vs org appearance, tokens, and Ring D hookup.">
+  <title>Universal canon — live hub ↔ org | P31 Labs</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/p31-style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/p31-tailwind-extend.js"></script>
+  <script>
+    tailwind.config = { theme: { extend: { ...window.P31_TAILWIND_EXTEND } } };
+  </script>
+  <style>
+    body {
+      font-family: var(--p31-font-sans);
+      background: var(--p31-void);
+      color: var(--p31-cloud);
+      transition: background-color 0.35s var(--p31-ease-standard), color 0.35s var(--p31-ease-standard);
+    }
+    .canon-hero {
+      background: linear-gradient(135deg, color-mix(in srgb, var(--p31-teal) 12%, transparent) 0%, transparent 50%, color-mix(in srgb, var(--p31-coral) 8%, transparent) 100%);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: var(--p31-radius-xl);
+      box-shadow: var(--p31-shadow-md);
+    }
+    .swatch {
+      border-radius: var(--p31-radius-lg);
+      border: 1px solid var(--p31-border-subtle);
+      aspect-ratio: 1;
+      min-height: 3.5rem;
+    }
+    .token-card {
+      background: var(--p31-surface);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: var(--p31-radius-lg);
+      transition: box-shadow 0.25s var(--p31-ease-standard), transform 0.25s var(--p31-ease-standard);
+    }
+    .token-card:hover {
+      box-shadow: var(--p31-shadow-glowTeal);
+      transform: translateY(-2px);
+    }
+    .seg {
+      display: inline-flex;
+      border-radius: var(--p31-radius-full);
+      padding: var(--p31-space-1);
+      background: var(--p31-surface2);
+      border: 1px solid var(--p31-border-subtle);
+      gap: 2px;
+    }
+    .seg button {
+      font-family: var(--p31-font-mono);
+      font-size: var(--p31-text-xs);
+      letter-spacing: var(--p31-tracking-wide);
+      text-transform: uppercase;
+      padding: var(--p31-space-2) var(--p31-space-4);
+      border-radius: var(--p31-radius-full);
+      border: none;
+      cursor: pointer;
+      background: transparent;
+      color: var(--p31-muted);
+      transition: background 0.2s, color 0.2s;
+    }
+    .seg button.on {
+      background: color-mix(in srgb, var(--p31-teal) 22%, transparent);
+      color: var(--p31-teal);
+    }
+    .space-ladder > div {
+      background: var(--p31-teal);
+      border-radius: var(--p31-radius-sm);
+      opacity: 0.85;
+    }
+    @keyframes canon-pulse {
+      0%, 100% { opacity: 0.5; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.08); }
+    }
+    .live-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 9999px;
+      background: var(--p31-phosphor);
+      animation: canon-pulse 2.4s var(--p31-ease-standard) infinite;
+      box-shadow: 0 0 14px color-mix(in srgb, var(--p31-phosphor) 50%, transparent);
+    }
+    pre.code {
+      font-family: var(--p31-font-mono);
+      font-size: var(--p31-text-xs);
+      line-height: var(--p31-leading-relaxed);
+      background: var(--p31-surface2);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: var(--p31-radius-md);
+      padding: var(--p31-space-4);
+      overflow-x: auto;
+      color: var(--p31-cloud);
+    }
+  </style>
+</head>
+<body class="bg-void text-cloud min-h-screen font-sans antialiased">
+<a href="#main" style="position:absolute;left:-9999px;top:0;padding:0.5rem 1rem;background:var(--p31-void);color:var(--p31-teal);font-size:0.875rem;z-index:9999;border-radius:0 0 4px 4px;text-decoration:none" onfocus="this.style.left='0'" onblur="this.style.left='-9999px'">Skip to main content</a>
+  <a href="/" class="fixed top-4 left-4 z-50 font-mono text-xs text-teal/70 hover:text-teal transition-colors no-underline z-[60]">← Hub</a>
+
+  <main id="main" class="max-w-3xl mx-auto px-5 pt-16 pb-24">
+    <header class="canon-hero px-6 py-8 mb-10 relative overflow-hidden">
+      <div class="absolute top-4 right-4 flex items-center gap-2">
+        <span class="live-dot" aria-hidden="true"></span>
+        <span class="font-mono text-[0.65rem] uppercase tracking-widest text-cloud/40">live tokens</span>
+      </div>
+      <p class="font-mono text-[0.65rem] tracking-[0.2em] uppercase text-teal/80 mb-3">p31.universalCanon / design-tokens</p>
+      <h1 class="text-2xl md:text-3xl font-bold text-paper mb-3 leading-tight">One canon. Two appearances.</h1>
+      <p class="text-cloud/65 text-base leading-relaxed max-w-xl mb-6">
+        Hub stays dark. phosphorus31.org flips to light with the <strong class="text-cloud/90">same brand accents</strong> — related DNA, different room.
+        Toggle below writes <span class="font-mono text-sm text-teal/90">data-p31-appearance</span> on <span class="font-mono text-sm">&lt;html&gt;</span> and remembers it.
+      </p>
+      <div class="flex flex-col sm:flex-row sm:items-center gap-4 flex-wrap">
+        <div class="seg" role="group" aria-label="Appearance">
+          <button type="button" data-mode="hub" class="on">Hub</button>
+          <button type="button" data-mode="org">Org</button>
+          <button type="button" data-mode="auto">Auto</button>
+        </div>
+        <span id="mode-label" class="font-mono text-xs text-muted">appearance: hub (default)</span>
+      </div>
+    </header>
+
+    <section class="mb-12">
+      <h2 class="font-sans text-[0.65rem] tracking-widest uppercase text-muted mb-4">Palette — shared accents</h2>
+      <div class="grid grid-cols-4 sm:grid-cols-7 gap-3">
+        <div class="text-center"><div class="swatch" style="background:var(--p31-coral)"></div><span class="font-mono text-[0.6rem] text-muted mt-1 block">coral</span></div>
+        <div class="text-center"><div class="swatch" style="background:var(--p31-teal)"></div><span class="font-mono text-[0.6rem] text-muted mt-1 block">teal</span></div>
+        <div class="text-center"><div class="swatch" style="background:var(--p31-teal)"></div><span class="font-mono text-[0.6rem] text-muted mt-1 block">cyan</span></div>
+        <div class="text-center"><div class="swatch" style="background:var(--p31-amber)"></div><span class="font-mono text-[0.6rem] text-muted mt-1 block">butter</span></div>
+        <div class="text-center"><div class="swatch" style="background:var(--p31-lavender)"></div><span class="font-mono text-[0.6rem] text-muted mt-1 block">lavender</span></div>
+        <div class="text-center"><div class="swatch" style="background:var(--p31-phosphorus)"></div><span class="font-mono text-[0.6rem] text-muted mt-1 block">P</span></div>
+        <div class="text-center"><div class="swatch" style="background:var(--p31-phosphor)"></div><span class="font-mono text-[0.6rem] text-muted mt-1 block">phosphor</span></div>
+      </div>
+    </section>
+
+    <section class="mb-12">
+      <h2 class="font-sans text-[0.65rem] tracking-widest uppercase text-muted mb-4">Surfaces — flip with appearance</h2>
+      <div class="grid sm:grid-cols-3 gap-4">
+        <div class="token-card p-4">
+          <div class="font-mono text-[0.6rem] text-muted mb-2">void</div>
+          <div class="h-16 rounded-lg border border-white/5" style="background:var(--p31-void)"></div>
+        </div>
+        <div class="token-card p-4">
+          <div class="font-mono text-[0.6rem] text-muted mb-2">surface</div>
+          <div class="h-16 rounded-lg" style="background:var(--p31-surface)"></div>
+        </div>
+        <div class="token-card p-4">
+          <div class="font-mono text-[0.6rem] text-muted mb-2">cloud (text)</div>
+          <div class="h-16 rounded-lg flex items-center justify-center font-mono text-sm" style="background:var(--p31-surface2);color:var(--p31-cloud)">Aa</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="mb-12">
+      <h2 class="font-sans text-[0.65rem] tracking-widest uppercase text-muted mb-4">Type scale — from canon</h2>
+      <div class="token-card p-5 space-y-3">
+        <p style="font-size:var(--p31-text-4xl);font-weight:700;line-height:var(--p31-leading-tight)">4xl — headline</p>
+        <p style="font-size:var(--p31-text-xl);line-height:var(--p31-leading-snug)">xl — lead copy</p>
+        <p style="font-size:var(--p31-text-base);line-height:var(--p31-leading-normal);color:color-mix(in srgb,var(--p31-cloud) 75%,transparent)">base — body. Atkinson Hyperlegible for reading; mono for contracts and probes.</p>
+        <p class="font-mono" style="font-size:var(--p31-text-sm);color:var(--p31-teal)">sm mono — telemetry</p>
+      </div>
+    </section>
+
+    <section class="mb-12">
+      <h2 class="font-sans text-[0.65rem] tracking-widest uppercase text-muted mb-4">Space ladder</h2>
+      <div class="token-card p-5">
+        <div class="space-ladder flex items-end gap-2 h-24">
+          <div style="width:var(--p31-space-1);height:var(--p31-space-1)"></div>
+          <div style="width:var(--p31-space-2);height:var(--p31-space-2)"></div>
+          <div style="width:var(--p31-space-3);height:var(--p31-space-3)"></div>
+          <div style="width:var(--p31-space-4);height:var(--p31-space-4)"></div>
+          <div style="width:var(--p31-space-6);height:var(--p31-space-6)"></div>
+          <div style="width:var(--p31-space-8);height:var(--p31-space-8)"></div>
+          <div style="width:var(--p31-space-12);height:var(--p31-space-12)"></div>
+        </div>
+        <p class="font-mono text-[0.6rem] text-muted mt-3">--p31-space-1 … 12 — same rhythm on hub and org.</p>
+      </div>
+    </section>
+
+    <section class="mb-12">
+      <h2 class="font-sans text-[0.65rem] tracking-widest uppercase text-muted mb-4">Motion</h2>
+      <button type="button" id="motion-demo" class="font-mono text-sm px-5 py-2.5 rounded-xl border transition-all"
+        style="border-color:var(--p31-border-subtle);background:var(--p31-surface);color:var(--p31-teal);transition-duration:var(--p31-duration-normal);transition-timing-function:var(--p31-ease-emphasized)">
+        Hover — duration + easing from canon
+      </button>
+    </section>
+
+    <section class="mb-8">
+      <h2 class="font-sans text-[0.65rem] tracking-widest uppercase text-muted mb-4">Ring D — drop-in</h2>
+      <pre class="code" id="snippet">&lt;link rel="stylesheet" href="/p31-style.css" /&gt;
+&lt;html lang="en" data-p31-appearance="org"&gt;</pre>
+      <p class="text-sm text-muted mt-3 leading-relaxed">Runbook in repo: <code class="text-cloud/70">andromeda/04_SOFTWARE/design-tokens/PHOSPHORUS31-RING.md</code></p>
+    </section>
+
+    <footer class="font-mono text-[0.65rem] text-muted border-t border-white/5 pt-8 flex flex-wrap gap-4 justify-between">
+      <span>P31 Labs — canon demo</span>
+      <div class="flex gap-4">
+        <a href="/p31-super-centaur-starter.html" class="text-teal/80 hover:text-teal no-underline">Super-Centaur</a>
+        <a href="/delta.html" class="text-teal/80 hover:text-teal no-underline">Delta</a>
+        <a href="/p31-style.css" class="text-teal/80 hover:text-teal no-underline">p31-style.css</a>
+      </div>
+    </footer>
+  </main>
+
+  <script>
+(function () {
+  var root = document.documentElement;
+  var KEY = 'p31-appearance';
+  var meta = document.querySelector('meta[name="theme-color"]');
+
+  function syncMeta() {
+    if (!meta) return;
+    var v = getComputedStyle(root).getPropertyValue('--p31-theme-color').trim();
+    if (v) meta.setAttribute('content', v);
+  }
+
+  function label(mode) {
+    var el = document.getElementById('mode-label');
+    if (!el) return;
+    var map = { hub: 'hub (technical dark)', org: 'org (phosphorus / light field)', auto: 'auto (follows OS light preference)' };
+    el.textContent = 'appearance: ' + (map[mode] || mode);
+  }
+
+  function setMode(mode) {
+    root.setAttribute('data-p31-appearance', mode);
+    try { localStorage.setItem(KEY, mode); } catch (e) {}
+    document.querySelectorAll('.seg button').forEach(function (b) {
+      b.classList.toggle('on', b.getAttribute('data-mode') === mode);
+    });
+    label(mode);
+    syncMeta();
+  }
+
+  var initial = 'hub';
+  try {
+    var s = localStorage.getItem(KEY);
+    if (s === 'org' || s === 'hub' || s === 'auto') initial = s;
+  } catch (e) {}
+  setMode(initial);
+
+  document.querySelector('.seg').addEventListener('click', function (e) {
+    var btn = e.target.closest('button[data-mode]');
+    if (!btn) return;
+    setMode(btn.getAttribute('data-mode'));
+  });
+
+  var md = document.getElementById('motion-demo');
+  if (md) {
+    md.addEventListener('mouseenter', function () {
+      md.style.transform = 'scale(1.03)';
+      md.style.boxShadow = 'var(--p31-shadow-glowTeal)';
+    });
+    md.addEventListener('mouseleave', function () {
+      md.style.transform = '';
+      md.style.boxShadow = '';
+    });
+  }
+})();
+  </script>
+</body>
+</html>

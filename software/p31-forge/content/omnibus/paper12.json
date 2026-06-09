@@ -1,0 +1,26 @@
+{
+  "kind": "paper",
+  "filename": "P31_Paper_12_Universal_Bridge_AI_Accessibility.docx",
+  "program": "research",
+  "title": "Universal Bridge: AI Accessibility Framework",
+  "abstract": "Published April 10, 2026",
+  "doi": "10.5281/zenodo.19503542",
+  "body": [
+    { "type": "h1", "text": "ABSTRACT" },
+    { "type": "para", "text": "The Universal Bridge establishes an open-source framework for AI accessibility, ensuring that artificial intelligence tools remain usable by neurodivergent individuals and those with disabilities." },
+    { "type": "h1", "text": "INTRODUCTION" },
+    { "type": "para", "text": "As AI becomes increasingly pervasive, accessibility considerations must be built into the foundation rather than retrofitted as afterthoughts. This paper establishes principles and implementations for truly inclusive AI systems." },
+    { "type": "h1", "text": "KEY PRINCIPLES" },
+    { "type": "bullet", "text": "Perceivable: Information must be presentable in multiple ways" },
+    { "type": "bullet", "text": "Operable: Interface components must be usable" },
+    { "type": "bullet", "text": "Understandable: Information and operation must be comprehensible" },
+    { "type": "bullet", "text": "Robust: Content must be interpretable by assistive technologies" },
+    { "type": "h1", "text": "IMPLEMENTATION FRAMEWORK" },
+    { "type": "bullet", "text": "AGPLv3/MIT licensed open source" },
+    { "type": "bullet", "text": "Compatible with WCAG 2.1 standards" },
+    { "type": "bullet", "text": "Designed for neurodivergent cognitive profiles" },
+    { "type": "bullet", "text": "Privacy-preserving by default" },
+    { "type": "h1", "text": "APPLICATIONS" },
+    { "type": "para", "text": "The Universal Bridge framework applies to all P31 Labs artifacts, ensuring that BONDING, The Buffer, Node Zero, and all future developments remain accessible to neurodivergent users." }
+  ]
+}

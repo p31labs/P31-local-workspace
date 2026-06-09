@@ -1,0 +1,33 @@
+{
+  "version": "1.0.0",
+  "environment": "development",
+  "services": {
+    "frontend": {
+      "port": 3000,
+      "path": "software/spaceship-earth"
+    },
+    "backend": {
+      "port": 3001,
+      "path": "software"
+    },
+    "monitoring": {
+      "port": 3002,
+      "path": "monitoring"
+    }
+  },
+  "oauth": {
+    "providers": [
+      "google",
+      "github",
+      "discord"
+    ],
+    "callbackUrl": "http://localhost:3000/auth/callback"
+  },
+  "secrets": {
+    "encryption": {
+      "algorithm": "aes-256-gcm",
+      "keyLength": 32,
+      "ivLength": 16
+    }
+  }
+}

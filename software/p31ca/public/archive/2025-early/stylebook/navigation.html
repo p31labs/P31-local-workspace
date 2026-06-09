@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Navigation · P31 Stylebook</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/p31-style.css">
+  <link rel="stylesheet" href="/lib/p31-fluid.css">
+  <link rel="stylesheet" href="/stylebook/_chrome.css">
+  <style>
+    .p31-tabs {
+      display: flex;
+      gap: 4px;
+      padding: 4px;
+      background: var(--p31-surface);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: 10px;
+      width: fit-content;
+    }
+    .p31-tab {
+      padding: 6px 14px;
+      border-radius: 7px;
+      background: transparent;
+      border: none;
+      color: var(--p31-cloud);
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .p31-tab:hover { color: var(--p31-paper); }
+    .p31-tab.active {
+      background: var(--p31-surface2);
+      color: var(--p31-paper);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+    
+    .p31-breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+    }
+    .p31-breadcrumb a {
+      color: var(--p31-muted);
+      text-decoration: none;
+    }
+    .p31-breadcrumb a:hover { color: var(--p31-cloud); }
+    .p31-breadcrumb-sep { color: var(--p31-muted); opacity: 0.4; }
+    .p31-breadcrumb-current { color: var(--p31-paper); font-weight: 500; }
+    
+    .p31-pagination {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .p31-page-btn {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--p31-surface);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: 8px;
+      color: var(--p31-cloud);
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.15s;
+    }
+    .p31-page-btn:hover { border-color: var(--p31-primary); color: var(--p31-primary); }
+    .p31-page-btn.active {
+      background: var(--p31-primary);
+      color: var(--p31-void);
+      border-color: var(--p31-primary);
+    }
+    
+    .p31-tabbar {
+      display: flex;
+      gap: 4px;
+      border-bottom: 1px solid var(--p31-border-subtle);
+    }
+    .p31-tabbar-item {
+      padding: 12px 20px;
+      background: transparent;
+      border: none;
+      color: var(--p31-muted);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      transition: all 0.15s;
+    }
+    .p31-tabbar-item:hover { color: var(--p31-cloud); }
+    .p31-tabbar-item.active {
+      color: var(--p31-primary);
+      border-bottom-color: var(--p31-primary);
+    }
+    
+    .p31-mock-sidebar {
+      width: 220px;
+      background: var(--p31-surface);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: 10px;
+      padding: 12px;
+    }
+    .p31-mock-side-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 10px;
+      border-radius: 6px;
+      color: var(--p31-cloud);
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .p31-mock-side-link:hover { background: var(--p31-surface2); }
+    .p31-mock-side-link.active {
+      background: var(--p31-surface2);
+      color: var(--p31-primary);
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+  <script type="module">
+    import { renderShell, code, callout } from '/stylebook/_chrome.js';
+    import { P31ThemeController } from '/lib/p31-theme-engine.mjs';
+    window.p31Theme = new P31ThemeController({ defaultTheme: 'hub' });
+    
+    const content = `
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Tabs</div>
+          <h2 class="sb-h2">Two tab styles</h2>
+          <p class="sb-text">Use <strong>segmented</strong> tabs for view switching (compact, set-like).
+          Use <strong>tabbar</strong> for primary section navigation (visual hierarchy).</p>
+        </div>
+        
+        <div class="sb-preview">
+          <div class="sb-preview-header"><span>Segmented control</span></div>
+          <div class="sb-preview-body">
+            <div class="p31-tabs">
+              <button class="p31-tab active">Overview</button>
+              <button class="p31-tab">Details</button>
+              <button class="p31-tab">Activity</button>
+              <button class="p31-tab">Settings</button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="sb-preview">
+          <div class="sb-preview-header"><span>Tabbar (section nav)</span></div>
+          <div class="sb-preview-body dense">
+            <div class="p31-tabbar">
+              <button class="p31-tabbar-item active">Recent</button>
+              <button class="p31-tabbar-item">Archive</button>
+              <button class="p31-tabbar-item">Trash</button>
+              <button class="p31-tabbar-item">Drafts</button>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Breadcrumb</div>
+          <h2 class="sb-h2">Where am I?</h2>
+        </div>
+        
+        <div class="sb-preview">
+          <div class="sb-preview-header"><span>Breadcrumb</span></div>
+          <div class="sb-preview-body">
+            <nav class="p31-breadcrumb" aria-label="Breadcrumb">
+              <a href="#">Home</a>
+              <span class="p31-breadcrumb-sep">/</span>
+              <a href="#">Products</a>
+              <span class="p31-breadcrumb-sep">/</span>
+              <a href="#">K4 Mesh</a>
+              <span class="p31-breadcrumb-sep">/</span>
+              <span class="p31-breadcrumb-current">Settings</span>
+            </nav>
+          </div>
+        </div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Pagination</div>
+          <h2 class="sb-h2">Long lists</h2>
+        </div>
+        
+        <div class="sb-preview">
+          <div class="sb-preview-header"><span>Numbered</span></div>
+          <div class="sb-preview-body">
+            <div class="p31-pagination">
+              <button class="p31-page-btn" aria-label="Previous">‹</button>
+              <button class="p31-page-btn">1</button>
+              <button class="p31-page-btn active">2</button>
+              <button class="p31-page-btn">3</button>
+              <span class="p31-page-btn" style="border:none; background:transparent; cursor:default;">...</span>
+              <button class="p31-page-btn">8</button>
+              <button class="p31-page-btn" aria-label="Next">›</button>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">Sidebar</div>
+          <h2 class="sb-h2">Persistent navigation</h2>
+        </div>
+        
+        <div class="sb-preview">
+          <div class="sb-preview-header"><span>Sidebar nav</span></div>
+          <div class="sb-preview-body">
+            <div class="p31-mock-sidebar">
+              <div style="font-family:var(--p31-font-mono); font-size:11px; color:var(--p31-muted); text-transform:uppercase; padding:6px 10px; letter-spacing:0.08em;">Workspace</div>
+              <div class="p31-mock-side-link active"><span style="opacity:0.7;">◇</span> Dashboard</div>
+              <div class="p31-mock-side-link"><span style="opacity:0.7;">◰</span> Projects <span style="margin-left:auto; font-family:var(--p31-font-mono); font-size:10px; padding:2px 6px; background:var(--p31-surface3); border-radius:4px;">12</span></div>
+              <div class="p31-mock-side-link"><span style="opacity:0.7;">⏲</span> Activity</div>
+              <div class="p31-mock-side-link"><span style="opacity:0.7;">▦</span> Reports</div>
+              <div style="font-family:var(--p31-font-mono); font-size:11px; color:var(--p31-muted); text-transform:uppercase; padding:6px 10px; margin-top:12px; letter-spacing:0.08em;">Account</div>
+              <div class="p31-mock-side-link"><span style="opacity:0.7;">⚙</span> Settings</div>
+              <div class="p31-mock-side-link"><span style="opacity:0.7;">@</span> Profile</div>
+            </div>
+          </div>
+        </div>
+        
+        ${callout('info', 'You\'re looking at one', 'The sidebar in this stylebook is a real implementation of this pattern — see <code>_chrome.css</code> for the source.')}
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">CSS</div>
+          <h2 class="sb-h2">Markup</h2>
+        </div>
+        
+        ${code(`<!-- Segmented tabs -->
+<div class="p31-tabs" role="tablist">
+  <button class="p31-tab active" role="tab" aria-selected="true">Overview</button>
+  <button class="p31-tab" role="tab" aria-selected="false">Details</button>
+  <button class="p31-tab" role="tab" aria-selected="false">Activity</button>
+</div>
+
+<!-- Section tabbar -->
+<div class="p31-tabbar" role="tablist">
+  <button class="p31-tabbar-item active" role="tab">Recent</button>
+  <button class="p31-tabbar-item" role="tab">Archive</button>
+</div>
+
+<!-- Breadcrumb -->
+<nav class="p31-breadcrumb" aria-label="Breadcrumb">
+  <a href="/">Home</a>
+  <span class="p31-breadcrumb-sep">/</span>
+  <span class="p31-breadcrumb-current">Settings</span>
+</nav>`, 'html', 'Navigation')}
+      </section>
+    `;
+    
+    renderShell({
+      activeId: 'navigation',
+      breadcrumb: [
+        { href: '/stylebook/', label: 'Stylebook' },
+        { href: '/stylebook/', label: 'Components' },
+        { label: 'Navigation' }
+      ],
+      title: 'Navigation',
+      subtitle: 'Tabs, breadcrumbs, pagination, sidebars. Patterns for "where am I" and "what now".',
+      meta: [{ label: 'Patterns', value: '5' }],
+      content
+    });
+  </script>
+</body>
+</html>

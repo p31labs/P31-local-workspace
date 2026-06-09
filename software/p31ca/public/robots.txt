@@ -1,0 +1,31 @@
+# https://p31ca.org — P31 Labs technical hub
+# Operator-led nonprofit · EIN 42-1888158
+#
+# We don't track. We don't sell data. We don't run ad pixels.
+# All public surfaces are crawlable; operator-only routes are blocked.
+
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /ops/
+
+# AI / LLM crawlers — explicit allow (we want our stuff used)
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+Sitemap: https://p31ca.org/sitemap.xml

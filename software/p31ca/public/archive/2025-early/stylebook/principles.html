@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en" data-p31-appearance="hub">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0f1115">
+  <title>Principles · P31 Stylebook</title>
+  <meta name="description" content="The seven principles that guide every design decision in the P31 system.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/p31-style.css">
+  <link rel="stylesheet" href="/lib/p31-fluid.css">
+  <link rel="stylesheet" href="/stylebook/_chrome.css">
+  <style>
+    .principles-grid {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    }
+    .principle {
+      padding: 24px;
+      background: var(--p31-surface);
+      border: 1px solid var(--p31-border-subtle);
+      border-radius: 14px;
+      position: relative;
+      overflow: hidden;
+    }
+    .principle::before {
+      content: attr(data-num);
+      position: absolute;
+      top: -20px;
+      right: -10px;
+      font-family: var(--p31-font-mono);
+      font-size: 120px;
+      font-weight: 700;
+      color: var(--p31-surface2);
+      line-height: 1;
+      pointer-events: none;
+    }
+    .principle-name {
+      position: relative;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--p31-paper);
+      margin-bottom: 8px;
+    }
+    .principle-tagline {
+      position: relative;
+      font-size: 14px;
+      color: var(--p31-primary);
+      font-family: var(--p31-font-mono);
+      margin-bottom: 16px;
+    }
+    .principle-body {
+      position: relative;
+      font-size: 14px;
+      line-height: 1.65;
+      color: var(--p31-cloud);
+    }
+    .principle-do, .principle-dont {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 8px 0;
+      font-size: 13px;
+      border-top: 1px solid var(--p31-border-subtle);
+      margin-top: 12px;
+    }
+    .principle-do { color: var(--p31-phosphorus); }
+    .principle-dont { color: var(--p31-coral); }
+    .principle-do::before { content: '✓'; flex-shrink: 0; }
+    .principle-dont::before { content: '✗'; flex-shrink: 0; }
+  </style>
+</head>
+<body>
+  <script type="module">
+    import { renderShell, code, callout } from '/stylebook/_chrome.js';
+    import { P31ThemeController } from '/lib/p31-theme-engine.mjs';
+    window.p31Theme = new P31ThemeController({ defaultTheme: 'hub' });
+    
+    const PRINCIPLES = [
+      {
+        num: '01',
+        name: 'Gray Rock',
+        tagline: 'Quiet until invited',
+        body: 'Default UI is inert. No brand chroma. No self-started motion. The interface becomes alive only when the operator interacts.',
+        do: 'Use muted hierarchies on first paint',
+        dont: 'Animate elements to grab attention before user intent'
+      },
+      {
+        num: '02',
+        name: 'Fluidity',
+        tagline: 'Everything flows',
+        body: 'Transitions feel physical. Spacing scales with viewport. Type breathes. Nothing snaps or stutters.',
+        do: 'Use clamp() for responsive scales',
+        dont: 'Hard-code breakpoint jumps'
+      },
+      {
+        num: '03',
+        name: 'Autonomy',
+        tagline: 'Respect the operator',
+        body: 'Obvious affordances. Honest copy. Reversible actions. The user is always in control, always informed.',
+        do: 'Show what changed and why',
+        dont: 'Hide defaults or use dark patterns'
+      },
+      {
+        num: '04',
+        name: 'Dignity',
+        tagline: 'Whole people, not users',
+        body: 'No shame, FOMO, or guilt as engagement levers. Treat adults and kids as the complete humans they are.',
+        do: 'Celebrate without comparing',
+        dont: 'Use streaks-as-identity or stranger leaderboards'
+      },
+      {
+        num: '05',
+        name: 'Proportion',
+        tagline: 'One focal beat per view',
+        body: 'Adjacent screaming regions cancel out. Choose where the eye lands. Everything else supports.',
+        do: 'Pick one emotional anchor per screen',
+        dont: 'Stack coral + glow + motion in one zone'
+      },
+      {
+        num: '06',
+        name: 'Access',
+        tagline: 'Designed for every body',
+        body: 'Atkinson Hyperlegible by default. Reduced motion respected. Color never carries meaning alone.',
+        do: 'Pair color with text and icons',
+        dont: 'Rely on motion to communicate state'
+      },
+      {
+        num: '07',
+        name: 'Ephemeralization',
+        tagline: 'One source, many surfaces',
+        body: 'Tokens, not hex codes. Generators, not duplicates. A single change cascades everywhere it should.',
+        do: 'Edit p31-universal-canon.json',
+        dont: 'Hardcode colors in component CSS'
+      }
+    ];
+    
+    const principlesGrid = `
+      <div class="principles-grid">
+        ${PRINCIPLES.map(p => `
+          <div class="principle" data-num="${p.num}">
+            <div class="principle-name">${p.name}</div>
+            <div class="principle-tagline">${p.tagline}</div>
+            <div class="principle-body">${p.body}</div>
+            <div class="principle-do">${p.do}</div>
+            <div class="principle-dont">${p.dont}</div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+    
+    const content = `
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">The seven</div>
+          <h2 class="sb-h2">Principles that guide every decision</h2>
+          <p class="sb-text-lead">
+            Before any color is chosen or component is built, these are the rules that shape the work.
+            They aren't suggestions — they're commitments.
+          </p>
+        </div>
+        ${principlesGrid}
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">In practice</div>
+          <h2 class="sb-h2">How principles become code</h2>
+          <p class="sb-text">
+            Each principle has mechanical enforcement. We don't trust intent — we trust verification.
+          </p>
+        </div>
+        
+        <table class="sb-table">
+          <thead>
+            <tr><th>Principle</th><th>Mechanism</th><th>Verifier</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Gray Rock</td><td>No animations on initial paint</td><td><code>verify:style-alignment</code></td></tr>
+            <tr><td>Fluidity</td><td>clamp() in tokens</td><td><code>verify:p31-style</code></td></tr>
+            <tr><td>Autonomy</td><td>No third-party tracking</td><td><code>security:check</code></td></tr>
+            <tr><td>Dignity</td><td>Avoid-list in copy guardrails</td><td><code>verify:public-voice</code></td></tr>
+            <tr><td>Proportion</td><td>One glass panel per section</td><td>Pre-ship checklist</td></tr>
+            <tr><td>Access</td><td>WCAG color contrast</td><td>Build-time check</td></tr>
+            <tr><td>Ephemeralization</td><td>Token-only colors</td><td><code>verify:style-alignment</code></td></tr>
+          </tbody>
+        </table>
+        
+        ${callout('info', 'Living document', 'These principles evolve. When a new edge case demands a new rule, we add it to the system — not as an exception, but as a constraint that every future component honors.')}
+      </section>
+      
+      <section class="sb-section">
+        <div class="sb-section-header">
+          <div class="sb-section-eyebrow">For contributors</div>
+          <h2 class="sb-h2">The pre-ship checklist</h2>
+        </div>
+        
+        ${code(`Before merging any UI change:
+
+[ ] Initial paint is Gray Rock (muted, no chroma, no motion)
+[ ] All colors use --p31-* tokens (no inline hex)
+[ ] Motion respects prefers-reduced-motion
+[ ] Text passes 4.5:1 contrast on every theme
+[ ] One focal element per viewport section
+[ ] Copy is honest (no FOMO, scarcity, or shame)
+[ ] Keyboard navigation works (Tab, Enter, Escape)
+[ ] Screen reader announces state changes
+[ ] Works in all 6 themes
+[ ] Works in all 5 modes
+[ ] verify:style-alignment passes`, 'plain', 'Checklist')}
+      </section>
+    `;
+    
+    renderShell({
+      activeId: 'principles',
+      breadcrumb: [
+        { href: '/stylebook/', label: 'Stylebook' },
+        { label: 'Principles' }
+      ],
+      title: 'Principles',
+      subtitle: 'Seven commitments that guide every component, color, and motion in the P31 system.',
+      meta: [
+        { label: 'Updated', value: '2026-05-01' },
+        { label: 'Schema', value: 'p31.principles/2.0.0' },
+        { label: 'Status', value: 'Living' }
+      ],
+      content
+    });
+  </script>
+</body>
+</html>

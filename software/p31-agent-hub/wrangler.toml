@@ -1,0 +1,76 @@
+# P31 Agent Hub — Workers AI orchestrator with service bindings to K₄ trio.
+# Deploy: cd software/p31-agent-hub && npm i && npx wrangler deploy
+# Requires: same Cloudflare account as k4-cage, k4-personal, k4-hubs (bindings below).
+# Optional secret: npx wrangler secret put AGENT_HUB_SECRET
+
+name = "p31-agent-hub"
+main = "src/index.js"
+compatibility_date = "2025-10-01"
+
+[vars]
+ENVIRONMENT = "production"
+# public = read-only tools. internal = may expose k4-hubs write tools when HUBS_WRITE_TOKEN secret is set.
+RELEASE_CHANNEL = "public"
+WORKERS_AI_MODEL = "@cf/meta/llama-3.1-8b-instruct"
+
+[ai]
+binding = "AI"
+
+# Same-account Worker-to-Worker (no public HTTP hop).
+[[services]]
+binding = "K4_CAGE"
+service = "k4-cage"
+
+[[services]]
+binding = "K4_PERSONAL"
+service = "k4-personal"
+
+[[services]]
+binding = "K4_HUBS"
+service = "k4-hubs"
+
+[durable_objects]
+bindings = [{ name = "AGENT_SESSION", class_name = "AgentSession" }]
+
+# Free-tier Workers require SQLite-backed Durable Objects (code 10097 if you use new_classes).
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["AgentSession"]
+
+# Named env does not inherit top-level bindings — duplicate AI, services, DO below.
+# Secrets (internal only): npx wrangler secret put AGENT_HUB_SECRET --env internal
+#   npx wrangler secret put HUBS_WRITE_TOKEN --env internal   # same value as k4-hubs
+[env.internal]
+name = "p31-agent-hub-internal"
+main = "src/index.js"
+
+[env.internal.vars]
+ENVIRONMENT = "production"
+RELEASE_CHANNEL = "internal"
+WORKERS_AI_MODEL = "@cf/meta/llama-3.1-8b-instruct"
+
+[env.internal.ai]
+binding = "AI"
+
+[[env.internal.services]]
+binding = "K4_CAGE"
+service = "k4-cage"
+
+[[env.internal.services]]
+binding = "K4_PERSONAL"
+service = "k4-personal"
+
+[[env.internal.services]]
+binding = "K4_HUBS"
+service = "k4-hubs"
+
+[env.internal.durable_objects]
+bindings = [{ name = "AGENT_SESSION", class_name = "AgentSession" }]
+
+# Required per-environment for DOs (same class, separate worker: p31-agent-hub-internal).
+[[env.internal.migrations]]
+tag = "v1"
+new_sqlite_classes = ["AgentSession"]
+
+[observability]
+enabled = true

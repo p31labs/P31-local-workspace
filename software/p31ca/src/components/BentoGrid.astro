@@ -1,0 +1,143 @@
+---
+import GlassBoxAstro from '../../../shared-components/glass-box/GlassBoxAstro.astro';
+import GlassBoxTelemetry from './GlassBoxTelemetry.astro';
+import landingData from '../data/hub-landing.json';
+
+// Pull real products from hub-landing data
+const coreProducts = landingData.coreProducts || [];
+const totalApps = coreProducts.length;
+
+// Category color mapping (arcade=emerald, core=violet, infra=amber, social=blue, research=rose, utility=orange, concept=slate)
+const categoryColors: Record<string, { bg: string; border: string; glow: string; icon: string }> = {
+  arcade: { bg: 'bg-emerald-500/10', border: 'border-emerald-500/30', glow: 'shadow-[0_0_8px_rgba(16,185,129,0.3)]', icon: 'text-emerald-400' },
+  core: { bg: 'bg-violet-500/10', border: 'border-violet-500/30', glow: 'shadow-[0_0_8px_rgba(139,92,246,0.3)]', icon: 'text-violet-400' },
+  infra: { bg: 'bg-amber-500/10', border: 'border-amber-500/30', glow: 'shadow-[0_0_8px_rgba(245,158,11,0.3)]', icon: 'text-amber-400' },
+  social: { bg: 'bg-blue-500/10', border: 'border-blue-500/30', glow: 'shadow-[0_0_8px_rgba(59,130,246,0.3)]', icon: 'text-blue-400' },
+  research: { bg: 'bg-rose-500/10', border: 'border-rose-500/30', glow: 'shadow-[0_0_8px_rgba(244,63,94,0.3)]', icon: 'text-rose-400' },
+  utility: { bg: 'bg-orange-500/10', border: 'border-orange-500/30', glow: 'shadow-[0_0_8px_rgba(249,115,22,0.3)]', icon: 'text-orange-400' },
+  concept: { bg: 'bg-slate-500/10', border: 'border-slate-500/30', glow: '', icon: 'text-slate-400' }
+};
+
+// Default color for products without category
+const defaultColor = categoryColors.concept;
+---
+
+<!-- BentoGrid: Below-fold content with explicit sizing to prevent CLS -->
+<div class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-6 gap-4 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto"
+     style="contain: layout style; min-height: 600px;">
+
+  <!-- Real App Matrix Box (Spans 3 cols, 2 rows) - Explicit height prevents CLS -->
+  <div class="col-span-1 md:col-span-4 lg:col-span-3 row-span-2 bg-zinc-900/40 border border-zinc-800/80 rounded-2xl p-5 relative overflow-hidden flex flex-col group"
+       style="min-height: 320px; height: 340px;">
+    <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/10 via-transparent to-cyan-500/5 pointer-events-none"></div>
+    <div class="relative z-10 flex-grow flex flex-col h-full">
+      <span class="text-zinc-400 font-mono text-xs uppercase mb-4 flex justify-between items-center border-b border-zinc-800 pb-3">
+        Core Products
+        <span class="text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded">{totalApps} ACTIVE</span>
+      </span>
+
+      <!-- Real App Matrix (41 Core Products) - Touch-optimized scroll with momentum -->
+      <div class="flex-grow overflow-y-auto p31-scroll relative" style="-webkit-overflow-scrolling: touch; overscroll-behavior-y: contain;">
+        <div class="grid grid-cols-4 sm:grid-cols-5 lg:grid-cols-6 gap-2 content-start">
+          {coreProducts.map((app, index) => {
+            const colors = categoryColors[app.category || 'concept'] || defaultColor;
+            // Explicit aspect-ratio prevents CLS during icon/font load
+            return (
+              <a
+                href={app.url}
+                data-app-index={index}
+                class={`relative rounded-lg bg-zinc-950 border ${colors.border} flex flex-col items-center justify-center hover:bg-zinc-800 hover:${colors.border} transition-colors group/app p-2 no-underline p31-interactive ${colors.glow}`}
+                style="aspect-ratio: 1/1; min-height: 44px; min-width: 44px; contain: layout style;"
+              >
+                <!-- Status indicator: explicit positioning prevents shift -->
+                <div class="absolute top-1.5 right-1.5 w-1.5 h-1.5">
+                  {app.status === 'LIVE' ? (
+                    <span class="block w-full h-full rounded-full bg-emerald-500 shadow-[0_0_5px_rgba(16,185,129,0.5)]"></span>
+                  ) : app.status === 'ALPHA' || app.status === 'BETA' ? (
+                    <span class="block w-full h-full rounded-full bg-amber-400 animate-pulse"></span>
+                  ) : (
+                    <span class="block w-full h-full rounded-full bg-zinc-600"></span>
+                  )}
+                </div>
+
+                <!-- Icon: explicit size prevents text reflow -->
+                <span class={`text-xl leading-none mb-1 ${colors.icon}`} style="width: 1.5rem; height: 1.5rem; text-align: center;">
+                  {app.icon || '◆'}
+                </span>
+
+                <!-- App Title: line-clamp prevents expansion -->
+                <span class="text-[10px] font-medium text-zinc-300 text-center leading-tight line-clamp-2 group-hover/app:text-white w-full">
+                  {app.title}
+                </span>
+
+                <!-- Category badge: only show if space permits -->
+                {app.category && (
+                  <span class={`text-[7px] font-mono px-1 rounded mt-0.5 ${colors.bg} ${colors.icon} hidden sm:block`}>
+                    {app.category}
+                  </span>
+                )}
+              </a>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- The Glass Box Telemetry (Spans 3 cols, 2 rows) - Explicit height -->
+  <div class="col-span-1 md:col-span-4 lg:col-span-3 row-span-2 flex flex-col group relative"
+       style="min-height: 320px; height: 340px;">
+    <div class="absolute -inset-1 bg-gradient-to-r from-cyan-500/20 to-emerald-500/20 rounded-2xl blur opacity-30 group-hover:opacity-60 transition duration-1000 group-hover:duration-200"></div>
+    <div class="relative h-full flex flex-col bg-zinc-900/40 border border-zinc-800/80 rounded-2xl p-4 overflow-hidden">
+      <GlassBoxTelemetry
+        wsEndpoint="wss://glass-box-ws.trimtab-signal.workers.dev/telemetry"
+        maxPackets={12}
+      />
+    </div>
+  </div>
+
+  <!-- Metric: Network Traffic - Fixed height prevents shift -->
+  <div class="col-span-1 md:col-span-2 lg:col-span-2 row-span-1 bg-zinc-900/40 border border-zinc-800/80 rounded-2xl p-5 hover:border-cyan-500/50 transition-all hover:shadow-[0_0_20px_rgba(34,211,238,0.1)] flex flex-col justify-between group"
+       style="height: 160px; min-height: 160px; contain: layout style;">
+    <div class="flex justify-between items-start">
+      <span class="text-zinc-400 font-mono text-xs uppercase">Global Throughput</span>
+      <svg class="w-4 h-4 text-cyan-500 opacity-50 group-hover:opacity-100 transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+    </div>
+    <div>
+      <!-- Explicit line-height prevents text reflow -->
+      <div class="text-3xl font-bold text-white leading-tight">4.82 <span class="text-lg text-zinc-500 font-normal">TB/s</span></div>
+      <div class="w-full h-1 bg-zinc-800 rounded-full mt-3 overflow-hidden">
+         <div class="h-full bg-cyan-500 w-[85%] rounded-full shadow-[0_0_10px_rgba(34,211,238,0.8)] relative">
+            <div class="absolute inset-0 bg-white/30 w-1/4 animate-[translate_2s_linear_infinite]"></div>
+         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Metric: Post-Quantum Status - Fixed height -->
+  <div class="col-span-1 md:col-span-2 lg:col-span-2 row-span-1 bg-zinc-900/40 border border-zinc-800/80 rounded-2xl p-5 hover:border-emerald-500/50 transition-all hover:shadow-[0_0_20px_rgba(16,185,129,0.1)] flex flex-col justify-between"
+       style="height: 160px; min-height: 160px; contain: layout style;">
+    <span class="text-zinc-400 font-mono text-xs uppercase block">Cryptography</span>
+    <div class="flex flex-col gap-1">
+      <div class="text-2xl font-bold text-white flex items-center gap-2 leading-tight">
+        ML-KEM-768
+        <span class="bg-emerald-500/10 text-emerald-400 text-[10px] px-2 py-0.5 rounded border border-emerald-500/20">FIPS 203</span>
+      </div>
+      <span class="text-zinc-500 text-xs font-mono">1184-byte strict encapsulation</span>
+    </div>
+  </div>
+
+  <!-- Metric: Edge Nodes - Fixed height -->
+  <div class="col-span-1 md:col-span-2 lg:col-span-2 row-span-1 bg-zinc-900/40 border border-zinc-800/80 rounded-2xl p-5 hover:border-zinc-600 transition-all flex flex-col justify-between"
+       style="height: 160px; min-height: 160px; contain: layout style;">
+    <span class="text-zinc-400 font-mono text-xs uppercase block">Active Edge Nodes</span>
+    <div class="flex items-baseline gap-2">
+      <div class="text-4xl font-bold text-white tracking-tighter leading-none">4,096</div>
+      <span class="text-emerald-400 text-sm font-mono flex items-center gap-1">
+        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg>
+        Syncd
+      </span>
+    </div>
+  </div>
+
+</div>
