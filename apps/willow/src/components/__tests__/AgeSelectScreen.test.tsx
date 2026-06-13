@@ -53,7 +53,7 @@ describe('AgeSelectScreen', () => {
     render(<AgeSelectScreen onBack={vi.fn()} />)
     fireEvent.click(screen.getByText('Bash (10)'))
     const bashBtn = screen.getByText('Bash (10)').closest('button')
-    expect(bashBtn?.style.background).toBe('#E0F7FA')
+    expect(bashBtn?.style.background).toBe('rgb(224, 247, 250)')
   })
 
   it('should render the header with emoji', () => {
