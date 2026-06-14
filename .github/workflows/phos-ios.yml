@@ -1,0 +1,38 @@
+name: Build PHOS for iOS
+
+on:
+  push:
+    tags:
+      - 'phos-v*-ios'
+  workflow_dispatch:
+
+jobs:
+  build-ios:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-ios x86_64-apple-ios
+      - name: Install dependencies
+        run: pnpm install
+        working-directory: phos
+      - name: Initialize iOS project
+        run: pnpm tauri ios init
+        working-directory: phos
+      - name: Build iOS app
+        run: pnpm tauri ios build
+        working-directory: phos
+      - name: Archive .ipa
+        uses: actions/upload-artifact@v4
+        with:
+          name: PHOS.ipa
+          path: phos/src-tauri/target/ios/universal/PHOS.ipa
