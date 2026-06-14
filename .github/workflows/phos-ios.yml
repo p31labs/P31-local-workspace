@@ -21,7 +21,7 @@ jobs:
         with:
           targets: aarch64-apple-ios x86_64-apple-ios
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --no-frozen-lockfile
         working-directory: phos
       - name: Install Tauri CLI
         run: pnpm add -g @tauri-apps/cli
