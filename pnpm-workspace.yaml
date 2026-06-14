@@ -16,9 +16,13 @@ packages:
   - 'software/discord/*'
   # Landing site nested under spaceship-earth
   - 'software/spaceship-earth/astro-landing'
+  # Project Polyhedron packages
+  - 'packages/*'
   # Repo-root satellite packages
   - 'cli'
   - 'p31labs/*'
   - 'phosphorus31.org/planetary-planet'
   - 'ecosystem/*'
   - 'apps/*'
+  # PHOS Tauri desktop + mobile app
+  - 'phos'
