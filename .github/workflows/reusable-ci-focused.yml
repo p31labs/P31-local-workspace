@@ -24,9 +24,8 @@ jobs:
 
        - uses: ./.github/actions/eslint-bonding-shared
 
-      - name: Security audit (high+, informational)
-        continue-on-error: true
-        run: pnpm audit --audit-level=high
+       - name: Security audit (high+)
+         run: pnpm audit --audit-level=high
 
       - uses: ./.github/actions/turbo-core-slice
 

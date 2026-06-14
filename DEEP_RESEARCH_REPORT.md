@@ -64,7 +64,7 @@ P31_Andromeda/
 │   ├── social/         # Social media content drafts
 │   ├── legal/          # Legal documents
 │   └── patterns/       # Architecture patterns
-├── 02_RESEARCH/        # Research files, letterheads
+├── governance/         # Research files, letterheads
 └── CLAUDE_CODE_HANDOVER.md  # Handoff doc (just created)
 ```
 

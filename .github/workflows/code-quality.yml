@@ -30,6 +30,5 @@ jobs:
 
       # Monorepo root pulls many legacy transitive trees (cli, ipfs, Next, etc.) — 80+ high
       # findings until dependency upgrades; do not block lint + lockfile on audit alone.
-      - name: Security audit (high+, informational)
-        continue-on-error: true
+      - name: Security audit (high+)
         run: pnpm audit --audit-level=high

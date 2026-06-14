@@ -25,20 +25,25 @@ bindings = [
   { name = "FAMILY_MESH_ROOM", class_name = "FamilyMeshRoom" },
 ]
 
-# FamilyMeshRoom was created under this tag — already applied, wrangler skips it.
+# All DO classes already exist on the server — migrations are retained as
+# no-ops to keep the tag chain consistent with the published script.
 [[migrations]]
 tag = "v2-hibernation"
-new_sqlite_classes = ["FamilyMeshRoom"]
 
-# K4Topology was never created — this migration adds it.
 [[migrations]]
 tag = "v3-production"
-new_sqlite_classes = ["K4Topology"]
 
-# Present on the published k4-cage worker in Cloudflare; include so wrangler’s
-# migration list matches the script (avoids "tag not in wrangler" + API 10074 drift).
 [[migrations]]
 tag = "v4-messaging"
+
+# Published script has v5-cage tag — include to avoid tag-mismatch drift.
+[[migrations]]
+tag = "v5-cage"
+
+# Remove orphan FamilyCageDO class (stale from previous version)
+[[migrations]]
+tag = "v6-remove-legacy"
+deleted_classes = ["FamilyCageDO"]
 
 # [[d1_databases]]
 # binding = "DB"
@@ -47,7 +52,7 @@ tag = "v4-messaging"
 
 [[kv_namespaces]]
 binding = "K4_MESH"
-id = "a8a2ab8f61174ff6b878eb74cb6bc91d"
+id = "94f07e54c7e841e2ae70e737cc55aa63"
 
 [vars]
 WORKER_VERSION = "2.0.0-unified"
