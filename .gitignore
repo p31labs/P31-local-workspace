@@ -53,6 +53,7 @@ npm-debug.log*
 # Build artifacts
 dist/
 build/
+**/target/
 # TypeScript incremental + Next.js (never commit)
 *.tsbuildinfo
 .tsbuildinfo
