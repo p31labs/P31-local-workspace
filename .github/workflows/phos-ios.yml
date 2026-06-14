@@ -25,11 +25,13 @@ jobs:
       - name: Install dependencies
         run: pnpm install
         working-directory: phos
+      - name: Install Tauri CLI
+        run: pnpm add -g @tauri-apps/cli
       - name: Initialize iOS project
-        run: pnpm tauri ios init
+        run: pnpm exec tauri ios init
         working-directory: phos
       - name: Build iOS app
-        run: pnpm tauri ios build
+        run: pnpm exec tauri ios build
         working-directory: phos
       - name: Archive .ipa
         uses: actions/upload-artifact@v4
