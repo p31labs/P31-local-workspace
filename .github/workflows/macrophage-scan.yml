@@ -1,0 +1,79 @@
+name: Macrophage Scan
+
+on:
+  schedule:
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Run maturity grader
+        run: python3 scripts/grade-repo.py
+        continue-on-error: true
+
+      - name: Run jitterbug daemon
+        run: python3 scripts/jitterbug-daemon.py
+        continue-on-error: true
+
+      - name: Commit updated index & queue
+        uses: stefanzweifel/git-auto-commit-action@v5
+        continue-on-error: true
+        with:
+          commit_message: "chore: auto-update grading index & jitterbug state [skip ci]"
+          file_pattern: grading-index.json GRADING_REPORT.md jitterbug-depressed-queue.json
+          commit_user_name: "p31-macrophage[bot]"
+          commit_user_email: "bot@p31labs.org"
+
+      - name: Run autonomous macrophage
+        id: macrophage
+        run: |
+          python3 scripts/macrophage.py --auto
+          EXIT_CODE=$?
+          if [ $EXIT_CODE -ne 0 ]; then
+            echo "Macrophage failed (exit $EXIT_CODE) — non-critical, skipping PR"
+            echo "success=false" >> "$GITHUB_OUTPUT"
+          else
+            BRANCH=$(git branch --show-current 2>/dev/null || echo "")
+            if [[ "$BRANCH" == auto-heal/* ]]; then
+              echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
+              echo "success=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "No depressed artifacts found or branch not created"
+              echo "success=false" >> "$GITHUB_OUTPUT"
+            fi
+          fi
+        continue-on-error: true
+
+      - name: Push auto-heal branch
+        if: steps.macrophage.outputs.success == 'true'
+        run: git push origin "${{ steps.macrophage.outputs.branch }}"
+        continue-on-error: true
+
+      - name: Create pull request
+        if: steps.macrophage.outputs.success == 'true'
+        run: |
+          ARTIFACT="${{ steps.macrophage.outputs.branch }}"
+          ARTIFACT="${ARTIFACT#auto-heal/}"
+          gh pr create \
+            --title "fix: auto-heal ${ARTIFACT} [macrophage]" \
+            --body "This is an automatically generated test draft from the Autonomous Macrophage.
+
+        The macrophage detected a depressed artifact and generated test files targeting its core module.
+
+        **Please review** the generated tests and merge if appropriate. This is a draft PR — tests may need human adjustments." \
+            --label "auto-heal" \
+            --label "test-draft" \
+            --draft
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

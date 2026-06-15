@@ -1,0 +1,63 @@
+{
+  "_comment": "CI health signals fed to jitterbug-daemon.py each tick.",
+  "_schema": "PMM_JITTERBUG=1.0",
+  "tests_pass": {
+    "weight": 1.0,
+    "artifacts": [
+      "software/packages/agent-engine",
+      "software/packages/shared",
+      "software/p31-delta-hiring",
+      "software/packages/k4-mesh-core"
+    ]
+  },
+  "build_success": {
+    "weight": 1.0,
+    "artifacts": ["software"]
+  },
+  "coverage_met": {
+    "weight": 1.0,
+    "artifacts": [
+      "software/packages/agent-engine",
+      "software/packages/shared"
+    ]
+  },
+  "deps_updated": {
+    "weight": 1.0,
+    "artifacts": ["software"]
+  },
+  "pr_merged": {
+    "weight": 1.0,
+    "artifacts": [
+      "software/packages/agent-engine",
+      "software/packages/shared",
+      "software/packages/k4-mesh-core",
+      "software/packages/love-ledger"
+    ]
+  },
+  "deploy_success": {
+    "weight": 1.0,
+    "artifacts": [
+      "software/cloudflare-worker/command-center",
+      "software/cloudflare-pages/p31-mesh",
+      "software/spaceship-earth",
+      "software/p31-hearing-ops",
+      "software/bonding"
+    ]
+  },
+  "docs_updated": {
+    "weight": 0.8,
+    "artifacts": [
+      "software/packages/agent-engine",
+      "software/packages/shared",
+      "software/packages/k4-mesh-core",
+      "software/spaceship-earth",
+      "software/p31-delta-hiring"
+    ]
+  },
+  "new_test_file": {
+    "weight": 0.9,
+    "artifacts": [
+      "software/packages/k4-mesh-core"
+    ]
+  }
+}

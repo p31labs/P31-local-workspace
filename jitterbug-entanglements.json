@@ -1,0 +1,126 @@
+{
+  "_schema": "PMM_JITTERBUG=1.0",
+  "_comment": "Explicit entanglement pairs inferred from @p31/* dependency graph. Auto-inferred prefix bonds are overridden when this file exists.",
+  "pairs": [
+    {
+      "a": "software/packages/agent-engine",
+      "b": "software/packages/shared",
+      "weight": 1.0,
+      "type": "dependency"
+    },
+    {
+      "a": "software/packages/sovereign-sdk",
+      "b": "software/packages/quantum-core",
+      "weight": 1.0,
+      "type": "dependency"
+    },
+    {
+      "a": "software/packages/quantum-edge",
+      "b": "software/packages/quantum-core",
+      "weight": 1.0,
+      "type": "dependency"
+    },
+    {
+      "a": "software/packages/quantum-edge",
+      "b": "software/packages/sovereign-sdk",
+      "weight": 1.0,
+      "type": "dependency"
+    },
+    {
+      "a": "software/spaceship-earth",
+      "b": "software/packages/shared",
+      "weight": 1.0,
+      "type": "dependency"
+    },
+    {
+      "a": "software/spaceship-earth",
+      "b": "software/bonding",
+      "weight": 1.0,
+      "type": "dependency"
+    },
+    {
+      "a": "software/spaceship-earth",
+      "b": "software/packages/sovereign",
+      "weight": 1.0,
+      "type": "dependency"
+    },
+    {
+      "a": "software/bonding",
+      "b": "software/packages/shared",
+      "weight": 1.0,
+      "type": "dependency"
+    },
+    {
+      "a": "software/packages/node-zero/pwa",
+      "b": "software/packages/game-engine",
+      "weight": 1.0,
+      "type": "dependency"
+    },
+    {
+      "a": "software/packages/node-zero/pwa",
+      "b": "software/packages/love-ledger",
+      "weight": 1.0,
+      "type": "dependency"
+    },
+    {
+      "a": "software/packages/node-zero/pwa",
+      "b": "software/packages/node-zero",
+      "weight": 1.0,
+      "type": "dependency"
+    },
+    {
+      "a": "software/p31ca",
+      "b": "software/spaceship-earth",
+      "weight": 0.8,
+      "type": "integration"
+    },
+    {
+      "a": "software/p31ca",
+      "b": "software/p31-delta-hiring",
+      "weight": 0.8,
+      "type": "integration"
+    },
+    {
+      "a": "software/p31ca",
+      "b": "software/packages/shared",
+      "weight": 0.8,
+      "type": "integration"
+    },
+    {
+      "a": "software/p31ca",
+      "b": "software/extensions/p31ca",
+      "weight": 0.8,
+      "type": "integration"
+    },
+    {
+      "a": "software/packages/oracle-terminal",
+      "b": "software/packages/harmonic-linter",
+      "weight": 0.6,
+      "type": "co-location"
+    },
+    {
+      "a": "software/packages/q-distribution",
+      "b": "software/packages/quantum-core",
+      "weight": 0.6,
+      "type": "affinity"
+    },
+    {
+      "a": "software/packages/k4-mesh-core",
+      "b": "software/k4-personal",
+      "weight": 0.8,
+      "type": "affinity"
+    },
+    {
+      "a": "software/packages/k4-mesh-core",
+      "b": "software/kenosis-mesh",
+      "weight": 0.7,
+      "type": "affinity"
+    },
+    {
+      "a": "software/spaceship-earth",
+      "b": "software/packages/agent-engine",
+      "weight": 0.5,
+      "type": "affinity"
+    }
+  ]
+}
