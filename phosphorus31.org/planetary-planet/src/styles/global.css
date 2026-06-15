@@ -1,13 +1,9 @@
-/* Google Fonts — must precede all other rules */
-@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&family=Lexend:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&family=Lexend:wght@300;400;500;600&family=Inter:wght@100..900&family=JetBrains+Mono:wght@100..800&display=swap');
 
-/* Tailwind v4 — single import replaces all v3 directives */
 @import "tailwindcss";
 
-/* Load legacy config for custom colors/fonts */
 @config "../../tailwind.config.mjs";
 
-/* ── Tailwind v4 theme tokens ── */
 @theme {
   --color-cloud: #F0EEE9;
   --color-espresso: #264653;
@@ -16,11 +12,43 @@
   --color-butter: #E9C46A;
   --color-lavender: #C9B1FF;
 
+  --color-quantum-cyan: #06b6d4;
+  --color-quantum-emerald: #10b981;
+  --color-quantum-amber: #f59e0b;
+  --color-quantum-pink: #ec4899;
+  --color-quantum-violet: #8b5cf6;
+
+  --color-willow-pink: #fbcfe8;
+  --color-willow-lavender: #e9d5ff;
+  --color-willow-mint: #d1fae5;
+  --color-willow-peach: #fed7aa;
+
   --font-heading: 'Lato', sans-serif;
   --font-body: 'Lexend', sans-serif;
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-glow-pulse: glow-pulse 2s ease-in-out infinite;
+  --animate-breath: breath 4s ease-in-out infinite;
+  --animate-spin-slow: spin 8s linear infinite;
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+
+  @keyframes glow-pulse {
+    0%, 100% { filter: brightness(1) drop-shadow(0 0 5px currentColor); }
+    50% { filter: brightness(1.2) drop-shadow(0 0 20px currentColor); }
+  }
+
+  @keyframes breath {
+    0%, 100% { opacity: 0.6; transform: scale(0.98); }
+    50% { opacity: 1; transform: scale(1.02); }
+  }
 }
 
-/* Global body styles for neurodivergent legibility */
 body {
   background-color: #F0EEE9;
   color: #264653;
@@ -33,7 +61,6 @@ h1, h2, h3, h4, h5, h6 {
   font-family: 'Lato', sans-serif;
 }
 
-/* Dyslexia Toggle Classes */
 .dyslexia-mode {
   letter-spacing: 0.05em !important;
   word-spacing: 0.05em !important;
@@ -41,7 +68,6 @@ h1, h2, h3, h4, h5, h6 {
   font-size: 105% !important;
 }
 
-/* Glass-box utility class */
 .glass-box {
   background-color: rgba(255, 255, 255, 0.6);
   backdrop-filter: blur(10px);
@@ -49,7 +75,30 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
 }
 
-/* Organic blob animation for illustrations */
+.quantum-glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 2rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.glow-cyan {
+  box-shadow: 0 0 15px rgba(6, 182, 212, 0.5);
+  transition: box-shadow 150ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.glow-cyan:hover {
+  box-shadow: 0 0 25px rgba(6, 182, 212, 0.5);
+}
+
+.glow-emerald {
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.5);
+}
+.glow-emerald:hover {
+  box-shadow: 0 0 25px rgba(16, 185, 129, 0.5);
+}
+
 .organic-blob {
   border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
   animation: morph 8s ease-in-out infinite;
@@ -87,13 +136,19 @@ h1, h2, h3, h4, h5, h6 {
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Brand-specific animation classes */
 .animate-pulse-slow { animation: pulse-slow 4s ease-in-out infinite; }
 .animate-orbit-slow { animation: orbit-slow 8s linear infinite; }
 .animate-orbit-medium { animation: orbit-medium 6s linear infinite; }
 .animate-orbit-fast { animation: orbit-fast 4s linear infinite; }
 
-/* Respect prefers-reduced-motion for sensory optimization */
+[data-spoons="1"],
+[data-spoons="0"] {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  filter: grayscale(0.3);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .organic-blob { animation: none; }
   * {
@@ -103,12 +158,10 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-/* Custom scrollbar */
 ::-webkit-scrollbar { width: 8px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
 
-/* Accessibility */
 button { transition: all 0.2s ease; }
 :focus { outline: 2px solid #2A9D8F; outline-offset: 2px; }
 *:focus:not(:focus-visible) { outline: none; }

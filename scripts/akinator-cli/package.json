@@ -1,0 +1,20 @@
+{
+  "name": "@p31/akinator-engine",
+  "version": "1.0.0",
+  "description": "Decision tree engine for adaptive interviews and assessments",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "akinator": "./bin/akinator.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "prepare": "npm run build"
+  },
+  "keywords": ["decision-tree", "adaptive-interview", "assessment", "neurodivergent"],
+  "author": "P31 Labs",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

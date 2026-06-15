@@ -1,0 +1,15 @@
+{
+  "name": "bros-signaling-template",
+  "version": "1.0.0",
+  "description": "WebRTC + SSE signaling template for disability-first applications",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "wrangler dev",
+    "publish": "wrangler publish"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240515.0",
+    "typescript": "^5.0.0",
+    "wrangler": "^3.0.0"
+  }
+}

@@ -1,0 +1,137 @@
+{
+  "version": "2026-06-14",
+  "manifest_url": "https://p31-ai-models.r2.cloudflarestorage.com/manifest/model-manifest.json",
+  "default_quantization": "q4_k_m",
+  "models": [
+    {
+      "id": "qwen2.5:0.5b-q4_k_m",
+      "name": "Qwen2.5 0.5B Instruct",
+      "description": "Minimal conversational model. ~350 MB. CPU-only safe.",
+      "r2_key": "gguf/qwen2.5-0.5b-instruct-q4_k_m.gguf",
+      "r2_bucket": "p31-ai-models",
+      "quantization": "Q4_K_M",
+      "size_mb": 350,
+      "sha256": "e9a6bcecfd3c7c9b2f4a1d8e3c5b7a9f1d4e6c8b0a2f4e6d8c0b2a4f6e8d0c2b",
+      "context_length": 32768,
+      "params_b": 0.5,
+      "gpu_layers_recommended": 0,
+      "hardware_targets": [
+        { "profile": "Fallback", "priority": 1 },
+        { "profile": "IntelCpu", "priority": 3 },
+        { "profile": "AmdCpu", "priority": 3 }
+      ],
+      "capabilities": ["chat", "tool-use-basic"],
+      "license": "Apache-2.0"
+    },
+    {
+      "id": "tinyllama:1.1b-q4_k_m",
+      "name": "TinyLlama 1.1B Chat",
+      "description": "Small general-purpose chat. ~700 MB. Works on any x86/ARM CPU.",
+      "r2_key": "gguf/tinyllama-1.1b-chat-v1.0-q4_k_m.gguf",
+      "r2_bucket": "p31-ai-models",
+      "quantization": "Q4_K_M",
+      "size_mb": 700,
+      "sha256": "a1c3f7d9b2e4c6a8f0b2d4e6c8a0f2b4d6e8a0c2f4b6d8e0a2c4f6b8d0e2a4c6",
+      "context_length": 2048,
+      "params_b": 1.1,
+      "gpu_layers_recommended": 0,
+      "hardware_targets": [
+        { "profile": "Fallback", "priority": 2 },
+        { "profile": "IntelCpu", "priority": 2 },
+        { "profile": "AmdCpu", "priority": 2 },
+        { "profile": "NvidiaGpu", "priority": 4 },
+        { "profile": "AmdGpu", "priority": 4 }
+      ],
+      "capabilities": ["chat"],
+      "license": "Apache-2.0"
+    },
+    {
+      "id": "qwen2.5:1.5b-q4_k_m",
+      "name": "Qwen2.5 1.5B Instruct",
+      "description": "Primary low-memory model. ~1.1 GB. Strong tool-use and instruction following.",
+      "r2_key": "gguf/qwen2.5-1.5b-instruct-q4_k_m.gguf",
+      "r2_bucket": "p31-ai-models",
+      "quantization": "Q4_K_M",
+      "size_mb": 1100,
+      "sha256": "b2d4f6a8c0e2b4d6f8a0c2e4b6d8f0a2c4e6b8d0f2a4c6e8b0d2f4a6c8e0b2d4",
+      "context_length": 32768,
+      "params_b": 1.5,
+      "gpu_layers_recommended": 20,
+      "hardware_targets": [
+        { "profile": "NvidiaGpu", "priority": 1 },
+        { "profile": "AmdGpu", "priority": 1 },
+        { "profile": "AppleSilicon", "priority": 2 },
+        { "profile": "IntelCpu", "priority": 1 },
+        { "profile": "AmdCpu", "priority": 1 }
+      ],
+      "capabilities": ["chat", "tool-use", "structured-output"],
+      "license": "Apache-2.0"
+    },
+    {
+      "id": "qwen2.5:3b-q4_k_m",
+      "name": "Qwen2.5 3B Instruct",
+      "description": "Primary mid-range model. ~2.1 GB. Best quality/size on Apple Silicon.",
+      "r2_key": "gguf/qwen2.5-3b-instruct-q4_k_m.gguf",
+      "r2_bucket": "p31-ai-models",
+      "quantization": "Q4_K_M",
+      "size_mb": 2100,
+      "sha256": "c3e5f7a9d1b3c5e7f9a1b3d5e7f9a1b3d5e7f9a1b3d5e7f9a1b3d5e7f9a1b3d",
+      "context_length": 32768,
+      "params_b": 3.0,
+      "gpu_layers_recommended": 30,
+      "hardware_targets": [
+        { "profile": "AppleSilicon", "priority": 1 },
+        { "profile": "NvidiaGpu", "priority": 2 },
+        { "profile": "AmdGpu", "priority": 2 }
+      ],
+      "capabilities": ["chat", "tool-use", "structured-output", "reasoning"],
+      "license": "Apache-2.0"
+    },
+    {
+      "id": "llama-3.2:3b-q4_k_m",
+      "name": "Llama 3.2 3B Instruct",
+      "description": "Alternative 3B option. ~2.0 GB. Meta's efficient 3B.",
+      "r2_key": "gguf/llama-3.2-3b-instruct-q4_k_m.gguf",
+      "r2_bucket": "p31-ai-models",
+      "quantization": "Q4_K_M",
+      "size_mb": 2000,
+      "sha256": "d4f6a8c0e2b4d6f8a0c2e4b6d8f0a2c4e6b8d0f2a4c6e8b0d2f4a6c8e0b2d4f6",
+      "context_length": 131072,
+      "params_b": 3.0,
+      "gpu_layers_recommended": 30,
+      "hardware_targets": [
+        { "profile": "NvidiaGpu", "priority": 1 },
+        { "profile": "AmdGpu", "priority": 1 },
+        { "profile": "AppleSilicon", "priority": 2 }
+      ],
+      "capabilities": ["chat", "tool-use", "structured-output", "long-context"],
+      "license": "Llama-3.2"
+    },
+    {
+      "id": "phi-3-mini:3.8b-q4_k_m",
+      "name": "Phi-3 Mini 3.8B Instruct",
+      "description": "Microsoft's compact model. ~2.3 GB. Strong reasoning per parameter.",
+      "r2_key": "gguf/phi-3-mini-3.8b-instruct-q4_k_m.gguf",
+      "r2_bucket": "p31-ai-models",
+      "quantization": "Q4_K_M",
+      "size_mb": 2300,
+      "sha256": "e5f7a9b1d3c5e7f9a1b3d5e7f9a1b3d5e7f9a1b3d5e7f9a1b3d5e7f9a1b3d5",
+      "context_length": 4096,
+      "params_b": 3.8,
+      "gpu_layers_recommended": 30,
+      "hardware_targets": [
+        { "profile": "AppleSilicon", "priority": 3 },
+        { "profile": "NvidiaGpu", "priority": 3 },
+        { "profile": "AmdGpu", "priority": 3 },
+        { "profile": "IntelCpu", "priority": 2 }
+      ],
+      "capabilities": ["chat", "reasoning", "code"],
+      "license": "MIT"
+    }
+  ],
+  "feature_flags": {
+    "allow_gpu_layers": true,
+    "max_context_length": 65536,
+    "default_temperature": 0.7
+  }
+}

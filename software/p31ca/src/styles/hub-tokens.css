@@ -1,7 +1,3 @@
-/**
- * P31 Technical Hub — canonical visual tokens (p31ca.org landing).
- * Imported by global.css; mirrored in public/assets/hub-skin.css for static Pages.
- */
 :root {
   --hub-void: #050505;
   --hub-nav: #080810;
@@ -17,4 +13,24 @@
   --hub-radius-lg: 1rem;
   --hub-font-sans: 'Inter', system-ui, sans-serif;
   --hub-font-mono: 'Space Mono', ui-monospace, monospace;
+
+  --quantum-cyan: #06b6d4;
+  --quantum-emerald: #10b981;
+  --quantum-amber: #f59e0b;
+  --quantum-pink: #ec4899;
+  --quantum-violet: #8b5cf6;
+
+  --willow-pink: #fbcfe8;
+  --willow-lavender: #e9d5ff;
+  --willow-mint: #d1fae5;
+  --willow-peach: #fed7aa;
+
+  --glass-bg: rgba(255, 255, 255, 0.1);
+  --glass-border: rgba(255, 255, 255, 0.2);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+
+  --transition-fast: 150ms;
+  --transition-normal: 300ms;
+  --transition-slow: 600ms;
+  --ease-quantum: cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }

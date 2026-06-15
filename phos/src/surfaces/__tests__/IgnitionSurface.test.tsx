@@ -47,10 +47,10 @@ describe('IgnitionSurface', () => {
     expect(screen.getByText(/Choose your entry point/)).toBeTruthy();
   });
 
-  it('should render 4 buttons in grid layout', () => {
+  it('should render 4 grid buttons plus Willow button', () => {
     renderIgnition();
     const buttons = screen.getAllByRole('button');
-    expect(buttons.length).toBe(4);
+    expect(buttons.length).toBe(5);
   });
 
   it('should not show content during grayRock', () => {

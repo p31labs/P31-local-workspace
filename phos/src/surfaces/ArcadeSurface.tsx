@@ -23,7 +23,11 @@ interface RpcMessage {
   timestamp: number;
 }
 
+import { useSpoonCapabilities } from '../hooks/useSpoonCapabilities';
+
 export function ArcadeSurface({ theme, spoons }: { theme: Record<string, string>; spoons: number }) {
+  const { grayRock } = useAtmosphere();
+  const caps = useSpoonCapabilities();
   const [filter, setFilter] = useState('all');
   const [activeGameUrl, setActiveGameUrl] = useState<string | null>(null);
   const [lastScore, setLastScore] = useState<RpcMessage | null>(null);
@@ -125,6 +129,14 @@ export function ArcadeSurface({ theme, spoons }: { theme: Record<string, string>
     );
   }
   /* v8 ignore stop */
+
+  if (grayRock) {
+    return (
+      <div className="space-y-4 w-full h-[500px] flex flex-col items-center justify-center">
+        <p className="font-mono text-xs text-zinc-500">Arcade suspended.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4 w-full">

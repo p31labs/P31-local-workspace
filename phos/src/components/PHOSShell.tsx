@@ -8,13 +8,14 @@ import { DemoController } from './DemoController';
 import { GrantNarrativeOverlay } from './GrantNarrativeOverlay';
 import { getBiologicalTheme } from '../lib/themeEngine';
 import { EscapeHatch } from './EscapeHatch';
+import { startLarmorTone, stopLarmorTone, isLarmorPlaying } from '../lib/tauriBridge';
 
 export { getBiologicalTheme };
 
 const VALID_SURFACES = new Set([
   'GREETING', 'IGNITION', 'BONDING', 'THE_BUFFER', 'VAULT', 'GRID',
   'NODE_ZERO', 'LEDGER', 'LOVE', 'HEARTH', 'ARCADE', 'ARCHIVE',
-  'COMPASS', 'SETTINGS',
+  'COMPASS', 'SETTINGS', 'STAR_BUILDER', 'ARCADE_OS', 'ARCADE_MASTER',
 ]);
 
 function hydrateFromURL(): { spoons: number; surface: string } {
@@ -39,7 +40,39 @@ function PHOSShellInner({ skipLoading = false }: { skipLoading?: boolean }) {
   const { spoons, setSpoons, grayRock, currentSurface, setSurface } = useAtmosphere();
   const [hudOpen, setHudOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(!skipLoading);
+  const [nativePlaying, setNativePlaying] = useState(false);
   const theme = getBiologicalTheme(spoons, grayRock);
+
+  useEffect(() => {
+    let cancelled = false;
+    isLarmorPlaying().then((playing) => {
+      if (!cancelled) setNativePlaying(playing);
+    }).catch(() => {});
+    return () => {
+      cancelled = true;
+      stopLarmorTone().catch(() => {});
+    };
+  }, []);
+
+  const toggleNativeAudio = useCallback(async () => {
+    try {
+      if (nativePlaying) {
+        await stopLarmorTone();
+        setNativePlaying(false);
+      } else {
+        await startLarmorTone();
+        setNativePlaying(true);
+      }
+    } catch (err) {
+      console.error('native audio toggle failed', err);
+    }
+  }, [nativePlaying]);
+
+  useEffect(() => {
+    return () => {
+      stopLarmorTone().catch(() => {});
+    };
+  }, []);
 
   useEffect(() => {
     if (skipLoading) return;
@@ -69,6 +102,20 @@ function PHOSShellInner({ skipLoading = false }: { skipLoading?: boolean }) {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handleKeyDown]);
 
+  const toggleNativeAudio = useCallback(async () => {
+    try {
+      if (nativePlaying) {
+        await stopLarmorTone();
+        setNativePlaying(false);
+      } else {
+        await startLarmorTone();
+        setNativePlaying(true);
+      }
+    } catch (err) {
+      console.error('native audio toggle failed', err);
+    }
+  }, [nativePlaying]);
+
   if (spoons === 0 || grayRock) {
     return <TheGuardian />;
   }
@@ -77,6 +124,7 @@ function PHOSShellInner({ skipLoading = false }: { skipLoading?: boolean }) {
     GREETING: 'Greeting', IGNITION: 'Ignition', BONDING: 'Bonding', THE_BUFFER: 'Buffer',
     VAULT: 'Vault', GRID: 'Grid', NODE_ZERO: 'Node Zero', LEDGER: 'Ledger', LOVE: 'Love',
     HEARTH: 'Hearth', ARCADE: 'Arcade', ARCHIVE: 'Archive', COMPASS: 'Compass', SETTINGS: 'Settings',
+    STAR_BUILDER: 'Star Builder', ARCADE_OS: 'Arcade OS', ARCADE_MASTER: 'Arcade Master',
   };
 
   if (isLoading) {
@@ -126,6 +174,8 @@ function PHOSShellInner({ skipLoading = false }: { skipLoading?: boolean }) {
         onToggleHud={() => setHudOpen(!hudOpen)}
         onSetSpoons={(s) => { setSpoons(s); setHudOpen(false); }}
         onSetSurface={(s) => { setSurface(s); setHudOpen(false); }}
+        onToggleNativeAudio={toggleNativeAudio}
+        nativeAudioPlaying={nativePlaying}
       />
 
       <main className="flex-1 overflow-y-auto pt-28 pb-32 px-4 flex flex-col items-center justify-start z-10 relative" aria-live="polite" aria-label={`${surfaceNames[currentSurface] || currentSurface} surface`}>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Warm Door — P31</title>
+<script src="../../state.js"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { height: 100%; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; -webkit-tap-highlight-color: transparent; }
+body { background: linear-gradient(160deg, #FFF7ED 0%, #FED7AA 50%, #FECACA 100%); display: flex; align-items: center; justify-content: center; padding: 20px; }
+.card { background: rgba(255,255,255,0.6); backdrop-filter: blur(12px); border-radius: 48px; padding: 40px 32px; max-width: 420px; width: 100%; text-align: center; box-shadow: 0 20px 60px rgba(234,88,12,0.15); border: 1px solid rgba(255,255,255,0.4); }
+.heart { font-size: min(35vw, 180px); animation: pulse 2s ease-in-out infinite; cursor: pointer; display: block; user-select: none; margin: 0 auto 16px; }
+.heart:active { transform: scale(0.9); }
+@keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+h1 { font-size: clamp(28px, 7vw, 48px); font-weight: 800; color: #7C2D12; line-height: 1.2; margin-bottom: 8px; }
+p { font-size: clamp(16px, 4vw, 22px); color: #9A3412; line-height: 1.5; opacity: 0.8; margin-bottom: 24px; }
+.btn { display: inline-block; padding: 20px 48px; border-radius: 60px; font-size: clamp(18px, 4.5vw, 24px); font-weight: 700; text-decoration: none; transition: all 0.2s; border: none; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.btn-primary { background: #EA580C; color: white; box-shadow: 0 8px 24px rgba(234,88,12,0.3); }
+.btn-primary:active { transform: scale(0.95); }
+.btn-secondary { background: rgba(255,255,255,0.6); color: #7C2D12; border: 2px solid #EA580C; }
+.skip { position: fixed; bottom: 20px; right: 20px; font-size: 14px; color: #9A3412; opacity: 0.5; text-decoration: none; }
+</style>
+</head>
+<body>
+<noscript><p style="padding:40px;font-size:24px;text-align:center;color:#7C2D12">❤️</p></noscript>
+
+<div class="card">
+  <div class="heart" id="heartEl" onclick="window.__sfx.heart();this.style.animation='none';void this.offsetWidth;this.style.animation='pulse 2s ease-in-out infinite';">❤️</div>
+  <h1>Welcome</h1>
+  <p>You are loved. You are safe. You are not alone.</p>
+  <a href="whom.html" class="btn btn-primary" onclick="window.__onboard.step(1);window.__sfx.pop();">Begin →</a>
+</div>
+
+<a href="../sparkle/" class="skip" onclick="window.__onboard.door('sparkle')">✨</a>
+
+<script>
+(function(){
+  window.__onboard.door('warm');
+  window.__onboard.step(0);
+  if (!window.__onboard.delta()) {
+    var h = document.getElementById('heartEl');
+    if (h) {
+      h.addEventListener('click', function(){ window.__sfx.heart(); });
+    }
+  }
+})();
+</script>
+</body>
+</html>

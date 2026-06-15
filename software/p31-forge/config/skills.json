@@ -1,0 +1,100 @@
+{
+  "sensory_gray_rock": {
+    "skill_id": "sensory_gray_rock",
+    "version": 1,
+    "domain": "somatic",
+    "trigger": {
+      "type": "spoon_drop",
+      "threshold": 1,
+      "context": []
+    },
+    "action": {
+      "type": "ui_override",
+      "payload": {
+        "css_class": "gray-rock-mode",
+        "animation_duration": 0.01,
+        "contrast": "low",
+        "monochrome": true
+      }
+    },
+    "xp_reward": 25,
+    "guardian_unlock": "shield_tier"
+  },
+  "sensory_breathing_guide": {
+    "skill_id": "sensory_breathing_guide",
+    "version": 1,
+    "domain": "somatic",
+    "trigger": {
+      "type": "spoon_drop",
+      "threshold": 2,
+      "context": []
+    },
+    "action": {
+      "type": "audio_cue",
+      "payload": {
+        "frequency": 0.1,
+        "pattern": "larmor_fade",
+        "text_fallback": "Breathe in… and out."
+      }
+    },
+    "xp_reward": 15,
+    "guardian_unlock": null
+  },
+  "executive_task_fracture": {
+    "skill_id": "executive_task_fracture",
+    "version": 1,
+    "domain": "executive",
+    "trigger": {
+      "type": "hesitation",
+      "threshold": 45,
+      "context": ["no_input"]
+    },
+    "action": {
+      "type": "akinator_prompt",
+      "payload": {
+        "prompt": "Are we stuck on starting, or stuck on deciding?",
+        "follow_up": "Just one tiny step. What's the smallest thing you could do right now?"
+      }
+    },
+    "xp_reward": 30,
+    "guardian_unlock": null
+  },
+  "guardian_voice_affirmation": {
+    "skill_id": "guardian_voice_affirmation",
+    "version": 1,
+    "domain": "guardian",
+    "trigger": {
+      "type": "guardian_unlock",
+      "threshold": 30,
+      "context": []
+    },
+    "action": {
+      "type": "tts_phrase",
+      "payload": {
+        "phrase": "You're doing great. Keep going."
+      }
+    },
+    "xp_reward": 0,
+    "guardian_unlock": "sparkle_tier"
+  },
+  "transition_bridge": {
+    "skill_id": "transition_bridge",
+    "version": 1,
+    "domain": "companion",
+    "trigger": {
+      "type": "task_transition",
+      "threshold": 0,
+      "context": ["high_dopamine_to_high_friction"]
+    },
+    "action": {
+      "type": "akinator_game",
+      "payload": {
+        "duration": 180,
+        "style": "low_stakes",
+        "prompt": "Quick brain reset before we switch tasks."
+      }
+    },
+    "xp_reward": 20,
+    "guardian_unlock": null
+  }
+}

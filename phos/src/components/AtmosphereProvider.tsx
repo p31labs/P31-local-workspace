@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
 
 interface AtmosphereContextValue {
   spoons: number;
@@ -51,6 +51,10 @@ export function AtmosphereProvider({
     setGrayRock(v);
     if (v) setSpoons(0);
   }, []);
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-spoons', String(spoons));
+  }, [spoons]);
 
   return (
     <AtmosphereContext.Provider

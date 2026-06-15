@@ -28,7 +28,13 @@ function relativeTime(ts: number): string {
   return `${days}d ago`;
 }
 
-export function LedgerSurface({ theme }: { theme: Record<string, string> }) {
+import { useAtmosphere } from '../components/AtmosphereProvider';
+import { useSpoonCapabilities } from '../hooks/useSpoonCapabilities';
+
+export function LedgerSurface({ theme, spoons }: { theme: Record<string, string>; spoons: number }) {
+  const { grayRock } = useAtmosphere();
+  const caps = useSpoonCapabilities();
+
   const [data, setData] = useState<LedgerData>({
     loveTokens: 0,
     deferredSlices: 0,
@@ -51,6 +57,14 @@ export function LedgerSurface({ theme }: { theme: Record<string, string> }) {
     const interval = setInterval(refresh, 2000);
     return () => clearInterval(interval);
   }, [refresh]);
+
+  if (grayRock) {
+    return (
+      <div className="p-6 bg-purple-950/20 text-slate-100 min-h-screen font-mono border border-purple-500/30">
+        <p className="font-mono text-xs text-zinc-500">Ledger locked.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 bg-purple-950/20 text-slate-100 min-h-screen font-mono border border-purple-500/30">

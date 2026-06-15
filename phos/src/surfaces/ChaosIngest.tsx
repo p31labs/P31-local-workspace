@@ -29,7 +29,7 @@ function persistDraft(text: string) {
   } catch { /* quota */ }
 }
 
-export function ChaosIngest({ theme }: { theme: Record<string, string> }) {
+export function ChaosIngest({ theme, spoons = 5 }: { theme: Record<string, string>; spoons?: number }) {
   const [text, setText] = useState('');
   const [syncing, setSyncing] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
@@ -39,7 +39,10 @@ export function ChaosIngest({ theme }: { theme: Record<string, string> }) {
   const statusTimer = useRef<ReturnType<typeof setTimeout>>();
   const mounted = useRef(true);
 
-  /* v8 ignore start */
+  const isCrisis = spoons <= 1;
+  const isBridge = spoons >= 2 && spoons <= 3;
+  const canCompute = spoons >= 4;
+
   useEffect(() => {
     const doc = new Y.Doc();
     ydocRef.current = doc;
@@ -47,56 +50,62 @@ export function ChaosIngest({ theme }: { theme: Record<string, string> }) {
     ytextRef.current = ytext;
 
     const saved = loadDraft();
-    if (saved) {
+    if (saved && !isCrisis) {
       ytext.insert(0, saved);
     }
 
-    const handler = () => {
-      const val = ytext.toString();
-      setText(val);
-    };
-    ytext.observe(handler);
+    let handler: (() => void) | null = null;
+    if (!isCrisis) {
+      handler = () => {
+        const val = ytext.toString();
+        setText(val);
+      };
+      ytext.observe(handler);
+      doc.on('update', (_, origin) => {
+        if (origin !== 'remote' && ytext.length > 0 && !isCrisis) {
+          persistDraft(ytext.toString());
+        }
+      });
+    }
 
-    doc.on('update', (_, origin) => {
-      if (origin !== 'remote' && ytext.length > 0) {
-        persistDraft(ytext.toString());
-      }
-    });
-
-    setText(ytext.toString());
+    setText(isCrisis ? '' : ytext.toString());
 
     return () => {
       mounted.current = false;
-      handler();
-      ytext.unobserve(handler);
+      if (handler) ytext.unobserve(handler);
       doc.destroy();
       ydocRef.current = null;
       ytextRef.current = null;
     };
-  }, []);
-  /* v8 ignore stop */
+  }, [isCrisis]);
 
   const handleTextChange = useCallback((value: string) => {
-    /* v8 ignore start */
     const ytext = ytextRef.current;
-    if (!ytext) return;
-    const doc = ydocRef.current;
-    if (!doc) return;
-
-    doc.transact(() => {
+    if (!ytext || !ydocRef.current) return;
+    ydocRef.current.transact(() => {
       ytext.delete(0, ytext.length);
       if (value) ytext.insert(0, value);
     }, 'user');
-    /* v8 ignore stop */
   }, []);
 
   const handleIngest = useCallback(async () => {
     if (!text.trim() || syncing) return;
+    if (!canCompute) return;
     setSyncing(true);
-    setStatus('COMMITTING_TO_LOCAL_VAULT...');
+    setStatus(isBridge ? 'LOCAL_ONLY // Bridge mode' : 'COMMITTING_TO_LOCAL_VAULT...');
 
-    /* v8 ignore start */
     try {
+      if (isBridge) {
+        if (mounted.current) {
+          setStatus('SAVED_LOCALLY // Compute suspended');
+          if (statusTimer.current) clearTimeout(statusTimer.current);
+          statusTimer.current = setTimeout(() => mounted.current && setStatus(null), 2000);
+        }
+        setSyncing(false);
+        setText('');
+        return;
+      }
+
       const [vaultMod, embedResult] = await Promise.all([
         import('../lib/ChaosVault'),
         embed(text),
@@ -134,10 +143,9 @@ export function ChaosIngest({ theme }: { theme: Record<string, string> }) {
     } finally {
       if (mounted.current) setSyncing(false);
     }
-    /* v8 ignore stop */
-  }, [text, syncing, embed]);
+  }, [text, syncing, embed, canCompute, isBridge]);
 
-  const placeholder = theme.name === 'SANCTUARY'
+  const placeholder = isCrisis
     ? 'Write anything here. It stays on this device. It is safe.'
     : 'ENTER_JOURNAL_ENTRY // LOCAL_STORAGE_ONLY';
 
@@ -145,7 +153,9 @@ export function ChaosIngest({ theme }: { theme: Record<string, string> }) {
     <div className="space-y-4 w-full">
       <div className="flex justify-between items-center border-b border-white/5 pb-2">
         <span className="text-xs font-mono tracking-widest uppercase opacity-60">Somatic Buffer Engine</span>
-        <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-orange-950/40 text-orange-400 border border-orange-900/30">Isolated Origin</span>
+        <span className={`text-[10px] font-mono uppercase px-2 py-0.5 rounded border ${isCrisis ? 'bg-zinc-800 text-zinc-400 border-zinc-700' : 'bg-orange-950/40 text-orange-400 border-orange-900-30'}`}>
+          {isCrisis ? 'Crisis Mode' : 'Isolated Origin'}
+        </span>
       </div>
       <textarea
         value={text}
@@ -156,14 +166,14 @@ export function ChaosIngest({ theme }: { theme: Record<string, string> }) {
       />
       <div className="flex justify-between items-center gap-4">
         <p className="text-[11px] font-mono opacity-50 tracking-wide truncate max-w-[60%]">
-          {status || 'READY // WAITING FOR SENSOR DATA'}
+          {status || (isCrisis ? 'CRISIS // Text only, no processing' : isBridge ? 'BRIDGE // Local save only' : 'READY // WAITING FOR SENSOR DATA')}
         </p>
         <button
           onClick={handleIngest}
-          disabled={!text.trim() || syncing}
+          disabled={!text.trim() || syncing || !canCompute}
           className={`px-6 py-2.5 text-xs tracking-widest font-mono uppercase whitespace-nowrap ${theme.button} disabled:opacity-30 disabled:pointer-events-none`}
         >
-          {syncing ? 'PROCESSING...' : 'COMMIT_TO_VAULT'}
+          {syncing ? 'PROCESSING...' : isBridge ? 'SAVE_LOCALLY' : isCrisis ? 'SANCTUARY' : 'COMMIT_TO_VAULT'}
         </button>
       </div>
     </div>

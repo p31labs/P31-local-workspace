@@ -194,18 +194,21 @@
 
 ### 🔴 CRITICAL — Housing
 
-**Status:** Contested legal proceeding. April 4 was opposing party's position — not a court determination. Outcome not determined. ESG housing grant portal opens April 13 (apply within 48 hours).
+**Status:** Legal proceeding — April 16 hearing PASSED. Appeal pending. 501(c)(3) determined. Mercury bank active. SAM.gov UEI registered.
 
-### 🔴 CRITICAL — Funding & Grant Cascade (CWP-2026-012)
+### 🟡 HIGH — Funding & Grant Pipeline (Current June 2026)
 
-- ESG Housing Grant: Portal opens April 13. Apply by April 15. Hard deadline.
-- NIDILRR / Switzer Fellowship ($80K): Contact initiated.
-- NIDILRR FIP Development (~$250K/yr × 3): Contact initiated.
-- NDEP ($19K): Eligibility check by April 15.
+- ASAN Teighlor McGee ($6,250): Narrative complete — due June 15.
+- Stimpunks Foundation ($5K): Drafting — due July 1.
+- NIDILRR / Switzer Fellowship ($80K): Contact initiated — track FY2027.
+- NIDILRR FIP Development (~$250K/yr × 3): Contact initiated — track FY2027.
+- ~~NLnet NGI proposals (€75K)~~: Deadline passed — resubmit next cycle.
+- ~~ESG Housing Grant~~: Deadline passed.
+- ~~NDEP ($19K)~~: Deadline passed.
 - Microsoft AI for Accessibility ($75K): Drafting.
-- Pollination Project ($500): Submitted Mar 10 — status check needed.
-- Awesome Foundation ($1K): Submitted Mar 10 — response ~Apr 15.
-- **Total pipeline: $550K+**
+- Pollination Project ($500): Submitted Mar 10 — awaiting decision.
+- Awesome Foundation ($1K): Submitted Mar 10 — awaiting decision.
+- **Total pipeline: ~$392K+**
 - Traction Package v3: COMPLETE — `docs/grants/TRACTION_PACKAGE_V3.md`
 - HCB application 4XDUXX (Feb 18): Follow-up email needed.
 - PPF (Players Philanthropy Fund): Backup if HCB non-responsive 48hr.

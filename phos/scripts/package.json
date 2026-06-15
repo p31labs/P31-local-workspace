@@ -1,0 +1,8 @@
+{
+  "scripts": {
+    "llm:probe": "bash scripts/phos-llm-monitor.sh",
+    "llm:probe:force": "OLLAMA_HOST=127.0.0.1 OLLAMA_PORT=11434 pnpm llm:probe",
+    "dev:smoke": "pnpm llm:probe && pnpm tauri dev",
+    "build:smoke": "pnpm llm:probe && pnpm tauri build"
+  }
+}

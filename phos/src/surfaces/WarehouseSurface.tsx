@@ -29,6 +29,7 @@ export function WarehouseSurface({ theme, spoons }: { theme: any; spoons: number
   const subRef = useRef<any>(null);
   const VISIBLE_ITEMS = 20;
   const ROW_HEIGHT = 48;
+  const canAnimate = spoons >= 2;
 
   /* v8 ignore start */
   useEffect(() => {
@@ -41,7 +42,6 @@ export function WarehouseSurface({ theme, spoons }: { theme: any; spoons: number
         db = new PGlite({ connectionString: 'idb://p31-warehouse-aj' });
         dbRef.current = db;
 
-        // Initial load
         const [summary, logs, all] = await Promise.all([
           db.query('SELECT COUNT(*) as count FROM items'),
           db.query('SELECT id, name, sku, quantity, updated_at FROM items ORDER BY id DESC LIMIT 3'),
@@ -61,8 +61,7 @@ export function WarehouseSurface({ theme, spoons }: { theme: any; spoons: number
           error: null,
         });
 
-        // Live subscription for reactive updates
-        if (db.live) {
+        if (canAnimate && db.live) {
           try {
             const sub = await db.live.query('SELECT id, name, sku, quantity, updated_at FROM items ORDER BY updated_at DESC LIMIT 100');
             if (!cancelled) {
@@ -100,7 +99,7 @@ export function WarehouseSurface({ theme, spoons }: { theme: any; spoons: number
       }
       dbRef.current = null;
     };
-  }, []);
+  }, [canAnimate]);
   /* v8 ignore stop */
 
   const visibleItems = state.allItems.slice(virtualOffset, virtualOffset + VISIBLE_ITEMS);

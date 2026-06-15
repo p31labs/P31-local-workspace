@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShieldAlert } from 'lucide-react';
+import { ShieldAlert, Waves } from 'lucide-react';
 
 interface EscapeHatchProps {
   theme: Record<string, string>;
@@ -10,11 +10,13 @@ interface EscapeHatchProps {
   onToggleHud: () => void;
   onSetSpoons: (s: number) => void;
   onSetSurface: (s: string) => void;
+  onToggleNativeAudio: () => void;
+  nativeAudioPlaying: boolean;
 }
 
 export function EscapeHatch({
   theme, hudOpen, currentSurface, spoons, surfaceNames,
-  onToggleHud, onSetSpoons, onSetSurface,
+  onToggleHud, onSetSpoons, onSetSurface, onToggleNativeAudio, nativeAudioPlaying,
 }: EscapeHatchProps) {
   return (
     <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center">
@@ -34,6 +36,20 @@ export function EscapeHatch({
         className={`mt-3 overflow-hidden transition-all duration-500 ease-in-out ${hudOpen ? 'max-h-[400px] opacity-100' : 'max-h-0 opacity-0'}`}
       >
         <div className={`p-5 w-80 flex flex-col gap-5 border border-white/5 shadow-2xl backdrop-blur-2xl ${theme.hud}`}>
+          <div className="text-center border-b border-white/10 pb-3">
+            <p className="text-[10px] font-mono tracking-widest opacity-50 mb-3 uppercase">Native Audio Test</p>
+            <button
+              onClick={onToggleNativeAudio}
+              className={`w-full py-2 rounded border font-mono text-[10px] tracking-widest transition-all duration-300 ${nativeAudioPlaying ? 'border-emerald-500/60 bg-emerald-500/10 text-emerald-300' : theme.button}`}
+              aria-pressed={nativeAudioPlaying}
+              aria-label={`Toggle native 863 Hz Larmor tone${nativeAudioPlaying ? ' (playing)' : ''}`}
+            >
+              <span className="inline-flex items-center gap-2">
+                <Waves size={12} />
+                {nativeAudioPlaying ? 'STOP_LARMOR' : 'START_LARMOR'}
+              </span>
+            </button>
+          </div>
           <div className="text-center border-b border-white/10 pb-3">
             <p className="text-[10px] font-mono tracking-widest opacity-50 mb-3 uppercase">Spoon Configuration</p>
             <div className="flex justify-between gap-1" role="radiogroup" aria-label="Spoon level">

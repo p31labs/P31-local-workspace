@@ -1,0 +1,9 @@
+{
+  "name": "@p31/sovereign-core",
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "build": "wasm-pack build --target web"
+  },
+  "files": ["pkg"]
+}

@@ -1,0 +1,31 @@
+name: Paper XII Data Export
+
+on:
+  schedule:
+    - cron: '0 0 * * 0'  # Every Sunday at midnight UTC
+  workflow_dispatch:       # Manual trigger
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          pip install PyYAML requests
+
+      - name: Run export script
+        run: python3 software/p31-forge/scripts/export-paper-xii.py --format zenodo
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          ZENODO_SANDBOX_TOKEN: ${{ secrets.ZENODO_SANDBOX_TOKEN }}
+
+      - name: Upload Zenodo export artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: paper-xii-data
+          path: |
+            software/p31-forge/zenodo_batch/xii-export/*/paper-xii-zenodo.csv

@@ -1,10 +1,10 @@
 ---
-import PHOSShell from '../components/PHOSShell';
+import App from '../components/App';
 import '../styles/globals.css';
 ---
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-spoons="5">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -14,9 +14,12 @@ import '../styles/globals.css';
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="manifest" href="/manifest.json" />
     <link rel="apple-touch-icon" href="/icon-192.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&family=JetBrains+Mono:wght@100..800&display=swap" rel="stylesheet" />
     <title>PHOS — Phosphorus Human Operating Surface</title>
   </head>
   <body>
-    <PHOSShell client:only="react" />
+    <App client:only="react" />
   </body>
 </html>

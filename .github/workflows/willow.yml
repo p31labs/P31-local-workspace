@@ -1,0 +1,49 @@
+name: willow
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "software/willow/**"
+      - ".github/actions/**"
+      - ".github/workflows/willow.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: willow-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/toolchain-constants
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install PNPM
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Install dependencies
+        working-directory: software/willow
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        working-directory: software/willow
+        run: pnpm build
+
+      - name: Deploy to Cloudflare Pages
+        if: github.ref == 'refs/heads/main'
+        uses: ./.github/actions/wrangler-run
+        with:
+          working-directory: software/willow
+          command: pages deploy dist --project-name=willow --branch=main
+          api-token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          account-id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

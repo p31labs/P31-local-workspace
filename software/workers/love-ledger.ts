@@ -81,6 +81,77 @@ const CARE_SCORE_MIN = 0.1;
 const CARE_SCORE_MAX = 1.0;
 const WORKER_SPOONS_MAX = 12; // mirrors client SPOONS_MAX
 
+const DEFAULT_GUARDIAN_CONFIG = {
+  xp: {
+    levels: [
+      { level: 1, threshold: 0, title: 'Sprout' },
+      { level: 2, threshold: 100, title: 'Sparkle' },
+      { level: 3, threshold: 300, title: 'Shield' },
+      { level: 4, threshold: 600, title: 'Guardian' },
+      { level: 5, threshold: 1000, title: 'Warden' },
+    ],
+    perAction: {
+      blockPlaced: 10,
+      bondFormed: 25,
+      rigidityAchieved: 50,
+      serviceDonated: 5,
+    },
+  },
+  ai: {
+    minResponses: 3,
+    maxContextTokens: 12000,
+    topicDriftThreshold: 0.7,
+  },
+};
+
+const DEFAULT_SKILLS = {
+  sensory_gray_rock: {
+    skill_id: 'sensory_gray_rock',
+    version: 1,
+    domain: 'somatic',
+    trigger: { type: 'spoon_drop', threshold: 1, context: [] },
+    action: { type: 'ui_override', payload: { css_class: 'gray-rock-mode', animation_duration: 0.01, contrast: 'low', monochrome: true } },
+    xp_reward: 25,
+    guardian_unlock: 'shield_tier',
+  },
+  sensory_breathing_guide: {
+    skill_id: 'sensory_breathing_guide',
+    version: 1,
+    domain: 'somatic',
+    trigger: { type: 'spoon_drop', threshold: 2, context: [] },
+    action: { type: 'audio_cue', payload: { frequency: 0.1, pattern: 'larmor_fade', text_fallback: 'Breathe in… and out.' } },
+    xp_reward: 15,
+    guardian_unlock: null,
+  },
+  executive_task_fracture: {
+    skill_id: 'executive_task_fracture',
+    version: 1,
+    domain: 'executive',
+    trigger: { type: 'hesitation', threshold: 45, context: ['no_input'] },
+    action: { type: 'akinator_prompt', payload: { prompt: 'Are we stuck on starting, or stuck on deciding?', follow_up: 'Just one tiny step. What\'s the smallest thing you could do right now?' } },
+    xp_reward: 30,
+    guardian_unlock: null,
+  },
+  guardian_voice_affirmation: {
+    skill_id: 'guardian_voice_affirmation',
+    version: 1,
+    domain: 'guardian',
+    trigger: { type: 'guardian_unlock', threshold: 30, context: [] },
+    action: { type: 'tts_phrase', payload: { phrase: 'You\'re doing great. Keep going.' } },
+    xp_reward: 0,
+    guardian_unlock: 'sparkle_tier',
+  },
+  transition_bridge: {
+    skill_id: 'transition_bridge',
+    version: 1,
+    domain: 'companion',
+    trigger: { type: 'task_transition', threshold: 0, context: ['high_dopamine_to_high_friction'] },
+    action: { type: 'akinator_game', payload: { duration: 180, style: 'low_stakes', prompt: 'Quick brain reset before we switch tasks.' } },
+    xp_reward: 20,
+    guardian_unlock: null,
+  },
+};
+
 function computeEffectiveCareScore(storedScore: number, updatedAt: number): number {
   const daysSince = (Date.now() - updatedAt) / 86_400_000;
   if (daysSince <= CARE_SCORE_GRACE_DAYS) return storedScore;
@@ -230,7 +301,99 @@ export default {
       }
     }
 
+    // Route: GET /api/guardian/config
+    if (pathParts[0] === 'api' && pathParts[1] === 'guardian' && pathParts[2] === 'config') {
+      return this.handleGuardianConfig(env);
+    }
+
+    // Route: POST /api/guardian/xp
+    if (pathParts[0] === 'api' && pathParts[1] === 'guardian' && pathParts[2] === 'xp') {
+      return this.handleGuardianXP(request, env);
+    }
+
+    // Route: GET /api/skills
+    if (pathParts[0] === 'api' && pathParts[1] === 'skills' && !pathParts[2]) {
+      return this.getSkills(request, env);
+    }
+
+    // Route: POST /api/skills/trigger
+    if (pathParts[0] === 'api' && pathParts[1] === 'skills' && pathParts[2] === 'trigger') {
+      return this.triggerSkill(request, env);
+    }
     return err('Not found', 404);
+  },
+
+  async handleGuardianConfig(env: Env): Promise<Response> {
+    try {
+      if (!env.SPOONS_KV) return json(DEFAULT_GUARDIAN_CONFIG);
+      const raw = await env.SPOONS_KV.get('guardian-config', 'json');
+      const config =
+        raw && typeof raw === 'object'
+          ? raw
+          : DEFAULT_GUARDIAN_CONFIG;
+      return json(config);
+    } catch {
+      return json(DEFAULT_GUARDIAN_CONFIG);
+    }
+  },
+
+  async handleGuardianXP(request: Request, env: Env): Promise<Response> {
+    try {
+      const body = request.method === 'GET' ? {} : await request.json().catch(() => ({}));
+      const childId = new URL(request.url).searchParams.get('child_id') || body.childId || body.userId;
+      const amount = Number(new URL(request.url).searchParams.get('amount') || body.amount || 1);
+      if (!childId) return err('Missing child_id', 400);
+      if (!Number.isFinite(amount) || amount <= 0) return err('Invalid amount', 400);
+
+      let xp = 0;
+      if (env.SPOONS_KV) {
+        xp = Number(await env.SPOONS_KV.get(`guardian_xp:${childId}`)) || 0;
+        xp += amount;
+        await env.SPOONS_KV.put(`guardian_xp:${childId}`, String(xp));
+      } else {
+        xp = amount;
+      }
+
+      const levels = DEFAULT_GUARDIAN_CONFIG.xp.levels as Array<{ level: number; threshold: number; title?: string }>;
+      let tier: string = 'egg';
+      for (const l of levels) {
+        if (xp >= l.threshold) tier = String(l.title ?? `level${l.level}`);
+      }
+
+      return json({ child_id: childId, xp, tier });
+    } catch {
+      return json({ error: 'Failed to update guardian xp' }, 500);
+    }
+  },
+
+  // ── Skills Engine ─────────────────────────────────────────────
+  async getSkills(request: Request, env: Env): Promise<Response> {
+    try {
+      const url = new URL(request.url);
+      const childId = url.searchParams.get('child_id');
+      const domain = url.searchParams.get('domain');
+      let skills = Object.values(DEFAULT_SKILLS);
+      if (domain) skills = skills.filter((s) => s.domain === domain);
+      return json(skills);
+    } catch {
+      return json(Object.values(DEFAULT_SKILLS));
+    }
+  },
+
+  async triggerSkill(request: Request, env: Env): Promise<Response> {
+    try {
+      const body = await request.json() as { skill_id?: string; child_id?: string };
+      const skillId = body.skill_id;
+      if (!skillId) return err('Missing skill_id', 400);
+      const skill = DEFAULT_SKILLS[skillId as keyof typeof DEFAULT_SKILLS];
+      if (!skill) return err('Skill not found', 404);
+      if (env.SPOONS_KV && body.child_id) {
+        await env.SPOONS_KV.put(`triggered:${body.child_id}:${skillId}`, String(Date.now()));
+      }
+      return json({ action: skill.action });
+    } catch {
+      return err('Failed to trigger skill', 500);
+    }
   },
 
   async getBalance(userId: string, env: Env): Promise<Response> {

@@ -151,11 +151,36 @@ function strutEndpointsKey(aShape: string, aVi: number, bShape: string, bVi: num
 }
 
 function pruneStrutsForShape(struts: StrutMap, shapeId: string): StrutMap {
-  const o: StrutMap = {};
-  for (const [k, v] of Object.entries(struts)) {
-    if (v.aShape !== shapeId && v.bShape !== shapeId) o[k] = v;
-  }
-  return o;
+    const o: StrutMap = {};
+    for (const [k, v] of Object.entries(struts)) {
+        if (v.aShape !== shapeId && v.bShape !== shapeId) o[k] = v;
+    }
+    return o;
+}
+
+// Award LOVE when a rigid structure is achieved
+async function awardLoveForRigidity(clientId: string, env: Env): Promise<void> {
+    try {
+        // Call the LOVE ledger worker to award LOVE for achieving rigidity
+        // Using BLOCK_PLACED as the transaction type since it's a structural achievement
+        const response = await fetch('https://love-ledger.trimtab-signal.workers.dev/api/love/earn', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                userId: clientId,
+                transactionType: 'BLOCK_PLACED',
+                description: 'Achieved rigid structure in Geodesic Room',
+            })
+        });
+        
+        if (!response.ok) {
+            console.warn(`Failed to award LOVE for rigidity: ${response.status}`);
+        }
+    } catch (error) {
+        console.warn(`Error awarding LOVE for rigidity:`, error);
+    }
 }
 
 export class GeodesicRoom extends DurableObject<Env> {
@@ -300,20 +325,25 @@ export class GeodesicRoom extends DurableObject<Env> {
         const struts = await this.getStruts();
         const rigidity = computeRigidity(shapes, struts);
         const op: Op = {
-          type: 'ADD_SHAPE',
-          shapeId,
-          shapeType,
-          x,
-          y,
-          z,
-          rotY,
-          tint,
-          version,
-          ts: Date.now(),
-          clientId,
-          rigidity,
+            type: 'ADD_SHAPE',
+            shapeId,
+            shapeType,
+            x,
+            y,
+            z,
+            rotY,
+            tint,
+            version,
+            ts: Date.now(),
+            clientId,
+            rigidity,
         };
         this.broadcastJson({ type: 'op', op });
+        
+        // Award LOVE if the structure is now rigid
+        if (rigidity.rigid) {
+            await awardLoveForRigidity(clientId, env);
+        }
         break;
       }
 
@@ -337,9 +367,14 @@ export class GeodesicRoom extends DurableObject<Env> {
         const strutsM = await this.getStruts();
         const rigidityM = computeRigidity(shapes, strutsM);
         const op: Op = {
-          type: 'MOVE_SHAPE', shapeId, x, y, z, rotY, version, ts: Date.now(), clientId, rigidity: rigidityM,
+            type: 'MOVE_SHAPE', shapeId, x, y, z, rotY, version, ts: Date.now(), clientId, rigidity: rigidityM,
         };
         this.broadcastJson({ type: 'op', op });
+        
+        // Award LOVE if the structure is now rigid
+        if (rigidityM.rigid) {
+            await awardLoveForRigidity(clientId, env);
+        }
         break;
       }
 
@@ -384,16 +419,21 @@ export class GeodesicRoom extends DurableObject<Env> {
           if (strutEndpointsKey(s.aShape, s.aVi, s.bShape, s.bVi) === ek) return;
         }
         const rec: StrutRecord = {
-          id: strutId, aShape, aVi, bShape, bVi, clientId, ts: Date.now(),
+            id: strutId, aShape, aVi, bShape, bVi, clientId, ts: Date.now(),
         };
         struts[strutId] = rec;
         await this.ctx.storage.put('struts', JSON.stringify(struts));
         await this.ctx.storage.put('version', version);
         const rigidity = computeRigidity(shapes, struts);
         const op: Op = {
-          type: 'ADD_STRUT', strutId, aShape, aVi, bShape, bVi, version, ts: Date.now(), clientId, rigidity,
+            type: 'ADD_STRUT', strutId, aShape, aVi, bShape, bVi, version, ts: Date.now(), clientId, rigidity,
         };
         this.broadcastJson({ type: 'op', op });
+        
+        // Award LOVE if the structure is now rigid
+        if (rigidity.rigid) {
+            await awardLoveForRigidity(clientId, env);
+        }
         break;
       }
 

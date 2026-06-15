@@ -1,0 +1,11 @@
+name = "bros-signaling-template"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+
+[vars]
+  # Set these in wrangler.toml or via wrangler secret put
+  BROS_VAPID_PUBLIC_KEY = ""
+  BROS_VAPID_PRIVATE_KEY = ""
+
+[env.production]
+  compatibility_date = "2024-01-01"

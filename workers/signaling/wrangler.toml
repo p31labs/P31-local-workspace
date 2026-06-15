@@ -1,0 +1,7 @@
+name = "p31-signaling"
+main = "src/index.ts"
+compatibility_date = "2025-01-01"
+
+kv_namespaces = [
+  { binding = "P31_SIGNALING_KV", id = "9401942b1098497caec0fe095809c7b3" }
+]

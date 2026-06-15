@@ -1,0 +1,6 @@
+name = "discord-alerter"
+main = "src/index.ts"
+compatibility_date = "2026-06-01"
+
+[vars]
+DISCORD_WEBHOOK_URL = ""

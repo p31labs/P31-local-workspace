@@ -1,8 +1,8 @@
 # P31 Andromeda — Final Production Release Summary
 
-**Date:** March 24, 2026  
-**Version:** 1.0.0  
-**Classification:** Medical Device (21 CFR §890.3710)
+**Date:** June 13, 2026  
+**Version:** 1.0.1  
+**Classification:** General Wellness / Communication Support. No FDA classification claimed. 513(g) RFI before market entry.
 
 ---
 
@@ -58,9 +58,9 @@ P31 Andromeda is a comprehensive cognitive prosthetic ecosystem designed for neu
 ### Discovery Documents
 | Document | Location | Status |
 |----------|----------|--------|
-| Johnson_Discovery_Response.docx | `docs/` | ✅ Ready |
-| Johnson_Production_Cover_Sheet.docx | `docs/` | ✅ Ready |
-| Financial_Summary_Exhibit.docx | `docs/` | ✅ Ready |
+| Johnson_Discovery_Response.docx | `docs/` | ✅ Filed March 26 |
+| Johnson_Production_Cover_Sheet.docx | `docs/` | ✅ Filed March 26 |
+| Financial_Summary_Exhibit.docx | `docs/` | ✅ Filed March 26 |
 | Psychiatrist Letter (Maughon) | Physical | ✅ In Hand |
 
 ### Financial Evidence
@@ -95,8 +95,8 @@ P31 Andromeda is a comprehensive cognitive prosthetic ecosystem designed for neu
 | March 18, 2026 | Recusal Hearing ("manic" label) | ✅ Documented |
 | March 23, 2026 | Psychiatrist Letter (Maughon) | ✅ Received |
 | March 24, 2026 | Psychiatrist Appointment | ✅ Complete |
-| March 26, 2026 | Discovery Response Deadline | 🔴 Pending |
-| April 4, 2026 | Eviction (401 Powder Horn Rd) | 🔴 14 days |
+| March 26, 2026 | Discovery Response Deadline | ✅ Filed |
+| April 4, 2026 | Eviction (401 Powder Horn Rd) | ✅ Resolved |
 
 ---
 
@@ -141,6 +141,6 @@ P31 Andromeda is a comprehensive cognitive prosthetic ecosystem designed for neu
 
 ---
 
-*Prepared: March 24, 2026*
+*Prepared: June 13, 2026*
 *P31 Labs | phosphorus31.org | github.com/p31labs*
 *It's okay to be a little wonky.* 🔺

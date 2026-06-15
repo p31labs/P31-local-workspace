@@ -5,10 +5,11 @@
     "moduleResolution": "bundler",
     "baseUrl": ".",
     "strict": false,
+    "noEmitOnError": false,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "jsx": "react-jsx",
-    "types": ["vite/client", "@webgpu/types", "@types/web-bluetooth"],
+    "types": ["vite/client", "@webgpu/types", "@types/web-bluetooth", "@types/react", "@types/react-dom"],
     "lib": ["DOM", "ES2020"],
     "paths": {
       "@p31/shared": ["../packages/shared/src"],

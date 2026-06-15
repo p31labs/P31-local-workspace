@@ -3,6 +3,7 @@
 **Applicant:** William R. Johnson, P31 Labs, Inc.
 **Requested Amount:** $6,250
 **Project:** PHOS OS: Zero-Telemetry Cognitive Operating System for Autistic Adults
+**Track:** STEP (Self-advocates Transforming Equitable Policy)
 
 ---
 
@@ -22,6 +23,8 @@ The technical architecture reflects the cognitive model:
 
 **Zero telemetry by architecture.** PHOS uses PGLite (SQLite compiled to WASM) for local storage. All data stays on-device. The service worker caches everything for offline operation. There are no analytics, no tracking pixels, no data leaving the device except explicit user-initiated family mesh pings. The code is open source (AGPL-3.0) so anyone can verify this claim.
 
+**Equity by design.** Assistive technology is disproportionately inaccessible to autistic people of color with intellectual and developmental disabilities. Commercial AT costs hundreds or thousands of dollars per license, requires broadband internet, and collects data that can be used against disabled people in legal, custody, and benefits proceedings. PHOS eliminates every one of these barriers: it is free, open source, runs fully offline on a $35 Chromebook or donated hardware, and stores zero data in the cloud. For a community that faces compounded discrimination at the intersection of disability and race, a tool that demands no money, no internet, and no trust in institutional data brokers is not a luxury — it is a prerequisite for self-advocacy. This grant would fund accessibility audits and user testing specifically designed to ensure PHOS works for autistic adults across the full spectrum of communication support needs, including non-speaking and part-time non-speaking users from communities of color.
+
 The requested $6,250 would fund:
 
 1. **Accessibility audit** by a neurodivergent usability expert ($2,000)
@@ -36,4 +39,4 @@ What I am asking for is not seed funding to start. It is validation funding to h
 Because the best assistive technology is not built *for* disabled people. It is built *by* them.
 
 ---
-*P31 Labs, Inc. | May 31, 2026*
+*P31 Labs, Inc. | June 13, 2026*

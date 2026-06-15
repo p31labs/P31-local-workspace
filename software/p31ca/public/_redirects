@@ -13,7 +13,7 @@
 
 # Short-path aliases — all single-hop to Astro routes; no .html targets
 # /passport — Astro serves /passport directly; rule omitted (would loop)
-/onboard       /ops#onboard        301
+/onboard       /onboard/        301
 /launch        /#launch            301
 /together      /#welcome           301
 /start         /connect#mesh       301

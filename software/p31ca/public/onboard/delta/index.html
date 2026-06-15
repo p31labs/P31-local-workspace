@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Delta — P31</title>
+<script src="../../state.js"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { height: 100%; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; -webkit-tap-highlight-color: transparent; }
+body { display: flex; align-items: center; justify-content: center; padding: 20px; transition: background 1s; }
+body.warm { background: linear-gradient(160deg, #FFF7ED, #FED7AA, #FECACA); }
+body.sparkle { background: linear-gradient(135deg, #E0F2FE, #C084FC, #F0ABFC); }
+body.neutral { background: linear-gradient(135deg, #0F172A, #1E1B4B, #0F172A); }
+.card { background: rgba(255,255,255,0.7); backdrop-filter: blur(16px); border-radius: 48px; padding: 40px 28px; max-width: 440px; width: 100%; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.4); }
+.tetra { margin: 0 auto 16px; width: clamp(120px, 30vw, 200px); height: clamp(120px, 30vw, 200px); position: relative; }
+.tetra svg { width: 100%; height: 100%; }
+.node { fill: #EA580C; transition: all 0.5s; }
+.sparkle .node { fill: #9333EA; }
+.edge { stroke: rgba(234,88,12,0.3); stroke-width: 2; transition: all 0.5s; }
+.sparkle .edge { stroke: rgba(147,51,234,0.3); }
+h1 { font-size: clamp(24px, 6vw, 36px); font-weight: 800; color: #7C2D12; margin-bottom: 8px; }
+.sparkle h1 { color: #4C1D95; }
+.neutral h1 { color: #E2E8F0; }
+p { font-size: clamp(16px, 4vw, 20px); color: #9A3412; opacity: 0.8; margin-bottom: 6px; line-height: 1.5; }
+.sparkle p { color: #6D28D9; }
+.neutral p { color: #94A3B8; }
+.network { font-size: 14px; color: #9A3412; opacity: 0.6; margin-bottom: 20px; }
+.sparkle .network { color: #6D28D9; }
+.neutral .network { color: #64748B; }
+.badge { display: inline-flex; align-items: center; gap: 6px; padding: 8px 20px; border-radius: 40px; font-size: 14px; font-weight: 600; margin-bottom: 20px; }
+.badge-connected { background: rgba(34,197,94,0.2); color: #16A34A; border: 1px solid rgba(34,197,94,0.3); }
+.badge-love { background: rgba(236,72,153,0.2); color: #EC4899; border: 1px solid rgba(236,72,153,0.3); }
+.links { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
+.link { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 14px 24px; border-radius: 32px; font-size: clamp(16px, 4vw, 20px); font-weight: 600; text-decoration: none; transition: all 0.2s; }
+.link:active { transform: scale(0.95); }
+.link-warm { background: #EA580C; color: white; }
+.link-sparkle { background: linear-gradient(135deg, #9333EA, #C084FC); color: white; }
+.link-outline { background: rgba(255,255,255,0.5); color: #7C2D12; border: 2px solid rgba(234,88,12,0.3); }
+.sparkle .link-outline { color: #4C1D95; border-color: rgba(147,51,234,0.3); }
+.corner { position: fixed; top: 16px; right: 16px; font-size: 12px; color: #9A3412; opacity: 0.4; text-decoration: none; }
+.sparkle .corner { color: #6D28D9; }
+.neutral .corner { color: #64748B; }
+</style>
+</head>
+<body id="bodyEl">
+<div class="card" id="cardEl">
+  <div class="tetra">
+    <svg viewBox="0 0 200 200">
+      <line class="edge" x1="100" y1="15" x2="20" y2="140"/>
+      <line class="edge" x1="100" y1="15" x2="180" y2="140"/>
+      <line class="edge" x1="100" y1="15" x2="100" y2="185"/>
+      <line class="edge" x1="20" y1="140" x2="180" y2="140"/>
+      <line class="edge" x1="20" y1="140" x2="100" y2="185"/>
+      <line class="edge" x1="180" y1="140" x2="100" y2="185"/>
+      <circle class="node" cx="100" cy="15" r="8"/>
+      <circle class="node" cx="20" cy="140" r="8"/>
+      <circle class="node" cx="180" cy="140" r="8"/>
+      <circle class="node" cx="100" cy="185" r="8"/>
+    </svg>
+  </div>
+
+  <h1 id="titleEl">You're on the mesh</h1>
+  <p id="subEl">You are connected. You are sovereign.</p>
+
+  <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:16px">
+    <div class="badge badge-connected" id="nodeBadge">◉ 2 nodes</div>
+    <div class="badge badge-love" id="loveBadge">❤️ 5 LOVE</div>
+  </div>
+
+  <div class="network" id="networkEl">Connected to: you + 1 other</div>
+
+  <div class="links">
+    <a href="../../" class="link link-warm" id="mainLink" onclick="window.__sfx.pop();">Back to Home</a>
+    <a href="../../planetary-onboard.html" class="link link-outline" id="exploreLink">Explore More →</a>
+  </div>
+</div>
+<a href="#" class="corner" onclick="window.__onboard.reset();window.location.href='../'">↩ reset</a>
+
+<script>
+(function(){
+  window.__onboard.complete();
+  var door = window.__onboard.door() || 'warm';
+  var love = window.__onboard.love() || 5;
+  var name = window.__onboard.name() || 'family';
+  var body = document.getElementById('bodyEl');
+  var card = document.getElementById('cardEl');
+  var title = document.getElementById('titleEl');
+  var sub = document.getElementById('subEl');
+  var nodeBadge = document.getElementById('nodeBadge');
+  var loveBadge = document.getElementById('loveBadge');
+  var network = document.getElementById('networkEl');
+  var mainLink = document.getElementById('mainLink');
+
+  if (door === 'sparkle') {
+    body.className = 'sparkle';
+    card.className = 'card sparkle';
+    mainLink.className = 'link link-sparkle';
+    title.textContent = '🎉 You did it!';
+    sub.textContent = 'You are on the team! ⭐';
+    nodeBadge.innerHTML = '◉ 2 nodes connected';
+    loveBadge.innerHTML = '❤️ ' + love + ' LOVE';
+    network.textContent = 'Connected to: Dad & ' + name;
+    document.title = 'Delta — P31';
+  } else if (door === 'warm') {
+    body.className = 'warm';
+    title.textContent = '💚 You\'re connected';
+    sub.textContent = 'You are on the mesh. Your family is here.';
+    nodeBadge.innerHTML = '◉ 2 nodes: You + ' + name;
+    loveBadge.innerHTML = '❤️ ' + love + ' LOVE';
+    network.textContent = 'Connected to: ' + name + ' via K\u2084 mesh';
+    document.title = 'Delta — P31';
+  } else {
+    body.className = 'neutral';
+    card.style.background = 'rgba(30,27,75,0.8)';
+    card.style.borderColor = 'rgba(99,102,241,0.3)';
+    title.textContent = '◉ Delta';
+    sub.textContent = 'Sovereign state reached. Mesh active.';
+    mainLink.textContent = '→ Enter the Mesh';
+    mainLink.style.background = 'linear-gradient(135deg, #6366F1, #818CF8)';
+    mainLink.style.color = 'white';
+    mainLink.href = '../../';
+    document.title = 'Delta — P31';
+  }
+
+  window.__sfx && window.__sfx.done && window.__sfx.done();
+
+  // Animate nodes pulsing
+  var circles = document.querySelectorAll('.node');
+  circles.forEach(function(c, i){
+    c.style.animation = 'pulse 2s ease-in-out ' + (i * 0.3) + 's infinite';
+  });
+})();
+</script>
+<style>
+@keyframes pulse {
+  0%, 100% { opacity: 0.6; r: 8; }
+  50% { opacity: 1; r: 10; }
+}
+svg .node { transition: all 0.3s; }
+</style>
+</body>
+</html>

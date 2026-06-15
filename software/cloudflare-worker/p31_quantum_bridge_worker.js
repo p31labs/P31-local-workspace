@@ -9,8 +9,11 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     const authHeader = request.headers.get("Authorization");
+    const expectedToken = env.IBM_QUANTUM_TOKEN;
+    if (!expectedToken || authHeader !== `Bearer ${expectedToken}`) {
+      return new Response("Unauthorized", { status: 401 });
+    }
 
-    const IBM_API_TOKEN = env.IBM_QUANTUM_TOKEN;
     const IBM_BASE_URL = "https://api.quantum-computing.ibm.com/runtime";
 
     // 1. Job Submission Route
@@ -21,7 +24,7 @@ export default {
         const response = await fetch(`${IBM_BASE_URL}/jobs`, {
           method: "POST",
           headers: {
-            "Authorization": `Bearer ${IBM_API_TOKEN}`,
+            "Authorization": `Bearer ${expectedToken}`,
             "Content-Type": "application/json"
           },
           body: JSON.stringify({
@@ -49,7 +52,7 @@ export default {
       try {
         const response = await fetch(`${IBM_BASE_URL}/jobs/${jobId}`, {
           method: "GET",
-          headers: { "Authorization": `Bearer ${IBM_API_TOKEN}` }
+          headers: { "Authorization": `Bearer ${expectedToken}` }
         });
         const data = await response.json();
         return new Response(JSON.stringify(data), {

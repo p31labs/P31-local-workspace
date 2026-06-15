@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Who — P31</title>
+<script src="../../state.js"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { height: 100%; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; -webkit-tap-highlight-color: transparent; }
+body { background: linear-gradient(160deg, #FFF7ED 0%, #FED7AA 50%, #FECACA 100%); display: flex; align-items: center; justify-content: center; padding: 20px; }
+.card { background: rgba(255,255,255,0.6); backdrop-filter: blur(12px); border-radius: 48px; padding: 32px 28px; max-width: 420px; width: 100%; text-align: center; box-shadow: 0 20px 60px rgba(234,88,12,0.15); border: 1px solid rgba(255,255,255,0.4); }
+h1 { font-size: clamp(22px, 6vw, 36px); font-weight: 700; color: #7C2D12; margin-bottom: 20px; }
+.people { display: flex; flex-direction: column; gap: 16px; }
+.person { display: flex; align-items: center; gap: 16px; padding: 20px 24px; border-radius: 32px; background: rgba(255,255,255,0.5); border: 2px solid rgba(234,88,12,0.2); cursor: pointer; text-decoration: none; transition: all 0.2s; }
+.person:active { transform: scale(0.96); background: rgba(255,255,255,0.8); }
+.person .emoji { font-size: clamp(40px, 10vw, 64px); }
+.person .name { font-size: clamp(20px, 5vw, 28px); font-weight: 600; color: #7C2D12; }
+.person .relation { font-size: clamp(14px, 3.5vw, 18px); color: #9A3412; opacity: 0.7; margin-top: 2px; }
+.skip { position: fixed; bottom: 20px; right: 20px; font-size: 14px; color: #9A3412; opacity: 0.4; text-decoration: none; }
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>Who do you want to connect with?</h1>
+  <div class="people">
+    <a href="message.html?name=Will" class="person" onclick="window.__onboard.name('Will');window.__onboard.step(2);window.__sfx.pop();">
+      <div class="emoji">👨🏽</div>
+      <div><div class="name">Will</div><div class="relation">Your son</div></div>
+    </a>
+    <a href="message.html?name=SJ" class="person" onclick="window.__onboard.name('S.J.');window.__onboard.step(2);window.__sfx.pop();">
+      <div class="emoji">👧🏽</div>
+      <div><div class="name">S.J.</div><div class="relation">Your granddaughter</div></div>
+    </a>
+    <a href="message.html?name=WJ" class="person" onclick="window.__onboard.name('W.J.');window.__onboard.step(2);window.__sfx.pop();">
+      <div class="emoji">👦🏽</div>
+      <div><div class="name">W.J.</div><div class="relation">Your grandson</div></div>
+    </a>
+    <a href="message.html?name=Mom" class="person" onclick="window.__onboard.name('Brenda');window.__onboard.step(2);window.__sfx.pop();">
+      <div class="emoji">👩🏽</div>
+      <div><div class="name">Brenda</div><div class="relation">Family</div></div>
+    </a>
+  </div>
+</div>
+<a href="#" class="skip" onclick="window.__onboard.reset();window.location.href='../'">↩</a>
+<script>window.__onboard.step(1);</script>
+</body>
+</html>

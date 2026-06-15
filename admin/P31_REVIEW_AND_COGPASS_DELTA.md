@@ -1,5 +1,5 @@
 # P31 ECOSYSTEM — FULL REVIEW & COGPASS v3.2 DELTA
-## As of April 3, 2026, 11:00 PM EDT
+## As of April 3, 2026, 11:00 PM EDT (Historical — key context still current)
 ## Prepared by: Opus (Architect)
 
 ---

@@ -1,0 +1,31 @@
+{
+  "name": "@p31labs/bus",
+  "version": "0.1.0",
+  "description": "4KB zero-dependency cross-tab event bus for the P31 ecosystem. BroadcastChannel + localStorage fallback.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run --passWithNoTests",
+    "prepublishOnly": "npm run build && npm run test"
+  },
+  "keywords": [
+    "p31",
+    "bus",
+    "broadcast",
+    "cross-tab",
+    "event-bus"
+  ],
+  "author": "P31 Labs",
+  "license": "MIT"
+}

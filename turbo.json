@@ -1,0 +1,23 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "pipeline": {
+    "build:core": {
+      "outputs": ["pkg/**"]
+    },
+    "build:web": {
+      "dependsOn": ["^build:core"],
+      "outputs": ["dist/**", ".astro/**"]
+    },
+    "build:tauri": {
+      "dependsOn": ["build:web"],
+      "outputs": ["src-tauri/target/release/bundle/**"]
+    },
+    "build": {
+      "dependsOn": ["build:core", "build:web", "build:tauri"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    }
+  }
+}

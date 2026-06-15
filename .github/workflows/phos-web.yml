@@ -1,0 +1,49 @@
+name: phos-web
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "phos/**"
+      - ".github/actions/**"
+      - ".github/workflows/phos-web.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: phos-web-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/toolchain-constants
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install PNPM
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Install dependencies
+        working-directory: phos
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        working-directory: phos
+        run: pnpm build
+
+      - name: Deploy to Cloudflare Pages
+        if: github.ref == 'refs/heads/main'
+        uses: ./.github/actions/wrangler-run
+        with:
+          working-directory: phos
+          command: pages deploy dist --project-name=phos --branch=main
+          api-token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          account-id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

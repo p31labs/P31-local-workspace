@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Pick a Game — P31</title>
+<script src="../../state.js"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { height: 100%; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; -webkit-tap-highlight-color: transparent; }
+body { background: linear-gradient(135deg, #E0F2FE 0%, #C084FC 50%, #F0ABFC 100%); display: flex; align-items: center; justify-content: center; padding: 20px; }
+.card { background: rgba(255,255,255,0.3); backdrop-filter: blur(8px); border-radius: 48px; padding: 36px 24px; max-width: 420px; width: 100%; text-align: center; box-shadow: 0 20px 60px rgba(147,51,234,0.2); border: 1px solid rgba(255,255,255,0.3); }
+h1 { font-size: clamp(22px, 6vw, 36px); font-weight: 700; color: #4C1D95; margin-bottom: 20px; }
+.games { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
+.game { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 20px 16px; border-radius: 32px; background: rgba(255,255,255,0.4); cursor: pointer; text-decoration: none; transition: all 0.2s; min-width: 100px; border: 2px solid transparent; }
+.game:active { transform: scale(0.92); background: rgba(255,255,255,0.7); border-color: #9333EA; }
+.game .icon { font-size: clamp(48px, 12vw, 72px); }
+.game .label { font-size: clamp(16px, 4vw, 22px); font-weight: 600; color: #4C1D95; }
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>Pick a game!</h1>
+  <div class="games">
+    <a href="match.html" class="game" onclick="window.__onboard.step(2);window.__sfx.pop();">
+      <div class="icon">🧩</div>
+      <div class="label">Match</div>
+    </a>
+    <a href="match.html" class="game" onclick="window.__onboard.step(2);window.__sfx.pop();">
+      <div class="icon">🫧</div>
+      <div class="label">Pop</div>
+    </a>
+    <a href="match.html" class="game" onclick="window.__onboard.step(2);window.__sfx.pop();">
+      <div class="icon">🎨</div>
+      <div class="label">Draw</div>
+    </a>
+  </div>
+</div>
+<script>window.__onboard.step(1);</script>
+</body>
+</html>

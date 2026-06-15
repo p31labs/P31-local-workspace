@@ -1,0 +1,50 @@
+{
+  "name": "p31-copilot",
+  "displayName": "P31 Copilot",
+  "description": "Local-first AI copilot with sovereign data awareness",
+  "version": "1.0.0",
+  "publisher": "P31Labs",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": ["Other"],
+  "main": "./src/extension.ts",
+  "activationEvents": [],
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "p31-copilot",
+          "title": "P31 Copilot",
+          "icon": "icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "p31-copilot": [
+        {
+          "type": "webview",
+          "id": "p31CopilotSidebar",
+          "name": "P31 Copilot"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run build:webview",
+    "build:webview": "cd webview-ui && npx vite build",
+    "build": "npm run build:webview"
+  },
+  "devDependencies": {
+    "@vscode/test-electron": "^2.4.0",
+    "typescript": "^5.0.0",
+    "vite": "^5.0.0",
+    "@vitejs/plugin-react": "^4.0.0",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "@types/vscode": "^1.90.0",
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0"
+  }
+}

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>How are you? — P31</title>
+<script src="../../state.js"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { height: 100%; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; -webkit-tap-highlight-color: transparent; }
+body { background: linear-gradient(160deg, #FFF7ED 0%, #FED7AA 50%, #FECACA 100%); display: flex; align-items: center; justify-content: center; padding: 20px; }
+.card { background: rgba(255,255,255,0.6); backdrop-filter: blur(12px); border-radius: 48px; padding: 36px 28px; max-width: 420px; width: 100%; text-align: center; box-shadow: 0 20px 60px rgba(234,88,12,0.15); border: 1px solid rgba(255,255,255,0.4); }
+h1 { font-size: clamp(22px, 6vw, 34px); font-weight: 700; color: #7C2D12; margin-bottom: 16px; }
+.feelings { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-bottom: 24px; }
+.feel-btn { font-size: clamp(36px, 9vw, 56px); padding: 16px; border-radius: 50%; background: rgba(255,255,255,0.5); border: 2px solid transparent; cursor: pointer; transition: all 0.2s; width: clamp(64px, 16vw, 88px); height: clamp(64px, 16vw, 88px); display: flex; align-items: center; justify-content: center; }
+.feel-btn:active { transform: scale(0.9); background: white; border-color: #EA580C; }
+.feel-btn.selected { background: white; border-color: #EA580C; box-shadow: 0 4px 16px rgba(234,88,12,0.2); }
+.btn { display: block; padding: 18px 36px; border-radius: 40px; font-size: clamp(18px, 4.5vw, 24px); font-weight: 700; text-decoration: none; background: #EA580C; color: white; transition: all 0.2s; }
+.btn:active { transform: scale(0.95); }
+.btn:disabled { opacity: 0.3; pointer-events: none; }
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>How are you feeling?</h1>
+  <div class="feelings">
+    <div class="feel-btn" data-spoons="1" onclick="pick(1,this)">😔</div>
+    <div class="feel-btn" data-spoons="2" onclick="pick(2,this)">😐</div>
+    <div class="feel-btn" data-spoons="3" onclick="pick(3,this)">🙂</div>
+    <div class="feel-btn" data-spoons="4" onclick="pick(4,this)">😊</div>
+    <div class="feel-btn" data-spoons="5" onclick="pick(5,this)">😍</div>
+  </div>
+  <a id="nextBtn" href="../delta/" class="btn" style="display:none" onclick="window.__onboard.complete();window.__sfx.done();">You're connected →</a>
+</div>
+<script>
+var selected = 0;
+window.__sfx && window.__sfx.pop && window.__sfx.pop();
+function pick(spoons, el) {
+  selected = spoons;
+  document.querySelectorAll('.feel-btn').forEach(function(b){ b.classList.remove('selected'); });
+  el.classList.add('selected');
+  window.__sfx && window.__sfx.chime && window.__sfx.chime();
+  window.__onboard.love(spoons);
+  var n = document.getElementById('nextBtn');
+  n.style.display = 'block';
+  if (spoons <= 2) n.textContent = '💚 Rest, then connect →';
+  else if (spoons <= 3) n.textContent = '💚 You\'re connected →';
+  else n.textContent = '💚 You\'re on the mesh →';
+}
+</script>
+</body>
+</html>

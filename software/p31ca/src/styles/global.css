@@ -4,8 +4,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ── P31 Design Tokens ── */
-
 @layer base {
   html {
     background-color: var(--hub-void);
@@ -20,9 +18,22 @@
     background: rgba(0, 255, 136, 0.2);
     color: #fff;
   }
-}
 
-/* ── Glassmorphism primitives ── */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--hub-void);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--quantum-cyan);
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--quantum-emerald);
+  }
+}
 
 @layer components {
   .glass-panel {
@@ -42,9 +53,40 @@
     background: rgba(255, 255, 255, 0.06);
   }
 
+  .quantum-glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    border-radius: 2rem;
+    box-shadow: var(--glass-shadow);
+  }
+
   .phosphor-glow {
     text-shadow: 0 0 20px rgba(0, 255, 136, 0.3),
                  0 0 40px rgba(0, 255, 136, 0.1);
+  }
+
+  .glow-cyan {
+    box-shadow: 0 0 15px var(--quantum-cyan);
+    transition: box-shadow var(--transition-fast) var(--ease-quantum);
+  }
+  .glow-cyan:hover {
+    box-shadow: 0 0 25px var(--quantum-cyan);
+  }
+
+  .glow-emerald {
+    box-shadow: 0 0 15px var(--quantum-emerald);
+  }
+  .glow-emerald:hover {
+    box-shadow: 0 0 25px var(--quantum-emerald);
+  }
+
+  .glow-phosphor {
+    box-shadow: 0 0 15px var(--hub-phosphor);
+  }
+  .glow-phosphor:hover {
+    box-shadow: 0 0 25px var(--hub-phosphor);
   }
 
   .status-live {
@@ -57,5 +99,23 @@
     background: rgba(255, 215, 0, 0.1);
     border-color: rgba(255, 215, 0, 0.25);
     color: #FFD700;
+  }
+}
+
+[data-spoons="1"],
+[data-spoons="0"] {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  filter: grayscale(0.3);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }

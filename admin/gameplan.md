@@ -1,47 +1,39 @@
 # P31 ANDROMEDA: PRIORITIZED GAMEPLAN
-## Last Updated: 2026-03-30
+## Last Updated: 2026-06-13
 ## Tier: SURVIVE → STABILIZE → SCALE
 
 ---
 
-## TIER 1: SURVIVE (0–30 Days)
-*Current status: April 4 eviction in 5 days. All accounts at $0–$5. Everything below this line is subordinate to housing stabilization.*
+## TIER 1: SURVIVE (Completed)
+*Status: Eviction resolved, 501(c)(3) determined, Mercury bank active, SAM.gov UEI registered.*
 
-### 1.1 🔴 HOUSING — CRISIS (April 4 Eviction)
-- [ ] ESG housing grant application prep (opens April 13, closes May 8 — **9-day gap after eviction**)
-- [ ] Emergency housing contacts: Camden County DFCS, Salvation Army, local churches
-- [ ] Document all funding efforts for legal record (court evidence of proactive mitigation)
-- [ ] Mortgage: $182,449 at 3.2% — deferment status maintained
-- [ ] Social media funding drop (SOCIAL_DROP_LIVE.md) — **PRIMARY near-term funding vehicle**
+### 1.1 ✅ HOUSING — RESOLVED
+- [x] Eviction (April 4) — resolved
+- [x] Housing stabilized
 
-### 1.2 🔴 LEGAL — ACTIVE COMPLIANCE
+### 1.2 🔴 LEGAL — POST-HEARING
 - [x] Discovery response filed March 26 (Response & Objections + Cover Sheet + Financial Summary)
-- [ ] **Psych eval scheduling** — court-ordered at Will's expense. Who administers it is the critical variable. Mar 24 psychiatrist established differential diagnosis (AuDHD vs. mania). Court-ordered eval must use competent neuropsych, not a general psych screen.
-- [ ] April 30 wellness baseline documentation (Camden County)
-- [ ] Maintain 2 supervised calls/week compliance — document every session
+- [x] April 16 hearing completed
+- [ ] Appeal pending
+- [ ] ADA accommodations being documented
 - [ ] BONDING telemetry: continue logging parental engagement (every atom = evidence)
 - [ ] Preserve all communication records (Messenger Kids, Discord, email)
-- [ ] Transcript purchase ($75, court reporter from Feb 5 and Mar 18 hearings)
 
-### 1.3 🔴 FUNDING — REVENUE GENERATION
-- [ ] **Ko-fi Phase 2 bridge post** — ready at `packages/genesis-gate/docs/kofi-phase2-post.md`. Blocked by: need to set dollar target. One-line decision, then publish.
-- [x] Reddit SuperStonk DD live — "The Floating Neutral" flaired DD, Zenodo DOI
-- [x] Reddit blitz executed March 29 (r/hypoparathyroidism, r/electricalengineering, r/AutisticPride, r/ADHD, r/opensource, r/gamedev)
-- [x] Discord server launched: https://discord.gg/uYW5rTCuZ
-- [x] Ko-fi Wave 1 deployed with content calendar through week 8
-- [ ] 15-Day Sprint Deployment Package — 7 grant payloads staged
-- [ ] Grants pending: Pollination Project ($500) + Awesome Foundation ($1,000) — submitted March 10, no response yet
+### 1.3 🟡 GRANT PIPELINE — ACTIVE
+- [x] Pollination Project ($500) + Awesome Foundation ($1,000) — submitted March 10, awaiting decision
+- [ ] **ASAN Teighlor McGee ($6,250)** — due June 15, narrative complete, ready for submission
+- [ ] **Stimpunks ($5,000)** — due July 1, drafting
+- [ ] NLnet NGI proposals (€75K total) — deadline June 1 passed, resubmit next cycle
+- [x] 501(c)(3) determination complete
+- [x] Mercury bank account active
+- [x] SAM.gov UEI registered
 
-### 1.4 🟡 INCORPORATION DEADLOCK — UNLOCK
-- [ ] **$425 = unlock key.** Georgia Articles ($110) + newspaper publication ($40) + IRS 1023-EZ ($275)
-- [ ] Once incorporated: EIN → SAM.gov registration (3–4 weeks) → federal grant pipeline (NIDILRR, NSF)
-- [ ] Sequence: incorporation → 501(c)(3) → SAM.gov → federal grants. All blocked on $425.
-- [ ] Ko-fi revenue or grant award can break this deadlock
-
-### 1.5 🟡 BENEFITS PRESERVATION
-- [ ] SNAP/Medicaid active — any income change must be evaluated against benefits cliff
-- [ ] Consult Georgia WIPA before accepting any grant award (NIDILRR Switzer $80K risk)
-- [ ] SSA disability — both exams complete (Feb 20 psych, Feb 26 physical). Awaiting determination.
+### 1.4 ✅ INCORPORATION — COMPLETE
+- [x] Georgia Articles filed
+- [x] EIN 42-1888158 assigned
+- [x] 501(c)(3) determined
+- [x] Mercury bank account active
+- [x] SAM.gov UEI registration complete
 
 ---
 
@@ -49,33 +41,31 @@
 *Activate after housing is secured. These unlock scaling.*
 
 ### 2.1 🟡 FERS DISABILITY RETIREMENT
-- [ ] Separation ~Sep 30, 2025. Filing deadline ~Sep 30, 2026 (5 CFR §844.201)
-- [ ] SF-3112A (with nexus) ✅, 3112B (Robby Allen signed) ✅, 3112C (psychiatrist completed) ✅
+- [ ] Deadline Sep 30, 2026 (5 CFR §844.201)
+- [x] SF-3112A (with nexus) ✅, 3112B (Robby Allen signed) ✅, 3112C (psychiatrist completed) ✅
 - [ ] Still needed: 3112D/E from agency, SF-3107 from Will
 - [ ] Nuclear option: file direct to OPM Boyers PA (no agency forms required per BAL 20-103)
 - [ ] Navy Benefits Center: 1-888-320-2917 / navybenefits@us.navy.mil
-- [ ] Annuity: Yr1 ~60% high-3 minus SSDI offset; Yr2+ ~40% high-3 minus 60% SSDI
 
 ### 2.2 🟡 NODE ZERO FIRMWARE SPRINT
-- [ ] AXS15231B display: vendor init sequence (7 commands, `0xBB` gate). Working approach: chunked memcpy staging buffer (CHUNK_LINES=20, two 19,200-byte DMA buffers, full_refresh=1, 40MHz QSPI, SPI mode 0)
-- [ ] Root cause confirmed: missing `lv_init()` before `lv_disp_drv_register()` — fix applied
+- [ ] AXS15231B display: vendor init sequence (7 commands). Chunked memcpy staging buffer, 40MHz QSPI, SPI mode 0
+- [x] Root cause confirmed: missing `lv_init()` before `lv_disp_drv_register()` — fix applied
 - [ ] **DO NOT SWAP PINS.** GPIO 1–4 are ES8311 audio codec. GPIO 9–14 are QSPI display.
 - [ ] Haptic patterns: Critical Alert, Attention, Optimal
 - [ ] LoRa mesh networking validation
 - [ ] PQC encryption integration (ML-KEM-768)
-- [ ] Reference implementation: GrokPhenix
 
 ### 2.3 🟡 SPACESHIP EARTH — 2 BLOCKING BUGS
 - [ ] Fix Tailwind v4 `@apply` in `@layer base` — broken after upgrade
 - [ ] Fix `useState + setTimeout(200ms)` race condition
-- [ ] 10-pattern audit complete; cockpit spatial doctrine validated (z1 canvas, z10-11 HUD, z50 toasts, z60 modals)
+- [x] 10-pattern audit complete; cockpit spatial doctrine validated
 
 ### 2.4 🟡 GRANT PIPELINE ACTIVATION
-- [ ] **SAM.gov registration** (blocked on $425 incorporation → 501(c)(3) → EIN → SAM.gov)
-- [ ] NIDILRR FIP Development: $250K/year × 3 years. Best organizational fit. Contact Radha Holavanahalli.
+- [x] **SAM.gov registration** — COMPLETE
+- [ ] NIDILRR FIP Development: $250K/year × 3 years. Contact Radha Holavanahalli.
 - [ ] NSF DARE: ~$100–200K/year. Year-round submissions. Contact DARE Program Director before submitting.
-- [ ] NSF CPS-CIR / HCC: Up to $1M/4yr. Target: ~Sep 2026. Node One = cyber-physical system.
-- [ ] RERC on AI-Driven AT: Up to $975K/year × 5 years. Requires university partnership (Georgia Tech CIDI via Hunter McFeron).
+- [ ] NSF CPS-CIR / HCC: Up to $1M/4yr. Target: ~Sep 2026.
+- [ ] RERC on AI-Driven AT: Up to $975K/year × 5 years. Requires university partnership.
 - [ ] Makers Making Change: Jake McIvor expressed interest. Formal submission pending.
 
 ### 2.5 🟢 ACADEMIC PIPELINE
@@ -190,3 +180,8 @@ Psych eval completed
 - ✅ lv_init() root cause confirmed (Node Zero)
 - ✅ Discovery response filed (Response & Objections + Cover Sheet + Financial Summary)
 - ✅ COPPA compliance framework built
+- ✅ 501(c)(3) determination complete
+- ✅ Mercury bank account active
+- ✅ SAM.gov UEI registration complete
+- ✅ April 16 hearing conducted
+- ✅ NLnet NGI proposals drafted (€75K, deadline June 1 passed — resubmit next cycle)

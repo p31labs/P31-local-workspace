@@ -3,10 +3,13 @@
  * P31CA.ORG — Technical Hub Landing Page
  * Redesigned: structured layout, live fleet status, coral accent, correct EIN.
  * Cross-linked to phosphorus31.org (nonprofit portal).
+ *
+ * routeName="home"
  */
 
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SharedFooter from '../components/SharedFooter.astro';
+import AppShell from '../layouts/AppShell.astro';
 import {
   liveProducts,
   suiteProducts,
@@ -14,6 +17,8 @@ import {
   researchApps,
   liveDeploymentCount,
 } from '../data/hub-products';
+
+export const routeName = 'home';
 
 const researchItems = [
   { title: 'Tetrahedron Protocol (K4)', doi: '10.5281/zenodo.18627420', desc: 'Geometric proof of K4 minimum isostatic structure. 280+ views, 240+ downloads.' },

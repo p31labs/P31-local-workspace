@@ -8,21 +8,13 @@
     "dev": "nodemon oracle-bot.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [
-    "discord",
-    "bot",
-    "p31",
-    "quantum",
-    "biology",
-    "decentralized",
-    "economy"
-  ],
+  "keywords": ["discord", "bot", "p31", "quantum", "biology", "decentralized", "economy"],
   "author": "P31 Labs",
   "license": "MIT",
   "dependencies": {
+    "@upstash/redis": "^1.25.0",
     "discord.js": "^14.15.3",
-    "dotenv": "^16.6.1",
-    "ioredis": "^5.3.2"
+    "dotenv": "^16.6.1"
   },
   "devDependencies": {
     "nodemon": "^3.1.0"

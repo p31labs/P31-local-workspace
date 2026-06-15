@@ -14,6 +14,10 @@ import { ConnectionGridSurface } from '../surfaces/ConnectionGridSurface';
 import { HearthSurface } from '../surfaces/HearthSurface';
 import { ShakeStream } from '../surfaces/ShakeStream';
 import { WarehouseSurface } from '../surfaces/WarehouseSurface';
+import { WillowSurface } from '../surfaces/WillowSurface';
+import { StarBuilderSurface } from '../surfaces/StarBuilderSurface';
+import { ArcadeOS } from '../surfaces/ArcadeOS';
+import { ArcadeMasterRuntime } from '../surfaces/ArcadeMasterRuntime';
 
 interface SurfaceProps {
   currentSurface: string;
@@ -28,22 +32,22 @@ export function SurfaceContent({ currentSurface, setSurface, spoons, theme: exte
 
   switch (currentSurface) {
     case 'GREETING':
-      return <GreetingSurface />;
+      return <GreetingSurface theme={theme} spoons={spoons} />;
 
     case 'IGNITION':
-      return <IgnitionSurface />;
+      return <IgnitionSurface theme={theme} spoons={spoons} />;
 
     case 'BONDING':
-      return <BondingSurface />;
+      return <BondingSurface theme={theme} spoons={spoons} />;
 
     case 'COMPASS':
-      return <CompassSurface />;
+      return <CompassSurface theme={theme} spoons={spoons} />;
 
     case 'SETTINGS':
-      return <SettingsSurface />;
+      return <SettingsSurface theme={theme} spoons={spoons} />;
 
     case 'THE_BUFFER':
-      return <ChaosIngest theme={theme} />;
+      return <ChaosIngest theme={theme} spoons={spoons} />;
 
     case 'VAULT':
       return <RetroVaultSurface theme={theme} spoons={spoons} />;
@@ -56,7 +60,7 @@ export function SurfaceContent({ currentSurface, setSurface, spoons, theme: exte
 
     case 'LEDGER':
     case 'LOVE':
-      return <LedgerSurface theme={theme} />;
+      return <LedgerSurface theme={theme} spoons={spoons} />;
 
     case 'HEARTH':
       return <HearthSurface theme={theme} spoons={spoons} />;
@@ -68,13 +72,20 @@ export function SurfaceContent({ currentSurface, setSurface, spoons, theme: exte
       return (
         <div className="space-y-4">
           <h3 className="text-sm font-mono uppercase tracking-widest opacity-60">Sovereign Archive Search</h3>
-          <ShakeStream theme={theme} initialQuery="" />
+          <ShakeStream theme={theme} initialQuery="" spoons={spoons} />
         </div>
       );
 
     case 'WAREHOUSE':
       return <WarehouseSurface theme={theme} spoons={spoons} />;
-
+    case 'WILLOW':
+      return <WillowSurface />;
+    case 'STAR_BUILDER':
+      return <StarBuilderSurface />;
+    case 'ARCADE_OS':
+      return <ArcadeOS onClose={() => setSurface('IGNITION')} />;
+    case 'ARCADE_MASTER':
+      return <ArcadeMasterRuntime onClose={() => setSurface('IGNITION')} />;
     default:
       return (
         <div className="p-4 border border-dashed border-red-900/40 text-red-400 font-mono text-xs uppercase tracking-widest rounded-lg">

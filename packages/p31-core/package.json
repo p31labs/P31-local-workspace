@@ -1,0 +1,38 @@
+{
+  "name": "@p31/core",
+  "version": "1.0.0",
+  "description": "Biophysical, cryptographic, and cognitive pacing engine for the P31 ecosystem",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./hooks": {
+      "import": "./dist/hooks/index.js",
+      "types": "./dist/hooks/index.d.ts"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "idb-keyval": "^6.2.1"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.0",
+    "typescript": "^5.0.0",
+    "vitest": "^0.34.0"
+  },
+  "keywords": ["p31", "polyhedron", "sovereign", "local-first", "biophysics", "cryptography"],
+  "license": "MIT",
+  "author": "P31 Labs"
+}

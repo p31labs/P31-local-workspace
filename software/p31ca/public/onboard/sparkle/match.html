@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Match — P31</title>
+<script src="../../state.js"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { height: 100%; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; -webkit-tap-highlight-color: transparent; }
+body { background: linear-gradient(135deg, #E0F2FE 0%, #C084FC 50%, #F0ABFC 100%); display: flex; align-items: center; justify-content: center; padding: 16px; }
+.card { background: rgba(255,255,255,0.3); backdrop-filter: blur(8px); border-radius: 48px; padding: 24px 20px; max-width: 400px; width: 100%; text-align: center; box-shadow: 0 20px 60px rgba(147,51,234,0.2); border: 1px solid rgba(255,255,255,0.3); }
+h1 { font-size: clamp(20px, 5vw, 30px); font-weight: 700; color: #4C1D95; margin-bottom: 12px; }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; max-width: 280px; margin: 0 auto 16px; }
+.cell { aspect-ratio: 1; border-radius: 24px; display: flex; align-items: center; justify-content: center; font-size: clamp(36px, 9vw, 56px); cursor: pointer; transition: all 0.3s; background: rgba(255,255,255,0.5); border: 2px solid rgba(255,255,255,0.3); user-select: none; }
+.cell.hidden { background: linear-gradient(135deg, #9333EA, #C084FC); border-color: rgba(147,51,234,0.3); }
+.cell.hidden span { display: none; }
+.cell.matched { background: rgba(74,222,128,0.4); border-color: #22C55E; }
+.cell:active { transform: scale(0.95); }
+.status { font-size: clamp(18px, 4.5vw, 24px); color: #4C1D95; font-weight: 600; margin-bottom: 12px; min-height: 36px; }
+.btn { display: inline-block; padding: 14px 36px; border-radius: 40px; font-size: clamp(16px, 4vw, 22px); font-weight: 700; text-decoration: none; background: linear-gradient(135deg, #9333EA, #C084FC); color: white; transition: all 0.2s; }
+.btn:active { transform: scale(0.95); }
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>🧩 Match the pairs!</h1>
+  <div class="status" id="status">Tap a card!</div>
+  <div class="grid" id="grid"></div>
+  <a id="nextBtn" href="reward.html" class="btn" style="display:none" onclick="window.__onboard.step(3);window.__sfx.done();">✨ You did it! →</a>
+</div>
+
+<script>
+window.__onboard.step(2);
+var PAIRS = [['🐶','🐱'],['🐰','🦊']];
+var cards = [];
+PAIRS.forEach(function(pair){
+  pair.forEach(function(emoji){ cards.push({emoji:emoji, matched:false, flipped:false}); });
+});
+cards.sort(function(){ return Math.random() - 0.5; });
+
+var flipped = [];
+var locked = false;
+var matchedCount = 0;
+var statusEl = document.getElementById('status');
+var gridEl = document.getElementById('grid');
+
+function render() {
+  gridEl.innerHTML = '';
+  cards.forEach(function(card, i){
+    var cell = document.createElement('div');
+    cell.className = 'cell';
+    if (card.matched) cell.classList.add('matched');
+    else if (!card.flipped) cell.classList.add('hidden');
+    cell.innerHTML = '<span>' + (card.flipped || card.matched ? card.emoji : '?') + '</span>';
+    cell.addEventListener('click', function(){ tap(i); });
+    gridEl.appendChild(cell);
+  });
+}
+
+function tap(idx) {
+  if (locked) return;
+  if (cards[idx].matched) return;
+  if (cards[idx].flipped) return;
+  if (flipped.length >= 2) return;
+
+  window.__sfx && window.__sfx.blink && window.__sfx.blink();
+  cards[idx].flipped = true;
+  flipped.push(idx);
+  render();
+
+  if (flipped.length === 2) {
+    locked = true;
+    var a = flipped[0], b = flipped[1];
+    if (cards[a].emoji === cards[b].emoji) {
+      cards[a].matched = true;
+      cards[b].matched = true;
+      matchedCount++;
+      window.__sfx && window.__sfx.chime && window.__sfx.chime();
+      statusEl.textContent = '🎉 Match!';
+      flipped = [];
+      locked = false;
+      render();
+      if (matchedCount === PAIRS.length) {
+        statusEl.textContent = '⭐ You matched them all! ⭐';
+        window.__onboard.love(5);
+        document.getElementById('nextBtn').style.display = 'inline-block';
+      }
+    } else {
+      statusEl.textContent = 'Try again!';
+      setTimeout(function(){
+        cards[a].flipped = false;
+        cards[b].flipped = false;
+        flipped = [];
+        locked = false;
+        statusEl.textContent = 'Tap a card!';
+        render();
+      }, 800);
+    }
+  }
+}
+
+render();
+</script>
+</body>
+</html>

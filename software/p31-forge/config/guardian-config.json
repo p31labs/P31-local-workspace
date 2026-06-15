@@ -1,0 +1,22 @@
+{
+  "xp": {
+    "levels": [
+      { "level": 1, "threshold": 0, "title": "Sprout" },
+      { "level": 2, "threshold": 100, "title": "Sparkle" },
+      { "level": 3, "threshold": 300, "title": "Shield" },
+      { "level": 4, "threshold": 600, "title": "Guardian" },
+      { "level": 5, "threshold": 1000, "title": "Warden" }
+    ],
+    "perAction": {
+      "blockPlaced": 10,
+      "bondFormed": 25,
+      "rigidityAchieved": 50,
+      "serviceDonated": 5
+    }
+  },
+  "ai": {
+    "minResponses": 3,
+    "maxContextTokens": 12000,
+    "topicDriftThreshold": 0.7
+  }
+}

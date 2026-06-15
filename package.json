@@ -37,10 +37,15 @@
     "lint": "echo \"Lint per package: cd software/<project> && pnpm run lint (if defined)\"",
     "audit": "pnpm audit"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "@types/three": "0.184.1"
+  },
   "dependencies": {
     "@types/web-bluetooth": "^0.0.21",
     "@upstash/redis": "^1.37.0",
     "@webgpu/types": "^0.1.69"
+  },
+  "overrides": {
+    "@types/three": "0.184.1"
   }
 }

@@ -79,7 +79,7 @@ As a 501(c)(3) nonprofit (pending determination), P31 Labs is eligible for feder
 | Granting Entity | Amount | Status | Notes |
 |----------------|--------|--------|-------|
 | Pollination / Awesome / Stimpunks | $4,500 | Submitted | Awaiting determination since March 2026 |
-| NDEP (Innovation DuPage) | ~$19,000 | Draft ready | Deadline April 15; individual entrepreneur program |
+| NDEP (Innovation DuPage) | ~$19,000 | Draft ready | Deadline passed — track next cycle |
 | ESG Housing Grant (GA DCA) | $50,000 | Opens Apr 13 | Requires 2-year 501(c)(3) history; ineligible 2026 cycle |
 | Microsoft AI for Accessibility | $75,000 | Closed | Applications currently closed; monitor for reopening |
 | Divergent Fund | $50–100K | Draft ready | Neurodiversity-focused funder |

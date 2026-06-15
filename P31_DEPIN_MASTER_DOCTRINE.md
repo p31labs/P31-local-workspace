@@ -1,6 +1,6 @@
 # Comprehensive Deployment and Operational Blueprint for the P31 Decentralized Physical Infrastructure Network
 
-> **Version:** 1.0 | **Date:** April 11, 2026 | **Status:** Jitterbug Phase  
+> **Version:** 1.1 | **Date:** June 13, 2026 | **Status:** Post-Hearing — 501(c)(3) Complete, Grant Pipeline Active  
 > **Classification:** TOPOLOGICAL SOVEREIGNTY — READY FOR DEPLOYMENT
 
 ---
@@ -238,7 +238,7 @@ To disincentivize conflict, neglect, and systemic abuse, the protocol utilizes s
 
 The physical anchor of the entire Delta topology is the **Phenix Navigator (Node-1)**, a handheld, military-grade communication device.
 
-To bypass strict medical device regulations and prevent external seizure, the device is strategically classified as an **FDA Class II, 510(k)-exempt "Powered Communication System"** under **21 CFR § 890.3710**, positioning it as a fundamental cognitive prosthetic rather than a traditional networking tool.
+The device is classified as a **General Wellness / Communication Support** device. No FDA classification is claimed. A 513(g) Request for Information will be filed before market entry.
 
 ### 5.2 Bill of Materials (BOM)
 
@@ -440,7 +440,7 @@ This transition is executed through a terminal ritual known as the **"Abdication
 
 | Classification | Code | Exemption Status |
 |----------------|------|----------------|
-| Communication Device | 21 CFR § 890.3710 | **Class II, 510(k)-exempt** |
+| General Wellness | N/A | No FDA classification claimed. 513(g) RFI before market entry. |
 | Software | CDS | 21st Century Cures Act | Non-device CDS |
 
 ### B. Defensive Publication DOIs
@@ -454,7 +454,7 @@ This transition is executed through a terminal ritual known as the **"Abdication
 
 | Role | Contact | Channel |
 |------|--------|---------|
-| Legal | Jennifer L. McGhan | jenn@mcghanlaw.com |
+| Legal | Case counsel | — |
 | Georgia Tools for Life | Hunter McFeron | — |
 | Developer | Tyler (Mesh) | — |
 | Board | Brenda O'Dell | brendaodell54@gmail.com |

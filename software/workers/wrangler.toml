@@ -12,9 +12,10 @@ new_sqlite_classes = [ "LoveTransactionDO" ]
 # binding = "PASSPORT_KV"
 # id = "your-passport-kv-id"
 
-[[kv_namespaces]]
-binding = "SPOONS_KV"
-id = "dbc13218ee314f0e988f51d2618e6061"
+# SPOONS_KV namespace temporarily disabled during migration
+# [[kv_namespaces]]
+# binding = "SPOONS_KV"
+# id = "dbc13218ee314f0e988f51d2618e6061"
 
 # [[kv_namespaces]]
 # binding = "THRESHOLDS_KV"

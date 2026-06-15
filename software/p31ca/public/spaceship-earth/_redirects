@@ -1,0 +1,3 @@
+# Rewrite /spaceship-earth/* to root for standalone Pages deployment
+# (base path in vite.config.ts is /spaceship-earth/ for same-origin embed on p31ca.org)
+/spaceship-earth/* /:splat 200

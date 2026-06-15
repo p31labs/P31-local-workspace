@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  ollama-backend:
+    image: ollama/ollama:latest
+    container_name: ollama-backend
+    volumes:
+      - ${HOME}/p31-cortex/data/ollama:/root/.ollama
+    ports:
+      - "127.0.0.1:11434:11434"
+    # On Crostini, GPU passthrough may be limited; uncomment if GPU is available
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: all
+    #           capabilities: [gpu]
+    restart: always
+    networks:
+      - phos-mesh
+
+  litellm-proxy:
+    image: ghcr.io/berriai/litellm:main
+    container_name: litellm-proxy
+    ports:
+      - "127.0.0.1:4000:4000"
+    volumes:
+      - ./litellm-config.yaml:/app/config.yaml
+    depends_on:
+      - ollama-backend
+    command: ["--config", "/app/config.yaml", "--port", "4000"]
+    restart: always
+    networks:
+      - phos-mesh
+
+networks:
+  phos-mesh:
+    driver: bridge
