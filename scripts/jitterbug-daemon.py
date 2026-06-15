@@ -53,7 +53,7 @@ SIGNAL_STRENGTHS = {
 
 # Jitter parameters
 JITTER_MEAN = 0.0
-JITTER_STD = 0.02
+JITTER_STD = 0.01
 
 # Recovery boost multiplier for depressed artifacts receiving signals
 RECOVERY_BOOST = 2.0
@@ -69,7 +69,7 @@ STAGE_THRESHOLDS = [
 
 STAGE_ORDER = {"FRUIT": 5, "BLOOM": 4, "SAPLING": 3, "SPROUT": 2, "SEED": 1}
 
-DEPRESSION_THRESHOLD = 1.2
+DEPRESSION_THRESHOLD = 1.5
 
 # Spoon-level time dilation
 # Level → (decay_multiplier, signal_multiplier, allow_jitter, allow_entanglement, allow_depression)
@@ -311,7 +311,7 @@ def main() -> None:
             a_score = min(a["continuous_scores"].values())
             b_score = min(b["continuous_scores"].values())
 
-            if a_score >= 3.0 and b_score >= 3.0:
+            if a_score >= 2.5 and b_score >= 2.5:
                 for dim in ("TEST",):
                     a["continuous_scores"][dim] = _clamp(a["continuous_scores"][dim] + 0.05)
                     b["continuous_scores"][dim] = _clamp(b["continuous_scores"][dim] + 0.05)
