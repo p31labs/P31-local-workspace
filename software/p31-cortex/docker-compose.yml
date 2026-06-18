@@ -1,0 +1,104 @@
+services:
+  ollama-backend:
+    image: ollama/ollama:latest
+    container_name: ollama-backend
+    volumes:
+      - ${HOME}/p31-cortex/data/ollama:/root/.ollama
+    ports:
+      - "127.0.0.1:11440:11434"
+    environment:
+      - OLLAMA_HOST=0.0.0.0
+    restart: always
+    networks:
+      - phos-mesh
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  litellm-proxy:
+    image: ghcr.io/berriai/litellm:main-latest
+    container_name: litellm-proxy
+    ports:
+      - "127.0.0.1:4000:4000"
+    volumes:
+      - ./litellm-config.yaml:/app/config.yaml:ro
+      - ./p31_safe_router.py:/app/routers/p31_safe_router.py:ro
+    depends_on:
+      ollama-backend:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:4000/models"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    environment:
+      - LITELLM_DEBUG=0
+    command: ["--config", "/app/config.yaml", "--port", "4000"]
+    restart: always
+    networks:
+      - phos-mesh
+
+  affective-chemistry:
+    build:
+      context: .
+      dockerfile: Dockerfile.affective-chemistry
+    container_name: affective-chemistry
+    ports:
+      - "127.0.0.1:5001:5001"
+    environment:
+      - LOG_LEVEL=INFO
+    restart: always
+    networks:
+      - phos-mesh
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5001/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  spoon-monitor:
+    build:
+      context: .
+      dockerfile: Dockerfile.spoon-monitor
+    container_name: spoon-monitor
+    ports:
+      - "127.0.0.1:5002:5002"
+    environment:
+      - LOG_LEVEL=INFO
+    restart: always
+    networks:
+      - phos-mesh
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5002/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  p31-safeguard:
+    build:
+      context: .
+      dockerfile: Dockerfile.oqe-verification
+    container_name: p31-safeguard
+    ports:
+      - "127.0.0.1:5003:5003"
+    environment:
+      - LOG_LEVEL=INFO
+    depends_on:
+      litellm-proxy:
+        condition: service_healthy
+    restart: always
+    networks:
+      - phos-mesh
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5003/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  phos-mesh:
+    driver: bridge
+    name: phos-mesh
