@@ -1,0 +1,85 @@
+# P31 FUEL BUDGET — Runtime Lock
+# This file is the ballast control system. It is NOT a suggestion.
+# Every P31 Action Queue item MUST be tagged [A], [B], or [C] before execution.
+# Operator override allowed but requires manual trim annotation.
+#
+# Read by: shell scripts, agent task routers, pre-commit hooks
+# Written by: operator only
+
+track_a:
+  name: Auxiliary
+  description: >
+    Somatic baseline, sleep, bills, medication, somatic stretch,
+    custody logistics. NEVER deprioritized.
+  budget_pct: 30
+  hard_floor_spoons: 2
+  time_gate:
+    before: "09:00"
+    after: "20:00"
+  guard: "LOCK_DAWN_AND_DUSK"
+  examples:
+    - Sleep 7+ hours
+    - Somatic stretch 4-5h/day split sessions
+    - Calcium/ATP supplementation
+    - Court filing logistics
+    - Custody visit coordination
+    - Hydration, meals
+
+track_b:
+  name: Refit
+  description: >
+    Code, grants, AI safety, documentation, therapy, rewiring.
+    Runs ONLY when Track A is green AND reactor temperature is below 0.7.
+  budget_pct: 50
+  trigger: "A_green AND reactor_temp < 0.7"
+  defer_until: "2026-06-19T00:00:00Z"
+  examples:
+    - EIN migration sweep
+    - abdicate.sh standalone repo creation
+    - Voltage → router wiring
+    - Guardrails JS/TS consolidation
+    - OQE suite execution
+    - Grant drafting (ASAN, NLnet)
+    - Repo hardening PRs
+
+track_c:
+  name: Mission
+  description: >
+    Hard external deadlines, litigation, emergency liquidity, custody.
+    Unlimited budget but EVERY spoon MUST be logged with mandatory RCA.
+  budget_pct: 20
+  override: UNLIMITED
+  rca_required: true
+  examples:
+    - June 10 court filing (window)
+    - Tyler emergency SMS
+    - Ko-fi liquidity monitoring
+    - McFeron legal correspondence
+  active_missions:
+    - "Case 2025CV936 — filing complete, monitor post-filing"
+    - "Emergency liquidity $500 target"
+
+# CROSS-TRACK RULES
+rules:
+  - id: R-001
+    rule: "Track A floors at 2 spoons. Below 2, all Tracks B and C enter manual-only mode."
+  - id: R-002
+    rule: "Track C items may consume Track B budget but MUST append abdicate.sh tombstone if emotional packet triggered."
+  - id: R-003
+    rule: "No Track B item begins before 09:00 or after 20:00 without operator manual trim annotation."
+  - id: R-004
+    rule: "If reactor_temp >= 0.7 for > 4 consecutive hours, all Tracks B and C halt. Scram protocol engages."
+  - id: R-005
+    rule: "Track C budget depletion triggers post-session RCA write to .p31/rca/ within 24h."
+
+# OPERATOR MANUAL TRIM LOG
+# When overriding time gates or track assignments, annotate here:
+# Format: "YYYY-MM-DD HH:MM [A|B|C] override -> new_track | reason"
+manual_trims: []
+
+# CURRENT DAY STATUS (updated by operator at dawn)
+today:
+  date: ""
+  track_a_status: "PENDING"
+  track_b_green: false
+  track_c_active_items: []
