@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# WCD-06: SIGNED — P31-OQE <2026-06-18> — T-0 SCRAM valve (abdicate.sh)
 # abdicate.sh — Emotional Packet Retirement (SOULSAFE Kenosis Protocol v0.1)
 # Retires an emotional packet by writing an immutable tombstone and logging the event.
 # This is the lightweight CORE-LOCAL protocol.

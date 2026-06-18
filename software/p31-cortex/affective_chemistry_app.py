@@ -1,3 +1,4 @@
+# WCD-06: SIGNED — P31-OQE <2026-06-18> — T+2 cortex migration (source of truth)
 """
 Affective Chemistry Engine - PHOS Cortex Service
 

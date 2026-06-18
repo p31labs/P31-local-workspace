@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# WCD-06: SIGNED — P31-OQE <2026-06-18> — T+1 dead-stick test (P31-CANARY)
 # P31-CANARY.sh — Dead-Stick Test for Post-Red-Board Re-Entry
 #
 # After a Red Board event, the system MUST pass the canary before

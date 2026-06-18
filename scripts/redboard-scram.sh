@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# WCD-06: SIGNED — P31-OQE <2026-06-18> — T+2 auto-SCRAM hook (redboard-scram)
 # redboard-scram.sh — Red Board Auto-Scram Integration Hook
 #
 # Called by spoon_monitor_app.py or cron to:
@@ -65,7 +66,8 @@ check() {
   fi
   
   # Check health log for recent Red Board events
-  recent=$(tail -100 "$HEALTH_LOG" 2>/dev/null | grep -c '"event":"red_board"' || echo "0")
+  recent=$(tail -100 "$HEALTH_LOG" 2>/dev/null | grep -c '"event":"red_board"' || true)
+  recent=${recent:-0}
   if [[ "$recent" -gt 0 ]]; then
     echo "STATUS: RECENT RED BOARD EVENTS (${recent} in last 100 log entries)"
     return 1

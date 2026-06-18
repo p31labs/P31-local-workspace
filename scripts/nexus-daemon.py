@@ -1,3 +1,4 @@
+# WCD-06: SIGNED — P31-OQE <2026-06-18> — T-0 legacy integration (nexus daemon)
 #!/usr/bin/env python3
 """
 P31 NEXUS Daemon — Cross-Domain State Entanglement Engine

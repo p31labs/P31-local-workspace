@@ -1,3 +1,4 @@
+# WCD-06: SIGNED — P31-OQE <2026-06-18> — T+1 PM captain-override endpoint
 """
 Spoon Monitor - PHOS Cortex Service
 
