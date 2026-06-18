@@ -1,22 +1,88 @@
 /**
  * P31 Orchestrator Guardrails System
+ * SOURCE OF TRUTH — import from guardrails.ts, not guardrails.js
  * 5-level protection with hysteresis (2 consecutive readings to change)
  * Integrated with action-registry for safety gating
  */
 
-import { GUARDRAIL_LEVELS } from './guardrails.js';
+export const S_MAX = 20
+export const FRICTION_COEFFICIENT = 1.5
+export const CARE_SCORE_MODIFIER = 0.3
+export const EPSILON = 0.1
+export const HYSTERESIS = 2
+export const MAX_ACTIONS_PER_HOUR_BASE = 12
+export const DEFENSIVE_CRITICAL_PRIORITY = 10
+export const IMPLICIT_APPROVAL_MIN_SPOONS = 12
+export const IMPLICIT_APPROVAL_MIN_Q_FACTOR = 0.85
+export const IMPLICIT_APPROVAL_MIN_ACTIVE_MINUTES = 5
+
+export const GUARDRAIL_LEVELS: readonly {
+  level: number
+  name: string
+  enterThreshold: number
+  exitThreshold: number
+  k: number
+  minPriority: number
+  maxActionsPerHour: number
+}[] = Object.freeze([
+  { 
+    level: 4, 
+    name: 'Full Autonomy',
+    enterThreshold: 15, 
+    exitThreshold: 14.5, 
+    k: 1.0, 
+    minPriority: 0,
+    maxActionsPerHour: 12
+  },
+  { 
+    level: 3, 
+    name: 'Semi-Destructive Autonomy',
+    enterThreshold: 10, 
+    exitThreshold: 9.5, 
+    k: 0.75, 
+    minPriority: 2,
+    maxActionsPerHour: 9
+  },
+  { 
+    level: 2, 
+    name: 'Non-Destructive Autonomy',
+    enterThreshold: 5, 
+    exitThreshold: 4.5, 
+    k: 0.5, 
+    minPriority: 4,
+    maxActionsPerHour: 6
+  },
+  { 
+    level: 1, 
+    name: 'Notifications Only',
+    enterThreshold: 2, 
+    exitThreshold: 1.5, 
+    k: 0.25, 
+    minPriority: 7,
+    maxActionsPerHour: 3
+  },
+  { 
+    level: 0, 
+    name: 'Fawn Guard / Manual Only',
+    enterThreshold: -Infinity, 
+    exitThreshold: 2.5, 
+    k: 0, 
+    minPriority: 10,
+    maxActionsPerHour: 1
+  }
+])
 
 export interface GuardrailState {
-  currentLevel: number;
-  consecutiveReadings: number;
-  lastSpoonCount: number;
+  currentLevel: number
+  consecutiveReadings: number
+  lastSpoonCount: number
 }
 
 const DEFAULT_STATE: GuardrailState = {
   currentLevel: 4,
   consecutiveReadings: 1,
   lastSpoonCount: 20,
-};
+}
 
 /**
  * Check and update guardrail level with hysteresis

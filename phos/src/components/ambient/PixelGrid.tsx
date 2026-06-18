@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { useAtmosphere } from '../AtmosphereProvider';
+import { SurfaceErrorBoundary } from '../SurfaceErrorBoundary';
 
 const PixelGrid: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -46,4 +47,12 @@ const PixelGrid: React.FC = () => {
   return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 0 }} aria-hidden="true" />;
 };
 
-export default PixelGrid;
+function PixelGridWithBoundary() {
+  return (
+    <SurfaceErrorBoundary canvasName="PixelGrid">
+      <PixelGrid />
+    </SurfaceErrorBoundary>
+  );
+}
+
+export default PixelGridWithBoundary;

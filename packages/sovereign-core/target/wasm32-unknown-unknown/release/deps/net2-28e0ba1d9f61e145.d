@@ -1,0 +1,12 @@
+/home/p31/P31-local-workspace/packages/sovereign-core/target/wasm32-unknown-unknown/release/deps/net2-28e0ba1d9f61e145.d: /home/p31/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/net2-0.2.39/src/lib.rs /home/p31/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/net2-0.2.39/src/tcp.rs /home/p31/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/net2-0.2.39/src/udp.rs /home/p31/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/net2-0.2.39/src/socket.rs /home/p31/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/net2-0.2.39/src/ext.rs /home/p31/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/net2-0.2.39/src/utils.rs
+
+/home/p31/P31-local-workspace/packages/sovereign-core/target/wasm32-unknown-unknown/release/deps/libnet2-28e0ba1d9f61e145.rlib: /home/p31/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/net2-0.2.39/src/lib.rs /home/p31/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/net2-0.2.39/src/tcp.rs /home/p31/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/net2-0.2.39/src/udp.rs /home/p31/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/net2-0.2.39/src/socket.rs /home/p31/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/net2-0.2.39/src/ext.rs /home/p31/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/net2-0.2.39/src/utils.rs
+
+/home/p31/P31-local-workspace/packages/sovereign-core/target/wasm32-unknown-unknown/release/deps/libnet2-28e0ba1d9f61e145.rmeta: /home/p31/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/net2-0.2.39/src/lib.rs /home/p31/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/net2-0.2.39/src/tcp.rs /home/p31/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/net2-0.2.39/src/udp.rs /home/p31/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/net2-0.2.39/src/socket.rs /home/p31/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/net2-0.2.39/src/ext.rs /home/p31/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/net2-0.2.39/src/utils.rs
+
+/home/p31/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/net2-0.2.39/src/lib.rs:
+/home/p31/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/net2-0.2.39/src/tcp.rs:
+/home/p31/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/net2-0.2.39/src/udp.rs:
+/home/p31/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/net2-0.2.39/src/socket.rs:
+/home/p31/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/net2-0.2.39/src/ext.rs:
+/home/p31/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/net2-0.2.39/src/utils.rs:

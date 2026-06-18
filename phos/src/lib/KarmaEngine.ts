@@ -21,7 +21,7 @@ async function getDb(): Promise<any> {
   dbReady = (async () => {
     try {
       const { PGlite } = await import('@electric-sql/pglite');
-      const db = new PGlite({ connectionString: DB_CONN });
+      const db = await PGlite.create(DB_CONN, { relaxedDurability: true });
       await db.exec(`
         CREATE TABLE IF NOT EXISTS karma_ledger (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -37,8 +37,27 @@ async function getDb(): Promise<any> {
       dbInstance = db;
       return db;
     } catch {
-      dbReady = null;
-      return null;
+      try {
+        const { PGlite } = await import('@electric-sql/pglite');
+        const db = await PGlite.create('memory://');
+        await db.exec(`
+          CREATE TABLE IF NOT EXISTS karma_ledger (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            kind TEXT NOT NULL,
+            delta INTEGER NOT NULL,
+            timestamp INTEGER NOT NULL,
+            signature TEXT NOT NULL,
+            prev_signature TEXT NOT NULL DEFAULT 'GENESIS'
+          );
+          CREATE INDEX IF NOT EXISTS idx_karma_timestamp ON karma_ledger(timestamp DESC);
+          CREATE INDEX IF NOT EXISTS idx_karma_signature ON karma_ledger(signature);
+        `);
+        dbInstance = db;
+        return db;
+      } catch {
+        dbReady = null;
+        return null;
+      }
     }
   })();
 

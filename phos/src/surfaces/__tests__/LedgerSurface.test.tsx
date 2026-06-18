@@ -3,7 +3,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, act } from '@testing-library/react';
 import { LedgerSurface } from '../LedgerSurface';
 
-vi.mock('../lib/KarmaEngine', () => ({
+vi.mock('../../lib/KarmaEngine', () => ({
   getBalanceAtomic: vi.fn().mockResolvedValue(0),
   getLedgerHistory: vi.fn().mockResolvedValue([]),
   verifyLedgerIntegrity: vi.fn().mockResolvedValue({ valid: true, count: 0 }),
@@ -44,7 +44,7 @@ describe('LedgerSurface', () => {
   });
 
   it('should show signed transaction entries', async () => {
-    const { getLedgerHistory } = await import('../lib/KarmaEngine');
+    const { getLedgerHistory } = await import('../../lib/KarmaEngine');
     vi.mocked(getLedgerHistory).mockResolvedValue([
       { kind: 'DAILY_CHECK_IN', delta: 5, timestamp: Date.now() - 60000, signature: 'abc123def456', prevSignature: 'GENESIS' },
     ]);
@@ -55,7 +55,7 @@ describe('LedgerSurface', () => {
   });
 
   it('should show tampered indicator if integrity fails', async () => {
-    const { verifyLedgerIntegrity } = await import('../lib/KarmaEngine');
+    const { verifyLedgerIntegrity } = await import('../../lib/KarmaEngine');
     vi.mocked(verifyLedgerIntegrity).mockResolvedValue({ valid: false, count: 5 });
 
     render(<LedgerSurface theme={mockTheme} />);

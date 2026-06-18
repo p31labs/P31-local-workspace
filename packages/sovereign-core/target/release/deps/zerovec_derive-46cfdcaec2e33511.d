@@ -1,0 +1,10 @@
+/home/p31/P31-local-workspace/packages/sovereign-core/target/release/deps/zerovec_derive-46cfdcaec2e33511.d: /home/p31/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zerovec-derive-0.11.3/src/lib.rs /home/p31/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zerovec-derive-0.11.3/src/make_ule.rs /home/p31/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zerovec-derive-0.11.3/src/make_varule.rs /home/p31/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zerovec-derive-0.11.3/src/ule.rs /home/p31/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zerovec-derive-0.11.3/src/utils.rs /home/p31/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zerovec-derive-0.11.3/src/varule.rs
+
+/home/p31/P31-local-workspace/packages/sovereign-core/target/release/deps/libzerovec_derive-46cfdcaec2e33511.so: /home/p31/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zerovec-derive-0.11.3/src/lib.rs /home/p31/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zerovec-derive-0.11.3/src/make_ule.rs /home/p31/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zerovec-derive-0.11.3/src/make_varule.rs /home/p31/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zerovec-derive-0.11.3/src/ule.rs /home/p31/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zerovec-derive-0.11.3/src/utils.rs /home/p31/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zerovec-derive-0.11.3/src/varule.rs
+
+/home/p31/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zerovec-derive-0.11.3/src/lib.rs:
+/home/p31/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zerovec-derive-0.11.3/src/make_ule.rs:
+/home/p31/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zerovec-derive-0.11.3/src/make_varule.rs:
+/home/p31/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zerovec-derive-0.11.3/src/ule.rs:
+/home/p31/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zerovec-derive-0.11.3/src/utils.rs:
+/home/p31/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zerovec-derive-0.11.3/src/varule.rs:

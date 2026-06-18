@@ -1,0 +1,1 @@
+/home/p31/P31-local-workspace/packages/sovereign-core/target/wasm32-unknown-unknown/release/sovereign_core.wasm: /home/p31/P31-local-workspace/packages/sovereign-core/src/lib.rs /home/p31/P31-local-workspace/packages/sovereign-core/src/mesh.rs

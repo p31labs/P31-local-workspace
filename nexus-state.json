@@ -1,0 +1,243 @@
+{
+  "meta": {
+    "schema": "PMM_NEXUS=1.0",
+    "generated_at": "2026-06-17T15:07:04Z",
+    "generation_seconds": 0.07,
+    "spoon_level": 4,
+    "spoon_label": "Focus \ud83c\udfaf"
+  },
+  "domains": {
+    "METABOLIC": {
+      "health": 0.5,
+      "risk_label": "STABLE",
+      "metrics": {
+        "serum_calcium_mg_dL": 7.8,
+        "albumin_g_dL": 4.0,
+        "creatinine_mg_dL": 1.2,
+        "serum_calcium_threshold": 7.8,
+        "chronic_conditions": [
+          "hypoparathyroidism",
+          "AuDHD"
+        ],
+        "medication_adherence_required": true,
+        "alertness_peak": [
+          "10:00",
+          "14:00"
+        ],
+        "alertness_trough": [
+          "15:00",
+          "17:00"
+        ],
+        "in_peak": false,
+        "in_trough": true,
+        "alertness": 0.5,
+        "calcium_at_risk": true,
+        "calcium_gap": 0
+      }
+    },
+    "COGNITIVE": {
+      "health": 0.6,
+      "risk_label": "STABLE",
+      "metrics": {
+        "spoon_level": 4,
+        "spoon_label": "Focus \ud83c\udfaf",
+        "spoon_budget": 4,
+        "raw_spoon_level": 4,
+        "task_initiation_weight": 0.8,
+        "task_switching_cost": 0.7,
+        "sequential_processing_preference": true,
+        "asynchronous_communication_required": true,
+        "fluorescent_lighting_penalty": 0.6,
+        "unpredictable_wait_time_penalty": 0.7,
+        "background_noise_threshold_db": 50,
+        "preferred_work_hours": [
+          "09:00",
+          "12:00",
+          "14:00",
+          "17:00"
+        ],
+        "in_peak_hours": false,
+        "in_trough_hours": true,
+        "entropy_multiplier": 1.2,
+        "task_switching_penalty": 0.4,
+        "task_initiation_penalty": 0.0,
+        "max_concurrent_tasks": 2,
+        "auto_approve_threshold": 0.85,
+        "risk_tolerance_medical": 0.1,
+        "risk_tolerance_financial": 0.4,
+        "risk_tolerance_codebase": 0.7,
+        "risk_tolerance": {
+          "medical": 0.1,
+          "financial": 0.4,
+          "codebase_stability": 0.7
+        },
+        "upcoming_deadlines": 1,
+        "content_backlog": 0,
+        "entangled_task_switching_penalty": true
+      }
+    },
+    "LEGAL": {
+      "health": 0.55,
+      "risk_label": "STABLE",
+      "metrics": {
+        "case": "Johnson v. Johnson, 2025CV936",
+        "judge": "Chief Judge Scarlett",
+        "status": "Post-hearing \u2014 April 16 hearing completed, written order pending",
+        "next_hearing": "AWAITING WRITTEN ORDER per O.C.G.A. \u00a7 9-11-58(b)",
+        "mcghan_deadline": "PASSED (April 17, 2026)",
+        "upcoming_events": [
+          {
+            "date": "2026-09-30",
+            "event": "FERS filing deadline"
+          }
+        ],
+        "upcoming_deadlines": 1,
+        "hearing_readiness": 0.5,
+        "operating_buffer": "$530 (Ko-fi + Stripe) + Mercury bank account ACTIVE (approved 4/20/2026)",
+        "grants_active": "Awesome Foundation $1K (April deliberation)",
+        "grants_pending": "NIDILRR Switzer $80K, FIP $250K/yr (inquiries sent, no response)",
+        "corp_status": "P31 Labs Inc \u2014 Active (GA SoS). EIN: 42-1888158 (assigned Apr 13, 2026). 501(c)(3) not filed."
+      }
+    },
+    "INFRASTRUCTURE": {
+      "health": 0.968,
+      "risk_label": "FLOURISHING",
+      "metrics": {
+        "total_workers": 28,
+        "online_workers": 27,
+        "degraded_workers": 1,
+        "health_score": 0.96,
+        "signal_health": 0.96,
+        "deployed_workers": 25,
+        "k4_cage_url": "https://k4-cage.trimtab-signal.workers.dev",
+        "ollama_url": "http://127.0.0.1:11434",
+        "phos_url": "https://phos.p31ca.org",
+        "infra_recency_hours": {
+          "software/cloudflare-worker": 44.5,
+          "software/packages/k4-mesh-core": 43.9,
+          "software/k4-cage": 74.5,
+          "software/k4-hubs": 184.7,
+          "software/k4-personal": 44.5,
+          "scripts/jitterbug-daemon.py": 43.9
+        },
+        "operation_complexity": 0.83,
+        "p31_default_model": "qwen2.5:1.5b"
+      }
+    },
+    "CONTENT": {
+      "health": 0.9,
+      "risk_label": "FLOURISHING",
+      "metrics": {
+        "pipeline_backlog": 0,
+        "signals_count": 8,
+        "active_channels": [
+          "twitter",
+          "bluesky",
+          "mastodon",
+          "devto",
+          "hashnode",
+          "zenodo",
+          "grants",
+          "substack",
+          "discord"
+        ],
+        "forge_available": true,
+        "weave_available": true,
+        "zenodo_papers_published": 4,
+        "zenodo_papers_ready": 13,
+        "social_cadence_active": true,
+        "docs_last_updated": "2026-06-17T15:07:04Z",
+        "production_cap": 1.0
+      }
+    }
+  },
+  "entanglements": {
+    "active": [
+      {
+        "id": "legal-cognitive-switch",
+        "from": "LEGAL.upcoming_deadlines",
+        "to": "COGNITIVE.task_switching_penalty",
+        "trigger_value": 1,
+        "threshold": 0,
+        "condition": "gt",
+        "effect": "penalty",
+        "weight": 0.7,
+        "description": "Each legal deadline adds cognitive switching overhead",
+        "message": ""
+      }
+    ],
+    "count": 1
+  },
+  "cascades": {
+    "active": [
+      {
+        "id": "hypocalcemia-cascade",
+        "severity": "high",
+        "trigger": "METABOLIC.serum_calcium_mg_dL = 7.8",
+        "chain": [
+          {
+            "domain": "COGNITIVE",
+            "metric": "spoon_budget",
+            "effect": "capped at 3"
+          },
+          {
+            "domain": "LEGAL",
+            "metric": "hearing_readiness",
+            "effect": "reduced by 30%"
+          },
+          {
+            "domain": "INFRASTRUCTURE",
+            "metric": "operation_complexity",
+            "effect": "non-critical deploys deferred"
+          }
+        ],
+        "critical_action": "Take calcium immediately. Prioritize only essential legal prep."
+      },
+      {
+        "id": "peak-hours-cascade",
+        "severity": "medium",
+        "trigger": "COGNITIVE.is_peak_hours = False",
+        "chain": [
+          {
+            "domain": "COGNITIVE",
+            "metric": "task_initiation_weight",
+            "effect": "reduced by 70%"
+          },
+          {
+            "domain": "INFRASTRUCTURE",
+            "metric": "complex_ops_recommended",
+            "effect": "defer to peak hours"
+          }
+        ],
+        "critical_action": "Schedule complex tasks for peak window (10:00-14:00). Do low-spoon work now."
+      },
+      {
+        "id": "legal-deadline-cascade",
+        "severity": "high",
+        "trigger": "LEGAL.upcoming_deadlines = 1",
+        "chain": [
+          {
+            "domain": "COGNITIVE",
+            "metric": "task_switching_penalty",
+            "effect": "+0.2 switching cost"
+          },
+          {
+            "domain": "CONTENT",
+            "metric": "priority",
+            "effect": "content deprioritized"
+          }
+        ],
+        "critical_action": "Focus on legal deadlines first. Defer all non-essential work."
+      }
+    ],
+    "count": 3
+  },
+  "critical_action": {
+    "priority": "HIGH",
+    "action": "Take calcium immediately. Prioritize only essential legal prep.",
+    "reason": "Cascade triggered: METABOLIC.serum_calcium_mg_dL = 7.8",
+    "source": "cascade",
+    "icon": "\ud83d\udfe0"
+  },
+  "overall_health": 0.704
+}

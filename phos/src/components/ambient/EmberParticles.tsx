@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { useAtmosphere } from '../AtmosphereProvider';
+import { SurfaceErrorBoundary } from '../SurfaceErrorBoundary';
 
 interface Ember {
   x: number; y: number; vx: number; vy: number; size: number; life: number; maxLife: number;
@@ -64,4 +65,12 @@ const EmberParticles: React.FC = () => {
   return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 0 }} aria-hidden="true" />;
 };
 
-export default EmberParticles;
+function EmberParticlesWithBoundary() {
+  return (
+    <SurfaceErrorBoundary canvasName="EmberParticles">
+      <EmberParticles />
+    </SurfaceErrorBoundary>
+  );
+}
+
+export default EmberParticlesWithBoundary;

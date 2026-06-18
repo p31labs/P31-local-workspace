@@ -5,7 +5,7 @@ const VECTOR_PROXY = endpoints.vectorProxy;
 
 export async function generateEmbedding(text: string): Promise<number[]> {
   try {
-    const response = await fetch('http://localhost:4000/v1/embeddings', {
+    const response = await fetch(VECTOR_PROXY, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

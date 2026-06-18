@@ -1,0 +1,14 @@
+/home/p31/P31-local-workspace/packages/sovereign-core/target/wasm32-unknown-unknown/release/deps/serde-2a798704b0ba2b5c.d: /home/p31/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs /home/p31/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs /home/p31/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs /home/p31/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs /home/p31/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs /home/p31/P31-local-workspace/packages/sovereign-core/target/wasm32-unknown-unknown/release/build/serde-7d7a11c85ff269e2/out/private.rs
+
+/home/p31/P31-local-workspace/packages/sovereign-core/target/wasm32-unknown-unknown/release/deps/libserde-2a798704b0ba2b5c.rlib: /home/p31/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs /home/p31/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs /home/p31/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs /home/p31/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs /home/p31/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs /home/p31/P31-local-workspace/packages/sovereign-core/target/wasm32-unknown-unknown/release/build/serde-7d7a11c85ff269e2/out/private.rs
+
+/home/p31/P31-local-workspace/packages/sovereign-core/target/wasm32-unknown-unknown/release/deps/libserde-2a798704b0ba2b5c.rmeta: /home/p31/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs /home/p31/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs /home/p31/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs /home/p31/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs /home/p31/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs /home/p31/P31-local-workspace/packages/sovereign-core/target/wasm32-unknown-unknown/release/build/serde-7d7a11c85ff269e2/out/private.rs
+
+/home/p31/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs:
+/home/p31/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs:
+/home/p31/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs:
+/home/p31/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs:
+/home/p31/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs:
+/home/p31/P31-local-workspace/packages/sovereign-core/target/wasm32-unknown-unknown/release/build/serde-7d7a11c85ff269e2/out/private.rs:
+
+# env-dep:OUT_DIR=/home/p31/P31-local-workspace/packages/sovereign-core/target/wasm32-unknown-unknown/release/build/serde-7d7a11c85ff269e2/out
