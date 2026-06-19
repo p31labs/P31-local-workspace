@@ -1,0 +1,143 @@
+{
+  "version": "1.0.0",
+  "repo_root": "/home/p31/P31-local-workspace",
+  "drop_zones": ["/tmp/phos-drop"],
+  "pattern_groups": {
+    "phos_frontend": {
+      "description": "PHOS web application (Astro + React)",
+      "base": "phos",
+      "patterns": [
+        {
+          "type": "page",
+          "glob": "src/pages/**/*.astro",
+          "dest": "{base}/src/pages/{relative}/{basename}.{ext}"
+        },
+        {
+          "type": "component",
+          "glob": "src/components/**/*.tsx",
+          "exclude": ["**/__tests__/**", "**/ambient/**"],
+          "dest": "{base}/src/components/{relative}/{basename}.{ext}"
+        },
+        {
+          "type": "ambient",
+          "glob": "src/components/ambient/*.tsx",
+          "dest": "{base}/src/components/ambient/{basename}.{ext}"
+        },
+        {
+          "type": "ambient_test",
+          "glob": "src/components/ambient/__tests__/*.test.tsx",
+          "dest": "{base}/src/components/ambient/__tests__/{basename}.{ext}"
+        },
+        {
+          "type": "surface",
+          "glob": "src/surfaces/*.tsx",
+          "dest": "{base}/src/surfaces/{basename}.{ext}"
+        },
+        {
+          "type": "surface_test",
+          "glob": "src/surfaces/__tests__/*.test.tsx",
+          "dest": "{base}/src/surfaces/__tests__/{basename}.{ext}"
+        },
+        {
+          "type": "component_test",
+          "glob": "src/components/__tests__/*.test.{ts,tsx}",
+          "dest": "{base}/src/components/__tests__/{basename}.{ext}"
+        },
+        {
+          "type": "lib",
+          "glob": "src/lib/*.ts",
+          "exclude": ["**/__tests__/**"],
+          "dest": "{base}/src/lib/{basename}.{ext}"
+        },
+        {
+          "type": "lib_test",
+          "glob": "src/lib/__tests__/*.test.{ts,tsx}",
+          "dest": "{base}/src/lib/__tests__/{basename}.{ext}"
+        },
+        {
+          "type": "hook",
+          "glob": "src/hooks/*.ts",
+          "dest": "{base}/src/hooks/{basename}.{ext}"
+        },
+        {
+          "type": "hook",
+          "glob": "src/hooks/*.tsx",
+          "dest": "{base}/src/hooks/{basename}.{ext}"
+        },
+        {
+          "type": "context",
+          "glob": "src/context/*.tsx",
+          "dest": "{base}/src/context/{basename}.{ext}"
+        },
+        {
+          "type": "config_src",
+          "glob": "src/config/*.ts",
+          "dest": "{base}/src/config/{basename}.{ext}"
+        },
+        {
+          "type": "style",
+          "glob": "src/styles/*.css",
+          "dest": "{base}/src/styles/{basename}.{ext}"
+        },
+        {
+          "type": "type_def",
+          "glob": "src/types/*.d.ts",
+          "dest": "{base}/src/types/{basename}.{ext}"
+        },
+        {
+          "type": "test_setup",
+          "glob": "src/__tests__/*.ts",
+          "dest": "{base}/src/__tests__/{basename}.{ext}"
+        },
+        {
+          "type": "e2e_test",
+          "glob": "tests/**/*.e2e.{ts,tsx}",
+          "dest": "{base}/tests/{relative}/{basename}.{ext}"
+        },
+        {
+          "type": "config",
+          "glob": "*.config.{ts,mjs,js}",
+          "dest": "{base}/{basename}.{ext}"
+        },
+        {
+          "type": "config",
+          "glob": "wrangler.toml",
+          "dest": "{base}/{basename}.{ext}"
+        }
+      ]
+    },
+    "phos_public": {
+      "description": "PHOS static assets (must have extension)",
+      "base": "phos",
+      "patterns": [
+        {
+          "type": "public_asset",
+          "glob": "public/**/*.*",
+          "exclude": ["public/_headers", "public/_redirects"],
+          "dest": "{base}/public/{relative}/{basename}.{ext}"
+        }
+      ]
+    },
+    "phos_rust": {
+      "description": "PHOS Tauri/Rust backend",
+      "base": "phos",
+      "patterns": [
+        {
+          "type": "rust_source",
+          "glob": "src-tauri/src/**/*.rs",
+          "dest": "{base}/src-tauri/src/{relative}/{basename}.{ext}"
+        },
+        {
+          "type": "tauri_config",
+          "glob": "src-tauri/*.toml",
+          "dest": "{base}/src-tauri/{basename}.{ext}"
+        },
+        {
+          "type": "tauri_config_json",
+          "glob": "src-tauri/*.json",
+          "dest": "{base}/src-tauri/{basename}.{ext}"
+        }
+      ]
+    }
+  }
+}

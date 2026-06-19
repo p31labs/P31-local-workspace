@@ -1,0 +1,20 @@
+{
+  "name": "phos-forge",
+  "version": "1.0.0",
+  "private": true,
+  "description": "PHOS Forge — autonomic file organization, quality mesh, and cognitive pipeline",
+  "type": "module",
+  "bin": {
+    "phos": "./cli.mjs"
+  },
+  "scripts": {
+    "adopt": "node cli.mjs adopt",
+    "status": "node cli.mjs status",
+    "classify": "node cli.mjs classify",
+    "watch": "node cli.mjs watch"
+  },
+  "dependencies": {
+    "fast-glob": "^3.3.2",
+    "chokidar": "^3.6.0"
+  }
+}
