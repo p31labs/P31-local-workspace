@@ -1,14 +1,19 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { describe, it, expect } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
+import { DeviceProvider } from '../../context/DeviceContext';
 import { AtmosphereProvider } from '../AtmosphereProvider';
 import { SurfaceContent } from '../SurfaceContent';
 
 const renderSurface = (surface: string, spoons = 3) => {
   return render(
-    <AtmosphereProvider initialSpoons={spoons} initialSurface={surface}>
-      <SurfaceContent currentSurface={surface} setSurface={() => {}} spoons={spoons} />
-    </AtmosphereProvider>
+    <DeviceProvider>
+      <AtmosphereProvider initialSpoons={spoons} initialSurface={surface}>
+        <Suspense fallback={<div>Loading...</div>}>
+          <SurfaceContent currentSurface={surface} setSurface={() => {}} spoons={spoons} />
+        </Suspense>
+      </AtmosphereProvider>
+    </DeviceProvider>
   );
 };
 
@@ -18,9 +23,9 @@ describe('SurfaceContent', () => {
     expect(screen.getByText('P³¹')).toBeTruthy();
   });
 
-  it('should render THE_BUFFER surface', () => {
+  it('should render THE_BUFFER surface', async () => {
     renderSurface('THE_BUFFER');
-    expect(screen.getByText('Somatic Buffer Engine')).toBeTruthy();
+    expect(await screen.findByText('Somatic Buffer Engine')).toBeTruthy();
   });
 
   it('should render VAULT surface', () => {
@@ -28,9 +33,9 @@ describe('SurfaceContent', () => {
     expect(screen.getByText('PQC Protective Layer')).toBeTruthy();
   });
 
-  it('should render ARCADE surface', () => {
+  it('should render ARCADE surface', async () => {
     renderSurface('ARCADE');
-    expect(screen.getByText('The Arcade Environment Hub')).toBeTruthy();
+    expect(await screen.findByText('The Arcade Environment Hub')).toBeTruthy();
   });
 
   it('should render HEARTH surface', () => {
@@ -44,9 +49,9 @@ describe('SurfaceContent', () => {
     expect(screen.getByText('PHOS BIFURCATED BALANCE LEDGER')).toBeTruthy();
   });
 
-  it('should render ARCHIVE surface', () => {
+  it('should render ARCHIVE surface', async () => {
     renderSurface('ARCHIVE');
-    expect(screen.getByText('Sovereign Archive Search')).toBeTruthy();
+    expect(await screen.findByText('Sovereign Archive Search')).toBeTruthy();
   });
 
   it('should render SETTINGS surface', () => {
@@ -59,12 +64,11 @@ describe('SurfaceContent', () => {
     expect(screen.getByText(/ERR_SURFACE_NOT_BOUND/)).toBeTruthy();
   });
 
-  it('should filter high-stress games at low spoons', () => {
+  it('should filter high-stress games at low spoons', async () => {
     renderSurface('ARCADE', 1);
-    const arcadeText = document.body.textContent || '';
-    expect(arcadeText).toContain('Zen Mode');
-    expect(arcadeText).not.toContain('Gridiron');
-    expect(arcadeText).not.toContain('Orbital');
+    expect(await screen.findByText(/Zen Mode/)).toBeTruthy();
+    expect(screen.queryByText('Gridiron')).toBeNull();
+    expect(screen.queryByText('Orbital')).toBeNull();
   });
 
   it('should render COMPASS surface', () => {
@@ -90,9 +94,9 @@ describe('SurfaceContent', () => {
     expect(screen.getByText('DISCOVERING')).toBeTruthy();
   });
 
-  it('should render GRID surface separately from NODE_ZERO', () => {
+  it('should render GRID surface separately from NODE_ZERO', async () => {
     renderSurface('GRID');
-    expect(screen.getByText(/CONNECTION_GRID/)).toBeTruthy();
-    expect(screen.getByText(/MESH_TOPOLOGY/)).toBeTruthy();
+    expect(await screen.findByText(/CONNECTION_GRID/)).toBeTruthy();
+    expect(await screen.findByText(/MESH_TOPOLOGY/)).toBeTruthy();
   });
 });
