@@ -68,7 +68,9 @@
     "security:audit": "node scripts/security/sca.mjs",
     "security:workers": "node scripts/security/verify-worker-inventory.mjs",
     "security:crypto": "node scripts/security/verify-crypto-surface.mjs",
-    "security:lint": "eslint src/ workers/ --ext .ts,.js --config eslint.config.security.mjs 2>/dev/null || true"
+    "security:lint": "eslint src/ workers/ --ext .ts,.js --config eslint.config.security.mjs 2>/dev/null || true",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@astrojs/react": "^5.0.4",

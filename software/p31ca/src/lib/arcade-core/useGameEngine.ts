@@ -72,7 +72,9 @@ export function useGameEngine(options: GameEngineOptions): GameEngine {
 
   const start = useCallback(() => {
     setEngineState(s => ({ ...s, status: 'running' }));
-    emit('game:started', { game: slug, spoons: engineState.spoons });
+    if (typeof window !== 'undefined') {
+      emit('game:started', { game: slug, spoons: engineState.spoons });
+    }
   }, [slug, engineState.spoons]);
 
   const pause = useCallback(() => {
