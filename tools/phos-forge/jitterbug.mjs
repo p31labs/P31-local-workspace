@@ -100,13 +100,13 @@ Return the facets as a JSON array at the end of your output:
 
 Output only the structure above with the JSON block. No preamble, no summary.`;
 
-const RESEARCH_CHEAP = 'openrouter/anthropic/claude-3.5-haiku-20241022';
-const RESEARCH_STRONG = 'openrouter/anthropic/claude-sonnet-4-20250514';
-const CONVERGE_MODEL = 'openrouter/anthropic/claude-sonnet-4-20250514';
+const RESEARCH_CHEAP = 'research';
+const RESEARCH_STRONG = 'synthesis';
+const CONVERGE_MODEL = 'synthesis';
 
 async function runResearch(facet, parentContext, index) {
   return callLLM(RESEARCH_SYSTEM, `## Facet\n${facet}\n\n## Context from parent synthesis\n${trimContext(parentContext)}\n\nExplore this facet in depth.`, {
-    model: RESEARCH_CHEAP,
+    intent: { task: 'research', privacy: 'standard' },
     maxTokens: 4096,
     temperature: 0.8,
   });
@@ -115,7 +115,7 @@ async function runResearch(facet, parentContext, index) {
 async function runConvergence(researchTexts) {
   const combined = researchTexts.map((t, i) => `## Research Output ${i + 1}\n${trimContext(t)}`).join('\n\n');
   return callLLM(CONVERGE_SYSTEM, `Converge these ${researchTexts.length} research outputs into a unified synthesis:\n\n${combined}`, {
-    model: CONVERGE_MODEL,
+    intent: { task: 'synthesis', privacy: 'standard' },
     maxTokens: 8192,
     temperature: 0.3,
   });
@@ -204,7 +204,7 @@ Format:
 2. **Title** — description
 ...`;
       const splitResult = await callLLM('You are a research strategist. Split problems into non-overlapping facets.', splitPrompt, {
-        model: RESEARCH_STRONG,
+        intent: { task: 'synthesis', privacy: 'standard' },
         maxTokens: 2048,
         temperature: 0.5,
       });

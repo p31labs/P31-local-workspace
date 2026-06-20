@@ -1,0 +1,60 @@
+model_list:
+  # --- TIER 1: SOVEREIGN (local, air-gapped) ---
+  # Handled directly by router.mjs via Ollama, bypassing LiteLLM.
+
+  # --- TIER 2: SCAVENGER (free/ultra-cheap) ---
+  # Load-balances across OpenRouter free models + Groq high-speed Llama.
+  # If one hits a rate limit, LiteLLM silently rotates to the next.
+  - model_name: p31-scavenger
+    litellm_params:
+      model: openrouter/deepseek/deepseek-chat:free
+      api_key: os.environ/OPENROUTER_API_KEY
+  - model_name: p31-scavenger
+    litellm_params:
+      model: openrouter/google/gemma-2-9b-it:free
+      api_key: os.environ/OPENROUTER_API_KEY
+  - model_name: p31-scavenger
+    litellm_params:
+      model: openrouter/nvidia/nemotron-3-super:free
+      api_key: os.environ/OPENROUTER_API_KEY
+  - model_name: p31-scavenger
+    litellm_params:
+      model: groq/llama-3.1-8b-instant
+      api_key: os.environ/GROQ_API_KEY
+
+  # --- TIER 3: FLASH (fast, cheap, capable) ---
+  # Near-premium reasoning at pennies per million tokens.
+  - model_name: p31-flash
+    litellm_params:
+      model: openrouter/anthropic/claude-3.5-haiku-20241022
+      api_key: os.environ/OPENROUTER_API_KEY
+  - model_name: p31-flash
+    litellm_params:
+      model: openrouter/google/gemini-1.5-flash
+      api_key: os.environ/OPENROUTER_API_KEY
+
+  # --- TIER 4: PREMIUM (high-reasoning, architecture) ---
+  # Reserved for code architecture, convergence, deep synthesis when spoons >= 4.
+  - model_name: p31-premium
+    litellm_params:
+      model: openrouter/anthropic/claude-3.5-sonnet-20241022
+      api_key: os.environ/OPENROUTER_API_KEY
+  - model_name: p31-premium
+    litellm_params:
+      model: openrouter/deepseek/deepseek-coder-v2
+      api_key: os.environ/OPENROUTER_API_KEY
+  - model_name: p31-premium
+    litellm_params:
+      model: openrouter/google/gemini-1.5-pro
+      api_key: os.environ/OPENROUTER_API_KEY
+
+router_settings:
+  routing_strategy: fallback
+  num_retries: 2
+  timeout: 60
+  enable_loadbalancing: true
+  enable_fallback: true
+  fallbacks:
+    - p31-premium: ["p31-flash"]
+    - p31-flash: ["p31-scavenger"]
+    - p31-scavenger: ["p31-flash"]

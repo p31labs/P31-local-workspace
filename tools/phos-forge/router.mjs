@@ -1,7 +1,32 @@
 import { readFileSync, existsSync, appendFileSync } from 'fs';
 
-const COGNITIVE_STATE_PATH = '/tmp/phos-cognitive-state.json';
 const SPOON_STATE_PATH = '/home/p31/P31-local-workspace/spoon-state.json';
+const COG_PATH = '/tmp/phos-cognitive-state.json';
+const EVENTS_PATH = '/tmp/phos-forge/events.jsonl';
+const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
+const OPENROUTER_KEY = process.env.OPENROUTER_API_KEY;
+const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
+const GROQ_KEY = process.env.GROQ_API_KEY;
+
+// Direct provider model mapping (bypasses LiteLLM entirely).
+// Tier aliases map to verified available OpenRouter + Groq models.
+const TIER_MODELS = {
+  scavenger: [
+    'meta-llama/llama-3.3-70b-instruct:free',
+    'deepseek/deepseek-v4-flash',
+    'nvidia/nemotron-3-super-120b-a12b:free',
+    'groq/llama-3.1-8b-instant',
+  ],
+  flash: [
+    'anthropic/claude-3.5-haiku',
+    'deepseek/deepseek-chat',
+  ],
+  premium: [
+    'anthropic/claude-sonnet-4',
+    'deepseek/deepseek-r1',
+    'google/gemini-2.5-pro',
+  ],
+};
 
 function getBioState() {
   let spoons = 4;
@@ -9,86 +34,96 @@ function getBioState() {
     if (existsSync(SPOON_STATE_PATH)) {
       const s = JSON.parse(readFileSync(SPOON_STATE_PATH, 'utf-8'));
       if (typeof s.level === 'number') spoons = s.level;
-    } else if (existsSync(COGNITIVE_STATE_PATH)) {
-      const c = JSON.parse(readFileSync(COGNITIVE_STATE_PATH, 'utf-8'));
+    } else if (existsSync(COG_PATH)) {
+      const c = JSON.parse(readFileSync(COG_PATH, 'utf-8'));
       if (typeof c.spoons === 'number') spoons = c.spoons;
       else if (typeof c.level === 'number') spoons = c.level;
     }
-  } catch (e) { /* silent fail, use default */ }
+  } catch { /* fallback to default */ }
   return { spoons };
 }
 
-const MODEL_MAP = {
-  LiteLLM: {
-    research: 'phos-fast-buffer',
-    synthesis: 'reasoning',
-    code: 'code',
-    fast: 'phos-fast-buffer',
-  },
-  OpenRouter: {
-    research: 'openrouter/anthropic/claude-3.5-haiku-20241022',
-    synthesis: 'openrouter/anthropic/claude-sonnet-4-20250514',
-    code: 'openrouter/deepseek/deepseek-coder',
-    fast: 'openrouter/anthropic/claude-3.5-haiku-20241022',
-  },
-  local: {
-    sovereign: 'qwen2.5:1.5b',
-  },
-};
+function emitTelemetry(intent, targetModel, fallbackUsed, sovereign) {
+  try {
+    appendFileSync(
+      EVENTS_PATH,
+      JSON.stringify({
+        type: 'router.decision',
+        payload: {
+          intent: intent.task,
+          model: targetModel,
+          sovereign,
+          fallback_used: fallbackUsed,
+          spoons: getBioState().spoons,
+          timestamp: new Date().toISOString(),
+        },
+      }) + '\n',
+    );
+  } catch { /* silent */ }
+}
 
-function validateResponse(text, maxTokens, opts = {}) {
+function modelToProvider(model) {
+  if (model.startsWith('groq/')) return { url: GROQ_URL, key: GROQ_KEY, stripPrefix: 'groq/' };
+  return { url: OPENROUTER_URL, key: OPENROUTER_KEY, stripPrefix: 'openrouter/' };
+}
+
+async function callProvider(model, messages, maxTokens, temperature, timeoutMs) {
+  const { url, key, stripPrefix } = modelToProvider(model);
+  if (!key) throw new Error(`No API key configured for provider of model ${model}`);
+
+  const resp = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${key}`,
+    },
+    body: JSON.stringify({
+      model: model.replace(stripPrefix, ''),
+      messages,
+      temperature,
+      max_tokens: maxTokens,
+    }),
+    signal: AbortSignal.timeout(timeoutMs),
+  });
+  if (!resp.ok) throw new Error(`${model.split('/')[0]} HTTP ${resp.status}: ${await resp.text().catch(() => '')}`);
+  const data = await resp.json();
+  return data.choices?.[0]?.message?.content || '';
+}
+
+async function routeToLocalOllama(system, user, maxTokens, temperature) {
+  const payload = {
+    model: 'qwen2.5:1.5b',
+    messages: [
+      { role: 'system', content: `${system}\n\nYou are a sovereign agent. Output concise results.` },
+      { role: 'user', content: user },
+    ],
+    stream: false,
+    options: { num_predict: Math.min(maxTokens, 512), temperature },
+  };
+  const resp = await fetch('http://localhost:11434/api/chat', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+    signal: AbortSignal.timeout(180000),
+  });
+  if (!resp.ok) throw new Error(`Ollama HTTP ${resp.status}`);
+  const data = await resp.json();
+  return data.message?.content || '';
+}
+
+function validateResponse(text, maxTokens) {
   if (!text || typeof text !== 'string') return { ok: false, reason: 'empty-response' };
-  const minQuality = opts.minQualityChars ?? Math.max(100, Math.floor(maxTokens * 0.1));
+  const minQuality = Math.max(100, Math.floor(maxTokens * 0.1));
   if (maxTokens > 300 && text.trim().length < minQuality) {
     return { ok: false, reason: `output-too-short:${text.trim().length}<${minQuality}` };
   }
   return { ok: true, text };
 }
 
-async function fetchWithTimeout(url, options, timeoutMs) {
-  const resp = await fetch(url, { ...options, signal: AbortSignal.timeout(timeoutMs) });
-  if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-  const data = await resp.json();
-  return data.choices?.[0]?.message?.content || data.message?.content || '';
-}
-
-async function checkOllamaAvailable(modelName) {
-  try {
-    const resp = await fetch('http://localhost:11434/api/tags', { signal: AbortSignal.timeout(5000) });
-    if (!resp.ok) return false;
-    const data = await resp.json();
-    return data.models?.some((m) => m.name === modelName) ?? false;
-  } catch {
-    return false;
-  }
-}
-
 export async function dispatchLLM(system, user, intent = {}, opts = {}) {
   const bio = getBioState();
-  const task = intent.task || 'research';
   const isSovereign = intent.privacy === 'sovereign';
-  let targetModel;
-  let provider;
-
-  if (isSovereign) {
-    targetModel = MODEL_MAP.local.sovereign;
-    provider = 'local';
-  } else if (task === 'code' || task === 'synthesis') {
-    if (bio.spoons >= 4) {
-      targetModel = MODEL_MAP.LiteLLM.synthesis;
-      provider = 'litellm';
-    } else {
-      targetModel = MODEL_MAP.LiteLLM.fast;
-      provider = 'litellm';
-    }
-  } else if (task === 'research') {
-    targetModel = MODEL_MAP.LiteLLM.research;
-    provider = 'litellm';
-  } else {
-    targetModel = MODEL_MAP.LiteLLM.fast;
-    provider = 'litellm';
-  }
-
+  const task = intent.task || 'research';
   const maxTokens = opts.maxTokens || 4096;
   const temperature = opts.temperature ?? 0.7;
   const messages = [
@@ -96,80 +131,43 @@ export async function dispatchLLM(system, user, intent = {}, opts = {}) {
     { role: 'user', content: user },
   ];
 
-  // Sovereign / Local Execution
+  // 1. Sovereign → local Ollama (bypass all cloud)
   if (isSovereign) {
-    const available = await checkOllamaAvailable(targetModel);
-    if (!available) {
-      throw new Error(`Sovereign model ${targetModel} not available locally. Run: ollama pull ${targetModel}`);
-    }
-    const localPayload = {
-      model: targetModel,
-      messages: messages.map((m) => ({
-        ...m,
-        content: m.role === 'system' ? `${m.content}\n\nYou are a sovereign agent. Output concise results.` : m.content,
-      })),
-      stream: false,
-      options: { num_predict: Math.min(maxTokens, 512), temperature },
-    };
-    try {
-      const content = await fetchWithTimeout('http://localhost:11434/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(localPayload),
-      }, 180000);
-      const val = validateResponse(content, maxTokens, opts);
-      if (val.ok) return val.text;
-    } catch (e) {
-      throw new Error(`Sovereign local execution failed: ${e.message}`);
-    }
+    const content = await routeToLocalOllama(system, user, maxTokens, temperature);
+    emitTelemetry(intent, 'ollama/qwen2.5:1.5b', false, true);
+    return content;
   }
 
-  // API Execution (LiteLLM Proxy -> OpenRouter Fallback)
-  const payload = { model: targetModel, messages, temperature, max_tokens: maxTokens };
-  const litellmKey = process.env.LITELLM_KEY || 'sk-local-proxy-key';
-  const openrouterKey = process.env.OPENROUTER_API_KEY;
-  let fallbackUsed = false;
-
-  try {
-    const content = await fetchWithTimeout('http://localhost:4000/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${litellmKey}`,
-      },
-      body: JSON.stringify(payload),
-    }, 60000);
-    const val = validateResponse(content, maxTokens, opts);
-    if (val.ok) {
-      try { appendFileSync('/tmp/phos-forge/events.jsonl', JSON.stringify({ type: 'router.decision', payload: { intent: task, model: targetModel, provider, spoons: bio.spoons, fallback_used: fallbackUsed, sovereign: isSovereign }, timestamp: new Date().toISOString() }) + '\n'); } catch {}
-      return val.text;
-    }
-  } catch (e) {
-    console.error(`[router] LiteLLM degraded for ${targetModel}. Failing over to OpenRouter.`);
+  // 2. Select tier based on spoons + task
+  let tier;
+  if (task === 'code' || task === 'synthesis') {
+    tier = bio.spoons >= 4 ? 'premium' : 'flash';
+  } else if (task === 'research') {
+    tier = 'scavenger';
+  } else {
+    tier = 'flash';
   }
 
-  if (openrouterKey) {
+  const models = TIER_MODELS[tier];
+
+  // 3. Try models in tier order (fallback within tier)
+  let lastError;
+  for (const model of models) {
     try {
-      fallbackUsed = true;
-      const fallbackModel = MODEL_MAP.OpenRouter[task] || MODEL_MAP.OpenRouter.fast;
-      const fallbackPayload = { ...payload, model: fallbackModel };
-      const content = await fetchWithTimeout('https://openrouter.ai/api/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${openrouterKey}`,
-        },
-        body: JSON.stringify(fallbackPayload),
-      }, 120000);
-      const val = validateResponse(content, maxTokens, opts);
+      const content = await callProvider(model, messages, maxTokens, temperature, opts.timeoutMs ?? 60000);
+      const val = validateResponse(content, maxTokens);
       if (val.ok) {
-        try { appendFileSync('/tmp/phos-forge/events.jsonl', JSON.stringify({ type: 'router.decision', payload: { intent: task, model: fallbackModel, provider: 'openrouter', spoons: bio.spoons, fallback_used: true, sovereign: isSovereign }, timestamp: new Date().toISOString() }) + '\n'); } catch {}
+        emitTelemetry(intent, model, false, false);
         return val.text;
       }
+      lastError = new Error(`Quality gate: ${val.reason}`);
     } catch (e) {
-      console.error(`[router] OpenRouter failed for ${targetModel}: ${e.message}`);
+      lastError = e;
+      // Try next model in tier
     }
   }
 
-  throw new Error(`[router] All availability avenues failed for intent: ${task}`);
+  throw new Error(
+    `[router] All models in tier "${tier}" failed. Last error: ${lastError?.message || 'unknown'}`,
+  );
 }
