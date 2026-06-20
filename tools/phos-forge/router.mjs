@@ -128,6 +128,7 @@ export async function dispatchLLM(system, user, intent = {}, opts = {}) {
   const payload = { model: targetModel, messages, temperature, max_tokens: maxTokens };
   const litellmKey = process.env.LITELLM_KEY || 'sk-local-proxy-key';
   const openrouterKey = process.env.OPENROUTER_API_KEY;
+  let fallbackUsed = false;
 
   try {
     const content = await fetchWithTimeout('http://localhost:4000/v1/chat/completions', {
@@ -139,13 +140,17 @@ export async function dispatchLLM(system, user, intent = {}, opts = {}) {
       body: JSON.stringify(payload),
     }, 60000);
     const val = validateResponse(content, maxTokens, opts);
-    if (val.ok) return val.text;
+    if (val.ok) {
+      try { appendFileSync('/tmp/phos-forge/events.jsonl', JSON.stringify({ type: 'router.decision', payload: { intent: task, model: targetModel, provider, spoons: bio.spoons, fallback_used: fallbackUsed, sovereign: isSovereign }, timestamp: new Date().toISOString() }) + '\n'); } catch {}
+      return val.text;
+    }
   } catch (e) {
     console.error(`[router] LiteLLM degraded for ${targetModel}. Failing over to OpenRouter.`);
   }
 
   if (openrouterKey) {
     try {
+      fallbackUsed = true;
       const fallbackModel = MODEL_MAP.OpenRouter[task] || MODEL_MAP.OpenRouter.fast;
       const fallbackPayload = { ...payload, model: fallbackModel };
       const content = await fetchWithTimeout('https://openrouter.ai/api/v1/chat/completions', {
@@ -157,7 +162,10 @@ export async function dispatchLLM(system, user, intent = {}, opts = {}) {
         body: JSON.stringify(fallbackPayload),
       }, 120000);
       const val = validateResponse(content, maxTokens, opts);
-      if (val.ok) return val.text;
+      if (val.ok) {
+        try { appendFileSync('/tmp/phos-forge/events.jsonl', JSON.stringify({ type: 'router.decision', payload: { intent: task, model: fallbackModel, provider: 'openrouter', spoons: bio.spoons, fallback_used: true, sovereign: isSovereign }, timestamp: new Date().toISOString() }) + '\n'); } catch {}
+        return val.text;
+      }
     } catch (e) {
       console.error(`[router] OpenRouter failed for ${targetModel}: ${e.message}`);
     }
