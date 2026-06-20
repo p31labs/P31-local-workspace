@@ -23,6 +23,8 @@ import time
 from pathlib import Path
 from typing import Any
 
+from p31_bus import bus_emit
+
 REPO_ROOT = Path("/home/p31/andromeda").resolve()
 INDEX_PATH = REPO_ROOT / "grading-index.json"
 REPORT_PATH = REPO_ROOT / "GRADING_REPORT.md"
@@ -239,9 +241,12 @@ def heal(artifact_path: str) -> dict[str, Any]:
     start = time.time()
     art = Path(artifact_path)
     if not art.exists() or not art.is_dir():
-        return {"status": "error", "message": f"Path not found: {artifact_path}"}
+        err = {"status": "error", "message": f"Path not found: {artifact_path}"}
+        bus_emit("macrophage.heal_failed", {"artifact": artifact_path, "error": err["message"]})
+        return err
 
     artifact_name = art.name
+    bus_emit("macrophage.heal_start", {"artifact": artifact_name, "path": artifact_path})
     print(f"\nMacrophage targeting: {artifact_name}", file=sys.stderr)
     print(f"  Path: {artifact_path}", file=sys.stderr)
 
@@ -295,15 +300,19 @@ def heal(artifact_path: str) -> dict[str, Any]:
 
     if generated_any:
         duration = time.time() - start
-        return {
+        result = {
             "status": "healed",
             "artifact": artifact_name,
             "path": artifact_path,
             "framework": framework,
             "duration_seconds": round(duration, 2),
         }
+        bus_emit("macrophage.heal_complete", {"artifact": artifact_name, "framework": framework, "duration_seconds": duration})
+        return result
     else:
-        return {"status": "failed", "message": "LLM could not generate tests", "artifact": artifact_name}
+        fail = {"status": "failed", "message": "LLM could not generate tests", "artifact": artifact_name}
+        bus_emit("macrophage.heal_failed", {"artifact": artifact_name, "error": fail["message"]})
+        return fail
 
 
 def _auto_detect_depressed() -> str | None:
@@ -360,6 +369,7 @@ def main() -> None:
     else:
         target = sys.argv[1]
 
+    bus_emit("macrophage.invoked", {"mode": "auto" if sys.argv[1] == "--auto" else "manual", "target": target})
     result = heal(target)
     print(f"  Result: {result.get('status', 'unknown')}", file=sys.stderr)
 

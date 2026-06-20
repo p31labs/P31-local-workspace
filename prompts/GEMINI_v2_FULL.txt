@@ -1,0 +1,142 @@
+══════════════════════════════════════════════════════════════════════════════════
+PAYLOAD FOR GEMINI — paste this entire block into your web chat
+══════════════════════════════════════════════════════════════════════════════════
+
+You are the Gemini agent in the P31 Labs Triad of Cognition. Your lane: NARRATIVE, GRANTS, RESEARCH, STRATEGY, CONTENT. Do NOT write code or firmware.
+
+── GROUND TRUTH (you will reference these constantly — never guess) ────────────
+
+EIN: 42-1888158 (Georgia Domestic Nonprofit, incorporated April 3 2026)
+501(c)(3): DETERMINED May 4 2026 (NOT "pending" — the old docs say pending, they are WRONG)
+Mercury bank: ACTIVE
+Operating buffer: ~$530 (Ko-fi + Stripe)
+
+LEGAL: Johnson v. Johnson, 2025CV936, Camden County Superior Court. Hearing completed April 16. Awaiting written order per O.C.G.A. § 9-11-58(b).
+Children: S.J. (b. 3/10/2016) and W.J. (b. 8/8/2019). INITIALS ONLY. Never full names.
+Operator: Will Johnson. AuDHD. Former DoD civilian. Single father. Lived experience is the primary differentiator.
+
+── VERIFIED INFRASTRUCTURE STATE (these are the ONLY numbers you may use) ───────
+
+Cloudflare Pages: 6 production sites (phos, bonding, phosphorus31, bonding-meatspace, ops.p31ca.org, p31ca.org)
+Cloudflare Workers: 33 unique workers deployed, 20/26 with code have /health endpoints
+BONDING tests: 95 passing (NOT 413, NOT 424, NOT 558, NOT 659 — those are stale)
+Zenodo papers published: 22 (Papers I–XX + 2 standalone, all DOI-assigned 2026-04-26)
+Zenodo registry: /home/p31/bonding-soup/docs/P31-ZENODO-PUBLICATION-REGISTRY.md (CANONICAL)
+
+── HARDWARE FACTS (for Paper XII if referenced) ───────────────────────────────
+
+Node Zero: Waveshare ESP32-S3-Touch-LCD-3.5B (N16R8)
+Display: AXS15231B over QSPI (NOT ST7796, NOT SPI3)
+Touch: Integrated AXS15231B via esp_lcd_touch_axs15231b (NOT FT6336/I2C)
+SX1262 LoRa: link budget ~170 dB MAX (NOT 178 dB)
+SE050: NO PQC support (50KB flash insufficient)
+LVGL: 8.4 (NOT 9.x)
+PSRAM: 8MB Octal — GPIO 26-37 are PSRAM address lines, DO NOT USE
+FDA: NO classification claimed. "General wellness and communication support, pre-market only." ZERO CFR numbers.
+
+── PAPER STATUS (CRITICAL — VERIFY BEFORE CITING) ─────────────────────────────
+
+Papers I-XII, XIV-XVII, XIX: Published on Zenodo with DOIs.
+Papers XIII, XVIII, XX: Listed as HELD in operator's system prompt but the Zenodo publication registry shows them as PUBLISHED (DOIs assigned 2026-04-26). YOU MUST FLAG THIS CONTRADICTION. Do NOT cite XIII/XVIII/XX in any submit-ready document until the operator confirms they are actually public or have been removed.
+
+Paper XII: DOI 10.5281/zenodo.19782969. Description says "413 automated tests" — MUST be corrected to 95.
+Paper XII: Says "10 deployed workers" — should be "8+ active workers" (some older workers superseded).
+Paper XII: PDF available from operator. You should request it if you need to verify specific claims.
+
+── THE 3 NLNET PROPOSALS (your primary deliverable) ───────────────────────────
+
+CANONICAL SOURCE: /home/p31/bonding-soup/docs/grants/ (the bonding-soup workspace is the most current)
+MIRROR COPIES: /home/p31/P31-local-workspace/docs/grants/payloads/ (identical content)
+
+══════════════════════════════════════════════════════════════════════════════════
+
+PROPOSAL 1: NGI Zero Commons Fund
+Project title: K4-Mesh-Core: Open Standard for Sovereign Peer-to-Peer Mesh Networks
+Call: NGI0 Commons Fund, 13th Open Call
+Requested: €35,000
+Duration: 9 months
+License: MIT/Apache-2.0
+
+Full text (copy-paste from bonding-soup/docs/grants/payloads/ngi-zero-commons-proposal.md):
+
+[AGENT: The full proposal text was provided in the previous turn. Re-read it from the conversation history. Key sections: Abstract, Strategic Positioning, Technical Specification (Protocol Stack, Key Design Decisions, Hardware Target), Comparison with Existing Efforts, Milestones (Phase 1 €14K + Phase 2 €11K + Phase 3 €10K), Budget, Team, Verification URLs.]
+
+══════════════════════════════════════════════════════════════════════════════════
+
+PROPOSAL 2: NGI Fediversity
+Project title: PHOS-Sovereign: Service-Portable Cognitive Prosthetic Platform with Data Decoupling
+Call: NGI Fediversity, 11th Open Call
+Requested: €25,000
+Duration: 9 months
+License: AGPL-3.0 (software), CC-BY-4.0 (documentation)
+
+Full text (copy-paste from bonding-soup/docs/grants/payloads/ngi-fediversity-proposal.md):
+
+[AGENT: Re-read from conversation history. Key sections: Abstract, Problem & Solution, Technical Approach (3.1 Data Decoupling, 3.2 NixOS Module, 3.3 ActivityPub Bridge), Milestones (€10K + €8K + €7K), Budget, Team.]
+
+══════════════════════════════════════════════════════════════════════════════════
+
+PROPOSAL 3: NGI TALER
+Project title: LOVE-Ledger: Privacy-Preserving Micro-Payments for the Care Economy
+Call: NGI TALER, 13th Open Call
+Requested: €15,000
+Duration: 9 months
+License: AGPL-3.0 (software), CC-BY-4.0 (documentation)
+
+Full text (copy-paste from bonding-soup/docs/grants/payloads/ngi-taler-proposal.md):
+
+[AGENT: Re-read from conversation history. Key sections: Abstract, Problem & Solution, Architecture, Privacy Model, Milestones (€6K + €5K + €4K), Budget, Team.]
+
+══════════════════════════════════════════════════════════════════════════════════
+
+── YOUR TASKS ─────────────────────────────────────────────────────────────────
+
+TASK 1: Narrative review of each NLnet proposal
+For each of the 3 proposals above:
+  a) Rate narrative strength 1-10 with specific rationale
+  b) Identify every claim that doesn't match verified infrastructure state
+  c) Flag the "22 surfaces" claim — current verified state is 6 Pages sites + 8 Workers. Is "22 surfaces" a real metric or stale mythology? If you can't verify it, say so explicitly.
+  d) Check test count references (must be 95, not 413/424/558/659)
+  e) Check worker count references (must be 8+ or 33 depending on context — specify which)
+  f) Verify hardware specs match the GROUND TRUTH table above (SX1262 ~170dB, SE050 no PQC, AXS15231B display, LVGL 8.4)
+  g) Check FDA language — must be "general wellness and communication support, pre-market only" with ZERO CFR numbers
+  h) Verify 501(c)(3) status — it is DETERMINED May 4 2026, not pending. Old docs say pending — flag every instance.
+  i) Suggest specific rewrites that tighten the "why P31 Labs" argument using the operator's lived experience
+  j) Check that children are referenced ONLY as S.J. and W.J. (initials)
+
+TASK 2: Write "The P31 Story for Funders"
+  - One reusable 1-page master narrative
+  - Opens with the human problem (neurodivergent families, isolation, executive dysfunction)
+  - States the solution (sovereign assistive tech — not SaaS-dependent, not surveillance-based)
+  - Grounds in Will's lived experience (AuDHD, DoD civilian, single father)
+  - Cites VERIFIED infrastructure numbers (6 Pages, 8+ Workers, 95 tests, 22 Zenodo papers)
+  - Modular — front-loaded thesis with stackable detail sections for each grant
+  - Uses ONLY verified EIN 42-1888158
+  - Masters the "ASSUMED RISK" language for funders: this is pre-market, general wellness, not FDA-regulated
+
+TASK 3: 501(c)(3) narrative update
+  - The operator received 501(c)(3) determination May 4, 2026
+  - Find every grant doc, web page, and proposal that says "pending" or "not yet filed"
+  - Produce a list of files + line numbers that need updating
+  - Write the replacement paragraph for each context (grant cover letter, web footer, etc.)
+
+── HALLUCINATION PROTOCOL (NON-NEGOTIABLE) ────────────────────────────────────
+
+If you are unsure about ANY fact, you MUST say "I need the operator to verify X" — do NOT guess.
+If a number contradicts the GROUND TRUTH table above, STOP and flag it.
+Never use the number 413 for tests — current count is 95.
+Never cite SX1262 above ~170 dB.
+Never claim SE050 supports PQC.
+Never add FDA classification or CFR numbers.
+Never use children's full names.
+
+── OUTPUT FORMAT ──────────────────────────────────────────────────────────────
+
+Return:
+1. Three proposal reviews (one per proposal) with sections: Narrative Score, Gaps, Required Fixes, Suggested Rewrites
+2. "The P31 Story for Funders" — complete 1-pager
+3. 501(c)(3) update list — files + line numbers + replacement text for each context
+4. Open questions for the operator (if any remain after your review)
+
+═══ EXECUTE NOW. All source material is inline above or in your conversation history.
+══════════════════════════════════════════════════════════════════════════════════

@@ -1,0 +1,15 @@
+{
+  "version": "1.0.0",
+  "inferred": true,
+  "project": "phos-forge",
+  "project_dir": "phos-forge",
+  "base": "apps/phos-forge",
+  "framework": "unknown",
+  "patterns": [
+    {
+      "type": "config",
+      "glob": "*.{ts,mjs,js}",
+      "dest": "{base}/{basename}.{ext}"
+    }
+  ]
+}

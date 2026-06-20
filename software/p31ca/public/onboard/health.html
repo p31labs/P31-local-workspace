@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Onboard Health</title>
+</head>
+<body>
+<script>
+(function() {
+  var state = {};
+  try {
+    var raw = localStorage.getItem('p31:onboard');
+    if (raw) state = JSON.parse(raw);
+  } catch(e) {}
+  state._status = 'ok';
+  state._timestamp = new Date().toISOString();
+  document.body.textContent = JSON.stringify(state, null, 2);
+})();
+</script>
+<noscript>
+<pre>{"_status":"ok","_note":"JavaScript disabled — state unavailable","_timestamp":"__STATIC__"}</pre>
+</noscript>
+</body>
+</html>

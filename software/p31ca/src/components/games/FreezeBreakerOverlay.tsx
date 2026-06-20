@@ -1,47 +1,26 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 
 interface FreezeBreakerOverlayProps {
   onComplete?: () => void;
-  thresholdTime?: number; // seconds to hold
+  thresholdTime?: number; // seconds to hold (base time)
+  spoonLevel?: number; // 0-12
 }
 
-/**
- * FreezeBreakerOverlay: Wave Function Collapse mechanic.
- * Full-screen overlay appears during executive freeze.
- * User holds spacebar → rising sine tone → snap → crystal alignment.
- */
-export function FreezeBreakerOverlay({ onComplete, thresholdTime = 3 }: FreezeBreakerOverlayProps) {
+export function FreezeBreakerOverlay({ onComplete, thresholdTime = 3, spoonLevel = 4 }: FreezeBreakerOverlayProps) {
   const [active, setActive] = useState(false);
   const [progress, setProgress] = useState(0);
   const [soundPlaying, setSoundPlaying] = useState(false);
   const startTime = useRef<number | null>(null);
   const audioCtx = useRef<AudioContext | null>(null);
 
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.code === 'Space' && !active && !e.repeat) {
-        startFreezeBreak();
-      }
-    };
-    const handleKeyUp = (e: KeyboardEvent) => {
-      if (e.code === 'Space' && active) {
-        cancelFreezeBreak();
-      }
-    };
-    const handleCustomTrigger = () => {
-      if (!active) startFreezeBreak();
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    window.addEventListener('keyup', handleKeyUp);
-    window.addEventListener('p31:triggerFreezeBreak', handleCustomTrigger);
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-      window.removeEventListener('keyup', handleKeyUp);
-      window.removeEventListener('p31:triggerFreezeBreak', handleCustomTrigger);
-    };
-  }, [active]);
+  // Calculate actual threshold time based on spoon level: lower spoons -> more time to break freeze
+  const actualThresholdTime = useCallback(() => {
+    const level = Math.max(0, Math.min(12, spoonLevel ?? 4));
+    // At spoon 0: thresholdTime * 2, at spoon 12: thresholdTime * 1
+    return thresholdTime * (2 - level / 12);
+  }, [thresholdTime, spoonLevel]);
 
-  const startFreezeBreak = () => {
+  const startFreezeBreak = useCallback(() => {
     setActive(true);
     setProgress(0);
     startTime.current = performance.now();
@@ -50,9 +29,9 @@ export function FreezeBreakerOverlay({ onComplete, thresholdTime = 3 }: FreezeBr
       audioCtx.current = new AudioContext();
     }
     playRisingTone();
-  };
+  }, []);
 
-  const playRisingTone = () => {
+  const playRisingTone = useCallback(() => {
     if (!audioCtx.current) return;
     const ctx = audioCtx.current;
     const osc = ctx.createOscillator();
@@ -61,30 +40,31 @@ export function FreezeBreakerOverlay({ onComplete, thresholdTime = 3 }: FreezeBr
     gain.connect(ctx.destination);
     osc.type = 'sine';
     osc.frequency.setValueAtTime(200, ctx.currentTime);
-    osc.frequency.linearRampToValueAtTime(880, ctx.currentTime + thresholdTime);
+    // Ramp over the actual threshold time
+    osc.frequency.linearRampToValueAtTime(880, ctx.currentTime + actualThresholdTime());
     gain.gain.setValueAtTime(0.15, ctx.currentTime);
-    gain.gain.linearRampToValueAtTime(0.3, ctx.currentTime + thresholdTime * 0.8);
-    gain.gain.linearRampToValueAtTime(0, ctx.currentTime + thresholdTime);
+    gain.gain.linearRampToValueAtTime(0.3, ctx.currentTime + actualThresholdTime() * 0.8);
+    gain.gain.linearRampToValueAtTime(0, ctx.currentTime + actualThresholdTime());
     osc.start();
     setSoundPlaying(true);
-    osc.stop(ctx.currentTime + thresholdTime);
-  };
+    osc.stop(ctx.currentTime + actualThresholdTime());
+  }, [actualThresholdTime]);
 
-  const cancelFreezeBreak = () => {
+  const cancelFreezeBreak = useCallback(() => {
     setActive(false);
     setProgress(0);
     startTime.current = null;
     if (audioCtx.current) {
       audioCtx.current.suspend();
     }
-  };
+  }, []);
 
   useEffect(() => {
     if (!active) return;
     const frame = requestAnimationFrame(function tick() {
       if (startTime.current === null) return;
       const elapsed = (performance.now() - startTime.current) / 1000;
-      const p = Math.min(elapsed / thresholdTime, 1);
+      const p = Math.min(elapsed / actualThresholdTime(), 1);
       setProgress(p);
       if (p >= 1) {
         // Freeze breaker complete
@@ -102,7 +82,7 @@ export function FreezeBreakerOverlay({ onComplete, thresholdTime = 3 }: FreezeBr
       }
     });
     return () => cancelAnimationFrame(frame);
-  }, [active, thresholdTime, onComplete]);
+  }, [active, onComplete, actualThresholdTime]);
 
   if (!active) return null;
 
@@ -161,5 +141,3 @@ export function FreezeBreakerOverlay({ onComplete, thresholdTime = 3 }: FreezeBr
     </div>
   );
 }
-
-export default FreezeBreakerOverlay;

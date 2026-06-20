@@ -1,0 +1,202 @@
+shelf:
+  phos:
+    - version: "2.3.0-gold"
+      built: "2026-06-18T00:00:00Z"
+      health_score: 0.95
+      voltage_report: "0.32 (calm)"
+      oqe_pass: true
+      wcd06_signed: true
+      alignment_gate: "pass"
+      status: "READY_DEPLOY"
+      description: "Production gold master. Calm voltage, zero OQE violations."
+      metadata:
+        repo: "andromeda/phos"
+        last_tested: "2026-06-18T00:00:00Z"
+        test_count: 85
+        test_files: 12
+  p31-safe-router:
+    - version: "1.2.5-hotfix"
+      built: "2026-06-18T00:00:00Z"
+      health_score: 1.0
+      voltage_report: "0.22 (nominal)"
+      oqe_pass: true
+      wcd06_signed: true
+      alignment_gate: "pass"
+      status: "CURRENT_PROD"
+      description: "Routing layer. All invariants green. Active production."
+      metadata:
+        repo: "p31-cortex/p31-safe-router"
+        last_tested: "2026-06-18T00:00:00Z"
+  affective-chemistry:
+    - version: "1.0.1-aligned"
+      built: "2026-06-18T00:00:00Z"
+      health_score: 0.94
+      voltage_report: "0.38 (stable)"
+      oqe_pass: true
+      wcd06_signed: true
+      alignment_gate: "pass"
+      status: "READY_DEPLOY"
+      description: "Voltage engine recalibrated. Emotional kinematics stable."
+      metadata:
+        repo: "p31-cortex/affective-chemistry"
+        last_tested: "2026-06-18T00:00:00Z"
+        calibration_version: "v1"
+  spoon-monitor:
+    - version: "1.0.2-captain"
+      built: "2026-06-18T00:00:00Z"
+      health_score: 0.92
+      oqe_pass: true
+      wcd06_signed: true
+      alignment_gate: "pass"
+      status: "READY_DEPLOY"
+      description: " Spoon state monitor. Captain mode. RDW cleared."
+      metadata:
+        repo: "p31-cortex/spoon-monitor"
+        last_tested: "2026-06-18T00:00:00Z"
+  bonding:
+    - version: "v20260618-181428-refurbished"
+      built: "2026-06-18T22:14:36Z"
+      health_score: 0.95
+      voltage_report: "0.35 (calm)"
+      oqe_pass: true
+      wcd06_signed: true
+      alignment_gate: pass
+      status: "READY_DEPLOY"
+      description: "Ready replacement — READY_DEPLOY"
+      metadata:
+        yardmaster_version: "0.1.0"
+    - version: "v20260618-131437-refurbished"
+      built: "2026-06-18T17:14:44Z"
+      health_score: 0.95
+      voltage_report: "0.35 (calm)"
+      oqe_pass: true
+      wcd06_signed: true
+      alignment_gate: pass
+      status: "CURRENT_PROD"
+      description: "Live refurbished deployment"
+      metadata:
+        yardmaster_version: "0.1.0"
+        deployed_at: "2026-06-18T17:30:00Z"
+    - version: "1.0.0-base"
+      built: "2026-06-18T00:00:00Z"
+      health_score: 0.90
+      voltage_report: "0.45 (nominal)"
+      oqe_pass: true
+      wcd06_signed: true
+      alignment_gate: "pass"
+      status: "READY_DEPLOY"
+      description: "Base throw. Bonding game layer. 424 tests / 32 suites verified."
+      metadata:
+        repo: "bonding"
+        last_tested: "2026-06-18T00:00:00Z"
+        test_count: 424
+        test_suites: 32
+  bonding-server:
+    - version: "0.1.0"
+      built: "2026-06-18T00:00:00Z"
+      health_score: 0.95
+      oqe_pass: true
+      wcd06_signed: true
+      alignment_gate: "pass"
+      status: "CURRENT_PROD"
+      description: "Express + Socket.io backend, PostGIS, health endpoint returns 200"
+      metadata:
+        repo: "bonding/apps/server"
+        url: "https://bonding-server.onrender.com"
+        last_tested: "2026-06-19T00:00:00Z"
+lenses:
+  spaceship-earth:
+    url: "https://d1264dfb.spaceship-earth.pages.dev"
+    health_endpoint: "/"
+    type: cloudflare-pages
+    status: "REGISTERED"
+    last_ok: null
+  p31ca:
+    url: "https://856f9476.p31ca.pages.dev"
+    health_endpoint: "/onboard/health"
+    type: cloudflare-pages
+    status: "REGISTERED"
+    last_ok: null
+  phos:
+    url: "https://5bce59d0.phos-btn.pages.dev"
+    health_endpoint: "/"
+    type: cloudflare-pages
+    status: "REGISTERED"
+    last_ok: null
+  willow:
+    url: "https://615b6425.willow-a23.pages.dev"
+    health_endpoint: "/"
+    type: cloudflare-pages
+    status: "REGISTERED"
+    last_ok: null
+  bonding-meatspace:
+    url: "https://bonding-meatspace.pages.dev"
+    health_endpoint: "/"
+    type: cloudflare-pages
+    status: "REGISTERED"
+    last_ok: null
+
+money_streams:
+  bounty-hunter:
+    script: "scripts/bounty-hunter.sh"
+    interval: "2h"
+    log: "logs/bounty-findings.json"
+    status: "STUB"
+  package-assets:
+    script: "scripts/package-assets.sh"
+    interval: "1h"
+    log: "logs/package-assets.log"
+    status: "STUB"
+  audit-crawler:
+    script: "scripts/audit-crawler.sh"
+    interval: "1h"
+    log: "logs/audit-leads.json"
+    status: "STUB"
+  publish-action:
+    script: "scripts/publish-action.sh"
+    interval: "1h"
+    log: "logs/action-publish.log"
+    status: "STUB"
+  post-sponsorships:
+    script: "scripts/post-sponsorships.sh"
+    interval: "2h"
+    log: "logs/outreach.log"
+    status: "STUB"
+
+onboarding_portal:
+  url: "https://856f9476.p31ca.pages.dev/onboard/"
+  health_endpoint: "/onboard/health"
+  state_file: "state/onboard-state.json"
+  status: "REGISTERED"
+  last_ok: null
+
+tools:
+  weave:
+    script: "weave-machine/weave.py"
+    description: "Content fusion engine — ingests, diffs, and zipper-merges documents"
+    version: "1.0"
+    status: "OPERATIONAL"
+    last_ok: "2026-06-19T01:10:00Z"
+  quantum-8ball:
+    script: "scripts/quantum-8ball.py"
+    description: "Decision engine — weighted priority ranking with parallel alternatives"
+    version: "1.0"
+    status: "OPERATIONAL"
+    last_ok: "2026-06-19T01:10:00Z"
+  nexus:
+    script: "scripts/nexus-daemon.py"
+    description: "Cross-domain state entanglement engine"
+    version: "1.0"
+    status: "OPERATIONAL"
+    last_ok: "2026-06-19T01:07:55Z"
+
+meta:
+  last_audit: "2026-06-19T00:55:00Z"
+  yardmaster_version: "0.1.0"
+  inventory_scheme: "semver-refurbish + sovereign-mesh-v1"
+  integrated_domains:
+    - services
+    - lenses
+    - money_streams
+    - onboarding_portal
+    - tools

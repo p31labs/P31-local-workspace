@@ -2,6 +2,7 @@ import { useRef, useMemo, useEffect } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import { useFBO } from '@react-three/drei';
+import { emit } from '../lib/arcade-core/eventBus.js';
 
 const SIM_RES = 256;
 
@@ -9,7 +10,7 @@ const sharedVertex = `
   varying vec2 vUv;
   void main() {
     vUv = uv;
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    gl_Position = projectionModelViewMatrix * vec4(position, 1.0);
   }
 `;
 
@@ -27,239 +28,132 @@ const simFragment = `
   void main() {
     vec2 pixel = 1.0 / uResolution;
     vec2 uv = vUv;
+    vec4 prev = texture2D(uPrev, uv);
+    vec4 prevLeft = texture2D(uPrev, uv - vec2(pixel.x, 0.0));
+    vec4 prevRight = texture2D(uPrev, uv + vec2(pixel.x, 0.0));
+    vec4 prevTop = texture2D(uPrev, uv - vec2(0.0, pixel.y));
+    vec4 prevBottom = texture2D(uPrev, uv + vec2(0.0, pixel.y));
+    float laplacian = 
+      prevLeft.r + prevRight.r + prevTop.r + prevBottom.r - 4.0 * prev.r;
+    float newR = prev.r + (Dt * (laplacian - prev.r * prev.g + uFeed * (1.0 - prev.r)));
+    float newG = prev.g + (Dt * (laplacian + prev.r * prev.g - (uKill + uFeed) * prev.g));
+    newR = clamp(newR, 0.0, 1.0);
+    newG = clamp(newG, 0.0, 1.0);
+    gl_FragColor = vec4(newR, newG, 0.0, 1.0);
+  }
+`;
 
-    // Initial condition: u=1, v=0 except center seed
-    if (uInit > 0.5) {
-      float u = 1.0;
-      float v = 0.0;
-      vec2 centered = uv - 0.5;
-      float d = length(centered);
-      if (d < 0.1) v = 1.0;
-      gl_FragColor = vec4(u, v, 0.0, 1.0);
-      return;
-    }
+interface AbyssalNodeSceneProps {
+  spoonLevel?: number; // 0-12
+}
 
-    vec4 center = texture2D(uPrev, uv);
-    float u = center.r;
-    float v = center.g;
+export function AbyssalNodeScene({ spoonLevel = 4 }: AbyssalNodeSceneProps) {
+  const ref = useRef<null | THREE.Mesh>(null);
+  const { prev, curr } = useFBO(SIM_RES, SIM_RES, THREE.RGBAFormat);
+  const { gl } = useThree();
 
-    // 4-neighbor Laplacian (wrap not needed; clamp edges by clamping UVs in neighbors? We'll use clampToEdge)
-    float uL = texture2D(uPrev, uv - vec2(pixel.x, 0.0)).r;
-    float uR = texture2D(uPrev, uv + vec2(pixel.x, 0.0)).r;
-    float uU = texture2D(uPrev, uv + vec2(0.0, pixel.y)).r;
-    float uD = texture2D(uPrev, uv - vec2(0.0, pixel.y)).r;
-    float vL = texture2D(uPrev, uv - vec2(pixel.x, 0.0)).g;
-    float vR = texture2D(uPrev, uv + vec2(pixel.x, 0.0)).g;
-    float vU = texture2D(uPrev, uv + vec2(0.0, pixel.y)).g;
-    float vD = texture2D(uPrev, uv - vec2(0.0, pixel.y)).g;
+  // Base feed and kill rates
+  const baseFeed = 0.055;
+  const baseKill = 0.062;
 
-    float lapU = (uL + uR + uU + uD - 4.0 * u) / (pixel.x * pixel.x);
-    float lapV = (vL + vR + vU + vD - 4.0 * v) / (pixel.x * pixel.x);
+  // Adjust feed and kill based on spoon level: lower spoons -> less feed, more kill
+  const feed = useMemo(() => {
+    const level = Math.max(0, Math.min(12, spoonLevel ?? 4));
+    // At spoon 0: feed = baseFeed * 0.5, at spoon 12: feed = baseFeed * 1.5
+    return baseFeed * (0.5 + level / 24);
+  }, [spoonLevel]);
 
-    // Nutrient burst adds V locally
-    float dvBurst = 0.0;
-    if (uNutrientBurst > 0.0) {
-      vec2 centered = uv - 0.5;
-      float d = length(centered);
-      float radius = 0.2;
-      if (d < radius) {
-        dvBurst = 0.5 * uNutrientBurst;
+  const kill = useMemo(() => {
+    const level = Math.max(0, Math.min(12, spoonLevel ?? 4));
+    // At spoon 0: kill = baseKill * 1.5, at spoon 12: kill = baseKill * 0.5
+    return baseKill * (1.5 - level / 24);
+  }, [spoonLevel]);
+
+  // Nutrient burst amount (base)
+  const nutrientBurst = 0.1;
+  // Initial amount
+  const init = 0.05;
+
+  useEffect(() => {
+    // Initialize with a small amount of nutrients in the center
+    curr.gl.bindTexture(gl.TEXTURE_2D, curr.texture);
+    curr.gl.texSubImage2D(
+      gl.TEXTURE_2D,
+      0,
+      Math.floor(SIM_RES / 2) - 5,
+      Math.floor(SIM_RES / 2) - 5,
+      10,
+      10,
+      gl.RGBA,
+      gl.FLOAT,
+      new Float32Array(10 * 10 * 4).fill(0).map((v, i) => i % 4 === 0 ? init : 0)
+    );
+    curr.gl.bindTexture(gl.TEXTURE_2D, null);
+  }, []);
+
+  // Listen for nutrient burst events from the shell (e.g., when user logs a meal)
+  useEffect(() => {
+    const handleNutrientBurst = () => {
+      // Add a burst of nutrients at a random location
+      curr.gl.bindTexture(gl.TEXTURE_2D, curr.texture);
+      const x = Math.floor(Math.random() * (SIM_RES - 20));
+      const y = Math.floor(Math.random() * (SIM_RES - 20));
+      const burst = new Float32Array(20 * 20 * 4);
+      for (let i = 0; i < 20 * 20; i++) {
+        burst[i * 4] = nutrientBurst; // R channel
       }
-    }
-
-    float uvv = u * v * v;
-    float feed = uFeed;
-    float du = 1.0 * lapU - uvv + feed * (1.0 - u);
-    float dv = 0.5 * lapV + uvv - (feed + uKill) * v + dvBurst;
-
-    float newU = clamp(u + du * uDt, 0.0, 1.0);
-    float newV = clamp(v + dv * uDt, 0.0, 1.0);
-
-    gl_FragColor = vec4(newU, newV, 0.0, 1.0);
-  }
-`;
-
-const displayFragment = `
-  precision mediump float;
-  uniform sampler2D uState;
-  uniform float uTime;
-  uniform float uNutrientBurst;
-  varying vec2 vUv;
-
-  void main() {
-    vec4 state = texture2D(uState, vUv);
-    float v = state.g;
-
-    vec3 deep   = vec3(0.04, 0.02, 0.08);
-    vec3 violet = vec3(0.55, 0.33, 0.70);
-    vec3 cyan   = vec3(0.2,  0.9,  0.8);
-
-    float intensity = v;
-    vec3 col = mix(deep, violet, smoothstep(0.0, 0.5, intensity));
-    col = mix(col, cyan, smoothstep(0.5, 1.0, intensity) * (0.5 + uNutrientBurst * 0.5));
-
-    gl_FragColor = vec4(col, 1.0);
-  }
-`;
-
-export function AbyssalNodeScene() {
-  const { gl, size } = useThree();
-  const burstValue = useRef(0.0);
-
-  // Simulation scene (offscreen)
-  const simScene = useMemo(() => {
-    const scene = new THREE.Scene();
-    const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
-    const geometry = new THREE.PlaneGeometry(2, 2);
-    const material = new THREE.ShaderMaterial({
-      uniforms: {
-        uPrev: { value: null as unknown as THREE.Texture },
-        uResolution: { value: new THREE.Vector2(SIM_RES, SIM_RES) },
-        uDt: { value: 1.0 },
-        uFeed: { value: 0.055 },
-        uKill: { value: 0.062 },
-        uNutrientBurst: { value: 0.0 },
-        uInit: { value: 0.0 },
-      },
-      vertexShader: sharedVertex,
-      fragmentShader: simFragment,
-    });
-    const mesh = new THREE.Mesh(geometry, material);
-    scene.add(mesh);
-    return { scene, camera, material };
-  }, []);
-
-   // Ping-pong FBOs
-   const fboA = useFBO(SIM_RES, SIM_RES, {
-     minFilter: THREE.NearestFilter,
-     magFilter: THREE.NearestFilter,
-     format: THREE.RGBAFormat,
-     type: THREE.FloatType,
-     depthBuffer: false,
-     stencilBuffer: false,
-     wrapS: THREE.ClampToEdgeWrapping,
-     wrapT: THREE.ClampToEdgeWrapping,
-   });
-   const fboB = useFBO(SIM_RES, SIM_RES, {
-     minFilter: THREE.NearestFilter,
-     magFilter: THREE.NearestFilter,
-     format: THREE.RGBAFormat,
-     type: THREE.FloatType,
-     depthBuffer: false,
-     stencilBuffer: false,
-     wrapS: THREE.ClampToEdgeWrapping,
-     wrapT: THREE.ClampToEdgeWrapping,
-   });
-  const readFBO = useRef(fboA);
-  const writeFBO = useRef(fboB);
-  const initialized = useRef(false);
-
-  // Nutrient burst event listener
-  useEffect(() => {
-    const onBurst = () => {
-      burstValue.current = 1.0;
+      curr.gl.texSubImage2D(
+        gl.TEXTURE_2D,
+        0,
+        x, y, 20, 20,
+        gl.RGBA,
+        gl.FLOAT,
+        burst
+      );
+      curr.gl.bindTexture(gl.TEXTURE_2D, null);
     };
-    window.addEventListener('p31:nutrientBurst', onBurst);
-    return () => window.removeEventListener('p31:nutrientBurst', onBurst);
+    window.addEventListener('p31:nutrientBurst', handleNutrientBurst);
+    return () => window.removeEventListener('p31:nutrientBurst', handleNutrientBurst);
   }, []);
-
-  // Cleanup on unmount
-  useEffect(() => {
-    return () => {
-      // Dispose FBOs
-      fboA.texture?.dispose();
-      fboB.texture?.dispose();
-      // Dispose simulation scene resources
-      const simMat = simScene.material as THREE.ShaderMaterial;
-      simMat.uniforms.uPrev.value?.dispose();
-      simMat.dispose();
-      (simScene.scene.children[0] as THREE.Mesh).geometry.dispose();
-      // Dispose display resources
-      displayMaterial.uniforms.uState.value?.dispose();
-      displayMaterial.dispose();
-      displayGeometry.dispose();
-    };
-  }, []);
-
-  // Display material (main canvas)
-  const displayGeometry = useMemo(() => new THREE.PlaneGeometry(8, 8), []);
-  const displayMaterial = useMemo(() => new THREE.ShaderMaterial({
-    uniforms: {
-      uState: { value: null as unknown as THREE.Texture },
-      uTime: { value: 0.0 },
-      uNutrientBurst: { value: 0.0 },
-    },
-    vertexShader: sharedVertex,
-    fragmentShader: displayFragment,
-    depthWrite: false,
-    depthTest: false,
-  }), []);
 
   useFrame(() => {
-    const simMat = simScene.material as THREE.ShaderMaterial;
-    const dispMat = displayMaterial as THREE.ShaderMaterial;
+    // Run simulation step
+    prev.gl.bindTexture(gl.TEXTURE_2D, prev.texture);
+    curr.gl.bindTexture(gl.TEXTURE_2D, curr.texture);
+    curr.gl.useMaterial(
+      new THREE.ShaderMaterial({
+        vertexShader: sharedVertex,
+        fragmentShader: simFragment,
+        uniforms: {
+          uPrev: { value: prev.texture },
+          uResolution: { value: new THREE.Vector2(SIM_RES, SIM_RES) },
+          uDt: { value: 1.0 },
+          uFeed: { value: feed },
+          uKill: { value: kill },
+          uNutrientBurst: { value: nutrientBurst },
+          uInit: { value: init },
+        },
+      })
+    );
+    // Render current state to prev (ping-pong)
+    const temp = prev;
+    prev.current = curr;
+    curr.current = temp;
+    curr.gl.bindTexture(gl.TEXTURE_2D, null);
+    prev.gl.bindTexture(gl.TEXTURE_2D, null);
+  });
 
-    // Update display uniforms
-    dispMat.uniforms.uTime.value = performance.now() / 1000;
-    dispMat.uniforms.uNutrientBurst.value = burstValue.current;
-    dispMat.uniforms.uState.value = readFBO.current.texture;
-
-    // Initialize simulation on first frame
-    if (!initialized.current) {
-      simMat.uniforms.uInit.value = 1.0;
-       // Render initial state to readFBO
-       gl.viewport.x = 0;
-       gl.viewport.y = 0;
-       gl.viewport.z = SIM_RES;
-       gl.viewport.w = SIM_RES;
-       gl.setScissor(0, 0, SIM_RES, SIM_RES);
-       gl.setScissorTest(true);
-
-       gl.viewport(0, 0, SIM_RES, SIM_RES);
-       gl.scissor(0, 0, SIM_RES, SIM_RES);
-       gl.setRenderTarget(readFBO.current);
-       gl.render(simScene.scene, simScene.camera);
-       gl.setRenderTarget(null);
-       // Restore viewport to canvas size
-       gl.viewport(0, 0, size.width, size.height);
-       gl.scissor(0, 0, size.width, size.height);
-      initialized.current = true;
-      return;
-    }
-
-     // Simulation step: render to writeFBO
-     simMat.uniforms.uPrev.value = readFBO.current.texture;
-     simMat.uniforms.uNutrientBurst.value = burstValue.current;
-     simMat.uniforms.uInit.value = 0.0;
-
-     // Set viewport and scissor for FBO render
-     gl.viewport.x = 0;
-     gl.viewport.y = 0;
-     gl.viewport.z = SIM_RES;
-     gl.viewport.w = SIM_RES;
-     gl.setScissor(0, 0, SIM_RES, SIM_RES);
-     gl.setScissorTest(true);
-
-     gl.viewport(0, 0, SIM_RES, SIM_RES);
-     gl.scissor(0, 0, SIM_RES, SIM_RES);
-     gl.setRenderTarget(writeFBO.current);
-     gl.render(simScene.scene, simScene.camera);
-     gl.setRenderTarget(null);
-     gl.viewport(0, 0, size.width, size.height);
-     gl.scissor(0, 0, size.width, size.height);
-
-    // Swap buffers
-    const temp = readFBO.current;
-    readFBO.current = writeFBO.current;
-    writeFBO.current = temp;
-
-    // Decay burst
-    if (burstValue.current > 0) {
-      burstValue.current = Math.max(0, burstValue.current - 0.02); // ~1s decay
+  // Render the current state to screen
+  useFrame(() => {
+    if (ref.current) {
+      ref.current.material.map = curr.texture;
     }
   });
 
-  return <mesh geometry={displayGeometry} material={displayMaterial} />;
+  return (
+    <mesh ref={ref} rotation={[0, 0, 0]} scale={[10, 10, 10]}>
+      <planeGeometry args={[1, 1]} />
+      <meshStandardMaterial color={0x88cc88} />
+    </mesh>
+  );
 }
-
-export default AbyssalNodeScene;

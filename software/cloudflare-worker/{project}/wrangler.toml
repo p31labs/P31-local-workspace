@@ -1,0 +1,14 @@
+# P31 Bouncer — gate agent + public secrets index (names only)
+name = "p31-bouncer"
+main = "src/index.js"
+compatibility_date = "2026-04-15"
+
+[vars]
+# Comma-separated origins for CORS, or * 
+ALLOWED_ORIGINS = "*"
+
+# Secret (required for GET /v1/gate):
+#   npx wrangler secret put BOUNCER_GATE_TOKEN
+
+[observability]
+enabled = true

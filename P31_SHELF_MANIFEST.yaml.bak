@@ -1,0 +1,85 @@
+shelf:
+  phos:
+    - version: "2.3.0-gold"
+      built: "2026-06-18T00:00:00Z"
+      health_score: 0.95
+      voltage_report: "0.32 (calm)"
+      oqe_pass: true
+      wcd06_signed: true
+      alignment_gate: "pass"
+      status: "READY_DEPLOY"
+      description: "Production gold master. Calm voltage, zero OQE violations."
+      metadata:
+        repo: "andromeda/phos"
+        last_tested: "2026-06-18T00:00:00Z"
+        test_count: 85
+        test_files: 12
+  p31-safe-router:
+    - version: "1.2.5-hotfix"
+      built: "2026-06-18T00:00:00Z"
+      health_score: 1.0
+      voltage_report: "0.22 (nominal)"
+      oqe_pass: true
+      wcd06_signed: true
+      alignment_gate: "pass"
+      status: "CURRENT_PROD"
+      description: "Routing layer. All invariants green. Active production."
+      metadata:
+        repo: "p31-cortex/p31-safe-router"
+        last_tested: "2026-06-18T00:00:00Z"
+  affective-chemistry:
+    - version: "1.0.1-aligned"
+      built: "2026-06-18T00:00:00Z"
+      health_score: 0.94
+      voltage_report: "0.38 (stable)"
+      oqe_pass: true
+      wcd06_signed: true
+      alignment_gate: "pass"
+      status: "READY_DEPLOY"
+      description: "Voltage engine recalibrated. Emotional kinematics stable."
+      metadata:
+        repo: "p31-cortex/affective-chemistry"
+        last_tested: "2026-06-18T00:00:00Z"
+        calibration_version: "v1"
+  spoon-monitor:
+    - version: "1.0.2-captain"
+      built: "2026-06-18T00:00:00Z"
+      health_score: 0.92
+      oqe_pass: true
+      wcd06_signed: true
+      alignment_gate: "pass"
+      status: "READY_DEPLOY"
+      description: " Spoon state monitor. Captain mode. RDW cleared."
+      metadata:
+        repo: "p31-cortex/spoon-monitor"
+        last_tested: "2026-06-18T00:00:00Z"
+  bonding:
+    - version: "v20260618-131437-refurbished"
+      built: "2026-06-18T17:14:44Z"
+      health_score: 0.95
+      voltage_report: "0.35 (calm)"
+      oqe_pass: true
+      wcd06_signed: true
+      alignment_gate: pass
+      status: "READY_DEPLOY"
+      description: "Ready replacement — READY_DEPLOY"
+      metadata:
+        yardmaster_version: "0.1.0"
+    - version: "1.0.0-base"
+      built: "2026-06-18T00:00:00Z"
+      health_score: 0.90
+      voltage_report: "0.45 (nominal)"
+      oqe_pass: true
+      wcd06_signed: true
+      alignment_gate: "pass"
+      status: "READY_DEPLOY"
+      description: "Base throw. Bonding game layer. 424 tests / 32 suites verified."
+      metadata:
+        repo: "bonding"
+        last_tested: "2026-06-18T00:00:00Z"
+        test_count: 424
+        test_suites: 32
+meta:
+  last_audit: "2026-06-18T17:16:13Z"
+  yardmaster_version: "0.1.0"
+  inventory_scheme: "semver-refurbish"

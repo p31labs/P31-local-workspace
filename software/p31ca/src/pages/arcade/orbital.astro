@@ -1,5 +1,5 @@
 ---
-// Orbital Drift — Arcade routing page
+// Orbital Drift — Classic game route
 import ArcadeShell from '../../layouts/ArcadeShell.astro';
 ---
 
@@ -7,232 +7,112 @@ import ArcadeShell from '../../layouts/ArcadeShell.astro';
   gameId="orbital"
   gameTitle="Orbital Drift"
   gameIcon="🪐"
+  showSelector={false}
+  fullscreen
 >
-  <div class="game-launcher">
-    <div class="launcher-content">
-      <div class="game-preview">
-        <div class="preview-icon">🪐</div>
-        <h1 class="pixel-title">ORBITAL DRIFT</h1>
-        <p class="game-desc">Gravity simulation sandbox</p>
-        <div class="tech-stack">
-          <span>n-body physics</span>
-          <span>Verlet integration</span>
-          <span>WebGL</span>
-          <span>PWA</span>
+  <div class="classic-game-mount" data-game="orbital">
+    <div class="classic-game-frame">
+      <div class="classic-game-placeholder" style="--game-accent: #8b7cc9;">
+        <div class="placeholder-icon">🪐</div>
+        <h2 class="placeholder-title">ORBITAL DRIFT</h2>
+        <p class="placeholder-desc">Gravity sandbox — n-body physics &amp; Verlet integration</p>
+        <div class="placeholder-actions">
+          <a
+            id="play-link"
+            href="https://p31-orbital-drift.pages.dev"
+            class="classic-play-btn"
+            target="_blank"
+            rel="noopener"
+            style="--btn-color: #8b7cc9;"
+          >
+            ▶ PLAY NOW
+          </a>
+          <button class="classic-score-btn" id="view-scores">🏆 HIGH SCORES</button>
+        </div>
+        <div class="placeholder-instructions">
+          <h3>How to Play</h3>
+          <ul>
+            <li>Place masses to orbit</li>
+            <li>Velocity affects trajectory</li>
+            <li>Collisions merge bodies</li>
+            <li>Lagrange points stable</li>
+          </ul>
         </div>
       </div>
-
-      <div class="launcher-actions">
-        <a
-          href="https://p31-orbital-drift.pages.dev"
-          class="play-btn"
-          target="_blank"
-          rel="noopener"
-        >
-          <span class="btn-icon">▶</span>
-          <span class="btn-text">PLAY NOW</span>
-        </a>
-
-        <button class="high-score-btn" id="view-scores">
-          <span>🏆 HIGH SCORES</span>
-        </button>
-      </div>
-
-      <div class="game-instructions">
-        <h3>How to Play</h3>
-        <ul>
-          <li>Place masses to orbit</li>
-          <li>Velocity affects trajectory</li>
-          <li>Collisions merge bodies</li>
-          <li>Lagrange points stable</li>
-        </ul>
-      </div>
     </div>
-
-    <a href="/arcade/" class="back-link">← Arcade Hub</a>
+    <div class="classic-hud">
+      <span class="classic-hud-label">N-BODY PHYSICS ACTIVE</span>
+      <span class="classic-hud-spoons" id="hud-spoons">🥄 4/12</span>
+    </div>
   </div>
 
-  <style>
-    .game-launcher {
-      min-height: calc(100vh - 48px);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 40px 20px;
-      background: linear-gradient(180deg, #0f1115 0%, #151520 100%);
-      position: relative;
-    }
+  <script is:inline>
+    (function() {
+      'use strict';
+      const SPOON_COLORS = {0:'#cc6247',1:'#cc6247',2:'#cda852',3:'#cda852',4:'#8b7cc9',5:'#8b7cc9',6:'#8b7cc9',7:'#8b7cc9',8:'#8b7cc9',9:'#8b7cc9',10:'#8b7cc9',11:'#8b7cc9',12:'#8b7cc9'};
 
-    .launcher-content {
-      max-width: 480px;
-      width: 100%;
-      text-align: center;
-    }
-
-    .game-preview {
-      margin-bottom: 40px;
-    }
-
-    .preview-icon {
-      font-size: 80px;
-      line-height: 1;
-      margin-bottom: 20px;
-      animation: bounce 2s infinite;
-    }
-
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
-    }
-
-    .pixel-title {
-      font-family: 'Press Start 2P', cursive;
-      font-size: 24px;
-      color: #8b7cc9;
-      margin: 0 0 16px;
-      letter-spacing: 0.1em;
-    }
-
-    .game-desc {
-      font-size: 16px;
-      color: rgba(232, 230, 227, 0.7);
-      margin: 0 0 24px;
-    }
-
-    .tech-stack {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 8px;
-    }
-
-    .tech-stack span {
-      font-size: 11px;
-      padding: 6px 12px;
-      background: rgba(139, 124, 201, 0.15);
-      border: 1px solid rgba(139, 124, 201, 0.3);
-      border-radius: 99px;
-      color: #8b7cc9;
-      font-family: 'JetBrains Mono', monospace;
-    }
-
-    .launcher-actions {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-bottom: 40px;
-    }
-
-    .play-btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      padding: 20px 40px;
-      background: #8b7cc9;
-      color: #0f1115;
-      text-decoration: none;
-      border-radius: 12px;
-      font-family: 'Press Start 2P', cursive;
-      font-size: 14px;
-      transition: all 0.3s;
-      box-shadow: 0 10px 30px rgba(139, 124, 201, 0.3);
-    }
-
-    .play-btn:hover {
-      transform: scale(1.05);
-      box-shadow: 0 15px 40px rgba(139, 124, 201, 0.5);
-    }
-
-    .btn-icon {
-      font-size: 18px;
-    }
-
-    .high-score-btn {
-      padding: 16px 32px;
-      background: transparent;
-      border: 2px solid rgba(205, 168, 82, 0.5);
-      border-radius: 12px;
-      color: #cda852;
-      font-family: 'Press Start 2P', cursive;
-      font-size: 10px;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-
-    .high-score-btn:hover {
-      background: rgba(205, 168, 82, 0.1);
-      border-color: #cda852;
-    }
-
-    .game-instructions {
-      text-align: left;
-      padding: 24px;
-      background: rgba(255, 255, 255, 0.03);
-      border-radius: 16px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-    }
-
-    .game-instructions h3 {
-      font-family: 'Press Start 2P', cursive;
-      font-size: 10px;
-      color: #8b7cc9;
-      margin: 0 0 16px;
-    }
-
-    .game-instructions ul {
-      margin: 0;
-      padding-left: 20px;
-      color: rgba(232, 230, 227, 0.7);
-      font-size: 14px;
-      line-height: 1.8;
-    }
-
-    .game-instructions li {
-      margin-bottom: 8px;
-    }
-
-    .back-link {
-      position: absolute;
-      bottom: 24px;
-      left: 24px;
-      color: rgba(232, 230, 227, 0.5);
-      text-decoration: none;
-      font-size: 13px;
-      font-family: 'JetBrains Mono', monospace;
-      transition: color 0.2s;
-    }
-
-    .back-link:hover {
-      color: #4db8a8;
-    }
-
-    @media (max-width: 480px) {
-      .pixel-title {
-        font-size: 18px;
+      // Update high score button
+      const scoresBtn = document.getElementById('view-scores');
+      if (scoresBtn) {
+        scoresBtn.addEventListener('click', async () => {
+          try {
+            const db = await import('../../lib/arcade-core/pglite/client.js');
+            const result = await (await db.getPGlite()).query(
+              `SELECT s.score, s.created_at, p.name
+               FROM arcade_high_scores s
+               JOIN arcade_players p ON s.player_id = p.id
+               WHERE s.game_id = (SELECT id FROM arcade_games WHERE slug = 'orbital')
+               ORDER BY s.score DESC LIMIT 10`
+            );
+            const rows = result.rows;
+            alert(rows.length === 0 ? 'No scores yet! Play to set a record.' : 'High Scores:\n' + rows.map((r, i) => `${i + 1}. ${r.score} - ${r.name}`).join('\n'));
+          } catch {
+            const scores = JSON.parse(localStorage.getItem('p31-arcade-highscores') || '{}');
+            const orbital = scores.orbital || [];
+            alert('High Scores:\n' + (orbital.length > 0 ? orbital.map((s, i) => `${i + 1}. ${s.score.toLocaleString()} - ${s.date}`).join('\n') : 'No scores yet!'));
+          }
+        });
       }
 
-      .preview-icon {
-        font-size: 60px;
+      // Update play link href when spoon level changes
+      const playLink = document.getElementById('play-link');
+      const hudSpoons = document.getElementById('hud-spoons');
+      function updatePlayLink(level) {
+        const lvl = Math.max(0, Math.min(12, level));
+        playLink.href = `https://p31-orbital-drift.pages.dev?spoon=${lvl}`;
+        hudSpoons.textContent = '🥄 ' + lvl + '/12';
+        hudSpoons.style.color = SPOON_COLORS[lvl] || '#8b7cc9';
       }
-
-      .play-btn {
-        padding: 16px 32px;
-        font-size: 12px;
-      }
-    }
-  </style>
-
-  <script>
-    // Load high scores from localStorage
-    const scoresBtn = document.getElementById('view-scores');
-    scoresBtn?.addEventListener('click', () => {
-      const scores = JSON.parse(localStorage.getItem('p31-arcade-highscores') || '{}');
-      const orbital = scores.orbital || [];
-      alert('High Scores:\n' + (orbital.length > 0
-        ? orbital.map((s, i) => `${i + 1}. ${s.score.toLocaleString()} - ${s.date}`).join('\n')
-        : 'No scores yet! Play to set a record.'));
-    });
+      // Initial call with default level 4
+      updatePlayLink(4);
+      // Listen for spoon changes
+      window.addEventListener('p31:spoon:changed', (e) => {
+        if (e.detail?.level !== undefined) {
+          updatePlayLink(e.detail.level);
+        }
+      };
+    })();
   </script>
+
+  <style is:inline>
+    :global(body) { background: #0f1115; overflow: hidden; }
+    .classic-game-mount { position: fixed; inset: 0; display: flex; flex-direction: column; }
+    .classic-game-frame { flex: 1; display: flex; align-items: center; justify-content: center; padding: 24px; margin-top: 52px; }
+    .classic-game-placeholder { max-width: 520px; width: 100%; text-align: center; padding: 48px 32px; background: rgba(255,255,255,0.03); border: 2px solid rgba(139,124,201,0.2); border-radius: 20px; }
+    .placeholder-icon { font-size: 72px; line-height: 1; margin-bottom: 20px; }
+    .placeholder-title { font-family: 'Press Start 2P', cursive; font-size: 20px; color: #8b7cc9; margin: 0 0 16px; letter-spacing: 0.1em; }
+    .placeholder-desc { font-size: 15px; color: rgba(232,230,227,0.65); margin: 0 0 32px; font-family: 'JetBrains Mono', monospace; line-height: 1.5; }
+    .placeholder-actions { display: flex; flex-direction: column; gap: 12px; margin-bottom: 36px; }
+    .classic-play-btn { display: flex; align-items: center; justify-center; gap: 12px; padding: 20px 40px; background: var(--btn-color, #8b7cc9); color: #0f1115; text-decoration: none; border-radius: 12px; font-family: 'Press Start 2P', cursive; font-size: 13px; font-weight: 700; transition: all 0.25s; box-shadow: 0 8px 28px rgba(139,124,201,0.3); }
+    .classic-play-btn:hover { transform: translateY(-3px) scale(1.03); box-shadow: 0 14px 36px rgba(139,124,201,0.5); }
+    .classic-score-btn { padding: 16px 32px; background: transparent; border: 2px solid rgba(205,168,82,0.4); border-radius: 12px; color: #cda852; font-family: 'Press Start 2P', cursive; font-size: 10px; font-weight: 700; cursor: pointer; transition: all 0.25s; }
+    .classic-score-btn:hover { background: rgba(205,168,82,0.08); border-color: #cda852; }
+    .placeholder-instructions { text-align: left; padding: 24px; background: rgba(255,255,255,0.03); border-radius: 16px; border: 1px solid rgba(255,255,255,0.08); }
+    .placeholder-instructions h3 { font-family: 'Press Start 2P', cursive; font-size: 9px; color: #8b7cc9; margin: 0 0 16px; }
+    .placeholder-instructions ul { margin: 0; padding-left: 20px; color: rgba(232,230,227,0.65); font-size: 14px; line-height: 1.8; }
+    .classic-hud { position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 14px; padding: 8px 18px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.08); border-radius: 99px; z-index: 20; backdrop-filter: blur(6px); }
+    .classic-hud-label { font-size: 9px; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.25em; text-transform: uppercase; color: rgba(232,230,227,0.4); }
+    .classic-hud-spoons { font-size: 13px; color: #8b7cc9; transition: color 0.4s; }
+    @media (max-width: 600px) { .classic-game-placeholder { padding: 32px 20px; } .placeholder-icon { font-size: 52px; } .placeholder-title { font-size: 15px; } .classic-play-btn { padding: 16px 28px; font-size: 11px; } }
+  </style>
 </ArcadeShell>

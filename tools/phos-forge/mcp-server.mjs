@@ -193,6 +193,40 @@ export default class PhosMCPServer extends EventEmitter {
         description: 'Show today\'s auto-generated session log (markdown).',
         inputSchema: { type: 'object', properties: {} },
       },
+      'brain-dump': {
+        description: 'Process a quantum brain dump: parse raw text, elaborate fragments, organize into themes, optionally deep research each theme via Jitterbug.',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            text: { type: 'string', description: 'Raw morning notes / stream of consciousness text' },
+            mode: { type: 'string', enum: ['quick', 'deep', 'full'], description: 'quick=elaborate+organize, deep=+Jitterbug research, full=+Cartographer+Tide' },
+            factor: { type: 'number', description: 'Jitterbug branch factor (default: 2, spoon-gated)' },
+            depth: { type: 'number', description: 'Jitterbug convergence depth (default: 1, spoon-gated)' },
+            file: { type: 'string', description: 'Read input from a file path instead of text' },
+          },
+          required: ['text'],
+        },
+      },
+      'brain-status': {
+        description: 'Show recent brain dump sessions and current processing state.',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            recent: { type: 'number', description: 'Number of recent sessions to show (default: 5)' },
+          },
+        },
+      },
+      'brain-diff': {
+        description: 'Compare two brain dump sessions — shared themes, new themes, dropped themes, task count delta.',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            session1: { type: 'string', description: 'First session ID (e.g. 98537f9f)' },
+            session2: { type: 'string', description: 'Second session ID' },
+          },
+          required: ['session1', 'session2'],
+        },
+      },
     };
   }
 
@@ -480,6 +514,41 @@ export default class PhosMCPServer extends EventEmitter {
         const content = readLog();
         if (!content) return { content: [{ type: 'text', text: 'No log for today yet.' }] };
         return { content: [{ type: 'text', text: content }] };
+      }
+      case 'brain-dump': {
+        const { processBrainDump } = await import('./brain.mjs');
+        let text = args?.text;
+        if (args?.file) {
+          const { readFileSync, existsSync } = await import('fs');
+          if (!existsSync(args.file)) throw new Error(`File not found: ${args.file}`);
+          text = readFileSync(args.file, 'utf-8');
+        }
+        if (!text) throw new Error('Missing required param: text (or provide file path)');
+        const mode = args?.mode || 'quick';
+        const factor = args?.factor || 2;
+        const depth = args?.depth || 1;
+        const result = await processBrainDump(text, { mode, factor, depth });
+        if (result.error) throw new Error(result.error);
+        return { content: [{ type: 'text', text: result.output }] };
+      }
+      case 'brain-status': {
+        const { getSessions } = await import('./brain.mjs');
+        const recent = getSessions(args?.recent || 5);
+        if (recent.length === 0) {
+          return { content: [{ type: 'text', text: 'No brain dump sessions today.' }] };
+        }
+        const lines = [`Brain Dump Sessions (last ${recent.length}):`];
+        for (const s of recent) {
+          lines.push(`  ${s.session} | ${s.mode} | ${s.themes} themes | ${s.thoughts} thoughts | ${s.duration} | spoon ${s.spoon}/5`);
+        }
+        return { content: [{ type: 'text', text: lines.join('\n') }] };
+      }
+      case 'brain-diff': {
+        if (!args?.session1 || !args?.session2) throw new Error('Missing required params: session1, session2');
+        const { diffSessions } = await import('./brain.mjs');
+        const result = diffSessions(args.session1, args.session2);
+        if (result.error) throw new Error(result.error);
+        return { content: [{ type: 'text', text: result.output }] };
       }
       default:
         throw new Error(`Unknown tool: ${name}`);

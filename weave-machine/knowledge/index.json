@@ -1,0 +1,32 @@
+{
+  "schema": "PMM_WEAVE=1.0",
+  "version": 3,
+  "documents": {
+    "demo": {
+      "name": "demo",
+      "source": "/home/p31/P31-local-workspace/weave-machine/demo-sample.md",
+      "ext": ".md",
+      "size": 143,
+      "ingested_at": "2026-06-19T01:09:34Z",
+      "content": "# Demo Document\n\n**Key Concept Alpha** and **Key Concept Beta** are important.\n\n## Section One\n\nThis is a test document for the WEAVE machine.\n",
+      "concepts": [
+        "Key Concept Beta",
+        "Section One",
+        "Section One\n\nThis",
+        "Key Concept Alpha",
+        "Demo Document"
+      ],
+      "content_hash": "3bb09b6b18cdbf12"
+    }
+  },
+  "concepts": {
+    "Key Concept Beta": 1,
+    "Section One": 1,
+    "Section One\n\nThis": 1,
+    "Key Concept Alpha": 1,
+    "Demo Document": 1
+  },
+  "entanglements": [],
+  "updated_at": "2026-06-19T01:09:34Z",
+  "staged": {}
+}

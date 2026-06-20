@@ -1,0 +1,91 @@
+#!/usr/bin/env bash
+# retire-task.sh
+# Records the retirement of a task or process unit by writing a retirement record and logging the event.
+# This is the lightweight local retirement protocol.
+#
+# Usage:
+#   ./retire-task.sh --task-id <ID> --reason <string> [--log-dir <path>]
+#
+# Exit codes:
+#   0  Success
+#   1  Missing or invalid arguments
+#   2  Log directory creation failure
+#   3  Retirement record write failure
+#   4  Health log write failure
+
+set -euo pipefail
+
+TASK_ID=""
+REASON=""
+LOG_DIR="/home/p31/.p31/task-logs"
+
+usage() {
+  echo "Usage: $0 --task-id <ID> --reason <string> [--log-dir <path>]"
+  echo "  --task-id    Unique identifier for the task or process unit"
+  echo "  --reason     Free-text reason for retirement"
+  echo "  --log-dir    Override log directory (default: .p31/task-logs)"
+  exit 1
+}
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --task-id) TASK_ID="$2"; shift 2 ;;
+    --reason)  REASON="$2"; shift 2 ;;
+    --log-dir) LOG_DIR="$2"; shift 2 ;;
+    *) echo "Unknown argument: $1"; usage ;;
+  esac
+done
+
+if [[ -z "$TASK_ID" || -z "$REASON" ]]; then
+  echo "Error: --task-id and --reason are required."
+  usage
+fi
+
+if [[ ! "$TASK_ID" =~ ^[a-zA-Z0-9_-]+$ ]]; then
+  echo "Error: task-id must be alphanumeric with dashes/underscores only."
+  exit 1
+fi
+
+TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+SESSION_ID="${USER:-unknown}-$(hostname)-$(date +%s)"
+RETIREMENT_RECORD="${LOG_DIR}/${TASK_ID}.retired"
+
+mkdir -p "$LOG_DIR" 2>/dev/null || { echo "Error: Cannot create log directory: $LOG_DIR"; exit 2; }
+
+TMPFILE=$(mktemp "${RETIREMENT_RECORD}.tmp.XXXXXX")
+trap 'rm -f "$TMPFILE"' EXIT
+
+cat > "$TMPFILE" <<EOF
+# RETIREMENT RECORD
+task_id:   ${TASK_ID}
+reason:    "${REASON}"
+timestamp: ${TIMESTAMP}
+session_id: ${SESSION_ID}
+status:    RETIRED
+operator:  ${USER:-unknown}
+host:      $(hostname)
+pwd:       $(pwd)
+shell:     ${SHELL:-unknown}
+EOF
+
+if ! mv "$TMPFILE" "$RETIREMENT_RECORD" 2>/dev/null; then
+  echo "Error: Cannot write retirement record: $RETIREMENT_RECORD"
+  exit 3
+fi
+
+trap - EXIT
+
+HEALTH_LOG="/home/p31/.p31/health.jsonl"
+RETIRE_EVENT=$(cat <<EOJSON
+{"ts":"${TIMESTAMP}","event":"retire_task","task_id":"${TASK_ID}","reason":"${REASON}","session":"${SESSION_ID}"}
+EOJSON
+)
+
+if ! echo "$RETIRE_EVENT" >> "$HEALTH_LOG" 2>/dev/null; then
+  echo "Warning: Retirement record written but health log update failed."
+  exit 4
+fi
+
+echo "RETIREMENT COMPLETE — ${TASK_ID} retired at ${TIMESTAMP}"
+echo "Record: ${RETIREMENT_RECORD}"
+exit 0

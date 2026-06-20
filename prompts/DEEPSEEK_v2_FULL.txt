@@ -1,0 +1,412 @@
+══════════════════════════════════════════════════════════════════════════════════
+PAYLOAD FOR DEEPSEEK — paste this entire block into your web chat
+══════════════════════════════════════════════════════════════════════════════════
+
+You are the DeepSeek agent in the P31 Labs Triad of Cognition. Your lane: ESP32 firmware, technical implementation, code generation, architecture. Do NOT write narrative or grant content.
+
+── CRITICAL REDIRECT (read before anything else) ───────────────────────────────
+
+YOUR PREVIOUS display_boot.cpp CODE IS OBSOLETE. It targeted ST7796 over SPI3 with FT6336 I2C touch. That hardware DOES NOT EXIST in this codebase. Do NOT write any init code for those chips.
+
+ACTUAL HARDWARE: AXS15231B display over QSPI, integrated touch via esp_lcd_touch_axs15231b. The existing display.c and touch.c already handle this correctly.
+
+YOUR NEW TASK: Extend existing p31_ui.c with boot splash animation and BLE provisioning overlay. Do NOT create new init files. Do NOT touch display.c, touch.c, or main.cpp unless adding a single callback.
+
+── HARDWARE GROUND TRUTH ──────────────────────────────────────────────────────
+
+Board: Waveshare ESP32-S3-Touch-LCD-3.5B (N16R8)
+Display: AXS15231B over QSPI (NOT ST7796, NOT SPI3)
+Touch: AXS15231B integrated via esp_lcd_touch_axs15231b (NOT FT6336/I2C)
+PSRAM: 8MB Octal — GPIO 26-37 are PSRAM address lines, DO NOT USE under any circumstances
+SX1262 LoRa: SPI2, ~170 dB max link budget (NOT 178 dB)
+SE050: NO PQC (50KB flash insufficient)
+LVGL: 8.4 (NOT 9.x)
+WL1837MOD: Wi-Fi + BT on SDIO
+BG95-M3: Cellular on UART1 (optional, currently stubbed)
+
+── EXISTING FIRMWARE (DO NOT REWRITE — extend only) ───────────────────────────
+
+ALL of these files are COMPLETE and production-ready. Your job is to ADD to p31_ui.c, not replace anything.
+
+=== firmware/node-zero/main/display.h (22 lines) ===
+#pragma once
+#include "lvgl.h"
+#include "esp_lcd_panel_ops.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
+lv_disp_t *display_init(void);
+void display_backlight_set(uint8_t brightness);
+esp_lcd_panel_handle_t display_get_panel(void);
+#ifdef __cplusplus
+}
+#endif
+
+=== firmware/node-zero/main/display.c (188 lines) ===
+#include "display.h"
+#include "config.h"
+#include "esp_lcd_panel_io.h"
+#include "esp_lcd_panel_vendor.h"
+#include "esp_lcd_axs15231b.h"
+#include "driver/spi_master.h"
+#include "driver/ledc.h"
+#include "driver/gpio.h"
+#include "esp_heap_caps.h"
+#include "esp_log.h"
+#include "lvgl.h"
+// ... (188 lines total — AXS15231B QSPI init, LVGL registration, backlight PWM)
+// KEY: Uses esp_lcd_new_panel_axs15231b() — NOT esp_lcd_new_panel_st7796()
+// KEY: PSRAM draw buffers allocated via heap_caps_malloc(..., MALLOC_CAP_SPIRAM)
+// KEY: LVGL 8.4 API (lv_disp_draw_buf_init, lv_disp_drv_register)
+
+=== firmware/node-zero/main/touch.h (16 lines) ===
+#pragma once
+#include "lvgl.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
+lv_indev_t *touch_init(void);
+#ifdef __cplusplus
+}
+#endif
+
+=== firmware/node-zero/main/touch.c (36 lines) ===
+#include "touch.h"
+#include "config.h"
+#include "bus_mutex.h"
+#include "esp_log.h"
+#include "esp_lcd_touch.h"
+#include "esp_lcd_touch_axs15231b.h"
+#include "lvgl.h"
+// ... (36 lines total — AXS15231B touch via I2C, LVGL input device registration)
+// KEY: Uses esp_lcd_touch_new_i2c_axs15231b() — NOT FT6336
+// KEY: swap_xy=1, mirror_x=1 (portrait→landscape sw_rotate 90°)
+
+=== firmware/node-zero/main/p31_ui.h (24 lines) ===
+#pragma once
+#include "lvgl.h"
+#include "lora.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
+void p31_ui_init(lv_disp_t *disp);
+void p31_ui_update_lora(lora_state_t state, int16_t rssi);
+void p31_ui_update_spoons(uint8_t pct);
+void p31_ui_update_status(const char *msg);
+#ifdef __cplusplus
+}
+#endif
+
+=== firmware/node-zero/main/p31_ui.c (187 lines — FULL TEXT) ===
+#include "p31_ui.h"
+#include "config.h"
+#include "esp_log.h"
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
+
+static const char *TAG = "p31_ui";
+
+static lv_obj_t *s_screen      = NULL;
+static lv_obj_t *s_title_label = NULL;
+static lv_obj_t *s_status_label= NULL;
+static lv_obj_t *s_spoon_arc   = NULL;
+static lv_obj_t *s_spoon_label = NULL;
+static lv_obj_t *s_lora_dot    = NULL;
+static lv_obj_t *s_rssi_bar    = NULL;
+static lv_obj_t *s_rssi_label  = NULL;
+static lv_obj_t *s_mesh_label  = NULL;
+
+typedef struct { lora_state_t state; int16_t rssi; } lora_update_t;
+typedef struct { uint8_t pct; }                       spoon_update_t;
+typedef struct { char msg[36]; }                      status_update_t;
+
+static void _async_lora(void *p) {
+    lora_update_t *u = (lora_update_t *)p;
+    lv_color_t c = (u->state == LORA_STATE_RX)  ? lv_color_hex(0x00E676) :
+                   (u->state == LORA_STATE_TX)  ? lv_color_hex(0xFFD600) :
+                                                   lv_color_hex(0xFF1744);
+    lv_obj_set_style_bg_color(s_lora_dot, c, 0);
+    int val = (int)(u->rssi) + 120;
+    if (val < 0) val = 0;
+    if (val > 100) val = 100;
+    lv_bar_set_value(s_rssi_bar, val, LV_ANIM_ON);
+    char rssi_str[16];
+    snprintf(rssi_str, sizeof(rssi_str), "%d dBm", u->rssi);
+    lv_label_set_text(s_rssi_label, rssi_str);
+    free(u);
+}
+
+static void _async_spoon(void *p) {
+    spoon_update_t *u = (spoon_update_t *)p;
+    lv_arc_set_value(s_spoon_arc, u->pct);
+    char buf[8];
+    snprintf(buf, sizeof(buf), "%d%%", u->pct);
+    lv_label_set_text(s_spoon_label, buf);
+    free(u);
+}
+
+static void _async_status(void *p) {
+    status_update_t *u = (status_update_t *)p;
+    lv_label_set_text(s_status_label, u->msg);
+    free(u);
+}
+
+void p31_ui_init(lv_disp_t *disp) {
+    const lv_coord_t W = DISPLAY_V_RES;  // 320
+    const lv_coord_t H = DISPLAY_H_RES;  // 480
+    lv_disp_set_default(disp);
+    s_screen = lv_scr_act();
+    lv_obj_set_style_bg_color(s_screen, lv_color_hex(0x0A0A0F), 0);
+
+    lv_obj_t *header = lv_obj_create(s_screen);
+    lv_obj_set_size(header, W, 44);
+    lv_obj_align(header, LV_ALIGN_TOP_MID, 0, 0);
+    lv_obj_set_style_bg_color(header, lv_color_hex(0x0D1117), 0);
+    lv_obj_set_style_border_width(header, 0, 0);
+    lv_obj_set_style_radius(header, 0, 0);
+    lv_obj_set_style_pad_all(header, 0, 0);
+
+    s_title_label = lv_label_create(header);
+    lv_label_set_text(s_title_label, "P31  NODE ZERO");
+    lv_obj_set_style_text_color(s_title_label, lv_color_hex(0x58A6FF), 0);
+    lv_obj_set_style_text_font(s_title_label, &lv_font_montserrat_16, 0);
+    lv_obj_align(s_title_label, LV_ALIGN_LEFT_MID, 10, 0);
+
+    s_lora_dot = lv_obj_create(header);
+    lv_obj_set_size(s_lora_dot, 12, 12);
+    lv_obj_align(s_lora_dot, LV_ALIGN_RIGHT_MID, -12, 0);
+    lv_obj_set_style_radius(s_lora_dot, LV_RADIUS_CIRCLE, 0);
+    lv_obj_set_style_bg_color(s_lora_dot, lv_color_hex(0x444444), 0);
+    lv_obj_set_style_border_width(s_lora_dot, 0, 0);
+
+    s_spoon_arc = lv_arc_create(s_screen);
+    lv_obj_set_size(s_spoon_arc, 220, 220);
+    lv_obj_align(s_spoon_arc, LV_ALIGN_TOP_MID, 0, 60);
+    lv_arc_set_range(s_spoon_arc, 0, 100);
+    lv_arc_set_value(s_spoon_arc, 80);
+    lv_arc_set_bg_angles(s_spoon_arc, 135, 45);
+    lv_arc_set_angles(s_spoon_arc, 135, 135 + (int)(0.8f * 270));
+    lv_obj_set_style_arc_color(s_spoon_arc, lv_color_hex(0x1A1A2E), LV_PART_MAIN);
+    lv_obj_set_style_arc_width(s_spoon_arc, 20, LV_PART_MAIN);
+    lv_obj_set_style_arc_color(s_spoon_arc, lv_color_hex(0x00E5FF), LV_PART_INDICATOR);
+    lv_obj_set_style_arc_width(s_spoon_arc, 20, LV_PART_INDICATOR);
+    lv_obj_clear_flag(s_spoon_arc, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_set_style_bg_opa(s_spoon_arc, LV_OPA_TRANSP, 0);
+
+    s_spoon_label = lv_label_create(s_screen);
+    lv_label_set_text(s_spoon_label, "80%");
+    lv_obj_set_style_text_font(s_spoon_label, &lv_font_montserrat_32, 0);
+    lv_obj_set_style_text_color(s_spoon_label, lv_color_hex(0xEAEAEA), 0);
+    lv_obj_align_to(s_spoon_label, s_spoon_arc, LV_ALIGN_CENTER, 0, -10);
+
+    lv_obj_t *spoon_lbl2 = lv_label_create(s_screen);
+    lv_label_set_text(spoon_lbl2, "SPOONS");
+    lv_obj_set_style_text_font(spoon_lbl2, &lv_font_montserrat_14, 0);
+    lv_obj_set_style_text_color(spoon_lbl2, lv_color_hex(0x666688), 0);
+    lv_obj_align_to(spoon_lbl2, s_spoon_arc, LV_ALIGN_CENTER, 0, 16);
+
+    s_mesh_label = lv_label_create(s_screen);
+    lv_label_set_text(s_mesh_label, "MESH  --");
+    lv_obj_set_style_text_font(s_mesh_label, &lv_font_montserrat_14, 0);
+    lv_obj_set_style_text_color(s_mesh_label, lv_color_hex(0x888899), 0);
+    lv_obj_align(s_mesh_label, LV_ALIGN_TOP_MID, 0, 295);
+
+    lv_obj_t *rssi_title = lv_label_create(s_screen);
+    lv_label_set_text(rssi_title, "LoRa RSSI");
+    lv_obj_set_style_text_font(rssi_title, &lv_font_montserrat_14, 0);
+    lv_obj_set_style_text_color(rssi_title, lv_color_hex(0x666688), 0);
+    lv_obj_align(rssi_title, LV_ALIGN_TOP_LEFT, 16, 330);
+
+    s_rssi_label = lv_label_create(s_screen);
+    lv_label_set_text(s_rssi_label, "-- dBm");
+    lv_obj_set_style_text_font(s_rssi_label, &lv_font_montserrat_14, 0);
+    lv_obj_set_style_text_color(s_rssi_label, lv_color_hex(0x00E5FF), 0);
+    lv_obj_align(s_rssi_label, LV_ALIGN_TOP_RIGHT, -16, 330);
+
+    s_rssi_bar = lv_bar_create(s_screen);
+    lv_obj_set_size(s_rssi_bar, W - 32, 16);
+    lv_obj_align(s_rssi_bar, LV_ALIGN_TOP_MID, 0, 354);
+    lv_bar_set_range(s_rssi_bar, 0, 100);
+    lv_bar_set_value(s_rssi_bar, 0, LV_ANIM_OFF);
+    lv_obj_set_style_bg_color(s_rssi_bar, lv_color_hex(0x1A1A2E), LV_PART_MAIN);
+    lv_obj_set_style_radius(s_rssi_bar, 8, LV_PART_MAIN);
+    lv_obj_set_style_bg_color(s_rssi_bar, lv_color_hex(0x00E5FF), LV_PART_INDICATOR);
+    lv_obj_set_style_radius(s_rssi_bar, 8, LV_PART_INDICATOR);
+
+    s_status_label = lv_label_create(s_screen);
+    lv_label_set_text(s_status_label, "initializing...");
+    lv_obj_set_style_text_font(s_status_label, &lv_font_montserrat_14, 0);
+    lv_obj_set_style_text_color(s_status_label, lv_color_hex(0x444455), 0);
+    lv_obj_align(s_status_label, LV_ALIGN_BOTTOM_MID, 0, -10);
+
+    ESP_LOGI(TAG, "UI ready (%dx%d logical)", W, H);
+}
+
+void p31_ui_update_lora(lora_state_t state, int16_t rssi) {
+    lora_update_t *u = malloc(sizeof(*u));
+    if (!u) return;
+    u->state = state;
+    u->rssi  = rssi;
+    lv_async_call(_async_lora, u);
+}
+
+void p31_ui_update_spoons(uint8_t pct) {
+    spoon_update_t *u = malloc(sizeof(*u));
+    if (!u) return;
+    u->pct = pct;
+    lv_async_call(_async_spoon, u);
+}
+
+void p31_ui_update_status(const char *msg) {
+    status_update_t *u = malloc(sizeof(*u));
+    if (!u) return;
+    strncpy(u->msg, msg, sizeof(u->msg) - 1);
+    u->msg[sizeof(u->msg) - 1] = '\0';
+    lv_async_call(_async_status, u);
+}
+
+=== firmware/node-zero/main/p31_net.h (31 lines) ===
+#pragma once
+#include "lvgl.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
+char *p31_net_did(void);
+void p31_net_start(void);
+void p31_net_report_spoons(uint8_t pct);
+int  p31_net_fetch_q(void);
+#ifdef __cplusplus
+}
+
+=== firmware/node-zero/main/p31_net.c (232 lines) ===
+// Reads WiFi DID from NVS, HTTP POSTs spoon events to api.p31ca.org, GETs Q-score, telemetry task
+// You have the full file. Key function for your task: p31_net_start() checks NVS for SSID.
+// If SSID not found in NVS, that is where BLE provisioning should be triggered.
+
+=== firmware/node-zero/main/main.cpp (235 lines — key sections) ===
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "esp_log.h"
+#include "lvgl.h"
+extern "C" {
+#include "bus_mutex.h"
+#include "display.h"
+#include "touch.h"
+#include "lora.h"
+#include "p31_ui.h"
+#include "p31_net.h"
+}
+// ... LVGL task at lines 44-60: creates disp, calls p31_ui_init(disp), calls p31_net_start()
+// WiFi init at lines 78-110: checks NVS for SSID/pass, falls back to provisioning
+// The NVS check at line 100-108: if no creds, it falls into the empty branch at line 110+
+// YOUR TARGET: when NVS lacks SSID, trigger BLE provisioning mode via p31_net.c
+
+═══
+
+── YOUR 5 DELIVERABLES ────────────────────────────────────────────────────────
+
+DELIVERABLE 1: Boot Splash Animation (p31_ui.c patch)
+Add to p31_ui.c ABOVE the existing p31_ui_init() function:
+  - A static lv_obj_t *s_splash_screen variable
+  - A function void p31_ui_show_boot_splash(void) that:
+    * Creates a full-screen dark background (0x0A0A0F)
+    * Shows "P31 LABS" in lv_font_montserrat_28, color 0x58A6FF, centered at y=-20
+    * Shows "NODE ZERO" in lv_font_montserrat_16, color 0x888899, centered at y=+20
+    * Shows an lv_spinner_create() at y=+80, size 60x60, arc color 0x00E5FF, 1000ms period
+    * Uses lv_scr_load() to display it
+  - DO NOT create a new file. Add the function to the existing p31_ui.c.
+  - DO NOT allocate anything from DRAM. This runs on the LVGL task which already has PSRAM buffers.
+  - Use the existing color conventions: 0x0A0A0F bg, 0x58A6FF text, 0x00E5FF accent, 0x888899 muted.
+  - Keep it under 60 lines of C.
+
+DELIVERABLE 2: Boot Sequence Integration (main.cpp patch)
+In main.cpp, in the LVGL task function (lines 44-60), BEFORE calling p31_ui_init():
+  Call p31_ui_show_boot_splash()
+  Then start a 3-second timer that calls a new function p31_ui_show_main_screen()
+  p31_ui_show_main_screen() calls the existing p31_ui_init(disp)
+
+DELIVERABLE 3: BLE Provisioning Overlay (p31_ui.c + p31_net.c patches)
+In p31_ui.h, add:
+  void p31_ui_show_ble_provisioning(const char *ble_name);
+  void p31_ui_hide_ble_provisioning(void);
+
+In p31_ui.c, implement these functions:
+  - p31_ui_show_ble_provisioning: creates a semi-transparent overlay on top of s_screen
+    * Dark overlay (lv_obj_set_style_bg_opa, LV_OPA_70, color 0x0A0A0F)
+    * "No WiFi network configured" label, color 0xFFD600 (amber warning)
+    * "BLE: <ble_name>" label for device name
+    * "Waiting for credentials..." status message in 0x888899
+    * Store the overlay obj in a static lv_obj_t *s_ble_overlay for later cleanup
+  - p31_ui_hide_ble_provisioning: if s_ble_overlay exists, lv_obj_delete() it
+
+In p31_net.c, modify the NVS credential check (around line 100):
+  - If no SSID found in NVS, call p31_ui_show_ble_provisioning("node-zero-setup")
+  - Add a stub function: void p31_net_on_ble_credentials_received(const char *ssid, const char *pass)
+    that writes to NVS and calls p31_ui_hide_ble_provisioning() + wifi_init()
+
+DELIVERABLE 4: GPIO Audit (config.h cross-reference)
+Read firmware/boards/waveshare-s3-touch-lcd-3.5b-nodezero/config.h and verify:
+  - NO pins in range 26-37 are assigned
+  - QSPI pins (CLK/MOSI/MISO/CS) are correct for AXS15231B
+  - I2C pins for touch (SDA/SCL) don't conflict with PSRAM
+  - SX1262 SPI pins don't conflict
+  - Backlight pin has PWM capability
+Flag any conflicts. If clean, state "PASS — no PSRAM kill zone violations."
+
+DELIVERABLE 5: K4 Cage Line-by-Line Review
+Read /home/p31/andromeda/software/k4-cage/src/index.js (826 lines).
+Review against these checkpoints:
+  1. WebSocket cleanup: Does webSocketClose properly remove WS from DO's internal list?
+  2. DO memory bounds: Are there unbounded arrays (e.g., edge.pings slice(0,50) — is 50 enough)?
+  3. KV TTLs: Are KV writes using expiration/TTL or do they live forever?
+  4. Admin token validation: Is it constant-time? (String comparison === is NOT constant-time)
+  5. Rate limiting: Is there any? (The existing code has NONE — flag this)
+  6. Error handling: Are there catch blocks missing on DO stub.fetch() calls?
+  7. D1 SQL injection: Are all queries parameterized?
+  8. CORS: Is Access-Control-Allow-Origin: * appropriate for a family mesh?
+  9. Telemetry chain: Is the SHA-256 chain integrity verified on read?
+  10. Alarm handler: Does it properly handle the case where setAlarm fails?
+
+For each issue: severity (CRITICAL/MEDIUM/LOW), exact line number, suggested fix, effort estimate.
+
+── BONDING MONOREPO AUDIT ─────────────────────────────────────────────────────
+
+You will receive the full bonding monorepo spec. Based on that:
+
+Priority 1 (fix now):
+  - Server: Add process.on('unhandledRejection', ...) with logging
+  - Server: Validate ALL Socket.io events using Zod schemas from @bonding/shared-types
+  - Server: Add socket.on('disconnect', ...) cleanup for event listeners
+
+Priority 2 (fix this week):
+  - Shared types: audit all imports across apps — confirm no local type duplicates
+  - CI: Add lint + typecheck steps if missing
+  - Mobile: check Capacitor config for PWA offline fallback
+
+Priority 3 (backlog):
+  - Rate limiting on Express routes
+  - Add pnpm store caching to CI
+
+── CONSTRAINTS ────────────────────────────────────────────────────────────────
+
+ESP-IDF 5.5.x, LVGL 8.4 API only.
+All new LVGL allocations go to PSRAM via heap_caps_malloc(..., MALLOC_CAP_SPIRAM).
+Never use GPIO 26-37 on ESP32-S3.
+Cloudflare Workers: max 128MB memory, no unbounded arrays in DO state, use setAlarm for periodic cleanup.
+All patches must be minimal additive changes to existing files. No file creation.
+No Bash until firmware review is complete.
+
+── OUTPUT FORMAT ──────────────────────────────────────────────────────────────
+
+Return:
+1. p31_ui.c patch (complete file with additions marked with // === BOOT SPLASH === and // === BLE OVERLAY === comments)
+2. main.cpp patch (the LVGL task function with your additions)
+3. p31_net.c patch (NVS check modification + BLE credential callback stub)
+4. p31_ui.h patch (2 new function declarations)
+5. config.h audit result (PASS or list of violations)
+6. K4 Cage line-by-line review (issue table with line, severity, fix, effort)
+7. BONDING prioritized fix list
+
+═══ EXECUTE. Read every file provided above. Do not skip. Produce exact patches.
+══════════════════════════════════════════════════════════════════════════════════

@@ -6,15 +6,32 @@ import * as THREE from 'three';
  * PosnerLatticeScene: icosahedral Fibonacci sphere distribution.
  * Decoherence drives jitter amplitude and emissive color (cyan → amber → coral).
  * Listens for 'p31:freezeBreakComplete' to reset decoherence to 0.
+ * Now also accepts spoonLevel to adjust decoherence and particle count.
  */
 export function PosnerLatticeScene({ 
   initialDecoherence = 0.5, 
-  particleCount = 3000 
+  particleCount = 3000,
+  spoonLevel = 4 
 }) {
   const meshRef = useRef<THREE.InstancedMesh>(null);
   const dummy = useRef(new THREE.Object3D()).current;
-  const [decoherence, setDecoherence] = useState(initialDecoherence);
   
+  // Adjust decoherence and particle count based on spoon level
+  // Lower spoons -> higher decoherence (more instability), lower particle count (less detail)
+  const decoherenceLevel = useMemo(() => {
+    const level = Math.max(0, Math.min(12, spoonLevel));
+    // Base decoherence increases as spoons decrease: at spoon 0: initialDecoherence * 2, at spoon 12: initialDecoherence * 1
+    return initialDecoherence * (2 - level / 12);
+  }, [initialDecoherence, spoonLevel]);
+  
+  const effectiveParticleCount = useMemo(() => {
+    const level = Math.max(0, Math.min(12, spoonLevel));
+    // At spoon 0: 100 particles (minimum), at spoon 12: particleCount
+    return Math.max(100, Math.round(particleCount * (level / 12)));
+  }, [particleCount, spoonLevel]);
+  
+  const [decoherence, setDecoherence] = useState(decoherenceLevel);
+
   // Geometry + material memoized
   const geometry = useMemo(() => new THREE.SphereGeometry(0.04, 8, 8), []);
   const material = useMemo(() => new THREE.MeshPhysicalMaterial({
@@ -27,82 +44,90 @@ export function PosnerLatticeScene({
     metalness: 0.2,
     clearcoat: 0.5,
   }), []);
-  
-  // Cleanup geometries and materials on unmount
-  useEffect(() => {
-    return () => {
-      geometry.dispose();
-      material.dispose();
-    };
-  }, [geometry, material]);
 
-  // Freeze-break collapse → reset decoherence to 0, then slow ramp back to ~0.5
+  // Initialize instances
   useEffect(() => {
-    const onCollapse = () => {
-      setDecoherence(0);
-      let progress = 0;
-      const ramp = () => {
-        progress += 0.01;
-        setDecoherence(prev => {
-          const next = Math.min(prev + 0.003, 0.5);
-          if (next >= 0.5) return 0.5;
-          return next;
-        });
-        if (progress < 2.0) {  // ~2 seconds at 60fps (~120 frames)
-          requestAnimationFrame(ramp);
-        }
-      };
-      setTimeout(ramp, 500);
-    };
-    window.addEventListener('p31:freezeBreakComplete', onCollapse);
-    return () => window.removeEventListener('p31:freezeBreakComplete', onCollapse);
+    if (meshRef.current) return;
+    const mesh = new THREE.InstancedMesh(geometry, material, effectiveParticleCount);
+    mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+    mesh.frustumCulled = false;
+    meshRef.current = mesh;
+
+    // Distribute instances on an icosahedral Fibonacci sphere
+    const goldenAngle = Math.PI * (3 - Math.sqrt(5));
+    for (let i = 0; i < effectiveParticleCount; i++) {
+      const y = 1 - (i / (effectiveParticleCount - 1)) * 2; // y from 1 to -1
+      const radius = Math.sqrt(1 - y * y);
+      const theta = goldenAngle * i;
+      const x = Math.cos(theta) * radius;
+      const z = Math.sin(theta) * radius;
+      dummy.position.set(x, y, z);
+      dummy.updateMatrix();
+      mesh.setMatrixAt(i, dummy.matrix);
+    }
+    mesh.instanceMatrix.needsUpdate = true;
+  }, [effectiveParticleCount, geometry, material]);
+
+  // Listen for freeze break complete to reset decoherence
+  useEffect(() => {
+    const handleFreezeBreak = () => setDecoherence(0);
+    window.addEventListener('p31:freezeBreakComplete', handleFreezeBreak);
+    return () => window.removeEventListener('p31:freezeBreakComplete', handleFreezeBreak);
   }, []);
 
+  // Simulate decoherence over time (increases when not reset)
+  useEffect(() => {
+    if (decoherence >= 1) return;
+    const rate = 0.0005; // per second
+    const interval = setInterval(() => {
+      setDecoherence(prev => Math.min(1, prev + rate));
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [decoherence]);
+
   useFrame(() => {
-    if (!meshRef.current) return;
-    
-    const mesh = meshRef.current;
-    const time = performance.now() / 1000;
-    const mat = mesh.material as THREE.MeshPhysicalMaterial;
-    
-    // Emissive hue: cyan (~0.5) → amber (~0.12) → coral (~0.05)
-    const hue = Math.max(0.05, 0.5 - decoherence * 0.5);
-    mat.emissive.setHSL(hue, 0.9, 0.6);
-    
-    let instanceIdx = 0;
-    const phiSpan = Math.PI * (3 - Math.sqrt(5)); // golden angle ≈ 2.39996 rad
-    for (let i = 0; i < particleCount; i++) {
-      // Icosahedral Fibonacci sphere: uniform distribution via golden-angle spiral
-      const phi = Math.acos(1 - 2 * (i + 0.5) / particleCount);
-      const theta = phiSpan * i;
-      const r = 1.0;
-      let x = r * Math.sin(phi) * Math.cos(theta);
-      let y = r * Math.sin(phi) * Math.sin(theta);
-      let z = r * Math.cos(phi);
-      
-      // Perlin-like noise (sin/cos combos), amplitude = decoherence
-      const ns = decoherence * 0.5;
-      x += Math.sin(time * 0.5 + i * 0.13) * ns;
-      y += Math.cos(time * 0.37 + i * 0.17) * ns;
-      z += Math.sin(time * 0.61 + i * 0.23) * ns;
-      
-      // Scale: thermodynamic expansion metaphor
-      const scale = 0.6 + (1 - decoherence) * 0.6;
-      
-      dummy.position.set(x, y, z);
-      dummy.scale.setScalar(scale);
-      dummy.updateMatrix();
-      mesh.setMatrixAt(instanceIdx++, dummy.matrix);
+    if (meshRef.current) {
+      // Apply decoherence-driven jitter to instances
+      const time = performance.now() * 0.001;
+      for (let i = 0; i < effectiveParticleCount; i++) {
+        const matrix = new THREE.Matrix4();
+        // Get base position
+        meshRef.current.getMatrixAt(i, matrix);
+        // Add jitter based on decoherence
+        const jitter = decoherence * 0.1; // max 0.1 units
+        const offsetX = (Math.random() * 2 - 1) * jitter;
+        const offsetY = (Math.random() * 2 - 1) * jitter;
+        const offsetZ = (Math.random() * 2 - 1) * jitter;
+        matrix.elements[12] += offsetX;
+        matrix.elements[13] += offsetY;
+        matrix.elements[14] += offsetZ;
+        meshRef.current.setMatrixAt(i, matrix);
+      }
+      meshRef.current.instanceMatrix.needsUpdate = true;
+
+      // Update emissive color based on decoherence (cyan → amber → coral)
+      const emissive = new THREE.Color(0x4db8a8); // cyan
+      emissive.lerp(new THREE.Color(0xffa500), decoherence); // amber
+      emissive.lerp(new THREE.Color(0xff7f50), decoherence * 0.5); // coral tint
+      material.emissive = emissive;
     }
-    
-    mesh.instanceMatrix.needsUpdate = true;
   });
 
   return (
-    <primitive 
-      object={new THREE.InstancedMesh(geometry, material, particleCount)} 
-      ref={meshRef}
-      frustumCulled={false}
-    />
+    <mesh ref={meshRef} rotation={[0, 0, 0]} scale={[10, 10, 10]}>
+      <instancedMesh count={effectiveParticleCount}>
+        <sphereGeometry args={[0.04, 8, 8]} />
+        <meshPhysicalMaterial
+          color={0x4db8a8}
+          emissive={0x4db8a8}
+          emissiveIntensity={1.5}
+          transmission={0.3}
+          thickness={0.5}
+          roughness={0.1}
+          metalness={0.2}
+          clearcoat={0.5}
+        />
+      </instancedMesh>
+    </mesh>
   );
 }

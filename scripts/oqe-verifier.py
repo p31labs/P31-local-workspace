@@ -33,6 +33,8 @@ from dataclasses import dataclass, field, asdict
 from pathlib import Path
 from typing import Optional
 
+from p31_bus import bus_emit
+
 # ---------------------------------------------------------------------------
 # Verified P31 Constants (from CLAUDE.md — DO NOT change without OQE pass)
 # ---------------------------------------------------------------------------
@@ -190,6 +192,7 @@ def scan_file(path_str: str) -> tuple[list[OQEViolation], bool]:
                     pattern=pattern_name,
                     description=description,
                 ))
+                bus_emit("oqe.issue_found", {"file": path_str, "line": lineno, "pattern": pattern_name})
 
     # Inflation checks
     if "bonding" in path_str.lower():
@@ -199,12 +202,14 @@ def scan_file(path_str: str) -> tuple[list[OQEViolation], bool]:
                 file=path_str, line=0, pattern="test_inflation",
                 description=f"BONDING test count {test_m.group(1)} > verified max {MAX_BONDING_TESTS}",
             ))
+            bus_emit("oqe.issue_found", {"file": path_str, "pattern": "test_inflation", "value": int(test_m.group(1))})
         suite_m = re.search(r'(\d+)\s*suites?', content, re.IGNORECASE)
         if suite_m and int(suite_m.group(1)) > MAX_BONDING_SUITES:
             violations.append(OQEViolation(
                 file=path_str, line=0, pattern="suite_inflation",
                 description=f"Suite count {suite_m.group(1)} > verified max {MAX_BONDING_SUITES}",
             ))
+            bus_emit("oqe.issue_found", {"file": path_str, "pattern": "suite_inflation", "value": int(suite_m.group(1))})
 
     return violations, has_wcd06
 
@@ -222,6 +227,7 @@ def log_force_override(rca_reason: str, staged_files: list[str]) -> None:
         f.write(json.dumps(entry) + "\n")
     print(f"[OQE] 🔓 FORCE OVERRIDE logged to {rca_dir}/oqe-overrides.jsonl")
     print(f"[OQE]    RCA: {rca_reason}")
+    bus_emit("oqe.force_override", {"rca": rca_reason, "files": staged_files})
 
 
 def run_verifier(force_rca: Optional[str] = None) -> OQEResult:
@@ -231,6 +237,8 @@ def run_verifier(force_rca: Optional[str] = None) -> OQEResult:
     if not staged:
         print("[OQE] No staged files. Nothing to verify.")
         return result
+
+    bus_emit("oqe.scan_start", {"files": len(staged)})
 
     for path_str in staged:
         if should_skip(path_str):
@@ -243,6 +251,7 @@ def run_verifier(force_rca: Optional[str] = None) -> OQEResult:
         else:
             result.wcd06_missing.append(path_str)
 
+    bus_emit("oqe.scan_complete", {"files_scanned": result.files_scanned, "violations": len(result.violations), "passed": result.passed})
     return result
 
 

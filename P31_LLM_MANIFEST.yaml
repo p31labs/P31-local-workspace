@@ -1,0 +1,127 @@
+# P31_LLM_MANIFEST.yaml
+# Version: 1.0
+# Last Updated: 2026-06-19
+
+models:
+  # ---- Premium (Paid) ----
+  - id: opus
+    provider: openrouter
+    endpoint: "https://openrouter.ai/api/v1/chat/completions"
+    model_name: "claude-3-opus"
+    cost_per_1k_input_tokens: 0.015
+    cost_per_1k_output_tokens: 0.075
+    capabilities: [strategy, architecture, writing, planning]
+    status: unavailable
+    last_checked: null
+    quota_remaining: null
+    notes: "Claude Pro subscription ended 2026-06-15. Re-enable if renewed."
+
+  # ---- Web / Free UI (Browser automation) ----
+  - id: deepseek-web
+    provider: web
+    endpoint: "https://chat.deepseek.com"
+    cost_per_1k_tokens: 0
+    capabilities: [code, reasoning, general]
+    status: available
+    last_checked: null
+    notes: "Free web UI; requires browser automation (Playwright)."
+
+  - id: gemini-web
+    provider: web
+    endpoint: "https://gemini.google.com"
+    cost_per_1k_tokens: 0
+    capabilities: [reasoning, general, planning]
+    status: available
+    last_checked: null
+    notes: "Free tier; Workspace access expires soon (2026-07-01)."
+
+  # ---- OpenRouter Free Models ----
+  - id: deepseek-v4-free
+    provider: openrouter
+    endpoint: "https://openrouter.ai/api/v1"
+    model_name: "deepseek/deepseek-v4"
+    cost_per_1k_tokens: 0
+    capabilities: [code, reasoning, chat]
+    status: available
+    last_checked: null
+    notes: "Free OpenRouter model."
+
+  - id: big-pickle
+    provider: openrouter
+    endpoint: "https://openrouter.ai/api/v1"
+    model_name: "big-pickle/big-pickle"
+    cost_per_1k_tokens: 0
+    capabilities: [chat, general, brainstorming]
+    status: available
+    last_checked: null
+    notes: "Fun free model; good for ideation."
+
+  - id: nemotron-3-super
+    provider: openrouter
+    endpoint: "https://openrouter.ai/api/v1"
+    model_name: "nvidia/nemotron-3-super"
+    cost_per_1k_tokens: 0
+    capabilities: [code, math, reasoning]
+    status: available
+    last_checked: null
+    notes: "Strong for coding and mathematical tasks."
+
+  # ---- Gateway / Local ----
+  - id: kilocode-gateway
+    provider: kilocode
+    endpoint: "https://gateway.kilocode.ai/api/v1"
+    model_name: "free-agent"
+    cost_per_1k_tokens: 0
+    capabilities: [code, chat, general]
+    status: available
+    last_checked: null
+    notes: "Kilo Code free gateway; may have rate limits."
+
+  - id: opencode-cli
+    provider: local
+    endpoint: "opencode://execute"
+    cost_per_1k_tokens: 0
+    capabilities: [code, local_analysis, file_ops]
+    status: available
+    last_checked: null
+    notes: "Runs OpenCode CLI on local machine. No network cost."
+
+# ---- Role definitions ----
+roles:
+  strategist:
+    description: "High-level architecture, planning, and trade-off analysis"
+    preferred_models: [opus, gemini-web, deepseek-web]
+    fallback_models: [deepseek-v4-free, big-pickle]
+    cost_sensitivity: low
+
+  coder:
+    description: "Writing, reviewing, and refactoring code"
+    preferred_models: [deepseek-v4-free, nemotron-3-super, deepseek-web]
+    fallback_models: [big-pickle, kilocode-gateway, opencode-cli]
+    cost_sensitivity: high
+
+  reviewer:
+    description: "Code review, quality checks, and documentation polishing"
+    preferred_models: [big-pickle, kilocode-gateway]
+    fallback_models: [nemotron-3-super, opencode-cli]
+    cost_sensitivity: high
+
+  planner:
+    description: "Breaking down tasks, generating checklists, and scheduling"
+    preferred_models: [gemini-web, opus, deepseek-web]
+    fallback_models: [deepseek-v4-free, big-pickle]
+    cost_sensitivity: medium
+
+  debugger:
+    description: "Diagnosing errors, reading stack traces, and suggesting fixes"
+    preferred_models: [nemotron-3-super, deepseek-v4-free]
+    fallback_models: [opencode-cli, big-pickle]
+    cost_sensitivity: high
+
+# Global routing rules
+routing:
+  default_role: coder
+  max_cost_per_request: 0.05
+  fallback_on_error: true
+  timeout_seconds: 60
+  retry_attempts: 2

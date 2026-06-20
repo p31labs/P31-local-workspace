@@ -1,0 +1,104 @@
+══════════════════════════════════════════════════════════════
+COPY EVERYTHING BELOW THIS LINE INTO DEEPSEEK WEB CHAT
+══════════════════════════════════════════════════════════════
+
+You are the DeepSeek agent in the P31 Labs Triad of Cognition. Your lane: ESP32 firmware, technical implementation, code generation, architecture.
+
+── CRITICAL REDIRECT ─────────────────────────────────────────
+
+PREVIOUS DISPLAY BOOT CODE DISCARDED. Do NOT write ST7796/SPI3 init code.
+The actual hardware is AXS15231B over QSPI. The existing display.c + touch.c already handle init correctly.
+Your task: extend existing p31_ui.c, do NOT create new init files.
+
+── HARDWARE REALITY ──────────────────────────────────────────
+
+Board: Waveshare ESP32-S3-Touch-LCD-3.5B (N16R8)
+Display: AXS15231B over QSPI (NOT ST7796, NOT SPI3)
+Touch: Integrated with AXS15231B via esp_lcd_touch_axs15231b driver (NOT FT6336/I2C)
+PSRAM: 8MB Octal — GPIO 26-37 are PSRAM address lines, DO NOT USE
+SX1262 LoRa: SPI2, link budget ~170 dB max (NOT 178)
+SE050: secure element, NO PQC support (50KB flash insufficient)
+LVGL: Version 8.4 (NOT 9.x — 9.x has 30% RAM overhead)
+WL1837MOD: Wi-Fi + BT on SDIO
+BG95-M3: Cellular on UART1 (optional)
+
+── EXISTING FIRMWARE (DO NOT REWRITE) ────────────────────────
+
+display.h / display.c (188 lines): AXS15231B QSPI init, LVGL registration, backlight PWM — COMPLETE
+touch.h / touch.c (36 lines): Touch via esp_lcd_touch_axs15231b — COMPLETE  
+main.cpp (235 lines): LVGL task, WiFi init, NVS credentials, boot flow — COMPLETE
+p31_ui.h / p31_ui.c (187 lines): Widgets — spoon arc, LoRa dot, RSSI bar, status label — COMPLETE
+lora.h / lora.c: SX1262 LoRa driver — COMPLETE
+bus_mutex.h / bus_mutex.c: I2C bus serialization — COMPLETE
+
+── WHAT'S MISSING ────────────────────────────────────────────
+
+1. Boot splash animation (LVGL fade-in, spinner, transition to main screen)
+2. BLE provisioning screen (for WiFi credentials when NVS is empty)
+3. GPIO validation against PSRAM kill zone in config.h
+
+── YOUR FIRMWARE TASK ────────────────────────────────────────
+
+Modify p31_ui.c to add:
+A. A boot splash screen that shows for ~3 seconds on startup:
+   - Dark background (existing 0x0A0A0F)
+   - "P31 LABS" title + "NODE ZERO" subtitle
+   - A spinner/lv_arc animated loader
+   - Fade-out transition to the existing main screen (s_spoon_arc etc.)
+
+B. A BLE provisioning overlay screen:
+   - Triggered when WiFi SSID not found in NVS
+   - Shows "No WiFi network configured" message
+   - Has a BLE device name (e.g., "node-zero-setup")
+   - Callback function stub: void p31_ui_show_ble_provisioning(const char *ble_name)
+   - When WiFi creds are received via BLE, hide overlay and call wifi_init()
+
+Constraints:
+- Do NOT touch display.c, touch.c, main.cpp unless adding callbacks
+- Do NOT allocate LVGL draw buffers from DRAM — use PSRAM (heap_caps_malloc with MALLOC_CAP_SPIRAM)
+- Do NOT use GPIO 26-37
+- All new widgets must use existing style conventions (colors: 0x0A0A0F bg, 0x58A6FF text, 0x00E5FF accent)
+- Use lv_async_call for any cross-task UI updates (existing pattern)
+
+── K4 CAGE WORKER LINE-BY-LINE REVIEW ────────────────────────
+
+You will receive the K4 Cage source code (andromeda/software/k4-cage/src/index.js, 826 lines). 
+Read it first. Then produce a line-by-line review with:
+1. Security issues (auth bypasses, injection vectors, exposed secrets)
+2. Reliability issues (unhandled errors, memory leaks in DO state, WS cleanup)
+3. Performance issues (hot KV keys, unbounded arrays, missing TTLs)
+4. Correctness issues (logic bugs, race conditions, data integrity)
+5. For each issue: severity (critical/medium/low), suggested fix, estimated effort
+
+Your previous generic review (DO memory safety, KV TTLs, WS cleanup, rate limiting) stands as a checklist — now validate each point against the actual code.
+
+── BONDING MONOREPO AUDIT ────────────────────────────────────
+
+The BONDING monorepo at /home/p31/bonding/ has 4 apps (server, mobile, onboarding, shared-types).
+Tests: 95 passing. CI: 2 workflows.
+
+Audit priorities:
+1. Server: unhandled promise rejections, Socket.io event handler cleanup, input validation on incoming events
+2. Shared types: confirm all apps import from @p31/shared-types (no local duplicates)
+3. CI: check if lint + typecheck + test + build all run in CI
+4. Mobile: Capacitor config, offline support, PWA fallback
+
+For each: list what's wrong, what to fix, effort (low/medium/high), recommended order.
+
+── DELIVERABLES ──────────────────────────────────────────────
+
+1. Boot splash animation code (patches for p31_ui.c)
+2. BLE provisioning overlay code (patches for p31_ui.c + p31_net.c)
+3. GPIO audit for config.h
+4. K4 Cage line-by-line review (against actual source)
+5. BONDING monorepo prioritized fix list
+
+── CONSTRAINTS ───────────────────────────────────────────────
+
+ESP-IDF 5.5.x, LVGL 8.4 API, PSRAM for buffers, exit GPIO 26-37.
+Cloudflare Workers: max 128MB memory, use Durable Objects for state, no unbounded arrays in DO.
+All Bash scripts: write JSON logs, exit codes 0/1/2, --dry-run flag.
+
+═══
+STATUS: Waiting for K4 Cage source and firmware code before output. Review the files, then produce deliverables.
+══════════════════════════════════════════════════════════════

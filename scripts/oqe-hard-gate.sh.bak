@@ -1,0 +1,143 @@
+#!/usr/bin/env bash
+# quality-gate.sh — Pre-commit Quality Check
+# P31 SOP: quality-001 | WD-06 Enforcement
+#
+# Blocks commits that:
+#   1. Are executed during a deferred fuel window (Track B hold)
+#   2. Contain quality issues (risk patterns, invariant violations, inflated claims)
+#   3. Lack WD-06 signoff on code files
+#
+# Override (logged RCA):
+#   COMMIT_QUALITY_RCA="reason" git commit ...
+#
+# Exit codes:
+#   0  Check passed — commit proceeds
+#   1  Check failed — issues found or hold active
+#   2  Track B deferred — all work commits blocked
+
+set -euo pipefail
+
+REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || echo "$P31_REPO_ROOT")"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+CHECK_SCRIPT="${SCRIPT_DIR}/P31-CANARY.sh"
+VERIFIER="${SCRIPT_DIR}/oqe-verifier.py"
+OVERRIDE_RCA="${COMMIT_QUALITY_RCA:-}"
+OVERRIDE_RCA_FILE="${REPO_ROOT}/.p31/rca/quality-overrides.jsonl"
+
+if [[ -t 1 ]]; then
+  RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'; CYAN='\033[0;36m'; NC='\033[0m'
+else
+  RED=''; GREEN=''; YELLOW=''; CYAN=''; NC=''
+fi
+
+pass() { echo -e "  ${GREEN}OK${NC} $1"; }
+fail() { echo -e "  ${RED}BLOCK${NC} $1"; }
+warn() { echo -e "  ${YELLOW}NOTE${NC} $1"; }
+info() { echo -e "  ${CYAN}->${NC} $1"; }
+
+echo ""
+echo -e "${CYAN}==========================================${NC}"
+echo -e "${CYAN}  QUALITY CHECK — PRE-COMMIT REVIEW${NC}"
+echo -e "${CYAN}  $(date -u +"%Y-%m-%dT%H:%M:%SZ")${NC}"
+echo -e "${CYAN}==========================================${NC}"
+echo ""
+
+# -----------------------------------------------------------------------
+# CHECK 1: Fuel Budget State
+# -----------------------------------------------------------------------
+info "Checking fuel budget state..."
+
+if [[ -f "$CHECK_SCRIPT" ]]; then
+  if ! bash "$CHECK_SCRIPT" check >/dev/null 2>&1; then
+    fail "WORK ON HOLD — Track B commits blocked."
+    fail "Complete re-entry check: bash ${SCRIPT_DIR}/P31-CANARY.sh"
+    fail "Or override: COMMIT_QUALITY_RCA=\"emergency bypass\" git commit ..."
+    exit 2
+  fi
+  pass "Fuel state: CLEAR"
+else
+  warn "P31-CANARY.sh not found — skipping fuel state check"
+fi
+
+# -----------------------------------------------------------------------
+# CHECK 2: Quality Verification
+# -----------------------------------------------------------------------
+info "Running quality checker on staged files..."
+
+if [[ ! -f "$VERIFIER" ]]; then
+  warn "oqe-verifier.py not found at ${VERIFIER} — check is UNARMED"
+  warn "Commits will proceed without quality verification."
+  exit 0
+fi
+
+VERIFIER_RESULT=$(python3 "$VERIFIER" --json 2>/dev/null) || VERIFIER_EXIT=$?
+VERIFIER_EXIT=${VERIFIER_EXIT:-0}
+
+PASSED=$(echo "$VERIFIER_RESULT" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('passed', False))" 2>/dev/null || echo "unknown")
+ISSUE_COUNT=$(echo "$VERIFIER_RESULT" | python3 -c "import sys,json; d=json.load(sys.stdin); print(len(d.get('violations', [])))" 2>/dev/null || echo "?")
+WD06_MISSING=$(echo "$VERIFIER_RESULT" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('wcd06_missing_count', 0))" 2>/dev/null || echo "?")
+FILES_SCANNED=$(echo "$VERIFIER_RESULT" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('files_scanned', 0))" 2>/dev/null || echo "?")
+
+info "Files scanned: ${FILES_SCANNED}"
+
+# -----------------------------------------------------------------------
+# DECISION
+# -----------------------------------------------------------------------
+
+if [[ "$PASSED" == "True" ]]; then
+  pass "Quality check: PASSED"
+  echo ""
+  exit 0
+fi
+
+# Issues found
+fail "Quality check: FAILED"
+echo ""
+echo -e "${RED}Issues (${ISSUE_COUNT}):${NC}"
+echo "$VERIFIER_RESULT" | python3 -c "
+import sys, json
+d = json.load(sys.stdin)
+for v in d.get('violations', []):
+    loc = f\"{v['file']}:{v['line']}\" if v['line'] else v['file']
+    print(f\"  [{v['severity']}] {loc}\")
+    print(f\"           {v['pattern']}: {v['description']}\")
+print()
+" 2>/dev/null
+
+if [[ "$WD06_MISSING" -gt 0 ]]; then
+  warn "WD-06 signoff missing from ${WD06_MISSING} file(s)"
+  warn "Add this line to each code file:"
+  warn "  # WD-06: SIGNED — <initials> <YYYY-MM-DD> — <task description>"
+  echo ""
+fi
+
+# Force override path
+if [[ -n "$OVERRIDE_RCA" ]]; then
+  warn "FORCE OVERRIDE engaged — RCA reason: ${OVERRIDE_RCA}"
+  mkdir -p "$(dirname "$OVERRIDE_RCA_FILE")" 2>/dev/null || true
+  OVERRIDE_ENTRY=$(python3 -c "
+import json, datetime
+print(json.dumps({
+    'timestamp': datetime.datetime.now().isoformat(),
+    'event': 'quality_force_override',
+    'rca': '''${OVERRIDE_RCA}''',
+    'env': '''$(whoami)@$(hostname)''',
+    'issues': ${ISSUE_COUNT},
+}))
+" 2>/dev/null)
+  echo "$OVERRIDE_ENTRY" >> "$OVERRIDE_RCA_FILE" 2>/dev/null || true
+  pass "Override logged to ${OVERRIDE_RCA_FILE}"
+  exit 0
+fi
+
+echo ""
+fail "COMMIT BLOCKED"
+echo ""
+echo "  To override (requires RCA):"
+echo "    COMMIT_QUALITY_RCA=\"<reason>\" git commit ..."
+echo ""
+echo "  To review issues:"
+echo "    cd ${REPO_ROOT}"
+echo "    python scripts/oqe-verifier.py  # see exact issues"
+echo ""
+exit 1

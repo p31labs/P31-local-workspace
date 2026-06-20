@@ -1,0 +1,1085 @@
+══════════════════════════════════════════════════════════════════════════════════
+PAYLOAD FOR DEEPSEEK — paste this entire block into your web chat
+══════════════════════════════════════════════════════════════════════════════════
+
+You are the DeepSeek agent in the P31 Labs Triad of Cognition. Your lane: ESP32 firmware, code review, technical implementation, code generation. Do NOT write narrative or grant content.
+
+── GROUND TRUTH (verified, use these) ────────────────────────────────────────
+
+P31 Labs is a Georgia 501(c)(3) tax-exempt nonprofit (DETERMINED May 4, 2026).
+EIN 42-1888158.
+7 Cloudflare Pages sites, 30 unique Workers (8+ active), 95 tests, 22 surfaces, 16/20 health, 22 Zenodo papers.
+
+Hardware: Waveshare ESP32-S3-Touch-LCD-3.5B (N16R8)
+Display: AXS15231B over QSPI (NOT ST7796, NOT SPI3)
+Touch: AXS15231B integrated via esp_lcd_touch_axs15231b (NOT FT6336)
+PSRAM: 8MB Octal — GPIO 26-37 are PSRAM address lines, DO NOT USE
+SX1262 LoRa: SPI2, ~170 dB max link budget (NOT 178 dB)
+SE050: NO PQC (50KB flash insufficient)
+LVGL: 8.4 (NOT 9.x)
+WL1837MOD: Wi-Fi + BT on SDIO
+
+── THREE REVIEW TASKS ────────────────────────────────────────────────────────
+
+TASK 1: K4 CAGE WORKER — Full line-by-line review
+TASK 2: GPIO CONFIG — Audit against hardware ground truth
+TASK 3: provision_esim.sh — Fix dead code after exec()
+
+Output format for EACH task:
+  [CRITICAL] / [WARNING] / [INFO] / [QUESTION]
+  Line: N
+  What: description of issue
+  Fix: exact code change
+
+For TASK 3, also produce a corrected version of the full file.
+
+── CODE FOLLOWS ──────────────────────────────────────────────────────────────
+
+// ═══════════════════════════════════════════════════════════════════════════
+// TASK 1 — K4 CAGE WORKER (software/k4-cage/src/index.js)
+// Review: correctness, security, error handling, edge cases, performance,
+// WebSocket lifecycle, Durable Object patterns, KV chain integrity
+// ═══════════════════════════════════════════════════════════════════════════
+
+/**
+ * Unified k4-cage — CWP-30
+ * K4Topology DO (family graph) + FamilyMeshRoom DO (WebSocket hibernation + D1 flush).
+ * P31 Labs, Inc. | EIN 42-1888158
+ *
+ * REST topology: /api/mesh, /api/vertex/:id, /api/presence/:id, /api/ping/:from/:to, /api/edge/:a/:b
+ * WebSocket: /ws/:roomId?node=<id>
+ * Room stats: /room-stats/:roomId
+ * Telemetry: GET/POST /api/telemetry (D1 when DB bound; else KV chain like legacy)
+ *
+ * Deploy: set database_id in wrangler.toml, run schema.sql, wrangler secret put ADMIN_TOKEN, deploy.
+ */
+import { DurableObject } from 'cloudflare:workers';
+
+const VERTICES = ['will', 'sj', 'wj', 'christyn'];
+const EDGES = [
+  ['will', 'sj'],
+  ['will', 'wj'],
+  ['will', 'christyn'],
+  ['sj', 'wj'],
+  ['sj', 'christyn'],
+  ['wj', 'christyn'],
+];
+
+const VERTEX_NAMES = {
+  will: 'Will',
+  sj: 'S.J.',
+  wj: 'W.J.',
+  christyn: 'Christyn',
+};
+
+/** Public API + validate-p31-full.sh (HEAD /api/mesh, COOP substring probe). */
+const CORS_HEADERS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS, HEAD',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+  'Cross-Origin-Opener-Policy': 'same-origin',
+  'Cross-Origin-Resource-Policy': 'cross-origin',
+};
+
+function edgeKey(v1, v2) {
+  return [v1, v2].sort().join('-');
+}
+
+function json(data, status = 200) {
+  return new Response(JSON.stringify(data, null, 2), {
+    status,
+    headers: { 'Content-Type': 'application/json; charset=utf-8', ...CORS_HEADERS },
+  });
+}
+
+function err(message, status = 400) {
+  return json({ error: message, timestamp: new Date().toISOString() }, status);
+}
+
+function isValidVertex(v) {
+  return VERTICES.includes(v);
+}
+
+function isValidEdge(v1, v2) {
+  return isValidVertex(v1) && isValidVertex(v2) && v1 !== v2;
+}
+
+function isAdmin(request, env) {
+  const token = env.ADMIN_TOKEN;
+  if (!token) return false;
+  const auth = request.headers.get('Authorization');
+  const url = new URL(request.url);
+  const q = url.searchParams.get('token');
+  return auth === `Bearer ${token}` || q === token;
+}
+
+async function sha256Hex(input) {
+  const msg =
+    typeof input === 'string' ? input : JSON.stringify(input);
+  const buf = new TextEncoder().encode(msg);
+  const hash = await crypto.subtle.digest('SHA-256', buf);
+  return [...new Uint8Array(hash)].map((b) => b.toString(16).padStart(2, '0')).join('');
+}
+
+// ─── KV telemetry (fallback / legacy WCD-46) ─────────────────────────
+async function appendTelemetryKv(env, event) {
+  const headRaw = await env.K4_MESH.get('telemetry:head');
+  const head = headRaw ? JSON.parse(headRaw) : { index: 0, hash: '0'.repeat(64) };
+  const newIndex = head.index + 1;
+  const payload = {
+    index: newIndex,
+    event,
+    timestamp: new Date().toISOString(),
+    prevHash: head.hash,
+  };
+  const newHash = await sha256Hex(JSON.stringify(payload) + head.hash);
+  payload.hash = newHash;
+  await env.K4_MESH.put(`telemetry:${newIndex}`, JSON.stringify(payload));
+  await env.K4_MESH.put('telemetry:head', JSON.stringify({ index: newIndex, hash: newHash }));
+  return payload;
+}
+
+async function getTelemetryKvChain(env, count) {
+  const headRaw = await env.K4_MESH.get('telemetry:head');
+  if (!headRaw) {
+    return { chain: [], head: null, verified: true, source: 'kv' };
+  }
+  const head = JSON.parse(headRaw);
+  const floor = Math.max(0, head.index - count);
+  const indices = [];
+  for (let i = head.index; i > floor; i--) indices.push(i);
+  const raws = await Promise.all(indices.map((i) => env.K4_MESH.get(`telemetry:${i}`)));
+  const chain = [];
+  for (const raw of raws) {
+    if (raw) chain.push(JSON.parse(raw));
+  }
+  let verified = true;
+  for (let i = 0; i < chain.length - 1; i++) {
+    if (chain[i].prevHash !== chain[i + 1].hash) {
+      verified = false;
+      break;
+    }
+  }
+  return { chain, head, verified, chainLength: head.index, source: 'kv' };
+}
+
+async function appendTelemetryD1(env, event) {
+  const row = await env.DB.prepare(
+    'SELECT hash FROM telemetry ORDER BY id DESC LIMIT 1',
+  ).first();
+  const prevHash = row?.hash ?? '0'.repeat(64);
+  const base = {
+    room_id: 'k4-cage',
+    node_id: 'system',
+    kind: 'event',
+    payload: JSON.stringify(event),
+    ts: Date.now(),
+    prev_hash: prevHash,
+  };
+  const hash = await sha256Hex({ ...base, prevHash });
+  const flushed_at = Date.now();
+  await env.DB.prepare(
+    `INSERT INTO telemetry (room_id, node_id, kind, payload, ts, hash, prev_hash, flushed_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+  )
+    .bind(
+      base.room_id,
+      base.node_id,
+      base.kind,
+      base.payload,
+      base.ts,
+      hash,
+      prevHash,
+      flushed_at,
+    )
+    .run();
+  return { hash, prevHash, source: 'd1' };
+}
+
+/** @param {import('./index.js').Env} env */
+async function broadcastPingToRooms(env, pingPayload) {
+  const token = env.INTERNAL_FANOUT_TOKEN;
+  if (!token) return;
+  const rooms = (env.MESH_ROOM_IDS || 'family-mesh').split(',').map((s) => s.trim()).filter(Boolean);
+  const headers = {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${token}`,
+  };
+  const body = JSON.stringify(pingPayload);
+  await Promise.all(
+    rooms.map((roomId) => {
+      const id = env.FAMILY_MESH_ROOM.idFromName(roomId);
+      const stub = env.FAMILY_MESH_ROOM.get(id);
+      return stub
+        .fetch(
+          new Request('https://internal/broadcast', {
+            method: 'POST',
+            headers,
+            body,
+          }),
+        )
+        .catch(() => {
+          /* non-fatal */
+        });
+    }),
+  );
+}
+
+// ═══ K4Topology DO ═══════════════════════════════════════════════════
+export class K4Topology extends DurableObject {
+  /** @param {DurableObjectState} ctx @param {Env} env */
+  constructor(ctx, env) {
+    super(ctx, env);
+    this.ctx = ctx;
+    this.env = env;
+  }
+
+  defaultVertex(id) {
+    return {
+      id,
+      name: VERTEX_NAMES[id] || id,
+      love: 0,
+      status: 'offline',
+      lastSeen: null,
+      heartbeat: null,
+      metadata: {},
+    };
+  }
+
+  defaultEdge(v1, v2) {
+    const key = edgeKey(v1, v2);
+    return {
+      vertices: [v1, v2],
+      key,
+      love: 0,
+      pings: [],
+      lastActivity: null,
+      messageCount: 0,
+    };
+  }
+
+  async fetch(request) {
+    const url = new URL(request.url);
+    const path = url.pathname;
+    const method = request.method;
+
+    if (path === '/mesh' && method === 'HEAD') {
+      return new Response(null, {
+        status: 200,
+        headers: { 'Content-Type': 'application/json; charset=utf-8' },
+      });
+    }
+
+    if (path === '/mesh' && method === 'GET') {
+      const vRaws = await Promise.all(
+        VERTICES.map((v) => this.ctx.storage.get(`vertex:${v}`)),
+      );
+      const eRaws = await Promise.all(
+        EDGES.map(([a, b]) => this.ctx.storage.get(`edge:${edgeKey(a, b)}`)),
+      );
+      const vertices = {};
+      const edges = {};
+      let totalLove = 0;
+      VERTICES.forEach((v, i) => {
+        const raw = vRaws[i];
+        vertices[v] = raw ? JSON.parse(raw) : this.defaultVertex(v);
+        totalLove += vertices[v].love || 0;
+      });
+      EDGES.forEach(([a, b], i) => {
+        const k = edgeKey(a, b);
+        const raw = eRaws[i];
+        edges[k] = raw ? JSON.parse(raw) : this.defaultEdge(a, b);
+        totalLove += edges[k].love || 0;
+      });
+      /** Normalized link-quality scalar for ops scorecards (isostatic K₄ ≡ full observability). */
+      const qFactor = 1;
+      return Response.json({
+        topology: 'K4',
+        vertices: 4,
+        edges: 6,
+        rigidity: 'isostatic',
+        betti_2: 1,
+        mesh: { vertices, edges },
+        totalLove,
+        qFactor,
+        routing_protocol: 'custom_dsdv',
+        timestamp: new Date().toISOString(),
+        signature: 'Ca₉(PO₄)₆',
+      });
+    }
+
+    const vertexGet = path.match(/^\/vertex\/(\w+)$/);
+    if (vertexGet && method === 'GET') {
+      const id = vertexGet[1];
+      if (!isValidVertex(id)) return Response.json({ error: 'Unknown vertex' }, { status: 404 });
+      const touch = [];
+      for (const [v1, v2] of EDGES) {
+        if (v1 === id || v2 === id) {
+          const k = edgeKey(v1, v2);
+          touch.push([v1, v2, k]);
+        }
+      }
+      const [raw, ...eRaws] = await Promise.all([
+        this.ctx.storage.get(`vertex:${id}`),
+        ...touch.map((t) => this.ctx.storage.get(`edge:${t[2]}`)),
+      ]);
+      const vertex = raw ? JSON.parse(raw) : this.defaultVertex(id);
+      const connectedEdges = {};
+      touch.forEach(([v1, v2, k], i) => {
+        const er = eRaws[i];
+        connectedEdges[k] = er ? JSON.parse(er) : this.defaultEdge(v1, v2);
+      });
+      return Response.json({ vertex, edges: connectedEdges });
+    }
+
+    const presence = path.match(/^\/presence\/(\w+)$/);
+    if (presence && method === 'POST') {
+      const id = presence[1];
+      if (!isValidVertex(id)) return Response.json({ error: 'Unknown vertex' }, { status: 404 });
+      const body = await request.json().catch(() => ({}));
+      const raw = await this.ctx.storage.get(`vertex:${id}`);
+      const vertex = raw ? JSON.parse(raw) : this.defaultVertex(id);
+      vertex.status = body.status || 'online';
+      vertex.lastSeen = new Date().toISOString();
+      vertex.heartbeat = Date.now();
+      if (body.metadata) vertex.metadata = { ...vertex.metadata, ...body.metadata };
+      await this.ctx.storage.put(`vertex:${id}`, JSON.stringify(vertex));
+      return Response.json({ vertex, recorded: true });
+    }
+
+    const ping = path.match(/^\/ping\/(\w+)\/(\w+)$/);
+    if (ping && method === 'POST') {
+      const from = ping[1];
+      const to = ping[2];
+      if (!isValidEdge(from, to)) return Response.json({ error: 'Invalid edge' }, { status: 400 });
+      const body = await request.json().catch(() => ({}));
+      const emoji = typeof body.emoji === 'string' && body.emoji.length < 32 ? body.emoji : '💚';
+      const k = edgeKey(from, to);
+      const [eraw, fromRaw, toRaw] = await Promise.all([
+        this.ctx.storage.get(`edge:${k}`),
+        this.ctx.storage.get(`vertex:${from}`),
+        this.ctx.storage.get(`vertex:${to}`),
+      ]);
+      const edge = eraw ? JSON.parse(eraw) : this.defaultEdge(from, to);
+      const pingObj = {
+        from,
+        to,
+        emoji,
+        timestamp: new Date().toISOString(),
+        id: crypto.randomUUID(),
+      };
+      edge.pings = [pingObj, ...(edge.pings || [])].slice(0, 50);
+      edge.love = (edge.love || 0) + 1;
+      edge.lastActivity = pingObj.timestamp;
+      edge.messageCount = (edge.messageCount || 0) + 1;
+
+      const fromV = fromRaw ? JSON.parse(fromRaw) : this.defaultVertex(from);
+      const toV = toRaw ? JSON.parse(toRaw) : this.defaultVertex(to);
+      fromV.love = (fromV.love || 0) + 1;
+      toV.love = (toV.love || 0) + 1;
+
+      await Promise.all([
+        this.ctx.storage.put(`edge:${k}`, JSON.stringify(edge)),
+        this.ctx.storage.put(`vertex:${from}`, JSON.stringify(fromV)),
+        this.ctx.storage.put(`vertex:${to}`, JSON.stringify(toV)),
+      ]);
+
+      return Response.json({
+        ping: pingObj,
+        edge: { love: edge.love, lastActivity: edge.lastActivity },
+        fromLove: fromV.love,
+        toLove: toV.love,
+      });
+    }
+
+    const edgeGet = path.match(/^\/edge\/(\w+)\/(\w+)$/);
+    if (edgeGet && method === 'GET') {
+      const v1 = edgeGet[1];
+      const v2 = edgeGet[2];
+      if (!isValidEdge(v1, v2)) return Response.json({ error: 'Invalid edge' }, { status: 400 });
+      const k = edgeKey(v1, v2);
+      const eraw = await this.ctx.storage.get(`edge:${k}`);
+      return Response.json(eraw ? JSON.parse(eraw) : this.defaultEdge(v1, v2));
+    }
+
+    return Response.json({ error: 'Unknown topology route' }, { status: 404 });
+  }
+}
+
+// ═══ FamilyMeshRoom DO ═══════════════════════════════════════════════
+export class FamilyMeshRoom extends DurableObject {
+  /** @param {DurableObjectState} ctx @param {Env} env */
+  constructor(ctx, env) {
+    super(ctx, env);
+    this.ctx = ctx;
+    this.env = env;
+    this.pendingTelemetry = [];
+    this.flushBatchSize = 100;
+    this.flushIntervalMs = 30_000;
+    this.roomId = 'family-mesh';
+  }
+
+  scheduleFlush() {
+    void this.ctx.storage.getAlarm().then((t) => {
+      if (t == null) {
+        void this.ctx.storage.setAlarm(Date.now() + this.flushIntervalMs);
+      }
+    });
+  }
+
+  broadcastJson(obj, excludeTags) {
+    const msg = JSON.stringify(obj);
+    for (const ws of this.ctx.getWebSockets()) {
+      const tags = this.ctx.getTags(ws);
+      const nodeId = tags[0];
+      if (excludeTags && nodeId === excludeTags) continue;
+      try {
+        ws.send(msg);
+      } catch {
+        try {
+          this.ctx.deleteWebSocket(ws);
+        } catch {
+          /* ignore */
+        }
+      }
+    }
+  }
+
+  async fetch(request) {
+    const url = new URL(request.url);
+    const path = url.pathname;
+    this.roomId = url.searchParams.get('room') || this.roomId;
+
+    if (path === '/stats' && request.method === 'GET') {
+      const sockets = this.ctx.getWebSockets();
+      return Response.json({
+        connections: sockets.length,
+        pendingTelemetry: this.pendingTelemetry.length,
+        roomId: this.roomId,
+      });
+    }
+
+    if (path === '/broadcast' && request.method === 'POST') {
+      const token = this.env.INTERNAL_FANOUT_TOKEN;
+      const auth = request.headers.get('Authorization');
+      if (token && auth !== `Bearer ${token}`) {
+        return Response.json({ error: 'Unauthorized' }, { status: 401 });
+      }
+      const body = await request.json().catch(() => ({}));
+      this.broadcastJson(body, null);
+      return Response.json({ ok: true, broadcast: true });
+    }
+
+    if (request.headers.get('Upgrade') !== 'websocket') {
+      return Response.json({ error: 'Expected WebSocket upgrade' }, { status: 400 });
+    }
+
+    const nodeId =
+      url.searchParams.get('node')?.replace(/[^a-zA-Z0-9_-]/g, '').slice(0, 64) ||
+      `anon-${crypto.randomUUID().slice(0, 8)}`;
+
+    const sockets = this.ctx.getWebSockets();
+    if (sockets.length >= 32) {
+      return new Response('Room full', { status: 503 });
+    }
+
+    const pair = new WebSocketPair();
+    const [client, server] = Object.values(pair);
+    this.ctx.acceptWebSocket(server, [nodeId]);
+
+    server.send(
+      JSON.stringify({
+        type: 'joined',
+        userId: nodeId,
+        room: this.roomId,
+        ts: Date.now(),
+      }),
+    );
+    this.broadcastJson({ type: 'user_joined', userId: nodeId, ts: Date.now() }, nodeId);
+    this.scheduleFlush();
+
+    return new Response(null, { status: 101, webSocket: client });
+  }
+
+  /** @param {WebSocket} ws @param {string | ArrayBuffer} message */
+  async webSocketMessage(ws, message) {
+    const tags = this.ctx.getTags(ws);
+    const nodeId = tags[0] || 'unknown';
+    let data;
+    const text = typeof message === 'string' ? message : new TextDecoder().decode(message);
+    try {
+      data = JSON.parse(text);
+    } catch {
+      data = { type: 'raw', content: text };
+    }
+
+    if (data.type === 'ping' && data.content === 'ping') {
+      ws.send(JSON.stringify({ type: 'pong', ts: Date.now() }));
+      return;
+    }
+
+    const payload = { ...data, sender: nodeId, ts: Date.now() };
+    this.broadcastJson(payload, nodeId);
+    if (this.env.DB) {
+      this.pendingTelemetry.push({
+        room_id: this.roomId,
+        node_id: nodeId,
+        kind: String(data.type || 'message').slice(0, 64),
+        payload: JSON.stringify(payload),
+        ts: Date.now(),
+      });
+      this.scheduleFlush();
+    }
+  }
+
+  /** @param {WebSocket} ws */
+  async webSocketClose(ws) {
+    const tags = this.ctx.getTags(ws);
+    const nodeId = tags[0] || 'unknown';
+    this.broadcastJson({ type: 'user_left', userId: nodeId, ts: Date.now() }, null);
+  }
+
+  async alarm() {
+    const db = this.env.DB;
+    if (this.pendingTelemetry.length > 0 && db) {
+      const batch = this.pendingTelemetry.splice(0, this.flushBatchSize);
+      let prevRow = await this.ctx.storage.get('d1_chain_head');
+      let prevHash = typeof prevRow === 'string' ? prevRow : '0'.repeat(64);
+
+      const statements = [];
+      for (const row of batch) {
+        const hashInput = { ...row, prevHash };
+        const hash = await sha256Hex(hashInput);
+        const flushed_at = Date.now();
+        statements.push(
+          db
+            .prepare(
+              `INSERT INTO telemetry (room_id, node_id, kind, payload, ts, hash, prev_hash, flushed_at)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+            )
+            .bind(
+              row.room_id,
+              row.node_id,
+              row.kind,
+              row.payload,
+              row.ts,
+              hash,
+              prevHash,
+              flushed_at,
+            ),
+        );
+        prevHash = hash;
+      }
+      try {
+        await db.batch(statements);
+        await this.ctx.storage.put('d1_chain_head', prevHash);
+      } catch {
+        this.pendingTelemetry.unshift(...batch);
+      }
+    }
+
+    if (this.pendingTelemetry.length > 0 || this.ctx.getWebSockets().length > 0) {
+      await this.ctx.storage.setAlarm(Date.now() + this.flushIntervalMs);
+    }
+  }
+}
+
+/** Legacy DO class name still referenced by existing k4-cage Durable Objects in Cloudflare. */
+export class FamilyMessagingDO extends FamilyMeshRoom {}
+
+// ═══ Worker router ═════════════════════════════════════════════════════
+/** @typedef {{ K4_TOPOLOGY: DurableObjectNamespace, FAMILY_MESH_ROOM: DurableObjectNamespace, K4_MESH: KVNamespace, DB?: D1Database, ADMIN_TOKEN?: string, INTERNAL_FANOUT_TOKEN?: string, MESH_ROOM_IDS?: string, WORKER_VERSION?: string, TOPOLOGY?: string, ENVIRONMENT?: string }} Env */
+
+/**
+ * @param {Request} request
+ * @param {Env} env
+ * @param {string} path e.g. /api/mesh
+ * @param {string} method
+ */
+async function topologyFetch(request, env, path, method) {
+  if (!env.K4_TOPOLOGY) {
+    return new Response(JSON.stringify({ error: 'DO not configured', code: 'NO_DO' }), { status: 503 });
+  }
+  const id = env.K4_TOPOLOGY.idFromName('family');
+  const stub = env.K4_TOPOLOGY.get(id);
+  const internalPath = path.replace(/^\/api/, '') || '/';
+  return stub.fetch(
+    new Request(`https://topology${internalPath}`, {
+      method,
+      headers: request.headers,
+      body: method !== 'GET' && method !== 'HEAD' ? request.body : undefined,
+    }),
+  );
+}
+
+export default {
+  /** @param {Request} request @param {Env} env */
+  async fetch(request, env) {
+    if (request.method === 'OPTIONS') {
+      return new Response(null, { headers: CORS_HEADERS });
+    }
+
+    const url = new URL(request.url);
+    const path = url.pathname;
+    const method = request.method;
+
+    try {
+      if (path === '/' || path === '') {
+        return new Response(
+          `<!DOCTYPE html><html><head><meta charset="utf-8"><title>K4 Cage</title></head><body><pre>k4-cage unified\nGET /api/mesh\nWS /ws/family-mesh?node=…\n</pre></body></html>`,
+          { headers: { 'Content-Type': 'text/html; charset=utf-8' } },
+        );
+      }
+
+      if (path === '/health' || path === '/api/health') {
+        const meshR = await topologyFetch(request, env, '/api/mesh', 'GET').catch(() => null);
+        let topologySummary = null;
+        if (meshR && meshR.ok) topologySummary = await meshR.json();
+        return json({
+          ok: true,
+          service: 'k4-cage-unified',
+          workerVersion: env.WORKER_VERSION || '2.0.0',
+          topology: topologySummary,
+          ts: new Date().toISOString(),
+        });
+      }
+
+      if (path === '/api/mesh' && method === 'HEAD') {
+        if (!env.K4_TOPOLOGY) {
+          return new Response(null, { status: 200, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json; charset=utf-8' } });
+        }
+        const r = await topologyFetch(request, env, '/api/mesh', 'HEAD');
+        return new Response(null, {
+          status: r.status,
+          headers: { ...CORS_HEADERS, 'Content-Type': r.headers.get('Content-Type') || 'application/json; charset=utf-8' },
+        });
+      }
+
+      if (path === '/api/mesh' && method === 'GET') {
+        if (!env.K4_TOPOLOGY) {
+          return json({
+            vertices: VERTICES.map(v => ({ id: v, name: VERTEX_NAMES[v] })),
+            edges: EDGES.map(([a, b]) => ({ source: a, target: b, qFactor: 1 })),
+            topology: 'K4',
+            qFactor: 1,
+            routing_protocol: 'custom_dsdv',
+            timestamp: new Date().toISOString(),
+          });
+        }
+        const r = await topologyFetch(request, env, '/api/mesh', 'GET');
+        return new Response(r.body, { status: r.status, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' } });
+      }
+
+      const vMatch = path.match(/^\/api\/vertex\/(\w+)$/);
+      if (vMatch && method === 'GET') {
+        const r = await topologyFetch(request, env, `/api/vertex/${vMatch[1]}`, 'GET');
+        return new Response(r.body, { status: r.status, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' } });
+      }
+
+       const pMatch = path.match(/^\/api\/presence\/(\w+)$/);
+       if (pMatch && method === 'POST') {
+         const r = await topologyFetch(request, env, `/api/presence/${pMatch[1]}`, 'POST');
+         const out = await r.text();
+         if (r.ok && env.FAMILY_MESH_ROOM) {
+           try {
+             const body = JSON.parse(out);
+             await broadcastPingToRooms(env, {
+               type: 'presence',
+               vertex: pMatch[1],
+               vertexRecord: body.vertex,
+               ts: Date.now(),
+             });
+           } catch {
+             /* ignore */
+           }
+         }
+
+         // Forward presence event to orchestrator webhook
+         if (r.ok && env.ORCHESTRATOR_WEBHOOK) {
+           try {
+             const body = JSON.parse(out);
+             await fetch(env.ORCHESTRATOR_WEBHOOK, {
+               method: 'POST',
+               headers: { 'Content-Type': 'application/json' },
+               body: JSON.stringify({
+                 type: 'presence',
+                 vertex: pMatch[1],
+                 vertexRecord: body.vertex,
+                 ts: Date.now()
+               })
+             }).catch(() => { /* optional, non-fatal */ });
+           } catch {
+             /* ignore */
+           }
+         }
+
+         return new Response(out, { status: r.status, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' } });
+       }
+
+      const pingMatch = path.match(/^\/api\/ping\/(\w+)\/(\w+)$/);
+      if (pingMatch && method === 'POST') {
+        if (!env.K4_TOPOLOGY) {
+          const [from, to] = pingMatch.slice(1);
+          const edgeKey = [from, to].sort().join('-');
+          const edgeCountKey = `edge:${edgeKey}:count`;
+          const currentCount = await env.K4_MESH.get(edgeCountKey);
+          const newCount = (parseInt(currentCount || '0', 10) + 1).toString();
+          await env.K4_MESH.put(edgeCountKey, newCount);
+          return json({ ok: true, from, to, love: parseInt(newCount, 10), ts: new Date().toISOString() });
+        }
+        const r = await topologyFetch(
+          request,
+          env,
+          `/api/ping/${pingMatch[1]}/${pingMatch[2]}`,
+          'POST',
+        );
+        const out = await r.text();
+        if (r.ok) {
+          let parsed;
+          try {
+            parsed = JSON.parse(out);
+          } catch {
+            parsed = null;
+          }
+          if (env.DB) {
+            try {
+              await appendTelemetryD1(env, {
+                type: 'ping',
+                from: pingMatch[1],
+                to: pingMatch[2],
+                ping: parsed?.ping,
+              });
+            } catch {
+              /* optional */
+            }
+          } else {
+            await appendTelemetryKv(env, {
+              type: 'ping',
+              from: pingMatch[1],
+              to: pingMatch[2],
+              ping: parsed?.ping,
+            });
+          }
+          if (parsed?.ping) {
+            await broadcastPingToRooms(env, {
+              type: 'ping',
+              ...parsed.ping,
+              fromLove: parsed.fromLove,
+              toLove: parsed.toLove,
+            });
+          }
+        }
+        return new Response(out, { status: r.status, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' } });
+      }
+
+      const eMatch = path.match(/^\/api\/edge\/(\w+)\/(\w+)$/);
+      if (eMatch && method === 'GET') {
+        const r = await topologyFetch(request, env, `/api/edge/${eMatch[1]}/${eMatch[2]}`, 'GET');
+        return new Response(r.body, { status: r.status, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' } });
+      }
+
+      if (path === '/api/telemetry' && method === 'GET') {
+        const limit = Math.min(parseInt(url.searchParams.get('limit') || url.searchParams.get('count') || '50', 10) || 50, 200);
+        if (env.DB) {
+          const res = await env.DB.prepare(
+            'SELECT * FROM telemetry ORDER BY id DESC LIMIT ?',
+          )
+            .bind(limit)
+            .all();
+          const rows = res.results || [];
+          let verified = true;
+          for (let i = 0; i < rows.length - 1; i++) {
+            if (rows[i].prev_hash !== rows[i + 1].hash) {
+              verified = false;
+              break;
+            }
+          }
+          return json({
+            source: 'd1',
+            chain: rows,
+            count: rows.length,
+            verified,
+            standard: 'WCD-46 SHA-256 chain (D1)',
+          });
+        }
+        const kv = await getTelemetryKvChain(env, limit);
+        return json({
+          ...kv,
+          standard: 'WCD-46 SHA-256 Chain-of-Custody',
+        });
+      }
+
+      if (path === '/api/telemetry' && method === 'POST') {
+        if (!isAdmin(request, env)) return err('Unauthorized', 401);
+        const body = await request.json().catch(() => null);
+        if (!body || !body.event) return err('Missing event payload');
+        if (env.DB) {
+          const t = await appendTelemetryD1(env, body.event);
+          return json({ recorded: true, telemetry: t });
+        }
+        const t = await appendTelemetryKv(env, body.event);
+        return json({ recorded: true, telemetry: t });
+      }
+
+      const rs = path.match(/^\/room-stats\/([^/]+)$/);
+      if (rs && method === 'GET') {
+        const roomId = rs[1];
+        const stub = env.FAMILY_MESH_ROOM.get(env.FAMILY_MESH_ROOM.idFromName(roomId));
+        const r = await stub.fetch(new Request('https://room/stats', { method: 'GET' }));
+        return new Response(r.body, { status: r.status, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' } });
+      }
+
+      if (path.startsWith('/ws/')) {
+        const parts = path.split('/').filter(Boolean);
+        const roomId = parts[1] || 'family-mesh';
+        const stub = env.FAMILY_MESH_ROOM.get(env.FAMILY_MESH_ROOM.idFromName(roomId));
+        const internal = new URL(request.url);
+        internal.pathname = '/';
+        internal.searchParams.set('room', roomId);
+        return stub.fetch(
+          new Request(internal.toString(), {
+            method: request.method,
+            headers: request.headers,
+            body: request.body,
+          }),
+        );
+      }
+
+      if (path === '/api/admin/dashboard' && method === 'GET') {
+        if (!isAdmin(request, env)) return err('Unauthorized', 401);
+        const roomStub = env.FAMILY_MESH_ROOM.get(env.FAMILY_MESH_ROOM.idFromName('family-mesh'));
+        const [meshR, statsR] = await Promise.all([
+          topologyFetch(request, env, '/api/mesh', 'GET'),
+          roomStub.fetch(new Request('https://room/stats')),
+        ]);
+        const mesh = meshR.ok ? await meshR.json() : null;
+        const room = statsR.ok ? await statsR.json() : null;
+        return json({
+          mesh,
+          room,
+          generated: new Date().toISOString(),
+        });
+      }
+
+      return err('Not found. Try GET /api/mesh', 404);
+    } catch (e) {
+      return err(`Internal error: ${e.message}`, 500);
+    }
+  },
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+// END TASK 1
+// ═══════════════════════════════════════════════════════════════════════════
+
+// ═══════════════════════════════════════════════════════════════════════════
+// TASK 2 — GPIO CONFIG (firmware/boards/waveshare-s3-touch-lcd-3.5b-nodezero/config.h)
+// Audit: verify every pin against hardware docs, check PSRAM kill zone,
+// verify I2C bus sharing, SPI host assignments, no conflicts
+// ═══════════════════════════════════════════════════════════════════════════
+
+#ifndef _BOARD_CONFIG_H_
+#define _BOARD_CONFIG_H_
+
+// ── P31 Node Zero — Waveshare ESP32-S3-Touch-LCD-3.5B (Type B, N16R8) ────────
+// Board: 480×320 AXS15231B display + touch, ES8311 codec, AXP2101 PMIC
+// Kill zone: GPIO 26-37 reserved for Octal PSRAM — NEVER route anything here
+// ─────────────────────────────────────────────────────────────────────────────
+
+// ── I2C (shared bus — AXP2101 PMIC + ES8311 codec + AXS15231B touch) ────────
+// All I2C transactions must acquire g_i2c_mutex (bus_mutex.h) before use
+#define I2C_MASTER_SDA      GPIO_NUM_8
+#define I2C_MASTER_SCL      GPIO_NUM_7
+#define I2C_MASTER_NUM      I2C_NUM_0
+#define I2C_MASTER_FREQ_HZ  400000      // Fast Mode
+
+// ── Display: AXS15231B via QSPI (SPI2_HOST) ──────────────────────────────────
+// DC pin: GPIO_NUM_NC — AXS15231B QSPI encodes cmd/data in transaction header.
+// Do NOT set DC to any GPIO (original config used GPIO 0 = BOOT button — WRONG)
+// Pin remap (CWP-046 / WCD-FW10): moved from GPIO 1-4 (I2S_D0-3 conflict)
+// to camera header pins 9-14 — above PSRAM kill zone (26-37) and clear of I2S.
+#define DISPLAY_HOST        SPI2_HOST
+#define DISPLAY_CS          GPIO_NUM_9
+#define DISPLAY_CLK         GPIO_NUM_10
+#define DISPLAY_D0          GPIO_NUM_11
+#define DISPLAY_D1          GPIO_NUM_12
+#define DISPLAY_D2          GPIO_NUM_13
+#define DISPLAY_D3          GPIO_NUM_14
+#define DISPLAY_DC          GPIO_NUM_NC  // No DC pin for QSPI mode
+#define DISPLAY_RST         GPIO_NUM_NC  // Power-on reset sufficient
+#define DISPLAY_BACKLIGHT   GPIO_NUM_6
+#define DISPLAY_BL_INVERT   false
+#define DISPLAY_CLK_HZ      (40 * 1000 * 1000)
+
+// Physical panel dimensions (portrait native)
+#define DISPLAY_H_RES       480
+#define DISPLAY_V_RES       320
+
+// Rotation: 90° CW via LVGL SOFTWARE rotation — hardware MADCTL swap causes
+// blank screen on AXS15231B (silicon boundary alignment bug — see display.c)
+#define DISPLAY_LVGL_ROT    LV_DISP_ROT_90
+
+// ── Touch: AXS15231B integrated DDIC via I2C ─────────────────────────────────
+#define TOUCH_I2C_ADDR      0x3B
+#define TOUCH_INT           GPIO_NUM_NC  // Interrupt not wired on Type B
+#define TOUCH_RST           GPIO_NUM_NC
+
+// ── LoRa: Semtech SX1262 via FSPI (SPI3_HOST) ────────────────────────────────
+// Repurposed camera pins — no camera on Type B board
+// All GPIOs above 37: clear of Octal PSRAM kill zone (26-37)
+#define LORA_HOST           SPI3_HOST
+#define LORA_SCK            GPIO_NUM_41  // CAM_PCLK repurposed
+#define LORA_MOSI           GPIO_NUM_42  // CAM_Y6 repurposed
+#define LORA_MISO           GPIO_NUM_39  // CAM_Y8 repurposed
+#define LORA_NSS            GPIO_NUM_40  // CAM_Y7 repurposed (severs HW TE — OK, SW DMA used)
+#define LORA_BUSY           GPIO_NUM_21  // CAM_Y9 repurposed
+#define LORA_DIO1           GPIO_NUM_38  // CAM_XCLK repurposed
+#define LORA_NRST           GPIO_NUM_45  // CAM_Y2 repurposed
+#define LORA_CLK_HZ         (8 * 1000 * 1000)
+
+// ── Audio: ES8311 codec (I2S) ─────────────────────────────────────────────────────
+// Audio pins occupy GPIO 2–5 to stay clear of QSPI (9–14) and LoRa (38–45).
+// DOUT (mic) kept on GPIO 16 to avoid conflict with LoRa NSS (GPIO 40).
+#define AUDIO_SAMPLE_RATE   24000
+#define AUDIO_I2S_MCLK      GPIO_NUM_5    // master clock -> codec
+#define AUDIO_I2S_WS        GPIO_NUM_4    // word select (L/R)
+#define AUDIO_I2S_BCLK      GPIO_NUM_3    // bit clock
+#define AUDIO_I2S_DIN       GPIO_NUM_2    // ESP32 → codec (speaker)
+#define AUDIO_I2S_DOUT      GPIO_NUM_16   // codec → ESP32 (mic), not GPIO 40
+#define AUDIO_ES8311_ADDR   0x18          // I2C address (ADDR pin tied low)
+#define AUDIO_PA_PIN        GPIO_NUM_NC   // No PA on this board
+
+// ── PMIC: X-Powers AXP2101 ───────────────────────────────────────────────────
+#define PMIC_I2C_ADDR       0x34
+#define PMIC_ENABLE         1
+
+// ── System ────────────────────────────────────────────────────────────────────
+#define BOOT_BUTTON         GPIO_NUM_0
+#define BUILTIN_LED         GPIO_NUM_NC
+
+#endif // _BOARD_CONFIG_H_
+
+// ═══════════════════════════════════════════════════════════════════════════
+// END TASK 2
+// ═══════════════════════════════════════════════════════════════════════════
+
+// ═══════════════════════════════════════════════════════════════════════════
+// TASK 3 — provision_esim.sh (firmware/node-zero/scripts/provision_esim.sh)
+// Bug: exec on line 20 transfers control to python, so lines 21-96
+// are DEAD CODE that never executes. The shell script's bash-native
+// logic (AT commands, QR parsing, qmicli, etc.) is orphaned.
+//
+// Fix: either remove the exec and implement in pure bash (removing
+// the python dependency), or keep exec and remove the dead code.
+// ═══════════════════════════════════════════════════════════════════════════
+
+#!/usr/bin/env bash
+# ── P31 Node Zero — eSIM Provisioning Wrapper ───────────────────────────────────
+# Wraps provision_esim.py for operator convenience.
+#
+# Usage:
+#   ./provision_esim.sh [--port /dev/ttyUSB0] [--qr <image> | --smdp <url>]
+#
+# Dependencies: python3, pyserial, requests, zbarimg (optional for QR)
+# ────────────────────────────────────────────────────────────────────────────────
+set -euo pipefail
+
+DIR="$(cd "$(dirname "$0")" && pwd)"
+PYTHON="${PYTHON:-python3}"
+
+echo "════════════════════════════════════════════════════════"
+echo "  Node Zero — eSIM Provisioning"
+echo "════════════════════════════════════════════════════════"
+
+# Forward all arguments to Python helper
+exec "$PYTHON" "$DIR/provision_esim.py" "$@"
+echo "  Node Zero — eSIM Provisioning"
+echo "  Port: $PORT"
+echo "════════════════════════════════════════════════════════"
+
+# ── Helper: send AT, wait for OK ───────────────────────────────
+at_cmd() {
+  # echo -e for newline; expect "OK" within 2s
+  echo -e "$1\r" > "$PORT" 2>/dev/null || true
+  # Use `microcom -s` in production; placeholder
+  sleep 0.2
+}
+
+echo "[1/5] Detecting modem type..."
+# Placeholder: in real implementation, use `tools/micropicocom` or `pyserial` read
+MODEM_TYPE="unknown"  # will become ublox / quectel / qualcomm
+
+# ── Step 2: Get SM‑DP+ URL ─────────────────────────────────────
+if [[ -n "$QR_IMAGE" ]]; then
+  echo "[2/5] Extracting SM‑DP+ URL from QR code..."
+  # convert QR image to string using zbarimg or similar
+  SMDP_URL=$(zbarimg -q "$QR_IMAGE" 2>/dev/null | head -1 || true)
+  if [[ -z "$SMDP_URL" ]]; then
+    echo "ERROR: Could not read QR code."
+    exit 1
+  fi
+  echo "      SM‑DP+: $SMDP_URL"
+elif [[ -z "$SMDP_URL" ]]; then
+  echo "ERROR: Must provide --smdp <url> or --qr <image>"
+  exit 1
+fi
+
+# ── Step 3: Download profile ───────────────────────────────────
+echo "[3/5] Downloading eSIM profile..."
+PROFILE_BIN="/tmp/sim-profile.mf"
+curl -f -L -o "$PROFILE_BIN" "$SMDP_URL" || {
+  echo "ERROR: Profile download failed (check SM‑DP+ address)."
+  exit 1
+}
+echo "      Profile size: $(stat -c%s "$PROFILE_BIN") bytes"
+
+# ── Step 4: Install profile (chipset‑specific) ──────────────────
+echo "[4/5] Installing profile..."
+case "$MODEM_TYPE" in
+  ublox)
+    # u‑blox LARA‑R6 / SARA‑R5 uses AT+CSIM
+    HEX=$(xxd -p -c 64 "$PROFILE_BIN" | tr -d '\n')
+    at_cmd "AT+CSIM=88,\"${HEX}\""   # placeholder length calculation required
+    ;;
+  quectel|qualcomm)
+    # Qualcomm/Quectel: qmicli -d /dev/cdc-wdm0 --dms-download-profile
+    if command -v qmicli &>/dev/null; then
+      qmicli -d /dev/cdc-wdm0 --dms-download-profile="file=$PROFILE_BIN" || true
+    else
+      echo "ERROR: qmicli not installed for $MODEM_TYPE modem."
+      exit 1
+    fi
+    ;;
+  *)
+    echo "ERROR: Modem type unknown or not supported yet."
+    exit 1
+    ;;
+esac
+
+# ── Step 5: Verification ───────────────────────────────────────
+echo "[5/5] Verifying installation..."
+echo "Profile installed. Please power‑cycle the device to attach network."
+
+echo "════════════════════════════════════════════════════════"
+echo "  PROVISIONING COMPLETE"
+echo "════════════════════════════════════════════════════════"
+
+// ═══════════════════════════════════════════════════════════════════════════
+// END TASK 3
+// ═══════════════════════════════════════════════════════════════════════════
+
+── INSTRUCTIONS ──────────────────────────────────────────────────────────────
+
+For each task, output:
+1. A severity rating: [CRITICAL] / [WARNING] / [INFO] / [QUESTION]
+2. Line number(s)
+3. Description of the issue
+4. Exact fix
+
+For TASK 3, also produce a corrected version of the entire file (choose either pure-bash or exec-with-wrapper, and commit to one).
+
+Work through all three tasks in order. Do not skip any.
+
+══════════════════════════════════════════════════════════════════════════════
+END PAYLOAD
+══════════════════════════════════════════════════════════════════════════════
