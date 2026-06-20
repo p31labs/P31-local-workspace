@@ -25,6 +25,7 @@ const TIER_MODELS = {
     'anthropic/claude-sonnet-4',
     'deepseek/deepseek-r1',
     'google/gemini-2.5-pro',
+    'meta-llama/llama-3.3-70b-instruct:free',
   ],
 };
 

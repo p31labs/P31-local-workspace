@@ -116,7 +116,7 @@ async function runConvergence(researchTexts) {
   const combined = researchTexts.map((t, i) => `## Research Output ${i + 1}\n${trimContext(t)}`).join('\n\n');
   return callLLM(CONVERGE_SYSTEM, `Converge these ${researchTexts.length} research outputs into a unified synthesis:\n\n${combined}`, {
     intent: { task: 'synthesis', privacy: 'standard' },
-    maxTokens: 8192,
+    maxTokens: 2000,
     temperature: 0.3,
   });
 }
