@@ -11,28 +11,28 @@ const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/openai/chat
 const GEMINI_KEY = process.env.GEMINI_API_KEY;
 
 // Direct provider model mapping (bypasses LiteLLM entirely).
-// Tier aliases map to verified available OpenRouter + Groq + Gemini models.
+// Tier aliases map to exact OpenRouter model IDs (no openrouter/ prefix needed — default route is OpenRouter).
 const TIER_MODELS = {
   scavenger: [
     'gemini/gemini-2.0-flash',
-    'openrouter/qwen/qwen3-coder:free',
-    'openrouter/nousresearch/hermes-3-llama-3.1-405b:free',
-    'openrouter/nvidia/nemotron-3-ultra-550b-a55b:free',
-    'openrouter/google/gemma-4-26b-a4b-it:free',
+    'qwen/qwen3-coder:free',
+    'nousresearch/hermes-3-llama-3.1-405b:free',
+    'nvidia/nemotron-3-ultra-550b-a55b:free',
+    'google/gemma-4-26b-a4b-it:free',
     'meta-llama/llama-3.3-70b-instruct:free',
     'deepseek/deepseek-v4-flash',
     'groq/llama-3.1-8b-instant',
     'openrouter/free',
   ],
   flash: [
-    'openrouter/anthropic/claude-3.5-haiku-20241022',
-    'openrouter/deepseek/deepseek-chat',
+    'anthropic/claude-3.5-haiku',
+    'deepseek/deepseek-chat',
     'openrouter/free',
   ],
   premium: [
-    'openrouter/anthropic/claude-sonnet-4-20250514',
-    'openrouter/deepseek/deepseek-r1',
-    'openrouter/google/gemini-2.5-pro',
+    'anthropic/claude-sonnet-4',
+    'deepseek/deepseek-r1',
+    'google/gemini-2.5-pro',
     'meta-llama/llama-3.3-70b-instruct:free',
     'openrouter/free',
   ],
