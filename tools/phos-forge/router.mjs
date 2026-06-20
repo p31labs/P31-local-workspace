@@ -7,25 +7,34 @@ const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
 const OPENROUTER_KEY = process.env.OPENROUTER_API_KEY;
 const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
 const GROQ_KEY = process.env.GROQ_API_KEY;
+const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions';
+const GEMINI_KEY = process.env.GEMINI_API_KEY;
 
 // Direct provider model mapping (bypasses LiteLLM entirely).
-// Tier aliases map to verified available OpenRouter + Groq models.
+// Tier aliases map to verified available OpenRouter + Groq + Gemini models.
 const TIER_MODELS = {
   scavenger: [
+    'gemini/gemini-2.0-flash',
+    'openrouter/qwen/qwen3-coder:free',
+    'openrouter/nousresearch/hermes-3-llama-3.1-405b:free',
+    'openrouter/nvidia/nemotron-3-ultra-550b-a55b:free',
+    'openrouter/google/gemma-4-26b-a4b-it:free',
     'meta-llama/llama-3.3-70b-instruct:free',
     'deepseek/deepseek-v4-flash',
-    'nvidia/nemotron-3-super-120b-a12b:free',
     'groq/llama-3.1-8b-instant',
+    'openrouter/free',
   ],
   flash: [
-    'anthropic/claude-3.5-haiku',
-    'deepseek/deepseek-chat',
+    'openrouter/anthropic/claude-3.5-haiku-20241022',
+    'openrouter/deepseek/deepseek-chat',
+    'openrouter/free',
   ],
   premium: [
-    'anthropic/claude-sonnet-4',
-    'deepseek/deepseek-r1',
-    'google/gemini-2.5-pro',
+    'openrouter/anthropic/claude-sonnet-4-20250514',
+    'openrouter/deepseek/deepseek-r1',
+    'openrouter/google/gemini-2.5-pro',
     'meta-llama/llama-3.3-70b-instruct:free',
+    'openrouter/free',
   ],
 };
 
@@ -65,6 +74,7 @@ function emitTelemetry(intent, targetModel, fallbackUsed, sovereign) {
 
 function modelToProvider(model) {
   if (model.startsWith('groq/')) return { url: GROQ_URL, key: GROQ_KEY, stripPrefix: 'groq/' };
+  if (model.startsWith('gemini/')) return { url: GEMINI_URL, key: GEMINI_KEY, stripPrefix: 'gemini/' };
   return { url: OPENROUTER_URL, key: OPENROUTER_KEY, stripPrefix: 'openrouter/' };
 }
 

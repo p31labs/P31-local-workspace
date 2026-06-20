@@ -11,6 +11,7 @@ import { dashboard } from './dashboard.mjs';
 import { estimate, getState } from './cognitive-estimator.mjs';
 import { remediate, getHealerLog } from './self-healer.mjs';
 import { renderAura, animateAura, captureAura } from './aura.mjs';
+import { generateDailyReport } from './aura-report.mjs';
 import { runJitterbug } from './jitterbug.mjs';
 import { getStatus as getReflexStatus, mutePattern, unmutePattern, getHistory } from './reflex-arc.mjs';
 import { tide, getTideState } from './tide.mjs';
@@ -273,6 +274,14 @@ async function cmdDeploy() {
 }
 
 async function cmdAura() {
+  const sub = args[0];
+  if (sub === 'report') {
+    const result = await generateDailyReport();
+    console.log(result.report);
+    console.log(`\nReport saved to ${result.path}`);
+    return;
+  }
+
   const extra = args.filter(a => a.startsWith('--') || a.startsWith('-'));
   const positional = args.filter(a => !a.startsWith('-'));
   const opts = {
@@ -796,6 +805,7 @@ Usage:
   phos remediate diag     Show current metrics and matching diagnostics
   phos calibrate --spoon <0-5>  Self-report spoon level
   phos calibrate --interactive   Interactive calibration
+  phos aura [report]                    Daily quantum-aura report (markdown)
   phos aura [--once|--verbose|--share]  Terminal particle visualization of cognitive state
   phos jitterbug "<problem>" [--factor N] [--depth N] [--dry-run]  Fractal research workflow (spawn N agents, converge, repeat)
   phos reflex [status|mute|unmute|history]  Sub-cycle fast loop (pattern matching, cooldown, spoon gating)
