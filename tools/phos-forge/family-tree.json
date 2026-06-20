@@ -1,0 +1,254 @@
+{
+  "version": "1.0.0",
+  "artifact": "PHOS Family Tree — OHANA",
+  "meta": {
+    "created": "2026-06-20",
+    "source": "Ancestry.com family tree — transcribed by Gemini web agent, reviewed by operator",
+    "note": "This tree includes step-relationships, unknown biological nodes, and broken connections. It is not a pristine binary — it is a map of what is known and what is not.",
+    "session_ref": "0fef2bf7",
+    "brain_dump_ref": "2026-06-20 — morning stream on hierarchy, trust collapse, knowledge transmission",
+    "key_insight": "The broken trust chain in the morning brain dump is not an abstraction — it is the architectural reality of the Johnson lineage. PHOS is being built to patch the very thing the family could not pass down."
+  },
+  "individuals": [
+    {
+      "id": "william-johnson-1985",
+      "name": "William Johnson",
+      "aka": ["Trimtab", "Operator"],
+      "born": 1985,
+      "living": true,
+      "role": "self",
+      "spouse_id": "christyn-francis-1987",
+      "parent_ids": ["rodger-johnson-1954", "brenda-katen-living"],
+      "notes": "Operator. Architect of PHOS. Building cognitive-cybernetic systems to patch the broken trust chain.",
+      "tags": ["self", "architect", "phos"]
+    },
+    {
+      "id": "christyn-francis-1987",
+      "name": "Christyn Francis",
+      "born": 1987,
+      "living": true,
+      "role": "spouse",
+      "spouse_id": "william-johnson-1985",
+      "notes": "Spouse of William.",
+      "tags": ["spouse"]
+    },
+    {
+      "id": "rodger-johnson-1954",
+      "name": "Rodger Johnson",
+      "born": 1954,
+      "deceased": true,
+      "role": "father",
+      "parent_ids": ["ghost-unknown-biological-father", "nona-butler-1938"],
+      "step_parent_ids": ["albert-dwayne-taber-1946"],
+      "notes": "William's father. His biological father is unknown. Albert Taber married Nona and stepped into the role of stepfather.",
+      "tags": ["father", "broken-link"],
+      "lineage_note": "The break in the chain. The 'legacy file system' was severed here — biological root unknown, stepfather relationship did not hold."
+    },
+    {
+      "id": "brenda-katen-living",
+      "name": "Brenda Katen",
+      "living": true,
+      "role": "mother",
+      "spouse_id": "rodger-johnson-1954",
+      "parent_ids": ["robert-james-katen-1920", "marjie-f-katen-1926"],
+      "tags": ["mother"]
+    },
+    {
+      "id": "albert-dwayne-taber-1946",
+      "name": "Albert Dwayne Taber",
+      "born": 1946,
+      "deceased": 1999,
+      "role": "step-grandfather",
+      "relationship_type": "step",
+      "spouse_id": "nona-butler-1938",
+      "parent_ids": ["leo-finnley-taber-1921", "hattie-jean-spoonemore-1928"],
+      "notes": "Step-grandfather to William. Married Nona Butler. Stepped into the role of father to Rodger Johnson. William had no relationship with him.",
+      "tags": ["step", "chosen-lineage"],
+      "lineage_note": "The chosen lineage. Albert was not a blood relative, but he carries the Spoonemore name — the ancestral echo of Spoon Theory."
+    },
+    {
+      "id": "nona-butler-1938",
+      "name": "Nona Butler",
+      "born": 1938,
+      "deceased": 2009,
+      "role": "grandmother",
+      "relationship_type": "biological",
+      "spouse_id": "albert-dwayne-taber-1946",
+      "parent_ids": ["jc-butler-deceased", "ada-e-kittrell-butler-deceased"],
+      "tags": ["grandmother", "biological"]
+    },
+    {
+      "id": "robert-james-katen-1920",
+      "name": "Robert James Katen",
+      "born": 1920,
+      "deceased": 2009,
+      "role": "grandfather",
+      "relationship_type": "biological",
+      "spouse_id": "marjie-f-katen-1926",
+      "parent_ids": ["william-michael-katen-1893", "theresa-marie-mccabe-1892"],
+      "tags": ["grandfather", "biological"],
+      "lineage_note": "Maternal line — intact. The knowledge transmission chain held on this side."
+    },
+    {
+      "id": "marjie-f-katen-1926",
+      "name": "Marjie F Katen",
+      "born": 1926,
+      "living": true,
+      "role": "grandmother",
+      "relationship_type": "biological",
+      "spouse_id": "robert-james-katen-1920",
+      "parent_ids": ["homer-andrew-billingslea-1895", "erma-lamore-barker-1896"],
+      "tags": ["grandmother", "biological", "living"]
+    },
+    {
+      "id": "leo-finnley-taber-1921",
+      "name": "Leo Finnley Taber",
+      "born": 1921,
+      "deceased": 1978,
+      "role": "great-grandfather",
+      "relationship_type": "biological",
+      "spouse_id": "hattie-jean-spoonemore-1928",
+      "tags": ["great-grandfather", "biological", "taber-line"]
+    },
+    {
+      "id": "hattie-jean-spoonemore-1928",
+      "name": "Hattie Jean Spoonemore",
+      "born": 1928,
+      "deceased": 1993,
+      "role": "great-grandmother",
+      "relationship_type": "biological",
+      "spouse_id": "leo-finnley-taber-1921",
+      "tags": ["great-grandmother", "biological", "spoonemore"],
+      "lineage_note": "The name that would become Spoon Theory. Hattie carried the surname Spoonemore — the cognitive gating mechanism of PHOS. The name came through the stepfather's line, the chosen lineage. A century later, it became the foundation of the system."
+    },
+    {
+      "id": "jc-butler-deceased",
+      "name": "J C Butler",
+      "deceased": true,
+      "role": "great-grandfather",
+      "relationship_type": "biological",
+      "spouse_id": "ada-e-kittrell-butler-deceased",
+      "tags": ["great-grandfather", "biological"]
+    },
+    {
+      "id": "ada-e-kittrell-butler-deceased",
+      "name": "Ada E Kittrell Butler",
+      "deceased": true,
+      "role": "great-grandmother",
+      "relationship_type": "biological",
+      "spouse_id": "jc-butler-deceased",
+      "tags": ["great-grandmother", "biological"]
+    },
+    {
+      "id": "william-michael-katen-1893",
+      "name": "William Michael Katen",
+      "born": 1893,
+      "deceased": 1973,
+      "role": "great-grandfather",
+      "relationship_type": "biological",
+      "spouse_id": "theresa-marie-mccabe-1892",
+      "tags": ["great-grandfather", "biological"]
+    },
+    {
+      "id": "theresa-marie-mccabe-1892",
+      "name": "Theresa Marie McCabe",
+      "born": 1892,
+      "deceased": 1981,
+      "role": "great-grandmother",
+      "relationship_type": "biological",
+      "spouse_id": "william-michael-katen-1893",
+      "tags": ["great-grandmother", "biological"]
+    },
+    {
+      "id": "homer-andrew-billingslea-1895",
+      "name": "Homer Andrew Billingslea",
+      "born": 1895,
+      "deceased": true,
+      "role": "great-grandfather",
+      "relationship_type": "biological",
+      "spouse_id": "erma-lamore-barker-1896",
+      "tags": ["great-grandfather", "biological"]
+    },
+    {
+      "id": "erma-lamore-barker-1896",
+      "name": "Erma Lamore Barker",
+      "born": 1896,
+      "deceased": 1925,
+      "role": "great-grandmother",
+      "relationship_type": "biological",
+      "spouse_id": "homer-andrew-billingslea-1895",
+      "portrait": true,
+      "tags": ["great-grandmother", "biological", "portrait"],
+      "lineage_note": "The only portrait in the tree. Lived 29 years. Died before William was born. Someone made sure she was remembered. That is what Logbook does — ensures the signal survives the carrier."
+    },
+    {
+      "id": "ghost-unknown-biological-father",
+      "name": "Unknown",
+      "role": "ghost-node",
+      "relationship_type": "unknown",
+      "born": null,
+      "deceased": null,
+      "tags": ["ghost", "unknown", "broken-link"],
+      "lineage_note": "The biological father of Rodger Johnson is unknown. This is the break in the chain that the morning brain dump was excavating. A ghost node — present in the structure, absent from the record. PHOS was built to acknowledge and work around exactly this kind of gap."
+    }
+  ],
+  "relationships": [
+    { "from": "william-johnson-1985", "to": "christyn-francis-1987", "type": "marriage" },
+    { "from": "rodger-johnson-1954", "to": "brenda-katen-living", "type": "marriage" },
+    { "from": "albert-dwayne-taber-1946", "to": "nona-butler-1938", "type": "marriage" },
+    { "from": "robert-james-katen-1920", "to": "marjie-f-katen-1926", "type": "marriage" },
+    { "from": "leo-finnley-taber-1921", "to": "hattie-jean-spoonemore-1928", "type": "marriage" },
+    { "from": "jc-butler-deceased", "to": "ada-e-kittrell-butler-deceased", "type": "marriage" },
+    { "from": "william-michael-katen-1893", "to": "theresa-marie-mccabe-1892", "type": "marriage" },
+    { "from": "homer-andrew-billingslea-1895", "to": "erma-lamore-barker-1896", "type": "marriage" },
+    { "from": "rodger-johnson-1954", "to": "nona-butler-1938", "type": "biological", "note": "Mother-son" },
+    { "from": "rodger-johnson-1954", "to": "ghost-unknown-biological-father", "type": "unknown", "note": "Biological father unknown — ghost node" },
+    { "from": "rodger-johnson-1954", "to": "albert-dwayne-taber-1946", "type": "step", "note": "Albert married Nona, stepped into father role. Relationship did not hold." },
+    { "from": "william-johnson-1985", "to": "rodger-johnson-1954", "type": "biological", "note": "Father-son" },
+    { "from": "william-johnson-1985", "to": "brenda-katen-living", "type": "biological", "note": "Mother-son" },
+    { "from": "brenda-katen-living", "to": "robert-james-katen-1920", "type": "biological", "note": "Father-daughter" },
+    { "from": "brenda-katen-living", "to": "marjie-f-katen-1926", "type": "biological", "note": "Mother-daughter" },
+    { "from": "nona-butler-1938", "to": "jc-butler-deceased", "type": "biological" },
+    { "from": "nona-butler-1938", "to": "ada-e-kittrell-butler-deceased", "type": "biological" },
+    { "from": "albert-dwayne-taber-1946", "to": "leo-finnley-taber-1921", "type": "biological" },
+    { "from": "albert-dwayne-taber-1946", "to": "hattie-jean-spoonemore-1928", "type": "biological" },
+    { "from": "marjie-f-katen-1926", "to": "homer-andrew-billingslea-1895", "type": "biological" },
+    { "from": "marjie-f-katen-1926", "to": "erma-lamore-barker-1896", "type": "biological" }
+  ],
+  "cycles": [
+    {
+      "id": "broken-root",
+      "name": "The Broken Root",
+      "individuals": ["rodger-johnson-1954", "ghost-unknown-biological-father"],
+      "description": "The biological father of Rodger Johnson is unknown. The knowledge transmission chain was severed at this node. The morning brain dump about broken hierarchies was not an abstraction — it was this.",
+      "phos_analog": "The break in the 'legacy file system' that PHOS was built to patch. Cartographer indexes known code; this node marks what is not known."
+    },
+    {
+      "id": "chosen-lineage",
+      "name": "The Chosen Lineage — Albert Taber",
+      "individuals": ["albert-dwayne-taber-1946", "rodger-johnson-1954", "nona-butler-1938"],
+      "description": "Albert Dwayne Taber married Nona Butler and stepped into the role of father to Rodger Johnson. He was not a biological relative, but he carried the Spoonemore name — the ancestral echo of Spoon Theory. The lineage that did not hold relationally still passed down the signal that would become PHOS.",
+      "phos_analog": "Autonomic file adoption: phos adopt. The system chooses to integrate and reorganize around a new canonical structure, even when the original lineage is broken."
+    },
+    {
+      "id": "spoonemore-echo",
+      "name": "The Spoonemore Echo",
+      "individuals": ["hattie-jean-spoonemore-1928", "albert-dwayne-taber-1946"],
+      "description": "Hattie Jean Spoonemore (1928–1993) carried the surname Spoonemore. A century later, Spoon Theory became the cognitive gating mechanism of PHOS. The name came through the stepfather's line — the chosen lineage, not the blood one. The legacy file system did not pass down intact, but it passed down exactly the right dependency.",
+      "phos_analog": "Spoon gating. The entire PHOS cognitive-cybernetic loop is built on spoon-aware resource management. The name was waiting in the ancestry all along."
+    },
+    {
+      "id": "erma-portrait",
+      "name": "Erma's Portrait",
+      "individuals": ["erma-lamore-barker-1896"],
+      "description": "Erma Lamore Barker (1896–1925) — the only portrait in the tree. Lived 29 years. Died before William was born. Someone uploaded her photograph, ensuring she would be seen by descendants she never met. That act — ensuring the signal survives the carrier — is what Logbook was built for.",
+      "phos_analog": "Logbook session archiving. The daily brain dump, the cognitive state snapshots, the healer actions — all of it is a portrait of who you were, preserved for a future you may not meet."
+    }
+  ],
+  "cross_references": {
+    "brain_dump": "The morning stream about trust, hierarchy, and legacy file systems (2026-06-20, session 0fef2bf7) directly references the broken root and chosen lineage captured in this tree.",
+    "phos_adopt": "The phos adopt command mirrors Albert Taber's choice — stepping into a role and reorganizing the structure around a new canonical map.",
+    "spoon_module": "The spoon-gating logic in jitterbug.mjs, brain.mjs, and nexus-daemon.mjs carries the name that Hattie Jean Spoonemore (1928–1993) passed down.",
+    "logbook": "Logbook archives daily sessions — the same impulse that preserved Erma Lamore Barker's portrait for descendants she never met."
+  }
+}

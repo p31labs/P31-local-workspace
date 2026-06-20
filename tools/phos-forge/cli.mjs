@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { resolve } from 'path';
+import { resolve, join } from 'path';
 import { existsSync } from 'fs';
 import { readFile, writeFile } from 'fs/promises';
 import { classifyFile, scanRepo } from './classifier.mjs';
@@ -17,8 +17,10 @@ import { tide, getTideState } from './tide.mjs';
 import { learn as kappaLrn, getWeights as kappaW, resetWeights as kappaRst, getAdjustedDiagnostics } from './kappa.mjs';
 import { buildIndex, query, findRelated, traceSymbol, getMap } from './cartographer.mjs';
 import { page as lbPage, getLogbookState, listLogs, readLog } from './logbook.mjs';
+import { processBrainDump, getSessions } from './brain.mjs';
 
 const [nodePath, scriptPath, command, ...args] = process.argv;
+const __dirname = resolve(new URL('.', import.meta.url).pathname);
 
 async function cmdAdopt() {
   console.log('🔍 Scanning repo for unclassified files...');
@@ -516,8 +518,27 @@ Usage:
   }
 }
 
+async function appendFamilyCycles() {
+  try {
+    const { existsSync, readFileSync } = await import('fs');
+    const { join } = await import('path');
+    const __dirname = resolve(new URL('.', import.meta.url).pathname);
+    const fp = join(__dirname, 'family-tree.json');
+    if (!existsSync(fp)) return '';
+    const tree = JSON.parse(readFileSync(fp, 'utf-8'));
+    if (!tree.cycles?.length) return '';
+    let md = '\n\n## OHANA — Family Lineage\n\n';
+    for (const c of tree.cycles) {
+      md += `### ${c.name}\n${c.description}\n\n`;
+      if (c.phos_analog) md += `*PHOS analog: ${c.phos_analog}*\n\n`;
+    }
+    return md;
+  } catch { return ''; }
+}
+
 async function cmdLogbook() {
   const sub = args[0];
+  const hasFamily = args.includes('--family');
   if (sub === 'page' || sub === 'update') {
     const r = lbPage();
     console.log(`Logbook — page written`);
@@ -526,17 +547,12 @@ async function cmdLogbook() {
     console.log(`  Elapsed: ${r.duration}`);
   } else if (sub === 'today') {
     const content = readLog();
-    if (content) console.log(content);
+    if (content) console.log(content + (hasFamily ? await appendFamilyCycles() : ''));
     else console.log('No log for today. Run `phos logbook page` first.');
-  } else if (sub === 'list') {
-    const logs = listLogs();
-    if (!logs.length) { console.log('No logbook entries.'); return; }
-    console.log(`Logbook — ${logs.length} entries`);
-    for (const l of logs) console.log(`  ${l.file.padEnd(16)} ${l.size > 1024 ? (l.size / 1024).toFixed(1) + 'KB' : l.size + 'B'}`);
   } else if (sub === 'read') {
     const date = args[1];
     const content = readLog(date);
-    if (content) console.log(content);
+    if (content) console.log(content + (hasFamily ? await appendFamilyCycles() : ''));
     else console.log(`No log for ${date || 'today'}.`);
   } else if (sub === 'status') {
     const s = getLogbookState();
@@ -558,10 +574,10 @@ async function cmdLogbook() {
 
 Usage:
   phos logbook page         Write a page (aggregate new events)
-  phos logbook today        Show today's log
-  phos logbook read <date>  Show a specific date's log
-  phos logbook list         List available logs
-  phos logbook status       Show logbook state
+  phos logbook today [--family]        Show today's log (with family lineage)
+  phos logbook read <date> [--family]  Show a specific date's log (with family lineage)
+  phos logbook list                    List available logs
+  phos logbook status                  Show logbook state
 `);
   }
 }
@@ -636,6 +652,90 @@ async function cmdRemediate() {
   }
 }
 
+async function cmdBrain() {
+  const flagValues = new Set();
+  const flagNames = ['--factor', '-f', '--depth', '-d', '--file'];
+  for (let i = 0; i < args.length; i++) {
+    if (flagNames.includes(args[i]) && i + 1 < args.length) flagValues.add(i + 1);
+  }
+  const fi = args.findIndex(a => a === '--factor' || a === '-f');
+  const factor = fi >= 0 && fi + 1 < args.length ? parseInt(args[fi + 1], 10) || 2 : 2;
+  const di = args.findIndex(a => a === '--depth' || a === '-d');
+  const depth = di >= 0 && di + 1 < args.length ? parseInt(args[di + 1], 10) || 1 : 1;
+
+  const sub = args[0];
+  if (sub === 'sessions' || sub === 'status') {
+    const count = parseInt(args[1], 10) || 5;
+    const sessions = getSessions(count);
+    if (sessions.length === 0) { console.log('No brain dump sessions today.'); return; }
+    console.log(`Brain Dump Sessions:`);
+    for (const s of sessions) {
+      console.log(`  ${s.session} | ${s.mode} | ${s.themes} themes | ${s.thoughts} thoughts | ${s.duration} | spoon ${s.spoon}/5`);
+    }
+    return;
+  }
+
+  if (sub === 'session') {
+    const { spawn } = await import('child_process');
+    const brainScript = join(__dirname, 'brain.mjs');
+    const args = [brainScript, 'session'];
+    if (hasFamily) args.push('--family');
+    const child = spawn('node', args, { stdio: 'inherit' });
+    await new Promise((r, j) => { child.on('close', (code) => code === 0 ? r() : j()); child.on('error', j); });
+    return;
+  }
+
+  if (sub === 'diff') {
+    const { spawn } = await import('child_process');
+    const brainScript = join(__dirname, 'brain.mjs');
+    const child = spawn('node', [brainScript, 'diff', args[1] || '', args[2] || ''], { stdio: 'inherit' });
+    await new Promise((r, j) => { child.on('close', (code) => code === 0 ? r() : j()); child.on('error', j); });
+    return;
+  }
+
+  const extra = args.filter(a => a.startsWith('--'));
+  const hasFamily = extra.includes('--family');
+  let mode = 'quick';
+  if (extra.includes('--deep')) mode = 'deep';
+  else if (extra.includes('--full')) mode = 'full';
+
+  const fileIdx = args.findIndex(a => a === '--file');
+  let text;
+  if (fileIdx >= 0) {
+    const { readFileSync, existsSync } = await import('fs');
+    const filePath = args[fileIdx + 1];
+    if (!filePath || !existsSync(filePath)) { console.error('File not found:', filePath); return; }
+    text = readFileSync(filePath, 'utf-8');
+  } else {
+    text = args.filter((a, i) => !a.startsWith('--') && !flagValues.has(i)).join(' ').trim();
+  }
+
+  if (!text) {
+    console.log(`PHOS Brain Dump — Quantum Thought Processor
+
+Pipeline: parse raw text → elaborate fragments → organize themes → research (optional) → synthesize → archive
+
+Usage:
+  phos brain "<text>" [--quick|--deep|--full] [--factor N] [--depth N]
+  phos brain --file <path> [--quick|--deep|--full]
+  phos brain sessions [n]
+
+Modes:
+  --quick   Elaborate + organize only (~3-5 min)
+  --deep    + Jitterbug research per theme (~10-15 min)
+  --full    + Cartographer code links + Tide context (~15-20 min)
+  --family  + Family lineage context (cycles, ghost nodes, Spoonemore echo) -- full only
+`);
+    return;
+  }
+
+  console.log(`🧠 Brain dump starting — mode: ${mode}${hasFamily ? ' + family' : ''}`);
+  const result = await processBrainDump(text, { mode, factor, depth, family: hasFamily });
+  if (result.error) { console.error(result.error); return; }
+  console.log(result.output);
+  console.log(`\n---\nSession: ${result.session} | Mode: ${result.mode} | Spoons: ${result.spoon}/5 | ${result.duration}`);
+}
+
 async function main() {
   const commandMap = {
     adopt: cmdAdopt,
@@ -656,6 +756,7 @@ async function main() {
     kappa: cmdKappa,
     cartographer: cmdCartographer,
     logbook: cmdLogbook,
+    brain: cmdBrain,
   };
 
   const handler = commandMap[command];
@@ -686,6 +787,11 @@ Usage:
   phos kappa [learn|weights|diagnostics|reset]  Outcome-aware healer learning (Bayesian weight updates)
   phos cartographer [status|index|query|related|trace]  Semantic codebase map (TF-IDF vector search)
   phos logbook [page|today|read|list|status]          Auto-generated session memory (markdown + JSON)
+  phos brain "<text>" [--quick|--deep|--full] [--family]  Quantum brain dump pipeline (elaborate → organize → research → archive)
+  phos brain --file <path> [--quick|--deep|--full] [--family]  Brain dump from file
+  phos brain sessions [n]                              Show recent brain dump sessions
+  phos brain session [--family]                        Interactive stdin capture (Ctrl+D to submit)
+  phos brain diff <id1> <id2>                          Compare two sessions
 `);
     process.exit(1);
   }

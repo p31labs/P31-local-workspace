@@ -84,6 +84,7 @@ function categorizeEvent(type) {
   if (type.includes('nexus') || type.includes('cycle') || type.includes('tick')) return 'cycle';
   if (type.includes('learn') || type.includes('kappa')) return 'learning';
   if (type.includes('reflex')) return 'reflex';
+  if (type.includes('brain') || type.includes('dump')) return 'brain';
   return 'other';
 }
 
