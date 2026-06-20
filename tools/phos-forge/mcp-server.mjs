@@ -386,14 +386,23 @@ export default class PhosMCPServer extends EventEmitter {
             content: [{ type: 'text', text: JSON.stringify({
               mode: 'DRY-RUN', problem: args.problem,
               requested: { factor: args.factor || 4, depth: args.depth || 3 },
+              allowOllama: !!args?.allow_ollama,
               gated, estimatedCalls: gated.depth * (gated.factor + 1),
               status: gated.depth > 0 ? 'READY' : 'BLOCKED',
             }, null, 2) }],
           };
         }
-        const result = await runJitterbug(args.problem, { factor: args.factor, depth: args.depth });
+        const allowOllama = !!args?.allow_ollama;
+        const result = await runJitterbug(args.problem, { factor: args.factor, depth: args.depth, allowOllama });
         if (result.error) throw new Error(result.error);
-        return { content: [{ type: 'text', text: result.output }] };
+        return {
+          content: [{ type: 'text', text: JSON.stringify({
+            session: result.session,
+            tree: result.tree,
+            gated: result.gated,
+            output: result.output,
+          }, null, 2) }],
+        };
       }
       case 'phos-aura': {
         const flags = [];

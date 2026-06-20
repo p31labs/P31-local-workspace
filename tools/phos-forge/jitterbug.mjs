@@ -10,6 +10,7 @@ const SESSION_DIR = '/tmp/phos-jitterbug';
 const STATE_PATH = '/tmp/phos-cognitive-state.json';
 const EVENTS_PATH = '/tmp/phos-forge/events.jsonl';
 const SPOON_PATH = '/home/p31/P31-local-workspace/spoon-state.json';
+const MAX_CONTEXT = 8000;
 
 const SPOON_TABLE = [
   { max: 0, factor: 1, depth: 0, label: 'LOCKED' },
@@ -45,15 +46,25 @@ export function getGatedConfig(requestedFactor, requestedDepth) {
   };
 }
 
+function trimContext(text) {
+  if (typeof text !== 'string') return '';
+  if (text.length > MAX_CONTEXT) {
+    return text.slice(-MAX_CONTEXT) + '\n\n[... context truncated to fit window ...]';
+  }
+  return text;
+}
+
 function busEmit(type, payload) {
   const event = { type, payload, timestamp: new Date().toISOString(), id: crypto.randomUUID() };
-  try { appendFileSync(EVENTS_PATH, JSON.stringify(event) + '\n'); } catch {}
+  try { appendFileSync(EVENTS_PATH, JSON.stringify(event) + '\n'); }
+  catch (e) { console.error(`[jitterbug] event bus write failed: ${e.message}`); }
 }
 
 export async function callLLM(system, user, opts = {}) {
   const model = opts.model || 'anthropic/claude-sonnet-4-20250514';
   const maxTokens = opts.maxTokens || 4096;
   const temperature = opts.temperature ?? 0.7;
+  const allowOllama = opts.allowOllama === true;
   const messages = [
     { role: 'system', content: system },
     { role: 'user', content: user },
@@ -65,64 +76,79 @@ export async function callLLM(system, user, opts = {}) {
 
   const litellmKey = process.env.LITELLM_KEY || 'sk-local-proxy-key';
   const openrouterKey = process.env.OPENROUTER_API_KEY;
+  const MIN_QUALITY_CHARS = Math.max(200, Math.floor(maxTokens * 0.15));
+
+  function validateResponse(text) {
+    if (!text || typeof text !== 'string') {
+      return { ok: false, reason: 'empty-response' };
+    }
+    if (maxTokens > 500 && text.trim().length < MIN_QUALITY_CHARS) {
+      return { ok: false, reason: `output-too-short:${text.trim().length}<${MIN_QUALITY_CHARS}` };
+    }
+    return { ok: true, text };
+  }
+
+  async function fetchWithTimeout(url, options, timeoutMs) {
+    const resp = await fetch(url, { ...options, signal: AbortSignal.timeout(timeoutMs) });
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const data = await resp.json();
+    const content = data.choices?.[0]?.message?.content || data.message?.content || '';
+    return validateResponse(content);
+  }
 
   // Try LiteLLM proxy first (has fallbacks)
   try {
-    const resp = await fetch('http://localhost:4000/v1/chat/completions', {
+    const result = await fetchWithTimeout('http://localhost:4000/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${litellmKey}`,
       },
       body: JSON.stringify(payload),
-      signal: AbortSignal.timeout(60000),
-    });
-    if (resp.ok) {
-      const data = await resp.json();
-      return data.choices?.[0]?.message?.content || '';
-    }
-  } catch {}
+    }, 60000);
+    if (result.ok) return result.text;
+  } catch (e) {
+    console.error(`[jitterbug] LiteLLM failed: ${e.message}`);
+  }
 
   // Fallback: direct OpenRouter
   if (openrouterKey) {
     try {
-      const resp = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      const result = await fetchWithTimeout('https://openrouter.ai/api/v1/chat/completions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${openrouterKey}`,
         },
         body: JSON.stringify(payload),
-        signal: AbortSignal.timeout(120000),
-      });
-      if (resp.ok) {
-        const data = await resp.json();
-        return data.choices?.[0]?.message?.content || '';
-      }
-    } catch {}
+      }, 120000);
+      if (result.ok) return result.text;
+    } catch (e) {
+      console.error(`[jitterbug] OpenRouter failed: ${e.message}`);
+    }
   }
 
-  // Fallback: local Ollama (1.5B model, limited but functional)
-  try {
-    const ollamaPayload = {
-      model: 'qwen2.5:1.5b',
-      messages,
-      stream: false,
-      options: { num_predict: Math.min(maxTokens, 300), temperature },
-    };
-    const resp = await fetch('http://localhost:11434/api/chat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(ollamaPayload),
-      signal: AbortSignal.timeout(180000),
-    });
-    if (resp.ok) {
-      const data = await resp.json();
-      return data.message?.content || '';
+  // Fallback: local Ollama (1.5B model — gated behind explicit flag)
+  if (allowOllama) {
+    try {
+      const ollamaPayload = {
+        model: 'qwen2.5:1.5b',
+        messages,
+        stream: false,
+        options: { num_predict: Math.min(maxTokens, 300), temperature },
+      };
+      const result = await fetchWithTimeout('http://localhost:11434/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(ollamaPayload),
+      }, 180000);
+      if (result.ok) return result.text;
+    } catch (e) {
+      console.error(`[jitterbug] Ollama fallback failed: ${e.message}`);
     }
-  } catch {}
+  }
 
-  throw new Error('All LLM backends failed (LiteLLM proxy + OpenRouter + Ollama)');
+  throw new Error('All LLM backends failed' + (allowOllama ? '' : ' (Ollama gated — use --allow-ollama to enable)'));
 }
 
 const RESEARCH_SYSTEM = `You are a deeply curious, thorough research agent. Explore your assigned facet exhaustively.
@@ -163,20 +189,22 @@ const RESEARCH_CHEAP = 'openrouter/anthropic/claude-3.5-haiku-20241022';
 const RESEARCH_STRONG = 'openrouter/anthropic/claude-sonnet-4-20250514';
 const CONVERGE_MODEL = 'openrouter/anthropic/claude-sonnet-4-20250514';
 
-async function runResearch(facet, parentContext, index) {
-  return callLLM(RESEARCH_SYSTEM, `## Facet\n${facet}\n\n## Context from parent synthesis\n${parentContext}\n\nExplore this facet in depth.`, {
+async function runResearch(facet, parentContext, index, allowOllama) {
+  return callLLM(RESEARCH_SYSTEM, `## Facet\n${facet}\n\n## Context from parent synthesis\n${trimContext(parentContext)}\n\nExplore this facet in depth.`, {
     model: RESEARCH_CHEAP,
     maxTokens: 4096,
     temperature: 0.8,
+    allowOllama,
   });
 }
 
-async function runConvergence(researchTexts) {
-  const combined = researchTexts.map((t, i) => `## Research Output ${i + 1}\n${t}`).join('\n\n');
+async function runConvergence(researchTexts, allowOllama) {
+  const combined = researchTexts.map((t, i) => `## Research Output ${i + 1}\n${trimContext(t)}`).join('\n\n');
   return callLLM(CONVERGE_SYSTEM, `Converge these ${researchTexts.length} research outputs into a unified synthesis:\n\n${combined}`, {
     model: CONVERGE_MODEL,
     maxTokens: 8192,
     temperature: 0.3,
+    allowOllama,
   });
 }
 
@@ -211,10 +239,11 @@ function saveArtifact(session, level, name, content) {
 export async function runJitterbug(problem, opts = {}) {
   const requestedFactor = opts.factor || 4;
   const requestedDepth = opts.depth || 3;
+  const allowOllama = opts.allowOllama === true;
   const gated = getGatedConfig(requestedFactor, requestedDepth);
 
   if (gated.depth === 0) {
-    return { error: `Spoon level ${gated.spoon} is too low for any research depth.`, gated };
+    return { error: `Spoon level ${gated.spoon} is too low for any research depth. (tier: ${gated.tier}) Use --force or wait for spoon recovery.`, gated };
   }
 
   const session = crypto.randomUUID().slice(0, 8);
@@ -228,16 +257,27 @@ export async function runJitterbug(problem, opts = {}) {
     requestedDepth,
     gated,
     session,
+    allowOllama,
     timestamp: new Date().toISOString(),
   };
   writeFileSync(resolve(artifactDir, 'workflow.json'), JSON.stringify(workflow, null, 2), 'utf-8');
 
-  busEmit('jitterbug.started', { session, problem, factor: gated.factor, depth: gated.depth, spoon: gated.spoon, tier: gated.tier });
+  busEmit('jitterbug.started', { session, problem, factor: gated.factor, depth: gated.depth, spoon: gated.spoon, tier: gated.tier, allowOllama });
 
   let currentContext = problem;
   const levelOutputs = [];
 
   for (let level = 0; level < gated.depth; level++) {
+    // Mid-run spoon check — if spoons dropped, pause gracefully
+    const midGated = getGatedConfig(requestedFactor, requestedDepth);
+    if (midGated.depth < gated.depth - level) {
+      busEmit('jitterbug.paused', { session, level, reason: 'spoon-degraded', from: gated.depth, to: midGated.depth });
+      if (level === 0) {
+        return { error: `Spoon level dropped mid-run (${midGated.spoon}, ${midGated.tier}). Cannot proceed at depth ${gated.depth}.`, gated: midGated, partial: levelOutputs };
+      }
+      break;
+    }
+
     busEmit('jitterbug.level_started', { session, level, factor: gated.factor });
 
     // Derive facets from context
@@ -256,8 +296,12 @@ Format:
         model: RESEARCH_STRONG,
         maxTokens: 2048,
         temperature: 0.5,
+        allowOllama,
       });
       facets = parseFacets(splitResult) || [];
+      if (facets.length < gated.factor) {
+        busEmit('jitterbug.split_fallback', { session, level, parsed: facets.length, requested: gated.factor });
+      }
       if (facets.length < gated.factor) {
         // Fallback: generate generic facets
         facets = Array.from({ length: gated.factor }, (_, i) => ({
@@ -283,33 +327,47 @@ Format:
     // Spawn parallel research
     const researchPromises = facets.map((facet, i) => {
       busEmit('jitterbug.research_started', { session, level, index: i, facet: facet.title });
-      return runResearch(facet.prompt, currentContext.slice(0, 2000), i).then(result => {
+      return runResearch(facet.prompt, currentContext, i, allowOllama).then(result => {
         saveArtifact(session, level, `research-${i + 1}.md`, `# ${facet.title}\n\n${result}`);
         busEmit('jitterbug.research_complete', { session, level, index: i });
         return result;
+      }).catch(err => {
+        busEmit('jitterbug.research_failed', { session, level, index: i, error: err.message });
+        return `[Research failed for facet "${facet.title}": ${err.message}]`;
       });
     });
 
     const researchResults = await Promise.all(researchPromises);
 
     // Converge
-    const convergence = await runConvergence(researchResults);
+    busEmit('jitterbug.convergence_started', { session, level });
+    const convergence = await runConvergence(researchResults, allowOllama);
+
+    // Validate convergence output structure
+    const hasStructure = /^(## Consensus|## Divergence|## Synthesis)/m.test(convergence);
+    if (!hasStructure) {
+      busEmit('jitterbug.convergence_warn', { session, level, issue: 'missing-expected-sections' });
+      console.error(`[jitterbug] Convergence at level ${level} missing expected section headers (Consensus/Divergence/Synthesis).`);
+    }
+
     saveArtifact(session, level, `convergence-${level + 1}.md`, convergence);
 
-    busEmit('jitterbug.convergence', { session, level });
+    busEmit('jitterbug.convergence', { session, level, structured: hasStructure });
 
     currentContext = convergence;
     levelOutputs.push(convergence);
   }
 
-  // Final output = last convergence
-  const finalOutput = levelOutputs[levelOutputs.length - 1] || 'No output generated.';
-  saveArtifact(session, gated.depth - 1, 'final.md', finalOutput);
+  // Final output = last level output (or best partial if interrupted)
+  const finalOutput = levelOutputs.length > 0
+    ? levelOutputs[levelOutputs.length - 1]
+    : 'No output generated.';
+  saveArtifact(session, levelOutputs.length - 1 || 0, 'final.md', finalOutput);
 
-  const tree = { session, levels: levelOutputs.length, factor: gated.factor, depth: gated.depth, spoon: gated.spoon };
+  const tree = { session, levels: levelOutputs.length, factor: gated.factor, depth: gated.depth, spoon: gated.spoon, completed: levelOutputs.length === gated.depth };
   writeFileSync(resolve(artifactDir, 'tree.json'), JSON.stringify(tree, null, 2), 'utf-8');
 
-  busEmit('jitterbug.complete', { session, levels: levelOutputs.length, factor: gated.factor, depth: gated.depth, spoon: gated.spoon });
+  busEmit('jitterbug.complete', { session, levels: levelOutputs.length, factor: gated.factor, depth: gated.depth, spoon: gated.spoon, completed: levelOutputs.length === gated.depth });
 
   // Strip ANSI for final output
   const clean = finalOutput.replace(/\x1B\[[0-9;?]*[A-Za-z]/g, '');
@@ -325,11 +383,13 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     const factor = fi >= 0 ? parseInt(args[fi + 1], 10) || 4 : 4;
     const di = args.findIndex(a => a === '--depth' || a === '-d');
     const depth = di >= 0 ? parseInt(args[di + 1], 10) || 3 : 3;
+    const allowOllama = args.includes('--allow-ollama');
     const gated = getGatedConfig(factor, depth);
     console.log(JSON.stringify({
       mode: 'DRY-RUN',
       problem,
       requested: { factor, depth },
+      allowOllama,
       gated,
       estimatedCalls: gated.depth * (gated.factor + 1) + (gated.depth > 0 ? 0 : 0),
       artifacts: `${SESSION_DIR}/<session-id>/`,
@@ -338,7 +398,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     process.exit(0);
   }
 
-  const problem = args.join(' ').trim() || '';
+  const problem = args.find(a => !a.startsWith('-')) || '';
   if (!problem) {
     console.error(`PHOS Jitterbug — Fractal Research Engine
 
@@ -346,6 +406,7 @@ Usage:
   phos jitterbug "<problem statement>"  Run the research workflow (spoon-gated)
   phos jitterbug --factor 3 --depth 2   Configure branching and depth
   phos jitterbug --dry-run              Preview what would be executed
+  phos jitterbug --allow-ollama         Enable Ollama fallback (noisy 1.5B)
 
 Spoon gating:
   Level 4-5: factor=4, depth=3 (15 LLM calls)
@@ -361,8 +422,9 @@ Output artifacts saved to /tmp/phos-jitterbug/<session-id>/
   const factor = fi >= 0 ? parseInt(args[fi + 1], 10) || 4 : 4;
   const di = args.findIndex(a => a === '--depth' || a === '-d');
   const depth = di >= 0 ? parseInt(args[di + 1], 10) || 3 : 3;
+  const allowOllama = args.includes('--allow-ollama');
 
-  runJitterbug(problem, { factor, depth })
+  runJitterbug(problem, { factor, depth, allowOllama })
     .then(result => {
       if (result.error) {
         console.error(result.error);
@@ -372,6 +434,7 @@ Output artifacts saved to /tmp/phos-jitterbug/<session-id>/
       console.log(`\n---`);
       console.log(`Session: ${result.session}`);
       console.log(`Spoons: ${result.gated.spoon}/5 (${result.gated.tier})`);
+      console.log(`Ollama: ${result.gated.allowOllama ? 'enabled' : 'disabled (default)'}`);
       console.log(`Artifacts: ${SESSION_DIR}/${result.session}/`);
     })
     .catch(err => {
