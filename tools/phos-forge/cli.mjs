@@ -737,6 +737,21 @@ Modes:
 }
 
 async function main() {
+async function cmdVerify() {
+  const { verifyAll } = await import('./verifier.mjs');
+  const repoRoot = resolve(join(__dirname, '../..'));
+  const result = await verifyAll(repoRoot);
+  console.log(`PHOS Verifier — ${result.summary}`);
+  console.log('');
+  for (const [name, c] of Object.entries(result.checks)) {
+    const icon = c.pass ? '✅' : '❌';
+    const extra = c.level !== undefined ? ` (level ${c.level})` : c.rules !== undefined ? ` (${c.rules} rules)` : c.files !== undefined ? ` (${c.files} files)` : '';
+    console.log(`  ${icon} ${name.padEnd(14)} ${c.detail}${extra}`);
+  }
+  console.log('');
+  process.exit(result.allPassed ? 0 : 1);
+}
+
   const commandMap = {
     adopt: cmdAdopt,
     status: cmdStatus,
@@ -757,6 +772,7 @@ async function main() {
     cartographer: cmdCartographer,
     logbook: cmdLogbook,
     brain: cmdBrain,
+    verify: cmdVerify,
   };
 
   const handler = commandMap[command];
@@ -792,6 +808,7 @@ Usage:
   phos brain sessions [n]                              Show recent brain dump sessions
   phos brain session [--family]                        Interactive stdin capture (Ctrl+D to submit)
   phos brain diff <id1> <id2>                          Compare two sessions
+  phos verify                                            Run system health checks (9 checks)
 `);
     process.exit(1);
   }
