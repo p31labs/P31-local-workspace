@@ -1,40 +1,23 @@
 import { useEffect } from 'react';
 import { PosnerLatticeScene } from './PosnerLatticeScene';
-import { useSpoonStore } from '../../lib/arcade-core/spoonStore.ts';
-import { emit } from '../../lib/arcade-core/eventBus.ts';
+import { useGameEngine } from '../../lib/arcade-core/useGameEngine';
+import { GameOverlay } from './GameOverlay';
 
 export function QuantumLatticeGame({ decoherence = 0.5, particleCount = 3000 }: QuantumLatticeGameProps) {
-  const { state: spoon } = useSpoonStore();
+  const engine = useGameEngine({ slug: 'quantum-lattice', title: 'Quantum Lattice' });
+  const { state, start } = engine;
 
-  useEffect(() => {
-    emit('game:started', { game: 'quantum-lattice', spoons: spoon.level });
-    return () => emit('game:completed', { game: 'quantum-lattice' });
-  }, []);
+  useEffect(() => { start(); }, [start]);
+
+  const spoonFactor = Math.max(0, Math.min(12, state.spoons)) / 12;
 
   return (
-    <div className="fixed inset-0">
-      <PosnerLatticeScene 
-        decoherence={decoherence} 
-        particleCount={particleCount} 
-        spoonLevel={spoon.level} 
+    <GameOverlay gameId="quantum-lattice" gameTitle="Quantum Lattice" gameIcon="⚛️" engineState={state}>
+      <PosnerLatticeScene
+        decoherence={decoherence * (2 - spoonFactor)}
+        particleCount={Math.max(100, Math.round(particleCount * spoonFactor))}
+        spoonLevel={state.spoons}
       />
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10">
-        <div className="flex items-center gap-3 px-5 py-3 rounded-full bg-black/40 border border-white/10">
-          <span className="text-sm">🥄</span>
-          <div className="w-32 h-2 rounded-full bg-white/10 overflow-hidden">
-            <div
-              className="h-full rounded-full transition-all duration-500"
-              style={{
-                width: `${(spoon.level / 12) * 100}%`,
-                background: spoon.level <= 1 ? '#cc6247' : spoon.level <= 3 ? '#cda852' : '#4db8a8',
-              }}
-            />
-          </div>
-          <span className="text-[11px] font-mono font-bold text-white/80 min-w-[32px] text-right">
-            {spoon.level}/12
-          </span>
-        </div>
-      </div>
-    </div>
+    </GameOverlay>
   );
 }
