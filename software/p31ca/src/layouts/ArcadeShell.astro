@@ -6,7 +6,8 @@
  */
 import { ClientRouter } from 'astro:transitions';
 import '../styles/global.css';
-import { SPOON_LEVEL_COLORS, COLORS, ARCADE_GAMES } from '../lib/arcade-core/theme.js';
+import { SPOON_LEVEL_COLORS, COLORS, ARCADE_GAMES } from '../lib/arcade-core/theme.ts';
+import { SpoonSync } from '../components/games/spoon-sync.tsx';
 
 interface Props {
   title?: string;

@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
-import { useSpoonStore } from '../lib/arcade-core/spoonStore.js';
-import { on, emit } from '../lib/arcade-core/eventBus.js';
+import { useSpoonStore } from '../../lib/arcade-core/spoonStore.ts';
+import { on, emit } from '../../lib/arcade-core/eventBus.ts';
 
 export function FreezeBreakerGame() {
   const { state: spoon, setLevel } = useSpoonStore();

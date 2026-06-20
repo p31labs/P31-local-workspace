@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { AbyssalNodeScene } from './AbyssalNodeScene';
-import { useSpoonStore } from '../lib/arcade-core/spoonStore.js';
-import { emit } from '../lib/arcade-core/eventBus.js';
+import { useSpoonStore } from '../../lib/arcade-core/spoonStore.ts';
+import { emit } from '../../lib/arcade-core/eventBus.ts';
 
 export function AbyssalNodeGame() {
   const { state: spoon } = useSpoonStore();

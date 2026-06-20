@@ -2,7 +2,7 @@ import { useRef, useMemo, useEffect } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import { useFBO } from '@react-three/drei';
-import { emit } from '../lib/arcade-core/eventBus.js';
+import { emit } from '../../lib/arcade-core/eventBus.ts';
 
 const SIM_RES = 256;
 

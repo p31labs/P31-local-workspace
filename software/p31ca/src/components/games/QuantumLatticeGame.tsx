@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { PosnerLatticeScene } from './PosnerLatticeScene';
-import { useSpoonStore } from '../lib/arcade-core/spoonStore.js';
-import { emit } from '../lib/arcade-core/eventBus.js';
+import { useSpoonStore } from '../../lib/arcade-core/spoonStore.ts';
+import { emit } from '../../lib/arcade-core/eventBus.ts';
 
 export function QuantumLatticeGame({ decoherence = 0.5, particleCount = 3000 }: QuantumLatticeGameProps) {
   const { state: spoon } = useSpoonStore();

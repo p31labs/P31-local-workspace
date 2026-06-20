@@ -1,7 +1,7 @@
 ---
 // Smallball — Classic arcade route (spoon-aware wrapper)
 import ArcadeShell from '../../layouts/ArcadeShell.astro';
-import { useGameSave } from '../../lib/arcade-core/useGameSave.js';
+import { useGameSave } from '../../lib/arcade-core/useGameSave.ts';
 ---
 
 <ArcadeShell
@@ -65,7 +65,7 @@ import { useGameSave } from '../../lib/arcade-core/useGameSave.js';
       if (scoresBtn) {
         scoresBtn.addEventListener('click', async () => {
           try {
-            const db = await import('../../lib/arcade-core/pglite/client.js');
+            const db = await import('../../lib/arcade-core/pglite/client.ts');
             const result = await (await db.getPGlite()).query(
               `SELECT s.score, s.created_at, p.name
                FROM arcade_high_scores s

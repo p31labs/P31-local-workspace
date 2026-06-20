@@ -1,4 +1,4 @@
-import useAudio from '../../../lib/arcade-core/useAudio.js';
+import useAudio from '../../../lib/arcade-core/useAudio.ts';
 
 export function useArcadeAudio() {
   const audio = useAudio();

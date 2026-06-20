@@ -1,7 +1,7 @@
 import { useEffect, useId } from 'react';
-import { useSpoonStore, getSpoonStore } from './spoonStore.js';
-import { emit } from './eventBus.js';
-import { SPOON_LEVEL_COLORS, COLORS } from './theme.js';
+import { useSpoonStore, getSpoonStore } from './spoonStore.ts';
+import { emit } from './eventBus.ts';
+import { SPOON_LEVEL_COLORS, COLORS } from './theme.ts';
 
 export function useSpoonPHOSSync() {
   const setLevel = useSpoonStore(s => s.setLevel);

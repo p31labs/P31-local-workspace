@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { CyberneticBonsaiScene } from './CyberneticBonsaiScene';
-import { useSpoonStore } from '../lib/arcade-core/spoonStore.js';
-import { emit } from '../lib/arcade-core/eventBus.js';
+import { useSpoonStore } from '../../lib/arcade-core/spoonStore.ts';
+import { emit } from '../../lib/arcade-core/eventBus.ts';
 
 export function BonsaiGame() {
   const { state: spoon, setLevel } = useSpoonStore();
