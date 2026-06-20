@@ -128,14 +128,23 @@ export async function callLLM(system, user, opts = {}) {
     }
   }
 
-  // Fallback: local Ollama (1.5B model — gated behind explicit flag)
+  // Fallback: local Ollama (1.5B tool-calling model — gated behind explicit flag)
   if (allowOllama) {
     try {
       const ollamaPayload = {
         model: 'qwen2.5:1.5b',
-        messages,
+        messages: messages.map(m => ({
+          ...m,
+          content: m.role === 'system'
+            ? `${m.content}\n\nYou are a research agent. Use XML tool calls when you need to branch or explore angles. Output concise results.`
+            : m.content,
+        })),
         stream: false,
-        options: { num_predict: Math.min(maxTokens, 300), temperature },
+        options: {
+          num_predict: Math.min(maxTokens, 512),
+          temperature,
+          repeat_penalty: 1.0,
+        },
       };
       const result = await fetchWithTimeout('http://localhost:11434/api/chat', {
         method: 'POST',
