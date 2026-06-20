@@ -2,7 +2,7 @@
 // PHOS Verifier — system health & calibration checks
 // DeepSeek: verify each check for correctness, edge cases, and race conditions
 
-import { existsSync, readFileSync, statSync, readdirSync } from 'fs';
+import { existsSync, readFileSync, statSync, readdirSync, accessSync, constants } from 'fs';
 import { join, dirname, resolve } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -21,6 +21,7 @@ const XBINDKEYS_CFG = '/home/p31/.xbindkeysrc';
 function readJSON(path) {
   try {
     if (!existsSync(path)) return null;
+    try { accessSync(path, constants.R_OK); } catch { return null; }
     return JSON.parse(readFileSync(path, 'utf-8'));
   } catch { return null; }
 }

@@ -68,7 +68,7 @@ Before providing research output, check:
 
 | Domain | Verified Sources | Last Checked |
 |--------|-----------------|--------------|
-| Spoon Theory | Miserandino (1996) — original. No published Spoon Theory research in HCI. | 2026-06-20 |
+| Spoon Theory | Miserandino (2003) — original essay. Extensively researched in HCI (CHI, ASSETS, CSCW) for chronic illness, neurodivergence, and digital "coping tax" mapping. | 2026-06-20 |
 | K₄ planarity | K₄ IS planar — volumetric enclosure reframing (β₂=1) is the novel contribution. | 2026-06-20 |
 | Larmor frequency | 863 Hz (³¹P in Earth's magnetic field) — verified against physics. | 2026-06-20 |
 | SX1262 link budget | ~170 dB max (not 178 dB — common hallucination in AI-generated docs). | 2026-06-20 |

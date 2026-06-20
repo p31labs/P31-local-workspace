@@ -111,7 +111,10 @@ export function learn() {
 
   const entries = readNewHealerEntries();
   const actionable = entries.filter(e => e.permitted && e.actions_taken?.length > 0 && e.diagnostic);
-  if (actionable.length === 0) return { new_learnings: 0, delta, weights: readWeights() };
+  if (actionable.length === 0) {
+    saveWeights(readWeights());
+    return { new_learnings: 0, delta, weights: readWeights() };
+  }
 
   const w = readWeights();
 

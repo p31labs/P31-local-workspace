@@ -99,14 +99,14 @@ Not every task is for you. Route based on domain:
 
 | Domain | Agent | Prompt Location | Why |
 |--------|-------|-----------------|-----|
-| Firmware / ESP32 / LVGL / C/CPP | DeepSeek | `prompts/deepseek-verify.md` | Hardware-near, memory-constrained |
-| Research / Grants / Narrative / Synthesis | Gemini | `prompts/gemini-verify.md` | Academic, citation verification |
-| UI / React / Astro / PWA / Frontend | Sonnet / Claude | (standard system prompt) | Components, user-facing |
-| System verification / Code review | **YOU (Big Pickle)** | This file | Verification meta-agent |
-| Verifier module review | DeepSeek | `prompts/deepseek-verify.md` | Systems-level edge case review |
-| Brain dump processing | PHOS CLI | `phos brain` command | Direct tool use |
-| Legal / Court / Compliance | **Human** | — | Never delegate legal. Period. |
-| Core PHOS architecture | **Big Pickle** consults all three | Triangulate | Gather input from DeepSeek + Gemini + Sonnet, then decide |
+| Evergreen planning / Schema / Docs | Gemini | `prompts/gemini-verify.md` | Research, synthesis, citations |
+| Feature design | Claude / Sonnet | (standard system prompt) | UX, components, frontend |
+| Vision / Computer / UI Assessment | Gemma | (built-in) | Fast, lightweight image-to-text |
+| Orchestration / Routing / Verification | Big Pickle | `agents/MASTER.md` | Meta-agent, drift detection, gate checks |
+| Verifier module review | DeepSeek | `prompts/deepseek-verify.md` | Systems-level edge case inspection |
+| Brain dump processing | PHOS CLI | `phos brain` command | Direct tool invocation |
+| Legal / Court / Docs | Human operator | — | Never delegate legal. Period. |
+| Core PHOS architecture | Big Pickle → triangulate | DeepSeek + Gemini + Sonnet | Gather all three, decide |
 
 **Handoff template:**
 ```
