@@ -1,7 +1,8 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, Suspense, lazy } from 'react';
 import { useGameEngine } from '../../lib/arcade-core/useGameEngine';
 import { GameOverlay } from './GameOverlay';
-import { FreezeBreakerOverlay } from './FreezeBreakerOverlay';
+
+const FreezeBreakerOverlay = lazy(() => import('./FreezeBreakerOverlay'));
 
 export function FreezeBreakerGame() {
   const engine = useGameEngine({ slug: 'freeze-breaker', title: 'Freeze Breaker' });
@@ -17,7 +18,9 @@ export function FreezeBreakerGame() {
   return (
     <GameOverlay gameId="freeze-breaker" gameTitle="Freeze Breaker" gameIcon="🧊" engineState={state}>
       {state.status === 'running' && !engine.state.isLowSpoon && (
-        <FreezeBreakerOverlay onComplete={handleComplete} thresholdTime={3} spoonLevel={state.spoons} />
+        <Suspense fallback={<div className="absolute inset-0 flex items-center justify-center text-white/60">Loading…</div>}>
+          <FreezeBreakerOverlay onComplete={handleComplete} thresholdTime={3} spoonLevel={state.spoons} />
+        </Suspense>
       )}
     </GameOverlay>
   );
