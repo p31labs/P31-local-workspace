@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { emit } from '../../lib/arcade-core/eventBus.ts';
 import { useSpoonStore } from '../../lib/arcade-core/spoonStore.ts';
 import { useSpoonHUD } from '../../lib/arcade-core/useSpoonHUD.ts';
@@ -15,11 +15,57 @@ interface GameOverlayProps {
 export function GameOverlay({ gameId, gameTitle, gameIcon, engineState, extraHud }: GameOverlayProps) {
   const hud = useSpoonHUD();
   const { setLevel } = useSpoonStore(s => ({ setLevel: s.setLevel }));
+  const blockedDialogRef = useRef<HTMLDivElement>(null);
+  const lastFocusRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     emit('game:started', { game: gameId, spoons: engineState.spoons });
     return () => emit('game:completed', { game: gameId, score: engineState.score });
   }, [gameId, engineState.spoons, engineState.score]);
+
+  useEffect(() => {
+    if (engineState.spoons > 1 || !blockedDialogRef.current) return;
+
+    const dialog = blockedDialogRef.current;
+    const focusableSelector = 'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+    lastFocusRef.current = document.activeElement as HTMLElement;
+    const firstEl = dialog.querySelector<HTMLElement>(focusableSelector);
+    firstEl?.focus();
+
+    function handleKey(e: KeyboardEvent) {
+      if (e.key === 'Escape') {
+        e.stopPropagation();
+        return;
+      }
+      if (e.key !== 'Tab') return;
+      const nodes = dialog.querySelectorAll<HTMLElement>(focusableSelector);
+      if (!nodes.length) {
+        e.preventDefault();
+        return;
+      }
+      const first = nodes[0];
+      const last = nodes[nodes.length - 1];
+      if (e.shiftKey) {
+        if (document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        }
+      } else {
+        if (document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    }
+
+    dialog.addEventListener('keydown', handleKey);
+
+    return () => {
+      dialog.removeEventListener('keydown', handleKey);
+      lastFocusRef.current?.focus();
+    };
+  }, [engineState.status, gameId, engineState.spoons]);
 
   const blocked = engineState.spoons <= 1;
 
@@ -73,7 +119,14 @@ export function GameOverlay({ gameId, gameTitle, gameIcon, engineState, extraHud
 
       {/* Blocked overlay */}
       {blocked && (
-        <div className="absolute inset-0 flex items-center justify-center z-50" style={{ background: 'rgba(0,0,0,0.7)' }}>
+        <div
+          ref={blockedDialogRef}
+          className="absolute inset-0 flex items-center justify-center z-50"
+          style={{ background: 'rgba(0,0,0,0.7)', outline: 'none' }}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Spoons critically low. Rest required."
+        >
           <div className="text-center max-w-xs p-8" style={{ background: 'rgba(15,17,21,0.95)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '16px' }}>
             <p className="text-4xl mb-4">🧘</p>
             <p className="text-base font-bold mb-2" style={{ color: '#cda852' }}>Spoons Critically Low</p>

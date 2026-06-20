@@ -1,4 +1,4 @@
-import { readFileSync, existsSync } from 'fs';
+import { readFileSync, existsSync, appendFileSync } from 'fs';
 
 const COGNITIVE_STATE_PATH = '/tmp/phos-cognitive-state.json';
 const SPOON_STATE_PATH = '/home/p31/P31-local-workspace/spoon-state.json';

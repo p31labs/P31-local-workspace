@@ -279,6 +279,19 @@ const initialSpoonColor = SPOON_LEVEL_COLORS[initialSpoonLevel] ?? COLORS.teal;
       .high-score-label { color: rgba(232,230,227,0.5); text-transform: uppercase; font-size: 9px; }
       .high-score-value { color: var(--p31-gold); font-weight: 700; }
 
+      /* ── A11y: screen-reader-only ── */
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0,0,0,0);
+        white-space: nowrap;
+        border: 0;
+      }
+
       /* ── Branding ── */
       .arcade-brand {
         display: flex;
@@ -342,6 +355,9 @@ const initialSpoonColor = SPOON_LEVEL_COLORS[initialSpoonLevel] ?? COLORS.teal;
 
   <body style={`--game-color: ${currentGame.color};`}>
     <a href="#game-content" class="arcade-skip-link">Skip to game</a>
+
+    <div id="a11y-announcer-spoon" class="sr-only" aria-live="polite" aria-atomic="true" role="status"></div>
+    <div id="a11y-announcer-status" class="sr-only" aria-live="polite" aria-atomic="true" role="status"></div>
 
     {!fullscreen && (
       <>
@@ -490,6 +506,14 @@ const initialSpoonColor = SPOON_LEVEL_COLORS[initialSpoonLevel] ?? COLORS.teal;
         const spoonValue = document.getElementById('spoon-value');
         const spoonGauge = document.getElementById('spoon-gauge');
 
+        function announceA11y(elId, msg) {
+          if (!msg) return;
+          const el = document.getElementById(elId);
+          if (!el) return;
+          el.textContent = '';
+          requestAnimationFrame(() => { el.textContent = msg; });
+        }
+
         function updateSpoonGauge(level) {
           const lvl = Math.max(0, Math.min(12, Number(level) || 4));
           const pct = (lvl / 12) * 100;
@@ -507,6 +531,7 @@ const initialSpoonColor = SPOON_LEVEL_COLORS[initialSpoonLevel] ?? COLORS.teal;
             spoonGauge.title = 'Spoons: ' + lvl + '/12';
             spoonGauge.setAttribute('aria-label', 'Spoon energy: ' + lvl + ' of 12');
           }
+          announceA11y('a11y-announcer-spoon', 'Spoon energy: ' + lvl + ' of 12');
         }
 
         window.addEventListener('p31:spoon:changed', (e) => {
