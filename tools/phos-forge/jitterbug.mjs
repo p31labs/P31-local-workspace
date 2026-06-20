@@ -4,6 +4,7 @@ import { mkdirSync, writeFileSync, readFileSync, existsSync, appendFileSync } fr
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import crypto from 'crypto';
+import { dispatchLLM } from './router.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const SESSION_DIR = '/tmp/phos-jitterbug';
@@ -61,75 +62,8 @@ function busEmit(type, payload) {
 }
 
 export async function callLLM(system, user, opts = {}) {
-  const model = opts.model || 'anthropic/claude-sonnet-4-20250514';
-  const maxTokens = opts.maxTokens || 4096;
-  const temperature = opts.temperature ?? 0.7;
-  const messages = [
-    { role: 'system', content: system },
-    { role: 'user', content: user },
-  ];
-
-  const payload = {
-    model, messages, max_tokens: maxTokens, temperature,
-  };
-
-  const litellmKey = process.env.LITELLM_KEY || 'sk-local-proxy-key';
-  const openrouterKey = process.env.OPENROUTER_API_KEY;
-  const MIN_QUALITY_CHARS = Math.max(200, Math.floor(maxTokens * 0.15));
-
-  function validateResponse(text) {
-    if (!text || typeof text !== 'string') {
-      return { ok: false, reason: 'empty-response' };
-    }
-    if (maxTokens > 500 && text.trim().length < MIN_QUALITY_CHARS) {
-      return { ok: false, reason: `output-too-short:${text.trim().length}<${MIN_QUALITY_CHARS}` };
-    }
-    return { ok: true, text };
-  }
-
-  async function fetchWithTimeout(url, options, timeoutMs) {
-    const resp = await fetch(url, { ...options, signal: AbortSignal.timeout(timeoutMs) });
-    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-    const data = await resp.json();
-    const content = data.choices?.[0]?.message?.content || data.message?.content || '';
-    return validateResponse(content);
-  }
-
-  // Try LiteLLM proxy first (has fallbacks)
-  try {
-    const result = await fetchWithTimeout('http://localhost:4000/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${litellmKey}`,
-      },
-      body: JSON.stringify(payload),
-    }, 60000);
-    if (result.ok) return result.text;
-  } catch (e) {
-    console.error(`[jitterbug] LiteLLM failed: ${e.message}`);
-  }
-
-  // Fallback: direct OpenRouter
-  if (openrouterKey) {
-    try {
-      const result = await fetchWithTimeout('https://openrouter.ai/api/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${openrouterKey}`,
-        },
-        body: JSON.stringify(payload),
-      }, 120000);
-      if (result.ok) return result.text;
-    } catch (e) {
-      console.error(`[jitterbug] OpenRouter failed: ${e.message}`);
-    }
-  }
-
-  // Local Ollama removed — API models only
-  console.error('[jitterbug] All API backends failed (LiteLLM + OpenRouter)');
-  throw new Error('All API backends failed (LiteLLM proxy + OpenRouter)');
+  const intent = opts.intent || { task: 'synthesis', privacy: 'standard' };
+  return dispatchLLM(system, user, intent, opts);
 }
 
 const RESEARCH_SYSTEM = `You are a deeply curious, thorough research agent. Explore your assigned facet exhaustively.
