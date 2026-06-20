@@ -1,8 +1,9 @@
-import { useCallback, useEffect } from 'react';
-import { CyberneticBonsaiScene } from './CyberneticBonsaiScene';
+import { useCallback, useEffect, Suspense, lazy } from 'react';
 import { useGameEngine } from '../../lib/arcade-core/useGameEngine';
 import { GameOverlay } from './GameOverlay';
 import { emit } from '../../lib/arcade-core/eventBus.ts';
+
+const CyberneticBonsaiScene = lazy(() => import('./CyberneticBonsaiScene'));
 
 export function BonsaiGame() {
   const engine = useGameEngine({ slug: 'cybernetic-bonsai', title: 'Cybernetic Bonsai' });
@@ -41,7 +42,9 @@ export function BonsaiGame() {
         </div>
       }
     >
-      <CyberneticBonsaiScene spoonLevel={state.spoons} />
+      <Suspense fallback={<div className="absolute inset-0 flex items-center justify-center text-white/60">Loading…</div>}>
+        <CyberneticBonsaiScene spoonLevel={state.spoons} />
+      </Suspense>
     </GameOverlay>
   );
 }
