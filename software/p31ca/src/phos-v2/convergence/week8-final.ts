@@ -53,60 +53,59 @@ export async function runWeek8Convergence(
   
   // All 8 phases for v2.0
   const ALL_PHASES = ['voice', 'bros', 'router', 'visual', 'predictive', 'guardian', 'bridge', 'memory'];
-  
-  // GA Readiness Report
+
+  // Weighted average: core phases get 1.2x, others 1.0x
+  const weights: Record<string, number> = {
+    voice: 1.2,
+    bros: 1.2,
+    router: 1.2,
+    visual: 1.0,
+    predictive: 1.0,
+    guardian: 1.0,
+    bridge: 1.0,
+    memory: 1.0,
+  };
+
+  // Compute weighted overall score from phase scores
+  let totalWeight = 0;
+  let weightedSum = 0;
+  for (const phase of ALL_PHASES) {
+    const report = baseReport.phaseReports.find((p) => p.phaseId === phase);
+    const score = report?.data?.confidence ?? 0;
+    const w = weights[phase] || 1.0;
+    totalWeight += w;
+    weightedSum += w * score;
+  }
+  const computedOverallScore = totalWeight > 0 ? weightedSum / totalWeight : 0;
+
+  const phaseScores: Record<string, number> = {};
+  for (const phase of ALL_PHASES) {
+    const report = baseReport.phaseReports.find((p) => p.phaseId === phase);
+    const score = report?.data?.confidence ?? 0;
+    phaseScores[phase] = score;
+  }
+
+  const gaBlocker = Object.entries(phaseScores)
+    .filter(([_, score]) => score < 0.90)
+    .map(([phase]) => phase);
+  const gaReady = gaBlocker.length === 0 && computedOverallScore >= 0.90;
+
+  const phaseReadinessEntries: Record<string, { version: string; status: 'alpha' | 'beta' | 'stable' | 'ga'; blockers: string[]; score: number }> = {};
+  for (const phase of ALL_PHASES) {
+    const score = phaseScores[phase];
+    const status: 'alpha' | 'beta' | 'stable' | 'ga' = score >= 0.90 ? 'ga' : 'beta';
+    const blockers = score < 0.90 ? [`Score ${score.toFixed(2)} below 0.90 GA threshold`] : [];
+    phaseReadinessEntries[phase] = {
+      version: phase === 'bridge' ? '0.9.0' : '1.0.0',
+      status,
+      blockers,
+      score,
+    };
+  }
+
   const gaReadiness: GAReadinessReport = {
-    overallScore: 0.93,
-    phaseReadiness: {
-      voice: {
-        version: '1.0.0',
-        status: 'ga',
-        blockers: [],
-        score: 0.95
-      },
-      bros: {
-        version: '1.0.0',
-        status: 'ga',
-        blockers: [],
-        score: 0.96
-      },
-      router: {
-        version: '1.0.0',
-        status: 'ga',
-        blockers: [],
-        score: 0.94
-      },
-      visual: {
-        version: '1.0.0',
-        status: 'ga',
-        blockers: [],
-        score: 0.92
-      },
-      predictive: {
-        version: '1.0.0',
-        status: 'ga',
-        blockers: [],
-        score: 0.88
-      },
-      guardian: {
-        version: '1.0.0',
-        status: 'ga',
-        blockers: [],
-        score: 0.97
-      },
-      bridge: {
-        version: '0.9.0',
-        status: 'beta',
-        blockers: ['External API rate limits need negotiation'],
-        score: 0.85
-      },
-      memory: {
-        version: '1.0.0',
-        status: 'ga',
-        blockers: [],
-        score: 0.91
-      }
-    },
+    overallScore: computedOverallScore,
+    phaseReadiness: phaseReadinessEntries,
     integrationMatrix: [
       {
         phases: ['voice', 'bros'],
@@ -340,35 +339,23 @@ Ready for General Availability.`
     allPhasesActive: integrationChecks[0].ready,
     crossPhaseIntegration: 0.96, // Exceeds 0.95 target
     systemStability: 0.995, // Exceeds 0.99 target
-    gaReadinessScore: 0.93 // Exceeds 0.90 target
+    gaReadinessScore: computedOverallScore, // Computed from phase scores
   };
   
-  // Validate against criteria
+  // Validate against criteria (GA gate: computed overall score must exceed 0.90)
   const enabled = input?.enableAllPhases !== false;
   const passed = 
     enabled &&
-    successCriteria.allPhasesActive &&
-    successCriteria.crossPhaseIntegration > 0.95 &&
-    successCriteria.systemStability > 0.99 &&
-    successCriteria.gaReadinessScore > 0.90;
+    gaReady &&
+    computedOverallScore >= 0.90;
   
   // Week 8 specific blockers
   const week8Blockers = [
     ...baseReport.blockers,
     ...(enabled ? [] : ['All-phases mode disabled - cannot verify GA readiness']),
-    ...(!successCriteria.allPhasesActive 
-      ? ['Not all 8 phases active - GA blocked'] 
-      : []),
-    ...(successCriteria.crossPhaseIntegration <= 0.95 
-      ? ['Cross-phase integration below 95% threshold'] 
-      : []),
-    ...(successCriteria.systemStability <= 0.99 
-      ? ['System stability below 99% threshold'] 
-      : []),
-    ...(successCriteria.gaReadinessScore <= 0.90 
-      ? ['GA readiness score below 90% - not ready for release'] 
-      : []),
-    ...gaReadiness.knownIssues
+    ...(gaBlocker.length > 0 ? [`Phases below GA threshold: ${gaBlocker.join(', ')}`] : []),
+    ...(computedOverallScore < 0.90 ? [`Overall GA score ${computedOverallScore.toFixed(2)} below 0.90`] : []),
+    ...(enabled && gaBlocker.length === 0 && computedOverallScore >= 0.90 ? [] : ['GA criteria not met']),
   ];
   
   const report: ConvergenceReport = {
@@ -399,8 +386,7 @@ Ready for General Availability.`
   console.log(`[Week 8 Convergence] ${report.summary}`);
   console.log(`[Week 8 Convergence] Blockers: ${week8Blockers.length}`);
   console.log(`[Week 8 Convergence] GA Ready: ${report.gaReady ? '✓ YES' : '✗ NO'}`);
-  console.log(`[Week 8 Convergence] GA Score: ${gaReadiness.overallScore}`);
-  console.log(`[Week 8 Convergence] Phases GA: ${Object.values(gaReadiness.phaseReadiness).filter(p => p.status === 'ga').length}/8`);
+  console.log(`[Week 8 Convergence] GA Score: ${computedOverallScore.toFixed(2)}`);
   
   if (report.gaReady) {
     console.log(`[Week 8 Convergence] *** PHOS v2.0 READY FOR RELEASE ***`);
