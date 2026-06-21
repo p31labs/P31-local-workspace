@@ -1,0 +1,30 @@
+---
+import ArcadeShell from '../layouts/ArcadeShell.astro';
+import { VisitationLogger } from '../components/tools/VisitationLogger';
+import { ADADownloader } from '../components/tools/ADADownloader';
+---
+
+<ArcadeShell
+  gameId="tetrahedron"
+  gameTitle="ADA Tools"
+  gameIcon="📄"
+  showSelector={false}
+>
+  <div class="ada-container">
+    <VisitationLogger client:load />
+    <hr style={{ border: '1px solid rgba(255,255,255,0.06)', margin: '36px 0' }} />
+    <ADADownloader client:load />
+  </div>
+
+  <style is:inline>
+    :global(body) {
+      background: #0f1115;
+    }
+    .ada-container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 24px 16px;
+      min-height: calc(100vh - 52px);
+    }
+  </style>
+</ArcadeShell>
