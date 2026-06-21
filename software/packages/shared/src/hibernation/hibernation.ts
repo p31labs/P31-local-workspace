@@ -120,7 +120,7 @@ export abstract class HibernatableDurableObject {
   protected options: HibernationOptions;
   protected stats: HibernationStats;
   protected lastActivity: number;
-  protected hibernationTimeout: NodeJS.Timeout | null = null;
+  protected hibernationTimeout: ReturnType<typeof setTimeout> | null = null;
   protected isHibernating = false;
   protected attachment: HibernationAttachment | null = null;
 
@@ -461,7 +461,7 @@ export class HibernationAPI {
   private options: HibernationOptions;
   private stats: HibernationStats;
   private lastActivity: number;
-  private hibernationTimeout: NodeJS.Timeout | null = null;
+  private hibernationTimeout: ReturnType<typeof setTimeout> | null = null;
   private isHibernating = false;
   private attachment: HibernationAttachment | null = null;
   private customSerialize: (() => Record<string, unknown>) | null = null;
