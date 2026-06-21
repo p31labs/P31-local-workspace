@@ -71,7 +71,7 @@ const ringColors = {
         btn.setAttribute('data-active', 'true');
         btn.classList.remove('opacity-70');
         btn.classList.add('opacity-100');
-        window.dispatchEvent(new CustomEvent('phos:persona:switch', {
+        window.dispatchEvent(new CustomEvent('bros.persona.changed', {
           detail: { persona: persona }
         }));
       });

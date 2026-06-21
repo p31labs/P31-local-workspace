@@ -322,7 +322,7 @@ const meshVertices = [
         });
 
         // Listen for persona switches
-        window.addEventListener('phos:persona:switch', (e: CustomEvent) => {
+        window.addEventListener('bros.persona.changed', (e: CustomEvent) => {
           const { persona } = e.detail;
           const p = personas[persona as keyof typeof personas];
 

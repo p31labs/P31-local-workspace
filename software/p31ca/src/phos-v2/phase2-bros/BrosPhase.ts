@@ -9,7 +9,7 @@ export type BrosPersona = 'wj' | 'sj' | 'cj' | 'wij';
 
 export class BrosPhase implements PHOSPhase {
   id = 'bros';
-  version = '0.1.0';
+  version = '1.0.0';
   status: 'alpha' | 'beta' | 'stable' | 'disabled' = 'alpha';
 
   private config: PHOSConfig | null = null;
