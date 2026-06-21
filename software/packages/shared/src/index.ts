@@ -16,6 +16,7 @@ export * from './ble';
 export * from './theme';
 export * from './trust';
 export * from './hibernation';
+export * from './cognitive-passport';
 
 // Re-export shared types to avoid conflicts
 export type { ZoneConfig, ZoneEnergy } from './zui/types';

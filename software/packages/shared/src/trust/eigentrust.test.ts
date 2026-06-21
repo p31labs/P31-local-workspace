@@ -74,15 +74,15 @@ describe('EigenTrust Algorithm', () => {
     const C = interactionsToTrustMatrix(history);
     
     // With Laplace smoothing epsilon=0.001:
-    // Alice->Bob: (8 + 0.001) / (10 + 0.002) ≈ 0.8008
-    // Alice->Carol: (2 + 0.001) / (10 + 0.002) ≈ 0.2008
-    // Bob->Alice: (5 + 0.001) / (5 + 0.002) ≈ 0.9996
-    // Bob->Carol: (0 + 0.001) / (5 + 0.002) ≈ 0.0019
-    
-    expect(C.Alice.Bob).toBeCloseTo(0.8008, 3);
-    expect(C.Alice.Carol).toBeCloseTo(0.2008, 3);
-    expect(C.Bob.Alice).toBeCloseTo(0.9996, 3);
-    expect(C.Bob.Carol).toBeCloseTo(0.0019, 3);
+    // Alice->Bob: (8 + 0.001) / (10 + 0.002) ≈ 0.79994
+    // Alice->Carol: (2 + 0.001) / (10 + 0.002) ≈ 0.20006
+    // Bob->Alice: (5 + 0.001) / (5 + 0.002) ≈ 0.99980
+    // Bob->Carol: (0 + 0.001) / (5 + 0.002) ≈ 0.00020
+
+    expect(C.Alice.Bob).toBeCloseTo(0.7999, 3);
+    expect(C.Alice.Carol).toBeCloseTo(0.2001, 3);
+    expect(C.Bob.Alice).toBeCloseTo(0.9998, 3);
+    expect(C.Bob.Carol).toBeCloseTo(0.0002, 3);
   });
 
   test('should handle genesis nodes correctly', () => {
@@ -150,12 +150,13 @@ describe('EigenTrust Algorithm', () => {
   });
 
   test('should converge within iteration limit', () => {
-    // Larger network to test convergence
+    // Larger network to test convergence.
+    // A is the sole genesis node; the graph is wired so trust flows back to A.
     const C = {
-      A: { B: 0.9, C: 0.1 },
-      B: { A: 0.5, C: 0.5, D: 0.5 },
-      C: { A: 0.3, B: 0.7 },
-      D: { B: 1.0 }
+      A: { B: 0.3, C: 0.7 },
+      B: { A: 0.8, D: 0.2 },
+      C: { A: 0.6, D: 0.4 },
+      D: { A: 0.9, B: 0.1 }
     };
     
     const p = { A: 1.0 };
@@ -170,7 +171,7 @@ describe('EigenTrust Algorithm', () => {
     expect(Object.keys(result).length).toBe(4);
     expect(Object.values(result).reduce((a, b) => a + b, 0)).toBeCloseTo(1);
     
-    // Genesis node A should have highest trust
+    // Genesis node A should have highest trust (incoming from B 0.8, C 0.6, D 0.9 + alpha anchor)
     expect(result.A).toBeGreaterThan(result.B);
     expect(result.A).toBeGreaterThan(result.C);
     expect(result.A).toBeGreaterThan(result.D);
