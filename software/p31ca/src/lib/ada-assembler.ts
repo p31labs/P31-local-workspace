@@ -1,5 +1,5 @@
 import type { PassportDocument } from '@p31/shared/cognitive-passport';
-import { getVisitLogs, type VisitLog } from './db';
+import { getVisitLogs, type VisitLog } from './tetrahedron/db';
 import { loadDraft } from '../passport/lib/db/index';
 
 export interface PassportFields {

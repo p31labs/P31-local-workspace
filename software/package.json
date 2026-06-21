@@ -26,6 +26,7 @@
     "google-bridge:verify": "npm run verify --prefix p31-google-bridge"
   },
   "devDependencies": {
+    "fake-indexeddb": "^3.1.8",
     "turbo": "^2.3.0",
     "vitest": "^4.1.2",
     "wrangler": "^4.85.0"
