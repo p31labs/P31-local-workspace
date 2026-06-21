@@ -16,17 +16,21 @@ export class BrosPhase implements PHOSPhase {
   private active = false;
   private errorCount = 0;
   private lastActivity = 0;
+  private personasInitialized = false;
 
   // Bros-specific
   private currentPersona: BrosPersona = 'wj';
-  private personas: Map<BrosPersona, PersonaConfig> = new Map();
+  private personas: Map<string, PersonaConfig> = new Map();
   private switchCount = 0;
   private switchHistory: Array<{ from: BrosPersona; to: BrosPersona; timestamp: number }> = [];
 
+  constructor() {
+    this.setupPersonas();
+  }
+
   async initialize(config: PHOSConfig): Promise<void> {
     this.config = config;
-    console.log('[BrosPhase] Initializing 4 personas...');
-    this.setupPersonas();
+    console.log('[BrosPhase] Initialized with', this.personas.size, 'personas');
     this.lastActivity = Date.now();
   }
 
@@ -129,34 +133,33 @@ export class BrosPhase implements PHOSPhase {
   }
 
   // Bros-specific methods
-  switchPersona(persona: BrosPersona): void {
-    if (persona === this.currentPersona) return;
+  switchPersona(persona: BrosPersona | string): void {
+    const target = String(persona);
+    if (target === this.currentPersona) return;
 
     const from = this.currentPersona;
-    this.currentPersona = persona;
+    this.currentPersona = target as BrosPersona;
     this.switchCount++;
     this.lastActivity = Date.now();
 
     this.switchHistory.push({
       from,
-      to: persona,
+      to: target as BrosPersona,
       timestamp: Date.now()
     });
 
-    // Keep history manageable
     if (this.switchHistory.length > 100) {
       this.switchHistory.shift();
     }
 
-    console.log(`[BrosPhase] Switched from ${from} to ${persona}`);
+    console.log(`[BrosPhase] Switched from ${from} to ${target}`);
 
-    // Emit event for other phases
     this.emit({
       type: 'bros.persona.changed',
-      payload: { persona, from, switchCount: this.switchCount },
+      payload: { persona: target, from, switchCount: this.switchCount },
       timestamp: Date.now(),
       source: 'bros',
-      persona
+      persona: target as BrosPersona
     });
   }
 
@@ -166,7 +169,7 @@ export class BrosPhase implements PHOSPhase {
     for (const [persona, config] of this.personas) {
       for (const trigger of config.voiceTrigger) {
         if (normalized.includes(trigger.toLowerCase())) {
-          return persona;
+          return persona as BrosPersona;
         }
       }
     }
@@ -178,8 +181,45 @@ export class BrosPhase implements PHOSPhase {
     return this.currentPersona;
   }
 
-  getPersonaConfig(persona: BrosPersona): PersonaConfig | undefined {
+  getPersonaConfig(persona: string): PersonaConfig | undefined {
     return this.personas.get(persona);
+  }
+
+  getAllPersonas(): Array<{ id: string; config: PersonaConfig }> {
+    return Array.from(this.personas.entries()).map(([id, config]) => ({ id, config }));
+  }
+
+  registerPersona(id: string, config: Omit<PersonaConfig, 'id'>): void {
+    if (this.personas.has(id)) return;
+    this.personas.set(id, config as PersonaConfig);
+    this.lastActivity = Date.now();
+  }
+
+  unregisterPersona(id: string): boolean {
+    const existed = this.personas.delete(id);
+    if (existed) this.lastActivity = Date.now();
+    return existed;
+  }
+
+  loadFromCogPass(personas: Array<{ id: string; name?: string; mode?: string; color?: string; icon?: string; features?: string[] }>): void {
+    for (const p of personas) {
+      if (!p.id || this.personas.has(p.id)) continue;
+      const mode = (p.mode as PersonaConfig['mode']) || 'operator';
+      const color = p.color || 'gray';
+      const icon = p.icon || '👤';
+      const name = p.name || p.id;
+      this.personas.set(p.id, {
+        name,
+        mode,
+        color,
+        icon,
+        description: `${mode} mode — loaded from Cognitive Passport`,
+        features: p.features || [],
+        voiceTrigger: [`${name} mode`, `${p.id} mode`],
+        uiDensity: mode === 'child' ? 'low' : mode === 'youth' ? 'medium' : 'high'
+      });
+    }
+    this.lastActivity = Date.now();
   }
 }
 
