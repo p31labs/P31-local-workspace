@@ -55,6 +55,18 @@ log "Building jitterbug-pwa..."
 cd "$PWA_DIR"
 pnpm run build
 
+# Validate build output
+if [[ ! -f "dist/index.html" ]]; then
+  log "ERROR: dist/index.html missing — build did not produce output"
+  exit 1
+fi
+CSS_COUNT=$(find dist -name "*.css" 2>/dev/null | wc -l)
+if [[ "$CSS_COUNT" -eq 0 ]]; then
+  log "ERROR: No CSS files in dist/ — styling pipeline broken"
+  exit 1
+fi
+log "Build validation passed: dist/ contains $(ls dist/assets/*.css 2>/dev/null | wc -l) CSS file(s)"
+
 # 2. Provision resources (idempotent)
 log "Provisioning Cloudflare resources..."
 

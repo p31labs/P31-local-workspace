@@ -25,7 +25,7 @@ from collections import defaultdict
 from pathlib import Path
 from typing import Any
 
-REPO_ROOT = Path("/home/p31/andromeda").resolve()
+REPO_ROOT = Path(__file__).resolve().parent.parent.resolve()
 EXCLUDE_PREFIXES = (
     "node_modules", ".pnpm", "dist", "coverage", ".git", ".turbo",
     "_ARCHIVE", "CoGNET", "cortex-ai-sdk", ".venv", "__pycache__",
@@ -57,9 +57,9 @@ def parse_baseline_overrides() -> dict[str, dict[str, Any]]:
         return overrides
 
     text = BASELINE_PATH.read_text(encoding="utf-8", errors="replace")
-    # Match table rows: | `path` | (emoji?) STAGE | N | N | N | N | N | ...
+    # Match table rows: | `path` | (emoji?) STAGE | N | N | N | N | N | N | ...
     pattern = re.compile(
-        r"\|\s*`([^`]+)`\s*\|\s*[🌱🌿🌳🌸🍎]?\s*(\w+)\s*\|\s*(\d)\s*\|\s*(\d)\s*\|\s*(\d)\s*\|\s*(\d)\s*\|\s*(\d)\s*\|"
+        r"\|\s*`([^`]+)`\s*\|\s*[🌱🌿🌳🌸🍎]?\s*(\w+)\s*\|\s*(\d)\s*\|\s*(\d)\s*\|\s*(\d)\s*\|\s*(\d)\s*\|\s*(\d)\s*\|\s*(\d)\s*\|"
     )
     for match in pattern.finditer(text):
         path = match.group(1).strip()
@@ -70,6 +70,7 @@ def parse_baseline_overrides() -> dict[str, dict[str, Any]]:
             "DOCS": int(match.group(5)),
             "OPS": int(match.group(6)),
             "SEC": int(match.group(7)),
+            "STYLE": int(match.group(8)),
         }
         overall = min(dims.values())
         overrides[path] = {
@@ -508,6 +509,58 @@ def score_sec(artifact_path: Path) -> tuple[int, str]:
     return 1, "No security evidence"
 
 
+def score_style(artifact_path: Path) -> tuple[int, str]:
+    """STYLE dimension 1-5. Checks CSS pipeline completeness."""
+    evidence = []
+    pkg = find_ancestor_file(artifact_path, "package.json")
+    has_build = False
+    css_deps = set()
+    if pkg:
+        try:
+            data = json.loads(pkg.read_text(encoding="utf-8", errors="replace"))
+            has_build = "build" in data.get("scripts", {})
+            all_deps = {}
+            for section in ("dependencies", "devDependencies", "optionalDependencies"):
+                all_deps.update(data.get(section, {}))
+            css_deps = {k.lower() for k in all_deps if any(t in k.lower() for t in ["tailwind", "postcss", "autoprefixer"])}
+        except Exception:
+            pass
+
+    has_css_entry = bool(
+        find_ancestor_file(artifact_path, "src/index.css")
+        or find_ancestor_file(artifact_path, "src/styles.css")
+        or find_ancestor_file(artifact_path, "src/app.css")
+    )
+
+    has_css_import = False
+    for entry_name in ("src/main.tsx", "src/main.ts", "src/main.jsx", "src/index.js", "main.tsx", "main.ts"):
+        entry = find_ancestor_file(artifact_path, entry_name)
+        if entry:
+            try:
+                text = entry.read_text(encoding="utf-8", errors="replace")
+                has_css_import = ".css" in text
+            except Exception:
+                pass
+            break
+
+    dist_dir = artifact_path / "dist"
+    dist_has_css = False
+    if dist_dir.is_dir():
+        dist_has_css = any(f.suffix == ".css" for f in dist_dir.rglob("*.css"))
+
+    if css_deps and has_css_entry and has_css_import and dist_has_css:
+        return 5, f"Complete CSS pipeline ({', '.join(sorted(css_deps))})"
+    if css_deps and has_css_entry and has_css_import:
+        return 4, f"CSS pipeline configured but dist/ not validated ({', '.join(sorted(css_deps))})"
+    if css_deps and has_css_entry:
+        return 3, f"CSS deps + entry file, missing import chain"
+    if css_deps:
+        return 2, f"CSS deps present but no entry file"
+    if has_build and not css_deps:
+        return 2, "Build present, no CSS pipeline"
+    return 1, "No CSS pipeline evidence"
+
+
 # ---------------------------------------------------------------------------
 # Stage helpers
 # ---------------------------------------------------------------------------
@@ -606,6 +659,7 @@ def main() -> None:
         docs_score, docs_evidence = score_docs(art_path)
         ops_score, ops_evidence = score_ops(art_path)
         sec_score, sec_evidence = score_sec(art_path)
+        style_score, style_evidence = score_style(art_path)
 
         auto_scores = {
             "CODE": code_score,
@@ -613,6 +667,7 @@ def main() -> None:
             "DOCS": docs_score,
             "OPS": ops_score,
             "SEC": sec_score,
+            "STYLE": style_score,
         }
         auto_overall = min(auto_scores.values())
         auto_stage_name, auto_stage_icon = stage_from_overall(auto_overall)
@@ -656,6 +711,7 @@ def main() -> None:
                 "DOCS": docs_evidence,
                 "OPS": ops_evidence,
                 "SEC": sec_evidence,
+                "STYLE": style_evidence,
             },
             "source_files": len(src_files),
             "test_files": len(test_files),
@@ -709,8 +765,8 @@ def main() -> None:
     lines.append("")
     lines.append("## Full Artifact Index")
     lines.append("")
-    lines.append("| Stage | Path | CODE | TEST | DOCS | OPS | SEC | Overall | Weakest | Override |")
-    lines.append("|-------|------|------|------|------|-----|-----|---------|---------|----------|")
+    lines.append("| Stage | Path | CODE | TEST | DOCS | OPS | SEC | STYLE | Overall | Weakest | Override |")
+    lines.append("|-------|------|------|------|------|-----|-----|-------|---------|---------|----------|")
 
     for e in index_entries:
         s = e["scores"]
@@ -719,7 +775,7 @@ def main() -> None:
         lines.append(
             f"| {e['stage_icon']} {e['stage']} "
             f"| `{e['path']}` "
-            f"| {s['CODE']} | {s['TEST']} | {s['DOCS']} | {s['OPS']} | {s['SEC']} "
+            f"| {s['CODE']} | {s['TEST']} | {s['DOCS']} | {s['OPS']} | {s['SEC']} | {s['STYLE']} "
             f"| {e['overall']} "
             f"| {w} "
             f"| {ov} |"
@@ -728,14 +784,14 @@ def main() -> None:
     lines.append("")
     lines.append("## Evidence Notes")
     lines.append("")
-    lines.append("| Path | CODE | TEST | DOCS | OPS | SEC |")
-    lines.append("|------|------|------|------|-----|-----|")
+    lines.append("| Path | CODE | TEST | DOCS | OPS | SEC | STYLE |")
+    lines.append("|------|------|------|------|-----|-----|-------|")
     for e in index_entries:
         ev = e["evidence"]
         lines.append(
             f"| `{e['path']}` "
             f"| {ev['CODE']} | {ev['TEST']} | {ev['DOCS']} "
-            f"| {ev['OPS']} | {ev['SEC']} |"
+            f"| {ev['OPS']} | {ev['SEC']} | {ev['STYLE']} |"
         )
 
     report_path = REPO_ROOT / "GRADING_REPORT.md"

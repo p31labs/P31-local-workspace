@@ -1,0 +1,99 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# Jitterbug Convergence — maturity grading + maturity gate
+# ═══════════════════════════════════════════════════════════════════════════════
+
+name: Jitterbug Convergence
+
+permissions:
+  contents: read
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: '0 3 * * *'  # daily at 03:00 UTC
+  workflow_dispatch:
+
+concurrency:
+  group: jitterbug-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  grade:
+    name: Grade & Gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run critical tests
+        run: cd software && pnpm turbo run test \
+          --filter=@p31/agent-engine \
+          --filter=@p31/bonding \
+          --filter=@p31/game-engine \
+          --filter=@p31/harmonic-linter \
+          --filter=@p31/love-ledger \
+          --filter=@p31/node-zero \
+          --filter=@p31/quantum-core \
+          --filter=@p31/shared \
+          --filter=@p31/jitterbug-api \
+          --filter=@p31/jitterbug-pwa \
+          --filter=@p31/brain-dump-orchestrator
+
+      - name: Build jitterbug-pwa
+        run: cd software/packages/jitterbug-pwa && pnpm run build
+
+      - name: Validate jitterbug-pwa build output
+        run: |
+          test -f software/packages/jitterbug-pwa/dist/index.html
+          test -f software/packages/jitterbug-pwa/dist/manifest.webmanifest
+          CSS_COUNT=$(find software/packages/jitterbug-pwa/dist -name "*.css" | wc -l)
+          if [ "$CSS_COUNT" -eq 0 ]; then
+            echo "::error::No CSS files in jitterbug-pwa dist/ — styling pipeline broken"
+            exit 1
+          fi
+          echo "jitterbug-pwa build validated: $CSS_COUNT CSS file(s)"
+
+      - name: Install Python deps
+        run: |
+          python3 -m pip install --upgrade pip
+          pip install pyyaml 2>/dev/null || true
+
+      - name: Generate grading report
+        run: |
+          cd scripts
+          python3 grade-repo.py
+          python3 jitterbug-daemon.py
+
+      - name: Upload grading artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jitterbug-report-${{ github.sha }}
+          path: |
+            grading-index.json
+            GRADING_REPORT.md
+            jitterbug-depressed-queue.json
+          retention-days: 30
+
+      - name: Check maturity gate (PRs only)
+        if: github.event_name == 'pull_request'
+        run: |
+          python3 scripts/check-maturity-gate.py
