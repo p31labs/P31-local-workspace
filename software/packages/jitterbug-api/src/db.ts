@@ -120,4 +120,26 @@ export class DBClient {
       .all();
     return (result.results as any) ?? [];
   }
+
+  async findStuckBrainDumps(olderThanMinutes = 10, limit = 10): Promise<Array<{ id: string; status: string; error?: string }>> {
+    const result = await this.db
+      .prepare(
+        `SELECT id, status, error FROM brain_dumps 
+         WHERE status IN ('processing', 'failed') 
+           AND created_at < datetime('now', '-' || ? || ' minutes')
+         ORDER BY created_at DESC LIMIT ?`
+      )
+      .bind(olderThanMinutes, limit)
+      .all();
+    return (result.results as any) ?? [];
+  }
+
+  async resetBrainDump(id: string): Promise<void> {
+    await this.db
+      .prepare(
+        `UPDATE brain_dumps SET status = 'pending', error = NULL, updated_at = CURRENT_TIMESTAMP WHERE id = ?`
+      )
+      .bind(id)
+      .run();
+  }
 }

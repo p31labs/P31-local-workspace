@@ -1,0 +1,31 @@
+name = "jitterbug-api"
+main = "src/index.ts"
+compatibility_date = "2024-06-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "jitterbug-db"
+database_id = "0a39b28c-d4bc-4b27-acd2-225bd7d9a3ab"
+
+[[r2_buckets]]
+binding = "R2_BUCKET"
+bucket_name = "jitterbug-deliverables"
+
+[[kv_namespaces]]
+binding = "KV"
+id = "d281745d5f1f486bbd5391fe856429dc"
+
+[[durable_objects.bindings]]
+name = "ORCHESTRATOR_DO"
+class_name = "OrchestratorDO"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["OrchestratorDO"]
+
+[[triggers]]
+cron = "0 0 * * *"
+
+[env.production]
+vars = { ENVIRONMENT = "production" }
+

@@ -63,6 +63,14 @@
                 <button onclick="switchTab('judge')" id="btn-judge" class="px-4 py-2 text-sm font-semibold rounded-md transition-all tab-inactive">Level 2: The Judge</button>
                 <button onclick="switchTab('funder')" id="btn-funder" class="px-4 py-2 text-sm font-semibold rounded-md transition-all tab-inactive">Level 3: The Funder</button>
                 <button onclick="switchTab('physicist')" id="btn-physicist" class="px-4 py-2 text-sm font-semibold rounded-md transition-all tab-inactive">Level 4: The Physicist</button>
+                <button onclick="switchTab('live')" id="btn-live" class="px-4 py-2 text-sm font-semibold rounded-md transition-all tab-inactive">🔴 Live Data</button>
+            </div>
+
+            <!-- Live Data Input Bar -->
+            <div id="live-input-bar" class="hidden bg-slate-800 p-3 rounded-lg mt-2 flex items-center gap-2">
+                <label class="text-xs text-slate-400 whitespace-nowrap">Brain Dump ID:</label>
+                <input type="text" id="live-bd-id" placeholder="paste brain dump UUID" class="flex-1 px-3 py-1 bg-slate-900 border border-slate-700 rounded text-sm text-white font-mono" />
+                <button onclick="loadLiveData()" class="px-3 py-1 bg-indigo-600 hover:bg-indigo-700 rounded text-sm font-medium">Load</button>
             </div>
         </div>
     </header>
@@ -143,7 +151,7 @@
             judge: {
                 title: "Medical Nexus: Cognitive Prosthetic",
                 badge: "Legal / Medical",
-                badgeClass: "bg-blue-500/20 text-blue-400 border-blue-500/30",
+                badgeClass: "bg-blue-500/20 text-blue-400 border-blue-500-30",
                 diagram: `
                     graph TD
                         Stress[Adversarial Friction<br/>Legal Stress] -->|Cortisol Trigger| Body[Biological Substrate]
@@ -171,7 +179,7 @@
             funder: {
                 title: "Impact Arc: Accessible Infrastructure",
                 badge: "Grants / Funding",
-                badgeClass: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
+                badgeClass: "bg-emerald-500/20 text-emerald-400 border-emerald-500-30",
                 diagram: `
                     graph LR
                         Open[Open Source Code<br/>CC BY 4.0] --> Platform(P31 Labs<br/>Standalone Entity)
@@ -200,7 +208,7 @@
             physicist: {
                 title: "Recursive Architecture: Isostatic Mesh",
                 badge: "Technical / Engineering",
-                badgeClass: "bg-orange-500/20 text-orange-400 border-orange-500/30",
+                badgeClass: "bg-orange-500/20 text-orange-400 border-orange-500-30",
                 diagram: `
                     graph TD
                         PWA[React PWA Client] -->|Bearer Auth| API(Cloudflare Worker API)
@@ -231,6 +239,159 @@
                 `
             }
         };
+
+        let liveApiUrl = '';
+        let liveInterval: number | null = null;
+
+        async function switchTab(audience) {
+            // Update Buttons
+            const buttons = ['poet', 'judge', 'funder', 'physicist', 'live'];
+            buttons.forEach(btn => {
+                const element = document.getElementById(`btn-${btn}`);
+                if (element) {
+                    if (btn === audience) {
+                        element.classList.replace('tab-inactive', 'tab-active');
+                    } else {
+                        element.classList.replace('tab-active', 'tab-inactive');
+                    }
+                }
+            });
+
+            const inputBar = document.getElementById('live-input-bar');
+            if (audience === 'live') {
+                if (inputBar) inputBar.classList.remove('hidden');
+                document.getElementById('viz-title').innerText = "Live Recursive Tree";
+                document.getElementById('viz-badge').innerText = "Live Data";
+                document.getElementById('viz-badge').className = "px-2 py-1 text-xs font-bold uppercase tracking-wider rounded bg-red-500/20 text-red-400 border border-red-500-30";
+                document.getElementById('annotation-container').innerHTML = `
+                    <h3 class="text-xl font-bold text-white mb-4">Live Data Mode</h3>
+                    <p class="text-slate-300 mb-4 leading-relaxed">Paste a brain dump UUID above to visualize its actual decomposition tree.</p>
+                    <p class="text-slate-300 mb-4 leading-relaxed">The tree updates in real-time as the orchestration runs. Each node represents an axis; color indicates status.</p>
+                    <div class="mt-4 bg-slate-900/50 p-4 rounded-lg border border-slate-700">
+                        <h4 class="text-sm font-bold text-red-400 uppercase mb-2 code-font">How to Use:</h4>
+                        <p class="text-slate-200 text-sm">1. Submit a brain dump via the PWA<br/>2. Copy the UUID from the URL or status page<br/>3. Paste it into the input bar above<br/>4. Watch the Sierpinski tree grow</p>
+                    </div>
+                `;
+                // Show data-driven SVG
+                const container = document.getElementById('diagram-container');
+                container.innerHTML = `<div id="live-tree-container" class="w-full h-full min-h-[400px] flex items-center justify-center">
+                    <div class="text-slate-400 text-sm">Enter a brain dump ID to visualize</div>
+                </div>`;
+            } else {
+                if (inputBar) inputBar.classList.add('hidden');
+                if (liveInterval) { clearInterval(liveInterval); liveInterval = null; }
+                const data = views[audience];
+                document.getElementById('viz-title').innerText = data.title;
+                const badge = document.getElementById('viz-badge');
+                badge.innerText = data.badge;
+                badge.className = `px-2 py-1 text-xs font-bold uppercase tracking-wider rounded border ${data.badgeClass}`;
+                document.getElementById('annotation-container').innerHTML = data.text;
+                renderDiagram(data.diagram);
+            }
+        }
+
+        async function loadLiveData() {
+            const idInput = document.getElementById('live-bd-id');
+            const id = idInput?.value?.trim();
+            if (!id) return;
+            liveApiUrl = 'https://jitterbug-api.trimtab-signal.workers.dev';
+            const container = document.getElementById('live-tree-container');
+            if (!container) return;
+            container.innerHTML = `<div class="text-slate-400 text-sm animate-pulse">Loading decomposition tree...</div>`;
+            const payload = await buildLiveTree(id, liveApiUrl);
+            if (!payload) {
+                container.innerHTML = `<div class="text-red-400 text-sm">Failed to load brain dump</div>`;
+                return;
+            }
+            container.innerHTML = '';
+            renderLiveTree(container, payload);
+            if (liveInterval) clearInterval(liveInterval);
+            liveInterval = window.setInterval(async () => {
+                const updated = await buildLiveTree(id, liveApiUrl);
+                if (updated) renderLiveTree(container, updated);
+            }, 5000);
+        }
+
+        async function buildLiveTree(id: string, apiUrl: string): Promise<any | null> {
+            try {
+                const res = await fetch(`${apiUrl}/api/brain-dump/${id}`);
+                if (!res.ok) return null;
+                const record: any = await res.json();
+                const axes = record.axes_json ? JSON.parse(record.axes_json) : [];
+                return {
+                    name: record.project_name || 'Brain Dump',
+                    status: record.status,
+                    children: axes.map((axis: any) => ({
+                        id: axis.id || axis.letter,
+                        name: axis.name || `${axis.letter || 'A'} — ${axis.focusArea || axis.agentRole || 'Unknown'}`,
+                        status: axis.status || 'pending',
+                    })),
+                };
+            } catch { return null; }
+        }
+
+        function renderLiveTree(container: HTMLElement, root: any) {
+            container.innerHTML = '';
+            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            const width = 800;
+            const height = Math.max(200, (root.children?.length || 0) * 50 + 80);
+            svg.setAttribute('width', '100%');
+            svg.setAttribute('height', String(height));
+            svg.setAttribute('viewBox', `0 0 800 ${height}`);
+            svg.style.fontFamily = 'Inter, sans-serif';
+            svg.style.fontSize = '12px';
+
+            const rootX = width / 2;
+            const rootY = 40;
+            const nodes: Array<{ x: number; y: number; data: any }> = [{ x: rootX, y: rootY, data: root }];
+            const links: Array<{ source: { x: number; y: number }; target: { x: number; y: number } }> = [];
+
+            if (root.children?.length) {
+                const childY = rootY + 60;
+                const spacing = Math.min(120, (width - 80) / root.children.length);
+                const startX = (width - (root.children.length - 1) * spacing) / 2;
+                root.children.forEach((child: any, i: number) => {
+                    const cx = startX + i * spacing;
+                    nodes.push({ x: cx, y: childY, data: child });
+                    links.push({ source: { x: rootX, y: rootY }, target: { x: cx, y: childY } });
+                });
+            }
+
+            const colors: Record<string, string> = { pending: '#94a3b8', running: '#facc15', completed: '#4ade80', failed: '#f87171' };
+
+            links.forEach(link => {
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', String(link.source.x));
+                line.setAttribute('y1', String(link.source.y));
+                line.setAttribute('x2', String(link.target.x));
+                line.setAttribute('y2', String(link.target.y));
+                line.setAttribute('stroke', '#475569');
+                line.setAttribute('stroke-width', '2');
+                svg.appendChild(line);
+            });
+
+            nodes.forEach(node => {
+                const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                g.setAttribute('transform', `translate(${node.x}, ${node.y})`);
+                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                circle.setAttribute('r', '16');
+                circle.setAttribute('fill', colors[node.data.status] || colors.pending);
+                circle.setAttribute('stroke', '#1e293b');
+                circle.setAttribute('stroke-width', '2');
+                g.appendChild(circle);
+                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                text.setAttribute('text-anchor', 'middle');
+                text.setAttribute('dy', '4');
+                text.setAttribute('fill', '#f8fafc');
+                text.setAttribute('font-size', '10');
+                text.setAttribute('font-weight', '600');
+                text.textContent = node.data.name.length > 12 ? node.data.name.slice(0, 10) + '…' : node.data.name;
+                g.appendChild(text);
+                svg.appendChild(g);
+            });
+
+            container.appendChild(svg);
+        }
 
         let currentDiagram = '';
 
@@ -277,32 +438,6 @@
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
-        }
-
-        function switchTab(audience) {
-            // Update Buttons
-            const buttons = ['poet', 'judge', 'funder', 'physicist'];
-            buttons.forEach(btn => {
-                const element = document.getElementById(`btn-${btn}`);
-                if (btn === audience) {
-                    element.classList.replace('tab-inactive', 'tab-active');
-                } else {
-                    element.classList.replace('tab-active', 'tab-inactive');
-                }
-            });
-
-            // Update Content
-            const data = views[audience];
-            document.getElementById('viz-title').innerText = data.title;
-            
-            const badge = document.getElementById('viz-badge');
-            badge.innerText = data.badge;
-            badge.className = `px-2 py-1 text-xs font-bold uppercase tracking-wider rounded border ${data.badgeClass}`;
-            
-            document.getElementById('annotation-container').innerHTML = data.text;
-            
-            // Render Diagram
-            renderDiagram(data.diagram);
         }
 
         // Initialize with Poet view

@@ -31,5 +31,5 @@ OPERATOR_PHONE = "ADD_YOUR_PHONE_HERE"
 # TWILIO_TOKEN = "your-twilio-token"
 # TWILIO_PHONE = "+19122274980"
 
-# [triggers]
-# crons = [ "0 * * * *" ]
+[triggers]
+crons = [ "0 * * * *" ]

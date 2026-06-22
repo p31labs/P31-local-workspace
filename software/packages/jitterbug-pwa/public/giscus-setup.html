@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Giscus Setup Helper — P31 Labs</title>
+    <style>
+        body {
+            background: #0f172a;
+            color: #e2e8f0;
+            font-family: system-ui, -apple-system, sans-serif;
+            display: grid;
+            place-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 32px;
+            max-width: 600px;
+            width: 100%;
+        }
+        h1 { margin: 0 0 4px; font-size: 1.5rem; }
+        .subtitle { color: #94a3b8; font-size: 0.9rem; margin-bottom: 20px; }
+        label { display: block; font-size: 0.8rem; color: #94a3b8; margin-bottom: 4px; }
+        input {
+            width: 100%;
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid #334155;
+            background: #0f172a;
+            color: #e2e8f0;
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+            box-sizing: border-box;
+        }
+        pre {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 16px;
+            overflow-x: auto;
+            font-size: 0.8rem;
+            white-space: pre-wrap;
+            word-break: break-all;
+            min-height: 120px;
+        }
+        button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+        button:hover { background: #2563eb; }
+        .success { background: #10b981; }
+        .success:hover { background: #059669; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Giscus Setup Helper</h1>
+        <p class="subtitle">Generate the embed code for your P31 Docs.</p>
+
+        <label>Repository (owner/name)</label>
+        <input type="text" id="repo" value="p31labs/andromeda" />
+
+        <label>Repository ID (node_id)</label>
+        <input type="text" id="repoId" placeholder="R_kgDOHY6M0Q" />
+
+        <label>Category</label>
+        <input type="text" id="category" value="Comments" />
+
+        <label>Category ID</label>
+        <input type="text" id="categoryId" placeholder="DIC_kwDOHY6M0c4CQfzQ" />
+
+        <button id="generateBtn">Generate Code</button>
+
+        <div style="margin-top: 16px;">
+            <pre id="output"><!-- Generated code will appear here --></pre>
+        </div>
+
+        <button id="copyBtn" class="success" style="display: none;">Copy to Clipboard</button>
+    </div>
+
+    <script>
+        document.getElementById('generateBtn').addEventListener('click', () => {
+            const repo = document.getElementById('repo').value.trim();
+            const repoId = document.getElementById('repoId').value.trim();
+            const category = document.getElementById('category').value.trim();
+            const categoryId = document.getElementById('categoryId').value.trim();
+
+            if (!repo || !repoId || !category || !categoryId) {
+                document.getElementById('output').textContent = 'Please fill in all fields.';
+                document.getElementById('copyBtn').style.display = 'none';
+                return;
+            }
+
+            const code = `<script src="https://giscus.app/client.js"
+    data-repo="${repo}"
+    data-repo-id="${repoId}"
+    data-category="${category}"
+    data-category-id="${categoryId}"
+    data-mapping="pathname"
+    data-strict="0"
+    data-reactions-enabled="1"
+    data-emit-metadata="0"
+    data-input-position="bottom"
+    data-theme="dark"
+    data-lang="en"
+    crossorigin="anonymous"
+    async><\/script>`;
+
+            document.getElementById('output').textContent = code;
+            document.getElementById('copyBtn').style.display = 'inline-block';
+        });
+
+        document.getElementById('copyBtn').addEventListener('click', () => {
+            const code = document.getElementById('output').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                const btn = document.getElementById('copyBtn');
+                btn.textContent = 'Copied!';
+                setTimeout(() => { btn.textContent = 'Copy to Clipboard'; }, 2000);
+            });
+        });
+    </script>
+</body>
+</html>

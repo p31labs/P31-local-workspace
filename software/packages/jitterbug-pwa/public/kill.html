@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>&#x1F6D1; Kill Switch — Federated Partition Recovery</title>
+    <style>
+        body {
+            background: #0f172a;
+            color: #e2e8f0;
+            font-family: system-ui, -apple-system, sans-serif;
+            display: grid;
+            place-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .box {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 32px;
+            max-width: 480px;
+            width: 100%;
+            text-align: center;
+        }
+        h1 { margin: 0 0 8px; font-size: 1.5rem; }
+        p { color: #94a3b8; line-height: 1.5; }
+        button {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 16px;
+        }
+        button:hover { background: #b91c1c; }
+        #status {
+            margin-top: 12px;
+            font-size: 0.9rem;
+        }
+        .ok { color: #4ade80; }
+        .err { color: #f87171; }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h1>&#x1F6D1; Kill Switch</h1>
+        <p>Federated Partition Recovery<br>
+        <small>401 Powder Horn Road &#x2022; Innocent-Until-Proven-Guilty Layer</small></p>
+        <button id="kick">Kick Partition Recovery</button>
+        <div id="status"></div>
+    </div>
+
+    <script>
+        document.getElementById('kick').addEventListener('click', async () => {
+            const el = document.getElementById('status');
+            try {
+                const api = new URL('/api/partition/recover', location.origin).href;
+                const res = await fetch(api, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' });
+                if (res.ok) {
+                    el.innerHTML = '<span class="ok">&#10003; Partition recovery initiated</span>';
+                } else {
+                    el.innerHTML = '<span class="err">&#10007; Failed: ' + res.status + '</span>';
+                }
+            } catch (e) {
+                el.innerHTML = '<span class="err">&#10007; Error</span>';
+            }
+        });
+    </script>
+</body>
+</html>

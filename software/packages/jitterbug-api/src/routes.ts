@@ -261,6 +261,25 @@ pskRouter.get('/brain-dump/:id/stream', async (request, env) => {
   });
 });
 
+pskRouter.post('/partition/recover', async (request, env) => {
+  const db = new DBClient(env.DB);
+  const stuck = await db.findStuckBrainDumps(10, 10);
+  let resetCount = 0;
+  for (const record of stuck) {
+    await db.resetBrainDump(record.id);
+    if (env.KV) {
+      await env.KV.delete(`status:${record.id}`).catch(() => {});
+    }
+    resetCount++;
+  }
+
+  return jsonResponse({
+    success: true,
+    message: `Partition recovery initiated: ${resetCount} records reset to pending`,
+    affected: resetCount,
+  });
+});
+
 router.all('/*', withCORS(async (request, env) => {
   return pskRouter.fetch(request, env);
 }));
