@@ -89,6 +89,10 @@ else
   log "R2 bucket already exists: $R2_NAME"
 fi
 
+# Apply 30-day lifecycle rule (idempotent)
+log "Applying 30-day R2 lifecycle rule..."
+bash "$WORKSPACE_ROOT/software/scripts/setup-r2-lifecycle.sh"
+
 # KV Namespace
 KV_JSON="$($WRANGLER kv namespace list 2>/dev/null || true)"
 if [[ -n "$KV_JSON" ]]; then

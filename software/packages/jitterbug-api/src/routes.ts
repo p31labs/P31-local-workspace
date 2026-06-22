@@ -55,10 +55,55 @@ const withCORS = (handler: (request: Request, env: Env) => Response | Promise<Re
 
 const pskRouter = Router();
 
-pskRouter.get('/health', async () => {
-  return new Response(JSON.stringify({ status: 'ok', timestamp: new Date().toISOString() }), {
+pskRouter.get('/health', async (request, env) => {
+  const checks: Record<string, string> = {
+    timestamp: new Date().toISOString(),
+  };
+  
+  try {
+    if (env.DB) {
+      const result = await env.DB.prepare('SELECT 1 AS ok').first();
+      checks.db = result ? 'ok' : 'error';
+    } else {
+      checks.db = 'unavailable';
+    }
+  } catch (err) {
+    checks.db = `error: ${err instanceof Error ? err.message : String(err)}`;
+  }
+  
+  try {
+    if (env.R2_BUCKET) {
+      await env.R2_BUCKET.list({ limit: 1 });
+      checks.r2 = 'ok';
+    } else {
+      checks.r2 = 'unavailable';
+    }
+  } catch (err) {
+    checks.r2 = `error: ${err instanceof Error ? err.message : String(err)}`;
+  }
+  
+  try {
+    if (env.KV) {
+      await env.KV.get('__health_check__', 'text');
+      checks.kv = 'ok';
+    } else {
+      checks.kv = 'unavailable';
+    }
+  } catch (err) {
+    checks.kv = `error: ${err instanceof Error ? err.message : String(err)}`;
+  }
+  
+  const overall = Object.values(checks).every(v => v === 'ok') ? 'ok' : 'degraded';
+  
+  return new Response(JSON.stringify({ status: overall, checks }), {
     headers: { 'Content-Type': 'application/json' },
   });
+});
+
+pskRouter.get('/brain-dumps', async (request, env) => {
+  const db = new DBClient(env.DB);
+  const results = await db.listRecent(20);
+  return jsonResponse(results);
 });
 
 pskRouter.post('/brain-dump', async (request, env) => {
