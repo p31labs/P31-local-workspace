@@ -1,0 +1,176 @@
+# FRUIT Promotion Gate
+# Blocks PRs when artifact maturity doesn't match declared stage.
+# Each artifact declares pmm-stage (FRUIT|BLOOM|SAPLING|SPROUT|SEED).
+# The gate scores 5 dimensions and enforces stage-specific thresholds.
+
+name: FRUIT Promotion Gate
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'software/packages/shared/**'
+      - 'software/p31ca/**'
+      - 'software/bonding/**'
+      - 'software/k4-cage/**'
+      - 'software/k4-personal/**'
+      - 'software/k4-hubs/**'
+      - 'software/p31-cortex/**'
+      - 'software/p31-forge/**'
+      - 'software/donate-api/**'
+      - 'software/p31-hearing-ops/**'
+      - 'software/cloudflare-worker/**'
+      - 'software/telemetry-worker/**'
+      - 'software/workers/**'
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  gate:
+    name: Maturity Gate Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+        working-directory: software
+
+      - name: Detect changed artifact directories
+        id: changed-dirs
+        working-directory: software
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          TRACKED_PATHS="packages/shared p31ca bonding k4-cage k4-personal k4-hubs p31-cortex p31-forge donate-api p31-hearing-ops cloudflare-worker telemetry-worker workers"
+          CHANGED=""
+
+          for dir in $TRACKED_PATHS; do
+            if [ -d "$dir" ]; then
+              CHANGED_FILES=$(git diff --name-only "$BASE_SHA"..."$HEAD_SHA" -- "$dir" 2>/dev/null || true)
+              if [ -n "$CHANGED_FILES" ]; then
+                CHANGED="$CHANGED $dir"
+              fi
+            fi
+          done
+
+          CHANGED=$(echo "$CHANGED" | xargs)
+          echo "Changed artifacts: $CHANGED"
+          echo "changed-dirs=$CHANGED" >> "$GITHUB_OUTPUT"
+
+      - name: Run maturity checks
+        id: checks
+        working-directory: software
+        env:
+          DIRS: ${{ steps.changed-dirs.outputs.changed-dirs }}
+        run: |
+          if [ -z "$DIRS" ]; then
+            echo "No changed artifacts detected."
+            echo '[]' > /tmp/fruit-results.json
+            printf 'true' > /tmp/fruit-passed.txt
+            echo "passed=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          ALL_PASSED=true
+          RESULTS="["
+          FIRST=true
+
+          for dir in $DIRS; do
+            [ "$FIRST" = true ] && FIRST=false || RESULTS="$RESULTS,"
+            echo "--- Checking $dir ---"
+            OUTPUT=$(npx tsx scripts/check-maturity-gate.ts "$dir" "$dir" 2>&1)
+            echo "$OUTPUT"
+            PASSED=$(echo "$OUTPUT" | grep -o '"passed": [a-z]*' | head -1 | cut -d' ' -f2)
+            [ "$PASSED" = "false" ] && ALL_PASSED=false
+            RESULTS="$RESULTS$(echo "$OUTPUT" | head -n -0)"
+          done
+
+          RESULTS="$RESULTS]"
+          echo "$RESULTS" > /tmp/fruit-results.json
+          printf '%s' "$ALL_PASSED" > /tmp/fruit-passed.txt
+          echo "passed=$ALL_PASSED" >> "$GITHUB_OUTPUT"
+
+      - name: Post PR comment with grading results
+        uses: actions/github-script@v7
+        if: always()
+        env:
+          PASSED: ${{ steps.checks.outputs.passed }}
+        with:
+          script: |
+            const fs = require('fs');
+            const results = JSON.parse(fs.readFileSync('/tmp/fruit-results.json', 'utf-8'));
+            const passed = fs.readFileSync('/tmp/fruit-passed.txt', 'utf-8').trim() === 'true';
+
+            const stageEmoji = { FRUIT: '🍎', BLOOM: '🌸', SAPLING: '🌱', SPROUT: '🌿', SEED: '🫘' };
+            const stageLabels = {
+              FRUIT: 'all ≥ 4, avg ≥ 4.5',
+              BLOOM: 'all ≥ 3, avg ≥ 3.5',
+              SAPLING: 'all ≥ 2, avg ≥ 2.5',
+              SPROUT: 'any ≥ 1',
+              SEED: 'no check'
+            };
+
+            let body = `## 🍎 FRUIT Promotion Gate Results\n\n`;
+            body += `**Overall: ${passed ? '✅ PASSED' : '❌ BLOCKED'}**\n\n`;
+
+            if (results.length === 0) {
+              body += `No changed artifacts detected. Gate skipped.\n`;
+            } else {
+              for (const r of results) {
+                const icon = r.passed ? '✅' : '❌';
+                const emoji = stageEmoji[r.declaredStage] || '❓';
+
+                body += `### ${emoji} ${r.artifact}\n\n`;
+                body += `| | Stage | Avg | CODE | TEST | DOCS | OPS | SEC |\n`;
+                body += `|---|---|---|---|---|---|---|---|\n`;
+                body += `| **Declared** | ${r.declaredStage} | ${r.average} | ${r.scores.CODE} | ${r.scores.TEST} | ${r.scores.DOCS} | ${r.scores.OPS} | ${r.scores.SEC} |\n\n`;
+                body += `${icon} **${r.passed ? 'PASS' : 'FAIL'}** — `;
+                body += r.passed ? 'Meets stage requirements.\n\n' : 'Does **not** meet stage requirements.\n\n';
+
+                body += `<details><summary>Dimension details</summary>\n\n`;
+                for (const dim of ['CODE', 'TEST', 'DOCS', 'OPS', 'SEC']) {
+                  body += `**${dim}** (${r.scores[dim]}/5):\n`;
+                  for (const log of r.details[dim]) {
+                    body += `- ${log}\n`;
+                  }
+                  body += '\n';
+                }
+                body += `</details>\n\n`;
+
+                if (!r.passed) {
+                  body += `> **Required for ${r.declaredStage}:** ${stageLabels[r.declaredStage] || 'unknown'}\n\n`;
+                }
+
+                body += `---\n\n`;
+              }
+            }
+
+            body += `_Scored by FRUIT gate v1 — each dimension 0–5._`;
+
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body,
+            });
+
+      - name: Fail if gate not passed
+        if: steps.checks.outputs.passed != 'true'
+        run: |
+          echo "❌ FRUIT Promotion Gate BLOCKED — one or more artifacts failed maturity check."
+          exit 1

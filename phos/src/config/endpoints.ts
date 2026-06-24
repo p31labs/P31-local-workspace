@@ -15,6 +15,7 @@ interface EndpointConfig {
   vectorProxy: string;
   ragProxy: string;
   dbConnection: string;
+  k4Api: string;
 }
 
 function getOverride(): Partial<EndpointConfig> {
@@ -30,6 +31,7 @@ function getEnv(): Partial<EndpointConfig> {
     vectorProxy: (import.meta as any).env?.VITE_VECTOR_PROXY || undefined,
     ragProxy: (import.meta as any).env?.VITE_RAG_PROXY || undefined,
     dbConnection: (import.meta as any).env?.VITE_DB_CONNECTION || undefined,
+    k4Api: (import.meta as any).env?.VITE_K4_API || undefined,
   };
 }
 
@@ -37,6 +39,7 @@ const DEFAULTS: EndpointConfig = {
   vectorProxy: 'http://localhost:4000/v1/embeddings',
   ragProxy: 'http://localhost:4001',
   dbConnection: '',
+  k4Api: 'https://cashpilot-sync.trimtab-signal.workers.dev',
 };
 
 export const endpoints: EndpointConfig = {

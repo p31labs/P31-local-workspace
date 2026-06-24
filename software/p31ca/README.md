@@ -1,5 +1,9 @@
 # p31ca.org — Technical hub (Astro)
 
+<!-- pmm-badge -->
+![PMM Maturity](../../.p31/badges/p31ca.svg)
+<!-- /pmm-badge -->
+
 Static **technical hub** for P31 Labs: tool cards, fleet status strip, links to Cloudflare Workers, and `public/` HTML apps. **Nonprofit narrative and donate** live on [phosphorus31.org](https://phosphorus31.org). How the two sites relate to edge Workers is documented in the monorepo:
 
 - [`docs/SITE_MAP_AND_OWNERSHIP.md`](../../../docs/SITE_MAP_AND_OWNERSHIP.md)

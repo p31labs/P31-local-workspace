@@ -1,0 +1,24 @@
+---
+// Leaderboard — Cross-game high scores
+import ArcadeShell from '../../layouts/ArcadeShell.astro';
+import { ArcadeLeaderboard } from '../../components/games/ArcadeLeaderboard.tsx';
+---
+
+<ArcadeShell
+  gameId="hub"
+  gameTitle="Leaderboards"
+  gameIcon="🏆"
+  showSelector={true}
+>
+  <div class="leaderboard-mount">
+    <ArcadeLeaderboard client:load />
+  </div>
+
+  <style is:inline>
+    :global(body) { background: #0f1115; }
+    .leaderboard-mount {
+      padding-top: 24px;
+      min-height: calc(100vh - 52px);
+    }
+  </style>
+</ArcadeShell>

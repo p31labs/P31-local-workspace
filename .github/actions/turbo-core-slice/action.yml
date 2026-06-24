@@ -8,17 +8,42 @@ runs:
   steps:
     - name: Type check (core packages)
       shell: bash
-      run: cd software && pnpm turbo run typecheck --filter=@p31/shared --filter=@p31/bonding --filter=@p31/spaceship-earth --filter=@p31/node-zero
+      run: cd software && pnpm turbo run typecheck \
+        --filter=@p31/shared \
+        --filter=@p31/bonding \
+        --filter=@p31/node-zero \
+        --filter=@p31/spaceship-earth
 
     - name: Build packages
       shell: bash
-      run: cd software && pnpm turbo run build --filter=@p31/shared --filter=@p31/bonding --filter=@p31/node-zero
+      run: cd software && pnpm turbo run build \
+        --filter=@p31/agent-engine \
+        --filter=@p31/bonding \
+        --filter=@p31/game-engine \
+        --filter=@p31/harmonic-linter \
+        --filter=@p31/love-ledger \
+        --filter=@p31/node-zero \
+        --filter=@p31/quantum-core \
+        --filter=@p31/shared \
+        --filter=@p31/spaceship-earth
 
-    - name: Run tests
+    - name: Run tests (all green packages)
       shell: bash
-      run: cd software && pnpm turbo run test --filter=@p31/bonding --filter=@p31/node-zero
+      run: cd software && pnpm turbo run test \
+        --filter=@p31/agent-engine \
+        --filter=@p31/bonding \
+        --filter=@p31/game-engine \
+        --filter=@p31/harmonic-linter \
+        --filter=@p31/love-ledger \
+        --filter=@p31/node-zero \
+        --filter=@p31/quantum-core \
+        --filter=@p31/shared
 
     - name: Turborepo remote cache
       if: ${{ env.TURBO_TOKEN != '' }}
       shell: bash
-      run: cd software && pnpm turbo run build --filter=@p31/bonding --filter=@p31/node-zero --remote
+      run: cd software && pnpm turbo run build \
+        --filter=@p31/bonding \
+        --filter=@p31/node-zero \
+        --filter=@p31/spaceship-earth \
+        --remote

@@ -50,11 +50,14 @@ export const ARCADE_GAMES = [
   { id: 'abyssal-node', title: 'Abyssal Node', emoji: '🌊', route: '/abyssal-node/', color: COLORS.rust, desc: 'Gray-Scott reaction-diffusion', spoonDifficulty: 2, tags: ['ambient', 'reaction-diffusion', 'sensory'] as const },
   { id: 'quantum-lattice', title: 'Quantum Lattice', emoji: '⚛️', route: '/quantum-lattice/', color: COLORS.purple, desc: 'Posner molecule decoherence', spoonDifficulty: 3, tags: ['quantum', 'decoherence', 'focus'] as const },
   { id: 'freeze-breaker', title: 'Freeze Breaker', emoji: '🧊', route: '/freeze-breaker/', color: '#7ec8e3', desc: 'Executive dysfunction intervention', spoonDifficulty: 1, tags: ['regulation', 'executive-function', 'safe-mode'] as const },
-  { id: 'smallball', title: 'Smallball', emoji: '⚾', route: '/arcade/smallball/', color: COLORS.rust, desc: '2.5D baseball with Markov chains', spoonDifficulty: 4, tags: ['sports', 'markov', 'classic'] as const },
+  { id: 'bashball', title: 'Bashball', emoji: '⚾', route: '/arcade/bashball/', color: COLORS.rust, desc: 'Baseball sim with Markov chains (dedicated to Bash)', spoonDifficulty: 4, tags: ['sports', 'markov', 'classic'] as const },
   { id: 'gridiron', title: 'Gridiron', emoji: '🏈', route: '/arcade/gridiron/', color: COLORS.green, desc: 'Strategic football with energy management', spoonDifficulty: 5, tags: ['sports', 'strategy', 'energy'] as const },
   { id: 'cards', title: 'Card Table', emoji: '🃏', route: '/arcade/cards/', color: COLORS.purple, desc: 'Strategic card collection', spoonDifficulty: 4, tags: ['cards', 'game-theory', 'classic'] as const },
   { id: 'strategy', title: 'Strategy Board', emoji: '♟️', route: '/arcade/strategy/', color: COLORS.gold, desc: 'Tactical warfare simulation', spoonDifficulty: 6, tags: ['strategy', 'pathfinding', 'classic'] as const },
   { id: 'liquid', title: 'Liquid Sculptor', emoji: '💧', route: '/arcade/liquid/', color: COLORS.teal, desc: 'Fluid dynamics playground', spoonDifficulty: 3, tags: ['physics', 'creative', 'fluid'] as const },
+  { id: 'orbital', title: 'Orbital Drift', emoji: '🪐', route: '/arcade/orbital/', color: COLORS.purple, desc: 'Gravity simulation sandbox', spoonDifficulty: 5, tags: ['physics', 'sandbox', 'n-body'] as const },
+  { id: 'poetry', title: 'Magnetic Poetry', emoji: '🧲', route: '/arcade/poetry/', color: COLORS.green, desc: 'Word field interactions', spoonDifficulty: 4, tags: ['creative', 'words', 'sandbox'] as const },
+  { id: 'resonance', title: 'Resonance Rings', emoji: '🌊', route: '/arcade/resonance/', color: COLORS.rust, desc: 'Wave harmonic visualization', spoonDifficulty: 3, tags: ['audio', 'physics', 'visualization'] as const },
 ] as const;
 
 export type ArcadeGame = typeof ARCADE_GAMES[number];

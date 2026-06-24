@@ -1,5 +1,6 @@
 import React from 'react';
 import { useBrainDumpStream } from '../hooks/useBrainDumpStream';
+import { TreeViewer } from './TreeViewer';
 
 interface StatusDashboardProps {
   id: string;
@@ -73,6 +74,8 @@ export function StatusDashboard({ id }: StatusDashboardProps) {
           </div>
         )}
       </div>
+
+      <TreeViewer brainDumpId={id} apiUrl={API_URL} />
 
       {eventLog.length > 0 && (
         <details className="bg-slate-800 border border-slate-700 rounded">

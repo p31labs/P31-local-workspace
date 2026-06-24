@@ -11,7 +11,7 @@
 */
 "use strict";
 
-const CACHE_VERSION = "v2";
+const CACHE_VERSION = "v3";
 const CACHE_SHELL = `p31-hub-shell-${CACHE_VERSION}`;
 const CACHE_ASSETS = `p31-hub-assets-${CACHE_VERSION}`;
 const CACHE_IMAGES = `p31-hub-images-${CACHE_VERSION}`;
@@ -120,9 +120,9 @@ self.addEventListener("fetch", (event) => {
 async function networkFirst(request, cacheName) {
   try {
     const networkResponse = await fetch(request);
-    if (networkResponse.ok) {
+    if (networkResponse.ok && networkResponse.body) {
       const cache = await caches.open(cacheName);
-      cache.put(request, networkResponse.clone());
+      try { cache.put(request, networkResponse.clone()); } catch {}
     }
     return networkResponse;
   } catch (error) {
@@ -145,9 +145,9 @@ async function cacheFirst(request, cacheName) {
 
   try {
     const networkResponse = await fetch(request);
-    if (networkResponse.ok) {
+    if (networkResponse.ok && networkResponse.body) {
       const cache = await caches.open(cacheName);
-      cache.put(request, networkResponse.clone());
+      try { cache.put(request, networkResponse.clone()); } catch {}
     }
     return networkResponse;
   } catch (error) {
@@ -164,9 +164,10 @@ async function staleWhileRevalidate(request, cacheName) {
   const cached = await caches.match(request);
 
   const networkFetch = fetch(request).then((response) => {
-    if (response.ok) {
-      const cache = caches.open(cacheName);
-      cache.then((c) => c.put(request, response.clone()));
+    if (response.ok && response.body) {
+      caches.open(cacheName).then((c) => {
+        try { c.put(request, response.clone()); } catch {}
+      });
     }
     return response;
   }).catch(() => null);

@@ -26,6 +26,8 @@
  *   OPTIONS preflight handled; Access-Control-Allow-Origin driven by ALLOWED_ORIGINS env.
  */
 
+import { VERSION } from '../version.js';
+
 // forge.js, brand.js, channels, and store.js are CommonJS — esbuild
 // handles CJS-in-ESM interop and walks the dependency graph so all
 // channel modules + docx land in the bundle. (createRequire would
@@ -77,7 +79,7 @@ function requireAuth(request, env) {
 async function handleInfo(env) {
   return json({
     service: 'P31 Forge',
-    version: '0.1.0',
+    version: VERSION,
     entity: B.ENTITY.org,
     ein: B.ENTITY.ein,
     endpoints: {
@@ -106,7 +108,7 @@ async function handleChannels(env) {
 }
 
 async function handleHealth(env) {
-  return json({ status: 'ok', timestamp: new Date().toISOString() }, {}, env);
+  return json({ status: 'ok', version: VERSION, timestamp: new Date().toISOString() }, {}, env);
 }
 
 async function handleBrand(env) {

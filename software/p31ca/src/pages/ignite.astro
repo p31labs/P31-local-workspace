@@ -1,0 +1,30 @@
+---
+import AppShell from '../layouts/AppShell.astro';
+import DeltaRunwayIgnition from '../components/DeltaRunwayIgnition.tsx';
+
+// Read spoon level from query param (?spoon=1|3|6), default 3
+const spoonParam = Astro.url.searchParams.get('spoon');
+const initialSpoon = spoonParam === '1' || spoonParam === '3' || spoonParam === '6'
+  ? parseInt(spoonParam) as 1 | 3 | 6
+  : 3;
+
+const alias = Astro.url.searchParams.get('alias') || 'Operator';
+const vertex = Astro.url.searchParams.get('vertex') || 'operator';
+---
+
+<AppShell
+  title="Delta Runway Ignition | Enter the Mesh"
+  description="Wye-to-Delta onboarding bridge — one tap to sovereign node."
+  routeName="ignite"
+>
+  <DeltaRunwayIgnition
+    alias={alias}
+    vertex={vertex}
+    initialSpoon={initialSpoon}
+    onComplete={(result) => {
+      // After ignition, surface the sovereign identity in dev console
+      // and redirect to the mesh dashboard
+      console.log('[DeltaRunway] Ignition complete:', result);
+    }}
+  />
+</AppShell>

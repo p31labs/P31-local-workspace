@@ -112,6 +112,28 @@ program
   });
 
 program
+  .command('resume')
+  .description('Resume only failed axes from a previous batch')
+  .argument('<batchId>', 'Batch ID from a previous run')
+  .option('-v, --verbose', 'Show real-time axis status updates', false)
+  .action(async (batchId: string, opts: any) => {
+    const orchestrator = new BrainDumpOrchestrator({
+      batchId,
+      axes: [], // Axes state is preserved in tracker
+      maxConcurrency: 4,
+      retryPolicy: { maxRetries: 2, backoffMs: 1000, retryableErrors: ['timeout', 'stub'] },
+      statusTracker: opts.verbose ? 'in-memory' : undefined,
+    });
+
+    console.log(`Resuming failed axes for batch ${batchId}...`);
+    const result = await orchestrator.resumeFailed();
+    console.log(`\nOverall: ${result.overallStatus}`);
+    for (const [id, run] of Object.entries(result.axes)) {
+      console.log(`  ${run.success ? '✅' : '❌'} ${id}: ${run.statusLine}`);
+    }
+  });
+
+program
   .command('converge')
   .description('Run convergence gate check')
   .argument('<axesFile>', 'Axes file')

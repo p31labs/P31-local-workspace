@@ -30,5 +30,14 @@ export { BridgePhase } from './phase7-bridge/BridgePhase';
 // Phase 8: Memory
 export { MemoryPhase } from './phase8-memory/MemoryPhase';
 
+// Phase 2.5: DADS (Dispatch & Delegation Surface)
+export { DadsPhase, TaskDispatcher } from './phase2.5-dads';
+export type { Task, TaskType, TaskPriority, TaskStatus, IntentType, Actor, TaskDispatch, EngagementLogEntry } from './phase2.5-dads';
+export type { CogPassActorProfile, DispatchOptions } from './phase2.5-dads';
+
+// PHOS consumer adapters
+export { createCogPassAdapter, listenForCogPassChanges } from './consumers/cogpass-adapter';
+export type { CogPassPHOSAdapter, PHOSPersonaConfig } from './consumers/cogpass-adapter';
+
 // Convergence checkpoints
 export * from './convergence';

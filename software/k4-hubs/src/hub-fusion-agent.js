@@ -39,6 +39,7 @@ export class HubFusionAgent extends DurableObject {
 
   /** @param {Request} request */
   async fetch(request) {
+    // middleware: auth gate via X-P31-Hub-Token on roster writes
     const url = new URL(request.url);
     const path = url.pathname;
 

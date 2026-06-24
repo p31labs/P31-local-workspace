@@ -1,40 +1,46 @@
-import { describe, it, expect } from 'vitest';
-import { BrosPhase } from './BrosPhase';
+import { describe, it, expect, beforeEach } from 'vitest';
+import { BrosPhase, BrosPersona } from './BrosPhase';
 
 describe('BrosPhase', () => {
-  it('initializes with 4 default personas', () => {
-    const bros = new BrosPhase();
+  let bros: BrosPhase;
+
+  beforeEach(() => {
+    bros = new BrosPhase();
+  });
+
+  it('initializes with zero personas before initialize()', () => {
+    expect(bros.getAllPersonas()).toHaveLength(0);
+  });
+
+  it('loads personas from CogPass-style data', () => {
+    bros.loadFromCogPass([
+      { id: 'dr_chen', name: 'Dr. Chen', mode: 'guardian', color: 'teal', features: ['voice', 'visual'] },
+      { id: 'tutor_marco', name: 'Marco', mode: 'operator', color: 'indigo', features: ['voice'] }
+    ]);
     const all = bros.getAllPersonas();
-    expect(all).toHaveLength(4);
-    const ids = all.map(p => p.id);
-    expect(ids).toContain('wj');
-    expect(ids).toContain('sj');
-    expect(ids).toContain('cj');
-    expect(ids).toContain('wij');
+    expect(all).toHaveLength(2);
+    expect(bros.getPersonaConfig('dr_chen')?.name).toBe('Dr. Chen');
+    expect(bros.getPersonaConfig('tutor_marco')?.mode).toBe('operator');
   });
 
-  it('switches persona and emits event', () => {
-    const bros = new BrosPhase();
-    bros.activate();
-    expect(bros.getCurrentPersona()).toBe('wj');
-
-    bros.switchPersona('sj');
-    expect(bros.getCurrentPersona()).toBe('sj');
-    expect(bros.getSwitchHistory().length).toBe(1);
-    expect(bros.getSwitchHistory()[0].from).toBe('wj');
-    expect(bros.getSwitchHistory()[0].to).toBe('sj');
+  it('ignores CogPass personas with duplicate IDs', () => {
+    bros.loadFromCogPass([
+      { id: 'alpha', name: 'Alpha', mode: 'operator', features: [] },
+      { id: 'alpha', name: 'Duplicate Alpha', mode: 'child', features: [] }
+    ]);
+    expect(bros.getAllPersonas()).toHaveLength(1);
+    expect(bros.getPersonaConfig('alpha')?.name).toBe('Alpha');
   });
 
-  it('retrieves persona config by ID', () => {
-    const bros = new BrosPhase();
-    const wj = bros.getPersonaConfig('wj');
-    expect(wj).toBeDefined();
-    expect(wj?.name).toBe('W.J.');
-    expect(wj?.mode).toBe('operator');
+  it('initializes placeholders when no CogPass provided', async () => {
+    await bros.initialize({ version: '2.0.0', convergenceWeek: 1, phases: {}, features: {} } as any);
+    const all = bros.getAllPersonas();
+    expect(all.length).toBeGreaterThanOrEqual(1);
+    const first = bros.getCurrentPersona();
+    expect(first).toBeTruthy();
   });
 
   it('registers a custom persona', () => {
-    const bros = new BrosPhase();
     bros.registerPersona('custom_bot', {
       name: 'Custom Bot',
       mode: 'operator',
@@ -45,15 +51,11 @@ describe('BrosPhase', () => {
       voiceTrigger: ['custom mode'],
       uiDensity: 'medium'
     });
-
-    const all = bros.getAllPersonas();
-    expect(all).toHaveLength(5);
-    const custom = bros.getPersonaConfig('custom_bot');
-    expect(custom?.name).toBe('Custom Bot');
+    expect(bros.getAllPersonas()).toHaveLength(1);
+    expect(bros.getPersonaConfig('custom_bot')?.name).toBe('Custom Bot');
   });
 
   it('unregisters a persona', () => {
-    const bros = new BrosPhase();
     bros.registerPersona('temp', {
       name: 'Temp',
       mode: 'operator',
@@ -64,67 +66,165 @@ describe('BrosPhase', () => {
       voiceTrigger: [],
       uiDensity: 'low'
     });
-    expect(bros.getAllPersonas()).toHaveLength(5);
-
+    expect(bros.getAllPersonas()).toHaveLength(1);
     const removed = bros.unregisterPersona('temp');
     expect(removed).toBe(true);
-    expect(bros.getAllPersonas()).toHaveLength(4);
+    expect(bros.getAllPersonas()).toHaveLength(0);
   });
 
   it('skips duplicate persona registration', () => {
-    const bros = new BrosPhase();
-    bros.registerPersona('sj', {
-      name: 'Duplicate S.J.',
-      mode: 'youth',
-      color: 'pink',
-      icon: '🎮',
-      description: 'Should not replace',
+    bros.registerPersona('alpha', {
+      name: 'Alpha',
+      mode: 'operator',
+      color: 'blue',
+      icon: '🤖',
+      description: 'First',
       features: [],
       voiceTrigger: [],
       uiDensity: 'medium'
     });
-    const all = bros.getAllPersonas();
-    expect(all).toHaveLength(4);
-    expect(bros.getPersonaConfig('sj')?.name).toBe('S.J.');
+    bros.registerPersona('alpha', {
+      name: 'Alpha Duplicate',
+      mode: 'child',
+      color: 'red',
+      icon: '👤',
+      description: 'Should not replace',
+      features: [],
+      voiceTrigger: [],
+      uiDensity: 'low'
+    });
+    expect(bros.getAllPersonas()).toHaveLength(1);
+    expect(bros.getPersonaConfig('alpha')?.name).toBe('Alpha');
   });
 
-  it('loads personas from CogPass-style data', () => {
-    const bros = new BrosPhase();
-    bros.loadFromCogPass([
-      { id: 'dr_chen', name: 'Dr. Chen', mode: 'guardian', color: 'teal', features: ['voice', 'visual'] },
-      { id: 'tutor_marco', name: 'Marco', mode: 'operator', color: 'indigo', features: ['voice'] }
-    ]);
-
-    const all = bros.getAllPersonas();
-    expect(all).toHaveLength(6);
-    expect(bros.getPersonaConfig('dr_chen')?.name).toBe('Dr. Chen');
-    expect(bros.getPersonaConfig('tutor_marco')?.mode).toBe('operator');
-  });
-
-  it('ignores CogPass personas with duplicate IDs', () => {
-    const bros = new BrosPhase();
-    const before = bros.getAllPersonas().length;
-    bros.loadFromCogPass([
-      { id: 'wj', name: 'Hacked WJ', mode: 'child', color: 'red' }
-    ]);
-    expect(bros.getAllPersonas()).toHaveLength(before);
-    expect(bros.getPersonaConfig('wj')?.name).toBe('W.J.');
-  });
-
-  it('reports state with correct metrics', () => {
-    const bros = new BrosPhase();
+  it('switches persona and emits event', () => {
     bros.activate();
-    bros.switchPersona('cj');
+    let captured: any = null;
+    bros.setEmitDelegate((event: any) => { captured = event; });
+    bros.setOnDelegate((_e: string, _h: any) => {});
+
+    expect(bros.getCurrentPersona()).toBe('');
+
+    bros.registerPersona('dr_chen', {
+      name: 'Dr. Chen',
+      mode: 'guardian',
+      color: 'teal',
+      icon: '🧭',
+      description: 'Guardian',
+      features: ['voice', 'visual'],
+      voiceTrigger: ['chen mode'],
+      uiDensity: 'medium'
+    });
+    bros.switchPersona('dr_chen');
+    expect(bros.getCurrentPersona()).toBe('dr_chen');
+    expect(bros.getSwitchHistory().length).toBe(1);
+    expect(captured?.type).toBe('bros.persona.changed');
+    expect(captured?.payload?.persona).toBe('dr_chen');
+  });
+
+  it('records and returns errors', () => {
+    bros.activate();
+    bros.setEmitDelegate(() => {});
+    bros.setOnDelegate(() => {});
+    expect(bros.getErrorCount()).toBe(0);
+    bros.recordError('test error');
+    expect(bros.getErrorCount()).toBe(1);
+    bros.recordError('another error');
+    expect(bros.getErrorCount()).toBe(2);
+  });
+
+  it('switchPersona calls recordError on invalid persona', () => {
+    bros.activate();
+    bros.setEmitDelegate(() => {});
+    bros.setOnDelegate(() => {});
+    expect(bros.getErrorCount()).toBe(0);
+    bros.switchPersona('nonexistent');
+    expect(bros.getErrorCount()).toBe(1);
+  });
+
+  it('reports state with correct metrics', async () => {
+    bros.activate();
+    bros.setEmitDelegate(() => {});
+    bros.setOnDelegate(() => {});
+
+    bros.loadFromCogPass([
+      { id: 'alpha', name: 'Alpha', mode: 'operator', features: [] }
+    ]);
+    bros.switchPersona('alpha');
+
     const state = bros.getState();
-    expect(state.status).toBe('active');
+    expect(state.status).not.toBe('paused');
     expect(state.metrics.personaSwitchCount).toBe(1);
   });
 
-  it('matches voice triggers for all personas', () => {
-    const bros = new BrosPhase();
-    expect(bros.matchVoiceTrigger('switch to S.J. mode')).toBe('sj');
-    expect(bros.matchVoiceTrigger('switch to guardian mode')).toBe('cj');
-    expect(bros.matchVoiceTrigger('switch to kid mode')).toBe('wij');
-    expect(bros.matchVoiceTrigger('switch to operator mode')).toBe('wj');
+  it('returns detailed state including persona list', async () => {
+    await bros.initialize({ version: '2.0.0', convergenceWeek: 1, phases: {}, features: {} } as any);
+    const detailed = bros.getDetailedState();
+    expect(detailed.currentPersona).toBeTruthy();
+    expect(detailed.personaList.length).toBeGreaterThanOrEqual(1);
+    expect(detailed.version).toBe('2.0.0');
+  });
+
+  it('records voice trigger matches with confidence', () => {
+    bros.registerPersona('dr_chen', {
+      name: 'Dr. Chen',
+      mode: 'guardian',
+      color: 'teal',
+      icon: '🧭',
+      description: 'Guardian',
+      features: ['voice', 'visual'],
+      voiceTrigger: ['chen mode', 'guardian mode'],
+      uiDensity: 'medium'
+    });
+    const result = bros.matchVoiceTrigger('switch to chen mode');
+    expect(result).toBe('dr_chen');
+  });
+
+  it('returns null for no voice trigger match', () => {
+    const result = bros.matchVoiceTrigger('something unrelated');
+    expect(result).toBeNull();
+  });
+
+  it('disambiguateAndSwitch returns ranked matches', () => {
+    bros.registerPersona('dr_chen', {
+      name: 'Dr. Chen',
+      mode: 'guardian',
+      color: 'teal',
+      icon: '🧭',
+      description: 'Guardian',
+      features: [],
+      voiceTrigger: ['chen', 'guardian'],
+      uiDensity: 'medium'
+    });
+    bros.registerPersona('marco', {
+      name: 'Marco',
+      mode: 'operator',
+      color: 'indigo',
+      icon: '🧑‍💻',
+      description: 'Tutor',
+      features: [],
+      voiceTrigger: ['marco', 'tutor'],
+      uiDensity: 'medium'
+    });
+    const matches = bros.disambiguateAndSwitch('call marco');
+    expect(matches.length).toBeGreaterThanOrEqual(1);
+    expect(matches[0].personaId).toBe('marco');
+    expect(matches[0].confidence).toBeGreaterThan(0);
+  });
+
+  it('loads persona data with full CogPass fields', () => {
+    bros.loadFromCogPass([
+      {
+        id: 'caregiver',
+        name: 'Brenda',
+        mode: 'caregiver',
+        color: 'green',
+        icon: '🫂',
+        features: ['voice', 'visual', 'memory']
+      }
+    ]);
+    const config = bros.getPersonaConfig('caregiver');
+    expect(config?.relationshipType).toBe('caregiver');
+    expect(config?.voiceTrigger).toContain('Brenda mode');
   });
 });

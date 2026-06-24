@@ -14,20 +14,13 @@ When your brain works like mine — high-bandwidth, geometric, systems-first —
 
 PHOS (Phosphorus Human Operating Surface) is my answer. It is a cognitive operating system that runs entirely on your device — no cloud, no accounts, no telemetry, no tracking. It uses Spoon Theory as a first-class design principle: when your energy drops, the UI complexity drops with it. Animations fade. Surfaces simplify. The system holds your state so you don't have to.
 
-The technical architecture reflects the cognitive model:
+The technical architecture reflects the cognitive model. PHOS has 22 surfaces — functional areas like Hearth (family connection), Sanctuary (secure memory), Forge (commerce), and Chaos Ingest (brain dump). Each surface has its own visual identity, ambient effects, and auditory signature. Navigation is via an intent engine: you type what you need, and the system routes you to the right surface. No menu-digging. No working memory load.
 
-**Surfaces instead of apps.** PHOS has 22 surfaces — functional areas like Hearth (family connection), Sanctuary (secure memory), Forge (commerce), and Chaos Ingest (brain dump). Each surface has its own visual identity, ambient effects, and auditory signature. Navigation is via an intent engine: you type what you need, and the system routes you to the right surface. No menu-digging. No working memory load.
+Spoon-aware degradation means the BioStore tracks cognitive energy as a first-class state variable. At 5 spoons, surfaces render full animations, particle effects, and ambient audio. At 2 spoons, animations stop, colors mute, and the UI reduces to essential elements. At 0 spoons, GRAY_ROCK mode activates — pure black and white, zero stimulation, with a breathing guide and a single grounding button.
 
-**Spoon-aware degradation.** The BioStore tracks cognitive energy (spoons) as a first-class state variable. At 5 spoons (full energy), surfaces render full animations, particle effects, and ambient audio. At 2 spoons, animations stop, colors mute, and the UI reduces to essential elements. At 0 spoons, GRAY_ROCK mode activates — pure black and white, zero stimulation, with a breathing guide and a single "Grounding Complete" button.
+Zero telemetry by architecture. PHOS uses PGLite (SQLite compiled to WASM) for local storage. All data stays on-device. The service worker caches everything for offline operation. There are no analytics, no tracking pixels, no data leaving the device except explicit user-initiated family mesh pings. The code is open source (AGPL-3.0) so anyone can verify this claim.
 
-**Zero telemetry by architecture.** PHOS uses PGLite (SQLite compiled to WASM) for local storage. All data stays on-device. The service worker caches everything for offline operation. There are no analytics, no tracking pixels, no data leaving the device except explicit user-initiated family mesh pings. The code is open source (AGPL-3.0) so anyone can verify this claim.
-
-The requested $6,250 would fund:
-
-1. **Accessibility audit** by a neurodivergent usability expert ($2,000)
-2. **User testing with 10 autistic adults** ($2,250)
-3. **Documentation and replication guide** ($1,000)
-4. **Bug fixes and polish from audit findings** ($1,000)
+The requested $6,250 would fund an accessibility audit by a neurodivergent usability expert ($2,000), user testing with 10 autistic adults ($2,250), documentation and replication guide ($1,000), and bug fixes and polish from audit findings ($1,000).
 
 PHOS is not a prototype. It is deployed, tested, and live. It has been built by one autistic engineer, for autistic users, with zero venture capital, zero institutional support, and zero safety net.
 
@@ -36,4 +29,6 @@ What I am asking for is not seed funding to start. It is validation funding to h
 Because the best assistive technology is not built *for* disabled people. It is built *by* them.
 
 ---
-*P31 Labs, Inc. | May 31, 2026*
+
+**Word count:** 491  
+**Status:** Submitted June 13, 2026

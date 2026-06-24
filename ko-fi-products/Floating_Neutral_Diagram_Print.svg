@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2400 2400" width="2400" height="2400">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a0a0a;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#1a1a2e;stop-opacity:1"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="2400" height="2400" fill="url(#bg)"/>
+  
+  <!-- Title -->
+  <text x="1200" y="100" text-anchor="middle" font-family="monospace" font-size="42" fill="#ff6b35">FLOATING NEUTRAL HYPOTHESIS</text>
+  <text x="1200" y="155" text-anchor="middle" font-family="monospace" font-size="24" fill="#8888aa">Hypoparathyroidism · Basal Ganglia Calcification · Voltage Regulation Failure</text>
+  
+  <!-- Left side: Electrical System (normal) -->
+  <text x="520" y="280" text-anchor="middle" font-family="monospace" font-size="22" fill="#39ff14">■ NORMAL ELECTRICAL SYSTEM</text>
+  
+  <!-- Transformer -->
+  <rect x="350" y="300" width="120" height="200" fill="none" stroke="#39ff14" stroke-width="2" rx="8"/>
+  <text x="410" y="410" text-anchor="middle" font-family="monospace" font-size="18" fill="#39ff14">TRANSFORMER</text>
+  
+  <!-- Three lines (L1, L2, N) -->
+  <line x1="470" y1="350" x2="900" y2="350" stroke="#ffcc00" stroke-width="3"/>
+  <text x="920" y="355" font-family="monospace" font-size="18" fill="#ffcc00">L1</text>
+  
+  <line x1="470" y1="400" x2="900" y2="400" stroke="#ffcc00" stroke-width="3"/>
+  <text x="920" y="405" font-family="monospace" font-size="18" fill="#ffcc00">L2</text>
+  
+  <line x1="470" y1="450" x2="900" y2="450" stroke="#8888aa" stroke-width="3"/>
+  <text x="920" y="455" font-family="monospace" font-size="18" fill="#8888aa">N (grounded)</text>
+  
+  <!-- Ground symbol -->
+  <line x1="410" y1="500" x2="410" y2="550" stroke="#39ff14" stroke-width="2"/>
+  <line x1="380" y1="550" x2="440" y2="550" stroke="#39ff14" stroke-width="3"/>
+  <line x1="390" y1="565" x2="430" y2="565" stroke="#39ff14" stroke-width="3"/>
+  <line x1="400" y1="580" x2="420" y2="580" stroke="#39ff14" stroke-width="3"/>
+  <text x="410" y="610" text-anchor="middle" font-family="monospace" font-size="16" fill="#39ff14">GND</text>
+  
+  <!-- Load -->
+  <circle cx="1000" cy="400" r="40" fill="none" stroke="#39ff14" stroke-width="2"/>
+  <text x="1000" y="410" text-anchor="middle" font-family="monospace" font-size="16" fill="#39ff14">LOAD</text>
+  
+  <text x="1000" y="700" text-anchor="middle" font-family="monospace" font-size="20" fill="#39ff14">Stable voltage reference</text>
+  <text x="1000" y="730" text-anchor="middle" font-family="monospace" font-size="20" fill="#39ff14">Protection circuits functional</text>
+  
+  <!-- RIGHT side: Floating Neutral (dysfunctional) -->
+  <text x="1880" y="280" text-anchor="middle" font-family="monospace" font-size="22" fill="#ff4444">■ FLOATING NEUTRAL</text>
+  
+  <!-- Transformer (same) -->
+  <rect x="1710" y="300" width="120" height="200" fill="none" stroke="#ff4444" stroke-width="2" rx="8"/>
+  <text x="1770" y="410" text-anchor="middle" font-family="monospace" font-size="18" fill="#ff4444">TRANSFORMER</text>
+  
+  <!-- Three lines (L1, L2, FLOATING N) -->
+  <line x1="1830" y1="350" x2="2200" y2="350" stroke="#ffcc00" stroke-width="3"/>
+  <text x="2210" y="355" font-family="monospace" font-size="18" fill="#ffcc00">L1</text>
+  
+  <line x1="1830" y1="400" x2="2200" y2="400" stroke="#ffcc00" stroke-width="3"/>
+  <text x="2210" y="405" font-family="monospace" font-size="18" fill="#ffcc00">L2</text>
+  
+  <!-- Floating neutral with danger indicator -->
+  <line x1="1830" y1="450" x2="2100" y2="450" stroke="#ff4444" stroke-width="3" stroke-dasharray="15,10"/>
+  <text x="2115" y="455" font-family="monospace" font-size="18" fill="#ff4444">N ⚡ (floating)</text>
+  
+  <!-- X where ground should be -->
+  <line x1="1770" y1="500" x2="1770" y2="540" stroke="#ff4444" stroke-width="3"/>
+  <line x1="1750" y1="520" x2="1790" y2="520" stroke="#ff4444" stroke-width="3"/>
+  <text x="1770" y="560" text-anchor="middle" font-family="monospace" font-size="16" fill="#ff4444">DISCONNECTED</text>
+  
+  <!-- Load with warning -->
+  <circle cx="1580" cy="400" r="40" fill="none" stroke="#ff4444" stroke-width="2"/>
+  <text x="1580" y="395" text-anchor="middle" font-family="monospace" font-size="16" fill="#ff4444">⚠</text>
+  <text x="1580" y="415" text-anchor="middle" font-family="monospace" font-size="14" fill="#ff4444">LOAD</text>
+  
+  <text x="1580" y="700" text-anchor="middle" font-family="monospace" font-size="20" fill="#ff4444">Unregulated voltage potential</text>
+  <text x="1580" y="730" text-anchor="middle" font-family="monospace" font-size="20" fill="#ff4444">Protection circuits FAIL</text>
+  <text x="1580" y="760" text-anchor="middle" font-family="monospace" font-size="20" fill="#ff4444">Current flows where it shouldn't</text>
+  
+  <!-- Center: The analogy bridge -->
+  <rect x="1050" y="850" width="300" height="180" fill="none" stroke="#7360ff" stroke-width="2" rx="12" opacity="0.6"/>
+  <text x="1200" y="900" text-anchor="middle" font-family="monospace" font-size="20" fill="#7360ff" filter="url(#glow)">B I O L O G I C A L</text>
+  <text x="1200" y="935" text-anchor="middle" font-family="monospace" font-size="20" fill="#7360ff" filter="url(#glow)">A N A L O G Y</text>
+  <text x="1200" y="975" text-anchor="middle" font-family="monospace" font-size="18" fill="#aaaacc">Basal ganglia calcification</text>
+  <text x="1200" y="1000" text-anchor="middle" font-family="monospace" font-size="18" fill="#aaaacc">= Floating neutral</text>
+  
+  <!-- Bottom diagram: Brain cross-section -->
+  <text x="1200" y="1120" text-anchor="middle" font-family="monospace" font-size="24" fill="#ff6b35">BASAL GANGLIA CALCIFICATION</text>
+  
+  <!-- Simplified brain outline -->
+  <ellipse cx="1200" cy="1350" rx="500" ry="300" fill="none" stroke="#ff6b35" stroke-width="2" opacity="0.5"/>
+  <text x="1200" y="1370" text-anchor="middle" font-family="monospace" font-size="18" fill="#ff6b35" opacity="0.7">Cerebral Cortex</text>
+  
+  <!-- Basal ganglia (calcified) -->
+  <ellipse cx="1050" cy="1300" rx="100" ry="80" fill="#ff6b35" opacity="0.3" stroke="#ff6b35" stroke-width="2"/>
+  <ellipse cx="1050" cy="1300" rx="60" ry="45" fill="#ff6b35" opacity="0.5"/>
+  <text x="1050" y="1255" text-anchor="middle" font-family="monospace" font-size="16" fill="#ff6b35">Basal</text>
+  <text x="1050" y="1275" text-anchor="middle" font-family="monospace" font-size="16" fill="#ff6b35">Ganglia</text>
+  
+  <ellipse cx="1350" cy="1300" rx="100" ry="80" fill="#ff6b35" opacity="0.3" stroke="#ff6b35" stroke-width="2"/>
+  <ellipse cx="1350" cy="1300" rx="60" ry="45" fill="#ff6b35" opacity="0.5"/>
+  <text x="1350" y="1255" text-anchor="middle" font-family="monospace" font-size="16" fill="#ff6b35">Basal</text>
+  <text x="1350" y="1275" text-anchor="middle" font-family="monospace" font-size="16" fill="#ff6b35">Ganglia</text>
+  
+  <!-- Calcium deposit indicators -->
+  <circle cx="1020" cy="1270" r="15" fill="#ffcc00" opacity="0.6"/>
+  <circle cx="1080" cy="1330" r="20" fill="#ffcc00" opacity="0.6"/>
+  <circle cx="1320" cy="1280" r="18" fill="#ffcc00" opacity="0.6"/>
+  <circle cx="1380" cy="1320" r="12" fill="#ffcc00" opacity="0.6"/>
+  <circle cx="1300" cy="1340" r="16" fill="#ffcc00" opacity="0.6"/>
+  <text x="1200" y="1420" text-anchor="middle" font-family="monospace" font-size="16" fill="#ffcc00" opacity="0.8">◆ Ca₉(PO₄)₆ deposits disrupt voltage regulation</text>
+  
+  <!-- Chemical equation -->
+  <text x="1200" y="1550" text-anchor="middle" font-family="monospace" font-size="20" fill="#7360ff">Ca²⁺ + PO₄³⁻ → Ca₉(PO₄)₆ [calcification]</text>
+  <text x="1200" y="1580" text-anchor="middle" font-family="monospace" font-size="20" fill="#ff6b35">→ Floating biological voltage reference → seizure threshold lowered</text>
+  
+  <!-- Bottom bar -->
+  <text x="1200" y="2150" text-anchor="middle" font-family="monospace" font-size="20" fill="#666680">2400×2400px · Print-Ready SVG · P31 Labs</text>
+  <text x="1200" y="2200" text-anchor="middle" font-family="monospace" font-size="16" fill="#444455">p31ca.org · "The geometry is invariant. Only the medium changes."</text>
+</svg>

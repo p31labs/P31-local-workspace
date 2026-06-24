@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { getBalanceAtomic, getLedgerHistory, verifyLedgerIntegrity } from '../lib/KarmaEngine';
+import { K4Bridge, type K4Features } from '../lib/K4Bridge';
 
 interface LedgerEntry {
   kind: string;
@@ -15,6 +16,8 @@ interface LedgerData {
   sablierStreamRate: string;
   integrity: { valid: boolean; count: number } | null;
   history: LedgerEntry[];
+  k4Features: K4Features | null;
+  k4Expanded: boolean;
 }
 
 function relativeTime(ts: number): string {
@@ -35,15 +38,18 @@ export function LedgerSurface({ theme }: { theme: Record<string, string> }) {
     sablierStreamRate: '0.000000',
     integrity: null,
     history: [],
+    k4Features: null,
+    k4Expanded: false,
   });
 
   const refresh = useCallback(async () => {
-    const [b, h, i] = await Promise.all([
+    const [b, h, i, k4] = await Promise.all([
       getBalanceAtomic(),
       getLedgerHistory(20),
       verifyLedgerIntegrity(),
+      K4Bridge.fetchFeatures(),
     ]);
-    setData((prev) => ({ ...prev, loveTokens: b, history: h, integrity: i }));
+    setData((prev) => ({ ...prev, loveTokens: b, history: h, integrity: i, k4Features: k4 }));
   }, []);
 
   useEffect(() => {
@@ -107,6 +113,49 @@ export function LedgerSurface({ theme }: { theme: Record<string, string> }) {
             Notice: L.O.V.E. tokens are soulbound assets tracking direct biological and physical care metrics via Proof of Care consensus. Completely separate from business labor assets.
           </p>
         </section>
+      </div>
+
+      {/* K₄ FRACTAL FLYWHEEL SECTION */}
+      <div className="mt-6 border border-purple-500/20 bg-black/40 p-4 rounded-sm shadow-inner">
+        <button
+          onClick={() => setData((prev) => ({ ...prev, k4Expanded: !prev.k4Expanded }))}
+          className="text-sm tracking-widest text-purple-300 font-bold uppercase mb-1 w-full flex justify-between items-center"
+        >
+          <span>Fractal Flywheel — K₄ Ledger</span>
+          <span>{data.k4Expanded ? '▲' : '▼'}</span>
+        </button>
+        {data.k4Expanded && (
+          <div className="space-y-2 mt-3">
+            {data.k4Features ? (
+              Object.entries(data.k4Features).map(([feature, levels]) => (
+                <div key={feature} className="border border-purple-500/10 p-2 rounded">
+                  <div className="flex justify-between text-xs font-mono">
+                    <span className="text-purple-300 uppercase">{feature}</span>
+                    <span className="opacity-60">
+                      L0:{levels.L0.toFixed(1)} L1:{levels.L1.toFixed(2)} L2:{levels.L2.toFixed(3)}
+                    </span>
+                  </div>
+                  <div className="w-full bg-purple-950/40 h-1.5 rounded-full mt-1 overflow-hidden">
+                    {[levels.L0, levels.L1, levels.L2, levels.L3, levels.L4].map((val, i) => {
+                      const pct = Math.min(100, Math.abs(val) * 10);
+                      const colors = ['#3fb950', '#58a6ff', '#d29922', '#bc8cff', '#ff69b4'];
+                      return pct > 0 ? (
+                        <div
+                          key={i}
+                          className="h-full inline-block"
+                          style={{ width: `${pct}%`, backgroundColor: colors[i], opacity: 0.6 + i * 0.1 }}
+                          title={`L${i}: ${val}`}
+                        />
+                      ) : null;
+                    })}
+                  </div>
+                </div>
+              ))
+            ) : (
+              <p className="text-[10px] opacity-40 font-mono">K₄ ledger unreachable</p>
+            )}
+          </div>
+        )}
       </div>
 
       {/* TRANSACTION HISTORY */}

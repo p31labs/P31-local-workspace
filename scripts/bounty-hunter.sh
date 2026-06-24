@@ -22,7 +22,10 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-[ -z "$TARGET" ] && usage
+if [ -z "$TARGET" ]; then
+    echo "{\"status\":\"skipped\",\"reason\":\"no target — daemon cycle, no scan target configured\",\"timestamp\":\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"}" > "$LOG_FILE"
+    exit 0
+fi
 
 mkdir -p "$(dirname "$LOG_FILE")"
 

@@ -1,10 +1,10 @@
 {
   "meta": {
     "schema": "PMM_8BALL=1.0",
-    "generated_at": "2026-06-19T10:26:58Z",
+    "generated_at": "2026-06-24T14:17:07Z",
     "spoon_level": 3,
     "calcium": 8.5,
-    "peak_hours": true,
+    "peak_hours": false,
     "deadlines": 1
   },
   "recommendations": [
@@ -12,28 +12,28 @@
       "rank": 1,
       "action": "deploy-workers",
       "label": "Deploy 4 patched Workers",
-      "score": 0.849,
+      "score": 0.708,
       "spoon_cost": 1,
       "urgency": 0.7,
       "domain": "infrastructure"
     },
     {
       "rank": 2,
-      "action": "money-streams",
-      "label": "Launch money stream daemons",
-      "score": 0.56,
-      "spoon_cost": 1,
-      "urgency": 0.5,
-      "domain": "infrastructure"
-    },
-    {
-      "rank": 3,
       "action": "ada-filing",
       "label": "File ADA Accommodation + Contempt Motion",
       "score": 0.514,
       "spoon_cost": 3,
       "urgency": 0.9,
       "domain": "legal"
+    },
+    {
+      "rank": 3,
+      "action": "money-streams",
+      "label": "Launch money stream daemons",
+      "score": 0.467,
+      "spoon_cost": 1,
+      "urgency": 0.5,
+      "domain": "infrastructure"
     },
     {
       "rank": 4,
@@ -48,7 +48,7 @@
       "rank": 5,
       "action": "quality-gate",
       "label": "Run pnpm run quality",
-      "score": 0.39,
+      "score": 0.325,
       "spoon_cost": 1,
       "urgency": 0.4,
       "domain": "infrastructure"
@@ -57,7 +57,7 @@
       "rank": 6,
       "action": "weave-merge",
       "label": "WEAVE: merge staged documents",
-      "score": 0.36,
+      "score": 0.3,
       "spoon_cost": 1,
       "urgency": 0.4,
       "domain": "content"
@@ -66,7 +66,7 @@
       "rank": 7,
       "action": "astro-migrate",
       "label": "Migrate p31-hearing-ops to Astro Islands",
-      "score": 0.264,
+      "score": 0.22,
       "spoon_cost": 4,
       "urgency": 0.6,
       "domain": "infrastructure"
@@ -75,7 +75,7 @@
       "rank": 8,
       "action": "grant-work",
       "label": "Grant research or submission prep",
-      "score": 0.176,
+      "score": 0.147,
       "spoon_cost": 3,
       "urgency": 0.5,
       "domain": "content"
@@ -93,6 +93,6 @@
   "top_pick": {
     "id": "deploy-workers",
     "label": "Deploy 4 patched Workers",
-    "confidence": 1.21
+    "confidence": 1.01
   }
 }

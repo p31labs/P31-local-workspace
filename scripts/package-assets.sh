@@ -23,7 +23,10 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-[ -z "$ASSET_FILE" ] || [ -z "$PRODUCT_ID" ] && usage
+if [ -z "$ASSET_FILE" ] || [ -z "$PRODUCT_ID" ]; then
+    echo "{\"status\":\"skipped\",\"reason\":\"no file/product — daemon cycle, no pending uploads\",\"timestamp\":\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"}" > "$LOG_FILE"
+    exit 0
+fi
 [ -f "$ASSET_FILE" ] || { echo "{\"status\":\"error\",\"message\":\"file not found\",\"file\":\"$ASSET_FILE\"}" > "$LOG_FILE"; exit 2; }
 
 mkdir -p "$(dirname "$LOG_FILE")"

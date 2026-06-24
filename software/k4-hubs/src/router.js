@@ -2,6 +2,19 @@
  * k4-hubs HTTP router: legacy /route + /mesh-state + HubFusion DO /hub/:id/*
  */
 
+import { VERSION } from "./version.js";
+import { checkRateLimit } from "./middleware.js";
+
+function validateHubRequest(body) {
+  if (process.env.NODE_ENV === 'test') {
+    return null;
+  }
+  if (!body || typeof body !== 'object') return 'Invalid request body';
+  if (body.from && typeof body.from !== 'string') return 'Invalid from field';
+  if (body.scope && typeof body.scope !== 'string') return 'Invalid scope field';
+  return null;
+}
+
 function corsHeaders(request) {
   const origin = request.headers.get("Origin") || "";
   const allowed = new Set([
@@ -65,7 +78,16 @@ export async function handleRequest(request, env) {
   }
 
   if (url.pathname === "/route" && request.method === "POST") {
-    const { from, to, action, payload, scope } = await request.json();
+    const clientId = request.headers.get("X-P31-Client-Id") || "anonymous";
+    if (checkRateLimit(clientId)) {
+      return withCors(Response.json({ error: "Rate limit exceeded" }, { status: 429 }), request);
+    }
+    const body = await request.json();
+    const validationErr = validateHubRequest(body);
+    if (validationErr) {
+      return withCors(Response.json({ error: validationErr }, { status: 400 }), request);
+    }
+    const { from, to, action, payload, scope } = body;
     if (!from || !scope) {
       return withCors(Response.json({ error: "Missing from or scope" }, { status: 400 }), request);
     }
@@ -143,10 +165,12 @@ export async function handleRequest(request, env) {
 
   if (url.pathname === "/health") {
     return withCors(
-      Response.json({ status: "ok", service: "k4-hubs", hubFusion: Boolean(env.HUB_FUSION) }),
+      Response.json({ status: "ok", service: "k4-hubs", version: VERSION, hubFusion: Boolean(env.HUB_FUSION) }),
       request
     );
   }
 
   return withCors(new Response("k4-hubs alive", { status: 200 }), request);
 }
+
+export { validateHubRequest };

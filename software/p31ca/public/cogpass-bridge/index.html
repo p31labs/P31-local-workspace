@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P31 CogPass Bridge</title>
+<meta name="description" content="P31 Cognitive Passport cross-origin bridge — secure data sharing">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 14px; color: #e4e4e7; background: transparent; min-height: 1px; }
+.bridge-status { padding: 8px 12px; font-size: 12px; color: #a1a1aa; text-align: center; }
+.error { color: #f87171; }
+.ready { color: #4ade80; }
+</style>
+</head>
+<body>
+<div id="status" class="bridge-status" role="status">Initializing secure bridge...</div>
+
+<script>
+(function() {
+  'use strict';
+
+  const ALLOWED_ORIGINS = new Set([
+    'https://p31ca.org',
+    'https://bonding.p31ca.org',
+    'https://phos.p31ca.org',
+    'https://ops.p31ca.org',
+    'https://willow.p31ca.org',
+  ]);
+
+  const BRIDGE_VERSION = 'p31.cogPassBridge/1.0.0';
+  const CACHE_TTL = 300_000; // 5 minutes
+  const STATUS_EL = document.getElementById('status');
+
+  let cache = {
+    data: null,
+    timestamp: 0,
+    nonce: null,
+  };
+
+  function setStatus(text, className) {
+    if (STATUS_EL) {
+      STATUS_EL.textContent = text;
+      STATUS_EL.className = 'bridge-status ' + (className || '');
+    }
+  }
+
+  function isFresh() {
+    return cache.data && (Date.now() - cache.timestamp) < CACHE_TTL;
+  }
+
+  function getCachedPassport() {
+    if (!isFresh()) return null;
+    try {
+      const raw = localStorage.getItem('p31-cogpass-v1');
+      if (!raw) return null;
+      return JSON.parse(raw);
+    } catch {
+      return null;
+    }
+  }
+
+  function getPassportForAudience(profile) {
+    const source = localStorage.getItem('p31-cogpass-v1');
+    if (!source) return null;
+
+    try {
+      const doc = JSON.parse(source);
+      doc.profile = profile || doc.profile || 'public';
+      return doc;
+    } catch {
+      return null;
+    }
+  }
+
+  window.addEventListener('message', function(event) {
+    if (!ALLOWED_ORIGINS.has(event.origin)) {
+      console.warn('[CogPass Bridge] Blocked message from untrusted origin:', event.origin);
+      return;
+    }
+
+    if (!event.data || typeof event.data !== 'object') return;
+    if (event.data.bridge !== BRIDGE_VERSION) return;
+
+    const { type, nonce, profile } = event.data;
+
+    if (type === 'cogpass:get') {
+      const passport = getPassportForAudience(profile);
+
+      if (!passport) {
+        event.source.postMessage({
+          bridge: BRIDGE_VERSION,
+          type: 'cogpass:reply',
+          nonce: nonce,
+          status: 'not_found',
+          data: null,
+        }, event.origin);
+        return;
+      }
+
+      cache.data = passport;
+      cache.timestamp = Date.now();
+      cache.nonce = nonce;
+
+      event.source.postMessage({
+        bridge: BRIDGE_VERSION,
+        type: 'cogpass:reply',
+        nonce: nonce,
+        status: 'ok',
+        data: passport,
+        cached_at: new Date(cache.timestamp).toISOString(),
+      }, event.origin);
+
+      setStatus('Passport shared ✓', 'ready');
+    }
+
+    if (type === 'cogpass:ping') {
+      event.source.postMessage({
+        bridge: BRIDGE_VERSION,
+        type: 'cogpass:pong',
+        nonce: nonce,
+        status: 'alive',
+        version: BRIDGE_VERSION,
+      }, event.origin);
+    }
+  });
+
+  window.addEventListener('load', function() {
+    const hasPassport = !!localStorage.getItem('p31-cogpass-v1');
+    setStatus(
+      hasPassport ? 'Bridge ready — passport available' : 'Bridge ready — await passport',
+      hasPassport ? 'ready' : '',
+    );
+
+    window.parent.postMessage({
+      bridge: BRIDGE_VERSION,
+      type: 'cogpass:ready',
+      status: 'loaded',
+      hasPassport: hasPassport,
+    }, '*');
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import type { ThemeShape } from '../lib/themeEngine';
-import { useDevice } from '../../../software/cloudflare-worker/{project}/command-center/src/cloud-hub-html.js';
+import { useDevice } from '../hooks/useDevice';
 import { Layers, Link2, WifiOff, Check } from 'lucide-react';
 
 export function SuperpositionSurface({ theme, spoons }: { theme: ThemeShape; spoons: number }) {

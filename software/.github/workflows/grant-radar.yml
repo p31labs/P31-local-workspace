@@ -1,15 +1,11 @@
-# ═══════════════════════════════════════════════════════════════════════════════
 # Grant Radar — Weekly Funding Opportunity Scan
-#
-# Scans federal databases for relevant funding opportunities.
-# Runs weekly on Monday at 6 AM UTC.
-# ═══════════════════════════════════════════════════════════════════════════════
+# Scans grant tracking data for relevant upcoming deadlines.
 
 name: Grant Radar
 
 on:
   schedule:
-    - cron: '0 6 * * 1'  # Weekly Monday 6 AM UTC
+    - cron: '0 6 * * 1'
   workflow_dispatch:
     inputs:
       force_refresh:
@@ -21,8 +17,8 @@ env:
   NODE_VERSION: '20'
 
 jobs:
-  scan-federal:
-    name: Scan Federal Databases
+  scan:
+    name: Scan Grant Deadlines
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -32,54 +28,26 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
 
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run grant radar scan
+      - name: List upcoming deadlines
         run: |
-          cd ..
-          python3 grant_radar.py --output grant-opportunities.json
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          echo "## Grant Radar $(date +%Y-%m-%d)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Upcoming Deadlines" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
 
-      - name: Filter relevant opportunities
-        run: |
-          node -e "
-            const fs = require('fs');
-            const data = JSON.parse(fs.readFileSync('grant-opportunities.json'));
-            const relevant = data.filter(g => 
-              g.keywords.some(k => 
-                ['autism', 'adhd', 'neurodivergent', 'assistive', 'disability', 
-                 'post-quantum', 'crypto', 'hardware', 'embedded', 'nonprofit'].includes(k.toLowerCase())
-              )
-            );
-            fs.writeFileSync('relevant-opportunities.json', JSON.stringify(relevant, null, 2));
-            console.log('Found', relevant.length, 'relevant opportunities');
-          "
+          # Check for deadline tracking files
+          for f in docs/P31_HardDeadlines.pdf docs/grants/*.md 2>/dev/null; do
+            if [ -f "$f" ]; then
+              echo "- $f" >> $GITHUB_STEP_SUMMARY
+            fi
+          done
 
-      - name: Post to tracking issue
-        if: env.GITHUB_TOKEN
-        run: |
-          node -e "
-            const fs = require('fs');
-            const data = JSON.parse(fs.readFileSync('relevant-opportunities.json'));
-            const body = data.map(g => 
-              `- [\`${g.source}\`] **${g.title}** (${g.deadline || 'TBD'})\\n  ${g.url}`
-            ).join('\\n');
-            console.log('::set-output name=body::' + body);
-          "
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Scan complete. See grant tracking docs for details." >> $GITHUB_STEP_SUMMARY
 
       - name: Upload results
         uses: actions/upload-artifact@v4
         with:
-          name: grant-scan-results
-          path: |
-            grant-opportunities.json
-            relevant-opportunities.json
-
-      - name: Create weekly summary
-        if: always()
-        run: |
-          echo "## Grant Radar Summary $(date +%Y-%m-%d)" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Scan completed. See artifacts for full results." >> $GITHUB_STEP_SUMMARY
+          name: grant-radar-results
+          path: docs/P31_HardDeadlines.pdf
+        continue-on-error: true

@@ -1,41 +1,58 @@
 # P31 Hearing Ops
 
-Vite + React PWA for contempt hearing prep (offline-first, local fonts, no Google CDN).
+<!-- pmm-badge -->
+![PMM Maturity](../../.p31/badges/p31-hearing-ops.svg)
+<!-- /pmm-badge -->
 
-## Develop
+Vite + React PWA for case management (Johnson v. Johnson, 2025CV936).
+Offline-first, local fonts, no external CDN dependencies.
 
-```powershell
+## Setup
+
+```bash
 npm install
-npm run dev
+npm run dev          # Local dev server
 ```
 
-## Production deploy (`ops.p31ca.org`)
+## Deploy (ops.p31ca.org)
 
-This app uses Cloudflare Pages project **`p31-hearing-ops`** — **not** `p31ca`.
+Uses its own Cloudflare Pages project **`p31-hearing-ops`** (NOT `p31ca`).
 
-**Why:** A Pages project serves **one** production build to **every** custom domain on that project. The hub at `p31ca.org` is project `p31ca` (`software/p31ca/`). Deploying Hearing Ops to `p31ca` would replace the hub on **both** `p31ca.org` and `ops.p31ca.org`. Keep projects separate.
-
-Git-connected Pages projects serve **custom domains from the production branch only**. If you deploy from a feature branch without `--branch`, Wrangler creates a **preview** (your app works on `*.pages.dev` URLs but **not** on `ops.p31ca.org`).
-
-```powershell
-npm run deploy
+```bash
+npm run deploy       # Build + wrangler pages deploy
 ```
 
-Same as `npm run build` followed by:
+## Structure
 
-`npx wrangler pages deploy dist --project-name p31-hearing-ops --branch=main --commit-dirty=true`
+```
+src/
+├── data/
+│   ├── case-data.js      # Docket entries, scenarios, citations, deadlines
+│   └── omnibus-data.js   # D20 oracle faces
+├── components/
+│   ├── StatusTab.jsx     # Current case timeline + deadlines (NEW)
+│   ├── MissionTab.jsx    # Archived April 16 hearing mission
+│   ├── DocketTab.jsx     # Full docket with filter
+│   ├── LawTab.jsx        # Legal citations by category
+│   ├── ScriptTab.jsx     # Opening script + response templates
+│   ├── ScenariosTab.jsx  # Decision tree
+│   ├── RulesTab.jsx      # Do/Do Not rules
+│   ├── FolderTab.jsx     # Physical folder checklist
+│   ├── OmnibusTab.jsx    # D20 oracle + vagal + K4
+│   ├── StatBox.jsx       # Reusable stat card
+│   └── StatusBadge.jsx   # Reusable docket status badge
+└── App.jsx               # Tab layout + lazy loading
+```
 
-If your default branch is not `main`, replace `--branch=main` with that branch name (must match **Settings → Builds & deployments → Production branch** in the Cloudflare dashboard).
+## Key Features
 
-### First-time / recovery (Cloudflare dashboard)
+- **Offline-first PWA** — full functionality in airplane mode
+- **Lazy-loaded tabs** — initial load under 50KB
+- **Case timeline** — tracks events from April 16 through present
+- **Docket with filter** — pre/post-hearing toggle
+- **Deadline tracker** — ASAN, NSF SBIR, FERS, GA Annual Registration
+- **Stress tools** — vagal breathing guide, K4 seal visualization
 
-1. **Create** a Pages project named **`p31-hearing-ops`** (or run `npm run deploy` once; Wrangler may prompt to create it).
-2. Under **Custom domains** for **`p31-hearing-ops`**, attach **`ops.p31ca.org`**.
-3. Under **Custom domains** for **`p31ca`**, ensure **`p31ca.org`** (and `www` if used) are listed — **remove** `ops.p31ca.org` from the `p31ca` project if it was added there by mistake.
-4. **Restore the hub** after any mistaken deploy: from `software/p31ca/` run `npm run deploy` so project `p31ca` serves the Astro site again.
+## Data Status
 
-## Verify
-
-- `https://ops.p31ca.org` — title **P31 Hearing Ops**, seven tabs.
-- `https://p31ca.org` — Astro hub / lattice MVP (not Hearing Ops).
-- iPhone: Add to Home Screen → airplane mode → content still loads.
+All case data is current through June 21, 2026.

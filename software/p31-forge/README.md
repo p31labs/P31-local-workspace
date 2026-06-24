@@ -1,5 +1,9 @@
 # P31 FORGE
 
+<!-- pmm-badge -->
+![PMM Maturity](../../.p31/badges/p31-forge.svg)
+<!-- /pmm-badge -->
+
 **Single-source document generation for everything P31 Labs ships.**
 
 Court filings. Grant applications. Board resolutions. Letters. Memos. Social

@@ -20,7 +20,7 @@ import time
 import urllib.request
 from pathlib import Path
 
-REPO_ROOT = Path("/home/p31/andromeda").resolve()
+REPO_ROOT = Path(__file__).resolve().parent.parent
 OLLAMA_URL = "http://localhost:11434/api/generate"
 LLM_MODEL = "qwen2.5:1.5b"
 MAX_ATTEMPTS = 3

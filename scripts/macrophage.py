@@ -25,7 +25,7 @@ from typing import Any
 
 from p31_bus import bus_emit
 
-REPO_ROOT = Path("/home/p31/andromeda").resolve()
+REPO_ROOT = Path(__file__).resolve().parent.parent.resolve()
 INDEX_PATH = REPO_ROOT / "grading-index.json"
 REPORT_PATH = REPO_ROOT / "GRADING_REPORT.md"
 OLLAMA_URL = "http://localhost:11434/api/generate"

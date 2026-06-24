@@ -188,7 +188,8 @@ export default {
   },
 
   async fetch(request, env) {
-    const url = new URL(request.url);
+    try {
+      const url = new URL(request.url);
 
     // CORS preflight
     if (request.method === 'OPTIONS') {
@@ -310,24 +311,31 @@ export default {
      }
 
       // ── Cost Summary API ──
-      if (url.pathname === '/api/costs' && request.method === 'GET') {
+    } catch (e) {
+      return jsonResponse({ error: 'Internal error', details: String(e) }, 500);
+    }
+  }
         const sessionEmail = request.headers.get('Cf-Access-Authenticated-User-Email');
         if (!sessionEmail) return jsonResponse({ error: 'Unauthorized' }, 401);
-        try {
-          const hours = parseInt(url.searchParams.get('hours') || '24');
-          const cutoff = Date.now() - (hours * 3600 * 1000);
-          const results = await env.EPCP_DB.prepare(
-            'SELECT service, operation, SUM(quantity) as total_qty, SUM(estimated_cost) as total_cost FROM cost_tracking WHERE ts > ? GROUP BY service, operation'
-          ).bind(cutoff).all();
-          const totalCost = (results.results || []).reduce(function(sum, r) { return sum + (r.total_cost || 0); }, 0);
-          return jsonResponse({
-            summary: results.results || [],
-            total_cost: totalCost,
-            period_hours: hours
-          });
-        } catch (e) {
-          return jsonResponse({ error: e.message }, 500);
-}
+       if (url.pathname === '/api/costs' && request.method === 'GET') {
+         const sessionEmail = request.headers.get('Cf-Access-Authenticated-User-Email');
+         if (!sessionEmail) return jsonResponse({ error: 'Unauthorized' }, 401);
+         try {
+           const hours = parseInt(url.searchParams.get('hours') || '24');
+           const cutoff = Date.now() - (hours * 3600 * 1000);
+           const results = await env.EPCP_DB.prepare(
+             'SELECT service, operation, SUM(quantity) as total_qty, SUM(estimated_cost) as total_cost FROM cost_tracking WHERE ts > ? GROUP BY service, operation'
+           ).bind(cutoff).all();
+           const totalCost = (results.results || []).reduce(function(sum, r) { return sum + (r.total_cost || 0); }, 0);
+           return jsonResponse({
+             summary: results.results || [],
+             total_cost: totalCost,
+             period_hours: hours
+           });
+         } catch (e) {
+           return jsonResponse({ error: e.message }, 500);
+         }
+       }
       
       // ── CRDT Session WebSocket ──
       if (url.pathname === '/api/crdt/session') {
@@ -479,9 +487,12 @@ export default {
       });
     }
 
-     // ── Dashboard ──
-     return serveDashboard(env);
-   };
+      // ── Dashboard ──
+      return serveDashboard(env);
+    } catch (e) {
+      return jsonResponse({ error: 'Internal error', details: String(e) }, 500);
+    }
+  };
 
 async function handleStatusWrite(request, env, auth) {
   try {

@@ -418,17 +418,30 @@ function grant(program, opts = {}) {
         "Responsible AI Practices"
       ]
     },
-    nlnet: {
-      program: "nlnet",
-      title: "NLnet NGI Zero Commons Fund",
-      deadline: "June 1, 2026, 12:00 CEST",
+    nlnet_taler: {
+      program: "nlnet_taler",
+      title: "NLnet NGI Taler — Privacy-preserving digital payments",
+      deadline: "August 1, 2026, 12:00 CEST",
       amount: "\u20AC5,000\u2013\u20AC50,000",
       sections: [
-        "Abstract",
-        "Requested Amount and Budget Justification",
-        "Comparison with Existing Efforts",
-        "Technical Challenges",
-        "Ecosystem Engagement"
+        "Integration with GNU Taler — How your project connects to Taler's payment system",
+        "Privacy Architecture — Data minimization, anonymity, auditability",
+        "Technical Implementation — Stack, timeline, deliverables",
+        "Open Source Compliance — License, dependencies, reproducibility",
+        "Ecosystem Impact — Who benefits and how"
+      ]
+    },
+    nlnet_fediversity: {
+      program: "nlnet_fediversity",
+      title: "NLnet NGI Fediversity — Reproducible hosting stack on Nix",
+      deadline: "August 1, 2026, 12:00 CEST",
+      amount: "\u20AC5,000\u2013\u20AC50,000",
+      sections: [
+        "Contribution to Fediversity — How you extend or integrate with Fediversity",
+        "Nix-based Architecture — Reproducibility, declarative config, deployment",
+        "Technical Implementation — Stack, timeline, deliverables",
+        "Open Source Compliance — License, dependencies, reproducibility",
+        "Ecosystem Impact — Who benefits and how"
       ]
     },
     asan: {
@@ -442,10 +455,36 @@ function grant(program, opts = {}) {
         "Budget",
         "Self-Advocate Leadership"
       ]
+    },
+    ats: {
+      program: "ats",
+      title: "ATS Accelerator 2026 (Access to Success / OBIO)",
+      deadline: "June 28, 2026, 5:00 PM EDT",
+      amount: "$50,000+ in grants (0% equity, free)",
+      sections: [
+        "Problem & Solution — What accessibility barrier are you solving and how?",
+        "MVP & Traction — Current stage, users, validation evidence",
+        "Co-creation with Disability Community — How disabled people shaped your product",
+        "Target Market & Impact — Who benefits and at what scale",
+        "Team — Why you are the right people to build this",
+        "Why ATS — What you hope to gain from the program"
+      ]
+    },
+    wargachuk: {
+      program: "wargachuk",
+      title: "Wargachuk Grant Program",
+      deadline: "Rolling — year-round",
+      amount: "$111–$50,000 (requesting $5,000)",
+      sections: [
+        "Introduction — Who you are and what you create",
+        "The Ask — How much ($111–$50K) and what it enables",
+        "Your Story — Why this moment matters",
+        "Links — Optional portfolio/github/website"
+      ]
     }
   };
   const s = scaffolds[program];
-  if (!s) throw new Error(`Unknown grant: ${program}. Use: gates, nlnet, asan`);
+  if (!s) throw new Error(`Unknown grant: ${program}. Use: gates, nlnet_taler, nlnet_fediversity, asan, ats, wargachuk`);
 
   return renderGrant({
     program: s.program,
@@ -498,7 +537,8 @@ AD-HOC SCAFFOLDS:
   node forge.js court "MOTION TITLE" "16th day of April, 2026"
   node forge.js letter "RE: Subject" "April 14, 2026"
   node forge.js corporate resolution|memo "April 14, 2026"
-  node forge.js grant gates|nlnet|asan
+  node forge.js grant gates|nlnet_taler|nlnet_fediversity|asan|ats|wargachuk
+  node forge.js booklet [--input path.md] [--output name]  # Compile explorer booklet
   node forge.js social "Post content" bluesky|mastodon|linkedin|all
   node forge.js brand                     # Print brand constants
 
@@ -740,6 +780,43 @@ Font:   ${B.TYPE.serif} (body) | ${B.TYPE.mono} (code)
       console.log(`   ${boardPath}`);
       console.log(`   ${legalPath}`);
       console.log();
+      return;
+    }
+
+    case 'booklet': {
+      const bookletDir = path.join(__dirname, 'booklet');
+      const compileScript = path.join(bookletDir, 'compile.js');
+      const docxScript = path.join(bookletDir, 'to-docx.js');
+
+      if (!fs.existsSync(compileScript)) {
+        console.error('Booklet compiler not found at booklet/compile.js');
+        process.exit(1);
+      }
+
+      const { spawnSync } = require('child_process');
+
+      // Step 1: HTML + Markdown
+      const r1 = spawnSync('node', [compileScript, ...args.slice(1)], {
+        stdio: 'inherit', cwd: __dirname
+      });
+      if (r1.status !== 0) process.exit(r1.status ?? 1);
+
+      // Step 2: .docx
+      if (!args.includes('--html-only')) {
+        console.log('\nGenerating .docx version...');
+        const r2 = spawnSync('node', ['booklet/to-docx.js'], {
+          stdio: 'inherit', cwd: __dirname
+        });
+        if (r2.status !== 0) console.warn('Docx generation skipped (images may be missing)');
+      }
+
+      // Print summary
+      const outDir = path.join(bookletDir, 'out');
+      const files = fs.readdirSync(outDir)
+        .filter(f => f.startsWith('P31_Explorer_Booklet'))
+        .map(f => `  ${path.join(outDir, f)} (${fs.statSync(path.join(outDir, f)).size} bytes)`);
+      console.log(`\nBooklet outputs:\n${files.join('\n')}`);
+      console.log('\nOpen the .html in a browser, then File > Print > Save as PDF for print-ready output.');
       return;
     }
 

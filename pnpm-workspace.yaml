@@ -2,6 +2,8 @@
 # All install/build/test for JS/TS runs from repository root unless a package README says otherwise.
 
 packages:
+  # PHOS v2 — standalone Astro PWA (not under software/)
+  - 'phos'
   # Turbo orchestrator (must be listed — software/* does not match this folder)
   - 'software'
   # Core applications & services (software top-level packages)

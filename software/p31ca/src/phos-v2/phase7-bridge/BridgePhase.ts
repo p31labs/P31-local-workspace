@@ -83,12 +83,16 @@ export class BridgePhase implements PHOSPhase {
 
   // Bridge-specific methods
   private detectPlatform(): void {
-    const userAgent = navigator.userAgent.toLowerCase();
+    const userAgent = typeof navigator !== 'undefined' ? navigator.userAgent.toLowerCase() : '';
+    const hasWindow = typeof window !== 'undefined';
+    const isElectron = hasWindow && /electron/.test(userAgent);
+    const hasNodeProcess = hasWindow && typeof window.process !== 'undefined';
+    
     if (/iphone|ipad|ipod/.test(userAgent)) {
       this.currentPlatform = 'ios';
     } else if (/android/.test(userAgent)) {
       this.currentPlatform = 'android';
-    } else if (/electron/.test(userAgent) || window.process) {
+    } else if (isElectron || hasNodeProcess) {
       this.currentPlatform = 'desktop';
     } else {
       this.currentPlatform = 'web';

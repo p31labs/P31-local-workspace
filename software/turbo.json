@@ -2,12 +2,35 @@
   "$schema": "https://turbo.build/schema.json",
   "tasks": {
     "build": {
-      "dependsOn": ["^build"],
-      "outputs": ["dist/**", ".next/**", "coverage/**"]
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        "dist/**",
+        ".next/**",
+        "coverage/**"
+      ]
     },
     "test": {
-      "dependsOn": ["build"],
-      "outputs": []
+      "outputs": [],
+      "cache": false
+    },
+    "test:critical": {
+      "outputs": [],
+      "cache": false,
+      "inputs": [
+        "src/**",
+        "tests/**",
+        "*.test.*"
+      ]
+    },
+    "test:unit": {
+      "outputs": [],
+      "cache": false
+    },
+    "test:all": {
+      "outputs": [],
+      "cache": false
     },
     "typecheck": {
       "outputs": []
@@ -17,7 +40,9 @@
     },
     "check": {
       "dependsOn": [],
-      "outputs": ["dist/**"]
+      "outputs": [
+        "dist/**"
+      ]
     },
     "dev": {
       "cache": false,

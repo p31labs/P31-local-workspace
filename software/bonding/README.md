@@ -1,5 +1,9 @@
 # BONDING
 
+<!-- pmm-badge -->
+![PMM Maturity](../../.p31/badges/bonding.svg)
+<!-- /pmm-badge -->
+
 > A molecule-building chemistry game for neurodivergent families.
 > Built by a father for his son's 10th birthday. Ships March 10, 2026.
 

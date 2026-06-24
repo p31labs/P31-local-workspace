@@ -1,6 +1,6 @@
 ---
-// Card Table — Classic game route
 import ArcadeShell from '../../layouts/ArcadeShell.astro';
+import { CardTableGame } from '../../components/games/CardTableGame.tsx';
 ---
 
 <ArcadeShell
@@ -10,109 +10,20 @@ import ArcadeShell from '../../layouts/ArcadeShell.astro';
   showSelector={false}
   fullscreen
 >
-  <div class="classic-game-mount" data-game="cards">
-    <div class="classic-game-frame">
-      <div class="classic-game-placeholder" style="--game-accent: #8b7cc9;">
-        <div class="placeholder-icon">🃏</div>
-        <h2 class="placeholder-title">CARD TABLE</h2>
-        <p class="placeholder-desc">Strategic card collection with game-theory engine</p>
-        <div class="placeholder-actions">
-          <a
-            id="play-link"
-            href="https://p31-cards.pages.dev"
-            class="classic-play-btn"
-            target="_blank"
-            rel="noopener"
-            style="--btn-color: #8b7cc9;"
-          >
-            ▶ PLAY NOW
-          </a>
-          <button class="classic-score-btn" id="view-scores">🏆 HIGH SCORES</button>
-        </div>
-        <div class="placeholder-instructions">
-          <h3>How to Play</h3>
-          <ul>
-            <li>Probability-based decisions</li>
-            <li>Card counting optional</li>
-            <li>Bluff detection algorithms</li>
-            <li>Strategic betting</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-    <div class="classic-hud">
-      <span class="classic-hud-label">GAME THEORY ACTIVE</span>
-      <span class="classic-hud-spoons" id="hud-spoons">🥄 4/12</span>
-    </div>
+  <div class="card-table-mount">
+    <CardTableGame client:load />
   </div>
 
-  <script is:inline>
-    (function() {
-      'use strict';
-      const SPOON_COLORS = {0:'#cc6247',1:'#cc6247',2:'#cda852',3:'#cda852',4:'#8b7cc9',5:'#8b7cc9',6:'#8b7cc9',7:'#8b7cc9',8:'#8b7cc9',9:'#8b7cc9',10:'#8b7cc9',11:'#8b7cc9',12:'#8b7cc9'};
-
-      // Update high score button
-      const scoresBtn = document.getElementById('view-scores');
-      if (scoresBtn) {
-        scoresBtn.addEventListener('click', async () => {
-          try {
-            const db = await import('../../lib/arcade-core/pglite/client.ts');
-            const result = await (await db.getPGlite()).query(
-              `SELECT s.score, s.created_at, p.name
-               FROM arcade_high_scores s
-               JOIN arcade_players p ON s.player_id = p.id
-               WHERE s.game_id = (SELECT id FROM arcade_games WHERE slug = 'cards')
-               ORDER BY s.score DESC LIMIT 10`
-            );
-            const rows = result.rows;
-            alert(rows.length === 0 ? 'No scores yet! Play to set a record.' : 'High Scores:\n' + rows.map((r, i) => `${i + 1}. ${r.score} - ${r.name}`).join('\n'));
-          } catch {
-            const scores = JSON.parse(localStorage.getItem('p31-arcade-highscores') || '{}');
-            const cards = scores.cards || [];
-            alert('High Scores:\n' + (cards.length > 0 ? cards.map((s, i) => `${i + 1}. ${s.score.toLocaleString()} - ${s.date}`).join('\n') : 'No scores yet!'));
-          }
-        });
-      }
-
-      // Update play link href when spoon level changes
-      const playLink = document.getElementById('play-link');
-      const hudSpoons = document.getElementById('hud-spoons');
-      function updatePlayLink(level) {
-        const lvl = Math.max(0, Math.min(12, level));
-        playLink.href = `https://p31-cards.pages.dev?spoon=${lvl}`;
-        hudSpoons.textContent = '🥄 ' + lvl + '/12';
-        hudSpoons.style.color = SPOON_COLORS[lvl] || '#8b7cc9';
-      }
-      // Initial call with default level 4
-      updatePlayLink(4);
-      // Listen for spoon changes
-      window.addEventListener('p31:spoon:changed', (e) => {
-        if (e.detail?.level !== undefined) {
-          updatePlayLink(e.detail.level);
-        }
-      });
-    })();
-  </script>
-
   <style is:inline>
-    :global(body) { background: #0f1115; overflow: hidden; }
-    .classic-game-mount { position: fixed; inset: 0; display: flex; flex-direction: column; }
-    .classic-game-frame { flex: 1; display: flex; align-items: center; justify-content: center; padding: 24px; margin-top: 52px; }
-    .classic-game-placeholder { max-width: 520px; width: 100%; text-align: center; padding: 48px 32px; background: rgba(255,255,255,0.03); border: 2px solid rgba(139,124,201,0.2); border-radius: 20px; }
-    .placeholder-icon { font-size: 72px; line-height: 1; margin-bottom: 20px; }
-    .placeholder-title { font-family: 'Press Start 2P', cursive; font-size: 20px; color: #8b7cc9; margin: 0 0 16px; letter-spacing: 0.1em; }
-    .placeholder-desc { font-size: 15px; color: rgba(232,230,227,0.65); margin: 0 0 32px; font-family: 'JetBrains Mono', monospace; line-height: 1.5; }
-    .placeholder-actions { display: flex; flex-direction: column; gap: 12px; margin-bottom: 36px; }
-    .classic-play-btn { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 20px 40px; background: var(--btn-color, #8b7cc9); color: #0f1115; text-decoration: none; border-radius: 12px; font-family: 'Press Start 2P', cursive; font-size: 13px; font-weight: 700; transition: all 0.25s; box-shadow: 0 8px 28px rgba(139,124,201,0.3); }
-    .classic-play-btn:hover { transform: translateY(-3px) scale(1.03); box-shadow: 0 14px 36px rgba(139,124,201,0.5); }
-    .classic-score-btn { padding: 16px 32px; background: transparent; border: 2px solid rgba(205,168,82,0.4); border-radius: 12px; color: #cda852; font-family: 'Press Start 2P', cursive; font-size: 10px; font-weight: 700; cursor: pointer; transition: all 0.25s; }
-    .classic-score-btn:hover { background: rgba(205,168,82,0.08); border-color: #cda852; }
-    .placeholder-instructions { text-align: left; padding: 24px; background: rgba(255,255,255,0.03); border-radius: 16px; border: 1px solid rgba(255,255,255,0.08); }
-    .placeholder-instructions h3 { font-family: 'Press Start 2P', cursive; font-size: 9px; color: #8b7cc9; margin: 0 0 16px; }
-    .placeholder-instructions ul { margin: 0; padding-left: 20px; color: rgba(232,230,227,0.65); font-size: 14px; line-height: 1.8; }
-    .classic-hud { position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 14px; padding: 8px 18px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.08); border-radius: 99px; z-index: 20; backdrop-filter: blur(6px); }
-    .classic-hud-label { font-size: 9px; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.25em; text-transform: uppercase; color: rgba(232,230,227,0.4); }
-    .classic-hud-spoons { font-size: 13px; color: #8b7cc9; transition: color 0.4s; }
-    @media (max-width: 600px) { .classic-game-placeholder { padding: 32px 20px; } .placeholder-icon { font-size: 52px; } .placeholder-title { font-size: 15px; } .classic-play-btn { padding: 16px 28px; font-size: 11px; } }
+    :global(body) { background: #0f1115; overflow: hidden; margin: 0; }
+    .card-table-mount {
+      position: fixed;
+      inset: 0;
+      overflow-y: auto;
+      z-index: 1;
+    }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(139,124,201,0.2); border-radius: 3px; }
   </style>
 </ArcadeShell>

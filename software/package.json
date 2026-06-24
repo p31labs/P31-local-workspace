@@ -8,11 +8,13 @@
     }
   },
   "scripts": {
-    "lint": "node -e \"process.exit(0)\"",
+    "lint": "turbo run lint",
     "update-dois": "node ops/update-dois.js",
     "forge:omnibus": "node scripts/forge-omnibus-all.cjs",
     "build:frontend": "npm run build --prefix frontend",
     "omnibus:ship": "npm run forge:omnibus && npm run build:frontend",
+    "convergence:run": "npx tsx scripts/convergence-runner.ts",
+    "convergence:run:week": "npx tsx scripts/convergence-runner.ts --week",
     "manifest:workers": "node scripts/generate-worker-manifest.mjs",
     "turbo": "turbo",
     "typecheck": "turbo run typecheck",
@@ -26,6 +28,7 @@
     "google-bridge:verify": "npm run verify --prefix p31-google-bridge"
   },
   "devDependencies": {
+    "@cloudflare/vitest-pool-workers": "^0.16.18",
     "fake-indexeddb": "^3.1.8",
     "turbo": "^2.3.0",
     "vitest": "^4.1.2",

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { getBalance } from '../../../software/cloudflare-worker/{project}/command-center/src/cloud-hub-html.js';
-import { isMuted } from '../../../software/cloudflare-worker/{project}/command-center/src/cloud-hub-html.js';
-import { useDevice } from '../../../software/cloudflare-worker/{project}/command-center/src/cloud-hub-html.js';
+import { getBalance } from '../lib/KarmaEngine';
+import { isMuted } from '../lib/sound';
+import { useDevice } from '../hooks/useDevice';
 import { Waves, Database, Activity, Monitor, Layers, Wifi } from 'lucide-react';
 
 interface TerminalStatusBarProps {

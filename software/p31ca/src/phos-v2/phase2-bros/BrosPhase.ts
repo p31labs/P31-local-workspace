@@ -1,180 +1,319 @@
 /**
  * Phase 2: PHOS Bros
- * Companion persona system with 4 modes
+ * Dynamic companion persona system
  */
 
 import type { PHOSPhase, PHOSEvent, PHOSConfig, PhaseState, ConvergenceData } from '../master';
+import { VoiceTriggerMatcher } from './VoiceTriggerMatcher';
 
-export type BrosPersona = 'wj' | 'sj' | 'cj' | 'wij';
+export type BrosPersona = string;
+
+export interface PersonaConfig {
+  id: string;
+  name: string;
+  mode: string;
+  color?: string;
+  icon?: string;
+  description?: string;
+  features: string[];
+  voiceTrigger: string[];
+  uiDensity: 'low' | 'medium' | 'high';
+  relationshipType?: string;
+  customLabel?: string;
+}
+
+export interface VoiceTriggerMatch {
+  personaId: string;
+  confidence: number;
+  matchedTrigger: string;
+}
+
+const PLACEHOLDER_NAMES = ['Alpha', 'Beta', 'Gamma', 'Delta'];
+const PLACEHOLDER_COLORS = ['#6366f1', '#f59e0b', '#10b981', '#ec4899'];
+const PLACEHOLDER_MODES = ['companion', 'mentor', 'caregiver', 'friend'];
+
+function randomPlaceholder(index: number): PersonaConfig {
+  return {
+    id: `ph_${index}`,
+    name: PLACEHOLDER_NAMES[index % PLACEHOLDER_NAMES.length],
+    mode: PLACEHOLDER_MODES[index % PLACEHOLDER_MODES.length],
+    color: PLACEHOLDER_COLORS[index % PLACEHOLDER_COLORS.length],
+    icon: ['🤖', '🧭', '🫂', '🍃'][index % 4],
+    description: `Placeholder persona — personalize via voice`,
+    features: ['voice'],
+    voiceTrigger: [`${PLACEHOLDER_NAMES[index]} mode`, `mode ${PLACEHOLDER_NAMES[index]}`],
+    uiDensity: 'medium'
+  };
+}
+
+function generatePlaceholders(count: number): PersonaConfig[] {
+  return Array.from({ length: count }, (_, i) => randomPlaceholder(i));
+}
 
 export class BrosPhase implements PHOSPhase {
   id = 'bros';
-  version = '1.0.0';
+  version = '0.0.0';
   status: 'alpha' | 'beta' | 'stable' | 'disabled' = 'alpha';
 
   private config: PHOSConfig | null = null;
   private active = false;
   private errorCount = 0;
   private lastActivity = 0;
-  private personasInitialized = false;
-
-  // Bros-specific
-  private currentPersona: BrosPersona = 'wj';
+  private currentPersona: BrosPersona = '';
   private personas: Map<string, PersonaConfig> = new Map();
   private switchCount = 0;
   private switchHistory: Array<{ from: BrosPersona; to: BrosPersona; timestamp: number }> = [];
+  private emitFn: ((event: PHOSEvent) => void) | null = null;
+  private onFn: ((event: string, handler: (event: PHOSEvent) => void) => void) | null = null;
+  private triggerMatcher: VoiceTriggerMatcher;
 
   constructor() {
-    this.setupPersonas();
+    this.currentPersona = '';
+    this.triggerMatcher = new VoiceTriggerMatcher();
   }
 
   async initialize(config: PHOSConfig): Promise<void> {
     this.config = config;
-    console.log('[BrosPhase] Initialized with', this.personas.size, 'personas');
+    this.version = config.version;
+
+    const cogPassPersonas = (config as any).personas as Array<{ id: string; name?: string; mode?: string; color?: string; icon?: string; features?: string[] }> | undefined;
+    if (cogPassPersonas && cogPassPersonas.length > 0) {
+      this.loadFromCogPass(cogPassPersonas);
+    } else {
+      const placeholders = generatePlaceholders(4);
+      for (const p of placeholders) {
+        this.personas.set(p.id, p);
+      }
+      this.currentPersona = placeholders[0].id;
+    }
+
+    if (this.personas.size > 0 && !this.currentPersona) {
+      this.currentPersona = this.personas.keys().next().value as BrosPersona;
+    }
+
     this.lastActivity = Date.now();
-  }
-
-  private setupPersonas(): void {
-    this.personas.set('wj', {
-      name: 'W.J.',
-      mode: 'operator',
-      color: 'cyan',
-      icon: '👤',
-      description: 'Operator mode. Full system access.',
-      features: ['voice', 'router', 'visual', 'predictive', 'guardian', 'bridge', 'memory'],
-      voiceTrigger: ['operator mode', 'W.J. mode', 'adult mode'],
-      uiDensity: 'high'
-    });
-
-    this.personas.set('sj', {
-      name: 'S.J.',
-      mode: 'youth',
-      color: 'emerald',
-      icon: '🎮',
-      description: 'Youth mode. Teen-friendly interface.',
-      features: ['voice', 'router', 'visual', 'memory'],
-      voiceTrigger: ['S.J. mode', 'youth mode', 'teen mode', 'bash mode'],
-      uiDensity: 'medium'
-    });
-
-    this.personas.set('cj', {
-      name: 'C.J.',
-      mode: 'guardian',
-      color: 'amber',
-      icon: '🛡️',
-      description: 'Guardian mode. Family oversight.',
-      features: ['voice', 'router', 'guardian', 'predictive'],
-      voiceTrigger: ['C.J. mode', 'guardian mode', 'parent mode'],
-      uiDensity: 'medium'
-    });
-
-    this.personas.set('wij', {
-      name: 'Wi.J.',
-      mode: 'child',
-      color: 'rose',
-      icon: '⭐',
-      description: 'Child mode. Safe, simple, fun.',
-      features: ['voice', 'visual'],
-      voiceTrigger: ['Wi.J. mode', 'child mode', 'kid mode', 'willow mode'],
-      uiDensity: 'low'
-    });
   }
 
   activate(): void {
     this.active = true;
-    this.status = 'alpha';
-    console.log('[BrosPhase] Activated with persona:', this.currentPersona);
+    this.updateStatus();
+    this.lastActivity = Date.now();
   }
 
   deactivate(): void {
     this.active = false;
-    console.log('[BrosPhase] Deactivated');
+    this.updateStatus();
   }
 
   destroy(): void {
     this.personas.clear();
-    console.log('[BrosPhase] Destroyed');
+    this.active = false;
+    this.currentPersona = '';
+    this.switchHistory = [];
+    this.switchCount = 0;
+    this.errorCount = 0;
+  }
+
+  emit(event: PHOSEvent): void {
+    if (this.emitFn) {
+      this.emitFn(event);
+    }
+  }
+
+  on(event: string, handler: (event: PHOSEvent) => void): void {
+    if (this.onFn) {
+      this.onFn(event, handler);
+    }
   }
 
   onConvergence(week: number, data: ConvergenceData): void {
+    const states = this.config
+      ? (this.config as any).masterStates
+      : null;
+    const hasPersonas = this.personas.size > 0;
+    const hasActivePersona = this.currentPersona !== '';
+    const hasVoiceTriggers = Array.from(this.personas.values()).some(p => p.voiceTrigger.length > 0);
+    const baselineReady = hasPersonas && hasActivePersona && hasVoiceTriggers;
+    const errorPenalty = Math.max(0, 1 - this.errorCount * 0.15);
+
+    let confidence = 0;
+    if (week >= 2) {
+      confidence = baselineReady ? 0.85 * errorPenalty : 0.35 * errorPenalty;
+    } else if (week >= 1) {
+      confidence = baselineReady ? 0.7 * errorPenalty : 0.25 * errorPenalty;
+    } else {
+      confidence = baselineReady ? 0.5 * errorPenalty : 0.15;
+    }
+
     data.deliverables = [
-      '4 persona implementations',
-      'Persona switching UI',
-      'Voice-persona integration (W2)',
-      'Visual avatar per persona (W4)'
+      `${this.personas.size} persona${this.personas.size === 1 ? '' : 's'} loaded`,
+      'Persona switching engine',
+      'Voice trigger integration',
+      'PersonaSwitcher UI component'
     ];
-    data.dependencies = ['voice']; // Needs voice for W2 convergence
-    data.blockers = [];
-    data.confidence = week >= 2 ? 0.85 : 0.4;
+    data.dependencies = ['voice'];
+    data.blockers = this.errorCount > 0 ? [`${this.errorCount} engine error(s)`] : [];
+    data.confidence = Math.min(1, Math.max(0, confidence));
   }
 
   getState(): PhaseState {
+    const personaList = Array.from(this.personas.values()).map(p => p.id);
     return {
       status: this.active ? 'active' : 'paused',
       lastActivity: this.lastActivity,
       errorCount: this.errorCount,
       metrics: {
-        currentPersona: this.currentPersona === 'wj' ? 0 : this.currentPersona === 'sj' ? 1 : this.currentPersona === 'cj' ? 2 : 3,
-        personaSwitchCount: this.switchCount
+        personaCount: this.personas.size,
+        personaSwitchCount: this.switchCount,
+        currentPersona: this.personas.has(this.currentPersona) ? 1 : 0,
+        voiceTriggersLoaded: Array.from(this.personas.values()).reduce((sum, p) => sum + p.voiceTrigger.length, 0)
       }
     };
   }
 
-  getSwitchHistory(): Array<{ from: BrosPersona; to: BrosPersona; timestamp: number }> {
-    return [...this.switchHistory];
+  getDetailedState(): Record<string, any> {
+    return {
+      ...this.getState(),
+      currentPersona: this.currentPersona,
+      personaList: Array.from(this.personas.entries()).map(([id, config]) => ({ id, config })),
+      version: this.version,
+      errorCount: this.errorCount,
+      lastActivity: this.lastActivity
+    };
   }
 
-  emit(event: PHOSEvent): void {
-    // Implementation via master registration
-  }
-
-  on(event: string, handler: (event: PHOSEvent) => void): void {
-    // Implementation via master registration
-  }
-
-  // Bros-specific methods
-  switchPersona(persona: BrosPersona | string): void {
-    const target = String(persona);
-    if (target === this.currentPersona) return;
-
-    const from = this.currentPersona;
-    this.currentPersona = target as BrosPersona;
-    this.switchCount++;
-    this.lastActivity = Date.now();
-
-    this.switchHistory.push({
-      from,
-      to: target as BrosPersona,
-      timestamp: Date.now()
-    });
-
-    if (this.switchHistory.length > 100) {
-      this.switchHistory.shift();
+  registerPersona(id: string, config: Omit<PersonaConfig, 'id'>): void {
+    const full: PersonaConfig = { ...config, id } as PersonaConfig;
+    this.personas.set(id, full);
+    if (!this.currentPersona) {
+      this.currentPersona = id;
     }
+    this.lastActivity = Date.now();
+  }
 
-    console.log(`[BrosPhase] Switched from ${from} to ${target}`);
+  unregisterPersona(id: string): boolean {
+    const existed = this.personas.delete(id);
+    if (existed) {
+      this.lastActivity = Date.now();
+      if (this.currentPersona === id) {
+        const next = this.personas.keys().next().value as BrosPersona | undefined;
+        this.currentPersona = next || '';
+      }
+    }
+    return existed;
+  }
 
-    this.emit({
-      type: 'bros.persona.changed',
-      payload: { persona: target, from, switchCount: this.switchCount },
-      timestamp: Date.now(),
-      source: 'bros',
-      persona: target as BrosPersona
-    });
+  loadFromCogPass(personas: Array<{ id: string; name?: string; mode?: string; color?: string; icon?: string; features?: string[] }>): void {
+    this.personas.clear();
+    for (const p of personas) {
+      if (!p.id) continue;
+      const mode = p.mode || 'companion';
+      const color = p.color || '#888888';
+      const icon = p.icon || '👤';
+      const name = p.name || p.id;
+      const config: PersonaConfig = {
+        id: p.id,
+        name,
+        mode,
+        color,
+        icon,
+        description: `${mode} mode — loaded from Cognitive Passport`,
+        features: p.features || [],
+        voiceTrigger: [`${name} mode`, `${p.id} mode`],
+        uiDensity: mode === 'child' || mode === 'youth' ? 'medium' : 'high',
+        relationshipType: mode
+      };
+      this.personas.set(p.id, config);
+    }
+    const first = this.personas.keys().next().value as BrosPersona | undefined;
+    if (first && !this.currentPersona) {
+      this.currentPersona = first;
+    }
+    this.lastActivity = Date.now();
+  }
+
+  switchPersona(persona: BrosPersona | string): void {
+    try {
+      const target = String(persona);
+      if (!this.personas.has(target)) {
+        throw new Error(`Persona "${target}" not found`);
+      }
+      if (target === this.currentPersona) return;
+
+      const from = this.currentPersona;
+      this.currentPersona = target;
+      this.switchCount++;
+      this.lastActivity = Date.now();
+
+      this.switchHistory.push({ from, to: target, timestamp: Date.now() });
+      if (this.switchHistory.length > 100) {
+        this.switchHistory.shift();
+      }
+
+      this.emit({
+        type: 'bros.persona.changed',
+        payload: { persona: target, from, switchCount: this.switchCount, trustScore: this.personas.get(target)?.features?.length ? 0.5 : 0.3 },
+        timestamp: Date.now(),
+        source: 'bros',
+        persona: target
+      });
+
+      // Push K₄ entry for trust dimension
+      const trustScore = this.personas.get(target)?.features?.length ? 0.5 : 0.3;
+      try {
+        const { K4Bridge } = await import('../../../../../phos/src/lib/K4Bridge');
+        K4Bridge.pushEntry({
+          level: 0,
+          feature: 'trust',
+          vertex: 'VERIFY',
+          edge: 'E34',
+          value: trustScore,
+          source: `bros:${target}`,
+        });
+      } catch { /* K4Bridge not available in non-PHOS context */ }
+    } catch (err) {
+      this.recordError(err instanceof Error ? err.message : 'switchPersona failed');
+    }
   }
 
   matchVoiceTrigger(text: string): BrosPersona | null {
-    const normalized = text.toLowerCase().trim();
+    const triggers = this.buildTriggerList();
+    const best = this.triggerMatcher.bestMatch(text, triggers);
+    if (best) {
+      this.triggerMatcher.recordMatch(best.personaId);
+    }
+    return best?.personaId ?? null;
+  }
 
-    for (const [persona, config] of this.personas) {
+  disambiguateAndSwitch(text: string): VoiceTriggerMatch[] {
+    const triggers = this.buildTriggerList();
+    return this.triggerMatcher.match(text, triggers);
+  }
+
+  private buildTriggerList(): Array<{ personaId: string; trigger: string }> {
+    const list: Array<{ personaId: string; trigger: string }> = [];
+    for (const [id, config] of this.personas) {
       for (const trigger of config.voiceTrigger) {
-        if (normalized.includes(trigger.toLowerCase())) {
-          return persona as BrosPersona;
-        }
+        list.push({ personaId: id, trigger });
       }
     }
+    return list;
+  }
 
-    return null;
+  recordError(message: string): void {
+    this.errorCount++;
+    this.lastActivity = Date.now();
+    this.emit({
+      type: 'bros.error',
+      payload: { message, errorCount: this.errorCount },
+      timestamp: Date.now(),
+      source: 'bros',
+      priority: 'high'
+    });
+  }
+
+  getErrorCount(): number {
+    return this.errorCount;
   }
 
   getCurrentPersona(): BrosPersona {
@@ -189,47 +328,27 @@ export class BrosPhase implements PHOSPhase {
     return Array.from(this.personas.entries()).map(([id, config]) => ({ id, config }));
   }
 
-  registerPersona(id: string, config: Omit<PersonaConfig, 'id'>): void {
-    if (this.personas.has(id)) return;
-    this.personas.set(id, config as PersonaConfig);
-    this.lastActivity = Date.now();
+  getSwitchHistory(): Array<{ from: BrosPersona; to: BrosPersona; timestamp: number }> {
+    return [...this.switchHistory];
   }
 
-  unregisterPersona(id: string): boolean {
-    const existed = this.personas.delete(id);
-    if (existed) this.lastActivity = Date.now();
-    return existed;
+  setEmitDelegate(fn: (event: PHOSEvent) => void): void {
+    this.emitFn = fn;
   }
 
-  loadFromCogPass(personas: Array<{ id: string; name?: string; mode?: string; color?: string; icon?: string; features?: string[] }>): void {
-    for (const p of personas) {
-      if (!p.id || this.personas.has(p.id)) continue;
-      const mode = (p.mode as PersonaConfig['mode']) || 'operator';
-      const color = p.color || 'gray';
-      const icon = p.icon || '👤';
-      const name = p.name || p.id;
-      this.personas.set(p.id, {
-        name,
-        mode,
-        color,
-        icon,
-        description: `${mode} mode — loaded from Cognitive Passport`,
-        features: p.features || [],
-        voiceTrigger: [`${name} mode`, `${p.id} mode`],
-        uiDensity: mode === 'child' ? 'low' : mode === 'youth' ? 'medium' : 'high'
-      });
+  setOnDelegate(fn: (event: string, handler: (event: PHOSEvent) => void) => void): void {
+    this.onFn = fn;
+  }
+
+  private updateStatus(): void {
+    if (!this.active) {
+      this.status = 'disabled';
+    } else if (this.errorCount === 0) {
+      this.status = 'beta';
+    } else if (this.errorCount < 3) {
+      this.status = 'alpha';
+    } else {
+      this.status = 'alpha';
     }
-    this.lastActivity = Date.now();
   }
-}
-
-export interface PersonaConfig {
-  name: string;
-  mode: 'operator' | 'youth' | 'guardian' | 'child';
-  color: string;
-  icon: string;
-  description: string;
-  features: string[];
-  voiceTrigger: string[];
-  uiDensity: 'low' | 'medium' | 'high';
 }

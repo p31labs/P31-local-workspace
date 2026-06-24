@@ -73,6 +73,21 @@ export class DadsPhase implements PHOSPhase {
     this.dispatcher.dispatch(task);
     this.dispatchCount++;
     this.lastActivity = Date.now();
+
+    // Push K₄ entry for tasks dimension
+    try {
+      const { K4Bridge } = await import('../../../../../phos/src/lib/K4Bridge');
+      K4Bridge.pushEntry({
+        level: 1,
+        feature: 'tasks',
+        vertex: 'AGGREGATE→VERIFY',
+        edge: 'E23',
+        value: 1,
+        source: `dads:${params.intent}:${params.type}`,
+        node_id: params.toActor,
+      });
+    } catch { /* K4Bridge not available */ }
+
     return task;
   }
 

@@ -20,7 +20,7 @@ from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
 
-REPO_ROOT = Path("/home/p31/andromeda").resolve()
+REPO_ROOT = Path(__file__).resolve().parent.parent.resolve()
 INDEX_PATH = REPO_ROOT / "grading-index.json"
 REPORT_PATH = REPO_ROOT / "GRADING_REPORT.md"
 SIGNALS_PATH = REPO_ROOT / "jitterbug-signals.json"

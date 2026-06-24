@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSpoonStore, getSpoonStore, type SpoonState } from './spoonStore.ts';
 import { emit, on } from './eventBus.ts';
-import { useGameSave, type GameSaveState } from './useGameSave.ts';
+import { getSaveState, useGameSave } from './useGameSave.ts';
 
 export type GameStatus = 'idle' | 'running' | 'paused' | 'complete' | 'failed';
 
@@ -34,7 +34,7 @@ export interface GameEngine {
 export function useGameEngine(options: GameEngineOptions): GameEngine {
   const { slug, title, initialSpoons = 4, autoSave = true } = options;
   const { state: spoonState, setLevel, consumeSpoons, recoverSpoons } = useSpoonStore();
-  const { getSaveState, saveScore, saveSession } = useGameSave(slug, title);
+  const { saveScore } = useGameSave(slug, title);
 
   const [engineState, setEngineState] = useState<GameEngineState>(() => ({
     status: 'idle',
@@ -79,8 +79,8 @@ export function useGameEngine(options: GameEngineOptions): GameEngine {
 
   const pause = useCallback(() => {
     setEngineState(s => ({ ...s, status: 'paused' }));
-    saveSession('paused', engineState.score);
-  }, [saveSession, engineState.score]);
+    saveScore(engineState.score);
+  }, [saveScore, engineState.score]);
 
   const resume = useCallback(() => {
     setEngineState(s => ({ ...s, status: 'running' }));
@@ -89,12 +89,12 @@ export function useGameEngine(options: GameEngineOptions): GameEngine {
   const complete = useCallback(async () => {
     setEngineState(s => ({ ...s, status: 'complete' }));
     emit('game:completed', { game: slug, score: engineState.score, spoons: engineState.spoons });
-    const sessionId = await saveSession('complete', engineState.score);
+    const sessionId = await saveScore(engineState.score);
     if (engineState.score > engineState.highScore) {
       setEngineState(s => ({ ...s, highScore: engineState.score }));
     }
     return sessionId;
-  }, [slug, engineState.score, engineState.spoons, engineState.highScore, saveSession]);
+  }, [slug, engineState.score, engineState.spoons, engineState.highScore, saveScore]);
 
   const reset = useCallback(() => {
     setEngineState({

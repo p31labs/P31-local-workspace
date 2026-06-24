@@ -4,6 +4,7 @@
 // ═══════════════════════════════════════════════════════════════════
 
 import { vi } from 'vitest';
+import 'fake-indexeddb/auto';
 
 // ── Browser API stubs ──
 Object.defineProperty(window, 'innerWidth', { value: 1024 });

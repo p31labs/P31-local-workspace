@@ -2,6 +2,14 @@ import { Router } from 'itty-router';
 import { BrainDumpSchema } from '@p31/brain-dump-orchestrator';
 import { DBClient } from './db';
 import type { Env } from './index';
+import { OpenCollectiveClient } from './open-collective';
+
+// Node.js compat crypto for Workers runtime
+declare const crypto: {
+  createHmac(algorithm: string, key: string): {
+    update(data: string): { digest(encoding: string): string };
+  };
+};
 
 const router = Router();
 
@@ -93,11 +101,49 @@ pskRouter.get('/health', async (request, env) => {
     checks.kv = `error: ${err instanceof Error ? err.message : String(err)}`;
   }
   
-  const overall = Object.values(checks).every(v => v === 'ok') ? 'ok' : 'degraded';
+  const overall = [checks.db, checks.r2, checks.kv].every(v => v === 'ok') ? 'ok' : 'degraded';
   
   return new Response(JSON.stringify({ status: overall, checks }), {
     headers: { 'Content-Type': 'application/json' },
   });
+});
+
+pskRouter.post('/webhook/fiscal-host', async (request, env) => {
+  const signature = request.headers.get('X-Hub-Signature-256');
+  const payload = await request.text();
+  
+  // Verify signature with OC_WEBHOOK_SECRET if configured
+  if (env.OC_WEBHOOK_SECRET && signature) {
+    const expected = 'sha256=' + crypto
+      .createHmac('sha256', env.OC_WEBHOOK_SECRET)
+      .update(payload)
+      .digest('hex');
+    if (signature !== expected) {
+      return jsonResponse({ error: 'Invalid signature' }, 401);
+    }
+  }
+  
+  try {
+    const body = JSON.parse(payload);
+    const { activity } = body;
+    
+    if (activity?.type === 'fiscal-host-change') {
+      console.log('[fiscal-host-webhook] Status update:', JSON.stringify(activity));
+      // Forward to OrchestratorDO if needed
+      if (env.ORCHESTRATOR_DO && env.KV) {
+        await env.KV.put('fiscal-host-status', JSON.stringify({
+          status: body.data?.status,
+          updatedAt: new Date().toISOString(),
+        }));
+      }
+      return jsonResponse({ received: true }, 200);
+    }
+    
+    return jsonResponse({ received: true, skipped: activity?.type }, 200);
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    return jsonResponse({ error: 'Invalid payload', details: msg }, 400);
+  }
 });
 
 pskRouter.get('/brain-dumps', async (request, env) => {

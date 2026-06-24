@@ -1,6 +1,7 @@
 ---
-// Gridiron — Arcade route (external CF Pages deploy embedded)
+// Gridiron — Classic arcade route (native football simulation)
 import ArcadeShell from '../../layouts/ArcadeShell.astro';
+import { GridironGameShell } from '../../components/games/GridironGameShell.tsx';
 ---
 
 <ArcadeShell
@@ -10,11 +11,20 @@ import ArcadeShell from '../../layouts/ArcadeShell.astro';
   showSelector={false}
   fullscreen
 >
-  <iframe
-    src="https://p31-gridiron.pages.dev"
-    class="fixed inset-0 w-full h-full border-0"
-    allowfullscreen
-    loading="lazy"
-    title="Gridiron football game"
-  />
+  <div class="gridiron-mount">
+    <GridironGameShell client:load />
+  </div>
+
+  <style is:inline>
+    :global(body) { background: #0f1115; overflow: hidden; margin: 0; }
+    .gridiron-mount {
+      position: fixed;
+      inset: 0;
+      overflow-y: auto;
+      z-index: 1;
+    }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(59,163,114,0.2); border-radius: 3px; }
+  </style>
 </ArcadeShell>

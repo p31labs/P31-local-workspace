@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" width="800" height="1000">
+  <rect width="800" height="1000" fill="white"/>
+  <!-- Title -->
+  <text x="400" y="60" text-anchor="middle" font-family="sans-serif" font-size="28" fill="#333" font-weight="bold">Cal the Calcium Atom</text>
+  <text x="400" y="90" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#999">Color me in!</text>
+
+  <!-- Cal's body - large circle (nucleus) -->
+  <circle cx="400" cy="400" r="120" fill="none" stroke="#333" stroke-width="4"/>
+  <!-- + charge symbol -->
+  <text x="400" y="420" text-anchor="middle" font-family="sans-serif" font-size="60" fill="#333" font-weight="bold">+</text>
+
+  <!-- Electron orbits -->
+  <ellipse cx="400" cy="400" rx="180" ry="70" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="6,4"/>
+  <ellipse cx="400" cy="400" rx="70" ry="180" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="6,4"/>
+  <ellipse cx="400" cy="400" rx="200" ry="200" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="6,4"/>
+
+  <!-- Electrons (small circles on orbits) -->
+  <circle cx="220" cy="400" r="18" fill="none" stroke="#333" stroke-width="3"/>
+  <circle cx="580" cy="400" r="18" fill="none" stroke="#333" stroke-width="3"/>
+  <circle cx="400" cy="230" r="18" fill="none" stroke="#333" stroke-width="3"/>
+  <circle cx="400" cy="570" r="18" fill="none" stroke="#333" stroke-width="3"/>
+
+  <!-- Battery gauge on Cal's chest -->
+  <rect x="360" y="520" width="80" height="30" rx="5" fill="none" stroke="#333" stroke-width="3"/>
+  <rect x="440" y="528" width="8" height="14" rx="2" fill="none" stroke="#333" stroke-width="2"/>
+  <!-- Battery bars -->
+  <rect x="366" y="525" width="12" height="20" rx="1" fill="none" stroke="#333" stroke-width="2"/>
+  <rect x="382" y="525" width="12" height="20" rx="1" fill="none" stroke="#333" stroke-width="2"/>
+  <rect x="398" y="525" width="12" height="20" rx="1" fill="none" stroke="#333" stroke-width="2"/>
+  <rect x="414" y="525" width="12" height="20" rx="1" fill="none" stroke="#333" stroke-width="2"/>
+
+  <!-- Cal's face -->
+  <!-- Eyes -->
+  <circle cx="370" cy="380" r="10" fill="none" stroke="#333" stroke-width="3"/>
+  <circle cx="430" cy="380" r="10" fill="none" stroke="#333" stroke-width="3"/>
+  <!-- Pupils -->
+  <circle cx="370" cy="380" r="4" fill="#333"/>
+  <circle cx="430" cy="380" r="4" fill="#333"/>
+  <!-- Smile -->
+  <path d="M375 405 Q400 430 425 405" fill="none" stroke="#333" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- Arms -->
+  <path d="M280 380 Q240 360 220 340" fill="none" stroke="#333" stroke-width="4" stroke-linecap="round"/>
+  <path d="M520 380 Q560 360 580 340" fill="none" stroke="#333" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- Legs -->
+  <path d="M350 520 L330 650" fill="none" stroke="#333" stroke-width="4" stroke-linecap="round"/>
+  <path d="M450 520 L470 650" fill="none" stroke="#333" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- Shoes -->
+  <ellipse cx="325" cy="655" rx="25" ry="10" fill="none" stroke="#333" stroke-width="3"/>
+  <ellipse cx="475" cy="655" rx="25" ry="10" fill="none" stroke="#333" stroke-width="3"/>
+
+  <!-- Bottom text -->
+  <text x="400" y="780" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#666">Cal helps your brain send sparks!</text>
+  <text x="400" y="810" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#999">Color the battery bars to show your energy level.</text>
+
+  <!-- Corner decorations - tiny tetrahedrons -->
+  <g transform="translate(60, 880)">
+    <polygon points="30,0 60,25 0,25" fill="none" stroke="#ccc" stroke-width="2"/>
+    <line x1="30" y1="0" x2="30" y2="35" stroke="#ccc" stroke-width="2"/>
+    <line x1="0" y1="25" x2="30" y2="35" stroke="#ccc" stroke-width="2"/>
+    <line x1="60" y1="25" x2="30" y2="35" stroke="#ccc" stroke-width="2"/>
+  </g>
+  <g transform="translate(660, 880)">
+    <polygon points="30,0 60,25 0,25" fill="none" stroke="#ccc" stroke-width="2"/>
+    <line x1="30" y1="0" x2="30" y2="35" stroke="#ccc" stroke-width="2"/>
+    <line x1="0" y1="25" x2="30" y2="35" stroke="#ccc" stroke-width="2"/>
+    <line x1="60" y1="25" x2="30" y2="35" stroke="#ccc" stroke-width="2"/>
+  </g>
+</svg>

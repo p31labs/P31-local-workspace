@@ -9,6 +9,8 @@
  *   → { sessionId }
  */
 
+export const VERSION = '1.2.0';
+
 interface Env {
   STRIPE_SECRET_KEY: string;
   STRIPE_WEBHOOK_SECRET: string;

@@ -86,7 +86,7 @@ describe('Aegis CWP-04 Mapper', () => {
   });
 
   test('should create interaction history from LOVE ledger events', () => {
-    const loveEvents = [
+    const loveEvents: Array<{ senderId: string; receiverId: string; outcome: 'positive' | 'negative' | 'neutral'; timestamp: number }> = [
       { senderId: 'alice', receiverId: 'bob', outcome: 'positive', timestamp: 1000 },
       { senderId: 'alice', receiverId: 'bob', outcome: 'positive', timestamp: 1001 },
       { senderId: 'alice', receiverId: 'bob', outcome: 'negative', timestamp: 1002 },

@@ -30,7 +30,7 @@ export interface PHOSEvent {
   payload: any;
   timestamp: number;
   source: string;
-  persona?: 'wj' | 'sj' | 'cj' | 'wij' | 'system';
+  persona?: string;
   priority?: 'low' | 'normal' | 'high' | 'urgent';
 }
 

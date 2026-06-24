@@ -10,9 +10,10 @@ interface GameOverlayProps {
   gameIcon: string;
   engineState: GameEngineState;
   extraHud?: React.ReactNode;
+  children?: React.ReactNode;
 }
 
-export function GameOverlay({ gameId, gameTitle, gameIcon, engineState, extraHud }: GameOverlayProps) {
+export function GameOverlay({ gameId, gameTitle, gameIcon, engineState, extraHud, children }: GameOverlayProps) {
   const hud = useSpoonHUD();
   const { setLevel } = useSpoonStore(s => ({ setLevel: s.setLevel }));
   const blockedDialogRef = useRef<HTMLDivElement>(null);
@@ -97,6 +98,9 @@ export function GameOverlay({ gameId, gameTitle, gameIcon, engineState, extraHud
 
       {/* Extra HUD area (game-specific controls / info) */}
       {extraHud}
+
+      {/* Game content area */}
+      {children}
 
       {/* Spoon indicator */}
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10">

@@ -1,50 +1,45 @@
-# Astro Starter Kit: Minimal
+# phosphorus31.org
 
-```sh
-npm create astro@latest -- --template minimal
+<!-- pmm-badge -->
+![PMM Maturity](../../.p31/badges/phosphorus31.svg)
+<!-- /pmm-badge -->
+
+[![PMM Stage: FRUIT](https://img.shields.io/badge/PMM-FRUIT-22c55e?style=flat-square)](.pmm-stage)
+
+Institutional site for P31 Labs, Inc. — research, products, and the Planetary Planet initiative.
+
+## Stack
+
+- **Astro 5** with React islands
+- **Tailwind CSS v4** (via `@tailwindcss/vite`)
+- **nanostores** for lightweight client state
+- **Deployed to** Cloudflare Pages via `wrangler`
+
+## Quick start
+
+```bash
+npm install
+npm run dev        # local dev at localhost:4321
+npm run build      # production build → dist/
+npm run test       # vitest with coverage
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## Health
 
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
+```bash
+curl https://phosphorus31.org/api/health
+# → {"status":"ok","version":"0.0.1","service":"phosphorus31.org","timestamp":"…"}
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## CI/CD
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+| Event | Action |
+|-------|--------|
+| PR to `main` | Build only |
+| Push to `main` | Build + deploy to Cloudflare Pages |
 
-Any static assets, like images, can be placed in the `public/` directory.
+See `.github/workflows/phosphorus31-site.yml`.
 
-## 🧞 Commands
+## PMM Maturity
 
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
-
-## P31: CI and deploy (parallel to p31ca.org)
-
-- **Monorepo:** this tree lives under `andromeda` / `p31-andromeda`. Marketing changes ship from **`phosphorus31.org/**`** only; the **p31ca.org** hub is under `software/p31ca` (separate path, separate team).
-- **GitHub Actions:** [`.github/workflows/phosphorus31-site.yml`](../../.github/workflows/phosphorus31-site.yml) runs `npm ci` + `npm run build` on every PR touching this folder; **merge to `main`** deploys to Cloudflare Pages project **`phosphorus31-org`**.
-- **Manual / filters:** [`.github/workflows/p31-automation.yml`](../../.github/workflows/p31-automation.yml) can also build+deploy this site when `phosphorus31.org` paths change on `main`, or via `workflow_dispatch` (toggle **deploy_phosphorus31**).
-- **Local (from repo root):** `pnpm run build:phosphorus31`
+This project is at **FRUIT** (PMM Stage 5) — all five dimensions scored ≥4, average ≥4.5.

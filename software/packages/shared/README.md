@@ -1,5 +1,9 @@
 # @p31/shared
 
+<!-- pmm-badge -->
+![PMM Maturity](../../../.p31/badges/_p31_shared.svg)
+<!-- /pmm-badge -->
+
 System-wide shared modules for the P31 Labs ecosystem, promoting code reuse and consistency across all applications including Spaceship Earth, Bonding, and Node One.
 
 ## Overview

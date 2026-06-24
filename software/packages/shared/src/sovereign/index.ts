@@ -3,3 +3,5 @@ export { audioEngine } from './audioEngine';
 export { disposeThreeNode } from './threeUtils';
 export { setupSovereignPWA } from './pwa';
 export { generateDID, hashTelemetry, exportLedgerJSON } from './crypto';
+export { createHealthResponse } from './health';
+export type { HealthResponse, HealthOptions, HealthDependency, HealthCheck } from './health';

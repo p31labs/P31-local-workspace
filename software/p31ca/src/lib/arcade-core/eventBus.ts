@@ -9,7 +9,13 @@ export type ArcadeEventType =
   | 'game:completed'
   | 'game:paused'
   | 'game:resumed'
-  | 'spoon:requested';
+  | 'spoon:requested'
+  | 'p31:bashball:atbat'
+  | 'p31:bashball:inningEnd'
+  | 'p31:gridiron:playResult'
+  | 'p31:gridiron:driveEnd'
+  | 'p31:cards:moveMade'
+  | 'p31:cards:gameComplete';
 
 export type ArcadeEventListener = (detail: unknown) => void;
 

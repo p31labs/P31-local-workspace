@@ -335,10 +335,52 @@ Ready for General Availability.`
   ];
   
   // Success criteria validation
+  // Calculate crossPhaseIntegration from integration checks
+  const relevantIntegrations = integrationChecks.filter(check => 
+    // All integration checks computed for week >= their threshold
+    // Since week = 8, all checks should be active and relevant
+    true
+  );
+  const readyIntegrations = relevantIntegrations.filter(check => check.ready);
+  const crossPhaseIntegration = relevantIntegrations.length > 0 
+    ? readyIntegrations.length / relevantIntegrations.length 
+    : 1.0;
+
+  // Calculate systemStability from phase states
+  const phaseStates = baseReport.phaseReports.map(pr => pr.state);
+  const now = Date.now();
+  
+  // Percentage of phases that are active
+  const activePhases = phaseStates.filter(s => s.status === 'active').length;
+  const phaseHealth = phaseStates.length > 0 ? activePhases / phaseStates.length : 1.0;
+  
+  // Error penalty: normalize total errors against acceptable threshold
+  const totalErrors = phaseStates.reduce((sum, s) => sum + s.errorCount, 0);
+  const maxAcceptableErrors = 4; // Allow up to 4 errors total across 8 phases (0.5 per phase avg)
+  const errorPenalty = Math.max(0, 1 - (totalErrors / maxAcceptableErrors));
+  
+  // Activity freshness: percentage of phases active in last 30 seconds
+  const recentActivityThreshold = 30000; // 30 seconds
+  const recentlyActive = phaseStates.filter(s => 
+    now - s.lastActivity < recentActivityThreshold
+  ).length;
+  const activityFreshness = phaseStates.length > 0 ? recentlyActive / phaseStates.length : 1.0;
+  
+  // Combine factors for system stability (weighted average)
+  const systemStability = Math.min(
+    1.0,
+    Math.max(
+      0.0,
+      (phaseHealth * 0.4) + 
+      (errorPenalty * 0.4) + 
+      (activityFreshness * 0.2)
+    )
+  );
+
   const successCriteria: Week8SuccessCriteria = {
     allPhasesActive: integrationChecks[0].ready,
-    crossPhaseIntegration: 0.96, // Exceeds 0.95 target
-    systemStability: 0.995, // Exceeds 0.99 target
+    crossPhaseIntegration,
+    systemStability,
     gaReadinessScore: computedOverallScore, // Computed from phase scores
   };
   

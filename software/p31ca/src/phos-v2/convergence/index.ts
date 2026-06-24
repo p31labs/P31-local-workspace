@@ -4,12 +4,12 @@
  */
 
 export { Week1Core } from './week1-core';
-export { Week2PersonaVoice } from './week2-persona-voice';
-export { Week3RouterVoice } from './week3-router-voice';
-export { Week4VisualCore } from './week4-visual-core';
-export { Week5MeshVisual } from './week5-mesh-visual';
-export { Week6PredictiveAll } from './week6-predictive-all';
-export { Week7GuardianAll } from './week7-guardian-all';
+export { runWeek2Convergence as Week2PersonaVoice } from './week2-persona-voice';
+export { runWeek3Convergence as Week3RouterVoice } from './week3-router-voice';
+export { runWeek4Convergence as Week4VisualCore } from './week4-visual-core';
+export { runWeek5Convergence as Week5MeshVisual } from './week5-mesh-visual';
+export { runWeek6Convergence as Week6PredictiveAll } from './week6-predictive-all';
+export { runWeek7Convergence as Week7GuardianAll } from './week7-guardian-all';
 export { Week8Final } from './week8-final';
 
 export interface ConvergenceDemo {

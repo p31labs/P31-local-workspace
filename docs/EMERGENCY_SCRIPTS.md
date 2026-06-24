@@ -27,12 +27,15 @@
 
 ---
 
-## 3. ASAN Grant (Deadline: July 31, 2026)
-
-**Action:** Assemble and submit the $8,500 grant proposal.
+## 3. ASAN Grant (Narrative Complete — Pending Submission Verification)
 
 **Key elements:**
-- Project: Jitterbug Sierpinski Orchestrator
+- Project: PHOS OS — Zero-Telemetry Cognitive Operating System for Autistic Adults
+- Amount: $6,250 (Teighlor McGee mini-grant)
+
+**Verification needed:**
+- Confirm submission date and ID via confirmation email
+- Track decision timeline (July 31, 2026)
 - Mission: Open-source cognitive prosthetic for neurodivergent populations
 - Fiscal Host: Code for Science & Society (pending approval)
 - Technical proof: Live deployment at jitterbug-api.trimtab-signal.workers.dev

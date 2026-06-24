@@ -1,5 +1,9 @@
 # EPCP Command Center
 
+<!-- pmm-badge -->
+![PMM Maturity](../../../.p31/badges/command-center.svg)
+<!-- /pmm-badge -->
+
 **Production URL:** https://command-center.trimtab-signal.workers.dev  
 **Status:** ✅ **OPERATIONAL**  
 **Cost:** ~$0.02/month  

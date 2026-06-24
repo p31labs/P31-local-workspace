@@ -96,6 +96,13 @@ export class TaskDispatcher {
     const channel = opts.preferredChannel ?? this.inferChannel(task);
     const dispatch = createTaskDispatch(task, channel);
 
+    // Read from K₄ ledger for trust-weighted routing when available
+    const storedTrust = this.getK4TrustScore(task.toActor);
+    if (storedTrust !== null) {
+      const actor = this.actors.get(task.toActor);
+      if (actor) actor.trustScore = storedTrust;
+    }
+
     this.log({
       taskId: task.id,
       event: 'dispatched',
@@ -142,6 +149,17 @@ export class TaskDispatcher {
 
   getActorCount(): number {
     return this.actors.size;
+  }
+
+  private async getK4TrustScore(actorId: string): Promise<number | null> {
+    try {
+      const { K4Bridge } = await import('../../../../../phos/src/lib/K4Bridge');
+      const features = await K4Bridge.fetchFeatures();
+      if (features?.trust) {
+        return features.trust.L0 || null;
+      }
+      return null;
+    } catch { return null; }
   }
 
   updateTrustScores(scores: Map<string, number> | Record<string, number>): void {

@@ -87,7 +87,7 @@ export class MemoryPhase implements PHOSPhase {
   // Memory-specific methods
   private async initStorage(): Promise<void> {
     // Check for IndexedDB support
-    if ('indexedDB' in window) {
+    if (typeof window !== 'undefined' && 'indexedDB' in window) {
       this.storageBackend = 'indexeddb';
     }
     console.log(`[MemoryPhase] Storage backend: ${this.storageBackend}`);

@@ -19,4 +19,4 @@ export {
   resetPHOSMaster
 } from './PHOSMasterRuntime';
 
-export { PHOS_V2_CONFIG, PHOS_DEV_CONFIG, PHOS_PROD_CONFIG } from './PHOSConfig';
+export { PHOS_V2_CONFIG, getPHOSConfig } from './PHOSConfig';

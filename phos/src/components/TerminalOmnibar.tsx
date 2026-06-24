@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { routeIntent } from '../../../software/cloudflare-worker/{project}/command-center/src/cloud-hub-html.js';
-import { setMuted } from '../../../software/cloudflare-worker/{project}/command-center/src/cloud-hub-html.js';
-import { useDevice } from '../../../software/cloudflare-worker/{project}/command-center/src/cloud-hub-html.js';
+import { routeIntent } from '../lib/IntentEngine';
+import { setMuted } from '../lib/sound';
+import { useDevice } from '../hooks/useDevice';
 import { Zap, Mic, Send } from 'lucide-react';
 
 interface TerminalOmnibarProps {

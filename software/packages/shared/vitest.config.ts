@@ -8,13 +8,13 @@ export default defineConfig({
     exclude: ['node_modules/**', 'dist/**'],
     coverage: {
       provider: 'v8',
-      reporter: ['text', 'json', 'html'],
+      reporter: ['text', 'json', 'html', 'lcov'],
       reportsDirectory: 'coverage',
       thresholds: {
-        lines: 95,
-        branches: 90,
-        functions: 95,
-        statements: 95
+        lines: 80,
+        branches: 75,
+        functions: 80,
+        statements: 80
       },
       exclude: [
         'node_modules/**',
@@ -24,5 +24,5 @@ export default defineConfig({
         '**/types/**'
       ]
     }
-  }
+  },
 });

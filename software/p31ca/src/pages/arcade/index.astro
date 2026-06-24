@@ -23,10 +23,10 @@ import { ARCADE_GAMES } from '../../lib/arcade-core/theme.ts';
             <span class="stat-value">9</span>
             <span class="stat-label">Spoons</span>
           </div>
-          <div class="stat">
-            <span class="stat-value">0</span>
-            <span class="stat-label">Tracking</span>
-          </div>
+          <a href="/arcade/leaderboard/" class="stat stat-link">
+            <span class="stat-value">🏆</span>
+            <span class="stat-label">Scores</span>
+          </a>
         </div>
       </div>
       <div class="hero-grid-bg"></div>
@@ -99,9 +99,9 @@ import { ARCADE_GAMES } from '../../lib/arcade-core/theme.ts';
         <span>Sports & Strategy</span>
       </h2>
       <div class="game-grid">
-        <a href="/arcade/smallball/" class="game-card" style="--card-color: #cc6247;">
+        <a href="/arcade/bashball/" class="game-card" style="--card-color: #cc6247;">
           <div class="card-icon">⚾</div>
-          <h3>Smallball</h3>
+          <h3>Bashball</h3>
           <p>2.5D baseball with Markov chains</p>
           <div class="card-meta">🥄🥄🥄🥄 Sports</div>
         </a>
@@ -170,6 +170,7 @@ import { ARCADE_GAMES } from '../../lib/arcade-core/theme.ts';
     <footer class="arcade-footer">
       <div class="footer-links">
         <a href="/">← P31 Hub</a>
+        <a href="/arcade/leaderboard/">🏆 Leaderboard</a>
         <a href="/bonding-about.html">BONDING →</a>
       </div>
       <div class="footer-brand">
@@ -246,6 +247,11 @@ import { ARCADE_GAMES } from '../../lib/arcade-core/theme.ts';
       align-items: center;
       gap: 4px;
     }
+    .stat-link {
+      text-decoration: none;
+      transition: opacity 0.15s;
+    }
+    .stat-link:hover { opacity: 0.7; }
 
     .stat-value {
       font-family: 'Press Start 2P', cursive;

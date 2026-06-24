@@ -569,54 +569,85 @@ inspect_money_streams() {
   header "Money Stream Inspection — $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
   yardmaster_log "inspect_money_streams_start"
 
-  local all_ok=0
-  for stream in "${REGISTERED_MONEY_STREAMS[@]}"; do
-    local log_path="${REPO_ROOT}/${MONEY_STREAM_LOG[$stream]}"
-    local interval="${MONEY_STREAM_INTERVAL[$stream]}"
-    local script_path="${REPO_ROOT}/${MONEY_STREAM_SCRIPT[$stream]}"
+  # Use unified launcher if available
+  local launcher="${SCRIPT_DIR}/p31-money-streams.sh"
+  if [[ -f "$launcher" ]]; then
+    info "Using unified money stream launcher"
+    bash "$launcher" --dry-run 2>/dev/null | sed 's/^/  /'
+  else
+    local all_ok=0
+    for stream in "${REGISTERED_MONEY_STREAMS[@]}"; do
+      local log_path="${REPO_ROOT}/${MONEY_STREAM_LOG[$stream]}"
+      local interval="${MONEY_STREAM_INTERVAL[$stream]}"
+      local script_path="${REPO_ROOT}/${MONEY_STREAM_SCRIPT[$stream]}"
 
-    # Check 1: script exists
-    if [[ ! -f "$script_path" ]]; then
-      fail "${stream}: script not found at ${script_path}"
-      all_ok=$((all_ok + 1))
-      yardmaster_log "stream_fail" "$stream" "missing_script"
-      continue
-    fi
+      if [[ ! -f "$script_path" ]]; then
+        fail "${stream}: script not found at ${script_path}"
+        all_ok=$((all_ok + 1))
+        yardmaster_log "stream_fail" "$stream" "missing_script"
+        continue
+      fi
 
-    # Check 2: log file exists and is recent
-    if [[ ! -f "$log_path" ]]; then
-      warn "${stream}: no log file yet"
-      all_ok=$((all_ok + 1))
-      yardmaster_log "stream_warn" "$stream" "no_log"
-      continue
-    fi
+      if [[ ! -f "$log_path" ]]; then
+        warn "${stream}: no log file yet"
+        all_ok=$((all_ok + 1))
+        yardmaster_log "stream_warn" "$stream" "no_log"
+        continue
+      fi
 
-    local file_mtime file_now age
-    file_mtime=$(stat -c %Y "$log_path" 2>/dev/null || echo "0")
-    file_now=$(date +%s)
-    age=$((file_now - file_mtime))
-    local max_age=$((interval * 2))
+      local file_mtime file_now age
+      file_mtime=$(stat -c %Y "$log_path" 2>/dev/null || echo "0")
+      file_now=$(date +%s)
+      age=$((file_now - file_mtime))
+      local max_age=$((interval * 2))
 
-    if [[ "$age" -lt "$max_age" ]]; then
-      pass "${stream}: log fresh (${age}s / ${max_age}s max)"
-    else
-      fail "${stream}: log stale (${age}s > ${max_age}s max)"
-      all_ok=$((all_ok + 1))
-      yardmaster_log "stream_stale" "$stream" "age:${age}s"
-    fi
+      if [[ "$age" -lt "$max_age" ]]; then
+        pass "${stream}: log fresh (${age}s / ${max_age}s max)"
+      else
+        fail "${stream}: log stale (${age}s > ${max_age}s max)"
+        all_ok=$((all_ok + 1))
+        yardmaster_log "stream_stale" "$stream" "age:${age}s"
+      fi
 
-    # Check 3: file is non-empty
-    if [[ -s "$log_path" ]]; then
-      :  # ok
-    else
-      warn "${stream}: log file empty"
-      all_ok=$((all_ok + 1))
-      yardmaster_log "stream_warn" "$stream" "empty_log"
-    fi
-  done
+      if [[ -s "$log_path" ]]; then
+        :
+      else
+        warn "${stream}: log file empty"
+        all_ok=$((all_ok + 1))
+        yardmaster_log "stream_warn" "$stream" "empty_log"
+      fi
+    done
+    yardmaster_log "inspect_money_streams_complete" "money-streams" "fails:${all_ok}"
+    return $all_ok
+  fi
+}
 
-  yardmaster_log "inspect_money_streams_complete" "money-streams" "fails:${all_ok}"
-  return $all_ok
+inspect_substack() {
+  header "Substack Pipeline — $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+  yardmaster_log "inspect_substack_start"
+  local checker="${SCRIPT_DIR}/p31-substack-status.sh"
+  if [[ -f "$checker" ]]; then
+    bash "$checker" 2>/dev/null | sed 's/^/  /'
+  else
+    warn "p31-substack-status.sh not found"
+    pass "Forge substack channel: present at ${REPO_ROOT}/software/p31-forge/channels/substack.js"
+    warn "Forge crons: check wrangler.toml (likely disabled)"
+  fi
+  yardmaster_log "inspect_substack_complete" "substack"
+}
+
+inspect_revenue() {
+  header "Revenue Mesh — $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+  yardmaster_log "inspect_revenue_start"
+  local rev="${SCRIPT_DIR}/revenue-report.sh"
+  if [[ -f "$rev" ]]; then
+    bash "$rev" 2>/dev/null | sed 's/^/  /'
+  else
+    warn "revenue-report.sh not found"
+    pass "Ko-fi webhook: p31_kofi_webhook_worker.js"
+    warn "Gumroad webhook: NOT deployed (run deploy.sh --all)"
+  fi
+  yardmaster_log "inspect_revenue_complete" "revenue"
 }
 
 inspect_onboard() {
@@ -733,6 +764,10 @@ inspect_all() {
   inspect_lenses || true
   echo ""
   inspect_money_streams || true
+  echo ""
+  inspect_substack || true
+  echo ""
+  inspect_revenue || true
   echo ""
   inspect_onboard || true
   echo ""
@@ -1328,7 +1363,7 @@ ${CYAN}USAGE:${NC}
   ${BOLD}$0${NC} <command> [options]
 
 ${CYAN}COMMANDS:${NC}
-  ${BOLD}inspect${NC} [SERVICE|all|lenses|money-streams|onboard|weave|8ball|nexus]
+  ${BOLD}inspect${NC} [SERVICE|all|lenses|money-streams|substack|revenue|onboard|weave|8ball|nexus]
                                       Inspect any domain or tool
   ${BOLD}refurbish${NC} SERVICE [mode]    Refurbish (full|dry-run|oqe-only)
   ${BOLD}cycle${NC}                       Full inspection across all domains
@@ -1339,7 +1374,9 @@ ${CYAN}COMMANDS:${NC}
   ${BOLD}fuel-check${NC}                  Check Track B budget
   ${BOLD}guardrail-check${NC}             Report guardrail level
   ${BOLD}schedule${NC}                    Show or apply cron schedule
-  ${BOLD}money-streams${NC}               Launch/restart money stream daemons
+  ${BOLD}money-streams${NC} [--stream NAME] [--dry-run] [--daemon]   Launch/restart money streams
+  ${BOLD}substack${NC}                                                 Substack pipeline health check
+  ${BOLD}revenue${NC}                                                  Revenue mesh + Gumroad status
   ${BOLD}sync-state${NC}                  Sync onboarding state from portal
 
 ${CYAN}EXAMPLES:${NC}
@@ -1347,6 +1384,8 @@ ${CYAN}EXAMPLES:${NC}
   $0 inspect all                      # All domains + tools
   $0 inspect lenses                   # Web lens health only
   $0 inspect money-streams            # Money stream log freshness only
+  $0 inspect substack                 # Substack pipeline status
+  $0 inspect revenue                  # Revenue mesh overview
   $0 inspect onboard                  # Onboarding portal health only
   $0 inspect weave                    # WEAVE content fusion engine status
   $0 inspect 8ball                    # 8-Ball decision engine
@@ -1356,7 +1395,9 @@ ${CYAN}EXAMPLES:${NC}
   $0 shelf-list                       # Show shelf
   $0 shelf-deploy phos v20250618-refurbished
   $0 schedule --apply                 # Install cron
-  $0 money-streams                    # Launch/restart money streams
+  $0 money-streams --dry-run          # Check all streams without running
+  $0 substack                         # Substack pipeline health check
+  $0 revenue                          # Revenue mesh overview
   $0 sync-state                       # Sync onboarding portal state
 
 ${CYAN}FILES:${NC}
@@ -1380,6 +1421,8 @@ main() {
           all)         inspect_all ;;
           lenses)      inspect_lenses ;;
           money-streams) inspect_money_streams ;;
+          substack)    inspect_substack ;;
+          revenue)     inspect_revenue ;;
           onboard)     inspect_onboard ;;
           weave)       inspect_weave ;;
           8ball|8-ball) inspect_8ball ;;
@@ -1465,13 +1508,23 @@ except Exception as e:
       ;;
     money-streams)
       header "Launching Money Streams"
-      if [[ -f "${SCRIPT_DIR}/launch-money-streams.sh" ]]; then
-        bash "${SCRIPT_DIR}/launch-money-streams.sh"
+      local launcher="${SCRIPT_DIR}/p31-money-streams.sh"
+      if [[ -f "$launcher" ]]; then
+        bash "$launcher" "${@:-}"
         yardmaster_log "money_streams_launch" "system"
       else
-        fail "launch-money-streams.sh not found"
+        fail "p31-money-streams.sh not found"
         return 1
       fi
+      ;;
+    substack)
+      header "Substack Pipeline Status"
+      bash "${SCRIPT_DIR}/p31-substack-status.sh" 2>/dev/null || warn "checker not found"
+      ;;
+    revenue)
+      header "Revenue Mesh"
+      bash "${SCRIPT_DIR}/revenue-report.sh" 2>/dev/null || warn "revenue-report.sh not found"
+      yardmaster_log "revenue_report" "system"
       ;;
     sync-state)
       header "Syncing Onboarding State"

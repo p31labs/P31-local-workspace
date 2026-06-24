@@ -3,16 +3,28 @@
   "version": "0.0.1",
   "private": true,
   "type": "module",
+  "description": "System-wide shared modules for the P31 Labs ecosystem",
+  "author": "P31 Labs <hello@p31ca.org>",
+  "license": "MIT",
+  "homepage": "https://p31ca.org",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/p31labs/andromeda.git",
+    "directory": "software/packages/shared"
+  },
   "scripts": {
     "build": "tsc",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "test": "vitest run --passWithNoTests",
+    "test:coverage": "vitest run --coverage --passWithNoTests",
     "test:watch": "vitest"
   },
   "main": "src/index.ts",
   "types": "src/index.ts",
   "dependencies": {
+    "@cloudflare/workers-types": "^4.20260317.1",
+    "@noble/ed25519": "^3.1.0",
     "@noble/post-quantum": "^0.2.1",
     "idb-keyval": "^6.2.1",
     "pino": "^9.0.0",
@@ -68,6 +80,7 @@
     "./theme/canon-brand": "./src/theme/canon-brand.ts",
     "./theme/tailwind-preset": "./src/theme/tailwind-preset.ts",
     "./trust": "./src/trust/index.ts",
-    "./cognitive-passport": "./src/cognitive-passport/index.ts"
+    "./cognitive-passport": "./src/cognitive-passport/index.ts",
+    "./version": "./src/version.ts"
   }
 }

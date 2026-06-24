@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2400 2400" width="2400" height="2400">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a0a0a;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#0d0d1a;stop-opacity:1"/>
+    </linearGradient>
+    <radialGradient id="center-glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#39ff14;stop-opacity:0.15"/>
+      <stop offset="100%" style="stop-color:#39ff14;stop-opacity:0"/>
+    </radialGradient>
+  </defs>
+  <rect width="2400" height="2400" fill="url(#bg)"/>
+  <rect x="0" y="0" width="2400" height="2400" fill="url(#center-glow)"/>
+  
+  <!-- Outer ring -->
+  <circle cx="1200" cy="1200" r="900" fill="none" stroke="#39ff14" stroke-width="1" opacity="0.15"/>
+  <circle cx="1200" cy="1200" r="700" fill="none" stroke="#00ffcc" stroke-width="1" opacity="0.1"/>
+  <circle cx="1200" cy="1200" r="500" fill="none" stroke="#7360ff" stroke-width="1" opacity="0.1"/>
+  
+  <!-- Main tetrahedron (large, centered) -->
+  <g transform="translate(1200, 1200)" opacity="0.9">
+    <!-- Tetrahedron edges -->
+    <line x1="0" y1="-500" x2="433" y2="250" stroke="#39ff14" stroke-width="4"/>
+    <line x1="0" y1="-500" x2="-433" y2="250" stroke="#39ff14" stroke-width="4"/>
+    <line x1="0" y1="-500" x2="0" y2="500" stroke="#39ff14" stroke-width="4"/>
+    <line x1="433" y2="250" x2="-433" y2="250" stroke="#00ffcc" stroke-width="4"/>
+    <line x1="433" y2="250" x2="0" y2="500" stroke="#00ffcc" stroke-width="4"/>
+    <line x1="-433" y2="250" x2="0" y2="500" stroke="#00ffcc" stroke-width="4"/>
+    
+    <!-- Vertices with vertex-color coding -->
+    <circle cx="0" cy="-500" r="45" fill="#39ff14" opacity="0.8"/>
+    <circle cx="433" cy="250" r="45" fill="#00ffcc" opacity="0.8"/>
+    <circle cx="-433" cy="250" r="45" fill="#7360ff" opacity="0.8"/>
+    <circle cx="0" cy="500" r="45" fill="#ff6b35" opacity="0.8"/>
+    
+    <!-- Inner tetrahedron (scaled) -->
+    <g opacity="0.5">
+      <line x1="0" y1="-250" x2="216" y2="125" stroke="#ff6b35" stroke-width="1.5"/>
+      <line x1="0" y1="-250" x2="-216" y2="125" stroke="#ff6b35" stroke-width="1.5"/>
+      <line x1="0" y1="-250" x2="0" y2="250" stroke="#ff6b35" stroke-width="1.5"/>
+      <line x1="216" y2="125" x2="-216" y2="125" stroke="#7360ff" stroke-width="1.5"/>
+      <line x1="216" y2="125" x2="0" y2="250" stroke="#7360ff" stroke-width="1.5"/>
+      <line x1="-216" y2="125" x2="0" y2="250" stroke="#7360ff" stroke-width="1.5"/>
+      <circle cx="0" cy="-250" r="22" fill="#ff6b35" opacity="0.5"/>
+      <circle cx="216" cy="125" r="22" fill="#ff6b35" opacity="0.5"/>
+      <circle cx="-216" cy="125" r="22" fill="#ff6b35" opacity="0.5"/>
+      <circle cx="0" cy="250" r="22" fill="#ff6b35" opacity="0.5"/>
+    </g>
+  </g>
+  
+  <!-- Title -->
+  <text x="1200" y="170" text-anchor="middle" font-family="serif" font-size="52" fill="#ffcc00" letter-spacing="8">AS ABOVE, SO BELOW</text>
+  <text x="1200" y="230" text-anchor="middle" font-family="monospace" font-size="22" fill="#8888aa">— Tabula Smaragdina · Hermetic Principle · Invariant Geometry —</text>
+  
+  <!-- Scale labels (left side: quantum) -->
+  <text x="120" y="600" text-anchor="middle" font-family="monospace" font-size="20" fill="#7360ff" transform="rotate(-90, 120, 600)">QUANTUM COHERENCE</text>
+  <text x="120" y="650" text-anchor="middle" font-family="monospace" font-size="16" fill="#555577" transform="rotate(-90, 120, 650)">Planck scale · wave functions · entanglement</text>
+  <circle cx="120" cy="700" r="20" fill="none" stroke="#7360ff" stroke-width="1.5" opacity="0.5"/>
+  <text x="120" y="705" text-anchor="middle" font-family="monospace" font-size="14" fill="#7360ff" opacity="0.7">Ψ</text>
+  
+  <!-- Scale labels (right side: social) -->
+  <text x="2280" y="600" text-anchor="middle" font-family="monospace" font-size="20" fill="#39ff14" transform="rotate(90, 2280, 600)">SOCIAL RESILIENCE</text>
+  <text x="2280" y="650" text-anchor="middle" font-family="monospace" font-size="16" fill="#557755" transform="rotate(90, 2280, 650)">Community · trust · collective action</text>
+  <circle cx="2280" cy="700" r="20" fill="none" stroke="#39ff14" stroke-width="1.5" opacity="0.5"/>
+  <text x="2280" y="705" text-anchor="middle" font-family="monospace" font-size="14" fill="#39ff14" opacity="0.7">Δ</text>
+  
+  <!-- Middle scales (top and bottom) -->
+  <text x="1200" y="500" text-anchor="middle" font-family="monospace" font-size="18" fill="#ff6b35">MOLECULAR CHEMISTRY</text>
+  <text x="1200" y="530" text-anchor="middle" font-family="monospace" font-size="14" fill="#885544">Posner molecules · Ca₉(PO₄)₆ · 31P resonance</text>
+  
+  <text x="1200" y="1850" text-anchor="middle" font-family="monospace" font-size="18" fill="#ff6b35">NEURAL COGNITION</text>
+  <text x="1200" y="1880" text-anchor="middle" font-family="monospace" font-size="14" fill="#885544">Basal ganglia · calcium signaling · neural voltage</text>
+  
+  <!-- Motto -->
+  <rect x="950" y="1950" width="500" height="100" fill="none" stroke="#ffcc00" stroke-width="1.5" rx="8" opacity="0.5"/>
+  <text x="1200" y="1990" text-anchor="middle" font-family="serif" font-style="italic" font-size="26" fill="#ffcc00">"The geometry is invariant.</text>
+  <text x="1200" y="2030" text-anchor="middle" font-family="serif" font-style="italic" font-size="26" fill="#ffcc00">Only the medium changes."</text>
+  
+  <!-- Corner ornaments -->
+  <text x="100" y="2300" font-family="monospace" font-size="14" fill="#444455">P31 Labs · p31ca.org</text>
+  <text x="2300" y="2300" text-anchor="end" font-family="monospace" font-size="14" fill="#444455">Ca₉(PO₄)₆ · 2400×2400px · Print-Ready</text>
+</svg>

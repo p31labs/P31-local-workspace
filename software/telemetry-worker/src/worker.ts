@@ -17,11 +17,15 @@
  * Storage: Cloudflare KV namespace bound as TELEMETRY_KV
  */
 
+import { VERSION } from './version';
+import { ratelimit } from './rate-limiter';
+
 /// <reference types="@cloudflare/workers-types" />
 
 interface Env {
   TELEMETRY_KV: KVNamespace;
   ALLOWED_ORIGIN: string;
+  RATE_LIMIT_KV?: KVNamespace;
 }
 
 interface PerformancePayload {
@@ -46,6 +50,14 @@ interface TelemetryEvent {
     data: Record<string, unknown>;
     ts: number;
   }>;
+}
+
+function validatePerformancePayload(body: unknown): string | null {
+  if (!body || typeof body !== 'object') return 'Invalid payload: expected object';
+  const p = body as Record<string, unknown>;
+  if (!p.sessionId || typeof p.sessionId !== 'string') return 'Invalid payload: sessionId required';
+  if (!p.metrics || typeof p.metrics !== 'object') return 'Invalid payload: metrics required';
+  return null;
 }
 
 function corsHeaders(origin: string, allowed: string): Record<string, string> {
@@ -73,14 +85,24 @@ export default {
 
     const url = new URL(request.url);
 
+    // Rate limit by IP
+    const clientIp = request.headers.get('CF-Connecting-IP') || 'unknown';
+    const rateResult = await ratelimit(clientIp, env.RATE_LIMIT_KV);
+    if (!rateResult.allowed) {
+      return new Response(JSON.stringify({ error: 'Rate limited' }), {
+        status: 429,
+        headers: { ...headers, 'Retry-After': String(rateResult.retryAfter) },
+      });
+    }
+
     // Performance telemetry endpoint
     if (url.pathname === '/api/telemetry/perf' && request.method === 'POST') {
       try {
         const body = await request.json() as PerformancePayload;
 
-        // Validate required fields
-        if (!body.sessionId || !body.metrics) {
-          return Response.json({ error: 'Invalid payload' }, { status: 400, headers });
+        const validation = validatePerformancePayload(body);
+        if (validation) {
+          return Response.json({ error: validation }, { status: 400, headers });
         }
 
         // Store in KV with 30-day expiration
@@ -114,7 +136,7 @@ export default {
       return Response.json({
         service: 'p31-telemetry',
         status: 'ok',
-        version: '1.0.0',
+        version: VERSION,
         timestamp: new Date().toISOString(),
         bindings: ['TELEMETRY_KV'],
         routes: [

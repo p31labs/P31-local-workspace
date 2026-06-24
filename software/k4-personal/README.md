@@ -1,5 +1,9 @@
 # k4-personal
 
+<!-- pmm-badge -->
+![PMM Maturity](../../.p31/badges/k4-personal.svg)
+<!-- /pmm-badge -->
+
 Cloudflare Worker: **personal K₄** mesh (`GET /api/mesh`, presence, ping, `/viz`) plus **`PersonalAgent`** Durable Object routes under `/agent/:userId/*`.
 
 ## Prereqs

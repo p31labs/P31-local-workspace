@@ -120,22 +120,25 @@ PMM_SCHEMA=1.1
 
 ---
 
-## Current Baseline (June 15, 2026 — v1.1)
+## Current Baseline (June 22, 2026 — v1.2)
 
 Applied to the major codebase areas:
 
-| Artifact | Stage | CODE | TEST | DOCS | OPS | SEC | Notes |
-|----------|-------|------|------|------|-----|-----|-------|
-| `agent-engine` | 🌳 SAPLING | 3 | 3 | 2 | 1 | 2 | Strong core, poor ops |
-| `shared/ui/p31-shared` | 🌸 BLOOM | 4 | 4 | 2 | 3 | 3 | Tested UI, partial coverage |
-| `shared/trust` | 🌳 SAPLING | 3 | 3 | 2 | 1 | 2 | EigenTrust works, tests fixed |
-| `p31-delta-hiring` | 🌳 SAPLING | 3 | 2 | 3 | 2 | 2 | Working but minimal tests |
-| `bonding` | 🌸 BLOOM | 4 | 4 | 3 | 4 | 3 | Production game |
-| `firmware/` stubs | 🌱 SEED | 1 | 1 | 1 | 1 | 1 | All stubs |
-| `p31ca.org` | 🌸 BLOOM | 4 | 3 | 3 | 4 | 3 | Live site |
-| `command-center` worker | 🌸 BLOOM | 4 | 2 | 3 | 4 | 3 | Live monitoring |
-| Root vitest config | 🌿 SPROUT | 3 | 1 | 1 | 2 | 1 | Meta-suite, no own tests |
-| CI pipeline | 🌿 SPROUT | 2 | 1 | 1 | 1 | 1 | Just created, untested |
+| Artifact | Stage | CODE | TEST | DOCS | OPS | SEC | STYLE | Notes |
+|----------|-------|------|------|------|-----|-----|-------|-------|
+| `agent-engine` | 🌳 SAPLING | 3 | 3 | 2 | 1 | 2 | 1 | Strong core, poor ops |
+| `shared/ui/p31-shared` | 🌸 BLOOM | 4 | 4 | 2 | 3 | 3 | 3 | Tested UI, partial coverage |
+| `shared/trust` | 🌳 SAPLING | 3 | 3 | 2 | 1 | 2 | 1 | EigenTrust works, tests fixed |
+| `p31-delta-hiring` | 🌳 SAPLING | 3 | 2 | 3 | 2 | 2 | 1 | Working but minimal tests |
+| `bonding` | 🌸 BLOOM | 4 | 4 | 3 | 4 | 3 | 3 | Production game |
+| `firmware/` stubs | 🌱 SEED | 1 | 1 | 1 | 1 | 1 | 1 | All stubs |
+| `p31ca.org` | 🌸 BLOOM | 4 | 3 | 3 | 4 | 3 | 3 | Live site |
+| `command-center` worker | 🌸 BLOOM | 4 | 2 | 3 | 4 | 3 | 1 | Live monitoring |
+| `root vitest config` | 🌿 SPROUT | 3 | 1 | 1 | 2 | 1 | 1 | Meta-suite, no own tests |
+| `CI pipeline` | 🌿 SPROUT | 2 | 1 | 1 | 1 | 1 | 1 | Just created, untested |
+| `jitterbug-pwa` | 🌳 SAPLING | 5 | 3 | 5 | 4 | 3 | 5 | Tests added, docs expanded |
+| `jitterbug-api` | 🌿 SPROUT | 5 | 3 | 3 | 4 | 3 | 2 | Backend, STYLE exempt target |
+| `brain-dump-orchestrator` | 🌿 SPROUT | 5 | 5 | 3 | 4 | 3 | 5 | Well tested, styled |
 
 ---
 

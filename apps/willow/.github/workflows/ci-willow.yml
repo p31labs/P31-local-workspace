@@ -1,0 +1,14 @@
+name: CI - willow
+on: [push, pull_request]
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: npm ci
+      - run: npx vitest run --coverage
+      - if: github.ref == 'refs/heads/main'
+        run: npm run deploy
+        env: { CLOUDFLARE_API_TOKEN: '${{ secrets.CF_API_TOKEN }}' }

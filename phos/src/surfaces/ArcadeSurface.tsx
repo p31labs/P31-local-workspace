@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useAtmosphere } from '../components/AtmosphereProvider';
 import { mintCredits } from '../lib/KarmaEngine';
+import { K4Bridge } from '../lib/K4Bridge';
 
 const ARCADE_GAMES = [
   { id: 'smallball', name: 'P31 Smallball', category: 'sports', stress: 'low' },
@@ -47,6 +48,14 @@ export function ArcadeSurface({ theme, spoons }: { theme: Record<string, string>
       mintCredits(credits, `arcade:${msg.gameId}`);
       setLastScore(msg);
       setEarnedThisSession((prev) => prev + credits);
+      K4Bridge.pushEntry({
+        level: 0,
+        feature: 'love',
+        vertex: 'EARN',
+        edge: 'EARN→AGGREGATE',
+        value: credits * 0.01,
+        source: `arcade:${msg.gameId}`,
+      });
     } catch { /* karma engine failure — non-blocking */ }
   }, []);
 

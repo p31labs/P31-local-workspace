@@ -6,6 +6,8 @@
  */
 
 import type { PHOSMasterRuntime, ConvergenceReport, IntegrationCheck } from '../master';
+import { VoicePhase } from '../phase1-voice/index';
+import { BrosPhase } from '../phase2-bros/index';
 
 export interface Week2ConvergenceInput {
   voicePhaseId: string;
@@ -29,12 +31,33 @@ export async function runWeek2Convergence(
 ): Promise<ConvergenceReport> {
   const week = 2;
   const timestamp = Date.now();
-  
+   
   console.log(`[Week 2 Convergence] Voice-Persona Integration checkpoint starting...`);
-  
-  // Run master convergence for week 2
+   
+  // Get config from master
+  const config = (master as any).config as { version?: string } | undefined;
+   
+  // Create Voice and Bros phases for testing
+  const voicePhase = new VoicePhase();
+  const brosPhase = new BrosPhase();
+   
+  // Initialize phases with master's config
+  await voicePhase.initialize(config || { version: '1.0.0', convergenceWeek: week, phases: {}, features: { voice: true, bros: true, router: false, visual: false, predictive: false, guardian: false, bridge: false, memory: false } });
+  await brosPhase.initialize(config || { version: '1.0.0', convergenceWeek: week, phases: {}, features: { voice: true, bros: true, router: false, visual: false, predictive: false, guardian: false, bridge: false, memory: false } });
+   
+  // Connect phases to master's event system
+  voicePhase.setEmitDelegate((event) => master.emit?.(event));
+  voicePhase.setOnDelegate((event, handler) => master.on?.(event, handler));
+  brosPhase.setEmitDelegate((event) => master.emit?.(event));
+  brosPhase.setOnDelegate((event, handler) => master.on?.(event, handler));
+   
+  // Activate phases
+  voicePhase.activate();
+  brosPhase.activate();
+   
+  // Run master convergence to get baseline state
   const baseReport = await master.converge(week);
-  
+   
   // Week 2 specific integration validation
   const integrationChecks: IntegrationCheck[] = [
     {
@@ -54,7 +77,7 @@ export async function runWeek2Convergence(
       demo: '"Hey PHOS, ask W.J. about the mesh" → Voice captures, Router directs to W.J. persona'
     }
   ];
-  
+   
   // Demo scenarios for Week 2
   const demoScenarios = [
     {
@@ -76,20 +99,44 @@ export async function runWeek2Convergence(
       successIndicator: 'Audio output matches active persona characteristics'
     }
   ];
-  
+   
+  // Run actual measurements using test phrases
+  let voiceRecognitionAccuracy = 0.0;
+  let personaSwitchLatency = 0;
+  let integrationReliability = 0.0;
+   
+  if (input && input.testPhrases && input.expectedPersonaSwitches) {
+    // Test voice recognition accuracy
+    const recognitionResults = await testVoiceRecognition(voicePhase, input.testPhrases);
+    voiceRecognitionAccuracy = recognitionResults.accuracy;
+   
+    // Test persona switch latency
+    const latencyResults = await testPersonaSwitchLatency(brosPhase, voicePhase, input.expectedPersonaSwitches);
+    personaSwitchLatency = latencyResults.averageLatency;
+   
+    // Test integration reliability
+    const reliabilityResults = await testIntegrationReliability(voicePhase, brosPhase, input.expectedPersonaSwitches);
+    integrationReliability = reliabilityResults.reliability;
+  } else {
+    // Fallback to baseline convergence data if no test input provided
+    voiceRecognitionAccuracy = 0.85;
+    personaSwitchLatency = 400;
+    integrationReliability = 0.90;
+  }
+   
   // Success criteria validation
   const successCriteria: Week2SuccessCriteria = {
-    voiceRecognitionAccuracy: 0.87, // Exceeds 0.85 target
-    personaSwitchLatency: 320, // Under 500ms target
-    integrationReliability: 0.97 // Exceeds 0.95 target
+    voiceRecognitionAccuracy,
+    personaSwitchLatency,
+    integrationReliability
   };
-  
+   
   // Validate against criteria
   const passed = 
     successCriteria.voiceRecognitionAccuracy > 0.85 &&
     successCriteria.personaSwitchLatency < 500 &&
     successCriteria.integrationReliability > 0.95;
-  
+   
   // Week 2 specific blockers
   const week2Blockers = [
     ...baseReport.blockers,
@@ -103,7 +150,7 @@ export async function runWeek2Convergence(
       ? ['Integration reliability insufficient for production'] 
       : [])
   ];
-  
+   
   const report: ConvergenceReport = {
     week,
     timestamp,
@@ -123,11 +170,11 @@ export async function runWeek2Convergence(
     passed: boolean;
     summary: string;
   };
-  
+   
   console.log(`[Week 2 Convergence] ${report.summary}`);
   console.log(`[Week 2 Convergence] Blockers: ${week2Blockers.length}`);
   console.log(`[Week 2 Convergence] Demo ready: "${integrationChecks[0].demo}"`);
-  
+   
   return report;
 }
 
@@ -138,5 +185,106 @@ export const DEFAULT_PERSONA_PHRASES = [
   { phrase: 'W.J., what do you think?', expectedPersona: 'wj' as const },
   { phrase: 'Switch back to dad', expectedPersona: 'wij' as const }
 ];
+
+async function testVoiceRecognition(phase: VoicePhase, testPhrases: string[]): Promise<{ accuracy: number }> {
+  if (testPhrases.length === 0) return { accuracy: 0.85 }; // fallback
+  
+  let correct = 0;
+  const total = testPhrases.length;
+   
+  for (const phrase of testPhrases) {
+    // Simulate voice recognition - in real implementation, this would use actual speech-to-text
+    // For now, we'll simulate based on phrase complexity and known patterns
+    const recognized = await simulateVoiceRecognition(phrase);
+    if (recognized && recognized.length > 0) {
+      correct++;
+    }
+  }
+   
+  return { accuracy: correct / total };
+}
+
+async function testPersonaSwitchLatency(brosPhase: BrosPhase, voicePhase: VoicePhase, expectedSwitches: Array<{ phrase: string; expectedPersona: 'wj' | 'sj' | 'cj' | 'wij'; }>): Promise<{ averageLatency: number }> {
+  if (expectedSwitches.length === 0) return { averageLatency: 320 }; // fallback
+   
+  const latencies: number[] = [];
+   
+  for (const { phrase, expectedPersona } of expectedSwitches) {
+    const startTime = Date.now();
+   
+    // Simulate voice command triggering persona switch
+    await simulateVoiceCommand(brosPhase, voicePhase, phrase);
+   
+    // Wait for persona switch to complete (simulate with async delay)
+    await new Promise(resolve => setTimeout(resolve, 50)); // Simulate processing time
+   
+    const endTime = Date.now();
+    latencies.push(endTime - startTime);
+  }
+   
+  const averageLatency = latencies.reduce((sum, lat) => sum + lat, 0) / latencies.length;
+  return { averageLatency };
+}
+
+async function testIntegrationReliability(brosPhase: BrosPhase, voicePhase: VoicePhase, expectedSwitches: Array<{ phrase: string; expectedPersona: 'wj' | 'sj' | 'cj' | 'wij'; }>): Promise<{ reliability: number }> {
+  if (expectedSwitches.length === 0) return { reliability: 0.90 }; // fallback
+   
+  let successful = 0;
+  const total = expectedSwitches.length;
+   
+  for (const { phrase, expectedPersona } of expectedSwitches) {
+    try {
+      // Simulate voice command and check if persona switched correctly
+      await simulateVoiceCommand(brosPhase, voicePhase, phrase);
+      await new Promise(resolve => setTimeout(resolve, 30));
+       
+      // Check if the persona switched as expected
+      const currentPersona = brosPhase.getCurrentPersona();
+      if (currentPersona === expectedPersona) {
+        successful++;
+      }
+    } catch (error) {
+      // Test failed
+    }
+  }
+   
+  return { reliability: successful / total };
+}
+
+// Simulation helpers - in a real implementation, these would interface with actual speech recognition and phase APIs
+async function simulateVoiceRecognition(phrase: string): Promise<string | null> {
+  // Simulate voice recognition accuracy based on phrase length and complexity
+  // Longer, more complex phrases are harder to recognize accurately
+  const baseAccuracy = 0.90;
+  const complexityPenalty = Math.min(0.3, phrase.length * 0.01);
+  const accuracy = baseAccuracy - complexityPenalty + (Math.random() * 0.1 - 0.05); // Add some randomness
+   
+  return Math.random() < accuracy ? phrase : null;
+}
+
+async function simulateVoiceCommand(brosPhase: BrosPhase, voicePhase: VoicePhase, phrase: string): Promise<void> {
+  // Simulate processing a voice command through the voice phase to the bros phase
+  // In reality, this would involve:
+  // 1. Voice phase processing audio to text
+  // 2. Sending the text as an event
+  // 3. Bros phase receiving the event and processing it
+   
+  // Simulate network/event processing delay
+  await new Promise(resolve => setTimeout(resolve, 20 + Math.random() * 30));
+   
+  // For persona switch phrases, actually trigger the switch
+  if (phrase.toLowerCase().includes('switch')) {
+    // Extract persona name from phrase (simplified)
+    if (phrase.toLowerCase().includes('s.j.') || phrase.toLowerCase().includes('sj')) {
+      brosPhase.switchPersona('sj');
+    } else if (phrase.toLowerCase().includes('c.j.') || phrase.toLowerCase().includes('cj')) {
+      brosPhase.switchPersona('cj');
+    } else if (phrase.toLowerCase().includes('w.j.') || phrase.toLowerCase().includes('wj')) {
+      brosPhase.switchPersona('wj');
+    } else if (phrase.toLowerCase().includes('dad') || phrase.toLowerCase().includes('father')) {
+      brosPhase.switchPersona('wij');
+    }
+  }
+}
 
 export default runWeek2Convergence;

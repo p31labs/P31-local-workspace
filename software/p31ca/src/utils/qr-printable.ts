@@ -351,6 +351,107 @@ export function exportStickersCSV(stickers: QRSticker[]): string {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// SOVEREIGN IDENTITY QR ENVELOPE
+// Printable QR for the Delta Runway Ignition
+// ─────────────────────────────────────────────────────────────────────────────
+
+export interface SovereignQRSticker {
+  type: 'sovereign-identity';
+  publicKey: string;
+  alias: string;
+  genesisHash: string;
+  vertex: string;
+  recoveryUrl: string;
+}
+
+export function generateSovereignQRPayload(sticker: SovereignQRSticker): string {
+  const payload = {
+    v: 'p31.sovereign/1.0.0',
+    pk: sticker.publicKey,
+    alias: sticker.alias,
+    vertex: sticker.vertex,
+    gh: sticker.genesisHash,
+    r: sticker.recoveryUrl,
+  };
+  return JSON.stringify(payload);
+}
+
+export function generateSovereignPrintableHTML(sticker: SovereignQRSticker): string {
+  const qrData = generateSovereignQRPayload(sticker);
+
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Sovereign Envelope — ${sticker.alias}</title>
+  <style>
+    @page { size: 50mm 30mm; margin: 0; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Courier New', monospace;
+      font-size: 7pt;
+      line-height: 1.2;
+      background: white;
+      padding: 3mm;
+    }
+    .envelope {
+      width: 44mm;
+      height: 24mm;
+      display: flex;
+      align-items: center;
+      gap: 2mm;
+      border: 0.5pt solid #000;
+      page-break-inside: avoid;
+    }
+    .qr-code {
+      width: 20mm;
+      height: 20mm;
+      flex-shrink: 0;
+    }
+    .info {
+      flex: 1;
+      overflow: hidden;
+    }
+    .alias { font-size: 8pt; font-weight: bold; }
+    .vertex { font-size: 6pt; text-transform: uppercase; margin-top: 1mm; }
+    .pubkey { font-size: 5pt; word-break: break-all; margin-top: 1mm; opacity: 0.7; }
+    @media print {
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+  </style>
+</head>
+<body>
+  <div class="envelope">
+    <div class="qr-code" data-qr="${qrData}"></div>
+    <div class="info">
+      <div class="alias">${sticker.alias}</div>
+      <div class="vertex">${sticker.vertex}</div>
+      <div class="pubkey">${sticker.publicKey.slice(0, 16)}...</div>
+    </div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const qr = document.querySelector('.qr-code');
+      if (qr && window.QRCode && qr.dataset.qr) {
+        new QRCode(qr, {
+          text: qr.dataset.qr,
+          width: 80,
+          height: 80,
+          colorDark: '#000000',
+          colorLight: '#ffffff',
+          correctLevel: QRCode.CorrectLevel.M
+        });
+      }
+    });
+  </script>
+</body>
+</html>`.trim();
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // EXPORTS
 // ─────────────────────────────────────────────────────────────────────────────
 

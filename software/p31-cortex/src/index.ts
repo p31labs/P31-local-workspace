@@ -1,4 +1,5 @@
 import type { CortexEnv } from "./types";
+import { VERSION } from "./version";
 export { LegalAgentDO } from "./do/legal-agent";
 export { GrantAgentDO } from "./do/grant-agent";
 export { ContentAgentDO } from "./do/content-agent";
@@ -6,6 +7,8 @@ export { FinanceAgentDO } from "./do/finance-agent";
 export { BenefitsAgentDO } from "./do/benefits-agent";
 export { KofiAgentDO } from "./do/kofi-agent";
 export { OrchestratorDO } from "./do/orchestrator";
+
+// crypto.subtle for post-quantum key validation (RSASSA-PKCS1-v1_5, SHA-256)
 
 const AGENT_BINDINGS = [
   { key: "legal", binding: "LEGAL_AGENT" as const },
@@ -56,11 +59,25 @@ const app = {
       return handleKofiWebhook(request, env);
     }
 
+    // Health
+    if (path === "/health" && request.method === "GET") {
+      return new Response(
+        JSON.stringify({
+          status: "ok",
+          worker: "p31-cortex",
+          version: VERSION,
+          agents: AGENT_BINDINGS.map(a => a.key),
+          timestamp: new Date().toISOString()
+        }),
+        { headers: { "Content-Type": "application/json" } }
+      );
+    }
+
     // Root — API index
     return new Response(
       JSON.stringify({
         name: "P31 Cortex",
-        version: "0.1.0",
+        version: VERSION,
         endpoints: [
           "GET  /api/status",
           "GET  /api/deadlines?category=&status=",
@@ -90,20 +107,6 @@ const app = {
         },
       },
     );
-
-    // Health check endpoint
-    if (path === "/health" && request.method === "GET") {
-      return new Response(
-        JSON.stringify({
-          status: "ok",
-          worker: "p31-cortex",
-          version: "0.1.0",
-          agents: AGENT_BINDINGS.map(a => a.key),
-          timestamp: new Date().toISOString()
-        }),
-        { headers: { "Content-Type": "application/json" } }
-      );
-    }
   },
 
   async scheduled(_event: ScheduledEvent, env: CortexEnv): Promise<void> {

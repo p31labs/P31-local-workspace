@@ -81,9 +81,16 @@ If they say "no" or delay, escalate to:
 
 ---
 
-## P4: ASAN Grant Assembly (Starts July 1)
+## P4: ASAN Grant (Prepare for Verification — Narrative Ready)
 
-**Goal:** Submit $8,500 mini-grant by July 31.
+**Goal:** Verify submission status and track decision by July 31.
+
+**Narrative Status:** Complete (docs/grants/payloads/asan-narrative.md)
+
+**Action Items:**
+- [ ] Confirm ASAN grant submission via confirmation email/tracking
+- [ ] Monitor for award notification by July 31, 2026
+- [ ] If not submitted by June 25, assemble and submit $6,250 proposal
 
 **Prerequisites:**
 - [ ] CS&S Fiscal Host approved (or OSC fallback)

@@ -1,9 +1,11 @@
 import { defineConfig } from 'vitest/config';
 
-/** Suite in tests/agent-engine.test.ts is behind current AgentEngine API; exclude until rewritten. */
 export default defineConfig({
   test: {
-    include: ['src/**/*.test.ts'],
-    exclude: ['tests/agent-engine.test.ts', '**/node_modules/**'],
+    include: ['src/**/*.test.ts', 'tests/**/*.test.ts'],
+    exclude: [
+      '**/node_modules/**',
+      'tests/agent-engine.draft.test.ts',
+    ],
   },
 });

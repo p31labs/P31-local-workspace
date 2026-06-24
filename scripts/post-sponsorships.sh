@@ -28,8 +28,8 @@ if [ "$DRY_RUN" = true ]; then
 fi
 
 if ! command -v gh &>/dev/null; then
-    echo "{\"status\":\"error\",\"message\":\"gh CLI not installed\",\"timestamp\":\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"}" > "$LOG_FILE"
-    exit 2
+    echo "{\"status\":\"skipped\",\"reason\":\"gh CLI not installed\",\"timestamp\":\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"}" > "$LOG_FILE"
+    exit 0
 fi
 
 QUERY='query($org:String!){organization(login:$org){sponsorshipsAsMaintainer(first:100){nodes{sponsorEntity{...on User{login name}...on Organization{login name}}tier{name monthlyPriceInDollars}}}}}'

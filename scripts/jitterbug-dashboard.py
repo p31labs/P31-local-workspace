@@ -19,7 +19,7 @@ from collections import Counter
 from datetime import datetime, timedelta
 from pathlib import Path
 
-REPO_ROOT = Path("/home/p31/andromeda").resolve()
+REPO_ROOT = Path(__file__).resolve().parent.parent
 INDEX_PATH = REPO_ROOT / "grading-index.json"
 SPOON_PATH = REPO_ROOT / "spoon-state.json"
 REPORT_PATH = REPO_ROOT / "GRADING_REPORT.md"

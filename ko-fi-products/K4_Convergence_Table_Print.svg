@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2400 2400" width="2400" height="2400">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a0a0a;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#1a1a2e;stop-opacity:1"/>
+    </linearGradient>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 L2,5 Z" fill="#39ff14"/>
+    </marker>
+  </defs>
+  <rect width="2400" height="2400" fill="url(#bg)"/>
+  
+  <!-- Title -->
+  <text x="1200" y="120" text-anchor="middle" font-family="monospace" font-size="48" fill="#00ffcc">K₄ CONVERGENCE TABLE</text>
+  <text x="1200" y="175" text-anchor="middle" font-family="monospace" font-size="28" fill="#8888aa">Complete Graph — Four Nodes, Six Edges — Maxwell Rigidity</text>
+  
+  <!-- Tetrahedron center -->
+  <g transform="translate(1200, 1100)">
+    <!-- Edges (6 total) -->
+    <line x1="0" y1="-500" x2="433" y2="250" stroke="#39ff14" stroke-width="3" opacity="0.8"/>
+    <line x1="0" y1="-500" x2="-433" y2="250" stroke="#39ff14" stroke-width="3" opacity="0.8"/>
+    <line x1="0" y1="-500" x2="0" y2="500" stroke="#39ff14" stroke-width="3" opacity="0.8"/>
+    <line x1="433" y2="250" x2="-433" y2="250" stroke="#00ffcc" stroke-width="3" opacity="0.8"/>
+    <line x1="433" y2="250" x2="0" y2="500" stroke="#00ffcc" stroke-width="3" opacity="0.8"/>
+    <line x1="-433" y2="250" x2="0" y2="500" stroke="#00ffcc" stroke-width="3" opacity="0.8"/>
+    
+    <!-- Nodes -->
+    <circle cx="0" cy="-500" r="30" fill="#39ff14" opacity="0.9"/>
+    <circle cx="433" cy="250" r="30" fill="#00ffcc" opacity="0.9"/>
+    <circle cx="-433" cy="250" r="30" fill="#7360ff" opacity="0.9"/>
+    <circle cx="0" cy="500" r="30" fill="#ff6b35" opacity="0.9"/>
+    
+    <!-- Node labels -->
+    <text x="0" y="-560" text-anchor="middle" font-family="monospace" font-size="24" fill="#39ff14">SYNERGETICS</text>
+    <text x="500" y="250" text-anchor="start" font-family="monospace" font-size="24" fill="#00ffcc">MAXWELL</text>
+    <text x="-500" y="250" text-anchor="end" font-family="monospace" font-size="24" fill="#7360ff">THOMSON</text>
+    <text x="0" y="580" text-anchor="middle" font-family="monospace" font-size="24" fill="#ff6b35">POSNER</text>
+  </g>
+  
+  <!-- Bottom info -->
+  <text x="1200" y="2150" text-anchor="middle" font-family="monospace" font-size="20" fill="#666680">4 nodes · 6 edges · β₂ = 1 (planar) · 3N - 6 = 6 (isostatic)</text>
+  <text x="1200" y="2200" text-anchor="middle" font-family="monospace" font-size="20" fill="#666680">P31 Labs · p31ca.org · "The geometry is invariant."</text>
+  <text x="1200" y="2350" text-anchor="middle" font-family="monospace" font-size="16" fill="#444455">2400×2400px · Print-Ready SVG · Ca₉(PO₄)₆</text>
+</svg>

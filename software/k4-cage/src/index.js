@@ -10,6 +10,7 @@
  *
  * Deploy: set database_id in wrangler.toml, run schema.sql, wrangler secret put ADMIN_TOKEN, deploy.
  */
+import { VERSION } from './version.js';
 import { DurableObject } from 'cloudflare:workers';
 
 const VERTICES = ['will', 'sj', 'wj', 'christyn'];
@@ -595,7 +596,7 @@ export default {
         return json({
           ok: true,
           service: 'k4-cage-unified',
-          workerVersion: env.WORKER_VERSION || '2.0.0',
+          workerVersion: VERSION,
           topology: topologySummary,
           ts: new Date().toISOString(),
         });

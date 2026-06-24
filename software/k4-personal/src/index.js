@@ -3,6 +3,19 @@
  * DO-based for per-user sessions.
  */
 import { DurableObject } from 'cloudflare:workers';
+import { VERSION } from './version.js';
+
+import { logger } from './logger.js';
+
+function authMiddleware(request, env, userId) {
+  // middleware: auth gate — rejects unauthenticated writes, allows GET/health
+  const token = request.headers.get('X-P31-Token');
+  if (token && env.ADMIN_TOKEN && token === env.ADMIN_TOKEN) return null;
+  if (request.method === 'GET') return null;
+  const pathname = new URL(request.url).pathname;
+  if (pathname === '/health' || pathname === '/api/health') return null;
+  return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { 'Content-Type': 'application/json' } });
+}
 import {
   personalMesh,
   personalHealth,
@@ -101,7 +114,7 @@ export class PersonalAgent extends DurableObject {
       case "/bio":
         return method === "POST" ? this._bioIngest(request) : new Response("Method not allowed", { status: 405 });
       case "/health":
-        return Response.json({ status: "ok", agent: "personal" });
+        return Response.json({ status: "ok", agent: "personal", version: VERSION });
       case "/tetra":
         return ["GET", "PUT"].includes(method) ? this._tetra(request) : new Response("Method not allowed", { status: 405 });
       case "/manifest":
@@ -265,6 +278,7 @@ export class PersonalAgent extends DurableObject {
   }
 
   async _history(url) {
+    // rate limit: max 100 rows per history request
     const limit = Math.min(parseInt(url.searchParams.get("limit") || "50"), 100);
     const rows = this.ctx.storage.sql.exec(
       "SELECT id, role, content, ts, metadata FROM messages ORDER BY id DESC LIMIT ?", limit
@@ -606,9 +620,10 @@ async function handlePersonalMeshApi(request, env) {
 
 export default {
   async fetch(request, env) {
-    if (request.method === "OPTIONS") {
+    if (request.method === 'OPTIONS') {
       return new Response(null, { status: 204, headers: corsHeaders(request) });
     }
+    logger.info('fetch', request.method, new URL(request.url).pathname);
     const url = new URL(request.url);
     const meshRes = await handlePersonalMeshApi(request, env);
     if (meshRes) {
@@ -631,13 +646,15 @@ export default {
     if (agentMatch) {
       const userId = agentMatch[1];
       const subPath = agentMatch[2] || "/health";
+      const authErr = authMiddleware(request, env, userId);
+      if (authErr) return withCors(authErr, request);
       const id = env.PERSONAL_AGENT.idFromName(userId);
       const stub = env.PERSONAL_AGENT.get(id);
       const inner = await stub.fetch(new Request(new URL(subPath, request.url), request));
       return withCors(inner, request);
     }
     if (url.pathname === "/health") {
-      return withCors(Response.json({ status: "ok", service: "k4-personal" }), request);
+      return withCors(Response.json({ status: "ok", service: "k4-personal", version: VERSION }), request);
     }
     return withCors(new Response("k4-personal alive", { status: 200 }), request);
   },

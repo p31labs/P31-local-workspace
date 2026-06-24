@@ -1,5 +1,9 @@
 # P31 Cloudflare Workers
 
+<!-- pmm-badge -->
+![PMM Maturity](../../.p31/badges/workers.svg)
+<!-- /pmm-badge -->
+
 Edge computing infrastructure for the P31 Andromeda ecosystem.
 
 ## Orchestrator (`p31-orchestrator.trimtab-signal.workers.dev`)

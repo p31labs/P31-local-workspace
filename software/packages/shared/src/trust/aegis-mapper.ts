@@ -8,10 +8,10 @@
  * framed as "community warmth" and "peer anchoring" per CWP-04 specifications.
  */
 
-import { 
-  computeEigenTrust, 
-  interactionsToTrustMatrix, 
-  TrustMatrix, 
+import {
+  computeEigenTrust,
+  interactionsToTrustMatrix,
+  LocalTrustMatrix as TrustMatrix,
   TrustVector,
   EigenTrustOptions,
   TRUST_THRESHOLDS
