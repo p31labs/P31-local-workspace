@@ -1,10 +1,10 @@
 # P31 Maturity Model — Repository Grading Report
 
-**Generated:** 2026-06-22T18:11:40
+**Generated:** 2026-06-25T06:33:56
 **Schema:** PMM_SCHEMA=1.1
-**Total artifacts graded:** 84
+**Total artifacts graded:** 85
 **Overrides applied:** 6
-**Scan duration:** 23.15s
+**Scan duration:** 17.76s
 
 ## Summary
 
@@ -14,7 +14,7 @@
 | 🌸 **BLOOM** | 1 |
 | 🌳 **SAPLING** | 3 |
 | 🌿 **SPROUT** | 38 |
-| 🌱 **SEED** | 42 |
+| 🌱 **SEED** | 43 |
 
 ## Full Artifact Index
 
@@ -35,6 +35,7 @@
 | 🌱 SEED | `software/cloudflare-worker` | 5 | 3 | 4 | 4 | 3 | 1 | 1 | STYLE |  |
 | 🌱 SEED | `software/cloudflare-worker/bouncer` | 3 | 2 | 3 | 4 | 3 | 1 | 1 | STYLE |  |
 | 🌱 SEED | `software/cloudflare-worker/command-center` | 5 | 4 | 5 | 4 | 3 | 1 | 1 | STYLE |  |
+| 🌱 SEED | `software/cloudflare-worker/p31-gumroad-webhook` | 4 | 1 | 4 | 4 | 3 | 1 | 1 | TEST, STYLE |  |
 | 🌱 SEED | `software/cloudflare-worker/social-drop-automation` | 5 | 2 | 4 | 4 | 3 | 1 | 1 | STYLE |  |
 | 🌱 SEED | `software/donate-api` | 4 | 4 | 3 | 4 | 3 | 1 | 1 | STYLE |  |
 | 🌱 SEED | `software/extensions/p31-cockpit-panel` | 3 | 2 | 4 | 4 | 3 | 1 | 1 | STYLE |  |
@@ -120,10 +121,11 @@
 | `p31labs/social-content-engine` | 326 lines of real logic | Minimal tests (0 assertions) | Detailed docs (52 lines, examples) | CI/CD pipeline | Lockfile present (lockfile (pnpm-lock.yaml)) | No CSS pipeline evidence |
 | `packages` | Minimal implementation | No test files | Detailed docs (52 lines, examples) | CI/CD pipeline | Lockfile present (lockfile (pnpm-lock.yaml)) | Build present, no CSS pipeline |
 | `packages/sovereign-core/pkg` | 615 lines, mature codebase | No test files | Detailed docs (52 lines, examples) | CI/CD pipeline | Lockfile present (lockfile (pnpm-lock.yaml)) | No CSS pipeline evidence |
-| `scripts` | 8172 lines, mature codebase | No test files | Detailed docs (52 lines, examples) | CI/CD pipeline | Lockfile present (lockfile (pnpm-lock.yaml)) | Build present, no CSS pipeline |
-| `software/cloudflare-worker` | 1602 lines, mature codebase | Basic tests (17 assertions) | Detailed docs (79 lines, examples) | CI/CD with wrangler deploy | Lockfile + lint config (lockfile (pnpm-lock.yaml), eslint.config.mjs) | No CSS pipeline evidence |
+| `scripts` | 8722 lines, mature codebase | No test files | Detailed docs (52 lines, examples) | CI/CD pipeline | Lockfile present (lockfile (pnpm-lock.yaml)) | Build present, no CSS pipeline |
+| `software/cloudflare-worker` | 2012 lines, mature codebase | Basic tests (17 assertions) | Detailed docs (79 lines, examples) | CI/CD with wrangler deploy | Lockfile + lint config (lockfile (pnpm-lock.yaml), eslint.config.mjs) | No CSS pipeline evidence |
 | `software/cloudflare-worker/bouncer` | 77 lines of real logic | Minimal tests (0 assertions) | README with usage (33 lines) | CI/CD with wrangler deploy | Lockfile + lint config (lockfile (pnpm-lock.yaml), eslint.config.mjs) | No CSS pipeline evidence |
 | `software/cloudflare-worker/command-center` | 7897 lines, mature codebase | Comprehensive tests (241 assertions) + vitest thresholds | Comprehensive docs (119 lines, examples, TOC) | CI/CD with wrangler deploy | Lockfile + lint config (lockfile (pnpm-lock.yaml), eslint.config.mjs) | No CSS pipeline evidence |
+| `software/cloudflare-worker/p31-gumroad-webhook` | 175 lines of real logic | No test files | Detailed docs (79 lines, examples) | CI/CD with wrangler deploy | Lockfile + lint config (lockfile (pnpm-lock.yaml), eslint.config.mjs) | No CSS pipeline evidence |
 | `software/cloudflare-worker/social-drop-automation` | 766 lines, mature codebase | Minimal tests (0 assertions) | Detailed docs (79 lines, examples) | CI/CD with wrangler deploy | Lockfile + lint config (lockfile (pnpm-lock.yaml), eslint.config.mjs) | No CSS pipeline evidence |
 | `software/donate-api` | 282 lines of real logic | Comprehensive tests (89 assertions) + vitest thresholds | README with usage (25 lines) | CI/CD with wrangler deploy | Lockfile + lint config (lockfile (pnpm-lock.yaml), eslint.config.mjs) | No CSS pipeline evidence |
 | `software/extensions/p31-cockpit-panel` | 75 lines of real logic | Minimal tests (0 assertions) | Detailed docs (56 lines, examples) | CI/CD pipeline | Lockfile + lint config (lockfile (pnpm-lock.yaml), eslint.config.mjs) | No CSS pipeline evidence |
@@ -139,7 +141,7 @@
 | `software/p31-agent-hub` | 603 lines, mature codebase | Minimal tests (0 assertions) | README with usage (30 lines) | CI/CD with wrangler deploy | Lockfile + lint config (lockfile (pnpm-lock.yaml), eslint.config.mjs) | No CSS pipeline evidence |
 | `software/p31-cortex` | 2704 lines, mature codebase | Basic tests (6 assertions) | README exists (18 lines) but no usage examples | CI/CD with wrangler deploy | Lockfile + lint config (lockfile (pnpm-lock.yaml), eslint.config.mjs) | No CSS pipeline evidence |
 | `software/p31-dashboard` | 68 lines of real logic | No test files | Detailed docs (56 lines, examples) | CI/CD pipeline | Lockfile + lint config (lockfile (pnpm-lock.yaml), eslint.config.mjs) | CSS deps present but no entry file |
-| `software/p31-forge` | 2286 lines, mature codebase | Basic tests (7 assertions) | Detailed docs (516 lines, examples) | CI/CD with wrangler deploy | Lockfile + lint config (lockfile (pnpm-lock.yaml), eslint.config.mjs) | No CSS pipeline evidence |
+| `software/p31-forge` | 2895 lines, mature codebase | Basic tests (7 assertions) | Detailed docs (516 lines, examples) | CI/CD with wrangler deploy | Lockfile + lint config (lockfile (pnpm-lock.yaml), eslint.config.mjs) | No CSS pipeline evidence |
 | `software/p31-google-bridge` | 656 lines, mature codebase | Minimal tests (0 assertions) | Detailed docs (86 lines, examples) | CI/CD with wrangler deploy | Lockfile + lint config (lockfile (pnpm-lock.yaml), eslint.config.mjs) | No CSS pipeline evidence |
 | `software/p31ca/workers/fhir` | 594 lines, mature codebase | Minimal tests (0 assertions) | README with usage (38 lines) | CI/CD with wrangler deploy | Lockfile + lint config (lockfile (pnpm-lock.yaml), eslint.config.mjs) | No CSS pipeline evidence |
 | `software/p31ca/workers/sync` | 97 lines of real logic | Minimal tests (0 assertions) | README with usage (38 lines) | CI/CD with wrangler deploy | Lockfile + lint config (lockfile (pnpm-lock.yaml), eslint.config.mjs) | No CSS pipeline evidence |
@@ -157,7 +159,7 @@
 | `interfaces` | 140 lines of real logic | Basic tests (9 assertions) | Detailed docs (52 lines, examples) | CI/CD pipeline | Lockfile present (lockfile (pnpm-lock.yaml)) | Build present, no CSS pipeline |
 | `p31-surrogate-backend` | 2193 lines, mature codebase | Minimal tests (0 assertions) | Detailed docs (52 lines, examples) | CI/CD pipeline | Lockfile present (lockfile (pnpm-lock.yaml)) | Build present, no CSS pipeline |
 | `p31labs` | Minimal implementation | Basic tests (9 assertions) | Detailed docs (52 lines, examples) | CI/CD pipeline | Lockfile present (lockfile (pnpm-lock.yaml)) | Build present, no CSS pipeline |
-| `phos` | 63525 lines, mature codebase | Comprehensive tests (813 assertions) + vitest thresholds | README with usage (37 lines) | CI/CD with wrangler deploy | Lockfile present (lockfile (pnpm-lock.yaml)) | CSS deps present but no entry file |
+| `phos` | 63657 lines, mature codebase | Comprehensive tests (813 assertions) + vitest thresholds | README with usage (37 lines) | CI/CD with wrangler deploy | Lockfile present (lockfile (pnpm-lock.yaml)) | CSS deps present but no entry file |
 | `phosphorus31.org` | Minimal implementation | Basic tests (9 assertions) | Detailed docs (52 lines, examples) | CI/CD pipeline | Lockfile present (lockfile (pnpm-lock.yaml)) | Build present, no CSS pipeline |
 | `phosphorus31.org/planetary-planet` | 508 lines, mature codebase | Basic tests (9 assertions) | README with usage (45 lines) | CI/CD with wrangler deploy | Lockfile present (lockfile (pnpm-lock.yaml)) | CSS deps present but no entry file |
 | `software` | 8471 lines, mature codebase | Core paths tested (24 assertions) | Detailed docs (56 lines, examples) | CI/CD pipeline | Lockfile + lint config (lockfile (pnpm-lock.yaml), eslint.config.mjs) | Build present, no CSS pipeline |
@@ -165,12 +167,12 @@
 | `software/docs` | 50 lines of real logic | Minimal tests (0 assertions) | Detailed docs (56 lines, examples) | CI/CD pipeline | Lockfile + lint config (lockfile (pnpm-lock.yaml), eslint.config.mjs) | Build present, no CSS pipeline |
 | `software/frontend` | 9943 lines, mature codebase | Core paths tested (74 assertions) | Detailed docs (56 lines, examples) | CI/CD with Docker deploy | Lockfile + lint config (lockfile (pnpm-lock.yaml), eslint.config.mjs) | Build present, no CSS pipeline |
 | `software/p31-hearing-ops` | 1318 lines, mature codebase | Tests with coverage tracking (31 assertions) | Detailed docs (58 lines, examples) | CI/CD with wrangler deploy | Lockfile + lint config (lockfile (pnpm-lock.yaml), eslint.config.mjs) | Build present, no CSS pipeline |
-| `software/p31ca` | 46741 lines, mature codebase | Comprehensive tests (886 assertions) + vitest thresholds | README with usage (38 lines) | CI/CD with wrangler deploy | Lockfile + lint config (lockfile (pnpm-lock.yaml), eslint.config.mjs) | CSS deps present but no entry file |
+| `software/p31ca` | 46780 lines, mature codebase | Comprehensive tests (886 assertions) + vitest thresholds | README with usage (38 lines) | CI/CD with wrangler deploy | Lockfile + lint config (lockfile (pnpm-lock.yaml), eslint.config.mjs) | CSS deps present but no entry file |
 | `software/p31ca/workers/glass-box-ws` | 317 lines of real logic | Minimal tests (0 assertions) | README with usage (38 lines) | CI/CD with wrangler deploy | Lockfile + lint config (lockfile (pnpm-lock.yaml), eslint.config.mjs) | Build present, no CSS pipeline |
-| `software/packages/brain-dump-orchestrator` | 2324 lines, mature codebase | Core paths tested (85 assertions) | Comprehensive docs (192 lines, examples, TOC) | CI/CD pipeline | Lockfile + lint config (lockfile (pnpm-lock.yaml), eslint.config.mjs) | Build present, no CSS pipeline |
+| `software/packages/brain-dump-orchestrator` | 2325 lines, mature codebase | Core paths tested (85 assertions) | Comprehensive docs (192 lines, examples, TOC) | CI/CD pipeline | Lockfile + lint config (lockfile (pnpm-lock.yaml), eslint.config.mjs) | Build present, no CSS pipeline |
 | `software/packages/game-engine` | 1115 lines, mature codebase | Comprehensive tests (341 assertions) + vitest thresholds | Comprehensive docs (198 lines, examples, TOC) | CI/CD pipeline | Lockfile + lint config (lockfile (pnpm-lock.yaml), eslint.config.mjs) | Build present, no CSS pipeline |
 | `software/packages/harmonic-linter` | 156 lines of real logic | Core paths tested (68 assertions) | Comprehensive docs (177 lines, examples, TOC) | CI/CD pipeline | Lockfile + lint config (lockfile (pnpm-lock.yaml), eslint.config.mjs) | Build present, no CSS pipeline |
-| `software/packages/jitterbug-api` | 812 lines, mature codebase | Core paths tested (55 assertions) | Detailed docs (123 lines, examples) | CI/CD with wrangler deploy | Lockfile + lint config (lockfile (pnpm-lock.yaml), eslint.config.mjs) | Build present, no CSS pipeline |
+| `software/packages/jitterbug-api` | 840 lines, mature codebase | Core paths tested (55 assertions) | Detailed docs (123 lines, examples) | CI/CD with wrangler deploy | Lockfile + lint config (lockfile (pnpm-lock.yaml), eslint.config.mjs) | Build present, no CSS pipeline |
 | `software/packages/love-ledger` | 543 lines, mature codebase | Core paths tested (396 assertions) | README with usage (31 lines) | CI/CD pipeline | Lockfile + lint config (lockfile (pnpm-lock.yaml), eslint.config.mjs) | Build present, no CSS pipeline |
 | `software/packages/node-zero` | 5558 lines, mature codebase | Core paths tested (524 assertions) | Detailed docs (114 lines, examples) | CI/CD pipeline | Lockfile + lint config (lockfile (pnpm-lock.yaml), eslint.config.mjs) | Build present, no CSS pipeline |
 | `software/packages/node-zero/pwa` | 1363 lines, mature codebase | Minimal tests (0 assertions) | Detailed docs (69 lines, examples) | CI/CD with wrangler deploy | Lockfile + lint config (lockfile (pnpm-lock.yaml), eslint.config.mjs) | Build present, no CSS pipeline |

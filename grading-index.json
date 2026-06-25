@@ -1,12 +1,12 @@
 {
   "meta": {
     "schema": "PMM_SCHEMA=1.1",
-    "generated": "2026-06-22T18:11:40",
+    "generated": "2026-06-25T06:33:56",
     "repo_root": "/home/p31/P31-local-workspace",
-    "git_sha": "aa242515fcc053baa2f88066d6dc20890a5e328c",
-    "total_artifacts": 84,
+    "git_sha": "528deaa009e10d6d6ca8b729c9b2b9d14bda371e",
+    "total_artifacts": 85,
     "overrides_applied": 6,
-    "scan_duration_seconds": 23.15,
+    "scan_duration_seconds": 17.76,
     "baseline_overrides_parsed": 11,
     "json_overrides_parsed": 0
   },
@@ -471,14 +471,14 @@
       "auto_overall": 1,
       "override": null,
       "evidence": {
-        "CODE": "8172 lines, mature codebase",
+        "CODE": "8722 lines, mature codebase",
         "TEST": "No test files",
         "DOCS": "Detailed docs (52 lines, examples)",
         "OPS": "CI/CD pipeline",
         "SEC": "Lockfile present (lockfile (pnpm-lock.yaml))",
         "STYLE": "Build present, no CSS pipeline"
       },
-      "source_files": 40,
+      "source_files": 41,
       "test_files": 0
     },
     {
@@ -510,14 +510,14 @@
       "auto_overall": 1,
       "override": null,
       "evidence": {
-        "CODE": "1602 lines, mature codebase",
+        "CODE": "2012 lines, mature codebase",
         "TEST": "Basic tests (17 assertions)",
         "DOCS": "Detailed docs (79 lines, examples)",
         "OPS": "CI/CD with wrangler deploy",
         "SEC": "Lockfile + lint config (lockfile (pnpm-lock.yaml), eslint.config.mjs)",
         "STYLE": "No CSS pipeline evidence"
       },
-      "source_files": 15,
+      "source_files": 17,
       "test_files": 1
     },
     {
@@ -597,6 +597,46 @@
       },
       "source_files": 14,
       "test_files": 6
+    },
+    {
+      "path": "software/cloudflare-worker/p31-gumroad-webhook",
+      "type": "directory",
+      "name": "p31-gumroad-webhook",
+      "stage": "SEED",
+      "stage_icon": "\ud83c\udf31",
+      "scores": {
+        "CODE": 4,
+        "TEST": 1,
+        "DOCS": 4,
+        "OPS": 4,
+        "SEC": 3,
+        "STYLE": 1
+      },
+      "overall": 1,
+      "weakest": [
+        "TEST",
+        "STYLE"
+      ],
+      "auto_scores": {
+        "CODE": 4,
+        "TEST": 1,
+        "DOCS": 4,
+        "OPS": 4,
+        "SEC": 3,
+        "STYLE": 1
+      },
+      "auto_overall": 1,
+      "override": null,
+      "evidence": {
+        "CODE": "175 lines of real logic",
+        "TEST": "No test files",
+        "DOCS": "Detailed docs (79 lines, examples)",
+        "OPS": "CI/CD with wrangler deploy",
+        "SEC": "Lockfile + lint config (lockfile (pnpm-lock.yaml), eslint.config.mjs)",
+        "STYLE": "No CSS pipeline evidence"
+      },
+      "source_files": 1,
+      "test_files": 0
     },
     {
       "path": "software/cloudflare-worker/social-drop-automation",
@@ -1212,14 +1252,14 @@
       "auto_overall": 1,
       "override": null,
       "evidence": {
-        "CODE": "2286 lines, mature codebase",
+        "CODE": "2895 lines, mature codebase",
         "TEST": "Basic tests (7 assertions)",
         "DOCS": "Detailed docs (516 lines, examples)",
         "OPS": "CI/CD with wrangler deploy",
         "SEC": "Lockfile + lint config (lockfile (pnpm-lock.yaml), eslint.config.mjs)",
         "STYLE": "No CSS pipeline evidence"
       },
-      "source_files": 17,
+      "source_files": 21,
       "test_files": 1
     },
     {
@@ -1926,14 +1966,14 @@
       "auto_overall": 2,
       "override": null,
       "evidence": {
-        "CODE": "63525 lines, mature codebase",
+        "CODE": "63657 lines, mature codebase",
         "TEST": "Comprehensive tests (813 assertions) + vitest thresholds",
         "DOCS": "README with usage (37 lines)",
         "OPS": "CI/CD with wrangler deploy",
         "SEC": "Lockfile present (lockfile (pnpm-lock.yaml))",
         "STYLE": "CSS deps present but no entry file"
       },
-      "source_files": 102,
+      "source_files": 103,
       "test_files": 42
     },
     {
@@ -2242,7 +2282,7 @@
       "auto_overall": 2,
       "override": null,
       "evidence": {
-        "CODE": "46741 lines, mature codebase",
+        "CODE": "46780 lines, mature codebase",
         "TEST": "Comprehensive tests (886 assertions) + vitest thresholds",
         "DOCS": "README with usage (38 lines)",
         "OPS": "CI/CD with wrangler deploy",
@@ -2322,7 +2362,7 @@
       "auto_overall": 2,
       "override": "operator baseline",
       "evidence": {
-        "CODE": "2324 lines, mature codebase",
+        "CODE": "2325 lines, mature codebase",
         "TEST": "Core paths tested (85 assertions)",
         "DOCS": "Comprehensive docs (192 lines, examples, TOC)",
         "OPS": "CI/CD pipeline",
@@ -2439,14 +2479,14 @@
       "auto_overall": 2,
       "override": "operator baseline",
       "evidence": {
-        "CODE": "812 lines, mature codebase",
+        "CODE": "840 lines, mature codebase",
         "TEST": "Core paths tested (55 assertions)",
         "DOCS": "Detailed docs (123 lines, examples)",
         "OPS": "CI/CD with wrangler deploy",
         "SEC": "Lockfile + lint config (lockfile (pnpm-lock.yaml), eslint.config.mjs)",
         "STYLE": "Build present, no CSS pipeline"
       },
-      "source_files": 7,
+      "source_files": 8,
       "test_files": 5
     },
     {
