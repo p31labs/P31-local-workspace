@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0a0e17">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="PHOS">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230a0e17'/><text x='50' y='68' text-anchor='middle' font-size='50'>💚</text></svg>">
+<title>PHOS — Spoon Engine</title>
+<style>
+  :root {
+    --bg: #0a0e17;
+    --surface: #111624;
+    --border: rgba(57, 255, 20, 0.15);
+    --green: #39ff14;
+    --teal: #20d0b0;
+    --amber: #ffb347;
+    --orange: #ff7733;
+    --red: #ff3355;
+    --blue: #88aaff;
+    --text: #e0e4ec;
+    --muted: #607080;
+    --font: system-ui, -apple-system, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    height: 100dvh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: background 0.8s ease, color 0.8s ease;
+  }
+
+  header {
+    padding: 14px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    z-index: 10;
+    flex-shrink: 0;
+    transition: background 0.8s ease, border-color 0.8s ease;
+  }
+  header .left { display: flex; align-items: center; gap: 10px; }
+  header h1 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--green);
+    transition: color 0.8s ease;
+  }
+  .passport-badge {
+    font-size: 0.65rem;
+    padding: 2px 8px;
+    border-radius: 10px;
+    background: rgba(57, 255, 20, 0.1);
+    border: 1px solid rgba(57, 255, 20, 0.3);
+    color: var(--green);
+    white-space: nowrap;
+    transition: all 0.8s ease;
+  }
+  .status { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--muted); }
+  .status-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--muted); transition: background 0.3s;
+  }
+  .status-dot.online { background: var(--green); box-shadow: 0 0 8px var(--green); }
+  .status-dot.offline { background: var(--red); }
+  .status-dot.queue { background: var(--amber); }
+
+  #spoon-display {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.8s ease;
+  }
+  #spoon-display::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, rgba(57,255,20,0.03) 0%, transparent 70%);
+    transition: opacity 0.8s ease;
+    pointer-events: none;
+  }
+
+  .spoon-icon {
+    font-size: 3.5rem;
+    transition: all 0.5s ease;
+    filter: grayscale(0.3);
+  }
+  .spoon-count {
+    font-size: 4rem;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--green);
+    transition: color 0.8s ease;
+  }
+  .spoon-label {
+    font-size: 1.2rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: var(--text);
+    transition: color 0.8s ease, opacity 0.5s ease;
+  }
+  .spoon-description {
+    font-size: 0.85rem;
+    color: var(--muted);
+    text-align: center;
+    max-width: 260px;
+    line-height: 1.5;
+    transition: color 0.8s ease;
+  }
+
+  #meltdown-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: #0a0000;
+    z-index: 50;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    padding: 30px;
+    animation: meltPulse 3s ease-in-out infinite;
+  }
+  @keyframes meltPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.85; }
+  }
+  #meltdown-overlay.visible { display: flex; }
+
+  .melt-icon { font-size: 4rem; }
+  .melt-title {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--red);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    transition: color 0.5s ease;
+  }
+  .melt-desc {
+    font-size: 0.9rem;
+    color: #cc8899;
+    text-align: center;
+    max-width: 300px;
+    line-height: 1.6;
+  }
+  .melt-button {
+    padding: 16px 40px;
+    border-radius: 30px;
+    border: 2px solid var(--red);
+    background: rgba(255, 51, 85, 0.15);
+    color: var(--red);
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: all 0.3s ease;
+  }
+  .melt-button:active {
+    background: rgba(255, 51, 85, 0.3);
+    transform: scale(0.95);
+  }
+  .melt-breathe {
+    font-size: 0.8rem;
+    color: #887788;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    animation: breatheText 6s ease-in-out infinite;
+  }
+  @keyframes breatheText {
+    0%, 100% { opacity: 0.6; letter-spacing: 4px; }
+    50% { opacity: 1; letter-spacing: 8px; }
+  }
+
+  /* ── Controls ── */
+  .controls {
+    padding: 14px 18px 24px;
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+    flex-shrink: 0;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+    transition: background 0.8s ease, border-color 0.8s ease;
+  }
+  .spoon-btn {
+    padding: 8px 16px;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    background: rgba(57,255,20,0.05);
+    color: var(--muted);
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+    min-width: 48px;
+    text-align: center;
+  }
+  .spoon-btn:active { transform: scale(0.88); }
+  .spoon-btn.active { border-color: var(--green); color: var(--green); background: rgba(57,255,20,0.12); }
+
+  .spoon-btn[data-level="5"] { border-color: rgba(57,255,20,0.3); }
+  .spoon-btn[data-level="5"].active { border-color: #39ff14; color: #39ff14; background: rgba(57,255,20,0.12); }
+  .spoon-btn[data-level="4"] { border-color: rgba(32,208,176,0.3); color: var(--teal); }
+  .spoon-btn[data-level="4"].active { border-color: var(--teal); color: var(--teal); background: rgba(32,208,176,0.12); }
+  .spoon-btn[data-level="3"] { border-color: rgba(255,179,71,0.3); color: var(--amber); }
+  .spoon-btn[data-level="3"].active { border-color: var(--amber); color: var(--amber); background: rgba(255,179,71,0.12); }
+  .spoon-btn[data-level="2"] { border-color: rgba(255,119,51,0.3); color: var(--orange); }
+  .spoon-btn[data-level="2"].active { border-color: var(--orange); color: var(--orange); background: rgba(255,119,51,0.12); }
+  .spoon-btn[data-level="1"] { border-color: rgba(255,51,85,0.3); color: var(--red); }
+  .spoon-btn[data-level="1"].active { border-color: var(--red); color: var(--red); background: rgba(255,51,85,0.12); }
+
+  /* ── Fork in the Road (Level 1 Crisis UI) ── */
+  .standard-controls { display: flex; gap: 10px; width: 100%; justify-content: center; }
+  .crisis-fork {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+    align-items: center;
+  }
+  [data-spoons="1"] .standard-controls { display: none; }
+  [data-spoons="1"] .crisis-fork { display: flex; }
+
+  .fork-text {
+    font-size: 0.85rem;
+    color: var(--muted);
+    text-align: center;
+    padding-bottom: 2px;
+    line-height: 1.4;
+  }
+  .fork-btn-group {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .fork-btn {
+    flex: 1 1 0;
+    min-width: 90px;
+    padding: 14px 8px;
+    border-radius: 16px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+    text-align: center;
+  }
+  .fork-btn:active { transform: scale(0.93); }
+  .fork-recover { background: rgba(255, 179, 71, 0.1); color: var(--amber); border-color: var(--amber); }
+  .fork-meltdown { background: rgba(255, 51, 85, 0.1); color: var(--red); border-color: var(--red); }
+  .fork-shutdown { background: rgba(100, 150, 255, 0.1); color: var(--blue); border-color: var(--blue); }
+
+  /* ── Queue ── */
+  #queue-indicator {
+    position: fixed;
+    top: 50px;
+    right: 10px;
+    background: var(--surface);
+    border: 1px solid var(--amber);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    color: var(--amber);
+    z-index: 15;
+    display: none;
+    gap: 4px;
+    align-items: center;
+  }
+  #queue-indicator.visible { display: flex; }
+
+  /* ── History ── */
+  #history {
+    flex-shrink: 0;
+    max-height: 160px;
+    overflow-y: auto;
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+    transition: all 0.8s ease;
+  }
+  #history::-webkit-scrollbar { width: 3px; }
+  #history::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding: 10px 18px 6px;
+  }
+  .history-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .history-framing {
+    font-size: 0.7rem;
+    color: var(--muted);
+    margin-top: 2px;
+    font-style: italic;
+  }
+  .clear-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    border-radius: 12px;
+    padding: 4px 10px;
+    font-size: 0.65rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .clear-btn.warn {
+    color: var(--red);
+    border-color: var(--red);
+    background: rgba(255, 51, 85, 0.08);
+  }
+
+  .history-entry {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 5px 18px;
+    font-size: 0.7rem;
+    color: var(--muted);
+    border-bottom: 1px solid rgba(255,255,255,0.02);
+  }
+  .h-time { color: #4a5a6a; min-width: 48px; font-variant-numeric: tabular-nums; }
+  .h-icon { min-width: 20px; text-align: center; }
+  .h-label { flex: 1; }
+  .h-spoons {
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    min-width: 20px;
+    text-align: right;
+  }
+  .history-entry[data-level="5"] .h-spoons { color: #39ff14; }
+  .history-entry[data-level="4"] .h-spoons { color: var(--teal); }
+  .history-entry[data-level="3"] .h-spoons { color: var(--amber); }
+  .history-entry[data-level="2"] .h-spoons { color: var(--orange); }
+  .history-entry[data-level="1"] .h-spoons { color: var(--red); }
+  .history-entry[data-level="0"] .h-spoons { color: var(--red); }
+  .history-entry.meltdown { background: rgba(255,51,85,0.03); }
+  .history-entry.shutdown { background: rgba(100,150,255,0.03); }
+  .h-type-badge {
+    font-size: 0.55rem;
+    padding: 1px 5px;
+    border-radius: 6px;
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+  }
+  .h-type-badge.meltdown { background: rgba(255,51,85,0.15); color: var(--red); }
+  .h-type-badge.shutdown { background: rgba(100,150,255,0.15); color: var(--blue); }
+
+  .history-empty {
+    text-align: center;
+    padding: 24px 18px;
+    color: var(--muted);
+    font-size: 0.75rem;
+    line-height: 1.6;
+  }
+
+  .toast {
+    position: fixed;
+    bottom: 90px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 8px 16px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 20;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+  .toast.show { opacity: 1; }
+
+  #passport-link {
+    text-align: center;
+    padding: 2px 16px 4px;
+    font-size: 0.7rem;
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+  #passport-link a { color: var(--green); }
+
+  /* ── Spoon State Adaptivity ── */
+  [data-spoons="5"] .spoon-count { color: #39ff14; }
+  [data-spoons="5"] .spoon-icon { filter: grayscale(0) brightness(1.2); }
+  [data-spoons="5"] #spoon-display::before { opacity: 1; }
+  [data-spoons="5"] .spoon-label { color: #39ff14; }
+
+  [data-spoons="4"] .spoon-count { color: #66ff66; }
+  [data-spoons="4"] .spoon-icon { filter: grayscale(0.1); }
+
+  [data-spoons="3"] .spoon-count { color: #aaff33; }
+  [data-spoons="3"] .spoon-icon { filter: grayscale(0.2); }
+  [data-spoons="3"] #spoon-display::before { background: radial-gradient(ellipse at center, rgba(170,255,51,0.02) 0%, transparent 70%); }
+
+  [data-spoons="2"] .spoon-count { color: var(--amber); }
+  [data-spoons="2"] .spoon-icon { filter: grayscale(0.4); }
+  [data-spoons="2"] #spoon-display::before { background: radial-gradient(ellipse at center, rgba(255,179,71,0.02) 0%, transparent 70%); }
+  [data-spoons="2"] header { border-bottom-color: rgba(255,179,71,0.2); }
+  [data-spoons="2"] .controls { border-top-color: rgba(255,179,71,0.2); }
+  [data-spoons="2"] .spoon-btn.active { border-color: var(--amber); color: var(--amber); background: rgba(255,179,71,0.12); }
+
+  [data-spoons="1"] { background: #080410; }
+  [data-spoons="1"] .spoon-count { color: var(--red); }
+  [data-spoons="1"] .spoon-icon { filter: grayscale(0.6) brightness(0.7); }
+  [data-spoons="1"] #spoon-display::before { background: radial-gradient(ellipse at center, rgba(255,51,85,0.02) 0%, transparent 70%); }
+  [data-spoons="1"] header { border-bottom-color: rgba(255,51,85,0.15); background: #0d0610; }
+  [data-spoons="1"] .controls { border-top-color: rgba(255,51,85,0.15); background: #0d0610; }
+  [data-spoons="1"] h1 { color: var(--red); }
+  [data-spoons="1"] .spoon-label { color: #cc8899; }
+  [data-spoons="1"] .spoon-btn.active { border-color: var(--red); color: var(--red); background: rgba(255,51,85,0.12); }
+  [data-spoons="1"] .status-dot { background: var(--red); }
+  [data-spoons="1"] .history-header { border-bottom-color: rgba(255,51,85,0.1); }
+
+  /* ── Recovery Modal ── */
+  #recovery-prompt {
+    display: none; position: fixed; inset: 0; background: rgba(10, 14, 23, 0.96);
+    z-index: 65; flex-direction: column; align-items: center; justify-content: center;
+    padding: 30px 20px; backdrop-filter: blur(12px);
+  }
+  #recovery-prompt.visible { display: flex; }
+
+  /* ── Pattern Insight Card ── */
+  .insight-card {
+    background: rgba(57, 255, 20, 0.04);
+    border: 1px solid rgba(57, 255, 20, 0.12);
+    border-radius: 12px;
+    padding: 10px 16px;
+    margin: 8px 18px;
+    font-size: 0.75rem;
+    color: var(--text);
+    line-height: 1.5;
+  }
+  .insight-title {
+    font-size: 0.65rem; color: var(--green); text-transform: uppercase;
+    letter-spacing: 1px; font-weight: 700; margin-bottom: 3px;
+  }
+  .h-strategy {
+    width: 100%; font-size: 0.6rem; color: var(--teal);
+    padding: 1px 0 0 58px; margin-top: -2px;
+  }
+  /* ── Family Mesh ── */
+  #family-mesh {
+    display: none;
+    justify-content: center;
+    gap: 14px;
+    padding: 6px 18px;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+  }
+  .mesh-node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    min-width: 52px;
+  }
+  .mesh-dot {
+    width: 24px; height: 24px; border-radius: 50%;
+    background: var(--muted);
+    transition: all 0.5s ease;
+  }
+  .mesh-dot.online { box-shadow: 0 0 10px currentColor; }
+  .mesh-name { font-size: 0.6rem; color: var(--muted); font-weight: 600; letter-spacing: 0.3px; }
+  .mesh-spoons { font-size: 0.75rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .mesh-node.offline { opacity: 0.35; }
+  .mesh-node { transition: opacity 0.5s ease; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="left">
+    <h1>PHOS</h1>
+    <span class="passport-badge" id="passportBadge" style="display:none">📋 Passport</span>
+  </div>
+  <div class="status">
+    <div class="status-dot" id="statusDot"></div>
+    <span id="statusText">Offline</span>
+  </div>
+</header>
+
+<div id="family-mesh" style="display:none"></div>
+
+<div id="spoon-display">
+  <div class="spoon-icon" id="spoonIcon">💚</div>
+  <div class="spoon-count" id="spoonCount">3</div>
+  <div class="spoon-label" id="spoonLabel">STEADY</div>
+  <div class="spoon-description" id="spoonDescription">You have enough energy for regular tasks. Pace yourself.</div>
+</div>
+
+<div id="meltdown-overlay">
+  <div class="melt-icon">🔥</div>
+  <div class="melt-title">MELTDOWN PROTOCOL</div>
+  <div class="melt-desc">Externalized overload. Your only job is survival.</div>
+  <div class="melt-breathe">Breathe</div>
+  <button class="melt-button" id="sosButton">🆘 S.O.S.</button>
+</div>
+
+<div id="queue-indicator">
+  <span>📤</span>
+  <span id="queueCount">0</span>
+</div>
+
+<div class="controls" id="controls">
+  <div class="standard-controls">
+    <button class="spoon-btn" data-level="5">⚡</button>
+    <button class="spoon-btn" data-level="4">🌿</button>
+    <button class="spoon-btn active" data-level="3">💚</button>
+    <button class="spoon-btn" data-level="2">💛</button>
+    <button class="spoon-btn" data-level="1">❤️</button>
+  </div>
+  <div class="crisis-fork">
+    <div class="fork-text">You're at 1 spoon. Choose what your body needs right now.</div>
+    <div class="fork-btn-group">
+      <button class="fork-btn fork-recover" id="forkRecover">⬆️ Step Back</button>
+      <button class="fork-btn fork-meltdown" id="forkMeltdown">🔥 Meltdown</button>
+      <button class="fork-btn fork-shutdown" id="forkShutdown">❄️ Shutdown</button>
+    </div>
+  </div>
+</div>
+
+<!-- Recovery Modal -->
+<div id="recovery-prompt">
+  <div class="ant-title">What is helping right now?</div>
+  <div class="ant-desc">Log your recovery strategy (Optional)</div>
+  <div class="ant-grid">
+    <button class="ant-btn" onclick="logRecovery('Quiet / Dark')">🔇 Quiet / Dark</button>
+    <button class="ant-btn" onclick="logRecovery('Deep Pressure')">🫂 Deep Pressure</button>
+    <button class="ant-btn" onclick="logRecovery('Stimming')">✨ Stimming</button>
+    <button class="ant-btn" onclick="logRecovery('Rest')">🛌 Rest</button>
+  </div>
+  <button class="ant-skip" onclick="skipRecovery()">I don't want to answer</button>
+</div>
+
+<div id="history">
+  <div class="history-header">
+    <div>
+      <div class="history-title">Energy Map</div>
+      <div class="history-framing">No good or bad levels. Only patterns.</div>
+    </div>
+    <button class="clear-btn" id="clearHistoryBtn">Clear Data</button>
+  </div>
+  <div class="insight-card">
+    <div class="insight-title">💡 Pattern Recognition</div>
+    <div id="pattern-insight"><em>Not enough data for patterns yet. Keep tracking.</em></div>
+  </div>
+  <div id="historyList"></div>
+</div>
+
+<div id="passport-link"></div>
+<div id="toast" class="toast"></div>
+
+<script>
+// ── Config ───────────────────────────────────────────────────
+const K4_API = 'https://k4-cage.trimtab-signal.workers.dev';
+const PASSPORT_KEY = 'p31-cogpass-v1';
+const DB_NAME = 'phos-store';
+const DB_VERSION = 1;
+const STORE_NAME = 'state';
+const QUEUE_STORE = 'queue';
+const HISTORY_STORE = 'history';
+const PING_INTERVAL = 60000;
+const MAX_HISTORY = 100;
+
+const SPOON_STATES = {
+  5: { label: 'THRIVING', icon: '⚡', desc: 'Full energy. Take on challenges, build, create.', color: '#39ff14' },
+  4: { label: 'STEADY', icon: '🌿', desc: 'Good energy. Regular tasks are manageable.', color: '#66ff66' },
+  3: { label: 'TIRED', icon: '💚', desc: 'Energy is draining. Prioritize what matters.', color: '#aaff33' },
+  2: { label: 'DRAINING', icon: '💛', desc: 'Low energy. Cut non-essentials, rest.', color: '#ffb347' },
+  1: { label: 'CRITICAL', icon: '❤️', desc: 'One spoon left. Survival mode.', color: '#ff3355' },
+  0: { label: 'MELTDOWN', icon: '💔', desc: 'Zero spoons. Only survival matters.', color: '#ff3355' },
+};
+
+let passportId = null;
+let currentSpoons = 3;
+let online = false;
+let spoonHistory = [];
+let db = null;
+
+// ── DOM refs ─────────────────────────────────────────────────
+const spoonCount = document.getElementById('spoonCount');
+const spoonLabel = document.getElementById('spoonLabel');
+const spoonDesc = document.getElementById('spoonDescription');
+const spoonIcon = document.getElementById('spoonIcon');
+const meltdownOverlay = document.getElementById('meltdown-overlay');
+const queueIndicator = document.getElementById('queue-indicator');
+const queueCount = document.getElementById('queueCount');
+const historyList = document.getElementById('historyList');
+const statusDot = document.getElementById('statusDot');
+const statusText = document.getElementById('statusText');
+const toastEl = document.getElementById('toast');
+const controlsEl = document.getElementById('controls');
+const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+const sosButton = document.getElementById('sosButton');
+const meltIcon = document.querySelector('.melt-icon');
+const meltTitle = document.querySelector('.melt-title');
+const meltDesc = document.querySelector('.melt-desc');
+const antecedentPrompt = document.getElementById('antecedent-prompt');
+const recoveryPrompt = document.getElementById('recovery-prompt');
+const forkRecover = document.getElementById('forkRecover');
+const forkMeltdown = document.getElementById('forkMeltdown');
+const forkShutdown = document.getElementById('forkShutdown');
+
+// ── Passport ──────────────────────────────────────────────────
+let currentCrisisType = 'meltdown';
+
+try {
+  const raw = localStorage.getItem(PASSPORT_KEY);
+  if (raw) {
+    const p = JSON.parse(raw);
+    passportId = p.displayName || p.subjectName || null;
+    const badge = document.getElementById('passportBadge');
+    if (badge) { badge.style.display = 'inline'; badge.textContent = '📋 ' + (p.displayName || 'Passport'); }
+    if (p.spoons !== undefined) {
+      currentSpoons = Math.max(0, Math.min(5, p.spoons));
+    }
+  } else {
+    document.getElementById('passport-link').innerHTML =
+      'No Cognitive Passport — <a href="https://p31ca.org/passport" target="_blank">create one</a>';
+  }
+} catch (e) {}
+
+function updatePassportSpoons(level) {
+  try {
+    const raw = localStorage.getItem(PASSPORT_KEY);
+    if (raw) {
+      const p = JSON.parse(raw);
+      p.spoons = level;
+      p.lastUpdated = new Date().toISOString();
+      localStorage.setItem(PASSPORT_KEY, JSON.stringify(p));
+    }
+  } catch (e) {}
+}
+
+// ── IndexedDB ────────────────────────────────────────────────
+function openDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(DB_NAME, DB_VERSION);
+    req.onupgradeneeded = (e) => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains(STORE_NAME)) db.createObjectStore(STORE_NAME, { keyPath: 'key' });
+      if (!db.objectStoreNames.contains(QUEUE_STORE)) db.createObjectStore(QUEUE_STORE, { keyPath: 'id', autoIncrement: true });
+      if (!db.objectStoreNames.contains(HISTORY_STORE)) db.createObjectStore(HISTORY_STORE, { keyPath: 'id', autoIncrement: true });
+    };
+    req.onsuccess = () => { db = req.result; resolve(db); };
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function ensureDB() { if (!db) await openDB(); }
+
+async function dbGet(key) {
+  await ensureDB();
+  return new Promise((resolve) => {
+    const tx = db.transaction(STORE_NAME, 'readonly');
+    const r = tx.objectStore(STORE_NAME).get(key);
+    r.onsuccess = () => resolve(r.result ? r.result.value : null);
+    r.onerror = () => resolve(null);
+  });
+}
+
+async function dbSet(key, value) {
+  await ensureDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE_NAME, 'readwrite');
+    tx.objectStore(STORE_NAME).put({ key, value });
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
+}
+
+async function dbGetHistory() {
+  await ensureDB();
+  return new Promise((resolve) => {
+    const tx = db.transaction(HISTORY_STORE, 'readonly');
+    const r = tx.objectStore(HISTORY_STORE).getAll();
+    r.onsuccess = () => resolve(r.result || []);
+    r.onerror = () => resolve([]);
+  });
+}
+
+async function dbAddHistory(entry) {
+  await ensureDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(HISTORY_STORE, 'readwrite');
+    const r = tx.objectStore(HISTORY_STORE).add(entry);
+    r.onsuccess = () => resolve(r.result);
+    r.onerror = () => reject(r.error);
+  });
+}
+
+async function dbClearHistory() {
+  await ensureDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(HISTORY_STORE, 'readwrite');
+    const r = tx.objectStore(HISTORY_STORE).clear();
+    r.onsuccess = () => resolve();
+    r.onerror = () => reject(r.error);
+  });
+}
+
+async function queueAdd(entry) {
+  await ensureDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(QUEUE_STORE, 'readwrite');
+    tx.objectStore(QUEUE_STORE).add({ ...entry, created: Date.now() });
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
+}
+
+async function queueGetAll() {
+  await ensureDB();
+  return new Promise((resolve) => {
+    const tx = db.transaction(QUEUE_STORE, 'readonly');
+    const r = tx.objectStore(QUEUE_STORE).getAll();
+    r.onsuccess = () => resolve(r.result || []);
+    r.onerror = () => resolve([]);
+  });
+}
+
+async function queueRemove(id) {
+  await ensureDB();
+  return new Promise((resolve) => {
+    const tx = db.transaction(QUEUE_STORE, 'readwrite');
+    tx.objectStore(QUEUE_STORE).delete(id);
+    tx.oncomplete = () => resolve();
+  });
+}
+
+// ── State ────────────────────────────────────────────────────
+async function applySpoons(level, crisisType) {
+  currentSpoons = Math.max(0, Math.min(5, level));
+  document.documentElement.setAttribute('data-spoons', currentSpoons);
+  const state = SPOON_STATES[currentSpoons];
+  spoonCount.textContent = currentSpoons;
+  spoonLabel.textContent = state.label;
+  spoonDesc.textContent = state.desc;
+  spoonIcon.textContent = state.icon;
+
+  controlsEl.querySelectorAll('.spoon-btn').forEach((btn) => {
+    btn.classList.toggle('active', parseInt(btn.dataset.level) === currentSpoons);
+  });
+
+  if (currentSpoons === 0 && crisisType) {
+    currentCrisisType = crisisType;
+    const isMeltdown = crisisType === 'meltdown';
+    meltIcon.textContent = isMeltdown ? '🔥' : '❄️';
+    meltTitle.textContent = isMeltdown ? 'MELTDOWN PROTOCOL' : 'SHUTDOWN PROTOCOL';
+    meltTitle.style.color = isMeltdown ? 'var(--red)' : 'var(--blue)';
+    meltDesc.textContent = isMeltdown
+      ? 'Externalized overload. Your only job is survival.'
+      : 'Internalized freeze. Withdrawal. Rest is recovery.';
+    meltdownOverlay.querySelector('.melt-button').style.borderColor = isMeltdown ? 'var(--red)' : 'var(--blue)';
+    meltdownOverlay.querySelector('.melt-button').style.color = isMeltdown ? 'var(--red)' : 'var(--blue)';
+    meltdownOverlay.querySelector('.melt-button').style.background = isMeltdown
+      ? 'rgba(255,51,85,0.15)' : 'rgba(100,150,255,0.15)';
+  }
+  meltdownOverlay.classList.toggle('visible', currentSpoons === 0);
+
+  updatePassportSpoons(currentSpoons);
+  await dbSet('spoons', currentSpoons);
+  await logToTimeline(currentSpoons, crisisType || 'standard');
+  if (meshNodes.will) { meshNodes.will.spoons = currentSpoons; meshNodes.will.status = 'online'; renderMeshNode('will'); }
+}
+
+async function logToTimeline(level, type) {
+  const entry = { level, type: type || 'standard', timestamp: Date.now() };
+  spoonHistory.unshift(entry);
+  if (spoonHistory.length > MAX_HISTORY) spoonHistory.pop();
+  renderHistory();
+  await dbSet('history', spoonHistory);
+}
+
+function renderHistory() {
+  if (!historyList) return;
+  const sorted = [...spoonHistory].reverse();
+  if (sorted.length === 0) {
+    historyList.innerHTML = '<div class="history-empty">Your energy timeline will appear here.<br>Adjust your spoons to start tracking.</div>';
+    return;
+  }
+  let html = '';
+  sorted.forEach((item) => {
+    const d = new Date(item.timestamp);
+    const t = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const state = SPOON_STATES[item.level] || SPOON_STATES[3];
+    const isCrisis = item.level === 0;
+    const cls = isCrisis ? `history-entry ${item.type}` : 'history-entry';
+    const badge = isCrisis ? `<span class="h-type-badge ${item.type}">${item.type === 'meltdown' ? '🔥' : '❄️'} ${item.type}</span>` : '';
+    const trigger = item.trigger ? `<div class="h-trigger">Trigger: ${item.trigger}</div>` : '';
+    const strategy = item.strategy ? `<div class="h-strategy">Helped: ${item.strategy}</div>` : '';
+    html += `<div class="${cls}" data-level="${item.level}">
+      <span class="h-time">${t}</span>
+      <span class="h-icon">${state.icon}</span>
+      <span class="h-label">${state.label}</span>
+      ${badge}
+      <span class="h-spoons">${item.level}</span>
+      ${trigger}
+      ${strategy}
+    </div>`;
+  });
+  historyList.innerHTML = html;
+  generateInsights();
+}
+
+// ── Crisis handling ──────────────────────────────────────────
+function triggerCrisis(type) {
+  if (navigator.vibrate) navigator.vibrate([100, 50, 100, 50, 200]);
+  applySpoons(0, type);
+  broadcastSpoon(0, type);
+}
+
+document.getElementById('forkMeltdown').addEventListener('click', () => triggerCrisis('meltdown'));
+document.getElementById('forkShutdown').addEventListener('click', () => triggerCrisis('shutdown'));
+// ── ABC Tracking & Recovery Chain ──────────────────────────
+let pendingTrigger = null;
+
+document.getElementById('forkRecover').addEventListener('click', async () => {
+  if (currentSpoons === 0) {
+    meltdownOverlay.classList.remove('visible');
+    antecedentPrompt.classList.add('visible');
+  } else {
+    await finalizeRecovery(2, 'recover', null, null);
+  }
+});
+
+async function logAntecedent(trigger) {
+  pendingTrigger = trigger;
+  antecedentPrompt.classList.remove('visible');
+  recoveryPrompt.classList.add('visible');
+}
+
+async function skipAntecedent() {
+  pendingTrigger = null;
+  antecedentPrompt.classList.remove('visible');
+  recoveryPrompt.classList.add('visible');
+}
+
+async function logRecovery(strategy) {
+  recoveryPrompt.classList.remove('visible');
+  await finalizeRecovery(2, 'recover', pendingTrigger, strategy);
+  showToast('Recovery logged. Rest now.');
+}
+
+async function skipRecovery() {
+  recoveryPrompt.classList.remove('visible');
+  await finalizeRecovery(2, 'recover', pendingTrigger, null);
+}
+
+async function finalizeRecovery(level, type, trigger, strategy) {
+  await applySpoons(level, type);
+  if ((trigger || strategy) && spoonHistory.length > 0) {
+    if (trigger) spoonHistory[0].trigger = trigger;
+    if (strategy) spoonHistory[0].strategy = strategy;
+    renderHistory();
+    await dbSet('history', spoonHistory);
+  }
+  await broadcastSpoon(level, type);
+}
+
+// ── Local Pattern Insight Engine ─────────────────────────────
+function generateInsights() {
+  const insightEl = document.getElementById('pattern-insight');
+  if (!insightEl) return;
+
+  const lowSpoons = spoonHistory.filter(h => h.level <= 2);
+  if (lowSpoons.length < 3) {
+    insightEl.innerHTML = '<em>Not enough data for patterns yet. Keep tracking.</em>';
+    return;
+  }
+
+  const triggers = {};
+  lowSpoons.forEach(h => { if (h.trigger) triggers[h.trigger] = (triggers[h.trigger] || 0) + 1; });
+  const topTrigger = Object.keys(triggers).sort((a, b) => triggers[b] - triggers[a])[0];
+
+  const times = { Morning: 0, Afternoon: 0, Evening: 0, Night: 0 };
+  lowSpoons.forEach(h => {
+    const hour = new Date(h.timestamp).getHours();
+    if (hour >= 5 && hour < 12) times.Morning++;
+    else if (hour >= 12 && hour < 17) times.Afternoon++;
+    else if (hour >= 17 && hour < 22) times.Evening++;
+    else times.Night++;
+  });
+  const topTime = Object.keys(times).sort((a, b) => times[b] - times[a])[0];
+
+  let text = `Your energy frequently drops in the <strong>${topTime}</strong>.`;
+  if (topTrigger) text += ` A recurring trigger is <strong>${topTrigger}</strong>.`;
+  insightEl.innerHTML = text;
+}
+
+sosButton.addEventListener('click', async () => {
+  showToast('🆘 SOS sent to K4 Cage');
+  await triggerCrisis('meltdown');
+});
+
+forkMeltdown.addEventListener('click', () => triggerCrisis('meltdown'));
+forkShutdown.addEventListener('click', () => triggerCrisis('shutdown'));
+
+// Expose for onclick handlers in HTML
+window.logAntecedent = logAntecedent;
+window.skipAntecedent = skipAntecedent;
+window.logRecovery = logRecovery;
+window.skipRecovery = skipRecovery;
+
+// ── 3-Tap Clear History ──────────────────────────────────────
+let clearCount = 0;
+let clearTimer = null;
+
+clearHistoryBtn.addEventListener('click', async () => {
+  clearCount++;
+  clearTimeout(clearTimer);
+
+  if (clearCount === 1) {
+    clearHistoryBtn.textContent = '⚠️ Tap again';
+    clearHistoryBtn.classList.add('warn');
+  } else if (clearCount === 2) {
+    clearHistoryBtn.textContent = 'One more tap to erase';
+  } else if (clearCount >= 3) {
+    clearHistoryBtn.textContent = 'Clearing...';
+    clearHistoryBtn.classList.remove('warn');
+    await dbClearHistory();
+    spoonHistory = [];
+    renderHistory();
+    showToast('History cleared');
+    setTimeout(() => { clearHistoryBtn.textContent = 'Clear Data'; }, 2000);
+    clearCount = 0;
+    return;
+  }
+  clearTimer = setTimeout(() => {
+    clearCount = 0;
+    clearHistoryBtn.textContent = 'Clear Data';
+    clearHistoryBtn.classList.remove('warn');
+  }, 4000);
+});
+
+// ── Family Mesh (WebSocket) ──────────────────────────────────
+const MESH_URL = 'wss://k4-cage.trimtab-signal.workers.dev/ws/family-mesh?node=phos';
+let meshNodes = {};
+let meshWs = null;
+
+const VERTEX_DEFS = {
+  will:     { name: 'Will',     emoji: '👤' },
+  sj:       { name: 'S.J.',     emoji: '👦' },
+  wj:       { name: 'W.J.',     emoji: '👧' },
+  christyn: { name: 'Christyn', emoji: '👩' },
+};
+
+function initMeshNodes() {
+  Object.entries(VERTEX_DEFS).forEach(([id, def]) => {
+    meshNodes[id] = Object.assign({ spoons: 3, status: 'offline' }, def);
+  });
+}
+
+function renderMeshNode(id) {
+  const node = meshNodes[id];
+  const el = document.getElementById('mesh-' + id);
+  if (!el) return;
+  const dot = el.querySelector('.mesh-dot');
+  const spoonsEl = el.querySelector('.mesh-spoons');
+  const colors = { 0: 'var(--red)', 1: 'var(--red)', 2: 'var(--orange)', 3: 'var(--amber)', 4: 'var(--teal)', 5: 'var(--green)' };
+  spoonsEl.textContent = node.spoons;
+  const online = node.status === 'online';
+  dot.classList.toggle('online', online);
+  dot.style.background = online ? (colors[node.spoons] || 'var(--muted)') : 'var(--muted)';
+  const c = online ? (colors[node.spoons] || 'transparent') : 'transparent';
+  dot.style.boxShadow = '0 0 8px ' + c;
+  el.classList.toggle('offline', !online);
+  el.dataset.spoons = node.spoons;
+}
+
+function buildMesh() {
+  const container = document.getElementById('family-mesh');
+  if (!container) return;
+  container.innerHTML = '';
+  container.style.display = 'flex';
+  Object.keys(VERTEX_DEFS).forEach(id => {
+    const node = meshNodes[id];
+    const el = document.createElement('div');
+    el.className = 'mesh-node' + (node.status === 'offline' ? ' offline' : '');
+    el.id = 'mesh-' + id;
+    el.dataset.spoons = node.spoons;
+    el.innerHTML = '<div class="mesh-dot"></div><span class="mesh-name">' + node.name + '</span><span class="mesh-spoons">' + node.spoons + '</span>';
+    container.appendChild(el);
+  });
+}
+
+function updateMeshFromBroadcast(data) {
+  if (!data || data.type !== 'spoon') return;
+  const nameMap = { 'Will': 'will', 'S.J.': 'sj', 'W.J.': 'wj', 'Christyn': 'christyn' };
+  const by = data.by || data.source || '';
+  const nodeId = Object.keys(nameMap).find(k => by.includes(k));
+  if (!nodeId) return;
+  meshNodes[nodeId].spoons = Math.max(0, Math.min(5, data.spoons ?? 3));
+  meshNodes[nodeId].status = 'online';
+  renderMeshNode(nodeId);
+}
+
+function connectMesh() {
+  if (meshWs && meshWs.readyState === WebSocket.OPEN) return;
+  try { meshWs = new WebSocket(MESH_URL); } catch { return; }
+  meshWs.onopen = () => {
+    Object.keys(meshNodes).forEach(id => { meshNodes[id].status = 'online'; renderMeshNode(id); });
+  };
+  meshWs.onmessage = (e) => {
+    let data;
+    try { data = JSON.parse(e.data); } catch { return; }
+    if ((data.sender === 'phos') || (data.by && passportId && data.by === passportId)) return;
+    if (data.type === 'spoon') updateMeshFromBroadcast(data);
+  };
+  meshWs.onclose = () => {
+    Object.keys(meshNodes).forEach(id => { meshNodes[id].status = 'offline'; renderMeshNode(id); });
+    setTimeout(connectMesh, 5000);
+  };
+  meshWs.onerror = () => { meshWs.close(); };
+}
+
+// ── Connection ───────────────────────────────────────────────
+async function checkConnection() {
+  try {
+    const r = await fetch(K4_API + '/api/mesh', { method: 'HEAD' });
+    online = r.ok;
+  } catch { online = false; }
+  statusDot.className = 'status-dot ' + (online ? 'online' : 'offline');
+  statusText.textContent = online ? 'Online' : 'Offline';
+}
+
+// ── Offline Queue ────────────────────────────────────────────
+async function broadcastSpoon(level, type) {
+  const payload = {
+    by: passportId || 'anonymous',
+    spoons: level,
+    crisisType: type || 'standard',
+    timestamp: new Date().toISOString(),
+  };
+
+  try {
+    const r = await fetch(K4_API + '/api/spoon/broadcast', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if (!r.ok) throw new Error(r.status);
+    if (level > 0) showToast('Synced');
+    return true;
+  } catch {
+    await queueAdd({ type: 'spoon', payload });
+    updateQueueIndicator();
+    if (level > 0 && online !== false) showToast('Queued — will sync');
+    return false;
+  }
+}
+
+async function flushQueue() {
+  const items = await queueGetAll();
+  if (items.length === 0) return;
+  for (const item of items) {
+    try {
+      const r = await fetch(K4_API + '/api/spoon/broadcast', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(item.payload),
+      });
+      if (r.ok) await queueRemove(item.id);
+    } catch { break; }
+  }
+  updateQueueIndicator();
+  const remaining = await queueGetAll();
+  if (remaining.length < items.length) showToast('Synced');
+}
+
+async function updateQueueIndicator() {
+  const items = await queueGetAll();
+  if (items.length > 0) {
+    queueIndicator.classList.add('visible');
+    queueCount.textContent = items.length;
+  } else {
+    queueIndicator.classList.remove('visible');
+  }
+}
+
+// ── Crisis Detection Heuristic ──────────────────────────────
+let clickTimestamps = [];
+
+function detectErraticBehavior() {
+  const now = Date.now();
+  clickTimestamps.push(now);
+  clickTimestamps = clickTimestamps.filter(t => now - t < 2500);
+  if (clickTimestamps.length >= 4) {
+    clickTimestamps = [];
+    if (currentSpoons > 1) {
+      showToast('Erratic input detected. Shielding UI.');
+      applySpoons(1, 'auto-detected');
+    }
+  }
+}
+
+// ── Standard spoon controls ──────────────────────────────────
+controlsEl.addEventListener('click', async (e) => {
+  const btn = e.target.closest('.spoon-btn');
+  if (!btn) return;
+
+  detectErraticBehavior();
+
+  const level = parseInt(btn.dataset.level);
+  await applySpoons(level, level === 1 ? 'critical' : 'standard');
+  if (navigator.vibrate) navigator.vibrate(10);
+  if (level > 1) await broadcastSpoon(level, 'standard');
+});
+
+// ── Background Sync Registration ─────────────────────────────
+function registerBackgroundSync() {
+  if ('serviceWorker' in navigator && 'SyncManager' in window) {
+    navigator.serviceWorker.ready.then((reg) => {
+      reg.sync.register('sync-spoons').catch(() => {});
+    });
+  }
+}
+
+// ── Toast ────────────────────────────────────────────────────
+let toastTimer = null;
+function showToast(msg) {
+  toastEl.textContent = msg;
+  toastEl.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2000);
+}
+
+// ── Init ─────────────────────────────────────────────────────
+(async () => {
+  await openDB();
+  const [saved, hist] = await Promise.all([dbGet('spoons'), dbGetHistory()]);
+  if (hist) { spoonHistory = hist; renderHistory(); }
+  if (saved !== null) {
+    currentSpoons = saved;
+    applySpoons(saved, 'standard');
+  }
+  await checkConnection();
+  await updateQueueIndicator();
+  initMeshNodes();
+  buildMesh();
+  meshNodes.will = Object.assign({}, meshNodes.will, { spoons: currentSpoons, status: 'online' });
+  renderMeshNode('will');
+  connectMesh();
+
+  window.addEventListener('online', async () => {
+    await checkConnection();
+    await flushQueue();
+    registerBackgroundSync();
+    showToast('Back online — syncing');
+  });
+  window.addEventListener('offline', () => { online = false; statusDot.className = 'status-dot offline'; statusText.textContent = 'Offline'; });
+
+  setInterval(async () => {
+    await checkConnection();
+    if (online) await flushQueue();
+  }, PING_INTERVAL);
+
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js', { scope: './' }).catch(() => {});
+  }
+})();
+</script>
+</body>
+</html>
