@@ -1,0 +1,25 @@
+{
+  "name": "k4-cage-worker",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "./deploy.sh",
+    "db:create": "wrangler d1 create k4-cage-db",
+    "kv:create": "wrangler kv:namespace create K4_KV",
+    "db:migrate": "wrangler d1 execute k4-cage-db --remote --file=src/db/schema.sql",
+    "tail": "wrangler tail k4-cage",
+    "test": "vitest run",
+    "test:live": "LIVE_TEST=1 vitest run tests/live/"
+  },
+  "dependencies": {
+    "@noble/post-quantum": "^0.6.1"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250611.0",
+    "typescript": "^5.7.2",
+    "vitest": "^3.0.0",
+    "wrangler": "^4.43.0"
+  }
+}

@@ -1,21 +1,75 @@
-# Focused turbo + compliance — implementation in reusable-ci-focused.yml
-name: P31 Labs CI
-
-permissions:
-  contents: read
+name: CI
 
 on:
-  workflow_dispatch:
   push:
     branches: [main]
   pull_request:
     branches: [main]
 
-concurrency:
-  group: p31-ci-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
 jobs:
-  ci:
-    uses: ./.github/workflows/reusable-ci-focused.yml
-    secrets: inherit
+  test-k4:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install dependencies
+        run: cd k4-worker && npm ci
+      - name: Type check
+        run: cd k4-worker && npx tsc --noEmit
+      - name: Run unit tests
+        run: cd k4-worker && npx vitest run
+
+  test-buffer:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install dependencies
+        run: cd buffer-worker && npm ci
+      - name: Type check
+        run: cd buffer-worker && npx tsc --noEmit
+      - name: Run unit tests
+        run: cd buffer-worker && npx vitest run
+
+  test-fawn:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install dependencies
+        run: cd fawn-guard && npm ci
+      - name: Type check
+        run: cd fawn-guard && npx tsc --noEmit
+      - name: Run unit tests
+        run: cd fawn-guard && npx vitest run
+
+  validate-openapi:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate OpenAPI spec
+        run: |
+          npm install -g @apidevtools/swagger-cli
+          swagger-cli validate docs/openapi.yaml
+
+  test-live-staging:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    env:
+      LIVE_URL: ${{ secrets.STAGING_URL }}
+      BUFFER_URL: ${{ secrets.STAGING_BUFFER_URL }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install dependencies
+        run: cd k4-worker && npm ci
+      - name: Run live E2E tests
+        run: cd k4-worker && npm run test:live

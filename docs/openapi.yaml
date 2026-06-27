@@ -1,0 +1,551 @@
+openapi: 3.1.0
+info:
+  title: P31 K₄ Delta-Mesh API
+  description: |
+    Sovereign Co-Parenting Platform — Tetrahedron Protocol v2.0
+    Court-admissible under O.C.G.A. § 24-9-901(b)(9)
+  version: 2.0.0
+  contact:
+    name: P31 Labs
+    email: trimtab.signal@proton.me
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: https://k4-cage.trimtab-signal.workers.dev
+    description: Production
+
+tags:
+  - name: Authentication
+    description: DID registration, key generation, and DID resolution
+  - name: Engagement
+    description: BONDING engagement event ingestion
+  - name: Packets
+    description: Structured packet routing and moderation
+  - name: Guardian
+    description: Fawn Guard content analysis
+  - name: Topology
+    description: Edge status and topology queries
+  - name: BONDING
+    description: BONDING room management (authenticated)
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: API key
+      description: API key (p31_...) obtained from /auth/register
+    DidAuth:
+      type: apiKey
+      in: body
+      name: did_signatures
+      description: |
+        Dual-signature authentication using Ed25519 + ML-DSA-65.
+        Required fields: did, nonce, timestamp, signatures.ed25519, signatures.mldsa65.
+
+  schemas:
+    RegisterRequest:
+      type: object
+      required:
+        - did
+        - nodeType
+        - ed25519PublicKey
+        - mldsa65PublicKey
+      properties:
+        did:
+          type: string
+          description: Decentralized Identifier (did:key:z...)
+        nodeType:
+          type: string
+          enum: [PARENT_A, PARENT_B, CHILD, SYSTEM_CORE]
+        displayName:
+          type: string
+        ed25519PublicKey:
+          type: string
+          description: Base64-encoded Ed25519 public key (32 bytes)
+        mldsa65PublicKey:
+          type: string
+          description: Base64-encoded ML-DSA-65 public key (1952 bytes)
+
+    RegisterResponse:
+      type: object
+      properties:
+        nodeId:
+          type: string
+        did:
+          type: string
+        status:
+          type: string
+          enum: [registered]
+        apiKey:
+          type: string
+          description: Bearer token for API authentication
+
+    KeygenResponse:
+      type: object
+      properties:
+        did:
+          type: string
+        ed25519:
+          type: object
+          properties:
+            publicKey:
+              type: string
+            privateKey:
+              type: string
+        mldsa65:
+          type: object
+          properties:
+            publicKey:
+              type: string
+            secretKey:
+              type: string
+
+    DidResolveResponse:
+      type: object
+      properties:
+        did:
+          type: string
+        node_id:
+          type: string
+        node_type:
+          type: string
+        display_name:
+          type: string
+        status:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        verificationMethod:
+          type: object
+
+    EngagementRequest:
+      type: object
+      required:
+        - roomCode
+        - childDid
+        - eventType
+        - payload
+        - serverHash
+        - serverVerified
+      properties:
+        roomCode:
+          type: string
+        childDid:
+          type: string
+        eventType:
+          type: string
+          enum: [ATOM_PLACED, PING_SENT, MOLECULE_COMPLETED, SESSION_START, SESSION_END]
+        payload:
+          type: object
+        serverHash:
+          type: string
+        serverVerified:
+          type: boolean
+        cfRay:
+          type: string
+        cfTlsVersion:
+          type: string
+        cfCountry:
+          type: string
+        userAgent:
+          type: string
+
+    EngagementResponse:
+      type: object
+      properties:
+        eventId:
+          type: string
+        status:
+          type: string
+          enum: [ingested]
+        timestamp:
+          type: string
+          format: date-time
+
+    PacketRequest:
+      type: object
+      required:
+        - edgeId
+        - senderDid
+        - category
+        - action
+        - objectId
+        - payload
+        - nspMode
+      properties:
+        edgeId:
+          type: string
+        senderDid:
+          type: string
+        category:
+          type: string
+          enum: [LOGISTICS, FINANCIAL, MEDICAL, EDUCATION, EMERGENCY, ENGAGEMENT]
+        action:
+          type: string
+          enum: [PROPOSE, REQUEST_APPROVAL, NOTIFY, REPORT, ACKNOWLEDGE, QUERY]
+        objectId:
+          type: string
+        payload:
+          type: object
+        eventType:
+          type: string
+        nspMode:
+          type: boolean
+        toneScore:
+          type: number
+          minimum: 0
+          maximum: 1
+        impedanceContribution:
+          type: number
+          minimum: -1
+          maximum: 1
+        structuralValid:
+          type: boolean
+        content:
+          type: string
+
+    PacketResponse:
+      type: object
+      properties:
+        packetId:
+          type: string
+        moderationId:
+          type: string
+        scScore:
+          type: number
+          minimum: 0
+          maximum: 1
+        ieScore:
+          type: number
+          minimum: 0
+          maximum: 1
+        state:
+          type: string
+          enum: [active, buffered, quarantined]
+        action:
+          type: string
+          enum: [deliver, buffer, quarantine, revise]
+        rationale:
+          type: string
+        triggeredRules:
+          type: array
+          items:
+            type: string
+        bufferUsed:
+          type: boolean
+        aiUsed:
+          type: boolean
+        timestamp:
+          type: string
+          format: date-time
+
+    GuardAnalysisRequest:
+      type: object
+      required:
+        - content
+        - authorDid
+        - targetDid
+        - contextType
+      properties:
+        content:
+          type: string
+        authorDid:
+          type: string
+        targetDid:
+          type: string
+        contextType:
+          type: string
+          enum: [message, ping, journal]
+
+    GuardAnalysisResponse:
+      type: object
+      properties:
+        analysis:
+          type: object
+        timestamp:
+          type: string
+          format: date-time
+
+    EdgeStatusResponse:
+      type: object
+      properties:
+        edgeId:
+          type: string
+        source:
+          type: string
+        target:
+          type: string
+        impedance:
+          type: number
+          minimum: 0
+          maximum: 1
+        threshold:
+          type: number
+        status:
+          type: string
+          enum: [active, buffered, quarantined]
+        interactionCount:
+          type: integer
+        lastInteraction:
+          type: string
+          format: date-time
+
+    HealthResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [ok]
+        topology:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+
+paths:
+  /health:
+    get:
+      summary: Health check
+      tags: [Authentication]
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+
+  /auth/keygen:
+    post:
+      summary: Generate a new keypair (Ed25519 + ML-DSA-65)
+      tags: [Authentication]
+      responses:
+        '200':
+          description: Keypair generated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KeygenResponse'
+
+  /auth/register:
+    post:
+      summary: Register a new node and obtain an API key
+      tags: [Authentication]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '200':
+          description: Node registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegisterResponse'
+        '400':
+          description: Invalid request body
+
+  /did/resolve:
+    get:
+      summary: Resolve a DID to node information
+      tags: [Authentication]
+      parameters:
+        - name: did
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: DID resolved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DidResolveResponse'
+        '404':
+          description: DID not found
+
+  /engagement:
+    post:
+      summary: Ingest a BONDING engagement event
+      tags: [Engagement]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EngagementRequest'
+      responses:
+        '200':
+          description: Event ingested
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EngagementResponse'
+        '400':
+          description: Missing required fields
+        '403':
+          description: Unknown child DID
+
+  /packet:
+    post:
+      summary: Send a structured packet for moderation and routing
+      tags: [Packets]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PacketRequest'
+      responses:
+        '200':
+          description: Packet processed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PacketResponse'
+        '400':
+          description: Invalid request
+        '500':
+          description: Internal error
+
+  /guard/analyze:
+    post:
+      summary: Analyze content for coercion, fawn masking, and child risk
+      tags: [Guardian]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GuardAnalysisRequest'
+      responses:
+        '200':
+          description: Analysis complete
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GuardAnalysisResponse'
+
+  /edge/status:
+    get:
+      summary: Get edge impedance status
+      tags: [Topology]
+      parameters:
+        - name: source
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Source DID
+        - name: target
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Target DID
+      responses:
+        '200':
+          description: Edge status retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EdgeStatusResponse'
+        '400':
+          description: Missing source or target
+        '404':
+          description: Edge not found
+
+  /bonding/room:
+    post:
+      summary: Create a BONDING room
+      tags: [BONDING]
+      security:
+        - BearerAuth: []
+        - DidAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                payload:
+                  type: object
+                  properties:
+                    childDid:
+                      type: string
+                    mode:
+                      type: string
+                      enum: [seed, molecule, discovery]
+      responses:
+        '200':
+          description: Room created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  roomId:
+                    type: string
+                  childDid:
+                    type: string
+                  mode:
+                    type: string
+                  context:
+                    type: object
+                  message:
+                    type: string
+        '403':
+          description: Only parents can create rooms
+
+  /bonding/room/{code}/join:
+    post:
+      summary: Join a BONDING room
+      tags: [BONDING]
+      security:
+        - BearerAuth: []
+        - DidAuth: []
+      parameters:
+        - name: code
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                childDid:
+                  type: string
+      responses:
+        '200':
+          description: Joined room
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  roomId:
+                    type: string
+                  childDid:
+                    type: string
+                  joined:
+                    type: boolean
+                  edgeId:
+                    type: string
+                  message:
+                    type: string
+        '403':
+          description: Child DID mismatch or inactive
+        '404':
+          description: Room not found

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PHOS — Offline</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0a0e17;
+      color: #d4d4d8;
+      font-family: system-ui, -apple-system, sans-serif;
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      text-align: center;
+    }
+    .icon { font-size: 4rem; margin-bottom: 16px; }
+    h1 { font-size: 1.5rem; color: #5eead4; margin-bottom: 8px; }
+    p { color: #64748b; max-width: 320px; line-height: 1.6; margin-bottom: 4px; }
+    .reconnect-btn {
+      margin-top: 20px;
+      padding: 12px 32px;
+      border-radius: 24px;
+      border: 1px solid #5eead4;
+      background: transparent;
+      color: #5eead4;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .reconnect-btn:hover { background: rgba(94, 234, 212, 0.08); }
+    .home-btn {
+      margin-top: 8px;
+      padding: 8px 20px;
+      border-radius: 16px;
+      background: transparent;
+      color: #64748b;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: none;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="icon">🌐</div>
+  <h1>You're offline</h1>
+  <p>Your data is safely stored on your device.</p>
+  <p>The mesh will reconnect automatically when you're back online.</p>
+  <button class="reconnect-btn" onclick="location.reload()">Try reconnecting</button>
+  <button class="home-btn" onclick="window.location.href='/'">Go Home</button>
+  <script>
+    setInterval(() => {
+      if (navigator.onLine) {
+        const n = document.createElement('div');
+        n.textContent = 'Connection restored. Reloading...';
+        n.style.cssText = 'position:fixed;bottom:20px;left:20px;background:#5eead4;color:#0a0e17;padding:12px;border-radius:8px;z-index:1000;font-weight:600;';
+        document.body.appendChild(n);
+        setTimeout(() => location.reload(), 1500);
+      }
+    }, 5000);
+  </script>
+</body>
+</html>

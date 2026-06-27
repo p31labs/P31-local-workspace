@@ -1,6 +1,6 @@
-const VERSION = 'v2.0.0';
+const VERSION = 'v2.1.0';
 const CACHE = `phos-${VERSION}`;
-const ASSETS = ['./index.html', './manifest.json'];
+const ASSETS = ['./index.html', './manifest.json', './offline.html'];
 
 self.addEventListener('install', (e) => {
   self.skipWaiting();
@@ -20,7 +20,17 @@ self.addEventListener('activate', (e) => {
 self.addEventListener('fetch', (e) => {
   const url = new URL(e.request.url);
   if (url.origin === location.origin) {
-    e.respondWith(caches.match(e.request).then((r) => r || fetch(e.request)));
+    e.respondWith(
+      caches.match(e.request).then((r) => {
+        if (r) return r;
+        return fetch(e.request).catch(() => {
+          if (e.request.mode === 'navigate') {
+            return caches.match('./offline.html');
+          }
+          return new Response('Offline', { status: 503 });
+        });
+      })
+    );
   }
 });
 
