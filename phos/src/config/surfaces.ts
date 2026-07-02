@@ -3,6 +3,7 @@ export interface SurfaceNavItem {
   label: string;
   icon: string;
   group: 'primary' | 'secondary';
+  href?: string;
 }
 
 export const SURFACE_NAV: SurfaceNavItem[] = [
@@ -26,6 +27,7 @@ export const SURFACE_NAV: SurfaceNavItem[] = [
   { id: 'COMPASS', label: 'Compass', icon: '⌖', group: 'secondary' },
   { id: 'NODE_ZERO', label: 'Node Zero', icon: '⊙', group: 'secondary' },
   { id: 'WAREHOUSE', label: 'Warehouse', icon: '▣', group: 'secondary' },
+  { id: 'ONBOARDING', label: 'Docs & Onboarding', icon: '📘', group: 'primary', href: '/onboarding' },
 ];
 
 export const SURFACE_IDS = SURFACE_NAV.map(s => s.id);
