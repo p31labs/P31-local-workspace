@@ -20,6 +20,11 @@ export const INTENT_RULES: IntentRule[] = [
   { keywords: ['log', 'ledger', 'history', 'memory', 'events', 'timeline', 'review'], surface: 'LEDGER' },
   { keywords: ['search', 'archive', 'knowledge', 'query', 'ask', 'oracle', 'document', 'embed', 'rag'], surface: 'ARCHIVE' },
   { keywords: ['setting', 'config', 'preference', 'tune', 'customize', 'adjust'], surface: 'SETTINGS' },
+
+  // Co-parenting & Sanctuary
+  { keywords: ['coparent', 'co-parent', 'parent', 'kid', 'child', 'custody', 'schedule', 'dropoff', 'pickup', 'co parenting'], surface: 'SANCTUARY', maxSpoons: 2 },
+  { keywords: ['sanctuary', 'message', 'messaging', 'chat', 'talk', 'communicate', 'secure'], surface: 'SANCTUARY' },
+  { keywords: ['dispute', 'settlement', 'justice', 'arbitrate', 'conflict', 'resolve', 'k4'], surface: 'DISPUTE' },
 ];
 
 export function parseRagQuery(input: string): string | null {

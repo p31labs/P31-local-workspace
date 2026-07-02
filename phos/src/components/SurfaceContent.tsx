@@ -1,7 +1,5 @@
 import React, { Suspense, lazy } from 'react';
-import { getBiologicalTheme } from './PHOSShell';
-import type { ThemeShape } from '../lib/themeEngine';
-import { SurfaceErrorBoundary } from './SurfaceErrorBoundary';
+import { DashboardSurface } from '../surfaces/DashboardSurface';
 import { GreetingSurface } from '../surfaces/GreetingSurface';
 import { IgnitionSurface } from '../surfaces/IgnitionSurface';
 import { BondingSurface } from '../surfaces/BondingSurface';
@@ -9,8 +7,15 @@ import { CompassSurface } from '../surfaces/CompassSurface';
 import { SettingsSurface } from '../surfaces/SettingsSurface';
 import { RetroVaultSurface } from '../surfaces/RetroVaultSurface';
 import { LedgerSurface } from '../surfaces/LedgerSurface';
+import { OpenLedgerSurface } from '../surfaces/OpenLedgerSurface';
 import { NodeZeroSurface } from '../surfaces/NodeZeroSurface';
 import { HearthSurface } from '../surfaces/HearthSurface';
+import { DisputeSurface } from '../surfaces/DisputeSurface';
+import { SanctuarySurface } from '../surfaces/SanctuarySurface';
+import { QuantumBrainDumpSurface } from '../surfaces/QuantumBrainDumpSurface';
+import { ArchiveSurface } from '../surfaces/ArchiveSurface';
+import { BarterMarketplace } from '../surfaces/BarterMarketplace';
+import { GovernanceSurface } from '../surfaces/GovernanceSurface';
 
 const ArcadeSurface = lazy(() =>
   import('../surfaces/ArcadeSurface').then(m => ({ default: m.ArcadeSurface }))
@@ -28,146 +33,113 @@ const WarehouseSurface = lazy(() =>
   import('../surfaces/WarehouseSurface').then(m => ({ default: m.WarehouseSurface }))
 );
 
-function SurfaceSkeleton({ name }: { name: string }) {
+function SurfaceSkeleton() {
   return (
-    <div className="animate-pulse p-6 space-y-4" role="status" aria-label={`Loading ${name}`}>
-      <div className="h-4 bg-white/5 rounded w-2/3" />
-      <div className="h-3 bg-white/5 rounded w-1/2" />
-      <div className="h-3 bg-white/5 rounded w-3/4" />
+    <div className="flex items-center justify-center h-full">
+      <div className="w-5 h-5 border-2 rounded-full animate-spin" style={{ borderColor: 'var(--phos-border)', borderTopColor: 'var(--phos-primary)' }} />
     </div>
   );
 }
 
 interface SurfaceProps {
   currentSurface: string;
-  theme?: ThemeShape;
   setSurface: (surf: string) => void;
   spoons: number;
+  theme?: Record<string, string>;
 }
 
-export function SurfaceContent({ currentSurface, setSurface, spoons, theme: externalTheme }: SurfaceProps) {
-  const theme = externalTheme || getBiologicalTheme(spoons, false, 4);
-
+export function SurfaceContent({ currentSurface, setSurface, spoons }: SurfaceProps) {
   switch (currentSurface) {
+    case 'CHAT':
+      return null;
+    case 'QUANTUM_BRAIN_DUMP':
+      return <QuantumBrainDumpSurface />;
+
+    case 'DASHBOARD':
+      return <DashboardSurface onNavigate={setSurface} />;
+
     case 'GREETING':
-      return (
-        <SurfaceErrorBoundary surfaceName="GREETING">
-          <GreetingSurface />
-        </SurfaceErrorBoundary>
-      );
+      return <GreetingSurface />;
 
     case 'IGNITION':
-      return (
-        <SurfaceErrorBoundary surfaceName="IGNITION">
-          <IgnitionSurface />
-        </SurfaceErrorBoundary>
-      );
+      return <IgnitionSurface />;
 
     case 'BONDING':
-      return (
-        <SurfaceErrorBoundary surfaceName="BONDING">
-          <BondingSurface />
-        </SurfaceErrorBoundary>
-      );
+      return <BondingSurface />;
 
     case 'COMPASS':
-      return (
-        <SurfaceErrorBoundary surfaceName="COMPASS">
-          <CompassSurface />
-        </SurfaceErrorBoundary>
-      );
+      return <CompassSurface />;
 
     case 'SETTINGS':
-      return (
-        <SurfaceErrorBoundary surfaceName="SETTINGS">
-          <SettingsSurface />
-        </SurfaceErrorBoundary>
-      );
+      return <SettingsSurface />;
 
     case 'THE_BUFFER':
       return (
-        <SurfaceErrorBoundary surfaceName="THE_BUFFER">
-          <Suspense fallback={<SurfaceSkeleton name="THE_BUFFER" />}>
-            <ChaosIngest theme={theme} />
-          </Suspense>
-        </SurfaceErrorBoundary>
+        <Suspense fallback={<SurfaceSkeleton />}>
+          <ChaosIngest />
+        </Suspense>
       );
 
     case 'VAULT':
-      return (
-        <SurfaceErrorBoundary surfaceName="VAULT">
-          <RetroVaultSurface theme={theme} spoons={spoons} />
-        </SurfaceErrorBoundary>
-      );
+      return <RetroVaultSurface spoons={spoons} />;
 
     case 'GRID':
       return (
-        <SurfaceErrorBoundary surfaceName="GRID">
-          <Suspense fallback={<SurfaceSkeleton name="GRID" />}>
-            <ConnectionGridSurface theme={theme} spoons={spoons} />
-          </Suspense>
-        </SurfaceErrorBoundary>
+        <Suspense fallback={<SurfaceSkeleton />}>
+          <ConnectionGridSurface spoons={spoons} />
+        </Suspense>
       );
 
     case 'NODE_ZERO':
-      return (
-        <SurfaceErrorBoundary surfaceName="NODE_ZERO">
-          <NodeZeroSurface theme={theme} spoons={spoons} />
-        </SurfaceErrorBoundary>
-      );
+      return <NodeZeroSurface theme={undefined} spoons={spoons} />;
 
     case 'LEDGER':
     case 'LOVE':
-      return (
-        <SurfaceErrorBoundary surfaceName="LEDGER">
-          <LedgerSurface theme={theme} />
-        </SurfaceErrorBoundary>
-      );
+      return <LedgerSurface />;
+
+    case 'OPEN_LEDGER':
+      return <OpenLedgerSurface spoons={spoons} />;
+
+    case 'DISPUTE':
+      return <DisputeSurface />;
+
+    case 'SANCTUARY':
+      return <SanctuarySurface spoons={spoons} />;
 
     case 'HEARTH':
-      return (
-        <SurfaceErrorBoundary surfaceName="HEARTH">
-          <HearthSurface theme={theme} spoons={spoons} />
-        </SurfaceErrorBoundary>
-      );
+      return <HearthSurface spoons={spoons} />;
 
     case 'ARCADE':
       return (
-        <SurfaceErrorBoundary surfaceName="ARCADE">
-          <Suspense fallback={<SurfaceSkeleton name="ARCADE" />}>
-            <ArcadeSurface theme={theme} spoons={spoons} />
-          </Suspense>
-        </SurfaceErrorBoundary>
+        <Suspense fallback={<SurfaceSkeleton />}>
+          <ArcadeSurface spoons={spoons} />
+        </Suspense>
       );
 
     case 'ARCHIVE':
-      return (
-        <SurfaceErrorBoundary surfaceName="ARCHIVE">
-          <Suspense fallback={<SurfaceSkeleton name="ARCHIVE" />}>
-            <div className="space-y-4">
-              <h3 className="text-sm font-mono uppercase tracking-widest opacity-60">Sovereign Archive Search</h3>
-              <ShakeStream theme={theme} initialQuery="" />
-            </div>
-          </Suspense>
-        </SurfaceErrorBoundary>
-      );
+      return <ArchiveSurface spoons={spoons} />;
+
+    case 'BARTER':
+      return <BarterMarketplace />;
+
+    case 'GOVERNANCE':
+      return <GovernanceSurface />;
 
     case 'WAREHOUSE':
       return (
-        <SurfaceErrorBoundary surfaceName="WAREHOUSE">
-          <Suspense fallback={<SurfaceSkeleton name="WAREHOUSE" />}>
-            <WarehouseSurface theme={theme} spoons={spoons} />
-          </Suspense>
-        </SurfaceErrorBoundary>
+        <Suspense fallback={<SurfaceSkeleton />}>
+          <WarehouseSurface spoons={spoons} />
+        </Suspense>
       );
 
     default:
       return (
-        <SurfaceErrorBoundary surfaceName={currentSurface}>
-          <div className="p-4 border border-dashed border-red-900/40 text-red-400 font-mono text-xs uppercase tracking-widest rounded-lg">
-            ERR_SURFACE_NOT_BOUND // {currentSurface}
+        <div className="flex items-center justify-center h-full">
+          <div className="text-center">
+            <div className="text-xs font-mono opacity-30">ERR_SURFACE_NOT_BOUND</div>
+            <div className="text-[10px] font-mono opacity-20 mt-1">{currentSurface}</div>
           </div>
-        </SurfaceErrorBoundary>
+        </div>
       );
   }
 }

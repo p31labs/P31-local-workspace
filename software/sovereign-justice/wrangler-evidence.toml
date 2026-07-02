@@ -1,0 +1,20 @@
+name = "sovereign-justice-evidence"
+main = "src/evidence-vault.ts"
+compatibility_date = "2026-06-01"
+
+[[d1_databases]]
+binding = "JUSTICE_D1"
+database_name = "sovereign-justice-db"
+database_id = "64381fff-b652-435c-8d48-ac5a1c7bf248"
+
+[[r2_buckets]]
+binding = "EVIDENCE_R2"
+bucket_name = "sovereign-justice-evidence"
+
+[[kv_namespaces]]
+binding = "JUSTICE_KV"
+id = "0bbc1c71fcf24b19af7864654e453bd0"
+
+[vars]
+ENVIRONMENT = "production"
+EVIDENCE_RETENTION_DAYS = "365"

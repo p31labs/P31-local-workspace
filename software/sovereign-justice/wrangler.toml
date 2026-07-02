@@ -1,0 +1,49 @@
+name = "sovereign-justice"
+main = "src/rag-pipeline.ts"
+compatibility_date = "2026-06-01"
+
+# ── D1 Databases ──────────────────────────────────────────────────────
+[[d1_databases]]
+binding = "JUSTICE_D1"
+database_name = "sovereign-justice-db"
+database_id = "64381fff-b652-435c-8d48-ac5a1c7bf248"
+
+# ── Vectorize Index ───────────────────────────────────────────────────
+[[vectorize]]
+binding = "JUSTICE_VECTORIZE"
+index_name = "p31-justice-corpus"
+
+# ── R2 Buckets ────────────────────────────────────────────────────────
+[[r2_buckets]]
+binding = "EVIDENCE_R2"
+bucket_name = "sovereign-justice-evidence"
+
+# ── KV Namespaces ─────────────────────────────────────────────────────
+[[kv_namespaces]]
+binding = "JUSTICE_KV"
+id = "0bbc1c71fcf24b19af7864654e453bd0"
+
+# ── Durable Objects ───────────────────────────────────────────────────
+# DO lives in wrangler-escrow.toml — not deployed from here
+
+# ── Queues ────────────────────────────────────────────────────────────
+# [[queues.producers]]
+# binding = "EVIDENCE_QUEUE"
+# queue = "evidence-ipfs-pinning"
+
+# ── AI Binding ────────────────────────────────────────────────────────
+[ai]
+binding = "AI"
+
+# ── Environment Variables ─────────────────────────────────────────────
+[vars]
+ENVIRONMENT = "production"
+EMBEDDING_MODEL = "@cf/openai/text-embedding-3-large"
+EVIDENCE_RETENTION_DAYS = "365"
+
+# ── Routes ────────────────────────────────────────────────────────────
+# routes = [
+#   { pattern = "rag.sovereign-justice.*", zone_name = "trimtab-signal.workers.dev" },
+#   { pattern = "evidence.sovereign-justice.*", zone_name = "trimtab-signal.workers.dev" },
+#   { pattern = "escrow.sovereign-justice.*", zone_name = "trimtab-signal.workers.dev" },
+# ]
