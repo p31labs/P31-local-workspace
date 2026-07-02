@@ -1,0 +1,103 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://p31ca.org/schemas/passport/v4.1.0",
+  "title": "Cognitive Passport v4.1",
+  "description": "Sovereign identity document for neurodivergent operators. This is the canonical data contract between Node Zero firmware, PHOS web client, and all ecosystem consumers.",
+  "type": "object",
+  "version": "4.1.0",
+  "schemaVersion": "p31.cognitivePassport/4.1.0",
+  "required": ["identity", "accessibility", "created", "did"],
+  "properties": {
+    "identity": {
+      "type": "object",
+      "description": "Who you are in this space.",
+      "properties": {
+        "displayName": { "type": "string", "maxLength": 64, "description": "How you are addressed within the ecosystem." },
+        "pronouns": { "type": "string", "maxLength": 32, "description": "Preferred pronouns." },
+        "role": { "type": "string", "maxLength": 32, "description": "Functional anchor: SYSTEM_CORE, PARENT_A, PARENT_B, CHILD, OPERATOR." },
+        "oneLiner": { "type": "string", "maxLength": 128, "description": "A single sentence that names your function in the mesh." }
+      },
+      "required": ["displayName"]
+    },
+    "cognition": {
+      "type": "object",
+      "description": "How your mind processes information and tasks.",
+      "properties": {
+        "processingStyle": { "type": "string", "maxLength": 64, "description": "e.g., parallel processor, sequential, interrupt-driven." },
+        "learningPreference": { "type": "string", "enum": ["visual", "kinetic", "text", "audio", "multimodal"], "description": "Primary modality for information intake." },
+        "executiveFunctionNotes": { "type": "string", "maxLength": 256, "description": "Where the friction lives: task initiation, context switching, working memory, etc." },
+        "strengths": { "type": "array", "items": { "type": "string", "maxLength": 64 }, "description": "Operational capacities that are reliable." },
+        "challenges": { "type": "array", "items": { "type": "string", "maxLength": 64 }, "description": "Areas where the system must compensate or accommodate." }
+      }
+    },
+    "communication": {
+      "type": "object",
+      "description": "How you send and receive signals.",
+      "properties": {
+        "preferredTone": { "type": "string", "enum": ["direct", "gentle", "analytical", "casual", "formal"], "description": "Default register for system-generated language." },
+        "avoidList": { "type": "array", "items": { "type": "string", "maxLength": 64 }, "description": "Words, phrases, or structures that cause cognitive spikes." },
+        "responseLength": { "type": "string", "enum": ["concise", "detailed", "bullet-points"], "description": "Preferred density of system responses." },
+        "languagePrimary": { "type": "string", "maxLength": 16, "description": "ISO 639-1 code (e.g., en, pt, es)." }
+      }
+    },
+    "accessibility": {
+      "type": "object",
+      "description": "How the physical and digital world must configure to accommodate you.",
+      "properties": {
+        "screenComfort": { "type": "integer", "minimum": 0, "maximum": 100, "description": "Baseline brightness and glare tolerance. 0 = maximum sensitivity, 100 = no restriction." },
+        "motionPreference": { "type": "string", "enum": ["off", "reduced", "full"], "description": "Animation tolerance." },
+        "contrastPreference": { "type": "string", "enum": ["high", "standard", "low"], "description": "Required contrast ratio sensitivity." },
+        "fontSize": { "type": "integer", "minimum": 8, "maximum": 32, "description": "Base font size in pixels." },
+        "density": { "type": "integer", "minimum": 0, "maximum": 100, "description": "Information density preference. 0 = sparse, 100 = dense." },
+        "colorSensitivity": { "type": "array", "items": { "type": "string", "maxLength": 32 }, "description": "Specific wavelengths or color families to suppress (e.g., 'red', 'flashing')." },
+        "audioPreference": { "type": "string", "enum": ["off", "reduced", "full"], "description": "System audio tolerance." },
+        "temperaturePreference": { "type": "integer", "minimum": 0, "maximum": 100, "description": "Environmental temperature baseline. 0 = cold-sensitive, 100 = heat-sensitive." }
+      },
+      "required": ["screenComfort", "motionPreference", "contrastPreference", "fontSize", "density"]
+    },
+    "baselineSpoons": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 5,
+      "description": "Default cognitive energy capacity. Runtime state is dynamic; this is the anchor."
+    },
+    "created": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of passport creation."
+    },
+    "updated": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of last modification."
+    },
+    "did": {
+      "type": "string",
+      "pattern": "^did:key:z[1-9A-HJ-NP-Za-km-z]+$",
+      "description": "Decentralized Identifier derived from Ed25519 public key. Self-certifying."
+    },
+    "publicKey": {
+      "type": "string",
+      "description": "Base64url-encoded Ed25519 public key (32 bytes)."
+    },
+    "exportProfiles": {
+      "type": "object",
+      "description": "12 deterministic export profile toggles. Each controls whether a field group is included in that profile's transform.",
+      "properties": {
+        "clinical": { "type": "boolean" },
+        "family": { "type": "boolean" },
+        "public": { "type": "boolean" },
+        "workplace": { "type": "boolean" },
+        "grantReviewer": { "type": "boolean" },
+        "legal": { "type": "boolean" },
+        "financial": { "type": "boolean" },
+        "emergency": { "type": "boolean" },
+        "educator": { "type": "boolean" },
+        "device": { "type": "boolean" },
+        "app": { "type": "boolean" },
+        "guest": { "type": "boolean" }
+      }
+    }
+  },
+  "additionalProperties": false
+}

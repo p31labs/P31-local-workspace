@@ -17,6 +17,8 @@ import { QuantumBrainDumpSurface } from '../surfaces/QuantumBrainDumpSurface';
 import { ArchiveSurface } from '../surfaces/ArchiveSurface';
 import { BarterMarketplace } from '../surfaces/BarterMarketplace';
 import { GovernanceSurface } from '../surfaces/GovernanceSurface';
+import { FeedbackSurface } from '../surfaces/FeedbackSurface';
+import { PassportSurface } from '../surfaces/PassportSurface';
 
 const ArcadeSurface = lazy(() =>
   import('../surfaces/ArcadeSurface').then(m => ({ default: m.ArcadeSurface }))
@@ -47,9 +49,10 @@ interface SurfaceProps {
   setSurface: (surf: string) => void;
   spoons: number;
   theme?: Record<string, string>;
+  isGuest?: boolean;
 }
 
-export function SurfaceContent({ currentSurface, setSurface, spoons }: SurfaceProps) {
+export function SurfaceContent({ currentSurface, setSurface, spoons, isGuest }: SurfaceProps) {
   switch (currentSurface) {
     case 'CHAT':
       return null;
@@ -129,6 +132,12 @@ export function SurfaceContent({ currentSurface, setSurface, spoons }: SurfacePr
 
     case 'GOVERNANCE':
       return <GovernanceSurface />;
+
+    case 'PASSPORT':
+      return <PassportSurface />;
+
+    case 'FEEDBACK':
+      return <FeedbackSurface isGuest={isGuest} spoons={spoons} />;
 
     case 'WAREHOUSE':
       return (

@@ -26,6 +26,9 @@ export const INTENT_RULES: IntentRule[] = [
   { keywords: ['sanctuary', 'message', 'messaging', 'chat', 'talk', 'communicate', 'secure'], surface: 'SANCTUARY' },
   { keywords: ['dispute', 'settlement', 'justice', 'arbitrate', 'conflict', 'resolve', 'k4'], surface: 'DISPUTE' },
   { keywords: ['attest', 'attestation', 'relationship', 'edge', 'co-sign', 'bind', 'connect', 'link'], surface: 'ATTEST' },
+  { keywords: ['feedback', 'bug', 'report', 'issue', 'problem', 'feature', 'suggestion', 'improve'], surface: 'FEEDBACK' },
+  { keywords: ['passport', 'document', 'identity', 'profile', 'who am i', 'my info', 'about me'], surface: 'PASSPORT' },
+  { keywords: ['passport', 'cognition', 'neurodivergent', 'accessibility', 'spoons'], surface: 'PASSPORT' },
 ];
 
 export function parseRagQuery(input: string): string | null {
