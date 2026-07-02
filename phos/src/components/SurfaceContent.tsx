@@ -12,6 +12,7 @@ import { NodeZeroSurface } from '../surfaces/NodeZeroSurface';
 import { HearthSurface } from '../surfaces/HearthSurface';
 import { DisputeSurface } from '../surfaces/DisputeSurface';
 import { SanctuarySurface } from '../surfaces/SanctuarySurface';
+import { AttestSurface } from '../surfaces/AttestSurface';
 import { QuantumBrainDumpSurface } from '../surfaces/QuantumBrainDumpSurface';
 import { ArchiveSurface } from '../surfaces/ArchiveSurface';
 import { BarterMarketplace } from '../surfaces/BarterMarketplace';
@@ -105,6 +106,10 @@ export function SurfaceContent({ currentSurface, setSurface, spoons }: SurfacePr
 
     case 'SANCTUARY':
       return <SanctuarySurface spoons={spoons} />;
+
+    case 'ATTEST':
+    case 'ATTESTATION':
+      return <AttestSurface spoons={spoons} />;
 
     case 'HEARTH':
       return <HearthSurface spoons={spoons} />;

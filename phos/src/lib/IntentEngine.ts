@@ -25,6 +25,7 @@ export const INTENT_RULES: IntentRule[] = [
   { keywords: ['coparent', 'co-parent', 'parent', 'kid', 'child', 'custody', 'schedule', 'dropoff', 'pickup', 'co parenting'], surface: 'SANCTUARY', maxSpoons: 2 },
   { keywords: ['sanctuary', 'message', 'messaging', 'chat', 'talk', 'communicate', 'secure'], surface: 'SANCTUARY' },
   { keywords: ['dispute', 'settlement', 'justice', 'arbitrate', 'conflict', 'resolve', 'k4'], surface: 'DISPUTE' },
+  { keywords: ['attest', 'attestation', 'relationship', 'edge', 'co-sign', 'bind', 'connect', 'link'], surface: 'ATTEST' },
 ];
 
 export function parseRagQuery(input: string): string | null {

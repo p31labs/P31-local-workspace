@@ -1,3 +1,5 @@
+import { ed25519 } from '@noble/curves/ed25519.js';
+
 export function hexToBytes(hex: string): Uint8Array {
   const clean = hex.replace(/^0x/, '');
   if (clean.length % 2 !== 0) {
@@ -30,19 +32,8 @@ export async function signPayload(
   data: string
 ): Promise<string> {
   const privateKeyBytes = hexToBytes(privateKeyHex);
-  const privateKey = await crypto.subtle.importKey(
-    'raw',
-    privateKeyBytes as BufferSource,
-    { name: 'Ed25519' },
-    false,
-    ['sign']
-  );
-  const signature = await crypto.subtle.sign(
-    'Ed25519',
-    privateKey,
-    new TextEncoder().encode(data) as BufferSource
-  );
-  return bytesToHex(new Uint8Array(signature));
+  const signature = ed25519.sign(new TextEncoder().encode(data), privateKeyBytes);
+  return bytesToHex(signature);
 }
 
 export async function generateAuthToken(
