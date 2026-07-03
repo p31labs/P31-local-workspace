@@ -1,15 +1,21 @@
 {
   "name": "k4-cage",
   "private": true,
-  "version": "2.0.0",
+  "version": "3.0.0",
   "type": "module",
   "scripts": {
     "test": "vitest run",
-    "deploy": "wrangler deploy"
+    "deploy": "wrangler deploy",
+    "auth:test": "node scripts/test-auth.mjs",
+    "k6": "k6 run tests/load/k6.js",
+    "k6:staging": "k6 run tests/load/k6.js -e BASE_URL=https://staging.k4-cage.trimtab-signal.workers.dev"
+  },
+  "dependencies": {
+    "@noble/post-quantum": "~0.6.1"
   },
   "devDependencies": {
-    "vitest": "^3.0.0",
     "@vitest/coverage-v8": "^3.0.0",
-    "wrangler": "^4.0.0"
+    "vitest": "^3.0.0",
+    "wrangler": "^4.107.0"
   }
 }
