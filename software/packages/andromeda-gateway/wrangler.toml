@@ -1,0 +1,7 @@
+name = "andromeda-gateway"
+main = "src/index.ts"
+compatibility_flags = ["nodejs_compat"]
+compatibility_date = "2026-07-03"
+
+[site]
+bucket = "./public"
