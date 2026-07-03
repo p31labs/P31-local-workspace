@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { generateAuthToken } from '../lib/did-auth';
 
-const K4_CORE = 'https://k4-core.trimtab-signal.workers.dev';
+const K4_CORE = 'https://k4-cage.trimtab-signal.workers.dev';
 
 interface DisputeRecord {
   id: string;
@@ -27,7 +27,7 @@ export function DisputeSurface() {
     setError(null);
     try {
       const token = await generateAuthToken(did, signingKey, JSON.stringify({ settlementId }));
-      const res = await fetch(`${K4_CORE}/dispute/list?settlementId=${encodeURIComponent(settlementId)}`, {
+      const res = await fetch(`${K4_CORE}/api/dispute/list?settlementId=${encodeURIComponent(settlementId)}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);

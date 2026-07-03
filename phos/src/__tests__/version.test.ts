@@ -3,7 +3,7 @@ import { VERSION, getVersion } from '../version';
 
 describe('version', () => {
   it('exports VERSION', () => {
-    expect(VERSION).toBe('0.1.0');
+    expect(VERSION).toBe('2.0.0');
   });
 
   it('getVersion returns VERSION', () => {

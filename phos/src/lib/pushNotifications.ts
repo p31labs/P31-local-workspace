@@ -40,9 +40,13 @@ export async function subscribeToPush(
   let subscription = await reg.pushManager.getSubscription();
 
   if (!subscription) {
+    const keyBytes = urlBase64ToUint8Array(applicationServerKey);
+    const keyBuffer = keyBytes.buffer.slice(keyBytes.byteOffset, keyBytes.byteOffset + keyBytes.byteLength);
+    const ab = new ArrayBuffer(keyBuffer.byteLength);
+    new Uint8Array(ab).set(new Uint8Array(keyBuffer));
     subscription = await reg.pushManager.subscribe({
       userVisibleOnly: true,
-      applicationServerKey: urlBase64ToUint8Array(applicationServerKey),
+      applicationServerKey: new Uint8Array(ab),
     });
   }
 

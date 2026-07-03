@@ -7,7 +7,7 @@ export async function getChaosVault(): Promise<any> {
 
   try {
     const { PGlite } = await import('@electric-sql/pglite');
-    dbInstance = new PGlite({ connectionString: 'idb://p31-chaos-vault' });
+    dbInstance = new PGlite('idb://p31-chaos-vault' as any);
     await dbInstance.exec(`
       CREATE TABLE IF NOT EXISTS unified_knowledge_graph (
         id BigSerial PRIMARY KEY,
@@ -22,7 +22,7 @@ export async function getChaosVault(): Promise<any> {
     addLog('ChaosVault:init', { error, fallback: 'memory' });
     try {
       const { PGlite } = await import('@electric-sql/pglite');
-      dbInstance = new PGlite({ connectionString: 'memory://' });
+      dbInstance = new PGlite('memory://' as any);
       await dbInstance.exec(`
         CREATE TABLE IF NOT EXISTS unified_knowledge_graph (
           id BigSerial PRIMARY KEY,

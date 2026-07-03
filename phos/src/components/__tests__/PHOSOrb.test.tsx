@@ -17,8 +17,8 @@ describe('PHOSOrb', () => {
     const { container } = renderWithProvider(3);
     const orb = container.querySelector('[aria-label="PHOS Orb"]');
     expect(orb).toBeTruthy();
-    expect(orb?.className).toContain('bg-emerald-400');
-    expect(orb?.className).toContain('animate-pulse');
+    expect(orb?.className).toContain('bg-phos-accent');
+    expect(orb?.getAttribute('style')).toContain('pulse');
   });
 
   it('should scale size with spoons', () => {

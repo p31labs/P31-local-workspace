@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { getBalanceAtomic, getLedgerHistory, verifyLedgerIntegrity } from '../lib/KarmaEngine';
 import { K4Bridge, type K4Features } from '../lib/K4Bridge';
+import { fetchLoveBalance } from '../lib/api/ledger';
 
 interface LedgerEntry {
   kind: string;
@@ -31,7 +32,7 @@ function relativeTime(ts: number): string {
   return `${days}d ago`;
 }
 
-export function LedgerSurface({ theme }: { theme: Record<string, string> }) {
+export function LedgerSurface({ theme }: { theme?: Record<string, string> }) {
   const [data, setData] = useState<LedgerData>({
     loveTokens: 0,
     deferredSlices: 0,
@@ -41,6 +42,8 @@ export function LedgerSurface({ theme }: { theme: Record<string, string> }) {
     k4Features: null,
     k4Expanded: false,
   });
+  const [remoteBalance, setRemoteBalance] = useState<number | null>(null);
+  const [balanceError, setBalanceError] = useState<string | null>(null);
 
   const refresh = useCallback(async () => {
     const [b, h, i, k4] = await Promise.all([
@@ -57,6 +60,20 @@ export function LedgerSurface({ theme }: { theme: Record<string, string> }) {
     const interval = setInterval(refresh, 2000);
     return () => clearInterval(interval);
   }, [refresh]);
+
+  useEffect(() => {
+    let cancelled = false;
+    const loadRemote = async () => {
+      try {
+        const bal = await fetchLoveBalance('did:key:local');
+        if (!cancelled) setRemoteBalance(bal.balance);
+      } catch (err) {
+        if (!cancelled) setBalanceError(err instanceof Error ? err.message : 'Failed to reach LOVE ledger');
+      }
+    };
+    loadRemote();
+    return () => { cancelled = true; };
+  }, []);
 
   return (
     <div className="p-6 bg-purple-950/20 text-slate-100 min-h-screen font-mono border border-purple-500/30">
@@ -97,8 +114,14 @@ export function LedgerSurface({ theme }: { theme: Record<string, string> }) {
               <span className="text-purple-400 font-bold">50.00% (Sovereignty Pool Locked)</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-slate-400">ACCUMULATED L.O.V.E. BALANCE:</span>
+              <span className="text-slate-400">ACCUMULATED L.O.V.E. BALANCE (local):</span>
               <span className="text-purple-300 font-bold">{data.loveTokens} PoC Tokens</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-slate-400">ACCUMULATED L.O.V.E. BALANCE (remote):</span>
+              <span className="text-purple-300 font-bold">
+                {remoteBalance !== null ? `${remoteBalance} PoC Tokens` : balanceError || '—'}
+              </span>
             </div>
             {data.integrity && (
               <div className="flex justify-between">

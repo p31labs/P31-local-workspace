@@ -19,7 +19,7 @@ describe('Biological Token Recalculation Core Matrix', () => {
 
     const quantum = getBiologicalTheme(5, false);
     expect(quantum.name).toBe('QUANTUM');
-    expect(quantum.wrapper).toContain('text-emerald-400');
+    expect(quantum.wrapper).toContain('text-[#E0E0E0]');
   });
 
   it('should trigger forced grayRock override regardless of quantitative input counters', () => {

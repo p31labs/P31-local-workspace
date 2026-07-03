@@ -1,5 +1,5 @@
 const PAIN_THRESHOLD = 7;
-const CACHE_NAME = 'hearth-shell-v1';
+const CACHE_NAME = 'hearth-shell-v2';
 const SHELL_URLS = ['/', '/index.html'];
 
 self.addEventListener('install', (e) => {
@@ -24,15 +24,16 @@ self.addEventListener('fetch', (e) => {
     e.respondWith(
       caches.open(CACHE_NAME).then((cache) =>
         cache.match(e.request).then((cached) => cached || fetch(e.request).then((res) => {
+          if (!res.ok) return cached || new Response('Offline', { status: 503 });
           cache.put(e.request, res.clone());
           return res;
-        }))
+        }).catch(() => cached || new Response('Offline', { status: 503 })))
       )
     );
     return;
   }
   e.respondWith(
-    caches.match(e.request).then((cached) => cached || fetch(e.request))
+    caches.match(e.request).then((cached) => cached || fetch(e.request).catch(() => new Response('Offline', { status: 503 })))
   );
 });
 

@@ -9,6 +9,17 @@ export default defineConfig({
   vite: {
     optimizeDeps: {
       exclude: ['@electric-sql/pglite']
-    }
-  }
+    },
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            vendor: ['react', 'react-dom', 'react-router-dom'],
+            pglite: ['@electric-sql/pglite'],
+          },
+        },
+      },
+      chunkSizeWarningLimit: 500,
+    },
+  },
 });

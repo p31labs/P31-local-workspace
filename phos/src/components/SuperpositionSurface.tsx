@@ -39,11 +39,11 @@ export function SuperpositionSurface({ theme, spoons }: { theme: ThemeShape; spo
           <p className="font-mono text-[10px] text-zinc-500 mt-2">No other authorized nodes detected.</p>
         </div>
       ) : (
-        <div className={`grid ${theme.gridCols || 'grid-cols-1 md:grid-cols-2'} gap-6`}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {devices.filter(d => d.online).map(device => (
             <div
               key={device.id}
-              className={`${theme.surfaceCard || 'p-4 border border-white/5 rounded-xl'} ${
+              className={`p-4 border border-white/5 rounded-xl ${
                 device.id === currentDevice.id
                   ? 'border-emerald-500/40 ring-1 ring-emerald-500/20'
                   : 'opacity-80'

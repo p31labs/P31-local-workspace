@@ -1,16 +1,31 @@
 import React from 'react';
 import { useAtmosphere } from './AtmosphereProvider';
 
-export default function PHOSOrb() {
-  const { spoons, grayRock } = useAtmosphere();
+interface PHOSOrbProps {
+  spoons?: number;
+}
+
+export default function PHOSOrb({ spoons: propSpoons }: PHOSOrbProps) {
+  const ctx = (() => { try { return useAtmosphere(); } catch { return null; } })();
+  const spoons = propSpoons ?? ctx?.spoons ?? 3;
+  const grayRock = ctx?.grayRock ?? false;
+
   const size = 72 + spoons * 8;
+
   if (grayRock || spoons === 0) {
     return <div className="w-16 h-16 rounded-full bg-gray-800 shadow-none" aria-hidden="true" />;
   }
+
+  const pulseDuration = Math.max(2, 6 - spoons);
   return (
     <div
-      className="rounded-full shadow-[0_0_50px_rgba(52,211,153,0.5)] bg-emerald-400 animate-pulse"
-      style={{ width: size, height: size }}
+      className="rounded-full bg-phos-accent phos-gpu"
+      style={{
+        width: size,
+        height: size,
+        opacity: 0.6 + spoons * 0.08,
+        animation: `pulse ${pulseDuration}s ease-in-out infinite`,
+      }}
       aria-label="PHOS Orb"
     />
   );

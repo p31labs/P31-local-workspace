@@ -28,13 +28,13 @@ function calcBackoff(retryCount: number): number {
   return Math.min(base, MAX_RETRY_MS);
 }
 
-export function NodeZeroSurface({ theme, spoons }: { theme: Record<string, string>; spoons: number }) {
+export function NodeZeroSurface({ theme, spoons }: { theme?: Record<string, string>; spoons: number }) {
   const [data, setData] = useState<TelemetryData | null>(null);
   const [wsState, setWsState] = useState<WsState>('idle');
   const [retryCount, setRetryCount] = useState(0);
   const bufferRef = useRef<TelemetryData[]>([]);
   const wsRef = useRef<WebSocket | null>(null);
-  const timerRef = useRef<ReturnType<typeof setTimeout>>();
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const throttleRef = useRef(0);
   const mounted = useRef(true);
 

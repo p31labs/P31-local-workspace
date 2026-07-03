@@ -21,7 +21,7 @@ async function verifyAssetHash(dataUrl: string, expectedHash: string): Promise<b
   }
 }
 
-export function RetroVaultSurface({ theme, spoons }: { theme: Record<string, string>; spoons: number }) {
+export function RetroVaultSurface({ theme, spoons }: { theme?: Record<string, string>; spoons: number }) {
   const [metrics, setMetrics] = useState<VaultMetrics | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [opfsPrompt, setOpfsPrompt] = useState(false);
@@ -45,7 +45,7 @@ export function RetroVaultSurface({ theme, spoons }: { theme: Record<string, str
     try {
       const pgliteMod = await import('@electric-sql/pglite');
       const PGlite = pgliteMod.PGlite;
-      const db = new PGlite({ connectionString: 'idb://p31-retro-vault' });
+      const db = new PGlite('idb://p31-retro-vault' as any);
 
       const [itemRes, mediaRes, configRes] = await Promise.all([
         db.query("SELECT COUNT(*) as count FROM entities WHERE context = 'item'"),

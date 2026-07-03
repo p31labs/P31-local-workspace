@@ -22,8 +22,8 @@ const INITIAL_STATE: WarehouseState = {
   error: null,
 };
 
-export function WarehouseSurface({ theme, spoons }: { theme: any; spoons: number }) {
-  const [state, setState] = useState<INITIAL_STATE>(INITIAL_STATE);
+export function WarehouseSurface({ theme, spoons }: { theme?: any; spoons: number }) {
+  const [state, setState] = useState<WarehouseState>(INITIAL_STATE);
   const [virtualOffset, setVirtualOffset] = useState(0);
   const dbRef = useRef<any>(null);
   const subRef = useRef<any>(null);
@@ -38,7 +38,7 @@ export function WarehouseSurface({ theme, spoons }: { theme: any; spoons: number
     async function initWarehouse() {
       try {
         const { PGlite } = await import('@electric-sql/pglite');
-        db = new PGlite({ connectionString: 'idb://p31-warehouse-aj' });
+        db = new PGlite('idb://p31-warehouse-aj' as any);
         dbRef.current = db;
 
         // Initial load
@@ -69,7 +69,7 @@ export function WarehouseSurface({ theme, spoons }: { theme: any; spoons: number
               subRef.current = sub;
               sub.on('change', (result: any) => {
                 if (!cancelled && result?.rows) {
-                  setState((prev) => ({
+                  setState((prev: WarehouseState) => ({
                     ...prev,
                     allItems: result.rows as WarehouseItem[],
                     recentLog: result.rows.slice(0, 3) as WarehouseItem[],
@@ -83,7 +83,7 @@ export function WarehouseSurface({ theme, spoons }: { theme: any; spoons: number
         }
       } catch (err) {
         if (!cancelled) {
-          setState((prev) => ({ ...prev, error: 'WAREHOUSE_DB_OFFLINE // READ_ONLY_FALLBACK' }));
+          setState((prev: WarehouseState) => ({ ...prev, error: 'WAREHOUSE_DB_OFFLINE // READ_ONLY_FALLBACK' }));
         }
       }
     }
@@ -142,7 +142,7 @@ export function WarehouseSurface({ theme, spoons }: { theme: any; spoons: number
               <p className="text-xs opacity-40 font-mono italic">No recent scans caught in loop.</p>
             ) : (
               <div className="space-y-1.5">
-                {state.recentLog.map((item) => (
+                {state.recentLog.map((item: WarehouseItem) => (
                   <div key={item.id} className="flex justify-between items-center text-xs font-mono p-2 rounded bg-white/5 border border-white/5">
                     <span className="truncate max-w-[70%]">{item.name}</span>
                     <span className="opacity-50 text-[10px]">{item.sku}</span>
@@ -163,7 +163,7 @@ export function WarehouseSurface({ theme, spoons }: { theme: any; spoons: number
                 onScroll={handleScroll}
               >
                 <div style={{ height: totalHeight, position: 'relative' }}>
-                  {visibleItems.map((item, i) => (
+                  {visibleItems.map((item: WarehouseItem, i: number) => (
                     <div
                       key={item.id}
                       className="absolute left-0 right-0 flex justify-between items-center text-xs font-mono px-3 border-b border-white/5 hover:bg-white/5"

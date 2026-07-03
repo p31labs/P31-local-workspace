@@ -6,11 +6,11 @@ export const IgnitionSurface: React.FC<{ className?: string }> = ({ className })
   return (
     <div className={`relative w-full h-full flex flex-col items-center justify-center ${className ?? ''}`}>
       {grayRock ? (
-        <p className="font-mono text-xs text-zinc-500">Ignition offline.</p>
+        <p className="font-sans text-xs text-zinc-500">Ignition offline.</p>
       ) : (
         <>
-          <span className="font-mono text-xs text-orange-500/60 tracking-widest uppercase mb-4">Ignition</span>
-          <p className="font-mono text-xs text-zinc-400 mb-6 text-center max-w-xs">
+          <span className="text-xs font-sans text-white/40 tracking-wide mb-4">Ignition</span>
+          <p className="text-xs font-sans text-zinc-400 mb-6 text-center max-w-xs">
             Welcome to PHOS — Phosphorus Human Operating Surface.<br />
             Choose your entry point.
           </p>
@@ -22,7 +22,7 @@ export const IgnitionSurface: React.FC<{ className?: string }> = ({ className })
                 { key: 'ARCHIVE', label: 'Knowledge' },
               ].map((d) => (
                 <button key={d.key} onClick={() => setSurface(d.key as any)}
-                  className="px-4 py-2 text-xs font-mono border border-orange-800/40 text-orange-400 rounded hover:bg-orange-900/20">
+                  className="px-4 py-2 text-xs font-sans border border-white/10 text-white/60 rounded hover:bg-white/10">
                   {d.label}
                 </button>
               ))}

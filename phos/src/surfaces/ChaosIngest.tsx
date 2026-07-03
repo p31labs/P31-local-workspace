@@ -29,14 +29,16 @@ function persistDraft(text: string) {
   } catch { /* quota */ }
 }
 
-export function ChaosIngest({ theme }: { theme: Record<string, string> }) {
+const fallbackTheme: Record<string, string> = { name: 'QUANTUM', input: '', button: '' };
+
+export function ChaosIngest({ theme = fallbackTheme }: { theme?: Record<string, string> }) {
   const [text, setText] = useState('');
   const [syncing, setSyncing] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
   const ydocRef = useRef<Y.Doc | null>(null);
   const ytextRef = useRef<Y.Text | null>(null);
   const { embed } = useEmbeddingWorker();
-  const statusTimer = useRef<ReturnType<typeof setTimeout>>();
+  const statusTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const mounted = useRef(true);
 
   /* v8 ignore start */

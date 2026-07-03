@@ -13,7 +13,7 @@ interface SearchResult {
   score: number;
 }
 
-export function ShakeStream({ theme, initialQuery }: { theme: Record<string, string>; initialQuery: string }) {
+export function ShakeStream({ theme, initialQuery }: { theme?: Record<string, string>; initialQuery: string }) {
   const [query, setQuery] = useState(initialQuery);
   const [results, setResults] = useState<SearchResult[]>([]);
   const [streamedText, setStreamedText] = useState('');

@@ -1,0 +1,49 @@
+:root {
+  --phos-theme: 'quantum';
+  --p31-bg: #0a0e14;
+  --p31-text: #e2e8f0;
+  --p31-text-muted: #94a3b8;
+  --p31-accent-primary: #10b981;
+  --p31-accent-secondary: #34d399;
+  --p31-accent-primary-dim: rgba(16, 185, 129, 0.15);
+  --p31-surface: #1a1e24;
+  --p31-surface-border: rgba(16, 185, 129, 0.15);
+  --p31-particles-opacity: 0.5;
+  --p31-font-family: 'Inter', system-ui, sans-serif;
+  --phos-bg: var(--p31-bg);
+  --phos-text: var(--p31-text);
+  --phos-accent: var(--p31-accent-secondary);
+  --phos-primary: var(--p31-accent-primary);
+  --phos-border: var(--p31-surface-border);
+  --phos-card-bg: var(--p31-surface);
+  --phos-glow: radial-gradient(ellipse at center, var(--p31-accent-primary-dim) 30%, transparent 70%);
+  --phos-glow-intensity: 1;
+  --phos-star-color-1: var(--p31-accent-primary);
+  --phos-star-color-2: var(--p31-accent-secondary);
+  --phos-star-intensity: var(--p31-particles-opacity);
+  --phos-font-heading: var(--p31-font-family);
+  --phos-font-body: var(--p31-font-family);
+}
+
+[data-spoons="0"] {
+  --phos-glow: none;
+  --phos-glow-intensity: 0;
+  --phos-star-intensity: 0;
+}
+
+[data-spoons="1"],
+[data-spoons="2"] {
+  --phos-glow: none;
+  --phos-glow-intensity: 0;
+}
+
+body {
+  background-color: var(--phos-bg);
+  color: var(--phos-text);
+  font-family: var(--phos-font-body);
+  transition: background-color 600ms ease, color 600ms ease;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--phos-font-heading);
+}

@@ -21,7 +21,7 @@ export { getBiologicalTheme };
 
 const VALID_SURFACES = new Set([
   'GREETING', 'IGNITION', 'BONDING', 'THE_BUFFER', 'VAULT', 'GRID',
-  'NODE_ZERO', 'LEDGER', 'LOVE', 'HEARTH', 'ARCADE', 'ARCHIVE',
+  'NODE_ZERO', 'LEDGER', 'LOVE', 'DISPUTE', 'HEARTH', 'ARCADE', 'ARCHIVE',
   'COMPASS', 'SETTINGS', 'WAREHOUSE',
 ]);
 
@@ -51,8 +51,8 @@ function PHOSShellInner({ skipLoading = false }: { skipLoading?: boolean }) {
   const [helpToast, setHelpToast] = useState('');
   const effectiveLevel = currentDevice?.level ?? inferredLevel;
   const theme = useMemo(
-    () => getBiologicalTheme(spoons, grayRock, effectiveLevel),
-    [spoons, grayRock, effectiveLevel]
+    () => getBiologicalTheme(spoons, grayRock),
+    [spoons, grayRock]
   );
 
   useEffect(() => {
@@ -112,7 +112,8 @@ function PHOSShellInner({ skipLoading = false }: { skipLoading?: boolean }) {
   const surfaceNames: Record<string, string> = {
     GREETING: 'Greeting', IGNITION: 'Ignition', BONDING: 'Bonding', THE_BUFFER: 'Buffer',
     VAULT: 'Vault', GRID: 'Grid', NODE_ZERO: 'Node Zero', LEDGER: 'Ledger', LOVE: 'Love',
-    HEARTH: 'Hearth', ARCADE: 'Arcade', ARCHIVE: 'Archive', COMPASS: 'Compass', SETTINGS: 'Settings',
+    DISPUTE: 'Dispute', HEARTH: 'Hearth', ARCADE: 'Arcade', ARCHIVE: 'Archive',
+    COMPASS: 'Compass', SETTINGS: 'Settings',
   };
 
   const isDesktopGreeting = currentSurface === 'GREETING' && theme.name === 'QUANTUM';
@@ -141,14 +142,14 @@ function PHOSShellInner({ skipLoading = false }: { skipLoading?: boolean }) {
       {isDesktopGreeting && (
         <>
           <div className="mt-8 ml-8 sm:mt-12 sm:ml-12 max-w-lg bg-[#050505]/60 backdrop-blur-md border border-white/5 rounded-2xl p-6 shadow-2xl z-20 relative">
-            <div className="flex items-center gap-2 text-emerald-500/60 font-mono text-[9px] mb-4 uppercase tracking-widest">
+            <div className="flex items-center gap-2 text-white/40 font-sans text-[9px] mb-4 tracking-wide">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
               {new Date().toLocaleTimeString('en-US', { hour12: true })}
             </div>
-            <div className="font-mono text-[11px] leading-relaxed text-zinc-300">
-              <div className="text-emerald-400 font-bold mb-2">&gt; PHOS_CORE // TAURI BRIDGE INITIALIZED.</div>
-              <div>Native Rust environment detected.</div>
-              <div>Hardware acceleration: Bypassed (Software Renderer Active).</div>
+            <div className="font-sans text-[11px] leading-relaxed text-zinc-300">
+              <div className="text-[var(--phos-primary)] font-medium mb-2">PHOS_CORE // INITIALIZED.</div>
+              <div>Native environment detected.</div>
+              <div>Hardware acceleration: active.</div>
               <div className="mt-3 text-zinc-500">Type /help for native execution commands.</div>
             </div>
           </div>
@@ -203,7 +204,7 @@ function PHOSShellInner({ skipLoading = false }: { skipLoading?: boolean }) {
         {mainContent}
 
         {helpToast && (
-          <div className="absolute bottom-28 left-1/2 -translate-x-1/2 z-50 px-5 py-3 bg-black/90 border border-emerald-800/40 rounded-[2rem] text-emerald-400 font-mono text-xs tracking-wider shadow-lg whitespace-nowrap backdrop-blur-xl">
+          <div className="absolute bottom-28 left-1/2 -translate-x-1/2 z-50 px-5 py-3 bg-black/90 border border-white/10 rounded-[2rem] text-[var(--phos-text)] font-sans text-xs tracking-wide shadow-lg whitespace-nowrap backdrop-blur-xl">
             {helpToast}
           </div>
         )}

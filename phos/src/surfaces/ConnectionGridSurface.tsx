@@ -28,7 +28,7 @@ const INITIAL_NODES: MeshNode[] = [
   { id: 'relay-1', name: 'Family Relay', type: 'relay', status: 'online', pingMs: 34 },
 ];
 
-export function ConnectionGridSurface({ theme, spoons }: { theme: Record<string, string>; spoons: number }) {
+export function ConnectionGridSurface({ theme, spoons }: { theme?: Record<string, string>; spoons: number }) {
   const [nodes, setNodes] = useState<MeshNode[]>(INITIAL_NODES);
   const [edges, setEdges] = useState<MeshEdge[]>([]);
   const [selectedNode, setSelectedNode] = useState<string | null>(null);

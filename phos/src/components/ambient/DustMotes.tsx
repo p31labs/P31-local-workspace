@@ -67,12 +67,12 @@ const DustMotes: React.FC = () => {
     return () => { cancelAnimationFrame(animRef.current); ro.disconnect(); };
   }, [spoons, grayRock]);
 
-  return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 0 }} aria-hidden="true" />;
+  return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none phos-gpu" style={{ zIndex: 0 }} aria-hidden="true" />;
 };
 
 function DustMotesWithBoundary() {
   return (
-    <SurfaceErrorBoundary canvasName="DustMotes">
+    <SurfaceErrorBoundary surfaceName="DustMotes">
       <DustMotes />
     </SurfaceErrorBoundary>
   );

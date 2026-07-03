@@ -40,7 +40,7 @@ export function unregisterActionHandler(surface: string) {
 async function registerSync() {
   if ('serviceWorker' in navigator && 'SyncManager' in window) {
     const reg = await navigator.serviceWorker.ready;
-    reg.sync.register('sync-actions').catch(() => {});
+    (reg as ServiceWorkerRegistration & { sync: { register(tag: string): Promise<void> } }).sync.register('sync-actions').catch(() => {});
   }
 }
 

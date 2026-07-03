@@ -1,3 +1,9 @@
 name = "phos"
 pages_build_output_dir = "dist"
 compatibility_date = "2026-05-31"
+
+[vars]
+PUBLIC_EDGE_AI_URL = "https://phos-ai-proxy.trimtab-signal.workers.dev"
+PUBLIC_EDGE_AI_TOKEN = "phos-edge-2026"
+PUBLIC_JITTERBUG_API = "https://jitterbug-api.trimtab-signal.workers.dev"
+PUBLIC_JITTERBUG_PSK = "***REDACTED***"

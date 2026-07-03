@@ -62,7 +62,9 @@ async function fetchSummary(feature?: string): Promise<K4Features | null> {
     const features: K4Features = {};
     for (const [level, summary] of Object.entries(data.summary || {})) {
       const l = Number(level);
-      for (const [f, val] of Object.entries(summary.vertices || {})) {
+      const vertices = (summary as Record<string, unknown>)?.vertices as Record<string, number> | undefined;
+      if (!vertices) continue;
+      for (const [f, val] of Object.entries(vertices)) {
         if (!features[f]) features[f] = { L0: 0, L1: 0, L2: 0, L3: 0, L4: 0 };
         (features[f] as any)[`L${l}`] = val as number;
       }

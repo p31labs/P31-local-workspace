@@ -9,7 +9,7 @@ interface PainNotification {
   source: string;
 }
 
-export function HearthSurface({ theme, spoons }: { theme: Record<string, string>; spoons: number }) {
+export function HearthSurface({ theme, spoons }: { theme?: Record<string, string>; spoons: number }) {
   const { setSpoons } = useAtmosphere();
   const [activeTab, setActiveTab] = useState('overview');
   const [energyLevel, setEnergyLevel] = useState(5);

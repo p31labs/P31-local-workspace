@@ -3,12 +3,15 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 export type ConnectionStatus = 'connecting' | 'connected' | 'disconnected' | 'error';
 
 export interface SanctuaryMessage {
-  type: 'message' | 'ack' | 'joined' | 'join' | 'error' | 'ping' | 'pong';
+  type: 'message' | 'ack' | 'joined' | 'join' | 'error' | 'ping' | 'pong' | 'replay';
+  id?: number;
   from?: string;
   to?: string;
   body?: string;
   timestamp?: number;
   peerDid?: string;
+  lastMsgId?: number;
+  messages?: { id: number; from: string; body: string; timestamp: number }[];
 }
 
 interface UseSanctuaryWSOptions {
@@ -53,6 +56,7 @@ export function useSanctuaryWS({
   const reconnectTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const messageQueue = useRef<SanctuaryMessage[]>([]);
   const isClosing = useRef(false);
+  const lastMessageId = useRef(0);
 
   const updateStatus = useCallback(
     (newStatus: ConnectionStatus) => {
@@ -65,7 +69,10 @@ export function useSanctuaryWS({
   const connect = useCallback(() => {
     if (isClosing.current) return;
 
-    const wsUrl = `wss://sovereign-justice-evidence.trimtab-signal.workers.dev/ws/sanctuary/${encodeURIComponent(roomId)}?did=${encodeURIComponent(did)}`;
+    let wsUrl = `wss://sovereign-justice-evidence.trimtab-signal.workers.dev/ws/sanctuary/${encodeURIComponent(roomId)}?did=${encodeURIComponent(did)}`;
+    if (lastMessageId.current > 0) {
+      wsUrl += `&lastMsgId=${lastMessageId.current}`;
+    }
 
     const ws = new WebSocket(wsUrl);
 
@@ -78,6 +85,7 @@ export function useSanctuaryWS({
         from: did,
         to: peerDid || '',
         peerDid: peerDid || '',
+        lastMsgId: lastMessageId.current > 0 ? lastMessageId.current : undefined,
       };
       ws.send(JSON.stringify(joinMsg));
 
@@ -94,6 +102,28 @@ export function useSanctuaryWS({
 
         if (data.type === 'joined' && data.peerDid) {
           setPeerDid(data.peerDid);
+        }
+
+        // Track highest message ID for reconnection replay
+        if (data.id && data.id > lastMessageId.current) {
+          lastMessageId.current = data.id;
+        }
+
+        // Handle replay buffer on reconnect
+        if (data.type === 'replay' && data.messages) {
+          data.messages.forEach((m) => {
+            if (m.id && m.id > lastMessageId.current) {
+              lastMessageId.current = m.id;
+            }
+            // Feed replay messages through the onMessage callback
+            onMessage?.({
+              type: 'message',
+              id: m.id,
+              from: m.from,
+              body: m.body,
+              timestamp: m.timestamp,
+            });
+          });
         }
       } catch {
         // non-JSON message (e.g., server ping) — ignore

@@ -3,7 +3,7 @@ const EVENT_KEY = 'p31_karma_events';
 const MAX_EVENTS = 200;
 const DB_CONN = 'idb://p31-karma-ledger';
 
-interface KarmaEvent {
+export interface KarmaEvent {
   kind: string;
   delta: number;
   timestamp: number;

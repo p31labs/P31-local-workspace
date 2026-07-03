@@ -24,7 +24,7 @@ interface RpcMessage {
   timestamp: number;
 }
 
-export function ArcadeSurface({ theme, spoons }: { theme: Record<string, string>; spoons: number }) {
+export function ArcadeSurface({ theme, spoons }: { theme?: Record<string, string>; spoons: number }) {
   const [filter, setFilter] = useState('all');
   const [activeGameUrl, setActiveGameUrl] = useState<string | null>(null);
   const [lastScore, setLastScore] = useState<RpcMessage | null>(null);

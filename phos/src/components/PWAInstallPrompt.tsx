@@ -1,30 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
-
-declare global {
-  namespace React.JSX {
-    interface IntrinsicElements {
-      'pwa-install': React.DetailedHTMLProps<
-        React.HTMLAttributes<HTMLElement> & {
-          'install-description'?: string;
-          'manual-apple'?: string;
-          'manual-chrome'?: string;
-          'disable-chrome'?: string;
-          'disable-install-description'?: string;
-          'manifest-url'?: string;
-          name?: string;
-          description?: string;
-          icon?: string;
-          ref?: React.Ref<HTMLElement>;
-        },
-        HTMLElement
-      >;
-    }
-  }
-}
+import type { PWAInstallElement, PWAInstallProps } from '@khmyznikov/pwa-install';
 
 export function PWAInstallPrompt() {
   const [ready, setReady] = useState(false);
-  const ref = useRef<HTMLElement>(null);
+  const ref = useRef<PWAInstallElement>(null);
 
   useEffect(() => {
     if (window.matchMedia('(display-mode: standalone)').matches) return;

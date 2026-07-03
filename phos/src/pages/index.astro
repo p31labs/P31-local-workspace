@@ -1,22 +1,32 @@
 ---
-import PHOSShell from '../components/PHOSShell';
+import PHOSWorkspace from '../components/PHOSWorkspace';
 import '../styles/globals.css';
 ---
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-spoons="3" data-theme="quantum">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="PHOS — Cognitive prosthetic platform with spoon-aware UI for neurodivergent individuals. Service-portable, data-decoupled, zero telemetry." />
-    <meta name="theme-color" content="#39ff14" />
+    <meta name="theme-color" content="#00f0ff" />
     <meta name="robots" content="index, follow" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="manifest" href="/manifest.json" />
     <link rel="apple-touch-icon" href="/icon-192.png" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
     <title>PHOS — Phosphorus Human Operating Surface</title>
+    <script>
+      (function() {
+        var spoons = localStorage.getItem('p31:spoons') || '3';
+        var themeMap = { 0:'crisis', 1:'sanctuary', 2:'sanctuary', 3:'bridge', 4:'quantum', 5:'quantum' };
+        var theme = themeMap[spoons] || 'quantum';
+        document.documentElement.setAttribute('data-spoons', spoons);
+        document.documentElement.setAttribute('data-theme', theme);
+      })();
+    </script>
   </head>
   <body>
-    <PHOSShell client:only="react" />
+    <PHOSWorkspace client:only="react" />
   </body>
 </html>

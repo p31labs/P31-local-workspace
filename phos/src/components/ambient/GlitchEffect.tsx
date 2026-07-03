@@ -48,9 +48,9 @@ const GlitchEffect: React.FC = () => {
 
   return (
     <>
-      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 0, opacity: 0 }} aria-hidden="true" />
+      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none phos-gpu" style={{ zIndex: 0, opacity: 0 }} aria-hidden="true" />
       <div
-        className="absolute inset-0 pointer-events-none"
+        className="absolute inset-0 pointer-events-none phos-gpu"
         style={{
           zIndex: 0,
           opacity: offset.active ? 0.15 : 0,
@@ -67,7 +67,7 @@ const GlitchEffect: React.FC = () => {
 
 function GlitchEffectWithBoundary() {
   return (
-    <SurfaceErrorBoundary canvasName="GlitchEffect">
+    <SurfaceErrorBoundary surfaceName="GlitchEffect">
       <GlitchEffect />
     </SurfaceErrorBoundary>
   );

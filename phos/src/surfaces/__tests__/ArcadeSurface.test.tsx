@@ -5,7 +5,7 @@ import { ArcadeSurface } from '../ArcadeSurface';
 
 const mockTheme = {
   name: 'QUANTUM',
-  button: 'bg-emerald-950/20 border border-emerald-500/40 text-emerald-400 rounded-none',
+  button: 'bg-white/10 hover:bg-white/15 border border-white/10 text-[#E0E0E0] rounded-2xl',
 };
 
 describe('ArcadeSurface', () => {

@@ -1,6 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { generateEmbedding, ingestAndEmbed } from '../Embedder';
 
+vi.mock('../ChaosVault', () => ({
+  ingestToChaosVault: vi.fn().mockResolvedValue(undefined),
+}));
+
 describe('Embedder', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -9,7 +13,7 @@ describe('Embedder', () => {
   describe('generateEmbedding', () => {
     it('should return embedding array on successful fetch', async () => {
       const mockEmbedding = new Array(768).fill(0.1);
-      (window.fetch as any).mockImplementationOnce(() =>
+      (globalThis.fetch as any).mockImplementationOnce(() =>
         Promise.resolve({
           ok: true,
           json: () => Promise.resolve({ data: [{ embedding: mockEmbedding }] }),
@@ -22,7 +26,7 @@ describe('Embedder', () => {
     });
 
     it('should return zero array on HTTP error', async () => {
-      (window.fetch as any).mockImplementationOnce(() =>
+      (globalThis.fetch as any).mockImplementationOnce(() =>
         Promise.resolve({
           ok: false,
           status: 500,
@@ -35,7 +39,7 @@ describe('Embedder', () => {
     });
 
     it('should return zero array on fetch failure', async () => {
-      (window.fetch as any).mockImplementationOnce(() =>
+      (globalThis.fetch as any).mockImplementationOnce(() =>
         Promise.reject(new Error('Network error'))
       );
 
@@ -49,7 +53,7 @@ describe('Embedder', () => {
         ok: true,
         json: () => Promise.resolve({ data: [{ embedding: new Array(768).fill(0) }] }),
       });
-      (window.fetch as any) = fetchMock;
+      (globalThis.fetch as any) = fetchMock;
 
       await generateEmbedding('hello world');
       expect(fetchMock).toHaveBeenCalledWith(
@@ -62,7 +66,7 @@ describe('Embedder', () => {
     });
 
     it('should return zero array when response data is empty', async () => {
-      (window.fetch as any).mockImplementationOnce(() =>
+      (globalThis.fetch as any).mockImplementationOnce(() =>
         Promise.resolve({
           ok: true,
           json: () => Promise.resolve({ data: [] }),
@@ -82,7 +86,7 @@ describe('Embedder', () => {
     });
 
     it('should call generateEmbedding and ingestToChaosVault for valid text', async () => {
-      (window.fetch as any).mockResolvedValueOnce({
+      (globalThis.fetch as any).mockResolvedValueOnce({
         ok: true,
         json: () => Promise.resolve({ data: [{ embedding: new Array(768).fill(0.1) }] }),
       });

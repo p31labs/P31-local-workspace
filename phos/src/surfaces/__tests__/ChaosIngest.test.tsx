@@ -3,7 +3,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { ChaosIngest } from '../ChaosIngest';
 
-vi.mock('../hooks/useEmbeddingWorker', () => ({
+vi.mock('../../hooks/useEmbeddingWorker', () => ({
   useEmbeddingWorker: () => ({
     embed: vi.fn().mockResolvedValue({ embedding: new Array(768).fill(0.001) }),
   }),

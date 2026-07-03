@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { healthCheck } from '../src/lib/health';
+import { healthCheck } from '../lib/health';
 
 describe('phos health', () => {
   it('returns ok status', () => {
@@ -10,7 +10,7 @@ describe('phos health', () => {
 
   it('includes version', () => {
     const result = healthCheck();
-    expect(result.version).toBe('0.1.0');
+    expect(result.version).toBe('2.0.0');
   });
 
   it('includes valid ISO timestamp', () => {

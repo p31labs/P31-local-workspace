@@ -35,8 +35,8 @@ describe('getBiologicalTheme', () => {
   it('should return QUANTUM theme at 4 spoons', () => {
     const theme = getBiologicalTheme(4, false);
     expect(theme.name).toBe('QUANTUM');
-    expect(theme.wrapper).toContain('font-mono');
-    expect(theme.orb).toContain('bg-emerald-400');
+    expect(theme.wrapper).toContain('font-sans');
+    expect(theme.orb).toContain('bg-[#7DD3A8]');
   });
 
   it('should return QUANTUM theme at 5 spoons', () => {
@@ -69,16 +69,16 @@ describe('getBiologicalTheme', () => {
     expect(getBiologicalTheme(2, false).hud).toContain('rounded-3xl');
   });
 
-  it('should use mono font throughout QUANTUM theme', () => {
+  it('should use sans font throughout QUANTUM theme', () => {
     const theme = getBiologicalTheme(5, false);
-    expect(theme.wrapper).toContain('font-mono');
-    expect(theme.input).toContain('font-mono');
-    expect(theme.container).toContain('font-mono');
+    expect(theme.wrapper).toContain('font-sans');
+    expect(theme.input).toContain('font-sans');
+    expect(theme.container).toContain('rounded-2xl');
   });
 
-  it('should use no border radius in QUANTUM theme', () => {
+  it('should use rounded-2xl in QUANTUM theme', () => {
     const theme = getBiologicalTheme(4, false);
-    expect(theme.button).toContain('rounded-none');
-    expect(theme.hud).toContain('rounded-none');
+    expect(theme.button).toContain('rounded-2xl');
+    expect(theme.hud).toContain('rounded-2xl');
   });
 });

@@ -30,11 +30,7 @@ describe('ChaosVault', () => {
       const { getChaosVault } = await import('../ChaosVault');
       const { PGlite } = await import('@electric-sql/pglite');
       await getChaosVault();
-      expect(PGlite).toHaveBeenCalledWith(
-        expect.objectContaining({
-          connectionString: 'idb://p31-chaos-vault',
-        })
-      );
+      expect(PGlite).toHaveBeenCalledWith('idb://p31-chaos-vault');
     });
 
     it('should create the unified_knowledge_graph table on init', async () => {

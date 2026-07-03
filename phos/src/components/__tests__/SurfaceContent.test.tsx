@@ -10,7 +10,7 @@ const renderSurface = (surface: string, spoons = 3) => {
     <DeviceProvider>
       <AtmosphereProvider initialSpoons={spoons} initialSurface={surface}>
         <Suspense fallback={<div>Loading...</div>}>
-          <SurfaceContent currentSurface={surface} setSurface={() => {}} spoons={spoons} />
+          <SurfaceContent currentSurface={surface} setSurface={() => {}} spoons={spoons} theme={{}} />
         </Suspense>
       </AtmosphereProvider>
     </DeviceProvider>
@@ -51,7 +51,7 @@ describe('SurfaceContent', () => {
 
   it('should render ARCHIVE surface', async () => {
     renderSurface('ARCHIVE');
-    expect(await screen.findByText('Sovereign Archive Search')).toBeTruthy();
+    expect(await screen.findByText('SOVEREIGN ARCHIVE')).toBeTruthy();
   });
 
   it('should render SETTINGS surface', () => {
