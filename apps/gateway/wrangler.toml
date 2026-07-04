@@ -1,0 +1,35 @@
+name = "p31-api-gateway"
+main = "src/index.ts"
+compatibility_date = "2026-07-04"
+compatibility_flags = ["nodejs_compat"]
+
+[observability]
+enabled = true
+
+[[services]]
+binding = "phos_ai_proxy"
+service = "phos-ai-proxy"
+
+[[services]]
+binding = "jitterbug_api"
+service = "jitterbug-api"
+
+[[services]]
+binding = "k4_cage"
+service = "k4-cage"
+
+[[services]]
+binding = "genesis_spark"
+service = "genesis-spark"
+
+[[services]]
+binding = "command_center"
+service = "command-center"
+
+[[services]]
+binding = "p31_signaling"
+service = "p31-signaling"
+
+[[routes]]
+pattern = "gateway.p31ca.org/*"
+zone_name = "p31ca.org"
