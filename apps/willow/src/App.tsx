@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Companion } from './components/Companion';
-import { VoiceScreen } from './components/VoiceScreen';
-import { DrawScreen } from './components/DrawScreen';
-import { MoodTracker } from './components/MoodTracker';
-import { FamilyScreen } from './components/FamilyScreen';
+import Companion from './components/Companion';
+import VoiceScreen from './components/VoiceScreen';
+import DrawScreen from './components/DrawScreen';
+import MoodTracker from './components/MoodTracker';
+import FamilyScreen from './components/FamilyScreen';
 
 const HUB_ORIGINS = ['https://p31ca.org', 'https://phos.p31ca.org', 'https://willow.p31ca.org'];
 
