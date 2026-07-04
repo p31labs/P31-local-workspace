@@ -1,0 +1,11 @@
+name = "genesis-spark"
+main = "src/index.ts"
+compatibility_date = "2026-07-03"
+
+[vars]
+PSK = "***REDACTED***"
+DEPLOYER_WALLET = "0x51c285Df171C76bE36252e32679F098d90768413"
+
+[[kv_namespaces]]
+binding = "GENESIS_KV"
+id = ""

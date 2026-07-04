@@ -1,0 +1,17 @@
+{
+  "name": "genesis-spark-worker",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev"
+  },
+  "dependencies": {
+    "itty-router": "^4.0.0"
+  },
+  "devDependencies": {
+    "wrangler": "^4.107.0",
+    "typescript": "^5.6.0"
+  }
+}

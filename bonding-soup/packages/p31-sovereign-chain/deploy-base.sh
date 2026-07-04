@@ -87,6 +87,7 @@ echo "✅ Deployment complete!"
 LOVE_TOKEN=$(echo "${OUTPUT}" | grep -oP 'LOVEToken:\s*\K0x[a-fA-F0-9]{40}' || true)
 LOVE_SBT=$(echo "${OUTPUT}" | grep -oP 'LOVESBT:\s*\K0x[a-fA-F0-9]{40}' || true)
 PROOF_OF_CARE=$(echo "${OUTPUT}" | grep -oP 'ProofOfCare:\s*\K0x[a-fA-F0-9]{40}' || true)
+GENESIS_SPARK=$(echo "${OUTPUT}" | grep -oP 'GenesisSpark:\s*\K0x[a-fA-F0-9]{40}' || true)
 
 if [[ -n "${LOVE_TOKEN}" && -n "${LOVE_SBT}" && -n "${PROOF_OF_CARE}" ]]; then
     cat > "${OUTPUT_FILE}" <<EOF
@@ -98,7 +99,8 @@ if [[ -n "${LOVE_TOKEN}" && -n "${LOVE_SBT}" && -n "${PROOF_OF_CARE}" ]]; then
   "contracts": {
     "LOVEToken": "${LOVE_TOKEN}",
     "LOVESBT": "${LOVE_SBT}",
-    "ProofOfCare": "${PROOF_OF_CARE}"
+    "ProofOfCare": "${PROOF_OF_CARE}",
+    "GenesisSpark": "${GENESIS_SPARK:-not deployed}"
   },
   "burnAddress": "${BURN_ADDRESS}",
   "abdicationStatus": "pending"
@@ -112,6 +114,9 @@ EOF
     echo "     https://basescan.org/address/${LOVE_TOKEN}#code"
     echo "     https://basescan.org/address/${LOVE_SBT}#code"
     echo "     https://basescan.org/address/${PROOF_OF_CARE}#code"
+    if [[ -n "${GENESIS_SPARK}" ]]; then
+    echo "     https://basescan.org/address/${GENESIS_SPARK}#code"
+    fi
     echo ""
     echo "  2. Update care-api worker secrets:"
     echo "     cd /home/p31/P31-local-workspace/workers/care-api"
@@ -124,6 +129,9 @@ EOF
     echo "     cast send ${LOVE_TOKEN} \"transferOwnership(address)\" ${BURN_ADDRESS} --rpc-url https://mainnet.base.org --account default"
     echo "     cast send ${LOVE_SBT} \"transferOwnership(address)\" ${BURN_ADDRESS} --rpc-url https://mainnet.base.org --account default"
     echo "     cast send ${PROOF_OF_CARE} \"transferOwnership(address)\" ${BURN_ADDRESS} --rpc-url https://mainnet.base.org --account default"
+    echo ""
+    echo "  4. Mint Genesis Spark to first donor (after funding threshold met):"
+    echo "     cast send ${GENESIS_SPARK} \"ignite(address,string)\" <DONOR_WALLET> <TX_HASH> --rpc-url https://mainnet.base.org --private-key <KEY>"
 else
     echo "⚠️  Could not auto-extract addresses. Parse manually from output above."
 fi
