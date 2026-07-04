@@ -13,6 +13,10 @@ export DEPLOYER_PRIVATE_KEY=0x...
 export PASSPORT_BASE_URI="ipfs://QmPassportMetadata/"
 ```
 
+The deployer wallet needs Base Sepolia ETH. Get test ETH from:
+- [Base Sepolia Faucet](https://docs.base.org/network-information/#base-sepolia-faucet)
+- Or bridge Sepolia ETH via the [Base Bridge](https://bridge.base.org/)
+
 ## Test Compile
 
 ```bash

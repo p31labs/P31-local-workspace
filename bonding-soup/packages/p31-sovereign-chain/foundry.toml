@@ -14,6 +14,7 @@ remappings = [
 [rpc_endpoints]
 sepolia = "${SEPOLIA_RPC}"
 base = "${BASE_RPC}"
+base_sepolia = "https://sepolia.base.org"
 
 [etherscan]
 sepolia = { key = "${ETHERSCAN_API_KEY}" }
