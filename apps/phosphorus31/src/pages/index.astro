@@ -1,0 +1,22 @@
+---
+import Layout from '../layouts/Layout.astro';
+import HomeView from '../components/HomeView.astro';
+
+const ngoJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "NGO",
+  "name": "P31 Labs, Inc.",
+  "legalName": "P31 Labs, Inc.",
+  "url": "https://phosphorus31.org",
+  "logo": "https://phosphorus31.org/favicon.svg",
+  "description": "Georgia nonprofit corporation building free, open-source assistive technology for neurodivergent families. 501(c)(3) application pending.",
+  "nonprofitStatus": "Nonprofit501c3",
+  "foundingDate": "2026-04-03",
+  "address": { "@type": "PostalAddress", "addressRegion": "GA", "addressCountry": "US" },
+  "sameAs": ["https://github.com/p31labs", "https://ko-fi.com/trimtab69420", "https://discord.gg/uYW5rTCuZ"]
+};
+---
+
+<Layout jsonLd={ngoJsonLd} canonical="https://phosphorus31.org/">
+	<HomeView />
+</Layout>

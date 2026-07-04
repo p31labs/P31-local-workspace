@@ -1,0 +1,26 @@
+---
+import Head from './Head.astro';
+import Footer from './Footer.astro';
+import Navbar from '../components/Navbar.jsx';
+
+const { title, description } = Astro.props;
+---
+<html lang="en" data-spoons="3" data-theme="quantum">
+  <Head title={title} description={description} />
+  <script>
+    (function() {
+      var spoons = localStorage.getItem('p31:spoons') || '3';
+      var themeMap = { 0:'crisis', 1:'sanctuary', 2:'sanctuary', 3:'bridge', 4:'quantum', 5:'quantum' };
+      var theme = themeMap[spoons] || 'quantum';
+      document.documentElement.setAttribute('data-spoons', spoons);
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
+  <body class="bg-void text-cloud font-mono antialiased min-h-screen flex flex-col">
+    <Navbar client:load />
+    <div class="flex-grow">
+      <slot />
+    </div>
+    <Footer />
+  </body>
+</html>

@@ -1,0 +1,334 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const donateJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Donate to P31 Labs",
+  "description": "Support P31 Labs — open-source assistive technology for neurodivergent families. Donations processed securely via PayPal.",
+  "url": "https://phosphorus31.org/donate",
+  "mainEntity": {
+    "@type": "DonateAction",
+    "recipient": { "@type": "NGO", "name": "P31 Labs" },
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+};
+---
+
+<Layout hideNav title="Donate | P31 Labs" description="Support P31 Labs — open-source assistive technology for neurodivergent families. Donations via PayPal. EIN 88-4411768. 501(c)(3) pending." jsonLd={donateJsonLd}>
+  <main class="animate-[fadeIn_0.4s_ease-out] bg-void text-white min-h-screen pb-24">
+    {/* Header */}
+    <div class="bg-surface text-white pt-32 pb-20 px-6">
+      <div class="max-w-5xl mx-auto">
+        <div class="text-quantum-gold font-bold tracking-widest uppercase text-sm mb-4">Support P31 Labs</div>
+        <h1 class="text-5xl font-heading font-black mb-6">Every atom placed is a connection.</h1>
+        <p class="text-xl opacity-80 max-w-2xl">
+          Your donation directly funds free, open-source assistive technology for neurodivergent families. No middleman.
+        </p>
+      </div>
+    </div>
+
+    <div class="max-w-5xl mx-auto px-6 -mt-10">
+      {/* Primary Donation Card */}
+      <div class="bg-surface p-8 md:p-12 rounded-2xl shadow-xl border border-cloud/10 mb-16">
+        <div class="text-center mb-8">
+          <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-quantum-cyan via-quantum-red to-quantum-gold rounded-2xl mb-6">
+            <span class="text-4xl font-heading font-black text-white">P</span>
+          </div>
+          <h2 class="text-3xl font-heading font-black text-ink mb-3">Donate to P31 Labs</h2>
+          <p class="text-ink/60 max-w-lg mx-auto">
+            Choose an amount below. Payments processed securely via PayPal.
+          </p>
+
+        {/* Amount Selection */}
+        <div class="max-w-md mx-auto">
+
+          {/* Monthly / One-time toggle */}
+          <div class="flex rounded-xl border-2 border-cloud/10 overflow-hidden mb-6 font-bold text-sm" id="modeToggle">
+            <button data-mode="monthly" class="flex-1 py-2.5 px-4 bg-quantum-cyan text-black transition-colors">Monthly</button>
+            <button data-mode="once" class="flex-1 py-2.5 px-4 bg-surface2 text-quantum-cyan transition-colors">One-time</button>
+          </div>
+
+          <div class="grid grid-cols-4 gap-3 mb-4" id="amountGrid">
+            <button data-amount="500" class="amount-btn bg-surface2 text-quantum-cyan font-bold py-3 rounded-xl text-center transition-all hover:scale-105 cursor-pointer border-2 border-muted hover:border-quantum-cyan">$5</button>
+            <button data-amount="1000" class="amount-btn bg-surface2 text-quantum-cyan font-bold py-3 rounded-xl text-center transition-all hover:scale-105 cursor-pointer border-2 border-muted hover:border-quantum-cyan">$10</button>
+            <button data-amount="2500" class="amount-btn active bg-quantum-cyan text-black font-bold py-3 rounded-xl text-center transition-all hover:scale-105 cursor-pointer border-2 border-quantum-cyan">$25</button>
+            <button data-amount="5000" class="amount-btn bg-surface2 text-quantum-cyan font-bold py-3 rounded-xl text-center transition-all hover:scale-105 cursor-pointer border-2 border-muted hover:border-quantum-cyan">$50</button>
+          </div>
+
+          <div class="relative mb-2">
+            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-ink/40 font-bold text-lg">$</span>
+            <input
+              type="number"
+              id="customAmount"
+              min="1"
+              step="1"
+              placeholder="Custom amount"
+              class="w-full pl-9 pr-4 py-3 rounded-xl border-2 border-muted focus:border-quantum-cyan focus:outline-none text-lg font-bold text-quantum-cyan bg-surface2 transition-colors"
+            />
+          </div>
+
+          {/* Impact statement */}
+          <p id="impactMsg" class="text-center text-sm text-quantum-cyan/80 font-medium mt-2 mb-1 min-h-[1.5rem]">Covers a full month of infrastructure for all 3 products.</p>
+
+          {/* Tax language - legally required disclosure */}
+          <p class="text-center text-xs text-ink/40 mt-1 mb-4">
+            P31 Labs, Inc. &middot; Georgia Nonprofit Corporation &middot; EIN 88-4411768 &middot;
+            <strong>501(c)(3) status pending.</strong> Donations are NOT tax-deductible until IRS determination.
+          </p>
+
+          {/* PayPal Smart Button Container */}
+          <div id="paypal-button-container" class="min-h-[48px]"></div>
+
+          {/* Fallback message */}
+          <p id="paypalFallback" class="text-center text-sm text-ink/60 mt-2 hidden">
+            PayPal buttons failed to load. Try our <a href="https://ko-fi.com/trimtab69420" class="text-quantum-cyan font-bold hover:underline">Ko-fi page</a> instead.
+          </p>
+        </div>
+      </div>
+
+      {/* What Your Donation Funds */}
+      <div class="mb-16">
+        <h2 class="text-3xl font-heading font-black text-ink mb-8">Where It Goes</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div class="glass-box p-8 rounded-2xl border-l-4 border-l-quantum-cyan">
+            <div class="text-3xl mb-4">&#x1F9EA;</div>
+            <h3 class="font-heading font-bold text-xl text-ink mb-3">BONDING</h3>
+            <p class="text-ink/70">
+              A multiplayer chemistry game that lets separated parents play alongside their kids in real time. Every atom placed is a timestamped engagement record.
+            </p>
+          </div>
+          <div class="glass-box p-8 rounded-2xl border-l-4 border-l-quantum-red">
+            <div class="text-3xl mb-4">&#x1F680;</div>
+            <h3 class="font-heading font-bold text-xl text-ink mb-3">Spaceship Earth</h3>
+            <p class="text-ink/70">
+              A somatic regulation cockpit for AuDHD adults. Spoon tracking, breathing pacer, sensory buffer zone, and executive function tools — all in one place.
+            </p>
+          </div>
+          <div class="glass-box p-8 rounded-2xl border-l-4 border-l-quantum-gold">
+            <div class="text-3xl mb-4">&#x1F4E1;</div>
+            <h3 class="font-heading font-bold text-xl text-ink mb-3">Infrastructure</h3>
+            <p class="text-ink/70">
+              Hosting, relay servers, domain costs, and development tools. Everything runs on Cloudflare Workers and costs less than a coffee subscription.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Organization Info */}
+      <div class="bg-cloud/50 rounded-3xl p-8 md:p-12 mb-16">
+        <h2 class="text-3xl font-heading font-black text-ink mb-8">Organization</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="bg-surface p-6 rounded-xl border border-cloud/10">
+            <div class="text-sm font-bold text-ink/50 uppercase mb-2">Entity</div>
+            <div class="text-lg font-bold text-ink">P31 Labs, Inc.</div>
+            <div class="text-sm text-ink/60 mt-1">Georgia Nonprofit Corporation &middot; EIN 88-4411768</div>
+          </div>
+          <div class="bg-surface p-6 rounded-xl border border-cloud/10">
+            <div class="text-sm font-bold text-ink/50 uppercase mb-2">Receipt</div>
+            <div class="text-lg font-bold text-ink">Automatic via PayPal</div>
+            <div class="text-sm text-ink/60 mt-1">Email receipt sent automatically</div>
+          </div>
+          <div class="bg-surface p-6 rounded-xl border border-cloud/10">
+            <div class="text-sm font-bold text-ink/50 uppercase mb-2">Source Code</div>
+            <a href="https://github.com/p31labs" target="_blank" rel="noopener noreferrer" class="text-lg font-bold text-quantum-cyan hover:underline">github.com/p31labs</a>
+            <div class="text-sm text-ink/60 mt-1">All repositories public</div>
+          </div>
+          <div class="bg-surface p-6 rounded-xl border border-cloud/10">
+            <div class="text-sm font-bold text-ink/50 uppercase mb-2">Status</div>
+            <div class="text-lg font-bold text-quantum-gold">501(c)(3) Pending</div>
+            <div class="text-sm text-ink/60 mt-1">IRS determination expected June-July 2026</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Other Ways */}
+      <div class="text-center mb-16">
+        <h2 class="text-2xl font-heading font-black text-ink mb-4">Other Ways to Help</h2>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center text-ink/70">
+          <div class="glass-box p-6 rounded-xl flex-1 max-w-xs">
+            <div class="text-2xl mb-2">&#x2B50;</div>
+            <h3 class="font-bold text-ink mb-1">Star on GitHub</h3>
+            <p class="text-sm">Visibility helps us reach more families.</p>
+            <a href="https://github.com/p31labs" target="_blank" rel="noopener noreferrer" class="text-quantum-cyan font-bold text-sm hover:underline mt-2 inline-block">github.com/p31labs</a>
+          </div>
+          <div class="glass-box p-6 rounded-xl flex-1 max-w-xs">
+            <div class="text-2xl mb-2">&#x2615;</div>
+            <h3 class="font-bold text-ink mb-1">Buy Us a Coffee</h3>
+            <p class="text-sm">Ko-fi is 0% fee — every cent reaches P31 Labs directly.</p>
+            <a href="https://ko-fi.com/trimtab69420" target="_blank" rel="noopener noreferrer" class="text-quantum-cyan font-bold text-sm hover:underline mt-2 inline-block">ko-fi.com/trimtab69420</a>
+          </div>
+          <div class="glass-box p-6 rounded-xl flex-1 max-w-xs">
+            <div class="text-2xl mb-2">&#x1F527;</div>
+            <h3 class="font-bold text-ink mb-1">Contribute Code</h3>
+            <p class="text-sm">All repos are open source and accepting PRs.</p>
+          </div>
+          <div class="glass-box p-6 rounded-xl flex-1 max-w-xs crypto-box">
+            <div class="text-2xl mb-2">&#x1FA99;</div>
+            <h3 class="font-bold text-ink mb-1">Crypto Donation</h3>
+            <p class="text-sm">Donate ETH, USDC, or DAI via Giveth. Zero platform fees.</p>
+            <a href="https://giveth.io/cause/p31labs" target="_blank" rel="noopener noreferrer" class="text-quantum-cyan font-bold text-sm hover:underline mt-2 inline-block">giveth.io/cause/p31labs</a>
+          </div>
+        </div>
+      </div>
+
+      {/* Contact */}
+      <div class="text-center">
+        <p class="text-ink/50 text-sm">
+          Questions? <a href="mailto:will@p31ca.org" class="text-quantum-cyan font-bold hover:underline">will@p31ca.org</a>
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <script is:inline>
+    (function() {
+      const API_URL = 'https://donate-api.phosphorus31.org';
+
+      const IMPACT = {
+        500:  'Covers 2 months of BONDING relay hosting costs.',
+        1000: 'Funds a week of development tooling for the team.',
+        2500: 'Covers a full month of infrastructure for all 3 products.',
+        5000: 'Funds an entire quarter of operating costs at current burn.',
+      };
+
+      let selectedAmount = 2500; // cents — default $25
+      let isMonthly = true;
+      let paypalLoaded = false;
+
+      // Load PayPal SDK
+      function loadPayPalSDK() {
+        const script = document.createElement('script');
+        script.src = 'https://www.paypal.com/sdk/js?client-id=sb&currency=USD&intent=capture';
+        script.async = true;
+        script.onload = function() {
+          paypalLoaded = true;
+          renderPayPalButtons();
+        };
+        script.onerror = function() {
+          document.getElementById('paypalFallback').classList.remove('hidden');
+        };
+        document.head.appendChild(script);
+      }
+
+      function renderPayPalButtons() {
+        const container = document.getElementById('paypal-button-container');
+        if (!container || typeof paypal === 'undefined') {
+          document.getElementById('paypalFallback').classList.remove('hidden');
+          return;
+        }
+
+        paypal.Buttons({
+          createOrder: async function() {
+            const res = await fetch(API_URL + '/create-paypal-order', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                amount: selectedAmount,
+                currency: 'usd',
+                mode: isMonthly ? 'monthly' : 'once',
+                successUrl: window.location.origin + '/donate?success=1',
+                cancelUrl: window.location.origin + '/donate',
+              }),
+            });
+            if (!res.ok) throw new Error('Failed to create order');
+            const data = await res.json();
+            return data.orderID;
+          },
+          onApprove: async function(data) {
+            const res = await fetch(API_URL + '/capture-paypal-order', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ orderID: data.orderID }),
+            });
+            if (!res.ok) throw new Error('Failed to capture order');
+            window.location.href = window.location.origin + '/donate?success=1';
+          },
+          onCancel: function() {
+            // User cancelled — do nothing
+          },
+          onError: function(err) {
+            console.error('PayPal error:', err);
+            alert('Something went wrong with PayPal. Please try again or use Ko-fi.');
+          },
+        }).render('#paypal-button-container');
+      }
+
+      function init() {
+        loadPayPalSDK();
+
+        // Mode toggle
+        document.querySelectorAll('#modeToggle button').forEach(btn => {
+          btn.addEventListener('click', () => {
+            isMonthly = btn.dataset.mode === 'monthly';
+            document.querySelectorAll('#modeToggle button').forEach(b => {
+              const active = b.dataset.mode === (isMonthly ? 'monthly' : 'once');
+              b.classList.toggle('bg-quantum-cyan', active);
+              b.classList.toggle('text-white', active);
+              b.classList.toggle('bg-surface', !active);
+              b.classList.toggle('text-ink/60', !active);
+            });
+          });
+        });
+
+        // Amount button selection
+        document.querySelectorAll('.amount-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            selectedAmount = parseInt(btn.dataset.amount);
+            document.getElementById('customAmount').value = '';
+            updateUI();
+          });
+        });
+
+        // Custom amount input
+        document.getElementById('customAmount').addEventListener('input', (e) => {
+          const val = parseInt(e.target.value);
+          if (val > 0) {
+            selectedAmount = val * 100;
+            document.querySelectorAll('.amount-btn').forEach(b => {
+              b.classList.remove('active', 'bg-quantum-cyan', 'text-white', 'border-quantum-cyan');
+              b.classList.add('bg-surface', 'text-ink', 'border-cloud/10');
+            });
+          }
+          updateImpact();
+        });
+
+        // Success message
+        if (new URLSearchParams(window.location.search).get('success') === '1') {
+          const card = document.querySelector('.shadow-xl');
+          const msg = document.createElement('div');
+          msg.className = 'bg-green-50 border border-green-200 text-green-800 rounded-xl p-6 text-center mb-8';
+          msg.innerHTML = '<p class="font-bold text-lg mb-1">Thank you!</p><p>Your donation has been received. A receipt has been sent to your email.</p>';
+          card.prepend(msg);
+        }
+      }
+
+      function updateUI() {
+        document.querySelectorAll('.amount-btn').forEach(b => {
+          const isActive = parseInt(b.dataset.amount) === selectedAmount;
+          b.classList.toggle('active', isActive);
+          b.classList.toggle('bg-quantum-cyan', isActive);
+          b.classList.toggle('text-white', isActive);
+          b.classList.toggle('border-quantum-cyan', isActive);
+          b.classList.toggle('bg-surface', !isActive);
+          b.classList.toggle('text-ink', !isActive);
+          b.classList.toggle('border-cloud/10', !isActive);
+        });
+        updateImpact();
+      }
+
+      function updateImpact() {
+        const msg = document.getElementById('impactMsg');
+        if (IMPACT[selectedAmount]) {
+          msg.textContent = IMPACT[selectedAmount];
+        } else {
+          const dollars = (selectedAmount / 100).toFixed(selectedAmount % 100 === 0 ? 0 : 2);
+          msg.textContent = `Your $${dollars} directly funds free assistive technology for neurodivergent families.`;
+        }
+      }
+
+      document.addEventListener('DOMContentLoaded', init);
+    })();
+  </script>
+</Layout>

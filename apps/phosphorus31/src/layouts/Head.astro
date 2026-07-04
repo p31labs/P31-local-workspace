@@ -1,0 +1,19 @@
+---
+export interface HeadProps {
+  title?: string;
+  description?: string;
+}
+const { title = "P31 Labs | Assistive Technology for Neurodivergent Families", description = "Phosphorus-31 Labs is a registered 501(c)(3) nonprofit building open-source, neurodivergent-first assistive technology. We ground the floating neutral." } = Astro.props;
+
+// CRITICAL FIX: Ground Vite CSS compilation
+import '../styles/global.css';
+---
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{title}</title>
+  <meta name="description" content={description} />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+</head>

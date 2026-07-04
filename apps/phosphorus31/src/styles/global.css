@@ -1,0 +1,150 @@
+/* Google Fonts — must precede all other rules */
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap');
+
+/* Design System Tokens — maps all colors to --p31-* variables controlled by data-spoons */
+@import '@p31/design-system/tokens';
+@import '@p31/design-system/themes';
+
+/* Tailwind v4 — single import replaces all v3 directives */
+@import "tailwindcss";
+
+/* Load legacy config for custom colors/fonts */
+@config "../../tailwind.config.mjs";
+
+/* ── Tailwind v4 theme tokens (mapped from design system) ── */
+@theme {
+  --color-void: var(--p31-bg);
+  --color-surface: var(--p31-surface);
+  --color-surface2: var(--p31-surface-solid);
+  --color-cloud: var(--p31-text-secondary);
+  --color-ink: var(--p31-text);
+  --color-muted: var(--p31-text-muted);
+  --color-quantum-cyan: var(--p31-accent-primary);
+  --color-quantum-violet: var(--p31-accent-secondary);
+  --color-quantum-gold: var(--p31-accent-tertiary);
+  --color-quantum-green: var(--p31-accent-success);
+  --color-quantum-red: var(--p31-accent-danger);
+
+  --font-heading: var(--p31-font-family-mono);
+  --font-body: var(--p31-font-family-mono);
+}
+
+/* Global body styles — driven by design system data-spoons */
+body {
+  background-color: var(--p31-bg);
+  color: var(--p31-text-secondary);
+  font-family: var(--p31-font-family-mono);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--p31-font-family-mono);
+  color: var(--p31-text);
+}
+
+/* Dyslexia Toggle Classes */
+.dyslexia-mode {
+  letter-spacing: 0.05em !important;
+  word-spacing: 0.05em !important;
+  line-height: 1.9 !important;
+  font-size: 105% !important;
+}
+
+/* Quantum Glass Box — token-driven */
+.glass-box {
+  background: var(--p31-glass-bg-value);
+  backdrop-filter: var(--p31-glass-blur-value);
+  -webkit-backdrop-filter: var(--p31-glass-blur-value);
+  border: 1px solid var(--p31-surface-border);
+  box-shadow: var(--p31-shadow-lg);
+  border-radius: var(--p31-radius-lg);
+}
+
+/* Glass hover */
+.glass-box-hover {
+  transition: border-color var(--p31-transition-duration-base) var(--p31-transition-ease),
+              background var(--p31-transition-duration-base) var(--p31-transition-ease),
+              box-shadow var(--p31-transition-duration-base) var(--p31-transition-ease);
+}
+
+.glass-box-hover:hover {
+  border-color: var(--p31-accent-primary);
+  background: color-mix(in srgb, var(--p31-glass-bg-value) 1.3, transparent);
+  box-shadow: var(--p31-shadow-lg), 0 0 30px var(--p31-accent-primary-dim);
+}
+
+/* Organic blob animation for illustrations */
+.organic-blob {
+  border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+  animation: morph 8s ease-in-out infinite;
+}
+
+@keyframes pulse-slow {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.05); }
+}
+
+@keyframes orbit-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes orbit-medium {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes orbit-fast {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes morph {
+  0%, 100% { border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; }
+  25% { border-radius: 50% 50% 50% 50% / 60% 40% 70% 30%; }
+  50% { border-radius: 30% 70% 40% 60% / 50% 60% 40% 50%; }
+  75% { border-radius: 60% 40% 30% 70% / 30% 70% 50% 50%; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes rotateCore {
+  0% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(180deg) scale(1.05); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+
+@keyframes breatheCore {
+  0% { opacity: 0.2; transform: scale(0.9); }
+  100% { opacity: 0.6; transform: scale(1.1); }
+}
+
+/* Brand-specific animation classes */
+.animate-pulse-slow { animation: pulse-slow 4s ease-in-out infinite; }
+.animate-orbit-slow { animation: orbit-slow 8s linear infinite; }
+.animate-orbit-medium { animation: orbit-medium 6s linear infinite; }
+.animate-orbit-fast { animation: orbit-fast 4s linear infinite; }
+
+/* Respect prefers-reduced-motion for sensory optimization */
+@media (prefers-reduced-motion: reduce) {
+  .organic-blob { animation: none; }
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--p31-text-muted); border-radius: var(--p31-radius-md); }
+
+/* Accessibility */
+button { transition: all var(--p31-transition-duration-base) var(--p31-transition-ease); }
+:focus { outline: 2px solid var(--p31-accent-primary); outline-offset: 2px; }
+*:focus:not(:focus-visible) { outline: none; }
