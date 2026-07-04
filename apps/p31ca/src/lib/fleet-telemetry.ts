@@ -84,11 +84,6 @@ const PLASMA_THRESHOLD = 2;
 const PROBE_CATALOG: ProbeSpec[] = [
   // ── CRITICAL — starfield enters PLASMA if ≥2 simultaneously down ──────────
   {
-    id:  'command-center',
-    url: 'https://gateway.p31ca.org/api/status',
-    tier: 'critical',
-  },
-  {
     id:  'k4-cage',
     url: 'https://gateway.p31ca.org/api/mesh',
     tier: 'critical',

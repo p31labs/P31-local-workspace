@@ -5,8 +5,7 @@ export interface Env {
   jitterbug_api: Fetcher;
   k4_cage: Fetcher;
   genesis_spark: Fetcher;
-  command_center: Fetcher;
-  p31_signaling?: Fetcher;
+  command_center?: Fetcher;
 }
 
 const allowedOrigins = [
@@ -124,32 +123,6 @@ app.get('/api/genesis', async (c) => {
   url.pathname = url.pathname.replace('/api/genesis', '/');
   const req = new Request(url, c.req.raw);
   const res = await c.env.genesis_spark.fetch(req);
-  const origin = c.req.header('Origin') || '';
-  const headers = new Headers(res.headers);
-  Object.entries(corsHeaders(origin)).forEach(([k, v]) => headers.set(k, v));
-  return new Response(res.body, { status: res.status, headers });
-});
-
-app.get('/api/status', async (c) => {
-  const url = new URL(c.req.url);
-  url.pathname = url.pathname.replace('/api/status', '/');
-  const req = new Request(url, c.req.raw);
-  const res = await c.env.command_center.fetch(req);
-  const origin = c.req.header('Origin') || '';
-  const headers = new Headers(res.headers);
-  Object.entries(corsHeaders(origin)).forEach(([k, v]) => headers.set(k, v));
-  return new Response(res.body, { status: res.status, headers });
-});
-
-app.get('/api/signaling', async (c) => {
-  if (!c.env.p31_signaling) {
-    const origin = c.req.header('Origin') || '';
-    return c.json({ ok: false, error: 'Not bound' }, 503, { ...corsHeaders(origin) });
-  }
-  const url = new URL(c.req.url);
-  url.pathname = url.pathname.replace('/api/signaling', '/');
-  const req = new Request(url, c.req.raw);
-  const res = await c.env.p31_signaling.fetch(req);
   const origin = c.req.header('Origin') || '';
   const headers = new Headers(res.headers);
   Object.entries(corsHeaders(origin)).forEach(([k, v]) => headers.set(k, v));
