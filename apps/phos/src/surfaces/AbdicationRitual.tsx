@@ -4,7 +4,7 @@ import { useAtmosphere } from '../components/AtmosphereProvider';
 import { spoonsStore } from '../store/spoons';
 import { generateKeypair } from '../lib/crypto';
 
-const K4_BASE = 'https://k4-cage.trimtab-signal.workers.dev';
+const K4_BASE = 'https://gateway.p31ca.org/api/mesh';
 
 type Stage = 'welcome' | 'generating' | 'naming';
 

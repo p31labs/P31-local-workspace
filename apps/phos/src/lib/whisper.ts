@@ -22,9 +22,9 @@ const EDGE_ENDPOINT = (() => {
   try {
     return (import.meta as any).env?.PUBLIC_EDGE_AI_URL
       ? `${(import.meta as any).env.PUBLIC_EDGE_AI_URL}/transcribe`
-      : 'https://phos-ai-proxy.trimtab-signal.workers.dev/transcribe';
+      : 'https://gateway.p31ca.org/transcribe';
   } catch {
-    return 'https://phos-ai-proxy.trimtab-signal.workers.dev/transcribe';
+    return 'https://gateway.p31ca.org/transcribe';
   }
 })();
 

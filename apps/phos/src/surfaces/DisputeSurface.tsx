@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { generateAuthToken } from '../lib/did-auth';
 
-const K4_CORE = 'https://k4-cage.trimtab-signal.workers.dev';
+const K4_CORE = 'https://gateway.p31ca.org/api/mesh';
 
 interface DisputeRecord {
   id: string;
