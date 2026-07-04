@@ -163,16 +163,13 @@
 
 # Route: /ops
 /agents.html                     /ops#agents              301
-/appointment-tracker-about.html  /ops#appointment-tracker 301
 /attractor-about.html            /ops#attractor           301
 /attractor.html                  /ops#attractor           301
 /axiom-about.html                /ops#axiom               301
 /axiom.html                      /ops#axiom               301
-/budget-tracker-about.html       /ops#budget-tracker      301
 /buffer-about.html               /ops#buffer              301
 /buffer.html                     /ops#buffer              301
 /builder.html                    /ops#builder             301
-/contact-locker-about.html       /ops#contact-locker      301
 /content-forge-about.html        /ops#content-forge       301
 /content-forge.html              /ops#content-forge       301
 /cortex-about.html               /ops#cortex              301
@@ -186,8 +183,6 @@
 /forge-about.html                /ops#forge               301
 /forge.html                      /ops#forge               301
 /integrations-about.html         /ops#integrations        301
-/legal-evidence-about.html       /ops#legal-evidence      301
-/medical-tracker-about.html      /ops#medical-tracker     301
 /observatory.html                /ops#observatory         301
 /open-doc-suite.html             /ops#docs                301
 /p31-super-centaur-starter.html  /ops#centaur             301
@@ -195,8 +190,6 @@
 /planetary-onboard.html          /ops#onboard             301
 /prism-about.html                /ops#prism               301
 /prism.html                      /ops#prism               301
-/sleep-tracker-about.html        /ops#sleep-tracker       301
-/somatic-anchor-about.html       /ops#somatic             301
 /style-generator.html            /ops#style               301
 /super-centaur-about.html        /ops#centaur             301
 /switches.html                   /ops#switches            301
@@ -210,15 +203,4 @@
 # G.O.D. Operator shell — moved from /ops/ to /god (route collision resolved Phase 2)
 /ops/  /god  301
 
-# @generated begin worker-spa-launch — do not edit by hand; npm run sync:worker-spa-launch
-/appointment-tracker  https://p31-appointment-tracker.trimtab-signal.workers.dev  302
-/love-ledger  https://p31-love-ledger.trimtab-signal.workers.dev  302
-/medical-tracker  https://p31-medical-tracker.trimtab-signal.workers.dev  302
-/somatic-anchor  https://p31-somatic-anchor.trimtab-signal.workers.dev  302
-/legal-evidence  https://p31-legal-evidence.trimtab-signal.workers.dev  302
-/contact-locker  https://p31-contact-locker.trimtab-signal.workers.dev  302
-/sleep-tracker  https://p31-sleep-tracker.trimtab-signal.workers.dev  302
-/budget-tracker  https://p31-budget-tracker.trimtab-signal.workers.dev  302
-/genesis-gate  https://genesis-gate.trimtab-signal.workers.dev  302
-# @generated end worker-spa-launch
 /api/phos/cognitive-state /api/phos/cognitive-state.json 200

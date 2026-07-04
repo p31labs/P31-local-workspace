@@ -1725,14 +1725,14 @@
     },
     "verify": "npm run verify:bus-bar (planned) — checks that productSlots covers all registry IDs, navByRole references only declared slots, and product count ≤ constraints.maxProducts. Until that script lands, validate manually: every key in productSlots must exist in registryAppUrlInvariants OR be flagged as 'subdomain-only' (e.g. bonding); every value in productSlots must be a key in slots; every entry in navByRole must be a key in slots."
   },
-   "threejs": {
-     "geodesic-math.astro": {
-       "path": "src/pages/geodesic-math.astro",
-       "mustIncludeSubstring": "three@0.170.0"
-     },
-     "mesh-observatory.astro": {
-       "path": "src/pages/mesh-observatory.astro",
-       "mustIncludeSubstring": "three@0.170.0"
-     }
-   }
+  "threejs": {
+    "geodesic-math.astro": {
+      "path": "src/pages/geodesic-math.astro",
+      "mustIncludeSubstring": "three@0.170.0"
+    },
+    "mesh-observatory.astro": {
+      "path": "src/pages/mesh-observatory.astro",
+      "mustIncludeSubstring": "three@0.170.0"
+    }
+  }
 }

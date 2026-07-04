@@ -1,5 +1,4 @@
 /** P31 app registry — single source for about pages + hub landing. */
-import { appUrlForWorkerSpa } from "./worker-spa-launches.mjs";
 
 export const registry = [
   {
@@ -168,7 +167,7 @@ export const registry = [
   {
     id: 'genesis-gate', title: 'Genesis Gate', tagline: 'Governance Control Plane',
     icon: '🔬', accent: '#3ba372', status: 'concept', statusLabel: 'CONCEPT',
-    appUrl: appUrlForWorkerSpa('genesis-gate'),
+    appUrl: 'https://genesis-gate.trimtab-signal.workers.dev',
     tech: ['TypeScript ESM', 'Cloudflare Workers', 'TelemetryModule', 'GovernanceHook'],
     features: [
       'TelemetryModule: real-time event stream from all P31 infrastructure endpoints',
@@ -297,7 +296,7 @@ export const registry = [
   {
     id: 'appointment-tracker', title: 'Appointment Tracker', tagline: 'Legal & Family Calendar',
     icon: '📅', accent: '#8b5cf6', status: 'live', statusLabel: 'LIVE',
-    appUrl: appUrlForWorkerSpa('appointment-tracker'),
+    appUrl: 'https://p31-appointment-tracker.trimtab-signal.workers.dev',
     tech: ['Cloudflare Worker', 'LocalStorage', 'CSV Export', 'Recurring Events'],
     features: [
       'Color-coded categories: legal (red), kids (blue), medical (purple), personal (green)',
@@ -318,7 +317,7 @@ export const registry = [
   {
     id: 'love-ledger', title: 'Love Ledger', tagline: 'Family LOVE Token Economy',
     icon: '💜', accent: '#ec4899', status: 'concept', statusLabel: 'CONCEPT',
-    appUrl: appUrlForWorkerSpa('love-ledger'),
+    appUrl: 'https://p31-love-ledger.trimtab-signal.workers.dev',
     tech: ['Cloudflare Worker', 'Chart.js', 'Leaderboard', 'Streak Counter'],
     features: [
       'Track LOVE tokens earned through care, creation, and consistency',
@@ -339,7 +338,7 @@ export const registry = [
   {
     id: 'medical-tracker', title: 'Medical Tracker', tagline: 'Hypoparathyroidism HPT-SD Monitor',
     icon: '🩺', accent: '#3b82f6', status: 'live', statusLabel: 'LIVE',
-    appUrl: appUrlForWorkerSpa('medical-tracker'),
+    appUrl: 'https://p31-medical-tracker.trimtab-signal.workers.dev',
     tech: ['Cloudflare Worker', 'Chart.js', 'WebCrypto', '0-4 Symptom Scaling'],
     features: [
       'Personal calcium / PTH log with timestamps — educational self-tracking only; not a certified EHR, not medical advice — confirm all care decisions with your clinician',
@@ -360,7 +359,7 @@ export const registry = [
   {
     id: 'somatic-anchor', title: 'Somatic Anchor', tagline: '863 Hz Larmor Grounding Tool',
     icon: '🕸️', accent: '#10b981', status: 'live', statusLabel: 'LIVE',
-    appUrl: appUrlForWorkerSpa('somatic-anchor'),
+    appUrl: 'https://p31-somatic-anchor.trimtab-signal.workers.dev',
     tech: ['Cloudflare Worker', 'Web Audio API', 'Vibration API', '4-4-6 Breathwork'],
     features: [
       'Wellness / grounding aid only — not medical treatment; stop if you feel worse and seek appropriate care',
@@ -404,7 +403,7 @@ export const registry = [
   {
     id: 'legal-evidence', title: 'Legal Evidence', tagline: 'SHA-256 Tamper-Evident Chain',
     icon: '🛣', accent: '#f59e0b', status: 'live', statusLabel: 'LIVE',
-    appUrl: appUrlForWorkerSpa('legal-evidence'),
+    appUrl: 'https://p31-legal-evidence.trimtab-signal.workers.dev',
     tech: ['Cloudflare Worker', 'WebCrypto SHA-256', 'Hash Chain', 'JSON chain export'],
     features: [
       'SHA-256 hash chain: each exhibit links to the hash of the previous one — tamper-evident',
@@ -445,7 +444,7 @@ export const registry = [
   {
     id: 'contact-locker', title: 'Contact Locker', tagline: 'AES-256-GCM Encrypted Directory',
     icon: '🔐', accent: '#06b6d4', status: 'live', statusLabel: 'LIVE',
-    appUrl: appUrlForWorkerSpa('contact-locker'),
+    appUrl: 'https://p31-contact-locker.trimtab-signal.workers.dev',
     tech: ['Cloudflare Worker', 'WebCrypto AES-256-GCM', 'PBKDF2', 'Room Code Auth'],
     features: [
       'AES-256-GCM encryption with PBKDF2 key derivation from a Room Code passphrase',
@@ -466,7 +465,7 @@ export const registry = [
   {
     id: 'sleep-tracker', title: 'Sleep Tracker', tagline: 'Sleep log (HPT-aware notes, not a medical device)',
     icon: '😴', accent: '#6366f1', status: 'live', statusLabel: 'LIVE',
-    appUrl: appUrlForWorkerSpa('sleep-tracker'),
+    appUrl: 'https://p31-sleep-tracker.trimtab-signal.workers.dev',
     tech: ['Cloudflare Worker', 'Chart.js', 'LocalStorage', '7-Day Trend Analysis'],
     features: [
       'Log bedtime and wake time — duration computed automatically',
@@ -487,7 +486,7 @@ export const registry = [
   {
     id: 'budget-tracker', title: 'Budget Tracker', tagline: 'Zero-Based Budgeting',
     icon: '💰', accent: '#22c55e', status: 'live', statusLabel: 'LIVE',
-    appUrl: appUrlForWorkerSpa('budget-tracker'),
+    appUrl: 'https://p31-budget-tracker.trimtab-signal.workers.dev',
     tech: ['Cloudflare Worker', 'Chart.js', 'LocalStorage', 'SNAP-Friendly Categories'],
     features: [
       'Zero-based budgeting: every dollar assigned a job before the month starts',

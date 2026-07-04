@@ -10,53 +10,7 @@ export const CANONICAL_LAUNCH_ORIGIN = "https://p31ca.org";
 /** @typedef {{ id: string; pathname: string; workersDevUrl: string }} WorkerSpaLaunch */
 
 /** Stable order: matches _redirects worker block after /education. */
-export const WORKER_SPA_LAUNCHES = [
-  {
-    id: "appointment-tracker",
-    pathname: "/appointment-tracker",
-    workersDevUrl: "https://p31-appointment-tracker.trimtab-signal.workers.dev",
-  },
-  {
-    id: "love-ledger",
-    pathname: "/love-ledger",
-    workersDevUrl: "https://p31-love-ledger.trimtab-signal.workers.dev",
-  },
-  {
-    id: "medical-tracker",
-    pathname: "/medical-tracker",
-    workersDevUrl: "https://p31-medical-tracker.trimtab-signal.workers.dev",
-  },
-  {
-    id: "somatic-anchor",
-    pathname: "/somatic-anchor",
-    workersDevUrl: "https://p31-somatic-anchor.trimtab-signal.workers.dev",
-  },
-  {
-    id: "legal-evidence",
-    pathname: "/legal-evidence",
-    workersDevUrl: "https://p31-legal-evidence.trimtab-signal.workers.dev",
-  },
-  {
-    id: "contact-locker",
-    pathname: "/contact-locker",
-    workersDevUrl: "https://p31-contact-locker.trimtab-signal.workers.dev",
-  },
-  {
-    id: "sleep-tracker",
-    pathname: "/sleep-tracker",
-    workersDevUrl: "https://p31-sleep-tracker.trimtab-signal.workers.dev",
-  },
-  {
-    id: "budget-tracker",
-    pathname: "/budget-tracker",
-    workersDevUrl: "https://p31-budget-tracker.trimtab-signal.workers.dev",
-  },
-  {
-    id: "genesis-gate",
-    pathname: "/genesis-gate",
-    workersDevUrl: "https://genesis-gate.trimtab-signal.workers.dev",
-  },
-];
+export const WORKER_SPA_LAUNCHES = [];
 
 const SPA_PATHS = new Set(WORKER_SPA_LAUNCHES.map((e) => e.pathname));
 
