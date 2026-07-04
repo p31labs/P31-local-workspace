@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { endpoints } from '../config/endpoints';
 
 interface DashboardCard {
   id: string;
@@ -12,16 +13,13 @@ interface DashboardCard {
 
 async function fetchKarma(): Promise<string> {
   try {
-    const base = 'https://cashpilot-sync.trimtab-signal.workers.dev';
-    const resp = await fetch(`${base}/api/k4/summary`);
+    const resp = await fetch(`${endpoints.k4Api}/api/mesh`);
     if (!resp.ok) throw new Error('K4 unavailable');
     const data = await resp.json();
-    const summary = data.summary || {};
+    const vertices = data.mesh?.vertices || {};
     let total = 0;
-    for (const level of Object.values(summary) as any[]) {
-      for (const val of Object.values(level.vertices || {})) {
-        total += Number(val) || 0;
-      }
+    for (const v of Object.values(vertices) as any[]) {
+      total += Number(v.love) || 0;
     }
     return total > 0 ? total.toLocaleString() : '—';
   } catch {
@@ -31,12 +29,12 @@ async function fetchKarma(): Promise<string> {
 
 async function fetchMeshNodes(): Promise<string> {
   try {
-    const base = 'https://cashpilot-sync.trimtab-signal.workers.dev';
-    const resp = await fetch(`${base}/api/k4/summary`);
+    const resp = await fetch(`${endpoints.k4Api}/api/mesh`);
     if (!resp.ok) throw new Error('K4 unavailable');
     const data = await resp.json();
-    const levels = Object.keys(data.summary || {}).length;
-    return levels > 0 ? `${levels}/5` : '—';
+    const vertexCount = Object.keys(data.mesh?.vertices || {}).length;
+    const edgeCount = data.mesh?.edges?.length || data.edges || 0;
+    return vertexCount > 0 ? `${vertexCount}v/${edgeCount}e` : '—';
   } catch {
     return '—';
   }
@@ -44,7 +42,7 @@ async function fetchMeshNodes(): Promise<string> {
 
 async function fetchIntercepts(): Promise<string> {
   try {
-    const resp = await fetch('https://buffer-worker.trimtab-signal.workers.dev/stats');
+    const resp = await fetch(`${endpoints.bufferWorker}/stats`);
     if (!resp.ok) throw new Error('Buffer unavailable');
     const data = await resp.json();
     return data.interceptsThisWeek?.toString() || '0';

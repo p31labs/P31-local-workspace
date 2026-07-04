@@ -107,9 +107,13 @@ app.get('/api/brain', async (c) => {
   return new Response(res.body, { status: res.status, headers });
 });
 
-app.get('/api/mesh', async (c) => {
+app.get('/api/mesh/*', async (c) => {
   const url = new URL(c.req.url);
-  url.pathname = url.pathname.replace('/api/mesh', '/');
+  const suffix = c.req.param('*') || '';
+  const path = suffix ? '/' + suffix : '/';
+  if (path !== '/') {
+    url.pathname = path;
+  }
   const req = new Request(url, c.req.raw);
   const res = await c.env.k4_cage.fetch(req);
   const origin = c.req.header('Origin') || '';
