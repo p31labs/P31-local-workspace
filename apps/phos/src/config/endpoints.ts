@@ -34,6 +34,8 @@ function getEnv(): Partial<EndpointConfig> {
   };
 }
 
+const GATEWAY = 'https://gateway.p31ca.org';
+
 const DEFAULTS: EndpointConfig = {
   vectorProxy: 'http://localhost:4000/v1/embeddings',
   ragProxy: 'http://localhost:4001',
@@ -43,8 +45,8 @@ const DEFAULTS: EndpointConfig = {
   loveLedger: 'https://love-ledger.trimtab-signal.workers.dev',
   contractEngine: 'https://contract-engine.trimtab-signal.workers.dev',
   governanceEngine: 'https://governance-engine.trimtab-signal.workers.dev',
-  aiProxy: 'https://phos-ai-proxy.trimtab-signal.workers.dev',
-  jitterbugProxy: 'https://phos-ai-proxy.trimtab-signal.workers.dev',
+  aiProxy: GATEWAY,
+  jitterbugProxy: GATEWAY,
 };
 
 export const endpoints: EndpointConfig = {

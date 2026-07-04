@@ -55,6 +55,48 @@ app.post('/api/chat', async (c) => {
   return new Response(res.body, { status: res.status, headers });
 });
 
+app.post('/v1/chat/completions', async (c) => {
+  const res = await c.env.phos_ai_proxy.fetch(c.req.raw);
+  const origin = c.req.header('Origin') || '';
+  const headers = new Headers(res.headers);
+  Object.entries(corsHeaders(origin)).forEach(([k, v]) => headers.set(k, v));
+  return new Response(res.body, { status: res.status, headers });
+});
+
+app.post('/transcribe', async (c) => {
+  const res = await c.env.phos_ai_proxy.fetch(c.req.raw);
+  const origin = c.req.header('Origin') || '';
+  const headers = new Headers(res.headers);
+  Object.entries(corsHeaders(origin)).forEach(([k, v]) => headers.set(k, v));
+  return new Response(res.body, { status: res.status, headers });
+});
+
+app.post('/jitterbug/brain-dump', async (c) => {
+  const res = await c.env.jitterbug_api.fetch(c.req.raw);
+  const origin = c.req.header('Origin') || '';
+  const headers = new Headers(res.headers);
+  Object.entries(corsHeaders(origin)).forEach(([k, v]) => headers.set(k, v));
+  return new Response(res.body, { status: res.status, headers });
+});
+
+app.get('/jitterbug/brain-dump/:id/stream', async (c) => {
+  const res = await c.env.jitterbug_api.fetch(c.req.raw);
+  const origin = c.req.header('Origin') || '';
+  const headers = new Headers(res.headers);
+  headers.set('Content-Type', 'text/event-stream');
+  headers.set('Cache-Control', 'no-store');
+  Object.entries(corsHeaders(origin)).forEach(([k, v]) => headers.set(k, v));
+  return new Response(res.body, { status: res.status, headers });
+});
+
+app.get('/jitterbug/brain-dump/:id', async (c) => {
+  const res = await c.env.jitterbug_api.fetch(c.req.raw);
+  const origin = c.req.header('Origin') || '';
+  const headers = new Headers(res.headers);
+  Object.entries(corsHeaders(origin)).forEach(([k, v]) => headers.set(k, v));
+  return new Response(res.body, { status: res.status, headers });
+});
+
 app.get('/api/brain', async (c) => {
   const url = new URL(c.req.url);
   url.pathname = url.pathname.replace('/api/brain', '/');
