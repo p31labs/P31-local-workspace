@@ -5,12 +5,14 @@ set -euo pipefail
 # Deploys LOVEToken, LOVESBT, ProofOfCare to Base (chain ID 8453)
 # 
 # Prerequisites:
-#   - Base ETH in deployer wallet (0x01...8413) — ~0.01 ETH sufficient
+#   - Base ETH in deployer wallet (0x51c285...8413) — ≥0.01 ETH sufficient
 #   - Foundry installed with Base RPC configured in foundry.toml
-#   - BASESCAN_API_KEY in environment or foundry.toml
+#   - BASESCAN_API_KEY in environment or foundry.toml (for --verify)
+#   - One of: --private-key, --interactive, or DEPLOYER_PK env var
 #
 # Usage:
-#   ./deploy-base.sh [--verify]
+#   ./deploy-base.sh [--verify] [--private-key <key>]
+#   DEPLOYER_PK=0x... ./deploy-base.sh --verify
 #
 # The script captures contract addresses and saves them to .deployed-addresses.json
 
@@ -20,8 +22,41 @@ BURN_ADDRESS="0x000000000000000000000000000000000000dEaD"
 OUTPUT_FILE="${SCRIPT_DIR}/.deployed-addresses.json"
 
 VERIFY_FLAG=""
-if [[ "${1:-}" == "--verify" ]]; then
-    VERIFY_FLAG="--verify"
+SIGNER_FLAG=""
+for arg in "$@"; do
+    case "${arg}" in
+        --verify) VERIFY_FLAG="--verify" ;;
+        --private-key=*) SIGNER_FLAG="--private-key ${arg#*=}" ;;
+        --interactive) SIGNER_FLAG="--interactive" ;;
+    esac
+done
+
+# Fallback to env var or interactive prompt
+if [[ -z "${SIGNER_FLAG}" ]]; then
+    if [[ -n "${DEPLOYER_PK:-}" ]]; then
+        SIGNER_FLAG="--private-key ${DEPLOYER_PK}"
+        echo "🔑 Using DEPLOYER_PK environment variable"
+    else
+        echo "🔑 No signing method specified."
+        echo "   Options:"
+        echo "     1) --private-key 0x... (paste key)"
+        echo "     2) DEPLOYER_PK=0x... ./deploy-base.sh (env var)"
+        echo "     3) --interactive (prompt)"
+        echo ""
+        read -p "Choose method (1/2/3, or enter private key directly): " choice
+        if [[ "${choice}" == "1" || "${choice}" == "--private-key" ]]; then
+            read -s -p "Enter deployer private key: " pk
+            echo ""
+            SIGNER_FLAG="--private-key ${pk}"
+        elif [[ "${choice}" == "3" || "${choice}" == "--interactive" ]]; then
+            SIGNER_FLAG="--interactive"
+        else
+            SIGNER_FLAG="--private-key ${choice}"
+        fi
+    fi
+fi
+
+if [[ -n "${VERIFY_FLAG}" ]]; then
     echo "🔍 Verification enabled — Basescan API key required"
 fi
 
@@ -35,7 +70,7 @@ cd "${SCRIPT_DIR}"
 # Run forge script and capture output
 OUTPUT=$(forge script script/DeployAll.s.sol:DeployAll \
     --rpc-url "${BASE_RPC:-https://mainnet.base.org}" \
-    --account default \
+    ${SIGNER_FLAG} \
     --broadcast \
     ${VERIFY_FLAG} \
     --ffi 2>&1) || {

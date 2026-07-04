@@ -52,6 +52,25 @@ case "${NETWORK}" in
         ;;
 esac
 
+# Determine signing method
+SIGNER=""
+if [[ -n "${DEPLOYER_PK:-}" ]]; then
+    SIGNER="--private-key ${DEPLOYER_PK}"
+    echo "🔑 Using DEPLOYER_PK environment variable"
+else
+    echo "🔑 No DEPLOYER_PK env var set."
+    echo "   Options: --private-key <key> or --interactive"
+    echo ""
+    read -s -p "Enter deployer private key (or press Enter for interactive): " pk
+    echo ""
+    if [[ -n "${pk}" ]]; then
+        SIGNER="--private-key ${pk}"
+    else
+        SIGNER="--interactive"
+    fi
+fi
+
+echo ""
 echo "🔥 EXECUTING ABDICATION PROTOCOL"
 echo "   Network: ${NETWORK} (chain ${CHAIN_ID})"
 echo "   Burn Address: ${BURN_ADDRESS}"
@@ -65,24 +84,27 @@ echo "   Press Ctrl+C within 10 seconds to abort..."
 sleep 10
 echo ""
 
-# Execute abdication for each contract
-echo "Transferring LOVEToken ownership..."
-cast send "${LOVE_TOKEN}" "transferOwnership(address)" "${BURN_ADDRESS}" \
-    --rpc-url "${RPC_URL}" \
-    --account default \
-    --yes
+abdicate() {
+    local name="$1"
+    local addr="$2"
+    echo "Transferring ${name} ownership..."
+    cast send "${addr}" "transferOwnership(address)" "${BURN_ADDRESS}" \
+        --rpc-url "${RPC_URL}" \
+        ${SIGNER} \
+        --yes
+    # Verify
+    local owner
+    owner=$(cast call "${addr}" "owner()(address)" --rpc-url "${RPC_URL}")
+    if [[ "${owner,,}" == "${BURN_ADDRESS,,}" ]]; then
+        echo "   ✅ ${name}: ownership verified at burn address"
+    else
+        echo "   ⚠️  ${name}: ownership is ${owner} (not yet burned)"
+    fi
+}
 
-echo "Transferring LOVESBT ownership..."
-cast send "${LOVE_SBT}" "transferOwnership(address)" "${BURN_ADDRESS}" \
-    --rpc-url "${RPC_URL}" \
-    --account default \
-    --yes
-
-echo "Transferring ProofOfCare ownership..."
-cast send "${PROOF_OF_CARE}" "transferOwnership(address)" "${BURN_ADDRESS}" \
-    --rpc-url "${RPC_URL}" \
-    --account default \
-    --yes
+abdicate "LOVEToken" "${LOVE_TOKEN}"
+abdicate "LOVESBT" "${LOVE_SBT}"
+abdicate "ProofOfCare" "${PROOF_OF_CARE}"
 
 echo ""
 echo "✅ ABDICATION COMPLETE"
