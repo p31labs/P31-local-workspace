@@ -38,6 +38,7 @@ import { SOVEREIGN_ROOMS } from './types';
 import { audioEngine, generateDID, hashTelemetry, exportLedgerJSON } from '@p31/shared/sovereign';
 import { trackEvent } from '../services/telemetry';
 import { haptic } from '../services/haptic';
+import { storage } from '../lib/storage';
 // Refs for timers to prevent race conditions
 const coherenceTimerRef = { current: null as ReturnType<typeof setTimeout> | null };
 const initTimerRef = { current: null as ReturnType<typeof setTimeout> | null };
@@ -97,7 +98,7 @@ export const useSovereignStore = create<SovereignState>((set, get) => ({
 
   // D1.1: Polymorphic Skin Engine
   skinTheme: 'OPERATOR',
-  accentColor: (() => { try { return localStorage.getItem('p31-accent') ?? '#00FFFF'; } catch { return '#00FFFF'; } })(),
+  accentColor: (() => { try { return storage.getItem('p31-accent') ?? '#00FFFF'; } catch { return '#00FFFF'; } })(),
 
   // D4.6: Sierpinski Progressive Disclosure
   interactedSlots: [],
@@ -124,8 +125,8 @@ export const useSovereignStore = create<SovereignState>((set, get) => ({
   celebrationPending: false,
 
   // Audio (WCD 18) — persisted in localStorage
-  sfxEnabled: (() => { try { return localStorage.getItem('p31-sfx') !== '0'; } catch { return true; } })(),
-  masterVolume: (() => { try { return parseFloat(localStorage.getItem('p31-vol') ?? '0.6'); } catch { return 0.6; } })(),
+  sfxEnabled: (() => { try { return storage.getItem('p31-sfx') !== '0'; } catch { return true; } })(),
+  masterVolume: (() => { try { return parseFloat(storage.getItem('p31-vol') ?? '0.6'); } catch { return 0.6; } })(),
 
   setPwaStatus: (status) => set({ pwaStatus: status }),
   toggleView: () => set((state) => ({ viewMode: state.viewMode === 'cockpit' ? 'classic' : 'cockpit' })),
@@ -257,7 +258,7 @@ export const useSovereignStore = create<SovereignState>((set, get) => ({
 
   setAccentColor: (hex) => {
     set({ accentColor: hex });
-    try { localStorage.setItem('p31-accent', hex); } catch {}
+    try { storage.setItem('p31-accent', hex); } catch {}
     if (typeof document === 'undefined') return;
     const r = parseInt(hex.slice(1, 3), 16);
     const g = parseInt(hex.slice(3, 5), 16);
@@ -308,12 +309,12 @@ export const useSovereignStore = create<SovereignState>((set, get) => ({
   // Audio (WCD 18)
   setSfxEnabled: (enabled) => {
     set({ sfxEnabled: enabled });
-    try { localStorage.setItem('p31-sfx', enabled ? '1' : '0'); } catch {}
+    try { storage.setItem('p31-sfx', enabled ? '1' : '0'); } catch {}
   },
   setMasterVolume: (v) => {
     const clamped = Math.max(0, Math.min(1, v));
     set({ masterVolume: clamped });
-    try { localStorage.setItem('p31-vol', String(clamped)); } catch {}
+    try { storage.setItem('p31-vol', String(clamped)); } catch {}
   },
 
 }));

@@ -16,11 +16,13 @@
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.1.0",
+    "@noble/curves": "^2.2.0",
     "@p31/bonding": "workspace:*",
     "@p31/shared": "workspace:*",
     "@p31/sovereign": "workspace:*",
     "@react-three/drei": "^9.88.0",
     "@react-three/fiber": "^8.15.0",
+    "@scopelift/stealth-address-sdk": "1.0.0-beta.5",
     "@sentry/react": "^8.55.0",
     "idb-keyval": "^6.2.1",
     "lucide-react": "^0.468.0",
