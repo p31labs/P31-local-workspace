@@ -1,0 +1,212 @@
+import React, { useState, useEffect, useCallback } from 'react';
+import { getBalanceAtomic, getLedgerHistory, verifyLedgerIntegrity } from '../lib/KarmaEngine';
+import { K4Bridge, type K4Features } from '../lib/K4Bridge';
+import { fetchLoveBalance } from '../lib/api/ledger';
+
+interface LedgerEntry {
+  kind: string;
+  delta: number;
+  timestamp: number;
+  signature: string;
+  prevSignature: string;
+}
+
+interface LedgerData {
+  loveTokens: number;
+  deferredSlices: number;
+  sablierStreamRate: string;
+  integrity: { valid: boolean; count: number } | null;
+  history: LedgerEntry[];
+  k4Features: K4Features | null;
+  k4Expanded: boolean;
+}
+
+function relativeTime(ts: number): string {
+  const diff = Date.now() - ts;
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return 'just now';
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  const days = Math.floor(hrs / 24);
+  return `${days}d ago`;
+}
+
+export function LedgerSurface({ theme }: { theme?: Record<string, string> }) {
+  const [data, setData] = useState<LedgerData>({
+    loveTokens: 0,
+    deferredSlices: 0,
+    sablierStreamRate: '0.000000',
+    integrity: null,
+    history: [],
+    k4Features: null,
+    k4Expanded: false,
+  });
+  const [remoteBalance, setRemoteBalance] = useState<number | null>(null);
+  const [balanceError, setBalanceError] = useState<string | null>(null);
+
+  const refresh = useCallback(async () => {
+    const [b, h, i, k4] = await Promise.all([
+      getBalanceAtomic(),
+      getLedgerHistory(20),
+      verifyLedgerIntegrity(),
+      K4Bridge.fetchFeatures(),
+    ]);
+    setData((prev) => ({ ...prev, loveTokens: b, history: h, integrity: i, k4Features: k4 }));
+  }, []);
+
+  useEffect(() => {
+    refresh();
+    const interval = setInterval(refresh, 2000);
+    return () => clearInterval(interval);
+  }, [refresh]);
+
+  useEffect(() => {
+    let cancelled = false;
+    const loadRemote = async () => {
+      try {
+        const bal = await fetchLoveBalance('did:key:local');
+        if (!cancelled) setRemoteBalance(bal.balance);
+      } catch (err) {
+        if (!cancelled) setBalanceError(err instanceof Error ? err.message : 'Failed to reach LOVE ledger');
+      }
+    };
+    loadRemote();
+    return () => { cancelled = true; };
+  }, []);
+
+  return (
+    <div className="p-6 bg-purple-950/20 text-slate-100 min-h-screen font-mono border border-purple-500/30">
+      <header className="border-b border-purple-500/30 pb-4 mb-6">
+        <h1 className="text-2xl text-purple-400 font-bold tracking-wider">PHOS BIFURCATED BALANCE LEDGER</h1>
+        <p className="text-xs text-slate-400">STATUS: AUDIT-COMPLIANT | JURISPRUDENTIAL ISOLATION ACTIVE</p>
+      </header>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* TRANCHE 1: OPERATIONAL LEDGER (THE VAN CAMP SHIELD) */}
+        <section className="border border-purple-500/20 bg-black/40 p-4 rounded-sm shadow-inner">
+          <h2 className="text-sm tracking-widest text-purple-300 font-bold uppercase mb-3 border-b border-purple-500/10 pb-1">
+            Tranche 1: Operational Base Payroll (Intellectual Energy)
+          </h2>
+          <div className="space-y-2 text-xs">
+            <div className="flex justify-between">
+              <span className="text-slate-400">SABLIER STREAM RATE:</span>
+              <span className="text-green-400 font-bold">{data.sablierStreamRate} USDC/sec</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-slate-400">DEFERRED SLICING PIE DEBT:</span>
+              <span className="text-amber-400 font-bold">{data.deferredSlices} SLICES (2x/4x Multiplier Loaded)</span>
+            </div>
+          </div>
+          <p className="text-[10px] text-slate-500 mt-4 leading-normal italic">
+            Notice: This data tracks corporate operational inputs at fair market rates, fully compensating the marital community and triggering the Van Camp protective shield.
+          </p>
+        </section>
+
+        {/* TRANCHE 3: ONTOLOGICAL LEDGER (THE L.O.V.E. ECONOMY) */}
+        <section className="border border-purple-500/20 bg-black/40 p-4 rounded-sm shadow-inner">
+          <h2 className="text-sm tracking-widest text-purple-300 font-bold uppercase mb-3 border-b border-purple-500/10 pb-1">
+            Tranche 3: Ontological Care Ledger (Emotional Energy)
+          </h2>
+          <div className="space-y-2 text-xs">
+            <div className="flex justify-between">
+              <span className="text-slate-400">FOUNDING NODE DIVIDEND WEIGHT:</span>
+              <span className="text-purple-400 font-bold">50.00% (Sovereignty Pool Locked)</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-slate-400">ACCUMULATED L.O.V.E. BALANCE (local):</span>
+              <span className="text-purple-300 font-bold">{data.loveTokens} PoC Tokens</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-slate-400">ACCUMULATED L.O.V.E. BALANCE (remote):</span>
+              <span className="text-purple-300 font-bold">
+                {remoteBalance !== null ? `${remoteBalance} PoC Tokens` : balanceError || '—'}
+              </span>
+            </div>
+            {data.integrity && (
+              <div className="flex justify-between">
+                <span className="text-slate-400">CHAIN INTEGRITY:</span>
+                <span className={data.integrity.valid ? 'text-emerald-400' : 'text-red-400'}>
+                  {data.integrity.valid ? '✓ VALID' : '⚠ TAMPERED'} ({data.integrity.count} entries)
+                </span>
+              </div>
+            )}
+          </div>
+          <p className="text-[10px] text-slate-500 mt-4 leading-normal italic">
+            Notice: L.O.V.E. tokens are soulbound assets tracking direct biological and physical care metrics via Proof of Care consensus. Completely separate from business labor assets.
+          </p>
+        </section>
+      </div>
+
+      {/* K₄ FRACTAL FLYWHEEL SECTION */}
+      <div className="mt-6 border border-purple-500/20 bg-black/40 p-4 rounded-sm shadow-inner">
+        <button
+          onClick={() => setData((prev) => ({ ...prev, k4Expanded: !prev.k4Expanded }))}
+          className="text-sm tracking-widest text-purple-300 font-bold uppercase mb-1 w-full flex justify-between items-center"
+        >
+          <span>Fractal Flywheel — K₄ Ledger</span>
+          <span>{data.k4Expanded ? '▲' : '▼'}</span>
+        </button>
+        {data.k4Expanded && (
+          <div className="space-y-2 mt-3">
+            {data.k4Features ? (
+              Object.entries(data.k4Features).map(([feature, levels]) => (
+                <div key={feature} className="border border-purple-500/10 p-2 rounded">
+                  <div className="flex justify-between text-xs font-mono">
+                    <span className="text-purple-300 uppercase">{feature}</span>
+                    <span className="opacity-60">
+                      L0:{levels.L0.toFixed(1)} L1:{levels.L1.toFixed(2)} L2:{levels.L2.toFixed(3)}
+                    </span>
+                  </div>
+                  <div className="w-full bg-purple-950/40 h-1.5 rounded-full mt-1 overflow-hidden">
+                    {[levels.L0, levels.L1, levels.L2, levels.L3, levels.L4].map((val, i) => {
+                      const pct = Math.min(100, Math.abs(val) * 10);
+                      const colors = ['#3fb950', '#58a6ff', '#d29922', '#bc8cff', '#ff69b4'];
+                      return pct > 0 ? (
+                        <div
+                          key={i}
+                          className="h-full inline-block"
+                          style={{ width: `${pct}%`, backgroundColor: colors[i], opacity: 0.6 + i * 0.1 }}
+                          title={`L${i}: ${val}`}
+                        />
+                      ) : null;
+                    })}
+                  </div>
+                </div>
+              ))
+            ) : (
+              <p className="text-[10px] opacity-40 font-mono">K₄ ledger unreachable</p>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* TRANSACTION HISTORY */}
+      {data.history.length > 0 && (
+        <div className="mt-6 space-y-2">
+          <h3 className="text-xs font-mono uppercase opacity-40">Transaction History</h3>
+          <div className="space-y-1.5 max-h-48 overflow-y-auto">
+            {data.history.map((entry, i) => (
+              <div key={i} className="flex justify-between items-center text-xs font-mono p-2 rounded bg-white/5 border border-white/5">
+                <div className="flex items-center gap-2">
+                  <span className={entry.delta >= 0 ? 'text-emerald-400' : 'text-red-400'}>
+                    {entry.delta >= 0 ? '+' : ''}{entry.delta}
+                  </span>
+                  <span className="opacity-70">{entry.kind}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  {entry.signature && (
+                    <span className="text-[8px] font-mono opacity-20">
+                      {entry.signature.substring(0, 8)}…
+                    </span>
+                  )}
+                  <span className="opacity-40 text-[10px]">{relativeTime(entry.timestamp)}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

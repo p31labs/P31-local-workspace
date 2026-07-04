@@ -1,0 +1,20 @@
+name = "backup-export"
+main = "index.ts"
+compatibility_date = "2026-01-01"
+
+[placement]
+mode = "smart"
+
+[env.production]
+retries = 3
+
+[env.staging]
+retries = 3
+
+[[r2_buckets]]
+binding = "BACKUP_BUCKET"
+bucket_name = "phos-d1-backups"
+preview_bucket_name = "phos-d1-backups-preview"
+
+[observability]
+enabled = true

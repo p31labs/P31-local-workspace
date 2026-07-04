@@ -1,0 +1,24 @@
+:root {
+  --phos-bg: #0a0e14;
+  --p31-bg: #0a0e14;
+  --p31-text: #e2e8f0;
+  --p31-text-muted: #94a3b8;
+  --p31-accent-primary: #10b981;
+  --p31-accent-secondary: #34d399;
+  --p31-accent-primary-dim: rgba(16, 185, 129, 0.15);
+  --p31-surface: #1a1e24;
+  --p31-surface-border: rgba(16, 185, 129, 0.15);
+  --p31-particles-opacity: 0.5;
+  --p31-font-family: 'Inter', system-ui, sans-serif;
+  --phos-border: rgba(16, 185, 129, 0.15);
+  --phos-accent: #10b981;
+  --phos-glow: radial-gradient(ellipse at 50% 0%, rgba(16, 185, 129, 0.08) 0%, transparent 70%);
+  --color-emerald-400: #34d399;
+  --color-emerald-500: #10b981;
+  --color-slate-200: #cbd5e1;
+  --color-slate-300: #94a3b8;
+  --color-slate-400: #64748b;
+  --color-slate-600: #475569;
+  --color-red-400: #f87171;
+  --color-red-500: #ef4444;
+}

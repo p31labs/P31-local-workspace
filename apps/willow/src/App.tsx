@@ -29,11 +29,19 @@ const listenToHub = (callback: (msg: Record<string, unknown>) => void) => {
 
 type Panel = 'voice' | 'draw' | 'magic' | 'feelings' | 'family' | null;
 
+const THEME_MAP: Record<number, string> = {
+  0: 'crisis', 1: 'sanctuary', 2: 'sanctuary', 3: 'bridge', 4: 'quantum', 5: 'quantum',
+};
+
 export default function App() {
   const [activePanel, setActivePanel] = useState<Panel>(null);
   const [showCompanion, setShowCompanion] = useState(false);
+  const [spoons, setSpoons] = useState(() => parseInt(localStorage.getItem('p31:spoons') || '3', 10));
 
   useEffect(() => {
+    const html = document.documentElement;
+    const currentSpoons = parseInt(html.getAttribute('data-spoons') || '3', 10);
+    setSpoons(currentSpoons);
     postToHub({
       type: 'PRESENCE_PING',
       source: 'WILLOW',
@@ -68,6 +76,24 @@ export default function App() {
         <h1>Willow</h1>
         <p>Tap to play</p>
       </header>
+
+      <div className="spoon-controls">
+        {[0, 2, 3, 5].map(level => (
+          <button
+            key={level}
+            onClick={() => {
+              setSpoons(level);
+              document.documentElement.setAttribute('data-spoons', String(level));
+              document.documentElement.setAttribute('data-theme', THEME_MAP[level] || 'quantum');
+              localStorage.setItem('p31:spoons', String(level));
+            }}
+            className="spoon-btn"
+            aria-label={`Set spoons to ${level}`}
+          >
+            {level}
+          </button>
+        ))}
+      </div>
 
       <main className="activity-grid">
         <button onClick={() => openPanel('voice')} aria-label="voice">Voice</button>

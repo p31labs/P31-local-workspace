@@ -1,0 +1,9 @@
+{
+  "name": "@p31/design-system",
+  "version": "1.0.0",
+  "private": true,
+  "exports": {
+    "./tokens": "./tokens.css",
+    "./themes": "./themes.css"
+  }
+}

@@ -1,0 +1,20 @@
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  X-XSS-Protection: 1; mode=block
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+   Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob:; connect-src 'self' ws: wss: ws://node-zero.local:81 idb: memory: http://localhost:4000 http://localhost:4001 https://k4-core.trimtab-signal.workers.dev https://k4-cage.trimtab-signal.workers.dev https://sovereign-justice-escrow.trimtab-signal.workers.dev https://sovereign-justice-evidence.trimtab-signal.workers.dev https://cashpilot-sync.trimtab-signal.workers.dev https://buffer-worker.trimtab-signal.workers.dev https://phos-ai-proxy.trimtab-signal.workers.dev https://jitterbug-api.trimtab-signal.workers.dev https://love-ledger.trimtab-signal.workers.dev https://governance-engine.trimtab-signal.workers.dev https://huggingface.co https://fonts.googleapis.com https://raw.githubusercontent.com https://fonts.gstatic.com https://static.cloudflareinsights.com; font-src 'self' https://fonts.gstatic.com; frame-src 'self' https://bonding.p31ca.org https://arcade.p31ca.org;
+  Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+  X-Robots-Tag: noindex
+
+https://phos.p31ca.org/*
+  X-Frame-Options: SAMEORIGIN
+  Cache-Control: no-cache, no-store, must-revalidate
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob:; connect-src 'self' ws: wss: ws://node-zero.local:81 idb: memory: http://localhost:4000 http://localhost:4001 https://k4-core.trimtab-signal.workers.dev https://k4-cage.trimtab-signal.workers.dev https://sovereign-justice-escrow.trimtab-signal.workers.dev https://sovereign-justice-evidence.trimtab-signal.workers.dev https://cashpilot-sync.trimtab-signal.workers.dev https://buffer-worker.trimtab-signal.workers.dev https://phos-ai-proxy.trimtab-signal.workers.dev https://jitterbug-api.trimtab-signal.workers.dev https://love-ledger.trimtab-signal.workers.dev https://governance-engine.trimtab-signal.workers.dev https://huggingface.co https://fonts.googleapis.com https://raw.githubusercontent.com https://fonts.gstatic.com https://static.cloudflareinsights.com; font-src 'self' https://fonts.gstatic.com; frame-src 'self' https://bonding.p31ca.org https://arcade.p31ca.org;
+
+https://*.pages.dev/*
+  X-Robots-Tag: noindex
+
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable

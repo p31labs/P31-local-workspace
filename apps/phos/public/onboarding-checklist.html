@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>K₄ Setup — First 10 Minutes</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: #0a0e14;
+      color: #cbd5e1;
+      padding: 24px;
+      max-width: 640px;
+      margin: 0 auto;
+      line-height: 1.5;
+    }
+    h1 { font-size: 20px; color: #e2e8f0; margin-bottom: 4px; }
+    .sub { font-size: 13px; color: #64748b; margin-bottom: 24px; }
+    .card {
+      background: #0c121a;
+      border: 1px solid rgba(16, 185, 129, 0.2);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .card h2 { font-size: 15px; color: #34d399; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+    .card p, .card li { font-size: 14px; color: #94a3b8; }
+    .card ul { padding-left: 20px; }
+    .card li { margin-bottom: 4px; }
+    .step-num {
+      display: inline-flex; width: 24px; height: 24px; align-items: center; justify-content: center;
+      background: rgba(16, 185, 129, 0.15); border-radius: 50%;
+      font-size: 12px; font-weight: 700; color: #34d399;
+    }
+    .btn {
+      display: inline-block; padding: 12px 24px; background: #10b981; color: #0a0e14;
+      border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 14px; margin-top: 8px;
+    }
+    hr { border: none; border-top: 1px solid #1e293b; margin: 24px 0; }
+    .tag {
+      display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 4px;
+      background: rgba(16, 185, 129, 0.1); color: #34d399; font-family: monospace;
+    }
+    .important { background: rgba(251, 191, 36, 0.08); border-color: rgba(251, 191, 36, 0.25); }
+    .important h2 { color: #fbbf24; }
+  </style>
+</head>
+<body>
+  <h1>K₄ Setup — First 10 Minutes</h1>
+  <p class="sub">No tech background needed. Just follow these steps.</p>
+
+  <div class="card important">
+    <h2>⏱️ Before You Start</h2>
+    <p>You need both people in the same room (or on a video call), each with a phone or laptop. Takes about 10 minutes.</p>
+  </div>
+
+  <div class="card">
+    <h2><span class="step-num">1</span> Open PHOS</h2>
+    <p>Go to <strong>phos.p31ca.org</strong> on your phone or laptop. It should look like a dark, quiet interface.</p>
+    <p style="margin-top: 8px;">Click the <strong>⚮ Attest</strong> icon in the left sidebar (looks like two intersecting rings).</p>
+  </div>
+
+  <div class="card">
+    <h2><span class="step-num">2</span> Create Your Identity</h2>
+    <p>In the Attest screen, you'll see fields for <strong>Your DID</strong> and <strong>Your Signing Key</strong>.</p>
+    <ul>
+      <li>Click <strong>Generate</strong> — it creates a digital identity unique to you</li>
+      <li><strong>⚠️ Copy your Signing Key</strong> somewhere safe (Notes app, password manager, or paper)</li>
+      <li>Your <strong>DID</strong> (the long string starting with "did:key:") is safe to share</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2><span class="step-num">3</span> Both Connect</h2>
+    <p>Now both people have their DID and Signing Key.</p>
+    <ul>
+      <li>Paste <strong>your DID</strong> and <strong>your Signing Key</strong> into the top two fields</li>
+      <li>Paste <strong>their DID</strong> into "Peer DID"</li>
+      <li>Paste <strong>their Signing Key</strong> into "Peer Signing Key"</li>
+    </ul>
+    <p style="margin-top:8px;">You can do this on the same device or two different devices.</p>
+  </div>
+
+  <div class="card">
+    <h2><span class="step-num">4</span> Create the Connection</h2>
+    <ul>
+      <li>Leave <strong>Edge Type</strong> as "Co-Parent" (or pick "Kinship")</li>
+      <li>The terms box already has a simple agreement — no need to change it</li>
+      <li>Click the big <strong>Create Attestation</strong> button</li>
+    </ul>
+    <p style="margin-top:8px;">If it works, you'll see a green box with "Attestation Created" and a long ID string.</p>
+  </div>
+
+  <div class="card">
+    <h2><span class="step-num">5</span> Send a Message</h2>
+    <p>Click the <strong>◈ Sanctuary</strong> icon in the left sidebar.</p>
+    <ul>
+      <li>Enter your DID + Signing Key in the first two fields</li>
+      <li>Enter their DID in the "Peer DID" field</li>
+      <li>Type a message and hit <strong>Send</strong></li>
+    </ul>
+    <p style="margin-top:8px;">You'll see "● Connected" in green. Messages arrive instantly.</p>
+  </div>
+
+  <div class="card important">
+    <h2>🎁 After 24 Hours</h2>
+    <p>After your first message, a 24-hour timer starts. When it finishes, you'll see a <strong>"LOVE Token Earned"</strong> box appear in Sanctuary.</p>
+    <p>Click <strong>Claim with Taler Wallet</strong> to receive it — it's a privacy-preserving digital reward for successful communication.</p>
+  </div>
+
+  <hr />
+
+  <p style="text-align:center; font-size:13px; color: #475569;">
+    Need help? Will is available at <strong>will@p31ca.org</strong>. You can also go to <strong>phos.p31ca.org/onboarding/</strong> for the full document suite.
+  </p>
+</body>
+</html>

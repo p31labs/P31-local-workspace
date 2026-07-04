@@ -12,6 +12,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "@p31/design-system": "file:../../andromeda/software/packages/design-system",
     "react": "^19.2.4",
     "react-dom": "^19.2.4"
   },
