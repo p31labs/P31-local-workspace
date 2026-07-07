@@ -25,6 +25,12 @@
       },
       "spoonAware": true,
       "spoonScale": "0–5 (0=crisis, 3=baseline, 5=high energy)"
+    },
+    "designSystem": {
+      "description": "PHOS component registry — queryable design system for agent-generated UI",
+      "mcpServer": "node cli/component-registry.js",
+      "tools": ["design_list_components", "design_get_component", "design_get_tokens", "design_search", "design_spoon_guide"],
+      "spec": "DESIGN.md"
     }
   },
   "links": [

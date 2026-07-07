@@ -1,0 +1,694 @@
+# P31 Labs — Full Documentation
+
+> Complete documentation dump for LLM ingestion. See also: llms.txt (index).
+
+---
+
+# Documentation
+
+Everything you need to build with P31 — from the CLI to PHOS, the gateway, and contributing.
+
+## Sections
+
+- **Getting Started** — Install the CLI, run the TUI, and explore PHOS.
+- **CLI Reference** — Real slash-commands, themes, and TTY behavior.
+- **PHOS** — Spoon-aware cognitive assistant, surfaces, and crisis mode.
+- **Architecture** — Gateway, LLM proxy, D1, KV, R2, Vectorize.
+- **API Reference** — REST endpoints, OpenAI-compatible chat, authentication.
+- **Contributing** — Fork, build, test, and submit PRs to P31 repos.
+
+Documentation v0.5.0 · Last updated July 2026
+
+---
+
+# Getting Started with P31
+
+Install the CLI, run the TUI, and explore PHOS in under 5 minutes.
+
+## 1. Install the CLI
+
+The CLI is currently local-only (not published to npm). Run:
+
+```
+cd /path/to/P31-local-workspace/cli
+npm install
+node index.js
+```
+
+The package is `@p31/andromeda-cli`; the in-TUI name is **P31 Oasis CLI**.
+
+> **Note:** The CLI *requires* an interactive TTY. If you run it without a TTY, only `--version` and `--help` work.
+
+## 2. Run the TUI
+
+In a terminal with a TTY, start the interactive interface:
+
+```
+node index.js
+```
+
+You'll see a blessed-based dashboard with a LOG pane, a SANDBOX shell, and a command palette.
+
+## 3. Try PHOS
+
+PHOS is a spoon-aware cognitive-assistant PWA. Visit:
+
+**https://phos.p31ca.org**
+
+No install required — runs in your browser with local LLM (WebLLM) + edge fallback.
+
+## Next Steps
+
+- **CLI Reference** — Real slash-commands and themes
+- **PHOS** — Surfaces, voice, crisis mode
+
+---
+
+# Design Principles
+
+Dark-first, glassmorphic, spoon-aware — built for neurodivergent users.
+
+## Dark-First
+
+Background `#0A0A0F` (p31ca) or `#030305` (phosphorus31). Warm white text `#F5F5F7` for reduced eye strain.
+
+## Glassmorphism
+
+24px border-radius, backdrop-blur(12px), semi-transparent borders, 8px/32px box-shadow. Hover lift on interactive panels.
+
+## Typography
+
+**Inter** for UI text (good readability at small sizes, open-source). **JetBrains Mono** for code and CLI output.
+
+## Spoon-Aware
+
+All motion and animation intensity is controlled by the spoon meter (0–5). Users choose their cognitive load level. See the spoon guide for full details.
+
+## Design Token System
+
+Design tokens are defined via `:root` CSS custom properties in `global.css`, mapped to Tailwind v4 `@theme` directives. Available as utility classes and component primitives.
+
+> **Note:** The design system package (`@p31/design-system`) emits tokens and themes, but Tailwind v4 `@import` from workspace packages may be silently dropped during build. Inline `:root` declarations in `global.css` serve as the production fallback.
+
+---
+
+# Accessibility
+
+P31 targets WCAG 2.2 Level AAA as a baseline.
+
+## Standards
+
+- WCAG 2.2 Level AAA — all surfaces audited with axe-core
+- Contrast ratio ≥7:1 for body text, ≥4.5:1 for large text
+- Touch targets ≥48×48px (WCAG 2.5.8 Enhanced)
+- Focus indicators: 2px solid `var(--phos-primary)` with 2px offset
+- Reduced motion: `prefers-reduced-motion` disables all animations
+- Reduced transparency: `prefers-reduced-transparency` disables backdrop-filter
+
+## Screen Reader Support
+
+- All icon buttons have descriptive `aria-label`
+- All SVGs have `aria-hidden="true"`
+- Navigation uses `role="navigation"` + `aria-label`
+- Chat messages use `aria-live="polite"`
+- Skip navigation link at top of every page
+
+## Spoon-Driven Accessibility
+
+Accessibility is not a static setting — it scales with spoon level. At Crisis (0), all motion is disabled, the interface is reduced to a breathing exercise. At Low (1), ambient effects are turned off and layouts simplify. At higher levels, more functionality becomes available.
+
+Automated audit: `node scripts/audit-wcag.mjs` — 0 violations expected.
+
+---
+
+# Spoon Theory in P31
+
+Energy-aware design for neurodivergent users.
+
+## What Are Spoons?
+
+Spoon theory is a metaphor for the finite daily energy available to people with chronic illness or neurodivergence. In P31, spoons are a first-class UI primitive — every surface, animation, and interaction is scaled to the user's current energy level.
+
+## The 0–5 Scale
+
+| Level | Label    | Behavior |
+|-------|----------|----------|
+| 0     | Crisis   | Full CrisisMode overlay. Breathing exercise. No UI chrome. All motion disabled. |
+| 1     | Low      | Minimal UI. No ambient animations. Single-column layout. Reduced interaction targets. |
+| 2     | Reduced  | Simple layout. Few animations. Larger touch targets. Longer response timeouts. |
+| 3     | Bridge   | Default state. Balanced UI with ambient effects. Normal interaction speed. |
+| 4     | Focused  | Full UI. Ambient animations active. Split-pane layouts available. |
+| 5     | Quantum  | Maximum UI. All animations. Multi-pane. Voice input ready. Full mesh features. |
+
+## Implementation
+
+Spoons state is stored as a persistent nanostore atom under the key `phos:spoons`. It drives CSS via the `data-spoons` attribute on the root element. All components respond to this attribute to scale complexity, animation, and cognitive load.
+
+See: `src/store/spoons.ts` · `src/styles/spacing.css` · `src/styles/motion.css`
+
+---
+
+# Contributing to P31
+
+Fork, build, test, and submit pull requests to P31 repositories.
+
+## 1. Fork the Repository
+
+Fork the monorepo on GitHub:
+
+```
+git clone https://github.com/p31labs/P31-local-workspace.git
+cd P31-local-workspace
+```
+
+## 2. Install Dependencies
+
+Install dependencies at the root:
+
+```
+pnpm install
+```
+
+Uses pnpm (v10.32.1). The root package.json manages the monorepo.
+
+## 3. Create a Branch
+
+```
+git checkout -b feat/your-feature-name
+```
+
+## 4. Make Changes
+
+Run tests and lint:
+
+```
+pnpm run test        # vitest + turbo
+pnpm run lint        # eslint
+```
+
+Git hooks are configured via `git config core.hooksPath .githooks`.
+
+## 5. Run Quality Gate
+
+Run the deploy-readiness checks:
+
+```
+pnpm run quality
+```
+
+This validates ground-truth data, worker SPA launch, style alignment, and fleet entity verification.
+
+## 6. Submit a Pull Request
+
+Push and open a PR:
+
+```
+git push origin feat/your-feature-name
+```
+
+Branch protection requires: 1 approval, green CI checks. All contributions are MIT License.
+
+---
+
+# Development Environment Setup
+
+Get your local environment ready for P31 development.
+
+## Prerequisites
+
+- **Node.js** ≥ 20.0.0 (root engine requirement)
+- **pnpm** v10.32.1 (package manager)
+- **Wrangler** (Cloudflare CLI) — for worker/Pages deploys
+- **Git** with hook paths configured
+
+```
+pnpm install
+```
+
+## Git Hooks
+
+Set git hooks path to the monorepo's custom hooks:
+
+```
+pnpm run git:hooks
+```
+
+Equivalent to: `git config core.hooksPath .githooks`
+
+## Running an App Locally
+
+**p31ca.org (docs/dev platform)**
+
+```
+cd apps/p31ca
+bash node_modules/.bin/astro dev
+```
+
+**PHOS (cognitive assistant)**
+
+```
+cd apps/phos
+npm run dev
+```
+
+**Gateway (API proxy)**
+
+```
+cd apps/gateway
+npx wrangler dev
+```
+
+---
+
+# API Reference
+
+REST endpoints at gateway.p31ca.org. No GraphQL support.
+
+## Base URL
+
+`https://gateway.p31ca.org`
+
+All endpoints return JSON. CORS restricted to 5 allowed origins.
+
+## Sections
+
+- **REST Endpoints** — 11 routes including health, chat, transcribe, jitterbug, mesh, and genesis.
+- **Auth API** — DID:key login, session verification, logout, and user profile.
+
+## Auth Requirements
+
+Most endpoints are public. Only `/api/*` write methods require `Authorization: Bearer <JWT>`. See the security docs for the full auth model.
+
+---
+
+# REST Endpoints
+
+All routes exposed by the gateway at `https://gateway.p31ca.org`.
+
+## Routes
+
+| Method | Path | Upstream | Auth |
+|--------|------|----------|------|
+| GET | /api/health | none (returns ok, service) | No |
+| POST | /api/chat | p31-llm-proxy | Bearer JWT |
+| POST | /v1/chat/completions | p31-llm-proxy (OpenAI-compatible) | Bearer JWT |
+| POST | /ai/chat | p31-llm-proxy | Bearer JWT |
+| POST | /transcribe | p31-llm-proxy (Whisper) | Bearer JWT |
+| POST | /jitterbug/brain-dump | jitterbug-api | No |
+| GET | /jitterbug/brain-dump/:id/stream | jitterbug-api (SSE) | No |
+| GET | /jitterbug/brain-dump/:id | jitterbug-api | No |
+| GET | /api/brain | jitterbug-api (rewrite to /) | No (GET) |
+| GET | /api/mesh/* | k4-cage (prefix stripped) | No (GET) |
+| GET | /api/genesis | genesis-spark (rewrite to /) | No (GET) |
+
+## Examples
+
+**GET /api/health**
+
+```json
+{
+  "ok": true,
+  "service": "p31-gateway"
+}
+```
+
+**POST /ai/chat**
+
+```bash
+curl -X POST https://gateway.p31ca.org/ai/chat \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "deepseek-chat",
+    "messages": [{ "role": "user", "content": "Hello" }],
+    "stream": false
+  }'
+```
+
+---
+
+# Auth API (p31-auth)
+
+DID:key Ed25519 authentication endpoints.
+
+## Endpoints
+
+| Method | Path | Purpose |
+|--------|------|---------|
+| GET | /auth/health | Health check |
+| POST | /auth/did-login | DID:key + Ed25519 login, returns JWT |
+| POST | /auth/session/verify | Verify JWT + check D1 session |
+| POST | /auth/logout | Delete session from D1 |
+| GET | /auth/user | Current user profile |
+
+## Login Flow
+
+**Step 1:** Generate Ed25519 keypair locally (lib keypair + DID derivation)
+
+**Step 2:** Sign a challenge message with private key
+
+**Step 3:** POST to /auth/did-login:
+
+```json
+{
+  "did": "did:key:z...",
+  "signature": "...",
+  "message": "Sign this message to log in to P31",
+  "email": "user@example.com"
+}
+```
+
+**Step 4:** Receive JWT (HS256, 30-day expiry):
+
+```json
+{
+  "token": "eyJ...",
+  "did": "did:key:z...",
+  "displayName": "User",
+  "email": "user@example.com"
+}
+```
+
+## Storing the Token
+
+The JWT is stored in `sessionStorage` under `p31-auth-token` (not localStorage). The identity keypair is persisted in localStorage and survives page reloads.
+
+> **Note:** Some documentation references localStorage key `p31-auth` — the current implementation uses **sessionStorage** key **p31-auth-token**. Verify which applies before relying on the token location.
+
+## Session Verification
+
+POST to `/auth/session/verify` with `Authorization: Bearer <JWT>`. Returns `{ valid: true, did, email, displayName, session, profile }`. The gateway uses this to verify /api/* write requests.
+
+---
+
+# P31 Architecture
+
+Cloudflare Workers + Pages ecosystem with edge compute, relational storage, and sovereign identity.
+
+## System Overview
+
+**Gateway**
+
+Hono REST proxy at gateway.p31ca.org. Routes to upstream services, enforces rate limits (100 req/min/IP, in-memory per-isolate), CORS (5 allowed origins), and optional Bearer-JWT auth for /api/* writes. **Note:** /ai/chat, /v1/chat/completions, and /transcribe are currently public.
+
+**Upstreams**
+
+p31-llm-proxy (DeepSeek/OpenRouter/OpenAI), jitterbug-api, k4-cage, genesis-spark, p31-auth. command_center and p31_signaling bindings are declared but unused.
+
+**Auth**
+
+DID:key Ed25519 identity generation. Login via /auth/did-login returns JWT (HS256, 30-day expiry). Stored in sessionStorage (key p31-auth-token). Gateway /api/* writes require Bearer token.
+
+**Storage**
+
+D1 (6 databases: status, auth, cortex, love-ledger, k4-cage, sovereign-justice), KV, R2, Vectorize, Analytics Engine. PHOS uses local PGlite (SQLite in-browser) + Yjs CRDT.
+
+## Observability
+
+Built-in `[observability]` in wrangler.toml, Axiom OTLP logs (dataset p31-workers), Sentry on phos/bonding/gateway/auth, Counterscale at analytics.p31ca.org, and status page at status.p31ca.org.
+
+---
+
+# Security Model
+
+Self-sovereign identity with DID:key, JWT sessions, and gateway auth.
+
+## Authentication Flow
+
+**1. Identity Creation**
+
+Client generates Ed25519 keypair via `generateKeypair()` (packages/auth). Derives `did:key:z...` using multicodec 0xed01 + base58. Keypair persists in localStorage.
+
+**2. Login**
+
+Client signs a challenge message with the private key. POST to `/auth/did-login` with `{ did, signature, message }`. Worker verifies Ed25519 signature against DID's public key. On success, creates D1 session (30-day expiry) and issues JWT (HS256).
+
+**3. Session**
+
+JWT stored in **sessionStorage** under key `p31-auth-token` (not localStorage). Sent as `Authorization: Bearer <token>` on protected requests.
+
+## Gateway Auth
+
+Only `/api/*` write methods (POST/PUT/DELETE/PATCH) require Bearer JWT. GET requests to `/api/*` are public. Endpoints `/ai/chat`, `/v1/chat/completions`, and `/transcribe` are currently outside the auth middleware and are public.
+
+## CORS
+
+5 allowed origins: phos.p31ca.org, p31ca.org, willow.p31ca.org, bonding.p31ca.org, phosphorus31.org. Methods: GET, POST, OPTIONS. Headers: Content-Type, Authorization. No wildcard.
+
+## Rate Limiting
+
+100 requests per minute per IP. In-memory Map per isolate (not distributed). Keyed by CF-Connecting-IP. Best-effort only; multiple isolates do not share state.
+
+---
+
+# Technology Stack
+
+The full P31 technology stack from edge to database.
+
+## Frontend Apps
+
+- **p31ca.org** — Astro 5 + Tailwind v4, static, developer platform
+- **phos.p31ca.org** — Astro 5 + React 19 + PGlite + Yjs, PWA, cognitive assistant
+- **phosphorus31.org** — Astro 5 + Tailwind v4, institutional site
+- **bonding.p31ca.org** — Vite + React 19 SPA
+- **willow.p31ca.org** — Vite + React 19 SPA
+
+## Backend Workers
+
+- **gateway.p31ca.org** — Hono REST proxy (p31-api-gateway)
+- **p31-llm-proxy** — LLM routing (DeepSeek/OpenRouter/OpenAI)
+- **p31-auth** — DID:key + JWT authentication
+- **status.p31ca.org** — Status page worker
+- **jitterbug-api, k4-cage, genesis-spark** — Specialised service workers
+
+## Data Layer
+
+- **D1** — 6 SQLite databases (status, auth, cortex, love-ledger, k4-cage, sovereign-justice)
+- **KV** — Key-value storage for sessions and config
+- **R2** — Object storage (counterscale daily rollups)
+- **Vectorize** — Vector embeddings for semantic search
+- **Analytics Engine** — Counterscale metrics dataset
+
+## Observability
+
+- **Axiom OTLP** — Log ingestion (dataset: p31-workers)
+- **Sentry** — Error tracking on phos, bonding, gateway, auth
+- **Counterscale** — Self-hosted analytics at analytics.p31ca.org
+- **status.p31ca.org** — Uptime monitoring
+
+## D1 Databases
+
+6 of 10 Free Plan limit used: p31-status-db, p31-auth, p31-cortex, love-ledger, k4-cage-db, sovereign-justice-db.
+
+---
+
+# PHOS — Phosphorus Human Operating Surface
+
+A spoon-aware, single-user cognitive-assistant PWA.
+
+## What is PHOS?
+
+PHOS is a web-based cognitive assistant built with Astro 5 + React 19 and deployed as a Cloudflare Pages PWA. It runs a local LLM (Llama-3.2-3B via WebLLM) in your browser with an edge fallback to DeepSeek/OpenRouter/OpenAI. Voice input uses local WASM Whisper with an edge Whisper fallback.
+
+> **Note:** The `/phos-cloud` page on this site is a static preview. The real app is at `phos.p31ca.org`.
+
+## Features
+
+**Spoon-Aware**
+
+0–5 spoon meter drives UI state. CrisisMode at 0 provides a breathing exercise. More stimulation at higher levels.
+
+**Dual LLM Engine**
+
+Local Llama-3.2-3B via WebLLM (requires WebGPU) + edge fallback to DeepSeek/OpenRouter/OpenAI.
+
+**Voice Input**
+
+Local WASM Whisper engine with automatic edge fallback when local initialisation fails.
+
+**25+ Surfaces**
+
+Navigable screens for chat, dashboard, brain dump, vault, ledger, governance, arcade, and more.
+
+---
+
+# Crisis Mode & Spoon-Aware Design
+
+PHOS uses a 0–5 spoon meter to adapt the interface to the user's cognitive energy level.
+
+## Spoon Levels
+
+**0–1: Crisis / Minimal**
+
+All motion disabled. CrisisMode breathing exercise shown. Static, predictable interface.
+
+**2–3: Reduced / Standard**
+
+Slowed animations. Gentle transitions. Baseline experience.
+
+**4–5: Enhanced / Maximum**
+
+Faster animations. Snappier transitions. More visual stimulation.
+
+## CrisisMode Component
+
+When the spoon meter reaches 0, the entire workspace is replaced by a full-screen black overlay with a 4-phase breathing animation (Breathe in / Hold / Breathe out / Hold), each phase lasting 4 seconds. The Starfield background and PHOSOrb are both hidden, and the Magic Drawer returns null.
+
+> **Known UX gap:** Currently CrisisMode has no built-in exit control. Spoon settings live in the shell which is replaced. Users may need to reload or edit `localStorage['phos:spoons']` to return. A fix is in progress to add an "I'm ready" button + Escape keybinding.
+
+## Design Context
+
+"Spoon theory" describes the limited energy reserves of people with chronic conditions, ADHD, autism, and other neurodivergent experiences. PHOS's implementation lets users control sensory input dynamically — reducing motion during low energy, increasing stimulation when capacity allows.
+
+---
+
+# Voice Input
+
+PHOS supports voice input through a dual-engine design: local WASM Whisper with an automatic edge fallback.
+
+## Local WASM Whisper
+
+Uses `@timur00kh/whisper.wasm` with the `base` model. Records via MediaRecorder (webm/opus), runs locally in the browser via `session.streaming()`. Tier: `local`.
+
+## Edge Fallback
+
+If local WASM initialisation or recording fails, audio is POSTed to `gateway.p31ca.org/transcribe` which proxies to Workers AI `whisper-large-v3-turbo`. Tier: `edge`.
+
+## VoiceInputButton
+
+The mic button in the chat area detects whether local WASM is supported (`isSupported`). If unsupported, it shows a disabled state labelled "Voice input unavailable". Otherwise it shows "Local WASM" or "Edge fallback" label in the `aria-label`.
+
+---
+
+# PHOS Surfaces
+
+PHOS has ~25 navigable surfaces, accessible via the sidebar or Ctrl+P command palette.
+
+## Surface Table
+
+| Surface ID | Route | Description |
+|------------|-------|-------------|
+| CHAT | / | Main conversation interface |
+| DASHBOARD | /dashboard | Overview and metrics |
+| QUANTUM_BRAIN_DUMP | /brain-dump | Thought capture and semantic search |
+| THE_BUFFER | /buffer | Chaos ingest / scratchpad |
+| VAULT | /vault | Retro vault for stored items |
+| LEDGER | /ledger | Love ledger / relationship tracking |
+| GOVERNANCE | /governance | Family governance tools |
+| PASSPORT | /passport | DID identity and profile |
+| SANCTUARY | /sanctuary | Grounding and regulation |
+| WAREHOUSE | /warehouse | Data warehouse / PGlite management |
+| ARCADE | /arcade | Games and interactive experiences |
+| ARCHIVE | /archive | Historical data and logs |
+
+Plus surfaces for Feedback, Settings, Ignition, Bonding, Compass, Node Zero, Dispute, Attest, Hearth, Barter Marketplace, Quantum Brain Dump, Grid, and more.
+
+## Navigation
+
+Surfaces are navigated via the left sidebar (`PHOSSidebar`) or the Ctrl+P command palette (`CommandPalette`). URLs are kept in sync with the current surface via `react-router-dom`.
+
+---
+
+# P31 Oasis CLI
+
+The interactive terrain user interface for the P31 ecosystem.
+
+## Overview
+
+The CLI is a local-only, blessed + node-pty interactive TUI branded **P31 Oasis CLI**. It provides a dashboard with LOG, SANDBOX, META, and TODOS panes. The package is `@p31/andromeda-cli` with binary `andromeda`.
+
+**Important:** A TTY is required. Without one, only `--version` and `--help` work.
+
+## Installation
+
+Not yet published to npm. Run locally:
+
+```
+cd /path/to/P31-local-workspace/cli
+npm install
+node index.js
+```
+
+## Flags
+
+| Flag | Output |
+|------|--------|
+| --version, -v | @p31/andromeda-cli v1.0.0 |
+| --help, -h | Usage: andromeda \| andromeda --help \| andromeda --version |
+
+These only respond in a non-TTY environment. In a TTY the TUI launches immediately.
+
+## Slash-Commands & Themes
+
+All interactive commands use the `/` prefix.
+
+---
+
+# CLI Slash-Commands
+
+All interactive commands available inside the P31 Oasis CLI TUI.
+
+## Commands
+
+| Command | Behavior | Example |
+|---------|----------|---------|
+| /exit | Save session and exit | `/exit` |
+| /clear | Clear the LOG pane | `/clear` |
+| /sandbox clear | Clear the SANDBOX pane | `/sandbox clear` |
+| /export log | Write LOG to p31-oasis-log-<timestamp>.txt | `/export log` |
+| /save | Save session to ~/.p31/cli-session.json | `/save` |
+| /notify test | Show test notifications | `/notify test` |
+| /help | Display help box with command list | `/help` |
+| /theme <name> | Switch theme (cyberpunk, nord, dracula, catppuccin, warm) | `/theme dracula` |
+| /mode <name> | Set mode (build/plan/review/debug) | `/mode review` |
+
+## Keyboard Shortcuts
+
+| Key | Action |
+|-----|--------|
+| Tab / S-Tab | Cycle focus between panes |
+| Ctrl+P | Open command palette |
+| Ctrl+T | Cycle themes |
+| Ctrl+L | Clear LOG |
+| Ctrl+S | Save session |
+| Esc / Ctrl+C | Save and exit |
+
+Any text not starting with `/` is sent directly to the SANDBOX shell (your default `$SHELL`).
+
+---
+
+# CLI Themes
+
+Five built-in themes for the P31 Oasis CLI TUI.
+
+## Theme List
+
+| Name | Display Name | Default? |
+|------|-------------|----------|
+| warm | P31 Precision | Yes (default) |
+| cyberpunk | Cyberpunk | |
+| nord | Nord | |
+| dracula | Dracula | |
+| catppuccin | Catppuccin | |
+
+## Switching Themes
+
+- **Slash command:** `/theme <name>`
+- **Keybinding:** `Ctrl+T` — cycles through themes in order
+- **Palette:** Open with `Ctrl+P` and select a theme entry
+
+The selected theme persists in `~/.p31/cli-session.json`.
+
+---
+
+# Documentation (Legacy)
+
+Alternate documentation index page.
+
+## Sections
+
+- **Architecture** — Understand the P31 stack — from edge to database.
+- **API Reference** — REST and GraphQL endpoints for your own integrations.
+- **Contributing** — How to fork, build, and submit PRs to P31 repos.
+- **Spoon-Aware Design** — Learn how motion scaling works for neurodivergent users.
+
+---

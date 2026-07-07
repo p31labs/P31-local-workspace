@@ -9,6 +9,7 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 const yaml = require('yaml');
+const { execSync } = require('child_process');
 
 const SESSION_DIR = path.join(os.homedir(), '.p31');
 const SESSION_FILE = path.join(SESSION_DIR, 'cli-session.json');
@@ -130,6 +131,18 @@ const TOOLS = [
       required: ['index'],
     },
   },
+  {
+    name: 'oasis_execute',
+    description: 'Execute a shell command in the session sandbox directory. Returns stdout, stderr, and exit code. Use for file operations, git commands, npm scripts, etc.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        command: { type: 'string', description: 'Shell command to execute' },
+        timeout: { type: 'number', description: 'Timeout in milliseconds (default: 30000)' },
+      },
+      required: ['command'],
+    },
+  },
 ];
 
 // ─── Tool Execution ──────────────────────────────────────────────────────────
@@ -231,6 +244,30 @@ function executeTool(name, args) {
       session.todos[idx].done = !session.todos[idx].done;
       saveSession(session);
       return { todo: session.todos[idx], index: idx, status: 'ok' };
+    }
+
+    case 'oasis_execute': {
+      if (!args.command) return { error: 'command is required', status: 'error' };
+      const cwd = session.sandboxCwd || process.cwd();
+      const timeout = args.timeout || 30000;
+      try {
+        const stdout = execSync(args.command, {
+          cwd,
+          timeout,
+          maxBuffer: 1024 * 1024,
+          encoding: 'utf8',
+          stdio: ['pipe', 'pipe', 'pipe'],
+        });
+        return { stdout: stdout.trim(), exitCode: 0, cwd, status: 'ok' };
+      } catch (e) {
+        return {
+          stdout: (e.stdout || '').trim(),
+          stderr: (e.stderr || '').trim(),
+          exitCode: e.status || 1,
+          cwd,
+          status: e.status === 0 ? 'ok' : 'error',
+        };
+      }
     }
 
     default:

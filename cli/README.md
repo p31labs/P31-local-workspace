@@ -104,6 +104,25 @@ Available tools:
 | `oasis_notify` | Queue a notification |
 | `oasis_add_todo` | Add a todo item |
 | `oasis_toggle_todo` | Toggle a todo's done state |
+| `oasis_execute` | Execute a shell command in sandbox directory |
+
+## Component Registry MCP Server
+
+A separate MCP server exposes the PHOS design system as a queryable component registry:
+
+```bash
+node cli/component-registry.js
+```
+
+5 tools for design-system-aware agent workflows:
+
+| Tool | Description |
+|------|-------------|
+| `design_list_components` | List all PHOS components with descriptions and token deps |
+| `design_get_component` | Get full details: props, tokens, CSS, usage example |
+| `design_get_tokens` | Get all design tokens and invariants |
+| `design_search` | Search components by keyword or token |
+| `design_spoon_guide` | Get spoon-level UI behavior guide (0–5) |
 
 ## Architecture
 
