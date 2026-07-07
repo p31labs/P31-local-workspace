@@ -35,7 +35,7 @@ Reads JSON-RPC from stdin, writes to stdout. 10 tools: `oasis_status`, `oasis_sa
 Agents can install the `andromeda` CLI globally via npm, making it available in any environment (local shell, CI/CD, GitHub Actions) without cloning the monorepo:
 
 ```bash
-npm install -g @p31/andromeda-cli
+npm install -g andromeda-cli
 andromeda --agent
 ```
 
