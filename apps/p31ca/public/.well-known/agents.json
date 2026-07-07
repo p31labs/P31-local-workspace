@@ -1,0 +1,24 @@
+{
+  "name": "P31 Labs",
+  "description": "Open-source neuroinclusive assistive technology for neurodivergent individuals and families.",
+  "documentation": "https://p31ca.org/docs",
+  "repository": "https://github.com/p31labs/P31-local-workspace",
+  "agents": {
+    "instructions": "AGENTS.md",
+    "design": "DESIGN.md"
+  },
+  "links": [
+    {
+      "rel": "instructions",
+      "href": "https://github.com/p31labs/P31-local-workspace/blob/main/AGENTS.md"
+    },
+    {
+      "rel": "design",
+      "href": "https://github.com/p31labs/P31-local-workspace/blob/main/DESIGN.md"
+    },
+    {
+      "rel": "docs",
+      "href": "https://p31ca.org/docs"
+    }
+  ]
+}
