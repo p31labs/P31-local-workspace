@@ -30,6 +30,18 @@ node cli/mcp-server.js
 ```
 Reads JSON-RPC from stdin, writes to stdout. 10 tools: `oasis_status`, `oasis_save`, `oasis_theme`, `oasis_mode`, `oasis_clear`, `oasis_export_log`, `oasis_sandbox_clear`, `oasis_notify`, `oasis_add_todo`, `oasis_toggle_todo`.
 
+### Edge-Aware Commands
+
+The CLI exposes three edge-aware commands that work in both TTY and headless environments. All support `--agent` for JSON output:
+
+```bash
+andromeda status                  # Health check (gateway, phos, p31ca)
+andromeda surfaces                # List PHOS surfaces (23 available)
+andromeda deploy --app phos       # Build + deploy to Cloudflare Pages/Workers
+```
+
+`andromeda deploy` requires `CLOUDFLARE_API_TOKEN` environment variable. Apps: `phos`, `p31ca`, `phosphorus31`, `bonding`, `willow`, `gateway`.
+
 ### CLI Global Installation
 
 Agents can install the `andromeda` CLI globally via npm, making it available in any environment (local shell, CI/CD, GitHub Actions) without cloning the monorepo:

@@ -1,6 +1,6 @@
 {
   "name": "andromeda-cli",
-  "version": "1.0.0",
+  "version": "1.1.2",
   "description": "Sovereign, agent-native CLI for the P31 ecosystem — Oasis TUI, MCP server, and --agent JSON mode for AI agents and CI/CD.",
   "main": "index.js",
   "bin": {
@@ -17,6 +17,7 @@
   },
   "files": [
     "index.js",
+    "commands.js",
     "mcp-server.js",
     "component-registry.js",
     "design-tokens-registry.js",

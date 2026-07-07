@@ -7,9 +7,14 @@
 
 // ─── Agent Mode (non-TTY safe) ──────────────────────────────────────────────
 // Check for --agent / -a BEFORE the TTY gate so agents can invoke from any ctx.
+// If a subcommand (status/surfaces/deploy) is present with --agent, the
+// subcommand handles it — so we skip this block.
+const _SUBCOMMANDS = ['status', 'surfaces', 'deploy'];
+
 {
   const _args = process.argv.slice(2);
-  if (_args.includes('--agent') || _args.includes('-a')) {
+  const _hasSubcommand = _args.some(a => _SUBCOMMANDS.includes(a));
+  if ((_args.includes('--agent') || _args.includes('-a')) && !_hasSubcommand) {
     const _fs = require('fs');
     const _path = require('path');
     const _yaml = require('yaml');
@@ -72,19 +77,51 @@
   }
 }
 
+// ─── Subcommand routing (Phase 2) ──────────────────────────────────────────
+// Runs synchronously (commands uses execSync internally) so the TUI/non-TTY
+// fallback below is never reached when a subcommand is invoked.
+{
+  const _args = process.argv.slice(2);
+  const _matched = _args.find(a => _SUBCOMMANDS.includes(a));
+  if (_matched) {
+    const cmds = require('./commands');
+    const cmd = { status: cmds.status, surfaces: cmds.surfaces, deploy: cmds.deploy }[_matched];
+    const opts = { agent: _args.includes('--agent') || _args.includes('-a') };
+
+    // Extract per-command options
+    const getOpt = (flag) => { const i = _args.indexOf(flag); return i !== -1 ? _args[i + 1] : undefined; };
+    if (_matched === 'status') opts.service = getOpt('--service');
+    if (_matched === 'surfaces') opts.name = getOpt('--name');
+    if (_matched === 'deploy') {
+      opts.app = getOpt('--app');
+      opts.env = getOpt('--env') || 'production';
+      opts.dryRun = _args.includes('--dry-run');
+      opts.yes = _args.includes('--yes');
+      opts.nonInteractive = _args.includes('--non-interactive');
+    }
+
+    cmd(opts);
+    process.exit(0);
+  }
+}
+
 // ─── TTY Gate ────────────────────────────────────────────────────────────────
 if (!process.stdout.isTTY || !process.stdin.isTTY) {
   const args = process.argv.slice(2);
   if (args.includes('--version') || args.includes('-v')) {
-    console.log('@p31/andromeda-cli v1.0.0');
+    console.log('andromeda-cli v1.0.0');
     process.exit(0);
   }
   if (args.includes('--help') || args.includes('-h')) {
     console.log(`
-P31 Oasis CLI v1.0.0
+andromeda-cli v1.0.0
 
 USAGE
   andromeda              Launch interactive TUI
+  andromeda status       Check health of gateway and services
+  andromeda surfaces     List PHOS surfaces
+  andromeda deploy       Deploy an app to Cloudflare Pages/Workers
+  andromeda --agent      Output session state as JSON
   andromeda --help       Show this help
   andromeda --version    Show version
 `);

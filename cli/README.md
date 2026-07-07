@@ -58,11 +58,48 @@ Inside the TUI, type text to send commands to the SANDBOX shell (your default `$
 
 | Flag | Output |
 |------|--------|
-| `--version`, `-v` | `@p31/andromeda-cli v1.0.0` |
+| `--version`, `-v` | `andromeda-cli v1.0.0` |
 | `--help`, `-h` | Usage information |
 | `--agent`, `-a` | JSON output of session state + design tokens |
 
 Flags work in both TTY and non-TTY environments. `--agent` always outputs JSON regardless of TTY.
+
+## Edge-Aware Commands
+
+These commands interact with the live P31 infrastructure. All support `--agent` for JSON output.
+
+### `andromeda status`
+
+Check health of the P31 gateway and edge services.
+
+```bash
+andromeda status                    # Human-readable table
+andromeda status --agent            # Machine-readable JSON
+andromeda status --service phos     # Filter a single service
+```
+
+### `andromeda surfaces`
+
+List available PHOS surfaces from the gateway.
+
+```bash
+andromeda surfaces                  # All 23 surfaces
+andromeda surfaces --agent           # JSON output
+andromeda surfaces --name dashboard  # Filter by name
+```
+
+### `andromeda deploy`
+
+Deploy an app to Cloudflare Pages or Workers. Requires `CLOUDFLARE_API_TOKEN` environment variable.
+
+```bash
+andromeda deploy --app phos                             # Build + deploy
+andromeda deploy --app p31ca --env preview               # Preview environment
+andromeda deploy --app gateway                           # Cloudflare Worker
+andromeda deploy --app phos --dry-run --agent             # Preview as JSON
+```
+
+Supported apps: `phos`, `p31ca`, `phosphorus31`, `bonding`, `willow`, `gateway`.
 
 ## Agent Mode (`--agent`)
 
