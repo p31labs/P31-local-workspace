@@ -4,6 +4,16 @@
 
 Add P31 Oasis CLI and Component Registry MCP servers
 
+## DNS Ownership Verification
+
+The MCP Registry uses DNS TXT records to verify namespace ownership. The following record must be active at `_agent.p31ca.org` before submitting the PR:
+
+```
+_agent.p31ca.org. 300 IN TXT "ver=1; uri=https://p31ca.org/.well-known/agents.json; auth=none"
+```
+
+This record is documented in `DNS_TXT_RECORD.md`.
+
 ## Server Definitions
 
 ### 1. P31 Oasis CLI (`p31-oasis-cli`)
@@ -148,14 +158,15 @@ MIT
 
 ## PR Submission Steps
 
-1. Fork `github.com/modelcontextprotocol/servers`
-2. Create branch `add-p31-servers`
-3. Add directories `servers/src/p31-oasis-cli/` and `servers/src/p31-component-registry/`
-4. Add `server.json` and `README.md` to each
-5. Update the root `README.md` or `servers/README.md` to list the new servers
-6. Submit PR
+1. **DNS Verification:** Ensure `_agent.p31ca.org` TXT record is live (see `DNS_TXT_RECORD.md`).
+2. Fork `github.com/modelcontextprotocol/servers`
+3. Create branch `add-p31-servers`
+4. Add directories `servers/src/p31-oasis-cli/` and `servers/src/p31-component-registry/`
+5. Add `server.json` and `README.md` to each
+6. Update the root `README.md` or `servers/README.md` to list the new servers
+7. Submit PR
 
 ## Additional Distribution
 
-- **Smithery:** Run `smithery mcp publish` after registry PR is merged.
+- **Smithery:** Run `npx @smithery/cli publish` after registry PR is merged.
 - **MCP Toolbox:** Submit via their web form.
