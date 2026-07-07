@@ -7,6 +7,26 @@
     "instructions": "AGENTS.md",
     "design": "DESIGN.md"
   },
+  "capabilities": {
+    "cli": {
+      "description": "Oasis CLI — interactive TUI with agent mode and MCP server",
+      "agentMode": "andromeda --agent",
+      "mcpServer": "node cli/mcp-server.js",
+      "commands": ["/exit", "/clear", "/sandbox clear", "/export log", "/save", "/notify test", "/help", "/theme <name>", "/mode <name>"]
+    },
+    "phos": {
+      "description": "PHOS — sovereign cognitive mesh gateway for neurodivergent users",
+      "gateway": "https://gateway.p31ca.org",
+      "endpoints": {
+        "chat": "/ai/chat",
+        "v1Chat": "/v1/chat/completions",
+        "transcribe": "/transcribe",
+        "surfaces": "/api/phos/surfaces"
+      },
+      "spoonAware": true,
+      "spoonScale": "0–5 (0=crisis, 3=baseline, 5=high energy)"
+    }
+  },
   "links": [
     {
       "rel": "instructions",
@@ -19,6 +39,10 @@
     {
       "rel": "docs",
       "href": "https://p31ca.org/docs"
+    },
+    {
+      "rel": "llms.txt",
+      "href": "https://p31ca.org/llms.txt"
     }
   ]
 }

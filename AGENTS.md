@@ -18,6 +18,28 @@ Visual identity, component guidelines, and neuroinclusive invariants are encoded
 - **Crisis Mode** — at `spoons === 0` no UI chrome may render; only the breathing overlay + exit control (Escape / "I'm ready").
 - **Single accent** — `quantum-cyan` is the only primary accent; never pure white/black text or backgrounds.
 
+## Agent Tooling
+
+### CLI Agent Mode
+Run `andromeda --agent` (or `-a`) for JSON output of session state, design tokens, and capabilities. Works in any context (TTY or non-TTY).
+
+### CLI MCP Server
+Agents can invoke CLI commands via MCP (Model Context Protocol):
+```bash
+node cli/mcp-server.js
+```
+Reads JSON-RPC from stdin, writes to stdout. 10 tools: `oasis_status`, `oasis_save`, `oasis_theme`, `oasis_mode`, `oasis_clear`, `oasis_export_log`, `oasis_sandbox_clear`, `oasis_notify`, `oasis_add_todo`, `oasis_toggle_todo`.
+
+### PHOS Capabilities
+Agents can discover PHOS endpoints via `/.well-known/agents.json`. Gateway exposes:
+- `POST /ai/chat` — conversational AI (Bearer auth required)
+- `POST /v1/chat/completions` — OpenAI-compatible completions (Bearer auth required)
+- `POST /transcribe` — voice transcription (Bearer auth required)
+- `GET /api/phos/surfaces` — list available PHOS surfaces (public)
+
+### Design Injection
+PHOS's LLM system prompt includes design tokens from `DESIGN.md` and adapts to the user's current spoon level (0–5).
+
 ## Build & Deploy Commands
 
 ### phos (Astro + React)

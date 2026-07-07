@@ -1,60 +1,50 @@
 # P31 Labs
 
-> Operator-led nonprofit building decentralized family infrastructure.
-> Mission: Build, Create, Connect.
-> Phosphorus31 is the public face; P31 is the technical hub.
+> P31 Labs builds neuroinclusive, agent-native infrastructure: a spoon-aware design system, the Oasis developer CLI, the PHOS companion app, and the p31ca edge platform.
 
-P31 Labs, Inc. is a Georgia 501(c)(3) (pending) founded April 3, 2026.
-EIN 42-1888158. Founder: W. Johnson. Operator condition: hypoparathyroidism + AuDHD.
+## Documentation
+- [Docs Hub](https://p31ca.org/docs): entry point for all P31 documentation.
+- [Getting Started](https://p31ca.org/docs/getting-started): environment setup and first run.
+- [Architecture](https://p31ca.org/docs/architecture): system overview.
+- [Tech Stack](https://p31ca.org/docs/architecture/stack): runtimes, frameworks, and edge services.
+- [Security Model](https://p31ca.org/docs/architecture/security): auth, edge proxy, and threat boundaries.
 
-We do not track, sell data, or run ad pixels. Every public surface is crawlable.
-Operator-only surfaces (command center, ops console) are local-only.
+## API
+- [API Overview](https://p31ca.org/docs/api): gateway and service endpoints.
+- [REST Reference](https://p31ca.org/docs/api/rest): request/response shapes.
+- [Auth](https://p31ca.org/docs/api/auth): Bearer-token auth required on protected routes.
 
-## Primary surfaces
+## CLI (Oasis)
+- [Oasis CLI](https://p31ca.org/cli): the P31 developer terminal (TUI).
+- [CLI Docs](https://p31ca.org/docs/cli): commands and configuration.
+- [CLI Commands](https://p31ca.org/docs/cli/commands): full command reference.
+- [CLI Themes](https://p31ca.org/docs/cli/themes): theming and accessibility options.
 
-- [Hub home](https://p31ca.org/): technical product grid, dark theme
-- [Stylebook](https://p31ca.org/stylebook/): complete design system reference (32+ pages)
-- [Cognitive passport](https://p31ca.org/passport): identity-first cognitive context generator
-- [Connection navigator](https://p31ca.org/connect): K₄ mesh visualization
-- [Initial build](https://p31ca.org/build): production site builder
-- [Doc library](https://p31ca.org/doc-library): searchable markdown index
-- [Mission home](https://phosphorus31.org/): nonprofit public face, light theme
-- [Donate](https://phosphorus31.org/donate): Stripe Checkout (no tracking)
+## PHOS
+- [PHOS App](https://p31ca.org/phos): the P31 companion for neurodivergent users.
+- [PHOS Cloud](https://p31ca.org/phos-cloud): sync, surfaces, and voice.
+- [PHOS Cloud Docs](https://p31ca.org/docs/phos-cloud): overview.
+- [Crisis Mode](https://p31ca.org/docs/phos-cloud/crisis): the hard-exit invariant and spoon reset.
+- [Surfaces](https://p31ca.org/docs/phos-cloud/surfaces): adaptive UI surfaces.
+- [Voice](https://p31ca.org/docs/phos-cloud/voice): voice interaction model.
 
-## Public APIs
+## Design System
+- [Design Overview](https://p31ca.org/docs/design): principles and tokens.
+- [Spoon Theory](https://p31ca.org/docs/design/spoons): data-spoons motion scaling and the 0–5 scale.
+- [Accessibility](https://p31ca.org/docs/design/accessibility): neuroinclusive constraints.
+- [DESIGN.md](https://p31ca.org/DESIGN.md): machine-readable design spec (Google Labs format).
+- [AGENTS.md](https://p31ca.org/AGENTS.md): contributor and agent workflow guide.
 
-- [Creator economy contract](https://p31ca.org/creator-economy.json): platform fee = 0, creator share = 1.0
-- [Passkey API](https://p31ca.org/api/passkey/*): WebAuthn endpoints
+## Platform & Ops
+- [Integrations](https://p31ca.org/integrations): connected services.
+- [Research](https://p31ca.org/research): active research threads.
+- [Grants](https://p31ca.org/grants): funding and open calls.
+- [Ops](https://p31ca.org/ops): operations index.
+- [EPCP](https://p31ca.org/ops/epcp): edge control plane.
+- [Mesh NOC](https://p31ca.org/ops/mesh-noc): network operations center.
+- [Mission Control](https://p31ca.org/ops/mission-control): live platform status.
 
-## Design system
-
-The P31 Stylebook documents 6 themes, 5 adaptive modes, 120+ tokens, and the complete component library.
-Live at https://p31ca.org/stylebook/. Built from canonical sources in /home/p31/p31-alignment.json.
-
-## What we don't do
-
-- No third-party analytics or tracking pixels
-- No ad networks
-- No engagement-driven dark patterns (FOMO, streaks-as-identity, scarcity timers)
-- No naval / military / submarine metaphors
-- No anthropomorphic AI (system is a tool, not a friend)
-
-## Architecture
-
-- Edge-only (Cloudflare Workers + Pages)
-- Encrypted family graph via K₄ mesh (k4-cage, k4-personal Workers)
-- Local-first AI personas (Ollama fleet of 10)
-- Zero-budget infrastructure (free tier all the way down)
-
-## License
-
-- Code: AGPL-3.0
-- Docs: CC BY 4.0
-- Brand mark: All rights reserved (contact brand@phosphorus31.org)
-
-## Contact
-
-- Operator: operator@phosphorus31.org
-- Press / brand: brand@phosphorus31.org
-- Security: security@phosphorus31.org
-- General: hello@phosphorus31.org
+## Agent Discovery
+- [agents.json](https://p31ca.org/.well-known/agents.json): Agent-Readability manifest.
+- [did.json](https://p31ca.org/.well-known/did.json): decentralized identifier.
+- [security.txt](https://p31ca.org/.well-known/security.txt): security contact.

@@ -58,12 +58,14 @@ export function useSovereignBrain() {
   const generateResponse = useCallback(async (
     prompt: string,
     contextLength = 0,
-    override: RoutingOverride = 'auto',
+    opts: { override?: RoutingOverride; model?: string; spoonLevel?: number } = {},
   ): Promise<string> => {
     try {
       return await brain.generateResponse(prompt, contextLength, {
         edgeEndpoint: `${endpoints.aiProxy}/ai/chat`,
-        override,
+        override: opts.override,
+        model: opts.model,
+        spoonLevel: opts.spoonLevel,
       });
     } catch (err) {
       throw err;

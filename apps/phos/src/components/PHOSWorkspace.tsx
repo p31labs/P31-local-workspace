@@ -14,12 +14,15 @@ import CrisisMode from './CrisisMode';
 import MobileNav from './MobileNav';
 import PHOSPromptBar from './PHOSPromptBar';
 import { VoiceInputButton } from './VoiceInputButton';
+import { PWAInstallPrompt } from './PWAInstallPrompt';
 import { PGliteProvider } from '../providers/PGliteProvider';
 import { useChatMessages } from '../hooks/useChatMessages';
 import { useSovereignBrain } from '../hooks/useSovereignBrain';
+import { mintCreditsAtomic } from '../lib/KarmaEngine';
 import type { RoutingOverride } from '../lib/llm';
 import { loadPrivateKey } from '../store/identity';
 import { PassportWizard } from '../surfaces/PassportWizard';
+import { PHOSOnboardingWizard } from './PHOSOnboardingWizard';
 import { useRouting } from './SurfaceRouter';
 
 type SpoonsState = 0 | 1 | 2 | 3 | 4 | 5;
@@ -93,6 +96,7 @@ function WorkspaceShell({ identity, isGuest }: { identity: IdentityState; isGues
   const context = useAtmosphere();
   const { spoons: s, currentSurface: cs, setSurface: ss } = context;
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [selectedModel, setSelectedModel] = useState<string>(() => localStorage.getItem('phos:llm-model') || 'deepseek-chat');
   const isMobile = useMediaQuery('(max-width: 768px)');
 
   const { messages, sendMessage, clearAll, isLoading: isChatLoading } = useChatMessages(200);
@@ -107,8 +111,13 @@ function WorkspaceShell({ identity, isGuest }: { identity: IdentityState; isGues
 
   const [isProcessing, setIsProcessing] = useState(false);
   const [llmError, setLlmError] = useState<string | null>(null);
-  const [routingOverride, setRoutingOverride] = useState<RoutingOverride>('auto');
+  const [routingOverride, setRoutingOverride] = useState<RoutingOverride>('force-edge');
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  useEffect(() => {
+    if (!localStorage.getItem('phos:onboarded')) setShowOnboarding(true);
+  }, []);
 
   useEffect(() => {
     document.documentElement.dataset.spoons = s.toString();
@@ -137,17 +146,21 @@ function WorkspaceShell({ identity, isGuest }: { identity: IdentityState; isGues
 
     try {
       const contextLength = messages.reduce((acc, m) => acc + Math.ceil(m.content.length / 4), 0);
-      const response = await generateResponse(text, contextLength, routingOverride);
+      const response = await generateResponse(text, contextLength, {
+        override: routingOverride,
+        model: selectedModel !== 'deepseek-chat' ? selectedModel : undefined,
+        spoonLevel: s,
+      });
       await sendMessage('system', response);
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Response failed';
       setLlmError(msg);
-      await sendMessage('system', '⚠️ The local inference engine is warming up. Try again in a moment.');
+      await sendMessage('system', '⚠️ Connection issue. Try again in a moment.');
     } finally {
       setIsProcessing(false);
-      setRoutingOverride('auto');
+      setRoutingOverride('force-edge');
     }
-  }, [sendMessage, s, generateResponse, messages, routingOverride]);
+  }, [sendMessage, s, generateResponse, messages, routingOverride, selectedModel]);
 
   const handleVoiceTranscript = useCallback((text: string) => {
     if (text.trim()) handleSend(text.trim());
@@ -163,6 +176,14 @@ function WorkspaceShell({ identity, isGuest }: { identity: IdentityState; isGues
 
   return (
     <div className="fixed inset-0 overflow-hidden font-sans flex bg-[var(--phos-bg)] text-[var(--phos-text)] transition-colors duration-1000 h-screen h-[100dvh]">
+      {showOnboarding && <PHOSOnboardingWizard onComplete={() => {
+        setShowOnboarding(false);
+        if (messages.length === 0) {
+          sendMessage('system', '✦ Welcome to PHOS. Try asking me a question or explore the surfaces on the left sidebar.');
+          mintCreditsAtomic(42, 'welcome').catch(() => {});
+        }
+      }} />}
+
       <UnifiedSpoonAwareStyles />
 
       <div className="absolute inset-0 pointer-events-none transition-all duration-1000" style={{ backgroundImage: 'var(--phos-glow)' }} />
@@ -179,6 +200,8 @@ function WorkspaceShell({ identity, isGuest }: { identity: IdentityState; isGues
         isOpen={drawerOpen}
         onClose={() => setDrawerOpen(false)}
         spoons={s}
+        selectedModel={selectedModel}
+        onSetModel={setSelectedModel}
       />
 
       {!isMobile && (
@@ -242,7 +265,7 @@ function WorkspaceShell({ identity, isGuest }: { identity: IdentityState; isGues
           </div>
           <button
             onClick={() => setDrawerOpen(true)}
-            className="p-2 rounded-full hover:bg-white/5 phos-glass pointer-events-auto transition-colors"
+            className="min-w-[48px] min-h-[48px] p-2 rounded-full hover:bg-white/5 phos-glass pointer-events-auto transition-colors flex items-center justify-center"
             aria-label="Open Telemetry Drawer"
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -327,16 +350,16 @@ function WorkspaceShell({ identity, isGuest }: { identity: IdentityState; isGues
               </div>
               <button
                 type="button"
-                onClick={() => setRoutingOverride((prev: RoutingOverride) => prev === 'force-edge' ? 'auto' : 'force-edge')}
-                className={`p-2.5 rounded-full phos-transition text-xs font-mono ${
+                onClick={() => setRoutingOverride((prev: RoutingOverride) => prev === 'force-edge' ? 'force-local' : 'force-edge')}
+                className={`min-w-[48px] min-h-[48px] flex items-center justify-center p-2.5 rounded-full phos-transition text-xs font-mono ${
                   routingOverride === 'force-edge'
                     ? 'bg-[#FFB347]/20 text-[#FFB347] shadow-[0_0_8px_#FFB347]/30'
-                    : 'text-[var(--phos-text)]/30 hover:text-[var(--phos-text)]/60 hover:bg-white/5'
+                    : 'bg-[var(--phos-primary)]/10 text-[var(--phos-primary)] shadow-[0_0_8px_var(--phos-primary)]/20'
                 }`}
-                aria-label={routingOverride === 'force-edge' ? 'Deep Think: Edge forced' : 'Enable Deep Think'}
-                title={routingOverride === 'force-edge' ? 'Edge forced — click to return to auto' : 'Force Edge Mesh (Deep Think)'}
+                aria-label={routingOverride === 'force-edge' ? 'Switch to local AI' : 'Switch to edge AI'}
+                title={routingOverride === 'force-edge' ? 'Edge AI — tap for local' : 'Local AI — tap for edge'}
               >
-                ⚡
+                {routingOverride === 'force-edge' ? '☁️' : '📡'}
               </button>
               <VoiceInputButton
                 onTranscript={handleVoiceTranscript}
@@ -351,6 +374,8 @@ function WorkspaceShell({ identity, isGuest }: { identity: IdentityState; isGues
       </main>
 
       {isMobile && <MobileNav surfaces={SURFACE_NAV} active={cs} onSelect={ss} />}
+
+      <PWAInstallPrompt />
     </div>
   );
 }

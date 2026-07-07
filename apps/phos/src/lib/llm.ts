@@ -7,6 +7,7 @@ import {
 } from '@mlc-ai/web-llm';
 import { calculateConfidence, type ConfidenceResult } from './confidence';
 import { getDb } from './pglite';
+import { designTokens } from './design-tokens';
 
 export type BrainStatus = 'unsupported' | 'off' | 'downloading' | 'ready' | 'error';
 export type AITier = 'local' | 'edge';
@@ -23,7 +24,27 @@ export interface BrainState {
 
 const LOCAL_MODEL_ID = 'Llama-3.2-3B-Instruct-q4f16_1-MLC';
 
-const DEFAULT_SYSTEM_PROMPT = `You are PHOS, a sovereign, zero-telemetry cognitive mesh gateway. You help a neurodivergent father navigate co-parenting, family logistics, and emotional regulation.
+function buildSystemPrompt(spoonLevel: number = 3): string {
+  const t = designTokens;
+  const spoonGuidance: Record<number, string> = {
+    0: 'CRISIS MODE — Suggest only grounding exercises (5-4-3-2-1 senses, box breathing). No interactive UI suggestions. Keep to 1 sentence.',
+    1: 'Low energy — Suggest simple, single-step actions only. Validate feelings first. Keep to 1-2 sentences.',
+    2: 'Recovering — Gentle suggestions, one at a time. Allow silence. Keep to 2 sentences.',
+    3: 'Baseline — Balanced suggestions with moderate complexity. Standard interaction.',
+    4: 'Energized — Suggest multi-step workflows, creative tasks, planning. Allow detail.',
+    5: 'High energy — Full-featured interactions, complex tasks, deep work. Unconstrained.',
+  };
+
+  return `You are PHOS, a sovereign, zero-telemetry cognitive mesh gateway. You help a neurodivergent father navigate co-parenting, family logistics, and emotional regulation.
+
+Design System (when suggesting UI, respect these tokens):
+- Primary accent: ${t.colors['quantum-cyan']} (never use pure white/black)
+- Background: ${t.colors.void}
+- Surface: ${t.colors.surface}
+- Text: ${t.colors['text-primary']}
+- Border radius: ${t.rounded.lg}
+- Font: ${t.typography.sans}
+- Glass panels: backdrop-filter: blur(12px), border-radius ${t.rounded.lg}, bg ${t.colors['glass-surface']}
 
 Guidelines:
 - Be concise, warm, and grounded
@@ -31,7 +52,11 @@ Guidelines:
 - Never use jargon or corporate language
 - Use metaphors from nature, physics, or the mesh when helpful
 - Keep responses under 3 sentences unless asked for detail
-- If the user seems overwhelmed, suggest a grounding technique or buffer action`;
+- If the user seems overwhelmed, suggest a grounding technique or buffer action
+
+Spoon-Aware Behavior (current level: ${spoonLevel}/5):
+${spoonGuidance[spoonLevel] || spoonGuidance[3]}`;
+}
 
 function detectCapability(): boolean {
   if (typeof navigator === 'undefined') return false;
@@ -50,9 +75,9 @@ export class HybridLLMEngine {
     tier: 'edge',
   };
 
-  constructor(modelId = LOCAL_MODEL_ID, systemPrompt = DEFAULT_SYSTEM_PROMPT) {
+  constructor(modelId = LOCAL_MODEL_ID, systemPrompt?: string) {
     this.modelId = modelId;
-    this.systemPrompt = systemPrompt;
+    this.systemPrompt = systemPrompt || buildSystemPrompt(3);
   }
 
   private emit() {
@@ -152,8 +177,13 @@ export class HybridLLMEngine {
       edgeEndpoint?: string;
       override?: RoutingOverride;
       onRoutingDecision?: (result: ConfidenceResult, route: RoutingDecision, tier: AITier) => void;
+      model?: string;
+      spoonLevel?: number;
     },
   ): Promise<string> {
+    const activePrompt = options?.spoonLevel != null
+      ? buildSystemPrompt(options.spoonLevel)
+      : this.systemPrompt;
     const confidence = calculateConfidence(prompt);
     let decision: RoutingDecision;
 
@@ -180,7 +210,7 @@ export class HybridLLMEngine {
     if (decision === 'local' && this.engine) {
       const completion = await this.engine.chat.completions.create({
         messages: [
-          { role: 'system', content: this.systemPrompt },
+          { role: 'system', content: activePrompt },
           { role: 'user', content: prompt },
         ],
         temperature: 0.7,
@@ -190,17 +220,23 @@ export class HybridLLMEngine {
     }
 
     if (decision === 'edge' && options?.edgeEndpoint) {
+      const body: Record<string, unknown> = {
+        messages: [
+          { role: 'system', content: activePrompt },
+          { role: 'user', content: prompt },
+        ],
+      };
+      if (options.model) {
+        body.model = options.model;
+      }
+      const token = typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('p31-auth-token') : null;
       const resp = await fetch(options.edgeEndpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
         },
-        body: JSON.stringify({
-          messages: [
-            { role: 'system', content: this.systemPrompt },
-            { role: 'user', content: prompt },
-          ],
-        }),
+        body: JSON.stringify(body),
       });
       if (!resp.ok) throw new Error(`Edge AI returned ${resp.status}`);
       const data: any = await resp.json();

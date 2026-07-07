@@ -1,394 +1,119 @@
-# P31 Andromeda CLI
+# P31 Oasis CLI
 
-## 🛠️ All-in-One Development Environment Manager
+Interactive terrain user interface (TUI) for the P31 ecosystem.
 
-The P31 Andromeda CLI is a comprehensive command-line interface that provides complete setup and development environment management for the P31 Andromeda project, including OAuth, passwords, tokens, and all startup tools.
+Package: `@p31/andromeda-cli`, binary: `andromeda`.
 
-## 🚀 Quick Start
-
-### Installation
-
-#### Global Installation
-```bash
-npm install -g @p31/andromeda-cli
-```
-
-#### Local Installation
-```bash
-npm install @p31/andromeda-cli
-npx andromeda setup
-```
-
-#### Direct Execution
-```bash
-npx @p31/andromeda-cli setup
-```
-
-### Basic Usage
+## Quick Start
 
 ```bash
-# Complete environment setup
-andromeda setup
-
-# Start development environment
-andromeda dev
-
-# Launch production environment
-andromeda launch
-
-# View all commands
-andromeda --help
-```
-
-## 📦 Commands Overview
-
-### Setup Commands
-
-#### `andromeda setup`
-Complete environment initialization including:
-- Environment variables configuration
-- OAuth provider setup
-- Secrets management
-- API tokens and keys management
-
-#### `andromeda setup:env`
-Configure environment variables interactively:
-```bash
-andromeda setup:env
-```
-
-#### `andromeda setup:oauth`
-Configure OAuth providers (Google, GitHub, Discord, Twitter):
-```bash
-andromeda setup:oauth
-```
-
-#### `andromeda setup:secrets`
-Set up secure secrets management with encryption:
-```bash
-andromeda setup:secrets
-```
-
-#### `andromeda setup:tokens`
-Configure API tokens and generate JWT tokens:
-```bash
-andromeda setup:tokens
-```
-
-### Development Commands
-
-#### `andromeda dev`
-Start complete development environment:
-- Frontend development server
-- Backend services
-- Monitoring stack
-
-#### `andromeda dev:frontend`
-Start only the frontend development server:
-```bash
-andromeda dev:frontend
-```
-
-#### `andromeda dev:backend`
-Start only the backend services:
-```bash
-andromeda dev:backend
-```
-
-#### `andromeda dev:monitoring`
-Start only the monitoring stack:
-```bash
-andromeda dev:monitoring
-```
-
-### Launch Commands
-
-#### `andromeda launch`
-Complete production launch:
-- Production build
-- Website deployment
-- Monitoring setup
-
-#### `andromeda launch:website`
-Deploy website to production:
-```bash
-andromeda launch:website
-```
-
-### Utility Commands
-
-#### `andromeda config`
-Configuration management:
-```bash
-andromeda config
-# Options: View config, Edit config, Reset config
-```
-
-#### `andromeda secrets`
-Secrets management:
-```bash
-andromeda secrets
-# Options: View secrets, Update secrets, Generate new keys
-```
-
-#### `andromeda tokens`
-Token management:
-```bash
-andromeda tokens
-# Options: View tokens, Refresh tokens, Generate new tokens
-```
-
-#### `andromeda status`
-System status check:
-```bash
-andromeda status
-```
-
-#### `andromeda logs`
-View application logs:
-```bash
-andromeda logs
-# Options: Frontend, Backend, Monitoring, All
-```
-
-## 🔧 Configuration
-
-### Environment Variables
-
-The CLI creates a comprehensive `.env.local` file with all necessary configuration:
-
-```bash
-# Basic Configuration
-NODE_ENV=development
-PORT=3000
-API_URL=http://localhost:3001
-
-# Database Configuration
-DATABASE_URL="postgresql://user:password@localhost:5432/andromeda"
-
-# Security Configuration
-JWT_SECRET="your-jwt-secret"
-SESSION_SECRET="your-session-secret"
-
-# OAuth Configuration
-GOOGLE_CLIENT_ID="your-google-client-id"
-GOOGLE_CLIENT_SECRET="your-google-client-secret"
-GITHUB_CLIENT_ID="your-github-client-id"
-GITHUB_CLIENT_SECRET="your-github-client-secret"
-
-# API Keys
-OPENAI_API_KEY="your-openai-api-key"
-CLOUDFLARE_API_TOKEN="your-cloudflare-token"
-TWITTER_API_KEY="your-twitter-api-key"
-```
-
-### OAuth Providers
-
-The CLI supports multiple OAuth providers:
-
-- **Google OAuth**: For Google account integration
-- **GitHub OAuth**: For GitHub authentication
-- **Discord OAuth**: For Discord community integration
-- **Twitter OAuth**: For Twitter authentication
-
-### Secrets Management
-
-All sensitive information is encrypted using AES-256-GCM:
-
-```javascript
-{
-  "databasePassword": {
-    "encrypted": "encrypted-data",
-    "authTag": "auth-tag"
-  },
-  "redisPassword": {
-    "encrypted": "encrypted-data", 
-    "authTag": "auth-tag"
-  },
-  "jwtSecret": {
-    "encrypted": "encrypted-data",
-    "authTag": "auth-tag"
-  }
-}
-```
-
-### Token Management
-
-JWT tokens are automatically generated and managed:
-
-```javascript
-{
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "expiresIn": "24h",
-  "issuedAt": "2026-03-24T00:00:00.000Z"
-}
-```
-
-## 🏗️ Architecture
-
-### CLI Structure
-
-```
-cli/
-├── index.js              # Main CLI application
-├── package.json          # CLI package configuration
-├── README.md            # CLI documentation
-├── config/              # Configuration files
-│   └── default.json     # Default configuration
-├── secrets/             # Encrypted secrets
-│   ├── encrypted.json   # Encrypted secrets
-│   └── keys.json        # Encryption keys
-├── tokens/              # API tokens
-│   ├── jwt.json         # JWT tokens
-│   └── new.json         # New tokens
-├── logs/                # Application logs
-├── deployment/          # Deployment files
-└── monitoring/          # Monitoring configuration
-```
-
-### Key Features
-
-#### Interactive Setup
-- Guided configuration process
-- Environment-specific settings
-- OAuth provider selection
-- Secret encryption
-
-#### Service Management
-- Start/stop individual services
-- Monitor service health
-- View service logs
-- Automatic service discovery
-
-#### Security Management
-- Encrypted secrets storage
-- JWT token generation
-- OAuth configuration
-- Key rotation support
-
-#### Development Tools
-- Hot reload support
-- Live monitoring
-- Debug mode
-- Performance profiling
-
-## 🚀 Development
-
-### Running in Development
-
-```bash
-# Clone the repository
-git clone https://github.com/p31labs/andromeda.git
-cd andromeda/cli
-
-# Install dependencies
+cd /path/to/P31-local-workspace/cli
 npm install
-
-# Run in development mode
-npm run dev
-
-# Run tests
-npm test
-
-# Build for production
-npm run build
+node index.js
 ```
 
-### Adding New Commands
+**Requires a TTY.** Without one, only `--version` and `--help` respond.
 
-1. Add command to `index.js`:
-```javascript
-program
-  .command('new-command')
-  .description('Description of new command')
-  .action(async () => {
-    await newCommandFunction();
-  });
+## Usage
+
+Inside the TUI, type text to send commands to the SANDBOX shell (your default `$SHELL`). Use slash-commands for UI actions:
+
+| Command | Action |
+|---------|--------|
+| `/exit` | Save session and exit |
+| `/clear` | Clear the LOG pane |
+| `/sandbox clear` | Clear the SANDBOX pane |
+| `/export log` | Write LOG to `p31-oasis-log-<timestamp>.txt` |
+| `/save` | Save session to `~/.p31/cli-session.json` |
+| `/notify test` | Show test notifications |
+| `/help` | Display help box |
+| `/theme <name>` | Switch theme (cyberpunk, nord, dracula, catppuccin, warm) |
+| `/mode <name>` | Set mode (build/plan/review/debug) |
+
+## Keyboard Shortcuts
+
+| Key | Action |
+|-----|--------|
+| Tab / S-Tab | Cycle focus between panes |
+| Ctrl+P | Open command palette |
+| Ctrl+T | Cycle themes |
+| Ctrl+L | Clear LOG |
+| Ctrl+S | Save session |
+| Esc / Ctrl+C | Save and exit |
+
+## Flags
+
+| Flag | Output |
+|------|--------|
+| `--version`, `-v` | `@p31/andromeda-cli v1.0.0` |
+| `--help`, `-h` | Usage information |
+| `--agent`, `-a` | JSON output of session state + design tokens |
+
+Flags work in both TTY and non-TTY environments. `--agent` always outputs JSON regardless of TTY.
+
+## Agent Mode (`--agent`)
+
+For programmatic use by AI agents, the CLI supports a `--agent` flag that outputs machine-readable JSON:
+
+```bash
+andromeda --agent
 ```
 
-2. Implement the command function:
-```javascript
-async function newCommandFunction() {
-  // Command implementation
-}
-```
+Output includes: `version`, `mode`, `theme`, `todos`, `sandboxCwd`, `design` (tokens from `DESIGN.md`), `capabilities` (slash-commands, shortcuts, themes, modes), and `status`.
 
-### Custom Configuration
+Example:
 
-Create a custom configuration file:
-
-```javascript
-// config/custom.json
+```json
 {
-  "customSetting": "value",
-  "services": {
-    "customService": {
-      "port": 8080,
-      "path": "./custom-service"
-    }
-  }
+  "version": "1.0.0",
+  "mode": "BUILD",
+  "theme": "warm",
+  "design": { "colors": { "quantum-cyan": "#00F0FF", "void": "#0A0A0F" } },
+  "capabilities": { "themes": ["cyberpunk", "nord", "dracula", "catppuccin", "warm"] },
+  "status": "ok"
 }
 ```
 
-## 🔒 Security
+## MCP Server
 
-### Encryption
-- AES-256-GCM encryption for all secrets
-- Automatic key generation
-- Secure key storage
-- Key rotation support
+The CLI exposes its capabilities via an [MCP](https://modelcontextprotocol.io/) (Model Context Protocol) server for agent tool invocation:
 
-### Authentication
-- JWT token-based authentication
-- OAuth provider integration
-- Session management
-- Rate limiting
+```bash
+node cli/mcp-server.js
+```
 
-### Best Practices
-- Never commit secrets to version control
-- Use environment-specific configurations
-- Regular security audits
-- Dependency vulnerability scanning
+The server reads JSON-RPC requests from stdin and writes responses to stdout. Supported methods:
 
-## 📊 Monitoring
+| Method | Description |
+|--------|-------------|
+| `initialize` | Handshake with protocol version |
+| `tools/list` | List available tools (10 tools) |
+| `tools/call` | Execute a tool by name |
 
-### Health Checks
-- Service availability monitoring
-- Performance metrics
-- Error tracking
-- Resource usage
+Available tools:
 
-### Logging
-- Structured logging
-- Log rotation
-- Error tracking
-- Performance monitoring
+| Tool | Description |
+|------|-------------|
+| `oasis_status` | Get session state, design tokens, capabilities |
+| `oasis_save` | Persist session to disk |
+| `oasis_theme` | Switch CLI theme |
+| `oasis_mode` | Set CLI mode |
+| `oasis_clear` | Clear log buffer |
+| `oasis_export_log` | Export log to file |
+| `oasis_sandbox_clear` | Clear sandbox output |
+| `oasis_notify` | Queue a notification |
+| `oasis_add_todo` | Add a todo item |
+| `oasis_toggle_todo` | Toggle a todo's done state |
 
-### Metrics
-- Response times
-- Error rates
-- Throughput
-- Resource utilization
+## Architecture
 
-## 🤝 Contributing
+The CLI is built with [blessed](https://github.com/chjj/blessed) for the TUI and [node-pty](https://github.com/microsoft/node-pty) for the embedded shell. It provides four panes:
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests
-5. Submit a pull request
+- **LOG** — session log output
+- **SANDBOX** — interactive shell
+- **META** — metadata display
+- **TODOS** — task list
 
-## 📄 License
+## License
 
-MIT License - see LICENSE file for details.
-
-## 🆘 Support
-
-- **Documentation**: [P31 Andromeda Docs](https://docs.p31andromeda.com)
-- **Issues**: [GitHub Issues](https://github.com/p31labs/andromeda/issues)
-- **Community**: [Discord Community](https://discord.gg/p31andromeda)
-- **Email**: support@p31andromeda.com
-
----
-
-**P31 Andromeda CLI** - Making development environment management simple and secure.
+MIT
