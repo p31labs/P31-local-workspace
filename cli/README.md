@@ -4,7 +4,20 @@ Interactive terrain user interface (TUI) for the P31 ecosystem.
 
 Package: `@p31/andromeda-cli`, binary: `andromeda`.
 
-## Quick Start
+## Install globally (npm)
+
+```bash
+npm install -g @p31/andromeda-cli
+andromeda --agent
+```
+
+This makes `andromeda` available in any environment (local shell, CI/CD, GitHub Actions) without cloning the monorepo. The MCP servers (`mcp-server.js`, `component-registry.js`) can then be invoked directly:
+
+```bash
+node /usr/lib/node_modules/@p31/andromeda-cli/mcp-server.js
+```
+
+## Quick Start (from source)
 
 ```bash
 cd /path/to/P31-local-workspace/cli

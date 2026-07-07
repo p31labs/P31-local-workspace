@@ -94,9 +94,21 @@ USAGE
   process.exit(1);
 }
 
-const blessed = require('blessed');
-const contrib = require('blessed-contrib');
-const pty = require('node-pty');
+// Lazy-load TUI dependencies — in optionalDependencies so npm install always
+// succeeds in headless agent environments. The --agent path exits above before
+// reaching here, so these are only required when a TTY is present.
+let blessed, contrib, pty;
+try {
+  blessed = require('blessed');
+  contrib = require('blessed-contrib');
+  pty = require('node-pty');
+} catch (e) {
+  console.error('[P31] TUI dependencies not available. Install build essentials and reinstall:');
+  console.error('[P31]   npm install -g @p31/andromeda-cli');
+  console.error('[P31] For headless agent mode, use: andromeda --agent');
+  process.exit(1);
+}
+
 const fs = require('fs');
 const path = require('path');
 const os = require('os');

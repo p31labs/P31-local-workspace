@@ -30,6 +30,19 @@ node cli/mcp-server.js
 ```
 Reads JSON-RPC from stdin, writes to stdout. 10 tools: `oasis_status`, `oasis_save`, `oasis_theme`, `oasis_mode`, `oasis_clear`, `oasis_export_log`, `oasis_sandbox_clear`, `oasis_notify`, `oasis_add_todo`, `oasis_toggle_todo`.
 
+### CLI Global Installation
+
+Agents can install the `andromeda` CLI globally via npm, making it available in any environment (local shell, CI/CD, GitHub Actions) without cloning the monorepo:
+
+```bash
+npm install -g @p31/andromeda-cli
+andromeda --agent
+```
+
+The CLI exposes two MCP servers:
+- `node cli/mcp-server.js` — Oasis CLI tools (11 tools incl. `oasis_execute`)
+- `node cli/component-registry.js` — Component Registry tools (5 tools)
+
 ### PHOS Capabilities
 Agents can discover PHOS endpoints via `/.well-known/agents.json`. Gateway exposes:
 - `POST /ai/chat` — conversational AI (Bearer auth required)
