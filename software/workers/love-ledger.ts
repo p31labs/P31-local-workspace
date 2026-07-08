@@ -22,6 +22,11 @@ export interface Env {
   LOVE_D1: D1Database;
   LOVE_TRANSACTION: DurableObjectNamespace;
   LOVE_PUB_SUB?: PubSub;
+  // Opt-in hardening (set via [vars] / wrangler secret). When LOVE_REQUIRE_AUTH
+  // is not 'true' the worker runs in dev mode and trusts the request body's
+  // userId (no real auth, matching legacy behavior).
+  LOVE_AUTH_SECRET?: string;
+  LOVE_REQUIRE_AUTH?: string;
 }
 
 export interface User {
@@ -157,6 +162,66 @@ function err(message: string, status: number): Response {
   return new Response(message, { status, headers: CORS_HEADERS });
 }
 
+// ── Auth (opt-in via LOVE_REQUIRE_AUTH) ──────────────────────────────
+
+const EARN_COOLDOWN_MS = 24 * 60 * 60 * 1000;
+
+function b64urlEncode(bytes: Uint8Array): string {
+  let bin = '';
+  for (const b of bytes) bin += String.fromCharCode(b);
+  return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+function b64urlDecode(s: string): Uint8Array {
+  const b64 = s.replace(/-/g, '+').replace(/_/g, '/');
+  const bin = atob(b64);
+  const out = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+  return out;
+}
+
+// HS256 verification using Web Crypto — no external dependency or network call.
+async function verifyJwt(token: string, secret: string): Promise<string | null> {
+  const parts = token.split('.');
+  if (parts.length !== 3) return null;
+  const [h, p, s] = parts;
+  try {
+    const key = await crypto.subtle.importKey(
+      'raw', new TextEncoder().encode(secret),
+      { name: 'HMAC', hash: 'SHA-256' }, false, ['verify']
+    );
+    const valid = await crypto.subtle.verify(
+      'HMAC', key, b64urlDecode(s), new TextEncoder().encode(`${h}.${p}`)
+    );
+    if (!valid) return null;
+    const payload = JSON.parse(new TextDecoder().decode(b64urlDecode(p))) as {
+      sub?: string; userId?: string; exp?: number;
+    };
+    if (payload.exp && Math.floor(Date.now() / 1000) > payload.exp) return null;
+    return payload.sub ?? payload.userId ?? null;
+  } catch {
+    return null;
+  }
+}
+
+// Verifies the caller's identity. In dev mode (LOVE_REQUIRE_AUTH !== 'true')
+// the userId from the request body is trusted. When enabled, a valid HS256
+// Bearer token is required and its subject becomes the authenticated user.
+async function verifyAuth(
+  request: Request,
+  env: Env,
+  bodyUserId?: string,
+): Promise<{ userId: string | null; status?: number }> {
+  if (env.LOVE_REQUIRE_AUTH !== 'true' || !env.LOVE_AUTH_SECRET) {
+    return { userId: bodyUserId ?? null };
+  }
+  const header = request.headers.get('Authorization');
+  if (!header || !header.startsWith('Bearer ')) return { userId: null, status: 401 };
+  const userId = await verifyJwt(header.slice(7), env.LOVE_AUTH_SECRET);
+  if (!userId) return { userId: null, status: 401 };
+  return { userId };
+}
+
 // ── Worker ──────────────────────────────────────────────────────────
 
 export default {
@@ -196,15 +261,18 @@ export default {
     if (pathParts[0] === 'api' && pathParts[1] === 'love' && pathParts[2] === 'spend') {
       if (request.method === 'POST') {
         const body = await request.json() as { userId: string; amount: number; description?: string; metadata?: unknown };
-        // Route to Durable Object for atomic processing
+        // Route to Durable Object for atomic processing (forward auth header)
         const id = env.LOVE_TRANSACTION.idFromName(body.userId);
         const stub = env.LOVE_TRANSACTION.get(id);
         const doUrl = new URL(request.url);
         doUrl.searchParams.set('action', 'spend');
+        const doHeaders: Record<string, string> = { 'Content-Type': 'application/json' };
+        const authHeader = request.headers.get('Authorization');
+        if (authHeader) doHeaders['Authorization'] = authHeader;
         return stub.fetch(new Request(doUrl.href, {
           method: 'POST',
           body: JSON.stringify(body),
-          headers: { 'Content-Type': 'application/json' },
+          headers: doHeaders,
         }));
       }
     }
@@ -305,11 +373,13 @@ export default {
   // Earn endpoint validates transactionType against canonical LOVE_AMOUNTS.
   // Rejects requests with unknown types or amounts that don't match the protocol.
   async handleEarn(request: Request, env: Env): Promise<Response> {
-    const body = await request.json() as TransactionRequest & { transactionType?: string };
+    const body = await request.json() as TransactionRequest & { transactionType?: string; nonce?: string };
 
-    if (!body.userId) {
-      return err('Missing userId', 400);
-    }
+    // ── Auth (opt-in) ────────────────────────────────────────────────
+    const auth = await verifyAuth(request, env, body.userId);
+    if (auth.status) return err('Unauthorized', auth.status);
+    const userId = auth.userId;
+    if (!userId) return err('Missing userId', 400);
 
     let amount: number;
 
@@ -329,6 +399,24 @@ export default {
       return err('Missing transactionType or amount', 400);
     }
 
+    // ── Replay protection (opt-in) ───────────────────────────────────
+    if (env.LOVE_REQUIRE_AUTH === 'true' && body.nonce) {
+      const dup = await env.LOVE_D1.prepare(
+        'SELECT nonce FROM used_nonces WHERE user_id = ? AND nonce = ?'
+      ).bind(userId, body.nonce).first();
+      if (dup) return err('Replay detected', 400);
+    }
+
+    // ── Rate limiting: at most one earn per 24h per user (opt-in) ─────
+    if (env.LOVE_REQUIRE_AUTH === 'true') {
+      const rl = await env.LOVE_D1.prepare(
+        'SELECT last_earn_at FROM rate_limits WHERE user_id = ?'
+      ).bind(userId).first<{ last_earn_at: number }>();
+      if (rl && Date.now() - rl.last_earn_at < EARN_COOLDOWN_MS) {
+        return err('Rate limited: one earn per day', 429);
+      }
+    }
+
     // Split 50/50 between pools
     const sovereigntyAmount = amount * 0.5;
     const performanceAmount = amount * 0.5;
@@ -336,69 +424,80 @@ export default {
 
     // Care score bump: care-type transactions earn more trust signal
     const careBump = CARE_TYPES.has(body.transactionType ?? '') ? CARE_TYPE_BUMP : PASSIVE_TYPE_BUMP;
-
-    // Update with two-pool split + care score bump
-    await env.LOVE_D1.prepare(`
-      INSERT INTO balances (user_id, total_earned, sovereignty_pool, performance_pool, care_score, updated_at)
-      VALUES (?, ?, ?, ?, 0.5, ?)
-      ON CONFLICT(user_id) DO UPDATE SET
-        total_earned = total_earned + ?,
-        sovereignty_pool = sovereignty_pool + ?,
-        performance_pool = performance_pool + ?,
-        care_score = MIN(?, care_score + ?),
-        updated_at = ?
-    `).bind(
-      body.userId,
-      amount,
-      sovereigntyAmount,
-      performanceAmount,
-      timestamp,
-      amount,
-      sovereigntyAmount,
-      performanceAmount,
-      CARE_SCORE_MAX,
-      careBump,
-      timestamp
-    ).run();
+    const transactionId = crypto.randomUUID();
 
     // Extract spoon level from metadata — record cognitive state at time of earn
     const spoonsAtEarn = typeof body.metadata?.spoons === 'number' ? body.metadata.spoons : null;
     const spoonDebt = spoonsAtEarn !== null ? WORKER_SPOONS_MAX - spoonsAtEarn : 0;
 
-    // Log transaction (preserve spoon metadata for future care_score calculations)
-    const transactionId = crypto.randomUUID();
-    await env.LOVE_D1.prepare(`
-      INSERT INTO transactions (id, user_id, type, amount, description, metadata, created_at)
-      VALUES (?, ?, 'earn', ?, ?, ?, ?)
-    `).bind(
-      transactionId,
-      body.userId,
-      amount,
-      body.description || body.transactionType || 'EARN',
-      JSON.stringify(body.metadata || {}),
-      timestamp
-    ).run();
+    // ── Atomic earn via D1 batch ─────────────────────────────────────
+    const stmts: ReturnType<typeof env.LOVE_D1.prepare>[] = [
+      env.LOVE_D1.prepare(`
+        INSERT INTO balances (user_id, total_earned, sovereignty_pool, performance_pool, care_score, updated_at)
+        VALUES (?, ?, ?, ?, 0.5, ?)
+        ON CONFLICT(user_id) DO UPDATE SET
+          total_earned = total_earned + ?,
+          sovereignty_pool = sovereignty_pool + ?,
+          performance_pool = performance_pool + ?,
+          care_score = MIN(?, care_score + ?),
+          updated_at = ?
+      `).bind(
+        userId, amount, sovereigntyAmount, performanceAmount, timestamp,
+        amount, sovereigntyAmount, performanceAmount, CARE_SCORE_MAX, careBump, timestamp
+      ),
+      env.LOVE_D1.prepare(`
+        INSERT INTO transactions (id, user_id, type, amount, description, metadata, created_at)
+        VALUES (?, ?, 'earn', ?, ?, ?, ?)
+      `).bind(
+        transactionId,
+        userId,
+        amount,
+        body.description || body.transactionType || 'EARN',
+        JSON.stringify(body.metadata || {}),
+        timestamp
+      ),
+    ];
+
+    if (env.LOVE_REQUIRE_AUTH === 'true' && body.nonce) {
+      stmts.push(
+        env.LOVE_D1.prepare(
+          'INSERT OR IGNORE INTO used_nonces (user_id, nonce, created_at) VALUES (?, ?, ?)'
+        ).bind(userId, body.nonce, timestamp)
+      );
+    }
+
+    stmts.push(
+      env.LOVE_D1.prepare(`
+        INSERT INTO rate_limits (user_id, last_earn_at, updated_at)
+        VALUES (?, ?, ?)
+        ON CONFLICT(user_id) DO UPDATE SET last_earn_at = ?, updated_at = ?
+      `).bind(userId, timestamp, timestamp, timestamp, timestamp)
+    );
 
     // Accumulate spoon debt — high value = consistently depleted when earning
     if (spoonDebt > 0) {
-      await env.LOVE_D1.prepare(`
-        UPDATE users SET total_spoons_spent = total_spoons_spent + ? WHERE id = ?
-      `).bind(spoonDebt, body.userId).run();
+      stmts.push(
+        env.LOVE_D1.prepare(
+          'UPDATE users SET total_spoons_spent = total_spoons_spent + ? WHERE id = ?'
+        ).bind(spoonDebt, userId)
+      );
     }
+
+    await env.LOVE_D1.batch(stmts);
 
     // Get new balance
     const newBalance = await env.LOVE_D1.prepare(`
       SELECT total_earned, sovereignty_pool, performance_pool, care_score FROM balances WHERE user_id = ?
-    `).bind(body.userId).first<{ total_earned: number; sovereignty_pool: number; performance_pool: number; care_score: number }>();
+    `).bind(userId).first<{ total_earned: number; sovereignty_pool: number; performance_pool: number; care_score: number }>();
 
     // Broadcast via Pub/Sub (optional binding)
     if (env.LOVE_PUB_SUB) {
       try {
         await env.LOVE_PUB_SUB.publish(
-          `love:${body.userId}`,
+          `love:${userId}`,
           JSON.stringify({
             type: 'balance_update',
-            userId: body.userId,
+            userId,
             amount,
             transactionId,
           })
@@ -408,7 +507,7 @@ export default {
           'love:global',
           JSON.stringify({
             type: 'transaction',
-            userId: body.userId,
+            userId,
             transactionType: 'earn',
             amount,
           })
@@ -421,7 +520,7 @@ export default {
     return json({
       success: true,
       transactionId,
-      userId: body.userId,
+      userId,
       type: 'earn',
       amount,
       newTotalEarned: newBalance?.total_earned || 0,
@@ -568,7 +667,11 @@ export default {
   async handleCareScore(request: Request, env: Env): Promise<Response> {
     const body = await request.json() as { userId: string; careScore: number };
 
-    if (!body.userId || typeof body.careScore !== 'number') {
+    const auth = await verifyAuth(request, env, body.userId);
+    if (auth.status) return err('Unauthorized', auth.status);
+    const userId = auth.userId;
+
+    if (!userId || typeof body.careScore !== 'number') {
       return err('Invalid request', 400);
     }
 
@@ -577,18 +680,18 @@ export default {
 
     await env.LOVE_D1.prepare(`
       UPDATE balances SET care_score = ?, updated_at = ? WHERE user_id = ?
-    `).bind(score, timestamp, body.userId).run();
+    `).bind(score, timestamp, userId).run();
 
     // Get updated balance to return new available amount
     const balance = await env.LOVE_D1.prepare(`
       SELECT performance_pool, care_score FROM balances WHERE user_id = ?
-    `).bind(body.userId).first<{ performance_pool: number; care_score: number }>();
+    `).bind(userId).first<{ performance_pool: number; care_score: number }>();
 
     const availableBalance = balance ? balance.performance_pool * score : 0;
 
     return json({
       success: true,
-      userId: body.userId,
+      userId,
       careScore: score,
       availableBalance,
       updatedAt: timestamp,
@@ -617,10 +720,15 @@ export class LoveTransactionDO implements DurableObject {
 
   private async handleSpend(request: Request): Promise<Response> {
     const body = await request.json() as { userId: string; amount: number; description?: string; metadata?: unknown };
+
+    const auth = await verifyAuth(request, this.env, body.userId);
+    if (auth.status) return err('Unauthorized', auth.status);
+    const userId = auth.userId;
+
     const transactionId = crypto.randomUUID();
     const timestamp = Date.now();
 
-    if (!body.userId || !body.amount || body.amount <= 0) {
+    if (!userId || !body.amount || body.amount <= 0) {
       return json({ error: 'Invalid request' }, 400);
     }
 
@@ -629,7 +737,7 @@ export class LoveTransactionDO implements DurableObject {
     const current = await this.env.LOVE_D1.prepare(`
       SELECT performance_pool, sovereignty_pool, total_earned, care_score, updated_at
       FROM balances WHERE user_id = ?
-    `).bind(body.userId).first<{
+    `).bind(userId).first<{
       performance_pool: number; sovereignty_pool: number; total_earned: number;
       care_score: number; updated_at: number;
     }>();
@@ -653,7 +761,7 @@ export class LoveTransactionDO implements DurableObject {
     if (effectiveCareScore < current.care_score) {
       await this.env.LOVE_D1.prepare(`
         UPDATE balances SET care_score = ? WHERE user_id = ?
-      `).bind(effectiveCareScore, body.userId).run();
+      `).bind(effectiveCareScore, userId).run();
     }
 
     const result = await this.env.LOVE_D1.prepare(`
@@ -662,7 +770,7 @@ export class LoveTransactionDO implements DurableObject {
           updated_at = ?
       WHERE user_id = ?
       RETURNING performance_pool, sovereignty_pool, care_score, total_earned
-    `).bind(body.amount, timestamp, body.userId)
+    `).bind(body.amount, timestamp, userId)
       .first<{ performance_pool: number; sovereignty_pool: number; care_score: number; total_earned: number }>();
 
     if (!result) {
@@ -675,7 +783,7 @@ export class LoveTransactionDO implements DurableObject {
       VALUES (?, ?, 'spend', ?, ?, ?, ?)
     `).bind(
       transactionId,
-      body.userId,
+      userId,
       body.amount,
       body.description || 'SPEND',
       JSON.stringify(body.metadata || {}),
@@ -685,16 +793,16 @@ export class LoveTransactionDO implements DurableObject {
     // Update user total spent
     await this.env.LOVE_D1.prepare(`
       UPDATE users SET total_spoons_spent = total_spoons_spent + ? WHERE id = ?
-    `).bind(body.amount, body.userId).run();
+    `).bind(body.amount, userId).run();
 
     // Broadcast via Pub/Sub (optional binding)
     if (this.env.LOVE_PUB_SUB) {
       try {
         await this.env.LOVE_PUB_SUB.publish(
-          `love:${body.userId}`,
+          `love:${userId}`,
           JSON.stringify({
             type: 'spend',
-            userId: body.userId,
+            userId,
             amount: body.amount,
             transactionId,
           })
@@ -710,7 +818,7 @@ export class LoveTransactionDO implements DurableObject {
     return json({
       success: true,
       transactionId,
-      userId: body.userId,
+      userId,
       amount: body.amount,
       newTotalEarned: result.total_earned,
       sovereigntyPool: result.sovereignty_pool,

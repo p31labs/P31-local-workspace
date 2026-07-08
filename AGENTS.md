@@ -3,6 +3,27 @@
 ## Project Overview
 P31 Labs builds open-source assistive technology for neurodivergent individuals. Monorepo at `/home/p31/P31-local-workspace`.
 
+## Research Findings (July 2026)
+
+Deep-web verification of the ecosystem's architecture, standards, and published
+packages against authoritative sources. Bottom line: the base standards are real
+and correctly cited; the only fabricated external claim was the
+`/.well-known/agents.json` IETF standardization.
+
+- **ERC-5192** — confirmed ([eips.ethereum.org/EIPS/eip-5192](https://eips.ethereum.org/EIPS/eip-5192)); `LOVESBT` compliance valid.
+- **DID Core v1.0** — [W3C Recommendation](https://www.w3.org/TR/did-core/); IANA registers `did.json`.
+- **WCAG 2.2** — [W3C Recommendation](https://www.w3.org/TR/WCAG22/) (2024-12-12).
+- **WebAuthn** — IANA Well-Known URI registry registers `webauthn` (W3C, 2026-01-23).
+- **MCP** — real protocol ([modelcontextprotocol.io](https://modelcontextprotocol.io)); supported by Claude, ChatGPT, VS Code, Cursor.
+- **GNU Taler** — real GNU project ([taler.net](https://taler.net)); P31 integration is planned, not yet built.
+- **A2A AgentCard** — `agent-card.json` is the **IANA-registered** agent-discovery well-known (A2A / Linux Foundation, 2025-08-01). P31 now serves `apps/p31ca/public/.well-known/agent-card.json` for standards-compliant discovery; legacy `agents.json` is retained for backward compatibility.
+- **Correction:** the claim that "IETF is standardizing `/.well-known/agents.json`" is **FALSE** — IANA has no such entry. Use `agent-card.json`.
+- **Published packages** — `andromeda-cli` (1.1.2), `@p31/agent-engine` (0.1.0-alpha.0), `@p31/game-engine` (0.1.0-alpha.0), `@p31/cli` (2.0.0) all verified live on npm.
+- **Smithery** — 12,148+ MCP servers (the earlier "6,000+" figure was understated).
+- **Kilo.ai** — real open-source agent (IDE/CLI/Cloud) with MCP support.
+
+See `GLOBAL_IMPACT_REPORT.md` for the full citation-backed report.
+
 ## Architecture
 - **Stack:** Cloudflare Workers + Pages, Astro, React 19, Tailwind, Vite, pnpm workspaces
 - **Frontend apps:** `apps/phos` (phos.p31ca.org), `apps/willow` (willow.p31ca.org), `apps/bonding` (bonding.p31ca.org), `apps/p31ca` (p31ca.org), `apps/phosphorus31` (phosphorus31.org)

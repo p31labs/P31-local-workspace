@@ -30,3 +30,19 @@ CREATE TABLE IF NOT EXISTS balances (
   updated_at INTEGER NOT NULL,
   FOREIGN KEY (user_id) REFERENCES users(id)
 );
+
+-- Hardening tables (used only when LOVE_REQUIRE_AUTH is enabled).
+CREATE TABLE IF NOT EXISTS rate_limits (
+  user_id TEXT PRIMARY KEY,
+  last_earn_at INTEGER NOT NULL,
+  updated_at INTEGER NOT NULL,
+  FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+CREATE TABLE IF NOT EXISTS used_nonces (
+  user_id TEXT NOT NULL,
+  nonce TEXT NOT NULL,
+  created_at INTEGER NOT NULL,
+  PRIMARY KEY (user_id, nonce),
+  FOREIGN KEY (user_id) REFERENCES users(id)
+);

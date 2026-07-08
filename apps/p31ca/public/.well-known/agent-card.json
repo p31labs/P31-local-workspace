@@ -1,0 +1,44 @@
+{
+  "schemaVersion": "0.2.0",
+  "name": "P31 Labs",
+  "description": "Open-source neuroinclusive assistive technology for neurodivergent individuals and families. Agent-native: CLI, component registry, and LOVE ledger are exposed as MCP servers.",
+  "url": "https://gateway.p31ca.org",
+  "provider": {
+    "organization": "P31 Labs",
+    "url": "https://p31ca.org"
+  },
+  "version": "1.0.0",
+  "capabilities": {
+    "streaming": false,
+    "pushNotifications": false,
+    "stateTransitionHistory": false
+  },
+  "authentication": {
+    "schemes": ["Bearer"]
+  },
+  "defaultInputModes": ["text/plain", "application/json"],
+  "defaultOutputModes": ["text/plain", "application/json"],
+  "skills": [
+    {
+      "id": "oasis-cli",
+      "name": "Oasis CLI",
+      "description": "Interactive TUI with --agent JSON mode and MCP server (11 tools).",
+      "tags": ["cli", "developer-tools", "agent-native", "neuroinclusive"],
+      "examples": ["andromeda --agent", "andromeda status --agent"]
+    },
+    {
+      "id": "component-registry",
+      "name": "Component Registry",
+      "description": "Queryable design system for agent-generated UI (5 tools). Spoon-aware.",
+      "tags": ["design-system", "component-registry", "spoon-aware"],
+      "examples": ["design_list_components", "design_get_component GlassPanel"]
+    },
+    {
+      "id": "love-ledger",
+      "name": "LOVE Ledger",
+      "description": "Privacy-preserving care accounting ledger (3 tools).",
+      "tags": ["love-economy", "soulbound", "care-accounting"],
+      "examples": ["love_status", "love_balance"]
+    }
+  ]
+}
