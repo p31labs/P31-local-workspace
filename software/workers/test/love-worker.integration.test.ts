@@ -12,9 +12,7 @@
  * `transactions` table has a FK to `users`). This matches production flow
  * (the client registers on genesis). Tests register users first.
  *
- * The worker does NOT implement on-chain-style threshold gating, rate-limiting,
- * auth, or age-vesting. Those gaps are tracked as hardening TODOs in
- * love-worker.hardening.test.ts — not asserted as present here.
+ * Hardening (auth, rate-limit, replay) is tested in love-worker.hardening.test.ts.
  */
 
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';

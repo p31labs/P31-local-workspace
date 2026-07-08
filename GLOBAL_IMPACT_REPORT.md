@@ -15,11 +15,11 @@ checked against authoritative registries and specifications.
 
 | Standard | Use in P31 | Verification |
 |----------|------------|--------------|
-| **ERC-5192** (Minimal Soulbound NFTs) | `LOVESBT.sol` soulbound badges; `GenesisSpark.sol` ceremonial mint | [`eips.ethereum.org/EIPS/eip-5192`](https://eips.ethereum.org/EIPS/eip-5192) — finalized, interface `0xb45a3c0e` |
+| **ERC-5192** (Minimal Soulbound NFTs) | `LOVESBT.sol` soulbound badges (partial — missing `supportsInterface(0xb45a3c0e)`); `CognitivePassport.sol` fully compliant & deployed (Base Sepolia, `0xa4bfb18fa7c5265e25b9a8915d1196a18d52299e`) | [`eips.ethereum.org/EIPS/eip-5192`](https://eips.ethereum.org/EIPS/eip-5192) — finalized, interface `0xb45a3c0e` |
 | **DID Core v1.0** | Pluggable identity module (`packages/auth`) | [W3C Recommendation](https://www.w3.org/TR/did-core/) (2022-07-19); IANA registers `did.json` well-known |
 | **WebAuthn** | Planned identity binding | IANA Well-Known URI registry — `webauthn` registered (W3C, 2026-01-23) |
 | **WCAG 2.2** | Design system, motion scaling, focus, ARIA | [W3C Recommendation](https://www.w3.org/TR/WCAG22/) (2024-12-12); levels A/AA/AAA |
-| **MCP** (Model Context Protocol) | 3 MCP servers (Oasis CLI, Component Registry, LOVE Ledger — 19 tools) | [modelcontextprotocol.io](https://modelcontextprotocol.io) — real protocol, supported by Claude, ChatGPT, VS Code, Cursor |
+| **MCP** (Model Context Protocol) | 4 MCP servers (Oasis CLI 11, Component Registry 5, LOVE Ledger 3, PHOS Forge 27 — ~46 tools) | [modelcontextprotocol.io](https://modelcontextprotocol.io) — real protocol, supported by Claude, ChatGPT, VS Code, Cursor |
 | **A2A AgentCard** | Agent discovery via `/.well-known/agent-card.json` | IANA Well-Known URI registry — `agent-card.json` registered (A2A / Linux Foundation, 2025-08-01) |
 | **GNU Taler** | Planned for privacy-preserving LOVE issuance | [taler.net](https://taler.net) — real GNU project (integration tracked, not yet built) |
 
@@ -36,13 +36,13 @@ checked against authoritative registries and specifications.
 | `andromeda-cli` | 1.1.2 | CLI with `--agent` JSON mode + MCP server (agent-native, neuroinclusive) |
 | `@p31/agent-engine` | 0.1.0-alpha.0 | Core engine for personalized AI agents in the P31 ecosystem |
 | `@p31/game-engine` | 0.1.0-alpha.0 | Geodesic building game engine (Maxwell rigidity, 7 seed challenges) |
-| `@p31/cli` | 2.0.0 | Sovereign AI agent for neurodivergent families |
 
-All packages were verified present on the npm registry.
+All packages were verified present on the npm registry. (Note: `@p31/cli` is a
+documentation artifact with no in-repo implementation — not listed here.)
 
 ## 3. Agent-Native Infrastructure
 
-- **19 MCP tools** across 3 servers (Oasis CLI 11, Component Registry 5, LOVE Ledger 3).
+- **~46 MCP tools** across 4 servers (Oasis CLI 11, Component Registry 5, LOVE Ledger 3, PHOS Forge 27).
 - **`andromeda` CLI** installable via `npm i -g andromeda-cli`; supports `--agent` JSON output.
 - **Agent discovery**: `/.well-known/agent-card.json` (A2A standard) + legacy `/.well-known/agents.json`.
 - **Edge-aware commands**: `status`, `surfaces`, `love`, `deploy`.

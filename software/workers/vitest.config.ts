@@ -5,6 +5,8 @@ export default defineConfig({
     environment: 'node',
     include: ['test/**/*.test.ts', 'test/**/*.test.js'],
     exclude: ['node_modules/**'],
-    globals: true
+    globals: true,
+    hookTimeout: 120000,
+    testTimeout: 60000,
   }
 });

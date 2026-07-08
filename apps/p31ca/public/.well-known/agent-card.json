@@ -1,8 +1,10 @@
 {
-  "schemaVersion": "0.2.0",
+  "schemaVersion": "https://schema.a2a.dev/agent-card/v0.2.2",
+  "kind": "agent",
   "name": "P31 Labs",
-  "description": "Open-source neuroinclusive assistive technology for neurodivergent individuals and families. Agent-native: CLI, component registry, and LOVE ledger are exposed as MCP servers.",
+  "description": "Open-source neuroinclusive assistive technology for neurodivergent individuals and families. Agent-native: CLI, MCP servers (4 servers, ~46 tools), and agent-card.json discovery.",
   "url": "https://gateway.p31ca.org",
+  "preferredTransport": "jsonrpc",
   "provider": {
     "organization": "P31 Labs",
     "url": "https://p31ca.org"
@@ -39,6 +41,13 @@
       "description": "Privacy-preserving care accounting ledger (3 tools).",
       "tags": ["love-economy", "soulbound", "care-accounting"],
       "examples": ["love_status", "love_balance"]
+    },
+    {
+      "id": "phos-forge",
+      "name": "PHOS Forge",
+      "description": "Studio MCP server for cognitive-state, healer, cartographer, and surface management (27 tools).",
+      "tags": ["phos", "forge", "cognitive-state", "mcp"],
+      "examples": ["phos-status", "cartographer-query"]
     }
   ]
 }

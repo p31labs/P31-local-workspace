@@ -36,8 +36,8 @@ const j = (body: unknown) => ({
 const authHeaders = async (userId: string) =>
   ({ 'Content-Type': 'application/json', Authorization: `Bearer ${await makeToken(userId)}` }) as Record<string, string>;
 
-const authFetch = async (h: Harness, userId: string, body: unknown) =>
-  h.fetch('/api/love/earn', { method: 'POST', headers: await authHeaders(userId), body: JSON.stringify(body) });
+const authFetch = async (h: Harness, userId: string, body: Record<string, unknown>) =>
+  h.fetch('/api/love/earn', { method: 'POST', headers: await authHeaders(userId), body: JSON.stringify({ nonce: crypto.randomUUID(), ...body }) });
 
 describe('Concurrency (dev mode, real, passing)', () => {
   it('keeps balance consistent under parallel earns', async () => {

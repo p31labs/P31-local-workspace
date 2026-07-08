@@ -74,14 +74,13 @@ class_name = "LoveTransactionDO"
 
 [vars]
 ENVIRONMENT = "production"
-BRENDA_PHONE = "+19122274980"
-BRENDA_USER_ID = "brenda-001"
-OPERATOR_USER_ID = "will-001"
+LOVE_REQUIRE_AUTH = "true"
 
-# Twilio (optional - for emergency notifications)
-# TWILIO_SID = "your-twilio-sid"
-# TWILIO_TOKEN = "your-twilio-token"
-# TWILIO_PHONE = "+19122274980"
+# PII/credentials moved to secrets (wrangler secret put):
+#   BRENDA_PHONE     — emergency contact phone
+#   BRENDA_USER_ID   — Brenda's user identifier
+#   OPERATOR_USER_ID — operator user identifier
+#   TWILIO_SID, TWILIO_TOKEN, TWILIO_PHONE — Twilio (optional)
 
 # Routes for love-ledger worker
 # Uncomment after Cloudflare account provisioning

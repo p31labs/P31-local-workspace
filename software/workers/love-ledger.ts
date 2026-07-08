@@ -399,8 +399,9 @@ export default {
       return err('Missing transactionType or amount', 400);
     }
 
-    // ── Replay protection (opt-in) ───────────────────────────────────
-    if (env.LOVE_REQUIRE_AUTH === 'true' && body.nonce) {
+    // ── Replay protection ────────────────────────────────────────────
+    if (env.LOVE_REQUIRE_AUTH === 'true') {
+      if (!body.nonce) return err('Missing nonce', 400);
       const dup = await env.LOVE_D1.prepare(
         'SELECT nonce FROM used_nonces WHERE user_id = ? AND nonce = ?'
       ).bind(userId, body.nonce).first();
@@ -458,7 +459,7 @@ export default {
       ),
     ];
 
-    if (env.LOVE_REQUIRE_AUTH === 'true' && body.nonce) {
+    if (env.LOVE_REQUIRE_AUTH === 'true') {
       stmts.push(
         env.LOVE_D1.prepare(
           'INSERT OR IGNORE INTO used_nonces (user_id, nonce, created_at) VALUES (?, ?, ?)'
@@ -526,89 +527,6 @@ export default {
       newTotalEarned: newBalance?.total_earned || 0,
       sovereigntyPool: newBalance?.sovereignty_pool || 0,
       performancePool: newBalance?.performance_pool || 0,
-      timestamp,
-    });
-  },
-
-  async handleTransaction(request: Request, env: Env, type: 'earn' | 'spend' | 'bonus'): Promise<Response> {
-    // This is now only used for non-spend transactions (bonus, legacy earn)
-    const body = await request.json() as TransactionRequest;
-
-    if (!body.userId || !body.amount || body.amount <= 0) {
-      return err('Invalid transaction', 400);
-    }
-
-    // For spend transactions via this path (should be handled by DO), check balance first
-    if (type === 'spend') {
-      const balance = await env.LOVE_D1.prepare(`
-        SELECT balance FROM balances WHERE user_id = ?
-      `).bind(body.userId).first<{ balance: number }>();
-
-      if (!balance || balance.balance < body.amount) {
-        return json({
-          error: 'Insufficient balance',
-          currentBalance: balance?.balance || 0,
-          requestedAmount: body.amount,
-        }, 400);
-      }
-    }
-
-    const transactionId = crypto.randomUUID();
-    const timestamp = Date.now();
-
-    // Insert transaction
-    await env.LOVE_D1.prepare(`
-      INSERT INTO transactions (id, user_id, type, amount, description, metadata, created_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
-    `).bind(
-      transactionId,
-      body.userId,
-      type,
-      body.amount,
-      body.description || '',
-      JSON.stringify(body.metadata || {}),
-      timestamp
-    ).run();
-
-    // Update balance (legacy path - for bonus transactions)
-    const balanceChange = type === 'spend' ? -body.amount : body.amount;
-    await env.LOVE_D1.prepare(`
-      INSERT INTO balances (user_id, balance, updated_at)
-      VALUES (?, ?, ?)
-      ON CONFLICT(user_id) DO UPDATE SET
-        balance = balance + ?,
-        updated_at = ?
-    `).bind(
-      body.userId,
-      balanceChange,
-      timestamp,
-      balanceChange,
-      timestamp
-    ).run();
-
-    // Update user totals
-    if (type === 'earn' || type === 'bonus') {
-      await env.LOVE_D1.prepare(`
-        UPDATE users SET total_love_earned = total_love_earned + ? WHERE id = ?
-      `).bind(body.amount, body.userId).run();
-    } else if (type === 'spend') {
-      await env.LOVE_D1.prepare(`
-        UPDATE users SET total_spoons_spent = total_spoons_spent + ? WHERE id = ?
-      `).bind(body.amount, body.userId).run();
-    }
-
-    // Get new balance
-    const newBalance = await env.LOVE_D1.prepare(`
-      SELECT balance FROM balances WHERE user_id = ?
-    `).bind(body.userId).first<{ balance: number }>();
-
-    return json({
-      success: true,
-      transactionId,
-      userId: body.userId,
-      type,
-      amount: body.amount,
-      newBalance: newBalance?.balance || 0,
       timestamp,
     });
   },
@@ -719,11 +637,20 @@ export class LoveTransactionDO implements DurableObject {
   }
 
   private async handleSpend(request: Request): Promise<Response> {
-    const body = await request.json() as { userId: string; amount: number; description?: string; metadata?: unknown };
+    const body = await request.json() as { userId: string; amount: number; description?: string; metadata?: unknown; nonce?: string };
 
     const auth = await verifyAuth(request, this.env, body.userId);
     if (auth.status) return err('Unauthorized', auth.status);
     const userId = auth.userId;
+
+    // ── Replay protection (spend) ───────────────────────────────────
+    if (this.env.LOVE_REQUIRE_AUTH === 'true') {
+      if (!body.nonce) return err('Missing nonce', 400);
+      const dup = await this.env.LOVE_D1.prepare(
+        'SELECT nonce FROM used_nonces WHERE user_id = ? AND nonce = ?'
+      ).bind(userId, body.nonce).first();
+      if (dup) return err('Replay detected', 400);
+    }
 
     const transactionId = crypto.randomUUID();
     const timestamp = Date.now();
@@ -794,6 +721,13 @@ export class LoveTransactionDO implements DurableObject {
     await this.env.LOVE_D1.prepare(`
       UPDATE users SET total_spoons_spent = total_spoons_spent + ? WHERE id = ?
     `).bind(body.amount, userId).run();
+
+    // Record nonce when auth is on
+    if (this.env.LOVE_REQUIRE_AUTH === 'true') {
+      await this.env.LOVE_D1.prepare(
+        'INSERT OR IGNORE INTO used_nonces (user_id, nonce, created_at) VALUES (?, ?, ?)'
+      ).bind(userId, body.nonce, timestamp).run();
+    }
 
     // Broadcast via Pub/Sub (optional binding)
     if (this.env.LOVE_PUB_SUB) {

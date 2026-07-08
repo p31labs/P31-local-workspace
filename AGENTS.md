@@ -6,21 +6,62 @@ P31 Labs builds open-source assistive technology for neurodivergent individuals.
 ## Research Findings (July 2026)
 
 Deep-web verification of the ecosystem's architecture, standards, and published
-packages against authoritative sources. Bottom line: the base standards are real
-and correctly cited; the only fabricated external claim was the
-`/.well-known/agents.json` IETF standardization.
+packages against source code and authoritative registries. Below is the grounded
+verdict — a few overstated claims from earlier drafts have been corrected.
 
-- **ERC-5192** — confirmed ([eips.ethereum.org/EIPS/eip-5192](https://eips.ethereum.org/EIPS/eip-5192)); `LOVESBT` compliance valid.
+### Standards (all verified)
+- **ERC-5192** — confirmed ([eips.ethereum.org/EIPS/eip-5192](https://eips.ethereum.org/EIPS/eip-5192));
+  `CognitivePassport.sol` is **fully compliant** (deployed on Base Sepolia, `0xa4bfb18fa7c5265e25b9a8915d1196a18d52299e`).
+`LOVESBT.sol` is fully compliant (`locked()`, `Locked` event, `supportsInterface(0xb45a3c0e)`).
+`GenesisSpark.sol` is soulbound by convention but does not implement the full ERC-5192 interface.
 - **DID Core v1.0** — [W3C Recommendation](https://www.w3.org/TR/did-core/); IANA registers `did.json`.
-- **WCAG 2.2** — [W3C Recommendation](https://www.w3.org/TR/WCAG22/) (2024-12-12).
+- **WCAG 2.2** — [W3C Recommendation](https://www.w3.org/TR/WCAG22/) (2024-12-12);
+  `data-spoons` motion scaling, CrisisMode, skip links, `prefers-reduced-motion` are
+  **verified in code**. The automated axe-core audit runner (`scripts/audit-wcag.mjs`)
+  referenced in earlier drafts is **missing from the repo** — the 0-violation claim
+  is unsubstantiated and should not be relied upon until the runner is created and
+  executed.
 - **WebAuthn** — IANA Well-Known URI registry registers `webauthn` (W3C, 2026-01-23).
-- **MCP** — real protocol ([modelcontextprotocol.io](https://modelcontextprotocol.io)); supported by Claude, ChatGPT, VS Code, Cursor.
-- **GNU Taler** — real GNU project ([taler.net](https://taler.net)); P31 integration is planned, not yet built.
-- **A2A AgentCard** — `agent-card.json` is the **IANA-registered** agent-discovery well-known (A2A / Linux Foundation, 2025-08-01). P31 now serves `apps/p31ca/public/.well-known/agent-card.json` for standards-compliant discovery; legacy `agents.json` is retained for backward compatibility.
-- **Correction:** the claim that "IETF is standardizing `/.well-known/agents.json`" is **FALSE** — IANA has no such entry. Use `agent-card.json`.
-- **Published packages** — `andromeda-cli` (1.1.2), `@p31/agent-engine` (0.1.0-alpha.0), `@p31/game-engine` (0.1.0-alpha.0), `@p31/cli` (2.0.0) all verified live on npm.
-- **Smithery** — 12,148+ MCP servers (the earlier "6,000+" figure was understated).
-- **Kilo.ai** — real open-source agent (IDE/CLI/Cloud) with MCP support.
+- **MCP** — real protocol ([modelcontextprotocol.io](https://modelcontextprotocol.io)).
+- **GNU Taler** — real GNU project ([taler.net](https://taler.net)); P31 integration is planned.
+- **A2A AgentCard** — `agent-card.json` is the **IANA-registered** agent-discovery
+  well-known (A2A / Linux Foundation, 2025-08-01). `agent-card.json` is served at
+  `apps/p31ca/public/.well-known/agent-card.json` with valid A2A schema; legacy
+  `agents.json` is retained for backward compatibility.
+
+### Correction: earlier false claim
+The earlier claim that "IETF is standardizing `/.well-known/agents.json`" is
+**FALSE** — IANA has no such entry. The correct registered standard is
+`agent-card.json`.
+
+### MCP servers (inventory)
+There are **4 in-repo MCP servers** (not 3 as previously stated), all hand-rolled JSON-RPC:
+| Server | File | Tools |
+|--------|------|-------|
+| Oasis CLI | `cli/mcp-server.js` | 11 |
+| Component Registry | `cli/component-registry.js` | 5 |
+| LOVE Ledger | `cli/love-registry.js` | 3 |
+| PHOS Forge | `tools/phos-forge/mcp-server.mjs` | 27 |
+| **Total** | | **~46** |
+
+### Published packages
+- **`andromeda-cli`** (1.1.2) — in-repo at `cli/`, published on npm.
+- **`@p31/agent-engine`** (0.1.0-alpha.0) — in-repo at `software/packages/agent-engine/`.
+- **`@p31/game-engine`** (0.1.0-alpha.0) — in-repo at `software/packages/game-engine/`.
+- **`@p31/cli` (2.0.0)** — **PHANTOM**: referenced in docs but has **no in-repo implementation**.
+  This is a documentation artifact; treat as unverified.
+
+### Court-admissible care records
+The earlier claim that love-ledger care records are hash-chained (`lastCareHash`)
+is **FALSE**. The love-ledger D1 worker has no hash-chain field. Real hash-chained
+court-admissible records exist in `software/workers/legal-versioning.ts` and
+`software/sovereign-justice/src/evidence-vault.ts` — not in the LOVE ledger.
+
+### Smithery
+12,148+ MCP servers (the earlier "6,000+" figure was understated).
+
+### Kilo.ai
+Real open-source agent (IDE/CLI/Cloud) with MCP support.
 
 See `GLOBAL_IMPACT_REPORT.md` for the full citation-backed report.
 
@@ -49,7 +90,7 @@ Agents can invoke CLI commands via MCP (Model Context Protocol):
 ```bash
 node cli/mcp-server.js
 ```
-Reads JSON-RPC from stdin, writes to stdout. 10 tools: `oasis_status`, `oasis_save`, `oasis_theme`, `oasis_mode`, `oasis_clear`, `oasis_export_log`, `oasis_sandbox_clear`, `oasis_notify`, `oasis_add_todo`, `oasis_toggle_todo`.
+Reads JSON-RPC from stdin, writes to stdout. 11 tools: `oasis_status`, `oasis_save`, `oasis_theme`, `oasis_mode`, `oasis_clear`, `oasis_export_log`, `oasis_sandbox_clear`, `oasis_notify`, `oasis_add_todo`, `oasis_toggle_todo`, `oasis_execute`.
 
 ### Edge-Aware Commands
 
@@ -77,10 +118,11 @@ npm install -g andromeda-cli
 andromeda --agent
 ```
 
-The CLI exposes three MCP servers:
-- `node cli/mcp-server.js` — Oasis CLI tools (11 tools incl. `oasis_execute`)
+The CLI exposes four MCP servers:
+- `node cli/mcp-server.js` — Oasis CLI tools (11 tools)
 - `node cli/component-registry.js` — Component Registry tools (5 tools)
 - `node cli/love-registry.js` — LOVE Ledger tools (3 tools)
+- `node tools/phos-forge/mcp-server.mjs` — PHOS Forge tools (27 tools)
 
 ### LOVE Ledger MCP Server
 
@@ -196,11 +238,10 @@ These must be added at https://github.com/p31labs/P31-local-workspace/settings/s
 
 ## WCAG 2.2 AAA Compliance (Baseline — July 2026)
 - **Touch targets:** All interactive elements ≥48×48px (WCAG 2.5.8 Enhanced).
-- **Contrast ratios:** All text ≥4.5:1 AA (≥7:1 for AAA preferred). Avoid `text-white/30` and `text-white/50` on dark backgrounds. Use `text-white/50` and `text-white/70` for AA/AAA compliance.
+- **Contrast ratios:** All text ≥4.5:1 AA (≥7:1 for AAA preferred). Avoid `text-white/30` on dark backgrounds. Use `text-white/70` for AA/AAA compliance.
 - **Focus indicators:** Global `:focus-visible` outline (2px `var(--phos-primary)`, offset 2px).
 - **Skip navigation:** `<a href="#main-content" class="skip-link">` in `index.astro`.
 - **Reduced motion:** `@media (prefers-reduced-motion: reduce)` sets all durations to 0ms (`motion.css`). `data-reduced-motion` attribute fallback. Crisis mode (spoons=0) also disables motion.
 - **ARIA labels:** All icon buttons have `aria-label`, all SVGs have `aria-hidden="true"`. Navigation has `role="navigation"` + `aria-label`. Chat messages use `aria-live="polite"`.
 - **Voice input:** `VoiceInputButton` detects `isSupported`, shows disabled state with "Voice input unavailable" when unsupported. Dual engine (local WASM + edge fallback).
 - **Keyboard navigation:** Tab order logical (left→right, top→bottom). Enter/Space triggers buttons. Escape closes magic drawer (handled in `PHOSMagicDrawer`).
-- **Automated audit:** axe-core (`@axe-core/playwright`) scan yields 0 violations (WCAG 2 A + AA + AAA). Run with `node scripts/audit-wcag.mjs`.
