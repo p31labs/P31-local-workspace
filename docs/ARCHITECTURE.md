@@ -1,136 +1,111 @@
-# Jitterbug Sierpinski Orchestrator — Architecture
+# P31 Capital Machine — Architecture
 
-## 1. Philosophical Foundation
+> **⚠️ Retired architecture (historical reference).** `LOVEToken.sol` was **archived** in Phase 1 — there is no on-chain LOVE ERC20. LOVE balances now live in the off-chain `love-ledger` worker (two-pool model); on-chain attestations are `LOVESBT` (ERC-5192) + `GenesisSpark` badges. See [`docs/LOVE_ECONOMY.md`](./LOVE_ECONOMY.md) for the current architecture. This document describes the pre-archive design.
 
-The Jitterbug is not a tool; it is a **way of life** — an exocortex that follows you across every device, every context, every thought. It scales by becoming invisible.
+## Overview
+The P31 Capital Machine is a decentralized system for verifying and rewarding care work through cryptographic identity, reputation scoring, and blockchain incentives. Built on Cloudflare Workers with D1 storage, KV caching, and Queues for async processing.
 
-### 1.1 Core Principles
+## Four-Layer Architecture
 
-| Principle | Description |
-|-----------|-------------|
-| **Self-similarity** | Every axis can become a brain dump, spawning sub-axes ad infinitum (Sierpinski recursion). |
-| **Isostatic Rigidity** | A four-agent peer-review mesh (K₄) guarantees truth convergence before propagation. |
-| **Floating Neutral** | The system isolates the operator from environmental noise to prevent biological collapse (cortisol-calcium axis). |
-| **Ephemeralization** | The ghost architecture — wakes, processes, dissolves — scales to zero when idle. |
+### 1. Foundation — Cryptographic Identity & Post-Quantum Cryptography
+- **Identity System**: Passphrase-derived deterministic keys via PBKDF2-HMAC-SHA256 (310,000 iterations)
+- **Authentication**: ECDSA P-256 signatures for identity verification (no passwords, no central authority)
+- **Post-Quantum Security**: 
+  - Key Encapsulation: ML-KEM-768 (FIPS 203) + ECDH P-256 hybrid via HKDF-SHA256
+  - Signatures: ML-DSA-65 (FIPS 204) for payload authentication
+  - Symmetric Encryption: AES-256-GCM for session data
+- **Key Management**: Deterministic salt enables cross-device identity recovery
+- **without username/password]
 
-## 2. Technical Architecture
+### 2. Structure — Reputation Engine
+- **Scoring Algorithm**: Exponential decay with 30-day half-life
+- **Confidence Weighting**: Diminishing returns formula `1 - 1/(1 + interactionCount/30)`
+- **Composite Score**: 40% biometric + 40% social bonds + 20% ledger activity
+- **Trust Tiers**: `trustTier = floor(careScore / 0.5e18)` where 0.5e18 = 1 tier level
+- **Storage**: TTL-based namespaces with LRU eviction at 4MB budget
 
-### 2.1 The 5-Layer Orchestration Pattern
+### 3. Housekeeping — Data Storage & Integrity
+- **Database**: D1 (SQLite) with 51 tables across `capital-db`
+- **Core Tables**:
+  - `identities`: Public keys, metadata, creation timestamps
+  - `care_state`: Current scores, trust tiers, last update
+  - `care_telemetry`: Time-series biometric and behavioral data
+  - `care_nonces`: Replay protection (UNIQUE constraint on nonce)
+- **Atomic Operations**: D1 `.batch()` for all mutations (no BEGIN/COMMIT)
+- **Replay Prevention**: UNIQUE constraint prevents nonce reuse
+- **Caching**: KV namespaces for rate limits and interaction counts (eventually consistent)
 
-| Layer | Component | Responsibility |
-|-------|-----------|----------------|
-| **1** | Brain Dump Capture | Structured intake with Zod validation |
-| **2** | Decomposition | Rule-based identification of 3–8 independent axes |
-| **3** | Agent Runtime | Pluggable adapters (Claude Code, Cortex Bridge, LLM) |
-| **4** | Parallel Orchestration | Concurrency-controlled execution with retry policies |
-| **5** | Convergence Gate | Gate checks, blocker analysis, rollback loops |
+### 4. Connection — Edge-to-Cloud Sync
+- **Worker Fleet**: 30 Cloudflare Workers (Free Plan compliant)
+  - `care-api`: Main API endpoints (/care/sync, /care/state, /care/rewards)
+  - `events-queue`: Consumer for p31-events queue (alerting, analytics)
+  - `pdf-generator`: Browser Rendering for care reports and certificates
+  - Plus 27 specialized workers for analytics, notifications, etc.
+- **Communication**:
+  - Request/Response: HTTPS over Cloudflare network
+  - Async: Cloudflare Queues (`p31-events`) for decoupled processing
+  - Real-time: WebSocket connections via Durable Objects (where implemented)
+- **Sybil Resistance**: 
+  - Cloudflare Turnstile on all mutation endpoints
+  - Rate limiting: 10 requests per 60 seconds per identity
+  - Nonce validation with blockchain-style mempool prevention
+- **Performance**:
+  - Global Cloudflare edge network (<50ms latency worldwide)
+  - D1 read replicas for geographical proximity
+  - KV edge caching for frequently accessed data
 
-### 2.2 Recursive Extension
+## Data Flows
 
-- `classifyAxis` — determines if an axis is atomic or composite.
-- `axisToBrainDump` — converts an axis back into a full `BrainDump`.
-- `K4GateChecker` — enforces 4-agent consensus (fast heuristic or full LLM).
-- `RecursiveBrainDumpOrchestrator` — depth-first execution with max depth control.
-
-### 2.3 Deployment Stack
-
-| Layer | Technology |
-|-------|------------|
-| **Edge Runtime** | Cloudflare Workers + Durable Objects |
-| **Database** | D1 (SQLite) |
-| **Object Storage** | R2 |
-| **Cache** | KV (60s TTL) |
-| **Frontend** | React PWA (Vite) |
-| **Orchestration** | `@p31/brain-dump-orchestrator` |
-
-## 3. Data Flow
-
+### Care Score Submission
 ```mermaid
 sequenceDiagram
-    participant User
-    participant PWA
-    participant API
-    participant DO
-    participant D1
-    participant R2
-
-    User->>PWA: Captures brain dump
-    PWA->>API: POST /brain-dump
-    API->>D1: Store record
-    API->>DO: Start orchestration
-    DO->>D1: Fetch record
-    DO->>DO: Decompose into axes
-    loop For each axis
-        DO->>DO: Classify (atomic/composite)
-        alt composite
-            DO->>DO: Recursively decompose
-        else atomic
-            DO->>DO: Execute via Cortex Bridge / LLM
-            DO->>R2: Write deliverable
-        end
-    end
-    DO->>DO: K₄ convergence gate
-    DO->>D1: Update status
-    PWA->>API: Poll /status
-    API->>D1: Read record
-    API->>User: Status response
+    participant User as Mobile App
+    participant API as care-api Worker
+    participant KV as CAPITAL_KV
+    participant D1 as capital-db
+    participant Queue as p31-events
+    participant Worker as events-queue Worker
+    
+    User->>API: POST /care/sync {biometricData, turnstileToken}
+    API->>KV: Validate Turnstile token (cached)
+    API->>D1: INSERT care_telemetry (with nonce check)
+    API->>D1: UPDATE care_state (exponential decay calculation)
+    API->>Queue: enqueue {userId, scoreDelta, timestamp}
+    API-->>User: 200 OK {newScore, trustTier}
+    Worker->>Queue: dequeue batch
+    Worker->>External: Send alerts/notifications
 ```
 
-## 4. Key Components
+### Reward Distribution
+```mermaid
+sequenceDiagram
+    participant Oracle as Off-chain Service
+    participant API as care-api Worker
+    participant Contract as ProofOfCare (Sepolia)
+    participant Token as LOVEToken Contract
+    participant SBT as LOVESBT Contract
+    
+    Oracle->>API: POST /pqc/session {careScore, proof}
+    API->>D1: Verify score >= CARE_THRESHOLD (0.5e18)
+    API->>API: Check cooldown (lastRewardMint + 1 day)
+    API->>Contract: syncCareScore(user, score)
+    Contract->>Token: mintCareReward(user) [if eligible]
+    Contract->>SBT: updateReputation(tokenId, newScore) [if tier changed]
+    Token-->>User: 100 LOVE tokens (50% sovereignty pool, 50% performance pool)
+    SBT-->>User: Updated reputation badge
+```
 
-### 4.1 BrainDumpOrchestrator (Core)
+## Security Boundaries
+- **Trust Zone 1**: User device (holds identity keys, performs biometric sensing)
+- **Trust Zone 2**: Cloudflare Edge (TLS termination, DDoS mitigation, Worker execution)
+- **Trust Zone 3**: D1 Database (encrypted at rest, access-limited to Workers)
+- **Trust Zone 4**: External Systems (blockchain, email, SMS - authenticated via API keys)
 
-- Accepts `OrchestratorDependencies` (tracker, statusTracker)
-- Runs axes in parallel with concurrency control
-- Supports pluggable runners: `ClaudeCodeRunner`, `GenericLLMRunner`, `CortexBridgeAdapter`, `NoOpRunner`
-
-### 4.2 RecursiveBrainDumpOrchestrator (Extension)
-
-- Extends `BrainDumpOrchestrator`
-- Uses `classifyAxis` to determine if a node should recurse
-- Writes artifact bubbles to R2
-- Applies K₄ gate at every level
-
-### 4.3 K4GateChecker
-
-- Wraps `GateChecker`
-- Adds 4-agent consensus (Critic, Refiner, Validator)
-- Fast mode uses heuristic; full mode uses LLM
-- Verifies edges: factuality, relevance, formatting, constraints, bias, logic
-
-### 4.4 Jitterbug API (Worker)
-
-- REST endpoints: `/health`, `/brain-dump` (POST), `/brain-dump/:id` (GET), `/brain-dump/:id/status` (GET), `/brain-dump/:id/stream` (SSE)
-- PSK authentication
-- KV cache for status (60s TTL)
-- SSE polls D1 every 5s, uses KV cache first
-
-### 4.5 Durable Object (OrchestratorDO)
-
-- Dynamically imports recursive orchestrator when `max_depth > 0`
-- Try-catch fallback to non-recursive orchestrator
-- Uses R2 deliverable tracker (or in-memory fallback)
-- Status tracker: KV or D1
-
-## 5. Security & Compliance
-
-- **PSK Authentication** — Bearer token for API access
-- **CORS** — Preflight handling for cross-origin requests
-- **ADA Compliance** — The system is a prescribed assistive device (Docket 103)
-- **Open Source** — CC BY 4.0 / MIT licensed
-
-## 6. Performance & Scaling
-
-- **Concurrency** — Configurable, default 4
-- **Timeout** — Per-axis 300s; K₄ LLM 30s
-- **Ephemeral Storage** — R2 with 30-day lifecycle (manual)
-- **Cache** — KV with 60s TTL reduces D1 reads by ~90%
-- **SSE** — 5s poll, KV cache, closes on terminal status
-
-## 7. Future Extensions
-
-- Real 4-agent LLM consensus (currently heuristic)
-- Queue decoupling for long-running orchestrations
-- WebSocket push for real-time updates
-- Custom domain alias for PWA
-- Full test suite execution (pool version upgrade)
+## Failure Modes & Mitigations
+1. **Worker Crash**: Stateless design enables instant restart; state in D1/KV
+2. **D1 Corruption**: Point-in-time recovery via backups; read replicas for HA
+3. **KV Inconsistency**: Eventually consistent; critical paths use D1 for strong consistency
+4. **Network Partition**: Users queue requests locally; retry with exponential backoff
+5. **Key Compromise**: Passphrase-based keys allow recovery via social trust graph
+6. **Replay Attack**: D1 UNIQUE nonce constraint prevents reuse
+7. **Rate Limit Abuse**: Per-identity limits + global CAPTCHA-like thresholds

@@ -1,6 +1,6 @@
 // ═════════════════════════════════════════════════════════════════════════════
 // andromeda — Phase 2: Edge-Aware Commands
-// status, surfaces, deploy
+// status, surfaces, deploy, love
 // All synchronous — uses child_process.execFileSync with node -e for HTTP.
 // No external dependencies (curl/wget not required).
 // ═════════════════════════════════════════════════════════════════════════════
@@ -10,6 +10,7 @@ const path = require('path');
 const fs = require('fs');
 
 const GATEWAY = 'gateway.p31ca.org';
+const LOVE_LEDGER_URL = process.env.LOVE_LEDGER_URL || 'https://love-ledger.p31ca.org';
 
 // Inline Node script for synchronous HTTP GET via execFileSync.
 // The script receives the URL as the argument (no shell quoting issues).
@@ -197,4 +198,43 @@ function deploy(options) {
   console.log(`\n  ✓ ${appName} deployed to ${env}\n`);
 }
 
-module.exports = { status, surfaces, deploy };
+module.exports = { status, surfaces, deploy, love };
+
+// ─── LOVE Ledger ─────────────────────────────────────────────────────────────
+
+// andromeda love [status|balance|sync] [userId]
+// Queries the LOVE ledger (D1-backed love-ledger worker) for care accounting state.
+function love(options) {
+  const sub = options.subcommand || 'status';
+  const userId = options.userId || process.env.P31_USER_ID || 'guest';
+
+  let endpoint;
+  if (sub === 'balance') {
+    endpoint = `${LOVE_LEDGER_URL}/api/love/balance?userId=${encodeURIComponent(userId)}`;
+  } else if (sub === 'sync') {
+    endpoint = `${LOVE_LEDGER_URL}/api/love/sync?userId=${encodeURIComponent(userId)}`;
+  } else {
+    endpoint = `${LOVE_LEDGER_URL}/api/love/status?userId=${encodeURIComponent(userId)}`;
+  }
+
+  const result = fetchJSON(endpoint);
+  if (result._error) {
+    console.error(`[p31] LOVE ledger error: ${result._error}`);
+    process.exit(2);
+  }
+
+  if (options.agent) return printJSON({ ...result, status: 'ok' });
+
+  if (sub === 'status') {
+    console.log(`\n  LOVE Ledger  (${result.totalLove || '0'} LOVE)`);
+    console.log(`  care_score:   ${result.careScore || '0'}`);
+    console.log(`  sovereignty:  ${result.sovereigntyPool || '0'}`);
+    console.log(`  performance:  ${result.performancePool || '0'}`);
+    console.log(`  SBT count:    ${result.sbtCount || 0}`);
+    console.log('');
+  } else if (sub === 'balance') {
+    console.log(`\n  LOVE balance for ${userId}: ${result.balance ?? result.totalLove ?? '0'}\n`);
+  } else {
+    console.log(`\n  ✓ Synced ${userId} with ledger\n`);
+  }
+}

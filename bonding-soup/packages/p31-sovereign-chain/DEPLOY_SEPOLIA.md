@@ -53,16 +53,18 @@ forge script script/DeployAll.s.sol:DeployAll \
 ## Expected Output
 After deployment, you'll see contract addresses like:
 ```
-LOVEToken: 0x...
 LOVESBT: 0x...
 ProofOfCare: 0x...
+GenesisSpark: 0x...
 ```
 
+> **Note:** `LOVEToken` is **not** deployed — it has been archived (`archived/LOVEToken.sol`). There is no on-chain LOVE ERC20. LOVE balances are issued off-chain by the `love-ledger` worker.
+
 ## Post-Deployment
-1. Update the `care-api` worker environment variables:
-   - `LOVE_TOKEN_ADDRESS`
-   - `LOVE_SBT_ADDRESS` 
-   - `PROOF_OF_CARE_ADDRESS`
+1. Update the `love-ledger` worker environment bindings (`software/workers/wrangler.toml`):
+   - `LOVE_D1` (D1 database: `love-ledger`)
+   - `LOVE_TRANSACTION` (Durable Object: `LoveTransactionDO`)
+2. The on-chain `ProofOfCare` only mints `LOVESBT`. LOVE issuance is handled off-chain by `love-ledger`.
 
 2. Redeploy the care-api worker:
 ```bash

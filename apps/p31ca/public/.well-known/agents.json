@@ -31,6 +31,19 @@
       "mcpServer": "node cli/component-registry.js",
       "tools": ["design_list_components", "design_get_component", "design_get_tokens", "design_search", "design_spoon_guide"],
       "spec": "DESIGN.md"
+    },
+    "love": {
+      "description": "L.O.V.E. ledger — privacy-preserving care accounting",
+      "ledger": "https://love-ledger.p31ca.org",
+      "api": "/api/love",
+      "sbt": "LOVESBT.sol (ERC-5192)",
+      "spoonAware": true,
+      "capabilities": {
+        "balance": "GET /api/love/balance",
+        "status": "GET /api/love/status",
+        "sync": "POST /api/love/sync"
+      },
+      "agentDiscovery": "andromeda love status"
     }
   },
   "links": [
@@ -49,6 +62,10 @@
     {
       "rel": "llms.txt",
       "href": "https://p31ca.org/llms.txt"
+    },
+    {
+      "rel": "love-ledger",
+      "href": "https://love-ledger.p31ca.org"
     }
   ]
 }

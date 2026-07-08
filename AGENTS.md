@@ -32,15 +32,20 @@ Reads JSON-RPC from stdin, writes to stdout. 10 tools: `oasis_status`, `oasis_sa
 
 ### Edge-Aware Commands
 
-The CLI exposes three edge-aware commands that work in both TTY and headless environments. All support `--agent` for JSON output:
+The CLI exposes edge-aware commands that work in both TTY and headless environments. All support `--agent` for JSON output:
 
 ```bash
 andromeda status                  # Health check (gateway, phos, p31ca)
 andromeda surfaces                # List PHOS surfaces (23 available)
+andromeda love status             # LOVE ledger status (requires LOVE_LEDGER_URL env)
+andromeda love balance <userId>   # LOVE balance for a user
+andromeda love sync               # Sync local LOVE state
 andromeda deploy --app phos       # Build + deploy to Cloudflare Pages/Workers
 ```
 
 `andromeda deploy` requires `CLOUDFLARE_API_TOKEN` environment variable. Apps: `phos`, `p31ca`, `phosphorus31`, `bonding`, `willow`, `gateway`.
+
+`andromeda love status` requires `LOVE_LEDGER_URL` environment variable (defaults to `https://love-ledger.p31ca.org`).
 
 ### CLI Global Installation
 
@@ -51,9 +56,26 @@ npm install -g andromeda-cli
 andromeda --agent
 ```
 
-The CLI exposes two MCP servers:
+The CLI exposes three MCP servers:
 - `node cli/mcp-server.js` — Oasis CLI tools (11 tools incl. `oasis_execute`)
 - `node cli/component-registry.js` — Component Registry tools (5 tools)
+- `node cli/love-registry.js` — LOVE Ledger tools (3 tools)
+
+### LOVE Ledger MCP Server
+
+Agents can query the LOVE ledger state via MCP:
+
+```bash
+node cli/love-registry.js
+```
+
+Tools:
+
+| Tool | Description |
+|------|-------------|
+| `love_status` | Get ledger status (total LOVE, care_score, pools, vesting) |
+| `love_balance` | Get LOVE balance for a user |
+| `love_sync` | Sync local LOVE state with the cloud ledger |
 
 ### PHOS Capabilities
 Agents can discover PHOS endpoints via `/.well-known/agents.json`. Gateway exposes:

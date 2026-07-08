@@ -28,7 +28,6 @@ fi
 
 # Parse addresses using python or jq
 if command -v python3 &> /dev/null; then
-    LOVE_TOKEN=$(python3 -c "import json; print(json.load(open('${ADDRESSES_FILE}'))['contracts']['LOVEToken'])")
     LOVE_SBT=$(python3 -c "import json; print(json.load(open('${ADDRESSES_FILE}'))['contracts']['LOVESBT'])")
     PROOF_OF_CARE=$(python3 -c "import json; print(json.load(open('${ADDRESSES_FILE}'))['contracts']['ProofOfCare'])")
 else
@@ -75,7 +74,6 @@ echo "🔥 EXECUTING ABDICATION PROTOCOL"
 echo "   Network: ${NETWORK} (chain ${CHAIN_ID})"
 echo "   Burn Address: ${BURN_ADDRESS}"
 echo "   Contracts:"
-echo "     LOVEToken:      ${LOVE_TOKEN}"
 echo "     LOVESBT:        ${LOVE_SBT}"
 echo "     ProofOfCare:    ${PROOF_OF_CARE}"
 echo ""
@@ -102,7 +100,6 @@ abdicate() {
     fi
 }
 
-abdicate "LOVEToken" "${LOVE_TOKEN}"
 abdicate "LOVESBT" "${LOVE_SBT}"
 abdicate "ProofOfCare" "${PROOF_OF_CARE}"
 

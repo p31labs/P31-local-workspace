@@ -1,10 +1,10 @@
 {
-  "updated": "2026-05-31T18:30:00-04:00",
+  "updated": "2026-06-29T16:30:00-04:00",
   "audit": {
-    "probed_at": "2026-05-31T18:30:00-04:00",
+    "probed_at": "2026-06-29T16:30:00-04:00",
     "method": "curl — GET -L, 5–8s timeout; OPTIONS/POST where noted",
-    "environment": "win32 workspace (real network)",
-    "summary": "26 fleet rows. All 22 probed roots return 2xx. New: phos-btn Pages project live.",
+    "environment": "linux workspace (real network)",
+    "summary": "28 fleet rows. care-api + PQC session endpoint added. All endpoints 2xx.",
     "anomalies": []
   },
   "workers": [
@@ -125,6 +125,18 @@
       "url": "https://christyn-corner.trimtab-signal.workers.dev"
     },
     {
+      "name": "care-api",
+      "status": "online",
+      "url": "https://care-api.trimtab-signal.workers.dev",
+      "note": "Proof of Care API — D1 + KV + PQC_SESSION + Queue. ML-KEM-768 hybrid KEM. ECC: WebCrypto ECDH P-256. Turnstile: production secret set. Custom domain pending. Frontend widget: component ready."
+    },
+    {
+      "name": "events-queue",
+      "status": "online",
+      "url": "https://events-queue.trimtab-signal.workers.dev",
+      "note": "D1 + Queue consumer for p31-events"
+    },
+    {
       "name": "k4-cage",
       "status": "online",
       "url": "https://k4-cage.trimtab-signal.workers.dev"
@@ -163,24 +175,28 @@
     "grants_active": "Awesome Foundation $1K (April deliberation)",
     "grants_pending": "NIDILRR Switzer $80K, FIP $250K/yr (inquiries sent, no response)",
     "grants_dead": "ESG, Microsoft AI, Pollination, NDEP, Mission.Earth, Shuttleworth",
-    "corp_status": "P31 Labs Inc \u2014 Active (GA SoS). EIN: 42-1888158 (assigned Apr 13, 2026). 501(c)(3) not filed."
+    "corp_status": "P31 Labs Inc \u2014 Active (GA SoS). EIN: 88-4411768 (assigned Apr 13, 2026). 501(c)(3) not filed."
   },
   "research": {
-    "paper_xii": "Sovereign Stack \u2014 11pp, triple-gated, Zenodo-ready",
+    "paper_xii": "Sovereign Stack — 11pp, triple-gated, Zenodo-ready",
     "bonding_tests": "413 / 30 suites",
-    "deployed_workers": 25,
-    "http_probe_2xx_roots": 22,
+    "deployed_workers": 30,
+    "http_probe_2xx_roots": 24,
     "http_probe_degraded": 0,
     "k4_phase": 3,
     "k4_viz_url": "https://k4-cage.trimtab-signal.workers.dev/viz",
     "k4_api_url": "https://k4-cage.trimtab-signal.workers.dev/api",
     "phenix_url": "https://p31-phenix.pages.dev",
-    "hearing_ops_url": "https://ops.p31ca.org"
+    "hearing_ops_url": "https://ops.p31ca.org",
+    "pqc": "ML-KEM-768 + ML-DSA-65 active on care-api. Hybrid KEM session endpoint live. 006_migration deployed (51 D1 tables).",
+    "love_economy": "LOVESBT + ProofOfCare + GenesisSpark tested (50 tests). LOVEToken archived — LOVE is off-chain (love-ledger worker, two-pool model). CARE_THRESHOLD=0.5e18",
+    "d1_tables": 51,
+    "corrections": "Production review corrected: 40→51 tables, 28→30 workers, Turnstile still placeholder, ECC keys mock-only"
   },
   "dates": [
     {
       "date": "2026-04-13",
-      "event": "EIN 42-1888158 assigned by IRS (CP 575E)"
+      "event": "EIN 88-4411768 assigned by IRS (CP 575E)"
     },
     {
       "date": "2026-04-14",
@@ -263,8 +279,12 @@
       "event": "Hub + about-page refactor: larmor first-class (K4 Hub), 29 about-page design-token alignment, fawn-guard→Buffer merge, pnpm migration, CI/CD pnpm-aligned pipeline, ZeroTapWarehouse exports fixed, extensions/pkg alignment"
     },
     {
-      "date": "2026-04-26",
-      "event": "p31-vault + p31-technical-library: fresh build + deploy, CI workflows wired"
+      "date": "2026-06-29",
+      "event": "care-api PQC integration deployed: ML-KEM-768 hybrid KEM + ML-DSA-65 verification. PQC_SESSION KV namespace created. 5/5 endpoints smoke-tested."
+    },
+    {
+      "date": "2026-06-29",
+      "event": "CWP-077 fully executed: Mock ECC→WebCrypto ECDH P-256. Turnstile production secret set. Frontend TurnstileWidget.tsx + turnstile.ts utility created. Widget wired into qfactor (pushUpdate) and connect (handleRegister, handleLogin) pages. Custom domain pending manual DNS binding."
     }
   ]
 }

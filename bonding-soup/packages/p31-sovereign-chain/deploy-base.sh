@@ -2,7 +2,8 @@
 set -euo pipefail
 
 # P31 Genesis Gate — Base Mainnet Deployment Script
-# Deploys LOVEToken, LOVESBT, ProofOfCare to Base (chain ID 8453)
+# Deploys LOVESBT, ProofOfCare, GenesisSpark to Base (chain ID 8453)
+# (LOVEToken archived in Phase 1 — no on-chain LOVE ERC20)
 # 
 # Prerequisites:
 #   - Base ETH in deployer wallet (0x51c285...8413) — ≥0.01 ETH sufficient
@@ -84,12 +85,11 @@ echo ""
 echo "✅ Deployment complete!"
 
 # Extract addresses from output
-LOVE_TOKEN=$(echo "${OUTPUT}" | grep -oP 'LOVEToken:\s*\K0x[a-fA-F0-9]{40}' || true)
 LOVE_SBT=$(echo "${OUTPUT}" | grep -oP 'LOVESBT:\s*\K0x[a-fA-F0-9]{40}' || true)
 PROOF_OF_CARE=$(echo "${OUTPUT}" | grep -oP 'ProofOfCare:\s*\K0x[a-fA-F0-9]{40}' || true)
 GENESIS_SPARK=$(echo "${OUTPUT}" | grep -oP 'GenesisSpark:\s*\K0x[a-fA-F0-9]{40}' || true)
 
-if [[ -n "${LOVE_TOKEN}" && -n "${LOVE_SBT}" && -n "${PROOF_OF_CARE}" ]]; then
+if [[ -n "${LOVE_SBT}" && -n "${PROOF_OF_CARE}" ]]; then
     cat > "${OUTPUT_FILE}" <<EOF
 {
   "network": "base",
@@ -97,7 +97,6 @@ if [[ -n "${LOVE_TOKEN}" && -n "${LOVE_SBT}" && -n "${PROOF_OF_CARE}" ]]; then
   "deployedAt": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
   "deployer": "0x51c285Df171C76bE36252e32679F098d90768413",
   "contracts": {
-    "LOVEToken": "${LOVE_TOKEN}",
     "LOVESBT": "${LOVE_SBT}",
     "ProofOfCare": "${PROOF_OF_CARE}",
     "GenesisSpark": "${GENESIS_SPARK:-not deployed}"
@@ -111,7 +110,6 @@ EOF
     echo ""
     echo "Next steps:"
     echo "  1. Verify contracts on Basescan:"
-    echo "     https://basescan.org/address/${LOVE_TOKEN}#code"
     echo "     https://basescan.org/address/${LOVE_SBT}#code"
     echo "     https://basescan.org/address/${PROOF_OF_CARE}#code"
     if [[ -n "${GENESIS_SPARK}" ]]; then
@@ -120,13 +118,11 @@ EOF
     echo ""
     echo "  2. Update care-api worker secrets:"
     echo "     cd /home/p31/P31-local-workspace/workers/care-api"
-    echo "     wrangler secret put LOVE_TOKEN_ADDRESS --value ${LOVE_TOKEN}"
     echo "     wrangler secret put LOVE_SBT_ADDRESS --value ${LOVE_SBT}"
     echo "     wrangler secret put PROOF_OF_CARE_ADDRESS --value ${PROOF_OF_CARE}"
     echo "     wrangler deploy"
     echo ""
     echo "  3. After 24h buffer, execute abdication:"
-    echo "     cast send ${LOVE_TOKEN} \"transferOwnership(address)\" ${BURN_ADDRESS} --rpc-url https://mainnet.base.org --account default"
     echo "     cast send ${LOVE_SBT} \"transferOwnership(address)\" ${BURN_ADDRESS} --rpc-url https://mainnet.base.org --account default"
     echo "     cast send ${PROOF_OF_CARE} \"transferOwnership(address)\" ${BURN_ADDRESS} --rpc-url https://mainnet.base.org --account default"
     echo ""

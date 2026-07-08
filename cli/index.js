@@ -9,7 +9,7 @@
 // Check for --agent / -a BEFORE the TTY gate so agents can invoke from any ctx.
 // If a subcommand (status/surfaces/deploy) is present with --agent, the
 // subcommand handles it — so we skip this block.
-const _SUBCOMMANDS = ['status', 'surfaces', 'deploy'];
+const _SUBCOMMANDS = ['status', 'surfaces', 'deploy', 'love'];
 
 {
   const _args = process.argv.slice(2);
@@ -85,7 +85,7 @@ const _SUBCOMMANDS = ['status', 'surfaces', 'deploy'];
   const _matched = _args.find(a => _SUBCOMMANDS.includes(a));
   if (_matched) {
     const cmds = require('./commands');
-    const cmd = { status: cmds.status, surfaces: cmds.surfaces, deploy: cmds.deploy }[_matched];
+    const cmd = { status: cmds.status, surfaces: cmds.surfaces, deploy: cmds.deploy, love: cmds.love }[_matched];
     const opts = { agent: _args.includes('--agent') || _args.includes('-a') };
 
     // Extract per-command options
@@ -98,6 +98,10 @@ const _SUBCOMMANDS = ['status', 'surfaces', 'deploy'];
       opts.dryRun = _args.includes('--dry-run');
       opts.yes = _args.includes('--yes');
       opts.nonInteractive = _args.includes('--non-interactive');
+    }
+    if (_matched === 'love') {
+      opts.subcommand = _args.find(a => ['status', 'balance', 'sync'].includes(a)) || 'status';
+      opts.userId = getOpt('balance') || getOpt('sync') || process.env.P31_USER_ID || 'guest';
     }
 
     cmd(opts);
