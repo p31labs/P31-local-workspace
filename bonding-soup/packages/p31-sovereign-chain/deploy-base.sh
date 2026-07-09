@@ -19,6 +19,10 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CHAIN_ID=8453
+
+# DeployAll.s.sol reads DEPLOYER_PRIVATE_KEY; reconcile the DEPLOYER_PK alias
+# so both the Forge script (env) and the --private-key flag resolve to the same key.
+export DEPLOYER_PRIVATE_KEY="${DEPLOYER_PRIVATE_KEY:-${DEPLOYER_PK:-}}"
 BURN_ADDRESS="0x000000000000000000000000000000000000dEaD"
 OUTPUT_FILE="${SCRIPT_DIR}/.deployed-addresses.json"
 
