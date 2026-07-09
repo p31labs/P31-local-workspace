@@ -1,0 +1,19 @@
+name = "p31-status"
+main = "src/index.ts"
+compatibility_date = "2026-07-04"
+compatibility_flags = ["nodejs_compat"]
+
+[observability]
+enabled = true
+
+[[d1_databases]]
+binding = "DB"
+database_name = "p31-status-db"
+database_id = "c45cfb3e-07ac-46d6-b9e0-1f36b0ecef19"
+
+[[routes]]
+pattern = "status.p31ca.org/*"
+zone_name = "p31ca.org"
+
+[triggers]
+crons = ["*/15 * * * *"]
