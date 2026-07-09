@@ -7,6 +7,7 @@ export function resolvePlay(
   defender: PlayerStats,
   rng: Rng,
   distance: number,
+  playerSpoon?: number,
 ): PlayResult {
   const isRun = playType === 'RUN';
   let gain: number;
@@ -15,7 +16,9 @@ export function resolvePlay(
   let clockSeconds: number;
 
   if (isRun) {
-    gain = 2 + (ballCarrier.speed / 100) * 4 + (ballCarrier.strength / 100) * 3 - (defender.tackling / 100) * 3 + rng() * 4;
+    const spoon = playerSpoon ?? 1;
+    gain = 2 + (ballCarrier.speed / 100) * 4 + (ballCarrier.strength / 100) * 3
+      - (defender.tackling / 100) * 3 * spoon + (1 - spoon) * 1.5 + rng() * 4;
     gain = Math.max(-5, Math.round(gain * 10) / 10);
 
     const fumbleChance = ballCarrier.strength < 40 ? 0.03 : 0;
@@ -29,7 +32,8 @@ export function resolvePlay(
 
     clockSeconds = 20 + rng() * 15;
   } else {
-    const completion = 0.5 + (ballCarrier.throwing / 100) * 0.3 - (defender.coverage / 100) * 0.2;
+    const spoon = playerSpoon ?? 1;
+    const completion = Math.min(0.95, 0.5 + (ballCarrier.throwing / 100) * 0.3 - (defender.coverage / 100) * 0.2 * spoon + (1 - spoon) * 0.15);
     const completed = rng() < completion;
 
     if (completed) {
@@ -39,7 +43,7 @@ export function resolvePlay(
       clockSeconds = 25 + rng() * 15;
     } else {
       const sackChance = 0.05;
-      const intChance = Math.max(0, 0.05 - (ballCarrier.throwing / 100) * 0.03 + (defender.coverage / 100) * 0.03);
+      const intChance = Math.max(0, 0.05 - (ballCarrier.throwing / 100) * 0.03 + (defender.coverage / 100) * 0.03 * spoon - (1 - spoon) * 0.03);
 
       if (rng() < sackChance) {
         gain = -(3 + rng() * 7);

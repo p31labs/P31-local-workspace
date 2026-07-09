@@ -26,6 +26,8 @@ function initState(): GameState {
     units.push(createUnit(`p2-s${i}`, 'soldier', { x: i * 2 + 1, y: 0 }, 2));
     units.push(createUnit(`p2-t${i}`, 'tank', { x: i * 2 + 1, y: 1 }, 2));
   }
+  units.push(createUnit('p1-a0', 'archer', { x: 7, y: 7 }, 1));
+  units.push(createUnit('p2-a0', 'archer', { x: 7, y: 0 }, 2));
   return {
     grid: Array.from({ length: GRID_SIZE }, () => Array(GRID_SIZE).fill('grass')),
     units, turn: 1, selected: null,
@@ -252,7 +254,7 @@ export function StrategyBoardGame({ onScoreChange, onComplete }: Props) {
         </svg>
       </div>
 
-      <div style={{ display: 'flex', gap: 12 }}>
+      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
         {!state.winner && state.turn === 1 && (
           <button onClick={endTurn} style={btnStyle}>
             End Turn →

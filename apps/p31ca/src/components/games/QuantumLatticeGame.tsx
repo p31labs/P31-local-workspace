@@ -4,6 +4,11 @@ import { GameOverlay } from './GameOverlay';
 
 const PosnerLatticeScene = lazy(() => import('./PosnerLatticeScene'));
 
+interface QuantumLatticeGameProps {
+  decoherence?: number;
+  particleCount?: number;
+}
+
 export function QuantumLatticeGame({ decoherence = 0.5, particleCount = 3000 }: QuantumLatticeGameProps) {
   const engine = useGameEngine({ slug: 'quantum-lattice', title: 'Quantum Lattice' });
   const { state, start } = engine;

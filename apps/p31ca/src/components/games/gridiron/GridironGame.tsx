@@ -124,6 +124,7 @@ export function GridironGame({
     setTimeout(() => {
       let current = game;
       const rng = createMulberry32(keyRef.current++);
+      const spoonFactor = Math.max(0.3, Math.min(1, spoonLevel / 6));
 
       let playType = selectedPlay;
       if (!isMyPos) {
@@ -131,7 +132,7 @@ export function GridironGame({
         setSelectedPlay(playType);
       }
 
-      const simState = simulatePlay(current, rng);
+      const simState = simulatePlay(current, rng, { spoonFactor, playerTeam: homeIdx === 1 ? 'home' : 'away' });
       const newDrives = simState.drives;
       const lastEvent = newDrives[newDrives.length - 1];
       const prevScore = lastEvent.scoreBefore;
@@ -303,7 +304,7 @@ export function GridironGame({
               </div>
               <div style={{ display: 'flex', justifyContent: 'center' }}>
                 <button onClick={handleSnap} disabled={isSimulating}
-                  style={{ padding: '12px 48px', borderRadius: 8, border: '2px solid rgba(205,168,82,0.4)', background: 'rgba(205,168,82,0.12)', color: '#cda852', fontFamily: "'Press Start 2P', cursive", fontSize: 12, cursor: isSimulating ? 'not-allowed' : 'pointer', opacity: isSimulating ? 0.5 : 1, animation: isSimulating ? 'none' : 'pulseGlow 2s ease-in-out infinite', transition: 'all 0.15s' }}
+                  style={{ padding: '12px 48px', borderRadius: 8, border: '2px solid rgba(205,168,82,0.4)', background: 'rgba(205,168,82,0.12)', color: '#cda852', fontFamily: "'Press Start 2P', cursive", fontSize: 12, cursor: isSimulating ? 'not-allowed' : 'pointer', opacity: isSimulating ? 0.5 : 1, animation: 'none', transition: 'all 0.15s' }}
                   onMouseEnter={e => { if (!isSimulating) e.currentTarget.style.background = 'rgba(205,168,82,0.22)'; }}
                   onMouseLeave={e => { e.currentTarget.style.background = 'rgba(205,168,82,0.12)'; }}>
                   {isSimulating ? 'SNAPPING...' : 'SNAP'}

@@ -5,6 +5,7 @@ import { Team } from '../../../engine/bashball/types.ts';
 import { generateTeam } from '../../../engine/bashball/gameLoop.ts';
 import { createMulberry32 } from '../../../engine/card/rng/mulberry32.ts';
 import { eventDescription } from '../../../engine/bashball/atbat.ts';
+import { BashballField } from './BashballField.tsx';
 
 interface BashballGameProps {
   onScoreChange: (delta: number) => void;
@@ -14,6 +15,7 @@ interface BashballGameProps {
   playerTeam?: Player[];
   opponentName?: string;
   onGameResult?: (myScore: number, oppScore: number) => void;
+  variant?: 'smallball' | 'classic';
 }
 
 type Screen =
@@ -120,13 +122,14 @@ function BaseDiamond({ bases }: { bases: [boolean, boolean, boolean] }) {
   );
 }
 
-export function BashballGame({ onScoreChange, onComplete, onMoveMade, spoonLevel, playerTeam, opponentName, onGameResult }: BashballGameProps) {
+export function BashballGame({ onScoreChange, onComplete, onMoveMade, spoonLevel, playerTeam, opponentName, onGameResult, variant = 'smallball' }: BashballGameProps) {
   const [screen, setScreen] = useState<Screen>({ phase: 'intro' });
   const [gameState, setGameState] = useState<GameState | null>(null);
   const [teamName, setTeamName] = useState('Bash League');
   const scrollRef = useRef<HTMLDivElement>(null);
   const prevCountRef = useRef(0);
   const [lastPlayIdx, setLastPlayIdx] = useState(-1);
+  const [elapsed, setElapsed] = useState(0);
 
   const spoonFactor = Math.max(0.3, Math.min(1.0, spoonLevel / 6));
 
@@ -158,6 +161,7 @@ export function BashballGame({ onScoreChange, onComplete, onMoveMade, spoonLevel
     setScreen({ phase: 'playing' });
     prevCountRef.current = 0;
     setLastPlayIdx(-1);
+    setElapsed(0);
     onMoveMade();
   }, [teamName, onMoveMade, playerTeam, opponentName]);
 
@@ -186,6 +190,12 @@ export function BashballGame({ onScoreChange, onComplete, onMoveMade, spoonLevel
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [gameState?.plays.length]);
+
+  useEffect(() => {
+    if (screen.phase !== 'playing' || gameState?.isComplete) return;
+    const timer = setInterval(() => setElapsed(e => e + 1), 1000);
+    return () => clearInterval(timer);
+  }, [screen.phase, gameState?.isComplete]);
 
   if (screen.phase === 'intro') {
     return (
@@ -260,7 +270,7 @@ export function BashballGame({ onScoreChange, onComplete, onMoveMade, spoonLevel
             maxLength={24}
           />
         </div>
-        <div style={{ display: 'flex', gap: 12 }}>
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
           <button
             onClick={startGame}
             style={{
@@ -302,7 +312,7 @@ export function BashballGame({ onScoreChange, onComplete, onMoveMade, spoonLevel
     const homeHits = gameState.plays.filter(p => !p.top && isHit(p.result)).length;
     const star = getStarPlayer(gameState.plays);
     const totalPlays = gameState.plays.length;
-    const fakeDuration = `${1 + Math.floor(totalPlays / 12)}h ${15 + (totalPlays * 7) % 45}m`;
+    const durationLabel = `${Math.floor(elapsed / 60)}:${String(elapsed % 60).padStart(2, '0')}`;
     const labelA = gameState.awayTeam.name === teamName ? 'YOUR TEAM' : gameState.awayTeam.name;
     const labelH = gameState.homeTeam.name === teamName ? 'YOUR TEAM' : gameState.homeTeam.name;
 
@@ -342,7 +352,7 @@ export function BashballGame({ onScoreChange, onComplete, onMoveMade, spoonLevel
             fontSize: 11, fontFamily: "'JetBrains Mono', monospace",
             color: 'rgba(232,230,227,0.6)', marginBottom: 12,
           }}>
-            Duration: {fakeDuration} &middot; {totalPlays} plays
+            Duration: {durationLabel} &middot; {totalPlays} plays
           </div>
 
           <div style={{
@@ -413,7 +423,7 @@ export function BashballGame({ onScoreChange, onComplete, onMoveMade, spoonLevel
   if (!gameState) return null;
 
   const { away: awayRuns, home: homeRuns } = getInningRuns(gameState.plays);
-  const { inning, top, outs, bases, score, currentBatter, currentPitcher, awayTeam, homeTeam, plays, isComplete } = gameState;
+  const { inning, top, outs, bases, score, balls, strikes, currentBatter, currentPitcher, awayTeam, homeTeam, plays, isComplete } = gameState;
   const labelA = awayTeam.name === teamName ? 'YOUR TEAM' : awayTeam.name;
   const labelH = homeTeam.name === teamName ? 'YOUR TEAM' : homeTeam.name;
 
@@ -542,7 +552,7 @@ export function BashballGame({ onScoreChange, onComplete, onMoveMade, spoonLevel
             }}>
               <span style={{
                 display: 'inline-block',
-                animation: 'pulseArrow 1.2s ease-in-out infinite',
+                animation: 'none',
               }}>
                 {top ? '▲' : '▼'}
               </span>
@@ -555,6 +565,14 @@ export function BashballGame({ onScoreChange, onComplete, onMoveMade, spoonLevel
               marginTop: 4,
             }}>
               {outs} OUT{outs !== 1 ? 'S' : ''}
+            </div>
+            <div style={{
+              fontSize: 9,
+              fontFamily: "'JetBrains Mono', monospace",
+              color: 'rgba(232,230,227,0.35)',
+              marginTop: 4,
+            }}>
+              ⏱ {Math.floor(elapsed / 60)}:{String(elapsed % 60).padStart(2, '0')}
             </div>
             <div style={{
               fontSize: 9,
@@ -577,15 +595,32 @@ export function BashballGame({ onScoreChange, onComplete, onMoveMade, spoonLevel
         </div>
       </div>
 
-      <div style={{
-        display: 'flex', justifyContent: 'center', alignItems: 'center',
-        padding: '8px 0',
-        background: 'rgba(58,119,40,0.03)',
-        borderRadius: 12,
-        border: '1px solid rgba(58,119,40,0.08)',
-      }}>
-        <BaseDiamond bases={bases} />
-      </div>
+      {variant === 'smallball' ? (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <div style={{
+            display: 'flex', justifyContent: 'center', gap: 18,
+            background: '#05070a', borderRadius: 10, padding: '8px 14px',
+            border: '1px solid rgba(205,168,82,0.25)',
+            fontFamily: "'Press Start 2P', monospace",
+          }}>
+            <span style={{ color: '#cda852', fontSize: 10 }}>B {balls}</span>
+            <span style={{ color: '#cda852', fontSize: 10 }}>S {strikes}</span>
+            <span style={{ color: '#cda852', fontSize: 10 }}>O {outs}</span>
+            <span style={{ color: '#7ec8e3', fontSize: 10 }}>⏱ {Math.floor(elapsed / 60)}:{String(elapsed % 60).padStart(2, '0')}</span>
+          </div>
+          <BashballField bases={bases} spoonLevel={spoonLevel} />
+        </div>
+      ) : (
+        <div style={{
+          display: 'flex', justifyContent: 'center', alignItems: 'center',
+          padding: '8px 0',
+          background: 'rgba(58,119,40,0.03)',
+          borderRadius: 12,
+          border: '1px solid rgba(58,119,40,0.08)',
+        }}>
+          <BaseDiamond bases={bases} />
+        </div>
+      )}
 
       <div
         ref={scrollRef}
@@ -670,8 +705,8 @@ export function BashballGame({ onScoreChange, onComplete, onMoveMade, spoonLevel
             fontSize: 10,
             cursor: 'pointer',
             transition: 'all 0.15s',
-            animation: 'pulseGlow 2s ease-in-out infinite',
-            display: 'flex',
+                animation: 'none',
+                display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             gap: 8,

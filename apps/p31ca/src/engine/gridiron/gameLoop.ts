@@ -135,7 +135,11 @@ export function simulateKickoff(state: GameState, rng: Rng): GameState {
   };
 }
 
-export function simulatePlay(state: GameState, rng?: Rng): GameState {
+export function simulatePlay(
+  state: GameState,
+  rng?: Rng,
+  opts?: { spoonFactor?: number; playerTeam?: 'home' | 'away' },
+): GameState {
   const seed = rng ?? createMulberry32(Date.now());
 
   if (state.isComplete) return state;
@@ -162,12 +166,14 @@ export function simulatePlay(state: GameState, rng?: Rng): GameState {
     const defPos: Position = playType === 'RUN' ? 'LB' : 'DB';
     const carrier = findPlayerByPosition(offenseTeam.offense, carrierPos);
     const def = findPlayerByPosition(defenseTeam.defense, defPos);
+    const playerSpoon = opts?.spoonFactor !== undefined && opts?.playerTeam === drive.possession ? opts.spoonFactor : undefined;
     result = resolvePlay(
       playType,
       carrier?.stats ?? offenseTeam.offense[0].stats,
       def?.stats ?? defenseTeam.defense[0].stats,
       seed,
       drive.distance,
+      playerSpoon,
     );
   }
 
