@@ -23,7 +23,7 @@ verdict — a few overstated claims from earlier drafts have been corrected.
   executed.
 - **WebAuthn** — IANA Well-Known URI registry registers `webauthn` (W3C, 2026-01-23).
 - **MCP** — real protocol ([modelcontextprotocol.io](https://modelcontextprotocol.io)).
-- **GNU Taler** — real GNU project ([taler.net](https://taler.net)); P31 integration is planned.
+- **GNU Taler** — real GNU project ([taler.net](https://taler.net)); P31 integration is **deployed** — `taler-exchange-bridge` is wired to `exchange.demo.taler.net` (see `docs/TALER_INTEGRATION.md`).
 - **A2A AgentCard** — `agent-card.json` is the **IANA-registered** agent-discovery
   well-known (A2A / Linux Foundation, 2025-08-01). `agent-card.json` is served at
   `apps/p31ca/public/.well-known/agent-card.json` with valid A2A schema; legacy
@@ -52,10 +52,12 @@ There are **4 in-repo MCP servers** (not 3 as previously stated), all hand-rolle
   This is a documentation artifact; treat as unverified.
 
 ### Court-admissible care records
-The earlier claim that love-ledger care records are hash-chained (`lastCareHash`)
-is **FALSE**. The love-ledger D1 worker has no hash-chain field. Real hash-chained
-court-admissible records exist in `software/workers/legal-versioning.ts` and
-`software/sovereign-justice/src/evidence-vault.ts` — not in the LOVE ledger.
+The deployed **simple** LOVE ledger worker (`apps/phos/src/workers/love-ledger/index.ts`)
+**does** implement a SHA-256 court-admissible hash chain (`love_chain` table,
+`prev_hash`/`entry_hash`, `GET /chain`, `GET /export`). Additional hash-chained
+court-admissible records also exist in `software/workers/legal-versioning.ts` and
+`software/sovereign-justice/src/evidence-vault.ts`. (Earlier drafts falsely claimed
+the LOVE ledger had no hash chain — that was only true of the *undeployed monolith*.)
 
 ### Smithery
 12,148+ MCP servers (the earlier "6,000+" figure was understated).
@@ -69,6 +71,7 @@ See `GLOBAL_IMPACT_REPORT.md` for the full citation-backed report.
 - **Stack:** Cloudflare Workers + Pages, Astro, React 19, Tailwind, Vite, pnpm workspaces
 - **Frontend apps:** `apps/phos` (phos.p31ca.org), `apps/willow` (willow.p31ca.org), `apps/bonding` (bonding.p31ca.org), `apps/p31ca` (p31ca.org), `apps/phosphorus31` (phosphorus31.org)
 - **Backend workers:** `apps/gateway` (gateway.p31ca.org), `apps/status` (status.p31ca.org), `apps/auth` (p31-auth), `software/cloudflare-worker/llm-proxy` (p31-llm-proxy)
+- **Core data/orchestration workers:** `love-ledger` (deployed ledger), `jitterbug-api` (Ambient Exocortex brain-dump orchestrator — shares the `love-ledger` D1), `care-api`, `fhir`, `taler-exchange-bridge`, `taler-bridge-billing` (x402 pay-per-call). See `software/packages/jitterbug-api/README.md`.
 - **Shared packages:** `packages/design-system`, `packages/auth`
 - **Free Plan limits:** 100k req/day, 200k log events/day, 10 D1 databases, 5 cron triggers
 
@@ -194,20 +197,26 @@ Deploy: `cd apps/counterscale/packages/server && npx wrangler deploy`
 - `gateway.phos_ai_proxy` → `p31-llm-proxy` (LLM routing)
 - Gateway routes: `/api/*` (auth-protected), `/ai/chat` (public, rewrites to LLM proxy)
 
-### Cron Triggers (5 max on Free Plan)
+### Cron Triggers (5 max on Free Plan — account currently uses all 5)
 - p31-status: `*/15 * * * *`
 - command-center: `*/5 * * * *`
-- love-ledger: `0 */6 * * *`
 - p31-cortex: `0 7,18 * * *`
 - counterscale: `0 2 * * *` (daily rollups)
+- phos-backup: `0 2 * * *` (daily LOVE ledger cold snapshot to R2)
+
+> Note: the deployed `love-ledger` worker has a `scheduled()` cold-archive handler
+> but **no `[triggers]` cron** (the 5-slot Free-Plan cap is full). Its archive is
+> covered by `phos-backup`'s daily cron instead. The earlier `love-ledger: 0 */6`
+> entry was removed to free a slot.
 
 ### Observability
 - Built-in: `[observability] enabled = true` in wrangler.toml
 - Axiom OTLP: `https://api.axiom.co/v1/logs` (dataset: p31-workers)
 - Sentry: phos, bonding, gateway, auth (via @sentry/react or @sentry/cloudflare)
 
-### D1 Databases (6 of 10 used)
-- p31-status-db (status page history), p31-auth, p31-cortex, love-ledger, k4-cage-db, sovereign-justice-db
+### D1 Databases (10 of 10 used — at Free Plan cap)
+- p31-status-db, p31-auth, p31-cortex, love-ledger (`592e3e2e-…`), k4-cage-db, sovereign-justice-db, contracts-db, governance-db, buffer-worker-db, hrv-coherence-db
+- The `love-ledger` D1 (`592e3e2e-3203-4e0a-8342-9e85215ec8a6`) is **intentionally shared** by care-api (`CAPITAL_DB`), fhir (`DB`), jitterbug-api (`DB`), and sovereign-justice (`LOVE_D1`) to stay within the 10-DB Free-Plan cap. `hrv-coherence-db` is the only freeable slot.
 
 ### Analytics
 - Counterscale at analytics.p31ca.org (self-hosted, Analytics Engine)
