@@ -19,7 +19,7 @@ checked against authoritative registries and specifications.
 | **DID Core v1.0** | Pluggable identity module (`packages/auth`) | [W3C Recommendation](https://www.w3.org/TR/did-core/) (2022-07-19); IANA registers `did.json` well-known |
 | **WebAuthn** | Planned identity binding | IANA Well-Known URI registry — `webauthn` registered (W3C, 2026-01-23) |
 | **WCAG 2.2** | Design system, motion scaling, focus, ARIA | [W3C Recommendation](https://www.w3.org/TR/WCAG22/) (2024-12-12); levels A/AA/AAA |
-| **MCP** (Model Context Protocol) | 4 MCP servers (Oasis CLI 11, Component Registry 5, LOVE Ledger 3, PHOS Forge 27 — ~46 tools) | [modelcontextprotocol.io](https://modelcontextprotocol.io) — real protocol, supported by Claude, ChatGPT, VS Code, Cursor |
+| **MCP** (Model Context Protocol) | 4 MCP servers (Oasis CLI 11, Component Registry 7, LOVE Ledger 3, PHOS Forge 27 — 48 tools) | [modelcontextprotocol.io](https://modelcontextprotocol.io) — real protocol, supported by Claude, ChatGPT, VS Code, Cursor |
 | **A2A AgentCard** | Agent discovery via `/.well-known/agent-card.json` | IANA Well-Known URI registry — `agent-card.json` registered (A2A / Linux Foundation, 2025-08-01) |
 | **GNU Taler** | Planned for privacy-preserving LOVE issuance | [taler.net](https://taler.net) — real GNU project (integration tracked, not yet built) |
 
@@ -42,7 +42,7 @@ documentation artifact with no in-repo implementation — not listed here.)
 
 ## 3. Agent-Native Infrastructure
 
-- **~46 MCP tools** across 4 servers (Oasis CLI 11, Component Registry 5, LOVE Ledger 3, PHOS Forge 27).
+- **48 MCP tools** across 4 servers (Oasis CLI 11, Component Registry 7, LOVE Ledger 3, PHOS Forge 27).
 - **`andromeda` CLI** installable via `npm i -g andromeda-cli`; supports `--agent` JSON output.
 - **Agent discovery**: `/.well-known/agent-card.json` (A2A standard) + legacy `/.well-known/agents.json`.
 - **Edge-aware commands**: `status`, `surfaces`, `love`, `deploy`.

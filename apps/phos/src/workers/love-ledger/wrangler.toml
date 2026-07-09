@@ -1,23 +1,33 @@
 name = "love-ledger"
 main = "index.ts"
-compatibility_date = "2026-01-01"
+compatibility_date = "2026-07-08"
+compatibility_flags = ["nodejs_compat"]
 
 [placement]
 mode = "smart"
-
-[env.production]
-retries = 3
-
-[env.staging]
-retries = 3
 
 [[d1_databases]]
 binding = "LOVE_DB"
 database_name = "love-ledger"
 database_id = "592e3e2e-3203-4e0a-8342-9e85215ec8a6"
 
+[[r2_buckets]]
+binding = "LOVE_ARCHIVE"
+bucket_name = "love-ledger-archive"
+
+# Canonical custom domain for the deployed ledger. (Deploy with
+# `npx wrangler deploy` from this dir; requires the p31ca.org zone to be
+# in the same Cloudflare account. If the route fails to provision, the
+# worker still serves from love-ledger.<account>.workers.dev.)
+routes = [
+  { pattern = "love-ledger.p31ca.org/*", zone_name = "p31ca.org" },
+]
+
+# Cold per-DID WORM archive is now owned by phos-backup's cron. Explicitly
+# empty crons frees the Free Plan cron slot (the "0 */6 * * *" trigger that
+# was live on deploy is removed on next `wrangler deploy`).
+[triggers]
+crons = []
+
 [observability]
 enabled = true
-
-[[migrations]]
-tag = "v1"

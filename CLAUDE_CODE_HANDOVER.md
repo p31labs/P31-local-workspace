@@ -134,7 +134,9 @@ $425 → Georgia incorporation → IRS 1023-EZ → SAM.gov → Federal grants
 | BONDING game | `software/bonding/` |
 | N0 PWA | `C:\Users\sandra\Documents\N0\pwa\` |
 | Spaceship Earth | `software/spaceship-earth/` |
-| LOVE Ledger (package) | `software/packages/love-ledger/` |
+| LOVE Ledger (deployed worker — canonical) | `apps/phos/src/workers/love-ledger/` |
+| LOVE Ledger (npm package) | `software/packages/love-ledger/` |
+| LOVE Ledger (undeployed monolith, reference only) | `software/workers/love-ledger.ts` |
 | Shared (types/stores) | `software/packages/shared/` |
 | Workers | `software/workers/` |
 
@@ -179,7 +181,7 @@ $425 → Georgia incorporation → IRS 1023-EZ → SAM.gov → Federal grants
 
 ## Contact
 
-- **Operator:** William R. Johnson — (912) 227-4980 — will@p31ca.org
+- **Operator:** William R. Johnson — (904) 684-9491 — will@p31ca.org
 - **ADA Support:** Brenda O'Dell — brendaodell54@gmail.com
 - **Beta Tester:** Tyler — Tailscale mesh
 

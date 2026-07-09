@@ -44,20 +44,25 @@ const TOOLS = [
 function executeTool(name, args) {
   const userId = args.userId || process.env.P31_USER_ID || 'guest';
   switch (name) {
+    // Endpoints target the DEPLOYED simple worker (apps/phos/src/workers/love-ledger),
+    // which exposes /status, /balance, /chain, /export with a `?did=` query param
+    // (NOT the undeployed monolith's /api/love/* routes).
     case 'love_status': {
-      const url = `${LOVE_LEDGER_URL}/api/love/status?userId=${encodeURIComponent(userId)}`;
+      const url = `${LOVE_LEDGER_URL}/status?did=${encodeURIComponent(userId)}`;
       const result = fetchJSON(url);
       return result._error ? { error: result._error, status: 'error' } : { ...result, status: 'ok' };
     }
     case 'love_balance': {
-      const url = `${LOVE_LEDGER_URL}/api/love/balance?userId=${encodeURIComponent(userId)}`;
+      const url = `${LOVE_LEDGER_URL}/balance?did=${encodeURIComponent(userId)}`;
       const result = fetchJSON(url);
       return result._error ? { error: result._error, status: 'error' } : { balance: result, status: 'ok' };
     }
     case 'love_sync': {
-      const url = `${LOVE_LEDGER_URL}/api/love/sync?userId=${encodeURIComponent(userId)}`;
+      // The deployed worker has no /sync route; "sync local state with the cloud
+      // ledger" maps to fetching the verified, court-admissible hash chain.
+      const url = `${LOVE_LEDGER_URL}/chain?did=${encodeURIComponent(userId)}`;
       const result = fetchJSON(url);
-      return result._error ? { error: result._error, status: 'error' } : { synced: true, result, status: 'ok' };
+      return result._error ? { error: result._error, status: 'error' } : { synced: true, chain: result, status: 'ok' };
     }
     default:
       return { error: `Unknown tool: ${name}`, status: 'error' };
