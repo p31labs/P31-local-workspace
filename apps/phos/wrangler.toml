@@ -1,6 +1,7 @@
 name = "phos"
 pages_build_output_dir = "dist"
 compatibility_date = "2026-05-31"
+compatibility_flags = ["nodejs_compat"]
 
 [vars]
 PUBLIC_EDGE_AI_URL = "https://gateway.p31ca.org"

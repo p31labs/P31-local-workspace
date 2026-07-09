@@ -1,0 +1,27 @@
+name = "bonding-relay"
+main = "worker/bundle.js"
+compatibility_date = "2026-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+# D1 removed 2026-06-28 — bonding routes migrated to KV (TELEMETRY_KV). Keeps DB count under limit.
+# [[d1_databases]]
+# binding = "DB"
+# database_name = "p31-state-db"
+# database_id = "a8f409ea-3e7f-4793-aecf-4ff141602ed0"
+
+[[kv_namespaces]]
+binding = "TELEMETRY_KV"
+id = "3293820df2b94398a183270a0cac8c7e"
+preview_id = "3293820df2b94398a183270a0cac8c7e"
+
+[[kv_namespaces]]
+binding = "SPOONS_KV"
+id = "152350db68f641558637c0e28aed9510"
+preview_id = "152350db68f641558637c0e28aed9510"
+
+[durable_objects]
+bindings = [{ name = "BONDING_ROOM_DO", class_name = "BondingRoomDO" }]
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = [ "BondingRoomDO" ]

@@ -1,6 +1,7 @@
 name = "p31-sync"
 main = "index.ts"
-compatibility_date = "2024-05-05"
+compatibility_date = "2026-01-01"
+compatibility_flags = ["nodejs_compat"]
 
 # Durable Object for real-time sync per namespace
 [[durable_objects.bindings]]

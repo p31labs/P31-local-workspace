@@ -1,6 +1,7 @@
 name = "sovereign-justice"
 main = "src/rag-pipeline.ts"
 compatibility_date = "2026-06-01"
+compatibility_flags = ["nodejs_compat"]
 
 # ── D1 Databases ──────────────────────────────────────────────────────
 [[d1_databases]]
@@ -47,3 +48,7 @@ EVIDENCE_RETENTION_DAYS = "365"
 #   { pattern = "evidence.sovereign-justice.*", zone_name = "trimtab-signal.workers.dev" },
 #   { pattern = "escrow.sovereign-justice.*", zone_name = "trimtab-signal.workers.dev" },
 # ]
+
+[observability]
+enabled = true
+head_sampling_rate = 0.1

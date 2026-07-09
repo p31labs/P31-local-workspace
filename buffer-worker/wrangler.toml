@@ -1,0 +1,23 @@
+name = "buffer-worker"
+main = "src/index.ts"
+compatibility_date = "2026-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+[[d1_databases]]
+binding = "BUFFER_DB"
+database_name = "buffer-worker-db"
+database_id = "e7eb78cd-11f7-41f5-bcc7-fb1ad03716a0"
+
+[[kv_namespaces]]
+binding = "BUFFER_KV"
+id = "d445420c09964b70b99302d58a7ecd7b"
+
+[[kv_namespaces]]
+binding = "GRATITUDE_KV"
+id = "3d5fdc7747bc452a879274412f5f0c45"
+
+[ai]
+binding = "AI"
+
+[observability]
+enabled = true

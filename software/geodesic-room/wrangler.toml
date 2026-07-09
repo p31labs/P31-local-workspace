@@ -10,7 +10,8 @@
 
 name = "geodesic-room"
 main = "src/index.ts"
-compatibility_date = "2025-10-01"
+compatibility_date = "2026-01-01"
+compatibility_flags = ["nodejs_compat"]
 
 [durable_objects]
 bindings = [
@@ -20,6 +21,9 @@ bindings = [
 [[migrations]]
 tag = "v1-init"
 new_sqlite_classes = ["GeodesicRoom"]
+
+[observability]
+enabled = true
 
 [[migrations]]
 tag = "v2-shapes"

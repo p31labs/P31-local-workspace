@@ -1,11 +1,14 @@
 name = "jitterbug-api"
 main = "src/index.ts"
-compatibility_date = "2024-06-01"
+compatibility_date = "2026-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+# PSK set via: wrangler secret put PSK --name jitterbug-api
 
 [[d1_databases]]
 binding = "DB"
-database_name = "jitterbug-db"
-database_id = "0a39b28c-d4bc-4b27-acd2-225bd7d9a3ab"
+database_name = "love-ledger"
+  database_id = "592e3e2e-3203-4e0a-8342-9e85215ec8a6"
 
 [[r2_buckets]]
 binding = "R2_BUCKET"
@@ -23,9 +26,9 @@ class_name = "OrchestratorDO"
 tag = "v1"
 new_sqlite_classes = ["OrchestratorDO"]
 
-[[triggers]]
-cron = "0 0 * * *"
-
 [env.production]
 vars = { ENVIRONMENT = "production" }
+
+[observability]
+enabled = true
 

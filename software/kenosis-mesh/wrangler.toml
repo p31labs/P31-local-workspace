@@ -2,6 +2,7 @@ name = "kenosis-mesh"
 main = "src/index.js"
 account_id = "ee05f70c889cb6f876b9925257e3a2fa"
 compatibility_date = "2026-03-17"
+compatibility_flags = ["nodejs_compat"]
 workers_dev = true
 
 # AUTH_TOKEN: set via `npx wrangler secret put AUTH_TOKEN` — rotate the old value

@@ -1,0 +1,30 @@
+name = "crypto-monitor"
+main = "src/index.ts"
+compatibility_date = "2026-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Poll every 15 minutes
+# Disabled: account at cron trigger limit (free plan: 5 max)
+# Use external cron (e.g. cron-job.org) to GET https://crypto-monitor.trimtab-signal.workers.dev/poll
+# [triggers]
+# crons = ["*/15 * * * *"]
+
+[vars]
+ALLOWED_ORIGIN = "https://phosphorus31.org"
+
+# Queue consumer for scheduled polling (replaces cron)
+[[queues.consumers]]
+queue = "poll-queue"
+max_batch_size = 1
+max_batch_timeout = 30
+
+# KV namespace for donation event storage
+[[kv_namespaces]]
+binding = "DONATION_EVENTS"
+id = "92136a92b4ae4f55a20d1e620319723f"
+
+# Secrets (set via wrangler CLI):
+#   npx wrangler secret put ETHERSCAN_API_KEY
+#   npx wrangler secret put P31_WALLET_ADDRESS
+#   npx wrangler secret put GIVETH_CAUSE_ID
+#   npx wrangler secret put DISCORD_WEBHOOK_URL

@@ -1,6 +1,6 @@
 name = "p31-cortex"
 main = "src/index.ts"
-compatibility_date = "2025-03-01"
+compatibility_date = "2026-01-01"
 compatibility_flags = ["nodejs_compat"]
 
 [triggers]
@@ -50,3 +50,6 @@ MAILCHANNELS_API = "https://api.mailchannels.net/tx/v1/send"
 
 [ai]
 binding = "AI"
+
+[observability]
+enabled = true

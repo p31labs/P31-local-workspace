@@ -9,7 +9,8 @@
 
 name = "k4-cage"
 main = "src/index.js"
-compatibility_date = "2025-10-01"
+compatibility_date = "2026-01-01"
+compatibility_flags = ["nodejs_compat"]
 
 [durable_objects]
 bindings = [
@@ -21,11 +22,11 @@ bindings = [
 tag = "unified-k4-v1"
 new_classes = ["K4Topology", "FamilyMeshRoom"]
 
-# D1 — replace database_id with output of: npx wrangler d1 list
-[[d1_databases]]
-binding = "DB"
-database_name = "p31-telemetry"
-database_id = "fc3b2ffb-4de4-4843-88b1-50e5c788dc50"
+# D1 removed 2026-06-28 — telemetry shifted to KV (K4_MESH). Keeps DB count under limit.
+# [[d1_databases]]
+# binding = "DB"
+# database_name = "p31-telemetry"
+# database_id = "4e21240c-bd02-4450-ba09-7f1bfa6c90e8"
 
 # KV — same binding as legacy k4-cage (cache + fallback telemetry when DB unbound)
 [[kv_namespaces]]

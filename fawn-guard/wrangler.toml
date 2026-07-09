@@ -1,0 +1,15 @@
+name = "fawn-guard"
+main = "src/index.ts"
+compatibility_date = "2026-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+[[d1_databases]]
+binding = "GUARD_DB"
+database_name = "fawn-guard-db"
+database_id = "8e40c27f-d357-4588-b141-3f57947a96d1"
+
+[[triggers]]
+cron = "0 2 * * *"
+
+[observability]
+enabled = true

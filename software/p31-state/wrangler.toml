@@ -1,6 +1,7 @@
 name = "p31-state"
 main = "src/index.ts"
 compatibility_date = "2026-04-04"
+compatibility_flags = ["nodejs_compat"]
 
 # Route: state.p31ca.org → p31-state worker
 # Set via Cloudflare dashboard → Workers & Pages → p31-state → Custom Domains
@@ -17,3 +18,6 @@ STATE_TTL_DAYS = "90"
 
 # Secrets:
 #   npx wrangler secret put SESSION_SECRET  → for session token signing (future)
+
+[observability]
+enabled = true

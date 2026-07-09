@@ -5,13 +5,14 @@ pragma solidity ^0.8.20;
 /**
  * 🔺 P31 LABS: GOD CONSTITUTION
  * ---------------------------------------------------------
- * L.O.V.E. (Ledger of Ontological Volume and Entropy)
+ * Metabolic Event & Coherence Ledger
  * 21 CFR §890.3710 Medical Necessity Mesh Ledger
  * 
  * This contract hardcodes the fundamental physical and geometric 
- * laws of the ecosystem into an immutable ledger. It establishes 
- * the L.O.V.E. token economy where acts of care and metabolic 
- * energy ("spoons") are mathematically commodified and hashed via SHA-256.
+ * laws of the ecosystem into an immutable ledger. It tracks 
+ * metabolic energy ("spoons") events, tetrahedral state, and 
+ * coherence indices. LOVE token economy is now handled by the 
+ * off-chain love-ledger worker (see docs/LOVE_ECONOMY.md).
  * 
  * Author: P31 Labs
  * License: MIT
@@ -37,8 +38,6 @@ contract GODConstitution {
         uint256 spoonDelta;  // Change in metabolic energy
     }
 
-    // L.O.V.E. Token mapping
-    mapping(address => uint256) public loveLedger;
     mapping(uint256 => MetabolicEvent) public somaticLedger;
     uint256 public eventCount;
     uint256 public totalSpoons;
@@ -56,7 +55,6 @@ contract GODConstitution {
     event AutopoiesisInitiated(address indexed deadAddress, uint256 timestamp);
     event SpoonsCommodified(uint256 indexed id, bytes32 entropyHash, uint8 voltage, int256 delta);
     event CoherenceUpdated(uint8 relational, uint8 cognitive, uint8 alignment, uint256 index);
-    event LoveTransferred(address indexed from, address indexed to, uint256 amount);
 
     constructor() {
         architect = msg.sender;
@@ -116,26 +114,6 @@ contract GODConstitution {
     }
 
     /**
-     * @dev Transfer L.O.V.E. tokens (soulbound - cannot be sold)
-     */
-    function transferLove(address _to, uint256 _amount) external {
-        require(_to != address(0), "Invalid recipient");
-        require(loveLedger[msg.sender] >= _amount, "Insufficient LOVE");
-        
-        loveLedger[msg.sender] -= _amount;
-        loveLedger[_to] += _amount;
-        
-        emit LoveTransferred(msg.sender, _to, _amount);
-    }
-
-    /**
-     * @dev Earn LOVE through care/creation
-     */
-    function earnLove(uint256 _amount) external {
-        loveLedger[msg.sender] += _amount;
-    }
-
-    /**
      * @dev Abdication Protocol: Permanently transfers administrative control 
      * to an unrecoverable address. This is the "Kenosis" - self-emptying 
      * of authority to achieve true autopoiesis.
@@ -161,10 +139,4 @@ contract GODConstitution {
         return currentState.coherenceIndex;
     }
 
-    /**
-     * @dev Get L.O.V.E. balance
-     */
-    function getLoveBalance(address _owner) external view returns (uint256) {
-        return loveLedger[_owner];
-    }
 }

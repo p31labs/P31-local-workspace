@@ -67,7 +67,7 @@ async function main() {
   if (shouldRun("A") && !SKIP_A) {
     const result = runPhase("A  P31 Contracts + Egg Hunt + Passport", () => {
       try {
-        execSync("npm run verify", { cwd: ROOT, stdio: "inherit", timeout: 120_000 });
+        execSync("npm run verify", { cwd: ROOT, stdio: "ignore", timeout: 120_000 });
         return { ok: true };
       } catch {
         return { ok: false };
