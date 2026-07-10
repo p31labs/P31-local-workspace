@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Scan the Universal Interface Generator package so its utility classes are generated */
+@source "../../interface-generator/src/**";
+
 @theme {
   --color-void: #0A0A0F;
   --color-surface: #12121A;
