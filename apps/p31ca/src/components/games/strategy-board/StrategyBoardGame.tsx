@@ -174,11 +174,17 @@ export function StrategyBoardGame({ onScoreChange, onComplete }: Props) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, padding: 16 }}>
       <div style={{
-        fontFamily: "'Press Start 2P', cursive", fontSize: 9,
+        width: '100%', maxWidth: GRID_SIZE * CELL,
+        background: 'rgba(15,17,21,0.95)',
+        border: '1px solid var(--p31-teal-border)',
+        borderRadius: 8, padding: '8px 12px',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        boxShadow: 'inset 0 0 12px rgba(0,0,0,0.6)',
+        fontFamily: "'Press Start 2P', cursive", fontSize: 9, letterSpacing: '0.04em',
         color: state.turn === 1 ? BOARD_COLORS.p1 : state.turn === 2 ? BOARD_COLORS.p2 : 'var(--p31-gold)',
         textAlign: 'center', minHeight: 24,
       }}>
-        {state.winner ? (state.winner === 1 ? '🎉 YOU WIN!' : '😞 AI WINS') : state.message}
+        {state.winner ? (state.winner === 1 ? 'YOU WIN!' : 'AI WINS') : state.message}
       </div>
 
       <div style={{
@@ -258,7 +264,7 @@ export function StrategyBoardGame({ onScoreChange, onComplete }: Props) {
 
       <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
         {!state.winner && state.turn === 1 && (
-          <button onClick={endTurn} style={btnStyle}>
+          <button onClick={endTurn} style={{ ...btnStyle, border: '1px solid var(--p31-teal-border)', boxShadow: '0 0 12px var(--p31-teal-border)', background: 'var(--p31-teal-dim)', color: 'var(--p31-teal)' }}>
             End Turn →
           </button>
         )}
