@@ -19,6 +19,7 @@ export const SURFACE_NAV: SurfaceNavItem[] = [
   { id: 'BARTER', label: 'Barter', icon: '🔄', group: 'primary' },
   { id: 'GOVERNANCE', label: 'Governance', icon: '⚖️', group: 'primary' },
   { id: 'PASSPORT', label: 'Passport', icon: '🪪', group: 'primary' },
+  { id: 'ADAPTIVE', label: 'Adaptive', icon: '❋', group: 'primary' },
   { id: 'FEEDBACK', label: 'Feedback', icon: '⚑', group: 'primary' },
   { id: 'SANCTUARY', label: 'Sanctuary', icon: '◈', group: 'primary' },
   { id: 'ATTEST', label: 'Attest', icon: '⚮', group: 'primary' },

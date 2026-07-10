@@ -1,5 +1,6 @@
 import React, { Suspense, lazy } from 'react';
 import { DashboardSurface } from '../surfaces/DashboardSurface';
+import { UIGSurface } from './UIGSurface';
 import { GreetingSurface } from '../surfaces/GreetingSurface';
 import { IgnitionSurface } from '../surfaces/IgnitionSurface';
 import { BondingSurface } from '../surfaces/BondingSurface';
@@ -135,6 +136,9 @@ export function SurfaceContent({ currentSurface, setSurface, spoons, isGuest }: 
 
     case 'PASSPORT':
       return <PassportSurface />;
+
+    case 'ADAPTIVE':
+      return <UIGSurface surfaceId="DASHBOARD" spoons={spoons} />;
 
     case 'FEEDBACK':
       return <FeedbackSurface isGuest={isGuest} spoons={spoons} />;
