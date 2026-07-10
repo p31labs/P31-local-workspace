@@ -20,6 +20,17 @@ export interface BrainDumpRecord {
   max_depth: number;
 }
 
+// Allowlists for dynamic UPDATE column names — prevents SQL identifier
+// injection from request bodies (values remain bound parameters).
+const UT_PARTICIPANT_COLUMNS = new Set([
+  'pseudonym', 'neurotype', 'cohort', 'age_band',
+  'access_needs_json', 'payment_method', 'consent_given', 'caregiver_assent',
+]);
+const UT_SESSION_COLUMNS = new Set([
+  'phase', 'session_date', 'format', 'spoons_start', 'spoons_end',
+  'wcag_json', 'payment_amount', 'paid', 'notes',
+]);
+
 export class DBClient {
   constructor(private db: D1Database) {}
 
@@ -182,7 +193,8 @@ export class DBClient {
   }
 
   async ut_updateParticipant(id: number, data: any) {
-    const fields = Object.keys(data);
+    const fields = Object.keys(data).filter((f) => UT_PARTICIPANT_COLUMNS.has(f));
+    if (fields.length === 0) return;
     const setClause = fields.map((f) => `${f} = ?`).join(', ');
     const values = fields.map((f) => data[f]);
     await this.db.prepare(`UPDATE ut_participants SET ${setClause} WHERE id = ?`).bind(...values, id).run();
@@ -218,7 +230,8 @@ export class DBClient {
   }
 
   async ut_updateSession(id: number, data: any) {
-    const fields = Object.keys(data);
+    const fields = Object.keys(data).filter((f) => UT_SESSION_COLUMNS.has(f));
+    if (fields.length === 0) return;
     const setClause = fields.map((f) => `${f} = ?`).join(', ');
     const values = fields.map((f) => data[f]);
     await this.db.prepare(`UPDATE ut_sessions SET ${setClause} WHERE id = ?`).bind(...values, id).run();

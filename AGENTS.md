@@ -18,9 +18,9 @@ verdict — a few overstated claims from earlier drafts have been corrected.
 - **WCAG 2.2** — [W3C Recommendation](https://www.w3.org/TR/WCAG22/) (2024-12-12);
   `data-spoons` motion scaling, CrisisMode, skip links, `prefers-reduced-motion` are
   **verified in code**. The automated axe-core audit runner (`scripts/audit-wcag.mjs`)
-  referenced in earlier drafts is **missing from the repo** — the 0-violation claim
-  is unsubstantiated and should not be relied upon until the runner is created and
-  executed.
+  **exists** in the repo but is **not yet wired into CI** — the 0-violation claim
+  remains unsubstantiated and should not be relied upon until the runner is wired
+  into CI and executed.
 - **WebAuthn** — IANA Well-Known URI registry registers `webauthn` (W3C, 2026-01-23).
 - **MCP** — real protocol ([modelcontextprotocol.io](https://modelcontextprotocol.io)).
 - **GNU Taler** — real GNU project ([taler.net](https://taler.net)); P31 integration is **deployed** — `taler-exchange-bridge` is wired to `exchange.demo.taler.net` (see `docs/TALER_INTEGRATION.md`).
@@ -223,7 +223,7 @@ Deploy: `cd apps/counterscale/packages/server && npx wrangler deploy`
 - Tracking: `<script defer src="https://analytics.p31ca.org/tracker.js" data-domain="SITE">`
 
 ### Auth
-- DID:key login via `apps/auth` + `packages/auth`
+- DID:key cryptographic signing/verification exists for ledger writes (`apps/phos/src/workers/love-ledger`), but the dedicated DID:key login app/package (`apps/auth`, `packages/auth`) is NOT yet implemented (scaffolds only)
 - JWT session in localStorage under `p31-auth`
 - Write routes on gateway require `Authorization: Bearer <JWT>`
 
@@ -246,10 +246,10 @@ These must be added at https://github.com/p31labs/P31-local-workspace/settings/s
 - Spoon-aware UI (0–5 scale via `data-spoons` attribute) mandatory for all surfaces.
 
 ## WCAG 2.2 AAA Compliance (Baseline — July 2026)
-- **Touch targets:** All interactive elements ≥48×48px (WCAG 2.5.8 Enhanced).
-- **Contrast ratios:** All text ≥4.5:1 AA (≥7:1 for AAA preferred). Avoid `text-white/30` on dark backgrounds. Use `text-white/70` for AA/AAA compliance.
+- **Touch targets:** Target is ≥48×48px (WCAG 2.5.8 Enhanced), but current shipping is 44px (e.g. `phos/src/surfaces/PassportWizard.tsx:118`); full AAA pending.
+- **Contrast ratios:** Current contrast meets AA in places (≥4.5:1), but `text-white/30` usage on dark backgrounds is being removed; ≥7:1 AAA pending.
 - **Focus indicators:** Global `:focus-visible` outline (2px `var(--phos-primary)`, offset 2px).
-- **Skip navigation:** `<a href="#main-content" class="skip-link">` in `index.astro`.
+- **Skip navigation:** The skip-link (`<a href="#main-content" class="skip-link">`) is present in the p31ca shell and bonding-soup static HTML but NOT yet in `apps/phos/src/pages/index.astro`; pending.
 - **Reduced motion:** `@media (prefers-reduced-motion: reduce)` sets all durations to 0ms (`motion.css`). `data-reduced-motion` attribute fallback. Crisis mode (spoons=0) also disables motion.
 - **ARIA labels:** All icon buttons have `aria-label`, all SVGs have `aria-hidden="true"`. Navigation has `role="navigation"` + `aria-label`. Chat messages use `aria-live="polite"`.
 - **Voice input:** `VoiceInputButton` detects `isSupported`, shows disabled state with "Voice input unavailable" when unsupported. Dual engine (local WASM + edge fallback).

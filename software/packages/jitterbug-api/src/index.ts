@@ -2,6 +2,7 @@ import { D1Database, R2Bucket, KVNamespace } from '@cloudflare/workers-types';
 import router from './routes';
 import { OrchestratorDO } from './orchestration-do';
 import { DBClient } from './db';
+import { timingSafeEqualStr } from './security';
 
 // WebSocketPair is available globally in Cloudflare Workers runtime
 declare const WebSocketPair: {
@@ -63,8 +64,8 @@ async function handleWebSocket(request: Request, env: Env): Promise<Response> {
   const url = new URL(request.url);
   const brainDumpId = url.searchParams.get('id');
   const auth = request.headers.get('Authorization');
-  const expected = `Bearer ${env.PSK}`;
-  if (!brainDumpId || !auth || auth !== expected) {
+    const expected = `Bearer ${env.PSK}`;
+    if (!brainDumpId || !timingSafeEqualStr(auth, expected)) {
     return new Response('Unauthorized', { status: 401 });
   }
 

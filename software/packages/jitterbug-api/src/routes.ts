@@ -5,6 +5,29 @@ import type { Env } from './index';
 import { OpenCollectiveClient } from './open-collective';
 import { registerUserTestRoutes } from './usertest';
 import { registerUigRoutes } from './uig';
+import { timingSafeEqualStr } from './security';
+
+// CORS allowlist for authenticated (PSK) routes. Public read endpoints keep
+// '*' by design. Override via CORS_ALLOW_ORIGINS env (comma-separated).
+const DEFAULT_CORS_ORIGINS = [
+  'https://jitterbug-pwa.pages.dev',
+  'https://main.jitterbug-pwa.pages.dev',
+  'https://phos.p31ca.org',
+  'https://p31ca.org',
+  'https://bonding.p31ca.org',
+  'http://localhost:5173',
+  'http://localhost:8787',
+];
+
+function allowedCorsOrigin(request: Request, env: Env): string {
+  const origin = request.headers.get('Origin') || '';
+  const allowed = ((env as any).CORS_ALLOW_ORIGINS ?? '')
+    .split(',')
+    .map((s: string) => s.trim())
+    .filter(Boolean);
+  const list = allowed.length ? allowed : DEFAULT_CORS_ORIGINS;
+  return list.includes(origin) ? origin : '';
+}
 
 // Node.js compat crypto for Workers runtime
 declare const crypto: {
@@ -30,7 +53,7 @@ const withCORS = (handler: (request: Request, env: Env) => Response | Promise<Re
     if (request.method === 'OPTIONS') {
       return new Response(null, {
         headers: {
-          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Origin': allowedCorsOrigin(request, env),
           'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
           'Access-Control-Allow-Headers': 'Content-Type, Authorization',
         },
@@ -39,14 +62,14 @@ const withCORS = (handler: (request: Request, env: Env) => Response | Promise<Re
 
     const auth = request.headers.get('Authorization');
     const expected = `Bearer ${env.PSK}`;
-    if (!auth || auth !== expected) {
+    if (!timingSafeEqualStr(auth, expected)) {
       return jsonResponse({ error: 'Unauthorized', details: 'Missing or invalid Bearer token' }, 401);
     }
 
     try {
       const response = await handler(request, env);
       const corsHeaders = {
-        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Origin': allowedCorsOrigin(request, env),
         'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type, Authorization',
       };
@@ -114,15 +137,19 @@ pskRouter.post('/webhook/fiscal-host', async (request, env) => {
   const signature = request.headers.get('X-Hub-Signature-256');
   const payload = await request.text();
   
-  // Verify signature with OC_WEBHOOK_SECRET if configured
-  if (env.OC_WEBHOOK_SECRET && signature) {
-    const expected = 'sha256=' + crypto
-      .createHmac('sha256', env.OC_WEBHOOK_SECRET)
-      .update(payload)
-      .digest('hex');
-    if (signature !== expected) {
-      return jsonResponse({ error: 'Invalid signature' }, 401);
-    }
+  // Verify signature with OC_WEBHOOK_SECRET — fail closed if unconfigured.
+  if (!env.OC_WEBHOOK_SECRET) {
+    return jsonResponse({ error: 'Webhook secret not configured' }, 503);
+  }
+  if (!signature) {
+    return jsonResponse({ error: 'Missing signature' }, 401);
+  }
+  const expected = 'sha256=' + crypto
+    .createHmac('sha256', env.OC_WEBHOOK_SECRET)
+    .update(payload)
+    .digest('hex');
+  if (!timingSafeEqualStr(signature, expected)) {
+    return jsonResponse({ error: 'Invalid signature' }, 401);
   }
   
   try {
@@ -299,14 +326,14 @@ pskRouter.get('/brain-dump/:id/stream', async (request, env) => {
     },
   });
 
-  return new Response(stream, {
-    headers: {
-      'Content-Type': 'text/event-stream',
-      'Cache-Control': 'no-cache',
-      'Connection': 'keep-alive',
-      'Access-Control-Allow-Origin': '*',
-    },
-  });
+    return new Response(stream, {
+      headers: {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        'Connection': 'keep-alive',
+        'Access-Control-Allow-Origin': allowedCorsOrigin(request, env),
+      },
+    });
 });
 
 pskRouter.post('/partition/recover', async (request, env) => {

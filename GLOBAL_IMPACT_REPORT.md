@@ -15,7 +15,7 @@ checked against authoritative registries and specifications.
 
 | Standard | Use in P31 | Verification |
 |----------|------------|--------------|
-| **ERC-5192** (Minimal Soulbound NFTs) | `LOVESBT.sol` soulbound badges (partial — missing `supportsInterface(0xb45a3c0e)`); `CognitivePassport.sol` fully compliant & deployed (Base Sepolia, `0xa4bfb18fa7c5265e25b9a8915d1196a18d52299e`) | [`eips.ethereum.org/EIPS/eip-5192`](https://eips.ethereum.org/EIPS/eip-5192) — finalized, interface `0xb45a3c0e` |
+| **ERC-5192** (Minimal Soulbound NFTs) | `LOVESBT.sol` soulbound badges (fully ERC-5192 compliant — implements `locked()`, `Locked` event, `supportsInterface(0xb45a3c0e)`); `CognitivePassport.sol` fully compliant & deployed (Base Sepolia, `0xa4bfb18fa7c5265e25b9a8915d1196a18d52299e`) | [`eips.ethereum.org/EIPS/eip-5192`](https://eips.ethereum.org/EIPS/eip-5192) — finalized, interface `0xb45a3c0e` |
 | **DID Core v1.0** | Pluggable identity module (`packages/auth`) | [W3C Recommendation](https://www.w3.org/TR/did-core/) (2022-07-19); IANA registers `did.json` well-known |
 | **WebAuthn** | Planned identity binding | IANA Well-Known URI registry — `webauthn` registered (W3C, 2026-01-23) |
 | **WCAG 2.2** | Design system, motion scaling, focus, ARIA | [W3C Recommendation](https://www.w3.org/TR/WCAG22/) (2024-12-12); levels A/AA/AAA |

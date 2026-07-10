@@ -191,8 +191,11 @@ export default {
     const method = request.method;
 
     // ── Fail-closed write authorization ─────────────────────────────
+    // Default-deny: writes require auth unless LOVE_REQUIRE_AUTH === 'false'
+    // (explicit opt-out). Missing LOVE_AUTH_SECRET when auth is required
+    // returns 503 — never an open write path.
     if (method === 'POST' && WRITE_PATHS.has(url.pathname)) {
-      if (env.LOVE_REQUIRE_AUTH === 'true') {
+      if (env.LOVE_REQUIRE_AUTH !== 'false') {
         if (!env.LOVE_AUTH_SECRET) {
           return new Response(JSON.stringify({ error: 'LOVE_AUTH_SECRET not configured' }), {
             status: 503,
