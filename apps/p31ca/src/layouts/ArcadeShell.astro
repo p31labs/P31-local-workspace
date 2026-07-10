@@ -8,6 +8,7 @@ import { ClientRouter } from 'astro:transitions';
 import '../styles/global.css';
 import { SPOON_LEVEL_COLORS, COLORS, ARCADE_GAMES } from '../lib/arcade-core/theme.ts';
 import { SpoonSync } from '../components/games/spoon-sync.tsx';
+import UIGArcadeControls from '../components/UIGArcadeControls';
 
 interface Props {
   title?: string;
@@ -499,6 +500,7 @@ const initialSpoonColor = SPOON_LEVEL_COLORS[initialSpoonLevel] ?? COLORS.teal;
       aria-label={`${gameTitle} game`}
     >
       <SpoonSync client:load />
+      <UIGArcadeControls client:only="react" />
       <slot />
     </main>
 
