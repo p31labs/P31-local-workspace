@@ -16,7 +16,7 @@ import { createInitialTeamState, generateRoster, generateRotation, applyTraining
 import { createMulberry32 } from '../../engine/card/rng/mulberry32.ts';
 import { getTeamNames } from '../../engine/bashball/league.ts';
 import { getSpoonStore } from '../../lib/arcade-core/spoonStore.ts';
-import { COLORS } from '../lib/arcade-core/theme.ts';
+import { COLORS } from '../../lib/arcade-core/theme.ts';
 
 type Screen =
   | { phase: 'menu' }

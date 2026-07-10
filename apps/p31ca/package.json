@@ -5,10 +5,6 @@
   "scripts": {
     "dev": "astro dev",
     "dev:tunnel": "node scripts/dev.mjs",
-    "hub:build": "node scripts/hub/build-landing-data.mjs",
-    "hub:verify": "node scripts/hub/verify.mjs",
-    "hub:diff": "node scripts/verify-ground-truth.mjs && node scripts/verify-worker-spa-launch.mjs && node scripts/hub/diff-index-sources.mjs",
-    "hub:sync": "node scripts/hub/build-landing-data.mjs && node scripts/hub/verify.mjs",
     "hub:about:generate": "node scripts/generate-about-pages.mjs",
     "verify": "npm run passport:verify && npm run build",
     "ci": "npm run verify",
@@ -43,9 +39,9 @@
     "verify:live-fleet-mesh": "node scripts/verify-live-fleet-mesh.mjs",
     "build:fleet-entities": "node scripts/build-fleet-entities.mjs",
     "verify:fleet-entities": "node scripts/verify-fleet-entities.mjs",
-    "prebuild": "node scripts/ops/ingest-glass-probes.mjs && node scripts/verify-p31-style.mjs && node scripts/verify-style-alignment.mjs && node scripts/verify-surface-canon.mjs && node scripts/build-fleet-entities.mjs && node scripts/verify-fleet-entities.mjs && node scripts/verify-ground-truth.mjs && node scripts/verify-worker-spa-launch.mjs && node scripts/verify-live-fleet-mesh.mjs && node scripts/verify-super-centaur-pack.mjs && node scripts/verify-synergetic.mjs && node scripts/verify-lattice-oracle.mjs && node scripts/verify-oqe-icosa.mjs && node scripts/verify-creator-economy.mjs && node scripts/verify-garden-zone-8b.mjs && node scripts/verify-geodesic-campaign.mjs && node scripts/verify-geodesic-room-wire.mjs && node scripts/verify-geodesic-build-snapshot.mjs && npm run verify:registry-urls && npm run verify:public-app-shell && npm run verify:delta-hiring && node scripts/verify-education.mjs && node scripts/hub/build-landing-data.mjs && node scripts/hub/verify.mjs && node scripts/hub/diff-index-sources.mjs",
+    "prebuild": "npm run prebuild:write && npm run prebuild:verify",
     "build": "astro build",
-    "postbuild": "node scripts/verify-p31ca-dist.mjs && node scripts/verify-internal-hub-links.mjs",
+    "postbuild": "npm run postbuild:verify",
     "passport:verify": "node scripts/verify-passport.mjs",
     "passport:sync": "node ../../../scripts/sync-passport-to-p31ca.mjs",
     "predeploy": "npm run verify",
@@ -70,7 +66,11 @@
     "security:crypto": "node scripts/security/verify-crypto-surface.mjs",
     "security:lint": "eslint src/ workers/ --ext .ts,.js --config eslint.config.security.mjs 2>/dev/null || true",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "prebuild:write": "node scripts/ops/ingest-glass-probes.mjs && node scripts/build-fleet-entities.mjs",
+    "prebuild:verify": "node scripts/verify-p31-style.mjs && node scripts/verify-style-alignment.mjs && node scripts/verify-lattice-oracle.mjs && node scripts/verify-oqe-icosa.mjs && node scripts/verify-registry-app-urls.mjs && node scripts/verify-public-app-shell.mjs && node scripts/verify-delta-hiring.mjs && node scripts/verify-education.mjs",
+    "postbuild:verify": "node scripts/verify-p31ca-dist.mjs && node scripts/verify-internal-hub-links.mjs && node scripts/verify-synergetic.mjs",
+    "verify:org": "node scripts/verify-super-centaur-pack.mjs && node scripts/verify-creator-economy.mjs && node scripts/verify-garden-zone-8b.mjs && node scripts/verify-surface-canon.mjs && node scripts/verify-fleet-entities.mjs && node scripts/verify-live-fleet-mesh.mjs && node scripts/verify-worker-spa-launch.mjs && node scripts/verify-ground-truth.mjs && node scripts/verify-geodesic-room-wire.mjs"
   },
   "dependencies": {
     "@astrojs/react": "^5.0.4",

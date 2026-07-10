@@ -381,7 +381,7 @@ export const registry = [
   {
     id: 'larmor', title: 'LARMOR', tagline: '863 Hz Somatic Regulation',
     icon: '╯', accent: '#cda852', status: 'live', statusLabel: 'DEPLOYED',
-    appUrl: 'larmor.html',
+    appUrl: 'larmor-about.html',
     tech: ['Web Audio API', '863 Hz Oscillator', 'Vibration API', '4-4-6 Breathwork'],
     features: [
       '863 Hz pure tone via Web Audio API OscillatorNode — no audio file to download',

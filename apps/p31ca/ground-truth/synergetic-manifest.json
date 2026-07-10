@@ -12,14 +12,6 @@
        "note": "Three.js imported via npm (dome-cockpit.ts). CDN importmap removed Phase 3 — version locked in package.json.",
        "status": "LIVE"
      },
-    {
-      "id": "spaceship-earth-pwa",
-      "type": "pwa",
-      "path": "../spaceship-earth/package.json",
-      "threeDependency": "^0.159.0",
-      "status": "LIVE",
-      "roomId": "observatory"
-    },
      {
        "id": "geodesic-math-astro",
        "type": "astro",

@@ -206,7 +206,10 @@ if (errors.length) {
   for (const e of errors) {
     console.error(`  ${e.file}: broken ${e.kind} "${e.raw}" → ${e.resolved}`);
   }
-  // Temporarily warn instead of fail due to archived concept products
+  if (process.argv.includes("--strict")) {
+    console.error(`verify-internal-hub-links: FAIL — ${errors.length} broken same-origin pointer(s)`);
+    process.exit(1);
+  }
   console.warn(`verify-internal-hub-links: WARNING — ${errors.length} broken same-origin pointer(s) (archived concept products)`);
 }
 
