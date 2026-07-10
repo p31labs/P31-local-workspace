@@ -55,7 +55,7 @@ P31 Labs is a Georgia 501(c)(3) nonprofit (EIN 42-1888158) building open-source 
 
 ## Contact
 
-William R. Johnson | will@p31ca.org | (912) 227-4980
+William R. Johnson | will@p31ca.org | (904) 684-9491
 P31 Labs, Inc. | https://phosphorus31.org | https://github.com/p31labs
 
 ---
