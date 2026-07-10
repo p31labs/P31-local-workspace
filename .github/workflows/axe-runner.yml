@@ -1,0 +1,41 @@
+# Non-blocking WCAG 2.2 AAA axe-core audit (Playwright + @axe-core/playwright).
+# Wires scripts/audit-wcag.mjs into CI without failing the pipeline.
+
+name: WCAG axe audit
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: axe-runner-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  axe-audit:
+    name: axe-core WCAG audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Enable pnpm (corepack)
+        run: corepack enable
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Run axe-core WCAG audit (non-blocking)
+        continue-on-error: true
+        run: node scripts/audit-wcag.mjs https://phos.p31ca.org

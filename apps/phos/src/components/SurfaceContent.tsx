@@ -1,4 +1,6 @@
 import React, { Suspense, lazy } from 'react';
+import { UIGSurface } from './UIGSurface';
+import { generatePhosInterface, phosRoleFromIdentity, samplePhosViewData } from '../lib/uig';
 import { DashboardSurface } from '../surfaces/DashboardSurface';
 import { GreetingSurface } from '../surfaces/GreetingSurface';
 import { IgnitionSurface } from '../surfaces/IgnitionSurface';
@@ -145,6 +147,16 @@ export function SurfaceContent({ currentSurface, setSurface, spoons, isGuest }: 
           <WarehouseSurface spoons={spoons} />
         </Suspense>
       );
+
+    // UIG (additive): ADAPTIVE is rendered through the InterfaceRenderer /
+    // UIGSurface adaptive shell, including the CrisisOverlay at spoons 0.
+    // Existing component-mode surfaces above remain on the unchanged switch.
+    case 'ADAPTIVE': {
+      const role = phosRoleFromIdentity();
+      const viewData = samplePhosViewData('DASHBOARD');
+      const description = generatePhosInterface('ADAPTIVE', { spoons, role, viewData });
+      return <UIGSurface description={description} surfaceId="ADAPTIVE" spoons={spoons} viewData={viewData} />;
+    }
 
     default:
       return (

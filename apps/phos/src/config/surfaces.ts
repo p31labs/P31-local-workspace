@@ -9,6 +9,7 @@ export interface SurfaceNavItem {
 export const SURFACE_NAV: SurfaceNavItem[] = [
   { id: 'CHAT', label: 'Gateway', icon: '✨', group: 'primary' },
   { id: 'DASHBOARD', label: 'Dashboard', icon: '⊞', group: 'primary' },
+  { id: 'ADAPTIVE', label: 'Adaptive', icon: '❋', group: 'primary' },
   { id: 'QUANTUM_BRAIN_DUMP', label: 'Brain Dump', icon: '🧠', group: 'primary' },
   { id: 'THE_BUFFER', label: 'Buffer', icon: '✎', group: 'primary' },
   { id: 'ARCHIVE', label: 'Archive', icon: '⚯', group: 'primary' },

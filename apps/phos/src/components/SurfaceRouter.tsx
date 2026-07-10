@@ -6,6 +6,7 @@ import PHOSWorkspace from './PHOSWorkspace';
 const SURFACE_PATHS: Record<string, string> = {
   CHAT: '/',
   DASHBOARD: '/dashboard',
+  ADAPTIVE: '/adaptive',
   QUANTUM_BRAIN_DUMP: '/brain-dump',
   THE_BUFFER: '/buffer',
   ARCHIVE: '/archive',

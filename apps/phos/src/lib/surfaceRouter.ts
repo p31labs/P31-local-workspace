@@ -4,6 +4,7 @@ const SURFACE_PATH_MAP: Record<string, string> = {
   '': 'CHAT',
   'chat': 'CHAT',
   'dashboard': 'DASHBOARD',
+  'adaptive': 'ADAPTIVE',
   'brain-dump': 'QUANTUM_BRAIN_DUMP',
   'buffer': 'THE_BUFFER',
   'archive': 'ARCHIVE',
