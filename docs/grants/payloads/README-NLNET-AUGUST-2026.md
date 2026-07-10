@@ -4,8 +4,8 @@
 
 | Proposal | Fund | Amount | File |
 |----------|------|--------|------|
-| PHOS-Sovereign | NGI Fediversity, 11th Open Call | €25,000 | `PHOS-SOVEREIGN-FINAL.md` |
-| LOVE-Ledger | NGI TALER, 13th Open Call | €15,000 | `LOVE-LEDGER-FINAL.md` |
+| PHOS-Sovereign | NGI Fediversity, 12th Open Call | €25,000 | `PHOS-SOVEREIGN-FINAL.md` |
+| LOVE-Ledger | NGI TALER, 14th Open Call | €15,000 | `LOVE-LEDGER-FINAL.md` |
 | **Total** | | **€40,000** | |
 
 ## Supporting Documents
@@ -39,5 +39,5 @@
 | Health score | 16/20 | andromeda/software/verify.sh |
 | Zenodo papers | 22 | P31-ZENODO-PUBLICATION-REGISTRY.md |
 | EIN | 42-1888158 | CP 575E on file |
-| 501(c)(3) | Determined May 4, 2026 | IRS determination letter |
+| 501(c)(3) | Application pending (GA nonprofit incorporated May 4, 2026) | IRS letter awaited; annual filing due |
 | FDA classification | None (general wellness, pre-market) | docs/GOD_GROUND_TRUTH.md |

@@ -1,7 +1,7 @@
 # Paper XII — The Sovereign Stack: Open-Source Hardware–Software Architecture for Neurodivergent Assistive Technology (v2 DRAFT)
 
 **Authors:** William R. Johnson (ORCID 0009-0002-2492-9079)
-**Affiliation:** P31 Labs, Inc. — 501(c)(3) tax-exempt Georgia Domestic Nonprofit (EIN 42-1888158)
+**Affiliation:** P31 Labs, Inc. — Georgia Domestic Nonprofit corporation (incorporated May 4, 2026), 501(c)(3) application pending (EIN 42-1888158)
 **Series:** P31 Labs Research Series, Paper XII
 **Resource type:** Working paper
 **License:** Creative Commons Attribution 4.0 International (CC-BY-4.0)

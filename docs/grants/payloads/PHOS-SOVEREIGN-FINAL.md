@@ -1,10 +1,10 @@
 # PHOS-Sovereign: Cognitive Portability Through Edge-Native Mesh Federation
 
-**Call:** NGI Fediversity, 11th Open Call
+**Call:** NGI Fediversity, 12th Open Call
 **Requested:** €25,000
 **Duration:** 9 months
 **License:** AGPL-3.0 (software), CC-BY-4.0 (documentation)
-**Organization:** P31 Labs, Inc. — 501(c)(3) tax-exempt Georgia Domestic Nonprofit (EIN 42-1888158)
+**Organization:** P31 Labs, Inc. — Georgia Domestic Nonprofit corporation (incorporated May 4, 2026), 501(c)(3) application pending (EIN 42-1888158)
 
 ## Abstract
 

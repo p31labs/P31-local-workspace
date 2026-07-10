@@ -51,7 +51,7 @@ With $5,000 from Stimpunks, we will:
 
 ## About P31 Labs
 
-P31 Labs is a Georgia 501(c)(3) nonprofit (EIN 42-1888158) building open-source assistive technology for neurodivergent individuals. Our founder, William R. Johnson, is an autistic/ADHD electrical engineer and father of two. Our products include BONDING (molecular chemistry game, shipped), PHOS OS (22-surface cognitive operating system, deployed), and Genesis Gate (telemetry orchestrator). All are open source.
+P31 Labs is a Georgia nonprofit corporation (incorporated May 4, 2026) with a pending 501(c)(3) application (EIN 42-1888158) building open-source assistive technology for neurodivergent individuals. Our founder, William R. Johnson, is an autistic/ADHD electrical engineer and father of two. Our products include BONDING (molecular chemistry game, shipped), PHOS OS (22-surface cognitive operating system, deployed), and Genesis Gate (telemetry orchestrator). All are open source.
 
 ## Contact
 

@@ -1,10 +1,10 @@
 # L.O.V.E.-Ledger: Zero-Knowledge Micro-Payments for the Invisible Care Economy
 
-**Call:** NGI TALER, 13th Open Call
+**Call:** NGI TALER, 14th Open Call
 **Requested:** €15,000
 **Duration:** 9 months
 **License:** AGPL-3.0 (software), CC-BY-4.0 (documentation)
-**Organization:** P31 Labs, Inc. — 501(c)(3) tax-exempt Georgia Domestic Nonprofit (EIN 42-1888158)
+**Organization:** P31 Labs, Inc. — Georgia Domestic Nonprofit corporation (incorporated May 4, 2026), 501(c)(3) application pending (EIN 42-1888158)
 
 ## Abstract
 
@@ -24,7 +24,7 @@ Existing care compensation runs through PayPal/Ko-fi (full financial surveillanc
 
 ## Significant Technical Challenges
 
-1. **Operating a Taler merchant backend without becoming a money transmitter** — P31 is a 501(c)(3) nonprofit; the Taler integration is structured as a care-grant/donation path, not a commercial exchange. Legal review in progress.
+1. **Operating a Taler merchant backend without becoming a money transmitter** — P31 is a Georgia nonprofit with a pending 501(c)(3) application; the Taler integration is structured as a care-grant/donation path, not a commercial exchange. Legal review in progress.
 2. **Bridging Taler to a local-first, often-offline PHOS mesh** — the LOVE-Ledger worker (`love-ledger.p31ca.org`) acts as the Taler merchant adapter, caching transactions and syncing when connectivity returns.
 3. **Reconciling Taler's merchant transparency with family-perimeter privacy** — Taler merchants see amount/date but not payer identity; the LOVE-Ledger hash-chain layer proves care occurred without exposing its emotional content.
 4. **'Send LOVE' UX at spoon-level 0** — the Cognitive Passport engine adapts UI by spoon level; at spoon 0 it reduces to a single zero-friction "Send LOVE" button.

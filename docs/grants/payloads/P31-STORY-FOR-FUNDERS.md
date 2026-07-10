@@ -6,7 +6,7 @@ Modern assistive technology has abandoned the people it was built to protect. Fo
 
 ## The Sovereign Solution
 
-P31 Labs, Inc. — a 501(c)(3) tax-exempt Georgia Domestic Nonprofit (EIN 42-1888158) — rejects this paradigm. We design, build, and deploy an open-source, non-custodial, surveillance-free "Sovereign Stack." This infrastructure returns digital autonomy to families as a basic civil right. It operates strictly as a general wellness and communication support platform within pre-market, non-clinical parameters, ensuring cognitive prosthetics remain functional even if cloud connectivity is severed.
+P31 Labs, Inc. — a Georgia Domestic Nonprofit corporation (incorporated May 4, 2026) with a pending 501(c)(3) application (EIN 42-1888158) — rejects this paradigm. We design, build, and deploy an open-source, non-custodial, surveillance-free "Sovereign Stack." This infrastructure returns digital autonomy to families as a basic civil right. It operates strictly as a general wellness and communication support platform within pre-market, non-clinical parameters, ensuring cognitive prosthetics remain functional even if cloud connectivity is severed.
 
 ## Lived-Experience Grounding
 
@@ -29,4 +29,4 @@ We are seeking **[Grant Specific Ask]** to fund the non-proprietary R&D, documen
 
 ---
 
-P31 Labs, Inc. | 501(c)(3) Tax-Exempt | EIN 42-1888158
+P31 Labs, Inc. | 501(c)(3) application pending | EIN 42-1888158

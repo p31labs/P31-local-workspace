@@ -1,68 +1,46 @@
-# NGI Zero Commons Fund — Submission Checklist
+# NGI TALER + NGI Fediversity — Submission Checklist (August 1, 2026)
 
-**Program:** NGI Zero Commons Fund (13th Call)
-**Deadline:** June 1, 2026, 12:00 CEST
-**Project:** K4-Mesh-Core: Open Standard for Sovereign Peer-to-Peer Mesh Networks
-**Requested:** €35,000 EUR
-**P31 Labs, Inc. | EIN 42-1888158**
+**Deadline:** August 1, 2026, 12:00 CEST
+**Portal:** https://nlnet.nl/propose/
+**Organization:** P31 Labs, Inc. — Georgia Domestic Nonprofit corporation (incorporated May 4, 2026), 501(c)(3) application pending (EIN 42-1888158)
 
----
-
-## Eligibility Checklist
-
-- [x] **Open source commitment:** All results under MIT/Apache-2.0 license
-- [x] **Free software:** Protocol specification libre, no proprietary dependencies
-- [x] **Internet contribution:** Advances P2P mesh networking as internet commons infrastructure
-- [x] **Full-stack coverage:** RF physical layer → routing protocol → reference implementation
-- [x] **Permissionless innovation:** Any developer can build compliant implementations
-- [x] **Recognized license:** MIT/Apache-2.0 dual-licensed
-
-## Application Form Requirements
-
-- [x] **Project name:** K4-Mesh-Core
-- [x] **Requested budget:** €35,000 (within €5K–€50K range)
-- [x] **Duration:** 9 months (within 6–12 month standard)
-- [x] **Contact:** William R. Johnson, will@p31ca.org, ORCID 0009-0002-2492-9079
-- [x] **Repository:** https://github.com/p31labs/andromeda
-- [x] **Public demo:** https://phos-btn.pages.dev
-
-## Verification URLs
-
-| Resource | URL |
-|----------|-----|
-| PHOS demo | https://phos-btn.pages.dev |
-| PHOS API | https://phos-api.trimtab-signal.workers.dev |
-| k4-agent-hub | Planned — mesh protocol reference worker (in development) |
-| Zenodo papers | https://zenodo.org/search?q=creators.name:%22Johnson%2C%20William%20R.%22 |
-| Institutional site | https://phosphorus31.org |
-| GitHub org | https://github.com/p31labs |
-| ORCID | https://orcid.org/0009-0002-2492-9079 |
-
-## NGI Commons Alignment
-
-| NGI Commons Principle | K4-Mesh-Core Implementation |
-|----------------------|----------------------------|
-| Open & Free | MIT/Apache-2 licensed protocol specification |
-| Privacy-Respecting | Zero-knowledge routing, no persistent identifiers |
-| Secure by Design | Mutual TLS 1.3, forward secrecy |
-| Decentralized | True P2P, no central authorities |
-| Interoperable | Well-defined API, multiple implementations |
-| Sustainable | Ultra-low-power, battery/renewable operation |
-| Transparent | Public GitHub, open issues, community governance |
-
-## Pre-Submission Verification
-
-- [x] Proposal addresses NGI Zero Commons goals
-- [x] Budget within range (€5K–€50K)
-- [x] Timeline realistic (9 months, 3 phases)
-- [x] Deliverables are verifiable
-- [x] License specified (MIT/Apache-2.0)
-- [x] All URLs verified live
-- [ ] **SUBMIT via NLnet portal before June 1, 12:00 CEST**
-
-## Generative AI Disclosure
-
-This proposal was drafted with the assistance of Kilo (openrouter/owl-alpha), an AI code assistant. GenAI was used for document structuring, formatting, and drafting. All technical content was directed and reviewed by William R. Johnson based on P31 Labs' existing deployed infrastructure. A full prompt provenance log is maintained at `docs/grants/prompt-provenance-log.md`.
+Only NGI TALER and NGI Fediversity are open; all other NGI Zero calls are paused for the "Open Internet Stack" transition.
 
 ---
-*Generated: May 31, 2026 | Submission package v2.0*
+
+## Proposals
+
+| Proposal | Fund (select in form) | Call | Amount | Source file |
+|----------|----------------------|------|--------|-------------|
+| **LOVE-Ledger** | NGI TALER | 14th Open Call | €15,000 | `LOVE-LEDGER-FINAL.md` |
+| **PHOS-Sovereign** | NGI Fediversity | 12th Open Call | €25,000 | `PHOS-SOVEREIGN-FINAL.md` |
+
+## Form fields → paste source
+
+- **Call topic:** NGI TALER / NGI Fediversity (exact — do not swap).
+- **Contact:** William R. Johnson · will@p31ca.org · org *P31 Labs, Inc.* · EIN 42-1888158 · country US.
+- **Proposal name / website:** proposal title; link `https://p31ca.org` (repo `github.com/p31labs/P31-local-workspace`).
+- **Abstract:** paste from the `-FINAL.md` (whole project + expected outcomes).
+- **Prior involvement:** deployed P31 infra (love-ledger worker, arcade, MCP servers).
+- **Requested amount:** €15,000 / €25,000.
+- **Budget use + task breakdown w/ rates:** paste budget table from `-FINAL.md`.
+- **Compare / Challenges / Ecosystem:** paste verbatim from `-FINAL.md`.
+- **Attachments (≤50 MB, HTML/PDF/ODT/txt):** upload the `-FINAL.md` (or its PDF) + `Paper_XII_v2.pdf` as supporting evidence.
+
+## 🧠 GenAI + CPU disclosure (mandatory)
+
+> This proposal was drafted with assistance from an AI coding assistant (Kilo / OpenRouter). GenAI was used for structuring, formatting, and drafting only. All technical content, budgets, and project plans were authored and verified by William R. Johnson against P31 Labs' deployed infrastructure. No confidential PII beyond public grant context was shared. A full prompt-provenance log is attached (`prompt-provenance-log.md`). External compute used: Cloudflare Pages/Workers hosting (existing, P31-funded) and standard LLM API access; no dedicated GPU/CPU procurement is requested under this grant.
+
+Attach `prompt-provenance-log.md` as a second attachment to satisfy the "unedited output / prompts" requirement.
+
+## ✅ Pre-submit (per proposal)
+
+- [ ] Correct call selected (TALER 14th / Fediversity 12th)
+- [ ] Amount matches (€15k / €25k)
+- [ ] Org stated as Georgia nonprofit, 501(c)(3) application pending, EIN 42-1888158
+- [ ] All 5 prose sections pasted (Abstract, Compare, Challenges, Ecosystem, Budget)
+- [ ] GenAI + CPU disclosure completed; provenance log attached
+- [ ] Submit before August 1, 12:00 CEST (don't wait — form is lightweight)
+
+---
+*Generated: July 10, 2026 | Replaces the stale K4-Mesh-Core (NGI Zero Commons, closed June 1) checklist.*
