@@ -5,7 +5,11 @@ import { generatePhosInterface, phosRoleFromIdentity, samplePhosViewData } from 
 interface UIGSurfaceProps {
   surfaceId: string;
   spoons: number;
+  // Precomputed by SurfaceContent; if omitted, regenerated from surfaceId + spoons.
+  description?: InterfaceDescription;
   viewData?: Record<string, any>;
+  // Component-mode surfaces render their existing UI inside the adaptive shell.
+  children?: React.ReactNode;
 }
 
 const DENSITY_PAD: Record<string, string> = {
@@ -201,28 +205,29 @@ function CrisisOverlay() {
   );
 }
 
-export function UIGSurface({ surfaceId, spoons, viewData }: UIGSurfaceProps) {
+export function UIGSurface({ surfaceId, spoons, description, viewData, children }: UIGSurfaceProps) {
   const role = phosRoleFromIdentity();
   const data = viewData ?? samplePhosViewData(surfaceId);
-  const description: InterfaceDescription = generatePhosInterface(surfaceId, { spoons, role, viewData: data });
+  const desc: InterfaceDescription =
+    description ?? generatePhosInterface(surfaceId, { spoons, role, viewData: data });
 
-  if (description.crisisMode) return <CrisisOverlay />;
+  if (desc.crisisMode) return <CrisisOverlay />;
 
-  const gap = DENSITY_GAP[description.density] ?? DENSITY_GAP.moderate;
+  const gap = DENSITY_GAP[desc.density] ?? DENSITY_GAP.moderate;
   return (
     <div className="h-full overflow-auto">
       <div className="text-[10px] uppercase tracking-widest opacity-40 mb-3">
-        Adaptive · {role} · spoons {spoons} · {description.layout}
+        Adaptive · {role} · spoons {spoons} · {desc.layout}
       </div>
-      <div className={layoutClass(description.layout, gap)}>
-        {description.widgets.map((w) => (
+      <div className={layoutClass(desc.layout, gap)}>
+        {children ?? desc.widgets.map((w) => (
           <React.Fragment key={w.id}>{renderWidget(w, data)}</React.Fragment>
         ))}
       </div>
-      {description.nextStep && (
+      {desc.nextStep && (
         <div className="phos-pill mt-4 inline-flex items-center gap-2 text-sm px-4 py-2">
           <span className="opacity-60">Next:</span>
-          <span style={{ color: 'var(--phos-accent)' }}>{description.nextStep.label}</span>
+          <span style={{ color: 'var(--phos-accent)' }}>{desc.nextStep.label}</span>
         </div>
       )}
     </div>

@@ -1,41 +1,7 @@
-import React, { Suspense, lazy } from 'react';
-import { DashboardSurface } from '../surfaces/DashboardSurface';
+import React, { Suspense } from 'react';
 import { UIGSurface } from './UIGSurface';
-import { GreetingSurface } from '../surfaces/GreetingSurface';
-import { IgnitionSurface } from '../surfaces/IgnitionSurface';
-import { BondingSurface } from '../surfaces/BondingSurface';
-import { CompassSurface } from '../surfaces/CompassSurface';
-import { SettingsSurface } from '../surfaces/SettingsSurface';
-import { RetroVaultSurface } from '../surfaces/RetroVaultSurface';
-import { LedgerSurface } from '../surfaces/LedgerSurface';
-import { OpenLedgerSurface } from '../surfaces/OpenLedgerSurface';
-import { NodeZeroSurface } from '../surfaces/NodeZeroSurface';
-import { HearthSurface } from '../surfaces/HearthSurface';
-import { DisputeSurface } from '../surfaces/DisputeSurface';
-import { SanctuarySurface } from '../surfaces/SanctuarySurface';
-import { AttestSurface } from '../surfaces/AttestSurface';
-import { QuantumBrainDumpSurface } from '../surfaces/QuantumBrainDumpSurface';
-import { ArchiveSurface } from '../surfaces/ArchiveSurface';
-import { BarterMarketplace } from '../surfaces/BarterMarketplace';
-import { GovernanceSurface } from '../surfaces/GovernanceSurface';
-import { FeedbackSurface } from '../surfaces/FeedbackSurface';
-import { PassportSurface } from '../surfaces/PassportSurface';
-
-const ArcadeSurface = lazy(() =>
-  import('../surfaces/ArcadeSurface').then(m => ({ default: m.ArcadeSurface }))
-);
-const ChaosIngest = lazy(() =>
-  import('../surfaces/ChaosIngest').then(m => ({ default: m.ChaosIngest }))
-);
-const ConnectionGridSurface = lazy(() =>
-  import('../surfaces/ConnectionGridSurface').then(m => ({ default: m.ConnectionGridSurface }))
-);
-const ShakeStream = lazy(() =>
-  import('../surfaces/ShakeStream').then(m => ({ default: m.ShakeStream }))
-);
-const WarehouseSurface = lazy(() =>
-  import('../surfaces/WarehouseSurface').then(m => ({ default: m.WarehouseSurface }))
-);
+import { generatePhosInterface, phosRoleFromIdentity, samplePhosViewData } from '../lib/uig';
+import { getSurfaceEntry } from '../lib/uigViews';
 
 function SurfaceSkeleton() {
   return (
@@ -53,111 +19,30 @@ interface SurfaceProps {
   isGuest?: boolean;
 }
 
-export function SurfaceContent({ currentSurface, setSurface, spoons, isGuest }: SurfaceProps) {
-  switch (currentSurface) {
-    case 'CHAT':
-      return null;
-    case 'QUANTUM_BRAIN_DUMP':
-      return <QuantumBrainDumpSurface />;
+// Data-driven dispatch: the previous 27-case switch is replaced by SURFACE_REGISTRY.
+// Every surface flows through generatePhosInterface → UIGSurface (adaptive shell,
+// crisis overlay at spoons 0). Widget-mode surfaces render UIG widgets; component-mode
+// surfaces keep their existing UI inside the adaptive shell.
+export function SurfaceContent({ currentSurface, spoons }: SurfaceProps) {
+  const role = phosRoleFromIdentity();
+  const entry = getSurfaceEntry(currentSurface);
+  if (!entry || entry.mode === 'none') return null;
 
-    case 'DASHBOARD':
-      return <DashboardSurface onNavigate={setSurface} />;
+  const viewData = entry.viewData ? entry.viewData(spoons, role) : samplePhosViewData(currentSurface);
+  const description = generatePhosInterface(currentSurface, { spoons, role, viewData });
 
-    case 'GREETING':
-      return <GreetingSurface />;
+  const body =
+    entry.mode === 'component' && entry.Component ? (
+      <Suspense fallback={<SurfaceSkeleton />}>
+        <entry.Component />
+      </Suspense>
+    ) : null;
 
-    case 'IGNITION':
-      return <IgnitionSurface />;
-
-    case 'BONDING':
-      return <BondingSurface />;
-
-    case 'COMPASS':
-      return <CompassSurface />;
-
-    case 'SETTINGS':
-      return <SettingsSurface />;
-
-    case 'THE_BUFFER':
-      return (
-        <Suspense fallback={<SurfaceSkeleton />}>
-          <ChaosIngest />
-        </Suspense>
-      );
-
-    case 'VAULT':
-      return <RetroVaultSurface spoons={spoons} />;
-
-    case 'GRID':
-      return (
-        <Suspense fallback={<SurfaceSkeleton />}>
-          <ConnectionGridSurface spoons={spoons} />
-        </Suspense>
-      );
-
-    case 'NODE_ZERO':
-      return <NodeZeroSurface theme={undefined} spoons={spoons} />;
-
-    case 'LEDGER':
-    case 'LOVE':
-      return <LedgerSurface />;
-
-    case 'OPEN_LEDGER':
-      return <OpenLedgerSurface spoons={spoons} />;
-
-    case 'DISPUTE':
-      return <DisputeSurface />;
-
-    case 'SANCTUARY':
-      return <SanctuarySurface spoons={spoons} />;
-
-    case 'ATTEST':
-    case 'ATTESTATION':
-      return <AttestSurface spoons={spoons} />;
-
-    case 'HEARTH':
-      return <HearthSurface spoons={spoons} />;
-
-    case 'ARCADE':
-      return (
-        <Suspense fallback={<SurfaceSkeleton />}>
-          <ArcadeSurface spoons={spoons} />
-        </Suspense>
-      );
-
-    case 'ARCHIVE':
-      return <ArchiveSurface spoons={spoons} />;
-
-    case 'BARTER':
-      return <BarterMarketplace />;
-
-    case 'GOVERNANCE':
-      return <GovernanceSurface />;
-
-    case 'PASSPORT':
-      return <PassportSurface />;
-
-    case 'ADAPTIVE':
-      return <UIGSurface surfaceId="DASHBOARD" spoons={spoons} />;
-
-    case 'FEEDBACK':
-      return <FeedbackSurface isGuest={isGuest} spoons={spoons} />;
-
-    case 'WAREHOUSE':
-      return (
-        <Suspense fallback={<SurfaceSkeleton />}>
-          <WarehouseSurface spoons={spoons} />
-        </Suspense>
-      );
-
-    default:
-      return (
-        <div className="flex items-center justify-center h-full">
-          <div className="text-center">
-            <div className="text-xs font-mono opacity-30">ERR_SURFACE_NOT_BOUND</div>
-            <div className="text-[10px] font-mono opacity-20 mt-1">{currentSurface}</div>
-          </div>
-        </div>
-      );
-  }
+  return (
+    <UIGSurface description={description} surfaceId={currentSurface} spoons={spoons} viewData={viewData}>
+      {body}
+    </UIGSurface>
+  );
 }
+
+export default SurfaceContent;
