@@ -60,8 +60,27 @@ const initialSpoonColor = SPOON_LEVEL_COLORS[initialSpoonLevel] ?? COLORS.teal;
 
     <ClientRouter />
 
+    <!-- Theme Engine (load order is load-bearing) -->
+    <script type="module" src="/lib/p31-theme-engine.mjs"></script>
+    <script type="module" src="/lib/p31-theme-switcher.mjs"></script>
+
     <style is:inline>
       :root {
+        /* ===== Theme Engine base tokens (fallbacks; p31-theme-engine.mjs overrides via inline style) ===== */
+        --p31-coral: #{COLORS.rust};
+        --p31-butter: #{COLORS.gold};
+        --p31-lavender: #{COLORS.purple};
+        --p31-phosphorus: #{COLORS.green};
+        --p31-cyan: #{COLORS.teal};
+        --p31-phosphor: #00ff88;
+        --p31-surface: #{COLORS.voidLighter};
+        --p31-surface2: #1c2028;
+        --p31-surface3: #232830;
+        --p31-paper: #f4f4f5;
+        --p31-ink: #1e293b;
+        --p31-muted: #6b7280;
+
+        /* ===== Arcade game colors — aliased to Theme Engine tokens for runtime switching ===== */
         --p31-void: #{COLORS.void};
         --p31-void-lighter: #{COLORS.voidLighter};
         --p31-deep-void: #{COLORS.deepVoid};
@@ -83,21 +102,21 @@ const initialSpoonColor = SPOON_LEVEL_COLORS[initialSpoonLevel] ?? COLORS.teal;
         --p31-white-4: #{COLORS.white4};
         --p31-white-3: #{COLORS.white3};
         --p31-white-2: #{COLORS.white2};
-        --p31-teal: #{COLORS.teal};
+        --p31-teal: var(--p31-cyan);
         --p31-teal-dim: #{COLORS.tealDim};
-        --p31-gold: #{COLORS.gold};
+        --p31-gold: var(--p31-butter);
         --p31-gold-dim: #{COLORS.goldDim};
         --p31-gold-border: #{COLORS.goldBorder};
-        --p31-rust: #{COLORS.rust};
+        --p31-rust: var(--p31-coral);
         --p31-rust-dim: #{COLORS.rustDim};
         --p31-rust-border: #{COLORS.rustBorder};
-        --p31-purple: #{COLORS.purple};
+        --p31-purple: var(--p31-lavender);
         --p31-purple-dim: #{COLORS.purpleDim};
         --p31-purple-border: #{COLORS.purpleBorder};
-        --p31-green: #{COLORS.green};
+        --p31-green: var(--p31-phosphorus);
         --p31-green-dim: #{COLORS.greenDim};
         --p31-green-border: #{COLORS.greenBorder};
-        --p31-ice: #{COLORS.ice};
+        --p31-ice: var(--p31-cyan);
         --p31-card-red: #{COLORS.cardRed};
         --p31-field-green: #{COLORS.fieldGreen};
       }
@@ -132,7 +151,7 @@ const initialSpoonColor = SPOON_LEVEL_COLORS[initialSpoonLevel] ?? COLORS.teal;
         left: 0;
         right: 0;
         height: 52px;
-        background: rgba(15, 17, 21, 0.95);
+        background: color-mix(in srgb, var(--p31-void) 95%, transparent);
         border-bottom: 2px solid var(--game-color, var(--p31-teal));
         display: flex;
         align-items: center;
@@ -149,7 +168,7 @@ const initialSpoonColor = SPOON_LEVEL_COLORS[initialSpoonLevel] ?? COLORS.teal;
         gap: 6px;
         padding: 5px 10px;
         background: rgba(0,0,0,0.3);
-        border: 1px solid rgba(255,255,255,0.08);
+        border: 1px solid var(--p31-white-8);
         border-radius: 99px;
         min-width: 130px;
         flex-shrink: 0;
@@ -159,7 +178,7 @@ const initialSpoonColor = SPOON_LEVEL_COLORS[initialSpoonLevel] ?? COLORS.teal;
         flex: 1;
         height: 7px;
         border-radius: 99px;
-        background: rgba(255,255,255,0.07);
+        background: var(--p31-white-6);
         overflow: hidden;
       }
       .spoon-gauge-fill {
@@ -171,7 +190,7 @@ const initialSpoonColor = SPOON_LEVEL_COLORS[initialSpoonLevel] ?? COLORS.teal;
       .spoon-gauge-value {
         font-family: 'JetBrains Mono', monospace;
         font-size: 10px;
-        color: #e8e6e3;
+        color: var(--p31-cloud);
         font-weight: 700;
         min-width: 30px;
         text-align: right;
@@ -183,8 +202,8 @@ const initialSpoonColor = SPOON_LEVEL_COLORS[initialSpoonLevel] ?? COLORS.teal;
         top: 52px;
         left: 0;
         right: 0;
-        background: rgba(15, 17, 21, 0.98);
-        border-bottom: 1px solid rgba(255,255,255,0.08);
+        background: color-mix(in srgb, var(--p31-void) 98%, transparent);
+        border-bottom: 1px solid var(--p31-white-8);
         transform: translateY(-100%);
         transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
         z-index: 99;
@@ -210,22 +229,22 @@ const initialSpoonColor = SPOON_LEVEL_COLORS[initialSpoonLevel] ?? COLORS.teal;
         align-items: center;
         gap: 6px;
         padding: 14px 10px;
-        background: rgba(255,255,255,0.03);
+        background: var(--p31-white-3);
         border: 2px solid transparent;
         border-radius: 12px;
         text-decoration: none;
-        color: #e8e6e3;
+        color: var(--p31-cloud);
         transition: all 0.2s;
         cursor: pointer;
         position: relative;
       }
       .arcade-card:hover {
-        background: rgba(255,255,255,0.06);
+        background: var(--p31-white-6);
         border-color: var(--card-color, var(--p31-teal));
         transform: translateY(-2px);
       }
       .arcade-card.active {
-        background: rgba(77,184,168,0.12);
+        background: var(--p31-teal-dim);
         border-color: var(--card-color, var(--p31-teal));
       }
       .arcade-card-icon { font-size: 30px; line-height: 1; }
@@ -238,7 +257,7 @@ const initialSpoonColor = SPOON_LEVEL_COLORS[initialSpoonLevel] ?? COLORS.teal;
       }
       .arcade-card-desc {
         font-size: 9px;
-        color: rgba(232,230,227,0.45);
+        color: var(--p31-cloud-40);
         text-align: center;
         line-height: 1.4;
       }
@@ -254,17 +273,17 @@ const initialSpoonColor = SPOON_LEVEL_COLORS[initialSpoonLevel] ?? COLORS.teal;
         align-items: center;
         gap: 6px;
         padding: 7px 11px;
-        background: rgba(255,255,255,0.05);
-        border: 1px solid rgba(255,255,255,0.1);
+        background: var(--p31-white-5);
+        border: 1px solid var(--p31-white-10);
         border-radius: 8px;
-        color: #e8e6e3;
+        color: var(--p31-cloud);
         cursor: pointer;
         font-family: 'JetBrains Mono', monospace;
         font-size: 11px;
         transition: all 0.2s;
       }
       .arcade-toggle:hover {
-        background: rgba(255,255,255,0.1);
+        background: var(--p31-white-10);
         border-color: var(--game-color, var(--p31-teal));
       }
       .arcade-toggle[aria-expanded="true"] {
@@ -301,7 +320,7 @@ const initialSpoonColor = SPOON_LEVEL_COLORS[initialSpoonLevel] ?? COLORS.teal;
         font-family: 'JetBrains Mono', monospace;
         font-size: 11px;
       }
-      .high-score-label { color: rgba(232,230,227,0.5); text-transform: uppercase; font-size: 9px; }
+      .high-score-label { color: var(--p31-cloud-50); text-transform: uppercase; font-size: 9px; }
       .high-score-value { color: var(--p31-gold); font-weight: 700; }
 
       /* ── A11y: screen-reader-only ── */
@@ -323,7 +342,7 @@ const initialSpoonColor = SPOON_LEVEL_COLORS[initialSpoonLevel] ?? COLORS.teal;
         align-items: center;
         gap: 10px;
         text-decoration: none;
-        color: #e8e6e3;
+        color: var(--p31-cloud);
         flex-shrink: 0;
       }
       .arcade-brand-icon { font-size: 20px; }
@@ -349,17 +368,17 @@ const initialSpoonColor = SPOON_LEVEL_COLORS[initialSpoonLevel] ?? COLORS.teal;
         display: flex;
         align-items: center;
         justify-content: center;
-        background: rgba(255,255,255,0.05);
-        border: 1px solid rgba(255,255,255,0.1);
+        background: var(--p31-white-5);
+        border: 1px solid var(--p31-white-10);
         border-radius: 8px;
-        color: #e8e6e3;
+        color: var(--p31-cloud);
         cursor: pointer;
         font-size: 16px;
         transition: all 0.2s;
         text-decoration: none;
       }
       .arcade-btn:hover {
-        background: rgba(255,255,255,0.1);
+        background: var(--p31-white-10);
         border-color: var(--game-color, var(--p31-teal));
       }
 
@@ -486,9 +505,9 @@ const initialSpoonColor = SPOON_LEVEL_COLORS[initialSpoonLevel] ?? COLORS.teal;
       (function() {
         'use strict';
         const SPOON_COLORS = {
-          0:'#cc6247',1:'#cc6247',2:'#cda852',3:'#cda852',
-          4:'#4db8a8',5:'#4db8a8',6:'#4db8a8',7:'#4db8a8',
-          8:'#3ba372',9:'#3ba372',10:'#3ba372',11:'#3ba372',12:'#3ba372'
+          0:'var(--p31-coral)',1:'var(--p31-coral)',2:'var(--p31-butter)',3:'var(--p31-butter)',
+          4:'var(--p31-cyan)',5:'var(--p31-cyan)',6:'var(--p31-cyan)',7:'var(--p31-cyan)',
+          8:'var(--p31-phosphorus)',9:'var(--p31-phosphorus)',10:'var(--p31-phosphorus)',11:'var(--p31-phosphorus)',12:'var(--p31-phosphorus)'
         };
 
         // Game selector toggle
@@ -542,7 +561,7 @@ const initialSpoonColor = SPOON_LEVEL_COLORS[initialSpoonLevel] ?? COLORS.teal;
         function updateSpoonGauge(level) {
           const lvl = Math.max(0, Math.min(12, Number(level) || 4));
           const pct = (lvl / 12) * 100;
-          const color = SPOON_COLORS[lvl] || '#4db8a8';
+          const color = SPOON_COLORS[lvl] || 'var(--p31-cyan)';
           if (spoonFill) {
             spoonFill.style.width = pct + '%';
             spoonFill.style.background = color;
