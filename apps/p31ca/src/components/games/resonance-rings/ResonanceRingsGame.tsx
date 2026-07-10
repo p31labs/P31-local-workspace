@@ -2,12 +2,14 @@ import { useRef, useEffect, useState, useCallback } from 'react';
 import { Ring } from '../../../engine/resonance-rings/types.ts';
 import { createRing, updateRings } from '../../../engine/resonance-rings/simulation.ts';
 import { COLORS } from '../../../lib/arcade-core/theme.ts';
-import { readThemeColors } from '../../../lib/arcade-core/cssVars.ts';
+import { readThemeColors, motionFactor } from '../../../lib/arcade-core/cssVars.ts';
 
 const W = 600, H = 600;
 const RING_COLORS = ['var(--p31-teal)', 'var(--p31-gold)', 'var(--p31-rust)', 'var(--p31-purple)', 'var(--p31-green)', 'var(--p31-ice)'];
 
-export function ResonanceRingsGame() {
+export function ResonanceRingsGame({ spoonLevel = 6 }: { spoonLevel?: number }) {
+  const spoonRef = useRef(spoonLevel);
+  spoonRef.current = spoonLevel;
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const ringsRef = useRef<Ring[]>([]);
   const [color, setColor] = useState('var(--p31-teal)');
@@ -57,7 +59,10 @@ export function ResonanceRingsGame() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      ringsRef.current = updateRings(ringsRef.current);
+      const factor = motionFactor(spoonRef.current);
+      if (factor > 0) {
+        ringsRef.current = updateRings(ringsRef.current, factor);
+      }
       setRingCount(ringsRef.current.length);
       draw();
     }, 1000 / 60);

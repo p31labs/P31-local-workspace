@@ -106,3 +106,24 @@ export function readThemeColors() {
     '--p31-field-green',
   ]);
 }
+
+/**
+ * Spoon-aware motion factor — a P31 neuroinclusive invariant.
+ *
+ * Motion scales with cognitive energy (spoon level, 0–12) and is FULLY
+ * DISABLED at spoons 0–1 (crisis / rest-required state). Returns a multiplier
+ * in [0, 1] suitable for scaling animation speed, trail fade, or simulation step.
+ *
+ *   spoons 0–1 → 0      (no motion; freeze)
+ *   spoons 2–6 → 0.3→1.0 (gradual ramp)
+ *   spoons 7–12 → 1.0   (full motion)
+ */
+export function motionFactor(spoonLevel: number): number {
+  if (!spoonLevel || spoonLevel <= 1) return 0;
+  return Math.max(0.3, Math.min(1.0, spoonLevel / 6));
+}
+
+/** True when motion should be suppressed entirely (crisis / rest state). */
+export function motionDisabled(spoonLevel: number): boolean {
+  return motionFactor(spoonLevel) === 0;
+}

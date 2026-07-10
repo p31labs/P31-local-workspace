@@ -2,14 +2,16 @@ import { useRef, useEffect, useState, useCallback } from 'react';
 import { Body, OrbitalState } from '../../../engine/orbital-drift/types.ts';
 import { updateBodies, createBody } from '../../../engine/orbital-drift/physics.ts';
 import { COLORS } from '../../../lib/arcade-core/theme.ts';
-import { readThemeColors } from '../../../lib/arcade-core/cssVars.ts';
+import { readThemeColors, motionFactor } from '../../../lib/arcade-core/cssVars.ts';
 
 const W = 600, H = 600;
 const ORBITAL_COLORS = ['var(--p31-teal)', 'var(--p31-gold)', 'var(--p31-rust)', 'var(--p31-purple)', 'var(--p31-green)', 'var(--p31-ice)', 'var(--p31-cloud)'];
 
 let bodyId = 0;
 
-export function OrbitalDriftGame() {
+export function OrbitalDriftGame({ spoonLevel = 6 }: { spoonLevel?: number }) {
+  const spoonRef = useRef(spoonLevel);
+  spoonRef.current = spoonLevel;
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const stateRef = useRef<OrbitalState>({
     bodies: [], trailsOn: true, speed: 1, paused: false,
@@ -76,7 +78,9 @@ export function OrbitalDriftGame() {
   useEffect(() => {
     const interval = setInterval(() => {
       if (stateRef.current.paused) return;
-      stateRef.current.bodies = updateBodies(stateRef.current.bodies, stateRef.current.speed);
+      const factor = motionFactor(spoonRef.current);
+      if (factor <= 0) { draw(); return; }
+      stateRef.current.bodies = updateBodies(stateRef.current.bodies, stateRef.current.speed * factor);
       setBodyCount(stateRef.current.bodies.length);
       draw();
     }, 1000 / 60);

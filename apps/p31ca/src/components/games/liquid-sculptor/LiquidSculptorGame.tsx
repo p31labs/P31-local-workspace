@@ -1,14 +1,16 @@
 import { useRef, useEffect, useState, useCallback } from 'react';
 import { updateParticles, emitParticles } from '../../../engine/liquid-sculptor/simulation.ts';
 import { COLORS } from '../../../lib/arcade-core/theme.ts';
-import { readThemeColors } from '../../../lib/arcade-core/cssVars.ts';
+import { readThemeColors, motionFactor } from '../../../lib/arcade-core/cssVars.ts';
 
 const W = 500, H = 500;
 
-export function LiquidSculptorGame() {
+export function LiquidSculptorGame({ spoonLevel = 6 }: { spoonLevel?: number }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const particlesRef = useRef<ReturnType<typeof updateParticles>>([]);
   const mouseRef = useRef({ x: 0, y: 0, down: false });
+  const spoonRef = useRef(spoonLevel);
+  spoonRef.current = spoonLevel;
   const [gravity, setGravity] = useState(0.5);
   const [color, setColor] = useState('var(--p31-teal)');
   const [cw, setCw] = useState(W);
@@ -42,14 +44,17 @@ export function LiquidSculptorGame() {
 
   useEffect(() => {
     const interval = setInterval(() => {
+      const factor = motionFactor(spoonRef.current);
       const m = mouseRef.current;
-      if (m.down) {
+      if (factor > 0 && m.down) {
         particlesRef.current = [
           ...particlesRef.current,
           ...emitParticles(m.x, m.y, 3, gravity),
         ];
       }
-      particlesRef.current = updateParticles(particlesRef.current, gravity);
+      if (factor > 0) {
+        particlesRef.current = updateParticles(particlesRef.current, gravity, factor);
+      }
       draw();
     }, 1000 / 60);
     return () => clearInterval(interval);

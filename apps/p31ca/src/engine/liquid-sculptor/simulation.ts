@@ -14,12 +14,18 @@ export function createParticle(x: number, y: number, gravity: number): Particle 
   };
 }
 
-export function updateParticles(particles: Particle[], gravity: number): Particle[] {
+/**
+ * Advance all particles by one simulation step.
+ * `step` (0–1) is the spoon-aware motion factor: at 0 the particles are frozen
+ * (no movement, no life decay), at 1 they move at full speed.
+ */
+export function updateParticles(particles: Particle[], gravity: number, step = 1): Particle[] {
+  if (step <= 0) return particles;
   const updated = particles
     .map(p => {
-      let vy = p.vy + gravity * 0.3;
-      const nx = p.x + p.vx;
-      const ny = p.y + vy;
+      let vy = p.vy + gravity * 0.3 * step;
+      const nx = p.x + p.vx * step;
+      const ny = p.y + vy * step;
       let vx = p.vx;
       if (nx < 0 || nx > WIDTH) vx = -p.vx * DAMPING;
       if (ny < 0 || ny > HEIGHT) vy = -vy * DAMPING;
@@ -29,7 +35,7 @@ export function updateParticles(particles: Particle[], gravity: number): Particl
         y: Math.max(0, Math.min(HEIGHT, ny)),
         vx,
         vy,
-        life: p.life - 0.003,
+        life: p.life - 0.003 * step,
       };
     })
     .filter(p => p.life > 0);

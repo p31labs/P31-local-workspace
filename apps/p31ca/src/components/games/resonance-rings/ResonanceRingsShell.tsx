@@ -18,7 +18,7 @@ export function ResonanceRingsShell() {
           Click to create resonance rings
         </p>
       </div>
-      <ResonanceRingsGame />
+      <ResonanceRingsGame spoonLevel={engine.state.spoons} />
     </div>
   );
 }

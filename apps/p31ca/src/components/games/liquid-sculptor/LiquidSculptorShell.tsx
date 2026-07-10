@@ -18,7 +18,7 @@ export function LiquidSculptorShell() {
           Click and drag to sculpt fluid
         </p>
       </div>
-      <LiquidSculptorGame />
+      <LiquidSculptorGame spoonLevel={engine.state.spoons} />
     </div>
   );
 }

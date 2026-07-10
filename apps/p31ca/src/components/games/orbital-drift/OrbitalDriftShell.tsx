@@ -18,7 +18,7 @@ export function OrbitalDriftShell() {
           Click to place bodies — watch them orbit
         </p>
       </div>
-      <OrbitalDriftGame />
+      <OrbitalDriftGame spoonLevel={engine.state.spoons} />
     </div>
   );
 }

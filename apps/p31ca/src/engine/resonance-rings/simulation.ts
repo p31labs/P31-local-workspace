@@ -15,12 +15,18 @@ export function createRing(x: number, y: number, color: string, frequency: numbe
   };
 }
 
-export function updateRings(rings: Ring[]): Ring[] {
+/**
+ * Advance all rings by one simulation step.
+ * `step` (0–1) is the spoon-aware motion factor: at 0 the rings are frozen
+ * (no expansion, no fade), at 1 they expand at full speed.
+ */
+export function updateRings(rings: Ring[], step = 1): Ring[] {
+  if (step <= 0) return rings;
   const updated = rings
     .map(r => ({
       ...r,
-      radius: r.radius + r.frequency * 2,
-      opacity: r.opacity - 0.008 * r.frequency,
+      radius: r.radius + r.frequency * 2 * step,
+      opacity: r.opacity - 0.008 * r.frequency * step,
     }))
     .filter(r => r.opacity > 0 && r.radius < r.maxRadius);
 
