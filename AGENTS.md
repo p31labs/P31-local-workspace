@@ -245,7 +245,7 @@ These must be added at https://github.com/p31labs/P31-local-workspace/settings/s
 - Never use submarine, naval, or military metaphors.
 - Spoon-aware UI (0–5 scale via `data-spoons` attribute) mandatory for all surfaces.
 
-## WCAG 2.2 AAA Compliance (Baseline — July 2026)
+## WCAG 2.2 AAA Compliance (Roadmap — Phase 2, CWP-2026-006)
 - **Touch targets:** Target is ≥48×48px (WCAG 2.5.8 Enhanced), but current shipping is 44px (e.g. `phos/src/surfaces/PassportWizard.tsx:118`); full AAA pending.
 - **Contrast ratios:** Current contrast meets AA in places (≥4.5:1), but `text-white/30` usage on dark backgrounds is being removed; ≥7:1 AAA pending.
 - **Focus indicators:** Global `:focus-visible` outline (2px `var(--phos-primary)`, offset 2px).
