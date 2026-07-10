@@ -19,6 +19,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@p31/interface-generator": "workspace:*",
     "@p31/shared": "workspace:*",
     "@react-three/drei": "^9.0.0",
     "@react-three/fiber": "^8.0.0",

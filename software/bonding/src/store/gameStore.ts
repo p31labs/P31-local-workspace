@@ -838,7 +838,9 @@ export const useGameStore = create<GameStore>()((set, get) => ({
     // WCD-20: Broadcast celebration to peers on molecule completion
     if (complete) {
       // Dynamically import to avoid circular dep - relay lives in spaceship-earth
-      import('@p31/spaceship-earth/services/sovereignRelay').then(({ sendCelebration }) => {
+      // @vite-ignore: spaceship-earth is an optional peer package not present
+      // in every checkout; the .catch below keeps standalone mode working.
+      import(/* @vite-ignore */ '@p31/spaceship-earth/services/sovereignRelay').then(({ sendCelebration }) => {
         sendCelebration({ type: 'molecule_complete', formula });
       }).catch(() => {
         // Relay not available - no-op in standalone mode

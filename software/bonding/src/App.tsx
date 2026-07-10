@@ -24,6 +24,8 @@ import { JitterbugNavigator } from './components/Navigation/Jitterbug';
 import { CockpitLayout } from './components/hud/CockpitLayout';
 import { TopBar } from './components/hud/TopBar';
 import { CommandBar } from './components/hud/CommandBar';
+import { UIGCockpit } from './components/hud/UIGCockpit';
+import { useBondingUIG } from './lib/uig';
 import { isBirthdayOrAfter, hasSeenBoot } from './components/hud/bootHelpers';
 
 // Lazy-loaded: only fetched when their conditional render triggers
@@ -81,6 +83,7 @@ const useActions = () => useGameStore(useShallow((s) => ({
 
 function App() {
   const bondingAtmosphere = useBondingAtmosphere();
+  const uig = useBondingUIG();
 
   // Console Easter Egg - "Zero Samples" verification
   // Triggers on DevTools open - displays ASCII tetrahedron
@@ -327,6 +330,7 @@ function App() {
   };
 
   return (
+    <UIGCockpit spoons={uig.spoons} density={uig.description.density}>
     <CockpitLayout
       viewport={<MoleculeCanvas atmosphereCoherence={bondingAtmosphere.coherence} />}
       topBar={
@@ -375,13 +379,13 @@ function App() {
       <StabilityMeter />
 
       {/* JitterbugNavigator (WCD-07) — fixed bottom-right */}
-      <JitterbugNavigator />
+      {uig.description.density !== 'minimal' && <JitterbugNavigator />}
 
       {/* WCD-25: Second icon row removed. Mode emoji now lives in TopBar.
           Breathing pacer + haptic toggle accessible through Jitterbug navigator. */}
 
       {/* Quest HUD */}
-      <QuestHUD />
+      {uig.description.density !== 'minimal' && <QuestHUD />}
 
       {/* Hint text — center when no atoms */}
       {atoms.length === 0 && gamePhase !== 'complete' && (
@@ -572,6 +576,7 @@ function App() {
         </div>
       )}
     </CockpitLayout>
+    </UIGCockpit>
   );
 }
 
