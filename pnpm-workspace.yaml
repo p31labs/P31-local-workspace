@@ -18,6 +18,14 @@ packages:
   - 'software/discord/*'
   # Landing site nested under spaceship-earth
   - 'software/spaceship-earth/astro-landing'
+  # Canonical frontend apps (valid manifests only; standalone npm apps like
+  # bonding/auth/status/design-hub are intentionally excluded to preserve deploys)
+  - 'apps/phos'
+  - 'apps/p31ca'
+  - 'apps/phosphorus31'
+  - 'apps/willow'
+  - 'apps/gateway'
+  - 'apps/counterscale'
   # Repo-root satellite packages
   - 'cli'
   - 'p31labs/*'
