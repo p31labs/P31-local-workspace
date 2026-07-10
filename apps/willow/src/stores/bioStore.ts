@@ -59,7 +59,7 @@ export function recordMood(bio: BioState, mood: number): BioState {
     lastPing: Date.now(),
   };
   if (mood >= 3) {
-    updated.spoons = Math.min(6, bio.spoons + 1);
+    updated.spoons = Math.min(5, bio.spoons + 1);
   }
   return updated;
 }

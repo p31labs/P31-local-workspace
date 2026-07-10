@@ -2,14 +2,24 @@
 import Head from '../components/Head.astro';
 import Navbar from '../components/Navbar.jsx';
 import Footer from '../components/Footer.astro';
+import CrisisIsland from '../components/CrisisIsland.tsx';
 const { hideNav = false, ...headProps } = Astro.props;
 ---
 
-<html lang="en">
+<html lang="en" data-spoons="3" data-theme="quantum">
   <Head {...headProps} />
+  <script>
+    (function () {
+      var spoons = localStorage.getItem('p31:spoons') || '3';
+      var themeMap = { 0: 'crisis', 1: 'sanctuary', 2: 'sanctuary', 3: 'bridge', 4: 'quantum', 5: 'quantum' };
+      document.documentElement.setAttribute('data-spoons', spoons);
+      document.documentElement.setAttribute('data-theme', themeMap[spoons] || 'quantum');
+    })();
+  </script>
   <body class="min-h-screen flex flex-col relative selection:bg-quantum-violet selection:text-white">
     {!hideNav && <Navbar client:load />}
     <slot />
     <Footer />
+    <CrisisIsland client:load />
   </body>
 </html>

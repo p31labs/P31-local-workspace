@@ -1,5 +1,5 @@
 import React from 'react';
-import type { InterfaceDescription, Widget } from '@p31/interface-generator';
+import { CrisisOverlay, type InterfaceDescription, type Widget } from '@p31/interface-generator';
 import { generatePhosInterface, phosRoleFromIdentity, samplePhosViewData } from '../lib/uig';
 
 interface UIGSurfaceProps {
@@ -10,6 +10,9 @@ interface UIGSurfaceProps {
   viewData?: Record<string, any>;
   // Component-mode surfaces render their existing UI inside the adaptive shell.
   children?: React.ReactNode;
+  // Exit handler for the crisis overlay (Escape / "I'm ready"). Optional so
+  // existing callers keep working; wire it to lift out of crisis mode.
+  onReady?: () => void;
 }
 
 const DENSITY_PAD: Record<string, string> = {
@@ -188,30 +191,13 @@ function layoutClass(layout: string, gap: string): string {
   }
 }
 
-function CrisisOverlay() {
-  return (
-    <div className="flex flex-col items-center justify-center h-full text-center px-6">
-      <div
-        className="w-40 h-40 rounded-full border-2 mb-8"
-        style={{
-          borderColor: 'var(--phos-accent)',
-          animation: 'phos-breathe 8s ease-in-out infinite',
-        }}
-      />
-      <div className="text-lg" style={{ color: 'var(--phos-accent)' }}>Emergency Rest</div>
-      <div className="text-xs opacity-50 mt-2">Press Escape when you are ready.</div>
-      <style>{`@keyframes phos-breathe { 0%,100% { transform: scale(0.85); opacity: 0.5 } 50% { transform: scale(1.05); opacity: 1 } }`}</style>
-    </div>
-  );
-}
-
 export function UIGSurface({ surfaceId, spoons, description, viewData, children }: UIGSurfaceProps) {
   const role = phosRoleFromIdentity();
   const data = viewData ?? samplePhosViewData(surfaceId);
   const desc: InterfaceDescription =
     description ?? generatePhosInterface(surfaceId, { spoons, role, viewData: data });
 
-  if (desc.crisisMode) return <CrisisOverlay />;
+  if (desc.crisisMode) return <CrisisOverlay onReady={onReady ?? (() => {})} />;
 
   const gap = DENSITY_GAP[desc.density] ?? DENSITY_GAP.moderate;
   return (

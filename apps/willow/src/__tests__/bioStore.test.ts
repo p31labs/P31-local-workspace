@@ -180,7 +180,7 @@ describe('recordMood', () => {
 
   it('should increase spoons for mood >= 3', () => {
     const result = recordMood(DEFAULT_BIO, 3)
-    expect(result.spoons).toBe(6)
+    expect(result.spoons).toBe(5)
   })
 
   it('should not increase spoons for mood < 3', () => {
@@ -188,10 +188,10 @@ describe('recordMood', () => {
     expect(result.spoons).toBe(5)
   })
 
-  it('should cap spoons at 6', () => {
-    const bio: BioState = { ...DEFAULT_BIO, spoons: 6 }
+  it('should cap spoons at 5', () => {
+    const bio: BioState = { ...DEFAULT_BIO, spoons: 5 }
     const result = recordMood(bio, 5)
-    expect(result.spoons).toBe(6)
+    expect(result.spoons).toBe(5)
   })
 
   it('should trim history to last 30 entries', () => {

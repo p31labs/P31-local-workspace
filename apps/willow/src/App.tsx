@@ -4,6 +4,7 @@ import VoiceScreen from './components/VoiceScreen';
 import DrawScreen from './components/DrawScreen';
 import MoodTracker from './components/MoodTracker';
 import FamilyScreen from './components/FamilyScreen';
+import { UIGWillowWrapper } from './components/UIGWillowWrapper';
 
 const HUB_ORIGINS = ['https://p31ca.org', 'https://phos.p31ca.org', 'https://willow.p31ca.org'];
 
@@ -70,57 +71,66 @@ export default function App() {
     });
   };
 
+  const handleCrisisExit = () => {
+    setSpoons(3);
+    document.documentElement.setAttribute('data-spoons', '3');
+    document.documentElement.setAttribute('data-theme', THEME_MAP[3] || 'quantum');
+    localStorage.setItem('p31:spoons', '3');
+  };
+
   return (
-    <div className="app">
-      <header className="app-header">
-        <h1>Willow</h1>
-        <p>Tap to play</p>
-      </header>
+    <UIGWillowWrapper spoons={spoons} onCrisisExit={handleCrisisExit}>
+      <div className="app">
+        <header className="app-header">
+          <h1>Willow</h1>
+          <p>Tap to play</p>
+        </header>
 
-      <div className="spoon-controls">
-        {[0, 2, 3, 5].map(level => (
-          <button
-            key={level}
-            onClick={() => {
-              setSpoons(level);
-              document.documentElement.setAttribute('data-spoons', String(level));
-              document.documentElement.setAttribute('data-theme', THEME_MAP[level] || 'quantum');
-              localStorage.setItem('p31:spoons', String(level));
-            }}
-            className="spoon-btn"
-            aria-label={`Set spoons to ${level}`}
-          >
-            {level}
-          </button>
-        ))}
+        <div className="spoon-controls">
+          {[0, 2, 3, 5].map(level => (
+            <button
+              key={level}
+              onClick={() => {
+                setSpoons(level);
+                document.documentElement.setAttribute('data-spoons', String(level));
+                document.documentElement.setAttribute('data-theme', THEME_MAP[level] || 'quantum');
+                localStorage.setItem('p31:spoons', String(level));
+              }}
+              className="spoon-btn"
+              aria-label={`Set spoons to ${level}`}
+            >
+              {level}
+            </button>
+          ))}
+        </div>
+
+        <main className="activity-grid">
+          <button onClick={() => openPanel('voice')} aria-label="voice">Voice</button>
+          <button onClick={() => openPanel('draw')} aria-label="draw">Draw</button>
+          <button onClick={() => openPanel('magic')} aria-label="magic">Magic</button>
+          <button onClick={() => openPanel('feelings')} aria-label="feelings">Feelings</button>
+          <button onClick={() => openPanel('family')} aria-label="family">Family</button>
+        </main>
+
+        <button
+          className="companion-fab"
+          onClick={() => setShowCompanion(!showCompanion)}
+          aria-label="open chat companion"
+        >
+          Companion
+        </button>
+
+        {showCompanion && <Companion onClose={() => setShowCompanion(false)} />}
+
+        {activePanel === 'voice' && <VoiceScreen onBack={() => openPanel(null)} />}
+        {activePanel === 'draw' && <DrawScreen onBack={() => openPanel(null)} />}
+        {activePanel === 'feelings' && <MoodTracker onBack={() => openPanel(null)} />}
+        {activePanel === 'family' && <FamilyScreen onBack={() => openPanel(null)} />}
+
+        <footer>
+          <span>P31 Labs</span>
+        </footer>
       </div>
-
-      <main className="activity-grid">
-        <button onClick={() => openPanel('voice')} aria-label="voice">Voice</button>
-        <button onClick={() => openPanel('draw')} aria-label="draw">Draw</button>
-        <button onClick={() => openPanel('magic')} aria-label="magic">Magic</button>
-        <button onClick={() => openPanel('feelings')} aria-label="feelings">Feelings</button>
-        <button onClick={() => openPanel('family')} aria-label="family">Family</button>
-      </main>
-
-      <button
-        className="companion-fab"
-        onClick={() => setShowCompanion(!showCompanion)}
-        aria-label="open chat companion"
-      >
-        Companion
-      </button>
-
-      {showCompanion && <Companion onClose={() => setShowCompanion(false)} />}
-
-      {activePanel === 'voice' && <VoiceScreen onBack={() => openPanel(null)} />}
-      {activePanel === 'draw' && <DrawScreen onBack={() => openPanel(null)} />}
-      {activePanel === 'feelings' && <MoodTracker onBack={() => openPanel(null)} />}
-      {activePanel === 'family' && <FamilyScreen onBack={() => openPanel(null)} />}
-
-      <footer>
-        <span>P31 Labs</span>
-      </footer>
-    </div>
+    </UIGWillowWrapper>
   );
 }

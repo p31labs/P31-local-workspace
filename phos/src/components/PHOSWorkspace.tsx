@@ -10,7 +10,7 @@ import { Starfield } from './Starfield';
 import PHOSSidebar from './PHOSSidebar';
 import PHOSMagicDrawer from './PHOSMagicDrawer';
 import CommandPalette from './CommandPalette';
-import CrisisMode from './CrisisMode';
+import { CrisisOverlay } from '@p31/interface-generator';
 import MobileNav from './MobileNav';
 import PHOSPromptBar from './PHOSPromptBar';
 import { VoiceInputButton } from './VoiceInputButton';
@@ -73,7 +73,7 @@ export default function PHOSWorkspace() {
       .catch(() => setKeyLoaded(true));
   }, []);
 
-  if (spoons === 0) return <CrisisMode />;
+  if (spoons === 0) return <CrisisOverlay onReady={() => spoonsStore.set(1)} />;
   if (!keyLoaded) return null;
 
   if (!guestBypass && (identity.isRegistered === 'false' || identity.keysGenerated === 'false')) {
