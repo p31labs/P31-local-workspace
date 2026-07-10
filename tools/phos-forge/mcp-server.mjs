@@ -227,6 +227,18 @@ export default class PhosMCPServer extends EventEmitter {
           required: ['session1', 'session2'],
         },
       },
+      'uig-generate-dashboard': {
+        description: 'Generate an adaptive InterfaceDescription from the Universal Interface Generator (UIG). Given a viewer role and spoon state (defaults to the agent\'s current spoon level), returns a declarative layout/widget map. Optionally accepts a Cognitive Passport subset and view data for richer, role-specific widgets. Crisis mode is forced at spoons 0.',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            role: { type: 'string', enum: ['coordinator', 'researcher', 'participant', 'grant-reviewer'], description: 'Viewer role (default: participant)' },
+            spoons: { type: 'number', description: 'Cognitive spoon level 0–5 (default: agent spoon state)' },
+            passport: { type: 'object', description: 'Optional Cognitive Passport subset (v4.1) for personalization' },
+            viewData: { type: 'object', description: 'Optional view/payload data to drive widgets' },
+          },
+        },
+      },
     };
   }
 
@@ -558,6 +570,34 @@ export default class PhosMCPServer extends EventEmitter {
         const result = diffSessions(args.session1, args.session2);
         if (result.error) throw new Error(result.error);
         return { content: [{ type: 'text', text: result.output }] };
+      }
+      case 'uig-generate-dashboard': {
+        const ROLES = ['coordinator', 'researcher', 'participant', 'grant-reviewer'];
+        const role = ROLES.includes(args?.role) ? args.role : 'participant';
+        const requested = Number.isFinite(Number(args?.spoons)) ? Number(args.spoons) : this.spoonState;
+        const spoons = Math.max(0, Math.min(5, Math.round(requested)));
+        const body = JSON.stringify({
+          role,
+          spoons,
+          passport: args?.passport ?? null,
+          viewData: args?.viewData ?? {},
+        });
+        const res = await fetch('https://jitterbug-api.trimtab-signal.workers.dev/uig/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body,
+        });
+        if (!res.ok) throw new Error(`UIG endpoint returned ${res.status} ${res.statusText}`);
+        const data = await res.json();
+        return {
+          content: [{
+            type: 'text',
+            text: JSON.stringify({
+              description: data.description,
+              meta: { ...data.meta, agentSpoons: this.spoonState },
+            }, null, 2),
+          }],
+        };
       }
       default:
         throw new Error(`Unknown tool: ${name}`);

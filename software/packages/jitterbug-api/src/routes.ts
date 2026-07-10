@@ -4,6 +4,7 @@ import { DBClient } from './db';
 import type { Env } from './index';
 import { OpenCollectiveClient } from './open-collective';
 import { registerUserTestRoutes } from './usertest';
+import { registerUigRoutes } from './uig';
 
 // Node.js compat crypto for Workers runtime
 declare const crypto: {
@@ -326,6 +327,9 @@ pskRouter.post('/partition/recover', async (request, env) => {
     affected: resetCount,
   });
 });
+
+  // Universal Interface Generator: stateless layout generation (public, no PSK)
+  registerUigRoutes(router);
 
   // User-testing dashboard: public reads + SSE on the outer router (no PSK); writes on pskRouter (PSK via withCORS)
   registerUserTestRoutes(router, pskRouter);

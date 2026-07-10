@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "@p31/brain-dump-orchestrator": "workspace:*",
+    "@p31/interface-generator": "workspace:*",
     "@p31/shared": "workspace:*",
     "itty-router": "^5.0.0",
     "zod": "^3.24.0"
