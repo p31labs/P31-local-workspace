@@ -1,6 +1,7 @@
 import { useRef, useEffect, useState, useCallback } from 'react';
 import { updateParticles, emitParticles } from '../../../engine/liquid-sculptor/simulation.ts';
 import { COLORS } from '../../../lib/arcade-core/theme.ts';
+import { readThemeColors } from '../../../lib/arcade-core/cssVars.ts';
 
 const W = 500, H = 500;
 
@@ -24,12 +25,15 @@ export function LiquidSculptorGame() {
     const ctx = c.getContext('2d')!;
     ctx.clearRect(0, 0, W, H);
 
+    const t = readThemeColors();
+    const resolve = (v: string) => (v.startsWith('var(') ? t[v.slice(4, -1)] : v);
+
     const p = particlesRef.current;
     for (let i = 0; i < p.length; i++) {
       const pt = p[i];
       ctx.beginPath();
       ctx.arc(pt.x, pt.y, 2 + pt.life * 2, 0, Math.PI * 2);
-      ctx.fillStyle = color;
+      ctx.fillStyle = resolve(color);
       ctx.globalAlpha = pt.life * 0.6;
       ctx.fill();
     }

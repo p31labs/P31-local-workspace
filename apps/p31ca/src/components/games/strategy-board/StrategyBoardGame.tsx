@@ -5,6 +5,7 @@ import {
 } from '../../../engine/strategy-board/types.ts';
 import { computeAiMove } from '../../../engine/strategy-board/ai.ts';
 import { COLORS } from '../../../lib/arcade-core/theme.ts';
+import { readThemeColors } from '../../../lib/arcade-core/cssVars.ts';
 
 const CELL = 56;
 const BOARD_COLORS = {
@@ -12,7 +13,6 @@ const BOARD_COLORS = {
   grass: '#2d3a2e', forest: '#1f4a2a',
   selected: 'var(--p31-gold-border)',
   canMove: 'var(--p31-teal-dim)',
-  canAttack: 'rgba(204,98,71,0.35)',
 };
 
 const UNIT_EMOJI: Record<string, string> = { soldier: '⚔️', tank: '🛡️', archer: '🏹' };
@@ -57,6 +57,7 @@ interface Props {
 
 export function StrategyBoardGame({ onScoreChange, onComplete }: Props) {
   const [state, setState] = useState<GameState>(initState);
+  const t = readThemeColors();
 
   const alive = (p: number) => state.units.filter(u => u.player === p && u.hp > 0);
 
@@ -220,7 +221,7 @@ export function StrategyBoardGame({ onScoreChange, onComplete }: Props) {
                         key={`range-${e.id}`}
                         x={e.pos.x * CELL} y={e.pos.y * CELL}
                         width={CELL} height={CELL}
-                        fill={BOARD_COLORS.canAttack} rx={4}
+                        fill={t['--p31-rust']} fillOpacity={0.35} rx={4}
                       />
                     ))
                 )}

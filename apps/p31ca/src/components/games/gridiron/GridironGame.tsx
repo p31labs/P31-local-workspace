@@ -231,6 +231,21 @@ export function GridironGame({
         )}
       </div>
 
+      {/* LCD status strip — retro scoreboard band (T7 facelift) */}
+      <div style={{
+        display: 'flex', justifyContent: 'center', gap: 18,
+        background: 'var(--p31-deep-void)', borderRadius: 10, padding: '8px 14px',
+        border: '1px solid var(--p31-gold-border)',
+        fontFamily: "'Press Start 2P', monospace",
+      }}>
+        <span style={{ color: 'var(--p31-gold)', fontSize: 10 }}>Q{game.quarter}</span>
+        <span style={{ color: 'var(--p31-gold)', fontSize: 10 }}>⏱ {formatTime(game.timeRemaining)}</span>
+        {!game.isComplete && !game.kickoffPending && (
+          <span style={{ color: 'var(--p31-ice)', fontSize: 10 }}>{downLabel(game.drive.down)} & {game.drive.distance}</span>
+        )}
+        <span style={{ color: 'var(--p31-cloud-50)', fontSize: 10 }}>{yardLineLabel(game.drive.yardLine, game.drive.possession)}</span>
+      </div>
+
       {/* Field */}
       <div style={{ borderRadius: 8, overflow: 'hidden', border: '1px solid var(--p31-white-6)' }}>
         <svg width="100%" height="100" viewBox="0 0 1000 400" preserveAspectRatio="xMidYMid meet" style={{ display: 'block' }}>
@@ -305,9 +320,9 @@ export function GridironGame({
               </div>
               <div style={{ display: 'flex', justifyContent: 'center' }}>
                 <button onClick={handleSnap} disabled={isSimulating}
-                  style={{ padding: '12px 48px', borderRadius: 8, border: '2px solid var(--p31-gold-border)', background: 'var(--p31-gold-dim)', color: 'var(--p31-gold)', fontFamily: "'Press Start 2P', cursive", fontSize: 12, cursor: isSimulating ? 'not-allowed' : 'pointer', opacity: isSimulating ? 0.5 : 1, animation: 'none', transition: 'all 0.15s' }}
-                  onMouseEnter={e => { if (!isSimulating) e.currentTarget.style.background = 'var(--p31-gold-border)'; }}
-                  onMouseLeave={e => { e.currentTarget.style.background = 'var(--p31-gold-dim)'; }}>
+                  style={{ padding: '12px 48px', borderRadius: 8, border: '2px solid var(--p31-gold)', background: 'var(--p31-deep-void)', color: 'var(--p31-gold)', fontFamily: "'Press Start 2P', cursive", fontSize: 12, cursor: isSimulating ? 'not-allowed' : 'pointer', opacity: isSimulating ? 0.5 : 1, animation: 'none', transition: 'all 0.15s', boxShadow: '0 0 12px var(--p31-gold-border)' }}
+                  onMouseEnter={e => { if (!isSimulating) { e.currentTarget.style.background = 'var(--p31-gold-dim)'; } }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'var(--p31-deep-void)'; }}>
                   {isSimulating ? 'SNAPPING...' : 'SNAP'}
                 </button>
               </div>
@@ -315,9 +330,9 @@ export function GridironGame({
           ) : (
             <div style={{ display: 'flex', justifyContent: 'center' }}>
               <button onClick={handleSnap} disabled={isSimulating}
-                style={{ padding: '12px 48px', borderRadius: 8, border: '2px solid var(--p31-gold-border)', background: 'var(--p31-gold-dim)', color: 'var(--p31-gold-dim)', fontFamily: "'Press Start 2P', cursive", fontSize: 12, cursor: isSimulating ? 'not-allowed' : 'pointer', opacity: isSimulating ? 0.5 : 1, transition: 'all 0.15s' }}
-                onMouseEnter={e => { if (!isSimulating) e.currentTarget.style.background = 'var(--p31-gold-border)'; }}
-                onMouseLeave={e => { e.currentTarget.style.background = 'var(--p31-gold-dim)'; }}>
+                style={{ padding: '12px 48px', borderRadius: 8, border: '2px solid var(--p31-gold-border)', background: 'var(--p31-deep-void)', color: 'var(--p31-gold)', fontFamily: "'Press Start 2P', cursive", fontSize: 12, cursor: isSimulating ? 'not-allowed' : 'pointer', opacity: isSimulating ? 0.5 : 1, transition: 'all 0.15s' }}
+                onMouseEnter={e => { if (!isSimulating) e.currentTarget.style.background = 'var(--p31-gold-dim)'; }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'var(--p31-deep-void)'; }}>
                 {isSimulating ? 'SIMULATING...' : 'SNAP'}
               </button>
             </div>

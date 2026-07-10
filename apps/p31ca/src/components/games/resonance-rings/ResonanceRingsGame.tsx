@@ -2,6 +2,7 @@ import { useRef, useEffect, useState, useCallback } from 'react';
 import { Ring } from '../../../engine/resonance-rings/types.ts';
 import { createRing, updateRings } from '../../../engine/resonance-rings/simulation.ts';
 import { COLORS } from '../../../lib/arcade-core/theme.ts';
+import { readThemeColors } from '../../../lib/arcade-core/cssVars.ts';
 
 const W = 600, H = 600;
 const RING_COLORS = ['var(--p31-teal)', 'var(--p31-gold)', 'var(--p31-rust)', 'var(--p31-purple)', 'var(--p31-green)', 'var(--p31-ice)'];
@@ -25,15 +26,19 @@ export function ResonanceRingsGame() {
     if (!c) return;
     const ctx = c.getContext('2d')!;
     const r = ringsRef.current;
+    const t = readThemeColors();
+    const resolve = (v: string) => (v.startsWith('var(') ? t[v.slice(4, -1)] : v);
 
-    ctx.fillStyle = 'rgba(15,17,21,0.15)';
+    ctx.globalAlpha = 0.15;
+    ctx.fillStyle = t['--p31-void'];
     ctx.fillRect(0, 0, W, H);
+    ctx.globalAlpha = 1;
 
     for (let i = 0; i < r.length; i++) {
       const ring = r[i];
       ctx.beginPath();
       ctx.arc(ring.x, ring.y, ring.radius, 0, Math.PI * 2);
-      ctx.strokeStyle = ring.color;
+      ctx.strokeStyle = resolve(ring.color);
       ctx.globalAlpha = ring.opacity * 0.6;
       ctx.lineWidth = Math.max(1, 4 * ring.opacity);
       ctx.stroke();
@@ -41,7 +46,7 @@ export function ResonanceRingsGame() {
       if (ring.radius > 10) {
         ctx.beginPath();
         ctx.arc(ring.x, ring.y, ring.radius * 0.6, 0, Math.PI * 2);
-        ctx.strokeStyle = ring.color;
+        ctx.strokeStyle = resolve(ring.color);
         ctx.globalAlpha = ring.opacity * 0.15;
         ctx.lineWidth = 1;
         ctx.stroke();

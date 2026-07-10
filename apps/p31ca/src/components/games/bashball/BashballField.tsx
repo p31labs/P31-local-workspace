@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { readThemeColors } from '../../../lib/arcade-core/cssVars.ts';
 
 interface BashballFieldProps {
   bases: [boolean, boolean, boolean];
@@ -34,6 +35,12 @@ export function BashballField({ bases, spoonLevel = 6 }: BashballFieldProps) {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.clearRect(0, 0, W, H);
 
+      const c = readThemeColors();
+      const fieldGreen = c['--p31-field-green'] || 'rgba(58,119,40,0.55)';
+      const fieldGreenDeep = c['--p31-green-dim'] || 'rgba(31,74,42,0.5)';
+      const cloud30 = c['--p31-cloud-30'] || 'rgba(232,230,227,0.3)';
+      const cloud18 = c['--p31-cloud-20'] || 'rgba(232,230,227,0.2)';
+
       const centerX = W / 2;
       const homeY = H - 64;
 
@@ -56,11 +63,11 @@ export function BashballField({ bases, spoonLevel = 6 }: BashballFieldProps) {
       ctx.lineTo(third.x, third.y);
       ctx.closePath();
       const grad = ctx.createLinearGradient(0, homeY, 0, second.y);
-      grad.addColorStop(0, 'rgba(58,119,40,0.55)');
-      grad.addColorStop(1, 'rgba(31,74,42,0.5)');
+      grad.addColorStop(0, fieldGreen);
+      grad.addColorStop(1, fieldGreenDeep);
       ctx.fillStyle = grad;
       ctx.fill();
-      ctx.strokeStyle = 'rgba(232,230,227,0.18)';
+      ctx.strokeStyle = cloud18;
       ctx.lineWidth = 2;
       ctx.stroke();
 
@@ -69,7 +76,7 @@ export function BashballField({ bases, spoonLevel = 6 }: BashballFieldProps) {
         ctx.save();
         ctx.translate(p.x, p.y);
         ctx.rotate(Math.PI / 4);
-        ctx.fillStyle = occupied ? 'rgba(255,255,255,0.92)' : 'rgba(232,230,227,0.28)';
+        ctx.fillStyle = occupied ? 'rgba(255,255,255,0.92)' : cloud30;
         ctx.fillRect(-s / 2, -s / 2, s, s);
         ctx.restore();
       };
@@ -107,7 +114,7 @@ export function BashballField({ bases, spoonLevel = 6 }: BashballFieldProps) {
   return (
     <canvas
       ref={canvasRef}
-      style={{ width: '100%', height: 360, display: 'block', borderRadius: 12, border: '1px solid rgba(58,119,40,0.18)' }}
+      style={{ width: '100%', height: 360, display: 'block', borderRadius: 12, border: '1px solid var(--p31-green-border)' }}
       aria-label="Isometric baseball field"
     />
   );

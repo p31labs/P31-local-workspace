@@ -2,6 +2,7 @@ import { useRef, useEffect, useState, useCallback } from 'react';
 import { Body, OrbitalState } from '../../../engine/orbital-drift/types.ts';
 import { updateBodies, createBody } from '../../../engine/orbital-drift/physics.ts';
 import { COLORS } from '../../../lib/arcade-core/theme.ts';
+import { readThemeColors } from '../../../lib/arcade-core/cssVars.ts';
 
 const W = 600, H = 600;
 const ORBITAL_COLORS = ['var(--p31-teal)', 'var(--p31-gold)', 'var(--p31-rust)', 'var(--p31-purple)', 'var(--p31-green)', 'var(--p31-ice)', 'var(--p31-cloud)'];
@@ -31,13 +32,17 @@ export function OrbitalDriftGame() {
     if (!c) return;
     const ctx = c.getContext('2d')!;
     const s = stateRef.current;
+    const t = readThemeColors();
+    const resolve = (v: string) => (v.startsWith('var(') ? t[v.slice(4, -1)] : v);
 
     if (!s.trailsOn) {
-      ctx.fillStyle = 'rgba(15,17,21,1)';
+      ctx.fillStyle = t['--p31-void'];
       ctx.fillRect(0, 0, W, H);
     } else {
-      ctx.fillStyle = 'rgba(15,17,21,0.1)';
+      ctx.globalAlpha = 0.1;
+      ctx.fillStyle = t['--p31-void'];
       ctx.fillRect(0, 0, W, H);
+      ctx.globalAlpha = 1;
     }
 
     for (const b of s.bodies) {
@@ -47,7 +52,7 @@ export function OrbitalDriftGame() {
         for (let i = 1; i < b.trail.length; i++) {
           ctx.lineTo(b.trail[i].x, b.trail[i].y);
         }
-        ctx.strokeStyle = b.color;
+        ctx.strokeStyle = resolve(b.color);
         ctx.globalAlpha = 0.2;
         ctx.lineWidth = 1;
         ctx.stroke();
@@ -56,12 +61,12 @@ export function OrbitalDriftGame() {
 
       ctx.beginPath();
       ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
-      ctx.fillStyle = b.color;
+      ctx.fillStyle = resolve(b.color);
       ctx.fill();
 
       ctx.beginPath();
       ctx.arc(b.x, b.y, b.radius * 1.5, 0, Math.PI * 2);
-      ctx.fillStyle = b.color;
+      ctx.fillStyle = resolve(b.color);
       ctx.globalAlpha = 0.1;
       ctx.fill();
       ctx.globalAlpha = 1;
