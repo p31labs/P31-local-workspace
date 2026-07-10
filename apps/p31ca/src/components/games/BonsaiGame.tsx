@@ -33,7 +33,7 @@ export function BonsaiGame() {
       extraHud={
         <div className="absolute top-20 left-5 z-20">
           <div className="px-4 py-2 rounded-lg text-[10px] tracking-widest uppercase font-bold"
-            style={{ background: 'rgba(0,0,0,0.5)', border: '1px solid rgba(255,255,255,0.08)', color: '#cda852' }}>
+            style={{ background: 'rgba(0,0,0,0.5)', border: '1px solid var(--p31-white-8)', color: 'var(--p31-gold)' }}>
             🧠 PID CONTROLLER ACTIVE
           </div>
           <p className="text-[10px] text-white/40 mt-2 font-mono">

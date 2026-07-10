@@ -1,4 +1,5 @@
 import { Card as CardType, cardLabel, suitIcon, cardColor } from '../../../engine/card/core/types.ts';
+import { COLORS } from '../../../lib/arcade-core/theme.ts';
 
 interface CardProps {
   card: CardType;
@@ -21,19 +22,19 @@ const STYLES: Record<string, React.CSSProperties> = {
     fontFamily: "'JetBrains Mono', monospace",
     fontWeight: 700,
     position: 'relative',
-    border: '2px solid rgba(255,255,255,0.10)',
+    border: '2px solid var(--p31-white-10)',
   },
   faceUp: {
-    background: 'rgba(255,255,255,0.06)',
+    background: 'var(--p31-white-6)',
   },
   faceDown: {
     background: 'linear-gradient(135deg, #2a1f5e, #1a1140)',
-    border: '2px solid rgba(139,124,201,0.2)',
+    border: '2px solid var(--p31-purple-border)',
   },
   selected: {
     transform: 'translateY(-8px)',
-    boxShadow: '0 8px 24px rgba(139,124,201,0.4)',
-    borderColor: '#8b7cc9',
+    boxShadow: '0 8px 24px var(--p31-purple-border)',
+    borderColor: 'var(--p31-purple)',
   },
   disabled: {
     opacity: 0.4,
@@ -44,7 +45,7 @@ const STYLES: Record<string, React.CSSProperties> = {
 export function CardView({ card, onClick, selected, disabled, small }: CardProps) {
   const size = small ? { width: 44, height: 64, fontSize: 12 } : { width: 56, height: 80, fontSize: 14 };
   const isRed = cardColor(card.suit) === 'red';
-  const colorStyle: React.CSSProperties = isRed ? { color: '#e06c75' } : { color: '#cda852' };
+  const colorStyle: React.CSSProperties = isRed ? { color: 'var(--p31-card-red)' } : { color: 'var(--p31-gold)' };
 
   const style: React.CSSProperties = {
     ...STYLES.base,
@@ -75,7 +76,7 @@ export function CardView({ card, onClick, selected, disabled, small }: CardProps
           </span>
         </>
       ) : (
-        <span style={{ fontSize: size.fontSize, color: '#8b7cc9', opacity: 0.6 }}>🂠</span>
+        <span style={{ fontSize: size.fontSize, color: 'var(--p31-purple)', opacity: 0.6 }}>🂠</span>
       )}
     </div>
   );

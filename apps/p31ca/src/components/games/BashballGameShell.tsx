@@ -16,6 +16,7 @@ import { createInitialTeamState, generateRoster, generateRotation, applyTraining
 import { createMulberry32 } from '../../engine/card/rng/mulberry32.ts';
 import { getTeamNames } from '../../engine/bashball/league.ts';
 import { getSpoonStore } from '../../lib/arcade-core/spoonStore.ts';
+import { COLORS } from '../lib/arcade-core/theme.ts';
 
 type Screen =
   | { phase: 'menu' }
@@ -249,15 +250,15 @@ export function BashballGameShell() {
   const extraHud = screen.phase === 'game' ? (
     <div className="absolute top-32 left-1/2 -translate-x-1/2 z-10" style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
       <button onClick={handleBackToDashboard} style={{
-        padding: '6px 14px', borderRadius: 8, border: '1px solid rgba(255,255,255,0.1)',
-        background: 'rgba(255,255,255,0.04)', color: 'rgba(232,230,227,0.6)',
+        padding: '6px 14px', borderRadius: 8, border: '1px solid var(--p31-white-10)',
+        background: 'var(--p31-white-4)', color: 'var(--p31-cloud-60)',
         fontFamily: "'JetBrains Mono', monospace", fontSize: 10, cursor: 'pointer',
       }}>
         ← DASHBOARD
       </button>
       <span style={{
-        padding: '6px 14px', borderRadius: 8, background: 'rgba(204,98,71,0.1)',
-        border: '1px solid rgba(204,98,71,0.2)', color: '#cc6247',
+        padding: '6px 14px', borderRadius: 8, background: 'var(--p31-rust-dim)',
+        border: '1px solid var(--p31-rust-border)', color: 'var(--p31-rust)',
         fontFamily: "'Press Start 2P', cursive", fontSize: 9,
       }}>
         BASHBALL
@@ -374,31 +375,31 @@ function TeamCreation({ onStart, engineState }: { onStart: (name: string) => voi
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 32, maxWidth: 500, width: '100%' }}>
       <div style={{ textAlign: 'center' }}>
         <div style={{ fontSize: 64, marginBottom: 16 }}>⚾</div>
-        <h1 style={{ fontFamily: "'Press Start 2P', cursive", fontSize: 18, color: '#cc6247', marginBottom: 12 }}>BASHBALL</h1>
-        <p style={{ fontSize: 12, fontFamily: "'JetBrains Mono', monospace", color: 'rgba(232,230,227,0.5)', lineHeight: 1.8 }}>
+        <h1 style={{ fontFamily: "'Press Start 2P', cursive", fontSize: 18, color: 'var(--p31-rust)', marginBottom: 12 }}>BASHBALL</h1>
+        <p style={{ fontSize: 12, fontFamily: "'JetBrains Mono', monospace", color: 'var(--p31-cloud-50)', lineHeight: 1.8 }}>
           Markov chain baseball simulation<br />
-          <span style={{ fontSize: 10, color: 'rgba(232,230,227,0.3)' }}>
+          <span style={{ fontSize: 10, color: 'var(--p31-cloud-30)' }}>
             dedicated to Sebastian "Bash" — batter up, son 🧡
           </span>
         </p>
       </div>
-      <div style={{ padding: '16px 24px', background: 'rgba(139,124,201,0.06)', border: '1px solid rgba(139,124,201,0.1)', borderRadius: 12, textAlign: 'center', width: '100%', maxWidth: 320 }}>
-        <p style={{ fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: 'rgba(232,230,227,0.4)', marginBottom: 12 }}>Name Your Team</p>
+      <div style={{ padding: '16px 24px', background: 'rgba(139,124,201,0.06)', border: '1px solid var(--p31-purple-dim)', borderRadius: 12, textAlign: 'center', width: '100%', maxWidth: 320 }}>
+        <p style={{ fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: 'var(--p31-cloud-40)', marginBottom: 12 }}>Name Your Team</p>
         <input value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Bash League" maxLength={24}
-          style={{ padding: '10px 16px', borderRadius: 8, border: '1px solid rgba(204,98,71,0.3)', background: 'rgba(255,255,255,0.03)', color: '#e8e6e3', fontFamily: "'JetBrains Mono', monospace", fontSize: 14, outline: 'none', width: '100%', boxSizing: 'border-box' }}
+          style={{ padding: '10px 16px', borderRadius: 8, border: '1px solid var(--p31-rust-border)', background: 'var(--p31-white-3)', color: 'var(--p31-cloud)', fontFamily: "'JetBrains Mono', monospace", fontSize: 14, outline: 'none', width: '100%', boxSizing: 'border-box' }}
           onKeyDown={e => { if (e.key === 'Enter' && name.trim()) onStart(name.trim()); }}
         />
       </div>
-      <div style={{ padding: '12px 24px', background: 'rgba(139,124,201,0.06)', border: '1px solid rgba(139,124,201,0.1)', borderRadius: 12, textAlign: 'center' }}>
-        <p style={{ fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: 'rgba(232,230,227,0.4)', lineHeight: 1.8 }}>
+      <div style={{ padding: '12px 24px', background: 'rgba(139,124,201,0.06)', border: '1px solid var(--p31-purple-dim)', borderRadius: 12, textAlign: 'center' }}>
+        <p style={{ fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: 'var(--p31-cloud-40)', lineHeight: 1.8 }}>
           Spoons: {engineState.spoons}/12<br />
           Train your team. Climb the league. Win the World Series.
         </p>
       </div>
       <button onClick={() => { if (name.trim()) onStart(name.trim()); }} disabled={!name.trim()}
-        style={{ padding: '16px 40px', borderRadius: 12, border: `2px solid ${name.trim() ? '#cc6247' : 'rgba(255,255,255,0.1)'}`, background: name.trim() ? 'rgba(204,98,71,0.1)' : 'rgba(255,255,255,0.02)', color: name.trim() ? '#cc6247' : 'rgba(232,230,227,0.2)', fontFamily: "'Press Start 2P', cursive", fontSize: 13, cursor: name.trim() ? 'pointer' : 'not-allowed', transition: 'all 0.2s' }}
-        onMouseEnter={e => { if (name.trim()) e.currentTarget.style.background = 'rgba(204,98,71,0.2)'; }}
-        onMouseLeave={e => { e.currentTarget.style.background = name.trim() ? 'rgba(204,98,71,0.1)' : 'rgba(255,255,255,0.02)'; }}
+        style={{ padding: '16px 40px', borderRadius: 12, border: `2px solid ${name.trim() ? 'var(--p31-rust)' : 'var(--p31-white-10)'}`, background: name.trim() ? 'var(--p31-rust-dim)' : 'var(--p31-white-2)', color: name.trim() ? 'var(--p31-rust)' : 'var(--p31-cloud-20)', fontFamily: "'Press Start 2P', cursive", fontSize: 13, cursor: name.trim() ? 'pointer' : 'not-allowed', transition: 'all 0.2s' }}
+        onMouseEnter={e => { if (name.trim()) e.currentTarget.style.background = 'var(--p31-rust-border)'; }}
+        onMouseLeave={e => { e.currentTarget.style.background = name.trim() ? 'var(--p31-rust-dim)' : 'var(--p31-white-2)'; }}
       >
         ⚾ START SEASON
       </button>
@@ -414,27 +415,27 @@ function ResumeScreen({ teamName, record, gamesPlayed, onResume, onNewGame }:
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 28, maxWidth: 400, width: '100%' }}>
       <div style={{ textAlign: 'center' }}>
         <div style={{ fontSize: 48, marginBottom: 12 }}>⚾</div>
-        <h1 style={{ fontFamily: "'Press Start 2P', cursive", fontSize: 16, color: '#cc6247', marginBottom: 8 }}>BASHBALL</h1>
-        <p style={{ fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: 'rgba(232,230,227,0.3)' }}>
+        <h1 style={{ fontFamily: "'Press Start 2P', cursive", fontSize: 16, color: 'var(--p31-rust)', marginBottom: 8 }}>BASHBALL</h1>
+        <p style={{ fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: 'var(--p31-cloud-30)' }}>
           Save found
         </p>
       </div>
-      <div style={{ padding: '16px 24px', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 12, textAlign: 'center', width: '100%' }}>
-        <p style={{ fontSize: 16, fontFamily: "'Press Start 2P', cursive", color: '#e8e6e3', marginBottom: 8 }}>{teamName}</p>
-        <p style={{ fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: 'rgba(232,230,227,0.5)' }}>
+      <div style={{ padding: '16px 24px', background: 'var(--p31-white-2)', border: '1px solid var(--p31-white-6)', borderRadius: 12, textAlign: 'center', width: '100%' }}>
+        <p style={{ fontSize: 16, fontFamily: "'Press Start 2P', cursive", color: 'var(--p31-cloud)', marginBottom: 8 }}>{teamName}</p>
+        <p style={{ fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: 'var(--p31-cloud-50)' }}>
           {record.wins}W - {record.losses}L — {pct}% — {gamesPlayed}/14 games
         </p>
       </div>
       <div style={{ display: 'flex', gap: 12 }}>
         <button onClick={onResume}
-          style={{ padding: '14px 32px', borderRadius: 12, border: '2px solid #cc6247', background: 'rgba(204,98,71,0.1)', color: '#cc6247', fontFamily: "'Press Start 2P', cursive", fontSize: 11, cursor: 'pointer' }}
-          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(204,98,71,0.2)'; }}
-          onMouseLeave={e => { e.currentTarget.style.background = 'rgba(204,98,71,0.1)'; }}
+          style={{ padding: '14px 32px', borderRadius: 12, border: '2px solid var(--p31-rust)', background: 'var(--p31-rust-dim)', color: 'var(--p31-rust)', fontFamily: "'Press Start 2P', cursive", fontSize: 11, cursor: 'pointer' }}
+          onMouseEnter={e => { e.currentTarget.style.background = 'var(--p31-rust-border)'; }}
+          onMouseLeave={e => { e.currentTarget.style.background = 'var(--p31-rust-dim)'; }}
         >
           RESUME
         </button>
         <button onClick={onNewGame}
-          style={{ padding: '14px 24px', borderRadius: 12, border: '1px solid rgba(255,255,255,0.1)', background: 'transparent', color: 'rgba(232,230,227,0.4)', fontFamily: "'JetBrains Mono', monospace", fontSize: 11, cursor: 'pointer' }}
+          style={{ padding: '14px 24px', borderRadius: 12, border: '1px solid var(--p31-white-10)', background: 'transparent', color: 'var(--p31-cloud-40)', fontFamily: "'JetBrains Mono', monospace", fontSize: 11, cursor: 'pointer' }}
         >
           NEW GAME
         </button>

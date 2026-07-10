@@ -1,5 +1,6 @@
 import { Card, suitIcon, Suit } from '../../../engine/card/core/types.ts';
 import { PileState } from '../../../engine/card/solitaire/validator.ts';
+import { COLORS } from '../../../lib/arcade-core/theme.ts';
 
 interface CardTableViewProps {
   tableau: PileState[];
@@ -49,7 +50,7 @@ export function CardTableView({
               width: 56,
               height: 80,
               borderRadius: 8,
-              border: '2px solid rgba(139,124,201,0.2)',
+              border: '2px solid var(--p31-purple-border)',
               background: stockCount > 0
                 ? 'linear-gradient(135deg, #2a1f5e, #1a1140)'
                 : 'transparent',
@@ -58,7 +59,7 @@ export function CardTableView({
               alignItems: 'center',
               justifyContent: 'center',
               fontSize: 10,
-              color: 'rgba(232,230,227,0.4)',
+              color: 'var(--p31-cloud-40)',
               fontFamily: "'JetBrains Mono', monospace",
             }}
             aria-label={`Stock: ${stockCount} cards remaining`}
@@ -76,8 +77,8 @@ export function CardTableView({
                   width: 56,
                   height: 80,
                   borderRadius: 8,
-                  border: '2px solid rgba(255,255,255,0.10)',
-                  background: 'rgba(255,255,255,0.06)',
+                  border: '2px solid var(--p31-white-10)',
+                  background: 'var(--p31-white-6)',
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
@@ -85,9 +86,9 @@ export function CardTableView({
                   fontFamily: "'JetBrains Mono', monospace",
                   fontWeight: 700,
                   fontSize: 14,
-                  color: selectedCard?.id === waste[waste.length - 1].id ? '#e06c75' : '#cda852',
+                  color: selectedCard?.id === waste[waste.length - 1].id ? 'var(--p31-card-red)' : 'var(--p31-gold)',
                   boxShadow: selectedCard?.id === waste[waste.length - 1].id
-                    ? '0 0 12px rgba(139,124,201,0.4)'
+                    ? '0 0 12px var(--p31-purple-border)'
                     : 'none',
                 }}>
                   <span>{suitIcon(waste[waste.length - 1].suit)}</span>
@@ -112,9 +113,9 @@ export function CardTableView({
                 height: 80,
                 borderRadius: 8,
                 border: pile.cards.length === 0
-                  ? '2px dashed rgba(255,255,255,0.08)'
-                  : '2px solid rgba(255,255,255,0.10)',
-                background: 'rgba(255,255,255,0.02)',
+                  ? '2px dashed var(--p31-white-8)'
+                  : '2px solid var(--p31-white-10)',
+                background: 'var(--p31-white-2)',
                 cursor: 'pointer',
                 display: 'flex',
                 flexDirection: 'column',
@@ -122,7 +123,7 @@ export function CardTableView({
                 justifyContent: 'center',
                 fontFamily: "'JetBrains Mono', monospace",
                 fontSize: 10,
-                color: 'rgba(232,230,227,0.3)',
+                color: 'var(--p31-cloud-30)',
               }}
               aria-label={`Foundation ${SUIT_ORDER[i]}`}
             >
@@ -133,7 +134,7 @@ export function CardTableView({
                   <span style={{
                     fontSize: 14,
                     color: SUIT_ORDER[i] === Suit.Hearts || SUIT_ORDER[i] === Suit.Diamonds
-                      ? '#e06c75' : '#cda852'
+                      ? 'var(--p31-card-red)' : 'var(--p31-gold)'
                   }}>
                     {suitIcon(pile.cards[pile.cards.length - 1].suit)}
                   </span>
@@ -165,7 +166,7 @@ export function CardTableView({
             <span style={{
               fontSize: 10,
               fontFamily: "'JetBrains Mono', monospace",
-              color: 'rgba(232,230,227,0.2)',
+              color: 'var(--p31-cloud-20)',
               marginBottom: 4,
             }}>
               {PILE_LABELS[i]}
@@ -187,10 +188,10 @@ export function CardTableView({
                     height: 80,
                     borderRadius: 8,
                     border: card.faceUp
-                      ? '2px solid rgba(255,255,255,0.10)'
-                      : '2px solid rgba(139,124,201,0.2)',
+                      ? '2px solid var(--p31-white-10)'
+                      : '2px solid var(--p31-purple-border)',
                     background: card.faceUp
-                      ? 'rgba(255,255,255,0.06)'
+                      ? 'var(--p31-white-6)'
                       : 'linear-gradient(135deg, #2a1f5e, #1a1140)',
                     display: 'flex',
                     flexDirection: 'column',
@@ -201,8 +202,8 @@ export function CardTableView({
                       ? '0 0 12px rgba(139,124,201,0.6)'
                       : 'none',
                     borderColor: selectedCard?.id === card.id
-                      ? '#8b7cc9'
-                      : card.faceUp ? 'rgba(255,255,255,0.10)' : 'rgba(139,124,201,0.2)',
+                      ? 'var(--p31-purple)'
+                      : card.faceUp ? 'var(--p31-white-10)' : 'var(--p31-purple-border)',
                   }}
                 >
                   {card.faceUp ? (
@@ -210,7 +211,7 @@ export function CardTableView({
                       <span style={{
                         fontSize: 14,
                         color: card.suit === Suit.Hearts || card.suit === Suit.Diamonds
-                          ? '#e06c75' : '#cda852',
+                          ? 'var(--p31-card-red)' : 'var(--p31-gold)',
                       }}>
                         {suitIcon(card.suit)}
                       </span>
@@ -227,7 +228,7 @@ export function CardTableView({
                       </span>
                     </>
                   ) : (
-                    <span style={{ color: '#8b7cc9', opacity: 0.4, fontSize: 16 }}>🂠</span>
+                    <span style={{ color: 'var(--p31-purple)', opacity: 0.4, fontSize: 16 }}>🂠</span>
                   )}
                 </div>
               ))}

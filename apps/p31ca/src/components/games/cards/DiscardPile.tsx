@@ -1,5 +1,6 @@
 import { Card } from '../../../engine/card/core/types.ts';
 import { CardView } from './CardView.tsx';
+import { COLORS } from '../../../lib/arcade-core/theme.ts';
 
 interface DiscardPileProps {
   cards: Card[];
@@ -12,13 +13,13 @@ export function DiscardPile({ cards, onTakeCard }: DiscardPileProps) {
       <div style={{
         width: 56,
         height: 80,
-        border: '2px dashed rgba(255,255,255,0.08)',
+        border: '2px dashed var(--p31-white-8)',
         borderRadius: 8,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         fontSize: 10,
-        color: 'rgba(232,230,227,0.2)',
+        color: 'var(--p31-cloud-20)',
         fontFamily: "'JetBrains Mono', monospace",
       }}>
         DISCARD
@@ -38,7 +39,7 @@ export function DiscardPile({ cards, onTakeCard }: DiscardPileProps) {
       <span style={{
         fontSize: 10,
         fontFamily: "'JetBrains Mono', monospace",
-        color: 'rgba(232,230,227,0.3)',
+        color: 'var(--p31-cloud-30)',
         letterSpacing: '0.15em',
         textTransform: 'uppercase',
       }}>
@@ -52,7 +53,7 @@ export function DiscardPile({ cards, onTakeCard }: DiscardPileProps) {
             left: -2,
             width: 56,
             height: 80,
-            border: '2px solid rgba(255,255,255,0.04)',
+            border: '2px solid var(--p31-white-4)',
             borderRadius: 8,
             transform: 'rotate(-2deg)',
           }} />

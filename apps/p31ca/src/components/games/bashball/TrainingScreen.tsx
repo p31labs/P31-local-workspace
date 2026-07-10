@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { COLORS } from '../../../lib/arcade-core/theme.ts';
 import { Player, SkillCategory, PlayerStats } from '../../../engine/bashball/types.ts';
 import { SKILL_STAT_MAP, SKILL_LABELS } from '../../../engine/bashball/training.ts';
 import { PlayerCard } from './PlayerCard.tsx';
@@ -15,10 +16,10 @@ interface TrainingScreenProps {
 const SKILLS: SkillCategory[] = ['hitting', 'pitching', 'fielding', 'running'];
 
 const SKILL_BUTTON_COLORS: Record<SkillCategory, string> = {
-  hitting: '#cc6247',
-  pitching: '#3ba372',
-  fielding: '#8b7cc9',
-  running: '#cda852',
+  hitting: 'var(--p31-rust)',
+  pitching: 'var(--p31-green)',
+  fielding: 'var(--p31-purple)',
+  running: 'var(--p31-gold)',
 };
 
 const SKILL_BUTTON_LABELS: Record<SkillCategory, string> = {
@@ -70,25 +71,25 @@ export function TrainingScreen({ roster, sessionsToday, maxSessions, eliteUnlock
         justifyContent: 'space-between',
         alignItems: 'center',
         padding: '14px 18px',
-        background: 'rgba(255,255,255,0.02)',
+        background: 'var(--p31-white-2)',
         borderRadius: 12,
-        border: '1px solid rgba(255,255,255,0.06)',
+        border: '1px solid var(--p31-white-6)',
       }}>
         <div style={{
           fontFamily: "'Press Start 2P', cursive",
           fontSize: 14,
-          color: '#cc6247',
+          color: 'var(--p31-rust)',
         }}>
           TRAINING
         </div>
         <div style={{
           fontFamily: "'JetBrains Mono', monospace",
           fontSize: 11,
-          color: limitReached ? '#cc6247' : 'rgba(232,230,227,0.6)',
+          color: limitReached ? 'var(--p31-rust)' : 'var(--p31-cloud-60)',
         }}>
           {sessionsToday}/{maxSessions} sessions today
           {eliteUnlocked && (
-            <span style={{ color: '#cda852', marginLeft: 8 }}>ELITE</span>
+            <span style={{ color: 'var(--p31-gold)', marginLeft: 8 }}>ELITE</span>
           )}
         </div>
       </div>
@@ -138,15 +139,15 @@ export function TrainingScreen({ roster, sessionsToday, maxSessions, eliteUnlock
                           width: '100%',
                           height: 28,
                           borderRadius: 8,
-                          border: `1px solid ${isThisFlashing ? SKILL_BUTTON_COLORS[skill] : disabled ? 'rgba(255,255,255,0.06)' : SKILL_BUTTON_COLORS[skill]}`,
+                          border: `1px solid ${isThisFlashing ? SKILL_BUTTON_COLORS[skill] : disabled ? 'var(--p31-white-6)' : SKILL_BUTTON_COLORS[skill]}`,
                           background: disabled
-                            ? 'rgba(255,255,255,0.02)'
+                            ? 'var(--p31-white-2)'
                             : isThisFlashing
                               ? `${SKILL_BUTTON_COLORS[skill]}40`
                               : isHovered
                                 ? `${SKILL_BUTTON_COLORS[skill]}25`
                                 : `${SKILL_BUTTON_COLORS[skill]}12`,
-                          color: disabled ? 'rgba(232,230,227,0.25)' : isThisFlashing ? SKILL_BUTTON_COLORS[skill] : SKILL_BUTTON_COLORS[skill],
+                          color: disabled ? 'var(--p31-cloud-25)' : isThisFlashing ? SKILL_BUTTON_COLORS[skill] : SKILL_BUTTON_COLORS[skill],
                           fontFamily: "'Press Start 2P', cursive",
                           fontSize: 7,
                           cursor: disabled ? 'not-allowed' : 'pointer',
@@ -171,7 +172,7 @@ export function TrainingScreen({ roster, sessionsToday, maxSessions, eliteUnlock
                             padding: '4px 8px',
                             borderRadius: 6,
                             background: 'rgba(0,0,0,0.9)',
-                            color: 'rgba(232,230,227,0.7)',
+                            color: 'var(--p31-cloud-70)',
                             fontFamily: "'JetBrains Mono', monospace",
                             fontSize: 7,
                             whiteSpace: 'nowrap',
@@ -202,9 +203,9 @@ export function TrainingScreen({ roster, sessionsToday, maxSessions, eliteUnlock
           alignSelf: 'center',
           padding: '12px 28px',
           borderRadius: 10,
-          border: `1px solid ${hoveredBack ? 'rgba(232,230,227,0.2)' : 'rgba(255,255,255,0.1)'}`,
-          background: hoveredBack ? 'rgba(255,255,255,0.04)' : 'transparent',
-          color: 'rgba(232,230,227,0.5)',
+          border: `1px solid ${hoveredBack ? 'var(--p31-cloud-20)' : 'var(--p31-white-10)'}`,
+          background: hoveredBack ? 'var(--p31-white-4)' : 'transparent',
+          color: 'var(--p31-cloud-50)',
           fontFamily: "'JetBrains Mono', monospace",
           fontSize: 11,
           cursor: 'pointer',

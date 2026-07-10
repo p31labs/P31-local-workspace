@@ -1,9 +1,10 @@
 import { useRef, useEffect, useState, useCallback } from 'react';
 import { Body, OrbitalState } from '../../../engine/orbital-drift/types.ts';
 import { updateBodies, createBody } from '../../../engine/orbital-drift/physics.ts';
+import { COLORS } from '../../../lib/arcade-core/theme.ts';
 
 const W = 600, H = 600;
-const COLORS = ['#4db8a8', '#cda852', '#cc6247', '#8b7cc9', '#3ba372', '#7ec8e3', '#e8e6e3'];
+const ORBITAL_COLORS = ['var(--p31-teal)', 'var(--p31-gold)', 'var(--p31-rust)', 'var(--p31-purple)', 'var(--p31-green)', 'var(--p31-ice)', 'var(--p31-cloud)'];
 
 let bodyId = 0;
 
@@ -84,7 +85,7 @@ export function OrbitalDriftGame() {
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
     const mass = 5 + Math.random() * 20;
-    const color = COLORS[Math.floor(Math.random() * COLORS.length)];
+    const color = ORBITAL_COLORS[Math.floor(Math.random() * COLORS.length)];
     const body = createBody(x * (W / rect.width), y * (W / rect.width), mass, color, `b${++bodyId}`);
     stateRef.current.bodies = [...stateRef.current.bodies, body];
     setBodyCount(stateRef.current.bodies.length);
@@ -100,7 +101,7 @@ export function OrbitalDriftGame() {
     const cx = W / 2, cy = H / 2;
     const bodies: Body[] = [];
     const bigMass = 50;
-    const big = createBody(cx, cy, bigMass, '#cda852', `b${++bodyId}`);
+    const big = createBody(cx, cy, bigMass, 'var(--p31-gold)', `b${++bodyId}`);
     big.vx = 0; big.vy = 0;
     bodies.push(big);
     for (let i = 0; i < 6; i++) {
@@ -109,7 +110,7 @@ export function OrbitalDriftGame() {
       const m = 2 + Math.random() * 5;
       const b = createBody(
         cx + Math.cos(angle) * dist, cy + Math.sin(angle) * dist,
-        m, COLORS[i % COLORS.length], `b${++bodyId}`
+        m, ORBITAL_COLORS[i % COLORS.length], `b${++bodyId}`
       );
       const orbV = Math.sqrt(500 * bigMass / dist) * 0.8;
       b.vx = -Math.sin(angle) * orbV + (Math.random() - 0.5) * 0.5;
@@ -127,8 +128,8 @@ export function OrbitalDriftGame() {
         width={W} height={H}
         style={{
           width: cw, height: ch,
-          borderRadius: 12, border: '1px solid rgba(255,255,255,0.08)',
-          background: '#0f1115', cursor: 'crosshair',
+          borderRadius: 12, border: '1px solid var(--p31-white-8)',
+          background: 'var(--p31-void)', cursor: 'crosshair',
         }}
         onClick={handleClick}
       />
@@ -137,20 +138,20 @@ export function OrbitalDriftGame() {
         display: 'flex', gap: 16, alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center',
         fontFamily: "'JetBrains Mono', monospace", fontSize: 10,
       }}>
-        <label style={{ color: 'rgba(232,230,227,0.4)', display: 'flex', alignItems: 'center', gap: 6 }}>
+        <label style={{ color: 'var(--p31-cloud-40)', display: 'flex', alignItems: 'center', gap: 6 }}>
           Speed
           <input type="range" min={1} max={5} step={1} value={speed}
             onChange={e => { const v = parseInt(e.target.value); setSpeed(v); stateRef.current.speed = v; }}
             style={{ width: 60 }} />
         </label>
 
-        <label style={{ color: 'rgba(232,230,227,0.4)', display: 'flex', alignItems: 'center', gap: 6 }}>
+        <label style={{ color: 'var(--p31-cloud-40)', display: 'flex', alignItems: 'center', gap: 6 }}>
           <input type="checkbox" checked={trailsOn}
             onChange={e => { setTrailsOn(e.target.checked); stateRef.current.trailsOn = e.target.checked; }} />
           Trails
         </label>
 
-        <label style={{ color: 'rgba(232,230,227,0.4)', display: 'flex', alignItems: 'center', gap: 6 }}>
+        <label style={{ color: 'var(--p31-cloud-40)', display: 'flex', alignItems: 'center', gap: 6 }}>
           <input type="checkbox" checked={paused}
             onChange={e => { setPaused(e.target.checked); stateRef.current.paused = e.target.checked; }} />
           Pause
@@ -159,7 +160,7 @@ export function OrbitalDriftGame() {
         <button onClick={addPreset} style={btnStyle}>Solar System</button>
         <button onClick={clear} style={btnStyle}>Clear</button>
 
-        <span style={{ color: 'rgba(232,230,227,0.2)', fontSize: 9 }}>
+        <span style={{ color: 'var(--p31-cloud-20)', fontSize: 9 }}>
           {bodyCount} bodies
         </span>
       </div>
@@ -168,7 +169,7 @@ export function OrbitalDriftGame() {
 }
 
 const btnStyle: React.CSSProperties = {
-  padding: '6px 14px', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 6,
-  background: 'transparent', color: 'rgba(232,230,227,0.5)',
+  padding: '6px 14px', border: '1px solid var(--p31-white-15)', borderRadius: 6,
+  background: 'transparent', color: 'var(--p31-cloud-50)',
   fontFamily: "'JetBrains Mono', monospace", fontSize: 10, cursor: 'pointer',
 };

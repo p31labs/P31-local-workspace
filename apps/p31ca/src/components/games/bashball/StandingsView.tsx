@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { COLORS } from '../../../lib/arcade-core/theme.ts';
 import { LeagueStandings, LeagueTier } from '../../../engine/bashball/types.ts';
 
 interface StandingsViewProps {
@@ -16,10 +17,10 @@ const TIER_LABELS: Record<LeagueTier, string> = {
 };
 
 const TIER_COLORS: Record<LeagueTier, string> = {
-  [LeagueTier.Rookie]: '#3ba372',
-  [LeagueTier.Minor]: '#8b7cc9',
-  [LeagueTier.Major]: '#cda852',
-  [LeagueTier.World]: '#cc6247',
+  [LeagueTier.Rookie]: 'var(--p31-green)',
+  [LeagueTier.Minor]: 'var(--p31-purple)',
+  [LeagueTier.Major]: 'var(--p31-gold)',
+  [LeagueTier.World]: 'var(--p31-rust)',
 };
 
 export function StandingsView({ standings, userTeamName, tier, onBack }: StandingsViewProps) {
@@ -39,15 +40,15 @@ export function StandingsView({ standings, userTeamName, tier, onBack }: Standin
         alignItems: 'center',
         justifyContent: 'space-between',
         padding: '14px 18px',
-        background: 'rgba(255,255,255,0.02)',
+        background: 'var(--p31-white-2)',
         borderRadius: 12,
-        border: '1px solid rgba(255,255,255,0.06)',
+        border: '1px solid var(--p31-white-6)',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <span style={{
             fontFamily: "'Press Start 2P', cursive",
             fontSize: 14,
-            color: '#cc6247',
+            color: 'var(--p31-rust)',
           }}>
             STANDINGS
           </span>
@@ -71,18 +72,18 @@ export function StandingsView({ standings, userTeamName, tier, onBack }: Standin
           padding: 40,
           fontFamily: "'JetBrains Mono', monospace",
           fontSize: 12,
-          color: 'rgba(232,230,227,0.4)',
-          background: 'rgba(255,255,255,0.02)',
+          color: 'var(--p31-cloud-40)',
+          background: 'var(--p31-white-2)',
           borderRadius: 12,
-          border: '1px solid rgba(255,255,255,0.06)',
+          border: '1px solid var(--p31-white-6)',
         }}>
           Season not started
         </div>
       ) : (
         <div style={{
-          background: 'rgba(255,255,255,0.02)',
+          background: 'var(--p31-white-2)',
           borderRadius: 12,
-          border: '1px solid rgba(255,255,255,0.06)',
+          border: '1px solid var(--p31-white-6)',
           overflow: 'hidden',
         }}>
           <div style={{
@@ -90,10 +91,10 @@ export function StandingsView({ standings, userTeamName, tier, onBack }: Standin
             gridTemplateColumns: '30px 1fr 36px 36px 36px 40px 40px 40px',
             gap: 4,
             padding: '10px 14px',
-            borderBottom: '1px solid rgba(255,255,255,0.06)',
+            borderBottom: '1px solid var(--p31-white-6)',
             fontFamily: "'JetBrains Mono', monospace",
             fontSize: 9,
-            color: 'rgba(232,230,227,0.4)',
+            color: 'var(--p31-cloud-40)',
           }}>
             <span>#</span>
             <span>Team</span>
@@ -123,13 +124,13 @@ export function StandingsView({ standings, userTeamName, tier, onBack }: Standin
                   padding: '10px 14px',
                   fontFamily: "'JetBrains Mono', monospace",
                   fontSize: 10,
-                  color: isUser ? '#cda852' : isHovered ? '#e8e6e3' : 'rgba(232,230,227,0.7)',
+                  color: isUser ? 'var(--p31-gold)' : isHovered ? 'var(--p31-cloud)' : 'var(--p31-cloud-70)',
                   background: isUser
-                    ? 'rgba(205,168,82,0.08)'
+                    ? 'var(--p31-gold-dim)'
                     : isHovered
-                      ? 'rgba(255,255,255,0.03)'
+                      ? 'var(--p31-white-3)'
                       : 'transparent',
-                  borderBottom: i < standings.teams.length - 1 ? '1px solid rgba(255,255,255,0.03)' : 'none',
+                  borderBottom: i < standings.teams.length - 1 ? '1px solid var(--p31-white-3)' : 'none',
                   transition: 'all 0.12s',
                   fontWeight: isUser ? 700 : 400,
                 }}
@@ -169,9 +170,9 @@ export function StandingsView({ standings, userTeamName, tier, onBack }: Standin
           alignSelf: 'center',
           padding: '12px 28px',
           borderRadius: 10,
-          border: `1px solid ${hoveredBack ? 'rgba(232,230,227,0.2)' : 'rgba(255,255,255,0.1)'}`,
-          background: hoveredBack ? 'rgba(255,255,255,0.04)' : 'transparent',
-          color: 'rgba(232,230,227,0.5)',
+          border: `1px solid ${hoveredBack ? 'var(--p31-cloud-20)' : 'var(--p31-white-10)'}`,
+          background: hoveredBack ? 'var(--p31-white-4)' : 'transparent',
+          color: 'var(--p31-cloud-50)',
           fontFamily: "'JetBrains Mono', monospace",
           fontSize: 11,
           cursor: 'pointer',

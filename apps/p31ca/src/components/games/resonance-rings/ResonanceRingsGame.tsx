@@ -1,14 +1,15 @@
 import { useRef, useEffect, useState, useCallback } from 'react';
 import { Ring } from '../../../engine/resonance-rings/types.ts';
 import { createRing, updateRings } from '../../../engine/resonance-rings/simulation.ts';
+import { COLORS } from '../../../lib/arcade-core/theme.ts';
 
 const W = 600, H = 600;
-const COLORS = ['#4db8a8', '#cda852', '#cc6247', '#8b7cc9', '#3ba372', '#7ec8e3'];
+const RING_COLORS = ['var(--p31-teal)', 'var(--p31-gold)', 'var(--p31-rust)', 'var(--p31-purple)', 'var(--p31-green)', 'var(--p31-ice)'];
 
 export function ResonanceRingsGame() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const ringsRef = useRef<Ring[]>([]);
-  const [color, setColor] = useState('#4db8a8');
+  const [color, setColor] = useState('var(--p31-teal)');
   const [frequency, setFrequency] = useState(1);
   const [ringCount, setRingCount] = useState(0);
   const [cw, setCw] = useState(W);
@@ -75,7 +76,7 @@ export function ResonanceRingsGame() {
       rings.push(createRing(
         cx + Math.cos(angle) * 60,
         cy + Math.sin(angle) * 60,
-        COLORS[i % COLORS.length], 0.5 + Math.random() * 0.5,
+        RING_COLORS[i % COLORS.length], 0.5 + Math.random() * 0.5,
       ));
     }
     ringsRef.current = [...ringsRef.current, ...rings];
@@ -88,8 +89,8 @@ export function ResonanceRingsGame() {
         width={W} height={H}
         style={{
           width: cw, height: ch,
-          borderRadius: 12, border: '1px solid rgba(255,255,255,0.08)',
-          background: '#0f1115', cursor: 'crosshair',
+          borderRadius: 12, border: '1px solid var(--p31-white-8)',
+          background: 'var(--p31-void)', cursor: 'crosshair',
         }}
         onClick={handleClick}
       />
@@ -98,14 +99,14 @@ export function ResonanceRingsGame() {
         display: 'flex', gap: 16, alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center',
         fontFamily: "'JetBrains Mono', monospace", fontSize: 10,
       }}>
-        <label style={{ color: 'rgba(232,230,227,0.4)', display: 'flex', alignItems: 'center', gap: 6 }}>
+        <label style={{ color: 'var(--p31-cloud-40)', display: 'flex', alignItems: 'center', gap: 6 }}>
           Frequency
           <input type="range" min={0.2} max={3} step={0.1} value={frequency}
             onChange={e => setFrequency(parseFloat(e.target.value))}
             style={{ width: 60 }} />
         </label>
 
-        <label style={{ color: 'rgba(232,230,227,0.4)', display: 'flex', alignItems: 'center', gap: 6 }}>
+        <label style={{ color: 'var(--p31-cloud-40)', display: 'flex', alignItems: 'center', gap: 6 }}>
           Color
           <input type="color" value={color} onChange={e => setColor(e.target.value)}
             style={{ width: 32, height: 24, border: 'none', background: 'transparent', cursor: 'pointer' }} />
@@ -114,7 +115,7 @@ export function ResonanceRingsGame() {
         <button onClick={burst} style={btnStyle}>Burst</button>
         <button onClick={clear} style={btnStyle}>Clear</button>
 
-        <span style={{ color: 'rgba(232,230,227,0.2)', fontSize: 9 }}>
+        <span style={{ color: 'var(--p31-cloud-20)', fontSize: 9 }}>
           {ringCount} rings
         </span>
       </div>
@@ -123,7 +124,7 @@ export function ResonanceRingsGame() {
 }
 
 const btnStyle: React.CSSProperties = {
-  padding: '6px 14px', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 6,
-  background: 'transparent', color: 'rgba(232,230,227,0.5)',
+  padding: '6px 14px', border: '1px solid var(--p31-white-15)', borderRadius: 6,
+  background: 'transparent', color: 'var(--p31-cloud-50)',
   fontFamily: "'JetBrains Mono', monospace", fontSize: 10, cursor: 'pointer',
 };

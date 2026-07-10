@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { COLORS } from '../../../lib/arcade-core/theme.ts';
 import { Player, PlayerStats } from '../../../engine/bashball/types.ts';
 
 interface PlayerCardProps {
@@ -10,10 +11,10 @@ interface PlayerCardProps {
 }
 
 const STAT_CONFIG: Record<keyof PlayerStats, { label: string; color: string }> = {
-  power: { label: 'POW', color: '#cc6247' },
-  speed: { label: 'SPD', color: '#cda852' },
-  stamina: { label: 'STA', color: '#8b7cc9' },
-  accuracy: { label: 'ACC', color: '#3ba372' },
+  power: { label: 'POW', color: 'var(--p31-rust)' },
+  speed: { label: 'SPD', color: 'var(--p31-gold)' },
+  stamina: { label: 'STA', color: 'var(--p31-purple)' },
+  accuracy: { label: 'ACC', color: 'var(--p31-green)' },
 };
 
 const STAT_KEYS: (keyof PlayerStats)[] = ['power', 'speed', 'stamina', 'accuracy'];
@@ -30,8 +31,8 @@ export function PlayerCard({ player, highlightStat, showTrainingGain, trainingSt
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
-        background: hovered ? 'rgba(255,255,255,0.04)' : 'rgba(255,255,255,0.02)',
-        border: `1px solid ${highlightStat ? '#cda852' : 'rgba(255,255,255,0.06)'}`,
+        background: hovered ? 'var(--p31-white-4)' : 'var(--p31-white-2)',
+        border: `1px solid ${highlightStat ? 'var(--p31-gold)' : 'var(--p31-white-6)'}`,
         borderRadius: 10,
         padding: compact ? '10px 12px' : '14px 16px',
         transition: 'all 0.15s',
@@ -47,15 +48,15 @@ export function PlayerCard({ player, highlightStat, showTrainingGain, trainingSt
         <span style={{
           fontFamily: "'Press Start 2P', cursive",
           fontSize: compact ? 8 : 10,
-          color: '#e8e6e3',
+          color: 'var(--p31-cloud)',
         }}>
           {player.name}
         </span>
         <span style={{
           fontFamily: "'JetBrains Mono', monospace",
           fontSize: compact ? 8 : 9,
-          color: '#cc6247',
-          background: 'rgba(204,98,71,0.12)',
+          color: 'var(--p31-rust)',
+          background: 'var(--p31-rust-dim)',
           padding: '2px 8px',
           borderRadius: 6,
         }}>
@@ -94,13 +95,13 @@ export function PlayerCard({ player, highlightStat, showTrainingGain, trainingSt
                 fontFamily: "'JetBrains Mono', monospace",
               }}>
                 <span style={{
-                  color: isTraining ? cfg.color : isHighlighted ? '#cda852' : 'rgba(232,230,227,0.5)',
+                  color: isTraining ? cfg.color : isHighlighted ? 'var(--p31-gold)' : 'var(--p31-cloud-50)',
                   fontWeight: isTraining || isHighlighted ? 700 : 400,
                 }}>
                   {cfg.label}
                 </span>
                 <span style={{
-                  color: isTraining ? cfg.color : isHighlighted ? '#cda852' : 'rgba(232,230,227,0.4)',
+                  color: isTraining ? cfg.color : isHighlighted ? 'var(--p31-gold)' : 'var(--p31-cloud-40)',
                 }}>
                   {isTraining ? `${Math.round(value)} +${showTrainingGain!.toFixed(1)}` : Math.round(value)}
                 </span>
@@ -108,7 +109,7 @@ export function PlayerCard({ player, highlightStat, showTrainingGain, trainingSt
               <div style={{
                 width: '100%',
                 height: barHeight,
-                background: 'rgba(255,255,255,0.04)',
+                background: 'var(--p31-white-4)',
                 borderRadius: barRadius,
                 overflow: 'hidden',
                 position: 'relative',
@@ -116,7 +117,7 @@ export function PlayerCard({ player, highlightStat, showTrainingGain, trainingSt
                 <div style={{
                   width: `${Math.min(100, Math.max(0, value))}%`,
                   height: '100%',
-                  background: isTraining ? cfg.color : isHighlighted ? '#cda852' : cfg.color,
+                  background: isTraining ? cfg.color : isHighlighted ? 'var(--p31-gold)' : cfg.color,
                   borderRadius: barRadius,
                   opacity: isTraining ? 1 : isHighlighted ? 0.9 : 0.7,
                   transition: 'width 0.3s ease, opacity 0.2s ease',

@@ -1,5 +1,6 @@
 import { Card } from '../../../engine/card/core/types.ts';
 import { CardView } from './CardView.tsx';
+import { COLORS } from '../../../lib/arcade-core/theme.ts';
 
 interface HandViewProps {
   cards: Card[];
@@ -17,7 +18,7 @@ export function HandView({ cards, selectedId, onCardClick, label }: HandViewProp
         <span style={{
           fontSize: 11,
           fontFamily: "'JetBrains Mono', monospace",
-          color: 'rgba(232,230,227,0.4)',
+          color: 'var(--p31-cloud-40)',
           letterSpacing: '0.15em',
           textTransform: 'uppercase',
         }}>
@@ -30,9 +31,9 @@ export function HandView({ cards, selectedId, onCardClick, label }: HandViewProp
         flexWrap: 'wrap',
         justifyContent: 'center',
         padding: '8px 12px',
-        background: 'rgba(255,255,255,0.02)',
+        background: 'var(--p31-white-2)',
         borderRadius: 12,
-        border: '1px solid rgba(255,255,255,0.06)',
+        border: '1px solid var(--p31-white-6)',
         minHeight: 90,
       }}>
         {cards.map((card) => (

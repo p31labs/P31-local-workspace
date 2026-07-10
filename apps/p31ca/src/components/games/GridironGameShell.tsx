@@ -6,6 +6,7 @@ import { GridironGame } from './gridiron/GridironGame.tsx';
 import { SeasonRecord } from '../../engine/gridiron/types.ts';
 import { createInitialSeasonRecord, formatSeasonRecord, generateTeamName } from '../../engine/gridiron/teamManager.ts';
 import { createMulberry32 } from '../../engine/card/rng/mulberry32.ts';
+import { COLORS } from '../../lib/arcade-core/theme.ts';
 
 type Screen = 'menu' | 'game';
 
@@ -77,17 +78,17 @@ export function GridironGameShell() {
   const extraHud = screen === 'game' ? (
     <div style={{ position: 'absolute', top: 80, left: '50%', transform: 'translateX(-50%)', zIndex: 10, display: 'flex', gap: 8, alignItems: 'center' }}>
       <button onClick={handleBackToMenu} style={{
-        padding: '6px 14px', borderRadius: 8, border: '1px solid rgba(255,255,255,0.1)',
-        background: 'rgba(255,255,255,0.04)', color: 'rgba(232,230,227,0.6)',
+        padding: '6px 14px', borderRadius: 8, border: '1px solid var(--p31-white-10)',
+        background: 'var(--p31-white-4)', color: 'var(--p31-cloud-60)',
         fontFamily: "'JetBrains Mono', monospace", fontSize: 10, cursor: 'pointer',
       }}
-        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; }}
-        onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; }}>
+        onMouseEnter={e => { e.currentTarget.style.background = 'var(--p31-white-8)'; }}
+        onMouseLeave={e => { e.currentTarget.style.background = 'var(--p31-white-4)'; }}>
         ← MENU
       </button>
       <span style={{
-        padding: '6px 14px', borderRadius: 8, background: 'rgba(205,168,82,0.1)',
-        border: '1px solid rgba(205,168,82,0.2)', color: '#cda852',
+        padding: '6px 14px', borderRadius: 8, background: 'var(--p31-gold-dim)',
+        border: '1px solid var(--p31-gold-border)', color: 'var(--p31-gold)',
         fontFamily: "'Press Start 2P', cursive", fontSize: 9,
       }}>
         GRIDIRON
@@ -108,38 +109,38 @@ export function GridironGameShell() {
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 28, maxWidth: 500, width: '100%' }}>
             <div style={{ textAlign: 'center' }}>
               <div style={{ fontSize: 64, marginBottom: 12 }}>🏈</div>
-              <h1 style={{ fontFamily: "'Press Start 2P', cursive", fontSize: 18, color: '#cda852', marginBottom: 12 }}>GRIDIRON</h1>
-              <p style={{ fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: 'rgba(232,230,227,0.5)', lineHeight: 1.8 }}>
+              <h1 style={{ fontFamily: "'Press Start 2P', cursive", fontSize: 18, color: 'var(--p31-gold)', marginBottom: 12 }}>GRIDIRON</h1>
+              <p style={{ fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: 'var(--p31-cloud-50)', lineHeight: 1.8 }}>
                 Football simulation engine
               </p>
             </div>
 
             {record.wins + record.losses > 0 && (
-              <div style={{ padding: '10px 20px', background: 'rgba(205,168,82,0.06)', border: '1px solid rgba(205,168,82,0.1)', borderRadius: 10, textAlign: 'center', width: '100%', maxWidth: 320 }}>
-                <p style={{ fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: 'rgba(232,230,227,0.4)', marginBottom: 4 }}>Season Record</p>
-                <p style={{ fontSize: 14, fontFamily: "'Press Start 2P', cursive", color: '#e8e6e3' }}>
+              <div style={{ padding: '10px 20px', background: 'var(--p31-gold-dim)', border: '1px solid var(--p31-gold-dim)', borderRadius: 10, textAlign: 'center', width: '100%', maxWidth: 320 }}>
+                <p style={{ fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: 'var(--p31-cloud-40)', marginBottom: 4 }}>Season Record</p>
+                <p style={{ fontSize: 14, fontFamily: "'Press Start 2P', cursive", color: 'var(--p31-cloud)' }}>
                   {formatSeasonRecord(record)}
                 </p>
-                <p style={{ fontSize: 9, fontFamily: "'JetBrains Mono', monospace", color: 'rgba(232,230,227,0.3)', marginTop: 4 }}>
+                <p style={{ fontSize: 9, fontFamily: "'JetBrains Mono', monospace", color: 'var(--p31-cloud-30)', marginTop: 4 }}>
                   PF: {record.pointsFor} — PA: {record.pointsAgainst}
                 </p>
               </div>
             )}
 
-            <div style={{ padding: '16px 24px', background: 'rgba(205,168,82,0.06)', border: '1px solid rgba(205,168,82,0.1)', borderRadius: 12, textAlign: 'center', width: '100%', maxWidth: 320 }}>
-              <p style={{ fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: 'rgba(232,230,227,0.4)', marginBottom: 12 }}>Team Name</p>
+            <div style={{ padding: '16px 24px', background: 'var(--p31-gold-dim)', border: '1px solid var(--p31-gold-dim)', borderRadius: 12, textAlign: 'center', width: '100%', maxWidth: 320 }}>
+              <p style={{ fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: 'var(--p31-cloud-40)', marginBottom: 12 }}>Team Name</p>
               <input
                 value={teamName}
                 onChange={e => setTeamName(e.target.value)}
                 placeholder="e.g. Atlanta Phoenix"
                 maxLength={24}
-                style={{ padding: '10px 16px', borderRadius: 8, border: '1px solid rgba(205,168,82,0.3)', background: 'rgba(255,255,255,0.03)', color: '#e8e6e3', fontFamily: "'JetBrains Mono', monospace", fontSize: 14, outline: 'none', width: '100%', boxSizing: 'border-box' }}
+                style={{ padding: '10px 16px', borderRadius: 8, border: '1px solid var(--p31-gold-border)', background: 'var(--p31-white-3)', color: 'var(--p31-cloud)', fontFamily: "'JetBrains Mono', monospace", fontSize: 14, outline: 'none', width: '100%', boxSizing: 'border-box' }}
                 onKeyDown={e => { if (e.key === 'Enter' && teamName.trim()) handleStartGame(); }}
               />
             </div>
 
-            <div style={{ padding: '12px 24px', background: 'rgba(205,168,82,0.04)', border: '1px solid rgba(205,168,82,0.08)', borderRadius: 12, textAlign: 'center' }}>
-              <p style={{ fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: 'rgba(232,230,227,0.4)', lineHeight: 1.8 }}>
+            <div style={{ padding: '12px 24px', background: 'rgba(205,168,82,0.04)', border: '1px solid var(--p31-gold-dim)', borderRadius: 12, textAlign: 'center' }}>
+              <p style={{ fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: 'var(--p31-cloud-40)', lineHeight: 1.8 }}>
                 Spoons: {spoonLevel}/12<br />
                 Difficulty factor: {(spoonFactor * 100).toFixed(0)}%
               </p>
@@ -148,9 +149,9 @@ export function GridironGameShell() {
             <button
               onClick={handleStartGame}
               disabled={!teamName.trim()}
-              style={{ padding: '16px 40px', borderRadius: 12, border: `2px solid ${teamName.trim() ? '#cda852' : 'rgba(255,255,255,0.1)'}`, background: teamName.trim() ? 'rgba(205,168,82,0.1)' : 'rgba(255,255,255,0.02)', color: teamName.trim() ? '#cda852' : 'rgba(232,230,227,0.2)', fontFamily: "'Press Start 2P', cursive", fontSize: 13, cursor: teamName.trim() ? 'pointer' : 'not-allowed', transition: 'all 0.2s' }}
-              onMouseEnter={e => { if (teamName.trim()) e.currentTarget.style.background = 'rgba(205,168,82,0.2)'; }}
-              onMouseLeave={e => { e.currentTarget.style.background = teamName.trim() ? 'rgba(205,168,82,0.1)' : 'rgba(255,255,255,0.02)'; }}
+              style={{ padding: '16px 40px', borderRadius: 12, border: `2px solid ${teamName.trim() ? 'var(--p31-gold)' : 'var(--p31-white-10)'}`, background: teamName.trim() ? 'var(--p31-gold-dim)' : 'var(--p31-white-2)', color: teamName.trim() ? 'var(--p31-gold)' : 'var(--p31-cloud-20)', fontFamily: "'Press Start 2P', cursive", fontSize: 13, cursor: teamName.trim() ? 'pointer' : 'not-allowed', transition: 'all 0.2s' }}
+              onMouseEnter={e => { if (teamName.trim()) e.currentTarget.style.background = 'var(--p31-gold-border)'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = teamName.trim() ? 'var(--p31-gold-dim)' : 'var(--p31-white-2)'; }}
             >
               PLAY BALL
             </button>

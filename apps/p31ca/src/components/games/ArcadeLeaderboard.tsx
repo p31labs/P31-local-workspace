@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { getPGlite } from '../../lib/arcade-core/pglite/client.ts';
 import { GET_ALL_GAME_TOP_SCORES } from '../../lib/arcade-core/pglite/schema.ts';
-import { ARCADE_GAMES } from '../../lib/arcade-core/theme.ts';
+import { ARCADE_GAMES, COLORS } from '../../lib/arcade-core/theme.ts';
 
 interface ScoreRow {
   slug: string;
@@ -59,20 +59,20 @@ export function ArcadeLeaderboard() {
       <div style={{ textAlign: 'center', marginBottom: 32 }}>
         <h1 style={{
           fontFamily: "'Press Start 2P', cursive", fontSize: 18,
-          color: '#cda852', marginBottom: 8,
+          color: 'var(--p31-gold)', marginBottom: 8,
         }}>
           LEADERBOARDS
         </h1>
         <p style={{
           fontSize: 11, fontFamily: "'JetBrains Mono', monospace",
-          color: 'rgba(232,230,227,0.4)',
+          color: 'var(--p31-cloud-40)',
         }}>
           Top scores across the arcade
         </p>
       </div>
 
       {loading && (
-        <div style={{ textAlign: 'center', padding: 40, fontSize: 12, fontFamily: "'JetBrains Mono', monospace", color: 'rgba(232,230,227,0.3)' }}>
+        <div style={{ textAlign: 'center', padding: 40, fontSize: 12, fontFamily: "'JetBrains Mono', monospace", color: 'var(--p31-cloud-30)' }}>
           Loading scores...
         </div>
       )}
@@ -80,13 +80,13 @@ export function ArcadeLeaderboard() {
       {!loading && groups.length === 0 && (
         <div style={{
           textAlign: 'center', padding: 40,
-          background: 'rgba(255,255,255,0.02)', borderRadius: 12,
-          border: '1px solid rgba(255,255,255,0.06)',
+          background: 'var(--p31-white-2)', borderRadius: 12,
+          border: '1px solid var(--p31-white-6)',
         }}>
-          <p style={{ fontSize: 14, fontFamily: "'JetBrains Mono', monospace", color: 'rgba(232,230,227,0.4)', marginBottom: 8 }}>
+          <p style={{ fontSize: 14, fontFamily: "'JetBrains Mono', monospace", color: 'var(--p31-cloud-40)', marginBottom: 8 }}>
             No scores yet
           </p>
-          <p style={{ fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: 'rgba(232,230,227,0.2)' }}>
+          <p style={{ fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: 'var(--p31-cloud-20)' }}>
             Play some games to see your best performances here.
           </p>
         </div>
@@ -94,19 +94,19 @@ export function ArcadeLeaderboard() {
 
       {!loading && groups.map(group => {
         const emoji = GAME_EMOJI[group.slug] || '🎮';
-        const color = GAME_COLOR[group.slug] || '#8b7cc9';
+        const color = GAME_COLOR[group.slug] || 'var(--p31-purple)';
         return (
           <div key={group.slug} style={{
             marginBottom: 16, padding: '16px 20px',
-            background: 'rgba(255,255,255,0.02)', borderRadius: 12,
-            border: '1px solid rgba(255,255,255,0.06)',
+            background: 'var(--p31-white-2)', borderRadius: 12,
+            border: '1px solid var(--p31-white-6)',
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
               <span style={{ fontSize: 28 }}>{emoji}</span>
               <div>
                 <h3 style={{
                   fontFamily: "'Press Start 2P', cursive", fontSize: 10,
-                  color: '#e8e6e3', margin: 0,
+                  color: 'var(--p31-cloud)', margin: 0,
                 }}>
                   {group.title}
                 </h3>
@@ -125,27 +125,27 @@ export function ArcadeLeaderboard() {
               <div key={i} style={{
                 display: 'flex', justifyContent: 'space-between', alignItems: 'center',
                 padding: '8px 12px', marginBottom: i < group.scores.length - 1 ? 6 : 0,
-                background: i === 0 ? 'rgba(205,168,82,0.06)' : 'transparent',
+                background: i === 0 ? 'var(--p31-gold-dim)' : 'transparent',
                 borderRadius: 8,
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                   <span style={{
                     fontFamily: "'Press Start 2P', cursive", fontSize: 8,
-                    color: i === 0 ? '#cda852' : 'rgba(232,230,227,0.3)',
+                    color: i === 0 ? 'var(--p31-gold)' : 'var(--p31-cloud-30)',
                     minWidth: 20,
                   }}>
                     {i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${i + 1}`}
                   </span>
                   <span style={{
                     fontSize: 16, fontFamily: "'Press Start 2P', cursive",
-                    color: i === 0 ? '#cda852' : '#e8e6e3',
+                    color: i === 0 ? 'var(--p31-gold)' : 'var(--p31-cloud)',
                   }}>
                     {s.score}
                   </span>
                 </div>
                 <span style={{
                   fontSize: 9, fontFamily: "'JetBrains Mono', monospace",
-                  color: 'rgba(232,230,227,0.3)',
+                  color: 'var(--p31-cloud-30)',
                 }}>
                   {formatDate(s.created_at)}
                 </span>
@@ -154,7 +154,7 @@ export function ArcadeLeaderboard() {
             {group.scores.length === 0 && (
               <p style={{
                 fontSize: 10, fontFamily: "'JetBrains Mono', monospace",
-                color: 'rgba(232,230,227,0.2)', textAlign: 'center', padding: 12,
+                color: 'var(--p31-cloud-20)', textAlign: 'center', padding: 12,
               }}>
                 No scores yet
               </p>

@@ -6,6 +6,7 @@ import { generateTeam } from '../../../engine/bashball/gameLoop.ts';
 import { createMulberry32 } from '../../../engine/card/rng/mulberry32.ts';
 import { eventDescription } from '../../../engine/bashball/atbat.ts';
 import { BashballField } from './BashballField.tsx';
+import { COLORS } from '../../../lib/arcade-core/theme.ts';
 
 interface BashballGameProps {
   onScoreChange: (delta: number) => void;
@@ -41,12 +42,12 @@ const styles = `
 
 function resultColor(result: AtBatResult): string {
   switch (result) {
-    case 'HOME_RUN': return '#3ba372';
+    case 'HOME_RUN': return 'var(--p31-green)';
     case 'TRIPLE':
     case 'DOUBLE':
-    case 'SINGLE': return '#7ec8e3';
-    case 'WALK': return '#cda852';
-    case 'STRIKEOUT': return '#cc6247';
+    case 'SINGLE': return 'var(--p31-ice)';
+    case 'WALK': return 'var(--p31-gold)';
+    case 'STRIKEOUT': return 'var(--p31-rust)';
     default: return 'rgba(232,230,227,0.55)';
   }
 }
@@ -102,22 +103,22 @@ function BaseDiamond({ bases }: { bases: [boolean, boolean, boolean] }) {
       {bases[0] ? (
         <circle cx="97" cy="55" r="8" fill="rgba(255,255,255,0.9)" />
       ) : (
-        <polygon points="94,55 97,52 100,55 97,58" fill="rgba(232,230,227,0.3)" />
+        <polygon points="94,55 97,52 100,55 97,58" fill="var(--p31-cloud-30)" />
       )}
 
       {bases[1] ? (
         <circle cx="55" cy="8" r="8" fill="rgba(255,255,255,0.9)" />
       ) : (
-        <polygon points="55,5 58,8 55,11 52,8" fill="rgba(232,230,227,0.3)" />
+        <polygon points="55,5 58,8 55,11 52,8" fill="var(--p31-cloud-30)" />
       )}
 
       {bases[2] ? (
         <circle cx="13" cy="55" r="8" fill="rgba(255,255,255,0.9)" />
       ) : (
-        <polygon points="10,55 13,52 16,55 13,58" fill="rgba(232,230,227,0.3)" />
+        <polygon points="10,55 13,52 16,55 13,58" fill="var(--p31-cloud-30)" />
       )}
 
-      <polygon points="50,100 60,100 64,104 60,108 50,108 46,104" fill="rgba(232,230,227,0.25)" />
+      <polygon points="50,100 60,100 64,104 60,108 50,108 46,104" fill="var(--p31-cloud-25)" />
     </svg>
   );
 }
@@ -206,13 +207,13 @@ export function BashballGame({ onScoreChange, onComplete, onMoveMade, spoonLevel
         <div style={{ fontSize: 72 }}>⚾</div>
         <h2 style={{
           fontFamily: "'Press Start 2P', cursive", fontSize: 16,
-          color: '#cc6247', margin: 0,
+          color: 'var(--p31-rust)', margin: 0,
         }}>
           BASHBALL
         </h2>
         <p style={{
           fontSize: 12, fontFamily: "'JetBrains Mono', monospace",
-          color: 'rgba(232,230,227,0.5)',
+          color: 'var(--p31-cloud-50)',
           maxWidth: 360, lineHeight: 1.8,
         }}>
           Markov chain baseball simulation. Manage your team, call the plays, and ride the spoon-fuelled RNG.
@@ -224,9 +225,9 @@ export function BashballGame({ onScoreChange, onComplete, onMoveMade, spoonLevel
           }}
           style={{
             padding: '16px 40px', borderRadius: 12,
-            border: '2px solid #cc6247',
-            background: 'rgba(204,98,71,0.1)',
-            color: '#cc6247',
+            border: '2px solid var(--p31-rust)',
+            background: 'var(--p31-rust-dim)',
+            color: 'var(--p31-rust)',
             fontFamily: "'Press Start 2P', cursive",
             fontSize: 12, cursor: 'pointer',
           }}
@@ -245,14 +246,14 @@ export function BashballGame({ onScoreChange, onComplete, onMoveMade, spoonLevel
       }}>
         <h3 style={{
           fontFamily: "'Press Start 2P', cursive",
-          fontSize: 12, color: '#cc6247',
+          fontSize: 12, color: 'var(--p31-rust)',
         }}>
           TEAM SETUP
         </h3>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8, width: '100%', maxWidth: 300 }}>
           <label style={{
             fontSize: 10, fontFamily: "'JetBrains Mono', monospace",
-            color: 'rgba(232,230,227,0.5)',
+            color: 'var(--p31-cloud-50)',
           }}>
             Your Team Name
           </label>
@@ -261,9 +262,9 @@ export function BashballGame({ onScoreChange, onComplete, onMoveMade, spoonLevel
             onChange={e => setTeamName(e.target.value)}
             style={{
               padding: '10px 16px', borderRadius: 8,
-              border: '1px solid rgba(204,98,71,0.3)',
-              background: 'rgba(255,255,255,0.03)',
-              color: '#e8e6e3',
+              border: '1px solid var(--p31-rust-border)',
+              background: 'var(--p31-white-3)',
+              color: 'var(--p31-cloud)',
               fontFamily: "'JetBrains Mono', monospace",
               fontSize: 14, outline: 'none',
             }}
@@ -275,9 +276,9 @@ export function BashballGame({ onScoreChange, onComplete, onMoveMade, spoonLevel
             onClick={startGame}
             style={{
               padding: '14px 32px', borderRadius: 12,
-              border: '2px solid #cc6247',
-              background: 'rgba(204,98,71,0.15)',
-              color: '#cc6247',
+              border: '2px solid var(--p31-rust)',
+              background: 'var(--p31-rust-dim)',
+              color: 'var(--p31-rust)',
               fontFamily: "'Press Start 2P', cursive",
               fontSize: 10, cursor: 'pointer',
             }}
@@ -288,9 +289,9 @@ export function BashballGame({ onScoreChange, onComplete, onMoveMade, spoonLevel
             onClick={() => setScreen({ phase: 'intro' })}
             style={{
               padding: '14px 24px', borderRadius: 12,
-              border: '1px solid rgba(255,255,255,0.1)',
+              border: '1px solid var(--p31-white-10)',
               background: 'transparent',
-              color: 'rgba(232,230,227,0.5)',
+              color: 'var(--p31-cloud-50)',
               fontFamily: "'JetBrains Mono', monospace",
               fontSize: 11, cursor: 'pointer',
             }}
@@ -325,32 +326,32 @@ export function BashballGame({ onScoreChange, onComplete, onMoveMade, spoonLevel
         <h2 style={{
           fontFamily: "'Press Start 2P', cursive",
           fontSize: won ? 16 : 14,
-          color: won ? '#3ba372' : '#cc6247',
+          color: won ? 'var(--p31-green)' : 'var(--p31-rust)',
         }}>
           {won ? 'VICTORY!' : 'LOSS'}
         </h2>
         <p style={{
           fontSize: 24, fontFamily: "'Press Start 2P', cursive",
-          color: '#e8e6e3',
+          color: 'var(--p31-cloud)',
         }}>
           {myScore} - {oppScore}
         </p>
 
         <div style={{
           width: '100%', maxWidth: 460, padding: '16px 20px',
-          background: 'rgba(255,255,255,0.02)',
-          border: '1px solid rgba(255,255,255,0.06)',
+          background: 'var(--p31-white-2)',
+          border: '1px solid var(--p31-white-6)',
           borderRadius: 12,
         }}>
           <div style={{
             fontFamily: "'Press Start 2P', cursive", fontSize: 10,
-            color: '#cda852', marginBottom: 14,
+            color: 'var(--p31-gold)', marginBottom: 14,
           }}>
             GAME RECAP
           </div>
           <div style={{
             fontSize: 11, fontFamily: "'JetBrains Mono', monospace",
-            color: 'rgba(232,230,227,0.6)', marginBottom: 12,
+            color: 'var(--p31-cloud-60)', marginBottom: 12,
           }}>
             Duration: {durationLabel} &middot; {totalPlays} plays
           </div>
@@ -364,19 +365,19 @@ export function BashballGame({ onScoreChange, onComplete, onMoveMade, spoonLevel
           }}>
             <div />
             {[1,2,3,4,5,6,7,8,9].map(i => (
-              <div key={i} style={{ color: 'rgba(232,230,227,0.35)', textAlign: 'center' }}>{i}</div>
+              <div key={i} style={{ color: 'var(--p31-cloud-35)', textAlign: 'center' }}>{i}</div>
             ))}
-            <div style={{ color: 'rgba(232,230,227,0.6)', textAlign: 'center' }}>R</div>
-            <div style={{ color: 'rgba(232,230,227,0.7)', textAlign: 'left' }}>{labelA}</div>
+            <div style={{ color: 'var(--p31-cloud-60)', textAlign: 'center' }}>R</div>
+            <div style={{ color: 'var(--p31-cloud-70)', textAlign: 'left' }}>{labelA}</div>
             {awayRuns.map((r, i) => (
-              <div key={i} style={{ color: '#cc6247', textAlign: 'center' }}>{r}</div>
+              <div key={i} style={{ color: 'var(--p31-rust)', textAlign: 'center' }}>{r}</div>
             ))}
-            <div style={{ color: '#cc6247', textAlign: 'center', fontWeight: 'bold' }}>{myScore}</div>
-            <div style={{ color: 'rgba(232,230,227,0.7)', textAlign: 'left' }}>{labelH}</div>
+            <div style={{ color: 'var(--p31-rust)', textAlign: 'center', fontWeight: 'bold' }}>{myScore}</div>
+            <div style={{ color: 'var(--p31-cloud-70)', textAlign: 'left' }}>{labelH}</div>
             {homeRuns.map((r, i) => (
-              <div key={i} style={{ color: '#cda852', textAlign: 'center' }}>{r}</div>
+              <div key={i} style={{ color: 'var(--p31-gold)', textAlign: 'center' }}>{r}</div>
             ))}
-            <div style={{ color: '#cda852', textAlign: 'center', fontWeight: 'bold' }}>{oppScore}</div>
+            <div style={{ color: 'var(--p31-gold)', textAlign: 'center', fontWeight: 'bold' }}>{oppScore}</div>
           </div>
 
           <div style={{
@@ -384,15 +385,15 @@ export function BashballGame({ onScoreChange, onComplete, onMoveMade, spoonLevel
             fontSize: 11, fontFamily: "'JetBrains Mono', monospace",
           }}>
             <div>
-              <div style={{ color: 'rgba(232,230,227,0.35)', fontSize: 9 }}>HITS</div>
-              <div style={{ color: '#7ec8e3' }}>{labelA}: {awayHits}</div>
-              <div style={{ color: '#7ec8e3' }}>{labelH}: {homeHits}</div>
+              <div style={{ color: 'var(--p31-cloud-35)', fontSize: 9 }}>HITS</div>
+              <div style={{ color: 'var(--p31-ice)' }}>{labelA}: {awayHits}</div>
+              <div style={{ color: 'var(--p31-ice)' }}>{labelH}: {homeHits}</div>
             </div>
             {star && (
               <div>
-                <div style={{ color: 'rgba(232,230,227,0.35)', fontSize: 9 }}>STAR PLAYER</div>
-                <div style={{ color: '#cda852', fontSize: 10 }}>{star.name}</div>
-                <div style={{ color: 'rgba(232,230,227,0.5)', fontSize: 9 }}>
+                <div style={{ color: 'var(--p31-cloud-35)', fontSize: 9 }}>STAR PLAYER</div>
+                <div style={{ color: 'var(--p31-gold)', fontSize: 10 }}>{star.name}</div>
+                <div style={{ color: 'var(--p31-cloud-50)', fontSize: 9 }}>
                   {star.count} positive {star.count === 1 ? 'result' : 'results'}
                 </div>
               </div>
@@ -407,9 +408,9 @@ export function BashballGame({ onScoreChange, onComplete, onMoveMade, spoonLevel
           }}
           style={{
             padding: '14px 32px', borderRadius: 12,
-            border: '2px solid #cc6247',
-            background: 'rgba(204,98,71,0.1)',
-            color: '#cc6247',
+            border: '2px solid var(--p31-rust)',
+            background: 'var(--p31-rust-dim)',
+            color: 'var(--p31-rust)',
             fontFamily: "'Press Start 2P', cursive",
             fontSize: 10, cursor: 'pointer',
           }}
@@ -466,17 +467,17 @@ export function BashballGame({ onScoreChange, onComplete, onMoveMade, spoonLevel
           {[1,2,3,4,5,6,7,8,9].map(i => (
             <div key={i} style={{
               textAlign: 'center',
-              color: i === inning ? '#e8e6e3' : 'rgba(232,230,227,0.3)',
+              color: i === inning ? 'var(--p31-cloud)' : 'var(--p31-cloud-30)',
               fontWeight: i === inning ? 'bold' : 'normal',
               paddingBottom: 4,
             }}>
               {i}
             </div>
           ))}
-          <div style={{ textAlign: 'center', color: 'rgba(232,230,227,0.5)', paddingBottom: 4 }}>R</div>
+          <div style={{ textAlign: 'center', color: 'var(--p31-cloud-50)', paddingBottom: 4 }}>R</div>
 
           <div style={{
-            color: 'rgba(232,230,227,0.6)', fontSize: 9, textAlign: 'left',
+            color: 'var(--p31-cloud-60)', fontSize: 9, textAlign: 'left',
             overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', lineHeight: '20px',
           }}>
             {labelA}
@@ -486,9 +487,9 @@ export function BashballGame({ onScoreChange, onComplete, onMoveMade, spoonLevel
             return (
               <div key={i} style={{
                 textAlign: 'center',
-                color: '#cc6247',
+                color: 'var(--p31-rust)',
                 lineHeight: '20px',
-                background: i === inning && top ? 'rgba(204,98,71,0.08)' : 'transparent',
+                background: i === inning && top ? 'var(--p31-rust-dim)' : 'transparent',
                 borderRadius: i === inning && top ? 4 : 0,
               }}>
                 {display}
@@ -496,14 +497,14 @@ export function BashballGame({ onScoreChange, onComplete, onMoveMade, spoonLevel
             );
           })}
           <div style={{
-            textAlign: 'center', color: '#cc6247',
+            textAlign: 'center', color: 'var(--p31-rust)',
             fontWeight: 'bold', lineHeight: '20px',
           }}>
             {score[0]}
           </div>
 
           <div style={{
-            color: 'rgba(232,230,227,0.6)', fontSize: 9, textAlign: 'left',
+            color: 'var(--p31-cloud-60)', fontSize: 9, textAlign: 'left',
             overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', lineHeight: '20px',
           }}>
             {labelH}
@@ -513,9 +514,9 @@ export function BashballGame({ onScoreChange, onComplete, onMoveMade, spoonLevel
             return (
               <div key={i} style={{
                 textAlign: 'center',
-                color: '#cda852',
+                color: 'var(--p31-gold)',
                 lineHeight: '20px',
-                background: i === inning && !top ? 'rgba(205,168,82,0.08)' : 'transparent',
+                background: i === inning && !top ? 'var(--p31-gold-dim)' : 'transparent',
                 borderRadius: i === inning && !top ? 4 : 0,
               }}>
                 {display}
@@ -523,7 +524,7 @@ export function BashballGame({ onScoreChange, onComplete, onMoveMade, spoonLevel
             );
           })}
           <div style={{
-            textAlign: 'center', color: '#cda852',
+            textAlign: 'center', color: 'var(--p31-gold)',
             fontWeight: 'bold', lineHeight: '20px',
           }}>
             {score[1]}
@@ -533,13 +534,13 @@ export function BashballGame({ onScoreChange, onComplete, onMoveMade, spoonLevel
         <div style={{
           display: 'flex', justifyContent: 'space-between', alignItems: 'center',
           marginTop: 10, paddingTop: 10,
-          borderTop: '1px solid rgba(255,255,255,0.04)',
+          borderTop: '1px solid var(--p31-white-4)',
         }}>
           <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: 9, fontFamily: "'JetBrains Mono', monospace", color: 'rgba(232,230,227,0.35)' }}>
+            <div style={{ fontSize: 9, fontFamily: "'JetBrains Mono', monospace", color: 'var(--p31-cloud-35)' }}>
               AWAY
             </div>
-            <div style={{ fontSize: 22, fontFamily: "'Press Start 2P', cursive", color: '#cc6247' }}>
+            <div style={{ fontSize: 22, fontFamily: "'Press Start 2P', cursive", color: 'var(--p31-rust)' }}>
               {score[0]}
             </div>
           </div>
@@ -548,7 +549,7 @@ export function BashballGame({ onScoreChange, onComplete, onMoveMade, spoonLevel
             <div style={{
               fontSize: 11,
               fontFamily: "'Press Start 2P', cursive",
-              color: '#8b7cc9',
+              color: 'var(--p31-purple)',
             }}>
               <span style={{
                 display: 'inline-block',
@@ -561,7 +562,7 @@ export function BashballGame({ onScoreChange, onComplete, onMoveMade, spoonLevel
             <div style={{
               fontSize: 10,
               fontFamily: "'JetBrains Mono', monospace",
-              color: 'rgba(232,230,227,0.5)',
+              color: 'var(--p31-cloud-50)',
               marginTop: 4,
             }}>
               {outs} OUT{outs !== 1 ? 'S' : ''}
@@ -569,7 +570,7 @@ export function BashballGame({ onScoreChange, onComplete, onMoveMade, spoonLevel
             <div style={{
               fontSize: 9,
               fontFamily: "'JetBrains Mono', monospace",
-              color: 'rgba(232,230,227,0.35)',
+              color: 'var(--p31-cloud-35)',
               marginTop: 4,
             }}>
               ⏱ {Math.floor(elapsed / 60)}:{String(elapsed % 60).padStart(2, '0')}
@@ -577,7 +578,7 @@ export function BashballGame({ onScoreChange, onComplete, onMoveMade, spoonLevel
             <div style={{
               fontSize: 9,
               fontFamily: "'JetBrains Mono', monospace",
-              color: 'rgba(232,230,227,0.25)',
+              color: 'var(--p31-cloud-25)',
               marginTop: 4,
             }}>
               🥄 {spoonFactor.toFixed(1)}x
@@ -585,10 +586,10 @@ export function BashballGame({ onScoreChange, onComplete, onMoveMade, spoonLevel
           </div>
 
           <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: 9, fontFamily: "'JetBrains Mono', monospace", color: 'rgba(232,230,227,0.35)' }}>
+            <div style={{ fontSize: 9, fontFamily: "'JetBrains Mono', monospace", color: 'var(--p31-cloud-35)' }}>
               HOME
             </div>
-            <div style={{ fontSize: 22, fontFamily: "'Press Start 2P', cursive", color: '#cda852' }}>
+            <div style={{ fontSize: 22, fontFamily: "'Press Start 2P', cursive", color: 'var(--p31-gold)' }}>
               {score[1]}
             </div>
           </div>
@@ -599,14 +600,14 @@ export function BashballGame({ onScoreChange, onComplete, onMoveMade, spoonLevel
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           <div style={{
             display: 'flex', justifyContent: 'center', gap: 18,
-            background: '#05070a', borderRadius: 10, padding: '8px 14px',
-            border: '1px solid rgba(205,168,82,0.25)',
+            background: 'var(--p31-deep-void)', borderRadius: 10, padding: '8px 14px',
+            border: '1px solid var(--p31-gold-border)',
             fontFamily: "'Press Start 2P', monospace",
           }}>
-            <span style={{ color: '#cda852', fontSize: 10 }}>B {balls}</span>
-            <span style={{ color: '#cda852', fontSize: 10 }}>S {strikes}</span>
-            <span style={{ color: '#cda852', fontSize: 10 }}>O {outs}</span>
-            <span style={{ color: '#7ec8e3', fontSize: 10 }}>⏱ {Math.floor(elapsed / 60)}:{String(elapsed % 60).padStart(2, '0')}</span>
+            <span style={{ color: 'var(--p31-gold)', fontSize: 10 }}>B {balls}</span>
+            <span style={{ color: 'var(--p31-gold)', fontSize: 10 }}>S {strikes}</span>
+            <span style={{ color: 'var(--p31-gold)', fontSize: 10 }}>O {outs}</span>
+            <span style={{ color: 'var(--p31-ice)', fontSize: 10 }}>⏱ {Math.floor(elapsed / 60)}:{String(elapsed % 60).padStart(2, '0')}</span>
           </div>
           <BashballField bases={bases} spoonLevel={spoonLevel} />
         </div>
@@ -630,14 +631,14 @@ export function BashballGame({ onScoreChange, onComplete, onMoveMade, spoonLevel
           padding: '12px 14px',
           background: 'rgba(0,0,0,0.2)',
           borderRadius: 12,
-          border: '1px solid rgba(255,255,255,0.04)',
+          border: '1px solid var(--p31-white-4)',
         }}
       >
         {plays.length === 0 && (
           <div style={{
             textAlign: 'center', fontSize: 11,
             fontFamily: "'JetBrains Mono', monospace",
-            color: 'rgba(232,230,227,0.3)',
+            color: 'var(--p31-cloud-30)',
             padding: 20,
           }}>
             Batter up! Press "PLAY" to start.
@@ -655,19 +656,19 @@ export function BashballGame({ onScoreChange, onComplete, onMoveMade, spoonLevel
               }}>
                 <span style={{
                   fontSize: 9, fontFamily: "'JetBrains Mono', monospace",
-                  color: 'rgba(232,230,227,0.25)', minWidth: 34,
+                  color: 'var(--p31-cloud-25)', minWidth: 34,
                 }}>
                   {play.inning}{play.top ? '▲' : '▼'}
                 </span>
                 <span style={{
                   fontSize: 10, fontFamily: "'JetBrains Mono', monospace",
-                  color: '#8b7cc9',
+                  color: 'var(--p31-purple)',
                 }}>
                   {play.batter}
                 </span>
                 <span style={{
                   fontSize: 9, fontFamily: "'JetBrains Mono', monospace",
-                  color: 'rgba(232,230,227,0.25)',
+                  color: 'var(--p31-cloud-25)',
                 }}>
                   vs. {play.pitcher}
                 </span>
@@ -679,7 +680,7 @@ export function BashballGame({ onScoreChange, onComplete, onMoveMade, spoonLevel
                 fontFamily: "'JetBrains Mono', monospace",
                 color: resultColor(play.result),
                 borderBottom: i < recentPlays.length - 1
-                  ? '1px solid rgba(255,255,255,0.03)' : 'none',
+                  ? '1px solid var(--p31-white-3)' : 'none',
               }}>
                 {play.result === 'HOME_RUN' && <span>🔥</span>}
                 {play.result === 'STRIKEOUT' && <span>💀</span>}
@@ -698,9 +699,9 @@ export function BashballGame({ onScoreChange, onComplete, onMoveMade, spoonLevel
           style={{
             padding: '14px 24px',
             borderRadius: 12,
-            border: '2px solid #cc6247',
-            background: 'rgba(204,98,71,0.12)',
-            color: '#cc6247',
+            border: '2px solid var(--p31-rust)',
+            background: 'var(--p31-rust-dim)',
+            color: 'var(--p31-rust)',
             fontFamily: "'Press Start 2P', cursive",
             fontSize: 10,
             cursor: 'pointer',
@@ -722,7 +723,7 @@ export function BashballGame({ onScoreChange, onComplete, onMoveMade, spoonLevel
         <div style={{
           textAlign: 'center', fontSize: 12,
           fontFamily: "'Press Start 2P', cursive",
-          color: '#cda852',
+          color: 'var(--p31-gold)',
           padding: 12,
         }}>
           GAME OVER — {score[0]} - {score[1]}

@@ -16,6 +16,7 @@ import {
   canAutoComplete,
 } from '../../../engine/card/solitaire/autocomplete.ts';
 import { CardTableView } from './CardTableView.tsx';
+import { COLORS } from '../../../lib/arcade-core/theme.ts';
 
 interface KlondikeSolitaireProps {
   onScoreChange: (delta: number) => void;
@@ -221,7 +222,7 @@ export function KlondikeSolitaire({ onScoreChange, onComplete, onMoveMade }: Klo
           <span style={{
             fontSize: 16,
             fontFamily: "'Press Start 2P', cursive",
-            color: '#3ba372',
+            color: 'var(--p31-green)',
           }}>
             YOU WIN!
           </span>
@@ -232,9 +233,9 @@ export function KlondikeSolitaire({ onScoreChange, onComplete, onMoveMade }: Klo
             style={{
               padding: '8px 20px',
               borderRadius: 8,
-              border: '1px solid #8b7cc9',
-              background: 'rgba(139,124,201,0.1)',
-              color: '#8b7cc9',
+              border: '1px solid var(--p31-purple)',
+              background: 'var(--p31-purple-dim)',
+              color: 'var(--p31-purple)',
               fontFamily: "'Press Start 2P', cursive",
               fontSize: 9,
               cursor: 'pointer',
@@ -259,7 +260,7 @@ export function KlondikeSolitaire({ onScoreChange, onComplete, onMoveMade }: Klo
         textAlign: 'center',
         fontSize: 11,
         fontFamily: "'JetBrains Mono', monospace",
-        color: 'rgba(232,230,227,0.3)',
+        color: 'var(--p31-cloud-30)',
       }}>
         Moves: {state.moves} | Score: {state.score}
       </div>

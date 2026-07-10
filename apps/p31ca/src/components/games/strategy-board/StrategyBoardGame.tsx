@@ -4,13 +4,14 @@ import {
   createUnit, inRange, tileAt,
 } from '../../../engine/strategy-board/types.ts';
 import { computeAiMove } from '../../../engine/strategy-board/ai.ts';
+import { COLORS } from '../../../lib/arcade-core/theme.ts';
 
 const CELL = 56;
-const COLORS = {
-  p1: '#4db8a8', p2: '#cc6247',
+const BOARD_COLORS = {
+  p1: 'var(--p31-teal)', p2: 'var(--p31-rust)',
   grass: '#2d3a2e', forest: '#1f4a2a',
-  selected: 'rgba(205,168,82,0.4)',
-  canMove: 'rgba(77,184,168,0.25)',
+  selected: 'var(--p31-gold-border)',
+  canMove: 'var(--p31-teal-dim)',
   canAttack: 'rgba(204,98,71,0.35)',
 };
 
@@ -173,7 +174,7 @@ export function StrategyBoardGame({ onScoreChange, onComplete }: Props) {
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, padding: 16 }}>
       <div style={{
         fontFamily: "'Press Start 2P', cursive", fontSize: 9,
-        color: state.turn === 1 ? COLORS.p1 : state.turn === 2 ? COLORS.p2 : '#cda852',
+        color: state.turn === 1 ? BOARD_COLORS.p1 : state.turn === 2 ? BOARD_COLORS.p2 : 'var(--p31-gold)',
         textAlign: 'center', minHeight: 24,
       }}>
         {state.winner ? (state.winner === 1 ? '🎉 YOU WIN!' : '😞 AI WINS') : state.message}
@@ -181,7 +182,7 @@ export function StrategyBoardGame({ onScoreChange, onComplete }: Props) {
 
       <div style={{
         position: 'relative', width: GRID_SIZE * CELL, height: GRID_SIZE * CELL,
-        border: '2px solid rgba(255,255,255,0.1)', borderRadius: 8, overflow: 'hidden',
+        border: '2px solid var(--p31-white-10)', borderRadius: 8, overflow: 'hidden',
       }}>
         <svg width={GRID_SIZE * CELL} height={GRID_SIZE * CELL} style={{ display: 'block' }}>
           {Array.from({ length: GRID_SIZE * GRID_SIZE }, (_, i) => {
@@ -191,8 +192,8 @@ export function StrategyBoardGame({ onScoreChange, onComplete }: Props) {
               <rect
                 key={i} x={x * CELL} y={y * CELL}
                 width={CELL} height={CELL}
-                fill={tile === 'grass' ? COLORS.grass : COLORS.forest}
-                stroke="rgba(255,255,255,0.04)"
+                fill={tile === 'grass' ? BOARD_COLORS.grass : BOARD_COLORS.forest}
+                stroke="var(--p31-white-4)"
                 strokeWidth={0.5}
                 onClick={() => handleCellClick(x, y)}
                 style={{ cursor: 'pointer' }}
@@ -208,7 +209,7 @@ export function StrategyBoardGame({ onScoreChange, onComplete }: Props) {
                   <rect
                     x={u.pos.x * CELL - 1} y={u.pos.y * CELL - 1}
                     width={CELL + 2} height={CELL + 2}
-                    fill="none" stroke={COLORS.selected} strokeWidth={2} rx={4}
+                    fill="none" stroke={BOARD_COLORS.selected} strokeWidth={2} rx={4}
                   />
                 )}
                 {isSelected && (
@@ -219,7 +220,7 @@ export function StrategyBoardGame({ onScoreChange, onComplete }: Props) {
                         key={`range-${e.id}`}
                         x={e.pos.x * CELL} y={e.pos.y * CELL}
                         width={CELL} height={CELL}
-                        fill={COLORS.canAttack} rx={4}
+                        fill={BOARD_COLORS.canAttack} rx={4}
                       />
                     ))
                 )}
@@ -227,7 +228,7 @@ export function StrategyBoardGame({ onScoreChange, onComplete }: Props) {
                   cx={u.pos.x * CELL + CELL / 2}
                   cy={u.pos.y * CELL + CELL / 2}
                   r={20}
-                  fill={u.player === 1 ? COLORS.p1 : COLORS.p2}
+                  fill={u.player === 1 ? BOARD_COLORS.p1 : BOARD_COLORS.p2}
                   opacity={0.15}
                 />
                 <text
@@ -242,7 +243,7 @@ export function StrategyBoardGame({ onScoreChange, onComplete }: Props) {
                   x={u.pos.x * CELL + CELL / 2}
                   y={u.pos.y * CELL + CELL - 4}
                   textAnchor="middle" fontSize={8}
-                  fill={u.hp <= 1 ? '#cc6247' : '#e8e6e3'}
+                  fill={u.hp <= 1 ? 'var(--p31-rust)' : 'var(--p31-cloud)'}
                   fontFamily="'Press Start 2P', cursive"
                   style={{ pointerEvents: 'none', userSelect: 'none' }}
                 >
@@ -261,15 +262,15 @@ export function StrategyBoardGame({ onScoreChange, onComplete }: Props) {
           </button>
         )}
         {state.winner && (
-          <button onClick={reset} style={{ ...btnStyle, background: '#cda852', color: '#0f1115' }}>
+          <button onClick={reset} style={{ ...btnStyle, background: 'var(--p31-gold)', color: 'var(--p31-void)' }}>
             Play Again
           </button>
         )}
       </div>
 
       <div style={{ display: 'flex', gap: 24, fontFamily: "'JetBrains Mono', monospace", fontSize: 11 }}>
-        <span style={{ color: COLORS.p1 }}>You: {alive(1).length}</span>
-        <span style={{ color: COLORS.p2 }}>AI: {alive(2).length}</span>
+        <span style={{ color: BOARD_COLORS.p1 }}>You: {alive(1).length}</span>
+        <span style={{ color: BOARD_COLORS.p2 }}>AI: {alive(2).length}</span>
       </div>
     </div>
   );
@@ -277,7 +278,7 @@ export function StrategyBoardGame({ onScoreChange, onComplete }: Props) {
 
 const btnStyle: React.CSSProperties = {
   padding: '8px 20px', border: 'none', borderRadius: 6,
-  background: 'rgba(255,255,255,0.08)', color: '#e8e6e3',
+  background: 'var(--p31-white-8)', color: 'var(--p31-cloud)',
   fontFamily: "'Press Start 2P', cursive", fontSize: 8,
   cursor: 'pointer',
 };

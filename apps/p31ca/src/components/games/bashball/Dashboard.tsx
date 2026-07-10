@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { COLORS } from '../../../lib/arcade-core/theme.ts';
 import { TeamState, LeagueStandings, SkillCategory, LeagueTier } from '../../../engine/bashball/types.ts';
 
 import { tierBadge, formatRecord } from '../../../engine/bashball/teamManager.ts';
@@ -22,7 +23,7 @@ const NAV_BUTTONS: { screen: DashboardProps['onNavigate'] extends (s: infer S) =
   { screen: 'shop', label: 'ELITE SHOP', icon: '🔧' },
 ];
 
-const WIN_PCT_COLORS = ['#cc6247', '#cc6247', '#cc6247', '#cda852', '#cda852', '#8b7cc9', '#3ba372', '#3ba372', '#3ba372', '#3ba372', '#3ba372'];
+const WIN_PCT_COLORS = ['var(--p31-rust)', 'var(--p31-rust)', 'var(--p31-rust)', 'var(--p31-gold)', 'var(--p31-gold)', 'var(--p31-purple)', 'var(--p31-green)', 'var(--p31-green)', 'var(--p31-green)', 'var(--p31-green)', 'var(--p31-green)'];
 
 export function Dashboard({ teamState, nextGame, leagueStandings, recentTrainingResults, onNavigate, seasonProgress, seasonTotal, seasonComplete, tier }: DashboardProps) {
   const [hoveredNav, setHoveredNav] = useState<string | null>(null);
@@ -52,22 +53,22 @@ export function Dashboard({ teamState, nextGame, leagueStandings, recentTraining
         justifyContent: 'space-between',
         alignItems: 'center',
         padding: '16px 18px',
-        background: 'rgba(255,255,255,0.02)',
+        background: 'var(--p31-white-2)',
         borderRadius: 12,
-        border: '1px solid rgba(255,255,255,0.06)',
+        border: '1px solid var(--p31-white-6)',
       }}>
         <div>
           <div style={{
             fontFamily: "'Press Start 2P', cursive",
             fontSize: 14,
-            color: '#e8e6e3',
+            color: 'var(--p31-cloud)',
           }}>
             {teamState.name}
           </div>
           <div style={{
             fontFamily: "'JetBrains Mono', monospace",
             fontSize: 9,
-            color: 'rgba(232,230,227,0.4)',
+            color: 'var(--p31-cloud-40)',
             marginTop: 6,
           }}>
             {tierBadge(teamState.tier)} · Season {teamState.season}
@@ -76,7 +77,7 @@ export function Dashboard({ teamState, nextGame, leagueStandings, recentTraining
         <div style={{
           fontFamily: "'Press Start 2P', cursive",
           fontSize: 16,
-          color: '#cda852',
+          color: 'var(--p31-gold)',
           textAlign: 'right',
         }}>
           {formatRecord(record)}
@@ -98,22 +99,22 @@ export function Dashboard({ teamState, nextGame, leagueStandings, recentTraining
       </div>
 
       {seasonTotal && seasonProgress !== undefined && !seasonComplete && (
-        <div style={{ width: '100%', padding: '6px 12px', background: 'rgba(255,255,255,0.02)', borderRadius: 8 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 9, fontFamily: "'JetBrains Mono', monospace", color: 'rgba(232,230,227,0.4)', marginBottom: 4 }}>
+        <div style={{ width: '100%', padding: '6px 12px', background: 'var(--p31-white-2)', borderRadius: 8 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 9, fontFamily: "'JetBrains Mono', monospace", color: 'var(--p31-cloud-40)', marginBottom: 4 }}>
             <span>Season {seasonProgress}/{seasonTotal}</span>
             <span>{Math.round((seasonProgress / seasonTotal) * 100)}%</span>
           </div>
-          <div style={{ width: '100%', height: 4, background: 'rgba(255,255,255,0.06)', borderRadius: 2, overflow: 'hidden' }}>
-            <div style={{ width: `${(seasonProgress / seasonTotal) * 100}%`, height: '100%', background: '#cc6247', borderRadius: 2, transition: 'width 0.3s' }} />
+          <div style={{ width: '100%', height: 4, background: 'var(--p31-white-6)', borderRadius: 2, overflow: 'hidden' }}>
+            <div style={{ width: `${(seasonProgress / seasonTotal) * 100}%`, height: '100%', background: 'var(--p31-rust)', borderRadius: 2, transition: 'width 0.3s' }} />
           </div>
         </div>
       )}
       {seasonComplete && (
-        <div style={{ width: '100%', padding: '12px 16px', background: 'rgba(205,168,82,0.08)', border: '1px solid rgba(205,168,82,0.2)', borderRadius: 12, textAlign: 'center' }}>
-          <p style={{ fontSize: 10, fontFamily: "'Press Start 2P', cursive", color: '#cda852', marginBottom: 4 }}>
+        <div style={{ width: '100%', padding: '12px 16px', background: 'var(--p31-gold-dim)', border: '1px solid var(--p31-gold-border)', borderRadius: 12, textAlign: 'center' }}>
+          <p style={{ fontSize: 10, fontFamily: "'Press Start 2P', cursive", color: 'var(--p31-gold)', marginBottom: 4 }}>
             SEASON COMPLETE
           </p>
-          <p style={{ fontSize: 9, fontFamily: "'JetBrains Mono', monospace", color: 'rgba(232,230,227,0.5)' }}>
+          <p style={{ fontSize: 9, fontFamily: "'JetBrains Mono', monospace", color: 'var(--p31-cloud-50)' }}>
             {teamState.record.wins}W - {teamState.record.losses}L
             {tier && ` — ${tierBadge(tier!)}`}
           </p>
@@ -123,12 +124,12 @@ export function Dashboard({ teamState, nextGame, leagueStandings, recentTraining
       {seasonComplete && (
         <button onClick={() => onNavigate('play')} style={{
           padding: '12px 28px', borderRadius: 10,
-          border: '2px solid #cda852', background: 'rgba(205,168,82,0.1)',
-          color: '#cda852', fontFamily: "'Press Start 2P', cursive", fontSize: 10,
+          border: '2px solid var(--p31-gold)', background: 'var(--p31-gold-dim)',
+          color: 'var(--p31-gold)', fontFamily: "'Press Start 2P', cursive", fontSize: 10,
           cursor: 'pointer',
         }}
-          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(205,168,82,0.2)'; }}
-          onMouseLeave={e => { e.currentTarget.style.background = 'rgba(205,168,82,0.1)'; }}
+          onMouseEnter={e => { e.currentTarget.style.background = 'var(--p31-gold-border)'; }}
+          onMouseLeave={e => { e.currentTarget.style.background = 'var(--p31-gold-dim)'; }}
         >
           NEXT SEASON →
         </button>
@@ -140,15 +141,15 @@ export function Dashboard({ teamState, nextGame, leagueStandings, recentTraining
           justifyContent: 'space-between',
           alignItems: 'center',
           padding: '14px 18px',
-          background: 'rgba(255,255,255,0.02)',
+          background: 'var(--p31-white-2)',
           borderRadius: 12,
-          border: '1px solid rgba(255,255,255,0.06)',
+          border: '1px solid var(--p31-white-6)',
         }}>
           <div>
             <div style={{
               fontFamily: "'JetBrains Mono', monospace",
               fontSize: 9,
-              color: 'rgba(232,230,227,0.4)',
+              color: 'var(--p31-cloud-40)',
               marginBottom: 4,
             }}>
               NEXT GAME
@@ -156,14 +157,14 @@ export function Dashboard({ teamState, nextGame, leagueStandings, recentTraining
             <div style={{
               fontFamily: "'Press Start 2P', cursive",
               fontSize: 10,
-              color: '#e8e6e3',
+              color: 'var(--p31-cloud)',
             }}>
               vs {nextGame.opponent}
             </div>
             <div style={{
               fontFamily: "'JetBrains Mono', monospace",
               fontSize: 9,
-              color: nextGame.isHome ? '#3ba372' : '#8b7cc9',
+              color: nextGame.isHome ? 'var(--p31-green)' : 'var(--p31-purple)',
               marginTop: 2,
             }}>
               {nextGame.isHome ? 'HOME' : 'AWAY'}
@@ -177,9 +178,9 @@ export function Dashboard({ teamState, nextGame, leagueStandings, recentTraining
             style={{
               padding: '10px 22px',
               borderRadius: 10,
-              border: '2px solid #cc6247',
-              background: hoveredNav === 'play-btn' ? 'rgba(204,98,71,0.2)' : 'rgba(204,98,71,0.1)',
-              color: '#cc6247',
+              border: '2px solid var(--p31-rust)',
+              background: hoveredNav === 'play-btn' ? 'var(--p31-rust-border)' : 'var(--p31-rust-dim)',
+              color: 'var(--p31-rust)',
               fontFamily: "'Press Start 2P', cursive",
               fontSize: 9,
               cursor: 'pointer',
@@ -194,14 +195,14 @@ export function Dashboard({ teamState, nextGame, leagueStandings, recentTraining
       {leagueStandings && leagueStandings.teams.length > 0 && (
         <div style={{
           padding: '14px 18px',
-          background: 'rgba(255,255,255,0.02)',
+          background: 'var(--p31-white-2)',
           borderRadius: 12,
-          border: '1px solid rgba(255,255,255,0.06)',
+          border: '1px solid var(--p31-white-6)',
         }}>
           <div style={{
             fontFamily: "'JetBrains Mono', monospace",
             fontSize: 9,
-            color: 'rgba(232,230,227,0.4)',
+            color: 'var(--p31-cloud-40)',
             marginBottom: 10,
           }}>
             STANDINGS
@@ -223,11 +224,11 @@ export function Dashboard({ teamState, nextGame, leagueStandings, recentTraining
                     alignItems: 'center',
                     padding: '6px 10px',
                     borderRadius: 8,
-                    background: isUser ? 'rgba(205,168,82,0.08)' : 'transparent',
-                    border: isUser ? '1px solid rgba(205,168,82,0.15)' : '1px solid transparent',
+                    background: isUser ? 'var(--p31-gold-dim)' : 'transparent',
+                    border: isUser ? '1px solid var(--p31-gold-border)' : '1px solid transparent',
                     fontFamily: "'JetBrains Mono', monospace",
                     fontSize: 10,
-                    color: isUser ? '#cda852' : 'rgba(232,230,227,0.6)',
+                    color: isUser ? 'var(--p31-gold)' : 'var(--p31-cloud-60)',
                   }}
                 >
                   <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -246,11 +247,11 @@ export function Dashboard({ teamState, nextGame, leagueStandings, recentTraining
                 alignItems: 'center',
                 padding: '6px 10px',
                 borderRadius: 8,
-                background: 'rgba(205,168,82,0.08)',
-                border: '1px solid rgba(205,168,82,0.15)',
+                background: 'var(--p31-gold-dim)',
+                border: '1px solid var(--p31-gold-border)',
                 fontFamily: "'JetBrains Mono', monospace",
                 fontSize: 10,
-                color: '#cda852',
+                color: 'var(--p31-gold)',
                 marginTop: 2,
               }}>
                 <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -274,7 +275,7 @@ export function Dashboard({ teamState, nextGame, leagueStandings, recentTraining
               padding: 0,
               fontFamily: "'JetBrains Mono', monospace",
               fontSize: 9,
-              color: hoveredLink === 'standings' ? '#8b7cc9' : 'rgba(232,230,227,0.4)',
+              color: hoveredLink === 'standings' ? 'var(--p31-purple)' : 'var(--p31-cloud-40)',
               cursor: 'pointer',
               transition: 'all 0.15s',
               textDecoration: hoveredLink === 'standings' ? 'underline' : 'none',
@@ -288,14 +289,14 @@ export function Dashboard({ teamState, nextGame, leagueStandings, recentTraining
       {recentTrainingResults.length > 0 && (
         <div style={{
           padding: '14px 18px',
-          background: 'rgba(255,255,255,0.02)',
+          background: 'var(--p31-white-2)',
           borderRadius: 12,
-          border: '1px solid rgba(255,255,255,0.06)',
+          border: '1px solid var(--p31-white-6)',
         }}>
           <div style={{
             fontFamily: "'JetBrains Mono', monospace",
             fontSize: 9,
-            color: 'rgba(232,230,227,0.4)',
+            color: 'var(--p31-cloud-40)',
             marginBottom: 10,
           }}>
             RECENT TRAINING
@@ -315,14 +316,14 @@ export function Dashboard({ teamState, nextGame, leagueStandings, recentTraining
                   alignItems: 'center',
                   padding: '6px 10px',
                   borderRadius: 8,
-                  background: 'rgba(255,255,255,0.02)',
+                  background: 'var(--p31-white-2)',
                   fontFamily: "'JetBrains Mono', monospace",
                   fontSize: 10,
-                  color: 'rgba(232,230,227,0.6)',
+                  color: 'var(--p31-cloud-60)',
                 }}
               >
                 <span>{r.playerName}</span>
-                <span style={{ color: '#3ba372' }}>
+                <span style={{ color: 'var(--p31-green)' }}>
                   +{r.gain.toFixed(1)} {r.skill}
                 </span>
               </div>
@@ -341,7 +342,7 @@ export function Dashboard({ teamState, nextGame, leagueStandings, recentTraining
               padding: 0,
               fontFamily: "'JetBrains Mono', monospace",
               fontSize: 9,
-              color: hoveredLink === 'train' ? '#8b7cc9' : 'rgba(232,230,227,0.4)',
+              color: hoveredLink === 'train' ? 'var(--p31-purple)' : 'var(--p31-cloud-40)',
               cursor: 'pointer',
               transition: 'all 0.15s',
               textDecoration: hoveredLink === 'train' ? 'underline' : 'none',
@@ -372,9 +373,9 @@ export function Dashboard({ teamState, nextGame, leagueStandings, recentTraining
               gap: 6,
               padding: '14px 10px',
               borderRadius: 10,
-              border: `1px solid ${hoveredNav === btn.screen ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.06)'}`,
-              background: hoveredNav === btn.screen ? 'rgba(255,255,255,0.04)' : 'rgba(255,255,255,0.02)',
-              color: hoveredNav === btn.screen ? '#e8e6e3' : 'rgba(232,230,227,0.5)',
+              border: `1px solid ${hoveredNav === btn.screen ? 'var(--p31-white-10)' : 'var(--p31-white-6)'}`,
+              background: hoveredNav === btn.screen ? 'var(--p31-white-4)' : 'var(--p31-white-2)',
+              color: hoveredNav === btn.screen ? 'var(--p31-cloud)' : 'var(--p31-cloud-50)',
               fontFamily: "'Press Start 2P', cursive",
               fontSize: 7,
               cursor: 'pointer',
@@ -403,9 +404,9 @@ function QuickStatCard({ label, value, valueColor }: { label: string; value: str
         alignItems: 'center',
         gap: 6,
         padding: '14px 10px',
-        background: hovered ? 'rgba(255,255,255,0.04)' : 'rgba(255,255,255,0.02)',
+        background: hovered ? 'var(--p31-white-4)' : 'var(--p31-white-2)',
         borderRadius: 10,
-        border: `1px solid ${hovered ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.06)'}`,
+        border: `1px solid ${hovered ? 'var(--p31-white-10)' : 'var(--p31-white-6)'}`,
         transition: 'all 0.15s',
         cursor: 'default',
       }}
@@ -413,14 +414,14 @@ function QuickStatCard({ label, value, valueColor }: { label: string; value: str
       <div style={{
         fontFamily: "'JetBrains Mono', monospace",
         fontSize: 8,
-        color: 'rgba(232,230,227,0.4)',
+        color: 'var(--p31-cloud-40)',
       }}>
         {label}
       </div>
       <div style={{
         fontFamily: "'Press Start 2P', cursive",
         fontSize: 16,
-        color: valueColor ?? '#e8e6e3',
+        color: valueColor ?? 'var(--p31-cloud)',
       }}>
         {value}
       </div>

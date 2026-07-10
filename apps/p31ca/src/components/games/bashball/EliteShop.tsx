@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { COLORS } from '../../../lib/arcade-core/theme.ts';
 import { PlayerStats } from '../../../engine/bashball/types.ts';
 import { ELITE_TRAINING_ITEMS } from '../../../engine/bashball/training.ts';
 
@@ -42,13 +43,13 @@ export function EliteShop({ spoons, eliteUnlocked, hasEliteTrial, activeBoosts, 
         <div style={{ fontSize: 40 }}>🔧</div>
         <h2 style={{
           fontFamily: "'Press Start 2P', cursive", fontSize: 14,
-          color: '#cda852', margin: '8px 0 4px',
+          color: 'var(--p31-gold)', margin: '8px 0 4px',
         }}>
           ELITE FACILITY
         </h2>
         <p style={{
           fontSize: 10, fontFamily: "'JetBrains Mono', monospace",
-          color: 'rgba(232,230,227,0.4)',
+          color: 'var(--p31-cloud-40)',
         }}>
           Performance Lab — {eliteUnlocked ? 'ACTIVE' : 'LOCKED'}
         </p>
@@ -58,13 +59,13 @@ export function EliteShop({ spoons, eliteUnlocked, hasEliteTrial, activeBoosts, 
         <div style={{
           width: '100%', maxWidth: 400,
           padding: '16px 20px', borderRadius: 12,
-          background: hasEliteTrial ? 'rgba(205,168,82,0.08)' : 'rgba(139,124,201,0.06)',
-          border: `1px solid ${hasEliteTrial ? 'rgba(205,168,82,0.2)' : 'rgba(139,124,201,0.1)'}`,
+          background: hasEliteTrial ? 'var(--p31-gold-dim)' : 'rgba(139,124,201,0.06)',
+          border: `1px solid ${hasEliteTrial ? 'var(--p31-gold-border)' : 'var(--p31-purple-dim)'}`,
           textAlign: 'center',
         }}>
           <p style={{
             fontSize: 10, fontFamily: "'JetBrains Mono', monospace",
-            color: 'rgba(232,230,227,0.5)', lineHeight: 1.6, marginBottom: 12,
+            color: 'var(--p31-cloud-50)', lineHeight: 1.6, marginBottom: 12,
           }}>
             {TRIAL_TEXT}
           </p>
@@ -73,9 +74,9 @@ export function EliteShop({ spoons, eliteUnlocked, hasEliteTrial, activeBoosts, 
               onClick={onActivateTrial}
               style={{
                 padding: '10px 24px', borderRadius: 8,
-                border: '1px solid #cda852',
-                background: 'rgba(205,168,82,0.1)',
-                color: '#cda852',
+                border: '1px solid var(--p31-gold)',
+                background: 'var(--p31-gold-dim)',
+                color: 'var(--p31-gold)',
                 fontFamily: "'Press Start 2P', cursive",
                 fontSize: 9, cursor: 'pointer',
               }}
@@ -86,7 +87,7 @@ export function EliteShop({ spoons, eliteUnlocked, hasEliteTrial, activeBoosts, 
             <>
               <p style={{
                 fontSize: 10, fontFamily: "'JetBrains Mono', monospace",
-                color: '#cda852',
+                color: 'var(--p31-gold)',
               }}>
                 Trial active — purchase below to unlock permanently (5 🥄)
               </p>
@@ -95,9 +96,9 @@ export function EliteShop({ spoons, eliteUnlocked, hasEliteTrial, activeBoosts, 
                 disabled={spoons < 5}
                 style={{
                   marginTop: 12, padding: '10px 24px', borderRadius: 8,
-                  border: `1px solid ${spoons >= 5 ? '#cda852' : 'rgba(255,255,255,0.1)'}`,
-                  background: spoons >= 5 ? 'rgba(205,168,82,0.1)' : 'rgba(255,255,255,0.02)',
-                  color: spoons >= 5 ? '#cda852' : 'rgba(232,230,227,0.2)',
+                  border: `1px solid ${spoons >= 5 ? 'var(--p31-gold)' : 'var(--p31-white-10)'}`,
+                  background: spoons >= 5 ? 'var(--p31-gold-dim)' : 'var(--p31-white-2)',
+                  color: spoons >= 5 ? 'var(--p31-gold)' : 'var(--p31-cloud-20)',
                   fontFamily: "'Press Start 2P', cursive",
                   fontSize: 9, cursor: spoons >= 5 ? 'pointer' : 'not-allowed',
                 }}
@@ -113,14 +114,14 @@ export function EliteShop({ spoons, eliteUnlocked, hasEliteTrial, activeBoosts, 
         alignSelf: 'stretch',
         display: 'flex', justifyContent: 'space-between',
         padding: '8px 12px',
-        background: 'rgba(255,255,255,0.02)',
+        background: 'var(--p31-white-2)',
         borderRadius: 8,
         fontSize: 10, fontFamily: "'JetBrains Mono', monospace",
-        color: 'rgba(232,230,227,0.5)',
+        color: 'var(--p31-cloud-50)',
       }}>
         <span>🥄 {spoons.toFixed(0)}</span>
         <span>Items: {activeCount}/{ELITE_TRAINING_ITEMS.length}</span>
-        {eliteUnlocked && <span style={{ color: '#3ba372' }}>2× GAINS</span>}
+        {eliteUnlocked && <span style={{ color: 'var(--p31-green)' }}>2× GAINS</span>}
       </div>
 
       <div style={{
@@ -140,11 +141,11 @@ export function EliteShop({ spoons, eliteUnlocked, hasEliteTrial, activeBoosts, 
                 borderRadius: 12,
                 background: owned ? 'rgba(59,163,114,0.06)' :
                   flash === item.name ? 'rgba(205,168,82,0.12)' :
-                  'rgba(255,255,255,0.02)',
+                  'var(--p31-white-2)',
                 border: `1px solid ${
                   owned ? 'rgba(59,163,114,0.2)' :
                   flash === item.name ? 'rgba(205,168,82,0.4)' :
-                  'rgba(255,255,255,0.06)'
+                  'var(--p31-white-6)'
                 }`,
                 transition: 'all 0.2s',
                 opacity: (!eliteUnlocked && !hasEliteTrial) ? 0.4 : 1,
@@ -156,7 +157,7 @@ export function EliteShop({ spoons, eliteUnlocked, hasEliteTrial, activeBoosts, 
               }}>
                 <span style={{
                   fontSize: 11, fontFamily: "'JetBrains Mono', monospace",
-                  color: '#e8e6e3', fontWeight: 600,
+                  color: 'var(--p31-cloud)', fontWeight: 600,
                 }}>
                   {item.name}
                 </span>
@@ -164,7 +165,7 @@ export function EliteShop({ spoons, eliteUnlocked, hasEliteTrial, activeBoosts, 
               </div>
               <div style={{
                 fontSize: 9, fontFamily: "'JetBrains Mono', monospace",
-                color: 'rgba(232,230,227,0.4)', marginBottom: 8,
+                color: 'var(--p31-cloud-40)', marginBottom: 8,
               }}>
                 {statLabel} ×{item.boost.toFixed(1)} training boost
               </div>
@@ -174,9 +175,9 @@ export function EliteShop({ spoons, eliteUnlocked, hasEliteTrial, activeBoosts, 
                   disabled={spoons < ITEM_COST}
                   style={{
                     width: '100%', padding: '6px 0', borderRadius: 6,
-                    border: `1px solid ${spoons >= ITEM_COST ? '#cda852' : 'rgba(255,255,255,0.1)'}`,
-                    background: spoons >= ITEM_COST ? 'rgba(205,168,82,0.08)' : 'rgba(255,255,255,0.02)',
-                    color: spoons >= ITEM_COST ? '#cda852' : 'rgba(232,230,227,0.2)',
+                    border: `1px solid ${spoons >= ITEM_COST ? 'var(--p31-gold)' : 'var(--p31-white-10)'}`,
+                    background: spoons >= ITEM_COST ? 'var(--p31-gold-dim)' : 'var(--p31-white-2)',
+                    color: spoons >= ITEM_COST ? 'var(--p31-gold)' : 'var(--p31-cloud-20)',
                     fontFamily: "'JetBrains Mono', monospace",
                     fontSize: 9, cursor: spoons >= ITEM_COST ? 'pointer' : 'not-allowed',
                   }}
@@ -187,7 +188,7 @@ export function EliteShop({ spoons, eliteUnlocked, hasEliteTrial, activeBoosts, 
               {owned && (
                 <div style={{
                   fontSize: 9, fontFamily: "'JetBrains Mono', monospace",
-                  color: '#3ba372', textAlign: 'center',
+                  color: 'var(--p31-green)', textAlign: 'center',
                 }}>
                   EQUIPPED
                 </div>
@@ -201,9 +202,9 @@ export function EliteShop({ spoons, eliteUnlocked, hasEliteTrial, activeBoosts, 
         onClick={onBack}
         style={{
           padding: '10px 28px', borderRadius: 8,
-          border: '1px solid rgba(255,255,255,0.1)',
+          border: '1px solid var(--p31-white-10)',
           background: 'transparent',
-          color: 'rgba(232,230,227,0.5)',
+          color: 'var(--p31-cloud-50)',
           fontFamily: "'JetBrains Mono', monospace",
           fontSize: 11, cursor: 'pointer',
         }}

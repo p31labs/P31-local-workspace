@@ -71,7 +71,7 @@ export function GameOverlay({ gameId, gameTitle, gameIcon, engineState, extraHud
   const blocked = engineState.spoons <= 1;
 
   return (
-    <div className="fixed inset-0 z-[90]" style={{ background: '#0f1115' }}>
+    <div className="fixed inset-0 z-[90]" style={{ background: 'var(--p31-void)' }}>
       {/* HUD top bar */}
       <div className="absolute top-16 left-0 right-0 flex items-center justify-between px-5 z-10">
         <div className="flex items-center gap-3">
@@ -87,8 +87,8 @@ export function GameOverlay({ gameId, gameTitle, gameIcon, engineState, extraHud
           <span
             className="text-[10px] font-mono tracking-widest uppercase px-2 py-0.5 rounded"
             style={{
-              color: blocked ? '#cc6247' : engineState.status === 'complete' ? '#3ba372' : '#7ec8e3',
-              background: 'rgba(255,255,255,0.05)',
+              color: blocked ? 'var(--p31-rust)' : engineState.status === 'complete' ? 'var(--p31-green)' : 'var(--p31-ice)',
+              background: 'var(--p31-white-5)',
             }}
           >
             {blocked ? 'REST REQUIRED' : engineState.status.toUpperCase()}
@@ -104,14 +104,14 @@ export function GameOverlay({ gameId, gameTitle, gameIcon, engineState, extraHud
 
       {/* Spoon indicator */}
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10">
-        <div className="flex items-center gap-3 px-5 py-3 rounded-full" style={{ background: 'rgba(0,0,0,0.4)', border: '1px solid rgba(255,255,255,0.08)' }}>
+        <div className="flex items-center gap-3 px-5 py-3 rounded-full" style={{ background: 'rgba(0,0,0,0.4)', border: '1px solid var(--p31-white-8)' }}>
           <span className="text-sm">🥄</span>
           <div className="w-32 h-2 rounded-full bg-white/10 overflow-hidden">
             <div
               className="h-full rounded-full transition-all duration-500"
               style={{
                 width: `${(engineState.spoons / 12) * 100}%`,
-                background: engineState.spoons <= 1 ? '#cc6247' : engineState.spoons <= 3 ? '#cda852' : '#4db8a8',
+                background: engineState.spoons <= 1 ? 'var(--p31-rust)' : engineState.spoons <= 3 ? 'var(--p31-gold)' : 'var(--p31-teal)',
               }}
             />
           </div>
@@ -131,9 +131,9 @@ export function GameOverlay({ gameId, gameTitle, gameIcon, engineState, extraHud
           aria-modal="true"
           aria-label="Spoons critically low. Rest required."
         >
-          <div className="text-center max-w-xs p-8" style={{ background: 'rgba(15,17,21,0.95)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '16px' }}>
+          <div className="text-center max-w-xs p-8" style={{ background: 'rgba(15,17,21,0.95)', border: '1px solid var(--p31-white-8)', borderRadius: '16px' }}>
             <p className="text-4xl mb-4">🧘</p>
-            <p className="text-base font-bold mb-2" style={{ color: '#cda852' }}>Spoons Critically Low</p>
+            <p className="text-base font-bold mb-2" style={{ color: 'var(--p31-gold)' }}>Spoons Critically Low</p>
             <p className="text-sm text-white/60 mb-4">
               Your cognitive energy is at <strong>{engineState.spoons}</strong>. Rest before attempting executive tasks.
             </p>

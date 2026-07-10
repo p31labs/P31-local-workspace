@@ -10,6 +10,7 @@ import { chooseDiscard } from '../../../engine/card/rummy/ai.ts';
 import { scoreRound } from '../../../engine/card/rummy/scoring.ts';
 import { HandView } from './HandView.tsx';
 import { DiscardPile as DiscardPileView } from './DiscardPile.tsx';
+import { COLORS } from '../../../lib/arcade-core/theme.ts';
 
 interface RummyGameProps {
   onScoreChange: (delta: number) => void;
@@ -140,14 +141,14 @@ export function RummyGame({ onScoreChange, onComplete, onMoveMade }: RummyGamePr
         justifyContent: 'space-between',
         alignItems: 'center',
         padding: '8px 16px',
-        background: 'rgba(255,255,255,0.02)',
+        background: 'var(--p31-white-2)',
         borderRadius: 12,
-        border: '1px solid rgba(255,255,255,0.06)',
+        border: '1px solid var(--p31-white-6)',
       }}>
         <span style={{
           fontSize: 12,
           fontFamily: "'JetBrains Mono', monospace",
-          color: '#8b7cc9',
+          color: 'var(--p31-purple)',
         }}>
           Score: You {playerScores[0]} — Opp {playerScores[1]}
         </span>
@@ -158,9 +159,9 @@ export function RummyGame({ onScoreChange, onComplete, onMoveMade }: RummyGamePr
               style={{
                 padding: '6px 14px',
                 borderRadius: 8,
-                border: '1px solid rgba(232,230,227,0.2)',
+                border: '1px solid var(--p31-cloud-20)',
                 background: 'rgba(255,255,255,0.05)',
-                color: '#e8e6e3',
+                color: 'var(--p31-cloud)',
                 fontFamily: "'JetBrains Mono', monospace",
                 fontSize: 11,
                 cursor: 'pointer',
@@ -174,9 +175,9 @@ export function RummyGame({ onScoreChange, onComplete, onMoveMade }: RummyGamePr
                 style={{
                   padding: '6px 14px',
                   borderRadius: 8,
-                  border: '1px solid #cda852',
-                  background: 'rgba(205,168,82,0.1)',
-                  color: '#cda852',
+                  border: '1px solid var(--p31-gold)',
+                  background: 'var(--p31-gold-dim)',
+                  color: 'var(--p31-gold)',
                   fontFamily: "'JetBrains Mono', monospace",
                   fontSize: 11,
                   cursor: 'pointer',
@@ -192,11 +193,11 @@ export function RummyGame({ onScoreChange, onComplete, onMoveMade }: RummyGamePr
       <div style={{
         textAlign: 'center',
         padding: '8px 16px',
-        background: 'rgba(139,124,201,0.06)',
+        background: 'var(--p31-purple-dim)',
         borderRadius: 8,
         fontSize: 12,
         fontFamily: "'JetBrains Mono', monospace",
-        color: '#8b7cc9',
+        color: 'var(--p31-purple)',
       }}>
         {message}
       </div>
@@ -211,13 +212,13 @@ export function RummyGame({ onScoreChange, onComplete, onMoveMade }: RummyGamePr
           width: 56,
           height: 80,
           borderRadius: 8,
-          border: '2px solid rgba(139,124,201,0.2)',
+          border: '2px solid var(--p31-purple-border)',
           background: 'linear-gradient(135deg, #2a1f5e, #1a1140)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           fontSize: 10,
-          color: 'rgba(232,230,227,0.4)',
+          color: 'var(--p31-cloud-40)',
           fontFamily: "'JetBrains Mono', monospace",
         }}>
           {stockRemaining}
@@ -243,13 +244,13 @@ export function RummyGame({ onScoreChange, onComplete, onMoveMade }: RummyGamePr
 
       <div style={{
         padding: '8px 16px',
-        background: 'rgba(255,255,255,0.02)',
+        background: 'var(--p31-white-2)',
         borderRadius: 12,
-        border: '1px solid rgba(255,255,255,0.06)',
+        border: '1px solid var(--p31-white-6)',
         textAlign: 'center',
         fontSize: 12,
         fontFamily: "'JetBrains Mono', monospace",
-        color: 'rgba(232,230,227,0.4)',
+        color: 'var(--p31-cloud-40)',
       }}>
         Opponent: {opponentHand.length} cards
       </div>

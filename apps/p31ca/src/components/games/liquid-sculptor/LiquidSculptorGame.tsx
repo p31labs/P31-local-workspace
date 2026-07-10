@@ -1,5 +1,6 @@
 import { useRef, useEffect, useState, useCallback } from 'react';
 import { updateParticles, emitParticles } from '../../../engine/liquid-sculptor/simulation.ts';
+import { COLORS } from '../../../lib/arcade-core/theme.ts';
 
 const W = 500, H = 500;
 
@@ -8,7 +9,7 @@ export function LiquidSculptorGame() {
   const particlesRef = useRef<ReturnType<typeof updateParticles>>([]);
   const mouseRef = useRef({ x: 0, y: 0, down: false });
   const [gravity, setGravity] = useState(0.5);
-  const [color, setColor] = useState('#4db8a8');
+  const [color, setColor] = useState('var(--p31-teal)');
   const [cw, setCw] = useState(W);
   const [ch, setCh] = useState(H);
 
@@ -65,7 +66,7 @@ export function LiquidSculptorGame() {
         width={W} height={H}
         style={{
           width: cw, height: ch,
-          borderRadius: 12, border: '1px solid rgba(255,255,255,0.08)',
+          borderRadius: 12, border: '1px solid var(--p31-white-8)',
           background: 'rgba(0,0,0,0.3)', cursor: 'crosshair',
         }}
         onMouseDown={e => { mouseRef.current.down = true; handleMouse(e); }}
@@ -75,28 +76,28 @@ export function LiquidSculptorGame() {
       />
 
       <div style={{ display: 'flex', gap: 16, alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
-        <label style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: 'rgba(232,230,227,0.4)', display: 'flex', alignItems: 'center', gap: 6 }}>
+        <label style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: 'var(--p31-cloud-40)', display: 'flex', alignItems: 'center', gap: 6 }}>
           Gravity
           <input type="range" min={-2} max={2} step={0.1} value={gravity}
             onChange={e => setGravity(parseFloat(e.target.value))}
             style={{ width: 80 }} />
         </label>
 
-        <label style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: 'rgba(232,230,227,0.4)', display: 'flex', alignItems: 'center', gap: 6 }}>
+        <label style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: 'var(--p31-cloud-40)', display: 'flex', alignItems: 'center', gap: 6 }}>
           Color
           <input type="color" value={color} onChange={e => setColor(e.target.value)}
             style={{ width: 32, height: 24, border: 'none', background: 'transparent', cursor: 'pointer' }} />
         </label>
 
         <button onClick={clear} style={{
-          padding: '6px 16px', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 6,
-          background: 'transparent', color: 'rgba(232,230,227,0.5)',
+          padding: '6px 16px', border: '1px solid var(--p31-white-15)', borderRadius: 6,
+          background: 'transparent', color: 'var(--p31-cloud-50)',
           fontFamily: "'JetBrains Mono', monospace", fontSize: 10, cursor: 'pointer',
         }}>
           Clear
         </button>
 
-        <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, color: 'rgba(232,230,227,0.2)' }}>
+        <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, color: 'var(--p31-cloud-20)' }}>
           {particlesRef.current.length} particles
         </span>
       </div>

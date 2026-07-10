@@ -4,6 +4,7 @@ import { emit } from '../../lib/arcade-core/eventBus.ts';
 import { GameOverlay } from '../../components/games/GameOverlay.tsx';
 import { KlondikeSolitaire } from './cards/KlondikeSolitaire.tsx';
 import { RummyGame } from './cards/RummyGame.tsx';
+import { COLORS } from '../../lib/arcade-core/theme.ts';
 
 type GameVariant = 'solitaire' | 'rummy';
 type Screen = { phase: 'menu' } | { phase: 'game'; variant: GameVariant };
@@ -53,9 +54,9 @@ export function CardTableGame() {
         style={{
           padding: '6px 14px',
           borderRadius: 8,
-          border: '1px solid rgba(255,255,255,0.1)',
-          background: 'rgba(255,255,255,0.04)',
-          color: 'rgba(232,230,227,0.6)',
+          border: '1px solid var(--p31-white-10)',
+          background: 'var(--p31-white-4)',
+          color: 'var(--p31-cloud-60)',
           fontFamily: "'JetBrains Mono', monospace",
           fontSize: 10,
           cursor: 'pointer',
@@ -68,9 +69,9 @@ export function CardTableGame() {
           style={{
             padding: '6px 14px',
             borderRadius: 8,
-            background: 'rgba(139,124,201,0.1)',
-            border: '1px solid rgba(139,124,201,0.2)',
-            color: '#8b7cc9',
+            background: 'var(--p31-purple-dim)',
+            border: '1px solid var(--p31-purple-border)',
+            color: 'var(--p31-purple)',
             fontFamily: "'Press Start 2P', cursive",
             fontSize: 9,
           }}
@@ -104,7 +105,7 @@ export function CardTableGame() {
               <h1 style={{
                 fontFamily: "'Press Start 2P', cursive",
                 fontSize: 18,
-                color: '#8b7cc9',
+                color: 'var(--p31-purple)',
                 marginBottom: 12,
               }}>
                 CARD TABLE
@@ -112,7 +113,7 @@ export function CardTableGame() {
               <p style={{
                 fontSize: 13,
                 fontFamily: "'JetBrains Mono', monospace",
-                color: 'rgba(232,230,227,0.5)',
+                color: 'var(--p31-cloud-50)',
                 lineHeight: 1.6,
               }}>
                 Klondike Solitaire &amp; Gin Rummy
@@ -122,12 +123,12 @@ export function CardTableGame() {
             {lastResult && (
               <div style={{
                 padding: '12px 24px',
-                background: 'rgba(59,163,114,0.1)',
-                border: '1px solid rgba(59,163,114,0.2)',
+                background: 'var(--p31-green-dim)',
+                border: '1px solid var(--p31-green-border)',
                 borderRadius: 12,
                 fontFamily: "'Press Start 2P', cursive",
                 fontSize: 9,
-                color: '#3ba372',
+                color: 'var(--p31-green)',
               }}>
                 {lastResult}
               </div>
@@ -145,21 +146,21 @@ export function CardTableGame() {
                 style={{
                   padding: '16px 32px',
                   borderRadius: 12,
-                  border: '2px solid rgba(139,124,201,0.3)',
-                  background: 'rgba(139,124,201,0.08)',
-                  color: '#8b7cc9',
+                  border: '2px solid var(--p31-purple-border)',
+                  background: 'var(--p31-purple-dim)',
+                  color: 'var(--p31-purple)',
                   fontFamily: "'Press Start 2P', cursive",
                   fontSize: 12,
                   cursor: 'pointer',
                   transition: 'all 0.2s',
                 }}
                 onMouseEnter={e => {
-                  e.currentTarget.style.background = 'rgba(139,124,201,0.15)';
-                  e.currentTarget.style.borderColor = '#8b7cc9';
+                  e.currentTarget.style.background = 'var(--p31-purple-dim)';
+                  e.currentTarget.style.borderColor = 'var(--p31-purple)';
                 }}
                 onMouseLeave={e => {
-                  e.currentTarget.style.background = 'rgba(139,124,201,0.08)';
-                  e.currentTarget.style.borderColor = 'rgba(139,124,201,0.3)';
+                  e.currentTarget.style.background = 'var(--p31-purple-dim)';
+                  e.currentTarget.style.borderColor = 'var(--p31-purple-border)';
                 }}
               >
                 ♠ SOLITAIRE
@@ -169,21 +170,21 @@ export function CardTableGame() {
                 style={{
                   padding: '16px 32px',
                   borderRadius: 12,
-                  border: '2px solid rgba(205,168,82,0.3)',
-                  background: 'rgba(205,168,82,0.08)',
-                  color: '#cda852',
+                  border: '2px solid var(--p31-gold-border)',
+                  background: 'var(--p31-gold-dim)',
+                  color: 'var(--p31-gold)',
                   fontFamily: "'Press Start 2P', cursive",
                   fontSize: 12,
                   cursor: 'pointer',
                   transition: 'all 0.2s',
                 }}
                 onMouseEnter={e => {
-                  e.currentTarget.style.background = 'rgba(205,168,82,0.15)';
-                  e.currentTarget.style.borderColor = '#cda852';
+                  e.currentTarget.style.background = 'var(--p31-gold-border)';
+                  e.currentTarget.style.borderColor = 'var(--p31-gold)';
                 }}
                 onMouseLeave={e => {
-                  e.currentTarget.style.background = 'rgba(205,168,82,0.08)';
-                  e.currentTarget.style.borderColor = 'rgba(205,168,82,0.3)';
+                  e.currentTarget.style.background = 'var(--p31-gold-dim)';
+                  e.currentTarget.style.borderColor = 'var(--p31-gold-border)';
                 }}
               >
                 ♥ GIN RUMMY
@@ -192,15 +193,15 @@ export function CardTableGame() {
 
             <div style={{
               padding: 16,
-              background: 'rgba(255,255,255,0.02)',
+              background: 'var(--p31-white-2)',
               borderRadius: 12,
-              border: '1px solid rgba(255,255,255,0.06)',
+              border: '1px solid var(--p31-white-6)',
               width: '100%',
             }}>
               <p style={{
                 fontSize: 10,
                 fontFamily: "'JetBrains Mono', monospace",
-                color: 'rgba(232,230,227,0.3)',
+                color: 'var(--p31-cloud-30)',
                 textAlign: 'center',
                 lineHeight: 1.8,
               }}>

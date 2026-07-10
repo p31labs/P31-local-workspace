@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import { WordTile } from '../../../engine/magnetic-poetry/types.ts';
 import { pickWords } from '../../../engine/magnetic-poetry/words.ts';
+import { COLORS } from '../../../lib/arcade-core/theme.ts';
 
 const BOARD_W = 600, BOARD_H = 500;
 const TILE_H = 32;
@@ -65,7 +66,7 @@ export function MagneticPoetryGame({ onScoreChange }: Props) {
       <div style={{
         width: BOARD_W, maxWidth: '100%',
         padding: 12, borderRadius: 10,
-        background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)',
+        background: 'var(--p31-white-2)', border: '1px solid var(--p31-white-6)',
         display: 'flex', flexWrap: 'wrap', gap: 6, justifyContent: 'center',
         minHeight: 60,
       }}>
@@ -73,7 +74,7 @@ export function MagneticPoetryGame({ onScoreChange }: Props) {
           <WordChip key={t.id} text={t.text} onClick={() => addToBoard(t)} />
         ))}
         {tiles.length === 0 && (
-          <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: 'rgba(232,230,227,0.2)', padding: 12 }}>
+          <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: 'var(--p31-cloud-20)', padding: 12 }}>
             All words on the board — click one to return it
           </span>
         )}
@@ -83,7 +84,7 @@ export function MagneticPoetryGame({ onScoreChange }: Props) {
       <div
         style={{
           position: 'relative', width: BOARD_W, height: BOARD_H, maxWidth: '100%',
-          borderRadius: 12, border: '2px dashed rgba(255,255,255,0.1)',
+          borderRadius: 12, border: '2px dashed var(--p31-white-10)',
           background: 'rgba(255,255,255,0.01)', overflow: 'hidden',
         }}
         onMouseMove={handleMouseMove}
@@ -98,9 +99,9 @@ export function MagneticPoetryGame({ onScoreChange }: Props) {
             style={{
               position: 'absolute', left: t.x, top: t.y,
               padding: '6px 12px', borderRadius: 8,
-              background: 'rgba(77,184,168,0.15)', border: '1px solid rgba(77,184,168,0.3)',
+              background: 'var(--p31-teal-dim)', border: '1px solid var(--p31-teal-dim)',
               fontFamily: "'JetBrains Mono', monospace", fontSize: 14,
-              color: '#e8e6e3', cursor: dragging === t.id ? 'grabbing' : 'grab',
+              color: 'var(--p31-cloud)', cursor: dragging === t.id ? 'grabbing' : 'grab',
               userSelect: 'none', whiteSpace: 'nowrap',
               zIndex: dragging === t.id ? 10 : 1,
               boxShadow: dragging === t.id ? '0 4px 20px rgba(0,0,0,0.4)' : 'none',
@@ -125,7 +126,7 @@ export function MagneticPoetryGame({ onScoreChange }: Props) {
       <div style={{ display: 'flex', gap: 12 }}>
         <button onClick={shuffle} style={btnStyle}>Shuffle Bank</button>
         <button onClick={addMore} style={btnStyle}>More Words</button>
-        <button onClick={clearBoard} style={{ ...btnStyle, borderColor: 'rgba(204,98,71,0.3)', color: 'rgba(204,98,71,0.6)' }}>
+        <button onClick={clearBoard} style={{ ...btnStyle, borderColor: 'var(--p31-rust-border)', color: 'rgba(204,98,71,0.6)' }}>
           Clear Board
         </button>
       </div>
@@ -139,12 +140,12 @@ function WordChip({ text, onClick }: { text: string; onClick: () => void }) {
       onClick={onClick}
       style={{
         padding: '4px 10px', borderRadius: 6, cursor: 'pointer',
-        background: 'rgba(59,163,114,0.12)', border: '1px solid rgba(59,163,114,0.25)',
-        fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: '#e8e6e3',
+        background: 'var(--p31-green-dim)', border: '1px solid var(--p31-green-border)',
+        fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: 'var(--p31-cloud)',
         transition: 'all 0.1s',
       }}
-      onMouseEnter={e => { e.currentTarget.style.background = 'rgba(59,163,114,0.25)'; }}
-      onMouseLeave={e => { e.currentTarget.style.background = 'rgba(59,163,114,0.12)'; }}
+      onMouseEnter={e => { e.currentTarget.style.background = 'var(--p31-green-border)'; }}
+      onMouseLeave={e => { e.currentTarget.style.background = 'var(--p31-green-dim)'; }}
     >
       {text}
     </span>
@@ -152,7 +153,7 @@ function WordChip({ text, onClick }: { text: string; onClick: () => void }) {
 }
 
 const btnStyle: React.CSSProperties = {
-  padding: '6px 14px', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 6,
-  background: 'transparent', color: 'rgba(232,230,227,0.5)',
+  padding: '6px 14px', border: '1px solid var(--p31-white-15)', borderRadius: 6,
+  background: 'transparent', color: 'var(--p31-cloud-50)',
   fontFamily: "'JetBrains Mono', monospace", fontSize: 10, cursor: 'pointer',
 };
