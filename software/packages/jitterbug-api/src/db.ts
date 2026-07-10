@@ -226,8 +226,12 @@ export class DBClient {
 
   async ut_listFindings(session_id?: number) {
     let sql = 'SELECT * FROM ut_findings';
-    if (session_id) sql += ' WHERE session_id = ?';
-    const result = await this.db.prepare(sql).bind(session_id ?? null).all();
+    if (session_id) {
+      sql += ' WHERE session_id = ?';
+      const result = await this.db.prepare(sql).bind(session_id).all();
+      return result.results;
+    }
+    const result = await this.db.prepare(sql).all();
     return result.results;
   }
 
