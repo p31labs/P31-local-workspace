@@ -142,4 +142,116 @@ export class DBClient {
       .bind(id)
       .run();
   }
+
+  // ----- User Testing -----
+
+  async ut_listParticipants(filters?: { pseudonym?: string; cohort?: string }) {
+    let sql = 'SELECT * FROM ut_participants';
+    const params: any[] = [];
+    if (filters?.pseudonym) {
+      sql += ' WHERE pseudonym = ?';
+      params.push(filters.pseudonym);
+    } else if (filters?.cohort) {
+      sql += ' WHERE cohort = ?';
+      params.push(filters.cohort);
+    }
+    const result = await this.db.prepare(sql).bind(...params).all();
+    return result.results;
+  }
+
+  async ut_createParticipant(data: {
+    pseudonym: string; neurotype?: string; cohort: string;
+    age_band?: string; access_needs_json?: string; payment_method?: string;
+    consent_given?: boolean; caregiver_assent?: boolean;
+  }) {
+    const { pseudonym, neurotype, cohort, age_band, access_needs_json, payment_method, consent_given, caregiver_assent } = data;
+    const result = await this.db.prepare(`
+      INSERT INTO ut_participants
+      (pseudonym, neurotype, cohort, age_band, access_needs_json, payment_method, consent_given, caregiver_assent)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    `).bind(pseudonym, neurotype || null, cohort, age_band || null, access_needs_json || null, payment_method || null, consent_given ? 1 : 0, caregiver_assent ? 1 : 0).run();
+    return (result.meta as any)?.last_row_id;
+  }
+
+  async ut_getParticipant(id: number) {
+    return this.db.prepare('SELECT * FROM ut_participants WHERE id = ?').bind(id).first();
+  }
+
+  async ut_getParticipantByPseudonym(pseudonym: string) {
+    return this.db.prepare('SELECT * FROM ut_participants WHERE pseudonym = ?').bind(pseudonym).first();
+  }
+
+  async ut_updateParticipant(id: number, data: any) {
+    const fields = Object.keys(data);
+    const setClause = fields.map((f) => `${f} = ?`).join(', ');
+    const values = fields.map((f) => data[f]);
+    await this.db.prepare(`UPDATE ut_participants SET ${setClause} WHERE id = ?`).bind(...values, id).run();
+  }
+
+  async ut_listSessions(filters?: { participant_id?: number; phase?: number }) {
+    let sql = 'SELECT * FROM ut_sessions';
+    const params: any[] = [];
+    const where: string[] = [];
+    if (filters?.participant_id) { where.push('participant_id = ?'); params.push(filters.participant_id); }
+    if (filters?.phase) { where.push('phase = ?'); params.push(filters.phase); }
+    if (where.length) sql += ' WHERE ' + where.join(' AND ');
+    const result = await this.db.prepare(sql).bind(...params).all();
+    return result.results;
+  }
+
+  async ut_createSession(data: {
+    participant_id: number; phase: number; session_date?: string; format: string;
+    spoons_start: number; spoons_end: number; wcag_json?: string;
+    payment_amount?: number; paid?: boolean; notes?: string;
+  }) {
+    const { participant_id, phase, session_date, format, spoons_start, spoons_end, wcag_json, payment_amount, paid, notes } = data;
+    const result = await this.db.prepare(`
+      INSERT INTO ut_sessions
+      (participant_id, phase, session_date, format, spoons_start, spoons_end, wcag_json, payment_amount, paid, notes)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `).bind(participant_id, phase, session_date || null, format, spoons_start, spoons_end, wcag_json || null, payment_amount ?? null, paid ? 1 : 0, notes || null).run();
+    return (result.meta as any)?.last_row_id;
+  }
+
+  async ut_getSession(id: number) {
+    return this.db.prepare('SELECT * FROM ut_sessions WHERE id = ?').bind(id).first();
+  }
+
+  async ut_updateSession(id: number, data: any) {
+    const fields = Object.keys(data);
+    const setClause = fields.map((f) => `${f} = ?`).join(', ');
+    const values = fields.map((f) => data[f]);
+    await this.db.prepare(`UPDATE ut_sessions SET ${setClause} WHERE id = ?`).bind(...values, id).run();
+  }
+
+  async ut_listFindings(session_id?: number) {
+    let sql = 'SELECT * FROM ut_findings';
+    if (session_id) sql += ' WHERE session_id = ?';
+    const result = await this.db.prepare(sql).bind(session_id ?? null).all();
+    return result.results;
+  }
+
+  async ut_createFinding(data: {
+    session_id: number; severity: number; category?: string; description?: string; suggested_fix?: string;
+  }) {
+    const { session_id, severity, category, description, suggested_fix } = data;
+    const result = await this.db.prepare(`
+      INSERT INTO ut_findings (session_id, severity, category, description, suggested_fix)
+      VALUES (?, ?, ?, ?, ?)
+    `).bind(session_id, severity, category || null, description || null, suggested_fix || null).run();
+    return (result.meta as any)?.last_row_id;
+  }
+
+  async ut_listDeadlines() {
+    const result = await this.db.prepare('SELECT * FROM ut_deadlines').all();
+    return result.results;
+  }
+
+  async ut_upsertDeadline(data: { label: string; due_date?: string; owner?: string; met?: boolean }) {
+    const { label, due_date, owner, met } = data;
+    await this.db.prepare(`
+      INSERT OR REPLACE INTO ut_deadlines (label, due_date, owner, met)
+      VALUES (?, ?, ?, ?)
+    `).bind(label, due_date || null, owner || null, met ? 1 : 0).run();
+  }
 }

@@ -3,8 +3,9 @@ import { CaptureForm } from './components/CaptureForm';
 import { StatusDashboard } from './components/StatusDashboard';
 import { HistoryView } from './components/HistoryView';
 import { useBrainDump } from './hooks/useBrainDump';
+import UserTestDashboard from './components/usertest/UserTestDashboard';
 
-type View = 'capture' | 'history' | 'status';
+type View = 'capture' | 'history' | 'status' | 'usertest';
 
 export function App() {
   const [submittedId, setSubmittedId] = useState<string | null>(null);
@@ -47,10 +48,17 @@ export function App() {
             >
               History
             </button>
+            <button
+              onClick={() => setView('usertest')}
+              className={`px-3 py-1 text-sm rounded ${view === 'usertest' ? 'bg-indigo-600 text-white' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}`}
+            >
+              Testing
+            </button>
           </nav>
         </div>
       </header>
       <main className="max-w-3xl mx-auto">
+        {view === 'usertest' && <UserTestDashboard />}
         {view === 'capture' && !submittedId && (
           <CaptureForm
             onSubmit={handleSubmit}
