@@ -85,7 +85,7 @@ The external landscape validates the timing:
 | Task | Description | Owner | Deadline | Status |
 | :--- | :--- | :--- | :--- | :--- |
 | **L3.1** | Finalize MCP monetization spec | Agent | ✅ DONE | `MCP_MONETIZATION_GATEWAY_SPEC.md` |
-| **L3.2** | Map x402 payment middleware to local Base testnet (Fallback) | Agent | Q3 2026 | 🟡 SCAFFOLDED (worker written + committed @ `bf8c991`; `tsc`/deploy validation BLOCKED — env `pnpm`/`npm install` hangs; deps `x402-hono`,`@coinbase/x402` not fetchable here; validation automated by `cli/validate-l3.2.js` for operator machine) |
+| **L3.2** | Map x402 payment middleware to local Base testnet (Fallback) | Agent | Q3 2026 | 🟢 VALIDATED (local: `tsc --noEmit` clean, `wrangler deploy --dry-run` green @ `d03c377`; root `pnpm install --no-frozen-lockfile` regenerates lockfiles so `x402-hono@1.2.0`/`@coinbase/x402@2.1.0` resolve; automated by `cli/validate-l3.2.js`) |
 | **L3.3** | Create Cloudflare Gateway config for MCP waitlist clearance | Agent | Q3 2026 | 🟡 DRAFT (`cloudflare-gateway-mcp-config.md`; gateway waitlisted, Worker fallback live) |
 | **L3.4** | Deploy first 3–5 paid MCP tools to production | Agent | Q3 2026 | 🔄 PENDING |
 
