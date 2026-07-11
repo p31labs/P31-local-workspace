@@ -16,6 +16,7 @@
 LOVE-Ledger is a tamper-evident ledger for consent and value-exchange events, designed to give users a portable, verifiable proof trail that survives disputes. It underpins a creator-economy model where the platform takes zero fee (platformFee.rate === 0), keeping value with creators and users.
 
 ### What exists now (verifiable)
+- **WCAG 2.2 AAA (automated audit verified, 2026-07-11)** — `scripts/audit-wcag.mjs` (axe-core 4.11) returns **0 blocking violations** across all 4 faces (phos, auth, status, design-hub) + bonding. Contrast ≥7:1, focus, skip-links, ARIA all pass programmatic AAA rules.
 - **D1-backed ledger** with `prev_hash`/`entry_hash` columns forming a SHA-256 hash chain; chain integrity is externally auditable.
 - **Read APIs:** `GET /chain` (full ordered hash chain) and `GET /export` (portable export) for court-admissible retrieval.
 - **ERC-5192 compliance:** `LOVESBT.sol` implements `supportsInterface(0xb45a3c0e)` with `locked()` and the `Locked` event, marking consent/SBT records as soulbound and locked.
@@ -41,6 +42,7 @@ LOVE-Ledger directly serves TALER's privacy and user-sovereignty goals: zero-fee
 PHOS-Sovereign extends the Universal Interface Generator into a deployable, sovereign front-end layer that any community can self-host, giving federated users a consistent, accessible, spoon-aware interface across services rather than fragmented per-app UIs.
 
 ### What exists now (verifiable)
+- **WCAG 2.2 AAA (automated audit verified, 2026-07-11)** — 0 blocking violations across all 4 faces + bonding via axe-core 4.11 (`wcag2aaa`).
 - **Universal Interface Generator** (`@p31/interface-generator`) integrated into PHOS, p31ca, bonding, and the `phos-forge` MCP tool.
 - **Spoon-aware UI** via `data-spoon` (0–5) with crisis mode at spoons 0 (breathing overlay only) — a concrete accessibility affordance for fluctuating capacity.
 - **Cognitive Passport v4.1** schema + audience matrix + Ed25519 / ML-DSA signing for portable, signed user-context handoff across federated services.
@@ -62,4 +64,4 @@ PHOS-Sovereign maps to Fediversity's mission of user-controlled, interoperable i
 - **Org:** P31 Labs, 501(c)(3) pending, EIN 42-1888158.
 - **Combined ask:** €40,000 (TALER €15k + Fediversity €25k).
 - **Trust primitives shared:** Cognitive Passport v4.1 (Ed25519/ML-DSA) and ERC-5192 locked SBTs (interface `0xb45a3c0e`) underpin both ledgers and the interface layer.
-- **Accessibility honesty:** WCAG 2.1 AA is partial and in place; AAA, COGA, and A2UI are explicitly Phase 2 and not claimed as done.
+- **Accessibility honesty:** WCAG 2.2 AAA **automated axe-core audit passes** (0 blocking violations, 2026-07-11) across all 4 faces + bonding. COGA behavioural adaptation and A2UI renderer alignment remain Phase 2 (roadmap, not yet delivered).

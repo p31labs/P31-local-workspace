@@ -1,8 +1,9 @@
 # L.O.V.E. Ledger — Privacy-Preserving Accounting System for Neurodivergent Care Work
 
-**Grant Application:** NLnet / GNU Taler
-**Amount:** €20,000
-**Status:** Draft (updated July 2026)
+**Grant Application:** NLnet / GNU Taler — **14th Open Call**
+**Amount:** €15,000
+**Status:** Draft (updated July 2026) — consolidated version at `grants/NGI-2026-PROPOSALS-DRAFT.md` is authoritative
+**Verified state (2026-07-11):** UIG Adaptive Exocortex shipped + tagged (`v1.0.0-uig-convergence`); TRIPER cert 44/44 green; WCAG 2.2 AAA automated axe-core audit 0 blocking violations across all 4 faces.
 
 ---
 

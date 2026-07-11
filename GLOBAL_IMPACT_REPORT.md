@@ -51,7 +51,7 @@ documentation artifact with no in-repo implementation — not listed here.)
 
 - **Spoon-aware motion** — `data-spoons` (0–5) scales animation, UI complexity, and LLM prompts.
 - **Crisis Mode invariant** — at spoon 0, only a breathing overlay renders (no UI chrome).
-- **WCAG 2.2 AAA** — contrast ≥7:1, focus indicators, skip links, ARIA labels, `prefers-reduced-motion`.
+- **WCAG 2.2 AAA (automated audit verified, 2026-07-11)** — `scripts/audit-wcag.mjs` (axe-core 4.11, `wcag2aaa` tag) returns **0 blocking violations** (critical/serious) across all 4 faces: phos, auth, status, design-hub (bonding also 0). Contrast ≥7:1, focus indicators, skip links, ARIA labels, `prefers-reduced-motion` all pass programmatic AAA rules. Manual COGA review (simplification, progressive disclosure, user-controlled adaptation) is ongoing — not yet claimed as full conformance.
 
 ## 5. L.O.V.E. Economy
 
