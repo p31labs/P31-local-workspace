@@ -1,0 +1,48 @@
+{
+  "timestamp": "2026-07-11T07:29:46.440Z",
+  "overall": true,
+  "suites": [
+    {
+      "name": "uig-generate",
+      "label": "UIG TRIPER — generateInterface + generateInterfaceFromIntent",
+      "passed": true,
+      "tests": 22
+    },
+    {
+      "name": "mcp-servers",
+      "label": "MCP Cross-Server — 4 servers, 46+ tools",
+      "passed": true,
+      "tests": 22
+    }
+  ],
+  "deployments": [
+    {
+      "app": "design-hub",
+      "url": "https://design-hub-41l.pages.dev",
+      "status": "deployed",
+      "http": 200
+    },
+    {
+      "app": "auth",
+      "url": "https://p31-auth.trimtab-signal.workers.dev",
+      "status": "deployed",
+      "health": "ok",
+      "login": "ok",
+      "verify": "ok"
+    },
+    {
+      "app": "status",
+      "url": "https://status.p31ca.org",
+      "status": "deployed",
+      "health": "ok",
+      "cron": "*/15 * * * *"
+    },
+    {
+      "app": "bonding",
+      "url": "https://bonding.pages.dev",
+      "status": "deployed",
+      "http": 200
+    }
+  ],
+  "mode": "cert"
+}

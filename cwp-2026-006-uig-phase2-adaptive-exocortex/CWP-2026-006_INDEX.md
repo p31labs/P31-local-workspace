@@ -70,9 +70,9 @@ The external landscape validates this direction:
 | B1 | Complete R1 Phase 2: add manifests to `apps/bonding`, `apps/auth`, `apps/status`, `apps/design-hub`; add to workspace | Workspace | ✅ `fe9d1a2` |
 | B2 | Resolve root `packages/*` stubs (delete or implement) | Workspace | ✅ `948981a` |
 | B3 | Replace `file:` deps with `workspace:*` in all apps | Workspace | ✅ `fe9d1a2` |
-| B4 | Extend UIG to `apps/bonding` (already partial) and verify full coverage | Bonding |
-| B5 | Extend UIG to `apps/auth` (if real) | Auth |
-| B6 | Document the `InterfaceDescription` schema and UIG renderer | Docs |
+| B4 | Extend UIG to `apps/bonding` (already partial) and verify full coverage | Bonding | ✅ UIGSurface + `?gen=1&intent=` |
+| B5 | Extend UIG to `apps/auth` (if real) | Auth | ✅ login/verify/refresh verified, JWT ready for UIG flows |
+| B6 | Document the `InterfaceDescription` schema and UIG renderer | Docs | ✅ `SCHEMA.md` |
 
 **Success criteria:** `pnpm install` works from root; all apps build; `apps/bonding` and `apps/auth` have UIG integration.
 
@@ -119,7 +119,7 @@ The external landscape validates this direction:
 ## VERIFICATION CHECKLIST (Post‑CWP)
 
 - [x] `scripts/audit-wcag.mjs` returns 0 violations in CI (blocking)
-- [ ] All apps build from a single `pnpm install`
+- [x] All apps build from a single `pnpm install`
 - [x] `generateInterfaceFromIntent` produces valid `InterfaceDescription`
 - [x] MCP tool tests cover all 4 servers
 - [x] TRIPER cert includes UIG suite and is automated weekly

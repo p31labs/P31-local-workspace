@@ -64,9 +64,9 @@ function runSuite(suite) {
   log(`${"─".repeat(60)}`);
 
   const result = spawnSync(
-    "node",
+    "npx",
     [
-      "node_modules/.bin/vitest",
+      "vitest",
       "run",
       "--config", "vitest.triper.config.mjs",
       "--reporter", "verbose",

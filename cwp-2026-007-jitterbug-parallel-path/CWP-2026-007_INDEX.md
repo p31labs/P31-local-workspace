@@ -77,7 +77,7 @@ This keeps `git log --oneline` scannable and `git bisect` effective.
 | D (Operational) | D2 | ✅ DONE | uncommitted |
 | D (Operational) | D3 | ✅ DONE | uncommitted |
 | D (Operational) | D4 | ✅ DONE | uncommitted |
-| E (Swarm) | E1-E4 | 🔄 IN PROGRESS | — |
+| E (Swarm) | E1-E4 | ✅ DONE | parallel path framework, coord rules, CI automation, MCP coverage |
 
 ---
 
