@@ -59,7 +59,7 @@ The external landscape validates the timing:
 | **L1.2** | Finalize LOVE-Ledger proposal (€15k, NGI TALER 14th) | Agent + User | Jul 31 | ✅ DONE (`4a0721c`, reconciled to €15k) |
 | **L1.3** | Finalize PHOS-Sovereign proposal (€25k, NGI Fediversity 12th) | Agent + User | Jul 31 | ✅ DONE (`4a0721c`, reconciled) |
 | **L1.4** | Submit both proposals at [nlnet.nl/propose/](https://nlnet.nl/propose/) | **User** | **Aug 1 12:00 CEST** | 🔄 PENDING |
-| **L1.5** | Update `GLOBAL_IMPACT_REPORT.md` with verifiable AAA/COGA status | Agent | Aug 1 | ✅ DONE (`4a0721c`, accurate 0-blocking claim) |
+| **L1.5** | Update `GLOBAL_IMPACT_REPORT.md` with verifiable AAA/COGA status | Agent | 2026-07-11 | ✅ DONE (report reconciled: 6 servers/115 tools, A2UI v0.9 row, x402 §3.1, TRIPER cert, AGPL-3.0) |
 | **L1.6** | Run full axe audit across all 4 faces (phos, auth, status, design-hub) | Agent | Jul 20 | ✅ DONE (`audit-wcag.mjs` → 0 blocking each) |
 
 **Success criteria:** Both €40k proposals submitted; secrets rotated; all faces audited; docs reflect production reality.
@@ -163,7 +163,7 @@ Ref: Fortune 1 way — decompose, dispatch, execute in parallel, merge, verify.
 - [ ] Cloudflare Gateway config ready
 - [x] 100+ MCP tools deployed (115 across 6 servers)
 - [x] Node MCP bridge (L3.4) spawns 4 servers → 48-tool catalog, 7/7 tests green
-- [ ] A2UI v0.9 integration complete
+- [x] A2UI v0.9 integration complete (L4.2 adapter + L4.3 renderer)
 - [x] UIG core open-sourced (AGPL-3.0, `software/packages/interface-generator`)
 - [ ] Tag `v2.0.0-sierpinski-expansion` pushed
 
