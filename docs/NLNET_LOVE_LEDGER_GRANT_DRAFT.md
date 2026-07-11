@@ -49,6 +49,23 @@ This gives LOVE the privacy properties of cash while maintaining a verifiable is
 - A family can produce a **WCD-46-style chain** showing consistent care over time.
 - The chain **does not expose** the emotional content of care — only the fact that care occurred.
 
+### 2.4 Cryptographic Security & Roadmap
+
+LOVE issuance uses **Clause Blind Schnorr (CBS)** — a real, WASM-compiled blind-signature
+scheme deployed live in the `love-ledger` worker (2026-07-11, `BLIND_MODE='taler'`), giving
+unlinkable care-credit minting with court-admissible, hash-chained receipts. CBS is the
+**pre-quantum** foundation.
+
+The **post-quantum** path replaces the asymmetric primitives (CBS scalar, Ed25519) with
+lattice PQC — **ML-KEM** (FIPS 203) + **ML-DSA** (FIPS 204) — via the existing
+`software/packages/quantum-core/src/pqc/fips203-204.ts` module, deployed as a hybrid
+(classical ‖ PQC) envelope. Symmetric primitives (SHA-256, AES-256) are Grover-safe and
+retained.
+
+A **SIC-POVM** quantum-measurement track is documented as *future research* (it requires
+quantum hardware and is not deployable in the Workers runtime) — see
+`plans/P31-WP-PQ-2026-001_PRE_POST_QUANTUM_CRYPTO_SECURITY.md`.
+
 ## 3. Budget
 
 | Item | Cost (€) |

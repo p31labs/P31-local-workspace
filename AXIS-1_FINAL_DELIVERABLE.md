@@ -4,6 +4,7 @@
 **Refs:** `CWP-2026-010`, `L5-FINAL-DELIVERABLE.md`, `L5-CREATION-ECONOMY.md`
 **Date:** 2026-07-11
 **Replaces:** `BLIND_MODE='mock'` stub in `love-ledger /withdraw`
+**Post-Quantum Roadmap:** `plans/P31-WP-PQ-2026-001_PRE_POST_QUANTUM_CRYPTO_SECURITY.md` — pre-quantum (CBS, live) + post-quantum (ML-KEM/ML-DSA, designed) + SIC-POVM research track.
 
 ---
 

@@ -195,8 +195,11 @@ value-based settlement: the worker settles on *value created for the user*
   require an HMAC-SHA256 (`LOVE_AUTH_SECRET`, 60s TTL) → 401 on
   miss/expiry. Spoon-delta replay is blocked via `consumed_nonces`
   (migration `004`). Intent quotes are edge-cached via `caches.default`.
-  GNU Taler blind signatures remain a **staging-only** mock behind a
-  `BLIND_MODE` guard until a WASM build lands.
+  GNU Taler blind signatures are **LIVE** in production via the CBS WASM
+  build (`BLIND_MODE='taler'`, `taler_cs.wasm`, delivered as Cloudflare
+  CompiledWasm). The earlier staging-only mock is fail-closed and no
+  longer used. See `AXIS-1_FINAL_DELIVERABLE.md` and
+  `plans/P31-WP-PQ-2026-001_PRE_POST_QUANTUM_CRYPTO_SECURITY.md`.
 
 ### LOVE Ledger MCP Server
 
