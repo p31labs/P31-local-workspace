@@ -1,8 +1,13 @@
 import { DurableObject } from 'cloudflare:workers';
 import { verifyRequest, unauthorizedResponse } from '../../lib/edge/verify';
 import { logEvent } from '../../lib/edge/logging';
-import { init as initCbs, base as cbsBase, signBlinded as cbsSign, verify as cbsVerify } from './taler-cbs/loader';
+import { ensureCbs, base as cbsBase, signBlinded as cbsSign, verify as cbsVerify } from './taler-cbs/loader';
 import { deriveNonce } from './taler-cbs/kdf';
+
+// The wasm is imported via ?module in taler-cbs/loader.ts (esbuild
+// compiles it at build time — the only Worker-supported way, since
+// [wasm_modules] and runtime WebAssembly.instantiate() are both
+// blocked for ES-module Workers. See AXIS-1 §6.1.
 
 const GENESIS_HASH = '0'.repeat(64);
 
@@ -212,7 +217,6 @@ export interface Env {
   LOVE_REQUIRE_AUTH?: string;
   RECEIPT_SIGNER_PUBLIC_KEY?: string;
   BLIND_ISSUER_PRIVATE_KEY?: string;
-  taler_cs: WebAssembly.Module;
   BLIND_MODE?: string;
   ENVIRONMENT?: string;
 }
@@ -454,13 +458,14 @@ export default {
 
     if (method === 'GET' && url.pathname === '/blind-pubkey') {
       try {
+        // TEMP DEBUG: surface the real error (remove after CBS smoke).
         if (!env.BLIND_ISSUER_PRIVATE_KEY) {
           return new Response(JSON.stringify({ error: 'CBS issuer not configured' }), {
             status: 503,
             headers: { 'Content-Type': 'application/json' },
           });
         }
-        await initCbs(env.taler_cs as unknown as WebAssembly.Module);
+        await ensureCbs();
         const xBytes = b64ToBytes(env.BLIND_ISSUER_PRIVATE_KEY);
         // Fresh one-time nonce `t` per request. n = clamp(SHA-512(x ‖ t))
         // is recomputed (stateless) from `t` at /blind-sign. R = n·G is
@@ -475,11 +480,11 @@ export default {
           R: bytesToB64(R),
           t: bytesToB64(t),
         }), { headers: { 'Content-Type': 'application/json' } });
-      } catch (err: any) {
-        logEvent({ event: 'blind_pubkey_error', service: 'love-ledger', success: false, error: err?.message || String(err) });
-        return new Response(JSON.stringify({ error: 'Internal server error' }), { status: 500, headers: { 'Content-Type': 'application/json' } });
+        } catch (err: any) {
+          logEvent({ event: 'blind_pubkey_error', service: 'love-ledger', success: false, error: err?.message || String(err) });
+          return new Response(JSON.stringify({ error: 'Internal server error' }), { status: 500, headers: { 'Content-Type': 'application/json' } });
+        }
       }
-    }
 
     if (method === 'POST' && url.pathname === '/blind-sign') {
       try {
@@ -493,7 +498,7 @@ export default {
         if (typeof body.c !== 'string' || typeof body.t !== 'string') {
           return new Response(JSON.stringify({ error: 'Missing blinded challenge c or nonce t' }), { status: 400 });
         }
-        await initCbs(env.taler_cs as unknown as WebAssembly.Module);
+        await ensureCbs();
         const xBytes = b64ToBytes(env.BLIND_ISSUER_PRIVATE_KEY);
         const tBytes = b64ToBytes(body.t);
         // SECURITY: n is derived from (x, t). Reusing the same `t` with two
@@ -590,7 +595,7 @@ export default {
             headers: { 'Content-Type': 'application/json' },
           });
         }
-        await initCbs(env.taler_cs as unknown as WebAssembly.Module);
+        await ensureCbs();
         const xBytes = b64ToBytes(env.BLIND_ISSUER_PRIVATE_KEY);
         const X = cbsBase(xBytes);
         const R = b64ToBytes(body.R);
@@ -601,6 +606,42 @@ export default {
             headers: { 'Content-Type': 'application/json' },
           });
         }
+        // Axis-1 replay protection: each blind-signature coin (c', s') is
+        // spent exactly once. Claim c' (PRIMARY KEY) before debiting; a
+        // replay is rejected with 409. This is the missing half of
+        // replay safety: cbs_nonce guards the signing nonce `t` (x-leak),
+        // while this guards the issued token here (double-spend).
+        // Legitimate repeats get a fresh t -> fresh coin. D1 `.run()` does
+        // not reliably surface `changes` in the Worker runtime, so we probe
+        // existence explicitly and rely on the PK violation (caught) to
+        // cover the concurrent-replay race.
+        const coinExpires = Date.now() + 365 * 86_400_000;
+        const prior = await withRetry(() => env.LOVE_DB.prepare(
+          'SELECT coin FROM cbs_coin WHERE coin = ?'
+        ).bind(body.cPrime).first<{ coin: string }>(), 3, 'cbs_coin_probe');
+        if (prior) {
+          logEvent({ event: 'cbs_coin_replay', service: 'love-ledger', success: false, data: { did: body.did } });
+          return new Response(JSON.stringify({ error: 'Token already spent (replay blocked)' }), {
+            status: 409,
+            headers: { 'Content-Type': 'application/json' },
+          });
+        }
+        try {
+          await env.LOVE_DB.prepare(
+            'INSERT INTO cbs_coin (coin, did, expires) VALUES (?, ?, ?)'
+          ).bind(body.cPrime, body.did, coinExpires).run();
+        } catch (claimErr: any) {
+          // PRIMARY KEY violation => a concurrent request already spent it.
+          logEvent({ event: 'cbs_coin_replay', service: 'love-ledger', success: false, data: { did: body.did }, error: String(claimErr?.message || claimErr) });
+          return new Response(JSON.stringify({ error: 'Token already spent (replay blocked)' }), {
+            status: 409,
+            headers: { 'Content-Type': 'application/json' },
+          });
+        }
+        // Best-effort TTL sweep of expired coins (cheap, keeps table small).
+        await env.LOVE_DB.prepare(
+          'DELETE FROM cbs_coin WHERE expires < ?'
+        ).bind(Date.now()).run().catch(() => {});
         // Court-admissible token = (c', s').
         const token = `${body.cPrime}.${body.sPrime}`;
         const entryHash = await sha256(

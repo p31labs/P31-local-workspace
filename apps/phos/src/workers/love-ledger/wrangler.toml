@@ -28,15 +28,23 @@ bucket_name = "love-ledger-archive"
 [triggers]
 crons = []
 
-# Axis-1: Clause Blind Schnorr WASM (Rust + curve25519-dalek).
-[wasm_modules]
-taler_cs = "taler_cs.wasm"
+# Axis-1: Clause Blind Schnorr WASM (Rust + curve25519-dalek) is
+# pre-compiled at deploy time via [[rules]] type = "CompiledWasm" (ES
+# module Workers cannot use [wasm_modules], and runtime WebAssembly
+# code-gen from raw bytes is blocked by workerd). index.ts imports it as
+# a WebAssembly.Module and instantiates it once. See §6.1.
+
+# Pre-compile the CBS wasm so it imports as a WebAssembly.Module.
+[[rules]]
+type = "CompiledWasm"
+globs = ["**/*.wasm"]
+fallthrough = false
 
 # BLIND_MODE is fail-closed: anything other than 'taler' → /withdraw 500s
 # (no mint path exists). Set via secret/var per environment.
 [vars]
 BLIND_MODE = "taler"
-ENVIRONMENT = "staging"
+ENVIRONMENT = "production"
 
 [observability]
 enabled = true

@@ -98,7 +98,8 @@ ok "secrets put"
 # ── Axis-1 WASM copy to love-ledger (idempotent) ───────────────────
 log "Copying taler_cs.wasm to love-ledger..."
 cp -f "$WASM" "$ROOT/apps/phos/src/workers/love-ledger/taler_cs.wasm" || die "wasm copy failed"
-ok "wasm copied to love-ledger"
+cp -f "$WASM" "$ROOT/apps/phos/src/workers/love-ledger/taler-cbs/taler_cs.wasm" || die "wasm copy (taler-cbs) failed"
+ok "wasm copied to love-ledger (root + taler-cbs/)"
 
 # ── Migrations (idempotent: CREATE TABLE IF NOT EXISTS) ──────────────
 log "Applying D1 migrations (incl. 005_cbs_nonce)..."
