@@ -281,6 +281,57 @@ const TOOLS = [
     description: 'Draft a message to a supporter when struggling.',
     inputSchema: { type: 'object', properties: { who: { type: 'string' }, why: { type: 'string' } }, required: ['who'] },
   },
+  // ── Memory scaffolding (Domain 7) ──
+  {
+    name: 'spaced_repetition',
+    description: 'Schedule spaced-review intervals for a fact by difficulty.',
+    inputSchema: { type: 'object', properties: { fact: { type: 'string' }, difficulty: { type: 'number', description: '1 easy – 5 hard' } }, required: ['fact'] },
+  },
+  {
+    name: 'note_retrieve',
+    description: 'Find saved notes by keyword overlap (heuristic stub).',
+    inputSchema: { type: 'object', properties: { notes: { type: 'array', items: { type: 'object', properties: { id: { type: 'string' }, text: { type: 'string' } } } }, query: { type: 'string' } }, required: ['notes', 'query'] },
+  },
+  {
+    name: 'memory_remind',
+    description: 'Compute a due date for a future reminder.',
+    inputSchema: { type: 'object', properties: { label: { type: 'string' }, in_days: { type: 'number' } }, required: ['label'] },
+  },
+  {
+    name: 'recall_prompt',
+    description: 'Generate a self-test prompt for a topic.',
+    inputSchema: { type: 'object', properties: { topic: { type: 'string' }, facts: { type: 'array', items: { type: 'string' } } }, required: ['topic'] },
+  },
+  {
+    name: 'external_memory',
+    description: 'Store a note in an in-process memory stub (not durable).',
+    inputSchema: { type: 'object', properties: { key: { type: 'string' }, value: { type: 'string' } }, required: ['key', 'value'] },
+  },
+  {
+    name: 'chunk_recall',
+    description: 'Split a list into smaller memorization chunks.',
+    inputSchema: { type: 'object', properties: { items: { type: 'array', items: { type: 'string' } }, per_chunk: { type: 'number' } }, required: ['items'] },
+  },
+  {
+    name: 'memory_encoding',
+    description: 'Suggest a mnemonic / encoding strategy for a fact.',
+    inputSchema: { type: 'object', properties: { fact: { type: 'string' }, strategy: { type: 'string', enum: ['acronym', 'imagery', 'story', 'rhyme'] } }, required: ['fact'] },
+  },
+  {
+    name: 'retrieval_practice',
+    description: 'Generate a quiz question from a text snippet.',
+    inputSchema: { type: 'object', properties: { snippet: { type: 'string' } }, required: ['snippet'] },
+  },
+  {
+    name: 'memory_cue',
+    description: 'Suggest a sensory cue to trigger recall of a routine.',
+    inputSchema: { type: 'object', properties: { routine: { type: 'string' }, cue_type: { type: 'string', enum: ['sight', 'sound', 'place', 'smell'] } }, required: ['routine'] },
+  },
+  {
+    name: 'forget_track',
+    description: 'Flag reminders not reviewed in over 30 days.',
+    inputSchema: { type: 'object', properties: { items: { type: 'array', items: { type: 'object', properties: { label: { type: 'string' }, last_reviewed: { type: 'string' } } } } }, required: ['items'] },
+  },
 ];
 
 // ─── Helpers (pure, no deps) ────────────────────────────────────────────────
@@ -317,6 +368,9 @@ function contrastRatio(rgb1, rgb2) {
 }
 
 // ─── Handlers ────────────────────────────────────────────────────────────────
+
+// In-process store for external_memory (stub — not durable across restarts).
+const memoryStore = new Map();
 
 const HANDLERS = {
   time_estimate({ task, complexity = 'medium', spoons = 3 }) {
@@ -662,6 +716,84 @@ const HANDLERS = {
   support_ping({ who, why }) {
     const first = (who || '').split(' ')[0] || who;
     return { to: who, draft: `Hey ${first}, I am having a hard moment${why ? ' (' + why + ')' : ''}. Can we talk soon? No fix needed — just company.` };
+  },
+
+  spaced_repetition({ fact, difficulty = 3 }) {
+    const base = [1, 3, 7, 14, 30];
+    const scale = difficulty <= 1 ? 1.6 : difficulty >= 5 ? 0.6 : 1;
+    const sched = base.map((d) => Math.max(1, Math.round(d * scale)));
+    return { fact, difficulty, schedule_days: sched, note: 'Review on these offsets; reset if you miss.' };
+  },
+
+  note_retrieve({ notes = [], query }) {
+    const q = (query || '').toLowerCase().split(/\W+/).filter(Boolean);
+    const scored = notes.map((n) => {
+      const text = (n.text || '').toLowerCase();
+      const score = q.reduce((a, t) => a + (text.includes(t) ? 1 : 0), 0);
+      return { id: n.id, score };
+    }).filter((s) => s.score > 0).sort((a, b) => b.score - a.score);
+    return { matches: scored.slice(0, 5), note: 'Heuristic keyword overlap; an LLM would rank by meaning.' };
+  },
+
+  memory_remind({ label, in_days = 1 }) {
+    const due = new Date(Date.now() + in_days * 86400000).toISOString().slice(0, 10);
+    return { label, due, note: 'Set a real reminder; this just computes the date.' };
+  },
+
+  recall_prompt({ topic, facts = [] }) {
+    return {
+      prompt: `Without looking, what do you remember about ${topic}?`,
+      test_facts: facts,
+      note: 'Say it out loud, then check against test_facts.',
+    };
+  },
+
+  external_memory({ key, value }) {
+    if (!memoryStore.has(key)) memoryStore.set(key, value);
+    return { stored: key, note: 'In-process stub — NOT persisted across restarts. Wire to KV/DB for durability.' };
+  },
+
+  chunk_recall({ items = [], per_chunk = 5 }) {
+    const chunks = [];
+    for (let i = 0; i < items.length; i += per_chunk) chunks.push(items.slice(i, i + per_chunk));
+    return { chunks, count: chunks.length, note: 'Smaller chunks memorize better.' };
+  },
+
+  memory_encoding({ fact, strategy }) {
+    const pick = strategy || (fact.length > 40 ? 'story' : 'imagery');
+    const map = {
+      acronym: 'Take first letters to form a word.',
+      imagery: 'Attach a vivid absurd image to the fact.',
+      story: 'Weave the fact into a tiny story.',
+      rhyme: 'Pair it with a rhyming word.',
+    };
+    return { fact, strategy: pick, suggestion: map[pick] || map.imagery, note: 'Encode at encode-time for easier recall.' };
+  },
+
+  retrieval_practice({ snippet }) {
+    const first = splitSentences(snippet || '')[0] || '';
+    const topic = first.replace(/^[^a-z]*the /i, '').slice(0, 60);
+    return { question: `What was stated about "${topic}..."?`, note: 'Active recall beats re-reading.' };
+  },
+
+  memory_cue({ routine, cue_type = 'sight' }) {
+    const cues = {
+      sight: `Put a visible object by where you do "${routine}".`,
+      sound: `Use a specific chime before "${routine}".`,
+      place: `Always do "${routine}" in the same spot.`,
+      smell: `Keep a scent nearby that means "${routine}".`,
+    };
+    return { routine, cue_type, cue: cues[cue_type] || cues.sight, note: 'One consistent cue triggers the habit.' };
+  },
+
+  forget_track({ items = [] }) {
+    const now = Date.now();
+    const flagged = items.map((it) => {
+      const last = it.last_reviewed ? new Date(it.last_reviewed).getTime() : 0;
+      const days = last ? Math.round((now - last) / 86400000) : 999;
+      return { label: it.label, days_since: days, stale: days > 30 };
+    }).filter((x) => x.stale);
+    return { stale: flagged, note: flagged.length ? 'Review these — they are past 30 days.' : 'All fresh.' };
   },
 };
 

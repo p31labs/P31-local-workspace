@@ -119,12 +119,12 @@ npm install -g andromeda-cli
 andromeda --agent
 ```
 
-The CLI exposes six MCP servers (103 tools):
+The CLI exposes six MCP servers (113 tools):
 - `node cli/mcp-server.js` — Oasis CLI tools (11 tools)
 - `node cli/component-registry.js` — Component Registry tools (5 tools)
 - `node cli/love-registry.js` — LOVE Ledger tools (3 tools)
 - `node tools/phos-forge/mcp-server.mjs` — PHOS Forge tools (29 tools)
-- `node cli/cognitive-prosthetic.js` — Cognitive Prosthetic tools (37 tools: temporal grounding, executive function, sensory adaptation, cognitive load, communication, crisis detection)
+- `node cli/cognitive-prosthetic.js` — Cognitive Prosthetic tools (47 tools: temporal grounding, executive function, sensory adaptation, cognitive load, communication, crisis detection, memory scaffolding)
 - `node cli/cognitive-comms.js` — Cognitive Comms tools (20 tools: tone, replies, boundaries, accommodations, agendas)
 
 ### LOVE Ledger MCP Server
