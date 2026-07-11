@@ -196,8 +196,8 @@ All writers and verifiers are local‑only (no network). The pipeline is **decou
 ## 7. Future Directions (L4)
 
 - **L4.1** — Expand MCP tools to 100+ (already 115, target 200)
-- **L4.2** — A2UI v0.9 integration (schema mapping drafted, renderer pending SDK)
-- **L4.3** — A2UI renderers for Flutter/Lit (external ecosystems)
+- **L4.2** — A2UI v0.9 integration ✅ DONE (adapter `a2ui.ts` + `a2ui-schema-mapping.md`; SDK inspected at `~/a2ui-app`)
+- **L4.3** — A2UI React renderer ✅ DONE (`A2UIRenderer.tsx`, server-render tested)
 - **L4.4** — Open‑source `@p31/interface-generator` (publish to npm/GitHub)
 - **L4.5** — UIG API documentation for external developers
 - **L4.6** — Cognitive‑domain expansion (memory, emotion, context‑switching)
