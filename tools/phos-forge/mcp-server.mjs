@@ -239,6 +239,19 @@ export default class PhosMCPServer extends EventEmitter {
           },
         },
       },
+      'uig-generate-from-intent': {
+        description: 'Generate an adaptive InterfaceDescription from a natural language intent. Given a text prompt describing what the user wants to see, returns a declarative layout/widget map with safety constraints applied. Crisis mode forced at spoons 0; widget count truncated at low spoons.',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            prompt: { type: 'string', description: 'Natural language description of the desired UI (e.g. "Show me my love ledger balance and upcoming deadlines")' },
+            spoons: { type: 'number', description: 'Cognitive spoon level 0–5 (default: agent spoon state)' },
+            role: { type: 'string', enum: ['coordinator', 'researcher', 'participant', 'grant-reviewer'], description: 'Viewer role (optional, filters relevant widgets)' },
+            constraints: { type: 'object', description: 'Optional hard constraints that override generated layout/density/navigation' },
+          },
+          required: ['prompt'],
+        },
+      },
     };
   }
 
@@ -595,6 +608,28 @@ export default class PhosMCPServer extends EventEmitter {
             text: JSON.stringify({
               description: data.description,
               meta: { ...data.meta, agentSpoons: this.spoonState },
+            }, null, 2),
+          }],
+        };
+      }
+      case 'uig-generate-from-intent': {
+        const ROLES = ['coordinator', 'researcher', 'participant', 'grant-reviewer'];
+        const role = ROLES.includes(args?.role) ? args.role : undefined;
+        const requested = Number.isFinite(Number(args?.spoons)) ? Number(args.spoons) : this.spoonState;
+        const spoons = Math.max(0, Math.min(5, Math.round(requested)));
+        const { generateInterfaceFromIntent } = await import('@p31/interface-generator');
+        const description = generateInterfaceFromIntent({
+          prompt: args?.prompt || 'Show me an overview',
+          spoons,
+          role,
+          constraints: args?.constraints,
+        });
+        return {
+          content: [{
+            type: 'text',
+            text: JSON.stringify({
+              description,
+              meta: { source: 'intent-deterministic', agentSpoons: this.spoonState },
             }, null, 2),
           }],
         };

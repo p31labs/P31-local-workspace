@@ -1,6 +1,7 @@
 import React, { Suspense, lazy } from 'react';
 import { UIGSurface } from './UIGSurface';
 import { generatePhosInterface, phosRoleFromIdentity, samplePhosViewData } from '../lib/uig';
+import { generateInterfaceFromIntent } from '@p31/interface-generator';
 import { DashboardSurface } from '../surfaces/DashboardSurface';
 import { GreetingSurface } from '../surfaces/GreetingSurface';
 import { IgnitionSurface } from '../surfaces/IgnitionSurface';
@@ -52,9 +53,11 @@ interface SurfaceProps {
   spoons: number;
   theme?: Record<string, string>;
   isGuest?: boolean;
+  isGenerative?: boolean;
+  intentPrompt?: string;
 }
 
-export function SurfaceContent({ currentSurface, setSurface, spoons, isGuest }: SurfaceProps) {
+export function SurfaceContent({ currentSurface, setSurface, spoons, isGuest, isGenerative, intentPrompt }: SurfaceProps) {
   switch (currentSurface) {
     case 'CHAT':
       return null;
@@ -154,8 +157,13 @@ export function SurfaceContent({ currentSurface, setSurface, spoons, isGuest }: 
     case 'ADAPTIVE': {
       const role = phosRoleFromIdentity();
       const viewData = samplePhosViewData('DASHBOARD');
-      const description = generatePhosInterface('ADAPTIVE', { spoons, role, viewData });
-      return <UIGSurface description={description} surfaceId="ADAPTIVE" spoons={spoons} viewData={viewData} />;
+      let description;
+      if (isGenerative && intentPrompt) {
+        description = generateInterfaceFromIntent({ prompt: intentPrompt, spoons, role });
+      } else {
+        description = generatePhosInterface('ADAPTIVE', { spoons, role, viewData });
+      }
+      return <UIGSurface description={description} surfaceId="ADAPTIVE" spoons={spoons} viewData={viewData} intentPrompt={isGenerative ? (intentPrompt ?? '') : undefined} />;
     }
 
     default:

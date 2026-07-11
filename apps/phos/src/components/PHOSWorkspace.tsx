@@ -51,7 +51,7 @@ export default function PHOSWorkspace() {
     () => identityStore.get(),
     () => ({ did: '', displayName: '', publicKey: '', isRegistered: 'false', joinedAt: '', keysGenerated: 'false' }),
   );
-  const { pathToSurface, navigateToSurface, currentPath } = useRouting();
+  const { pathToSurface, navigateToSurface, currentPath, isGenerative, intentPrompt } = useRouting();
   const [keyLoaded, setKeyLoaded] = useState(false);
   const [guestBypass, setGuestBypass] = useState(false);
   const [initialSurface, setInitialSurface] = useState(() => pathToSurface() || 'CHAT');
@@ -95,6 +95,7 @@ export default function PHOSWorkspace() {
 function WorkspaceShell({ identity, isGuest }: { identity: IdentityState; isGuest: boolean }) {
   const context = useAtmosphere();
   const { spoons: s, currentSurface: cs, setSurface: ss } = context;
+  const { isGenerative, intentPrompt } = useRouting();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedModel, setSelectedModel] = useState<string>(() => localStorage.getItem('phos:llm-model') || 'deepseek-chat');
   const isMobile = useMediaQuery('(max-width: 768px)');
@@ -278,7 +279,7 @@ function WorkspaceShell({ identity, isGuest }: { identity: IdentityState; isGues
         <div className="flex-1 overflow-y-auto w-full px-4 md:px-8 flex flex-col relative z-10">
           {cs !== 'CHAT' ? (
             <div className="max-w-6xl mx-auto w-full h-full pb-8 animate-slide-fade-in">
-              <SurfaceContent currentSurface={cs} setSurface={ss} spoons={s} theme={getBiologicalTheme(s, false)} isGuest={isGuest} />
+              <SurfaceContent currentSurface={cs} setSurface={ss} spoons={s} theme={getBiologicalTheme(s, false)} isGuest={isGuest} isGenerative={isGenerative} intentPrompt={intentPrompt} />
             </div>
           ) : (
             <div className="max-w-3xl mx-auto w-full flex-1 flex flex-col justify-end pb-4">

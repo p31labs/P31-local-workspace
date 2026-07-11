@@ -1,5 +1,5 @@
-import React from 'react';
-import { CrisisOverlay, type InterfaceDescription, type Widget } from '@p31/interface-generator';
+import React, { useState, useCallback } from 'react';
+import { CrisisOverlay, type InterfaceDescription, type Widget, generateInterfaceFromIntent } from '@p31/interface-generator';
 import { generatePhosInterface, phosRoleFromIdentity, samplePhosViewData } from '../lib/uig';
 
 interface UIGSurfaceProps {
@@ -13,6 +13,8 @@ interface UIGSurfaceProps {
   // Exit handler for the crisis overlay (Escape / "I'm ready"). Optional so
   // existing callers keep working; wire it to lift out of crisis mode.
   onReady?: () => void;
+  // When set, enables the generative prompt bar and seeds the initial intent.
+  intentPrompt?: string;
 }
 
 const DENSITY_PAD: Record<string, string> = {
@@ -191,17 +193,53 @@ function layoutClass(layout: string, gap: string): string {
   }
 }
 
-export function UIGSurface({ surfaceId, spoons, description, viewData, children }: UIGSurfaceProps) {
+export function UIGSurface({ surfaceId, spoons, description, viewData, children, onReady, intentPrompt }: UIGSurfaceProps) {
   const role = phosRoleFromIdentity();
   const data = viewData ?? samplePhosViewData(surfaceId);
-  const desc: InterfaceDescription =
+  const baseDesc: InterfaceDescription =
     description ?? generatePhosInterface(surfaceId, { spoons, role, viewData: data });
+
+  const [activeDesc, setActiveDesc] = useState<InterfaceDescription>(baseDesc);
+  const [prompt, setPrompt] = useState(intentPrompt ?? '');
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  const handleGenerate = useCallback(() => {
+    if (!prompt.trim()) return;
+    setIsGenerating(true);
+    const genDesc = generateInterfaceFromIntent({ prompt: prompt.trim(), spoons, role });
+    setActiveDesc(genDesc);
+    setIsGenerating(false);
+  }, [prompt, spoons, role]);
+
+  const desc = activeDesc;
 
   if (desc.crisisMode) return <CrisisOverlay onReady={onReady ?? (() => {})} />;
 
   const gap = DENSITY_GAP[desc.density] ?? DENSITY_GAP.moderate;
   return (
     <div className="h-full overflow-auto">
+      {intentPrompt !== undefined && (
+        <div className="mb-4 phos-glass rounded-2xl p-3 flex gap-2 items-center">
+          <input
+            type="text"
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+            onKeyDown={(e) => { if (e.key === 'Enter') handleGenerate(); }}
+            placeholder="Describe what you want to see..."
+            className="flex-1 bg-transparent text-sm outline-none placeholder:opacity-30"
+            aria-label="Generate interface from natural language prompt"
+          />
+          <button
+            onClick={handleGenerate}
+            disabled={isGenerating || !prompt.trim()}
+            className="phos-pill px-3 py-1.5 text-xs font-medium disabled:opacity-30"
+            type="button"
+            aria-label="Generate UI from prompt"
+          >
+            {isGenerating ? '...' : 'Generate'}
+          </button>
+        </div>
+      )}
       <div className="text-[10px] uppercase tracking-widest opacity-40 mb-3">
         Adaptive · {role} · spoons {spoons} · {desc.layout}
       </div>

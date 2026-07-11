@@ -49,18 +49,21 @@ function useSurfaceRouting() {
     return PATH_TO_SURFACE[cleanPath] || null;
   };
 
+  const isGenerative = searchParams.get('gen') === '1';
+  const intentPrompt = searchParams.get('intent') || undefined;
+
   const navigateToSurface = (surface: string) => {
     const path = SURFACE_PATHS[surface] || '/';
     navigate(path, { replace: true });
   };
 
-  return { pathToSurface, navigateToSurface, currentPath: location.pathname };
+  return { pathToSurface, navigateToSurface, currentPath: location.pathname, isGenerative, intentPrompt };
 }
 
 const RoutingCtx = React.createContext<ReturnType<typeof useSurfaceRouting> | null>(null);
 
 export function useRouting() {
-  return React.useContext(RoutingCtx) ?? { pathToSurface: () => null, navigateToSurface: () => {}, currentPath: '/' };
+  return React.useContext(RoutingCtx) ?? { pathToSurface: () => null, navigateToSurface: () => {}, currentPath: '/', isGenerative: false, intentPrompt: undefined };
 }
 
 export function PhosApp() {

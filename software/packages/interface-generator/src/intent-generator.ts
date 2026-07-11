@@ -16,7 +16,7 @@ import { spoonGuide } from './rules/spoon-guide';
 
 interface IntentPattern {
   keywords: string[];
-  widgets: Array<{ type: WidgetType; title: string; dataBinding: string; size?: Widget['size'] }>;
+  widgets: Array<{ type: WidgetType; title: string; dataBinding: string | null; size?: Widget['size'] }>;
   layout?: InterfaceDescription['layout'];
   density?: InterfaceDescription['density'];
 }
