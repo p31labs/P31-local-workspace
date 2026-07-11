@@ -68,7 +68,7 @@ function runSuite(suite) {
     [
       "vitest",
       "run",
-      "--config", "vitest.triper.config.mjs",
+      "--config", "vitest.triper.config.ts",
       "--reporter", "verbose",
       testPattern,
     ],

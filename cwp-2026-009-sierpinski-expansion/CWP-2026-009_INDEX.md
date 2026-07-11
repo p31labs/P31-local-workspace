@@ -13,7 +13,7 @@
 
 ## PREAMBLE
 
-The UIG Adaptive Exocortex is **stable, shipped, and verified**. The core infrastructure (PHOS, bonding, auth, status, design-hub) is production-hardened. WCAG 2.2 AAA is **in progress** (all 4 faces audited: 0 blocking violations; full AAA sign-off pending final report). The generative layer is live (`?gen=1&intent=`). TRIPER cert is green (44/44). The swarm orchestration pattern is proven.
+The UIG Adaptive Exocortex is **stable, shipped, and verified**. The core infrastructure (PHOS, bonding, auth, status, design-hub) is production-hardened. WCAG 2.2 AAA is **in progress** (all 4 faces audited: 0 blocking violations; full AAA sign-off pending final report). The generative layer is live (`?gen=1&intent=`). TRIPER cert is green (12/12 suites, 84 tests, rebuilt 2026-07-11). The swarm orchestration pattern is proven.
 
 CWP-2026-009 is the **Sierpinski Expansion** — recursive, self-similar scaling from the stable core outward. It grows the ecosystem in four dimensions, replicating the same adaptive pattern at larger scales:
 
@@ -42,7 +42,7 @@ The external landscape validates the timing:
 | UIG Adaptive Exocortex | ✅ Shipped | `9bb2a90` |
 | Design System (A1-A7) | ✅ DONE | `408180f` / `f2a9c73` / `a407b43` |
 | Generative Layer (C1-C6) | ✅ DONE | `50790ed` / `48edd38` |
-| TRIPER cert (44/44) | ✅ Verified | `tests/triper/logs/cert-2026-07-11T07-29-46-440Z.json` |
+| TRIPER cert (12/12 suites, 84 tests) | ✅ Verified | `tests/triper/logs/cert-2026-07-11T15-12-55-542Z.json` |
 | Tag `v1.0.0-uig-convergence` | ✅ DONE | `bd8c298` |
 
 **Important Note on WCAG 2.2 AAA:** Full axe-runner audit across all 4 faces (phos, auth, status, design-hub, bonding) returns **0 blocking violations** (L1.6 complete). Final AAA sign-off lands with the GLOBAL_IMPACT_REPORT update (L1.5).

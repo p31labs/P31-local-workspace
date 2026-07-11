@@ -280,12 +280,13 @@ These must be added at https://github.com/p31labs/P31-local-workspace/settings/s
 ### Test suites
 - `tests/unit/mcp/mcp-servers.test.ts` — 22 MCP tests (PHOS Forge batch stdin, Oasis/Registry/LOVE streaming). Run: `npx vitest run tests/unit/mcp/`
 - `tests/unit/triper/uig-generate.triper.test.ts` — 22 TRIPER tests for `generateInterface` + `generateInterfaceFromIntent`. Run: `npx vitest run --config vitest.triper.config.ts`
-- `vitest.triper.config.ts` — separate config (TRIPER tests use direct source imports, not workspace package resolution)
+- `tests/mvp/<suite>/<suite>.triper.test.mjs` — 12 rebuilt MVP TRIPER suites (bonding, cars, personal, hub, mesh, simplex, email, epcp, geodesic, p31ca-user-sentinel, mesh-integrity, systems-integrity), 7 axis-tests each. Run all: `node tests/triper/triper-runner.mjs --cert`
+- `vitest.triper.config.ts` — separate config covering `tests/unit/triper/**` + `tests/mvp/**` (TRIPER tests use direct source imports, not workspace package resolution)
 
 ### Key patterns
 - **PHOS Forge is a batch-mode server** — reads all stdin until `end` event, not line-by-line. Tests must `spawn`, wait for `close`, then close stdin.
 - **Oasis/Registry/LOVE are streaming** — write JSON-RPC per line, read per line.
-- **`isValidDescription()`** in TRIPER tests validates structure, not widget count (roles with empty `viewData` may produce 0 widgets).
+- **`isValidDescription()`** in TRIPER tests validates structure + non-empty widgets (MVP suites seed `viewData` with generator-recognized keys so the description carries domain widgets).
 - **Crisis mode** (`spoons=0`) sets `crisisMode: true` but still produces widgets — the UI layer (CrisisOverlay) handles rendering, not the generator.
 
 ### Environment
