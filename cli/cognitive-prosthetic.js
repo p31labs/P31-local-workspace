@@ -140,6 +140,147 @@ const TOOLS = [
       required: ['message'],
     },
   },
+  // ── Temporal grounding (cont.) ──
+  {
+    name: 'deadline_guard',
+    description: 'Flag clustered or overlapping deadlines within a window.',
+    inputSchema: { type: 'object', properties: { deadlines: { type: 'array', items: { type: 'object', properties: { label: { type: 'string' }, in_days: { type: 'number' } } } } }, required: ['deadlines'] },
+  },
+  {
+    name: 'timebox',
+    description: 'Define a focused work block with a hard stop and break.',
+    inputSchema: { type: 'object', properties: { task: { type: 'string' }, minutes: { type: 'number' } }, required: ['task'] },
+  },
+  {
+    name: 'rhythm_detect',
+    description: 'From a productivity log, suggest your best-focus hours.',
+    inputSchema: { type: 'object', properties: { log: { type: 'array', items: { type: 'object', properties: { day: { type: 'string' }, productive_hours: { type: 'array', items: { type: 'number' } } } } } }, required: ['log'] },
+  },
+  {
+    name: 'wait_estimate',
+    description: 'Estimate how long until a reply or approval arrives.',
+    inputSchema: { type: 'object', properties: { avg_reply_hours: { type: 'number' } }, required: ['avg_reply_hours'] },
+  },
+  // ── Executive function (cont.) ──
+  {
+    name: 'next_action',
+    description: 'Pick the single best next action from a list.',
+    inputSchema: { type: 'object', properties: { tasks: { type: 'array', items: { type: 'string' } } }, required: ['tasks'] },
+  },
+  {
+    name: 'dependency_map',
+    description: 'Order items respecting their dependencies.',
+    inputSchema: { type: 'object', properties: { items: { type: 'array', items: { type: 'object', properties: { name: { type: 'string' }, depends_on: { type: 'array', items: { type: 'string' } } } } } }, required: ['items'] },
+  },
+  {
+    name: 'energy_match',
+    description: 'Match a task to your current spoon/energy level.',
+    inputSchema: { type: 'object', properties: { tasks: { type: 'array', items: { type: 'object', properties: { name: { type: 'string' }, energy: { type: 'number' } } } }, spoons: { type: 'number' } }, required: ['tasks'] },
+  },
+  {
+    name: 'habit_stack',
+    description: 'Attach a new habit to an existing anchor routine.',
+    inputSchema: { type: 'object', properties: { habit: { type: 'string' }, anchor: { type: 'string' } }, required: ['habit', 'anchor'] },
+  },
+  {
+    name: 'stall_diagnose',
+    description: 'Name why a task is stuck and suggest a nudge.',
+    inputSchema: { type: 'object', properties: { stuck_on: { type: 'string' } }, required: ['stuck_on'] },
+  },
+  // ── Sensory adaptation (cont.) ──
+  {
+    name: 'font_tune',
+    description: 'Recommend readable font settings for a spoon level.',
+    inputSchema: { type: 'object', properties: { spoons: { type: 'number' }, dyslexia: { type: 'boolean' } } },
+  },
+  {
+    name: 'noise_profile',
+    description: 'Suggest a focus-sound profile for a task type.',
+    inputSchema: { type: 'object', properties: { task_type: { type: 'string', enum: ['deep', 'admin', 'creative', 'rest'] } } },
+  },
+  {
+    name: 'light_advice',
+    description: 'Suggest lighting for a time of day and spoon level.',
+    inputSchema: { type: 'object', properties: { spoons: { type: 'number' }, time_of_day: { type: 'string', enum: ['morning', 'midday', 'evening', 'night'] } } },
+  },
+  {
+    name: 'density_scale',
+    description: 'Recommend UI information density for a spoon level.',
+    inputSchema: { type: 'object', properties: { spoons: { type: 'number' } } },
+  },
+  // ── Cognitive load (cont.) ──
+  {
+    name: 'simplify',
+    description: 'Rewrite dense text into plainer language (heuristic).',
+    inputSchema: { type: 'object', properties: { text: { type: 'string' } }, required: ['text'] },
+  },
+  {
+    name: 'outline',
+    description: 'Extract the heading/section structure from text.',
+    inputSchema: { type: 'object', properties: { text: { type: 'string' } }, required: ['text'] },
+  },
+  {
+    name: 'glossary',
+    description: 'Surface likely jargon terms to define.',
+    inputSchema: { type: 'object', properties: { text: { type: 'string' } }, required: ['text'] },
+  },
+  {
+    name: 'progress_track',
+    description: 'Report progress percentage with encouragement.',
+    inputSchema: { type: 'object', properties: { done: { type: 'number' }, total: { type: 'number' } }, required: ['done', 'total'] },
+  },
+  {
+    name: 'question_reframe',
+    description: 'Turn a vague question into a sharper, answerable one.',
+    inputSchema: { type: 'object', properties: { question: { type: 'string' } }, required: ['question'] },
+  },
+  // ── Communication ──
+  {
+    name: 'tone_shift',
+    description: 'Suggest tone adjustments for a message.',
+    inputSchema: { type: 'object', properties: { text: { type: 'string' }, target: { type: 'string', enum: ['calm', 'firm', 'warm', 'neutral'] } }, required: ['text'] },
+  },
+  {
+    name: 'draft_reply',
+    description: 'Draft a reply template from a received message.',
+    inputSchema: { type: 'object', properties: { message: { type: 'string' }, stance: { type: 'string', enum: ['accept', 'decline', 'clarify', 'thank'] } }, required: ['message'] },
+  },
+  {
+    name: 'meeting_notes',
+    description: 'Structure a transcript into decisions and actions.',
+    inputSchema: { type: 'object', properties: { transcript: { type: 'string' } }, required: ['transcript'] },
+  },
+  {
+    name: 'assertive_reframe',
+    description: 'Reframe an over-apologetic sentence to be clear and kind.',
+    inputSchema: { type: 'object', properties: { sentence: { type: 'string' } }, required: ['sentence'] },
+  },
+  {
+    name: 'status_update',
+    description: 'Compose a concise status update from progress and blockers.',
+    inputSchema: { type: 'object', properties: { done: { type: 'array', items: { type: 'string' } }, blockers: { type: 'array', items: { type: 'string' } } }, required: ['done'] },
+  },
+  // ── Crisis detection (cont.) ──
+  {
+    name: 'meltdown_plan',
+    description: 'Build a pre-emptive de-escalation plan from triggers.',
+    inputSchema: { type: 'object', properties: { triggers: { type: 'array', items: { type: 'string' } }, comforts: { type: 'array', items: { type: 'string' } } } },
+  },
+  {
+    name: 'shutdown_routine',
+    description: 'Suggest a wind-down routine scaled to spoons.',
+    inputSchema: { type: 'object', properties: { spoons: { type: 'number' } } },
+  },
+  {
+    name: 'grounding_54321',
+    description: 'Lead the 5-4-3-2-1 grounding exercise.',
+    inputSchema: { type: 'object', properties: {} },
+  },
+  {
+    name: 'support_ping',
+    description: 'Draft a message to a supporter when struggling.',
+    inputSchema: { type: 'object', properties: { who: { type: 'string' }, why: { type: 'string' } }, required: ['who'] },
+  },
 ];
 
 // ─── Helpers (pure, no deps) ────────────────────────────────────────────────
@@ -335,6 +476,192 @@ const HANDLERS = {
         ? 'Distress signals present: lower spoons, use Crisis Mode breathing, reach out to a supporter.'
         : 'Early signals: take a grounding pause; consider a 20-min timer for hyperfocus or a thought-defusion step for rumination.';
     return { flags, severity, suggestion, safe_to_continue: severity === 0 };
+  },
+
+  deadline_guard({ deadlines = [] }) {
+    const sorted = [...deadlines].sort((a, b) => a.in_days - b.in_days);
+    const clusters = [];
+    for (let i = 1; i < sorted.length; i++) {
+      if (sorted[i].in_days - sorted[i - 1].in_days <= 2) {
+        clusters.push({ around_day: sorted[i - 1].in_days, items: [sorted[i - 1].label, sorted[i].label] });
+      }
+    }
+    return { deadlines: sorted, clusters, warning: clusters.length ? 'Cluster detected — protect recovery time.' : 'Spread looks manageable.' };
+  },
+
+  timebox({ task, minutes = 25 }) {
+    return { task, start: 'now', end_in_min: minutes, break_after: Math.min(10, Math.round(minutes / 5)), note: 'One block; stop at the bell.' };
+  },
+
+  rhythm_detect({ log = [] }) {
+    const freq = {};
+    for (const d of log) for (const h of d.productive_hours || []) freq[h] = (freq[h] || 0) + 1;
+    const best = Object.entries(freq).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([h]) => Number(h));
+    return { best_focus_hours: best, note: best.length ? 'Schedule deep work in these windows.' : 'Log more days to find a rhythm.' };
+  },
+
+  wait_estimate({ avg_reply_hours = 24 }) {
+    const ms = avg_reply_hours * 3600 * 1000;
+    return { expected_hours: Math.round(avg_reply_hours), expected_by: new Date(Date.now() + ms).toISOString(), note: 'Estimate only; set a reminder.' };
+  },
+
+  next_action({ tasks = [] }) {
+    if (!tasks.length) return { next: null };
+    const list = tasks.map((t, i) => (typeof t === 'string' ? { name: t, score: tasks.length - i } : { name: t.name, score: t.score ?? tasks.length - i }));
+    list.sort((a, b) => b.score - a.score);
+    return { next: list[0].name, remaining: list.length - 1 };
+  },
+
+  dependency_map({ items = [] }) {
+    const done = new Set();
+    const order = [];
+    const remaining = [...items];
+    let guard = 0;
+    while (remaining.length && guard++ < 100) {
+      const ready = remaining.filter((it) => (it.depends_on || []).every((d) => done.has(d)));
+      if (!ready.length) break;
+      for (const r of ready) { order.push(r.name); done.add(r.name); }
+      for (let i = remaining.length - 1; i >= 0; i--) if (done.has(remaining[i].name)) remaining.splice(i, 1);
+    }
+    return { order, blocked: remaining.map((r) => r.name), note: remaining.length ? 'Circular or missing deps among: ' + remaining.map((r) => r.name).join(', ') : 'All orderable.' };
+  },
+
+  energy_match({ tasks = [], spoons = 3 }) {
+    const ranked = [...tasks].sort((a, b) => Math.abs(a.energy - spoons) - Math.abs(b.energy - spoons));
+    return { best_match: ranked[0]?.name, note: ranked[0]?.energy <= spoons ? 'This fits your current energy.' : 'All tasks need more energy than you have — rest or shrink scope.' };
+  },
+
+  habit_stack({ habit, anchor }) {
+    return { stack: `After ${anchor}, I will ${habit}.`, note: 'Anchor to an existing automatic routine.' };
+  },
+
+  stall_diagnose({ stuck_on }) {
+    const reasons = ['Unclear first step', 'Too big to start', 'Low spoons right now', 'Fear of doing it wrong', 'No clear deadline'];
+    const nudge = ['Name the tiniest first action.', 'Split it into a 5-min version.', 'Lower the bar; done beats perfect.', 'Write the worst possible attempt, then improve.', 'Set a 10-min timer and start.'];
+    return { stuck_on, likely_reasons: reasons, nudge: nudge[Math.floor(Math.random() * nudge.length)] };
+  },
+
+  font_tune({ spoons = 3, dyslexia = false }) {
+    const base = dyslexia ? 'Use a dyslexia-friendly font (e.g. OpenDyslexic/Atkinson).' : 'Use a humanist sans (e.g. Inter/Source Sans).';
+    const size = spoons <= 1 ? '18–20px, generous line-height.' : spoons <= 3 ? '16–18px.' : '14–16px ok.';
+    return { font: base, size, weight: spoons <= 1 ? 'medium (avoid thin)' : 'regular', note: 'Larger + heavier at low spoons.' };
+  },
+
+  noise_profile({ task_type = 'deep' }) {
+    const map = { deep: 'Brown/white noise or lo-fi', admin: 'Light instrumental', creative: 'Lyric-free ambient', rest: 'Silence or nature sounds' };
+    return { profile: map[task_type] || map.deep, note: 'Noise masks distraction; match to task.' };
+  },
+
+  light_advice({ spoons = 3, time_of_day = 'midday' }) {
+    const map = { morning: 'Cool bright light', midday: 'Natural daylight', evening: 'Warm dim', night: 'Very dim warm, blue-light off' };
+    return { light: map[time_of_day] || map.midday, note: spoons <= 1 ? 'Dim further; protect rest.' : 'Standard.' };
+  },
+
+  density_scale({ spoons = 3 }) {
+    const d = spoons <= 1 ? 'minimal' : spoons <= 3 ? 'moderate' : 'detailed';
+    return { density: d, note: 'Less on screen at low spoons (per DESIGN.md).' };
+  },
+
+  simplify({ text }) {
+    const swap = { utilize: 'use', facilitate: 'help', leverage: 'use', commence: 'start', 'in order to': 'to', 'prior to': 'before', 'subsequent to': 'after' };
+    const sentences = splitSentences(text);
+    const out = sentences.map((s) => s.replace(/\b(utilize|facilitate|leverage|commence|in order to|prior to|subsequent to)\b/gi, (m) => swap[m.toLowerCase()] || m).replace(/\s{2,}/g, ' ')).join(' ');
+    return { simplified: out, note: 'Swapped jargon for plain words; review for tone.' };
+  },
+
+  outline({ text }) {
+    const lines = (text || '').split(/\n/).map((l) => l.trim()).filter(Boolean);
+    const heads = lines.filter((l) => /^(\d+\.|#|\*|-)\s/.test(l) || /^[A-Z][^.!?]{3,40}$/.test(l));
+    return { outline: heads.length ? heads : lines.slice(0, 5), note: heads.length ? 'Detected structure.' : 'No explicit headings; showing first lines.' };
+  },
+
+  glossary({ text }) {
+    const terms = (text || '').match(/\b([A-Z][a-z]{3,})\b/g) || [];
+    const uniq = [...new Set(terms)].slice(0, 12);
+    return { terms: uniq, note: 'Candidate jargon — confirm which need defining for the reader.' };
+  },
+
+  progress_track({ done = 0, total = 1 }) {
+    const pct = Math.max(0, Math.min(100, Math.round((done / total) * 100)));
+    const msg = pct >= 100 ? 'Done — celebrate.' : pct >= 60 ? 'Past the hump, keep going.' : pct >= 30 ? 'Momentum building.' : 'Small start counts.';
+    return { percent: pct, message: msg };
+  },
+
+  question_reframe({ question }) {
+    const q = (question || '').trim();
+    const vague = /\b(thing|stuff|everything|something|better|good|fix it)\b/i.test(q);
+    const sharper = vague ? q.replace(/\b(thing|stuff|something)\b/gi, 'the specific outcome') + ' — what does success look like?' : q + ' — what is the first concrete step?';
+    return { original: q, reframed: sharper, note: vague ? 'Vague words detected; make it concrete.' : 'Already fairly specific.' };
+  },
+
+  tone_shift({ text, target = 'neutral' }) {
+    const recs = { calm: 'Slow pace, soft words, acknowledge feelings.', firm: 'Direct, short sentences, clear boundary.', warm: 'Friendlier openings, inclusive "we".', neutral: 'Fact-first, drop filler.' };
+    return { target, suggestion: recs[target] || recs.neutral, apply_to: text };
+  },
+
+  draft_reply({ message, stance = 'thank' }) {
+    const tmpl = {
+      accept: 'Thanks — yes, that works. I will proceed and confirm by <date>.',
+      decline: 'Thank you for the offer. I am not able to take this on right now.',
+      clarify: 'Thanks for this. Could you clarify <specific point> so I respond well?',
+      thank: 'Thank you — I appreciate it.',
+    };
+    return { stance, draft: tmpl[stance] || tmpl.thank, note: 'Personalize before sending.' };
+  },
+
+  meeting_notes({ transcript }) {
+    const lines = (transcript || '').split(/\n/).map((l) => l.trim()).filter(Boolean);
+    return {
+      decisions: lines.filter((l) => /decid|agreed|we will|action/i.test(l)),
+      actions: lines.filter((l) => /todo|assign|follow.?up|by <|owner/i.test(l)),
+      note: 'Auto-extracted; verify ownership + dates.',
+    };
+  },
+
+  assertive_reframe({ sentence }) {
+    const cleaned = (sentence || '')
+      .replace(/^(i'?m )?sorry( for|about|if)?/i, '')
+      .replace(/i (just|was wondering if|feel like)/i, 'I')
+      .replace(/\s{2,}/g, ' ')
+      .trim();
+    return { original: sentence, reframed: cleaned || sentence, note: 'Removed over-apology; kept it clear and kind.' };
+  },
+
+  status_update({ done = [], blockers = [] }) {
+    const body = (done.length ? 'Done: ' + done.join('; ') + '. ' : '') + (blockers.length ? 'Blocked: ' + blockers.join('; ') + '.' : 'No blockers.');
+    return { update: body, length: body.length };
+  },
+
+  meltdown_plan({ triggers = [], comforts = [] }) {
+    return {
+      triggers: triggers.length ? triggers : ['unknown — log next time'],
+      plan: ['Notice early signs.', 'Use a comfort: ' + ((comforts && comforts[0]) || 'quiet space'), 'Lower spoons: dim, slow, step back.', 'Re-engage only when steady.'],
+    };
+  },
+
+  shutdown_routine({ spoons = 3 }) {
+    const steps = spoons <= 1
+      ? ['Stop screens.', 'Dim lights.', 'Slow breathing 2 min.', 'Rest.']
+      : ['Close open tabs.', 'Write tomorrow’s one next action.', 'Set a stop time.', 'Wind down.'];
+    return { spoons, steps };
+  },
+
+  grounding_54321({}) {
+    return {
+      steps: [
+        '5 things you can SEE',
+        '4 things you can TOUCH',
+        '3 things you can HEAR',
+        '2 things you can SMELL',
+        '1 thing you can TASTE',
+      ],
+      note: 'Slow through each; breathe between.',
+    };
+  },
+
+  support_ping({ who, why }) {
+    const first = (who || '').split(' ')[0] || who;
+    return { to: who, draft: `Hey ${first}, I am having a hard moment${why ? ' (' + why + ')' : ''}. Can we talk soon? No fix needed — just company.` };
   },
 };
 
