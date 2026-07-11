@@ -339,30 +339,44 @@ export async function verify(msg: Uint8Array, cPrime: Uint8Array, sPrime: Uint8A
 
 ### 6.1 Wrangler WASM binding
 ```toml
-# creation-accountant/wrangler.toml  (and love-ledger/wrangler.toml)
+# love-ledger/wrangler.toml
 [wasm_modules]
-taler_cs = "src/taler-cbs/taler_cs.wasm"
+taler_cs = "taler_cs.wasm"
+
+[vars]
+BLIND_MODE = "taler"
+ENVIRONMENT = "staging"
 ```
 
-### 6.2 New secrets (operator-generated, added to `l5-deploy.sh`)
+### 6.2 Operator secrets + nonce model (CORRECTED — single secret)
+
+> **Security correction (Jul 2026):** the original plan derived `n` from
+> `(x, period)` (daily rotation). That REUSES the Schnorr nonce `n` across
+> every same-day withdrawal, and two customers can recover `x` from
+> `s1' − s2' = (c1 − c2)·x`. Fixed: `n` is **fresh per withdrawal**
+> via a one-time nonce `t`; `n = clamp(SHA-512(x ‖ t))`, `R = n·G`.
+> The issuer stays stateful-free (recomputes `n` from `t`); a D1
+> `cbs_nonce` set enforces single-use of `t` (the leak is impossible
+> because the check is at `/blind-sign`, not `/withdraw`).
+
 | Secret | Worker | Source |
 |---------|---------|--------|
-| `BLIND_ISSUER_PRIVATE_KEY` | creation-accountant | ed25519 scalar `x` (hex) |
-| `BLIND_ISSUER_PUBLIC_KEY` | love-ledger | ed25519 point `X = x·G` (base64) |
-| `ISSUER_NONCE_R` | both | ephemeral `R = n·G` (base64, rotated per period) |
+| `BLIND_ISSUER_PRIVATE_KEY` | love-ledger | ed25519 scalar `x` (base64) — **only** secret |
 
-> `l5-deploy.sh` must be extended to generate + `put` these three (mirror
-> the existing Ed25519/LOVE_AUTH_SECRET block). They are **not** in the
-> current script — that's the one missing wiring step.
+`X = base(x)` and `R = base(n)` (n from `t`) are derived at runtime;
+**no public-key or nonce secret is stored or transmitted**. `l5-deploy.sh`
+generates `BLIND_ISSUER_PRIVATE_KEY` (base64) and `put`s it on love-ledger
+only. `BLIND_MODE='taler'` switches the real path on; anything else 500s.
 
 ### 6.3 Flow
-- **Client (renderer):** `blind(msg, a, b, R, X)` → keep `cPrime`.
-- **creation-accountant:** `signBlinded(c, n, x)` where `n,x` are the
-  issuer's ephemeral + private scalars → `unblind(s, a)` → final `(cPrime, s')`
-  base64 token stored on the receipt.
+- **Client (browser, `taler-cbs-client.ts`):** `GET /blind-pubkey` →
+  `{X, R, t}`; `blind(msg, a, b, R, X)` locally → keep `cPrime`.
+- **love-ledger `/blind-sign`:** `signBlinded(c, n, x)` with `n` recomputed
+  from `t` (`deriveNonce`); `t` is single-use (`cbs_nonce`); returns `s`.
+- **Client:** `unblind(s, a)` locally → `(cPrime, s')`.
 - **love-ledger `/withdraw`:** `verify(msg, cPrime, sPrime, X, R)` **before**
-  minting LOVE (replaces the mock `blindsig-<uuid>`).
-- `BLIND_MODE='taler'` switches the real path on; `'mock'` + prod still 500s.
+  minting LOVE; on success the court-admissible token is `cPrime.sPrime`.
+- `BLIND_MODE='taler'` switches the real path on; `'mock'`/prod still 500s.
 
 ---
 

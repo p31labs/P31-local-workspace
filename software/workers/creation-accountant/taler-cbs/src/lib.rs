@@ -78,6 +78,13 @@ pub fn unblind(s: &[u8; 32], a: &[u8; 32]) -> Scalar {
     s + a
 }
 
+/// Public point X = x·G (or R = n·G). Used by the issuer to publish
+/// X/R and by the verifier. `x`/`n` are 32-byte scalars.
+pub fn base(x: &[u8; 32]) -> Option<[u8; 32]> {
+    let x = Scalar::from_bytes_mod_order(*x);
+    Some(EdwardsPoint::mul_base(&x).compress().to_bytes())
+}
+
 /// Verifier: valid ⟺ H(s'·G − c'·X ‖ m) mod q == c'.
 pub fn verify(
     msg: &[u8],
@@ -196,6 +203,18 @@ pub unsafe extern "C" fn cs_verify(
         0
     } else {
         -1
+    }
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn cs_base(x_ptr: *const u8, out: *mut u8) -> i32 {
+    let x = rd32(x_ptr);
+    match base(&x) {
+        Some(p) => {
+            wr(out, &p);
+            0
+        }
+        None => -1,
     }
 }
 

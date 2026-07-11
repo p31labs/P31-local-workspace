@@ -1,6 +1,8 @@
 import { DurableObject } from 'cloudflare:workers';
 import { verifyRequest, unauthorizedResponse } from '../../lib/edge/verify';
 import { logEvent } from '../../lib/edge/logging';
+import { init as initCbs, base as cbsBase, signBlinded as cbsSign, verify as cbsVerify } from './taler-cbs/loader';
+import { deriveNonce } from './taler-cbs/kdf';
 
 const GENESIS_HASH = '0'.repeat(64);
 
@@ -8,6 +10,19 @@ async function sha256(input: string): Promise<string> {
   const data = new TextEncoder().encode(input);
   const digest = await crypto.subtle.digest('SHA-256', data);
   return Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+// Axis-1 CBS base64 helpers (atob-based, matches verifyReceiptSig style).
+function b64ToBytes(b64: string): Uint8Array {
+  const bin = atob(b64);
+  const out = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+  return out;
+}
+function bytesToB64(bytes: Uint8Array): string {
+  let bin = '';
+  for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+  return btoa(bin);
 }
 
 // Axis-2 verify side: confirm a creation-accountant receipt signature
@@ -196,6 +211,8 @@ export interface Env {
   LOVE_AUTH_SECRET?: string;
   LOVE_REQUIRE_AUTH?: string;
   RECEIPT_SIGNER_PUBLIC_KEY?: string;
+  BLIND_ISSUER_PRIVATE_KEY?: string;
+  taler_cs: WebAssembly.Module;
   BLIND_MODE?: string;
   ENVIRONMENT?: string;
 }
@@ -435,12 +452,91 @@ export default {
       }
     }
 
+    if (method === 'GET' && url.pathname === '/blind-pubkey') {
+      try {
+        if (!env.BLIND_ISSUER_PRIVATE_KEY) {
+          return new Response(JSON.stringify({ error: 'CBS issuer not configured' }), {
+            status: 503,
+            headers: { 'Content-Type': 'application/json' },
+          });
+        }
+        await initCbs(env.taler_cs as unknown as WebAssembly.Module);
+        const xBytes = b64ToBytes(env.BLIND_ISSUER_PRIVATE_KEY);
+        // Fresh one-time nonce `t` per request. n = clamp(SHA-512(x ‖ t))
+        // is recomputed (stateless) from `t` at /blind-sign. R = n·G is
+        // published so the client can blind against it. Reusing `t` (same n)
+        // across two challenges leaks x, so `t` is single-use (see /blind-sign).
+        const t = crypto.getRandomValues(new Uint8Array(32));
+        const nBytes = await deriveNonce(xBytes, t);
+        const X = cbsBase(xBytes);
+        const R = cbsBase(nBytes);
+        return new Response(JSON.stringify({
+          X: bytesToB64(X),
+          R: bytesToB64(R),
+          t: bytesToB64(t),
+        }), { headers: { 'Content-Type': 'application/json' } });
+      } catch (err: any) {
+        logEvent({ event: 'blind_pubkey_error', service: 'love-ledger', success: false, error: err?.message || String(err) });
+        return new Response(JSON.stringify({ error: 'Internal server error' }), { status: 500, headers: { 'Content-Type': 'application/json' } });
+      }
+    }
+
+    if (method === 'POST' && url.pathname === '/blind-sign') {
+      try {
+        if (!env.BLIND_ISSUER_PRIVATE_KEY) {
+          return new Response(JSON.stringify({ error: 'CBS issuer not configured' }), {
+            status: 503,
+            headers: { 'Content-Type': 'application/json' },
+          });
+        }
+        const body = await request.json() as { c: string; t: string };
+        if (typeof body.c !== 'string' || typeof body.t !== 'string') {
+          return new Response(JSON.stringify({ error: 'Missing blinded challenge c or nonce t' }), { status: 400 });
+        }
+        await initCbs(env.taler_cs as unknown as WebAssembly.Module);
+        const xBytes = b64ToBytes(env.BLIND_ISSUER_PRIVATE_KEY);
+        const tBytes = b64ToBytes(body.t);
+        // SECURITY: n is derived from (x, t). Reusing the same `t` with two
+        // different challenges c yields two signatures under the SAME n, from
+        // which x leaks (s1−s2 = (c1−c2)·x). Enforce single-use here, at
+        // the sign step — not at /withdraw — so the leak is impossible.
+        const tB64 = body.t;
+        const existing = await withRetry(() => env.LOVE_DB.prepare(
+          'SELECT t FROM cbs_nonce WHERE t = ?'
+        ).bind(tB64).first<{ t: string }>(), 3, 'cbs_nonce_select');
+        if (existing) {
+          logEvent({ event: 'cbs_nonce_reuse', service: 'love-ledger', success: false, data: { t: tB64.slice(0, 16) } });
+          return new Response(JSON.stringify({ error: 'Nonce already used' }), {
+            status: 409,
+            headers: { 'Content-Type': 'application/json' },
+          });
+        }
+        const nBytes = await deriveNonce(xBytes, tBytes);
+        const s = cbsSign(b64ToBytes(body.c), nBytes, xBytes);
+        const expires = Date.now() + 86_400_000;
+        await withRetry(() => env.LOVE_DB.prepare(
+          'INSERT INTO cbs_nonce (t, expires) VALUES (?, ?)'
+        ).bind(tB64, expires).run(), 3, 'cbs_nonce_insert');
+        // Best-effort TTL sweep of expired nonces (cheap, keeps table small).
+        await withRetry(() => env.LOVE_DB.prepare(
+          'DELETE FROM cbs_nonce WHERE expires < ?'
+        ).bind(Date.now()).run(), 1, 'cbs_nonce_sweep').catch(() => {});
+        return new Response(JSON.stringify({ s: bytesToB64(s) }), { headers: { 'Content-Type': 'application/json' } });
+      } catch (err: any) {
+        logEvent({ event: 'blind_sign_error', service: 'love-ledger', success: false, error: err?.message || String(err) });
+        return new Response(JSON.stringify({ error: 'Internal server error' }), { status: 500, headers: { 'Content-Type': 'application/json' } });
+      }
+    }
+
     if (method === 'POST' && url.pathname === '/withdraw') {
       try {
         const body = await request.json() as {
           did: string;
           amount: number;
-          blind_secret: string;
+          msg: string;
+          cPrime: string;
+          sPrime: string;
+          R: string;
         };
         if (typeof body.amount !== 'number' || body.amount <= 0) {
           return new Response(JSON.stringify({ error: 'Invalid amount' }), { status: 400 });
@@ -480,32 +576,48 @@ export default {
         for (const r of prevRows.results || []) {
           if (r.created_at > maxTs) { maxTs = r.created_at; prevHash = r.entry_hash; }
         }
-        // Axis-1 guard: the current blind signature is a staging-only
-        // placeholder. Real GNU Taler Clause Blind Schnorr needs a WASM
-        // build; never mint with the mock on production.
-        if (env.BLIND_MODE === 'mock' && env.ENVIRONMENT === 'production') {
-          return new Response(JSON.stringify({ error: 'FATAL: mock blind signatures disabled in production' }), {
+        // Axis-1: real Clause Blind Schnorr. Fail-closed — no mint
+        // path exists unless BLIND_MODE === 'taler'.
+        if (env.BLIND_MODE !== 'taler') {
+          return new Response(JSON.stringify({ error: 'FATAL: blind signatures disabled (BLIND_MODE != taler)' }), {
             status: 500,
             headers: { 'Content-Type': 'application/json' },
           });
         }
-        // TODO: GNU Taler Clause Blind Schnorr issuance (blind_secret).
-        const blindSig = `blindsig-${crypto.randomUUID()}`;
+        if (!env.BLIND_ISSUER_PRIVATE_KEY) {
+          return new Response(JSON.stringify({ error: 'CBS issuer not configured' }), {
+            status: 503,
+            headers: { 'Content-Type': 'application/json' },
+          });
+        }
+        await initCbs(env.taler_cs as unknown as WebAssembly.Module);
+        const xBytes = b64ToBytes(env.BLIND_ISSUER_PRIVATE_KEY);
+        const X = cbsBase(xBytes);
+        const R = b64ToBytes(body.R);
+        const valid = cbsVerify(b64ToBytes(body.msg), b64ToBytes(body.cPrime), b64ToBytes(body.sPrime), X, R);
+        if (!valid) {
+          return new Response(JSON.stringify({ error: 'Invalid blind signature' }), {
+            status: 401,
+            headers: { 'Content-Type': 'application/json' },
+          });
+        }
+        // Court-admissible token = (c', s').
+        const token = `${body.cPrime}.${body.sPrime}`;
         const entryHash = await sha256(
-          [body.did, 'system:love-issuer', String(body.amount), String(ts), prevHash, blindSig].join('|')
+          [body.did, 'system:love-issuer', String(body.amount), String(ts), prevHash, token].join('|')
         );
 
         const chain = env.LOVE_DB.prepare(`
           INSERT INTO love_chain (id, from_did, to_did, amount, type, signature, prev_hash, entry_hash, created_at)
           VALUES (?, ?, ?, ?, 'love_withdraw', ?, ?, ?, ?)
-        `).bind(txId, body.did, 'system:love-issuer', body.amount, blindSig, prevHash, entryHash, ts);
+        `).bind(txId, body.did, 'system:love-issuer', body.amount, token, prevHash, entryHash, ts);
 
         // Atomic: debit + chain entry commit together (or roll back).
         await env.LOVE_DB.batch([debit, chain]);
 
         return new Response(JSON.stringify({
           success: true,
-          blind_signature: blindSig,
+          blind_signature: token,
           transactionId: txId,
         }), { headers: { 'Content-Type': 'application/json' } });
       } catch (err: any) {

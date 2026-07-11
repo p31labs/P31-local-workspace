@@ -28,5 +28,15 @@ bucket_name = "love-ledger-archive"
 [triggers]
 crons = []
 
+# Axis-1: Clause Blind Schnorr WASM (Rust + curve25519-dalek).
+[wasm_modules]
+taler_cs = "taler_cs.wasm"
+
+# BLIND_MODE is fail-closed: anything other than 'taler' → /withdraw 500s
+# (no mint path exists). Set via secret/var per environment.
+[vars]
+BLIND_MODE = "taler"
+ENVIRONMENT = "staging"
+
 [observability]
 enabled = true

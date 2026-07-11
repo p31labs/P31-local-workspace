@@ -43,7 +43,9 @@ fi
 [ -f "$WASM" ] || die "taler_cs.wasm missing — build it (see AXIS-1_FINAL_DELIVERABLE.md §4)"
 node software/workers/creation-accountant/taler-cbs/test/vector.mjs >/tmp/l5-cbs.log 2>&1 \
   || die "Axis-1 CBS test vector FAILED (see /tmp/l5-cbs.log)"
-ok "Axis-1 CBS WASM verified (cross-checked vs Web Crypto)"
+node software/workers/creation-accountant/taler-cbs/test/integration.mjs >/tmp/l5-cbs-int.log 2>&1 \
+  || die "Axis-1 CBS integration FAILED (see /tmp/l5-cbs-int.log)"
+ok "Axis-1 CBS WASM verified (vector + issuer-flow + nonce-reuse proof)"
 
 # ── KV provisioning (idempotent) ──────────────────────────────────────
 if grep -q "$PLACEHOLDER" software/workers/intent-resolver/wrangler.toml software/workers/creation-accountant/wrangler.toml; then
@@ -68,12 +70,12 @@ if [ "$REGEN" = "1" ] || [ ! -f "$SECRETS_FILE" ]; then
   RECEIPT_SIGNER_PRIVATE_KEY=$(node -e 'const{webcrypto}=require("crypto");(async()=>{const k=await webcrypto.subtle.generateKey({name:"Ed25519"},true,["sign","verify"]);process.stdout.write(Buffer.from(await webcrypto.subtle.exportKey("pkcs8",k.privateKey)).toString("base64"));})()' 2>/dev/null) || die "private key gen failed"
   RECEIPT_SIGNER_PUBLIC_KEY=$(node -e 'const{webcrypto}=require("crypto");(async()=>{const k=await webcrypto.subtle.generateKey({name:"Ed25519"},true,["sign","verify"]);process.stdout.write(Buffer.from(await webcrypto.subtle.exportKey("spki",k.publicKey)).toString("base64"));})()' 2>/dev/null) || die "public key gen failed"
   LOVE_AUTH_SECRET=$(node -e 'process.stdout.write(require("crypto").randomBytes(32).toString("hex"))' 2>/dev/null) || die "LOVE_AUTH_SECRET gen failed"
-  # Axis-1 CBS: issuer (x,X) + ephemeral nonce (R = n·G). X,R are base64
-  # raw Ed25519 public points; x is the RFC-8032 scalar (hex) from the seed.
-  BLIND_ISSUER_PRIVATE_KEY=$(node -e 'const{webcrypto}=require("crypto");(async()=>{const k=await webcrypto.subtle.generateKey("Ed25519",true,["sign","verify"]);const j=await webcrypto.subtle.exportKey("jwk",k.privateKey);const s=Buffer.from(j.d,"base64url");const h=new Uint8Array(await webcrypto.subtle.digest("SHA-512",s));const x=h.slice(0,32);x[0]&=248;x[31]&=127;x[31]|=64;process.stdout.write(Buffer.from(x).toString("hex"));})()' 2>/dev/null) || die "blind issuer key gen failed"
-  BLIND_ISSUER_PUBLIC_KEY=$(node -e 'const{webcrypto}=require("crypto");(async()=>{const k=await webcrypto.subtle.generateKey("Ed25519",true,["sign","verify"]);const j=await webcrypto.subtle.exportKey("jwk",k.privateKey);process.stdout.write(Buffer.from(Buffer.from(j.x,"base64url")).toString("base64"));})()' 2>/dev/null) || die "blind issuer pub gen failed"
-  ISSUER_NONCE_R=$(node -e 'const{webcrypto}=require("crypto");(async()=>{const k=await webcrypto.subtle.generateKey("Ed25519",true,["sign","verify"]);const j=await webcrypto.subtle.exportKey("jwk",k.privateKey);process.stdout.write(Buffer.from(Buffer.from(j.x,"base64url")).toString("base64"));})()' 2>/dev/null) || die "issuer nonce gen failed"
-  printf 'RECEIPT_SIGNER_PRIVATE_KEY=%s\nRECEIPT_SIGNER_PUBLIC_KEY=%s\nLOVE_AUTH_SECRET=%s\nBLIND_ISSUER_PRIVATE_KEY=%s\nBLIND_ISSUER_PUBLIC_KEY=%s\nISSUER_NONCE_R=%s\n' "$RECEIPT_SIGNER_PRIVATE_KEY" "$RECEIPT_SIGNER_PUBLIC_KEY" "$LOVE_AUTH_SECRET" "$BLIND_ISSUER_PRIVATE_KEY" "$BLIND_ISSUER_PUBLIC_KEY" "$ISSUER_NONCE_R" > "$SECRETS_FILE"
+  # Axis-1 CBS: ONLY the issuer scalar x is a secret. X = base(x) and
+  # R = n·G (n = clamp(SHA-512(x ‖ t)), t = fresh per-withdrawal nonce)
+  # are DERIVED at runtime — never stored. x is base64 (the worker calls
+  # b64ToBytes(secret)). Single secret, single worker (love-ledger).
+  BLIND_ISSUER_PRIVATE_KEY=$(node -e 'const{webcrypto}=require("crypto");(async()=>{const k=await webcrypto.subtle.generateKey("Ed25519",true,["sign","verify"]);const j=await webcrypto.subtle.exportKey("jwk",k.privateKey);const s=Buffer.from(j.d,"base64url");const h=new Uint8Array(await webcrypto.subtle.digest("SHA-512",s));const x=h.slice(0,32);x[0]&=248;x[31]&=127;x[31]|=64;process.stdout.write(Buffer.from(x).toString("base64"));})()' 2>/dev/null) || die "blind issuer key gen failed"
+  printf 'RECEIPT_SIGNER_PRIVATE_KEY=%s\nRECEIPT_SIGNER_PUBLIC_KEY=%s\nLOVE_AUTH_SECRET=%s\nBLIND_ISSUER_PRIVATE_KEY=%s\n' "$RECEIPT_SIGNER_PRIVATE_KEY" "$RECEIPT_SIGNER_PUBLIC_KEY" "$LOVE_AUTH_SECRET" "$BLIND_ISSUER_PRIVATE_KEY" > "$SECRETS_FILE"
   chmod 600 "$SECRETS_FILE"
   ok "secrets generated -> $SECRETS_FILE  (ADD TO .gitignore — NEVER COMMIT)"
 else
@@ -89,17 +91,19 @@ put_secret software/workers/creation-accountant RECEIPT_SIGNER_PRIVATE_KEY "$REC
 put_secret apps/phos/src/workers/love-ledger        RECEIPT_SIGNER_PUBLIC_KEY  "$RECEIPT_SIGNER_PUBLIC_KEY"
 put_secret apps/phos/src/workers/love-ledger        LOVE_AUTH_SECRET            "$LOVE_AUTH_SECRET"
 put_secret software/workers/mcp-x402-gateway    LOVE_AUTH_SECRET            "$LOVE_AUTH_SECRET"
-# Axis-1 CBS blind-signature secrets
-put_secret software/workers/creation-accountant BLIND_ISSUER_PRIVATE_KEY "$BLIND_ISSUER_PRIVATE_KEY"
-put_secret software/workers/creation-accountant ISSUER_NONCE_R           "$ISSUER_NONCE_R"
-put_secret apps/phos/src/workers/love-ledger        BLIND_ISSUER_PUBLIC_KEY  "$BLIND_ISSUER_PUBLIC_KEY"
-put_secret apps/phos/src/workers/love-ledger        ISSUER_NONCE_R           "$ISSUER_NONCE_R"
+# Axis-1 CBS: single secret on love-ledger (consolidated issuer).
+put_secret apps/phos/src/workers/love-ledger        BLIND_ISSUER_PRIVATE_KEY  "$BLIND_ISSUER_PRIVATE_KEY"
 ok "secrets put"
 
-# ── Migration 004 (idempotent: CREATE TABLE IF NOT EXISTS) ───────────
-log "Applying migration 004 (replay + telemetry)..."
-( cd "$ROOT/apps/phos/src/workers/love-ledger" && npx wrangler d1 migrations apply love-ledger --env "$ENV_NAME" --remote ) || die "migration 004 apply failed"
-ok "migration 004 applied"
+# ── Axis-1 WASM copy to love-ledger (idempotent) ───────────────────
+log "Copying taler_cs.wasm to love-ledger..."
+cp -f "$WASM" "$ROOT/apps/phos/src/workers/love-ledger/taler_cs.wasm" || die "wasm copy failed"
+ok "wasm copied to love-ledger"
+
+# ── Migrations (idempotent: CREATE TABLE IF NOT EXISTS) ──────────────
+log "Applying D1 migrations (incl. 005_cbs_nonce)..."
+( cd "$ROOT/apps/phos/src/workers/love-ledger" && npx wrangler d1 migrations apply love-ledger --env "$ENV_NAME" --remote ) || die "migrations apply failed"
+ok "migrations applied"
 
 # ── Per-worker: dry-run gate, then live deploy ────────────────────────
 deploy_worker(){ local dir="$1" name="$2"
