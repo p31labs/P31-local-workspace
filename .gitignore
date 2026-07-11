@@ -168,6 +168,9 @@ stripe_backup_code.txt
 *.pem
 did-signing-key.pem
 
+# L5 deploy script generated secrets (NEVER COMMIT)
+.l5-secrets.env
+
 # Wrangler local state
 .wrangler/
 

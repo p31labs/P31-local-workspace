@@ -237,6 +237,23 @@ commit **atomically** via `db.batch`.
 
 ## 6. Deployment Runbook (Operator Steps)
 
+**Zero-touch option (recommended):** `cwp-2026-009-sierpinski-expansion/l5-deploy.sh`
+automates the entire sequence below as a **fail-closed** pipeline:
+`wrangler` auth preflight → TRIPER 12/12 red-gate → idempotent KV
+provisioning (`AUTO_KV=1`) → Ed25519 + LOVE_AUTH_SECRET generation →
+secret put → migration `004` apply → **dry-run gate on all 4 workers** →
+live deploy → post-deploy cert. Set `AUTO_KV=1` to let it create the KV
+namespaces and auto-fill the placeholders; otherwise pre-create them and pass the
+ids. It never deploys on a red TRIPER cert or an unauthenticated session.
+
+```bash
+cd cwp-2026-009-sierpinski-expansion
+AUTO_KV=1 bash l5-deploy.sh        # full provision + deploy
+# or:  REGEN_SECRETS=1 bash l5-deploy.sh   # regenerate keys
+```
+
+**Manual steps** (what the script does, for review/debug):
+
 **Prerequisites:** Wrangler v4+ authenticated in the target environment · D1 `love-ledger`
 exists · real KV namespaces for `PASSPORT_KV` (intent-resolver) and `CREATION_KV`
 (creation-accountant).
