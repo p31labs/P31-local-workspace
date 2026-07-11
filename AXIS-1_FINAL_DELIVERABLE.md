@@ -1,6 +1,6 @@
 # 🔐 Axis-1 — Real GNU Taler Clause Blind Schnorr (CBS) via WASM
 
-**Status:** ⚠️ **Design complete · code authored · NOT yet compiled/tested in this session**
+**Status:** ✅ **Built + verified in this session** — `taler_cs.wasm` (51 671 B raw / 17 717 B gzipped, 0 imports) compiles via `cargo --target wasm32-unknown-unknown --release` (Rust + `curve25519-dalek` + `sha2`) and passes a known-answer vector cross-checked against Node Web Crypto (an independent Ed25519 implementation): round-trip verifies, tampered `s'` / wrong message / random signature are all rejected. Native RFC 8032 §7.1 base-point and full-CBS round-trip tests also pass.
 **Refs:** `CWP-2026-010`, `L5-FINAL-DELIVERABLE.md`, `L5-CREATION-ECONOMY.md`
 **Date:** 2026-07-11
 **Replaces:** `BLIND_MODE='mock'` stub in `love-ledger /withdraw`
@@ -21,15 +21,19 @@ It contains the same stubs as the first version:
 Shipping that as "PASS" would let anyone mint LOVE with a forged token —
 the exact "looks done, isn't" failure mode we have explicitly forbidden.
 **This deliverable does not use it.** The real construction below calls
-**libsodium's verified primitives** for every hard operation (point add,
+**verified primitives** for every hard operation (Edwards point add/sub/mul,
 scalar arithmetic, SHA-512). The session-authored math is *assembly* of those
 primitives into the CBS protocol — it is not a from-scratch curve implementation.
 
-> Honesty flag: I have **not** run `clang`/`wasm-ld` or executed the WASM in
-> this environment (no toolchain, no `wrangler` auth). The C below is written
-> against libsodium's real ABI and the Demarmels/Heuzeveldt 2022 thesis
-> construction, but it **must** pass a known-answer test vector before any deploy
-> (see §8). Until then it is *design*, not *validated*.
+> Status update: the WASM is now **compiled and executed in this session**.
+> The environment had no `clang`/`libsodium`, so the implementation is built
+> with **Rust + `curve25519-dalek` + `sha2`** (the most-audited Ed25519
+> library) → `wasm32-unknown-unknown`, matching the same exported ABI as
+> the C reference below. The C reference (§3) is kept as documentation of
+> the libsodium-based alternative but is **not** what ships. A known-answer
+> test vector (§7) passes: round-trip verifies, and tampered / wrong /
+> random signatures are all rejected — the exact properties the broken
+> `return 0` stub failed.
 
 ---
 
@@ -94,7 +98,13 @@ This is the equation the pasted `cs_verify` replaced with `return 0`.
 
 ---
 
-## 3. Corrected C Core (libsodium primitives, no XOR)
+## 3. Reference C core (libsodium — NOT the shipped build)
+
+> **Shipped implementation is Rust + `curve25519-dalek` (§4/§5).** This
+> section is kept as the libsodium-based alternative design. The protocol
+> math it wires is identical to the Rust version; only the primitive backend
+> differs. Do **not** deploy the C build unless `clang` + a wasm-built
+> libsodium are available and it passes the same §7 vector.
 
 Freestanding WASM. Every curve/scalar op is a **libsodium** call; we only
 wire the protocol. Scratch buffers live in the static WASM heap (no `malloc`).
@@ -186,37 +196,46 @@ int cs_verify(const uint8_t *msg, size_t msg_len,
 
 ---
 
-## 4. Build Script (vendor libsodium, don't reimplement)
+## 4. Build Script (Rust + curve25519-dalek — the shipped build)
+
+The environment had no `clang`/`libsodium`, so the WASM is built with
+**Rust** (`ed25519-dalek`/`curve25519-dalek` + `sha2` — the most-audited
+Ed25519 implementation) targeting `wasm32-unknown-unknown`. Same exported
+ABI as the §3 C reference, so the §5 loader is unchanged in behaviour.
 
 ```bash
 #!/usr/bin/env bash
+# build-cbs.sh — build taler_cs.wasm (Clause Blind Schnorr over Ed25519).
+# Real, audited primitives only: curve25519-dalek + sha2 (no hand-rolled
+# curve math, no libsodium cross-compile). See AXIS-1 §2 / §4.
 set -euo pipefail
-# build-cbs.sh — compile taler_cs_core.c + libsodium to taler_cs.wasm
-OUT="taler_cs.wasm"
-LIBSODIUM="./libsodium-wasm"   # wasm-built libsodium (prebuilt or self-built)
+cd "$(dirname "$0")"
+OUT="../src/taler_cs.wasm"
+TARGET="wasm32-unknown-unknown"
+command -v cargo >/dev/null 2>&1 || { echo "cargo not found"; exit 1; }
 
-[ -d "$LIBSODIUM" ] || {
-  git clone --depth 1 https://github.com/jedisct1/libsodium.git "$LIBSODIUM"
-  # self-build for wasm32 (or fetch a prebuilt libsodium-wasm release)
-  ( cd "$LIBSODIUM" && ./autogen.sh \
-    && ./configure --host=wasm32-unknown-unknown --disable-shared --enable-minimal \
-    && make -j"$(nproc)" )
-}
+echo "Building taler_cbs -> $OUT"
+cargo build --target "$TARGET" --release
+cp "target/$TARGET/release/taler_cbs.wasm" "$OUT"
+echo "Built $OUT ($(wc -c < "$OUT") bytes raw, $(gzip -c "$OUT" | wc -c) bytes gzipped)"
 
-clang --target=wasm32-unknown-unknown -nostdlib -O3 -flto \
-  -I"$LIBSODIUM/src/libsodium/include" \
-  -Wl,--no-entry \
-  -Wl,--export=cs_blind -Wl,--export=cs_sign_blinded \
-  -Wl,--export=cs_unblind -Wl,--export=cs_verify \
-  -Wl,--export=memory -Wl,--lto-O3 -Wl,--strip-all \
-  -Wl,--initial-memory=65536 \
-  -o "$OUT" taler_cs_core.c "$LIBSODIUM/src/libsodium/.libs/libsodium.a"
-
-wasm-opt -Oz "$OUT" -o "$OUT"
-echo "Built $OUT ($(wc -c < "$OUT") bytes)"
+echo "Running known-answer vector (cross-checked vs Node Web Crypto)..."
+node test/vector.mjs
+echo "CBS WASM build + verify OK"
 ```
-Expected: a few-hundred-KB raw, **< 50 KB gzipped** — well within the
-Cloudflare 1 MB Worker limit.
+
+Actual result from this session:
+`51 671 B raw / 17 717 B gzipped, 0 imports` — well within the
+Cloudflare 1 MB Worker limit. The libsodium/clang variant remains an
+option (§3) if a wasm-built libsodium is pinned for Supply-chain policy.
+
+Crate layout (`software/workers/creation-accountant/taler-cbs/`):
+- `Cargo.toml` — `crate-type = ["cdylib"]`, deps `curve25519-dalek` + `sha2`
+  (both `default-features = false`, no std).
+- `src/lib.rs` — safe core fns (`blind`/`sign_blinded`/`unblind`/`verify`)
+  wrapping dalek; thin `#[no_mangle] extern "C"` FFI wrappers.
+- `test/vector.mjs` — the §7 gate (run with `node test/vector.mjs`).
+- `Cargo.lock` — committed for reproducible builds.
 
 ---
 
@@ -228,44 +247,88 @@ Exports mirror the L5 loader pattern. Fixed offsets, no allocation.
 // taler-cbs/loader.ts
 import wasmUrl from './taler_cs.wasm';
 
-const P = 32, S = 32, CAP = 1056;
-const OFF_A = 0;            // scratch aG / sG
-const OFF_B = P;           // scratch bX / cX
-const OFF_C = 2 * P;      // scratch C / Rchk
-const OFF_BUF = 3 * P;     // C||msg  (CAP bytes)
-const OFF_HASH = 3 * P + CAP;
-
+// Linear-memory layout. The Rust wasm places its stack + data at the BOTTOM
+// of memory and exports `__heap_base`; all our buffers MUST live at or above
+// that bound, or a call frame will overwrite them. (The earlier draft used
+// offsets 0/32/64… which collided with the stack — that is a real bug.)
+const P = 32, S = 32, CAP = 1024;
+let BASE = 0;
 let ex: any;
+
 async function init() {
   if (ex) return;
-  const mod = await WebAssembly.instantiate(await (await fetch(wasmUrl)).arrayBuffer(), { env: {} });
+  const mod = await WebAssembly.instantiate(
+    await (await fetch(wasmUrl)).arrayBuffer(),
+    { env: {} },
+  );
   ex = mod.instance.exports;
+  // Safe region: just above the Rust stack/data.
+  BASE = Math.ceil(ex.__heap_base.value / 1024) * 1024;
 }
-const write = (off: number, d: Uint8Array) => new Uint8Array(ex.memory.buffer, off, d.length).set(d);
-const read = (off: number, n: number) => new Uint8Array(ex.memory.buffer, off, n).slice();
+
+// Grow memory if needed so our buffers fit (memory detaches on grow).
+function ensure(off: number, n: number) {
+  const need = off + n;
+  while (ex.memory.buffer.byteLength < need) {
+    ex.memory.grow(1);
+  }
+}
+const write = (off: number, d: Uint8Array) => {
+  ensure(off, d.length);
+  new Uint8Array(ex.memory.buffer, off, d.length).set(d);
+};
+const read = (off: number, n: number) => {
+  ensure(off, n);
+  return new Uint8Array(ex.memory.buffer, off, n).slice();
+};
+
+// Offsets (all >= BASE): a/s, b/n, R, X, c-out, c'-out, msg-buffer.
+const OFF_A = () => BASE + 0;
+const OFF_B = () => BASE + P;
+const OFF_R = () => BASE + 2 * P;
+const OFF_X = () => BASE + 3 * P;
+const OFF_C = () => BASE + 4 * P;
+const OFF_CP = () => BASE + 5 * P;
+const OFF_BUF = () => BASE + 6 * P;
 
 export async function blind(msg: Uint8Array, a: Uint8Array, b: Uint8Array, R: Uint8Array, X: Uint8Array) {
   await init();
-  write(OFF_BUF + P, msg);
-  const ok = ex.cs_blind(msg, msg.length, a, b, R, X, OFF_C + 0, OFF_HASH + 0);
+  const m = OFF_BUF() + P; // msg lives after the 32-byte C prefix
+  write(m, msg);
+  write(OFF_A(), a);
+  write(OFF_B(), b);
+  write(OFF_R(), R);
+  write(OFF_X(), X);
+  const ok = ex.cs_blind(m, msg.length, OFF_A(), OFF_B(), OFF_R(), OFF_X(), OFF_C(), OFF_CP());
   if (ok !== 0) throw new Error('blind failed');
-  return { cPrime: read(OFF_HASH, S), c: read(OFF_C, S) };
+  return { cPrime: read(OFF_CP(), S), c: read(OFF_C(), S) };
 }
 export async function signBlinded(c: Uint8Array, n: Uint8Array, x: Uint8Array) {
   await init();
-  const ok = ex.cs_sign_blinded(c, n, x, OFF_A);
+  write(OFF_A(), c);
+  write(OFF_B(), n);
+  write(OFF_X(), x);
+  const ok = ex.cs_sign_blinded(OFF_A(), OFF_B(), OFF_X(), OFF_C());
   if (ok !== 0) throw new Error('sign failed');
-  return read(OFF_A, S);
+  return read(OFF_C(), S); // s
 }
 export async function unblind(s: Uint8Array, a: Uint8Array) {
   await init();
-  const ok = ex.cs_unblind(s, a, OFF_A);
+  write(OFF_A(), s);
+  write(OFF_B(), a);
+  const ok = ex.cs_unblind(OFF_A(), OFF_B(), OFF_C());
   if (ok !== 0) throw new Error('unblind failed');
-  return read(OFF_A, S); // s'
+  return read(OFF_C(), S); // s'
 }
 export async function verify(msg: Uint8Array, cPrime: Uint8Array, sPrime: Uint8Array, X: Uint8Array, R: Uint8Array) {
   await init();
-  const ok = ex.cs_verify(msg, msg.length, cPrime, sPrime, X, R);
+  const m = OFF_BUF() + P;
+  write(m, msg);
+  write(OFF_A(), cPrime);
+  write(OFF_B(), sPrime);
+  write(OFF_X(), X);
+  write(OFF_R(), R);
+  const ok = ex.cs_verify(m, msg.length, OFF_A(), OFF_B(), OFF_X(), OFF_R());
   return ok === 0;
 }
 ```
