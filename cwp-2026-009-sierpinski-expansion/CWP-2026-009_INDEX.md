@@ -98,8 +98,8 @@ The external landscape validates the timing:
 | Task | Description | Owner | Deadline | Status |
 | :--- | :--- | :--- | :--- | :--- |
 | **L4.1** | Expand tool inventory (46 → 115) targeting cognitive domains | Agent | Q4 2026 | ✅ DONE (`e9821ec`, 6 servers / 115 tools) |
-| **L4.2** | Map `InterfaceDescription` schema directly to A2UI v0.9 | Agent | Q3 2026 | 🟡 DRAFT (`a2ui-schema-mapping.md`; exact A2UI v0.9 field names flagged `[VERIFY]` — PyPI SDK unreachable here) |
-| **L4.3** | Add A2UI renderer support for external ecosystems | Agent | Q4 2026 | 🔄 PENDING |
+| **L4.2** | Map `InterfaceDescription` schema directly to A2UI v0.9 | Agent | 2026-07-11 | ✅ DONE (`src/adapters/a2ui.ts` + `a2ui-schema-mapping.md`; SDK inspected at `~/a2ui-app`, real v0.9 wire confirmed) |
+| **L4.3** | Add A2UI renderer support for external ecosystems | Agent | 2026-07-11 | ✅ DONE (`src/adapters/A2UIRenderer.tsx` + tests) |
 | **L4.4** | Open-source UIG core (`@p31/interface-generator`) | Agent | Q4 2026 | 🔄 PENDING |
 | **L4.5** | P31 Automation Engine (conceptual doc + orchestrator + L3.2 validator) | Agent | 2026-07-11 | ✅ DONE (`docs/P31_AUTOMATION_ENGINE.md`, `cli/p31-automation-engine.js`, `cli/validate-l3.2.js`) |
 

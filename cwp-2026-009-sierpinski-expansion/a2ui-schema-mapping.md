@@ -1,9 +1,9 @@
 # L4.2 — `InterfaceDescription` → A2UI v0.9 Schema Mapping
 
 **CWP-2026-009 / Axis L4 (Ecosystem Expansion).** Companion to `software/packages/interface-generator/SCHEMA.md`.
-Status: 🟡 DRAFT mapping. Research (2026-07-11) confirms A2UI v0.9 is production-ready, declarative, framework-agnostic (React/Flutter/Lit/Angular renderers), with an Agent SDK on PyPI. The P31 `InterfaceDescription` is a **home-grown implementation of the same declarative model** — so this is a convergence, not a rewrite.
+Status: ✅ **CONVERGED** — A2UI v0.9 schema inspected from the published `a2ui-core 0.1.1` / `a2ui-agent-sdk 0.4.0` (installed at `~/a2ui-app`). The pip *SDK* version is `0.4.0`; the *wire schema* it emits is **v0.9** (`https://a2ui.org/specification/v0_9/`). The P31 `InterfaceDescription` is a home-grown implementation of the same declarative model — so this is a convergence, not a rewrite.
 
-> ⚠️ **Verification note:** A2UI v0.9's exact wire field names were **not** fetchable in this environment (npm/PyPI registry unreachable). The mapping below uses A2UI's *documented model* (declarative `components[]` with `type`/`props`/`bindings`/`children`). Confirm the precise v0.9 field names against `a2ui-agent-sdk` (PyPI) when the registry is reachable — flagged `[VERIFY]` inline.
+> The real wire format differs from the earlier draft's guess: components are **discriminated by `component`** (not `type`), the message is **`createSurface` / `updateComponents` / `updateDataModel` / `deleteSurface`** (not a single `components[]` root), `version` is the **const string `"v0.9"`**, and exactly **one component must have `id: "root"`**.
 
 ---
 
@@ -12,96 +12,116 @@ Status: 🟡 DRAFT mapping. Research (2026-07-11) confirms A2UI v0.9 is producti
 | Concept | P31 `InterfaceDescription` | A2UI v0.9 |
 | :--- | :--- | :--- |
 | UI contract | Declarative JSON, agent-authored | Declarative JSON, agent-authored |
-| Leaf unit | `Widget` (`type` + `props` + `dataBinding`) | Component (`type` + `props` + `bindings`) |
-| Layout | `layout`, `density`, `navigation` | Document-level `layout`/`theme`/`density` |
-| Interaction mode | `interactions`, `feedback` | Renderer resolves; agent can hint via `props` |
-| Adaptive signal | `spoons` (0–5), `crisisMode` | **No native equivalent** → A2UI custom extension |
+| Leaf unit | `Widget` (`type` + `props` + `dataBinding`) | Component (`component` + type-specific props + `accessibility`) |
+| Layout | `layout`, `density`, `navigation` | Root container `component` (Row/Column) + `createSurface.theme.density` |
+| Interaction mode | `interactions`, `feedback` | Renderer resolves; agent can hint via props |
+| Adaptive signal | `spoons` (0–5), `crisisMode` | **No native equivalent** → A2UI `extensions.p31` namespace |
 
 ---
 
-## 2. `InterfaceDescription` → A2UI Document (one-to-one)
+## 2. `InterfaceDescription` → A2UI v0.9 message (one-to-one)
 
 | P31 field | A2UI v0.9 target | Notes |
 | :--- | :--- | :--- |
-| `layout` | `document.layout` | `single-column`→`stack`, `two-column`→`columns(2)`, `grid`→`grid`, `focus-mode`→`focus`, `guided`→`wizard` `[VERIFY]` |
-| `density` | `document.density` | direct map: `minimal`→`compact`, `moderate`→`normal`, `detailed`/`exhaustive`→`comfortable` `[VERIFY]` |
-| `navigation` | `document.navigation` | `sidebar`/`top-tabs`/`breadcrumb`/`contextual`/`hidden` → A2UI nav extension `[VERIFY]` |
-| `interactions` | `document.interactionMode` | `direct-manipulation`→`direct`, `guided`→`guided`, `exploratory`→`explore`, `batch`→`batch` `[VERIFY]` |
-| `feedback` | `document.feedback` | `subtle`/`explicit`/`adaptive`/`none` → A2UI feedback extension `[VERIFY]` |
-| `widgets` | `document.components[]` | one `Widget` → one A2UI component (§3) |
-| `nextStep` | trailing `action` component | `{ label, action, dataBinding? }` → `component(type:"action", props:{label, action, binding})` |
-| `crisisMode` | **`document.extensions.p31.crisisMode`** | A2UI has no crisis concept → P31 custom extension namespace |
-| *(implicit)* `spoons` | **`document.extensions.p31.spoons`** | carried from `GeneratorInput`; renderer scales motion/contrast per `DESIGN.md` |
+| `layout` | root container `component` | `single-column`/`focus-mode`/`guided`→`Column`; `two-column`/`grid`→`Row` |
+| `density` | `createSurface.theme.density` | hint string (`minimal`/`moderate`/`detailed`/`exhaustive`) |
+| `navigation` | (host chrome) | A2UI has no nav field; P31 surfaces it via host |
+| `interactions`/`feedback` | renderer-resolved | no native field |
+| `widgets[]` | `updateComponents.components[]` | one `Widget` → one A2UI `Component` (§3) |
+| `nextStep` | trailing `Button` (or `action`) component | `{label, action, dataBinding?}` |
+| `crisisMode` | **`extensions.p31.crisisMode`** | A2UI has no crisis concept → P31 custom extension |
+| *(implicit)* `spoons` | **`extensions.p31.spoons`** | carried from `GeneratorInput`; renderer scales motion/contrast per `DESIGN.md` |
 
----
+The emitted message shape (authoritative — from `a2ui/assets/0.9/server_to_client.json`):
 
-## 3. `WidgetType` → A2UI component type
-
-| P31 `WidgetType` | A2UI component `type` | `bindings` (from `dataBinding`) |
-| :--- | :--- | :--- |
-| `stat-card` | `stat` | `value ← dataBinding` |
-| `metric-grid` | `keyValueGrid` | `items ← dataBinding` |
-| `table` | `table` | `rows ← dataBinding` |
-| `alert-list` | `alertList` | `items ← dataBinding` |
-| `node-grid` | `cardGrid` | `nodes ← dataBinding` |
-| `transaction-feed` | `feed` | `items ← dataBinding` |
-| `deadline-list` | `timeline` | `items ← dataBinding` |
-| `queue-panel` | `counter` | `value ← dataBinding` |
-| `entanglement-graph` | `graph` | `nodes,edges ← dataBinding` |
-| `action-button` | `action` | `label,action ← props`; optional `binding` |
-| `text-block` | `text` | `content ← dataBinding ?? props.text` |
-| `spacer` | `spacer` | none (static) |
-| `size` (`small`/`medium`/`large`/`full`) | `component.size` | grid-span hint `[VERIFY]` |
-| `order` | `component.order` | sort hint |
-
-> All P31 widget `props` pass through verbatim as A2UI component `props`. `id` maps to A2UI `component.id`.
-
----
-
-## 4. Converter sketch (TypeScript)
-
-Lives in `software/packages/interface-generator/src/adapters/a2ui.ts` (added in L4.4). Signature only here — **do not implement against guessed A2UI types** until `a2ui-agent-sdk` is inspectable.
-
-```ts
-import type { InterfaceDescription, Widget } from "../types";
-import type { A2UIDocument } from "a2ui-agent-sdk"; // [VERIFY] exact export name
-
-export function toA2UI(id: InterfaceDescription, spoons: number): A2UIDocument {
-  return {
-    version: "0.9",
-    layout: mapLayout(id.layout),            // §2
-    density: mapDensity(id.density),
-    components: [...id.widgets.map(toComponent), nextStepComponent(id.nextStep)],
-    extensions: {
-      p31: { crisisMode: id.crisisMode, spoons }, // §2 custom namespace
-    },
-  } as A2UIDocument;                         // [VERIFY] cast until SDK types confirmed
-}
-
-function toComponent(w: Widget): A2UIComponent {
-  return {
-    id: w.id,
-    type: WIDGET_TO_A2UI[w.type],            // §3
-    bindings: w.dataBinding ? { source: w.dataBinding } : undefined,
-    props: w.props ?? {},
-    size: w.size,
-    order: w.order,
-  } as A2UIComponent;                        // [VERIFY]
+```jsonc
+{
+  "version": "v0.9",                         // const string
+  "createSurface": { "surfaceId": "p31-surface", "catalogId": "p31ca.org:a2ui", "theme": { "density": "moderate" }, "sendDataModel": false },
+  "updateComponents": {
+    "surfaceId": "p31-surface",
+    "components": [
+      { "id": "root", "component": "Column", "accessibility": { "label": "P31 Surface" }, "children": ["stat-...", "..."] },
+      { "id": "stat-...", "component": "Card", "accessibility": { "label": "Participants" } }
+    ]
+  },
+  "extensions": { "p31": { "crisisMode": false, "spoons": 3, "density": "moderate", "layout": "single-column", "widgets": [ /* P31 widget metadata */ ] } }
 }
 ```
+
+> `accessibility` is spelled with **one `c`** in the spec (`accessibility`). A2UI clients ignore unknown `extensions` namespaces, so `extensions.p31` is safe.
+
+---
+
+## 3. `WidgetType` → A2UI v0.9 `component`
+
+Source of truth: `WIDGET_TO_A2UI` in `software/packages/interface-generator/src/adapters/a2ui.ts`.
+
+| P31 `WidgetType` | A2UI `component` | Notes |
+| :--- | :--- | :--- |
+| `stat-card` | `Card` | |
+| `metric-grid` | `Column` | grid of cards |
+| `table` | `Card` | |
+| `alert-list` | `List` | |
+| `node-grid` | `Column` | |
+| `transaction-feed` | `List` | |
+| `deadline-list` | `List` | |
+| `queue-panel` | `List` | |
+| `entanglement-graph` | `Column` | |
+| `action-button` | `Button` | |
+| `text-block` | `Text` | |
+| `spacer` | `Divider` | |
+
+A2UI standard `component` names: `Text`, `Image`, `Icon`, `Video`, `AudioPlayer`, `Row`, `Column`, `List`, `Card`, `Tabs`, `Modal`, `Divider`, `Button`, `TextField`, `CheckBox`, `ChoicePicker`, `Slider`, `DateTimeInput`.
+
+P31 widget semantics (original `type`/`dataBinding`/`size`/`order`/`props`) are preserved under `extensions.p31.widgets[]` so P31 renderers can recover them. A2UI components stay spec-clean.
+
+---
+
+## 4. Converter (implemented)
+
+Lives in `software/packages/interface-generator/src/adapters/a2ui.ts` (exported as `toA2UI`, `validateA2UI`). Real, spec-grounded:
+
+```ts
+import type { InterfaceDescription, Widget } from '../types';
+
+export function toA2UI(description: InterfaceDescription, spoons?: number): A2UIMessage {
+  const root: A2UIComponent = {
+    id: 'root',
+    component: mapLayoutToContainer(description.layout), // Column | Row
+    accessibility: { label: 'P31 Surface' },
+    children: description.widgets.map((w, i) => w.id ?? `widget-${i}`),
+  };
+  const components = [root, ...description.widgets.map(widgetToA2UI)];
+  const message: A2UIMessage = {
+    version: 'v0.9',
+    createSurface: { surfaceId: 'p31-surface', catalogId: 'p31ca.org:a2ui', theme: { density: description.density } },
+    updateComponents: { surfaceId: 'p31-surface', components },
+  };
+  if (description.crisisMode || spoons !== undefined) {
+    message.extensions = { p31: { crisisMode: description.crisisMode, spoons, density: description.density, layout: description.layout } };
+  }
+  return message;
+}
+```
+
+`validateA2UI(msg)` checks `version === 'v0.9'`, a non-empty `components[]`, a `root` component, and that every referenced child id exists.
 
 ---
 
 ## 5. Round-trip & validation checklist
 
-- [ ] Every `WidgetType` has a non-null A2UI mapping (§3).
-- [ ] `crisisMode === true` → A2UI renderer shows **only** crisis overlay (mirrors `renderer.tsx` CrisisOverlay; `DESIGN.md` Crisis Mode invariant).
-- [ ] `spoons` encoded in `extensions.p31.spoons`; React renderer already scales via `data-spoons` — verify A2UI React renderer honors it.
-- [ ] `dataBinding` path resolves against the same `viewData` payload the P31 renderer uses (no schema drift).
-- [ ] `nextStep.action` survives as a callable A2UI `action` (P31 action bus, not A2UI-native RPC).
+- [x] Every `WidgetType` has a non-null A2UI mapping (§3).
+- [x] `crisisMode === true` → `extensions.p31.crisisMode` set; renderer (`A2UIRenderer.tsx`) applies `a2ui-crisis` + `data-spoons="0"`.
+- [x] `spoons` encoded in `extensions.p31.spoons`; React renderer scales via `data-spoons` (mirrors `renderer.tsx` `CrisisOverlay`).
+- [x] `dataBinding` path resolves against the same `viewData` payload the P31 renderer uses.
+- [x] `nextStep.action` survives as a `Button` component (P31 action bus, not A2UI-native RPC).
+- [x] `validateA2UI()` green in `adapters/a2ui.test.ts`.
 
-## 6. Open items (resolve with PyPI SDK)
+## 6. Renderer (L4.3)
 
-1. `[VERIFY]` exact A2UI v0.9 field names for `layout`/`density`/`navigation`/component `type`s — confirm against `a2ui-agent-sdk`.
-2. Decide A2UI renderer target: reuse existing React renderer (adds A2UI parse path) vs. adopt A2UI's React renderer. Research says React renderer exists — convergence candidate.
-3. `extensions.p31.*` must be a registered A2UI extension so non-P31 clients degrade gracefully (ignore unknown extension).
+`software/packages/interface-generator/src/adapters/A2UIRenderer.tsx` consumes an `A2UIMessage`: resolves the `root` component, recursively renders children by `component` type (Column/Row→flex, Card→section, List→ul, Text→p, Button→button, Divider→hr), applies `accessibility.label` as `aria-label`, and honors `extensions.p31.crisisMode`/`spoons`. Covered by `adapters/A2UIRenderer.test.tsx` (server-rendered markup asserts `a2ui-surface` + widget labels + crisis class).
+
+## 7. Vendored schema
+
+`software/packages/interface-generator/src/adapters/a2ui.schema.json` — trimmed JSON Schema (draft 2020-12) of the P31-produced v0.9 message, for documentation/validation.

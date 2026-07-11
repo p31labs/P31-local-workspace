@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://p31ca.org/schemas/a2ui.v0.9.json",
+  "title": "P31 A2UI v0.9 Message (trimmed)",
+  "description": "Trimmed A2UI v0.9 wire message as produced by @p31/interface-generator's toA2UI adapter. Authoritative spec: https://a2ui.org/specification/v0_9/. Components are discriminated by `component`; exactly one component MUST have id \"root\".",
+  "type": "object",
+  "properties": {
+    "version": { "const": "v0.9" },
+    "createSurface": {
+      "type": "object",
+      "properties": {
+        "surfaceId": { "type": "string" },
+        "catalogId": { "type": "string" },
+        "theme": { "type": "object", "additionalProperties": { "type": "string" } },
+        "sendDataModel": { "type": "boolean" }
+      },
+      "required": ["surfaceId", "catalogId"],
+      "additionalProperties": false
+    },
+    "updateComponents": {
+      "type": "object",
+      "properties": {
+        "surfaceId": { "type": "string" },
+        "components": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/Component" }
+        }
+      },
+      "required": ["surfaceId", "components"],
+      "additionalProperties": false
+    },
+    "extensions": {
+      "type": "object",
+      "properties": {
+        "p31": {
+          "type": "object",
+          "properties": {
+            "crisisMode": { "type": "boolean" },
+            "spoons": { "type": "number" },
+            "density": { "type": "string" },
+            "layout": { "type": "string" },
+            "widgets": { "type": "array" }
+          }
+        }
+      }
+    }
+  },
+  "required": ["version"],
+  "$defs": {
+    "Component": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "component": {
+          "type": "string",
+          "enum": ["Text", "Image", "Icon", "Video", "AudioPlayer", "Row", "Column", "List", "Card", "Tabs", "Modal", "Divider", "Button", "TextField", "CheckBox", "ChoicePicker", "Slider", "DateTimeInput"]
+        },
+        "accessibility": {
+          "type": "object",
+          "properties": {
+            "label": { "type": "string" },
+            "description": { "type": "string" }
+          }
+        },
+        "children": {
+          "oneOf": [
+            { "type": "array", "items": { "type": "string" } },
+            { "type": "object", "properties": { "componentId": { "type": "string" }, "path": { "type": "string" } }, "required": ["componentId", "path"] }
+          ]
+        },
+        "weight": { "type": "number" }
+      },
+      "required": ["id", "component"]
+    }
+  }
+}
