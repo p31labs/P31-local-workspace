@@ -56,10 +56,10 @@ The external landscape validates the timing:
 | Task | Description | Owner | Deadline | Status |
 | :--- | :--- | :--- | :--- | :--- |
 | **L1.1** | Rotate provider secrets (Deployer, APIs, RPCs, PSK) | **User** | **ASAP** | 🔄 PENDING |
-| **L1.2** | Finalize LOVE-Ledger proposal (€15k, NGI TALER 14th) | Agent + User | Jul 31 | 🔄 Agent drafts, User reviews |
-| **L1.3** | Finalize PHOS-Sovereign proposal (€25k, NGI Fediversity 12th) | Agent + User | Jul 31 | 🔄 Agent drafts, User reviews |
+| **L1.2** | Finalize LOVE-Ledger proposal (€15k, NGI TALER 14th) | Agent + User | Jul 31 | ✅ DONE (`4a0721c`, reconciled to €15k) |
+| **L1.3** | Finalize PHOS-Sovereign proposal (€25k, NGI Fediversity 12th) | Agent + User | Jul 31 | ✅ DONE (`4a0721c`, reconciled) |
 | **L1.4** | Submit both proposals at [nlnet.nl/propose/](https://nlnet.nl/propose/) | **User** | **Aug 1 12:00 CEST** | 🔄 PENDING |
-| **L1.5** | Update `GLOBAL_IMPACT_REPORT.md` with verifiable AAA/COGA status | Agent | Aug 1 | 🔄 PENDING |
+| **L1.5** | Update `GLOBAL_IMPACT_REPORT.md` with verifiable AAA/COGA status | Agent | Aug 1 | ✅ DONE (`4a0721c`, accurate 0-blocking claim) |
 | **L1.6** | Run full axe audit across all 4 faces (phos, auth, status, design-hub) | Agent | Jul 20 | ✅ DONE (`audit-wcag.mjs` → 0 blocking each) |
 
 **Success criteria:** Both €40k proposals submitted; secrets rotated; all faces audited; docs reflect production reality.
