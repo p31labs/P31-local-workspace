@@ -100,7 +100,7 @@ The external landscape validates the timing:
 | **L4.1** | Expand tool inventory (46 → 115) targeting cognitive domains | Agent | Q4 2026 | ✅ DONE (`e9821ec`, 6 servers / 115 tools) |
 | **L4.2** | Map `InterfaceDescription` schema directly to A2UI v0.9 | Agent | 2026-07-11 | ✅ DONE (`src/adapters/a2ui.ts` + `a2ui-schema-mapping.md`; SDK inspected at `~/a2ui-app`, real v0.9 wire confirmed) |
 | **L4.3** | Add A2UI renderer support for external ecosystems | Agent | 2026-07-11 | ✅ DONE (`src/adapters/A2UIRenderer.tsx` + tests) |
-| **L4.4** | Open-source UIG core (`@p31/interface-generator`) | Agent | Q4 2026 | 🔄 PENDING |
+| **L4.4** | Open-source UIG core (`@p31/interface-generator`) | Agent | 2026-07-11 | 🟢 DONE (AGPL-3.0: root `LICENSE` + package.json `license`, `@p31/interface-generator` license field + README License section, Gecko fund grant reconciled MIT→AGPL) |
 | **L4.5** | P31 Automation Engine (conceptual doc + orchestrator + L3.2 validator) | Agent | 2026-07-11 | ✅ DONE (`docs/P31_AUTOMATION_ENGINE.md`, `cli/p31-automation-engine.js`, `cli/validate-l3.2.js`) |
 
 **Success criteria:** 100+ tools aligned with neurodivergent needs; 1:1 A2UI integration; UIG core publicly available.
@@ -164,7 +164,7 @@ Ref: Fortune 1 way — decompose, dispatch, execute in parallel, merge, verify.
 - [x] 100+ MCP tools deployed (115 across 6 servers)
 - [x] Node MCP bridge (L3.4) spawns 4 servers → 48-tool catalog, 7/7 tests green
 - [ ] A2UI v0.9 integration complete
-- [ ] UIG core open-sourced
+- [x] UIG core open-sourced (AGPL-3.0, `software/packages/interface-generator`)
 - [ ] Tag `v2.0.0-sierpinski-expansion` pushed
 
 ---

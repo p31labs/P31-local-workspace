@@ -9,7 +9,7 @@
 | **Fund** | EXANTE Gecko Fund |
 | **Amount Requested** | €50,000 |
 | **Duration** | 12 months |
-| **License** | MIT |
+| **License** | AGPL-3.0 |
 
 ---
 
@@ -165,13 +165,13 @@ This produces a four-layer cryptographic audit trail suitable for evidentiary pr
 
 ## 8. Open Source Commitment
 
-All deliverables will be released under the **MIT License** and published to [github.com/p31labs](https://github.com/p31labs). Key repositories:
+All deliverables will be released under the **AGPL-3.0 License** and published to [github.com/p31labs](https://github.com/p31labs). Key repositories:
 
 - `shadow-bridge` — Cloudflare Worker for Roblox → LOVE event routing (existing)
 - `love-ledger-core` — Open-sourced Ledger v1.0 implementation (blind signatures, local-first)
 - `love-ledger-taler-bridge` — GNU Taler ↔ L.O.V.E. Ledger integration specification
 - `roblox-bridge` — Lua transmitter scripts + Vinegar Studio setup (existing)
-- `k4-cage-pwa` — Existing K₄ mesh (already MIT, 104+ tests)
+- `k4-cage-pwa` — Existing K₄ mesh (relicensed AGPL-3.0, 104+ tests)
 
 The L.O.V.E. Ledger's Taler integration will be **interoperable with the GNU Taler reference implementation** by design. LOVE credits can be converted to EUR at any Taler-accepting merchant, and Taler coins can be credited as LOVE at the Ledger level.
 

@@ -92,3 +92,13 @@ and non-React consumers (e.g. the `uig-generate-dashboard` MCP tool in `tools/ph
 - Phase 4: bonding / HUD via `InterfaceRenderer`.
 - Phase 5 (future): LLM rewrite of `InterfaceDescription` with hard safety constraints
   (crisis override, motion scaling, required widgets always present).
+
+## License
+
+**AGPL-3.0** — see the root [`LICENSE`](../../LICENSE).
+
+The UIG core is free software released under the GNU Affero General Public License v3.0.
+If you run a modified version of this package to provide a service over a network, the
+AGPL requires you to offer that modified source to your users. This protects the
+neurodivergent assistive-tech commons: improvements stay shareable.
+
