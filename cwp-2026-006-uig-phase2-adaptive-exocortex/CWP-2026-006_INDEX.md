@@ -2,7 +2,7 @@
 
 **Vector Equilibrium to Tetrahedron | Issued 2026-07-10**
 
-**STATUS:** AUTHORIZED — PLANNING PHASE
+**STATUS:** IN EXECUTION — Axis A Batch 1 pushed (`408180f`)
 **ISSUED:** 2026-07-10
 **OPERATOR:** trimtab-signal / p31
 **PARENT:** CWP-2026-005 (UIG Convergence & Workspace Unification)
@@ -40,10 +40,10 @@ The external landscape validates this direction:
 | R5 – Phosphorus31 crisis island | DONE | `a7d4696` |
 | R6 – CrisisOverlay dedupe | DONE | `a7d4696` |
 | R7 – axe-runner in CI | DONE | `d4377a6` |
-| WCD-501 – Delete root `/phos` | PENDING (user confirm) | — |
-| WCD-502 – Doc false‑claim corrections | PENDING | — |
-| WCD-503 – Final verification suite | PENDING | — |
-| Phase 0.1 – Secret rotation + history rewrite | DONE (local, pending push) | — |
+| WCD-501 – Delete root `/phos` | DONE | `6d37496` |
+| WCD-502 – Doc false‑claim corrections | DONE | `440fc5c` |
+| WCD-503 – Final verification suite | PARTIAL (sandbox network; TRIPER 12/12 fresh) | — |
+| Phase 0.1 – Secret rotation + history rewrite | DONE | `440fc5c` + force-push |
 
 ---
 
@@ -53,9 +53,9 @@ The external landscape validates this direction:
 
 | Task | Deliverable | Owner |
 | :--- | :--- | :--- |
-| A1 | Enforce 48px touch targets across all apps | UIG renderer |
-| A2 | Add skip‑link to `phos/src/pages/index.astro` and all entry points | PHOS |
-| A3 | Replace all `text-white/30` on dark with `text-white/70` (contrast ≥7:1) | All apps |
+| A1 | Enforce 48px touch targets across all apps | ✅ DONE (`408180f`) |
+| A2 | Add skip‑link to `phos/src/pages/index.astro` and all entry points | ✅ DONE (`408180f`) |
+| A3 | Replace all `text-white/30` on dark with `text-white/70` (contrast ≥7:1) | ✅ DONE (`408180f`) |
 | A4 | Centralise `data-spoons` motion scaling in `@p31/design-system` | Design system |
 | A5 | Implement progressive disclosure (COGA pattern) in PHOS surfaces | PHOS |
 | A6 | Add user‑controlled adaptation controls (spoon slider, density toggles) to all apps | UIG renderer |
@@ -140,11 +140,12 @@ The external landscape validates this direction:
 
 ## PARKING LOT (from CWP-2026-005)
 
-- **WCD-501:** Delete root `/phos` — awaiting user confirm.
-- **WCD-502:** Doc false‑claim corrections — needs manual review.
-- **WCD-503:** Final verification suite — must run before CWP-2026-006 starts.
+- **WCD-501:** ✅ DONE — root `/phos` deleted (`6d37496`).
+- **WCD-502:** ✅ DONE — WCAG header relabeled (`440fc5c`).
+- **WCD-503:** PARTIAL — `pnpm install` stalls in sandbox (network); TRIPER cert fresh 12/12.
+- **Provider-side key rotation:** STILL PENDING — user action required at OpenRouter, Groq, Gemini, Cloudflare (SEPOLIA_RPC).
 
-These are blocking prerequisites. Once they clear, Axis A begins.
+All blocking prerequisites cleared. Axis A Batch 1 pushed.
 
 ---
 
