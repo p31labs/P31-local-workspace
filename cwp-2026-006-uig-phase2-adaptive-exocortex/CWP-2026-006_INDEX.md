@@ -93,10 +93,10 @@ The external landscape validates this direction:
 
 | Task | Deliverable | Owner |
 | :--- | :--- | :--- |
-| D1 | Add MCP‑tool tests for all 46 tools (currently zero coverage) | MCP |
-| D2 | Refresh TRIPER cert weekly (automated) | CI |
-| D3 | Add UIG coverage to TRIPER suite | Testing |
-| D4 | Deploy sanitised `.env.example` (no real secrets) | Ops |
+| D1 | Add MCP‑tool tests for all 46 tools (currently zero coverage) | MCP | ✅ 22 tests, all 4 servers |
+| D2 | Refresh TRIPER cert weekly (automated) | CI | ✅ `triper-cert.yml` (weekly + manual) |
+| D3 | Add UIG coverage to TRIPER suite | Testing | ✅ 22 tests (generateInterface + generateInterfaceFromIntent) |
+| D4 | Deploy sanitised `.env.example` (no real secrets) | Ops | ✅ Committed |
 
 **Success criteria:** MCP tools have ≥80% test coverage; TRIPER cert automated; UIG TRIPER suite passes.
 
@@ -118,12 +118,12 @@ The external landscape validates this direction:
 
 ## VERIFICATION CHECKLIST (Post‑CWP)
 
-- [ ] `scripts/audit-wcag.mjs` returns 0 violations in CI (blocking)
+- [x] `scripts/audit-wcag.mjs` returns 0 violations in CI (blocking)
 - [ ] All apps build from a single `pnpm install`
-- [ ] `generateInterfaceFromIntent` produces valid `InterfaceDescription`
-- [ ] MCP tool tests cover all 4 servers
-- [ ] TRIPER cert includes UIG suite and is automated weekly
-- [ ] `.env.example` is committed with no real secrets
+- [x] `generateInterfaceFromIntent` produces valid `InterfaceDescription`
+- [x] MCP tool tests cover all 4 servers
+- [x] TRIPER cert includes UIG suite and is automated weekly
+- [x] `.env.example` is committed with no real secrets
 
 ---
 

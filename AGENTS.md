@@ -18,9 +18,7 @@ verdict — a few overstated claims from earlier drafts have been corrected.
 - **WCAG 2.2** — [W3C Recommendation](https://www.w3.org/TR/WCAG22/) (2024-12-12);
   `data-spoons` motion scaling, CrisisMode, skip links, `prefers-reduced-motion` are
   **verified in code**. The automated axe-core audit runner (`scripts/audit-wcag.mjs`)
-  **exists** in the repo but is **not yet wired into CI** — the 0-violation claim
-  remains unsubstantiated and should not be relied upon until the runner is wired
-  into CI and executed.
+  **exists** in the repo and is **wired into CI** via `axe-runner.yml` (continue-on-error: false).
 - **WebAuthn** — IANA Well-Known URI registry registers `webauthn` (W3C, 2026-01-23).
 - **MCP** — real protocol ([modelcontextprotocol.io](https://modelcontextprotocol.io)).
 - **GNU Taler** — real GNU project ([taler.net](https://taler.net)); P31 integration is **deployed** — `taler-exchange-bridge` is wired to `exchange.demo.taler.net` (see `docs/TALER_INTEGRATION.md`).
@@ -41,7 +39,7 @@ There are **4 in-repo MCP servers** (not 3 as previously stated), all hand-rolle
 | Oasis CLI | `cli/mcp-server.js` | 11 |
 | Component Registry | `cli/component-registry.js` | 5 |
 | LOVE Ledger | `cli/love-registry.js` | 3 |
-| PHOS Forge | `tools/phos-forge/mcp-server.mjs` | 27 |
+| PHOS Forge | `tools/phos-forge/mcp-server.mjs` | 29 |
 | **Total** | | **~46** |
 
 ### Published packages
@@ -246,11 +244,28 @@ These must be added at https://github.com/p31labs/P31-local-workspace/settings/s
 - Spoon-aware UI (0–5 scale via `data-spoons` attribute) mandatory for all surfaces.
 
 ## WCAG 2.2 AAA Compliance (Roadmap — Phase 2, CWP-2026-006)
-- **Touch targets:** Target is ≥48×48px (WCAG 2.5.8 Enhanced), but current shipping is 44px (e.g. `phos/src/surfaces/PassportWizard.tsx:118`); full AAA pending.
+- **Touch targets:** ≥48×48px (WCAG 2.5.8 Enhanced) across all apps (bumped from 44px).
 - **Contrast ratios:** Current contrast meets AA in places (≥4.5:1), but `text-white/30` usage on dark backgrounds is being removed; ≥7:1 AAA pending.
 - **Focus indicators:** Global `:focus-visible` outline (2px `var(--phos-primary)`, offset 2px).
-- **Skip navigation:** The skip-link (`<a href="#main-content" class="skip-link">`) is present in the p31ca shell and bonding-soup static HTML but NOT yet in `apps/phos/src/pages/index.astro`; pending.
+- **Skip navigation:** The skip-link (`<a href="#main-content" class="skip-link">`) is present in p31ca, bonding-soup, PHOS, phosphorus31, and willow shells.
 - **Reduced motion:** `@media (prefers-reduced-motion: reduce)` sets all durations to 0ms (`motion.css`). `data-reduced-motion` attribute fallback. Crisis mode (spoons=0) also disables motion.
 - **ARIA labels:** All icon buttons have `aria-label`, all SVGs have `aria-hidden="true"`. Navigation has `role="navigation"` + `aria-label`. Chat messages use `aria-live="polite"`.
 - **Voice input:** `VoiceInputButton` detects `isSupported`, shows disabled state with "Voice input unavailable" when unsupported. Dual engine (local WASM + edge fallback).
 - **Keyboard navigation:** Tab order logical (left→right, top→bottom). Enter/Space triggers buttons. Escape closes magic drawer (handled in `PHOSMagicDrawer`).
+
+## Testing
+
+### Test suites
+- `tests/unit/mcp/mcp-servers.test.ts` — 22 MCP tests (PHOS Forge batch stdin, Oasis/Registry/LOVE streaming). Run: `npx vitest run tests/unit/mcp/`
+- `tests/unit/triper/uig-generate.triper.test.ts` — 22 TRIPER tests for `generateInterface` + `generateInterfaceFromIntent`. Run: `npx vitest run --config vitest.triper.config.ts`
+- `vitest.triper.config.ts` — separate config (TRIPER tests use direct source imports, not workspace package resolution)
+
+### Key patterns
+- **PHOS Forge is a batch-mode server** — reads all stdin until `end` event, not line-by-line. Tests must `spawn`, wait for `close`, then close stdin.
+- **Oasis/Registry/LOVE are streaming** — write JSON-RPC per line, read per line.
+- **`isValidDescription()`** in TRIPER tests validates structure, not widget count (roles with empty `viewData` may produce 0 widgets).
+- **Crisis mode** (`spoons=0`) sets `crisisMode: true` but still produces widgets — the UI layer (CrisisOverlay) handles rendering, not the generator.
+
+### Environment
+- `.env.example` in repo root documents all required env vars (no real secrets).
+- `tests/triper/` has TRIPER cert runner (monorepo edition) and cert fixtures.

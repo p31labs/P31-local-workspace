@@ -1,0 +1,57 @@
+name: TRIPER Cert
+
+on:
+  schedule:
+    - cron: '0 4 * * 1'  # Weekly Monday 04:00 UTC
+  workflow_dispatch:
+    inputs:
+      suite:
+        description: 'Single suite to run (leave empty for all)'
+        required: false
+        default: ''
+
+jobs:
+  triper-cert:
+    name: TRIPER Certification
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci || npm install
+
+      - name: Run TRIPER cert
+        run: |
+          SUITE_ARG=""
+          if [ -n "${{ github.event.inputs.suite }}" ]; then
+            SUITE_ARG="${{ github.event.inputs.suite }}"
+          fi
+          node tests/triper/triper-runner.mjs --cert $SUITE_ARG
+        env:
+          NODE_NO_WARNINGS: '1'
+
+      - name: Upload cert logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: triper-cert-logs-${{ github.run_id }}
+          path: tests/triper/logs/
+          retention-days: 30
+
+      - name: Check cert freshness
+        run: |
+          CERT=$(ls -t tests/triper/logs/cert-*.json 2>/dev/null | head -1)
+          if [ -z "$CERT" ]; then
+            echo "::error::No cert file found"
+            exit 1
+          fi
+          CERT_AGE=$(( ($(date +%s) - $(stat -c %Y "$CERT")) / 86400 ))
+          echo "Cert age: ${CERT_AGE} days"
+          if [ "$CERT_AGE" -gt 7 ]; then
+            echo "::warning::Cert is ${CERT_AGE} days old (max 7)"
+          fi

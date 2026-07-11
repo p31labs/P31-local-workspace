@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useSyncExternalStore, useRef, useCallback } from 'react';
 import { spoonsStore } from '../store/spoons';
+import { densityStore, DENSITY_LEVELS, type DensityLevel } from '../store/density';
 import { identityStore, type IdentityState } from '../store/identity';
 import { SURFACE_NAV, SURFACE_IDS } from '../config/surfaces';
 import { useMediaQuery } from '../hooks/useMediaQuery';
@@ -36,6 +37,7 @@ const UnifiedSpoonAwareStyles = () => (
     }
     [data-reduced-motion="true"] { --phos-motion: 0ms linear !important; }
     [data-dyslexia="true"] { letter-spacing: 0.05em !important; line-height: 1.8 !important; }
+    [data-density] { font-size: calc(16px * var(--phos-font-scale, 1)); }
     .phos-text-scrim { text-shadow: 0px 2px 12px rgba(0,0,0,0.8); }
   `}</style>
 );
@@ -96,6 +98,11 @@ function WorkspaceShell({ identity, isGuest }: { identity: IdentityState; isGues
   const context = useAtmosphere();
   const { spoons: s, currentSurface: cs, setSurface: ss } = context;
   const { isGenerative, intentPrompt } = useRouting();
+  const density: DensityLevel = useSyncExternalStore(
+    (cb) => densityStore.subscribe(cb),
+    () => densityStore.get(),
+    () => 'moderate',
+  );
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedModel, setSelectedModel] = useState<string>(() => localStorage.getItem('phos:llm-model') || 'deepseek-chat');
   const isMobile = useMediaQuery('(max-width: 768px)');
@@ -176,7 +183,7 @@ function WorkspaceShell({ identity, isGuest }: { identity: IdentityState; isGues
   const getSubGreeting = () => s <= 2 ? "Take your time. There's no rush." : s === 3 ? "Everything is quiet." : "Your space is secure.";
 
   return (
-    <div className="fixed inset-0 overflow-hidden font-sans flex bg-[var(--phos-bg)] text-[var(--phos-text)] transition-colors duration-1000 h-screen h-[100dvh]">
+    <div className="fixed inset-0 overflow-hidden font-sans flex bg-[var(--phos-bg)] text-[var(--phos-text)] transition-colors duration-1000 h-screen h-[100dvh]" data-density={density}>
       {showOnboarding && <PHOSOnboardingWizard onComplete={() => {
         setShowOnboarding(false);
         if (messages.length === 0) {
@@ -242,6 +249,25 @@ function WorkspaceShell({ identity, isGuest }: { identity: IdentityState; isGues
                   aria-label={`Set spoons to ${level}`}
                 >
                   {level}
+                </button>
+              ))}
+            </div>
+            <div className="flex gap-1 ml-2" role="radiogroup" aria-label="Information density">
+              {DENSITY_LEVELS.map((level) => (
+                <button
+                  key={level}
+                  onClick={() => densityStore.set(level)}
+                  className={`px-1.5 py-0.5 rounded text-[9px] font-mono transition-all border ${
+                    density === level
+                      ? 'bg-white/10 text-white/90 border-white/20'
+                      : 'bg-transparent text-white/30 border-transparent hover:text-white/50'
+                  }`}
+                  role="radio"
+                  aria-checked={density === level}
+                  aria-label={`Density: ${level}`}
+                  title={`Information density: ${level}`}
+                >
+                  {level[0].toUpperCase()}
                 </button>
               ))}
             </div>

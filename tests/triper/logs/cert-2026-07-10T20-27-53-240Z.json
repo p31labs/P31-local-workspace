@@ -1,0 +1,19 @@
+{
+  "timestamp": "2026-07-11T00:00:00.000Z",
+  "suites": [
+    { "suite": "bonding", "label": "BONDING — Molecular builder", "passed": true },
+    { "suite": "cars", "label": "C.A.R.S. — Root bonding-soup engine", "passed": true },
+    { "suite": "personal", "label": "PERSONAL — SIMPLEX + Passport + K₄ personal", "passed": true },
+    { "suite": "hub", "label": "HUB — p31ca technical hub", "passed": true },
+    { "suite": "mesh", "label": "MESH — K₄ cage + hubs + personal", "passed": true },
+    { "suite": "simplex", "label": "SIMPLEX — v7 agent layer", "passed": true },
+    { "suite": "email", "label": "EMAIL — simplex-email Worker", "passed": true },
+    { "suite": "epcp", "label": "EPCP — Command center", "passed": true },
+    { "suite": "geodesic", "label": "GEODESIC — GeodesicRoom WS", "passed": true },
+    { "suite": "p31ca-user-sentinel", "label": "P31CA USER SENTINEL — E2E swarm", "passed": true },
+    { "suite": "mesh-integrity", "label": "MESH INTEGRITY — URL/PRS/glass", "passed": true },
+    { "suite": "systems-integrity", "label": "SYSTEMS INTEGRITY — Alignment/workflow", "passed": true }
+  ],
+  "overall": true,
+  "mode": "cert"
+}

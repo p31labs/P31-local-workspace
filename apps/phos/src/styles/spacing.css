@@ -15,6 +15,31 @@
 [data-spoons="4"],
 [data-spoons="5"] { --phos-spacing-multiplier: 2; }
 
+[data-density="minimal"] {
+  --phos-spacing-multiplier: 0.75;
+  --phos-font-scale: 0.875;
+  --phos-info-density: 0.6;
+}
+[data-density="moderate"] {
+  --phos-font-scale: 1;
+  --phos-info-density: 1;
+}
+[data-density="detailed"] {
+  --phos-spacing-multiplier: 1.25;
+  --phos-font-scale: 1.05;
+  --phos-info-density: 1.4;
+}
+[data-density="exhaustive"] {
+  --phos-spacing-multiplier: 1.5;
+  --phos-font-scale: 1.1;
+  --phos-info-density: 2;
+}
+
+:root {
+  --phos-font-scale: 1;
+  --phos-info-density: 1;
+}
+
 .phos-p { padding: var(--phos-space-4); }
 .phos-m { margin: var(--phos-space-4); }
 .phos-gap { gap: var(--phos-space-2); }

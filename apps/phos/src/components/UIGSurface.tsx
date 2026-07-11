@@ -1,6 +1,7 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useSyncExternalStore } from 'react';
 import { CrisisOverlay, type InterfaceDescription, type Widget, generateInterfaceFromIntent } from '@p31/interface-generator';
 import { generatePhosInterface, phosRoleFromIdentity, samplePhosViewData } from '../lib/uig';
+import { densityStore, type DensityLevel } from '../store/density';
 
 interface UIGSurfaceProps {
   surfaceId: string;
@@ -199,6 +200,12 @@ export function UIGSurface({ surfaceId, spoons, description, viewData, children,
   const baseDesc: InterfaceDescription =
     description ?? generatePhosInterface(surfaceId, { spoons, role, viewData: data });
 
+  const userDensity: DensityLevel = useSyncExternalStore(
+    (cb) => densityStore.subscribe(cb),
+    () => densityStore.get(),
+    () => 'moderate',
+  );
+
   const [activeDesc, setActiveDesc] = useState<InterfaceDescription>(baseDesc);
   const [prompt, setPrompt] = useState(intentPrompt ?? '');
   const [isGenerating, setIsGenerating] = useState(false);
@@ -211,7 +218,8 @@ export function UIGSurface({ surfaceId, spoons, description, viewData, children,
     setIsGenerating(false);
   }, [prompt, spoons, role]);
 
-  const desc = activeDesc;
+  // User density preference overrides the generated description's density
+  const desc = { ...activeDesc, density: userDensity };
 
   if (desc.crisisMode) return <CrisisOverlay onReady={onReady ?? (() => {})} />;
 
