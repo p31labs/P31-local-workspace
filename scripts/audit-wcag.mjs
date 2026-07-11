@@ -15,7 +15,10 @@ async function audit(url) {
   const browser = await chromium.launch();
   const context = await browser.newContext();
   const page = await context.newPage();
-  await page.goto(url, { waitUntil: 'networkidle' });
+  await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
+  // Allow SPA/analytics connections to settle without requiring full network idle
+  // (live SSE/websocket/analytics keep the socket open, so `networkidle` never fires).
+  await page.waitForTimeout(2500);
 
   const results = await new AxeBuilder({ page })
     .withTags(['wcag2a', 'wcag2aa', 'wcag2aaa'])

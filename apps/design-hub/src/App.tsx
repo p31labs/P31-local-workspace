@@ -25,7 +25,7 @@ function ColorSwatch({ name, value }: { name: string; value: string }) {
         border: '1px solid rgba(255,255,255,0.08)', marginBottom: 8,
       }} />
       <div style={{ fontSize: 12, fontWeight: 500 }}>{name}</div>
-      <div style={{ fontSize: 11, color: '#666', fontFamily: 'JetBrains Mono' }}>{value}</div>
+      <div style={{ fontSize: 11, color: '#94a3b8', fontFamily: 'JetBrains Mono' }}>{value}</div>
     </div>
   );
 }
@@ -57,7 +57,7 @@ function SpoonDemo() {
           }} />
           <div>
             <div style={{ fontSize: 14, fontWeight: 600 }}>Motion: {motionDuration}</div>
-            <div style={{ fontSize: 12, color: '#999' }}>
+            <div style={{ fontSize: 12, color: '#cbd5e1' }}>
               {spoons <= 1 ? 'Motion fully disabled (crisis/low)' : `Transitions at ${motionDuration}`}
             </div>
           </div>
@@ -87,7 +87,7 @@ function TypographyDemo() {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       {samples.map(s => (
         <div key={s.label} style={{ display: 'flex', alignItems: 'baseline', gap: 16 }}>
-          <span style={{ fontSize: 11, color: '#666', width: 60, fontFamily: 'JetBrains Mono' }}>{s.label}</span>
+          <span style={{ fontSize: 11, color: '#94a3b8', width: 60, fontFamily: 'JetBrains Mono' }}>{s.label}</span>
           <span style={s.style}>The quick brown fox</span>
         </div>
       ))}
@@ -110,7 +110,7 @@ function GlassDemo() {
           border: '1px solid rgba(255,255,255,0.08)',
         }}>
           <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 4 }}>{g.label}</div>
-          <div style={{ fontSize: 12, color: '#999' }}>radius: {g.radius}px · blur: {g.blur}px</div>
+          <div style={{ fontSize: 12, color: '#cbd5e1' }}>radius: {g.radius}px · blur: {g.blur}px</div>
         </div>
       ))}
     </div>
@@ -125,7 +125,7 @@ function SpacingDemo() {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       {levels.map((level, i) => (
         <div key={level} style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-          <span style={{ fontSize: 12, color: '#999', width: 80, fontFamily: 'JetBrains Mono' }}>{level}</span>
+          <span style={{ fontSize: 12, color: '#cbd5e1', width: 80, fontFamily: 'JetBrains Mono' }}>{level}</span>
           <div style={{ display: 'flex', gap: densities[i] }}>
             {[1, 2, 3].map(n => (
               <div key={n} style={{
@@ -134,7 +134,7 @@ function SpacingDemo() {
               }} />
             ))}
           </div>
-          <span style={{ fontSize: 11, color: '#666' }}>gap: {densities[i]}px</span>
+          <span style={{ fontSize: 11, color: '#94a3b8' }}>gap: {densities[i]}px</span>
         </div>
       ))}
     </div>
@@ -161,7 +161,7 @@ function WCAGDemo() {
         }}>
           <span style={{ color: '#34D399' }}>{c.icon}</span>
           <span style={{ fontSize: 13, fontWeight: 500 }}>{c.label}</span>
-          <span style={{ fontSize: 12, color: '#999', marginLeft: 'auto' }}>{c.detail}</span>
+          <span style={{ fontSize: 12, color: '#cbd5e1', marginLeft: 'auto' }}>{c.detail}</span>
         </div>
       ))}
     </div>
@@ -195,13 +195,13 @@ export default function App() {
         borderRight: '1px solid rgba(255,255,255,0.06)', flexShrink: 0,
       }}>
         <h1 style={{ fontSize: 16, fontWeight: 700, marginBottom: 4, color: '#00F0FF' }}>P31 Design</h1>
-        <p style={{ fontSize: 11, color: '#666', marginBottom: 24 }}>Design System Hub</p>
+        <p style={{ fontSize: 11, color: '#94a3b8', marginBottom: 24 }}>Design System Hub</p>
         {sections.map(s => (
           <button key={s.id} onClick={() => setActive(s.id)} style={{
             display: 'flex', alignItems: 'center', gap: 8, width: '100%',
             padding: '8px 12px', borderRadius: 8, border: 'none', cursor: 'pointer',
             background: active === s.id ? 'rgba(0,240,255,0.1)' : 'transparent',
-            color: active === s.id ? '#00F0FF' : '#999',
+            color: active === s.id ? '#00F0FF' : '#cbd5e1',
             fontSize: 13, fontWeight: active === s.id ? 500 : 400,
             textAlign: 'left', marginBottom: 2,
           }}>
@@ -213,7 +213,7 @@ export default function App() {
         <h2 style={{ fontSize: 24, fontWeight: 600, marginBottom: 8 }}>
           {sections.find(s => s.id === active)?.label}
         </h2>
-        <p style={{ fontSize: 14, color: '#999', marginBottom: 24 }}>
+        <p style={{ fontSize: 14, color: '#cbd5e1', marginBottom: 24 }}>
           {active === 'colors' && 'P31 color palette — dark-first, high-contrast, neuroinclusive.'}
           {active === 'typography' && 'Type scale from H1 to Code. Inter for UI, JetBrains Mono for code.'}
           {active === 'spoons' && 'Spoon-aware motion scaling. Motion fully disabled at spoons 0–1.'}

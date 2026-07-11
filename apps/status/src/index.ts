@@ -74,7 +74,7 @@ function dashboardHTML(results: CheckResult[]): string {
   const rows = results.map(r => `
     <tr>
       <td style="padding:8px 16px;font-weight:600">${r.name}</td>
-      <td style="padding:8px 16px;color:${r.status === 'up' ? '#00e5ff' : r.status === 'degraded' ? '#fbbf24' : '#ef4444'}">${r.status.toUpperCase()}</td>
+      <td style="padding:8px 16px;color:${r.status === 'up' ? '#00e5ff' : r.status === 'degraded' ? '#fbbf24' : '#fca5a5'}">${r.status.toUpperCase()}</td>
       <td style="padding:8px 16px;text-align:right">${r.latency_ms}ms</td>
       <td style="padding:8px 16px;font-size:12px;color:#999">${r.error || '—'}</td>
     </tr>`).join('');
@@ -91,10 +91,10 @@ function dashboardHTML(results: CheckResult[]): string {
     h1 { font-size:24px; margin-bottom:4px; }
     .summary { color:${upCount === totalCount ? '#00e5ff' : '#fbbf24'}; font-size:14px; margin-bottom:24px; }
     table { width:100%; border-collapse:collapse; background:rgba(255,255,255,0.03); border-radius:12px; overflow:hidden; }
-    th { padding:12px 16px; text-align:left; font-size:12px; text-transform:uppercase; letter-spacing:1px; color:#666; border-bottom:1px solid rgba(255,255,255,0.06); }
+    th { padding:12px 16px; text-align:left; font-size:12px; text-transform:uppercase; letter-spacing:1px; color:#94a3b8; border-bottom:1px solid rgba(255,255,255,0.06); }
     tr:hover { background:rgba(255,255,255,0.02); }
     td { border-bottom:1px solid rgba(255,255,255,0.04); }
-    footer { margin-top:24px; font-size:12px; color:#555; text-align:center; }
+    footer { margin-top:24px; font-size:12px; color:#94a3b8; text-align:center; }
   </style>
 </head>
 <body>

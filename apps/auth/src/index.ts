@@ -22,6 +22,23 @@ app.use('*', cors({
 
 app.get('/health', (c) => c.json({ status: 'ok', service: 'p31-auth', timestamp: Date.now() }));
 
+// Root landing page (valid HTML for accessibility audits: title + lang)
+app.get('/', (c) => c.html(`<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P31 Auth</title>
+</head>
+<body style="background:#0a0e14;color:#e2e8f0;font-family:system-ui,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;margin:0">
+  <div style="text-align:center;max-width:480px;padding:32px">
+    <h1 style="color:#00F0FF;font-size:24px;margin-bottom:8px">P31 Auth</h1>
+    <p style="color:#cbd5e1;font-size:14px;line-height:1.6">JWT authentication service for the P31 Adaptive Exocortex.</p>
+    <p style="color:#94a3b8;font-size:13px;margin-top:16px">POST to <code>/auth/login</code> to obtain a token. GET <code>/health</code> for status.</p>
+  </div>
+</body>
+</html>`));
+
 // ── JWT helpers ────────────────────────────────────────────────────────
 async function signJWT(payload: Record<string, unknown>, secret: string, expiresIn = 86400): Promise<string> {
   const header = { alg: 'HS256', typ: 'JWT' };
