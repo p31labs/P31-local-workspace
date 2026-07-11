@@ -69,7 +69,7 @@ This keeps `git log --oneline` scannable and `git bisect` effective.
 | A (Design System) | A7 | ✅ DONE | `408180f` |
 | A (Design System) | A6 | ✅ DONE | uncommitted |
 | B (UIG Extension) | B2 | ✅ DONE | `408180f` |
-| B (UIG Extension) | B1+B3 | ⏸️ DEFERRED | — |
+| B (UIG Extension) | B1+B3 | ✅ DONE | `fe9d1a2` |
 | C (Generative) | C1-C2 | ✅ DONE | `48edd38` |
 | C (Generative) | C3-C4 | ✅ DONE | `48edd38` |
 | C (Generative) | C5-C6 | ✅ DONE | `48edd38` |

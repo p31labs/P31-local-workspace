@@ -67,9 +67,9 @@ The external landscape validates this direction:
 
 | Task | Deliverable | Owner |
 | :--- | :--- | :--- |
-| B1 | Complete R1 Phase 2: add manifests to `apps/bonding`, `apps/auth`, `apps/status`, `apps/design-hub`; add to workspace | Workspace |
-| B2 | Resolve root `packages/*` stubs (delete or implement) | Workspace |
-| B3 | Replace `file:` deps with `workspace:*` in all apps | Workspace |
+| B1 | Complete R1 Phase 2: add manifests to `apps/bonding`, `apps/auth`, `apps/status`, `apps/design-hub`; add to workspace | Workspace | ✅ `fe9d1a2` |
+| B2 | Resolve root `packages/*` stubs (delete or implement) | Workspace | ✅ `948981a` |
+| B3 | Replace `file:` deps with `workspace:*` in all apps | Workspace | ✅ `fe9d1a2` |
 | B4 | Extend UIG to `apps/bonding` (already partial) and verify full coverage | Bonding |
 | B5 | Extend UIG to `apps/auth` (if real) | Auth |
 | B6 | Document the `InterfaceDescription` schema and UIG renderer | Docs |
