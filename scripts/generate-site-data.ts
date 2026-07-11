@@ -8,7 +8,7 @@ const ROOT = join(__filename, "..", "..");
 
 function countSurfaces(): number {
   try {
-    const content = readFileSync(join(ROOT, "phos/src/surfaces/SurfaceContent.tsx"), "utf-8");
+    const content = readFileSync(join(ROOT, "apps/phos/src/components/SurfaceContent.tsx"), "utf-8");
     const matches = content.match(/case\s+'[A-Z_]+'/g);
     return matches ? matches.length : 0;
   } catch { return 0; }

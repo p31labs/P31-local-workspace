@@ -261,7 +261,7 @@ export class BrosPhase implements PHOSPhase {
       // Push K₄ entry for trust dimension
       const trustScore = this.personas.get(target)?.features?.length ? 0.5 : 0.3;
       try {
-        const { K4Bridge } = await import('../../../../../phos/src/lib/K4Bridge');
+        const { K4Bridge } = await import('../../../../../apps/phos/src/lib/K4Bridge');
         K4Bridge.pushEntry({
           level: 0,
           feature: 'trust',

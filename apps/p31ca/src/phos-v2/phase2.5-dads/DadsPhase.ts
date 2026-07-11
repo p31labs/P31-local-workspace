@@ -76,7 +76,7 @@ export class DadsPhase implements PHOSPhase {
 
     // Push K₄ entry for tasks dimension
     try {
-      const { K4Bridge } = await import('../../../../../phos/src/lib/K4Bridge');
+      const { K4Bridge } = await import('../../../../../apps/phos/src/lib/K4Bridge');
       K4Bridge.pushEntry({
         level: 1,
         feature: 'tasks',

@@ -153,7 +153,7 @@ export class TaskDispatcher {
 
   private async getK4TrustScore(actorId: string): Promise<number | null> {
     try {
-      const { K4Bridge } = await import('../../../../../phos/src/lib/K4Bridge');
+      const { K4Bridge } = await import('../../../../../apps/phos/src/lib/K4Bridge');
       const features = await K4Bridge.fetchFeatures();
       if (features?.trust) {
         return features.trust.L0 || null;
