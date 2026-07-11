@@ -12,7 +12,7 @@ const app = new Hono<{ Bindings: Env }>();
 
 app.use('*', cors({
   origin: (origin, c) => {
-    const allowed = (c.env.ALLOWED_ORIGINS || '').split(',').map(s => s.trim());
+    const allowed = (c.env.ALLOWED_ORIGINS || '').split(',').map((s: string) => s.trim());
     return allowed.includes(origin) ? origin : allowed[0] || '*';
   },
   allowMethods: ['GET', 'POST', 'OPTIONS'],
