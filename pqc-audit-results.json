@@ -1,7 +1,99 @@
 {
   "vulnerabilities": [
     {
-      "file": "ecosystem\\analytics\\legal-compliance-dashboard.js",
+      "file": "/home/p31/P31-local-workspace/apps/p31ca/workers/passkey/src/index.ts",
+      "line": 185,
+      "vulnerability": "shor_vulnerable",
+      "pattern": "alg\\s*:\\s*['\"]RS\\d+['\"]",
+      "description": "Vulnerable to Shor's Algorithm - breaks RSA, ECDSA, DSA, and Diffie-Hellman",
+      "replacement": "FIPS 203 ML-KEM (Key Encapsulation), FIPS 204 ML-DSA (Digital Signatures)",
+      "risk_level": "CRITICAL",
+      "context": [
+        {
+          "line": 182,
+          "content": "    const e = coseKey.get(-2) as Uint8Array;",
+          "isVulnerable": false
+        },
+        {
+          "line": 183,
+          "content": "    if (!n || !e) throw new Error('RS256 key missing n or e');",
+          "isVulnerable": false
+        },
+        {
+          "line": 184,
+          "content": "    const jwk: JsonWebKey = {",
+          "isVulnerable": false
+        },
+        {
+          "line": 185,
+          "content": "      kty: 'RSA', alg: 'RS256',",
+          "isVulnerable": true
+        },
+        {
+          "line": 186,
+          "content": "      n:   b64url(n),",
+          "isVulnerable": false
+        },
+        {
+          "line": 187,
+          "content": "      e:   b64url(e),",
+          "isVulnerable": false
+        },
+        {
+          "line": 188,
+          "content": "      ext: true,",
+          "isVulnerable": false
+        }
+      ]
+    },
+    {
+      "file": "/home/p31/P31-local-workspace/apps/p31ca/workers/passkey/src/index.ts",
+      "line": 191,
+      "vulnerability": "shor_vulnerable",
+      "pattern": "alg\\s*:\\s*['\"]RS\\d+['\"]",
+      "description": "Vulnerable to Shor's Algorithm - breaks RSA, ECDSA, DSA, and Diffie-Hellman",
+      "replacement": "FIPS 203 ML-KEM (Key Encapsulation), FIPS 204 ML-DSA (Digital Signatures)",
+      "risk_level": "CRITICAL",
+      "context": [
+        {
+          "line": 188,
+          "content": "      ext: true,",
+          "isVulnerable": false
+        },
+        {
+          "line": 189,
+          "content": "    };",
+          "isVulnerable": false
+        },
+        {
+          "line": 190,
+          "content": "    await crypto.subtle.importKey('jwk', jwk, { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' }, false, ['verify']);",
+          "isVulnerable": false
+        },
+        {
+          "line": 191,
+          "content": "    return { alg: 'RS256', jwk };",
+          "isVulnerable": true
+        },
+        {
+          "line": 192,
+          "content": "  }",
+          "isVulnerable": false
+        },
+        {
+          "line": 193,
+          "content": "",
+          "isVulnerable": false
+        },
+        {
+          "line": 194,
+          "content": "  throw new Error(`Unsupported COSE algorithm: ${alg}`);",
+          "isVulnerable": false
+        }
+      ]
+    },
+    {
+      "file": "/home/p31/P31-local-workspace/ecosystem/analytics/legal-compliance-dashboard.js",
       "line": 797,
       "vulnerability": "grover_vulnerable",
       "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
@@ -11,43 +103,43 @@
       "context": [
         {
           "line": 794,
-          "content": "     */\r",
+          "content": "     */",
           "isVulnerable": false
         },
         {
           "line": 795,
-          "content": "    calculateSHA256(data) {\r",
+          "content": "    calculateSHA256(data) {",
           "isVulnerable": false
         },
         {
           "line": 796,
-          "content": "        const crypto = require('crypto');\r",
+          "content": "        const crypto = require('crypto');",
           "isVulnerable": false
         },
         {
           "line": 797,
-          "content": "        return crypto.createHash('sha256').update(JSON.stringify(data)).digest('hex');\r",
+          "content": "        return crypto.createHash('sha256').update(JSON.stringify(data)).digest('hex');",
           "isVulnerable": true
         },
         {
           "line": 798,
-          "content": "    }\r",
+          "content": "    }",
           "isVulnerable": false
         },
         {
           "line": 799,
-          "content": "\r",
+          "content": "",
           "isVulnerable": false
         },
         {
           "line": 800,
-          "content": "    /**\r",
+          "content": "    /**",
           "isVulnerable": false
         }
       ]
     },
     {
-      "file": "ecosystem\\discord\\oracle-bot.js",
+      "file": "/home/p31/P31-local-workspace/ecosystem/discord/oracle-bot.js",
       "line": 1003,
       "vulnerability": "grover_vulnerable",
       "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
@@ -57,43 +149,43 @@
       "context": [
         {
           "line": 1000,
-          "content": "    }\r",
+          "content": "    }",
           "isVulnerable": false
         },
         {
           "line": 1001,
-          "content": "\r",
+          "content": "",
           "isVulnerable": false
         },
         {
           "line": 1002,
-          "content": "    generateDecryptedCID(validation) {\r",
+          "content": "    generateDecryptedCID(validation) {",
           "isVulnerable": false
         },
         {
           "line": 1003,
-          "content": "        const hash = crypto.createHash('sha256');\r",
+          "content": "        const hash = crypto.createHash('sha256');",
           "isVulnerable": true
         },
         {
           "line": 1004,
-          "content": "        hash.update(JSON.stringify({\r",
+          "content": "        hash.update(JSON.stringify({",
           "isVulnerable": false
         },
         {
           "line": 1005,
-          "content": "            validation: validation.metrics,\r",
+          "content": "            validation: validation.metrics,",
           "isVulnerable": false
         },
         {
           "line": 1006,
-          "content": "            timestamp: new Date().toISOString(),\r",
+          "content": "            timestamp: new Date().toISOString(),",
           "isVulnerable": false
         }
       ]
     },
     {
-      "file": "ecosystem\\github-actions\\scripts\\decrypt-ipfs-payload.js",
+      "file": "/home/p31/P31-local-workspace/ecosystem/github-actions/decrypt-ipfs-payload.js",
       "line": 80,
       "vulnerability": "grover_vulnerable",
       "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
@@ -103,43 +195,43 @@
       "context": [
         {
           "line": 77,
-          "content": "            tolerance: 120\r",
+          "content": "            tolerance: 120",
           "isVulnerable": false
         },
         {
           "line": 78,
-          "content": "        };\r",
+          "content": "        };",
           "isVulnerable": false
         },
         {
           "line": 79,
-          "content": "        \r",
+          "content": "        ",
           "isVulnerable": false
         },
         {
           "line": 80,
-          "content": "        const syncHash = crypto.createHash('sha256');\r",
+          "content": "        const syncHash = crypto.createHash('sha256');",
           "isVulnerable": true
         },
         {
           "line": 81,
-          "content": "        syncHash.update(JSON.stringify(syncData));\r",
+          "content": "        syncHash.update(JSON.stringify(syncData));",
           "isVulnerable": false
         },
         {
           "line": 82,
-          "content": "        const syncDigest = syncHash.digest('hex');\r",
+          "content": "        const syncDigest = syncHash.digest('hex');",
           "isVulnerable": false
         },
         {
           "line": 83,
-          "content": "        \r",
+          "content": "        ",
           "isVulnerable": false
         }
       ]
     },
     {
-      "file": "ecosystem\\github-actions\\scripts\\decrypt-ipfs-payload.js",
+      "file": "/home/p31/P31-local-workspace/ecosystem/github-actions/decrypt-ipfs-payload.js",
       "line": 85,
       "vulnerability": "grover_vulnerable",
       "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
@@ -149,43 +241,43 @@
       "context": [
         {
           "line": 82,
-          "content": "        const syncDigest = syncHash.digest('hex');\r",
+          "content": "        const syncDigest = syncHash.digest('hex');",
           "isVulnerable": false
         },
         {
           "line": 83,
-          "content": "        \r",
+          "content": "        ",
           "isVulnerable": false
         },
         {
           "line": 84,
-          "content": "        // Use the hash to create the encryption key\r",
+          "content": "        // Use the hash to create the encryption key",
           "isVulnerable": false
         },
         {
           "line": 85,
-          "content": "        const key = crypto.createHash('sha256').update(syncDigest).digest();\r",
+          "content": "        const key = crypto.createHash('sha256').update(syncDigest).digest();",
           "isVulnerable": true
         },
         {
           "line": 86,
-          "content": "        \r",
+          "content": "        ",
           "isVulnerable": false
         },
         {
           "line": 87,
-          "content": "        return {\r",
+          "content": "        return {",
           "isVulnerable": false
         },
         {
           "line": 88,
-          "content": "            key: key,\r",
+          "content": "            key: key,",
           "isVulnerable": false
         }
       ]
     },
     {
-      "file": "ecosystem\\github-actions\\scripts\\decrypt-ipfs-payload.js",
+      "file": "/home/p31/P31-local-workspace/ecosystem/github-actions/decrypt-ipfs-payload.js",
       "line": 268,
       "vulnerability": "grover_vulnerable",
       "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
@@ -195,43 +287,43 @@
       "context": [
         {
           "line": 265,
-          "content": "            timestamp: new Date().toISOString()\r",
+          "content": "            timestamp: new Date().toISOString()",
           "isVulnerable": false
         },
         {
           "line": 266,
-          "content": "        };\r",
+          "content": "        };",
           "isVulnerable": false
         },
         {
           "line": 267,
-          "content": "        \r",
+          "content": "        ",
           "isVulnerable": false
         },
         {
           "line": 268,
-          "content": "        const signature = crypto.createHash('sha256').update(JSON.stringify(signatureData)).digest('hex');\r",
+          "content": "        const signature = crypto.createHash('sha256').update(JSON.stringify(signatureData)).digest('hex');",
           "isVulnerable": true
         },
         {
           "line": 269,
-          "content": "        \r",
+          "content": "        ",
           "isVulnerable": false
         },
         {
           "line": 270,
-          "content": "        return {\r",
+          "content": "        return {",
           "isVulnerable": false
         },
         {
           "line": 271,
-          "content": "            signature: signature,\r",
+          "content": "            signature: signature,",
           "isVulnerable": false
         }
       ]
     },
     {
-      "file": "ecosystem\\github-actions\\scripts\\log-larmor-event.js",
+      "file": "/home/p31/P31-local-workspace/ecosystem/github-actions/log-larmor-event.js",
       "line": 212,
       "vulnerability": "grover_vulnerable",
       "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
@@ -241,43 +333,43 @@
       "context": [
         {
           "line": 209,
-          "content": "     */\r",
+          "content": "     */",
           "isVulnerable": false
         },
         {
           "line": 210,
-          "content": "    generateIntegrityHash(syncTimestamps, decryptedCID) {\r",
+          "content": "    generateIntegrityHash(syncTimestamps, decryptedCID) {",
           "isVulnerable": false
         },
         {
           "line": 211,
-          "content": "        const crypto = require('crypto');\r",
+          "content": "        const crypto = require('crypto');",
           "isVulnerable": false
         },
         {
           "line": 212,
-          "content": "        const hash = crypto.createHash('sha256');\r",
+          "content": "        const hash = crypto.createHash('sha256');",
           "isVulnerable": true
         },
         {
           "line": 213,
-          "content": "        hash.update(JSON.stringify({\r",
+          "content": "        hash.update(JSON.stringify({",
           "isVulnerable": false
         },
         {
           "line": 214,
-          "content": "            timestamps: syncTimestamps,\r",
+          "content": "            timestamps: syncTimestamps,",
           "isVulnerable": false
         },
         {
           "line": 215,
-          "content": "            cid: decryptedCID,\r",
+          "content": "            cid: decryptedCID,",
           "isVulnerable": false
         }
       ]
     },
     {
-      "file": "ecosystem\\github-actions\\scripts\\log-larmor-event.js",
+      "file": "/home/p31/P31-local-workspace/ecosystem/github-actions/log-larmor-event.js",
       "line": 236,
       "vulnerability": "grover_vulnerable",
       "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
@@ -287,43 +379,43 @@
       "context": [
         {
           "line": 233,
-          "content": "            precision: eventLog.user.precision\r",
+          "content": "            precision: eventLog.user.precision",
           "isVulnerable": false
         },
         {
           "line": 234,
-          "content": "        };\r",
+          "content": "        };",
           "isVulnerable": false
         },
         {
           "line": 235,
-          "content": "        \r",
+          "content": "        ",
           "isVulnerable": false
         },
         {
           "line": 236,
-          "content": "        const hash = crypto.createHash('sha256');\r",
+          "content": "        const hash = crypto.createHash('sha256');",
           "isVulnerable": true
         },
         {
           "line": 237,
-          "content": "        hash.update(JSON.stringify(signatureData));\r",
+          "content": "        hash.update(JSON.stringify(signatureData));",
           "isVulnerable": false
         },
         {
           "line": 238,
-          "content": "        \r",
+          "content": "        ",
           "isVulnerable": false
         },
         {
           "line": 239,
-          "content": "        return {\r",
+          "content": "        return {",
           "isVulnerable": false
         }
       ]
     },
     {
-      "file": "ecosystem\\github-actions\\scripts\\log-larmor-event.js",
+      "file": "/home/p31/P31-local-workspace/ecosystem/github-actions/log-larmor-event.js",
       "line": 258,
       "vulnerability": "grover_vulnerable",
       "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
@@ -333,43 +425,43 @@
       "context": [
         {
           "line": 255,
-          "content": "            compliance: auditEntry.compliance\r",
+          "content": "            compliance: auditEntry.compliance",
           "isVulnerable": false
         },
         {
           "line": 256,
-          "content": "        };\r",
+          "content": "        };",
           "isVulnerable": false
         },
         {
           "line": 257,
-          "content": "        \r",
+          "content": "        ",
           "isVulnerable": false
         },
         {
           "line": 258,
-          "content": "        const hash = crypto.createHash('sha256');\r",
+          "content": "        const hash = crypto.createHash('sha256');",
           "isVulnerable": true
         },
         {
           "line": 259,
-          "content": "        hash.update(JSON.stringify(signatureData));\r",
+          "content": "        hash.update(JSON.stringify(signatureData));",
           "isVulnerable": false
         },
         {
           "line": 260,
-          "content": "        \r",
+          "content": "        ",
           "isVulnerable": false
         },
         {
           "line": 261,
-          "content": "        return {\r",
+          "content": "        return {",
           "isVulnerable": false
         }
       ]
     },
     {
-      "file": "ecosystem\\github-actions\\scripts\\log-multisig-event.js",
+      "file": "/home/p31/P31-local-workspace/ecosystem/github-actions/log-multisig-event.js",
       "line": 241,
       "vulnerability": "grover_vulnerable",
       "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
@@ -379,43 +471,43 @@
       "context": [
         {
           "line": 238,
-          "content": "        \r",
+          "content": "        ",
           "isVulnerable": false
         },
         {
           "line": 239,
-          "content": "        // Generate a simple hash signature\r",
+          "content": "        // Generate a simple hash signature",
           "isVulnerable": false
         },
         {
           "line": 240,
-          "content": "        const crypto = require('crypto');\r",
+          "content": "        const crypto = require('crypto');",
           "isVulnerable": false
         },
         {
           "line": 241,
-          "content": "        const hash = crypto.createHash('sha256');\r",
+          "content": "        const hash = crypto.createHash('sha256');",
           "isVulnerable": true
         },
         {
           "line": 242,
-          "content": "        hash.update(JSON.stringify(signatureData));\r",
+          "content": "        hash.update(JSON.stringify(signatureData));",
           "isVulnerable": false
         },
         {
           "line": 243,
-          "content": "        \r",
+          "content": "        ",
           "isVulnerable": false
         },
         {
           "line": 244,
-          "content": "        return {\r",
+          "content": "        return {",
           "isVulnerable": false
         }
       ]
     },
     {
-      "file": "ecosystem\\github-actions\\scripts\\publish-decrypted-content.js",
+      "file": "/home/p31/P31-local-workspace/ecosystem/github-actions/publish-decrypted-content.js",
       "line": 107,
       "vulnerability": "grover_vulnerable",
       "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
@@ -425,43 +517,43 @@
       "context": [
         {
           "line": 104,
-          "content": "            timestamp: new Date().toISOString()\r",
+          "content": "            timestamp: new Date().toISOString()",
           "isVulnerable": false
         },
         {
           "line": 105,
-          "content": "        };\r",
+          "content": "        };",
           "isVulnerable": false
         },
         {
           "line": 106,
-          "content": "        \r",
+          "content": "        ",
           "isVulnerable": false
         },
         {
           "line": 107,
-          "content": "        const hash = crypto.createHash('sha256');\r",
+          "content": "        const hash = crypto.createHash('sha256');",
           "isVulnerable": true
         },
         {
           "line": 108,
-          "content": "        hash.update(JSON.stringify(integrityData));\r",
+          "content": "        hash.update(JSON.stringify(integrityData));",
           "isVulnerable": false
         },
         {
           "line": 109,
-          "content": "        \r",
+          "content": "        ",
           "isVulnerable": false
         },
         {
           "line": 110,
-          "content": "        return {\r",
+          "content": "        return {",
           "isVulnerable": false
         }
       ]
     },
     {
-      "file": "ecosystem\\github-actions\\scripts\\publish-decrypted-content.js",
+      "file": "/home/p31/P31-local-workspace/ecosystem/github-actions/publish-decrypted-content.js",
       "line": 155,
       "vulnerability": "grover_vulnerable",
       "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
@@ -471,43 +563,43 @@
       "context": [
         {
           "line": 152,
-          "content": "    async publishToIPFS(contentPackage) {\r",
+          "content": "    async publishToIPFS(contentPackage) {",
           "isVulnerable": false
         },
         {
           "line": 153,
-          "content": "        try {\r",
+          "content": "        try {",
           "isVulnerable": false
         },
         {
           "line": 154,
-          "content": "            // Simulate IPFS publishing (in real implementation, would use ipfs-http-client)\r",
+          "content": "            // Simulate IPFS publishing (in real implementation, would use ipfs-http-client)",
           "isVulnerable": false
         },
         {
           "line": 155,
-          "content": "            const contentHash = crypto.createHash('sha256');\r",
+          "content": "            const contentHash = crypto.createHash('sha256');",
           "isVulnerable": true
         },
         {
           "line": 156,
-          "content": "            contentHash.update(JSON.stringify(contentPackage));\r",
+          "content": "            contentHash.update(JSON.stringify(contentPackage));",
           "isVulnerable": false
         },
         {
           "line": 157,
-          "content": "            const simulatedCID = `bafybeih${contentHash.digest('hex').slice(0, 52)}`;\r",
+          "content": "            const simulatedCID = `bafybeih${contentHash.digest('hex').slice(0, 52)}`;",
           "isVulnerable": false
         },
         {
           "line": 158,
-          "content": "            \r",
+          "content": "            ",
           "isVulnerable": false
         }
       ]
     },
     {
-      "file": "ecosystem\\github-actions\\scripts\\publish-decrypted-content.js",
+      "file": "/home/p31/P31-local-workspace/ecosystem/github-actions/publish-decrypted-content.js",
       "line": 210,
       "vulnerability": "grover_vulnerable",
       "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
@@ -517,43 +609,503 @@
       "context": [
         {
           "line": 207,
-          "content": "            type: 'p31_decrypted_content'\r",
+          "content": "            type: 'p31_decrypted_content'",
           "isVulnerable": false
         },
         {
           "line": 208,
-          "content": "        };\r",
+          "content": "        };",
           "isVulnerable": false
         },
         {
           "line": 209,
-          "content": "        \r",
+          "content": "        ",
           "isVulnerable": false
         },
         {
           "line": 210,
-          "content": "        const hash = crypto.createHash('sha256');\r",
+          "content": "        const hash = crypto.createHash('sha256');",
           "isVulnerable": true
         },
         {
           "line": 211,
-          "content": "        hash.update(JSON.stringify(signatureData));\r",
+          "content": "        hash.update(JSON.stringify(signatureData));",
           "isVulnerable": false
         },
         {
           "line": 212,
-          "content": "        \r",
+          "content": "        ",
           "isVulnerable": false
         },
         {
           "line": 213,
-          "content": "        return {\r",
+          "content": "        return {",
           "isVulnerable": false
         }
       ]
     },
     {
-      "file": "ecosystem\\ipfs\\ipns-manager.js",
+      "file": "/home/p31/P31-local-workspace/ecosystem/github-actions/scripts/decrypt-ipfs-payload.js",
+      "line": 80,
+      "vulnerability": "grover_vulnerable",
+      "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
+      "description": "Vulnerable to Grover's Algorithm - reduces effective security by half",
+      "replacement": "Double key sizes (AES-256), SPHINCS+ (Hash-based signatures), FIPS 205 SLH-DSA",
+      "risk_level": "HIGH",
+      "context": [
+        {
+          "line": 77,
+          "content": "            tolerance: 120",
+          "isVulnerable": false
+        },
+        {
+          "line": 78,
+          "content": "        };",
+          "isVulnerable": false
+        },
+        {
+          "line": 79,
+          "content": "        ",
+          "isVulnerable": false
+        },
+        {
+          "line": 80,
+          "content": "        const syncHash = crypto.createHash('sha256');",
+          "isVulnerable": true
+        },
+        {
+          "line": 81,
+          "content": "        syncHash.update(JSON.stringify(syncData));",
+          "isVulnerable": false
+        },
+        {
+          "line": 82,
+          "content": "        const syncDigest = syncHash.digest('hex');",
+          "isVulnerable": false
+        },
+        {
+          "line": 83,
+          "content": "        ",
+          "isVulnerable": false
+        }
+      ]
+    },
+    {
+      "file": "/home/p31/P31-local-workspace/ecosystem/github-actions/scripts/decrypt-ipfs-payload.js",
+      "line": 85,
+      "vulnerability": "grover_vulnerable",
+      "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
+      "description": "Vulnerable to Grover's Algorithm - reduces effective security by half",
+      "replacement": "Double key sizes (AES-256), SPHINCS+ (Hash-based signatures), FIPS 205 SLH-DSA",
+      "risk_level": "HIGH",
+      "context": [
+        {
+          "line": 82,
+          "content": "        const syncDigest = syncHash.digest('hex');",
+          "isVulnerable": false
+        },
+        {
+          "line": 83,
+          "content": "        ",
+          "isVulnerable": false
+        },
+        {
+          "line": 84,
+          "content": "        // Use the hash to create the encryption key",
+          "isVulnerable": false
+        },
+        {
+          "line": 85,
+          "content": "        const key = crypto.createHash('sha256').update(syncDigest).digest();",
+          "isVulnerable": true
+        },
+        {
+          "line": 86,
+          "content": "        ",
+          "isVulnerable": false
+        },
+        {
+          "line": 87,
+          "content": "        return {",
+          "isVulnerable": false
+        },
+        {
+          "line": 88,
+          "content": "            key: key,",
+          "isVulnerable": false
+        }
+      ]
+    },
+    {
+      "file": "/home/p31/P31-local-workspace/ecosystem/github-actions/scripts/decrypt-ipfs-payload.js",
+      "line": 268,
+      "vulnerability": "grover_vulnerable",
+      "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
+      "description": "Vulnerable to Grover's Algorithm - reduces effective security by half",
+      "replacement": "Double key sizes (AES-256), SPHINCS+ (Hash-based signatures), FIPS 205 SLH-DSA",
+      "risk_level": "HIGH",
+      "context": [
+        {
+          "line": 265,
+          "content": "            timestamp: new Date().toISOString()",
+          "isVulnerable": false
+        },
+        {
+          "line": 266,
+          "content": "        };",
+          "isVulnerable": false
+        },
+        {
+          "line": 267,
+          "content": "        ",
+          "isVulnerable": false
+        },
+        {
+          "line": 268,
+          "content": "        const signature = crypto.createHash('sha256').update(JSON.stringify(signatureData)).digest('hex');",
+          "isVulnerable": true
+        },
+        {
+          "line": 269,
+          "content": "        ",
+          "isVulnerable": false
+        },
+        {
+          "line": 270,
+          "content": "        return {",
+          "isVulnerable": false
+        },
+        {
+          "line": 271,
+          "content": "            signature: signature,",
+          "isVulnerable": false
+        }
+      ]
+    },
+    {
+      "file": "/home/p31/P31-local-workspace/ecosystem/github-actions/scripts/log-larmor-event.js",
+      "line": 212,
+      "vulnerability": "grover_vulnerable",
+      "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
+      "description": "Vulnerable to Grover's Algorithm - reduces effective security by half",
+      "replacement": "Double key sizes (AES-256), SPHINCS+ (Hash-based signatures), FIPS 205 SLH-DSA",
+      "risk_level": "HIGH",
+      "context": [
+        {
+          "line": 209,
+          "content": "     */",
+          "isVulnerable": false
+        },
+        {
+          "line": 210,
+          "content": "    generateIntegrityHash(syncTimestamps, decryptedCID) {",
+          "isVulnerable": false
+        },
+        {
+          "line": 211,
+          "content": "        const crypto = require('crypto');",
+          "isVulnerable": false
+        },
+        {
+          "line": 212,
+          "content": "        const hash = crypto.createHash('sha256');",
+          "isVulnerable": true
+        },
+        {
+          "line": 213,
+          "content": "        hash.update(JSON.stringify({",
+          "isVulnerable": false
+        },
+        {
+          "line": 214,
+          "content": "            timestamps: syncTimestamps,",
+          "isVulnerable": false
+        },
+        {
+          "line": 215,
+          "content": "            cid: decryptedCID,",
+          "isVulnerable": false
+        }
+      ]
+    },
+    {
+      "file": "/home/p31/P31-local-workspace/ecosystem/github-actions/scripts/log-larmor-event.js",
+      "line": 236,
+      "vulnerability": "grover_vulnerable",
+      "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
+      "description": "Vulnerable to Grover's Algorithm - reduces effective security by half",
+      "replacement": "Double key sizes (AES-256), SPHINCS+ (Hash-based signatures), FIPS 205 SLH-DSA",
+      "risk_level": "HIGH",
+      "context": [
+        {
+          "line": 233,
+          "content": "            precision: eventLog.user.precision",
+          "isVulnerable": false
+        },
+        {
+          "line": 234,
+          "content": "        };",
+          "isVulnerable": false
+        },
+        {
+          "line": 235,
+          "content": "        ",
+          "isVulnerable": false
+        },
+        {
+          "line": 236,
+          "content": "        const hash = crypto.createHash('sha256');",
+          "isVulnerable": true
+        },
+        {
+          "line": 237,
+          "content": "        hash.update(JSON.stringify(signatureData));",
+          "isVulnerable": false
+        },
+        {
+          "line": 238,
+          "content": "        ",
+          "isVulnerable": false
+        },
+        {
+          "line": 239,
+          "content": "        return {",
+          "isVulnerable": false
+        }
+      ]
+    },
+    {
+      "file": "/home/p31/P31-local-workspace/ecosystem/github-actions/scripts/log-larmor-event.js",
+      "line": 258,
+      "vulnerability": "grover_vulnerable",
+      "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
+      "description": "Vulnerable to Grover's Algorithm - reduces effective security by half",
+      "replacement": "Double key sizes (AES-256), SPHINCS+ (Hash-based signatures), FIPS 205 SLH-DSA",
+      "risk_level": "HIGH",
+      "context": [
+        {
+          "line": 255,
+          "content": "            compliance: auditEntry.compliance",
+          "isVulnerable": false
+        },
+        {
+          "line": 256,
+          "content": "        };",
+          "isVulnerable": false
+        },
+        {
+          "line": 257,
+          "content": "        ",
+          "isVulnerable": false
+        },
+        {
+          "line": 258,
+          "content": "        const hash = crypto.createHash('sha256');",
+          "isVulnerable": true
+        },
+        {
+          "line": 259,
+          "content": "        hash.update(JSON.stringify(signatureData));",
+          "isVulnerable": false
+        },
+        {
+          "line": 260,
+          "content": "        ",
+          "isVulnerable": false
+        },
+        {
+          "line": 261,
+          "content": "        return {",
+          "isVulnerable": false
+        }
+      ]
+    },
+    {
+      "file": "/home/p31/P31-local-workspace/ecosystem/github-actions/scripts/log-multisig-event.js",
+      "line": 241,
+      "vulnerability": "grover_vulnerable",
+      "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
+      "description": "Vulnerable to Grover's Algorithm - reduces effective security by half",
+      "replacement": "Double key sizes (AES-256), SPHINCS+ (Hash-based signatures), FIPS 205 SLH-DSA",
+      "risk_level": "HIGH",
+      "context": [
+        {
+          "line": 238,
+          "content": "        ",
+          "isVulnerable": false
+        },
+        {
+          "line": 239,
+          "content": "        // Generate a simple hash signature",
+          "isVulnerable": false
+        },
+        {
+          "line": 240,
+          "content": "        const crypto = require('crypto');",
+          "isVulnerable": false
+        },
+        {
+          "line": 241,
+          "content": "        const hash = crypto.createHash('sha256');",
+          "isVulnerable": true
+        },
+        {
+          "line": 242,
+          "content": "        hash.update(JSON.stringify(signatureData));",
+          "isVulnerable": false
+        },
+        {
+          "line": 243,
+          "content": "        ",
+          "isVulnerable": false
+        },
+        {
+          "line": 244,
+          "content": "        return {",
+          "isVulnerable": false
+        }
+      ]
+    },
+    {
+      "file": "/home/p31/P31-local-workspace/ecosystem/github-actions/scripts/publish-decrypted-content.js",
+      "line": 107,
+      "vulnerability": "grover_vulnerable",
+      "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
+      "description": "Vulnerable to Grover's Algorithm - reduces effective security by half",
+      "replacement": "Double key sizes (AES-256), SPHINCS+ (Hash-based signatures), FIPS 205 SLH-DSA",
+      "risk_level": "HIGH",
+      "context": [
+        {
+          "line": 104,
+          "content": "            timestamp: new Date().toISOString()",
+          "isVulnerable": false
+        },
+        {
+          "line": 105,
+          "content": "        };",
+          "isVulnerable": false
+        },
+        {
+          "line": 106,
+          "content": "        ",
+          "isVulnerable": false
+        },
+        {
+          "line": 107,
+          "content": "        const hash = crypto.createHash('sha256');",
+          "isVulnerable": true
+        },
+        {
+          "line": 108,
+          "content": "        hash.update(JSON.stringify(integrityData));",
+          "isVulnerable": false
+        },
+        {
+          "line": 109,
+          "content": "        ",
+          "isVulnerable": false
+        },
+        {
+          "line": 110,
+          "content": "        return {",
+          "isVulnerable": false
+        }
+      ]
+    },
+    {
+      "file": "/home/p31/P31-local-workspace/ecosystem/github-actions/scripts/publish-decrypted-content.js",
+      "line": 155,
+      "vulnerability": "grover_vulnerable",
+      "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
+      "description": "Vulnerable to Grover's Algorithm - reduces effective security by half",
+      "replacement": "Double key sizes (AES-256), SPHINCS+ (Hash-based signatures), FIPS 205 SLH-DSA",
+      "risk_level": "HIGH",
+      "context": [
+        {
+          "line": 152,
+          "content": "    async publishToIPFS(contentPackage) {",
+          "isVulnerable": false
+        },
+        {
+          "line": 153,
+          "content": "        try {",
+          "isVulnerable": false
+        },
+        {
+          "line": 154,
+          "content": "            // Simulate IPFS publishing (in real implementation, would use ipfs-http-client)",
+          "isVulnerable": false
+        },
+        {
+          "line": 155,
+          "content": "            const contentHash = crypto.createHash('sha256');",
+          "isVulnerable": true
+        },
+        {
+          "line": 156,
+          "content": "            contentHash.update(JSON.stringify(contentPackage));",
+          "isVulnerable": false
+        },
+        {
+          "line": 157,
+          "content": "            const simulatedCID = `bafybeih${contentHash.digest('hex').slice(0, 52)}`;",
+          "isVulnerable": false
+        },
+        {
+          "line": 158,
+          "content": "            ",
+          "isVulnerable": false
+        }
+      ]
+    },
+    {
+      "file": "/home/p31/P31-local-workspace/ecosystem/github-actions/scripts/publish-decrypted-content.js",
+      "line": 210,
+      "vulnerability": "grover_vulnerable",
+      "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
+      "description": "Vulnerable to Grover's Algorithm - reduces effective security by half",
+      "replacement": "Double key sizes (AES-256), SPHINCS+ (Hash-based signatures), FIPS 205 SLH-DSA",
+      "risk_level": "HIGH",
+      "context": [
+        {
+          "line": 207,
+          "content": "            type: 'p31_decrypted_content'",
+          "isVulnerable": false
+        },
+        {
+          "line": 208,
+          "content": "        };",
+          "isVulnerable": false
+        },
+        {
+          "line": 209,
+          "content": "        ",
+          "isVulnerable": false
+        },
+        {
+          "line": 210,
+          "content": "        const hash = crypto.createHash('sha256');",
+          "isVulnerable": true
+        },
+        {
+          "line": 211,
+          "content": "        hash.update(JSON.stringify(signatureData));",
+          "isVulnerable": false
+        },
+        {
+          "line": 212,
+          "content": "        ",
+          "isVulnerable": false
+        },
+        {
+          "line": 213,
+          "content": "        return {",
+          "isVulnerable": false
+        }
+      ]
+    },
+    {
+      "file": "/home/p31/P31-local-workspace/ecosystem/ipfs/ipns-manager.js",
       "line": 288,
       "vulnerability": "grover_vulnerable",
       "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
@@ -563,43 +1115,43 @@
       "context": [
         {
           "line": 285,
-          "content": "        // Extract the base58 encoded public key from the PEM format\r",
+          "content": "        // Extract the base58 encoded public key from the PEM format",
           "isVulnerable": false
         },
         {
           "line": 286,
-          "content": "        // This is a simplified version - in production, you'd use proper IPNS key handling\r",
+          "content": "        // This is a simplified version - in production, you'd use proper IPNS key handling",
           "isVulnerable": false
         },
         {
           "line": 287,
-          "content": "        const publicKeyBuffer = Buffer.from(this.keyPair.publicKey, 'base64');\r",
+          "content": "        const publicKeyBuffer = Buffer.from(this.keyPair.publicKey, 'base64');",
           "isVulnerable": false
         },
         {
           "line": 288,
-          "content": "        return crypto.createHash('sha256').update(publicKeyBuffer).digest('hex').substring(0, 46);\r",
+          "content": "        return crypto.createHash('sha256').update(publicKeyBuffer).digest('hex').substring(0, 46);",
           "isVulnerable": true
         },
         {
           "line": 289,
-          "content": "    }\r",
+          "content": "    }",
           "isVulnerable": false
         },
         {
           "line": 290,
-          "content": "\r",
+          "content": "",
           "isVulnerable": false
         },
         {
           "line": 291,
-          "content": "    /**\r",
+          "content": "    /**",
           "isVulnerable": false
         }
       ]
     },
     {
-      "file": "pqc-audit-results.json",
+      "file": "/home/p31/P31-local-workspace/pqc-audit-results.json",
       "line": 29,
       "vulnerability": "grover_vulnerable",
       "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
@@ -645,7 +1197,7 @@
       ]
     },
     {
-      "file": "pqc-audit-results.json",
+      "file": "/home/p31/P31-local-workspace/pqc-audit-results.json",
       "line": 75,
       "vulnerability": "grover_vulnerable",
       "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
@@ -691,7 +1243,7 @@
       ]
     },
     {
-      "file": "pqc-audit-results.json",
+      "file": "/home/p31/P31-local-workspace/pqc-audit-results.json",
       "line": 121,
       "vulnerability": "grover_vulnerable",
       "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
@@ -737,7 +1289,7 @@
       ]
     },
     {
-      "file": "pqc-audit-results.json",
+      "file": "/home/p31/P31-local-workspace/pqc-audit-results.json",
       "line": 167,
       "vulnerability": "grover_vulnerable",
       "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
@@ -783,7 +1335,7 @@
       ]
     },
     {
-      "file": "pqc-audit-results.json",
+      "file": "/home/p31/P31-local-workspace/pqc-audit-results.json",
       "line": 213,
       "vulnerability": "grover_vulnerable",
       "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
@@ -829,7 +1381,7 @@
       ]
     },
     {
-      "file": "pqc-audit-results.json",
+      "file": "/home/p31/P31-local-workspace/pqc-audit-results.json",
       "line": 259,
       "vulnerability": "grover_vulnerable",
       "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
@@ -875,7 +1427,7 @@
       ]
     },
     {
-      "file": "pqc-audit-results.json",
+      "file": "/home/p31/P31-local-workspace/pqc-audit-results.json",
       "line": 305,
       "vulnerability": "grover_vulnerable",
       "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
@@ -921,7 +1473,7 @@
       ]
     },
     {
-      "file": "pqc-audit-results.json",
+      "file": "/home/p31/P31-local-workspace/pqc-audit-results.json",
       "line": 351,
       "vulnerability": "grover_vulnerable",
       "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
@@ -967,7 +1519,7 @@
       ]
     },
     {
-      "file": "pqc-audit-results.json",
+      "file": "/home/p31/P31-local-workspace/pqc-audit-results.json",
       "line": 397,
       "vulnerability": "grover_vulnerable",
       "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
@@ -1013,7 +1565,7 @@
       ]
     },
     {
-      "file": "pqc-audit-results.json",
+      "file": "/home/p31/P31-local-workspace/pqc-audit-results.json",
       "line": 443,
       "vulnerability": "grover_vulnerable",
       "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
@@ -1059,7 +1611,7 @@
       ]
     },
     {
-      "file": "pqc-audit-results.json",
+      "file": "/home/p31/P31-local-workspace/pqc-audit-results.json",
       "line": 489,
       "vulnerability": "grover_vulnerable",
       "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
@@ -1105,7 +1657,7 @@
       ]
     },
     {
-      "file": "pqc-audit-results.json",
+      "file": "/home/p31/P31-local-workspace/pqc-audit-results.json",
       "line": 535,
       "vulnerability": "grover_vulnerable",
       "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
@@ -1151,7 +1703,7 @@
       ]
     },
     {
-      "file": "pqc-audit-results.json",
+      "file": "/home/p31/P31-local-workspace/pqc-audit-results.json",
       "line": 581,
       "vulnerability": "grover_vulnerable",
       "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
@@ -1195,16 +1747,713 @@
           "isVulnerable": false
         }
       ]
+    },
+    {
+      "file": "/home/p31/P31-local-workspace/pqc-audit-results.json",
+      "line": 627,
+      "vulnerability": "grover_vulnerable",
+      "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
+      "description": "Vulnerable to Grover's Algorithm - reduces effective security by half",
+      "replacement": "Double key sizes (AES-256), SPHINCS+ (Hash-based signatures), FIPS 205 SLH-DSA",
+      "risk_level": "HIGH",
+      "context": [
+        {
+          "line": 624,
+          "content": "        },",
+          "isVulnerable": false
+        },
+        {
+          "line": 625,
+          "content": "        {",
+          "isVulnerable": false
+        },
+        {
+          "line": 626,
+          "content": "          \"line\": 29,",
+          "isVulnerable": false
+        },
+        {
+          "line": 627,
+          "content": "          \"content\": \"          \\\"content\\\": \\\"        return crypto.createHash('sha256').update(JSON.stringify(data)).digest('hex');\\\\r\\\",\",",
+          "isVulnerable": true
+        },
+        {
+          "line": 628,
+          "content": "          \"isVulnerable\": true",
+          "isVulnerable": false
+        },
+        {
+          "line": 629,
+          "content": "        },",
+          "isVulnerable": false
+        },
+        {
+          "line": 630,
+          "content": "        {",
+          "isVulnerable": false
+        }
+      ]
+    },
+    {
+      "file": "/home/p31/P31-local-workspace/pqc-audit-results.json",
+      "line": 673,
+      "vulnerability": "grover_vulnerable",
+      "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
+      "description": "Vulnerable to Grover's Algorithm - reduces effective security by half",
+      "replacement": "Double key sizes (AES-256), SPHINCS+ (Hash-based signatures), FIPS 205 SLH-DSA",
+      "risk_level": "HIGH",
+      "context": [
+        {
+          "line": 670,
+          "content": "        },",
+          "isVulnerable": false
+        },
+        {
+          "line": 671,
+          "content": "        {",
+          "isVulnerable": false
+        },
+        {
+          "line": 672,
+          "content": "          \"line\": 75,",
+          "isVulnerable": false
+        },
+        {
+          "line": 673,
+          "content": "          \"content\": \"          \\\"content\\\": \\\"        const hash = crypto.createHash('sha256');\\\\r\\\",\",",
+          "isVulnerable": true
+        },
+        {
+          "line": 674,
+          "content": "          \"isVulnerable\": true",
+          "isVulnerable": false
+        },
+        {
+          "line": 675,
+          "content": "        },",
+          "isVulnerable": false
+        },
+        {
+          "line": 676,
+          "content": "        {",
+          "isVulnerable": false
+        }
+      ]
+    },
+    {
+      "file": "/home/p31/P31-local-workspace/pqc-audit-results.json",
+      "line": 719,
+      "vulnerability": "grover_vulnerable",
+      "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
+      "description": "Vulnerable to Grover's Algorithm - reduces effective security by half",
+      "replacement": "Double key sizes (AES-256), SPHINCS+ (Hash-based signatures), FIPS 205 SLH-DSA",
+      "risk_level": "HIGH",
+      "context": [
+        {
+          "line": 716,
+          "content": "        },",
+          "isVulnerable": false
+        },
+        {
+          "line": 717,
+          "content": "        {",
+          "isVulnerable": false
+        },
+        {
+          "line": 718,
+          "content": "          \"line\": 121,",
+          "isVulnerable": false
+        },
+        {
+          "line": 719,
+          "content": "          \"content\": \"          \\\"content\\\": \\\"        const syncHash = crypto.createHash('sha256');\\\\r\\\",\",",
+          "isVulnerable": true
+        },
+        {
+          "line": 720,
+          "content": "          \"isVulnerable\": true",
+          "isVulnerable": false
+        },
+        {
+          "line": 721,
+          "content": "        },",
+          "isVulnerable": false
+        },
+        {
+          "line": 722,
+          "content": "        {",
+          "isVulnerable": false
+        }
+      ]
+    },
+    {
+      "file": "/home/p31/P31-local-workspace/pqc-audit-results.json",
+      "line": 765,
+      "vulnerability": "grover_vulnerable",
+      "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
+      "description": "Vulnerable to Grover's Algorithm - reduces effective security by half",
+      "replacement": "Double key sizes (AES-256), SPHINCS+ (Hash-based signatures), FIPS 205 SLH-DSA",
+      "risk_level": "HIGH",
+      "context": [
+        {
+          "line": 762,
+          "content": "        },",
+          "isVulnerable": false
+        },
+        {
+          "line": 763,
+          "content": "        {",
+          "isVulnerable": false
+        },
+        {
+          "line": 764,
+          "content": "          \"line\": 167,",
+          "isVulnerable": false
+        },
+        {
+          "line": 765,
+          "content": "          \"content\": \"          \\\"content\\\": \\\"        const key = crypto.createHash('sha256').update(syncDigest).digest();\\\\r\\\",\",",
+          "isVulnerable": true
+        },
+        {
+          "line": 766,
+          "content": "          \"isVulnerable\": true",
+          "isVulnerable": false
+        },
+        {
+          "line": 767,
+          "content": "        },",
+          "isVulnerable": false
+        },
+        {
+          "line": 768,
+          "content": "        {",
+          "isVulnerable": false
+        }
+      ]
+    },
+    {
+      "file": "/home/p31/P31-local-workspace/pqc-audit-results.json",
+      "line": 811,
+      "vulnerability": "grover_vulnerable",
+      "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
+      "description": "Vulnerable to Grover's Algorithm - reduces effective security by half",
+      "replacement": "Double key sizes (AES-256), SPHINCS+ (Hash-based signatures), FIPS 205 SLH-DSA",
+      "risk_level": "HIGH",
+      "context": [
+        {
+          "line": 808,
+          "content": "        },",
+          "isVulnerable": false
+        },
+        {
+          "line": 809,
+          "content": "        {",
+          "isVulnerable": false
+        },
+        {
+          "line": 810,
+          "content": "          \"line\": 213,",
+          "isVulnerable": false
+        },
+        {
+          "line": 811,
+          "content": "          \"content\": \"          \\\"content\\\": \\\"        const signature = crypto.createHash('sha256').update(JSON.stringify(signatureData)).digest('hex');\\\\r\\\",\",",
+          "isVulnerable": true
+        },
+        {
+          "line": 812,
+          "content": "          \"isVulnerable\": true",
+          "isVulnerable": false
+        },
+        {
+          "line": 813,
+          "content": "        },",
+          "isVulnerable": false
+        },
+        {
+          "line": 814,
+          "content": "        {",
+          "isVulnerable": false
+        }
+      ]
+    },
+    {
+      "file": "/home/p31/P31-local-workspace/pqc-audit-results.json",
+      "line": 857,
+      "vulnerability": "grover_vulnerable",
+      "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
+      "description": "Vulnerable to Grover's Algorithm - reduces effective security by half",
+      "replacement": "Double key sizes (AES-256), SPHINCS+ (Hash-based signatures), FIPS 205 SLH-DSA",
+      "risk_level": "HIGH",
+      "context": [
+        {
+          "line": 854,
+          "content": "        },",
+          "isVulnerable": false
+        },
+        {
+          "line": 855,
+          "content": "        {",
+          "isVulnerable": false
+        },
+        {
+          "line": 856,
+          "content": "          \"line\": 259,",
+          "isVulnerable": false
+        },
+        {
+          "line": 857,
+          "content": "          \"content\": \"          \\\"content\\\": \\\"        const hash = crypto.createHash('sha256');\\\\r\\\",\",",
+          "isVulnerable": true
+        },
+        {
+          "line": 858,
+          "content": "          \"isVulnerable\": true",
+          "isVulnerable": false
+        },
+        {
+          "line": 859,
+          "content": "        },",
+          "isVulnerable": false
+        },
+        {
+          "line": 860,
+          "content": "        {",
+          "isVulnerable": false
+        }
+      ]
+    },
+    {
+      "file": "/home/p31/P31-local-workspace/pqc-audit-results.json",
+      "line": 903,
+      "vulnerability": "grover_vulnerable",
+      "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
+      "description": "Vulnerable to Grover's Algorithm - reduces effective security by half",
+      "replacement": "Double key sizes (AES-256), SPHINCS+ (Hash-based signatures), FIPS 205 SLH-DSA",
+      "risk_level": "HIGH",
+      "context": [
+        {
+          "line": 900,
+          "content": "        },",
+          "isVulnerable": false
+        },
+        {
+          "line": 901,
+          "content": "        {",
+          "isVulnerable": false
+        },
+        {
+          "line": 902,
+          "content": "          \"line\": 305,",
+          "isVulnerable": false
+        },
+        {
+          "line": 903,
+          "content": "          \"content\": \"          \\\"content\\\": \\\"        const hash = crypto.createHash('sha256');\\\\r\\\",\",",
+          "isVulnerable": true
+        },
+        {
+          "line": 904,
+          "content": "          \"isVulnerable\": true",
+          "isVulnerable": false
+        },
+        {
+          "line": 905,
+          "content": "        },",
+          "isVulnerable": false
+        },
+        {
+          "line": 906,
+          "content": "        {",
+          "isVulnerable": false
+        }
+      ]
+    },
+    {
+      "file": "/home/p31/P31-local-workspace/pqc-audit-results.json",
+      "line": 949,
+      "vulnerability": "grover_vulnerable",
+      "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
+      "description": "Vulnerable to Grover's Algorithm - reduces effective security by half",
+      "replacement": "Double key sizes (AES-256), SPHINCS+ (Hash-based signatures), FIPS 205 SLH-DSA",
+      "risk_level": "HIGH",
+      "context": [
+        {
+          "line": 946,
+          "content": "        },",
+          "isVulnerable": false
+        },
+        {
+          "line": 947,
+          "content": "        {",
+          "isVulnerable": false
+        },
+        {
+          "line": 948,
+          "content": "          \"line\": 351,",
+          "isVulnerable": false
+        },
+        {
+          "line": 949,
+          "content": "          \"content\": \"          \\\"content\\\": \\\"        const hash = crypto.createHash('sha256');\\\\r\\\",\",",
+          "isVulnerable": true
+        },
+        {
+          "line": 950,
+          "content": "          \"isVulnerable\": true",
+          "isVulnerable": false
+        },
+        {
+          "line": 951,
+          "content": "        },",
+          "isVulnerable": false
+        },
+        {
+          "line": 952,
+          "content": "        {",
+          "isVulnerable": false
+        }
+      ]
+    },
+    {
+      "file": "/home/p31/P31-local-workspace/pqc-audit-results.json",
+      "line": 995,
+      "vulnerability": "grover_vulnerable",
+      "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
+      "description": "Vulnerable to Grover's Algorithm - reduces effective security by half",
+      "replacement": "Double key sizes (AES-256), SPHINCS+ (Hash-based signatures), FIPS 205 SLH-DSA",
+      "risk_level": "HIGH",
+      "context": [
+        {
+          "line": 992,
+          "content": "        },",
+          "isVulnerable": false
+        },
+        {
+          "line": 993,
+          "content": "        {",
+          "isVulnerable": false
+        },
+        {
+          "line": 994,
+          "content": "          \"line\": 397,",
+          "isVulnerable": false
+        },
+        {
+          "line": 995,
+          "content": "          \"content\": \"          \\\"content\\\": \\\"        const hash = crypto.createHash('sha256');\\\\r\\\",\",",
+          "isVulnerable": true
+        },
+        {
+          "line": 996,
+          "content": "          \"isVulnerable\": true",
+          "isVulnerable": false
+        },
+        {
+          "line": 997,
+          "content": "        },",
+          "isVulnerable": false
+        },
+        {
+          "line": 998,
+          "content": "        {",
+          "isVulnerable": false
+        }
+      ]
+    },
+    {
+      "file": "/home/p31/P31-local-workspace/pqc-audit-results.json",
+      "line": 1041,
+      "vulnerability": "grover_vulnerable",
+      "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
+      "description": "Vulnerable to Grover's Algorithm - reduces effective security by half",
+      "replacement": "Double key sizes (AES-256), SPHINCS+ (Hash-based signatures), FIPS 205 SLH-DSA",
+      "risk_level": "HIGH",
+      "context": [
+        {
+          "line": 1038,
+          "content": "        },",
+          "isVulnerable": false
+        },
+        {
+          "line": 1039,
+          "content": "        {",
+          "isVulnerable": false
+        },
+        {
+          "line": 1040,
+          "content": "          \"line\": 443,",
+          "isVulnerable": false
+        },
+        {
+          "line": 1041,
+          "content": "          \"content\": \"          \\\"content\\\": \\\"        const hash = crypto.createHash('sha256');\\\\r\\\",\",",
+          "isVulnerable": true
+        },
+        {
+          "line": 1042,
+          "content": "          \"isVulnerable\": true",
+          "isVulnerable": false
+        },
+        {
+          "line": 1043,
+          "content": "        },",
+          "isVulnerable": false
+        },
+        {
+          "line": 1044,
+          "content": "        {",
+          "isVulnerable": false
+        }
+      ]
+    },
+    {
+      "file": "/home/p31/P31-local-workspace/pqc-audit-results.json",
+      "line": 1087,
+      "vulnerability": "grover_vulnerable",
+      "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
+      "description": "Vulnerable to Grover's Algorithm - reduces effective security by half",
+      "replacement": "Double key sizes (AES-256), SPHINCS+ (Hash-based signatures), FIPS 205 SLH-DSA",
+      "risk_level": "HIGH",
+      "context": [
+        {
+          "line": 1084,
+          "content": "        },",
+          "isVulnerable": false
+        },
+        {
+          "line": 1085,
+          "content": "        {",
+          "isVulnerable": false
+        },
+        {
+          "line": 1086,
+          "content": "          \"line\": 489,",
+          "isVulnerable": false
+        },
+        {
+          "line": 1087,
+          "content": "          \"content\": \"          \\\"content\\\": \\\"            const contentHash = crypto.createHash('sha256');\\\\r\\\",\",",
+          "isVulnerable": true
+        },
+        {
+          "line": 1088,
+          "content": "          \"isVulnerable\": true",
+          "isVulnerable": false
+        },
+        {
+          "line": 1089,
+          "content": "        },",
+          "isVulnerable": false
+        },
+        {
+          "line": 1090,
+          "content": "        {",
+          "isVulnerable": false
+        }
+      ]
+    },
+    {
+      "file": "/home/p31/P31-local-workspace/pqc-audit-results.json",
+      "line": 1133,
+      "vulnerability": "grover_vulnerable",
+      "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
+      "description": "Vulnerable to Grover's Algorithm - reduces effective security by half",
+      "replacement": "Double key sizes (AES-256), SPHINCS+ (Hash-based signatures), FIPS 205 SLH-DSA",
+      "risk_level": "HIGH",
+      "context": [
+        {
+          "line": 1130,
+          "content": "        },",
+          "isVulnerable": false
+        },
+        {
+          "line": 1131,
+          "content": "        {",
+          "isVulnerable": false
+        },
+        {
+          "line": 1132,
+          "content": "          \"line\": 535,",
+          "isVulnerable": false
+        },
+        {
+          "line": 1133,
+          "content": "          \"content\": \"          \\\"content\\\": \\\"        const hash = crypto.createHash('sha256');\\\\r\\\",\",",
+          "isVulnerable": true
+        },
+        {
+          "line": 1134,
+          "content": "          \"isVulnerable\": true",
+          "isVulnerable": false
+        },
+        {
+          "line": 1135,
+          "content": "        },",
+          "isVulnerable": false
+        },
+        {
+          "line": 1136,
+          "content": "        {",
+          "isVulnerable": false
+        }
+      ]
+    },
+    {
+      "file": "/home/p31/P31-local-workspace/pqc-audit-results.json",
+      "line": 1179,
+      "vulnerability": "grover_vulnerable",
+      "pattern": "crypto\\.createHash\\(['\"]sha256['\"]\\)",
+      "description": "Vulnerable to Grover's Algorithm - reduces effective security by half",
+      "replacement": "Double key sizes (AES-256), SPHINCS+ (Hash-based signatures), FIPS 205 SLH-DSA",
+      "risk_level": "HIGH",
+      "context": [
+        {
+          "line": 1176,
+          "content": "        },",
+          "isVulnerable": false
+        },
+        {
+          "line": 1177,
+          "content": "        {",
+          "isVulnerable": false
+        },
+        {
+          "line": 1178,
+          "content": "          \"line\": 581,",
+          "isVulnerable": false
+        },
+        {
+          "line": 1179,
+          "content": "          \"content\": \"          \\\"content\\\": \\\"        return crypto.createHash('sha256').update(publicKeyBuffer).digest('hex').substring(0, 46);\\\\r\\\",\",",
+          "isVulnerable": true
+        },
+        {
+          "line": 1180,
+          "content": "          \"isVulnerable\": true",
+          "isVulnerable": false
+        },
+        {
+          "line": 1181,
+          "content": "        },",
+          "isVulnerable": false
+        },
+        {
+          "line": 1182,
+          "content": "        {",
+          "isVulnerable": false
+        }
+      ]
+    },
+    {
+      "file": "/home/p31/P31-local-workspace/software/packages/quantum-core/src/pqcPrimitives.ts",
+      "line": 19,
+      "vulnerability": "grover_vulnerable",
+      "pattern": "crypto\\.createHash\\(['\"]sha512['\"]\\)",
+      "description": "Vulnerable to Grover's Algorithm - reduces effective security by half",
+      "replacement": "Double key sizes (AES-256), SPHINCS+ (Hash-based signatures), FIPS 205 SLH-DSA",
+      "risk_level": "HIGH",
+      "context": [
+        {
+          "line": 16,
+          "content": " * @returns Hexadecimal string of the SHA-512 hash",
+          "isVulnerable": false
+        },
+        {
+          "line": 17,
+          "content": " */",
+          "isVulnerable": false
+        },
+        {
+          "line": 18,
+          "content": "export const generateQuantumSafeHash = (data: string | Buffer): string => {",
+          "isVulnerable": false
+        },
+        {
+          "line": 19,
+          "content": "  return crypto.createHash('sha512').update(data).digest('hex');",
+          "isVulnerable": true
+        },
+        {
+          "line": 20,
+          "content": "};",
+          "isVulnerable": false
+        },
+        {
+          "line": 21,
+          "content": "",
+          "isVulnerable": false
+        },
+        {
+          "line": 22,
+          "content": "/**",
+          "isVulnerable": false
+        }
+      ]
+    },
+    {
+      "file": "/home/p31/P31-local-workspace/software/packages/quantum-core/src/pqcPrimitives.ts",
+      "line": 63,
+      "vulnerability": "grover_vulnerable",
+      "pattern": "crypto\\.pbkdf2\\(",
+      "description": "Vulnerable to Grover's Algorithm - reduces effective security by half",
+      "replacement": "Double key sizes (AES-256), SPHINCS+ (Hash-based signatures), FIPS 205 SLH-DSA",
+      "risk_level": "HIGH",
+      "context": [
+        {
+          "line": 60,
+          "content": "  keyLength: number = 64",
+          "isVulnerable": false
+        },
+        {
+          "line": 61,
+          "content": "): Promise<string> => {",
+          "isVulnerable": false
+        },
+        {
+          "line": 62,
+          "content": "  return new Promise((resolve, reject) => {",
+          "isVulnerable": false
+        },
+        {
+          "line": 63,
+          "content": "    crypto.pbkdf2(password, salt, iterations, keyLength, 'sha512', (err, derivedKey) => {",
+          "isVulnerable": true
+        },
+        {
+          "line": 64,
+          "content": "      if (err) reject(err);",
+          "isVulnerable": false
+        },
+        {
+          "line": 65,
+          "content": "      else resolve(derivedKey.toString('hex'));",
+          "isVulnerable": false
+        },
+        {
+          "line": 66,
+          "content": "    });",
+          "isVulnerable": false
+        }
+      ]
     }
   ],
   "summary": {
-    "critical": 0,
-    "high": 26,
+    "critical": 2,
+    "high": 51,
     "medium": 0,
     "low": 0,
-    "total": 26
+    "total": 53
   },
   "recommendations": [
+    {
+      "priority": "CRITICAL",
+      "category": "Shor's Algorithm Vulnerabilities",
+      "action": "Replace RSA, ECDSA, and Diffie-Hellman with FIPS 203 ML-KEM and FIPS 204 ML-DSA",
+      "timeline": "Immediate (within 3 months)",
+      "impact": "Prevents complete cryptographic compromise when quantum computers become available"
+    },
     {
       "priority": "HIGH",
       "category": "Grover's Algorithm Vulnerabilities",

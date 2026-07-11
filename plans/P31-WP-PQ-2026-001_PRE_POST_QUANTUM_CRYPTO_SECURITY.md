@@ -283,6 +283,15 @@ both the quantum-measurement scale and the distributed-ledger scale.
 - **`scripts/pqc-audit.js`** scans the codebase for classical-crypto patterns (RSA, ECDSA,
   ECDH, SHA-1/MD5, etc.) and flags them for PQC migration — the mechanism that will track the
   remaining Ed25519 / CBS migration to ML-DSA / ML-KEM.
+- **Audit gap (verified 2026-07-11):** the scanner's regexes are RSA/ECDSA/ECDH-centric
+  and **miss Ed25519 / Curve25519** — both equally Shor-vulnerable. The live `love-ledger`
+  audit therefore under-reports the worker's real exposure (Ed25519 receipt sig + CBS scalar). PQC
+  migration of these is tracked manually here, not auto-flagged by the tool.
+- **Live PQC seal uses ML-DSA-44 (L1), not L3:** Cloudflare Workers caps a text secret at
+  **5.1 kB**. An ML-DSA-65 (L3) *secret key* is 4032 raw bytes → 5.4 kB base64 — over the
+  cap (upload rejected). ML-DSA-44 (L1) secret key is 2528 bytes → 3.4 kB base64 and fits.
+  L1 is lattice-based (Shor-resistant) and ample for care-credit integrity; L3 is the target once
+  key storage allows (e.g. split-secret or a secret store).
 - Observability is enabled (`[observability] enabled = true`) with Axiom OTLP export.
 - The `love_chain` hash chain is the immutable audit trail (see §7.2).
 

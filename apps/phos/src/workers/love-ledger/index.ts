@@ -3,6 +3,7 @@ import { verifyRequest, unauthorizedResponse } from '../../lib/edge/verify';
 import { logEvent } from '../../lib/edge/logging';
 import { ensureCbs, base as cbsBase, signBlinded as cbsSign, verify as cbsVerify } from './taler-cbs/loader';
 import { deriveNonce } from './taler-cbs/kdf';
+import { MLDSA } from './taler-cbs/pqc';
 
 // The wasm is imported via ?module in taler-cbs/loader.ts (esbuild
 // compiles it at build time — the only Worker-supported way, since
@@ -28,6 +29,26 @@ function bytesToB64(bytes: Uint8Array): string {
   let bin = '';
   for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
   return btoa(bin);
+}
+
+// Post-quantum server-side seal (ML-DSA-44 / L1, FIPS 204) over the
+// entry hash. L1 (128-bit) is used live because the Workers secret-size
+// cap (5.1 kB) cannot hold an L3 (ML-DSA-65) secret key; L1 is
+// lattice-based (Shor-resistant) and ample for care-credit integrity.
+// Additive: a missing / failed seal returns null and is logged — it never
+// breaks the classical Ed25519 receipt path. Any reader holding
+// MLDSA_SIGNER_PUBLIC_KEY can verify the seal.
+async function signPqcSeal(entryHashHex: string, env: Env): Promise<string | null> {
+  try {
+    if (!env.MLDSA_SIGNER_PRIVATE_KEY) return null;
+    const sk = b64ToBytes(env.MLDSA_SIGNER_PRIVATE_KEY);
+    const mldsa = new MLDSA({ securityLevel: 1 });
+    const sig = mldsa.sign(new TextEncoder().encode(entryHashHex), sk);
+    return bytesToB64(sig);
+  } catch (e: any) {
+    logEvent({ event: 'pqc_sign_error', service: 'love-ledger', success: false, error: String(e?.message || e) });
+    return null;
+  }
 }
 
 // Axis-2 verify side: confirm a creation-accountant receipt signature
@@ -217,6 +238,8 @@ export interface Env {
   LOVE_REQUIRE_AUTH?: string;
   RECEIPT_SIGNER_PUBLIC_KEY?: string;
   BLIND_ISSUER_PRIVATE_KEY?: string;
+  MLDSA_SIGNER_PRIVATE_KEY?: string;
+  MLDSA_SIGNER_PUBLIC_KEY?: string;
   BLIND_MODE?: string;
   ENVIRONMENT?: string;
 }
@@ -334,11 +357,12 @@ export default {
         const entryHash = await sha256(
           [body.from, body.to, String(body.amount), String(ts), prevHash, body.signature || ''].join('|')
         );
+        const pqcSig = await signPqcSeal(entryHash, env);
 
         await withRetry(() => env.LOVE_DB.prepare(`
-          INSERT INTO love_chain (id, from_did, to_did, amount, type, signature, prev_hash, entry_hash, created_at)
-          VALUES (?, ?, ?, ?, 'transfer', ?, ?, ?, ?)
-        `        ).bind(txId, body.from, body.to, body.amount, body.signature ?? null, prevHash, entryHash, ts).run(), 3, 'transfer_insert');
+          INSERT INTO love_chain (id, from_did, to_did, amount, type, signature, signature_pqc, prev_hash, entry_hash, created_at)
+          VALUES (?, ?, ?, ?, 'transfer', ?, ?, ?, ?, ?)
+        `        ).bind(txId, body.from, body.to, body.amount, body.signature ?? null, pqcSig, prevHash, entryHash, ts).run(), 3, 'transfer_insert');
 
         logEvent({
           event: 'transfer_completed',
@@ -647,11 +671,12 @@ export default {
         const entryHash = await sha256(
           [body.did, 'system:love-issuer', String(body.amount), String(ts), prevHash, token].join('|')
         );
+        const pqcSig = await signPqcSeal(entryHash, env);
 
         const chain = env.LOVE_DB.prepare(`
-          INSERT INTO love_chain (id, from_did, to_did, amount, type, signature, prev_hash, entry_hash, created_at)
-          VALUES (?, ?, ?, ?, 'love_withdraw', ?, ?, ?, ?)
-        `).bind(txId, body.did, 'system:love-issuer', body.amount, token, prevHash, entryHash, ts);
+          INSERT INTO love_chain (id, from_did, to_did, amount, type, signature, signature_pqc, prev_hash, entry_hash, created_at)
+          VALUES (?, ?, ?, ?, 'love_withdraw', ?, ?, ?, ?, ?)
+        `).bind(txId, body.did, 'system:love-issuer', body.amount, token, pqcSig, prevHash, entryHash, ts);
 
         // Atomic: debit + chain entry commit together (or roll back).
         await env.LOVE_DB.batch([debit, chain]);

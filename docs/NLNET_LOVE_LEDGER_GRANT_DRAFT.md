@@ -84,6 +84,7 @@ quantum hardware and is not deployable in the Workers runtime) — see
 3. Single UI counter + cloud sync (economyStore.ts).
 4. Court-admissible artifact generation (hash-chained care records).
 5. Updated documentation and developer onboarding.
+6. Post-quantum crypto roadmap (ML-KEM/ML-DSA hybrid) — see Work Package `P31-WP-PQ-2026-001`.
 
 ## 5. Timeline
 
@@ -93,7 +94,8 @@ quantum hardware and is not deployable in the Workers runtime) — see
 | Identity | 1 month | DID:key + WebAuthn |
 | Hardening | 2 months | Worker resilience, tests, docs |
 | Pilot | 1 month | Family pilot with 10 users |
-| **Total** | **6 months** | |
+| Post-Quantum | 2 months | Hybrid ML-KEM/ML-DSA migration (FIPS 203/204) |
+| **Total** | **8 months** | |
 
 ## 6. Contact
 
