@@ -127,6 +127,23 @@ The CLI exposes six MCP servers (115 tools):
 - `node cli/cognitive-prosthetic.js` — Cognitive Prosthetic tools (47 tools: temporal grounding, executive function, sensory adaptation, cognitive load, communication, crisis detection, memory scaffolding)
 - `node cli/cognitive-comms.js` — Cognitive Comms tools (20 tools: tone, replies, boundaries, accommodations, agendas)
 
+### P31 Automation Engine
+
+The `cli/p31-automation-engine.js` orchestrator codifies the Fortune 1 pipeline + Sierpinski Expansion into one runnable tool (zero deps, CommonJS). It is the unified nervous system for the CWP swarm, build/deploy, TRIPER cert, MCP audits, and health checks.
+
+```bash
+node cli/p31-automation-engine.js mcp      # spawn all 6 servers, count tools (115)
+node cli/p31-automation-engine.js triper   # node tests/triper/triper-runner.mjs --cert
+node cli/p31-automation-engine.js build    # pnpm -C apps/p31ca run build (non-fatal)
+node cli/p31-automation-engine.js monitor  # fetch status.p31ca.org/health per service
+node cli/p31-automation-engine.js swarm [id]  # [SIMULATED] CWP agent dispatch
+node cli/p31-automation-engine.js all      # run everything + print status table
+```
+
+`cli/validate-l3.2.js` automates the `cwp-2026-009-sierpinski-expansion/L3.2-VALIDATION-RUNBOOK.md` steps (install hygiene → worker install → `tsc --noEmit` → `wrangler deploy --dry-run`) and prints a copy-paste report block. It requires registry access and runs on the operator machine.
+
+Conceptual architecture: `docs/P31_AUTOMATION_ENGINE.md`.
+
 ### LOVE Ledger MCP Server
 
 Agents can query the LOVE ledger state via MCP:
