@@ -386,6 +386,40 @@ At `spoons === 0`, the interface must render a full-screen breathing exercise ov
 
 Never render interactive UI elements (buttons, inputs, navigation) in CrisisMode. The overlay is a grounding exercise — the only interaction is the exit control. (Implemented in `apps/phos/src/components/CrisisMode.tsx`.)
 
+## COGA — Cognitive and Learning Accessibility
+
+WCAG 2.2 COGA success criteria require interfaces that reduce cognitive load, support progressive disclosure, and adapt to user capabilities. P31 implements these through the spoon system and the `<Disclosure>` component.
+
+### Progressive Disclosure
+
+Use the `<Disclosure>` component (`apps/phos/src/components/Disclosure.tsx`) to hide secondary information behind an expand/collapse toggle. This reduces initial cognitive load while keeping detail accessible.
+
+- **Default state:** Collapsed at spoons ≤ 1, expanded at spoons ≥ 3.
+- **Auto-collapse:** The component auto-collapses when spoons drop below the threshold.
+- **ARIA:** `aria-expanded`, `aria-controls`, `role="region"` are mandatory.
+
+### Spoon-Driven Complexity Tiers
+
+Surfaces should adapt their information density based on `data-spoons`:
+
+| Spoons | Complexity | Behavior |
+| :--- | :--- | :--- |
+| 0 | Crisis | Full-screen breathing overlay; no UI chrome |
+| 1 | Minimal | Emergency contacts only; all secondary features hidden |
+| 2 | Compact | Core features only; compact inputs, reduced detail |
+| 3–4 | Standard | Full feature set with progressive disclosure for secondary content |
+| 5 | Exhaustive | All features expanded; maximum detail density |
+
+### Information Hierarchy
+
+- Primary action: single `quantum-cyan` CTA per screen.
+- Secondary actions: hidden behind `<Disclosure>` or in the Magic Drawer.
+- Tertiary information: accessible via navigation but not shown by default.
+
+### User-Controlled Adaptation
+
+The spoon slider (global) and density toggles (per-surface) give users direct control over complexity. The system never auto-increases complexity — only the user can request more detail.
+
 ## Do's and Don'ts
 
 ### Do's
