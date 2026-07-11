@@ -40,3 +40,14 @@ export interface GeneratorInput {
   role: 'coordinator' | 'researcher' | 'participant' | 'grant-reviewer';
   spoons: number; // 0–5
 }
+
+export interface GenerationIntent {
+  /** Natural language description of what the user wants to see */
+  prompt: string;
+  /** Current spoon level (0–5) */
+  spoons: number;
+  /** Optional role to filter relevant widgets */
+  role?: GeneratorInput['role'];
+  /** Optional hard constraints that override LLM output */
+  constraints?: Partial<InterfaceDescription>;
+}
