@@ -1,0 +1,15 @@
+name = "p31-auth"
+main = "src/index.ts"
+compatibility_date = "2026-07-04"
+compatibility_flags = ["nodejs_compat"]
+
+[observability]
+enabled = true
+
+[[d1_databases]]
+binding = "DB"
+database_name = "p31-auth"
+database_id = "73959828-0d6d-4772-950d-38a917881182"
+
+[vars]
+ALLOWED_ORIGINS = "https://phos.p31ca.org,https://p31ca.org,https://willow.p31ca.org,https://bonding.p31ca.org"
