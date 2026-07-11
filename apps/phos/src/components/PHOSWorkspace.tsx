@@ -210,7 +210,7 @@ function WorkspaceShell({ identity, isGuest }: { identity: IdentityState; isGues
         </div>
       )}
 
-      <main className="flex-1 flex flex-col relative z-10 w-full" style={{ paddingBottom: isMobile ? '64px' : '0' }}>
+      <main id="main-content" className="flex-1 flex flex-col relative z-10 w-full" style={{ paddingBottom: isMobile ? '64px' : '0' }}>
 
         <header className="flex items-center justify-between px-6 py-4 flex-shrink-0 z-20 pointer-events-none">
           <div className="flex items-center gap-3 pointer-events-auto">
@@ -313,7 +313,7 @@ function WorkspaceShell({ identity, isGuest }: { identity: IdentityState; isGues
                             style={{ width: `${Math.round(brainProgress * 100)}%` }}
                           />
                         </div>
-                        <p className="text-[10px] text-center text-white/30 font-light">
+                        <p className="text-[10px] text-center text-white/70 font-light">
                           Loading local AI model... {Math.round(brainProgress * 100)}%
                         </p>
                       </div>
@@ -366,7 +366,7 @@ function WorkspaceShell({ identity, isGuest }: { identity: IdentityState; isGues
                 disabled={s === 0}
               />
             </div>
-            <div className="text-center mt-3 text-[10px] font-light text-white/20 tracking-wide">
+            <div className="text-center mt-3 text-[10px] font-light text-white/70 tracking-wide">
               PHOS OS · Zero-Telemetry · ⌘K to search
             </div>
           </div>

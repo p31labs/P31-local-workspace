@@ -40,7 +40,7 @@ export default function PHOSSidebar({ surfaces, active, onSelect, spoons }: PHOS
         <button
           key={s.id}
           onClick={() => s.href ? window.location.href = s.href : onSelect(s.id)}
-          className="flex items-center justify-center w-11 h-11 rounded-lg transition-all duration-200"
+          className="flex items-center justify-center w-12 h-12 rounded-lg transition-all duration-200"
           style={{
             color: active === s.id ? 'var(--phos-primary)' : 'var(--phos-text)',
             opacity: active === s.id ? 1 : 0.35,
@@ -60,7 +60,7 @@ export default function PHOSSidebar({ surfaces, active, onSelect, spoons }: PHOS
         <button
           key={s.id}
           onClick={() => s.href ? window.location.href = s.href : onSelect(s.id)}
-          className="flex items-center justify-center w-11 h-11 rounded-lg transition-all duration-200"
+          className="flex items-center justify-center w-12 h-12 rounded-lg transition-all duration-200"
           style={{
             color: active === s.id ? 'var(--phos-primary)' : 'var(--phos-text)',
             opacity: active === s.id ? 1 : 0.35,

@@ -86,16 +86,16 @@ const researchItems = [
           >
             Nonprofit portal
           </a>
-          <span class="hidden sm:inline text-white/20">·</span>
+          <span class="hidden sm:inline text-white/70">·</span>
           <span class="text-white/50">
             Technical hub <span class="text-white/35">(this site)</span>
           </span>
-          <span class="hidden sm:inline text-white/20">·</span>
+          <span class="hidden sm:inline text-white/70">·</span>
           <span class="text-white/45 text-xs sm:text-sm">
             Mesh &amp; agents on Cloudflare Workers — linked from cards below; not served by this Pages build.
           </span>
         </div>
-        <p class="text-[11px] text-white/30 mt-3">
+        <p class="text-[11px] text-white/70 mt-3">
           Mission, donate, and publications:{' '}
           <a href="https://phosphorus31.org/research" target="_blank" rel="noopener noreferrer" class="text-hubRose/80 hover:text-hubRose no-underline">phosphorus31.org/research</a>
           {' · '}
@@ -112,7 +112,7 @@ const researchItems = [
             <div class="w-2 h-2 rounded-full bg-emerald-400" id="fleet-indicator" style="box-shadow:0 0 6px rgba(52,211,153,0.6);"></div>
             <span class="text-xs font-semibold text-white/70">Fleet Status</span>
           </div>
-          <span class="text-[10px] text-white/30" id="fleet-timestamp">Checking...</span>
+          <span class="text-[10px] text-white/70" id="fleet-timestamp">Checking...</span>
         </div>
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2" id="fleet-grid">
           <div class="text-center py-2 px-3 rounded-lg bg-white/[0.02] border border-white/[0.04]">
@@ -148,7 +148,7 @@ const researchItems = [
       <div class="flex items-center gap-3 mb-6">
         <div class="w-2 h-2 rounded-full bg-emerald-400" style="box-shadow:0 0 6px rgba(52,211,153,0.6);"></div>
         <h2 class="text-sm font-semibold text-white/70 uppercase tracking-wider">Live Deployments</h2>
-        <span class="text-xs text-white/30">{liveProducts.length} core</span>
+        <span class="text-xs text-white/70">{liveProducts.length} core</span>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {liveProducts.map((p) => (
@@ -166,7 +166,7 @@ const researchItems = [
             <p class="text-xs text-white/50 leading-relaxed mb-3">{p.subtitle}</p>
             <div class="flex flex-wrap gap-1.5">
               {p.stack.map((tag) => (
-                <span class="text-[10px] px-2 py-0.5 rounded-md bg-white/[0.05] text-white/30">{tag}</span>
+                <span class="text-[10px] px-2 py-0.5 rounded-md bg-white/[0.05] text-white/70">{tag}</span>
               ))}
             </div>
           </a>
@@ -179,7 +179,7 @@ const researchItems = [
       <div class="flex items-center gap-3 mb-6">
         <div class="w-2 h-2 rounded-full bg-violet-400" style="box-shadow:0 0 6px rgba(167,139,250,0.5);"></div>
         <h2 class="text-sm font-semibold text-white/70 uppercase tracking-wider">Production Suite</h2>
-        <span class="text-xs text-white/30">{suiteProducts.length} edge apps</span>
+        <span class="text-xs text-white/70">{suiteProducts.length} edge apps</span>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {suiteProducts.map((p) => (
@@ -197,7 +197,7 @@ const researchItems = [
             <p class="text-xs text-white/50 leading-relaxed mb-3">{p.subtitle}</p>
             <div class="flex flex-wrap gap-1.5">
               {p.stack.map((tag) => (
-                <span class="text-[10px] px-2 py-0.5 rounded-md bg-white/[0.05] text-white/30">{tag}</span>
+                <span class="text-[10px] px-2 py-0.5 rounded-md bg-white/[0.05] text-white/70">{tag}</span>
               ))}
             </div>
           </a>
@@ -210,7 +210,7 @@ const researchItems = [
       <div class="flex items-center gap-3 mb-6">
         <div class="w-2 h-2 rounded-full bg-amber-400"></div>
         <h2 class="text-sm font-semibold text-white/70 uppercase tracking-wider">In Development</h2>
-        <span class="text-xs text-white/30">{devProducts.length} building</span>
+        <span class="text-xs text-white/70">{devProducts.length} building</span>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {devProducts.map((p) => (
@@ -234,7 +234,7 @@ const researchItems = [
             <p class="text-xs text-white/50 leading-relaxed mb-3">{p.subtitle}</p>
             <div class="flex flex-wrap gap-1.5">
               {p.stack.map((tag) => (
-                <span class="text-[10px] px-2 py-0.5 rounded-md bg-white/[0.05] text-white/30">{tag}</span>
+                <span class="text-[10px] px-2 py-0.5 rounded-md bg-white/[0.05] text-white/70">{tag}</span>
               ))}
             </div>
           </a>
@@ -247,7 +247,7 @@ const researchItems = [
       <div class="flex items-center gap-3 mb-6">
         <div class="w-2 h-2 rounded-full bg-fuchsia-400/90"></div>
         <h2 class="text-sm font-semibold text-white/70 uppercase tracking-wider">Research Tools</h2>
-        <span class="text-xs text-white/30">{researchApps.length} frameworks</span>
+        <span class="text-xs text-white/70">{researchApps.length} frameworks</span>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {researchApps.map((p) => (
@@ -265,7 +265,7 @@ const researchItems = [
             <p class="text-xs text-white/50 leading-relaxed mb-3">{p.subtitle}</p>
             <div class="flex flex-wrap gap-1.5">
               {p.stack.map((tag) => (
-                <span class="text-[10px] px-2 py-0.5 rounded-md bg-white/[0.05] text-white/30">{tag}</span>
+                <span class="text-[10px] px-2 py-0.5 rounded-md bg-white/[0.05] text-white/70">{tag}</span>
               ))}
             </div>
           </a>
@@ -278,7 +278,7 @@ const researchItems = [
       <div class="flex items-center gap-3 mb-6">
         <div class="w-2 h-2 rounded-full bg-cyan-400"></div>
         <h2 class="text-sm font-semibold text-white/70 uppercase tracking-wider">Publications</h2>
-        <span class="text-xs text-white/30">4 published, 13 ready</span>
+        <span class="text-xs text-white/70">4 published, 13 ready</span>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         {researchItems.map((r) => (

@@ -61,7 +61,7 @@ export function VoiceInputButton({ onTranscript, disabled = false, className = '
     return (
       <button
         disabled
-        className={`flex items-center justify-center w-11 h-11 rounded-full opacity-30 cursor-not-allowed ${className}`}
+        className={`flex items-center justify-center w-12 h-12 rounded-full opacity-30 cursor-not-allowed ${className}`}
         aria-label="Voice input unavailable"
         title="Voice input unavailable on this device"
       >
@@ -81,7 +81,7 @@ export function VoiceInputButton({ onTranscript, disabled = false, className = '
         onClick={handleClick}
         disabled={disabled}
         aria-label={isListening ? 'Stop recording' : `Start voice input (${isLocal ? 'Local WASM' : 'Edge fallback'})`}
-        className={`flex items-center justify-center w-11 h-11 rounded-full transition-all duration-300 cursor-pointer ${
+        className={`flex items-center justify-center w-12 h-12 rounded-full transition-all duration-300 cursor-pointer ${
           isListening
             ? 'bg-red-500/20 text-red-400 animate-pulse shadow-lg shadow-red-500/20'
             : 'phos-glass text-[var(--phos-text)]/60 hover:text-[var(--phos-primary)] hover:bg-white/5'

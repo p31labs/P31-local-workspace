@@ -80,6 +80,7 @@ export default function App() {
 
   return (
     <UIGWillowWrapper spoons={spoons} onCrisisExit={handleCrisisExit}>
+      <a href="#main-content" style={{ position: 'fixed', top: '-100%', left: 0, zIndex: 9999, padding: '0.75rem 1.5rem', background: '#0ff', color: '#000', fontFamily: 'monospace', fontSize: '0.875rem', fontWeight: 600, textDecoration: 'none', borderRadius: '0 0 8px 0' }} onFocus={(e) => { (e.target as HTMLElement).style.top = '0'; }} onBlur={(e) => { (e.target as HTMLElement).style.top = '-100%'; }}>Skip to main content</a>
       <div className="app">
         <header className="app-header">
           <h1>Willow</h1>
@@ -104,7 +105,7 @@ export default function App() {
           ))}
         </div>
 
-        <main className="activity-grid">
+        <main id="main-content" className="activity-grid">
           <button onClick={() => openPanel('voice')} aria-label="voice">Voice</button>
           <button onClick={() => openPanel('draw')} aria-label="draw">Draw</button>
           <button onClick={() => openPanel('magic')} aria-label="magic">Magic</button>

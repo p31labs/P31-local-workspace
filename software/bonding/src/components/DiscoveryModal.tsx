@@ -76,7 +76,7 @@ export function DiscoveryModal() {
           placeholder="Name your discovery..."
           maxLength={30}
           autoFocus
-          className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white text-center text-lg placeholder:text-white/20 outline-none focus:border-white/40 transition-colors"
+          className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white text-center text-lg placeholder:text-white/70 outline-none focus:border-white/40 transition-colors"
           style={{ minHeight: 48 }}
         />
 
@@ -99,7 +99,7 @@ export function DiscoveryModal() {
         <button
           type="button"
           onClick={handleDismiss}
-          className="mt-3 text-xs text-white/20 hover:text-white/40 transition-colors cursor-pointer"
+          className="mt-3 text-xs text-white/70 hover:text-white/90 transition-colors cursor-pointer"
         >
           Skip naming
         </button>

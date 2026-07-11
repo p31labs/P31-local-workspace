@@ -60,7 +60,7 @@ function GalleryRow({ entry }: { entry: GalleryEntry }) {
       <span className="text-amber-400/60 font-mono">
         {'\u2665'}{entry.love}
       </span>
-      <span className="text-white/20">
+      <span className="text-white/70">
         {MODE_EMOJI[entry.mode] ?? ''}
       </span>
       <span className="text-white/15 text-[10px] min-w-[55px] text-right">
@@ -140,12 +140,12 @@ export function ModeSelect() {
                 <p className="text-sm font-bold text-white/80 group-hover:text-white transition-colors">
                   {quest.name}
                 </p>
-                <p className="text-[11px] text-white/30 truncate">
+                <p className="text-[11px] text-white/70 truncate">
                   {quest.description}
                 </p>
               </div>
               <div className="flex flex-col items-end flex-shrink-0">
-                <span className="text-[10px] text-white/20 font-mono">
+                <span className="text-[10px] text-white/70 font-mono">
                   {quest.steps.length} molecules
                 </span>
                 <span className="text-[10px] text-amber-400/50 font-mono">
@@ -167,7 +167,7 @@ export function ModeSelect() {
               <p className="text-sm font-bold text-white/60 group-hover:text-white/80 transition-colors">
                 Free Build
               </p>
-              <p className="text-[11px] text-white/20">
+              <p className="text-[11px] text-white/70">
                 No quest. Build anything.
               </p>
             </div>
@@ -224,7 +224,7 @@ export function ModeSelect() {
               >
                 <span className="text-3xl">{age.emoji}</span>
                 <span className="text-xs font-bold text-white/80">{age.label}</span>
-                <span className="text-[10px] text-white/30">{age.desc}</span>
+                <span className="text-[10px] text-white/70">{age.desc}</span>
               </button>
             ))}
           </div>
@@ -248,7 +248,7 @@ export function ModeSelect() {
               <span className="text-base font-bold text-white/80 group-hover:text-white transition-colors">
                 {mode.label}
               </span>
-              <span className="text-xs text-white/30 text-center leading-relaxed">
+              <span className="text-xs text-white/70 text-center leading-relaxed">
                 {mode.description}
               </span>
               <span className="text-[10px] text-white/15 font-mono mt-auto">
@@ -286,7 +286,7 @@ export function ModeSelect() {
             <button
               type="button"
               onClick={() => setShowAll(!showAll)}
-              className="w-full mt-2 text-[11px] text-white/20 hover:text-white/40 transition-colors cursor-pointer"
+              className="w-full mt-2 text-[11px] text-white/70 hover:text-white/90 transition-colors cursor-pointer"
             >
               {showAll ? 'Show less' : `Show all ${gallery.length}...`}
             </button>
@@ -299,7 +299,7 @@ export function ModeSelect() {
       )}
 
       {/* Wonky footer */}
-      <p className="fixed bottom-3 w-full text-center text-[11px] italic text-white/20 pointer-events-none">
+      <p className="fixed bottom-3 w-full text-center text-[11px] italic text-white/70 pointer-events-none">
         {WONKY_FOOTER}
       </p>
     </div>

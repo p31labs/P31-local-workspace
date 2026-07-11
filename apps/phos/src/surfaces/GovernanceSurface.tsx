@@ -247,7 +247,7 @@ export function GovernanceSurface() {
             className={`px-4 py-2 rounded-xl text-xs font-sans transition-colors ${
               activeTab === tab
                 ? 'bg-white/10 text-white/80 border border-white/10'
-                : 'text-white/30 hover:text-white/50'
+                : 'text-white/70 hover:text-white/90'
             }`}
           >
             {tab === 'proposals' ? 'Proposals' : tab === 'constitution' ? 'Constitution' : tab === 'new' ? 'New Proposal' : 'Delegate'}
@@ -268,7 +268,7 @@ export function GovernanceSurface() {
               <div className="w-6 h-6 border-2 border-phos-primary/30 border-t-phos-primary rounded-full animate-spin" />
             </div>
           ) : proposals.length === 0 ? (
-            <div className="text-center text-white/30 py-12">
+            <div className="text-center text-white/70 py-12">
               <p className="text-sm font-light">No proposals yet.</p>
               <p className="text-xs opacity-50 mt-1">Be the first to propose a change.</p>
             </div>
@@ -285,7 +285,7 @@ export function GovernanceSurface() {
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-sans text-white/80">{proposal.title}</span>
-                        <span className="text-[10px] font-mono text-white/30">{proposal.status.toUpperCase()}</span>
+                        <span className="text-[10px] font-mono text-white/70">{proposal.status.toUpperCase()}</span>
                       </div>
                       <p className="text-xs text-white/40 font-light mt-1 line-clamp-2">{proposal.description}</p>
                       {proposal.action?.type && (
@@ -293,7 +293,7 @@ export function GovernanceSurface() {
                           Action: {proposal.action.type} {proposal.action.target ? `→ ${proposal.action.target}` : ''}
                         </p>
                       )}
-                      <div className="flex gap-4 mt-2 text-[10px] text-white/30 font-mono">
+                      <div className="flex gap-4 mt-2 text-[10px] text-white/70 font-mono">
                         <span>For: {proposal.votesFor}</span>
                         <span>Against: {proposal.votesAgainst}</span>
                         <span>Abstain: {proposal.votesAbstain}</span>
@@ -380,10 +380,10 @@ export function GovernanceSurface() {
               <h3 className="text-xs font-sans text-white/40 mb-2">Amendment History</h3>
               <div className="space-y-1 max-h-32 overflow-y-auto">
                 {constitution.amendmentHistory.length === 0 ? (
-                  <p className="text-[10px] text-white/20">No amendments yet.</p>
+                  <p className="text-[10px] text-white/70">No amendments yet.</p>
                 ) : (
                   constitution.amendmentHistory.map((entry, i) => (
-                    <div key={i} className="text-[10px] text-white/30 font-mono flex justify-between">
+                    <div key={i} className="text-[10px] text-white/70 font-mono flex justify-between">
                       <span>{entry.description}</span>
                       <span>{new Date(entry.timestamp).toLocaleDateString()}</span>
                     </div>
@@ -399,7 +399,7 @@ export function GovernanceSurface() {
         <div className="flex-1 overflow-y-auto">
           <div className="max-w-2xl mx-auto space-y-4">
             <h2 className="text-sm font-sans text-white/70">Propose a Change</h2>
-            <p className="text-xs text-white/30 font-light">Submit a constitutional amendment. Requires 66% supermajority and 20% quorum.</p>
+            <p className="text-xs text-white/70 font-light">Submit a constitutional amendment. Requires 66% supermajority and 20% quorum.</p>
 
             <input
               type="text"
@@ -457,7 +457,7 @@ export function GovernanceSurface() {
         <div className="flex-1 overflow-y-auto">
           <div className="max-w-2xl mx-auto space-y-4">
             <h2 className="text-sm font-sans text-white/70">Delegate Your Vote</h2>
-            <p className="text-xs text-white/30 font-light">Choose someone you trust to vote on your behalf. You can revoke at any time.</p>
+            <p className="text-xs text-white/70 font-light">Choose someone you trust to vote on your behalf. You can revoke at any time.</p>
 
             <input
               type="text"
@@ -478,7 +478,7 @@ export function GovernanceSurface() {
             <div className="mt-4 space-y-2">
               <h3 className="text-xs font-sans text-white/40">Your Delegations</h3>
               {delegations.length === 0 ? (
-                <p className="text-[10px] text-white/20">No active delegations.</p>
+                <p className="text-[10px] text-white/70">No active delegations.</p>
               ) : (
                 delegations.map((d, i) => (
                   <div key={i} className="flex justify-between text-xs text-white/40 font-mono">

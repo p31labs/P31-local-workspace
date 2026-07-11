@@ -27,6 +27,11 @@ import '../styles/globals.css';
     </script>
   </head>
   <body>
+    <style>
+      .skip-link { position: fixed; top: -100%; left: 0; z-index: 9999; padding: 0.75rem 1.5rem; background: #0ff; color: #000; font-family: monospace; font-size: 0.875rem; font-weight: 600; text-decoration: none; border-radius: 0 0 8px 0; }
+      .skip-link:focus { top: 0; }
+    </style>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
     <PhosApp client:only="react" />
   </body>
 </html>

@@ -134,7 +134,7 @@ export function BarterMarketplace() {
             className={`px-4 py-2 rounded-xl text-xs font-sans transition-colors ${
               activeTab === tab
                 ? 'bg-white/10 text-white/80 border border-white/10'
-                : 'text-white/30 hover:text-white/50'
+                : 'text-white/70 hover:text-white/90'
             }`}
           >
             {tab === 'list' ? 'Browse' : tab === 'create' ? 'Create Listing' : 'My Listings'}
@@ -155,7 +155,7 @@ export function BarterMarketplace() {
               <div className="w-6 h-6 border-2 border-phos-primary/30 border-t-phos-primary rounded-full animate-spin" />
             </div>
           ) : listings.length === 0 ? (
-            <div className="text-center text-white/30 py-12">
+            <div className="text-center text-white/70 py-12">
               <p className="text-sm font-light">No active barter listings.</p>
               <p className="text-xs opacity-50 mt-1">Be the first to list something.</p>
             </div>
@@ -168,12 +168,12 @@ export function BarterMarketplace() {
                       <span className="text-sm font-sans text-white/80">
                         {listing.offeredQuantity}x {listing.offeredItem}
                       </span>
-                      <span className="text-xs text-white/30">⟷</span>
+                      <span className="text-xs text-white/70">⟷</span>
                       <span className="text-sm font-sans text-white/80">
                         {listing.requestedQuantity}x {listing.requestedItem}
                       </span>
                     </div>
-                    <div className="flex gap-3 mt-2 text-[10px] text-white/30 font-mono">
+                    <div className="flex gap-3 mt-2 text-[10px] text-white/70 font-mono">
                       <span>{listing.location}</span>
                       <span>·</span>
                       <span>{listing.category}</span>
@@ -197,7 +197,7 @@ export function BarterMarketplace() {
         <div className="flex-1 overflow-y-auto">
           <div className="max-w-2xl mx-auto space-y-4">
             <h2 className="text-sm font-sans text-white/70">Create Barter Listing</h2>
-            <p className="text-xs text-white/30 font-light">List something you have to offer. Trust capacity determines your limit.</p>
+            <p className="text-xs text-white/70 font-light">List something you have to offer. Trust capacity determines your limit.</p>
 
             <div className="grid grid-cols-2 gap-4">
               <input
@@ -260,7 +260,7 @@ export function BarterMarketplace() {
             </button>
 
             {trustProfile && (
-              <div className="text-xs text-white/30 font-light text-center">
+              <div className="text-xs text-white/70 font-light text-center">
                 Your trust capacity: {trustProfile.capacity.toLocaleString()} units
               </div>
             )}
@@ -270,9 +270,9 @@ export function BarterMarketplace() {
 
       {activeTab === 'my' && (
         <div className="flex-1 overflow-y-auto space-y-3">
-          <p className="text-xs text-white/30 font-light mb-4">Your active barter listings.</p>
+          <p className="text-xs text-white/70 font-light mb-4">Your active barter listings.</p>
           {listings.filter(l => l.offeredBy === identity.did).length === 0 ? (
-            <div className="text-center text-white/30 py-12">
+            <div className="text-center text-white/70 py-12">
               <p className="text-sm font-light">You haven't listed anything yet.</p>
             </div>
           ) : (
@@ -284,12 +284,12 @@ export function BarterMarketplace() {
                     <span className="text-sm font-sans text-white/80">
                       {listing.offeredQuantity}x {listing.offeredItem}
                     </span>
-                    <span className="text-xs text-white/30">⟷</span>
+                    <span className="text-xs text-white/70">⟷</span>
                     <span className="text-sm font-sans text-white/80">
                       {listing.requestedQuantity}x {listing.requestedItem}
                     </span>
                   </div>
-                  <div className="flex gap-3 mt-2 text-[10px] text-white/30 font-mono">
+                  <div className="flex gap-3 mt-2 text-[10px] text-white/70 font-mono">
                     <span>{listing.status}</span>
                     <span>·</span>
                     <span>{listing.location}</span>

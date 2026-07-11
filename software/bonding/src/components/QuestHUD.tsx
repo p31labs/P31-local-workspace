@@ -83,7 +83,7 @@ export function QuestHUD() {
         </div>
         {/* Narrative intro — shown when no atoms on canvas */}
         {narrative && !formulaActive && progress.completedSteps === 0 && (
-          <p className="text-[10px] text-white/30 italic leading-tight mb-1">
+          <p className="text-[10px] text-white/70 italic leading-tight mb-1">
             {narrative.intro}
           </p>
         )}

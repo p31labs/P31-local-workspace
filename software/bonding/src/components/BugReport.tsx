@@ -272,7 +272,7 @@ export function BugReport({ isOpen, onClose }: BugReportProps) {
             </button>
 
             {/* Privacy note */}
-            <p className="text-[10px] text-white/20 text-center mt-3 font-mono">
+            <p className="text-[10px] text-white/70 text-center mt-3 font-mono">
               Device info will be included automatically
             </p>
           </>

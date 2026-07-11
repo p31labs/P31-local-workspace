@@ -346,8 +346,8 @@ html, body, #root {
   font-family: var(--font-display);
   cursor: pointer;
   transition: all var(--trans-fast);
-  min-height: 44px;
-  min-width: 44px;
+  min-height: 48px;
+  min-width: 48px;
   padding: 8px 16px;
   display: inline-flex;
   align-items: center;

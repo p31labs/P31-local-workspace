@@ -69,7 +69,7 @@ export function TutorialOverlay() {
           <button
             type="button"
             onClick={() => setMinimized(true)}
-            className="absolute -top-1 -right-1 text-white/15 hover:text-white/40 transition-colors cursor-pointer text-xs"
+            className="absolute -top-1 -right-1 text-white/15 hover:text-white/90 transition-colors cursor-pointer text-xs"
             style={{ minWidth: 28, minHeight: 28, touchAction: 'manipulation' }}
           >
             {'\u2715'}
@@ -85,7 +85,7 @@ export function TutorialOverlay() {
             </div>
           </div>
 
-          <p className="text-[9px] text-white/10 font-mono mt-1">
+          <p className="text-[9px] text-white/60 font-mono mt-1">
             {stepNum}/{totalSteps}{step.waitFor.type === 'any_tap' ? ' \u00B7 tap anywhere' : ''}
           </p>
         </div>

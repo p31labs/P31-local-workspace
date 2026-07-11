@@ -163,7 +163,7 @@ export function Lobby() {
             >{ch}</span>
           ))}
         </h1>
-        <p className="text-sm text-white/30 font-mono"
+        <p className="text-sm text-white/70 font-mono"
           style={{ animation: 'letterReveal 0.4s ease-out 0.5s both' }}
         >
           Play Together
@@ -203,7 +203,7 @@ export function Lobby() {
             >
               <span className="text-3xl">+</span>
               <span className="text-base font-bold text-white/80">Start Room</span>
-              <span className="text-xs text-white/30">Create a new room</span>
+              <span className="text-xs text-white/70">Create a new room</span>
             </button>
 
             <button
@@ -214,7 +214,7 @@ export function Lobby() {
             >
               <span className="text-3xl">&rarr;</span>
               <span className="text-base font-bold text-white/80">Join Room</span>
-              <span className="text-xs text-white/30">Enter a room code</span>
+              <span className="text-xs text-white/70">Enter a room code</span>
             </button>
           </div>
         </div>
@@ -229,7 +229,7 @@ export function Lobby() {
             value={name}
             onChange={(e) => setName(e.target.value)}
             maxLength={20}
-            className={`w-full px-4 py-3 glass-card rounded-xl text-white text-center font-medium placeholder:text-white/20 focus:outline-none focus:border-white/30 ${
+            className={`w-full px-4 py-3 glass-card rounded-xl text-white text-center font-medium placeholder:text-white/70 focus:outline-none focus:border-white/30 ${
               error ? 'border-red-400/50' : 'border-white/10'
             }`}
             style={{ minHeight: 48 }}
@@ -270,7 +270,7 @@ export function Lobby() {
       {/* Step: Waiting for player */}
       {step === 'waiting' && (
         <div className="flex flex-col items-center gap-4">
-          <p className="text-xs text-white/30 font-mono">Room Code</p>
+          <p className="text-xs text-white/70 font-mono">Room Code</p>
           <div className="flex items-center gap-6">
             <p
               className="text-5xl font-black font-mono tracking-widest text-white select-all"
@@ -304,15 +304,15 @@ export function Lobby() {
                 },
               );
             }}
-            className="text-xs text-white/40 hover:text-white/60 border border-white/[0.12] rounded-lg px-4 py-1.5 transition-colors cursor-pointer"
+            className="text-xs text-white/40 hover:text-white/90 border border-white/[0.12] rounded-lg px-4 py-1.5 transition-colors cursor-pointer"
             style={{ minHeight: 36 }}
           >
             {copyFeedback === 'copied' ? 'Copied!' : copyFeedback === 'failed' ? 'Copy failed — tap code to select' : 'Copy Code'}
           </button>
-          <p className="text-sm text-white/30">
+          <p className="text-sm text-white/70">
             Share this code with your player
           </p>
-          <div className="flex items-center gap-2 text-white/20 text-sm">
+          <div className="flex items-center gap-2 text-white/70 text-sm">
             <span className="inline-block w-2 h-2 rounded-full bg-green/40 animate-pulse" />
             <WaitingDots />
           </div>
@@ -340,7 +340,7 @@ export function Lobby() {
             value={name}
             onChange={(e) => setName(e.target.value)}
             maxLength={20}
-            className={`w-full px-4 py-3 glass-card rounded-xl text-white text-center font-medium placeholder:text-white/20 focus:outline-none focus:border-white/30 ${
+            className={`w-full px-4 py-3 glass-card rounded-xl text-white text-center font-medium placeholder:text-white/70 focus:outline-none focus:border-white/30 ${
               error ? 'border-red-400/50' : 'border-white/10'
             }`}
             style={{ minHeight: 48 }}
@@ -382,7 +382,7 @@ export function Lobby() {
       <button
         type="button"
         onClick={handleBack}
-        className="text-xs text-white/30 hover:text-white/50 transition-colors cursor-pointer"
+        className="text-xs text-white/70 hover:text-white/90 transition-colors cursor-pointer"
         style={{ minHeight: 48, touchAction: 'manipulation' }}
       >
         &larr; Back

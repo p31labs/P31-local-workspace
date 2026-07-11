@@ -115,7 +115,7 @@ export const PassportWizard: React.FC<{ onComplete: () => void }> = ({ onComplet
                 <button
                   onClick={handleGuestBypass}
                   disabled={loading}
-                  className="w-full rounded-2xl px-6 py-3.5 text-xs font-light text-white/30 hover:text-white/50 transition-colors min-h-[44px]"
+                  className="w-full rounded-2xl px-6 py-3.5 text-xs font-light text-white/70 hover:text-white/90 transition-colors min-h-[48px]"
                 >
                   Enter as Guest
                 </button>

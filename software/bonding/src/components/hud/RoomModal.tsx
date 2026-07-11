@@ -129,7 +129,7 @@ export function RoomModal({ onClose }: RoomModalProps) {
             </span>
             <button
               onClick={onClose}
-              className="w-8 h-8 flex items-center justify-center rounded-lg text-white/30 hover:text-white/60 transition-colors"
+              className="w-8 h-8 flex items-center justify-center rounded-lg text-white/70 hover:text-white/90 transition-colors"
               aria-label="Close"
             >
               ✕
@@ -140,7 +140,7 @@ export function RoomModal({ onClose }: RoomModalProps) {
             {roomCode}
           </div>
 
-          <p className="text-xs text-white/30 text-center">Share this code with your partner</p>
+          <p className="text-xs text-white/70 text-center">Share this code with your partner</p>
 
           <button
             onClick={handleLeave}
@@ -165,7 +165,7 @@ export function RoomModal({ onClose }: RoomModalProps) {
           <span className="font-mono text-xs text-white/40 tracking-wider uppercase">Multiplayer</span>
           <button
             onClick={onClose}
-            className="w-8 h-8 flex items-center justify-center rounded-lg text-white/30 hover:text-white/60 transition-colors"
+            className="w-8 h-8 flex items-center justify-center rounded-lg text-white/70 hover:text-white/90 transition-colors"
             aria-label="Close"
           >
             ✕
@@ -179,7 +179,7 @@ export function RoomModal({ onClose }: RoomModalProps) {
           onChange={(e) => setName(e.target.value)}
           placeholder="Your name"
           maxLength={16}
-          className="w-full px-4 py-2.5 rounded-xl bg-white/[0.06] border border-white/[0.08] text-white/80 placeholder:text-white/20 font-mono text-sm outline-none focus:border-white/20 transition-colors"
+          className="w-full px-4 py-2.5 rounded-xl bg-white/[0.06] border border-white/[0.08] text-white/80 placeholder:text-white/70 font-mono text-sm outline-none focus:border-white/20 transition-colors"
         />
 
         {/* Create new room */}
@@ -194,7 +194,7 @@ export function RoomModal({ onClose }: RoomModalProps) {
         {/* Divider */}
         <div className="flex items-center gap-3">
           <div className="flex-1 h-px bg-white/[0.06]" />
-          <span className="text-[10px] text-white/20 uppercase tracking-wider">or join</span>
+          <span className="text-[10px] text-white/70 uppercase tracking-wider">or join</span>
           <div className="flex-1 h-px bg-white/[0.06]" />
         </div>
 
@@ -206,7 +206,7 @@ export function RoomModal({ onClose }: RoomModalProps) {
             onChange={(e) => setCode(e.target.value.toUpperCase().slice(0, 4))}
             placeholder="CODE"
             maxLength={4}
-            className="flex-1 px-4 py-2.5 rounded-xl bg-white/[0.06] border border-white/[0.08] text-white/80 placeholder:text-white/20 font-mono text-lg tracking-[0.25em] uppercase text-center outline-none focus:border-[#FFD700]/30 transition-colors"
+            className="flex-1 px-4 py-2.5 rounded-xl bg-white/[0.06] border border-white/[0.08] text-white/80 placeholder:text-white/70 font-mono text-lg tracking-[0.25em] uppercase text-center outline-none focus:border-[#FFD700]/30 transition-colors"
             onKeyDown={(e) => { if (e.key === 'Enter') handleJoin(); }}
           />
           <button

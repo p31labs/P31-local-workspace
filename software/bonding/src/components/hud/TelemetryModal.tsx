@@ -35,7 +35,7 @@ function eventColor(type: string): string {
     case 'PING_SENT': return 'text-blue-400';
     case 'PING_RECEIVED': return 'text-blue-300';
     case 'DIFFICULTY_CHANGED': return 'text-white/40';
-    default: return 'text-white/30';
+    default: return 'text-white/70';
   }
 }
 
@@ -103,7 +103,7 @@ export function TelemetryModal({ onClose }: TelemetryModalProps) {
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 flex items-center justify-center rounded-lg text-white/30 hover:text-white/60 transition-colors"
+            className="w-8 h-8 flex items-center justify-center rounded-lg text-white/70 hover:text-white/90 transition-colors"
             aria-label="Close telemetry viewer"
           >
             ✕
@@ -112,10 +112,10 @@ export function TelemetryModal({ onClose }: TelemetryModalProps) {
 
         {/* Session info */}
         <div className="px-5 py-2 border-b border-white/[0.04] flex items-center gap-4">
-          <span className="font-mono text-[10px] text-white/20">
+          <span className="font-mono text-[10px] text-white/70">
             SESSION {sessionId ? sessionId.slice(0, 8) : '—'}
           </span>
-          <span className="font-mono text-[10px] text-white/20">
+          <span className="font-mono text-[10px] text-white/70">
             {entries.length} EVENT{entries.length !== 1 ? 'S' : ''}
           </span>
           <span className="font-mono text-[10px] text-[#00FF88]/40">
@@ -140,7 +140,7 @@ export function TelemetryModal({ onClose }: TelemetryModalProps) {
             <div className="text-center py-8 font-mono text-xs text-white/15">
               No events recorded yet.
               <br />
-              <span className="text-white/10">Events appear as you play.</span>
+              <span className="text-white/60">Events appear as you play.</span>
             </div>
           ) : (
             <div className="space-y-1">
@@ -149,7 +149,7 @@ export function TelemetryModal({ onClose }: TelemetryModalProps) {
                   key={evt.seq}
                   className="flex items-center gap-4 font-mono text-xs py-1 border-b border-white/[0.02] last:border-0"
                 >
-                  <span className="w-16 shrink-0 text-white/20 tabular-nums">
+                  <span className="w-16 shrink-0 text-white/70 tabular-nums">
                     {formatTimestamp(evt.ts)}
                   </span>
                   <span className={`flex-1 truncate ${eventColor(evt.type)}`}>
@@ -166,7 +166,7 @@ export function TelemetryModal({ onClose }: TelemetryModalProps) {
 
         {/* Footer */}
         <div className="px-5 py-3 border-t border-white/[0.06] text-center">
-          <span className="font-mono text-[9px] text-white/10 tracking-wider uppercase">
+          <span className="font-mono text-[9px] text-white/60 tracking-wider uppercase">
             P31 Labs · OQE Standard · Tamper-Evident Hash Chain
           </span>
         </div>

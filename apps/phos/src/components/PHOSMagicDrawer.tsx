@@ -60,7 +60,7 @@ export default function PHOSMagicDrawer({
           <button
             ref={toggleRef}
             onClick={onClose}
-            className="p-3 rounded-lg hover:bg-white/5 transition-colors opacity-50 hover:opacity-100 min-w-[44px] min-h-[44px] flex items-center justify-center"
+            className="p-3 rounded-lg hover:bg-white/5 transition-colors opacity-50 hover:opacity-100 min-w-[48px] min-h-[48px] flex items-center justify-center"
             aria-label="Close Mesh Dashboard"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">

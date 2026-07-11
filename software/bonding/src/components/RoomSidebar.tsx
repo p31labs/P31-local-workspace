@@ -117,7 +117,7 @@ export function RoomSidebar() {
       <button
         type="button"
         onClick={() => setExpanded(true)}
-        className="absolute top-20 right-6 glass-card px-3 py-2 rounded-full text-xs text-white/40 cursor-pointer hover:text-white/60 transition-colors flex items-center gap-2"
+        className="absolute top-20 right-6 glass-card px-3 py-2 rounded-full text-xs text-white/40 cursor-pointer hover:text-white/90 transition-colors flex items-center gap-2"
         style={{ minHeight: 40, touchAction: 'manipulation' }}
       >
         <span className={`w-2 h-2 rounded-full ${statusColor}`} />
@@ -134,7 +134,7 @@ export function RoomSidebar() {
         <button
           type="button"
           onClick={() => setExpanded(false)}
-          className="text-[10px] text-white/15 hover:text-white/30 transition-colors cursor-pointer"
+          className="text-[10px] text-white/15 hover:text-white/70 transition-colors cursor-pointer"
           style={{ minHeight: 24 }}
         >
           collapse
@@ -162,7 +162,7 @@ export function RoomSidebar() {
                 {player.name}
               </span>
               {isBreathing && (
-                <span className="text-[10px] text-white/20">{'\u{1FAC1}'}</span>
+                <span className="text-[10px] text-white/70">{'\u{1FAC1}'}</span>
               )}
             </div>
 
@@ -173,7 +173,7 @@ export function RoomSidebar() {
                   {displayFormula(formula)}
                 </span>
               ) : (
-                <span className="text-white/20">building...</span>
+                <span className="text-white/70">building...</span>
               )}
               <span className="text-amber-400/60">
                 {'\u2665'} {player.state.love}
@@ -235,7 +235,7 @@ export function RoomSidebar() {
                 <button
                   type="button"
                   onClick={() => handleSendMessage(player.id)}
-                  className="px-2 py-1.5 bg-white/5 hover:bg-white/10 rounded-lg text-xs text-white/40 hover:text-white/60 transition-all cursor-pointer"
+                  className="px-2 py-1.5 bg-white/5 hover:bg-white/10 rounded-lg text-xs text-white/40 hover:text-white/90 transition-all cursor-pointer"
                   style={{ minHeight: 32, touchAction: 'manipulation' }}
                 >
                   {'\u{1F4E4}'}
@@ -253,7 +253,7 @@ export function RoomSidebar() {
       {/* Ping log */}
       {recentLog.length > 0 && (
         <div className="bg-white/[0.04] backdrop-blur-[20px] rounded-xl border border-white/[0.08] px-3 py-2 max-h-32 overflow-y-auto">
-          <p className="text-[10px] text-white/20 mb-1">Recent</p>
+          <p className="text-[10px] text-white/70 mb-1">Recent</p>
           {recentLog.map((entry) => (
             <p key={entry.id} className="text-[11px] text-white/40 leading-snug truncate">
               {entry.fromName}: {entry.message ? `${entry.message} ` : ''}{entry.reaction}
@@ -263,7 +263,7 @@ export function RoomSidebar() {
       )}
 
       {/* Room code footer */}
-      <p className="text-[10px] text-white/10 font-mono text-right">
+      <p className="text-[10px] text-white/60 font-mono text-right">
         Room {roomCode}
       </p>
     </div>

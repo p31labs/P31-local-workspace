@@ -209,7 +209,7 @@ export const PassportSurface: React.FC = () => {
           <div className="flex gap-2">
             <button
               onClick={() => { setIsEditing(false); loadFormFromPassport(); }}
-              className="text-xs text-white/40 hover:text-white/60 transition-colors"
+              className="text-xs text-white/40 hover:text-white/90 transition-colors"
             >
               Cancel
             </button>
@@ -362,7 +362,7 @@ export const PassportSurface: React.FC = () => {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-lg font-light tracking-wide text-[#E8E8EC]">Cognitive Passport</h2>
-          <p className="text-xs text-white/30 font-light mt-0.5">
+          <p className="text-xs text-white/70 font-light mt-0.5">
             {passport.did ? `DID: ${passport.did.slice(0, 40)}...` : 'Local document'}
           </p>
         </div>
@@ -392,19 +392,19 @@ export const PassportSurface: React.FC = () => {
         <div className="space-y-4">
           {passport.identity && (
             <div className="rounded-2xl bg-white/5 border border-white/5 p-5 space-y-3">
-              <h3 className="text-xs font-mono text-white/30 uppercase tracking-widest">Identity</h3>
+              <h3 className="text-xs font-mono text-white/70 uppercase tracking-widest">Identity</h3>
               <div className="grid grid-cols-2 gap-3 text-sm font-light">
                 <div>
-                  <div className="text-[10px] text-white/30 uppercase tracking-widest mb-0.5">Name</div>
+                  <div className="text-[10px] text-white/70 uppercase tracking-widest mb-0.5">Name</div>
                   <div className="text-white/70">{passport.identity.displayName || '—'}</div>
                 </div>
                 <div>
-                  <div className="text-[10px] text-white/30 uppercase tracking-widest mb-0.5">Role</div>
+                  <div className="text-[10px] text-white/70 uppercase tracking-widest mb-0.5">Role</div>
                   <div className="text-white/70">{passport.identity.role || '—'}</div>
                 </div>
                 {passport.identity.oneLiner && (
                   <div className="col-span-2">
-                    <div className="text-[10px] text-white/30 uppercase tracking-widest mb-0.5">One-Liner</div>
+                    <div className="text-[10px] text-white/70 uppercase tracking-widest mb-0.5">One-Liner</div>
                     <div className="text-white/70 text-xs italic">{passport.identity.oneLiner}</div>
                   </div>
                 )}
@@ -414,20 +414,20 @@ export const PassportSurface: React.FC = () => {
 
           {passport.cognition && (
             <div className="rounded-2xl bg-white/5 border border-white/5 p-5 space-y-3">
-              <h3 className="text-xs font-mono text-white/30 uppercase tracking-widest">Cognition</h3>
+              <h3 className="text-xs font-mono text-white/70 uppercase tracking-widest">Cognition</h3>
               <div className="grid grid-cols-2 gap-3 text-sm font-light">
                 <div>
-                  <div className="text-[10px] text-white/30 uppercase tracking-widest mb-0.5">Processing Style</div>
+                  <div className="text-[10px] text-white/70 uppercase tracking-widest mb-0.5">Processing Style</div>
                   <div className="text-white/70">{passport.cognition.processingStyle || '—'}</div>
                 </div>
                 <div>
-                  <div className="text-[10px] text-white/30 uppercase tracking-widest mb-0.5">Learning</div>
+                  <div className="text-[10px] text-white/70 uppercase tracking-widest mb-0.5">Learning</div>
                   <div className="text-white/70">{passport.cognition.learningPreference || '—'}</div>
                 </div>
               </div>
               {passport.cognition.strengths?.length > 0 && (
                 <div>
-                  <div className="text-[10px] text-white/30 uppercase tracking-widest mb-1">Strengths</div>
+                  <div className="text-[10px] text-white/70 uppercase tracking-widest mb-1">Strengths</div>
                   <div className="flex flex-wrap gap-1">
                     {passport.cognition.strengths.map((s: string) => (
                       <span key={s} className="px-2 py-0.5 rounded-full bg-white/5 text-[10px] text-white/50 font-light">{s}</span>
@@ -440,22 +440,22 @@ export const PassportSurface: React.FC = () => {
 
           {passport.accessibility && (
             <div className="rounded-2xl bg-white/5 border border-white/5 p-5 space-y-3">
-              <h3 className="text-xs font-mono text-white/30 uppercase tracking-widest">Accessibility</h3>
+              <h3 className="text-xs font-mono text-white/70 uppercase tracking-widest">Accessibility</h3>
               <div className="grid grid-cols-2 gap-3 text-sm font-light">
                 <div>
-                  <div className="text-[10px] text-white/30 uppercase tracking-widest mb-0.5">Spoons Baseline</div>
+                  <div className="text-[10px] text-white/70 uppercase tracking-widest mb-0.5">Spoons Baseline</div>
                   <div className="text-white/70">{passport.baselineSpoons ?? 3} / 5</div>
                 </div>
                 <div>
-                  <div className="text-[10px] text-white/30 uppercase tracking-widest mb-0.5">Font Size</div>
+                  <div className="text-[10px] text-white/70 uppercase tracking-widest mb-0.5">Font Size</div>
                   <div className="text-white/70">{passport.accessibility.fontSize || 16}px</div>
                 </div>
                 <div>
-                  <div className="text-[10px] text-white/30 uppercase tracking-widest mb-0.5">Motion</div>
+                  <div className="text-[10px] text-white/70 uppercase tracking-widest mb-0.5">Motion</div>
                   <div className="text-white/70">{passport.accessibility.motionPreference || '—'}</div>
                 </div>
                 <div>
-                  <div className="text-[10px] text-white/30 uppercase tracking-widest mb-0.5">Contrast</div>
+                  <div className="text-[10px] text-white/70 uppercase tracking-widest mb-0.5">Contrast</div>
                   <div className="text-white/70">{passport.accessibility.contrastPreference || '—'}</div>
                 </div>
               </div>

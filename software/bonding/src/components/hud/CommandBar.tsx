@@ -116,7 +116,7 @@ export function CommandBar({
             className="w-9 h-9 rounded-lg flex items-center justify-center
                        border border-white/[0.06] bg-transparent touch-expand
                        hover:border-white/10 transition-all duration-150 active:scale-90
-                       font-mono text-[11px] text-white/25 hover:text-white/50"
+                       font-mono text-[11px] text-white/25 hover:text-white/90"
             aria-label="View telemetry log"
           >
             &lt;/&gt;

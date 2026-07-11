@@ -163,7 +163,7 @@ export function ShakeStream({ theme, initialQuery }: { theme?: Record<string, st
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && executeSearch(query)}
           placeholder="Search your journal..."
-          className="flex-1 px-3 py-2 text-xs rounded-lg border outline-none bg-black/40 border-white/10 text-white/80 placeholder:text-white/30"
+          className="flex-1 px-3 py-2 text-xs rounded-lg border outline-none bg-black/40 border-white/10 text-white/80 placeholder:text-white/70"
         />
         {loading ? (
           <button

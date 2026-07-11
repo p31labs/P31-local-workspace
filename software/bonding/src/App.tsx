@@ -502,7 +502,7 @@ function App() {
                 <p className="text-lg mb-0.5">
                   {PERSONALITY_EMOJI[personality.type]} {personality.name}
                 </p>
-                <p className="text-xs text-white/30 italic">
+                <p className="text-xs text-white/70 italic">
                   {personality.description}
                 </p>
               </div>
@@ -557,7 +557,7 @@ function App() {
               <button
                 type="button"
                 onClick={handleExportClipboard}
-                className="px-4 py-3 bg-transparent hover:bg-white/5 text-white/40 hover:text-white/60 rounded-xl transition-all cursor-pointer border border-white/15 text-xs min-h-12"
+                className="px-4 py-3 bg-transparent hover:bg-white/5 text-white/40 hover:text-white/90 rounded-xl transition-all cursor-pointer border border-white/15 text-xs min-h-12"
                 title="Copy engagement log to clipboard"
               >
                 {exportCopied ? 'Copied!' : 'Exhibit A'}
@@ -568,7 +568,7 @@ function App() {
             <button
               type="button"
               onClick={handleExportDownload}
-              className="mt-3 text-[10px] text-white/15 hover:text-white/30 transition-colors cursor-pointer"
+              className="mt-3 text-[10px] text-white/15 hover:text-white/70 transition-colors cursor-pointer"
             >
               Download .txt
             </button>

@@ -76,7 +76,7 @@ export function TopBar({ onNavOpen, title = 'BONDING' }: TopBarProps) {
     <GlassPanel className="h-full flex items-center justify-between px-4 gap-3">
       <NavTrigger onClick={onNavOpen} />
 
-      <span className="font-mono text-xs font-medium text-white/30 tracking-[0.15em] uppercase select-none">
+      <span className="font-mono text-xs font-medium text-white/70 tracking-[0.15em] uppercase select-none">
         {title}
       </span>
 

@@ -166,7 +166,7 @@ export function TopBar({ modeEmoji, onModeExit, onLobby, isInRoom, playerCount, 
         />
       </div>
 
-      <span className="font-mono text-xs font-medium text-white/30 tracking-[0.15em] uppercase select-none">
+      <span className="font-mono text-xs font-medium text-white/70 tracking-[0.15em] uppercase select-none">
         {title}
       </span>
 
