@@ -68,7 +68,7 @@ External landscape (verified July 11, 2026):
 | C2 | Finalise PHOS-Sovereign proposal (€25k, NGI Fediversity 12th) | Grants | 🔄 IN PROGRESS | Proposal complete |
 | C3 | Submit both proposals at nlnet.nl/propose/ | **User** | 🔄 USER ACTION | Submission receipt by Aug 1 |
 | C4 | Update AGENTS.md with final WCAG 2.2 AAA status | Docs | ✅ DONE | No false claims |
-| C5 | Tag release: `v1.0.0-uig-convergence` | Ops | 🔄 PENDING | Tag pushed to origin |
+| C5 | Tag release: `v1.0.0-uig-convergence` | Ops | ✅ DONE (`bd8c298`) | Tag pushed to origin |
 
 ---
 
