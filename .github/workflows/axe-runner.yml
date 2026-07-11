@@ -1,5 +1,6 @@
-# Non-blocking WCAG 2.2 AAA axe-core audit (Playwright + @axe-core/playwright).
-# Wires scripts/audit-wcag.mjs into CI without failing the pipeline.
+# WCAG 2.2 AAA axe-core audit (Playwright + @axe-core/playwright).
+# Fails on critical/serious violations; minor/moderate are reported but non-blocking.
+# Wires scripts/audit-wcag.mjs into CI.
 
 name: WCAG axe audit
 
@@ -36,6 +37,5 @@ jobs:
       - name: Install Playwright Chromium
         run: npx playwright install --with-deps chromium
 
-      - name: Run axe-core WCAG audit (non-blocking)
-        continue-on-error: true
+      - name: Run axe-core WCAG audit
         run: node scripts/audit-wcag.mjs https://phos.p31ca.org

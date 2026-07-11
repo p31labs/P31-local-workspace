@@ -1,0 +1,28 @@
+/*
+ * @p31/design-system/motion
+ * Canonical spoon-aware motion kill-switch.
+ * Lowest common denominator — app-local overlays can re-enable at higher spoon levels.
+ *
+ * WCAG 2.2 AAA: motion is fully disabled at spoons 0 and via prefers-reduced-motion.
+ */
+
+/* Crisis mode (spoons=0): kill all motion */
+[data-spoons="0"] *,
+[data-reduced-motion="true"] * {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+/* OS-level preference */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
