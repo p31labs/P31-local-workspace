@@ -56,24 +56,30 @@ async function verifyJWT(token: string, secret: string): Promise<Record<string, 
 
 // ── Auth routes ────────────────────────────────────────────────────────
 app.post('/auth/login', async (c) => {
-  const { pseudonym, did } = await c.req.json<{ pseudonym?: string; did?: string }>();
-  if (!pseudonym && !did) return c.json({ error: 'pseudonym or did required' }, 400);
+  try {
+    const { pseudonym, did } = await c.req.json<{ pseudonym?: string; did?: string }>();
+    if (!pseudonym && !did) return c.json({ error: 'pseudonym or did required' }, 400);
 
-  const userId = did || `pseudo:${pseudonym}`;
-  const token = await signJWT({ sub: userId, pseudonym: pseudonym || userId }, c.env.JWT_SECRET);
+    const userId = did || `pseudo:${pseudonym}`;
+    const secret = c.env.JWT_SECRET || 'p31-auth-default-secret-change-in-production';
+    const token = await signJWT({ sub: userId, pseudonym: pseudonym || userId }, secret);
 
-  // Upsert user record
-  await c.env.DB.prepare('INSERT OR REPLACE INTO users (id, pseudonym, did, last_login) VALUES (?, ?, ?, ?)')
-    .bind(userId, pseudonym || null, did || null, new Date().toISOString())
-    .run();
+    // Upsert user record
+    await c.env.DB.prepare('INSERT OR REPLACE INTO users (id, pseudonym, did, last_login) VALUES (?, ?, ?, ?)')
+      .bind(userId, pseudonym || null, did || null, new Date().toISOString())
+      .run();
 
-  return c.json({ token, userId, pseudonym: pseudonym || userId });
+    return c.json({ token, userId, pseudonym: pseudonym || userId });
+  } catch (err) {
+    return c.json({ error: 'internal error', detail: String(err) }, 500);
+  }
 });
 
 app.get('/auth/verify', async (c) => {
   const auth = c.req.header('Authorization');
   if (!auth?.startsWith('Bearer ')) return c.json({ error: 'missing token' }, 401);
-  const payload = await verifyJWT(auth.slice(7), c.env.JWT_SECRET);
+  const secret = c.env.JWT_SECRET || 'p31-auth-default-secret-change-in-production';
+  const payload = await verifyJWT(auth.slice(7), secret);
   if (!payload) return c.json({ error: 'invalid token' }, 401);
   return c.json({ valid: true, userId: payload.sub, pseudonym: payload.pseudonym });
 });
@@ -81,9 +87,10 @@ app.get('/auth/verify', async (c) => {
 app.post('/auth/refresh', async (c) => {
   const auth = c.req.header('Authorization');
   if (!auth?.startsWith('Bearer ')) return c.json({ error: 'missing token' }, 401);
-  const payload = await verifyJWT(auth.slice(7), c.env.JWT_SECRET);
+  const secret = c.env.JWT_SECRET || 'p31-auth-default-secret-change-in-production';
+  const payload = await verifyJWT(auth.slice(7), secret);
   if (!payload) return c.json({ error: 'invalid token' }, 401);
-  const token = await signJWT({ sub: payload.sub, pseudonym: payload.pseudonym }, c.env.JWT_SECRET);
+  const token = await signJWT({ sub: payload.sub, pseudonym: payload.pseudonym }, secret);
   return c.json({ token });
 });
 
