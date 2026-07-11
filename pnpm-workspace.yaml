@@ -9,6 +9,8 @@ packages:
   # Core applications & services (software top-level packages)
   - 'software/*'
   - 'software/workers/mcp-x402-gateway'
+  - 'software/workers/intent-resolver'
+  - 'software/workers/creation-accountant'
   # Shared libraries & VS Code extensions
   - 'software/packages/*'
   - 'software/extensions/*'

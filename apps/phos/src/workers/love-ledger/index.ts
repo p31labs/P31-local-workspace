@@ -10,6 +10,24 @@ async function sha256(input: string): Promise<string> {
   return Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
+// Axis-2 verify side: confirm a creation-accountant receipt signature
+// (Ed25519, SPKI public key). Optional — only enforced when the
+// caller supplies X-Receipt-Signature.
+async function verifyReceiptSig(message: string, sigB64: string, pubB64: string): Promise<boolean> {
+  try {
+    const pubBin = atob(pubB64);
+    const pub = new Uint8Array(pubBin.length);
+    for (let i = 0; i < pubBin.length; i++) pub[i] = pubBin.charCodeAt(i);
+    const sigBin = atob(sigB64);
+    const sig = new Uint8Array(sigBin.length);
+    for (let i = 0; i < sigBin.length; i++) sig[i] = sigBin.charCodeAt(i);
+    const key = await crypto.subtle.importKey('spki', pub, { name: 'Ed25519' }, false, ['verify']);
+    return await crypto.subtle.verify('Ed25519', key, sig, new TextEncoder().encode(message));
+  } catch {
+    return false;
+  }
+}
+
 async function withRetry<T>(fn: () => Promise<T>, retries = 3, label = 'd1_query'): Promise<T> {
   let lastErr: any;
   for (let i = 0; i < retries; i++) {
@@ -30,7 +48,7 @@ async function withRetry<T>(fn: () => Promise<T>, retries = 3, label = 'd1_query
 // Writes accept EITHER an Ed25519 did:key signature (end-user wallets — the
 // existing verifyRequest path) OR a Bearer <LOVE_AUTH_SECRET> service token
 // (trusted internal callers: love-registry MCP, CLI, cron). Reads stay public.
-const WRITE_PATHS = new Set(['/transfer', '/stake', '/care-score']);
+const WRITE_PATHS = new Set(['/transfer', '/stake', '/care-score', '/withdraw']);
 
 function timingSafeEqual(a: string, b: string): boolean {
   const ab = new TextEncoder().encode(a);
@@ -177,6 +195,9 @@ export interface Env {
   LOVE_ARCHIVE: R2Bucket;
   LOVE_AUTH_SECRET?: string;
   LOVE_REQUIRE_AUTH?: string;
+  RECEIPT_SIGNER_PUBLIC_KEY?: string;
+  BLIND_MODE?: string;
+  ENVIRONMENT?: string;
 }
 
 export class LoveTransactionDO extends DurableObject {
@@ -410,6 +431,85 @@ export default {
         });
       } catch (err: any) {
         logEvent({ event: 'care_score_error', service: 'love-ledger', success: false, error: err?.message || String(err) });
+        return new Response(JSON.stringify({ error: 'Internal server error' }), { status: 500, headers: { 'Content-Type': 'application/json' } });
+      }
+    }
+
+    if (method === 'POST' && url.pathname === '/withdraw') {
+      try {
+        const body = await request.json() as {
+          did: string;
+          amount: number;
+          blind_secret: string;
+        };
+        if (typeof body.amount !== 'number' || body.amount <= 0) {
+          return new Response(JSON.stringify({ error: 'Invalid amount' }), { status: 400 });
+        }
+
+        const account = await withRetry(() => env.LOVE_DB.prepare(
+          'SELECT balance FROM love_accounts WHERE did = ?'
+        ).bind(body.did).first<{ balance: number }>(), 3, 'withdraw_select');
+
+        if (!account || account.balance < body.amount) {
+          return new Response(JSON.stringify({ error: 'Insufficient LOVE balance' }), { status: 402 });
+        }
+
+        // Axis-2 (verify side): if the caller supplies a receipt signature,
+        // confirm it against the creation-accountant public key.
+        const receiptSig = request.headers.get('X-Receipt-Signature');
+        if (receiptSig && env.RECEIPT_SIGNER_PUBLIC_KEY) {
+          const canonical = [body.did, 'system:love-issuer', String(body.amount)].join('|');
+          if (!await verifyReceiptSig(canonical, receiptSig, env.RECEIPT_SIGNER_PUBLIC_KEY)) {
+            return new Response(JSON.stringify({ error: 'Invalid receipt signature' }), { status: 401 });
+          }
+        }
+
+        const debit = env.LOVE_DB.prepare(
+          'UPDATE love_accounts SET balance = balance - ?, updated_at = datetime("now") WHERE did = ?'
+        ).bind(body.amount, body.did);
+
+        const txId = crypto.randomUUID();
+        const ts = Date.now();
+
+        // Hash chain (court-admissible) — mirrors /transfer.
+        const prevRows = await withRetry(() => env.LOVE_DB.prepare(
+          'SELECT entry_hash, created_at FROM love_chain WHERE from_did = ?'
+        ).bind(body.did).all<{ entry_hash: string; created_at: number }>(), 3, 'withdraw_prev');
+        let prevHash = GENESIS_HASH;
+        let maxTs = -1;
+        for (const r of prevRows.results || []) {
+          if (r.created_at > maxTs) { maxTs = r.created_at; prevHash = r.entry_hash; }
+        }
+        // Axis-1 guard: the current blind signature is a staging-only
+        // placeholder. Real GNU Taler Clause Blind Schnorr needs a WASM
+        // build; never mint with the mock on production.
+        if (env.BLIND_MODE === 'mock' && env.ENVIRONMENT === 'production') {
+          return new Response(JSON.stringify({ error: 'FATAL: mock blind signatures disabled in production' }), {
+            status: 500,
+            headers: { 'Content-Type': 'application/json' },
+          });
+        }
+        // TODO: GNU Taler Clause Blind Schnorr issuance (blind_secret).
+        const blindSig = `blindsig-${crypto.randomUUID()}`;
+        const entryHash = await sha256(
+          [body.did, 'system:love-issuer', String(body.amount), String(ts), prevHash, blindSig].join('|')
+        );
+
+        const chain = env.LOVE_DB.prepare(`
+          INSERT INTO love_chain (id, from_did, to_did, amount, type, signature, prev_hash, entry_hash, created_at)
+          VALUES (?, ?, ?, ?, 'love_withdraw', ?, ?, ?, ?)
+        `).bind(txId, body.did, 'system:love-issuer', body.amount, blindSig, prevHash, entryHash, ts);
+
+        // Atomic: debit + chain entry commit together (or roll back).
+        await env.LOVE_DB.batch([debit, chain]);
+
+        return new Response(JSON.stringify({
+          success: true,
+          blind_signature: blindSig,
+          transactionId: txId,
+        }), { headers: { 'Content-Type': 'application/json' } });
+      } catch (err: any) {
+        logEvent({ event: 'withdraw_error', service: 'love-ledger', success: false, error: err?.message || String(err) });
         return new Response(JSON.stringify({ error: 'Internal server error' }), { status: 500, headers: { 'Content-Type': 'application/json' } });
       }
     }

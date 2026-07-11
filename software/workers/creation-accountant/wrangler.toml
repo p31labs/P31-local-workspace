@@ -1,0 +1,18 @@
+name = "creation-accountant"
+main = "src/index.ts"
+compatibility_date = "2026-07-08"
+
+# L5 — CreationAccountant: measure value, write LOVE receipt.
+# Shares the SAME love-ledger D1 as the LOVE ledger + mcp-x402
+# (database_id 592e3e2e-...). The creation_penalties table +
+# love_chain.metadata column come from migration 003 (wrangler d1 migrations).
+[vars]
+
+[[d1_databases]]
+binding = "LOVE_LEDGER"
+database_name = "love-ledger"
+database_id = "592e3e2e-3203-4e0a-8342-9e85215ec8a6"
+
+[[kv_namespaces]]
+binding = "CREATION_KV"
+id = "d281745d-replace-me"

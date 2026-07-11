@@ -1,0 +1,19 @@
+name = "intent-resolver"
+main = "src/index.ts"
+compatibility_date = "2026-07-08"
+
+# L5 — IntentResolver: parse intent, return a Creation Quote.
+# Spoon state is client-measured (data-spoons pre/post) and supplied
+# by the caller; there is NO edge D1 spoon_state store (per repo survey).
+# Passport is resolved from PASSPORT_KV when a did is supplied.
+[vars]
+INTENT_CACHE_TTL = "3600"
+
+[[kv_namespaces]]
+binding = "PASSPORT_KV"
+id = "d281745d-replace-me"
+
+[[d1_databases]]
+binding = "LOVE_LEDGER"
+database_name = "love-ledger"
+database_id = "592e3e2e-3203-4e0a-8342-9e85215ec8a6"

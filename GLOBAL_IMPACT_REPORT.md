@@ -86,6 +86,7 @@ documentation artifact with no in-repo implementation — not listed here.)
 | Worker hardening — production enablement | Code complete; enable via `LOVE_REQUIRE_AUTH` + `wrangler secret put LOVE_AUTH_SECRET` |
 | ASSETS 2026 submission | Email draft pending |
 | DNS ownership TXT | Record ready for Cloudflare dashboard |
+| L5 Creation Economy | Scaffolded — intent-driven, dual-settlement (LOVE/x402) worker model; concept in `L5-CREATION-ECONOMY.md` |
 
 ## 8. Conclusion
 

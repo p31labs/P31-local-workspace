@@ -31,6 +31,7 @@ const SUITES = [
   { name: "p31ca-user-sentinel", label: "P31CA USER SENTINEL — E2E swarm" },
   { name: "mesh-integrity",      label: "MESH INTEGRITY — URL/PRS/glass" },
   { name: "systems-integrity",   label: "SYSTEMS INTEGRITY — Alignment/workflow" },
+  { name: "creation-economy",   label: "CREATION ECONOMY — intent-driven generation (L5)" },
 ];
 
 const args = process.argv.slice(2);

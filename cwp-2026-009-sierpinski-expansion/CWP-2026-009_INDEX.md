@@ -105,6 +105,14 @@ The external landscape validates the timing:
 
 **Success criteria:** 100+ tools aligned with neurodivergent needs; 1:1 A2UI integration; UIG core publicly available.
 
+### AXIS L5 — BUSINESS MODEL (Paradigm Shift: Extraction → Co-Creation)
+
+| Task | Description | Owner | Deadline | Status |
+| :--- | :--- | :--- | :--- | :--- |
+| **L5** | Creation Economy — intent-driven worker model (IntentResolver + CreationAccountant + LOVE dual-settlement) | Agent | 2026-07-31 | 🟡 SCAFFOLDED (`software/workers/intent-resolver` + `creation-accountant` Workers drafted; `apps/phos/src/workers/love-ledger` `/withdraw` extended; mcp-x402 `X-Creation-Unit` routing + `/mcp` bridge forward; `L5-CREATION-ECONOMY.md` + `CWP-2026-010`) |
+
+**Success criteria:** IntentResolver `/intent` returns a Creation Quote; CreationAccountant `/receipt` writes a hash-chained LOVE receipt (D1 batch); Dual Settlement Router routes `X-Creation-Unit: love|usdc`; LOVE `/withdraw` issues blind-sig (GNU Taler placeholder); TRIPER suite `creation-economy.triper.test.mjs` passes (6 axes); migration `003` applied.
+
 ---
 
 ## TIMELINE & RECURSIVE SCALING
@@ -165,6 +173,9 @@ Ref: Fortune 1 way — decompose, dispatch, execute in parallel, merge, verify.
 - [x] Node MCP bridge (L3.4) spawns 4 servers → 48-tool catalog, 7/7 tests green
 - [x] A2UI v0.9 integration complete (L4.2 adapter + L4.3 renderer)
 - [x] UIG core open-sourced (AGPL-3.0, `software/packages/interface-generator`)
+- [ ] L5 Creation Economy scaffolded (IntentResolver + CreationAccountant + X-Creation-Unit routing)
+- [ ] L5 TRIPER suite (creation-economy) passing (6 axes)
+- [ ] LOVE `/withdraw` + migration `003` applied
 - [ ] Tag `v2.0.0-sierpinski-expansion` pushed
 
 ---

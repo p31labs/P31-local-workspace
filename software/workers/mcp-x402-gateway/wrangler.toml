@@ -9,10 +9,17 @@ compatibility_date = "2026-01-01"
 NETWORK = "base-sepolia"
 PAY_TO = "0xPAY_TO_RECEIVER"
 FACILITATOR_URL = "https://facilitator.x402.org"
-BILLING_INGEST_URL = "https://taler-bridge-billing.p31ca.org/api/revenue/ingest"
+REVENUE_INGEST_URL = "https://taler-bridge-billing.p31ca.org/api/revenue/ingest"
+# L5 — Dual Settlement Router shares the LOVE ledger D1 + the L3.4 bridge URL.
+BRIDGE_URL = "https://mcp-x402-bridge.p31ca.org/mcp"
 
 # Secrets (wrangler secret put), never in code:
 # FACILITATOR_KEY_ID, FACILITATOR_SECRET_KEY, REVENUE_API_TOKEN
+
+[[d1_databases]]
+binding = "LOVE_LEDGER"
+database_name = "love-ledger"
+database_id = "592e3e2e-3203-4e0a-8342-9e85215ec8a6"
 
 [observability]
 enabled = true

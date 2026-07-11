@@ -18,6 +18,7 @@
 import { Hono } from "hono";
 import { paymentMiddleware } from "x402-hono";
 import { createFacilitatorConfig } from "@coinbase/x402";
+import { verifyLoveHmac } from "./love-auth";
 
 interface Env {
   PAY_TO: string;
@@ -27,6 +28,12 @@ interface Env {
   FACILITATOR_SECRET_KEY: string;
   REVENUE_INGEST_URL: string;
   REVENUE_API_TOKEN?: string;
+  // L5 — Dual Settlement Router shares the LOVE ledger D1 + the L3.4 bridge URL.
+  LOVE_LEDGER: D1Database;
+  BRIDGE_URL: string;
+  // Axis-6: shared HMAC secret proving a `love` request came from
+  // the trusted first-party renderer (set via `wrangler secret put`).
+  LOVE_AUTH_SECRET?: string;
 }
 
 type AppContext = { Bindings: Env };
@@ -64,12 +71,62 @@ const PRICING: Record<string, { price: string; network: string; description: str
   "brain-dump": { price: "0.25", network: "base-sepolia", description: "LLM elaboration (premium-high)" },
 };
 
+// L5 — Dual Settlement Router. Reads X-Creation-Unit; for `love`,
+// verifies the caller's LOVE balance and short-circuits straight to the
+// bridge (no x402 402). Registered BEFORE the /mcp payment gate so
+// it runs first; for usdc/auto it just calls next() (existing flow).
+app.use(async (c, next) => {
+  const unit = c.req.header("X-Creation-Unit");
+  if (unit !== "love") return next();
+
+  // Axis-6: require an HMAC-SHA256 proof (`X-Love-Auth-MAC` over
+  // `love:<timestamp>`) from the trusted renderer when the shared
+  // secret is configured. Prevents an external caller from spoofing
+  // `X-Creation-Unit: love` to reach paid tools for free.
+  if (c.env.LOVE_AUTH_SECRET) {
+    const ok = await verifyLoveHmac(
+      c.req.header("X-Love-Auth-MAC"),
+      c.req.header("X-Love-Timestamp"),
+      c.env.LOVE_AUTH_SECRET,
+    );
+    if (!ok) {
+      return c.json({ error: "Invalid LOVE settlement auth" }, 401);
+    }
+  }
+
+  const did = c.req.header("X-DID") || c.req.header("X-User-DID");
+  if (!did) return next();
+  const body = (await c.req.raw.clone().json().catch(() => ({}))) as any;
+  const price = PRICING[body?.params?.name ?? ""]?.price ?? "0.05";
+  const bal = await c.env.LOVE_LEDGER.prepare(
+    "SELECT balance FROM love_accounts WHERE did = ?"
+  ).bind(did).first<{ balance: number }>();
+  if (!bal || bal.balance < parseFloat(price)) {
+    return c.json({ error: "Insufficient LOVE balance" }, 402);
+  }
+  // TODO: GNU Taler Clause Blind Schnorr issuance.
+  const blindSig = `blindsig-${crypto.randomUUID()}`;
+  c.header("X-LOVE-Signature", blindSig);
+  // LOVE-settled: bypass x402 gate, forward straight to the bridge.
+  const upstream = await fetch(c.env.BRIDGE_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "X-LOVE-Signature": blindSig, "X-DID": did },
+    body: JSON.stringify(body),
+  });
+  return new Response(await upstream.text(), {
+    status: upstream.status,
+    headers: { "Content-Type": "application/json" },
+  });
+});
+
 // x402-gated MCP endpoint. The Node bridge (L3.4) reads the stdio
 // backends; this Worker issues the 402 + verifies payment, then forwards
 // to the bridge over a service binding. Phase 1: issue + verify only.
 app.use("/mcp", async (c, next) => {
   if (c.req.method !== "POST") return next();
-  const toolName = (await c.req.json().catch(() => ({})))?.params?.name ?? "";
+  // Peek the body without consuming it (clone) so the downstream /mcp
+  // route can still read the original request stream.
+  const toolName = (await c.req.raw.clone().json().catch(() => ({})))?.params?.name ?? "";
   const priced = PRICING[toolName];
   if (!priced) return next(); // free / metered-low: open
 
@@ -85,6 +142,22 @@ app.use("/mcp", async (c, next) => {
     facilitator(c.env)
   );
   return mw(c, next);
+});
+
+// L5 — Bridge forward. The prior code only issued/verified the 402
+// and then 404'd (no downstream /mcp handler). This closes the loop:
+// paid AND free calls now proxy to the L3.4 Node stdio<->HTTP bridge.
+app.post("/mcp", async (c) => {
+  const body = await c.req.text();
+  const upstream = await fetch(c.env.BRIDGE_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body,
+  });
+  return new Response(await upstream.text(), {
+    status: upstream.status,
+    headers: { "Content-Type": "application/json" },
+  });
 });
 
 // Land settled MCP revenue into the SAME RevenueTracker DO as

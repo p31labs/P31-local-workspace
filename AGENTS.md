@@ -165,6 +165,39 @@ npm start                                     # POST /mcp on :8788, GET /health
 - `src/router.mjs` / `src/index.mjs` — router + HTTP edge.
 - Runbook: `cwp-2026-009-sierpinski-expansion/L3.4-RUNBOOK.md`.
 
+### L5 Creation Economy (intent-driven worker model)
+
+Paradigm shift from **extractive** tollbooth pricing (per-call) to **co-creative**
+value-based settlement: the worker settles on *value created for the user*
+(spoons saved, care generated), not value extracted. Concept:
+`cwp-2026-009-sierpinski-expansion/L5-CREATION-ECONOMY.md`; CWP: `CWP-2026-010-creation-economy.md`.
+
+- `software/workers/intent-resolver/` — `POST /intent` parses intent (via
+  `@p31/interface-generator` `generateInterfaceFromIntent`) and returns a
+  **Creation Quote** (spoons_saved, care_value, love/usdc amounts). Spoon state
+  is client-measured (`data-spoons`); there is **no** edge D1 spoon store.
+- `software/workers/creation-accountant/` — `POST /receipt` measures the
+  pre/post `data-spoons` delta (renderer-reported, trustless) and writes a
+  hash-chained **creation receipt** to the LOVE ledger `love_chain` (D1 batch).
+- `software/workers/mcp-x402-gateway/` — `X-Creation-Unit: love|usdc`
+  routing layer + `POST /mcp` forwards to the L3.4 bridge. `love` path
+  checks `LOVE_LEDGER` balance and issues a blind-sig placeholder.
+- `apps/phos/src/workers/love-ledger/` — `/withdraw` issues blind-signed
+  LOVE credits (GNU Taler placeholder) atomically (D1 batch). Migration
+  `003_creation_accounting.sql` adds `love_chain.metadata` + `creation_penalties`.
+- Settlement is **dual / user-choice**: LOVE care-credit (non-extractive,
+  two-pool vesting) or x402 USDC. All Workers use **Web Crypto**
+  (no Node `crypto`) and **D1 batch** for atomicity.
+- **Settlement hardening (optimization pass):** `creation-accountant` signs
+  each receipt with **Ed25519** (`RECEIPT_SIGNER_PRIVATE_KEY`) into
+  `love_chain.signature`; `love-ledger /withdraw` verifies it
+  (`RECEIPT_SIGNER_PUBLIC_KEY`). LOVE-path requests on `mcp-x402`
+  require an HMAC-SHA256 (`LOVE_AUTH_SECRET`, 60s TTL) → 401 on
+  miss/expiry. Spoon-delta replay is blocked via `consumed_nonces`
+  (migration `004`). Intent quotes are edge-cached via `caches.default`.
+  GNU Taler blind signatures remain a **staging-only** mock behind a
+  `BLIND_MODE` guard until a WASM build lands.
+
 ### LOVE Ledger MCP Server
 
 Agents can query the LOVE ledger state via MCP:
