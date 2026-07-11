@@ -147,6 +147,24 @@ node cli/p31-automation-engine.js all      # run everything + print status table
 
 Conceptual architecture: `docs/P31_AUTOMATION_ENGINE.md`.
 
+### x402 MCP Bridge (L3.4)
+
+The L3.2 x402 Worker cannot spawn children on Workers runtime, so a supervised Node
+service bridges the 4 stdio MCP servers to the edge. The Worker (L3.2) binds to
+it via service binding / `BRIDGE_URL` and is the 402 gate; the bridge is pure
+routing (initialize / tools/list fan-out / tools/call by name).
+
+```bash
+cd software/workers/mcp-x402-gateway/bridge
+node --test src/__tests__/bridge.test.mjs   # 7/7 green, 48 tools routed
+npm start                                     # POST /mcp on :8788, GET /health
+```
+
+- `src/backends.mjs` — 4 backend configs (oasis/registry/love stream, phosforge batch).
+- `src/stdio-client.mjs` — `StdioBackend` supervisor (crash → exp backoff, max 5 → unhealthy).
+- `src/router.mjs` / `src/index.mjs` — router + HTTP edge.
+- Runbook: `cwp-2026-009-sierpinski-expansion/L3.4-RUNBOOK.md`.
+
 ### LOVE Ledger MCP Server
 
 Agents can query the LOVE ledger state via MCP:

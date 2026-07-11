@@ -1,0 +1,11 @@
+{
+  "name": "@p31/mcp-x402-bridge",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "L3.4 Node stdio<->HTTP bridge: spawns the 4 MCP stdio servers and exposes them behind the x402 Worker over MCP Streamable HTTP.",
+  "scripts": {
+    "start": "node src/index.mjs",
+    "test": "node --test src/__tests__/bridge.test.mjs"
+  }
+}
