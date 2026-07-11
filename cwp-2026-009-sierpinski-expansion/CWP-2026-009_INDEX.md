@@ -85,8 +85,8 @@ The external landscape validates the timing:
 | Task | Description | Owner | Deadline | Status |
 | :--- | :--- | :--- | :--- | :--- |
 | **L3.1** | Finalize MCP monetization spec | Agent | ✅ DONE | `MCP_MONETIZATION_GATEWAY_SPEC.md` |
-| **L3.2** | Map x402 payment middleware to local Base testnet (Fallback) | Agent | Q3 2026 | 🔄 PENDING |
-| **L3.3** | Create Cloudflare Gateway config for MCP waitlist clearance | Agent | Q3 2026 | 🔄 PENDING |
+| **L3.2** | Map x402 payment middleware to local Base testnet (Fallback) | Agent | Q3 2026 | 🟡 SCAFFOLDED (worker written + committed @ `bf8c991`; `tsc`/deploy validation BLOCKED — env `pnpm`/`npm install` hangs; deps `x402-hono`,`@coinbase/x402` not fetchable here) |
+| **L3.3** | Create Cloudflare Gateway config for MCP waitlist clearance | Agent | Q3 2026 | 🟡 DRAFT (`cloudflare-gateway-mcp-config.md`; gateway waitlisted, Worker fallback live) |
 | **L3.4** | Deploy first 3–5 paid MCP tools to production | Agent | Q3 2026 | 🔄 PENDING |
 
 **Success criteria:** ≥3 MCP tools monetized; x402 architecture functional on testnet/mainnet; Cloudflare Gateway ready.
@@ -98,7 +98,7 @@ The external landscape validates the timing:
 | Task | Description | Owner | Deadline | Status |
 | :--- | :--- | :--- | :--- | :--- |
 | **L4.1** | Expand tool inventory (46 → 100+) targeting cognitive domains | Agent | Q4 2026 | 🔄 PENDING |
-| **L4.2** | Map `InterfaceDescription` schema directly to A2UI v0.9 | Agent | Q3 2026 | 🔄 PENDING |
+| **L4.2** | Map `InterfaceDescription` schema directly to A2UI v0.9 | Agent | Q3 2026 | 🟡 DRAFT (`a2ui-schema-mapping.md`; exact A2UI v0.9 field names flagged `[VERIFY]` — PyPI SDK unreachable here) |
 | **L4.3** | Add A2UI renderer support for external ecosystems | Agent | Q4 2026 | 🔄 PENDING |
 | **L4.4** | Open-source UIG core (`@p31/interface-generator`) | Agent | Q4 2026 | 🔄 PENDING |
 
