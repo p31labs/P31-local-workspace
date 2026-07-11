@@ -114,7 +114,19 @@ All are JSON‑RPC over stdio; zero new deps; tested offline.
 ### 3.5. Monitoring Layer
 - **status.p31ca.org** — D1 cron Worker checks health of all services (phos, gateway, p31ca, willow, bonding, love‑ledger, status) every 15 minutes; reports degraded/up status.
 - **axe‑runner** — Playwright + axe‑core audits `https://phos.p31ca.org` (and other faces) for WCAG 2.2 AAA. Blocking on critical/serious violations.
-- **TRIPER Logs** — JSON certs stored in `tests/triper/logs/`; fresh cert <24h.
+ - **TRIPER Logs** — JSON certs stored in `tests/triper/logs/`; fresh cert <24h.
+
+### 3.6. Automation Engine
+The `cli/p31-automation-engine.js` orchestrator (zero deps, CommonJS) codifies the Fortune 1 pipeline + Sierpinski Expansion into one runnable tool — the unified nervous system. It automates the four operational pillars the CWP swarm needs: **build, test, deploy, validate**, plus `mcp` (tool audits), `monitor` (health), `triper` (cert), and `swarm` (CWP dispatch, simulated).
+
+```bash
+node cli/p31-automation-engine.js test      # pnpm run test:unit (vitest unit suite)
+node cli/p31-automation-engine.js deploy    # wrangler deploy --dry-run (x402 worker)
+node cli/p31-automation-engine.js validate  # TRIPER cert + L3.2 x402 worker validator
+node cli/p31-automation-engine.js all       # run everything + print status table
+```
+
+`cli/validate-l3.2.js` automates the L3.2 runbook steps (install hygiene → worker install → `tsc --noEmit` → dry-run) and prints a copy-paste report block. These require registry access and run on the operator machine.
 
 ---
 

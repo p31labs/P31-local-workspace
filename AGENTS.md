@@ -129,12 +129,15 @@ The CLI exposes six MCP servers (115 tools):
 
 ### P31 Automation Engine
 
-The `cli/p31-automation-engine.js` orchestrator codifies the Fortune 1 pipeline + Sierpinski Expansion into one runnable tool (zero deps, CommonJS). It is the unified nervous system for the CWP swarm, build/deploy, TRIPER cert, MCP audits, and health checks.
+The `cli/p31-automation-engine.js` orchestrator codifies the Fortune 1 pipeline + Sierpinski Expansion into one runnable tool (zero deps, CommonJS). It is the unified nervous system for the CWP swarm, build/deploy, testing, validation, MCP audits, and health checks.
 
 ```bash
 node cli/p31-automation-engine.js mcp      # spawn all 6 servers, count tools (115)
 node cli/p31-automation-engine.js triper   # node tests/triper/triper-runner.mjs --cert
 node cli/p31-automation-engine.js build    # pnpm -C apps/p31ca run build (non-fatal)
+node cli/p31-automation-engine.js test     # pnpm run test:unit (vitest unit suite, non-fatal)
+node cli/p31-automation-engine.js deploy   # wrangler deploy --dry-run (x402 worker, non-fatal)
+node cli/p31-automation-engine.js validate # TRIPER cert + L3.2 x402 worker validator
 node cli/p31-automation-engine.js monitor  # fetch status.p31ca.org/health per service
 node cli/p31-automation-engine.js swarm [id]  # [SIMULATED] CWP agent dispatch
 node cli/p31-automation-engine.js all      # run everything + print status table

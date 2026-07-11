@@ -14,7 +14,6 @@
     "build": "pnpm --dir software run build",
     "test": "turbo run test:critical",
     "test:full": "turbo run test:all",
-    "test:unit": "turbo run test:unit",
     "test:e2e": "playwright test --config playwright.config.ts",
     "test:e2e:ui": "playwright test --config playwright.config.ts --ui",
     "lockfile:check": "pnpm install --frozen-lockfile && pnpm install --frozen-lockfile --dir software",

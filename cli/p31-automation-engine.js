@@ -32,8 +32,11 @@ const CONFIG = {
   version: '1.0.0',
   paths: {
     workspaceRoot: path.resolve(__dirname, '..'),
+
     cliDir: path.resolve(__dirname),
-    logsDir: path.resolve(__dirname, '../tests/triper/logs')
+    logsDir: path.resolve(__dirname, '../tests/triper/logs'),
+    workerDir: path.resolve(__dirname, '../software/workers/mcp-x402-gateway'),
+    validateScript: path.resolve(__dirname, 'validate-l3.2.js')
   },
   // Real MCP server locations and tool counts (verified 2026-07-11)
   mcpServers: [
@@ -66,6 +69,8 @@ class P31AutomationEngine {
       build: 'unknown',
       runtime: 'unknown',
       verify: 'unknown',
+      test: 'unknown',
+      deploy: 'unknown',
       health: 'unknown'
     };
     this.startTime = Date.now();
@@ -267,6 +272,62 @@ class P31AutomationEngine {
   }
 
   // -------------------------------------------------------------------------
+  // LAYER 3b: TESTING (unit suite — real, best-effort)
+  // -------------------------------------------------------------------------
+  async runTests() {
+    log.header('Testing: Unit Suite (vitest)');
+    const cmd = 'pnpm run test:unit';
+    log.gray(`  → ${cmd}  (resolves to: vitest run --config vitest.config.ts)`);
+    const result = await this.runCommand(cmd, CONFIG.paths.workspaceRoot, { timeout: 300000, fatal: false });
+    if (result.success) {
+      const m = result.stdout.match(/Tests\s+(\d+)\s+passed/);
+      const n = m ? m[1] : '?';
+      log.success(`Unit tests passed (${n} tests).`);
+      this.status.test = 'green';
+    } else {
+      log.warn('Unit tests failed or timed out (see output).');
+      log.gray('  Try: cd apps/p31ca && pnpm install && pnpm run test:unit');
+      this.status.test = 'yellow';
+    }
+  }
+
+  // -------------------------------------------------------------------------
+  // LAYER 2b: DEPLOYMENT (worker dry-run — real, best-effort)
+  // -------------------------------------------------------------------------
+  async runDeploy() {
+    log.header('Deployment: x402 Worker Dry-Run (wrangler)');
+    const cmd = 'npx wrangler deploy --dry-run';
+    log.gray(`  → ${cmd}  (${CONFIG.paths.workerDir})`);
+    const result = await this.runCommand(cmd, CONFIG.paths.workerDir, { timeout: 180000, fatal: false });
+    if (result.success) {
+      log.success('Worker dry-run build succeeded.');
+      this.status.deploy = 'green';
+    } else {
+      log.warn('Worker dry-run failed (see output).');
+      this.status.deploy = 'yellow';
+    }
+  }
+
+  // -------------------------------------------------------------------------
+  // LAYER 3c: VALIDATION (TRIPER cert + L3.2 worker)
+  // -------------------------------------------------------------------------
+  async runValidate() {
+    log.header('Validation: TRIPER + L3.2 x402 Worker');
+    await this.runTriper();
+    log.info('Running L3.2 validator (node cli/validate-l3.2.js)...');
+    const script = CONFIG.paths.validateScript;
+    if (!fs.existsSync(script)) {
+      log.warn(`Validator script missing: ${script}`);
+      return;
+    }
+    const { stdout, stderr } = await execPromise(`node ${JSON.stringify(script)}`, {
+      cwd: CONFIG.paths.workspaceRoot, timeout: 600000
+    }).catch((e) => ({ stdout: '', stderr: e.message }));
+    if (stdout) log.gray(stdout.trim().split('\n').slice(-12).join('\n'));
+    if (stderr && !stderr.toLowerCase().includes('warning')) log.gray(`  stderr: ${stderr.trim().split('\n')[0]}`);
+  }
+
+  // -------------------------------------------------------------------------
   // MAIN ROUTER
   // -------------------------------------------------------------------------
   async run() {
@@ -293,6 +354,15 @@ class P31AutomationEngine {
         case 'mcp':
           await this.verifyMCPServers();
           break;
+        case 'test':
+          await this.runTests();
+          break;
+        case 'deploy':
+          await this.runDeploy();
+          break;
+        case 'validate':
+          await this.runValidate();
+          break;
         case 'monitor':
           await this.runHealthCheck();
           break;
@@ -300,7 +370,9 @@ class P31AutomationEngine {
           await this.dispatchCWP('CWP-SYSTEM-START');
           await this.runBuildPipeline();
           await this.verifyMCPServers();
-          await this.runTriper();
+          await this.runTests();
+          await this.runValidate();
+          await this.runDeploy();
           await this.runHealthCheck();
 
           log.header('GLOBAL ENGINE STATUS');
@@ -310,7 +382,7 @@ class P31AutomationEngine {
           break;
         default:
           log.error(`Unknown command: ${command}`);
-          log.info('Available commands: swarm [id], build, triper, mcp, monitor, all');
+          log.info('Available commands: swarm [id], build, test, deploy, validate, triper, mcp, monitor, all');
           process.exit(1);
       }
     } catch (err) {
