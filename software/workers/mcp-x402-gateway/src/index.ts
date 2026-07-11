@@ -69,7 +69,7 @@ const PRICING: Record<string, { price: string; network: string; description: str
 // to the bridge over a service binding. Phase 1: issue + verify only.
 app.use("/mcp", async (c, next) => {
   if (c.req.method !== "POST") return next();
-  const toolName = (await c.req.json().catch(() => ({}))?.params?.name ?? "";
+  const toolName = (await c.req.json().catch(() => ({})))?.params?.name ?? "";
   const priced = PRICING[toolName];
   if (!priced) return next(); // free / metered-low: open
 
