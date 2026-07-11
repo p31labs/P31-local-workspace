@@ -119,7 +119,7 @@ npm install -g andromeda-cli
 andromeda --agent
 ```
 
-The CLI exposes six MCP servers (113 tools):
+The CLI exposes six MCP servers (115 tools):
 - `node cli/mcp-server.js` — Oasis CLI tools (11 tools)
 - `node cli/component-registry.js` — Component Registry tools (5 tools)
 - `node cli/love-registry.js` — LOVE Ledger tools (3 tools)
