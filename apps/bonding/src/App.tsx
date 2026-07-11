@@ -35,7 +35,7 @@ export function BondingApp() {
 
       <main id="main-content" style={{ width: '100%', maxWidth: 640, padding: 24 }}>
         <h1 style={{ fontSize: 32, fontWeight: 700, marginBottom: 8, color: '#00F0FF' }}>Bonding</h1>
-        <p style={{ fontSize: 14, color: '#999', marginBottom: 24 }}>
+        <p style={{ fontSize: 14, color: '#cbd5e1', marginBottom: 24 }}>
           Molecule-building chemistry game for neurodivergent children
         </p>
 
@@ -71,10 +71,10 @@ export function BondingApp() {
             }}>
               ⚗️
             </div>
-            <p style={{ fontSize: 12, color: '#666', textAlign: 'center' }}>
+            <p style={{ fontSize: 12, color: '#94a3b8', textAlign: 'center' }}>
               Spoons: {spoons} — {spoons <= 1 ? 'Motion disabled' : 'Active'}
             </p>
-            <p style={{ fontSize: 11, color: '#444', textAlign: 'center', marginTop: 8 }}>
+            <p style={{ fontSize: 11, color: '#cbd5e1', textAlign: 'center', marginTop: 8 }}>
               Add <code>?gen=1</code> or <code>?gen=1&intent=your+prompt</code> to URL for generative layer
             </p>
           </>

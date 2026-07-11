@@ -13,7 +13,8 @@ const BLOCKING_IMPACTS = new Set(['critical', 'serious']);
 
 async function audit(url) {
   const browser = await chromium.launch();
-  const page = await browser.newPage();
+  const context = await browser.newContext();
+  const page = await context.newPage();
   await page.goto(url, { waitUntil: 'networkidle' });
 
   const results = await new AxeBuilder({ page })
