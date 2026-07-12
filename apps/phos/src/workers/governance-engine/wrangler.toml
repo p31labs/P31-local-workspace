@@ -14,11 +14,11 @@ retries = 3
 [[d1_databases]]
 binding = "GOVERNANCE_DB"
 database_name = "governance-db"
-database_id = "f05c8f18-a419-440c-a4e4-fe7da18dd7ae"
+database_id = "ece98a7c-4e96-4802-9b7c-c1015e8ef69b"
 
 [durable_objects]
 bindings = [
-  { name = "GOVERNANCE_ENGINE", class_name = "GovernanceEngine" },
+  { name = "GOVERNANCE_ENGINE", class_name = "GovernanceEngineDO" },
   { name = "TALLY_ROOM", class_name = "TallyRoom" }
 ]
 
@@ -28,7 +28,6 @@ new_sqlite_classes = ["GovernanceEngine"]
 
 [[migrations]]
 tag = "v2"
-new_sqlite_classes = ["TallyRoom"]
 
 [observability]
 enabled = true

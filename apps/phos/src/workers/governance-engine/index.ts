@@ -25,7 +25,7 @@ export interface Env {
   GOVERNANCE_DB: D1Database;
 }
 
-export class GovernanceEngine extends DurableObject {
+export class GovernanceEngineDO extends DurableObject {
   constructor(state: DurableObjectState) {
     super(state);
   }
@@ -34,6 +34,7 @@ export class GovernanceEngine extends DurableObject {
     return new Response('OK');
   }
 }
+export { GovernanceEngineDO as GovernanceEngine };
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
@@ -267,6 +268,7 @@ export default {
         logEvent({ event: 'activate_fail', service: 'governance-engine', success: false, error: String(err) });
         return errorResponse(err);
       }
+    }
 
     if (method === 'POST' && path === '/vote') {
       try {
