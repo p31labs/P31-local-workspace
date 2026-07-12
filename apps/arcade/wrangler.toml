@@ -2,12 +2,11 @@ name = "arcade"
 main = "src/index.ts"
 compatibility_date = "2026-01-01"
 
-[[d1_databases]]
-binding = "DB"
-database_name = "love-ledger"
-database_id = "592e3e2e-3203-4e0a-8342-9e85215ec8a6"
-
 [env.production]
 routes = [
   { pattern = "arcade.p31ca.org/*", zone_name = "p31ca.org" }
 ]
+[[env.production.d1_databases]]
+binding = "DB"
+database_name = "love-ledger"
+database_id = "592e3e2e-3203-4e0a-8342-9e85215ec8a6"
