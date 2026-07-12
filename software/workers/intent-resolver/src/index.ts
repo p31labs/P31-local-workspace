@@ -19,6 +19,7 @@ type Env = {
   INTENT_CACHE_TTL?: string;
   LOVE_LEDGER: D1Database;
   NEEDLE_WEIGHTS: R2Bucket;
+  NEEDLE_MODEL_KEY?: string;
 };
 
 const app = new Hono<{ Bindings: Env }>();

@@ -46,7 +46,7 @@ let initAttempted = false;
 
 const R2_FETCH_TIMEOUT_MS = 10_000;
 const INFERENCE_TIMEOUT_MS = 5_000;
-const MODEL_KEY = 'needle-v1.safetensors';
+const DEFAULT_MODEL_KEY = 'needle-v1.safetensors';
 const VOCAB_KEY = 'vocab.txt';
 
 function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
@@ -58,7 +58,7 @@ function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise
   ]);
 }
 
-async function ensureEngine(env: { NEEDLE_WEIGHTS: R2Bucket }): Promise<any> {
+async function ensureEngine(env: { NEEDLE_WEIGHTS: R2Bucket; NEEDLE_MODEL_KEY?: string }): Promise<any> {
   if (engine) return engine;
   if (initAttempted) return null;
   initAttempted = true;
@@ -79,11 +79,11 @@ async function ensureEngine(env: { NEEDLE_WEIGHTS: R2Bucket }): Promise<any> {
 
     // 3. Load model weights from R2 (with timeout).
     const modelResp = await withTimeout(
-      env.NEEDLE_WEIGHTS.get(MODEL_KEY),
+      env.NEEDLE_WEIGHTS.get(env.NEEDLE_MODEL_KEY || DEFAULT_MODEL_KEY),
       R2_FETCH_TIMEOUT_MS,
       'R2 model fetch',
     );
-    if (!modelResp) throw new Error(`${MODEL_KEY} not in R2`);
+    if (!modelResp) throw new Error(`${env.NEEDLE_MODEL_KEY || DEFAULT_MODEL_KEY} not in R2`);
     const modelBytes = new Uint8Array(await modelResp.arrayBuffer());
     console.log('[needle-engine] weights:', modelBytes.length, 'bytes');
 
@@ -123,7 +123,7 @@ export interface ToolDef {
 export async function classifyIntent(
   prompt: string,
   tools: ToolDef[],
-  env: { NEEDLE_WEIGHTS: R2Bucket },
+  env: { NEEDLE_WEIGHTS: R2Bucket; NEEDLE_MODEL_KEY?: string },
 ): Promise<NeedleResult | null> {
   metrics.requests++;
   const eng = await ensureEngine(env);

@@ -8,6 +8,10 @@ compatibility_date = "2026-07-08"
 
 [vars]
 INTENT_CACHE_TTL = "3600"
+# Active needle model (Phase 2 fine-tune swaps this to needle-v2.safetensors
+# via `wrangler variable put NEEDLE_MODEL_KEY needle-v2.safetensors` — no
+# source edit required). Defaults to the base model.
+NEEDLE_MODEL_KEY = "needle-v1.safetensors"
 
 [[kv_namespaces]]
 binding = "PASSPORT_KV"
