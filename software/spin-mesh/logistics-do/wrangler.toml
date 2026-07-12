@@ -10,3 +10,13 @@ command = "npm run build"
 [[migrations]]
 tag = "v1"
 new_classes = ["HandoverDO"]
+
+# Axis-6 LOVE settlement HMAC shared secret. Centralised in the Cloudflare
+# Secrets Store (`p31-secrets`, store-id 33d48162fd6842869beeed3516e2909c) so a
+# single rotation propagates to every bound Worker. Resolved at runtime via
+# `await env.LOVE_AUTH_SECRET.get()`. Enables the L.O.V.E. barter-completion
+# mint path (previously skipped because no secret was bound).
+[[secrets_store_secrets]]
+binding = "LOVE_AUTH_SECRET"
+store_id = "33d48162fd6842869beeed3516e2909c"
+secret_name = "LOVE_AUTH_SECRET"

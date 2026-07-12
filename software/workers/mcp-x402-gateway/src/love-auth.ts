@@ -15,6 +15,15 @@ function hexToBytes(hex: string): Uint8Array {
   return out;
 }
 
+// LOVE_AUTH_SECRET may be a plain string (legacy [vars]/secret) or a
+// Cloudflare Secrets Store binding (`{ get(): Promise<string> }`). Resolve
+// either shape to the bare secret string.
+export async function resolveSecret(s: any): Promise<string | undefined> {
+  if (!s) return undefined;
+  if (typeof s.get === 'function') return (await s.get()) as string;
+  return s as string;
+}
+
 export async function verifyLoveHmac(
   macHeader: string | null,
   tsHeader: string | null,

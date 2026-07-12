@@ -23,6 +23,16 @@ BRIDGE_URL = "https://mcp-x402-bridge.p31ca.org/mcp"
 LOVE_LEDGER_URL = "https://love-ledger.p31ca.org"
 GLM_MODEL = "@cf/meta/llama-4-scout-17b-16e-instruct"
 
+# Axis-6 LOVE settlement HMAC shared secret. Centralised in the Cloudflare
+# Secrets Store (`p31-secrets`, store-id 33d48162fd6842869beeed3516e2909c) so a
+# single rotation propagates to every bound Worker. Resolved at runtime via
+# `await env.LOVE_AUTH_SECRET.get()`. MUST equal the LOVE_AUTH_SECRET on
+# love-ledger so the orchestrator's /contract/propose Bearer call verifies.
+[[secrets_store_secrets]]
+binding = "LOVE_AUTH_SECRET"
+store_id = "33d48162fd6842869beeed3516e2909c"
+secret_name = "LOVE_AUTH_SECRET"
+
 # Workers AI binding for GLM-4.7-Flash (and others).
 [ai]
 binding = "AI"

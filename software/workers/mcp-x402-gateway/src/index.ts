@@ -18,8 +18,9 @@
 import { Hono } from "hono";
 import { paymentMiddleware } from "x402-hono";
 import { createFacilitatorConfig } from "@coinbase/x402";
-import { verifyLoveHmac } from "./love-auth";
+import { verifyLoveHmac, resolveSecret } from "./love-auth";
 import { meterGlm } from "./llm-meter";
+import { runAgent } from "./orchestrator";
 
 interface Env {
   PAY_TO: string;
@@ -92,10 +93,11 @@ app.use(async (c, next) => {
   // secret is configured. Prevents an external caller from spoofing
   // `X-Creation-Unit: love` to reach paid tools for free.
   if (c.env.LOVE_AUTH_SECRET) {
+    const loveSecret = await resolveSecret(c.env.LOVE_AUTH_SECRET);
     const ok = await verifyLoveHmac(
       c.req.header("X-Love-Auth-MAC"),
       c.req.header("X-Love-Timestamp"),
-      c.env.LOVE_AUTH_SECRET,
+      loveSecret,
     );
     if (!ok) {
       return c.json({ error: "Invalid LOVE settlement auth" }, 401);
@@ -209,10 +211,11 @@ app.post("/llm/complete", async (c) => {
 
   // Axis-6: require HMAC proof when LOVE_AUTH_SECRET is configured.
   if (c.env.LOVE_AUTH_SECRET) {
+    const loveSecret = await resolveSecret(c.env.LOVE_AUTH_SECRET);
     const ok = await verifyLoveHmac(
       c.req.header("X-Love-Auth-MAC"),
       c.req.header("X-Love-Timestamp"),
-      c.env.LOVE_AUTH_SECRET,
+      loveSecret,
     );
     if (!ok) return c.json({ error: "Invalid LOVE settlement auth" }, 401);
   }
@@ -237,10 +240,11 @@ app.post("/llm/complete", async (c) => {
 app.post("/classify", async (c) => {
   if (!c.env.NEEDLE) return c.json({ error: "NEEDLE service not bound" }, 503);
   if (c.env.LOVE_AUTH_SECRET) {
+    const loveSecret = await resolveSecret(c.env.LOVE_AUTH_SECRET);
     const ok = await verifyLoveHmac(
       c.req.header("X-Love-Auth-MAC"),
       c.req.header("X-Love-Timestamp"),
-      c.env.LOVE_AUTH_SECRET,
+      loveSecret,
     );
     if (!ok) return c.json({ error: "Invalid LOVE settlement auth" }, 401);
   }
@@ -270,6 +274,26 @@ app.post("/classify", async (c) => {
 });
 
 app.get("/health", (c) => c.json({ status: "ok", service: "mcp-x402-gateway", network: c.env.NETWORK, timestamp: Date.now() }));
+
+// CWP-2026-014 — Agent Orchestrator. Natural-language query → classify (needle
+// → GLM fallback) → plan → execute via bridge → settle as a PQC care contract
+// in LOVE. Axis-6 HMAC-gated (creation action). See orchestrator.ts.
+app.post("/agent/run", async (c) => {
+  const did = c.req.header("X-DID") || c.req.header("X-User-DID");
+  if (!did) return c.json({ error: "Missing X-DID header" }, 400);
+  if (c.env.LOVE_AUTH_SECRET) {
+    const loveSecret = await resolveSecret(c.env.LOVE_AUTH_SECRET);
+    const ok = await verifyLoveHmac(
+      c.req.header("X-Love-Auth-MAC"),
+      c.req.header("X-Love-Timestamp"),
+      loveSecret,
+    );
+    if (!ok) return c.json({ error: "Invalid LOVE settlement auth" }, 401);
+  }
+  const body = (await c.req.json().catch(() => ({}))) as any;
+  body.did = did;
+  return runAgent(c.env, c.executionCtx, body);
+});
 
 // Advertise per-tool cost (spec §3.3).
 app.get("/.well-known/mcp-pricing", (c) => c.json({

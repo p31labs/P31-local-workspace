@@ -3,7 +3,7 @@ import { verifyRequest, unauthorizedResponse } from '../../lib/edge/verify';
 import { logEvent } from '../../lib/edge/logging';
 import { ensureCbs, base as cbsBase, signBlinded as cbsSign, verify as cbsVerify } from './taler-cbs/loader';
 import { deriveNonce } from './taler-cbs/kdf';
-import { MLDSA } from './taler-cbs/pqc';
+import { MLKEM, MLDSA } from './taler-cbs/pqc';
 
 // The wasm is imported via ?module in taler-cbs/loader.ts (esbuild
 // compiles it at build time — the only Worker-supported way, since
@@ -29,6 +29,21 @@ function bytesToB64(bytes: Uint8Array): string {
   let bin = '';
   for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
   return btoa(bin);
+}
+
+// ── AES-256-GCM (Web Crypto) — symmetric layer under an ML-KEM shared secret ──
+// ML-KEM only establishes a 32-byte shared secret; we use it as the AES-GCM
+// key to encrypt the (potentially large) contract terms.
+async function aesGcmEncrypt(plain: Uint8Array, key: Uint8Array): Promise<{ iv: Uint8Array; ct: Uint8Array }> {
+  const cryptoKey = await crypto.subtle.importKey('raw', key, { name: 'AES-GCM' }, false, ['encrypt']);
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const ct = new Uint8Array(await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, cryptoKey, plain));
+  return { iv, ct };
+}
+
+async function aesGcmDecrypt(iv: Uint8Array, ct: Uint8Array, key: Uint8Array): Promise<Uint8Array> {
+  const cryptoKey = await crypto.subtle.importKey('raw', key, { name: 'AES-GCM' }, false, ['decrypt']);
+  return new Uint8Array(await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, cryptoKey, ct));
 }
 
 // Post-quantum server-side seal (ML-DSA-44 / L1, FIPS 204) over the
@@ -89,13 +104,25 @@ async function withRetry<T>(fn: () => Promise<T>, retries = 3, label = 'd1_query
 // Writes accept EITHER an Ed25519 did:key signature (end-user wallets — the
 // existing verifyRequest path) OR a Bearer <LOVE_AUTH_SECRET> service token
 // (trusted internal callers: love-registry MCP, CLI, cron). Reads stay public.
-const WRITE_PATHS = new Set(['/transfer', '/stake', '/care-score', '/withdraw', '/family/onboard', '/family/status', '/llm/reserve', '/llm/settle']);
+const WRITE_PATHS = new Set(['/transfer', '/stake', '/care-score', '/withdraw', '/family/onboard', '/family/status', '/llm/reserve', '/llm/settle', '/contract/keygen', '/contract/propose', '/contract/activate']);
 
 function timingSafeEqual(a: string, b: string): boolean {
   const ab = new TextEncoder().encode(a);
   const bb = new TextEncoder().encode(b);
   if (ab.length !== bb.length) return false;
   return crypto.subtle.timingSafeEqual(ab, bb);
+}
+
+// LOVE_AUTH_SECRET may be a plain string (legacy `wrangler secret put`) or a
+// Cloudflare Secrets Store binding (`{ get(): Promise<string> }`). Resolve
+// either shape to the bare secret string. Centralised in the `p31-secrets`
+// store (store-id 33d48162fd6842869beeed3516e2909c) so a single rotation
+// propagates to every bound Worker.
+async function resolveLoveSecret(env: Env): Promise<string | undefined> {
+  const s = env.LOVE_AUTH_SECRET;
+  if (!s) return undefined;
+  if (typeof (s as any).get === 'function') return (await (s as any).get()) as string;
+  return s as string;
 }
 
 // ── JWT utilities (HS256, Web Crypto) ─────────────────────────────
@@ -141,7 +168,8 @@ async function authorizeWrite(request: Request, env: Env, didSource: string): Pr
   if (auth && auth.startsWith('Bearer ')) {
     const token = auth.slice(7);
     // 1. Try LOVE_AUTH_SECRET (service token, static)
-    if (env.LOVE_AUTH_SECRET && timingSafeEqual(token, env.LOVE_AUTH_SECRET)) return true;
+    const loveSecret = await resolveLoveSecret(env);
+    if (loveSecret && timingSafeEqual(token, loveSecret)) return true;
     // 2. Try JWT (passkey session token)
     if (env.PASSKEY_JWT_SECRET) {
       const payload = await verifyJWT(token, env.PASSKEY_JWT_SECRET);
@@ -279,7 +307,7 @@ function affidavitText(a: { did: string; exportedAt: string; count: number; vali
 export interface Env {
   LOVE_DB: D1Database;
   LOVE_ARCHIVE: R2Bucket;
-  LOVE_AUTH_SECRET?: string;
+  LOVE_AUTH_SECRET?: any;
   LOVE_REQUIRE_AUTH?: string;
   RECEIPT_SIGNER_PUBLIC_KEY?: string;
   BLIND_ISSUER_PRIVATE_KEY?: string;
@@ -1032,6 +1060,187 @@ export default {
          FROM llm_usage WHERE did = ? ORDER BY created_at DESC LIMIT ?`
       ).bind(did, limit).all(), 3, 'llm_usage_select');
       return new Response(JSON.stringify({ did, count: (rows.results || []).length, entries: rows.results || [] }), {
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    // ── PQC Care Contracts (CWP-2026-014) ──────────────────────────────────
+    // ML-KEM-768 encrypted terms + ML-DSA-44 ledger seal. Author encrypts the
+    // plaintext `terms` to the counterparty's ML-KEM public key; only the
+    // counterparty (holding the ML-KEM private key) can decrypt. The ledger
+    // attests integrity with its server-side ML-DSA-44 seal over entry_hash.
+
+    if (method === 'POST' && url.pathname === '/contract/keygen') {
+      try {
+        const body = await request.json() as { did: string };
+        if (!body.did) return new Response(JSON.stringify({ error: 'Missing did' }), { status: 400 });
+
+        const existing = await withRetry(() => env.LOVE_DB.prepare(
+          'SELECT kem_public_key, dsa_public_key FROM contract_keys WHERE did = ?'
+        ).bind(body.did).first<{ kem_public_key: string; dsa_public_key: string }>(), 3, 'ck_select');
+
+        if (existing) {
+          // Key already exists — never re-disclose the private key.
+          return new Response(JSON.stringify({
+            did: body.did,
+            generated: false,
+            kem_public_key: existing.kem_public_key,
+            dsa_public_key: existing.dsa_public_key,
+          }), { headers: { 'Content-Type': 'application/json' } });
+        }
+
+        const kem = new MLKEM({ securityLevel: 3 }).keygen();   // ML-KEM-768
+        const dsa = new MLDSA({ securityLevel: 1 }).keygen();   // ML-DSA-44 (L1: fits 5.1 kB secret cap)
+        const now = Date.now();
+        await withRetry(() => env.LOVE_DB.prepare(
+          'INSERT INTO contract_keys (did, kem_public_key, dsa_public_key, created_at) VALUES (?, ?, ?, ?)'
+        ).bind(body.did, bytesToB64(kem.publicKey), bytesToB64(dsa.publicKey), now).run(), 3, 'ck_insert');
+
+        logEvent({ event: 'contract_keygen', service: 'love-ledger', did: body.did, success: true });
+        return new Response(JSON.stringify({
+          did: body.did,
+          generated: true,
+          kem_public_key: bytesToB64(kem.publicKey),
+          kem_private_key: bytesToB64(kem.secretKey),
+          dsa_public_key: bytesToB64(dsa.publicKey),
+          dsa_private_key: bytesToB64(dsa.secretKey),
+        }), { headers: { 'Content-Type': 'application/json' } });
+      } catch (err: any) {
+        logEvent({ event: 'contract_keygen_error', service: 'love-ledger', success: false, error: err?.message || String(err) });
+        return new Response(JSON.stringify({ error: 'Internal server error' }), { status: 500, headers: { 'Content-Type': 'application/json' } });
+      }
+    }
+
+    if (method === 'POST' && url.pathname === '/contract/propose') {
+      try {
+        const body = await request.json() as { author_did: string; counterparty_did: string; title: string; terms: any };
+        if (!body.author_did || !body.counterparty_did || !body.title || body.terms === undefined) {
+          return new Response(JSON.stringify({ error: 'Missing author_did, counterparty_did, title, or terms' }), { status: 400 });
+        }
+        const cpk = await withRetry(() => env.LOVE_DB.prepare(
+          'SELECT kem_public_key FROM contract_keys WHERE did = ?'
+        ).bind(body.counterparty_did).first<{ kem_public_key: string }>(), 3, 'ck_cp_select');
+        if (!cpk) {
+          return new Response(JSON.stringify({ error: 'Counterparty has no contract key — call /contract/keygen first' }), { status: 400 });
+        }
+
+        const termsJson = JSON.stringify(body.terms);
+        const termsBytes = new TextEncoder().encode(termsJson);
+        const termsHash = await sha256(termsJson);
+
+        // ML-KEM-768 encapsulate → 32-byte shared secret; AES-256-GCM encrypt terms.
+        const { cipherText, sharedSecret } = new MLKEM({ securityLevel: 3 }).encapsulate(b64ToBytes(cpk.kem_public_key));
+        const { iv, ct } = await aesGcmEncrypt(termsBytes, sharedSecret);
+        const encryptedTerms = bytesToB64(new TextEncoder().encode(JSON.stringify({
+          iv: bytesToB64(iv), ct: bytesToB64(ct),
+        })));
+        const kemCipherB64 = bytesToB64(cipherText);
+
+        const id = crypto.randomUUID();
+        const ts = Date.now();
+        const entryHash = await sha256(
+          [id, body.author_did, body.counterparty_did, body.title, termsHash, kemCipherB64, String(ts)].join('|')
+        );
+        const pqcSeal = await signPqcSeal(entryHash, env);
+
+        await withRetry(() => env.LOVE_DB.prepare(`
+          INSERT INTO care_contracts (id, author_did, counterparty_did, title, terms_hash, encrypted_terms, kem_ciphertext, pqc_seal, entry_hash, status, created_at, activated_at)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'proposed', ?, NULL)
+        `).bind(id, body.author_did, body.counterparty_did, body.title, termsHash, encryptedTerms, kemCipherB64, pqcSeal, entryHash, ts).run(), 3, 'cc_insert');
+
+        logEvent({ event: 'contract_propose', service: 'love-ledger', did: body.author_did, success: true, data: { id, counterparty: body.counterparty_did } });
+        return new Response(JSON.stringify({
+          id,
+          status: 'proposed',
+          title: body.title,
+          author_did: body.author_did,
+          counterparty_did: body.counterparty_did,
+          terms_hash: termsHash,
+          kem_ciphertext: kemCipherB64,
+          pqc_seal: pqcSeal,
+        }), { headers: { 'Content-Type': 'application/json' } });
+      } catch (err: any) {
+        logEvent({ event: 'contract_propose_error', service: 'love-ledger', success: false, error: err?.message || String(err) });
+        return new Response(JSON.stringify({ error: 'Internal server error' }), { status: 500, headers: { 'Content-Type': 'application/json' } });
+      }
+    }
+
+    if (method === 'POST' && url.pathname === '/contract/activate') {
+      try {
+        const body = await request.json() as { did: string; id: string; kem_private_key: string };
+        if (!body.did || !body.id || !body.kem_private_key) {
+          return new Response(JSON.stringify({ error: 'Missing did, id, or kem_private_key' }), { status: 400 });
+        }
+        const row = await withRetry(() => env.LOVE_DB.prepare(
+          'SELECT author_did, counterparty_did, title, terms_hash, encrypted_terms, kem_ciphertext, status FROM care_contracts WHERE id = ?'
+        ).bind(body.id).first<{ author_did: string; counterparty_did: string; title: string; terms_hash: string; encrypted_terms: string; kem_ciphertext: string; status: string }>(), 3, 'cc_select');
+        if (!row) return new Response(JSON.stringify({ error: 'Unknown contract' }), { status: 404 });
+        if (row.counterparty_did !== body.did) {
+          return new Response(JSON.stringify({ error: 'Only the counterparty can activate this contract' }), { status: 403 });
+        }
+        if (row.status !== 'proposed') {
+          return new Response(JSON.stringify({ error: `Contract already ${row.status}` }), { status: 409 });
+        }
+
+        // Decapsulate with the counterparty's ML-KEM private key → shared secret → decrypt terms.
+        const sharedSecret = new MLKEM({ securityLevel: 3 }).decapsulate(b64ToBytes(row.kem_ciphertext), b64ToBytes(body.kem_private_key));
+        const envelope = JSON.parse(new TextDecoder().decode(b64ToBytes(row.encrypted_terms)));
+        const termsBytes = await aesGcmDecrypt(b64ToBytes(envelope.iv), b64ToBytes(envelope.ct), sharedSecret);
+        const termsJson = new TextDecoder().decode(termsBytes);
+        const recomputed = await sha256(termsJson);
+        if (recomputed !== row.terms_hash) {
+          return new Response(JSON.stringify({ error: 'Terms hash mismatch — tampered or wrong key' }), { status: 422 });
+        }
+
+        const now = Date.now();
+        await withRetry(() => env.LOVE_DB.prepare(
+          'UPDATE care_contracts SET status = ?, activated_at = ? WHERE id = ?'
+        ).bind('active', now, body.id).run(), 3, 'cc_activate');
+
+        logEvent({ event: 'contract_activate', service: 'love-ledger', did: body.did, success: true, data: { id: body.id } });
+        return new Response(JSON.stringify({
+          id: body.id,
+          status: 'active',
+          title: row.title,
+          terms: JSON.parse(termsJson),
+        }), { headers: { 'Content-Type': 'application/json' } });
+      } catch (err: any) {
+        logEvent({ event: 'contract_activate_error', service: 'love-ledger', success: false, error: err?.message || String(err) });
+        return new Response(JSON.stringify({ error: 'Internal server error' }), { status: 500, headers: { 'Content-Type': 'application/json' } });
+      }
+    }
+
+    if (method === 'GET' && url.pathname.startsWith('/contract/') && url.pathname.split('/').length === 3) {
+      const id = url.pathname.split('/')[2];
+      const row = await withRetry(() => env.LOVE_DB.prepare(
+        'SELECT id, author_did, counterparty_did, title, terms_hash, encrypted_terms, kem_ciphertext, pqc_seal, entry_hash, status, created_at, activated_at FROM care_contracts WHERE id = ?'
+      ).bind(id).first<any>(), 3, 'cc_get');
+      if (!row) return new Response(JSON.stringify({ error: 'Unknown contract' }), { status: 404 });
+      // Never return plaintext terms — only the holder of the counterparty ML-KEM
+      // private key can decrypt. Clients verify integrity via terms_hash + pqc_seal.
+      return new Response(JSON.stringify({
+        id: row.id,
+        author_did: row.author_did,
+        counterparty_did: row.counterparty_did,
+        title: row.title,
+        terms_hash: row.terms_hash,
+        encrypted_terms: row.encrypted_terms,
+        kem_ciphertext: row.kem_ciphertext,
+        pqc_seal: row.pqc_seal,
+        entry_hash: row.entry_hash,
+        status: row.status,
+        created_at: row.created_at,
+        activated_at: row.activated_at,
+      }), { headers: { 'Content-Type': 'application/json' } });
+    }
+
+    if (method === 'GET' && url.pathname === '/contracts') {
+      const did = url.searchParams.get('did');
+      if (!did) return new Response(JSON.stringify({ error: 'Missing did' }), { status: 400 });
+      const rows = await withRetry(() => env.LOVE_DB.prepare(
+        'SELECT id, author_did, counterparty_did, title, status, created_at, pqc_seal FROM care_contracts WHERE author_did = ? OR counterparty_did = ? ORDER BY created_at DESC LIMIT 100'
+      ).bind(did, did).all<any>(), 3, 'cc_list');
+      return new Response(JSON.stringify({ did, count: (rows.results || []).length, contracts: rows.results || [] }), {
         headers: { 'Content-Type': 'application/json' },
       });
     }

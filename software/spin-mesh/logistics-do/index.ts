@@ -153,7 +153,12 @@ export class HandoverDO {
 
   async mintLoveTokens(state: HandoverState): Promise<void> {
     const loveLedger = this.env?.LOVE_LEDGER_URL || 'https://love-ledger.p31ca.org';
-    const auth = this.env?.LOVE_AUTH_SECRET;
+    const authSecret = this.env?.LOVE_AUTH_SECRET;
+    // LOVE_AUTH_SECRET may be a plain string or a Secrets Store binding
+    // (`{ get(): Promise<string> }`). Centralised in the `p31-secrets` store.
+    const auth = authSecret && typeof (authSecret as any).get === 'function'
+      ? await (authSecret as any).get()
+      : authSecret;
     if (!auth) {
       console.error('[L.O.V.E.] LOVE_AUTH_SECRET not set — skipping mint for', state.cycleId);
       return;

@@ -48,3 +48,13 @@ ENVIRONMENT = "production"
 
 [observability]
 enabled = true
+
+# Axis-6 LOVE settlement HMAC shared secret. Centralised in the Cloudflare
+# Secrets Store (`p31-secrets`, store-id 33d48162fd6842869beeed3516e2909c) so a
+# single rotation propagates to every bound Worker. Resolved at runtime via
+# `await env.LOVE_AUTH_SECRET.get()`. Replaces the legacy per-worker
+# `wrangler secret put LOVE_AUTH_SECRET`.
+[[secrets_store_secrets]]
+binding = "LOVE_AUTH_SECRET"
+store_id = "33d48162fd6842869beeed3516e2909c"
+secret_name = "LOVE_AUTH_SECRET"
