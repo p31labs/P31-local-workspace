@@ -23,9 +23,7 @@ id = "ee153bbfc8c5427288ab9dddf9a1c9a9"
 #   webhook.p31ca.org → p31-kofi-webhook
 #   kofi.p31ca.org → p31-kofi-webhook
 
-# Daily cron for node count digest
-[triggers]
-crons = ["20 17 * * *"]  # Daily 1:20 PM EDT (17:20 UTC)
+# Daily digest now triggered via GHA (POST /digest endpoint)
 
 # Build configuration
 [build]

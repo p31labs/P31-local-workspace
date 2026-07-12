@@ -1,0 +1,43 @@
+name: Daily Scheduled Tasks
+
+# Replaces CF cron triggers moved off the Free Plan cap.
+# social-worker: daily social wave dispatch
+# kofi-webhook: daily node count digest to Discord
+
+on:
+  schedule:
+    - cron: '0 17 * * *'   # 17:00 UTC daily — social wave
+    - cron: '20 17 * * *'  # 17:20 UTC daily — kofi digest
+  workflow_dispatch:
+    inputs:
+      task:
+        description: 'Task to run'
+        required: false
+        type: choice
+        options:
+          - social
+          - kofi
+
+jobs:
+  social-wave:
+    runs-on: ubuntu-latest
+    if: >-
+      github.event.schedule == '0 17 * * *' ||
+      (github.event_name == 'workflow_dispatch' && inputs.task == 'social')
+    steps:
+      - name: Trigger social wave
+        run: |
+          curl -sf -X POST https://p31-social-worker.trimtab-signal.workers.dev/trigger \
+            -H 'Content-Type: application/json' \
+            -d '{"wave":"auto"}' || echo "Social worker unreachable (non-fatal)"
+
+  kofi-digest:
+    runs-on: ubuntu-latest
+    if: >-
+      github.event.schedule == '20 17 * * *' ||
+      (github.event_name == 'workflow_dispatch' && inputs.task == 'kofi')
+    steps:
+      - name: Trigger kofi digest
+        run: |
+          curl -sf -X POST https://p31-kofi-webhook.trimtab-signal.workers.dev/digest \
+            -H 'Content-Type: application/json' || echo "Kofi webhook unreachable (non-fatal)"

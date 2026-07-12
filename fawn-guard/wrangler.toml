@@ -8,8 +8,7 @@ binding = "GUARD_DB"
 database_name = "fawn-guard-db"
 database_id = "8e40c27f-d357-4588-b141-3f57947a96d1"
 
-[[triggers]]
-cron = "0 2 * * *"
+# Health check now triggered via GHA
 
 [observability]
 enabled = true

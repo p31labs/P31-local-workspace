@@ -56,6 +56,28 @@ export default {
       return jsonResponse({ error: 'Method not allowed' }, 405);
     }
 
+    // POST /digest — manual trigger for daily node count digest (GHA replacement for cron)
+    if (path === '/digest') {
+      const nodeCount = await getNodeCount(env);
+      const nextMilestone = getNextMilestone(nodeCount);
+      const webhookUrl = env.DISCORD_WEBHOOK_URL;
+      if (!webhookUrl) return jsonResponse({ error: 'No Discord webhook configured' }, 500);
+      const embed = {
+        embeds: [{
+          title: '📊 Daily Node Count Digest',
+          color: 0x00D4FF,
+          fields: [
+            { name: 'Total Nodes', value: `${nodeCount}`, inline: true },
+            { name: 'Next Milestone', value: nextMilestone ? `${nextMilestone.target} (${nextMilestone.remaining} to go)` : 'All milestones reached!', inline: true },
+          ],
+          footer: { text: 'P31 Labs | Daily Ko-fi Digest' },
+          timestamp: new Date().toISOString(),
+        }],
+      };
+      await fetch(webhookUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(embed) });
+      return jsonResponse({ ok: true, node_count: nodeCount, next_milestone: nextMilestone });
+    }
+
     try {
       // Verify webhook secret (supports both header and Ko-fi verification token)
       const webhookSecret = request.headers.get('x-kofi-webhook-secret');

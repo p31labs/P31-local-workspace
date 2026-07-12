@@ -32,13 +32,7 @@ ENVIRONMENT = "production"
 # Workers & Pages → p31-social-worker → Triggers → Custom Domains → Add custom domain
 # Add: social.p31ca.org
 
-# Recurring cron triggers
-# Single daily trigger at 1:00 PM EDT — worker determines day and fires appropriate wave
-# Ko-fi digest lives in wrangler-kofi.toml (separate worker, separate cron budget)
-[triggers]
-crons = [
-  "0 17 * * *",    # Daily 1:00 PM EDT — Mon=weekly wave, Wed=midweek, Fri=weekend, 1st=Zenodo
-]
+# Social waves now triggered via GHA (POST /trigger endpoint)
 
 # Build configuration
 [build]
