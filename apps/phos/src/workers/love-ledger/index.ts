@@ -98,11 +98,56 @@ function timingSafeEqual(a: string, b: string): boolean {
   return crypto.subtle.timingSafeEqual(ab, bb);
 }
 
+// ── JWT utilities (HS256, Web Crypto) ─────────────────────────────
+// Used for passkey → session token flow. Clients authenticate via
+// passkey, receive a JWT, and present it as Bearer token on writes.
+
+function b64url(buf: ArrayBuffer): string {
+  return btoa(String.fromCharCode(...new Uint8Array(buf)))
+    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+function b64urlDecode(s: string): Uint8Array {
+  const pad = s.length % 4 === 0 ? '' : '='.repeat(4 - (s.length % 4));
+  const bin = atob(s.replace(/-/g, '+').replace(/_/g, '/') + pad);
+  return Uint8Array.from(bin, c => c.charCodeAt(0));
+}
+
+async function signJWT(payload: Record<string, any>, secret: string, expiresIn = 86400): Promise<string> {
+  const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' })).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  const body = btoa(JSON.stringify({ ...payload, iat: Math.floor(Date.now() / 1000), exp: Math.floor(Date.now() / 1000) + expiresIn })).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  const data = new TextEncoder().encode(`${header}.${body}`);
+  const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+  const sig = await crypto.subtle.sign('HMAC', key, data);
+  return `${header}.${body}.${b64url(sig)}`;
+}
+
+async function verifyJWT(token: string, secret: string): Promise<Record<string, any> | null> {
+  try {
+    const [header, body, sig] = token.split('.');
+    if (!header || !body || !sig) return null;
+    const data = new TextEncoder().encode(`${header}.${body}`);
+    const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['verify']);
+    const valid = await crypto.subtle.verify('HMAC', key, b64urlDecode(sig), data);
+    if (!valid) return null;
+    const payload = JSON.parse(new TextDecoder().decode(b64urlDecode(body)));
+    if (payload.exp && payload.exp < Math.floor(Date.now() / 1000)) return null;
+    return payload;
+  } catch { return null; }
+}
+
 async function authorizeWrite(request: Request, env: Env, didSource: string): Promise<boolean> {
   const auth = request.headers.get('Authorization');
   if (auth && auth.startsWith('Bearer ')) {
-    if (!env.LOVE_AUTH_SECRET) return false;
-    return timingSafeEqual(auth.slice(7), env.LOVE_AUTH_SECRET);
+    const token = auth.slice(7);
+    // 1. Try LOVE_AUTH_SECRET (service token, static)
+    if (env.LOVE_AUTH_SECRET && timingSafeEqual(token, env.LOVE_AUTH_SECRET)) return true;
+    // 2. Try JWT (passkey session token)
+    if (env.PASSKEY_JWT_SECRET) {
+      const payload = await verifyJWT(token, env.PASSKEY_JWT_SECRET);
+      if (payload?.sub) return true;
+    }
+    return false;
   }
   return verifyRequest(request, didSource);
 }
@@ -242,6 +287,8 @@ export interface Env {
   MLDSA_SIGNER_PUBLIC_KEY?: string;
   BLIND_MODE?: string;
   ENVIRONMENT?: string;
+  PASSKEY_URL?: string;
+  PASSKEY_JWT_SECRET?: string;
 }
 
 export class LoveTransactionDO extends DurableObject {
@@ -279,6 +326,39 @@ export default {
       return new Response(JSON.stringify({ status: 'ok', service: 'love-ledger', timestamp: new Date().toISOString() }), {
         headers: { 'Content-Type': 'application/json' },
       });
+    }
+
+    // ── Passkey auth → JWT session token ────────────────────────────
+    // POST /auth/passkey: accepts passkey assertion, verifies via the
+    // passkey worker, and issues a JWT for love-ledger write access.
+    if (method === 'POST' && url.pathname === '/auth/passkey') {
+      if (!env.PASSKEY_URL || !env.PASSKEY_JWT_SECRET) {
+        return new Response(JSON.stringify({ error: 'Passkey auth not configured' }), { status: 503 });
+      }
+      try {
+        const body = await request.json() as any;
+        const { credentialId, clientDataJSON, authenticatorData, signature } = body;
+        if (!credentialId || !clientDataJSON || !authenticatorData || !signature) {
+          return new Response(JSON.stringify({ error: 'Missing passkey assertion fields' }), { status: 400 });
+        }
+        // Verify via passkey worker's auth-finish endpoint
+        const passkeyResp = await fetch(`${env.PASSKEY_URL}/api/passkey/auth-finish`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ credentialId, clientDataJSON, authenticatorData, signature }),
+        });
+        const passkeyResult = await passkeyResp.json() as any;
+        if (!passkeyResp.ok || !passkeyResult.ok) {
+          return new Response(JSON.stringify({ error: 'Passkey verification failed', details: passkeyResult.error }), { status: 401 });
+        }
+        // Issue JWT with userId as subject
+        const jwt = await signJWT({ sub: passkeyResult.userId, auth: 'passkey' }, env.PASSKEY_JWT_SECRET);
+        return new Response(JSON.stringify({ ok: true, token: jwt, userId: passkeyResult.userId }), {
+          headers: { 'Content-Type': 'application/json' },
+        });
+      } catch (e: any) {
+        return new Response(JSON.stringify({ error: 'Passkey auth error', details: e.message }), { status: 500 });
+      }
     }
 
     if (method === 'GET' && url.pathname === '/balance') {
