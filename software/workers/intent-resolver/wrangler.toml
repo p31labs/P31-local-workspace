@@ -30,3 +30,6 @@ bucket_name = "p31-needle-weights"
 type = "CompiledWasm"
 globs = ["**/*.wasm"]
 fallthrough = false
+
+[limits]
+cpu_ms = 30000

@@ -22,8 +22,41 @@ export type NeedleError = {
   fallback_reason: string;
 };
 
+// ── Structured metrics ──────────────────────────────────────────────
+export type NeedleMetrics = {
+  requests: number;
+  successes: number;
+  fallbacks: number;
+  initFailures: number;
+  inferenceTimeouts: number;
+  avgInferenceMs: number;
+};
+
+const metrics: NeedleMetrics = {
+  requests: 0,
+  successes: 0,
+  fallbacks: 0,
+  initFailures: 0,
+  inferenceTimeouts: 0,
+  avgInferenceMs: 0,
+};
+
 let engine: any = null;
 let initAttempted = false;
+
+const R2_FETCH_TIMEOUT_MS = 10_000;
+const INFERENCE_TIMEOUT_MS = 5_000;
+const MODEL_KEY = 'needle-v1.safetensors';
+const VOCAB_KEY = 'vocab.txt';
+
+function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<T>((_, reject) =>
+      setTimeout(() => reject(new Error(`${label} timed out after ${ms}ms`)), ms)
+    ),
+  ]);
+}
 
 async function ensureEngine(env: { NEEDLE_WEIGHTS: R2Bucket }): Promise<any> {
   if (engine) return engine;
@@ -44,15 +77,23 @@ async function ensureEngine(env: { NEEDLE_WEIGHTS: R2Bucket }): Promise<any> {
     glue.initSync(input);
     console.log('[needle-engine] initSync done');
 
-    // 3. Load model weights from R2.
-    const modelResp = await env.NEEDLE_WEIGHTS.get('needle.safetensors');
-    if (!modelResp) throw new Error('needle.safetensors not in R2');
+    // 3. Load model weights from R2 (with timeout).
+    const modelResp = await withTimeout(
+      env.NEEDLE_WEIGHTS.get(MODEL_KEY),
+      R2_FETCH_TIMEOUT_MS,
+      'R2 model fetch',
+    );
+    if (!modelResp) throw new Error(`${MODEL_KEY} not in R2`);
     const modelBytes = new Uint8Array(await modelResp.arrayBuffer());
     console.log('[needle-engine] weights:', modelBytes.length, 'bytes');
 
-    // 4. Load vocabulary from R2.
-    const vocabResp = await env.NEEDLE_WEIGHTS.get('vocab.txt');
-    if (!vocabResp) throw new Error('vocab.txt not in R2');
+    // 4. Load vocabulary from R2 (with timeout).
+    const vocabResp = await withTimeout(
+      env.NEEDLE_WEIGHTS.get(VOCAB_KEY),
+      R2_FETCH_TIMEOUT_MS,
+      'R2 vocab fetch',
+    );
+    if (!vocabResp) throw new Error(`${VOCAB_KEY} not in R2`);
     const vocabText = await vocabResp.text();
     console.log('[needle-engine] vocab:', vocabText.length, 'chars');
 
@@ -63,6 +104,7 @@ async function ensureEngine(env: { NEEDLE_WEIGHTS: R2Bucket }): Promise<any> {
     console.log('[needle-engine] engine loaded');
     return engine;
   } catch (e: any) {
+    metrics.initFailures++;
     console.error('[needle-engine] init failed:', e.message);
     return null;
   }
@@ -83,25 +125,47 @@ export async function classifyIntent(
   tools: ToolDef[],
   env: { NEEDLE_WEIGHTS: R2Bucket },
 ): Promise<NeedleResult | null> {
+  metrics.requests++;
   const eng = await ensureEngine(env);
   if (!eng) return null;
 
   try {
     const toolsJson = JSON.stringify(tools);
-    const raw = eng.run(prompt, toolsJson);
+    const t0 = Date.now();
+    const raw = await withTimeout(
+      Promise.resolve(eng.run(prompt, toolsJson)),
+      INFERENCE_TIMEOUT_MS,
+      'needle inference',
+    );
+    const elapsed = Date.now() - t0;
+    // Exponential moving average for inference latency.
+    metrics.avgInferenceMs = metrics.avgInferenceMs
+      ? metrics.avgInferenceMs * 0.8 + elapsed * 0.2
+      : elapsed;
+
     const parsed = JSON.parse(raw);
 
     // Needle returns a single object {name, arguments} or an array.
     const call = Array.isArray(parsed) ? parsed[0] : parsed;
-    if (!call?.name) return null;
+    if (!call?.name) {
+      metrics.fallbacks++;
+      return null;
+    }
 
+    metrics.successes++;
     return {
       tool: call.name,
       arguments: call.arguments ?? {},
       needle_used: true,
     };
   } catch (e: any) {
-    console.error('[needle-engine] inference failed:', e.message);
+    if (e.message?.includes('timed out')) {
+      metrics.inferenceTimeouts++;
+      console.warn('[needle-engine] inference timeout');
+    } else {
+      console.error('[needle-engine] inference failed:', e.message);
+    }
+    metrics.fallbacks++;
     return null;
   }
 }
@@ -109,4 +173,9 @@ export async function classifyIntent(
 /** Check if the engine is initialized (for health checks). */
 export function needleReady(): boolean {
   return engine !== null;
+}
+
+/** Return a snapshot of runtime metrics. */
+export function needleMetrics(): NeedleMetrics {
+  return { ...metrics };
 }

@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { parseIntent } from './intent-parser';
 import { generateCapabilityPlan } from './capability-planner';
 import { createQuote } from './quote-generator';
+import { needleReady, needleMetrics } from './needle-engine';
 
 type Passport = { baselineSpoons?: number; [key: string]: unknown };
 
@@ -93,6 +94,13 @@ app.post('/intent', zValidator('json', intentSchema), async (c) => {
   return resp;
 });
 
-app.get('/health', (c) => c.json({ status: 'ok', service: 'intent-resolver' }));
+app.get('/health', (c) => c.json({
+  status: 'ok',
+  service: 'intent-resolver',
+  needle: {
+    ready: needleReady(),
+    ...needleMetrics(),
+  },
+}));
 
 export default app;

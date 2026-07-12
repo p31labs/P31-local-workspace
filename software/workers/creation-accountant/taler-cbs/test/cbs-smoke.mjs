@@ -3,7 +3,7 @@ import { webcrypto } from 'node:crypto';
 
 const crypto = webcrypto;
 const BASE_URL = 'https://love-ledger.p31ca.org';
-const AUTH = 'cbsstaging0000000000000000000000000000000000000000000000000';
+const AUTH = '43fa3d824b176cc0394d389344f867466c439aaeecc862f3e17266a968443ab7';
 const DID = 'did:test:cbs-smoke';
 const AMOUNT = 5;
 const WASM = new URL('../../src/taler_cs.wasm', import.meta.url);
@@ -55,11 +55,11 @@ console.log('3. /blind-sign -> s.len', b64d(sRes.s).length);
 const sPrime = unblind(b64d(sRes.s), a);
 
 // 4. withdraw (Bearer auth)
-const w = await j(await fetch(`${BASE_URL}/withdraw`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + AUTH }, body: JSON.stringify({ did: DID, amount: AMOUNT, msg: b64e(msg), cPrime: b64e(cPrime), sPrime: b64e(sPrime), R: pk.R }) }));
+const w = await j(await fetch(`${BASE_URL}/withdraw`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + AUTH }, body: JSON.stringify({ did: DID, amount: AMOUNT, msg: b64e(msg), cPrime: b64e(cPrime), sPrime: b64e(sPrime), t }) }));
 console.log('4. /withdraw ->', w.success ? 'OK' : 'FAIL', JSON.stringify(w).slice(0, 200));
 if (!w.success) process.exit(1);
 
 // 5. replay same (c',s') must FAIL (court-admissible single-use)
-const w2 = await j(await fetch(`${BASE_URL}/withdraw`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + AUTH }, body: JSON.stringify({ did: DID, amount: AMOUNT, msg: b64e(msg), cPrime: b64e(cPrime), sPrime: b64e(sPrime), R: pk.R }) }));
+const w2 = await j(await fetch(`${BASE_URL}/withdraw`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + AUTH }, body: JSON.stringify({ did: DID, amount: AMOUNT, msg: b64e(msg), cPrime: b64e(cPrime), sPrime: b64e(sPrime), t }) }));
 console.log('5. replay withdraw ->', w2.success ? 'UNEXPECTED-OK' : 'correctly rejected (' + w2.error + ')');
 console.log('\nCBS LIVE SMOKE: PASS');

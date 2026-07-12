@@ -645,7 +645,8 @@ export default {
           msg: string;
           cPrime: string;
           sPrime: string;
-          R: string;
+          t: string;
+          R?: string;
         };
         if (typeof body.amount !== 'number' || body.amount <= 0) {
           return new Response(JSON.stringify({ error: 'Invalid amount' }), { status: 400 });
@@ -702,13 +703,44 @@ export default {
         await ensureCbs();
         const xBytes = b64ToBytes(env.BLIND_ISSUER_PRIVATE_KEY);
         const X = cbsBase(xBytes);
-        const R = b64ToBytes(body.R);
+        // Prefer recomputing R from t (deterministic, server-side). Fall
+        // back to client-supplied R for backward compat with old callers.
+        let R: Uint8Array;
+        if (body.t) {
+          const tBytes = b64ToBytes(body.t);
+          const nBytes = await deriveNonce(xBytes, tBytes);
+          R = cbsBase(nBytes);
+        } else if (body.R) {
+          R = b64ToBytes(body.R);
+        } else {
+          return new Response(JSON.stringify({ error: 'Missing t or R' }), {
+            status: 400,
+            headers: { 'Content-Type': 'application/json' },
+          });
+        }
         const valid = cbsVerify(b64ToBytes(body.msg), b64ToBytes(body.cPrime), b64ToBytes(body.sPrime), X, R);
         if (!valid) {
           return new Response(JSON.stringify({ error: 'Invalid blind signature' }), {
             status: 401,
             headers: { 'Content-Type': 'application/json' },
           });
+        }
+        // Axis-1: consume the signing nonce t to prevent reuse. Reusing
+        // the same n across two challenges leaks x (s1−s2 = (c1−c2)·x).
+        if (body.t) {
+          const nonceRow = await withRetry(() => env.LOVE_DB.prepare(
+            'SELECT t FROM cbs_nonce WHERE t = ?'
+          ).bind(body.t).first<{ t: string }>(), 3, 'cbs_nonce_withdraw_check');
+          if (!nonceRow) {
+            return new Response(JSON.stringify({ error: 'Unknown or expired nonce' }), {
+              status: 400,
+              headers: { 'Content-Type': 'application/json' },
+            });
+          }
+          // Delete to prevent reuse.
+          await withRetry(() => env.LOVE_DB.prepare(
+            'DELETE FROM cbs_nonce WHERE t = ?'
+          ).bind(body.t).run(), 3, 'cbs_nonce_withdraw_consume');
         }
         // Axis-1 replay protection: each blind-signature coin (c', s') is
         // spent exactly once. Claim c' (PRIMARY KEY) before debiting; a

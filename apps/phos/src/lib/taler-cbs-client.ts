@@ -79,7 +79,7 @@ export class TalerCBSClient {
         msg: bytesToB64(msg),
         cPrime: bytesToB64(cPrime),
         sPrime: bytesToB64(sPrime),
-        R: pk.R,
+        t: pk.t,
       }),
     })).json() as { success?: boolean; blind_signature?: string; transactionId?: string; error?: string };
 
