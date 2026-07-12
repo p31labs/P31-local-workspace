@@ -1,0 +1,29 @@
+name: Update Live Docs
+on:
+  schedule:
+    - cron: '0 */6 * * *'   # every 6 hours
+  push:
+    paths:
+      - 'migrations/008_*'
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm install -g wrangler
+      - name: Run live docs update
+        run: node scripts/update-live-docs.js
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "docs: auto-update live pilot data [skip ci]"
+          file_pattern: docs/*.md
+          commit_user_name: "p31-live-docs[bot]"
+          commit_user_email: "bot@p31labs.org"

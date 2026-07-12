@@ -89,7 +89,7 @@ async function withRetry<T>(fn: () => Promise<T>, retries = 3, label = 'd1_query
 // Writes accept EITHER an Ed25519 did:key signature (end-user wallets — the
 // existing verifyRequest path) OR a Bearer <LOVE_AUTH_SECRET> service token
 // (trusted internal callers: love-registry MCP, CLI, cron). Reads stay public.
-const WRITE_PATHS = new Set(['/transfer', '/stake', '/care-score', '/withdraw']);
+const WRITE_PATHS = new Set(['/transfer', '/stake', '/care-score', '/withdraw', '/family/onboard', '/family/status']);
 
 function timingSafeEqual(a: string, b: string): boolean {
   const ab = new TextEncoder().encode(a);
@@ -735,6 +735,70 @@ export default {
         artifact.storage = { json: key, text: txtKey };
       }
       return new Response(JSON.stringify(artifact), { headers: { 'Content-Type': 'application/json' } });
+    }
+
+    // ── Pilot Registry Routes ──────────────────────────────────────────
+    if (method === 'POST' && url.pathname === '/family/onboard') {
+      try {
+        const body = await request.json() as { did: string; family_name: string; nodes?: string[] };
+        if (!body.did || !body.family_name) {
+          return new Response(JSON.stringify({ error: 'Missing did or family_name' }), { status: 400 });
+        }
+        const existing = await env.LOVE_DB.prepare('SELECT did FROM love_accounts WHERE did = ?').bind(body.did).first();
+        if (!existing) {
+          return new Response(JSON.stringify({ error: 'Account not found. Create LOVE account first.' }), { status: 404 });
+        }
+        const onboarded_at = Date.now();
+        await env.LOVE_DB.prepare(
+          'INSERT OR REPLACE INTO pilot_registry (did, family_name, status, onboarded_at, active_nodes) VALUES (?, ?, ?, ?, 0)'
+        ).bind(body.did, body.family_name, 'pending', onboarded_at).run();
+        if (body.nodes && body.nodes.length) {
+          const now = Date.now();
+          for (const nodeId of body.nodes) {
+            await env.LOVE_DB.prepare(
+              'INSERT OR IGNORE INTO node_registry (node_id, family_did, last_seen, firmware_version) VALUES (?, ?, ?, ?)'
+            ).bind(nodeId, body.did, now, 'v0.1.0').run();
+          }
+          await env.LOVE_DB.prepare(
+            'UPDATE pilot_registry SET active_nodes = (SELECT COUNT(*) FROM node_registry WHERE family_did = ?) WHERE did = ?'
+          ).bind(body.did, body.did).run();
+        }
+        logEvent({ event: 'family_onboarded', service: 'love-ledger', success: true, did: body.did, family: body.family_name });
+        return new Response(JSON.stringify({ success: true, did: body.did, status: 'pending' }), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        });
+      } catch (err: any) {
+        logEvent({ event: 'family_onboard_error', service: 'love-ledger', success: false, error: err?.message || String(err) });
+        return new Response(JSON.stringify({ error: 'Internal server error' }), { status: 500 });
+      }
+    }
+
+    if (method === 'PATCH' && url.pathname.startsWith('/family/') && url.pathname.endsWith('/status')) {
+      try {
+        if (!await authorizeWrite(request, env, 'did')) {
+          logEvent({ event: 'write_auth_fail', service: 'love-ledger', success: false, data: { path: url.pathname } });
+          return unauthorizedResponse();
+        }
+        const parts = url.pathname.split('/');
+        const did = parts[2];
+        if (!did) {
+          return new Response(JSON.stringify({ error: 'Missing DID' }), { status: 400 });
+        }
+        const body = await request.json() as { status: string };
+        if (!body.status || !['pending', 'active', 'completed'].includes(body.status)) {
+          return new Response(JSON.stringify({ error: 'Invalid status. Must be pending, active, or completed.' }), { status: 400 });
+        }
+        await env.LOVE_DB.prepare('UPDATE pilot_registry SET status = ? WHERE did = ?').bind(body.status, did).run();
+        logEvent({ event: 'family_status_update', service: 'love-ledger', success: true, did, status: body.status });
+        return new Response(JSON.stringify({ success: true, did, status: body.status }), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        });
+      } catch (err: any) {
+        logEvent({ event: 'family_status_error', service: 'love-ledger', success: false, error: err?.message || String(err) });
+        return new Response(JSON.stringify({ error: 'Internal server error' }), { status: 500 });
+      }
     }
 
     return new Response('Not found', { status: 404 });
