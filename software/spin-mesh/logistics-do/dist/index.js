@@ -1,0 +1,155 @@
+/**
+ * SpIn Mesh — Logistics Durable Object v0.1
+ *
+ * Coordinates double-blind physical hand-offs for a locked TTC cycle.
+ * Creates ephemeral X3DH key exchange, suggests venues, and destroys
+ * shared secrets upon completion.
+ *
+ * Bound to Matchmaking DO as LOGISTICS binding.
+ */
+export class HandoverDO {
+    constructor(state, env) {
+        this.state = state;
+        this.env = env;
+        // Auto-expire after 24h
+        this.state.blockUntil('expire', Date.now() + 24 * 60 * 60 * 1000);
+    }
+    async alarm() {
+        const s = await this.state.get();
+        if (s && Date.now() - s.createdAt > 24 * 60 * 60 * 1000) {
+            await this.state.delete();
+        }
+        this.state.blockUntil('expire', Date.now() + 24 * 60 * 60 * 1000);
+    }
+    async fetch(request) {
+        const url = new URL(request.url);
+        const path = url.pathname;
+        if (path === '/init' && request.method === 'POST')
+            return this.init(request);
+        if (path === '/key' && request.method === 'POST')
+            return this.submitKey(request);
+        if (path === '/ready' && request.method === 'GET')
+            return this.ready(request);
+        if (path === '/complete' && request.method === 'POST')
+            return this.complete(request);
+        if (path === '/health')
+            return new Response('OK', { status: 200 });
+        return new Response('Not Found', { status: 404 });
+    }
+    // POST /init — Matchmaking DO creates handover record
+    async init(request) {
+        const body = await request.json();
+        const state = {
+            cycleId: body.cycleId,
+            participants: body.participants,
+            resourceIds: body.resourceIds,
+            midpoint: body.midpoint,
+            geohash: body.geohash,
+            venues: body.venues || [],
+            pubkeys: {},
+            completed: new Set(),
+            createdAt: Date.now(),
+        };
+        await this.state.put(state);
+        return new Response(JSON.stringify({ ok: true }), { headers: { 'Content-Type': 'application/json' } });
+    }
+    // POST /key — participant submits ephemeral X25519 public key (hex string)
+    async submitKey(request) {
+        const body = (await request.json());
+        const { userId, pubkey } = body;
+        const state = await this.state.get();
+        if (!state)
+            return new Response('Handover unknown', { status: 404 });
+        state.pubkeys[userId] = Uint8Array.from(Buffer.from(pubkey, 'hex'));
+        await this.state.put(state);
+        // If all keys received, push 'ready' to both via Matchmaking DO WebSocket? For now, return.
+        return new Response(JSON.stringify({ ok: true }), { headers: { 'Content-Type': 'application/json' } });
+    }
+    // GET /ready?userId=… — returns remote pubkey and handover metadata when ready
+    async ready(request) {
+        const url = new URL(request.url);
+        const userId = url.searchParams.get('userId');
+        if (!userId)
+            return new Response('userId required', { status: 400 });
+        const state = await this.state.get();
+        if (!state)
+            return new Response('Handover unknown', { status: 404 });
+        // Not ready until we have both pubkeys
+        if (!(userId in state.pubkeys)) {
+            const waiting = state.participants.filter(p => !(p in state.pubkeys));
+            return new Response(JSON.stringify({ ready: false, waitingFor: waiting }), { headers: { 'Content-Type': 'application/json' } });
+        }
+        const otherId = state.participants.find(p => p !== userId);
+        if (!otherId) {
+            return new Response(JSON.stringify({ ready: false, waitingFor: [userId] }), { headers: { 'Content-Type': 'application/json' } });
+        }
+        const remotePub = state.pubkeys[otherId];
+        if (!remotePub) {
+            return new Response(JSON.stringify({ ready: false, waitingFor: [otherId] }), { headers: { 'Content-Type': 'application/json' } });
+        }
+        return new Response(JSON.stringify({
+            ready: true,
+            cycleId: state.cycleId,
+            midpoint: state.midpoint,
+            geohash: state.geohash,
+            venues: state.venues,
+            remotePubkey: Array.from(remotePub),
+            resourceIds: state.resourceIds,
+        }), { headers: { 'Content-Type': 'application/json' } });
+    }
+    // POST /complete — participant acknowledges physical handover; triggers secret destruction when all done
+    async complete(request) {
+        const { userId } = await request.json();
+        const state = await this.state.get();
+        if (!state)
+            return new Response('Handover unknown', { status: 404 });
+        state.completed.add(userId);
+        await this.state.put(state);
+        if (state.completed.size === state.participants.length) {
+            // Mint L.O.V.E. tokens (single-mint per cycle)
+            await this.mintLoveTokens(state);
+            // Destroy state — privacy wipe
+            await this.state.delete();
+        }
+        return new Response(JSON.stringify({ ok: true, completed: state.completed.size }), { headers: { 'Content-Type': 'application/json' } });
+    }
+    async mintLoveTokens(state) {
+        const loveLedger = this.env?.LOVE_LEDGER_URL || 'https://love-ledger.p31ca.org';
+        const auth = this.env?.LOVE_AUTH_SECRET;
+        if (!auth) {
+            console.error('[L.O.V.E.] LOVE_AUTH_SECRET not set — skipping mint for', state.cycleId);
+            return;
+        }
+        for (const participant of state.participants) {
+            try {
+                const res = await fetch(`${loveLedger}/transfer`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${auth}`,
+                    },
+                    body: JSON.stringify({
+                        from: 'system:love-issuer',
+                        to: participant,
+                        amount: 10,
+                        signature: 'barter-mint',
+                        type: 'barter_completion',
+                    }),
+                });
+                if (!res.ok) {
+                    console.error(`[L.O.V.E.] Mint failed for ${participant}: ${res.status} ${await res.text()}`);
+                }
+            }
+            catch (err) {
+                console.error(`[L.O.V.E.] Mint error for ${participant}:`, err);
+            }
+        }
+        console.log(`[L.O.V.E.] Minted for cycle ${state.cycleId} to ${state.participants.join(',')}`);
+    }
+}
+// Default handler for ES module syntax (required by wrangler)
+export default {
+    fetch(request) {
+        return new Response('spin-logistics DO worker', { status: 200 });
+    },
+};

@@ -10,3 +10,7 @@ routes = [
 binding = "DB"
 database_name = "love-ledger"
 database_id = "592e3e2e-3203-4e0a-8342-9e85215ec8a6"
+
+[[env.production.services]]
+binding = "K4_CAGE"
+service = "k4-cage"

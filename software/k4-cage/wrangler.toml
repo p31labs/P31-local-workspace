@@ -41,9 +41,10 @@ tag = "v4-messaging"
 tag = "v5-cage"
 
 # Remove orphan FamilyCageDO class (stale from previous version)
-[[migrations]]
-tag = "v6-remove-legacy"
-deleted_classes = ["FamilyCageDO"]
+# Note: cannot delete a class that was never exported — skip deletion
+# [[migrations]]
+# tag = "v6-remove-legacy"
+# deleted_classes = ["FamilyCageDO"]
 
 # [[d1_databases]]
 # binding = "DB"

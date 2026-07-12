@@ -819,6 +819,28 @@ export default {
         });
       }
 
+      // Bridge: GET /api/topology/summary — compact summary for Arcade enrichment
+      if (path === '/api/topology/summary' && method === 'GET') {
+        if (!env.K4_TOPOLOGY) {
+          return json({ vertices: VERTICES.length, edges: EDGES.length, totalLove: 0, online: 0, topology: 'K4' });
+        }
+        const r = await topologyFetch(request, env, '/api/mesh', 'GET');
+        if (!r.ok) return json({ error: 'topology unavailable' }, { status: 502 });
+        const mesh = await r.json();
+        const verts = mesh.mesh?.vertices || {};
+        const online = Object.values(verts).filter(v => v.status === 'online').length;
+        return json({
+          topology: mesh.topology,
+          vertices: mesh.vertices,
+          edges: mesh.edges,
+          totalLove: mesh.totalLove || 0,
+          online,
+          rigidity: mesh.rigidity,
+          qFactor: mesh.qFactor,
+          timestamp: mesh.timestamp,
+        });
+      }
+
       return err('Not found. Try GET /api/mesh', 404);
     } catch (e) {
       return err(`Internal error: ${e.message}`, 500);

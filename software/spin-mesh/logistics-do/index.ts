@@ -152,7 +152,42 @@ export class HandoverDO {
   }
 
   async mintLoveTokens(state: HandoverState): Promise<void> {
-    // Placeholder: in future, call EigenTrust service or write to a global ledger
-    console.log(`[L.O.V.E.] Mint for cycle ${state.cycleId} by ${state.participants.join(',')}`);
+    const loveLedger = this.env?.LOVE_LEDGER_URL || 'https://love-ledger.p31ca.org';
+    const auth = this.env?.LOVE_AUTH_SECRET;
+    if (!auth) {
+      console.error('[L.O.V.E.] LOVE_AUTH_SECRET not set — skipping mint for', state.cycleId);
+      return;
+    }
+    for (const participant of state.participants) {
+      try {
+        const res = await fetch(`${loveLedger}/transfer`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${auth}`,
+          },
+          body: JSON.stringify({
+            from: 'system:love-issuer',
+            to: participant,
+            amount: 10,
+            signature: 'barter-mint',
+            type: 'barter_completion',
+          }),
+        });
+        if (!res.ok) {
+          console.error(`[L.O.V.E.] Mint failed for ${participant}: ${res.status} ${await res.text()}`);
+        }
+      } catch (err) {
+        console.error(`[L.O.V.E.] Mint error for ${participant}:`, err);
+      }
+    }
+    console.log(`[L.O.V.E.] Minted for cycle ${state.cycleId} to ${state.participants.join(',')}`);
   }
 }
+
+// Default handler for ES module syntax (required by wrangler)
+export default {
+  fetch(request: Request): Response {
+    return new Response('spin-logistics DO worker', { status: 200 });
+  },
+};

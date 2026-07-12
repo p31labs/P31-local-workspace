@@ -2,6 +2,7 @@ import { Hono } from 'hono';
 
 type Env = {
   DB: D1Database;
+  K4_CAGE: Fetcher;
 };
 
 const app = new Hono<{ Bindings: Env }>();
@@ -84,7 +85,28 @@ app.get('/api/pilots', async (c) => {
       GROUP BY p.did
       ORDER BY p.onboarded_at DESC
     `).all();
-    return c.json(pilots.results);
+
+    let k4Topology: any = null;
+    try {
+      const k4Res = await c.env.K4_CAGE.fetch('https://k4/api/topology/summary');
+      if (k4Res.ok) k4Topology = await k4Res.json();
+    } catch { /* K4 unavailable — non-fatal */ }
+
+    const enriched = pilots.results.map((p: any) => {
+      if (k4Topology && k4Topology.totalLove > 0) {
+        return {
+          ...p,
+          mesh_health: k4Topology.online / k4Topology.vertices || p.mesh_health,
+          active_nodes: k4Topology.online || p.active_nodes,
+          k4_love: k4Topology.totalLove,
+          k4_online: k4Topology.online,
+          k4_rigidity: k4Topology.rigidity,
+        };
+      }
+      return p;
+    });
+
+    return c.json(enriched);
   } catch (err) {
     return c.json({ error: 'Failed to query pilots' }, 500);
   }

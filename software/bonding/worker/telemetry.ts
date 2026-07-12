@@ -25,11 +25,13 @@
 // ═══════════════════════════════════════════════════════
 
 export interface Env {
-  DB: D1Database;
-  TELEMETRY_KV: KVNamespace;
-  SPOONS_KV: KVNamespace;
+  DB?: D1Database;
+  TELEMETRY_KV?: KVNamespace;
+  SPOONS_KV?: KVNamespace;
   DISCORD_WEBHOOK_URL?: string;
   GENESIS_GATE_URL?: string;
+  LOVE_LEDGER_URL?: string;
+  LOVE_AUTH_SECRET?: string;
 }
 
 function getQFactor(spoonCount: number): number {
@@ -876,6 +878,54 @@ async function handleSCEAnnounce(request: Request, env: Env): Promise<Response> 
   }
 }
 
+// ── Bridge: Bonding → LOVE ──
+
+async function handleD1Mint(request: Request, env: Env): Promise<Response> {
+  try {
+    const { sessionId, did, totalLove, metadata } = await request.json() as {
+      sessionId: string;
+      did: string;
+      totalLove: number;
+      metadata?: Record<string, unknown>;
+    };
+    if (!sessionId || !did || typeof totalLove !== 'number' || totalLove <= 0) {
+      return corsResponse(JSON.stringify({ error: 'Missing or invalid fields: sessionId, did, totalLove (positive number)' }), 400);
+    }
+
+    const loveLedger = env.LOVE_LEDGER_URL || 'https://love-ledger.p31ca.org';
+    const auth = env.LOVE_AUTH_SECRET;
+    if (!auth) {
+      return corsResponse(JSON.stringify({ error: 'LOVE_AUTH_SECRET not configured' }), 503);
+    }
+
+    const res = await fetch(`${loveLedger}/transfer`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${auth}`,
+      },
+      body: JSON.stringify({
+        from: 'system:love-issuer',
+        to: did,
+        amount: totalLove,
+        signature: 'bonding-mint',
+        type: 'gameplay',
+      }),
+    });
+
+    if (!res.ok) {
+      const err = await res.text();
+      console.error('[Bridge] Bonding→LOVE mint failed:', err);
+      return corsResponse(JSON.stringify({ error: 'Love ledger transfer failed', detail: err }), 502);
+    }
+
+    const data = await res.json();
+    return corsResponse(JSON.stringify({ success: true, transaction: data }));
+  } catch (e) {
+    return corsResponse(JSON.stringify({ error: String(e) }), 400);
+  }
+}
+
 // ── Router ──
 
 export default {
@@ -991,7 +1041,8 @@ export default {
           'GET  /api/room/:code',
           'GET  /health',
           'POST /book-session',
-          'POST /api/social/announce'
+          'POST /api/social/announce',
+          'POST /d1/mint'
         ]
       }), 200);
     }
@@ -1021,6 +1072,11 @@ export default {
     const d1TelemetryMatch = path.match(/^\/d1\/telemetry\/(.+)$/);
     if (method === 'GET' && d1TelemetryMatch) {
       return handleD1GetTelemetry(d1TelemetryMatch[1], env);
+    }
+
+    // Bridge: POST /d1/mint — mint LOVE from bonding session
+    if (method === 'POST' && path === '/d1/mint') {
+      return handleD1Mint(request, env);
     }
 
     return corsResponse(JSON.stringify({ error: 'Not found' }), 404);
