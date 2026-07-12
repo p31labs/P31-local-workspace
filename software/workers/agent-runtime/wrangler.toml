@@ -1,0 +1,24 @@
+name = "agent-runtime"
+main = "src/index.ts"
+compatibility_date = "2026-01-01"
+
+# Agents SDK runtime: AgentRuntime is a Durable Object.
+[[durable_objects.bindings]]
+name = "AgentRuntime"
+class_name = "AgentRuntime"
+
+[[migrations]]
+tag = "v1"
+new_classes = ["AgentRuntime"]
+
+# love-ledger Worker — care-score / balance lookups for generate_care_report.
+[[services]]
+binding = "LOVE_LEDGER"
+service = "love-ledger"
+
+# send_notification (v1: telegram) — bot token set via:
+#   wrangler secret put TELEGRAM_BOT_TOKEN
+# (reuse the Cloudflare Secrets Store by binding it here if preferred.)
+
+[observability]
+enabled = true

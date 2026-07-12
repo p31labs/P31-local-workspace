@@ -11,6 +11,7 @@ packages:
   - 'software/workers/mcp-x402-gateway'
   - 'software/workers/intent-resolver'
   - 'software/workers/creation-accountant'
+  - 'software/workers/agent-runtime'
   # Shared libraries & VS Code extensions
   - 'software/packages/*'
   - 'software/extensions/*'

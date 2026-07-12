@@ -43,6 +43,8 @@ interface Env {
   AI?: any;
   // Phase 3 — Needle-as-a-Service binding (intent-resolver POST /classify).
   NEEDLE?: Fetcher;
+  // CWP-2026-015 (A) — agent-runtime built-in tool executor.
+  AGENT_RUNTIME?: Fetcher;
 }
 
 type AppContext = { Bindings: Env };

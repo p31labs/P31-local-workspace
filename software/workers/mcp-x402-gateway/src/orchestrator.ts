@@ -29,6 +29,23 @@ export const P31_TOOLS: Array<{ name: string; description: string }> = [
   { name: 'phos_rollback', description: 'Roll back a PHOS deployment to a previous version' },
 ];
 
+// CWP-2026-015 (A) — built-in tools executed by the agent-runtime Worker
+// (not the L3.4 bridge). The bridge still owns the 9 P31 tools above.
+export const BUILTIN_TOOLS: Array<{ name: string; description: string }> = [
+  { name: 'send_notification', description: 'Send a notification to a family member (v1: Telegram)' },
+  { name: 'generate_care_report', description: 'Generate a care report for a DID from love-ledger care-score and balance' },
+];
+
+// Routing table: built-in tools → agent-runtime service binding; everything
+// else → L3.4 bridge. Lets the orchestrator fan out without hard-coding.
+const TOOL_REGISTRY: Record<string, 'agent-runtime' | 'bridge'> = {
+  send_notification: 'agent-runtime',
+  generate_care_report: 'agent-runtime',
+};
+
+// All tools the planner may select from.
+const ALL_TOOLS = [...P31_TOOLS, ...BUILTIN_TOOLS];
+
 export interface AgentEnv {
   NEEDLE?: Fetcher;
   BRIDGE_URL: string;
@@ -36,6 +53,7 @@ export interface AgentEnv {
   GLM_MODEL?: string;
   LOVE_AUTH_SECRET?: any;
   LOVE_LEDGER_URL?: string;
+  AGENT_RUNTIME?: Fetcher;
 }
 
 interface Step { tool: string; arguments: Record<string, any>; }
@@ -78,7 +96,7 @@ function extractJsonArray(text: string): string {
 
 async function planWithGlm(env: AgentEnv, query: string): Promise<Step[]> {
   if (!env.AI) return [];
-  const toolList = P31_TOOLS.map((t) => `- ${t.name}: ${t.description}`).join('\n');
+  const toolList = ALL_TOOLS.map((t) => `- ${t.name}: ${t.description}`).join('\n');
   const system =
     'You are the P31 care-agent planner. Given a user request, return a JSON array of tool calls ' +
     'drawn ONLY from the available tools. Each element: {"tool": <name>, "arguments": <object>}. ' +
@@ -126,15 +144,37 @@ async function planWithGlm(env: AgentEnv, query: string): Promise<Step[]> {
         arguments: s?.arguments ?? s?.input ?? s?.parameters ?? s?.function?.arguments ?? {},
       }))
       // Only route to tools the orchestrator actually knows how to call.
-      .filter((s: Step) => typeof s.tool === 'string' && P31_TOOLS.some((t) => t.name === s.tool))
+      .filter((s: Step) => typeof s.tool === 'string' && ALL_TOOLS.some((t) => t.name === s.tool))
       .slice(0, 3);
   } catch {
     return [];
   }
 }
 
-// ── 3. execute via the L3.4 bridge (JSON-RPC tools/call) ────────────────────
+// ── 3. execute ──────────────────────────────────────────────────────────────
 async function executeTool(env: AgentEnv, step: Step): Promise<any> {
+  // Built-in tools run on the agent-runtime Worker via service binding.
+  if (env.AGENT_RUNTIME && TOOL_REGISTRY[step.tool] === 'agent-runtime') {
+    try {
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 20000);
+      const res = await env.AGENT_RUNTIME.fetch(`https://agent-runtime/tool/${step.tool}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        signal: ctrl.signal,
+        body: JSON.stringify(step.arguments ?? {}),
+      });
+      clearTimeout(timer);
+      const text = await res.text();
+      let parsed: any = null;
+      try { parsed = JSON.parse(text); } catch { /* leave as null */ }
+      return { tool: step.tool, ok: res.ok, status: res.status, result: parsed };
+    } catch (e: any) {
+      return { tool: step.tool, ok: false, error: String(e?.message || e) };
+    }
+  }
+
+  // Everything else → L3.4 bridge (JSON-RPC tools/call).
   try {
     const ctrl = new AbortController();
     const timer = setTimeout(() => ctrl.abort(), 20000);

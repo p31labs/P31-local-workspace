@@ -44,6 +44,12 @@ binding = "AI"
 binding = "NEEDLE"
 service = "intent-resolver"
 
+# CWP-2026-015 (A) — agent-runtime executes built-in tools (send_notification,
+# generate_care_report) instead of the L3.4 bridge.
+[[services]]
+binding = "AGENT_RUNTIME"
+service = "agent-runtime"
+
 # Secrets (wrangler secret put), never in code:
 # FACILITATOR_KEY_ID, FACILITATOR_SECRET_KEY, REVENUE_API_TOKEN
 
