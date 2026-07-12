@@ -27,6 +27,10 @@ interface Env {
   LOVE_LEDGER: Fetcher;
   // Telegram bot token (set via `wrangler secret put TELEGRAM_BOT_TOKEN`).
   TELEGRAM_BOT_TOKEN: string;
+  // CWP-2026-016 (C) — Spike Land MCP integration (staged, off by default).
+  ENABLE_SPIKE_LAND?: string;
+  SPIKE_LAND_MCP_URL?: string;
+  SPIKE_LAND_API_KEY?: string;
 }
 
 interface SendNotificationArgs {
@@ -101,7 +105,27 @@ async function generateCareReport(env: Env, body: CareReportArgs): Promise<Respo
 }
 
 // Retained for durable state / scheduling (used by later care-mesh work).
-export class AgentRuntime extends Agent<Env> {}
+export class AgentRuntime extends Agent<Env> {
+  // CWP-2026-016 (C) — Spike Land MCP wiring (staged, off by default).
+  // When ENABLE_SPIKE_LAND === "true" and SPIKE_LAND_MCP_URL is set, the agent
+  // connects to Spike Land's MCP registry so its tools become available via
+  // getAITools(). The endpoint is auth-gated and currently unverified, so this
+  // is disabled by default and any failure is non-fatal.
+  async onStart(): Promise<void> {
+    if (this.env.ENABLE_SPIKE_LAND !== "true") return;
+    const url = this.env.SPIKE_LAND_MCP_URL;
+    if (!url) return;
+    try {
+      const headers: Record<string, string> = {};
+      if (this.env.SPIKE_LAND_API_KEY) {
+        headers["Authorization"] = `Bearer ${this.env.SPIKE_LAND_API_KEY}`;
+      }
+      await this.addMcpServer("spike-land", url, { transport: { headers } });
+    } catch (e: any) {
+      console.error("Spike Land MCP connection failed (staged, non-fatal):", e?.message ?? e);
+    }
+  }
+}
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {

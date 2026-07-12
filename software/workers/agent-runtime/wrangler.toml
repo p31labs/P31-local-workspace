@@ -21,5 +21,14 @@ service = "love-ledger"
 #   wrangler secret put TELEGRAM_BOT_TOKEN
 # (reuse the Cloudflare Secrets Store by binding it here if preferred.)
 
+# CWP-2026-016 (C) — Spike Land MCP integration (staged, OFF by default).
+# The Spike Land MCP endpoint is auth-gated and currently unverified
+# (api.spike.land/mcp -> 404, spike.land/mcp -> 401), so this stays disabled.
+# To enable: set ENABLE_SPIKE_LAND = "true", point SPIKE_LAND_MCP_URL at the
+# confirmed endpoint, and `wrangler secret put SPIKE_LAND_API_KEY`.
+[vars]
+ENABLE_SPIKE_LAND = "false"
+SPIKE_LAND_MCP_URL = "https://spike.land/mcp"
+
 [observability]
 enabled = true

@@ -12,6 +12,7 @@ packages:
   - 'software/workers/intent-resolver'
   - 'software/workers/creation-accountant'
   - 'software/workers/agent-runtime'
+  - 'software/workers/care-mesh'
   # Shared libraries & VS Code extensions
   - 'software/packages/*'
   - 'software/extensions/*'
