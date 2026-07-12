@@ -1,6 +1,7 @@
 name = "agent-runtime"
 main = "src/index.ts"
 compatibility_date = "2026-01-01"
+compatibility_flags = ["nodejs_compat"]
 
 # Agents SDK runtime: AgentRuntime is a Durable Object.
 [[durable_objects.bindings]]
@@ -9,7 +10,7 @@ class_name = "AgentRuntime"
 
 [[migrations]]
 tag = "v1"
-new_classes = ["AgentRuntime"]
+new_sqlite_classes = ["AgentRuntime"]
 
 # love-ledger Worker — care-score / balance lookups for generate_care_report.
 [[services]]
