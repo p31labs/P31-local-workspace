@@ -351,8 +351,13 @@ CWP-2026-015/016/017 loop. All are documented in per-worker `RUNBOOK.md` files.
   - `generate_care_report` — queries love-ledger `/care-score` + `/balance` via LOVE_LEDGER binding.
 - **Spike Land MCP (CWP-2026-016 C):** `addMcpServer("spike-land", …)` wired in
   `onStart()`, feature-flagged behind `ENABLE_SPIKE_LAND` (`[vars]` default `"false"`),
-  `SPIKE_LAND_MCP_URL` (default `https://spike.land/mcp`), `SPIKE_LAND_API_KEY`.
-  Endpoint is auth-gated/unverified (`spike.land/mcp` → 401) — stays OFF.
+  `SPIKE_LAND_MCP_URL` (default `https://mcp.spike.land/mcp`), `SPIKE_LAND_API_KEY`.
+  **Endpoint discovered 2026-07-12 (CWP-2026-018 D):** hosted MCP is
+  `https://mcp.spike.land/mcp` (Streamable HTTP; `initialize` → 401 without
+  `Bearer` token). Token = Spike Land API key `sk_...` (`https://spike.land/settings?tab=api-keys`)
+  or OAuth `mcp_...` (`https://mcp.spike.land/oauth/device`). Earlier guesses
+  `spike.land/mcp` / `api.spike.land/mcp` are NOT the MCP host. To enable:
+  `wrangler variable put ENABLE_SPIKE_LAND true` + `wrangler secret put SPIKE_LAND_API_KEY`.
 - **Deploy:** `cd software/workers/agent-runtime && npx wrangler deploy`
 - **Health:** `GET /health` → `{"status":"ok","service":"agent-runtime"}`
 

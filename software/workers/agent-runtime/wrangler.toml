@@ -22,13 +22,15 @@ service = "love-ledger"
 # (reuse the Cloudflare Secrets Store by binding it here if preferred.)
 
 # CWP-2026-016 (C) — Spike Land MCP integration (staged, OFF by default).
-# The Spike Land MCP endpoint is auth-gated and currently unverified
-# (api.spike.land/mcp -> 404, spike.land/mcp -> 401), so this stays disabled.
-# To enable: set ENABLE_SPIKE_LAND = "true", point SPIKE_LAND_MCP_URL at the
-# confirmed endpoint, and `wrangler secret put SPIKE_LAND_API_KEY`.
+# Endpoint discovered 2026-07-12: the hosted MCP server is `https://mcp.spike.land/mcp`
+# (NOT spike.land/mcp or api.spike.land/mcp). It is Streamable-HTTP MCP and requires
+# `Authorization: Bearer <token>` where token is a Spike Land API key (`sk_...`,
+# from https://spike.land/settings?tab=api-keys) or OAuth access token (`mcp_...`).
+# `initialize` is auth-gated (401 without token); `tools/list` needs an initialized
+# session. To enable: set ENABLE_SPIKE_LAND = "true" + `wrangler secret put SPIKE_LAND_API_KEY`.
 [vars]
 ENABLE_SPIKE_LAND = "false"
-SPIKE_LAND_MCP_URL = "https://spike.land/mcp"
+SPIKE_LAND_MCP_URL = "https://mcp.spike.land/mcp"
 
 [observability]
 enabled = true
