@@ -1,0 +1,15 @@
+name = "p31-mcp-server"
+main = "src/index.ts"
+compatibility_date = "2026-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+# mcp-x402-gateway — upstream L3.4 bridge front door that serves the 9 P31
+# tools (oasis_execute, phos_adopt, jitterbug_run, phos_learn, phos_deploy,
+# phos_watch, healer_remediate, bus_emit, phos_rollback). Each P31 MCP tool
+# call forwards an MCP tools/call to this service binding.
+[[services]]
+binding = "GATEWAY"
+service = "mcp-x402-gateway"
+
+[observability]
+enabled = true

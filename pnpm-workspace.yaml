@@ -13,6 +13,7 @@ packages:
   - 'software/workers/creation-accountant'
   - 'software/workers/agent-runtime'
   - 'software/workers/care-mesh'
+  - 'software/workers/p31-mcp-server'
   # Shared libraries & VS Code extensions
   - 'software/packages/*'
   - 'software/extensions/*'

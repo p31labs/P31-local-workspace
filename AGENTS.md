@@ -70,6 +70,7 @@ See `GLOBAL_IMPACT_REPORT.md` for the full citation-backed report.
 - **Frontend apps:** `apps/phos` (phos.p31ca.org), `apps/willow` (willow.p31ca.org), `apps/bonding` (bonding.p31ca.org), `apps/p31ca` (p31ca.org), `apps/phosphorus31` (phosphorus31.org)
 - **Backend workers:** `apps/gateway` (gateway.p31ca.org), `apps/status` (status.p31ca.org), `apps/auth` (p31-auth), `software/cloudflare-worker/llm-proxy` (p31-llm-proxy)
 - **Core data/orchestration workers:** `love-ledger` (deployed ledger), `jitterbug-api` (Ambient Exocortex brain-dump orchestrator — shares the `love-ledger` D1), `care-api`, `fhir`, `taler-exchange-bridge`, `taler-bridge-billing` (x402 pay-per-call). See `software/packages/jitterbug-api/README.md`.
+- **Agent / mesh workers (CWP-2026-015/016/017):** `agent-runtime` (Agents SDK tool runtime — `send_notification` + `generate_care_report`; `agent-runtime.trimtab-signal.workers.dev`), `care-mesh` (privacy-preserving care data mesh, Laplace DP + Ed25519-signed; `care-mesh.trimtab-signal.workers.dev`), `p31-mcp-server` (native MCP front door for the 9 P31 tools; `p31-mcp-server.trimtab-signal.workers.dev`). `mcp-x402-gateway` orchestrates tool routing. See each worker's `RUNBOOK.md`.
 - **Shared packages:** `packages/design-system`, `packages/auth`
 - **Free Plan limits:** 100k req/day, 200k log events/day, 10 D1 databases, 5 cron triggers
 
@@ -290,7 +291,7 @@ Deploy: `cd apps/counterscale/packages/server && npx wrangler deploy`
 
 ### D1 Databases (10 of 10 used — at Free Plan cap)
 - p31-status-db, p31-auth, p31-cortex, love-ledger (`592e3e2e-…`), k4-cage-db, sovereign-justice-db, contracts-db, governance-db, buffer-worker-db, hrv-coherence-db
-- The `love-ledger` D1 (`592e3e2e-3203-4e0a-8342-9e85215ec8a6`) is **intentionally shared** by care-api (`CAPITAL_DB`), fhir (`DB`), jitterbug-api (`DB`), and sovereign-justice (`LOVE_D1`) to stay within the 10-DB Free-Plan cap. `hrv-coherence-db` is the only freeable slot.
+- The `love-ledger` D1 (`592e3e2e-3203-4e0a-8342-9e85215ec8a6`) is **intentionally shared** by care-api (`CAPITAL_DB`), fhir (`DB`), jitterbug-api (`DB`), sovereign-justice (`LOVE_D1`), and care-mesh (`CARE_DB`) to stay within the 10-DB Free-Plan cap. `hrv-coherence-db` is the only freeable slot.
 
 ### Analytics
 - Counterscale at analytics.p31ca.org (self-hosted, Analytics Engine)

@@ -30,7 +30,10 @@
 | love-ledger | LOVE credits, CBS blind-sig, PQC ML-DSA-44 seal, pilot registry, **LLM billing (Phase 4)** | `/withdraw`, `/transfer`, `/llm/reserve`, `/llm/settle`, `/llm/usage` |
 | intent-resolver | Edge-native intent classification (needle-rs SIMD128) → Creation Quote | `POST /intent`, `GET /health` |
 | needle-service | Central tool-calling for all workers (service binding) — **Phase 3** | `POST /classify` |
-| mcp-x402-gateway | x402 pay-per-call, GLM-4.7-Flash fallback, billing integration | `POST /mcp` |
+| mcp-x402-gateway | x402 pay-per-call, GLM-4.7-Flash fallback, billing integration | `POST /mcp`, `POST /agent/run` |
+| agent-runtime | Cloudflare Agents SDK tool runtime (v1 built-ins: `send_notification`, `generate_care_report`) | `/health`, `/tool/send_notification`, `/tool/generate_care_report` |
+| care-mesh | Privacy-preserving care data mesh (Laplace DP, Ed25519-signed submissions) | `/submit`, `/aggregates`, `/mesh` |
+| p31-mcp-server | Native MCP front door for the 9 P31 tools (CWP-2026-017 B) | `/mcp`, `/health` |
 | creation-accountant | Value measurement, Ed25519 receipt signing | `POST /receipt` |
 | jitterbug-api | Brain-dump orchestrator (shares love-ledger D1) | `POST /brain-dump` |
 | buffer-scorer | Scoring heuristics | `POST /score` |
@@ -328,4 +331,76 @@ So Phase 3 delivered the reusable service + the one safe, genuine consumer.
 - [x] Phase 4 D1 `009_llm_usage` + `/llm/*` + gateway `/llm/complete` (VERIFIED)
 - [x] Phase 3 `NEEDLE` service binding + gateway `/classify` proxy (VERIFIED)
 - [ ] `p31labs/needle-rs` fork (needs valid GH creds)
+
+---
+
+## 14. CWP-2026-016 / CWP-2026-017 — Agent Runtime, Care Mesh & P31 MCP Server
+
+Three new Workers (deployed 2026-07-12, `trimtab-signal` account) close the
+CWP-2026-015/016/017 loop. All are documented in per-worker `RUNBOOK.md` files.
+
+### 14.1 agent-runtime — `agent-runtime.trimtab-signal.workers.dev`
+- **Built on:** Cloudflare Agents SDK `agents@0.17.3` (`Agent` class retained for
+  durable state + D1 `sql` + scheduling; built-in tools served from entry `fetch`
+  because `routeAgentRequest` only dispatches agent-protocol requests).
+- **Requires:** `compatibility_flags = ["nodejs_compat"]`, `new_sqlite_classes =
+  ["AgentRuntime"]`, `[[services]] LOVE_LEDGER → love-ledger`.
+- **v1 built-in tools** (orchestrator routes these via `AGENT_RUNTIME` service binding):
+  - `send_notification` — Telegram only (raw Bot API). Needs `TELEGRAM_BOT_TOKEN`
+    (`wrangler secret put`); returns graceful 500 if unset. did→chat_id is 1:1 for now.
+  - `generate_care_report` — queries love-ledger `/care-score` + `/balance` via LOVE_LEDGER binding.
+- **Spike Land MCP (CWP-2026-016 C):** `addMcpServer("spike-land", …)` wired in
+  `onStart()`, feature-flagged behind `ENABLE_SPIKE_LAND` (`[vars]` default `"false"`),
+  `SPIKE_LAND_MCP_URL` (default `https://spike.land/mcp`), `SPIKE_LAND_API_KEY`.
+  Endpoint is auth-gated/unverified (`spike.land/mcp` → 401) — stays OFF.
+- **Deploy:** `cd software/workers/agent-runtime && npx wrangler deploy`
+- **Health:** `GET /health` → `{"status":"ok","service":"agent-runtime"}`
+
+### 14.2 care-mesh — `care-mesh.trimtab-signal.workers.dev`
+- **Purpose:** privacy-preserving aggregation of care data across families.
+- **Reuses** the shared `love-ledger` D1 as `CARE_DB` (account is at the 10/10 D1
+  Free-Plan cap — no new DB). Migration `001_care_mesh_aggregates.sql` applied via
+  `wrangler d1 execute --remote --file=…`.
+- **Endpoints:**
+  - `POST /submit` — body `{family_did, period_start, period_end, avg_spoons,
+    care_event_count, care_score, signature, pubkey}`. `signature` is an Ed25519
+    signature (raw 32-byte pubkey in `pubkey`, hex) over the canonical string
+    `"<family_did>|<period_start>|<period_end>|<avg_spoons>|<care_event_count>|<care_score>"`.
+  - `GET /aggregates?family_did=` — raw stored rows for a family.
+  - `GET /mesh?family_did=` — all *other* families' rows with **Laplace DP** noise
+    applied to `avg_spoons`: ε = 0.5, sensitivity = 5 → scale = 10, clamped to `[0,5]`.
+- **Sign (openssl):** `printf '%s' "<canonical>" | openssl pkeyutl -sign -inkey key.pem -rawin | xxd -p`.
+- **Deploy:** `cd software/workers/care-mesh && npx wrangler deploy`
+- **Health:** `GET /health` → `{"status":"ok","service":"care-mesh"}`
+
+### 14.3 p31-mcp-server — `p31-mcp-server.trimtab-signal.workers.dev`
+- **Purpose (CWP-2026-017 B):** native MCP front door exposing P31's 9 tools to any
+  MCP client (Claude, Cursor, …). Also the fallback for the Spike Land integration.
+- **Built on:** `agents/mcp` → `createMcpHandler` + MCP SDK `McpServer` (stateless).
+- **Tools:** `oasis_execute, phos_adopt, jitterbug_run, phos_learn, phos_deploy,
+  phos_watch, healer_remediate, bus_emit, phos_rollback`.
+- **Routing:** each `tools/call` forwards an MCP `tools/call` to `mcp-x402-gateway`
+  `/mcp` (the L3.4 bridge front door) via the `GATEWAY` service binding — the same
+  backend the orchestrator uses for non-builtin tools. No new execution surface.
+- **Deploy:** `cd software/workers/p31-mcp-server && npx wrangler deploy`
+- **Verify:** `GET /health`; MCP `initialize` + `tools/list` returns the 9 tools.
+
+### 14.4 End-to-end smoke (CWP-2026-017 A)
+```
+SECRET=43fa3d824b176cc0394d389344f867466c439aaeecc862f3e17266a968443ab7
+TS=$(date +%s%3N)
+MAC=$(printf 'love:%s' "$TS" | openssl dgst -sha256 -hmac "$SECRET" | awk '{print $NF}')
+curl -X POST https://mcp-x402-gateway.trimtab-signal.workers.dev/agent/run \
+  -H "Content-Type: application/json" -H "X-DID: test-family" \
+  -H "X-Love-Timestamp: $TS" -H "X-Love-Auth-MAC: $MAC" \
+  -d '{"query":"generate a care report for test-family"}'
+# → classifier:glm, plan:[generate_care_report], ok:true (200), contract_id set
+```
+
+### 14.5 Ops follow-ups (manual, tokens not in session)
+- `wrangler secret put TELEGRAM_BOT_TOKEN` on `agent-runtime` (enables notifications).
+- `wrangler secret put CF_API_TOKEN` on `secret-rotator` (Secrets Store Write perm).
+- Spike Land: discover confirmed endpoint/auth, then `ENABLE_SPIKE_LAND="true"` +
+  `wrangler secret put SPIKE_LAND_API_KEY` on `agent-runtime`.
+
 - [ ] warm-isolate p95 benchmark (blocked by per-request cold 22 MB R2 reload under sparse traffic; verified fast in-path)
