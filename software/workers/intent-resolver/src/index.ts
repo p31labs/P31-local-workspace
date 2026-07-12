@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { parseIntent } from './intent-parser';
 import { generateCapabilityPlan } from './capability-planner';
 import { createQuote } from './quote-generator';
-import { needleReady, needleMetrics } from './needle-engine';
+import { needleReady, needleMetrics, classifyIntent } from './needle-engine';
 
 type Passport = { baselineSpoons?: number; [key: string]: unknown };
 
@@ -92,6 +92,33 @@ app.post('/intent', zValidator('json', intentSchema), async (c) => {
   resp.headers.set('Cache-Control', `max-age=${ttl}, stale-while-revalidate=60`);
   c.executionCtx?.waitUntil(cache.put(cacheKey, resp.clone()));
   return resp;
+});
+
+// POST /classify — shared Needle-as-a-Service endpoint (Phase 3).
+// Any worker bound to `intent-resolver` can POST a prompt + tool catalogue
+// and get back the resolved P31 tool call, or a clean fallback. Reuses the
+// same lazy-loaded WASM engine as /intent (one engine per isolate).
+const toolSchema = z.object({
+  name: z.string().min(1),
+  description: z.string(),
+  parameters: z.record(z.unknown()).optional(),
+});
+const classifySchema = z.object({
+  prompt: z.string().min(1),
+  tools: z.array(toolSchema).min(1),
+});
+
+app.post('/classify', zValidator('json', classifySchema), async (c) => {
+  const { prompt, tools } = c.req.valid('json');
+  const result = await classifyIntent(prompt, tools, c.env);
+  if (!result) {
+    return c.json({ needle_used: false, fallback_reason: 'Needle unavailable' }, 200);
+  }
+  return c.json({
+    needle_used: true,
+    tool: result.tool,
+    arguments: result.arguments,
+  });
 });
 
 app.get('/health', (c) => c.json({

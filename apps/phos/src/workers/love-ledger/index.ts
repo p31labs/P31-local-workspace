@@ -89,7 +89,7 @@ async function withRetry<T>(fn: () => Promise<T>, retries = 3, label = 'd1_query
 // Writes accept EITHER an Ed25519 did:key signature (end-user wallets — the
 // existing verifyRequest path) OR a Bearer <LOVE_AUTH_SECRET> service token
 // (trusted internal callers: love-registry MCP, CLI, cron). Reads stay public.
-const WRITE_PATHS = new Set(['/transfer', '/stake', '/care-score', '/withdraw', '/family/onboard', '/family/status']);
+const WRITE_PATHS = new Set(['/transfer', '/stake', '/care-score', '/withdraw', '/family/onboard', '/family/status', '/llm/reserve', '/llm/settle']);
 
 function timingSafeEqual(a: string, b: string): boolean {
   const ab = new TextEncoder().encode(a);
@@ -911,6 +911,129 @@ export default {
         logEvent({ event: 'family_status_error', service: 'love-ledger', success: false, error: err?.message || String(err) });
         return new Response(JSON.stringify({ error: 'Internal server error' }), { status: 500 });
       }
+    }
+
+    // ── Phase 4 (CWP-2026-013): LLM Usage Meter — Reserve & Refund ──
+    // 1 LOVE = 1000 tokens. A caller reserves the max LOVE for a GLM call
+    // upfront (atomic check + debit). After the call, settle() refunds the
+    // unspent difference. This turns GLM-4.7-Flash into a self-funding
+    // revenue engine (12–83× margin) instead of a P31 cost sink.
+
+    if (method === 'POST' && url.pathname === '/llm/reserve') {
+      try {
+        const body = await request.json() as { did: string; max_tokens: number; model?: string };
+        if (!body.did || typeof body.max_tokens !== 'number' || body.max_tokens <= 0) {
+          return new Response(JSON.stringify({ error: 'Invalid did or max_tokens' }), { status: 400 });
+        }
+        const reservedLove = body.max_tokens / 1000; // 1 LOVE = 1000 tokens
+        const model = body.model || 'glm-4.7-flash';
+
+        const account = await withRetry(() => env.LOVE_DB.prepare(
+          'SELECT balance FROM love_accounts WHERE did = ?'
+        ).bind(body.did).first<{ balance: number }>(), 3, 'llm_reserve_select');
+
+        if (!account || account.balance < reservedLove) {
+          return new Response(JSON.stringify({
+            error: 'Insufficient LOVE balance',
+            required_love: reservedLove,
+            balance: account?.balance ?? 0,
+          }), { status: 402, headers: { 'Content-Type': 'application/json' } });
+        }
+
+        const reservationId = crypto.randomUUID();
+        const ts = Date.now();
+        const debit = env.LOVE_DB.prepare(
+          'UPDATE love_accounts SET balance = balance - ?, updated_at = datetime("now") WHERE did = ?'
+        ).bind(reservedLove, body.did);
+        const insert = env.LOVE_DB.prepare(`
+          INSERT INTO llm_usage (id, did, model, reservation_id, reserved_love, actual_love, max_tokens, actual_tokens, refunded_love, status, created_at, settled_at)
+          VALUES (?, ?, ?, ?, ?, 0, ?, 0, 0, 'reserved', ?, NULL)
+        `).bind(reservationId, body.did, model, reservationId, reservedLove, body.max_tokens, ts);
+
+        // Atomic: debit + reservation row commit together (or roll back).
+        await env.LOVE_DB.batch([debit, insert]);
+
+        logEvent({
+          event: 'llm_reserve',
+          service: 'love-ledger',
+          did: body.did,
+          success: true,
+          data: { reservationId, reservedLove, maxTokens: body.max_tokens, model },
+        });
+
+        return new Response(JSON.stringify({
+          success: true,
+          reservation_id: reservationId,
+          reserved_love: reservedLove,
+          max_tokens: body.max_tokens,
+          model,
+        }), { headers: { 'Content-Type': 'application/json' } });
+      } catch (err: any) {
+        logEvent({ event: 'llm_reserve_error', service: 'love-ledger', success: false, error: err?.message || String(err) });
+        return new Response(JSON.stringify({ error: 'Internal server error' }), { status: 500, headers: { 'Content-Type': 'application/json' } });
+      }
+    }
+
+    if (method === 'POST' && url.pathname === '/llm/settle') {
+      try {
+        const body = await request.json() as { did: string; reservation_id: string; actual_tokens: number; model?: string };
+        if (!body.did || !body.reservation_id || typeof body.actual_tokens !== 'number' || body.actual_tokens < 0) {
+          return new Response(JSON.stringify({ error: 'Invalid settle request' }), { status: 400 });
+        }
+        const row = await withRetry(() => env.LOVE_DB.prepare(
+          'SELECT reserved_love, status FROM llm_usage WHERE reservation_id = ? AND did = ?'
+        ).bind(body.reservation_id, body.did).first<{ reserved_love: number; status: string }>(), 3, 'llm_settle_select');
+
+        if (!row) return new Response(JSON.stringify({ error: 'Unknown reservation' }), { status: 404 });
+        if (row.status === 'settled') return new Response(JSON.stringify({ error: 'Already settled' }), { status: 409 });
+
+        const actualLove = body.actual_tokens / 1000;
+        const refundedLove = Math.max(0, row.reserved_love - actualLove);
+        const ts = Date.now();
+
+        const refund = env.LOVE_DB.prepare(
+          'UPDATE love_accounts SET balance = balance + ?, updated_at = datetime("now") WHERE did = ?'
+        ).bind(refundedLove, body.did);
+        const update = env.LOVE_DB.prepare(`
+          UPDATE llm_usage SET status = 'settled', actual_love = ?, actual_tokens = ?, refunded_love = ?, settled_at = ?
+          WHERE reservation_id = ? AND did = ?
+        `).bind(actualLove, body.actual_tokens, refundedLove, ts, body.reservation_id, body.did);
+
+        // Atomic: refund + settle row update commit together.
+        await env.LOVE_DB.batch([refund, update]);
+
+        logEvent({
+          event: 'llm_settle',
+          service: 'love-ledger',
+          did: body.did,
+          success: true,
+          data: { reservationId: body.reservation_id, actualLove, refundedLove },
+        });
+
+        return new Response(JSON.stringify({
+          success: true,
+          actual_love: actualLove,
+          refunded_love: refundedLove,
+          charged_love: actualLove,
+          actual_tokens: body.actual_tokens,
+        }), { headers: { 'Content-Type': 'application/json' } });
+      } catch (err: any) {
+        logEvent({ event: 'llm_settle_error', service: 'love-ledger', success: false, error: err?.message || String(err) });
+        return new Response(JSON.stringify({ error: 'Internal server error' }), { status: 500, headers: { 'Content-Type': 'application/json' } });
+      }
+    }
+
+    if (method === 'GET' && url.pathname === '/llm/usage') {
+      const did = url.searchParams.get('did');
+      if (!did) return new Response(JSON.stringify({ error: 'Missing did' }), { status: 400 });
+      const limit = Math.min(parseInt(url.searchParams.get('limit') || '50', 10) || 50, 200);
+      const rows = await withRetry(() => env.LOVE_DB.prepare(
+        `SELECT reservation_id, did, model, reserved_love, actual_love, max_tokens, actual_tokens, refunded_love, status, created_at, settled_at
+         FROM llm_usage WHERE did = ? ORDER BY created_at DESC LIMIT ?`
+      ).bind(did, limit).all(), 3, 'llm_usage_select');
+      return new Response(JSON.stringify({ did, count: (rows.results || []).length, entries: rows.results || [] }), {
+        headers: { 'Content-Type': 'application/json' },
+      });
     }
 
     return new Response('Not found', { status: 404 });

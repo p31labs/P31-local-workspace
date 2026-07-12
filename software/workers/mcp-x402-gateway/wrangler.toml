@@ -13,6 +13,27 @@ REVENUE_INGEST_URL = "https://taler-bridge-billing.p31ca.org/api/revenue/ingest"
 # L5 — Dual Settlement Router shares the LOVE ledger D1 + the L3.4 bridge URL.
 BRIDGE_URL = "https://mcp-x402-bridge.p31ca.org/mcp"
 
+# Phase 4 — Reserve & Refund GLM metering. LOVE_LEDGER_URL is where the
+# /llm/* billing endpoints live. GLM_MODEL is the Workers AI model id served
+# by default. NOTE: GLM-4.7-Flash is Zhipu's model and is NOT in Cloudflare's
+# Workers AI catalog — it must be called via Zhipu's REST API (separate
+# provider wiring), not the AI binding. The default below is a valid Workers
+# AI model so the metering path works out-of-the-box; swap for any entitled
+# Workers AI model id, or wire Zhipu for true GLM.
+LOVE_LEDGER_URL = "https://love-ledger.p31ca.org"
+GLM_MODEL = "@cf/meta/llama-4-scout-17b-16e-instruct"
+
+# Workers AI binding for GLM-4.7-Flash (and others).
+[ai]
+binding = "AI"
+
+# Phase 3 — Needle-as-a-Service binding. intent-resolver exposes POST
+# /classify (lazy-loaded WASM tool-calling transformer). The gateway proxies
+# natural-language -> P31 tool resolution through it (see /classify route).
+[[services]]
+binding = "NEEDLE"
+service = "intent-resolver"
+
 # Secrets (wrangler secret put), never in code:
 # FACILITATOR_KEY_ID, FACILITATOR_SECRET_KEY, REVENUE_API_TOKEN
 

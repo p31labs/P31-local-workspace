@@ -19,6 +19,7 @@ import { Hono } from "hono";
 import { paymentMiddleware } from "x402-hono";
 import { createFacilitatorConfig } from "@coinbase/x402";
 import { verifyLoveHmac } from "./love-auth";
+import { meterGlm } from "./llm-meter";
 
 interface Env {
   PAY_TO: string;
@@ -34,6 +35,13 @@ interface Env {
   // Axis-6: shared HMAC secret proving a `love` request came from
   // the trusted first-party renderer (set via `wrangler secret put`).
   LOVE_AUTH_SECRET?: string;
+  // Phase 4 — GLM metering: where to call love-ledger /llm/* and which model.
+  LOVE_LEDGER_URL?: string;
+  GLM_MODEL?: string;
+  // Workers AI binding (GLM-4.7-Flash + others).
+  AI?: any;
+  // Phase 3 — Needle-as-a-Service binding (intent-resolver POST /classify).
+  NEEDLE?: Fetcher;
 }
 
 type AppContext = { Bindings: Env };
@@ -189,6 +197,76 @@ app.post("/api/revenue/ingest", async (c) => {
     }),
   });
   return c.json(await res.json().catch(() => ({ ok: res.ok })), res.status as 200 | 401 | 500);
+});
+
+// Phase 4 (CWP-2026-013) — Reserve & Refund GLM metering endpoint.
+// Reserves max LOVE upfront, streams GLM-4.7-Flash (Workers AI), and refunds
+// the unspent difference on stream flush via ctx.waitUntil. Turns GLM into a
+// self-funding revenue engine. Auth: X-DID + (optional) LOVE settlement HMAC.
+app.post("/llm/complete", async (c) => {
+  const did = c.req.header("X-DID") || c.req.header("X-User-DID");
+  if (!did) return c.json({ error: "Missing X-DID header" }, 400);
+
+  // Axis-6: require HMAC proof when LOVE_AUTH_SECRET is configured.
+  if (c.env.LOVE_AUTH_SECRET) {
+    const ok = await verifyLoveHmac(
+      c.req.header("X-Love-Auth-MAC"),
+      c.req.header("X-Love-Timestamp"),
+      c.env.LOVE_AUTH_SECRET,
+    );
+    if (!ok) return c.json({ error: "Invalid LOVE settlement auth" }, 401);
+  }
+
+  const body = (await c.req.json().catch(() => ({}))) as any;
+  const maxTokens = Math.min(Math.max(parseInt(String(body.max_tokens ?? "4096"), 10) || 4096, 1), 32000);
+  const model = body.model || c.env.GLM_MODEL || "glm-4.7-flash";
+  const messages =
+    body.messages ??
+    (body.prompt ? [{ role: "user", content: String(body.prompt) }] : []);
+  if (!Array.isArray(messages) || messages.length === 0) {
+    return c.json({ error: "Missing messages or prompt" }, 400);
+  }
+
+  return meterGlm(c.env, c.executionCtx, { did, maxTokens, model, messages });
+});
+
+// Phase 3 — proxy natural-language -> P31 tool resolution to the Needle
+// service (intent-resolver POST /classify). Axis-6 HMAC-gated (creation action).
+// A cold needle isolate is guarded by an 8s abort so it can never hang the
+// gateway; on any failure we fail closed to a clean fallback.
+app.post("/classify", async (c) => {
+  if (!c.env.NEEDLE) return c.json({ error: "NEEDLE service not bound" }, 503);
+  if (c.env.LOVE_AUTH_SECRET) {
+    const ok = await verifyLoveHmac(
+      c.req.header("X-Love-Auth-MAC"),
+      c.req.header("X-Love-Timestamp"),
+      c.env.LOVE_AUTH_SECRET,
+    );
+    if (!ok) return c.json({ error: "Invalid LOVE settlement auth" }, 401);
+  }
+  const body = (await c.req.json().catch(() => ({}))) as any;
+  if (!body?.prompt || !Array.isArray(body?.tools) || body.tools.length === 0) {
+    return c.json({ error: "Missing prompt or tools[]" }, 400);
+  }
+  // Guard the sub-request so a cold needle isolate can never hang the gateway
+  // indefinitely. The needle cold-start is ~20-28s (22 MB R2 model load), so
+  // the ceiling tracks that rather than a tight timeout.
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), 30000);
+  try {
+    const upstream = await c.env.NEEDLE.fetch("https://intent-resolver/classify", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ prompt: body.prompt, tools: body.tools }),
+      signal: ctrl.signal,
+    });
+    return c.json(await upstream.json(), upstream.status as 200 | 400 | 503);
+  } catch {
+    // Needle cold-start/timeout — fail closed to a clean fallback.
+    return c.json({ needle_used: false, fallback_reason: "Needle service unavailable" }, 200);
+  } finally {
+    clearTimeout(timer);
+  }
 });
 
 app.get("/health", (c) => c.json({ status: "ok", service: "mcp-x402-gateway", network: c.env.NETWORK, timestamp: Date.now() }));
