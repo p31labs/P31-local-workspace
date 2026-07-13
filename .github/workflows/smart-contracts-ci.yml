@@ -1,0 +1,38 @@
+name: SMART Contracts CI
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'contracts/**'
+  push:
+    branches: [main]
+    paths:
+      - 'contracts/**'
+
+jobs:
+  forge-test:
+    name: Forge Build + Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: stable
+
+      - name: Build
+        working-directory: contracts
+        run: forge build --sizes
+
+      - name: Test
+        working-directory: contracts
+        run: forge test -vvv
+
+      - name: Gas snapshot
+        working-directory: contracts
+        run: forge snapshot || true
