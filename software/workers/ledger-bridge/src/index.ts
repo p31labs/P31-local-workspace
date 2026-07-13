@@ -28,7 +28,7 @@ import {
   type WalletClient,
 } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
-import { sepolia } from "viem/chains";
+import { baseSepolia } from "viem/chains";
 import { P31TransparencyAnchorAbi, ProofOfCareAbi } from "./abis";
 
 interface Env {
@@ -45,17 +45,13 @@ function isDryRun(env: Env): boolean {
   return env.DRY_RUN === "true" || !env.BRIDGE_PRIVATE_KEY;
 }
 
-function getClients(env: Env): {
-  publicClient: ReturnType<typeof createPublicClient>;
-  walletClient: WalletClient | null;
-  account: ReturnType<typeof privateKeyToAccount> | null;
-} {
-  const publicClient = createPublicClient({ chain: sepolia, transport: http(env.RPC_URL) });
+function getClients(env: Env) {
+  const publicClient = createPublicClient({ chain: baseSepolia, transport: http(env.RPC_URL) });
   if (!env.BRIDGE_PRIVATE_KEY) return { publicClient, walletClient: null, account: null };
   const account = privateKeyToAccount(env.BRIDGE_PRIVATE_KEY as Hex);
   const walletClient = createWalletClient({
     account,
-    chain: sepolia,
+    chain: baseSepolia,
     transport: http(env.RPC_URL),
   });
   return { publicClient, walletClient, account };
@@ -87,7 +83,7 @@ async function relay(
       to: to as Hex,
       data,
       account,
-      chain: sepolia,
+      chain: baseSepolia,
     });
     const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
     return Response.json({ ok: true, label, txHash, status: receipt.status });
@@ -112,7 +108,7 @@ export default {
         status: "ok",
         service: "ledger-bridge",
         dryRun: isDryRun(env),
-        chain: "sepolia",
+        chain: "base-sepolia",
         proofOfCare: env.PROOF_OF_CARE_ADDR,
         anchor: env.ANCHOR_ADDR,
         anchorDeployed: env.ANCHOR_ADDR !== zeroAddress,

@@ -1,52 +1,65 @@
 {
   "schema": "p31.chainAnchor/0.1.0",
-  "updated": "2026-04-30T00:00:00.000Z",
+  "updated": "2026-07-13T00:00:00.000Z",
   "sovereignLayersManifest": "p31-sovereign-layers.json",
   "contracts": [
     {
       "name": "P31TransparencyAnchor",
-      "source": "packages/p31-sovereign-chain/src/P31TransparencyAnchor.sol",
+      "source": "contracts/src/P31TransparencyAnchor.sol",
       "solidity": "0.8.24",
       "role": "Append-only digest + URI commitments (manifest proofs).",
-      "note": "digest in anchor() is operator-chosen bytes32 (typically sha256 of UTF-8 JSON)."
-    },
-    {
-      "name": "P31ContentRoot",
-      "source": "packages/p31-sovereign-chain/src/P31ContentRoot.sol",
-      "solidity": "0.8.24",
-      "role": "Owner-managed key → CID map for IPFS/Arweave hub snapshots.",
-      "note": "Transfer owner to Safe multisig for production (see p31-sovereign-layers L10)."
+      "note": "digest in anchor() is operator-chosen bytes32 (typically sha256 of UTF-8 JSON).",
+      "deployed": {
+        "84532": "0xd930Fc4d429BbE6B8CEcca9e4C77386dB528e267"
+      }
     },
     {
       "name": "P31ManifestRegistry",
-      "source": "packages/p31-sovereign-chain/src/P31ManifestRegistry.sol",
+      "source": "contracts/src/P31ManifestRegistry.sol",
       "solidity": "0.8.24",
       "role": "SMART M — manifest id → latest digest + URI (permissionless publish).",
-      "note": "manifestId e.g. keccak256(bytes(schema string))."
+      "note": "manifestId e.g. keccak256(bytes(schema string)).",
+      "deployed": {
+        "84532": "0xC0b82fF04B17B79fa34b0df2d16e7B84FE73c203"
+      }
     },
     {
       "name": "P31AccessAllowlist",
-      "source": "packages/p31-sovereign-chain/src/P31AccessAllowlist.sol",
+      "source": "contracts/src/P31AccessAllowlist.sol",
       "solidity": "0.8.24",
       "role": "SMART A — capability → address allowlist (owner).",
-      "note": "Use for gated hooks; rotate owner to multisig."
+      "note": "Use for gated hooks; rotate owner to multisig.",
+      "deployed": {
+        "84532": "0xdb56D7fbE2e9f5A78cea58af5A525D64e8b3D7f8"
+      }
+    },
+    {
+      "name": "P31ContentRoot",
+      "source": "contracts/src/P31ContentRoot.sol",
+      "solidity": "0.8.24",
+      "role": "Owner-managed key → CID map for IPFS/Arweave hub snapshots.",
+      "note": "Transfer owner to Safe multisig for production (see p31-sovereign-layers L10).",
+      "deployed": {
+        "84532": "0xA38782025a6E2f77b7eC1f5682dFdeCD2EDCCa39"
+      }
     },
     {
       "name": "P31TreasuryConfig",
-      "source": "packages/p31-sovereign-chain/src/P31TreasuryConfig.sol",
+      "source": "contracts/src/P31TreasuryConfig.sol",
       "solidity": "0.8.24",
       "role": "SMART T — Safe + USDC + chain id; lock after configure.",
-      "note": "Pairs with L8 on-chain payments in p31-sovereign-layers.json."
+      "note": "Pairs with L8 on-chain payments in p31-sovereign-layers.json.",
+      "deployed": {
+        "84532": "0xbb9EBb96eEE9Da3Db379C2A7D07f919b628bEf54"
+      }
     }
   ],
   "networks": [
     {
       "chainId": 84532,
       "name": "base-sepolia",
-      "registryAddress": null,
-      "deployTxHash": null,
       "explorer": "https://sepolia.basescan.org",
-      "note": "Testnet — set address after first deploy."
+      "note": "All 5 SMART governance contracts deployed 2026-07-13."
     },
     {
       "chainId": 8453,
