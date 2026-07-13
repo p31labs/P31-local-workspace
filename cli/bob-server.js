@@ -442,15 +442,17 @@ function contractSurfaceAudit({ servers } = {}) {
     const content = readFileSafe(server);
     if (!content) continue;
 
-    // Extract tool names from TOOLS array
-    const toolMatches = content.match(/name:\s*['"]([^'"]+)['"]/g) || [];
-    const toolNames = toolMatches.map(m => m.match(/name:\s*['"]([^'"]+)['"]/)[1]);
+    // Extract tool names from TOOLS array only (between 'const TOOLS = [' and the matching ']')
+    const toolsMatch = content.match(/const TOOLS\s*=\s*\[([\s\S]*?)\];/);
+    const toolsContent = toolsMatch ? toolsMatch[1] : '';
+    const toolNameMatches = toolsContent.match(/name:\s*['"]([^'"]+)['"]/g) || [];
+    const toolNames = toolNameMatches.map(m => m.match(/name:\s*['"]([^'"]+)['"]/)[1]);
 
-    // Check naming convention
+    // Check naming convention (tool names should be snake_case)
     const nonSnakeCase = toolNames.filter(t => !/^[a-z][a-z0-9_]*$/.test(t));
 
-    // Check for inputSchema
-    const hasSchema = (content.match(/inputSchema/g) || []).length;
+    // Check for inputSchema in TOOLS array
+    const hasSchemaCount = (toolsContent.match(/inputSchema/g) || []).length;
 
     // Check for status response pattern
     const hasStatus = /status:\s*['"](?:ok|error)['"]/.test(content) || /status.*ok.*error/.test(content);
@@ -460,15 +462,15 @@ function contractSurfaceAudit({ servers } = {}) {
 
     const violations = [];
     if (nonSnakeCase.length > 0) {
-      violations.push({ rule: 'C-204', message: `Non snake_case tool names: ${nonSnakeCase.join(', ')}` });
+      violations.push({ rule: 'C-204', message: `Non snake_case tool names: ${nonSnakeCase.slice(0, 5).join(', ')}${nonSnakeCase.length > 5 ? ` (+${nonSnakeCase.length - 5})` : ''}` });
     }
-    if (toolNames.length > 0 && hasSchema < toolNames.length) {
-      violations.push({ rule: 'C-201', message: 'Not all tools have inputSchema' });
+    if (toolNames.length > 0 && hasSchemaCount < toolNames.length) {
+      violations.push({ rule: 'C-201', message: `Not all tools have inputSchema (${hasSchemaCount}/${toolNames.length})` });
     }
-    if (!hasStatus) {
+    if (!hasStatus && toolNames.length > 0) {
       violations.push({ rule: 'C-202', message: 'Missing status response pattern' });
     }
-    if (!hasErrorHandling) {
+    if (!hasErrorHandling && toolNames.length > 0) {
       violations.push({ rule: 'C-203', message: 'Missing error handling' });
     }
 
