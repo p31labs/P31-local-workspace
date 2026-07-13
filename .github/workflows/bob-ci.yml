@@ -1,0 +1,75 @@
+name: BOB Structural Audit
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  bob-audit:
+    name: Structural Health Audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run BOB structural report
+        run: |
+          printf '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"structural_report_generate","arguments":{"format":"markdown"}}}\n' | node cli/bob-server.js 2>/dev/null | python3 -c "
+import sys, json
+d = json.load(sys.stdin)
+r = json.loads(d['result']['content'][0]['text'])
+print(r.get('report', 'No report generated'))
+"
+
+      - name: Run BOB entropy audit
+        run: |
+          printf '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"structural_entropy_audit","arguments":{}}}\n' | node cli/bob-server.js 2>/dev/null | python3 -c "
+import sys, json
+d = json.load(sys.stdin)
+r = json.loads(d['result']['content'][0]['text'])
+entropy = r.get('entropy', 0)
+coupling = r.get('coupling', 0)
+cycles = len(r.get('cycles', []))
+print(f'Service Graph: entropy={entropy} (target<0.3), coupling={coupling} (target<0.4), cycles={cycles}')
+if entropy > 0.5:
+    print(f'::warning::Entropy {entropy} exceeds 0.5 threshold')
+if cycles > 0:
+    print(f'::error::Found {cycles} circular dependency cycle(s)')
+    exit(1)
+"
+
+      - name: Run BOB contract audit
+        run: |
+          printf '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"contract_surface_audit","arguments":{}}}\n' | node cli/bob-server.js 2>/dev/null | python3 -c "
+import sys, json
+d = json.load(sys.stdin)
+r = json.loads(d['result']['content'][0]['text'])
+tools = r.get('tools', 0)
+compliant = r.get('compliantTools', 0)
+violations = r.get('violations', 0)
+print(f'MCP Contracts: {tools} tools, {compliant} compliant, {violations} violations')
+if violations > 0:
+    print(f'::warning::{violations} MCP contract violations found')
+"
+
+      - name: Run BOB configuration topology
+        run: |
+          printf '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"configuration_topology_audit","arguments":{}}}\n' | node cli/bob-server.js 2>/dev/null | python3 -c "
+import sys, json
+d = json.load(sys.stdin)
+r = json.loads(d['result']['content'][0]['text'])
+workers = r.get('workers', 0)
+d1 = r.get('d1Databases', 0)
+shared = r.get('sharedD1', [])
+print(f'Configuration: {workers} workers, {d1} D1 databases')
+for s in shared:
+    print(f'  Shared D1: {s[\"database\"]} used by {len(s[\"workers\"])} workers')
+    if len(s['workers']) > 5:
+        print(f'  ::warning::{s[\"database\"]} exceeds 5-worker threshold')
+"

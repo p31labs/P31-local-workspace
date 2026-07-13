@@ -71,6 +71,7 @@ class P31AutomationEngine {
       build: 'unknown',
       runtime: 'unknown',
       verify: 'unknown',
+      governance: 'unknown',
       test: 'unknown',
       deploy: 'unknown',
       health: 'unknown'
@@ -276,6 +277,49 @@ class P31AutomationEngine {
   // -------------------------------------------------------------------------
   // LAYER 3b: TESTING (unit suite — real, best-effort)
   // -------------------------------------------------------------------------
+  // -------------------------------------------------------------------------
+  // LAYER 1c: GOVERNANCE (MARGE + BOB audits)
+  // -------------------------------------------------------------------------
+  async runGovernanceAudits() {
+    log.header('Governance: MARGE + BOB Audits');
+
+    // Run MARGE audit on a sample surface
+    const margeCmd = `printf '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"design_expert_audit_surface","arguments":{"file":"apps/phos/src/surfaces/PQCKeygenSurface.tsx"}}}' | node cli/marge-server.js`;
+    const margeResult = await this.runCommand(margeCmd, CONFIG.paths.workspaceRoot, { timeout: 30000, fatal: false });
+    if (margeResult.success) {
+      try {
+        const output = JSON.parse(margeResult.stdout);
+        const report = JSON.parse(output.result.content[0].text);
+        log.success(`MARGE: score ${report.score}/100, ${report.summary?.hardFail || 0} hard-fail`);
+        this.status.governance = report.score >= 50 ? 'green' : 'yellow';
+      } catch {
+        log.warn('MARGE: could not parse output');
+        this.status.governance = 'yellow';
+      }
+    } else {
+      log.warn('MARGE audit failed');
+      this.status.governance = 'yellow';
+    }
+
+    // Run BOB entropy audit
+    const bobCmd = `printf '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"structural_entropy_audit","arguments":{}}}' | node cli/bob-server.js`;
+    const bobResult = await this.runCommand(bobCmd, CONFIG.paths.workspaceRoot, { timeout: 30000, fatal: false });
+    if (bobResult.success) {
+      try {
+        const output = JSON.parse(bobResult.stdout);
+        const report = JSON.parse(output.result.content[0].text);
+        log.success(`BOB: ${report.workers} workers, entropy ${report.entropy}, coupling ${report.coupling}`);
+      } catch {
+        log.warn('BOB: could not parse output');
+      }
+    } else {
+      log.warn('BOB audit failed');
+    }
+  }
+
+  // -------------------------------------------------------------------------
+  // LAYER 2a: TESTING (vitest unit suite)
+  // -------------------------------------------------------------------------
   async runTests() {
     log.header('Testing: Unit Suite (vitest)');
     const cmd = 'pnpm run test:unit';
@@ -372,6 +416,7 @@ class P31AutomationEngine {
           await this.dispatchCWP('CWP-SYSTEM-START');
           await this.runBuildPipeline();
           await this.verifyMCPServers();
+          await this.runGovernanceAudits();
           await this.runTests();
           await this.runValidate();
           await this.runDeploy();
