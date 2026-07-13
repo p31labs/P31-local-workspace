@@ -14,6 +14,7 @@ packages:
   - 'software/workers/agent-runtime'
   - 'software/workers/care-mesh'
   - 'software/workers/p31-mcp-server'
+  - 'software/workers/ledger-bridge'
   # Shared libraries & VS Code extensions
   - 'software/packages/*'
   - 'software/extensions/*'

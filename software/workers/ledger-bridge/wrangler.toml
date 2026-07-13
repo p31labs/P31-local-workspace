@@ -1,0 +1,33 @@
+name = "ledger-bridge"
+main = "src/index.ts"
+compatibility_date = "2026-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+# ── On-chain attestation relay (CWP-2026-0xx, Path A) ───────────────────────
+# Bridges off-chain LOVE ledger events to the deployed P31 sovereign-chain
+# contracts on Sepolia (chain 11155111). Scoped to ATTESTATION ANCHORING only —
+# the fungible LOVE ERC-20 path was retired (see software/workers/test/
+# retired-contracts.test.ts); this bridge does NOT mint/burn LOVE tokens.
+#
+# Addresses below are the deployed Sepolia contracts
+# (bonding-soup/packages/p31-sovereign-chain/broadcast/DeployAll.s.sol/11155111).
+[vars]
+# Public Sepolia RPC; override with Alchemy/Infura/Cloudflare in production.
+RPC_URL = "https://rpc.sepolia.org"
+# ProofOfCare (oracle/relay) — deployed Sepolia.
+PROOF_OF_CARE_ADDR = "0x4384c856c0ccc9cb5a4adb148937ea557293543b"
+# P31TransparencyAnchor — NOT deployed by DeployAll.s.sol. Deploy it
+# (forge script) and set this to its address before using /anchor. Left as the
+# zero address as a guard; /anchor refuses to broadcast while it is zero.
+ANCHOR_ADDR = "0x0000000000000000000000000000000000000000"
+# Dry-run by default: encode calldata and return it WITHOUT broadcasting.
+# Set to "false" (and provide BRIDGE_PRIVATE_KEY) to send real transactions.
+DRY_RUN = "true"
+
+# BRIDGE_PRIVATE_KEY (funded Sepolia signer, relay authority) — set via:
+#   wrangler secret put BRIDGE_PRIVATE_KEY
+# The ProofOfCare relay must then be pointed at this worker's address:
+#   ProofOfCare.setRelay(<bridge deployed address>)  — called ONCE by the architect key.
+
+[observability]
+enabled = true
