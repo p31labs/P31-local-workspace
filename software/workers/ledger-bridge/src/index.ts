@@ -48,16 +48,17 @@ function isDryRun(env: Env): boolean {
 function getClients(env: Env): {
   publicClient: ReturnType<typeof createPublicClient>;
   walletClient: WalletClient | null;
+  account: ReturnType<typeof privateKeyToAccount> | null;
 } {
   const publicClient = createPublicClient({ chain: sepolia, transport: http(env.RPC_URL) });
-  if (!env.BRIDGE_PRIVATE_KEY) return { publicClient, walletClient: null };
+  if (!env.BRIDGE_PRIVATE_KEY) return { publicClient, walletClient: null, account: null };
   const account = privateKeyToAccount(env.BRIDGE_PRIVATE_KEY as Hex);
   const walletClient = createWalletClient({
     account,
     chain: sepolia,
     transport: http(env.RPC_URL),
   });
-  return { publicClient, walletClient };
+  return { publicClient, walletClient, account };
 }
 
 /**
@@ -78,13 +79,14 @@ async function relay(
       note: "Set BRIDGE_PRIVATE_KEY + DRY_RUN=false to broadcast a real transaction.",
     });
   }
-  const { publicClient, walletClient } = getClients(env);
-  if (!walletClient) return Response.json({ error: "no signer configured" }, { status: 500 });
+  const { publicClient, walletClient, account } = getClients(env);
+  if (!walletClient || !account) return Response.json({ error: "no signer configured" }, { status: 500 });
 
   try {
     const txHash = await walletClient.sendTransaction({
       to: to as Hex,
       data,
+      account,
       chain: sepolia,
     });
     const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
