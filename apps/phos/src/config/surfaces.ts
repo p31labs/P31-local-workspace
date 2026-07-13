@@ -28,6 +28,7 @@ export const SURFACE_NAV: SurfaceNavItem[] = [
   { id: 'BONDING', label: 'Bonding', icon: '⚛', group: 'secondary' },
   { id: 'GRID', label: 'Grid', icon: '⌗', group: 'secondary' },
   { id: 'COMPASS', label: 'Compass', icon: '⌖', group: 'secondary' },
+  { id: 'PQC_KEYS', label: 'PQC Keys', icon: '🔐', group: 'secondary' },
   { id: 'NODE_ZERO', label: 'Node Zero', icon: '⊙', group: 'secondary' },
   { id: 'WAREHOUSE', label: 'Warehouse', icon: '▣', group: 'secondary' },
   { id: 'ONBOARDING', label: 'Docs & Onboarding', icon: '📘', group: 'primary', href: '/onboarding' },

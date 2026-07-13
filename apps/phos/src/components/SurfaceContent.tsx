@@ -22,6 +22,7 @@ import { BarterMarketplace } from '../surfaces/BarterMarketplace';
 import { GovernanceSurface } from '../surfaces/GovernanceSurface';
 import { FeedbackSurface } from '../surfaces/FeedbackSurface';
 import { PassportSurface } from '../surfaces/PassportSurface';
+import { PQCKeygenSurface } from '../surfaces/PQCKeygenSurface';
 
 const ArcadeSurface = lazy(() =>
   import('../surfaces/ArcadeSurface').then(m => ({ default: m.ArcadeSurface }))
@@ -140,6 +141,9 @@ export function SurfaceContent({ currentSurface, setSurface, spoons, isGuest, is
 
     case 'PASSPORT':
       return <PassportSurface />;
+
+    case 'PQC_KEYS':
+      return <PQCKeygenSurface />;
 
     case 'FEEDBACK':
       return <FeedbackSurface isGuest={isGuest} spoons={spoons} />;

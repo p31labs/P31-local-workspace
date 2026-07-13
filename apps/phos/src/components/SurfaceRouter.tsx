@@ -25,6 +25,7 @@ const SURFACE_PATHS: Record<string, string> = {
   BONDING: '/bonding',
   GRID: '/grid',
   COMPASS: '/compass',
+  PQC_KEYS: '/pqc-keys',
   NODE_ZERO: '/node-zero',
   WAREHOUSE: '/warehouse',
   DISPUTE: '/dispute',
