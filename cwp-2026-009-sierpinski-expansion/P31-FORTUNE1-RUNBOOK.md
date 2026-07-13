@@ -346,8 +346,10 @@ CWP-2026-015/016/017 loop. All are documented in per-worker `RUNBOOK.md` files.
 - **Requires:** `compatibility_flags = ["nodejs_compat"]`, `new_sqlite_classes =
   ["AgentRuntime"]`, `[[services]] LOVE_LEDGER → love-ledger`.
 - **v1 built-in tools** (orchestrator routes these via `AGENT_RUNTIME` service binding):
-  - `send_notification` — Telegram only (raw Bot API). Needs `TELEGRAM_BOT_TOKEN`
-    (`wrangler secret put`); returns graceful 500 if unset. did→chat_id is 1:1 for now.
+- `send_notification` — `telegram` or `discord` (raw HTTP). Telegram needs
+  `TELEGRAM_BOT_TOKEN` (`wrangler secret put`); Discord needs `DISCORD_WEBHOOK_URL`
+  (incoming-webhook URL). Discord is configured for the pilot (Telegram number
+  blocked) — zero-cost alternative. `email`/`push` stubbed (501) for v2.
   - `generate_care_report` — queries love-ledger `/care-score` + `/balance` via LOVE_LEDGER binding.
 - **Spike Land MCP (CWP-2026-016 C):** `addMcpServer("spike-land", …)` wired in
   `onStart()`, feature-flagged behind `ENABLE_SPIKE_LAND` (`[vars]` default `"false"`),

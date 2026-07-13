@@ -48,7 +48,7 @@ curl -X POST https://love-ledger.p31ca.org/family/onboard \
 | Method | Path | Purpose |
 |---|---|---|
 | GET | `/health` | Liveness |
-| POST | `/tool/send_notification` | Telegram notification (`{did, message, channel?, chat_id?}`) |
+| POST | `/tool/send_notification` | Notification (`{did, message, channel?, chat_id?}`) — `telegram` or `discord` |
 | POST | `/tool/generate_care_report` | Care report (`{did, date_range?, format?}`) |
 
 `send_notification` requires the worker to have `TELEGRAM_BOT_TOKEN` configured;

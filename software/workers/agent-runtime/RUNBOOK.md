@@ -25,8 +25,14 @@ paths must be handled in `fetch` (fall through to `routeAgentRequest` last).
 | POST | `/tool/generate_care_report` | love-ledger care report |
 
 ## v1 built-in tools (orchestrator routes these via `AGENT_RUNTIME` binding)
-- `send_notification` — Telegram only. Needs `TELEGRAM_BOT_TOKEN` (`wrangler secret put`).
-  Returns graceful 500 if unset. did→chat_id is 1:1 for now.
+- `send_notification` — `telegram` or `discord` channel (raw HTTP; the Agents SDK
+  has no `messenger` export in 0.17.3).
+  - Telegram: needs `TELEGRAM_BOT_TOKEN` (`wrangler secret put`); did→chat_id 1:1.
+    Returns graceful 500 if unset.
+  - Discord: needs `DISCORD_WEBHOOK_URL` (`wrangler secret put`, an incoming-webhook
+    URL). Per-call `chat_id` may override with a full `https://discord.com/api/webhooks/...`
+    URL. Zero-cost Telegram alternative — configured for the pilot (Telegram number blocked).
+  - `email`/`push` are stubbed (501) for v2.
 - `generate_care_report` — queries love-ledger `/care-score` + `/balance`.
 
 ## Spike Land MCP (CWP-2026-016 C) — staged, OFF by default
