@@ -128,27 +128,27 @@ export function AttestSurface({ spoons }: { spoons: number }) {
             placeholder="Your DID"
             value={myDid}
             onChange={(e) => setMyDid(e.target.value)}
-            className="w-full px-3 py-2 text-xs font-mono bg-black/40 border border-purple-500/20 rounded text-slate-200 placeholder-slate-600"
+            className="w-full px-3 py-2 text-xs font-mono phos-bg/40 border border-purple-500/20 rounded text-slate-200 placeholder-slate-600"
           />
           <input
             placeholder="Signing Key"
             type="password"
             value={signingKey}
             onChange={(e) => setSigningKey(e.target.value)}
-            className="w-full px-3 py-2 text-xs font-mono bg-black/40 border border-purple-500/20 rounded text-slate-200 placeholder-slate-600"
+            className="w-full px-3 py-2 text-xs font-mono phos-bg/40 border border-purple-500/20 rounded text-slate-200 placeholder-slate-600"
           />
           <input
             placeholder="Peer DID"
             value={peerDid}
             onChange={(e) => setPeerDid(e.target.value)}
-            className="w-full px-3 py-2 text-xs font-mono bg-black/40 border border-purple-500/20 rounded text-slate-200 placeholder-slate-600"
+            className="w-full px-3 py-2 text-xs font-mono phos-bg/40 border border-purple-500/20 rounded text-slate-200 placeholder-slate-600"
           />
           <input
             placeholder="Peer Signing Key"
             type="password"
             value={peerKey}
             onChange={(e) => setPeerKey(e.target.value)}
-            className="w-full px-3 py-2 text-xs font-mono bg-black/40 border border-purple-500/20 rounded text-slate-200 placeholder-slate-600"
+            className="w-full px-3 py-2 text-xs font-mono phos-bg/40 border border-purple-500/20 rounded text-slate-200 placeholder-slate-600"
           />
           <button
             onClick={handleAttest}
@@ -184,7 +184,7 @@ export function AttestSurface({ spoons }: { spoons: number }) {
             placeholder="did:key:z6M..."
             value={myDid}
             onChange={(e) => setMyDid(e.target.value)}
-            className="w-full px-3 py-2 text-xs font-mono bg-black/40 border border-purple-500/20 rounded text-slate-200 placeholder-slate-600"
+            className="w-full px-3 py-2 text-xs font-mono phos-bg/40 border border-purple-500/20 rounded text-slate-200 placeholder-slate-600"
           />
         </div>
         <div>
@@ -194,7 +194,7 @@ export function AttestSurface({ spoons }: { spoons: number }) {
             type="password"
             value={signingKey}
             onChange={(e) => setSigningKey(e.target.value)}
-            className="w-full px-3 py-2 text-xs font-mono bg-black/40 border border-purple-500/20 rounded text-slate-200 placeholder-slate-600"
+            className="w-full px-3 py-2 text-xs font-mono phos-bg/40 border border-purple-500/20 rounded text-slate-200 placeholder-slate-600"
           />
         </div>
       </div>
@@ -206,7 +206,7 @@ export function AttestSurface({ spoons }: { spoons: number }) {
             placeholder="did:key:z6M..."
             value={peerDid}
             onChange={(e) => setPeerDid(e.target.value)}
-            className="w-full px-3 py-2 text-xs font-mono bg-black/40 border border-purple-500/20 rounded text-slate-200 placeholder-slate-600"
+            className="w-full px-3 py-2 text-xs font-mono phos-bg/40 border border-purple-500/20 rounded text-slate-200 placeholder-slate-600"
           />
         </div>
         <div>
@@ -216,7 +216,7 @@ export function AttestSurface({ spoons }: { spoons: number }) {
             type="password"
             value={peerKey}
             onChange={(e) => setPeerKey(e.target.value)}
-            className="w-full px-3 py-2 text-xs font-mono bg-black/40 border border-purple-500/20 rounded text-slate-200 placeholder-slate-600"
+            className="w-full px-3 py-2 text-xs font-mono phos-bg/40 border border-purple-500/20 rounded text-slate-200 placeholder-slate-600"
           />
         </div>
       </div>
@@ -226,7 +226,7 @@ export function AttestSurface({ spoons }: { spoons: number }) {
         <select
           value={edgeType}
           onChange={(e) => setEdgeType(e.target.value)}
-          className="w-full px-3 py-2 text-xs font-mono bg-black/40 border border-purple-500/20 rounded text-slate-200"
+          className="w-full px-3 py-2 text-xs font-mono phos-bg/40 border border-purple-500/20 rounded text-slate-200"
         >
           {EDGE_TYPES.map((t) => (
             <option key={t} value={t}>
@@ -242,7 +242,7 @@ export function AttestSurface({ spoons }: { spoons: number }) {
           value={termsJson}
           onChange={(e) => setTermsJson(e.target.value)}
           rows={4}
-          className="w-full px-3 py-2 text-xs font-mono bg-black/40 border border-purple-500/20 rounded text-slate-200 placeholder-slate-600 resize-none"
+          className="w-full px-3 py-2 text-xs font-mono phos-bg/40 border border-purple-500/20 rounded text-slate-200 placeholder-slate-600 resize-none"
         />
       </div>
 

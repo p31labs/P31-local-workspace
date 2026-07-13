@@ -152,9 +152,9 @@ export function SanctuarySurface({ spoons }: { spoons: number }) {
           <p className="text-xs text-slate-300">
             Messaging hidden to conserve energy. Emergency contacts shown below.
           </p>
-          <div className="p-4 border border-white/10 bg-white/5 rounded-lg space-y-2">
+          <div className="p-4 border border-white/10 phos-glass rounded-lg space-y-2">
             <div className="text-sm font-mono text-red-300">{emergencyContact.name}</div>
-            <div className="text-lg font-bold text-white">{emergencyContact.phone}</div>
+            <div className="text-lg font-bold text-primary">{emergencyContact.phone}</div>
             <div className="text-[10px] font-mono opacity-60">{emergencyContact.relation}</div>
           </div>
           <p className="text-[10px] font-mono text-amber-400/60">
@@ -177,13 +177,13 @@ export function SanctuarySurface({ spoons }: { spoons: number }) {
             placeholder="Your DID"
             value={myDid}
             onChange={(e) => setMyDid(e.target.value)}
-            className="flex-1 px-2 py-1 text-[10px] font-mono bg-black/40 border border-emerald-500/20 rounded text-slate-200 placeholder-slate-600"
+            className="flex-1 px-2 py-1 text-[10px] font-mono phos-bg/40 border border-emerald-500/20 rounded text-slate-200 placeholder-slate-600"
           />
           <input
             placeholder="Peer DID"
             value={peerDid}
             onChange={(e) => setPeerDid(e.target.value)}
-            className="flex-1 px-2 py-1 text-[10px] font-mono bg-black/40 border border-emerald-500/20 rounded text-slate-200 placeholder-slate-600"
+            className="flex-1 px-2 py-1 text-[10px] font-mono phos-bg/40 border border-emerald-500/20 rounded text-slate-200 placeholder-slate-600"
           />
         </div>
 
@@ -193,11 +193,11 @@ export function SanctuarySurface({ spoons }: { spoons: number }) {
             value={signingKey}
             onChange={(e) => setSigningKey(e.target.value)}
             type="password"
-            className="w-full px-2 py-1 text-[10px] font-mono bg-black/40 border border-emerald-500/20 rounded text-slate-200 placeholder-slate-600"
+            className="w-full px-2 py-1 text-[10px] font-mono phos-bg/40 border border-emerald-500/20 rounded text-slate-200 placeholder-slate-600"
           />
         </div>
 
-        <div className="flex-1 overflow-y-auto space-y-2 min-h-0 border border-white/5 rounded-lg p-3 bg-black/20">
+        <div className="flex-1 overflow-y-auto space-y-2 min-h-0 border border-white/5 rounded-lg p-3 phos-bg/20">
           {messages.length === 0 ? (
             <p className="text-xs text-slate-500 text-center">No messages yet.</p>
           ) : (
@@ -206,7 +206,7 @@ export function SanctuarySurface({ spoons }: { spoons: number }) {
                 <div className={`max-w-[80%] p-2 rounded-lg text-xs ${
                   m.isMine
                     ? 'bg-emerald-900/30 border border-emerald-500/20 text-emerald-200'
-                    : 'bg-slate-800/50 border border-slate-600/20 text-slate-200'
+                    : 'phos-surface/50 border border-slate-600/20 text-slate-200'
                 }`}>
                   <p>{m.body}</p>
                 </div>
@@ -223,7 +223,7 @@ export function SanctuarySurface({ spoons }: { spoons: number }) {
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             rows={2}
-            className="flex-1 px-3 py-2 text-xs font-mono bg-black/40 border border-emerald-500/20 rounded text-slate-200 placeholder-slate-600 resize-none"
+            className="flex-1 px-3 py-2 text-xs font-mono phos-bg/40 border border-emerald-500/20 rounded text-slate-200 placeholder-slate-600 resize-none"
           />
           <button
             onClick={sendMessage}
@@ -259,13 +259,13 @@ export function SanctuarySurface({ spoons }: { spoons: number }) {
           placeholder="Your DID"
           value={myDid}
           onChange={(e) => setMyDid(e.target.value)}
-          className="flex-1 px-3 py-2 text-xs font-mono bg-black/40 border border-emerald-500/20 rounded text-slate-200 placeholder-slate-600"
+          className="flex-1 px-3 py-2 text-xs font-mono phos-bg/40 border border-emerald-500/20 rounded text-slate-200 placeholder-slate-600"
         />
         <input
           placeholder="Peer DID"
           value={peerDid}
           onChange={(e) => setPeerDid(e.target.value)}
-          className="flex-1 px-3 py-2 text-xs font-mono bg-black/40 border border-emerald-500/20 rounded text-slate-200 placeholder-slate-600"
+          className="flex-1 px-3 py-2 text-xs font-mono phos-bg/40 border border-emerald-500/20 rounded text-slate-200 placeholder-slate-600"
         />
       </div>
 
@@ -275,7 +275,7 @@ export function SanctuarySurface({ spoons }: { spoons: number }) {
           value={signingKey}
           onChange={(e) => setSigningKey(e.target.value)}
           type="password"
-          className="w-full px-3 py-2 text-xs font-mono bg-black/40 border border-emerald-500/20 rounded text-slate-200 placeholder-slate-600"
+          className="w-full px-3 py-2 text-xs font-mono phos-bg/40 border border-emerald-500/20 rounded text-slate-200 placeholder-slate-600"
         />
       </div>
 
@@ -283,7 +283,7 @@ export function SanctuarySurface({ spoons }: { spoons: number }) {
         <p className="text-red-400 text-xs shrink-0">{error}</p>
       )}
 
-      <div className="flex-1 overflow-y-auto space-y-2 min-h-0 border border-white/5 rounded-lg p-3 bg-black/20">
+      <div className="flex-1 overflow-y-auto space-y-2 min-h-0 border border-white/5 rounded-lg p-3 phos-bg/20">
         {messages.length === 0 ? (
           <p className="text-xs text-slate-500 text-center">No messages yet. Start a conversation.</p>
         ) : (
@@ -292,7 +292,7 @@ export function SanctuarySurface({ spoons }: { spoons: number }) {
               <div className={`max-w-[80%] p-2 rounded-lg text-xs ${
                 m.isMine
                   ? 'bg-emerald-900/30 border border-emerald-500/20 text-emerald-200'
-                  : 'bg-slate-800/50 border border-slate-600/20 text-slate-200'
+                  : 'phos-surface/50 border border-slate-600/20 text-slate-200'
               }`}>
                 <p className="whitespace-pre-wrap break-words">{m.body}</p>
                 <div className="flex justify-between items-center mt-1">
@@ -317,7 +317,7 @@ export function SanctuarySurface({ spoons }: { spoons: number }) {
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
           rows={2}
-          className="flex-1 px-3 py-2 text-xs font-mono bg-black/40 border border-emerald-500/20 rounded text-slate-200 placeholder-slate-600 resize-none"
+          className="flex-1 px-3 py-2 text-xs font-mono phos-bg/40 border border-emerald-500/20 rounded text-slate-200 placeholder-slate-600 resize-none"
         />
         <button
           onClick={sendMessage}

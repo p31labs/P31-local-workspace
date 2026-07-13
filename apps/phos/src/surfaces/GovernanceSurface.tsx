@@ -171,7 +171,7 @@ export function GovernanceSurface() {
         <p className="text-sm text-white/60 font-light mb-4">Governance is paused. Focus on grounding.</p>
         <button
           onClick={() => window.location.href = '/'}
-          className="px-6 py-3 rounded-xl bg-white/10 text-white/60 text-xs font-sans"
+          className="px-6 py-3 rounded-xl phos-glass text-white/60 text-xs font-sans"
         >
           Return to Gateway
         </button>
@@ -209,7 +209,7 @@ export function GovernanceSurface() {
 
           <button
             onClick={() => setActiveTab('delegate')}
-            className="w-full max-w-md py-3 rounded-2xl bg-white/5 border border-white/10 text-white/40 text-xs font-sans"
+            className="w-full max-w-md py-3 rounded-2xl phos-glass border border-white/10 text-white/40 text-xs font-sans"
           >
             Delegate Your Vote
           </button>
@@ -246,7 +246,7 @@ export function GovernanceSurface() {
             onClick={() => setActiveTab(tab)}
             className={`px-4 py-2 rounded-xl text-xs font-sans transition-colors ${
               activeTab === tab
-                ? 'bg-white/10 text-white/80 border border-white/10'
+                ? 'phos-glass text-white/80 border border-white/10'
                 : 'text-white/70 hover:text-white/90'
             }`}
           >
@@ -299,7 +299,7 @@ export function GovernanceSurface() {
                         <span>Abstain: {proposal.votesAbstain}</span>
                         <span>Quorum: {Math.round(progress * 100)}%</span>
                       </div>
-                      <div className="w-full h-1 mt-2 rounded-full bg-white/5 overflow-hidden">
+                      <div className="w-full h-1 mt-2 rounded-full phos-glass overflow-hidden">
                         <div
                           className="h-full rounded-full bg-phos-primary transition-all duration-300"
                           style={{ width: `${Math.min(100, progress * 100)}%` }}
@@ -323,7 +323,7 @@ export function GovernanceSurface() {
                           </button>
                           <button
                             onClick={() => handleVote(proposal.id, 'ABSTAIN')}
-                            className="px-2 py-1 rounded text-[10px] font-mono bg-white/5 text-white/40 hover:bg-white/10"
+                            className="px-2 py-1 rounded text-[10px] font-mono phos-glass text-white/40 hover:phos-glass"
                           >
                             ABSTAIN
                           </button>
@@ -445,7 +445,7 @@ export function GovernanceSurface() {
             <button
               onClick={handleCreateProposal}
               disabled={!title || !description || !actionValue}
-              className="w-full py-3 rounded-xl bg-white/5 border border-white/10 text-sm font-sans text-white/80 hover:bg-white/10 disabled:opacity-40"
+              className="w-full py-3 rounded-xl phos-glass border border-white/10 text-sm font-sans text-white/80 hover:phos-glass disabled:opacity-40"
             >
               Submit Proposal
             </button>
@@ -470,7 +470,7 @@ export function GovernanceSurface() {
             <button
               onClick={handleDelegate}
               disabled={!delegateDid.trim()}
-              className="w-full py-3 rounded-xl bg-white/5 border border-white/10 text-sm font-sans text-white/80 hover:bg-white/10 disabled:opacity-40"
+              className="w-full py-3 rounded-xl phos-glass border border-white/10 text-sm font-sans text-white/80 hover:phos-glass disabled:opacity-40"
             >
               Delegate Vote
             </button>
@@ -483,7 +483,7 @@ export function GovernanceSurface() {
                 delegations.map((d, i) => (
                   <div key={i} className="flex justify-between text-xs text-white/40 font-mono">
                     <span>{d.delegatorDid.slice(0, 16)}… → {d.delegateDid.slice(0, 16)}…</span>
-                    <button className="text-red-400/50 hover:text-red-400">Revoke</button>
+                    <button className="min-h-[48px] min-w-[48px] text-red-400/50 hover:text-red-400">Revoke</button>
                   </div>
                 ))
               )}

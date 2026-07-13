@@ -193,7 +193,7 @@ export const PassportSurface: React.FC = () => {
             setSection('cognition');
             loadFormFromPassport();
           }}
-          className="rounded-2xl bg-white/5 border border-white/10 px-6 py-4 text-sm font-light text-white/80 hover:bg-white/10 transition-all"
+          className="rounded-2xl phos-glass border border-white/10 px-6 py-4 text-sm font-light text-white/80 hover:phos-glass transition-all"
         >
           Begin Passport
         </button>
@@ -216,7 +216,7 @@ export const PassportSurface: React.FC = () => {
             <button
               onClick={handleUpdatePassport}
               disabled={saveStatus === 'saving'}
-              className="rounded-xl bg-white/5 border border-white/10 px-4 py-2 text-xs font-light text-white/80 hover:bg-white/10 transition-all disabled:opacity-40"
+              className="rounded-xl phos-glass border border-white/10 px-4 py-2 text-xs font-light text-white/80 hover:phos-glass transition-all disabled:opacity-40"
             >
               {saveStatus === 'saving' ? 'Saving...' : saveStatus === 'saved' ? 'Saved' : 'Save'}
             </button>
@@ -226,15 +226,15 @@ export const PassportSurface: React.FC = () => {
           <div className="space-y-4">
             <div>
               <label className="text-xs text-white/40 font-light block mb-1">Display Name</label>
-              <input value={form.displayName} onChange={(e) => setForm({...form, displayName: e.target.value})} className="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-sm text-white/80 outline-none" />
+              <input value={form.displayName} onChange={(e) => setForm({...form, displayName: e.target.value})} className="w-full rounded-xl phos-glass border border-white/10 px-4 py-3 text-sm text-white/80 outline-none" />
             </div>
             <div>
               <label className="text-xs text-white/40 font-light block mb-1">One-Liner</label>
-              <input value={form.oneLiner} onChange={(e) => setForm({...form, oneLiner: e.target.value})} className="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-sm text-white/80 outline-none" />
+              <input value={form.oneLiner} onChange={(e) => setForm({...form, oneLiner: e.target.value})} className="w-full rounded-xl phos-glass border border-white/10 px-4 py-3 text-sm text-white/80 outline-none" />
             </div>
             <div>
               <label className="text-xs text-white/40 font-light block mb-1">Role</label>
-              <select value={form.role} onChange={(e) => setForm({...form, role: e.target.value})} className="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-sm text-white/80 outline-none">
+              <select value={form.role} onChange={(e) => setForm({...form, role: e.target.value})} className="w-full rounded-xl phos-glass border border-white/10 px-4 py-3 text-sm text-white/80 outline-none">
                 <option value="SYSTEM_CORE">System Core</option>
                 <option value="PARENT_A">Parent A</option>
                 <option value="PARENT_B">Parent B</option>
@@ -249,11 +249,11 @@ export const PassportSurface: React.FC = () => {
           <div className="space-y-4">
             <div>
               <label className="text-xs text-white/40 font-light block mb-1">Processing Style</label>
-              <input value={form.processingStyle} onChange={(e) => setForm({...form, processingStyle: e.target.value})} placeholder="e.g., parallel, sequential, interrupt-driven" className="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-sm text-white/80 outline-none" />
+              <input value={form.processingStyle} onChange={(e) => setForm({...form, processingStyle: e.target.value})} placeholder="e.g., parallel, sequential, interrupt-driven" className="w-full rounded-xl phos-glass border border-white/10 px-4 py-3 text-sm text-white/80 outline-none" />
             </div>
             <div>
               <label className="text-xs text-white/40 font-light block mb-1">Learning Preference</label>
-              <select value={form.learningPreference} onChange={(e) => setForm({...form, learningPreference: e.target.value as any})} className="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-sm text-white/80 outline-none">
+              <select value={form.learningPreference} onChange={(e) => setForm({...form, learningPreference: e.target.value as any})} className="w-full rounded-xl phos-glass border border-white/10 px-4 py-3 text-sm text-white/80 outline-none">
                 <option value="visual">Visual</option>
                 <option value="kinetic">Kinetic</option>
                 <option value="text">Text</option>
@@ -263,15 +263,15 @@ export const PassportSurface: React.FC = () => {
             </div>
             <div>
               <label className="text-xs text-white/40 font-light block mb-1">Executive Function Notes</label>
-              <textarea value={form.executiveFunctionNotes} onChange={(e) => setForm({...form, executiveFunctionNotes: e.target.value})} rows={3} className="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-sm text-white/80 outline-none resize-none" />
+              <textarea value={form.executiveFunctionNotes} onChange={(e) => setForm({...form, executiveFunctionNotes: e.target.value})} rows={3} className="w-full rounded-xl phos-glass border border-white/10 px-4 py-3 text-sm text-white/80 outline-none resize-none" />
             </div>
             <div>
               <label className="text-xs text-white/40 font-light block mb-1">Strengths (comma-separated)</label>
-              <input value={form.strengths} onChange={(e) => setForm({...form, strengths: e.target.value})} className="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-sm text-white/80 outline-none" />
+              <input value={form.strengths} onChange={(e) => setForm({...form, strengths: e.target.value})} className="w-full rounded-xl phos-glass border border-white/10 px-4 py-3 text-sm text-white/80 outline-none" />
             </div>
             <div>
               <label className="text-xs text-white/40 font-light block mb-1">Challenges (comma-separated)</label>
-              <input value={form.challenges} onChange={(e) => setForm({...form, challenges: e.target.value})} className="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-sm text-white/80 outline-none" />
+              <input value={form.challenges} onChange={(e) => setForm({...form, challenges: e.target.value})} className="w-full rounded-xl phos-glass border border-white/10 px-4 py-3 text-sm text-white/80 outline-none" />
             </div>
           </div>
         )}
@@ -279,7 +279,7 @@ export const PassportSurface: React.FC = () => {
           <div className="space-y-4">
             <div>
               <label className="text-xs text-white/40 font-light block mb-1">Preferred Tone</label>
-              <select value={form.preferredTone} onChange={(e) => setForm({...form, preferredTone: e.target.value as any})} className="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-sm text-white/80 outline-none">
+              <select value={form.preferredTone} onChange={(e) => setForm({...form, preferredTone: e.target.value as any})} className="w-full rounded-xl phos-glass border border-white/10 px-4 py-3 text-sm text-white/80 outline-none">
                 <option value="direct">Direct</option>
                 <option value="gentle">Gentle</option>
                 <option value="analytical">Analytical</option>
@@ -289,11 +289,11 @@ export const PassportSurface: React.FC = () => {
             </div>
             <div>
               <label className="text-xs text-white/40 font-light block mb-1">Avoid List (comma-separated)</label>
-              <input value={form.avoidList} onChange={(e) => setForm({...form, avoidList: e.target.value})} placeholder="words or phrases that cause cognitive spikes" className="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-sm text-white/80 outline-none" />
+              <input value={form.avoidList} onChange={(e) => setForm({...form, avoidList: e.target.value})} placeholder="words or phrases that cause cognitive spikes" className="w-full rounded-xl phos-glass border border-white/10 px-4 py-3 text-sm text-white/80 outline-none" />
             </div>
             <div>
               <label className="text-xs text-white/40 font-light block mb-1">Response Length</label>
-              <select value={form.responseLength} onChange={(e) => setForm({...form, responseLength: e.target.value as any})} className="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-sm text-white/80 outline-none">
+              <select value={form.responseLength} onChange={(e) => setForm({...form, responseLength: e.target.value as any})} className="w-full rounded-xl phos-glass border border-white/10 px-4 py-3 text-sm text-white/80 outline-none">
                 <option value="concise">Concise</option>
                 <option value="detailed">Detailed</option>
                 <option value="bullet-points">Bullet Points</option>
@@ -301,7 +301,7 @@ export const PassportSurface: React.FC = () => {
             </div>
             <div>
               <label className="text-xs text-white/40 font-light block mb-1">Primary Language</label>
-              <input value={form.languagePrimary} onChange={(e) => setForm({...form, languagePrimary: e.target.value})} className="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-sm text-white/80 outline-none" />
+              <input value={form.languagePrimary} onChange={(e) => setForm({...form, languagePrimary: e.target.value})} className="w-full rounded-xl phos-glass border border-white/10 px-4 py-3 text-sm text-white/80 outline-none" />
             </div>
           </div>
         )}
@@ -321,7 +321,7 @@ export const PassportSurface: React.FC = () => {
             </div>
             <div>
               <label className="text-xs text-white/40 font-light block mb-1">Motion Preference</label>
-              <select value={form.motionPreference} onChange={(e) => setForm({...form, motionPreference: e.target.value as any})} className="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-sm text-white/80 outline-none">
+              <select value={form.motionPreference} onChange={(e) => setForm({...form, motionPreference: e.target.value as any})} className="w-full rounded-xl phos-glass border border-white/10 px-4 py-3 text-sm text-white/80 outline-none">
                 <option value="off">Off</option>
                 <option value="reduced">Reduced</option>
                 <option value="full">Full</option>
@@ -329,7 +329,7 @@ export const PassportSurface: React.FC = () => {
             </div>
             <div>
               <label className="text-xs text-white/40 font-light block mb-1">Contrast Preference</label>
-              <select value={form.contrastPreference} onChange={(e) => setForm({...form, contrastPreference: e.target.value as any})} className="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-sm text-white/80 outline-none">
+              <select value={form.contrastPreference} onChange={(e) => setForm({...form, contrastPreference: e.target.value as any})} className="w-full rounded-xl phos-glass border border-white/10 px-4 py-3 text-sm text-white/80 outline-none">
                 <option value="high">High</option>
                 <option value="standard">Standard</option>
                 <option value="low">Low</option>
@@ -337,11 +337,11 @@ export const PassportSurface: React.FC = () => {
             </div>
             <div>
               <label className="text-xs text-white/40 font-light block mb-1">Color Sensitivity (comma-separated)</label>
-              <input value={form.colorSensitivity} onChange={(e) => setForm({...form, colorSensitivity: e.target.value})} placeholder="e.g., red, flashing" className="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-sm text-white/80 outline-none" />
+              <input value={form.colorSensitivity} onChange={(e) => setForm({...form, colorSensitivity: e.target.value})} placeholder="e.g., red, flashing" className="w-full rounded-xl phos-glass border border-white/10 px-4 py-3 text-sm text-white/80 outline-none" />
             </div>
             <div>
               <label className="text-xs text-white/40 font-light block mb-1">Audio Preference</label>
-              <select value={form.audioPreference} onChange={(e) => setForm({...form, audioPreference: e.target.value as any})} className="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-sm text-white/80 outline-none">
+              <select value={form.audioPreference} onChange={(e) => setForm({...form, audioPreference: e.target.value as any})} className="w-full rounded-xl phos-glass border border-white/10 px-4 py-3 text-sm text-white/80 outline-none">
                 <option value="off">Off</option>
                 <option value="reduced">Reduced</option>
                 <option value="full">Full</option>
@@ -369,13 +369,13 @@ export const PassportSurface: React.FC = () => {
         <div className="flex gap-2">
           <button
             onClick={() => { loadFormFromPassport(); setIsEditing(true); }}
-            className="rounded-xl bg-white/5 border border-white/10 px-4 py-2 text-xs font-light text-white/60 hover:text-white/80 hover:bg-white/10 transition-all"
+            className="rounded-xl phos-glass border border-white/10 px-4 py-2 text-xs font-light text-white/60 hover:text-white/80 hover:phos-glass transition-all"
           >
             Edit
           </button>
           <button
             onClick={() => handleExport()}
-            className="rounded-xl bg-white/5 border border-white/10 px-4 py-2 text-xs font-light text-white/60 hover:text-white/80 hover:bg-white/10 transition-all"
+            className="rounded-xl phos-glass border border-white/10 px-4 py-2 text-xs font-light text-white/60 hover:text-white/80 hover:phos-glass transition-all"
           >
             Export
           </button>
@@ -383,7 +383,7 @@ export const PassportSurface: React.FC = () => {
       </div>
 
       {saveStatus === 'saved' && (
-        <div className="rounded-xl bg-white/5 border border-white/10 px-4 py-2 text-xs text-white/60 font-light text-center">
+        <div className="rounded-xl phos-glass border border-white/10 px-4 py-2 text-xs text-white/60 font-light text-center">
           Saved to local storage.
         </div>
       )}
@@ -391,7 +391,7 @@ export const PassportSurface: React.FC = () => {
       {!isEditing && (
         <div className="space-y-4">
           {passport.identity && (
-            <div className="rounded-2xl bg-white/5 border border-white/5 p-5 space-y-3">
+            <div className="rounded-2xl phos-glass border border-white/5 p-5 space-y-3">
               <h3 className="text-xs font-mono text-white/70 uppercase tracking-widest">Identity</h3>
               <div className="grid grid-cols-2 gap-3 text-sm font-light">
                 <div>
@@ -413,7 +413,7 @@ export const PassportSurface: React.FC = () => {
           )}
 
           {passport.cognition && (
-            <div className="rounded-2xl bg-white/5 border border-white/5 p-5 space-y-3">
+            <div className="rounded-2xl phos-glass border border-white/5 p-5 space-y-3">
               <h3 className="text-xs font-mono text-white/70 uppercase tracking-widest">Cognition</h3>
               <div className="grid grid-cols-2 gap-3 text-sm font-light">
                 <div>
@@ -430,7 +430,7 @@ export const PassportSurface: React.FC = () => {
                   <div className="text-[10px] text-white/70 uppercase tracking-widest mb-1">Strengths</div>
                   <div className="flex flex-wrap gap-1">
                     {passport.cognition.strengths.map((s: string) => (
-                      <span key={s} className="px-2 py-0.5 rounded-full bg-white/5 text-[10px] text-white/50 font-light">{s}</span>
+                      <span key={s} className="px-2 py-0.5 rounded-full phos-glass text-[10px] text-white/50 font-light">{s}</span>
                     ))}
                   </div>
                 </div>
@@ -439,7 +439,7 @@ export const PassportSurface: React.FC = () => {
           )}
 
           {passport.accessibility && (
-            <div className="rounded-2xl bg-white/5 border border-white/5 p-5 space-y-3">
+            <div className="rounded-2xl phos-glass border border-white/5 p-5 space-y-3">
               <h3 className="text-xs font-mono text-white/70 uppercase tracking-widest">Accessibility</h3>
               <div className="grid grid-cols-2 gap-3 text-sm font-light">
                 <div>
@@ -463,13 +463,13 @@ export const PassportSurface: React.FC = () => {
           )}
 
           <div className="flex gap-2 pt-2">
-            <button onClick={() => handleExport('full')} className="flex-1 rounded-xl bg-white/5 border border-white/10 px-4 py-2.5 text-xs font-light text-white/60 hover:text-white/80 hover:bg-white/10 transition-all">
+            <button onClick={() => handleExport('full')} className="min-h-[48px] min-w-[48px] flex-1 rounded-xl phos-glass border border-white/10 px-4 py-2.5 text-xs font-light text-white/60 hover:text-white/80 hover:phos-glass transition-all">
               Export Full
             </button>
-            <button onClick={() => handleExport('clinical')} className="flex-1 rounded-xl bg-white/5 border border-white/10 px-4 py-2.5 text-xs font-light text-white/60 hover:text-white/80 hover:bg-white/10 transition-all">
+            <button onClick={() => handleExport('clinical')} className="min-h-[48px] min-w-[48px] flex-1 rounded-xl phos-glass border border-white/10 px-4 py-2.5 text-xs font-light text-white/60 hover:text-white/80 hover:phos-glass transition-all">
               Clinical View
             </button>
-            <button onClick={() => handleExport('guest')} className="flex-1 rounded-xl bg-white/5 border border-white/10 px-4 py-2.5 text-xs font-light text-white/60 hover:text-white/80 hover:bg-white/10 transition-all">
+            <button onClick={() => handleExport('guest')} className="min-h-[48px] min-w-[48px] flex-1 rounded-xl phos-glass border border-white/10 px-4 py-2.5 text-xs font-light text-white/60 hover:text-white/80 hover:phos-glass transition-all">
               Guest View
             </button>
           </div>

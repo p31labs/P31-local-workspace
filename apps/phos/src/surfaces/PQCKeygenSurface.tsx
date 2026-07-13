@@ -171,7 +171,7 @@ const QuantumParticles: React.FC = () => {
 type StatusKind = 'idle' | 'generating' | 'generated' | 'registering' | 'registered' | 'error';
 
 const STATUS_STYLES: Record<StatusKind, { bg: string; border: string; text: string; pulse: boolean }> = {
-  idle:         { bg: 'bg-white/5', border: 'border-white/10', text: 'text-white/40', pulse: false },
+  idle:         { bg: 'phos-glass', border: 'border-white/10', text: 'text-white/40', pulse: false },
   generating:   { bg: 'bg-amber-500/10', border: 'border-amber-500/30', text: 'text-amber-400', pulse: true },
   generated:    { bg: 'bg-amber-500/10', border: 'border-amber-500/20', text: 'text-amber-400', pulse: false },
   registering:  { bg: 'bg-cyan-500/10', border: 'border-cyan-500/30', text: 'text-cyan-400', pulse: true },
@@ -218,7 +218,7 @@ const KeyCard: React.FC<{
         </div>
         <button
           onClick={handleCopy}
-          className="text-[10px] text-white/30 hover:text-white/60 transition-colors px-2 py-0.5 rounded hover:bg-white/5"
+          className="text-[10px] text-white/30 hover:text-white/60 transition-colors px-2 py-0.5 rounded hover:phos-glass"
           aria-label={`Copy ${label}`}
         >
           {copied ? '✓ copied' : 'copy'}
@@ -461,7 +461,7 @@ export const PQCKeygenSurface: React.FC = () => {
                   value={passphrase}
                   onChange={(e) => setPassphrase(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-sm text-white/80 outline-none pr-16 focus:border-cyan-500/30 focus:shadow-[0_0_20px_rgba(0,240,255,0.05)] transition-all"
+                  className="w-full rounded-xl phos-glass border border-white/10 px-4 py-3 text-sm text-white/80 outline-none pr-16 focus:border-cyan-500/30 focus:shadow-[0_0_20px_rgba(0,240,255,0.05)] transition-all"
                 />
                 <button
                   onClick={() => setShowPassphrase(!showPassphrase)}
@@ -474,7 +474,7 @@ export const PQCKeygenSurface: React.FC = () => {
             <button
               onClick={generateKeys}
               disabled={!passphrase || passphrase.length < 8}
-              className="w-full rounded-xl px-4 py-3 text-sm font-light transition-all disabled:opacity-40 disabled:cursor-not-allowed bg-white/5 border border-white/10 text-white/80 hover:bg-white/10 hover:border-cyan-500/20"
+              className="w-full rounded-xl px-4 py-3 text-sm font-light transition-all disabled:opacity-40 disabled:cursor-not-allowed phos-glass border border-white/10 text-white/80 hover:phos-glass hover:border-cyan-500/20"
             >
               Generate PQC Keypair
             </button>
@@ -506,14 +506,14 @@ export const PQCKeygenSurface: React.FC = () => {
                 className={`flex-1 rounded-xl px-4 py-2.5 text-xs font-light transition-all disabled:opacity-40 disabled:cursor-not-allowed ${
                   status === 'registered'
                     ? 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-400'
-                    : 'bg-white/5 border border-white/10 text-white/60 hover:text-white/80 hover:bg-white/10 hover:border-cyan-500/20'
+                    : 'phos-glass border border-white/10 text-white/60 hover:text-white/80 hover:phos-glass hover:border-cyan-500/20'
                 }`}
               >
                 {status === 'registered' ? '✓ Registered' : 'Register with Ledger'}
               </button>
               <button
                 onClick={handleExportPublicKeys}
-                className="flex-1 rounded-xl bg-white/5 border border-white/10 px-4 py-2.5 text-xs font-light text-white/60 hover:text-white/80 hover:bg-white/10 transition-all"
+                className="flex-1 rounded-xl phos-glass border border-white/10 px-4 py-2.5 text-xs font-light text-white/60 hover:text-white/80 hover:phos-glass transition-all"
               >
                 Export Public Keys
               </button>
@@ -536,7 +536,7 @@ export const PQCKeygenSurface: React.FC = () => {
                   value={verifyPassphrase}
                   onChange={(e) => setVerifyPassphrase(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-sm text-white/80 outline-none pr-16 focus:border-cyan-500/30 focus:shadow-[0_0_20px_rgba(0,240,255,0.05)] transition-all"
+                  className="w-full rounded-xl phos-glass border border-white/10 px-4 py-3 text-sm text-white/80 outline-none pr-16 focus:border-cyan-500/30 focus:shadow-[0_0_20px_rgba(0,240,255,0.05)] transition-all"
                 />
                 <button
                   onClick={() => setShowVerify(!showVerify)}
@@ -549,7 +549,7 @@ export const PQCKeygenSurface: React.FC = () => {
             <button
               onClick={verifyKey}
               disabled={!verifyPassphrase}
-              className="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-sm font-light text-white/80 hover:bg-white/10 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+              className="w-full rounded-xl phos-glass border border-white/10 px-4 py-3 text-sm font-light text-white/80 hover:phos-glass transition-all disabled:opacity-40 disabled:cursor-not-allowed"
             >
               Verify Keys
             </button>

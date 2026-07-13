@@ -126,6 +126,18 @@ const TOOLS = [
       required: ['file'],
     },
   },
+  {
+    name: 'design_expert_batch_ephemeralize',
+    description: 'Apply fixes to multiple surface files at once.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        files: { type: 'array', items: { type: 'string' }, description: 'List of file paths' },
+        dryRun: { type: 'boolean', description: 'If true, return changes without applying (default: true)' },
+      },
+      required: ['files'],
+    },
+  },
 ];
 
 // ─── Rule Registry ───────────────────────────────────────────────────────────
@@ -562,61 +574,108 @@ function checkContrast({ foreground, background }) {
 // ─── Suggest Fix ─────────────────────────────────────────────────────────────
 
 const FIX_MAP = {
-  'D-002': { pattern: /text-white(?![\/\[])/g, replacement: 'text-primary', explanation: 'Use text-primary (var(--phos-text)) instead of raw white' },
-  'D-003': { pattern: /bg-black/g, replacement: 'phos-bg', explanation: 'Use phos-bg class (var(--phos-bg) = #0A0A0F)' },
-  'D-004': { pattern: /bg-white\/\d+/g, replacement: 'phos-glass', explanation: 'Use phos-glass class (includes backdrop-filter: blur(20px))' },
-  'D-015': { pattern: /<button/g, replacement: '<button className="min-h-[48px] min-w-[48px]"', explanation: 'Add minimum touch target size per WCAG 2.5.8' },
-  'D-028': { pattern: /<IconButton/g, replacement: '<IconButton aria-label="..."', explanation: 'Add aria-label for screen reader access' },
-  'D-029': { pattern: /<svg(?!.*aria-hidden)/g, replacement: '<svg aria-hidden="true"', explanation: 'Hide decorative SVGs from screen readers' },
+  'D-002': { replacement: 'text-primary', explanation: 'Use text-primary (var(--phos-text)) instead of raw white' },
+  'D-003': { replacement: 'phos-bg', explanation: 'Use phos-bg class (var(--phos-bg) = #0A0A0F)' },
+  'D-004': { replacement: 'phos-glass', explanation: 'Use phos-glass class (includes backdrop-filter: blur(20px))' },
+  'D-012': { replacement: '<a href="#main-content" className="skip-link">Skip to content</a>', explanation: 'Add skip link for accessibility' },
+  'D-015': { replacement: 'className="min-h-[48px] min-w-[48px]"', explanation: 'Add minimum touch target size per WCAG 2.5.8' },
+  'D-028': { replacement: 'aria-label="..."', explanation: 'Add aria-label for screen reader access' },
+  'D-029': { replacement: 'aria-hidden="true"', explanation: 'Hide decorative SVGs from screen readers' },
+  'D-033': { replacement: '(review legacy terminology)', explanation: 'Use person-first or identity-first language' },
 };
 
-function suggestFix({ file, rule, line }) {
-  const fix = FIX_MAP[rule];
-  if (!fix) {
-    return { status: 'error', error: `No fix mapping for rule ${rule}` };
+// Line-level fix rules: regex → replacement (applied per-line)
+const LINE_FIXES = [
+  { re: /bg-white\/\d+/g, replacement: 'phos-glass', rule: 'D-004' },
+  { re: /bg-black\b/g, replacement: 'phos-bg', rule: 'D-003' },
+  { re: /text-white\b(?![\/\[])/g, replacement: 'text-primary', rule: 'D-002' },
+  { re: /bg-(zinc|slate|gray)-(800|900|950)\b/g, replacement: 'phos-surface', rule: 'D-004' },
+];
+
+// Touch target fix: find buttons without min-h-[48px]
+function fixTouchTargets(lines) {
+  const changes = [];
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    if (/<button|<Button/.test(line) && !/min-h-\[48px\]/.test(line)) {
+      // Add min-h-[48px] min-w-[48px] to className
+      if (/className=/.test(line)) {
+        lines[i] = line.replace(/className="/, 'className="min-h-[48px] min-w-[48px] ');
+        changes.push({ line: i + 1, before: 'className="', after: 'className="min-h-[48px] min-w-[48px] ', rule: 'D-015' });
+      }
+    }
   }
+  return changes;
+}
+
+// SVG aria-hidden fix
+function fixSvgAriaHidden(lines) {
+  const changes = [];
+  for (let i = 0; i < lines.length; i++) {
+    if (/<svg[^>]*(?!.*aria-hidden)/.test(lines[i]) && !/aria-hidden/.test(lines[i])) {
+      lines[i] = lines[i].replace(/<svg/, '<svg aria-hidden="true"');
+      changes.push({ line: i + 1, before: '<svg', after: '<svg aria-hidden="true"', rule: 'D-029' });
+    }
+  }
+  return changes;
+}
+
+function suggestFix({ file, rule, line }) {
   const content = readFileSafe(file);
   if (content === null) {
     return { status: 'error', error: `File not found: ${file}` };
   }
-  const match = content.match(fix.pattern);
-  return {
-    status: 'ok',
-    original: match ? match[0] : '(no match found)',
-    fixed: match ? match[0].replace(fix.pattern, fix.replacement) : '(no match found)',
-    explanation: fix.explanation,
-  };
+  const fix = FIX_MAP[rule];
+  if (!fix) {
+    return { status: 'error', error: `No fix mapping for rule ${rule}` };
+  }
+  // Find a matching line
+  const lines = content.split('\n');
+  for (let i = 0; i < lines.length; i++) {
+    if (rule === 'D-004' && /bg-white\/\d+/.test(lines[i])) {
+      return { status: 'ok', rule, line: i + 1, original: lines[i].trim().slice(0, 80), fixed: lines[i].replace(/bg-white\/\d+/, 'phos-glass').trim().slice(0, 80), explanation: fix.explanation };
+    }
+    if (rule === 'D-003' && /bg-black/.test(lines[i])) {
+      return { status: 'ok', rule, line: i + 1, original: lines[i].trim().slice(0, 80), fixed: lines[i].replace(/bg-black/, 'phos-bg').trim().slice(0, 80), explanation: fix.explanation };
+    }
+    if (rule === 'D-002' && /text-white(?![\/\[])/.test(lines[i])) {
+      return { status: 'ok', rule, line: i + 1, original: lines[i].trim().slice(0, 80), fixed: lines[i].replace(/text-white(?![\/\[])/, 'text-primary').trim().slice(0, 80), explanation: fix.explanation };
+    }
+  }
+  return { status: 'ok', rule, original: '(no match found)', fixed: '(no match found)', explanation: fix.explanation };
 }
 
-// ─── Ephemeralize ────────────────────────────────────────────────────────────
+// ─── Ephemeralize (Optimized O(n)) ───────────────────────────────────────────
 
 function ephemeralize({ file, dryRun = true }) {
   const content = readFileSafe(file);
   if (content === null) {
     return { status: 'error', error: `File not found: ${file}` };
   }
-  let modified = content;
+  const lines = content.split('\n');
   const changes = [];
 
-  for (const [rule, fix] of Object.entries(FIX_MAP)) {
-    let match;
-    const regex = new RegExp(fix.pattern.source, fix.pattern.flags);
-    while ((match = regex.exec(modified)) !== null) {
-      const lineNum = modified.slice(0, match.index).split('\n').length;
-      changes.push({
-        line: lineNum,
-        before: match[0],
-        after: match[0].replace(fix.pattern, fix.replacement),
-        rule,
-      });
-      modified = modified.slice(0, match.index) + match[0].replace(fix.pattern, fix.replacement) + modified.slice(match.index + match[0].length);
-      regex.lastIndex = 0;
+  // Phase 1: Line-level regex fixes (O(n) per rule)
+  for (let i = 0; i < lines.length; i++) {
+    for (const fix of LINE_FIXES) {
+      const before = lines[i];
+      lines[i] = lines[i].replace(fix.re, fix.replacement);
+      if (lines[i] !== before) {
+        changes.push({ line: i + 1, before: before.trim().slice(0, 80), after: lines[i].trim().slice(0, 80), rule: fix.rule });
+      }
     }
   }
 
+  // Phase 2: Touch target fixes
+  changes.push(...fixTouchTargets(lines));
+
+  // Phase 3: SVG aria-hidden fixes
+  changes.push(...fixSvgAriaHidden(lines));
+
+  // Apply if not dry-run
   if (!dryRun && changes.length > 0) {
     try {
-      fs.writeFileSync(path.resolve(file), modified, 'utf-8');
+      fs.writeFileSync(path.resolve(file), lines.join('\n'), 'utf-8');
     } catch (e) {
       return { status: 'error', error: `Failed to write file: ${e.message}` };
     }
@@ -626,6 +685,25 @@ function ephemeralize({ file, dryRun = true }) {
     status: 'ok',
     changes,
     applied: !dryRun && changes.length > 0,
+  };
+}
+
+// ─── Batch Ephemeralize ─────────────────────────────────────────────────────
+
+function batchEphemeralize({ files, dryRun = true }) {
+  const results = [];
+  for (const file of files) {
+    const result = ephemeralize({ file, dryRun });
+    results.push({ file, ...result });
+  }
+  const totalChanges = results.reduce((a, r) => a + (r.changes?.length || 0), 0);
+  const applied = results.filter(r => r.applied).length;
+  return {
+    status: 'ok',
+    files: results.length,
+    totalChanges,
+    applied,
+    results,
   };
 }
 
@@ -653,6 +731,8 @@ function executeTool(name, args) {
       return suggestFix(args);
     case 'design_expert_ephemeralize':
       return ephemeralize(args);
+    case 'design_expert_batch_ephemeralize':
+      return batchEphemeralize(args);
     default:
       return { status: 'error', error: `Unknown tool: ${name}` };
   }
