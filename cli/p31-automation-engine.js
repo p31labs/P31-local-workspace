@@ -45,7 +45,9 @@ const CONFIG = {
     { name: 'LOVE Ledger', file: 'cli/love-registry.js', count: 3 },
     { name: 'PHOS Forge', file: 'tools/phos-forge/mcp-server.mjs', count: 29 },
     { name: 'Cognitive Prosthetic', file: 'cli/cognitive-prosthetic.js', count: 47 },
-    { name: 'Cognitive Comms', file: 'cli/cognitive-comms.js', count: 20 }
+    { name: 'Cognitive Comms', file: 'cli/cognitive-comms.js', count: 20 },
+    { name: 'MARGE Design Expert', file: 'cli/marge-server.js', count: 10 },
+    { name: 'BOB Structural Expert', file: 'cli/bob-server.js', count: 10 }
   ],
   healthServices: [
     { name: 'phos', url: 'https://phos.p31ca.org/health' },

@@ -120,20 +120,22 @@ npm install -g andromeda-cli
 andromeda --agent
 ```
 
-The CLI exposes six MCP servers (115 tools):
+The CLI exposes eight MCP servers (135 tools):
 - `node cli/mcp-server.js` — Oasis CLI tools (11 tools)
 - `node cli/component-registry.js` — Component Registry tools (5 tools)
 - `node cli/love-registry.js` — LOVE Ledger tools (3 tools)
 - `node tools/phos-forge/mcp-server.mjs` — PHOS Forge tools (29 tools)
 - `node cli/cognitive-prosthetic.js` — Cognitive Prosthetic tools (47 tools: temporal grounding, executive function, sensory adaptation, cognitive load, communication, crisis detection, memory scaffolding)
 - `node cli/cognitive-comms.js` — Cognitive Comms tools (20 tools: tone, replies, boundaries, accommodations, agendas)
+- `node cli/marge-server.js` — MARGE Design Expert tools (10 tools: design compliance audit, glass/spoons/WCAG/accent checks, contrast ratio, auto-fix)
+- `node cli/bob-server.js` — BOB Structural Expert tools (10 tools: structural entropy, service graph, schema drift, contract audit, state machines, config topology)
 
 ### P31 Automation Engine
 
 The `cli/p31-automation-engine.js` orchestrator codifies the Fortune 1 pipeline + Sierpinski Expansion into one runnable tool (zero deps, CommonJS). It is the unified nervous system for the CWP swarm, build/deploy, testing, validation, MCP audits, and health checks.
 
 ```bash
-node cli/p31-automation-engine.js mcp      # spawn all 6 servers, count tools (115)
+node cli/p31-automation-engine.js mcp      # spawn all 8 servers, count tools (135)
 node cli/p31-automation-engine.js triper   # node tests/triper/triper-runner.mjs --cert
 node cli/p31-automation-engine.js build    # pnpm -C apps/p31ca run build (non-fatal)
 node cli/p31-automation-engine.js test     # pnpm run test:unit (vitest unit suite, non-fatal)
