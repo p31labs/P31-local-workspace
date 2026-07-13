@@ -56,6 +56,7 @@ const CONFIG = {
     { name: 'willow', url: 'https://willow.p31ca.org' },
     { name: 'bonding', url: 'https://bonding.p31ca.org' },
     { name: 'love-ledger', url: 'https://love-ledger.p31ca.org/health' },
+    { name: 'ledger-bridge', url: 'https://ledger-bridge.trimtab-signal.workers.dev/health' },
     { name: 'status', url: 'https://status.p31ca.org/health' }
   ]
 };

@@ -70,7 +70,7 @@ See `GLOBAL_IMPACT_REPORT.md` for the full citation-backed report.
 - **Frontend apps:** `apps/phos` (phos.p31ca.org), `apps/willow` (willow.p31ca.org), `apps/bonding` (bonding.p31ca.org), `apps/p31ca` (p31ca.org), `apps/phosphorus31` (phosphorus31.org)
 - **Backend workers:** `apps/gateway` (gateway.p31ca.org), `apps/status` (status.p31ca.org), `apps/auth` (p31-auth), `software/cloudflare-worker/llm-proxy` (p31-llm-proxy)
 - **Core data/orchestration workers:** `love-ledger` (deployed ledger), `jitterbug-api` (Ambient Exocortex brain-dump orchestrator — shares the `love-ledger` D1), `care-api`, `fhir`, `taler-exchange-bridge`, `taler-bridge-billing` (x402 pay-per-call). See `software/packages/jitterbug-api/README.md`.
-- **Agent / mesh workers (CWP-2026-015/016/017):** `agent-runtime` (Agents SDK tool runtime — `send_notification` + `generate_care_report`; `agent-runtime.trimtab-signal.workers.dev`), `care-mesh` (privacy-preserving care data mesh, Laplace DP + Ed25519-signed; `care-mesh.trimtab-signal.workers.dev`), `p31-mcp-server` (native MCP front door for the 9 P31 tools; `p31-mcp-server.trimtab-signal.workers.dev`). `mcp-x402-gateway` orchestrates tool routing. `ledger-bridge` (on-chain attestation relay to Sepolia contracts; `ledger-bridge.trimtab-signal.workers.dev`). See each worker's `RUNBOOK.md`.
+- **Agent / mesh workers (CWP-2026-015/016/017):** `agent-runtime` (Agents SDK tool runtime — `send_notification` + `generate_care_report`; `agent-runtime.trimtab-signal.workers.dev`), `care-mesh` (privacy-preserving care data mesh, Laplace DP + Ed25519-signed; `care-mesh.trimtab-signal.workers.dev`), `p31-mcp-server` (native MCP front door for the 9 P31 tools; `p31-mcp-server.trimtab-signal.workers.dev`). `mcp-x402-gateway` orchestrates tool routing. `ledger-bridge` (LIVE on-chain attestation relay to Base Sepolia contracts; `ledger-bridge.trimtab-signal.workers.dev`). See each worker's `RUNBOOK.md`.
 - **Shared packages:** `packages/design-system`, `packages/auth`
 - **Free Plan limits:** 100k req/day, 200k log events/day, 10 D1 databases, 5 cron triggers
 
@@ -120,10 +120,10 @@ npm install -g andromeda-cli
 andromeda --agent
 ```
 
-The CLI exposes eight MCP servers (135 tools):
+The CLI exposes eight MCP servers (137 tools):
 - `node cli/mcp-server.js` — Oasis CLI tools (11 tools)
 - `node cli/component-registry.js` — Component Registry tools (5 tools)
-- `node cli/love-registry.js` — LOVE Ledger tools (3 tools)
+- `node cli/love-registry.js` — LOVE Ledger tools (4 tools: love_status, love_balance, love_sync, love_anchor)
 - `node tools/phos-forge/mcp-server.mjs` — PHOS Forge tools (29 tools)
 - `node cli/cognitive-prosthetic.js` — Cognitive Prosthetic tools (47 tools: temporal grounding, executive function, sensory adaptation, cognitive load, communication, crisis detection, memory scaffolding)
 - `node cli/cognitive-comms.js` — Cognitive Comms tools (20 tools: tone, replies, boundaries, accommodations, agendas)
@@ -135,7 +135,7 @@ The CLI exposes eight MCP servers (135 tools):
 The `cli/p31-automation-engine.js` orchestrator codifies the Fortune 1 pipeline + Sierpinski Expansion into one runnable tool (zero deps, CommonJS). It is the unified nervous system for the CWP swarm, build/deploy, testing, validation, MCP audits, and health checks.
 
 ```bash
-node cli/p31-automation-engine.js mcp      # spawn all 8 servers, count tools (135)
+node cli/p31-automation-engine.js mcp      # spawn all 8 servers, count tools (137)
 node cli/p31-automation-engine.js triper   # node tests/triper/triper-runner.mjs --cert
 node cli/p31-automation-engine.js build    # pnpm -C apps/p31ca run build (non-fatal)
 node cli/p31-automation-engine.js test     # pnpm run test:unit (vitest unit suite, non-fatal)

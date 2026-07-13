@@ -45,6 +45,9 @@ fallthrough = false
 [vars]
 BLIND_MODE = "taler"
 ENVIRONMENT = "production"
+# On-chain attestation bridge (CWP-2026-022). love-ledger anchors every
+# court-admissible love_chain entry here for verifiable on-chain witnesses.
+BRIDGE_URL = "https://ledger-bridge.trimtab-signal.workers.dev"
 
 [observability]
 enabled = true

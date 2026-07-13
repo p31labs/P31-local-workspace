@@ -1,8 +1,8 @@
 # ledger-bridge — RUNBOOK
 
-**Service:** `ledger-bridge` (not yet deployed)
+**Service:** `ledger-bridge` (LIVE — https://ledger-bridge.trimtab-signal.workers.dev)
 **Repo:** `software/workers/ledger-bridge`
-**Stack:** Cloudflare Worker + `viem` (Sepolia / chain 11155111)
+**Stack:** Cloudflare Worker + `viem` (Base Sepolia / chain 84532)
 **Purpose:** Off-chain → on-chain attestation relay. Closes the gap where no
 Worker calls the deployed P31 sovereign-chain contracts.
 
@@ -18,52 +18,54 @@ Two on-chain actions are supported:
 | `POST /anchor-batch` | `anchor(...)` × N | `P31TransparencyAnchor` |
 | `POST /care-proof` | `submitCareProofs(...)` | `ProofOfCare` (as relay) |
 
-## Deployed contract addresses (Sepolia)
+## Deployed contract addresses (Base Sepolia, 84532)
 
 - `ProofOfCare` — `0x4384c856c0ccc9cb5a4adb148937ea557293543b` (live)
 - `LOVESBT` — `0x8dd8041f7e78decb2f3bb078d68da2e2f36f5636` (live)
-- `P31TransparencyAnchor` — **NOT deployed by `DeployAll.s.sol`**. Deploy it
-  (forge script in `bonding-soup/packages/p31-sovereign-chain`) and set
-  `ANCHOR_ADDR` in `wrangler.toml` before using `/anchor`. The Worker refuses to
-  broadcast while `ANCHOR_ADDR` is the zero address.
+- `P31TransparencyAnchor` — `0xd930Fc4d429BbE6B8CEcca9e4C77386dB528e267` (**deployed 2026-07-13**, `ANCHOR_ADDR` set)
+- Full set: see `apps/p31ca/public/p31-chain-anchor.json`
 
-## Dry-run (default, safe)
+## Live mode (current)
 
-`DRY_RUN="true"` (default) → endpoints encode the calldata and return it as JSON
-**without broadcasting**. Deploy and inspect with no secrets:
+`DRY_RUN="false"` (set 2026-07-13) → endpoints broadcast real transactions to
+Base Sepolia. `BRIDGE_PRIVATE_KEY` is set as a Cloudflare secret.
 
 ```
-curl https://<worker>/health
-curl -X POST https://<worker>/anchor -H 'Content-Type: application/json' \
-  -d '{"entryHash":"0x<64-hex>","uri":"ipfs://love-chain/<id>"}'
-# → {"dryRun":true,"label":"anchor","to":"0x...","data":"0x...", ...}
+curl https://ledger-bridge.trimtab-signal.workers.dev/health
+# → {"status":"ok","dryRun":false,"chain":"base-sepolia","anchorDeployed":true,...}
+
+curl -X POST https://ledger-bridge.trimtab-signal.workers.dev/anchor \
+  -H 'Content-Type: application/json' \
+  -d '{"entryHash":"0x<64-hex>","uri":"https://love-ledger.p31ca.org/chain?did=<did>"}'
+# → {"ok":true,"label":"anchor","txHash":"0x...","status":"success"}
 ```
 
-## Go live
+## Go live (DONE — 2026-07-13)
 
-1. Deploy `P31TransparencyAnchor` to Sepolia; set `ANCHOR_ADDR`.
-2. Fund a Sepolia signer wallet.
-3. Set the signer as a secret:
-   ```
-   cd software/workers/ledger-bridge
-   wrangler secret put BRIDGE_PRIVATE_KEY   # 0x... private key
-   ```
-4. Point `ProofOfCare` at this Worker (one-time, by the **architect** key — the
-   bridge cannot set its own relay):
-   ```
-   # off-chain, with the architect/deployer key:
-   ProofOfCare.setRelay(<ledger-bridge deployed address>)
-   ```
-5. Flip dry-run off (set `DRY_RUN="false"` via `wrangler variable put`).
-6. `npx wrangler deploy`.
+1. ✅ Deployed `P31TransparencyAnchor` to Base Sepolia; set `ANCHOR_ADDR`.
+2. ✅ Funded signer wallet (deployer key, ~2 ETH on Base Sepolia).
+3. ✅ Set `BRIDGE_PRIVATE_KEY` via `wrangler secret put`.
+4. ⏳ `ProofOfCare.setRelay(<bridge address>)` — pending architect key; only
+   needed for `/care-proof` (relay path). `/anchor` is permissionless.
+5. ✅ Flipped `DRY_RUN="false"`.
+6. ✅ `wrangler deploy` — live.
 
 ## Integration (how LOVE ledger events reach here)
 
-The LOVE ledger (`apps/phos/src/workers/love-ledger`, `love_chain` table) should,
-after inserting a court-admissible entry, call `POST /anchor` with
-`entryHash = entry_hash` and a `uri` to the manifest. This is the on-chain
-court-admissible anchor. Wire it as a service binding or scheduled cron — left as
-the integration step (the bridge is decoupled and callable over HTTP).
+The LOVE ledger (`apps/phos/src/workers/love-ledger`, `love_chain` table) now
+anchors every court-admissible entry on-chain. After each `INSERT` into
+`love_chain` (in `/transfer` and `/withdraw`), the Worker calls `POST /anchor`
+via `ctx.waitUntil(anchorOnChain(entryHash, did, env.BRIDGE_URL))` — fire-and-forget,
+non-blocking. The `entry_hash` (64-hex, no prefix) is `0x`-prefixed to match
+`P31TransparencyAnchor.anchor()`'s `bytes32` arg. The `uri` points at the
+verifiable hash-chain manifest for that DID:
+
+```
+https://love-ledger.p31ca.org/chain?did=<did>
+```
+
+Agents can anchor arbitrary entries via the `love_anchor` MCP tool
+(`cli/love-registry.js`).
 
 ## Verify
 ```

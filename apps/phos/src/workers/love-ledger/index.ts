@@ -18,6 +18,31 @@ async function sha256(input: string): Promise<string> {
   return Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
+/**
+ * Anchor a court-admissible ledger entry on-chain via the ledger-bridge.
+ *
+ * The love-ledger entry_hash is a 64-char hex string WITHOUT 0x prefix.
+ * P31TransparencyAnchor.anchor() requires a 0x-prefixed bytes32, so we prefix it.
+ * The URI points at the verifiable hash-chain manifest for that DID — anyone
+ * can fetch it and confirm the entry existed at the anchored block time.
+ *
+ * Fire-and-forget: failures are swallowed (best-effort anchoring). The D1 insert
+ * is the source of truth; on-chain anchoring is the verifiable witness.
+ */
+async function anchorOnChain(entryHash: string, did: string, bridgeUrl?: string): Promise<void> {
+  if (!bridgeUrl) return;
+  const uri = `https://love-ledger.p31ca.org/chain?did=${encodeURIComponent(did)}`;
+  try {
+    await fetch(`${bridgeUrl}/anchor`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ entryHash: `0x${entryHash}`, uri }),
+    });
+  } catch {
+    // Non-blocking: on-chain anchoring is best-effort.
+  }
+}
+
 // Axis-1 CBS base64 helpers (atob-based, matches verifyReceiptSig style).
 function b64ToBytes(b64: string): Uint8Array {
   const bin = atob(b64);
@@ -317,6 +342,7 @@ export interface Env {
   ENVIRONMENT?: string;
   PASSKEY_URL?: string;
   PASSKEY_JWT_SECRET?: string;
+  BRIDGE_URL?: string;
 }
 
 export class LoveTransactionDO extends DurableObject {
@@ -326,7 +352,7 @@ export class LoveTransactionDO extends DurableObject {
 }
 
 export default {
-  async fetch(request: Request, env: Env): Promise<Response> {
+  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
     const method = request.method;
 
@@ -471,6 +497,9 @@ export default {
           INSERT INTO love_chain (id, from_did, to_did, amount, type, signature, signature_pqc, prev_hash, entry_hash, created_at)
           VALUES (?, ?, ?, ?, 'transfer', ?, ?, ?, ?, ?)
         `        ).bind(txId, body.from, body.to, body.amount, body.signature ?? null, pqcSig, prevHash, entryHash, ts).run(), 3, 'transfer_insert');
+
+        // Anchor the court-admissible entry on-chain (fire-and-forget).
+        ctx.waitUntil(anchorOnChain(entryHash, body.to, env.BRIDGE_URL));
 
         logEvent({
           event: 'transfer_completed',
@@ -820,6 +849,9 @@ export default {
 
         // Atomic: debit + chain entry commit together (or roll back).
         await env.LOVE_DB.batch([debit, chain]);
+
+        // Anchor the court-admissible entry on-chain (fire-and-forget).
+        ctx.waitUntil(anchorOnChain(entryHash, body.did, env.BRIDGE_URL));
 
         return new Response(JSON.stringify({
           success: true,

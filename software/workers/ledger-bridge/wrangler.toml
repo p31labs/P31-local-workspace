@@ -15,9 +15,9 @@ RPC_URL = "https://sepolia.base.org"
 ANCHOR_ADDR = "0xd930Fc4d429BbE6B8CEcca9e4C77386dB528e267"
 # ProofOfCare (oracle/relay) — deployed Base Sepolia.
 PROOF_OF_CARE_ADDR = "0x4384c856c0ccc9cb5a4adb148937ea557293543b"
-# Dry-run by default: encode calldata and return it WITHOUT broadcasting.
-# Set to "false" (and provide BRIDGE_PRIVATE_KEY) to send real transactions.
-DRY_RUN = "true"
+# Live mode: broadcast real transactions to Base Sepolia.
+# BRIDGE_PRIVATE_KEY set via `wrangler secret put`.
+DRY_RUN = "false"
 
 # BRIDGE_PRIVATE_KEY (funded Base Sepolia signer, relay authority) — set via:
 #   wrangler secret put BRIDGE_PRIVATE_KEY

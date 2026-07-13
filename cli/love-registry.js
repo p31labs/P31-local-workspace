@@ -38,6 +38,18 @@ const TOOLS = [
     name: 'love_sync',
     description: 'Sync local LOVE state with the cloud ledger',
     inputSchema: { type: 'object', properties: { userId: { type: 'string' } } }
+  },
+  {
+    name: 'love_anchor',
+    description: 'Anchor a LOVE ledger entry hash on-chain via P31TransparencyAnchor (Base Sepolia). Returns the broadcast tx hash.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        entryHash: { type: 'string', description: '0x-prefixed 32-byte hash of the ledger entry (from love_sync chain)' },
+        uri: { type: 'string', description: 'Manifest URI (default: love-ledger chain query for userId)' }
+      },
+      required: ['entryHash']
+    }
   }
 ];
 
@@ -63,6 +75,30 @@ function executeTool(name, args) {
       const url = `${LOVE_LEDGER_URL}/chain?did=${encodeURIComponent(userId)}`;
       const result = fetchJSON(url);
       return result._error ? { error: result._error, status: 'error' } : { synced: true, chain: result, status: 'ok' };
+    }
+    case 'love_anchor': {
+      // Anchor a LOVE ledger entry hash on-chain via the ledger-bridge.
+      const entryHash = args.entryHash;
+      if (!entryHash || !/^0x[0-9a-fA-F]{64}$/.test(entryHash)) {
+        return { error: 'entryHash must be a 0x-prefixed 64-char hex string', status: 'error' };
+      }
+      const uri = args.uri || `https://love-ledger.p31ca.org/chain?did=${encodeURIComponent(userId)}`;
+      const bridgeUrl = process.env.LEDGER_BRIDGE_URL || 'https://ledger-bridge.trimtab-signal.workers.dev';
+      const script = [
+        'const https=require("https");',
+        'const d=JSON.stringify({entryHash:process.argv[1],uri:process.argv[2]});',
+        'const o={hostname:new URL(process.argv[3]).hostname,path:"/anchor",method:"POST",headers:{"Content-Type":"application/json","Content-Length":Buffer.byteLength(d)}};',
+        'const r=https.request(o,res=>{let b="";res.on("data",c=>b+=c);res.on("end",()=>process.stdout.write(b))});',
+        'r.on("error",e=>{process.stdout.write(JSON.stringify({error:String(e.message),status:"error"}))});',
+        'r.write(d);r.end();'
+      ].join('');
+      try {
+        const raw = execFileSync('node', ['-e', script, entryHash, uri, bridgeUrl], { timeout: 15000, encoding: 'utf-8', stdio: ['ignore', 'pipe', 'pipe'] });
+        const parsed = JSON.parse(raw);
+        return { ...parsed, status: parsed.ok ? 'ok' : 'error', explorer: `https://sepolia.basescan.org/tx/${parsed.txHash}` };
+      } catch (e) {
+        return { error: `Bridge error: ${e.message}`, status: 'error' };
+      }
     }
     default:
       return { error: `Unknown tool: ${name}`, status: 'error' };
