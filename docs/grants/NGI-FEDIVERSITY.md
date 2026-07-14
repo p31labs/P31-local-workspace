@@ -1,10 +1,10 @@
-# NGI Fediversity — Proposal Narrative (CWP-2026-026)
+# NGI Fediversity — Proposal Narrative (CWP-2026-030)
 
 **Programme:** NGI Fediversity 12th Open Call
 **Deadline:** 2026-08-01, 12:00 CEST
 **Applicant:** P31 Labs
 **Requested amount:** €25,000
-**Status:** Draft ready for final submission — live demo links included below.
+**Status:** Final submission ready — live demo links, compliance evidence, 104 tests passing.
 
 ---
 
@@ -24,7 +24,9 @@ crisis-mode, `data-spoons` motion scaling). **PHOS-Sovereign** makes it decentra
 - **NixOS module** — one-command, reproducible self-hosting of the full P31 stack
   (PHOS + love-ledger + ledger-bridge + contracts), so a school or co-op can run their own instance.
 - **Sovereign identity** — Ed25519 `did:key` + quantum-safe `did:jwk` (ML-DSA-65); keys never leave
-  the browser.
+  the browser. Supports `did:web` resolution per W3C DID Core v1.1 (Candidate Recommendation).
+- **Post-quantum credentials** — ML-DSA-65 SD-JWT VC issuance, composite signatures
+  (Ed25519 + ML-DSA-65), NIST IR 8547 compliant. (CWP-2026-029/030)
 
 ## 3. What we will build with NGI Fediversity funding
 
@@ -41,9 +43,15 @@ crisis-mode, `data-spoons` motion scaling). **PHOS-Sovereign** makes it decentra
   - **Care Mint:** https://phos.p31ca.org/mint
   - **PQC Keys (quantum-safe DIDs):** https://phos.p31ca.org/pqc-keys
   - **Passport (sovereign identity):** https://phos.p31ca.org/passport
+- **Pilot Dashboard:** https://pilot.p31ca.org — real-time pilot operations
+- **Sovereign Agent:** https://phos.p31ca.org/health — D1 + R2 health status
+- **Ledger Bridge:** https://ledger-bridge.trimtab-signal.workers.dev/health — on-chain relay health
 - **On-chain (Base Sepolia 84532):** `ProofOfCare` `0x08263FdD…`, `LOVESBT` `0x521cAD1b…`,
   `P31TransparencyAnchor` `0xd930Fc4d…`
 - **Decentralised care mesh:** `care-mesh` (Laplace DP + Ed25519-signed) — privacy-preserving care data.
+- **18 pilot families** registered in `pilot_registry` (shared LOVE ledger D1).
+- **Standards:** RFC 9964 (AKP JWK), DID Core v1.1 (`did:key`/`did:jwk`/`did:web`),
+  SD-JWT VC draft-17, NIST IR 8547. **104 tests passing.**
 
 ## 5. Why NGI Fediversity
 

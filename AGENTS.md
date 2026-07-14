@@ -20,6 +20,10 @@ verdict — a few overstated claims from earlier drafts have been corrected.
   local client-side document in PHOS (`apps/phos/src/surfaces/PassportSurface.tsx`), not an on-chain token.
   `GenesisSpark.sol` is soulbound by convention but does not implement the full ERC-5192 interface.
 - **DID Core v1.0** — [W3C Recommendation](https://www.w3.org/TR/did-core/); IANA registers `did.json`.
+- **DID Core v1.1** — [W3C Candidate Recommendation](https://www.w3.org/TR/did-core/) (2026-03-05).
+  P31 supports `did:key` (Ed25519), `did:jwk` (ML-DSA-65 AKP, RFC 9964), and `did:web`
+  (HTTPS fetch per DID Core v1.1 §8.3). `resolveDIDAsync()` handles all three methods.
+  (CWP-2026-030 Phase 3)
 - **Sovereign DIDs (P31)** — primary `did:key` (Ed25519, Web Crypto) for on-chain care proofs;
   plus a quantum-safe **`did:jwk`** (ML-DSA-65, encoded per IANA JOSE RFC 9964 as `kty:AKP`, **not**
   `crv`). Both bind to an ETH address in `love-ledger`'s self-signed `identity_registry`. PHOS
@@ -34,6 +38,7 @@ verdict — a few overstated claims from earlier drafts have been corrected.
     Disclosure JWTs (RFC 9901) pinned to **draft-ietf-oauth-sd-jwt-vc-17** (`typ:dc+sd-jwt`,
     `_sd_alg:sha-256`), Ed25519-signed, SHA-256 (`@noble/hashes`) over salted disclosures. Endpoints:
     `POST /credential/issue` and `POST /credential/verify`. Used by the pilot-dashboard "Active SD-JWTs" KPI.
+    `@sd-jwt/core` v0.20.0 installed as reference implementation (CWP-2026-030 Phase 2).
 - **WCAG 2.2** — [W3C Recommendation](https://www.w3.org/TR/WCAG22/) (2024-12-12);
   `data-spoons` motion scaling, CrisisMode, skip links, `prefers-reduced-motion` are
   **verified in code**. The automated axe-core audit runner (`scripts/audit-wcag.mjs`)

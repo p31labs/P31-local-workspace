@@ -2,8 +2,9 @@
  * DID Core v1.1 Resolver — W3C Candidate Recommendation Snapshot 2026-03-05
  * https://www.w3.org/TR/2026/CR-did-1.1-20260305/
  *
- * Supports did:key (Ed25519) and did:jwk (ML-DSA-65 AKP, RFC 9964).
- * No network fetch required — both methods are self-resolving.
+ * Supports did:key (Ed25519), did:jwk (ML-DSA-65 AKP, RFC 9964),
+ * and did:web (HTTPS fetch per DID Core v1.1 §8.3).
+ * CWP-2026-030 Phase 3: did:web resolution added.
  */
 
 import { fromBase64Url } from './crypto';
@@ -51,7 +52,7 @@ export interface ParsedDID {
 }
 
 export function parseDID(did: string): ParsedDID | null {
-  const match = did.match(/^did:([a-z0-9]+):([a-zA-Z0-9._%-]+)(\/[^\?#]*)?(\?[^\#]*)?(#.*)?$/);
+  const match = did.match(/^did:([a-z0-9]+):([a-zA-Z0-9._%-:]+)(\/[^\?#]*)?(\?[^\#]*)?(#.*)?$/);
   if (!match) return null;
   const method = match[1] as DIDMethod;
   if (!['key', 'jwk', 'web'].includes(method)) return null;
@@ -160,7 +161,57 @@ export function resolveDID(did: string): DIDDocument | null {
   switch (parsed.method) {
     case 'key': return resolveDidKey(did);
     case 'jwk': return resolveDidJwk(did);
-    case 'web': return null; // did:web requires HTTP fetch — not implemented here
+    case 'web': return null; // did:web requires HTTP — use resolveDIDAsync
+    default: return null;
+  }
+}
+
+// ── did:web Resolution (CWP-2026-030 Phase 3) ──────────────────────────
+// Per DID Core v1.1 §8.3: did:web:example.com:user:alice
+// → https://example.com/user/alice/did.json
+// Uses HTTP fetch — only available in async context.
+
+async function resolveDidWeb(did: string): Promise<DIDDocument | null> {
+  try {
+    const remaining = did.replace('did:web:', '');
+    const parts = remaining.split(':');
+    const domain = parts[0];
+    if (!domain) return null;
+
+    // Build path: domain + (optional path segments joined by /) + /did.json
+    const pathSegments = parts.slice(1);
+    const path = pathSegments.length > 0
+      ? `/${pathSegments.join('/')}/did.json`
+      : '/.well-known/did.json';
+
+    const url = `https://${domain}${path}`;
+    const res = await fetch(url, {
+      headers: { 'Accept': 'application/did+json' },
+      // Short timeout for resolver
+      signal: AbortSignal.timeout(5000),
+    });
+    if (!res.ok) return null;
+
+    const doc = await res.json() as DIDDocument;
+    // Validate basic DID Document structure
+    if (!doc['@context'] || !doc.id || !doc.verificationMethod) return null;
+    return doc;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Async resolver — supports all methods including did:web (requires fetch).
+ */
+export async function resolveDIDAsync(did: string): Promise<DIDDocument | null> {
+  const parsed = parseDID(did);
+  if (!parsed) return null;
+
+  switch (parsed.method) {
+    case 'key': return resolveDidKey(did);
+    case 'jwk': return resolveDidJwk(did);
+    case 'web': return resolveDidWeb(did);
     default: return null;
   }
 }

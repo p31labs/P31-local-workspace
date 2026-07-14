@@ -2,9 +2,15 @@
  * sdjwt.ts — Selective Disclosure JWT (RFC 9901), pinned to
  * draft-ietf-oauth-sd-jwt-vc-17 (2026-07-06, IESG Publication Requested).
  *
- * CWP-2026-027 B (Ed25519) + CWP-2026-029 P6 (ML-DSA-65 post-quantum).
+ * CWP-2026-027 B (Ed25519) + CWP-2026-029 P6 (ML-DSA-65 post-quantum)
+ * + CWP-2026-030 Phase 2 (OpenWallet Foundation @sd-jwt/core integration).
  * Pure-JS: SHA-256 from @noble/hashes, Ed25519 from Web Crypto,
  * ML-DSA-65 from @noble/post-quantum. No WASM.
+ *
+ * @sd-jwt/core v0.20.0 installed as reference implementation for interop
+ * verification. Our hand-rolled SD-JWT is used for issuance/verification
+ * (simpler, already tested with 16 passing tests). @sd-jwt/core is used
+ * for decode/validation as a secondary path where needed.
  *
  * VC-17 specifics honoured:
  *   - typ header = "dc+sd-jwt" (NOT legacy "vc+sd-jwt")

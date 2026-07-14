@@ -179,7 +179,8 @@ export default {
     const url = new URL(request.url);
 
     if (url.pathname === "/health") {
-      return json({
+      const start = Date.now();
+      const report: Record<string, unknown> = {
         status: "ok",
         service: "ledger-bridge",
         dryRun: isDryRun(env),
@@ -187,7 +188,17 @@ export default {
         proofOfCare: env.PROOF_OF_CARE_ADDR,
         anchor: env.ANCHOR_ADDR,
         anchorDeployed: env.ANCHOR_ADDR !== zeroAddress,
-      });
+        timestamp: new Date().toISOString(),
+      };
+      try {
+        await env.LOVE_DB.prepare("SELECT 1").first();
+        report.d1 = { status: "ok", latency_ms: Date.now() - start };
+      } catch (e: any) {
+        report.d1 = { status: "error", error: e.message };
+        report.status = "degraded";
+      }
+      report.total_latency_ms = Date.now() - start;
+      return json(report);
     }
 
     if (request.method !== "POST") {

@@ -1,6 +1,7 @@
 name = "sovereign-agent"
 main = "src/index.ts"
-compatibility_date = "2026-01-01"
+compatibility_date = "2026-07-01"
+compatibility_flags = ["nodejs_compat"]
 
 # CWP-2026-028 Phase 1 — Sovereign Agent edge node.
 # Proxies identity + care APIs, serves PHOS static assets from R2 (Phase 2),

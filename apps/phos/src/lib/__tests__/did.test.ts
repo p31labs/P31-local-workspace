@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseDID, resolveDID, didKeyType, type DIDDocument } from '../did';
+import { parseDID, resolveDID, resolveDIDAsync, didKeyType, type DIDDocument } from '../did';
 import { didJwkFromMlDsa65, toBase64Url, fromBase64Url } from '../crypto';
 import { ml_dsa65 } from '@noble/post-quantum/ml-dsa.js';
 
@@ -124,5 +124,32 @@ describe('did:jwk round-trip', () => {
     // Extract public key from resolved DID Document
     const resolvedPub = fromBase64Url(doc!.verificationMethod[0].publicKeyJwk!.pub);
     expect(toBase64Url(resolvedPub)).toBe(toBase64Url(kp.publicKey));
+  });
+});
+
+// ── did:web (CWP-2026-030 Phase 3) ──────────────────────────────────────
+
+describe('did:web parsing', () => {
+  it('parses did:web with domain only', () => {
+    const result = parseDID('did:web:example.com');
+    expect(result).not.toBeNull();
+    expect(result!.method).toBe('web');
+    expect(result!.id).toBe('example.com');
+  });
+
+  it('parses did:web with path segments', () => {
+    const result = parseDID('did:web:example.com:user:alice');
+    expect(result).not.toBeNull();
+    expect(result!.method).toBe('web');
+    expect(result!.id).toBe('example.com:user:alice');
+  });
+
+  it('did:web resolves to null in sync mode', () => {
+    const doc = resolveDID('did:web:example.com');
+    expect(doc).toBeNull(); // sync resolver returns null for did:web
+  });
+
+  it('didKeyType returns null for did:web', () => {
+    expect(didKeyType('did:web:example.com')).toBeNull();
   });
 });

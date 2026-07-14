@@ -53,9 +53,37 @@ function proxyHeaders(resp: Response): Headers {
 
 const app = new Hono<{ Bindings: Env }>();
 
-app.get("/health", (c) =>
-  c.json({ ok: true, service: "sovereign-agent", version: VERSION }),
-);
+app.get("/health", async (c) => {
+  const start = Date.now();
+  const report: Record<string, unknown> = {
+    ok: true,
+    service: "sovereign-agent",
+    version: VERSION,
+    timestamp: new Date().toISOString(),
+  };
+
+  // D1 connectivity check
+  try {
+    await c.env.LOVE_DB.prepare("SELECT 1").first();
+    report.d1 = { status: "ok", latency_ms: Date.now() - start };
+  } catch (e: any) {
+    report.d1 = { status: "error", error: e.message };
+    report.ok = false;
+  }
+
+  // R2 bucket check
+  try {
+    const r2Start = Date.now();
+    await c.env.ASSETS.list({ limit: 1 });
+    report.r2 = { status: "ok", latency_ms: Date.now() - r2Start, bucket: "phos-assets" };
+  } catch (e: any) {
+    report.r2 = { status: "error", error: e.message };
+    // R2 failure is non-critical (PHOS still works without static assets)
+  }
+
+  report.total_latency_ms = Date.now() - start;
+  return c.json(report, report.ok ? 200 : 503);
+});
 
 // ── Identity APIs → love-ledger (service binding) ────────────────────────
 app.all("/identity/*", async (c) => {

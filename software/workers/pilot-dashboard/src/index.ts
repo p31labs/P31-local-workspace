@@ -290,6 +290,54 @@ app.get("/api/stats", async (c) => {
   return c.json(stats);
 });
 
-app.get("/health", (c) => c.json({ ok: true, service: "pilot-dashboard" }));
+// ── CWP-2026-030 Phase 6: Onboarding API ───────────────────────────────
+
+app.get("/api/onboard/status", async (c) => {
+  const pilots = await loadPilots(c.env);
+  const total = pilots.length;
+  const onboarded = pilots.filter((p) => p.status === "onboarded").length;
+  const invited = pilots.filter((p) => p.status === "invited").length;
+  const pending = total - onboarded - invited;
+  return c.json({ total, onboarded, invited, pending });
+});
+
+app.post("/api/onboard", async (c) => {
+  const { did } = await c.req.json<{ did?: string }>();
+  if (!did) return c.json({ error: "did is required" }, 400);
+
+  // Generate onboarding link
+  const onboardUrl = `https://phos.p31ca.org?did=${encodeURIComponent(did)}`;
+
+  // Update status to 'invited'
+  await c.env.LOVE_DB.prepare(
+    "UPDATE pilot_registry SET status = 'invited' WHERE did = ?"
+  ).bind(did).run();
+
+  return c.json({
+    ok: true,
+    did,
+    onboardUrl,
+    dashboardUrl: "https://pilot.p31ca.org",
+    note: "Share the onboarding link with the pilot family.",
+  });
+});
+
+app.get("/health", async (c) => {
+  const start = Date.now();
+  const report: Record<string, unknown> = {
+    ok: true,
+    service: "pilot-dashboard",
+    timestamp: new Date().toISOString(),
+  };
+  try {
+    await c.env.LOVE_DB.prepare("SELECT 1").first();
+    report.d1 = { status: "ok", latency_ms: Date.now() - start };
+  } catch (e: any) {
+    report.d1 = { status: "error", error: e.message };
+    report.ok = false;
+  }
+  report.total_latency_ms = Date.now() - start;
+  return c.json(report, report.ok ? 200 : 503);
+});
 
 export default app;

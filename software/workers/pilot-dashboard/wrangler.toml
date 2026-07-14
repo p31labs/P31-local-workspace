@@ -1,6 +1,7 @@
 name = "pilot-dashboard"
 main = "src/index.ts"
-compatibility_date = "2026-01-01"
+compatibility_date = "2026-07-01"
+compatibility_flags = ["nodejs_compat"]
 
 # CWP-2026-027 C — pilot operations dashboard.
 # Binds the SHARED LOVE_DB (Free-Plan cap: no new D1 databases).

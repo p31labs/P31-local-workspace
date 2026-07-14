@@ -1,6 +1,6 @@
 name = "ledger-bridge"
 main = "src/index.ts"
-compatibility_date = "2026-01-01"
+compatibility_date = "2026-07-01"
 compatibility_flags = ["nodejs_compat"]
 
 # ── On-chain attestation relay (CWP-2026-021, Axis C) ───────────────────────
