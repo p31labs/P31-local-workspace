@@ -40,6 +40,7 @@ interface Stats {
   mints: number;
   credentials: number;
   anomalies: number;
+  invited: number;
 }
 
 const enc = new TextEncoder();
@@ -65,6 +66,7 @@ async function sign(ts: string, secret: string): Promise<string> {
 
 // HMAC gate for /api/* — 60s TTL, same scheme as mcp-x402 LOVE path.
 async function requireAuth(c: any, next: any) {
+  c.header('x-request-id', c.req.header('x-request-id') || crypto.randomUUID());
   const secret = c.env.LOVE_AUTH_SECRET as string | undefined;
   if (!secret) return c.json({ error: "LOVE_AUTH_SECRET not configured" }, 500);
   const header = c.req.header("x-p31-auth") || "";
@@ -80,8 +82,14 @@ async function requireAuth(c: any, next: any) {
 }
 
 async function safeFirst(env: Env, sql: string): Promise<any> {
+  const start = Date.now();
   try {
-    return await env.LOVE_DB.prepare(sql).first();
+    const result = await env.LOVE_DB.prepare(sql).first();
+    const duration = Date.now() - start;
+    if (duration > 500) {
+      console.warn(`[SLOW_QUERY] ${duration}ms: ${sql.slice(0, 100)}`);
+    }
+    return result;
   } catch {
     return null;
   }
@@ -148,6 +156,11 @@ async function loadStats(env: Env, pilots: Pilot[]): Promise<Stats> {
   )) || {};
   const mintsRow = await safeFirst(env, "SELECT COUNT(*) AS n FROM care_proofs");
   const credRow = await safeFirst(env, "SELECT COUNT(*) AS n FROM credential_issuance");
+  let invited = 0;
+  try {
+    const invRow = await safeFirst(env, "SELECT COUNT(*) AS n FROM onboarding_events WHERE event = 'invited'");
+    invited = Number(invRow?.n) || 0;
+  } catch { /* table may not exist */ }
   return {
     total: Number(s.total) || 0,
     active: Number(s.active) || 0,
@@ -157,6 +170,7 @@ async function loadStats(env: Env, pilots: Pilot[]): Promise<Stats> {
     mints: Number(mintsRow?.n) || 0,
     credentials: Number(credRow?.n) || 0,
     anomalies: pilots.filter((p) => p.anomaly).length,
+    invited,
   };
 }
 
@@ -166,10 +180,27 @@ function esc(s: string): string {
   );
 }
 
+async function ensureOnboardingTable(db: D1Database): Promise<void> {
+  try {
+    await db.prepare(`
+      CREATE TABLE IF NOT EXISTS onboarding_events (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        did TEXT NOT NULL,
+        event TEXT NOT NULL,
+        timestamp INTEGER NOT NULL,
+        metadata TEXT
+      )
+    `).run();
+  } catch {
+    // Table creation best-effort
+  }
+}
+
 function renderDashboard(pilots: Pilot[], stats: Stats): string {
   const cards = [
     ["Pilots", stats.total],
     ["Active", stats.active],
+    ["Invited", stats.invited],
     ["With ETH binding", stats.with_eth],
     ["Care mints", stats.mints],
     ["SD-JWTs", stats.credentials],
@@ -196,6 +227,13 @@ function renderDashboard(pilots: Pilot[], stats: Stats): string {
         <td>${p.mints}</td>
         <td>${p.credentials}</td>
         <td>${anom}</td>
+        <td>
+          <button class="invite-btn" onclick="sendInvite('${esc(p.did)}')" 
+                  aria-label="Send invitation to ${esc(p.family_name)}"
+                  ${p.status === 'invited' || p.status === 'onboarded' ? 'disabled' : ''}>
+            ${p.status === 'invited' ? 'Sent' : p.status === 'onboarded' ? 'Done' : 'Invite'}
+          </button>
+        </td>
       </tr>`;
     })
     .join("");
@@ -241,6 +279,13 @@ function renderDashboard(pilots: Pilot[], stats: Stats): string {
   .bar{display:inline-block;width:80px;height:8px;border-radius:6px;background:rgba(255,255,255,.1);overflow:hidden;vertical-align:middle}
   .bar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--ok))}
   .sr-num{margin-left:.5rem;color:var(--muted);font-size:.8rem}
+  .invite-btn{
+    background:var(--accent);color:#001;border:none;border-radius:8px;
+    padding:.4rem .8rem;font-size:.82rem;cursor:pointer;font-weight:600;
+    min-height:44px;min-width:44px;
+  }
+  .invite-btn:disabled{opacity:.5;cursor:not-allowed}
+  .invite-btn:hover:not(:disabled){filter:brightness(1.1)}
   footer{color:var(--muted);font-size:.8rem;padding:1rem clamp(1rem,4vw,3rem) 2rem}
   :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
   @media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
@@ -260,18 +305,54 @@ function renderDashboard(pilots: Pilot[], stats: Stats): string {
     <thead><tr>
       <th scope="col">DID</th><th scope="col">Status</th><th scope="col">Nodes</th>
       <th scope="col">Mesh health</th><th scope="col">Mints</th><th scope="col">SD-JWTs</th><th scope="col">Health</th>
+      <th scope="col">Actions</th>
     </tr></thead>
     <tbody>${rows}</tbody>
   </table>
 </main>
 <footer>Generated ${new Date().toISOString()} · data: shared LOVE_DB (love-ledger)</footer>
+<script>
+async function sendInvite(did) {
+  const btn = event.target;
+  btn.disabled = true;
+  btn.textContent = 'Sending...';
+  try {
+    const resp = await fetch('/api/invite', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ did })
+    });
+    const data = await resp.json();
+    if (data.ok) {
+      btn.textContent = 'Sent';
+      await fetch('/api/invite/track', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ did, event: 'invited' })
+      });
+    } else {
+      btn.textContent = 'Error';
+      btn.disabled = false;
+    }
+  } catch {
+    btn.textContent = 'Error';
+    btn.disabled = false;
+  }
+}
+</script>
 </body>
 </html>`;
 }
 
 const app = new Hono<{ Bindings: Env }>();
 
-app.use("/api/*", requireAuth);
+app.use("/api/*", async (c, next) => {
+  // Skip auth for internal invite routes (dashboard page only)
+  if (c.req.path === "/api/invite" || c.req.path === "/api/invite/track") {
+    return next();
+  }
+  return requireAuth(c, next);
+});
 
 app.get("/", async (c) => {
   const pilots = await loadPilots(c.env);
@@ -320,6 +401,43 @@ app.post("/api/onboard", async (c) => {
     dashboardUrl: "https://pilot.p31ca.org",
     note: "Share the onboarding link with the pilot family.",
   });
+});
+
+app.post("/api/invite", async (c) => {
+  const { did } = await c.req.json<{ did?: string }>();
+  if (!did) return c.json({ error: "did is required" }, 400);
+
+  // Validate DID exists in pilot_registry
+  const pilot = await c.env.LOVE_DB.prepare(
+    "SELECT did FROM pilot_registry WHERE did = ?"
+  ).bind(did).first();
+  if (!pilot) return c.json({ error: "unknown pilot DID" }, 404);
+
+  // Update status to 'invited' (skip if already onboarded)
+  await c.env.LOVE_DB.prepare(
+    "UPDATE pilot_registry SET status = 'invited' WHERE did = ? AND status != 'onboarded'"
+  ).bind(did).run();
+
+  // Log event
+  await ensureOnboardingTable(c.env.LOVE_DB);
+  await c.env.LOVE_DB.prepare(
+    "INSERT INTO onboarding_events (did, event, timestamp) VALUES (?, ?, ?)"
+  ).bind(did, "invited", Date.now()).run();
+
+  const onboardUrl = `https://phos.p31ca.org?did=${encodeURIComponent(did)}`;
+  return c.json({ ok: true, did, onboardUrl });
+});
+
+app.post("/api/invite/track", async (c) => {
+  const { did, event } = await c.req.json<{ did?: string; event?: string }>();
+  if (!did || !event) return c.json({ error: "did and event required" }, 400);
+
+  await ensureOnboardingTable(c.env.LOVE_DB);
+  await c.env.LOVE_DB.prepare(
+    "INSERT INTO onboarding_events (did, event, timestamp) VALUES (?, ?, ?)"
+  ).bind(did, event, Date.now()).run();
+
+  return c.json({ ok: true });
 });
 
 app.get("/health", async (c) => {

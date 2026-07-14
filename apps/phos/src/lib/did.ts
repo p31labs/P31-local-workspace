@@ -24,6 +24,18 @@ export interface DIDDocument {
   alsoKnownAs?: string[];
 }
 
+// DID Core v1.1 §10.2 — Resolution Metadata
+export interface DIDResolutionMetadata {
+  contentType?: string;
+  error?: string;
+}
+
+export interface DIDResolutionResult {
+  didResolutionMetadata: DIDResolutionMetadata;
+  didDocument: DIDDocument | null;
+  didDocumentStream: string | null;
+}
+
 export interface VerificationMethod {
   id: string;
   type: string;
@@ -84,6 +96,18 @@ function base58btcDecode(input: string): Uint8Array {
     bytes[i] = parseInt(hex.slice(i * 2, i * 2 + 2), 16);
   }
   return bytes;
+}
+
+export function base58btcEncode(bytes: Uint8Array): string {
+  let num = 0n;
+  for (const b of bytes) num = num * 256n + BigInt(b);
+  if (num === 0n) return BASE58BTC_ALPHABET[0];
+  let result = '';
+  while (num > 0n) {
+    result = BASE58BTC_ALPHABET[Number(num % 58n)] + result;
+    num /= 58n;
+  }
+  return result;
 }
 
 function resolveDidKey(did: string): DIDDocument | null {
@@ -178,15 +202,24 @@ async function resolveDidWeb(did: string): Promise<DIDDocument | null> {
     const domain = parts[0];
     if (!domain) return null;
 
-    // Build path: domain + (optional path segments joined by /) + /did.json
-    const pathSegments = parts.slice(1);
-    const path = pathSegments.length > 0
-      ? `/${pathSegments.join('/')}/did.json`
+    // Detect port: if parts[1] is all digits, it's a port segment
+    let host = domain;
+    let pathParts: string[];
+    if (parts.length > 1 && /^\d+$/.test(parts[1])) {
+      host = `${domain}:${parts[1]}`;
+      pathParts = parts.slice(2);
+    } else {
+      pathParts = parts.slice(1);
+    }
+
+    // Build path: host + (optional path segments joined by /) + /did.json
+    const path = pathParts.length > 0
+      ? `/${pathParts.join('/')}/did.json`
       : '/.well-known/did.json';
 
-    const url = `https://${domain}${path}`;
+    const url = `https://${host}${path}`;
     const res = await fetch(url, {
-      headers: { 'Accept': 'application/did+json' },
+      headers: { 'Accept': 'application/did+json, application/did+ld+json' },
       // Short timeout for resolver
       signal: AbortSignal.timeout(5000),
     });
@@ -214,6 +247,28 @@ export async function resolveDIDAsync(did: string): Promise<DIDDocument | null> 
     case 'web': return resolveDidWeb(did);
     default: return null;
   }
+}
+
+// ── DID Core v1.1 §10.2 — Resolution Metadata Envelope ──────────────────
+
+function wrapResult(doc: DIDDocument | null): DIDResolutionResult {
+  if (doc) {
+    return {
+      didResolutionMetadata: { contentType: 'application/did+ld+json' },
+      didDocument: doc,
+      didDocumentStream: JSON.stringify(doc),
+    };
+  }
+  return {
+    didResolutionMetadata: { error: 'notFound' },
+    didDocument: null,
+    didDocumentStream: null,
+  };
+}
+
+export async function resolveDIDWrapped(did: string): Promise<DIDResolutionResult> {
+  const doc = await resolveDIDAsync(did);
+  return wrapResult(doc);
 }
 
 // ── DID Signature Verification (dispatches by method) ────────────────────

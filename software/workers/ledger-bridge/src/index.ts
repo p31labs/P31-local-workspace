@@ -380,7 +380,8 @@ export default {
         return json({ ok: true, txHash, did, ethAddress: row.eth_address });
       }
 
-      // Dry-run: return calldata, record with null txHash.
+      // Dry-run: return relay response as streaming body (intentional — response IS the relay output).
+      // The D1 INSERT below is fire-and-forget for audit trail.
       const dry = relay(env, env.PROOF_OF_CARE_ADDR, data, "submitCareProofs");
       await env.LOVE_DB.prepare(
         `INSERT INTO care_proofs (did, eth_address, t_prox, q_res, tasks, entropy_root, tx_hash, anchored_at)

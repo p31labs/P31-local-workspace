@@ -12,6 +12,8 @@ import {
   createPresentation,
   verifyPresentation,
   issueSDJWTPostQuantum,
+  verifySDJWTPostQuantum,
+  verifySDJWTWithPresentation,
 } from "../src/sdjwt.ts";
 import { ml_dsa65 } from "@noble/post-quantum/ml-dsa.js";
 
@@ -213,4 +215,97 @@ test("PQ SD-JWT: tampered PQ SD-JWT fails ML-DSA-65 verification", async () => {
 
   const ok = ml_dsa65.verify(sigBytes, msg, pkBytes);
   assert.equal(ok, false, "tampered PQ SD-JWT must fail ML-DSA-65 verification");
+});
+
+// ── CWP-2026-034: Draft-17 vct, exp/nbf, cnf binding, PQ verification ──────
+
+test("SD-JWT includes vct claim in payload", async () => {
+  const cred = await issueSDJWT({ careScore: 85 });
+  const jws = cred.sdjwt.split("~")[0];
+  const [, p] = jws.split(".");
+  const payload = JSON.parse(atob(p.replace(/-/g, "+").replace(/_/g, "/")));
+  assert.ok(payload.vct, "vct claim must be present");
+  assert.match(payload.vct, /p31ca\.org/, "vct must reference p31ca.org");
+});
+
+test("SD-JWT includes exp and nbf time bounds", async () => {
+  const cred = await issueSDJWT({ careScore: 85 });
+  const jws = cred.sdjwt.split("~")[0];
+  const [, p] = jws.split(".");
+  const payload = JSON.parse(atob(p.replace(/-/g, "+").replace(/_/g, "/")));
+  assert.ok(typeof payload.nbf === "number", "nbf must be a number");
+  assert.ok(typeof payload.exp === "number", "exp must be a number");
+  assert.ok(payload.exp > payload.nbf, "exp must be after nbf");
+});
+
+test("SD-JWT with expired nbf/exp fails verification", async () => {
+  const now = Math.floor(Date.now() / 1000);
+  const cred = await issueSDJWT({ careScore: 85 }, undefined, {
+    exp: now - 100,
+    nbf: now - 200,
+  });
+  const issuer = await getIssuer();
+  const res = await verifySDJWT(cred.sdjwt, issuer.pub);
+  assert.equal(res.valid, false, "expired SD-JWT must fail");
+  assert.equal(res.error, "expired");
+});
+
+test("PQ SD-JWT: verifySDJWTPostQuantum verifies ML-DSA-65 signature", async () => {
+  const pqKP = ml_dsa65.keygen();
+  const cred = await issueSDJWTPostQuantum({ careScore: 92 }, pqKP);
+  const result = await verifySDJWTPostQuantum(cred.sdjwt, pqKP.publicKey);
+  assert.equal(result.valid, true, "PQ SD-JWT must verify");
+  assert.equal(result.disclosed.careScore, 92);
+});
+
+test("PQ SD-JWT: includes vct and time bounds", async () => {
+  const pqKP = ml_dsa65.keygen();
+  const cred = await issueSDJWTPostQuantum({ careScore: 88 }, pqKP);
+  const jws = cred.sdjwt.split("~")[0];
+  const [, p] = jws.split(".");
+  const payload = JSON.parse(atob(p.replace(/-/g, "+").replace(/_/g, "/")));
+  assert.ok(payload.vct, "vct claim must be present in PQ SD-JWT");
+  assert.ok(typeof payload.nbf === "number", "nbf must be a number");
+  assert.ok(typeof payload.exp === "number", "exp must be a number");
+});
+
+test("SD-JWT with cnf: verifySDJWTWithPresentation validates holder binding", async () => {
+  const holderKP = await crypto.subtle.generateKey("Ed25519", false, ["sign", "verify"]);
+  const holderPubRaw = new Uint8Array(await crypto.subtle.exportKey("raw", holderKP.publicKey));
+  let bin = "";
+  for (let i = 0; i < holderPubRaw.length; i++) bin += String.fromCharCode(holderPubRaw[i]);
+  const holderPubB64 = btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+
+  const cred = await issueSDJWT({ careScore: 90 }, holderPubB64);
+  const nonce = "challenge-456";
+  const aud = "https://verifier.example.com";
+  const kbJwt = await createPresentation(holderKP.privateKey, cred.sdjwt, { careScore: 90 }, nonce, aud);
+
+  // Combine: sdjwt~kbJwt
+  const combined = `${cred.sdjwt}~${kbJwt}`;
+  const issuer = await getIssuer();
+  const result = await verifySDJWTWithPresentation(combined, issuer.pub, nonce, aud);
+  assert.equal(result.valid, true);
+  assert.equal(result.holderBound, true, "holder must be bound to cnf key");
+});
+
+test("SD-JWT with wrong holder key: cnf verification fails", async () => {
+  const holderKP = await crypto.subtle.generateKey("Ed25519", false, ["sign", "verify"]);
+  const otherKP = await crypto.subtle.generateKey("Ed25519", false, ["sign", "verify"]);
+  const holderPubRaw = new Uint8Array(await crypto.subtle.exportKey("raw", holderKP.publicKey));
+  let bin = "";
+  for (let i = 0; i < holderPubRaw.length; i++) bin += String.fromCharCode(holderPubRaw[i]);
+  const holderPubB64 = btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+
+  const cred = await issueSDJWT({ careScore: 90 }, holderPubB64);
+  const nonce = "challenge-789";
+  const aud = "https://verifier.example.com";
+
+  // Sign with OTHER key (not the one in cnf)
+  const kbJwt = await createPresentation(otherKP.privateKey, cred.sdjwt, { careScore: 90 }, nonce, aud);
+  const combined = `${cred.sdjwt}~${kbJwt}`;
+  const issuer = await getIssuer();
+  const result = await verifySDJWTWithPresentation(combined, issuer.pub, nonce, aud);
+  assert.equal(result.valid, true, "SD-JWT itself is valid");
+  assert.equal(result.holderBound, false, "holder key does not match cnf");
 });

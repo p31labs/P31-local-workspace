@@ -42,6 +42,8 @@ function b64urlDecode(s: string): Uint8Array {
 const enc = new TextEncoder();
 const dec = new TextDecoder();
 
+const DEFAULT_VCT = 'https://p31ca.org/credential-types/care-attestation/v1';
+
 // ── Issuer key (Ed25519, ephemeral per worker-start) ──────────────
 // NOTE: Web Crypto cannot derive a public key from a raw Ed25519 seed, so we
 // generate a keypair at startup. For production, pin a stable issuer DID and
@@ -164,6 +166,7 @@ export async function verifyPresentation(
 export async function issueSDJWT(
   claims: Record<string, unknown>,
   holderPubB64?: string,
+  opts?: { vct?: string; exp?: number; nbf?: number },
 ): Promise<SDCredential> {
   const issuer = await getIssuer();
   const entries = Object.entries(claims);
@@ -177,12 +180,16 @@ export async function issueSDJWT(
   const _sd = disclosures.map((d) => b64urlEncode(sha256(enc.encode(d))));
 
   const header = { alg: "Ed25519", typ: "dc+sd-jwt" };
+  const iat = Math.floor(Date.now() / 1000);
   const payload: Record<string, unknown> = {
+    vct: opts?.vct || DEFAULT_VCT,
     iss: "did:p31:ledger-bridge",
-    iat: Math.floor(Date.now() / 1000),
+    iat,
     _sd_alg: "sha-256",
     _sd,
   };
+  payload.nbf = opts?.nbf || iat;
+  payload.exp = opts?.exp || payload.nbf + 365 * 24 * 60 * 60;
   // draft-17 §4: cnf claim binds the SD-JWT to a holder's key for KB-JWT
   if (holderPubB64) {
     payload.cnf = { jwk: { kty: "OKP", crv: "Ed25519", x: holderPubB64 } };
@@ -221,6 +228,7 @@ export async function issueSDJWTPostQuantum(
   claims: Record<string, unknown>,
   pqKeyPair: PQKeyPair,
   holderPubB64?: string,
+  opts?: { vct?: string; exp?: number; nbf?: number },
 ): Promise<PQSDCredential> {
   const entries = Object.entries(claims);
 
@@ -234,12 +242,16 @@ export async function issueSDJWTPostQuantum(
 
   // AKP JWK header per RFC 9964 §4
   const header = { kty: "AKP", alg: "ML-DSA-65", typ: "dc+sd-jwt" };
+  const iat = Math.floor(Date.now() / 1000);
   const payload: Record<string, unknown> = {
+    vct: opts?.vct || DEFAULT_VCT,
     iss: "did:p31:ledger-bridge",
-    iat: Math.floor(Date.now() / 1000),
+    iat,
     _sd_alg: "sha-256",
     _sd,
   };
+  payload.nbf = opts?.nbf || iat;
+  payload.exp = opts?.exp || payload.nbf + 365 * 24 * 60 * 60;
   if (holderPubB64) {
     payload.cnf = { jwk: { kty: "AKP", alg: "ML-DSA-65", pub: holderPubB64 } };
   }
@@ -258,6 +270,7 @@ export async function issueSDJWTPostQuantum(
 export interface VerifyResult {
   valid: boolean;
   disclosed: Record<string, unknown>;
+  error?: string;
 }
 
 /**
@@ -295,6 +308,14 @@ export async function verifySDJWT(sdjwt: string, issuerPub: CryptoKey): Promise<
     enc.encode(`${h}.${p}`),
   );
   if (!sigOk) return { valid: false, disclosed: {} };
+
+  const now = Math.floor(Date.now() / 1000);
+  if (typeof payload.exp === 'number' && now > payload.exp) {
+    return { valid: false, disclosed: {}, error: 'expired' };
+  }
+  if (typeof payload.nbf === 'number' && now < payload.nbf) {
+    return { valid: false, disclosed: {}, error: 'not_yet_valid' };
+  }
 
   const _sd: string[] = Array.isArray(payload._sd) ? payload._sd : [];
   const disclosed: Record<string, unknown> = {};
@@ -339,4 +360,126 @@ export async function selectDisclosures(
     }
   }
   return `${jws}~${keep.join("~")}`;
+}
+
+// ── CWP-2026-034: Draft-17 cnf + holder-binding verification ──────────────
+
+/**
+ * Import a holder public key from a cnf JWK claim.
+ */
+export async function importKeyFromCnf(
+  cnfJwk: Record<string, unknown>,
+): Promise<CryptoKey> {
+  return crypto.subtle.importKey(
+    'jwk',
+    cnfJwk as JsonWebKey,
+    { name: 'Ed25519' },
+    false,
+    ['verify'],
+  );
+}
+
+/**
+ * Verify an SD-JWT with attached KB-JWT, validating holder binding via cnf.
+ * Combined format: jws~disc1~disc2~...~kb_jwt
+ */
+export async function verifySDJWTWithPresentation(
+  sdjwtWithKbJwt: string,
+  issuerPub: CryptoKey,
+  expectedNonce: string,
+  expectedAud: string,
+): Promise<VerifyResult & { holderBound: boolean }> {
+  // Split SD-JWT from KB-JWT (KB-JWT is the last ~segment)
+  const parts = sdjwtWithKbJwt.split('~');
+  const kbJwt = parts[parts.length - 1];
+  const sdjwt = parts.slice(0, -1).join('~');
+
+  // 1. Verify SD-JWT signature
+  const sdResult = await verifySDJWT(sdjwt, issuerPub);
+  if (!sdResult.valid) return { ...sdResult, holderBound: false };
+
+  // 2. Extract cnf claim from SD-JWT payload
+  const jws = sdjwt.split('~')[0];
+  const [, p] = jws.split('.');
+  const payload = JSON.parse(dec.decode(b64urlDecode(p)));
+
+  if (!payload.cnf || !payload.cnf.jwk) {
+    return { ...sdResult, holderBound: false, error: 'no_cnf' };
+  }
+
+  // 3. Import the holder public key from cnf
+  const holderPub = await importKeyFromCnf(payload.cnf.jwk);
+
+  // 4. Verify KB-JWT signature matches cnf key
+  const kbOk = await verifyPresentation(kbJwt, holderPub, expectedNonce, expectedAud, sdjwt);
+
+  return { ...sdResult, holderBound: kbOk };
+}
+
+// ── CWP-2026-034: PQ verification path ────────────────────────────────────
+
+/**
+ * Verify a post-quantum (ML-DSA-65) signed SD-JWT.
+ */
+export async function verifySDJWTPostQuantum(
+  sdjwt: string,
+  pqPubKey: Uint8Array,
+): Promise<VerifyResult> {
+  const parts = sdjwt.split('~');
+  const jws = parts[0];
+  const disclosureEnc = parts.slice(1);
+  const [h, p, sigB64] = jws.split('.');
+  if (!h || !p || !sigB64) return { valid: false, disclosed: {} };
+
+  let header: any, payload: any;
+  try {
+    header = JSON.parse(dec.decode(b64urlDecode(h)));
+    payload = JSON.parse(dec.decode(b64urlDecode(p)));
+  } catch {
+    return { valid: false, disclosed: {} };
+  }
+
+  if (header.kty !== 'AKP' || header.alg !== 'ML-DSA-65') {
+    return { valid: false, disclosed: {} };
+  }
+  if (header.typ !== 'dc+sd-jwt' && header.typ !== 'vc+sd-jwt') {
+    return { valid: false, disclosed: {} };
+  }
+  if (payload._sd_alg !== 'sha-256') return { valid: false, disclosed: {} };
+
+  // Verify ML-DSA-65 signature
+  const sigBytes = b64urlDecode(sigB64);
+  const msg = new TextEncoder().encode(`${h}.${p}`);
+  const ok = ml_dsa65.verify(sigBytes, msg, pqPubKey);
+  if (!ok) return { valid: false, disclosed: {} };
+
+  // Verify time bounds
+  const now = Math.floor(Date.now() / 1000);
+  if (typeof payload.exp === 'number' && now > payload.exp) {
+    return { valid: false, disclosed: {}, error: 'expired' };
+  }
+  if (typeof payload.nbf === 'number' && now < payload.nbf) {
+    return { valid: false, disclosed: {}, error: 'not_yet_valid' };
+  }
+
+  // Verify disclosures
+  const _sd: string[] = Array.isArray(payload._sd) ? payload._sd : [];
+  const disclosed: Record<string, unknown> = {};
+  for (const encDisc of disclosureEnc) {
+    let discStr: string;
+    try {
+      discStr = dec.decode(b64urlDecode(encDisc));
+    } catch {
+      return { valid: false, disclosed: {} };
+    }
+    const hash = b64urlEncode(sha256(enc.encode(discStr)));
+    if (!_sd.includes(hash)) return { valid: false, disclosed: {} };
+    try {
+      const [salt, key, value] = JSON.parse(discStr);
+      disclosed[key] = value;
+    } catch {
+      return { valid: false, disclosed: {} };
+    }
+  }
+  return { valid: true, disclosed };
 }

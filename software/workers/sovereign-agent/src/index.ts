@@ -45,9 +45,10 @@ function contentType(key: string): string {
   return MIME[ext] || "application/octet-stream";
 }
 
-function proxyHeaders(resp: Response): Headers {
+function proxyHeaders(resp: Response, requestId: string): Headers {
   const h = new Headers(resp.headers);
   h.delete("transfer-encoding");
+  h.set("x-request-id", requestId);
   return h;
 }
 
@@ -87,30 +88,36 @@ app.get("/health", async (c) => {
 
 // ── Identity APIs → love-ledger (service binding) ────────────────────────
 app.all("/identity/*", async (c) => {
+  const requestId = c.req.header("x-request-id") || crypto.randomUUID();
   try {
-    const resp = await c.env.LOVE_LEDGER.fetch(c.req.raw);
-    return new Response(resp.body, { status: resp.status, headers: proxyHeaders(resp) });
+    const req = new Request(c.req.raw, { headers: { ...Object.fromEntries(c.req.raw.headers), "x-request-id": requestId } });
+    const resp = await c.env.LOVE_LEDGER.fetch(req);
+    return new Response(resp.body, { status: resp.status, headers: proxyHeaders(resp, requestId) });
   } catch (e: any) {
-    return c.json({ error: "love-ledger service unavailable", detail: e.message }, 502);
+    return c.json({ error: "love-ledger service unavailable", detail: e.message, requestId }, 502);
   }
 });
 
 // ── Care + credential APIs → ledger-bridge (URL-based) ────────────────────
 app.all("/care-proof", async (c) => {
+  const requestId = c.req.header("x-request-id") || crypto.randomUUID();
   try {
-    const resp = await fetch(`${BRIDGE}/care-proof`, c.req.raw);
-    return new Response(resp.body, { status: resp.status, headers: proxyHeaders(resp) });
+    const req = new Request(c.req.raw, { headers: { ...Object.fromEntries(c.req.raw.headers), "x-request-id": requestId } });
+    const resp = await fetch(`${BRIDGE}/care-proof`, req);
+    return new Response(resp.body, { status: resp.status, headers: proxyHeaders(resp, requestId) });
   } catch (e: any) {
-    return c.json({ error: "ledger-bridge unavailable", detail: e.message }, 502);
+    return c.json({ error: "ledger-bridge unavailable", detail: e.message, requestId }, 502);
   }
 });
 
 app.all("/credential/*", async (c) => {
+  const requestId = c.req.header("x-request-id") || crypto.randomUUID();
   try {
-    const resp = await fetch(`${BRIDGE}${c.req.path}`, c.req.raw);
-    return new Response(resp.body, { status: resp.status, headers: proxyHeaders(resp) });
+    const req = new Request(c.req.raw, { headers: { ...Object.fromEntries(c.req.raw.headers), "x-request-id": requestId } });
+    const resp = await fetch(`${BRIDGE}${c.req.path}`, req);
+    return new Response(resp.body, { status: resp.status, headers: proxyHeaders(resp, requestId) });
   } catch (e: any) {
-    return c.json({ error: "ledger-bridge unavailable", detail: e.message }, 502);
+    return c.json({ error: "ledger-bridge unavailable", detail: e.message, requestId }, 502);
   }
 });
 

@@ -57,9 +57,23 @@ const actor = {
 
 // ── Health ─────────────────────────────────────────────────────────────────
 
-app.get('/health', (c) =>
-  c.json({ status: 'ok', service: 'federation-bridge', timestamp: Date.now() })
-);
+app.get('/health', async (c) => {
+  const start = Date.now();
+  const report: Record<string, unknown> = {
+    ok: true,
+    service: 'federation-bridge',
+    timestamp: new Date().toISOString(),
+  };
+  try {
+    await c.env.LOVE_DB.prepare('SELECT 1').first();
+    report.d1 = { status: 'ok', latency_ms: Date.now() - start };
+  } catch (e: any) {
+    report.d1 = { status: 'error', error: e.message };
+    report.ok = false;
+  }
+  report.total_latency_ms = Date.now() - start;
+  return c.json(report, report.ok ? 200 : 503);
+});
 
 // ── NodeInfo ───────────────────────────────────────────────────────────────
 
@@ -117,6 +131,8 @@ app.get('/following', (c) =>
 // ── Outbox ─────────────────────────────────────────────────────────────────
 
 app.get('/outbox', async (c) => {
+  const requestId = c.req.header('x-request-id') || crypto.randomUUID();
+  c.header('x-request-id', requestId);
   const db = c.env.LOVE_DB;
   const results = await db
     .prepare('SELECT id, entry_hash, created_at FROM love_chain ORDER BY created_at DESC LIMIT 20')
@@ -145,6 +161,8 @@ app.get('/outbox', async (c) => {
 // ── Inbox ──────────────────────────────────────────────────────────────────
 
 app.post('/inbox', async (c) => {
+  const requestId = c.req.header('x-request-id') || crypto.randomUUID();
+  c.header('x-request-id', requestId);
   const body = await c.req.json();
 
   // Accept Follow activities
@@ -168,6 +186,8 @@ app.post('/inbox', async (c) => {
 // ── Publish endpoint (PHOS → Federation) ──────────────────────────────────
 
 app.post('/publish', async (c) => {
+  const requestId = c.req.header('x-request-id') || crypto.randomUUID();
+  c.header('x-request-id', requestId);
   const authHeader = c.req.header('Authorization');
   if (!authHeader?.startsWith('Bearer ')) {
     return c.json({ error: 'Unauthorized' }, 401);

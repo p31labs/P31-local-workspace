@@ -35,7 +35,7 @@ async function generateEd25519(): Promise<Keypair> {
 
   const publicKeyBytes = await crypto.subtle.exportKey('raw', keyPair.publicKey);
   const publicKeyBase64 = arrayBufferToBase64(publicKeyBytes);
-  const did = `did:key:z${base64ToBase64Url(publicKeyBase64)}`;
+  const did = pubToDidKey(new Uint8Array(publicKeyBytes));
 
   return { did, publicKey: publicKeyBase64, privateKey: keyPair.privateKey };
 }
@@ -200,6 +200,27 @@ function base64ToArrayBuffer(base64: string): ArrayBuffer {
 
 function base64ToBase64Url(base64: string): string {
   return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+// ── Base58btc encode (CWP-2026-033) ─────────────────────────────────────
+
+const BASE58BTC_ALPHABET = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+
+export function base58btcEncode(bytes: Uint8Array): string {
+  let num = 0n;
+  for (const b of bytes) num = num * 256n + BigInt(b);
+  if (num === 0n) return BASE58BTC_ALPHABET[0];
+  let result = '';
+  while (num > 0n) {
+    result = BASE58BTC_ALPHABET[Number(num % 58n)] + result;
+    num /= 58n;
+  }
+  return result;
+}
+
+export function pubToDidKey(rawPub: Uint8Array): string {
+  const prefixed = new Uint8Array([0xed, 0x01, ...rawPub]);
+  return `did:key:z${base58btcEncode(prefixed)}`;
 }
 
 // ── RFC 9964 AKP JWK helpers ─────────────────────────────────────────────
