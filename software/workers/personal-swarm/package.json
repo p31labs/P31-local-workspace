@@ -9,7 +9,8 @@
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
     "dev": "wrangler dev",
-    "deploy": "wrangler deploy"
+    "deploy": "wrangler deploy",
+    "monitor": "node cf-monitor.mjs"
   },
   "dependencies": {
     "hono": "^4.7.0"

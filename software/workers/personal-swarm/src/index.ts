@@ -19,7 +19,15 @@ export interface SwarmEnv {
   // CWP-2026-040H — R2 binding holding the spatial dashboard asset.
   // (BUG-05 fix: serve the dashboard from this binding, not a mis-wired
   // ASSETS module, so /spatial returns 200 instead of 404.)
-  PHOS_ASSETS?: { get(key: string): Promise<{ body: ReadableStream; contentType?: string } | null> };
+  PHOS_ASSETS?: {
+    get(key: string): Promise<{
+      body: ReadableStream;
+      contentType?: string;
+      httpEtag?: string;
+      etag?: string;
+      writeHttpMetadata(headers: Headers): void;
+    } | null>;
+  };
 }
 
 function json(data: unknown, status = 200): Response {
@@ -27,6 +35,37 @@ function json(data: unknown, status = 200): Response {
     status,
     headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
   });
+}
+
+// CWP-2026-041 §1/§2 — edge read-cache for hot D1 GETs. Keeps D1
+// round-trips + CPU down for the dashboard's polling reads. Short TTL with
+// stale-while-revalidate: writes stay visible within seconds, reads are cheap.
+// Cache is read lazily so unit tests can inject a `caches` stub.
+async function cachedJson(c: any, producer: () => Promise<unknown>): Promise<Response> {
+  const cache = (globalThis as any).caches?.default;
+  const key = new Request(c.req.url);
+  if (cache) {
+    const hit = await cache.match(key);
+    if (hit) {
+      const h = new Headers(hit.headers);
+      h.set("X-Cache", "HIT");
+      return new Response(hit.body, { status: hit.status, headers: h });
+    }
+  }
+  const data = await producer();
+  const res = json(data);
+  res.headers.set("Cache-Control", "public, max-age=30, stale-while-revalidate=300");
+  res.headers.set("X-Cache", "MISS");
+  if (cache) {
+    // Await so the write completes within the request lifetime (deferring via
+    // waitUntil is unreliable when the isolate recycles between requests).
+    try {
+      await cache.put(key, res.clone());
+    } catch {
+      /* cache write is best-effort */
+    }
+  }
+  return res;
 }
 
 // Real dispatcher: routes to p31-cortex agent DO endpoints.
@@ -111,28 +150,41 @@ export function createApp(deps: {
   });
 
   // CWP-2026-040H — unified view for the spatial dashboard.
+  // CWP-2026-041 §1 — edge-cached (hot polling read).
   app.get("/api/fractal", async (c) => {
     const db = await deps.getDB();
     const scale = c.req.query("scale") as Scale | undefined;
-    return json(await getUnifiedView(db, { filterScale: scale }));
+    return cachedJson(c, () => getUnifiedView(db, { filterScale: scale }));
   });
 
   app.get("/api/swarm-events", async (c) => {
     const db = await deps.getDB();
     const nodeId = c.req.query("nodeId");
     const limit = Number(c.req.query("limit") || "100");
-    return json(await db.listSwarmEvents(nodeId ?? undefined, limit));
+    return cachedJson(c, () => db.listSwarmEvents(nodeId ?? undefined, limit));
   });
 
   // CWP-2026-040H — serve the spatial dashboard HTML from the R2 binding.
+  // CWP-2026-041 §2 — zero-egress CDN: long Cache-Control + ETag
+  // conditional (304 when unchanged -> ~100B vs ~14KB per request).
   app.get("/spatial", async (c) => {
     const assets = deps.assets;
     if (!assets) return json({ error: "assets_binding_unavailable" }, 501);
     const obj = await assets.get("spatial-dashboard.html");
     if (!obj) return json({ error: "asset_not_found" }, 404);
-    return new Response(obj.body, {
-      headers: { "Content-Type": "text/html; charset=utf-8", "Access-Control-Allow-Origin": "*" },
-    });
+    const headers = new Headers();
+    obj.writeHttpMetadata(headers);
+    const etag = (obj as any).httpEtag || (obj as any).etag;
+    if (etag) {
+      headers.set("ETag", etag);
+      const inm = c.req.header("if-none-match");
+      if (inm && inm === etag) {
+        return new Response(null, { status: 304, headers });
+      }
+    }
+    headers.set("Cache-Control", "public, max-age=86400, stale-while-revalidate=86400");
+    headers.set("Access-Control-Allow-Origin", "*");
+    return new Response(obj.body, { status: 200, headers });
   });
 
   return app;

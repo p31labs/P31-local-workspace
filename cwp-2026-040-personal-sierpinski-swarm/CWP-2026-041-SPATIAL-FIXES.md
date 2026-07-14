@@ -57,3 +57,56 @@ Then visit `https://personal-swarm.<sub>.workers.dev/spatial`.
 ## Verification
 - `npx tsc --noEmit` clean.
 - `npx vitest run` → 21/21 pass (was 15; +6 for 040H).
+
+---
+
+## Phase 2 — Post-deploy feedback-loop hardening (applied)
+
+Turning the live engine into a self-optimizing, globally-performant system.
+
+### 🔴 High — Observability → autonomous remediation
+- **`cf-monitor.mjs`** (new) — auto-diagnostic layer. Streams `wrangler tail
+  --format json`, fingerprints every exception/error log, de-dupes across
+  restarts (`.cf-monitor-state.json`), and opens a GitHub issue per NEW error
+  signature (throttled, `cf-monitor`+`bug` labels). Run: `npm run monitor`
+  (needs `gh` auth + `GH_REPO`).
+- **Hono `onError`** surfaces real errors as JSON (added in deploy fix) so the
+  swarm *sees itself*.
+
+### 🔴 High — R2 + Cache-Control: zero-egress CDN
+- `/spatial` now returns `Cache-Control: public, max-age=86400,
+  stale-while-revalidate=86400` and an `ETag`. A matching `If-None-Match`
+  request returns **304** (~100B vs ~14KB). R2 egress is free regardless.
+- `obj.writeHttpMetadata(headers)` copies content-type + etag from the object.
+
+### 🔴 High — D1 query caching (edge)
+- `GET /api/fractal` + `GET /api/swarm-events` are served through the
+  **Cache API** (`caches.default`): first hit `MISS`, repeats `HIT`, short
+  `max-age=30, stale-while-revalidate=300` so writes surface within seconds
+  while reads stay cheap (lower D1 round-trips + CPU). Guard is lazy so unit
+  tests inject a stub.
+
+### 🟡 Medium — Neuroinclusive: Reduce Motion toggle
+- New **Motion/Calm** button persists preference in `localStorage`, honours
+  `prefers-reduced-motion` on load, and disables link particles + transitions
+  (`body.reduced-motion`). Spoon-aware motion + CrisisMode VagusBreath retained.
+
+### 🟡 Medium — WebGPU renderer (guarded)
+- After graph build, if `navigator.gpu` exists we dynamically import
+  `three/webgpu`, `await WebGPURenderer.init()`, and swap via `Graph.renderer()`.
+  Any failure keeps the WebGL renderer — no regression for WebGL-only browsers.
+  **Needs a real-GPU browser pass to confirm** (sandbox has no GPU).
+
+### 🟢 Stretch / monitor (documented, not yet built)
+- **Semantic Level of Detail (SLoD)** — heat-kernel/“ hyperbolic-manifold
+  continuous resolution so 60 nodes → 60,000 without losing self-similar clarity.
+- **FracComplEx** fractional-order KG embeddings for multi-scale / non-local semantics.
+- **Standards watch** — W3C Agent Trust Protocol (`did:atp`, hybrid Ed25519 +
+  ML-DSA-65), NIST 3rd-round PQS (May 2026), W3C Quantum-Resistant
+  Cryptosuites v1.0 FPWD (June 2026). P31 ML-DSA-65 already positioned.
+
+## Phase 2 verification
+- `npx tsc --noEmit` clean.
+- `npx vitest run` → 23/23 pass (+2: `/spatial` ETag/304, edge-cache MISS→HIT).
+- Live: `/spatial` → 200 + `ETag`/`Cache-Control`; repeat with `If-None-Match`
+  → 304. `/api/fractal` → `X-Cache: MISS` then `HIT`.

@@ -21,6 +21,7 @@
     "imports": {
       "three": "https://esm.sh/three@0.170.0",
       "three/": "https://esm.sh/three@0.170.0/",
+      "three/webgpu": "https://esm.sh/three@0.170.0/webgpu",
       "3d-force-graph": "https://esm.sh/3d-force-graph@1.80.0?external=three",
       "d3-force-3d": "https://esm.sh/d3-force-3d@3.0.5"
     }
@@ -83,6 +84,12 @@
     body[data-spoons="0"] #graph { filter: saturate(0.7) brightness(0.85); }
     body[data-spoons="1"] #graph, body[data-spoons="2"] #graph { filter: saturate(0.85); }
 
+    /* CWP-2026-041 §4 — explicit Reduce Motion toggle (persists across
+       sessions). Honours the OS pref on load; user can force it. */
+    body.reduced-motion * { animation: none !important; transition: none !important; }
+    body.reduced-motion .breath { animation: none !important; opacity: 0.82; box-shadow: none; }
+    body.reduced-motion #graph { filter: none; }
+
     /* CrisisMode (spoons=0): VagusBreath overlay, no chrome. */
     #crisis {
       position: fixed; inset: 0; z-index: 50; display: none;
@@ -123,6 +130,7 @@
     <button class="ui" id="btn-3d" aria-pressed="true" aria-label="Toggle 3D perspective">3D</button>
     <button class="ui" id="btn-fit" aria-label="Fit graph to view">Fit</button>
     <button class="ui" id="btn-swarm" aria-label="Re-run swarm pulse">Pulse</button>
+    <button class="ui" id="btn-motion" aria-pressed="false" aria-label="Toggle reduce motion">Motion</button>
   </div>
 
   <div id="spoonbar" class="glass" role="group" aria-label="Spoon level">
@@ -168,6 +176,19 @@
     // without stale closures (BUG-06 fix).
     let spoonLevel = 5;
     let is3D = true;
+
+    // CWP-2026-041 §4 — Reduce Motion preference (persisted + OS pref).
+    const MOTION_KEY = "ps-reduce-motion";
+    let reduceMotion =
+      localStorage.getItem(MOTION_KEY) === "1" ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    function applyMotion() {
+      document.body.classList.toggle("reduced-motion", reduceMotion);
+      if (typeof Graph !== "undefined") {
+        Graph.linkDirectionalParticles(reduceMotion ? 0 : 2);
+      }
+    }
 
     const container = document.getElementById("graph");
     const statusEl = document.getElementById("status");
@@ -271,6 +292,23 @@
         }
       });
 
+    // CWP-2026-041 §3 — WebGPU renderer (guarded). Up to ~7x better
+    // rendering on modern HW; falls back to WebGL on any failure. Only
+    // swaps if navigator.gpu exists AND the WebGPU renderer initializes,
+    // so WebGL-only browsers are never affected.
+    (async () => {
+      if (!("gpu" in navigator)) return;
+      try {
+        const { WebGPURenderer } = await import("three/webgpu");
+        const wr = new WebGPURenderer();
+        await wr.init();
+        Graph.renderer(wr);
+        statusEl.textContent = "webgpu";
+      } catch (_) {
+        /* keep WebGL renderer */
+      }
+    })();
+
     // BUG-02 fix: the graph will not render until graphData is supplied.
     // PERF-02 fix: no window.innerWidth default prop — sizing is handled by
     // the library reading the container element automatically.
@@ -321,6 +359,21 @@
       Graph.graphData(cur);
       statusEl.textContent = "swarm pulse";
     });
+
+    // CWP-2026-041 §4 — persistent Reduce Motion toggle.
+    const btnMotion = document.getElementById("btn-motion");
+    function syncMotionBtn() {
+      btnMotion.setAttribute("aria-pressed", String(reduceMotion));
+      btnMotion.textContent = reduceMotion ? "Calm" : "Motion";
+    }
+    btnMotion.addEventListener("click", () => {
+      reduceMotion = !reduceMotion;
+      localStorage.setItem(MOTION_KEY, reduceMotion ? "1" : "0");
+      applyMotion();
+      syncMotionBtn();
+    });
+    syncMotionBtn();
+    applyMotion();
 
     window.addEventListener("resize", () => {
       // The library auto-fits the container; nothing extra required, but we

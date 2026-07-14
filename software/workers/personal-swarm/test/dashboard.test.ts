@@ -76,4 +76,50 @@ describe("CWP-040H: spatial dashboard unified view", () => {
     const res = await app.request("/spatial");
     expect(res.status).toBe(404);
   });
+
+  it("/spatial sends Cache-Control + ETag and honours If-None-Match (304)", async () => {
+    const body = new ReadableStream();
+    const headers = new Headers();
+    const assets = {
+      async get() {
+        return {
+          body,
+          httpEtag: '"abc123"',
+          writeHttpMetadata: (h: Headers) => h.set("Content-Type", "text/html"),
+        };
+      },
+    };
+    const app = createApp({ getDB: async () => db, dispatcher, assets: assets as any });
+
+    const first = await app.request("/spatial");
+    expect(first.status).toBe(200);
+    expect(first.headers.get("ETag")).toBe('"abc123"');
+    expect(first.headers.get("Cache-Control")).toContain("max-age=86400");
+
+    const second = await app.request("/spatial", { headers: { "If-None-Match": '"abc123"' } });
+    expect(second.status).toBe(304);
+  });
+
+  it("GET /api/fractal is edge-cached (MISS then HIT)", async () => {
+    class FakeCache {
+      store = new Map<string, Response>();
+      async match(req: Request) { return this.store.get(req.url); }
+      async put(req: Request, res: Response) { this.store.set(req.url, res); }
+    }
+    Object.defineProperty(globalThis, "caches", {
+      value: { default: new FakeCache() },
+      configurable: true,
+    });
+
+    const app = createApp({ getDB: async () => db, dispatcher });
+    const a = await app.request("/api/fractal");
+    expect(a.headers.get("X-Cache")).toBe("MISS");
+    const b = await app.request("/api/fractal");
+    expect(b.headers.get("X-Cache")).toBe("HIT");
+    const ab = await a.json() as { nodes: unknown[] };
+    const bb = await b.json() as { nodes: unknown[] };
+    expect(ab.nodes.length).toBe(bb.nodes.length);
+
+    delete (globalThis as any).caches;
+  });
 });
