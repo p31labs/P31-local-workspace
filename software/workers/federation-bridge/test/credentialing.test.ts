@@ -138,3 +138,32 @@ describe("Outbound activity integrity (Phase 3)", () => {
     expect(inbox.status).toBe(422);
   });
 });
+
+describe("EUDI gaps closed (CWP-2026-048)", () => {
+  it("serves an aggregated Status List 2021 bitstring at /credential/revocation/list", async () => {
+    const res = await app.request("/credential/revocation/list", {}, env);
+    expect(res.status).toBe(200);
+    const j = await res.json();
+    expect(j.type).toBe("VerifiableCredential");
+    expect(j.credentialSubject.type).toBe("StatusList2021");
+    expect(typeof j.credentialSubject.encodedList).toBe("string");
+    expect(j.credentialSubject.statusPurpose).toBe("revocation");
+  });
+
+  it("serves a did:web DID Document at /.well-known/did.json", async () => {
+    const res = await app.request("/.well-known/did.json", {}, env);
+    expect(res.status).toBe(200);
+    expect(res.headers.get("content-type")).toContain("application/did+json");
+    const doc = await res.json();
+    expect(doc.id).toBe("did:web:federation.p31ca.org");
+    const types = (doc.service || []).map((s: any) => s.type);
+    expect(types).toContain("CredentialIssuer");
+    expect(types).toContain("CredentialVerifier");
+  });
+
+  it("returns 404 for unknown pilot on /pilot/:did/status", async () => {
+    const res = await app.request(`/pilot/${encodeURIComponent("did:web:ghost.example")}/status`, {}, env);
+    expect(res.status).toBe(404);
+    expect((await res.json()).found).toBe(false);
+  });
+});

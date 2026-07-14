@@ -524,6 +524,29 @@ app.post('/credential/revoke/:id', async (c) => {
   }
 });
 
+app.get('/credential/revocation/list', async (c) => {
+  await ensureCredentialsTable(c.env.LOVE_DB);
+  const { encodedList, count } = await buildStatusList(c.env.LOVE_DB);
+  return c.json(
+    {
+      '@context': ['https://www.w3.org/ns/credentials/v2'],
+      id: `${ORIGIN}/credential/revocation/list`,
+      type: 'VerifiableCredential',
+      name: 'P31 Credential Status List',
+      issuer: ACTOR_ID,
+      validFrom: new Date().toISOString(),
+      credentialSubject: {
+        id: `${ORIGIN}/credential/revocation/list#list`,
+        type: 'StatusList2021',
+        statusPurpose: 'revocation',
+        encodedList,
+      },
+    },
+    200,
+    { 'Cache-Control': 'public, max-age=300' }
+  );
+});
+
 app.get('/credential/revocation/:id', async (c) => {
   await ensureCredentialsTable(c.env.LOVE_DB);
   const id = decodeURIComponent(c.req.param('id'));
@@ -538,6 +561,137 @@ app.get('/credential/revocation/:id', async (c) => {
     revoked,
     statusList: { idx: 0, statusPurpose: revoked ? 'revocation' : 'valid' },
   });
+});
+
+// ── EUDI: aggregated Status List 2021 (bitstring) ──────────────────────
+
+// Build a Status List 2021 bitstring over the credentials table and return it
+// as a StatusList2021Entry (VC) per W3C Status List 2021 §2.
+async function buildStatusList(db: D1Database): Promise<{ encodedList: string; count: number }> {
+  const rows = await db
+    .prepare('SELECT id, revoked FROM credentials ORDER BY created_at ASC LIMIT 131072')
+    .all();
+  const list = (rows.results || []) as Array<{ id: string; revoked: number }>;
+  const byteLen = Math.ceil(list.length / 8);
+  const bits = new Uint8Array(byteLen);
+  for (let i = 0; i < list.length; i++) {
+    if (list[i].revoked) bits[Math.floor(i / 8)] |= 1 << (i % 8);
+  }
+  // GZIP-compress (Status List 2021 mandates gzip; CompressionStream is
+  // available in the Workers runtime and Node 18+).
+  const compressed = await gzip(bits);
+  const encodedList = base64UrlEncode(compressed);
+  return { encodedList, count: list.length };
+}
+
+async function gzip(data: Uint8Array): Promise<Uint8Array> {
+  const stream = new (globalThis as any).CompressionStream('gzip');
+  const writer = stream.writable.getWriter();
+  void writer.write(data);
+  void writer.close();
+  const reader = stream.readable.getReader();
+  const chunks: Uint8Array[] = [];
+  for (;;) {
+    const { value, done } = await reader.read();
+    if (done) break;
+    chunks.push(value as Uint8Array);
+  }
+  const len = chunks.reduce((a, c) => a + c.length, 0);
+  const out = new Uint8Array(len);
+  let off = 0;
+  for (const c of chunks) {
+    out.set(c, off);
+    off += c.length;
+  }
+  return out;
+}
+
+function base64UrlEncode(bytes: Uint8Array): string {
+  let bin = '';
+  for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+  return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+// ── did:web well-known (EUDI gap: publish DID Document under host) ───
+
+app.get('/.well-known/did.json', (c) => {
+  // did:web:federation.p31ca.org -> https://federation.p31ca.org/.well-known/did.json
+  const did = `did:web:${new URL(ORIGIN).host}`;
+  const doc = {
+    '@context': ['https://www.w3.org/ns/did/v1'],
+    id: did,
+    verificationMethod: [
+      {
+        id: `${did}#main-key`,
+        type: 'Ed25519VerificationKey2020',
+        controller: did,
+        publicKeyMultibase: (() => {
+          // Derive multibase z-base58 from the PEM (strip headers, base58btc).
+          const pem = c.env.ACTOR_PUBLIC_KEY || '';
+          const b64 = pem.replace(/-----(BEGIN|END) [^-]+-----/g, '').replace(/\s+/g, '');
+          const der = Uint8Array.from(atob(b64));
+          return 'z' + base58Encode(der);
+        })(),
+      },
+    ],
+    authentication: [`${did}#main-key`],
+    assertionMethod: [`${did}#main-key`],
+    service: [
+      {
+        id: `${did}#credential-issuer`,
+        type: 'CredentialIssuer',
+        serviceEndpoint: `${ORIGIN}/credential/issue`,
+      },
+      {
+        id: `${did}#credential-verifier`,
+        type: 'CredentialVerifier',
+        serviceEndpoint: `${ORIGIN}/credential/verify`,
+      },
+    ],
+  };
+  return c.json(doc, 200, {
+    'Content-Type': 'application/did+json',
+    'Cache-Control': 'public, max-age=3600',
+  });
+});
+
+function base58Encode(bytes: Uint8Array): string {
+  const ALPHABET = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+  let num = 0n;
+  for (const b of bytes) num = (num << 8n) | BigInt(b);
+  let out = '';
+  while (num > 0n) {
+    const rem = Number(num % 58n);
+    out = ALPHABET[rem] + out;
+    num /= 58n;
+  }
+  for (const b of bytes) {
+    if (b === 0) out = '1' + out;
+    else break;
+  }
+  return out;
+}
+
+// ── Pilot onboarding status (self-service portal) ──────────────────────────
+
+app.get('/pilot/:did/status', async (c) => {
+  const did = decodeURIComponent(c.req.param('did'));
+  try {
+    const row = await c.env.LOVE_DB.prepare(
+      'SELECT did, family_name, status, registered_at, onboarded_at FROM pilot_registry WHERE did = ?'
+    )
+      .bind(did)
+      .first();
+    if (!row) return c.json({ did, found: false, status: 'unknown' }, 404, {
+      'Access-Control-Allow-Origin': '*',
+    });
+    return c.json({ did, found: true, ...(row as any) }, 200, {
+      'Cache-Control': 'public, max-age=60',
+      'Access-Control-Allow-Origin': '*',
+    });
+  } catch (e: any) {
+    return c.json({ did, found: false, error: e.message }, 500);
+  }
 });
 
 // ── HTTP Signature / FEP-8b32 discovery ────────────────────────────────────

@@ -1,16 +1,21 @@
 #!/usr/bin/env node
 /**
- * pilot-onboard.js — CWP-2026-030 Phase 6
- * Automated pilot family onboarding for the P31 care mesh.
+ * pilot-onboard.js — CWP-2026-046 (wrangler 4.110 compatible)
+ * Pilot family onboarding for the P31 care mesh.
  *
- * Reads pilot_registry from the shared D1, generates onboarding links,
- * and optionally marks pilots as onboarded.
+ * Reads pilot_registry from the shared love-ledger D1, prints onboarding
+ * links, and (--onboard <did>) marks a pilot as onboarded via a real D1 write.
+ *
+ * NOTE: Sending invitations is manual outreach — there is no --send mode.
+ * The script only reads/prints and (optionally) flips a status column.
  *
  * Usage:
- *   node scripts/pilot-onboard.js [--dry-run] [--status] [--onboard <did>]
+ *   node scripts/pilot-onboard.js [--status]
+ *   node scripts/pilot-onboard.js [--onboard <did>] [--dry-run]
  */
 
-const D1_ID = "592e3e2e-3203-4e0a-8342-9e85215ec8a6";
+// Worker dir that owns the LOVE_DB binding (shared love-ledger D1).
+const WORKER_DIR = "software/workers/federation-bridge";
 const PHOS_URL = "https://phos.p31ca.org";
 const DASHBOARD_URL = "https://pilot.p31ca.org";
 
@@ -19,17 +24,21 @@ const dryRun = args.includes("--dry-run");
 const showStatus = args.includes("--status");
 const onboardDid = args.includes("--onboard") ? args[args.indexOf("--onboard") + 1] : null;
 
+// Shell-escape a SQL string into a single-quoted argument.
+function shellSql(sql) {
+  return `'${sql.replace(/'/g, `'\\''`)}'`;
+}
+
 async function run(command) {
   const { execSync } = await import("child_process");
-  return execSync(command, { encoding: "utf-8", timeout: 30000 }).trim();
+  return execSync(command, { encoding: "utf-8", cwd: WORKER_DIR, timeout: 30000 }).trim();
 }
 
 async function queryD1(sql) {
-  const cmd = `npx wrangler d1 execute love-ledger --database-id ${D1_ID} --remote --command "${sql.replace(/"/g, '\\"')}"`;
+  // wrangler 4.110 rejects --database-id; use the binding form from a worker dir.
+  const cmd = `npx wrangler d1 execute LOVE_DB --remote --command ${shellSql(sql)}`;
   const output = await run(cmd);
-  // Parse JSON output
-  const lines = output.split("\n");
-  for (const line of lines) {
+  for (const line of output.split("\n")) {
     try {
       const parsed = JSON.parse(line);
       if (parsed.results) return parsed.results;
@@ -39,7 +48,7 @@ async function queryD1(sql) {
 }
 
 async function main() {
-  console.log("P31 Pilot Onboarding Tool (CWP-2026-030 Phase 6)\n");
+  console.log("P31 Pilot Onboarding Tool (CWP-2026-046)\n");
 
   if (showStatus) {
     const pilots = await queryD1(
@@ -66,7 +75,7 @@ async function main() {
     return;
   }
 
-  // Default: show onboarding links for pending pilots
+  // Default: show onboarding links for pending pilots.
   const pilots = await queryD1(
     "SELECT did, family_name, status FROM pilot_registry WHERE status != 'onboarded' ORDER BY registered_at"
   );
@@ -79,17 +88,16 @@ async function main() {
   console.log(`Found ${pilots.length} pilots pending onboarding:\n`);
   for (const p of pilots) {
     const onboardUrl = `${PHOS_URL}?did=${encodeURIComponent(p.did)}`;
-    const dashboardUrl = `${DASHBOARD_URL}`;
     console.log(`  📋 ${p.family_name || "Unknown"}`);
     console.log(`     DID: ${p.did}`);
     console.log(`     Onboarding link: ${onboardUrl}`);
-    console.log(`     Dashboard: ${dashboardUrl}`);
+    console.log(`     Dashboard: ${DASHBOARD_URL}`);
     console.log();
   }
 
-  console.log("To onboard a pilot, run:");
+  console.log("To mark a pilot onboarded (real D1 write), run:");
   console.log("  node scripts/pilot-onboard.js --onboard <did>");
-  console.log("\nUse --dry-run to preview without making changes.");
+  console.log("\nSending invitations is manual outreach — this tool does not send email.");
 }
 
 main().catch((e) => {

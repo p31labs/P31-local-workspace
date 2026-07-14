@@ -1,0 +1,15 @@
+name = "fhir-bridge"
+main = "src/index.ts"
+compatibility_date = "2026-07-01"
+compatibility_flags = ["nodejs_compat"]
+
+# CWP-2026-048 Phase 1 — HL7 FHIR R5 bridge.
+# Maps P31 care attestations to FHIR Observations / Patients / Provenance
+# for healthcare interoperability. Shares the love-ledger D1.
+[[d1_databases]]
+binding = "LOVE_DB"
+database_name = "love-ledger"
+database_id = "592e3e2e-3203-4e0a-8342-9e85215ec8a6"
+
+[observability]
+enabled = true
