@@ -61,3 +61,22 @@
 | `phos.p31ca.org` 404 | Apex custom-domain edge linkage stale (no Pages headers; proxied A record not matched to project) | Deleted + re-created domain via Pages API; pending propagation |
 | `federation.p31ca.org` 404 | `[[custom_domains]]` set but not activated in dashboard | Manual: Cloudflare dashboard → Workers → federation-bridge → Custom Domains → Activate |
 | FALSE ✅ in CWP (NGI submitted, Alerts configured) | CWP not reconciled with `AGENTS.md` CWP-2026-047 corrections | This audit supersedes the CWP Reality-Check |
+
+## Execution Log — 2026-07-14 (agent)
+
+**Done (API/CLI-executable):**
+- Phase 0: wrote this alignment audit; corrected the CWP's false ✅ claims (NGI submitted, Alerts configured) to ❌/pending.
+- Phase 1: rebuilt PHOS (`astro build`, ~185s) and deployed to Pages project `phos` → production deployment `5355d981.phos-btn.pages.dev`. `www.phos.p31ca.org/portal/` → **200** and preview `/portal/` → **200**.
+- Phase 1: re-created the `phos.p31ca.org` custom domain via the Pages API to force re-linkage; it is now `pending` (verification active) — see blocker below.
+- Phase 4: fixed `scripts/pilot-onboard.js` (multi-line JSON parsing + missing `registered_at` column) and generated **18** onboarding links → `/tmp/pilot-links.txt`. Note: 3 of 18 rows are test/seed DIDs (`ztest`, `cbs-smoke`, `system:genesis`); ~15 are real families.
+- Phase 3: validated all 7 NGI evidence artefacts exist.
+
+**Blocked — requires human / dashboard (not API-executable with this OAuth token):**
+- **Phase 1 — apex `phos.p31ca.org` 404 (RESIDUAL):** root cause = stale DNS A record `104.21.65.84` not linked to the Pages project; custom domain stuck `pending` because HTTP validation cannot reach its token (apex itself 404s). Fix: Cloudflare Dashboard → DNS → `p31ca.org` → replace the `phos.p31ca.org` A record with the Pages CNAME (or delete the custom domain and re-add from the dashboard so Cloudflare recreates the correct record). Token lacks `zone:dns:write`.
+- **Phase 2 — PQC TLS:** zone setting `post_quantum_encryption` requires `zone:settings:edit` (token has only `zone:read`/`ssl_certs:write`) → API returns `9109`. Dashboard: SSL/TLS → Edge Certificates → Post-Quantum.
+- **Phase 2 — Alerts:** account Alerting API requires `account:alerts:*` scope (absent) → API returns `10000`. Dashboard: Alerts panel (Worker Errors >5/min, D1 latency >1000ms, R2 503, CPU >90%).
+- **Phase 3 — NGI submit:** NLnet portal is a manual human action; checklist submit/confirm boxes stay unchecked.
+- **Phase 4 — pilot invite send:** `pilot-onboard.js` has no `--send`; sending is manual outreach using `/tmp/pilot-links.txt`.
+- **Phase 5 — demo video:** manual record/upload.
+- **Phase 6 — community launch:** Discord/Matrix activation manual.
+- **Separate gap:** `federation.p31ca.org` → 404 (custom domain not activated in dashboard).

@@ -61,3 +61,15 @@
 - **Pilot invites**: `scripts/pilot-onboard.js` prints onboarding links (no `--send`
   mode exists); `--onboard <did>` marks a family onboarded in the shared D1. Sending
   invitations is a manual outreach step.
+
+## CWP-2026-049 Agent Execution — 2026-07-14
+
+Aligned with `docs/cwp/CWP-2026-049-ALIGNMENT.md`. What the build agent completed vs. what remains manual:
+
+- **PHOS deployed:** rebuilt + deployed to Pages project `phos` (deploy `5355d981.phos-btn.pages.dev`). `www.phos.p31ca.org/portal/` → 200, preview `/portal/` → 200.
+- **`phos.p31ca.org` apex still 404 (BLOCKED):** stale DNS A record (`104.21.65.84`) not linked to Pages; custom domain stuck `pending` (HTTP validation deadlock). Needs dashboard DNS fix — see Alignment doc Phase 1 blocker. Token lacks `zone:dns:write`.
+- **PQC TLS + Alerts (BLOCKED):** API probes returned `9109` (zone settings) and `10000` (alerts) — insufficient token scope. Dashboard-only.
+- **Pilot tool fixed + links generated:** `scripts/pilot-onboard.js` fixed (multi-line JSON parse + missing `registered_at` col); 18 links in `/tmp/pilot-links.txt` (3 are test/seed DIDs). Sending invites is manual.
+- **NGI artefacts validated:** all 7 evidence files present.
+- **Not executed (by design):** NGI NLnet submit, demo video, pilot invite sends, Discord/Matrix activation, `federation.p31ca.org` custom-domain activation.
+- **CWP doc false ✅ corrected:** "NGI submitted" and "Alerts configured" are ❌/pending, not done.
