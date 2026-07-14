@@ -30,6 +30,14 @@ const ACTOR_ID = `${ORIGIN}/actor`;
 const INBOX_URL = `${ORIGIN}/inbox`;
 const OUTBOX_URL = `${ORIGIN}/outbox`;
 
+// ── EUDI-aligned credential type registry (ESSIF/EBSI) ─────────────────────
+// EUDI Wallet (mandatory in EU Member States by end 2026) issues W3C VC Data
+// Integrity 1.1 credentials. P31 care credentials align to these types.
+const EUDI_CREDENTIAL_TYPES = [
+  'https://p31ca.org/credential-types/care-attestation/v1',
+  'https://p31ca.org/credential-types/identity/v1',
+];
+
 // ── ActivityPub Actor ──────────────────────────────────────────────────────
 
 const actor = {
@@ -54,6 +62,19 @@ const actor = {
   endpoints: {
     sharedInbox: INBOX_URL,
   },
+  // EUDI Discovery: DID Document service endpoints for credential issuance/verification.
+  service: [
+    {
+      id: `${ACTOR_ID}#credential-issuer`,
+      type: 'CredentialIssuer',
+      serviceEndpoint: `${ORIGIN}/credential/issue`,
+    },
+    {
+      id: `${ACTOR_ID}#credential-verifier`,
+      type: 'CredentialVerifier',
+      serviceEndpoint: `${ORIGIN}/credential/verify`,
+    },
+  ],
 };
 
 // ── Health ─────────────────────────────────────────────────────────────────
@@ -259,10 +280,17 @@ async function ensureCredentialsTable(db: D1Database) {
         type TEXT,
         sdjwt TEXT,
         activity TEXT,
-        created_at TEXT
+        created_at TEXT,
+        revoked INTEGER DEFAULT 0
       )`
     )
     .run();
+  // Migrate already-deployed DBs that predate the revoked column.
+  try {
+    await db.prepare('ALTER TABLE credentials ADD COLUMN revoked INTEGER DEFAULT 0').run();
+  } catch {
+    /* column already exists */
+  }
 }
 
 async function ensurePublishedTable(db: D1Database) {
@@ -385,7 +413,7 @@ app.post('/credential/issue', async (c) => {
     const lbRes = await fetch(`${ledgerBridgeUrl(c)}/credential/issue`, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ claims: { ...claims, subject, vct } }),
+      body: JSON.stringify({ claims: { sub: subject, ...claims, subject, vct } }),
     });
     if (!lbRes.ok) {
       return c.json({ error: 'ledger-bridge issuance failed', status: lbRes.status }, 502);
@@ -415,7 +443,7 @@ app.post('/credential/issue', async (c) => {
 
     await ensureCredentialsTable(c.env.LOVE_DB);
     await c.env.LOVE_DB.prepare(
-      'INSERT OR REPLACE INTO credentials (id, issuer, subject, type, sdjwt, activity, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)'
+      'INSERT OR REPLACE INTO credentials (id, issuer, subject, type, sdjwt, activity, created_at, revoked) VALUES (?, ?, ?, ?, ?, ?, ?, 0)'
     )
       .bind(id, ACTOR_ID, subject, vct, sdjwt, JSON.stringify(activity), new Date().toISOString())
       .run();
@@ -473,6 +501,39 @@ app.get('/credential/search', async (c) => {
     `SELECT id, issuer, subject, type, created_at FROM credentials ${where} ORDER BY created_at DESC LIMIT 50`
   ).bind(...binds).all();
   return c.json({ results: rows.results });
+});
+
+// ── EUDI revocation (Status List 2021-style status endpoint) ───────────────
+
+app.post('/credential/revoke/:id', async (c) => {
+  const requestId = c.req.header('x-request-id') || crypto.randomUUID();
+  c.header('x-request-id', requestId);
+  try {
+    const id = decodeURIComponent(c.req.param('id'));
+    const row = await c.env.LOVE_DB.prepare('SELECT id, revoked FROM credentials WHERE id = ?').bind(id).first();
+    if (!row) return c.json({ error: 'credential not found' }, 404);
+    await c.env.LOVE_DB.prepare('UPDATE credentials SET revoked = 1 WHERE id = ?').bind(id).run();
+    return c.json({ ok: true, id, revoked: true });
+  } catch (e: any) {
+    console.error(JSON.stringify({ level: 'error', requestId, service: 'federation-bridge', error: e.message, path: '/credential/revoke', timestamp: new Date().toISOString() }));
+    c.header('x-request-id', requestId);
+    return c.json({ error: 'Internal error', requestId }, 500);
+  }
+});
+
+app.get('/credential/revocation/:id', async (c) => {
+  const id = decodeURIComponent(c.req.param('id'));
+  const row = await c.env.LOVE_DB.prepare('SELECT id, revoked FROM credentials WHERE id = ?').bind(id).first();
+  if (!row) return c.json({ error: 'credential not found' }, 404);
+  const revoked = !!(row as any).revoked;
+  // Status List 2021 is a bitstring; for a single credential we return a
+  // StatusListEntry-style object the EUDI wallet can map to a status list.
+  return c.json({
+    id,
+    status: revoked ? 'invalid' : 'valid',
+    revoked,
+    statusList: { idx: 0, statusPurpose: revoked ? 'revocation' : 'valid' },
+  });
 });
 
 // ── HTTP Signature / FEP-8b32 discovery ────────────────────────────────────

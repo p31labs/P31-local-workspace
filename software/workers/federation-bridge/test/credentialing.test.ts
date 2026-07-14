@@ -15,12 +15,24 @@ class MockD1 {
     const make = (args: any[]) => ({
       run: async () => {
         if (sql.includes("INSERT OR REPLACE INTO credentials")) {
-          const [id, issuer, subject, type, sdjwt, activity, created_at] = args;
-          this.creds.set(id, { id, issuer, subject, type, sdjwt, activity, created_at });
+          const [id, issuer, subject, type, sdjwt, activity, created_at, revoked] = args;
+          this.creds.set(id, { id, issuer, subject, type, sdjwt, activity, created_at, revoked: revoked ?? 0 });
+        } else if (sql.includes("UPDATE credentials SET revoked")) {
+          const [id] = args;
+          const row = this.creds.get(id);
+          if (row) row.revoked = 1;
+        } else if (sql.includes("ALTER TABLE credentials")) {
+          /* no-op on mock */
         }
         return {};
       },
-      first: async () => (sql.includes("SELECT * FROM credentials WHERE id") ? this.creds.get(args[0]) || null : null),
+      first: async () => {
+        if (sql.includes("SELECT id, revoked FROM credentials WHERE id")) {
+          const row = this.creds.get(args[0]);
+          return row ? { id: row.id, revoked: row.revoked } : null;
+        }
+        return sql.includes("SELECT * FROM credentials WHERE id") ? this.creds.get(args[0]) || null : null;
+      },
       all: async () => ({ results: sql.includes("FROM credentials") ? [...this.creds.values()] : [] }),
     });
     const direct = make([]);
@@ -38,7 +50,7 @@ beforeAll(async () => {
   };
 });
 
-beforeAll(() => {
+beforeEach(() => {
   vi.stubGlobal("fetch", (url: string) => {
     if (url.includes("/credential/issue"))
       return Promise.resolve(new Response(JSON.stringify({ sdjwt: "fake.sdjwt.value" }), { status: 200 }));
@@ -79,6 +91,31 @@ describe("BadgeFed-style credentialing (Phase 2)", () => {
   it("rejects issue without subject/claims", async () => {
     const r = await post("/credential/issue", { subject: "x" });
     expect(r.status).toBe(400);
+  });
+
+  it("exposes EUDI credential service endpoints in the actor DID document", async () => {
+    const res = await app.request("/actor", {}, env);
+    const doc = await res.json();
+    const services = (doc.service || []).map((s: any) => s.type);
+    expect(services).toContain("CredentialIssuer");
+    expect(services).toContain("CredentialVerifier");
+  });
+
+  it("revokes a credential and reflects it via the EUDI revocation endpoint", async () => {
+    const issue = await post("/credential/issue", { subject: "did:example:carol", claims: { skill: "care" }, type: "CareCredential" });
+    const ij = await issue.json();
+
+    const before = await app.request(`/credential/revocation/${encodeURIComponent(ij.id)}`, {}, env);
+    expect((await before.json()).status).toBe("valid");
+
+    const revoke = await app.request(`/credential/revoke/${encodeURIComponent(ij.id)}`, { method: "POST" }, env);
+    expect(revoke.status).toBe(200);
+    expect((await revoke.json()).revoked).toBe(true);
+
+    const after = await app.request(`/credential/revocation/${encodeURIComponent(ij.id)}`, {}, env);
+    const aj = await after.json();
+    expect(aj.status).toBe("invalid");
+    expect(aj.revoked).toBe(true);
   });
 });
 

@@ -45,6 +45,7 @@ accepting `Create`/`Announce` activities (CWP-2026-043 §3).
 | `graph-gpu` (npm) | **Does not exist** (404) | Superseded — do not depend on it |
 | **@fusefactory/fuse-three-forcegraph** v1.1.15 | Real, maintained | WebGL **GPGPU** force graph (ping-pong render-to-texture compute, `THREE.WebGLRenderer`). API: `new Engine(canvas, opts).setData().start()`. An alternative renderer, but it is **not WebGPU** — the live dashboard's WebGPU path is already superior for that goal |
 | **BadgeFed** | Protocol, not a package (npm 404) | `federation-bridge` implements BadgeFed-style credentialing natively (ActivityPub + SD-JWT VC + FEP-8b32), no SDK dependency |
+| **Hybrid PQC TLS (X25519-ML-KEM-768)** | Cloudflare edge, **zone-level** setting | **Correction (CWP-2026-044 §4):** NOT a `wrangler.toml` `compatibility_flags = ["hybrid_pqc_tls"]` entry — no such flag exists. Enable via zone SSL/TLS → Edge Certificates → Post-Quantum. There is no `CF-PQC-Key-Exchange` response header either; PQC negotiation is at the TLS layer. EUDI revocation uses a Status-List-2021-style `/credential/revocation/:id` endpoint in `federation-bridge`. |
 
 ## Review cadence
 Re-check this file when any "Expected" date passes or when a dependent CWP opens

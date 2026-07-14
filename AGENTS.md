@@ -386,3 +386,16 @@ These must be added at https://github.com/p31labs/P31-local-workspace/settings/s
   Integrity Proofs) — `POST /credential/issue`, `/credential/verify`, `GET /credential/search`.
 - `federation-bridge` signs outbound activities with **FEP-8b32** (eddsa-2022 / Ed25519 over
   JCS-canonicalized JSON) and verifies inbound proofs before accepting `Create`/`Announce`.
+
+### CWP-2026-044 corrections (2026-07-14)
+- **Hybrid PQC TLS is a Cloudflare ZONE setting, not a wrangler flag.** There is no
+  `compatibility_flags = ["hybrid_pqc_tls"]` entry and no `CF-PQC-Key-Exchange` response
+  header. Enable Post-Quantum at zone SSL/TLS → Edge Certificates; it propagates from the
+  Cloudflare edge, not per-Worker. Do not add a fake flag to any `wrangler.toml`.
+- **`@sd-jwt/core` v0.20.0 is ALREADY integrated** in `ledger-bridge/src/sdjwt.ts`
+  (CWP-2026-030 Phase 2) — Phase 4 of CWP-2026-044 was already satisfied; no rewrite needed.
+- **EUDI Wallet alignment (Phase 1) implemented:** `federation-bridge` now exposes
+  `CredentialIssuer`/`CredentialVerifier` DID-Document `service` endpoints, issues SD-JWT VCs
+  with `sub`/`vct`/`exp`, and serves a Status-List-2021-style `/credential/revocation/:id`
+  endpoint plus `POST /credential/revoke/:id`. `docs/CRYPTOGRAPHIC-INVENTORY.md` created
+  (NIST IR 8547). 10 federation-bridge tests pass (4 FEP-8b32 + 4 credentialing + 2 EUDI).

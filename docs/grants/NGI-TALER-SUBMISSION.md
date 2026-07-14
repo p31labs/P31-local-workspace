@@ -148,3 +148,23 @@ to a pilot-ready system serving real neurodivergent families.
 - **R2 Storage:** `phos-assets` bucket for PHOS static assets
 - **On-chain:** LOVESBT + ProofOfCare + P31TransparencyAnchor on Base Sepolia
 - **DNS:** `phos.p31ca.org`, `pilot.p31ca.org`, `federation.p31ca.org`
+
+## CWP-2026-044 Interoperability Update (2026-07-14)
+
+Post-quantum + EUDI alignment added to the P31 stack ahead of the 2026-08-01 deadline:
+
+| Capability | Evidence | Status |
+|------------|----------|--------|
+| X-Wing hybrid KEM (ML-KEM-768 + X25519) | `ledger-bridge/src/kem.ts`, `GET /kem/xwing/{public,encapsulate,decapsulate}`, live-verified round-trip | ✅ |
+| ML-DSA-65 signatures (FIPS 204) | `ledger-bridge` care-proof co-signature + SD-JWT VC | ✅ |
+| EUDI Wallet alignment | `federation-bridge` DID-Document `CredentialIssuer`/`CredentialVerifier` services, SD-JWT VC with `vct`/`sub`/`exp`/`cnf`, Status-List-2021-style `/credential/revocation/:id` | ✅ |
+| FEP-8b32 Object Integrity Proofs | `federation-bridge` signs `/publish`, verifies `/inbox` (ActivityPub + BadgeFed-style credentialing) | ✅ |
+| `@sd-jwt/core` v0.20.0 (OpenWallet, RFC 9901 + draft-17) | Already integrated in `ledger-bridge/src/sdjwt.ts` | ✅ |
+| Cryptographic inventory (NIST IR 8547) | `docs/CRYPTOGRAPHIC-INVENTORY.md` | ✅ |
+| Hybrid PQC TLS | Cloudflare **zone-level** Post-Quantum setting (not a wrangler flag) — enable on `p31ca.org` zone | ☐ Pending (ops) |
+
+**Test coverage:** `personal-swarm` 23, `ledger-bridge` 8 (X-Wing KEM), `federation-bridge` 10
+(FEP-8b32 + credentialing + EUDI revocation) — all passing; 0 typecheck errors.
+
+**Correction:** the `hybrid_pqc_tls` wrangler compatibility flag and `CF-PQC-Key-Exchange` header
+cited in earlier drafts do not exist. Hybrid PQC TLS is a Cloudflare zone SSL/TLS setting.
