@@ -16,7 +16,7 @@ export async function initCbs(wasmUrl: string): Promise<void> {
   const mod = await WebAssembly.instantiate(bytes, { env: {} });
   INST = mod.instance;
   MEM = INST.exports.memory as WebAssembly.Memory;
-  BASE = Math.ceil((INST.exports.__heap_base.value as number) / 1024) * 1024;
+  BASE = Math.ceil(((INST.exports as any).__heap_base?.value ?? 0) / 1024) * 1024;
 }
 
 function ensure(off: number, n: number) {

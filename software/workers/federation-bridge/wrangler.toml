@@ -1,0 +1,19 @@
+name = "federation-bridge"
+main = "src/index.ts"
+compatibility_date = "2026-07-01"
+compatibility_flags = ["nodejs_compat"]
+
+# CWP-2026-031 Phase 3 — ActivityPub Federation Bridge.
+# Federates care attestations (SD-JWT VCs) to the Fediverse.
+# HTTP Signatures (RFC 9421) + Object Integrity Proofs (FEP-8b32).
+# Routes: federation.p31ca.org/*
+
+routes = [{ pattern = "federation.p31ca.org/*", zone_name = "p31ca.org" }]
+
+[[d1_databases]]
+binding = "LOVE_DB"
+database_name = "love-ledger"
+database_id = "592e3e2e-3203-4e0a-8342-9e85215ec8a6"
+
+[observability]
+enabled = true

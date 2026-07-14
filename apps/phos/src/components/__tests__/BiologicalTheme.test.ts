@@ -5,12 +5,12 @@ describe('Biological Token Recalculation Core Matrix', () => {
   it('should swap tokens correctly across mapped limits', () => {
     const crisis = getBiologicalTheme(0, false);
     expect(crisis.name).toBe('CRISIS');
-    expect(crisis.wrapper).toContain('bg-black');
+    expect(crisis.wrapper).toContain('bg-phos-bg');
     expect(crisis.orb).toContain('animate-none');
 
     const sanctuary = getBiologicalTheme(2, false);
     expect(sanctuary.name).toBe('SANCTUARY');
-    expect(sanctuary.wrapper).toContain('bg-gradient-to-b');
+    expect(sanctuary.wrapper).toContain('bg-phos-bg');
     expect(sanctuary.orb).toContain('animate-biomimetic-breath');
 
     const bridge = getBiologicalTheme(3, false);
@@ -19,12 +19,12 @@ describe('Biological Token Recalculation Core Matrix', () => {
 
     const quantum = getBiologicalTheme(5, false);
     expect(quantum.name).toBe('QUANTUM');
-    expect(quantum.wrapper).toContain('text-[#E0E0E0]');
+    expect(quantum.wrapper).toContain('text-phos-text');
   });
 
   it('should trigger forced grayRock override regardless of quantitative input counters', () => {
     const theme = getBiologicalTheme(5, true);
     expect(theme.name).toBe('CRISIS');
-    expect(theme.wrapper).toContain('bg-black');
+    expect(theme.wrapper).toContain('bg-phos-bg');
   });
 });

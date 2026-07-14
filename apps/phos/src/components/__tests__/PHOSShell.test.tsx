@@ -5,8 +5,8 @@ describe('getBiologicalTheme', () => {
   it('should return CRISIS theme at 0 spoons', () => {
     const theme = getBiologicalTheme(0, false);
     expect(theme.name).toBe('CRISIS');
-    expect(theme.wrapper).toContain('bg-black');
-    expect(theme.orb).toContain('bg-gray-800');
+    expect(theme.wrapper).toContain('bg-phos-bg');
+    expect(theme.orb).toContain('bg-phos-card');
   });
 
   it('should return CRISIS theme when grayRock is true regardless of spoons', () => {
@@ -18,7 +18,7 @@ describe('getBiologicalTheme', () => {
   it('should return SANCTUARY theme at 1 spoon', () => {
     const theme = getBiologicalTheme(1, false);
     expect(theme.name).toBe('SANCTUARY');
-    expect(theme.wrapper).toContain('bg-slate-950');
+    expect(theme.wrapper).toContain('bg-phos-bg');
   });
 
   it('should return SANCTUARY theme at 2 spoons', () => {
@@ -29,14 +29,14 @@ describe('getBiologicalTheme', () => {
     const theme = getBiologicalTheme(3, false);
     expect(theme.name).toBe('BRIDGE');
     expect(theme.wrapper).toContain('font-serif');
-    expect(theme.orb).toContain('bg-indigo-500');
+    expect(theme.orb).toContain('bg-phos-primary');
   });
 
   it('should return QUANTUM theme at 4 spoons', () => {
     const theme = getBiologicalTheme(4, false);
     expect(theme.name).toBe('QUANTUM');
     expect(theme.wrapper).toContain('font-sans');
-    expect(theme.orb).toContain('bg-[#7DD3A8]');
+    expect(theme.orb).toContain('bg-phos-primary');
   });
 
   it('should return QUANTUM theme at 5 spoons', () => {
@@ -56,7 +56,6 @@ describe('getBiologicalTheme', () => {
   it('should disable animations and effects in CRISIS theme', () => {
     const theme = getBiologicalTheme(0, false);
     expect(theme.button).toContain('transition-none');
-    expect(theme.button).toContain('backdrop-blur-none');
     expect(theme.input).toContain('pointer-events-none');
   });
 

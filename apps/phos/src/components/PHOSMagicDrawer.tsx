@@ -11,6 +11,8 @@ interface PHOSMagicDrawerProps {
   isOpen: boolean;
   onClose: () => void;
   spoons: number;
+  selectedModel?: string;
+  onSetModel?: (model: string) => void;
   meshEvents?: MeshEvent[];
   dyslexiaMode?: string;
   reducedMotion?: string;
@@ -20,6 +22,8 @@ interface PHOSMagicDrawerProps {
 
 export default function PHOSMagicDrawer({
   isOpen, onClose, spoons,
+  selectedModel = '',
+  onSetModel = () => {},
   meshEvents = [],
   dyslexiaMode = 'false',
   reducedMotion = 'false',

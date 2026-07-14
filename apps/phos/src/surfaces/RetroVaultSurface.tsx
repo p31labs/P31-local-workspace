@@ -33,63 +33,64 @@ export function RetroVaultSurface({ theme, spoons }: { theme?: Record<string, st
       const root = await navigator.storage.getDirectory();
       const fileHandle = await root.getFileHandle('vault-manifest.json', { create: true });
       setOpfsPrompt(false);
-      loadVault();
     } catch {
       setError('OPFS_PERMISSION_DENIED');
     }
     /* v8 ignore stop */
   }, []);
 
-  const loadVault = useCallback(async () => {
-    /* v8 ignore start */
-    try {
-      const pgliteMod = await import('@electric-sql/pglite');
-      const PGlite = pgliteMod.PGlite;
-      const db = new PGlite('idb://p31-retro-vault' as any);
-
-      const [itemRes, mediaRes, configRes] = await Promise.all([
-        db.query("SELECT COUNT(*) as count FROM entities WHERE context = 'item'"),
-        db.query("SELECT COUNT(*) as count FROM entities WHERE context = 'media'"),
-        db.query("SELECT COUNT(*) as count FROM entities WHERE context = 'configuration'"),
-      ]);
-
-      const itemCount = Number((itemRes.rows as any)?.[0]?.count || 0);
-      const mediaCount = Number((mediaRes.rows as any)?.[0]?.count || 0);
-      const configCount = Number((configRes.rows as any)?.[0]?.count || 0);
-
-      let hashVerified = true;
-      let verified = 0;
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
       try {
-        const sample = await db.query(
-          "SELECT data_url, sha256_hash FROM entities WHERE context = 'media' AND sha256_hash IS NOT NULL LIMIT 10"
-        );
-        for (const row of sample.rows as any[]) {
-          if (row.data_url && row.sha256_hash) {
-            const ok = await verifyAssetHash(row.data_url, row.sha256_hash);
-            if (!ok) hashVerified = false;
-            verified++;
+        const pgliteMod = await import('@electric-sql/pglite');
+        if (cancelled) return;
+        const PGlite = pgliteMod.PGlite;
+        const db = new PGlite('idb://p31-retro-vault' as any);
+
+        const [itemRes, mediaRes, configRes] = await Promise.all([
+          db.query("SELECT COUNT(*) as count FROM entities WHERE context = 'item'"),
+          db.query("SELECT COUNT(*) as count FROM entities WHERE context = 'media'"),
+          db.query("SELECT COUNT(*) as count FROM entities WHERE context = 'configuration'"),
+        ]);
+
+        if (cancelled) return;
+        const itemCount = Number((itemRes.rows as any)?.[0]?.count || 0);
+        const mediaCount = Number((mediaRes.rows as any)?.[0]?.count || 0);
+        const configCount = Number((configRes.rows as any)?.[0]?.count || 0);
+
+        let hashVerified = true;
+        let verified = 0;
+        try {
+          const sample = await db.query(
+            "SELECT data_url, sha256_hash FROM entities WHERE context = 'media' AND sha256_hash IS NOT NULL LIMIT 10"
+          );
+          if (!cancelled) {
+            for (const row of sample.rows as any[]) {
+              if (row.data_url && row.sha256_hash) {
+                const ok = await verifyAssetHash(row.data_url, row.sha256_hash);
+                if (!ok) hashVerified = false;
+                verified++;
+              }
+            }
           }
+        } catch { /* hash verification optional */ }
+
+        if (!cancelled) {
+          setMetrics({ items: itemCount, media: mediaCount, configurations: configCount, hashVerified });
+          setVerifiedCount(verified);
         }
-      } catch { /* hash verification optional */ }
-
-      setMetrics({
-        items: itemCount,
-        media: mediaCount,
-        configurations: configCount,
-        hashVerified,
-      });
-      setVerifiedCount(verified);
-    } catch (err: any) {
-      if (err?.message?.includes('OPFS') || err?.name?.includes('NotFoundError')) {
-        setOpfsPrompt(true);
+      } catch (err: any) {
+        if (cancelled) return;
+        if (err?.message?.includes('OPFS') || err?.name?.includes('NotFoundError')) {
+          setOpfsPrompt(true);
+        }
+        setError('VAULT_EMPTY // NO_DATA_STORED');
+        setMetrics({ items: 0, media: 0, configurations: 0, hashVerified: true });
       }
-      setError('VAULT_EMPTY // NO_DATA_STORED');
-      setMetrics({ items: 0, media: 0, configurations: 0, hashVerified: true });
-    }
-    /* v8 ignore stop */
+    })();
+    return () => { cancelled = true; };
   }, []);
-
-  useEffect(() => { loadVault(); }, [loadVault]);
 
   return (
     <div className="space-y-4 w-full">

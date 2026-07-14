@@ -1,10 +1,10 @@
-# NGI TALER — Proposal Narrative (CWP-2026-030)
+# NGI TALER — Proposal Narrative (CWP-2026-031)
 
 **Programme:** NGI TALER 14th Open Call
 **Deadline:** 2026-08-01, 12:00 CEST
 **Applicant:** P31 Labs
 **Requested amount:** €15,000
-**Status:** Final submission ready — live demo links, compliance evidence, 104 tests passing.
+**Status:** Final submission ready — live demo links, compliance evidence, 108+ tests passing, Design Frontier complete.
 
 ---
 
@@ -55,6 +55,14 @@ the user* (spoons saved, care generated), not value extracted. Three pillars:
   - `P31TransparencyAnchor` — `0xd930Fc4d429BbE6B8CEcca9e4C77386dB528e267`
 - **Post-quantum credentials:** ML-DSA-65 SD-JWT VC issuance via `POST /credential/issue`
   with `post_quantum: true`. NIST IR 8547 compliant.
+- **Federation Bridge:** ActivityPub federation for care attestations (CWP-2026-031 Phase 3).
+  HTTP Signatures (RFC 9421) + Object Integrity Proofs (FEP-8b32).
+- **Unified Shell:** Single role-based interface merging PHOS + Pilot Dashboard + Sovereign Agent
+  (CWP-2026-031 Phase 4). Family, Caregiver, Operator, Developer roles.
+- **Post-Quantum Identity Surface:** DID management (rotate/revoke), composite signature
+  visualisation, SD-JWT wallet (CWP-2026-031 Phase 5).
+- **Pilot Onboarding Wizard:** 5-step flow: DID → PQC Keys → Register → Care Proof → SBT Mint.
+  Spoon-aware, WCAG 2.2 AAA (CWP-2026-031 Phase 6).
 - **Architecture:** `ledger-bridge` verifies the DID↔ETH binding (Ed25519, ML-DSA-65, or composite)
   before relaying `submitCareProofs` — open minting is removed.
 
@@ -66,8 +74,9 @@ the user* (spoons saved, care generated), not value extracted. Three pillars:
 | W3C DID Core v1.1 | Candidate Recommendation, 2026-03-05 | `did:key`, `did:jwk`, `did:web` |
 | SD-JWT VC draft-17 | IESG Publication Requested, 2026-07-06 | `typ:dc+sd-jwt`, KB-JWT key binding |
 | NIST IR 8547 | RSA/ECC deprecated 2030 | ML-DSA-65 primary, no deprecated algorithms |
-| WCAG 2.2 | W3C Recommendation | Crisis mode, spoon-aware, skip links |
-| **Test coverage** | **104 tests passing** | 88 PHOS + 16 ledger-bridge |
+| WCAG 2.2 | W3C Recommendation | Crisis mode, spoon-aware, skip links, dyslexia mode |
+| ActivityPub | W3C Recommendation | Federation Bridge, HTTP Signatures (RFC 9421) |
+| **Test coverage** | **108+ tests passing** | 92 PHOS + 16 ledger-bridge |
 
 ## 5. Why NGI TALER
 

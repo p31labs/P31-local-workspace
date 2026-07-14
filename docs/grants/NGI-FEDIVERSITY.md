@@ -1,10 +1,10 @@
-# NGI Fediversity — Proposal Narrative (CWP-2026-030)
+# NGI Fediversity — Proposal Narrative (CWP-2026-031)
 
 **Programme:** NGI Fediversity 12th Open Call
 **Deadline:** 2026-08-01, 12:00 CEST
 **Applicant:** P31 Labs
 **Requested amount:** €25,000
-**Status:** Final submission ready — live demo links, compliance evidence, 104 tests passing.
+**Status:** Final submission ready — live demo links, compliance evidence, 108+ tests passing, Design Frontier complete.
 
 ---
 
@@ -32,10 +32,10 @@ crisis-mode, `data-spoons` motion scaling). **PHOS-Sovereign** makes it decentra
 
 | Work package | Outcome |
 |--------------|---------|
-| ActivityPub bridge | Federated care-artefact sharing with selective disclosure |
+| ActivityPub bridge | **Deployed** — `federation-bridge` Worker with HTTP Signatures (RFC 9421) + FEP-8b32 |
 | NixOS module | Reproducible, auditable self-host packaging of the P31 stack |
 | Fediversity pilot | Deploy an instance for a pilot family cohort / partner org |
-| Accessibility audit | WCAG 2.2 AAA pass + spoon-aware UX verification |
+| Accessibility audit | WCAG 2.2 AAA pass + spoon-aware UX verification + dyslexia mode |
 
 ## 4. Live demonstration (already running)
 
@@ -43,15 +43,20 @@ crisis-mode, `data-spoons` motion scaling). **PHOS-Sovereign** makes it decentra
   - **Care Mint:** https://phos.p31ca.org/mint
   - **PQC Keys (quantum-safe DIDs):** https://phos.p31ca.org/pqc-keys
   - **Passport (sovereign identity):** https://phos.p31ca.org/passport
+  - **Post-Quantum Identity Surface:** DID management, composite signatures, SD-JWT wallet
+  - **Pilot Onboarding Wizard:** 5-step onboarding for 18 families
+  - **Unified Shell:** Role-based interface (Family/Caregiver/Operator/Developer)
 - **Pilot Dashboard:** https://pilot.p31ca.org — real-time pilot operations
 - **Sovereign Agent:** https://phos.p31ca.org/health — D1 + R2 health status
 - **Ledger Bridge:** https://ledger-bridge.trimtab-signal.workers.dev/health — on-chain relay health
+- **Federation Bridge:** https://federation.p31ca.org/actor — ActivityPub actor, outbox, NodeInfo
 - **On-chain (Base Sepolia 84532):** `ProofOfCare` `0x08263FdD…`, `LOVESBT` `0x521cAD1b…`,
   `P31TransparencyAnchor` `0xd930Fc4d…`
 - **Decentralised care mesh:** `care-mesh` (Laplace DP + Ed25519-signed) — privacy-preserving care data.
 - **18 pilot families** registered in `pilot_registry` (shared LOVE ledger D1).
 - **Standards:** RFC 9964 (AKP JWK), DID Core v1.1 (`did:key`/`did:jwk`/`did:web`),
-  SD-JWT VC draft-17, NIST IR 8547. **104 tests passing.**
+  SD-JWT VC draft-17, NIST IR 8547, ActivityPub (W3C), HTTP Signatures (RFC 9421).
+  **108+ tests passing.**
 
 ## 5. Why NGI Fediversity
 
