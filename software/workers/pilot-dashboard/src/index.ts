@@ -174,6 +174,10 @@ async function loadStats(env: Env, pilots: Pilot[]): Promise<Stats> {
   };
 }
 
+function logError(requestId: string, service: string, error: string, path: string) {
+  console.error(JSON.stringify({ level: 'error', requestId, service, error, path, timestamp: new Date().toISOString() }));
+}
+
 function esc(s: string): string {
   return s.replace(/[&<>"']/g, (c) =>
     ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!,
@@ -355,9 +359,15 @@ app.use("/api/*", async (c, next) => {
 });
 
 app.get("/", async (c) => {
-  const pilots = await loadPilots(c.env);
-  const stats = await loadStats(c.env, pilots);
-  return c.html(renderDashboard(pilots, stats));
+  const requestId = c.req.header("x-request-id") || crypto.randomUUID();
+  try {
+    const pilots = await loadPilots(c.env);
+    const stats = await loadStats(c.env, pilots);
+    return c.html(renderDashboard(pilots, stats));
+  } catch (e: any) {
+    logError(requestId, 'pilot-dashboard', e.message, '/');
+    return c.json({ error: e.message, requestId }, 500);
+  }
 });
 
 app.get("/api/pilots", async (c) => {
@@ -383,61 +393,79 @@ app.get("/api/onboard/status", async (c) => {
 });
 
 app.post("/api/onboard", async (c) => {
-  const { did } = await c.req.json<{ did?: string }>();
-  if (!did) return c.json({ error: "did is required" }, 400);
+  const requestId = c.req.header("x-request-id") || crypto.randomUUID();
+  try {
+    const { did } = await c.req.json<{ did?: string }>();
+    if (!did) return c.json({ error: "did is required" }, 400);
 
-  // Generate onboarding link
-  const onboardUrl = `https://phos.p31ca.org?did=${encodeURIComponent(did)}`;
+    // Generate onboarding link
+    const onboardUrl = `https://phos.p31ca.org?did=${encodeURIComponent(did)}`;
 
-  // Update status to 'invited'
-  await c.env.LOVE_DB.prepare(
-    "UPDATE pilot_registry SET status = 'invited' WHERE did = ?"
-  ).bind(did).run();
+    // Update status to 'invited'
+    await c.env.LOVE_DB.prepare(
+      "UPDATE pilot_registry SET status = 'invited' WHERE did = ?"
+    ).bind(did).run();
 
-  return c.json({
-    ok: true,
-    did,
-    onboardUrl,
-    dashboardUrl: "https://pilot.p31ca.org",
-    note: "Share the onboarding link with the pilot family.",
-  });
+    return c.json({
+      ok: true,
+      did,
+      onboardUrl,
+      dashboardUrl: "https://pilot.p31ca.org",
+      note: "Share the onboarding link with the pilot family.",
+    });
+  } catch (e: any) {
+    logError(requestId, 'pilot-dashboard', e.message, '/api/onboard');
+    return c.json({ error: e.message, requestId }, 500);
+  }
 });
 
 app.post("/api/invite", async (c) => {
-  const { did } = await c.req.json<{ did?: string }>();
-  if (!did) return c.json({ error: "did is required" }, 400);
+  const requestId = c.req.header("x-request-id") || crypto.randomUUID();
+  try {
+    const { did } = await c.req.json<{ did?: string }>();
+    if (!did) return c.json({ error: "did is required" }, 400);
 
-  // Validate DID exists in pilot_registry
-  const pilot = await c.env.LOVE_DB.prepare(
-    "SELECT did FROM pilot_registry WHERE did = ?"
-  ).bind(did).first();
-  if (!pilot) return c.json({ error: "unknown pilot DID" }, 404);
+    // Validate DID exists in pilot_registry
+    const pilot = await c.env.LOVE_DB.prepare(
+      "SELECT did FROM pilot_registry WHERE did = ?"
+    ).bind(did).first();
+    if (!pilot) return c.json({ error: "unknown pilot DID" }, 404);
 
-  // Update status to 'invited' (skip if already onboarded)
-  await c.env.LOVE_DB.prepare(
-    "UPDATE pilot_registry SET status = 'invited' WHERE did = ? AND status != 'onboarded'"
-  ).bind(did).run();
+    // Update status to 'invited' (skip if already onboarded)
+    await c.env.LOVE_DB.prepare(
+      "UPDATE pilot_registry SET status = 'invited' WHERE did = ? AND status != 'onboarded'"
+    ).bind(did).run();
 
-  // Log event
-  await ensureOnboardingTable(c.env.LOVE_DB);
-  await c.env.LOVE_DB.prepare(
-    "INSERT INTO onboarding_events (did, event, timestamp) VALUES (?, ?, ?)"
-  ).bind(did, "invited", Date.now()).run();
+    // Log event
+    await ensureOnboardingTable(c.env.LOVE_DB);
+    await c.env.LOVE_DB.prepare(
+      "INSERT INTO onboarding_events (did, event, timestamp) VALUES (?, ?, ?)"
+    ).bind(did, "invited", Date.now()).run();
 
-  const onboardUrl = `https://phos.p31ca.org?did=${encodeURIComponent(did)}`;
-  return c.json({ ok: true, did, onboardUrl });
+    const onboardUrl = `https://phos.p31ca.org?did=${encodeURIComponent(did)}`;
+    return c.json({ ok: true, did, onboardUrl });
+  } catch (e: any) {
+    logError(requestId, 'pilot-dashboard', e.message, '/api/invite');
+    return c.json({ error: e.message, requestId }, 500);
+  }
 });
 
 app.post("/api/invite/track", async (c) => {
-  const { did, event } = await c.req.json<{ did?: string; event?: string }>();
-  if (!did || !event) return c.json({ error: "did and event required" }, 400);
+  const requestId = c.req.header("x-request-id") || crypto.randomUUID();
+  try {
+    const { did, event } = await c.req.json<{ did?: string; event?: string }>();
+    if (!did || !event) return c.json({ error: "did and event required" }, 400);
 
-  await ensureOnboardingTable(c.env.LOVE_DB);
-  await c.env.LOVE_DB.prepare(
-    "INSERT INTO onboarding_events (did, event, timestamp) VALUES (?, ?, ?)"
-  ).bind(did, event, Date.now()).run();
+    await ensureOnboardingTable(c.env.LOVE_DB);
+    await c.env.LOVE_DB.prepare(
+      "INSERT INTO onboarding_events (did, event, timestamp) VALUES (?, ?, ?)"
+    ).bind(did, event, Date.now()).run();
 
-  return c.json({ ok: true });
+    return c.json({ ok: true });
+  } catch (e: any) {
+    logError(requestId, 'pilot-dashboard', e.message, '/api/invite/track');
+    return c.json({ error: e.message, requestId }, 500);
+  }
 });
 
 app.get("/health", async (c) => {

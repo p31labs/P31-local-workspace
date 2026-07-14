@@ -4,7 +4,7 @@
 **Deadline:** 2026-08-01, 12:00 CEST
 **Applicant:** P31 Labs
 **Requested amount:** €25,000
-**Status:** Final submission ready — live demo links, compliance evidence, 108+ tests passing, Design Frontier complete.
+**Status:** Final submission ready — live demo links, compliance evidence, 384 tests passing, Design Frontier complete.
 
 ---
 
@@ -56,7 +56,7 @@ crisis-mode, `data-spoons` motion scaling). **PHOS-Sovereign** makes it decentra
 - **18 pilot families** registered in `pilot_registry` (shared LOVE ledger D1).
 - **Standards:** RFC 9964 (AKP JWK), DID Core v1.1 (`did:key`/`did:jwk`/`did:web`),
   SD-JWT VC draft-17, NIST IR 8547, ActivityPub (W3C), HTTP Signatures (RFC 9421).
-  **108+ tests passing.**
+  **384 tests passing.**
 
 ## 5. Why NGI Fediversity
 

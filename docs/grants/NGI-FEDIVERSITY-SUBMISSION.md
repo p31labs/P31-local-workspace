@@ -14,7 +14,7 @@
 **Deadline:** 2026-08-01, 12:00 CEST
 **Applicant:** P31 Labs
 **Requested amount:** €25,000
-**Status:** Final submission ready — live demo links, compliance evidence, 108+ tests passing, Design Frontier complete.
+**Status:** Final submission ready — live demo links, compliance evidence, 384 tests passing (361 PHOS + 23 ledger-bridge), Design Frontier complete.
 
 ---
 
@@ -66,7 +66,7 @@ crisis-mode, `data-spoons` motion scaling). **PHOS-Sovereign** makes it decentra
 - **18 pilot families** registered in `pilot_registry` (shared LOVE ledger D1).
 - **Standards:** RFC 9964 (AKP JWK), DID Core v1.1 (`did:key`/`did:jwk`/`did:web`),
   SD-JWT VC draft-17, NIST IR 8547, ActivityPub (W3C), HTTP Signatures (RFC 9421).
-  **108+ tests passing.**
+  **384 tests passing.**
 
 ### 5. Why NGI Fediversity
 
@@ -93,7 +93,7 @@ institutions can run *themselves*, removing P31 as a single point of control.
 | NIST IR 8547 | ✅ No deprecated algorithms | `docs/grants/NIST-IR-8547-COMPLIANCE.md` |
 | ML-DSA-65 (FIPS 204) | ✅ Post-quantum signatures | `@noble/post-quantum` v0.6.1 |
 | Composite signatures | ✅ Ed25519 + ML-DSA-65 | `apps/phos/src/lib/crypto.ts` — defence-in-depth |
-| Test coverage | ✅ 370+ tests | 354 PHOS + 16 ledger-bridge |
+| Test coverage | ✅ 384 tests | 361 PHOS + 23 ledger-bridge |
 | Type errors | ✅ 0 | `npx tsc --noEmit` passes |
 
 ## Federation-Specific Evidence
@@ -107,6 +107,19 @@ institutions can run *themselves*, removing P31 as a single point of control.
 | NixOS Module | 🔲 Planned | WP2 in proposal |
 | Neuroinclusive UI | ✅ Spoon-aware, dyslexia mode | WCAG 2.2 compliant |
 | Unified Shell | ✅ Role-based | Family/Caregiver/Operator/Developer roles |
+
+## Post-Submission Hardening (CWP-2026-032/033/034)
+
+| Enhancement | Status | Evidence |
+|-------------|--------|----------|
+| DID Core v1.1 port encoding | ✅ Fixed | `did:web:example.com:8443:user` resolves correctly |
+| SD-JWT `vct` claim (draft-17 §4.2) | ✅ Added | Credential type in all SD-JWT payloads |
+| SD-JWT `cnf` verification (draft-17 §5) | ✅ Fixed | KB-JWT key binding now verified against issuer cnf |
+| SD-JWT PQ verification path | ✅ Added | `verifySDJWTPostQuantum()` for ML-DSA-65 credentials |
+| SD-JWT `exp`/`nbf` time bounds | ✅ Added | Credentials expire after 1 year by default |
+| Request-ID propagation | ✅ Added | All 4 workers propagate x-request-id |
+| Observability (D1 metrics) | ✅ Added | Health endpoints with D1 latency probes |
+| Pilot invitation system | ✅ Added | Dashboard "Send Invitation" button + event tracking |
 
 ## Live Demo Links
 

@@ -4,7 +4,7 @@
 **Deadline:** 2026-08-01, 12:00 CEST
 **Applicant:** P31 Labs
 **Requested amount:** €15,000
-**Status:** Final submission ready — live demo links, compliance evidence, 108+ tests passing, Design Frontier complete.
+**Status:** Final submission ready — live demo links, compliance evidence, 384 tests passing, Design Frontier complete.
 
 ---
 
@@ -76,7 +76,7 @@ the user* (spoons saved, care generated), not value extracted. Three pillars:
 | NIST IR 8547 | RSA/ECC deprecated 2030 | ML-DSA-65 primary, no deprecated algorithms |
 | WCAG 2.2 | W3C Recommendation | Crisis mode, spoon-aware, skip links, dyslexia mode |
 | ActivityPub | W3C Recommendation | Federation Bridge, HTTP Signatures (RFC 9421) |
-| **Test coverage** | **108+ tests passing** | 92 PHOS + 16 ledger-bridge |
+| **Test coverage** | **384 tests passing** | 361 PHOS + 23 ledger-bridge |
 
 ## 5. Why NGI TALER
 

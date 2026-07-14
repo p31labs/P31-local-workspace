@@ -14,7 +14,7 @@
 **Deadline:** 2026-08-01, 12:00 CEST
 **Applicant:** P31 Labs
 **Requested amount:** €15,000
-**Status:** Final submission ready — live demo links, compliance evidence, 108+ tests passing, Design Frontier complete.
+**Status:** Final submission ready — live demo links, compliance evidence, 384 tests passing (361 PHOS + 23 ledger-bridge), Design Frontier complete.
 
 ---
 
@@ -86,7 +86,7 @@ the user* (spoons saved, care generated), not value extracted. Three pillars:
 | NIST IR 8547 | RSA/ECC deprecated 2030 | ML-DSA-65 primary, no deprecated algorithms |
 | WCAG 2.2 | W3C Recommendation | Crisis mode, spoon-aware, skip links, dyslexia mode |
 | ActivityPub | W3C Recommendation | Federation Bridge, HTTP Signatures (RFC 9421) |
-| **Test coverage** | **108+ tests passing** | 92 PHOS + 16 ledger-bridge |
+| **Test coverage** | **384 tests passing** | 361 PHOS + 23 ledger-bridge |
 
 ### 5. Why NGI TALER
 
@@ -114,8 +114,21 @@ to a pilot-ready system serving real neurodivergent families.
 | NIST IR 8547 | ✅ No deprecated algorithms | `docs/grants/NIST-IR-8547-COMPLIANCE.md` |
 | ML-DSA-65 (FIPS 204) | ✅ Post-quantum signatures | `@noble/post-quantum` v0.6.1 |
 | Composite signatures | ✅ Ed25519 + ML-DSA-65 | `apps/phos/src/lib/crypto.ts` — defence-in-depth |
-| Test coverage | ✅ 370+ tests | 354 PHOS + 16 ledger-bridge |
+| Test coverage | ✅ 384 tests | 361 PHOS + 23 ledger-bridge |
 | Type errors | ✅ 0 | `npx tsc --noEmit` passes |
+
+## Post-Submission Hardening (CWP-2026-032/033/034)
+
+| Enhancement | Status | Evidence |
+|-------------|--------|----------|
+| DID Core v1.1 port encoding | ✅ Fixed | `did:web:example.com:8443:user` resolves correctly |
+| SD-JWT `vct` claim (draft-17 §4.2) | ✅ Added | Credential type in all SD-JWT payloads |
+| SD-JWT `cnf` verification (draft-17 §5) | ✅ Fixed | KB-JWT key binding now verified against issuer cnf |
+| SD-JWT PQ verification path | ✅ Added | `verifySDJWTPostQuantum()` for ML-DSA-65 credentials |
+| SD-JWT `exp`/`nbf` time bounds | ✅ Added | Credentials expire after 1 year by default |
+| Request-ID propagation | ✅ Added | All 4 workers propagate x-request-id |
+| Observability (D1 metrics) | ✅ Added | Health endpoints with D1 latency probes |
+| Pilot invitation system | ✅ Added | Dashboard "Send Invitation" button + event tracking |
 
 ## Live Demo Links
 

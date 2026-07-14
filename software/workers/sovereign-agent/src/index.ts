@@ -94,6 +94,7 @@ app.all("/identity/*", async (c) => {
     const resp = await c.env.LOVE_LEDGER.fetch(req);
     return new Response(resp.body, { status: resp.status, headers: proxyHeaders(resp, requestId) });
   } catch (e: any) {
+    console.error(JSON.stringify({ level: 'error', requestId, service: 'sovereign-agent', error: e.message, path: c.req.path, timestamp: new Date().toISOString() }));
     return c.json({ error: "love-ledger service unavailable", detail: e.message, requestId }, 502);
   }
 });
@@ -106,6 +107,7 @@ app.all("/care-proof", async (c) => {
     const resp = await fetch(`${BRIDGE}/care-proof`, req);
     return new Response(resp.body, { status: resp.status, headers: proxyHeaders(resp, requestId) });
   } catch (e: any) {
+    console.error(JSON.stringify({ level: 'error', requestId, service: 'sovereign-agent', error: e.message, path: '/care-proof', timestamp: new Date().toISOString() }));
     return c.json({ error: "ledger-bridge unavailable", detail: e.message, requestId }, 502);
   }
 });
@@ -117,6 +119,7 @@ app.all("/credential/*", async (c) => {
     const resp = await fetch(`${BRIDGE}${c.req.path}`, req);
     return new Response(resp.body, { status: resp.status, headers: proxyHeaders(resp, requestId) });
   } catch (e: any) {
+    console.error(JSON.stringify({ level: 'error', requestId, service: 'sovereign-agent', error: e.message, path: c.req.path, timestamp: new Date().toISOString() }));
     return c.json({ error: "ledger-bridge unavailable", detail: e.message, requestId }, 502);
   }
 });
@@ -133,6 +136,7 @@ app.get("/api/pilots", async (c) => {
     `).all();
     return c.json((rows as any).results || []);
   } catch (e: any) {
+    console.error(JSON.stringify({ level: 'error', requestId: c.req.header("x-request-id") || 'unknown', service: 'sovereign-agent', error: e.message, path: '/api/pilots', timestamp: new Date().toISOString() }));
     return c.json({ error: e.message }, 500);
   }
 });
@@ -162,6 +166,7 @@ app.get("/api/stats", async (c) => {
       credentials: Number((creds as any)?.n) || 0,
     });
   } catch (e: any) {
+    console.error(JSON.stringify({ level: 'error', requestId: c.req.header("x-request-id") || 'unknown', service: 'sovereign-agent', error: e.message, path: '/api/stats', timestamp: new Date().toISOString() }));
     return c.json({ error: e.message }, 500);
   }
 });
@@ -178,7 +183,8 @@ app.get("/*", async (c) => {
     headers.set("Content-Type", contentType(key));
     headers.set("Cache-Control", key.includes(".html") ? "public, max-age=600, must-revalidate" : "public, max-age=86400, immutable");
     return new Response(obj.body, { headers });
-  } catch {
+  } catch (e: any) {
+    console.error(JSON.stringify({ level: 'error', requestId: c.req.header("x-request-id") || 'unknown', service: 'sovereign-agent', error: e?.message || 'R2 bucket error', path: c.req.path, timestamp: new Date().toISOString() }));
     // Bucket not provisioned yet (Phase 2) — surface a clear status, not a crash.
     return c.json(
       { ok: false, note: "PHOS static assets not provisioned — run CWP-2026-028 Phase 2 (create + populate R2 bucket `phos-assets`)." },

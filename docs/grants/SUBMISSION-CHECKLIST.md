@@ -6,7 +6,7 @@
 - [x] Final submission package (`NGI-TALER-SUBMISSION.md`)
 - [x] Live demo links verified (phos.p31ca.org, pilot.p31ca.org)
 - [x] Compliance evidence (DID Core v1.1, RFC 9964, SD-JWT VC draft-17, NIST IR 8547)
-- [x] Test coverage (370+ tests passing)
+- [x] Test coverage (384 tests passing)
 - [ ] Demo video recorded and uploaded
 - [ ] Submitted via NLnet portal (https://nlnet.nl/taler/)
 - [ ] Confirmation received from NLnet
@@ -17,7 +17,7 @@
 - [x] Final submission package (`NGI-FEDIVERSITY-SUBMISSION.md`)
 - [x] Live demo links verified (federation.p31ca.org, phos.p31ca.org)
 - [x] Compliance evidence (ActivityPub, RFC 9421, NodeInfo 2.1)
-- [x] Test coverage (370+ tests passing)
+- [x] Test coverage (384 tests passing)
 - [ ] NixOS module implementation (WP2)
 - [ ] Demo video recorded and uploaded
 - [ ] Submitted via NLnet portal (https://nlnet.nl/fediversity/)
@@ -32,6 +32,9 @@
 - [x] Post-quantum crypto: `@noble/post-quantum` ML-DSA-65
 - [x] Federation bridge: `software/workers/federation-bridge/`
 - [x] Pilot dashboard: `software/workers/pilot-dashboard/`
+- [x] Pilot invitation system: `/api/invite` + dashboard button
+- [x] Request-ID propagation: `x-request-id` across all workers
+- [x] Observability: D1 latency probes in health endpoints
 
 ## Deadline
 

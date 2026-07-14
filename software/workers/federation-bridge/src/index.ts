@@ -163,24 +163,30 @@ app.get('/outbox', async (c) => {
 app.post('/inbox', async (c) => {
   const requestId = c.req.header('x-request-id') || crypto.randomUUID();
   c.header('x-request-id', requestId);
-  const body = await c.req.json();
+  try {
+    const body = await c.req.json();
 
-  // Accept Follow activities
-  if (body.type === 'Follow') {
-    return c.json({
-      '@context': 'https://www.w3.org/ns/activitystreams',
-      type: 'Accept',
-      actor: ACTOR_ID,
-      object: body,
-    }, 200);
+    // Accept Follow activities
+    if (body.type === 'Follow') {
+      return c.json({
+        '@context': 'https://www.w3.org/ns/activitystreams',
+        type: 'Accept',
+        actor: ACTOR_ID,
+        object: body,
+      }, 200);
+    }
+
+    // Accept Create/Announce activities (care attestations from other instances)
+    if (['Create', 'Announce'].includes(body.type)) {
+      return c.json({ ok: true }, 202);
+    }
+
+    return c.json({ error: 'Unsupported activity type' }, 400);
+  } catch (e: any) {
+    console.error(JSON.stringify({ level: 'error', requestId, service: 'federation-bridge', error: e.message, path: '/inbox', timestamp: new Date().toISOString() }));
+    c.header('x-request-id', requestId);
+    return c.json({ error: 'Internal error', requestId }, 500);
   }
-
-  // Accept Create/Announce activities (care attestations from other instances)
-  if (['Create', 'Announce'].includes(body.type)) {
-    return c.json({ ok: true }, 202);
-  }
-
-  return c.json({ error: 'Unsupported activity type' }, 400);
 });
 
 // ── Publish endpoint (PHOS → Federation) ──────────────────────────────────
@@ -188,35 +194,41 @@ app.post('/inbox', async (c) => {
 app.post('/publish', async (c) => {
   const requestId = c.req.header('x-request-id') || crypto.randomUUID();
   c.header('x-request-id', requestId);
-  const authHeader = c.req.header('Authorization');
-  if (!authHeader?.startsWith('Bearer ')) {
-    return c.json({ error: 'Unauthorized' }, 401);
+  try {
+    const authHeader = c.req.header('Authorization');
+    if (!authHeader?.startsWith('Bearer ')) {
+      return c.json({ error: 'Unauthorized' }, 401);
+    }
+
+    const body = await c.req.json();
+    const { sdjwt, subject, disclosedClaims } = body;
+
+    if (!sdjwt || !subject) {
+      return c.json({ error: 'Missing sdjwt or subject' }, 400);
+    }
+
+    const activity = {
+      '@context': 'https://www.w3.org/ns/activitystreams',
+      id: `${ORIGIN}/activities/${crypto.randomUUID()}`,
+      type: 'Create',
+      actor: ACTOR_ID,
+      published: new Date().toISOString(),
+      object: {
+        type: 'Note',
+        name: `Care attestation for ${subject}`,
+        content: JSON.stringify({ sdjwt, subject, disclosedClaims }),
+        attributedTo: ACTOR_ID,
+        sensitive: true,
+        summary: 'Cryptographic care attestation (SD-JWT VC)',
+      },
+    };
+
+    return c.json({ ok: true, activity }, 201);
+  } catch (e: any) {
+    console.error(JSON.stringify({ level: 'error', requestId, service: 'federation-bridge', error: e.message, path: '/publish', timestamp: new Date().toISOString() }));
+    c.header('x-request-id', requestId);
+    return c.json({ error: 'Internal error', requestId }, 500);
   }
-
-  const body = await c.req.json();
-  const { sdjwt, subject, disclosedClaims } = body;
-
-  if (!sdjwt || !subject) {
-    return c.json({ error: 'Missing sdjwt or subject' }, 400);
-  }
-
-  const activity = {
-    '@context': 'https://www.w3.org/ns/activitystreams',
-    id: `${ORIGIN}/activities/${crypto.randomUUID()}`,
-    type: 'Create',
-    actor: ACTOR_ID,
-    published: new Date().toISOString(),
-    object: {
-      type: 'Note',
-      name: `Care attestation for ${subject}`,
-      content: JSON.stringify({ sdjwt, subject, disclosedClaims }),
-      attributedTo: ACTOR_ID,
-      sensitive: true,
-      summary: 'Cryptographic care attestation (SD-JWT VC)',
-    },
-  };
-
-  return c.json({ ok: true, activity }, 201);
 });
 
 // ── HTTP Signature verification (RFC 9421) ─────────────────────────────────
