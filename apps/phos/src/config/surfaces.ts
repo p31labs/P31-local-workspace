@@ -31,6 +31,7 @@ export const SURFACE_NAV: SurfaceNavItem[] = [
   { id: 'PQC_KEYS', label: 'PQC Keys', icon: '🔐', group: 'secondary' },
   { id: 'NODE_ZERO', label: 'Node Zero', icon: '⊙', group: 'secondary' },
   { id: 'WAREHOUSE', label: 'Warehouse', icon: '▣', group: 'secondary' },
+  { id: 'MINT', label: 'Care Mint', icon: '🌱', group: 'secondary' },
   { id: 'ONBOARDING', label: 'Docs & Onboarding', icon: '📘', group: 'primary', href: '/onboarding' },
 ];
 

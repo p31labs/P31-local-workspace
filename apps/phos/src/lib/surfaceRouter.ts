@@ -28,6 +28,7 @@ const SURFACE_PATH_MAP: Record<string, string> = {
   'dispute': 'DISPUTE',
   'love': 'LOVE',
   'ignition': 'IGNITION',
+  'mint': 'MINT',
 };
 
 const SURFACE_TO_PATH: Record<string, string> = {};

@@ -36,14 +36,20 @@ async function run(command) {
 
 async function queryD1(sql) {
   // wrangler 4.110 rejects --database-id; use the binding form from a worker dir.
+  // wrangler 4.110 pretty-prints JSON across multiple lines, so parse the whole
+  // output block (from first '[' to last ']') rather than line-by-line.
   const cmd = `npx wrangler d1 execute LOVE_DB --remote --command ${shellSql(sql)}`;
   const output = await run(cmd);
-  for (const line of output.split("\n")) {
-    try {
-      const parsed = JSON.parse(line);
-      if (parsed.results) return parsed.results;
-    } catch {}
-  }
+  const cleaned = output.replace(/\x1b\[[0-9;]*m/g, "");
+  const start = cleaned.indexOf("[");
+  const end = cleaned.lastIndexOf("]");
+  if (start === -1 || end === -1) return [];
+  try {
+    const arr = JSON.parse(cleaned.slice(start, end + 1));
+    for (const item of arr) {
+      if (item && Array.isArray(item.results)) return item.results;
+    }
+  } catch {}
   return [];
 }
 
@@ -52,7 +58,7 @@ async function main() {
 
   if (showStatus) {
     const pilots = await queryD1(
-      "SELECT did, family_name, status, onboarded_at FROM pilot_registry ORDER BY registered_at DESC"
+      "SELECT did, family_name, status, onboarded_at FROM pilot_registry ORDER BY did"
     );
     console.log(`Found ${pilots.length} pilots:\n`);
     for (const p of pilots) {
@@ -77,7 +83,7 @@ async function main() {
 
   // Default: show onboarding links for pending pilots.
   const pilots = await queryD1(
-    "SELECT did, family_name, status FROM pilot_registry WHERE status != 'onboarded' ORDER BY registered_at"
+      "SELECT did, family_name, status FROM pilot_registry WHERE status != 'onboarded' ORDER BY did"
   );
 
   if (pilots.length === 0) {

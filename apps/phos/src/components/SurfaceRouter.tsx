@@ -31,6 +31,7 @@ const SURFACE_PATHS: Record<string, string> = {
   DISPUTE: '/dispute',
   LOVE: '/love',
   IGNITION: '/ignition',
+  MINT: '/mint',
 };
 
 const PATH_TO_SURFACE: Record<string, string> = {};

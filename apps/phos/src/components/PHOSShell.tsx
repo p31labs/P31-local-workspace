@@ -22,7 +22,7 @@ export { getBiologicalTheme };
 const VALID_SURFACES = new Set([
   'GREETING', 'IGNITION', 'BONDING', 'THE_BUFFER', 'VAULT', 'GRID',
   'NODE_ZERO', 'LEDGER', 'LOVE', 'DISPUTE', 'HEARTH', 'ARCADE', 'ARCHIVE',
-  'COMPASS', 'SETTINGS', 'WAREHOUSE',
+  'COMPASS', 'SETTINGS', 'WAREHOUSE', 'MINT',
 ]);
 
 function hydrateFromURL(): { spoons: number; surface: string } {
