@@ -20,9 +20,12 @@ Two on-chain actions are supported:
 
 ## Deployed contract addresses (Base Sepolia, 84532)
 
-- `ProofOfCare` — `0x4384c856c0ccc9cb5a4adb148937ea557293543b` (live)
-- `LOVESBT` — `0x8dd8041f7e78decb2f3bb078d68da2e2f36f5636` (live)
-- `P31TransparencyAnchor` — `0xd930Fc4d429BbE6B8CEcca9e4C77386dB528e267` (**deployed 2026-07-13**, `ANCHOR_ADDR` set)
+> Unified in **CWP-2026-023 Phase 0** (2026-07-13). The earlier `0x4384…` /
+> `0x8dd8…` addresses are RETIRED.
+
+- `ProofOfCare` — `0x08263FdD50196F229C9C2ccD650056067b884538` (oracle + relay)
+- `LOVESBT` — `0x521cAD1b54CDDB2B6B53a30EBe050C429F9c6C55` (soulbound care SBT)
+- `P31TransparencyAnchor` — `0xd930Fc4d429BbE6B8CEcca9e4C77386dB528e267` (anchor)
 - Full set: see `apps/p31ca/public/p31-chain-anchor.json`
 
 ## Live mode (current)
@@ -43,12 +46,41 @@ curl -X POST https://ledger-bridge.trimtab-signal.workers.dev/anchor \
 ## Go live (DONE — 2026-07-13)
 
 1. ✅ Deployed `P31TransparencyAnchor` to Base Sepolia; set `ANCHOR_ADDR`.
-2. ✅ Funded signer wallet (deployer key, ~2 ETH on Base Sepolia).
-3. ✅ Set `BRIDGE_PRIVATE_KEY` via `wrangler secret put`.
-4. ⏳ `ProofOfCare.setRelay(<bridge address>)` — pending architect key; only
-   needed for `/care-proof` (relay path). `/anchor` is permissionless.
-5. ✅ Flipped `DRY_RUN="false"`.
-6. ✅ `wrangler deploy` — live.
+2. ✅ Funded dedicated relay signer `0x6B31cF8E72483D70Eee4C3e5970B5C95774FC8Ca`
+   (~0.02 ETH; distinct from the deployer key) and set it as `BRIDGE_PRIVATE_KEY`.
+3. ✅ `ProofOfCare.setOracle(loveLedger/ProofOfCare)` + `setRelay(0x6B31cF8E…)` called
+   by the architect key during `DeployMint` (CWP-2026-023). `/care-proof` relay path live.
+4. ✅ Flipped `DRY_RUN="false"`.
+5. ✅ `wrangler deploy` — live.
+
+## Sovereign care-proof flow (CWP-2026-025)
+
+`POST /care-proof` is a **signed, DID-gated relay** — open minting was removed.
+
+Request body:
+```json
+{
+  "did": "did:key:z<base64url(rawEd25519Pub)>",
+  "signature": "<base64 Ed25519 sig over canonical message>",
+  "users": ["0x<ethAddress>"],
+  "tProx":  ["<1e18-scaled string>"],
+  "qRes":   ["<1e18-scaled string>"],
+  "tasks":  ["<int string>"],
+  "entropyRoots": ["0x<64-hex>"]
+}
+```
+- `tProx`/`qRes`/`tasks` are **strings** (1e18-scaled; exceed `Number.MAX_SAFE_INTEGER`).
+- Canonical signed message (client + bridge must match exactly):
+  `proof|<did>|<users>|<tProx>|<qRes>|<tasks>|<entropyRoots>` (each array joined with `,`).
+- The bridge resolves `identity_registry` (shared `love-ledger` D1) for the DID,
+  verifies the Ed25519 sig, and requires `users[0] === registered eth_address`.
+- On success it relays `submitCareProofs(...)` on-chain **and** writes a dual-anchor
+  row to `care_proofs` in the same D1 (off-chain court-admissible record).
+
+Register a DID first: `POST https://love-ledger.p31ca.org/identity/register`
+(self-signed: `signature` over `<did>|<ed25519_pub_b64>||<eth_address>`).
+
+PHOS UI: `apps/phos/src/surfaces/MintSurface.tsx` (surface `MINT`, route `/mint`).
 
 ## Integration (how LOVE ledger events reach here)
 

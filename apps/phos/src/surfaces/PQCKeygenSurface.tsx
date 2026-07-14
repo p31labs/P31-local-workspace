@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect, useRef, useSyncExternalStore } from 'react';
 import { identityStore, type IdentityState } from '../store/identity';
 import { MLKEM, MLDSA } from '../workers/love-ledger/taler-cbs/pqc';
-import { didJwkFromMlDsa65 } from '../lib/crypto';
+import { didJwkFromMlDsa65, verifyDidJwk } from '../lib/crypto';
 
 // ─── IndexedDB vault for PQC secret keys ────────────────────────────────────
 
@@ -325,7 +325,7 @@ export const PQCKeygenSurface: React.FC = () => {
       setKemPubKey(bytesToB64(kemPair.publicKey));
       setDsaPubKey(bytesToB64(dsaPair.publicKey));
       setDsa65PubKey(bytesToB64(dsa65Pair.publicKey));
-      setDidJwk(didJwkFromMlDsa65(dsa65Pair.publicKey));
+      setDidJwk(await didJwkFromMlDsa65(dsa65Pair.publicKey));
       setStatus('generated');
     } catch (err: any) {
       setError(err?.message || 'Key generation failed');

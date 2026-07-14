@@ -262,6 +262,8 @@ export default {
       const did: string = body?.did;
       const signature: string | undefined = body?.signature;
       const mldsa65Sig: string | undefined = body?.mldsa65_sig;
+      // CWP-2026-029 P4: composite signature (Ed25519 + ML-DSA-65, both must verify)
+      const composite: { ed25519_sig?: string; mldsa65_sig?: string } | undefined = body?.composite;
       const users: string[] = body?.users;
       const tProx: any[] = body?.tProx;
       const qRes: any[] = body?.qRes;
@@ -271,9 +273,9 @@ export default {
       if (!did) {
         return json({ error: "did is required (sovereign mint)" }, 400);
       }
-      if (!signature && !mldsa65Sig) {
+      if (!signature && !mldsa65Sig && !(composite?.ed25519_sig && composite?.mldsa65_sig)) {
         return json(
-          { error: "signature (Ed25519) or mldsa65_sig (ML-DSA-65) is required" },
+          { error: "signature (Ed25519), mldsa65_sig (ML-DSA-65), or composite {ed25519_sig, mldsa65_sig} required" },
           400,
         );
       }
@@ -298,11 +300,18 @@ export default {
         return json({ error: "Unknown DID — register at love-ledger /identity/register first" }, 401);
       }
 
-      // 2) Prove DID control — EITHER Ed25519 (classical) OR ML-DSA-65
-      //    (post-quantum, CWP-2026-027 A) when mldsa65_pub is registered.
+      // 2) Prove DID control — Ed25519 (classical), ML-DSA-65 (post-quantum),
+      //    or composite (CWP-2026-029 P4: BOTH must verify).
       const message = buildProofMessage(did, users, tProx, qRes, tasks, entropyRoots);
       let controlProven = false;
-      if (mldsa65Sig && row.mldsa65_pub) {
+
+      if (composite?.ed25519_sig && composite?.mldsa65_sig && row.mldsa65_pub) {
+        // Composite: BOTH Ed25519 AND ML-DSA-65 must verify (defence-in-depth)
+        const pubBytes = didToEd25519Pub(did);
+        const edValid = !!pubBytes && (await verifyDidSignature(message, composite.ed25519_sig, pubBytes));
+        const pqValid = verifyMLDSA65(message, composite.mldsa65_sig, row.mldsa65_pub);
+        controlProven = edValid && pqValid;
+      } else if (mldsa65Sig && row.mldsa65_pub) {
         controlProven = verifyMLDSA65(message, mldsa65Sig, row.mldsa65_pub);
       }
       if (!controlProven && signature) {
@@ -311,7 +320,7 @@ export default {
       }
       if (!controlProven) {
         return json(
-          { error: "Invalid signature — DID control not proven (Ed25519 or ML-DSA-65)" },
+          { error: "Invalid signature — DID control not proven (Ed25519, ML-DSA-65, or composite)" },
           401,
         );
       }
@@ -382,9 +391,11 @@ export default {
     // Issues a selectively-disclosable care credential over the DID's
     // registered claims. The holder later reveals a subset via
     // selectDisclosures + /credential/verify.
+    // CWP-2026-029 P6: add `post_quantum: true` + `pq_keypair` for ML-DSA-65.
     if (url.pathname === "/credential/issue") {
       const did: string = body?.did;
       const claims: Record<string, unknown> | undefined = body?.claims;
+      const postQuantum: boolean = !!body?.post_quantum;
       if (!did || typeof claims !== "object" || Array.isArray(claims) ||
           Object.keys(claims).length === 0) {
         return json({ error: "did and a non-empty claims object are required" }, 400);
@@ -395,6 +406,37 @@ export default {
       if (!reg) {
         return json({ error: "Unknown DID — register at love-ledger /identity/register first" }, 401);
       }
+      if (postQuantum) {
+        // CWP-2026-029 P6: ML-DSA-65 credential issuance
+        const { issueSDJWTPostQuantum } = await import("./sdjwt");
+        const pqKeyPair = body?.pq_keypair;
+        if (!pqKeyPair?.publicKey || !pqKeyPair?.secretKey) {
+          return json({ error: "pq_keypair { publicKey, secretKey } required for post_quantum issuance" }, 400);
+        }
+        const cred = await issueSDJWTPostQuantum(claims, {
+          publicKey: new Uint8Array(pqKeyPair.publicKey),
+          secretKey: new Uint8Array(pqKeyPair.secretKey),
+        });
+        await env.LOVE_DB.prepare(
+          `CREATE TABLE IF NOT EXISTS credential_issuance (
+             id INTEGER PRIMARY KEY AUTOINCREMENT,
+             did TEXT NOT NULL,
+             vct TEXT NOT NULL DEFAULT 'p31.care',
+             issued_at INTEGER NOT NULL,
+             algorithm TEXT DEFAULT 'Ed25519'
+           )`,
+        ).run();
+        await env.LOVE_DB.prepare(
+          "INSERT INTO credential_issuance (did, issued_at, algorithm) VALUES (?, ?, ?)",
+        ).bind(did, Date.now(), "ML-DSA-65").run();
+        return json({
+          ok: true,
+          sdjwt: cred.sdjwt,
+          issuerPubB64: cred.issuerPubB64,
+          algorithm: cred.algorithm,
+          note: "Post-quantum SD-JWT VC (ML-DSA-65). Reveal selected claims with /credential/verify.",
+        });
+      }
       const cred = await issueSDJWT(claims);
       // Idempotent: ensure the issuance table exists, then count.
       await env.LOVE_DB.prepare(
@@ -402,7 +444,8 @@ export default {
            id INTEGER PRIMARY KEY AUTOINCREMENT,
            did TEXT NOT NULL,
            vct TEXT NOT NULL DEFAULT 'p31.care',
-           issued_at INTEGER NOT NULL
+           issued_at INTEGER NOT NULL,
+           algorithm TEXT DEFAULT 'Ed25519'
          )`,
       ).run();
       await env.LOVE_DB.prepare(
@@ -412,6 +455,7 @@ export default {
         ok: true,
         sdjwt: cred.sdjwt,
         issuerPubB64: cred.issuerPubB64,
+        algorithm: "Ed25519",
         note: "Reveal selected claims with /credential/verify (send only the ~disclosure segments you choose).",
       });
     }

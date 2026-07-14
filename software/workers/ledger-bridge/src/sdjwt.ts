@@ -2,8 +2,9 @@
  * sdjwt.ts — Selective Disclosure JWT (RFC 9901), pinned to
  * draft-ietf-oauth-sd-jwt-vc-17 (2026-07-06, IESG Publication Requested).
  *
- * CWP-2026-027 B. Pure-JS: SHA-256 from @noble/hashes, Ed25519 signing
- * from Web Crypto. No WASM. Issuer is the ledger-bridge (oracle/relay).
+ * CWP-2026-027 B (Ed25519) + CWP-2026-029 P6 (ML-DSA-65 post-quantum).
+ * Pure-JS: SHA-256 from @noble/hashes, Ed25519 from Web Crypto,
+ * ML-DSA-65 from @noble/post-quantum. No WASM.
  *
  * VC-17 specifics honoured:
  *   - typ header = "dc+sd-jwt" (NOT legacy "vc+sd-jwt")
@@ -14,6 +15,7 @@
  */
 
 import { sha256 } from "@noble/hashes/sha256";
+import { ml_dsa65 } from "@noble/post-quantum/ml-dsa.js";
 
 // ── base64url (RFC 7515 Appendix C) ───────────────────────────────
 function b64urlEncode(bytes: Uint8Array): string {
@@ -54,14 +56,109 @@ export async function getIssuer(): Promise<{ priv: CryptoKey; pub: CryptoKey }> 
 export interface SDCredential {
   sdjwt: string; // compact SD-JWT: jws~disc1~disc2~...
   issuerPubB64: string; // base64url JWK-less raw pub, for out-of-band verify
+  /** Key Binding JWT (holder proof). Present only after createPresentation(). */
+  kbJwt?: string;
+}
+
+// ── KB-JWT (Key Binding JWT) — draft-17 §5 ─────────────────────────────
+// The holder signs a JWS over: hash(sd-jwt) || disclose_claims || nonce || aud.
+// This proves the holder possesses the private key bound in `cnf`.
+
+export interface KBJwtPayload {
+  iss: string;     // holder DID
+  aud: string;     // verifier origin
+  nonce: string;   // challenge from verifier
+  sd_hash: string; // base64url(SHA-256(issuer_signed_sdjwt))
+  iat: number;
+}
+
+/**
+ * Create a Key Binding JWT (holder signs a presentation).
+ * @param holderKey - Ed25519 private key of the holder
+ * @param issuerSignedSDJWT - the original compact SD-JWT from issuer
+ * @param claims - the disclosed claims (subset)
+ * @param nonce - verifier challenge
+ * @param aud - verifier origin
+ */
+export async function createPresentation(
+  holderKey: CryptoKey,
+  issuerSignedSDJWT: string,
+  claims: Record<string, unknown>,
+  nonce: string,
+  aud: string,
+): Promise<string> {
+  const sdHash = b64urlEncode(new Uint8Array(sha256(enc.encode(issuerSignedSDJWT))));
+
+  const header = { alg: "Ed25519", typ: "kb+jwt" };
+  const payload: KBJwtPayload = {
+    iss: "", // holder DID set by caller if needed
+    aud,
+    nonce,
+    sd_hash: sdHash,
+    iat: Math.floor(Date.now() / 1000),
+  };
+
+  const h = b64urlEncode(enc.encode(JSON.stringify(header)));
+  const p = b64urlEncode(enc.encode(JSON.stringify(payload)));
+  const sig = await crypto.subtle.sign("Ed25519", holderKey, enc.encode(`${h}.${p}`));
+  return `${h}.${p}.${b64urlEncode(new Uint8Array(sig))}`;
+}
+
+/**
+ * Verify a Key Binding JWT.
+ * @param kbJwt - the KB-JWT string
+ * @param holderPub - Ed25519 public key of the holder (from cnf or out-of-band)
+ * @param expectedNonce - the nonce the verifier issued
+ * @param expectedAud - the verifier origin
+ * @param issuerSignedSDJWT - the original compact SD-JWT (for sd_hash check)
+ */
+export async function verifyPresentation(
+  kbJwt: string,
+  holderPub: CryptoKey,
+  expectedNonce: string,
+  expectedAud: string,
+  issuerSignedSDJWT: string,
+): Promise<boolean> {
+  try {
+    const [h, p, sigB64] = kbJwt.split(".");
+    if (!h || !p || !sigB64) return false;
+
+    const header = JSON.parse(dec.decode(b64urlDecode(h)));
+    const payload = JSON.parse(dec.decode(b64urlDecode(p))) as KBJwtPayload;
+
+    if (header.typ !== "kb+jwt") return false;
+    if (header.alg !== "Ed25519") return false;
+    if (payload.nonce !== expectedNonce) return false;
+    if (payload.aud !== expectedAud) return false;
+
+    // Verify sd_hash matches the issuer-signed SD-JWT
+    const expectedHash = b64urlEncode(new Uint8Array(sha256(enc.encode(issuerSignedSDJWT))));
+    if (payload.sd_hash !== expectedHash) return false;
+
+    // Verify holder signature
+    return await crypto.subtle.verify(
+      "Ed25519",
+      holderPub,
+      b64urlDecode(sigB64),
+      enc.encode(`${h}.${p}`),
+    );
+  } catch {
+    return false;
+  }
 }
 
 /**
  * Issue an SD-JWT over a set of claims. All claims are selectively
  * disclosable. The holder later reveals a subset by keeping only the
  * corresponding `~disclosure` segments (see selectDisclosures).
+ *
+ * @param claims - key-value claims to include
+ * @param holderPubB64 - optional base64url holder public key for `cnf` (KB-JWT binding)
  */
-export async function issueSDJWT(claims: Record<string, unknown>): Promise<SDCredential> {
+export async function issueSDJWT(
+  claims: Record<string, unknown>,
+  holderPubB64?: string,
+): Promise<SDCredential> {
   const issuer = await getIssuer();
   const entries = Object.entries(claims);
 
@@ -74,12 +171,16 @@ export async function issueSDJWT(claims: Record<string, unknown>): Promise<SDCre
   const _sd = disclosures.map((d) => b64urlEncode(sha256(enc.encode(d))));
 
   const header = { alg: "Ed25519", typ: "dc+sd-jwt" };
-  const payload = {
+  const payload: Record<string, unknown> = {
     iss: "did:p31:ledger-bridge",
     iat: Math.floor(Date.now() / 1000),
     _sd_alg: "sha-256",
     _sd,
   };
+  // draft-17 §4: cnf claim binds the SD-JWT to a holder's key for KB-JWT
+  if (holderPubB64) {
+    payload.cnf = { jwk: { kty: "OKP", crv: "Ed25519", x: holderPubB64 } };
+  }
 
   const h = b64urlEncode(enc.encode(JSON.stringify(header)));
   const p = b64urlEncode(enc.encode(JSON.stringify(payload)));
@@ -89,6 +190,63 @@ export async function issueSDJWT(claims: Record<string, unknown>): Promise<SDCre
   const sdjwt = `${jws}~${disclosures.map((d) => b64urlEncode(enc.encode(d))).join("~")}`;
   const rawPub = new Uint8Array((await crypto.subtle.exportKey("raw", issuer.pub)) as ArrayBuffer);
   return { sdjwt, issuerPubB64: b64urlEncode(rawPub) };
+}
+
+// ── CWP-2026-029 P6: ML-DSA-65 post-quantum credential issuance ─────
+// Issues an SD-JWT VC signed with ML-DSA-65 (NIST FIPS 204) for
+// quantum-safe credential presentation. Uses AKP JWK header per RFC 9964.
+interface PQKeyPair {
+  publicKey: Uint8Array;  // 1952 bytes (ML-DSA-65)
+  secretKey: Uint8Array;  // 4032 bytes
+}
+
+export interface PQSDCredential {
+  sdjwt: string;
+  issuerPubB64: string;   // ML-DSA-65 public key, standard base64
+  algorithm: "ML-DSA-65";
+}
+
+/**
+ * Issue a selectively-disclosable VC signed with ML-DSA-65 (post-quantum).
+ * The JWS header uses { kty: "AKP", alg: "ML-DSA-65", typ: "dc+sd-jwt" }
+ * per RFC 9964.
+ */
+export async function issueSDJWTPostQuantum(
+  claims: Record<string, unknown>,
+  pqKeyPair: PQKeyPair,
+  holderPubB64?: string,
+): Promise<PQSDCredential> {
+  const entries = Object.entries(claims);
+
+  const disclosures = entries.map(([key, value]) => {
+    const salt = crypto.getRandomValues(new Uint8Array(16));
+    const arr: unknown[] = [b64urlEncode(salt), key, value];
+    return JSON.stringify(arr);
+  });
+
+  const _sd = disclosures.map((d) => b64urlEncode(sha256(enc.encode(d))));
+
+  // AKP JWK header per RFC 9964 §4
+  const header = { kty: "AKP", alg: "ML-DSA-65", typ: "dc+sd-jwt" };
+  const payload: Record<string, unknown> = {
+    iss: "did:p31:ledger-bridge",
+    iat: Math.floor(Date.now() / 1000),
+    _sd_alg: "sha-256",
+    _sd,
+  };
+  if (holderPubB64) {
+    payload.cnf = { jwk: { kty: "AKP", alg: "ML-DSA-65", pub: holderPubB64 } };
+  }
+
+  const h = b64urlEncode(enc.encode(JSON.stringify(header)));
+  const p = b64urlEncode(enc.encode(JSON.stringify(payload)));
+  const msg = new TextEncoder().encode(`${h}.${p}`);
+  const sig = ml_dsa65.sign(msg, pqKeyPair.secretKey);
+  const sigB64 = b64urlEncode(sig);
+  const jws = `${h}.${p}.${sigB64}`;
+
+  const sdjwt = `${jws}~${disclosures.map((d) => b64urlEncode(enc.encode(d))).join("~")}`;
+  return { sdjwt, issuerPubB64: btoa(String.fromCharCode(...pqKeyPair.publicKey)), algorithm: "ML-DSA-65" };
 }
 
 export interface VerifyResult {

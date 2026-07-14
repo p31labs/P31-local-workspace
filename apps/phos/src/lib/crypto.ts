@@ -104,6 +104,63 @@ export function signMlDsa65(message: string, secretKeyB64: string): string {
   return arrayBufferToBase64(sig);
 }
 
+// CWP-2026-029 P1 — ML-DSA-65 verification (base64 signature + base64 public key).
+export function verifyMlDsa65(message: string, signatureB64: string, publicKeyB64: string): boolean {
+  try {
+    const sigBytes = new Uint8Array(base64ToArrayBuffer(signatureB64));
+    const pkBytes = new Uint8Array(base64ToArrayBuffer(publicKeyB64));
+    return ml_dsa65.verify(new TextEncoder().encode(message), sigBytes, pkBytes);
+  } catch {
+    return false;
+  }
+}
+
+// ── CWP-2026-029 P4 — Composite Signatures (Ed25519 + ML-DSA-65) ────────
+// IETF LAMPS draft-ietf-lamps-pq-composite-sigs-16: defence-in-depth.
+// Both classical and post-quantum signatures must verify for the composite to be valid.
+
+export interface CompositeSignature {
+  ed25519_sig: string;  // base64 Ed25519 signature
+  mldsa65_sig: string;  // base64 ML-DSA-65 signature
+}
+
+/**
+ * Create a composite signature: Ed25519 + ML-DSA-65.
+ * Both sign the same canonical message. The composite is valid only if
+ * BOTH verify independently.
+ */
+export async function signComposite(
+  message: string,
+  ed25519PrivKey: CryptoKey,
+  mldsa65SecretKeyB64: string,
+): Promise<CompositeSignature> {
+  const ed25519Sig = await signMessage(message, ed25519PrivKey);
+  const mldsa65Sig = signMlDsa65(message, mldsa65SecretKeyB64);
+  return { ed25519_sig: ed25519Sig, mldsa65_sig: mldsa65Sig };
+}
+
+/**
+ * Verify a composite signature: BOTH Ed25519 AND ML-DSA-65 must verify.
+ * Returns false if either fails — defence-in-depth.
+ */
+export async function verifyComposite(
+  message: string,
+  composite: CompositeSignature,
+  ed25519PubKeyB64: string,
+  mldsa65PubKeyB64: string,
+): Promise<boolean> {
+  // 1. Verify Ed25519 (classical)
+  const edValid = await verifySignature(message, composite.ed25519_sig, ed25519PubKeyB64);
+  if (!edValid) return false;
+
+  // 2. Verify ML-DSA-65 (post-quantum)
+  const pqValid = verifyMlDsa65(message, composite.mldsa65_sig, mldsa65PubKeyB64);
+  if (!pqValid) return false;
+
+  // 3. Both must verify
+  return true;
+}
+
 export async function createSignedPayload(
   payload: any,
   privateKey: CryptoKey,
@@ -145,16 +202,56 @@ function base64ToBase64Url(base64: string): string {
   return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
 
+// ── RFC 9964 AKP JWK helpers ─────────────────────────────────────────────
+
+// Base64url-encode raw bytes (no padding). Works in Workers (no btoa dependency).
+export function toBase64Url(bytes: Uint8Array): string {
+  let binary = '';
+  for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+// Decode a base64url string to Uint8Array.
+export function fromBase64Url(b64url: string): Uint8Array {
+  let b64 = b64url.replace(/-/g, '+').replace(/_/g, '/');
+  while (b64.length % 4) b64 += '=';
+  const binary = atob(b64);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return bytes;
+}
+
+// JWK Thumbprint per RFC 7638 §3.3 + RFC 9964 §6: lexicographic order is alg, kty, pub.
+// Uses @noble/hashes sha256 if available, falls back to Web Crypto SHA-256.
+async function computeAkpThumbprint(pubB64Url: string): Promise<string> {
+  const canonical = JSON.stringify({ alg: 'ML-DSA-65', kty: 'AKP', pub: pubB64Url });
+  const data = new TextEncoder().encode(canonical);
+  const hash = await crypto.subtle.digest('SHA-256', data);
+  return toBase64Url(new Uint8Array(hash));
+}
+
 // Encode an ML-DSA-65 raw public key (1952 bytes) as a quantum-safe
-// `did:jwk` following IANA JOSE (RFC 9964): key type `AKP`, `alg: ML-DSA-65`,
-// `pub` = base64url(raw pk). did:jwk = "did:jwk:" + base64url(JSON JWK).
-export function didJwkFromMlDsa65(publicKey: Uint8Array): string {
-  const toB64Url = (bytes: Uint8Array): string => {
-    let bin = '';
-    for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
-    return base64ToBase64Url(btoa(bin));
-  };
-  const jwk = { kty: 'AKP', alg: 'ML-DSA-65', pub: toB64Url(publicKey) };
+// `did:jwk` following RFC 9964: key type `AKP`, `alg: ML-DSA-65`,
+// `pub` = base64url(raw pk), `kid` = JWK Thumbprint (RFC 7638).
+// did:jwk = "did:jwk:" + base64url(JSON JWK).
+export async function didJwkFromMlDsa65(publicKey: Uint8Array): Promise<string> {
+  const pubB64Url = toBase64Url(publicKey);
+  const kid = await computeAkpThumbprint(pubB64Url);
+  const jwk = { kid, kty: 'AKP' as const, alg: 'ML-DSA-65' as const, pub: pubB64Url };
   const json = JSON.stringify(jwk);
-  return 'did:jwk:' + toB64Url(new TextEncoder().encode(json));
+  return 'did:jwk:' + toBase64Url(new TextEncoder().encode(json));
+}
+
+// Verify a did:jwk round-trip: decode, re-derive thumbprint, check kid matches.
+export async function verifyDidJwk(didJwk: string): Promise<boolean> {
+  try {
+    const b64url = didJwk.replace('did:jwk:', '');
+    const jwkBytes = fromBase64Url(b64url);
+    const jwk = JSON.parse(new TextDecoder().decode(jwkBytes));
+    if (jwk.kty !== 'AKP' || jwk.alg !== 'ML-DSA-65' || !jwk.pub || !jwk.kid) return false;
+    const recomputed = await computeAkpThumbprint(jwk.pub);
+    return recomputed === jwk.kid;
+  } catch {
+    return false;
+  }
 }
