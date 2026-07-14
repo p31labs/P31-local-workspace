@@ -22,3 +22,6 @@ bucket_name = "phos-assets"
 
 [vars]
 CORTEX_URL = "https://p31-cortex.p31labs.workers.dev"
+
+[observability]
+enabled = true

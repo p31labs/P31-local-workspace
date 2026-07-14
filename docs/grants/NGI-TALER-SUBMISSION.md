@@ -168,3 +168,25 @@ Post-quantum + EUDI alignment added to the P31 stack ahead of the 2026-08-01 dea
 
 **Correction:** the `hybrid_pqc_tls` wrangler compatibility flag and `CF-PQC-Key-Exchange` header
 cited in earlier drafts do not exist. Hybrid PQC TLS is a Cloudflare zone SSL/TLS setting.
+
+## CWP-2026-045 Launch Frontier Update (2026-07-14)
+
+**Status:** Production-hardened and EUDI-ready ahead of the 2026-08-01 deadline.
+
+| Item | State |
+|------|-------|
+| Federation Bridge | **LIVE** at `https://federation.p31ca.org` (+ `federation-bridge.trimtab-signal.workers.dev`); deployed via Cloudflare custom domain (auto-DNS + TLS) |
+| EUDI DID Document | `/actor` exposes `CredentialIssuer` + `CredentialVerifier` service endpoints |
+| Credential issuance/verify/revocation | `POST /credential/issue`, `POST /credential/verify`, `GET /credential/search`, `GET /credential/revocation/:id`, `POST /credential/revoke/:id` |
+| Observability | `[observability] enabled = true` on all 3 production workers (personal-swarm, ledger-bridge, federation-bridge) |
+| Hybrid PQC TLS | Cloudflare zone-level Post-Quantum setting (enable on `p31ca.org` zone) |
+| X-Wing KEM | Live round-trip in `ledger-bridge` (`/kem/xwing/*`) |
+| Test coverage | **41+ passing** (23 personal-swarm + 8 X-Wing KEM + 10 federation-bridge), 0 typecheck errors |
+| EUDI readiness doc | `docs/EUDI-READINESS.md` |
+| Demo script | `docs/grants/NGI-DEMO-SCRIPT.md` |
+
+### Submission Checklist
+- [ ] NGI TALER proposal submitted via NLnet portal
+- [ ] NGI Fediversity proposal submitted via NLnet portal
+- [ ] Demo video recorded, uploaded (Zenodo/YouTube unlisted), and linked
+- [ ] Compliance evidence attached: `docs/CRYPTOGRAPHIC-INVENTORY.md` (NIST IR 8547), `docs/EUDI-READINESS.md`, test reports

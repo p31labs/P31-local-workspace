@@ -6,9 +6,12 @@ compatibility_flags = ["nodejs_compat"]
 # CWP-2026-031 Phase 3 — ActivityPub Federation Bridge.
 # Federates care attestations (SD-JWT VCs) to the Fediverse.
 # HTTP Signatures (RFC 9421) + Object Integrity Proofs (FEP-8b32).
-# Routes: federation.p31ca.org/*
+# Custom domain: federation.p31ca.org — auto-provisions DNS record + TLS cert.
+# (A `routes` entry would require a manually-created DNS record for the
+# subdomain; custom_domains provisions it on deploy.)
 
-routes = [{ pattern = "federation.p31ca.org/*", zone_name = "p31ca.org" }]
+[[custom_domains]]
+domain = "federation.p31ca.org"
 
 [[d1_databases]]
 binding = "LOVE_DB"

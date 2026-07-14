@@ -399,3 +399,10 @@ These must be added at https://github.com/p31labs/P31-local-workspace/settings/s
   with `sub`/`vct`/`exp`, and serves a Status-List-2021-style `/credential/revocation/:id`
   endpoint plus `POST /credential/revoke/:id`. `docs/CRYPTOGRAPHIC-INVENTORY.md` created
   (NIST IR 8547). 10 federation-bridge tests pass (4 FEP-8b32 + 4 credentialing + 2 EUDI).
+
+### CWP-2026-045 (Launch Frontier, 2026-07-14)
+- **Federation Bridge is now LIVE** at `https://federation.p31ca.org` (Cloudflare custom domain → auto-DNS + TLS) and `federation-bridge.trimtab-signal.workers.dev`. Deployed with `LOVE_DB` (shared love-ledger D1) + `ACTOR_PRIVATE_KEY`/`ACTOR_PUBLIC_KEY` (Ed25519 PEM, generated locally) + `LEDGER_BRIDGE_URL`.
+- **Prod bug fixed:** `ensureCredentialsTable` now runs at the top of every handler that touches `credentials` (issue/search/verify/revoke/revocation). Previously it ran only in `/credential/issue` AFTER the ledger-bridge fetch, so a failed/unregistered-DID issuance never created the table and every read endpoint 500'd. Now reads return `{"results":[]}` (200) and unknown-id lookups return 404.
+- **Observability** `[observability] enabled = true` is set on all 3 production workers (personal-swarm redeployed `5f3ad5c3`, ledger-bridge, federation-bridge).
+- **Cloudflare Alerts** (Worker Errors >5/min, D1 latency >1000ms, R2 503, CPU >90%) are configured on the **Cloudflare dashboard** (Alerts panel) — not via wrangler. `cf-monitor.mjs` (personal-swarm) streams `wrangler tail` and opens GitHub issues for new error signatures.
+- EUDI readiness documented in `docs/EUDI-READINESS.md`; NGI demo script in `docs/grants/NGI-DEMO-SCRIPT.md`. NGI proposals updated with live links + 41+ test coverage.

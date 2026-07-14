@@ -404,6 +404,7 @@ app.post('/credential/issue', async (c) => {
   const requestId = c.req.header('x-request-id') || crypto.randomUUID();
   c.header('x-request-id', requestId);
   try {
+    await ensureCredentialsTable(c.env.LOVE_DB);
     const body = await c.req.json();
     const { subject, claims, type } = body;
     if (!subject || !claims || typeof claims !== 'object') {
@@ -441,7 +442,6 @@ app.post('/credential/issue', async (c) => {
     };
     activity.proof = await signProof(activity, c.env.ACTOR_PRIVATE_KEY);
 
-    await ensureCredentialsTable(c.env.LOVE_DB);
     await c.env.LOVE_DB.prepare(
       'INSERT OR REPLACE INTO credentials (id, issuer, subject, type, sdjwt, activity, created_at, revoked) VALUES (?, ?, ?, ?, ?, ?, ?, 0)'
     )
@@ -460,6 +460,7 @@ app.post('/credential/verify', async (c) => {
   const requestId = c.req.header('x-request-id') || crypto.randomUUID();
   c.header('x-request-id', requestId);
   try {
+    await ensureCredentialsTable(c.env.LOVE_DB);
     const body = await c.req.json();
     const id = body?.id;
     if (!id) return c.json({ error: 'id required' }, 400);
@@ -488,6 +489,7 @@ app.post('/credential/verify', async (c) => {
 });
 
 app.get('/credential/search', async (c) => {
+  await ensureCredentialsTable(c.env.LOVE_DB);
   const issuer = c.req.query('issuer');
   const subject = c.req.query('subject');
   const type = c.req.query('type');
@@ -509,6 +511,7 @@ app.post('/credential/revoke/:id', async (c) => {
   const requestId = c.req.header('x-request-id') || crypto.randomUUID();
   c.header('x-request-id', requestId);
   try {
+    await ensureCredentialsTable(c.env.LOVE_DB);
     const id = decodeURIComponent(c.req.param('id'));
     const row = await c.env.LOVE_DB.prepare('SELECT id, revoked FROM credentials WHERE id = ?').bind(id).first();
     if (!row) return c.json({ error: 'credential not found' }, 404);
@@ -522,6 +525,7 @@ app.post('/credential/revoke/:id', async (c) => {
 });
 
 app.get('/credential/revocation/:id', async (c) => {
+  await ensureCredentialsTable(c.env.LOVE_DB);
   const id = decodeURIComponent(c.req.param('id'));
   const row = await c.env.LOVE_DB.prepare('SELECT id, revoked FROM credentials WHERE id = ?').bind(id).first();
   if (!row) return c.json({ error: 'credential not found' }, 404);
