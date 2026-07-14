@@ -1,4 +1,4 @@
-import type { FractalDB, FractalNode, CausalChain, SwarmDispatcher } from "./types";
+import type { FractalDB, FractalNode, CausalChain, SwarmDispatcher, SwarmEvent } from "./types";
 import { getDNA, evolve, saveDNA } from "./behaviouralDna";
 import { orchestrateChain } from "./swarm";
 
@@ -7,6 +7,7 @@ export interface ConsolidationResult {
   chainId: string;
   agentsFired: string[];
   genomeUpdated: boolean;
+  events: SwarmEvent[];
 }
 
 // CWP-040D: event-driven consolidation. Called immediately after a causal chain
@@ -25,5 +26,26 @@ export async function consolidate(
     await saveDNA(db, { ...dnaRecord, genome: evolved });
   }
   const agentsFired = await orchestrateChain(db, dispatcher, node, chain);
-  return { nodeId: node.id, chainId: chain.id, agentsFired, genomeUpdated: changed };
+
+  // CWP-2026-040H — record each dispatch as a swarm event so the spatial
+  // dashboard can replay the fractal's recent pulse.
+  const events: SwarmEvent[] = agentsFired.map((agent, i) => ({
+    id: `${chain.id}-e${i}`,
+    nodeId: node.id,
+    agent: agent as SwarmEvent["agent"],
+    status: "fired",
+    detail: `consolidating chain ${chain.id}`,
+    createdAt: chain.createdAt,
+  }));
+  for (const e of events) {
+    await db.logSwarmEvent(e);
+  }
+
+  return {
+    nodeId: node.id,
+    chainId: chain.id,
+    agentsFired,
+    genomeUpdated: changed,
+    events,
+  };
 }

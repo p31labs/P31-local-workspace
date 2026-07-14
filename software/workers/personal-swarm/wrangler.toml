@@ -14,5 +14,11 @@ binding = "DB"
 database_name = "p31-cortex"
 database_id = "6a645125-23c6-4c35-86c9-eeea5744301a"
 
+# CWP-2026-040H — spatial dashboard asset (the built public/spatial-dashboard.html).
+# BUG-05 fix: served via /spatial from this R2 binding (not a mis-wired ASSETS module).
+[[r2_buckets]]
+binding = "PHOS_ASSETS"
+bucket_name = "phos-assets"
+
 [vars]
 CORTEX_URL = "https://p31-cortex.p31labs.workers.dev"

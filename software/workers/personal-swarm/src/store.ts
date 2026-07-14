@@ -4,6 +4,7 @@ import type {
   FractalLink,
   CausalChain,
   Scale,
+  SwarmEvent,
 } from "./types";
 
 const NODE_COLS = "id, scale, label, did_key AS didKey, parent_id AS parentId, created_at AS createdAt";
@@ -111,6 +112,29 @@ abstract class SqlFractalDB implements FractalDB {
     }
   }
 
+  async logSwarmEvent(e: SwarmEvent): Promise<void> {
+    await this.query(
+      `INSERT INTO swarm_events (id, node_id, agent, status, detail, created_at)
+       VALUES (?, ?, ?, ?, ?, ?)`,
+      [e.id, e.nodeId, e.agent, e.status, e.detail ?? null, e.createdAt],
+    );
+  }
+
+  async listSwarmEvents(nodeId?: string, limit = 50): Promise<SwarmEvent[]> {
+    if (nodeId) {
+      return this.query<SwarmEvent>(
+        `SELECT id, node_id AS nodeId, agent, status, detail, created_at AS createdAt
+         FROM swarm_events WHERE node_id = ? ORDER BY created_at DESC LIMIT ?`,
+        [nodeId, limit],
+      );
+    }
+    return this.query<SwarmEvent>(
+      `SELECT id, node_id AS nodeId, agent, status, detail, created_at AS createdAt
+       FROM swarm_events ORDER BY created_at DESC LIMIT ?`,
+      [limit],
+    );
+  }
+
   async close(): Promise<void> {}
 }
 
@@ -131,6 +155,10 @@ CREATE TABLE IF NOT EXISTS behavioural_dna (
 CREATE TABLE IF NOT EXISTS fractal_links (
   id TEXT PRIMARY KEY, from_node TEXT NOT NULL, to_node TEXT NOT NULL,
   rel_type TEXT NOT NULL, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE IF NOT EXISTS swarm_events (
+  id TEXT PRIMARY KEY, node_id TEXT NOT NULL, agent TEXT NOT NULL,
+  status TEXT NOT NULL, detail TEXT, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 `;
 
@@ -181,6 +209,10 @@ CREATE TABLE IF NOT EXISTS fractal_links (
   id TEXT PRIMARY KEY, from_node TEXT NOT NULL, to_node TEXT NOT NULL,
   rel_type TEXT NOT NULL, created_at TEXT DEFAULT (datetime('now'))
 );
+CREATE TABLE IF NOT EXISTS swarm_events (
+  id TEXT PRIMARY KEY, node_id TEXT NOT NULL, agent TEXT NOT NULL,
+  status TEXT NOT NULL, detail TEXT, created_at TEXT DEFAULT (datetime('now'))
+);
 `;
 
 export class D1FractalDB extends SqlFractalDB {
@@ -205,6 +237,7 @@ export class MemoryFractalDB implements FractalDB {
   private links: FractalLink[] = [];
   private causal: CausalChain[] = [];
   private dna = new Map<string, { genome_json: string; updated_at: string }>();
+  private events: SwarmEvent[] = [];
 
   async init(): Promise<void> {}
   async createNode(n: FractalNode): Promise<void> {
@@ -239,6 +272,15 @@ export class MemoryFractalDB implements FractalDB {
   }
   async upsertDna(nodeId: string, genomeJson: string, updatedAt: string): Promise<void> {
     this.dna.set(nodeId, { genome_json: genomeJson, updated_at: updatedAt });
+  }
+  async logSwarmEvent(e: SwarmEvent): Promise<void> {
+    this.events.unshift(e);
+  }
+  async listSwarmEvents(nodeId?: string, limit = 50): Promise<SwarmEvent[]> {
+    const filtered = nodeId
+      ? this.events.filter((e) => e.nodeId === nodeId)
+      : this.events;
+    return filtered.slice(0, limit);
   }
   async close(): Promise<void> {}
 }

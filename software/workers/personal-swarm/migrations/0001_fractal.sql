@@ -33,3 +33,13 @@ CREATE INDEX IF NOT EXISTS idx_fn_scale ON fractal_nodes(scale);
 CREATE INDEX IF NOT EXISTS idx_cm_node ON causal_memories(node_id);
 CREATE INDEX IF NOT EXISTS idx_fl_from ON fractal_links(from_node);
 CREATE INDEX IF NOT EXISTS idx_fl_to ON fractal_links(to_node);
+CREATE TABLE IF NOT EXISTS swarm_events (
+  id TEXT PRIMARY KEY,
+  node_id TEXT NOT NULL,
+  agent TEXT NOT NULL,
+  status TEXT NOT NULL,
+  detail TEXT,
+  created_at TEXT DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS idx_se_node ON swarm_events(node_id);
+CREATE INDEX IF NOT EXISTS idx_se_created ON swarm_events(created_at);

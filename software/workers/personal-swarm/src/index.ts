@@ -10,11 +10,16 @@ import {
 import { recordCausalChain, listCausalChains } from "./causalMemory";
 import { getDNA } from "./behaviouralDna";
 import { consolidate } from "./consolidation";
+import { getUnifiedView } from "./dashboard";
 import { D1FractalDB } from "./store";
 
 export interface SwarmEnv {
   DB: any;
   CORTEX_URL?: string;
+  // CWP-2026-040H — R2 binding holding the spatial dashboard asset.
+  // (BUG-05 fix: serve the dashboard from this binding, not a mis-wired
+  // ASSETS module, so /spatial returns 200 instead of 404.)
+  PHOS_ASSETS?: { get(key: string): Promise<{ body: ReadableStream; contentType?: string } | null> };
 }
 
 function json(data: unknown, status = 200): Response {
@@ -42,6 +47,7 @@ function cortexDispatcher(cortexUrl: string): SwarmDispatcher {
 export function createApp(deps: {
   getDB: () => Promise<FractalDB>;
   dispatcher: SwarmDispatcher;
+  assets?: SwarmEnv["PHOS_ASSETS"];
 }) {
   const app = new Hono();
 
@@ -97,6 +103,31 @@ export function createApp(deps: {
     return json(await listLinks(db, c.req.param("id")));
   });
 
+  // CWP-2026-040H — unified view for the spatial dashboard.
+  app.get("/api/fractal", async (c) => {
+    const db = await deps.getDB();
+    const scale = c.req.query("scale") as Scale | undefined;
+    return json(await getUnifiedView(db, { filterScale: scale }));
+  });
+
+  app.get("/api/swarm-events", async (c) => {
+    const db = await deps.getDB();
+    const nodeId = c.req.query("nodeId");
+    const limit = Number(c.req.query("limit") || "100");
+    return json(await db.listSwarmEvents(nodeId ?? undefined, limit));
+  });
+
+  // CWP-2026-040H — serve the spatial dashboard HTML from the R2 binding.
+  app.get("/spatial", async (c) => {
+    const assets = deps.assets;
+    if (!assets) return json({ error: "assets_binding_unavailable" }, 501);
+    const obj = await assets.get("spatial-dashboard.html");
+    if (!obj) return json({ error: "asset_not_found" }, 404);
+    return new Response(obj.body, {
+      headers: { "Content-Type": "text/html; charset=utf-8", "Access-Control-Allow-Origin": "*" },
+    });
+  });
+
   return app;
 }
 
@@ -108,7 +139,7 @@ export default {
       return db;
     };
     const dispatcher = cortexDispatcher(env.CORTEX_URL || "http://localhost:8787");
-    const app = createApp({ getDB, dispatcher });
+    const app = createApp({ getDB, dispatcher, assets: env.PHOS_ASSETS });
     return app.fetch(request);
   },
 };
