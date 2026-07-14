@@ -329,7 +329,7 @@ importers:
         version: 5.9.3
       wrangler:
         specifier: ^4.107.0
-        version: 4.110.0
+        version: 4.110.0(@cloudflare/workers-types@5.20260714.1)
 
   packages/brain-dump-orchestrator:
     dependencies:
@@ -372,7 +372,7 @@ importers:
         version: 5.9.3
       wrangler:
         specifier: ^4.107.0
-        version: 4.110.0
+        version: 4.110.0(@cloudflare/workers-types@5.20260714.1)
 
   packages/harmonic-linter:
     devDependencies:
@@ -2035,6 +2035,9 @@ packages:
 
   '@cloudflare/workers-types@4.20260317.1':
     resolution: {integrity: sha512-+G4eVwyCpm8Au1ex8vQBCuA9wnwqetz4tPNRoB/53qvktERWBRMQnrtvC1k584yRE3emMThtuY0gWshvSJ++PQ==}
+
+  '@cloudflare/workers-types@5.20260714.1':
+    resolution: {integrity: sha512-HGCTQVIQwzqAMLrZBCgLDrWKMgOdi6yn+S0Do1rF6z7t8tVvNprQfa53V6EDRRwsVO92uN5gviX2SxASDINZfA==}
 
   '@cspotcode/source-map-support@0.8.1':
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
@@ -11548,6 +11551,9 @@ snapshots:
     optional: true
 
   '@cloudflare/workers-types@4.20260317.1': {}
+
+  '@cloudflare/workers-types@5.20260714.1':
+    optional: true
 
   '@cspotcode/source-map-support@0.8.1':
     dependencies:
@@ -21248,7 +21254,7 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  wrangler@4.110.0:
+  wrangler@4.110.0(@cloudflare/workers-types@5.20260714.1):
     dependencies:
       '@cloudflare/kv-asset-handler': 0.5.0
       '@cloudflare/unenv-preset': 2.16.1(unenv@2.0.0-rc.24)(workerd@1.20260708.1)
@@ -21259,6 +21265,7 @@ snapshots:
       unenv: 2.0.0-rc.24
       workerd: 1.20260708.1
     optionalDependencies:
+      '@cloudflare/workers-types': 5.20260714.1
       fsevents: 2.3.3
     transitivePeerDependencies:
       - bufferutil

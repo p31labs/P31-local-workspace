@@ -15,6 +15,7 @@ packages:
   - 'software/workers/care-mesh'
   - 'software/workers/p31-mcp-server'
   - 'software/workers/ledger-bridge'
+  - 'software/workers/personal-swarm'
   # Shared libraries & VS Code extensions
   - 'software/packages/*'
   - 'software/extensions/*'
