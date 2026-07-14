@@ -20,6 +20,40 @@ abstract class SqlFractalDB implements FractalDB {
       const s = stmt.trim();
       if (s) await this.exec(s);
     }
+    // Self-heal: a previous partial/truncated CREATE (or a schema evolution)
+    // can leave a table missing columns that `CREATE TABLE IF NOT EXISTS`
+    // will not recreate. Add any missing expected columns idempotently.
+    await this.ensureColumns();
+  }
+
+  // Expected extra columns per table (beyond the NOT-NULL core). Added with
+  // nullable TYPE so ALTER never fails on existing NULL-able rows.
+  private async ensureColumns(): Promise<void> {
+    const expected: Record<string, string[]> = {
+      fractal_nodes: ["did_key", "parent_id", "created_at"],
+      causal_memories: ["confidence", "created_at"],
+      behavioural_dna: ["updated_at"],
+      fractal_links: ["created_at"],
+      swarm_events: ["detail", "created_at"],
+    };
+    for (const table of Object.keys(expected)) {
+      let have = new Set<string>();
+      try {
+        const info = await this.query<{ name: string }>(`PRAGMA table_info(${table})`);
+        have = new Set(info.map((r) => r.name));
+      } catch {
+        continue; // table not present yet — next request will create it
+      }
+      for (const col of expected[table]) {
+        if (!have.has(col)) {
+          try {
+            await this.exec(`ALTER TABLE ${table} ADD COLUMN ${col} TEXT`);
+          } catch {
+            // column already exists or unsupported — ignore
+          }
+        }
+      }
+    }
   }
 
   async createNode(n: FractalNode): Promise<void> {
@@ -139,27 +173,14 @@ abstract class SqlFractalDB implements FractalDB {
 }
 
 // --- PGLite (sovereign Self core, browser/worker) -------------------------
+// Single-line statements: the Workers D1 runtime `exec` binding can mangle
+// multi-line SQL (SQLITE "incomplete input"), so every DDL is one line.
 const PGLITE_SCHEMA = `
-CREATE TABLE IF NOT EXISTS fractal_nodes (
-  id TEXT PRIMARY KEY, scale TEXT NOT NULL, label TEXT NOT NULL,
-  did_key TEXT, parent_id TEXT, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-CREATE TABLE IF NOT EXISTS causal_memories (
-  id TEXT PRIMARY KEY, node_id TEXT NOT NULL, trigger TEXT NOT NULL, goal TEXT NOT NULL,
-  approach TEXT NOT NULL, outcome TEXT NOT NULL, lesson TEXT NOT NULL,
-  confidence REAL NOT NULL DEFAULT 0.5, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-CREATE TABLE IF NOT EXISTS behavioural_dna (
-  node_id TEXT PRIMARY KEY, genome_json TEXT NOT NULL, updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-CREATE TABLE IF NOT EXISTS fractal_links (
-  id TEXT PRIMARY KEY, from_node TEXT NOT NULL, to_node TEXT NOT NULL,
-  rel_type TEXT NOT NULL, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-CREATE TABLE IF NOT EXISTS swarm_events (
-  id TEXT PRIMARY KEY, node_id TEXT NOT NULL, agent TEXT NOT NULL,
-  status TEXT NOT NULL, detail TEXT, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+CREATE TABLE IF NOT EXISTS fractal_nodes (id TEXT PRIMARY KEY, scale TEXT NOT NULL, label TEXT NOT NULL, did_key TEXT, parent_id TEXT, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
+CREATE TABLE IF NOT EXISTS causal_memories (id TEXT PRIMARY KEY, node_id TEXT NOT NULL, trigger TEXT NOT NULL, goal TEXT NOT NULL, approach TEXT NOT NULL, outcome TEXT NOT NULL, lesson TEXT NOT NULL, confidence REAL NOT NULL DEFAULT 0.5, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
+CREATE TABLE IF NOT EXISTS behavioural_dna (node_id TEXT PRIMARY KEY, genome_json TEXT NOT NULL, updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
+CREATE TABLE IF NOT EXISTS fractal_links (id TEXT PRIMARY KEY, from_node TEXT NOT NULL, to_node TEXT NOT NULL, rel_type TEXT NOT NULL, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
+CREATE TABLE IF NOT EXISTS swarm_events (id TEXT PRIMARY KEY, node_id TEXT NOT NULL, agent TEXT NOT NULL, status TEXT NOT NULL, detail TEXT, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
 `;
 
 function toPg(sql: string): string {
@@ -192,27 +213,14 @@ export class PgliteFractalDB extends SqlFractalDB {
 }
 
 // --- D1 (shared Family/Career sync on p31-cortex D1) ---------------------
+// Single-line statements (see PGLITE_SCHEMA note): the runtime `exec` binding
+// mangles multi-line DDL with "incomplete input".
 const D1_SCHEMA = `
-CREATE TABLE IF NOT EXISTS fractal_nodes (
-  id TEXT PRIMARY KEY, scale TEXT NOT NULL, label TEXT NOT NULL,
-  did_key TEXT, parent_id TEXT, created_at TEXT DEFAULT (datetime('now'))
-);
-CREATE TABLE IF NOT EXISTS causal_memories (
-  id TEXT PRIMARY KEY, node_id TEXT NOT NULL, trigger TEXT NOT NULL, goal TEXT NOT NULL,
-  approach TEXT NOT NULL, outcome TEXT NOT NULL, lesson TEXT NOT NULL,
-  confidence REAL NOT NULL DEFAULT 0.5, created_at TEXT DEFAULT (datetime('now'))
-);
-CREATE TABLE IF NOT EXISTS behavioural_dna (
-  node_id TEXT PRIMARY KEY, genome_json TEXT NOT NULL, updated_at TEXT DEFAULT (datetime('now'))
-);
-CREATE TABLE IF NOT EXISTS fractal_links (
-  id TEXT PRIMARY KEY, from_node TEXT NOT NULL, to_node TEXT NOT NULL,
-  rel_type TEXT NOT NULL, created_at TEXT DEFAULT (datetime('now'))
-);
-CREATE TABLE IF NOT EXISTS swarm_events (
-  id TEXT PRIMARY KEY, node_id TEXT NOT NULL, agent TEXT NOT NULL,
-  status TEXT NOT NULL, detail TEXT, created_at TEXT DEFAULT (datetime('now'))
-);
+CREATE TABLE IF NOT EXISTS fractal_nodes (id TEXT PRIMARY KEY, scale TEXT NOT NULL, label TEXT NOT NULL, did_key TEXT, parent_id TEXT, created_at TEXT DEFAULT (datetime('now')));
+CREATE TABLE IF NOT EXISTS causal_memories (id TEXT PRIMARY KEY, node_id TEXT NOT NULL, trigger TEXT NOT NULL, goal TEXT NOT NULL, approach TEXT NOT NULL, outcome TEXT NOT NULL, lesson TEXT NOT NULL, confidence REAL NOT NULL DEFAULT 0.5, created_at TEXT DEFAULT (datetime('now')));
+CREATE TABLE IF NOT EXISTS behavioural_dna (node_id TEXT PRIMARY KEY, genome_json TEXT NOT NULL, updated_at TEXT DEFAULT (datetime('now')));
+CREATE TABLE IF NOT EXISTS fractal_links (id TEXT PRIMARY KEY, from_node TEXT NOT NULL, to_node TEXT NOT NULL, rel_type TEXT NOT NULL, created_at TEXT DEFAULT (datetime('now')));
+CREATE TABLE IF NOT EXISTS swarm_events (id TEXT PRIMARY KEY, node_id TEXT NOT NULL, agent TEXT NOT NULL, status TEXT NOT NULL, detail TEXT, created_at TEXT DEFAULT (datetime('now')));
 `;
 
 export class D1FractalDB extends SqlFractalDB {
@@ -223,7 +231,7 @@ export class D1FractalDB extends SqlFractalDB {
     return D1_SCHEMA;
   }
   protected async exec(stmt: string): Promise<void> {
-    await this.d1.exec(stmt);
+    await this.d1.prepare(stmt).run();
   }
   protected async query<T>(sql: string, params: unknown[] = []): Promise<T[]> {
     const res = await this.d1.prepare(sql).bind(...(params as any[])).all();

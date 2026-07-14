@@ -51,6 +51,13 @@ export function createApp(deps: {
 }) {
   const app = new Hono();
 
+  // Surface real errors as JSON instead of Hono's default "Internal Server
+  // Error" text (which otherwise swallows the underlying cause).
+  app.onError((err, c) => {
+    const message = err instanceof Error ? `${err.name}: ${err.message}` : String(err);
+    return c.json({ error: "handler_exception", detail: message }, 500);
+  });
+
   app.options("/*", () => new Response(null, { status: 204, headers: { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods": "GET,POST,OPTIONS", "Access-Control-Allow-Headers": "Content-Type" } }));
 
   app.post("/api/node", async (c) => {
