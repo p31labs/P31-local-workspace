@@ -1,27 +1,41 @@
-# Contributor Covenant Code of Conduct
+# Code of Conduct — P31 Labs
 
-## Our Pledge
+We are building **sovereign, neuroinclusive assistive technology** for real
+families. That mission shapes how we treat each other.
 
-We pledge to make participation in our community a harassment-free experience for everyone, regardless of age, body size, visible or invisible disability, ethnicity, sex characteristics, gender identity and expression, level of experience, education, socio-economic status, nationality, personal appearance, race, religion, or sexual identity and orientation.
+## Our standards
 
-## Our Standards
+- **Care first.** Every contributor, user, and pilot family deserves dignity.
+  No conduct that undermines a neurodivergent person's autonomy or safety.
+- **Spoon-aware communication.** People have limited executive energy. Be
+  concise, kind, and patient; avoid pile-ons and demands for instant replies.
+- **Sovereign by default.** Respect privacy, consent, and self-determination
+  in code and in community. No coercion, no surveillance-as-feature.
+- **Assume good faith; correct kindly.** Disagreement on cryptography or UX is
+  fine; personal attacks are not.
+- **No harassment.** No discrimination on the basis of neurotype, disability,
+  race, gender, sexuality, religion, or background.
 
-Examples of behavior that contributes to a positive environment:
-- Using welcoming and inclusive language
-- Being respectful of differing viewpoints and experiences
-- Gracefully accepting constructive criticism
-- Focusing on what is best for the community
+## Unacceptable behaviour
 
-Examples of unacceptable behavior:
-- Trolling, insulting/derogatory comments, and personal or political attacks
-- Public or private harassment
-- Publishing others' private information without explicit permission
-- Other conduct which could reasonably be considered inappropriate in a professional setting
+- Harassment, slurs, or derogatory remarks about neurodivergence or disability.
+- Doxxing, intimidation, or threats.
+- Deliberate sabotage of the codebase or pilot data.
+- Sexualised language or imagery in community spaces.
+
+## Reporting
+
+Report concerns privately to the maintainers
+(security/private disclosure — see `CONTRIBUTING.md`). Reports are
+handled confidentially; retribution is not tolerated.
 
 ## Enforcement
 
-Instances of abusive, harassing, or otherwise unacceptable behavior may be reported to the project maintainer at support@p31ca.org. All complaints will be reviewed and investigated and will result in a response that is deemed necessary and appropriate to the circumstances.
+Maintainers may warn, temporarily mute, or ban contributors who violate
+this CoC, scaled to the harm. Decisions are appealable to the TSC
+(see `docs/COMMUNITY-GUIDE.md`).
 
-## Attribution
+---
 
-This Code of Conduct is adapted from the [Contributor Covenant](https://www.contributor-covenant.org), version 2.1.
+*Adapted from the spirit of the Contributor Covenant, tailored to a
+neuroinclusive, care-first project.*

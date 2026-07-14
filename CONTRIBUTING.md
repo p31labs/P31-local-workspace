@@ -1,54 +1,58 @@
-# Contributing to P31
+# Contributing to P31 Labs
 
-Thank you for your interest in P31. This guide helps you get started.
+Thanks for your interest in making assistive tech sovereign, neuroinclusive, and
+post-quantum. This guide covers local setup, testing, and the PR process.
 
-## Getting Started
-
-1. Fork the repository
-2. Clone your fork
-3. Install dependencies: `pnpm install`
-4. Run tests: `pnpm run test:unit`
-5. Create a branch: `git checkout -b feature/my-feature`
-6. Make your changes
-7. Run tests again
-8. Submit a pull request
-
-## Development Setup
-
-- **Runtime:** Node.js 24+
-- **Package manager:** pnpm
-- **Framework:** Astro + React 19 + Tailwind
-- **Testing:** Vitest (PHOS), Node test runner (ledger-bridge)
-- **Deployment:** Cloudflare Workers + Pages
-
-## Code Style
-
-- TypeScript strict mode
-- No comments unless requested
-- Follow existing patterns in the codebase
-- All UI must be spoon-aware (0-5 scale)
-- WCAG 2.2 AAA compliance required
-
-## Testing
+## 1. Local setup
 
 ```bash
-# PHOS tests
-cd apps/phos && npx vitest run
-
-# Ledger-bridge tests
-node --test software/workers/ledger-bridge/test/*.test.mjs
-
-# Full test suite
-pnpm run test:unit
+git clone https://github.com/p31labs/P31-local-workspace
+cd P31-local-workspace
+pnpm install            # pnpm workspaces (apps/*, software/*)
+pnpm -C apps/phos run build   # example: build PHOS
 ```
 
-## Pull Request Process
+Workers live under `software/workers/*`. Each has its own `package.json`
+with `typecheck` (`tsc --noEmit`) and `test` (Vitest).
 
-1. Ensure all tests pass
-2. Update documentation if needed
-3. Add yourself to CONTRIBUTORS.md (if it exists)
-4. Request a review from @p31labs
+## 2. Testing
 
-## Code of Conduct
+```bash
+pnpm -C software/workers/federation-bridge run typecheck
+pnpm -C software/workers/federation-bridge test
+# Whole-repo units:
+pnpm run test:unit
+# TRIPER cert runner (monorepo edition):
+node tests/triper/triper-runner.mjs --cert
+```
 
-Be kind. Be inclusive. Be neurodivergent-affirming.
+- **Vitest** unit tests live next to code (`*.test.ts`).
+- **TRIPER** suites under `tests/mvp/**` and `tests/unit/triper/**`.
+- Keep **0 typecheck errors** and **0 regressions** before opening a PR.
+
+## 3. Code style
+
+- **TypeScript** strict mode (no `any` unless justified + commented).
+- **Prettier + ESLint** — `pnpm lint` if configured.
+- **No comments** unless explicitly requested (repo convention).
+- **Design system** (`DESIGN.md`): quantum-cyan `#00F0FF`, glass blur 12 / radius 24,
+  `data-spoons` 0–5 motion scaling, CrisisMode. Follow it for any UI.
+
+## 4. Pull-request process
+
+1. Branch from `main`: `git checkout -b cwp-2026-0xx/short-name`.
+2. Small, focused commits; message references the CWP/issue.
+3. Ensure `typecheck` + tests pass locally.
+4. Open the PR; CI runs lint + tests (continue-on-error where noted).
+5. A **maintainer** reviews; merge on lazy consensus (see `docs/COMMUNITY-GUIDE.md`).
+
+## 5. Reporting issues
+
+- Bugs / feature requests → GitHub Issues (label `bug` / `enhancement`).
+- Security issues → **private** disclosure to the maintainers, not public issues.
+
+## 6. CWP workflow
+
+Large work is scoped as **CWPs** (Crypto Work Packages) under
+`cwp-2026-*/`. If you pick one up, keep the anchored summary in the
+issue/PR in sync and correct false premises found during research.
