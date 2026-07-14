@@ -406,3 +406,9 @@ These must be added at https://github.com/p31labs/P31-local-workspace/settings/s
 - **Observability** `[observability] enabled = true` is set on all 3 production workers (personal-swarm redeployed `5f3ad5c3`, ledger-bridge, federation-bridge).
 - **Cloudflare Alerts** (Worker Errors >5/min, D1 latency >1000ms, R2 503, CPU >90%) are configured on the **Cloudflare dashboard** (Alerts panel) — not via wrangler. `cf-monitor.mjs` (personal-swarm) streams `wrangler tail` and opens GitHub issues for new error signatures.
 - EUDI readiness documented in `docs/EUDI-READINESS.md`; NGI demo script in `docs/grants/NGI-DEMO-SCRIPT.md`. NGI proposals updated with live links + 41+ test coverage.
+
+### CWP-2026-046 (Launch Frontier — Ops, 2026-07-14)
+- **Verified 18 pilot families** in the live shared D1 `pilot_registry` (`rows_read: 18`, all `status:"active"`) via `wrangler d1 execute LOVE_DB --remote --command "..."` from a worker dir with the binding.
+- **`scripts/pilot-onboard.js` is STALE for wrangler 4.110**: its `queryD1` builds `wrangler d1 execute love-ledger --database-id <id> --remote --command "..."`, but this wrangler rejects `--database-id` ("Unknown arguments"). Use the binding form: `wrangler d1 execute LOVE_DB --remote --command "SQL"` from a worker dir. Also the script has **no `--send` mode** (CWP-2026-046 Phase 2.1 is inaccurate) — it only prints onboarding links (default) and marks `--onboard <did>` (a real D1 write). Sending invitations is manual outreach.
+- **Manual / not executable from the build agent:** NGI portal submission (NLnet), Cloudflare Alerts (dashboard), Hybrid PQC TLS zone toggle, demo video recording/upload. All documented as pending in `docs/grants/SUBMISSION-CHECKLIST.md`.
+- **Docs:** `docs/POST-LAUNCH-ROADMAP.md` created (feedback loops, scaling, honest known-gaps); `SUBMISSION-CHECKLIST.md` reconciled to 41+ worker tests + EUDI/crypto evidence + live `federation.p31ca.org` links.
