@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useEffect, useRef, useSyncExternalStore } from 'react';
 import { identityStore, type IdentityState } from '../store/identity';
 import { MLKEM, MLDSA } from '../workers/love-ledger/taler-cbs/pqc';
+import { didJwkFromMlDsa65 } from '../lib/crypto';
 
 // ─── IndexedDB vault for PQC secret keys ────────────────────────────────────
 
@@ -22,6 +23,8 @@ function getPqcDB(): Promise<IDBDatabase> {
 async function savePqcKeys(keys: {
   kemSecretKey: string;
   dsaSecretKey: string;
+  dsa65SecretKey: string;
+  dsa65PublicKey: string;
   passphrase: string;
 }): Promise<void> {
   const db = await getPqcDB();
@@ -39,13 +42,20 @@ async function savePqcKeys(keys: {
   const plaintext = enc.encode(JSON.stringify({
     kem: keys.kemSecretKey,
     dsa: keys.dsaSecretKey,
+    dsa65: keys.dsa65SecretKey,
+    dsa65pub: keys.dsa65PublicKey,
   }));
   const ciphertext = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, aesKey, plaintext);
   tx.objectStore(PQC_STORE).put({ salt: Array.from(salt), iv: Array.from(iv), data: Array.from(new Uint8Array(ciphertext)) }, 'pqc-keys');
   await new Promise<void>((res, rej) => { tx.oncomplete = () => res(); tx.onerror = () => rej(tx.error!); });
 }
 
-async function loadPqcKeys(passphrase: string): Promise<{ kemSecretKey: string; dsaSecretKey: string } | null> {
+export async function loadPqcKeys(passphrase: string): Promise<{
+  kemSecretKey: string;
+  dsaSecretKey: string;
+  dsa65SecretKey?: string;
+  dsa65PublicKey?: string;
+} | null> {
   try {
     const db = await getPqcDB();
     const tx = db.transaction(PQC_STORE, 'readonly');
@@ -195,11 +205,17 @@ const KeyCard: React.FC<{
   label: string;
   algorithm: string;
   value: string;
-  color: 'cyan' | 'purple';
+  color: 'cyan' | 'purple' | 'emerald';
 }> = ({ label, algorithm, value, color }) => {
   const [copied, setCopied] = useState(false);
-  const border = color === 'cyan' ? 'border-cyan-500/20' : 'border-purple-500/20';
-  const glow = color === 'cyan' ? 'hover:shadow-cyan-500/10' : 'hover:shadow-purple-500/10';
+  const border =
+    color === 'cyan' ? 'border-cyan-500/20'
+    : color === 'purple' ? 'border-purple-500/20'
+    : 'border-emerald-500/20';
+  const glow =
+    color === 'cyan' ? 'hover:shadow-cyan-500/10'
+    : color === 'purple' ? 'hover:shadow-purple-500/10'
+    : 'hover:shadow-emerald-500/10';
 
   const handleCopy = useCallback(async () => {
     try {
@@ -270,6 +286,8 @@ export const PQCKeygenSurface: React.FC = () => {
   const [showPassphrase, setShowPassphrase] = useState(false);
   const [kemPubKey, setKemPubKey] = useState('');
   const [dsaPubKey, setDsaPubKey] = useState('');
+  const [dsa65PubKey, setDsa65PubKey] = useState('');
+  const [didJwk, setDidJwk] = useState('');
   const [error, setError] = useState('');
   const [hasExisting, setHasExisting] = useState<boolean | null>(null);
   const [verifyPassphrase, setVerifyPassphrase] = useState('');
@@ -290,18 +308,24 @@ export const PQCKeygenSurface: React.FC = () => {
     try {
       const kem = new MLKEM({ securityLevel: 3 }); // ML-KEM-768
       const dsa = new MLDSA({ securityLevel: 1 }); // ML-DSA-44
+      const dsa65 = new MLDSA({ securityLevel: 3 }); // ML-DSA-65 (quantum-safe)
 
       const kemPair = kem.keygen();
       const dsaPair = dsa.keygen();
+      const dsa65Pair = dsa65.keygen();
 
       await savePqcKeys({
         kemSecretKey: bytesToB64(kemPair.secretKey),
         dsaSecretKey: bytesToB64(dsaPair.secretKey),
+        dsa65SecretKey: bytesToB64(dsa65Pair.secretKey),
+        dsa65PublicKey: bytesToB64(dsa65Pair.publicKey),
         passphrase,
       });
 
       setKemPubKey(bytesToB64(kemPair.publicKey));
       setDsaPubKey(bytesToB64(dsaPair.publicKey));
+      setDsa65PubKey(bytesToB64(dsa65Pair.publicKey));
+      setDidJwk(didJwkFromMlDsa65(dsa65Pair.publicKey));
       setStatus('generated');
     } catch (err: any) {
       setError(err?.message || 'Key generation failed');
@@ -417,7 +441,7 @@ export const PQCKeygenSurface: React.FC = () => {
         {/* Status */}
         <StatusBadge status={status}>
           {status === 'idle' && 'Ready to generate'}
-          {status === 'generating' && 'Generating ML-KEM-768 + ML-DSA-44…'}
+          {status === 'generating' && 'Generating ML-KEM-768 + ML-DSA-44 + ML-DSA-65…'}
           {status === 'generated' && 'Keys generated locally — register with ledger'}
           {status === 'registering' && 'Registering public keys with LOVE ledger…'}
           {status === 'registered' && 'Keys active — quantum-resistant care contracts enabled'}
@@ -497,6 +521,10 @@ export const PQCKeygenSurface: React.FC = () => {
             <div className="space-y-3">
               <KeyCard label="ML-KEM-768 Public" algorithm="FIPS 203" value={kemPubKey} color="cyan" />
               <KeyCard label="ML-DSA-44 Public" algorithm="FIPS 204" value={dsaPubKey} color="purple" />
+              <KeyCard label="ML-DSA-65 Public" algorithm="FIPS 204" value={dsa65PubKey} color="emerald" />
+              {didJwk && (
+                <KeyCard label="did:jwk (quantum-safe)" algorithm="kty:AKP · ML-DSA-65" value={didJwk} color="emerald" />
+              )}
             </div>
 
             <div className="flex gap-2 pt-2">

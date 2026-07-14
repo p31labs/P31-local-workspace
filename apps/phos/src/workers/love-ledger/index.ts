@@ -351,6 +351,42 @@ export class LoveTransactionDO extends DurableObject {
   }
 }
 
+// ── Identity registry helpers (CWP-2026-025) ──────────────────────────
+// did:key encoding matches apps/phos/src/lib/crypto.ts:
+//   did = `did:key:z${base64url(standardBase64(rawPubkey))}`
+function jsonResp(body: any, status = 200): Response {
+  return new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
+}
+
+function b64UrlDecodeBytes(s: string): Uint8Array {
+  let b64 = s.replace(/-/g, '+').replace(/_/g, '/');
+  while (b64.length % 4) b64 += '=';
+  const bin = atob(b64);
+  const out = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+  return out;
+}
+
+function didToEd25519Pub(did: string): Uint8Array | null {
+  if (!did.startsWith('did:key:z')) return null;
+  try { return b64UrlDecodeBytes(did.slice('did:key:z'.length)); } catch { return null; }
+}
+
+// Canonical registration payload — client and server must build identically.
+function buildRegisterMessage(did: string, ed25519Pub: string, mldsa65Pub: string, ethAddress: string): string {
+  return `${did}|${ed25519Pub}|${mldsa65Pub}|${ethAddress}`;
+}
+
+// Verify an Ed25519 (or P-256 fallback) signature over a UTF-8 message.
+async function verifyDidSignature(message: string, sigB64: string, pubBytes: Uint8Array): Promise<boolean> {
+  try {
+    const alg = pubBytes.byteLength === 32 ? 'Ed25519' : 'ECDSA';
+    const namedCurve = alg === 'Ed25519' ? undefined : 'P-256';
+    const key = await crypto.subtle.importKey('raw', pubBytes, { name: alg, namedCurve } as any, false, ['verify']);
+    return await crypto.subtle.verify({ name: alg, namedCurve } as any, key, b64ToBytes(sigB64), new TextEncoder().encode(message));
+  } catch { return false; }
+}
+
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
@@ -1139,7 +1175,92 @@ export default {
         }), { headers: { 'Content-Type': 'application/json' } });
       } catch (err: any) {
         logEvent({ event: 'contract_keygen_error', service: 'love-ledger', success: false, error: err?.message || String(err) });
-        return new Response(JSON.stringify({ error: 'Internal server error' }), { status: 500, headers: { 'Content-Type': 'application/json' } });
+          return new Response(JSON.stringify({ error: 'Internal server error' }), { status: 500, headers: { 'Content-Type': 'application/json' } });
+        }
+      }
+
+    // ── Sovereign identity registry (CWP-2026-025) ──────────────────────
+    // Self-signed registration: the client proves control of its Ed25519 DID
+    // by signing the registration payload. No server secret required.
+    if (method === 'POST' && url.pathname === '/identity/register') {
+      try {
+        const b = await request.json() as {
+          did?: string; ed25519_pub?: string; mldsa65_pub?: string;
+          eth_address?: string; signature?: string;
+        };
+        if (!b.did || !b.ed25519_pub || !b.eth_address || !b.signature) {
+          return jsonResp({ error: 'Missing did, ed25519_pub, eth_address, or signature' }, 400);
+        }
+        if (!/^0x[0-9a-fA-F]{40}$/.test(b.eth_address)) {
+          return jsonResp({ error: 'Invalid eth_address' }, 400);
+        }
+        const pubBytes = didToEd25519Pub(b.did);
+        if (!pubBytes || pubBytes.byteLength !== 32) {
+          return jsonResp({ error: 'did must encode a 32-byte Ed25519 key' }, 400);
+        }
+        // Sanity: body ed25519_pub must match the did-derived key.
+        if (bytesToB64(pubBytes) !== b.ed25519_pub) {
+          return jsonResp({ error: 'ed25519_pub does not match did' }, 400);
+        }
+        const msg = buildRegisterMessage(b.did, b.ed25519_pub, b.mldsa65_pub ?? '', b.eth_address);
+        if (!await verifyDidSignature(msg, b.signature, pubBytes)) {
+          return jsonResp({ error: 'Invalid signature — DID control not proven' }, 401);
+        }
+        const now = Date.now();
+        await withRetry(() => env.LOVE_DB.prepare(
+          `INSERT INTO identity_registry (did, ed25519_pub, mldsa65_pub, eth_address, registered_at, updated_at)
+           VALUES (?, ?, ?, ?, ?, ?)
+           ON CONFLICT(did) DO UPDATE SET
+             ed25519_pub=excluded.ed25519_pub,
+             mldsa65_pub=excluded.mldsa65_pub,
+             eth_address=excluded.eth_address,
+             updated_at=excluded.updated_at`
+        ).bind(b.did, b.ed25519_pub, b.mldsa65_pub ?? null, b.eth_address, now, now).run(), 3, 'ir_upsert');
+        logEvent({ event: 'identity_register', service: 'love-ledger', did: b.did, success: true });
+        return jsonResp({ ok: true, did: b.did, eth_address: b.eth_address });
+      } catch (err: any) {
+        logEvent({ event: 'identity_register_error', service: 'love-ledger', success: false, error: err?.message || String(err) });
+        return jsonResp({ error: 'Internal server error' }, 500);
+      }
+    }
+
+    if (method === 'GET' && url.pathname === '/identity/lookup') {
+      const did = url.searchParams.get('did');
+      if (!did) return jsonResp({ error: 'Missing did' }, 400);
+      const row = await withRetry(() => env.LOVE_DB.prepare(
+        'SELECT did, ed25519_pub, mldsa65_pub, eth_address, registered_at, updated_at FROM identity_registry WHERE did = ?'
+      ).bind(did).first<{
+        did: string; ed25519_pub: string; mldsa65_pub: string | null;
+        eth_address: string; registered_at: number; updated_at: number;
+      }>(), 3, 'ir_lookup');
+      if (!row) return jsonResp({ error: 'Not found' }, 404);
+      return jsonResp(row);
+    }
+
+    if (method === 'POST' && url.pathname === '/identity/verify') {
+      try {
+        const b = await request.json() as {
+          did?: string; message?: string; ed25519Sig?: string; mldsa65Sig?: string;
+        };
+        if (!b.did || !b.message || !b.ed25519Sig) {
+          return jsonResp({ error: 'Missing did, message, or ed25519Sig' }, 400);
+        }
+        const row = await withRetry(() => env.LOVE_DB.prepare(
+          'SELECT ed25519_pub, mldsa65_pub FROM identity_registry WHERE did = ?'
+        ).bind(b.did).first<{ ed25519_pub: string; mldsa65_pub: string | null }>(), 3, 'ir_vlookup');
+        if (!row) return jsonResp({ error: 'Unknown did' }, 404);
+        const pubBytes = didToEd25519Pub(b.did);
+        const validEd25519 = pubBytes ? await verifyDidSignature(b.message, b.ed25519Sig, pubBytes) : false;
+        let validMldsa65 = false;
+        if (b.mldsa65Sig && row.mldsa65_pub) {
+          try {
+            const mldsa = new MLDSA({ securityLevel: 3 });
+            validMldsa65 = mldsa.verify(new TextEncoder().encode(b.message), b64ToBytes(b.mldsa65Sig), b64ToBytes(row.mldsa65_pub));
+          } catch { validMldsa65 = false; }
+        }
+        return jsonResp({ validEd25519, validMldsa65 });
+      } catch (err: any) {
+        return jsonResp({ error: 'Internal server error' }, 500);
       }
     }
 

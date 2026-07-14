@@ -30,6 +30,8 @@ import {
 import { privateKeyToAccount } from "viem/accounts";
 import { baseSepolia } from "viem/chains";
 import { P31TransparencyAnchorAbi, ProofOfCareAbi } from "./abis";
+import { ml_dsa65 } from "@noble/post-quantum/ml-dsa.js";
+import { issueSDJWT, verifySDJWT, getIssuer } from "./sdjwt";
 
 interface Env {
   RPC_URL: string;
@@ -37,6 +39,7 @@ interface Env {
   ANCHOR_ADDR: string;
   DRY_RUN?: string;
   BRIDGE_PRIVATE_KEY?: string;
+  LOVE_DB: any; // shared love-ledger D1 (identity_registry + care_proofs)
 }
 
 const BYTES32 = /^0x[0-9a-fA-F]{64}$/;
@@ -97,6 +100,78 @@ function json(body: any, status = 200): Response {
     status,
     headers: { "Content-Type": "application/json" },
   });
+}
+
+// ── Sovereign identity verification (CWP-2026-025) ──────────────────────
+// did:key encoding matches apps/phos/src/lib/crypto.ts:
+//   did = `did:key:z${base64url(standardBase64(rawEd25519Pubkey))}`
+function b64UrlDecodeBytes(s: string): Uint8Array {
+  let b64 = s.replace(/-/g, "+").replace(/_/g, "/");
+  while (b64.length % 4) b64 += "=";
+  const bin = atob(b64);
+  const out = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+  return out;
+}
+
+function didToEd25519Pub(did: string): Uint8Array | null {
+  if (!did.startsWith("did:key:z")) return null;
+  try {
+    return b64UrlDecodeBytes(did.slice("did:key:z".length));
+  } catch {
+    return null;
+  }
+}
+
+function b64ToBytes(b64: string): Uint8Array {
+  const bin = atob(b64);
+  const out = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+  return out;
+}
+
+// Verify an Ed25519 signature over a UTF-8 message using Web Crypto.
+async function verifyDidSignature(
+  message: string,
+  sigB64: string,
+  pubBytes: Uint8Array,
+): Promise<boolean> {
+  if (pubBytes.byteLength !== 32) return false;
+  try {
+    const key = await crypto.subtle.importKey("raw", pubBytes, "Ed25519", false, ["verify"]);
+    return await crypto.subtle.verify("Ed25519", key, b64ToBytes(sigB64), new TextEncoder().encode(message));
+  } catch {
+    return false;
+  }
+}
+
+// Verify an ML-DSA-65 (FIPS 204, NIST cat-3) signature over a UTF-8 message.
+// Pure-JS via @noble/post-quantum (no WASM). Used as the post-quantum
+// DID-control proof path (CWP-2026-027 A): the caller signs the canonical
+// proof message with their ML-DSA-65 key registered in identity_registry.mldsa65_pub.
+function verifyMLDSA65(
+  message: string,
+  sigB64: string,
+  pubB64: string,
+): boolean {
+  try {
+    return ml_dsa65.verify(b64ToBytes(sigB64), new TextEncoder().encode(message), b64ToBytes(pubB64));
+  } catch {
+    return false;
+  }
+}
+
+// Canonical signed payload — PHOS client (Phase 3) must sign this exact string.
+function buildProofMessage(
+  did: string,
+  users: string[],
+  tProx: any[],
+  qRes: any[],
+  tasks: any[],
+  entropyRoots: string[],
+): string {
+  const j = (a: any[]) => a.map((v) => String(v)).join(",");
+  return `proof|${did}|${j(users)}|${j(tProx)}|${j(qRes)}|${j(tasks)}|${j(entropyRoots)}`;
 }
 
 export default {
@@ -179,14 +254,29 @@ export default {
       return json({ ok: true, results });
     }
 
-    // ── ProofOfCare.submitCareProofs(...) — requires relay authority ─────
+    // ── ProofOfCare.submitCareProofs(...) — sovereign, signed relay ──────
+    // CWP-2026-025: the caller must prove control of a registered DID (Ed25519
+    // sig over the payload) and the SBT recipient (users[0]) must equal the
+    // ETH address bound to that DID. Open minting is REMOVED.
     if (url.pathname === "/care-proof") {
+      const did: string = body?.did;
+      const signature: string | undefined = body?.signature;
+      const mldsa65Sig: string | undefined = body?.mldsa65_sig;
       const users: string[] = body?.users;
       const tProx: any[] = body?.tProx;
       const qRes: any[] = body?.qRes;
       const tasks: any[] = body?.tasks;
       const entropyRoots: string[] = body?.entropyRoots;
 
+      if (!did) {
+        return json({ error: "did is required (sovereign mint)" }, 400);
+      }
+      if (!signature && !mldsa65Sig) {
+        return json(
+          { error: "signature (Ed25519) or mldsa65_sig (ML-DSA-65) is required" },
+          400,
+        );
+      }
       if (!Array.isArray(users) || users.length === 0 || !users.every((u) => isAddress(u))) {
         return json({ error: "users must be a non-empty array of valid addresses" }, 400);
       }
@@ -198,6 +288,43 @@ export default {
         return json({ error: "entropyRoots must be 0x-prefixed 32-byte hex strings" }, 400);
       }
 
+      // 1) Resolve the DID's registered binding.
+      const row = (await env.LOVE_DB.prepare(
+        "SELECT ed25519_pub, mldsa65_pub, eth_address FROM identity_registry WHERE did = ?",
+      ).bind(did).first()) as
+        | { ed25519_pub: string; mldsa65_pub: string | null; eth_address: string }
+        | null;
+      if (!row) {
+        return json({ error: "Unknown DID — register at love-ledger /identity/register first" }, 401);
+      }
+
+      // 2) Prove DID control — EITHER Ed25519 (classical) OR ML-DSA-65
+      //    (post-quantum, CWP-2026-027 A) when mldsa65_pub is registered.
+      const message = buildProofMessage(did, users, tProx, qRes, tasks, entropyRoots);
+      let controlProven = false;
+      if (mldsa65Sig && row.mldsa65_pub) {
+        controlProven = verifyMLDSA65(message, mldsa65Sig, row.mldsa65_pub);
+      }
+      if (!controlProven && signature) {
+        const pubBytes = didToEd25519Pub(did);
+        controlProven = !!pubBytes && (await verifyDidSignature(message, signature, pubBytes));
+      }
+      if (!controlProven) {
+        return json(
+          { error: "Invalid signature — DID control not proven (Ed25519 or ML-DSA-65)" },
+          401,
+        );
+      }
+
+      // 3) The SBT recipient MUST be the address bound to this DID.
+      if (users[0].toLowerCase() !== row.eth_address.toLowerCase()) {
+        return json(
+          { error: "users[0] must equal the ETH address registered to this DID" },
+          403,
+        );
+      }
+
+      // 4) Encode + relay on-chain as the oracle/relay signer.
       const data = encodeFunctionData({
         abi: ProofOfCareAbi,
         functionName: "submitCareProofs",
@@ -209,7 +336,96 @@ export default {
           entropyRoots as Hex[],
         ],
       });
-      return relay(env, env.PROOF_OF_CARE_ADDR, data, "submitCareProofs");
+
+      // 5) Dual-anchor: keep an off-chain court-admissible record (CWP-2026-025).
+      let txHash: string | null = null;
+      if (!isDryRun(env)) {
+        const res = await relay(env, env.PROOF_OF_CARE_ADDR, data, "submitCareProofs");
+        const payload = (await res.json()) as { ok?: boolean; txHash?: string };
+        if (!payload?.ok) return json(payload, 502);
+        txHash = payload.txHash ?? null;
+        await env.LOVE_DB.prepare(
+          `INSERT INTO care_proofs (did, eth_address, t_prox, q_res, tasks, entropy_root, tx_hash, anchored_at)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+        ).bind(
+          did,
+          row.eth_address,
+          JSON.stringify(tProx),
+          JSON.stringify(qRes),
+          JSON.stringify(tasks),
+          JSON.stringify(entropyRoots),
+          txHash,
+          Date.now(),
+        ).run();
+        return json({ ok: true, txHash, did, ethAddress: row.eth_address });
+      }
+
+      // Dry-run: return calldata, record with null txHash.
+      const dry = relay(env, env.PROOF_OF_CARE_ADDR, data, "submitCareProofs");
+      await env.LOVE_DB.prepare(
+        `INSERT INTO care_proofs (did, eth_address, t_prox, q_res, tasks, entropy_root, tx_hash, anchored_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      ).bind(
+        did,
+        row.eth_address,
+        JSON.stringify(tProx),
+        JSON.stringify(qRes),
+        JSON.stringify(tasks),
+        JSON.stringify(entropyRoots),
+        null,
+        Date.now(),
+      ).run();
+      return dry;
+    }
+
+    // ── SD-JWT issue (CWP-2026-027 B, RFC 9901 / VC-17) ─────
+    // Issues a selectively-disclosable care credential over the DID's
+    // registered claims. The holder later reveals a subset via
+    // selectDisclosures + /credential/verify.
+    if (url.pathname === "/credential/issue") {
+      const did: string = body?.did;
+      const claims: Record<string, unknown> | undefined = body?.claims;
+      if (!did || typeof claims !== "object" || Array.isArray(claims) ||
+          Object.keys(claims).length === 0) {
+        return json({ error: "did and a non-empty claims object are required" }, 400);
+      }
+      const reg = (await env.LOVE_DB.prepare(
+        "SELECT did FROM identity_registry WHERE did = ?",
+      ).bind(did).first()) as { did: string } | null;
+      if (!reg) {
+        return json({ error: "Unknown DID — register at love-ledger /identity/register first" }, 401);
+      }
+      const cred = await issueSDJWT(claims);
+      // Idempotent: ensure the issuance table exists, then count.
+      await env.LOVE_DB.prepare(
+        `CREATE TABLE IF NOT EXISTS credential_issuance (
+           id INTEGER PRIMARY KEY AUTOINCREMENT,
+           did TEXT NOT NULL,
+           vct TEXT NOT NULL DEFAULT 'p31.care',
+           issued_at INTEGER NOT NULL
+         )`,
+      ).run();
+      await env.LOVE_DB.prepare(
+        "INSERT INTO credential_issuance (did, issued_at) VALUES (?, ?)",
+      ).bind(did, Date.now()).run();
+      return json({
+        ok: true,
+        sdjwt: cred.sdjwt,
+        issuerPubB64: cred.issuerPubB64,
+        note: "Reveal selected claims with /credential/verify (send only the ~disclosure segments you choose).",
+      });
+    }
+
+    // ── SD-JWT verify ──────────────────────────────────────────────
+    if (url.pathname === "/credential/verify") {
+      const sdjwt: string = body?.sdjwt;
+      if (!sdjwt || typeof sdjwt !== "string") {
+        return json({ error: "sdjwt (compact SD-JWT string) is required" }, 400);
+      }
+      const issuer = await getIssuer();
+      const result = await verifySDJWT(sdjwt, issuer.pub);
+      if (!result.valid) return json({ valid: false, disclosed: {} }, 422);
+      return json({ valid: true, disclosed: result.disclosed });
     }
 
     return json({ error: `Unknown route: ${url.pathname}` }, 404);

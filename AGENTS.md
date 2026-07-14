@@ -10,11 +10,30 @@ packages against source code and authoritative registries. Below is the grounded
 verdict — a few overstated claims from earlier drafts have been corrected.
 
 ### Standards (all verified)
-- **ERC-5192** — confirmed ([eips.ethereum.org/EIPS/eip-5192](https://eips.ethereum.org/EIPS/eip-5192));
-  `CognitivePassport.sol` is **fully compliant** (deployed on Base Sepolia, `0xa4bfb18fa7c5265e25b9a8915d1196a18d52299e`).
-`LOVESBT.sol` is fully compliant (`locked()`, `Locked` event, `supportsInterface(0xb45a3c0e)`).
-`GenesisSpark.sol` is soulbound by convention but does not implement the full ERC-5192 interface.
+- **ERC-5192** — confirmed ([eips.ethereum.org/EIPS/eip-5192](https://eips.ethereum.org/EIPS/eip-5192)) as a standard.
+  **Correction (2026-07-13, CWP-2026-023/025 audit):** no P31 contract is actually ERC-5192
+  compliant. `LOVESBT.sol` (Base Sepolia `0x521cAD1b54CDDB2B6B53a30EBe050C429F9c6C55`) is
+  soulbound **by convention only** — `transfer`/`transferFrom` revert — but it does NOT implement
+  the ERC-5192 interface (`locked()`, `Locked` event, `supportsInterface(0xb45a3c0e)` are absent).
+  `CognitivePassport.sol` does **not exist** in the repo and is **not deployed**; the address
+  `0xa4bfb18fa7c5265e25b9a8915d1196a18d52299e` is unverified. The "Cognitive Passport" is a
+  local client-side document in PHOS (`apps/phos/src/surfaces/PassportSurface.tsx`), not an on-chain token.
+  `GenesisSpark.sol` is soulbound by convention but does not implement the full ERC-5192 interface.
 - **DID Core v1.0** — [W3C Recommendation](https://www.w3.org/TR/did-core/); IANA registers `did.json`.
+- **Sovereign DIDs (P31)** — primary `did:key` (Ed25519, Web Crypto) for on-chain care proofs;
+  plus a quantum-safe **`did:jwk`** (ML-DSA-65, encoded per IANA JOSE RFC 9964 as `kty:AKP`, **not**
+  `crv`). Both bind to an ETH address in `love-ledger`'s self-signed `identity_registry`. PHOS
+  **PQC Keys** surface (`/pqc-keys`) generates ML-KEM-768 + ML-DSA-44 + ML-DSA-65. (CWP-2026-025/026)
+  - **ML-DSA-65 care-proof co-signature (CWP-2026-027 A):** `ledger-bridge` `/care-proof` accepts an
+    optional `mldsa65_sig` (standard base64 of the 3309-byte ML-DSA-65 sig over the same canonical
+    `proof|…` message). Verified via `@noble/post-quantum` `ml_dsa65.verify` against
+    `identity_registry.mldsa65_pub`. If the DID has no ML-DSA-65 pub on file it falls back to Ed25519;
+    if it does, the co-signature is required. PHOS **Care SBT Mint** has a "Post-Quantum Co-Signature"
+    toggle that signs from the PQC vault and (re-)registers `mldsa65_pub`.
+  - **SD-JWT care credentials (CWP-2026-027 B):** `ledger-bridge` issues/verifies Selective
+    Disclosure JWTs (RFC 9901) pinned to **draft-ietf-oauth-sd-jwt-vc-17** (`typ:dc+sd-jwt`,
+    `_sd_alg:sha-256`), Ed25519-signed, SHA-256 (`@noble/hashes`) over salted disclosures. Endpoints:
+    `POST /credential/issue` and `POST /credential/verify`. Used by the pilot-dashboard "Active SD-JWTs" KPI.
 - **WCAG 2.2** — [W3C Recommendation](https://www.w3.org/TR/WCAG22/) (2024-12-12);
   `data-spoons` motion scaling, CrisisMode, skip links, `prefers-reduced-motion` are
   **verified in code**. The automated axe-core audit runner (`scripts/audit-wcag.mjs`)

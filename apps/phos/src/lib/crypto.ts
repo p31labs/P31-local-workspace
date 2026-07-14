@@ -3,6 +3,8 @@
  * Zero telemetry. Zero server dependency.
  */
 
+import { ml_dsa65 } from "@noble/post-quantum/ml-dsa.js";
+
 export interface Keypair {
   did: string;
   publicKey: string;
@@ -93,6 +95,15 @@ export async function verifySignature(
   }
 }
 
+// CWP-2026-027 A-5 — Post-quantum ML-DSA-65 signing in the browser.
+// `secretKeyB64` is the base64 ML-DSA-65 secret key from the PQC vault.
+// Returns STANDARD base64 (the ledger-bridge verifies with atob), not url-safe.
+export function signMlDsa65(message: string, secretKeyB64: string): string {
+  const skBytes = new Uint8Array(base64ToArrayBuffer(secretKeyB64));
+  const sig = ml_dsa65.sign(new TextEncoder().encode(message), skBytes);
+  return arrayBufferToBase64(sig);
+}
+
 export async function createSignedPayload(
   payload: any,
   privateKey: CryptoKey,
@@ -112,8 +123,8 @@ export async function verifySignedPayload(
 
 // ── Utilities ──
 
-function arrayBufferToBase64(buffer: ArrayBuffer | ArrayBufferLike): string {
-  const bytes = new Uint8Array(buffer);
+function arrayBufferToBase64(buffer: Uint8Array | ArrayBuffer | ArrayBufferLike): string {
+  const bytes = buffer instanceof Uint8Array ? buffer : new Uint8Array(buffer);
   let binary = '';
   for (let i = 0; i < bytes.length; i++) {
     binary += String.fromCharCode(bytes[i]);
@@ -132,4 +143,18 @@ function base64ToArrayBuffer(base64: string): ArrayBuffer {
 
 function base64ToBase64Url(base64: string): string {
   return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+// Encode an ML-DSA-65 raw public key (1952 bytes) as a quantum-safe
+// `did:jwk` following IANA JOSE (RFC 9964): key type `AKP`, `alg: ML-DSA-65`,
+// `pub` = base64url(raw pk). did:jwk = "did:jwk:" + base64url(JSON JWK).
+export function didJwkFromMlDsa65(publicKey: Uint8Array): string {
+  const toB64Url = (bytes: Uint8Array): string => {
+    let bin = '';
+    for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+    return base64ToBase64Url(btoa(bin));
+  };
+  const jwk = { kty: 'AKP', alg: 'ML-DSA-65', pub: toB64Url(publicKey) };
+  const json = JSON.stringify(jwk);
+  return 'did:jwk:' + toB64Url(new TextEncoder().encode(json));
 }
