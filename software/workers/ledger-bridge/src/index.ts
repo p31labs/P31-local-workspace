@@ -32,6 +32,13 @@ import { baseSepolia } from "viem/chains";
 import { P31TransparencyAnchorAbi, ProofOfCareAbi } from "./abis";
 import { ml_dsa65 } from "@noble/post-quantum/ml-dsa.js";
 import { issueSDJWT, verifySDJWT, getIssuer } from "./sdjwt";
+import {
+  generateXWingKeyPair,
+  encapsulateXWing,
+  decapsulateXWing,
+  bytesToB64,
+  XWING_CT_LEN,
+} from "./kem";
 
 interface Env {
   RPC_URL: string;
@@ -199,6 +206,57 @@ export default {
       }
       report.total_latency_ms = Date.now() - start;
       return json(report);
+    }
+
+    // ── X-Wing hybrid KEM (draft-ietf-lamp-xwing-00) ─────────────────────
+    // Hybrid post-quantum key exchange: ML-KEM-768 + X25519.
+    if (url.pathname === "/kem/xwing/public") {
+      const kp = generateXWingKeyPair();
+      return json({
+        publicKey: bytesToB64(kp.publicKey),
+        secretKey: bytesToB64(kp.secretKey),
+        lengths: {
+          publicKey: kp.publicKey.length,
+          secretKey: kp.secretKey.length,
+          ciphertext: XWING_CT_LEN,
+        },
+      });
+    }
+
+    if (url.pathname === "/kem/xwing/encapsulate") {
+      if (request.method !== "POST") return json({ error: "POST required" }, 405);
+      let body: any;
+      try {
+        body = await request.json();
+      } catch {
+        return json({ error: "Invalid JSON body" }, 400);
+      }
+      if (!body?.publicKey) return json({ error: "publicKey (base64) required" }, 400);
+      try {
+        const { ciphertext, sharedSecret } = encapsulateXWing(b64ToBytes(body.publicKey));
+        return json({ ciphertext: bytesToB64(ciphertext), sharedSecret: bytesToB64(sharedSecret) });
+      } catch (e: any) {
+        return json({ error: e.message }, 400);
+      }
+    }
+
+    if (url.pathname === "/kem/xwing/decapsulate") {
+      if (request.method !== "POST") return json({ error: "POST required" }, 405);
+      let body: any;
+      try {
+        body = await request.json();
+      } catch {
+        return json({ error: "Invalid JSON body" }, 400);
+      }
+      if (!body?.ciphertext || !body?.secretKey) {
+        return json({ error: "ciphertext and secretKey (base64) required" }, 400);
+      }
+      try {
+        const ss = decapsulateXWing(b64ToBytes(body.ciphertext), b64ToBytes(body.secretKey));
+        return json({ sharedSecret: bytesToB64(ss) });
+      } catch (e: any) {
+        return json({ error: e.message }, 400);
+      }
     }
 
     if (request.method !== "POST") {

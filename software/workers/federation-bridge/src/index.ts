@@ -18,6 +18,7 @@ interface FederationEnv {
   LOVE_DB: D1Database;
   ACTOR_PRIVATE_KEY: string;
   ACTOR_PUBLIC_KEY: string;
+  LEDGER_BRIDGE_URL?: string;
 }
 
 const app = new Hono<{ Bindings: FederationEnv }>();
@@ -158,36 +159,123 @@ app.get('/outbox', async (c) => {
   });
 });
 
-// ── Inbox ──────────────────────────────────────────────────────────────────
 
-app.post('/inbox', async (c) => {
-  const requestId = c.req.header('x-request-id') || crypto.randomUUID();
-  c.header('x-request-id', requestId);
+// ── Cryptographic helpers: FEP-8b32 Object Integrity Proofs ────────────────
+
+function pemToBuffer(pem: string): ArrayBuffer {
+  const b64 = pem.replace(/-----[^-]+-----/g, '').replace(/\s+/g, '');
+  const bin = atob(b64);
+  const buf = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) buf[i] = bin.charCodeAt(i);
+  return buf.buffer;
+}
+
+function b64url(bytes: Uint8Array): string {
+  let bin = '';
+  for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+  return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+function b64urlToBytes(s: string): Uint8Array {
+  let b64 = s.replace(/-/g, '+').replace(/_/g, '/');
+  while (b64.length % 4) b64 += '=';
+  const bin = atob(b64);
+  const out = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+  return out;
+}
+
+// JSON Canonicalization Scheme (RFC 8785): stable key order, no whitespace.
+function jcs(value: unknown): string {
+  if (value === null || typeof value !== 'object') return JSON.stringify(value);
+  if (Array.isArray(value)) return '[' + value.map(jcs).join(',') + ']';
+  const obj = value as Record<string, unknown>;
+  const keys = Object.keys(obj).sort();
+  return '{' + keys.map((k) => JSON.stringify(k) + ':' + jcs(obj[k])).join(',') + '}';
+}
+
+export async function signProof(
+  obj: Record<string, unknown>,
+  privPem: string
+): Promise<Record<string, unknown>> {
+  const priv = await crypto.subtle.importKey(
+    'pkcs8',
+    pemToBuffer(privPem),
+    { name: 'Ed25519' },
+    false,
+    ['sign']
+  );
+  const { proof: _omit, ...rest } = obj;
+  const data = new TextEncoder().encode(jcs(rest));
+  const sig = new Uint8Array(await crypto.subtle.sign('Ed25519', priv, data));
+  return {
+    type: 'DataIntegrityProof',
+    cryptosuite: 'eddsa-2022',
+    proofPurpose: 'assertionMethod',
+    verificationMethod: `${ACTOR_ID}#main-key`,
+    created: new Date().toISOString(),
+    proofValue: b64url(sig),
+  };
+}
+
+export async function verifyProof(
+  obj: Record<string, unknown>,
+  pubPem: string
+): Promise<boolean> {
+  const proof = obj.proof as Record<string, unknown> | undefined;
+  if (!proof || typeof proof.proofValue !== 'string') return false;
+  let pub: CryptoKey;
   try {
-    const body = await c.req.json();
-
-    // Accept Follow activities
-    if (body.type === 'Follow') {
-      return c.json({
-        '@context': 'https://www.w3.org/ns/activitystreams',
-        type: 'Accept',
-        actor: ACTOR_ID,
-        object: body,
-      }, 200);
-    }
-
-    // Accept Create/Announce activities (care attestations from other instances)
-    if (['Create', 'Announce'].includes(body.type)) {
-      return c.json({ ok: true }, 202);
-    }
-
-    return c.json({ error: 'Unsupported activity type' }, 400);
-  } catch (e: any) {
-    console.error(JSON.stringify({ level: 'error', requestId, service: 'federation-bridge', error: e.message, path: '/inbox', timestamp: new Date().toISOString() }));
-    c.header('x-request-id', requestId);
-    return c.json({ error: 'Internal error', requestId }, 500);
+    pub = await crypto.subtle.importKey(
+      'spki',
+      pemToBuffer(pubPem),
+      { name: 'Ed25519' },
+      false,
+      ['verify']
+    );
+  } catch {
+    return false;
   }
-});
+  const { proof: _omit, ...rest } = obj;
+  const data = new TextEncoder().encode(jcs(rest));
+  try {
+    return await crypto.subtle.verify('Ed25519', pub, b64urlToBytes(proof.proofValue), data);
+  } catch {
+    return false;
+  }
+}
+
+function extractPemFromProof(proof: Record<string, unknown>): string | null {
+  return typeof proof.publicKeyPem === 'string' ? proof.publicKeyPem : null;
+}
+
+async function ensureCredentialsTable(db: D1Database) {
+  await db
+    .prepare(
+      `CREATE TABLE IF NOT EXISTS credentials (
+        id TEXT PRIMARY KEY,
+        issuer TEXT,
+        subject TEXT,
+        type TEXT,
+        sdjwt TEXT,
+        activity TEXT,
+        created_at TEXT
+      )`
+    )
+    .run();
+}
+
+async function ensurePublishedTable(db: D1Database) {
+  await db
+    .prepare(
+      `CREATE TABLE IF NOT EXISTS published_activities (
+        id TEXT PRIMARY KEY,
+        activity TEXT,
+        created_at TEXT
+      )`
+    )
+    .run();
+}
 
 // ── Publish endpoint (PHOS → Federation) ──────────────────────────────────
 
@@ -207,7 +295,7 @@ app.post('/publish', async (c) => {
       return c.json({ error: 'Missing sdjwt or subject' }, 400);
     }
 
-    const activity = {
+    const activity: Record<string, unknown> = {
       '@context': 'https://www.w3.org/ns/activitystreams',
       id: `${ORIGIN}/activities/${crypto.randomUUID()}`,
       type: 'Create',
@@ -223,6 +311,13 @@ app.post('/publish', async (c) => {
       },
     };
 
+    // FEP-8b32: integrity-protect outbound activities with an Object Integrity Proof.
+    activity.proof = await signProof(activity, c.env.ACTOR_PRIVATE_KEY);
+    await ensurePublishedTable(c.env.LOVE_DB);
+    await c.env.LOVE_DB.prepare(
+      'INSERT OR REPLACE INTO published_activities (id, activity, created_at) VALUES (?, ?, ?)'
+    ).bind(activity.id as string, JSON.stringify(activity), new Date().toISOString()).run();
+
     return c.json({ ok: true, activity }, 201);
   } catch (e: any) {
     console.error(JSON.stringify({ level: 'error', requestId, service: 'federation-bridge', error: e.message, path: '/publish', timestamp: new Date().toISOString() }));
@@ -231,7 +326,156 @@ app.post('/publish', async (c) => {
   }
 });
 
-// ── HTTP Signature verification (RFC 9421) ─────────────────────────────────
+// ── Inbox (verify inbound Object Integrity Proofs, FEP-8b32) ───────────────
+
+app.post('/inbox', async (c) => {
+  const requestId = c.req.header('x-request-id') || crypto.randomUUID();
+  c.header('x-request-id', requestId);
+  try {
+    const body = await c.req.json();
+
+    if (body.type === 'Follow') {
+      return c.json({
+        '@context': 'https://www.w3.org/ns/activitystreams',
+        type: 'Accept',
+        actor: ACTOR_ID,
+        object: body,
+      }, 200);
+    }
+
+    if (['Create', 'Announce'].includes(body.type)) {
+      // FEP-8b32: if the activity carries an Object Integrity Proof, verify it
+      // against the included/known public key before accepting.
+      if (body.proof) {
+        const pubPem =
+          body.proof?.verificationMethod === `${ACTOR_ID}#main-key`
+            ? c.env.ACTOR_PUBLIC_KEY
+            : extractPemFromProof(body.proof);
+        const ok = pubPem ? await verifyProof(body, pubPem) : false;
+        if (!ok) {
+          return c.json({ error: 'Object Integrity Proof verification failed' }, 422);
+        }
+      }
+      return c.json({ ok: true }, 202);
+    }
+
+    return c.json({ error: 'Unsupported activity type' }, 400);
+  } catch (e: any) {
+    console.error(JSON.stringify({ level: 'error', requestId, service: 'federation-bridge', error: e.message, path: '/inbox', timestamp: new Date().toISOString() }));
+    c.header('x-request-id', requestId);
+    return c.json({ error: 'Internal error', requestId }, 500);
+  }
+});
+
+// ── BadgeFed-style credentialing (SD-JWT VC + ActivityPub + FEP-8b32) ──────
+
+const ledgerBridgeUrl = (c: any) =>
+  c.env.LEDGER_BRIDGE_URL || 'https://ledger-bridge.trimtab-signal.workers.dev';
+
+app.post('/credential/issue', async (c) => {
+  const requestId = c.req.header('x-request-id') || crypto.randomUUID();
+  c.header('x-request-id', requestId);
+  try {
+    const body = await c.req.json();
+    const { subject, claims, type } = body;
+    if (!subject || !claims || typeof claims !== 'object') {
+      return c.json({ error: 'subject and claims (object) required' }, 400);
+    }
+    const vct = type || 'CareCredential';
+    const lbRes = await fetch(`${ledgerBridgeUrl(c)}/credential/issue`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ claims: { ...claims, subject, vct } }),
+    });
+    if (!lbRes.ok) {
+      return c.json({ error: 'ledger-bridge issuance failed', status: lbRes.status }, 502);
+    }
+    const { sdjwt } = (await lbRes.json()) as { sdjwt: string };
+
+    const id = `${ORIGIN}/credentials/${crypto.randomUUID()}`;
+    const activity: Record<string, unknown> = {
+      '@context': [
+        'https://www.w3.org/ns/activitystreams',
+        'https://w3id.org/security/data-integrity/v1',
+      ],
+      id,
+      type: 'Create',
+      actor: ACTOR_ID,
+      published: new Date().toISOString(),
+      to: ['https://www.w3.org/ns/activitystreams#Public'],
+      object: {
+        type: 'VerifiableCredential',
+        id: `${id}#vc`,
+        issuer: ACTOR_ID,
+        credentialSubject: { id: subject, ...claims },
+        evidence: { type: 'SD-JWT', sdjwt },
+      },
+    };
+    activity.proof = await signProof(activity, c.env.ACTOR_PRIVATE_KEY);
+
+    await ensureCredentialsTable(c.env.LOVE_DB);
+    await c.env.LOVE_DB.prepare(
+      'INSERT OR REPLACE INTO credentials (id, issuer, subject, type, sdjwt, activity, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)'
+    )
+      .bind(id, ACTOR_ID, subject, vct, sdjwt, JSON.stringify(activity), new Date().toISOString())
+      .run();
+
+    return c.json({ ok: true, id, activity, sdjwt }, 201);
+  } catch (e: any) {
+    console.error(JSON.stringify({ level: 'error', requestId, service: 'federation-bridge', error: e.message, path: '/credential/issue', timestamp: new Date().toISOString() }));
+    c.header('x-request-id', requestId);
+    return c.json({ error: 'Internal error', requestId }, 500);
+  }
+});
+
+app.post('/credential/verify', async (c) => {
+  const requestId = c.req.header('x-request-id') || crypto.randomUUID();
+  c.header('x-request-id', requestId);
+  try {
+    const body = await c.req.json();
+    const id = body?.id;
+    if (!id) return c.json({ error: 'id required' }, 400);
+    const row = await c.env.LOVE_DB.prepare('SELECT * FROM credentials WHERE id = ?').bind(id).first();
+    if (!row) return c.json({ error: 'credential not found' }, 404);
+
+    const activity = JSON.parse(row.activity as string);
+    const integrityProof = await verifyProof(activity, c.env.ACTOR_PUBLIC_KEY);
+    const lbRes = await fetch(`${ledgerBridgeUrl(c)}/credential/verify`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ sdjwt: row.sdjwt }),
+    });
+    const sdjwtResult: any = lbRes.ok ? await lbRes.json() : { verified: false };
+    return c.json({
+      id,
+      integrityProof,
+      sdjwt: sdjwtResult,
+      verified: integrityProof && !!sdjwtResult?.verified,
+    });
+  } catch (e: any) {
+    console.error(JSON.stringify({ level: 'error', requestId, service: 'federation-bridge', error: e.message, path: '/credential/verify', timestamp: new Date().toISOString() }));
+    c.header('x-request-id', requestId);
+    return c.json({ error: 'Internal error', requestId }, 500);
+  }
+});
+
+app.get('/credential/search', async (c) => {
+  const issuer = c.req.query('issuer');
+  const subject = c.req.query('subject');
+  const type = c.req.query('type');
+  const clauses: string[] = [];
+  const binds: string[] = [];
+  if (issuer) { clauses.push('issuer = ?'); binds.push(issuer); }
+  if (subject) { clauses.push('subject = ?'); binds.push(subject); }
+  if (type) { clauses.push('type = ?'); binds.push(type); }
+  const where = clauses.length ? `WHERE ${clauses.join(' AND ')}` : '';
+  const rows = await c.env.LOVE_DB.prepare(
+    `SELECT id, issuer, subject, type, created_at FROM credentials ${where} ORDER BY created_at DESC LIMIT 50`
+  ).bind(...binds).all();
+  return c.json({ results: rows.results });
+});
+
+// ── HTTP Signature / FEP-8b32 discovery ────────────────────────────────────
 
 app.get('/.well-known/http-signatures', (c) =>
   c.json({

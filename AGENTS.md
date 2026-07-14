@@ -373,3 +373,16 @@ These must be added at https://github.com/p31labs/P31-local-workspace/settings/s
 ### Environment
 - `.env.example` in repo root documents all required env vars (no real secrets).
 - `tests/triper/` has TRIPER cert runner (monorepo edition) and cert fixtures.
+
+### CWP-2026-043 dependency corrections (2026-07-14)
+- **`@fusefactory/fuse-three-forcegraph`** (v1.1.15) is the real, maintained 3D force-graph
+  library — but it is **WebGL GPGPU** (ping-pong render-to-texture compute via
+  `THREE.WebGLRenderer`), **not WebGPU**. API: `new Engine(canvas, opts).setData().start()`.
+- **`graph-gpu` and `badgefed` do not exist on npm** (404) — do not depend on them.
+- The live `spatial-dashboard.html` already uses **real WebGPU** (`3d-force-graph` +
+  `Graph.renderer(WebGPURenderer)`, guarded WebGL fallback) — superior to the WebGL-GPGPU path.
+- **BadgeFed** is a protocol, not a package: `federation-bridge` implements BadgeFed-style
+  credentialing natively (ActivityPub + SD-JWT VC via `ledger-bridge` + FEP-8b32 Object
+  Integrity Proofs) — `POST /credential/issue`, `/credential/verify`, `GET /credential/search`.
+- `federation-bridge` signs outbound activities with **FEP-8b32** (eddsa-2022 / Ed25519 over
+  JCS-canonicalized JSON) and verifies inbound proofs before accepting `Create`/`Announce`.

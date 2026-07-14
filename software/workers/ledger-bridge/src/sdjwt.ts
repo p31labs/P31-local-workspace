@@ -181,7 +181,7 @@ export async function issueSDJWT(
 
   const header = { alg: "Ed25519", typ: "dc+sd-jwt" };
   const iat = Math.floor(Date.now() / 1000);
-  const payload: Record<string, unknown> = {
+  const payload: Record<string, any> = {
     vct: opts?.vct || DEFAULT_VCT,
     iss: "did:p31:ledger-bridge",
     iat,
@@ -243,7 +243,7 @@ export async function issueSDJWTPostQuantum(
   // AKP JWK header per RFC 9964 §4
   const header = { kty: "AKP", alg: "ML-DSA-65", typ: "dc+sd-jwt" };
   const iat = Math.floor(Date.now() / 1000);
-  const payload: Record<string, unknown> = {
+  const payload: Record<string, any> = {
     vct: opts?.vct || DEFAULT_VCT,
     iss: "did:p31:ledger-bridge",
     iat,
@@ -372,7 +372,7 @@ export async function importKeyFromCnf(
 ): Promise<CryptoKey> {
   return crypto.subtle.importKey(
     'jwk',
-    cnfJwk as JsonWebKey,
+    cnfJwk as unknown as JsonWebKey,
     { name: 'Ed25519' },
     false,
     ['verify'],
