@@ -59,53 +59,76 @@ app.get("/health", (c) =>
 
 // ── Identity APIs → love-ledger (service binding) ────────────────────────
 app.all("/identity/*", async (c) => {
-  const resp = await c.env.LOVE_LEDGER.fetch(c.req.raw);
-  return new Response(resp.body, { status: resp.status, headers: proxyHeaders(resp) });
+  try {
+    const resp = await c.env.LOVE_LEDGER.fetch(c.req.raw);
+    return new Response(resp.body, { status: resp.status, headers: proxyHeaders(resp) });
+  } catch (e: any) {
+    return c.json({ error: "love-ledger service unavailable", detail: e.message }, 502);
+  }
 });
 
 // ── Care + credential APIs → ledger-bridge (URL-based) ────────────────────
 app.all("/care-proof", async (c) => {
-  const resp = await fetch(`${BRIDGE}/care-proof`, c.req.raw);
-  return new Response(resp.body, { status: resp.status, headers: proxyHeaders(resp) });
+  try {
+    const resp = await fetch(`${BRIDGE}/care-proof`, c.req.raw);
+    return new Response(resp.body, { status: resp.status, headers: proxyHeaders(resp) });
+  } catch (e: any) {
+    return c.json({ error: "ledger-bridge unavailable", detail: e.message }, 502);
+  }
 });
 
 app.all("/credential/*", async (c) => {
-  const resp = await fetch(`${BRIDGE}${c.req.path}`, c.req.raw);
-  return new Response(resp.body, { status: resp.status, headers: proxyHeaders(resp) });
+  try {
+    const resp = await fetch(`${BRIDGE}${c.req.path}`, c.req.raw);
+    return new Response(resp.body, { status: resp.status, headers: proxyHeaders(resp) });
+  } catch (e: any) {
+    return c.json({ error: "ledger-bridge unavailable", detail: e.message }, 502);
+  }
 });
 
 // ── Dashboard KPI reads → shared LOVE_DB ──────────────────────────────────
 app.get("/api/pilots", async (c) => {
-  const rows = await c.env.LOVE_DB.prepare(`
-    SELECT p.did, p.family_name, p.status, p.onboarded_at, p.active_nodes,
-           p.mesh_health, p.eth_address,
-           (SELECT COUNT(*) FROM care_proofs cp WHERE cp.did = p.did) AS mints
-    FROM pilot_registry p
-    ORDER BY p.onboarded_at DESC
-  `).all();
-  return c.json((rows as any).results || []);
+  try {
+    const rows = await c.env.LOVE_DB.prepare(`
+      SELECT p.did, p.family_name, p.status, p.onboarded_at, p.active_nodes,
+             p.mesh_health, p.eth_address,
+             (SELECT COUNT(*) FROM care_proofs cp WHERE cp.did = p.did) AS mints
+      FROM pilot_registry p
+      ORDER BY p.onboarded_at DESC
+    `).all();
+    return c.json((rows as any).results || []);
+  } catch (e: any) {
+    return c.json({ error: e.message }, 500);
+  }
 });
 
 app.get("/api/stats", async (c) => {
-  const s = (await c.env.LOVE_DB.prepare(`
-    SELECT COUNT(*) AS total,
-           SUM(CASE WHEN status='active' THEN 1 ELSE 0 END) AS active,
-           SUM(CASE WHEN eth_address IS NOT NULL THEN 1 ELSE 0 END) AS with_eth,
-           AVG(mesh_health) AS avg_health,
-           SUM(active_nodes) AS nodes
-    FROM pilot_registry
-  `).first()) || {};
-  const mints = await c.env.LOVE_DB.prepare("SELECT COUNT(*) AS n FROM care_proofs").first();
-  const creds = await c.env.LOVE_DB.prepare("SELECT COUNT(*) AS n FROM credential_issuance").first();
-  return c.json({
-    total: Number(s.total) || 0,
-    active: Number(s.active) || 0,
-    with_eth: Number(s.with_eth) || 0,
-    avg_health: Number(s.avg_health) || 0,
-    nodes: Number(s.nodes) || 0,
-    mints: Number((mints as any)?.n) || 0,
-    credentials: Number((creds as any)?.n) || 0,
-  });
+  try {
+    const s = (await c.env.LOVE_DB.prepare(`
+      SELECT COUNT(*) AS total,
+             SUM(CASE WHEN status='active' THEN 1 ELSE 0 END) AS active,
+             SUM(CASE WHEN eth_address IS NOT NULL THEN 1 ELSE 0 END) AS with_eth,
+             AVG(mesh_health) AS avg_health,
+             SUM(active_nodes) AS nodes
+      FROM pilot_registry
+    `).first()) || {};
+    const mints = await c.env.LOVE_DB.prepare("SELECT COUNT(*) AS n FROM care_proofs").first();
+    let creds = { n: 0 } as any;
+    try {
+      creds = await c.env.LOVE_DB.prepare("SELECT COUNT(*) AS n FROM credential_issuance").first();
+    } catch { /* table may not exist yet */ }
+    return c.json({
+      total: Number(s.total) || 0,
+      active: Number(s.active) || 0,
+      with_eth: Number(s.with_eth) || 0,
+      avg_health: Number(s.avg_health) || 0,
+      nodes: Number(s.nodes) || 0,
+      mints: Number((mints as any)?.n) || 0,
+      credentials: Number((creds as any)?.n) || 0,
+    });
+  } catch (e: any) {
+    return c.json({ error: e.message }, 500);
+  }
 });
 
 // ── PHOS static assets from R2 (Phase 2 — bucket `phos-assets`) ───────────

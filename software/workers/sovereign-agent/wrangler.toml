@@ -7,19 +7,20 @@ compatibility_date = "2026-01-01"
 # and reads the shared LOVE_DB for dashboard KPIs.
 # Binds the SHARED LOVE_DB (Free-Plan cap: no new D1 databases).
 
-[env.production]
 routes = [{ pattern = "phos.p31ca.org/*", zone_name = "p31ca.org" }]
 
-[[env.production.d1_databases]]
+[[d1_databases]]
 binding = "LOVE_DB"
 database_name = "love-ledger"
 database_id = "592e3e2e-3203-4e0a-8342-9e85215ec8a6"
 
-[[env.production.r2_buckets]]
+[[r2_buckets]]
 binding = "ASSETS"
 bucket_name = "phos-assets"
 
-[[env.production.services]]
+[[services]]
 binding = "LOVE_LEDGER"
 service = "love-ledger"
-environment = "production"
+
+[observability]
+enabled = true
