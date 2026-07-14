@@ -67,7 +67,7 @@
 Aligned with `docs/cwp/CWP-2026-049-ALIGNMENT.md`. What the build agent completed vs. what remains manual:
 
 - **PHOS deployed:** rebuilt + deployed to Pages project `phos` (deploy `5355d981.phos-btn.pages.dev`). `www.phos.p31ca.org/portal/` → 200, preview `/portal/` → 200.
-- **`phos.p31ca.org` apex still 404 (BLOCKED):** stale DNS A record (`104.21.65.84`) not linked to Pages; custom domain stuck `pending` (HTTP validation deadlock). Needs dashboard DNS fix — see Alignment doc Phase 1 blocker. Token lacks `zone:dns:write`.
+- **`phos.p31ca.org` apex → 200 (RESOLVED):** root cause was the `phos.p31ca.org/* -> sovereign-agent` Worker route shadowing the Pages custom domain; that route was deleted. `phos.p31ca.org/portal/` and `phos.p31ca.org/` now return 200 (PHOS deployed, production deploy `5355d981.phos-btn.pages.dev`).
 - **PQC TLS + Alerts (BLOCKED):** API probes returned `9109` (zone settings) and `10000` (alerts) — insufficient token scope. Dashboard-only.
 - **Pilot tool fixed + links generated:** `scripts/pilot-onboard.js` fixed (multi-line JSON parse + missing `registered_at` col); 18 links in `/tmp/pilot-links.txt` (3 are test/seed DIDs). Sending invites is manual.
 - **NGI artefacts validated:** all 7 evidence files present.

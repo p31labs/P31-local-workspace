@@ -23,8 +23,8 @@
 
 ### Phase 1 — Fix `phos.p31ca.org` Domain
 - **As written:** "bind custom domain to the `phos-btn` Pages project."
-- **Actual:** Pages project is named **`phos`** (the `phos-btn.pages.dev` hostname is only its preview subdomain). The custom domain `phos.p31ca.org` was already bound and reported `active` in the Pages API, yet returned a plain-text `404` from Cloudflare (`server: cloudflare`, no Pages headers). `www.phos.p31ca.org` returns 200 with full Pages headers. DNS check: apex is a proxied A record to Cloudflare anycast IPs; no Worker route intercepts it. **Root cause:** stale/mismatched apex DNS↔Pages edge linkage.
-- **Fix applied (this audit):** deleted + re-created the `phos.p31ca.org` custom domain via the Pages API to force re-linkage (status now `initializing` → `active` after propagation). No code change needed; the production deployment `2274cf1d` already serves `/portal/`.
+- **Actual:** Pages project is named **`phos`** (the `phos-btn.pages.dev` hostname is only its preview subdomain). The custom domain `phos.p31ca.org` was bound and reported `active` in the Pages API, yet returned a plain-text `404` from Cloudflare (`server: cloudflare`, no Pages headers). `www.phos.p31ca.org` returned 200 with full Pages headers. The apex DNS was a flattened CNAME to Cloudflare anycast (correct). The real blocker: a **Worker route `phos.p31ca.org/* -> sovereign-agent`** was shadowing the Pages custom domain — Cloudflare evaluates Worker routes ahead of Pages for the same host, so the `sovereign-agent` Worker answered (404) and Pages never received the request. An earlier route listing was truncated and missed this route.
+- **Fix applied (this audit):** deleted the `phos.p31ca.org/* -> sovereign-agent` Worker route (token has `workers_routes:write`). The apex now falls through to the Pages custom domain and serves `/portal/` → **200**. (An earlier delete/re-create of the custom domain via the Pages API was unnecessary churn and is superseded by this fix.)
 
 ### Phase 2 — Cloudflare PQC TLS + Alerts
 - **As written:** enable zone-level Post-Quantum TLS; configure Alerts.
@@ -58,7 +58,7 @@
 
 | Issue | Root cause | Resolution |
 |-------|------------|------------|
-| `phos.p31ca.org` 404 | Apex custom-domain edge linkage stale (no Pages headers; proxied A record not matched to project) | Deleted + re-created domain via Pages API; pending propagation |
+| `phos.p31ca.org` 404 | Worker route `phos.p31ca.org/* -> sovereign-agent` shadowed the Pages custom domain | Deleted the Worker route; apex now serves PHOS (200) |
 | `federation.p31ca.org` 404 | `[[custom_domains]]` set but not activated in dashboard | Manual: Cloudflare dashboard → Workers → federation-bridge → Custom Domains → Activate |
 | FALSE ✅ in CWP (NGI submitted, Alerts configured) | CWP not reconciled with `AGENTS.md` CWP-2026-047 corrections | This audit supersedes the CWP Reality-Check |
 
@@ -67,12 +67,12 @@
 **Done (API/CLI-executable):**
 - Phase 0: wrote this alignment audit; corrected the CWP's false ✅ claims (NGI submitted, Alerts configured) to ❌/pending.
 - Phase 1: rebuilt PHOS (`astro build`, ~185s) and deployed to Pages project `phos` → production deployment `5355d981.phos-btn.pages.dev`. `www.phos.p31ca.org/portal/` → **200** and preview `/portal/` → **200**.
-- Phase 1: re-created the `phos.p31ca.org` custom domain via the Pages API to force re-linkage; it is now `pending` (verification active) — see blocker below.
+- Phase 1: **RESOLVED** — `phos.p31ca.org/portal/` and `phos.p31ca.org/` now return **200** (full Pages headers). Root cause was the `phos.p31ca.org/* -> sovereign-agent` Worker route shadowing the Pages custom domain; deleted that route. (DNS was already correct: a flattened CNAME to the Pages project.)
 - Phase 4: fixed `scripts/pilot-onboard.js` (multi-line JSON parsing + missing `registered_at` column) and generated **18** onboarding links → `/tmp/pilot-links.txt`. Note: 3 of 18 rows are test/seed DIDs (`ztest`, `cbs-smoke`, `system:genesis`); ~15 are real families.
 - Phase 3: validated all 7 NGI evidence artefacts exist.
 
 **Blocked — requires human / dashboard (not API-executable with this OAuth token):**
-- **Phase 1 — apex `phos.p31ca.org` 404 (RESIDUAL):** root cause = stale DNS A record `104.21.65.84` not linked to the Pages project; custom domain stuck `pending` because HTTP validation cannot reach its token (apex itself 404s). Fix: Cloudflare Dashboard → DNS → `p31ca.org` → replace the `phos.p31ca.org` A record with the Pages CNAME (or delete the custom domain and re-add from the dashboard so Cloudflare recreates the correct record). Token lacks `zone:dns:write`.
+- **Phase 1 — apex `phos.p31ca.org` 404: RESOLVED (see above).** Was caused by the `phos.p31ca.org/* -> sovereign-agent` Worker route, not DNS. No dashboard action needed.
 - **Phase 2 — PQC TLS:** zone setting `post_quantum_encryption` requires `zone:settings:edit` (token has only `zone:read`/`ssl_certs:write`) → API returns `9109`. Dashboard: SSL/TLS → Edge Certificates → Post-Quantum.
 - **Phase 2 — Alerts:** account Alerting API requires `account:alerts:*` scope (absent) → API returns `10000`. Dashboard: Alerts panel (Worker Errors >5/min, D1 latency >1000ms, R2 503, CPU >90%).
 - **Phase 3 — NGI submit:** NLnet portal is a manual human action; checklist submit/confirm boxes stay unchecked.
