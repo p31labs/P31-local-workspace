@@ -27,6 +27,8 @@ const app = new Hono<{ Bindings: FederationEnv }>();
 
 app.use('*', cors());
 
+app.get('/', (c) => c.redirect('/actor', 301));
+
 const ORIGIN = 'https://federation.p31ca.org';
 const ACTOR_ID = `${ORIGIN}/actor`;
 const INBOX_URL = `${ORIGIN}/inbox`;
