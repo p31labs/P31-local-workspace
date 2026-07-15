@@ -4,6 +4,7 @@
 /* Design System Tokens — maps all colors to --p31-* variables controlled by data-spoons */
 @import '@p31/design-system/tokens';
 @import '@p31/design-system/themes';
+@import '@p31/design-system/motion';
 
 /* Tailwind v4 — single import replaces all v3 directives */
 @import "tailwindcss";

@@ -1,5 +1,6 @@
 @import '@p31/design-system/tokens';
 @import '@p31/design-system/themes';
+@import '@p31/design-system/motion';
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: 'Inter', system-ui, sans-serif; background: #0a0e14; color: #e2e8f0; }
