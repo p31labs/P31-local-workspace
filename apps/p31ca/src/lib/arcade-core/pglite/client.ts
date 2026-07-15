@@ -10,7 +10,7 @@ export async function getPGlite(): Promise<PGlite> {
   if (initPromise) return initPromise;
 
   initPromise = (async () => {
-    const db = new PGlite();
+    const db = await PGlite.create('idb://p31-arcade');
     await db.exec(SCHEMA);
 
     for (const game of ARCADE_GAMES) {

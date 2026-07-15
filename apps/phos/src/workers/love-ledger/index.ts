@@ -148,7 +148,7 @@ async function withRetry<T>(fn: () => Promise<T>, retries = 3, label = 'd1_query
 // Writes accept EITHER an Ed25519 did:key signature (end-user wallets — the
 // existing verifyRequest path) OR a Bearer <LOVE_AUTH_SECRET> service token
 // (trusted internal callers: love-registry MCP, CLI, cron). Reads stay public.
-const WRITE_PATHS = new Set(['/transfer', '/stake', '/care-score', '/withdraw', '/family/onboard', '/family/status', '/llm/reserve', '/llm/settle', '/contract/keygen', '/contract/propose', '/contract/activate']);
+const WRITE_PATHS = new Set(['/transfer', '/stake', '/care-score', '/withdraw', '/family/onboard', '/family/status', '/llm/reserve', '/llm/settle', '/contract/keygen', '/contract/propose', '/contract/activate', '/arcade/score', '/arcade/achievement']);
 
 function timingSafeEqual(a: string, b: string): boolean {
   const ab = new TextEncoder().encode(a);
@@ -1441,7 +1441,7 @@ export default {
     if (method === 'POST' && url.pathname === '/genesis/unlock') {
       try {
         await ensureGenesisState(env);
-        const body = await c.req.json<{ did: string; entry_hash?: string; tx_hash?: string }>();
+        const body = await request.json() as { did: string; entry_hash?: string; tx_hash?: string };
         if (!body.did) return new Response(JSON.stringify({ error: 'Missing did' }), { status: 400, headers: { 'Content-Type': 'application/json' } });
 
         // Check if already unlocked
@@ -1466,6 +1466,170 @@ export default {
       } catch (err: any) {
         logEvent({ event: 'genesis_unlock_error', service: 'love-ledger', success: false, error: err?.message || String(err) });
         return new Response(JSON.stringify({ error: 'Internal server error' }), { status: 500, headers: { 'Content-Type': 'application/json' } });
+      }
+    }
+
+    // ── Arcade Score (CWP-2026-053) ──────────────────────────────────────────
+    if (method === 'POST' && url.pathname === '/arcade/score') {
+      try {
+        const body = await request.json() as {
+          did?: string; game_id?: string; score?: number; signature?: string;
+        };
+        if (!body.did || !body.game_id || typeof body.score !== 'number' || !body.signature) {
+          return jsonResp({ error: 'Missing did, game_id, score, or signature' }, 400);
+        }
+
+        const pubBytes = didToEd25519Pub(body.did);
+        if (!pubBytes || pubBytes.byteLength !== 32) {
+          return jsonResp({ error: 'Invalid did' }, 400);
+        }
+
+        const msg = `arcade|${body.did}|${body.game_id}|${body.score}`;
+        if (!await verifyDidSignature(msg, body.signature, pubBytes)) {
+          return jsonResp({ error: 'Invalid signature — DID control not proven' }, 401);
+        }
+
+        const gameLimits: Record<string, { min: number; max: number }> = {
+          bashball: { min: 0, max: 99 }, smallball: { min: 0, max: 999 },
+          gridiron: { min: 0, max: 84 }, cards: { min: 0, max: 999 },
+          strategy: { min: 0, max: 999 }, liquid: { min: 0, max: 999 },
+          orbital: { min: 0, max: 999 }, poetry: { min: 0, max: 999 },
+          resonance: { min: 0, max: 999 },
+        };
+        const limits = gameLimits[body.game_id] || { min: 0, max: 99999 };
+        if (body.score < limits.min || body.score > limits.max) {
+          return jsonResp({ error: `Score out of range for ${body.game_id}` }, 400);
+        }
+
+        const credits = Math.max(1, Math.floor(body.score / 100));
+        const now = Date.now();
+        const did = body.did;
+        const gameId = body.game_id;
+        const score = body.score;
+
+        await withRetry(async () => {
+          await env.LOVE_DB.prepare(
+            'INSERT INTO arcade_scores (did, game_id, score, credits_earned, created_at) VALUES (?, ?, ?, ?, ?)'
+          ).bind(did, gameId, score, credits, now).run();
+
+          await env.LOVE_DB.prepare(
+            'UPDATE love_accounts SET balance = balance + ? WHERE did = ?'
+          ).bind(credits, did).run();
+
+          const careWeight = 0.01;
+          const current = await env.LOVE_DB.prepare(
+            'SELECT care_score FROM love_accounts WHERE did = ?'
+          ).bind(did).first() as { care_score: number } | null;
+          const currentScore = current?.care_score ?? 0.5;
+          const newScore = Math.min(1, currentScore + careWeight * credits);
+          await env.LOVE_DB.prepare(
+            'UPDATE love_accounts SET care_score = ?, care_score_at = ? WHERE did = ?'
+          ).bind(newScore, now, did).run();
+        }, 3, 'arcade_score');
+
+        const balance = await env.LOVE_DB.prepare(
+          'SELECT balance, care_score FROM love_accounts WHERE did = ?'
+        ).bind(did).first() as { balance: number; care_score: number } | null;
+
+        logEvent({ event: 'arcade_score', service: 'love-ledger', did, game_id: gameId, score, credits, success: true });
+        return jsonResp({
+          ok: true, did, game_id: gameId, score,
+          credits_earned: credits,
+          new_balance: balance?.balance ?? 0,
+          new_care_score: balance?.care_score ?? 0.5,
+        });
+      } catch (err: any) {
+        logEvent({ event: 'arcade_score_error', service: 'love-ledger', success: false, error: err?.message || String(err) });
+        return jsonResp({ error: 'Internal server error' }, 500);
+      }
+    }
+
+    if (method === 'GET' && url.pathname === '/arcade/leaderboard') {
+      const gameId = url.searchParams.get('game');
+      const limit = parseInt(url.searchParams.get('limit') || '10');
+      try {
+        const rows = await withRetry(() =>
+          env.LOVE_DB.prepare(
+            'SELECT did, game_id, score, credits_earned, created_at FROM arcade_scores WHERE game_id = ? OR ? IS NULL ORDER BY score DESC LIMIT ?'
+          ).bind(gameId, gameId, limit).all()
+        , 3, 'arcade_leaderboard');
+        return jsonResp({ game: gameId, scores: rows.results || [] });
+      } catch (err: any) {
+        logEvent({ event: 'arcade_leaderboard_error', service: 'love-ledger', success: false, error: err?.message || String(err) });
+        return jsonResp({ error: 'Internal server error' }, 500);
+      }
+    }
+
+    if (method === 'GET' && url.pathname === '/arcade/scores') {
+      const did = url.searchParams.get('did');
+      const gameId = url.searchParams.get('game');
+      const limit = parseInt(url.searchParams.get('limit') || '50');
+      if (!did) return jsonResp({ error: 'did required' }, 400);
+      try {
+        const rows = await withRetry(() =>
+          env.LOVE_DB.prepare(
+            'SELECT id, game_id, score, credits_earned, created_at FROM arcade_scores WHERE did = ? AND (game_id = ? OR ? IS NULL) ORDER BY created_at DESC LIMIT ?'
+          ).bind(did, gameId, gameId, limit).all()
+        , 3, 'arcade_scores_history');
+        return jsonResp({ did, scores: rows.results || [] });
+      } catch (err: any) {
+        logEvent({ event: 'arcade_scores_history_error', service: 'love-ledger', success: false, error: err?.message || String(err) });
+        return jsonResp({ error: 'Internal server error' }, 500);
+      }
+    }
+
+    // ── Arcade Achievement — ML-DSA-65 SD-JWT VC (CWP-2026-053 Phase 6) ────
+    if (method === 'POST' && url.pathname === '/arcade/achievement') {
+      try {
+        const body = await request.json() as { did?: string; game_id?: string; signature?: string };
+        if (!body.did || !body.game_id || !body.signature) {
+          return jsonResp({ error: 'Missing did, game_id, or signature' }, 400);
+        }
+
+        const pubBytes = didToEd25519Pub(body.did);
+        if (!pubBytes || pubBytes.byteLength !== 32) {
+          return jsonResp({ error: 'Invalid did' }, 400);
+        }
+        const msg = `achievement|${body.did}|${body.game_id}`;
+        if (!await verifyDidSignature(msg, body.signature, pubBytes)) {
+          return jsonResp({ error: 'Invalid signature' }, 401);
+        }
+
+        const row = await withRetry(() =>
+          env.LOVE_DB.prepare(
+            'SELECT score, credits_earned, created_at FROM arcade_scores WHERE did = ? AND game_id = ? ORDER BY score DESC LIMIT 1'
+          ).bind(body.did, body.game_id).first()
+        , 3, 'arcade_achievement_check');
+        if (!row) return jsonResp({ error: 'No score found' }, 404);
+        const score = (row as any).score as number;
+        if (score < 500) return jsonResp({ error: 'Score does not qualify (min 500)' }, 400);
+
+        const bridgeUrl = env.BRIDGE_URL || 'https://ledger-bridge.trimtab-signal.workers.dev';
+        const credRes = await fetch(`${bridgeUrl}/credential/issue`, {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({
+            did: body.did,
+            claims: {
+              vct: 'https://p31ca.org/credential-types/arcade-achievement/v1',
+              game: body.game_id, score,
+              achieved_at: new Date().toISOString(),
+            },
+            post_quantum: true,
+          }),
+        });
+        if (!credRes.ok) {
+          return jsonResp({ error: `ledger-bridge issuance failed: ${await credRes.text()}` }, 502);
+        }
+        const cred = await credRes.json();
+        return jsonResp({
+          ok: true, did: body.did, game_id: body.game_id, score,
+          sdjwt: cred.sdjwt, algorithm: 'ML-DSA-65',
+          note: 'Verifiable achievement — present to prove your high score.',
+        });
+      } catch (err: any) {
+        logEvent({ event: 'arcade_achievement_error', service: 'love-ledger', success: false, error: err?.message || String(err) });
+        return jsonResp({ error: 'Internal server error' }, 500);
       }
     }
 

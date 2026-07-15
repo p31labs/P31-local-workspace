@@ -28,6 +28,7 @@ async function pushEntry(entry: K4Entry): Promise<boolean> {
     const resp = await fetch(`${BASE}/api/mesh`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(entry),
     });
     return resp.ok;
   } catch { return false; }

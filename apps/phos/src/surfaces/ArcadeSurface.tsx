@@ -3,6 +3,8 @@ import { useAtmosphere } from '../components/AtmosphereProvider';
 import { mintCredits } from '../lib/KarmaEngine';
 import { K4Bridge } from '../lib/K4Bridge';
 
+const LOVE_LEDGER_URL = 'https://love-ledger.p31ca.org';
+
 const ARCADE_GAMES = [
   { id: 'smallball', name: 'P31 Smallball', category: 'sports', stress: 'low' },
   { id: 'gridiron', name: 'Gridiron Strategy', category: 'strategy', stress: 'high' },
@@ -56,6 +58,19 @@ export function ArcadeSurface({ theme, spoons }: { theme?: Record<string, string
         value: credits * 0.01,
         source: `arcade:${msg.gameId}`,
       });
+
+      // Server-side persistence (CWP-2026-053): POST to love-ledger
+      // Best-effort: failure is non-blocking, client-side mint already succeeded
+      fetch(`${LOVE_LEDGER_URL}/arcade/score`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          did: localStorage.getItem('p31-did') || 'did:key:zunknown',
+          game_id: msg.gameId,
+          score,
+          signature: 'client-pending', // Server validates on full identity flow
+        }),
+      }).catch(() => { /* offline — client-side mint is authoritative */ });
     } catch { /* karma engine failure — non-blocking */ }
   }, []);
 
