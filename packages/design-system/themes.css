@@ -1,5 +1,27 @@
-:root {
-  --phos-bg: #0a0e14;
-  --phos-border: rgba(0, 240, 255, 0.15);
+/*
+ * @p31/design-system themes
+ * Theme overrides for quantum/sanctuary/crisis modes.
+ * Canonical token values are in tokens.css.
+ */
+
+:root,
+[data-theme="quantum"] {
+  --phos-bg: #0A0A0F;
+  --phos-border: rgba(255, 255, 255, 0.08);
   --phos-accent: #00F0FF;
+  --p31-surface: #12121A;
+}
+
+[data-theme="sanctuary"] {
+  --phos-bg: #0A0A0F;
+  --phos-border: rgba(167, 139, 250, 0.12);
+  --phos-accent: #A78BFA;
+  --p31-surface: #12121A;
+}
+
+[data-theme="crisis"] {
+  --phos-bg: #0A0A0F;
+  --phos-border: rgba(251, 113, 133, 0.12);
+  --phos-accent: #FB7185;
+  --p31-surface: #0A0A0F;
 }

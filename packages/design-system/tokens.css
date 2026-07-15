@@ -1,20 +1,77 @@
+/*
+ * @p31/design-system tokens
+ * Canonical design tokens aligned to DESIGN.md.
+ * All apps MUST import this file and use these variables.
+ */
+
 :root {
-  --phos-bg: #0a0e14;
-  --p31-bg: #0a0e14;
-  --p31-text: #e2e8f0;
-  --p31-text-muted: #94a3b8;
+  /* ── Void / Background ── */
+  --phos-bg: #0A0A0F;
+  --p31-bg: #0A0A0F;
+  --p31-void: #0A0A0F;
+
+  /* ── Surface ── */
+  --p31-surface: #12121A;
+  --p31-surface2: #1C1C2A;
+  --p31-surface-border: rgba(255, 255, 255, 0.08);
+
+  /* ── Text ── */
+  --p31-text: #F5F5F7;
+  --p31-text-muted: rgba(245, 245, 247, 0.6);
+  --p31-text-tertiary: rgba(245, 245, 247, 0.3);
+  --p31-cloud: #A1A1AA;
+
+  /* ── Accent: Quantum palette ── */
   --p31-accent-primary: #00F0FF;
   --p31-accent-secondary: #34d399;
   --p31-accent-primary-dim: rgba(0, 240, 255, 0.15);
-  --p31-surface: #1a1e24;
-  --p31-surface-border: rgba(0, 240, 255, 0.15);
-  --p31-particles-opacity: 0.5;
-  --p31-font-family: 'Inter', system-ui, sans-serif;
-  --phos-border: rgba(0, 240, 255, 0.15);
   --phos-accent: #00F0FF;
+  --quantum-cyan: #00F0FF;
+  --quantum-violet: #A78BFA;
+  --quantum-gold: #FBBF24;
+  --quantum-green: #34D399;
+  --quantum-red: #FB7185;
+  --quantum-iris: #818CF8;
+
+  /* ── Glass ── */
+  --p31-glass-surface: rgba(255, 255, 255, 0.04);
+  --p31-glass-border: rgba(255, 255, 255, 0.08);
+  --p31-glass-border-hover: rgba(255, 255, 255, 0.15);
+  --p31-glass-surface-hover: rgba(255, 255, 255, 0.06);
+  --p31-glass-blur: 12px;
+  --p31-glass-radius: 24px;
+  --phos-border: rgba(255, 255, 255, 0.08);
   --phos-glow: radial-gradient(ellipse at 50% 0%, rgba(0, 240, 255, 0.08) 0%, transparent 70%);
+
+  /* ── Status ── */
   --phos-success-soft: #34d399;
   --phos-success: #10b981;
+
+  /* ── Typography ── */
+  --p31-font-family: 'Inter', system-ui, sans-serif;
+  --p31-font-mono: 'JetBrains Mono', monospace;
+
+  /* ── Radius ── */
+  --p31-radius-none: 0px;
+  --p31-radius-sm: 8px;
+  --p31-radius-md: 12px;
+  --p31-radius-lg: 24px;
+  --p31-radius-full: 9999px;
+
+  /* ── Spacing ── */
+  --p31-space-xs: 4px;
+  --p31-space-sm: 8px;
+  --p31-space-md: 16px;
+  --p31-space-lg: 24px;
+  --p31-space-xl: 40px;
+  --p31-space-xxl: 64px;
+  --p31-gutter: 24px;
+  --p31-margin: 32px;
+
+  /* ── Particles ── */
+  --p31-particles-opacity: 0.5;
+
+  /* ── Slate palette ── */
   --color-slate-200: #cbd5e1;
   --color-slate-300: #94a3b8;
   --color-slate-400: #64748b;

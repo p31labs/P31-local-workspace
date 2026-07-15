@@ -19,6 +19,8 @@ packages:
   # Shared libraries & VS Code extensions
   - 'software/packages/*'
   - 'software/extensions/*'
+  # Repo-root shared packages (design-system, ui, etc.)
+  - 'packages/*'
   # Nested app (PWA under node-zero)
   - 'software/packages/node-zero/pwa'
   # Workers grouped under cloudflare-worker and discord

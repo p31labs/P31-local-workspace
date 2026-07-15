@@ -1,0 +1,114 @@
+/*
+ * @p31/ui K4 Hero
+ * Canonical animated tetrahedron — spoon-aware, motion-respecting.
+ * Import this CSS once per page; the SVG component references these classes.
+ */
+
+.k4-hero {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 2rem 0;
+}
+
+.k4-mesh {
+  width: 180px;
+  height: 180px;
+  animation: k4-rotate-core 12s linear infinite;
+  transform-origin: center center;
+  position: relative;
+  z-index: 2;
+}
+
+/* Orbital glow */
+.k4-glow {
+  fill: var(--quantum-cyan, #00f0ff);
+  filter: blur(14px);
+  opacity: 0.5;
+  animation: k4-breathe-core 4s ease-in-out infinite alternate;
+  transition: all 0.8s ease;
+}
+
+/* Nodes */
+.k4-node {
+  fill: var(--text-primary, #f5f5f7);
+  transition: fill 0.8s ease;
+}
+
+.k4-node.shimmer {
+  animation: k4-shimmer-node 3s ease-in-out infinite alternate;
+}
+
+/* Edges */
+.k4-edge {
+  stroke: var(--quantum-violet, #a78bfa);
+  stroke-width: 1.5;
+  opacity: 0.65;
+  transition: all 0.8s ease;
+}
+
+.k4-edge.entangled {
+  stroke-dasharray: 8 4;
+  animation: k4-edge-pulse 4s ease-in-out infinite;
+}
+
+/* ── Keyframes ── */
+
+@keyframes k4-shimmer-node {
+  0%   { fill: var(--quantum-cyan, #00f0ff); }
+  50%  { fill: var(--quantum-violet, #a78bfa); }
+  100% { fill: var(--quantum-cyan, #00f0ff); }
+}
+
+@keyframes k4-edge-pulse {
+  0%   { stroke-dashoffset: 0;   opacity: 0.4; }
+  50%  { stroke-dashoffset: 12;  opacity: 1; }
+  100% { stroke-dashoffset: 24;  opacity: 0.4; }
+}
+
+@keyframes k4-rotate-core {
+  0%   { transform: rotate(0deg)   scale(1); }
+  50%  { transform: rotate(180deg) scale(1.08); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+
+@keyframes k4-breathe-core {
+  0%   { opacity: 0.3; transform: scale(0.9); }
+  100% { opacity: 0.7; transform: scale(1.15); }
+}
+
+/* ── Spoon-aware motion ── */
+
+[data-spoons="0"] .k4-mesh,
+[data-spoons="1"] .k4-mesh,
+[data-reduced-motion="true"] .k4-mesh {
+  animation: none;
+}
+
+[data-spoons="2"] .k4-mesh {
+  animation-duration: 24s;
+}
+
+[data-spoons="4"] .k4-mesh {
+  animation-duration: 8s;
+}
+
+[data-spoons="5"] .k4-mesh {
+  animation-duration: 6s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .k4-mesh {
+    animation: none;
+  }
+  .k4-glow {
+    animation: none;
+  }
+  .k4-node.shimmer {
+    animation: none;
+  }
+  .k4-edge.entangled {
+    animation: none;
+  }
+}
