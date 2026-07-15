@@ -1,5 +1,7 @@
 import React from 'react';
 import { useAtmosphere } from '../components/AtmosphereProvider';
+import { K4Hero } from '@p31/ui/K4Hero';
+import '@p31/ui/k4-hero.css';
 
 export const GreetingSurface: React.FC<{ className?: string }> = ({ className }) => {
   const { grayRock, spoons, setSurface } = useAtmosphere();
@@ -9,6 +11,7 @@ export const GreetingSurface: React.FC<{ className?: string }> = ({ className })
         <p className="font-mono text-xs text-zinc-500">System suspended.</p>
       ) : (
         <>
+          <K4Hero />
           <div className="text-4xl font-mono text-emerald-400 mb-2">P³¹</div>
           <p className="font-mono text-xs text-zinc-500 mb-6">
             spoons: {spoons}/5

@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { BondingUIGSurface } from './components/BondingUIGSurface';
+import { K4Hero } from '@p31/ui/K4Hero';
+import '@p31/ui/k4-hero.css';
 
 function getUrlParam(key: string): string | null {
   if (typeof window === 'undefined') return null;
@@ -61,16 +63,7 @@ export function BondingApp() {
           />
         ) : (
           <>
-            <div style={{
-              width: 200, height: 200, borderRadius: '50%', margin: '0 auto 24px',
-              background: 'radial-gradient(circle, rgba(0,240,255,0.2) 0%, transparent 70%)',
-              border: '2px solid rgba(0,240,255,0.3)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: 48,
-              animation: spoons >= 2 ? 'pulse 2s ease-in-out infinite' : 'none',
-            }}>
-              ⚗️
-            </div>
+            <K4Hero />
             <p style={{ fontSize: 12, color: '#94a3b8', textAlign: 'center' }}>
               Spoons: {spoons} — {spoons <= 1 ? 'Motion disabled' : 'Active'}
             </p>

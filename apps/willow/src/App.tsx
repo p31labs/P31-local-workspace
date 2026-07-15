@@ -3,6 +3,8 @@ import Companion from './components/Companion';
 import VoiceScreen from './components/VoiceScreen';
 import DrawScreen from './components/DrawScreen';
 import MoodTracker from './components/MoodTracker';
+import { K4Hero } from '@p31/ui/K4Hero';
+import '@p31/ui/k4-hero.css';
 import FamilyScreen from './components/FamilyScreen';
 import { UIGWillowWrapper } from './components/UIGWillowWrapper';
 
@@ -83,6 +85,7 @@ export default function App() {
       <a href="#main-content" style={{ position: 'fixed', top: '-100%', left: 0, zIndex: 9999, padding: '0.75rem 1.5rem', background: '#0ff', color: '#000', fontFamily: 'monospace', fontSize: '0.875rem', fontWeight: 600, textDecoration: 'none', borderRadius: '0 0 8px 0' }} onFocus={(e) => { (e.target as HTMLElement).style.top = '0'; }} onBlur={(e) => { (e.target as HTMLElement).style.top = '-100%'; }}>Skip to main content</a>
       <div className="app">
         <header className="app-header">
+          <K4Hero />
           <h1>Willow</h1>
           <p>Tap to play</p>
         </header>
