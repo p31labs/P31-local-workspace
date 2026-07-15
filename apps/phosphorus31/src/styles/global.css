@@ -53,12 +53,12 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Quantum Glass Box — token-driven */
 .glass-box {
-  background: var(--p31-glass-bg-value);
-  backdrop-filter: var(--p31-glass-blur-value);
-  -webkit-backdrop-filter: var(--p31-glass-blur-value);
-  border: 1px solid var(--p31-surface-border);
-  box-shadow: var(--p31-shadow-lg);
-  border-radius: var(--p31-radius-lg);
+  background: var(--p31-glass-surface);
+  backdrop-filter: blur(var(--p31-glass-blur));
+  -webkit-backdrop-filter: blur(var(--p31-glass-blur));
+  border: 1px solid var(--p31-glass-border);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  border-radius: var(--p31-glass-radius);
 }
 
 /* Glass hover */
@@ -70,8 +70,8 @@ h1, h2, h3, h4, h5, h6 {
 
 .glass-box-hover:hover {
   border-color: var(--p31-accent-primary);
-  background: color-mix(in srgb, var(--p31-glass-bg-value) 1.3, transparent);
-  box-shadow: var(--p31-shadow-lg), 0 0 30px var(--p31-accent-primary-dim);
+  background: color-mix(in srgb, var(--p31-glass-surface) 1.3, transparent);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15), 0 0 30px var(--p31-accent-primary-dim);
 }
 
 /* Organic blob animation for illustrations */
