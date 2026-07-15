@@ -1,5 +1,6 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
+import { ml_dsa65 } from '@noble/post-quantum/ml-dsa.js';
 
 /**
  * CWP-2026-031 Phase 3 — ActivityPub Federation Bridge
@@ -18,6 +19,7 @@ interface FederationEnv {
   LOVE_DB: D1Database;
   ACTOR_PRIVATE_KEY: string;
   ACTOR_PUBLIC_KEY: string;
+  ACTOR_PQ_PUBLIC_KEY?: string; // ML-DSA-65 public key (base64) for PQ verification
   LEDGER_BRIDGE_URL?: string;
 }
 
@@ -44,6 +46,7 @@ const actor = {
   '@context': [
     'https://www.w3.org/ns/activitystreams',
     'https://w3id.org/security/data-integrity/v1',
+    'https://w3id.org/security/suites/jws-2020/v1',
   ],
   id: ACTOR_ID,
   type: 'Application',
@@ -59,6 +62,23 @@ const actor = {
     owner: ACTOR_ID,
     publicKeyPem: 'PLACEHOLDER', // Replaced at runtime
   },
+  // CWP-2026-051: post-quantum verification method (ML-DSA-65, AKP/RFC 9964)
+  verificationMethod: [
+    {
+      id: `${ACTOR_ID}#main-key`,
+      type: 'Ed25519VerificationKey2020',
+      controller: ACTOR_ID,
+    },
+    {
+      id: `${ACTOR_ID}#pq-key`,
+      type: 'JsonWebKey2020',
+      controller: ACTOR_ID,
+      publicKeyJwk: {
+        kty: 'AKP',
+        alg: 'ML-DSA-65',
+      },
+    },
+  ],
   endpoints: {
     sharedInbox: INBOX_URL,
   },
@@ -270,6 +290,63 @@ function extractPemFromProof(proof: Record<string, unknown>): string | null {
   return typeof proof.publicKeyPem === 'string' ? proof.publicKeyPem : null;
 }
 
+// ── ML-DSA-65 (FIPS 204) post-quantum verification ─────────────────────────
+// CWP-2026-051: close the mesh quantum loop — verify inbound ML-DSA-65
+// Object Integrity Proofs so Node Zero's did:jwk is mesh-verified.
+
+function b64ToBytes(b64: string): Uint8Array {
+  let s = b64.replace(/-/g, '+').replace(/_/g, '/');
+  while (s.length % 4) s += '=';
+  const bin = atob(s);
+  const out = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+  return out;
+}
+
+/** Verify an ML-DSA-65 (FIPS 204, NIST cat-3) signature. Pure-JS via @noble/post-quantum. */
+function verifyMLDSA65(message: string, sigB64: string, pubB64: string): boolean {
+  try {
+    return ml_dsa65.verify(b64ToBytes(sigB64), new TextEncoder().encode(message), b64ToBytes(pubB64));
+  } catch {
+    return false;
+  }
+}
+
+function extractMldsa65PubFromProof(proof: Record<string, unknown>): string | null {
+  return typeof proof.publicKeyBase64 === 'string' ? proof.publicKeyBase64 : null;
+}
+
+/**
+ * Verify a composite Object Integrity Proof (Ed25519 + ML-DSA-65).
+ * Both signatures must verify over the same JCS-canonicalized payload.
+ * Returns { ed25519: boolean, mldsa65: boolean, ok: boolean }.
+ */
+async function verifyCompositeProof(
+  obj: Record<string, unknown>,
+  ed25519PubPem: string,
+  mldsa65PubB64?: string | null,
+): Promise<{ ed25519: boolean; mldsa65: boolean; ok: boolean }> {
+  const pqProof = obj.pqProof as Record<string, unknown> | undefined;
+
+  // Ed25519 verification
+  const ed25519 = await verifyProof(obj, ed25519PubPem);
+
+  // ML-DSA-65 verification (if pqProof present)
+  let mldsa65Ok = true; // no PQ proof = pass (Ed25519-only is acceptable)
+  if (pqProof && typeof pqProof.proofValue === 'string') {
+    const pubB64 = mldsa65PubB64 || extractMldsa65PubFromProof(pqProof);
+    if (pubB64) {
+      const { proof: _omit, ...rest } = obj;
+      const data = jcs(rest);
+      mldsa65Ok = verifyMLDSA65(data, pqProof.proofValue as string, pubB64);
+    } else {
+      mldsa65Ok = false;
+    }
+  }
+
+  return { ed25519, mldsa65: mldsa65Ok, ok: ed25519 && mldsa65Ok };
+}
+
 async function ensureCredentialsTable(db: D1Database) {
   await db
     .prepare(
@@ -372,16 +449,45 @@ app.post('/inbox', async (c) => {
     }
 
     if (['Create', 'Announce'].includes(body.type)) {
-      // FEP-8b32: if the activity carries an Object Integrity Proof, verify it
-      // against the included/known public key before accepting.
-      if (body.proof) {
-        const pubPem =
+      // FEP-8b32 + CWP-2026-051: verify Object Integrity Proofs.
+      // Accept Ed25519-only, ML-DSA-65-only, or composite (both must verify).
+      if (body.proof || body.pqProof) {
+        // Determine which Ed25519 key to use
+        const ed25519PubPem =
           body.proof?.verificationMethod === `${ACTOR_ID}#main-key`
             ? c.env.ACTOR_PUBLIC_KEY
-            : extractPemFromProof(body.proof);
-        const ok = pubPem ? await verifyProof(body, pubPem) : false;
-        if (!ok) {
-          return c.json({ error: 'Object Integrity Proof verification failed' }, 422);
+            : extractPemFromProof(body.proof || {});
+
+        // Determine ML-DSA-65 key (from pqProof embedded key or env)
+        const pqPubB64 = extractMldsa65PubFromProof(body.pqProof || {})
+          || c.env.ACTOR_PQ_PUBLIC_KEY;
+
+        if (body.proof && body.pqProof && ed25519PubPem) {
+          // Composite: both Ed25519 AND ML-DSA-65 must verify
+          const result = await verifyCompositeProof(body, ed25519PubPem, pqPubB64);
+          if (!result.ok) {
+            return c.json({
+              error: 'Composite proof verification failed',
+              ed25519: result.ed25519,
+              mldsa65: result.mldsa65,
+            }, 422);
+          }
+        } else if (body.proof && ed25519PubPem) {
+          // Ed25519-only
+          const ok = await verifyProof(body, ed25519PubPem);
+          if (!ok) {
+            return c.json({ error: 'Object Integrity Proof verification failed' }, 422);
+          }
+        } else if (body.pqProof && pqPubB64) {
+          // ML-DSA-65-only
+          const { proof: _omit, ...rest } = body;
+          const data = jcs(rest);
+          const ok = verifyMLDSA65(data, body.pqProof.proofValue, pqPubB64);
+          if (!ok) {
+            return c.json({ error: 'ML-DSA-65 proof verification failed' }, 422);
+          }
+        } else {
+          return c.json({ error: 'No verifiable proof provided' }, 422);
         }
       }
       return c.json({ ok: true }, 202);
@@ -618,7 +724,7 @@ app.get('/.well-known/did.json', (c) => {
   // did:web:federation.p31ca.org -> https://federation.p31ca.org/.well-known/did.json
   const did = `did:web:${new URL(ORIGIN).host}`;
   const doc = {
-    '@context': ['https://www.w3.org/ns/did/v1'],
+    '@context': ['https://www.w3.org/ns/did/v1', 'https://w3id.org/security/suites/jws-2020/v1'],
     id: did,
     verificationMethod: [
       {
@@ -633,9 +739,19 @@ app.get('/.well-known/did.json', (c) => {
           return 'z' + base58Encode(der);
         })(),
       },
+      // CWP-2026-051: ML-DSA-65 post-quantum verification method
+      {
+        id: `${did}#pq-key`,
+        type: 'JsonWebKey2020',
+        controller: did,
+        publicKeyJwk: {
+          kty: 'AKP',
+          alg: 'ML-DSA-65',
+        },
+      },
     ],
     authentication: [`${did}#main-key`],
-    assertionMethod: [`${did}#main-key`],
+    assertionMethod: [`${did}#main-key`, `${did}#pq-key`],
     service: [
       {
         id: `${did}#credential-issuer`,

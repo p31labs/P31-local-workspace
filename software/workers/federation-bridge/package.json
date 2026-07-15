@@ -10,6 +10,7 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@noble/post-quantum": "^0.6.1",
     "hono": "^4.6.0"
   },
   "devDependencies": {
