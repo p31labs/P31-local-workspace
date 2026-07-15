@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@p31/design-system": "file:../../packages/design-system",
+    "@p31/ui": "file:../../packages/ui",
     "@p31/interface-generator": "workspace:*",
     "@react-three/drei": "^9.0.0",
     "@react-three/fiber": "^8.0.0",
@@ -33,6 +34,7 @@
     "@vitejs/plugin-react": "^4.3.0",
     "typescript": "^5.5.0",
     "vite": "^5.4.0",
+    "vite-plugin-pwa": "^0.19.8",
     "vitest": "^2.1.0",
     "wrangler": "^4.0.0"
   }
