@@ -5,12 +5,12 @@ compatibility_date = "2026-04-13"
 
 [[kv_namespaces]]
 binding = "STATUS_KV"
-id = "ff890e80e7e64ae8b8afb59870f1a0f6"
+id = "83d45f5b869445ec83ebfb4b2f7e713d"
 
-[[d1_databases]]
-binding = "EPCP_DB"
-database_name = "epcp-audit"
-database_id = "12ce6570-839e-431d-a14d-bb6002dc89e8"
+# [[d1_databases]]
+# binding = "EPCP_DB"
+# database_name = "epcp-audit"
+# database_id = "12ce6570-839e-431d-a14d-bb6002dc89e8"
 
 [[r2_buckets]]
 binding = "FORENSICS_HOT"
@@ -34,8 +34,6 @@ crons = ["*/5 * * * *"]
 [[durable_objects.bindings]]
 name = "CRDT_SESSION_DO"
 class_name = "CrdtSessionDO"
-
-# Migrations already applied in production; re-declaring triggers API 10074.
 
 [vars]
 ENVIRONMENT = "production"

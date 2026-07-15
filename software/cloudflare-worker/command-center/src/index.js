@@ -157,16 +157,30 @@ async function isAdmin(request, env) {
 // ── RBAC middleware ──
 const ROLE_LEVEL = { none: 0, reader: 1, operator: 2, legal: 2, admin: 3 };
 
+const CORS_HEADERS = { 'Access-Control-Allow-Origin': '*' };
+
+function withCors(response) {
+  const newResponse = new Response(response.body, response);
+  newResponse.headers.set('Access-Control-Allow-Origin', '*');
+  return newResponse;
+}
+
 async function withAccess(request, env, requiredRole, handler) {
   const auth = await authenticate(request, env);
   if (!auth) {
     return new Response('Unauthorized', {
       status: 401,
-      headers: { 'WWW-Authenticate': 'Bearer realm="EPCP"' }
+      headers: {
+        'WWW-Authenticate': 'Bearer realm="EPCP"',
+        'Access-Control-Allow-Origin': '*',
+      }
     });
   }
   if ((ROLE_LEVEL[auth.role] || 0) < (ROLE_LEVEL[requiredRole] || 99)) {
-    return new Response('Forbidden', { status: 403 });
+    return new Response('Forbidden', {
+      status: 403,
+      headers: { 'Access-Control-Allow-Origin': '*' }
+    });
   }
   return handler(auth);
 }
@@ -272,7 +286,10 @@ export default {
       // SSE accessible to any authenticated user (Cloudflare Access sets this header)
       const sessionEmail = request.headers.get('Cf-Access-Authenticated-User-Email');
       if (!sessionEmail) {
-        return new Response('Unauthorized: No session', { status: 401 });
+        return new Response('Unauthorized: No session', {
+          status: 401,
+          headers: { 'Access-Control-Allow-Origin': '*' }
+        });
       }
       try {
         return handleSseStream(request, env);
@@ -311,12 +328,6 @@ export default {
      }
 
       // ── Cost Summary API ──
-    } catch (e) {
-      return jsonResponse({ error: 'Internal error', details: String(e) }, 500);
-    }
-  }
-        const sessionEmail = request.headers.get('Cf-Access-Authenticated-User-Email');
-        if (!sessionEmail) return jsonResponse({ error: 'Unauthorized' }, 401);
        if (url.pathname === '/api/costs' && request.method === 'GET') {
          const sessionEmail = request.headers.get('Cf-Access-Authenticated-User-Email');
          if (!sessionEmail) return jsonResponse({ error: 'Unauthorized' }, 401);
@@ -492,7 +503,8 @@ export default {
     } catch (e) {
       return jsonResponse({ error: 'Internal error', details: String(e) }, 500);
     }
-  };
+  },
+};
 
 async function handleStatusWrite(request, env, auth) {
   try {
@@ -529,7 +541,10 @@ async function handleCfSummary(request, env, url) {
   const auth = request.headers.get('Authorization') || '';
   const token = auth.replace('Bearer ', '');
   if (!token || token !== env.STATUS_TOKEN) {
-    return new Response(null, { status: 401 });
+    return new Response(null, {
+      status: 401,
+      headers: { 'Access-Control-Allow-Origin': '*' }
+    });
   }
   if (!env.CF_API_TOKEN || !env.CF_ACCOUNT_ID) {
     return jsonResponse({ configured: false });
