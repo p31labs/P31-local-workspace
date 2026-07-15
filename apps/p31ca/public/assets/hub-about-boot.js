@@ -1,7 +1,7 @@
 /**
  * ABOUT pages: hub nav polish + live fleet/worker strip from command-center API.
  */
-const STATUS_API = "https://command-center.trimtab-signal.workers.dev/api/status";
+const STATUS_API = "https://command-center.p31ca.org/api/status";
 const TIMEOUT_MS = 6000;
 
 function ensureAmbient() {

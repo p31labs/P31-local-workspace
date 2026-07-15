@@ -8,7 +8,7 @@ import AppShell from '../layouts/AppShell.astro'
 import mesh from '../data/p31-mesh-constants.json'
 import opsGlass from '../data/ops-glass-probes.json'
 
-const commandCenterBase = 'https://command-center.trimtab-signal.workers.dev'
+const commandCenterBase = 'https://command-center.p31ca.org'
 const commandCenterHealth = `${commandCenterBase}/api/health`
 const operatorShiftApiUrl = `${commandCenterBase}/api/operator/shift`
 const k4HealthUrl = new URL('/api/health', mesh.k4PersonalWorkerUrl).toString()

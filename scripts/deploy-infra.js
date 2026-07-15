@@ -152,8 +152,10 @@ async function main() {
   await ensureDnsRecord({ name: 'phos.p31ca.org', type: 'CNAME', content: 'phos-btn.pages.dev' });
   await ensureDnsRecord({ name: 'federation.p31ca.org', type: 'CNAME', content: 'federation-bridge.trimtab-signal.workers.dev' });
   await ensureDnsRecord({ name: 'pilot.p31ca.org', type: 'CNAME', content: 'pilot-dashboard.trimtab-signal.workers.dev' });
+  await ensureDnsRecord({ name: 'command-center.p31ca.org', type: 'CNAME', content: 'command-center.trimtab-signal.workers.dev' });
   await ensureRoute({ pattern: 'pilot.p31ca.org/*', script: 'pilot-dashboard' });
   await ensureRoute({ pattern: 'federation.p31ca.org/*', script: 'federation-bridge' });
+  await ensureRoute({ pattern: 'command-center.p31ca.org/*', script: 'command-center' });
   await deleteRouteIf((r) => r.pattern.startsWith('phos.p31ca.org/'), 'shadow route (Pages owns phos)');
   await ensurePagesDomain('phos.p31ca.org');
   await ensurePagesDomain('www.phos.p31ca.org');
