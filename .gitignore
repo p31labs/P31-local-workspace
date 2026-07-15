@@ -179,3 +179,9 @@ did-signing-key.pem
 /zenodo_scan_*.md
 phos/src-tauri/target/
 software/workers/creation-accountant/taler-cbs/target/
+
+# NGI submission build artifacts
+out/
+
+# Genesis invite state (idempotency tracker)
+.sent-invites.json

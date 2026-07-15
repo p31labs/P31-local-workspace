@@ -1,0 +1,41 @@
+name: Pilot Invites (CWP-2026-050)
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: pilot-invites
+  cancel-in-progress: true
+
+jobs:
+  invites:
+    runs-on: ubuntu-latest
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ee05f70c889cb6f876b9925257e3a2fa
+      CLOUDFLARE_ZONE_ID: 3ba5eda28c73c52dc6f0c33a2a607aae
+      DISCORD_WEBHOOK_PHOS: ${{ secrets.DISCORD_WEBHOOK_PHOS }}
+      DISCORD_WEBHOOK_WILLOW: ${{ secrets.DISCORD_WEBHOOK_WILLOW }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/toolchain-constants
+      - name: Install wrangler globally
+        run: npm install -g wrangler@${{ env.WRANGLER_VERSION }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Download invite state
+        uses: actions/download-artifact@v4
+        with:
+          name: sent-invites
+          path: .sent-invites.json
+        continue-on-error: true
+      - name: Send pilot invites
+        run: node scripts/send-invites.js --send
+      - name: Upload invite state
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sent-invites
+          path: .sent-invites.json
+          if-no-files-found: ignore
