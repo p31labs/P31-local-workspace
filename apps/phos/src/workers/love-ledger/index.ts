@@ -18,6 +18,25 @@ async function sha256(input: string): Promise<string> {
   return Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
+/** Ensure genesis_state table exists (CWP-2026-052 — Reunion Protocol). */
+async function ensureGenesisState(env: Env): Promise<void> {
+  await env.LOVE_DB.prepare(
+    `CREATE TABLE IF NOT EXISTS genesis_state (
+      id INTEGER PRIMARY KEY CHECK (id = 1),
+      unlocked INTEGER DEFAULT 0,
+      timestamp INTEGER,
+      did TEXT,
+      entry_hash TEXT,
+      tx_hash TEXT,
+      created_at TEXT DEFAULT (datetime('now'))
+    )`
+  ).run();
+  // Seed locked state if row doesn't exist
+  await env.LOVE_DB.prepare(
+    'INSERT OR IGNORE INTO genesis_state (id, unlocked) VALUES (1, 0)'
+  ).run();
+}
+
 /**
  * Anchor a court-admissible ledger entry on-chain via the ledger-bridge.
  *
@@ -1396,6 +1415,58 @@ export default {
       return new Response(JSON.stringify({ did, count: (rows.results || []).length, contracts: rows.results || [] }), {
         headers: { 'Content-Type': 'application/json' },
       });
+    }
+
+    // ── Genesis activation: GET /genesis/status ────────────────────────────
+    if (method === 'GET' && url.pathname === '/genesis/status') {
+      try {
+        await ensureGenesisState(env);
+        const row = await withRetry(() => env.LOVE_DB.prepare(
+          'SELECT unlocked, timestamp, did, entry_hash, tx_hash FROM genesis_state WHERE id = 1'
+        ).first<any>(), 3, 'genesis_status');
+        return new Response(JSON.stringify({
+          unlocked: row?.unlocked === 1,
+          timestamp: row?.timestamp || null,
+          did: row?.did || null,
+          entry_hash: row?.entry_hash || null,
+          tx_hash: row?.tx_hash || null,
+        }), { headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' } });
+      } catch (err: any) {
+        logEvent({ event: 'genesis_status_error', service: 'love-ledger', success: false, error: err?.message || String(err) });
+        return new Response(JSON.stringify({ error: 'Internal server error' }), { status: 500, headers: { 'Content-Type': 'application/json' } });
+      }
+    }
+
+    // ── Genesis activation: POST /genesis/unlock ───────────────────────────
+    if (method === 'POST' && url.pathname === '/genesis/unlock') {
+      try {
+        await ensureGenesisState(env);
+        const body = await c.req.json<{ did: string; entry_hash?: string; tx_hash?: string }>();
+        if (!body.did) return new Response(JSON.stringify({ error: 'Missing did' }), { status: 400, headers: { 'Content-Type': 'application/json' } });
+
+        // Check if already unlocked
+        const existing = await withRetry(() => env.LOVE_DB.prepare(
+          'SELECT unlocked FROM genesis_state WHERE id = 1'
+        ).first<any>(), 3, 'genesis_check');
+        if (existing?.unlocked === 1) {
+          return new Response(JSON.stringify({ ok: true, already_unlocked: true, timestamp: existing.timestamp }), {
+            headers: { 'Content-Type': 'application/json' },
+          });
+        }
+
+        const now = Date.now();
+        await withRetry(() => env.LOVE_DB.prepare(
+          'INSERT OR REPLACE INTO genesis_state (id, unlocked, timestamp, did, entry_hash, tx_hash) VALUES (1, 1, ?, ?, ?, ?)'
+        ).bind(now, body.did, body.entry_hash || null, body.tx_hash || null).run(), 3, 'genesis_unlock');
+
+        logEvent({ event: 'genesis_unlocked', service: 'love-ledger', did: body.did, success: true, data: { entry_hash: body.entry_hash, tx_hash: body.tx_hash } });
+        return new Response(JSON.stringify({ ok: true, unlocked: true, timestamp: now, did: body.did }), {
+          headers: { 'Content-Type': 'application/json' },
+        });
+      } catch (err: any) {
+        logEvent({ event: 'genesis_unlock_error', service: 'love-ledger', success: false, error: err?.message || String(err) });
+        return new Response(JSON.stringify({ error: 'Internal server error' }), { status: 500, headers: { 'Content-Type': 'application/json' } });
+      }
     }
 
     return new Response('Not found', { status: 404 });

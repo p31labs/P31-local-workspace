@@ -20,6 +20,8 @@ extern "C" {
 #include "lora.h"
 #include "p31_ui.h"
 #include "p31_net.h"
+#include "mldsa_identity.h"
+#include "p31_care_proof.h"
 }
 
 static const char *TAG = "main";
@@ -186,8 +188,10 @@ extern "C" void app_main(void) {
     // ── Sensors (IMU/env — placeholder) ────────────────────────────────────────
     // Sensor bus acquisition deferred to feature modules.
 
-    // ── Identity (DID provisioning — placeholder) ──────────────────────────────
-    // Identity boot tasks executed by p31_net_task below.
+    // ── Identity (Ed25519 + ML-DSA-65 PQC keypair + DID derivation) ──────────
+    mldsa_identity_init();
+    ESP_LOGI(TAG, "PQC identity: did_key=%s did_jwk=%s",
+             mldsa_identity_did_key(), mldsa_identity_did_jwk());
 
     // ── LVGL mutex + 1ms hardware tick timer ───────────────────────────────────
     s_lvgl_mutex = xSemaphoreCreateMutex();

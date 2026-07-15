@@ -7,6 +7,8 @@ idf_component_register(
         "lora.c"
         "p31_ui.c"
         "p31_net.c"
+        "mldsa_identity.c"
+        "p31_care_proof.c"
     INCLUDE_DIRS
         "."
         "${CMAKE_CURRENT_SOURCE_DIR}/../../boards/waveshare-s3-touch-lcd-3.5b-nodezero"
@@ -26,6 +28,7 @@ idf_component_register(
         log
         freertos
         spi_flash
+        mldsa-esp32
 )
 
 # Copy lv_conf.h to the location LVGL's build system expects

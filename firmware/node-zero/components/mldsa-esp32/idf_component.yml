@@ -1,0 +1,15 @@
+name: mldsa-esp32
+version: 0.2.0
+description: ML-DSA-65 (FIPS 204) for ESP32 — post-quantum digital signatures
+url: https://github.com/NeuraiProject/mldsa-esp32
+repository: https://github.com/NeuraiProject/mldsa-esp32
+license: Apache-2.0
+targets:
+  - esp32
+  - esp32s2
+  - esp32s3
+  - esp32c3
+dependencies:
+  idf:
+    version: ">=5.0"
+  espressif/esp_random: "*"

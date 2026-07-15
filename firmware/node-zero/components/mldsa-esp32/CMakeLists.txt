@@ -1,0 +1,11 @@
+idf_component_register(
+    SRCS
+        "src/mldsa_core.c"
+        "src/mldsa_nvs.c"
+        "src/mldsa_random.c"
+    INCLUDE_DIRS
+        "include"
+    REQUIRES
+        nvs_flash
+        esp_random
+)

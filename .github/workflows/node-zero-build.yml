@@ -1,0 +1,34 @@
+name: Node Zero Firmware Build
+
+on:
+  push:
+    paths: ['firmware/node-zero/**']
+  pull_request:
+    paths: ['firmware/node-zero/**']
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: ESP-IDF build
+        uses: espressif/esp-idf-ci-action@v1
+        with:
+          esp_idf_version: v5.5.3
+          target: esp32s3
+          path: 'firmware/node-zero'
+
+      - name: Upload firmware artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: node-zero-firmware-${{ github.sha }}
+          path: |
+            firmware/node-zero/build/*.bin
+            firmware/node-zero/build/*.elf
+            firmware/node-zero/build/bootloader/*.bin
+            firmware/node-zero/build/partition_table/*.bin
+          retention-days: 30
