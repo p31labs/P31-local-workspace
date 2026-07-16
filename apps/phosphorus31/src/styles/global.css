@@ -1,10 +1,11 @@
 /* Google Fonts — must precede all other rules */
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap');
 
-/* Design System Tokens — maps all colors to --p31-* variables controlled by data-spoons */
-@import '@p31/design-system/tokens';
-@import '@p31/design-system/themes';
-@import '@p31/design-system/motion';
+/* Design System — mathematical foundation from @p31/design-core v2.0.0 */
+@import '@p31/design-core/css/base.css';
+@import '@p31/design-core/css/glass.css';
+@import '@p31/design-core/css/motion.css';
+@import '@p31/design-core/css/typography.css';
 
 /* Tailwind v4 — single import replaces all v3 directives */
 @import "tailwindcss";

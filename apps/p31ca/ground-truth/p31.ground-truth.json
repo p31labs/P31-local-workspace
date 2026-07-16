@@ -3,6 +3,21 @@
   "version": "1.0.0",
   "updated": "2026-05-04",
   "mission": "Build, create, connect — decentralized family mesh. This file is the machine-routable spine for p31ca.org; human narrative stays in root CLAUDE.md, P31 COGNITIVE PASSPORT — v5.md, and docs/. Version namespaces: P31 home docs/CANONICAL-NUMBERING.md; values: P31 home p31-constants.json. Source→sink alignment: P31 home p31-alignment.json (p31.alignment/1.0.0) and docs/P31-ALIGNMENT-SYSTEM.md (ephemeralization; verify: npm run verify:alignment).",
+  "contentFiles": {
+    "description": "Mutable content that appears on p31ca.org pages. Each file has a stalenessThreshold in days. verify-content-sources.mjs blocks deploy if any file exceeds its threshold.",
+    "basePath": "ground-truth/content",
+    "files": {
+      "nonprofit": { "file": "nonprofit.json", "threshold": 30, "updateMode": "manual" },
+      "stats": { "file": "stats.json", "threshold": 7, "updateMode": "fetch-script" },
+      "constants": { "file": "constants.json", "threshold": 365, "updateMode": "manual" },
+      "love": { "file": "love.json", "threshold": 30, "updateMode": "manual" }
+    },
+    "fetchScript": "scripts/fetch-content-stats.mjs",
+    "verifyScripts": [
+      "scripts/verify-content-sources.mjs",
+      "scripts/verify-content-consistency.mjs"
+    ]
+  },
   "canonicalNumbering": {
     "spec": "P31 home: docs/CANONICAL-NUMBERING.md",
     "passportLongForm": {

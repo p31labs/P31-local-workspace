@@ -212,7 +212,7 @@ export function generatePrintableHTML(stickers: QRSticker[]): string {
       
       .preview-controls button {
         padding: 10px 20px;
-        background: #5DCAA5;
+        background: #34D399;
         color: #0f1115;
         border: none;
         border-radius: 6px;

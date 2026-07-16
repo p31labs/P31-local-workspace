@@ -1,0 +1,11 @@
+# Phase 0.1 secret redaction — git filter-repo --replace-text
+# Values after each secret key name are replaced with ***REDACTED***.
+# Lookbehind-width issues avoided by matching the key assignment and restoring the name.
+
+regex:DEPLOYER_PRIVATE_KEY[=:]\s*["']?[0-9a-fA-Fx][0-9a-fA-F]{30,}==>DEPLOYER_PRIVATE_KEY=***REDACTED***
+regex:OPENROUTER_API_KEY[=:]\s*["']?\S+==>OPENROUTER_API_KEY=***REDACTED***
+regex:GROQ_API_KEY[=:]\s*["']?\S+==>GROQ_API_KEY=***REDACTED***
+regex:GEMINI_API_KEY[=:]\s*["']?\S+==>GEMINI_API_KEY=***REDACTED***
+regex:SEPOLIA_RPC[=:]\s*["']?\S+==>SEPOLIA_RPC=***REDACTED***
+regex:JITTERBUG_PSK[=:]\s*["']?\S+==>JITTERBUG_PSK=***REDACTED***
+regex:p31-sierpinski-ophile-ophore-ssm-[0-9]+==>***REDACTED***

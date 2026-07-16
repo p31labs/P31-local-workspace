@@ -28,8 +28,8 @@ function table(headers, rows) {
  * @returns {string}
  */
 export function buildDesignTokenReferenceMd(doc, opts = {}) {
-  if (doc.schema !== "p31.universalCanon/1.0.0") {
-    throw new Error(`expected p31.universalCanon/1.0.0, got ${doc.schema}`);
+  if (doc.schema !== "p31.universalCanon/1.0.0" && doc.schema !== "p31.universalCanon/2.0.0") {
+    throw new Error(`expected p31.universalCanon/1.0.0 or /2.0.0, got ${doc.schema}`);
   }
   const when = opts.generatedAt ?? new Date().toISOString();
   const lines = [];

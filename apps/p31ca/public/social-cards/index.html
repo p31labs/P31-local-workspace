@@ -6,7 +6,7 @@
   <title>P31 social cards — screenshot-ready, 1080×1080, P31 canon</title>
   <meta name="description" content="Ten share-ready cards: stat flex, fleet status, the quote, perception vs reality, ethics-as-architecture, the closer, the dev flex, K4 geometry, the trim tab, ASCII tetrahedron. Open the page, screenshot a card, share it. The geometry holds." />
   <meta name="color-scheme" content="dark" />
-  <meta name="theme-color" content="#5DCAA5" />
+  <meta name="theme-color" content="#34D399" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='75' x='10' font-size='75' font-weight='bold' fill='%235DCAA5' font-family='monospace'%3E◍%3C/text%3E%3C/svg%3E" />
   <!-- P31 PWA contract — installable to phone home screen for one-tap screenshot sessions. -->
   <link rel="manifest" href="/pwa/manifest-social-cards.json" />
@@ -15,12 +15,12 @@
   <style>
     /* P31 canonical tokens (subset of cognitive-passport/p31-style.css) */
     :root {
-      --p31-void: #0f1115;
-      --p31-surface: #161920;
+      --p31-void: #0A0A0F;
+      --p31-surface: #12121A;
       --p31-surface2: #1c2028;
       --p31-coral: #cc6247;
-      --p31-teal: #5DCAA5;
-      --p31-cyan: #4db8a8;
+      --p31-teal: #34D399;
+      --p31-cyan: #00F0FF;
       --p31-cloud: #d8d6d0;
       --p31-amber: #cda852;
       --p31-lavender: #8b7cc9;
@@ -640,7 +640,7 @@
       letter-spacing: -0.01em;
     }
     .card--trimtab .quote .pull {
-      color: #5DCAA5;
+      color: #34D399;
       font-weight: 600;
     }
     .card--trimtab .attr {
@@ -663,7 +663,7 @@
       letter-spacing: 0.06em;
       display: flex; justify-content: space-between; align-items: baseline;
     }
-    .card--trimtab .footer .right { color: #5DCAA5; font-weight: 600; }
+    .card--trimtab .footer .right { color: #34D399; font-weight: 600; }
 
     /* Card 10: ASCII tetrahedron (copy-pasteable) */
     .card--ascii .canvas-inner {
@@ -736,7 +736,7 @@
     .card-canvas .corner-mark .tetra { color: var(--p31-teal); }
     /* light cards (trimtab) get a dark corner mark */
     .card--trimtab .corner-mark { color: #6b7280; }
-    .card--trimtab .corner-mark .tetra { color: #5DCAA5; }
+    .card--trimtab .corner-mark .tetra { color: #34D399; }
 
     /* Print + screenshot helpers */
     @media print {
@@ -1055,7 +1055,7 @@
       <div class="svg-wrap">
         <svg viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg" aria-label="K₄ tetrahedron — four vertices, six edges">
           <!-- six edges, drawn first so vertices sit on top -->
-          <g stroke="#5DCAA5" stroke-width="3" stroke-linecap="round" opacity="0.85">
+          <g stroke="#34D399" stroke-width="3" stroke-linecap="round" opacity="0.85">
             <!-- edges: top↔bot-left, top↔bot-right, top↔center, bot-left↔bot-right, bot-left↔center, bot-right↔center -->
             <line x1="300" y1="80"  x2="100" y2="500" />
             <line x1="300" y1="80"  x2="500" y2="500" />
@@ -1066,13 +1066,13 @@
           </g>
           <!-- vertex glow halo -->
           <g opacity="0.35">
-            <circle cx="300" cy="80"  r="40" fill="#5DCAA5" />
+            <circle cx="300" cy="80"  r="40" fill="#34D399" />
             <circle cx="100" cy="500" r="40" fill="#cc6247" />
             <circle cx="500" cy="500" r="40" fill="#3ba372" />
             <circle cx="300" cy="350" r="40" fill="#cda852" />
           </g>
           <!-- vertex circles (the four nodes) -->
-          <circle cx="300" cy="80"  r="22" fill="#5DCAA5" stroke="#d8d6d0" stroke-width="2" />
+          <circle cx="300" cy="80"  r="22" fill="#34D399" stroke="#d8d6d0" stroke-width="2" />
           <circle cx="100" cy="500" r="22" fill="#cc6247" stroke="#d8d6d0" stroke-width="2" />
           <circle cx="500" cy="500" r="22" fill="#3ba372" stroke="#d8d6d0" stroke-width="2" />
           <circle cx="300" cy="350" r="22" fill="#cda852" stroke="#d8d6d0" stroke-width="2" />

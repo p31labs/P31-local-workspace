@@ -15,10 +15,10 @@ const description = 'Complete inventory management for used furniture warehouse'
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="Warehouse" />
-    <meta name="theme-color" content="#0f1115" />
+    <meta name="theme-color" content="#0A0A0F" />
   </head>
 
-  <div id="warehouse-app" style="min-height: 100vh; background: #0f1115;">
+  <div id="warehouse-app" style="min-height: 100vh; background: #0A0A0F;">
     <!-- Tab Navigation -->
     <nav style="
       position: fixed;
@@ -35,7 +35,7 @@ const description = 'Complete inventory management for used furniture warehouse'
         padding: 16px;
         background: transparent;
         border: none;
-        color: #5DCAA5;
+        color: #34D399;
         font-size: 14px;
         cursor: pointer;
       ">📷 Scan</button>
@@ -70,7 +70,7 @@ const description = 'Complete inventory management for used furniture warehouse'
 
     <div id="tab-admin" class="tab-content" style="display: none; padding: 20px; padding-bottom: 80px;">
       <div style="max-width: 600px; margin: 0 auto; color: #D8D6D0;">
-        <h2 style="color: #5DCAA5; margin-bottom: 20px;">⚙️ Warehouse Admin</h2>
+        <h2 style="color: #34D399; margin-bottom: 20px;">⚙️ Warehouse Admin</h2>
 
         <div style="
           background: #161920;
@@ -84,8 +84,8 @@ const description = 'Complete inventory management for used furniture warehouse'
             display: inline-block;
             margin-top: 12px;
             padding: 12px 24px;
-            background: #5DCAA5;
-            color: #0f1115;
+            background: #34D399;
+            color: #0A0A0F;
             text-decoration: none;
             border-radius: 8px;
             font-weight: 500;
@@ -103,9 +103,9 @@ const description = 'Complete inventory management for used furniture warehouse'
           <button id="manual-sync" style="
             margin-top: 12px;
             padding: 12px 24px;
-            background: #0f1115;
-            color: #5DCAA5;
-            border: 1px solid #5DCAA5;
+            background: #0A0A0F;
+            color: #34D399;
+            border: 1px solid #34D399;
             border-radius: 8px;
             cursor: pointer;
           ">Sync Now</button>
@@ -142,7 +142,7 @@ const description = 'Complete inventory management for used furniture warehouse'
           b.style.color = '#666';
         });
         btn.classList.add('active');
-        btn.style.color = '#5DCAA5';
+        btn.style.color = '#34D399';
 
         // Update content
         document.querySelectorAll('.tab-content').forEach(c => {

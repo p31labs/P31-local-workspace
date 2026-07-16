@@ -7,12 +7,12 @@
  */
 
 import AppShell from '../layouts/AppShell.astro';
+import contentNonprofit from '../../ground-truth/content/nonprofit.json';
+import meshConstants from '../data/p31-mesh-constants.json';
 
 const stats = [
-  { number: "104", label: "Applications", description: "In the P31 constellation ecosystem" },
-  { number: "200+", label: "Edge Locations", description: "Cloudflare Points of Presence worldwide" },
+  { number: "0%", label: "Platform Fee", description: "Ethical monetization commitment" },
   { number: "4", label: "Core Vertices", description: "Family mesh topology (K₄ architecture)" },
-  { number: "0%", label: "Platform Fee", description: "Ethical monetization commitment" }
 ];
 
 const principles = [
@@ -35,17 +35,17 @@ const principles = [
 
 const legal = {
   name: "P31 Labs, Inc.",
-  ein: "42-1888158",
+  ein: contentNonprofit.ein,
   status: "Georgia nonprofit corporation",
-  irs: "501(c)(3) pending",
-  founded: "2026",
+  irs: contentNonprofit.irsStatus === "pending" ? "501(c)(3) pending" : contentNonprofit.irsStatus,
+  founded: String(contentNonprofit.foundingYear),
   mission: "Build, create, connect — establishing decentralized family mesh networks"
 };
 ---
 
 <AppShell
   title="About P31 Labs"
-  description="P31 Labs, Inc. is a Georgia nonprofit (EIN 42-1888158) building open-source assistive technology for neurodivergent families. 501(c)(3) pending."
+  description={`P31 Labs, Inc. is a Georgia nonprofit (EIN ${contentNonprofit.ein}) building open-source assistive technology for neurodivergent families. ${contentNonprofit.irsStatusDetail}.`}
   routeName="about"
 >
   <div class="max-w-4xl mx-auto space-y-16 py-12">

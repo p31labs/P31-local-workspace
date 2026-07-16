@@ -1024,7 +1024,7 @@ if (prefersReducedMotion) {
   // Data
   const AXIS_COLORS = { a: 0xff9944, b: 0x44aaff, c: 0x44ffaa, d: 0xff4466 };
   const AXIS_LABELS = { a: 'Operator', b: 'Signals', c: 'Context', d: 'Shield' };
-  const STATE_CSS = { active: 'var(--p31-phosphorus)', deployed: 'var(--p31-teal)', countdown: '#cda852', complete: '#4db8a8', missing: '#cc6247', ongoing: 'var(--p31-teal)', prototype: '#cda852', research: '#4db8a8' };
+  const STATE_CSS = { active: 'var(--p31-phosphorus)', deployed: 'var(--p31-teal)', countdown: '#cda852', complete: '#00F0FF', missing: '#cc6247', ongoing: 'var(--p31-teal)', prototype: '#cda852', research: '#00F0FF' };
   const STATE_GLOW = { countdown: 2.0, critical: 2.5, complete: 0.4, active: 1.0, ongoing: 0.6, deployed: 0.7, prototype: 0.8, missing: 1.2, research: 0.5 };
 
   const VERTICES = {

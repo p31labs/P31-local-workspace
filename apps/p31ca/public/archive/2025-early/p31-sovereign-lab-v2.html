@@ -29,7 +29,7 @@
       --lab-void-dark: #050508;
       --lab-surface: rgba(16, 20, 28, 0.85);
       --lab-surface-hover: rgba(24, 30, 42, 0.9);
-      --lab-cyan: #4db8a8;
+      --lab-cyan: #00F0FF;
       --lab-cyan-glow: rgba(77, 184, 168, 0.4);
       --lab-phos: #a78bfa;
       --lab-phos-glow: rgba(167, 139, 250, 0.4);
@@ -48,7 +48,7 @@
     body.lab {
       margin: 0;
       min-height: 100dvh;
-      font-family: "Atkinson Hyperlegible", system-ui, sans-serif;
+      font-family: "Inter", system-ui, sans-serif;
       background: var(--lab-void);
       color: #d8d6d0;
       display: grid;
@@ -914,7 +914,7 @@
   <!-- Loading Overlay -->
   <div class="loading-overlay" id="loading">
     <svg class="loading-tetra" viewBox="0 0 100 100">
-      <polygon points="50,10 90,80 10,80" fill="none" stroke="#4db8a8" stroke-width="2"/>
+      <polygon points="50,10 90,80 10,80" fill="none" stroke="#00F0FF" stroke-width="2"/>
       <polygon points="50,10 90,80 50,50" fill="none" stroke="#a78bfa" stroke-width="1" opacity="0.5"/>
       <polygon points="10,80 90,80 50,50" fill="none" stroke="#cc6247" stroke-width="1" opacity="0.5"/>
     </svg>
@@ -927,12 +927,12 @@
         <svg viewBox="0 0 100 100">
           <defs>
             <linearGradient id="tetra-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" style="stop-color:#4db8a8"/>
+              <stop offset="0%" style="stop-color:#00F0FF"/>
               <stop offset="100%" style="stop-color:#a78bfa"/>
             </linearGradient>
           </defs>
           <polygon points="50,15 85,75 15,75" fill="none" stroke="url(#tetra-grad)" stroke-width="3"/>
-          <circle cx="50" cy="45" r="4" fill="#4db8a8">
+          <circle cx="50" cy="45" r="4" fill="#00F0FF">
             <animate attributeName="opacity" values="1;0.5;1" dur="2s" repeatCount="indefinite"/>
           </circle>
         </svg>

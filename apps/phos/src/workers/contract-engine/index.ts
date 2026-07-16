@@ -187,7 +187,7 @@ export default {
         });
       } catch (err: any) {
         console.error('/contract/initiate error:', err);
-        return new Response(JSON.stringify({ error: err.message || String(err) }), {
+        return new Response(JSON.stringify({ error: 'Internal server error' }), {
           status: 500,
           headers: { 'Content-Type': 'application/json' }
         });
@@ -261,7 +261,7 @@ export default {
         });
       } catch (err: any) {
         console.error('/contract/sign error:', err);
-        return new Response(JSON.stringify({ error: err.message || String(err) }), {
+        return new Response(JSON.stringify({ error: 'Internal server error' }), {
           status: 500,
           headers: { 'Content-Type': 'application/json' }
         });
@@ -304,7 +304,7 @@ export default {
         });
       } catch (err: any) {
         console.error('/contract/activate error:', err);
-        return new Response(JSON.stringify({ error: err.message || String(err) }), {
+        return new Response(JSON.stringify({ error: 'Internal server error' }), {
           status: 500,
           headers: { 'Content-Type': 'application/json' }
         });
@@ -349,7 +349,7 @@ export default {
         });
       } catch (err: any) {
         logEvent({ event: 'fulfill_failed', service: 'contract-engine', success: false, data: { error: err.message || String(err) } });
-        return new Response(JSON.stringify({ error: err.message || String(err) }), {
+        return new Response(JSON.stringify({ error: 'Internal server error' }), {
           status: 500,
           headers: { 'Content-Type': 'application/json' }
         });
@@ -394,7 +394,7 @@ export default {
         });
       } catch (err: any) {
         logEvent({ event: 'dissolve_failed', service: 'contract-engine', success: false, data: { error: err.message || String(err) } });
-        return new Response(JSON.stringify({ error: err.message || String(err) }), {
+        return new Response(JSON.stringify({ error: 'Internal server error' }), {
           status: 500,
           headers: { 'Content-Type': 'application/json' }
         });

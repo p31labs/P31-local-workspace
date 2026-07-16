@@ -3,7 +3,7 @@
  * BaseLayout.astro — P31 Command Center root layout.
  *
  * Enforces the dark-mode glassmorphism theme across all children.
- * Void (#050505) baseline, Inter + Space Mono (matches operator static HTML).
+ * Void (#0A0A0F) baseline, Inter + JetBrains Mono (matches operator static HTML).
  * Google Fonts loaded via preconnect + display=swap for FOUT prevention.
  */
 interface Props {
@@ -27,16 +27,25 @@ const canonicalHref =
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
     <link rel="canonical" href={canonicalHref} />
-    <meta name="theme-color" content="#050505" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalHref} />
+    <meta property="og:site_name" content="P31 Labs" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="theme-color" content="#0A0A0F" />
+    <script src="/lib/p31-cookie-consent.js" defer></script>
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
-    <!-- Fonts: Inter + Space Mono (hub + static p31ca) -->
+    <!-- Fonts: Inter + JetBrains Mono (hub + static p31ca) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap"
       rel="stylesheet"
     />
 

@@ -43,7 +43,7 @@ pnpm run build         # Build all packages
 This project serves neurodivergent users. When contributing UI changes:
 
 - Respect the progressive disclosure layers (0-3)
-- Use the canonical font stack (Atkinson Hyperlegible for UI)
+- Use the canonical font stack (Inter for UI)
 - Maintain high contrast with the P31 color palette
 - Avoid unnecessary animations or sensory friction
 - Test with reduced-motion preferences enabled

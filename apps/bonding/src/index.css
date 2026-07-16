@@ -1,6 +1,7 @@
-@import '@p31/design-system/tokens';
-@import '@p31/design-system/themes';
-@import '@p31/design-system/motion';
+@import '@p31/design-core/css/base.css';
+@import '@p31/design-core/css/glass.css';
+@import '@p31/design-core/css/motion.css';
+@import '@p31/design-core/css/typography.css';
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Inter', system-ui, sans-serif; background: #0a0e14; color: #e2e8f0; }
+body { font-family: var(--p31-font-sans); background: var(--p31-void); color: var(--p31-text-primary); }

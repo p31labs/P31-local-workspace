@@ -2,11 +2,11 @@
 
 <!-- AUTO-GENERATED — do not hand-edit. Source: p31-universal-canon.json -->
 
-**Schema:** `p31.universalCanon/1.0.0` · **Canon version:** `1.2.0` · **Generated:** `2026-05-22T20:15:22.561Z`
+**Schema:** `p31.universalCanon/2.0.0` · **Canon version:** `2.0.0` · **Generated:** `2026-07-15T23:27:57.841Z`
 
-*P31 universal design canon — shared tokens, ring-local appearance*
+*P31 universal design canon — @p31/design-core v2.0.0 (mathematical foundation)*
 
-Single source for typography, spacing, motion, and brand palette. Ring A (p31ca hub) defaults to appearance "hub" (dark). Ring D (phosphorus31.org) uses appearance "org" (light) via data-p31-appearance on <html> — same brand colors, inverted surfaces so it feels related but not identical. BONDING (bonding.p31ca.org) stays out of this file by operator policy.
+All visual values derived from PHI (1.618), Perfect Fourth (1.333), 4-multiple grid, OKLCH color space, and musical tempo (120 BPM). Single source of truth. Every surface imports from design-core. Divergence is a type error.
 
 **Regenerate:** from P31 home repo root, `npm run apply:p31-style` (keeps this file in sync) or `npm run generate:design-token-docs`.
 
@@ -16,23 +16,22 @@ Single source for typography, spacing, motion, and brand palette. Ring A (p31ca 
 
 | Ring | Hosts (sample) | Default `appearance` | Notes |
 | --- | --- | --- | --- |
-| hub | p31ca.org, www.p31ca.org, *.p31ca.pages.dev | hub | Technical hub, static tools, Astro + Tailwind CDN pages. |
-| org | phosphorus31.org, www.phosphorus31.org, api.phosphorus31.org | org | Public org narrative + MAP surfaces. Opt in with data-p31-appearance="org" (or server-render default). |
+| hub | p31ca.org, www.p31ca.org, *.p31ca.pages.dev, phosphorus31.org, www.phosphorus31.org | hub | Dark-only unified appearance. org appearance retired. |
 
 ## Brand palette (shared across appearances)
 
-*Brand anchors — appearances should keep these identical for cross-ring recognition.*
+*DESIGN.md canonical colors — identical across all surfaces.*
 
 | Token | Hex (canonical) | CSS variable |
 | --- | --- | --- |
-| coral | `#cc6247` | `--p31-coral` (in :root) |
-| teal | `#5DCAA5` | `--p31-teal` (in :root) |
-| cyan | `#4db8a8` | `--p31-cyan` (in :root) |
-| amber | `#cda852` | `--p31-amber` (in :root) |
-| lavender | `#8b7cc9` | `--p31-lavender` (in :root) |
-| phosphorus | `#3ba372` | `--p31-phosphorus` (in :root) |
-| phosphor | `#00FF88` | `--p31-phosphor` (in :root) |
-| fuchsia | `#e879f9` | `--p31-fuchsia` (in :root) |
+| coral | `#FB7185` | `--p31-coral` (in :root) |
+| teal | `#34D399` | `--p31-teal` (in :root) |
+| cyan | `#00F0FF` | `--p31-cyan` (in :root) |
+| amber | `#FBBF24` | `--p31-amber` (in :root) |
+| lavender | `#A78BFA` | `--p31-lavender` (in :root) |
+| phosphorus | `#34D399` | `--p31-phosphorus` (in :root) |
+| phosphor | `#00F0FF` | `--p31-phosphor` (in :root) |
+| fuchsia | `#A78BFA` | `--p31-fuchsia` (in :root) |
 
 ## Typography
 
@@ -40,29 +39,29 @@ Single source for typography, spacing, motion, and brand palette. Ring A (p31ca 
 
 | Role | Families (JSON order) | CSS variable |
 | --- | --- | --- |
-| sans | Atkinson Hyperlegible, sans-serif | `--p31-font-sans` |
-| mono | JetBrains Mono, monospace | `--p31-font-mono` |
+| sans | Inter, ui-sans-serif, system-ui, -apple-system, sans-serif | `--p31-font-sans` |
+| mono | JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace | `--p31-font-mono` |
 
 ### Type scale (rem)
 
 | Key | Value | CSS variable |
 | --- | --- | --- |
-| xs | 0.75rem | --p31-text-xs |
-| sm | 0.875rem | --p31-text-sm |
+| xs | 0.44rem | --p31-text-xs |
+| sm | 0.56rem | --p31-text-sm |
 | base | 1rem | --p31-text-base |
-| md | 1.0625rem | --p31-text-md |
-| lg | 1.125rem | --p31-text-lg |
-| xl | 1.25rem | --p31-text-xl |
-| 2xl | 1.5rem | --p31-text-2xl |
-| 3xl | 1.875rem | --p31-text-3xl |
-| 4xl | 2.25rem | --p31-text-4xl |
+| md | 1rem | --p31-text-md |
+| lg | 1.33rem | --p31-text-lg |
+| xl | 1.78rem | --p31-text-xl |
+| 2xl | 2.37rem | --p31-text-2xl |
+| 3xl | 3.16rem | --p31-text-3xl |
+| 4xl | 3.16rem | --p31-text-4xl |
 
 ### Line height
 
 | Key | Value | CSS variable |
 | --- | --- | --- |
-| tight | 1.25 | --p31-leading-tight |
-| snug | 1.4 | --p31-leading-snug |
+| tight | 1.1 | --p31-leading-tight |
+| snug | 1.2 | --p31-leading-snug |
 | normal | 1.6 | --p31-leading-normal |
 | relaxed | 1.75 | --p31-leading-relaxed |
 
@@ -84,13 +83,10 @@ Single source for typography, spacing, motion, and brand palette. Ring A (p31ca 
 | 2 | 0.5rem | --p31-space-2 |
 | 3 | 0.75rem | --p31-space-3 |
 | 4 | 1rem | --p31-space-4 |
-| 5 | 1.25rem | --p31-space-5 |
 | 6 | 1.5rem | --p31-space-6 |
 | 8 | 2rem | --p31-space-8 |
-| 10 | 2.5rem | --p31-space-10 |
 | 12 | 3rem | --p31-space-12 |
 | 16 | 4rem | --p31-space-16 |
-| 20 | 5rem | --p31-space-20 |
 | 24 | 6rem | --p31-space-24 |
 | px | 1px | --p31-space-px |
 
@@ -101,11 +97,11 @@ Single source for typography, spacing, motion, and brand palette. Ring A (p31ca 
 | Key | Value | CSS variable |
 | --- | --- | --- |
 | none | 0 | --p31-radius-none |
-| sm | 4px | --p31-radius-sm |
-| md | 8px | --p31-radius-md |
-| lg | 12px | --p31-radius-lg |
-| xl | 16px | --p31-radius-xl |
-| 2xl | 1.25rem | --p31-radius-2xl |
+| sm | 8px | --p31-radius-sm |
+| md | 12px | --p31-radius-md |
+| lg | 24px | --p31-radius-lg |
+| xl | 24px | --p31-radius-xl |
+| 2xl | 24px | --p31-radius-2xl |
 | full | 9999px | --p31-radius-full |
 
 ### Shadow
@@ -116,17 +112,17 @@ Single source for typography, spacing, motion, and brand palette. Ring A (p31ca 
 | sm | 0 1px 2px rgba(0, 0, 0, 0.06) | --p31-shadow-sm |
 | md | 0 4px 14px rgba(0, 0, 0, 0.08) | --p31-shadow-md |
 | lg | 0 12px 40px rgba(0, 0, 0, 0.12) | --p31-shadow-lg |
-| glowTeal | 0 0 24px rgba(37, 137, 125, 0.25) | --p31-shadow-glowTeal |
+| glowTeal | 0 0 24px rgba(0, 240, 255, 0.25) | --p31-shadow-glowTeal |
 
 ### Motion — duration (ms in CSS, emitted with `ms` suffix in file)
 
 | Key | Value (ms) | CSS variable |
 | --- | --- | --- |
-| instant | 100 | --p31-duration-instant |
-| fast | 150 | --p31-duration-fast |
+| instant | 63 | --p31-duration-instant |
+| fast | 125 | --p31-duration-fast |
 | normal | 250 | --p31-duration-normal |
-| slow | 400 | --p31-duration-slow |
-| glacial | 800 | --p31-duration-glacial |
+| slow | 500 | --p31-duration-slow |
+| glacial | 1000 | --p31-duration-glacial |
 
 ### Motion — easing
 
@@ -153,8 +149,8 @@ Single source for typography, spacing, motion, and brand palette. Ring A (p31ca 
 | --- | --- | --- |
 | ringWidth | 2px | `--p31-focus-ring` |
 | ringOffset | 2px | `--p31-focus-offset` |
-| hubRingColor | rgba(77, 184, 168, 0.55) | `--p31-focus-color-hub` |
-| orgRingColor | rgba(37, 137, 125, 0.45) | `--p31-focus-color-org` |
+| hubRingColor | rgba(0, 240, 255, 0.55) | `--p31-focus-color-hub` |
+| orgRingColor | rgba(0, 240, 255, 0.45) | `--p31-focus-color-org` |
 
 ## Appearances (hub vs org)
 
@@ -165,27 +161,27 @@ Brand accents must match the palette above; neutrals differ. Hub is default; org
 | Field | Value |
 | --- | --- |
 | `colorScheme` | dark |
-| `themeColor` | #0f1115 |
+| `themeColor` | #0A0A0F |
 
 **Surface colors (same keys as --p31-*)**
 
 | Role | Hex | CSS variable |
 | --- | --- | --- |
-| void | #0f1115 | --p31-void |
-| surface | #161920 | --p31-surface |
-| surface2 | #1c2028 | --p31-surface2 |
-| coral | #cc6247 | --p31-coral |
-| teal | #5DCAA5 | --p31-teal |
-| cyan | #4db8a8 | --p31-cyan |
-| cloud | #d8d6d0 | --p31-cloud |
-| amber | #cda852 | --p31-amber |
-| lavender | #8b7cc9 | --p31-lavender |
-| phosphorus | #3ba372 | --p31-phosphorus |
-| paper | #f4f4f5 | --p31-paper |
-| ink | #1e293b | --p31-ink |
+| void | #0A0A0F | --p31-void |
+| surface | #12121A | --p31-surface |
+| surface2 | #1C1C2A | --p31-surface2 |
+| coral | #FB7185 | --p31-coral |
+| teal | #34D399 | --p31-teal |
+| cyan | #00F0FF | --p31-cyan |
+| cloud | #A1A1AA | --p31-cloud |
+| amber | #FBBF24 | --p31-amber |
+| lavender | #A78BFA | --p31-lavender |
+| phosphorus | #34D399 | --p31-phosphorus |
+| paper | #F5F5F7 | --p31-paper |
+| ink | #0A0A0F | --p31-ink |
 | muted | #6b7280 | --p31-muted |
-| phosphor | #00FF88 | --p31-phosphor |
-| fuchsia | #e879f9 | --p31-fuchsia |
+| phosphor | #00F0FF | --p31-phosphor |
+| fuchsia | #A78BFA | --p31-fuchsia |
 
 **Semantic**
 
@@ -204,43 +200,43 @@ Brand accents must match the palette above; neutrals differ. Hub is default; org
 
 | Field | Value |
 | --- | --- |
-| `colorScheme` | light |
-| `themeColor` | #f5f4f0 |
+| `colorScheme` | dark |
+| `themeColor` | #0A0A0F |
 
-*Light, warm paper field; ink-forward text. Brand hues MUST match palette.* — only neutrals (void/surface/cloud/ink/muted/paper) differ from hub.*
+*Org appearance retired — dark-only unified. Identical to hub.*
 
 **Surface colors (same keys as --p31-*)**
 
 | Role | Hex | CSS variable |
 | --- | --- | --- |
-| void | #f5f4f0 | --p31-void |
-| surface | #ffffff | --p31-surface |
-| surface2 | #ebeae4 | --p31-surface2 |
-| coral | #cc6247 | --p31-coral |
-| teal | #5DCAA5 | --p31-teal |
-| cyan | #4db8a8 | --p31-cyan |
-| cloud | #1e293b | --p31-cloud |
-| amber | #cda852 | --p31-amber |
-| lavender | #8b7cc9 | --p31-lavender |
-| phosphorus | #3ba372 | --p31-phosphorus |
-| paper | #fdfcfa | --p31-paper |
-| ink | #0f172a | --p31-ink |
-| muted | #64748b | --p31-muted |
-| phosphor | #00FF88 | --p31-phosphor |
-| fuchsia | #e879f9 | --p31-fuchsia |
+| void | #0A0A0F | --p31-void |
+| surface | #12121A | --p31-surface |
+| surface2 | #1C1C2A | --p31-surface2 |
+| coral | #FB7185 | --p31-coral |
+| teal | #34D399 | --p31-teal |
+| cyan | #00F0FF | --p31-cyan |
+| cloud | #A1A1AA | --p31-cloud |
+| amber | #FBBF24 | --p31-amber |
+| lavender | #A78BFA | --p31-lavender |
+| phosphorus | #34D399 | --p31-phosphorus |
+| paper | #F5F5F7 | --p31-paper |
+| ink | #0A0A0F | --p31-ink |
+| muted | #6b7280 | --p31-muted |
+| phosphor | #00F0FF | --p31-phosphor |
+| fuchsia | #A78BFA | --p31-fuchsia |
 
 **Semantic**
 
 | Key | Value | CSS variable |
 | --- | --- | --- |
-| borderSubtle | rgba(15, 23, 42, 0.09) | --p31-border-subtle (appearance block) |
+| borderSubtle | rgba(255, 255, 255, 0.06) | --p31-border-subtle (appearance block) |
 
 **Glass**
 
 | Key | Value | CSS variable |
 | --- | --- | --- |
-| border | rgba(15, 23, 42, 0.07) | --p31-glass-border |
-| surface | rgba(255, 255, 255, 0.82) | --p31-glass-surface |
+| border | rgba(255, 255, 255, 0.08) | --p31-glass-border |
+| surface | rgba(255, 255, 255, 0.04) | --p31-glass-surface |
 
 ## Tailwind CDN bridge (hub)
 

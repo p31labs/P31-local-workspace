@@ -35,7 +35,7 @@ export function ADADownloader() {
           border: 'none',
           borderRadius: 8,
           background: '#cda852',
-          color: '#0f1115',
+          color: '#0A0A0F',
           fontFamily: "'Press Start 2P', cursive",
           fontSize: 12,
           cursor: 'pointer',

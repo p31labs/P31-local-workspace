@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { BondingUIGSurface } from './components/BondingUIGSurface';
 import { K4Hero } from '@p31/ui/K4Hero';
 import '@p31/ui/k4-hero.css';
+import { mountStarfield } from '@p31/ui/starfield';
+import '@p31/ui/starfield.css';
 
 function getUrlParam(key: string): string | null {
   if (typeof window === 'undefined') return null;
@@ -12,6 +14,11 @@ export function BondingApp() {
   const [spoons, setSpoons] = useState(3);
   const [genMode, setGenMode] = useState(false);
   const [intentPrompt, setIntentPrompt] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    const instance = mountStarfield(undefined, { spoons });
+    return () => instance.destroy();
+  }, []);
 
   useEffect(() => {
     const gen = getUrlParam('gen');
@@ -25,7 +32,7 @@ export function BondingApp() {
 
   return (
     <div data-spoons={spoons} style={{
-      minHeight: '100vh', background: '#0a0e14', color: '#e2e8f0',
+      minHeight: '100vh', background: '#0A0A0F', color: '#F5F5F7',
       display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
       fontFamily: "'Inter', system-ui, sans-serif",
     }}>
@@ -64,22 +71,39 @@ export function BondingApp() {
         ) : (
           <>
             <K4Hero />
-            <p style={{ fontSize: 12, color: '#94a3b8', textAlign: 'center' }}>
+            <p style={{ fontSize: 12, color: '#94a3b8', textAlign: 'center', marginBottom: 24 }}>
               Spoons: {spoons} — {spoons <= 1 ? 'Motion disabled' : 'Active'}
             </p>
-            <p style={{ fontSize: 11, color: '#cbd5e1', textAlign: 'center', marginTop: 8 }}>
-              Add <code>?gen=1</code> or <code>?gen=1&intent=your+prompt</code> to URL for generative layer
-            </p>
+            <button
+              onClick={() => setGenMode(true)}
+              style={{
+                background: 'rgba(0,240,255,0.15)',
+                border: '1px solid rgba(0,240,255,0.3)',
+                color: '#00F0FF',
+                borderRadius: 12,
+                padding: '12px 24px',
+                fontWeight: 700,
+                fontSize: 14,
+                cursor: 'pointer',
+                width: '100%',
+                transition: 'background 0.2s ease',
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(0,240,255,0.25)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(0,240,255,0.15)'; }}
+              aria-label="Enter Bonding game"
+            >
+              Enter Bonding →
+            </button>
           </>
         )}
       </main>
 
-      <style>{`
-        @keyframes pulse {
-          0%, 100% { transform: scale(1); }
-          50% { transform: scale(1.05); }
-        }
-      `}</style>
+      <footer style={{
+        marginTop: 'auto', padding: '20px 0', borderTop: '1px solid rgba(255,255,255,0.08)',
+        textAlign: 'center', fontSize: 12, color: 'rgba(245,245,247,0.3)', width: '100%',
+      }}>
+        Bonding · P31 Labs · EIN 42-1888158
+      </footer>
     </div>
   );
 }

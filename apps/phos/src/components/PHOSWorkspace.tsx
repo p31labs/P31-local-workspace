@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useSyncExternalStore, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useSyncExternalStore, useRef, useCallback, lazy, Suspense } from 'react';
 import { spoonsStore } from '../store/spoons';
 import { densityStore, DENSITY_LEVELS, type DensityLevel } from '../store/density';
 import { identityStore, type IdentityState } from '../store/identity';
@@ -16,7 +16,7 @@ import MobileNav from './MobileNav';
 import PHOSPromptBar from './PHOSPromptBar';
 import { VoiceInputButton } from './VoiceInputButton';
 import { PWAInstallPrompt } from './PWAInstallPrompt';
-import { PGliteProvider } from '../providers/PGliteProvider';
+const PGliteProvider = lazy(() => import('../providers/PGliteProvider').then(m => ({ default: m.PGliteProvider })));
 import { useChatMessages } from '../hooks/useChatMessages';
 import { useSovereignBrain } from '../hooks/useSovereignBrain';
 import { mintCreditsAtomic } from '../lib/KarmaEngine';
@@ -78,18 +78,22 @@ export default function PHOSWorkspace() {
   if (!guestBypass && (identity.isRegistered === 'false' || identity.keysGenerated === 'false')) {
     return (
       <AtmosphereProvider initialSpoons={spoons} initialSurface={initialSurface}>
-      <PGliteProvider>
-        <PassportWizard onComplete={() => setGuestBypass(true)} />
-      </PGliteProvider>
+      <Suspense fallback={<div style={{minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',color:'#00F0FF',fontSize:'14px'}}>Loading...</div>}>
+        <PGliteProvider>
+          <PassportWizard onComplete={() => setGuestBypass(true)} />
+        </PGliteProvider>
+      </Suspense>
       </AtmosphereProvider>
     );
   }
 
   return (
     <AtmosphereProvider initialSpoons={spoons} initialSurface={initialSurface}>
-      <PGliteProvider>
-        <WorkspaceShell identity={identity} isGuest={guestBypass} />
-      </PGliteProvider>
+      <Suspense fallback={<div style={{minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',color:'#00F0FF',fontSize:'14px'}}>Loading...</div>}>
+        <PGliteProvider>
+          <WorkspaceShell identity={identity} isGuest={guestBypass} />
+        </PGliteProvider>
+      </Suspense>
     </AtmosphereProvider>
   );
 }

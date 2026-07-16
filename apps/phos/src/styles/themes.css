@@ -1,15 +1,15 @@
 :root {
   --phos-theme: 'quantum';
-  --p31-bg: #0a0e14;
-  --p31-text: #e2e8f0;
-  --p31-text-muted: #94a3b8;
-  --p31-accent-primary: #00F0FF;
-  --p31-accent-secondary: #34d399;
+  --p31-bg: var(--p31-void);
+  --p31-text: var(--p31-text-primary);
+  --p31-text-muted: var(--p31-text-secondary);
+  --p31-accent-primary: var(--p31-accent);
+  --p31-accent-secondary: var(--p31-accent-green);
   --p31-accent-primary-dim: rgba(0, 240, 255, 0.15);
-  --p31-surface: #1a1e24;
+  --p31-surface: var(--p31-surface);
   --p31-surface-border: rgba(0, 240, 255, 0.15);
   --p31-particles-opacity: 0.5;
-  --p31-font-family: 'Inter', system-ui, sans-serif;
+  --p31-font-family: var(--p31-font-sans);
   --phos-bg: var(--p31-bg);
   --phos-text: var(--p31-text);
   --phos-accent: var(--p31-accent-primary);

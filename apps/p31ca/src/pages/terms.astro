@@ -6,12 +6,15 @@
  * Open-source, no-warranty, user-owned content.
  */
 import AppShell from '../layouts/AppShell.astro';
+import contentNonprofit from '../../ground-truth/content/nonprofit.json';
+
+const termsEffective = new Date(contentNonprofit.policies.terms.effective).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 ---
 
 <AppShell title="Terms of Service — P31 Labs" description="Terms of use for P31 Labs open-source assistive technology.">
   <main class="max-w-3xl mx-auto px-6 py-16">
     <h1 class="text-3xl font-bold text-white mb-2">Terms of Service</h1>
-    <p class="text-sm text-gray-400 mb-8">Effective: June 10, 2026</p>
+    <p class="text-sm text-gray-400 mb-8">Effective: {termsEffective}</p>
 
     <div class="space-y-8 text-gray-300 leading-relaxed">
       <section>
@@ -41,7 +44,7 @@ import AppShell from '../layouts/AppShell.astro';
 
       <section>
         <h2 class="text-xl font-semibold text-white mb-3">6. Donations</h2>
-        <p>Donations are voluntary and non-refundable. Funds support the development and maintenance of open-source assistive technology. P31 Labs is a registered 501(c)(3) nonprofit (EIN 42-1888158).</p>
+        <p>Donations are voluntary and non-refundable. Funds support the development and maintenance of open-source assistive technology. P31 Labs is a Georgia nonprofit corporation with 501(c)(3) status pending (EIN 42-1888158).</p>
       </section>
 
       <section>
@@ -61,7 +64,7 @@ import AppShell from '../layouts/AppShell.astro';
     </div>
 
     <footer class="mt-12 pt-6 border-t border-gray-800 text-xs text-gray-500">
-      <p>P31 Labs, Inc. — Georgia Domestic Nonprofit (EIN 42-1888158)</p>
+      <p>P31 Labs, Inc. — Georgia Domestic Nonprofit (EIN {contentNonprofit.ein})</p>
     </footer>
   </main>
 </AppShell>

@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
 <script>(function(){var r=document.documentElement;if(/[?&]alive=1(?:&|$)/.test(location.search))return;r.classList.add("p31-gray-rock");function wake(){r.classList.remove("p31-gray-rock")}document.addEventListener("pointerdown",wake,{once:true,capture:true});document.addEventListener("keydown",wake,{once:true,capture:true})})();</script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="theme-color" content="#0f1115">
+    <meta name="theme-color" content="#0A0A0F">
     <title>COLLIDER | Particle Physics Sandbox | P31 Labs</title>
     <link rel="stylesheet" href="/p31-style.css" />
     <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         *{margin:0;padding:0;box-sizing:border-box}
-        :root{--void:#0f1115;--surface:#161920;--teal:#25897d;--cyan:#4db8a8;--cloud:#d8d6d0;--butter:#cda852;--lav:#8b7cc9;--coral:#cc6247;--phos:#3ba372}
-        body{background:var(--void);color:var(--cloud);font-family:'Atkinson Hyperlegible',sans-serif;height:100vh;display:flex;flex-direction:column;overflow:hidden}
+        :root{--void:#0A0A0F;--surface:#12121A;--teal:#25897d;--cyan:#00F0FF;--cloud:#d8d6d0;--butter:#cda852;--lav:#8b7cc9;--coral:#cc6247;--phos:#3ba372}
+        body{background:var(--void);color:var(--cloud);font-family:'Inter',sans-serif;height:100vh;display:flex;flex-direction:column;overflow:hidden}
         header{padding:10px 20px;background:rgba(15,17,21,0.95);border-bottom:1px solid rgba(255,255,255,0.05);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;z-index:10}
         .logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--cloud);font-weight:700;font-size:14px}
         a.back{color:rgba(216,214,208,0.4);font-family:'JetBrains Mono',monospace;font-size:12px;text-decoration:none}
@@ -79,13 +79,13 @@ resize(); window.addEventListener('resize', resize);
 
 const ELEMENTS = {
     H:  {name:'Hydrogen',  valence:1, mass:1,  color:'#d8d6d0', radius:12},
-    He: {name:'Helium',    valence:0, mass:4,  color:'#4db8a8', radius:14},
+    He: {name:'Helium',    valence:0, mass:4,  color:'#00F0FF', radius:14},
     C:  {name:'Carbon',    valence:4, mass:12, color:'#8b7cc9', radius:16},
     N:  {name:'Nitrogen',  valence:3, mass:14, color:'#3ba372', radius:16},
     O:  {name:'Oxygen',    valence:2, mass:16, color:'#cc6247', radius:16},
     Na: {name:'Sodium',    valence:1, mass:23, color:'#cda852', radius:18},
     P:  {name:'Phosphorus',valence:5, mass:31, color:'#25897d', radius:18},
-    Cl: {name:'Chlorine',  valence:1, mass:35, color:'#4db8a8', radius:18},
+    Cl: {name:'Chlorine',  valence:1, mass:35, color:'#00F0FF', radius:18},
 };
 
 let atoms = [];
@@ -284,7 +284,7 @@ function draw() {
             }
         }
 
-        ctx.fillStyle='#0f1115';
+        ctx.fillStyle='#0A0A0F';
         ctx.font=`bold ${a.radius>15?11:9}px "JetBrains Mono"`;
         ctx.textAlign='center';ctx.textBaseline='middle';
         ctx.fillText(a.elem,a.x,a.y);

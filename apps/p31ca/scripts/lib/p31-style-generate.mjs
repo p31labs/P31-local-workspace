@@ -92,8 +92,8 @@ function emitUniversalScale(lines, canon) {
  * @returns {{ css: string, js: string }}
  */
 export function buildStyleArtifacts(canon) {
-  if (canon.schema !== "p31.universalCanon/1.0.0") {
-    throw new Error(`expected p31.universalCanon/1.0.0, got ${canon.schema}`);
+  if (canon.schema !== "p31.universalCanon/1.0.0" && canon.schema !== "p31.universalCanon/2.0.0") {
+    throw new Error(`expected p31.universalCanon/1.0.0 or /2.0.0, got ${canon.schema}`);
   }
   assertPaletteAligned(canon);
 
@@ -1021,8 +1021,8 @@ function emitQuantumMaterialUBlock(lines, canon) {
  * `rounded-shape-asymmetric`, `duration-q-enter`).
  */
 export function buildAstroTailwindThemeExtend(canon) {
-  if (canon.schema !== "p31.universalCanon/1.0.0") {
-    throw new Error(`expected p31.universalCanon/1.0.0, got ${canon.schema}`);
+  if (canon.schema !== "p31.universalCanon/1.0.0" && canon.schema !== "p31.universalCanon/2.0.0") {
+    throw new Error(`expected p31.universalCanon/1.0.0 or /2.0.0, got ${canon.schema}`);
   }
   const hub = canon.appearances.hub;
   const { colors, glass } = hub;

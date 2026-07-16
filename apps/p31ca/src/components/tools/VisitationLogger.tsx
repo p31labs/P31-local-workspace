@@ -127,7 +127,7 @@ export function VisitationLogger() {
           {audioUrl && (
             <audio controls src={audioUrl} style={{ height: 36, maxWidth: 240 }} />
           )}
-          <button type="submit" style={{ ...btnStyle, background: '#cda852', color: '#0f1115', fontWeight: 600 }}>
+          <button type="submit" style={{ ...btnStyle, background: '#cda852', color: '#0A0A0F', fontWeight: 600 }}>
             Save Log
           </button>
         </div>
@@ -149,7 +149,7 @@ export function VisitationLogger() {
             <div style={{ fontSize: 11, color: 'rgba(232,230,227,0.5)' }}>
               Supervisor: {log.supervisor || 'N/A'}
             </div>
-            {log.audioBlob && <div style={{ fontSize: 10, color: '#4db8a8' }}>🎤 Voice memo attached</div>}
+            {log.audioBlob && <div style={{ fontSize: 10, color: '#00F0FF' }}>🎤 Voice memo attached</div>}
             {log.deviations && (
               <div style={{ fontSize: 11, color: '#cc6247', marginTop: 4 }}>⚠️ {log.deviations}</div>
             )}

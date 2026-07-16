@@ -25,6 +25,9 @@
     "verify:registry-urls": "node scripts/verify-registry-app-urls.mjs",
     "verify:public-app-shell": "node scripts/verify-public-app-shell.mjs",
     "verify:education": "node scripts/verify-education.mjs",
+    "verify:content": "node scripts/verify-content-sources.mjs && node scripts/verify-content-consistency.mjs",
+    "content:status": "node scripts/verify-content-sources.mjs --dry-run && node scripts/verify-content-consistency.mjs --dry-run",
+    "content:fetch": "node scripts/fetch-content-stats.mjs --force",
     "verify:delta-hiring": "node scripts/verify-delta-hiring.mjs",
     "verify:super-centaur-pack": "node scripts/verify-super-centaur-pack.mjs",
     "apply:p31-style": "node scripts/apply-p31-style.mjs",
@@ -68,7 +71,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "prebuild:write": "node scripts/ops/ingest-glass-probes.mjs && node scripts/build-fleet-entities.mjs",
-    "prebuild:verify": "node scripts/verify-p31-style.mjs && node scripts/verify-style-alignment.mjs && node scripts/verify-lattice-oracle.mjs && node scripts/verify-oqe-icosa.mjs && node scripts/verify-registry-app-urls.mjs && node scripts/verify-public-app-shell.mjs && node scripts/verify-delta-hiring.mjs && node scripts/verify-education.mjs",
+    "prebuild:verify": "node scripts/verify-p31-style.mjs && node scripts/verify-style-alignment.mjs && node scripts/verify-lattice-oracle.mjs && node scripts/verify-oqe-icosa.mjs && node scripts/verify-registry-app-urls.mjs && node scripts/verify-public-app-shell.mjs && node scripts/verify-delta-hiring.mjs && node scripts/verify-education.mjs && node scripts/verify-content-sources.mjs && node scripts/verify-content-consistency.mjs",
     "postbuild:verify": "node scripts/verify-p31ca-dist.mjs && node scripts/verify-internal-hub-links.mjs && node scripts/verify-synergetic.mjs",
     "verify:org": "node scripts/verify-super-centaur-pack.mjs && node scripts/verify-creator-economy.mjs && node scripts/verify-garden-zone-8b.mjs && node scripts/verify-surface-canon.mjs && node scripts/verify-fleet-entities.mjs && node scripts/verify-live-fleet-mesh.mjs && node scripts/verify-worker-spa-launch.mjs && node scripts/verify-ground-truth.mjs && node scripts/verify-geodesic-room-wire.mjs"
   },

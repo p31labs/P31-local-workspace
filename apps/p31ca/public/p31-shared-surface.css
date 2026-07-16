@@ -978,12 +978,12 @@ body.p31-has-top-bar { padding-top: 3rem; }
   align-items: center;
   justify-content: center;
   border-radius: 6px;
-  border: 1px solid color-mix(in srgb, var(--p31-teal, #4db8a8) 40%, transparent);
-  background: color-mix(in srgb, var(--p31-teal, #4db8a8) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--p31-teal, #00F0FF) 40%, transparent);
+  background: color-mix(in srgb, var(--p31-teal, #00F0FF) 12%, transparent);
   font-family: var(--p31-font-mono, "JetBrains Mono", monospace);
   font-size: 11px;
   font-weight: 700;
-  color: var(--p31-cyan, #4db8a8);
+  color: var(--p31-cyan, #00F0FF);
 }
 .nav-brand-label {
   font-family: var(--p31-font-mono, "JetBrains Mono", monospace);
@@ -1002,7 +1002,7 @@ body.p31-has-top-bar { padding-top: 3rem; }
 .nav-prompt {
   font-family: var(--p31-font-mono, "JetBrains Mono", monospace);
   font-size: 11px;
-  color: color-mix(in srgb, var(--p31-teal, #4db8a8) 50%, transparent);
+  color: color-mix(in srgb, var(--p31-teal, #00F0FF) 50%, transparent);
 }
 .nav-link {
   font-family: var(--p31-font-mono, "JetBrains Mono", monospace);

@@ -5,12 +5,12 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap");
 
 .hub-about-page {
-  --void: #050505;
+  --void: #0A0A0F;
   --surface: rgba(255, 255, 255, 0.035);
   --surface2: rgba(255, 255, 255, 0.055);
   --coral: var(--hub-coral, #cc6247);
   --teal: #25897d;
-  --cyan: #4db8a8;
+  --cyan: #00F0FF;
   --cloud: var(--hub-cloud, #d8d6d0);
   --muted: #6b7280;
   --border: rgba(255, 255, 255, 0.06);

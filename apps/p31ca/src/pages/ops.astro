@@ -8,7 +8,7 @@ const byId = Object.fromEntries(registry.map((p) => [p.id, p]));
 
 // Ops tool manifest: section hash → registry id (or inline fallback)
 const TOOLS = [
-  { hash: 'agents',              label: 'Agents',           regId: null,                  icon: '🤖', accent: '#4db8a8', tagline: 'Agent Fleet dispatch layer',      appUrl: '/fleet', status: 'live'    },
+  { hash: 'agents',              label: 'Agents',           regId: null,                  icon: '🤖', accent: '#00F0FF', tagline: 'Agent Fleet dispatch layer',      appUrl: '/fleet', status: 'live'    },
   { hash: 'appointment-tracker', label: 'Appt Tracker',     regId: 'appointment-tracker'                                                                                                                  },
   { hash: 'attractor',           label: 'Attractor',        regId: 'attractor'                                                                                                                            },
   { hash: 'axiom',               label: 'Axiom',            regId: 'axiom'                                                                                                                                },
@@ -19,7 +19,7 @@ const TOOLS = [
   { hash: 'content-forge',       label: 'Content Forge',    regId: 'content-forge'                                                                                                                        },
   { hash: 'cortex',              label: 'Cortex',           regId: 'cortex'                                                                                                                               },
   { hash: 'discord',             label: 'Discord Bot',      regId: 'discord-bot'                                                                                                                          },
-  { hash: 'docs',                label: 'Doc Suite',        regId: null,                  icon: '📄', accent: '#4db8a8', tagline: 'P31 Open Doc Suite',             appUrl: '/doc-suite', status: 'live'  },
+  { hash: 'docs',                label: 'Doc Suite',        regId: null,                  icon: '📄', accent: '#00F0FF', tagline: 'P31 Open Doc Suite',             appUrl: '/doc-suite', status: 'live'  },
   { hash: 'spaceship-earth',                 label: 'Spaceship Earth',              regId: 'spaceship-earth'                                                                                                                                  },
   { hash: 'editor',              label: 'Editor',           regId: null,                  icon: '✏️', accent: '#8b7cc9', tagline: 'Minimal markdown editor',        appUrl: 'editor.html', status: 'concept' },
   { hash: 'forge',               label: 'Forge',            regId: 'forge'                                                                                                                                },
@@ -45,7 +45,7 @@ const tools = TOOLS.map((t) => {
     hash:    t.hash,
     label:   t.label,
     icon:    reg?.icon    ?? t.icon    ?? '◈',
-    accent:  reg?.accent  ?? t.accent  ?? '#4db8a8',
+    accent:  reg?.accent  ?? t.accent  ?? '#00F0FF',
     title:   reg?.title   ?? t.label,
     tagline: reg?.tagline ?? t.tagline ?? '',
     status:  reg?.status  ?? t.status  ?? 'concept',

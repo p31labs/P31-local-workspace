@@ -3,11 +3,11 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>P31 visual demos — two artifacts that hold the whole thesis</title>
-  <meta name="description" content="Two interactive educational artifacts that hold the whole P31 thesis: 'The Same Shape' (K₄ rendered at four orders of magnitude in lockstep) and 'The Pulse' (one canonical number flowing through every surface in the codebase, in real time). Plus a public glass box terminal." />
+  <title>P31 visual demos — interactive artifacts that hold the whole thesis</title>
+  <meta name="description" content="Interactive educational artifacts that hold the whole P31 thesis: 'The Same Shape' (K₄ at four orders of magnitude), 'The Pulse' (863 Hz propagating through the codebase), Molecular Field (DOM+SVG physics), Spaceship Earth (WebGL journey), and the Molecular Starfield (adaptive ambient mesh)." />
   <meta name="color-scheme" content="dark" />
-  <meta property="og:title" content="P31 visual demos — two artifacts that hold the whole thesis" />
-  <meta property="og:description" content="The Same Shape · The Pulse · the glass box. Three windows into how P31 actually works. Open source. No tracking." />
+  <meta property="og:title" content="P31 visual demos — interactive artifacts that hold the whole thesis" />
+  <meta property="og:description" content="The Same Shape · The Pulse · Molecular Field · Spaceship Earth · Starfield. Five windows into how P31 actually works. Open source. No tracking." />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='75' x='10' font-size='75' font-weight='bold' fill='%2362d979' font-family='monospace'%3E◍%3C/text%3E%3C/svg%3E" />
   <style>
     /* schema marker: p31.demosIndex/0.1.0 — required by scripts/verify-demos.mjs.
@@ -22,8 +22,8 @@
       --line: #20302480;
       --green: #62d979;
       --green-dim: #3aa653;
-      --teal: #5DCAA5;
-      --cyan: #4db8a8;
+      --teal: #34D399;
+      --cyan: #00F0FF;
       --amber: #f0b25a;
       --butter: #cda852;
       --coral: #cc6247;
@@ -167,11 +167,11 @@
 <div class="wrap">
 
 <header>
-  <h1>◍ <span class="glow">P31 visual demos</span> — two artifacts hold the whole thesis</h1>
-  <p>Consolidated from four atomic demos down to two interactive educational artifacts. Each one is single-file, no telemetry, no analytics, no servers — and each one is the kind of thing you can drop into a grant cover letter, a social post, a classroom, or a code review.</p>
+  <h1>◍ <span class="glow">P31 visual demos</span> — interactive artifacts hold the whole thesis</h1>
+  <p>A collection of interactive educational artifacts that demonstrate P31's sovereign, neuroinclusive, post-quantum care attestation. Each one is single-file, no telemetry, no analytics, no servers — and each one is the kind of thing you can drop into a grant cover letter, a social post, a classroom, or a code review.</p>
   <div class="badges">
-    <span class="badge live">2 live artifacts</span>
-    <span class="badge consolidated">consolidated 2026-05-02</span>
+    <span class="badge live">5 live artifacts</span>
+    <span class="badge consolidated">expanded 2026-07-15</span>
     <span class="badge">single-file HTML</span>
     <span class="badge">no tracking</span>
     <span class="badge">CC-BY 4.0 — share + remix</span>
@@ -245,6 +245,67 @@
   </div>
 </div>
 
+<!-- Additional Demos — CWP-2026-058 -->
+<section class="captions" style="border-top: 1px solid var(--line); padding-top: 30px; margin-top: 30px;">
+  <h2>More artifacts</h2>
+  <p class="lead">Interactive experiences that showcase P31's sovereign, neuroinclusive, post-quantum care attestation.</p>
+</section>
+
+<div class="featured" style="margin-bottom: 40px;">
+
+  <!-- Spaceship Earth -->
+  <article class="feature">
+    <div class="body">
+      <span class="tag">immersive · WebGL · 14 themed planets</span>
+      <h2>Spaceship Earth <span class="accent">— a journey through the P31 universe</span></h2>
+      <p class="lede">Navigate through 14 themed planets in an immersive WebGL experience. Each planet represents a facet of the P31 sovereign mesh — from quantum cryptography to neuroinclusive design. Built with Three.js and React.</p>
+      <ul>
+        <li>14 themed planets with unique visual identities</li>
+        <li>Full mobile responsiveness with touch interactions</li>
+        <li>WebGL + Three.js rendering engine</li>
+        <li>PWA support — install to home screen</li>
+      </ul>
+      <div class="actions">
+        <a class="primary" href="/spaceship-earth/">launch experience</a>
+        <a href="/spaceship-earth-about.html">about</a>
+      </div>
+    </div>
+  </article>
+
+  <!-- Molecular Field -->
+  <article class="feature">
+    <div class="body">
+      <span class="tag">physics · DOM+SVG · quantum states</span>
+      <h2>Molecular Field <span class="accent">— atoms, bonds, and quantum states</span></h2>
+      <p class="lede">A real-time physics simulation using DOM elements and SVG bonds. Switch between SOLID, LIQUID, GAS, and PLASMA states. Watch how spoon level (cognitive load) affects the field's behavior — dense and energetic at spoons 5, sparse and calm at spoons 1.</p>
+      <ul>
+        <li>4 physics modes: SOLID, LIQUID, GAS, PLASMA</li>
+        <li>Spoon-aware adaptive UI (0–5 levels)</li>
+        <li>DOM + SVG rendering (no WebGL required)</li>
+        <li>Real-time notification feed with severity levels</li>
+      </ul>
+      <div class="actions">
+        <a class="primary" href="./molecular-field.html">open demo</a>
+        <a href="/lib/p31-molecular-field.js">source</a>
+      </div>
+    </div>
+  </article>
+
+</div>
+
+<!-- Starfield — smaller tile like Glass Box -->
+<div class="third">
+  <div class="icon" style="color: var(--teal);">✦</div>
+  <div>
+    <h3 style="color: var(--teal);">Molecular Starfield</h3>
+    <p>Canvas 2D ambient mesh that adapts to spoon level. Dense and bright at spoons 5, sparse and dim at spoons 1. Fire bursts for events (ping, medication, agent, LOVE). The visual heartbeat of the P31 mesh.</p>
+  </div>
+  <div class="actions">
+    <a href="../lib/starfield-demo.html">open</a>
+    <a href="../lib/p31-starfield.js">source</a>
+  </div>
+</div>
+
 <section class="captions">
   <h2>Share kit — caption blocks</h2>
   <p class="lead">Pre-written for X / Bluesky / LinkedIn / Mastodon. Click any "copy" to grab the block. All variants are anti-FOMO, no streak language, no urgency-bait.</p>
@@ -275,7 +336,7 @@
     <a href="https://github.com/p31labs/andromeda/blob/main/docs/P31-GLASS-BOX.md" target="_blank" rel="noopener">glass box docs</a>
     <a href="https://github.com/p31labs/bonding-soup" target="_blank" rel="noopener">repo</a>
   </div>
-  <div style="color:var(--grey-dim)">p31.demosIndex/0.1.0 · 2 artifacts (+1 ops surface) · no tracking · no analytics · CC-BY 4.0</div>
+  <div style="color:var(--grey-dim)">p31.demosIndex/0.2.0 · 5 artifacts (+1 ops surface) · no tracking · no analytics · CC-BY 4.0</div>
 </footer>
 
 </div>

@@ -432,7 +432,30 @@ export default {
     }
 
     if (method === 'GET' && url.pathname === '/health') {
-      return new Response(JSON.stringify({ status: 'ok', service: 'love-ledger', timestamp: new Date().toISOString() }), {
+      const checks: Record<string, { ok: boolean; latency_ms?: number }> = {};
+      let allOk = true;
+      const d1Start = Date.now();
+      try {
+        await env.LOVE_DB.prepare('SELECT 1').first();
+        checks.d1 = { ok: true, latency_ms: Date.now() - d1Start };
+      } catch {
+        checks.d1 = { ok: false };
+        allOk = false;
+      }
+      try {
+        await env.LOVE_ARCHIVE.head('health-check');
+        checks.r2 = { ok: true };
+      } catch {
+        checks.r2 = { ok: false };
+      }
+      return new Response(JSON.stringify({
+        ok: allOk,
+        surface: 'love-ledger',
+        version: '0.0.1',
+        timestamp: new Date().toISOString(),
+        status: allOk ? 'operational' : 'degraded',
+        checks,
+      }), {
         headers: { 'Content-Type': 'application/json' },
       });
     }

@@ -14,18 +14,24 @@ import {
   researchApps,
   liveDeploymentCount,
 } from '../data/hub-products';
+import contentNonprofit from '../../ground-truth/content/nonprofit.json';
+import contentStats from '../../ground-truth/content/stats.json';
+import researchData from '../data/p31-research.json';
+
+const publishedCount = (researchData as any).papers?.filter((p: any) => p.published).length ?? 4;
+const readyCount = ((researchData as any).papers?.length ?? 0) - publishedCount;
 
 const researchItems = [
-  { title: 'Tetrahedron Protocol (K4)', doi: '10.5281/zenodo.18627420', desc: 'Geometric proof of K4 minimum isostatic structure. 280+ views, 240+ downloads.' },
+  { title: 'Tetrahedron Protocol (K4)', doi: '10.5281/zenodo.18627420', desc: `Geometric proof of K4 minimum isostatic structure. ${contentStats.zenodoViews}+ views, ${contentStats.zenodoDownloads}+ downloads.` },
   { title: 'Genesis Whitepaper v1.1', doi: '10.5281/zenodo.19411363', desc: 'SIC-POVM measurement framework, EDE architecture, Q Distribution, Samson\'s Law.' },
-  { title: 'Papers V-XIX', doi: null, desc: '13 additional papers styled and ready for Zenodo batch upload. Topics: calcium biophysics, cognitive sovereignty, AT design.' },
+  { title: 'Papers V-XIX', doi: null, desc: `${readyCount} additional papers styled and ready for Zenodo batch upload. Topics: calcium biophysics, cognitive sovereignty, AT design.` },
   { title: '5 Defensive Publications', doi: null, desc: 'Prior art deposited to Internet Archive Feb 25, 2026. Freedom-to-operate protection.' },
 ];
 ---
 
 <BaseLayout
   title="P31 Labs | Technical Hub"
-  description="Technical hub for P31 Labs — open-source assistive tools, fleet status, and links to edge deployments. EIN 42-1888158."
+  description={`Technical hub for P31 Labs — open-source assistive tools, fleet status, and links to edge deployments. EIN ${contentNonprofit.ein}.`}
   canonical="https://p31ca.org/"
 >
   <!-- Navbar -->
@@ -84,7 +90,7 @@ const researchItems = [
         </svg>
       </div>
       <div class="text-xs font-medium text-gray-500 tracking-wider uppercase mb-4">
-        P31 Labs, Inc. / EIN 42-1888158
+        P31 Labs, Inc. / EIN {contentNonprofit.ein}
       </div>
       <h1 class="text-4xl md:text-5xl font-extrabold text-white leading-tight mb-4">
         Open-Source Assistive<br/>Technology.
@@ -310,7 +316,7 @@ const researchItems = [
       <div class="flex items-center gap-3 mb-6">
         <div class="w-2 h-2 rounded-full bg-cyan-400"></div>
         <h2 class="text-sm font-semibold text-white/70 uppercase tracking-wider">Publications</h2>
-        <span class="text-xs text-white/70">4 published, 13 ready</span>
+        <span class="text-xs text-white/70">{publishedCount} published, {readyCount} ready</span>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         {researchItems.map((r) => (
@@ -341,11 +347,11 @@ const researchItems = [
             <div class="text-[10px] text-white/40 mt-1 uppercase tracking-wider">Live + Suite</div>
           </div>
           <div>
-            <div class="text-2xl font-extrabold text-white">413</div>
+            <div class="text-2xl font-extrabold text-white">{contentStats.testsPassing}</div>
             <div class="text-[10px] text-white/40 mt-1 uppercase tracking-wider">Tests Passing</div>
           </div>
           <div>
-            <div class="text-2xl font-extrabold text-white">4</div>
+            <div class="text-2xl font-extrabold text-white">{publishedCount}</div>
             <div class="text-[10px] text-white/40 mt-1 uppercase tracking-wider">Papers Published</div>
           </div>
           <div>

@@ -1,6 +1,7 @@
 ---
 // @p31-layout: Workshop
 import AppShell from '../layouts/AppShell.astro';
+import contentLove from '../../ground-truth/content/love.json';
 
 const SECTIONS = [
   { id: 'mesh',     label: 'Mesh Start'   },
@@ -147,7 +148,7 @@ const SECTIONS = [
     </div>
   </div>
 
-  <script>
+  <script define:vars={{ loveTotal: contentLove.totalLove, loveTop: contentLove.vertices.top, loveLeft: contentLove.vertices.left, loveRight: contentLove.vertices.right, loveBottom: contentLove.vertices.bottom }}>
     import { mountHashRouterAuto } from '../lib/hash-router';
 
     const FALLBACK = {
@@ -155,10 +156,10 @@ const SECTIONS = [
       topology: {
         mesh: {
           vertices: {
-            will:     { id: 'will',     name: 'Will',     love: 92, status: 'online',  lastSeen: null, metadata: { q_factor: 0.920 } },
-            sj:       { id: 'sj',       name: 'S.J.',     love: 47, status: 'offline', lastSeen: null, metadata: { q_factor: 0.850 } },
-            wj:       { id: 'wj',       name: 'W.J.',     love: 36, status: 'offline', lastSeen: null, metadata: { q_factor: 0.880 } },
-            christyn: { id: 'christyn', name: 'Christyn', love: 74, status: 'offline', lastSeen: null, metadata: { q_factor: 0.910 } },
+            will:     { id: 'will',     name: 'Will',     love: loveTop, status: 'online',  lastSeen: null, metadata: { q_factor: 0.920 } },
+            sj:       { id: 'sj',       name: 'S.J.',     love: loveLeft, status: 'offline', lastSeen: null, metadata: { q_factor: 0.850 } },
+            wj:       { id: 'wj',       name: 'W.J.',     love: loveRight, status: 'offline', lastSeen: null, metadata: { q_factor: 0.880 } },
+            christyn: { id: 'christyn', name: 'Christyn', love: loveBottom, status: 'offline', lastSeen: null, metadata: { q_factor: 0.910 } },
           },
           edges: {
             'will-sj':       { vertices: ['will',     'sj'      ], key: 'will-sj',       love: 139, messageCount: 45 },
@@ -169,7 +170,7 @@ const SECTIONS = [
             'christyn-wj':   { vertices: ['christyn', 'wj'      ], key: 'christyn-wj',   love:   0, messageCount:  0 },
           },
         },
-        totalLove: 276,
+        totalLove: loveTotal,
         qFactor: 1,
       },
     };

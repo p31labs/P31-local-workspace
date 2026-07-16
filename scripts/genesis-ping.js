@@ -17,15 +17,29 @@
  */
 
 import { ml_dsa65 } from '@noble/post-quantum/ml-dsa.js';
-import { readFileSync, existsSync, writeFileSync } from 'fs';
+import { sha256 } from '@noble/hashes/sha256';
+import { readFileSync, existsSync, writeFileSync, mkdirSync } from 'fs';
 
 const DRY_RUN = !process.argv.includes('--apply');
 const DO_ANCHOR = process.argv.includes('--anchor');
+const VERBOSE = process.argv.includes('--verbose');
 const LEDGER_BRIDGE = process.env.LEDGER_BRIDGE_URL || 'https://ledger-bridge.trimtab-signal.workers.dev';
 const LOVE_LEDGER = process.env.LOVE_LEDGER_URL || 'https://love-ledger.p31ca.org';
-const ETH_ADDRESS = process.env.GENESIS_ETH_ADDRESS || '0x0000000000000000000000000000000000000000';
+
+// Read deployer address from .env as fallback for GENESIS_ETH_ADDRESS
+let defaultEth = '0x0000000000000000000000000000000000000000';
+try {
+  const envContent = readFileSync('.env', 'utf8');
+  const m = envContent.match(/DEPLOYER_ADDRESS=([^\n]+)/);
+  if (m) defaultEth = m[1].trim();
+} catch {}
+const ETH_ADDRESS = process.env.GENESIS_ETH_ADDRESS || defaultEth;
 
 // ── Helpers ────────────────────────────────────────────────────────────────
+
+function bytesToHex(bytes) {
+  return Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
+}
 
 function bytesToB64(bytes) {
   let bin = '';
@@ -159,6 +173,7 @@ async function main() {
 
   // 4) Composite care-proof
   console.log('\n4. Composite care-proof (Ed25519 + ML-DSA-65)...');
+  let careResult = null;
   const users = [ETH_ADDRESS];
   const tProx = [1.0];
   const qRes = [0.95];
@@ -198,6 +213,7 @@ async function main() {
       body: JSON.stringify(careProofBody),
     });
     const json = await res.json();
+    careResult = json;
     console.log(`   POST /care-proof → ${res.status}`, json);
     if (!res.ok) {
       console.error('   Care-proof failed. Aborting.');
@@ -206,25 +222,28 @@ async function main() {
   }
 
   // 5) On-chain anchor (M5)
+  let anchorResult = null;
   if (DO_ANCHOR) {
     console.log('\n5. On-chain Attestation Anchor...');
-    // For the anchor, we need the entry_hash from the care-proof result.
-    // In dry-run, we fabricate one.
-    const entryHash = '0x' + 'ca'.repeat(32);
+    // Compute real entryHash from the proof message (SHA-256, matches love_chain convention)
+    const entryHashBytes = sha256(new TextEncoder().encode(proofMsg));
+    const entryHash = '0x' + bytesToHex(entryHashBytes);
     const uri = `ipfs://genesis-ping-${Date.now()}`;
+
+    if (VERBOSE) console.log(`   proofMsg (full) = ${proofMsg}`);
+    console.log(`   entryHash = ${entryHash}`);
 
     if (DRY_RUN) {
       console.log('   [dry-run] Would POST to ledger-bridge /anchor');
-      console.log(`   entryHash = ${entryHash}`);
       console.log(`   uri = ${uri}`);
     } else {
-      // TODO: extract entryHash from care-proof response
       const res = await fetch(`${LEDGER_BRIDGE}/anchor`, {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({ entryHash, uri }),
       });
       const json = await res.json();
+      anchorResult = json;
       console.log(`   POST /anchor → ${res.status}`, json);
     }
   }
@@ -239,8 +258,31 @@ async function main() {
   console.log(`  Ed25519 pub:  ${ed.pubB64.length} chars (base64)`);
   console.log(`  ML-DSA-65 pub: ${bytesToB64(pq.publicKey).length} chars (base64)`);
   console.log(`  Care-proof:   composite (Ed25519 + ML-DSA-65)`);
+  console.log(`  entryHash:    ${DO_ANCHOR ? '0x' + bytesToHex(sha256(new TextEncoder().encode(proofMsg))).slice(0, 16) + '...' : 'N/A (no --anchor)'}`);
   console.log(`  Mode:         ${DRY_RUN ? 'DRY-RUN' : 'LIVE'}`);
+  if (VERBOSE) console.log(`  Verbose:      enabled`);
   console.log('─'.repeat(60));
+
+  // Save complete genesis record
+  if (!DRY_RUN) {
+    try { mkdirSync('out', { recursive: true }); } catch {}
+    const record = {
+      timestamp: new Date().toISOString(),
+      mode: DRY_RUN ? 'dry-run' : 'live',
+      didKey,
+      didJwk,
+      ed25519_pubB64: ed.pubB64,
+      mldsa65_pubB64: bytesToB64(pq.publicKey),
+      ethAddress: ETH_ADDRESS,
+      proofMsg,
+      entryHash: DO_ANCHOR ? '0x' + bytesToHex(sha256(new TextEncoder().encode(proofMsg))) : null,
+      careProof: careResult,
+      anchor: anchorResult,
+    };
+    const filename = `out/genesis-ping-${Date.now()}.json`;
+    writeFileSync(filename, JSON.stringify(record, null, 2));
+    console.log(`\n  Genesis record saved to ${filename}`);
+  }
 
   // Save key material for reference
   const keyFile = {

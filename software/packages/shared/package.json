@@ -26,6 +26,7 @@
     "@cloudflare/workers-types": "^4.20260317.1",
     "@noble/ed25519": "^3.1.0",
     "@noble/post-quantum": "^0.2.1",
+    "@p31/design-core": "workspace:*",
     "idb-keyval": "^6.2.1",
     "pino": "^9.0.0",
     "pino-pretty": "^11.0.0",

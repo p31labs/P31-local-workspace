@@ -94,7 +94,7 @@ export function ToolchainView({ maxAuraLines = 6, maxRouterLines = 8, maxSpoonBa
                       className="h-full rounded-full"
                       style={{
                         width: `${(b.level / 12) * 100}%`,
-                        background: b.level <= 1 ? '#cc6247' : b.level <= 3 ? '#cda852' : '#4db8a8',
+                        background: b.level <= 1 ? '#cc6247' : b.level <= 3 ? '#cda852' : '#00F0FF',
                       }}
                     />
                   </div>

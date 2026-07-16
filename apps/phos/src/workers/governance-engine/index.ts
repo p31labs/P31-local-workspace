@@ -576,7 +576,7 @@ export default {
           db: dbCheck?.ok ? 'ok' : 'degraded'
         }), { headers: { 'Content-Type': 'application/json' } });
       } catch (err: any) {
-        return new Response(JSON.stringify({ ok: false, error: err.message }), {
+        return new Response(JSON.stringify({ ok: false, error: 'Internal server error' }), {
           status: 500, headers: { 'Content-Type': 'application/json' }
         });
       }
@@ -599,7 +599,7 @@ async function safeJson(request: Request): Promise<Record<string, any>> {
 function errorResponse(err: any): Response {
   console.error('Governance Engine error:', err);
   return new Response(
-    JSON.stringify({ error: err.message || 'Internal server error' }),
+    JSON.stringify({ error: 'Internal server error' }),
     { status: 500, headers: { 'Content-Type': 'application/json' } }
   );
 }

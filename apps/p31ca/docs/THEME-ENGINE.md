@@ -161,7 +161,7 @@ console.log(P31_FLUID.easing.spring);     // cubic-bezier
 ### Typography
 
 ```css
---p31-font-sans   /* Atkinson Hyperlegible */
+--p31-font-sans   /* Inter */
 --p31-font-mono   /* JetBrains Mono */
 
 --p31-text-sm     /* 0.875rem - 1rem fluid */

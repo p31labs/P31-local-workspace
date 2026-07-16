@@ -4,28 +4,28 @@
     <meta charset="UTF-8">
 <script>(function(){var r=document.documentElement;if(/[?&]alive=1(?:&|$)/.test(location.search))return;r.classList.add("p31-gray-rock");function wake(){r.classList.remove("p31-gray-rock")}document.addEventListener("pointerdown",wake,{once:true,capture:true});document.addEventListener("keydown",wake,{once:true,capture:true})})();</script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="theme-color" content="#0f1115">
+    <meta name="theme-color" content="#0A0A0F">
     <title>K4 MARKET | Tetrahedron Market Tomography | P31 Labs</title>
     <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/p31-style.css">
     <style>
         *{margin:0;padding:0;box-sizing:border-box}
-        body{background:#0f1115;color:#d8d6d0;font-family:'Atkinson Hyperlegible',sans-serif;height:100vh;display:flex;flex-direction:column;overflow:hidden}
+        body{background:#0A0A0F;color:#d8d6d0;font-family:'Inter',sans-serif;height:100vh;display:flex;flex-direction:column;overflow:hidden}
         header{padding:10px 20px;background:rgba(15,17,21,0.95);border-bottom:1px solid rgba(255,255,255,0.05);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;z-index:10}
         .logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:#d8d6d0;font-weight:700;font-size:14px}
         a.back{color:rgba(216,214,208,0.4);font-family:'JetBrains Mono',monospace;font-size:12px;text-decoration:none}
         a.back:hover{color:#d8d6d0}
         .toolbar{display:flex;gap:10px;align-items:center;padding:10px 20px;background:rgba(22,25,32,0.8);border-bottom:1px solid rgba(255,255,255,0.04);flex-shrink:0;flex-wrap:wrap}
         button{font-family:'JetBrains Mono',monospace;font-size:11px;padding:6px 12px;border-radius:6px;cursor:pointer;border:1px solid rgba(255,255,255,0.1);background:rgba(22,25,32,0.8);color:rgba(216,214,208,0.6);transition:all 0.2s}
-        button:hover{border-color:#4db8a8;color:#4db8a8}
-        button.active{border-color:#4db8a8;color:#4db8a8;background:rgba(77,184,168,0.1)}
+        button:hover{border-color:#00F0FF;color:#00F0FF}
+        button.active{border-color:#00F0FF;color:#00F0FF;background:rgba(77,184,168,0.1)}
         #mount{flex:1;position:relative}
         .price-panel{position:absolute;top:12px;left:12px;background:rgba(15,17,21,0.88);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:14px;font-family:'JetBrains Mono',monospace;font-size:11px;z-index:5;min-width:160px}
         .price-title{font-size:10px;color:rgba(216,214,208,0.3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px}
         .price-row{display:flex;justify-content:space-between;gap:12px;margin-bottom:6px;align-items:center}
         .price-sym{font-weight:700}
         .price-val{font-size:13px}
-        .up{color:#3ba372}.dn{color:#cc6247}.flat{color:#4db8a8}
+        .up{color:#3ba372}.dn{color:#cc6247}.flat{color:#00F0FF}
         .edge-panel{position:absolute;top:12px;right:12px;background:rgba(15,17,21,0.88);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:14px;font-family:'JetBrains Mono',monospace;font-size:11px;z-index:5;min-width:160px}
         .hud{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(216,214,208,0.25);pointer-events:none}
     </style>
@@ -64,7 +64,7 @@
 <div id="mount">
     <div class="price-panel">
         <div class="price-title">K4 Nodes</div>
-        <div class="price-row"><span class="price-sym" style="color:#4db8a8">O</span><span class="price-val up" id="p-open">—</span></div>
+        <div class="price-row"><span class="price-sym" style="color:#00F0FF">O</span><span class="price-val up" id="p-open">—</span></div>
         <div class="price-row"><span class="price-sym" style="color:#3ba372">H</span><span class="price-val up" id="p-high">—</span></div>
         <div class="price-row"><span class="price-sym" style="color:#cc6247">L</span><span class="price-val dn" id="p-low">—</span></div>
         <div class="price-row"><span class="price-sym" style="color:#cda852">C</span><span class="price-val" id="p-close">—</span></div>
@@ -175,7 +175,7 @@ function updateDisplay(){
         const spread=Math.abs(prices[a]-prices[b]);
         return {a:VERT_LABELS[a],b:VERT_LABELS[b],spread};
     });
-    document.getElementById('edge-list').innerHTML=edgeData.map(e=>`<div class="price-row"><span style="color:rgba(216,214,208,0.4)">${e.a}-${e.b}</span><span style="color:#4db8a8">${e.spread.toFixed(2)}</span></div>`).join('');
+    document.getElementById('edge-list').innerHTML=edgeData.map(e=>`<div class="price-row"><span style="color:rgba(216,214,208,0.4)">${e.a}-${e.b}</span><span style="color:#00F0FF">${e.spread.toFixed(2)}</span></div>`).join('');
 
     // Edge opacity = spread
     edgeLines.forEach((line,i)=>{

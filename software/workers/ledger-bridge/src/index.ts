@@ -187,25 +187,23 @@ export default {
 
     if (url.pathname === "/health") {
       const start = Date.now();
-      const report: Record<string, unknown> = {
-        status: "ok",
-        service: "ledger-bridge",
-        dryRun: isDryRun(env),
-        chain: "base-sepolia",
-        proofOfCare: env.PROOF_OF_CARE_ADDR,
-        anchor: env.ANCHOR_ADDR,
-        anchorDeployed: env.ANCHOR_ADDR !== zeroAddress,
-        timestamp: new Date().toISOString(),
-      };
+      const checks: Record<string, { ok: boolean; latency_ms?: number }> = {};
+      let allOk = true;
       try {
         await env.LOVE_DB.prepare("SELECT 1").first();
-        report.d1 = { status: "ok", latency_ms: Date.now() - start };
+        checks.d1 = { ok: true, latency_ms: Date.now() - start };
       } catch (e: any) {
-        report.d1 = { status: "error", error: e.message };
-        report.status = "degraded";
+        checks.d1 = { ok: false };
+        allOk = false;
       }
-      report.total_latency_ms = Date.now() - start;
-      return json(report);
+      return json({
+        ok: allOk,
+        surface: "ledger-bridge",
+        version: "0.0.1",
+        timestamp: new Date().toISOString(),
+        status: allOk ? "operational" : "degraded",
+        checks,
+      });
     }
 
     // ── X-Wing hybrid KEM (draft-ietf-lamp-xwing-00) ─────────────────────

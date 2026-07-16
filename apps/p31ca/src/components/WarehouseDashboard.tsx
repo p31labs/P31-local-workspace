@@ -87,7 +87,7 @@ export function WarehouseDashboard(): React.ReactElement {
         </div>
 
         <div style={{ ...styles.statCard, background: totalPending > 0 ? '#fff8e1' : '#f0f9f4' }}>
-          <div style={{ ...styles.statValue, color: totalPending > 0 ? '#f9a825' : '#5DCAA5' }}>
+          <div style={{ ...styles.statValue, color: totalPending > 0 ? '#f9a825' : '#34D399' }}>
             {totalPending}
           </div>
           <div style={styles.statLabel}>Pending Sync</div>
@@ -167,7 +167,7 @@ const styles: Record<string, React.CSSProperties> = {
     margin: '0 auto',
     padding: '20px',
     fontFamily: 'system-ui, sans-serif',
-    color: '#0f1115',
+    color: '#0A0A0F',
   },
   loading: {
     textAlign: 'center',
@@ -189,7 +189,7 @@ const styles: Record<string, React.CSSProperties> = {
   statValue: {
     fontSize: '32px',
     fontWeight: 'bold',
-    color: '#5DCAA5',
+    color: '#34D399',
   },
   statLabel: {
     fontSize: '13px',
@@ -203,7 +203,7 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: '16px',
     fontWeight: '600',
     marginBottom: '12px',
-    color: '#0f1115',
+    color: '#0A0A0F',
   },
   zoneGrid: {
     display: 'grid',
@@ -226,7 +226,7 @@ const styles: Record<string, React.CSSProperties> = {
     width: '24px',
     height: '24px',
     borderRadius: '6px',
-    background: '#0f1115',
+    background: '#0A0A0F',
     color: 'white',
     display: 'flex',
     alignItems: 'center',
@@ -296,7 +296,7 @@ const styles: Record<string, React.CSSProperties> = {
   refreshBtn: {
     width: '100%',
     padding: '14px',
-    background: '#0f1115',
+    background: '#0A0A0F',
     color: 'white',
     border: 'none',
     borderRadius: '10px',

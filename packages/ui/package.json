@@ -1,15 +1,20 @@
 {
   "name": "@p31/ui",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "private": true,
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
+    "./starfield": "./src/starfield.ts",
+    "./starfield.css": "./src/starfield.css",
+    "./molecular-field": "./src/molecular-field.ts",
+    "./molecular-field.css": "./src/molecular-field.css",
     "./k4-hero": "./src/k4-hero.ts",
     "./k4-hero.css": "./src/k4-hero.css",
     "./K4Hero": "./src/K4Hero.tsx"
   },
   "dependencies": {
+    "@p31/design-core": "workspace:*",
     "react": "^19.0.0"
   },
   "devDependencies": {

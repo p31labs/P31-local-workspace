@@ -1,9 +1,9 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 
 const T = {
-  void: "#0f1115", surface: "#161920", surface2: "#1c2028",
+  void: "#0A0A0F", surface: "#161920", surface2: "#1c2028",
   glass: "rgba(255,255,255,0.06)", cloud: "#e8e6e3", muted: "#6b7280",
-  teal: "#5DCAA5", cyan: "#4db8a8", coral: "#cc6247",
+  teal: "#34D399", cyan: "#00F0FF", coral: "#cc6247",
   amber: "#cda852", lavender: "#8b7cc9", phosphorus: "#5dca5d",
 };
 

@@ -147,7 +147,7 @@ export const DEFAULT_SETTINGS: P31Settings = {
 
   display: {
     theme: 'dark',
-    accentColor: '#4db8a8',
+    accentColor: '#00F0FF',
     showMissionTrio: true,
     compactMode: false,
   },

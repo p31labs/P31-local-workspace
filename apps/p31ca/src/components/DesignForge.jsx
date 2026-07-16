@@ -1,14 +1,14 @@
 import { useState, useCallback } from "react";
 
 const TOKENS = {
-  void: "#0f1115",
+  void: "#0A0A0F",
   surface: "#161920",
   surface2: "#1c2028",
   glassBorder: "rgba(255,255,255,0.06)",
   cloud: "#e8e6e3",
   muted: "#6b7280",
-  teal: "#5DCAA5",
-  cyan: "#4db8a8",
+  teal: "#34D399",
+  cyan: "#00F0FF",
   coral: "#cc6247",
   amber: "#cda852",
   lavender: "#8b7cc9",
@@ -102,7 +102,7 @@ const TEMPLATES = {
   <nav class="top-nav">
     <a href="/" class="nav-brand">
       <svg viewBox="0 0 100 100" width="24" height="24" fill="none" aria-hidden="true">
-        <path d="M50 10 L90 85 L10 85 Z" stroke="#5DCAA5" stroke-width="5" stroke-linejoin="round"/>
+        <path d="M50 10 L90 85 L10 85 Z" stroke="#34D399" stroke-width="5" stroke-linejoin="round"/>
         <path d="M50 10 L50 60 L90 85" stroke="#cc6247" stroke-width="5" stroke-linejoin="round" opacity="0.8"/>
         <path d="M50 60 L10 85" stroke="#cda852" stroke-width="5" stroke-linejoin="round" opacity="0.6"/>
       </svg>
@@ -997,7 +997,7 @@ William R. Johnson
 /* NEVER hardcode hex values. ALWAYS use var(--p31-*) */
 
 /* BACKGROUNDS */
---p31-void:         #0f1115;  /* Deep canvas. THE background. NOT var(--p31-void). */
+--p31-void:         #0A0A0F;  /* Deep canvas. THE background. NOT var(--p31-void). */
 --p31-surface:      #161920;  /* Panel background */
 --p31-surface2:     #1c2028;  /* Elevated card background */
 --p31-glass-border: rgba(255,255,255,0.06); /* Subtle structural outline */
@@ -1008,18 +1008,18 @@ William R. Johnson
 --p31-muted:        #6b7280;  /* Secondary text. 4.5:1 vs void. AA. Labels only. */
 
 /* BRAND SEMANTIC */
---p31-teal:         #5DCAA5;  /* Trust/structure/primary. 8.2:1. AAA. */
---p31-cyan:         #4db8a8;  /* Highlight/accent. Alias target for teal in some contexts. */
+--p31-teal:         #34D399;  /* Trust/structure/primary. 8.2:1. AAA. */
+--p31-cyan:         #00F0FF;  /* Highlight/accent. Alias target for teal in some contexts. */
 --p31-coral:        #cc6247;  /* Voltage/urgency/legal/warning. 4.6:1. AA. */
 --p31-amber:        #cda852;  /* Focus/biological/L.O.V.E./children. 7.1:1. AAA. */
 --p31-lavender:     #8b7cc9;  /* Archive/documentation/scribe. 4.8:1. AA. */
 --p31-phosphorus:   #5dca5d;  /* Success/growth/confirmation. */
 
 /* CORRECTIONS LOG */
-/* ❌ --p31-void: var(--p31-void)     → ✅ #0f1115 (Kimi used wrong value) */
-/* ❌ --p31-teal: var(--p31-teal)     → ✅ #5DCAA5 (Gemini used wrong value) */
+/* ❌ --p31-void: var(--p31-void)     → ✅ #0A0A0F (Kimi used wrong value) */
+/* ❌ --p31-teal: var(--p31-teal)     → ✅ #34D399 (Gemini used wrong value) */
 /* ❌ Border radius: 3rem/48px → ✅ 12px (Kimi too aggressive) */
-/* ❌ Font: Inter only         → ✅ Inter + Atkinson Hyperlegible (a11y) */`,
+/* ❌ Font: Inter only         → ✅ Inter + Inter (a11y) */`,
     },
     {
       id: "spacing-ref",
@@ -1071,7 +1071,7 @@ William R. Johnson
 /* FONT STACKS */
 --p31-font-sans:  'Inter var', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 --p31-font-mono:  'JetBrains Mono', 'Fira Code', monospace;
---p31-font-a11y:  'Atkinson Hyperlegible', sans-serif;
+--p31-font-a11y:  'Inter', sans-serif;
 --p31-font-serif: 'Playfair Display', Georgia, serif; /* decorative headers ONLY */
 
 /* TYPE SCALE */
@@ -1088,7 +1088,7 @@ William R. Johnson
 
 /* WHEN TO USE WHICH FONT */
 /* Inter var:               Everything by default */
-/* Atkinson Hyperlegible:   Surfaces targeting dyslexia/low vision */
+/* Inter:   Surfaces targeting dyslexia/low vision */
 /* JetBrains Mono:          Code, data, timestamps, metrics, labels */
 /* Playfair Display:        Decorative section headers ONLY, never body */
 

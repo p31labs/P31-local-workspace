@@ -58,9 +58,35 @@
   Cloudflare **dashboard → Alerts** panel, not via wrangler.
 - **Hybrid PQC TLS**: enabled at the Cloudflare zone level (SSL/TLS → Edge
   Certificates → Post-Quantum) for `p31ca.org` — a dashboard/ops step, not code.
-- **Pilot invites**: `scripts/pilot-onboard.js` prints onboarding links (no `--send`
-  mode exists); `--onboard <did>` marks a family onboarded in the shared D1. Sending
-  invitations is a manual outreach step.
+- **Pilot invites**: `scripts/pilot-onboard.js --export-links` generates onboarding
+  URLs; `--export-csv` exports status. `--onboard <did>` marks onboarded. Sending
+  invitations is manual outreach using `docs/PILOT-OUTREACH-KIT.md` templates.
+
+## CWP-2026-058 (Fortune 1 Launch) — 2026-07-15
+
+### Completed
+
+- [x] Genesis ping SHA-256 entryHash fix (`scripts/genesis-ping.js`)
+- [x] p31ca `/api/health/` endpoint (HTTP 200, JSON)
+- [x] p31ca hybrid mode (`output: 'static'` + `@astrojs/cloudflare`)
+- [x] Pilot outreach docs (`docs/PILOT-OUTREACH-KIT.md`, `docs/PILOT-TRACKER-TEMPLATE.md`)
+- [x] Pilot onboarding CLI (`--export-links`, `--export-csv`, `--summary`, `--template`)
+- [x] Demos index expansion (Spaceship Earth, Molecular Field, Starfield tiles)
+- [x] Molecular Field demo (`public/demos/molecular-field.html`)
+- [x] Spaceship Earth void color fix (`#000000` → `#0A0A0F`)
+- [x] Treaty page signing section (`site/uplink.html`)
+- [x] Full production demo script (`docs/grants/NGI-DEMO-SCRIPT.md`)
+- [x] p31ca built and deployed to production
+- [x] All endpoints verified HTTP 200
+
+### Still manual
+
+- Run genesis ping live: `GENESIS_ETH_ADDRESS=0x51c285Df171C76bE36252e32679F098d90768413 node scripts/genesis-ping.js --apply --anchor`
+- Record demo video using `docs/grants/NGI-DEMO-SCRIPT.md`
+- Send pilot invites via email/Discord using `docs/PILOT-OUTREACH-KIT.md`
+- Submit NGI proposals via NLnet portal
+- Enable Cloudflare PQC TLS (zone SSL/TLS dashboard)
+- Configure Cloudflare Alerts (dashboard)
 
 ## CWP-2026-049 Agent Execution — 2026-07-14
 

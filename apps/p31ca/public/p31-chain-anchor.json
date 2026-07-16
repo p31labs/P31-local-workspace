@@ -52,6 +52,26 @@
       "deployed": {
         "84532": "0xbb9EBb96eEE9Da3Db379C2A7D07f919b628bEf54"
       }
+    },
+    {
+      "name": "LOVESBT",
+      "source": "contracts/src/LOVESBT.sol",
+      "solidity": "0.8.24",
+      "role": "Soulbound care-badge SBT (ERC-721, transfers revert). Mints via ProofOfCare oracle.",
+      "note": "owner=deployer, oracle=ProofOfCare. loveToken retired; LOVE rewards out of scope (v1 = LOVESBT only).",
+      "deployed": {
+        "84532": "0x521cAD1b54CDDB2B6B53a30EBe050C429F9c6C55"
+      }
+    },
+    {
+      "name": "ProofOfCare",
+      "source": "contracts/src/ProofOfCare.sol",
+      "solidity": "0.8.24",
+      "role": "Care-proof oracle/relay. submitCareProofs(user, rootHash, careScore, tier, uri) is onlyRelay.",
+      "note": "architect=deployer, loveToken=0x0 (LOVESBT only), relay=ledger-bridge signer. Internal mint via LOVESBT.setOracle.",
+      "deployed": {
+        "84532": "0x08263FdD50196F229C9C2ccD650056067b884538"
+      }
     }
   ],
   "networks": [

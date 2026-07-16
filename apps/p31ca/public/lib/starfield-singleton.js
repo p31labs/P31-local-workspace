@@ -277,7 +277,7 @@ export function startStarfield(canvas) {
   const s = getOrInit(canvas);
   if (!s) {
     // WebGL failed - show fallback gradient
-    canvas.style.background = 'radial-gradient(ellipse at center, #1a1a2e 0%, #0f1115 100%)';
+    canvas.style.background = 'radial-gradient(ellipse at center, #1a1a2e 0%, #0A0A0F 100%)';
   }
 }
 

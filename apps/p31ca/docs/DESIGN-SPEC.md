@@ -99,11 +99,11 @@ P31ca.org is the technical hub that hosts tools, visualizations, and onboarding 
 ### 4.1 Font Stack
 
 ```css
---p31-font-sans:  'Atkinson Hyperlegible', sans-serif;
+--p31-font-sans:  'Inter', sans-serif;
 --p31-font-mono: 'JetBrains Mono', monospace;
 ```
 
-**Atkinson Hyperlegible:** Designed for low-vision readers; distinct letterforms (b/d, p/q differentiation).
+**Inter:** Designed for low-vision readers; distinct letterforms (b/d, p/q differentiation).
 
 ### 4.2 Type Scale
 

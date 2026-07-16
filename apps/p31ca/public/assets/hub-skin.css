@@ -1,12 +1,12 @@
 /**
  * P31 Technical Hub — portable skin for static HTML + external Pages (e.g. p31-mesh).
- * Load after Inter + Space Mono. Matches Astro hub (index.astro).
+ * Load after Inter + JetBrains Mono. Matches Astro hub (index.astro).
  *
- * <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap">
+ * <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap">
  * <link rel="stylesheet" href="/assets/hub-skin.css">
  */
 :root {
-  --hub-void: #050505;
+  --hub-void: #0A0A0F;
   --hub-nav: #080810;
   --hub-rose: #e8636f;
   --hub-coral: #cc6247;
@@ -19,7 +19,7 @@
   --hub-glass-border: rgba(255, 255, 255, 0.08);
   --hub-radius-lg: 1rem;
   --hub-font-sans: 'Inter', system-ui, sans-serif;
-  --hub-font-mono: 'Space Mono', ui-monospace, monospace;
+  --hub-font-mono: 'JetBrains Mono', ui-monospace, monospace;
 }
 
 .hub-body {

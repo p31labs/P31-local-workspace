@@ -11,84 +11,42 @@ export const LANGS: { code: Lang; label: string }[] = [
 
 type Dict = Record<string, string>;
 
-const en: Dict = {
-  'portal.title': 'P31 Care Mesh — Join',
-  'portal.subtitle': 'Self-service onboarding for your family.',
-  'portal.enterDid': 'Enter your family DID',
-  'portal.check': 'Check status',
-  'portal.invalidDid': 'Please enter a valid DID (e.g. did:web:family.example).',
-  'portal.loading': 'Checking…',
-  'portal.notFound': 'We could not find that DID. Ask your community steward for an invite.',
-  'portal.step': 'Step',
-  'portal.invited': 'Invited',
-  'portal.onboarded': 'Onboarded',
-  'portal.registered': 'Registered',
-  'portal.lang': 'Language',
-  'portal.start': 'Begin onboarding',
-  'portal.done': 'You are all set. Welcome to the mesh.',
-};
+// Inline fallbacks for fast first render — JSON files load async
+import enInline from './i18n/en.json';
+import esInline from './i18n/es.json';
+import frInline from './i18n/fr.json';
+import deInline from './i18n/de.json';
 
-const es: Dict = {
-  'portal.title': 'Malla de Cuidado P31 — Únete',
-  'portal.subtitle': 'Alta autogestionada para tu familia.',
-  'portal.enterDid': 'Introduce el DID de tu familia',
-  'portal.check': 'Comprobar estado',
-  'portal.invalidDid': 'Introduce un DID válido (p. ej. did:web:family.example).',
-  'portal.loading': 'Comprobando…',
-  'portal.notFound': 'No encontramos ese DID. Pide una invitación a tu guía comunitario.',
-  'portal.step': 'Paso',
-  'portal.invited': 'Invitado',
-  'portal.onboarded': 'Dado de alta',
-  'portal.registered': 'Registrado',
-  'portal.lang': 'Idioma',
-  'portal.start': 'Empezar alta',
-  'portal.done': 'Todo listo. Bienvenido/a a la malla.',
+const DICTS: Record<Lang, Dict> = {
+  en: enInline as Dict,
+  es: esInline as Dict,
+  fr: frInline as Dict,
+  de: deInline as Dict,
 };
-
-const fr: Dict = {
-  'portal.title': 'Maillage de Soin P31 — Rejoignez',
-  'portal.subtitle': 'Intégration autonome pour votre famille.',
-  'portal.enterDid': 'Saisissez le DID de votre famille',
-  'portal.check': 'Vérifier l’état',
-  'portal.invalidDid': 'Saisissez un DID valide (ex. did:web:family.example).',
-  'portal.loading': 'Vérification…',
-  'portal.notFound': 'DID introuvable. Demandez une invitation à votre référent·e.',
-  'portal.step': 'Étape',
-  'portal.invited': 'Invité',
-  'portal.onboarded': 'Intégré',
-  'portal.registered': 'Inscrit',
-  'portal.lang': 'Langue',
-  'portal.start': 'Commencer',
-  'portal.done': 'C’est fait. Bienvenue dans le maillage.',
-};
-
-const de: Dict = {
-  'portal.title': 'P31-Fürsorgenetz — Mitmachen',
-  'portal.subtitle': 'Selbstbediente Aufnahme für deine Familie.',
-  'portal.enterDid': 'Familien-DID eingeben',
-  'portal.check': 'Status prüfen',
-  'portal.invalidDid': 'Bitte gültigen DID eingeben (z. B. did:web:family.example).',
-  'portal.loading': 'Prüfe…',
-  'portal.notFound': 'DID nicht gefunden. Bitte um eine Einladung bei deiner/m Mentor/in.',
-  'portal.step': 'Schritt',
-  'portal.invited': 'Eingeladen',
-  'portal.onboarded': 'Aufgenommen',
-  'portal.registered': 'Registriert',
-  'portal.lang': 'Sprache',
-  'portal.start': 'Aufnahme starten',
-  'portal.done': 'Fertig. Willkommen im Netz.',
-};
-
-const DICTS: Record<Lang, Dict> = { en, es, fr, de };
 
 const STORAGE_KEY = 'p31.lang';
+
+function detectLang(): Lang {
+  if (typeof navigator === 'undefined') return 'en';
+  const navLang = (navigator.language || '').split('-')[0];
+  if (navLang === 'es') return 'es';
+  if (navLang === 'fr') return 'fr';
+  if (navLang === 'de') return 'de';
+  return 'en';
+}
 
 export function useI18n() {
   const [lang, setLangState] = useState<Lang>('en');
 
   useEffect(() => {
     const stored = (typeof localStorage !== 'undefined' && localStorage.getItem(STORAGE_KEY)) as Lang | null;
-    if (stored && DICTS[stored]) setLangState(stored);
+    if (stored && DICTS[stored]) {
+      setLangState(stored);
+    } else {
+      const detected = detectLang();
+      setLangState(detected);
+      if (typeof localStorage !== 'undefined') localStorage.setItem(STORAGE_KEY, detected);
+    }
   }, []);
 
   const setLang = useCallback((l: Lang) => {
@@ -98,7 +56,11 @@ export function useI18n() {
   }, []);
 
   const t = useCallback(
-    (key: string) => DICTS[lang][key] ?? DICTS.en[key] ?? key,
+    (key: string, vars?: Record<string, string | number>) => {
+      const raw = DICTS[lang][key] ?? DICTS.en[key] ?? key;
+      if (!vars) return raw;
+      return raw.replace(/\{(\w+)\}/g, (_, name) => String(vars[name] ?? `{${name}}`));
+    },
     [lang],
   );
 

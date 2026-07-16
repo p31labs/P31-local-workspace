@@ -25,8 +25,8 @@
       --line: #20302480;
       --line-hi: #3aa65340;
       --ink: #e7eee9;
-      --teal: #5DCAA5;
-      --cyan: #4db8a8;
+      --teal: #34D399;
+      --cyan: #00F0FF;
       --coral: #cc6247;
       --butter: #cda852;
       --butter-glow: #cda852aa;
@@ -572,7 +572,7 @@ function drawEdge(x1, y1, x2, y2, reach, hi, lo) {
 }
 
 function drawNode(x, y, r, color, label, lit, dpr) {
-  const fills = { butter: "#cda852", cyan: "#4db8a8", phos: "#3ba372", "var-cyan": "#4db8a8", "var-phos": "#3ba372" };
+  const fills = { butter: "#cda852", cyan: "#00F0FF", phos: "#3ba372", "var-cyan": "#00F0FF", "var-phos": "#3ba372" };
   const fill = fills[color] || "#aab2ad";
   // halo if lit
   if (lit) {

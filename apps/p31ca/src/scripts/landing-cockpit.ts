@@ -20,8 +20,8 @@ const MAX_SPOONS = 20;
 let prevSpoonsForSunrise: number | undefined;
 
 function applyQFavicon(score: number) {
-  let stroke = "#4db8a8";
-  if (score > 0.8) stroke = "#4db8a8";
+  let stroke = "#00F0FF";
+  if (score > 0.8) stroke = "#00F0FF";
   else if (score > 0.5) stroke = "#7a9e96";
   else if (score > 0.3) stroke = "#cda852";
   else stroke = "#cc6247";

@@ -1,0 +1,22 @@
+{
+  "name": "@p31/design-core",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./tokens": "./src/tokens/index.ts",
+    "./math": "./src/math/index.ts",
+    "./css/all.css": "./src/css/all.css",
+    "./css/base.css": "./src/css/base.css",
+    "./css/glass.css": "./src/css/glass.css",
+    "./css/motion.css": "./src/css/motion.css",
+    "./css/typography.css": "./src/css/typography.css",
+    "./starfield": "./src/starfield.ts",
+    "./crisis-overlay": "./src/crisis-overlay.ts"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "^5.7.0"
+  }
+}

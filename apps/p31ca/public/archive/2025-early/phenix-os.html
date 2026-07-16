@@ -16,8 +16,8 @@
                 extend: {
                     fontFamily: { sans: ['"Inter"', 'sans-serif'], mono: ['"Space Mono"', 'monospace'] },
                     colors: {
-                        void: '#050505', surface: '#161920', elevated: '#1e222e',
-                        coral: '#cc6247', teal: '#25897d', cyan: '#4db8a8',
+                        void: '#050505', surface: '#12121A', elevated: '#1e222e',
+                        coral: '#cc6247', teal: '#25897d', cyan: '#00F0FF',
                         cloud: '#d8d6d0', butter: '#cda852', lavender: '#8b7cc9', phosphorus: '#00FF88',
                     },
                     animation: { 'scanline': 'scan 10s linear infinite', 'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite' },
@@ -42,7 +42,7 @@
             background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1);
             transition: all 0.2s; border-radius: 8px; cursor: pointer; font-family: 'Space Mono', monospace; font-size: 0.75rem; text-transform: uppercase;
         }
-        .glass-btn:hover { background: rgba(255, 255, 255, 0.08); border-color: #4db8a8; }
+        .glass-btn:hover { background: rgba(255, 255, 255, 0.08); border-color: #00F0FF; }
         .tab-content { display: none; }
         .tab-content.active { display: block; animation: fadeIn 0.3s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
@@ -61,7 +61,7 @@
         <div class="px-4 py-3 flex flex-wrap justify-between items-center gap-4">
             <div class="flex items-center gap-4">
                 <a href="phenix.html" class="font-mono text-[10px] text-cloud/30 hover:text-cloud/70 transition-colors">← About</a>
-                <div class="font-bold text-sm tracking-widest uppercase" style="background: linear-gradient(90deg, #4db8a8, #8b7cc9); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                <div class="font-bold text-sm tracking-widest uppercase" style="background: linear-gradient(90deg, #00F0FF, #8b7cc9); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
                     PHENIX OS
                 </div>
                 <div id="status-chip" class="font-mono text-[10px] px-3 py-1 rounded-full border border-phosphorus/50 text-phosphorus bg-phosphorus/10 animate-pulse-slow">
@@ -121,7 +121,7 @@
                             </div>
                         </div>
                         <div class="flex items-center gap-3 bg-elevated p-2 rounded-lg">
-                            <div class="w-2 h-2 rounded-full bg-cyan shadow-[0_0_5px_#4db8a8]"></div>
+                            <div class="w-2 h-2 rounded-full bg-cyan shadow-[0_0_5px_#00F0FF]"></div>
                             <div>
                                 <div class="font-mono text-[8px] font-bold text-cyan tracking-widest">THE FORGE</div>
                                 <div class="font-mono text-xs text-cloud/60 mt-0.5" id="vtx-forge">Build Mode</div>
@@ -540,7 +540,7 @@
             ctx.clearRect(0,0,w,w);
             ctx.beginPath(); ctx.arc(cx, cx, r, 0, Math.PI*2); ctx.strokeStyle = 'rgba(77,184,168,0.1)'; ctx.lineWidth = 6; ctx.stroke();
             ctx.beginPath(); ctx.arc(cx, cx, r, -Math.PI/2, -Math.PI/2 + (Math.PI*2*(1-pct)));
-            const g = ctx.createLinearGradient(0,0,w,w); g.addColorStop(0, '#4db8a8'); g.addColorStop(1, '#cda852');
+            const g = ctx.createLinearGradient(0,0,w,w); g.addColorStop(0, '#00F0FF'); g.addColorStop(1, '#cda852');
             ctx.strokeStyle = g; ctx.lineCap = 'round'; ctx.stroke();
         }
 

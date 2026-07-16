@@ -6,6 +6,12 @@
  */
 import AppShell from '../layouts/AppShell.astro';
 import { POSNER_PRISM_SVG } from '../lib/phos-assets';
+import contentConstants from '../../ground-truth/content/constants.json';
+
+const fersDaysRemaining = Math.ceil((new Date(contentConstants.fersDeadline).getTime() - Date.now()) / 864e5);
+const larmorLabel = `${contentConstants.larmorHz}Hz`;
+const maxSpoons = contentConstants.maxSpoons;
+const defaultSpoons = contentConstants.defaultSpoons;
 ---
 
 <AppShell title="P31 Labs | Sovereign Cockpit" routeName="dome">
@@ -164,7 +170,7 @@ import { POSNER_PRISM_SVG } from '../lib/phos-assets';
 
      <div class="w-full border-t border-white/5 px-1 py-1 md:border-t-0 md:px-4 md:py-0" role="status">
        <span id="cockpit-instrument-strip" class="block text-[10px] md:text-[11px] text-p31-cloud/90 tracking-wide font-mono leading-snug" aria-live="polite">
-         COCKPIT · Q — · SPOONS —/12 · FERS —d · SENTINEL —
+          COCKPIT · Q — · SPOONS —/{maxSpoons} · FERS {fersDaysRemaining}d · SENTINEL —
        </span>
        <span id="dome-mode-strip" class="mt-0.5 block text-[10px] text-p31-muted-60 tracking-wide font-mono leading-snug">
          MODE: SELECT · orbit: Alt+drag or right-drag · zoom: scroll · touch: 1=tap face · 2=orbit/zoom
@@ -197,7 +203,7 @@ import { POSNER_PRISM_SVG } from '../lib/phos-assets';
         <div class="flex items-center gap-4">
          <div class="flex items-center gap-2 cursor-pointer group" id="trimtab-trigger" title="Drag to tune frequency · Click for Layer 0 Somatic Mode" role="slider" aria-label="Trimtab frequency control" data-i18n-aria-label="hud.trimtab.label" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50" tabindex="0">
            <canvas id="trimtab-canvas" width="24" height="24" class="opacity-70 group-hover:opacity-100 transition-opacity" aria-hidden="true"></canvas>
-           <span id="trimtab-freq" class="text-amber font-bold w-12" data-i18n="hud.trimtab.frequency">863Hz</span>
+            <span id="trimtab-freq" class="text-amber font-bold w-12" data-i18n="hud.trimtab.frequency">{larmorLabel}</span>
          </div>
        </div>
      </div>
@@ -258,7 +264,7 @@ import { POSNER_PRISM_SVG } from '../lib/phos-assets';
          <span class="font-mono text-[9px] uppercase tracking-wider text-p31-muted">FERS window</span>
          <span id="dock-fers-val" class="font-mono text-lg font-bold tabular-nums text-p31-cloud">—</span>
        </div>
-       <p class="mb-0 mt-0.5 font-mono text-[8px] leading-tight text-p31-muted-60">Days to 2026-09-30 filing close (UTC)</p>
+        <p class="mb-0 mt-0.5 font-mono text-[8px] leading-tight text-p31-muted-60">Days to {contentConstants.fersDeadline} filing close (UTC)</p>
      </div>
    </div>
 
@@ -369,7 +375,7 @@ import { POSNER_PRISM_SVG } from '../lib/phos-assets';
          <div id="l0-escape-fill" class="h-full w-0 bg-coral shadow-[0_0_10px_#E8636F]"></div>
        </div>
        <div class="text-[10px] font-mono text-p31-muted tracking-widest uppercase" data-i18n="layer0.escapeHint">Hold ESC for 3 seconds to disengage</div>
-       <div class="text-[9px] font-mono text-cyan tracking-widest uppercase opacity-50 mt-2" data-i18n="layer0.larmorFreq">Larmor Frequency: 863Hz Active</div>
+        <div class="text-[9px] font-mono text-cyan tracking-widest uppercase opacity-50 mt-2" data-i18n="layer0.larmorFreq">Larmor Frequency: {larmorLabel} Active</div>
      </div>
    </div>
 </AppShell>

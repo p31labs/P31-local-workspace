@@ -286,7 +286,7 @@
     .sf-btn-primary {
       background: #4db8a8;
       border: none;
-      color: #0f1115;
+      color: #0A0A0F;
     }
     .sf-btn-primary:hover { box-shadow: 0 0 20px rgba(77, 184, 168, 0.4); }
   `;

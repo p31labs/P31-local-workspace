@@ -10,9 +10,9 @@ const STORAGE_KEY = "p31-epcp-state";
 
 // ── Canonical P31 Tokens ─────────────────────────────────────────────────────
 const T = {
-  void: "#0f1115", surface: "#161920", surface2: "#1c2028",
-  teal: "#4db8a8", coral: "#cc6247", amber: "#cda852",
-  lavender: "#8b7cc9", phosphorus: "var(--p31-phosphorus)", cyan: "#5DCAA5",
+  void: "#0A0A0F", surface: "#161920", surface2: "#1c2028",
+  teal: "#00F0FF", coral: "#cc6247", amber: "#cda852",
+  lavender: "#8b7cc9", phosphorus: "var(--p31-phosphorus)", cyan: "#34D399",
   cloud: "var(--p31-cloud)", muted: "#6b7280", glass: "rgba(255,255,255,0.06)",
   glassBorder: "rgba(255,255,255,0.08)",
 };
@@ -260,7 +260,7 @@ export default function EPCP() {
   return (
     <div style={{
       minHeight: "100vh", background: T.void, color: T.cloud,
-      fontFamily: "'Inter', 'Atkinson Hyperlegible', system-ui, sans-serif",
+      fontFamily: "'Inter', 'Inter', system-ui, sans-serif",
       padding: "16px 16px 80px", maxWidth: 1200, margin: "0 auto",
       filter: safeMode ? "grayscale(1)" : "none",
       transition: "filter 0.3s ease",

@@ -1,6 +1,7 @@
-@import '@p31/design-system/tokens';
-@import '@p31/design-system/themes';
-@import '@p31/design-system/motion';
+@import '@p31/design-core/css/base.css';
+@import '@p31/design-core/css/glass.css';
+@import '@p31/design-core/css/motion.css';
+@import '@p31/design-core/css/typography.css';
 
 * {
   margin: 0;

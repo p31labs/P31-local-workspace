@@ -5,6 +5,8 @@ import DrawScreen from './components/DrawScreen';
 import MoodTracker from './components/MoodTracker';
 import { K4Hero } from '@p31/ui/K4Hero';
 import '@p31/ui/k4-hero.css';
+import { mountStarfield } from '@p31/ui/starfield';
+import '@p31/ui/starfield.css';
 import FamilyScreen from './components/FamilyScreen';
 import { UIGWillowWrapper } from './components/UIGWillowWrapper';
 
@@ -40,6 +42,11 @@ export default function App() {
   const [activePanel, setActivePanel] = useState<Panel>(null);
   const [showCompanion, setShowCompanion] = useState(false);
   const [spoons, setSpoons] = useState(() => parseInt(localStorage.getItem('p31:spoons') || '3', 10));
+
+  useEffect(() => {
+    const instance = mountStarfield(undefined, { spoons });
+    return () => instance.destroy();
+  }, []);
 
   useEffect(() => {
     const html = document.documentElement;
@@ -91,7 +98,7 @@ export default function App() {
         </header>
 
         <div className="spoon-controls">
-          {[0, 2, 3, 5].map(level => (
+          {[0, 1, 2, 3, 4, 5].map(level => (
             <button
               key={level}
               onClick={() => {

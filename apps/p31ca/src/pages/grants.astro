@@ -23,6 +23,7 @@
  */
 import AppShell from '../layouts/AppShell.astro';
 import grantsData from '../data/grants.json';
+import contentNonprofit from '../../ground-truth/content/nonprofit.json';
 
 interface GrantEntry {
   title: string;
@@ -349,7 +350,7 @@ const description =
   )}
 
   <footer class="nonprofit-footer">
-    <p>P31 Labs, Inc. — 501(c)(3) pending — EIN 42-1888158</p>
+    <p>P31 Labs, Inc. — 501(c)(3) {contentNonprofit.irsStatus} — EIN {contentNonprofit.ein}</p>
     <p>
       Data sourced from <code>src/data/grants.json</code>. Canonical contract:
       <code>ground-truth/nonprofit/grants.json</code> + companion runbook

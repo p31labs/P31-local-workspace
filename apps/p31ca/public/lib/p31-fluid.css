@@ -11,7 +11,7 @@
 
 :root {
   /* Colors - fallback to hub theme */
-  --p31-void: #0f1115;
+  --p31-void: #0A0A0F;
   --p31-surface: #161920;
   --p31-surface2: #1c2028;
   --p31-surface3: #232830;
@@ -21,7 +21,7 @@
   --p31-muted: #6b7280;
   --p31-coral: #cc6247;
   --p31-teal: #25897d;
-  --p31-cyan: #4db8a8;
+  --p31-cyan: #00F0FF;
   --p31-amber: #cda852;
   --p31-lavender: #8b7cc9;
   --p31-phosphorus: #3ba372;
@@ -53,11 +53,11 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   TYPOGRAPHY - Atkinson Hyperlegible + JetBrains Mono
+   TYPOGRAPHY - Inter + JetBrains Mono
    ═══════════════════════════════════════════════════════════════ */
 
 :root {
-  --p31-font-sans: 'Atkinson Hyperlegible', -apple-system, BlinkMacSystemFont, sans-serif;
+  --p31-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   --p31-font-mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
   
   /* Fluid type scale - responsive to viewport */

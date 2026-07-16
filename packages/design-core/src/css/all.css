@@ -1,0 +1,6 @@
+/* P31 design-core — all.css */
+/* Import this single file to get the complete P31 design system. */
+@import './base.css';
+@import './glass.css';
+@import './motion.css';
+@import './typography.css';

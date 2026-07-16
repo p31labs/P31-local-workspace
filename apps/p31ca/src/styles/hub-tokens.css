@@ -3,7 +3,7 @@
  * Imported by global.css; mirrored in public/assets/hub-skin.css for static Pages.
  */
 :root {
-  --hub-void: #050505;
+  --hub-void: #0A0A0F;
   --hub-nav: #080810;
   --hub-rose: #e8636f;
   --hub-coral: #cc6247;
@@ -16,5 +16,5 @@
   --hub-glass-border: rgba(255, 255, 255, 0.08);
   --hub-radius-lg: 1rem;
   --hub-font-sans: 'Inter', system-ui, sans-serif;
-  --hub-font-mono: 'Space Mono', ui-monospace, monospace;
+  --hub-font-mono: 'JetBrains Mono', ui-monospace, monospace;
 }

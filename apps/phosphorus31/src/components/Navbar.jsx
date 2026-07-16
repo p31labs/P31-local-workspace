@@ -39,10 +39,10 @@ const Navbar = () => {
           <a href="/" className="flex items-center gap-4 cursor-pointer group" style={{ textDecoration: 'none' }} title="Return Home">
             <div className="w-12 h-12">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
-                <rect width="512" height="512" rx="112" fill="#b53cff" />
-                <circle cx="390" cy="120" r="48" fill="#00f0ff" />
-                <text x="256" y="340" fontFamily="'JetBrains Mono', monospace" fontWeight="900" fontSize="220" fill="#ffffff" textAnchor="middle">P31</text>
-                <rect x="156" y="380" width="200" height="16" rx="8" fill="#ffd700" />
+                <rect width="512" height="512" rx="112" fill="#A78BFA" />
+                <circle cx="390" cy="120" r="48" fill="#00F0FF" />
+                <text x="256" y="340" fontFamily="'JetBrains Mono', monospace" fontWeight="900" fontSize="220" fill="#F5F5F7" textAnchor="middle">P31</text>
+                <rect x="156" y="380" width="200" height="16" rx="8" fill="#FBBF24" />
               </svg>
             </div>
             <div>
@@ -91,7 +91,7 @@ const Navbar = () => {
             </button>
 
             <div className="hidden md:flex items-center gap-1">
-              {[0, 2, 3, 5].map(level => (
+              {[0, 1, 2, 3, 4, 5].map(level => (
                 <button
                   key={level}
                   onClick={() => handleSetSpoons(level)}

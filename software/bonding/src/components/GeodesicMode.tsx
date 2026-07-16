@@ -219,7 +219,7 @@ export function GeodesicMode() {
               <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
                 <span style={{ fontSize: '1.3rem', flexShrink: 0, opacity: 0.75, lineHeight: 1.3 }}>{step!.emoji}</span>
                 <div>
-                  <div style={{ fontFamily: "'Atkinson Hyperlegible', sans-serif", fontSize: 13, color: '#d8d6d0', lineHeight: 1.45 }}>{step!.msg}</div>
+                  <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 13, color: '#d8d6d0', lineHeight: 1.45 }}>{step!.msg}</div>
                   <div style={{ fontSize: 9, color: 'rgba(216,214,208,0.25)', marginTop: 5, display: 'flex', gap: 10 }}>
                     <span>{track.label} · {stepIdx + 1}/{track.steps.length}</span>
                     <button type="button" onClick={skipCoach} style={{ background: 'none', border: 'none', color: 'inherit', cursor: 'pointer', padding: 0, fontFamily: 'inherit', font: 'inherit' }}>skip</button>
@@ -242,7 +242,7 @@ export function GeodesicMode() {
 
       {/* ── Toast ── */}
       {toastMsg && (
-        <div style={{ position: 'fixed', left: '50%', transform: 'translateX(-50%)', bottom: 'calc(72px + env(safe-area-inset-bottom, 0px))', background: 'rgba(37,137,125,0.95)', borderRadius: 10, padding: '10px 16px', fontFamily: "'Atkinson Hyperlegible', sans-serif", fontSize: 14, fontWeight: 500, color: '#d8d6d0', zIndex: 60, pointerEvents: 'none', maxWidth: 'min(94vw, 400px)', textAlign: 'center', boxShadow: '0 4px 20px rgba(0,0,0,0.35)' }}>
+        <div style={{ position: 'fixed', left: '50%', transform: 'translateX(-50%)', bottom: 'calc(72px + env(safe-area-inset-bottom, 0px))', background: 'rgba(37,137,125,0.95)', borderRadius: 10, padding: '10px 16px', fontFamily: "'Inter', sans-serif", fontSize: 14, fontWeight: 500, color: '#d8d6d0', zIndex: 60, pointerEvents: 'none', maxWidth: 'min(94vw, 400px)', textAlign: 'center', boxShadow: '0 4px 20px rgba(0,0,0,0.35)' }}>
           {toastMsg}
         </div>
       )}

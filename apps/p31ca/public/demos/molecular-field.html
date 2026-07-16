@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>P31 Molecular Field — spoon-aware physics</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #0A0A0F; color: #E2E8F0; font-family: 'Inter', system-ui, sans-serif; overflow: hidden; height: 100vh; }
+    canvas { display: block; width: 100%; height: 100%; }
+    .controls {
+      position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+      display: flex; gap: 12px; z-index: 10;
+      background: rgba(10,10,15,0.85); backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.06); border-radius: 24px;
+      padding: 12px 20px;
+    }
+    .controls button {
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+      color: #E2E8F0; padding: 8px 16px; border-radius: 12px;
+      font-size: 13px; cursor: pointer; transition: all 0.2s;
+    }
+    .controls button:hover { background: rgba(0,240,255,0.12); border-color: rgba(0,240,255,0.3); }
+    .controls button.active { background: rgba(0,240,255,0.2); border-color: #00F0FF; color: #00F0FF; }
+    .spoon-display {
+      position: fixed; top: 20px; right: 20px; z-index: 10;
+      background: rgba(10,10,15,0.85); backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.06); border-radius: 16px;
+      padding: 12px 16px; font-size: 13px; color: #94A3B8;
+    }
+    .spoon-display .spoon-value { color: #00F0FF; font-size: 20px; font-weight: 700; }
+    .notification {
+      position: fixed; top: 20px; left: 20px; z-index: 10;
+      background: rgba(10,10,15,0.85); backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.06); border-radius: 12px;
+      padding: 10px 14px; font-size: 12px; color: #94A3B8;
+      max-width: 280px; opacity: 0; transition: opacity 0.3s;
+    }
+    .notification.show { opacity: 1; }
+    .notification .severity { font-weight: 600; }
+    .notification .severity.info { color: #00F0FF; }
+    .notification .severity.warn { color: #FBBF24; }
+    .notification .severity.error { color: #FB7185; }
+  </style>
+</head>
+<body>
+  <canvas id="field"></canvas>
+  <div class="controls">
+    <button data-mode="SOLID" class="active">Solid</button>
+    <button data-mode="LIQUID">Liquid</button>
+    <button data-mode="GAS">Gas</button>
+    <button data-mode="PLASMA">Plasma</button>
+    <button data-spoon="1">1</button>
+    <button data-spoon="3">3</button>
+    <button data-spoon="5" class="active">5</button>
+  </div>
+  <div class="spoon-display">
+    <div>Spoons</div>
+    <div class="spoon-value">5</div>
+  </div>
+  <div class="notification" id="notif"></div>
+
+  <script>
+    const canvas = document.getElementById('field');
+    const ctx = canvas.getContext('2d');
+    let W, H;
+    let mode = 'SOLID';
+    let spoonLevel = 5;
+    let particles = [];
+    let time = 0;
+    const notif = document.getElementById('notif');
+
+    const MODES = {
+      SOLID:    { count: 80,  speed: 0.3,  bondLen: 80,  color: '#00F0FF', jitter: 0.5 },
+      LIQUID:   { count: 60,  speed: 1.2,  bondLen: 60,  color: '#A78BFA', jitter: 2 },
+      GAS:      { count: 40,  speed: 3.0,  bondLen: 0,   color: '#34D399', jitter: 4 },
+      PLASMA:   { count: 30,  speed: 5.0,  bondLen: 0,   color: '#FB7185', jitter: 8 },
+    };
+
+    function resize() {
+      W = canvas.width = window.innerWidth;
+      H = canvas.height = window.innerHeight;
+    }
+
+    function createParticles() {
+      const cfg = MODES[mode];
+      const adjustedCount = Math.max(8, Math.floor(cfg.count * (spoonLevel / 5)));
+      particles = [];
+      for (let i = 0; i < adjustedCount; i++) {
+        particles.push({
+          x: Math.random() * W,
+          y: Math.random() * H,
+          vx: (Math.random() - 0.5) * cfg.speed,
+          vy: (Math.random() - 0.5) * cfg.speed,
+          r: 3 + Math.random() * 4,
+          phase: Math.random() * Math.PI * 2,
+        });
+      }
+    }
+
+    function draw() {
+      ctx.fillStyle = '#0A0A0F';
+      ctx.fillRect(0, 0, W, H);
+      time += 0.016;
+
+      const cfg = MODES[mode];
+      const alphaScale = spoonLevel / 5;
+
+      // bonds
+      if (cfg.bondLen > 0) {
+        ctx.strokeStyle = cfg.color;
+        ctx.globalAlpha = 0.15 * alphaScale;
+        ctx.lineWidth = 1;
+        for (let i = 0; i < particles.length; i++) {
+          for (let j = i + 1; j < particles.length; j++) {
+            const dx = particles[i].x - particles[j].x;
+            const dy = particles[i].y - particles[j].y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < cfg.bondLen * (spoonLevel / 5)) {
+              ctx.beginPath();
+              ctx.moveTo(particles[i].x, particles[i].y);
+              ctx.lineTo(particles[j].x, particles[j].y);
+              ctx.stroke();
+            }
+          }
+        }
+        ctx.globalAlpha = 1;
+      }
+
+      // particles
+      for (const p of particles) {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vx += (Math.random() - 0.5) * cfg.jitter * 0.1;
+        p.vy += (Math.random() - 0.5) * cfg.jitter * 0.1;
+        if (p.x < 0 || p.x > W) p.vx *= -1;
+        if (p.y < 0 || p.y > H) p.vy *= -1;
+        p.x = Math.max(0, Math.min(W, p.x));
+        p.y = Math.max(0, Math.min(H, p.y));
+
+        const pulse = 0.6 + 0.4 * Math.sin(time * 2 + p.phase);
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r * pulse, 0, Math.PI * 2);
+        ctx.fillStyle = cfg.color;
+        ctx.globalAlpha = (0.5 + 0.5 * pulse) * alphaScale;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      }
+
+      requestAnimationFrame(draw);
+    }
+
+    function showNotif(msg, severity) {
+      notif.innerHTML = `<span class="severity ${severity}">${severity.toUpperCase()}</span> ${msg}`;
+      notif.classList.add('show');
+      setTimeout(() => notif.classList.remove('show'), 3000);
+    }
+
+    // controls
+    document.querySelectorAll('[data-mode]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('[data-mode]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        mode = btn.dataset.mode;
+        createParticles();
+        showNotif(`Mode: ${mode}`, 'info');
+      });
+    });
+
+    document.querySelectorAll('[data-spoon]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('[data-spoon]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        spoonLevel = parseInt(btn.dataset.spoon);
+        document.querySelector('.spoon-value').textContent = spoonLevel;
+        createParticles();
+        showNotif(`Spoons: ${spoonLevel}`, spoonLevel <= 1 ? 'warn' : 'info');
+      });
+    });
+
+    resize();
+    createParticles();
+    draw();
+    window.addEventListener('resize', () => { resize(); createParticles(); });
+  </script>
+</body>
+</html>

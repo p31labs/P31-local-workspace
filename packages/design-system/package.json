@@ -1,7 +1,8 @@
 {
   "name": "@p31/design-system",
-  "version": "1.0.0",
+  "version": "1.0.0-deprecated",
   "private": true,
+  "description": "DEPRECATED — use @p31/design-core instead",
   "exports": {
     "./tokens": "./tokens.css",
     "./themes": "./themes.css",

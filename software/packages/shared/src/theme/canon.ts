@@ -1,50 +1,52 @@
 /**
- * Typed bridge to p31-universal-canon.json v1.2.0
- * Single source of truth – embed values from the canon JSON.
- * When the canon JSON is updated, update this file manually.
+ * P31 Canon — re-exports from @p31/design-core (mathematical foundation).
+ * Previously: p31-universal-canon.json v1.2.0 (arbitrary values).
+ * Now: @p31/design-core v2.0.0 (mathematically-derived values).
+ *
+ * All visual values derive from PHI (1.618), Perfect Fourth (1.333),
+ * 4-multiple grid, OKLCH color space, and musical tempo (120 BPM).
  */
-import type { ThemeMode } from './types';
 
-// ─── Canon JSON v1.2.0 values ───────────────────────────────────────────────
+import { COLORS, GLASS, FONT_SIZES } from '@p31/design-core/tokens';
 
-export const CANON_VERSION = '1.2.0';
+export const CANON_VERSION = '2.0.0';
 
 export type P31Appearance = 'hub' | 'org';
 
-/** Brand anchors – identical across appearances */
+/** Brand palette — identical to DESIGN.md / @p31/design-core */
 export const CANON_PALETTE = {
-  coral: '#cc6247',
-  teal: '#5DCAA5',
-  cyan: '#4db8a8',
-  amber: '#cda852',
-  lavender: '#8b7cc9',
-  phosphorus: '#3ba372',
-  phosphor: '#00FF88',
-  fuchsia: '#e879f9',
+  coral: '#FB7185',
+  teal: '#34D399',
+  cyan: '#00F0FF',
+  amber: '#FBBF24',
+  lavender: '#A78BFA',
+  phosphorus: '#34D399',
+  phosphor: '#00F0FF',
+  fuchsia: '#A78BFA',
 } as const;
 
 export type CanonPaletteKey = keyof typeof CANON_PALETTE;
 
 export const CANON_FONTS = {
-  sans: ['Atkinson Hyperlegible', 'sans-serif'],
-  mono: ['JetBrains Mono', 'monospace'],
+  sans: ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'sans-serif'],
+  mono: ['JetBrains Mono', 'ui-monospace', 'monospace'],
 } as const;
 
 export const CANON_FONT_SCALE: Record<string, string> = {
-  xs: '0.75rem',
-  sm: '0.875rem',
+  xs: '0.44rem',
+  sm: '0.75rem',
   base: '1rem',
-  md: '1.0625rem',
-  lg: '1.125rem',
-  xl: '1.25rem',
-  '2xl': '1.5rem',
-  '3xl': '1.875rem',
-  '4xl': '2.25rem',
+  md: '1rem',
+  lg: '1.33rem',
+  xl: '1.78rem',
+  '2xl': '2.37rem',
+  '3xl': '3.16rem',
+  '4xl': '3.16rem',
 };
 
 export const CANON_LINE_HEIGHT = {
-  tight: '1.25',
-  snug: '1.4',
+  tight: '1.1',
+  snug: '1.2',
   normal: '1.6',
   relaxed: '1.75',
 } as const;
@@ -63,23 +65,23 @@ export const CANON_SPACING: Record<string, string> = {
   '2': '0.5rem',
   '3': '0.75rem',
   '4': '1rem',
-  '5': '1.25rem',
+  '5': '1.5rem',
   '6': '1.5rem',
   '8': '2rem',
-  '10': '2.5rem',
+  '10': '3rem',
   '12': '3rem',
   '16': '4rem',
-  '20': '5rem',
+  '20': '6rem',
   '24': '6rem',
 };
 
 export const CANON_RADIUS: Record<string, string> = {
   none: '0',
-  sm: '4px',
-  md: '8px',
-  lg: '12px',
-  xl: '16px',
-  '2xl': '1.25rem',
+  sm: '8px',
+  md: '12px',
+  lg: '24px',
+  xl: '24px',
+  '2xl': '24px',
   full: '9999px',
 };
 
@@ -88,15 +90,15 @@ export const CANON_SHADOW: Record<string, string> = {
   sm: '0 1px 2px rgba(0, 0, 0, 0.06)',
   md: '0 4px 14px rgba(0, 0, 0, 0.08)',
   lg: '0 12px 40px rgba(0, 0, 0, 0.12)',
-  glowTeal: '0 0 24px rgba(37, 137, 125, 0.25)',
+  glowTeal: '0 0 24px rgba(0, 240, 255, 0.25)',
 };
 
 export const CANON_MOTION_DURATION = {
-  instant: '100',
-  fast: '150',
+  instant: '63',
+  fast: '125',
   normal: '250',
-  slow: '400',
-  glacial: '800',
+  slow: '500',
+  glacial: '1000',
 } as const;
 
 export const CANON_MOTION_EASING = {
@@ -117,8 +119,8 @@ export const CANON_Z_INDEX = {
 export const CANON_FOCUS = {
   ringWidth: '2px',
   ringOffset: '2px',
-  hubRingColor: 'rgba(77, 184, 168, 0.55)',
-  orgRingColor: 'rgba(37, 137, 125, 0.45)',
+  hubRingColor: 'rgba(0, 240, 255, 0.55)',
+  orgRingColor: 'rgba(0, 240, 255, 0.45)',
 } as const;
 
 export interface AppearanceColors {
@@ -145,56 +147,59 @@ export interface AppearanceColors {
   glass: { border: string; surface: string };
 }
 
+import type { ThemeMode } from './types';
+
+// Single dark-only appearance. The org (light mode) appearance is retired.
 export const CANON_APPEARANCES: Record<P31Appearance, AppearanceColors> = {
   hub: {
     colorScheme: 'dark',
-    themeColor: '#0f1115',
+    themeColor: COLORS.void,
     colors: {
-      void: '#0f1115',
-      surface: '#161920',
-      surface2: '#1c2028',
-      coral: '#cc6247',
-      teal: '#5DCAA5',
-      cyan: '#4db8a8',
-      cloud: '#d8d6d0',
-      amber: '#cda852',
-      lavender: '#8b7cc9',
-      phosphorus: '#3ba372',
-      paper: '#f4f4f5',
-      ink: '#1e293b',
+      void: COLORS.void,
+      surface: COLORS.surface,
+      surface2: COLORS.surface2,
+      coral: '#FB7185',
+      teal: '#34D399',
+      cyan: COLORS.accent,
+      cloud: COLORS.cloud,
+      amber: COLORS.gold,
+      lavender: COLORS.violet,
+      phosphorus: COLORS.green,
+      paper: '#F5F5F7',
+      ink: '#0A0A0F',
       muted: '#6b7280',
-      phosphor: '#00FF88',
-      fuchsia: '#e879f9',
+      phosphor: COLORS.accent,
+      fuchsia: COLORS.violet,
     },
     semantic: { borderSubtle: 'rgba(255, 255, 255, 0.06)' },
-    glass: { border: 'rgba(255, 255, 255, 0.08)', surface: 'rgba(255, 255, 255, 0.04)' },
+    glass: { border: GLASS.border, surface: GLASS.surface },
   },
   org: {
-    colorScheme: 'light',
-    themeColor: '#f5f4f0',
+    colorScheme: 'dark',
+    themeColor: COLORS.void,
     colors: {
-      void: '#f5f4f0',
-      surface: '#ffffff',
-      surface2: '#ebeae4',
-      coral: '#cc6247',
-      teal: '#5DCAA5',
-      cyan: '#4db8a8',
-      cloud: '#1e293b',
-      amber: '#cda852',
-      lavender: '#8b7cc9',
-      phosphorus: '#3ba372',
-      paper: '#fdfcfa',
-      ink: '#0f172a',
-      muted: '#64748b',
-      phosphor: '#00FF88',
-      fuchsia: '#e879f9',
+      void: COLORS.void,
+      surface: COLORS.surface,
+      surface2: COLORS.surface2,
+      coral: '#FB7185',
+      teal: '#34D399',
+      cyan: COLORS.accent,
+      cloud: COLORS.cloud,
+      amber: COLORS.gold,
+      lavender: COLORS.violet,
+      phosphorus: COLORS.green,
+      paper: '#F5F5F7',
+      ink: '#0A0A0F',
+      muted: '#6b7280',
+      phosphor: COLORS.accent,
+      fuchsia: COLORS.violet,
     },
-    semantic: { borderSubtle: 'rgba(15, 23, 42, 0.09)' },
-    glass: { border: 'rgba(15, 23, 42, 0.07)', surface: 'rgba(255, 255, 255, 0.82)' },
+    semantic: { borderSubtle: 'rgba(255, 255, 255, 0.06)' },
+    glass: { border: GLASS.border, surface: GLASS.surface },
   },
 };
 
-/** Return appearance colors for the given appearance key */
+/** Return appearance colors — now dark-only for both hub and org */
 export function getAppearance(appearance: P31Appearance): AppearanceColors {
   return CANON_APPEARANCES[appearance];
 }

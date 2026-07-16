@@ -80,16 +80,17 @@ export default {
       const ok = await verifyEd25519(b.pubkey, b.signature, canonical(b));
       if (!ok) return Response.json({ error: "Invalid Ed25519 signature" }, { status: 401 });
 
-      await env.CARE_DB.prepare(
-        `INSERT INTO care_mesh_aggregates
-           (family_did, period_start, period_end, avg_spoons, care_event_count, care_score, noise_epsilon, signature, created_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      )
-        .bind(
-          b.family_did,
-          b.period_start,
-          b.period_end,
-          b.avg_spoons,
+      try {
+        await env.CARE_DB.prepare(
+          `INSERT INTO care_mesh_aggregates
+            (family_did, period_start, period_end, avg_spoons, care_event_count, care_score, noise_epsilon, signature, created_at)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        )
+          .bind(
+            b.family_did,
+            b.period_start,
+            b.period_end,
+            b.avg_spoons,
           b.care_event_count,
           b.care_score,
           EPSILON,
@@ -99,40 +100,51 @@ export default {
         .run();
 
       return Response.json({ ok: true });
+      } catch (e: any) {
+        return Response.json({ error: "Database unavailable", requestId: crypto.randomUUID() }, { status: 503 });
+      }
     }
 
     // GET /aggregates?family_did= — this family's own stored aggregates.
     if (request.method === "GET" && url.pathname === "/aggregates") {
       const did = url.searchParams.get("family_did");
       if (!did) return Response.json({ error: "Missing family_did" }, { status: 400 });
-      const rows = await env.CARE_DB.prepare(
-        "SELECT family_did, period_start, period_end, avg_spoons, care_event_count, care_score, created_at FROM care_mesh_aggregates WHERE family_did = ? ORDER BY period_start DESC LIMIT 100",
-      )
-        .bind(did)
-        .all();
-      return Response.json(rows);
+      try {
+        const rows = await env.CARE_DB.prepare(
+          "SELECT family_did, period_start, period_end, avg_spoons, care_event_count, care_score, created_at FROM care_mesh_aggregates WHERE family_did = ? ORDER BY period_start DESC LIMIT 100",
+        )
+          .bind(did)
+          .all();
+        return Response.json(rows);
+      } catch (e: any) {
+        return Response.json({ error: "Database unavailable", requestId: crypto.randomUUID() }, { status: 503 });
+      }
     }
 
     // GET /mesh?family_did= — anonymised peer aggregates with DP noise.
     if (request.method === "GET" && url.pathname === "/mesh") {
       const did = url.searchParams.get("family_did");
       if (!did) return Response.json({ error: "Missing family_did" }, { status: 400 });
-      const rows = await env.CARE_DB.prepare(
-        "SELECT family_did, period_start, period_end, avg_spoons, care_event_count, care_score FROM care_mesh_aggregates WHERE family_did != ? ORDER BY period_start DESC LIMIT 50",
-      )
-        .bind(did)
-        .all();
-      const scale = SENSITIVITY / EPSILON;
-      const peers = ((rows.results as any[]) ?? []).map((r) => ({
-        family_did: r.family_did,
-        period_start: r.period_start,
-        period_end: r.period_end,
-        avg_spoons: Math.max(0, Math.min(5, r.avg_spoons + laplaceNoise(scale))),
-        care_event_count: r.care_event_count,
-        care_score: r.care_score,
-        noise_epsilon: EPSILON,
-      }));
-      return Response.json({ epsilon: EPSILON, sensitivity: SENSITIVITY, peers: peers.length, mesh: peers });
+      try {
+        const rows = await env.CARE_DB.prepare(
+          "SELECT family_did, period_start, period_end, avg_spoons, care_event_count, care_score FROM care_mesh_aggregates WHERE family_did != ? ORDER BY period_start DESC LIMIT 50",
+        )
+          .bind(did)
+          .all();
+        const scale = SENSITIVITY / EPSILON;
+        const peers = ((rows.results as any[]) ?? []).map((r) => ({
+          family_did: r.family_did,
+          period_start: r.period_start,
+          period_end: r.period_end,
+          avg_spoons: Math.max(0, Math.min(5, r.avg_spoons + laplaceNoise(scale))),
+          care_event_count: r.care_event_count,
+          care_score: r.care_score,
+          noise_epsilon: EPSILON,
+        }));
+        return Response.json({ epsilon: EPSILON, sensitivity: SENSITIVITY, peers: peers.length, mesh: peers });
+      } catch (e: any) {
+        return Response.json({ error: "Database unavailable", requestId: crypto.randomUUID() }, { status: 503 });
+      }
     }
 
     return new Response("Not found", { status: 404 });
