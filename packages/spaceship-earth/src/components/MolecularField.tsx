@@ -3,11 +3,17 @@
 
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
+import { fieldChaos } from '../engine/coherence';
 
 const PARTICLE_COUNT = 2400;
 const BG_COLOR = 0x050505;
 
-export function MolecularField() {
+interface MolecularFieldProps {
+  /** Phase 3: coherence 0..1. High = ordered/calm, low = chaotic. */
+  coherence?: number;
+}
+
+export function MolecularField({ coherence }: MolecularFieldProps) {
   const mountRef = useRef<HTMLDivElement>(null);
   const frameRef = useRef(0);
 
@@ -36,6 +42,10 @@ export function MolecularField() {
     const colors = new Float32Array(PARTICLE_COUNT * 3);
     const velocities = new Float32Array(PARTICLE_COUNT * 3);
 
+    // Phase 3: coherence drives order vs chaos. High coherence → calm/slow
+    // (chaos ≈ 0.5); low coherence → faster, wider drift (chaos up to 2.5).
+    const chaos = fieldChaos(typeof coherence === 'number' ? coherence : 1);
+
     for (let i = 0; i < PARTICLE_COUNT; i++) {
       const i3 = i * 3;
       const r = 10 + Math.pow(Math.random(), 0.5) * 95;
@@ -60,9 +70,9 @@ export function MolecularField() {
       colors[i3 + 1] = c.g;
       colors[i3 + 2] = c.b;
 
-      velocities[i3] = (Math.random() - 0.5) * 0.0004;
-      velocities[i3 + 1] = (Math.random() - 0.5) * 0.0004;
-      velocities[i3 + 2] = (Math.random() - 0.5) * 0.0004;
+      velocities[i3] = (Math.random() - 0.5) * 0.0004 * chaos;
+      velocities[i3 + 1] = (Math.random() - 0.5) * 0.0004 * chaos;
+      velocities[i3 + 2] = (Math.random() - 0.5) * 0.0004 * chaos;
     }
 
     const geo = new THREE.BufferGeometry();
@@ -146,7 +156,7 @@ export function MolecularField() {
       frameRef.current = requestAnimationFrame(animate);
       if (time - lastTime < MIN_DT) return;
       lastTime = time;
-      angle += 0.00025;
+      angle += 0.00025 * chaos;
 
       const pos = geo.attributes.position as THREE.BufferAttribute;
       for (let i = 0; i < PARTICLE_COUNT; i++) {

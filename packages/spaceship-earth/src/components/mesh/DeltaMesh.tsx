@@ -20,6 +20,7 @@ import { useFrame } from '@react-three/fiber';
 import { Float, Text } from '@react-three/drei';
 import * as THREE from 'three';
 import { RicciMath } from '../../lib/engine/ricci';
+import type { K4Graph } from '@p31/quantum-core/k4';
 
 export interface DeltaMeshNode {
   id: string;
@@ -100,25 +101,39 @@ interface DeltaMeshProps {
   networkStress?: number;
   showLabels?: boolean;
   autoRotate?: boolean;
+  /** Phase 2: live K₄ skeleton. When provided, curvature + edge health are
+   * driven by the live graph (meshHealth), not the cosmetic proxy. */
+  graph?: K4Graph;
 }
 
 export function DeltaMesh({ 
   networkStress = 0, 
   showLabels = true, 
-  autoRotate = true 
+  autoRotate = true,
+  graph,
 }: DeltaMeshProps) {
   const groupRef = useRef<THREE.Group>(null);
   const curvatureRef = useRef(1.0);
-  
-  // Generate static K4 topology
+
+  // Generate static K4 topology (positions are always a regular tetrahedron).
   const nodes = useMemo(() => generateK4Nodes(), []);
   const edges = useMemo(() => generateK4Edges(), []);
+
+  // Phase 2: when a live graph is supplied, curvature follows mesh health.
+  const liveCurvature = useMemo(() => {
+    if (!graph) return 1.0;
+    const sum = graph.edges.reduce((a, e) => a + e.weight, 0);
+    const health = graph.edges.length > 0 ? sum / graph.edges.length : 0;
+    return 0.5 + Math.min(1, Math.max(0, health)) * 1.0; // κ ∈ [0.5,1.5]
+  }, [graph]);
+  const curvature = graph ? liveCurvature : 1.0 - networkStress * 0.5;
   
-  // Animate curvature and scale each frame
+  // Animate curvature and scale each frame.
+  // With a live graph, curvature is driven by mesh health (no cosmetic proxy).
   useFrame(({ clock }) => {
     const t = clock.getElapsedTime();
-    curvatureRef.current = calculateRicciCurvature(t, networkStress);
-    
+    curvatureRef.current = graph ? curvature : calculateRicciCurvature(t, networkStress);
+
     // Apply dRfge scale oscillation using RicciMath
     if (groupRef.current) {
       const scale = RicciMath.getScaleFactor(curvatureRef.current);
@@ -129,16 +144,22 @@ export function DeltaMesh({
   // Curvature-based color scheme: κ maps to color
   // κ > 0.9 = green (healthy), κ 0.7-0.9 = cyan (stable), κ < 0.7 = red (degraded)
   const curvatureColor = useMemo(() => {
-    const k = curvatureRef.current;
+    const k = curvature;
     if (k >= 0.9) return '#00FF88';      // Green - isostatic
     if (k >= 0.7) return '#00D4FF';     // Cyan - stable
     return '#EF4444';                   // Red - degraded
-  }, []);
-  
+  }, [curvature]);
+
   const gatewayColor = curvatureColor;   // Gateway reflects health
   const nodeColor = '#00D4FF';           // Cyan for regular nodes
-  const edgeColor = curvatureRef.current >= 0.8 ? '#1f2937' : '#7A27FF'; // Purple edge on stress
-  const edgeHighlightColor = curvatureRef.current >= 0.8 ? '#4db8a8' : '#EF4444';
+  const edgeColor = curvature >= 0.8 ? '#1f2937' : '#7A27FF'; // Purple edge on stress
+  const edgeHighlightColor = curvature >= 0.8 ? '#4db8a8' : '#EF4444';
+
+  // Phase 2: per-vertex emissive scales with live subsystem activity.
+  const vertexWeights = useMemo(
+    () => (graph ? graph.vertices.map((v) => v.weight) : [1, 1, 1, 1]),
+    [graph],
+  );
 
   return (
     <group ref={groupRef}>
@@ -155,7 +176,7 @@ export function DeltaMesh({
             <meshStandardMaterial
               color={node.isGateway ? gatewayColor : nodeColor}
               emissive={node.isGateway ? gatewayColor : nodeColor}
-              emissiveIntensity={1.5}
+              emissiveIntensity={0.5 + (vertexWeights[index] ?? 1) * 1.5}
               roughness={0.3}
               metalness={0.7}
             />
@@ -171,33 +192,38 @@ export function DeltaMesh({
               anchorY="middle"
               font={`${import.meta.env.BASE_URL}fonts/JetBrainsMono-Bold.ttf`}
             >
-              {node.label}
+              {graph?.vertices[index]?.label ?? node.label}
             </Text>
           )}
         </Float>
       ))}
 
-      {/* Render Edges (K4 = 6 edges) */}
-      {edges.map((edge, index) => {
+       {/* Render Edges (K4 = 6 edges) — opacity reflects live flow health */}
+       {edges.map((edge, index) => {
         const startNode = nodes[edge.from];
         const endNode = nodes[edge.to];
-        
+
         // Create line geometry
         const points = [startNode.position, endNode.position];
         const lineGeometry = new THREE.BufferGeometry().setFromPoints(points);
-        
+
+        // Phase 2: when a live graph is present, edge weight = flow health.
+        const liveWeight = graph?.edges[index]?.weight;
+        const opacity = liveWeight !== undefined ? 0.15 + liveWeight * 0.6 : 0.6;
+        const color = liveWeight !== undefined && liveWeight < 0.4 ? '#EF4444' : edgeColor;
+
         return (
           <line key={`edge_${index}`}>
             <bufferGeometry {...lineGeometry} />
             <lineBasicMaterial 
-              color={edgeColor} 
+              color={color} 
               transparent 
-              opacity={0.6}
+              opacity={opacity}
               linewidth={1}
             />
           </line>
         );
-      })}
+       })}
 
       {/* Central stress indicator (shows network health) */}
       <mesh position={[0, 0, 0]}>

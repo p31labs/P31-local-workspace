@@ -80,6 +80,8 @@ export default defineConfig({
       '@p31/love-ledger': path.resolve(__dirname, '../packages/love-ledger/src'),
       '@p31/game-engine': path.resolve(__dirname, '../packages/game-engine/src'),
       '@p31/sovereign': path.resolve(__dirname, '../packages/sovereign/src'),
+      '@p31/quantum-core': path.resolve(__dirname, '../../packages/quantum-core/src'),
+      '@p31/design-core': path.resolve(__dirname, '../../packages/design-core/src'),
     },
     dedupe: ['three', '@react-three/fiber', '@react-three/drei'],
   },

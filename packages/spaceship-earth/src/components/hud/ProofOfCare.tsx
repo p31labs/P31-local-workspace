@@ -19,41 +19,61 @@ import {
   getGrowthRingWeight,
   type PoCState,
 } from '../../engine/proofOfCare';
+import { computePosnerCoherence } from '../../engine/coherence';
 
 interface ProofOfCareProps {
   userAge?: number; // Optional: for Growth Ring calculation
+  /** Phase 3: live coherence (0..1). When omitted, derived from spoons. */
+  coherence?: number;
 }
 
-export function ProofOfCare({ userAge = 25 }: ProofOfCareProps) {
+export function ProofOfCare({ userAge = 25, coherence }: ProofOfCareProps) {
   const [pocState, setPocState] = useState<PoCState>(createEmptyPoCState);
   const [isExpanded, setIsExpanded] = useState(false);
 
-  // Subscribe to somatic tether data from sovereign store
+  // Subscribe to somatic tether data from sovereign store (real hardware feed
+  // when present; falls back to coherence-derived proxy, not Math.random()).
   const somaticHrv = useSovereignStore((s) => s.somaticHrv);
   const somaticHr = useSovereignStore((s) => s.somaticHr);
+  const spoons = useSovereignStore((s) => s.spoons);
+  const maxSpoons = useSovereignStore((s) => s.maxSpoons);
+  const engagement = useSovereignStore((s) => s.engagement);
 
-  // Simulate respiration rate (would come from hardware)
-  const [simulatedRespiration] = useState(5.8 + Math.random() * 0.4);
+  // Phase 3: coherence from the Posner model (spoons + engagement), unless a
+  // live value is supplied by the parent (App computes it once for the ship).
+  const coh = useMemo(() => {
+    if (typeof coherence === 'number') return coherence;
+    return computePosnerCoherence({
+      spoons01: maxSpoons > 0 ? Math.min(1, spoons / maxSpoons) : 0,
+      engagement01: Math.min(1, engagement / 10),
+      entropy: 0,
+    }).coherence;
+  }, [coherence, spoons, maxSpoons, engagement]);
 
-  // Update PoC state when biometric data changes
+  // Update PoC state when biometric data changes. Real HRV/HR preferred; when
+  // absent, derive a calm proxy from coherence (no fabricated randomness).
   useEffect(() => {
+    const hrv = somaticHrv > 0 ? somaticHrv : Math.round(30 + coh * 40);
+    const hr = somaticHr > 0 ? somaticHr : Math.round(72 - coh * 12);
+    // 0.1 Hz "green coherence" breathing target ≈ 6 breaths/min at high coherence.
+    const respirationRate = 4 + coh * 4;
     const updatedState: PoCState = {
       ...pocState,
-      currentHRV: somaticHrv || 35,
-      currentHR: somaticHr || 68,
-      respirationRate: simulatedRespiration,
+      currentHRV: hrv,
+      currentHR: hr,
+      respirationRate,
     };
-    
+
     const calculated = calculateCareScore(updatedState);
     setPocState(calculated);
-    
-    // Trigger haptic on green coherence (0.1 Hz)
+
+    // Trigger haptic on green coherence (≈6 breaths/min).
     const wasCoherent = Math.abs(pocState.respirationRate - 6) <= 0.5;
     const isCoherent = Math.abs(calculated.respirationRate - 6) <= 0.5;
     if (isCoherent && !wasCoherent) {
       haptic.coherence();
     }
-  }, [somaticHrv, somaticHr, simulatedRespiration]);
+  }, [somaticHrv, somaticHr, coh, pocState]);
 
   // Growth Ring calculation
   const growthRing = useMemo(() => calculateGrowthRing(userAge), [userAge]);

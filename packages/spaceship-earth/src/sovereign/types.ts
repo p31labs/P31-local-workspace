@@ -1,3 +1,5 @@
+import type { FeedbackState, Outcome } from '../engine/feedbackLoop';
+
 export type SovereignRoom = 'OBSERVATORY' | 'COLLIDER' | 'BONDING' | 'BRIDGE' | 'BUFFER' | 'COPILOT' | 'LANDING' | 'RESONANCE' | 'FORGE' | 'VAULT' | 'SOVEREIGN' | 'GEODESIC';
 
 export const SOVEREIGN_ROOMS: readonly SovereignRoom[] = ['OBSERVATORY', 'COLLIDER', 'BONDING', 'BRIDGE', 'BUFFER', 'COPILOT', 'LANDING', 'RESONANCE', 'FORGE', 'VAULT', 'SOVEREIGN', 'GEODESIC'];
@@ -16,6 +18,9 @@ export type ViewPerspective = 'OBSERVER' | 'GODHEAD';
 
 // D1.1: Polymorphic Skin Engine
 export type SkinTheme = 'OPERATOR' | 'KIDS' | 'GRAY_ROCK';
+
+// Phase 1: SIC-POVM ship modes (continuous blend, never a single toggle).
+export type ShipMode = 'explore' | 'create' | 'connect' | 'reflect';
 
 // M18: Somatic Tether
 export type SomaticStatus = 'disconnected' | 'calibrating' | 'active' | 'stress';
@@ -106,6 +111,17 @@ export interface SovereignState {
   skinTheme: SkinTheme;
   accentColor: string;     // CSS hex, e.g. '#00FFFF' — user-selectable primary accent
 
+  // Phase 1: SIC-POVM state engine (see src/engine/stateEngine.ts)
+  // The ship is a continuous superposition of these four modes.
+  modeProbabilities: Record<ShipMode, number>;
+  modeDominant: ShipMode;
+  modeEntropy: number;     // 0 = focused, 1 = scattered (coherence proxy)
+  engagement: number;      // 0..10 observed connection/activity this session
+
+  // Phase 5: feedback loop — running EWMA memory of observed outcomes that
+  // modulates each subsequent SIC-POVM measurement (see engine/feedbackLoop.ts).
+  feedback: FeedbackState;
+
   // D4.6: Sierpinski Progressive Disclosure
   interactedSlots: number[];  // slots user has visited (serializable)
   sierpinskiDepth: number;    // current max fractal depth (0-2)
@@ -173,6 +189,11 @@ export interface SovereignState {
   // D1.1: Polymorphic Skin Engine
   setSkinTheme: (theme: SkinTheme) => void;
   setAccentColor: (hex: string) => void;
+
+  // Phase 1: SIC-POVM state engine actions
+  measureState: () => void;
+  recordOutcome: (outcome: Outcome) => void;
+  setEngagement: (value: number) => void;
 
   // D4.6: Sierpinski Progressive Disclosure
   markSlotInteracted: (slot: number) => void;

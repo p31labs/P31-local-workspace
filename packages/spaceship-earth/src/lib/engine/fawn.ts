@@ -149,6 +149,19 @@ export function getWarning(text: string): string {
 export class FawnGuard {
   static analyze = analyze;
   static getWarning = getWarning;
+
+  /**
+   * Phase 3: coherence-gated analysis. When user coherence is low, intercept
+   * on milder fawn signals; when high, only stronger signals. `threshold`
+   * is the minimum severity that triggers interception.
+   */
+  static gate(text: string, threshold: 'mild' | 'moderate' | 'severe' = 'moderate'): FawnAnalysis {
+    const result = analyze(text);
+    if (!result.triggered) return result;
+    const order = { none: 0, mild: 1, moderate: 2, severe: 3 } as const;
+    const triggered = order[result.severity] >= order[threshold];
+    return triggered ? result : { ...result, triggered: false };
+  }
   
   static grayRock(text: string): string {
     let clean = text;

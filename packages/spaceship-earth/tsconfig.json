@@ -21,6 +21,10 @@
       "@p31/game-engine/*": ["../packages/game-engine/src/*"],
       "@p31/sovereign": ["../packages/sovereign/src"],
       "@p31/sovereign/*": ["../packages/sovereign/src/*"],
+      "@p31/quantum-core": ["../../packages/quantum-core/src"],
+      "@p31/quantum-core/*": ["../../packages/quantum-core/src/*"],
+      "@p31/design-core": ["../../packages/design-core/src"],
+      "@p31/design-core/*": ["../../packages/design-core/src/*"],
       "@p31/tetra": ["src/lib/tetra"],
       "@p31/tetra/*": ["src/lib/tetra/*"]
     }

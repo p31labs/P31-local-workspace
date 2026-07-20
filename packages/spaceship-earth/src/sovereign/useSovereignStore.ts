@@ -33,7 +33,14 @@
  *     const { a, b } = useSovereignStore(useShallow(s => ({ a: s.a, b: s.b })));
  */
 import { create } from 'zustand';
-import type { SovereignState, SovereignRoom, RelayPeer, RelayStatus } from './types';
+import type { SovereignState, SovereignRoom, RelayPeer, RelayStatus, ShipMode } from './types';
+import { measureShipState, type UserState } from '../engine/stateEngine';
+import {
+  initFeedbackState,
+  runFeedbackCycle,
+  foldOutcome,
+  type FeedbackState,
+} from '../engine/feedbackLoop';
 import { SOVEREIGN_ROOMS } from './types';
 import { audioEngine, generateDID, hashTelemetry, exportLedgerJSON } from '@p31/shared/sovereign';
 import { trackEvent } from '../services/telemetry';
@@ -59,8 +66,8 @@ export const useSovereignStore = create<SovereignState>((set, get) => ({
   bleStatus: 'DISCONNECTED',
   loraNodes: 0,
   // NodeContext bridge
-  spoons: 12,
-  maxSpoons: 12,
+  spoons: 5,
+  maxSpoons: 5,
   tier: 'FULL',
   love: 0,
   nodeId: null,
@@ -99,6 +106,16 @@ export const useSovereignStore = create<SovereignState>((set, get) => ({
   // D1.1: Polymorphic Skin Engine
   skinTheme: 'OPERATOR',
   accentColor: (() => { try { return storage.getItem('p31-accent') ?? '#00FFFF'; } catch { return '#00FFFF'; } })(),
+
+  // Phase 1: SIC-POVM state engine — ship starts in a balanced superposition.
+  modeProbabilities: { explore: 0.25, create: 0.25, connect: 0.25, reflect: 0.25 },
+  modeDominant: 'explore',
+  modeEntropy: 1,
+  engagement: 0,
+
+  // Phase 5: feedback loop — running EWMA memory of observed outcomes that
+  // modulates each subsequent SIC-POVM measurement (the ring that closes).
+  feedback: initFeedbackState(),
 
   // D4.6: Sierpinski Progressive Disclosure
   interactedSlots: [],
@@ -270,6 +287,45 @@ export const useSovereignStore = create<SovereignState>((set, get) => ({
     root.setProperty('--neon-faint', `rgba(${r},${g},${b},0.08)`);
     root.setProperty('--neon-ghost', `rgba(${r},${g},${b},0.03)`);
     root.setProperty('--glow-cyan',  `0 0 6px ${hex}, 0 0 20px rgba(${r},${g},${b},0.3)`);
+  },
+
+  // Phase 1 + 5: Re-measure the SIC-POVM ship state, closing the feedback loop.
+  // The raw observables (spoons → energy on the engine's 0..5 scale, love →
+  // well-being, engagement → connection) are blended with the running feedback
+  // memory before measurement, then this cycle's coherence is folded back in.
+  measureState: () => {
+    const s = get();
+    const raw: UserState = {
+      // Engine expects spoons on a 0..5 scale; normalize from the ship's scale.
+      spoons: s.maxSpoons > 0 ? (s.spoons / s.maxSpoons) * 5 : 0,
+      careScore: Math.min(100, s.love),
+      engagement: s.engagement,
+    };
+    const cycle = runFeedbackCycle(raw, s.feedback);
+    set({
+      modeProbabilities: cycle.mode.probabilities,
+      modeDominant: cycle.mode.dominant,
+      modeEntropy: cycle.mode.entropy,
+      feedback: cycle.feedback,
+    });
+  },
+
+  // Phase 5: record an external outcome (a transmission, a coherence reading)
+  // into the feedback memory WITHOUT immediately re-measuring, so callers can
+  // batch an outcome then measure once.
+  recordOutcome: (outcome) => {
+    set({ feedback: foldOutcome(get().feedback, outcome) });
+  },
+
+  setEngagement: (value: number) => {
+    const clamped = Math.max(0, Math.min(10, value));
+    // A rising engagement reading is itself an outcome — fold it into memory
+    // (normalized 0..1) so sustained connection biases future measurements.
+    set({
+      engagement: clamped,
+      feedback: foldOutcome(get().feedback, { engagement: clamped / 10 }),
+    });
+    get().measureState();
   },
 
   // D4.6: Sierpinski Progressive Disclosure
