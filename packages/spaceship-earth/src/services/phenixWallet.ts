@@ -8,7 +8,7 @@
  */
 
 import { generateStealthAddress, computeStealthKey } from '@scopelift/stealth-address-sdk';
-import { secp256k1 } from '@noble/curves/secp256k1';
+import { secp256k1 } from '@noble/curves/secp256k1.js';
 import { storage } from '../lib/storage';
 
 const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
@@ -149,7 +149,7 @@ async function deriveKey(password: string, salt: Uint8Array): Promise<CryptoKey>
 // ── STEALTH KEY GENERATION (SECP256k1 via @noble/curves) ──
 
 async function generateSecp256k1KeyPair(): Promise<{ privateKey: string; publicKey: string }> {
-  const privateKeyBytes = secp256k1.utils.randomPrivateKey();
+  const privateKeyBytes = secp256k1.utils.randomSecretKey();
   const pubKeyHex = secp256k1.getPublicKey(privateKeyBytes, false);
   const pubKeyBytes = new Uint8Array(pubKeyHex);
   const hashBytes = new Uint8Array(await crypto.subtle.digest('SHA-256', pubKeyBytes));
@@ -179,12 +179,12 @@ export async function computeP31StealthKey(
   ephemeralPublicKey: string,
 ): Promise<string> {
   const result = await computeStealthKey({
-    viewingPrivateKey,
-    spendingPrivateKey,
-    ephemeralPublicKey,
+    viewingPrivateKey: viewingPrivateKey as any as `0x${string}`,
+    spendingPrivateKey: spendingPrivateKey as any as `0x${string}`,
+    ephemeralPublicKey: ephemeralPublicKey as any as `0x${string}`,
     schemeId: 1,
   });
-  return result.stealthKey;
+  return result;
 }
 
 // ── VAULT ──
