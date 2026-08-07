@@ -1,8 +1,10 @@
 name = "spaceship-relay"
 main = "worker/index.ts"
-compatibility_date = "2026-01-01"
+compatibility_date = "2026-07-16"
 compatibility_flags = ["nodejs_compat"]
 
 [[kv_namespaces]]
 binding = "SPACESHIP_TELEMETRY"
-id = "cb2cbcad85a54b959f5fc81cb9fc21bb"
+
+[cache]
+enabled = true

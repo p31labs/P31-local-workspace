@@ -106,7 +106,7 @@ export function analyze(text: string): FawnAnalysis {
 
   if (cache.size >= CACHE_MAX_SIZE) {
     const oldestKey = cache.keys().next().value;
-    cache.delete(oldestKey);
+    if (oldestKey !== undefined) cache.delete(oldestKey);
   }
   cache.set(cacheKey, { result, timestamp: now });
 

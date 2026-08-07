@@ -478,9 +478,18 @@ async function handleMintK4(req: Request, env: Env): Promise<Response> {
 }
 
 // ── Router ──
-
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
+    // Handle CORS preflight
+    if (request.method.toUpperCase() === 'OPTIONS') return optionsResponse();
+
+    // WebSocket signaling for kenosisMesh
+    if (new URL(request.url).pathname === '/ws') {
+      const { handleWebSocket } = await import('./wsSignaling');
+      const ws = handleWebSocket(request);
+      if (ws) return ws;
+    }
+
     const url = new URL(request.url);
     const method = request.method.toUpperCase();
     const path = url.pathname;
@@ -529,6 +538,7 @@ export default {
           'POST /api/mint-k4',
           'POST /state/:did',
           'GET  /state/:did',
+          'WS  /ws',
           'GET  /health',
         ],
       }));

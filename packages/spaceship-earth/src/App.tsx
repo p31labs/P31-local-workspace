@@ -1,16 +1,20 @@
 /**
  * @file App.tsx — P31 Spaceship Earth cockpit shell
  */
-import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
+import { useState, useMemo, useEffect, useRef } from 'react';
+import { Canvas } from '@react-three/fiber';
 import { OrbitControls, PerspectiveCamera } from '@react-three/drei';
 import { Globe, Battery, Volume2, VolumeX } from 'lucide-react';
 import { create } from 'zustand';
 import { haptic } from './services/haptic';
+import { initSovereignBridge } from './lib/sovereignBridge';
 import { getLarmorEngine } from './lib/engine/larmor';
-import { RicciMath, getAnimatedCurvature } from './lib/engine/ricci';
+import { RicciMath } from './lib/engine/ricci';
 import { FawnGuard } from './lib/engine/fawn';
 
+import { ZoomLevel, useZUICameraStore } from '@p31/shared/zui';
+import { ZUIScene } from './scenes/ZUIScene';
+import { ZoomControls } from './components/hud/ZoomControls';
 import { CatchersMitt } from './components/hud/CatchersMitt';
 import { ProofOfCare } from './components/hud/ProofOfCare';
 import { DeltaMesh } from './components/mesh/DeltaMesh';
@@ -20,20 +24,16 @@ import { useSovereignStore } from './sovereign/useSovereignStore';
 import { buildShipK4 } from './engine/k4Binding';
 import { computePosnerCoherence, fawnThreshold } from './engine/coherence';
 import { computeLayoutField, type PanelLayout } from './engine/layoutField';
+import { useWebMCP, type SpaceshipWebMCPConfig } from './hooks/useWebMCP';
 
 // Canonical spoon scale — P31-wide is 0–5 (DESIGN.md `data-spoons`). The ship
 // single-sources it here; every energy calc flows through MAX_SPOONS.
 const MAX_SPOONS = 5;
 
 const useAppStore = create<{ spoons: number; setSpoons: (n: number) => void }>((set) => ({
-  spoons: MAX_SPOONS,
+  spoons: 3,
   setSpoons: (n) => set({ spoons: n }),
 }));
-
-function CurvatureDriver({ onTick }: { onTick: (t: number) => void }) {
-  useFrame(({ clock }) => onTick(clock.getElapsedTime()));
-  return null;
-}
 
 export default function App() {
   const [viewMode, setViewMode] = useState<'DELTA' | 'POSNER'>('DELTA');
@@ -42,23 +42,36 @@ export default function App() {
   const setSpoons = useAppStore((s) => s.setSpoons);
   const [input, setInput] = useState('');
   const [warning, setWarning] = useState<string | null>(null);
-  const [curvature, setCurvature] = useState(1.0);
   const larmorEngine = useMemo(() => getLarmorEngine(), []);
+
+  // Phase 2: ZUI camera rig. OrbitControls yields control while a zoom
+  // transition is in flight; auto-rotate only frames the cockpit at MACRO.
+  const orbitControlsRef = useRef<any>(null);
+  const zuiLevel = useZUICameraStore((s) => s.currentLevel);
+  const zuiTransitioning = useZUICameraStore((s) => s.isTransitioning);
 
   // Phase 1 + 5: drive the SIC-POVM measurement through the store's feedback
   // loop. Mirror the local spoon slider into the store first, then measure —
   // measureState() blends the raw state with running feedback memory and folds
   // this cycle's coherence back in (the ring closes). The ship is a continuous
   // superposition that adapts over the session, never a hard mode toggle.
+  // Bridge: sync sovereign store ↔ shell stores via custom events
+  // data-spoons: DOM attribute the shell's crisis mode + reduced-motion depend on
+  useEffect(() => {
+    const cleanup = initSovereignBridge();
+    document.documentElement.setAttribute('data-spoons', String(spoons));
+    return cleanup;
+  }, []);
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-spoons', String(spoons));
+  }, [spoons]);
+
   useEffect(() => {
     const store = useSovereignStore.getState();
     useSovereignStore.setState({ spoons, maxSpoons: MAX_SPOONS });
     store.measureState();
   }, [spoons]);
-
-  const onCurvatureTick = useCallback((t: number) => {
-    setCurvature(getAnimatedCurvature(1.0, t));
-  }, []);
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
@@ -142,32 +155,64 @@ export default function App() {
     transition: 'transform 600ms cubic-bezier(0.16,1,0.3,1), opacity 600ms ease',
   });
 
+  const webmcpRef = useRef<SpaceshipWebMCPConfig | null>(null);
+  webmcpRef.current = {
+    getSpoons: () => useAppStore.getState().spoons,
+    setSpoons: (n) => {
+      setSpoons(n);
+      document.documentElement.setAttribute('data-spoons', String(n));
+    },
+    getViewMode: () => viewMode,
+    toggleViewMode: () => setViewMode((p) => (p === 'DELTA' ? 'POSNER' : 'DELTA')),
+    isLarmorActive: () => isLarmorActive,
+    toggleLarmor,
+    sendTransmission: (_msg: string) => {
+      haptic.transmit();
+      setSpoons(Math.max(0, useAppStore.getState().spoons - 1));
+      const store = useSovereignStore.getState();
+      store.recordOutcome({ coherence: shipCoherence });
+      store.setEngagement(Math.min(10, store.engagement + 1));
+    },
+    getCoherence: () => shipCoherence,
+  };
+  useWebMCP(webmcpRef);
+
   return (
-    <div className="relative w-full h-screen overflow-hidden bg-[#050505] text-[#d8d6d0] font-mono">
+    <div className="relative w-full h-full overflow-hidden bg-transparent text-[#d8d6d0] font-mono">
       <MolecularField coherence={shipCoherence} />
-      <div className="absolute inset-0 z-[1]">
+      <div className="absolute inset-0 z-[1] w-full h-full">
         <Canvas
+          className="w-full h-full"
           gl={{ alpha: true, antialias: true, powerPreference: 'high-performance' }}
           onCreated={({ gl, scene }) => {
             scene.background = null;
             gl.setClearColor(0x000000, 0);
           }}
         >
-          <CurvatureDriver onTick={onCurvatureTick} />
-          <PerspectiveCamera makeDefault position={[0, 0, 5]} />
-          <OrbitControls enableZoom={false} autoRotate autoRotateSpeed={0.5} enablePan={false} />
+          <PerspectiveCamera makeDefault position={[0, 0, 3]} fov={75} />
+          <OrbitControls
+            ref={orbitControlsRef}
+            enableZoom={false}
+            enablePan={false}
+            enabled={!zuiTransitioning}
+            autoRotate={zuiLevel === ZoomLevel.MACRO && !zuiTransitioning}
+            autoRotateSpeed={0.5}
+          />
           <ambientLight intensity={0.35} />
           <pointLight position={[10, 10, 10]} intensity={1.2} color={0x22d3ee} />
-          {viewMode === 'DELTA' ? (
-            <DeltaMesh networkStress={1 - curvature} graph={shipK4} />
-          ) : (
-            <PosnerMolecule spoons={spoons} />
-          )}
+          {zuiLevel === ZoomLevel.MACRO &&
+            (viewMode === 'DELTA' ? (
+              <DeltaMesh graph={shipK4} />
+            ) : (
+              <PosnerMolecule spoons={spoons} />
+            ))}
+          <ZUIScene controlsRef={orbitControlsRef} />
         </Canvas>
       </div>
 
       <CatchersMitt />
       <ProofOfCare userAge={25} coherence={shipCoherence} />
+      <ZoomControls />
 
       <div
         className="absolute top-6 left-6 z-20 pointer-events-auto"
@@ -262,6 +307,12 @@ export default function App() {
           </div>
         </div>
       </div>
+      {spoons === 0 && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 9999, background: '#0A0E17', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16 }}>
+          <p style={{ color: '#4db8a8', fontSize: '1.2rem', fontFamily: 'monospace' }}>🧘 Resting</p>
+          <button onClick={() => setSpoons(2)} style={{ padding: '8px 24px', background: 'rgba(77,184,168,0.15)', border: '1px solid #4db8a8', borderRadius: 8, color: '#4db8a8', cursor: 'pointer' }}>Return 🌿</button>
+        </div>
+      )}
     </div>
   );
 }

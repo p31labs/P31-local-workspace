@@ -45,6 +45,8 @@ export const TriStateCamera: React.FC<TriStateCameraProps> = ({
     phi: Math.PI / 3, // Vertical angle
     theta: 0,         // Horizontal angle
   });
+  const stateRef = useRef(cameraState);
+  stateRef.current = cameraState;
 
   // Update camera state when props change
   useEffect(() => {
@@ -107,26 +109,27 @@ export const TriStateCamera: React.FC<TriStateCameraProps> = ({
     if (!controlsRef.current) return;
 
     const controls = controlsRef.current;
+    const cs = stateRef.current;
     
-    switch (cameraState.mode) {
+    switch (cs.mode) {
       case 'dome':
         // Enforce dome constraints
-        const distance = camera.position.distanceTo(cameraState.target);
-        if (distance < cameraState.radius * 0.75) {
+        const distance = camera.position.distanceTo(cs.target);
+        if (distance < cs.radius * 0.75) {
           // Push camera out if too close
-          const direction = new Vector3().subVectors(camera.position, cameraState.target).normalize();
-          camera.position.copy(cameraState.target).add(direction.multiplyScalar(cameraState.radius * 0.75));
+          const direction = new Vector3().subVectors(camera.position, cs.target).normalize();
+          camera.position.copy(cs.target).add(direction.multiplyScalar(cs.radius * 0.75));
         }
         break;
 
       case 'screen':
         // Maintain screen-parallel orientation
-        camera.lookAt(cameraState.target);
+        camera.lookAt(cs.target);
         // Allow horizontal panning but maintain vertical alignment
         const currentPos = camera.position;
         const targetPos = new Vector3(
           currentPos.x,
-          cameraState.target.y + cameraState.height,
+          cs.target.y + cs.height,
           currentPos.z
         );
         camera.position.lerp(targetPos, 5 * delta);

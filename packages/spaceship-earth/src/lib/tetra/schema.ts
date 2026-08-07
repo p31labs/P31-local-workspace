@@ -27,7 +27,14 @@ export type TetraClass =
   | 'CAR'                  // Vehicle/transport node
   | 'MESH_NODE'            // Individual K4 network node
   | 'BONDING_GAME'         // BONDING chemistry game state
-  | 'SPACESHIP_EARTH';     // Dashboard instance itself
+  | 'SPACESHIP_EARTH'      // Dashboard instance itself
+  // Nonprofit management domains
+  | 'DONOR_CAGE'           // Donor relationships + donation history
+  | 'GRANT_PORTAL'         // Grant applications + funder tracking
+  | 'VOLUNTEER_NET'        // Volunteer scheduling + hour tracking
+  | 'CAMPAIGN_HUB'         // Fundraising campaigns + progress
+  | 'LEDGER_NODE'          // Accounting ledger entries
+  | 'REPORT_ORBIT';        // Reports + analytics
 
 export type TetraScale = 'personal' | 'family' | 'hub' | 'marketplace' | 'ecosystem';
 

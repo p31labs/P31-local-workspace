@@ -1,8 +1,8 @@
-import { useMemo, useRef, useEffect } from 'react';
-import { useFrame } from '@react-three/fiber';
+import { useMemo, useRef, useEffect, useState } from 'react';
 import * as THREE from 'three';
+import { Text } from '@react-three/drei';
+import { useZUICameraStore, ZoomLevel } from '@p31/shared/zui';
 
-// ── 1. Authentic P31 Geodesic Math ──────────────────────────────────────────
 const PHI = (1 + Math.sqrt(5)) / 2;
 
 const RAW_ICOSA_VERTS: [number, number, number][] = [
@@ -17,6 +17,14 @@ const ICOSA_FACES: [number, number, number][] = [
   [3, 9, 4], [3, 4, 2], [3, 2, 6], [3, 6, 8], [3, 8, 9],
   [4, 9, 5], [2, 4, 11], [6, 2, 10], [8, 6, 7], [9, 8, 1],
 ];
+
+const PANEL_SPECS = {
+  'dome-workshop': { label: 'Workshop', color: '#fb923c', cond: (cx: number, cy: number, _cz: number) => cy > 0.5 && cx < -0.5 },
+  'dome-garden':   { label: 'Garden',   color: '#34d399', cond: (cx: number, cy: number, _cz: number) => cy > 0.5 && cx > 0.5 },
+  'dome-atelier':  { label: 'Atelier',  color: '#c084fc', cond: (cx: number, cy: number, _cz: number) => cy < -0.5 },
+} as const;
+
+type PanelId = keyof typeof PANEL_SPECS;
 
 function buildIcosaSphereDome(rad: number, subs: number) {
   let vertices: [number, number, number][] = RAW_ICOSA_VERTS.map(([x, y, z]) => {
@@ -59,39 +67,88 @@ function buildIcosaSphereDome(rad: number, subs: number) {
   return { vertices, faces, edges };
 }
 
-function buildGeometries(radius: number, detail: number) {
-  const { vertices, faces, edges } = buildIcosaSphereDome(radius, detail);
-
-  // Face geometry
-  const facePositions = new Float32Array(faces.length * 9);
-  faces.forEach((face, i) => {
-    for (let v = 0; v < 3; v++) {
-      facePositions[i * 9 + v * 3]     = vertices[face[v]][0];
-      facePositions[i * 9 + v * 3 + 1] = vertices[face[v]][1];
-      facePositions[i * 9 + v * 3 + 2] = vertices[face[v]][2];
-    }
+function buildFaceGeo(
+  faceList: [number, number, number][],
+  verts: [number, number, number][],
+): THREE.BufferGeometry {
+  const pos = new Float32Array(faceList.length * 9);
+  faceList.forEach(([a, b, c], i) => {
+    pos[i * 9] = verts[a][0]; pos[i * 9 + 1] = verts[a][1]; pos[i * 9 + 2] = verts[a][2];
+    pos[i * 9 + 3] = verts[b][0]; pos[i * 9 + 4] = verts[b][1]; pos[i * 9 + 5] = verts[b][2];
+    pos[i * 9 + 6] = verts[c][0]; pos[i * 9 + 7] = verts[c][1]; pos[i * 9 + 8] = verts[c][2];
   });
-  const faceGeo = new THREE.BufferGeometry();
-  faceGeo.setAttribute('position', new THREE.BufferAttribute(facePositions, 3));
-  faceGeo.computeVertexNormals();
-
-  // Edge geometry
-  const edgePositions = new Float32Array(edges.length * 6);
-  edges.forEach(([a, b], i) => {
-    edgePositions[i * 6]     = vertices[a][0];
-    edgePositions[i * 6 + 1] = vertices[a][1];
-    edgePositions[i * 6 + 2] = vertices[a][2];
-    edgePositions[i * 6 + 3] = vertices[b][0];
-    edgePositions[i * 6 + 4] = vertices[b][1];
-    edgePositions[i * 6 + 5] = vertices[b][2];
-  });
-  const edgeGeo = new THREE.BufferGeometry();
-  edgeGeo.setAttribute('position', new THREE.BufferAttribute(edgePositions, 3));
-
-  return { faceGeo, edgeGeo };
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  g.computeVertexNormals();
+  return g;
 }
 
-// ── 2. React Three Fiber Component ──────────────────────────────────────────
+function buildAllGeometries(radius: number, detail: number) {
+  const { vertices, faces, edges } = buildIcosaSphereDome(radius, detail);
+
+  const panelFaces: Record<PanelId, [number, number, number][]> = {
+    'dome-workshop': [],
+    'dome-garden': [],
+    'dome-atelier': [],
+  };
+  const structureFaces: [number, number, number][] = [];
+
+  const panelCenters: Record<PanelId, THREE.Vector3> = {} as any;
+  const accum: Record<PanelId, THREE.Vector3> = {} as any;
+
+  for (const face of faces) {
+    const [a, b, c] = face;
+    const cx = (vertices[a][0] + vertices[b][0] + vertices[c][0]) / 3;
+    const cy = (vertices[a][1] + vertices[b][1] + vertices[c][1]) / 3;
+    const cz = (vertices[a][2] + vertices[b][2] + vertices[c][2]) / 3;
+
+    let key: PanelId | null = null;
+    for (const [id, spec] of Object.entries(PANEL_SPECS)) {
+      if (spec.cond(cx, cy, cz)) { key = id as PanelId; break; }
+    }
+
+    if (key) {
+      panelFaces[key].push(face);
+      if (!accum[key]) accum[key] = new THREE.Vector3();
+      accum[key].x += cx; accum[key].y += cy; accum[key].z += cz;
+    } else {
+      structureFaces.push(face);
+    }
+  }
+
+  for (const id of Object.keys(PANEL_SPECS) as PanelId[]) {
+    const n = panelFaces[id].length;
+    if (n > 0) {
+      const a = accum[id];
+      // Place label just outside the dome surface
+      const dir = a.clone().normalize();
+      panelCenters[id] = dir.multiplyScalar(radius * 1.12);
+    } else {
+      panelCenters[id] = new THREE.Vector3(0, 0, 0);
+    }
+  }
+
+  const allGeo = buildFaceGeo(faces, vertices);
+
+  const edgePos = new Float32Array(edges.length * 6);
+  edges.forEach(([a, b], i) => {
+    edgePos[i * 6] = vertices[a][0]; edgePos[i * 6 + 1] = vertices[a][1]; edgePos[i * 6 + 2] = vertices[a][2];
+    edgePos[i * 6 + 3] = vertices[b][0]; edgePos[i * 6 + 4] = vertices[b][1]; edgePos[i * 6 + 5] = vertices[b][2];
+  });
+  const edgeGeo = new THREE.BufferGeometry();
+  edgeGeo.setAttribute('position', new THREE.BufferAttribute(edgePos, 3));
+
+  return {
+    panelGeos: Object.fromEntries(
+      Object.entries(panelFaces).map(([id, fs]) => [id, buildFaceGeo(fs, vertices)])
+    ) as Record<PanelId, THREE.BufferGeometry>,
+    structureGeo: buildFaceGeo(structureFaces, vertices),
+    allGeo,
+    edgeGeo,
+    panelCenters,
+  };
+}
+
 interface GeodesicDomeProps {
   isUrgent?: boolean;
   radius?: number;
@@ -99,61 +156,77 @@ interface GeodesicDomeProps {
 }
 
 export function GeodesicDome({ isUrgent = false, radius = 8, detail = 3 }: GeodesicDomeProps) {
-  const outerRef = useRef<THREE.Group>(null);
-  const innerRef = useRef<THREE.Group>(null);
+  const [hovered, setHovered] = useState<PanelId | null>(null);
 
-  const { faceGeo, edgeGeo } = useMemo(
-    () => buildGeometries(radius, detail),
-    [radius, detail],
-  );
+  const data = useMemo(() => buildAllGeometries(radius, detail), [radius, detail]);
 
-  useEffect(() => () => { faceGeo.dispose(); edgeGeo.dispose(); }, [faceGeo, edgeGeo]);
-
-  useFrame((_, delta) => {
-    const speed = isUrgent ? 0.15 : 0.05;
-    if (outerRef.current) {
-      outerRef.current.rotation.y += delta * speed;
-      outerRef.current.rotation.x += delta * speed * 0.5;
-    }
-    if (innerRef.current) {
-      innerRef.current.rotation.y -= delta * speed * 0.8;
-      innerRef.current.rotation.z += delta * speed * 0.3;
-    }
-  });
+  useEffect(() => {
+    const { panelGeos, structureGeo, allGeo, edgeGeo } = data;
+    return () => {
+      for (const g of Object.values(panelGeos)) g.dispose();
+      structureGeo.dispose();
+      allGeo.dispose();
+      edgeGeo.dispose();
+    };
+  }, [data]);
 
   const accentColor = isUrgent ? '#cc6247' : '#00D4FF';
 
   return (
     <group>
-      {/* Outer cockpit shell */}
-      <group ref={outerRef}>
-        <mesh geometry={faceGeo}>
+      {/* Outer structural shell + 3 colored panels */}
+      <group>
+        {/* Structure faces (gray, non-panel faces) */}
+        <mesh geometry={data.structureGeo}>
           <meshPhysicalMaterial
             color={isUrgent ? 0x1a0505 : 0x050508}
-            emissive={isUrgent ? new THREE.Color(0x330000) : new THREE.Color(0x000000)}
             roughness={0.15}
             metalness={0.5}
             transmission={0.6}
             thickness={0.8}
             transparent
-            opacity={0.85}
+            opacity={0.55}
             side={THREE.DoubleSide}
-            polygonOffset
-            polygonOffsetFactor={1}
           />
         </mesh>
-        <lineSegments geometry={edgeGeo}>
+
+        {/* 3 curved panel meshes */}
+        {(Object.entries(PANEL_SPECS) as [PanelId, typeof PANEL_SPECS[PanelId]][]).map(([id, spec]) => (
+          <mesh
+            key={id}
+            geometry={data.panelGeos[id]}
+            onClick={(e) => { e.stopPropagation(); useZUICameraStore.getState().zoomToNode(id, ZoomLevel.MESO); }}
+            onPointerOver={(e) => { e.stopPropagation(); setHovered(id); }}
+            onPointerOut={() => setHovered(null)}
+          >
+            <meshStandardMaterial
+              color={spec.color}
+              emissive={spec.color}
+              emissiveIntensity={hovered === id ? 0.55 : 0.12}
+              roughness={0.5}
+              metalness={0.1}
+              transparent
+              opacity={0.88}
+              side={THREE.DoubleSide}
+              polygonOffset
+              polygonOffsetFactor={-1}
+            />
+          </mesh>
+        ))}
+
+        {/* Wireframe edge overlay */}
+        <lineSegments geometry={data.edgeGeo}>
           <lineBasicMaterial
             color={accentColor}
             transparent
-            opacity={isUrgent ? 0.80 : 0.25}
+            opacity={isUrgent ? 0.80 : 0.28}
           />
         </lineSegments>
       </group>
 
       {/* Inner navigation shell */}
-      <group ref={innerRef} scale={0.97}>
-        <mesh geometry={faceGeo}>
+      <group scale={0.97}>
+        <mesh geometry={data.allGeo}>
           <meshPhysicalMaterial
             color={0x080810}
             roughness={0.1}
@@ -165,7 +238,7 @@ export function GeodesicDome({ isUrgent = false, radius = 8, detail = 3 }: Geode
             side={THREE.DoubleSide}
           />
         </mesh>
-        <lineSegments geometry={edgeGeo}>
+        <lineSegments geometry={data.edgeGeo}>
           <lineBasicMaterial
             color={accentColor}
             transparent
@@ -174,6 +247,23 @@ export function GeodesicDome({ isUrgent = false, radius = 8, detail = 3 }: Geode
           />
         </lineSegments>
       </group>
+
+      {/* Panel labels */}
+      {(Object.entries(PANEL_SPECS) as [PanelId, typeof PANEL_SPECS[PanelId]][]).map(([id, spec]) => (
+        <Text
+          key={`label-${id}`}
+          position={data.panelCenters[id]}
+          fontSize={0.55}
+          color="#ffffff"
+          anchorX="center"
+          anchorY="middle"
+          font="/fonts/JetBrainsMono-Bold.ttf"
+          outlineWidth={0.08}
+          outlineColor="#000000"
+        >
+          {spec.label}
+        </Text>
+      ))}
     </group>
   );
 }

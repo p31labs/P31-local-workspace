@@ -5,6 +5,9 @@ import * as THREE from 'three';
 import { ArtifactNode } from './ArtifactNode';
 import type { ArtifactData } from './ArtifactNode';
 
+const CORE_GEO = new THREE.SphereGeometry(1, 32, 32);
+const GLOW_GEO = new THREE.SphereGeometry(1, 16, 16);
+
 const STAGE_ORDER = ['SEED', 'SPROUT', 'SAPLING', 'BLOOM', 'FRUIT'] as const;
 const STAGE_RING_RADIUS: Record<string, number> = {
   SEED: 2.5,
@@ -146,7 +149,6 @@ export function MaturityDashboard() {
 
   const coreColor = averageScore >= 4 ? '#22d3ee' : averageScore >= 2 ? '#fbbf24' : '#F44336';
 
-  const coreGeometry = useMemo(() => new THREE.SphereGeometry(1, 32, 32), []);
   const coreMaterial = useMemo(() => new THREE.MeshStandardMaterial({
     color: coreColor,
     emissive: coreColor,
@@ -155,7 +157,6 @@ export function MaturityDashboard() {
     metalness: 0.9,
   }), [coreColor]);
 
-  const glowGeometry = useMemo(() => new THREE.SphereGeometry(1, 16, 16), []);
   const glowMaterial = useMemo(() => new THREE.MeshBasicMaterial({
     color: coreColor,
     transparent: true,
@@ -185,8 +186,8 @@ export function MaturityDashboard() {
       <pointLight position={[-10, -5, -10]} intensity={0.5} color={0x7A27FF} />
 
       <group ref={groupRef}>
-        <mesh geometry={coreGeometry} material={coreMaterial} scale={[coreRadius, coreRadius, coreRadius]} />
-        <mesh geometry={glowGeometry} material={glowMaterial} scale={[coreRadius * 1.8, coreRadius * 1.8, coreRadius * 1.8]} />
+        <mesh geometry={CORE_GEO} material={coreMaterial} scale={[coreRadius, coreRadius, coreRadius]} />
+        <mesh geometry={GLOW_GEO} material={glowMaterial} scale={[coreRadius * 1.8, coreRadius * 1.8, coreRadius * 1.8]} />
 
         <Text
           position={[0, coreRadius + 0.4, 0]}

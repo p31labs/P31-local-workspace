@@ -63,7 +63,7 @@ export function DIDAvatar({ did, size = 48 }: DIDavatarProps) {
   }
 
   // Build 5×5 grid: col 0,1,2 from cells; col 3 mirrors col 1; col 4 mirrors col 0
-  const rects: JSX.Element[] = [];
+  const rects: React.JSX.Element[] = [];
   for (let row = 0; row < 5; row++) {
     for (let col = 0; col < 5; col++) {
       const srcCol = col <= 2 ? col : 4 - col;

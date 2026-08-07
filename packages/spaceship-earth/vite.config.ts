@@ -1,13 +1,15 @@
 /// <reference types="vitest" />
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import tailwindcss from '@tailwindcss/vite';
 import path from 'path';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
-  base: '/spaceship-earth/',
+  base: '/',
   plugins: [
+    tailwindcss(),
     react(),
     visualizer({
       filename: './dist/stats.html',
@@ -75,13 +77,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@p31/shared': path.resolve(__dirname, '../packages/shared/src'),
-      '@p31/node-zero': path.resolve(__dirname, '../packages/node-zero/src'),
-      '@p31/love-ledger': path.resolve(__dirname, '../packages/love-ledger/src'),
-      '@p31/game-engine': path.resolve(__dirname, '../packages/game-engine/src'),
-      '@p31/sovereign': path.resolve(__dirname, '../packages/sovereign/src'),
-      '@p31/quantum-core': path.resolve(__dirname, '../../packages/quantum-core/src'),
-      '@p31/design-core': path.resolve(__dirname, '../../packages/design-core/src'),
+      '@p31/tetra': path.resolve(__dirname, './src/lib/tetra'),
     },
     dedupe: ['three', '@react-three/fiber', '@react-three/drei'],
   },
@@ -105,9 +101,5 @@ export default defineConfig({
       },
     },
     chunkSizeWarningLimit: 1000,
-  },
-  test: {
-    environment: 'node',
-    include: ['src/**/*.test.ts'],
   },
 });

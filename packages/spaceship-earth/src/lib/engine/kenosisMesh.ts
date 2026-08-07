@@ -25,8 +25,10 @@ export interface KenosisMeshConfig {
 
 // Public signaling servers are unreliable — default to local-only (IndexedDB).
 // Pass signalingServers in config to enable cross-device WebRTC sync.
-const DEFAULT_SIGNALING: string[] = [];
-const MAX_SPOONS = 12;
+const DEFAULT_SIGNALING = [
+  'wss://spaceship-relay.trimtab-signal.workers.dev/ws?room=p31-spaceship&topic=yjs',
+];
+const MAX_SPOONS = 5;
 const CONNECTION_TIMEOUT_MS = 15000;
 
 function clampSpoons(value: unknown): number {

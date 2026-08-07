@@ -5,7 +5,7 @@ import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { fieldChaos } from '../engine/coherence';
 
-const PARTICLE_COUNT = 2400;
+const PARTICLE_COUNT = 400;
 const BG_COLOR = 0x050505;
 
 interface MolecularFieldProps {
@@ -93,10 +93,10 @@ export function MolecularField({ coherence }: MolecularFieldProps) {
 
     const mat = new THREE.PointsMaterial({
       vertexColors: true,
-      size: 0.18,
+      size: 0.08,
       sizeAttenuation: true,
       transparent: true,
-      opacity: 0.82,
+      opacity: 0.5,
       blending: THREE.AdditiveBlending,
       depthWrite: false,
       map: dotTex,

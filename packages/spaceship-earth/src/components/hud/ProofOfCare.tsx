@@ -9,7 +9,7 @@
  * 
  * CWP-JITTERBUG-12: Proof of Care (PoC) UI Engine
  */
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useSovereignStore } from '../../sovereign/useSovereignStore';
 import { haptic } from '../../services/haptic';
 import {
@@ -50,30 +50,40 @@ export function ProofOfCare({ userAge = 25, coherence }: ProofOfCareProps) {
     }).coherence;
   }, [coherence, spoons, maxSpoons, engagement]);
 
+  // Keep the latest PoC state in a ref so the derivation below can read the
+  // previous respiration rate without re-running on every pocState change
+  // (self-referential deps would loop the effect).
+  const pocStateRef = useRef(pocState);
+  useEffect(() => {
+    pocStateRef.current = pocState;
+  }, [pocState]);
+
   // Update PoC state when biometric data changes. Real HRV/HR preferred; when
   // absent, derive a calm proxy from coherence (no fabricated randomness).
   useEffect(() => {
+    const prev = pocStateRef.current;
     const hrv = somaticHrv > 0 ? somaticHrv : Math.round(30 + coh * 40);
     const hr = somaticHr > 0 ? somaticHr : Math.round(72 - coh * 12);
     // 0.1 Hz "green coherence" breathing target ≈ 6 breaths/min at high coherence.
     const respirationRate = 4 + coh * 4;
     const updatedState: PoCState = {
-      ...pocState,
+      ...prev,
       currentHRV: hrv,
       currentHR: hr,
       respirationRate,
     };
 
     const calculated = calculateCareScore(updatedState);
+    pocStateRef.current = calculated;
     setPocState(calculated);
 
     // Trigger haptic on green coherence (≈6 breaths/min).
-    const wasCoherent = Math.abs(pocState.respirationRate - 6) <= 0.5;
+    const wasCoherent = Math.abs(prev.respirationRate - 6) <= 0.5;
     const isCoherent = Math.abs(calculated.respirationRate - 6) <= 0.5;
     if (isCoherent && !wasCoherent) {
       haptic.coherence();
     }
-  }, [somaticHrv, somaticHr, coh, pocState]);
+  }, [somaticHrv, somaticHr, coh]);
 
   // Growth Ring calculation
   const growthRing = useMemo(() => calculateGrowthRing(userAge), [userAge]);

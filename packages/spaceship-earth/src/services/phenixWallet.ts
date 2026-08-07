@@ -9,6 +9,7 @@
 
 import { generateStealthAddress, computeStealthKey } from '@scopelift/stealth-address-sdk';
 import { secp256k1 } from '@noble/curves/secp256k1.js';
+import { ed25519 } from '@noble/curves/ed25519.js';
 import { storage } from '../lib/storage';
 
 const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
@@ -470,5 +471,503 @@ export function getWalletState(): WalletState {
     totalETH,
     stealthAddresses: addrs,
     hwConnected: false,
+  };
+}
+
+// ── SOVEREIGN IDENTITY (Ed25519 + DID:key) ──────────────────────────
+
+export interface Ed25519Identity {
+  did: string;
+  publicKeyHex: string;
+  privateKeyHex: string;
+  publicKeyMultibase: string;
+}
+
+function toHex(bytes: Uint8Array): string {
+  return Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+function fromHex(hex: string): Uint8Array {
+  const arr = new Uint8Array(hex.length / 2);
+  for (let i = 0; i < hex.length; i += 2) {
+    arr[i / 2] = parseInt(hex.substring(i, i + 2), 16);
+  }
+  return arr;
+}
+
+function multibaseEncode(bytes: Uint8Array): string {
+  const alphabet = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+  let num = 0n;
+  for (const b of bytes) num = (num << 8n) | BigInt(b);
+  if (num === 0n) return 'z1';
+  let out = '';
+  while (num > 0n) {
+    out = alphabet[Number(num % 58n)] + out;
+    num /= 58n;
+  }
+  return 'z' + out;
+}
+
+export function generateEd25519Identity(): Ed25519Identity {
+  const priv = crypto.getRandomValues(new Uint8Array(32));
+  const pub = ed25519.getPublicKey(priv);
+  const pubHex = toHex(pub);
+  const privHex = toHex(priv);
+  const multicodec = new Uint8Array([0xed, 0x01, ...pub]);
+  const mb = multibaseEncode(multicodec);
+  const did = `did:key:${mb}`;
+  return { did, publicKeyHex: pubHex, privateKeyHex: privHex, publicKeyMultibase: mb };
+}
+
+export function signEd25519(privateKeyHex: string, message: Uint8Array): Uint8Array {
+  return ed25519.sign(message, fromHex(privateKeyHex));
+}
+
+export function verifyEd25519(publicKeyHex: string, message: Uint8Array, signature: Uint8Array): boolean {
+  return ed25519.verify(signature, message, fromHex(publicKeyHex));
+}
+
+// ── VC STORAGE ────────────────────────────────────────────────────────
+
+const VC_KEY = 'phenix_vc_store_v2';
+
+export interface StoredCredential {
+  id: string;
+  vct: string;
+  sdjwt: string;
+  issuerDID: string;
+  issuedAt: string;
+  claims: Record<string, unknown>;
+  merkleRoot?: string;
+  nullifier?: string;
+  privacyEnabled?: boolean;
+}
+
+export function storeCredential(cred: StoredCredential): void {
+  const store = getCredentials();
+  const existing = store.findIndex(c => c.id === cred.id);
+  if (existing >= 0) store[existing] = cred;
+  else store.push(cred);
+  try {
+    localStorage.setItem(VC_KEY, JSON.stringify(store));
+  } catch {
+    storage.setItem(VC_KEY, store);
+  }
+}
+
+export function getCredentials(): StoredCredential[] {
+  try {
+    const raw = localStorage.getItem(VC_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch {}
+  try {
+    return storage.getItem<StoredCredential[]>(VC_KEY) || [];
+  } catch {
+    return [];
+  }
+}
+
+export function getCredentialById(id: string): StoredCredential | null {
+  return getCredentials().find(c => c.id === id) || null;
+}
+
+export function deleteCredential(id: string): void {
+  const store = getCredentials().filter(c => c.id !== id);
+  try {
+    localStorage.setItem(VC_KEY, JSON.stringify(store));
+  } catch {
+    storage.setItem(VC_KEY, store);
+  }
+}
+
+// ── CREDENTIAL PRESENTATION ──────────────────────────────────────────
+
+export interface VCPresentation {
+  credential: StoredCredential;
+  disclosedClaims: string[];
+  presentation: string;
+  keyBindingJWT: string;
+  aud: string;
+  nonce: string;
+  createdAt: string;
+}
+
+const PRESENTATION_KEY = 'phenix_presentations';
+
+export async function createPresentation(
+  credential: StoredCredential,
+  disclosedClaims: string[],
+  aud: string,
+  identity: Ed25519Identity,
+): Promise<VCPresentation> {
+  const nonce = toHex(crypto.getRandomValues(new Uint8Array(16)));
+
+  const header = { alg: 'EdDSA', typ: 'kb+jwt' };
+  const headerB64 = btoa(JSON.stringify(header)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+
+  const payload = {
+    aud,
+    nonce,
+    iat: Math.floor(Date.now() / 1000),
+    sd_hash: 'sha256_disclosures_placeholder',
+  };
+  const payloadB64 = btoa(JSON.stringify(payload)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+
+  const signingInput = new TextEncoder().encode(`${headerB64}.${payloadB64}`);
+  const sig = signEd25519(identity.privateKeyHex, signingInput);
+  const sigB64 = btoa(String.fromCharCode(...sig)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+
+  const keyBindingJWT = `${headerB64}.${payloadB64}.${sigB64}`;
+
+  const presentation: VCPresentation = {
+    credential,
+    disclosedClaims,
+    presentation: `${credential.sdjwt}~${keyBindingJWT}`,
+    keyBindingJWT,
+    aud,
+    nonce,
+    createdAt: new Date().toISOString(),
+  };
+
+  const stored = getPresentations();
+  stored.push(presentation);
+  try {
+    localStorage.setItem(PRESENTATION_KEY, JSON.stringify(stored));
+  } catch {
+    storage.setItem(PRESENTATION_KEY, stored);
+  }
+
+  return presentation;
+}
+
+export function getPresentations(): VCPresentation[] {
+  try {
+    const raw = localStorage.getItem(PRESENTATION_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch {}
+  return [];
+}
+
+// ── ZK PROOF GENERATION ──────────────────────────────────────────────
+
+let _MerkleTree: any = null;
+let _zkModule: any = null;
+
+async function loadZKModules(): Promise<void> {
+  if (_MerkleTree && _zkModule) return;
+  const mod = await import('@p31/shared');
+  _MerkleTree = mod.MerkleTree;
+  _zkModule = mod;
+}
+
+export async function generateZKProofForCredential(
+  credential: StoredCredential,
+  claimKey: string,
+  secret: Uint8Array,
+): Promise<{ nullifier: string; leafHex: string; rootHex: string; proof: string }> {
+  await loadZKModules();
+
+  const enc = new TextEncoder();
+  const claimValue = String(credential.claims[claimKey] ?? '');
+  const leaf = enc.encode(`${claimKey}:${claimValue}`);
+
+  const tree = await _MerkleTree.build([leaf]);
+  const root = tree.getRoot();
+  const merkleProof = tree.getProof(0);
+
+  const nullifier = await _zkModule.generateNullifier(credential.id, claimKey, secret);
+  const proof = await _zkModule.generateZKProof(leaf, merkleProof, root, nullifier, secret);
+
+  return {
+    nullifier,
+    leafHex: proof.leafHex,
+    rootHex: proof.rootHex,
+    proof: proof.proof,
+  };
+}
+
+export async function verifyZKProofForCredential(
+  credential: StoredCredential,
+  claimKey: string,
+  proofHex: string,
+  nullifier: string,
+  secret: Uint8Array,
+): Promise<boolean> {
+  await loadZKModules();
+
+  const enc = new TextEncoder();
+  const leaf = enc.encode(`${claimKey}:${credential.claims[claimKey] || ''}`);
+  const tree = await _MerkleTree.build([leaf]);
+
+  const zkProof = {
+    leafHex: toHex(leaf),
+    rootHex: toHex(tree.getRoot()),
+    nullifier,
+    proof: proofHex,
+  };
+
+  return _zkModule.verifyZKProof(zkProof, secret);
+}
+
+// ── WALLET CAPABILITIES (Agent Discovery) ────────────────────────────
+
+export function getWalletCapabilities(): Record<string, unknown> {
+  const state = getWalletState();
+  const creds = getCredentials();
+  return {
+    name: 'Phenix Donation Wallet',
+    version: '3.0.0',
+    exists: state.exists,
+    unlocked: state.unlocked,
+    stealthAddresses: state.stealthAddresses.length,
+    totalETH: state.totalETH,
+    credentialCount: creds.length,
+    credentialTypes: [...new Set(creds.map(c => c.vct))],
+    capabilities: [
+      'erc5564_stealth_addresses',
+      'aes256gcm_vault',
+      'ed25519_keygen',
+      'did_key_identity',
+      'sd_jwt_storage',
+      'key_binding_presentation',
+      'zk_proof_generation',
+      'memo_to_file_ledger',
+      'sha256_integrity_export',
+    ],
+    cryptoSuites: ['Ed25519', 'SECP256k1', 'AES-256-GCM', 'SHA-256', 'PBKDF2'],
+    mcpAnnotations: ['data-mcp-tool="phenixWallet"', 'data-mcp-target="wallet-root"'],
+  };
+}
+
+// ── MULTI-DID SUPPORT ─────────────────────────────────────────────────
+
+const IDENTITIES_KEY = 'phenix_identities_v2';
+const ACTIVE_DID_KEY = 'phenix_active_did';
+
+export interface StoredIdentity {
+  did: string;
+  publicKeyHex: string;
+  label: string;
+  createdAt: string;
+  verified: boolean;
+  didMethod: 'did:key' | 'did:web' | 'did:jwk';
+}
+
+export function storeIdentity(id: StoredIdentity): void {
+  const ids = getIdentities();
+  const existing = ids.findIndex(i => i.did === id.did);
+  if (existing >= 0) ids[existing] = id;
+  else ids.push(id);
+  try { localStorage.setItem(IDENTITIES_KEY, JSON.stringify(ids)); } catch {}
+}
+
+export function getIdentities(): StoredIdentity[] {
+  try {
+    const raw = localStorage.getItem(IDENTITIES_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch {}
+  return [];
+}
+
+export function getActiveIdentity(): StoredIdentity | null {
+  const activeDid = localStorage.getItem(ACTIVE_DID_KEY);
+  if (!activeDid) return getIdentities()[0] || null;
+  return getIdentities().find(i => i.did === activeDid) || null;
+}
+
+export function switchActiveIdentity(did: string): boolean {
+  const exists = getIdentities().find(i => i.did === did);
+  if (!exists) return false;
+  localStorage.setItem(ACTIVE_DID_KEY, did);
+  return true;
+}
+
+export function removeIdentity(did: string): void {
+  const ids = getIdentities().filter(i => i.did !== did);
+  try { localStorage.setItem(IDENTITIES_KEY, JSON.stringify(ids)); } catch {}
+  if (localStorage.getItem(ACTIVE_DID_KEY) === did) {
+    localStorage.removeItem(ACTIVE_DID_KEY);
+  }
+}
+
+export function createIdentityFromEd25519(label: string): StoredIdentity {
+  const ed25519 = generateEd25519Identity();
+  const identity: StoredIdentity = {
+    did: ed25519.did,
+    publicKeyHex: ed25519.publicKeyHex,
+    label: label || `Identity ${getIdentities().length + 1}`,
+    createdAt: new Date().toISOString(),
+    verified: false,
+    didMethod: 'did:key',
+  };
+  storeIdentity(identity);
+  if (!getActiveIdentity()) switchActiveIdentity(identity.did);
+  return identity;
+}
+
+// ── HARDWARE WALLET BRIDGE (WebUSB) ──────────────────────────────────
+
+let hwLastConnected = false;
+
+export function isHardwareAvailable(): boolean {
+  return typeof navigator !== 'undefined' && 'usb' in navigator;
+}
+
+export async function connectHardwareWallet(): Promise<{ connected: boolean; deviceName?: string; error?: string }> {
+  if (!isHardwareAvailable()) {
+    return { connected: false, error: 'WebUSB not available in this browser.' };
+  }
+  try {
+    const device = await (navigator as any).usb.requestDevice({
+      filters: [{ vendorId: 0x1209 }],
+    });
+    await device.open();
+    hwLastConnected = true;
+    return { connected: true, deviceName: device.productName || 'P31 Hardware Wallet' };
+  } catch (e: any) {
+    hwLastConnected = false;
+    return { connected: false, error: e.message || 'Connection failed' };
+  }
+}
+
+export function isHardwareConnected(): boolean {
+  return hwLastConnected;
+}
+
+export async function signWithHardwareWallet(message: Uint8Array): Promise<{ signature: string; error?: string }> {
+  if (!hwLastConnected) {
+    return { signature: '', error: 'Hardware wallet not connected.' };
+  }
+  try {
+    return { signature: '', error: 'WebUSB signing not implemented — requires P31 firmware command.' };
+  } catch (e: any) {
+    return { signature: '', error: e.message };
+  }
+}
+
+// ── SOCIAL RECOVERY (Guardian Integration) ────────────────────────────
+
+const FEDERATION_API = 'https://federation.p31ca.org';
+
+export async function addRecoveryGuardian(
+  subjectDid: string,
+  guardianDid: string,
+  shareHash: string,
+  threshold = 3,
+  totalGuardians = 5,
+): Promise<{ status: string; error?: string }> {
+  try {
+    const resp = await fetch(`${FEDERATION_API}/identity/recovery/guardians`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ subjectDid, guardianDid, shareHash, threshold, totalGuardians }),
+    });
+    if (!resp.ok) {
+      const err = await resp.json().catch(() => ({ error: resp.statusText }));
+      return { status: 'failed', error: (err as any).error };
+    }
+    return { status: 'guardian_added' };
+  } catch (e: any) {
+    return { status: 'error', error: e.message };
+  }
+}
+
+export async function removeRecoveryGuardian(
+  subjectDid: string,
+  guardianDid: string,
+): Promise<{ status: string; error?: string }> {
+  try {
+    const resp = await fetch(`${FEDERATION_API}/identity/recovery/guardians/${encodeURIComponent(guardianDid)}`, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ did: subjectDid }),
+    });
+    if (!resp.ok) {
+      const err = await resp.json().catch(() => ({ error: resp.statusText }));
+      return { status: 'failed', error: (err as any).error };
+    }
+    return { status: 'guardian_removed' };
+  } catch (e: any) {
+    return { status: 'error', error: e.message };
+  }
+}
+
+export async function getRecoveryGuardians(did: string): Promise<{
+  guardians: Array<{ guardianDid: string; createdAt: string }>;
+  threshold: number;
+  totalGuardians: number;
+  recoveryPossible: boolean;
+} | { error: string }> {
+  try {
+    const resp = await fetch(`${FEDERATION_API}/identity/recovery/guardians/${encodeURIComponent(did)}`);
+    if (!resp.ok) return { error: `HTTP ${resp.status}` };
+    return resp.json();
+  } catch (e: any) {
+    return { error: e.message };
+  }
+}
+
+export async function initiateRecovery(
+  did: string,
+  shareHashes: string[],
+): Promise<{ status: string; sharesValidated?: number; threshold?: number; error?: string }> {
+  try {
+    const resp = await fetch(`${FEDERATION_API}/identity/recovery/initiate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ did, shareHashes }),
+    });
+    const data = await resp.json();
+    if (!resp.ok) return { status: 'failed', error: data.error };
+    return { status: 'recovery_authorized', sharesValidated: data.sharesValidated, threshold: data.threshold };
+  } catch (e: any) {
+    return { status: 'error', error: e.message };
+  }
+}
+
+// ── UPDATED STATE + CAPABILITIES ──────────────────────────────────────
+
+export function getExtendedWalletState() {
+  const base = getWalletState();
+  const identities = getIdentities();
+  const active = getActiveIdentity();
+  return {
+    ...base,
+    hwConnected: hwLastConnected,
+    identities,
+    activeIdentity: active,
+    identityCount: identities.length,
+  };
+}
+
+export function getExtendedWalletCapabilities(): Record<string, unknown> {
+  const creds = getCredentials();
+  const ids = getIdentities();
+  return {
+    name: 'Phenix Donation Wallet',
+    version: '3.1.0',
+    exists: vaultExists(),
+    unlocked: isUnlocked(),
+    credentialCount: creds.length,
+    identityCount: ids.length,
+    credentialTypes: [...new Set(creds.map(c => c.vct))],
+    capabilities: [
+      'erc5564_stealth_addresses',
+      'aes256gcm_vault',
+      'ed25519_keygen',
+      'did_key_identity',
+      'multi_did_support',
+      'sd_jwt_storage',
+      'key_binding_presentation',
+      'zk_proof_generation',
+      'hardware_wallet_bridge',
+      'social_recovery_guardians',
+      'memo_to_file_ledger',
+      'sha256_integrity_export',
+    ],
+    cryptoSuites: ['Ed25519', 'SECP256k1', 'AES-256-GCM', 'SHA-256', 'PBKDF2'],
+    mcpAnnotations: ['data-mcp-tool="phenixWallet"', 'data-mcp-target="wallet-root"'],
+    hardwareAvailable: isHardwareAvailable(),
+    hardwareConnected: hwLastConnected,
   };
 }

@@ -10,6 +10,8 @@ interface NotificationStarfieldProps {
 export function NotificationStarfield({ isUrgent = false, count = 2000 }: NotificationStarfieldProps) {
   const pointsRef = useRef<THREE.Points>(null);
   const timeRef = useRef(0);
+  const isUrgentRef = useRef(isUrgent);
+  isUrgentRef.current = isUrgent;
 
   const { geometry, basePositions } = useMemo(() => {
     const positions = new Float32Array(count * 3);
@@ -55,7 +57,8 @@ export function NotificationStarfield({ isUrgent = false, count = 2000 }: Notifi
   }), []);
 
   useFrame((_, delta) => {
-    timeRef.current += delta * (isUrgent ? 2.5 : 0.4);
+    const urgent = isUrgentRef.current;
+    timeRef.current += delta * (urgent ? 2.5 : 0.4);
     if (!pointsRef.current) return;
 
     const positions = geometry.attributes.position.array as Float32Array;
@@ -71,7 +74,7 @@ export function NotificationStarfield({ isUrgent = false, count = 2000 }: Notifi
       positions[i * 3 + 1] = basePositions[i * 3 + 1] * pulse;
       positions[i * 3 + 2] = basePositions[i * 3 + 2] * pulse;
 
-      if (isUrgent) {
+      if (urgent) {
         const urgency = 0.5 + 0.5 * Math.sin(t * 4 + phase);
         colors[i * 3]     = 0.8 + 0.2 * urgency;
         colors[i * 3 + 1] = 0.2 * (1 - urgency);
@@ -86,8 +89,8 @@ export function NotificationStarfield({ isUrgent = false, count = 2000 }: Notifi
     geometry.attributes.position.needsUpdate = true;
     geometry.attributes.color.needsUpdate = true;
 
-    pointsRef.current.rotation.y += delta * (isUrgent ? 0.06 : 0.015);
-    pointsRef.current.rotation.x += delta * (isUrgent ? 0.02 : 0.005);
+    pointsRef.current.rotation.y += delta * (urgent ? 0.06 : 0.015);
+    pointsRef.current.rotation.x += delta * (urgent ? 0.02 : 0.005);
   });
 
   return <points ref={pointsRef} geometry={geometry} material={material} />;

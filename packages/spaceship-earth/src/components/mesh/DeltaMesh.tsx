@@ -51,7 +51,7 @@ export function generateK4Nodes(): DeltaMeshNode[] {
   
   return positions.map((pos, i) => ({
     id: `node_${i}`,
-    position: pos.multiplyScalar(1.5), // Scale up for visibility
+    position: pos.multiplyScalar(5.0), // Scale up for visibility
     label: i === 0 ? 'GATEWAY' : `NODE_0${i}`,
     isGateway: i === 0,
   }));
@@ -114,6 +114,8 @@ export function DeltaMesh({
 }: DeltaMeshProps) {
   const groupRef = useRef<THREE.Group>(null);
   const curvatureRef = useRef(1.0);
+  const graphRef = useRef(graph);
+  graphRef.current = graph;
 
   // Generate static K4 topology (positions are always a regular tetrahedron).
   const nodes = useMemo(() => generateK4Nodes(), []);
@@ -132,7 +134,7 @@ export function DeltaMesh({
   // With a live graph, curvature is driven by mesh health (no cosmetic proxy).
   useFrame(({ clock }) => {
     const t = clock.getElapsedTime();
-    curvatureRef.current = graph ? curvature : calculateRicciCurvature(t, networkStress);
+    curvatureRef.current = graphRef.current ? curvature : calculateRicciCurvature(t, networkStress);
 
     // Apply dRfge scale oscillation using RicciMath
     if (groupRef.current) {

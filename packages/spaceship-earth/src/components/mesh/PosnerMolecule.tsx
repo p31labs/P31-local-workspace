@@ -56,14 +56,20 @@ export function PosnerMolecule({ spoons, calcium }: PosnerMoleculeProps) {
   const isLow = spoons <= 4;
   const isCritical = calcium !== undefined && calcium < 8.0;
 
+  const isLowRef = useRef(isLow);
+  isLowRef.current = isLow;
+  const isCriticalRef = useRef(isCritical);
+  isCriticalRef.current = isCritical;
+
   const caColor  = isCritical ? '#EF4444' : '#cda852';
   const po4Color = '#9B59B6';
   const starSpeed = isLow ? 3 : 1;
 
   useFrame((_, delta) => {
     if (!groupRef.current) return;
-    groupRef.current.rotation.y += delta * (isLow ? 0.4 : 0.15);
-    if (isLow) {
+    const il = isLowRef.current;
+    groupRef.current.rotation.y += delta * (il ? 0.4 : 0.15);
+    if (il) {
       groupRef.current.rotation.x += delta * 0.08;
     }
   });

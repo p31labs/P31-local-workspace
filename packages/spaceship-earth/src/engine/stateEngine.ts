@@ -66,7 +66,7 @@ const clamp01 = (n: number): number => (Number.isFinite(n) ? Math.min(1, Math.ma
 /**
  * Encode user state as a 2x2 density matrix (metaphorical mapping).
  *
- *   r00 = energy      = spoons / 5
+ *   r00 = energy      = spoons / maxSpoons
  *   r11 = well-being  = careScore / 100
  *   r01 = r10 = connection/engagement / 10
  *
@@ -74,8 +74,8 @@ const clamp01 = (n: number): number => (Number.isFinite(n) ? Math.min(1, Math.ma
  * the SIC-POVM measurement primitive. Diagonal dominance (r00+r11 ≈ 1) keeps
  * the measurement well-behaved; off-diagonal terms encode "connection."
  */
-export function passportToDensityMatrix(state: UserState): DensityMatrix {
-  const r00 = clamp01(state.spoons / 5);
+export function passportToDensityMatrix(state: UserState, maxSpoons = 5): DensityMatrix {
+  const r00 = clamp01(state.spoons / maxSpoons);
   const r11 = clamp01(state.careScore / 100);
   const off = clamp01(state.engagement / 10);
   // Intuitive mapping: r00 = energy, r11 = well-being, off-diagonal = connection.

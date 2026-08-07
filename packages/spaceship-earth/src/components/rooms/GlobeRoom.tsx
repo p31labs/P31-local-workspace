@@ -2,6 +2,10 @@ import { useRef, useMemo, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
+const HALO_GEO = new THREE.SphereGeometry(2.18, 32, 32);
+const NODE_ZERO_GEO = new THREE.SphereGeometry(0.07, 16, 16);
+const NODE_CORE_GEO = new THREE.SphereGeometry(0.04, 12, 12);
+
 const MESH_NODES = [
   { lat: 30.93,  lon: -81.96,  tier: 0 }, // Camden County, GA — Node Zero
   { lat: 33.74,  lon: -84.39,  tier: 1 }, // Atlanta
@@ -114,15 +118,6 @@ export function GlobeRoom() {
     [],
   );
 
-  const nodeGeos = useMemo(
-    () => ({
-      zero: new THREE.SphereGeometry(0.07, 16, 16),
-      core: new THREE.SphereGeometry(0.04, 12, 12),
-    }),
-    [],
-  );
-
-  const haloGeo = useMemo(() => new THREE.SphereGeometry(2.18, 32, 32), []);
   const haloMat = useMemo(
     () => new THREE.MeshBasicMaterial({ color: '#001133', transparent: true, opacity: 0.4, side: THREE.BackSide }),
     [],
@@ -135,12 +130,9 @@ export function GlobeRoom() {
       lineGeos.forEach((g) => g.dispose());
       nodeMats.zero.dispose();
       nodeMats.core.dispose();
-      nodeGeos.zero.dispose();
-      nodeGeos.core.dispose();
-      haloGeo.dispose();
       haloMat.dispose();
     },
-    [cloudGeo, cloudMat, lineGeos, nodeMats, nodeGeos, haloGeo, haloMat],
+    [cloudGeo, cloudMat, lineGeos, nodeMats, haloMat],
   );
 
   useFrame(({ clock }) => {
@@ -152,7 +144,7 @@ export function GlobeRoom() {
 
   return (
     <group ref={groupRef}>
-      <mesh geometry={haloGeo} material={haloMat} />
+      <mesh geometry={HALO_GEO} material={haloMat} />
       <points geometry={cloudGeo} material={cloudMat} />
       {lineGeos.map((geo, i) => (
         <line key={i}>
@@ -163,7 +155,7 @@ export function GlobeRoom() {
       {nodePositions.map((pos, i) => (
         <mesh
           key={i}
-          geometry={i === 0 ? nodeGeos.zero : nodeGeos.core}
+          geometry={i === 0 ? NODE_ZERO_GEO : NODE_CORE_GEO}
           material={i === 0 ? nodeMats.zero : nodeMats.core}
           position={pos}
         />

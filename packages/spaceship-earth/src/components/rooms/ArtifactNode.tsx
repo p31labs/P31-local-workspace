@@ -3,6 +3,9 @@ import { useFrame } from '@react-three/fiber';
 import { Text, Html } from '@react-three/drei';
 import * as THREE from 'three';
 
+const ARTIFACT_GEO = new THREE.SphereGeometry(1, 24, 24);
+const HALO_GEO = new THREE.RingGeometry(0.12, 0.15, 32);
+
 const STAGE_COLORS: Record<string, string> = {
   SEED: '#8B7355',
   SPROUT: '#4CAF50',
@@ -42,10 +45,6 @@ export function ArtifactNode({ data, position }: ArtifactNodeProps) {
     metalness: 0.6,
   }), [color]);
 
-  const geometry = useMemo(() => new THREE.SphereGeometry(1, 24, 24), []);
-
-  const haloGeometry = useMemo(() => new THREE.RingGeometry(0.12, 0.15, 32), []);
-
   useFrame(({ clock }) => {
     if (!meshRef.current) return;
     const t = clock.getElapsedTime();
@@ -69,7 +68,7 @@ Weakest: ${data.weakest.join(', ')}`;
     <group position={position}>
       <mesh
         ref={meshRef}
-        geometry={geometry}
+        geometry={ARTIFACT_GEO}
         material={material}
         scale={[radius, radius, radius]}
         onPointerOver={() => setHovered(true)}
@@ -77,7 +76,7 @@ Weakest: ${data.weakest.join(', ')}`;
         onClick={() => setSelected(!selected)}
       />
       {data.depressed && (
-        <mesh ref={ringRef} geometry={haloGeometry}>
+        <mesh ref={ringRef} geometry={HALO_GEO}>
           <meshBasicMaterial color="#F44336" transparent opacity={0.6} side={THREE.DoubleSide} />
         </mesh>
       )}

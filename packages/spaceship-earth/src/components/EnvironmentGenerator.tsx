@@ -100,7 +100,7 @@ const ECOSYSTEM_PRESETS: Record<string, EcosystemPreset> = {
       { key: 'NODE_ONE_CHANNEL_ID', description: 'Discord channel ID for Node One commands', example: '', required: false, category: 'app_config' },
       { key: 'ANNOUNCEMENTS_CHANNEL_ID', description: 'Discord channel ID for announcements', example: '', required: false, category: 'app_config' },
       { key: 'ENABLE_FAWN_DETECTION', description: 'Enable fawn response detection for cognitive safety', example: 'true', required: false, category: 'security', format: 'boolean' },
-      { key: 'MAX_SPOON_DISPLAY', description: 'Maximum number of spoons to display in embed', example: '12', required: false, category: 'app_config', format: 'number' },
+      { key: 'MAX_SPOON_DISPLAY', description: 'Maximum number of spoons to display in embed', example: '5', required: false, category: 'app_config', format: 'number' },
       { key: 'NODE_ONE_WEBHOOK_PORT', description: 'Port for Node One webhook server', example: '3000', required: false, category: 'services', format: 'number' },
     ],
     files: [
