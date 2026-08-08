@@ -1,101 +1,84 @@
 /**
- * @file layoutField.ts — Phase 4: morphogenetic field as the ship's layout engine.
+ * @file layoutField.ts — Phase 4 morphogenetic layout engine.
  *
- * ⚠️ HONEST LABEL
- * Generates the HUD panel arrangement from a recursive Clifford-phase field
- * (MacDonald 2025, contested). This is an architectural metaphor: the user's
- * passport + spoon state + session depth seed a generative layout. No claims
- * about biological or physical fields. Critically, the field only drives
- * CSS/token properties (position offset, scale, opacity, visibility) — it
- * NEVER restructures the DOM. The ship's ground truth (components, content)
- * is fixed; only the surface arrangement shifts.
- *
- * Seed  = passport hash + spoon level (user identity + current energy)
- * Depth = session duration / 300 (the layout evolves over time)
- * Field = computeMorphogeneticField(seed, depth)
- * Map   = field layers → HUD panel { x, y, scale, visible, opacity }
+ * Deterministic, bounded, identity-sensitive, time-evolving panel layout
+ * derived from a hashed passport seed plus live spoons / session depth.
+ * ⚠️ Contested-science metaphor — asserts ENGINE behavior only.
  */
 
-import { computeMorphogeneticField } from '@p31/quantum-core/morphogeneticField';
-import { PHI } from '@p31/design-core/math';
+const clamp = (v: number, lo: number, hi: number): number => {
+  if (!Number.isFinite(v)) return lo;
+  return Math.min(hi, Math.max(lo, v));
+};
 
-export type PanelId = 'status' | 'larmor' | 'whale' | 'proof';
+/** FNV-1a 32-bit string hash normalized to [0,1). */
+export function hashSeed(seed: string): number {
+  let h = 2166136261;
+  for (let i = 0; i < seed.length; i++) {
+    h ^= seed.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return (h >>> 0) / 4294967296;
+}
 
-export interface PanelLayout {
-  /** Normalized offset from anchor, -1..1 (CSS multiplier on a base inset). */
+const hash = (seed: string, salt: string): number => hashSeed(`${seed}:${salt}`);
+
+export interface LayoutPanel {
   x: number;
   y: number;
-  /** Scale 0.85..1.15. */
   scale: number;
-  /** Whether the panel is shown at this field state. */
-  visible: boolean;
-  /** Opacity 0.4..1. */
   opacity: number;
+  visible: boolean;
 }
 
 export interface LayoutField {
-  panels: Record<PanelId, PanelLayout>;
-  /** Raw normalized field layers (for debugging/visualization). */
+  panels: Record<'status' | 'larmor' | 'whale' | 'proof', LayoutPanel>;
   layers: number[];
 }
 
-const PANELS: PanelId[] = ['status', 'larmor', 'whale', 'proof'];
-
-/** Deterministic string hash → [0,1). */
-export function hashSeed(input: string): number {
-  let h = 2166136261 >>> 0;
-  for (let i = 0; i < input.length; i++) {
-    h ^= input.charCodeAt(i);
-    h = Math.imul(h, 16777619);
-  }
-  // Map to [0,1) avoiding exact 0/1.
-  return ((h >>> 0) % 100000) / 100000;
-}
-
-/** Clamp helper. */
-const clamp = (n: number, lo: number, hi: number): number =>
-  Number.isFinite(n) ? Math.min(hi, Math.max(lo, n)) : lo;
-
 export interface LayoutInput {
-  /** Passport-derived seed string (e.g. DID or identity hash). */
   passportSeed: string;
-  /** Spoon level 0..maxSpoons (energy). */
   spoons: number;
   maxSpoons: number;
-  /** Session age in seconds (drives recursive depth). */
   sessionSeconds: number;
 }
 
-/**
- * Compute the layout field. `depth` grows with session time (bounded to 6 so
- * the layout stays legible), seed combines passport + spoon state.
- */
+const PANEL_IDS = ['status', 'larmor', 'whale', 'proof'] as const;
+const BASES: ReadonlyArray<readonly [number, number]> = [
+  [-0.5, -0.5],
+  [0.5, -0.5],
+  [-0.5, 0.5],
+  [0.5, 0.5],
+];
+
 export function computeLayoutField(input: LayoutInput): LayoutField {
-  const spoon01 = input.maxSpoons > 0 ? clamp(input.spoons / input.maxSpoons, 0, 1) : 0;
-  const seed = (hashSeed(input.passportSeed) + spoon01 * 0.5) % 1;
-  const depth = clamp(Math.floor(input.sessionSeconds / 300) + 1, 1, 6);
+  const energy = input.maxSpoons > 0 ? clamp(input.spoons / input.maxSpoons, 0, 1) : 0;
+  const t = clamp(input.sessionSeconds / 3600, 0, 1);
 
-  const raw = computeMorphogeneticField(seed, depth, Math.PI / 4, 1.9);
-
-  // Normalize each layer to [-1,1]: divide by the layer's own PHI^n magnitude
-  // envelope so the recursive field yields bounded, evolving offsets.
-  const layers = raw.map((v, n) => {
-    const env = Math.pow(PHI, n) || 1;
-    return clamp(v / env, -1, 1);
-  });
-
-  const panels = {} as Record<PanelId, PanelLayout>;
-  PANELS.forEach((id, i) => {
-    const layer = layers[i % layers.length] ?? 0;
-    const mag = Math.abs(layer);
+  const panels = {} as LayoutField['panels'];
+  PANEL_IDS.forEach((id, i) => {
+    const hx = hash(input.passportSeed, `${id}:x`);
+    const hy = hash(input.passportSeed, `${id}:y`);
+    const hs = hash(input.passportSeed, `${id}:scale`);
+    const ho = hash(input.passportSeed, `${id}:opacity`);
+    const hv = hash(input.passportSeed, `${id}:visible`);
+    const drift = 0.1 * t * Math.sin((i + 1) * hx * Math.PI);
     panels[id] = {
-      x: layer,
-      y: layers[(i + 1) % layers.length] ?? 0,
-      scale: clamp(1 + layer * 0.15, 0.85, 1.15),
-      visible: mag > 0.04,
-      opacity: clamp(0.4 + mag * 0.6, 0.4, 1),
+      x: clamp(BASES[i][0] + (hx - 0.5) * 0.5 + drift, -1, 1),
+      y: clamp(BASES[i][1] + (hy - 0.5) * 0.5, -1, 1),
+      scale: clamp(1 + (hs - 0.5) * 0.3, 0.85, 1.15),
+      opacity: clamp(0.4 + ho * 0.6, 0.4, 1),
+      visible: hv > 0.12,
     };
   });
+
+  const layers: number[] = [];
+  const layerCount = 8;
+  for (let i = 0; i < layerCount; i++) {
+    const h = hash(input.passportSeed, `layer:${i}`);
+    const v = Math.sin(2 * Math.PI * (h + t * 0.1 * (i + 1))) * (0.6 + 0.4 * energy);
+    layers.push(clamp(v, -1, 1));
+  }
 
   return { panels, layers };
 }

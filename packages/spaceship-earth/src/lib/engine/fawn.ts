@@ -1,189 +1,92 @@
 /**
- * @file fawn.ts — FawnGuard: detect fawn response patterns in text
- * 
- * Hardened with:
- * - Input sanitization (null/undefined, trimming, max length)
- * - Caching for repeated analyses
- * - Case‑insensitive matching option
- * - XSS‑safe warning output
+ * @file fawn.ts — Fawn-Guard: detect fawning / over-apologetic language.
+ *
+ * A lightweight signal-safety guard that flags over-apology, self-diminishing,
+ * and permission-seeking phrasing before it is surfaced to the user. All
+ * warnings are XSS-escaped.
  */
 
 export interface FawnPattern {
   id: string;
-  regex: RegExp;
-  category: 'apology' | 'pleading' | 'diminishing' | 'self-effacing';
+  label: string;
+  severity: 'mild' | 'moderate' | 'severe';
+  pattern: RegExp;
 }
-
-export const FAWN_PATTERNS: FawnPattern[] = [
-  { id: 'over_apology', category: 'apology', regex: /\b(I'm so sorry|sorry if this is|so sorry to bother|sorry to bother you)\b/gi },
-  { id: 'permission_pleading', category: 'pleading', regex: /\b(if it's okay|is it okay if|would you mind if|can i ask)\b/gi },
-  { id: 'self_diminishing', category: 'diminishing', regex: /\b(I just thought|I'm probably wrong but|stupid question but|just wanted to say)\b/gi },
-  { id: 'humble_brag', category: 'self-effacing', regex: /\b(I know this might be silly|I don't mean to bother)\b/gi },
-  // Additional patterns
-  { id: 'sorry_basic', category: 'apology', regex: /\bsorry\b/i },
-  { id: 'my_fault', category: 'apology', regex: /\bmy fault\b/i },
-  { id: 'apologize', category: 'apology', regex: /\bi apologize\b/i },
-  { id: 'you_right', category: 'apology', regex: /\byou're right\b/i },
-  { id: 'i_wrong', category: 'apology', regex: /\bi was wrong\b/i },
-  { id: 'dont_angry', category: 'pleading', regex: /\bplease don't be angry\b/i },
-  { id: 'do_better', category: 'pleading', regex: /\bi'll do better\b/i },
-  { id: 'should_have', category: 'self-effacing', regex: /\bi should have known\b/i },
-  { id: 'messed_up', category: 'self-effacing', regex: /\bi messed up\b/i },
-  { id: 'i_failed', category: 'self-effacing', regex: /\bi failed\b/i },
-];
 
 export interface FawnAnalysis {
   triggered: boolean;
   matches: string[];
-  severity: 'none' | 'mild' | 'moderate' | 'severe';
 }
 
-// LRU cache for repeated analyses
-interface CacheEntry {
-  result: FawnAnalysis;
-  timestamp: number;
-}
-const cache = new Map<string, CacheEntry>();
-const CACHE_MAX_SIZE = 100;
-const CACHE_TTL_MS = 60000;
+export const FAWN_PATTERNS: readonly FawnPattern[] = [
+  {
+    id: 'over_apology',
+    label: 'Over-apology',
+    severity: 'mild',
+    pattern: /(?:i'?m|i am) (?:so |very |really )?sorry|(?:so|very|really) sorry|\bsorry\b|sorry for (?:bothering|being a burden)/i,
+  },
+  {
+    id: 'self_diminishing',
+    label: 'Self-diminishing',
+    severity: 'moderate',
+    pattern: /i(?:'?m| am) (?:probably|maybe) wrong|just thought (?:maybe )?i (?:was|am) wrong|i always mess (?:up|everything)/i,
+  },
+  {
+    id: 'permission_seeking',
+    label: 'Permission-seeking',
+    severity: 'severe',
+    pattern: /is it (?:ok|okay|fine|alright) if/i,
+  },
+] as const;
 
-function normalizeInput(text: string): string {
-  if (typeof text !== 'string') return '';
-  let normalized = text.trim();
-  if (normalized.length > 10000) normalized = normalized.substring(0, 10000);
-  return normalized.toLowerCase();
-}
+const MAX_LENGTH = 14000;
 
-function escapeHtml(str: string): string {
-  return str
+const severityLevel: Record<FawnPattern['severity'], number> = { mild: 1, moderate: 2, severe: 3 };
+
+const esc = (s: string): string =>
+  s
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
+
+export function analyze(text: unknown): FawnAnalysis {
+  if (typeof text !== 'string' || text.length === 0) return { triggered: false, matches: [] };
+  const matches: string[] = [];
+  for (const p of FAWN_PATTERNS) {
+    if (p.pattern.test(text)) matches.push(p.id);
+  }
+  return { triggered: matches.length > 0, matches };
 }
 
-function analyzeInternal(text: string): FawnAnalysis {
-  if (text === null || text === undefined || typeof text !== 'string') {
-    return { triggered: false, matches: [], severity: 'none' };
-  }
-  const trimmed = text.trim();
-  if (trimmed.length === 0) {
-    return { triggered: false, matches: [], severity: 'none' };
-  }
-
-  const testText = trimmed.toLowerCase();
-  const matchedPatterns: string[] = [];
-  let severityScore = 0;
-
-  for (const pattern of FAWN_PATTERNS) {
-    if (pattern.regex.test(text)) {
-      matchedPatterns.push(pattern.id);
-      severityScore++;
-    }
-    pattern.regex.lastIndex = 0;
-  }
-
-  let severity: FawnAnalysis['severity'] = 'none';
-  if (matchedPatterns.length > 0) {
-    if (severityScore >= 3) severity = 'severe';
-    else if (severityScore >= 2) severity = 'moderate';
-    else severity = 'mild';
-  }
-
-  return { triggered: matchedPatterns.length > 0, matches: matchedPatterns, severity };
-}
-
-export function analyze(text: string): FawnAnalysis {
-  const cacheKey = normalizeInput(text);
-  const now = Date.now();
-  const cached = cache.get(cacheKey);
-  if (cached && (now - cached.timestamp) < CACHE_TTL_MS) {
-    return cached.result;
-  }
-
-  const result = analyzeInternal(text);
-
-  if (cache.size >= CACHE_MAX_SIZE) {
-    const oldestKey = cache.keys().next().value;
-    if (oldestKey !== undefined) cache.delete(oldestKey);
-  }
-  cache.set(cacheKey, { result, timestamp: now });
-
-  return result;
-}
-
+/** Crash-safe variant: non-strings and over-long input return "safe". */
 export function safeAnalyze(text: unknown): FawnAnalysis {
-  let inputStr = '';
-  if (typeof text === 'string') {
-    inputStr = text;
-  } else if (text !== null && text !== undefined) {
-    inputStr = String(text);
-  }
-  return analyzeInternal(inputStr);
+  if (typeof text !== 'string' || text.length > MAX_LENGTH) return { triggered: false, matches: [] };
+  return analyze(text);
 }
 
-export function getWarning(text: string): string {
-  if (!text || typeof text !== 'string') return '';
-  
-  const result = analyze(text);
-  if (!result.triggered) return '';
-
-  const categoryLabels: Record<string, string> = {
-    apology: 'Apology detected',
-    pleading: 'Permission-seeking detected',
-    diminishing: 'Self-diminishing language',
-    selfEffacing: 'Self-effacing detected',
-  };
-
-  const categories = [...new Set(
-    FAWN_PATTERNS
-      .filter(p => result.matches.includes(p.id))
-      .map(p => p.category)
-  )];
-
-  const escapedText = escapeHtml(text);
-  return `⚠️ Fawn response: ${categories.map(c => categoryLabels[c]).join(', ')}. Text: "${escapedText.substring(0, 200)}${escapedText.length > 200 ? '…' : ''}"`;
+/** Human-facing warning with XSS-escaped snippet. Empty string when safe. */
+export function getWarning(text: unknown): string {
+  const analysis = safeAnalyze(text);
+  if (!analysis.triggered || typeof text !== 'string') return '';
+  const snippet = text.length > 160 ? `${text.slice(0, 160)}…` : text;
+  return `Fawn language detected — reconsider phrasing: “${esc(snippet)}”`;
 }
 
 export class FawnGuard {
-  static analyze = analyze;
-  static getWarning = getWarning;
-
-  /**
-   * Phase 3: coherence-gated analysis. When user coherence is low, intercept
-   * on milder fawn signals; when high, only stronger signals. `threshold`
-   * is the minimum severity that triggers interception.
-   */
-  static gate(text: string, threshold: 'mild' | 'moderate' | 'severe' = 'moderate'): FawnAnalysis {
-    const result = analyze(text);
-    if (!result.triggered) return result;
-    const order = { none: 0, mild: 1, moderate: 2, severe: 3 } as const;
-    const triggered = order[result.severity] >= order[threshold];
-    return triggered ? result : { ...result, triggered: false };
-  }
-  
-  static grayRock(text: string): string {
-    let clean = text;
-    clean = clean.replace(/\b(I'm so sorry|sorry if this is|so sorry to bother|sorry to bother you)\b/gi, 'Note:');
-    clean = clean.replace(/\b(I just thought|I'm probably wrong but|stupid question but)\b/gi, 'I noted');
-    clean = clean.replace(/\b(if it's okay|is it okay if|would you mind if)\b/gi, 'Request:');
-    clean = clean.replace(/\b(I know this might be silly|I don't mean to bother)\b/gi, 'Observation:');
-    return clean;
+  static isSafe(text: unknown): boolean {
+    return !analyze(text).triggered;
   }
 
-  static isSafe(text: string): boolean {
-    return !this.analyze(text).triggered;
+  /** Gate a signal against a coherence-derived threshold severity. */
+  static gate(text: unknown, threshold: FawnPattern['severity']): { triggered: boolean } {
+    const analysis = analyze(text);
+    if (!analysis.triggered) return { triggered: false };
+    const maxSeverity = FAWN_PATTERNS.filter((p) => analysis.matches.includes(p.id)).reduce(
+      (max, p) => Math.max(max, severityLevel[p.severity]),
+      0,
+    );
+    return { triggered: maxSeverity >= severityLevel[threshold] };
   }
-}
-
-if (typeof setInterval !== 'undefined') {
-  setInterval(() => {
-    const now = Date.now();
-    for (const [key, entry] of cache.entries()) {
-      if (now - entry.timestamp > CACHE_TTL_MS) {
-        cache.delete(key);
-      }
-    }
-  }, 60000);
 }

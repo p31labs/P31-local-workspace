@@ -25,7 +25,7 @@ declare global {
 export interface SpaceshipWebMCPConfig {
   getSpoons: () => number;
   setSpoons: (n: number) => void;
-  getViewMode: () => 'DELTA' | 'POSNER';
+  getViewMode: () => string;
   toggleViewMode: () => void;
   isLarmorActive: () => boolean;
   toggleLarmor: () => void;

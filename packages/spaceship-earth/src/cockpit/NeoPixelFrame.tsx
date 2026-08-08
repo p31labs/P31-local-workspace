@@ -1,0 +1,194 @@
+import { useMemo, useRef, useEffect } from 'react';
+import { useFrame } from '@react-three/fiber';
+import * as THREE from 'three';
+import { useShipStore } from '../store/shipStore';
+import { icosahedronGeodesic } from '../math/geodesic';
+
+const DOME_RADIUS = 12;
+const SEGMENTS_PER_EDGE = 20;
+const PIXEL_RADIUS = 0.045;
+const PIXEL_GAP = 0.01;
+
+const LED_MODE_MAP: Record<string, number> = {
+  rainbow: 0,
+  chase: 1,
+  solid: 2,
+  breath: 3,
+  gradient: 4,
+  'dual-chase': 5,
+  off: 6,
+};
+
+export default function NeoPixelFrame() {
+  const ledMode = useShipStore((s) => s.ledMode);
+  const ledSpeed = useShipStore((s) => s.ledSpeed);
+  const ledColor = useShipStore((s) => s.ledColor);
+  const ledBrightness = useShipStore((s) => s.ledBrightness);
+  const ledColors = useShipStore((s) => s.ledColors);
+
+  const ref = useRef<THREE.InstancedMesh>(null);
+  const matRef = useRef<THREE.ShaderMaterial>(null);
+
+  const geo = useMemo(() => new THREE.CylinderGeometry(PIXEL_RADIUS, PIXEL_RADIUS, 1, 6, 1, false), []);
+
+  const matrices = useMemo(() => {
+    const shell = icosahedronGeodesic(DOME_RADIUS, 2);
+    const results: THREE.Matrix4[] = [];
+    const dummy = new THREE.Object3D();
+    const quat = new THREE.Quaternion();
+    const up = new THREE.Vector3(0, 1, 0);
+
+    shell.edges.forEach(([a, b]) => {
+      const start = new THREE.Vector3(...shell.vertices[a]);
+      const end = new THREE.Vector3(...shell.vertices[b]);
+      const dir = new THREE.Vector3().copy(end).sub(start);
+      const len = dir.length();
+      const segmentLen = len / SEGMENTS_PER_EDGE;
+      const dirNorm = dir.clone().normalize();
+      quat.setFromUnitVectors(up, dirNorm);
+
+      for (let i = 0; i < SEGMENTS_PER_EDGE; i++) {
+        const t = (i + 0.5) / SEGMENTS_PER_EDGE;
+        const pos = new THREE.Vector3().copy(start).add(dirNorm.clone().multiplyScalar(t * len));
+        dummy.position.copy(pos);
+        dummy.rotation.setFromQuaternion(quat);
+        dummy.scale.set(1, segmentLen - PIXEL_GAP, 1);
+        dummy.updateMatrix();
+        results.push(dummy.matrix.clone());
+      }
+    });
+
+    return results;
+  }, []);
+
+  useEffect(() => {
+    if (!ref.current) return;
+    matrices.forEach((m, i) => ref.current!.setMatrixAt(i, m));
+    ref.current.instanceMatrix.needsUpdate = true;
+  }, [matrices]);
+
+  const material = useMemo(
+    () =>
+      new THREE.ShaderMaterial({
+        uniforms: {
+          uTime: { value: 0 },
+          uMode: { value: LED_MODE_MAP[ledMode] ?? 0 },
+          uSpeed: { value: ledSpeed / 10 },
+          uColor: { value: new THREE.Color(ledColor) },
+          uBrightness: { value: ledBrightness / 100 },
+          uColor1: { value: new THREE.Color(ledColors[0] ?? '#ff9944') },
+          uColor2: { value: new THREE.Color(ledColors[1] ?? '#22d3ee') },
+        },
+        vertexShader: `
+          varying vec3 vPosition;
+          varying float vInstanceId;
+
+          void main() {
+            vPosition = (instanceMatrix * vec4(position, 1.0)).xyz;
+            vInstanceId = float(gl_InstanceID);
+            gl_Position = projectionMatrix * modelViewMatrix * instanceMatrix * vec4(position, 1.0);
+          }
+        `,
+        fragmentShader: `
+          uniform float uTime;
+          uniform int uMode;
+          uniform float uSpeed;
+          uniform vec3 uColor;
+          uniform float uBrightness;
+          uniform vec3 uColor1;
+          uniform vec3 uColor2;
+
+          varying vec3 vPosition;
+          varying float vInstanceId;
+
+          // HSL to RGB conversion
+          vec3 hsl2rgb(vec3 c) {
+            vec3 rgb = clamp(abs(mod(c.x * 6.0 + vec3(0.0, 4.0, 2.0), 6.0) - 3.0) - 1.0, 0.0, 1.0);
+            return c.z + c.y * (rgb - 0.5) * (1.0 - abs(2.0 * c.z - 1.0));
+          }
+
+          void main() {
+            vec3 finalColor = uColor;
+            float brightness = uBrightness;
+
+            // Mode 0: Rainbow
+            if (uMode == 0) {
+              float hue = mod(vPosition.y * 0.2 + uTime * uSpeed * 0.25, 1.0);
+              float shimmer = 0.6 + 0.4 * sin(vInstanceId * 0.05 + uTime * 1.5);
+              finalColor = hsl2rgb(vec3(hue, 1.0, shimmer * 0.9));
+            }
+            // Mode 1: Chase
+            else if (uMode == 1) {
+              float phase = mod(uTime * uSpeed * 0.15, 1.0);
+              float p = vInstanceId / 9600.0;
+              float dist = mod(p - phase + 1.0, 1.0);
+              float intensity = max(0.0, 1.0 - dist * 4.0);
+              brightness *= intensity;
+            }
+            // Mode 2: Solid
+            else if (uMode == 2) {
+              float microPulse = 0.85 + 0.15 * sin(vInstanceId * 0.03 + uTime);
+              brightness *= microPulse;
+            }
+            // Mode 3: Breath
+            else if (uMode == 3) {
+              float breathe = 0.3 + 0.7 * (0.5 + 0.5 * sin(uTime * uSpeed * 0.15));
+              brightness *= breathe;
+            }
+            // Mode 4: Gradient
+            else if (uMode == 4) {
+              float p = vInstanceId / 9600.0;
+              float frac = mod(p + uTime * uSpeed * 0.15, 1.0);
+              finalColor = mix(uColor1, uColor2, frac);
+            }
+            // Mode 5: Dual-chase
+            else if (uMode == 5) {
+              float p = vInstanceId / 9600.0;
+              float phase0 = mod(uTime * uSpeed * 0.15, 1.0);
+              float phase1 = mod(phase0 + 0.5, 1.0);
+              float dist0 = mod(p - phase0 + 1.0, 1.0);
+              float dist1 = mod(p - phase1 + 1.0, 1.0);
+              float int0 = max(0.0, 1.0 - dist0 * 4.0);
+              float int1 = max(0.0, 1.0 - dist1 * 4.0);
+              finalColor = uColor1 * int0 + uColor2 * int1;
+            }
+            // Mode 6: Off
+            else if (uMode == 6) {
+              brightness = 0.0;
+            }
+
+            gl_FragColor = vec4(finalColor * brightness, 1.0);
+          }
+        `,
+        toneMapped: false,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+        transparent: true,
+      }),
+    [ledMode, ledSpeed, ledColor, ledBrightness, ledColors],
+  );
+
+  // Update uniforms when store changes
+  useEffect(() => {
+    if (!matRef.current) return;
+    matRef.current.uniforms.uMode.value = LED_MODE_MAP[ledMode] ?? 0;
+    matRef.current.uniforms.uSpeed.value = ledSpeed / 10;
+    matRef.current.uniforms.uColor.value.set(ledColor);
+    matRef.current.uniforms.uBrightness.value = ledBrightness / 100;
+    matRef.current.uniforms.uColor1.value.set(ledColors[0] ?? '#ff9944');
+    matRef.current.uniforms.uColor2.value.set(ledColors[1] ?? '#22d3ee');
+  }, [ledMode, ledSpeed, ledColor, ledBrightness, ledColors]);
+
+  // Update time uniform every frame
+  useFrame(({ clock }) => {
+    if (matRef.current) {
+      matRef.current.uniforms.uTime.value = clock.getElapsedTime();
+    }
+  });
+
+  return (
+    <instancedMesh ref={ref} args={[geo, material, matrices.length]}>
+      <primitive ref={matRef} object={material} attach="material" />
+    </instancedMesh>
+  );
+}

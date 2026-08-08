@@ -1,17 +1,10 @@
 import React from 'react';
-import { createRoot } from 'react-dom/client';
-import './main.css';
+import ReactDOM from 'react-dom/client';
 import App from './App';
-import { initTheme } from './sovereign/useSovereignStore';
+import './index.css';
 
-// Apply persisted skin + accent before first paint
-initTheme();
-
-const root = document.getElementById('root');
-if (root) {
-  createRoot(root).render(
-    <React.StrictMode>
-      <App />
-    </React.StrictMode>
-  );
-}
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+);

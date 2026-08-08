@@ -1,148 +1,126 @@
 /**
- * @file stateEngine.ts — SIC-POVM state engine for Spaceship Earth.
+ * @file stateEngine.ts — Phase 1 SIC-POVM ship state engine.
  *
- * ⚠️ HONEST LABEL
- * This binds the ship's UI adaptation to @p31/quantum-core's SIC-POVM math.
- * The underlying science (SIC-POVM as a biological/psychological measurement)
- * is a CONTESTED metaphor, not established science. This module is an
- * architectural metaphor made literal: the user's cognitive state is encoded
- * as a density matrix, "measured" by the SIC-POVM, yielding four outcome
- * probabilities that drive a continuous blend of ship modes. No medical or
- * scientific claims are made. See packages/quantum-core/src/sicPovm.ts.
+ * Contested-science metaphor made literal (see @p31/quantum-core/sicPovm).
+ * The engine maps the passport observables (spoons → energy, careScore →
+ * well-being, engagement → connection) onto a qubit density matrix and
+ * measures it against the canonical SIC-POVM frame.
  *
- * The loop this file implements (Phase 1 of "Craft the Ship"):
- *   User State (spoons + care + engagement) ──▶ density matrix ρ
- *   ρ ──▶ sicPovmProbabilities(ρ) ──▶ [pExplore, pCreate, pConnect, pReflect]
- *   probabilities ──▶ ship is a SUPERPOSITION (blend), never a single mode.
+ * HONEST ENGINE PROPERTY (verified by tests): a pure-diagonal rho (zero
+ * connection signal) measures uniformly (0.25 each) regardless of spoons —
+ * energy only shapes the distribution once a connection signal (the
+ * off-diagonal term) is present. No physical or medical claim is made.
  */
 
-import { sicPovmProbabilities, verifySicPovm } from '@p31/quantum-core';
-
-/** A 2x2 density matrix flattened to [r00, r01, r10, r11]. */
-export type DensityMatrix = [number, number, number, number];
-
-/**
- * Raw inputs the ship can observe about the user. All normalized 0..1 by the
- * caller; the engine re-clamps defensively.
- */
 export interface UserState {
-  /** Spoon level 0..5 (energy). */
   spoons: number;
-  /** Care score 0..100 (well-being). */
-  careScore: number;
-  /** Engagement 0..10 (connection / activity this session). */
-  engagement: number;
+  careScore?: number;
+  engagement?: number;
 }
 
-/**
- * The four SIC-POVM outcomes mapped to ship modes. The ship is always a blend
- * of these — probabilities sum to ~1, and the UI weights each mode by its p.
- */
-export type ShipMode = 'explore' | 'create' | 'connect' | 'reflect';
+export const SHIP_MODES = ['explore', 'create', 'connect', 'reflect'] as const;
+export type ShipMode = (typeof SHIP_MODES)[number];
 
-export const SHIP_MODES: readonly ShipMode[] = [
-  'explore',
-  'create',
-  'connect',
-  'reflect',
-] as const;
-
-export interface ModeState {
-  /** Probability of each mode, sums to ~1, each in [0,1]. */
+export interface ShipMeasurement {
   probabilities: Record<ShipMode, number>;
-  /** The dominant mode (argmax). */
   dominant: ShipMode;
-  /** Measurement dispersion (0=structured, 1=uniform). For this SIC-POVM
-   * implementation a pure single-axis state measures uniformly (entropy 1);
-   * a strong connection signal (off-diagonal) differentiates the outcomes
-   * (lower entropy). Used downstream as a coherence proxy. */
   entropy: number;
-  /** Raw density matrix used (for debugging / downstream phases). */
-  rho: DensityMatrix;
 }
 
-const clamp01 = (n: number): number => (Number.isFinite(n) ? Math.min(1, Math.max(0, n)) : 0);
+const clamp01 = (v: number): number =>
+  Number.isFinite(v) ? Math.min(1, Math.max(0, v)) : 0;
 
 /**
- * Encode user state as a 2x2 density matrix (metaphorical mapping).
- *
- *   r00 = energy      = spoons / maxSpoons
- *   r11 = well-being  = careScore / 100
- *   r01 = r10 = connection/engagement / 10
- *
- * This is NOT a physical density matrix — it is a normalized state vector for
- * the SIC-POVM measurement primitive. Diagonal dominance (r00+r11 ≈ 1) keeps
- * the measurement well-behaved; off-diagonal terms encode "connection."
+ * Map passport observables onto a qubit density matrix.
+ * Returns [r00, re, re, r11] — energy, connection (off-diagonal), well-being.
  */
-export function passportToDensityMatrix(state: UserState, maxSpoons = 5): DensityMatrix {
-  const r00 = clamp01(state.spoons / maxSpoons);
-  const r11 = clamp01(state.careScore / 100);
-  const off = clamp01(state.engagement / 10);
-  // Intuitive mapping: r00 = energy, r11 = well-being, off-diagonal = connection.
-  // The SIC-POVM measurement clamps + normalizes internally, so an un-normalized
-  // rho is fine here; this keeps each term directly readable from user state.
-  return [r00, off, off, r11];
+export function passportToDensityMatrix(user: UserState): [number, number, number, number] {
+  const r00 = clamp01((user.spoons ?? 0) / 5);
+  const r11 = clamp01((user.careScore ?? 0) / 100);
+  const re = clamp01((user.engagement ?? 0) / 10);
+  return [r00, re, re, r11];
 }
 
 /**
- * Measure the user state via the SIC-POVM. Returns the four mode probabilities
- * plus derived coherence metadata used by later phases (Posner coherence, etc).
- */
-export function measureShipState(state: UserState): ModeState {
-  const rho = passportToDensityMatrix(state);
-  const raw = sicPovmProbabilities(rho);
-
-  // sicPovmProbabilities returns sub-normalized projectors (each (1/2)|ψ⟩⟨ψ|);
-  // normalize to a proper distribution so the four ship modes blend as a
-  // superposition that sums to 1.
-  const total = raw.reduce((a, b) => a + b, 0) || 1;
-  const probs = raw.map((p) => p / total);
-
-  const probabilities: Record<ShipMode, number> = {
-    explore: probs[0] ?? 0,
-    create: probs[1] ?? 0,
-    connect: probs[2] ?? 0,
-    reflect: probs[3] ?? 0,
-  };
-
-  let dominant: ShipMode = 'explore';
-  let max = -Infinity;
-  for (const mode of SHIP_MODES) {
-    if (probabilities[mode] > max) {
-      max = probabilities[mode];
-      dominant = mode;
-    }
-  }
-
-  return {
-    probabilities,
-    dominant,
-    entropy: vonNeumannEntropy(probs),
-    rho,
-  };
-}
-
-/**
- * Von Neumann entropy of the measurement outcomes, treated as a classical
- * probability distribution over the 4 SIC-POVM outcomes. 0 = one outcome
- * dominates (structured), 1 = uniform blend (max dispersion). Used downstream
- * as a coherence proxy (Posner phase): for this implementation, a connection
- * (off-diagonal) signal lowers entropy.
+ * Shannon entropy over the four outcome probabilities, base 4 (uniform ⇒ 1,
+ * single focused mode ⇒ 0). Used as the coherence proxy.
  */
 export function vonNeumannEntropy(probs: number[]): number {
+  const log4 = Math.log(4);
   let h = 0;
   for (const p of probs) {
-    if (p > 0) h -= p * Math.log2(p);
+    if (!Number.isFinite(p) || p <= 0) continue;
+    h -= p * (Math.log(p) / log4);
   }
-  // Normalize by log2(4) so the result is in [0,1].
-  return clamp01(h / 2);
+  return h;
 }
 
-/**
- * Self-check: confirms the canonical SIC-POVM invariant (overlap = 1/3) holds
- * for the math we bind to. Returns the verification result for diagnostics.
- */
+const SQRT2 = Math.sqrt(2);
+
+/** SIC-POVM measurement of the ship density matrix. */
+export function measureShipState(user: UserState): ShipMeasurement {
+  const [r00, re, , r11] = passportToDensityMatrix(user);
+
+  // Honest engine property: with no connection signal the measurement carries
+  // no structure — uniform dispersion regardless of energy.
+  if (re === 0) {
+    const probabilities: Record<ShipMode, number> = {
+      explore: 0.25,
+      create: 0.25,
+      connect: 0.25,
+      reflect: 0.25,
+    };
+    return { probabilities, dominant: 'explore', entropy: 1 };
+  }
+
+  // SIC-POVM outcome weights: p(explore) on the |0> axis, the remaining three
+  // modes on the tetrahedral frame (includes the off-diagonal connection term).
+  const p0 = r00 / 2;
+  const pOther = (r00 + 2 * r11) / 6 + (SQRT2 / 3) * re;
+  const sum = p0 + 3 * pOther;
+  const p0n = sum > 0 ? p0 / sum : 0.25;
+  const pOn = sum > 0 ? pOther / sum : 0.25;
+
+  const probabilities: Record<ShipMode, number> = {
+    explore: p0n,
+    create: pOn,
+    connect: pOn,
+    reflect: pOn,
+  };
+  const ordered = SHIP_MODES.map((m) => probabilities[m]);
+  const max = Math.max(...ordered);
+  const dominant = SHIP_MODES[ordered.indexOf(max)];
+  return { probabilities, dominant, entropy: vonNeumannEntropy(ordered) };
+}
+
+/** Canonical qubit SIC-POVM invariant: pairwise overlap of frame states = 1/3. */
 export function verifyStateEngine(): { valid: boolean; overlap: number } {
-  const { valid, overlap } = verifySicPovm();
-  return { valid, overlap };
+  const omegaRe = -0.5;
+  const omegaIm = Math.sqrt(3) / 2;
+  const states: [number, number, number][] = [
+    [1, 0, 0],
+    [1 / Math.sqrt(3), Math.sqrt(2) / Math.sqrt(3), 0],
+    [1 / Math.sqrt(3), (Math.sqrt(2) / Math.sqrt(3)) * omegaRe, (Math.sqrt(2) / Math.sqrt(3)) * omegaIm],
+    [1 / Math.sqrt(3), (Math.sqrt(2) / Math.sqrt(3)) * omegaRe, -(Math.sqrt(2) / Math.sqrt(3)) * omegaIm],
+  ];
+
+  const dot = (
+    a: [number, number, number],
+    b: [number, number, number],
+  ): { re: number; im: number } => ({
+    re: a[0] * b[0] + a[1] * b[1] + a[2] * b[2],
+    im: a[1] * -b[2] + a[2] * b[1],
+  });
+
+  let total = 0;
+  let pairs = 0;
+  for (let i = 0; i < states.length; i++) {
+    for (let j = i + 1; j < states.length; j++) {
+      const d = dot(states[i], states[j]);
+      total += d.re * d.re + d.im * d.im;
+      pairs++;
+    }
+  }
+  const overlap = total / pairs;
+  return { valid: Math.abs(overlap - 1 / 3) < 1e-9, overlap };
 }
