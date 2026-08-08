@@ -4,7 +4,10 @@ import * as THREE from 'three';
 import { useShipStore } from '../store/shipStore';
 import OuterDome from './OuterDome';
 import TetraCraft from './TetraCraft';
-import InnerDome from './InnerDome';
+import GraphShell from './GraphShell';
+import GraphNodes from './GraphNodes';
+import GraphEdges from './GraphEdges';
+import { StarfieldField } from './StarfieldField';
 
 export default function Lens() {
   const cyanLightRef = useRef<THREE.PointLight>(null);
@@ -34,15 +37,34 @@ export default function Lens() {
     }
   });
 
+  const spoons = useShipStore((s) => s.spoons);
+  const lastNotifPulse = useShipStore((s) => s.lastNotifPulse || 0);
+  const highUnread = useShipStore((s) => s.highUnread || 0);
+
   return (
     <group>
       <ambientLight intensity={0.1} />
       <pointLight ref={cyanLightRef} intensity={0.6} color={0x22d3ee} distance={30} decay={1.5} />
       <pointLight ref={amberLightRef} intensity={0.5} color={0xf59e0b} distance={30} decay={1.5} />
 
+      {/* GPU Starfield (in-canvas, 3D points far away) */}
+      <StarfieldField
+        count={1600}
+        spoons={spoons}
+        highUnread={highUnread}
+        pulseAt={lastNotifPulse}
+        warm="#d9a066"
+        cool="#8a7a68"
+      />
+
+      {/* Outer Aesthetic (ice shell + NeoPixel + tetra frame) */}
       <OuterDome />
       <TetraCraft />
-      <InnerDome />
+
+      {/* Graph Interior (replaces InnerDome + Nodes + Edges) */}
+      <GraphShell />
+      <GraphNodes />
+      <GraphEdges />
     </group>
   );
 }

@@ -86,6 +86,11 @@ export interface ShipStore {
   ledBrightness: number;
   ledColors: string[];
   ledCollapsed: boolean;
+  
+  // SMART notification system (Phase 4)
+  lastNotifPulse?: number;
+  highUnread?: number;
+  
   setSpoons: (s: number) => void;
   setCoherence: (c: number) => void;
   setEngagement: (e: number) => void;

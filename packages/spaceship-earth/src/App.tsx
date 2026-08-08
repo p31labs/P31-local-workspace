@@ -13,6 +13,7 @@ import SpoonPulse from './hud/SpoonPulse';
 import LedController from './hud/LedController';
 import DunaBoard from './hud/DunaBoard';
 import SystemBoard from './hud/SystemBoard';
+import JitterbugBackground from './components/JitterbugBackground';
 import { installVerifyHooks } from './verify/hooks';
 
 // const showPerf = import.meta.env.DEV || new URLSearchParams(window.location.search).has('perf');
@@ -59,9 +60,12 @@ export default function App() {
 
   return (
     <div style={{ width: '100vw', height: '100vh', background: '#05070a', overflow: 'hidden' }}>
+      {/* Molecular Starfield (DOM Canvas-2D, behind WebGL canvas) */}
+      <JitterbugBackground />
+
       <Canvas
         camera={{ position: [0, 6, 28], fov: 45 }}
-        gl={{ antialias: true, alpha: false, powerPreference: 'high-performance' }}
+        gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
         dpr={Math.min(window.devicePixelRatio, 1.5)}
       >
         {/* {showPerf && <Perf position="top-left" />} */}
