@@ -1,10 +1,6 @@
-import { useState, useRef, useEffect, useMemo } from 'react';
-import { useFrame, useThree } from '@react-three/fiber';
-import * as THREE from 'three';
+import { useState } from 'react';
 import { useShipStore } from '../store/shipStore';
 import { VERTICES } from '@p31/shared';
-import { DOME_VERTICES, assignNodeVertices } from '../math/domeMap';
-import type { Axis } from '../math/domeMap';
 
 const AXIS_TYPES = ['family', 'system', 'care', 'shield'] as const;
 const AXIS_COLORS: Record<string, string> = {
@@ -20,62 +16,14 @@ export default function DataCard() {
   const dockRecords = useShipStore((s) => s.dockRecords);
   const dockedPorts = useShipStore((s) => s.dockedPorts);
   const coherence = useShipStore((s) => s.coherence);
+  const spoons = useShipStore((s) => s.spoons);
+  const nodeScreenPos = useShipStore((s) => s.nodeScreenPos);
+  const nodeVisible = useShipStore((s) => s.nodeVisible);
   const dockMemberAt = useShipStore((s) => s.dockMemberAt);
   const undockMember = useShipStore((s) => s.undockMember);
   const nextDemoMember = useShipStore((s) => s.nextDemoMember);
   const setSelectedPort = useShipStore((s) => s.setSelectedPort);
   const [dockAxis, setDockAxis] = useState<string>('family');
-
-  const { camera, size, scene } = useThree();
-  const screenPos = useRef({ x: 0, y: 0 });
-  const nodeVisible = useRef(false);
-  const domeGroupRef = useRef<THREE.Group>(null);
-  const [nodeScreenPos, setNodeScreenPos] = useState({ x: 0, y: 0 });
-
-  const axisCounts = useMemo(() => {
-    const counts: Record<string, number> = { Body: 0, Mesh: 0, Forge: 0, Shield: 0 };
-    for (const v of VERTICES) {
-      counts[v.axis] = (counts[v.axis] || 0) + 1;
-    }
-    return counts;
-  }, []);
-
-  const nodePositions = useMemo(() => {
-    const vertexIndices = assignNodeVertices(axisCounts as Record<Axis, number>);
-    return VERTICES.slice(0, 58).map((node, i) => {
-      const vi = vertexIndices[i] ?? 0;
-      return new THREE.Vector3(...DOME_VERTICES[vi]);
-    });
-  }, [axisCounts]);
-
-  useEffect(() => {
-    scene.traverse((obj) => {
-      if (obj instanceof THREE.Group && obj.name === 'outer-dome') {
-        domeGroupRef.current = obj;
-      }
-    });
-  }, [scene]);
-
-  useFrame(() => {
-    if (selectedNode === null || !domeGroupRef.current) {
-      nodeVisible.current = false;
-      return;
-    }
-
-    const localPos = nodePositions[selectedNode];
-    if (!localPos) return;
-
-    const worldPos = localPos.clone();
-    domeGroupRef.current.localToWorld(worldPos);
-
-    const projected = worldPos.clone().project(camera);
-    const x = (projected.x * 0.5 + 0.5) * size.width;
-    const y = (-projected.y * 0.5 + 0.5) * size.height;
-
-    nodeVisible.current = projected.z < 1;
-    screenPos.current = { x, y };
-    setNodeScreenPos({ x, y });
-  });
 
   // ── Port Mode ──
   if (selectedPort !== null) {
@@ -156,12 +104,12 @@ export default function DataCard() {
   }
 
   // ── Node Mode ──
-  if (selectedNode !== null && nodeVisible.current) {
+  if (selectedNode !== null && nodeVisible) {
     const node = VERTICES[selectedNode];
     if (!node) return null;
 
-    const cardLeft = nodeScreenPos.x + 20;
-    const cardTop = nodeScreenPos.y - 40;
+    const cardLeft = Math.min(nodeScreenPos.x + 20, window.innerWidth - 280);
+    const cardTop = Math.max(nodeScreenPos.y - 40, 60);
 
     return (
       <div style={{ ...cardStyle, left: cardLeft, top: cardTop, right: 'auto' }}>
@@ -186,7 +134,7 @@ export default function DataCard() {
           Coherence {(coherence * 100).toFixed(0)}%
         </div>
         <div style={{ color: '#f59e0b', fontSize: 10 }}>
-          Spoons {useShipStore.getState().spoons}/5
+          Spoons {spoons}/5
         </div>
       </div>
     );
@@ -217,8 +165,6 @@ const portCardStyle: React.CSSProperties = {
 
 const cardStyle: React.CSSProperties = {
   position: 'fixed',
-  top: 80,
-  right: 20,
   background: 'rgba(6,10,18,0.88)',
   backdropFilter: 'blur(14px)',
   WebkitBackdropFilter: 'blur(14px)',

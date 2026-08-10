@@ -5,6 +5,8 @@ import { useShipStore } from '../store/shipStore';
 import NeoPixelFrame from './NeoPixelFrame';
 import { regularTetra } from '../math/geometry';
 import { useAdaptiveQuality, useShouldAnimate } from '../hooks/useAdaptiveQuality';
+import { DOME_VERTICES, assignNodeVertices } from '../math/domeMap';
+import { VERTICES } from '@p31/shared';
 
 const DOME_RADIUS = 12;
 const PORT_COUNT = 120;
@@ -69,6 +71,8 @@ export default function OuterDome({ children }: { children?: React.ReactNode }) 
   const setSelectedPort = useShipStore((s) => s.setSelectedPort);
   const setHoveredPort = useShipStore((s) => s.setHoveredPort);
   const setSelectedNode = useShipStore((s) => s.setSelectedNode);
+  const setNodeScreenPos = useShipStore((s) => s.setNodeScreenPos);
+  const setNodeVisible = useShipStore((s) => s.setNodeVisible);
   const groupRef = useRef<THREE.Group>(null);
   const tetraRef = useRef<THREE.InstancedMesh>(null);
   const portsRef = useRef<THREE.InstancedMesh>(null);
@@ -78,6 +82,19 @@ export default function OuterDome({ children }: { children?: React.ReactNode }) 
 
   const portPositions = useMemo(() => generatePortPositions(DOME_RADIUS, PORT_COUNT), []);
   const tetraFrame = useMemo(() => regularTetra(TETRA_SCALE), []);
+
+  const nodePositions = useMemo(() => {
+    const axisCounts: Record<'body' | 'mesh' | 'forge' | 'shield', number> = { body: 0, mesh: 0, forge: 0, shield: 0 };
+    for (const v of VERTICES) {
+      const key = v.axis.toLowerCase() as 'body' | 'mesh' | 'forge' | 'shield';
+      axisCounts[key]++;
+    }
+    const vertexIndices = assignNodeVertices(axisCounts);
+    return VERTICES.slice(0, 58).map((_, i) => {
+      const vi = vertexIndices[i] ?? 0;
+      return new THREE.Vector3(...DOME_VERTICES[vi]);
+    });
+  }, []);
 
   const edgePairs = useMemo(
     () => [
@@ -162,12 +179,26 @@ export default function OuterDome({ children }: { children?: React.ReactNode }) 
     document.body.style.cursor = '';
   }, [setHoveredPort]);
 
-  useFrame(({ clock }) => {
+  useFrame(({ clock, camera, size }) => {
     time.current = clock.getElapsedTime();
     if (!groupRef.current || !shouldAnimate) return;
 
     const speed = 0.0002 * (0.5 + 0.5 * (spoons / 5));
     groupRef.current.rotation.y += speed;
+
+    const selectedNode = useShipStore.getState().selectedNode;
+    if (selectedNode !== null && groupRef.current && selectedNode < nodePositions.length) {
+      const localPos = nodePositions[selectedNode];
+      const worldPos = localPos.clone();
+      groupRef.current.localToWorld(worldPos);
+      const projected = worldPos.clone().project(camera);
+      const x = (projected.x * 0.5 + 0.5) * size.width;
+      const y = (-projected.y * 0.5 + 0.5) * size.height;
+      setNodeScreenPos({ x, y });
+      setNodeVisible(projected.z < 1);
+    } else {
+      setNodeVisible(false);
+    }
   });
 
   return (

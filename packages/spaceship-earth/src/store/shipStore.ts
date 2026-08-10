@@ -122,6 +122,8 @@ export interface ShipStore {
   
   // K4 wireframe overlay toggle
   showK4Wireframe: boolean;
+  nodeScreenPos: { x: number; y: number };
+  nodeVisible: boolean;
   
   setSpoons: (s: number) => void;
   setCoherence: (c: number) => void;
@@ -141,6 +143,8 @@ export interface ShipStore {
    setLedColors: (colors: string[]) => void;
    setLedCollapsed: (collapsed: boolean) => void;
    setShowK4Wireframe: (show: boolean) => void;
+   setNodeScreenPos: (pos: { x: number; y: number }) => void;
+   setNodeVisible: (visible: boolean) => void;
    nextDemoMember: () => { id: string; index: number };
  }
 
@@ -170,6 +174,8 @@ export const useShipStore = create<ShipStore>()(
       ledCollapsed: true,
       demoIndex: 0,
       showK4Wireframe: false,
+      nodeScreenPos: { x: 0, y: 0 },
+      nodeVisible: false,
       setSpoons: (s) => set({ spoons: Math.max(0, Math.min(5, s)) }),
       setCoherence: (c) => set({ coherence: Math.max(0, Math.min(1, c)) }),
       setEngagement: (e) => set({ engagement: Math.max(0, Math.min(10, e)) }),
@@ -235,6 +241,8 @@ export const useShipStore = create<ShipStore>()(
       setLedColors: (colors) => set({ ledColors: colors }),
       setLedCollapsed: (collapsed) => set({ ledCollapsed: collapsed }),
       setShowK4Wireframe: (show) => set({ showK4Wireframe: show }),
+      setNodeScreenPos: (pos) => set({ nodeScreenPos: pos }),
+      setNodeVisible: (visible) => set({ nodeVisible: visible }),
       nextDemoMember: () => {
         const state = get();
         const idx = state.demoIndex;
