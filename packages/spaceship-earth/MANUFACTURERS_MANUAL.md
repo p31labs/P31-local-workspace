@@ -69,6 +69,11 @@ App
 │   ├── Edges (quadratic bezier curves)
 │   ├── Nodes (sphere core/glow/halo, click select)
 │   ├── InstancedEdges (performance edges)
+│   ├── GraphShell (outer 2V + inner 1V + tetra frame)
+│   ├── GraphNodes (58 instanced spheres)
+│   ├── GraphEdges (55 typed relationship lines)
+│   ├── StarfieldField (GPU round-star field)
+│   ├── JitterbugBackground (DOM Canvas-2D molecular starfield)
 │   ├── DataCard (floating node info)
 │   └── SpoonPulse (bottom-left orb)
 ├── HUD Overlays
@@ -335,7 +340,7 @@ useWebMCP();
 // 5. Subscribe: push shipStore changes back to sovereignStore
 ```
 
-### 6.2 Dome Geometry (`src/math/geodesic.ts`)
+### 6.2 Dome Geometry (`src/math/geodesic.ts`) + Graph Data Dome
 
 Base icosahedron: 12 vertices (golden ratio φ = 1.618034), 20 faces.
 Subdivision: midpoint → normalize to radius. `KEY_PRECISION: 8` for dedupe.
@@ -348,6 +353,17 @@ Detail-2 outputs:
 | Edges | 480 |
 | Faces | 320 |
 | NeoPixel segments | 480 × 20 = 9600 |
+
+Graph Data Dome (observatory engine in `@p31/shared`):
+
+| Component | Layer | Details |
+|---|---|---|
+| GraphShell | Interior | Outer 2V shell (R=9) + inner 1V shell (R=3.4) + tetra frame axis markers |
+| GraphNodes | Interior | 58 instanced spheres (core + glow), click-select via raycaster |
+| GraphEdges | Interior | 55 typed relationship lines (treats/requires/includes/uses/monitors/litigates) |
+| StarfieldField | Atmosphere | GPU round-star field (1600 points, shader-driven twinkle + pulse) |
+| JitterbugBackground | DOM | Canvas-2D molecular starfield behind WebGL canvas |
+| Lens | Lighting | Ambient + 2 point lights (cyan + amber), orbits |
 
 ### 6.3 Rendering Pipeline
 
@@ -397,6 +413,7 @@ Lerp rate: `SKIN_LERP_RATE = 4.0` (transitions per second).
 | `__p31_domeStructure` | `verify/hooks.ts` | Dome metadata |
 | `__p31_ship` | `verify/hooks.ts` | Ship state |
 | `__p31_led` | `verify/hooks.ts` | LED settings |
+| `__p31_observatory` | `verify/hooks.ts` | Graph Data Dome metrics |
 
 `__p31_domeStructure` payload:
 
@@ -410,6 +427,18 @@ Lerp rate: `SKIN_LERP_RATE = 4.0` (transitions per second).
   "neoPixelSegments": 9600,
   "tetraFrame": 6,
   "innerDome": true
+}
+```
+
+`__p31_observatory` payload:
+
+```json
+{
+  "nodeCount": 58,
+  "edgeCount": 55,
+  "axisCount": 4,
+  "shellVertices": 642,
+  "shellEdges": 480
 }
 ```
 
@@ -525,9 +554,10 @@ Sections:
 
 | Section | Purpose |
 |---|---|
-| A | Static preflight (file existence, store fields, LED modes, geodesic math, hook presence) |
+| A | Static preflight (file existence, store fields, LED modes, geodesic math, hook presence, Graph Data Dome components) |
 | B | Deploy fingerprint |
 | C | Page load + verify hooks |
+| C.1 | Graph Data Dome runtime checks (observatory metrics, component presence) |
 | D | Dome metadata validation |
 | E | HUD boards render |
 | F | LED controller interaction |
@@ -537,13 +567,15 @@ Static preflight checks (Section A):
 
 - `hud/DunaBoard.tsx`, `hud/SystemBoard.tsx`, `hud/LedController.tsx` exist.
 - `cockpit/OuterDome.tsx`, `cockpit/NeoPixelFrame.tsx` exist.
+- `cockpit/GraphShell.tsx`, `cockpit/GraphNodes.tsx`, `cockpit/GraphEdges.tsx` exist.
+- `components/JitterbugBackground.tsx`, `cockpit/StarfieldField.tsx`, `cockpit/Lens.tsx` exist.
 - `math/geometry.ts`, `verify/hooks.ts`, `store/shipStore.ts` exist.
 - Store fields: `dockedPorts`, `memberCount`, `dunaTarget`, `coherence`,
   `spoons`, `viewMode`.
 - LED modes enum includes all 7 modes.
 - 480 edges × 20 segments = 9600.
 - Geodesic detail=2 → 480 edges.
-- Hooks expose `__p31_domeStructure`, `__p31_ship`, `__p31_led`.
+- Hooks expose `__p31_domeStructure`, `__p31_ship`, `__p31_led`, `__p31_observatory`.
 
 ### 9.3 CI Pipeline (`.github/workflows/spaceship-earth.yml`)
 
@@ -715,17 +747,28 @@ Static preflight checks (Section A):
 | G-13 | A | `__p31_domeStructure` exposed | Window hook |
 | G-14 | A | `__p31_ship` exposed | Window hook |
 | G-15 | A | `__p31_led` exposed | Window hook |
-| G-16 | D | Dome layers = 4 | `__p31_domeStructure.layers` |
-| G-17 | D | Outer edges = 480 | `__p31_domeStructure.outerEdges` |
-| G-18 | D | Ports = 120 | `__p31_domeStructure.ports` |
-| G-19 | D | NeoPixel segments = 9600 | `__p31_domeStructure.neoPixelSegments` |
-| G-20 | E | Duna board renders | `data-testid="duna-board"` |
-| G-21 | E | System board renders | `data-testid="system-board"` |
-| G-22 | F | LED controller renders | `data-testid="led-controller"` |
-| G-23 | F | LED controller collapsed by default | `data-collapsed="true"` |
-| G-24 | F | Mode switch propagates | Store update |
-| G-25 | G | Collapsed state persists | Reload check |
-| G-26 | G | Mode persists | Reload check |
+| G-16 | A | `__p31_observatory` exposed | Window hook |
+| G-17 | A | Graph Data Dome components present | File existence |
+| G-18 | D | Dome layers = 4 | `__p31_domeStructure.layers` |
+| G-19 | D | Outer edges = 480 | `__p31_domeStructure.outerEdges` |
+| G-20 | D | Ports = 120 | `__p31_domeStructure.ports` |
+| G-21 | D | NeoPixel segments = 9600 | `__p31_domeStructure.neoPixelSegments` |
+| G-22 | C.1 | Observatory nodeCount = 58 | `__p31_observatory.nodeCount` |
+| G-23 | C.1 | Observatory edgeCount = 55 | `__p31_observatory.edgeCount` |
+| G-24 | C.1 | Observatory axisCount = 4 | `__p31_observatory.axisCount` |
+| G-25 | C.1 | Observatory shellEdges = 480 | `__p31_observatory.shellEdges` |
+| G-26 | C.1 | GraphShell renders | DOM presence |
+| G-27 | C.1 | GraphNodes instanced spheres present | Canvas WebGL context |
+| G-28 | C.1 | GraphEdges lines present | Canvas presence |
+| G-29 | C.1 | JitterbugBackground canvas present | `.jitterbug-background` |
+| G-30 | C.1 | StarfieldField points present | Canvas WebGL context |
+| G-31 | E | Duna board renders | `data-testid="duna-board"` |
+| G-32 | E | System board renders | `data-testid="system-board"` |
+| G-33 | F | LED controller renders | `data-testid="led-controller"` |
+| G-34 | F | LED controller collapsed by default | `data-collapsed="true"` |
+| G-35 | F | Mode switch propagates | Store update |
+| G-36 | G | Collapsed state persists | Reload check |
+| G-37 | G | Mode persists | Reload check |
 
 ---
 

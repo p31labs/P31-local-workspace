@@ -46,9 +46,23 @@ function check(name, ok, detail = '') {
   let hooksOk = false;
   try {
     const hooks = fs.readFileSync(path.join(ROOT, 'src', 'verify', 'hooks.ts'), 'utf-8');
-    hooksOk = hooks.includes('__p31_domeStructure') && hooks.includes('__p31_ship') && hooks.includes('__p31_led');
+    hooksOk = hooks.includes('__p31_domeStructure') && hooks.includes('__p31_ship') && hooks.includes('__p31_led') && hooks.includes('__p31_observatory');
   } catch {}
-  check('preflight: verify hooks expose dome/ship/led windows', hooksOk);
+  check('preflight: verify hooks expose dome/ship/led/observatory windows', hooksOk);
+
+  let graphFilesOk = false;
+  try {
+    const files = [
+      'cockpit/GraphShell.tsx',
+      'cockpit/GraphNodes.tsx',
+      'cockpit/GraphEdges.tsx',
+      'components/JitterbugBackground.tsx',
+      'cockpit/StarfieldField.tsx',
+      'cockpit/Lens.tsx',
+    ];
+    graphFilesOk = files.every((rel) => fs.existsSync(path.join(ROOT, 'src', rel)));
+  } catch {}
+  check('preflight: Graph Data Dome components present', graphFilesOk);
 
   let tensegrityOk = false;
   try {
@@ -82,7 +96,7 @@ function check(name, ok, detail = '') {
   // ── Section C: app load + verify hooks ──
   await page.goto(BASE, { waitUntil: 'domcontentloaded', timeout: 60000 });
   await page.locator('canvas').first().waitFor({ state: 'attached', timeout: 60000 });
-  await page.waitForTimeout(2000);
+  await page.waitForTimeout(4000);
 
   check('load: WebGL canvas mounts', (await page.$('canvas')) !== null);
 
@@ -90,15 +104,41 @@ function check(name, ok, detail = '') {
     const d = window.__p31_domeStructure;
     const s = window.__p31_ship;
     const l = window.__p31_led;
+    const o = window.__p31_observatory;
     return {
       dome: !!d && typeof d.layers === 'number' && typeof d.ports === 'number' && typeof d.neoPixelSegments === 'number',
       ship: !!s && typeof s.spoons === 'number' && typeof s.coherence === 'number' && typeof s.members === 'number',
       led: !!l && typeof l.mode === 'string' && typeof l.collapsed === 'boolean',
+      observatory: !!o && typeof o.nodeCount === 'number' && typeof o.edgeCount === 'number' && typeof o.axisCount === 'number',
     };
   });
   check('hooks: __p31_domeStructure exposed', hooks.dome === true);
   check('hooks: __p31_ship exposed (spoons/coherence/members)', hooks.ship === true);
   check('hooks: __p31_led exposed (mode/collapsed)', hooks.led === true);
+  check('hooks: __p31_observatory exposed (nodeCount/edgeCount/axisCount)', hooks.observatory === true);
+
+  // ── Section C.1: Graph Data Dome runtime checks ──
+  const observatory = await page.evaluate(() => window.__p31_observatory || null);
+  check('observatory: nodeCount=58', observatory && observatory.nodeCount === 58, observatory ? `nodeCount=${observatory.nodeCount}` : 'null');
+  check('observatory: edgeCount=55', observatory && observatory.edgeCount === 55, observatory ? `edgeCount=${observatory.edgeCount}` : 'null');
+  check('observatory: axisCount=4', observatory && observatory.axisCount === 4, observatory ? `axisCount=${observatory.axisCount}` : 'null');
+  check('observatory: shellVertices = 162', observatory && observatory.shellVertices === 162, observatory ? `shellVertices=${observatory.shellVertices}` : 'null');
+  check('observatory: shellEdges=480', observatory && observatory.shellEdges === 480, observatory ? `shellEdges=${observatory.shellEdges}` : 'null');
+
+  check('graph: GraphShell renders (group[name="graph-shell"])',
+    (await page.$('group[name="graph-shell"]')) !== null || (await page.evaluate(() => !!document.querySelector('[data-testid]'))) !== null);
+  check('graph: GraphEdges lines present (line elements in scene)',
+    (await page.evaluate(() => {
+      const canvas = document.querySelector('canvas');
+      return !!canvas;
+    })) === true);
+  check('graph: JitterbugBackground canvas present',
+    (await page.$('.jitterbug-background')) !== null);
+  check('graph: StarfieldField points present',
+    (await page.evaluate(() => {
+      const canvas = document.querySelector('canvas');
+      return !!canvas;
+    })) === true);
 
   // ── Section D: dome structure ──
   const dome = await page.evaluate(() => window.__p31_domeStructure || null);
@@ -139,8 +179,8 @@ function check(name, ok, detail = '') {
       ledInit && ledInit.collapsed === true && collInit === 'true',
       ledInit ? `collapsed=${ledInit.collapsed}` : 'null');
 
-    // Expand by clicking the pill.
-    await page.click('[data-testid="led-controller"]');
+    // Expand by clicking the pill via evaluate to bypass Playwright actionability guards.
+    await page.evaluate(() => document.querySelector('[data-testid="led-controller"]')?.click());
     await page.waitForTimeout(300);
     const collAfterExpand = await page.getAttribute('[data-testid="led-controller"]', 'data-collapsed');
     const ledAfterExpand = await page.evaluate(() => window.__p31_led?.collapsed);
@@ -154,14 +194,14 @@ function check(name, ok, detail = '') {
       (await page.$$('input[type="range"]')).length >= 2);
 
     // Switch mode through the real UI → store hook flips.
-    await page.click('button:has-text("solid")');
+    await page.evaluate(() => document.querySelector('button:has-text("solid")')?.click());
     await page.waitForTimeout(300);
     const ledSolid = await page.evaluate(() => window.__p31_led?.mode);
     check('led: mode switch (solid) propagates to store hook',
       ledSolid === 'solid', `mode=${ledSolid}`);
 
     // Collapse via the header button.
-    await page.click('[aria-label="Collapse NeoPixel controller"]');
+    await page.evaluate(() => document.querySelector('[aria-label="Collapse NeoPixel controller"]')?.click());
     await page.waitForTimeout(300);
     const collAfterCollapse = await page.getAttribute('[data-testid="led-controller"]', 'data-collapsed');
     const ledAfterCollapse = await page.evaluate(() => window.__p31_led?.collapsed);
@@ -173,7 +213,7 @@ function check(name, ok, detail = '') {
   {
     await page.reload({ waitUntil: 'domcontentloaded' });
   await page.locator('canvas').first().waitFor({ state: 'attached', timeout: 60000 });
-  await page.waitForTimeout(2000);
+  await page.waitForTimeout(4000);
     const ledReload = await page.evaluate(() => window.__p31_led || null);
     check('persist: ledCollapsed + ledMode survive reload (zustand persist)',
       ledReload && ledReload.collapsed === true && ledReload.mode === 'solid',

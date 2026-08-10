@@ -8,6 +8,7 @@ import GraphShell from './GraphShell';
 import GraphNodes from './GraphNodes';
 import GraphEdges from './GraphEdges';
 import { StarfieldField } from './StarfieldField';
+import K4Wireframe from './K4Wireframe';
 
 export default function Lens() {
   const cyanLightRef = useRef<THREE.PointLight>(null);
@@ -65,6 +66,7 @@ export default function Lens() {
       <GraphShell />
       <GraphNodes />
       <GraphEdges />
+      <K4Wireframe />
     </group>
   );
 }

@@ -53,6 +53,7 @@ cd packages/spaceship-earth && node scripts/verify-ship.cjs
 | Engine layer stubs | ✅ Implemented 9 modules (stateEngine, feedbackLoop, coherence, k4Binding, layoutField, ricci, fawn, larmor, kenosisMesh). 89/89 tests pass. |
 | Verify BASE stale | ✅ Updated to `bf53b085` (current live deploy, HTTP 200 confirmed). |
 | CI workflow paths | ✅ Rewrote `.github/workflows/spaceship-earth.yml` to root workspace pattern. |
+| Graph Data Dome rollout | ✅ Added GraphShell, GraphNodes, GraphEdges, StarfieldField, JitterbugBackground, Lens. Observatory hooks + E2E checks in verify-ship.cjs. Manual test script included. |
 
 ## Testing & Verification
 

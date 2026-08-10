@@ -76,9 +76,6 @@ export default defineConfig({
     port: 5180,
   },
   resolve: {
-    alias: {
-      '@p31/tetra': path.resolve(__dirname, './src/lib/tetra'),
-    },
     dedupe: ['three', '@react-three/fiber', '@react-three/drei'],
   },
   build: {

@@ -2,7 +2,7 @@
  * @file cockpit/GraphNodes.tsx — P31 Graph Nodes (58 Instanced Spheres)
  * 
  * InstancedMesh renders all 58 nodes in a single draw call.
- * Positioned via baryToPosition (barycentric → geodesic shell @ R=9).
+ * Positioned via baryToPosition (barycentric → geodesic shell @ R=7).
  * Click-select via raycaster (instanceId → node.id).
  * State-driven glow/scale (countdown pulse, crisis bump).
  */
@@ -29,7 +29,7 @@ export default function GraphNodes() {
   const nodes = useRef(
     VERTICES.map((node) => ({
       ...node,
-      position: baryToPosition(node, 9),
+      position: baryToPosition(node, 7),
       color: getGraphNodeColor(node),
       glow: STATE_GLOW[node.state],
     }))

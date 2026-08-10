@@ -15,8 +15,8 @@
       "react/*": ["./node_modules/@types/react/*"],
       "react-dom": ["./node_modules/@types/react-dom"],
       "react-dom/*": ["./node_modules/@types/react-dom/*"],
-      "@p31/tetra": ["src/lib/tetra"],
-      "@p31/tetra/*": ["src/lib/tetra/*"]
+      "@p31/design-core": ["../design-core/src/index.ts"],
+      "@p31/design-core/*": ["../design-core/*"]
     }
   },
   "include": ["src", "src/types/**/*.d.ts"],

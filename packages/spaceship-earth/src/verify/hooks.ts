@@ -3,6 +3,7 @@
 // __P31_VERIFY__ is set, mirroring the shell's convention.
 import { useShipStore } from '../store/shipStore';
 import { icosahedronGeodesic } from '../math/geodesic';
+import { VERTICES, EDGES, AXES } from '@p31/shared';
 
 const DOME_RADIUS = 12;
 const PORT_COUNT = 120;
@@ -14,7 +15,8 @@ export function installVerifyHooks(): () => void {
     (typeof window !== 'undefined' && (window as any).__P31_VERIFY__);
   if (!canExpose) return () => {};
 
-  const outerEdges = icosahedronGeodesic(DOME_RADIUS, 2).edges.length;
+  const outerShell = icosahedronGeodesic(DOME_RADIUS, 2);
+  const outerEdges = outerShell.edges.length;
 
   const expose = () => {
     const s = useShipStore.getState();
@@ -46,6 +48,13 @@ export function installVerifyHooks(): () => void {
       brightness: s.ledBrightness,
       colors: s.ledColors,
       collapsed: s.ledCollapsed,
+    };
+    (window as any).__p31_observatory = {
+      nodeCount: VERTICES.length,
+      edgeCount: EDGES.length,
+      axisCount: Object.keys(AXES).length,
+      shellVertices: outerShell.vertices.length,
+      shellEdges: outerEdges,
     };
   };
 
