@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import * as THREE from 'three';
 import { DockRecord, allocatePort, computeDockEdges, computeProbabilities, computeSystemProbabilities, detectEdgeCases, generateDockJSON } from '../engine/dockMath';
-import { DOME_VERTICES } from '../math/domeMap';
+import { DOME_FACE_CENTROIDS } from '../math/domeMap';
 
 const NODE_DATA = [
   { id: 'willow', label: 'Willow', type: 'family' as const, color: '#ff9944' },
@@ -34,10 +34,10 @@ function icosahedronVertices(radius = 3): [number, number, number][] {
 }
 
 function generatePortPositions(count: number): [number, number, number][] {
-  return DOME_VERTICES.slice(0, count).map(v => [v[0], v[1], v[2]]);
+  return DOME_FACE_CENTROIDS.slice(0, count).map(v => [v[0], v[1], v[2]]);
 }
 
-const PORT_COUNT = 120;
+const PORT_COUNT = 320;
 const PORT_POSITIONS = generatePortPositions(PORT_COUNT);
 
 export type LedMode = 'rainbow' | 'chase' | 'solid' | 'breath' | 'gradient' | 'dual-chase' | 'off';

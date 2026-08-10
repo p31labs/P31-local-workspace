@@ -5,15 +5,15 @@ import { useShipStore } from '../store/shipStore';
 import NeoPixelFrame from './NeoPixelFrame';
 import { regularTetra } from '../math/geometry';
 import { useAdaptiveQuality, useShouldAnimate } from '../hooks/useAdaptiveQuality';
-import { DOME_VERTICES, assignNodeVertices } from '../math/domeMap';
+import { DOME_VERTICES, DOME_FACE_CENTROIDS, assignNodeVertices } from '../math/domeMap';
 import { VERTICES } from '@p31/shared';
 
 const DOME_RADIUS = 12;
-const PORT_COUNT = 120;
+const PORT_COUNT = 320;
 const TETRA_SCALE = DOME_RADIUS * 0.55;
 
-function generatePortPositions(radius: number, count: number): THREE.Vector3[] {
-  return DOME_VERTICES.slice(0, count).map(v => new THREE.Vector3(v[0], v[1], v[2]));
+function generatePortPositions(count: number): THREE.Vector3[] {
+  return DOME_FACE_CENTROIDS.slice(0, count).map(v => new THREE.Vector3(v[0], v[1], v[2]));
 }
 
 export default function OuterDome({ children }: { children?: React.ReactNode }) {
@@ -30,7 +30,7 @@ export default function OuterDome({ children }: { children?: React.ReactNode }) 
   const shouldAnimate = useShouldAnimate(spoons);
   const adaptive = useAdaptiveQuality();
 
-  const portPositions = useMemo(() => generatePortPositions(DOME_RADIUS, PORT_COUNT), []);
+  const portPositions = useMemo(() => generatePortPositions(PORT_COUNT), []);
   const tetraFrame = useMemo(() => regularTetra(TETRA_SCALE), []);
 
   const nodePositions = useMemo(() => {
@@ -199,14 +199,12 @@ export default function OuterDome({ children }: { children?: React.ReactNode }) 
         onPointerOver={handlePortOver}
         onPointerOut={handlePortOut}
       >
-        <tetrahedronGeometry args={[0.7, 0]} />
-        <meshStandardMaterial
-          color={0x88aacc}
-          emissive={0x88aacc}
-          emissiveIntensity={0.35}
-          roughness={0.2}
-          metalness={0.5}
-          toneMapped={false}
+        <tetrahedronGeometry args={[1.8, 0]} />
+        <meshBasicMaterial
+          transparent
+          opacity={0}
+          depthWrite={false}
+          side={THREE.DoubleSide}
         />
       </instancedMesh>
 

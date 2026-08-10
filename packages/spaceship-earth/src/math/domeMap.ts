@@ -14,6 +14,21 @@ const shell: Geodesic = icosahedronGeodesic(DOME_RADIUS, DETAIL);
 /** 162 vertices @ R=12 */
 export const DOME_VERTICES: ReadonlyArray<readonly [number, number, number]> = shell.vertices;
 
+/** 320 face centroids (one per triangular face, projected to R=12) */
+export const DOME_FACE_CENTROIDS: ReadonlyArray<readonly [number, number, number]> = shell.faces.map(
+  ([a, b, c]) => {
+    const va = DOME_VERTICES[a];
+    const vb = DOME_VERTICES[b];
+    const vc = DOME_VERTICES[c];
+    const cx = (va[0] + vb[0] + vc[0]) / 3;
+    const cy = (va[1] + vb[1] + vc[1]) / 3;
+    const cz = (va[2] + vb[2] + vc[2]) / 3;
+    const len = Math.sqrt(cx * cx + cy * cy + cz * cz);
+    const s = DOME_RADIUS / len;
+    return [cx * s, cy * s, cz * s];
+  },
+);
+
 /** 480 edges (vertex index pairs) */
 export const DOME_EDGES: ReadonlyArray<readonly [number, number]> = shell.edges.map(
   ([a, b]) => (a < b ? [a, b] : [b, a]) as readonly [number, number],
