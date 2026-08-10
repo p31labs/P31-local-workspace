@@ -194,7 +194,7 @@ export default function NeoPixelFrame({ segmentCount = 9600 }: NeoPixelFrameProp
   });
 
   return (
-    <instancedMesh ref={ref} args={[geo, undefined, totalSegments]}>
+    <instancedMesh ref={ref} args={[geo, undefined, totalSegments]} raycast={() => null}>
       <primitive ref={matRef} object={material} attach="material" />
     </instancedMesh>
   );

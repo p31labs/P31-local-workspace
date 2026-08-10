@@ -1,5 +1,5 @@
-import { useMemo, useRef, useEffect } from 'react';
-import { useFrame } from '@react-three/fiber';
+import { useMemo, useRef, useEffect, useCallback } from 'react';
+import { useFrame, type ThreeEvent } from '@react-three/fiber';
 import * as THREE from 'three';
 import { useShipStore } from '../store/shipStore';
 import NeoPixelFrame from './NeoPixelFrame';
@@ -39,7 +39,10 @@ function generatePortPositions(radius: number, count: number): THREE.Vector3[] {
 }
 
 export default function OuterDome({ children }: { children?: React.ReactNode }) {
-  const { spoons, coherence, dockedPorts, selectedPort } = useShipStore();
+  const { spoons, coherence, dockedPorts, selectedPort, hoveredPort } = useShipStore();
+  const setSelectedPort = useShipStore((s) => s.setSelectedPort);
+  const setHoveredPort = useShipStore((s) => s.setHoveredPort);
+  const setSelectedNode = useShipStore((s) => s.setSelectedNode);
   const groupRef = useRef<THREE.Group>(null);
   const tetraRef = useRef<THREE.InstancedMesh>(null);
   const portsRef = useRef<THREE.InstancedMesh>(null);
@@ -94,21 +97,43 @@ export default function OuterDome({ children }: { children?: React.ReactNode }) 
     const tempColor = new THREE.Color();
 
     portPositions.forEach((pos, i) => {
-      const innerPos = pos.clone().normalize().multiplyScalar(DOME_RADIUS * 0.88);
-      dummy.position.copy(innerPos);
+      dummy.position.copy(pos.clone().normalize().multiplyScalar(DOME_RADIUS * 0.88));
       dummy.lookAt(0, 0, 0);
       dummy.scale.setScalar(1);
       dummy.updateMatrix();
       mesh.setMatrixAt(i, dummy.matrix);
 
-      const isDocked = dockedPorts.includes(i);
-      const isSelected = selectedPort === i;
-      tempColor.set(isSelected ? 0xffffff : isDocked ? 0xf59e0b : 0x88aacc);
+      if (selectedPort === i) tempColor.set(0xffffff);
+      else if (hoveredPort === i) tempColor.set(0xffcc44);
+      else if (dockedPorts.includes(i)) tempColor.set(0xf59e0b);
+      else tempColor.set(0x88aacc);
       mesh.setColorAt(i, tempColor);
     });
     mesh.instanceMatrix.needsUpdate = true;
     if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
-  }, [portPositions, dockedPorts, selectedPort]);
+  }, [portPositions, dockedPorts, selectedPort, hoveredPort]);
+
+  const handlePortClick = useCallback((e: ThreeEvent<MouseEvent>) => {
+    e.stopPropagation();
+    if (e.instanceId !== undefined) {
+      setSelectedNode(null);
+      setSelectedPort(e.instanceId);
+    }
+  }, [setSelectedPort, setSelectedNode]);
+
+  const handlePortOver = useCallback((e: ThreeEvent<PointerEvent>) => {
+    e.stopPropagation();
+    if (e.instanceId !== undefined) {
+      setHoveredPort(e.instanceId);
+      document.body.style.cursor = 'pointer';
+    }
+  }, [setHoveredPort]);
+
+  const handlePortOut = useCallback((e: ThreeEvent<PointerEvent>) => {
+    e.stopPropagation();
+    setHoveredPort(null);
+    document.body.style.cursor = '';
+  }, [setHoveredPort]);
 
   useFrame(({ clock }) => {
     time.current = clock.getElapsedTime();
@@ -122,7 +147,7 @@ export default function OuterDome({ children }: { children?: React.ReactNode }) 
     <group ref={groupRef}>
       <NeoPixelFrame segmentCount={adaptive.neoPixelSegments} />
 
-      <mesh>
+      <mesh raycast={() => null}>
         <icosahedronGeometry args={[DOME_RADIUS * 0.975, 2]} />
         <meshPhysicalMaterial
           color={0xaaccdd}
@@ -156,7 +181,13 @@ export default function OuterDome({ children }: { children?: React.ReactNode }) 
         />
       </instancedMesh>
 
-      <instancedMesh ref={portsRef} args={[undefined, undefined, PORT_COUNT]}>
+      <instancedMesh
+        ref={portsRef}
+        args={[undefined, undefined, PORT_COUNT]}
+        onClick={handlePortClick}
+        onPointerOver={handlePortOver}
+        onPointerOut={handlePortOut}
+      >
         <tetrahedronGeometry args={[0.45, 0]} />
         <meshStandardMaterial
           color={0x88aacc}

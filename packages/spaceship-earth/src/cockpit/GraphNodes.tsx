@@ -5,7 +5,7 @@
  * Dome vertex assignment via domeMap — axis‑aware, one vertex per node.
  */
 
-import { useRef, useEffect, useMemo } from 'react';
+import { useRef, useEffect, useMemo, useCallback } from 'react';
 import { useFrame, ThreeEvent } from '@react-three/fiber';
 import * as THREE from 'three';
 import {
@@ -24,6 +24,7 @@ export default function GraphNodes() {
   const meshRef = useRef<THREE.InstancedMesh>(null!);
   const coreRef = useRef<THREE.InstancedMesh>(null!);
   const setSelectedNode = useShipStore((s) => s.setSelectedNode);
+  const setSelectedPort = useShipStore((s) => s.setSelectedPort);
 
   const nodes = useMemo(() => {
     const axisCounts: Record<Axis, number> = { body: 0, mesh: 0, forge: 0, shield: 0 };
@@ -89,22 +90,30 @@ export default function GraphNodes() {
     }
   });
 
-  const handleClick = (e: ThreeEvent<MouseEvent>) => {
+  const handleClick = useCallback((e: ThreeEvent<MouseEvent>) => {
     e.stopPropagation();
     if (e.instanceId !== undefined) {
-      const node = nodes[e.instanceId];
+      setSelectedPort(null);
       setSelectedNode(e.instanceId);
-      console.log('[GraphNodes] Selected:', node.id, node.label);
+      console.log('[GraphNodes] Selected:', nodes[e.instanceId].id, nodes[e.instanceId].label);
     }
-  };
+  }, [setSelectedNode, setSelectedPort, nodes]);
+
+  const handlePointerOver = useCallback(() => {
+    document.body.style.cursor = 'pointer';
+  }, []);
+
+  const handlePointerOut = useCallback(() => {
+    document.body.style.cursor = '';
+  }, []);
 
   return (
     <group name="graph-nodes">
-      <instancedMesh ref={coreRef} args={[undefined, undefined, NODE_COUNT]} onClick={handleClick}>
+      <instancedMesh ref={coreRef} args={[undefined, undefined, NODE_COUNT]} onClick={handleClick} onPointerOver={handlePointerOver} onPointerOut={handlePointerOut}>
         <sphereGeometry args={[0.12, 16, 12]} />
         <meshStandardMaterial metalness={0.3} roughness={0.6} />
       </instancedMesh>
-      <instancedMesh ref={meshRef} args={[undefined, undefined, NODE_COUNT]} renderOrder={-1}>
+      <instancedMesh ref={meshRef} args={[undefined, undefined, NODE_COUNT]} renderOrder={-1} onPointerOver={handlePointerOver} onPointerOut={handlePointerOut}>
         <sphereGeometry args={[0.12, 16, 12]} />
         <meshBasicMaterial transparent opacity={0.4} depthWrite={false} />
       </instancedMesh>

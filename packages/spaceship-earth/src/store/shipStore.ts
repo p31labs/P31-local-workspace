@@ -79,6 +79,7 @@ export interface ShipStore {
   dunaTarget: number;
   portPositions: [number, number, number][];
   selectedPort: number | null;
+  hoveredPort: number | null;
   dockRecords: DockRecord[];
   ledMode: LedMode;
   ledSpeed: number;
@@ -86,6 +87,7 @@ export interface ShipStore {
   ledBrightness: number;
   ledColors: string[];
   ledCollapsed: boolean;
+  demoIndex: number;
   
   // SMART notification system (Phase 4)
   lastNotifPulse?: number;
@@ -102,6 +104,8 @@ export interface ShipStore {
   dockMember: (memberId: string, axis: 'family' | 'system' | 'care' | 'shield') => void;
   undockMember: (portIndex: number) => void;
   setSelectedPort: (idx: number | null) => void;
+  setHoveredPort: (idx: number | null) => void;
+  dockMemberAt: (portIndex: number, memberId: string, axis: 'family' | 'system' | 'care' | 'shield') => void;
   setMemberCount: (count: number) => void;
   setLedMode: (mode: LedMode) => void;
   setLedSpeed: (speed: number) => void;
@@ -110,6 +114,7 @@ export interface ShipStore {
    setLedColors: (colors: string[]) => void;
    setLedCollapsed: (collapsed: boolean) => void;
    setShowK4Wireframe: (show: boolean) => void;
+   nextDemoMember: () => { id: string; index: number };
  }
 
 export const useShipStore = create<ShipStore>()(
@@ -128,6 +133,7 @@ export const useShipStore = create<ShipStore>()(
       dunaTarget: 100,
       portPositions: PORT_POSITIONS,
       selectedPort: null,
+      hoveredPort: null,
       dockRecords: [],
       ledMode: 'rainbow',
       ledSpeed: 5,
@@ -135,6 +141,7 @@ export const useShipStore = create<ShipStore>()(
       ledBrightness: 80,
       ledColors: ['#ff9944', '#22d3ee', '#44ffaa'],
       ledCollapsed: true,
+      demoIndex: 0,
       showK4Wireframe: false,
       setSpoons: (s) => set({ spoons: Math.max(0, Math.min(5, s)) }),
       setCoherence: (c) => set({ coherence: Math.max(0, Math.min(1, c)) }),
@@ -172,6 +179,27 @@ export const useShipStore = create<ShipStore>()(
         }));
       },
       setSelectedPort: (idx) => set({ selectedPort: idx }),
+      setHoveredPort: (idx) => set({ hoveredPort: idx }),
+      dockMemberAt: (portIndex: number, memberId: string, axis: 'family' | 'system' | 'care' | 'shield') => {
+        const state = get();
+        if (state.dockedPorts.includes(portIndex)) return;
+        const portPos = (idx: number) => new THREE.Vector3(...state.portPositions[idx]);
+        const portPosVec = portPos(portIndex);
+        const dockedPositions = state.dockedPorts.map((i) => portPos(i));
+        const edges = computeDockEdges(portPosVec, dockedPositions);
+        const memberAxes = state.dockRecords.map((r) => r.axis);
+        const probs = computeProbabilities(edges, memberAxes, axis);
+        const edgeCases = detectEdgeCases(probs, state.dockedPorts);
+        const sysProbs = computeSystemProbabilities([...state.dockedPorts, portIndex], PORT_COUNT, probs);
+        const record = generateDockJSON(memberId, portIndex, Date.now(), axis, state.portPositions[portIndex], probs, sysProbs, edgeCases);
+        set({
+          dockedPorts: [...state.dockedPorts, portIndex],
+          memberCount: state.memberCount + 1,
+          dockRecords: [...state.dockRecords, record],
+          coherence: sysProbs.coherence,
+          engagement: sysProbs.engagement,
+        });
+      },
       setMemberCount: (count) => set({ memberCount: count }),
       setLedMode: (mode) => set({ ledMode: mode }),
       setLedSpeed: (speed) => set({ ledSpeed: Math.min(10, Math.max(0, speed)) }),
@@ -180,6 +208,12 @@ export const useShipStore = create<ShipStore>()(
       setLedColors: (colors) => set({ ledColors: colors }),
       setLedCollapsed: (collapsed) => set({ ledCollapsed: collapsed }),
       setShowK4Wireframe: (show) => set({ showK4Wireframe: show }),
+      nextDemoMember: () => {
+        const state = get();
+        const idx = state.demoIndex;
+        set({ demoIndex: idx + 1 });
+        return { id: `Member ${String(idx + 1).padStart(3, '0')}`, index: idx };
+      },
     }),
     {
       name: 'ship-led-storage',
