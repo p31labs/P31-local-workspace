@@ -3,8 +3,6 @@
  *
  * Nodes sit on the outer dome surface (R=12, detail=2).
  * 58 vertices picked from 162, grouped by 4 tetrahedron axes.
- * Click-select via raycaster (instanceId → node.id).
- * State-driven glow/scale (countdown pulse, crisis bump).
  */
 
 import { useRef, useEffect } from 'react';
@@ -17,54 +15,58 @@ import {
   shouldPulse,
 } from '@p31/shared';
 import { useShipStore } from '../store/shipStore';
+import { icosahedronGeodesic } from '../math/geodesic';
 
 const DOME_RADIUS = 12;
 const NODE_COUNT = 58;
 
-const AXIS_DIRS: [string, THREE.Vector3][] = [
-  ['body', new THREE.Vector3(1, 1, 1).normalize()],
-  ['mesh', new THREE.Vector3(1, -1, -1).normalize()],
-  ['forge', new THREE.Vector3(-1, 1, -1).normalize()],
-  ['shield', new THREE.Vector3(-1, -1, 1).normalize()],
+const AXIS_DIRS: ReadonlyArray<[string, number[]]> = [
+  ['body', [1, 1, 1]],
+  ['mesh', [1, -1, -1]],
+  ['forge', [-1, 1, -1]],
+  ['shield', [-1, -1, 1]],
 ];
 
-export function pickDomeVertices(count: number): { positions: THREE.Vector3[]; indices: number[] } {
-  const geo = new THREE.IcosahedronGeometry(DOME_RADIUS, 2);
-  const pos = geo.getAttribute('position');
-  const all: THREE.Vector3[] = [];
-  for (let i = 0; i < pos.count; i++) {
-    all.push(new THREE.Vector3(pos.getX(i), pos.getY(i), pos.getZ(i)));
+export function pickDomeVertices(count: number): { positions: [number, number, number][]; indices: number[] } {
+  const shell = icosahedronGeodesic(DOME_RADIUS, 2);
+  const { vertices } = shell;
+
+  function dot(a: [number, number, number], b: number[]): number {
+    return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+  }
+  function len(b: number[]): number {
+    return Math.sqrt(b[0] * b[0] + b[1] * b[1] + b[2] * b[2]);
   }
 
-  const groups = new Map<string, { idx: number; dot: number }[]>();
+  const groups: Map<string, { idx: number; dot: number }[]> = new Map();
   for (const [name] of AXIS_DIRS) groups.set(name, []);
 
-  for (let i = 0; i < all.length; i++) {
-    const dir = all[i].clone().normalize();
+  for (let i = 0; i < vertices.length; i++) {
+    const dirLen = Math.sqrt(vertices[i][0] ** 2 + vertices[i][1] ** 2 + vertices[i][2] ** 2);
     let best = '';
     let bestDot = -Infinity;
-    for (const [name, ax] of AXIS_DIRS) {
-      const d = dir.dot(ax);
+    for (const [name, axis] of AXIS_DIRS) {
+      const d = (vertices[i][0] * axis[0] + vertices[i][1] * axis[1] + vertices[i][2] * axis[2]) / (dirLen * len(axis));
       if (d > bestDot) { bestDot = d; best = name; }
     }
     groups.get(best)!.push({ idx: i, dot: bestDot });
   }
 
   const perAxis = Math.ceil(count / AXIS_DIRS.length);
-  const positions: THREE.Vector3[] = [];
+  const positions: [number, number, number][] = [];
   const indices: number[] = [];
   for (const [name] of AXIS_DIRS) {
     const sorted = groups.get(name)!.sort((a, b) => b.dot - a.dot);
     for (let i = 0; i < Math.min(perAxis, sorted.length); i++) {
-      positions.push(all[sorted[i].idx]);
+      positions.push(vertices[sorted[i].idx]);
       indices.push(sorted[i].idx);
     }
   }
 
   while (indices.length > count) { positions.pop(); indices.pop(); }
   const seen = new Set(indices);
-  for (let i = 0; i < all.length && indices.length < count; i++) {
-    if (!seen.has(i)) { positions.push(all[i]); indices.push(i); seen.add(i); }
+  for (let i = 0; i < vertices.length && indices.length < count; i++) {
+    if (!seen.has(i)) { positions.push(vertices[i]); indices.push(i); seen.add(i); }
   }
 
   return { positions, indices };
@@ -80,7 +82,7 @@ export default function GraphNodes() {
   const nodes = useRef(
     VERTICES.slice(0, NODE_COUNT).map((node, i) => ({
       ...node,
-      position: domeSelection.positions[i].clone(),
+      position: new THREE.Vector3(...domeSelection.positions[i]),
       color: getGraphNodeColor(node),
       glow: STATE_GLOW[node.state],
     }))
