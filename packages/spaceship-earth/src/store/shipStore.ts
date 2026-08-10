@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import * as THREE from 'three';
 import { DockRecord, allocatePort, computeDockEdges, computeProbabilities, computeSystemProbabilities, detectEdgeCases, generateDockJSON } from '../engine/dockMath';
+import { DOME_VERTICES } from '../math/domeMap';
 
 const NODE_DATA = [
   { id: 'willow', label: 'Willow', type: 'family' as const, color: '#ff9944' },
@@ -33,58 +34,7 @@ function icosahedronVertices(radius = 3): [number, number, number][] {
 }
 
 function generatePortPositions(count: number): [number, number, number][] {
-  const geo = new THREE.IcosahedronGeometry(12, 3);
-  const pos = geo.getAttribute('position');
-  const idx = geo.getIndex();
-  if (!idx) return [];
-
-  const verts: THREE.Vector3[] = [];
-  for (let i = 0; i < pos.count; i++) {
-    verts.push(new THREE.Vector3(pos.getX(i), pos.getY(i), pos.getZ(i)));
-  }
-
-  const centroids: THREE.Vector3[] = [];
-  for (let i = 0; i < idx.count; i += 3) {
-    const a = idx.getX(i);
-    const b = idx.getX(i + 1);
-    const c = idx.getX(i + 2);
-    const centroid = new THREE.Vector3()
-      .add(verts[a])
-      .add(verts[b])
-      .add(verts[c])
-      .multiplyScalar(1 / 3);
-    centroids.push(centroid);
-  }
-
-  const sampled = farthestPointSampling(centroids, count);
-  return sampled.map((p) => [p.x, p.y, p.z]);
-}
-
-function farthestPointSampling(points: THREE.Vector3[], count: number): THREE.Vector3[] {
-  if (points.length === 0 || count === 0) return [];
-  const selected: THREE.Vector3[] = [points[0]];
-  const minDist: number[] = points.map(() => Infinity);
-
-  while (selected.length < count && selected.length < points.length) {
-    let farthestIdx = -1;
-    let farthestDist = -1;
-    const last = selected[selected.length - 1];
-
-    for (let i = 0; i < points.length; i++) {
-      if (selected.includes(points[i])) continue;
-      const dist = points[i].distanceTo(last);
-      if (dist < minDist[i]) minDist[i] = dist;
-      if (minDist[i] > farthestDist) {
-        farthestDist = minDist[i];
-        farthestIdx = i;
-      }
-    }
-
-    if (farthestIdx === -1) break;
-    selected.push(points[farthestIdx]);
-  }
-
-  return selected;
+  return DOME_VERTICES.slice(0, count).map(v => [v[0], v[1], v[2]]);
 }
 
 const PORT_COUNT = 120;
