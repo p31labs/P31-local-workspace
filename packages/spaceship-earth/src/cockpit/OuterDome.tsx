@@ -184,7 +184,10 @@ export default function OuterDome({ children }: { children?: React.ReactNode }) 
     if (!groupRef.current || !shouldAnimate) return;
 
     const speed = 0.0002 * (0.5 + 0.5 * (spoons / 5));
-    groupRef.current.rotation.y += speed;
+    const { selectedPort, hoveredPort } = useShipStore.getState();
+    if (selectedPort === null && hoveredPort === null) {
+      groupRef.current.rotation.y += speed;
+    }
 
     const selectedNode = useShipStore.getState().selectedNode;
     if (selectedNode !== null && groupRef.current && selectedNode < nodePositions.length) {
@@ -228,7 +231,7 @@ export default function OuterDome({ children }: { children?: React.ReactNode }) 
         />
       </mesh>
 
-      <instancedMesh ref={tetraRef} args={[undefined, undefined, 6]}>
+      <instancedMesh ref={tetraRef} args={[undefined, undefined, 6]} raycast={() => null}>
         <cylinderGeometry args={[0.035, 0.035, 1, 6, 1, false]} />
         <meshBasicMaterial
           color={0xff9944}
@@ -246,11 +249,11 @@ export default function OuterDome({ children }: { children?: React.ReactNode }) 
         onPointerOver={handlePortOver}
         onPointerOut={handlePortOut}
       >
-        <tetrahedronGeometry args={[0.45, 0]} />
+        <tetrahedronGeometry args={[0.7, 0]} />
         <meshStandardMaterial
           color={0x88aacc}
           emissive={0x88aacc}
-          emissiveIntensity={0.15}
+          emissiveIntensity={0.35}
           roughness={0.2}
           metalness={0.5}
           toneMapped={false}

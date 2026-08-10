@@ -79,7 +79,7 @@ export default function App() {
         <CameraRig />
         <Lens />
         <EffectComposer>
-          <Bloom luminanceThreshold={0.8} luminanceSmoothing={0.4} height={bloomHeight} intensity={1.2} mipmapBlur />
+          <Bloom luminanceThreshold={0.2} luminanceSmoothing={0.15} intensity={1.4} mipmapBlur height={bloomHeight} />
         </EffectComposer>
       </Canvas>
       <DataCard />

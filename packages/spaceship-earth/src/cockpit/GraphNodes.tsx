@@ -111,7 +111,7 @@ export default function GraphNodes() {
     <group name="graph-nodes">
       <instancedMesh ref={coreRef} args={[undefined, undefined, NODE_COUNT]} onClick={handleClick} onPointerOver={handlePointerOver} onPointerOut={handlePointerOut}>
         <sphereGeometry args={[0.12, 16, 12]} />
-        <meshStandardMaterial metalness={0.3} roughness={0.6} />
+        <meshStandardMaterial metalness={0.3} roughness={0.6} emissive={0x44aaff} emissiveIntensity={0.3} toneMapped={false} />
       </instancedMesh>
       <instancedMesh ref={meshRef} args={[undefined, undefined, NODE_COUNT]} renderOrder={-1} onPointerOver={handlePointerOver} onPointerOut={handlePointerOut}>
         <sphereGeometry args={[0.12, 16, 12]} />
