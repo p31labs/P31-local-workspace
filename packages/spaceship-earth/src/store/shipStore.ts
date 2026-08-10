@@ -56,8 +56,35 @@ function generatePortPositions(count: number): [number, number, number][] {
     centroids.push(centroid);
   }
 
-  centroids.sort((a, b) => b.length() - a.length());
-  return centroids.slice(0, count).map((p) => [p.x, p.y, p.z]);
+  const sampled = farthestPointSampling(centroids, count);
+  return sampled.map((p) => [p.x, p.y, p.z]);
+}
+
+function farthestPointSampling(points: THREE.Vector3[], count: number): THREE.Vector3[] {
+  if (points.length === 0 || count === 0) return [];
+  const selected: THREE.Vector3[] = [points[0]];
+  const minDist: number[] = points.map(() => Infinity);
+
+  while (selected.length < count && selected.length < points.length) {
+    let farthestIdx = -1;
+    let farthestDist = -1;
+    const last = selected[selected.length - 1];
+
+    for (let i = 0; i < points.length; i++) {
+      if (selected.includes(points[i])) continue;
+      const dist = points[i].distanceTo(last);
+      if (dist < minDist[i]) minDist[i] = dist;
+      if (minDist[i] > farthestDist) {
+        farthestDist = minDist[i];
+        farthestIdx = i;
+      }
+    }
+
+    if (farthestIdx === -1) break;
+    selected.push(points[farthestIdx]);
+  }
+
+  return selected;
 }
 
 const PORT_COUNT = 120;
