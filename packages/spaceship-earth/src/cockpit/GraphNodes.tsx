@@ -60,6 +60,8 @@ export default function GraphNodes() {
     meshRef.current.instanceMatrix.needsUpdate = true;
     if (coreRef.current.instanceColor) coreRef.current.instanceColor.needsUpdate = true;
     if (meshRef.current.instanceColor) meshRef.current.instanceColor.needsUpdate = true;
+    coreRef.current.computeBoundingSphere();
+    meshRef.current.computeBoundingSphere();
   }, [nodes]);
 
   // Animate countdown/pulse nodes
@@ -83,6 +85,8 @@ export default function GraphNodes() {
 
     coreRef.current.instanceMatrix.needsUpdate = true;
     meshRef.current.instanceMatrix.needsUpdate = true;
+    coreRef.current.computeBoundingSphere();
+    meshRef.current.computeBoundingSphere();
   });
 
   const handleClick = (e: ThreeEvent<MouseEvent>) => {

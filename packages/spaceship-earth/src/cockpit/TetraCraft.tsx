@@ -1,14 +1,18 @@
-import { useRef, useMemo } from 'react';
+import { useMemo, useRef, useEffect } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import { useShipStore } from '../store/shipStore';
 import { regularTetra } from '../math/geometry';
+import { useShouldAnimate } from '../hooks/useAdaptiveQuality';
 
 export default function TetraCraft() {
   const { coherence, spoons } = useShipStore();
   const { camera } = useThree();
   const groupRef = useRef<THREE.Group>(null);
+  const edgesRef = useRef<THREE.InstancedMesh>(null);
+  const vertsRef = useRef<THREE.InstancedMesh>(null);
   const time = useRef(0);
+  const shouldAnimate = useShouldAnimate(spoons);
 
   const tetra = useMemo(() => {
     const t = regularTetra(0.5);
@@ -23,11 +27,62 @@ export default function TetraCraft() {
     };
   }, []);
 
-  const colors = [0xff9944, 0x44aaff, 0x44ffaa, 0xff4466];
+  const edgePairs = useMemo(
+    () => tetra.edges,
+    [tetra.edges],
+  );
+
+  const colors = useMemo(() => [0xff9944, 0x44aaff, 0x44ffaa, 0xff4466], []);
+
+  useEffect(() => {
+    const mesh = edgesRef.current;
+    if (!mesh) return;
+    const dummy = new THREE.Object3D();
+    const up = new THREE.Vector3(0, 1, 0);
+    const quat = new THREE.Quaternion();
+    const dir = new THREE.Vector3();
+    const mid = new THREE.Vector3();
+
+    edgePairs.forEach(([i, j], idx) => {
+      const a = tetra.verts[i];
+      const b = tetra.verts[j];
+      dir.subVectors(b, a);
+      const len = dir.length();
+      mid.addVectors(a, b).multiplyScalar(0.5);
+      quat.setFromUnitVectors(up, dir.normalize());
+      dummy.position.copy(mid);
+      dummy.quaternion.copy(quat);
+      dummy.scale.set(1, len, 1);
+      dummy.updateMatrix();
+      mesh.setMatrixAt(idx, dummy.matrix);
+
+      const c = new THREE.Color(colors[idx % 4]);
+      mesh.setColorAt(idx, c);
+    });
+    mesh.instanceMatrix.needsUpdate = true;
+    if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
+  }, [edgePairs, tetra.verts, colors]);
+
+  useEffect(() => {
+    const mesh = vertsRef.current;
+    if (!mesh) return;
+    const dummy = new THREE.Object3D();
+    const c = new THREE.Color(0xffffff);
+
+    tetra.verts.forEach((pos, i) => {
+      dummy.position.copy(pos);
+      dummy.scale.setScalar(1);
+      dummy.updateMatrix();
+      mesh.setMatrixAt(i, dummy.matrix);
+      mesh.setColorAt(i, c);
+    });
+    mesh.instanceMatrix.needsUpdate = true;
+    if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
+  }, [tetra.verts]);
 
   useFrame(({ clock }) => {
     time.current = clock.getElapsedTime();
-    if (!groupRef.current) return;
+    if (!groupRef.current || !shouldAnimate) return;
 
     const camPos = camera.position;
     const lookDir = new THREE.Vector3(0, 0, 0).sub(camPos).normalize();
@@ -50,6 +105,8 @@ export default function TetraCraft() {
     groupRef.current.scale.setScalar(pulse);
   });
 
+  const glowIntensity = 0.3 + 0.7 * coherence * (spoons / 5);
+
   return (
     <group ref={groupRef}>
       <mesh>
@@ -65,45 +122,29 @@ export default function TetraCraft() {
         />
       </mesh>
 
-      {tetra.edges.map(([i, j], idx) => {
-        const a = tetra.verts[i];
-        const b = tetra.verts[j];
-        const mid = a.clone().add(b).multiplyScalar(0.5);
-        const dir = b.clone().sub(a);
-        const len = dir.length();
-        const quat = new THREE.Quaternion().setFromUnitVectors(
-          new THREE.Vector3(0, 1, 0),
-          dir.normalize()
-        );
-        const color = colors[idx % 4];
-        return (
-          <mesh key={idx} position={mid} quaternion={quat}>
-            <cylinderGeometry args={[0.012, 0.012, len, 4, 1]} />
-            <meshStandardMaterial
-              color={color}
-              emissive={color}
-              emissiveIntensity={0.5 + 0.3 * coherence}
-              roughness={0.2}
-              metalness={0.7}
-              toneMapped={false}
-            />
-          </mesh>
-        );
-      })}
+      <instancedMesh ref={edgesRef} args={[undefined, undefined, tetra.edges.length]}>
+        <cylinderGeometry args={[0.012, 0.012, 1, 4, 1, false]} />
+        <meshStandardMaterial
+          color={0xff9944}
+          emissive={0xff9944}
+          emissiveIntensity={0.5 + 0.3 * coherence}
+          roughness={0.2}
+          metalness={0.7}
+          toneMapped={false}
+        />
+      </instancedMesh>
 
-      {tetra.verts.map((pos, i) => (
-        <mesh key={`node-${i}`} position={pos}>
-          <sphereGeometry args={[0.04, 12, 12]} />
-          <meshStandardMaterial
-            color={0xffffff}
-            emissive={0xffffff}
-            emissiveIntensity={0.3 + 0.3 * (spoons / 5)}
-            roughness={0.1}
-            metalness={0.9}
-            toneMapped={false}
-          />
-        </mesh>
-      ))}
+      <instancedMesh ref={vertsRef} args={[undefined, undefined, tetra.verts.length]}>
+        <sphereGeometry args={[0.04, 12, 12]} />
+        <meshStandardMaterial
+          color={0xffffff}
+          emissive={0xffffff}
+          emissiveIntensity={0.3 + 0.3 * (spoons / 5)}
+          roughness={0.1}
+          metalness={0.9}
+          toneMapped={false}
+        />
+      </instancedMesh>
     </group>
   );
 }

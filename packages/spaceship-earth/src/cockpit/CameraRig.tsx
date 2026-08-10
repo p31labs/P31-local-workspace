@@ -37,6 +37,10 @@ export default function CameraRig() {
       autoRotate={selectedPort === null}
       enablePan
       enableZoom
+      touches={{
+        ONE: THREE.TOUCH.ROTATE,
+        TWO: THREE.TOUCH.DOLLY_PAN,
+      }}
     />
   );
 }

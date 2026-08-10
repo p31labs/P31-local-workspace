@@ -1,5 +1,7 @@
+import { useEffect } from 'react';
 import { useShipStore } from '../store/shipStore';
 import type { LedMode } from '../store/shipStore';
+import { getNeoPixelBridge } from '../services/neoPixelBridge';
 
 const MODES: LedMode[] = ['rainbow', 'chase', 'solid', 'breath', 'gradient', 'dual-chase', 'off'];
 
@@ -36,6 +38,31 @@ export default function LedController() {
   const setLedBrightness = useShipStore((s) => s.setLedBrightness);
   const setLedColors = useShipStore((s) => s.setLedColors);
   const setLedCollapsed = useShipStore((s) => s.setLedCollapsed);
+
+  useEffect(() => {
+    const bridge = getNeoPixelBridge();
+    bridge.setHardwareMode(import.meta.env.VITE_HARDWARE_LED === 'true');
+  }, []);
+
+  const handleSetMode = (mode: LedMode) => {
+    setLedMode(mode);
+    getNeoPixelBridge().setMode(mode);
+  };
+
+  const handleSetSpeed = (speed: number) => {
+    setLedSpeed(speed);
+    getNeoPixelBridge().setSpeed(speed);
+  };
+
+  const handleSetColor = (color: string) => {
+    setLedColor(color);
+    getNeoPixelBridge().setColor(color);
+  };
+
+  const handleSetBrightness = (brightness: number) => {
+    setLedBrightness(brightness);
+    getNeoPixelBridge().setBrightness(brightness);
+  };
 
   const paletteSlots = MODE_USES_PALETTE[ledMode];
   const toggleCollapse = () => setLedCollapsed(!ledCollapsed);
@@ -122,7 +149,7 @@ export default function LedController() {
         {MODES.map((mode) => (
           <button
             key={mode}
-            onClick={() => setLedMode(mode)}
+            onClick={() => handleSetMode(mode)}
             style={{
               background: ledMode === mode ? '#22d3ee' : 'rgba(255,255,255,0.05)',
               color: ledMode === mode ? '#05070a' : '#8899aa',
@@ -149,7 +176,7 @@ export default function LedController() {
           <input
             type="color"
             value={ledColor}
-            onChange={(e) => setLedColor(e.target.value)}
+            onChange={(e) => handleSetColor(e.target.value)}
             style={{
               width: 28,
               height: 28,
@@ -205,7 +232,7 @@ export default function LedController() {
             min="0"
             max="10"
             value={ledSpeed}
-            onChange={(e) => setLedSpeed(Number(e.target.value))}
+            onChange={(e) => handleSetSpeed(Number(e.target.value))}
             style={{ flex: 1, accentColor: '#22d3ee', height: 4 }}
           />
           <span style={{ fontSize: 9, color: '#8899aa', minWidth: 16, textAlign: 'right' }}>{ledSpeed}</span>
@@ -217,7 +244,7 @@ export default function LedController() {
             min="0"
             max="100"
             value={ledBrightness}
-            onChange={(e) => setLedBrightness(Number(e.target.value))}
+            onChange={(e) => handleSetBrightness(Number(e.target.value))}
             style={{ flex: 1, accentColor: '#f59e0b', height: 4 }}
           />
           <span style={{ fontSize: 9, color: '#8899aa', minWidth: 16, textAlign: 'right' }}>{ledBrightness}%</span>

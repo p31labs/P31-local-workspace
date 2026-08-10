@@ -91,6 +91,9 @@ export interface ShipStore {
   lastNotifPulse?: number;
   highUnread?: number;
   
+  // K4 wireframe overlay toggle
+  showK4Wireframe: boolean;
+  
   setSpoons: (s: number) => void;
   setCoherence: (c: number) => void;
   setEngagement: (e: number) => void;
@@ -104,9 +107,10 @@ export interface ShipStore {
   setLedSpeed: (speed: number) => void;
   setLedColor: (color: string) => void;
   setLedBrightness: (brightness: number) => void;
-  setLedColors: (colors: string[]) => void;
-  setLedCollapsed: (collapsed: boolean) => void;
-}
+   setLedColors: (colors: string[]) => void;
+   setLedCollapsed: (collapsed: boolean) => void;
+   setShowK4Wireframe: (show: boolean) => void;
+ }
 
 export const useShipStore = create<ShipStore>()(
   persist(
@@ -131,6 +135,7 @@ export const useShipStore = create<ShipStore>()(
       ledBrightness: 80,
       ledColors: ['#ff9944', '#22d3ee', '#44ffaa'],
       ledCollapsed: true,
+      showK4Wireframe: false,
       setSpoons: (s) => set({ spoons: Math.max(0, Math.min(5, s)) }),
       setCoherence: (c) => set({ coherence: Math.max(0, Math.min(1, c)) }),
       setEngagement: (e) => set({ engagement: Math.max(0, Math.min(10, e)) }),
@@ -174,6 +179,7 @@ export const useShipStore = create<ShipStore>()(
       setLedBrightness: (b) => set({ ledBrightness: Math.min(100, Math.max(0, b)) }),
       setLedColors: (colors) => set({ ledColors: colors }),
       setLedCollapsed: (collapsed) => set({ ledCollapsed: collapsed }),
+      setShowK4Wireframe: (show) => set({ showK4Wireframe: show }),
     }),
     {
       name: 'ship-led-storage',
@@ -184,6 +190,7 @@ export const useShipStore = create<ShipStore>()(
         ledBrightness: state.ledBrightness,
         ledColors: state.ledColors,
         ledCollapsed: state.ledCollapsed,
+        showK4Wireframe: state.showK4Wireframe,
       }),
     }
   )

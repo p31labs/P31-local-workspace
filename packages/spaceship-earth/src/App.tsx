@@ -39,7 +39,14 @@ export default function App() {
       if (s.coherence !== p.coherence) { useShipStore.setState({ coherence: s.coherence }); p.coherence = s.coherence; }
       if (s.engagement !== p.engagement) { useShipStore.setState({ engagement: s.engagement }); p.engagement = s.engagement; }
     });
-    return () => { cleanup?.(); unsub(); unsubVerify(); };
+
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'k' || e.key === 'K') {
+        useShipStore.getState().setShowK4Wireframe(!useShipStore.getState().showK4Wireframe);
+      }
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => { cleanup?.(); unsub(); unsubVerify(); window.removeEventListener('keydown', handleKey); };
   }, []);
 
   const webmcpRef = useRef<SpaceshipWebMCPConfig | null>(null);

@@ -7,7 +7,7 @@
  */
 
 import { useEffect, useRef } from 'react';
-import { mountJitterbugStarfield, type JitterbugStarfieldInstance } from '@p31/design-core';
+import { mountJitterbugStarfield, type JitterbugStarfieldInstance } from '@p31/design-core/starfield/jitterbug';
 import { useShipStore } from '../store/shipStore';
 import { useSovereignStore } from '../sovereign/useSovereignStore';
 
