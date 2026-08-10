@@ -38,7 +38,7 @@ export default function DataCard() {
     };
 
     return (
-      <div style={cardStyle}>
+      <div style={portCardStyle}>
         <div style={headerStyle('Port')}>
           Port {selectedPort}
           <span style={{ fontSize: 9, color: isOccupied ? '#f59e0b' : '#44ffaa', marginLeft: 8 }}>
@@ -130,6 +130,26 @@ export default function DataCard() {
 
   return null;
 }
+
+const portCardStyle: React.CSSProperties = {
+  position: 'fixed',
+  top: 80,
+  left: 20,
+  background: 'rgba(6,10,18,0.88)',
+  backdropFilter: 'blur(14px)',
+  WebkitBackdropFilter: 'blur(14px)',
+  border: '1px solid rgba(255,255,255,0.08)',
+  borderRadius: 12,
+  padding: '14px 18px',
+  color: '#e0e4ec',
+  fontFamily: "'JetBrains Mono', monospace",
+  fontSize: 11,
+  minWidth: 200,
+  maxWidth: 260,
+  pointerEvents: 'auto',
+  boxShadow: '0 8px 32px rgba(0,0,0,0.6)',
+  zIndex: 100,
+};
 
 const cardStyle: React.CSSProperties = {
   position: 'fixed',

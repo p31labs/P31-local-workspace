@@ -34,7 +34,7 @@ function generatePortPositions(radius: number, count: number): THREE.Vector3[] {
     centroids.push(centroid);
   }
 
-  centroids.sort((a, b) => a.length() - b.length());
+  centroids.sort((a, b) => b.length() - a.length());
   return centroids.slice(0, count);
 }
 

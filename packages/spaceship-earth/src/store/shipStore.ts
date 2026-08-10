@@ -56,7 +56,7 @@ function generatePortPositions(count: number): [number, number, number][] {
     centroids.push(centroid);
   }
 
-  centroids.sort((a, b) => a.length() - b.length());
+  centroids.sort((a, b) => b.length() - a.length());
   return centroids.slice(0, count).map((p) => [p.x, p.y, p.z]);
 }
 
