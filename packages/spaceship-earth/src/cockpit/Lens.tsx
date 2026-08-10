@@ -57,14 +57,13 @@ export default function Lens() {
         cool="#8a7a68"
       />
 
-      {/* Outer Aesthetic (ice shell + NeoPixel + tetra frame) */}
-      <OuterDome />
+      {/* Outer Aesthetic (ice shell + NeoPixel + tetra frame + graph) */}
+      <OuterDome>
+        <GraphNodes />
+        <GraphEdges />
+        <K4Wireframe />
+      </OuterDome>
       <TetraCraft />
-
-      {/* Graph Interior — nodes/edges on dome surface */}
-      <GraphNodes />
-      <GraphEdges />
-      <K4Wireframe />
     </group>
   );
 }

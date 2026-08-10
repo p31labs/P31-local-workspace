@@ -38,7 +38,7 @@ function generatePortPositions(radius: number, count: number): THREE.Vector3[] {
   return centroids.slice(0, count);
 }
 
-export default function OuterDome() {
+export default function OuterDome({ children }: { children?: React.ReactNode }) {
   const { spoons, coherence, dockedPorts, selectedPort } = useShipStore();
   const groupRef = useRef<THREE.Group>(null);
   const tetraRef = useRef<THREE.InstancedMesh>(null);
@@ -167,6 +167,8 @@ export default function OuterDome() {
           toneMapped={false}
         />
       </instancedMesh>
+
+      {children}
     </group>
   );
 }
