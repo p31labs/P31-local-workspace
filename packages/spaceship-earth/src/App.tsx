@@ -9,6 +9,7 @@ import { useWebMCP, type SpaceshipWebMCPConfig } from './hooks/useWebMCP';
 import Lens from './cockpit/Lens';
 import CameraRig from './cockpit/CameraRig';
 import DataCard from './hud/DataCard';
+import DataControls from './hud/DataControls';
 import SpoonPulse from './hud/SpoonPulse';
 import LedController from './hud/LedController';
 import DunaBoard from './hud/DunaBoard';
@@ -83,6 +84,7 @@ export default function App() {
         </EffectComposer>
       </Canvas>
       <DataCard />
+      <DataControls />
       <DunaBoard />
       <SystemBoard />
       <SpoonPulse />

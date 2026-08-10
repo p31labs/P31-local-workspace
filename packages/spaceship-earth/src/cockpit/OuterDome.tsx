@@ -2,6 +2,7 @@ import { useMemo, useRef, useEffect, useCallback } from 'react';
 import { useFrame, type ThreeEvent } from '@react-three/fiber';
 import * as THREE from 'three';
 import { useShipStore } from '../store/shipStore';
+import { useDataStore } from '../store/dataStore';
 import NeoPixelFrame from './NeoPixelFrame';
 import { regularTetra } from '../math/geometry';
 import { useAdaptiveQuality, useShouldAnimate } from '../hooks/useAdaptiveQuality';
@@ -83,6 +84,9 @@ export default function OuterDome({ children }: { children?: React.ReactNode }) 
     mesh.instanceMatrix.needsUpdate = true;
   }, [edgePairs, tetraFrame]);
 
+  const faceData = useDataStore((s) => s.faceData);
+  const hasData = faceData.length > 0;
+
   useEffect(() => {
     const mesh = portsRef.current;
     if (!mesh) return;
@@ -96,16 +100,19 @@ export default function OuterDome({ children }: { children?: React.ReactNode }) 
       dummy.updateMatrix();
       mesh.setMatrixAt(i, dummy.matrix);
 
+      const dataPoint = hasData ? faceData[i] : null;
+
       if (selectedPort === i) tempColor.set(0xffffff);
       else if (hoveredPort === i) tempColor.set(0xffcc44);
       else if (dockedPorts.includes(i)) tempColor.set(0xf59e0b);
+      else if (dataPoint && dataPoint.color) tempColor.set(dataPoint.color);
       else tempColor.set(0x88aacc);
       mesh.setColorAt(i, tempColor);
     });
     mesh.instanceMatrix.needsUpdate = true;
     if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
     mesh.computeBoundingSphere();
-  }, [portPositions, dockedPorts, selectedPort, hoveredPort]);
+  }, [portPositions, dockedPorts, selectedPort, hoveredPort, faceData, hasData]);
 
   const handlePortClick = useCallback((e: ThreeEvent<MouseEvent>) => {
     e.stopPropagation();
