@@ -140,7 +140,7 @@ export default function OuterDome({ children }: { children?: React.ReactNode }) 
     const tempColor = new THREE.Color();
 
     portPositions.forEach((pos, i) => {
-      dummy.position.copy(pos.clone().normalize().multiplyScalar(DOME_RADIUS * 0.88));
+      dummy.position.copy(pos.clone().normalize().multiplyScalar(DOME_RADIUS * 1.02));
       dummy.lookAt(0, 0, 0);
       dummy.scale.setScalar(1);
       dummy.updateMatrix();
