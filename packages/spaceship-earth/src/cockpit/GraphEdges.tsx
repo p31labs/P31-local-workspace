@@ -1,64 +1,48 @@
 /**
  * @file cockpit/GraphEdges.tsx — P31 Graph Edges (55 Typed Relationships)
  *
- * Geodesic arcs along the dome surface (R=12) between nodes.
- * Single LineSegments draw call.
+ * Connections follow the shortest path along the dome's 480‑edge wireframe
+ * (the same edges that carry NeoPixel LED segments).
  */
 
 import { useMemo } from 'react';
 import * as THREE from 'three';
 import { EDGES, VERTICES } from '@p31/shared';
-import { pickDomeVertices } from './GraphNodes';
+import { DOME_VERTICES, assignNodeVertices, shortestPath } from '../math/domeMap';
+import type { Axis } from '../math/domeMap';
 
-const DOME_RADIUS = 12;
 const NODE_COUNT = 58;
-const CURVE_SEGMENTS = 24;
 
-function arcOnSphere(
-  start: THREE.Vector3,
-  end: THREE.Vector3,
-  radius: number,
-  segments: number,
-): number[] {
-  const cross = new THREE.Vector3().crossVectors(start, end);
-  const len = cross.length();
-  if (len < 0.001) {
-    const out: number[] = [];
-    for (let i = 0; i <= segments; i++) {
-      const p = new THREE.Vector3().lerpVectors(start, end, i / segments).normalize().multiplyScalar(radius);
-      out.push(p.x, p.y, p.z);
-    }
-    return out;
+function nodeToVertexIndex(): Map<string, number> {
+  const axisCounts: Record<Axis, number> = { body: 0, mesh: 0, forge: 0, shield: 0 };
+  for (const v of VERTICES) {
+    const a = v.axis.toLowerCase() as Axis;
+    axisCounts[a] = (axisCounts[a] || 0) + 1;
   }
-  cross.normalize();
-  const angle = start.angleTo(end);
-  const out: number[] = [];
-  for (let i = 0; i <= segments; i++) {
-    const p = start.clone().applyAxisAngle(cross, angle * (i / segments)).normalize().multiplyScalar(radius);
-    out.push(p.x, p.y, p.z);
-  }
-  return out;
+  const indices = assignNodeVertices(axisCounts);
+  const map = new Map<string, number>();
+  VERTICES.slice(0, NODE_COUNT).forEach((v, i) => map.set(v.id, indices[i] ?? 0));
+  return map;
 }
 
 export default function GraphEdges() {
   const positions = useMemo(() => {
-    const { positions: domePositions, indices: domeVertexIndices } = pickDomeVertices(NODE_COUNT);
-
-    const nodeIdToPos = new Map<string, THREE.Vector3>();
-    VERTICES.slice(0, NODE_COUNT).forEach((v, i) => {
-      nodeIdToPos.set(v.id, new THREE.Vector3(...domePositions[i]));
-    });
-
+    const idToVertex = nodeToVertexIndex();
     const verts: number[] = [];
-    for (const edge of EDGES) {
-      const a = nodeIdToPos.get(edge.source);
-      const b = nodeIdToPos.get(edge.target);
-      if (!a || !b) continue;
 
-      const arc = arcOnSphere(a, b, DOME_RADIUS, CURVE_SEGMENTS);
-      for (let i = 0; i < arc.length / 3 - 1; i++) {
-        verts.push(arc[i * 3], arc[i * 3 + 1], arc[i * 3 + 2]);
-        verts.push(arc[i * 3 + 3], arc[i * 3 + 4], arc[i * 3 + 5]);
+    for (const edge of EDGES) {
+      const s = idToVertex.get(edge.source);
+      const t = idToVertex.get(edge.target);
+      if (s === undefined || t === undefined) continue;
+
+      const path = shortestPath(s, t);
+      if (!path || path.length < 2) continue;
+
+      for (let i = 0; i < path.length - 1; i++) {
+        const a = DOME_VERTICES[path[i]];
+        const b = DOME_VERTICES[path[i + 1]];
+        verts.push(a[0], a[1], a[2]);
+        verts.push(b[0], b[1], b[2]);
       }
     }
     return new Float32Array(verts);
