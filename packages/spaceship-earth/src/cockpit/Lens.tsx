@@ -4,7 +4,6 @@ import * as THREE from 'three';
 import { useShipStore } from '../store/shipStore';
 import OuterDome from './OuterDome';
 import TetraCraft from './TetraCraft';
-import GraphShell from './GraphShell';
 import GraphNodes from './GraphNodes';
 import GraphEdges from './GraphEdges';
 import { StarfieldField } from './StarfieldField';
@@ -62,8 +61,7 @@ export default function Lens() {
       <OuterDome />
       <TetraCraft />
 
-      {/* Graph Interior (replaces InnerDome + Nodes + Edges) */}
-      <GraphShell />
+      {/* Graph Interior — nodes/edges on dome surface */}
       <GraphNodes />
       <GraphEdges />
       <K4Wireframe />

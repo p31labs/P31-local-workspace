@@ -179,10 +179,13 @@ function check(name, ok, detail = '') {
       ledInit && ledInit.collapsed === true && collInit === 'true',
       ledInit ? `collapsed=${ledInit.collapsed}` : 'null');
 
-    // Expand by clicking the pill via evaluate to bypass Playwright actionability guards.
+    // Expand via evaluate, then wait for the DOM to reflect the expanded state.
     await page.evaluate(() => document.querySelector('[data-testid="led-controller"]')?.click());
-    await page.waitForTimeout(300);
-    const collAfterExpand = await page.getAttribute('[data-testid="led-controller"]', 'data-collapsed');
+    await page.waitForFunction(
+      () => document.querySelector('[data-testid="led-controller"]')?.getAttribute('data-collapsed') === 'false',
+      { timeout: 30000 },
+    );
+    const collAfterExpand = 'false';
     const ledAfterExpand = await page.evaluate(() => window.__p31_led?.collapsed);
     check('led: click on collapsed pill expands the controller',
       collAfterExpand === 'false' && ledAfterExpand === false);
@@ -202,8 +205,11 @@ function check(name, ok, detail = '') {
 
     // Collapse via the header button.
     await page.evaluate(() => document.querySelector('[aria-label="Collapse NeoPixel controller"]')?.click());
-    await page.waitForTimeout(300);
-    const collAfterCollapse = await page.getAttribute('[data-testid="led-controller"]', 'data-collapsed');
+    await page.waitForFunction(
+      () => document.querySelector('[data-testid="led-controller"]')?.getAttribute('data-collapsed') === 'true',
+      { timeout: 30000 },
+    );
+    const collAfterCollapse = 'true';
     const ledAfterCollapse = await page.evaluate(() => window.__p31_led?.collapsed);
     check('led: header button collapses the controller back to a pill',
       collAfterCollapse === 'true' && ledAfterCollapse === true);
