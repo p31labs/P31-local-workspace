@@ -125,6 +125,15 @@ export function StarfieldField({
     blending: THREE.AdditiveBlending,
   }), []);
 
+  // Dispose imperative GPU resources: geometry is recreated when count changes,
+  // the shader material lives for the component lifetime.
+  useEffect(() => () => {
+    geometry.dispose();
+  }, [geometry]);
+  useEffect(() => () => {
+    material.dispose();
+  }, [material]);
+
   useFrame((_, delta) => {
     if (reduceMotion || calm) return;
     timeRef.current += delta;

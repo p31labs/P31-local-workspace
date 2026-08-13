@@ -1,101 +1,71 @@
 import { useCallback } from 'react';
-import { useDataStore } from '../store/dataStore';
-import { createHapiConnector } from '../engine/hapiConnector';
+import { useDatasetStore } from '../store/datasetStore';
+import { sourceRegistry } from '../engine/sourceRegistry';
 
 export default function DataControls() {
-  const loading = useDataStore((s) => s.loading);
-  const error = useDataStore((s) => s.error);
-  const activeConnector = useDataStore((s) => s.activeConnector);
-  const refresh = useDataStore((s) => s.refresh);
-  const setActiveConnector = useDataStore((s) => s.setActiveConnector);
+  const isLoading = useDatasetStore((s) => s.isLoading);
+  const lastError = useDatasetStore((s) => s.lastError);
+  const datasets = useDatasetStore((s) => s.datasets);
+  const activeFaceId = useDatasetStore((s) => s.activeFaceDatasetId);
+  const activeVertexId = useDatasetStore((s) => s.activeVertexDatasetId);
+  const clearAll = useDatasetStore((s) => s.clearAll);
+  const buckyMode = useDatasetStore((s) => s.buckyMode);
+  const setBuckyMode = useDatasetStore((s) => s.setBuckyMode);
 
-  const loadHungerMap = useCallback(() => {
-    setActiveConnector(createHapiConnector('food-security'));
-  }, [setActiveConnector]);
+  const activeConnectorId =
+    datasets.find((d) => d.id === activeVertexId)?.connectorId ??
+    datasets.find((d) => d.id === activeFaceId)?.connectorId;
 
-  const loadPopulation = useCallback(() => {
-    setActiveConnector(createHapiConnector('population'));
-  }, [setActiveConnector]);
+  const load = useCallback((id: string) => {
+    void sourceRegistry.load(id);
+  }, []);
 
   const clearData = useCallback(() => {
-    setActiveConnector(null);
-  }, [setActiveConnector]);
+    clearAll();
+  }, [clearAll]);
+
+  const activePersonal = activeConnectorId === 'personal-constellation';
+  const activeFood = activeConnectorId?.startsWith('hapi-food');
+  const activePop = activeConnectorId?.startsWith('hapi-pop');
 
   return (
-    <div style={{
-      position: 'fixed',
-      bottom: 20,
-      left: 20,
-      background: 'rgba(6,10,18,0.88)',
-      backdropFilter: 'blur(14px)',
-      WebkitBackdropFilter: 'blur(14px)',
-      border: '1px solid rgba(255,255,255,0.08)',
-      borderRadius: 12,
-      padding: '12px 16px',
-      color: '#e0e4ec',
-      fontFamily: "'JetBrains Mono', monospace",
-      fontSize: 10,
-      zIndex: 100,
-      display: 'flex',
-      flexDirection: 'column',
-      gap: 8,
-      minWidth: 200,
-    }}>
-      <div style={{ fontSize: 9, color: '#6a7a8a', textTransform: 'uppercase', letterSpacing: 1 }}>
-        Data Sources
-      </div>
+    <div className="data-controls">
+      <div className="data-controls-label">Data Sources</div>
 
-      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-        <button onClick={loadHungerMap} disabled={loading} style={{
-          background: activeConnector?.id.startsWith('hapi-food') ? '#22d3ee' : 'rgba(255,255,255,0.05)',
-          color: activeConnector?.id.startsWith('hapi-food') ? '#05070a' : '#8899aa',
-          border: '1px solid rgba(255,255,255,0.08)',
-          borderRadius: 6,
-          padding: '5px 10px',
-          cursor: loading ? 'wait' : 'pointer',
-          fontSize: 9,
-          fontWeight: 600,
-        }}>
-          {loading && activeConnector?.id.startsWith('hapi-food') ? 'Loading...' : 'Hunger Map'}
-        </button>
-
-        <button onClick={loadPopulation} disabled={loading} style={{
-          background: activeConnector?.id.startsWith('hapi-pop') ? '#22d3ee' : 'rgba(255,255,255,0.05)',
-          color: activeConnector?.id.startsWith('hapi-pop') ? '#05070a' : '#8899aa',
-          border: '1px solid rgba(255,255,255,0.08)',
-          borderRadius: 6,
-          padding: '5px 10px',
-          cursor: loading ? 'wait' : 'pointer',
-          fontSize: 9,
-          fontWeight: 600,
-        }}>
-          {loading && activeConnector?.id.startsWith('hapi-pop') ? 'Loading...' : 'Population'}
-        </button>
-
-        <button onClick={clearData} disabled={loading} style={{
-          background: 'rgba(255,68,102,0.1)',
-          color: '#ff4466',
-          border: '1px solid rgba(255,68,102,0.2)',
-          borderRadius: 6,
-          padding: '5px 10px',
-          cursor: loading ? 'wait' : 'pointer',
-          fontSize: 9,
-          fontWeight: 600,
-        }}>
-          Clear
-        </button>
-      </div>
-
-      {error && (
-        <div style={{ fontSize: 9, color: '#ff4466', marginTop: 4 }}>
-          {error}
+      {datasets.length === 0 && (
+        <div style={{ fontSize: 9, color: '#667788', textAlign: 'center', padding: '8px 0 12px' }}>
+          Select a data source to begin, or upload your own.
         </div>
       )}
 
-      {activeConnector && !error && (
-        <div style={{ fontSize: 9, color: '#6a7a8a', marginTop: 2 }}>
-          {activeConnector.name}
-        </div>
+      <div className="data-controls-row">
+        <button onClick={() => load('personal-constellation')} disabled={isLoading} className={`data-btn${activePersonal ? ' data-btn-primary' : ' data-btn-ghost'}`}>
+          {isLoading && activePersonal ? 'Loading...' : 'Personal'}
+        </button>
+
+        <button onClick={() => load('hapi-food-security')} disabled={isLoading} className={`data-btn${activeFood ? ' data-btn-primary' : ' data-btn-ghost'}`}>
+          {isLoading && activeFood ? 'Loading...' : 'Hunger Map'}
+        </button>
+
+        <button onClick={() => load('hapi-population')} disabled={isLoading} className={`data-btn${activePop ? ' data-btn-primary' : ' data-btn-ghost'}`}>
+          {isLoading && activePop ? 'Loading...' : 'Population'}
+        </button>
+
+        <button onClick={clearData} disabled={isLoading} className="data-btn data-btn-clear">
+          Clear
+        </button>
+
+        <button onClick={() => setBuckyMode(!buckyMode)} className={`data-btn${buckyMode ? ' data-btn-primary' : ' data-btn-ghost'}`}>
+          {buckyMode ? 'Bucky: On' : 'Bucky'}
+        </button>
+      </div>
+
+      {lastError && (
+        <div className="data-controls-error">{lastError}</div>
+      )}
+
+      {activeConnectorId && !lastError && (
+        <div className="data-controls-status">{sourceRegistry.get(activeConnectorId)?.name ?? activeConnectorId}</div>
       )}
     </div>
   );

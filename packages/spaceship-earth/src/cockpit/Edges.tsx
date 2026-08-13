@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useEffect } from 'react';
 import * as THREE from 'three';
 import { useShipStore } from '../store/shipStore';
 
@@ -39,6 +39,12 @@ export default function Edges() {
     geom.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
     return geom;
   }, [nodePositions]);
+
+  // Dispose the imperative buffer when it is rebuilt (nodePositions change) or
+  // the edge layer unmounts.
+  useEffect(() => () => {
+    geometry.dispose();
+  }, [geometry]);
 
   const opacity = 0.08 + 0.18 * coherence * (spoons / 5);
 

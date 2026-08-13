@@ -19,6 +19,14 @@ export default function Nodes() {
   const glowGeo = useMemo(() => new THREE.SphereGeometry(0.22, 16, 16), []);
   const haloGeo = useMemo(() => new THREE.SphereGeometry(0.30, 16, 16), []);
 
+  // Imperative geometries are not auto-disposed by react-three-fiber — release
+  // GPU buffers when the node layer unmounts (dataset cleared, dome hidden).
+  useEffect(() => () => {
+    coreGeo.dispose();
+    glowGeo.dispose();
+    haloGeo.dispose();
+  }, [coreGeo, glowGeo, haloGeo]);
+
   // Pre-compute initial transforms and colors
   useEffect(() => {
     if (!coreRef.current || !glowRef.current || !haloRef.current) return;

@@ -1,191 +1,146 @@
 # Spaceship Earth Deployment Guide
 
+**Document ID:** P31-SE-DEPL-001 | **Version:** 1.2.0 | **Last Updated:** 2026-08-11
+
 ## Overview
-This guide provides step-by-step instructions for deploying the Spaceship Earth PWA to production and configuring the Node Zero embedded display system.
+
+This guide covers production deployment of the Spaceship Earth PWA to
+Cloudflare Pages (static frontend) and Cloudflare Workers (`spaceship-relay`
+relay + telemetry), including the CI/CD pipeline and post-deploy verification.
 
 ## Prerequisites
 
 ### System Requirements
-- Node.js 18+ with npm
+
+- Node.js 22+ and pnpm 9+
 - Git access to the repository
-- Access to p31ca.org hosting environment
-- ESP32 development environment for Node Zero
+- Cloudflare account with Wrangler CLI authenticated (`wrangler whoami`)
+- Playwright for the E2E verify suite (`NODE_PATH=/home/p31/node_modules`)
 
-### Dependencies
+### Required Secrets
+
+| Secret | Purpose | Where |
+|---|---|---|
+| `CLOUDFLARE_API_TOKEN` | Pages + Workers deploy | GitHub Actions secrets |
+| `CLOUDFLARE_ACCOUNT_ID` | Cloudflare account | GitHub Actions secrets |
+
+## 1. Building
+
+### 1.1 Install & Build
+
 ```bash
-# Install missing type definitions
-npm install --save-dev @webgpu/types @types/web-bluetooth
+cd /home/p31/P31-local-workspace
+pnpm install
 
-# Install production dependencies
-npm install
+pnpm --filter @p31/spaceship-earth build
+# → tsc --noEmit (no errors) + vite build → packages/spaceship-earth/dist/
 ```
 
-## 1. PWA Deployment to p31ca.org
+### 1.2 Verify Build Output
 
-### 1.1 Build the Application
+- `dist/` contains `index.html`, hashed JS/CSS assets, `sw.js` (Workbox).
+- Run the unit suite (193 tests) before shipping:
+
 ```bash
-cd software/spaceship-earth
-npm run build
+pnpm --filter @p31/spaceship-earth test
 ```
 
-### 1.2 Verify Build Success
-- Check `dist/` directory contains built files
-- Verify no TypeScript compilation errors
-- Run production build tests:
+## 2. Deploying
+
+### 2.1 Pages (Static Frontend)
+
 ```bash
-npm test
+cd packages/spaceship-earth
+pnpm dlx wrangler pages deploy dist --project-name=spaceship-earth --branch=main
 ```
 
-### 1.3 Deploy to Production
+- Production alias: **https://spaceship-earth.pages.dev**
+- Per-deploy URL: `https://<deploy-hash>.spaceship-earth.pages.dev`
+- `public/_headers` carries the CSP / HSTS / Permissions-Policy headers
+  (see `WCD-30-SECURITY-REPORT.md`).
+
+### 2.2 Worker (Relay + Telemetry)
+
 ```bash
-# Deploy using your preferred method (Netlify, Vercel, etc.)
-# Example for Netlify:
-npm install -g netlify-cli
-netlify deploy --prod
-
-# Example for direct server deployment:
-scp -r dist/* user@p31ca.org:/var/www/spaceship-earth/
+cd packages/spaceship-earth
+pnpm dlx wrangler deploy --name=spaceship-relay
 ```
 
-### 1.4 Post-Deployment Verification
-- Visit https://p31ca.org/spaceship-earth
-- Verify PWA installation prompt appears
-- Test WebGPU functionality in supported browsers
-- Confirm BLE permissions are requested
+- Requires the `SPACESHIP_TELEMETRY` KV namespace binding (see `wrangler.toml`).
 
-## 2. Node Zero Display Configuration
+## 3. CI/CD Pipeline
 
-### 2.1 Flash Display Firmware
+`.github/workflows/spaceship-earth.yml` triggers on pushes touching
+`packages/spaceship-earth/**` (and `workflow_dispatch`):
+
+1. `actions/checkout@v4`
+2. `actions/setup-node@v4` (Node 22) + `corepack enable`
+3. `pnpm install`
+4. `pnpm --filter @p31/spaceship-earth run build`
+5. `wrangler pages deploy` via the `wrangler-run` composite action
+   (requires `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID`)
+
+Deploys to the **main** branch (production) only; preview deployments are
+created for other branches automatically by Pages.
+
+## 4. Post-Deployment Verification
+
+### 4.1 HTTP Checks
+
 ```bash
-cd firmware/maker-variant
-idf.py set-target esp32s3
-idf.py build
-idf.py flash
+curl -s -o /dev/null -w "%{http_code}\n" https://spaceship-earth.pages.dev
+# 200
+curl -s https://spaceship-earth.pages.dev/ | grep -o '<title>[^<]*</title>'
+# <title>Spaceship Earth — P31 Labs</title>
 ```
 
-### 2.2 Configure Display Settings
-The display configuration is now optimized for Node Zero:
+### 4.2 Verify Suite (E2E)
 
-**Key Settings Applied:**
-- QSPI interface enabled
-- RGB565 color format with proper byte swapping
-- Color inversion corrected for Node Zero displays
-- 480x480 resolution support
-
-### 2.3 Verify Display Operation
-1. Power on Node Zero
-2. Check for proper boot sequence
-3. Verify display shows correct colors (no inversion)
-4. Test touch responsiveness
-
-## 3. Environment Configuration
-
-### 3.1 Production Environment Variables
-Create `.env.production`:
 ```bash
-VITE_API_URL=https://api.p31ca.org
-VITE_WEBSOCKET_URL=wss://api.p31ca.org/ws
-VITE_BLE_ENABLED=true
-VITE_WEBGPU_ENABLED=true
+cd packages/spaceship-earth
+NODE_PATH=/home/p31/node_modules node scripts/verify-ship.cjs
+# Sections A–G all green against the live deploy
 ```
 
-### 3.2 Service Worker Configuration
-The PWA includes automatic service worker registration for offline functionality:
-- Caches core application files
-- Provides offline fallback
-- Handles background sync for economy data
+### 4.3 Manual Smoke Test
 
-### 3.3 Security Headers
-Ensure your web server includes these headers:
-```
-Content-Security-Policy: default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'
-Cross-Origin-Embedder-Policy: require-corp
-Cross-Origin-Opener-Policy: same-origin
-```
+1. Open https://spaceship-earth.pages.dev
+2. Rotate the dome; click a dome face (selects the port, DataCard appears).
+3. Toggle **Bucky** in the DataControls panel — full-screen Dymaxion net
+   renders with 320 face circles. Click a circle (selection mirrors the 3D
+   dome), press **Escape** to return.
+4. Load a dataset via DatasetPanel; verify Legend / TimeControls update and
+   face colors change on both the dome and the net.
+5. PWA install prompt appears; offline reload serves the shell from `sw.js`.
 
-## 4. Testing Checklist
+## 5. Environment Variables
 
-### 4.1 Functional Testing
-- [ ] PWA installs successfully on mobile devices
-- [ ] WebGPU rules engine loads and functions
-- [ ] BLE scanning works (if supported)
-- [ ] Camera controls respond correctly
-- [ ] Economy system tracks spoons and LOVE
-- [ ] Rules engine enforces zone restrictions
+| Variable | Scope | Purpose |
+|---|---|---|
+| `VITE_RELAY_URL` | Build (optional) | WebSocket relay endpoint |
+| `VITE_LLM_KEY` | Build (optional) | LLM API key |
 
-### 4.2 Performance Testing
-- [ ] 60fps maintained in ZUI navigation
-- [ ] Mobile performance acceptable on Android tablets
-- [ ] Memory usage stable during extended use
-- [ ] Battery consumption reasonable
+All relay features degrade gracefully when `VITE_RELAY_URL` is absent.
 
-### 4.3 Cross-Browser Testing
-- [ ] Chrome (WebGPU support)
-- [ ] Edge (WebGPU support)
-- [ ] Firefox (WebGPU support)
-- [ ] Safari (CPU fallback)
+## 6. Rollback
 
-## 5. Troubleshooting
+1. **Pages:** `wrangler pages deployment list --project-name spaceship-earth`,
+   then re-promote a previous successful deployment to the main branch.
+2. **Worker:** `wrangler deploy --name spaceship-relay` a prior known-good
+   commit after `git checkout <sha>`.
 
-### 5.1 Common Issues
+## 7. Troubleshooting
 
-**WebGPU Not Available:**
-- Check browser supports WebGPU (Chrome 113+, Edge 113+)
-- Verify `navigator.gpu` is available
-- CPU fallback should activate automatically
-
-**BLE Not Working:**
-- Ensure HTTPS is used (required for Web Bluetooth)
-- Check browser supports Web Bluetooth API
-- Verify user grants Bluetooth permissions
-
-**Display Issues on Node Zero:**
-- Confirm firmware is flashed with latest configuration
-- Check power supply provides adequate current
-- Verify display cable connections
-
-**Performance Issues:**
-- Reduce Sierpinski depth on low-end devices
-- Enable performance monitoring in debug mode
-- Check for memory leaks in long sessions
-
-### 5.2 Debug Mode
-Enable debug mode by adding `?debug=true` to URL:
-- Shows performance metrics
-- Displays WebGPU status
-- Logs rule evaluation results
-- Shows BLE connection status
-
-## 6. Maintenance
-
-### 6.1 Regular Updates
-- Monitor WebGPU browser support updates
-- Update type definitions as needed
-- Test with new browser versions
-
-### 6.2 Monitoring
-- Monitor PWA performance metrics
-- Track user engagement with economy system
-- Watch for rule engine violations or conflicts
-
-### 6.3 Backup and Recovery
-- Backup IndexedDB data regularly
-- Maintain version control of configuration files
-- Document any custom zone rules or modifications
-
-## 7. Support Contacts
-
-For deployment issues:
-- **WebGPU Issues**: Check browser compatibility and fallback behavior
-- **BLE Issues**: Verify HTTPS and permissions
-- **Display Issues**: Refer to Node Zero documentation
-- **General Support**: Review implementation summary and WCD documentation
+| Issue | Resolution |
+|---|---|
+| `wrangler whoami` shows missing scopes | Re-run `wrangler login` |
+| Build fails with Rolldown/PWA warnings | Non-fatal (plugin warnings); verify `dist/` produced |
+| Pages deploy ignores `wrangler.toml` | Expected — `wrangler.toml` is Worker config; Pages needs `pages_build_output_dir` if unified |
+| Verify suite hits stale deploy | Redeploy; per-deploy hash URLs go stale once superseded |
+| `_headers` not applied | Confirm `public/_headers` uploaded in the deploy output |
 
 ## Next Steps
 
-1. Complete deployment following this guide
-2. Conduct user testing with target audience
-3. Monitor performance and user feedback
-4. Iterate on any issues discovered during testing
-
-The system is now ready for production deployment with comprehensive fallback mechanisms and performance optimizations in place.
+1. Keep `verify-ship.cjs` green against every production deploy.
+2. Extend DatasetPanel source connectors (HAPI/SDG live pulls).
+3. Wire `neo_pixel_control` MCP tool to physical LED controllers.

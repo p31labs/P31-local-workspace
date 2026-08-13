@@ -1,6 +1,6 @@
 # Spaceship Earth — Immersive 3D Cockpit
 
-**Version:** 1.1.0 | **Status:** Production | **Deployment:** https://bf53b085.spaceship-earth.pages.dev
+**Version:** 1.2.0 | **Status:** Production | **Deployment:** https://spaceship-earth.pages.dev
 
 Spaceship Earth is an immersive 3D cockpit application rendering a geodesic docking dome with 9600 NeoPixel segments, sovereign state orchestration, and real-time telemetry HUDs. It is the primary visual and interactive cockpit for the P31 ecosystem.
 
@@ -16,7 +16,7 @@ pnpm --filter @p31/spaceship-earth dev
 # Production build
 pnpm --filter @p31/spaceship-earth build
 
-# Unit tests (89 tests, 100% pass rate)
+# Unit tests (193 tests, 100% pass rate)
 pnpm --filter @p31/spaceship-earth test
 
 # Verify suite (E2E, live deploy)
@@ -25,10 +25,12 @@ cd packages/spaceship-earth && node scripts/verify-ship.cjs
 
 ## Features
 
-- **3D Geodesic Dome:** 480 edges, 9600 NeoPixel segments, 120 ports.
+- **3D Geodesic Dome:** 480 edges, 9600 NeoPixel segments, 320 interactive face ports.
+- **Dymaxion (Bucky) Net:** Full-screen SVG overlay that unfolds the dome onto the verified Wikipedia icosahedron net — click-to-select mirrors 3D port selection.
+- **Data Connectors:** Universal dataset layer (JSON / HAPI / SDG) mapped onto the 320 faces with legend, timeline scrubber, and share/export.
 - **Sovereign State:** Zustand stores + PGLite historical ledger.
-- **Engine Layer (v1.1):** Phases 1–5 SIC-POVM measurement, K₄ binding, Posner coherence, morphogenetic layout, EWMA feedback.
-- **HUD Telemetry:** DUNA board, System board, LED controller.
+- **Engine Layer:** Phases 1–5 SIC-POVM measurement, K₄ binding, Posner coherence, morphogenetic layout, EWMA feedback.
+- **HUD Telemetry:** DUNA board, System board, LED controller, SpoonPulse.
 - **WebMCP:** Browser-native agent tools via Chrome Origin Trial.
 - **MCP Server:** 4 stdio tools (`duna_status`, `system_health`, `dome_structure`, `neo_pixel_control`).
 
@@ -37,7 +39,7 @@ cd packages/spaceship-earth && node scripts/verify-ship.cjs
 - **Frontend:** Vite 8 + React 19 + Three.js 0.172 (@react-three/fiber).
 - **Storage:** IndexedDB (`p31-genesis`, `p31-relay-queue`, `p31-error-log`) + localStorage (LED settings).
 - **Deployment:** Cloudflare Pages (`spaceship-earth`) + Worker (`spaceship-relay`).
-- **Tests:** Vitest 4 (10 files, 89 tests).
+- **Tests:** Vitest 4 (18 files, 193 tests).
 
 ## Documentation
 
@@ -45,26 +47,27 @@ cd packages/spaceship-earth && node scripts/verify-ship.cjs
 - [**ARCHITECTURE.md**](./ARCHITECTURE.md) — System design and data flow.
 - [**API_REFERENCE.md**](./API_REFERENCE.md) — MCP tools and endpoints.
 - [**DEPLOYMENT_GUIDE.md**](./DEPLOYMENT_GUIDE.md) — CI/CD, wrangler config, secrets.
+- [**src/cockpit/PERFORMANCE_AUDIT.md**](./src/cockpit/PERFORMANCE_AUDIT.md) — Dome renderer draw-call analysis.
 
-## Key Fixes (v1.1.0)
+## Key Fixes (v1.2.0)
 
 | Issue | Resolution |
 |-------|-----------|
-| Engine layer stubs | ✅ Implemented 9 modules (stateEngine, feedbackLoop, coherence, k4Binding, layoutField, ricci, fawn, larmor, kenosisMesh). 89/89 tests pass. |
-| Verify BASE stale | ✅ Updated to `bf53b085` (current live deploy, HTTP 200 confirmed). |
-| CI workflow paths | ✅ Rewrote `.github/workflows/spaceship-earth.yml` to root workspace pattern. |
-| Graph Data Dome rollout | ✅ Added GraphShell, GraphNodes, GraphEdges, StarfieldField, JitterbugBackground, Lens. Observatory hooks + E2E checks in verify-ship.cjs. Manual test script included. |
+| 320 face targets | ✅ All 320 dome faces interactive — invisible hit targets at face centroids (`PORT_COUNT = 320`). |
+| Dymaxion net | ✅ New `engine/dymaxion.ts` + `cockpit/BuckyView.tsx` — verified Wikipedia net, 14 dymaxion tests. |
+| Data connectors | ✅ New dataset layer (`datasetStore`, `datasetParser`, `timeSeries`, `share`) + DatasetPanel, Legend, TimeControls, ExportButton, Onboarding. |
+| Universal mapping | ✅ `faceMapper` maps any dataset vertex/face onto the 320 dome faces. |
 
 ## Testing & Verification
 
 ```bash
 # Unit suite (Vitest)
 pnpm test
-# ✅ 10 files, 89 tests (100% pass)
+# ✅ 18 files, 193 tests (100% pass)
 
 # E2E suite (Playwright)
 node scripts/verify-ship.cjs
-# ✅ Sections A–G, 186+ checks (all green)
+# ✅ Sections A–G against live deploy
 
 # Type check
 pnpm typecheck
@@ -72,7 +75,7 @@ pnpm typecheck
 
 # Production build
 pnpm build
-# ✅ tsc + vite, 270–280 KB gzip
+# ✅ tsc + vite, ~310 KB gzip (main bundle)
 ```
 
 ## Deployment
@@ -96,7 +99,7 @@ pnpm dlx wrangler deploy --name=spaceship-relay
 
 1. Read [CONTRIBUTING.md](./CONTRIBUTING.md).
 2. Run `pnpm build && pnpm test` before commit.
-3. Ensure `verify-ship.cjs` passes (186/187 checks).
+3. Ensure `verify-ship.cjs` passes against the live deploy.
 4. PR workflow auto-runs CI checks.
 
 ## License

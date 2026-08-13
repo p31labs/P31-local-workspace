@@ -1,243 +1,103 @@
 # Spaceship Earth End-User Manual
 
+**Version:** 1.2.0 | **Last Updated:** 2026-08-11
+
 ## Welcome to Spaceship Earth
 
-Spaceship Earth is a local-first Progressive Web App designed to help neurodivergent individuals manage their cognitive energy, navigate social spaces, and maintain sovereignty over their environment. This manual will guide you through using the system effectively.
+Spaceship Earth is a 3D cockpit application that renders a geodesic "docking
+dome" of **320 interactive faces**. It is designed to help neurodivergent
+individuals and families visualize care data, social connections, and
+wellbeing metrics in a calm, sovereign, local-first environment. Everything
+runs in your browser — no account, no cloud dependency for core features.
 
 ## Getting Started
 
-### Installation
-1. **Visit the Website**: Go to https://p31ca.org/spaceship-earth
-2. **Install as PWA**: Click the "Install" button in your browser or use the menu to "Add to Home Screen"
-3. **Grant Permissions**: Allow camera, microphone, and Bluetooth permissions when prompted
-4. **First Launch**: The app will guide you through initial setup
+1. **Visit** https://spaceship-earth.pages.dev
+2. **Install as PWA:** use the browser's *Install* / *Add to Home Screen*
+   option for offline support.
+3. **Explore the dome:** drag to orbit, scroll to zoom, and click any of the
+   320 triangular faces.
 
-### Initial Setup
-1. **Create Your Profile**: Set up your display name and avatar
-2. **Morning Assessment**: Complete the daily energy assessment to set your Spoon budget
-3. **Zone Discovery**: Explore available zones and their rules
-4. **BLE Configuration**: If using physical beacons, pair your devices
+## The 3D Dome
 
-## Core Concepts
+The central geodesic dome has 480 glowing edges lit with NeoPixel-style
+segments. Every one of its **320 triangular faces** is interactive:
 
-### Spoons (Cognitive Energy)
-- **What are Spoons?**: Your daily cognitive energy budget (typically 12/day)
-- **Spending**: Activities like socializing, decision-making, and sensory processing cost spoons
-- **Borrowing**: You can borrow spoons but must pay back with 1.5x interest
-- **Stand Down**: When you reach 0 spoons, you enter Stand Down mode and should rest
+- **Hover** a face to see it highlight.
+- **Click** a face to select it — the DataCard shows its details, and the
+  selection mirrors across views (3D dome and Dymaxion net).
+- **Deselect** by clicking the close control on the DataCard.
 
-### LOVE (Karma)
-- **What is LOVE?**: A lifetime counter of positive social interactions
-- **Earning**: Receive LOVE from peers for helpful actions, completing tasks, or positive contributions
-- **Usage**: LOVE unlocks Creator Status and zone creation privileges
-- **Never Decreases**: LOVE is monotonically increasing
+## Dymaxion Net (Bucky Mode)
 
-### Zones and Sovereignty
-- **Zones**: Designated areas with specific rules and energy requirements
-- **Sovereignty**: Each zone has a sovereign resident who sets rules
-- **Visitor Mindset**: When entering a zone, you must acknowledge its rules
-- **Energy Matching**: Zones have energy levels (Kinetic, Balanced, Ordered, Still)
+Press the **Bucky** button in the DataControls panel to unfold the dome onto a
+flat map — a **Dymaxion (Buckminster Fuller) icosahedron net**.
 
-## Interface Overview
+- The dome's 320 faces are laid out inside 20 triangular cells forming the
+  classic Wikipedia icosahedron net (a 3-row band).
+- One circle per face, colored from the active dataset (or default cyan).
+- **Click a circle** to select that face — the same port selection as the 3D
+  dome.
+- **Hover** a circle for a glow; selected faces are larger.
+- Press **Escape** or the **close button** to return to the 3D dome.
 
-### The ZUI (Zoomable User Interface)
-The main interface uses a three-level zoom system:
+## Datasets
 
-#### Level 0: Macro View (Sierpinski Tetrahedron)
-- **Purpose**: Overview of all zones in your network
-- **Navigation**: Click on glowing nodes to zoom into specific zones
-- **Information**: Shows zone health, activity levels, and connections
+Load your own data and map it onto the dome:
 
-#### Level 1: Meso View (Local Zone Orbs)
-- **Purpose**: View individual spaces within a selected zone
-- **Navigation**: Click on orbs to see creator profiles and content
-- **Information**: Shows member count, recent activity, and energy levels
+1. Open the **DatasetPanel** (DataControls panel) and choose *Load dataset*.
+2. Supported formats: JSON, HAPI, SDG (see `docs/DOME_DATA_FORMAT.md`).
+3. Face colors update to the dataset's values; the **Legend** explains the
+   color ramp.
+4. For time-series datasets, the **TimeControls** scrubber animates the
+   timeline across the faces.
+5. **Export/Share** bundles the current dataset for sharing.
 
-#### Level 2: Micro View (Creator Context)
-- **Purpose**: Detailed view of creators, their rules, and content
-- **Navigation**: Scroll through profiles and interact with content
-- **Information**: Shows karma scores, zone rules, and available actions
+The dome maps up to 320 nodes — one per face.
 
-### Camera Controls
-- **Mouse/Touch**: Pan, zoom, and rotate the 3D view
-- **Collision Detection**: Camera automatically avoids obstacles
-- **Multi-Screen**: Supports multiple monitor setups
-- **Performance**: System adapts to your device capabilities
+## HUD Panels
 
-## Daily Workflow
+| Panel | Purpose |
+|---|---|
+| DUNA board (left rail) | Docking status, member count |
+| System board (right rail) | Coherence, health, mesh status |
+| LED controller (bottom) | NeoPixel animation mode, speed, color, brightness |
+| SpoonPulse (bottom-left orb) | Cognitive-energy level (color-coded) |
+| DataCard | Details for the selected face/port |
 
-### Morning Routine
-1. **Open the App**: Launch Spaceship Earth
-2. **Complete Assessment**: Answer questions about:
-   - Medication status
-   - Pain levels
-   - Legal obligations
-   - Emotional state
-3. **Review Spoon Budget**: See your available energy for the day
-4. **Plan Activities**: Check zone requirements and plan accordingly
+### Keyboard Shortcuts
 
-### Zone Navigation
-1. **Select Destination**: Choose a zone from the Macro view
-2. **Check Requirements**: Review energy costs and rules
-3. **BLE Trigger**: If using physical beacons, approach the zone boundary
-4. **Visitor Mindset**: Acknowledge zone rules in the modal
-5. **Enter Zone**: Proceed with appropriate energy expenditure
+- **K** — toggle the K₄ wireframe overlay
+- **Escape** — close the Dymaxion net / overlays
+- **Space** — reset camera position
 
-### Social Interactions
-1. **Help Board**: Post requests or offer assistance
-2. **Karma System**: Award LOVE for positive interactions
-3. **Creator Status**: Work towards unlocking zone creation privileges
-4. **Peer Review**: Participate in community governance
+## Accessibility
 
-## Advanced Features
+- **Reduced motion:** enabled automatically from OS settings or via the
+  sovereign state (`data-spoons` ≤ 1 disables animation).
+- **Spoon-aware:** the UI scales motion and chrome with your cognitive-energy
+  level (0–5).
+- **Focus + keyboard:** all interactive controls are keyboard-accessible;
+  overlays trap focus and close on Escape.
+- **Color contrast:** face/legend colors use perceptually uniform tokens.
 
-### BLE Beacon Integration
-**For Physical Spaces:**
-- **Detection**: Automatic zone detection when approaching physical boundaries
-- **Haptic Feedback**: Gentle vibrations when entering/exiting zones
-- **Audio Cues**: Spatial audio changes based on location
-- **Visual Transitions**: Smooth UI transitions synchronized with physical movement
+## Privacy
 
-**Setup:**
-1. Ensure Bluetooth is enabled
-2. Approach a configured beacon
-3. Grant location permissions if requested
-4. Follow on-screen instructions for pairing
-
-### Cognitive Shield
-**Purpose**: Filters high-conflict messages to reduce stress
-**How it works:**
-1. **Detection**: Automatically identifies potentially stressful content
-2. **Rewriting**: Uses local AI to create neutral summaries
-3. **Toggle**: You can view the original message if needed
-4. **Learning**: System adapts to your preferences over time
-
-### Economy Management
-**Spoon Tracking:**
-- Automatic logging of energy expenditures
-- Real-time balance updates
-- Borrowing and repayment tracking
-- Daily reset and penalty calculations
-
-**LOVE Management:**
-- Peer-to-peer karma transfers
-- Task completion rewards
-- Creator status progression
-- Community contribution tracking
+- All data is stored locally (IndexedDB / localStorage).
+- Telemetry is **opt-in only** and blocked entirely in Kids mode.
+- No account or external identity required for core features.
 
 ## Troubleshooting
 
-### Common Issues
-
-**WebGPU Not Working:**
-- **Cause**: Browser doesn't support WebGPU
-- **Solution**: System automatically falls back to CPU processing
-- **Performance**: May be slightly slower but fully functional
-
-**BLE Not Detected:**
-- **Cause**: Bluetooth disabled or permissions denied
-- **Solution**: Enable Bluetooth and grant location permissions
-- **Alternative**: Use manual zone selection
-
-**Camera Controls Unresponsive:**
-- **Cause**: Performance issues or input conflicts
-- **Solution**: Try refreshing the page or adjusting performance settings
-- **Alternative**: Use keyboard shortcuts for navigation
-
-**Spoon Count Incorrect:**
-- **Cause**: Manual adjustments or system errors
-- **Solution**: Use the "Reset Daily" function or contact support
-- **Prevention**: Avoid manual spoon adjustments unless necessary
-
-### Performance Optimization
-
-**For Low-End Devices:**
-- Reduce Sierpinski depth in settings
-- Enable performance monitoring
-- Use CPU fallback mode
-- Close other browser tabs
-
-**For High-End Devices:**
-- Enable all WebGPU features
-- Increase visual quality settings
-- Use multi-monitor support
-- Enable advanced camera features
-
-### Getting Help
-
-**In-App Support:**
-- Help Board for community assistance
-- Documentation links in settings
-- Tutorial videos for complex features
-
-**External Resources:**
-- Implementation Summary document
-- Technical documentation
-- Developer guides
-
-## Best Practices
-
-### Energy Management
-1. **Plan Ahead**: Check zone requirements before visiting
-2. **Rest Regularly**: Don't wait until Stand Down to rest
-3. **Borrow Wisely**: Only borrow spoons for essential activities
-4. **Track Patterns**: Notice which activities cost the most energy
-
-### Social Engagement
-1. **Start Small**: Begin with low-energy interactions
-2. **Be Consistent**: Regular small contributions build karma
-3. **Respect Boundaries**: Always acknowledge zone rules
-4. **Ask for Help**: Use the Help Board when needed
-
-### Technical Usage
-1. **Keep Updated**: Regularly update the PWA
-2. **Monitor Performance**: Use built-in monitoring tools
-3. **Backup Data**: Export important information periodically
-4. **Test Features**: Experiment with settings to find optimal configuration
-
-## Privacy and Security
-
-### Local-First Design
-- **Data Ownership**: All data stored locally on your device
-- **No Cloud Dependencies**: Critical functionality works offline
-- **Privacy Protection**: No personal data sent to external servers
-- **Encryption**: Sensitive data encrypted using WebCrypto
-
-### Permissions
-- **Bluetooth**: Only for zone detection and beacon interaction
-- **Camera/Microphone**: Only for optional video/audio features
-- **Location**: Only for BLE beacon proximity detection
-- **Storage**: For local data persistence and offline functionality
-
-### Data Management
-- **Export**: Regularly export important data
-- **Backup**: Use browser's built-in backup features
-- **Clear Data**: Option to reset all data if needed
-- **Privacy**: No tracking or analytics by default
+| Issue | Solution |
+|---|---|
+| Dome doesn't render | Enable WebGL in browser settings; update browser |
+| Offline reload fails | Ensure the PWA was installed (service worker) |
+| Dataset doesn't appear | Confirm ≤ 320 nodes; check the Legend for the ramp |
+| Bucky overlay won't open | Toggle via DataControls; verify `buckyMode` state |
 
 ## Conclusion
 
-Spaceship Earth is designed to empower you with tools for cognitive sovereignty and social navigation. Take time to explore the features at your own pace, and don't hesitate to use the Help Board or documentation for support.
-
-Remember: This is your spaceship. You are the captain. Use these tools to create a environment that supports your needs and helps you thrive.
-
-## Quick Reference
-
-### Keyboard Shortcuts
-- **Space**: Reset camera position
-- **F**: Toggle fullscreen
-- **P**: Toggle performance monitoring
-- **H**: Show help overlay
-
-### Common Actions
-- **Add Spoon**: Manual energy adjustment (use sparingly)
-- **Award LOVE**: Click karma button on user profiles
-- **Post Request**: Use Help Board in any zone
-- **Reset Day**: Use morning assessment to reset spoon budget
-
-### Emergency Procedures
-- **Stand Down**: Automatic when spoons reach 0
-- **Reset System**: Clear data in settings if needed
-- **Contact Support**: Use Help Board or documentation
-
-Welcome aboard, Captain. The journey begins now.
+Spaceship Earth turns your family's care and wellbeing data into a calm,
+sovereign 3D space you can explore — in the dome, or unfolded as a flat
+Dymaxion map. Take your time. It's your spaceship.

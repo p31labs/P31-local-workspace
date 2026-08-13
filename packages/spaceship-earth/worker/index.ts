@@ -13,28 +13,63 @@
 
 export interface Env {
   SPACESHIP_TELEMETRY: KVNamespace;
+  P31_SHELL: { fetch: (request: Request) => Promise<Response> };
   OCTOPRINT_URL?: string;
   OCTOPRINT_API_KEY?: string;
   GCODE_ALLOWLIST?: string; // comma-separated filenames
 }
 
+// ── Cross-app state (proxy → p31-shell CrossAppStateDO) ──
+const spaceshipStateStore: Record<string, unknown> = {};
+
+function addSecurityHeaders(response: Response): Response {
+  const headers = new Headers(response.headers);
+  headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
+  headers.set('X-Content-Type-Options', 'nosniff');
+  headers.set('X-Frame-Options', 'DENY');
+  headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+  headers.set('Permissions-Policy', 'geolocation=(), camera=(), microphone=(), payment=()');
+  return new Response(response.body, { status: response.status, headers });
+}
+
 // ── CORS ──
 
-const CORS_HEADERS = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET, POST, PUT, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type',
-};
+const ALLOWED_ORIGINS = [
+  'https://p31ca.org',
+  'https://www.p31ca.org',
+  'https://app.p31ca.org',
+  'https://p31-shell.trimtab-signal.workers.dev',
+  'https://spaceship-earth.pages.dev',
+  'http://localhost:5200',
+  'http://localhost:5173',
+  'http://localhost:4173',
+  'http://localhost:3000',
+];
 
-function corsResponse(body: string, status = 200): Response {
+function corsOriginFor(request: Request, pathname: string): string {
+  if (pathname === '/health') return '*';
+  const origin = request.headers.get('Origin');
+  if (origin && ALLOWED_ORIGINS.includes(origin)) return origin;
+  return 'null';
+}
+
+function corsHeadersFor(request: Request, pathname: string): Record<string, string> {
+  return {
+    'Access-Control-Allow-Origin': corsOriginFor(request, pathname),
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+  };
+}
+
+function corsResponse(request: Request, body: string, status = 200): Response {
   return new Response(body, {
     status,
-    headers: { 'Content-Type': 'application/json', ...CORS_HEADERS },
+    headers: { 'Content-Type': 'application/json', ...corsHeadersFor(request, new URL(request.url).pathname) },
   });
 }
 
-function optionsResponse(): Response {
-  return new Response(null, { status: 204, headers: CORS_HEADERS });
+function optionsResponse(request: Request): Response {
+  return new Response(null, { status: 204, headers: corsHeadersFor(request, new URL(request.url).pathname) });
 }
 
 // ── SHA-256 (server-side, independent of client) ──
@@ -79,7 +114,7 @@ async function handleSessionStart(req: Request, env: Env): Promise<Response> {
   try {
     body = await req.json() as typeof body;
   } catch {
-    return corsResponse(JSON.stringify({ error: 'Invalid JSON' }), 400);
+    return corsResponse(request, JSON.stringify({ error: 'Invalid JSON' }), 400);
   }
 
   const sessionId = crypto.randomUUID();
@@ -100,7 +135,7 @@ async function handleSessionStart(req: Request, env: Env): Promise<Response> {
     expirationTtl: 30 * 86400, // 30 days
   });
 
-  return corsResponse(JSON.stringify({ ok: true, sessionId, serverHash }));
+  return corsResponse(request, JSON.stringify({ ok: true, sessionId, serverHash }));
 }
 
 // POST /session/heartbeat — record room visit duration
@@ -109,17 +144,17 @@ async function handleSessionHeartbeat(req: Request, env: Env): Promise<Response>
   try {
     body = await req.json() as typeof body;
   } catch {
-    return corsResponse(JSON.stringify({ error: 'Invalid JSON' }), 400);
+    return corsResponse(request, JSON.stringify({ error: 'Invalid JSON' }), 400);
   }
 
   const { sessionId, room, durationMs, spoons } = body;
   if (!sessionId || !room || durationMs === undefined) {
-    return corsResponse(JSON.stringify({ error: 'Missing fields' }), 400);
+    return corsResponse(request, JSON.stringify({ error: 'Missing fields' }), 400);
   }
 
   const raw = await env.SPACESHIP_TELEMETRY.get(sessionKey(sessionId));
   if (!raw) {
-    return corsResponse(JSON.stringify({ error: 'Session not found' }), 404);
+    return corsResponse(request, JSON.stringify({ error: 'Session not found' }), 404);
   }
 
   const session = JSON.parse(raw) as SessionRecord;
@@ -138,7 +173,7 @@ async function handleSessionHeartbeat(req: Request, env: Env): Promise<Response>
     expirationTtl: 30 * 86400,
   });
 
-  return corsResponse(JSON.stringify({ ok: true, serverHash: session.serverHash }));
+  return corsResponse(request, JSON.stringify({ ok: true, serverHash: session.serverHash }));
 }
 
 // POST /session/end — finalize session
@@ -147,17 +182,17 @@ async function handleSessionEnd(req: Request, env: Env): Promise<Response> {
   try {
     body = await req.json() as typeof body;
   } catch {
-    return corsResponse(JSON.stringify({ error: 'Invalid JSON' }), 400);
+    return corsResponse(request, JSON.stringify({ error: 'Invalid JSON' }), 400);
   }
 
   const { sessionId } = body;
   if (!sessionId) {
-    return corsResponse(JSON.stringify({ error: 'Missing sessionId' }), 400);
+    return corsResponse(request, JSON.stringify({ error: 'Missing sessionId' }), 400);
   }
 
   const raw = await env.SPACESHIP_TELEMETRY.get(sessionKey(sessionId));
   if (!raw) {
-    return corsResponse(JSON.stringify({ error: 'Session not found' }), 404);
+    return corsResponse(request, JSON.stringify({ error: 'Session not found' }), 404);
   }
 
   const session = JSON.parse(raw) as SessionRecord;
@@ -170,7 +205,7 @@ async function handleSessionEnd(req: Request, env: Env): Promise<Response> {
     expirationTtl: 365 * 86400, // 1 year for completed sessions
   });
 
-  return corsResponse(JSON.stringify({ ok: true, serverHash: session.serverHash }));
+  return corsResponse(request, JSON.stringify({ ok: true, serverHash: session.serverHash }));
 }
 
 // ── BS58 decoder (minimal, no dep) ──
@@ -250,12 +285,12 @@ async function handleStatePost(req: Request, env: Env, did: string): Promise<Res
   try {
     body = await req.json() as typeof body;
   } catch {
-    return corsResponse(JSON.stringify({ error: 'Invalid JSON' }), 400);
+    return corsResponse(request, JSON.stringify({ error: 'Invalid JSON' }), 400);
   }
 
   const { payload, signature } = body;
   if (!payload || !signature || payload.timestamp === undefined) {
-    return corsResponse(JSON.stringify({ error: 'Missing payload or signature' }), 400);
+    return corsResponse(request, JSON.stringify({ error: 'Missing payload or signature' }), 400);
   }
 
   // Extract public key from DID
@@ -263,7 +298,7 @@ async function handleStatePost(req: Request, env: Env, did: string): Promise<Res
   try {
     pubKeyBytes = didToPublicKeyBytes(did);
   } catch (err) {
-    return corsResponse(JSON.stringify({ error: (err as Error).message }), 400);
+    return corsResponse(request, JSON.stringify({ error: (err as Error).message }), 400);
   }
 
   // Import as Ed25519 public CryptoKey
@@ -274,7 +309,7 @@ async function handleStatePost(req: Request, env: Env, did: string): Promise<Res
       { name: 'Ed25519' }, false, ['verify'],
     );
   } catch {
-    return corsResponse(JSON.stringify({ error: 'Failed to import public key' }), 400);
+    return corsResponse(request, JSON.stringify({ error: 'Failed to import public key' }), 400);
   }
 
   // Verify signature against canonical payload JSON
@@ -286,11 +321,11 @@ async function handleStatePost(req: Request, env: Env, did: string): Promise<Res
   try {
     valid = await crypto.subtle.verify('Ed25519', pubKey, sigBytes, dataBytes);
   } catch {
-    return corsResponse(JSON.stringify({ error: 'Signature verification failed' }), 400);
+    return corsResponse(request, JSON.stringify({ error: 'Signature verification failed' }), 400);
   }
 
   if (!valid) {
-    return corsResponse(JSON.stringify({ error: 'SIGNATURE_INVALID' }), 403);
+    return corsResponse(request, JSON.stringify({ error: 'SIGNATURE_INVALID' }), 403);
   }
 
   // Server-side hash for Daubert chain
@@ -306,16 +341,16 @@ async function handleStatePost(req: Request, env: Env, did: string): Promise<Res
     expirationTtl: 90 * 86400, // 90 days
   });
 
-  return corsResponse(JSON.stringify({ ok: true, serverHash }));
+  return corsResponse(request, JSON.stringify({ ok: true, serverHash }));
 }
 
 // GET /state/:did — read latest verified state
-async function handleStateGet(env: Env, did: string): Promise<Response> {
+async function handleStateGet(req: Request, env: Env, did: string): Promise<Response> {
   const raw = await env.SPACESHIP_TELEMETRY.get(stateKey(did));
   if (!raw) {
-    return corsResponse(JSON.stringify({ error: 'No state for DID' }), 404);
+    return corsResponse(req, JSON.stringify({ error: 'No state for DID' }), 404);
   }
-  return corsResponse(raw);
+  return corsResponse(req, raw);
 }
 
 // ── Mint K4 types (WCD-M19) ──
@@ -347,27 +382,27 @@ async function handleMintK4(req: Request, env: Env): Promise<Response> {
   try {
     body = await req.json() as MintK4Body;
   } catch {
-    return corsResponse(JSON.stringify({ error: 'Invalid JSON' }), 400);
+    return corsResponse(request, JSON.stringify({ error: 'Invalid JSON' }), 400);
   }
 
   const { nonce, canonicalTimestamp, signatures, gcodeFile } = body;
 
   // Validate 4 signatures
   if (!nonce || !canonicalTimestamp || !signatures || signatures.length !== 4 || !gcodeFile) {
-    return corsResponse(JSON.stringify({ error: 'Requires nonce, canonicalTimestamp, 4 signatures, and gcodeFile' }), 400);
+    return corsResponse(request, JSON.stringify({ error: 'Requires nonce, canonicalTimestamp, 4 signatures, and gcodeFile' }), 400);
   }
 
   // Ensure 4 distinct DIDs
   const dids = signatures.map((s) => s.did);
   if (new Set(dids).size !== 4) {
-    return corsResponse(JSON.stringify({ error: 'Requires 4 distinct DIDs' }), 400);
+    return corsResponse(request, JSON.stringify({ error: 'Requires 4 distinct DIDs' }), 400);
   }
 
   // Nonce replay check
   const nonceKey = `nonce:${nonce}`;
   const existingNonce = await env.SPACESHIP_TELEMETRY.get(nonceKey);
   if (existingNonce) {
-    return corsResponse(JSON.stringify({ error: 'REPLAY_DETECTED' }), 409);
+    return corsResponse(request, JSON.stringify({ error: 'REPLAY_DETECTED' }), 409);
   }
 
   // Construct canonical payload (sorted DIDs for deterministic verification)
@@ -385,7 +420,7 @@ async function handleMintK4(req: Request, env: Env): Promise<Response> {
     try {
       pubKeyBytes = didToPublicKeyBytes(did);
     } catch {
-      return corsResponse(JSON.stringify({ error: `Invalid DID at index ${i}` }), 400);
+      return corsResponse(request, JSON.stringify({ error: `Invalid DID at index ${i}` }), 400);
     }
 
     let pubKey: CryptoKey;
@@ -395,7 +430,7 @@ async function handleMintK4(req: Request, env: Env): Promise<Response> {
         { name: 'Ed25519' }, false, ['verify'],
       );
     } catch {
-      return corsResponse(JSON.stringify({ error: `Failed to import key at index ${i}` }), 400);
+      return corsResponse(request, JSON.stringify({ error: `Failed to import key at index ${i}` }), 400);
     }
 
     const sigBytes = hexToBytes(signature);
@@ -403,11 +438,11 @@ async function handleMintK4(req: Request, env: Env): Promise<Response> {
     try {
       valid = await crypto.subtle.verify('Ed25519', pubKey, sigBytes, dataBytes);
     } catch {
-      return corsResponse(JSON.stringify({ error: `Verification error at index ${i}` }), 400);
+      return corsResponse(request, JSON.stringify({ error: `Verification error at index ${i}` }), 400);
     }
 
     if (!valid) {
-      return corsResponse(JSON.stringify({ error: 'SIGNATURE_INVALID', index: i }), 403);
+      return corsResponse(request, JSON.stringify({ error: 'SIGNATURE_INVALID', index: i }), 403);
     }
   }
 
@@ -417,7 +452,7 @@ async function handleMintK4(req: Request, env: Env): Promise<Response> {
   // G-code allowlist check
   const allowlist = (env.GCODE_ALLOWLIST ?? 'k4_node_v1.gcode').split(',').map((f) => f.trim());
   if (!allowlist.includes(gcodeFile)) {
-    return corsResponse(JSON.stringify({ error: 'GCODE_NOT_ALLOWED' }), 403);
+    return corsResponse(request, JSON.stringify({ error: 'GCODE_NOT_ALLOWED' }), 403);
   }
 
   // OctoPrint integration (if configured)
@@ -429,14 +464,14 @@ async function handleMintK4(req: Request, env: Env): Promise<Response> {
         headers: { 'X-Api-Key': env.OCTOPRINT_API_KEY },
       });
       if (!printerRes.ok) {
-        return corsResponse(JSON.stringify({ error: 'PRINTER_UNREACHABLE' }), 409);
+        return corsResponse(request, JSON.stringify({ error: 'PRINTER_UNREACHABLE' }), 409);
       }
       const printerState = await printerRes.json() as { state?: { flags?: { printing?: boolean } } };
       if (printerState.state?.flags?.printing) {
-        return corsResponse(JSON.stringify({ error: 'PRINTER_BUSY' }), 409);
+        return corsResponse(request, JSON.stringify({ error: 'PRINTER_BUSY' }), 409);
       }
     } catch {
-      return corsResponse(JSON.stringify({ error: 'PRINTER_CONNECTION_FAILED' }), 409);
+      return corsResponse(request, JSON.stringify({ error: 'PRINTER_CONNECTION_FAILED' }), 409);
     }
 
     // Fire print job
@@ -469,7 +504,7 @@ async function handleMintK4(req: Request, env: Env): Promise<Response> {
     expirationTtl: 365 * 86400,
   });
 
-  return corsResponse(JSON.stringify({
+  return corsResponse(request, JSON.stringify({
     ok: true,
     nonce,
     serverHash,
@@ -481,7 +516,7 @@ async function handleMintK4(req: Request, env: Env): Promise<Response> {
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     // Handle CORS preflight
-    if (request.method.toUpperCase() === 'OPTIONS') return optionsResponse();
+    if (request.method.toUpperCase() === 'OPTIONS') return optionsResponse(request);
 
     // WebSocket signaling for kenosisMesh
     if (new URL(request.url).pathname === '/ws') {
@@ -495,7 +530,7 @@ export default {
     const path = url.pathname;
 
     if (method === 'OPTIONS') {
-      return optionsResponse();
+      return optionsResponse(request);
     }
 
     if (method === 'POST' && path === '/session/start') {
@@ -520,12 +555,12 @@ export default {
     if (stateMatch) {
       const did = decodeURIComponent(stateMatch[1]);
       if (method === 'POST') return handleStatePost(request, env, did);
-      if (method === 'GET') return handleStateGet(env, did);
+      if (method === 'GET') return handleStateGet(request, env, did);
     }
 
     // R05: Health endpoint — CWP-2026-014
     if (method === 'GET' && path === '/health') {
-      return corsResponse(JSON.stringify({
+      return addSecurityHeaders(corsResponse(request, JSON.stringify({
         service: 'spaceship-relay',
         status: 'ok',
         version: '1.0.0',
@@ -540,10 +575,53 @@ export default {
           'GET  /state/:did',
           'WS  /ws',
           'GET  /health',
+          'GET  /api/spaceship-state',
+          'POST /api/spaceship-state',
+          'GET  /api/status',
         ],
-      }));
+      })));
     }
 
-    return corsResponse(JSON.stringify({ error: 'Not found' }), 404);
+    if ((method === 'GET' || method === 'POST') && path === '/api/spaceship-state') {
+      // Proxy to the p31-shell CrossAppStateDO via service binding. Two gotchas
+      // documented from production debugging:
+      //   1. Plain Worker-to-Worker fetch() over *.workers.dev URLs is blocked
+      //      (Cloudflare Error 1042) — service bindings are required.
+      //   2. The binding request URL MUST use the target's full public hostname;
+      //      a bare service-name host ("https://p31-shell/...") also yields 1042.
+      // Every public endpoint converges on one shared cross-app state.
+      try {
+        const target = new Request('https://p31-shell.trimtab-signal.workers.dev/api/spaceship-state', {
+          method,
+          headers: { 'Content-Type': 'application/json' },
+          body: method === 'POST' ? await request.text() : undefined,
+        });
+        const upstream = await env.P31_SHELL.fetch(target);
+        const body = await upstream.text();
+        const res = addSecurityHeaders(corsResponse(request, body, upstream.status));
+        res.headers.set('Cache-Control', 'no-store');
+        return res;
+      } catch (err) {
+        return addSecurityHeaders(corsResponse(request, JSON.stringify({
+          ok: false,
+          proxyError: String((err as Error).message ?? err),
+        }), 502));
+      }
+    }
+
+    if (method === 'GET' && path === '/api/status') {
+      let shellOk = false;
+      try {
+        const res = await env.P31_SHELL.fetch(new Request('https://p31-shell/api/health'));
+        shellOk = res.ok;
+      } catch { shellOk = false; }
+      return addSecurityHeaders(corsResponse(request, JSON.stringify({
+        shell: { status: shellOk ? 'ok' : 'unknown', url: 'service:p31-shell' },
+        spaceship: { status: 'ok', state: spaceshipStateStore },
+        timestamp: Date.now(),
+      })));
+    }
+
+    return corsResponse(request, JSON.stringify({ error: 'Not found' }), 404);
   },
 };

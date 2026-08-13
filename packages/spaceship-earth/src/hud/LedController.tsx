@@ -67,54 +67,12 @@ export default function LedController() {
   const paletteSlots = MODE_USES_PALETTE[ledMode];
   const toggleCollapse = () => setLedCollapsed(!ledCollapsed);
 
-  if (ledCollapsed) {
-    return (
-      <div
-        onClick={toggleCollapse}
-        data-testid="led-controller"
-        data-collapsed="true"
-        style={{
-          position: 'fixed',
-          bottom: 20,
-          right: 20,
-          background: 'rgba(0,0,0,0.85)',
-          backdropFilter: 'blur(12px)',
-          WebkitBackdropFilter: 'blur(12px)',
-          padding: '8px 14px',
-          borderRadius: 30,
-          border: '1px solid rgba(255,255,255,0.08)',
-          color: '#d8d6d0',
-          fontFamily: "'JetBrains Mono', monospace",
-          fontSize: 11,
-          zIndex: 100,
-          pointerEvents: 'auto',
-          cursor: 'pointer',
-          display: 'flex',
-          alignItems: 'center',
-          gap: 10,
-        }}
-      >
-        <span style={{ color: '#22d3ee' }}>NeoPixel</span>
-        <span style={{ color: '#667788' }}>·</span>
-        <span>{ledMode}</span>
-        <span style={{ color: '#667788' }}>·</span>
-        <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-          <span style={{ display: 'inline-block', width: 10, height: 10, borderRadius: '50%', background: ledColor }} />
-          <span style={{ fontSize: 10, color: '#8899aa' }}>{ledBrightness}%</span>
-        </span>
-        <span style={{ fontSize: 14, opacity: 0.4, marginLeft: 2 }}>◂</span>
-      </div>
-    );
-  }
-
   return (
     <div
       data-testid="led-controller"
-      data-collapsed="false"
+      data-collapsed={String(ledCollapsed)}
       style={{
-      position: 'fixed',
-      bottom: 20,
-      right: 20,
+      width: '100%',
       background: 'rgba(0,0,0,0.85)',
       backdropFilter: 'blur(12px)',
       WebkitBackdropFilter: 'blur(12px)',
@@ -124,9 +82,6 @@ export default function LedController() {
       color: '#d8d6d0',
       fontFamily: "'JetBrains Mono', monospace",
       fontSize: 11,
-      zIndex: 100,
-      pointerEvents: 'auto',
-      minWidth: 260,
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
         <strong style={{ fontSize: 12 }}>NeoPixel Controller</strong>

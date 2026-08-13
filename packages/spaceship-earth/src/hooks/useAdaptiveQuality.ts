@@ -9,6 +9,7 @@
 
 import { useEffect, useState } from 'react';
 import { performanceMonitor } from '../services/performanceMonitor';
+import { domeConfig } from '../config/domeConfig';
 
 type PerformanceLevel = 'high' | 'medium' | 'low';
 
@@ -21,11 +22,13 @@ export interface QualityTier {
   antialias: boolean;
 }
 
+const MAX_NEO_SEGMENTS = domeConfig.neoPixel.maxSegments;
+
 const TIERS: Record<PerformanceLevel, QualityTier> = {
   high: {
     level: 'high',
     fovMultiplier: 1.0,
-    neoPixelSegments: 9600,
+    neoPixelSegments: MAX_NEO_SEGMENTS,
     starfieldCount: 1600,
     bloomHeight: 512,
     antialias: true,
@@ -33,7 +36,7 @@ const TIERS: Record<PerformanceLevel, QualityTier> = {
   medium: {
     level: 'medium',
     fovMultiplier: 0.95,
-    neoPixelSegments: 4800,
+    neoPixelSegments: Math.round(MAX_NEO_SEGMENTS / 2),
     starfieldCount: 800,
     bloomHeight: 256,
     antialias: false,
@@ -41,7 +44,7 @@ const TIERS: Record<PerformanceLevel, QualityTier> = {
   low: {
     level: 'low',
     fovMultiplier: 0.9,
-    neoPixelSegments: 2400,
+    neoPixelSegments: Math.round(MAX_NEO_SEGMENTS / 4),
     starfieldCount: 400,
     bloomHeight: 128,
     antialias: false,
@@ -78,6 +81,19 @@ export function useAdaptiveQuality(): QualityTier {
 export function useShouldAnimate(spoons: number): boolean {
   const reducedMotion = useReducedMotionQuery();
   return spoons > 1 && !reducedMotion;
+}
+
+/**
+ * Returns the 5-tier speed factor from the canonical token system.
+ * Drives CSS animation-duration and JS animation speed scaling.
+ * Maps: spoons 0-1 → 0, 2 → 0.25, 3 → 0.5, 4 → 0.75, 5 → 1.
+ */
+export function useSpeedFactor(spoons: number): number {
+  if (spoons <= 1) return 0;
+  if (spoons === 2) return 0.25;
+  if (spoons === 3) return 0.5;
+  if (spoons === 4) return 0.75;
+  return 1;
 }
 
 function useReducedMotionQuery(): boolean {

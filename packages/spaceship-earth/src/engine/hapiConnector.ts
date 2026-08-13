@@ -23,6 +23,7 @@ export function createHapiConnector(
     id,
     name: `HDX HAPI — ${theme}${countryCode ? ` (${countryCode})` : ''}`,
     description: `Humanitarian indicator: ${theme}`,
+    target: 'face',
 
     async fetch(): Promise<NormalizedDataPoint[]> {
       const url = new URL(`${HAPI_BASE}/${theme}`);

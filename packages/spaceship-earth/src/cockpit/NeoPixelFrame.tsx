@@ -3,11 +3,13 @@ import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { useShipStore } from '../store/shipStore';
 import { icosahedronGeodesic } from '../math/geodesic';
+import { domeConfig } from '../config/domeConfig';
 
-const DOME_RADIUS = 12;
-const DEFAULT_SEGMENTS_PER_EDGE = 20;
-const PIXEL_RADIUS = 0.045;
-const PIXEL_GAP = 0.01;
+const DOME_RADIUS = domeConfig.geometry.radius;
+const DEFAULT_SEGMENTS_PER_EDGE = domeConfig.neoPixel.segmentsPerEdge;
+const PIXEL_RADIUS = domeConfig.neoPixel.pixelRadius;
+const PIXEL_GAP = domeConfig.neoPixel.pixelGap;
+const MAX_SEGMENTS = domeConfig.neoPixel.maxSegments;
 
 const LED_MODE_MAP: Record<string, number> = {
   rainbow: 0,
@@ -23,7 +25,7 @@ interface NeoPixelFrameProps {
   segmentCount?: number;
 }
 
-export default function NeoPixelFrame({ segmentCount = 9600 }: NeoPixelFrameProps) {
+export default function NeoPixelFrame({ segmentCount = MAX_SEGMENTS }: NeoPixelFrameProps) {
   const ledMode = useShipStore((s) => s.ledMode);
   const ledSpeed = useShipStore((s) => s.ledSpeed);
   const ledColor = useShipStore((s) => s.ledColor);
@@ -36,7 +38,7 @@ export default function NeoPixelFrame({ segmentCount = 9600 }: NeoPixelFrameProp
   const geo = useMemo(() => new THREE.CylinderGeometry(PIXEL_RADIUS, PIXEL_RADIUS, 1, 6, 1, false), []);
 
   const { matrices, totalSegments } = useMemo(() => {
-    const shell = icosahedronGeodesic(DOME_RADIUS, 2);
+    const shell = icosahedronGeodesic(DOME_RADIUS, domeConfig.geometry.detail);
     const allSegments: { pos: THREE.Vector3; dir: THREE.Vector3; len: number }[] = [];
     const dummy = new THREE.Object3D();
     const quat = new THREE.Quaternion();
@@ -100,7 +102,7 @@ export default function NeoPixelFrame({ segmentCount = 9600 }: NeoPixelFrameProp
           uBrightness: { value: ledBrightness / 100 },
           uColor1: { value: new THREE.Color(ledColors[0] ?? '#ff9944') },
           uColor2: { value: new THREE.Color(ledColors[1] ?? '#22d3ee') },
-          uTotal: { value: 9600.0 },
+          uTotal: { value: MAX_SEGMENTS },
         },
         vertexShader: `
           varying vec3 vPosition;
@@ -184,8 +186,15 @@ export default function NeoPixelFrame({ segmentCount = 9600 }: NeoPixelFrameProp
     matRef.current.uniforms.uBrightness.value = ledBrightness / 100;
     matRef.current.uniforms.uColor1.value.set(ledColors[0] ?? '#ff9944');
     matRef.current.uniforms.uColor2.value.set(ledColors[1] ?? '#22d3ee');
-    matRef.current.uniforms.uTotal.value = 9600.0;
+    matRef.current.uniforms.uTotal.value = MAX_SEGMENTS;
   }, [ledMode, ledSpeed, ledColor, ledBrightness, ledColors]);
+
+  // `geo` (in args) and the ShaderMaterial (primitive) are not auto-disposed by
+  // react-three-fiber — release the GPU buffers on unmount.
+  useEffect(() => () => {
+    geo.dispose();
+    material.dispose();
+  }, [geo, material]);
 
   useFrame(({ clock }) => {
     if (matRef.current) {

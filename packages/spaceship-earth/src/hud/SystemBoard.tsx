@@ -1,11 +1,7 @@
 import { useShipStore } from '../store/shipStore';
 
 const PANEL: React.CSSProperties = {
-  position: 'fixed',
-  top: 20,
-  right: 20,
-  width: 240,
-  marginTop: 122,
+  width: '100%',
   background: 'rgba(0,0,0,0.85)',
   backdropFilter: 'blur(12px)',
   WebkitBackdropFilter: 'blur(12px)',
@@ -15,8 +11,6 @@ const PANEL: React.CSSProperties = {
   color: '#d8d6d0',
   fontFamily: "'JetBrains Mono', monospace",
   fontSize: 11,
-  zIndex: 90,
-  pointerEvents: 'auto',
 };
 
 export default function SystemBoard() {

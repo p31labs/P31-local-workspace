@@ -55,8 +55,21 @@ export class NeoPixelBridgeImpl implements NeoPixelBridge {
   }
 
   setHardwareMode(enabled: boolean): void {
-    this.mode = enabled ? 'hardware' : 'simulation';
-    if (this.mode === 'simulation') {
+    if (this.mode === (enabled ? 'hardware' : 'simulation')) return;
+    if (enabled) {
+      // Seed the hardware batch from the current UI state so hardware dispatch
+      // reflects what the user sees.
+      const state = useShipStore.getState();
+      this.batch = {
+        mode: state.ledMode,
+        speed: state.ledSpeed,
+        color: state.ledColor,
+        brightness: state.ledBrightness,
+      };
+      this.mode = 'hardware';
+    } else {
+      // Return to simulation: sync the last hardware batch back into the store.
+      this.mode = 'simulation';
       const state = useShipStore.getState();
       state.setLedMode(this.batch.mode);
       state.setLedSpeed(this.batch.speed);

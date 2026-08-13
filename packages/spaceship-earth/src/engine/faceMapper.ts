@@ -11,8 +11,18 @@
  * - auto:       detect strategy from data point fields
  */
 
-import type { NormalizedDataPoint, FaceData, VertexData, MappingStrategy, TimeSeriesPoint } from './dataConnectors';
-import { DOME_FACE_CENTROIDS, DOME_VERTICES, DOME_EDGES } from '../math/domeMap';
+import type {
+  NormalizedDataPoint,
+  FaceData,
+  VertexData,
+  EdgeData,
+  EdgeStyle,
+  MappingStrategy,
+  TimeSeriesPoint,
+  DatasetStyleGuide,
+} from './dataConnectors';
+import { DEFAULT_EDGE_STYLE, readPointMetadata } from './dataConnectors';
+import { DOME_FACE_CENTROIDS, DOME_VERTICES, shortestPath } from '../math/domeMap';
 
 const EARTH_RADIUS_KM = 6371;
 
@@ -81,6 +91,27 @@ function findNearestVertex(v: { x: number; y: number; z: number }): number {
 
 export type AggregationStrategy = 'last' | 'max' | 'avg' | 'sum';
 
+/** Diverging cyan→violet→amber gradient shared by the dome and the legend. */
+export function defaultColorScale(value: number, min: number, max: number): string {
+  if (max === min) return value === 0 ? '#1e293b' : '#22d3ee';
+  const t = Math.max(0, Math.min(1, (value - min) / (max - min)));
+  const stops = ['#0f172a', '#22d3ee', '#6366f1', '#a855f7', '#f59e0b'];
+  const scaled = t * (stops.length - 1);
+  const i = Math.min(stops.length - 2, Math.floor(scaled));
+  const f = scaled - i;
+  const c0 = hexToRgb(stops[i]);
+  const c1 = hexToRgb(stops[i + 1]);
+  const r = Math.round(c0.r + (c1.r - c0.r) * f);
+  const g = Math.round(c0.g + (c1.g - c0.g) * f);
+  const b = Math.round(c0.b + (c1.b - c0.b) * f);
+  return `rgb(${r},${g},${b})`;
+}
+
+function hexToRgb(hex: string): { r: number; g: number; b: number } {
+  const n = parseInt(hex.slice(1), 16);
+  return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
+}
+
 export interface FaceMapperOptions {
   aggregation?: AggregationStrategy;
   colorScale?: (value: number, min: number, max: number) => string;
@@ -92,6 +123,8 @@ export interface VertexMapperOptions {
   aggregation?: AggregationStrategy;
   colorScale?: (value: number, min: number, max: number) => string;
   defaultValue?: number;
+  /** Per-category colors (category → CSS color); wins over the value scale. */
+  categoryColors?: Record<string, string>;
 }
 
 function resolveStrategy(point: NormalizedDataPoint): MappingStrategy {
@@ -236,7 +269,7 @@ export function mapDataToFaces(
   const values = Object.values(faces).map(f => f.value);
   const min = values.length ? Math.min(...values) : defaultValue;
   const max = values.length ? Math.max(...values) : defaultValue;
-  const scale = colorScale || ((v: number) => (v === 0 ? '#1e293b' : '#22d3ee'));
+  const scale = colorScale || defaultColorScale;
   const catColors = categoryColors || {};
 
   const result: FaceData[] = [];
@@ -277,7 +310,7 @@ export function mapDataToVertices(
 ): VertexData[] {
   const { aggregation = 'last', colorScale, defaultValue = 0 } = options;
 
-  const vertices: Record<number, { value: number; count: number; label: string; category?: string; metadata?: Record<string, unknown> }> = {};
+  const vertices: Record<number, { value: number; count: number; label: string; category?: string; id?: string; metadata?: Record<string, unknown> }> = {};
 
   for (const point of points) {
     const targetVertex = mapPointToVertex(point);
@@ -290,6 +323,7 @@ export function mapDataToVertices(
         count: 1,
         label: point.label,
         category: point.category,
+        id: point.id,
         metadata: point.metadata,
       };
     } else {
@@ -312,6 +346,7 @@ export function mapDataToVertices(
       }
       existing.label = point.label;
       if (point.category) existing.category = point.category;
+      existing.id = point.id;
       existing.metadata = point.metadata;
     }
   }
@@ -320,6 +355,7 @@ export function mapDataToVertices(
   const min = values.length ? Math.min(...values) : defaultValue;
   const max = values.length ? Math.max(...values) : defaultValue;
   const scale = colorScale || ((v: number) => (v === 0 ? '#1e293b' : '#22d3ee'));
+  const catColors = options.categoryColors || {};
 
   const result: VertexData[] = [];
   for (let i = 0; i < DOME_VERTICES.length; i++) {
@@ -329,9 +365,10 @@ export function mapDataToVertices(
       result.push({
         vertexIndex: i,
         value: avg,
-        color: scale(avg, min, max),
+        color: v.category ? (catColors[v.category] ?? scale(avg, min, max)) : scale(avg, min, max),
         label: v.label,
         category: v.category,
+        id: v.id,
         metadata: v.metadata,
       });
     } else {
@@ -342,6 +379,146 @@ export function mapDataToVertices(
         label: '',
       });
     }
+  }
+
+  return result;
+}
+
+// ─── Edge mapping ───────────────────────────────────────────────────────────
+
+function clamp01(n: number): number {
+  return Math.max(0, Math.min(1, n));
+}
+
+/** Merge category base style + temporal override + criticality multiplier. */
+export function mergeEdgeStyle(
+  category: string,
+  criticality: string,
+  temporal: string,
+  styleGuide?: DatasetStyleGuide,
+): EdgeStyle {
+  const cat = styleGuide?.categories?.[category] ?? {};
+  const temp = styleGuide?.temporalOverrides?.[temporal] ?? {};
+  const mult = styleGuide?.criticalityMultiplier?.[criticality] ?? 1;
+
+  return {
+    color: cat.color ?? DEFAULT_EDGE_STYLE.color,
+    thickness: Math.max(0.2, (cat.thickness ?? DEFAULT_EDGE_STYLE.thickness) * mult),
+    opacity: clamp01((cat.opacity ?? DEFAULT_EDGE_STYLE.opacity) * (temp.opacity ?? 1)),
+    animation: cat.animation ?? DEFAULT_EDGE_STYLE.animation,
+    dasharray: temp.dasharray,
+    glow: cat.glow ?? DEFAULT_EDGE_STYLE.glow,
+    pulseIntensity: temp.pulseIntensity,
+  };
+}
+
+interface EdgePointRecord {
+  source: string;
+  target: string;
+  category: string;
+  criticality: string;
+  temporal: string;
+  weight?: number;
+}
+
+/**
+ * Map a dataset's node/edge points to the edge layer.
+ *
+ * Edges come from either explicit `type: 'edge'` points (source/target node
+ * ids) or implicit `connections[]` on node points. Each edge's 3D path follows
+ * the geodesic wireframe (shortestPath) between the endpoint vertex positions,
+ * and its style is derived entirely from metadata + the dataset style guide.
+ */
+export function mapDataToEdges(
+  points: NormalizedDataPoint[],
+  styleGuide?: DatasetStyleGuide,
+): EdgeData[] {
+  const nodeById = new Map<string, { idx: number; pos: [number, number, number] }>();
+  const nodeByLabel = new Map<string, { idx: number; pos: [number, number, number] }>();
+
+  for (const point of points) {
+    if (point.type === 'edge') continue;
+    const idx = mapPointToVertex(point);
+    if (idx < 0 || idx >= DOME_VERTICES.length) continue;
+    const pos: [number, number, number] = [
+      DOME_VERTICES[idx][0],
+      DOME_VERTICES[idx][1],
+      DOME_VERTICES[idx][2],
+    ];
+    nodeById.set(point.id, { idx, pos });
+    if (point.label) nodeByLabel.set(point.label, { idx, pos });
+  }
+
+  const resolve = (ref: string): { idx: number; pos: [number, number, number] } | undefined =>
+    nodeById.get(ref) ?? nodeByLabel.get(ref);
+
+  const records: EdgePointRecord[] = [];
+
+  for (const point of points) {
+    if (point.type === 'edge') {
+      if (!point.source || !point.target) continue;
+      const meta = readPointMetadata(point);
+      records.push({
+        source: point.source,
+        target: point.target,
+        category: meta.category ?? 'other',
+        criticality: meta.criticality ?? 'tertiary',
+        temporal: meta.temporal ?? 'active',
+        weight: meta.weight,
+      });
+      continue;
+    }
+    if (point.connections?.length) {
+      const meta = readPointMetadata(point);
+      for (const other of point.connections) {
+        records.push({
+          source: point.id,
+          target: other,
+          category: meta.category ?? 'other',
+          criticality: meta.criticality ?? 'tertiary',
+          temporal: meta.temporal ?? 'active',
+          weight: meta.weight,
+        });
+      }
+    }
+  }
+
+  const seen = new Set<string>();
+  const result: EdgeData[] = [];
+
+  for (const rec of records) {
+    const key = rec.source < rec.target ? `${rec.source}|${rec.target}` : `${rec.target}|${rec.source}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+
+    const a = resolve(rec.source);
+    const b = resolve(rec.target);
+    if (!a || !b) continue;
+
+    let path: number[] | null = null;
+    if (a.idx !== b.idx) path = shortestPath(a.idx, b.idx);
+
+    let vertices: [number, number, number][];
+    if (path) {
+      vertices = path.map((vi) => [
+        DOME_VERTICES[vi][0],
+        DOME_VERTICES[vi][1],
+        DOME_VERTICES[vi][2],
+      ]);
+    } else {
+      vertices = [a.pos, b.pos];
+    }
+
+    result.push({
+      source: rec.source,
+      target: rec.target,
+      vertices,
+      style: mergeEdgeStyle(rec.category, rec.criticality, rec.temporal, styleGuide),
+      category: rec.category,
+      criticality: rec.criticality,
+      temporal: rec.temporal,
+      weight: rec.weight,
+    });
   }
 
   return result;

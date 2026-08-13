@@ -1,10 +1,10 @@
 # Spaceship Earth — Manufacturer's Technical Manual
 
-**Version:** 1.1.0
+**Version:** 1.2.0
 **Document ID:** P31-SE-MAN-001
 **Classification:** Technical — Manufacturer / OEM
-**Last Updated:** 2026-08-08
-**Deployment:** https://bf53b085.spaceship-earth.pages.dev
+**Last Updated:** 2026-08-11
+**Deployment:** https://spaceship-earth.pages.dev
 **Maintainer:** P31 Labs — trimtab-signal
 
 ---
@@ -26,9 +26,9 @@ ecosystem.
 | Package Manager | pnpm (repo root `pnpm-workspace.yaml`) |
 | Runtime | Vite 8 + React 19 + Three.js 0.172 |
 | Renderer | `@react-three/fiber` 9 + `@react-three/drei` + `@react-three/postprocessing` |
-| Unit tests | Vitest 4 (10 files, 89 tests — green) |
+| Unit tests | Vitest 4 (18 files, 193 tests — green) |
 | PWA | Yes (`vite-plugin-pwa`, Workbox, `generateSW`) |
-| Pages deploy | https://bf53b085.spaceship-earth.pages.dev |
+| Pages deploy | https://spaceship-earth.pages.dev |
 | Worker | `spaceship-relay` (Cloudflare Worker) |
 | Compatibility date | 2026-07-16 |
 
@@ -61,7 +61,7 @@ App
 ├── Canvas (@react-three/fiber)
 │   ├── EffectComposer → UnrealBloomPass
 │   ├── Lens (ambient + point lights)
-│   ├── OuterDome (geodesic shell + tetra frame)
+│   ├── OuterDome (geodesic shell + tetra frame + 320 face targets)
 │   ├── InnerDome (wireframe + stat nodes)
 │   ├── TetraCraft (camera-relative tetra)
 │   ├── CameraRig (OrbitControls + auto-rotate)
@@ -79,7 +79,11 @@ App
 ├── HUD Overlays
 │   ├── DunaBoard        (data-testid="duna-board")
 │   ├── SystemBoard      (data-testid="system-board")
-│   └── LedController    (data-testid="led-controller", collapsible)
+│   ├── LedController    (data-testid="led-controller", collapsible)
+│   ├── DataControls     (data-testid="data-controls", Bucky toggle)
+│   ├── DatasetPanel     (dataset picker/upload)
+│   ├── Legend / TimeControls / ExportButton / FaceInfo / Onboarding
+│   └── BuckyView        (full-screen Dymaxion net SVG)
 └── (no BottomNav — cockpit-only)
 ```
 
@@ -152,7 +156,7 @@ Direction: Sovereign (source of truth) → Ship (rendering).
 ## 3. Engine Layer (Phases 1–5)
 
 Added in v1.1.0. The engine layer was previously stubbed; all nine modules are
-now implemented and covered by the vitest suite (89 tests, all green).
+now implemented and covered by the vitest suite (193 tests, all green).
 
 | Module | Phase | Responsibility | Tests |
 |---|---|---|---|
@@ -189,6 +193,51 @@ no physical, medical, or scientific claim is made.
 
 ---
 
+## 3.5 Dymaxion Net (Bucky Mode) & Dataset Layer
+
+Added in v1.2.0. Two new subsystems extend the dome beyond 3D-only rendering:
+
+### 3.5.1 Dymaxion Net (`src/engine/dymaxion.ts` + `src/cockpit/BuckyView.tsx`)
+
+The dome's **320 faces** are unfolded onto a flat **icosahedron net** — the
+verified 3-row band of the public-domain "Icosahedron flat.svg" from Wikipedia:
+
+- **Cells:** 20 equilateral triangles in rows `T 0..4` (apex up, y=6–42),
+  `D 5..9` (down, y=42–78), `U 10..14` (up, y=42–78), `B 15..19`
+  (down, y=78–114). `D/U` share the equator row; `B` mirrors `U` horizontally.
+- **Verification (unit-tested):** 19 shared edges (spanning tree of the dual
+  graph), connected, all cells equilateral, **zero overlaps**.
+- **Embedding:** `solveNetEmbedding` maps each of the 20 icosahedron base faces
+  into a cell — T→`0,1,5,15,6`; D→`4,2,19,10,16`; U→`3,9,14,11,7`;
+  B→`17,12,13,18,8`.
+- **Mapping:** each dome face (0..319) is placed at its base-face cell's
+  barycentric position, projected through the plane, giving 320 points
+  (`buildDymaxionNet`).
+- **Rendering:** `BuckyView` draws the SVG overlay — cell outlines, one circle
+  per face colored from the active dataset (`#22d3ee` default), quadratic
+  connection arcs (`buildConnectionSegments`), click-to-select that mirrors 3D
+  port selection, hover glow, Escape / close button to exit.
+- **Toggle:** `buckyMode` in `datasetStore`, controlled by the **Bucky** button
+  in `DataControls`.
+
+### 3.5.2 Dataset Layer (`src/store/datasetStore.ts` + `src/engine/dataset*`)
+
+| Module | Responsibility |
+|---|---|
+| `datasetStore.ts` | Datasets registry, active selection, `buckyMode`, legend, timeline index |
+| `datasetParser.ts` | Parse JSON / HAPI / SDG payloads → `FaceData[]` (320 faces) |
+| `faceMapper.ts` | Map arbitrary dataset vertices/faces onto the 320 dome faces |
+| `timeSeries.ts` | Timeline indexing (per-timestamp face values) |
+| `dataConnectors.ts` / `hapiConnector.ts` | External dataset sources (HAPI, SDG) |
+| `share.ts` | Build export/share payloads for a loaded dataset |
+
+Consumers: `DatasetPanel` (picker/upload), `Legend`, `TimeControls`,
+`ExportButton`, `FaceInfo`, `Onboarding`, and `BuckyView`.
+`useActiveFaceData()` returns the per-face colors driving both the 3D dome
+surface and the Dymaxion overlay.
+
+---
+
 ## 4. Fabrication (Build Pipeline)
 
 ### 4.1 Toolchain
@@ -217,7 +266,7 @@ pnpm --filter @p31/spaceship-earth build
 # Production preview
 pnpm --filter @p31/spaceship-earth preview
 
-# Unit tests (10 files, 89 tests)
+# Unit tests (18 files, 193 tests)
 pnpm --filter @p31/spaceship-earth test
 
 # Sync dist/ to p31ca.org for same-origin hosting
@@ -242,7 +291,7 @@ pnpm dlx wrangler deploy --name spaceship-relay
 | `dist/index.html` | — | Entry point |
 | `dist/assets/vendor-react-*.js` | ~60 KB gzip | React |
 | `dist/assets/vendor-three-*.js` | ~243 KB gzip | Three.js |
-| `dist/assets/index-*.js` | ~15 KB gzip | App |
+| `dist/assets/index-*.js` | ~58 KB gzip | App + dataset + Dymaxion |
 | `dist/sw.js` | — | Workbox service worker |
 | `dist/stats.html` | — | Rollup visualizer report |
 
@@ -338,6 +387,7 @@ installVerifyHooks();
 useWebMCP();
 // 4. Hydrate shipStore from sovereignStore (spoons=4, coherence=0.8, engagement=5, didKey)
 // 5. Subscribe: push shipStore changes back to sovereignStore
+// 6. Render Canvas + HUD overlays + BuckyView (Dymaxion net)
 ```
 
 ### 6.2 Dome Geometry (`src/math/geodesic.ts`) + Graph Data Dome
@@ -369,7 +419,7 @@ Graph Data Dome (observatory engine in `@p31/shared`):
 
 | Component | Layer | Details |
 |---|---|---|
-| OuterDome | Outer | Radius 12, 480 edges, 9600 NeoPixel segments, tetra frame (6 edges), 120 ports |
+| OuterDome | Outer | Radius 12, 480 edges, 9600 NeoPixel segments, tetra frame (6 edges), 320 face targets |
 | NeoPixelFrame | Segment | InstancedMesh (CylinderGeometry), PIXEL_RADIUS 0.045, PIXEL_GAP 0.01 |
 | TetraCraft | Inner | Camera-relative tetra (`regularTetra(0.5)`), wobbly rotation |
 | InnerDome | Inner | Radius 2.5 wireframe, additive `#d9a066`, stat nodes |
@@ -378,8 +428,10 @@ Graph Data Dome (observatory engine in `@p31/shared`):
 | Edges | Connectivity | Node pairs < 2.5 apart, quadratic bezier, opacity `0.08 + 0.18*coherence` |
 | Nodes | Ports | 12 nodes, sphere core/glow/halo, pulse `0.85 + 0.15*sin`, click select |
 | InstancedEdges | Performance | Instanced cylinders, per-instance colors |
+| FaceTargets | Ports | 320 invisible hit targets at `DOME_FACE_CENTROIDS` (click → `setSelectedPort`) |
 | DataCard | HUD | Projected node info over canvas |
 | SpoonPulse | HUD | Bottom-left orb, color by spoon level |
+| BuckyView | Overlay | Full-screen SVG Dymaxion net (DOM, above WebGL canvas) |
 
 ### 6.4 Skin Profiles (`src/sovereign/skinProfiles.ts`)
 
@@ -423,7 +475,7 @@ Lerp rate: `SKIN_LERP_RATE = 4.0` (transitions per second).
   "mode": "docking-dome",
   "radius": 12,
   "outerEdges": 480,
-  "ports": 120,
+  "ports": 320,
   "neoPixelSegments": 9600,
   "tetraFrame": 6,
   "innerDome": true
@@ -478,7 +530,7 @@ set (the verify suite sets it via `addInitScript` before the bundle's first tick
 |---|---|
 | `DOME_RADIUS` | 12 |
 | `INNER_RADIUS` | 2.5 |
-| `PORT_COUNT` | 120 |
+| `PORT_COUNT` | 320 |
 | `SEGMENTS_PER_EDGE` | 20 |
 | `PIXEL_RADIUS` | 0.045 |
 | `PIXEL_GAP` | 0.01 |
@@ -533,8 +585,9 @@ set (the verify suite sets it via `addInitScript` before the bundle's first tick
 cd /home/p31/P31-local-workspace/packages/spaceship-earth && npx vitest run
 ```
 
-- 10 test files, 89 tests, all green.
-- Covers all nine engine modules (Phases 1–5) + dock math integration.
+- 18 test files, 193 tests, all green.
+- Covers all nine engine modules (Phases 1–5), dock math, dataset parser,
+  Dymaxion net, legend, share, and time controls.
 
 ### 9.2 Verify Suite (`scripts/verify-ship.cjs`)
 
@@ -544,11 +597,11 @@ node scripts/verify-ship.cjs
 
 | Environment | Default | Purpose |
 |---|---|---|
-| `SHIP_VERIFY_BASE` | `https://bf53b085.spaceship-earth.pages.dev` | Live deploy URL |
+| `SHIP_VERIFY_BASE` | `https://spaceship-earth.pages.dev` | Live deploy URL |
 | `__P31_VERIFY__` | set internally | Enables verify-gated hooks |
 
-> **v1.1.0:** the default `SHIP_VERIFY_BASE` was updated from the stale
-> `5a043de3` hash to the current production deploy `bf53b085`.
+> **v1.2.0:** the default `SHIP_VERIFY_BASE` is the canonical production alias
+> `spaceship-earth.pages.dev` (per-deploy hashes are `*.spaceship-earth.pages.dev`).
 
 Sections:
 
@@ -570,12 +623,14 @@ Static preflight checks (Section A):
 - `cockpit/GraphShell.tsx`, `cockpit/GraphNodes.tsx`, `cockpit/GraphEdges.tsx` exist.
 - `components/JitterbugBackground.tsx`, `cockpit/StarfieldField.tsx`, `cockpit/Lens.tsx` exist.
 - `math/geometry.ts`, `verify/hooks.ts`, `store/shipStore.ts` exist.
+- `engine/dymaxion.ts`, `cockpit/BuckyView.tsx`, `store/datasetStore.ts` exist.
 - Store fields: `dockedPorts`, `memberCount`, `dunaTarget`, `coherence`,
   `spoons`, `viewMode`.
 - LED modes enum includes all 7 modes.
 - 480 edges × 20 segments = 9600.
 - Geodesic detail=2 → 480 edges.
 - Hooks expose `__p31_domeStructure`, `__p31_ship`, `__p31_led`, `__p31_observatory`.
+- Dymaxion: 19 shared edges, 320 points, 20 cells, zero overlaps.
 
 ### 9.3 CI Pipeline (`.github/workflows/spaceship-earth.yml`)
 
@@ -630,13 +685,15 @@ Static preflight checks (Section A):
 | E-R3 | `@p31/tetra` alias | Pointed at a nonexistent path in tsconfig path maps | Verify consumers; remove alias or add module |
 | E-R4 | RUNBOOK drift | `RUNBOOK.md` predates the engine layer and verify-base update | Refresh against this manual |
 
-### 11.2 Resolved Errata (v1.1.0)
+### 11.2 Resolved Errata (v1.2.0)
 
 | ID | Component | Resolution |
 |---|---|---|
-| E-01/E-05 | Engine layer (`coherence`, `k4Binding`, `layoutField`, `fawn`, `kenosisMesh`, `larmor`, `ricci`) | **Implemented** — 9 modules, 89/89 tests green, production build passes |
+| E-01/E-05 | Engine layer (`coherence`, `k4Binding`, `layoutField`, `fawn`, `kenosisMesh`, `larmor`, `ricci`) | **Implemented** — 9 modules, tests green, production build passes |
 | E-02 | CI workflow paths (`software/` → no such dir) | **Fixed** in `spaceship-earth.yml` |
-| E-03 | Stale verify BASE (`5a043de3`) | **Fixed** → `bf53b085` (current live deploy, HTTP 200 confirmed) |
+| E-03 | Stale verify BASE | **Fixed** → `spaceship-earth.pages.dev` (canonical production alias) |
+| E-06 | Port count 120 → 320 | **Fixed** — all 320 dome faces interactive via `DOME_FACE_CENTROIDS` |
+| E-07 | No flat-map view | **Fixed** — Dymaxion (Bucky) net overlay added |
 
 ### 11.3 Common Failures
 
@@ -701,7 +758,7 @@ Static preflight checks (Section A):
 | `pnpm dev` | Start dev server (port 5180) |
 | `pnpm build` | Typecheck + production build → `dist/` |
 | `pnpm preview` | Preview production build |
-| `pnpm test` | Vitest unit suite (89 tests) |
+| `pnpm test` | Vitest unit suite (193 tests) |
 | `pnpm sync:p31ca` | Sync `dist/` to `p31ca.org/public/spaceship-earth` |
 | `node scripts/verify-ship.cjs` | Playwright E2E suite (live deploy) |
 | `node cli/spaceship-server.js` | MCP stdio server (4 tools) |
@@ -727,6 +784,10 @@ Static preflight checks (Section A):
 | `ledColors` | shipStore | string[] | Palette |
 | `ledCollapsed` | shipStore | boolean | Controller collapsed |
 | `selectedPort` | shipStore | number\|null | Selected port index |
+| `hoveredPort` | shipStore | number\|null | Hovered port index |
+| `buckyMode` | datasetStore | boolean | Dymaxion (Bucky) overlay toggle |
+| `activeDatasetId` | datasetStore | string\|null | Active dataset |
+| `timeStep` | datasetStore | number | Active timeline index |
 
 ### Appendix C: Verify-Gate Matrix (Spaceship Earth)
 
@@ -751,7 +812,7 @@ Static preflight checks (Section A):
 | G-17 | A | Graph Data Dome components present | File existence |
 | G-18 | D | Dome layers = 4 | `__p31_domeStructure.layers` |
 | G-19 | D | Outer edges = 480 | `__p31_domeStructure.outerEdges` |
-| G-20 | D | Ports = 120 | `__p31_domeStructure.ports` |
+| G-20 | D | Ports = 320 | `__p31_domeStructure.ports` |
 | G-21 | D | NeoPixel segments = 9600 | `__p31_domeStructure.neoPixelSegments` |
 | G-22 | C.1 | Observatory nodeCount = 58 | `__p31_observatory.nodeCount` |
 | G-23 | C.1 | Observatory edgeCount = 55 | `__p31_observatory.edgeCount` |
@@ -772,5 +833,5 @@ Static preflight checks (Section A):
 
 ---
 
-**Next revision:** 2026-08-15
+**Next revision:** 2026-08-22
 **Maintainer:** P31 Labs — trimtab-signal

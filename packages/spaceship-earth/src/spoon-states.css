@@ -1,0 +1,174 @@
+/* ═══════════════════════════════════════════════════════
+   SPOON STATE MACHINE — 6 Energy Levels
+   Each level defines: panel visibility, animation, sensory params
+   ═══════════════════════════════════════════════════════ */
+
+/* ── SPOONS 5: Peak Energy ──────────────────────────── */
+/* Full 3D dome, all HUD, all effects, full palette */
+
+[data-spoons="5"] {
+  --spoons-bloom: 1.4;
+  --spoons-particles: 400;
+  --spoons-fps: 60;
+  --spoons-animation: 1;
+  --spoons-saturation: 1;
+  --spoons-contrast: 75;
+}
+
+[data-spoons="4"] {
+  --spoons-bloom: 0.5;
+  --spoons-particles: 200;
+  --spoons-fps: 45;
+  --spoons-animation: 0.7;
+  --spoons-saturation: 0.8;
+  --spoons-contrast: 60;
+}
+
+[data-spoons="3"] {
+  --spoons-bloom: 0.1;
+  --spoons-particles: 50;
+  --spoons-fps: 30;
+  --spoons-animation: 0.4;
+  --spoons-saturation: 0.6;
+  --spoons-contrast: 45;
+}
+
+[data-spoons="2"] {
+  --spoons-bloom: 0;
+  --spoons-particles: 0;
+  --spoons-fps: 15;
+  --spoons-animation: 0.1;
+  --spoons-saturation: 0.4;
+  --spoons-contrast: 30;
+}
+
+[data-spoons="1"] {
+  --spoons-bloom: 0;
+  --spoons-particles: 0;
+  --spoons-fps: 5;
+  --spoons-animation: 0;
+  --spoons-saturation: 0.25;
+  --spoons-contrast: 25;
+}
+
+[data-spoons="0"] {
+  --spoons-bloom: 0;
+  --spoons-particles: 0;
+  --spoons-fps: 1;
+  --spoons-animation: 0;
+  --spoons-saturation: 0.15;
+  --spoons-contrast: 20;
+}
+
+/* ── SENSORY BUDGET: Animation intensity ────────────── */
+
+[data-spoons="0"] *,
+[data-spoons="1"] * {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+}
+
+[data-spoons="2"] * {
+  animation-duration: 0.5s !important;
+}
+
+[data-spoons="3"] * {
+  animation-duration: 0.3s !important;
+}
+
+/* ── SENSORY BUDGET: Color temperature shift ─────────── */
+
+[data-spoons="0"] { filter: saturate(0.15) brightness(0.3) sepia(0.2); }
+[data-spoons="1"] { filter: saturate(0.25) brightness(0.5) sepia(0.1); }
+[data-spoons="2"] { filter: saturate(0.4) brightness(0.7); }
+[data-spoons="3"] { filter: saturate(0.6) brightness(0.85); }
+
+/* ── CRISIS MODE: No chrome, only rest ───────────────── */
+
+[data-spoons="0"] .ship-topbar,
+[data-spoons="0"] .command-palette,
+[data-spoons="0"] .mcp-explorer,
+[data-spoons="0"] .jitterbug-background {
+  display: none !important;
+}
+
+/* ── LOW SPOON: Simplified topbar ────────────────────── */
+
+[data-spoons="2"] .ship-topbar {
+  height: 40px;
+}
+
+[data-spoons="2"] .topbar-brand {
+  font-size: var(--fs-sm);
+}
+
+[data-spoons="2"] .metric-badge {
+  padding: 2px 6px;
+  font-size: 9px;
+}
+
+/* ── PANEL VISIBILITY BY SPOON LEVEL ────────────────── */
+
+/* DataCard: high cognitive cost, hide at low spoons */
+[data-spoons="2"] [data-panel="datacard"],
+[data-spoons="1"] [data-panel="datacard"],
+[data-spoons="0"] [data-panel="datacard"] {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* DataControls: specialist feature, hide at spoons <=3 */
+[data-spoons="3"] [data-panel="datacontrols"],
+[data-spoons="2"] [data-panel="datacontrols"],
+[data-spoons="1"] [data-panel="datacontrols"],
+[data-spoons="0"] [data-panel="datacontrols"] {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* DatasetPanel: hide at spoons <=3 */
+[data-spoons="3"] [data-panel="dataset"],
+[data-spoons="2"] [data-panel="dataset"],
+[data-spoons="1"] [data-panel="dataset"],
+[data-spoons="0"] [data-panel="dataset"] {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* DunaBoard, SystemBoard: informational, hide at spoons <=3 */
+[data-spoons="3"] [data-panel="duna"],
+[data-spoons="3"] [data-panel="system"],
+[data-spoons="2"] [data-panel="duna"],
+[data-spoons="2"] [data-panel="system"],
+[data-spoons="1"] [data-panel="duna"],
+[data-spoons="1"] [data-panel="system"],
+[data-spoons="0"] [data-panel="duna"],
+[data-spoons="0"] [data-panel="system"] {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* LedController: hardware-specific, hide at spoons <=2 */
+[data-spoons="2"] [data-panel="led"],
+[data-spoons="1"] [data-panel="led"],
+[data-spoons="0"] [data-panel="led"] {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* McpExplorer: developer tool, always hide unless explicitly opened */
+[data-spoons="5"] [data-panel="mcp"],
+[data-spoons="4"] [data-panel="mcp"],
+[data-spoons="3"] [data-panel="mcp"],
+[data-spoons="2"] [data-panel="mcp"],
+[data-spoons="1"] [data-panel="mcp"],
+[data-spoons="0"] [data-panel="mcp"] {
+  display: none !important;
+}
+
+/* BuckyView: toggle-based, respect spoon level for motion */
+[data-spoons="2"] [data-panel="bucky"],
+[data-spoons="1"] [data-panel="bucky"],
+[data-spoons="0"] [data-panel="bucky"] {
+  display: none !important;
+}

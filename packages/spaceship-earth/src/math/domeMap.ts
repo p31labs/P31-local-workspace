@@ -7,13 +7,17 @@
  * - detail=3: 1280 faces, 642 vertices
  * - detail=4: 5120 faces, 2562 vertices
  *
+ * Radius and detail come from the central dome config, so URL params or
+ * persisted settings can request 320, 1280, or 5120 faces on the fly.
+ *
  * Guarantees zero drift between the LED frame and the graph topology.
  */
 
 import { icosahedronGeodesic, type Geodesic } from './geodesic';
+import { domeConfig } from '../config/domeConfig';
 
-const DEFAULT_RADIUS = 12;
-const DEFAULT_DETAIL = 2;
+const DEFAULT_RADIUS = domeConfig.geometry.radius;
+const DEFAULT_DETAIL = domeConfig.geometry.detail;
 
 export interface DomeGeometry {
   vertices: ReadonlyArray<readonly [number, number, number]>;
@@ -87,6 +91,15 @@ export function createDomeGeometry(radius = DEFAULT_RADIUS, detail = DEFAULT_DET
 
 const shell = createDomeGeometry(DEFAULT_RADIUS, DEFAULT_DETAIL);
 
+/**
+ * Build a fresh dome geometry from the live config (radius/detail).
+ * Callers that must track a config change (e.g. a detail upgrade at runtime)
+ * should use this instead of the module-level constants below.
+ */
+export function getDomeGeometry(): DomeGeometry {
+  return createDomeGeometry(domeConfig.geometry.radius, domeConfig.geometry.detail);
+}
+
 /** 162 vertices @ R=12, detail=2 */
 export const DOME_VERTICES: ReadonlyArray<readonly [number, number, number]> = shell.vertices;
 
@@ -125,6 +138,37 @@ const AXIS_DIRS: ReadonlyArray<[Axis, readonly [number, number, number]]> = [
   ['forge', [-1, 1, -1]],
   ['shield', [-1, -1, 1]],
 ];
+
+// ═══════════════════════════════════════════════════════════════
+// K₄ TETRAHEDRAL FACE ANCHORS (soft layout affinity)
+// ═══════════════════════════════════════════════════════════════
+
+/**
+ * Category → K₄ face index used as a *soft* anchor by the force-directed
+ * layout. Nodes start biased toward their category's face but are never
+ * locked there — cross-domain edge weights can pull them elsewhere.
+ */
+export const CATEGORY_FACE_AFFINITY: Record<string, number> = {
+  family: 0,
+  legal: 1,
+  medical: 2,
+  project: 3,
+};
+
+/**
+ * Centers of the four K₄ faces, projected onto a sphere of `radius`.
+ * The tetrahedron here is the even-parity (±1,±1,±1) vertex set, so each
+ * face's outward normal is exactly the opposing axis direction.
+ */
+export function k4FaceCenters(radius: number): [number, number, number][] {
+  return AXIS_DIRS.map(([, dir]) => {
+    const inv = radius / Math.sqrt(dir[0] * dir[0] + dir[1] * dir[1] + dir[2] * dir[2]);
+    return [dir[0] * inv, dir[1] * inv, dir[2] * inv];
+  });
+}
+
+/** K₄ face anchors at the inner graph-shell radius (R=9). */
+export const K4_FACE_CENTERS: [number, number, number][] = k4FaceCenters(9);
 
 function len2(v: readonly [number, number, number]): number {
   return v[0] * v[0] + v[1] * v[1] + v[2] * v[2];

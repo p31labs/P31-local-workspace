@@ -1,4 +1,4 @@
-import { useRef, useMemo } from 'react';
+import { useRef, useMemo, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { useShipStore } from '../store/shipStore';
@@ -26,6 +26,10 @@ export default function AmbientField() {
     geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
     return geo;
   }, [positions]);
+
+  useEffect(() => () => {
+    geometry.dispose();
+  }, [geometry]);
 
   useFrame(({ clock }) => {
     if (!pointsRef.current) return;

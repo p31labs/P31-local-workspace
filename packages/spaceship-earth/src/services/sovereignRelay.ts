@@ -25,6 +25,7 @@
  */
 
 import { enqueue, drainQueue, queueSize } from './offlineQueue';
+import type { QueuedAction } from './offlineQueue';
 import type { RelayPeer, CelebrationEvent } from '../sovereign/types';
 
 // ── Config ────────────────────────────────────────────────────────────────
@@ -221,11 +222,11 @@ export function disconnect(): void {
  * Send an action to the relay. If disconnected, the action is queued in
  * IndexedDB and will be replayed on reconnect.
  */
-export async function sendAction(type: string, payload: unknown): Promise<void> {
+export async function sendAction(type: QueuedAction['kind'], payload: unknown): Promise<void> {
   if (_ws?.readyState === WebSocket.OPEN) {
     _ws.send(JSON.stringify({ type: 'action', did: _did ?? 'ANONYMOUS', payload, ts: Date.now() }));
   } else {
-    await enqueue({ type, payload, ts: Date.now() });
+    await enqueue(type, payload);
     const n = await queueSize();
     const store = await getStore();
     store.setOfflineQueueSize(n);

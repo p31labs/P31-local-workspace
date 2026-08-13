@@ -1,6 +1,6 @@
 # Spaceship Earth — API Reference
 
-**Document ID:** P31-SE-API-001 | **Version:** 1.1.0 | **Last Updated:** 2026-08-08
+**Document ID:** P31-SE-API-001 | **Version:** 1.2.0 | **Last Updated:** 2026-08-11
 
 ---
 
@@ -86,7 +86,7 @@ Get dome geometry metadata.
   "radius": 12,
   "innerRadius": 2.5,
   "outerEdges": 480,
-  "ports": 120,
+  "ports": 320,
   "neoPixelSegments": 9600,
   "tetraFrame": 6,
   "innerDome": true,
@@ -492,6 +492,12 @@ if (navigator.modelContext) {
 ---
 
 ## 9. Changelog
+
+### v1.2.0 (2026-08-11)
+- ✅ 320 face ports (all dome faces interactive).
+- ✅ Dymaxion (Bucky) net overlay — `buildDymaxionNet` geometry + `BuckyView`.
+- ✅ Universal dataset layer (JSON / HAPI / SDG) mapped onto the 320 faces.
+- ✅ 18 test files / 193 tests green.
 
 ### v1.1.0 (2026-08-08)
 - ✅ Engine layer implemented; all MCP tools functional.

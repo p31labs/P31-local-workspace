@@ -5,21 +5,20 @@ P31 internal development guide. Operator: Will Johnson.
 ## Prerequisites
 
 - Node.js 22+
-- npm 10+
+- pnpm 9+
+- Git access to the monorepo
 
 ## Setup
 
 ```bash
-# From the monorepo root
-cd software
+# From the monorepo root (/home/p31/P31-local-workspace)
+pnpm install
 
-# Install shared packages first (spaceship-earth aliases these)
-cd packages/shared && npm install && cd ../..
+# Install workspace deps for spaceship-earth
+pnpm --filter @p31/spaceship-earth install
 
-# Install and start Spaceship Earth
-cd spaceship-earth
-npm install
-npm run dev
+# Start the dev server
+pnpm --filter @p31/spaceship-earth dev
 # → http://localhost:5180
 ```
 
@@ -28,11 +27,11 @@ npm run dev
 | URL param | Effect |
 |-----------|--------|
 | `?demo=true` | Bypass ship lock + onboarding; show demo kiosk banner |
-| `?stats=1` | Mount stats.js FPS overlay (requires `npm i -D stats.js`) |
+| `?stats=1` | Mount stats.js FPS overlay |
 
 ## Environment Variables
 
-Copy `.env.example` to `.env.local` and fill in values.
+Copy `.env.example` to `.env.local` in `packages/spaceship-earth/` and fill in values.
 
 ```
 VITE_RELAY_URL=wss://bonding-relay.trimtab-signal.workers.dev
@@ -49,6 +48,8 @@ The relay is optional — all relay features are graceful no-ops when `VITE_RELA
 | Styles | Tailwind v4 — `@import "tailwindcss"`, not v3 directives |
 | TypeScript | strict + `verbatimModuleSyntax` + `erasableSyntaxOnly` — use `import type` |
 | Zustand selectors | `useShallow` for multi-field objects; atomic `s => s.field` for single values |
+| Dome geometry | `math/geometry.ts` — geodesic detail=2 → 480 edges, 320 faces (ports) |
+| Dymaxion net | `engine/dymaxion.ts` + `cockpit/BuckyView.tsx` — 19 shared edges, 320 points, 20 cells |
 
 ## TypeScript Rules
 
@@ -59,8 +60,8 @@ The relay is optional — all relay features are graceful no-ops when `VITE_RELA
 ## Testing
 
 ```bash
-npm test            # Vitest unit tests (watch mode)
-npm test -- --run   # Single pass (CI mode)
+pnpm test            # Vitest unit tests (watch mode)
+pnpm test -- --run   # Single pass (CI mode) — 193 tests across 18 files
 ```
 
 Tests live at `src/**/*.test.ts`. Environment: Node (no DOM required for pure unit tests).
@@ -68,16 +69,10 @@ Tests live at `src/**/*.test.ts`. Environment: Node (no DOM required for pure un
 ## Build
 
 ```bash
-npm run build       # tsc --noEmit + vite build
+pnpm build           # tsc --noEmit + vite build
 ```
 
-Build output in `dist/`. Bundle analyser report at `dist/stats.html` (open in browser).
-
-Current gzip sizes (baseline):
-- `vendor-react`: ~43 kB
-- `vendor-three`: ~116 kB
-- `index`: ~111 kB
-- Total initial load: **~276 kB gzipped**
+Build output in `dist/`.
 
 ## Code Style
 
@@ -107,3 +102,11 @@ fix/*     — bug fixes
 ```
 
 PRs require: tsc clean + all tests green + build clean.
+
+## Ship Release
+
+1. Bump version in `package.json` and the docs version headers
+   (MANUFACTURERS_MANUAL, API_REFERENCE, RUNBOOK).
+2. `pnpm build` + `pnpm test -- --run` green.
+3. Deploy Pages + Worker (see `DEPLOYMENT_GUIDE.md`).
+4. Run `scripts/verify-ship.cjs` against the live deploy.

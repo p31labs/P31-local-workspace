@@ -2,15 +2,15 @@ import { useMemo, useRef, useEffect, useCallback } from 'react';
 import { useFrame, type ThreeEvent } from '@react-three/fiber';
 import * as THREE from 'three';
 import { useShipStore } from '../store/shipStore';
-import { useDataStore } from '../store/dataStore';
+import { useActiveFaceData } from '../store/datasetStore';
 import NeoPixelFrame from './NeoPixelFrame';
 import { regularTetra } from '../math/geometry';
 import { useAdaptiveQuality, useShouldAnimate } from '../hooks/useAdaptiveQuality';
-import { DOME_VERTICES, DOME_FACE_CENTROIDS, assignNodeVertices } from '../math/domeMap';
-import { VERTICES } from '@p31/shared';
+import { DOME_FACE_CENTROIDS } from '../math/domeMap';
+import { domeConfig } from '../config/domeConfig';
 
-const DOME_RADIUS = 12;
-const PORT_COUNT = 320;
+const DOME_RADIUS = domeConfig.geometry.radius;
+const PORT_COUNT = DOME_FACE_CENTROIDS.length;
 const TETRA_SCALE = DOME_RADIUS * 0.55;
 
 function generatePortPositions(count: number): THREE.Vector3[] {
@@ -22,8 +22,6 @@ export default function OuterDome({ children }: { children?: React.ReactNode }) 
   const setSelectedPort = useShipStore((s) => s.setSelectedPort);
   const setHoveredPort = useShipStore((s) => s.setHoveredPort);
   const setSelectedNode = useShipStore((s) => s.setSelectedNode);
-  const setNodeScreenPos = useShipStore((s) => s.setNodeScreenPos);
-  const setNodeVisible = useShipStore((s) => s.setNodeVisible);
   const groupRef = useRef<THREE.Group>(null);
   const tetraRef = useRef<THREE.InstancedMesh>(null);
   const portsRef = useRef<THREE.InstancedMesh>(null);
@@ -33,19 +31,6 @@ export default function OuterDome({ children }: { children?: React.ReactNode }) 
 
   const portPositions = useMemo(() => generatePortPositions(PORT_COUNT), []);
   const tetraFrame = useMemo(() => regularTetra(TETRA_SCALE), []);
-
-  const nodePositions = useMemo(() => {
-    const axisCounts: Record<'body' | 'mesh' | 'forge' | 'shield', number> = { body: 0, mesh: 0, forge: 0, shield: 0 };
-    for (const v of VERTICES) {
-      const key = v.axis.toLowerCase() as 'body' | 'mesh' | 'forge' | 'shield';
-      axisCounts[key]++;
-    }
-    const vertexIndices = assignNodeVertices(axisCounts);
-    return VERTICES.slice(0, 58).map((_, i) => {
-      const vi = vertexIndices[i] ?? 0;
-      return new THREE.Vector3(...DOME_VERTICES[vi]);
-    });
-  }, []);
 
   const edgePairs = useMemo(
     () => [
@@ -84,7 +69,7 @@ export default function OuterDome({ children }: { children?: React.ReactNode }) 
     mesh.instanceMatrix.needsUpdate = true;
   }, [edgePairs, tetraFrame]);
 
-  const faceData = useDataStore((s) => s.faceData);
+  const faceData = useActiveFaceData();
   const hasData = faceData.length > 0;
 
   useEffect(() => {
@@ -118,7 +103,8 @@ export default function OuterDome({ children }: { children?: React.ReactNode }) 
     e.stopPropagation();
     if (e.instanceId !== undefined) {
       setSelectedNode(null);
-      setSelectedPort(e.instanceId);
+      const current = useShipStore.getState().selectedPort;
+      setSelectedPort(current === e.instanceId ? null : e.instanceId);
     }
   }, [setSelectedPort, setSelectedNode]);
 
@@ -136,7 +122,7 @@ export default function OuterDome({ children }: { children?: React.ReactNode }) 
     document.body.style.cursor = '';
   }, [setHoveredPort]);
 
-  useFrame(({ clock, camera, size }) => {
+  useFrame(({ clock }) => {
     time.current = clock.getElapsedTime();
     if (!groupRef.current || !shouldAnimate) return;
 
@@ -145,20 +131,6 @@ export default function OuterDome({ children }: { children?: React.ReactNode }) 
     if (selectedPort === null && hoveredPort === null) {
       groupRef.current.rotation.y += speed;
     }
-
-    const selectedNode = useShipStore.getState().selectedNode;
-    if (selectedNode !== null && groupRef.current && selectedNode < nodePositions.length) {
-      const localPos = nodePositions[selectedNode];
-      const worldPos = localPos.clone();
-      groupRef.current.localToWorld(worldPos);
-      const projected = worldPos.clone().project(camera);
-      const x = (projected.x * 0.5 + 0.5) * size.width;
-      const y = (-projected.y * 0.5 + 0.5) * size.height;
-      setNodeScreenPos({ x, y });
-      setNodeVisible(projected.z < 1);
-    } else {
-      setNodeVisible(false);
-    }
   });
 
   return (
@@ -166,7 +138,7 @@ export default function OuterDome({ children }: { children?: React.ReactNode }) 
       <NeoPixelFrame segmentCount={adaptive.neoPixelSegments} />
 
       <mesh raycast={() => null}>
-        <icosahedronGeometry args={[DOME_RADIUS * 0.975, 2]} />
+        <icosahedronGeometry args={[DOME_RADIUS * 0.975, domeConfig.geometry.detail]} />
         <meshPhysicalMaterial
           color={0xaaccdd}
           transparent

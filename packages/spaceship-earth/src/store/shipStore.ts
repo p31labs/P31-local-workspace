@@ -3,44 +3,27 @@ import { persist } from 'zustand/middleware';
 import * as THREE from 'three';
 import { DockRecord, allocatePort, computeDockEdges, computeProbabilities, computeSystemProbabilities, detectEdgeCases, generateDockJSON } from '../engine/dockMath';
 import { DOME_FACE_CENTROIDS } from '../math/domeMap';
+import { domeConfig } from '../config/domeConfig';
+import type { LedMode, ShipNode } from '../config/domeConfig';
 
-const NODE_DATA = [
-  { id: 'willow', label: 'Willow', type: 'family' as const, color: '#ff9944' },
-  { id: 'sebastian', label: 'Sebastian', type: 'family' as const, color: '#ff9944' },
-  { id: 'elara', label: 'Elara', type: 'family' as const, color: '#ff9944' },
-  { id: 'orion', label: 'Orion', type: 'family' as const, color: '#ff9944' },
-  { id: 'mesh', label: 'Mesh', type: 'system' as const, color: '#44aaff' },
-  { id: 'ledger', label: 'Ledger', type: 'system' as const, color: '#44aaff' },
-  { id: 'identity', label: 'Identity', type: 'system' as const, color: '#44aaff' },
-  { id: 'sync', label: 'Sync', type: 'system' as const, color: '#44aaff' },
-  { id: 'somatic', label: 'Somatic', type: 'care' as const, color: '#44ffaa' },
-  { id: 'bonding', label: 'Bonding', type: 'care' as const, color: '#44ffaa' },
-  { id: 'rituals', label: 'Rituals', type: 'care' as const, color: '#44ffaa' },
-  { id: 'love', label: 'LOVE', type: 'care' as const, color: '#44ffaa' },
-];
-
-function icosahedronVertices(radius = 3): [number, number, number][] {
-  const t = (1 + Math.sqrt(5)) / 2;
-  const raw: [number, number, number][] = [
-    [-1, t, 0], [1, t, 0], [-1, -t, 0], [1, -t, 0],
-    [0, -1, t], [0, 1, t], [0, -1, -t], [0, 1, -t],
-    [t, 0, -1], [t, 0, 1], [-t, 0, -1], [-t, 0, 1],
-  ];
-  return raw.map(([x, y, z]) => {
-    const len = Math.sqrt(x * x + y * y + z * z);
-    const s = radius / len;
-    return [x * s, y * s, z * s];
-  });
-}
+export type { LedMode } from '../config/domeConfig';
+export type { ShipNode } from '../config/domeConfig';
 
 function generatePortPositions(count: number): [number, number, number][] {
   return DOME_FACE_CENTROIDS.slice(0, count).map(v => [v[0], v[1], v[2]]);
 }
 
-const PORT_COUNT = 320;
+// Port count follows the dome's configured geometry (320 faces @ detail=2),
+// never a magic literal.
+const PORT_COUNT = DOME_FACE_CENTROIDS.length;
 const PORT_POSITIONS = generatePortPositions(PORT_COUNT);
 
-export type LedMode = 'rainbow' | 'chase' | 'solid' | 'breath' | 'gradient' | 'dual-chase' | 'off';
+// The demo node constellation was removed in Phase 3: nodes now come from the
+// source registry (personalConstellation connector → dataset pipeline).
+// nodeData/nodePositions remain empty here and are only read by the orphaned
+// legacy Nodes/Edges renderers, which render nothing with zero nodes.
+const seedNodes: ShipNode[] = [];
+const initialNodePositions: [number, number, number][] = [];
 
 export interface ShipStore {
   spoons: number;
@@ -50,7 +33,7 @@ export interface ShipStore {
   selectedNode: number | null;
   viewMode: 'ambient' | 'detail';
   nodePositions: [number, number, number][];
-  nodeData: typeof NODE_DATA;
+  nodeData: ShipNode[];
   dockedPorts: number[];
   memberCount: number;
   dunaTarget: number;
@@ -65,6 +48,7 @@ export interface ShipStore {
   ledColors: string[];
   ledCollapsed: boolean;
   demoIndex: number;
+  demoMode: boolean;
   
   // SMART notification system (Phase 4)
   lastNotifPulse?: number;
@@ -75,6 +59,13 @@ export interface ShipStore {
   nodeScreenPos: { x: number; y: number };
   nodeVisible: boolean;
   
+  // Gaze tracking (opt-in, local-only)
+  gazeActive: boolean;
+
+  // Dual anchored HUD state
+  hudLeft: 'data' | null;
+  hudRight: 'system' | 'hardware' | null;
+
   setSpoons: (s: number) => void;
   setCoherence: (c: number) => void;
   setEngagement: (e: number) => void;
@@ -95,8 +86,12 @@ export interface ShipStore {
    setShowK4Wireframe: (show: boolean) => void;
    setNodeScreenPos: (pos: { x: number; y: number }) => void;
    setNodeVisible: (visible: boolean) => void;
-   nextDemoMember: () => { id: string; index: number };
- }
+    setGazeActive: (active: boolean) => void;
+    setHudLeft: (section: 'data' | null) => void;
+    setHudRight: (section: 'system' | 'hardware' | null) => void;
+    setDemoMode: (mode: boolean) => void;
+    nextDemoMember: () => { id: string; index: number };
+  }
 
 export const useShipStore = create<ShipStore>()(
   persist(
@@ -107,25 +102,29 @@ export const useShipStore = create<ShipStore>()(
       didKey: '',
       selectedNode: null,
       viewMode: 'ambient',
-      nodePositions: icosahedronVertices(3),
-      nodeData: NODE_DATA,
+      nodePositions: initialNodePositions,
+      nodeData: seedNodes,
       dockedPorts: [],
       memberCount: 0,
-      dunaTarget: 100,
+      dunaTarget: 0,
       portPositions: PORT_POSITIONS,
       selectedPort: null,
       hoveredPort: null,
       dockRecords: [],
-      ledMode: 'rainbow',
-      ledSpeed: 5,
-      ledColor: '#22d3ee',
-      ledBrightness: 80,
-      ledColors: ['#ff9944', '#22d3ee', '#44ffaa'],
-      ledCollapsed: true,
+      ledMode: domeConfig.led.mode,
+      ledSpeed: domeConfig.led.speed,
+      ledColor: domeConfig.led.color,
+      ledBrightness: domeConfig.led.brightness,
+      ledColors: domeConfig.led.colors,
+      ledCollapsed: domeConfig.led.collapsed,
       demoIndex: 0,
+      demoMode: false,
       showK4Wireframe: false,
       nodeScreenPos: { x: 0, y: 0 },
       nodeVisible: false,
+      gazeActive: false,
+      hudLeft: null,
+      hudRight: null,
       setSpoons: (s) => set({ spoons: Math.max(0, Math.min(5, s)) }),
       setCoherence: (c) => set({ coherence: Math.max(0, Math.min(1, c)) }),
       setEngagement: (e) => set({ engagement: Math.max(0, Math.min(10, e)) }),
@@ -193,8 +192,13 @@ export const useShipStore = create<ShipStore>()(
       setShowK4Wireframe: (show) => set({ showK4Wireframe: show }),
       setNodeScreenPos: (pos) => set({ nodeScreenPos: pos }),
       setNodeVisible: (visible) => set({ nodeVisible: visible }),
+      setGazeActive: (active) => set({ gazeActive: active }),
+      setHudLeft: (section) => set({ hudLeft: section }),
+      setHudRight: (section) => set({ hudRight: section }),
+      setDemoMode: (mode) => set({ demoMode: mode }),
       nextDemoMember: () => {
         const state = get();
+        if (!state.demoMode) return null;
         const idx = state.demoIndex;
         set({ demoIndex: idx + 1 });
         return { id: `Member ${String(idx + 1).padStart(3, '0')}`, index: idx };
@@ -210,6 +214,8 @@ export const useShipStore = create<ShipStore>()(
         ledColors: state.ledColors,
         ledCollapsed: state.ledCollapsed,
         showK4Wireframe: state.showK4Wireframe,
+        hudLeft: state.hudLeft,
+        hudRight: state.hudRight,
       }),
     }
   )

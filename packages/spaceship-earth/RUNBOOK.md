@@ -1,8 +1,8 @@
 # Spaceship Earth — Operational Runbook
 
-**Version:** 1.1.0
-**Last Updated:** 2026-08-08
-**Deployment:** https://bf53b085.spaceship-earth.pages.dev
+**Version:** 1.2.0
+**Last Updated:** 2026-08-11
+**Deployment:** https://spaceship-earth.pages.dev
 
 ---
 
@@ -17,7 +17,7 @@
 
 ```bash
 pnpm dev          # Vite dev server on :5180
-pnpm test         # Vitest unit suite (89 tests)
+pnpm test         # Vitest unit suite (193 tests)
 pnpm build        # tsc --noEmit + vite build → dist/
 pnpm preview      # Preview production build
 ```
@@ -33,8 +33,8 @@ NODE_PATH=/home/p31/node_modules node scripts/verify-ship.cjs
 ```
 
 Expected results:
-- Unit: 89/89 tests pass
-- E2E: 187/187 checks pass against `bf53b085.spaceship-earth.pages.dev`
+- Unit: 193/193 tests pass
+- E2E: all checks pass against `spaceship-earth.pages.dev`
 
 ## 4. Deployment
 
@@ -77,6 +77,7 @@ Persistent state: `~/p31-agents/spaceship-state.json`
 | Live deploy stale | Rebuild `dist/` from current HEAD and redeploy Pages |
 | Worker fails | Check `SPACESHIP_TELEMETRY` KV namespace binding |
 | LED controls no-op | `neo_pixel_control` is UI-only until hardware bridge is wired |
+| Bucky overlay missing | Verify `buckyMode` toggle in `DataControls`; `BuckyView` mounts after `LedController` |
 
 ## 7. Architecture Reference
 

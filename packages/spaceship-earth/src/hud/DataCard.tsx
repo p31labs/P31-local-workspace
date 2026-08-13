@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useShipStore } from '../store/shipStore';
-import { VERTICES } from '@p31/shared';
+import { useActiveVertexData } from '../store/datasetStore';
+import A2DataCard from '@p31/design-core/a2ui/DataCard';
 
 const AXIS_TYPES = ['family', 'system', 'care', 'shield'] as const;
 const AXIS_COLORS: Record<string, string> = {
@@ -21,8 +22,11 @@ export default function DataCard() {
   const nodeVisible = useShipStore((s) => s.nodeVisible);
   const dockMemberAt = useShipStore((s) => s.dockMemberAt);
   const undockMember = useShipStore((s) => s.undockMember);
+  const demoMode = useShipStore((s) => s.demoMode);
   const nextDemoMember = useShipStore((s) => s.nextDemoMember);
   const setSelectedPort = useShipStore((s) => s.setSelectedPort);
+  const setSelectedNode = useShipStore((s) => s.setSelectedNode);
+  const vertexData = useActiveVertexData();
   const [dockAxis, setDockAxis] = useState<string>('family');
 
   // ── Port Mode ──
@@ -40,181 +44,87 @@ export default function DataCard() {
       setSelectedPort(null);
     };
 
+    const status = isOccupied
+      ? { label: 'OCCUPIED', state: 'warning' as const }
+      : { label: 'VACANT', state: 'online' as const };
+
+    const metrics = [
+      ...(isOccupied && portRecord ? [
+        { label: 'Member', value: portRecord.memberId, color: AXIS_COLORS[portRecord.axis] },
+        { label: 'Axis', value: portRecord.axis },
+        { label: 'Docked', value: new Date(portRecord.dockTime).toLocaleDateString() },
+        ...(portRecord.systemProbabilities ? [
+          { label: 'Coherence', value: `${((portRecord.systemProbabilities.coherence ?? 0) * 100).toFixed(0)}%` },
+          { label: 'Engagement', value: `${((portRecord.systemProbabilities.engagement ?? 0) * 100).toFixed(0)}%` },
+        ] : []),
+      ] : [
+        { label: 'Dock usage', value: `${dockedPorts.length} / 120` },
+        { label: 'Coherence', value: `${((coherence ?? 0) * 100).toFixed(0)}%` },
+      ]),
+    ];
+
     return (
-      <div style={portCardStyle}>
-        <div style={headerStyle('Port')}>
-          Port {selectedPort}
-          <span style={{ fontSize: 9, color: isOccupied ? '#f59e0b' : '#44ffaa', marginLeft: 8 }}>
-            {isOccupied ? 'OCCUPIED' : 'VACANT'}
-          </span>
-        </div>
-
-        {isOccupied && portRecord && (
-          <div style={{ marginBottom: 8 }}>
-            <div style={{ fontSize: 13, color: AXIS_COLORS[portRecord.axis], fontWeight: 700 }}>
-              {portRecord.memberId}
-            </div>
-            <div style={{ fontSize: 9, color: '#6a7a8a', marginTop: 2 }}>
-              Axis: {portRecord.axis} · Docked {new Date(portRecord.dockTime).toLocaleDateString()}
-            </div>
-            {portRecord.systemProbabilities && (
-              <div style={{ marginTop: 4, fontSize: 9, color: '#8899aa' }}>
-                Coh {((portRecord.systemProbabilities.coherence ?? 0) * 100).toFixed(0)}% ·
-                Eng {((portRecord.systemProbabilities.engagement ?? 0) * 100).toFixed(0)}%
-              </div>
-            )}
+      <A2DataCard
+        title={`Port ${selectedPort}`}
+        variant="port"
+        status={status}
+        metrics={metrics}
+        actions={isOccupied ? [
+          { label: 'Undock', onClick: handleUndock, variant: 'danger' },
+        ] : demoMode ? [
+          { label: 'Dock Demo Member', onClick: handleDock, variant: 'primary' },
+        ] : []}
+        onClose={() => setSelectedPort(null)}
+      >
+        {!isOccupied && demoMode && (
+          <div style={{ display: 'flex', gap: 4, marginTop: 8 }}>
+            {AXIS_TYPES.map((a) => (
+              <button
+                key={a}
+                onClick={() => setDockAxis(a)}
+                style={{
+                  background: dockAxis === a ? AXIS_COLORS[a] : 'rgba(255,255,255,0.05)',
+                  color: dockAxis === a ? '#05070a' : '#8899aa',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  borderRadius: 5,
+                  padding: '3px 8px',
+                  cursor: 'pointer',
+                  fontSize: 9,
+                  fontWeight: dockAxis === a ? 700 : 400,
+                }}
+              >
+                {a}
+              </button>
+            ))}
           </div>
         )}
-
-        {!isOccupied && (
-          <div>
-            <div style={{ display: 'flex', gap: 4, marginBottom: 6 }}>
-              {AXIS_TYPES.map((a) => (
-                <button
-                  key={a}
-                  onClick={() => setDockAxis(a)}
-                  style={{
-                    background: dockAxis === a ? AXIS_COLORS[a] : 'rgba(255,255,255,0.05)',
-                    color: dockAxis === a ? '#05070a' : '#8899aa',
-                    border: '1px solid rgba(255,255,255,0.08)',
-                    borderRadius: 5, padding: '3px 8px', cursor: 'pointer',
-                    fontSize: 9, fontWeight: dockAxis === a ? 700 : 400,
-                  }}
-                >
-                  {a}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
-        <div style={{ fontSize: 9, color: '#6a7a8a', marginBottom: 6 }}>
-          Dock usage: {dockedPorts.length} / 120 · Coh {((coherence ?? 0) * 100).toFixed(0)}%
-        </div>
-
-        {isOccupied ? (
-          <button onClick={handleUndock} style={actionBtn('#ff4466')}>Undock</button>
-        ) : (
-          <button onClick={handleDock} style={actionBtn('#22d3ee')}>Dock Demo Member</button>
-        )}
-
-        <button onClick={() => setSelectedPort(null)} style={closeBtn}>✕</button>
-      </div>
+      </A2DataCard>
     );
   }
 
   // ── Node Mode ──
   if (selectedNode !== null && nodeVisible) {
-    const node = VERTICES[selectedNode];
+    // Same filtered index as GraphNodes renders (value !== null placeholders skipped).
+    const active = vertexData.filter((v) => v.value !== null);
+    const node = active[selectedNode];
     if (!node) return null;
 
     const cardLeft = Math.min(nodeScreenPos.x + 20, window.innerWidth - 280);
     const cardTop = Math.max(nodeScreenPos.y - 40, 60);
 
     return (
-      <div style={{ ...cardStyle, left: cardLeft, top: cardTop, right: 'auto' }}>
-        <div style={headerStyle('Node')}>
-          Node
-        </div>
-        <div style={{ fontWeight: 700, fontSize: 13, marginBottom: 2, color: AXIS_COLORS[node.axis] || '#22d3ee' }}>
-          {node.label}
-        </div>
-        <div style={{ fontSize: 9, color: '#6a7a8a', marginBottom: 4 }}>
-          {node.id}
-        </div>
-        <div style={{ fontSize: 10, color: AXIS_COLORS[node.axis] }}>
-          Axis: {node.axis} · State: {node.state}
-        </div>
-        {node.notes && (
-          <div style={{ fontSize: 9, color: '#8899aa', marginTop: 4 }}>
-            {node.notes}
-          </div>
-        )}
-        <div style={{ marginTop: 8, color: '#66ccff', fontSize: 10 }}>
-          Coherence {(coherence * 100).toFixed(0)}%
-        </div>
-        <div style={{ color: '#f59e0b', fontSize: 10 }}>
-          Spoons {spoons}/5
-        </div>
-      </div>
+      <A2DataCard
+        title={node.label}
+        subtitle={`${node.id ?? node.vertexIndex} · ${node.category ?? 'node'} · vertex ${node.vertexIndex}`}
+        variant="node"
+        metrics={[
+          { label: 'Coherence', value: `${((coherence ?? 0) * 100).toFixed(0)}%`, color: node.color },
+          { label: 'Spoons', value: `${spoons}/5` },
+        ]}
+        onClose={() => setSelectedNode(null)}
+      />
     );
   }
 
   return null;
 }
-
-const portCardStyle: React.CSSProperties = {
-  position: 'fixed',
-  top: 80,
-  left: 20,
-  background: 'rgba(6,10,18,0.88)',
-  backdropFilter: 'blur(14px)',
-  WebkitBackdropFilter: 'blur(14px)',
-  border: '1px solid rgba(255,255,255,0.08)',
-  borderRadius: 12,
-  padding: '14px 18px',
-  color: '#e0e4ec',
-  fontFamily: "'JetBrains Mono', monospace",
-  fontSize: 11,
-  minWidth: 200,
-  maxWidth: 260,
-  pointerEvents: 'auto',
-  boxShadow: '0 8px 32px rgba(0,0,0,0.6)',
-  zIndex: 100,
-};
-
-const cardStyle: React.CSSProperties = {
-  position: 'fixed',
-  background: 'rgba(6,10,18,0.88)',
-  backdropFilter: 'blur(14px)',
-  WebkitBackdropFilter: 'blur(14px)',
-  border: '1px solid rgba(255,255,255,0.08)',
-  borderRadius: 12,
-  padding: '14px 18px',
-  color: '#e0e4ec',
-  fontFamily: "'JetBrains Mono', monospace",
-  fontSize: 11,
-  minWidth: 200,
-  maxWidth: 260,
-  pointerEvents: 'auto',
-  boxShadow: '0 8px 32px rgba(0,0,0,0.6)',
-  zIndex: 100,
-};
-
-function headerStyle(label: string): React.CSSProperties {
-  return {
-    fontSize: 9,
-    color: '#6a7a8a',
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-    marginBottom: 6,
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  };
-}
-
-function actionBtn(color: string): React.CSSProperties {
-  return {
-    background: color,
-    color: '#05070a',
-    border: 'none',
-    borderRadius: 6,
-    padding: '6px 12px',
-    cursor: 'pointer',
-    fontSize: 10,
-    fontWeight: 700,
-    fontFamily: "'JetBrains Mono', monospace",
-  };
-}
-
-const closeBtn: React.CSSProperties = {
-  position: 'absolute',
-  top: 8,
-  right: 10,
-  background: 'none',
-  border: 'none',
-  color: '#667788',
-  cursor: 'pointer',
-  fontSize: 12,
-};
