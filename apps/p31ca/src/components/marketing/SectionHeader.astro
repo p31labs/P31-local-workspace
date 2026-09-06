@@ -1,0 +1,17 @@
+---
+interface Props {
+  title: string;
+  description?: string;
+  align?: 'left' | 'center';
+}
+
+const { title, description, align = 'center' } = Astro.props;
+---
+
+<div class={`space-y-4 ${align === 'center' ? 'text-center' : 'text-left'}`}>
+  <h2 class="text-3xl md:text-4xl font-bold tracking-tight" style="color: var(--p31-text);">{title}</h2>
+  {description && (
+    <p class="text-lg max-w-2xl mx-auto" style="color: var(--p31-text-secondary);">{description}</p>
+  )}
+  <div class={`h-1 w-16 rounded-full ${align === 'center' ? 'mx-auto' : ''}`} style="background: var(--p31-accent);"></div>
+</div>

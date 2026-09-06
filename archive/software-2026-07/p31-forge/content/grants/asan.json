@@ -1,0 +1,27 @@
+{
+  "kind": "grant",
+  "filename": "P31_Grant_ASAN_TeighlorMcGee.docx",
+  "program": "asan",
+  "title": "ASAN Teighlor McGee Grassroots Mini-Grants",
+  "deadline": "July 31, 2026 (opens May 15, 2026)",
+  "amount": "Up to $6,250",
+  "body": [
+    { "type": "h1", "text": "PROJECT DESCRIPTION" },
+    { "type": "para", "text": "Phoenix Navigator (Node Zero) is an ESP32-S3-based palm device that provides haptic feedback for somatic self-regulation. The hardware prototype is complete; we request mini-grant funding to manufacture fifteen (15) beta units for distribution to Autistic self-advocates and to produce an accessible, plain-language user manual co-authored with the beta cohort." },
+
+    { "type": "h1", "text": "COMMUNITY IMPACT" },
+    { "type": "para", "text": "The Autistic community has been sold expensive closed-source \"behavioral intervention\" devices (weighted vests, pressure machines, shock collars) that position us as problems to be suppressed. P31 Labs builds the opposite: open, self-owned, self-directed tools that treat Autistic self-regulation as an engineering problem with dignified solutions. Every beta user owns their device and their data. Schematics and firmware are released under AGPLv3." },
+
+    { "type": "h1", "text": "BUDGET" },
+    { "type": "bullet", "text": "Hardware (15 units \u00d7 $45 BOM including case): $675" },
+    { "type": "bullet", "text": "Shipping and packaging: $250" },
+    { "type": "bullet", "text": "Plain-language user manual layout + print-ready PDF: $1,500" },
+    { "type": "bullet", "text": "Compensation for beta cohort (15 \u00d7 $150 stipend for feedback sessions): $2,250" },
+    { "type": "bullet", "text": "ADA-accessible web documentation: $800" },
+    { "type": "bullet", "text": "Contingency: $775" },
+    { "type": "field", "label": "Total Requested", "value": "$6,250" },
+
+    { "type": "h1", "text": "SELF-ADVOCATE LEADERSHIP" },
+    { "type": "para", "text": "P31 Labs is founded, incorporated, and operated by an Autistic self-advocate. Every engineering and design decision is made by an Autistic person for Autistic people. The beta cohort will be recruited through ASAN\u2019s chapter network. Cohort members co-author the user manual as paid contributors; their names appear in the project README and on the device documentation." }
+  ]
+}

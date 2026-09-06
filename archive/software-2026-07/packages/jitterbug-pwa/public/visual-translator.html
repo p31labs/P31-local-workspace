@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jitterbug Visual Translator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.4.0/dist/mermaid.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a; /* Slate 900 */
+            color: #f8fafc; /* Slate 50 */
+        }
+        
+        .code-font {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .tab-active {
+            background-color: #3b82f6; /* Blue 500 */
+            color: white;
+            border-color: #60a5fa;
+        }
+
+        .tab-inactive {
+            background-color: #1e293b; /* Slate 800 */
+            color: #94a3b8; /* Slate 400 */
+            border-color: #334155;
+        }
+
+        /* Custom scrollbar for annotations */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e293b; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #475569; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b; 
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-slate-900 border-b border-slate-800 p-6">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div>
+                <h1 class="text-3xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">
+                    Jitterbug Visual Translator
+                </h1>
+                <p class="text-slate-400 text-sm mt-1 code-font">P31 Andromeda // Physicists to Poets Bridge</p>
+            </div>
+            <div class="flex space-x-2 bg-slate-800 p-1 rounded-lg">
+                <button onclick="switchTab('poet')" id="btn-poet" class="px-4 py-2 text-sm font-semibold rounded-md transition-all tab-active">Level 1: The Poet</button>
+                <button onclick="switchTab('judge')" id="btn-judge" class="px-4 py-2 text-sm font-semibold rounded-md transition-all tab-inactive">Level 2: The Judge</button>
+                <button onclick="switchTab('funder')" id="btn-funder" class="px-4 py-2 text-sm font-semibold rounded-md transition-all tab-inactive">Level 3: The Funder</button>
+                <button onclick="switchTab('physicist')" id="btn-physicist" class="px-4 py-2 text-sm font-semibold rounded-md transition-all tab-inactive">Level 4: The Physicist</button>
+                <button onclick="switchTab('live')" id="btn-live" class="px-4 py-2 text-sm font-semibold rounded-md transition-all tab-inactive">🔴 Live Data</button>
+            </div>
+
+            <!-- Live Data Input Bar -->
+            <div id="live-input-bar" class="hidden bg-slate-800 p-3 rounded-lg mt-2 flex items-center gap-2">
+                <label class="text-xs text-slate-400 whitespace-nowrap">Brain Dump ID:</label>
+                <input type="text" id="live-bd-id" placeholder="paste brain dump UUID" class="flex-1 px-3 py-1 bg-slate-900 border border-slate-700 rounded text-sm text-white font-mono" />
+                <button onclick="loadLiveData()" class="px-3 py-1 bg-indigo-600 hover:bg-indigo-700 rounded text-sm font-medium">Load</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-7xl mx-auto w-full p-6 grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- Visualization Panel (Left 2/3) -->
+        <section class="lg:col-span-2 flex flex-col">
+            <div class="bg-slate-800 border border-slate-700 rounded-xl overflow-hidden flex-grow flex flex-col shadow-2xl">
+                <div class="bg-slate-900 px-4 py-3 border-b border-slate-700 flex justify-between items-center">
+                    <div class="flex items-center gap-3">
+                        <h2 id="viz-title" class="text-lg font-semibold text-slate-200">System Context (Public View)</h2>
+                        <span id="viz-badge" class="px-2 py-1 text-xs font-bold uppercase tracking-wider rounded bg-purple-500/20 text-purple-400 border border-purple-500/30">Abstract</span>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="copyDiagram()" class="px-3 py-1 text-xs font-medium rounded bg-slate-700 hover:bg-slate-600 text-slate-200 border border-slate-600" title="Copy Mermaid code">
+                            📋 Copy Code
+                        </button>
+                        <button onclick="exportSVG()" class="px-3 py-1 text-xs font-medium rounded bg-slate-700 hover:bg-slate-600 text-slate-200 border border-slate-600" title="Download as SVG">
+                            ⬇️ SVG
+                        </button>
+                    </div>
+                </div>
+                <div class="p-8 flex-grow flex items-center justify-center bg-slate-800/50 min-h-[400px]" id="diagram-container">
+                    <!-- Mermaid Diagram Injected Here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Annotation Panel (Right 1/3) -->
+        <section class="bg-slate-800 border border-slate-700 rounded-xl overflow-hidden flex flex-col shadow-2xl h-[600px]">
+            <div class="bg-slate-900 px-4 py-3 border-b border-slate-700">
+                <h2 class="text-lg font-semibold text-slate-200">Plain English Translation</h2>
+            </div>
+            <div class="p-6 overflow-y-auto flex-grow" id="annotation-container">
+                <!-- Text Injected Here -->
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // Initialize Mermaid with dark theme
+        mermaid.initialize({ 
+            startOnLoad: false,
+            theme: 'dark',
+            fontFamily: 'Inter, sans-serif',
+            securityLevel: 'loose'
+        });
+
+        // Data for different audiences
+        const views = {
+            poet: {
+                title: "System Context: The Digital Ramp",
+                badge: "Abstract / Public",
+                badgeClass: "bg-purple-500/20 text-purple-400 border-purple-500/30",
+                diagram: `
+                    graph LR
+                        Chaos[Environmental Noise<br/>Overwhelming Tasks] -->|Input| Portal((Jitterbug<br/>Engine))
+                        Portal -->|Processes & Distills| Clarity[Actionable Truth<br/>Structured Plans]
+                        
+                        style Portal fill:#8b5cf6,stroke:#c4b5fd,stroke-width:4px,color:#fff
+                        style Chaos fill:#1e293b,stroke:#475569,stroke-width:2px,color:#cbd5e1,stroke-dasharray: 5 5
+                        style Clarity fill:#10b981,stroke:#6ee7b7,stroke-width:2px,color:#fff
+                `,
+                text: `
+                    <h3 class="text-xl font-bold text-white mb-4">The Translator's Note</h3>
+                    <p class="text-slate-300 mb-4 leading-relaxed">This view is for the public, friends, and general collaborators. It focuses purely on the <strong>input and output</strong>.</p>
+                    <p class="text-slate-300 mb-4 leading-relaxed"><strong>The Metaphor:</strong> A digital alchemy engine.</p>
+                    <p class="text-slate-300 mb-4 leading-relaxed">When the mind is flooded with unstructured information and high-stakes stress, the biological system can reach a breaking point. The Jitterbug takes this messy, overwhelming chaos, processes it invisibly, and outputs clean, actionable steps.</p>
+                    <div class="mt-6 bg-slate-900/50 p-4 rounded-lg border border-slate-700">
+                        <h4 class="text-sm font-bold text-purple-400 uppercase mb-2 code-font">Key Phrase to Use:</h4>
+                        <p class="text-slate-200 italic">"It captures chaos, decomposes it, and converges on actionable truth. It's an extension of how I think."</p>
+                    </div>
+                `
+            },
+            judge: {
+                title: "Medical Nexus: Cognitive Prosthetic",
+                badge: "Legal / Medical",
+                badgeClass: "bg-blue-500/20 text-blue-400 border-blue-500-30",
+                diagram: `
+                    graph TD
+                        Stress[Adversarial Friction<br/>Legal Stress] -->|Cortisol Trigger| Body[Biological Substrate]
+                        Body -.->|Danger| Calcium[Calcium Drop < 8.2 mg/dL<br/>Tetany / Crisis]
+                        
+                        Stress -->|Intercepted by| JBug{Jitterbug<br/>ADA Prosthetic}
+                        JBug -->|Offloads Executive Function| Shield[Protects Prefrontal Cortex]
+                        Shield -->|Maintains| Homeostasis[Metabolic Stability<br/>Regulated Co-Parenting]
+                        
+                        style JBug fill:#3b82f6,stroke:#93c5fd,stroke-width:4px,color:#fff
+                        style Calcium fill:#ef4444,stroke:#fca5a5,stroke-width:2px,color:#fff
+                        style Homeostasis fill:#10b981,stroke:#6ee7b7,stroke-width:2px,color:#fff
+                `,
+                text: `
+                    <h3 class="text-xl font-bold text-white mb-4">The Translator's Note</h3>
+                    <p class="text-slate-300 mb-4 leading-relaxed">This view is strictly for Judge Scarlett, opposing counsel, and clinical evaluators. It focuses entirely on <strong>medical necessity and biological outcomes</strong>.</p>
+                    <p class="text-slate-300 mb-4 leading-relaxed"><strong>The Metaphor:</strong> A wheelchair for the mind; a biological buffer.</p>
+                    <p class="text-slate-300 mb-4 leading-relaxed">Do not mention Sierpinski, recursion, or Cloudflare here. Focus on the ADA accommodation (Docket 103). The system intercepts stress before it triggers the cortisol-calcium axis, preventing medical crises and allowing you to remain a regulated, capable father.</p>
+                    <div class="mt-6 bg-slate-900/50 p-4 rounded-lg border border-slate-700">
+                        <h4 class="text-sm font-bold text-blue-400 uppercase mb-2 code-font">Key Phrase to Use:</h4>
+                        <p class="text-slate-200 italic">"This software is a prescribed medical device. It isolates me from environmental noise, protects my biological baseline, and ensures I can show up fully for Bash and Willow."</p>
+                    </div>
+                `
+            },
+            funder: {
+                title: "Impact Arc: Accessible Infrastructure",
+                badge: "Grants / Funding",
+                badgeClass: "bg-emerald-500/20 text-emerald-400 border-emerald-500-30",
+                diagram: `
+                    graph LR
+                        Open[Open Source Code<br/>CC BY 4.0] --> Platform(P31 Labs<br/>Standalone Entity)
+                        Platform --> ASAN[ASAN Grant]
+                        Platform --> OSE[OSE Nominations]
+                        Platform --> NSF[NSF SBIR]
+                        
+                        ASAN -.-> Impact[Scalable Accessibility for<br/>AuDHD Populations]
+                        OSE -.-> Impact
+                        NSF -.-> Impact
+                        
+                        style Platform fill:#10b981,stroke:#6ee7b7,stroke-width:3px,color:#fff
+                        style Impact fill:#f59e0b,stroke:#fcd34d,stroke-width:3px,color:#fff
+                `,
+                text: `
+                    <h3 class="text-xl font-bold text-white mb-4">The Translator's Note</h3>
+                    <p class="text-slate-300 mb-4 leading-relaxed">This view is for ASAN, Open Source Ecology (OSE), NLnet, and the NSF. It focuses on <strong>viability, scale, and organizational structure</strong>.</p>
+                    <p class="text-slate-300 mb-4 leading-relaxed"><strong>The Metaphor:</strong> Open infrastructure for neurodivergent inclusion.</p>
+                    <p class="text-slate-300 mb-4 leading-relaxed">Funders need to know the entity is clean (P31 Labs, Inc.) and the technology is proven (live on Cloudflare, 23 passing tests). They are funding the transition from a personal medical device to a global open-source public good.</p>
+                    <div class="mt-6 bg-slate-900/50 p-4 rounded-lg border border-slate-700">
+                        <h4 class="text-sm font-bold text-emerald-400 uppercase mb-2 code-font">Key Phrase to Use:</h4>
+                        <p class="text-slate-200 italic">"We have built and deployed the core infrastructure. Grant funding allows us to scale this cognitive prosthetic into a free, open-source tool for the broader neurodivergent community."</p>
+                    </div>
+                `
+            },
+            physicist: {
+                title: "Recursive Architecture: Isostatic Mesh",
+                badge: "Technical / Engineering",
+                badgeClass: "bg-orange-500/20 text-orange-400 border-orange-500-30",
+                diagram: `
+                    graph TD
+                        PWA[React PWA Client] -->|Bearer Auth| API(Cloudflare Worker API)
+                        API -->|TTL 60s| KV[(KV Status Cache)]
+                        API --> DO{Orchestrator DO}
+                        
+                        DO -->|1. Brain Dump| D1[(D1 SQLite)]
+                        DO -->|2. Parallel Axes| Runner[Agent Runtime]
+                        Runner -.->|Artifacts Bubble| R2[(R2 Deliverables)]
+                        
+                        Runner --> K4{K4 Isostatic Gate<br/>Generator/Critic/Refiner/Validator}
+                        K4 -->|If Composite| DO
+                        K4 -->|If Atomic| Output[Actionable Truth]
+                        
+                        style DO fill:#f97316,stroke:#fdba74,stroke-width:3px,color:#fff
+                        style K4 fill:#ef4444,stroke:#fca5a5,stroke-width:3px,color:#fff
+                        style R2 fill:#0ea5e9,stroke:#7dd3fc,stroke-width:2px,color:#fff
+                `,
+                text: `
+                    <h3 class="text-xl font-bold text-white mb-4">The Translator's Note</h3>
+                    <p class="text-slate-300 mb-4 leading-relaxed">This view is strictly for developers, technical collaborators, and high-level tech grants (NSF). It focuses on <strong>data flow, state management, and algorithmic convergence</strong>.</p>
+                    <p class="text-slate-300 mb-4 leading-relaxed"><strong>The Metaphor:</strong> A 5-layer recursive orchestration engine with mathematical truth convergence.</p>
+                    <p class="text-slate-300 mb-4 leading-relaxed">You can unleash the full technical lexicon here. Discuss the Sierpinski recursion, the bypassing of the Node.js <code>fs</code> dependency via R2 object bubbling, and the K₄ tetrahedron mesh that prevents hallucination propagation.</p>
+                    <div class="mt-6 bg-slate-900/50 p-4 rounded-lg border border-slate-700">
+                        <h4 class="text-sm font-bold text-orange-400 uppercase mb-2 code-font">Key Phrase to Use:</h4>
+                        <p class="text-slate-200 italic">"It uses recursive decomposition with depth-first batching and R2 artifact bubbling to maintain O(1) context growth per layer, enabling infinite architectural scalability."</p>
+                    </div>
+                `
+            }
+        };
+
+        let liveApiUrl = '';
+        let liveInterval: number | null = null;
+
+        async function switchTab(audience) {
+            // Update Buttons
+            const buttons = ['poet', 'judge', 'funder', 'physicist', 'live'];
+            buttons.forEach(btn => {
+                const element = document.getElementById(`btn-${btn}`);
+                if (element) {
+                    if (btn === audience) {
+                        element.classList.replace('tab-inactive', 'tab-active');
+                    } else {
+                        element.classList.replace('tab-active', 'tab-inactive');
+                    }
+                }
+            });
+
+            const inputBar = document.getElementById('live-input-bar');
+            if (audience === 'live') {
+                if (inputBar) inputBar.classList.remove('hidden');
+                document.getElementById('viz-title').innerText = "Live Recursive Tree";
+                document.getElementById('viz-badge').innerText = "Live Data";
+                document.getElementById('viz-badge').className = "px-2 py-1 text-xs font-bold uppercase tracking-wider rounded bg-red-500/20 text-red-400 border border-red-500-30";
+                document.getElementById('annotation-container').innerHTML = `
+                    <h3 class="text-xl font-bold text-white mb-4">Live Data Mode</h3>
+                    <p class="text-slate-300 mb-4 leading-relaxed">Paste a brain dump UUID above to visualize its actual decomposition tree.</p>
+                    <p class="text-slate-300 mb-4 leading-relaxed">The tree updates in real-time as the orchestration runs. Each node represents an axis; color indicates status.</p>
+                    <div class="mt-4 bg-slate-900/50 p-4 rounded-lg border border-slate-700">
+                        <h4 class="text-sm font-bold text-red-400 uppercase mb-2 code-font">How to Use:</h4>
+                        <p class="text-slate-200 text-sm">1. Submit a brain dump via the PWA<br/>2. Copy the UUID from the URL or status page<br/>3. Paste it into the input bar above<br/>4. Watch the Sierpinski tree grow</p>
+                    </div>
+                `;
+                // Show data-driven SVG
+                const container = document.getElementById('diagram-container');
+                container.innerHTML = `<div id="live-tree-container" class="w-full h-full min-h-[400px] flex items-center justify-center">
+                    <div class="text-slate-400 text-sm">Enter a brain dump ID to visualize</div>
+                </div>`;
+            } else {
+                if (inputBar) inputBar.classList.add('hidden');
+                if (liveInterval) { clearInterval(liveInterval); liveInterval = null; }
+                const data = views[audience];
+                document.getElementById('viz-title').innerText = data.title;
+                const badge = document.getElementById('viz-badge');
+                badge.innerText = data.badge;
+                badge.className = `px-2 py-1 text-xs font-bold uppercase tracking-wider rounded border ${data.badgeClass}`;
+                document.getElementById('annotation-container').innerHTML = data.text;
+                renderDiagram(data.diagram);
+            }
+        }
+
+        async function loadLiveData() {
+            const idInput = document.getElementById('live-bd-id');
+            const id = idInput?.value?.trim();
+            if (!id) return;
+            liveApiUrl = 'https://jitterbug-api.trimtab-signal.workers.dev';
+            const container = document.getElementById('live-tree-container');
+            if (!container) return;
+            container.innerHTML = `<div class="text-slate-400 text-sm animate-pulse">Loading decomposition tree...</div>`;
+            const payload = await buildLiveTree(id, liveApiUrl);
+            if (!payload) {
+                container.innerHTML = `<div class="text-red-400 text-sm">Failed to load brain dump</div>`;
+                return;
+            }
+            container.innerHTML = '';
+            renderLiveTree(container, payload);
+            if (liveInterval) clearInterval(liveInterval);
+            liveInterval = window.setInterval(async () => {
+                const updated = await buildLiveTree(id, liveApiUrl);
+                if (updated) renderLiveTree(container, updated);
+            }, 5000);
+        }
+
+        async function buildLiveTree(id: string, apiUrl: string): Promise<any | null> {
+            try {
+                const res = await fetch(`${apiUrl}/api/brain-dump/${id}`);
+                if (!res.ok) return null;
+                const record: any = await res.json();
+                const axes = record.axes_json ? JSON.parse(record.axes_json) : [];
+                return {
+                    name: record.project_name || 'Brain Dump',
+                    status: record.status,
+                    children: axes.map((axis: any) => ({
+                        id: axis.id || axis.letter,
+                        name: axis.name || `${axis.letter || 'A'} — ${axis.focusArea || axis.agentRole || 'Unknown'}`,
+                        status: axis.status || 'pending',
+                    })),
+                };
+            } catch { return null; }
+        }
+
+        function renderLiveTree(container: HTMLElement, root: any) {
+            container.innerHTML = '';
+            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            const width = 800;
+            const height = Math.max(200, (root.children?.length || 0) * 50 + 80);
+            svg.setAttribute('width', '100%');
+            svg.setAttribute('height', String(height));
+            svg.setAttribute('viewBox', `0 0 800 ${height}`);
+            svg.style.fontFamily = 'Inter, sans-serif';
+            svg.style.fontSize = '12px';
+
+            const rootX = width / 2;
+            const rootY = 40;
+            const nodes: Array<{ x: number; y: number; data: any }> = [{ x: rootX, y: rootY, data: root }];
+            const links: Array<{ source: { x: number; y: number }; target: { x: number; y: number } }> = [];
+
+            if (root.children?.length) {
+                const childY = rootY + 60;
+                const spacing = Math.min(120, (width - 80) / root.children.length);
+                const startX = (width - (root.children.length - 1) * spacing) / 2;
+                root.children.forEach((child: any, i: number) => {
+                    const cx = startX + i * spacing;
+                    nodes.push({ x: cx, y: childY, data: child });
+                    links.push({ source: { x: rootX, y: rootY }, target: { x: cx, y: childY } });
+                });
+            }
+
+            const colors: Record<string, string> = { pending: '#94a3b8', running: '#facc15', completed: '#4ade80', failed: '#f87171' };
+
+            links.forEach(link => {
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', String(link.source.x));
+                line.setAttribute('y1', String(link.source.y));
+                line.setAttribute('x2', String(link.target.x));
+                line.setAttribute('y2', String(link.target.y));
+                line.setAttribute('stroke', '#475569');
+                line.setAttribute('stroke-width', '2');
+                svg.appendChild(line);
+            });
+
+            nodes.forEach(node => {
+                const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                g.setAttribute('transform', `translate(${node.x}, ${node.y})`);
+                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                circle.setAttribute('r', '16');
+                circle.setAttribute('fill', colors[node.data.status] || colors.pending);
+                circle.setAttribute('stroke', '#1e293b');
+                circle.setAttribute('stroke-width', '2');
+                g.appendChild(circle);
+                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                text.setAttribute('text-anchor', 'middle');
+                text.setAttribute('dy', '4');
+                text.setAttribute('fill', '#f8fafc');
+                text.setAttribute('font-size', '10');
+                text.setAttribute('font-weight', '600');
+                text.textContent = node.data.name.length > 12 ? node.data.name.slice(0, 10) + '…' : node.data.name;
+                g.appendChild(text);
+                svg.appendChild(g);
+            });
+
+            container.appendChild(svg);
+        }
+
+        let currentDiagram = '';
+
+        async function renderDiagram(diagramString) {
+            currentDiagram = diagramString;
+            const container = document.getElementById('diagram-container');
+            // Reset container
+            container.innerHTML = `<div class="mermaid text-center w-full">${diagramString}</div>`;
+            try {
+                // Parse and render the new diagram
+                await mermaid.run({
+                    querySelector: '.mermaid'
+                });
+            } catch (err) {
+                console.error("Mermaid rendering failed:", err);
+            }
+        }
+
+        async function copyDiagram() {
+            try {
+                await navigator.clipboard.writeText(currentDiagram.trim());
+                const btn = event.target as HTMLButtonElement;
+                const original = btn.innerHTML;
+                btn.innerHTML = '✅ Copied!';
+                setTimeout(() => btn.innerHTML = original, 1500);
+            } catch (err) {
+                console.error('Copy failed:', err);
+            }
+        }
+
+        async function exportSVG() {
+            const svg = document.querySelector('#diagram-container svg');
+            if (!svg) {
+                alert('No diagram rendered yet — please wait for the diagram to load.');
+                return;
+            }
+            const svgData = new XMLSerializer().serializeToString(svg);
+            const blob = new Blob([svgData], { type: 'image/svg+xml' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `jitterbug-${Date.now()}.svg`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Initialize with Poet view
+        document.addEventListener("DOMContentLoaded", () => {
+            switchTab('poet');
+        });
+    </script>
+</body>
+</html>

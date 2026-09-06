@@ -1,0 +1,176 @@
+# Reusable workflow: Versioned Worker Deployment
+#
+# Deploys a Cloudflare Worker with zero-downtime via wrangler versions.
+#
+# IMPORTANT: The called workflow MUST have permissions set to allow
+# deployments. The caller must provide:
+#   CLOUDFLARE_API_TOKEN  — with Workers Versions write access
+#   CLOUDFLARE_ACCOUNT_ID — the Cloudflare account ID
+#   HEALTH_URL            — URL to check after staging deploy
+#
+# Usage (in a caller workflow):
+#   jobs:
+#     deploy:
+#       uses: ./.github/workflows/deploy-versioned.yml
+#       with:
+#         working-directory: software/my-worker
+#         health-url: https://my-worker.staging.workers.dev/health
+#         version-message: "v1.2.3"
+#       secrets:
+#         CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+#         CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+name: Deploy (Versioned — Zero-Downtime)
+
+on:
+  workflow_call:
+    inputs:
+      working-directory:
+        required: true
+        type: string
+        description: 'Directory containing the worker wrangler.toml'
+      health-url:
+        required: true
+        type: string
+        description: 'URL to health-check the worker at (staging/preview)'
+      version-message:
+        required: false
+        type: string
+        default: ''
+        description: 'Optional version tag message (e.g. v1.2.3)'
+      health-timeout:
+        required: false
+        type: number
+        default: 60
+        description: 'Max seconds to wait for health check to pass'
+      traffic-percent:
+        required: false
+        type: number
+        default: 100
+        description: 'Percent of traffic for the new version (default 100)'
+    secrets:
+      CLOUDFLARE_API_TOKEN:
+        required: true
+      CLOUDFLARE_ACCOUNT_ID:
+        required: true
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  deploy:
+    name: Versioned Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+        working-directory: software
+
+      - name: Build worker
+        run: pnpm build
+        working-directory: ${{ inputs.working-directory }}
+
+      - name: Upload version (staging — no traffic)
+        id: upload
+        run: |
+          DEPLOY_MSG="${{ inputs.version-message }}"
+          if [ -z "$DEPLOY_MSG" ]; then
+            DEPLOY_MSG="deploy $(git rev-parse --short HEAD) $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          fi
+          OUTPUT=$(npx wrangler versions upload --message "$DEPLOY_MSG" 2>&1) || {
+            echo "::error::Version upload failed"
+            echo "$OUTPUT"
+            exit 1
+          }
+          echo "$OUTPUT"
+          # Extract version ID from output
+          VERSION_ID=$(echo "$OUTPUT" | grep -oP 'version_id\s*=\s*["'"'"']?\K[^"'"'"'\s]+' | head -1)
+          if [ -z "$VERSION_ID" ]; then
+            VERSION_ID=$(echo "$OUTPUT" | grep -oP '(v|version)-\d+' | head -1)
+          fi
+          echo "version_id=$VERSION_ID" >> "$GITHUB_OUTPUT"
+        working-directory: ${{ inputs.working-directory }}
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+      - name: Health check (pre-deploy)
+        id: health
+        run: |
+          URL="${{ inputs.health-url }}"
+          TIMEOUT=${{ inputs.health-timeout }}
+          INTERVAL=5
+          MAX_ATTEMPTS=$(( TIMEOUT / INTERVAL ))
+          echo "Checking health at $URL (timeout: ${TIMEOUT}s)..."
+          for i in $(seq 1 "$MAX_ATTEMPTS"); do
+            HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 "$URL" 2>/dev/null || echo "000")
+            if [ "$HTTP_CODE" = "200" ]; then
+              BODY=$(curl -s --max-time 10 "$URL" 2>/dev/null || echo "{}")
+              STATUS=$(echo "$BODY" | python3 -c "import sys,json; print(json.load(sys.stdin).get('status','down'))" 2>/dev/null || echo "unknown")
+              if [ "$STATUS" = "ok" ] || [ "$STATUS" = "degraded" ]; then
+                echo "Health check PASSED (HTTP $HTTP_CODE, status=$STATUS)"
+                echo "status=pass" >> "$GITHUB_OUTPUT"
+                exit 0
+              fi
+              echo "Attempt $i: Health endpoint returned status=$STATUS, retrying..."
+            else
+              echo "Attempt $i: HTTP $HTTP_CODE, retrying..."
+            fi
+            sleep "$INTERVAL"
+          done
+          echo "Health check FAILED after ${TIMEOUT}s"
+          echo "status=fail" >> "$GITHUB_OUTPUT"
+          exit 1
+
+      - name: Deploy version to traffic
+        if: steps.health.outputs.status == 'pass'
+        id: deploy
+        run: |
+          VERSION_ID="${{ steps.upload.outputs.version_id }}"
+          PERCENT="${{ inputs.traffic_percent }}"
+          if [ -z "$PERCENT" ]; then PERCENT=100; fi
+          echo "Deploying version $VERSION_ID to $PERCENT% traffic..."
+          npx wrangler versions deploy "$VERSION_ID" --percent "$PERCENT" 2>&1 || {
+            echo "::error::Version deploy failed"
+            exit 1
+          }
+        working-directory: ${{ inputs.working-directory }}
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+      - name: Verify deployment (post-deploy health check)
+        if: steps.deploy.outcome == 'success'
+        run: |
+          sleep 10
+          URL="${{ inputs.health-url }}"
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 "$URL" 2>/dev/null || echo "000")
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "::warning::Post-deploy health check returned HTTP $HTTP_CODE"
+          else
+            echo "Post-deploy health check PASSED"
+          fi
+
+      - name: Rollback on failure
+        if: failure() && steps.upload.outputs.version_id != ''
+        run: |
+          echo "::warning::Deploy failed — rolling back to previous version"
+          npx wrangler versions rollback 2>&1 || echo "::warning::Rollback command failed — manual intervention required"
+        working-directory: ${{ inputs.working-directory }}
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

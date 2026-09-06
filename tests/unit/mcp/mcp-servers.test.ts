@@ -226,14 +226,15 @@ describe('LOVE Ledger MCP', () => {
 
   afterAll(() => killQuietly(proc));
 
-  it('lists 3 tools via tools/list', async () => {
+  it('lists 4 tools via tools/list', async () => {
     const res = await sendRPC(proc, 'tools/list');
     expect(res.result).toBeDefined();
-    expect(res.result.tools.length).toBe(3);
+    expect(res.result.tools.length).toBe(4);
     const names = res.result.tools.map((t: any) => t.name);
     expect(names).toContain('love_status');
     expect(names).toContain('love_balance');
     expect(names).toContain('love_sync');
+    expect(names).toContain('love_anchor');
   });
 
   it('love_balance has userId property', async () => {

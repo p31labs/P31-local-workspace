@@ -1,0 +1,27 @@
+name = "sovereign-justice-escrow"
+main = "src/escrow-engine.ts"
+compatibility_date = "2026-06-01"
+
+[[d1_databases]]
+binding = "JUSTICE_D1"
+database_name = "sovereign-justice-db"
+database_id = "64381fff-b652-435c-8d48-ac5a1c7bf248"
+
+[[d1_databases]]
+binding = "LOVE_D1"
+database_name = "love-ledger"
+database_id = "592e3e2e-3203-4e0a-8342-9e85215ec8a6"
+
+[[durable_objects.bindings]]
+name = "ESCROW_DO"
+class_name = "DisputeEscrowDO"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["DisputeEscrowDO"]
+
+[vars]
+ENVIRONMENT = "production"
+
+[cache]
+enabled = true

@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Spoon Calculator - P31 Andromeda</title>
+    <meta name="description" content="Real-time spoon theory energy tracker. Visual cognitive budget manager for neurodivergent individuals." />
+    <style>
+      :root {
+        --green: #22c55e;
+        --yellow: #eab308;
+        --red: #ef4444;
+        --black: #111827;
+        --bg: #0f172a;
+        --card: #1e293b;
+        --text: #f8fafc;
+        --muted: #94a3b8;
+      }
+      
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: var(--bg);
+        color: var(--text);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      
+      #root {
+        width: 100%;
+        max-width: 800px;
+        padding: 20px;
+      }
+    </style>
+    <!-- R08: P31 telemetry — CWP-2026-014 -->
+    <script src="https://p31ca.org/p31-telemetry.js" defer></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

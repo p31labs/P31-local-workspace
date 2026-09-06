@@ -1,0 +1,23 @@
+{
+  "schema": "p31.glossary/1.0.0",
+  "updated": "2026-04-26",
+  "entries": [
+    { "id": "delta", "term": "Delta (hiring model)", "definition": "A decentralized, evidence-forward hiring model: work samples, rubrics, and community-aligned review, contrasted in org docs with purely centralized (Wye-style) proxy hiring.", "seeAlso": ["role-packet", "wcd", "rubric"] },
+    { "id": "role-packet", "term": "Role packet", "definition": "A structured job description: outcomes, constraints, evaluation weights, accommodation, and a linked WCD. The canonical data lives in p31-delta-hiring for this surface.", "seeAlso": ["wcd", "rubric", "accommodation"] },
+    { "id": "wcd", "term": "WCD", "definition": "Work challenge definition: a bounded, time-limited work sample with deliverables, a rubric whose weights sum to 100%, and good vs anti-pattern hints.", "seeAlso": ["rubric", "proof-record"] },
+    { "id": "rubric", "term": "Rubric", "definition": "A set of scored dimensions, each with a weight. Reviewers and self-assessment in the app both reference the same dimension ids where possible.", "seeAlso": ["wcd", "self-assessment"] },
+    { "id": "proof-record", "term": "p31.proofRecord", "definition": "A versioned JSON shape for a candidate’s portable export: consent, artifacts, self-assessment, and free-text to reviewers. Schema: schemas/proof-record.schema.json in this package.", "seeAlso": ["export", "import"] },
+    { "id": "love", "term": "L.O.V.E. tokens", "definition": "In-org motivation token described in P31’s Delta materials. This app shows weights as UI affordance; it does not mint or settle tokens on chain.", "seeAlso": ["equity-tiers", "love"] },
+    { "id": "equity-tiers", "term": "Equity tiers", "definition": "A published table in role-packets data: tokens required, equity %, and governance notes. Legal formation and grants determine real equity.", "seeAlso": ["love"] },
+    { "id": "guild", "term": "Guild", "definition": "A community grouping (e.g. frontend, design, operations) used in role metadata for browsability.", "seeAlso": ["role-packet"] },
+    { "id": "self-assessment", "term": "Self assessment", "definition": "1–5 sliders on each rubric dimension in the builder. Not a public score; it aligns your self-review with the same dimensions reviewers will use.", "seeAlso": ["rubric", "proof-record"] },
+    { "id": "artifact", "term": "Artifact", "definition": "A link (repo, url, other) plus optional commit SHA, label, and notes. The proof record lists multiple artifacts for one submission batch.", "seeAlso": ["proof-record", "commit-sha"] },
+    { "id": "commit-sha", "term": "Commit SHA", "definition": "Optional git commit id for repository artifacts so reviewers can check out the exact state you intended.", "seeAlso": ["artifact"] },
+    { "id": "accommodation", "term": "Accommodation", "definition": "Narrative in each role packet and global policy: async-first, written review by default, and a path to request alternatives. Not medical advice; follow org process.", "seeAlso": ["a11y-async"] },
+    { "id": "export", "term": "Export (JSON)", "definition": "Download of a p31.proofRecord file. Requires both consent checkboxes. Use for backup and official submission when a channel is published.", "seeAlso": ["import", "proof-record"] },
+    { "id": "import", "term": "Import (JSON)", "definition": "Load a p31.proofRecord from file; server validates structure and stores a new local copy to avoid clobbering existing drafts without intent.", "seeAlso": ["export", "proof-record"] },
+    { "id": "localstorage", "term": "Local storage (browser)", "definition": "Draft proofs persist only in this origin’s browser storage until export. Clearing site data can delete them—back up with exports.", "seeAlso": ["export"] },
+    { "id": "ground-truth", "term": "Data ground truth", "definition": "JSON in src/data/ is canonical for this app’s UI. The verify script checks referential integrity (roles→WCD) and rubric weight sums.", "seeAlso": ["wcd", "rubric"] },
+    { "id": "review-plane", "term": "Review plane (concept)", "definition": "Org-side process: calibrate, optionally blind, score against the published rubric. This static app may surface reviewer help but is not a backend ATS.", "seeAlso": ["rubric", "for-reviewers"] }
+  ]
+}

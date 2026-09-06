@@ -1,0 +1,25 @@
+{
+  "name": "ledger-bridge",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "typecheck": "tsc --noEmit",
+    "dev": "wrangler dev",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@noble/curves": "^1.8.0",
+    "@noble/hashes": "^1.8.0",
+    "@noble/post-quantum": "^0.6.1",
+    "@sd-jwt/core": "^0.20.0",
+    "viem": "^2.21.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.0.0",
+    "typescript": "^5.9.0",
+    "vitest": "^3.0.0",
+    "wrangler": "^4.0.0"
+  }
+}

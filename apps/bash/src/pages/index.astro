@@ -1,0 +1,89 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { Section, StatTiles, CardGrid } from '@p31/ui/layout';
+import { QuantumLayer } from '@p31/ui/quantum';
+import { BashCompanion } from '../components/BashCompanion';
+import stats from '../data/stats.json';
+import items from '../data/items.json';
+
+const ngJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "BASH — P31 Shell Companion",
+  "applicationCategory": "Productivity",
+  "operatingSystem": "Web",
+  "description": "A spoon-aware shell companion for neurodivergent families. System overview, quick commands, and mindful computing.",
+  "url": "https://bash.p31ca.org/",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "author": {
+    "@type": "Organization",
+    "name": "P31 Labs, Inc."
+  }
+};
+---
+
+<Layout jsonLd={ngJsonLd} canonical="https://bash.p31ca.org/" title="BASH | P31 Shell Companion" description="Spoon-aware shell companion — system overview, quick commands, and mindful computing for neurodivergent families.">
+
+  <!-- Hero -->
+  <section class="py-20 md:py-28">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="flex items-center gap-3 mb-4">
+        <span class="text-3xl font-mono text-quantum-cyan font-bold" style="text-shadow: 0 0 20px rgba(0,240,255,0.3);">$</span>
+        <h1 class="text-2xl md:text-5xl font-bold text-white font-mono">BASH</h1>
+      </div>
+      <p class="text-cloud/60 mb-2 max-w-2xl text-sm md:text-base">
+        <span class="text-quantum-green">#</span> Brain-Aware SHell — a spoon-aware companion for sovereign computing.
+      </p>
+      <p class="text-cloud/40 text-xs md:text-sm max-w-2xl font-mono">
+        ~$ <span class="text-quantum-cyan">echo</span> <span class="text-quantum-gold">"Your system. Your pace. Your mesh."</span>
+      </p>
+    </div>
+  </section>
+
+  <!-- Quantum Layer -->
+  <div class="max-w-6xl mx-auto px-6 mb-12">
+    <QuantumLayer simplified linkBase="https://p31ca.org" />
+  </div>
+
+  <!-- Live Metrics -->
+  <section class="pb-12">
+    <div class="max-w-6xl mx-auto px-6">
+      <Section header={{ eyebrow: 'SYSTEM', title: 'Live Metrics', description: 'BASH system status — spoon-aware and privacy-first.' }}>
+        <StatTiles stats={stats} cols={4} />
+      </Section>
+    </div>
+  </section>
+
+  <!-- BASH Companion (interactive) -->
+  <section class="pb-16">
+    <div class="max-w-6xl mx-auto px-6">
+      <Section header={{ eyebrow: 'COMPANION', title: 'BASH Shell', description: 'Your spoon-aware command companion. Type a command or ask for help.' }}>
+        <BashCompanion client:load />
+      </Section>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="pb-20">
+    <div class="max-w-6xl mx-auto px-6">
+      <Section header={{ eyebrow: 'FEATURES', title: 'Tools & Surfaces', align: 'left' }}>
+        <CardGrid cards={items} cols={3} />
+      </Section>
+    </div>
+  </section>
+
+  <!-- Honest Label -->
+  <div class="max-w-6xl mx-auto px-6 pb-12">
+    <div style={{
+      fontSize: 9, fontFamily: 'monospace', color: 'rgba(255,255,255,0.12)',
+      textAlign: 'center', borderTop: '1px solid rgba(255,255,255,0.04)', paddingTop: 12,
+    }}>
+      ⚠️ HONEST LABEL: The tetrahedral quantum layer (SIC-POVM, K₄, Posner) is a computational metaphor — not established physics.
+    </div>
+  </div>
+
+</Layout>

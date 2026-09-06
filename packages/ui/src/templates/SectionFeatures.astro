@@ -1,0 +1,13 @@
+---
+export interface Props {
+  columns?: number;
+}
+const { columns, children } = Astro.props;
+---
+
+<section
+  class="grid"
+  style={`max-width: var(--p31-max-width-lg); margin: 0 auto; padding-left: var(--p31-space-md); padding-right: var(--p31-space-md); padding-top: var(--p31-space-xl); padding-bottom: var(--p31-space-xl); gap: var(--p31-space-md); grid-template-columns: ${columns ? `repeat(${columns}, 1fr)` : 'repeat(auto-fill, minmax(280px, 1fr))'};`}
+>
+  <slot />
+</section>

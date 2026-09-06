@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="og-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#050508"/>
+      <stop offset="100%" stop-color="#0A0A0F"/>
+    </linearGradient>
+    <linearGradient id="og-crown" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00F0FF"/>
+      <stop offset="25%" stop-color="#A78BFA"/>
+      <stop offset="50%" stop-color="#FBBF24"/>
+      <stop offset="75%" stop-color="#818CF8"/>
+      <stop offset="100%" stop-color="#00F0FF"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#og-bg)"/>
+  <g transform="translate(600, 220) scale(2.4)">
+    <path d="M 40 155 Q 60 80 70 38 Q 85 18 100 19 Q 115 18 130 38 Q 140 80 160 155" fill="none" stroke="url(#og-crown)" stroke-width="2.5"/>
+    <path d="M 40 155 Q 60 80 70 38 Q 85 18 100 19 Q 115 18 130 38 Q 140 80 160 155 Q 145 145 130 142 Q 115 139 100 139 Q 85 139 70 142 Q 55 145 40 155 Z" fill="rgba(255,255,255,0.04)"/>
+    <polygon points="100,19 108,38 128,38" fill="#00F0FF"/>
+    <polygon points="100,19 92,38 72,38" fill="#A78BFA"/>
+    <polygon points="70,38 78,55 92,38" fill="#FBBF24"/>
+    <polygon points="130,38 122,55 108,38" fill="#34D399"/>
+    <polygon points="72,38 85,60 100,58 92,38" fill="#818CF8"/>
+    <polygon points="128,38 115,60 100,58 108,38" fill="#FB7185"/>
+    <polygon points="100,52 108,70 100,82" fill="#00F0FF" opacity="0.7"/>
+    <polygon points="100,52 92,70 100,82" fill="#A78BFA" opacity="0.7"/>
+  </g>
+  <text x="600" y="410" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="48" font-weight="700" fill="#F5F5F7" letter-spacing="0.02em">The Sovereign Mesh</text>
+  <text x="600" y="460" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="20" fill="rgba(245,245,247,0.5)">p31ca.org — Sovereign, quantum-safe infrastructure for neurodivergent families</text>
+</svg>

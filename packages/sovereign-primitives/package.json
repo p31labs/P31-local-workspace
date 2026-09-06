@@ -1,0 +1,32 @@
+{
+  "name": "@p31/sovereign-primitives",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "Identity and cryptographic primitives for the P31 Labs ecosystem",
+  "author": "P31 Labs <hello@p31ca.org>",
+  "license": "MIT",
+  "homepage": "https://p31ca.org",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/p31labs/andromeda.git",
+    "directory": "packages/sovereign-primitives"
+  },
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run --passWithNoTests"
+  },
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "dependencies": {
+    "@noble/post-quantum": "^0.6.1"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.0"
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  }
+}

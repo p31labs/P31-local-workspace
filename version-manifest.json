@@ -1,0 +1,26 @@
+{
+  "updated": "2026-08-10T09:30:00Z",
+  "sites": {
+    "p31ca.org": { "version": "1.0.0", "commit": "main", "deployed": "2026-07-16T22:00:00Z", "project": "p31ca", "type": "pages" },
+    "phosphorus31.org": { "version": "1.0.0", "commit": "main", "deployed": "2026-07-16", "project": "phosphorus31-org", "type": "pages" },
+    "phos.p31ca.org": { "version": "2.0.0", "commit": "main", "deployed": "2026-07-16T22:00:00Z", "project": "phos", "type": "pages" },
+    "bonding.p31ca.org": { "version": "1.0.0", "commit": "main", "deployed": "2026-07-16", "project": "bonding", "type": "pages" },
+    "willow.p31ca.org": { "version": "1.0.0", "commit": "main", "deployed": "2026-07-16", "project": "willow", "type": "pages" },
+    "arcade.p31ca.org": { "version": "1.0.0", "commit": "main", "deployed": "2026-07-16", "project": "arcade", "type": "worker" },
+    "gateway.p31ca.org": { "version": "2.0.0", "commit": "main", "deployed": "2026-07-16T22:13:00Z", "project": "p31-api-gateway", "type": "worker" },
+    "status.p31ca.org": { "version": "1.1.0", "commit": "main", "deployed": "2026-07-16", "project": "p31-status", "type": "worker" }
+  },
+  "workers": {
+    "device-registry": { "version": "1.0.0", "deployed": "2026-07-16T21:41:00Z" },
+    "shadow-bridge": { "version": "2.1.0", "deployed": "2026-08-10", "status": "active" },
+    "roblox-bridge": { "version": "1.0.0", "deployed": "2026-08-10", "status": "active" },
+    "game-builder":   { "version": "1.0.0", "deployed": "2026-08-10", "status": "active" },
+    "multiplayer-room": { "version": "2.0.0", "deployed": "2026-07-16T20:26:00Z" },
+    "meshy-bridge": { "version": "1.0.0", "deployed": "2026-07-16T18:13:00Z" },
+    "artifact-registry": { "version": "1.0.0", "deployed": "2026-07-16T18:04:00Z" },
+    "genesis-gate": { "version": "1.0.0", "deployed": "2026-07-16" },
+    "love-bridge": { "version": "1.0.0", "deployed": "2026-07-01", "status": "needs-env-fix" },
+    "care-api": { "version": "1.0.0", "deployed": "2026-07-16" },
+    "taler-bridge-billing": { "version": "1.0.0", "deployed": "2026-07-16" }
+  }
+}

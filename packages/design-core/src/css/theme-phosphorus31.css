@@ -1,0 +1,45 @@
+/**
+ * P31 Theme Persona — CARETAKER (phosphorus31.org / WILLOW)
+ *
+ * Warm, spacious, high-legibility palette with emerald/gold accents and
+ * serif-accented headings. Import AFTER @p31/design-core/css/all.css.
+ *
+ * Usage in app shell:
+ *   import '@p31/design-core/css/theme-phosphorus31.css';
+ */
+
+:root[data-theme='caretaker'],
+:root[data-brand='phosphorus31'] {
+  --p31-accent: oklch(50% 0.18 150);          /* emerald */
+  --p31-accent-gold: oklch(65% 0.18 45);     /* warm gold */
+  --p31-bg: oklch(98% 0.008 85);             /* warm off-white */
+  --p31-surface: oklch(95% 0.012 80);
+  --p31-surface2: oklch(90% 0.015 75);
+  --p31-text: oklch(15% 0.012 60);
+  --p31-text-secondary: oklch(35% 0.015 60);
+  --p31-text-tertiary: oklch(50% 0.012 60);
+  --p31-glass-surface: oklch(100% 0.01 240 / 0.35);
+  --p31-glass-border: oklch(100% 0.01 240 / 0.15);
+  --p31-glass-blur: blur(16px);
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+:root[data-theme='caretaker'] h1,
+:root[data-theme='caretaker'] h2,
+:root[data-theme='caretaker'] h3,
+:root[data-theme='caretaker'] .font-serif {
+  font-family: 'Playfair Display', 'Georgia', serif;
+}
+
+:root[data-theme='caretaker'] .gap-sm { gap: 6px; }
+:root[data-theme='caretaker'] .gap-md { gap: 14px; }
+:root[data-theme='caretaker'] .gap-lg { gap: 24px; }
+:root[data-theme='caretaker'] .gap-xl { gap: 36px; }
+
+:root[data-theme='caretaker'] {
+  --p31-radius-lg: 28px;
+  --p31-radius-xl: 32px;
+  --p31-radius-candy: 32px;
+}

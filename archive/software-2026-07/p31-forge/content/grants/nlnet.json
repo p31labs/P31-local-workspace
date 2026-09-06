@@ -1,0 +1,26 @@
+{
+  "kind": "grant",
+  "filename": "P31_Grant_NLnet_Commons.docx",
+  "program": "nlnet",
+  "title": "NLnet NGI Zero Commons Fund",
+  "deadline": "June 1, 2026, 12:00 CEST",
+  "amount": "\u20AC5,000\u2013\u20AC50,000",
+  "body": [
+    { "type": "h1", "text": "ABSTRACT" },
+    { "type": "para", "text": "P31 Labs develops open-source cognitive prosthetic infrastructure for neurodivergent minds. We propose to harden and internationalize P31 Forge \u2014 a document-generation engine that collapses the administrative overhead of running a nonprofit, a legal defense, or an academic research program into a single content-pack pipeline. Every artifact is AGPLv3/MIT and runs on Cloudflare Workers free tier." },
+
+    { "type": "h1", "text": "REQUESTED AMOUNT AND BUDGET JUSTIFICATION" },
+    { "type": "para", "text": "Requested: \u20AC25,000. Budget allocated to (a) i18n expansion of P31 Forge content-pack schema to support German/Dutch/French legal and administrative conventions; (b) third-party security audit of the Cloudflare Worker ingress; (c) part-time contract for a second disabled contributor to expand the brand system and accessibility test coverage." },
+
+    { "type": "h1", "text": "COMPARISON WITH EXISTING EFFORTS" },
+    { "type": "para", "text": "Existing document-automation tools (DocuSign, Rocket Lawyer, LegalZoom) are closed-source, US-centric, and priced for large law firms. Open-source alternatives (LibreOffice templates, pandoc) require extensive manual assembly. P31 Forge is the first content-pack-driven, brand-coherent, CLI+HTTP, AGPLv3 document engine explicitly designed for under-resourced pro-se litigants, disabled founders, and lean nonprofits." },
+
+    { "type": "h1", "text": "TECHNICAL CHALLENGES" },
+    { "type": "bullet", "text": "Schema extensibility: supporting plural legal conventions (EU civil code, common law, German Bundesrecht)" },
+    { "type": "bullet", "text": "Font coverage preflight: our existing Unicode linter catches tofu glyphs at build time; expanding to CJK and full IPA is open work" },
+    { "type": "bullet", "text": "Cryptographic attestation: binding a compiled .docx to the originating content pack via signed manifest" },
+
+    { "type": "h1", "text": "ECOSYSTEM ENGAGEMENT" },
+    { "type": "para", "text": "We engage with the neurodivergent self-advocate community (ASAN, NLnet's existing accessibility grantees), the European open-source documentation community (Sphinx, pandoc), and the open-hardware community (ESP32, Adafruit). We commit to upstream-patching any improvements to the docx npm library and to publishing integration docs for the most-used European tax/legal frameworks." }
+  ]
+}

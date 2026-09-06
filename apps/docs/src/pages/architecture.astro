@@ -1,0 +1,142 @@
+---
+import DocsLayout from '../layouts/DocsLayout.astro';
+
+const title = 'Architecture Overview';
+---
+
+<DocsLayout title={title}>
+  <div class="breadcrumb">
+    <a href="/">Docs</a>
+    <span>/</span>
+    <a href="/architecture">Architecture</a>
+    <span>/</span>
+    <span>Overview</span>
+  </div>
+
+  <h1>Architecture Overview</h1>
+  <p class="lead">The P31 Sovereign Stack is built on Cloudflare's edge platform, using Workers, Pages, Durable Objects, D1, and R2 to create a globally distributed, low-latency system.</p>
+
+  <h2>System Diagram</h2>
+  <pre><code>┌─────────────────────────────────────────────────────────────┐
+│                        P31 Sovereign Stack                    │
+├─────────────────────────────────────────────────────────────┤
+│                                                               │
+│  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐      │
+│  │   Portals   │    │   Shell     │    │   Workers   │      │
+│  │  (React)    │    │  (React)    │    │  (Edge)     │      │
+│  └──────┬──────┘    └──────┬──────┘    └──────┬──────┘      │
+│         │                  │                  │              │
+│         └──────────────────┼──────────────────┘              │
+│                            │                                 │
+│              ┌─────────────┴─────────────┐                   │
+│              │      API Gateway          │                   │
+│              │   (gateway.p31ca.org)     │                   │
+│              └─────────────┬─────────────┘                   │
+│                            │                                 │
+│     ┌──────────────┬───────┴───────┬──────────────┐        │
+│     │              │               │              │        │
+│  ┌──┴──┐      ┌───┴───┐      ┌───┴───┐      ┌──┴──┐     │
+│  │ D1  │      │  D1   │      │  R2   │      │ KV  │     │
+│  │(10) │      │(shared)│      │       │      │     │     │
+│  └─────┘      └───────┘      └───────┘      └─────┘     │
+│                                                               │
+│  ┌──────────────────────────────────────────────────────┐    │
+│  │              Durable Objects (SQLite)                │    │
+│  │  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐   │    │
+│  │  │ Signaling   │ │ TaskDispatch │ │  Evidence   │   │    │
+│  │  │    Room     │ │     DO      │ │    Vault    │   │    │
+│  │  └─────────────┘ └─────────────┘ └─────────────┘   │    │
+│  └──────────────────────────────────────────────────────┘    │
+└─────────────────────────────────────────────────────────────┘</code></pre>
+
+  <h2>Technology Stack</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Layer</th>
+        <th>Technology</th>
+        <th>Purpose</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Frontend</strong></td>
+        <td>React 19, Astro 5, Vite 6</td>
+        <td>SPAs, static sites, component library</td>
+      </tr>
+      <tr>
+        <td><strong>Edge Runtime</strong></td>
+        <td>Cloudflare Workers</td>
+        <td>60+ workers for MCP, PQC, DID, mesh</td>
+      </tr>
+      <tr>
+        <td><strong>Hosting</strong></td>
+        <td>Cloudflare Pages</td>
+        <td>Portals and static assets</td>
+      </tr>
+      <tr>
+        <td><strong>Database</strong></td>
+        <td>D1 (SQLite), KV, R2</td>
+        <td>Structured data, caching, object storage</td>
+      </tr>
+      <tr>
+        <td><strong>State</strong></td>
+        <td>Durable Objects (SQLite)</td>
+        <td>Real-time coordination, alarms, WebSockets</td>
+      </tr>
+      <tr>
+        <td><strong>Crypto</strong></td>
+        <td>@noble/post-quantum, Web Crypto</td>
+        <td>ML-KEM-768, ML-DSA-65, SLH-DSA-128s, Ed25519</td>
+      </tr>
+      <tr>
+        <td><strong>Design</strong></td>
+        <td>@p31/design-core, @p31/ui</td>
+        <td>Quantum-tokenized design system</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Data Flow</h2>
+  <ol>
+    <li><strong>User Interaction</strong> — User interacts with a Portal or Shell (React SPA)</li>
+    <li><strong>Edge Request</strong> — Request hits Cloudflare Edge, routed to appropriate Worker</li>
+    <li><strong>Authentication</strong> — DID-based auth (Ed25519/ML-DSA-65) or JWT session</li>
+    <li><strong>Processing</strong> — Worker processes request, may call D1/Durable Object/R2</li>
+    <li><strong>Response</strong> — JSON or HTML returned, cached at edge when appropriate</li>
+  </ol>
+
+  <h2>Security Model</h2>
+  <p>The P31 stack implements a zero-trust security model:</p>
+  <ul>
+    <li><strong>Post-Quantum Cryptography</strong> — All signatures use NIST FIPS standards</li>
+    <li><strong>DID-Based Identity</strong> — No central auth provider; users control their DIDs</li>
+    <li><strong>Encrypted Storage</strong> — D1 and R2 data is encrypted at rest</li>
+    <li><strong>TLS 1.3</strong> — All traffic encrypted with hybrid PQC TLS (when enabled at zone)</li>
+    <li><strong>Secret Rotation</strong> — Automated rotation via kill-switch Worker</li>
+  </ul>
+
+  <h2>Scalability</h2>
+  <p>Built on Cloudflare's edge network, the P31 stack automatically scales to handle millions of requests. Durable Objects provide strong consistency where needed, while the edge cache handles high-throughput read operations.</p>
+
+  <div class="callout callout-info">
+    <div class="callout-title">Free Plan Limits</div>
+    <p>The P31 stack operates within Cloudflare's Free Plan limits: 100k req/day per worker, 10 D1 databases, 5 cron triggers. The architecture is designed to work within these constraints while maintaining functionality.</p>
+  </div>
+
+  <div class="last-updated">Last updated: August 2026</div>
+</DocsLayout>
+
+<style>
+  .lead {
+    font-size: 18px;
+    color: var(--t2);
+    margin-bottom: 32px;
+    line-height: 1.7;
+  }
+
+  pre code {
+    font-size: 11px;
+    line-height: 1.4;
+  }
+</style>

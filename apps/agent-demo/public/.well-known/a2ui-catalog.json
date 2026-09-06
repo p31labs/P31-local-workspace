@@ -1,0 +1,263 @@
+{
+  "$schema": "https://a2ui.dev/schemas/catalog.json",
+  "version": "0.9",
+  "metadata": {
+    "name": "p31-quantum",
+    "description": "P31 Labs Quantum Design System — mathematically perfect, visually breathtaking",
+    "base_url": "",
+    "apps": [
+      "phos",
+      "p31ca",
+      "willow",
+      "bonding",
+      "phosphorus31"
+    ]
+  },
+  "components": [
+    {
+      "name": "GlassPanel",
+      "description": "Glassmorphic elevated surface with backdrop blur.",
+      "props": {
+        "padding": {
+          "type": "string",
+          "default": "md",
+          "options": [
+            "sm",
+            "md",
+            "lg"
+          ]
+        }
+      },
+      "actions": []
+    },
+    {
+      "name": "GlassCard",
+      "description": "Compact glassmorphic card with padding.",
+      "props": {
+        "color": {
+          "type": "string",
+          "default": "accent",
+          "options": [
+            "accent",
+            "violet",
+            "gold",
+            "green",
+            "red"
+          ]
+        },
+        "padding": {
+          "type": "string",
+          "default": "lg",
+          "options": [
+            "sm",
+            "md",
+            "lg"
+          ]
+        },
+        "interactive": {
+          "type": "boolean",
+          "default": true
+        }
+      },
+      "actions": [
+        "click",
+        "focus",
+        "hover"
+      ]
+    },
+    {
+      "name": "GlassStrong",
+      "description": "High-opacity glass surface with strong blur.",
+      "props": {},
+      "actions": []
+    },
+    {
+      "name": "GlassSubtle",
+      "description": "Low-opacity glass surface with subtle blur.",
+      "props": {},
+      "actions": []
+    },
+    {
+      "name": "Button",
+      "description": "Button component with primary, secondary, and ghost variants.",
+      "props": {
+        "variant": {
+          "type": "string",
+          "default": "primary",
+          "options": [
+            "primary",
+            "secondary",
+            "ghost"
+          ]
+        },
+        "size": {
+          "type": "string",
+          "default": "md",
+          "options": [
+            "sm",
+            "md",
+            "lg"
+          ]
+        }
+      },
+      "actions": [
+        "click",
+        "focus",
+        "hover"
+      ]
+    },
+    {
+      "name": "SpoonMeter",
+      "description": "Real-time cognitive load indicator (0-5 scale).",
+      "props": {
+        "current": {
+          "type": "number",
+          "default": 3,
+          "range": [
+            0,
+            5
+          ]
+        },
+        "interactive": {
+          "type": "boolean",
+          "default": true
+        }
+      },
+      "actions": [
+        "change",
+        "update"
+      ]
+    },
+    {
+      "name": "TetraGrid",
+      "description": "4-column responsive grid for tetrahedral content layouts.",
+      "props": {},
+      "actions": []
+    },
+    {
+      "name": "HonestLabel",
+      "description": "Disclaimer badge for contested-science content.",
+      "props": {},
+      "actions": []
+    },
+    {
+      "name": "StatusBadge",
+      "description": "Status indicator badge with Live/Beta/Research variants.",
+      "props": {
+        "status": {
+          "type": "string",
+          "default": "live",
+          "options": [
+            "live",
+            "beta",
+            "research"
+          ]
+        }
+      },
+      "actions": []
+    },
+    {
+      "name": "CrisisOverlay",
+      "description": "Full-screen breathing overlay shown when spoons=0.",
+      "props": {
+        "message": {
+          "type": "string",
+          "default": "Rest. Breathe. The mesh holds."
+        },
+        "buttonLabel": {
+          "type": "string",
+          "default": "I'm Ready"
+        }
+      },
+      "actions": [
+        "dismiss",
+        "confirm"
+      ]
+    },
+    {
+      "name": "Starfield",
+      "description": "200-star twinkling canvas background with animation loop.",
+      "props": {
+        "count": {
+          "type": "number",
+          "default": 200
+        },
+        "speed": {
+          "type": "number",
+          "default": 0.08
+        }
+      },
+      "actions": [
+        "start",
+        "stop"
+      ]
+    },
+    {
+      "name": "ThemeToggle",
+      "description": "Dark/light theme toggle button. Persists to localStorage under p31:theme.",
+      "props": {},
+      "actions": [
+        "toggle"
+      ]
+    },
+    {
+      "name": "CandyHeader",
+      "description": "Canonical P31 candy-pill header bar with phosphorous-green glass, cyan border, and glow shadow.",
+      "props": {
+        "brand": {
+          "type": "string",
+          "default": "p31ca",
+          "options": [
+            "p31ca",
+            "phosphorus"
+          ]
+        }
+      },
+      "actions": [
+        "navigate"
+      ]
+    },
+    {
+      "name": "Crown",
+      "description": "Animated tetrahedral crown brand glyph for header and brand surfaces.",
+      "props": {
+        "size": {
+          "type": "string",
+          "default": "md",
+          "options": [
+            "xs",
+            "sm",
+            "md",
+            "lg"
+          ]
+        },
+        "brand": {
+          "type": "string",
+          "default": "p31ca",
+          "options": [
+            "p31ca",
+            "phosphorus"
+          ]
+        }
+      },
+      "actions": []
+    },
+    {
+      "name": "SpoonDial",
+      "description": "Icon-mode spoon meter for compact header placement, showing 5 SVG spoons with active/inactive opacity.",
+      "props": {
+        "spoons": {
+          "type": "number",
+          "default": 3,
+          "range": [
+            0,
+            5
+          ]
+        }
+      },
+      "actions": [
+        "change"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+name: p31-crypto-mcp
+description: P31 Post-Quantum Crypto MCP Server — ML-DSA-65, ML-KEM-768, SD-JWT, GNU Taler, x402 micropayments. 12 tools.
+version: "1.0.0"
+transport:
+  type: http
+  url: https://p31-crypto-mcp.trimtab-signal.workers.dev/mcp
+  protocol: 2026-07-28
+tags:
+  - post-quantum
+  - pqc
+  - ml-dsa
+  - ml-kem
+  - sd-jwt
+  - gnu-taler
+  - x402
+  - did
+  - p31
+  - neuroinclusive
+tools:
+  - pqc_keygen
+  - pqc_sign
+  - pqc_verify
+  - kem_encapsulate
+  - kem_decapsulate
+  - sd_jwt_issue
+  - sd_jwt_present
+  - taler_withdraw
+  - taler_pay
+  - x402_request
+  - x402_accept
+  - pqc_audit

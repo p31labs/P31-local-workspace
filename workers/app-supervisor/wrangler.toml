@@ -1,0 +1,17 @@
+name = "app-supervisor"
+main = "src/index.ts"
+compatibility_date = "2026-07-18"
+compatibility_flags = ["nodejs_compat"]
+
+[[durable_objects.bindings]]
+name = "APP_SUPERVISOR"
+class_name = "AppSupervisor"
+
+# TODO: Add [exports.AppSupervisor] section with type = "durable-object" and storage = "sqlite"
+# WARNING: Missing [exports] config for Durable Object(s) — manual handling required.
+
+[observability]
+enabled = true
+
+[cache]
+enabled = true

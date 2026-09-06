@@ -1,0 +1,11 @@
+name = "kill-switch"
+main = "src/index.ts"
+compatibility_date = "2026-07-21"
+compatibility_flags = ["nodejs_compat"]
+
+[triggers]
+crons = ["0 * * * *"]
+
+[observability]
+enabled = true
+head_sampling_rate = 0.1

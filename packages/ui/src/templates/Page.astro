@@ -1,0 +1,16 @@
+---
+export interface Props {
+  headerSlot?: any;
+}
+const { headerSlot, children } = Astro.props;
+---
+
+<div
+  class="flex flex-col"
+  style="max-width: var(--p31-max-width-lg); margin: 0 auto; padding-left: var(--p31-space-md); padding-right: var(--p31-space-md); gap: var(--p31-space-lg);"
+>
+  {headerSlot && <div class="flex-shrink-0">{headerSlot}</div>}
+  <main id="main-content" class="flex-1">
+    <slot />
+  </main>
+</div>

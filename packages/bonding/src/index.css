@@ -1,0 +1,642 @@
+@import "tailwindcss";
+
+/* ── WCD-CC03: Font @import removed — loaded via <link> in index.html
+   to avoid @import-after-rules CSS warning from Tailwind expansion ── */
+
+/* ═══════════════════════════════════════════════════════
+   BONDING — P31 Labs
+   Custom styles and animations beyond Tailwind utility
+   ═══════════════════════════════════════════════════════ */
+
+@theme {
+  /* ── Legacy tokens (preserved) ── */
+  --color-void-light: #0a0a1a;
+  --color-rose: #ff4466;
+  --color-violet: #8844ff;
+  --color-love: #FFB800;
+  --color-green: #4ADE80;
+  --color-seed: #4ADE80;
+  --color-sprout: #22D3EE;
+  --color-sapling: #A78BFA;
+
+  /* ── WCD-08: Cockpit design tokens ── */
+  --color-void: #050510;
+  --color-phosphor: #00FF88;
+  --color-amber: #FFD700;
+  --color-cyan: #06B6D4;
+
+  /* ── WCD-08: Toast animation ── */
+  --animate-toast-slide: toast-slide 3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  @keyframes toast-slide {
+    0%   { transform: translateY(100%) scale(0.95); opacity: 0; }
+    10%  { transform: translateY(0) scale(1); opacity: 1; }
+    85%  { transform: translateY(0) scale(1); opacity: 1; }
+    100% { transform: translateY(100%) scale(0.95); opacity: 0; }
+  }
+
+  /* ── Phase 3: Kid Mode celebration bounce ── */
+  --animate-bounce-kid: bounceKid 0.4s ease-out;
+  @keyframes bounceKid {
+    0%   { transform: scale(1); }
+    30%  { transform: scale(0.85); }
+    50%  { transform: scale(1.1); }
+    70%  { transform: scale(0.95); }
+    100% { transform: scale(1); }
+  }
+}
+
+/* ── WCD-CC02: Global touch + focus styles ── */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.6);
+  outline-offset: 2px;
+}
+
+/* ── UX Audit Phase 1: Age-based font sizing ── */
+:root {
+  /* Default: ages 13-59 */
+  --font-size-base: clamp(12px, 1.5vh, 15px);
+  --font-size-lg: clamp(16px, 2vh, 20px);
+  --font-size-xl: clamp(20px, 2.5vh, 24px);
+  --touch-target-min: 48px;
+}
+
+/* Ages 6-12: Slightly larger, friendlier */
+[data-age-group="child"] {
+  --font-size-base: clamp(14px, 1.8vh, 16px);
+  --font-size-lg: clamp(18px, 2.2vh, 22px);
+  --font-size-xl: clamp(24px, 3vh, 28px);
+  --touch-target-min: 56px;
+}
+
+/* Ages 60-80: Maximum readability */
+[data-age-group="senior"] {
+  --font-size-base: clamp(16px, 2vh, 20px);
+  --font-size-lg: clamp(22px, 2.8vh, 26px);
+  --font-size-xl: clamp(28px, 3.5vh, 34px);
+  --touch-target-min: 64px;
+}
+
+/* Apply font sizes */
+body {
+  font-size: var(--font-size-base);
+}
+
+/* Age-based touch targets */
+button, [role="button"], input {
+  min-height: var(--touch-target-min);
+  font-size: var(--font-size-base);
+}
+
+/* ── Base ── */
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background: #000000;
+  color: #E0E0F0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow: hidden;
+  font-family: 'Space Mono', ui-monospace, monospace;
+  overscroll-behavior: none;
+  /* WCD-14: Prevent iOS long-press context menu + text selection on game UI */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* ── WCD-08 + WCD-09: Fixed cockpit viewport — prevents pull-to-refresh, mobile address bar resize,
+   and iOS rubber-banding. position:fixed on body ensures inset-0 respects dynamic viewport. ── */
+body {
+  position: fixed;
+  inset: 0;
+  touch-action: none;
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: none;
+}
+
+/* ── Global touch targets ── */
+button, [role="button"], input {
+  min-height: 48px;
+}
+
+/* ── WCD-14: Re-enable text selection on form inputs (overrides global user-select: none) ── */
+input, textarea, [contenteditable] {
+  -webkit-user-select: text;
+  user-select: text;
+  -webkit-touch-callout: default;
+}
+
+/* ── Touch expansion: invisible hit area around element palette buttons ── */
+.touch-expand {
+  position: relative;
+}
+.touch-expand::before {
+  content: '';
+  position: absolute;
+  inset: -12px;
+}
+
+/* ── Toast animations ── */
+@keyframes toastSlideIn {
+  from {
+    transform: translateX(80px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes toastSlideOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+}
+
+@keyframes toastProgress {
+  from { width: 100%; }
+  to { width: 0%; }
+}
+
+.toast-enter {
+  animation: toastSlideIn 0.3s ease-out;
+}
+
+.toast-exit {
+  animation: toastSlideOut 0.15s ease-in forwards;
+}
+
+/* ── Stability bar pulse on completion ── */
+@keyframes stabilityPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.stability-pulse {
+  animation: stabilityPulse 1.2s ease-in-out infinite;
+}
+
+/* ── Love counter pop ── */
+@keyframes lovePop {
+  0% { transform: translateX(-50%) scale(1); }
+  50% { transform: translateX(-50%) scale(1.3); }
+  100% { transform: translateX(-50%) scale(1); }
+}
+
+.love-pop {
+  animation: lovePop 0.4s ease-out;
+}
+
+/* ── Completion overlay fade ── */
+@keyframes completeFadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.complete-enter {
+  animation: completeFadeIn 0.6s ease-out;
+}
+
+/* ── Achievement unlock shimmer ── */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* ── Formula checkpoint pulse ── */
+@keyframes formulaPulse {
+  0%, 100% { text-shadow: 0 0 4px rgba(0, 255, 136, 0.3); }
+  50% { text-shadow: 0 0 14px rgba(0, 255, 136, 0.7); }
+}
+
+.formula-checkpoint {
+  animation: formulaPulse 1.5s ease-in-out infinite;
+}
+
+.achievement-shimmer {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 184, 0, 0.15) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s ease-in-out;
+}
+
+/* ── Toast slide from top-center ── */
+@keyframes toastSlideDown {
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.toast-enter-center {
+  animation: toastSlideDown 0.2s ease-out;
+}
+
+/* ── Discovery shimmer on title ── */
+@keyframes discoveryShimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.discovery-shimmer {
+  background: linear-gradient(90deg, #fff 0%, #FFB800 50%, #fff 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: discoveryShimmer 2s ease-in-out infinite;
+}
+
+/* ── Title glow ── */
+.title-glow {
+  text-shadow: 0 0 40px rgba(255, 255, 255, 0.15), 0 0 80px rgba(136, 68, 255, 0.1);
+}
+
+/* ── Tutorial highlight ring ── */
+@keyframes highlightPulse {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(255, 184, 0, 0.4); }
+  50% { box-shadow: 0 0 0 6px rgba(255, 184, 0, 0.2); }
+}
+
+.highlight-ring {
+  animation: highlightPulse 1.5s ease-in-out infinite;
+}
+
+/* ── Celebration flash ── */
+@keyframes celebrationFlash {
+  0% { opacity: 0; }
+  50% { opacity: 0.1; }
+  100% { opacity: 0; }
+}
+
+.celebration-flash {
+  animation: celebrationFlash 0.2s ease-out;
+  pointer-events: none;
+}
+
+/* ── Ping notification pop (WCD-49) ── */
+@keyframes pingPop {
+  0% { opacity: 0; transform: scale(0.5); }
+  40% { opacity: 1; transform: scale(1.1); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+.ping-enter {
+  animation: pingPop 0.1s ease-out;
+}
+
+/* ── WCD-29: Boot sequence animations ── */
+@keyframes bootLineIn {
+  0% { opacity: 0; transform: translateY(4px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes bootButtonIn {
+  0% { opacity: 0; transform: scale(0.9); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* ── WCD-22: Network button pulse when connected ── */
+@keyframes networkPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(0, 255, 136, 0.3); }
+  50% { box-shadow: 0 0 8px 2px rgba(0, 255, 136, 0.15); }
+}
+
+.network-pulse {
+  animation: networkPulse 2s ease-in-out infinite;
+}
+
+/* ── WCD-23: Discovery toast styling (clear glass — background now inline) ── */
+
+@keyframes discoveryReveal {
+  0% { transform: translateY(-20px) scale(0.9); opacity: 0; }
+  50% { transform: translateY(2px) scale(1.02); opacity: 1; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+.discovery-enter {
+  animation: discoveryReveal 0.4s ease-out;
+}
+
+/* ── WCD-29: Transparent HUD text-shadow for legibility over starfield ── */
+.hud-text {
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8), 0 0 8px rgba(0, 0, 0, 0.5);
+}
+
+/* ── WCD-08: Scrollbar hide for ElementDock horizontal scroll ── */
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ── WCD-1: Miniature atom core pulse ── */
+@keyframes pulse-core {
+  0%   { opacity: 0.7; transform: scale(0.93); }
+  50%  { opacity: 1;   transform: scale(1.07); }
+  100% { opacity: 0.7; transform: scale(0.93); }
+}
+.animate-pulse-core {
+  animation: pulse-core 2.4s ease-in-out infinite;
+}
+
+/* ── Blood Moon: ember flicker — irregular, organic, CSS-only ── */
+@keyframes ember-flicker {
+  0%   { opacity: 0.06; transform: scale(0.85); }
+  12%  { opacity: 0.18; transform: scale(1.15); }
+  25%  { opacity: 0.04; transform: scale(0.80); }
+  38%  { opacity: 0.22; transform: scale(1.10); }
+  50%  { opacity: 0.08; transform: scale(0.90); }
+  63%  { opacity: 0.14; transform: scale(1.05); }
+  75%  { opacity: 0.03; transform: scale(0.75); }
+  88%  { opacity: 0.16; transform: scale(1.20); }
+  100% { opacity: 0.06; transform: scale(0.85); }
+}
+
+.ember-idle {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #cc1100;
+  box-shadow: 0 0 6px 2px rgba(204,17,0,0.3);
+  animation: ember-flicker 4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.ember-lit {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ff3300;
+  opacity: 0.85;
+  box-shadow:
+    0 0 8px 3px rgba(255,51,0,0.5),
+    0 0 20px 8px rgba(255,51,0,0.2);
+  animation: ember-glow 3s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes ember-glow {
+  0%, 100% { opacity: 0.75; transform: scale(1); }
+  50% { opacity: 0.95; transform: scale(1.15); }
+}
+
+/* ── Blood Moon: haze warm wash breathing ── */
+@keyframes haze-breathe {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+.haze-breathe {
+  animation: haze-breathe 10s ease-in-out infinite;
+}
+
+/* ── Loading spinner (Lobby buttons) ── */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  vertical-align: middle;
+}
+
+/* ── Suspense loading pulse ── */
+@keyframes loadPulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.7; }
+}
+
+.load-pulse {
+  animation: loadPulse 1.5s ease-in-out infinite;
+}
+
+/* ═══════════════════════════════════════════════════════
+   VISUAL OVERHAUL — Full Send
+   ═══════════════════════════════════════════════════════ */
+
+/* ── Element palette breathing glow ── */
+@keyframes paletteBreath {
+  0%, 100% { box-shadow: 0 2px 8px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.05), 0 0 8px var(--glow-color, transparent); }
+  50% { box-shadow: 0 2px 8px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.05), 0 0 18px var(--glow-color, transparent); }
+}
+
+.palette-breath {
+  animation: paletteBreath 3s ease-in-out infinite;
+}
+
+/* ── Palette drag ripple ── */
+@keyframes paletteRipple {
+  0% { transform: scale(1); opacity: 0.4; }
+  100% { transform: scale(2.5); opacity: 0; }
+}
+
+.palette-ripple::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  animation: paletteRipple 0.4s ease-out forwards;
+  pointer-events: none;
+}
+
+/* ── Stability bar shimmer (80%+) ── */
+@keyframes stabilityShimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.stability-shimmer {
+  background-image: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.2) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: stabilityShimmer 1.5s linear infinite;
+}
+
+/* ── Stability glow edge ── */
+@keyframes stabilityGlow {
+  0%, 100% { filter: drop-shadow(0 0 3px var(--bar-color, #4ade80)); }
+  50% { filter: drop-shadow(0 0 8px var(--bar-color, #4ade80)); }
+}
+
+.stability-glow {
+  animation: stabilityGlow 1.5s ease-in-out infinite;
+}
+
+/* ── Completion card shimmer border ── */
+@keyframes completionBorderShimmer {
+  0% { border-color: rgba(255,255,255,0.15); }
+  33% { border-color: rgba(201,177,255,0.3); }
+  66% { border-color: rgba(78,205,196,0.3); }
+  100% { border-color: rgba(255,255,255,0.15); }
+}
+
+.completion-shimmer-border {
+  animation: completionBorderShimmer 3s ease-in-out infinite;
+}
+
+/* ── Completion formula reveal ── */
+@keyframes formulaReveal {
+  0% { transform: scale(0.7); opacity: 0; filter: blur(8px); }
+  60% { transform: scale(1.05); opacity: 1; filter: blur(0); }
+  100% { transform: scale(1); opacity: 1; filter: blur(0); }
+}
+
+.formula-reveal {
+  animation: formulaReveal 0.6s ease-out;
+}
+
+/* ── Completion background pulse ── */
+@keyframes completionBgPulse {
+  0%, 100% { background-color: rgba(0,0,0,0.5); }
+  50% { background-color: rgba(20,10,30,0.6); }
+}
+
+.completion-bg-pulse {
+  animation: completionBgPulse 3s ease-in-out infinite;
+}
+
+/* ── Button glow pulse (Build Another) ── */
+@keyframes buttonGlow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(74,222,128,0.3); }
+  50% { box-shadow: 0 0 16px 4px rgba(74,222,128,0.2); }
+}
+
+.button-glow {
+  animation: buttonGlow 2s ease-in-out infinite;
+}
+
+/* ── Mode card stagger slide-up ── */
+@keyframes modeCardIn {
+  0% { opacity: 0; transform: translateY(20px) scale(0.95); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.mode-card-enter {
+  animation: modeCardIn 0.4s ease-out both;
+}
+
+/* ── Clear glass card — floating transparent panel ── */
+.glass-card {
+  background: linear-gradient(
+    160deg,
+    rgba(255, 255, 255, 0.08) 0%,
+    rgba(255, 255, 255, 0.02) 100%
+  );
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-top-color: rgba(255, 255, 255, 0.25);
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+.glass-card:hover {
+  background: linear-gradient(
+    160deg,
+    rgba(255, 255, 255, 0.12) 0%,
+    rgba(255, 255, 255, 0.04) 100%
+  );
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+/* ── Title letter reveal ── */
+@keyframes letterReveal {
+  0% { opacity: 0; transform: translateY(8px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Gallery slide-in ── */
+@keyframes gallerySlideIn {
+  0% { opacity: 0; transform: translateX(20px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+
+.gallery-slide {
+  animation: gallerySlideIn 0.3s ease-out both;
+}
+
+/* ── Lobby scanning underline ── */
+@keyframes scanLine {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.scan-underline {
+  background-image: linear-gradient(90deg, transparent 30%, rgba(0,255,136,0.6) 50%, transparent 70%);
+  background-size: 200% 2px;
+  background-repeat: no-repeat;
+  background-position-y: 100%;
+  animation: scanLine 2s linear infinite;
+}
+
+/* ── Lobby helix spinner ── */
+@keyframes helixSpin {
+  0% { transform: scaleX(1) rotate(0deg); }
+  25% { transform: scaleX(0.3) rotate(90deg); }
+  50% { transform: scaleX(1) rotate(180deg); }
+  75% { transform: scaleX(0.3) rotate(270deg); }
+  100% { transform: scaleX(1) rotate(360deg); }
+}
+
+.helix-spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  animation: helixSpin 1.2s ease-in-out infinite;
+  vertical-align: middle;
+}
+
+/* ── Screen flash effects ── */
+@keyframes screenFlashGold {
+  0% { box-shadow: inset 0 0 0 0 rgba(255,184,0,0); }
+  30% { box-shadow: inset 0 0 60px 10px rgba(255,184,0,0.15); }
+  100% { box-shadow: inset 0 0 0 0 rgba(255,184,0,0); }
+}
+
+.screen-flash-gold {
+  animation: screenFlashGold 0.5s ease-out;
+}
+
+@keyframes screenFlashWhite {
+  0% { box-shadow: inset 0 0 0 0 rgba(255,255,255,0); }
+  20% { box-shadow: inset 0 0 80px 20px rgba(255,255,255,0.1); }
+  100% { box-shadow: inset 0 0 0 0 rgba(255,255,255,0); }
+}
+
+.screen-flash-white {
+  animation: screenFlashWhite 0.4s ease-out;
+}
+
+/* ── Play Together pulse ── */
+@keyframes playPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255,255,255,0.1); }
+  50% { box-shadow: 0 0 12px 3px rgba(255,255,255,0.08); }
+}
+
+.play-pulse {
+  animation: playPulse 2.5s ease-in-out infinite;
+}

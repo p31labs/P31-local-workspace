@@ -1,0 +1,34 @@
+name = "love-ledger"
+main = "src/index.ts"
+compatibility_date = "2026-07-16"
+compatibility_flags = ["nodejs_compat"]
+
+# Shared love-ledger D1 (Free Plan cap: 10 DBs — shared across 6 workers)
+[[d1_databases]]
+binding = "LOVE_D1"
+database_name = "love-ledger"
+database_id = "592e3e2e-3203-4e0a-8342-9e85215ec8a6"
+
+# Durable Object for atomic spend transactions
+[[durable_objects.bindings]]
+name = "LOVE_TRANSACTION"
+class_name = "LoveTransactionDO"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["LoveTransactionDO"]
+
+[vars]
+ENVIRONMENT = "production"
+LOVE_REQUIRE_AUTH = "true"
+
+# Secrets (set via wrangler secret put):
+#   LOVE_AUTH_SECRET — HMAC-SHA256 for x402 LOVE-path auth
+#   RECEIPT_SIGNER_PRIVATE_KEY — Ed25519 private key for creation receipts
+#   RECEIPT_SIGNER_PUBLIC_KEY — Ed25519 public key for verification
+
+[observability]
+enabled = true
+
+[cache]
+enabled = true

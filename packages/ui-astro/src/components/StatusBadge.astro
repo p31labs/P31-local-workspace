@@ -1,0 +1,20 @@
+---
+interface Props {
+  status?: 'online' | 'offline' | 'busy' | 'away';
+  label?: string;
+  class?: string;
+}
+
+const { status = 'online', label, class: className = '' } = Astro.props;
+const labels = { online: 'Online', offline: 'Offline', busy: 'Busy', away: 'Away' };
+const badgeClass = {
+  online: 'badge-success',
+  offline: 'badge-error',
+  busy: 'badge-warning',
+  away: 'badge-info',
+}[status];
+---
+<span class:list={['badge', badgeClass, className]} data-status={status}>
+  <span class="status-dot" data-status={status} aria-hidden="true" />
+  {label || labels[status]}
+</span>

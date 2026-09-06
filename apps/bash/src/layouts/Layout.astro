@@ -1,0 +1,69 @@
+---
+import '@p31/design-core/css/base.css';
+import '@p31/design-core/css/glass.css';
+import '@p31/design-core/css/motion.css';
+import '@p31/design-core/css/typography.css';
+import '@p31/design-core/css/size-class.css';
+import '@p31/design-core/css/ambient.css';
+import '@p31/design-core/css/container.css';
+import '@p31/design-core/css/link-glow.css';
+import '@p31/design-core/css/quantum.css';
+import '../styles/global.css';
+import { EphemeralProvider } from '@p31/ui';
+import Head from './Head.astro';
+import SiteNav from './SiteNav.tsx';
+import CrisisIsland from './CrisisIsland.tsx';
+import BashChrome from './P31Chrome.tsx';
+import FooterIsland from './Footer.tsx';
+const { hideNav = false, ...headProps } = Astro.props;
+---
+
+<html lang="en" data-spoons="3" data-theme="quantum">
+  <Head {...headProps} />
+  <script is:inline>
+    (function () {
+      var spoons = localStorage.getItem('p31:spoons') || '3';
+      var themeMap = { 0: 'crisis', 1: 'sanctuary', 2: 'sanctuary', 3: 'bridge', 4: 'quantum', 5: 'quantum' };
+      document.documentElement.setAttribute('data-spoons', spoons);
+      document.documentElement.setAttribute('data-theme', themeMap[spoons] || 'quantum');
+    })();
+    (function () {
+      var w = window.innerWidth;
+      var sc = 'regular';
+      if (w <= 480) sc = 'compact';
+      else if (w >= 768 && w <= 1023) sc = 'medium';
+      else if (w >= 1024) sc = 'expanded';
+      document.documentElement.dataset.sizeClass = sc;
+      var hasTouch = window.matchMedia('(pointer: coarse)').matches;
+      var hasMouse = window.matchMedia('(pointer: fine)').matches;
+      document.documentElement.dataset.input = hasTouch && hasMouse ? 'hybrid' : hasTouch ? 'touch' : 'mouse';
+    })();
+  </script>
+  <body class="min-h-screen flex flex-col relative selection:bg-quantum-violet selection:text-white" style="padding-bottom: var(--p31-chrome-strip-h); overflow-x: hidden;">
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    {!hideNav && <SiteNav client:load />}
+    <div id="main-content" class="flex-1" style="padding-top: var(--p31-nav-h); padding-bottom: var(--p31-chrome-strip-h)">
+      <EphemeralProvider client:load ambientMode="soft"><slot /></EphemeralProvider>
+    </div>
+    <FooterIsland client:load />
+    <CrisisIsland client:load />
+    <BashChrome client:load />
+
+    <script>
+      import { mountStarfield } from '@p31/design-core/starfield';
+
+      try {
+        const spoons = parseInt(
+          document.documentElement.getAttribute('data-spoons') || '3',
+          10
+        );
+        const instance = mountStarfield(undefined, { spoons });
+        window.__p31starfield = instance;
+        document.documentElement.setAttribute('data-starfield-ready', 'true');
+      } catch (err) {
+        console.warn('P31: Starfield engine bypassed (fallback mode).', err);
+        document.documentElement.setAttribute('data-starfield-error', 'true');
+      }
+    </script>
+  </body>
+</html>

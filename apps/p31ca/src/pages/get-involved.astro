@@ -1,0 +1,85 @@
+---
+import MarketingShell from '../layouts/MarketingShell.astro';
+import MarketingTopbar from '../components/marketing/MarketingTopbar.astro';
+import SectionHeader from '../components/marketing/SectionHeader.astro';
+import Footer from '../components/marketing/Footer.astro';
+---
+
+<MarketingShell title="Get Involved — P31 Labs" description="Support open-source assistive technology. Donate, deploy, or contribute to the sovereign stack.">
+  <MarketingTopbar slot="starfield" />
+  
+  <main id="main-content" class="section">
+    <div class="max-w-5xl mx-auto px-6 md:px-12 lg:px-16">
+      <SectionHeader title="Get Involved" description="Support open-source assistive technology. Donate, deploy, or contribute." />
+      
+      <div class="mt-16 space-y-12">
+        <!-- Donate -->
+        <section class="animate-fade-in-up delay-100">
+          <h3 class="text-xl font-bold mb-6" style="color: var(--p31-text);">Donate</h3>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <a href="https://paypal.me/p31labs" target="_blank" rel="noopener" class="glass-card p-6 text-center hover:border-cyan-400/30 transition-all">
+              <div class="text-3xl mb-3">💳</div>
+              <h4 class="font-semibold mb-2" style="color: var(--p31-text);">PayPal</h4>
+              <p class="text-sm" style="color: var(--p31-text-secondary);">One-time or recurring donations</p>
+            </a>
+            <a href="https://blockonomics.co/pay/p31labs" target="_blank" rel="noopener" class="glass-card p-6 text-center hover:border-cyan-400/30 transition-all">
+              <div class="text-3xl mb-3">₿</div>
+              <h4 class="font-semibold mb-2" style="color: var(--p31-text);">Bitcoin</h4>
+              <p class="text-sm" style="color: var(--p31-text-secondary);">BTC via Blockonomics</p>
+            </a>
+            <a href="https://ko-fi.com/p31labs" target="_blank" rel="noopener" class="glass-card p-6 text-center hover:border-cyan-400/30 transition-all">
+              <div class="text-3xl mb-3">☕</div>
+              <h4 class="font-semibold mb-2" style="color: var(--p31-text);">Ko-fi</h4>
+              <p class="text-sm" style="color: var(--p31-text-secondary);">Support with a coffee</p>
+            </a>
+          </div>
+        </section>
+
+        <!-- Deploy -->
+        <section class="animate-fade-in-up delay-200">
+          <h3 class="text-xl font-bold mb-6" style="color: var(--p31-text);">Deploy Your Own</h3>
+          <div class="glass-card p-8">
+            <p class="text-base leading-relaxed mb-6" style="color: var(--p31-text-secondary);">
+              Clone the repo, run the CLI, and own your sovereign P31 stack. Zero server costs, open source, fully customizable.
+            </p>
+            <div class="space-y-3">
+              <div class="flex items-center gap-3">
+                <span class="text-sm font-mono px-2 py-1 rounded" style="background: rgba(6,182,212,0.1); color: var(--p31-accent); border: 1px solid rgba(6,182,212,0.2);">$ git clone https://github.com/p31labs/P31-local-workspace</span>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="text-sm font-mono px-2 py-1 rounded" style="background: rgba(6,182,212,0.1); color: var(--p31-accent); border: 1px solid rgba(6,182,212,0.2);">$ cd apps/p31ca && npm install && npm run deploy</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- GitHub -->
+        <section class="animate-fade-in-up delay-300">
+          <h3 class="text-xl font-bold mb-6" style="color: var(--p31-text);">Contribute</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <a href="https://github.com/p31labs/P31-local-workspace" target="_blank" rel="noopener" class="glass-card p-6 hover:border-cyan-400/30 transition-all">
+              <div class="flex items-start gap-4">
+                <div class="text-2xl">📦</div>
+                <div>
+                  <h4 class="font-semibold mb-2" style="color: var(--p31-text);">GitHub</h4>
+                  <p class="text-sm" style="color: var(--p31-text-secondary);">Star, fork, or contribute to the main repository. All code is AGPL-licensed.</p>
+                </div>
+              </div>
+            </a>
+            <a href="https://discord.gg/p31labs" target="_blank" rel="noopener" class="glass-card p-6 hover:border-cyan-400/30 transition-all">
+              <div class="flex items-start gap-4">
+                <div class="text-2xl">💬</div>
+                <div>
+                  <h4 class="font-semibold mb-2" style="color: var(--p31-text);">Discord</h4>
+                  <p class="text-sm" style="color: var(--p31-text-secondary);">Join the community. Ask questions, share deployments, and meet other sovereign stack operators.</p>
+                </div>
+              </div>
+            </a>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</MarketingShell>

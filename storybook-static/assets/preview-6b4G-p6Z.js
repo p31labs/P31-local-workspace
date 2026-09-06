@@ -1,0 +1,1 @@
+var e={parameters:{backgrounds:{default:`void`,values:[{name:`void`,value:`#0A0A0F`}]},controls:{matchers:{color:/(background|color)$/i,date:/Date$/i}}},decorators:[]};export{e as default};

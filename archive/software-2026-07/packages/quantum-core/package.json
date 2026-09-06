@@ -1,0 +1,59 @@
+{
+  "name": "@p31/quantum-core",
+  "version": "1.0.0",
+  "description": "P31 Labs - Quantum Core (SIC-POVM, K4, Posner, Feedback Loop, Bandit RL, Edge Adaptation)",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./sic-povm": "../quantum-core/src/sicPovm.ts",
+    "./posner": "../quantum-core/src/posner.ts",
+    "./did": "../quantum-core/src/did.ts",
+    "./k4": "../quantum-core/src/k4.ts",
+    "./cosmic": "../quantum-core/src/cosmic.ts",
+    "./morphogeneticField": "../quantum-core/src/morphogeneticField.ts",
+    "./feedbackLoop": "../quantum-core/src/feedbackLoop.ts",
+    "./d20": "../quantum-core/src/d20.ts",
+    "./bandit": "../quantum-core/src/bandit.ts",
+    "./edgeAdaptation": "../quantum-core/src/edgeAdaptation.ts",
+    "./pqc/fips203-204": "./src/pqc/fips203-204.ts",
+    "./pqcPrimitives": "./src/pqcPrimitives.ts",
+    "./algorithms/quantumAlgorithms": "./src/algorithms/quantumAlgorithms.ts",
+    "./microservices/quantumServiceManager": "./src/microservices/quantumServiceManager.ts",
+    "./monitoring/quantumSystemMonitor": "./src/monitoring/quantumSystemMonitor.ts",
+    "./optimization/performanceBaseline": "./src/optimization/performanceBaseline.ts",
+    "./swarm/SicPovmSwarmManager": "./src/swarm/SicPovmSwarmManager.ts",
+    "./ibmQuantumBridge": "./src/ibmQuantumBridge.ts"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "build": "tsc --noEmit",
+    "pqc:audit": "node scripts/pqc-audit.mjs"
+  },
+  "dependencies": {
+    "@noble/post-quantum": "^0.6.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "typescript": "^5.4.0",
+    "vitest": "^2.0.0"
+  },
+  "keywords": [
+    "pqc",
+    "post-quantum-cryptography",
+    "ml-kem",
+    "ml-dsa",
+    "fips-203",
+    "fips-204",
+    "kyber",
+    "dilithium",
+    "sic-povm",
+    "k4",
+    "bandit-rl",
+    "adaptive-ui"
+  ],
+  "author": "P31 Labs",
+  "license": "MIT",
+  "homepage": "https://phosphorus31.org"
+}

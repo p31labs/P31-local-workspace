@@ -1,0 +1,8 @@
+name = "storybook-p31ca"
+pages_build_output_dir = "../storybook-static"
+compatibility_date = "2026-07-01"
+
+[[redirects]]
+from = "/*"
+to = "/index.html"
+status = 200

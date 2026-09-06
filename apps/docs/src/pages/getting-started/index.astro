@@ -1,0 +1,96 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const title = 'Getting Started';
+---
+
+<DocsLayout title={title}>
+  <div class="breadcrumb">
+    <a href="/">Docs</a>
+    <span>/</span>
+    <span>Getting Started</span>
+  </div>
+
+  <h1>Getting Started</h1>
+  <p class="lead">Welcome to the P31 Sovereign Stack. This guide will help you set up your development environment and deploy your first application.</p>
+
+  <h2>Prerequisites</h2>
+  <ul>
+    <li><strong>Node.js</strong> 22+ — <a href="https://nodejs.org/">Download</a></li>
+    <li><strong>pnpm</strong> 9+ — <a href="https://pnpm.io/">Install</a></li>
+    <li><strong>Wrangler CLI</strong> — <code>npm install -g wrangler</code></li>
+    <li><strong>Cloudflare Account</strong> — <a href="https://dash.cloudflare.com/sign-up">Sign up</a></li>
+  </ul>
+
+  <h2>Quick Links</h2>
+  <div class="grid">
+    <div class="card">
+      <h4><a href="/getting-started/installation">Installation</a></h4>
+      <p>Set up your local development environment with pnpm workspaces and Wrangler.</p>
+    </div>
+    <div class="card">
+      <h4><a href="/getting-started/quickstart">Quick Start</a></h4>
+      <p>Deploy your first P31 application in under 10 minutes.</p>
+    </div>
+    <div class="card">
+      <h4><a href="/architecture">Architecture</a></h4>
+      <p>Understand the P31 Sovereign Stack architecture and components.</p>
+    </div>
+    <div class="card">
+      <h4><a href="/guides/deployment">Deployment</a></h4>
+      <p>Learn how to deploy Workers, Pages, and Durable Objects.</p>
+    </div>
+  </div>
+
+  <h2>What You'll Build</h2>
+  <p>By the end of this guide, you'll have:</p>
+  <ul>
+    <li>A local development environment with all P31 packages</li>
+    <li>A deployed Cloudflare Worker with PQC capabilities</li>
+    <li>A Portal with glassmorphism UI and spoon-aware motion</li>
+    <li>Integration with the P31 MCP ecosystem</li>
+  </ul>
+
+  <div class="last-updated">Last updated: August 2026</div>
+</DocsLayout>
+
+<style>
+  .lead {
+    font-size: 18px;
+    color: var(--t2);
+    margin-bottom: 32px;
+    line-height: 1.7;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin: 24px 0;
+  }
+
+  .card {
+    background: var(--s);
+    border: 1px solid var(--b);
+    border-radius: 8px;
+    padding: 20px;
+    transition: border-color 0.15s;
+  }
+
+  .card:hover {
+    border-color: var(--a);
+  }
+
+  .card h4 {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--a);
+  }
+
+  .card p {
+    font-size: 14px;
+    color: var(--t2);
+    margin: 0;
+  }
+</style>

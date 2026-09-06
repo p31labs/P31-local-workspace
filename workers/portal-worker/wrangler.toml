@@ -1,0 +1,19 @@
+name = "p31-portal-worker"
+main = "src/index.ts"
+compatibility_date = "2026-07-26"
+compatibility_flags = ["nodejs_compat"]
+
+[observability]
+enabled = true
+
+[placement]
+mode = "smart"
+
+[[kv_namespaces]]
+binding = "GENERATED_GAMES"
+id = "732c8507d6cf4ec3946c33807b3bf00a"
+
+[[d1_databases]]
+binding = "game_definitions"
+database_name = "game-definitions"
+database_id = "bd3a410a-81e8-4e36-996c-50e5c973d510"

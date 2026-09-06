@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en" data-spoons="3" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>P31 A2UI Renderer — Agent-to-UI Playground</title>
+  <meta name="description" content="Render A2UI JSON into P31 glass components. Agents describe layouts, this renders them." />
+  <meta name="theme-color" content="#0A0A0F" />
+  <style>
+/* P31 Sovereign Design System — auto-generated from tokens.yml */
+/* DO NOT EDIT DIRECTLY — edit tokens.yml and rebuild */
+
+:root {
+  /* Void tiers */
+  --p31-bg: #0A0A0F;
+  --p31-surface: #12121A;
+  --p31-surface2: #1C1C2A;
+
+  /* Accent colours */
+  --p31-accent: #00F0FF;
+  --p31-accent-violet: #A78BFA;
+  --p31-accent-gold: #FBBF24;
+  --p31-accent-green: #34D399;
+  --p31-accent-red: #FB7185;
+  --p31-accent-iris: #818CF8;
+
+  /* Text */
+  --p31-text: #F5F5F7;
+  --p31-text-secondary: rgba(245,245,247,0.6);
+  --p31-text-tertiary: rgba(245,245,247,0.3);
+
+  /* Glass */
+  --p31-glass-bg: rgba(255,255,255,0.04);
+  --p31-glass-border: rgba(255,255,255,0.08);
+  --p31-glass-border-hover: rgba(255,255,255,0.15);
+  --p31-glass-shadow: 0 8px 32px rgba(0,0,0,0.15);
+
+  /* Radii */
+  --p31-radius-sm: 8px;
+  --p31-radius-md: 12px;
+  --p31-radius-lg: 16px;
+  --p31-radius-xl: 24px;
+  --p31-radius-full: 9999px;
+
+  /* Typography */
+  --p31-font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --p31-font-mono: ui-monospace, SFMono-Regular, 'Fira Code', 'Fira Mono', 'Roboto Mono', 'JetBrains Mono', Menlo, Monaco, Consolas, monospace;
+}
+
+/* Light theme overrides */
+html[data-theme="light"] {
+  --p31-bg: #F8FAFC;
+  --p31-surface: #FFFFFF;
+  --p31-surface2: #F1F5F9;
+  --p31-text: #0F172A;
+  --p31-text-secondary: rgba(15,23,42,0.6);
+  --p31-text-tertiary: rgba(15,23,42,0.3);
+  --p31-glass-bg: rgba(0,0,0,0.03);
+  --p31-glass-border: rgba(0,0,0,0.08);
+  --p31-glass-border-hover: rgba(0,0,0,0.15);
+}
+
+/* Glass panels */
+.glass-panel {
+  background: rgba(255,255,255,0.04);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 24px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+}
+
+.glass-card {
+  background: rgba(255,255,255,0.04);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+  transition: all 0.2s ease;
+}
+.glass-card:hover {
+  border-color: rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.06);
+}
+
+.glass-strong {
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 24px;
+}
+
+.glass-subtle {
+  background: rgba(255,255,255,0.03);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 24px;
+}
+
+/* Buttons */
+.btn-primary {
+  background: #00F0FF;
+  color: #0A0A0F;
+  font-weight: 700;
+  padding: 8px 24px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 0 20px rgba(0,240,255,0.25);
+  transition: all 0.2s;
+  font-size: 14px;
+}
+.btn-primary:hover {
+  box-shadow: 0 0 30px rgba(0,240,255,0.4);
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background: rgba(255,255,255,0.06);
+  color: #F5F5F7;
+  font-weight: 600;
+  padding: 8px 24px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.1);
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+  font-size: 14px;
+}
+.btn-secondary:hover {
+  border-color: rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.1);
+}
+
+.btn-ghost {
+  color: rgba(245,245,247,0.6);
+  font-weight: 600;
+  padding: 8px 24px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+  font-size: 14px;
+}
+.btn-ghost:hover {
+  color: var(--p31-text);
+  background: rgba(255,255,255,0.05);
+}
+
+/* Link glow */
+.link-glow { transition: all 0.2s ease; }
+
+</style>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+    body { font-family: var(--p31-font-sans); background: var(--p31-bg); color: var(--p31-text-secondary); line-height: 1.6; min-height: 100vh; overflow-x: hidden; }
+    a { color: var(--p31-accent); text-decoration: none; }
+    h1, h2, h3 { color: var(--p31-text); }
+    #starfield { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+    #theme-toggle { background: var(--p31-glass-bg); border: 1px solid var(--p31-glass-border); color: var(--p31-text); cursor: pointer; font-size: 1rem; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: border-color 0.3s; flex-shrink: 0; }
+    #theme-toggle:hover { border-color: var(--p31-glass-border-hover); }
+    .page { display: none; }
+    .page.active { display: block; }
+    .container { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
+    .top-nav { position: fixed; top: 0; left: 0; right: 0; z-index: 50; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; height: 42px; }
+    .top-nav-links { display: flex; align-items: center; gap: 4px; }
+    #main-content { padding-top: 60px; position: relative; z-index: 10; padding-bottom: 80px; }
+    .spoon-meter { position: fixed; bottom: 16px; right: 16px; z-index: 100; display: flex; align-items: center; gap: 6px; padding: 8px 14px; font-family: var(--p31-font-mono); font-size: 12px; user-select: none; cursor: pointer; }
+    .spoon-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--p31-text-tertiary); transition: all 0.2s; }
+    .spoon-dot.filled { background: var(--p31-accent); box-shadow: 0 0 6px rgba(0,240,255,0.5); }
+    .playground { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; min-height: 70vh; }
+    .playground textarea { width: 100%; height: 100%; min-height: 500px; background: var(--p31-surface); color: var(--p31-text); border: 1px solid var(--p31-glass-border); border-radius: var(--p31-radius-lg); padding: 16px; font-family: var(--p31-font-mono); font-size: 12px; resize: vertical; }
+    .presets { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+    .preset-btn { padding: 6px 14px; border-radius: 8px; background: var(--p31-glass-bg); border: 1px solid var(--p31-glass-border); color: var(--p31-text-secondary); cursor: pointer; font-size: 11px; font-family: var(--p31-font-mono); transition: all 0.2s; }
+    .preset-btn:hover { border-color: var(--p31-glass-border-hover); color: var(--p31-text); }
+    @media (max-width: 768px) { .playground { grid-template-columns: 1fr; } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }
+  </style>
+</head>
+<body>
+  <canvas id="starfield" aria-hidden="true"></canvas>
+
+  <nav class="top-nav glass-strong">
+    <a href="/" style="font-weight:800;font-size:16px;color:var(--p31-accent);text-decoration:none;letter-spacing:-0.02em;">P31 <span style="color:var(--p31-text);">A2UI</span></a>
+    <div class="top-nav-links">
+      <div class="spoon-meter-inline" id="spoon-meter" title="Spoon Level" style="display:inline-flex;align-items:center;gap:5px;font-family:var(--p31-font-mono);font-size:11px;color:var(--p31-text-tertiary);cursor:pointer;user-select:none;padding:2px 6px;border-radius:4px;">
+        <span class="dot" style="width:10px;height:10px;border-radius:50%;background:var(--p31-glass-border);display:inline-block;"></span>
+        <span class="dot" style="width:10px;height:10px;border-radius:50%;background:var(--p31-glass-border);display:inline-block;"></span>
+        <span class="dot" style="width:10px;height:10px;border-radius:50%;background:var(--p31-glass-border);display:inline-block;"></span>
+        <span class="dot" style="width:10px;height:10px;border-radius:50%;background:var(--p31-glass-border);display:inline-block;"></span>
+        <span class="dot" style="width:10px;height:10px;border-radius:50%;background:var(--p31-glass-border);display:inline-block;"></span>
+        <span id="spoon-label" style="color:var(--p31-accent);">3/5</span>
+      </div>
+      <button id="theme-toggle" aria-label="Toggle theme" title="Toggle theme">🌙</button>
+    </div>
+  </nav>
+
+  <main id="main-content" style="padding-top:60px;position:relative;z-index:10;padding-bottom:80px;">
+    <div class="container" style="padding-top:24px;">
+      <div style="text-align:center;margin-bottom:24px;">
+        <h1 style="font-size:clamp(1.5rem,4vw,2.5rem);font-weight:800;">A2UI <span style="background:linear-gradient(135deg,var(--p31-accent),var(--p31-accent-violet));-webkit-background-clip:text;background-clip:text;color:transparent;">Renderer</span></h1>
+        <p style="color:var(--p31-text-secondary);font-size:13px;max-width:600px;margin:0 auto;">Paste A2UI JSON from <code style="font-family:var(--p31-font-mono);background:var(--p31-glass-bg);padding:2px 6px;border-radius:4px;">layout_generate</code> and see it rendered live using P31 glass components.</p>
+      </div>
+
+      <div class="presets">
+        <button class="preset-btn" onclick="loadPreset('hero')">Hero</button>
+        <button class="preset-btn" onclick="loadPreset('tetra')">Tetra Grid</button>
+        <button class="preset-btn" onclick="loadPreset('cards')">Card Grid</button>
+        <button class="preset-btn" onclick="loadPreset('cta')">CTA Block</button>
+      </div>
+
+      <div class="playground">
+        <textarea id="a2ui-input" placeholder="Paste A2UI JSON here..."></textarea>
+        <div id="a2ui-preview" style="background:var(--p31-surface);border:1px solid var(--p31-glass-border);border-radius:var(--p31-radius-lg);padding:24px;min-height:500px;overflow:auto;"></div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    var htmlEl = document.documentElement;
+    var toggleBtn = document.getElementById('theme-toggle');
+
+    // Theme toggle
+    (function() {
+      var saved = localStorage.getItem('p31:theme');
+      if (saved === 'light' || saved === 'dark') htmlEl.setAttribute('data-theme', saved);
+    })();
+    function updateToggleIcon() {
+      toggleBtn.innerHTML = htmlEl.getAttribute('data-theme') === 'light' ? '\u2600\uFE0F' : '\uD83C\uDF19';
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', htmlEl.getAttribute('data-theme') === 'light' ? '#F8FAFC' : '#0A0A0F');
+    }
+    updateToggleIcon();
+    toggleBtn.addEventListener('click', function() {
+      var newTheme = htmlEl.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      htmlEl.setAttribute('data-theme', newTheme);
+      localStorage.setItem('p31:theme', newTheme);
+      updateToggleIcon();
+    });
+
+    // Spoon meter (inline)
+    var spoonMeter = document.getElementById('spoon-meter');
+    var spoons = parseInt(htmlEl.getAttribute('data-spoons') || '3', 10);
+    function updateSpoons(lvl) {
+      htmlEl.setAttribute('data-spoons', String(lvl));
+      localStorage.setItem('p31:spoons', String(lvl));
+      if (spoonMeter) {
+        var dots = spoonMeter.querySelectorAll('.dot');
+        for (var i = 0; i < dots.length; i++) {
+          var filled = i < lvl;
+          dots[i].style.background = filled ? 'var(--p31-accent)' : 'var(--p31-glass-border)';
+          dots[i].style.boxShadow = filled ? '0 0 6px rgba(0,240,255,0.3)' : 'none';
+        }
+      }
+      var label = document.getElementById('spoon-label');
+      if (label) label.textContent = lvl + '/5';
+    }
+    if (spoonMeter) {
+      spoonMeter.addEventListener('click', function(e) {
+        var dot = e.target.closest('.dot');
+        if (!dot) return;
+        var idx = Array.prototype.indexOf.call(spoonMeter.querySelectorAll('.dot'), dot);
+        updateSpoons(idx + 1);
+      });
+    }
+    updateSpoons(spoons);
+
+    // Starfield
+    (function() {
+      var canvas = document.getElementById('starfield');
+      var ctx = canvas.getContext('2d');
+      var stars = [];
+      function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+      resize();
+      window.addEventListener('resize', resize);
+      for (var i = 0; i < 120; i++) {
+        stars.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, r: Math.random()*1.5+0.3, a: Math.random(), sp: Math.random()*0.02+0.005, dir: Math.random()<0.5?1:-1 });
+      }
+      function draw() {
+        if (parseInt(htmlEl.getAttribute('data-spoons')) <= 1) { ctx.clearRect(0,0,canvas.width,canvas.height); requestAnimationFrame(draw); return; }
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        for (var i=0;i<stars.length;i++) {
+          var s=stars[i]; s.a+=s.sp*s.dir;
+          if (s.a>=1){s.a=1;s.dir=-1;} if (s.a<=0.2){s.a=0.2;s.dir=1;}
+          ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+          ctx.fillStyle='rgba(255,255,255,'+(s.a*0.7)+')'; ctx.fill();
+          s.y+=0.08*(s.r*0.5+0.3);
+          if (s.y>canvas.height+10){s.y=-10;s.x=Math.random()*canvas.width;}
+        }
+        requestAnimationFrame(draw);
+      }
+      draw();
+    })();
+
+    // ─── A2UI Renderer ────────────────────────────────────────────────────
+
+    var COLOR = {
+      accent: 'var(--p31-accent)',
+      violet: 'var(--p31-accent-violet)',
+      gold: 'var(--p31-accent-gold)',
+      green: 'var(--p31-accent-green)',
+      red: 'var(--p31-accent-red)',
+    };
+
+    var STYLE = {
+      heading: 'color:var(--p31-text);font-weight:700;',
+      h1: 'font-size:clamp(2.5rem,6vw,4rem);line-height:1.15;margin-bottom:16px;',
+      h2: 'font-size:clamp(1.5rem,3vw,2.25rem);margin-bottom:8px;text-align:center;',
+      subtitle: 'font-size:1.125rem;color:var(--p31-text-secondary);max-width:650px;margin:0 auto 32px;',
+      description: 'color:var(--p31-text-secondary);text-align:center;max-width:650px;margin:0 auto 24px;',
+      monobadge: 'display:inline-flex;align-items:center;gap:8px;padding:6px 16px;border-radius:32px;margin-bottom:20px;',
+      section: 'padding:48px 24px;max-width:1280px;margin:0 auto;',
+      hero: 'text-align:center;padding:60px 0 40px;max-width:1280px;margin:0 auto;padding-left:24px;padding-right:24px;',
+      empty: 'color:var(--p31-text-tertiary);text-align:center;padding:40px;font-family:var(--p31-font-mono);font-size:12px;',
+    };
+
+    function renderNode(node) {
+      if (!node || !node.component) return document.createTextNode('');
+
+      var el, inner;
+      switch (node.component) {
+        case 'Hero':
+          el = document.createElement('section');
+          el.style.cssText = STYLE.hero;
+          break;
+        case 'Heading':
+          var lvl = (node.properties && node.properties.level) || 2;
+          el = document.createElement(lvl === 1 ? 'h1' : 'h2');
+          el.style.cssText = STYLE.heading + (lvl === 1 ? STYLE.h1 : STYLE.h2) + (lvl === 1 ? 'text-align:center;' : '');
+          el.textContent = node.properties.text || '';
+          return el;
+        case 'Text':
+          el = document.createElement('p');
+          var v = (node.properties && node.properties.variant) || '';
+          el.style.cssText = v === 'subtitle' ? STYLE.subtitle : v === 'description' ? STYLE.description : 'color:var(--p31-text-secondary);';
+          el.textContent = node.properties.text || '';
+          return el;
+        case 'Label':
+          el = document.createElement('div');
+          el.className = 'glass-subtle';
+          el.style.cssText = STYLE.monobadge;
+          el.textContent = node.properties.text || '';
+          return el;
+        case 'ButtonRow':
+          el = document.createElement('div');
+          el.style.cssText = 'display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:32px;';
+          (node.properties.buttons || []).forEach(function(b) {
+            var a = document.createElement('a');
+            a.className = 'btn-' + (b.variant === 'secondary' ? 'secondary' : b.variant === 'ghost' ? 'ghost' : 'primary');
+            a.href = b.href || '#';
+            a.style.cssText = 'display:inline-flex;align-items:center;gap:8px;';
+            a.textContent = b.label || '';
+            el.appendChild(a);
+          });
+          return el;
+        case 'StatRow':
+          el = document.createElement('div');
+          el.style.cssText = 'display:flex;gap:24px;justify-content:center;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,0.06);padding-top:24px;';
+          (node.properties.stats || []).forEach(function(s) {
+            var d = document.createElement('div');
+            d.className = 'glass-subtle';
+            d.style.cssText = 'padding:12px 16px;text-align:center;min-width:80px;';
+            d.innerHTML = '<div style="font-size:20px;font-weight:700;color:var(--p31-text);">' + (s.value || '') + '</div><div style="font-size:10px;color:var(--p31-text-tertiary);text-transform:uppercase;letter-spacing:0.05em;">' + (s.label || '') + '</div>';
+            el.appendChild(d);
+          });
+          return el;
+        case 'TetraGrid':
+          el = document.createElement('div');
+          el.className = 'tetra-grid';
+          el.style.cssText = 'display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:16px 0;';
+          break;
+        case 'Grid':
+          el = document.createElement('div');
+          el.style.cssText = 'display:grid;grid-template-columns:repeat(' + ((node.properties && node.properties.columns) || 3) + ',1fr);gap:16px;';
+          break;
+        case 'GlassCard':
+          el = document.createElement('div');
+          el.className = 'glass-card';
+          var c = (node.properties && node.properties.color) || 'accent';
+          var border = 'border-left:2px solid ' + (COLOR[c] || COLOR.accent) + ';';
+          if (node.properties.href && node.properties.href !== '') {
+            el = document.createElement('a');
+            el.className = 'glass-card';
+            el.href = node.properties.href;
+            el.style.cssText = border + 'text-decoration:none;display:block;';
+          } else {
+            el.style.cssText = border;
+          }
+          inner = '';
+          if (node.properties.title) inner += '<h3 style="color:var(--p31-text);font-size:14px;font-weight:700;margin-bottom:' + (node.properties.description ? '4px' : '0') + ';">' + node.properties.title + '</h3>';
+          if (node.properties.description) inner += '<p style="color:var(--p31-text-secondary);font-size:12px;line-height:1.5;">' + node.properties.description + '</p>';
+          el.innerHTML = inner;
+          return el;
+        case 'Section':
+          el = document.createElement('section');
+          el.style.cssText = (node.properties && node.properties.variant === 'grid') ? 'padding:24px;max-width:1280px;margin:0 auto;' : STYLE.section;
+          break;
+        case 'CTABlock':
+          el = document.createElement('div');
+          el.className = 'glass-strong';
+          el.style.cssText = 'padding:48px 24px;text-align:center;max-width:720px;margin:0 auto;border-radius:var(--p31-radius-xl);';
+          var h = node.properties.heading || '';
+          var d = node.properties.description || '';
+          var btns = (node.properties.buttons || []).map(function(b) { return '<a href="' + (b.href || '#') + '" class="btn-' + (b.variant === 'secondary' ? 'secondary' : b.variant === 'ghost' ? 'ghost' : 'primary') + '" style="display:inline-flex;align-items:center;gap:8px;">' + (b.label || '') + '</a>'; }).join('');
+          el.innerHTML = '<h2 style="font-size:clamp(1.5rem,3vw,2rem);font-weight:700;color:var(--p31-text);margin-bottom:12px;">' + h + '</h2>' + (d ? '<p style="color:var(--p31-text-secondary);margin-bottom:24px;max-width:550px;margin-left:auto;margin-right:auto;">' + d + '</p>' : '') + (btns ? '<div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">' + btns + '</div>' : '');
+          return el;
+        case 'HtmlBlock':
+          el = document.createElement('div');
+          el.innerHTML = node.properties.html || '';
+          return el;
+        default:
+          el = document.createElement('div');
+          el.style.cssText = STYLE.empty;
+          el.textContent = 'Unknown component: ' + node.component;
+          return el;
+      }
+
+      if (node.children) {
+        node.children.forEach(function(child) {
+          el.appendChild(renderNode(child));
+        });
+      }
+      return el;
+    }
+
+    function renderA2UI(json) {
+      var preview = document.getElementById('a2ui-preview');
+      try {
+        var data = typeof json === 'string' ? JSON.parse(json) : json;
+        if (data.a2ui && data.a2ui.root) data = data.a2ui.root;
+        if (data.root && !data.component) data = data.root;
+        preview.innerHTML = '';
+        preview.appendChild(renderNode(data));
+      } catch (e) {
+        preview.innerHTML = '<div style="' + STYLE.empty + 'color:var(--p31-accent-red);">Error: ' + e.message + '</div>';
+      }
+    }
+
+    // Live render on input
+    var input = document.getElementById('a2ui-input');
+    input.addEventListener('input', function() {
+      if (this.value.trim()) renderA2UI(this.value.trim());
+    });
+
+    // ─── Presets ──────────────────────────────────────────────────────────
+
+    var PRESETS = {
+      hero: JSON.stringify({
+        version:'p31-a2ui-0.9',layout:'hero',
+        root:{component:'Hero',properties:{},children:[
+          {component:'Label',properties:{text:'501(c)(3) Nonprofit',variant:'badge'}},
+          {component:'Heading',properties:{text:'Sovereign Care',level:1}},
+          {component:'Text',properties:{text:'Open-source assistive technology for neurodivergent families.',variant:'subtitle'}},
+          {component:'ButtonRow',properties:{buttons:[
+            {label:'Enter PHOS',href:'https://phos.p31ca.org',variant:'primary'},
+            {label:'Research',href:'#',variant:'ghost'}
+          ]}},
+          {component:'StatRow',properties:{stats:[
+            {value:'18',label:'Families'},{value:'1,247',label:'LOVE'},{value:'5',label:'Apps'}
+          ]}}
+        ]}
+      }, null, 2),
+      tetra: JSON.stringify({
+        version:'p31-a2ui-0.9',layout:'tetra-grid',
+        root:{component:'TetraGrid',properties:{},children:[
+          {component:'GlassCard',properties:{title:'Quantum Core',description:'SIC-POVM d=2',color:'accent'}},
+          {component:'GlassCard',properties:{title:'Care Economy',description:'LOVE Ledger',color:'violet'}},
+          {component:'GlassCard',properties:{title:'Research',description:'22 Papers',color:'gold'}},
+          {component:'GlassCard',properties:{title:'Impact',description:'18 Families',color:'green'}}
+        ]}
+      }, null, 2),
+      cards: JSON.stringify({
+        version:'p31-a2ui-0.9',layout:'card-grid',
+        root:{component:'Section',properties:{variant:'grid'},children:[
+          {component:'Heading',properties:{text:'Research Papers',level:2}},
+          {component:'Text',properties:{text:'Open-access publications on tetrahedral mathematics, SIC-POVM, and spoon-aware design.',variant:'description'}},
+          {component:'Grid',properties:{columns:3},children:[
+            {component:'GlassCard',properties:{title:'K4 Tetrahedron',description:'Complete graph topology for sovereign infrastructure',color:'accent',href:'https://zenodo.org'}},
+            {component:'GlassCard',properties:{title:'SIC-POVM Posner',description:'SIC-POVM states embedded in Posner molecule geometry',color:'violet'}},
+            {component:'GlassCard',properties:{title:'Spoon-Aware UI',description:'Neurodivergent design framework for cognitive load management',color:'gold'}}
+          ]}
+        ]}
+      }, null, 2),
+      cta: JSON.stringify({
+        version:'p31-a2ui-0.9',layout:'cta',
+        root:{component:'CTABlock',properties:{
+          heading:'Support Sovereign Care',
+          description:'P31 Labs is 100% community-funded. Every donation builds free tools for families who need them most.',
+          buttons:[
+            {label:'Donate',href:'https://ko-fi.com/trimtab69420',variant:'primary'},
+            {label:'GitHub',href:'https://github.com/p31labs',variant:'secondary'},
+            {label:'Join Discord',href:'https://discord.gg/uYW5rTCuZ',variant:'ghost'}
+          ]
+        }}
+      }, null, 2),
+    };
+
+    function loadPreset(key) {
+      var input = document.getElementById('a2ui-input');
+      input.value = PRESETS[key] || '';
+      input.dispatchEvent(new Event('input'));
+    }
+
+    // Auto-load hero preset
+    loadPreset('hero');
+  </script>
+</body>
+</html>

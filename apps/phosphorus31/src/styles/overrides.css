@@ -1,0 +1,153 @@
+/* apps/phosphorus31/src/styles/overrides.css */
+/* The Garden — brand overrides (emerald, Atkinson, off-white) */
+
+@layer overrides {
+  :root[data-brand="phosphorus31"] {
+    /* Color Palette Mapping — emerald primary, amber secondary */
+    --p31-color-accent: var(--p31-color-emerald);
+    --p31-color-accent-glow: rgba(16, 185, 129, 0.15);
+    --p31-color-secondary: var(--p31-color-amber);
+
+    /* Safety: ensure nav height is always defined */
+    --p31-nav-h: clamp(3.25rem, 2.75rem + 1.5vw, 4rem);
+
+    /* Typography Mapping — Atkinson Hyperlegible */
+    --p31-font-sans: 'Atkinson Hyperlegible', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+    /* Non-Profit Conversion & Touch Target Guards */
+    --p31-touch-target-min: 48px;
+
+    /* Off-white background for The Garden */
+    --p31-surface-bg: oklch(97% 0.01 240);
+    --p31-text-primary: oklch(12% 0.01 240);
+    --p31-text-secondary: oklch(28% 0.01 240);
+    --p31-text-muted: oklch(45% 0.01 240);
+    --p31-text-subtle: oklch(65% 0.01 240);
+    --p31-surface-card: oklch(100% 0 240);
+    --p31-surface-border: oklch(85% 0.01 240);
+    --p31-glass-surface: rgba(0,0,0,0.03);
+    --p31-glass-border: rgba(0,0,0,0.08);
+    --p31-glass-border-hover: rgba(0,0,0,0.15);
+
+    /* Brand-aware SiteNav candy-pill colors (emerald instead of cyan) */
+    --p31-nav-bg: rgba(16, 185, 129, 0.12);
+    --p31-nav-border: rgba(16, 185, 129, 0.6);
+    --p31-nav-glow: 0 0 30px rgba(16, 185, 129, 0.25);
+    --p31-nav-inset: inset 0 0 20px rgba(251, 191, 36, 0.12);
+  }
+
+  /* Enforce Touch Target Bounding on Interactive Elements */
+  [data-brand="phosphorus31"] button,
+  [data-brand="phosphorus31"] a[role="button"],
+  [data-brand="phosphorus31"] .p31-cta-button {
+    min-height: var(--p31-touch-target-min);
+    min-width: var(--p31-touch-target-min);
+  }
+
+  /* Crisis mode: dim content instead of hiding */
+  [data-spoons="0"] #main-content {
+    opacity: 0.5;
+    filter: grayscale(0.8);
+  }
+
+  /* Hero feather mask (emerald glow) */
+  .hero-feather::before {
+    content: "";
+    position: absolute;
+    inset: -10% -5%;
+    z-index: -1;
+    background:
+      radial-gradient(120% 100% at 50% 30%, rgba(16, 185, 129, 0.05) 0%, transparent 55%),
+      radial-gradient(130% 120% at 50% 35%, rgba(245, 247, 250, 0.6) 0%, rgba(245, 247, 250, 0.28) 45%, transparent 80%);
+    -webkit-mask-image: radial-gradient(115% 115% at 50% 40%, #000 55%, transparent 100%);
+    mask-image: radial-gradient(115% 115% at 50% 40%, #000 55%, transparent 100%);
+    pointer-events: none;
+  }
+
+  /* Title shimmer (emerald/amber/cyan gradient) */
+  .title-shimmer > span:first-child {
+    background: linear-gradient(135deg, var(--p31-color-emerald), var(--p31-color-amber), var(--p31-color-cyan));
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: textShimmer 6s ease-in-out infinite;
+  }
+
+  @keyframes textShimmer {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* Ambient grid */
+  .ambient-grid {
+    background-size: 40px 40px;
+    background-image:
+      linear-gradient(to right, rgba(0,0,0,0.03) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(0,0,0,0.03) 1px, transparent 1px);
+    mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+  }
+
+  /* Spoon Crown visibility (same as p31ca, but emerald glow via token overrides) */
+  html[data-spoons="0"] .cr-rotate,
+  html[data-spoons="0"] .cr-core,
+  html[data-spoons="0"] .cr-jewel { animation: none !important; }
+  html[data-spoons="0"] .cr-master { filter: none !important; opacity: 0.25 !important; }
+  html[data-spoons="0"] .cr-band { animation: none !important; }
+
+  html[data-spoons="1"] .cr-rotate,
+  html[data-spoons="1"] .cr-core,
+  html[data-spoons="1"] .cr-jewel { animation: none !important; }
+  html[data-spoons="1"] .cr-master { filter: none !important; opacity: 0.4 !important; }
+
+  html[data-spoons="2"] .cr-rotate { animation-duration: 60s !important; }
+  html[data-spoons="2"] .cr-band { animation-duration: 16s !important; }
+  html[data-spoons="2"] .cr-core { animation-duration: 6s !important; }
+  html[data-spoons="2"] .cr-jewel { animation-duration: 32s !important; }
+
+  html[data-spoons="3"] .cr-rotate { animation-duration: 40s !important; }
+  html[data-spoons="3"] .cr-band { animation-duration: 12s !important; }
+  html[data-spoons="3"] .cr-core { animation-duration: 4s !important; }
+  html[data-spoons="3"] .cr-jewel { animation-duration: 24s !important; }
+
+  html[data-spoons="4"] .cr-rotate { animation-duration: 30s !important; }
+  html[data-spoons="4"] .cr-band { animation-duration: 10s !important; }
+  html[data-spoons="4"] .cr-core { animation-duration: 3s !important; }
+  html[data-spoons="4"] .cr-jewel { animation-duration: 18s !important; }
+
+  html[data-spoons="5"] .cr-rotate { animation-duration: 24s !important; }
+  html[data-spoons="5"] .cr-band { animation-duration: 8s !important; }
+  html[data-spoons="5"] .cr-core { animation-duration: 2.5s !important; }
+  html[data-spoons="5"] .cr-jewel { animation-duration: 14s !important; }
+
+  /* Skip link (WCAG) */
+  .skip-link {
+    position: absolute;
+    left: -9999px;
+    top: 16px;
+    padding: 8px 16px;
+    background: var(--p31-color-emerald);
+    color: var(--p31-void);
+    border-radius: 8px;
+    font-weight: 700;
+    z-index: 9999;
+    text-decoration: none;
+  }
+  .skip-link:focus {
+    left: 16px;
+  }
+
+  /* Glass subtle hover glow (emerald) */
+  .glass-subtle:hover {
+    border-color: var(--p31-color-emerald);
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.15);
+  }
+
+  /* Selection color */
+  ::selection {
+    background: var(--p31-color-emerald);
+    color: var(--p31-void);
+  }
+}

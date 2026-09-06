@@ -1,0 +1,84 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const title = 'Security Architecture';
+---
+
+<DocsLayout title={title}>
+  <div class="breadcrumb">
+    <a href="/">Docs</a>
+    <span>/</span>
+    <a href="/guides">Guides</a>
+    <span>/</span>
+    <span>Security</span>
+  </div>
+
+  <h1>Security Architecture</h1>
+  <p class="lead">P31 implements a zero-trust, quantum-resistant security model built on post-quantum cryptography and decentralized identity.</p>
+
+  <h2>Authentication Methods</h2>
+  <p>The P31 stack supports five authentication methods:</p>
+  <ol>
+    <li><strong>JWT HS256</strong> — Traditional session tokens for web clients</li>
+    <li><strong>DID Ed25519/ML-DSA-65</strong> — Cryptographic DID-based authentication</li>
+    <li><strong>Cloudflare Access JWT</strong> — Zero-trust network access</li>
+    <li><strong>PSK</strong> — Pre-shared keys for worker-to-worker communication</li>
+    <li><strong>WebAuthn Passkeys</strong> — Phishing-resistant authentication</li>
+  </ol>
+
+  <h2>Post-Quantum Cryptography</h2>
+  <p>All cryptographic operations use NIST-standardized algorithms:</p>
+  <ul>
+    <li><strong>ML-KEM-768</strong> (FIPS 203) — Key encapsulation for secure key exchange</li>
+    <li><strong>ML-DSA-65</strong> (FIPS 204) — Digital signatures for documents and DIDs</li>
+    <li><strong>SLH-DSA-128s</strong> (FIPS 205) — Hash-based signatures for long-term archival</li>
+    <li><strong>Ed25519</strong> — Classical signatures for compatibility during transition</li>
+  </ul>
+
+  <h2>Secret Management</h2>
+  <p>Secrets are managed via Wrangler and Cloudflare Secrets Store:</p>
+  <pre><code># Set a secret for a Worker
+npx wrangler secret put SENTRY_DSN
+
+# List secrets
+npx wrangler secret list
+
+# Rotate secrets (automated via kill-switch Worker)</code></pre>
+
+  <h2>Durable Object Safety</h2>
+  <p>Every <code>setAlarm()</code> call is guarded by a corresponding <code>getAlarm()</code> check. The kill-switch Worker monitors DO row read/write budgets hourly and sends alerts if thresholds are exceeded.</p>
+
+  <h2>TLS and Transport Security</h2>
+  <ul>
+    <li><strong>TLS 1.3</strong> — All traffic encrypted</li>
+    <li><strong>Hybrid PQC TLS</strong> — Enable at Cloudflare zone SSL/TLS settings (not per-Worker)</li>
+    <li><strong>CSP Headers</strong> — Strict Content-Security-Policy on all responses</li>
+    <li><strong>CORS</strong> — Configured per endpoint with specific origin allowlists</li>
+  </ul>
+
+  <div class="callout callout-warning">
+    <div class="callout-title">Hybrid PQC TLS</div>
+    <p>Post-quantum TLS is a Cloudflare ZONE setting, not a wrangler flag. Enable it at Cloudflare Dashboard → SSL/TLS → Edge Certificates → Post-Quantum. No <code>compatibility_flags</code> entry is needed.</p>
+  </div>
+
+  <h2>Security Headers</h2>
+  <p>All responses include security headers:</p>
+  <ul>
+    <li><code>X-Content-Type-Options: nosniff</code></li>
+    <li><code>X-Frame-Options: DENY</code></li>
+    <li><code>X-XSS-Protection: 1; mode=block</code></li>
+    <li><code>Referrer-Policy: strict-origin-when-cross-origin</code></li>
+    <li><code>Permissions-Policy: bluetooth=()</code></li>
+  </ul>
+
+  <div class="last-updated">Last updated: August 2026</div>
+</DocsLayout>
+
+<style>
+  .lead {
+    font-size: 18px;
+    color: var(--t2);
+    margin-bottom: 32px;
+    line-height: 1.7;
+  }
+</style>

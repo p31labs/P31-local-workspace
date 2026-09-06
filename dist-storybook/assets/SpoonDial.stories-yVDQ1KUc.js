@@ -1,0 +1,19 @@
+import{t as e}from"./jsx-runtime-mpqBHCWX.js";var t=e();function n({spoons:e,setSpoons:n,mode:r=`button`,fullscreen:i=!0,className:a=``,style:o}){return r===`pips`?(0,t.jsxs)(`div`,{className:`flex items-center gap-1.5 ${a}`,style:o,children:[(0,t.jsx)(`button`,{onClick:()=>n(e===0?3:0),className:`text-[9px] font-mono tracking-widest px-1.5 py-0.5 rounded transition-colors`,"aria-label":`Toggle crisis mode`,style:{color:e===0?`var(--p31-accent-red)`:`var(--p31-text-tertiary)`},children:e===0?`!`:e}),[0,1,2,3,4,5].map(r=>(0,t.jsx)(`button`,{onClick:()=>n(r),"aria-label":`Set spoons to ${r}`,className:`w-3 h-3 rounded-full transition-all border-0 p-0 cursor-pointer`,style:{background:r<=e?e<=1?`rgba(251,113,133,0.9)`:`var(--p31-accent)`:`rgba(255,255,255,0.18)`,boxShadow:r<=e?`0 0 6px var(--p31-accent)`:`none`}},r))]}):(0,t.jsxs)(`div`,{className:`flex items-center gap-4 text-[10px] font-mono-tech ${a}`,style:o,children:[(0,t.jsx)(`span`,{className:`hidden xl:inline text-mist`,children:`β₂ = 1`}),(0,t.jsx)(`span`,{className:`hidden xl:inline text-quantum-cyan`,children:`863 Hz`}),(0,t.jsx)(`span`,{className:`hidden xl:inline text-quantum-green`,children:`K₄ planar`}),(0,t.jsxs)(`button`,{onClick:()=>n((e+1)%6),"aria-label":`Spoon level ${e} of 5 — click to change`,className:`flex items-center gap-1.5 px-2.5 h-9 rounded-lg border transition-all ${e===0?`border-quantum-red/40 text-quantum-red bg-quantum-red/10`:`border-cloud/20 text-ink hover:border-quantum-cyan/40`}`,children:[(0,t.jsx)(`span`,{"aria-hidden":`true`,children:e===0?`⚠`:`⚡`}),(0,t.jsx)(`span`,{children:e}),(0,t.jsx)(`span`,{className:`text-mist`,children:`/5`})]}),i&&(0,t.jsx)(`button`,{onClick:()=>{document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen().catch(()=>{})},"aria-label":`Toggle fullscreen`,className:`w-9 h-9 flex items-center justify-center rounded-lg border border-cloud/20 text-mist hover:text-ink hover:border-quantum-cyan/40 transition-all`,children:(0,t.jsx)(`span`,{"aria-hidden":`true`,children:`⛶`})})]})}n.__docgenInfo={description:``,methods:[],displayName:`SpoonDial`,props:{spoons:{required:!0,tsType:{name:`number`},description:``},setSpoons:{required:!0,tsType:{name:`signature`,type:`function`,raw:`(n: number) => void`,signature:{arguments:[{type:{name:`number`},name:`n`}],return:{name:`void`}}},description:``},mode:{required:!1,tsType:{name:`union`,raw:`'button' | 'pips'`,elements:[{name:`literal`,value:`'button'`},{name:`literal`,value:`'pips'`}]},description:``,defaultValue:{value:`'button'`,computed:!1}},fullscreen:{required:!1,tsType:{name:`boolean`},description:``,defaultValue:{value:`true`,computed:!1}},className:{required:!1,tsType:{name:`string`},description:``,defaultValue:{value:`''`,computed:!1}},style:{required:!1,tsType:{name:`CSSProperties`},description:``}}};var r={component:n,title:`Chrome/SpoonDial`},i={args:{spoons:3,setSpoons:()=>{},mode:`button`}},a={args:{spoons:3,setSpoons:()=>{},mode:`pips`}},o={args:{spoons:0,setSpoons:()=>{},mode:`pips`}};i.parameters={...i.parameters,docs:{...i.parameters?.docs,source:{originalSource:`{
+  args: {
+    spoons: 3,
+    setSpoons: () => {},
+    mode: 'button'
+  }
+}`,...i.parameters?.docs?.source}}},a.parameters={...a.parameters,docs:{...a.parameters?.docs,source:{originalSource:`{
+  args: {
+    spoons: 3,
+    setSpoons: () => {},
+    mode: 'pips'
+  }
+}`,...a.parameters?.docs?.source}}},o.parameters={...o.parameters,docs:{...o.parameters?.docs,source:{originalSource:`{
+  args: {
+    spoons: 0,
+    setSpoons: () => {},
+    mode: 'pips'
+  }
+}`,...o.parameters?.docs?.source}}};var s=[`ButtonMode`,`PipsMode`,`Crisis`];export{i as ButtonMode,o as Crisis,a as PipsMode,s as __namedExportsOrder,r as default};

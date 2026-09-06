@@ -1,0 +1,22 @@
+{
+  "name": "@p31/ui-astro",
+  "version": "2.1.0",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./css": "./src/css.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "build": "astro build"
+  },
+  "dependencies": {
+    "@p31/design-core": "workspace:*",
+    "astro": "^5.18.1"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0"
+  }
+}

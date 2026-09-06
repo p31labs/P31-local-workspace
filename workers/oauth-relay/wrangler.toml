@@ -1,0 +1,19 @@
+name = "oauth-relay"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "p31-oauth"
+database_id = "placeholder-replace-with-actual"
+
+[vars]
+GOOGLE_CLIENT_ID = ""
+GOOGLE_CLIENT_SECRET = ""
+GITHUB_CLIENT_ID = ""
+GITHUB_CLIENT_SECRET = ""
+SHELL_ORIGIN = "https://p31-shell.trimtab-signal.workers.dev"
+
+[observability]
+enabled = true

@@ -1,0 +1,172 @@
+import { Meta, ColorPalette, ColorItem, Typeset } from '@storybook/blocks';
+
+<Meta title="Design System/Design Tokens" />
+
+# Design Tokens
+
+The P31 design system is mathematically grounded in quantum geometry. Every visual decision — font size, spacing, color, component dimension — flows from a single root: `16px × (4/3)^n`, timed to the 863 Hz Larmor frequency of phosphorus-31.
+
+---
+
+## Color Palette
+
+All colors are defined in OKLCH space for perceptual uniformity, with hex fallbacks for legacy compatibility.
+
+### Accent Colors
+
+<ColorPalette>
+  <ColorItem title="Cyan" subtitle="Primary accent — oklch(65% 0.18 195)" colors={{ '#00F0FF': 'var(--p31-color-cyan)' }} />
+  <ColorItem title="Violet" subtitle="Secondary accent — oklch(65% 0.18 285)" colors={{ '#A78BFA': 'var(--p31-color-violet)' }} />
+  <ColorItem title="Amber" subtitle="Warmth, warning — oklch(65% 0.18 15)" colors={{ '#FBBF24': 'var(--p31-color-amber)' }} />
+  <ColorItem title="Emerald" subtitle="Success, growth — oklch(65% 0.18 105)" colors={{ '#34D399': 'var(--p31-color-emerald)' }} />
+  <ColorItem title="Red" subtitle="Error, urgency — oklch(65% 0.18 20)" colors={{ '#FB7185': 'var(--p31-color-red)' }} />
+  <ColorItem title="Iris" subtitle="Supporting accent — oklch(65% 0.18 270)" colors={{ '#818CF8': 'var(--p31-color-iris)' }} />
+</ColorPalette>
+
+### Surface Hierarchy
+
+<ColorPalette>
+  <ColorItem title="Void" subtitle="Deepest background — var(--p31-void)" colors={{ '#0A0A0F': '--p31-void' }} />
+  <ColorItem title="Void Deep" subtitle="Darker void — var(--p31-void-deep)" colors={{ '#050508': '--p31-void-deep' }} />
+  <ColorItem title="Surface" subtitle="Base surface — var(--p31-surface)" colors={{ '#12121A': '--p31-surface' }} />
+  <ColorItem title="Surface 2" subtitle="Raised surface — var(--p31-surface2)" colors={{ '#1C1C2A': '--p31-surface2' }} />
+  <ColorItem title="Surface 3" subtitle="Highest surface — var(--p31-surface3)" colors={{ '#252535': '--p31-surface3' }} />
+</ColorPalette>
+
+### Text Hierarchy
+
+<ColorPalette>
+  <ColorItem title="Text Primary" subtitle="var(--p31-text)" colors={{ '#F5F5F7': '--p31-text' }} />
+  <ColorItem title="Text Secondary" subtitle="var(--p31-cloud)" colors={{ '#A1A1AA': '--p31-cloud (60% opacity)' }} />
+  <ColorItem title="Text Tertiary" subtitle="var(--p31-text-tertiary)" colors={{ 'rgba(245,245,247,0.3)': '--p31-text-tertiary (30% opacity)' }} />
+</ColorPalette>
+
+### Semantic Aliases
+
+| Token | Maps To | Use Case |
+|-------|---------|----------|
+| `--p31-semantic-success` | `var(--p31-color-emerald)` | Success states, confirmations |
+| `--p31-semantic-warning` | `var(--p31-color-amber)` | Warnings, cautions |
+| `--p31-semantic-error` | `oklch(65% 0.18 20)` | Errors, destructive actions |
+| `--p31-semantic-info` | `var(--p31-color-cyan)` | Informational messages |
+| `--p31-semantic-accent` | `var(--p31-color-cyan)` | Primary accent reference |
+
+> **Rule:** Never use pure white (`#FFFFFF`) or pure black (`#000000`). Always use token references.
+
+---
+
+## Typography
+
+### Fluid Type Scale
+
+The scale follows `V_n = 16px × (4/3)^n`, ranging from step -1 (12px) to step +6 (90px).
+
+<Typeset
+  fontSizes={[12, 16, 21, 28, 38, 50, 67, 90]}
+  fontWeight="normal"
+  sampleText="Cognitive sovereignty through quantum design"
+/>
+
+### Type Classes
+
+| Class | CSS Variable | Approx Size | Weight | Line Height |
+|-------|-------------|-------------|--------|-------------|
+| `.text-h1` | `--p31-text-4xl` | 51px | 700 | 1.1 |
+| `.text-h2` | `--p31-text-3xl` | 38px | 600 | 1.2 |
+| `.text-h3` | `--p31-text-2xl` | 28px | 600 | 1.3 |
+| `.text-h4` | `--p31-text-xl` | 21px | 600 | 1.3 |
+| `.text-body` | `--p31-text-base` | 16px | 400 | 1.6 |
+| `.text-body-sm` | `--p31-text-sm` | 14px | 400 | 1.6 |
+| `.text-label` | `--p31-text-xs` | 12px | 500 | 1.0 |
+| `.text-code` | `--p31-text-sm` | 14px | 400 | 1.6 |
+
+### Glow Text Utilities
+
+| Class | Effect |
+|-------|--------|
+| `.glow-cyan` | Cyan micro-glow (20px + 40px radius) |
+| `.glow-violet` | Violet micro-glow |
+| `.glow-gold` | Gold micro-glow |
+| `.glow-green` | Emerald micro-glow |
+| `.glow-rose` | Rose/red micro-glow |
+
+### Font Families
+
+| Token | Font Stack |
+|-------|-----------|
+| `--p31-font-family` | Inter, ui-sans-serif, system-ui, -apple-system, sans-serif |
+| `--p31-font-mono` | JetBrains Mono, ui-monospace, SF Mono, monospace |
+
+---
+
+## Modular Tetrahedral Scale
+
+The fundamental scaling system: `V_n = 16px × (4/3)^n`
+
+| Step | Formula | Value | Token | Example Use |
+|------|---------|-------|-------|-------------|
+| -1 | 16 × 0.75 | ~12px | `--p31-scale-xs` | Captions, compact padding |
+| 0 | 16 × 1.0 | 16px | `--p31-scale-sm` | Body text, base grid unit |
+| 1 | 16 × 1.333 | ~21px | `--p31-scale-md` | Small headings, button heights |
+| 2 | 16 × 1.778 | ~28px | `--p31-scale-lg` | Medium headings, card padding |
+| 3 | 16 × 2.370 | ~38px | `--p31-scale-xl` | Large headings, modal padding |
+| 4 | 16 × 3.160 | ~50px | `--p31-scale-2xl` | Hero title min, header height |
+| 5 | 16 × 4.214 | ~67px | `--p31-scale-3xl` | Display banners, major gaps |
+| 6 | 16 × 5.619 | ~90px | `--p31-scale-4xl` | Mega displays, hero padding |
+
+---
+
+## Fluid Spacing (Zero-Breakpoint Clamp)
+
+Spacing adapts to viewport width automatically using CSS `clamp()`. No breakpoint-specific overrides needed.
+
+| Token | Clamp Range | At 320px | At 768px | At 1440px |
+|-------|------------|----------|----------|-----------|
+| `--p31-space-xs` | 12px → 16px | ~13px | ~15px | 16px |
+| `--p31-space-sm` | 16px → 21px | ~17px | ~19px | 21px |
+| `--p31-space-md` | 21px → 28px | ~22px | ~25px | 28px |
+| `--p31-space-lg` | 28px → 38px | ~30px | ~35px | 38px |
+| `--p31-space-xl` | 38px → 50px | ~41px | ~47px | 50px |
+| `--p31-space-2xl` | 50px → 67px | ~54px | ~62px | 67px |
+| `--p31-space-3xl` | 67px → 90px | ~72px | ~83px | 90px |
+
+---
+
+## Border Radius
+
+Derived from the tetrahedral scale: `radius = scale / 2`
+
+| Token | Value | Use Case |
+|-------|-------|----------|
+| `--p31-radius-xs` | ~6px | Small badges, chips |
+| `--p31-radius-sm` | ~8px | Small buttons, inputs |
+| `--p31-radius-md` | ~10.5px | Default buttons, cards |
+| `--p31-radius-lg` | ~14px | Large cards, modals |
+| `--p31-radius-xl` | ~19px | Hero sections, panels |
+| `--p31-radius-full` | 9999px | Pill buttons, avatars |
+
+---
+
+## Breakpoints
+
+| Token | Width | Target |
+|-------|-------|--------|
+| `--p31-bp-mobile` | 0px | Phones |
+| `--p31-bp-tablet` | 768px | Tablets |
+| `--p31-bp-desktop` | 1024px | Laptops |
+| `--p31-bp-wide` | 1440px | Desktops |
+| `--p31-bp-ultrawide` | 1920px | Large screens |
+
+---
+
+## Root Constants
+
+| Token | Value | Meaning |
+|-------|-------|---------|
+| `--p31-base` | 16px | Root grid unit |
+| `--p31-tetra` | 1.3333 | Scale ratio (4/3) |
+| `--p31-phi` | 1.618 | Golden ratio |
+| `--p31-larmor` | 863 | P-31 Larmor frequency (Hz) |
+| `--p31-overlap` | 0.3333 | SIC-POVM overlap (1/3) |
+| `--p31-k4` | 4 | K₄ graph vertices |
+| `--p31-beta2` | 1 | Planar embedding constant |

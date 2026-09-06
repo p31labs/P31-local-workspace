@@ -1,0 +1,10 @@
+{
+  "name": "p31-crypto-mcp",
+  "description": "P31 PQC Crypto MCP Server — ML-DSA-65 keygen/sign/verify, ML-KEM-768, SLH-DSA-128s, hybrid signatures, SD-JWT, x402 payment",
+  "version": "0.1.0",
+  "repository": "https://github.com/p31labs/andromeda",
+  "homepage": "https://p31ca.org",
+  "keywords": ["post-quantum", "cryptography", "mldsa", "mlkem", "slhdsa", "hybrid", "sd-jwt", "x402", "p31"],
+  "transport": "streamable-http",
+  "endpoint": "https://p31-crypto-mcp.trimtab-signal.workers.dev/mcp"
+}

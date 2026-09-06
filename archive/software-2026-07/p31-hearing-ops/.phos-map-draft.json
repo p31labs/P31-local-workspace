@@ -1,0 +1,20 @@
+{
+  "version": "1.0.0",
+  "inferred": true,
+  "project": "p31-hearing-ops",
+  "project_dir": "../software/p31-hearing-ops",
+  "base": "software/p31-hearing-ops",
+  "framework": "unknown",
+  "patterns": [
+    {
+      "type": "public/**/*.*",
+      "glob": "public_asset",
+      "dest": "{base}/public/{relative}/{basename}.{ext}"
+    },
+    {
+      "type": "*.{ts,mjs,js}",
+      "glob": "config",
+      "dest": "{base}/{basename}.{ext}"
+    }
+  ]
+}

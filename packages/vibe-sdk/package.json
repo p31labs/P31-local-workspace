@@ -1,0 +1,14 @@
+{
+  "name": "@p31/vibe-sdk",
+  "version": "1.0.0",
+  "private": false,
+  "type": "module",
+  "description": "P31 Vibe Coding SDK — programmatic code generation, deployment, and management for neurodivergent families",
+  "license": "MIT",
+  "repository": "github:p31labs/vibe-sdk",
+  "keywords": ["p31", "vibe-coding", "ai", "code-generation", "neurodivergent", "cloudflare-workers"],
+  "main": "src/index.ts",
+  "exports": { ".": "./src/index.ts" },
+  "dependencies": {},
+  "devDependencies": { "typescript": "^5.7.0" }
+}

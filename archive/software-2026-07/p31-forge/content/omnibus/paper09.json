@@ -1,0 +1,26 @@
+{
+  "kind": "paper",
+  "filename": "P31_Paper_09_Node_Zero_Hardware.docx",
+  "program": "research",
+  "title": "Node Zero Hardware Prototype",
+  "abstract": "Sub-$50 BOM for autonomic regulation",
+  "doi": "10.5281/zenodo.xxxxx",
+  "body": [
+    { "type": "h1", "text": "ABSTRACT" },
+    { "type": "para", "text": "Node Zero is a sub-$50 BOM hardware prototype designed for autonomic regulation and cognitive sensory gating, specifically targeted at neurodivergent individuals." },
+    { "type": "h1", "text": "INTRODUCTION" },
+    { "type": "para", "text": "Existing assistive-tech vendors sell closed-source devices at medical-device markups to a disproportionately unemployed and uninsured population. P31 Labs releases everything under AGPLv3/MIT and targets hardware under $50 BOM." },
+    { "type": "h1", "text": "SPECIFICATIONS" },
+    { "type": "bullet", "text": "Target BOM: under $50" },
+    { "type": "bullet", "text": "ESP32-S3 based hardware" },
+    { "type": "bullet", "text": "Focus on autonomic regulation" },
+    { "type": "bullet", "text": "Cognitive sensory gating capabilities" },
+    { "type": "bullet", "text": "Open source AGPLv3/MIT licensing" },
+    { "type": "h1", "text": "DEVELOPMENT STATUS" },
+    { "type": "bullet", "text": "85% complete for The Buffer software component" },
+    { "type": "bullet", "text": "Hardware prototyping phase" },
+    { "type": "bullet", "text": "Beta testing planned for 15 users" },
+    { "type": "h1", "text": "IMPACT" },
+    { "type": "para", "text": "Provides affordable, open-source assistive technology for neurodivergent individuals who are disproportionately unemployed and uninsured." }
+  ]
+}

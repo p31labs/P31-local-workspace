@@ -1,0 +1,26 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+const title = 'Installation';
+---
+<DocsLayout title={title}>
+  <div class="breadcrumb">
+    <a href="/">Docs</a>
+    <span>/</span>
+    <a href="/getting-started">Getting Started</a>
+    <span>/</span>
+    <span>Installation</span>
+  </div>
+  <h1>Installation</h1>
+  <p class="lead">Set up your local development environment for the P31 Sovereign Stack.</p>
+  <h2>Clone the Repository</h2>
+  <pre><code>git clone https://github.com/p31labs/P31-local-workspace.git
+cd P31-local-workspace</code></pre>
+  <h2>Install Dependencies</h2>
+  <pre><code>pnpm install</code></pre>
+  <h2>Configure Wrangler</h2>
+  <pre><code>npx wrangler login</code></pre>
+  <h2>Verify Setup</h2>
+  <pre><code>pnpm run verify</code></pre>
+  <div class="last-updated">Last updated: August 2026</div>
+</DocsLayout>
+<style>.lead{font-size:18px;color:var(--t2);margin-bottom:32px;line-height:1.7}</style>

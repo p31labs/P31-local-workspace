@@ -1,0 +1,36 @@
+---
+const navItems = [
+  { href: '/', label: 'Hub' },
+  { href: '/research', label: 'Research' },
+  { href: '/arcade', label: 'Arcade' },
+  { href: '/get-involved', label: 'Get Involved' },
+  { href: '/signin', label: 'Sign In' },
+];
+---
+
+<header class="fixed top-0 left-0 right-0 z-50" style="background: rgba(3, 7, 14, 0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--p31-glass-border);">
+  <div class="max-w-7xl mx-auto px-6 md:px-12 lg:px-16">
+    <div class="flex items-center justify-between h-14">
+      <a href="/" class="flex items-center gap-3 group">
+        <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: var(--p31-accent); color: #000; font-weight: 800; font-size: 14px;">P31</div>
+        <span class="font-semibold text-sm tracking-tight hidden sm:inline" style="color: var(--p31-text);">Labs</span>
+      </a>
+      <nav class="hidden md:flex items-center gap-1" aria-label="Main navigation">
+        {navItems.map((item) => (
+          <a
+            href={item.href}
+            class="px-3 py-1.5 text-sm rounded-md transition-colors"
+            style="color: var(--p31-text-secondary);"
+          >
+            {item.label}
+          </a>
+        ))}
+      </nav>
+      <div class="flex items-center gap-3">
+        <a href="/signin" class="text-sm font-medium px-4 py-2 rounded-lg transition-colors" style="background: var(--p31-accent); color: #000;">
+          Sign In
+        </a>
+      </div>
+    </div>
+  </div>
+</header>

@@ -1,0 +1,20 @@
+---
+const nodes = [
+  { icon: '⚡', label: 'Cloudflare Workers', count: 12, desc: 'Edge compute functions' },
+  { icon: '🗄️', label: 'D1 Databases', count: 10, desc: 'SQLite at the edge' },
+  { icon: '🔄', label: 'Durable Objects', count: 16, desc: 'Stateful coordination' },
+  { icon: '🔌', label: 'MCP Tools', count: 36, desc: 'Model Context Protocol' },
+];
+---
+
+<div class="stack-diagonal animate-fade-in-up delay-300">
+  {nodes.map((node, i) => (
+    <div class="stack-node" style="animation-delay: {i * 100}ms;">
+      <div class="stack-node__icon">{node.icon}</div>
+      <div class="stack-node__content">
+        <div class="stack-node__label">{node.label}</div>
+        <div class="stack-node__count">{node.count} {node.desc}</div>
+      </div>
+    </div>
+  ))}
+</div>

@@ -1,0 +1,17 @@
+---
+const signals = [
+  { number: '22', label: 'Papers on Zenodo' },
+  { number: '501(c)(3)', label: 'Nonprofit status' },
+  { number: 'AGPL', label: 'Open source license' },
+  { number: '0$', label: 'Server costs (free tier)' },
+];
+---
+
+<div class="trust-grid animate-fade-in-up delay-400">
+  {signals.map((signal) => (
+    <div class="trust-item">
+      <div class="trust-item__number">{signal.number}</div>
+      <div class="trust-item__label">{signal.label}</div>
+    </div>
+  ))}
+</div>

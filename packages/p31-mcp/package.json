@@ -1,0 +1,15 @@
+{
+  "name": "@p31/mcp-vibe",
+  "version": "1.0.0",
+  "private": false,
+  "type": "module",
+  "license": "MIT",
+  "description": "P31 Vibe Coding MCP Server — generate and deploy apps via MCP tools for neurodivergent families",
+  "repository": "github:p31labs/mcp-vibe",
+  "keywords": ["p31", "mcp", "vibe-coding", "ai", "code-generation", "mcp-server", "neurodivergent", "cloudflare"],
+  "main": "src/index.mjs",
+  "bin": { "p31-mcp-vibe": "src/index.mjs" },
+  "scripts": { "start": "node src/index.mjs" },
+  "dependencies": {},
+  "devDependencies": { "typescript": "^5.7.0" }
+}

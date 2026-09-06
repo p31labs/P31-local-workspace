@@ -1,0 +1,14 @@
+---
+export interface Props {
+  eyebrow?: string;
+  title: string;
+  description?: string;
+  align?: 'center' | 'left';
+}
+const { eyebrow, title, description, align = 'center' } = Astro.props;
+---
+<div class={`text-${align} space-y-3 ${align === 'center' ? 'mx-auto' : ''}`}>
+  {eyebrow && <p class="font-mono text-[10px] tracking-[0.2em] uppercase text-white/20">{eyebrow}</p>}
+  <h2 class="text-3xl md:text-4xl font-bold text-[#F5F5F7]">{title}</h2>
+  {description && <p class="text-sm text-white/40 max-w-lg mx-auto">{description}</p>}
+</div>

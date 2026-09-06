@@ -1,0 +1,15 @@
+name = "p31-component-registry"
+main = "src/index.ts"
+compatibility_date = "2026-07-16"
+compatibility_flags = ["nodejs_compat"]
+
+[build]
+command = "npx tsc --noEmit && echo 'TypeScript check passed'"
+
+[vars]
+ENVIRONMENT = "production"
+VERSION = "1.0.0"
+
+# Custom domain: registry.p31ca.org
+# This route maps the custom domain to the worker
+# Ensure the domain is added in Cloudflare dashboard -> Worker -> Settings -> Domains & Routes

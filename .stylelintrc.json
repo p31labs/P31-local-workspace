@@ -1,0 +1,36 @@
+{
+  "extends": "stylelint-config-standard",
+  "rules": {
+    "color-no-hex": [true, {
+      "severity": "warning",
+      "message": "Use var(--p31-*) token instead of hardcoded hex. See RULES.md Rule 1."
+    }],
+    "declaration-property-unit-disallowed-list": {
+      "font-size": ["px"],
+      "padding": ["px"],
+      "margin": ["px"]
+    },
+    "hue-degree-notation": null,
+    "number-max-precision": null,
+    "color-function-alias-notation": null,
+    "declaration-block-single-line-max-declarations": null,
+    "color-hex-length": null,
+    "comment-empty-line-before": null,
+    "selector-class-pattern": null,
+    "no-descending-specificity": null,
+    "alpha-value-notation": null,
+    "color-function-notation": null,
+    "import-notation": null,
+    "property-no-vendor-prefix": null,
+    "value-keyword-case": null,
+    "media-feature-range-notation": null
+  },
+  "ignoreFiles": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/out/**",
+    "**/coverage/**",
+    "**/*.min.css",
+    "**/public/**"
+  ]
+}

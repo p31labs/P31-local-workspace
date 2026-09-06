@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PHOS Meatspace QA Dashboard</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- React & Babel -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        p31: {
+                            void: '#0A0C10',
+                            surface: '#13161D',
+                            surface2: '#1C212B',
+                            accent: '#00F0FF',
+                            accentMuted: 'rgba(0, 240, 255, 0.2)',
+                            danger: '#FF3366',
+                            success: '#00FF9D',
+                            textPrimary: '#E2E8F0',
+                            textSecondary: '#94A3B8',
+                            glassBorder: 'rgba(255, 255, 255, 0.08)'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        :root {
+            --p31-void: #0A0C10;
+            --p31-surface: rgba(19, 22, 29, 0.6);
+            --p31-surface-hover: rgba(19, 22, 29, 0.9);
+            --p31-glass-border: rgba(255, 255, 255, 0.08);
+            --p31-accent: #00F0FF;
+            --p31-text-primary: #E2E8F0;
+            --p31-text-secondary: #94A3B8;
+        }
+
+        body {
+            background-color: var(--p31-void);
+            color: var(--p31-text-primary);
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(0, 240, 255, 0.03), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(167, 139, 250, 0.03), transparent 25%);
+        }
+
+        .phos-glass {
+            background: var(--p31-surface);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--p31-glass-border);
+        }
+
+        .phos-gpu {
+            transform: translateZ(0);
+            will-change: transform, background-color;
+            transition: all 0.2s ease;
+        }
+
+        /* Spoon-aware state handling */
+        [data-spoons="0"] .phos-ui-chrome {
+            display: none !important;
+        }
+        
+        [data-spoons="0"] body {
+            background: #000 !important;
+            background-image: none !important;
+        }
+
+        [data-spoons="1"] *, [data-spoons="0"] * {
+            animation-duration: 0s !important;
+            transition-duration: 0s !important;
+            backdrop-filter: none !important;
+        }
+
+        /* Custom scrollbar for matrix */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--p31-void);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2D3748;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4A5568;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // --- DATA LAYER ---
+        const ARTIFACTS = [
+            { id: '01', name: 'The Void Cube', check: 'Dimensions, XYZ', target: '±0.3mm accuracy', status: 'passed' },
+            { id: '02', name: 'The Spoon Gauge', check: 'Overhang, Bridges', target: '<1mm bridge sag', status: 'passed' },
+            { id: '03', name: 'The Quantum Prism', check: 'Multi-Color Z-Shift', target: '<0.1mm layer shift', status: 'pending' },
+            { id: '04', name: 'The Cage Key', check: 'X/Y Tolerance', target: '0.3mm slides free', status: 'pending' },
+            { id: '05', name: 'The Trust Marker', check: 'QR Scan Depth', target: '12mm QR scans <1s', status: 'failed' },
+            { id: '06', name: 'The Foundation Plate', check: '1st Layer Adhesion', target: '100% adherence', status: 'pending' },
+            { id: '07', name: 'The Scaffold Arch', check: 'Support Removal', target: '<3min removal time', status: 'pending' },
+            { id: '08', name: 'The Comm Mast', check: 'Retraction, String', target: '0 branching/thick', status: 'pending' },
+            { id: '09', name: 'The P31 Ruler', check: 'Macro Dimensions', target: 'Flat, precise to ref.', status: 'pending' },
+            { id: '10', name: 'The Cage Trophy', check: 'End-to-end Pipeline', target: '100% Checklist Pass', status: 'pending' },
+        ];
+
+        // --- COMPONENTS ---
+
+        // Invariant: 48px touch target button
+        const PhosButton = ({ children, onClick, variant = 'default', className = '', icon: Icon }) => {
+            const baseClass = "phos-gpu flex items-center justify-center min-h-[48px] px-6 rounded-[12px] font-sans text-[12px] uppercase tracking-[0.05em] font-medium border transition-colors cursor-pointer gap-2";
+            const variants = {
+                default: "bg-p31-surface2 border-p31-glassBorder text-p31-textPrimary hover:bg-[#2A313E]",
+                accent: "bg-p31-accent text-black border-transparent hover:bg-[#33F3FF]",
+                ghost: "bg-transparent border-transparent text-p31-textSecondary hover:bg-p31-surface2 hover:text-p31-textPrimary"
+            };
+
+            return (
+                <button onClick={onClick} className={`${baseClass} ${variants[variant]} ${className}`}>
+                    {Icon && <Icon size={16} />}
+                    {children}
+                </button>
+            );
+        };
+
+        const StatusBadge = ({ status }) => {
+            const styles = {
+                passed: "text-p31-success bg-p31-success/10 border-p31-success/20",
+                failed: "text-p31-danger bg-p31-danger/10 border-p31-danger/20",
+                pending: "text-p31-textSecondary bg-p31-surface2 border-p31-glassBorder"
+            };
+            
+            return (
+                <span className={`inline-flex items-center justify-center min-h-[32px] px-3 rounded-full border text-[11px] uppercase tracking-[0.05em] font-bold ${styles[status]}`}>
+                    {status}
+                </span>
+            );
+        };
+
+        const QRScannerForm = ({ onClose }) => {
+            return (
+                <div className="absolute inset-0 z-50 flex items-center justify-center p-6 bg-black/60 backdrop-blur-sm">
+                    <div className="phos-glass w-full max-w-lg rounded-[24px] p-[24px] flex flex-col gap-[24px] animate-[fadeIn_0.2s_ease-out]">
+                        <header className="flex items-center justify-between">
+                            <h2 className="text-2xl font-bold text-p31-textPrimary">Log QA Card</h2>
+                            <button onClick={onClose} className="w-[48px] h-[48px] flex items-center justify-center rounded-[12px] hover:bg-p31-surface2 border border-transparent hover:border-p31-glassBorder transition-colors">
+                                <i data-lucide="x" className="text-p31-textSecondary"></i>
+                            </button>
+                        </header>
+                        
+                        <div className="flex flex-col items-center justify-center py-[48px] border-2 border-dashed border-p31-glassBorder rounded-[12px] bg-black/20">
+                            <div className="w-[200px] h-[200px] border-2 border-p31-accent relative flex items-center justify-center">
+                                <div className="absolute top-0 left-0 w-4 h-4 border-t-4 border-l-4 border-p31-accent -mt-1 -ml-1"></div>
+                                <div className="absolute top-0 right-0 w-4 h-4 border-t-4 border-r-4 border-p31-accent -mt-1 -mr-1"></div>
+                                <div className="absolute bottom-0 left-0 w-4 h-4 border-b-4 border-l-4 border-p31-accent -mb-1 -ml-1"></div>
+                                <div className="absolute bottom-0 right-0 w-4 h-4 border-b-4 border-r-4 border-p31-accent -mb-1 -mr-1"></div>
+                                <div className="w-full h-[2px] bg-p31-accent opacity-50 absolute animate-[scan_2s_ease-in-out_infinite]"></div>
+                                <span className="text-[12px] uppercase tracking-[0.05em] text-p31-accent">Hold QA QR Here</span>
+                            </div>
+                        </div>
+
+                        <div className="flex gap-4">
+                            <PhosButton variant="default" onClick={onClose} className="flex-1">Cancel</PhosButton>
+                            <PhosButton variant="accent" onClick={onClose} className="flex-1">Manual Entry</PhosButton>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const App = () => {
+            const [spoons, setSpoons] = useState(4);
+            const [isScanning, setIsScanning] = useState(false);
+
+            useEffect(() => {
+                document.body.setAttribute('data-spoons', spoons.toString());
+                lucide.createIcons();
+            }, [spoons, isScanning]);
+
+            // If Spoons = 0, Crisis Mode (No UI Chrome, ultra minimal)
+            if (spoons === 0) {
+                return (
+                    <div className="min-h-screen flex flex-col items-center justify-center p-6 gap-8">
+                        <div className="text-p31-danger font-mono text-xl">CRISIS_MODE: ACTIVE</div>
+                        <p className="text-p31-textSecondary max-w-md text-center leading-relaxed">
+                            System structural chrome disabled. Meatspace validation paused. Please wait for cognitive resources to replenish before operating heavy machinery.
+                        </p>
+                        <PhosButton variant="default" onClick={() => setSpoons(4)}>Restore Spoons</PhosButton>
+                    </div>
+                );
+            }
+
+            return (
+                <div className="min-h-screen flex flex-col p-4 md:p-8 relative">
+                    {isScanning && <QRScannerForm onClose={() => setIsScanning(false)} />}
+                    
+                    {/* Header - phos-ui-chrome */}
+                    <header className="phos-ui-chrome flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">
+                        <div className="flex items-center gap-4">
+                            <div className="w-[48px] h-[48px] rounded-[12px] bg-p31-accent/10 border border-p31-accent flex items-center justify-center text-p31-accent">
+                                <i data-lucide="printer"></i>
+                            </div>
+                            <div>
+                                <h1 className="text-[24px] md:text-[32px] font-bold text-p31-textPrimary tracking-tight">Meatspace QA</h1>
+                                <p className="text-[14px] text-p31-textSecondary font-mono mt-1">phos.p31ca.org/qa/matrix</p>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center gap-4 phos-glass rounded-[16px] p-2">
+                            <span className="text-[12px] uppercase tracking-[0.05em] text-p31-textSecondary font-bold ml-2">Spoons:</span>
+                            <div className="flex gap-1">
+                                {[1,2,3,4,5].map(val => (
+                                    <button 
+                                        key={val}
+                                        onClick={() => setSpoons(val)}
+                                        className={`w-[40px] h-[40px] rounded-[8px] flex items-center justify-center transition-colors ${spoons >= val ? 'bg-p31-accent text-black' : 'bg-p31-surface2 text-p31-textSecondary'}`}
+                                    >
+                                        <i data-lucide="zap" size={16}></i>
+                                    </button>
+                                ))}
+                                <button 
+                                    onClick={() => setSpoons(0)}
+                                    className="w-[40px] h-[40px] rounded-[8px] bg-p31-danger/20 text-p31-danger hover:bg-p31-danger hover:text-black ml-2 flex items-center justify-center transition-colors"
+                                    title="Trigger Crisis Mode"
+                                >
+                                    <i data-lucide="alert-triangle" size={16}></i>
+                                </button>
+                            </div>
+                        </div>
+                    </header>
+
+                    {/* Main Content Area */}
+                    <main className="flex-1 flex flex-col xl:flex-row gap-6">
+                        
+                        {/* Sidebar Config / Actions */}
+                        <aside className="w-full xl:w-[320px] flex flex-col gap-6">
+                            <div className="phos-glass rounded-[24px] p-6 flex flex-col gap-6">
+                                <div className="flex flex-col gap-2">
+                                    <h3 className="text-[12px] uppercase tracking-[0.05em] text-p31-textSecondary font-bold">Printer Baseline</h3>
+                                    <div className="font-mono text-[13px] p-4 bg-black/40 rounded-[12px] border border-p31-glassBorder text-p31-accent leading-relaxed">
+                                        > NOZZLE: 0.4mm<br/>
+                                        > MAT: PLA / PETG<br/>
+                                        > VOL: 220x220x250
+                                    </div>
+                                </div>
+                                <PhosButton variant="accent" onClick={() => setIsScanning(true)}>
+                                    <i data-lucide="qr-code" size={16}></i>
+                                    Scan QA Card
+                                </PhosButton>
+                            </div>
+                            
+                            <div className="phos-glass rounded-[24px] p-6 flex flex-col gap-4">
+                                <h3 className="text-[12px] uppercase tracking-[0.05em] text-p31-textSecondary font-bold">Fleet Status</h3>
+                                <div className="flex items-center justify-between p-4 bg-p31-surface2 rounded-[12px] border border-p31-glassBorder">
+                                    <span className="font-sans text-p31-textPrimary">Node Alpha</span>
+                                    <StatusBadge status="passed" />
+                                </div>
+                                <div className="flex items-center justify-between p-4 bg-p31-surface2 rounded-[12px] border border-p31-glassBorder">
+                                    <span className="font-sans text-p31-textPrimary">Node Beta</span>
+                                    <StatusBadge status="failed" />
+                                </div>
+                            </div>
+                        </aside>
+
+                        {/* Fleet Matrix Table */}
+                        <div className="flex-1 phos-glass rounded-[24px] flex flex-col overflow-hidden min-h-[500px]">
+                            <div className="p-6 border-b border-p31-glassBorder flex items-center justify-between bg-white/[0.02]">
+                                <h2 className="text-xl font-bold">Validation Matrix</h2>
+                                <span className="font-mono text-[13px] text-p31-textSecondary">10 Artifacts</span>
+                            </div>
+                            
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-left border-collapse">
+                                    <thead>
+                                        <tr className="border-b border-p31-glassBorder bg-black/20">
+                                            <th className="p-4 text-[12px] uppercase tracking-[0.05em] text-p31-textSecondary font-bold font-sans">ID</th>
+                                            <th className="p-4 text-[12px] uppercase tracking-[0.05em] text-p31-textSecondary font-bold font-sans">Artifact</th>
+                                            <th className="p-4 text-[12px] uppercase tracking-[0.05em] text-p31-textSecondary font-bold font-sans">Primary Check</th>
+                                            <th className="p-4 text-[12px] uppercase tracking-[0.05em] text-p31-textSecondary font-bold font-sans">Target Metric</th>
+                                            <th className="p-4 text-[12px] uppercase tracking-[0.05em] text-p31-textSecondary font-bold font-sans">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="font-sans text-[14px]">
+                                        {ARTIFACTS.map((art, idx) => (
+                                            <tr key={art.id} className="border-b border-p31-glassBorder hover:bg-white/[0.02] transition-colors group">
+                                                <td className="p-4 font-mono text-p31-textSecondary group-hover:text-p31-accent transition-colors">{art.id}</td>
+                                                <td className="p-4 font-medium text-p31-textPrimary">{art.name}</td>
+                                                <td className="p-4 text-p31-textSecondary">{art.check}</td>
+                                                <td className="p-4 font-mono text-[13px]">{art.target}</td>
+                                                <td className="p-4"><StatusBadge status={art.status} /></td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </main>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+    
+    <style>
+        @keyframes scan {
+            0% { top: 10%; opacity: 0; }
+            10% { opacity: 0.5; }
+            90% { opacity: 0.5; }
+            100% { top: 90%; opacity: 0; }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+    </style>
+</body>
+</html>

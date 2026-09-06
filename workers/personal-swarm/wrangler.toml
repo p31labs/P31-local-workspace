@@ -1,0 +1,30 @@
+name = "personal-swarm"
+main = "src/index.ts"
+compatibility_date = "2026-07-16"
+
+# CWP-2026-040 — Personal Sierpinski Swarm
+# Storage decision (user: best fit for stack): Self core stays PGLite/local in the
+# PHOS client (sovereign). Family/Career sync to the EXISTING p31-cortex D1
+# (binding DB) — NO new database (D1 Free Plan is 10/10 used).
+# Cron decision: consolidation is EVENT-DRIVEN (fired on causal capture), so NO
+# new cron trigger (cron budget is 5/5 used).
+
+[[d1_databases]]
+binding = "DB"
+database_name = "p31-cortex"
+database_id = "6a645125-23c6-4c35-86c9-eeea5744301a"
+
+# CWP-2026-040H — spatial dashboard asset (the built public/spatial-dashboard.html).
+# BUG-05 fix: served via /spatial from this R2 binding (not a mis-wired ASSETS module).
+[[r2_buckets]]
+binding = "PHOS_ASSETS"
+bucket_name = "phos-assets"
+
+[vars]
+CORTEX_URL = "https://p31-cortex.p31labs.workers.dev"
+
+[observability]
+enabled = true
+
+[cache]
+enabled = true

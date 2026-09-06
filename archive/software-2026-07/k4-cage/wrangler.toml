@@ -1,0 +1,66 @@
+# k4-cage — CWP-30 unified (K4Topology + FamilyMeshRoom DOs, D1 telemetry)
+# P31 Labs, Inc. | EIN 42-1888158
+#
+# Free-plan note: Cloudflare free tier requires new_sqlite_classes (code 10097).
+# K4Topology + FamilyMeshRoom use ctx.storage.get/put — fully compatible.
+#
+# DO migration history (as-applied in Cloudflare):
+#   v2-hibernation — created FamilyMeshRoom (already exists)
+#   v3-production  — creates K4Topology (does not yet exist)
+#
+# First-time D1 setup (optional telemetry chain):
+#   npx wrangler d1 create p31-telemetry  → paste database_id below
+#   npx wrangler d1 execute p31-telemetry --remote --file=../unified-k4-cage/schema.sql
+#   npx wrangler secret put ADMIN_TOKEN
+# Optional:
+#   npx wrangler secret put INTERNAL_FANOUT_TOKEN
+
+name = "k4-cage"
+main = "src/index.js"
+compatibility_date = "2026-07-16"
+
+[durable_objects]
+bindings = [
+  { name = "K4_TOPOLOGY",      class_name = "K4Topology" },
+  { name = "FAMILY_MESH_ROOM", class_name = "FamilyMeshRoom" },
+]
+
+# All DO classes already exist on the server — migrations are retained as
+# no-ops to keep the tag chain consistent with the published script.
+[[migrations]]
+tag = "v2-hibernation"
+
+[[migrations]]
+tag = "v3-production"
+
+[[migrations]]
+tag = "v4-messaging"
+
+# Published script has v5-cage tag — include to avoid tag-mismatch drift.
+[[migrations]]
+tag = "v5-cage"
+
+# Remove orphan FamilyCageDO class (stale from previous version)
+# Note: cannot delete a class that was never exported — skip deletion
+# [[migrations]]
+# tag = "v6-remove-legacy"
+# deleted_classes = ["FamilyCageDO"]
+
+# [[d1_databases]]
+# binding = "DB"
+# database_name = "p31-telemetry"
+# database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+
+[[kv_namespaces]]
+binding = "K4_MESH"
+id = "94f07e54c7e841e2ae70e737cc55aa63"
+
+[vars]
+WORKER_VERSION = "2.0.0"
+TOPOLOGY = "K4"
+ENVIRONMENT = "production"
+MESH_ROOM_IDS = "family-mesh"
+ORCHESTRATOR_WEBHOOK = "https://p31-orchestrator.trimtab-signal.workers.dev/api/webhook/k4-cage"
+
+[cache]
+enabled = true

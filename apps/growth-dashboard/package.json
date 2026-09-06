@@ -1,0 +1,38 @@
+{
+  "name": "growth-dashboard",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@p31/design-core": "workspace:*",
+    "@p31/ui": "workspace:*",
+    "@tanstack/react-query": "^5.59.0",
+    "recharts": "^2.13.0",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "react-router-dom": "^7.18.1",
+    "zustand": "^5.0.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.2.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^4.7.0",
+    "babel-plugin-react-compiler": "^1.0.0",
+    "jsdom": "^24.1.3",
+    "tailwindcss": "^4.2.1",
+    "typescript": "^5.7.0",
+    "vite": "^6.4.2",
+    "vitest": "^3.0.0"
+  }
+}

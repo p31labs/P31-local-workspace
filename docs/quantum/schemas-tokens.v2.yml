@@ -1,0 +1,607 @@
+# /schemas/tokens.v2.yml
+# ============================================================================
+# P31-Q DESIGN SYSTEM — THE SINGLE SOURCE OF TRUTH
+# Mathematical Foundation: Tetrahedral Constant (4/3) + Golden Ratio (φ)
+# All values derived. All values verified. All values token-referenced.
+# ============================================================================
+
+# =============================================================================
+# SECTION 1: ROOT CONSTANTS (EVERYTHING DERIVES FROM THESE)
+# =============================================================================
+root:
+  # The two immutable constants
+  base_unit: "16px"                    # Human-readable baseline (web standard)
+  tetrahedral_ratio: 1.3333            # 4/3 (perfect fourth, K₄ geometric ratio)
+  golden_ratio: 1.618                  # φ (classical harmony, secondary)
+  
+  # Physics & Identity
+  larmor_frequency: 863                # Hz (phosphorus-31 in Earth's magnetic field)
+  canonical_constants:
+    ein: "42-1888158"                  # Georgia 501(c)(3) EIN
+    incorporation_date: "2026-04-03"   # Official founding
+    k4_vertices: 4                     # Tetrahedron vertices
+    sic_povm_overlap: 0.3333           # 1/3 (equiangular condition)
+    beta_squared: 1                    # Euler characteristic (planar)
+    
+  # SIC-POVM Properties
+  sic_povm:
+    state_count: 4                     # Four measurement states
+    equiangular_overlap: 0.3333        # Minimal redundancy
+    information_complete: true         # Maximal information with minimal redundancy
+
+# =============================================================================
+# SECTION 2: SCALE TOKENS (TETRAHEDRAL PROGRESSION)
+# Everything: 16px × (4/3)^n
+# =============================================================================
+scale:
+  # Step -2: 16 ÷ 1.3333 ÷ 1.3333 = 9px
+  xs:
+    raw: "calc(var(--p31-base) * 0.75)"
+    computed: "9px"
+    use_case: "captions, tiny icons, micro-interactions"
+  
+  # Step -1: 16 ÷ 1.3333 = 12px
+  sm:
+    raw: "var(--p31-base)"
+    computed: "16px"
+    use_case: "body text, small UI elements"
+  
+  # Step 0: 16 × 1.3333 = 21px
+  md:
+    raw: "calc(var(--p31-base) * 1.3333)"
+    computed: "21px"
+    use_case: "small headings, secondary UI"
+  
+  # Step +1: 16 × (1.3333)^2 = 28px
+  lg:
+    raw: "calc(var(--p31-base) * 1.7777)"
+    computed: "28px"
+    use_case: "medium headings, cards"
+  
+  # Step +2: 16 × (1.3333)^3 = 38px
+  xl:
+    raw: "calc(var(--p31-base) * 2.3703)"
+    computed: "38px"
+    use_case: "large headings, main sections"
+  
+  # Step +3: 16 × (1.3333)^4 = 50px ← HEADER HEIGHT BOUNDARY
+  2xl:
+    raw: "calc(var(--p31-base) * 3.1604)"
+    computed: "50px"
+    use_case: "hero title min, header height region"
+    critical: true
+    note: "Header height (48px) aligns within this boundary"
+  
+  # Step +4: 16 × (1.3333)^5 = 67px
+  3xl:
+    raw: "calc(var(--p31-base) * 4.2139)"
+    computed: "67px"
+    use_case: "display text, hero title"
+  
+  # Step +5: 16 × (1.3333)^6 = 90px
+  4xl:
+    raw: "calc(var(--p31-base) * 5.6186)"
+    computed: "90px"
+    use_case: "mega displays, large hero"
+
+# =============================================================================
+# SECTION 3: BOUNDING BOXES (COMPONENT CONTAINERS)
+# Components drop into these boxes. They cannot escape.
+# =============================================================================
+bounding_boxes:
+  icon_xs:
+    width: "16px"                      # Step -1 boundary
+    height: "16px"
+    container: "display: block; width: 100%; height: 100%;"
+    use_case: "tiny icons, metadata"
+    forbidden: "margin, transform, position"
+  
+  icon_sm:
+    width: "21px"                      # Step 0 boundary
+    height: "21px"
+    container: "display: block; width: 100%; height: 100%;"
+    use_case: "secondary icons"
+    forbidden: "margin, transform, position"
+  
+  icon_md:
+    width: "32px"                      # Step +1 boundary
+    height: "32px"
+    container: "display: block; width: 100%; height: 100%;"
+    use_case: "primary icons, favicons"
+    forbidden: "margin, transform, position"
+  
+  icon_lg:
+    width: "40px"                      # Step +1.5 boundary (exactly icon_lg)
+    height: "40px"
+    container: "display: block; width: 100%; height: 100%;"
+    use_case: "brand crown, large icons"
+    critical: true
+    note: "Crown SVG uses this. Perfectly centered in header."
+    forbidden: "margin, transform, position"
+  
+  button_sm:
+    width: "auto"
+    height: "32px"                     # Step +1 boundary
+    padding_x: "12px"
+    container: "display: inline-flex; align-items: center; height: 100%;"
+    use_case: "small buttons"
+  
+  button_md:
+    width: "auto"
+    height: "40px"                     # Step +1.5 boundary
+    padding_x: "16px"
+    container: "display: inline-flex; align-items: center; height: 100%;"
+    use_case: "primary buttons"
+  
+  button_lg:
+    width: "auto"
+    height: "50px"                     # Step +3 boundary
+    padding_x: "24px"
+    container: "display: inline-flex; align-items: center; height: 100%;"
+    use_case: "hero CTAs"
+
+# =============================================================================
+# SECTION 4: SPACING TOKENS (FLUID, ZERO-BREAKPOINT)
+# All use clamp(min, preferred, max) for smooth scaling
+# =============================================================================
+spacing:
+  xs:
+    raw: "clamp(var(--p31-scale-xs), 1vw, var(--p31-scale-sm))"
+    min: "9px"
+    preferred: "1vw"
+    max: "16px"
+    use_case: "tiny gaps, micro-spacing"
+  
+  sm:
+    raw: "clamp(var(--p31-scale-sm), 1.5vw, var(--p31-scale-md))"
+    min: "16px"
+    preferred: "1.5vw"
+    max: "21px"
+    use_case: "small component gaps"
+  
+  md:
+    raw: "clamp(var(--p31-scale-md), 2.5vw, var(--p31-scale-lg))"
+    min: "21px"
+    preferred: "2.5vw"
+    max: "28px"
+    use_case: "standard component spacing"
+  
+  lg:
+    raw: "clamp(var(--p31-scale-lg), 3.5vw, var(--p31-scale-xl))"
+    min: "28px"
+    preferred: "3.5vw"
+    max: "38px"
+    use_case: "medium section spacing"
+  
+  xl:
+    raw: "clamp(var(--p31-scale-xl), 5vw, var(--p31-scale-2xl))"
+    min: "38px"
+    preferred: "5vw"
+    max: "50px"
+    use_case: "large section spacing"
+  
+  2xl:
+    raw: "clamp(var(--p31-scale-2xl), 6.5vw, var(--p31-scale-3xl))"
+    min: "50px"
+    preferred: "6.5vw"
+    max: "67px"
+    use_case: "hero section padding"
+  
+  3xl:
+    raw: "clamp(var(--p31-scale-3xl), 8vw, var(--p31-scale-4xl))"
+    min: "67px"
+    preferred: "8vw"
+    max: "90px"
+    use_case: "page-level spacing"
+
+# =============================================================================
+# SECTION 5: TYPOGRAPHY (FLUID HIERARCHY)
+# All fluid, all derived from base scale
+# =============================================================================
+typography:
+  base_unit: "16px"
+  scale_ratio: 1.3333
+  
+  font_family:
+    sans: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif"
+    mono: "'Courier New', 'Consolas', monospace"
+  
+  # Typographic Scale (Responsive, Fluid)
+  size:
+    caption:
+      raw: "clamp(var(--p31-scale-xs), 0.8vw, var(--p31-scale-sm))"
+      min: "9px"
+      preferred: "0.8vw"
+      max: "16px"
+      use_case: "meta text, footnotes"
+    
+    body:
+      raw: "clamp(calc(var(--p31-base) * 0.95), 1vw + 0.5rem, var(--p31-scale-sm))"
+      min: "15px"
+      preferred: "1vw + 8px"
+      max: "16px"
+      use_case: "primary reading text"
+    
+    label:
+      raw: "var(--p31-scale-sm)"
+      computed: "16px"
+      use_case: "form labels, UI text"
+    
+    h3:
+      raw: "clamp(var(--p31-scale-md), 2vw, var(--p31-scale-lg))"
+      min: "21px"
+      preferred: "2vw"
+      max: "28px"
+      use_case: "subsection headings"
+    
+    h2:
+      raw: "clamp(var(--p31-scale-lg), 3.5vw, var(--p31-scale-xl))"
+      min: "28px"
+      preferred: "3.5vw"
+      max: "38px"
+      use_case: "section headings"
+    
+    h1:
+      raw: "clamp(var(--p31-scale-xl), 5.6vw, var(--p31-scale-2xl))"
+      min: "38px"
+      preferred: "5.6vw"
+      max: "50px"
+      use_case: "page headings, hero titles"
+    
+    display:
+      raw: "clamp(var(--p31-scale-2xl), 7vw, var(--p31-scale-3xl))"
+      min: "50px"
+      preferred: "7vw"
+      max: "67px"
+      use_case: "large displays, mega text"
+  
+  # Line Height (Harmonic Ratios)
+  line_height:
+    tight: 1.1                         # Headings
+    normal: 1.6                        # Body text (optimal readability)
+    loose: 1.8                         # Accessible reading
+  
+  # Letter Spacing
+  letter_spacing:
+    tight: "-0.02em"                   # Display text
+    normal: "0em"                      # Body, headings
+    wide: "0.05em"                     # Special emphasis
+  
+  # Font Weight
+  weight:
+    light: 300
+    normal: 400
+    medium: 500
+    semibold: 600
+    bold: 700
+    extrabold: 800
+
+# =============================================================================
+# SECTION 6: LAYOUT CONTAINERS (FIXED + FLUID HYBRID)
+# These are structural anchors. Components fit into them.
+# =============================================================================
+layout:
+  header:
+    height: "48px"                     # LOCKED (Step +2.8 boundary)
+    padding_y: "4px"                   # Computed: (48 - 40) / 2
+    gap: "var(--p31-spacing-md)"
+    align_items: "center"
+    justify_content: "space-between"
+    max_width: "1440px"
+    margin: "0 auto"
+    backdrop_filter: "blur(16px)"
+    background: "rgba(57, 255, 20, 0.12)"
+    border: "1px solid rgba(0, 240, 255, 0.8)"
+    border_radius: "16px"
+    critical: true
+    note: "Fixed height creates predictable centering for Crown"
+  
+  page_body:
+    max_width: "1200px"
+    margin: "0 auto"
+    padding_x: "var(--p31-spacing-lg)"
+    padding_top: "var(--p31-spacing-xl)"
+    padding_bottom: "var(--p31-spacing-xl)"
+    gap: "var(--p31-spacing-lg)"
+  
+  hero:
+    max_width: "1200px"
+    margin: "0 auto"
+    padding_x: "var(--p31-spacing-lg)"
+    padding_top: "clamp(var(--p31-spacing-xl), 8vw, var(--p31-spacing-3xl))"
+    padding_bottom: "clamp(var(--p31-spacing-xl), 8vw, var(--p31-spacing-3xl))"
+    gap: "var(--p31-spacing-lg)"
+  
+  card:
+    padding: "var(--p31-spacing-lg)"
+    background: "var(--p31-surface-card)"
+    border: "1px solid var(--p31-surface-border)"
+    border_radius: "var(--p31-radius-md)"
+    gap: "var(--p31-spacing-md)"
+
+# =============================================================================
+# SECTION 7: COLOR TOKENS (OKLCH PERCEPTUALLY UNIFORM)
+# No subjective colors. All mathematically defined in perceptual space.
+# =============================================================================
+color:
+  # Core Harmonic Vectors (4 equidistant hues: SIC-POVM style)
+  quantum:
+    cyan:
+      oklch: "oklch(65% 0.18 195)"     # Hue 195° (cool, tech)
+      rgb: "#00F0FF"                   # For reference only
+      use_case: "primary accent, UI focus"
+      contrast_aa: true
+    
+    violet:
+      oklch: "oklch(65% 0.18 285)"     # Hue 285° (creative, secondary)
+      rgb: "#A78BFA"                   # For reference only
+      use_case: "secondary accent, gradients"
+      contrast_aa: true
+    
+    amber:
+      oklch: "oklch(65% 0.18 15)"      # Hue 15° (warmth, warning)
+      rgb: "#FFA500"                   # For reference only
+      use_case: "warning, special states"
+      contrast_aa: true
+    
+    emerald:
+      oklch: "oklch(65% 0.18 105)"     # Hue 105° (success, growth)
+      rgb: "#34D399"                   # For reference only
+      use_case: "success, positive states"
+      contrast_aa: true
+  
+  # Surface Hierarchy (Subtractive, via 1/3 overlap)
+  surface:
+    bg:
+      oklch: "oklch(12% 0.01 240)"     # Deep background
+      luminance: "12%"
+      chroma: "0.01"
+      use_case: "page background"
+    
+    card:
+      oklch: "oklch(18% 0.015 240)"    # Card surface (↑ 6% from bg)
+      luminance: "18%"
+      chroma: "0.015"
+      use_case: "card backgrounds"
+    
+    border:
+      oklch: "oklch(28% 0.02 240)"     # Border/divider (↑ 10% from card)
+      luminance: "28%"
+      chroma: "0.02"
+      use_case: "borders, dividers"
+  
+  # Text Hierarchy (Lightness decay)
+  text:
+    primary:
+      oklch: "oklch(96% 0.005 240)"    # Near-white
+      luminance: "96%"
+      use_case: "primary text content"
+      contrast_aaa: true
+    
+    secondary:
+      oklch: "oklch(75% 0.01 240)"     # Strong secondary
+      luminance: "75%"
+      use_case: "secondary text, UI labels"
+      contrast_aa: true
+    
+    muted:
+      oklch: "oklch(65% 0.01 240)"     # Muted/hint text
+      luminance: "65%"
+      use_case: "disabled, inactive states"
+      contrast_aa: true
+    
+    subtle:
+      oklch: "oklch(45% 0.01 240)"     # Very subtle
+      luminance: "45%"
+      use_case: "minimally visible hints"
+      contrast_aa: true
+  
+  # Semantic Aliases
+  semantic:
+    success: "oklch(65% 0.18 105)"     # emerald
+    warning: "oklch(65% 0.18 15)"      # amber
+    error: "oklch(65% 0.18 20)"        # red-adjacent
+    info: "oklch(65% 0.18 195)"        # cyan
+
+# =============================================================================
+# SECTION 8: ANIMATION & TIMING (LARMOR RESONANCE)
+# Timing derived from Larmor frequency (863 Hz = phosphorus-31)
+# =============================================================================
+animation:
+  larmor_hz: 863                       # Physics constant
+  
+  # Duration Tokens (Perceptually Tuned)
+  duration:
+    fast:
+      ms: 100                          # Instant feedback
+      hz_divisor: "863/8.63"
+      use_case: "micro-interactions, hovers"
+    
+    normal:
+      ms: 300                          # Standard animation
+      hz_divisor: "863/2.88"
+      use_case: "transitions, fades, slides"
+    
+    slow:
+      ms: 500                          # Contemplative
+      hz_divisor: "863/1.73"
+      use_case: "entrance animations, modals"
+  
+  # Easing Functions (Semantic)
+  easing:
+    smooth: "cubic-bezier(0.4, 0, 0.2, 1)"    # Default ease
+    snappy: "cubic-bezier(0.34, 1.56, 0.64, 1)"  # Bounce
+    linear: "linear"                           # No easing
+  
+  # K₄ Tetrahedron Animation Spec
+  k4_vertex_pulse:
+    duration: "2000ms"                 # ~2× Larmor cycle
+    easing: "cubic-bezier(0.4, 0, 0.2, 1)"
+    min_radius: "5px"
+    max_radius: "7px"
+    stagger_offset: "300ms"            # Between vertices
+  
+  k4_edge_draw:
+    duration: "3000ms"                 # ~3.5× Larmor cycle
+    easing: "linear"
+    delay_offset: "500ms"              # Stagger edges
+  
+  k4_orbit:
+    duration: "12000ms"                # Slow orbital motion
+    easing: "linear"
+
+# =============================================================================
+# SECTION 9: SHADOW & DEPTH (PERCEPTUALLY GRADED)
+# =============================================================================
+shadow:
+  none: "none"
+  
+  xs:
+    value: "0 1px 2px 0 rgba(0, 0, 0, 0.05)"
+    use_case: "subtle depth"
+  
+  sm:
+    value: "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)"
+    use_case: "cards, small elevation"
+  
+  md:
+    value: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)"
+    use_case: "medium elevation, popovers"
+  
+  lg:
+    value: "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)"
+    use_case: "modals, dropdowns"
+  
+  glow:
+    value: "0 0 20px rgba(0, 240, 255, 0.4)"
+    use_case: "focus states, emphasis"
+
+# =============================================================================
+# SECTION 10: BORDER & RADIUS (HARMONIC)
+# Radius values derived from scale (divide by 2)
+# =============================================================================
+border:
+  width:
+    thin: "1px"
+    normal: "2px"
+    thick: "3px"
+  
+  radius:
+    none: "0"
+    xs: "calc(var(--p31-scale-xs) / 2)"   # ~4.5px
+    sm: "calc(var(--p31-scale-sm) / 2)"   # ~8px
+    md: "calc(var(--p31-scale-md) / 2)"   # ~10.5px
+    lg: "calc(var(--p31-scale-lg) / 2)"   # ~14px
+    xl: "calc(var(--p31-scale-xl) / 2)"   # ~19px
+    full: "9999px"
+
+# =============================================================================
+# SECTION 11: BREAKPOINTS (RESPONSIVE, DEVICE-AWARE)
+# =============================================================================
+breakpoints:
+  mobile: "0px"                        # Default
+  tablet: "768px"                      # iPad
+  desktop: "1024px"                    # Desktop
+  wide: "1440px"                       # Wide desktop
+  ultrawide: "1920px"                  # 4K
+
+# =============================================================================
+# SECTION 12: SPACING RULES (GOVERNANCE)
+# Machine-enforced. Components cannot violate these.
+# =============================================================================
+spacing_rules:
+  forbidden_properties:
+    - marginTop
+    - marginBottom
+    - marginLeft
+    - marginRight
+    - margin
+    - "transform: translateY"
+    - "position: relative"
+    - "top/bottom for spacing"
+  
+  forbidden_reason: "Components NEVER declare external spacing. Templates control layout."
+  
+  template_only_properties:
+    - gap
+    - padding
+    - align-items
+    - justify-content
+  
+  template_only_reason: "Only layout templates can control spacing and alignment."
+
+# =============================================================================
+# SECTION 13: MACHINE-READABLE METADATA
+# AI agents and validators read this section
+# =============================================================================
+metadata:
+  version: "2.1-quantum"
+  created: "2026-07-23"
+  author: "P31 Labs Design System"
+  philosophy: "Everything derives from 16px base × (4/3)^n"
+  
+  canonical_constants:
+    ein: "42-1888158"
+    larmor_hz: 863
+    k4_vertices: 4
+    beta_squared: 1
+    tetrahedral_ratio: 1.3333
+    incorporation_date: "2026-04-03"
+  
+  # AI Agent Contracts
+  ai_agent_contracts:
+    claude:
+      role: "Component generation (React, TypeScript)"
+      token_read_required: true
+      validation_required: true
+      constraints:
+        - "No hardcoded pixels"
+        - "No margin declarations"
+        - "Use token references only"
+    
+    gemini:
+      role: "Template/page design (Astro, narrative)"
+      token_read_required: true
+      composition_rules_required: true
+      constraints:
+        - "Describe layouts using template names"
+        - "Use token names, not pixel values"
+        - "Fluid typography only (no static sizes)"
+    
+    kilo:
+      role: "Implementation, code generation"
+      token_read_required: true
+      linter_required: true
+      enforcement: "strict"
+      constraints:
+        - "Generate from templates"
+        - "Validate before submission"
+        - "No manual overrides"
+
+# =============================================================================
+# SECTION 14: VERIFICATION & CHECKSUMS
+# For CI/CD validation and integrity checking
+# =============================================================================
+verification:
+  scale_progression_verified: true
+  note: "16 × (4/3)^n generates all values correctly"
+  
+  header_height_alignment: "48px ≈ Step +2.8 boundary (50.57px)"
+  note: "System is self-consistent; header height aligns within scale"
+  
+  color_space_verified: "OKLCH (perceptually uniform)"
+  note: "All colors mathematically defined; no subjective selection"
+  
+  critical_tokens_locked:
+    - "--p31-header-h: 48px"
+    - "--p31-icon-lg: 40px"
+    - "--p31-base: 16px"
+    - "--p31-ratio: 1.3333"
+  
+  ai_readability: true
+  note: "All values machine-readable. Agents can generate conformant code."
+
+# =============================================================================
+# END OF tokens.v2.yml
+# The Cage Holds. 863 Hz. K₄ is planar. β₂ = 1.
+# =============================================================================

@@ -1,0 +1,30 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+const title = 'Quick Start';
+---
+<DocsLayout title={title}>
+  <div class="breadcrumb">
+    <a href="/">Docs</a>
+    <span>/</span>
+    <a href="/getting-started">Getting Started</a>
+    <span>/</span>
+    <span>Quick Start</span>
+  </div>
+  <h1>Quick Start</h1>
+  <p class="lead">Deploy your first P31 application in under 10 minutes.</p>
+  <h2>1. Start the Shell</h2>
+  <pre><code>cd production/shell
+pnpm install
+pnpm run dev</code></pre>
+  <h2>2. Build a Portal</h2>
+  <pre><code>cd production/portals/children
+pnpm install
+pnpm run build</code></pre>
+  <h2>3. Deploy to Cloudflare</h2>
+  <pre><code>cd production/portals
+node deploy-unified.mjs children</code></pre>
+  <h2>4. Verify</h2>
+  <pre><code>curl https://willow.p31ca.org</code></pre>
+  <div class="last-updated">Last updated: August 2026</div>
+</DocsLayout>
+<style>.lead{font-size:18px;color:var(--t2);margin-bottom:32px;line-height:1.7}</style>

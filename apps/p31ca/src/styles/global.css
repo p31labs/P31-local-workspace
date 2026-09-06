@@ -1,47 +1,66 @@
-@import '@p31/design-core/css/base.css';
-@import '@p31/design-core/css/glass.css';
-@import '@p31/design-core/css/motion.css';
-@import '@p31/design-core/css/typography.css';
+@import "@p31/design-core/css/tokens.css";
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-/* ── P31 Design Tokens ── */
-
-@layer base {
-  html {
-    background-color: var(--p31-void);
-    color: var(--p31-text-primary);
-    font-family: var(--p31-font-sans);
-    scroll-behavior: smooth;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-
-  ::selection {
-    background: rgba(0, 240, 255, 0.2);
-    color: #fff;
-  }
+:root {
+  color-scheme: dark;
+  --p31-bg: oklch(14% 0.014 75);
+  --p31-surface: oklch(19% 0.017 74);
+  --p31-surface2: oklch(25% 0.02 72);
+  --p31-accent: oklch(65% 0.14 45);
+  --p31-accent-alt: oklch(70% 0.09 150);
+  --p31-accent-green: oklch(70% 0.12 152);
+  --p31-accent-red: oklch(64% 0.13 22);
+  --p31-accent-gold: oklch(80% 0.135 88);
+  --p31-accent-violet: oklch(60% 0.1 28);
+  --p31-text: oklch(93% 0.012 80);
+  --p31-text-secondary: oklch(78% 0.018 75);
+  --p31-text-tertiary: oklch(70% 0.015 75);
+  --p31-glass-bg: oklch(100% 0.01 75 / 0.10);
+  --p31-glass-bg-strong: oklch(100% 0.01 75 / 0.14);
+  --p31-glass-border: oklch(100% 0.01 75 / 0.16);
+  --p31-glass-border-hover: oklch(100% 0.01 75 / 0.25);
+  --p31-glass-blur: blur(14px);
+  --p31-glass-shadow: 0 8px 24px oklch(10% .02 60 / .35);
+  --p31-radius-sm: 2px;
+  --p31-radius-md: 4px;
+  --p31-radius-lg: 8px;
+  --p31-radius-xl: 12px;
+  --p31-radius-full: 9999px;
+  --p31-font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
+  --p31-font-mono: 'JetBrains Mono', monospace;
+  --p31-topbar-height: 56px;
 }
 
-/* ── Phosphor glow utility ── */
+html {
+  font-family: var(--p31-font-sans);
+  background: var(--p31-bg);
+  color: var(--p31-text);
+}
 
-@layer components {
-  .phosphor-glow {
-    text-shadow: 0 0 20px rgba(0, 240, 255, 0.3),
-                 0 0 40px rgba(0, 240, 255, 0.1);
-  }
+body {
+  margin: 0;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
 
-  .status-live {
-    background: rgba(0, 255, 136, 0.1);
-    border-color: rgba(0, 255, 136, 0.25);
-    color: #00FF88;
-  }
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 0;
+  z-index: 9999;
+  padding: 0.75rem 1.5rem;
+  background: var(--p31-accent);
+  color: #000;
+  font-family: monospace;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 0 0 8px 0;
+}
+.skip-link:focus {
+  top: 0;
+}
 
-  .status-dev {
-    background: rgba(255, 215, 0, 0.1);
-    border-color: rgba(255, 215, 0, 0.25);
-    color: #FFD700;
-  }
+:focus-visible {
+  outline: 2px solid var(--p31-accent);
+  outline-offset: 2px;
 }

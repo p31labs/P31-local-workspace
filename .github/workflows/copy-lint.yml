@@ -1,0 +1,30 @@
+name: Copy Lint
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  copy-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check for banned public-facing terms
+        run: |
+          BANNED_PATTERNS='sovereign|spoon-aware|Spoon-Aware|Spoon‑Aware|spoon aware|quantum-ready|post-quantum'
+          ALLOWED_FILES='apps/p31ca/src/pages/.*\.astro|apps/p31ca/src/layouts/.*\.astro|apps/phosphorus31/src/pages/.*\.astro|apps/phosphorus31/src/layouts/.*\.astro'
+
+          MATCHES=$(grep -rEn --include="*.astro" -E "$BANNED_PATTERNS" apps/p31ca/src/pages apps/p31ca/src/layouts apps/phosphorus31/src/pages apps/phosphorus31/src/layouts 2>/dev/null | grep -v 'quantum\.css\|data-theme="quantum"\|@p31/ui/quantum\|quantum-cyan\|quantum-violet\|quantum-red\|quantum-green' || true)
+
+          if [ -n "$MATCHES" ]; then
+            echo "❌ Banned terms found in public-facing copy:"
+            echo "$MATCHES"
+            echo ""
+            echo "See COPY_GUIDELINES.md for approved replacements."
+            exit 1
+          fi
+
+          echo "✅ No banned terms found in public-facing copy."

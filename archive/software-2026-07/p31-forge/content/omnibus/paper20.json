@@ -1,0 +1,25 @@
+{
+  "kind": "paper",
+  "filename": "P31_Paper_20_Omnibus_D20_System.docx",
+  "program": "research",
+  "title": "Omnibus D20 System: Geodesic Navigation for Research Provenance",
+  "abstract": "20-sided geodesic dice for research navigation",
+  "doi": "10.5281/zenodo.xxxxx",
+  "body": [
+    { "type": "h1", "text": "ABSTRACT" },
+    { "type": "para", "text": "This paper documents the Omnibus D20 System, a 20-sided geodesic dice (icosahedron) interface for navigating the P31 Labs research corpus. Each face represents one research paper, providing spatial, tactile interaction with complex scientific knowledge." },
+    { "type": "h1", "text": "INTRODUCTION" },
+    { "type": "para", "text": "As research corpora grow beyond traditional linear navigation methods, spatial and geometric interfaces become essential for knowledge discovery. The Omnibus D20 provides a novel interface that maps the first 20 papers to the faces of an icosahedron, with Papers 21-25 accessible via the central core." },
+    { "type": "h1", "text": "GEOMETRICAL FOUNDATIONS" },
+    { "type": "bullet", "text": "Icosahedron geometry: V=12, E=30, F=20" },
+    { "type": "bullet", "text": "Euler characteristic: V - E + F = 2 (12 - 30 + 20 = 2)" },
+    { "type": "bullet", "text": "Represents mathematical certainty and structural stability" },
+    { "type": "h1", "text": "SYSTEM COMPONENTS" },
+    { "type": "bullet", "text": "Holographic CSS-3D D20 for high-performance UI rendering" },
+    { "type": "bullet", "text": "Three.js variant for rich visualizations" },
+    { "type": "bullet", "text": "Geodesic Seal interaction for 'Natural 20' sovereignty verification" },
+    { "type": "bullet", "text": "Integration with P31 Forge document generation engine" },
+    { "type": "h1", "text": "APPLICATIONS" },
+    { "type": "para", "text": "The Omnibus D20 serves as both a navigation system and philosophical statement: geometry is destiny, and the icosahedron provides the optimal structure for organizing complex research knowledge." }
+  ]
+}

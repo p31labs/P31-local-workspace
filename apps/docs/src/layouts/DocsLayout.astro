@@ -1,0 +1,215 @@
+---
+import '../styles/global.css';
+import Search from '../components/Search.astro';
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = 'P31 Labs documentation' } = Astro.props;
+---
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title} — P31 Docs</title>
+    <meta name="description" content={description} />
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <a href="/" class="logo">P31 Docs</a>
+        </div>
+        <nav class="sidebar-nav">
+          <Search />
+          <div class="nav-section">
+            <div class="nav-section-title">Getting Started</div>
+            <a href="/getting-started" class="nav-link">Introduction</a>
+            <a href="/getting-started/installation" class="nav-link">Installation</a>
+            <a href="/getting-started/quickstart" class="nav-link">Quick Start</a>
+          </div>
+          <div class="nav-section">
+            <div class="nav-section-title">Architecture</div>
+            <a href="/architecture" class="nav-link">Overview</a>
+            <a href="/architecture/shell" class="nav-link">Sovereign Shell</a>
+            <a href="/architecture/portals" class="nav-link">Portals</a>
+            <a href="/architecture/workers" class="nav-link">Workers</a>
+            <a href="/architecture/packages" class="nav-link">Packages</a>
+          </div>
+          <div class="nav-section">
+            <div class="nav-section-title">Guides</div>
+            <a href="/guides/deployment" class="nav-link">Deployment</a>
+            <a href="/guides/security" class="nav-link">Security</a>
+            <a href="/guides/testing" class="nav-link">Testing</a>
+            <a href="/guides/ci-cd" class="nav-link">CI/CD</a>
+          </div>
+          <div class="nav-section">
+            <div class="nav-section-title">Reference</div>
+            <a href="/reference/mcp" class="nav-link">MCP Servers</a>
+            <a href="/reference/pqc" class="nav-link">Post-Quantum Crypto</a>
+            <a href="/reference/eudi" class="nav-link">EUDI Wallet</a>
+            <a href="/reference/api" class="nav-link">API Reference</a>
+          </div>
+        </nav>
+        <div class="sidebar-footer">
+          <a href="https://github.com/p31labs" target="_blank">GitHub</a>
+          <a href="https://p31ca.org" target="_blank">p31ca.org</a>
+        </div>
+      </aside>
+      <main class="content">
+        <slot />
+      </main>
+    </div>
+    <script>
+      // Search functionality
+      const searchInput = document.getElementById('search-input');
+      const searchResults = document.getElementById('search-results');
+      
+      if (searchInput && searchResults) {
+        searchInput.addEventListener('input', (e) => {
+          const query = e.target.value.toLowerCase();
+          if (query.length < 2) {
+            searchResults.innerHTML = '';
+            searchResults.style.display = 'none';
+            return;
+          }
+          // Simple client-side search - in production, use a proper search index
+          searchResults.style.display = 'block';
+        });
+      }
+    </script>
+  </body>
+</html>
+
+<style>
+  :root {
+    --bg: #0a0c10;
+    --s: #12151c;
+    --b: #252a38;
+    --t: #c8cdd8;
+    --t2: #8b92a5;
+    --a: #8b5cf6;
+    --g: #00d68f;
+    --sidebar-w: 280px;
+  }
+  
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  body {
+    background: var(--bg);
+    color: var(--t);
+    font-family: system-ui, -apple-system, sans-serif;
+    line-height: 1.6;
+  }
+  
+  .app {
+    display: flex;
+    min-height: 100vh;
+  }
+  
+  .sidebar {
+    width: var(--sidebar-w);
+    background: var(--s);
+    border-right: 1px solid var(--b);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    overflow-y: auto;
+    z-index: 100;
+  }
+  
+  .sidebar-header {
+    padding: 20px;
+    border-bottom: 1px solid var(--b);
+  }
+  
+  .logo {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--a);
+    text-decoration: none;
+    letter-spacing: -0.02em;
+  }
+  
+  .sidebar-nav {
+    flex: 1;
+    padding: 16px 12px;
+    overflow-y: auto;
+  }
+  
+  .nav-section {
+    margin-bottom: 24px;
+  }
+  
+  .nav-section-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--t2);
+    margin-bottom: 8px;
+    padding: 0 8px;
+  }
+  
+  .nav-link {
+    display: block;
+    padding: 6px 12px;
+    color: var(--t);
+    text-decoration: none;
+    font-size: 14px;
+    border-radius: 6px;
+    margin-bottom: 2px;
+    transition: background 0.15s, color 0.15s;
+  }
+  
+  .nav-link:hover {
+    background: var(--b);
+    color: #fff;
+  }
+  
+  .nav-link[aria-current="page"] {
+    background: var(--a);
+    color: #fff;
+    font-weight: 600;
+  }
+  
+  .sidebar-footer {
+    padding: 16px;
+    border-top: 1px solid var(--b);
+    display: flex;
+    gap: 16px;
+  }
+  
+  .sidebar-footer a {
+    color: var(--t2);
+    text-decoration: none;
+    font-size: 12px;
+  }
+  
+  .sidebar-footer a:hover {
+    color: var(--t);
+  }
+  
+  .content {
+    flex: 1;
+    margin-left: var(--sidebar-w);
+    max-width: calc(100% - var(--sidebar-w));
+    padding: 40px 48px;
+  }
+  
+  @media (max-width: 768px) {
+    .sidebar {
+      transform: translateX(-100%);
+    }
+    .content {
+      margin-left: 0;
+      max-width: 100%;
+      padding: 24px;
+    }
+  }
+</style>

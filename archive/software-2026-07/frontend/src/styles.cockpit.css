@@ -1,0 +1,755 @@
+/**
+ * P31 Cockpit Styles — Z-Index Layer & Component Styles
+ * 
+ * Vertex 3 (Interface Node) — CSS for Cockpit Layout
+ * Extends the base styles.css with Z-layer and component styles
+ */
+
+/* ═══════════════════════════════════════════════════════════════════ */
+/* Z-Index Layer Definitions                                          */
+/* ═══════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* Z-Layer Values */
+  --z-void: 0;
+  --z-canvas: 1;
+  --z-room-hud: 10;
+  --z-router-nav: 11;
+  --z-toast: 50;
+  --z-modal: 60;
+  --z-centaur: 80;
+  --z-boot: 100;
+  --z-onboarding: 200;
+  
+  /* Cockpit Colors */
+  --phosphorus: #00FF88;
+  --quantum-cyan: #00D4FF;
+  --quantum-violet: #7A27FF;
+  --phosphorus-orange: #FF6600;
+  --calcium-amber: #F59E0B;
+  --danger-red: #EF4444;
+  --void: #050510;
+  --void-light: #0B0F19;
+  --text-primary: #E8ECF4;
+}
+
+/* ═══════════════════════════════════════════════════════════════════ */
+/* Cockpit Layout Container                                           */
+/* ═══════════════════════════════════════════════════════════════════ */
+
+.cockpit-layout {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+}
+
+/* Z-Layer Base */
+.z-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+
+.z-layer > * {
+  pointer-events: auto;
+}
+
+/* Specific Layer Styles */
+.void-starfield {
+  background: var(--void);
+  background-image: 
+    radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.15) 0%, transparent 100%),
+    radial-gradient(1px 1px at 40% 70%, rgba(255,255,255,0.1) 0%, transparent 100%),
+    radial-gradient(1px 1px at 60% 20%, rgba(255,255,255,0.12) 0%, transparent 100%),
+    radial-gradient(1px 1px at 80% 50%, rgba(255,255,255,0.08) 0%, transparent 100%),
+    radial-gradient(1px 1px at 10% 90%, rgba(255,255,255,0.1) 0%, transparent 100%),
+    radial-gradient(1px 1px at 90% 10%, rgba(255,255,255,0.1) 0%, transparent 100%);
+}
+
+.canvas-layer {
+  z-index: var(--z-canvas);
+}
+
+.room-hud-layer {
+  z-index: var(--z-room-hud);
+  pointer-events: none;
+}
+
+.room-hud-layer > * {
+  pointer-events: auto;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+
+.router-nav-layer {
+  z-index: var(--z-router-nav);
+}
+
+.toast-layer {
+  z-index: var(--z-toast);
+}
+
+.modal-layer {
+  z-index: var(--z-modal);
+}
+
+.centaur-layer {
+  z-index: var(--z-centaur);
+}
+
+.boot-layer {
+  z-index: var(--z-boot);
+}
+
+.onboarding-layer {
+  z-index: var(--z-onboarding);
+}
+
+/* ═══════════════════════════════════════════════════════════════════ */
+/* Spoon Meter Styles                                                 */
+/* ═══════════════════════════════════════════════════════════════════ */
+
+.spoon-meter {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.spoon-meter-sm {
+  gap: 6px;
+}
+
+.spoon-meter-sm .spoon-meter-bar {
+  height: 4px;
+  width: 60px;
+}
+
+.spoon-meter-md {
+  gap: 12px;
+}
+
+.spoon-meter-lg {
+  gap: 16px;
+}
+
+.spoon-meter-lg .spoon-meter-bar {
+  height: 12px;
+}
+
+.spoon-meter-label {
+  font-size: 10px;
+  letter-spacing: 2px;
+  opacity: 0.8;
+  min-width: 70px;
+}
+
+.spoon-meter-bar {
+  position: relative;
+  flex: 1;
+  height: 8px;
+  background: rgba(224, 230, 237, 0.1);
+  border-radius: 4px;
+  overflow: visible;
+}
+
+.spoon-meter-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.5s ease, background 0.5s ease;
+}
+
+.spoon-meter-threshold {
+  position: absolute;
+  top: -4px;
+  bottom: -4px;
+  width: 2px;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.spoon-meter-value {
+  font-size: 20px;
+  font-weight: 700;
+  min-width: 50px;
+}
+
+.spoon-meter-max {
+  color: var(--text-primary);
+  opacity: 0.4;
+  font-size: 14px;
+}
+
+.spoon-meter-controls {
+  display: flex;
+  gap: 4px;
+}
+
+.spoon-btn {
+  width: 28px;
+  height: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--text-primary);
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.spoon-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--phosphorus);
+}
+
+.spoon-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* ═══════════════════════════════════════════════════════════════════ */
+/* Heartbeat Lockout Styles                                          */
+/* ═══════════════════════════════════════════════════════════════════ */
+
+.heartbeat-lockout {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-boot);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--void);
+}
+
+.heartbeat-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.heartbeat-content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  color: var(--text-primary);
+}
+
+.heartbeat-status {
+  margin-bottom: 32px;
+}
+
+.heartbeat-label {
+  display: block;
+  font-size: 14px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.heartbeat-countdown {
+  font-size: 120px;
+  font-weight: 200;
+  line-height: 1;
+}
+
+.heartbeat-instruction {
+  margin-bottom: 48px;
+}
+
+.heartbeat-instruction p {
+  font-size: 18px;
+  opacity: 0.8;
+  margin: 8px 0;
+}
+
+.heartbeat-spoons {
+  font-size: 14px;
+  opacity: 0.6;
+}
+
+.heartbeat-target {
+  font-size: 12px;
+  opacity: 0.4;
+}
+
+.heartbeat-dismiss {
+  padding: 16px 48px;
+  font-size: 14px;
+  letter-spacing: 2px;
+  background: transparent;
+  border: 1px solid var(--phosphorus);
+  color: var(--phosphorus);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.heartbeat-dismiss:hover {
+  background: var(--phosphorus);
+  color: var(--void);
+}
+
+/* ═══════════════════════════════════════════════════════════════════ */
+/* Voltage Display Styles                                            */
+/* ═══════════════════════════════════════════════════════════════════ */
+
+.voltage-display {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.voltage-display.compact {
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+.voltage-meter-container {
+  width: 100%;
+}
+
+.voltage-meter-bar {
+  position: relative;
+  height: 6px;
+  background: rgba(224, 230, 237, 0.1);
+  border-radius: 3px;
+  overflow: visible;
+}
+
+.voltage-meter-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.3s ease, background 0.3s ease;
+}
+
+.voltage-threshold {
+  position: absolute;
+  top: -2px;
+  bottom: -2px;
+  width: 2px;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.voltage-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border: 1px solid;
+  border-radius: 6px;
+}
+
+.voltage-tier-badge {
+  font-size: 10px;
+  letter-spacing: 1px;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.voltage-value {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.voltage-log {
+  display: flex;
+  gap: 4px;
+  font-size: 12px;
+}
+
+.voltage-log-label {
+  opacity: 0.5;
+}
+
+.voltage-log-entry {
+  font-weight: 600;
+}
+
+/* Voltage Warning Modal */
+.voltage-warning-modal,
+.voltage-sequester {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.voltage-warning-card,
+.voltage-sequester-card {
+  background: var(--void-light);
+  border: 1px solid var(--calcium-amber);
+  border-radius: 12px;
+  padding: 32px;
+  max-width: 400px;
+  width: 90%;
+}
+
+.voltage-warning-header,
+.voltage-sequester-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.voltage-warning-icon,
+.voltage-sequester-icon {
+  font-size: 32px;
+}
+
+.voltage-warning-header h2,
+.voltage-sequester-header h2 {
+  color: var(--text-primary);
+  font-size: 20px;
+  margin: 0;
+}
+
+.voltage-warning-content,
+.voltage-sequester-content {
+  margin-bottom: 24px;
+}
+
+.voltage-warning-summary,
+.voltage-sequester-reason {
+  color: var(--text-primary);
+  margin-bottom: 16px;
+}
+
+.voltage-warning-score {
+  display: flex;
+  justify-content: space-between;
+}
+
+.voltage-warning-actions,
+.voltage-sequester-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.voltage-warning-btn,
+.voltage-sequester-btn {
+  flex: 1;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.voltage-warning-btn.decline {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--text-primary);
+}
+
+.voltage-warning-btn.accept,
+.voltage-sequester-btn {
+  background: var(--calcium-amber);
+  border: none;
+  color: var(--void);
+}
+
+.voltage-warning-btn:disabled,
+.voltage-sequester-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Sequester special */
+.voltage-sequester {
+  animation: shake 0.1s infinite;
+}
+
+@keyframes shake {
+  0% { transform: translate(1px, 1px); }
+  50% { transform: translate(-1px, -1px); }
+  100% { transform: translate(1px, 1px); }
+}
+
+/* ═══════════════════════════════════════════════════════════════════ */
+/* Fawn Guard Modal Styles                                            */
+/* ═══════════════════════════════════════════════════════════════════ */
+
+.fawn-guard-modal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.fawn-guard-card {
+  background: var(--void-light);
+  border: 1px solid var(--danger-red);
+  border-radius: 12px;
+  padding: 32px;
+  max-width: 500px;
+  width: 90%;
+}
+
+.fawn-guard-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.fawn-guard-icon {
+  font-size: 32px;
+}
+
+.fawn-guard-header h2 {
+  color: var(--text-primary);
+  font-size: 22px;
+  margin: 0;
+}
+
+.fawn-guard-explanation {
+  margin-bottom: 20px;
+  color: var(--text-primary);
+}
+
+.fawn-guard-confidence {
+  margin-top: 12px;
+  font-size: 14px;
+}
+
+.fawn-guard-markers {
+  margin-bottom: 20px;
+}
+
+.fawn-guard-markers h3 {
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: var(--text-primary);
+  opacity: 0.6;
+  margin-bottom: 12px;
+}
+
+.fawn-guard-markers ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.fawn-guard-markers li {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.fawn-marker-label {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.fawn-marker-description {
+  font-size: 12px;
+  opacity: 0.6;
+  margin-top: 2px;
+}
+
+.fawn-guard-draft-section {
+  margin-bottom: 20px;
+}
+
+.fawn-guard-toggle-draft {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--text-primary);
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.fawn-guard-draft-preview {
+  margin-top: 12px;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 6px;
+  border-left: 3px solid var(--danger-red);
+}
+
+.fawn-guard-draft-preview p {
+  color: var(--text-primary);
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.fawn-guard-context {
+  margin-bottom: 24px;
+  padding: 12px;
+  background: rgba(239, 68, 68, 0.1);
+  border-radius: 6px;
+}
+
+.fawn-guard-context p {
+  color: var(--text-primary);
+  font-size: 13px;
+  margin: 0;
+  opacity: 0.9;
+}
+
+.fawn-guard-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.fawn-guard-btn {
+  flex: 1;
+  padding: 14px 24px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.fawn-guard-btn.reject {
+  background: transparent;
+  border: 1px solid var(--danger-red);
+  color: var(--danger-red);
+}
+
+.fawn-guard-btn.confirm {
+  background: var(--phosphorus);
+  border: none;
+  color: var(--void);
+}
+
+.fawn-guard-btn:hover {
+  transform: translateY(-1px);
+}
+
+/* ═══════════════════════════════════════════════════════════════════ */
+/* Centaur Terminal Styles (AI Chat)                                   */
+/* ═══════════════════════════════════════════════════════════════════ */
+
+.centaur-terminal {
+  position: fixed;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 400px;
+  max-width: 90vw;
+  background: var(--void-light);
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  z-index: var(--z-centaur);
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+}
+
+.centaur-terminal.visible {
+  transform: translateX(0);
+}
+
+.centaur-terminal-header {
+  padding: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.centaur-terminal-title {
+  font-size: 14px;
+  letter-spacing: 2px;
+  color: var(--quantum-cyan);
+}
+
+.centaur-terminal-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+}
+
+.centaur-terminal-input {
+  padding: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* ═══════════════════════════════════════════════════════════════════ */
+/* Boot / Lock Screen Styles                                           */
+/* ═══════════════════════════════════════════════════════════════════ */
+
+.boot-screen {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-boot);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--void);
+}
+
+.boot-screen-content {
+  text-align: center;
+  max-width: 500px;
+}
+
+.boot-logo {
+  font-size: 48px;
+  margin-bottom: 24px;
+}
+
+.boot-title {
+  font-size: 32px;
+  letter-spacing: 8px;
+  color: var(--phosphorus);
+  margin-bottom: 16px;
+}
+
+.boot-subtitle {
+  font-size: 14px;
+  color: var(--text-primary);
+  opacity: 0.5;
+  letter-spacing: 4px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════ */
+/* Onboarding Styles                                                  */
+/* ═══════════════════════════════════════════════════════════════════ */
+
+.onboarding-screen {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-onboarding);
+  background: var(--void);
+}
+
+.onboarding-progress {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: 24px;
+}
+
+.onboarding-step {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+}
+
+.onboarding-step.active {
+  background: var(--phosphorus);
+  box-shadow: 0 0 12px var(--phosphorus);
+}
+
+.onboarding-step.complete {
+  background: var(--phosphorus);
+}
+
+.onboarding-content {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 48px 24px;
+  text-align: center;
+}

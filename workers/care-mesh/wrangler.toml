@@ -1,0 +1,17 @@
+name = "care-mesh"
+main = "src/index.ts"
+compatibility_date = "2026-07-16"
+
+# Reuse the shared love-ledger D1 (Free Plan is at the 10-DB cap — no new DB).
+# The care_mesh_aggregates table is created via:
+#   wrangler d1 execute love-ledger --remote --file=migrations/001_care_mesh_aggregates.sql
+[[d1_databases]]
+binding = "CARE_DB"
+database_name = "love-ledger"
+database_id = "592e3e2e-3203-4e0a-8342-9e85215ec8a6"
+
+[observability]
+enabled = true
+
+[cache]
+enabled = true

@@ -1,0 +1,35 @@
+# P31 Matrix Homeserver — Caddy reverse proxy
+# Handles: client API, federation (8448), and well-known delegation
+
+{
+    email {$LETSENCRYPT_EMAIL}
+    # Uncomment for staging cert while testing:
+    # acme_ca https://acme-staging-v02.api.letsencrypt.org/directory
+}
+
+# Matrix client API + federation
+{$DOMAIN} {
+    # Federation requests on port 8448 and /_matrix path
+    reverse_proxy /_matrix/* synapse:8008
+    reverse_proxy /_synapse/* synapse:8008
+
+    # All other requests: serve the Element web client (optional)
+    handle {
+        respond "P31 Matrix Homeserver — {$DOMAIN}" 200
+    }
+
+    log {
+        output file /data/logs/caddy-access.log {
+            roll_size 10mb
+            roll_keep 5
+        }
+    }
+}
+
+# Federation port — Matrix spec requires port 8448 OR .well-known delegation
+# Using .well-known on p31ca.org static site (see p31ca/public/.well-known/matrix/)
+# This listener handles direct federation from servers that don't use .well-known
+:{$DOMAIN}:8448 {
+    tls {$LETSENCRYPT_EMAIL}
+    reverse_proxy synapse:8008
+}

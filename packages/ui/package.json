@@ -11,7 +11,15 @@
     "./molecular-field.css": "./src/molecular-field.css",
     "./k4-hero": "./src/k4-hero.ts",
     "./k4-hero.css": "./src/k4-hero.css",
-    "./K4Hero": "./src/K4Hero.tsx"
+    "./K4Hero": "./src/K4Hero.tsx",
+    "./templates": "./src/templates/index.ts",
+    "./templates/Header": "./src/templates/Header.astro",
+    "./templates/Page": "./src/templates/Page.astro",
+    "./templates/SectionHero": "./src/templates/SectionHero.astro",
+    "./templates/SectionFeatures": "./src/templates/SectionFeatures.astro",
+    "./templates/Footer": "./src/templates/Footer.astro",
+    "./templates/TetraNav": "./src/templates/TetraNav.astro",
+    "./chrome.css": "./src/chrome.css"
   },
   "dependencies": {
     "@p31/design-core": "workspace:*",

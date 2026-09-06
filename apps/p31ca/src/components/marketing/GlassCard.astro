@@ -1,0 +1,21 @@
+---
+interface Props {
+  title?: string;
+  children?: any;
+  class?: string;
+  style?: string;
+}
+
+const { title, children, class: className = '', style = '' } = Astro.props;
+---
+
+<div class={`glass-card ${className}`} style={`background: var(--p31-glass-bg); border: 1px solid var(--p31-glass-border); backdrop-filter: var(--p31-glass-blur); -webkit-backdrop-filter: var(--p31-glass-blur); border-radius: var(--p31-radius-xl); box-shadow: var(--p31-glass-shadow); ${style}`}>
+  {title && (
+    <div class="px-6 py-4" style="border-bottom: 1px solid var(--p31-glass-border);">
+      <h3 class="text-sm font-semibold tracking-wide uppercase" style="color: var(--p31-text);">{title}</h3>
+    </div>
+  )}
+  <div class="p-6">
+    {children}
+  </div>
+</div>

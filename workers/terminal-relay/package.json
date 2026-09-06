@@ -1,0 +1,14 @@
+{
+  "name": "terminal-relay",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "deploy": "wrangler deploy"
+  },
+  "dependencies": {
+    "@cloudflare/sandbox": "^0.8.0"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  }
+}

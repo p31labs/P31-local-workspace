@@ -1,0 +1,28 @@
+---
+interface Props {
+  level?: number;
+  min?: number;
+  max?: number;
+  class?: string;
+  label?: string;
+}
+
+const { level = 3, min = 0, max = 5, class: className = '', label = 'Cognitive load' } = Astro.props;
+const current = Math.max(min, Math.min(max, level));
+const spoons = Array.from({ length: max - min + 1 }, (_, i) => min + i);
+---
+<div class:list={['spoon-dial', className]} role="radiogroup" aria-label={label}>
+  {
+    spoons.map((n) => (
+      <button
+        type="button"
+        class:list={['spoon-btn', n === current && 'active']}
+        aria-checked={n === current ? 'true' : 'false'}
+        aria-label={`Spoons = ${n}`}
+        title={`Cognitive load level ${n}`}
+      >
+        {n}
+      </button>
+    ))
+  }
+</div>

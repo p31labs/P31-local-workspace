@@ -1,0 +1,10 @@
+name = "p31-command-center"
+compatibility_date = "2026-07-16"
+compatibility_flags = ["nodejs_compat"]
+pages_build_output_dir = "out"
+
+[observability]
+enabled = true
+
+[cache]
+enabled = true

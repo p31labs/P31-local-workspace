@@ -1,0 +1,23 @@
+{
+  "name": "@p31/quantum-core",
+  "version": "0.1.0",
+  "type": "module",
+  "publishConfig": { "access": "public" },
+  "files": ["src"],
+  "exports": {
+    ".": "./src/index.ts",
+    "./sic-povm": "./src/sicPovm.ts",
+    "./posner": "./src/posner.ts",
+    "./did": "./src/did.ts",
+    "./k4": "./src/k4.ts",
+    "./cosmic": "./src/cosmic.ts",
+    "./morphogeneticField": "./src/morphogeneticField.ts",
+    "./feedbackLoop": "./src/feedbackLoop.ts",
+    "./d20": "./src/d20.ts",
+    "./bandit": "./src/bandit.ts",
+    "./edgeAdaptation": "./src/edgeAdaptation.ts"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0"
+  }
+}

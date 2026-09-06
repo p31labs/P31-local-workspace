@@ -1,0 +1,17 @@
+[package]
+name = "taler-cbs"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib"]
+
+[target.'cfg(target_arch = "wasm32")']
+rustflags = ["-Ctarget-feature=+simd128"]
+
+[dependencies]
+curve25519-dalek = { version = "4", default-features = false }
+sha2 = { version = "0.10", default-features = false }
+
+[dev-dependencies]
+hex = "0.4"

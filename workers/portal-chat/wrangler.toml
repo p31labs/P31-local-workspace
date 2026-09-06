@@ -1,0 +1,13 @@
+name = "portal-chat"
+main = "src/index.ts"
+compatibility_date = "2026-07-16"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+ENVIRONMENT = "production"
+
+[observability]
+enabled = true
+
+[cache]
+enabled = true

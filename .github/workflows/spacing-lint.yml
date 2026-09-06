@@ -1,0 +1,39 @@
+name: Spacing Lint
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  spacing-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Validate spatial rules — p31ca
+        run: node cli/index.js validate-spacing --src apps/p31ca/src --strict
+
+      - name: Validate spatial rules — phosphorus31
+        run: node cli/index.js validate-spacing --src apps/phosphorus31/src --strict
+
+      - name: Validate spatial rules — growth-dashboard
+        run: node cli/index.js validate-spacing --src apps/growth-dashboard/src --strict
+
+      - name: Validate spatial rules — phos
+        run: node cli/index.js validate-spacing --src apps/phos/src --strict
+
+      - name: Validate spatial rules — willow
+        run: node cli/index.js validate-spacing --src apps/willow/src --strict
+
+      - name: Validate spatial rules — bonding
+        run: node cli/index.js validate-spacing --src apps/bonding/src --strict

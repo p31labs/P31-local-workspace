@@ -1,0 +1,23 @@
+name = "game-builder"
+main = "src/index.ts"
+compatibility_date = "2026-07-18"
+compatibility_flags = ["nodejs_compat", "global_fetch_strictly_public"]
+
+# Optional: base URL of the roblox-bridge worker (worlds CRUD).
+# Set via wrangler secret put ROBLOX_BRIDGE_URL.
+# Defaults to the deployed worker if unset.
+
+# Optional: base URL of the shadow-bridge worker (LOVE pending/mint status).
+# Set via wrangler secret put SHADOW_BRIDGE_URL.
+
+# Shares the love-ledger D1 (Free Plan cap: 10 DBs — see AGENTS.md)
+[[d1_databases]]
+binding = "GAME_DB"
+database_name = "love-ledger"
+database_id = "592e3e2e-3203-4e0a-8342-9e85215ec8a6"
+
+[observability]
+enabled = true
+
+[env.production]
+vars = { ENVIRONMENT = "production" }

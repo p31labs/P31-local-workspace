@@ -1,0 +1,85 @@
+#!/usr/bin/env node
+/**
+ * pre-commit hook: grant-file secret scanner
+ *
+ * Scans staged grant-related files for potential secrets/API keys before commit.
+ * Runs automatically when grant-pipeline.json, content packs, or verify-grants.js are staged.
+ *
+ * Bypass: git commit --no-verify (or set P31_SKIP_GRANT_SECRET_SCAN=1)
+ */
+
+const { execSync } = require('child_process');
+const fs = require('fs');
+const path = require('path');
+
+if (process.env.P31_SKIP_GRANT_SECRET_SCAN) process.exit(0);
+
+// Get list of staged files
+function getStagedFiles() {
+  try {
+    const out = execSync('git diff --cached --name-only --diff-filter=ACMR', { encoding: 'utf-8' });
+    return out.split('\n').filter(Boolean);
+  } catch {
+    return [];
+  }
+}
+
+const staged = getStagedFiles();
+
+// Grant-relevant file patterns
+const grantPatterns = [
+  /docs\/grants\/.*\.(json|md)$/,
+  /scripts\/verify-grants\.js$/,
+  /andromeda\/04_SOFTWARE\/p31-forge\/content\/grants\/.*\.json$/,
+  /andromeda\/04_SOFTWARE\/p31-cortex\/scripts\/sync-grants\.js$/,
+];
+
+const relevant = staged.filter(f => grantPatterns.some(rx => rx.test(f)));
+
+if (relevant.length === 0) process.exit(0);
+
+console.log('\n🔍 Grant pre-commit secret scan...\n');
+
+const secretPatterns = [
+  { regex: /sk_[\w-]+/, name: 'Stripe secret key' },
+  { regex: /rk_[\w-]+/, name: 'Stripe restricted key' },
+  { regex: /ghp_[\w-]+/, name: 'GitHub PAT' },
+  { regex: /github_pat_[\w-]+/, name: 'GitHub fine-grained PAT' },
+  { regex: /AKIA[\w]{16}/, name: 'AWS access key' },
+  { regex: /AIza[\w-]{35}/, name: 'Google API key' },
+  { regex: /xoxb-[\w-]+/, name: 'Slack bot token' },
+  { regex: /Bearer [\w]+/, name: 'Bearer token' },
+  { regex: /Basic [\w=]+/, name: 'Basic auth' },
+  { regex: /-----BEGIN [A-Z ]+ PRIVATE KEY-----/, name: 'Private key' },
+  { regex: /"[a-z_]+_token"\s*:\s*"[A-Za-z0-9_\-]+"/, name: 'Token field' },
+];
+
+let found = false;
+
+for (const file of relevant) {
+  try {
+    const content = fs.readFileSync(file, 'utf-8');
+    const lines = content.split('\n');
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      for (const { regex, name } of secretPatterns) {
+        if (regex.test(line)) {
+          console.error(`❌ ${file}:${i+1} — possible ${name}`);
+          console.error(`   ${line.trim().slice(0, 100)}`);
+          found = true;
+        }
+      }
+    }
+  } catch (e) {
+    // Ignore unreadable files
+  }
+}
+
+if (found) {
+  console.log('\n🚨 COMMIT BLOCKED — secrets detected in grant files.');
+  console.log('   Remove or replace with environment variables before committing.\n');
+  process.exit(1);
+}
+
+console.log('✅ No secrets detected in grant-related files\n');
+process.exit(0);

@@ -1,0 +1,314 @@
+{
+  "schema": "p31.discordBot.manifest/1.0.0",
+  "packageVersion": "1.0.0",
+  "registryFingerprint": "a8b62d65e42ce62b9b1be173",
+  "commands": [
+    {
+      "name": "bonding",
+      "aliases": [
+        "bond",
+        "molecule",
+        "molecules"
+      ],
+      "description": "BONDING game stats, quest info, and multiplayer help",
+      "usage": "bonding [stats|quest|multiplayer]"
+    },
+    {
+      "name": "book",
+      "aliases": [
+        "mnft",
+        "mothernatrue",
+        "storybook"
+      ],
+      "description": "Mother Nature and Father Time — P31 Labs children's book",
+      "usage": "book [read|pdf|about]"
+    },
+    {
+      "name": "chain",
+      "aliases": [
+        "exquisite",
+        "story"
+      ],
+      "description": "Collaborative one-line-at-a-time story — exquisite mesh",
+      "usage": "chain start • chain add …words • chain view • chain undo • chain end"
+    },
+    {
+      "name": "claim",
+      "aliases": [
+        "discovered",
+        "found"
+      ],
+      "description": "Claim an egg you found in the Quantum Egg Hunt",
+      "usage": "claim <egg>"
+    },
+    {
+      "name": "cortex",
+      "aliases": [
+        "alert",
+        "deadlines",
+        "ops"
+      ],
+      "description": "P31 Cortex — operations dashboard, deadlines, agent status",
+      "usage": "cortex [status|deadlines|run|agent <name>]"
+    },
+    {
+      "name": "crew",
+      "aliases": [
+        "meshcrew",
+        "personas"
+      ],
+      "description": "Meet the mesh crew — bios, vibes, and chatty quips",
+      "usage": "crew [forge|counsel|scribe|oracle|triage|narrator|phos|mesh]"
+    },
+    {
+      "name": "deep",
+      "aliases": [
+        "deeper",
+        "rabbit"
+      ],
+      "description": "Deeper cuts: would-you-rather, riddles, fortunes, facts, anagrams",
+      "usage": "deep • deep wyr • deep riddle [answer] • deep fortune • deep fact • deep anagram [WORD]"
+    },
+    {
+      "name": "deploy",
+      "aliases": [
+        "ci",
+        "dispatch"
+      ],
+      "description": "Trigger a GitHub Actions workflow from Discord (Admin only)",
+      "usage": "deploy <workflow> [branch]"
+    },
+    {
+      "name": "drift",
+      "aliases": [
+        "changelog",
+        "commitmsg",
+        "shipnote"
+      ],
+      "description": "Procedural changelog / commit-message drift — safe nonsense",
+      "usage": "drift"
+    },
+    {
+      "name": "easter",
+      "aliases": [
+        "eggs"
+      ],
+      "description": "Link to Easter egg hunt for kids",
+      "usage": "easter"
+    },
+    {
+      "name": "eggs",
+      "aliases": [
+        "egg",
+        "hunt"
+      ],
+      "description": "Quantum Egg Hunt — your progress + global status",
+      "usage": "eggs"
+    },
+    {
+      "name": "esg",
+      "aliases": [
+        "grant"
+      ],
+      "description": "ESG application draft for housing assistance",
+      "usage": "esg"
+    },
+    {
+      "name": "grants",
+      "aliases": [
+        "donations",
+        "funding"
+      ],
+      "description": "Show P31 Labs funding pipeline status (live from GrantAgent)",
+      "usage": "grants"
+    },
+    {
+      "name": "hangman",
+      "aliases": [
+        "hm"
+      ],
+      "description": "Guess a 5-letter mesh word letter-by-letter",
+      "usage": "hangman • hangman new • hangman a • hangman reveal"
+    },
+    {
+      "name": "health",
+      "aliases": [
+        "ping",
+        "workers"
+      ],
+      "description": "P31 Network Health — check status of all workers and services",
+      "usage": "health"
+    },
+    {
+      "name": "help",
+      "aliases": [
+        "?",
+        "h"
+      ],
+      "description": "Show this help message",
+      "usage": "help [command]"
+    },
+    {
+      "name": "housing",
+      "aliases": [
+        "homeless",
+        "shelter"
+      ],
+      "description": "Emergency housing resources in Georgia",
+      "usage": "housing"
+    },
+    {
+      "name": "joke",
+      "aliases": [
+        "jk",
+        "lol"
+      ],
+      "description": "Curated jokes — mix, dev, mesh, or dad tier",
+      "usage": "joke [mix|dev|mesh|dad]"
+    },
+    {
+      "name": "leaderboard",
+      "aliases": [
+        "lb",
+        "top"
+      ],
+      "description": "Top Quantum Egg Hunt hunters",
+      "usage": "leaderboard"
+    },
+    {
+      "name": "lore",
+      "aliases": [
+        "micro",
+        "snippet",
+        "vignette"
+      ],
+      "description": "Micro-lore vignettes from the mesh canon (original flavor text)",
+      "usage": "lore"
+    },
+    {
+      "name": "meshword",
+      "aliases": [
+        "mw",
+        "wordle"
+      ],
+      "description": "Wordle-style 5-letter puzzle — random or UTC-daily (shared word worldwide)",
+      "usage": "meshword • meshword daily • meshword WORD • meshword guess WORD • meshword abandon"
+    },
+    {
+      "name": "nodes",
+      "aliases": [
+        "mesh",
+        "network"
+      ],
+      "description": "Mesh node count — progress toward K₄ (4), Posner (39), Larmor (863)",
+      "usage": "nodes"
+    },
+    {
+      "name": "paradox",
+      "aliases": [
+        "2t1f",
+        "twotruths",
+        "twotruthsonelie"
+      ],
+      "description": "Two truths & a lie — mesh-lore edition",
+      "usage": "paradox • paradox a|b|c • paradox reveal"
+    },
+    {
+      "name": "play",
+      "aliases": [
+        "game",
+        "games"
+      ],
+      "description": "Mini-games: rock/paper/scissors, coin flip, dice, 8-ball",
+      "usage": "play rps rock|paper|scissors • play flip • play roll 2d6 • play 8ball [q] • play number [1-100]"
+    },
+    {
+      "name": "qclock",
+      "aliases": [
+        "qdeck",
+        "quantumclock"
+      ],
+      "description": "Quantum clock + card suite — grandfather phase, tick card, CSPRNG shuffle",
+      "usage": "qclock • qclock shuffle • qclock trim 0–1"
+    },
+    {
+      "name": "rehoused",
+      "aliases": [
+        "ga-rehoused"
+      ],
+      "description": "Georgia Rehoused application draft",
+      "usage": "rehoused"
+    },
+    {
+      "name": "social",
+      "aliases": [
+        "content",
+        "post",
+        "sce"
+      ],
+      "description": "P31 Social Content Engine — templates, scheduling, analytics",
+      "usage": "social [templates|dashboard|create|schedule]"
+    },
+    {
+      "name": "spoon",
+      "aliases": [
+        "economy",
+        "love",
+        "spoons"
+      ],
+      "description": "Track spoons and LOVE in the P31 economy",
+      "usage": "spoon [leaderboard|link|redeem|role|store|@user]"
+    },
+    {
+      "name": "status",
+      "aliases": [
+        "check",
+        "sys"
+      ],
+      "description": "Check Node One/P31 system status",
+      "usage": "status [service]"
+    },
+    {
+      "name": "telemetry",
+      "aliases": [
+        "stats"
+      ],
+      "description": "Check telemetry service status",
+      "usage": "telemetry"
+    },
+    {
+      "name": "tetra",
+      "aliases": [
+        "k4seal",
+        "seal4",
+        "tetragram"
+      ],
+      "description": "Tetra seal — place four words on K₄; get six edge readings + a closure",
+      "usage": "tetra • tetra 1–4 <word> • tetra roll • tetra seal • tetra start"
+    },
+    {
+      "name": "trivia",
+      "aliases": [
+        "quiz"
+      ],
+      "description": "P31-flavored trivia — tags, streaks, channel sessions",
+      "usage": "trivia • trivia daily (UTC) • [mesh|stack|science|lore] • trivia a|b|c|d • answer • stats"
+    }
+  ],
+  "contentStats": {
+    "commands": 32,
+    "triviaCards": 15,
+    "meshwordLexicon": 58,
+    "paradoxCards": 12,
+    "jokesCombined": 24,
+    "riddles": 8,
+    "wouldYouRather": 12,
+    "fortunes": 15,
+    "deepFacts": 15,
+    "loreSnippets": 37,
+    "chainStarters": 20,
+    "tetraSparks": 24,
+    "quantumClockLarmorHz": 863,
+    "quantumDeckCards": 52
+  }
+}

@@ -1,0 +1,35 @@
+---
+interface Props {
+  items?: Array<{
+    icon?: string;
+    label: string;
+    href?: string;
+    active?: boolean;
+  }>;
+  activeIndex?: number;
+  class?: string;
+}
+
+const { items = [], activeIndex = 0, class: className = '' } = Astro.props;
+const safeActive = Math.min(activeIndex, items.length - 1);
+---
+<nav class:list={['bottom-nav', className]} role="tablist" aria-label="Primary">
+  {
+    items.map((item, i) => {
+      const isActive = i === safeActive;
+      const cls = ['nav-item', isActive && 'active'];
+      if (item.href) {
+        return (
+          <a href={item.href} class:list={cls} aria-current={isActive ? 'page' : undefined}>
+            {item.icon}<span>{item.label}</span>
+          </a>
+        );
+      }
+      return (
+        <button type="button" class:list={cls} aria-selected={isActive}>
+          {item.icon}<span>{item.label}</span>
+        </button>
+      );
+    })
+  }
+</nav>

@@ -1645,6 +1645,12 @@
         "href": "/glass-box.html",
         "phosVoiceKey": "/glass-box.html",
         "description": "Public transparency dashboard. Visible to operator role in nav for one-click access; remains publicly reachable for everyone."
+      },
+      "cli": {
+        "label": "CLI",
+        "href": "/cli/",
+        "phosVoiceKey": "/cli/",
+        "description": "Web terminal for running P31 CLI commands from the browser via the MCP gateway."
       }
     },
     "navByRole": {
@@ -1663,7 +1669,8 @@
         "lab",
         "research",
         "stylebook",
-        "support"
+        "support",
+        "cli"
       ],
       "operator": [
         "welcome",
@@ -1673,6 +1680,7 @@
         "research",
         "stylebook",
         "support",
+        "cli",
         "ops",
         "ede",
         "buffer",

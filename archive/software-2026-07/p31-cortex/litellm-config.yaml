@@ -1,0 +1,95 @@
+litellm_settings:
+  drop_params: true
+  set_verbose: false
+  telemetry: false
+  router_class: "routers.p31_safe_router.P31SafeRouter"
+  routing_strategy: latency-based-routing
+  num_retries: 2
+  request_timeout: 120
+  fallbacks:
+    - phos-cognitive-core: ["phos-fast-buffer"]
+    - phos-fast-buffer: ["phos-cognitive-core"]
+
+model_list:
+  - model_name: phos-cognitive-core
+    litellm_params:
+      model: ollama/qwen2.5-coder:7b
+      api_base: http://ollama-backend:11434
+      tpm: 100000
+      rpm: 1000
+      timeout: 120
+    router_settings:
+      p31_agent: "sonnet"
+      lanes:
+        - code
+        - python
+        - javascript
+        - typescript
+        - react
+        - html
+        - css
+        - git
+        - bash
+        - tests
+        - vitest
+        - debug
+        - bugfix
+      forbidden_lanes:
+        - architecture
+        - firmware
+        - esp32
+        - c_cpp
+        - registers
+        - grants
+        - legal
+
+  - model_name: phos-fast-buffer
+    litellm_params:
+      model: ollama/llama3.2:3b
+      api_base: http://ollama-backend:11434
+      tpm: 150000
+      rpm: 2000
+      timeout: 120
+    router_settings:
+      p31_agent: "deepseek"
+      lanes:
+        - firmware
+        - c_cpp
+        - cpp
+        - esp32
+        - esp-idf
+        - registers
+        - drv2605l
+        - sx1262
+        - se050
+        - platformio
+        - cobs
+        - uart
+        - spi
+        - hardware
+      forbidden_lanes:
+        - ui
+        - react
+        - css
+        - architecture
+        - operator_state
+        - grants
+
+  - model_name: phos-vector-embed
+    litellm_params:
+      model: ollama/nomic-embed-text
+      api_base: http://ollama-backend:11434
+
+general_settings:
+  p31_safeguard_enabled: true
+  affective_chemistry_endpoint: "http://affective-chemistry:5001/api/analyze"
+  spoon_monitor_endpoint: "ws://spoon-monitor:5002"
+  verification_enabled: true
+  verification_endpoint: "http://p31-safeguard:5003/verify"
+  verification_triggers:
+    - firmware
+    - architecture
+    - legal
+    - grants
+    - research
+    - specification

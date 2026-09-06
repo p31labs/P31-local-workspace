@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  # Redis for atomic operations and state management
+  redis:
+    image: redis:7-alpine
+    container_name: p31-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    restart: unless-stopped
+
+  # P31 Spoons Economy API
+  spoons-api:
+    build: .
+    container_name: p31-spoons-api
+    ports:
+      - "3001:3001"
+    environment:
+      - UPSTASH_REDIS_URL=redis://redis:6379
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+  # Optional: Redis Commander for debugging
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: p31-redis-commander
+    ports:
+      - "8081:8081"
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+volumes:
+  redis_data:

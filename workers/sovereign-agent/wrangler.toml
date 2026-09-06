@@ -1,0 +1,30 @@
+name = "sovereign-agent"
+main = "src/index.ts"
+compatibility_date = "2026-07-16"
+compatibility_flags = ["nodejs_compat"]
+
+# CWP-2026-028 Phase 1 — Sovereign Agent edge node.
+# Proxies identity + care APIs, serves PHOS static assets from R2 (Phase 2),
+# and reads the shared LOVE_DB for dashboard KPIs.
+# Binds the SHARED LOVE_DB (Free-Plan cap: no new D1 databases).
+
+routes = [{ pattern = "phos.p31ca.org/*", zone_name = "p31ca.org" }]
+
+[[d1_databases]]
+binding = "LOVE_DB"
+database_name = "love-ledger"
+database_id = "592e3e2e-3203-4e0a-8342-9e85215ec8a6"
+
+[[r2_buckets]]
+binding = "ASSETS"
+bucket_name = "phos-assets"
+
+[[services]]
+binding = "LOVE_LEDGER"
+service = "love-ledger"
+
+[observability]
+enabled = true
+
+[cache]
+enabled = true

@@ -1,0 +1,38 @@
+{
+  "name": "@p31/interface-generator",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "P31 Universal Interface Generator — adaptive UI from Cognitive Passport + data",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./types": "./src/types.ts",
+    "./generator": "./src/generator.ts",
+    "./intent-generator": "./src/intent-generator.ts",
+    "./renderer": "./src/renderer.tsx",
+    "./a2ui": "./src/adapters/a2ui.ts",
+    "./A2UIRenderer": "./src/adapters/A2UIRenderer.tsx"
+  },
+  "scripts": {
+    "test": "vitest run --config vitest.config.ts",
+    "test:watch": "vitest --config vitest.config.ts"
+  },
+  "dependencies": {
+    "@p31/design-core": "workspace:*",
+    "@p31/quantum-core": "workspace:*"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0",
+    "vitest": "^2.0.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  }
+}

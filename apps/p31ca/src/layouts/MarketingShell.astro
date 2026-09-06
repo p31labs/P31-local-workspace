@@ -1,0 +1,57 @@
+---
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'P31 Labs — Sovereign Stack for Neurodivergent Families',
+  description = 'Open-source assistive technology. Sovereign identity, care economy, and open research for neurodivergent families.',
+} = Astro.props;
+
+import '@p31/design-core/css/all.css';
+import '../styles/p31-style.css';
+---
+
+<!doctype html>
+<html lang="en" data-spoons="3" data-theme="quantum">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://p31ca.org" />
+    <meta property="og:site_name" content="P31 Labs" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <link rel="canonical" href="https://p31ca.org" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+    <title>{title}</title>
+    <slot name="head" />
+  </head>
+  <body class="min-h-screen antialiased" style="background: var(--p31-bg, #030712); color: var(--p31-text, #e2e8f0); font-family: var(--p31-font-sans, 'Plus Jakarta Sans', system-ui, sans-serif); line-height: 1.6; -webkit-font-smoothing: antialiased; overflow-x: hidden;">
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    
+    <!-- Ambient starfield background -->
+    <slot name="starfield">
+      <div class="fixed inset-0 pointer-events-none" aria-hidden="true" style="z-index: var(--p31-z-starfield, 0); background: radial-gradient(circle at 50% -20%, rgba(6,182,212,0.12) 0%, transparent 55%), radial-gradient(circle at 10% 80%, rgba(16,185,129,0.07) 0%, transparent 45%), radial-gradient(circle at 90% 90%, rgba(139,92,246,0.07) 0%, transparent 45%); background-color: var(--p31-void, #030712);"></div>
+    </slot>
+
+    <div id="main-content" class="relative" style="z-index: var(--p31-content, 10);">
+      <slot />
+    </div>
+
+    <script is:inline>
+      (function () {
+        var spoons = parseInt(localStorage.getItem('p31:spoons') || '3', 10);
+        document.documentElement.setAttribute('data-spoons', String(spoons));
+      })();
+    </script>
+  </body>
+</html>

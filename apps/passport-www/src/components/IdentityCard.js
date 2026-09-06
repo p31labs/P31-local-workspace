@@ -1,0 +1,4 @@
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import { usePassportStore } from '../hooks/usePassportStore';
+export function IdentityCard() { const { passport } = usePassportStore(); return (_jsxs("div", { className: "id-card", children: [_jsxs("div", { className: "id-header", children: [_jsx("span", { className: "id-icon", children: "\u25C7" }), _jsxs("div", { children: [_jsx("h3", { children: "P31 Cognitive Passport" }), _jsxs("p", { children: ["Edition ", passport.edition, " \u00B7 ", passport.actors.length, " actors registered"] })] })] }), _jsxs("div", { className: "id-meta", children: [_jsx("span", { children: "DID: did:web:passport.p31ca.org" }), _jsx("span", { children: "Signing: Ed25519 + ML-DSA-65" }), _jsxs("span", { children: ["Created: ", new Date(passport.createdAt).toLocaleDateString()] })] })] })); }
+//# sourceMappingURL=IdentityCard.js.map

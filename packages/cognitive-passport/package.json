@@ -1,0 +1,32 @@
+{
+  "name": "@p31/cognitive-passport",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "Cognitive Passport schema, profiles, and scoring for the P31 Labs ecosystem",
+  "author": "P31 Labs <hello@p31ca.org>",
+  "license": "MIT",
+  "homepage": "https://p31ca.org",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/p31labs/andromeda.git",
+    "directory": "packages/cognitive-passport"
+  },
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run --passWithNoTests"
+  },
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "dependencies": {
+    "@p31/shared-core": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.0"
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  }
+}

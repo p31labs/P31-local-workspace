@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>P31 Labs — Tools for Neurodivergent Families</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-void: #0a0a0f;
+            --bg-surface: #12121a;
+            --text-white: #ffffff;
+            --text-cloud: rgba(161, 161, 170, 0.7);
+            --text-muted: rgba(161, 161, 170, 0.4);
+            --accent-cyan: #00f0ff;
+            --accent-violet: #a78bfa;
+            --accent-green: #34d399;
+            --glass-bg: rgba(255, 255, 255, 0.04);
+            --glass-border: rgba(255, 255, 255, 0.08);
+        }
+
+        body {
+            background: var(--bg-void);
+            color: var(--text-cloud);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* MOLECULAR STARFIELD BACKGROUND */
+        .starfield {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        .star {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            background: white;
+            border-radius: 50%;
+        }
+
+        /* Subtle molecular grid lines */
+        .molecule-grid {
+            position: fixed;
+            inset: -50%;
+            z-index: 1;
+            pointer-events: none;
+            opacity: 0.03;
+            background-image:
+                linear-gradient(rgba(0, 240, 255, 0.3) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 240, 255, 0.3) 1px, transparent 1px);
+            background-size: 80px 80px;
+            animation: gridDrift 40s linear infinite;
+        }
+
+        @keyframes gridDrift {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(80px, 80px); }
+        }
+
+        /* CONTENT WRAPPER */
+        .content {
+            position: relative;
+            z-index: 10;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* NAVBAR */
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(12px);
+            background: rgba(10, 10, 15, 0.85);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 16px 24px;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-weight: 700;
+            color: var(--accent-cyan);
+            font-size: 16px;
+            letter-spacing: 0.05em;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: var(--text-cloud);
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+
+        .nav-link:hover {
+            color: var(--accent-cyan);
+        }
+
+        .btn-primary {
+            background: var(--accent-cyan);
+            color: var(--bg-void);
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
+        }
+
+        /* HERO SECTION */
+        .hero {
+            padding: 80px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 40px;
+        }
+
+        .k4-logo {
+            width: 200px;
+            height: 200px;
+            margin-bottom: 20px;
+        }
+
+        .hero-title {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 900;
+            color: var(--text-white);
+            line-height: 1.1;
+            max-width: 900px;
+        }
+
+        .hero-title .accent {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-violet));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 18px;
+            color: var(--text-cloud);
+            max-width: 700px;
+            line-height: 1.8;
+        }
+
+        .hero-ctas {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid var(--accent-cyan);
+            color: var(--accent-cyan);
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(0, 240, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        /* SECTION */
+        .section {
+            padding: 80px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .section-title {
+            font-size: 32px;
+            font-weight: 900;
+            color: var(--text-white);
+            margin-bottom: 48px;
+            text-align: center;
+        }
+
+        /* FEATURES GRID */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .feature-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 32px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .feature-card:hover {
+            border-color: rgba(0, 240, 255, 0.3);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 32px rgba(0, 240, 255, 0.1);
+        }
+
+        .feature-icon {
+            font-size: 32px;
+            margin-bottom: 16px;
+        }
+
+        .feature-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-white);
+            margin-bottom: 12px;
+        }
+
+        .feature-desc {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.7;
+        }
+
+        /* SMART NOTIFICATIONS */
+        .notification-demo {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 24px;
+            margin-top: 24px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .notification {
+            background: rgba(52, 211, 153, 0.1);
+            border-left: 4px solid var(--accent-green);
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            font-size: 14px;
+        }
+
+        .notification-icon {
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        /* FOOTER */
+        footer {
+            padding: 48px 24px;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 24px;
+            justify-content: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .footer-link {
+            color: var(--accent-cyan);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-link:hover {
+            color: var(--accent-violet);
+        }
+
+        /* ANIMATIONS */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero {
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .nav-links {
+                gap: 16px;
+                font-size: 12px;
+            }
+
+            .hero {
+                padding: 60px 0;
+            }
+
+            .hero-ctas {
+                flex-direction: column;
+            }
+
+            .section {
+                padding: 60px 0;
+            }
+        }
+
+        /* REDUCED MOTION */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+
+            .molecule-grid {
+                animation: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- STARFIELD BACKGROUND -->
+    <canvas id="starfield" class="starfield"></canvas>
+    <div class="molecule-grid"></div>
+
+    <!-- NAVBAR -->
+    <nav>
+        <div class="nav-container">
+            <div class="logo">P31 Labs</div>
+            <div class="nav-links">
+                <a href="#features" class="nav-link">Features</a>
+                <a href="#docs" class="nav-link">Documentation</a>
+                <a href="https://github.com/p31labs" class="nav-link">GitHub</a>
+                <button class="btn-primary">Support Us</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <div class="content">
+        <!-- HERO -->
+        <section class="hero">
+            <svg class="k4-logo" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+                <!-- K4 Tetrahedron with animated elements -->
+                <defs>
+                    <filter id="glow-cyan">
+                        <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                        <feMerge>
+                            <feMergeNode in="coloredBlur"/>
+                            <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                    </filter>
+                    <filter id="glow-violet">
+                        <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                        <feMerge>
+                            <feMergeNode in="coloredBlur"/>
+                            <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                    </filter>
+                </defs>
+
+                <!-- Edges -->
+                <line x1="150" y1="50" x2="100" y2="230" stroke="rgba(0,240,255,0.3)" stroke-width="2" stroke-dasharray="200" stroke-dashoffset="0">
+                    <animate attributeName="stroke-dashoffset" from="200" to="0" dur="3s" repeatCount="indefinite"/>
+                </line>
+                <line x1="150" y1="50" x2="200" y2="230" stroke="rgba(167,139,250,0.3)" stroke-width="2" stroke-dasharray="200" stroke-dashoffset="0">
+                    <animate attributeName="stroke-dashoffset" from="200" to="0" dur="3.5s" repeatCount="indefinite"/>
+                </line>
+                <line x1="100" y1="230" x2="200" y2="230" stroke="rgba(52,211,153,0.3)" stroke-width="2" stroke-dasharray="100" stroke-dashoffset="0">
+                    <animate attributeName="stroke-dashoffset" from="100" to="0" dur="2.5s" repeatCount="indefinite"/>
+                </line>
+                <line x1="150" y1="50" x2="150" y2="230" stroke="rgba(255,215,0,0.2)" stroke-width="1" opacity="0.5"/>
+
+                <!-- Vertices (animated) -->
+                <g>
+                    <!-- Top vertex -->
+                    <circle cx="150" cy="50" r="6" fill="url(#grad-cyan)" filter="url(#glow-cyan)">
+                        <animate attributeName="r" from="5" to="7" dur="2s" repeatCount="indefinite"/>
+                    </circle>
+
+                    <!-- Bottom-left vertex -->
+                    <circle cx="100" cy="230" r="6" fill="url(#grad-violet)" filter="url(#glow-violet)">
+                        <animate attributeName="r" from="5" to="7" dur="2.3s" repeatCount="indefinite"/>
+                    </circle>
+
+                    <!-- Bottom-right vertex -->
+                    <circle cx="200" cy="230" r="6" fill="url(#grad-green)">
+                        <animate attributeName="r" from="5" to="7" dur="2.6s" repeatCount="indefinite"/>
+                    </circle>
+
+                    <!-- Center -->
+                    <circle cx="150" cy="150" r="8" fill="url(#grad-center)" filter="url(#glow-cyan)">
+                        <animate attributeName="r" from="7" to="9" dur="1.5s" repeatCount="indefinite"/>
+                    </circle>
+                </g>
+
+                <!-- Gradients -->
+                <defs>
+                    <radialGradient id="grad-cyan">
+                        <stop offset="0%" style="stop-color:rgb(0,240,255);stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:rgb(0,240,255);stop-opacity:0.3" />
+                    </radialGradient>
+                    <radialGradient id="grad-violet">
+                        <stop offset="0%" style="stop-color:rgb(167,139,250);stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:rgb(167,139,250);stop-opacity:0.3" />
+                    </radialGradient>
+                    <radialGradient id="grad-green">
+                        <stop offset="0%" style="stop-color:rgb(52,211,153);stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:rgb(52,211,153);stop-opacity:0.3" />
+                    </radialGradient>
+                    <radialGradient id="grad-center">
+                        <stop offset="0%" style="stop-color:rgb(0,240,255);stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:rgb(167,139,250);stop-opacity:0.5" />
+                    </radialGradient>
+                </defs>
+            </svg>
+
+            <h1 class="hero-title">
+                Tools built for <span class="accent">how your brain actually works</span>
+            </h1>
+            <p class="hero-subtitle">
+                Free, open-source assistive technology for neurodivergent families. No tracking. No paywalls. Just helpful tools that respect your cognition.
+            </p>
+            <div class="hero-ctas">
+                <button class="btn-primary">Get Started</button>
+                <button class="btn-secondary">Learn More</button>
+            </div>
+        </section>
+
+        <!-- FEATURES -->
+        <section class="section" id="features">
+            <h2 class="section-title">What We Build</h2>
+            <div class="features">
+                <div class="feature-card">
+                    <div class="feature-icon">🎮</div>
+                    <h3 class="feature-title">BONDING</h3>
+                    <p class="feature-desc">
+                        A multiplayer chemistry game that lets parents play alongside their kids, anywhere. Every action is a documented moment of connection.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🧠</div>
+                    <h3 class="feature-title">Cognitive Tools</h3>
+                    <p class="feature-desc">
+                        Processing help for communication, sensory regulation, and cognitive load management. Built by neurodivergent people, for neurodivergent people.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">📡</div>
+                    <h3 class="feature-title">Offline-First</h3>
+                    <p class="feature-desc">
+                        Your data stays on your device. No surveillance. No algorithms trying to keep you hooked. Just you and your tools.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Smart Notifications Demo -->
+            <div class="notification-demo">
+                <h3 class="feature-title" style="margin-top: 0;">Smart Notifications (Example)</h3>
+                <div class="notification">
+                    <span class="notification-icon">⏰</span>
+                    <div>
+                        <strong>Time to take meds</strong><br>
+                        <small style="color: var(--text-muted);">You usually take these at this time</small>
+                    </div>
+                </div>
+                <div class="notification" style="background: rgba(0,240,255,0.1); border-color: var(--accent-cyan);">
+                    <span class="notification-icon">☕</span>
+                    <div>
+                        <strong>Break suggested</strong><br>
+                        <small style="color: var(--text-muted);">You've been focused for 90 minutes</small>
+                    </div>
+                </div>
+                <div class="notification" style="background: rgba(167,139,250,0.1); border-color: var(--accent-violet);">
+                    <span class="notification-icon">👤</span>
+                    <div>
+                        <strong>Someone sent you a message</strong><br>
+                        <small style="color: var(--text-muted);">Via offline mesh when you're ready</small>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VALUES -->
+        <section class="section">
+            <h2 class="section-title">Built on Trust</h2>
+            <div class="features">
+                <div class="feature-card">
+                    <div class="feature-icon">🔓</div>
+                    <h3 class="feature-title">100% Open Source</h3>
+                    <p class="feature-desc">
+                        All code published on GitHub. No proprietary algorithms. You can audit, modify, and contribute.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🛡️</div>
+                    <h3 class="feature-title">Your Data, Your Rules</h3>
+                    <p class="feature-desc">
+                        No cloud sync without permission. No ad networks. No behavioral tracking. Privacy is not a feature, it's the default.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">💚</div>
+                    <h3 class="feature-title">Made by Neurodivergent Humans</h3>
+                    <p class="feature-desc">
+                        We live with ADHD, autism, and other neurodivergences. We build what we wish existed. We get it.
+                    </p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-links">
+            <a href="https://github.com/p31labs" class="footer-link">GitHub</a>
+            <a href="https://discord.gg/p31" class="footer-link">Discord</a>
+            <a href="https://phosphorus31.org" class="footer-link">Nonprofit</a>
+            <a href="https://ko-fi.com/trimtab69420" class="footer-link">Support</a>
+        </div>
+        <p>P31 Labs, Inc. • Georgia 501(c)(3) • EIN 42-1888158</p>
+        <p style="margin-top: 12px; color: var(--text-muted); font-size: 12px;">Built with care for families who need something different.</p>
+    </footer>
+
+    <script>
+        // STARFIELD ANIMATION
+        const canvas = document.getElementById('starfield');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const stars = [];
+        const starCount = Math.floor((window.innerWidth * window.innerHeight) / 15000);
+
+        // Initialize stars
+        for (let i = 0; i < starCount; i++) {
+            stars.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                radius: Math.random() * 1.5,
+                opacity: Math.random() * 0.7 + 0.3,
+                vx: (Math.random() - 0.5) * 0.2,
+                vy: (Math.random() - 0.5) * 0.2
+            });
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'white';
+
+            for (let star of stars) {
+                // Update position
+                star.x += star.vx;
+                star.y += star.vy;
+
+                // Wrap around edges
+                if (star.x < 0) star.x = canvas.width;
+                if (star.x > canvas.width) star.x = 0;
+                if (star.y < 0) star.y = canvas.height;
+                if (star.y > canvas.height) star.y = 0;
+
+                // Draw with opacity
+                ctx.globalAlpha = star.opacity;
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            ctx.globalAlpha = 1;
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+
+        // Handle resize
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
+</body>
+</html>

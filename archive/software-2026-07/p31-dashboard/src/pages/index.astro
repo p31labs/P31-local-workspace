@@ -1,0 +1,306 @@
+---
+import Layout from '../components/Layout.astro';
+---
+
+<Layout title="PHOS Forge — Convergence Dashboard">
+  <style>
+    :root {
+      --bg-deep: hsl(220, 8%, 8%);
+      --bg-surface: hsl(220, 6%, 14%);
+      --bg-card: hsl(220, 6%, 14%);
+      --border-subtle: hsl(220, 5%, 22%);
+      --text-main: hsl(220, 10%, 80%);
+      --text-muted: hsl(220, 5%, 50%);
+      --cl-load: hsl(35, 35%, 45%);
+      --cl-fatigue: hsl(215, 15%, 30%);
+      --cl-flow: hsl(165, 45%, 40%);
+      --cl-creativity: hsl(270, 30%, 45%);
+      --cl-stress: hsl(15, 35%, 40%);
+      --grid-color: hsl(220, 5%, 25%);
+      --radar-fill: hsla(165, 30%, 40%, 0.2);
+      --radar-stroke: hsl(165, 30%, 45%);
+    }
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+    }
+    .dash-grid {
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 900px) {
+      .dash-grid { grid-template-columns: 1fr 1fr; }
+    }
+    .radar-cell {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  </style>
+
+  <div class="min-h-screen" style="background: var(--bg-deep); color: var(--text-main);">
+    <header class="border-b px-4 py-4 flex items-center justify-between" style="border-color: var(--border-subtle); background: color-mix(in srgb, var(--bg-deep) 80%, transparent); backdrop-filter: blur(4px);">
+      <div>
+        <h1 class="text-xl font-bold tracking-tight" style="color: hsl(165, 45%, 45%);">PHOS Forge</h1>
+        <p class="text-xs" style="color: var(--text-muted);">Convergence Dashboard</p>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium" style="background: var(--bg-card); border-color: var(--border-subtle);">
+          <span class="h-2 w-2 rounded-full animate-pulse" style="background: hsl(165, 45%, 40%);"></span>
+          Live
+        </span>
+        <span class="text-xs" id="event-count" style="color: var(--text-muted);">0 events</span>
+      </div>
+    </header>
+
+    <main class="mx-auto max-w-6xl px-4 py-6 space-y-6">
+      <div class="dash-grid">
+        <section class="card p-4">
+          <div class="flex items-baseline justify-between mb-3">
+            <h2 class="text-sm font-semibold uppercase tracking-wider" style="color: var(--text-muted);">Cognitive State</h2>
+            <span class="text-xs" id="spoon-display" style="color: var(--text-muted);">Spoons: --/5</span>
+          </div>
+          <div class="radar-cell">
+            <svg id="radarSvg" viewBox="0 0 200 200" width="200" height="200" role="img" aria-label="5-dimensional cognitive state radar chart">
+              <polygon id="radarData" :fill="'var(--radar-fill)'" :stroke="'var(--radar-stroke)'" stroke-width="2" points="" />
+            </svg>
+          </div>
+        </section>
+
+        <section class="card p-4">
+          <h2 class="text-sm font-semibold uppercase tracking-wider mb-3" style="color: var(--text-muted);">Timeline</h2>
+          <div id="sparklines" class="space-y-2">
+            <div class="flex items-center gap-2 text-xs" style="color: var(--cl-load);"><span style="width: 3rem;">LOAD</span><svg viewBox="0 0 200 30" class="flex-1" style="height: 30px;"><polyline id="spk-load" fill="none" stroke="currentColor" stroke-width="1.5" points=""/></svg></div>
+            <div class="flex items-center gap-2 text-xs" style="color: var(--cl-fatigue);"><span style="width: 3rem;">FATG</span><svg viewBox="0 0 200 30" class="flex-1" style="height: 30px;"><polyline id="spk-fatigue" fill="none" stroke="currentColor" stroke-width="1.5" points=""/></svg></div>
+            <div class="flex items-center gap-2 text-xs" style="color: var(--cl-flow);"><span style="width: 3rem;">FLOW</span><svg viewBox="0 0 200 30" class="flex-1" style="height: 30px;"><polyline id="spk-flow" fill="none" stroke="currentColor" stroke-width="1.5" points=""/></svg></div>
+            <div class="flex items-center gap-2 text-xs" style="color: var(--cl-creativity);"><span style="width: 3rem;">CREA</span><svg viewBox="0 0 200 30" class="flex-1" style="height: 30px;"><polyline id="spk-creativity" fill="none" stroke="currentColor" stroke-width="1.5" points=""/></svg></div>
+            <div class="flex items-center gap-2 text-xs" style="color: var(--cl-stress);"><span style="width: 3rem;">STRS</span><svg viewBox="0 0 200 30" class="flex-1" style="height: 30px;"><polyline id="spk-stress" fill="none" stroke="currentColor" stroke-width="1.5" points=""/></svg></div>
+          </div>
+        </section>
+      </div>
+
+      <section class="card p-4">
+        <h2 class="text-sm font-semibold uppercase tracking-wider mb-3" style="color: var(--text-muted);">Self-Healer</h2>
+        <div id="healer-container">
+          <div class="text-xs" style="color: var(--text-muted);">Waiting for data…</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="border-b px-4 py-3 flex items-center justify-between" style="border-color: var(--border-subtle);">
+          <h2 class="text-sm font-semibold uppercase tracking-wider" style="color: var(--text-muted);">Recent Events</h2>
+          <span class="text-xs" id="event-count-header" style="color: var(--text-muted);">Loading…</span>
+        </div>
+        <div id="events-container" class="divide-y" style="border-color: var(--border-subtle);">
+          <div class="px-4 py-6 text-center text-sm" style="color: var(--text-muted);">Loading events…</div>
+        </div>
+      </section>
+
+      <section class="card p-4">
+        <h2 class="text-sm font-semibold uppercase tracking-wider mb-3" style="color: var(--text-muted);">Top Event Types</h2>
+        <div id="top-types" class="grid grid-cols-2 gap-2 sm:grid-cols-4">
+          <div class="text-xs" style="color: var(--text-muted);">Loading…</div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="border-t mt-8" style="border-color: var(--border-subtle);">
+      <div class="mx-auto max-w-6xl px-4 py-4 flex items-center justify-between">
+        <p class="text-xs" style="color: var(--text-muted);">PHOS Forge — Autonomic Convergence</p>
+        <p class="text-xs" style="color: var(--text-muted);">/tmp/phos-forge/events.jsonl</p>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    const API = '/api/state';
+    const DIMS = ['cognitive_load', 'fatigue', 'flow', 'creativity', 'stress'];
+    const DIM_COLORS = ['var(--cl-load)', 'var(--cl-fatigue)', 'var(--cl-flow)', 'var(--cl-creativity)', 'var(--cl-stress)'];
+    const DIM_LABELS = ['LOAD', 'FATG', 'FLOW', 'CREA', 'STRS'];
+
+    const radarSvg = document.getElementById('radarSvg');
+    const radarData = document.getElementById('radarData');
+    const spoonEl = document.getElementById('spoon-display');
+
+    const CX = 100, CY = 100, R = 75, SIDES = 5;
+
+    function getPoint(value, index) {
+      const angle = -Math.PI / 2 + index * (2 * Math.PI / SIDES);
+      return {
+        x: CX + R * value * Math.cos(angle),
+        y: CY + R * value * Math.sin(angle),
+      };
+    }
+
+    function buildGrid() {
+      const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      g.setAttribute('stroke', 'var(--grid-color)');
+      g.setAttribute('stroke-width', '0.5');
+      g.setAttribute('fill', 'none');
+      [0.33, 0.66, 1].forEach(level => {
+        const pts = Array.from({ length: SIDES }, (_, i) => {
+          const p = getPoint(level, i);
+          return `${p.x},${p.y}`;
+        }).join(' ');
+        const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+        poly.setAttribute('points', pts);
+        g.appendChild(poly);
+      });
+      Array.from({ length: SIDES }, (_, i) => {
+        const p = getPoint(1, i);
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', CX); line.setAttribute('y1', CY);
+        line.setAttribute('x2', p.x); line.setAttribute('y2', p.y);
+        g.appendChild(line);
+      });
+      radarSvg.insertBefore(g, radarData);
+    }
+    buildGrid();
+
+    let current = [0, 0, 0, 0, 0];
+    let target = [0, 0, 0, 0, 0];
+    let histories = DIMS.map(() => []);
+    let lastHealerId = 0;
+    let lastEventsJson = '';
+
+    function iconFor(type) {
+      if (type.includes('deploy')) return '🚀';
+      if (type.includes('health') || type.includes('inspect')) return '🏥';
+      if (type.includes('fail') || type.includes('error')) return '❌';
+      if (type.includes('fuel')) return '⛽';
+      if (type.includes('grade')) return '📊';
+      if (type.includes('yardmaster')) return '⚙️';
+      if (type.includes('phos')) return '🔥';
+      if (type.includes('ship-pr')) return '📦';
+      if (type.includes('quality-gate')) return '🛡️';
+      if (type.includes('nexus')) return '🔮';
+      return '📡';
+    }
+
+    function renderHealer(entries) {
+      const el = document.getElementById('healer-container');
+      if (!entries.length) {
+        el.innerHTML = '<div class="text-xs" style="color: var(--text-muted);">No healer entries yet.</div>';
+        return;
+      }
+      el.innerHTML = entries.map(e => {
+        const time = (e.timestamp || '').slice(11, 19) || '??:??:??';
+        const status = e.permitted ? (e.actions_taken?.some(a => !a.includes('blocked') && a !== 'none') ? '⚡' : '👁') : '⛔';
+        const actions = (e.actions_taken || []).filter(a => !a.includes('blocked')).join(', ') || 'watch-only';
+        return `<div class="flex items-center gap-2 px-2 py-1 text-xs border-b" style="border-color: var(--border-subtle);">
+          <span>${status}</span>
+          <span style="color: var(--text-muted);">${time}</span>
+          <span class="truncate">${e.label || e.diagnostic || 'unknown'}</span>
+          <span style="color: var(--text-muted); margin-left: auto;">${actions}</span>
+        </div>`;
+      }).join('');
+    }
+
+    function renderEvents(events) {
+      const container = document.getElementById('events-container');
+      const countEl = document.getElementById('event-count');
+      const countHeader = document.getElementById('event-count-header');
+      const topEl = document.getElementById('top-types');
+
+      if (!events.length) {
+        container.innerHTML = '<div class="px-4 py-6 text-center text-sm" style="color: var(--text-muted);">No events yet.</div>';
+        return;
+      }
+      container.innerHTML = events.slice(0, 50).map(ev => {
+        const payload = typeof ev.payload === 'object' ? JSON.stringify(ev.payload) : String(ev.payload);
+        return `<div class="flex items-start gap-3 px-4 py-2.5 transition-colors hover:bg-white/5">
+          <span class="mt-0.5 text-base leading-none">${iconFor(ev.type)}</span>
+          <div class="min-w-0 flex-1">
+            <code class="text-xs font-medium break-all" style="color: hsl(165, 45%, 45%);">${ev.type}</code>
+            <p class="mt-0.5 text-xs truncate" style="color: var(--text-muted);">${payload}</p>
+          </div>
+          <time class="text-[10px] tabular-nums whitespace-nowrap mt-0.5" style="color: var(--text-muted);">${(ev.timestamp || '').slice(11, 19)}</time>
+        </div>`;
+      }).join('');
+
+      const counts = {};
+      for (const ev of events) counts[ev.type] = (counts[ev.type] || 0) + 1;
+      const top = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 8);
+      if (top.length) {
+        topEl.innerHTML = top.map(([type, count]) =>
+          `<div class="rounded px-3 py-2" style="background: var(--bg-surface); border: 1px solid var(--border-subtle);">
+            <p class="text-xs truncate" style="color: hsl(165, 45%, 45%);">${type}</p>
+            <p class="text-lg font-bold" style="color: var(--text-main);">${count}</p>
+          </div>`
+        ).join('');
+      }
+
+      countEl.textContent = events.length + ' events';
+      countHeader.textContent = 'Last ' + events.length;
+    }
+
+    function updateSparklines() {
+      DIMS.forEach((dim, i) => {
+        const el = document.getElementById('spk-' + dim);
+        if (!el || histories[i].length < 2) return;
+        const vals = histories[i];
+        const w = 200, h = 30;
+        const pts = vals.map((v, j) => {
+          const x = (j / Math.max(vals.length - 1, 1)) * w;
+          const y = h - v * h;
+          return `${x.toFixed(1)},${y.toFixed(1)}`;
+        }).join(' ');
+        el.setAttribute('points', pts);
+      });
+    }
+
+    function animateRadar() {
+      let changed = false;
+      current = current.map((v, i) => {
+        const diff = target[i] - v;
+        if (Math.abs(diff) > 0.001) changed = true;
+        return v + diff * 0.1;
+      });
+      if (changed) {
+        const pts = current.map((v, i) => {
+          const p = getPoint(v, i);
+          return `${p.x},${p.y}`;
+        }).join(' ');
+        radarData.setAttribute('points', pts);
+      }
+      updateSparklines();
+      requestAnimationFrame(animateRadar);
+    }
+    animateRadar();
+
+    async function load() {
+      try {
+        const res = await fetch(API);
+        const data = await res.json();
+        if (!data) return;
+
+        const state = data.state || {};
+        target = DIMS.map(d => typeof state[d] === 'number' ? state[d] : 0.5);
+
+        DIMS.forEach((dim, i) => {
+          const val = typeof state[dim] === 'number' ? state[dim] : 0.5;
+          if (histories[i].length > 60) histories[i].shift();
+          histories[i].push(val);
+        });
+
+        const spoon = state.spoon ?? '--';
+        const label = state.spoon_label || '';
+        spoonEl.textContent = `Spoons: ${spoon}/5 ${label}`;
+
+        if (data.healer) renderHealer(data.healer);
+        if (data.events) {
+          const json = JSON.stringify(data.events.slice(0, 50));
+          if (json !== lastEventsJson) {
+            lastEventsJson = json;
+            renderEvents(data.events);
+          }
+        }
+      } catch { /* poll silently */ }
+    }
+
+    load();
+    setInterval(load, 2000);
+  </script>
+</Layout>

@@ -1,0 +1,276 @@
+/* packages/shared/src/theme/css-variables.css */
+
+/* Color tokens */
+:root {
+  /* Brand colors */
+  --color-phosphor: #00FF88;
+  --color-phosphor-muted: #00E68A;
+  --color-quantum-cyan: #00D4FF;
+  --color-quantum-violet: #7A27FF;
+  --color-phosphor-orange: #FF6600;
+  --color-calcium-amber: #F59E0B;
+  --color-danger-red: #EF4444;
+  
+  /* Axis colors */
+  --color-body: #FF9944;
+  --color-mesh: #44AAFF;
+  --color-forge: #44FFAA;
+  --color-shield: #FF4466;
+  
+  /* UI layers */
+  --color-void: #050510;
+  --color-void-light: #0B0F19;
+  --color-surface: #0A0A1A;
+  --color-surface-elevated: #111122;
+  --color-border: #2A2A40;
+  --color-border-subtle: #1F1F33;
+  
+  /* Text colors */
+  --color-text-primary: #E8EECF4;
+  --color-text-secondary: #B8C1D6;
+  --color-text-muted: #8A94A8;
+  --color-text-inverse: #FFFFFF;
+  
+  /* Semantic colors */
+  --color-success: #10B981;
+  --color-warning: #F59E0B;
+  --color-error: #EF4444;
+  --color-info: #3B82F6;
+  
+  /* Typography */
+  --font-family-mono: 'Space Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+  --font-family-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif;
+  --font-family-display: 'Oxanium', ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
+  
+  --font-size-xs: clamp(8px, 1vh, 10px);
+  --font-size-sm: clamp(9px, 1.2vh, 11px);
+  --font-size-base: clamp(10px, 1.3vh, 12px);
+  --font-size-lg: clamp(12px, 1.6vh, 14px);
+  --font-size-xl: clamp(16px, 2vh, 20px);
+  --font-size-2xl: clamp(20px, 3.5vh, 32px);
+  --font-size-3xl: clamp(24px, 4vh, 40px);
+  --font-size-4xl: clamp(32px, 5vh, 48px);
+  
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  
+  --line-height-tight: 1.2;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.8;
+  
+  /* Spacing */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 12px;
+  --spacing-lg: 16px;
+  --spacing-xl: 24px;
+  --spacing-2xl: 32px;
+  --spacing-3xl: 48px;
+  
+  /* Animation */
+  --duration-instant: 0s;
+  --duration-fast: 0.15s;
+  --duration-normal: 0.2s;
+  --duration-slow: 0.4s;
+  --duration-slowest: 0.6s;
+  
+  --easing-default: ease-out;
+  --easing-enter: cubic-bezier(0.16, 1, 0.3, 1);
+  --easing-exit: cubic-bezier(0.4, 0, 0.6, 1);
+  --easing-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  
+  /* Skin overrides */
+  --skin-background: #050510;
+  --skin-foreground: #E8EECF4;
+  --skin-primary: #00FF88;
+  --skin-secondary: #00D4FF;
+  --skin-accent: #7A27FF;
+  --skin-muted: #8A94A8;
+  --skin-glass-opacity: 0.15;
+  --skin-border-radius: 8px;
+  --skin-reduce-motion: 0;
+}
+
+/* Theme variants */
+body.dark {
+  /* Dark theme overrides */
+  --color-void: #050510;
+  --color-surface: #0A0A1A;
+  --color-text-primary: #E8EECF4;
+  --color-text-secondary: #B8C1D6;
+}
+
+body.light {
+  /* Light theme overrides */
+  --color-void: #FFFFFF;
+  --color-surface: #F8FAFC;
+  --color-text-primary: #0F172A;
+  --color-text-secondary: #475569;
+}
+
+body.density-compact {
+  /* Compact density overrides */
+  --spacing-md: 8px;
+  --spacing-lg: 12px;
+  --font-size-base: clamp(9px, 1.2vh, 11px);
+  --font-size-lg: clamp(11px, 1.5vh, 13px);
+}
+
+body.density-spacious {
+  /* Spacious density overrides */
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --font-size-base: clamp(11px, 1.4vh, 13px);
+  --font-size-lg: clamp(14px, 1.8vh, 16px);
+}
+
+body.contrast-high {
+  /* High contrast overrides */
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: #CCCCCC;
+  --color-text-muted: #888888;
+  --color-border: #FFFFFF;
+}
+
+/* Motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Glass effect utility */
+.glass {
+  background: rgba(var(--skin-primary-rgb, 0, 255, 136), var(--skin-glass-opacity, 0.15));
+  border: 1px solid rgba(var(--color-border-rgb, 42, 42, 64), 0.3);
+  border-radius: var(--skin-border-radius, 8px);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+/* Theme utilities */
+.theme-background {
+  background-color: var(--skin-background);
+}
+
+.theme-foreground {
+  color: var(--skin-foreground);
+}
+
+.theme-primary {
+  color: var(--skin-primary);
+}
+
+.theme-secondary {
+  color: var(--skin-secondary);
+}
+
+.theme-accent {
+  color: var(--skin-accent);
+}
+
+.theme-muted {
+  color: var(--skin-muted);
+}
+
+.theme-border {
+  border-color: var(--color-border);
+}
+
+.theme-text-primary {
+  color: var(--color-text-primary);
+}
+
+.theme-text-secondary {
+  color: var(--color-text-secondary);
+}
+
+.theme-text-muted {
+  color: var(--color-text-muted);
+}
+
+/* Spacing utilities */
+.spacing-xs { margin: var(--spacing-xs); }
+.spacing-sm { margin: var(--spacing-sm); }
+.spacing-md { margin: var(--spacing-md); }
+.spacing-lg { margin: var(--spacing-lg); }
+.spacing-xl { margin: var(--spacing-xl); }
+.spacing-2xl { margin: var(--spacing-2xl); }
+.spacing-3xl { margin: var(--spacing-3xl); }
+
+.spacing-xs-top { margin-top: var(--spacing-xs); }
+.spacing-sm-top { margin-top: var(--spacing-sm); }
+.spacing-md-top { margin-top: var(--spacing-md); }
+.spacing-lg-top { margin-top: var(--spacing-lg); }
+.spacing-xl-top { margin-top: var(--spacing-xl); }
+.spacing-2xl-top { margin-top: var(--spacing-2xl); }
+.spacing-3xl-top { margin-top: var(--spacing-3xl); }
+
+.spacing-xs-bottom { margin-bottom: var(--spacing-xs); }
+.spacing-sm-bottom { margin-bottom: var(--spacing-sm); }
+.spacing-md-bottom { margin-bottom: var(--spacing-md); }
+.spacing-lg-bottom { margin-bottom: var(--spacing-lg); }
+.spacing-xl-bottom { margin-bottom: var(--spacing-xl); }
+.spacing-2xl-bottom { margin-bottom: var(--spacing-2xl); }
+.spacing-3xl-bottom { margin-bottom: var(--spacing-3xl); }
+
+.spacing-xs-left { margin-left: var(--spacing-xs); }
+.spacing-sm-left { margin-left: var(--spacing-sm); }
+.spacing-md-left { margin-left: var(--spacing-md); }
+.spacing-lg-left { margin-left: var(--spacing-lg); }
+.spacing-xl-left { margin-left: var(--spacing-xl); }
+.spacing-2xl-left { margin-left: var(--spacing-2xl); }
+.spacing-3xl-left { margin-left: var(--spacing-3xl); }
+
+.spacing-xs-right { margin-right: var(--spacing-xs); }
+.spacing-sm-right { margin-right: var(--spacing-sm); }
+.spacing-md-right { margin-right: var(--spacing-md); }
+.spacing-lg-right { margin-right: var(--spacing-lg); }
+.spacing-xl-right { margin-right: var(--spacing-xl); }
+.spacing-2xl-right { margin-right: var(--spacing-2xl); }
+.spacing-3xl-right { margin-right: var(--spacing-3xl); }
+
+/* Typography utilities */
+.text-xs { font-size: var(--font-size-xs); }
+.text-sm { font-size: var(--font-size-sm); }
+.text-base { font-size: var(--font-size-base); }
+.text-lg { font-size: var(--font-size-lg); }
+.text-xl { font-size: var(--font-size-xl); }
+.text-2xl { font-size: var(--font-size-2xl); }
+.text-3xl { font-size: var(--font-size-3xl); }
+.text-4xl { font-size: var(--font-size-4xl); }
+
+.font-mono { font-family: var(--font-family-mono); }
+.font-sans { font-family: var(--font-family-sans); }
+.font-display { font-family: var(--font-family-display); }
+
+.font-normal { font-weight: var(--font-weight-normal); }
+.font-medium { font-weight: var(--font-weight-medium); }
+.font-semibold { font-weight: var(--font-weight-semibold); }
+.font-bold { font-weight: var(--font-weight-bold); }
+
+.leading-tight { line-height: var(--line-height-tight); }
+.leading-normal { line-height: var(--line-height-normal); }
+.leading-relaxed { line-height: var(--line-height-relaxed); }
+
+/* Animation utilities */
+.transition-fast { transition: all var(--duration-fast) var(--easing-default); }
+.transition-normal { transition: all var(--duration-normal) var(--easing-default); }
+.transition-slow { transition: all var(--duration-slow) var(--easing-default); }
+
+.animate-in { animation: fadeIn var(--duration-normal) var(--easing-enter); }
+.animate-out { animation: fadeOut var(--duration-normal) var(--easing-exit); }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(4px); }
+}

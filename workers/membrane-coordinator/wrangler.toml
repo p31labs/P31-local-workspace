@@ -1,0 +1,25 @@
+name = "membrane-coordinator"
+main = "src/index.ts"
+compatibility_date = "2026-07-16"
+
+[[durable_objects.bindings]]
+name = "MEMBRANE"
+class_name = "MembraneCoordinator"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["MembraneCoordinator"]
+
+[vars]
+GENESIS_GATE_URL = "https://genesis-gate.trimtab-signal.workers.dev"
+LOVE_BRIDGE_URL = "https://love-bridge.trimtab-signal.workers.dev"
+
+# TODO: Add [exports.MembraneCoordinator] section with type = "durable-object" and storage = "sqlite"
+# WARNING: Missing [exports] config for Durable Object(s) — manual handling required.
+
+[observability]
+enabled = true
+head_sampling_rate = 1.0
+
+[cache]
+enabled = true

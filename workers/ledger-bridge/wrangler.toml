@@ -1,0 +1,42 @@
+name = "ledger-bridge"
+main = "src/index.ts"
+compatibility_date = "2026-07-16"
+compatibility_flags = ["nodejs_compat"]
+
+# ── On-chain attestation relay (CWP-2026-021, Axis C) ───────────────────────
+# Bridges off-chain LOVE ledger events to the deployed P31 sovereign-chain
+# contracts on Base Sepolia (chain 84532). Scoped to ATTESTATION ANCHORING only —
+# the fungible LOVE ERC-20 path was retired (see software/workers/test/
+# retired-contracts.test.ts); this bridge does NOT mint/burn LOVE tokens.
+[vars]
+# Base Sepolia public RPC; override with Alchemy/Infura in production.
+RPC_URL = "https://sepolia.base.org"
+# P31TransparencyAnchor — deployed Base Sepolia 2026-07-13.
+ANCHOR_ADDR = "0xd930Fc4d429BbE6B8CEcca9e4C77386dB528e267"
+# ProofOfCare (oracle/relay) — deployed Base Sepolia 2026-07-13 (CWP-2026-023 Phase 0).
+PROOF_OF_CARE_ADDR = "0x08263FdD50196F229C9C2ccD650056067b884538"
+# LOVESBT (soulbound care SBT) — deployed Base Sepolia 2026-07-13 (CWP-2026-023 Phase 0).
+LOVESBT_ADDR = "0x521cAD1b54CDDB2B6B53a30EBe050C429F9c6C55"
+# Live mode: broadcast real transactions to Base Sepolia.
+# BRIDGE_PRIVATE_KEY set via `wrangler secret put`.
+DRY_RUN = "false"
+
+# BRIDGE_PRIVATE_KEY = dedicated relay signer (0x6B31cF8E72483D70Eee4C3e5970B5C95774FC8Ca),
+# distinct from DEPLOYER_PRIVATE_KEY. ProofOfCare.setRelay() points at this address
+# (called ONCE by the architect key during DeployMint). Funds ~0.02 ETH on Base Sepolia.
+# Set via: wrangler secret put BRIDGE_PRIVATE_KEY
+# NOTE: If BRIDGE_PRIVATE_KEY is not set, the worker falls back to dry-run mode
+# regardless of DRY_RUN=false.
+
+# Shared identity registry (CWP-2026-025). Same D1 as love-ledger so the
+# bridge can verify DID↔ETH bindings + Ed25519 signatures without a round-trip.
+[[d1_databases]]
+binding = "LOVE_DB"
+database_name = "love-ledger"
+database_id = "592e3e2e-3203-4e0a-8342-9e85215ec8a6"
+
+[observability]
+enabled = true
+
+[cache]
+enabled = true

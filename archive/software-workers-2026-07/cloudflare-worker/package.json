@@ -1,0 +1,23 @@
+{
+  "name": "p31-orchestrator",
+  "version": "1.0.0",
+  "description": "P31 Labs Love-Ledger + Orchestrator (Cloudflare Worker)",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "test": "vitest run --coverage",
+    "typecheck": "tsc --noEmit",
+    "kv:create": "wrangler kv:namespace create P31_MESH_STATE"
+  },
+  "dependencies": {
+    "discord-interactions": "^3.4.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240612.0",
+    "typescript": "^5.5.0",
+    "vitest": "^2.1.0",
+    "@vitest/coverage-v8": "^2.1.0",
+    "wrangler": "^3.114.17"
+  }
+}

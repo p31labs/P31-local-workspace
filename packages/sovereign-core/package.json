@@ -1,0 +1,30 @@
+{
+  "name": "@p31/sovereign-core",
+  "version": "0.1.0",
+  "type": "module",
+  "publishConfig": { "access": "public" },
+  "files": ["src"],
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./did": "./src/did.ts",
+    "./love": "./src/love.ts",
+    "./mesh": "./src/mesh.ts",
+    "./sbt": "./src/sbt.ts",
+    "./ipfs": "./src/ipfs.ts",
+    "./contracts": "./src/contracts.ts",
+    "./profile": "./src/profile.ts",
+    "./store": "./src/store.ts",
+    "./types": "./src/types.ts",
+    "./bridge": "./src/bridge.ts"
+  },
+  "dependencies": {
+    "ethers": "^6.17.0",
+    "peerjs": "^1.5.5",
+    "zustand": "^5.0.14"
+  },
+  "peerDependencies": {
+    "react": "^19.2.0"
+  }
+}

@@ -1,0 +1,11 @@
+name = "willow"
+pages_build_output_dir = "dist"
+compatibility_date = "2026-07-16"
+
+# Willow is a Pages project deployed from dist/
+# The main entrypoint is for the Pages Functions worker (not used in production)
+# Deploy: npx wrangler pages deploy dist --project-name willow --commit-dirty=true
+
+[observability]
+enabled = true
+

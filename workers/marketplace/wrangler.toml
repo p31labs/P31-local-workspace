@@ -1,0 +1,28 @@
+name = "marketplace"
+main = "src/index.ts"
+compatibility_date = "2026-07-16"
+compatibility_flags = ["nodejs_compat"]
+
+# Shared love-ledger D1 for trust tier lookups
+[[d1_databases]]
+binding = "LOVE_DB"
+database_name = "love-ledger"
+database_id = "592e3e2e-3203-4e0a-8342-9e85215ec8a6"
+
+# Durable Object binding for catalog state
+[[durable_objects.bindings]]
+name = "CATALOG_DO"
+class_name = "MarketplaceCatalogDO"
+
+[vars]
+ENVIRONMENT = "production"
+
+[observability]
+enabled = true
+
+[cache]
+enabled = true
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["MarketplaceCatalogDO"]

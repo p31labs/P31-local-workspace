@@ -1,0 +1,93 @@
+# Publish @p31/shared
+#
+# On version tag push: bumps version.ts, builds, and publishes to npm.
+# Consumers pin versions for reproducible worker builds (FRUIT OPS requirement).
+
+name: Publish @p31/shared
+
+on:
+  push:
+    tags:
+      - 'shared-v*'
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Extract version from tag
+        id: version
+        run: |
+          TAG="${{ github.ref_name }}"
+          VER="${TAG#shared-}"
+          echo "version=$VER" >> "$GITHUB_OUTPUT"
+          echo "Extracted version: $VER"
+
+      - name: Update version.ts
+        run: |
+          VER="${{ steps.version.outputs.version }}"
+          cat > packages/shared/src/version.ts <<-EOF
+          /**
+           * Package version — single source of truth.
+           * Updated by the release workflow on tag push.
+           */
+
+          export const VERSION = '$VER' as const;
+
+          export function getVersion(): string {
+            return VERSION;
+          }
+          EOF
+          echo "Updated version.ts to $VER"
+        working-directory: software
+
+      - name: Update package.json version
+        run: |
+          VER="${{ steps.version.outputs.version }}"
+          npm version "$VER" --no-git-tag-version --allow-same-version
+        working-directory: software/packages/shared
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+        working-directory: software
+
+      - name: Build
+        run: pnpm --filter @p31/shared build
+        working-directory: software
+
+      - name: Run tests
+        run: pnpm --filter @p31/shared test -- --coverage
+        working-directory: software
+
+      - name: Publish to npm
+        run: pnpm publish --no-git-checks --access public
+        working-directory: software/packages/shared
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Commit version bump
+        run: |
+          git config user.name "p31-bot"
+          git config user.email "bot@p31ca.org"
+          git add packages/shared/package.json packages/shared/src/version.ts
+          git commit -m "chore(shared): bump to ${{ steps.version.outputs.version }}"
+          git push
+        working-directory: software

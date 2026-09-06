@@ -1,0 +1,41 @@
+---
+import ArcadeLayout from '../../layouts/ArcadeLayout.astro';
+import Bashball from '../../games/Bashball';
+import Gridiron from '../../games/Gridiron';
+import GeodesicBuilder from '../../games/GeodesicBuilder';
+import StrategyBoard from '../../games/StrategyBoard';
+import CardTable from '../../games/CardTable';
+import LiquidSculptor from '../../games/LiquidSculptor';
+import JitterbugGame from '../../components/JitterbugGame';
+import SafeGame from '../../components/SafeGame';
+
+export function getStaticPaths() {
+  return [
+    { params: { game: 'bashball' } },
+    { params: { game: 'jitterbug' } },
+    { params: { game: 'gridiron' } },
+    { params: { game: 'geodesic' } },
+    { params: { game: 'strategy' } },
+    { params: { game: 'cards' } },
+    { params: { game: 'liquid' } },
+  ];
+}
+
+const { game } = Astro.params;
+const gameMap: Record<string, any> = {
+  bashball: Bashball,
+  gridiron: Gridiron,
+  geodesic: GeodesicBuilder,
+  jitterbug: JitterbugGame,
+  strategy: StrategyBoard,
+  cards: CardTable,
+  liquid: LiquidSculptor,
+};
+---
+
+<ArcadeLayout title={`${game} — Arcade`}>
+  <div style="padding: 16px 0;">
+    <a href="/" style="color: rgba(245,245,247,0.4); textDecoration: none; fontSize: 13px; fontFamily: 'monospace'; padding: '0 24px';">← Arcade</a>
+  </div>
+  {game && gameMap[game] && <SafeGame game={gameMap[game]} client:only="react" />}
+</ArcadeLayout>

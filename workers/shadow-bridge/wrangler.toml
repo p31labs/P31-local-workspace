@@ -1,0 +1,25 @@
+name = "shadow-bridge"
+main = "src/index.ts"
+compatibility_date = "2026-07-16"
+compatibility_flags = ["global_fetch_strictly_public"]
+
+[[durable_objects.bindings]]
+name = "GAME_SESSION"
+class_name = "GameSessionDO"
+
+[[migrations]]
+tag = "v2"
+new_sqlite_classes = ["GameSessionDO"]
+
+[vars]
+GENESIS_GATE_URL = "https://genesis-gate.trimtab-signal.workers.dev"
+LOVE_BRIDGE_URL = "https://love-bridge.trimtab-signal.workers.dev"
+GAME_ID = "p31-roblox-bridge"
+LOVE_ENABLED = "true"
+
+[observability]
+enabled = true
+head_sampling_rate = 1.0
+
+[cache]
+enabled = true

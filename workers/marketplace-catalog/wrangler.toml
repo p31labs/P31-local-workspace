@@ -1,0 +1,30 @@
+name = "marketplace-catalog"
+main = "src/index.ts"
+compatibility_date = "2026-07-16"
+compatibility_flags = ["nodejs_compat"]
+
+# Shared love-ledger D1 for trust tier lookups
+[[d1_databases]]
+binding = "LOVE_DB"
+database_name = "love-ledger"
+database_id = "592e3e2e-3203-4e0a-8342-9e85215ec8a6"
+
+# Durable Object for hot marketplace state
+[[durable_objects.bindings]]
+name = "CATALOG_DO"
+class_name = "MarketplaceCatalogDO"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["MarketplaceCatalogDO"]
+
+[vars]
+ENVIRONMENT = "production"
+LOVE_LEDGER_URL = "https://love-ledger.trimtab-signal.workers.dev"
+JUSTICE_HUB_URL = "https://p31-justice-hub.trimtab-signal.workers.dev"
+
+[observability]
+enabled = true
+
+[cache]
+enabled = true

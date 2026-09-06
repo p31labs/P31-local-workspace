@@ -1,0 +1,4 @@
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import { useCageStore } from '../hooks/useCageStore';
+export function LoveBoard() { const { nodes, sendLove } = useCageStore(); return (_jsxs("div", { className: "love-board", children: [_jsx("h3", { children: "LOVE Board" }), _jsx("div", { className: "love-grid", children: nodes.map(n => (_jsxs("button", { className: "love-card", onClick: () => sendLove(n.id), children: [_jsx("span", { className: "love-mood", children: n.mood }), _jsxs("div", { className: "love-info", children: [_jsx("span", { className: "love-name", children: n.name }), _jsxs("span", { className: "love-pct", children: [n.love, "%"] })] }), _jsx("div", { className: "love-bar", children: _jsx("div", { className: "love-bar-fill", style: { width: `${n.love}%`, background: ['#8b5cf6', '#5cb8ff', '#00d68f', '#ff7eb6'][nodes.indexOf(n)] } }) })] }, n.id))) })] })); }
+//# sourceMappingURL=LoveBoard.js.map

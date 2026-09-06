@@ -1,0 +1,656 @@
+# P31 Design System — Component Registry
+# Single source of truth for all component definitions.
+# Consumed by: design-mcp-server.js, build-sovereign.mjs, export-a2ui.mjs, design dashboard
+
+version: "1.0"
+
+components:
+  GlassPanel:
+    description: Glassmorphic elevated surface with backdrop blur.
+    css_class: glass-panel
+    tool: renderGlassPanel
+    aiGuidance:
+      useWhen: "You need a top-level surface that separates content sections with depth."
+      avoidWhen: "For compact inline content, use GlassCard or GlassSubtle instead."
+      examples:
+        - "Main content area wrapper"
+        - "Settings panel container"
+    props:
+      padding:
+        type: string
+        default: md
+        options: [sm, md, lg]
+    slots: [default]
+    tokens:
+      - primitive.color.glass_surface
+      - primitive.color.glass_border
+      - primitive.color.surface2
+      - primitive.color.void_deep
+      - primitive.radius.xl
+      - primitive.radius.sm
+      - primitive.radius.lg
+      - primitive.shadow.glass
+      - primitive.spacing.xl
+      - primitive.spacing.xxl
+
+  GlassCard:
+    description: Compact glassmorphic card with padding.
+    css_class: glass-card
+    tool: renderGlassCard
+    aiGuidance:
+      useWhen: "Displaying a single piece of content in a grid or list."
+      avoidWhen: "For full-width sections, use GlassPanel instead."
+      examples:
+        - "Product card in a grid"
+        - "Info card in a dashboard"
+    props:
+      color:
+        type: string
+        default: accent
+        options: [accent, violet, gold, green, red]
+      padding:
+        type: string
+        default: lg
+        options: [sm, md, lg]
+      interactive:
+        type: boolean
+        default: true
+    slots: [default, header]
+    tokens:
+      - primitive.color.glass_surface
+      - primitive.color.glass_border
+      - primitive.color.glass_border_hover
+      - primitive.color.surface2
+      - primitive.color.void_deep
+      - primitive.radius.xl
+      - primitive.radius.sm
+      - primitive.radius.lg
+      - primitive.radius.full
+      - primitive.shadow.glass
+      - primitive.shadow.glow_cyan_hover
+      - primitive.spacing.xs
+      - primitive.spacing.md
+      - primitive.spacing.xl
+      - primitive.spacing.xxl
+      - primitive.typography.font_sans
+      - semantic.color.background.alt
+      - semantic.color.accent.gold
+      - semantic.color.accent.red
+      - semantic.color.accent.iris
+
+  GlassStrong:
+    description: High-opacity glass surface with strong blur.
+    css_class: glass-strong
+    tool: renderGlassStrong
+    aiGuidance:
+      useWhen: "Overlaying on busy or high-contrast backgrounds where text must remain readable."
+      avoidWhen: "On already-dark static backgrounds — use GlassSubtle or GlassCard instead."
+      examples:
+        - "Modal dialog backdrop"
+        - "Floating toolbar over starfield"
+    props: {}
+    slots: [default]
+    tokens:
+      - primitive.color.glass_surface_strong
+      - primitive.color.void_deep
+      - primitive.blur.strong
+      - primitive.radius.xl
+
+  GlassSubtle:
+    description: Low-opacity glass surface with subtle blur.
+    css_class: glass-subtle
+    tool: renderGlassSubtle
+    aiGuidance:
+      useWhen: "Grouping related items without heavy visual weight."
+      avoidWhen: "For primary content areas or high-priority information."
+      examples:
+        - "Secondary sidebar panel"
+        - "Input group wrapper"
+    props: {}
+    slots: [default]
+    tokens:
+      - primitive.color.glass_surface_subtle
+      - primitive.color.surface2
+      - primitive.blur.subtle
+      - primitive.radius.xl
+
+  Button:
+    description: Button component with primary, secondary, and ghost variants.
+    css_class: btn-primary
+    tool: renderButton
+    aiGuidance:
+      useWhen: "User needs to submit a form, confirm an action, or trigger a primary interaction."
+      avoidWhen: "Navigating between pages — use a link or TetraGrid navigation item instead."
+      examples:
+        - "Submit order"
+        - "Save changes"
+        - "Confirm deletion"
+    variants: [btn-primary, btn-secondary, btn-ghost]
+    props:
+      variant:
+        type: string
+        default: primary
+        options: [primary, secondary, ghost]
+      size:
+        type: string
+        default: md
+        options: [sm, md, lg]
+    slots: [default]
+    tokens:
+      - semantic.color.accent.default
+      - primitive.color.void
+      - primitive.color.void_deep
+      - primitive.color.surface2
+      - primitive.spacing.sm
+      - primitive.spacing.lg
+      - primitive.spacing.xl
+      - primitive.radius.md
+      - primitive.radius.sm
+      - primitive.radius.full
+      - primitive.shadow.glow_cyan
+      - primitive.typography.font_sans
+
+  SpoonMeter:
+    description: Real-time cognitive load indicator (0-5 scale).
+    css_class: spoon-meter
+    tool: renderSpoonMeter
+    aiGuidance:
+      useWhen: "Displaying current spoon level, adjusting UI density, or triggering crisis mode."
+      avoidWhen: "Decorative-only contexts where spoon state is irrelevant."
+      examples:
+        - "Header status bar"
+        - "Settings accessibility panel"
+    props:
+      current:
+        type: number
+        default: 3
+        range: [0, 5]
+      interactive:
+        type: boolean
+        default: true
+    slots: []
+    tokens:
+      - semantic.color.accent.default
+      - semantic.color.accent.gold
+      - semantic.color.accent.red
+      - semantic.color.accent.iris
+      - semantic.color.text.tertiary
+      - primitive.typography.font_sans
+
+  TetraGrid:
+    description: 4-column responsive grid for tetrahedral content layouts.
+    css_class: tetra-grid
+    tool: renderTetraGrid
+    aiGuidance:
+      useWhen: "Arranging 2-12 items in a responsive grid that collapses from 4 → 2 → 1 columns."
+      avoidWhen: "For two-column layouts, use a custom CSS grid instead."
+      examples:
+        - "Icon gallery"
+        - "Feature cards"
+        - "Research paper list"
+    props: {}
+    slots: [default]
+    tokens:
+      - primitive.spacing.xs
+      - primitive.spacing.md
+      - primitive.spacing.xl
+      - primitive.spacing.xxl
+
+  HonestLabel:
+    description: Disclaimer badge for contested-science content.
+    css_class: honest-label
+    tool: renderHonestLabel
+    aiGuidance:
+      useWhen: "Marking content that requires scientific honesty or uncertainty disclosure."
+      avoidWhen: "For standard status indicators, use StatusBadge instead."
+      examples:
+        - "Contested research claim"
+        - "Preliminary experimental result"
+    props: {}
+    slots: [default]
+    tokens:
+      - primitive.typography.font_mono
+      - primitive.typography.font_sans
+      - semantic.color.text.tertiary
+
+  StatusBadge:
+    description: Status indicator badge with Live/Beta/Research variants.
+    css_class: status-badge
+    tool: renderStatusBadge
+    aiGuidance:
+      useWhen: "Communicating deployment status, release stage, or research phase."
+      avoidWhen: "For generic labels without status semantics."
+      examples:
+        - "Service health indicator"
+        - "Release stage tag"
+        - "Research phase marker"
+    variants: [status-badge-live, status-badge-beta, status-badge-research]
+    props:
+      status:
+        type: string
+        default: live
+        options: [live, beta, research]
+    slots: [default]
+    tokens:
+      - semantic.color.accent.green
+      - semantic.color.accent.default
+      - semantic.color.accent.variant
+      - semantic.color.accent.gold
+      - semantic.color.accent.red
+      - semantic.color.accent.iris
+      - primitive.radius.sm
+      - primitive.spacing.xs
+      - primitive.typography.font_sans
+
+  CrisisOverlay:
+    description: Full-screen breathing overlay shown when spoons=0.
+    css_class: crisis-overlay
+    tool: crisisOverlay
+    aiGuidance:
+      useWhen: "User spoon level reaches 0; requires immediate calming UI with a single exit action."
+      avoidWhen: "For non-emergency modals or informational popups."
+      examples:
+        - "Spoons depleted screen"
+        - "Sensory overload break"
+    props:
+      message:
+        type: string
+        default: Rest. Breathe. The mesh holds.
+      buttonLabel:
+        type: string
+        default: "I'm Ready"
+    slots: []
+    tokens:
+      - semantic.color.background.default
+      - primitive.color.void_deep
+      - primitive.typography.font_sans
+
+  Starfield:
+    description: 200-star twinkling canvas background with animation loop.
+    css_class: starfield
+    tool: renderStarfield
+    aiGuidance:
+      useWhen: "Adding ambient motion to the background of a hero or landing section."
+      avoidWhen: "When spoons=0 or prefers-reduced-motion is active — performance and accessibility."
+      examples:
+        - "PHOS landing background"
+        - "Dashboard ambient layer"
+    props:
+      count:
+        type: number
+        default: 200
+      speed:
+        type: number
+        default: 0.08
+    slots: []
+    tokens:
+      - primitive.color.void_deep
+      - primitive.radius.full
+      - primitive.shadow.glow_cyan
+
+  ThemeToggle:
+    description: Dark/light theme toggle button. Persists to localStorage under p31:theme.
+    css_class: theme-toggle
+    tool: themeToggle
+    aiGuidance:
+      useWhen: "Switching between dark and light visual themes in the header or settings."
+      avoidWhen: "When the app is dark-only or when theme is controlled by system preference only."
+      examples:
+        - "Header theme switcher"
+        - "Accessibility settings"
+    props: {}
+    slots: []
+    tokens:
+      - semantic.color.background.default
+      - theme.light.background.default
+      - theme.light.background.alt
+      - theme.light.text.primary
+      - theme.light.text.secondary
+      - theme.light.text.tertiary
+      - theme.light.glass_surface
+      - theme.light.glass_border
+      - theme.light.glass_border_hover
+      - primitive.typography.font_sans
+
+  CandyHeader:
+    description: Canonical P31 candy-pill header bar with phosphorous-green glass, cyan border, and glow shadow.
+    css_class: candy-header
+    tool: renderCandyHeader
+    aiGuidance:
+      useWhen: "Top-of-page site navigation bar. Must use the canonical candy-pill glass styling."
+      avoidWhen: "Inline headers within card content — use GlassCard or GlassPanel instead."
+      examples:
+        - "p31ca.org site header"
+        - "PHOS app shell header"
+    props:
+      brand:
+        type: string
+        default: p31ca
+        options: [p31ca, phosphorus]
+    slots: [default]
+    tokens:
+      - component.header_candy
+      - component.crown_xs
+      - component.spoon_icon
+      - primitive.color.cyan
+      - primitive.color.void
+
+  Crown:
+    description: Animated tetrahedral crown brand glyph for header and brand surfaces.
+    css_class: crown
+    tool: renderCrown
+    aiGuidance:
+      useWhen: "Brand identity in headers, loading states, or empty states."
+      avoidWhen: "Decorative-only contexts where brand is irrelevant."
+      examples:
+        - "Site nav brand mark"
+        - "App loading splash"
+    props:
+      size:
+        type: string
+        default: md
+        options: [xs, sm, md, lg]
+      brand:
+        type: string
+        default: p31ca
+        options: [p31ca, phosphorus]
+    slots: []
+    tokens:
+      - component.crown_xs
+      - primitive.color.cyan
+      - primitive.color.violet
+      - primitive.color.gold
+      - primitive.color.green
+      - primitive.color.iris
+
+  SpoonDial:
+    description: Icon-mode spoon meter for compact header placement, showing 5 SVG spoons with active/inactive opacity.
+    css_class: spoon-dial
+    tool: setSpoonLevel
+    aiGuidance:
+      useWhen: "Header spoon indicator where space is limited. Use mode=icon for compact display."
+      avoidWhen: "Full-width settings panel — use SpoonMeter instead."
+      examples:
+        - "Site header right side"
+        - "Compact app bar"
+    props:
+      spoons:
+        type: number
+        default: 3
+        range: [0, 5]
+    slots: []
+    tokens:
+      - component.spoon_icon
+      - semantic.color.accent.default
+      - primitive.color.text.tertiary
+
+  Card:
+    description: Generic glass card used across portals for content containers.
+    css_class: card
+    tool: renderCard
+    aiGuidance:
+      useWhen: "Wrapping a piece of content in a glassmorphic card with backdrop blur."
+      avoidWhen: "For top-level sections use GlassPanel instead."
+      examples:
+        - "Dashboard stat card"
+        - "Content section wrapper"
+    props:
+      padding:
+        type: string
+        default: lg
+        options: [sm, md, lg]
+    slots: [default, header]
+    tokens:
+      - primitive.color.glass_surface
+      - primitive.color.glass_border
+      - primitive.color.glass_border_hover
+      - primitive.radius.lg
+      - primitive.radius.md
+      - primitive.shadow.glass
+      - primitive.typography.font_sans
+
+  Topbar:
+    description: Portal top navigation bar with glass effect, spoons-aware height, and brand accent.
+    css_class: topbar
+    tool: renderTopbar
+    aiGuidance:
+      useWhen: "Top-of-page navigation bar for portals. Includes spoon dial on right."
+      avoidWhen: "Use CandyHeader for standalone brand headers."
+      examples:
+        - "Willow companion topbar"
+        - "Tetra Ops dashboard topbar"
+    props:
+      brand:
+        type: string
+        default: p31ca
+        options: [p31ca, phosphorus, willow]
+    slots: [left, center, right]
+    tokens:
+      - primitive.color.glass_surface
+      - primitive.color.void
+      - primitive.spacing.lg
+      - primitive.spacing.md
+      - primitive.radius.md
+      - primitive.typography.font_sans
+
+  BottomNav:
+    description: Fixed bottom tab navigation for mobile-first portal layouts.
+    css_class: bottom-nav
+    tool: navigate
+    aiGuidance:
+      useWhen: "Mobile-first navigation with 3-5 tabs at the bottom of the viewport."
+      avoidWhen: "Desktop sidebar navigation — use left rail instead."
+      examples:
+        - "Tetra Ops bottom navigation"
+        - "P31 Portal bottom tabs"
+    props:
+      items:
+        type: array
+        default: []
+    slots: []
+    tokens:
+      - primitive.color.glass_surface
+      - primitive.color.void
+      - primitive.spacing.sm
+      - primitive.radius.md
+      - primitive.typography.font_sans
+
+  Badge:
+    description: Compact status or metric badge with optional dot indicator.
+    css_class: badge
+    tool: renderBadge
+    aiGuidance:
+      useWhen: "Displaying a compact metric, status, or tag in headers or cards."
+      avoidWhen: "For prominent status indicators use StatusBadge instead."
+      examples:
+        - "LOVE balance badge"
+        - "System status badge"
+    props:
+      variant:
+        type: string
+        default: default
+        options: [default, accent, success, error]
+    slots: [default]
+    tokens:
+      - primitive.color.glass_surface
+      - primitive.color.glass_border
+      - primitive.radius.full
+      - primitive.spacing.xs
+      - primitive.spacing.md
+      - primitive.typography.font_mono
+
+  CompanionCard:
+    description: Child-friendly glass card for willow companion portal, with warm rounded styling.
+    css_class: companion-card
+    tool: companionCard
+    aiGuidance:
+      useWhen: "Displaying content in the willow child/teen companion portal."
+      avoidWhen: "For standard portal cards use Card or GlassCard."
+      examples:
+        - "Willow mood card"
+        - "Willow game card"
+    props:
+      color:
+        type: string
+        default: accent
+        options: [accent, violet, gold, green, red]
+    slots: [default, header]
+    tokens:
+      - primitive.color.glass_surface
+      - primitive.color.glass_border
+      - primitive.radius.xl
+      - primitive.radius.lg
+      - primitive.radius.full
+      - primitive.shadow.glass
+      - primitive.typography.font_display
+
+  MoodBtn:
+    description: Mood selection button for the willow companion mood grid.
+    css_class: mood-btn
+    tool: moodBtn
+    aiGuidance:
+      useWhen: "Presenting mood options in a grid for the child companion check-in."
+      avoidWhen: "For standard buttons use Button instead."
+      examples:
+        - "Willow mood tracker grid"
+    props:
+      mood:
+        type: string
+        default: happy
+        options: [happy, calm, okay, sad, overwhelmed, angry, anxious, tired]
+    slots: []
+    tokens:
+      - primitive.radius.full
+      - primitive.typography.font_display
+      - primitive.spacing.md
+
+  GameCard:
+    description: Game selection card for arcade/play sections.
+    css_class: game-card
+    tool: gameCard
+    aiGuidance:
+      useWhen: "Displaying a game or activity in a grid layout."
+      avoidWhen: "For non-game content use Card or GlassCard."
+      examples:
+        - "ARCADE game grid"
+        - "Willow activity picker"
+    props:
+      spoons:
+        type: string
+        default: "2-5"
+    slots: []
+    tokens:
+      - primitive.color.glass_surface
+      - primitive.color.glass_border
+      - primitive.radius.lg
+      - primitive.typography.font_sans
+
+  ChatBubble:
+    description: Chat message bubble for companion chat interface.
+    css_class: chat-bubble
+    tool: chatBubble
+    aiGuidance:
+      useWhen: "Displaying a chat message in the companion or portal chat interface."
+      avoidWhen: "For system notifications use Toast instead."
+      examples:
+        - "Willow companion chat"
+        - "Support chat message"
+    props:
+      role:
+        type: string
+        default: user
+        options: [user, companion, system]
+    slots: [default]
+    tokens:
+      - primitive.radius.lg
+      - primitive.radius.md
+      - primitive.typography.font_sans
+      - primitive.color.surface2
+      - primitive.color.void_deep
+
+  PinKey:
+    description: PIN pad key for the willow companion PIN overlay.
+    css_class: pin-key
+    tool: pinKey
+    aiGuidance:
+      useWhen: "Rendering a single key on the PIN entry pad for child lock/unlock."
+      avoidWhen: "For form inputs use standard form elements instead."
+      examples:
+        - "Willow PIN overlay keypad"
+    props:
+      value:
+        type: string
+        default: ""
+    slots: []
+    tokens:
+      - primitive.radius.full
+      - primitive.typography.font_display
+      - primitive.spacing.md
+
+  Toggle:
+    description: Binary toggle switch for settings pages.
+    css_class: toggle
+    tool: renderToggle
+    aiGuidance:
+      useWhen: "Toggling a binary setting on/off in preferences or settings panels."
+      avoidWhen: "For radio groups use standard radio inputs instead."
+      examples:
+        - "Dark mode toggle"
+        - "Sound on/off toggle"
+    props:
+      checked:
+        type: boolean
+        default: false
+    slots: []
+    tokens:
+      - primitive.radius.full
+      - primitive.color.glass_surface
+      - primitive.color.surface2
+
+  BreakOverlay:
+    description: Full-screen break timer overlay for the willow companion.
+    css_class: break-overlay
+    tool: breakOverlay
+    aiGuidance:
+      useWhen: "Displaying a scheduled break or sensory break for the child companion."
+      avoidWhen: "For crisis mode use CrisisOverlay instead — BreakOverlay is gentler."
+      examples:
+        - "Willow break timer"
+        - "Scheduled sensory break"
+    props:
+      duration:
+        type: number
+        default: 120
+    slots: []
+    tokens:
+      - primitive.color.void_deep
+      - primitive.color.surface2
+      - primitive.typography.font_display
+      - primitive.radius.xl
+
+  Toast:
+    description: Transient notification toast for portal feedback.
+    css_class: toast
+    tool: showToast
+    aiGuidance:
+      useWhen: "Showing a brief success, error, or info message that auto-dismisses."
+      avoidWhen: "For persistent notifications use the NotificationStore or a modal."
+      examples:
+        - "Molecule submitted successfully"
+        - "Wallet connected"
+    props:
+      type:
+        type: string
+        default: info
+        options: [info, success, error]
+      duration:
+        type: number
+        default: 3000
+    slots: [default]
+    tokens:
+      - primitive.color.glass_surface
+      - primitive.color.glass_border_strong
+      - primitive.radius.md
+      - primitive.typography.font_sans
+      - semantic.color.accent.green
+      - semantic.color.accent.red

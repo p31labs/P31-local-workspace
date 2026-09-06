@@ -1,0 +1,11 @@
+name = "mcp-registry"
+main = "src/index.ts"
+compatibility_date = "2026-07-16"
+compatibility_flags = ["nodejs_compat"]
+
+[observability]
+enabled = true
+
+[[kv_namespaces]]
+binding = "REGISTRY_KV"
+id = "0f08cff0858a40b49da004ba9d90f900"

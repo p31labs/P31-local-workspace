@@ -1,0 +1,52 @@
+/**
+ * @file chrome.css — Shared P31 sovereign chrome styles.
+ *
+ * Crisis Mode: at data-spoons 0, no chrome may render (DESIGN.md hard invariant).
+ * The SpoonOrbit companion dims at spoons <= 1 and hides entirely at 0 (.ui-chrome).
+ */
+
+/* Crisis mode (spoons = 0): suppress all chrome except the breathing overlay. */
+[data-spoons='0'] .ui-chrome,
+[data-spoons='0'] .ui-chrome * {
+  display: none !important;
+}
+
+/* Crisis overlay — only visible at spoons 0. Hidden otherwise. */
+html:not([data-spoons='0']) p31-crisis-overlay {
+  display: none !important;
+}
+
+/* Collapse body padding-bottom when the strip is hidden, so the page
+   reclaims the reserved space. (Body gets its padding-bottom from an
+   inline style, so this CSS rule needs the !important override.) */
+[data-spoons='0'] body {
+  padding-bottom: 0 !important;
+}
+
+/* Low spoons (1): dim the companion, no fast motion. */
+[data-spoons='1'] .spoon-orbit-btn {
+  opacity: 0.5;
+  filter: saturate(0.6);
+}
+
+/* SpoonOrbit companion button — hover glow */
+.spoon-orbit-btn {
+  transition: opacity 0.3s ease, filter 0.3s ease, transform var(--p31-duration-fast) var(--p31-easing-standard);
+  border-radius: 12px;
+}
+
+.spoon-orbit-btn:hover {
+  box-shadow: 0 0 18px rgba(0, 240, 255, 0.3);
+}
+
+.spoon-orbit-btn:focus-visible {
+  outline: 2px solid var(--p31-accent);
+  outline-offset: 4px;
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .spoon-orbit-btn {
+    animation: none !important;
+  }
+}

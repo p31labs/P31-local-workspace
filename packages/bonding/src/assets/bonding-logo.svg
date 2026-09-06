@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <!-- OLED Black Background -->
+  <rect width="512" height="512" fill="#000000" />
+  
+  <!-- Surface Void Gradient -->
+  <defs>
+    <linearGradient id="voidGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#000000" />
+      <stop offset="100%" stop-color="#050308" />
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" fill="url(#voidGradient)" />
+  
+  <!-- Molecular Structure -->
+  <g transform="translate(256, 256)">
+    <!-- Central Carbon Atom -->
+    <circle r="32" fill="#FF00FF" stroke="#00FFFF" stroke-width="3" />
+    
+    <!-- Hydrogen Atoms -->
+    <g>
+      <circle cx="100" cy="0" r="16" fill="#00FFFF" />
+      <circle cx="-100" cy="0" r="16" fill="#00FFFF" />
+      <circle cx="0" cy="100" r="16" fill="#00FFFF" />
+      <circle cx="0" cy="-100" r="16" fill="#00FFFF" />
+    </g>
+    
+    <!-- Covalent Bonds -->
+    <g stroke="#00FFFF" stroke-width="4" opacity="0.8">
+      <line x1="32" y1="0" x2="84" y2="0" />
+      <line x1="-32" y1="0" x2="-84" y2="0" />
+      <line x1="0" y1="32" x2="0" y2="84" />
+      <line x1="0" y1="-32" x2="0" y2="-84" />
+    </g>
+    
+    <!-- Electron Orbits -->
+    <g stroke="#BF5FFF" stroke-width="2" opacity="0.4">
+      <circle r="60" fill="none" />
+      <circle r="120" fill="none" />
+      <circle r="180" fill="none" />
+    </g>
+    
+    <!-- Energy Fields -->
+    <g stroke="#FFD700" stroke-width="1" opacity="0.6">
+      <path d="M 100 0 Q 130 30 100 60" />
+      <path d="M -100 0 Q -130 -30 -100 -60" />
+      <path d="M 0 100 Q 30 130 60 100" />
+      <path d="M 0 -100 Q -30 -130 -60 -100" />
+    </g>
+  </g>
+  
+  <!-- Brand Text -->
+  <text x="256" y="460" font-family="Oxanium, system-ui, sans-serif" font-weight="800" font-size="36" fill="#00FFFF" text-anchor="middle">BONDING</text>
+  <text x="256" y="490" font-family="Space Mono, monospace" font-weight="400" font-size="14" fill="#BF5FFF" text-anchor="middle">MOLECULAR EDUCATION</text>
+</svg>

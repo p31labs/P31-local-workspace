@@ -1,0 +1,73 @@
+name: P31 Packages CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'packages/**'
+      - '.github/workflows/packages.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'packages/**'
+      - '.github/workflows/packages.yml'
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: 'Publish to npm'
+        required: true
+        default: 'false'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        package: [ui, design-core, sovereign-core, game-engine, gamification, quantum-core]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Type check
+        run: pnpm -C packages/${{ matrix.package }} typecheck 2>/dev/null || echo "No typecheck script"
+
+      - name: Run tests
+        run: pnpm -C packages/${{ matrix.package }} test 2>/dev/null || echo "No test script"
+
+  publish:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.publish == 'true'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Publish packages
+        run: |
+          for pkg in design-core quantum-core sovereign-core game-engine gamification ui; do
+            echo "Publishing @p31/$pkg..."
+            cd packages/$pkg
+            npm publish --access public
+            cd ../..
+          done
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

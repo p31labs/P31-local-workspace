@@ -1,0 +1,18 @@
+name = "sovereign-justice-rag"
+main = "src/rag-pipeline.ts"
+compatibility_date = "2026-07-16"
+
+[[d1_databases]]
+binding = "JUSTICE_D1"
+database_name = "sovereign-justice-db"
+database_id = "64381fff-b652-435c-8d48-ac5a1c7bf248"
+
+[ai]
+binding = "AI"
+
+[vars]
+ENVIRONMENT = "production"
+EMBEDDING_MODEL = "@cf/baai/bge-large-en-v1.5"
+
+[cache]
+enabled = true

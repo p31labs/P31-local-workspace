@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Background -->
+  <rect width="512" height="512" fill="#050510" rx="128" />
+  
+  <!-- Atom symbol: overlapping ellipses -->
+  <!-- Central nucleus -->
+  <circle cx="256" cy="256" r="40" fill="#00FF88" />
+  
+  <!-- Electron orbitals -->
+  <ellipse cx="256" cy="256" rx="120" ry="40" fill="none" stroke="#00FF88" stroke-width="8" stroke-opacity="0.6" />
+  <ellipse cx="256" cy="256" rx="40" ry="120" fill="none" stroke="#00FF88" stroke-width="8" stroke-opacity="0.6" />
+  <ellipse cx="256" cy="256" rx="90" ry="90" fill="none" stroke="#00FF88" stroke-width="6" stroke-opacity="0.4" transform="rotate(45 256 256)" />
+  
+  <!-- Connecting bonds -->
+  <line x1="256" y1="136" x2="256" y2="376" stroke="#00FF88" stroke-width="4" stroke-opacity="0.8" />
+  <line x1="136" y1="256" x2="376" y2="256" stroke="#00FF88" stroke-width="4" stroke-opacity="0.8" />
+  
+  <!-- Outer ring -->
+  <circle cx="256" cy="256" r="200" fill="none" stroke="#00FF88" stroke-width="4" stroke-opacity="0.3" />
+</svg>

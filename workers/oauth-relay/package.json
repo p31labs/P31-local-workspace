@@ -1,0 +1,21 @@
+{
+  "name": "p31-oauth-relay",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "scripts": {
+    "dev": "wrangler dev",
+    "build": "tsc --noEmit",
+    "deploy": "wrangler deploy",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "hono": "^4.6.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260514.0",
+    "typescript": "^5.7.0",
+    "wrangler": "^4.97.0"
+  }
+}

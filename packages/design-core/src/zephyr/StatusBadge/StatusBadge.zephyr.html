@@ -1,0 +1,48 @@
+<z-badge
+  data-status="online"
+  data-mcp-tool="statusBadge"
+  data-mcp-type="status"
+  data-mcp-target="status-badge"
+  data-mcp-state="online"
+>
+  <span slot="indicator" class="status-dot"></span>
+  <span slot="label" class="status-label">
+    <slot name="label">Online</slot>
+  </span>
+</z-badge>
+
+<style>
+  :host {
+    --z-badge-online: var(--p31-accent-green, #34d399);
+    --z-badge-offline: var(--p31-accent-red, #fb7185);
+    --z-badge-busy: var(--p31-accent-gold, #fbbf24);
+    --z-badge-away: var(--p31-text-tertiary, #94a3b8);
+    --z-badge-bg: var(--p31-glass-bg, rgba(255,255,255,0.06));
+    --z-badge-color: var(--p31-text-primary, #F5F5F7);
+  }
+
+  .status-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--z-badge-online);
+    flex-shrink: 0;
+  }
+
+  :host([data-status="online"]) .status-dot {
+    background: var(--z-badge-online);
+  }
+
+  :host([data-status="offline"]) .status-dot {
+    background: var(--z-badge-offline);
+  }
+
+  :host([data-status="busy"]) .status-dot {
+    background: var(--z-badge-busy);
+  }
+
+  :host([data-status="away"]) .status-dot {
+    background: var(--z-badge-away);
+  }
+</style>

@@ -1,0 +1,40 @@
+# mautrix-meta bridge config — Facebook Messenger + Instagram DMs
+homeserver:
+  address: http://synapse:8008
+  domain: p31ca.org
+  async_media: false
+
+appservice:
+  address: http://bridge-meta:29319
+  hostname: 0.0.0.0
+  port: 29319
+  database:
+    type: sqlite3
+    uri: /data/meta.db
+  id: meta
+  bot_username: metabot
+  bot_displayname: Meta Bridge
+  as_token: "${BRIDGE_META_AS_TOKEN}"
+  hs_token: "${BRIDGE_META_HS_TOKEN}"
+
+meta:
+  # Mode: messenger (Facebook Messenger) or instagram
+  # Set to messenger; use !meta switch-account for Instagram
+  mode: messenger
+
+bridge:
+  username_template: "messenger_{{.}}"
+  command_prefix: "!meta"
+  permissions:
+    "@will:p31ca.org": admin
+
+  encryption:
+    allow: true
+    default: true
+    require: true
+
+logging:
+  min_level: warn
+  writers:
+    - type: stdout
+      format: pretty-colored

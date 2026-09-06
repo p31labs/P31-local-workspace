@@ -1,0 +1,30 @@
+---
+export interface Stat {
+  label: string;
+  value: string | number;
+  href?: string;
+}
+const { stats, cols = 4 } = Astro.props;
+const colClasses =
+  cols === 2 ? 'grid-cols-2'
+  : cols === 3 ? 'grid-cols-2 sm:grid-cols-3'
+  : cols === 5 ? 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-5'
+  : 'grid-cols-2 sm:grid-cols-4';
+---
+<div class={`grid ${colClasses} gap-3`}>
+  {stats.map((s) => (
+    <div class="glass-subtle p-3 rounded-xl text-center">
+      {s.href ? (
+        <a href={s.href} target="_blank" rel="noopener noreferrer" class="no-underline link-glow hover:brightness-125 transition">
+          <div class="text-xl font-bold text-[#F5F5F7] tabular-nums">{s.value}</div>
+          <div class="text-[10px] text-white/30 uppercase tracking-wider">{s.label}</div>
+        </a>
+      ) : (
+        <>
+          <div class="text-xl font-bold text-[#F5F5F7] tabular-nums">{s.value}</div>
+          <div class="text-[10px] text-white/30 uppercase tracking-wider">{s.label}</div>
+        </>
+      )}
+    </div>
+  ))}
+</div>

@@ -1,0 +1,161 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Design System/Components" />
+
+# Component Catalog
+
+P31 design system components are the building blocks of all P31 surfaces. Every component is neuroinclusive by design — respecting spoon levels, glassmorphism, and quantum-cyan accent rules.
+
+---
+
+## Core Components
+
+These components live in `packages/design-core/src/generated/` and are the single source of truth.
+
+### Crown
+The P31 Crown mark — a 200×168 SVG icon symbolizing cognitive sovereignty. Acts as the site-wide brand mark and navigation anchor.
+
+- **ViewBox:** `0 16 200 168`
+- **Accessibility:** Includes `<title>` and `<desc>` elements
+- **Variants:** Icon-only (full P31 tetrahedral mark)
+- **Import:** `import { Crown } from '@p31/design-core/generated/Crown'`
+
+### GlassCard
+The canonical glassmorphic card container. Wraps content with the P31 glass aesthetic.
+
+- **Glass tier:** Standard (`.glass-panel` base)
+- **Hover:** Lifts 2px, border brightens
+- **Import:** `import { GlassCard } from '@p31/design-core/generated/GlassCard'`
+
+### Button
+Three-variant button component with quantum-cyan primary accent.
+
+- **Variants:** `primary` | `secondary` | `ghost`
+- **Sizes:** `sm` | `md` | `lg`
+- **Accessibility:** `min-height: 44px`, `min-width: 44px`, focus-visible ring
+- **Import:** `import { Button } from '@p31/design-core/generated/Button'`
+
+### SpoonDial
+Cognitive load indicator and adjustment control. Shows current spoon level (0–5) with mode switching.
+
+- **Modes:** Full dial, compact icon, hidden (crisis)
+- **Import:** `import { SpoonDial } from '@p31/design-core/generated/SpoonDial'`
+
+### CrisisOverlay
+Full-screen breathing overlay for crisis mode (spoons = 0). Only exit control is visible.
+
+- **Behavior:** Renders when `data-spoons="0"`
+- **Controls:** Escape key, "I'm ready" button
+- **Import:** `import { CrisisOverlay } from '@p31/design-core/generated/CrisisOverlay'`
+
+---
+
+## UI Chrome Components
+
+These components live in `packages/ui/src/chrome/` and are available via `@p31/ui/chrome`.
+
+### SiteNav
+Primary navigation with candy-pill segments and active state detection.
+
+- **Features:** Route-based active highlighting, tetrahedral nav structure
+- **Import:** `import { SiteNav } from '@p31/ui/chrome'`
+
+### BrandMark
+App-specific brand identity with icon + name + tagline.
+
+- **Props:** `appName`, `tagline`, `icon`
+- **Import:** `import { BrandMark } from '@p31/ui/chrome'`
+
+### Footer
+Standard P31 site footer with links, copyright, and mesh status.
+
+- **Import:** `import { Footer } from '@p31/ui/chrome'`
+
+### SkipLink
+WCAG 2.2 skip-navigation link for keyboard users.
+
+- **Behavior:** Hidden until focused, then visible at top of page
+- **Import:** `import { SkipLink } from '@p31/ui/chrome'`
+
+### SovereigntyStrip
+Top-of-page status bar showing sovereignty status and quantum mesh health.
+
+- **Import:** `import { SovereigntyStrip } from '@p31/ui/chrome'`
+
+### GlowButton
+Animated glow-effect button for high-emphasis actions.
+
+- **Import:** `import { GlowButton } from '@p31/ui/chrome'`
+
+---
+
+## Generated Components (Full List)
+
+15 auto-generated components with Storybook stories:
+
+| Component | Description |
+|-----------|-------------|
+| `Crown` | P31 Crown SVG mark |
+| `GlassCard` | Glass card container |
+| `GlassPanel` | Glass panel container |
+| `GlassSubtle` | Subtle glass overlay |
+| `GlassStrong` | Strong glass overlay |
+| `Button` | Primary/secondary/ghost button |
+| `SpoonDial` | Spoon level indicator |
+| `SpoonMeter` | Spoon level meter bar |
+| `CrisisOverlay` | Crisis mode breathing overlay |
+| `CandyHeader` | Candy-pill navigation header |
+| `ThemeToggle` | Light/dark theme switch |
+| `Starfield` | Animated background starfield |
+| `StatusBadge` | Status indicator badge |
+| `HonestLabel` | Ethical disclosure label |
+| `TetraGrid` | Tetrahedral grid layout |
+
+---
+
+## Astro Templates
+
+Layout templates in `packages/ui/src/templates/` that control page structure:
+
+| Template | Description |
+|----------|-------------|
+| `Page.astro` | Page shell with max-width and spacing |
+| `Header.astro` | Page header with optional nav slot |
+| `TetraNav.astro` | Fixed top navigation with tetrahedral links |
+| `SectionHero.astro` | Hero section with title |
+| `SectionFeatures.astro` | Feature grid section |
+| `Footer.astro` | Standard page footer |
+
+> **Governance Rule:** Templates control layout (`gap`, `padding`, `max-width`). Components NEVER declare `margin`, `transform`, or `position`. Only templates control positioning.
+
+---
+
+## Import Patterns
+
+```tsx
+// From design-core (canonical source)
+import { Crown } from '@p31/design-core/generated/Crown';
+import { GlassCard } from '@p31/design-core/generated/GlassCard';
+import { Button } from '@p31/design-core/generated/Button';
+
+// From ui/chrome (application chrome)
+import { SiteNav, BrandMark, Footer } from '@p31/ui/chrome';
+
+// From ui/templates (Astro-only)
+import Page from '@p31/ui/templates/Page.astro';
+import TetraNav from '@p31/ui/templates/TetraNav.astro';
+```
+
+---
+
+## Agent Prompt Rules
+
+When generating UI, agents MUST follow these invariants:
+
+1. Check `data-spoons` — disable motion at spoons ≤ 1
+2. Use exactly **one** cyan accent per screen
+3. Never pure white text (`#FFFFFF`) or pure black backgrounds (`#000000`)
+4. All cards use `.glass-card` or `.glass-panel`
+5. All buttons use `.btn-primary`, `.btn-secondary`, or `.btn-ghost`
+6. Every component must work across spoons 0–5
+7. Touch targets ≥ 48px

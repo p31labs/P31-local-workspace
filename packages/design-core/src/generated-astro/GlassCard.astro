@@ -1,0 +1,17 @@
+---
+// @file GlassCard — Glassmorphic card variant for Astro.
+// Auto-generated from components.yml.
+
+interface Props {
+  children: AstroSlotChildren;
+  strong?: boolean;
+  class?: string;
+}
+
+const { children, strong = false, class: className = '' } = Astro.props;
+const baseCls = `rounded-2xl border border-white/[0.06] backdrop-blur-xl ${strong ? 'bg-void-raised/80 shadow-[0_8px_32px_rgba(0,0,0,0.4)]' : 'bg-void-raised/60 shadow-[0_4px_16px_rgba(0,0,0,0.3)]'} ${className}`;
+---
+
+<div class={baseCls}>
+  <slot />
+</div>

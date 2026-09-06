@@ -1,0 +1,203 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Design System/Glassmorphism" />
+
+# Glassmorphism
+
+The P31 glassmorphism system provides layered, translucent surfaces with controllable depth, blur, and glow. Every elevated surface in the design system uses glass — there are no flat containers.
+
+---
+
+## Glass Tiers
+
+### Subtle Glass (`.glass-subtle`)
+- Background: `rgba(255,255,255,0.03)` — 30% opacity
+- Blur: `8px` — light depth separation
+- Border: `rgba(255,255,255,0.06)`
+- **Use for:** Background patterns, decorative elements
+
+<div style={{ background: 'rgba(255,255,255,0.03)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '14px', padding: '24px', margin: '16px 0' }}>
+  <span style={{ color: 'var(--p31-text-primary, #F5F5F7)' }}>Subtle glass panel</span>
+</div>
+
+### Standard Glass (`.glass-panel`)
+- Background: `var(--p31-glass-surface)` — 40% opacity
+- Blur: `12px` — standard depth
+- Border: `var(--p31-glass-border)` — 8% opacity border
+- Shadow: `0 8px 32px rgba(0,0,0,0.15)`
+- Hover: border lightens to 15%, background increases to 8%, lifts by 2px
+- **Use for:** Cards, content panels, modals
+
+<div style={{ background: 'rgba(255,255,255,0.04)', backdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '24px', padding: '24px', boxShadow: '0 8px 32px rgba(0,0,0,0.15)', margin: '16px 0' }}>
+  <span style={{ color: 'var(--p31-text-primary, #F5F5F7)' }}>Standard glass panel (hover to see effect)</span>
+</div>
+
+### Standard Card (`.glass-card`)
+Same as `.glass-panel` but with built-in `padding: var(--p31-spacing-lg)`.
+- **Use for:** Content cards with auto-padding
+
+### Strong Glass (`.glass-strong`)
+- Background: `rgba(255,255,255,0.08)` — 85% opacity
+- Blur: `24px` — heavy depth separation
+- Border: `rgba(255,255,255,0.12)`
+- Shadow: `0 12px 48px rgba(0,0,0,0.3)`
+- **Use for:** Navbars, modals, overlays
+
+<div style={{ background: 'rgba(255,255,255,0.08)', backdropFilter: 'blur(24px)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '24px', padding: '24px', boxShadow: '0 12px 48px rgba(0,0,0,0.3)', margin: '16px 0' }}>
+  <span style={{ color: 'var(--p31-text-primary, #F5F5F7)' }}>Strong glass panel</span>
+</div>
+
+### Glass Navbar (`.glass-navbar`)
+- Background: `rgba(255,255,255,0.06)`
+- Blur: `24px`
+- Fixed position with centered layout
+- **Use for:** Primary navigation bars
+
+---
+
+## Blur Tiers
+
+| Token | Value | Glass Tier | Purpose |
+|-------|-------|------------|---------|
+| `--p31-blur-subtle` | `8px` | `.glass-subtle` | Light depth, background patterns |
+| `--p31-blur-standard` | `12px` | `.glass-panel`, `.glass-card` | Standard panel depth |
+| `--p31-blur-strong` | `24px` | `.glass-strong`, `.glass-navbar` | Heavy depth, navigation |
+
+---
+
+## Glass Token Reference
+
+| Token | Value | Description |
+|-------|-------|-------------|
+| `--p31-glass-bg` | `rgba(255,255,255,0.04)` | Glass background base |
+| `--p31-glass-surface` | `rgba(255,255,255,0.04)` | Panel surface fill |
+| `--p31-glass-surface-hover` | `rgba(255,255,255,0.08)` | Surface fill on hover |
+| `--p31-glass-border` | `rgba(255,255,255,0.08)` | Panel border stroke |
+| `--p31-glass-border-hover` | `rgba(255,255,255,0.15)` | Border opacity on hover |
+| `--p31-glass-shadow` | `0 8px 32px rgba(0,0,0,0.15)` | Standard panel shadow |
+| `--p31-glass-strong-bg` | `rgba(255,255,255,0.08)` | Strong glass background |
+
+---
+
+## Glow Shadows
+
+Accent-colored glow for interactive and emphasized elements.
+
+| Token | CSS Value |
+|-------|----------|
+| `--p31-glow-cyan` | `0 0 20px rgba(0,240,255,0.25)` |
+| `--p31-glow-violet` | `0 0 20px rgba(167,139,250,0.25)` |
+| `--p31-glow-gold` | `0 0 20px rgba(251,191,36,0.25)` |
+| `--p31-glow-green` | `0 0 20px rgba(52,211,153,0.25)` |
+
+---
+
+## Depth Shadows
+
+| Token | Value |
+|-------|-------|
+| `--p31-shadow-xs` | `0 1px 2px 0 rgba(0,0,0,0.05)` |
+| `--p31-shadow-sm` | `0 1px 3px 0 rgba(0,0,0,0.1)` |
+| `--p31-shadow-md` | `0 4px 6px -1px rgba(0,0,0,0.1)` |
+| `--p31-shadow-lg` | `0 10px 15px -3px rgba(0,0,0,0.1)` |
+| `--p31-shadow-glow` | `0 0 20px rgba(0,240,255,0.4)` |
+
+---
+
+## Buttons
+
+### Primary (`.btn-primary`)
+
+- Background: `var(--p31-accent)` (quantum cyan)
+- Text: `var(--p31-void)` (dark, high contrast)
+- Glow: `var(--p31-glow-cyan)`
+- Hover: lifts 2px, stronger glow
+- **Use for:** The single primary action per screen
+
+<div style={{ margin: '16px 0' }}>
+  <button style={{ background: '#00F0FF', color: '#0A0A0F', fontWeight: 700, padding: 'var(--p31-spacing-sm) var(--p31-spacing-lg)', borderRadius: '10.5px', border: 'none', cursor: 'pointer', boxShadow: '0 0 20px rgba(0,240,255,0.25)', padding: '10px 24px', fontSize: '14px' }}>
+    Primary Action
+  </button>
+</div>
+
+### Secondary (`.btn-secondary`)
+
+- Background: `rgba(167,139,250,0.1)` (violet tint)
+- Text: `var(--p31-accent-violet)` (violet)
+- Border: `rgba(167,139,250,0.3)`
+- Hover: deepens background, lifts 2px, violet glow
+- **Use for:** Secondary actions, less emphasis
+
+<div style={{ margin: '16px 0' }}>
+  <button style={{ background: 'rgba(167,139,250,0.1)', color: '#A78BFA', fontWeight: 700, padding: '10px 24px', borderRadius: '10.5px', border: '1px solid rgba(167,139,250,0.3)', cursor: 'pointer', fontSize: '14px' }}>
+    Secondary Action
+  </button>
+</div>
+
+### Ghost (`.btn-ghost`)
+
+- Background: `rgba(255,255,255,0.05)`
+- Text: `var(--p31-text-secondary)`
+- Border: `rgba(255,255,255,0.1)`
+- Hover: shallow background increase, text lightens
+- **Use for:** Tertiary actions, subtle interactions
+
+<div style={{ margin: '16px 0' }}>
+  <button style={{ background: 'rgba(255,255,255,0.05)', color: '#A1A1AA', fontWeight: 700, padding: '10px 24px', borderRadius: '10.5px', border: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer', fontSize: '14px' }}>
+    Ghost Action
+  </button>
+</div>
+
+> **Rule:** Use exactly **one** `.btn-primary` per screen. All other actions use `.btn-secondary` or `.btn-ghost`.
+
+---
+
+## Spoon-Aware Motion
+
+Motion scales monotonically with the user's spoon level (0–5). Every component must respect `data-spoons`.
+
+| Spoon Level | Label | Animation | Transition | Behavior |
+|-------------|-------|-----------|------------|----------|
+| 0 | Crisis | 0ms | 0ms | All motion disabled. Chrome hidden. Only breathing overlay + exit control. |
+| 1 | Minimal | 0ms | 0ms | All motion disabled. Minimal chrome. |
+| 2 | Low | 800ms | 400ms | Slowed motion for sensory sensitivity. |
+| 3 | Moderate | 400ms | 200ms | Default speed. |
+| 4 | High | 600ms | 300ms | Calmer, smoother transitions. |
+| 5 | Full | 200ms | 100ms | Brisk, responsive feel. |
+
+### How It Works
+
+The `motion.css` file uses `[data-spoons="N"]` attribute selectors to override animation/transition durations globally:
+
+```css
+[data-spoons="2"] *, [data-spoons="2"] *::before, [data-spoons="2"] *::after {
+  animation-duration: 800ms !important;
+  transition-duration: 800ms !important;
+}
+```
+
+### Reduced Motion Fallback
+
+For users with `prefers-reduced-motion: reduce`:
+
+```css
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0s !important;
+    transition-duration: 0s !important;
+  }
+}
+```
+
+> **Invariant:** At spoons ≤ 1, **all** motion must be disabled. At spoons = 0, **no UI chrome** may render — only the breathing overlay + exit control.
+
+---
+
+## Design Rules Summary
+
+1. **No flat containers** — all elevated surfaces use `.glass-panel`, `.glass-card`, or `.glass-strong`
+2. **No inline motion** — all transitions must use token durations and respect `data-spoons`
+3. **One primary accent** per screen — exactly one `.btn-primary`
+4. **No pure white/black** — use token references for all colors
+5. **48px minimum touch targets** — all interactive elements
+6. **Spoon-aware by default** — every component must work across spoons 0–5

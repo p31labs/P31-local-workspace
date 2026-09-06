@@ -1,0 +1,10 @@
+name = "vibe-generate"
+main = "src/index.ts"
+compatibility_date = "2026-07-18"
+compatibility_flags = ["nodejs_compat"]
+
+[observability]
+enabled = true
+
+[cache]
+enabled = true

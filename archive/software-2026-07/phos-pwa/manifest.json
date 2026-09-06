@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json.schemastore.org/web-manifest-combined.json",
+  "id": "p31.phos",
+  "name": "PHOS — Spoon Engine",
+  "short_name": "PHOS",
+  "description": "Adaptive spoon-aware energy tracker with meltdown protocol and K4 mesh integration. Install for offline-first energy management.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["standalone", "browser"],
+  "orientation": "portrait",
+  "background_color": "#0a0e17",
+  "theme_color": "#39ff14",
+  "categories": ["health", "lifestyle", "productivity"],
+  "lang": "en",
+  "dir": "ltr",
+  "prefer_related_applications": false
+}

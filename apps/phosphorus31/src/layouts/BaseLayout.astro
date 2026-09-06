@@ -2,25 +2,23 @@
 import Head from './Head.astro';
 import Footer from './Footer.astro';
 import Navbar from '../components/Navbar.jsx';
+import '@p31/design-core/css/all.css';
+import '../styles/overrides.css';
 
 const { title, description } = Astro.props;
 ---
-<html lang="en" data-spoons="3" data-theme="quantum">
+<html lang="en" data-spoons="3" data-theme="willow">
   <Head title={title} description={description} />
   <script>
     (function() {
       var spoons = localStorage.getItem('p31:spoons') || '3';
-      var themeMap = { 0:'crisis', 1:'sanctuary', 2:'sanctuary', 3:'bridge', 4:'quantum', 5:'quantum' };
-      var theme = themeMap[spoons] || 'quantum';
+      var themeMap = { 0:'crisis', 1:'sanctuary', 2:'sanctuary', 3:'willow', 4:'willow', 5:'willow' };
+      var theme = themeMap[spoons] || 'willow';
       document.documentElement.setAttribute('data-spoons', spoons);
       document.documentElement.setAttribute('data-theme', theme);
     })();
   </script>
-  <body class="bg-void text-cloud font-mono antialiased min-h-screen flex flex-col">
-    <style>
-      .skip-link { position: fixed; top: -100%; left: 0; z-index: 9999; padding: 0.75rem 1.5rem; background: #0ff; color: #000; font-family: monospace; font-size: 0.875rem; font-weight: 600; text-decoration: none; border-radius: 0 0 8px 0; }
-      .skip-link:focus { top: 0; }
-    </style>
+  <body class="min-h-screen antialiased" style="background: var(--p31-bg, #070d0a); color: var(--p31-text, #f0f2f5); font-family: var(--p31-font-sans, 'Inter', system-ui, sans-serif); line-height: 1.6; -webkit-font-smoothing: antialiased; overflow-x: hidden;">
     <a href="#main-content" class="skip-link">Skip to main content</a>
     <Navbar client:load />
     <div class="flex-grow" id="main-content">

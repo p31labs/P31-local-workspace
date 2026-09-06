@@ -1,0 +1,31 @@
+name = "secret-rotator"
+main = "src/index.ts"
+compatibility_date = "2026-07-16"
+
+# Account + Secrets Store coordinates (from `wrangler secrets-store store list`).
+[vars]
+ACCOUNT_ID = "ee05f70c889cb6f876b9925257e3a2fa"
+STORE_ID = "33d48162fd6842869beeed3516e2909c"
+# LOVE_AUTH_SECRET secret UUID (from `wrangler secrets-store secret list <store-id>`).
+LOVE_AUTH_SECRET_ID = "2dc63e6a05a945e8be2af584a1f10a49"
+
+# Reuse the existing love-ledger D1 for the audit log (Free Plan 10-DB cap —
+# no new database). The 011_secret_rotation_log table lives there.
+[[d1_databases]]
+binding = "ROTATION_DB"
+database_name = "love-ledger"
+database_id = "592e3e2e-3203-4e0a-8342-9e85215ec8a6"
+
+# Quarterly automatic rotation.
+[triggers]
+crons = ["0 0 1 */3 *"]
+
+[observability]
+enabled = true
+
+# Secrets (set via `wrangler secret put`):
+#   CF_API_TOKEN  — API token with the "Secrets Store Write" permission.
+#   ADMIN_TOKEN   — shared secret guarding the emergency POST /admin/rotate.
+
+[cache]
+enabled = true

@@ -1,0 +1,16 @@
+---
+// @file GlassSubtle — Low-opacity glass surface for Astro.
+// Auto-generated from components.yml.
+
+interface Props {
+  children: AstroSlotChildren;
+  class?: string;
+}
+
+const { children, class: className = '' } = Astro.props;
+const baseCls = `rounded-2xl border border-white/[0.04] backdrop-blur-lg bg-void-raised/40 shadow-[0_2px_8px_rgba(0,0,0,0.2)] ${className}`;
+---
+
+<div class={baseCls}>
+  <slot />
+</div>

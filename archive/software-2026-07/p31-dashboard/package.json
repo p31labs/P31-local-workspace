@@ -1,0 +1,22 @@
+{
+  "name": "p31-dashboard",
+  "type": "module",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "deploy": "npx wrangler pages deploy dist --project-name p31-dashboard --branch=main --commit-dirty=true",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "astro": "^5.18.1"
+  },
+  "devDependencies": {
+    "@astrojs/tailwind": "^6.0.2",
+    "@types/node": "^25.6.0",
+    "tailwindcss": "^3.4.19",
+    "wrangler": "^4.85.0"
+  }
+}

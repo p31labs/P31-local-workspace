@@ -1,0 +1,41 @@
+---
+export interface HeadProps {
+  title?: string;
+  description?: string;
+  canonical?: string;
+  ogImage?: string;
+  jsonLd?: object;
+}
+const {
+  title = "P31 Labs | Sovereign Care for Neurodivergent Families",
+  description = "P31 Labs is a Georgia 501(c)(3) nonprofit building free, open-source assistive technology for neurodivergent families. Sovereign tools grounded in care science.",
+  canonical = Astro.url.href,
+  ogImage = `https://TEMPLATE_DOMAIN/og-default.png`,
+  jsonLd,
+} = Astro.props as HeadProps;
+---
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{title}</title>
+  <meta name="description" content={description} />
+  <link rel="canonical" href={canonical} />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content={canonical} />
+  <meta property="og:image" content={ogImage} />
+  <meta property="og:site_name" content="P31 Labs" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={title} />
+  <meta name="twitter:description" content={description} />
+  <meta name="twitter:image" content={ogImage} />
+  <meta name="theme-color" content="#050508" />
+  <meta name="application-name" content="P31 Labs" />
+  <meta name="robots" content="index, follow" />
+  {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+</head>

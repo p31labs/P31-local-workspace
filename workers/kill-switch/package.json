@@ -1,0 +1,1 @@
+{"name":"kill-switch","version":"1.0.0","private":true,"scripts":{"deploy":"wrangler deploy"},"dependencies":{"@p31/shared":"workspace:*"},"devDependencies":{"@cloudflare/workers-types":"^4.0.0","typescript":"^5.5.0","wrangler":"^3.0.0"}}

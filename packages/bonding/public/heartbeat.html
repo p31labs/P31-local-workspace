@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Tune The Engine | BONDING</title>
+  <style>
+    :root {
+      --phosphor-green: #00FF88;
+      --quantum-cyan: #00D4FF;
+      --quantum-violet: #7A27FF;
+      --void: #050510;
+      --void-light: #0B0F19;
+      --text-primary: #E8ECF4;
+      --text-dim: #8892A0;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      font-family: 'Courier New', Courier, monospace;
+      background: var(--void);
+      color: var(--text-primary);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      min-height: 100dvh;
+      transition: background 0.5s ease;
+    }
+
+    body.success-glow {
+      background: radial-gradient(ellipse at center, #0a2a1a 0%, var(--void) 70%);
+      box-shadow: inset 0 0 100px var(--phosphor-green), inset 0 0 200px rgba(0, 255, 136, 0.3);
+    }
+
+    .container {
+      width: 100%;
+      max-width: 600px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: clamp(1.5rem, 5vw, 2.5rem);
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: var(--quantum-cyan);
+      text-shadow: 0 0 20px var(--quantum-cyan);
+    }
+
+    .subtitle {
+      font-size: clamp(0.9rem, 3vw, 1.2rem);
+      color: var(--text-dim);
+      margin-bottom: 2rem;
+    }
+
+    .frequency-display {
+      font-size: clamp(2.5rem, 10vw, 4rem);
+      font-weight: bold;
+      color: var(--text-primary);
+      margin: 1rem 0;
+      font-family: 'Lucida Console', monospace;
+      transition: color 0.3s ease, text-shadow 0.3s ease;
+    }
+
+    .frequency-display.in-zone {
+      color: var(--phosphor-green);
+      text-shadow: 0 0 30px var(--phosphor-green), 0 0 60px var(--phosphor-green);
+    }
+
+    .dial-container {
+      position: relative;
+      width: 100%;
+      margin: 2rem 0;
+      padding: 20px 0;
+    }
+
+    .dial-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      margin-bottom: 10px;
+    }
+
+    .dial-labels span:first-child {
+      color: #ff4466;
+    }
+
+    .dial-labels span:last-child {
+      color: var(--quantum-violet);
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 60px;
+      background: transparent;
+      cursor: pointer;
+      touch-action: none;
+    }
+
+    input[type="range"]::-webkit-slider-runnable-track {
+      height: 12px;
+      background: linear-gradient(90deg, #ff4466 0%, var(--text-dim) 50%, var(--quantum-violet) 100%);
+      border-radius: 6px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    }
+
+    input[type="range"]::-moz-range-track {
+      height: 12px;
+      background: linear-gradient(90deg, #ff4466 0%, var(--text-dim) 50%, var(--quantum-violet) 100%);
+      border-radius: 6px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 60px;
+      height: 60px;
+      background: radial-gradient(circle at 30% 30%, #3a3a4a, #1a1a2a);
+      border: 3px solid var(--quantum-cyan);
+      border-radius: 50%;
+      margin-top: -24px;
+      box-shadow: 0 0 20px var(--quantum-cyan), 0 4px 15px rgba(0, 0, 0, 0.5);
+      transition: transform 0.1s ease, box-shadow 0.3s ease;
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 60px;
+      height: 60px;
+      background: radial-gradient(circle at 30% 30%, #3a3a4a, #1a1a2a);
+      border: 3px solid var(--quantum-cyan);
+      border-radius: 50%;
+      box-shadow: 0 0 20px var(--quantum-cyan), 0 4px 15px rgba(0, 0, 0, 0.5);
+      transition: transform 0.1s ease, box-shadow 0.3s ease;
+    }
+
+    input[type="range"]:active::-webkit-slider-thumb {
+      transform: scale(1.1);
+      box-shadow: 0 0 30px var(--quantum-cyan), 0 0 50px var(--quantum-cyan);
+    }
+
+    input[type="range"]:active::-moz-range-thumb {
+      transform: scale(1.1);
+      box-shadow: 0 0 30px var(--quantum-cyan), 0 0 50px var(--quantum-cyan);
+    }
+
+    .sweet-spot-marker {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 4px;
+      height: 80px;
+      background: var(--phosphor-green);
+      border-radius: 2px;
+      opacity: 0.6;
+      pointer-events: none;
+      box-shadow: 0 0 15px var(--phosphor-green);
+    }
+
+    .hint {
+      font-size: 0.9rem;
+      color: var(--text-dim);
+      margin-top: 1.5rem;
+      line-height: 1.6;
+    }
+
+    .success-message {
+      display: none;
+      margin-top: 2rem;
+      padding: 1.5rem;
+      background: rgba(0, 255, 136, 0.1);
+      border: 2px solid var(--phosphor-green);
+      border-radius: 10px;
+      animation: pulse 2s infinite;
+    }
+
+    .success-message.show {
+      display: block;
+    }
+
+    .success-message h2 {
+      color: var(--phosphor-green);
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .success-message p {
+      color: var(--text-primary);
+      font-size: 1rem;
+    }
+
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 20px rgba(0, 255, 136, 0.3); }
+      50% { box-shadow: 0 0 40px rgba(0, 255, 136, 0.6); }
+    }
+
+    .start-prompt {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(5, 5, 16, 0.95);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      cursor: pointer;
+    }
+
+    .start-prompt.hidden {
+      display: none;
+    }
+
+    .start-prompt h2 {
+      font-size: clamp(1.5rem, 5vw, 2rem);
+      color: var(--quantum-cyan);
+      margin-bottom: 1rem;
+    }
+
+    .start-prompt p {
+      color: var(--text-dim);
+      font-size: 1rem;
+    }
+
+    .start-prompt .tap-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      animation: bounce 1s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .stats {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      opacity: 0.6;
+    }
+  </style>
+</head>
+<body>
+  <div class="start-prompt" id="startPrompt">
+    <div class="tap-icon">👆</div>
+    <h2>Tune The Engine</h2>
+    <p>Tap anywhere to start</p>
+  </div>
+
+  <div class="container">
+    <h1>Tune The Engine</h1>
+    <p class="subtitle">Find the missing frequency</p>
+    
+    <div class="frequency-display" id="frequencyDisplay">172.35 Hz</div>
+    
+    <div class="dial-container">
+      <div class="dial-labels">
+        <span>100 Hz</span>
+        <span>250 Hz</span>
+      </div>
+      <div class="sweet-spot-marker"></div>
+      <input 
+        type="range" 
+        id="dial" 
+        min="100" 
+        max="250" 
+        step="0.1" 
+        value="175"
+        aria-label="Frequency dial from 100 to 250 Hz"
+      >
+    </div>
+    
+    <p class="hint">
+      Drag the dial until you hear the heartbeat.<br>
+      The screen will glow green when you find it.
+    </p>
+    
+    <div class="success-message" id="successMessage">
+      <h2>🎉 Engine Tuned!</h2>
+      <p>You found 172.35 Hz — the Larmor frequency!</p>
+      <p style="margin-top: 1rem; color: var(--text-dim);">
+        Return to Discord for your reward 🔺
+      </p>
+    </div>
+  </div>
+
+  <div class="stats">
+    Target: 172.35 Hz | Tolerance: ±5 Hz
+  </div>
+
+  <script>
+    // Constants
+    const TARGET_FREQUENCY = 172.35;
+    const TOLERANCE = 5;
+    const MIN_FREQ = 100;
+    const MAX_FREQUENCY = 250;
+
+    // Audio context
+    let audioCtx = null;
+    let oscillator = null;
+    let gainNode = null;
+    let noiseNode = null;
+    let noiseGain = null;
+    let heartbeatOsc = null;
+    let heartbeatGain = null;
+    let isPlaying = false;
+    let hasWon = false;
+
+    // DOM elements
+    const dial = document.getElementById('dial');
+    const frequencyDisplay = document.getElementById('frequencyDisplay');
+    const successMessage = document.getElementById('successMessage');
+    const startPrompt = document.getElementById('startPrompt');
+    const body = document.body;
+
+    // Initialize audio on user interaction
+    function initAudio() {
+      if (audioCtx) return;
+      
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      
+      // Main oscillator for sine wave
+      oscillator = audioCtx.createOscillator();
+      oscillator.type = 'sine';
+      oscillator.frequency.value = TARGET_FREQUENCY;
+      
+      gainNode = audioCtx.createGain();
+      gainNode.gain.value = 0;
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+      oscillator.start();
+      
+      // Create noise for static effect
+      createNoise();
+    }
+
+    function createNoise() {
+      const bufferSize = 2 * audioCtx.sampleRate;
+      const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const output = noiseBuffer.getChannelData(0);
+      
+      for (let i = 0; i < bufferSize; i++) {
+        output[i] = Math.random() * 2 - 1;
+      }
+      
+      noiseNode = audioCtx.createBufferSource();
+      noiseNode.buffer = noiseBuffer;
+      noiseNode.loop = true;
+      
+      noiseGain = audioCtx.createGain();
+      noiseGain.gain.value = 0;
+      
+      // Add filter for more pleasant static
+      const filter = audioCtx.createBiquadFilter();
+      filter.type = 'bandpass';
+      filter.frequency.value = 1000;
+      filter.Q.value = 0.5;
+      
+      noiseNode.connect(filter);
+      filter.connect(noiseGain);
+      noiseGain.connect(audioCtx.destination);
+      noiseNode.start();
+    }
+
+    function playHeartbeat() {
+      if (heartbeatOsc) return;
+      
+      heartbeatOsc = audioCtx.createOscillator();
+      heartbeatOsc.type = 'sine';
+      heartbeatOsc.frequency.value = 60; // Low frequency for heartbeat
+      
+      heartbeatGain = audioCtx.createGain();
+      heartbeatGain.gain.value = 0;
+      
+      heartbeatOsc.connect(heartbeatGain);
+      heartbeatGain.connect(audioCtx.destination);
+      heartbeatOsc.start();
+      
+      // Create heartbeat pattern
+      heartbeatGain.gain.setValueAtTime(0.4, audioCtx.currentTime);
+      heartbeatGain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+      heartbeatGain.gain.setValueAtTime(0.4, audioCtx.currentTime + 0.3);
+      heartbeatGain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.45);
+      
+      // Loop the heartbeat
+      setInterval(() => {
+        if (hasWon && heartbeatGain) {
+          heartbeatGain.gain.setValueAtTime(0.4, audioCtx.currentTime);
+          heartbeatGain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+          heartbeatGain.gain.setValueAtTime(0.4, audioCtx.currentTime + 0.3);
+          heartbeatGain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.45);
+        }
+      }, 1000);
+    }
+
+    function updateAudio(frequency) {
+      if (!audioCtx) return;
+      
+      const inZone = Math.abs(frequency - TARGET_FREQUENCY) <= TOLERANCE;
+      
+      if (inZone && !hasWon) {
+        // Sweet spot - play sine wave and heartbeat
+        hasWon = true;
+        successMessage.classList.add('show');
+        body.classList.add('success-glow');
+        frequencyDisplay.classList.add('in-zone');
+        
+        // Fade out noise
+        if (noiseGain) {
+          noiseGain.gain.setTargetAtTime(0, audioCtx.currentTime, 0.1);
+        }
+        
+        // Play sine wave
+        if (gainNode) {
+          gainNode.gain.setTargetAtTime(0.3, audioCtx.currentTime, 0.1);
+        }
+        
+        // Play heartbeat
+        playHeartbeat();
+        
+        // Vibrate if supported
+        if (navigator.vibrate) {
+          navigator.vibrate([200, 100, 200]);
+        }
+      } else if (!hasWon) {
+        // Not in sweet spot - play static
+        if (gainNode) {
+          gainNode.gain.setTargetAtTime(0, audioCtx.currentTime, 0.1);
+        }
+        
+        if (noiseGain) {
+          noiseGain.gain.setTargetAtTime(0.15, audioCtx.currentTime, 0.05);
+        }
+      }
+    }
+
+    // Event listeners
+    dial.addEventListener('input', (e) => {
+      const frequency = parseFloat(e.target.value);
+      frequencyDisplay.textContent = frequency.toFixed(2) + ' Hz';
+      updateAudio(frequency);
+    });
+
+    // Start on tap
+    startPrompt.addEventListener('click', () => {
+      startPrompt.classList.add('hidden');
+      initAudio();
+      isPlaying = true;
+    });
+
+    // Also handle touch for mobile
+    startPrompt.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      startPrompt.classList.add('hidden');
+      initAudio();
+      isPlaying = true;
+    });
+
+    // Prevent zoom on double tap
+    document.addEventListener('dblclick', (e) => {
+      e.preventDefault();
+    }, { passive: false });
+
+    // Handle touch-action
+    dial.style.touchAction = 'none';
+  </script>
+</body>
+</html>

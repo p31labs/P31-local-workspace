@@ -1,0 +1,92 @@
+{
+  "wcdId": "WCD-53",
+  "title": "Founding Nodes Hardware Shipping Manifest",
+  "version": "1.0.0",
+  "created": "2026-03-31",
+  "status": "pending",
+  "totalUnits": 4,
+  "shipDate": "Q2 2026",
+  "items": {
+    "node_zero": {
+      "name": "Node Zero Device",
+      "description": "ESP32-S3 with touchscreen, pre-flashed with P31 firmware",
+      "unitCost": 100,
+      "quantity": 4
+    },
+    "quick_start_guide": {
+      "name": "Quick Start Guide",
+      "description": "Printed card with Discord invite and setup instructions",
+      "unitCost": 2,
+      "quantity": 4
+    },
+    "sticker_pack": {
+      "name": "P31 Sticker Pack",
+      "description": "Branded stickers for each Founding Node",
+      "unitCost": 3,
+      "quantity": 4
+    },
+    "handwritten_note": {
+      "name": "Handwritten Note",
+      "description": "Personalized note from operator to each Founding Node",
+      "unitCost": 0,
+      "quantity": 4
+    }
+  },
+  "shipping": {
+    "domestic": {
+      "unitCost": 15,
+      "quantity": 4
+    },
+    "packaging": {
+      "totalCost": 20
+    }
+  },
+  "costSummary": {
+    "hardware": 400,
+    "shipping": 60,
+    "packaging": 20,
+    "total": 480
+  },
+  "foundingNodes": [
+    {
+      "slot": 1,
+      "discordId": null,
+      "discordUsername": null,
+      "claimDate": null,
+      "shippingAddress": null,
+      "trackingNumber": null,
+      "shippedDate": null,
+      "status": "pending"
+    },
+    {
+      "slot": 2,
+      "discordId": null,
+      "discordUsername": null,
+      "claimDate": null,
+      "shippingAddress": null,
+      "trackingNumber": null,
+      "shippedDate": null,
+      "status": "pending"
+    },
+    {
+      "slot": 3,
+      "discordId": null,
+      "discordUsername": null,
+      "claimDate": null,
+      "shippingAddress": null,
+      "trackingNumber": null,
+      "shippedDate": null,
+      "status": "pending"
+    },
+    {
+      "slot": 4,
+      "discordId": null,
+      "discordUsername": null,
+      "claimDate": null,
+      "shippingAddress": null,
+      "trackingNumber": null,
+      "shippedDate": null,
+      "status": "pending"
+    }
+  ]
+}

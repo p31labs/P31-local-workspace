@@ -1,0 +1,13 @@
+{
+  "name": "p31-phos-worker",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "npx wrangler dev",
+    "deploy": "npx wrangler deploy"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20260726.1",
+    "wrangler": "^4.114.0"
+  }
+}

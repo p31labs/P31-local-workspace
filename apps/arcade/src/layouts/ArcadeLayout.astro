@@ -1,0 +1,74 @@
+---
+import '@p31/design-core/css/all.css';
+import '@p31/ui/chrome.css';
+import '../styles/globals.css';
+import { EphemeralProvider } from '@p31/ui';
+import AdaptiveRoot from '../components/AdaptiveRoot.client';
+
+const { title = 'LOVE Arcade' } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en" data-spoons="3" data-theme="quantum">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{title}</title>
+    <meta name="description" content="P31 LOVE Arcade — play, create, and earn LOVE tokens." />
+    <meta name="theme-color" content="#0A0A0F" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <script is:inline>
+      (function () {
+        var spoons = localStorage.getItem('p31:spoons') || '3';
+        document.documentElement.setAttribute('data-spoons', spoons);
+        var w = window.innerWidth;
+        var sc = 'regular';
+        if (w <= 480) sc = 'compact';
+        else if (w >= 768 && w <= 1023) sc = 'medium';
+        else if (w >= 1024) sc = 'expanded';
+        document.documentElement.dataset.sizeClass = sc;
+        var hasTouch = window.matchMedia('(pointer: coarse)').matches;
+        var hasMouse = window.matchMedia('(pointer: fine)').matches;
+        document.documentElement.dataset.input = hasTouch && hasMouse ? 'hybrid' : hasTouch ? 'touch' : 'mouse';
+      })();
+    </script>
+  </head>
+
+  <body class="min-h-screen text-white/85 antialiased" style="padding-bottom: var(--p31-chrome-strip-h, 0px); overflow-x: hidden;">
+    <AdaptiveRoot client:load />
+
+    <div id="void-bg" aria-hidden="true"></div>
+
+    <a href="#main-content" class="skip-link" style="position:fixed;top:-100%;left:0;z-index:999;padding:0.75rem 1.5rem;background:var(--p31-accent,#00F0FF);color:var(--p31-void,#0A0A0F);font-family:monospace;font-size:0.875rem;font-weight:600;text-decoration:none;border-radius:0 0 8px 0;">Skip to main content</a>
+
+    <style is:inline>
+      .skip-link:focus { top: 0; }
+    </style>
+
+    <nav style="display:flex;justify-content:center;align-items:center;padding:12px 16px;background:rgba(5,5,8,0.85);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,0.04);position:sticky;top:0;z-index:50;gap:24px;">
+      <a href="/" style="color:#00F0FF;text-decoration:none;font-size:14px;font-family:monospace;font-weight:700;">🎮 LOVE Arcade</a>
+      <a href="/leaderboard" style="color:rgba(245,245,247,0.6);text-decoration:none;font-size:12px;font-family:monospace;">Leaderboard</a>
+    </nav>
+
+    <main id="main-content">
+      <EphemeralProvider client:load ambientMode="soft">
+        <slot />
+      </EphemeralProvider>
+    </main>
+
+    <p31-crisis-overlay message="Rest. Breathe. The mesh holds. Exit when ready." button-label="I'm Ready"></p31-crisis-overlay>
+
+    <script>
+      import { registerP31CrisisOverlay } from '@p31/design-core/crisis-overlay';
+      registerP31CrisisOverlay();
+    </script>
+  </body>
+</html>

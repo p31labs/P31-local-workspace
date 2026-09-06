@@ -1,0 +1,40 @@
+/**
+ * P31 Theme Persona — REBEL (p31ca.org / BASH / PHOS)
+ *
+ * Dense, high-contrast, dark-void palette with quantum-cyan accents and
+ * monospace-leaning typography. Import AFTER @p31/design-core/css/all.css.
+ *
+ * Usage in app shell:
+ *   import '@p31/design-core/css/theme-p31ca.css';
+ */
+
+:root[data-theme='rebel'],
+:root[data-brand='p31ca'] {
+  --p31-accent: oklch(65% 0.28 195);          /* quantum cyan */
+  --p31-accent-shimmer: oklch(70% 0.32 195);
+  --p31-bg: oklch(8% 0.01 240);              /* deeper void */
+  --p31-surface: oklch(12% 0.015 240);
+  --p31-surface2: oklch(18% 0.02 240);
+  --p31-text: oklch(97% 0.005 240);
+  --p31-text-secondary: oklch(72% 0.01 240);
+  --p31-glass-surface: oklch(100% 0.01 240 / 0.03);
+  --p31-glass-border: oklch(100% 0.01 240 / 0.08);
+  font-family: 'Plus Jakarta Sans', 'JetBrains Mono', system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+:root[data-theme='rebel'] h1,
+:root[data-theme='rebel'] h2,
+:root[data-theme='rebel'] h3,
+:root[data-theme='rebel'] .font-mono {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+:root[data-theme='rebel'] .gap-sm { gap: 4px; }
+:root[data-theme='rebel'] .gap-md { gap: 8px; }
+:root[data-theme='rebel'] .gap-lg { gap: 16px; }
+:root[data-theme='rebel'] .gap-xl { gap: 24px; }
+
+:root[data-theme='rebel'] .tracking-tight { letter-spacing: -0.02em; }
+:root[data-theme='rebel'] .tracking-normal { letter-spacing: 0.01em; }

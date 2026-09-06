@@ -1,0 +1,129 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const title = 'Deployment Guide';
+---
+
+<DocsLayout title={title}>
+  <div class="breadcrumb">
+    <a href="/">Docs</a>
+    <span>/</span>
+    <a href="/guides">Guides</a>
+    <span>/</span>
+    <span>Deployment</span>
+  </div>
+
+  <h1>Deployment Guide</h1>
+  <p class="lead">Learn how to deploy P31 applications to Cloudflare's edge platform.</p>
+
+  <h2>Prerequisites</h2>
+  <ul>
+    <li><a href="https://nodejs.org/">Node.js</a> 22+</li>
+    <li><a href="https://pnpm.io/">pnpm</a> 9+</li>
+    <li><a href="https://developers.cloudflare.com/wrangler/">Wrangler CLI</a></li>
+    <li>Cloudflare account with Workers/Pages enabled</li>
+  </ul>
+
+  <h2>Quick Deploy</h2>
+  <p>Deploy any P31 application with a single command:</p>
+  <pre><code># Deploy the Sovereign Shell
+cd production/shell
+npx wrangler deploy
+
+# Deploy all portals
+cd production/portals
+node deploy-unified.mjs
+
+# Deploy a specific portal
+node deploy-unified.mjs children parent</code></pre>
+
+  <h2>Environment Variables</h2>
+  <p>Set secrets using Wrangler:</p>
+  <pre><code># Set a secret for a Worker
+npx wrangler secret put SENTRY_DSN
+npx wrangler secret put CLOUDFLARE_API_TOKEN
+
+# Set a secret for a Pages project
+npx wrangler pages project secret put SECRET_NAME --project-name=p31-portal-children</code></pre>
+
+  <h2>Custom Domains</h2>
+  <p>P31 uses custom domains for all portals and services. Domains are configured via the Cloudflare Dashboard or API:</p>
+  <pre><code># Add a custom domain to a Pages project
+node add-domains.js --only=p31-portal-children</code></pre>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Service</th>
+        <th>Domain</th>
+        <th>Type</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Sovereign Shell</td>
+        <td>p31-shell.trimtab-signal.workers.dev</td>
+        <td>Worker</td>
+      </tr>
+      <tr>
+        <td>Children Portal</td>
+        <td>willow.p31ca.org</td>
+        <td>Pages</td>
+      </tr>
+      <tr>
+        <td>Parent Portal</td>
+        <td>tetra.p31ca.org</td>
+        <td>Pages</td>
+      </tr>
+      <tr>
+        <td>Teen Portal</td>
+        <td>sixseven.p31ca.org</td>
+        <td>Pages</td>
+      </tr>
+      <tr>
+        <td>Meatspace Portal</td>
+        <td>meatspace.p31ca.org</td>
+        <td>Pages</td>
+      </tr>
+      <tr>
+        <td>Design Portal</td>
+        <td>design.p31ca.org</td>
+        <td>Pages</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>CI/CD</h2>
+  <p>Automated deployments are configured via GitHub Actions. On push to <code>main</code>:</p>
+  <ol>
+    <li>Lint and typecheck pass</li>
+    <li>All tests pass</li>
+    <li>Build succeeds</li>
+    <li>Deploy to production</li>
+    <li>E2E verify suite runs (with retry)</li>
+  </ol>
+
+  <div class="callout callout-warning">
+    <div class="callout-title">Production Deploys</div>
+    <p>Always run the verify suite before deploying to production. The CI pipeline includes automated E2E verification with 3 retry attempts.</p>
+  </div>
+
+  <h2>Rollback</h2>
+  <pre><code># Rollback a Worker to a previous version
+npx wrangler versions deploy --version-id <previous-version-id>
+
+# Rollback a Pages project
+npx wrangler pages deployment list --project-name=p31-portal-children
+npx wrangler pages rollback --project-name=p31-portal-children --deployment-id=<id></code></pre>
+
+  <div class="last-updated">Last updated: August 2026</div>
+</DocsLayout>
+
+<style>
+  .lead {
+    font-size: 18px;
+    color: var(--t2);
+    margin-bottom: 32px;
+    line-height: 1.7;
+  }
+</style>

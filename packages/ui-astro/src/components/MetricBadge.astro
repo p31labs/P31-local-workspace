@@ -1,0 +1,16 @@
+---
+interface Props {
+  icon?: string;
+  value: string | number;
+  label?: string;
+  clickable?: boolean;
+  class?: string;
+}
+
+const { icon, value, label, clickable = false, class: className = '' } = Astro.props;
+---
+<div class:list={['metric-badge', clickable && 'clickable', className]}>
+  {icon && <span class="status-dot">{icon}</span>}
+  <span class="value">{value}</span>
+  {label && <span class="label">{label}</span>}
+</div>

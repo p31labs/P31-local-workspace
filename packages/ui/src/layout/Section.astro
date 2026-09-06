@@ -1,0 +1,21 @@
+---
+import PageHeader from './PageHeader.astro';
+export interface HeaderProps {
+  eyebrow?: string;
+  title: string;
+  description?: string;
+  align?: 'center' | 'left';
+}
+const { header, children } = Astro.props;
+---
+<section class="space-y-6">
+  <PageHeader eyebrow={header.eyebrow} title={header.title} description={header.description} align={header.align} />
+  <slot />
+</section>
+
+<style is:global>
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>

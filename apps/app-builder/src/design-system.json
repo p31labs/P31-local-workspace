@@ -1,0 +1,106 @@
+{
+  "tokens": {
+    "root": {
+      "bg": { "$type": "color", "$value": "oklch(10% 0.01 240)" },
+      "surface": { "$type": "color", "$value": "oklch(15% 0.015 240)" },
+      "surface2": { "$type": "color", "$value": "oklch(22% 0.02 240)" },
+      "accent": { "$type": "color", "$value": "oklch(65% 0.18 195)" },
+      "accent_violet": { "$type": "color", "$value": "oklch(65% 0.18 285)" },
+      "accent_gold": { "$type": "color", "$value": "oklch(65% 0.18 15)" },
+      "accent_green": { "$type": "color", "$value": "oklch(65% 0.18 105)" },
+      "accent_red": { "$type": "color", "$value": "oklch(65% 0.18 20)" },
+      "accent_iris": { "$type": "color", "$value": "oklch(65% 0.18 270)" },
+      "text": { "$type": "color", "$value": "oklch(96% 0.005 240)" },
+      "text_secondary": { "$type": "color", "$value": "oklch(75% 0.01 240)" },
+      "text_tertiary": { "$type": "color", "$value": "oklch(55% 0.01 240)" }
+    },
+    "scale": {
+      "xs": { "$type": "dimension", "$value": "12px" },
+      "sm": { "$type": "dimension", "$value": "16px" },
+      "md": { "$type": "dimension", "$value": "21px" },
+      "lg": { "$type": "dimension", "$value": "28px" },
+      "xl": { "$type": "dimension", "$value": "38px" },
+      "2xl": { "$type": "dimension", "$value": "50px" },
+      "3xl": { "$type": "dimension", "$value": "67px" },
+      "4xl": { "$type": "dimension", "$value": "90px" }
+    },
+    "spacing": {
+      "xs": { "$type": "dimension", "$value": "clamp(4px, 1vw, 8px)" },
+      "sm": { "$type": "dimension", "$value": "clamp(8px, 1.5vw, 12px)" },
+      "md": { "$type": "dimension", "$value": "clamp(12px, 2.5vw, 20px)" },
+      "lg": { "$type": "dimension", "$value": "clamp(20px, 3.5vw, 32px)" },
+      "xl": { "$type": "dimension", "$value": "clamp(32px, 5vw, 48px)" },
+      "xxl": { "$type": "dimension", "$value": "clamp(48px, 6.5vw, 64px)" }
+    },
+    "typography": {
+      "sans": { "$type": "fontFamily", "$value": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" },
+      "mono": { "$type": "fontFamily", "$value": "ui-monospace, SFMono-Regular, 'Fira Code', 'Fira Mono', 'Roboto Mono', 'JetBrains Mono', Menlo, Monaco, Consolas, monospace" }
+    },
+    "animation": {
+      "duration_fast": { "$type": "duration", "$value": "100ms" },
+      "duration_standard": { "$type": "duration", "$value": "200ms" },
+      "duration_slow": { "$type": "duration", "$value": "300ms" },
+      "easing_standard": { "$type": "cubicBezier", "$value": "cubic-bezier(0.4, 0, 0.2, 1)" },
+      "easing_decelerate": { "$type": "cubicBezier", "$value": "cubic-bezier(0.0, 0, 0.2, 1)" },
+      "easing_accelerate": { "$type": "cubicBezier", "$value": "cubic-bezier(0.4, 0, 1, 1)" }
+    },
+    "shadow": {
+      "glass": { "$type": "shadow", "$value": "0 8px 32px rgba(0,0,0,0.15)" },
+      "glow_cyan": { "$type": "shadow", "$value": "0 0 20px rgba(0,240,255,0.25)" },
+      "glow_violet": { "$type": "shadow", "$value": "0 0 20px rgba(167,139,250,0.25)" }
+    },
+    "primitive": {
+      "color": {
+        "cyan": "oklch(65% 0.18 195)",
+        "violet": "oklch(65% 0.18 285)",
+        "gold": "oklch(65% 0.18 15)",
+        "green": "oklch(65% 0.18 105)",
+        "red": "oklch(65% 0.18 20)",
+        "iris": "oklch(65% 0.18 270)",
+        "void": "oklch(10% 0.01 240)",
+        "cloud": "oklch(96% 0.005 240)",
+        "surface": "oklch(15% 0.015 240)",
+        "surface2": "oklch(22% 0.02 240)"
+      },
+      "blur": {
+        "subtle": "8px",
+        "standard": "12px",
+        "strong": "24px"
+      },
+      "radius": {
+        "sm": "8px",
+        "md": "16px",
+        "lg": "24px",
+        "xl": "32px",
+        "full": "9999px"
+      }
+    },
+    "component": {
+      "glass": {
+        "bg": "oklch(100% 0.01 240 / 0.04)",
+        "border": "oklch(100% 0.01 240 / 0.08)",
+        "border_hover": "oklch(100% 0.01 240 / 0.15)"
+      },
+      "header": {
+        "h": "clamp(48px, 8vw, 80px)",
+        "bg": "oklch(100% 0.01 240 / 0.02)"
+      },
+      "nav": {
+        "h": "48px",
+        "bg": "oklch(15% 0.015 240 / 0.95)"
+      },
+      "icon": {
+        "sm_w": "20px",
+        "sm_h": "20px",
+        "md_w": "24px",
+        "md_h": "24px",
+        "lg_w": "32px",
+        "lg_h": "32px"
+      },
+      "spoon": {
+        "dot_size": "14px",
+        "gap": "8px"
+      }
+    }
+  }
+}

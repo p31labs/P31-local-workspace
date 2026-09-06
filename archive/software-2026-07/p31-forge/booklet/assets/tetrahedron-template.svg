@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 700" width="600" height="700">
+  <rect width="600" height="700" fill="white"/>
+  <text x="300" y="50" text-anchor="middle" font-family="sans-serif" font-size="24" fill="#333" font-weight="bold">Fold Your Own K₄ Tetrahedron!</text>
+  <text x="300" y="80" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#999">Cut along solid lines. Fold along dashed lines. Tape the tabs.</text>
+
+  <!-- Tetrahedron net - 4 triangles arranged in a cross pattern -->
+  <g transform="translate(200, 10)">
+
+    <!-- Base triangle (bottom center) -->
+    <polygon points="100,280 200,420 0,420" fill="none" stroke="#333" stroke-width="3"/>
+    <!-- Tab 1 - left -->
+    <polygon points="0,420 20,420 10,450" fill="none" stroke="#333" stroke-width="1.5" stroke-dasharray="4,3"/>
+    <!-- Tab 2 - right -->
+    <polygon points="200,420 180,420 190,450" fill="none" stroke="#333" stroke-width="1.5" stroke-dasharray="4,3"/>
+    <!-- Tab 3 - bottom -->
+    <polygon points="100,420 80,450 120,450" fill="none" stroke="#333" stroke-width="1.5" stroke-dasharray="4,3"/>
+
+    <!-- Front triangle (bottom left) -->
+    <polygon points="0,280 100,420 -100,420" fill="none" stroke="#333" stroke-width="3"/>
+    <line x1="0" y1="280" x2="-20" y2="310" stroke="#333" stroke-width="1.5" stroke-dasharray="4,3"/>
+
+    <!-- Right triangle (bottom right) -->
+    <polygon points="200,280 300,420 100,420" fill="none" stroke="#333" stroke-width="3"/>
+
+    <!-- Top triangle -->
+    <polygon points="100,140 200,280 0,280" fill="none" stroke="#333" stroke-width="3"/>
+    <!-- Tab on top -->
+    <polygon points="100,140 85,115 115,115" fill="none" stroke="#333" stroke-width="1.5" stroke-dasharray="4,3"/>
+
+    <!-- Left triangle -->
+    <polygon points="0,280 100,140 -100,280" fill="none" stroke="#333" stroke-width="3"/>
+    <!-- Tab on bottom-left -->
+    <polygon points="-100,280 -120,280 -110,305" fill="none" stroke="#333" stroke-width="1.5" stroke-dasharray="4,3"/>
+
+    <!-- Vertex labels -->
+    <text x="100" y="135" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#999">A</text>
+    <text x="-5" y="275" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#999">B</text>
+    <text x="205" y="275" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#999">C</text>
+    <text x="100" y="435" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#999">D</text>
+  </g>
+
+  <!-- Instructions -->
+  <text x="300" y="550" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#666">1. Cut along the thick solid lines.</text>
+  <text x="300" y="575" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#666">2. Fold along the dashed lines.</text>
+  <text x="300" y="600" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#666">3. Tape the tabs to the matching faces.</text>
+  <text x="300" y="625" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#666">4. A meets A, B meets B, C meets C!</text>
+
+  <text x="300" y="670" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#999">The strongest shape in the universe!</text>
+</svg>

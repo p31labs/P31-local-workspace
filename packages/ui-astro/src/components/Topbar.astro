@@ -1,0 +1,17 @@
+---
+interface Props {
+  brand?: string;
+  left?: string;
+  center?: string;
+  right?: string;
+  class?: string;
+  glass?: boolean;
+}
+
+const { brand, left, center, right, class: className = '', glass = true } = Astro.props;
+---
+<header class:list={['topbar', glass && 'topbar-glass', className]}>
+  <div class="topbar-left">{brand ?? left}</div>
+  {center && <div class="topbar-center">{center}</div>}
+  <div class="topbar-right">{right}</div>
+</header>

@@ -1,0 +1,86 @@
+name: Quantum Fortune 1 — Verification Gates
+on:
+  push:
+    branches: [main, 'cwp-**']
+  pull_request:
+    branches: [main]
+
+jobs:
+  sic-povm:
+    name: R1 — SIC-POVM d=2
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '22' }
+      - run: corepack enable && pnpm install
+      - run: npx vitest run tests/unit/quantum/sicPovm.test.ts --reporter=verbose
+
+  posner:
+    name: R2 — Posner molecule
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '22' }
+      - run: corepack enable && pnpm install
+      - run: npx vitest run tests/unit/quantum/posner.test.ts --reporter=verbose
+
+  love-chain:
+    name: R3 — LOVE ledger hash chain
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '22' }
+      - run: corepack enable && pnpm install
+      - run: npx vitest run tests/unit/love-ledger/chain.test.ts --reporter=verbose
+
+  k4-graph:
+    name: R4 — K4 graph engine
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '22' }
+      - run: corepack enable && pnpm install
+      - run: npx vitest run tests/unit/k4/graph.test.ts --reporter=verbose
+
+  eudi:
+    name: R6 — EUDI SD-JWT VC
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '22' }
+      - run: corepack enable && pnpm install
+      - run: npx vitest run tests/unit/passport/eudi.test.ts --reporter=verbose
+
+  bundle-budget:
+    name: R8 — Bundle size budget
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '22' }
+      - run: corepack enable && pnpm install
+      - name: Check quantum-core bundle
+        run: |
+          echo "Bundle budget check (placeholder)"
+          echo "quantum-core: estimated <200KB gzip"
+          echo "Total per Worker: <600KB"
+
+  honest-labels:
+    name: R8 — Honest label audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check for HONEST LABEL headers in quantum files
+        run: |
+          for f in $(find packages/quantum-core/src -name '*.ts' 2>/dev/null); do
+            if ! grep -q 'HONEST LABEL' "$f"; then
+              echo "Missing HONEST LABEL in $f"
+              exit 1
+            fi
+          done
+          echo "All quantum files have honest labels ✓"

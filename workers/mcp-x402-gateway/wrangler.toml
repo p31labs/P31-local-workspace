@@ -1,0 +1,69 @@
+name = "mcp-x402-gateway"
+main = "src/index.ts"
+compatibility_date = "2026-07-16"
+
+# L3.2 — x402 payment middleware mapped to local Base testnet (fallback).
+# NETWORK defaults to base-sepolia (testnet). Set FACILITATOR_KEY_ID +
+# FACILITATOR_SECRET_KEY (mainnet CDP auth) to switch to production settlement.
+[vars]
+NETWORK = "base-sepolia"
+PAY_TO = "0x51c285Df171C76bE36252e32679F098d90768413"
+FACILITATOR_URL = "https://facilitator.x402.org"
+REVENUE_INGEST_URL = "https://taler-bridge-billing.p31ca.org/api/revenue/ingest"
+# L5 — Dual Settlement Router shares the LOVE ledger D1 + the L3.4 bridge URL.
+BRIDGE_URL = "https://mcp-x402-bridge.p31ca.org/mcp"
+X402_VERSION = "2.0"
+
+# Phase 4 — Reserve & Refund GLM metering. LOVE_LEDGER_URL is where the
+# /llm/* billing endpoints live. GLM_MODEL is the Workers AI model id served
+# by default. NOTE: GLM-4.7-Flash is Zhipu's model and is NOT in Cloudflare's
+# Workers AI catalog — it must be called via Zhipu's REST API (separate
+# provider wiring), not the AI binding. The default below is a valid Workers
+# AI model so the metering path works out-of-the-box; swap for any entitled
+# Workers AI model id, or wire Zhipu for true GLM.
+LOVE_LEDGER_URL = "https://love-ledger.p31ca.org"
+GLM_MODEL = "@cf/meta/llama-4-scout-17b-16e-instruct"
+REVENUE_LEDGER_URL = "https://revenue-ledger.trimtab-signal.workers.dev"
+ENTITLEMENT_URL = "https://entitlement.trimtab-signal.workers.dev"
+ENTITLEMENT_API_TOKEN = ""  # set via wrangler secret put ENTITLEMENT_API_TOKEN
+
+# Axis-6 LOVE settlement HMAC shared secret. Centralised in the Cloudflare
+# Secrets Store (`p31-secrets`, store-id 33d48162fd6842869beeed3516e2909c) so a
+# single rotation propagates to every bound Worker. Resolved at runtime via
+# `await env.LOVE_AUTH_SECRET.get()`. MUST equal the LOVE_AUTH_SECRET on
+# love-ledger so the orchestrator's /contract/propose Bearer call verifies.
+[[secrets_store_secrets]]
+binding = "LOVE_AUTH_SECRET"
+store_id = "33d48162fd6842869beeed3516e2909c"
+secret_name = "LOVE_AUTH_SECRET"
+
+# Workers AI binding for GLM-4.7-Flash (and others).
+[ai]
+binding = "AI"
+
+# Phase 3 — Needle-as-a-Service binding. intent-resolver exposes POST
+# /classify (lazy-loaded WASM tool-calling transformer). The gateway proxies
+# natural-language -> P31 tool resolution through it (see /classify route).
+[[services]]
+binding = "NEEDLE"
+service = "intent-resolver"
+
+# CWP-2026-015 (A) — agent-runtime executes built-in tools (send_notification,
+# generate_care_report) instead of the L3.4 bridge.
+[[services]]
+binding = "AGENT_RUNTIME"
+service = "agent-runtime"
+
+# Secrets (wrangler secret put), never in code:
+# FACILITATOR_KEY_ID, FACILITATOR_SECRET_KEY, REVENUE_API_TOKEN
+
+[[d1_databases]]
+binding = "LOVE_LEDGER"
+database_name = "love-ledger"
+database_id = "592e3e2e-3203-4e0a-8342-9e85215ec8a6"
+
+[observability]
+enabled = true
+
+[cache]
+enabled = true

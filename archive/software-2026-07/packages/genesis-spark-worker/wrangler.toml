@@ -1,0 +1,14 @@
+name = "genesis-spark"
+main = "src/index.ts"
+compatibility_date = "2026-07-16"
+compatibility_flags = ["nodejs_compat"]
+
+# PSK set via: wrangler secret put PSK --name genesis-spark
+# DEPLOYER_WALLET set via: wrangler secret put DEPLOYER_WALLET --name genesis-spark
+
+[[kv_namespaces]]
+binding = "GENESIS_KV"
+id = "e8402df593d94e36bfeef7f7615979a6"
+
+[cache]
+enabled = true

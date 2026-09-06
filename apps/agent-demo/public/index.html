@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en" data-brand="p31" data-spoons="3" data-theme="quantum">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>P31 × Zephyr — Agent-Native Surfaces</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/zephyr-framework@1/zephyr-framework.min.css">
+  <meta name="description" content="Agent-controllable, tokenized UI — the sovereign agent-native web stack in action.">
+  <meta http-equiv="origin-trial" content="A4rGnF5xw8cNifIvg1yPE2wYpDFs/Hxunt4xy5EyTKmtjxxYvA6by2pgYJpMxjplhLaqkwwWxXlneJ6F68BhHmUAAABweyJvcmlnaW4iOiJodHRwczovL3AzMWNhLm9yZzo0NDMiLCJmZWF0dXJlIjoiV2ViTUNQIiwiZXhwaXJ5IjoxNzg4OTYyMDYyLCJpc1N1YmRvbWFpbiI6dHJ1ZSwiaXNUaGlyZFBhcnR5Ijp0cnVlfQ==">
+
+  <style>
+    :root {
+      --p31-base: 16px;
+      --p31-bg: oklch(10% 0.01 240);
+      --p31-surface: oklch(15% 0.015 240);
+      --p31-surface2: oklch(22% 0.02 240);
+      --p31-accent: oklch(65% 0.18 195);
+      --p31-accent-cyan: oklch(65% 0.18 195);
+      --p31-accent-violet: oklch(65% 0.18 285);
+      --p31-accent-gold: oklch(65% 0.18 15);
+      --p31-accent-green: oklch(65% 0.18 105);
+      --p31-accent-red: oklch(65% 0.18 30);
+      --p31-accent-iris: oklch(65% 0.18 255);
+      --p31-text-primary: oklch(96% 0.005 240);
+      --p31-text-secondary: oklch(75% 0.01 240);
+      --p31-text-tertiary: oklch(55% 0.01 240);
+      --p31-glass-bg: oklch(100% 0.01 240 / 0.04);
+      --p31-glass-border: oklch(100% 0.01 240 / 0.08);
+      --p31-glass-border-hover: oklch(100% 0.01 240 / 0.15);
+      --p31-glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+      --p31-glow-cyan: 0 0 20px rgba(0, 240, 255, 0.25);
+      --p31-radius-sm: 8px;
+      --p31-radius-md: 16px;
+      --p31-radius-lg: 24px;
+      --p31-radius-full: 9999px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: var(--p31-bg);
+      color: var(--p31-text-primary);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      min-height: 100vh;
+    }
+
+    .app {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: clamp(16px, 4vw, 48px);
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    header {
+      text-align: center;
+      padding: 24px;
+      background: var(--p31-glass-bg);
+      border: 1px solid var(--p31-glass-border);
+      border-radius: var(--p31-radius-lg);
+    }
+
+    header h1 {
+      margin: 0 0 8px 0;
+      font-size: 28px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--p31-accent-cyan), var(--p31-accent-violet));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    header p {
+      margin: 0;
+      font-size: 14px;
+      color: var(--p31-text-secondary);
+    }
+
+    .badge-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .badge-row > * { flex-shrink: 0; }
+
+    .hero-badge {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .section {
+      background: var(--p31-glass-bg);
+      border: 1px solid var(--p31-glass-border);
+      border-radius: var(--p31-radius-md);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .section h2 {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--p31-text-secondary);
+    }
+
+    .section p {
+      margin: 0;
+      font-size: 13px;
+      color: var(--p31-text-tertiary);
+      line-height: 1.5;
+    }
+
+    .section-title {
+      width: 100%;
+      font-size: 14px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--p31-text-secondary);
+      margin: 0;
+    }
+
+    .status-switcher {
+      display: flex;
+      gap: 6px;
+    }
+
+    .status-btn {
+      padding: 6px 12px;
+      border-radius: var(--p31-radius-sm);
+      border: 1px solid var(--p31-glass-border);
+      background: transparent;
+      color: var(--p31-text-secondary);
+      cursor: pointer;
+      font-size: 11px;
+      transition: all 0.15s ease;
+    }
+
+    .status-btn:hover {
+      border-color: var(--p31-accent-cyan);
+      color: var(--p31-accent-cyan);
+    }
+
+    .status-btn.active {
+      background: rgba(0, 240, 255, 0.1);
+      border-color: var(--p31-accent-cyan);
+      color: var(--p31-accent-cyan);
+    }
+
+    .meta-footer {
+      margin-top: 32px;
+      padding: 16px;
+      background: var(--p31-glass-bg);
+      border: 1px solid var(--p31-glass-border);
+      border-radius: var(--p31-radius-md);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      color: var(--p31-text-tertiary);
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .meta-footer code {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 10px;
+      background: rgba(255,255,255,0.05);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    z-agent {
+      --z-agent-bg: var(--p31-surface);
+      --z-agent-color: var(--p31-text-primary);
+      --z-agent-border: var(--p31-glass-border);
+      --z-agent-accent: var(--p31-accent-cyan);
+      --z-agent-radius: var(--p31-radius-md);
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1>P31 × Zephyr</h1>
+      <p>Agent-native surfaces — zero runtime JS, full MCP control, sovereign tokens.</p>
+    </header>
+
+    <!-- Crown Section -->
+    <div class="section">
+      <span class="section-title">Crown — Role Badge</span>
+      <div class="badge-row">
+        <z-badge
+          variant="crown"
+          class="hero-badge"
+          data-mcp-tool="crownDisplay"
+          data-mcp-state="active"
+          data-mcp-target="crown-badge"
+        >
+          <span slot="icon" style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;flex-shrink:0;overflow:hidden;">
+            <svg viewBox="0 16 200 168" width="100%" height="100%" role="img" aria-label="Crown">
+              <path d="M40 155Q60 80 70 38Q85 18 100 19Q115 18 130 38Q140 80 160 155" fill="none" stroke="currentColor" stroke-width="2.5" opacity="0.6"/>
+              <polygon points="100,19 108,38 128,38" fill="var(--p31-accent-violet)" opacity="0.9"/>
+              <polygon points="100,19 92,38 72,38" fill="var(--p31-accent-violet)" opacity="0.6"/>
+              <polygon points="70,38 78,55 92,38" fill="var(--p31-accent-gold)"/>
+              <polygon points="130,38 122,55 108,38" fill="var(--p31-accent-green)"/>
+              <circle cx="100" cy="100" r="5" fill="var(--p31-accent-violet)"/>
+            </svg>
+          </span>
+          <span slot="label">Sovereign</span>
+          <span slot="tooltip">Full system access — sovereign role</span>
+        </z-badge>
+      </div>
+    </div>
+
+    <!-- SpoonDial Section -->
+    <div class="section" data-mcp-tool="spoonDialSection" data-mcp-target="spoon-dial-section">
+      <span class="section-title">SpoonDial — Energy Level</span>
+      <z-range
+        id="spoon-dial"
+        min="0"
+        max="5"
+        step="1"
+        value="3"
+        data-mcp-tool="spoonDial"
+        data-mcp-type="control"
+        data-mcp-range="0,5"
+        data-mcp-current="3"
+        data-mcp-target="spoon-dial"
+      >
+        <style>
+          :host {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            --z-range-track-height: 6px;
+            --z-range-track-bg: var(--p31-glass-border, rgba(255,255,255,0.1));
+            --z-range-thumb-size: 24px;
+            --z-range-thumb-bg: var(--p31-accent-cyan, #00F0FF);
+            --z-range-fill-bg: var(--p31-accent-cyan, #00F0FF);
+          }
+          .slabel {
+            font-family: inherit;
+            font-size: 13px;
+            color: var(--p31-text-secondary);
+            letter-spacing: 0.02em;
+          }
+          .dots {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+          }
+          .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            flex-shrink: 0;
+            background: rgba(255,255,255,0.18);
+          }
+          .dot:hover { transform: scale(1.35); }
+          .dot.crisis { background: var(--p31-accent-red, #fb7185); box-shadow: 0 0 8px rgba(251,113,133,0.5); }
+          .dot.standard { background: var(--p31-accent-cyan, #00F0FF); box-shadow: 0 0 6px var(--p31-accent-cyan, #00F0FF); }
+          .dot.full { background: var(--p31-accent-violet, #A78BFA); box-shadow: 0 0 6px var(--p31-accent-violet, #A78BFA); }
+        </style>
+        <span class="slabel">Spoons: <span id="value-display">3</span>/5</span>
+        <div class="dots" id="dots-container">
+          <button class="dot" data-index="0" aria-label="Set spoons to 0"></button>
+          <button class="dot" data-index="1" aria-label="Set spoons to 1"></button>
+          <button class="dot" data-index="2" aria-label="Set spoons to 2"></button>
+          <button class="dot" data-index="3" aria-label="Set spoons to 3"></button>
+          <button class="dot" data-index="4" aria-label="Set spoons to 4"></button>
+          <button class="dot" data-index="5" aria-label="Set spoons to 5"></button>
+        </div>
+        <script>
+          (() => {
+            const range = document.getElementById('spoon-dial');
+            if (!range) return;
+            const display = document.getElementById('value-display');
+            const dots = document.querySelectorAll('.dot');
+            function updateDots(val) {
+              if (display) display.textContent = val;
+              range.dataset.mcpCurrent = val;
+              dots.forEach((dot, i) => {
+                dot.className = 'dot';
+                if (i <= val) {
+                  if (val <= 1) dot.classList.add('crisis');
+                  else if (val <= 3) dot.classList.add('standard');
+                  else dot.classList.add('full');
+                }
+              });
+            }
+            range.addEventListener('input', () => updateDots(parseInt(range.value, 10)));
+            dots.forEach((dot) => {
+              dot.addEventListener('click', () => {
+                const val = parseInt(dot.dataset.index, 10);
+                range.value = val;
+                updateDots(val);
+                range.dispatchEvent(new Event('input', { bubbles: true }));
+              });
+            });
+            updateDots(parseInt(range.value, 10));
+          })();
+        </script>
+      </z-range>
+    </div>
+
+    <!-- StatusBadge Section -->
+    <div class="section" data-mcp-tool="statusBadgeSection" data-mcp-target="status-badge-section">
+      <span class="section-title">StatusBadge — Connection Status</span>
+      <p>Click a status to change the badge. Agents can also set this via MCP.</p>
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <z-badge
+          id="status-badge"
+          data-status="online"
+          data-mcp-tool="statusBadge"
+          data-mcp-type="status"
+          data-mcp-target="status-badge"
+          data-mcp-state="online"
+        >
+          <style>
+            :host {
+              --z-badge-online: var(--p31-accent-green, #34d399);
+              --z-badge-offline: var(--p31-accent-red, #fb7185);
+              --z-badge-busy: var(--p31-accent-gold, #fbbf24);
+              --z-badge-away: var(--p31-text-tertiary, #94a3b8);
+              --z-badge-bg: var(--p31-glass-bg, rgba(255,255,255,0.06));
+              --z-badge-color: var(--p31-text-primary, #F5F5F7);
+            }
+            .status-dot {
+              display: inline-block;
+              width: 10px;
+              height: 10px;
+              border-radius: 50%;
+              background: var(--z-badge-online);
+              flex-shrink: 0;
+              transition: background 0.2s ease;
+            }
+            :host([data-status="online"]) .status-dot { background: var(--z-badge-online); }
+            :host([data-status="offline"]) .status-dot { background: var(--z-badge-offline); }
+            :host([data-status="busy"]) .status-dot { background: var(--z-badge-busy); }
+            :host([data-status="away"]) .status-dot { background: var(--z-badge-away); }
+          </style>
+          <span slot="indicator" class="status-dot"></span>
+          <span slot="label" class="status-label">Online</span>
+        </z-badge>
+        <div class="status-switcher">
+          <button class="status-btn active" data-status="online">Online</button>
+          <button class="status-btn" data-status="offline">Offline</button>
+          <button class="status-btn" data-status="busy">Busy</button>
+          <button class="status-btn" data-status="away">Away</button>
+        </div>
+        <script>
+          (() => {
+            const badge = document.getElementById('status-badge');
+            if (!badge) return;
+            const btns = document.querySelectorAll('.status-btn');
+            const label = badge.querySelector('.status-label');
+            btns.forEach(btn => {
+              btn.addEventListener('click', () => {
+                const status = btn.dataset.status;
+                badge.dataset.status = status;
+                badge.dataset.mcpState = status;
+                if (label) label.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+                btns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+              });
+            });
+          })();
+        </script>
+      </div>
+    </div>
+
+    <!-- Agent Control Panel -->
+    <div class="section" style="gap:12px;">
+      <span class="section-title">Agent Control</span>
+      <p>Type a command below. The agent can read state, set values, and control all components on this page.</p>
+      <z-agent
+        server="https://p31-design-mcp.trimtab-signal.workers.dev"
+        placeholder='Try: "Set spoon level to 4" or "Change status to busy"...'
+      ></z-agent>
+    </div>
+
+    <!-- A2UI Preview Panel -->
+    <div class="section" style="gap:12px;">
+      <span class="section-title">A2UI Preview — Agent-Generated UI</span>
+      <p>Paste A2UI component JSON below to see it rendered with P31 tokens and WebMCP annotations.</p>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">
+        <button onclick="loadExample('card')" class="status-btn">GlassCard + SpoonMeter</button>
+        <button onclick="loadExample('crisis')" class="status-btn">CrisisOverlay</button>
+        <button onclick="loadExample('badge')" class="status-btn">StatusBadge + Crown</button>
+      </div>
+      <textarea id="a2ui-input" rows="8" style="width:100%;padding:12px;border-radius:8px;border:1px solid var(--p31-glass-border);background:rgba(0,0,0,0.3);color:var(--p31-text-primary);font-family:var(--p31-font-mono,monospace);font-size:12px;resize:vertical;outline:none;box-sizing:border-box;line-height:1.6;">{
+  "components": [
+    {"id":"c1","component":"GlassCard","props":{"color":"violet","padding":"lg"}},
+    {"id":"c2","component":"SpoonMeter","props":{"current":4},"parentId":"c1"},
+    {"id":"c3","component":"StatusBadge","props":{"status":"beta"},"parentId":"c1"},
+    {"id":"c4","component":"Crown","props":{"size":"md","brand":"p31ca"},"parentId":"c1"}
+  ]
+}</textarea>
+      <div style="display:flex;gap:8px;">
+        <button onclick="renderA2UI()" style="padding:10px 24px;border-radius:8px;border:1px solid var(--p31-accent-cyan);background:rgba(0,240,255,0.1);color:var(--p31-accent-cyan);cursor:pointer;font-size:13px;font-weight:600;">Render A2UI →</button>
+        <span id="a2ui-status" style="font-size:12px;color:var(--p31-text-tertiary);align-self:center;"></span>
+      </div>
+      <div id="a2ui-output" style="display:none;border-radius:8px;overflow:hidden;border:1px solid var(--p31-glass-border);">
+        <iframe id="a2ui-frame" style="width:100%;border:none;background:var(--p31-bg);"></iframe>
+      </div>
+    </div>
+
+    <!-- Agent API Test Panel -->
+    <div class="section" style="gap:12px;">
+      <span class="section-title">Agent API — Manual Test</span>
+      <p>Simulate agent calls to verify the Zephyr Agent API works with P31 components.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button onclick="testGetState()" style="padding:8px 16px;border-radius:8px;border:1px solid var(--p31-glass-border);background:var(--p31-glass-bg);color:var(--p31-accent-cyan);cursor:pointer;font-size:12px;">
+          Zephyr.agent.getState()
+        </button>
+        <button onclick="testActHighlight()" style="padding:8px 16px;border-radius:8px;border:1px solid var(--p31-glass-border);background:var(--p31-glass-bg);color:var(--p31-accent-violet);cursor:pointer;font-size:12px;">
+          Zephyr.agent.act('z-badge', 'highlight')
+        </button>
+        <button onclick="testSpoonSet()" style="padding:8px 16px;border-radius:8px;border:1px solid var(--p31-glass-border);background:var(--p31-glass-bg);color:var(--p31-accent-green);cursor:pointer;font-size:12px;">
+          Set SpoonDial to 4
+        </button>
+      </div>
+      <pre id="agent-result" style="margin:0;padding:16px;background:rgba(0,0,0,0.3);border-radius:8px;font-size:12px;color:var(--p31-text-secondary);overflow-x:auto;display:none;line-height:1.6;"></pre>
+    </div>
+
+    <!-- Footer -->
+    <div class="meta-footer">
+      <span>Powered by <b>Zephyr Framework</b> · <b>P31 Design System</b></span>
+      <span>
+        <code>data-mcp-*</code> annotations · stateless MCP · sovereign tokens
+      </span>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/zephyr-framework@1/zephyr-framework.min.js"></script>
+
+  <!-- P31 MCP Browser Dispatcher -->
+  <script>
+  (function() {
+    'use strict';
+
+    var TOOLS = {};
+
+    // ── SpoonDial helpers ──
+    function updateSpoonDial(level) {
+      var range = document.getElementById('spoon-dial');
+      if (!range) return false;
+      var clamped = Math.max(0, Math.min(5, Number(level)));
+      range.value = clamped;
+      range.dispatchEvent(new Event('input', { bubbles: true }));
+      document.documentElement.setAttribute('data-spoons', String(clamped));
+      window.dispatchEvent(new CustomEvent('spoons:changed', {
+        detail: { level: clamped }, bubbles: true
+      }));
+      return true;
+    }
+
+    // ── StatusBadge helpers ──
+    function updateStatusBadge(status) {
+      var badge = document.getElementById('status-badge');
+      if (!badge) return false;
+      var valid = ['online', 'offline', 'busy', 'away'];
+      if (valid.indexOf(status) === -1) return false;
+      badge.dataset.status = status;
+      badge.dataset.mcpState = status;
+      var label = badge.querySelector('.status-label');
+      if (label) label.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+      document.querySelectorAll('.status-btn').forEach(function(b) {
+        b.classList.toggle('active', b.dataset.status === status);
+      });
+      return true;
+    }
+
+    // ── Tool definitions ──
+    TOOLS.setSpoonLevel = {
+      description: 'Set the cognitive load spoon level (0-5)',
+      inputSchema: {
+        type: 'object',
+        properties: { level: { type: 'number', minimum: 0, maximum: 5 } },
+        required: ['level']
+      },
+      execute: async function(args) {
+        var ok = updateSpoonDial(args.level);
+        return { success: ok, level: Math.max(0, Math.min(5, Number(args.level))) };
+      }
+    };
+
+    TOOLS.setStatus = {
+      description: 'Set the status badge to online, offline, busy, or away',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          status: { type: 'string', enum: ['online', 'offline', 'busy', 'away'] }
+        },
+        required: ['status']
+      },
+      execute: async function(args) {
+        var ok = updateStatusBadge(args.status);
+        return { success: ok, status: args.status };
+      }
+    };
+
+    TOOLS.navigate = {
+      description: 'Navigate to a URL',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          href: { type: 'string' },
+          external: { type: 'boolean', default: false }
+        },
+        required: ['href']
+      },
+      execute: async function(args) {
+        if (args.external) {
+          window.open(args.href, '_blank', 'noopener,noreferrer');
+        } else {
+          window.location.href = args.href;
+        }
+        return { success: true, href: args.href };
+      }
+    };
+
+    TOOLS.toggleDrawer = {
+      description: 'Open or close a navigation drawer',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          state: { type: 'string', enum: ['open', 'closed', 'toggle'] },
+          target: { type: 'string' }
+        },
+        required: ['state']
+      },
+      execute: async function(args) {
+        var drawer = args.target
+          ? document.querySelector(args.target)
+          : document.querySelector('[data-mcp-tool="toggleDrawer"]');
+        if (!drawer) return { success: false, error: 'Drawer not found' };
+        var shouldOpen = args.state === 'toggle'
+          ? !drawer.hasAttribute('open')
+          : args.state === 'open';
+        if (shouldOpen) {
+          drawer.setAttribute('open', '');
+          drawer.dispatchEvent(new Event('open', { bubbles: true }));
+        } else {
+          drawer.removeAttribute('open');
+          drawer.dispatchEvent(new Event('close', { bubbles: true }));
+        }
+        return { success: true, state: shouldOpen ? 'open' : 'closed' };
+      }
+    };
+
+    // ── Register WebMCP tools (navigator.modelContext) ──
+    function registerWebMCP() {
+      var _ctx=(typeof document!=='undefined'&&document.modelContext)?document.modelContext:(typeof navigator!=='undefined'&&navigator.modelContext)?navigator.modelContext:null;if(!_ctx) {
+        console.log('[P31 MCP] navigator.modelContext not available — skipping WebMCP registration');
+        return;
+      }
+      Object.keys(TOOLS).forEach(function(name) {
+        var t = TOOLS[name];
+        _ctx.registerTool({
+          name: name,
+          description: t.description,
+          inputSchema: t.inputSchema,
+          execute: t.execute
+        });
+      });
+      console.log('[P31 MCP] Registered ' + Object.keys(TOOLS).length + ' tools via navigator.modelContext');
+    }
+
+    // ── Expose tools globally for z-agent and direct calling ──
+    window.__p31MCPTools = TOOLS;
+    window.__p31MCPExec = function(name, args) {
+      if (!TOOLS[name]) return { success: false, error: 'Unknown tool: ' + name };
+      return TOOLS[name].execute(args);
+    };
+
+    // ── Listen for spoons:changed events (from Zephyr components) ──
+    window.addEventListener('spoons:changed', function(e) {
+      var level = e.detail.level;
+      var infoEl = document.getElementById('agent-result');
+      if (infoEl && infoEl.style.display !== 'none') {
+        infoEl.innerHTML = '<strong style="color:var(--p31-accent-cyan);">Event: spoons:changed</strong>\n' +
+          JSON.stringify({ level: level }, null, 2);
+      }
+    });
+
+    // ── Init ──
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', registerWebMCP);
+    } else {
+      registerWebMCP();
+    }
+
+    console.log('[P31 MCP] Browser dispatcher ready — tools:', Object.keys(TOOLS).join(', '));
+  })();
+  </script>
+  <!-- End P31 MCP Browser Dispatcher -->
+
+  <script>
+    (function() {
+      var resultEl = document.getElementById('agent-result');
+      function showResult(title, data) {
+        resultEl.style.display = 'block';
+        resultEl.innerHTML = '<strong style="color:var(--p31-accent-cyan);">' + title + ':</strong>\n' + JSON.stringify(data, null, 2);
+      }
+      window.testGetState = function() {
+        if (typeof Zephyr !== 'undefined' && Zephyr.agent) {
+          showResult('Zephyr.agent.getState()', Zephyr.agent.getState());
+        } else {
+          showResult('Zephyr.agent.getState()', { error: 'Zephyr Agent API not available' });
+        }
+      };
+      window.testActHighlight = function() {
+        if (typeof Zephyr !== 'undefined' && Zephyr.agent) {
+          showResult('Zephyr.agent.act()', Zephyr.agent.act('z-badge', 'highlight'));
+        } else {
+          showResult('Zephyr.agent.act()', { error: 'Zephyr Agent API not available' });
+        }
+      };
+      window.testSpoonSet = function() {
+        var range = document.getElementById('spoon-dial');
+        if (range) {
+          range.value = 4;
+          range.dispatchEvent(new Event('input', { bubbles: true }));
+          showResult('setSpoonLevel(4)', { success: true, value: 4, message: 'SpoonDial updated to 4' });
+        } else {
+          showResult('setSpoonLevel(4)', { error: 'SpoonDial not found' });
+        }
+      };
+
+      // ── A2UI Preview ──
+      var A2UI_RENDER_URL = 'https://p31-edge-render.trimtab-signal.workers.dev/a2ui/render';
+
+      window.EXAMPLES = {
+        card: '{\n  "components": [\n    {"id":"c1","component":"GlassCard","props":{"color":"violet","padding":"lg"}},\n    {"id":"c2","component":"SpoonMeter","props":{"current":4},"parentId":"c1"},\n    {"id":"c3","component":"StatusBadge","props":{"status":"beta"},"parentId":"c1"},\n    {"id":"c4","component":"Crown","props":{"size":"md","brand":"p31ca"},"parentId":"c1"}\n  ]\n}',
+        crisis: '{\n  "components": [\n    {"id":"c1","component":"CrisisOverlay","props":{"message":"Rest. Breathe. The mesh holds.","buttonLabel":"I\'m Ready"}}\n  ]\n}',
+        badge: '{\n  "components": [\n    {"id":"c1","component":"GlassCard","props":{"color":"green","padding":"sm"}},\n    {"id":"c2","component":"StatusBadge","props":{"status":"live"},"parentId":"c1"},\n    {"id":"c3","component":"Crown","props":{"size":"sm","brand":"phos"},"parentId":"c1"}\n  ]\n}',
+      };
+
+      window.loadExample = function(key) {
+        var input = document.getElementById('a2ui-input');
+        var ex = window.EXAMPLES[key];
+        if (ex) input.value = ex;
+      };
+
+      window.renderA2UI = function() {
+        var input = document.getElementById('a2ui-input');
+        var output = document.getElementById('a2ui-output');
+        var frame = document.getElementById('a2ui-frame');
+        var status = document.getElementById('a2ui-status');
+
+        var payload;
+        try {
+          payload = JSON.parse(input.value);
+        } catch (e) {
+          status.textContent = '❌ Invalid JSON: ' + e.message;
+          status.style.color = 'var(--p31-accent-red, #FB7185)';
+          return;
+        }
+
+        status.textContent = '⏳ Rendering...';
+        status.style.color = 'var(--p31-text-tertiary)';
+
+        fetch(A2UI_RENDER_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        })
+        .then(function(r) {
+          if (!r.ok) throw new Error('HTTP ' + r.status);
+          return r.text();
+        })
+        .then(function(html) {
+          output.style.display = 'block';
+          frame.srcdoc = html;
+          status.textContent = '✅ ' + (html.match(/data-mcp-/g) || []).length + ' WebMCP annotations';
+          status.style.color = 'var(--p31-accent-green, #34d399)';
+
+          // Auto-resize iframe
+          frame.onload = function() {
+            try {
+              var h = frame.contentWindow.document.body.scrollHeight;
+              frame.style.height = Math.max(400, h + 40) + 'px';
+            } catch(_) { frame.style.height = '500px'; }
+          };
+        })
+        .catch(function(err) {
+          status.textContent = '❌ ' + err.message;
+          status.style.color = 'var(--p31-accent-red, #FB7185)';
+        });
+      };
+    })();
+  </script>
+</body>
+</html>

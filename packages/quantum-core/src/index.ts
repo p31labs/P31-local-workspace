@@ -1,0 +1,11 @@
+export * from './sicPovm.js';
+export * from './posner.js';
+export * from './did.js';
+export { K4Graph } from './k4.js';
+export type { K4Vertex, K4Edge } from './k4.js';
+export { computeMorphogeneticField, cliffordRotation, morphogeneticFieldValue } from './morphogeneticField.js';
+export { HOUSE_NEURO_MAP, homoConstellatusProfile, COSMIC_TETRA, hasTetraConstant } from './cosmic.js';
+export * from './feedbackLoop.js';
+export * from './d20.js';
+export * from './bandit.js';
+export * from './edgeAdaptation.js';

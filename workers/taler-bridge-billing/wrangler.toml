@@ -1,0 +1,36 @@
+name = "taler-bridge-billing"
+main = "src/index.ts"
+compatibility_date = "2026-07-16"
+compatibility_flags = ["nodejs_compat"]
+
+[[durable_objects.bindings]]
+name = "RevenueTracker"
+class_name = "RevenueTracker"
+
+[[migrations]]
+tag = "v1"
+new_classes = ["RevenueTracker"]
+
+# TODO: Add [exports.RevenueTracker] section with type = "durable-object"
+# WARNING: Missing [exports] config for Durable Object(s) — manual handling required.
+
+[vars]
+PAY_TO = ""
+NETWORK = "base-sepolia"
+EXCHANGE_BASE_URL = "https://exchange.demo.taler.net"
+PREMIUM_PRICE = "$0.25"
+FACILITATOR_URL = "https://x402.org/facilitator"
+FACILITATOR_KEY_ID = ""
+FACILITATOR_SECRET_KEY = ""
+TALER_EXCHANGE_URL = "https://exchange.demo.taler.net"
+TALER_DONATION_CURRENCY = "EUR"
+TALER_DONATION_DEFAULT_AMOUNT = "EUR:5"
+TALER_WIRED = "false"
+REVENUE_LEDGER_URL = "https://revenue-ledger.trimtab-signal.workers.dev"
+
+[observability]
+enabled = true
+head_sampling_rate = 0.1
+
+[cache]
+enabled = true

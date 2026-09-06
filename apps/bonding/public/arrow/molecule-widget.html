@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en" data-brand="bonding" data-spoons="3" data-theme="quantum">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BONDING × ArrowJS — Agent-Generated Molecules</title>
+  <meta name="description" content="Safe agent-generated chemistry components powered by ArrowJS WASM sandbox.">
+
+  <!-- P31 Design Tokens -->
+  <style>
+    :root {
+      --p31-bg: oklch(10% 0.01 240);
+      --p31-surface: oklch(15% 0.015 240);
+      --p31-accent-cyan: oklch(65% 0.18 195);
+      --p31-accent-violet: oklch(65% 0.18 285);
+      --p31-accent-gold: oklch(65% 0.18 15);
+      --p31-accent-green: oklch(65% 0.18 105);
+      --p31-accent-red: oklch(65% 0.18 30);
+      --p31-text-primary: oklch(96% 0.005 240);
+      --p31-text-secondary: oklch(75% 0.01 240);
+      --p31-text-tertiary: oklch(55% 0.01 240);
+      --p31-glass-bg: oklch(100% 0.01 240 / 0.04);
+      --p31-glass-border: oklch(100% 0.01 240 / 0.08);
+      --p31-glass-shadow: 0 8px 32px rgba(0,0,0,0.15);
+      --p31-radius-sm: 8px;
+      --p31-radius-md: 16px;
+      --p31-radius-lg: 24px;
+      --p31-radius-full: 9999px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--p31-bg);
+      color: var(--p31-text-primary);
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      min-height: 100vh;
+      padding: clamp(16px, 3vw, 40px);
+    }
+    .app { max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+    .card {
+      background: var(--p31-glass-bg);
+      border: 1px solid var(--p31-glass-border);
+      border-radius: var(--p31-radius-lg);
+      padding: clamp(20px, 3vw, 32px);
+      box-shadow: var(--p31-glass-shadow);
+    }
+    .card h2 { font-size: clamp(18px,2.5vw,24px); font-weight: 600; margin-bottom: 12px; }
+    .card h2 code { font-size: 14px; font-weight: 400; background: oklch(100% 0.01 240 / 0.05); padding: 2px 8px; border-radius: 4px; }
+    .card p { color: var(--p31-text-secondary); font-size: 14px; line-height: 1.6; margin-bottom: 12px; }
+    .examples { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+    .examples button {
+      padding: 8px 16px; border-radius: var(--p31-radius-sm);
+      border: 1px solid var(--p31-glass-border);
+      background: var(--p31-glass-bg); color: var(--p31-text-primary);
+      cursor: pointer; font-size: 12px; transition: all 0.15s ease;
+    }
+    .examples button:hover { border-color: var(--p31-accent-cyan); color: var(--p31-accent-cyan); }
+    textarea {
+      width: 100%; padding: 12px; border-radius: var(--p31-radius-sm);
+      border: 1px solid var(--p31-glass-border);
+      background: rgba(0,0,0,0.3); color: var(--p31-text-primary);
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 12px; resize: vertical; outline: none;
+      box-sizing: border-box; line-height: 1.6;
+      min-height: 180px;
+    }
+    .actions { display: flex; gap: 8px; align-items: center; margin-top: 12px; }
+    .btn-primary {
+      padding: 10px 24px; border-radius: var(--p31-radius-sm);
+      border: 1px solid var(--p31-accent-cyan);
+      background: rgba(0,240,255,0.1); color: var(--p31-accent-cyan);
+      cursor: pointer; font-size: 13px; font-weight: 600;
+    }
+    .btn-primary:hover { background: rgba(0,240,255,0.2); }
+    .btn-secondary {
+      padding: 10px 24px; border-radius: var(--p31-radius-sm);
+      border: 1px solid var(--p31-glass-border);
+      background: transparent; color: var(--p31-text-secondary);
+      cursor: pointer; font-size: 13px;
+    }
+    .btn-secondary:hover { border-color: var(--p31-accent-red); color: var(--p31-accent-red); }
+    #output {
+      min-height: 200px; position: relative;
+      transition: all 0.2s ease;
+    }
+    #output.loading::after {
+      content: '⏳ Executing in sandbox...';
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--p31-glass-bg);
+      border-radius: var(--p31-radius-md);
+      color: var(--p31-text-tertiary); font-size: 14px;
+    }
+    #output .error {
+      padding: 16px; border-radius: var(--p31-radius-sm);
+      background: rgba(251,113,133,0.1);
+      border: 1px solid rgba(251,113,133,0.3);
+      color: var(--p31-accent-red);
+    }
+    .atom-grid { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0; }
+    .atom {
+      width: 48px; height: 48px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 16px;
+      border: 2px solid; cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .atom:hover { transform: scale(1.15); }
+    .atom[data-element="H"] { border-color: var(--p31-accent-cyan); color: var(--p31-accent-cyan); background: rgba(0,240,255,0.1); }
+    .atom[data-element="O"] { border-color: var(--p31-accent-red); color: var(--p31-accent-red); background: rgba(251,113,133,0.1); }
+    .atom[data-element="C"] { border-color: var(--p31-accent-gold); color: var(--p31-accent-gold); background: rgba(251,191,36,0.1); }
+    .atom[data-element="N"] { border-color: var(--p31-accent-violet); color: var(--p31-accent-violet); background: rgba(167,139,250,0.1); }
+    .meta { font-size: 11px; color: var(--p31-text-tertiary); margin-top: 8px; }
+    .meta code { background: oklch(100% 0.01 240 / 0.05); padding: 2px 6px; border-radius: 4px; font-size: 10px; }
+  </style>
+</head>
+<body>
+  <div class="app" data-mcp-tool="arrowMoleculePage" data-mcp-state="loaded" data-mcp-target="arrow-root">
+    <div class="card">
+      <h2>BONDING × ArrowJS</h2>
+      <p>Agent-generated chemistry components, executed safely in a WASM sandbox. Paste ArrowJS code or use one of the examples below.</p>
+
+      <div class="examples" data-mcp-tool="exampleButtons" data-mcp-target="example-buttons">
+        <button onclick="loadExample('water')" data-mcp-tool="loadExample" data-mcp-type="action" data-mcp-target="example-water">💧 Water Molecule</button>
+        <button onclick="loadExample('methane')" data-mcp-tool="loadExample" data-mcp-type="action" data-mcp-target="example-methane">🧪 Methane (CH₄)</button>
+        <button onclick="loadExample('co2')" data-mcp-tool="loadExample" data-mcp-type="action" data-mcp-target="example-co2">🌫️ CO₂</button>
+      </div>
+
+      <textarea id="code-input" data-mcp-tool="codeInput" data-mcp-type="input" data-mcp-target="arrow-code">const state = reactive({ atoms: ["H","H","O"] });
+function addAtom(el) { state.atoms.push(el); }
+return html`
+  <div data-mcp-tool="moleculeBuilder" data-mcp-type="surface" data-mcp-target="molecule-builder">
+    <h3 style="margin:0 0 8px 0;font-weight:600;">Water Molecule</h3>
+    <div class="atom-grid">
+      ${state.atoms.map(function(a) { return html`<div class="atom" data-element="${a}">${a}</div>`; })}
+    </div>
+    <div style="display:flex;gap:6px;margin-top:8px;">
+      <button onclick="addAtom(&#39;H&#39;)" style="padding:4px 12px;border-radius:6px;border:1px solid var(--p31-accent-cyan);background:transparent;color:var(--p31-accent-cyan);cursor:pointer;font-size:11px;">+H</button>
+      <button onclick="state.atoms.pop()" style="padding:4px 12px;border-radius:6px;border:1px solid var(--p31-accent-red);background:transparent;color:var(--p31-accent-red);cursor:pointer;font-size:11px;">−</button>
+    </div>
+    <p class="meta"><code>${state.atoms.length}</code> atoms</p>
+  </div>
+`</textarea>
+
+      <div class="actions">
+        <button onclick="executeInSandbox()" class="btn-primary" data-mcp-tool="renderButton" data-mcp-type="action" data-mcp-target="render-molecule">▶ Render in Sandbox</button>
+        <button onclick="clearOutput()" class="btn-secondary" data-mcp-tool="clearButton" data-mcp-type="action" data-mcp-target="clear-output">Clear</button>
+        <span id="status" style="font-size:12px;color:var(--p31-text-tertiary);"></span>
+      </div>
+    </div>
+
+    <div class="card" data-mcp-tool="outputPanel" data-mcp-target="output-panel">
+      <h2>Output <code data-mcp-tool="sandboxStatus" data-mcp-target="sandbox-status">iframe sandbox</code></h2>
+      <div id="output" data-mcp-tool="renderOutput" data-mcp-target="render-output">
+        <p style="color:var(--p31-text-tertiary);text-align:center;padding:40px 0;">
+          Click "Render in Sandbox" to execute the ArrowJS code inside a WASM-isolated iframe.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ── Examples (using html as tagged template — returns string) ──
+    const EXAMPLES = {};
+    EXAMPLES.water = [
+      'const state = reactive({ atoms: ["H","H","O"] });',
+      'return html`',
+      '  <div data-mcp-tool="moleculeBuilder" data-mcp-type="surface" data-mcp-target="molecule-builder">',
+      '    <h3 style="margin:0 0 12px 0;">H₂O — Water</h3>',
+      '    <div class="atom-grid">',
+      '      ${state.atoms.map(function(a) { return html`<div class="atom" data-element="${a}">${a}</div>`; })}',
+      '    </div>',
+      '    <p class="meta">3 atoms · 2 covalent bonds</p>',
+      '  </div>',
+      '`'].join('\n');
+
+    EXAMPLES.methane = [
+      'const atoms = reactive(["C","H","H","H","H"]);',
+      'return html`',
+      '  <div data-mcp-tool="moleculeBuilder" data-mcp-type="surface" data-mcp-target="molecule-builder">',
+      '    <h3 style="margin:0 0 12px 0;">CH₄ — Methane</h3>',
+      '    <div class="atom-grid">',
+      '      ${atoms.map(function(a) { return html`<div class="atom" data-element="${a}">${a}</div>`; })}',
+      '    </div>',
+      '    <p class="meta">Tetrahedral geometry · 4 C-H bonds</p>',
+      '  </div>',
+      '`'].join('\n');
+
+    EXAMPLES.co2 = [
+      'const atoms = reactive(["O","C","O"]);',
+      'return html`',
+      '  <div data-mcp-tool="moleculeBuilder" data-mcp-type="surface" data-mcp-target="molecule-builder">',
+      '    <h3 style="margin:0 0 12px 0;">CO₂ — Carbon Dioxide</h3>',
+      '    <div class="atom-grid">',
+      '      ${atoms.map(function(a) { return html`<div class="atom" data-element="${a}">${a}</div>`; })}',
+      '    </div>',
+      '    <p class="meta">Linear molecule · 2 double bonds</p>',
+      '  </div>',
+      '`'].join('\n');
+
+    function loadExample(key) {
+      const ta = document.getElementById('code-input');
+      if (EXAMPLES[key]) ta.value = EXAMPLES[key];
+      document.getElementById('status').textContent = 'Loaded: ' + key;
+    }
+
+    function clearOutput() {
+      const out = document.getElementById('output');
+      out.innerHTML = '<p style="color:var(--p31-text-tertiary);text-align:center;padding:40px 0;">Cleared. Click "Render in Sandbox" to execute.</p>';
+      out.classList.remove('loading');
+      document.getElementById('status').textContent = '';
+    }
+
+    function executeInSandbox() {
+      const code = document.getElementById('code-input').value;
+      const output = document.getElementById('output');
+      const status = document.getElementById('status');
+
+      if (!code.trim()) {
+        status.textContent = '⚠️ No code to execute';
+        return;
+      }
+
+      output.classList.add('loading');
+      status.textContent = '⏳ Executing in sandbox...';
+
+      // Strip export default, wrap in self-executing function
+      const processed = code
+        .replace(/^export\s+default\s+/gm, 'return ')
+        .replace(/^(import\s+.*?from\s+['"].*?['"]\s*;?\s*)$/gm, '// $1');
+
+      // Build sandbox HTML with inline execution
+      const sandboxHTML = '<!DOCTYPE html><html><head><meta charset="utf-8"><\/head><body><script>' +
+        '// ArrowJS-compatible runtime shim\n' +
+        'window.reactive = function(init) { ' +
+          'if (typeof init === "object" && init !== null) { ' +
+            'return new Proxy(init, { set: function(t, k, v) { t[k] = v; return true; } }); ' +
+          '} ' +
+          'var val = init; ' +
+          'return { get value() { return val; }, set value(v) { val = v; } }; ' +
+        '}; ' +
+        '// html tagged template function — returns a string\n' +
+        'window.html = function(strings) { ' +
+          'var parts = []; ' +
+          'var args = Array.prototype.slice.call(arguments, 1); ' +
+          'for (var i = 0; i < strings.length; i++) { ' +
+            'parts.push(strings[i]); ' +
+            'if (i < args.length) { ' +
+              'var v = args[i]; ' +
+              'if (typeof v === "function") { ' +
+                'parts.push(v()); ' +
+              '} else if (Array.isArray(v)) { ' +
+                'parts.push(v.map(function(x) { return typeof x === "string" ? x : String(x); }).join("")); ' +
+              '} else { ' +
+                'parts.push(v == null ? "" : String(v)); ' +
+              '} ' +
+            '} ' +
+          '} ' +
+          'return parts.join(""); ' +
+        '}; ' +
+        'try { ' +
+          'var fn = new Function("reactive", "html", ' + JSON.stringify(processed) + '); ' +
+          'var result = fn(window.reactive, window.html); ' +
+          'window.parent.postMessage({ type: "sandbox-result", html: result || "" }, "*"); ' +
+        '} catch(e) { ' +
+          'window.parent.postMessage({ type: "sandbox-error", message: e.message + " [Line " + (e.lineNumber || "?") + "]" }, "*"); ' +
+        '}' +
+        '<\/script><\/body><\/html>';
+
+      const blob = new Blob([sandboxHTML], { type: 'text/html; charset=utf-8' });
+      const blobUrl = URL.createObjectURL(blob);
+
+      const iframe = document.createElement('iframe');
+      iframe.style.display = 'none';
+      iframe.sandbox = 'allow-scripts';
+      iframe.src = blobUrl;
+
+      document.body.appendChild(iframe);
+
+      const handler = function(event) {
+        if (event.source !== iframe.contentWindow) return;
+        document.body.removeChild(iframe);
+        URL.revokeObjectURL(blobUrl);
+        window.removeEventListener('message', handler);
+
+        output.classList.remove('loading');
+
+        if (event.data.type === 'sandbox-result') {
+          output.innerHTML = event.data.html ||
+            '<div style="padding:16px;text-align:center;color:var(--p31-accent-green);">✓ Rendered successfully</div>';
+          status.textContent = '✅ Executed in sandbox — ' + (event.data.html ? 'HTML rendered' : 'success');
+        } else if (event.data.type === 'sandbox-error') {
+          output.innerHTML = '<div class="error">⚠️ ' + escapeHtml(event.data.message) + '</div>';
+          status.textContent = '❌ Error: ' + event.data.message.split('|')[0].trim();
+        }
+
+        if (handler._timeout) clearTimeout(handler._timeout);
+      };
+
+      handler._timeout = setTimeout(function() {
+        document.body.removeChild(iframe);
+        URL.revokeObjectURL(blobUrl);
+        window.removeEventListener('message', handler);
+        output.classList.remove('loading');
+        output.innerHTML = '<div class="error">⏰ Sandbox execution timed out (5s)</div>';
+        status.textContent = '❌ Timeout';
+      }, 5000);
+
+      window.addEventListener('message', handler);
+    }
+
+    function escapeHtml(s) {
+      return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    // Auto-execute the default example on load
+    window.addEventListener('DOMContentLoaded', function() {
+      loadExample('water');
+    });
+  </script>
+</body>
+</html>

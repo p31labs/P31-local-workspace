@@ -1,0 +1,34 @@
+name = "dads"
+main = "src/index.ts"
+compatibility_date = "2026-07-16"
+compatibility_flags = ["nodejs_compat"]
+
+# Reuse shared love-ledger D1 (Free Plan cap: 10 DBs)
+[[d1_databases]]
+binding = "CARE_DB"
+database_name = "love-ledger"
+database_id = "592e3e2e-3203-4e0a-8342-9e85215ec8a6"
+
+[[d1_databases]]
+binding = "LOVE_DB"
+database_name = "love-ledger"
+database_id = "592e3e2e-3203-4e0a-8342-9e85215ec8a6"
+
+[[durable_objects.bindings]]
+name = "TASK_DISPATCH"
+class_name = "TaskDispatchDO"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["TaskDispatchDO"]
+
+[vars]
+ENVIRONMENT = "production"
+VERSION = "1.0.0"
+LOVE_BRIDGE_URL = "https://love-ledger.p31ca.org"
+
+[observability]
+enabled = true
+
+[cache]
+enabled = true

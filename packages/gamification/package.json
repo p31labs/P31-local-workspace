@@ -1,0 +1,25 @@
+{
+  "name": "@p31/gamification",
+  "version": "1.0.0",
+  "type": "module",
+  "publishConfig": { "access": "public" },
+  "files": ["src"],
+  "description": "Shared gamification engine for P31 surfaces — sound, confetti, haptics, achievements, growth rings, voice feedback, economy store",
+  "exports": {
+    ".": "./src/index.ts",
+    "./sound": "./src/sound.ts",
+    "./confetti": "./src/confetti.ts",
+    "./haptic": "./src/haptic.ts",
+    "./growth-rings": "./src/growthRings.ts",
+    "./achievements": "./src/achievementEngine.ts",
+    "./voice-feedback": "./src/voiceFeedback.ts",
+    "./economy": "./src/economyStore.ts"
+  },
+  "dependencies": {
+    "idb-keyval": "^6.2.1",
+    "zustand": "^5.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0"
+  }
+}

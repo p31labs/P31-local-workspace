@@ -1,0 +1,45 @@
+name = "intent-resolver"
+main = "src/index.ts"
+compatibility_date = "2026-07-16"
+
+# L5 — IntentResolver: parse intent, return a Creation Quote.
+# Needle-rs: 26M-param tool-calling transformer running as WASM at the edge.
+# Model weights (22 MB INT4) are fetched from R2 on cold start and cached.
+
+[vars]
+INTENT_CACHE_TTL = "3600"
+# Active needle model (Phase 2 fine-tune swaps this to needle-v2.safetensors
+# via `wrangler variable put NEEDLE_MODEL_KEY needle-v2.safetensors` — no
+# source edit required). Defaults to the base model.
+NEEDLE_MODEL_KEY = "needle-v1.safetensors"
+
+[[kv_namespaces]]
+binding = "PASSPORT_KV"
+id = "d281745d5f1f486bbd5391fe856429dc"
+
+[[d1_databases]]
+binding = "LOVE_LEDGER"
+database_name = "love-ledger"
+database_id = "592e3e2e-3203-4e0a-8342-9e85215ec8a6"
+
+# Needle-rs model weights storage.
+[[r2_buckets]]
+binding = "NEEDLE_WEIGHTS"
+bucket_name = "p31-needle-weights"
+
+# Pre-compile the Needle WASM so it imports as a WebAssembly.Module.
+# Cloudflare Workers BLOCKS runtime WASM code-gen from raw bytes; the
+# supported path is a pre-compiled module via [[rules]] type = "CompiledWasm".
+[[rules]]
+type = "CompiledWasm"
+globs = ["**/*.wasm"]
+fallthrough = false
+
+[limits]
+cpu_ms = 30000
+
+[observability]
+enabled = true
+
+[cache]
+enabled = true

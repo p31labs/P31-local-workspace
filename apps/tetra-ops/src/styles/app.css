@@ -1,0 +1,202 @@
+/* P31 TETRA God-View — layout + app-specific rules.
+ * All tokens/glass/spoon-motion come from @p31/design-core/css/all.css.
+ * Only layout structure and a few glue rules live here. No ad-hoc hex, no motion overrides. */
+
+:root {
+  --tetra-hdr-h: 74px;
+  --tetra-foot-h: 128px;
+  --tetra-gutter: var(--p31-spacing-md);
+}
+
+* { box-sizing: border-box; }
+
+/* Crisis overlay is ONLY visible at spoon 0 (design-core motion.css hides
+ * .ui-chrome at 0/1 but does NOT gate the <p31-crisis-overlay> web component,
+ * whose :host is display:flex unconditionally). Gate it here. */
+p31-crisis-overlay { display: none; }
+[data-spoons='0'] p31-crisis-overlay { display: flex; }
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+html { background: var(--p31-void); }
+
+body {
+  background: transparent;
+  color: var(--p31-text-primary);
+  font-family: var(--p31-font-sans);
+  overflow: hidden; /* operator dashboard is a fixed full-viewport shell */
+}
+
+/* Void base sits at the very back; the design-core starfield (z-index:0) layers
+ * above it and below the app shell. The 3D canvas is transparent so the
+ * starfield reads through behind the mesh. */
+#root { background: transparent; }
+
+/* Skip link — WCAG 2.4.1 */
+
+/* App grid: header / (left · main · right) / footer */
+.tetra-app {
+  display: grid;
+  height: 100vh;
+  grid-template-rows: var(--tetra-hdr-h) 1fr var(--tetra-foot-h);
+  grid-template-columns: 276px 1fr 296px;
+  grid-template-areas:
+    'hdr hdr hdr'
+    'left main right'
+    'foot foot foot';
+}
+.tetra-app { position: relative; z-index: 1; }
+.tetra-hdr { grid-area: hdr; z-index: 3; }
+.tetra-left { grid-area: left; overflow-y: auto; border-right: 1px solid var(--p31-glass-border); background: transparent; }
+.tetra-main { grid-area: main; position: relative; overflow: hidden; background: transparent; }
+.tetra-right { grid-area: right; overflow-y: auto; border-left: 1px solid var(--p31-glass-border); background: transparent; }
+.tetra-foot { grid-area: foot; }
+
+/* 3D canvas fills the main area */
+.tetra-canvas { width: 100%; height: 100%; background: transparent; }
+.tetra-canvas canvas { background: transparent !important; }
+
+/* Panel inner padding */
+.tetra-pi { padding: var(--p31-spacing-md); display: flex; flex-direction: column; gap: var(--p31-spacing-sm); height: 100%; }
+
+/* Section label */
+.tetra-label {
+  font-family: var(--p31-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: var(--p31-text-tertiary);
+  text-transform: uppercase;
+  padding: 2px 0 4px;
+}
+
+/* Vertex button */
+.vbtn {
+  width: 100%;
+  text-align: left;
+  padding: var(--p31-spacing-md);
+  border-radius: var(--p31-radius-lg);
+  cursor: pointer;
+  transition: transform var(--p31-duration-fast) var(--p31-easing-standard),
+    border-color var(--p31-duration-fast) var(--p31-easing-standard);
+  border: 1px solid var(--p31-glass-border);
+  background: var(--p31-glass-surface);
+  color: var(--p31-text-primary);
+  min-height: 48px; /* WCAG 2.5.8 AAA — >=48px touch target */
+}
+.vbtn:hover { transform: translateX(2px); }
+.vbtn.active { transform: scale(1.01); border-color: var(--p31-glass-border-hover); }
+
+/* Edge pill */
+.epill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px 3px 6px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid var(--p31-glass-border);
+  font-family: var(--p31-font-mono);
+  font-size: 9.5px;
+  color: var(--p31-text-secondary);
+}
+
+/* Status chip */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 7px;
+  border-radius: 5px;
+  font-family: var(--p31-font-mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+}
+
+/* Telemetry row */
+.trow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  border-radius: var(--p31-radius-md);
+  font-family: var(--p31-font-mono);
+  font-size: 10px;
+  border: 1px solid transparent;
+}
+
+/* Action button (>=48px touch target) */
+.abtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 0 var(--p31-spacing-md);
+  min-height: 48px;
+  border-radius: var(--p31-radius-md);
+  font-family: var(--p31-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: all var(--p31-duration-fast) var(--p31-easing-standard);
+  border: 1px solid var(--p31-glass-border);
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--p31-text-secondary);
+}
+.abtn:hover { background: rgba(255, 255, 255, 0.05); color: var(--p31-text-primary); }
+
+/* Telemetry metric tile */
+.tmetric { display: flex; flex-direction: column; padding: 6px 10px; border-radius: var(--p31-radius-md); background: rgba(255, 255, 255, 0.02); border: 1px solid var(--p31-glass-border); }
+.tmetric .label { font-size: 8px; color: var(--p31-text-tertiary); text-transform: uppercase; letter-spacing: 0.06em; }
+.tmetric .value { font-size: 14px; font-weight: 700; font-family: var(--p31-font-mono); }
+
+/* Dot */
+.dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+
+/* Range inputs — accent via design-core */
+input[type='range'] { width: 100%; accent-color: var(--p31-accent); }
+
+/* Terminal */
+.tetra-terminal { flex: 1; overflow-y: auto; font-family: var(--p31-font-mono); font-size: 10.5px; line-height: 1.65; color: var(--p31-text-secondary); }
+
+/* Scrollbars */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.08); border-radius: 2px; }
+
+/* Divider */
+.div { height: 1px; background: var(--p31-glass-border); flex-shrink: 0; }
+
+/* Responsive tiers */
+@media (max-width: 1200px) {
+  .tetra-app {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: var(--tetra-hdr-h) 1fr 1fr var(--tetra-foot-h);
+    grid-template-areas:
+      'hdr hdr'
+      'left main'
+      'right right'
+      'foot foot';
+  }
+  .tetra-left { border-right: none; border-bottom: 1px solid var(--p31-glass-border); }
+  .tetra-right { border-left: none; border-top: 1px solid var(--p31-glass-border); }
+}
+@media (max-width: 768px) {
+  .tetra-app {
+    grid-template-columns: 1fr;
+    grid-template-rows: var(--tetra-hdr-h) 50vh 1fr 1fr var(--tetra-foot-h);
+    grid-template-areas:
+      'hdr'
+      'main'
+      'left'
+      'right'
+      'foot';
+  }
+  .tetra-left,
+  .tetra-right { border: none; border-bottom: 1px solid var(--p31-glass-border); }
+}

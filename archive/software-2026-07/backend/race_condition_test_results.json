@@ -1,0 +1,48 @@
+{
+  "test_summary": {
+    "total_tests": 3,
+    "passed_tests": 3,
+    "failed_tests": 0,
+    "success_rate": "100.0%"
+  },
+  "individual_results": [
+    {
+      "test": "Quantum Double Tap",
+      "user_id": "test_user_123",
+      "delay_ms": 20,
+      "execution_time": 0.022063732147216797,
+      "requests_sent": 2,
+      "requests_successful": 1,
+      "total_deduction": 1,
+      "final_balance": 9,
+      "protection_working": true
+    },
+    {
+      "test": "Rapid Fire",
+      "user_id": "test_user_123",
+      "request_count": 50,
+      "execution_time": 0.06146502494812012,
+      "requests_successful": 1,
+      "total_deduction": 1,
+      "final_balance": 8,
+      "protection_working": true
+    },
+    {
+      "test": "Medical Safety",
+      "user_id": "test_user_123",
+      "initial_balance": 1,
+      "requested_amount": 2,
+      "success": false,
+      "final_balance": 0,
+      "error": "CLINICAL_HALT",
+      "protection_working": true
+    }
+  ],
+  "economy_state": {
+    "user_balances": {
+      "test_user_123": 1
+    },
+    "total_transactions": 53
+  },
+  "timestamp": "2026-03-23T13:19:08.893459"
+}

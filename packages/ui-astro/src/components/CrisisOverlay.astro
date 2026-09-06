@@ -1,0 +1,25 @@
+---
+interface Props {
+  message?: string;
+  buttonLabel?: string;
+  onReady?: string;
+  visible?: boolean;
+}
+
+const {
+  message = 'Rest. Breathe. The mesh holds.',
+  buttonLabel = "I'm Ready",
+  onReady,
+  visible = true,
+} = Astro.props;
+---
+{
+  visible ? (
+    <p31-crisis-overlay
+      message={message}
+      button-label={buttonLabel}
+      data-ready={onReady}
+      data-testid="crisis-overlay"
+    />
+  ) : null
+}

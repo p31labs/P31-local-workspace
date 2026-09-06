@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>Bonding — P31 Labs</title>
+    <meta name="description" content="Molecule-building chemistry game for neurodivergent children." />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#000000" />
+    <meta http-equiv="origin-trial" content="A4rGnF5xw8cNifIvg1yPE2wYpDFs/Hxunt4xy5EyTKmtjxxYvA6by2pgYJpMxjplhLaqkwwWxXlneJ6F68BhHmUAAABweyJvcmlnaW4iOiJodHRwczovL3AzMWNhLm9yZzo0NDMiLCJmZWF0dXJlIjoiV2ViTUNQIiwiZXhwaXJ5IjoxNzg4OTYyMDYyLCJpc1N1YmRvbWFpbiI6dHJ1ZSwiaXNUaGlyZFBhcnR5Ijp0cnVlfQ==">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  <!-- P31 MCP Browser Dispatcher — sovereign WebMCP for bonding agent-native interaction -->
+  <script>
+  (function() {
+    'use strict';
+
+    var TOOLS = {};
+
+    function queryAttr(selector, attr) {
+      var el = document.querySelector(selector);
+      return el ? el.getAttribute(attr) : null;
+    }
+
+    function queryAttrAll(selector, attr) {
+      return Array.from(document.querySelectorAll(selector)).map(function(el) {
+        return el.getAttribute(attr);
+      }).filter(Boolean);
+    }
+
+    TOOLS.scan_ui = {
+      description: 'Scan the current page for all data-mcp-* annotated elements',
+      inputSchema: { type: 'object', properties: {}, required: [] },
+      execute: async function() {
+        var all = document.querySelectorAll('[data-mcp-tool]');
+        var tools = {};
+        all.forEach(function(el) {
+          var name = el.getAttribute('data-mcp-tool');
+          if (!name) return;
+          tools[name] = {
+            target: el.getAttribute('data-mcp-target') || null,
+            state: el.getAttribute('data-mcp-state') || null,
+            type: el.getAttribute('data-mcp-type') || null,
+            tag: el.tagName.toLowerCase(),
+          };
+        });
+        return { tools: tools, count: Object.keys(tools).length };
+      }
+    };
+
+    TOOLS.setSpoonLevel = {
+      description: 'Set the spoon level (0-5) — affects motion, crisis mode, and UI density',
+      inputSchema: {
+        type: 'object',
+        properties: { level: { type: 'number', minimum: 0, maximum: 5 } },
+        required: ['level']
+      },
+      execute: async function(args) {
+        var clamped = Math.max(0, Math.min(5, Number(args.level)));
+        document.documentElement.setAttribute('data-spoons', String(clamped));
+        var container = document.querySelector('[data-spoons]');
+        if (container) container.setAttribute('data-spoons', String(clamped));
+        window.dispatchEvent(new CustomEvent('spoons:changed', {
+          detail: { level: clamped }, bubbles: true
+        }));
+        return { success: true, level: clamped };
+      }
+    };
+
+    TOOLS.scan_widgets = {
+      description: 'Scan dynamically rendered widget annotations (statCard, actionButton, widgetLayout)',
+      inputSchema: { type: 'object', properties: {}, required: [] },
+      execute: async function() {
+        var widgets = {
+          statCards: queryAttrAll('[data-mcp-tool="statCard"]', 'data-mcp-target'),
+          actionButtons: queryAttrAll('[data-mcp-tool="actionButton"]', 'data-mcp-target'),
+          layoutTool: queryAttr('[data-mcp-tool="widgetLayout"]', 'data-mcp-target'),
+          surfaceState: queryAttr('[data-mcp-tool="bondingUIGSurface"]', 'data-mcp-state'),
+          crisisState: queryAttr('[data-mcp-tool="crisisOverlay"]', 'data-mcp-state'),
+        };
+        return { widgets: widgets };
+      }
+    };
+
+    TOOLS.navigate = {
+      description: 'Navigate to a URL',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          href: { type: 'string' },
+          external: { type: 'boolean', default: false }
+        },
+        required: ['href']
+      },
+      execute: async function(args) {
+        if (args.external) {
+          window.open(args.href, '_blank', 'noopener,noreferrer');
+        } else {
+          window.location.href = args.href;
+        }
+        return { success: true, href: args.href };
+      }
+    };
+
+    // ── Register WebMCP tools (navigator.modelContext) ──
+    function registerWebMCP() {
+      var _ctx=(typeof document!=='undefined'&&document.modelContext)?document.modelContext:(typeof navigator!=='undefined'&&navigator.modelContext)?navigator.modelContext:null;if(!_ctx) {
+        console.log('[P31 MCP] navigator.modelContext not available — tools registered globally');
+        return;
+      }
+      Object.keys(TOOLS).forEach(function(name) {
+        var t = TOOLS[name];
+        _ctx.registerTool({
+          name: name,
+          description: t.description,
+          inputSchema: t.inputSchema,
+          execute: t.execute
+        });
+      });
+      console.log('[P31 MCP] Registered ' + Object.keys(TOOLS).length + ' tools via navigator.modelContext');
+    }
+
+    window.__p31MCPTools = TOOLS;
+    window.__p31MCPExec = function(name, args) {
+      if (!TOOLS[name]) return { success: false, error: 'Unknown tool: ' + name };
+      return TOOLS[name].execute(args);
+    };
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', registerWebMCP);
+    } else {
+      registerWebMCP();
+    }
+
+    console.log('[P31 MCP] Bonding browser dispatcher ready — tools:', Object.keys(TOOLS).join(', '));
+  })();
+  </script>
+  <!-- End P31 MCP Browser Dispatcher -->
+  </body>
+</html>

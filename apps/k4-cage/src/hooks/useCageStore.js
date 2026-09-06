@@ -1,0 +1,5 @@
+import { create } from 'zustand';
+;
+const NODES = [{ id: 'will', name: 'Will', online: true, love: 100, lastPing: Date.now(), mood: '💜' }, { id: 'christyn', name: 'Christyn', online: true, love: 100, lastPing: Date.now(), mood: '💚' }, { id: 'sj', name: 'S.J.', online: true, love: 100, lastPing: Date.now(), mood: '💙' }, { id: 'wj', name: 'W.J.', online: true, love: 100, lastPing: Date.now(), mood: '💛' }];
+export const useCageStore = create((set, get) => ({ nodes: NODES, events: ['Mesh initialized — K4 topology active', 'All four nodes online', 'LOVE ledger sync complete'], ping: () => set(s => ({ nodes: s.nodes.map(n => ({ ...n, lastPing: Date.now(), online: true })) })), sendLove: (id) => set(s => ({ nodes: s.nodes.map(n => n.id === id ? { ...n, love: Math.min(100, n.love + 3), mood: '💜💚💙💛'[Math.floor(Math.random() * 4)] } : n), events: [`${new Date().toLocaleTimeString()} — LOVE sent to ${s.nodes.find(x => x.id === id)?.name}`, ...s.events].slice(0, 20) })), addEvent: (e) => set(s => ({ events: [e, ...s.events].slice(0, 20) })) }));
+//# sourceMappingURL=useCageStore.js.map

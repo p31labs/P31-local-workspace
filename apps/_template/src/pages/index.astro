@@ -1,0 +1,39 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { Section, StatTiles, CardGrid } from '@p31/ui/layout';
+import { QuantumDashboard } from '@p31/ui/quantum';
+import stats from '../data/stats.json';
+import items from '../data/items.json';
+
+const ngJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "P31 Labs, Inc.",
+  "url": "https://demosite.p31ca.org/",
+};
+---
+
+<Layout jsonLd={ngJsonLd} canonical="https://demosite.p31ca.org/" title="Template | P31 Labs" description="Starter site built on the P31 design canon — spoon-aware, glass, sovereign.">
+
+  <section class="py-20 md:py-28">
+    <div class="max-w-6xl mx-auto px-6">
+      <h1 class="text-2xl md:text-4xl font-bold text-white mb-2">Template Site</h1>
+      <p class="text-cloud/60 mb-10 max-w-2xl">A new P31 site, scaffolded from <code>apps/_template</code>. It already uses the canonical layout components and design tokens.</p>
+
+      <Section header={{ eyebrow: 'QF-1 Kernel', title: 'Quantum Fortune 1', description: 'The tetrahedral ground truth — live from your Zenodo math.' }}>
+        <QuantumDashboard client:load />
+      </Section>
+
+      <Section header={{ eyebrow: 'Overview', title: 'Live Metrics', description: 'StatTiles render from JSON in src/data/.' }}>
+        <StatTiles stats={stats} cols={4} />
+      </Section>
+
+      <div class="mt-12">
+        <Section header={{ eyebrow: 'Catalog', title: 'Items', align: 'left' }}>
+          <CardGrid cards={items} cols={3} />
+        </Section>
+      </div>
+    </div>
+  </section>
+
+</Layout>

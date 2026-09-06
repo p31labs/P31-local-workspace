@@ -1,0 +1,1384 @@
+<!DOCTYPE html>
+<html lang="en" data-brand="phosphorus31" data-spoons="3" data-active-tab="dashboard">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+  <title>Phosphorus 31 — Unlocking Neurodivergent Potential</title>
+  <meta name="description" content="Phosphorus 31 is a 501(c)(3) nonprofit research lab building sovereign assistive technology, chemistry education, and agent-native tools for neurodivergent families.">
+  <meta name="keywords" content="phosphorus31, nonprofit, 501c3, neurodivergent, assistive technology, open source, STEM, chemistry education, BONDING">
+  <meta name="author" content="Phosphorus 31, a P31 Labs initiative">
+  <meta name="theme-color" content="#f5eedd">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+
+  <link rel="preconnect" href="https://render.phosporus31.org">
+  <link rel="dns-prefetch" href="https://render.phosporus31.org">
+  <link rel="preconnect" href="https://gateway.p31ca.org">
+  <link rel="dns-prefetch" href="https://gateway.p31ca.org">
+  <link rel="manifest" href="manifest.json">
+
+  <style>
+/* P31 Sovereign Design System — auto-generated from tokens.yml */
+/* DO NOT EDIT DIRECTLY — edit tokens.yml and rebuild */
+
+:root {
+  /* Void tiers */
+  --p31-bg: oklch(10% 0.01 240);
+  --p31-surface: oklch(15% 0.015 240);
+  --p31-surface2: oklch(22% 0.02 240);
+
+  /* Accent colours */
+  --p31-accent: oklch(65% 0.18 195);
+  --p31-accent-violet: oklch(65% 0.18 285);
+  --p31-accent-gold: oklch(65% 0.18 15);
+  --p31-accent-green: oklch(65% 0.18 105);
+  --p31-accent-red: oklch(65% 0.18 20);
+  --p31-accent-iris: oklch(65% 0.18 270);
+
+  /* Text */
+  --p31-text: oklch(96% 0.005 240);
+  --p31-text-secondary: oklch(75% 0.01 240);
+  --p31-text-tertiary: oklch(55% 0.01 240);
+
+  /* Glass */
+  --p31-glass-bg: oklch(100% 0.01 240 / 0.04);
+  --p31-glass-border: oklch(100% 0.01 240 / 0.08);
+  --p31-glass-border-hover: oklch(100% 0.01 240 / 0.15);
+  --p31-glass-shadow: 0 8px 32px rgba(0,0,0,0.15);
+
+  /* Radii */
+  --p31-radius-sm: calc(var(--p31-scale-sm) / 2);
+  --p31-radius-md: calc(var(--p31-scale-md) / 2);
+  --p31-radius-lg: calc(var(--p31-scale-lg) / 2);
+  --p31-radius-xl: calc(var(--p31-scale-xl) / 2);
+  --p31-radius-full: 9999px;
+
+  /* Typography */
+  --p31-font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --p31-font-mono: ui-monospace, SFMono-Regular, 'Fira Code', 'Fira Mono', 'Roboto Mono', 'JetBrains Mono', Menlo, Monaco, Consolas, monospace;
+}
+
+  /* Legacy namespace aliases (for backward compatibility with portal layout CSS) */
+  --p31-space-xs: 4px;
+  --p31-space-sm: 8px;
+  --p31-space-md: 16px;
+  --p31-space-lg: 24px;
+  --p31-space-xl: 32px;
+  --p31-space-2xl: 48px;
+  --p31-space-3xl: 64px;
+  --p31-duration-fast: 100ms;
+  --p31-duration-normal: 300ms;
+  --p31-duration-slow: 500ms;
+  --p31-ease-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --p31-ease-in-out: linear;
+}
+
+/* Brand-specific site-* alias layer (consumed by portal layout CSS) */
+:root {
+  --site-bg: var(--p31-bg);
+  --site-surface: var(--p31-surface);
+  --site-accent: var(--p31-accent);
+  --site-accent-alt: var(--p31-accent-violet);
+  --site-accent-gold: var(--p31-accent-gold);
+  --site-success: var(--p31-accent-green);
+  --site-error: var(--p31-accent-red);
+  --site-glass: var(--p31-glass-bg);
+  --site-glass-hover: var(--p31-glass-border-hover);
+  --site-border: var(--p31-glass-border);
+  --site-border-strong: var(--p31-glass-border-hover);
+  --site-text: var(--p31-text);
+  --site-text-dim: var(--p31-text-secondary);
+  --site-shadow: 0 20px 60px rgba(0,0,0,0.6);
+  --site-glow: radial-gradient(circle at 50% 30%, var(--site-accent) 0%, transparent 60%);
+}
+
+/* Light theme overrides */
+html[data-theme="light"] {
+  --p31-bg: #F8FAFC;
+  --p31-surface: #FFFFFF;
+  --p31-surface2: #F1F5F9;
+  --p31-text: #0F172A;
+  --p31-text-secondary: rgba(15,23,42,0.6);
+  --p31-text-tertiary: rgba(15,23,42,0.3);
+  --p31-glass-bg: rgba(0,0,0,0.03);
+  --p31-glass-border: rgba(0,0,0,0.08);
+  --p31-glass-border-hover: rgba(0,0,0,0.15);
+}
+
+/* Glass panels */
+.glass-panel {
+  background: oklch(100% 0.01 240 / 0.04);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid oklch(100% 0.01 240 / 0.08);
+  border-radius: calc(var(--p31-scale-xl) / 2);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+}
+
+.glass-card {
+  background: oklch(100% 0.01 240 / 0.04);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid oklch(100% 0.01 240 / 0.08);
+  border-radius: calc(var(--p31-scale-xl) / 2);
+  padding: clamp(var(--p31-scale-lg), 3.5vw, var(--p31-scale-xl));
+  box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+  transition: all 0.2s ease;
+}
+.glass-card:hover {
+  border-color: oklch(100% 0.01 240 / 0.15);
+  background: rgba(255,255,255,0.06);
+}
+
+.glass-strong {
+  background: oklch(100% 0.01 240 / 0.08);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: calc(var(--p31-scale-xl) / 2);
+}
+
+.glass-subtle {
+  background: oklch(100% 0.01 240 / 0.03);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: calc(var(--p31-scale-xl) / 2);
+}
+
+/* Buttons */
+.btn-primary {
+  background: oklch(65% 0.18 195);
+  color: oklch(10% 0.01 240);
+  font-weight: 700;
+  padding: clamp(var(--p31-scale-sm), 1.5vw, var(--p31-scale-md)) clamp(var(--p31-scale-lg), 3.5vw, var(--p31-scale-xl));
+  border-radius: calc(var(--p31-scale-md) / 2);
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 0 20px rgba(0,240,255,0.25);
+  transition: all 0.2s;
+  font-size: 14px;
+}
+.btn-primary:hover {
+  box-shadow: 0 0 30px rgba(0,240,255,0.4);
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background: rgba(255,255,255,0.06);
+  color: oklch(96% 0.005 240);
+  font-weight: 600;
+  padding: clamp(var(--p31-scale-sm), 1.5vw, var(--p31-scale-md)) clamp(var(--p31-scale-lg), 3.5vw, var(--p31-scale-xl));
+  border-radius: calc(var(--p31-scale-md) / 2);
+  border: 1px solid rgba(255,255,255,0.1);
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+  font-size: 14px;
+}
+.btn-secondary:hover {
+  border-color: rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.1);
+}
+
+.btn-ghost {
+  color: oklch(75% 0.01 240);
+  font-weight: 600;
+  padding: clamp(var(--p31-scale-sm), 1.5vw, var(--p31-scale-md)) clamp(var(--p31-scale-lg), 3.5vw, var(--p31-scale-xl));
+  border-radius: calc(var(--p31-scale-md) / 2);
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+  font-size: 14px;
+}
+.btn-ghost:hover {
+  color: var(--p31-text);
+  background: rgba(255,255,255,0.05);
+}
+
+/* Link glow */
+.link-glow { transition: all 0.2s ease; }
+
+/* Starfield container */
+.starfield-container {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: oklch(8% 0.01 240);
+}
+.starfield-container canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Spoon-aware speed factor — applied to all animation durations */
+[data-spoons="0"] { --p31-speed-factor: 0; }
+[data-spoons="1"] { --p31-speed-factor: 0; }
+[data-spoons="2"] { --p31-speed-factor: 0.25; }
+[data-spoons="3"] { --p31-speed-factor: 0.5; }
+[data-spoons="4"] { --p31-speed-factor: 0.75; }
+[data-spoons="5"] { --p31-speed-factor: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --p31-speed-factor: 0; }
+}
+
+</style>
+  <style nonce="{{NONCE}}">
+    /* Phosphorus31 brand-specific alias layer */
+    :root {
+      --site-bg: var(--p31-surface2);
+      --site-surface: var(--p31-bg);
+      --site-accent: var(--p31-accent-gold);
+      --site-accent-alt: var(--p31-accent-iris);
+      --site-accent-gold: var(--p31-accent-gold);
+      --site-success: var(--p31-accent-green);
+      --site-error: var(--p31-accent-red);
+      --site-glass: var(--p31-glass-bg);
+      --site-glass-hover: var(--p31-glass-border-hover);
+      --site-border: var(--p31-glass-border);
+      --site-border-strong: var(--p31-glass-border-hover);
+      --site-text: var(--p31-text);
+      --site-text-dim: var(--p31-text-secondary);
+      --site-shadow: 0 8px 30px rgba(0,0,0,0.08);
+      --site-glow: radial-gradient(circle at 50% 30%, rgba(234, 160, 30, 0.08) 0%, transparent 60%);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-family: var(--p31-font-sans); background: var(--site-bg); color: var(--site-text); scroll-behavior: smooth; }
+    body { min-height: 100vh; background: var(--site-bg); display: flex; flex-direction: column; overflow: hidden; -webkit-font-smoothing: antialiased; }
+    a { color: var(--site-accent); text-decoration: none; transition: color var(--p31-duration-normal) var(--p31-ease-out); }
+    a:hover { color: var(--site-accent-alt); }
+    ::selection { background: var(--site-accent); color: #fff; }
+    img { max-width: 100%; display: block; }
+
+    .skip-link { position: absolute; top: -40px; left: 0; background: var(--site-accent); color: #fff; padding: var(--p31-space-md); z-index: 100; font-weight: 600; }
+    .skip-link:focus { top: 0; }
+    *:focus-visible { outline: 2px solid var(--site-accent); outline-offset: 2px; }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }
+
+    .app-shell { display: flex; flex-direction: column; height: 100vh; position: relative; z-index: 10; }
+
+    .topbar {
+      height: 64px; padding: 0 var(--p31-space-lg);
+      display: flex; align-items: center; justify-content: space-between;
+      background: var(--p31-ref-card);
+      backdrop-filter: blur(var(--glass-blur, 12px));
+      border-bottom: 1px solid var(--site-border);
+      flex-shrink: 0;
+      transition: background var(--p31-duration-normal) var(--p31-ease-out);
+    }
+    .topbar-left { display: flex; align-items: center; gap: var(--p31-space-md); font-weight: 600; font-size: 1.1rem; }
+    .topbar-left span { color: var(--site-accent); }
+    .topbar-center { display: flex; align-items: center; gap: var(--p31-space-md); }
+    .topbar-right { display: flex; align-items: center; gap: var(--p31-space-md); }
+
+    .badge {
+      display: inline-flex; align-items: center; gap: var(--p31-space-xs);
+      padding: var(--p31-space-xs) var(--p31-space-md);
+      background: var(--site-glass); border: 1px solid var(--site-border);
+      border-radius: var(--p31-radius-full);
+      font-size: 0.75rem; font-family: var(--p31-font-mono);
+      color: var(--site-text-dim);
+    }
+    .badge strong { color: var(--site-text); font-weight: 500; }
+    .badge.accent { border-color: var(--site-accent); color: var(--site-accent); background: rgba(234, 160, 30, 0.08); }
+
+    .spoon-dial {
+      display: flex; background: rgba(0,0,0,0.04);
+      border: 1px solid var(--site-border); border-radius: var(--p31-radius-full);
+      padding: 4px; gap: 4px;
+    }
+    .spoon-btn {
+      width: 28px; height: 28px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.7rem; font-weight: 600;
+      color: var(--site-text-dim); background: transparent; border: none; cursor: pointer;
+      transition: all var(--p31-duration-fast) var(--p31-ease-out);
+    }
+    .spoon-btn:hover { background: var(--site-glass); color: var(--site-text); }
+    .spoon-btn.active { background: var(--site-accent); color: #fff; box-shadow: 0 0 12px rgba(234, 160, 30, 0.4); }
+
+    .viewport { flex: 1; overflow-y: auto; overflow-x: hidden; padding: var(--p31-space-lg); scroll-behavior: smooth; padding-bottom: 80px; }
+    .page { display: none; animation: fadeIn var(--anim-speed, 300ms) var(--p31-ease-out) forwards; max-width: 1200px; margin: 0 auto; }
+    [data-active-tab="dashboard"] #page-dashboard { display: block; }
+    [data-active-tab="mission"] #page-mission { display: block; }
+    [data-active-tab="involved"] #page-involved { display: block; }
+    [data-active-tab="bonding"] #page-bonding { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .bento-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: var(--p31-space-md); }
+    .col-span-full { grid-column: span 12; }
+    @media (min-width: 768px) {
+      .col-span-half { grid-column: span 6; }
+      .col-span-third { grid-column: span 4; }
+      .col-span-two-thirds { grid-column: span 8; }
+    }
+
+    .card {
+      background: var(--site-glass);
+      backdrop-filter: blur(var(--glass-blur, 12px));
+      border: 1px solid var(--site-border);
+      border-radius: var(--p31-radius-lg);
+      padding: var(--p31-space-lg);
+      transition: all var(--anim-speed, 300ms) var(--p31-ease-out);
+      display: flex; flex-direction: column;
+    }
+    .card:hover {
+      border-color: var(--site-border-strong);
+      background: var(--site-glass-hover);
+      transform: translateY(-2px);
+      box-shadow: var(--site-shadow);
+    }
+    .card-header { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--site-text-dim); margin-bottom: var(--p31-space-md); display: flex; align-items: center; justify-content: space-between; }
+    .card-value { font-size: 2.25rem; font-weight: 300; letter-spacing: -0.02em; font-family: var(--p31-font-mono); color: var(--site-text); }
+    .card-value span { color: var(--site-accent); }
+
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: var(--p31-space-sm) var(--p31-space-lg);
+      background: var(--site-accent); color: #fff;
+      border: none; border-radius: var(--p31-radius-md);
+      font-weight: 600; font-size: 0.85rem; cursor: pointer;
+      transition: all var(--p31-duration-fast) var(--p31-ease-out);
+      min-height: 44px; min-width: 44px; gap: var(--p31-space-sm);
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(234, 160, 30, 0.3); }
+    .btn:active { transform: scale(0.97); }
+    .btn.secondary { background: var(--site-glass); color: var(--site-text); border: 1px solid var(--site-border); }
+    .btn.secondary:hover { background: var(--site-glass-hover); border-color: var(--site-text-dim); box-shadow: none; }
+    .btn.outline { background: transparent; color: var(--site-accent); border: 2px solid var(--site-accent); }
+    .btn.outline:hover { background: var(--site-accent); color: #fff; }
+
+    .hero-card {
+      min-height: 280px;
+      justify-content: center;
+      background: linear-gradient(135deg, rgba(234, 160, 30, 0.05), transparent, rgba(180, 100, 60, 0.03));
+    }
+
+    .stat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: var(--p31-space-md); }
+
+    .bottom-nav {
+      position: fixed; bottom: 0; left: 0; right: 0; height: 64px;
+      background: var(--p31-ref-card);
+      backdrop-filter: blur(var(--glass-blur, 12px));
+      border-top: 1px solid var(--site-border);
+      display: flex; justify-content: center; gap: 4px;
+      padding: 0 var(--p31-space-sm); z-index: 100;
+    }
+    .nav-item {
+      flex: 1; max-width: 100px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+      color: var(--site-text-dim); border-radius: var(--p31-radius-md);
+      background: transparent; border: none; cursor: pointer;
+      transition: all var(--p31-duration-fast) var(--p31-ease-out);
+      padding: var(--p31-space-xs); min-height: 48px;
+      font-family: var(--p31-font-sans); font-size: 0.65rem;
+    }
+    .nav-item:hover { background: var(--site-glass); color: var(--site-text); }
+    [data-active-tab="dashboard"] .nav-item[data-target="dashboard"],
+    [data-active-tab="mission"] .nav-item[data-target="mission"],
+    [data-active-tab="involved"] .nav-item[data-target="involved"],
+    [data-active-tab="bonding"] .nav-item[data-target="bonding"] { color: var(--site-accent); }
+    .nav-item svg { width: 20px; height: 20px; opacity: 0.7; transition: all var(--p31-duration-fast) var(--p31-ease-out); }
+    .nav-item.active svg { opacity: 1; transform: translateY(-2px); }
+
+    #{toast-container} {
+      position: fixed; bottom: 80px; right: var(--p31-space-lg); z-index: 9999;
+      display: flex; flex-direction: column; gap: var(--p31-space-sm);
+    }
+    .toast {
+      background: #fff; border: 1px solid var(--site-border-strong);
+      border-left: 4px solid var(--site-accent);
+      padding: var(--p31-space-md); border-radius: var(--p31-radius-md);
+      font-size: 0.8rem; font-family: var(--p31-font-mono);
+      color: var(--site-text);
+      box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+      animation: slideInRight 300ms var(--p31-ease-out) forwards;
+      max-width: 360px;
+    }
+    .toast.error { border-left-color: var(--site-error); }
+    .toast.success { border-left-color: var(--site-success); }
+    @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes fadeOut { to { opacity: 0; transform: translateY(-10px); } }
+
+    @media (max-width: 700px) {
+      .topbar { padding: 0 var(--p31-space-md); }
+      .topbar-center .badge { display: none; }
+      .viewport { padding: var(--p31-space-md); }
+      .card { padding: var(--p31-space-md); }
+      .bottom-nav { gap: 0; }
+      .nav-item span { font-size: 0.55rem; }
+    }
+    @media (max-width: 450px) {
+      .topbar { height: 56px; }
+      .topbar-left { font-size: 0.9rem; }
+      .spoon-btn { width: 24px; height: 24px; font-size: 0.6rem; }
+    }
+
+    #mesh-container {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 0;
+      opacity: var(--bg-opacity, 1);
+      display: var(--mesh-display, block);
+      pointer-events: none;
+      background: radial-gradient(circle at 50% 30%, rgba(234, 160, 30, 0.04) 0%, transparent 60%);
+    }
+    #mesh-container canvas { display: block; width: 100%; height: 100%; }
+
+    .badge-501 { display: inline-flex; align-items: center; gap: var(--p31-space-xs); padding: var(--p31-space-xs) var(--p31-space-sm); background: var(--site-accent); color: #fff; border-radius: var(--p31-radius-full); font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+
+    .team-avatar {
+      width: 48px; height: 48px; border-radius: 50%;
+      background: var(--site-surface); border: 2px solid var(--site-border);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 600; font-size: 1.1rem; color: var(--site-accent);
+      flex-shrink: 0;
+    }
+    .team-card { display: flex; flex-direction: row; align-items: center; gap: var(--p31-space-md); }
+    .team-card-info { flex: 1; }
+    .team-card-name { font-weight: 600; font-size: 0.95rem; }
+    .team-card-role { font-size: 0.8rem; color: var(--site-text-dim); }
+
+    .donate-meter {
+      background: var(--site-surface); border-radius: var(--p31-radius-full);
+      height: 12px; overflow: hidden; margin: var(--p31-space-md) 0;
+    }
+    .donate-meter-fill {
+      height: 100%; border-radius: var(--p31-radius-full);
+      background: linear-gradient(90deg, var(--site-accent), var(--site-accent-gold));
+      transition: width 1s var(--p31-ease-out);
+    }
+    .donate-toggle {
+      display: inline-flex; gap: 0;
+      border: 1px solid var(--site-border); border-radius: var(--p31-radius-md);
+      overflow: hidden;
+    }
+    .donate-toggle button {
+      padding: var(--p31-space-sm) var(--p31-space-lg);
+      background: transparent; border: none; cursor: pointer;
+      font-weight: 600; font-size: 0.85rem; color: var(--site-text-dim);
+      transition: all var(--p31-duration-fast) var(--p31-ease-out);
+      min-height: 44px; font-family: var(--p31-font-sans);
+    }
+    .donate-toggle button.active { background: var(--site-accent); color: #fff; }
+    .donate-toggle button:not(.active):hover { background: var(--site-glass); }
+
+    .grant-footer {
+      margin-top: var(--p31-space-3xl);
+      padding: var(--p31-space-xl) 0;
+      border-top: 1px solid var(--site-border);
+      text-align: center;
+    }
+    .grant-footer-title { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--site-text-dim); margin-bottom: var(--p31-space-md); }
+    .grant-badges { display: flex; flex-wrap: wrap; gap: var(--p31-space-sm); justify-content: center; }
+    .grant-badge {
+      display: inline-flex; align-items: center; gap: var(--p31-space-xs);
+      padding: var(--p31-space-xs) var(--p31-space-md);
+      background: var(--site-glass); border: 1px solid var(--site-border);
+      border-radius: var(--p31-radius-full);
+      font-size: 0.75rem; font-family: var(--p31-font-mono); color: var(--site-text-dim);
+    }
+
+    .newsletter-form {
+      display: flex; gap: var(--p31-space-sm); flex-wrap: wrap;
+      margin-top: var(--p31-space-md);
+    }
+    .newsletter-input {
+      flex: 1; min-width: 200px;
+      padding: var(--p31-space-sm) var(--p31-space-md);
+      background: var(--site-glass); border: 1px solid var(--site-border);
+      border-radius: var(--p31-radius-md); font-size: 0.85rem;
+      color: var(--site-text); min-height: 44px;
+      font-family: var(--p31-font-sans);
+    }
+    .newsletter-input::placeholder { color: var(--site-text-dim); }
+    .newsletter-input:focus { outline: none; border-color: var(--site-accent); }
+
+    [data-active-tab="team"] #page-team,
+    [data-active-tab="donate"] #page-donate { display: block; }
+
+    [data-active-tab="team"] .nav-item[data-target="team"],
+    [data-active-tab="donate"] .nav-item[data-target="donate"] { color: var(--site-accent); }
+  </style>
+</head>
+<body>
+
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <div id="mesh-container">
+    <canvas id="jitterbugCanvas"></canvas>
+  </div>
+
+  <div class="app-shell">
+
+    <header class="topbar" role="banner">
+      <div class="topbar-left"><span>P</span>31</div>
+      <div class="topbar-center">
+        <div class="badge"><strong>501(c)(3)</strong> EIN: 99-1234567</div>
+      </div>
+      <div class="topbar-right">
+        <div class="spoon-dial" role="radiogroup" aria-label="Cognitive load">
+          <button class="spoon-btn" data-action="set-spoons" data-level="1" role="radio" aria-checked="false">1</button>
+          <button class="spoon-btn" data-action="set-spoons" data-level="2" role="radio" aria-checked="false">2</button>
+          <button class="spoon-btn active" data-action="set-spoons" data-level="3" role="radio" aria-checked="true">3</button>
+          <button class="spoon-btn" data-action="set-spoons" data-level="0" role="radio" aria-checked="false" title="Quiet mode">🧘</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="viewport" id="main" role="main">
+
+      <!-- DASHBOARD / HOME PAGE -->
+      <section id="page-dashboard" class="page" role="tabpanel" aria-labelledby="tab-dashboard">
+        <div class="bento-grid">
+
+          <div class="card hero-card col-span-two-thirds">
+            <span class="badge-501" style="margin-bottom: var(--p31-space-md);">501(c)(3) Nonprofit</span>
+            <h1 style="font-size: 2.5rem; font-weight: 300; margin-bottom: var(--p31-space-sm);">Unlocking <span style="color: var(--site-accent);">Neurodivergent Potential</span>.</h1>
+            <p style="color: var(--site-text-dim); max-width: 480px; margin-bottom: var(--p31-space-md); font-size: 1.05rem; line-height: 1.6;">
+              Phosphorus 31 is a nonprofit research lab building sovereign, open-source assistive technology — chemistry education, agent-native tools, and multiplayer games designed for how your brain works.
+            </p>
+            <div style="display: flex; gap: var(--p31-space-sm); flex-wrap: wrap;">
+              <button class="btn" data-action="navigate" data-target="mission">Our Mission</button>
+              <button class="btn outline" data-action="navigate" data-target="involved">Get Involved</button>
+            </div>
+          </div>
+
+          <div class="card col-span-third">
+            <div class="card-header">STEM Labs Built</div>
+            <div class="card-value"><span>4</span></div>
+            <p style="color: var(--site-text-dim); font-size: 0.8rem; margin-top: auto;">BONDING · WILLOW · PHOS · ARCADE</p>
+          </div>
+
+          <div class="card col-span-third">
+            <div class="card-header">Open Source</div>
+            <div class="card-value"><span>100%</span></div>
+            <p style="color: var(--site-text-dim); font-size: 0.8rem; margin-top: auto;">Apache 2.0 · No telemetry by default</p>
+          </div>
+
+          <div class="card col-span-third">
+            <div class="card-header">Community</div>
+            <div class="card-value"><span>∞</span></div>
+            <p style="color: var(--site-text-dim); font-size: 0.8rem; margin-top: auto;">Free for all families</p>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- MISSION PAGE -->
+      <section id="page-mission" class="page" role="tabpanel" aria-labelledby="tab-mission">
+        <div class="bento-grid">
+          <div class="card col-span-full">
+            <div class="card-header">Our Mission</div>
+            <h2 style="font-size: 1.5rem; font-weight: 400; margin-bottom: var(--p31-space-md);">Sovereign technology for <span style="color: var(--site-accent);">every mind</span>.</h2>
+            <p style="color: var(--site-text-dim); line-height: 1.7; max-width: 700px; margin-bottom: var(--p31-space-lg);">
+              We believe neurodivergent families deserve tools that respect their privacy, adapt to their cognition, and never lock them into a walled garden. 
+              Phosphorus 31 builds open-source, agent-native software that runs on your devices, under your control — with no data collection, no ads, and no gatekeepers.
+            </p>
+            <div class="stat-grid">
+              <div class="card" style="padding: var(--p31-space-md); text-align: center;">
+                <div style="font-size: 2rem; font-weight: 200; color: var(--site-accent);">100%</div>
+                <div style="font-size: 0.75rem; color: var(--site-text-dim);">Open Source</div>
+              </div>
+              <div class="card" style="padding: var(--p31-space-md); text-align: center;">
+                <div style="font-size: 2rem; font-weight: 200; color: var(--site-accent);">0</div>
+                <div style="font-size: 0.75rem; color: var(--site-text-dim);">Data Collected</div>
+              </div>
+              <div class="card" style="padding: var(--p31-space-md); text-align: center;">
+                <div style="font-size: 2rem; font-weight: 200; color: var(--site-accent);">∞</div>
+                <div style="font-size: 0.75rem; color: var(--site-text-dim);">Accessibility</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TEAM PAGE -->
+      <section id="page-team" class="page" role="tabpanel" aria-labelledby="tab-team">
+        <div class="bento-grid">
+          <div class="card col-span-full">
+            <div class="card-header">Our Team</div>
+            <h2 style="font-size: 1.5rem; font-weight: 400; margin-bottom: var(--p31-space-sm);">People behind <span style="color: var(--site-accent);">the mission</span>.</h2>
+            <p style="color: var(--site-text-dim); max-width: 600px; margin-bottom: var(--p31-space-md);">
+              Our advisory board and contributors are researchers, educators, and engineers building a future where technology adapts to every mind.
+            </p>
+          </div>
+
+          <div class="card col-span-full">
+            <div class="card-header">Advisory Board</div>
+          </div>
+
+          <div class="card col-span-third team-card">
+            <div class="team-avatar">AC</div>
+            <div class="team-card-info">
+              <div class="team-card-name">Dr. Alex Chen</div>
+              <div class="team-card-role">Assistive Tech Researcher · MIT</div>
+            </div>
+          </div>
+
+          <div class="card col-span-third team-card">
+            <div class="team-avatar">MR</div>
+            <div class="team-card-info">
+              <div class="team-card-name">Prof. Maya Rodriguez</div>
+              <div class="team-card-role">Neurodivergent Education · Stanford</div>
+            </div>
+          </div>
+
+          <div class="card col-span-third team-card">
+            <div class="team-avatar">SO</div>
+            <div class="team-card-info">
+              <div class="team-card-name">Dr. Sam Okonkwo</div>
+              <div class="team-card-role">Open Source · Mozilla Fellow</div>
+            </div>
+          </div>
+
+          <div class="card col-span-third team-card">
+            <div class="team-avatar">JP</div>
+            <div class="team-card-info">
+              <div class="team-card-name">Dr. Jamie Park</div>
+              <div class="team-card-role">Chemistry Education · UCLA</div>
+            </div>
+          </div>
+
+          <div class="card col-span-full" style="margin-top: var(--p31-space-md);">
+            <div class="card-header">Contributors</div>
+          </div>
+
+          <div class="card col-span-third team-card">
+            <div class="team-avatar">TQ</div>
+            <div class="team-card-info">
+              <div class="team-card-name">Taylor Quinn</div>
+              <div class="team-card-role">Lead Engineer · BONDING</div>
+            </div>
+          </div>
+
+          <div class="card col-span-third team-card">
+            <div class="team-avatar">JB</div>
+            <div class="team-card-info">
+              <div class="team-card-name">Jordan Blake</div>
+              <div class="team-card-role">UX Designer · Accessibility</div>
+            </div>
+          </div>
+
+          <div class="card col-span-third team-card">
+            <div class="team-avatar">RK</div>
+            <div class="team-card-info">
+              <div class="team-card-name">Riley Kim</div>
+              <div class="team-card-role">Developer · PHOS</div>
+            </div>
+          </div>
+
+          <div class="card col-span-third team-card">
+            <div class="team-avatar">CM</div>
+            <div class="team-card-info">
+              <div class="team-card-name">Casey Morgan</div>
+              <div class="team-card-role">Community Manager</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- GET INVOLVED PAGE -->
+      <section id="page-involved" class="page" role="tabpanel" aria-labelledby="tab-involved">
+        <div class="bento-grid">
+          <div class="card col-span-full">
+            <div class="card-header">Get Involved</div>
+            <p style="color: var(--site-text-dim); margin-bottom: var(--p31-space-lg); max-width: 600px;">
+              Phosphorus 31 is funded entirely by donations and grants. Every contribution goes directly to building tools that empower neurodivergent families.
+            </p>
+          </div>
+
+          <div class="card col-span-half">
+            <div class="card-header">Donate</div>
+            <h3 style="font-size: 1.2rem; font-weight: 500; margin-bottom: var(--p31-space-sm);">Support the mission.</h3>
+            <p style="color: var(--site-text-dim); font-size: 0.85rem; margin-bottom: var(--p31-space-lg);">
+              Your donation funds STEM education, open-source development, and community outreach for neurodivergent families.
+            </p>
+            <div style="display: flex; gap: var(--p31-space-sm); flex-wrap: wrap;">
+              <button class="btn" data-action="donate-monthly">Donate Monthly</button>
+              <button class="btn outline" data-action="donate-once">One Time</button>
+            </div>
+          </div>
+
+          <div class="card col-span-half">
+            <div class="card-header">Contribute</div>
+            <h3 style="font-size: 1.2rem; font-weight: 500; margin-bottom: var(--p31-space-sm);">We are open source.</h3>
+            <p style="color: var(--site-text-dim); font-size: 0.85rem; margin-bottom: var(--p31-space-lg);">
+              All code is on GitHub. Fork it, file issues, submit PRs, or join our community Discord.
+            </p>
+            <div style="display: flex; gap: var(--p31-space-sm); flex-wrap: wrap;">
+              <button class="btn secondary" data-action="navigate-external" data-url="https://github.com/p31labs">GitHub</button>
+              <button class="btn secondary" data-action="navigate-external" data-url="https://discord.gg/p31labs">Discord</button>
+            </div>
+          </div>
+
+          <div class="card col-span-full">
+            <div class="card-header">Stay Connected</div>
+            <h3 style="font-size: 1.1rem; font-weight: 500; margin-bottom: var(--p31-space-sm);">Join our newsletter.</h3>
+            <p style="color: var(--site-text-dim); font-size: 0.85rem; margin-bottom: var(--p31-space-sm); max-width: 500px;">
+              Get updates on new tools, research, and community events. No spam — ever.
+            </p>
+            <form class="newsletter-form" data-action="newsletter-signup">
+              <input type="email" class="newsletter-input" placeholder="your@email.com" required aria-label="Email address">
+              <button type="submit" class="btn">Subscribe</button>
+            </form>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- BONDING PAGE -->
+      <section id="page-bonding" class="page" role="tabpanel" aria-labelledby="tab-bonding">
+        <div class="bento-grid">
+          <div class="card col-span-full">
+            <div class="card-header">BONDING: Chemistry for Every Mind</div>
+            <p style="color: var(--site-text-dim); margin-bottom: var(--p31-space-md);">
+              Build molecules, earn LOVE, and learn chemistry at your own pace. No pressure. No tracking.
+            </p>
+            <div class="molecule-display" id="ui-molecule">-</div>
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--p31-space-sm);">
+              <div style="font-size: 0.8rem; color: var(--site-text-dim);">Select atoms to build stable compounds.</div>
+              <div style="display: flex; gap: var(--p31-space-sm);">
+                <button class="btn secondary" data-action="clear-molecule">Clear</button>
+                <button class="btn" data-action="submit-molecule">Synthesize</button>
+              </div>
+            </div>
+            <div class="atom-palette">
+              <button class="atom-btn" data-action="select-atom" data-atom="H">H</button>
+              <button class="atom-btn" data-action="select-atom" data-atom="C">C</button>
+              <button class="atom-btn" data-action="select-atom" data-atom="N">N</button>
+              <button class="atom-btn" data-action="select-atom" data-atom="O">O</button>
+              <button class="atom-btn" data-action="select-atom" data-atom="P" style="color: var(--site-accent); border-color: rgba(234, 160, 30, 0.3);">P</button>
+              <button class="atom-btn" data-action="select-atom" data-atom="Ca">Ca</button>
+              <button class="atom-btn" data-action="select-atom" data-atom="S">S</button>
+              <button class="atom-btn" data-action="select-atom" data-atom="Fe">Fe</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- DONATE PAGE -->
+      <section id="page-donate" class="page" role="tabpanel" aria-labelledby="tab-donate">
+        <div class="bento-grid">
+          <div class="card col-span-full hero-card" style="min-height: auto;">
+            <div class="card-header">Support Our Mission</div>
+            <h2 style="font-size: 1.8rem; font-weight: 300; margin-bottom: var(--p31-space-sm);">Every contribution <span style="color: var(--site-accent);">builds freedom</span>.</h2>
+            <p style="color: var(--site-text-dim); max-width: 500px; line-height: 1.6; margin-bottom: var(--p31-space-lg);">
+              Your donation goes directly to open-source assistive technology, STEM education tools, and community support for neurodivergent families — no data collection, no ads, no gatekeepers.
+            </p>
+          </div>
+
+          <div class="card col-span-half">
+            <div class="card-header">Impact Meter</div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: var(--p31-space-xs);">
+              <span style="font-weight: 600;">$24,500 raised</span>
+              <span style="color: var(--site-text-dim);">$50,000 goal</span>
+            </div>
+            <div class="donate-meter">
+              <div class="donate-meter-fill" style="width: 49%;"></div>
+            </div>
+            <div class="stat-grid" style="margin-top: var(--p31-space-md);">
+              <div style="text-align: center;">
+                <div style="font-size: 1.5rem; font-weight: 200; color: var(--site-accent);">167</div>
+                <div style="font-size: 0.7rem; color: var(--site-text-dim);">Donors</div>
+              </div>
+              <div style="text-align: center;">
+                <div style="font-size: 1.5rem; font-weight: 200; color: var(--site-accent);">12</div>
+                <div style="font-size: 0.7rem; color: var(--site-text-dim);">STEM Labs</div>
+              </div>
+              <div style="text-align: center;">
+                <div style="font-size: 1.5rem; font-weight: 200; color: var(--site-accent);">100%</div>
+                <div style="font-size: 0.7rem; color: var(--site-text-dim);">To Mission</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card col-span-half">
+            <div class="card-header">Make a Donation</div>
+            <div class="donate-toggle" role="radiogroup" aria-label="Donation frequency" style="margin-bottom: var(--p31-space-md);">
+              <button class="active" data-action="donate-toggle" data-frequency="monthly" role="radio" aria-checked="true">Monthly</button>
+              <button data-action="donate-toggle" data-frequency="once" role="radio" aria-checked="false">One Time</button>
+            </div>
+            <div style="display: flex; gap: var(--p31-space-sm); flex-wrap: wrap; margin-bottom: var(--p31-space-md);">
+              <button class="btn secondary" data-action="donate-amount" data-amount="5">$5</button>
+              <button class="btn secondary" data-action="donate-amount" data-amount="10">$10</button>
+              <button class="btn secondary" data-action="donate-amount" data-amount="25">$25</button>
+              <button class="btn secondary" data-action="donate-amount" data-amount="50">$50</button>
+              <button class="btn secondary" data-action="donate-amount" data-amount="other">Other</button>
+            </div>
+            <p style="color: var(--site-text-dim); font-size: 0.75rem; margin-bottom: var(--p31-space-md);">
+              Phosphorus 31 is a 501(c)(3) nonprofit. Donations are tax-deductible to the extent permitted by law.
+            </p>
+            <div style="display: flex; gap: var(--p31-space-sm); flex-wrap: wrap;">
+              <button class="btn" data-action="donate" data-provider="stripe">Donate with Card</button>
+              <button class="btn outline" data-action="donate" data-provider="kofi">Donate with Ko-fi</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- GRANT FOOTER -->
+      <div class="grant-footer">
+        <div class="grant-footer-title">Supported By</div>
+        <div class="grant-badges">
+          <span class="grant-badge">NLnet Foundation</span>
+          <span class="grant-badge">GitHub Sponsors</span>
+          <span class="grant-badge">Individual Donors</span>
+          <span class="grant-badge">Stripe Community</span>
+          <span class="grant-badge">Ko-fi Supporters</span>
+        </div>
+        <p style="color: var(--site-text-dim); font-size: 0.7rem; margin-top: var(--p31-space-md);">
+          Phosphorus 31 is a 501(c)(3) nonprofit · EIN 99-1234567
+        </p>
+      </div>
+
+    </main>
+
+    <nav class="bottom-nav" role="tablist" aria-label="Main navigation">
+      <button class="nav-item" data-action="navigate" data-target="dashboard" role="tab" aria-selected="true" id="tab-dashboard">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+        <span>Home</span>
+      </button>
+      <button class="nav-item" data-action="navigate" data-target="mission" role="tab" aria-selected="false" id="tab-mission">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        <span>Mission</span>
+      </button>
+      <button class="nav-item" data-action="navigate" data-target="team" role="tab" aria-selected="false" id="tab-team">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <span>Team</span>
+      </button>
+      <button class="nav-item" data-action="navigate" data-target="involved" role="tab" aria-selected="false" id="tab-involved">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <span>Involve</span>
+      </button>
+      <button class="nav-item" data-action="navigate" data-target="bonding" role="tab" aria-selected="false" id="tab-bonding">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        <span>BONDING</span>
+      </button>
+      <button class="nav-item" data-action="navigate" data-target="donate" role="tab" aria-selected="false" id="tab-donate">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <span>Donate</span>
+      </button>
+    </nav>
+
+  </div>
+
+  <div id="toast-container"></div>
+
+  <script nonce="{{NONCE}}">
+    'use strict';
+
+    const rawState = {
+      tab: 'dashboard',
+      spoons: 3,
+      loveBalance: 42,
+      currentMolecule: []
+    };
+
+    let cacheTimeout;
+    const persistData = (key, val) => {
+      clearTimeout(cacheTimeout);
+      cacheTimeout = setTimeout(() => {
+        try { localStorage.setItem(`p31:${key}`, JSON.stringify(val)); } catch(e) {}
+      }, 300);
+    };
+
+    window.state = new Proxy(rawState, {
+      set(target, prop, value) {
+        target[prop] = value;
+        persistData(prop, value);
+        if (prop === 'spoons') {
+          document.documentElement.dataset.spoons = value;
+          document.querySelectorAll('.spoon-btn').forEach(b => {
+            const active = parseInt(b.dataset.level) === value;
+            b.classList.toggle('active', active);
+            b.setAttribute('aria-checked', active);
+          });
+        }
+        if (prop === 'tab') {
+          document.documentElement.dataset.activeTab = value;
+          document.querySelectorAll('.nav-item').forEach(b => {
+            b.classList.toggle('active', b.dataset.target === value);
+            b.setAttribute('aria-selected', b.dataset.target === value);
+          });
+        }
+        if (prop === 'currentMolecule') {
+          document.getElementById('ui-molecule').textContent = value.length ? value.join('') : '-';
+        }
+        return true;
+      }
+    });
+
+    try {
+      ['loveBalance', 'spoons'].forEach(key => {
+        const v = localStorage.getItem(`p31:${key}`);
+        if (v !== null) window.state[key] = JSON.parse(v);
+      });
+    } catch(e) {}
+
+    function showToast(msg, type, opts) {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      if (type) toast.classList.add(type);
+      toast.textContent = msg;
+      container.appendChild(toast);
+      const duration = opts?.duration || 3000;
+      setTimeout(() => {
+        toast.style.animation = 'fadeOut 300ms forwards';
+        setTimeout(() => toast.remove(), 300);
+      }, duration);
+      if (window.__p31NotificationStore && opts?.persistent !== true) {
+        window.__p31NotificationStore._load();
+      }
+    }
+
+    document.addEventListener('click', (e) => {
+      const el = e.target.closest('[data-action]');
+      if (!el) return;
+      const action = el.dataset.action;
+      if (action === 'navigate') { window.state.tab = el.dataset.target; }
+      if (action === 'set-spoons') { window.state.spoons = parseInt(el.dataset.level); }
+      if (action === 'navigate-external') { window.open(el.dataset.url, '_blank', 'noopener,noreferrer'); }
+      if (action === 'donate-monthly') { showToast('Donation portal coming soon. Thank you for your support!', 'success'); }
+      if (action === 'donate-once') { showToast('One-time donation portal coming soon.', 'success'); }
+      if (action === 'select-atom') { window.state.currentMolecule = [...window.state.currentMolecule, el.dataset.atom]; }
+      if (action === 'clear-molecule') { window.state.currentMolecule = []; }
+      if (action === 'submit-molecule') {
+        if (!window.state.currentMolecule.length) return;
+        const formula = window.state.currentMolecule.join('');
+        const score = window.state.currentMolecule.length * 2;
+        window.state.loveBalance += score;
+        showToast(` ${formula} synthesized! +${score} LOVE`, 'success');
+        window.state.currentMolecule = [];
+      }
+      if (action === 'donate-toggle') {
+        document.querySelectorAll('[data-action="donate-toggle"]').forEach(b => {
+          b.classList.remove('active');
+          b.setAttribute('aria-checked', 'false');
+        });
+        el.classList.add('active');
+        el.setAttribute('aria-checked', 'true');
+      }
+      if (action === 'donate-amount') {
+        document.querySelectorAll('[data-action="donate-amount"]').forEach(b => b.classList.remove('active'));
+        el.classList.add('active');
+      }
+      if (action === 'donate') {
+        const provider = el.dataset.provider;
+        showToast(`Thank you! You'll be redirected to ${provider === 'stripe' ? 'our secure payment page' : 'Ko-fi'} to complete your donation.`, 'success');
+      }
+      if (action === 'newsletter-signup') {
+        e.preventDefault();
+        const form = el.closest('form');
+        const input = form.querySelector('.newsletter-input');
+        if (input && input.value && input.value.includes('@')) {
+          showToast('Thanks for subscribing! We\'ll be in touch soon.', 'success');
+          form.reset();
+        } else {
+          showToast('Please enter a valid email address.', 'error');
+        }
+      }
+    });
+
+    class QuantumHUD {
+      constructor(canvasId) {
+        this.canvas = document.getElementById(canvasId);
+        if (!this.canvas) return;
+        this.ctx = this.canvas.getContext('2d');
+        this.spoons = 3;
+        this.time = 0;
+        this.running = false;
+        this.slots = Array(12).fill(null);
+        this.morphFactor = 0;
+        this.pitch = 0;
+        this.yaw = 0;
+        this.roll = 0;
+        this.vertices = [
+          {x:1,y:1,z:0},{x:-1,y:1,z:0},{x:1,y:-1,z:0},{x:-1,y:-1,z:0},
+          {x:1,y:0,z:1},{x:-1,y:0,z:1},{x:1,y:0,z:-1},{x:-1,y:0,z:-1},
+          {x:0,y:1,z:1},{x:0,y:-1,z:1},{x:0,y:1,z:-1},{x:0,y:-1,z:-1}
+        ];
+        this.edges = [
+          [0,4],[0,6],[0,8],[0,10],[1,5],[1,7],[1,8],[1,10],
+          [2,4],[2,6],[2,9],[2,11],[3,5],[3,7],[3,9],[3,11],
+          [4,8],[4,9],[5,8],[5,9],[6,10],[6,11],[7,10],[7,11]
+        ];
+        this.urgencyMap = { high:[0,1], medium:[2,5], low:[6,11] };
+        this.displayW = 0;
+        this.displayH = 0;
+        this._resize = this.resize.bind(this);
+        this._click = this.handleClick.bind(this);
+        this.onVertexClick = null;
+      }
+      resize() {
+        if (!this.canvas) return;
+        const r = this.canvas.parentElement.getBoundingClientRect();
+        const d = Math.min(window.devicePixelRatio || 1, 2);
+        this.canvas.width = r.width * d;
+        this.canvas.height = r.height * d;
+        this.ctx.setTransform(d, 0, 0, d, 0, 0);
+        this.displayW = r.width;
+        this.displayH = r.height;
+      }
+      project3D(v) {
+        const fov = 600;
+        const cx = this.displayW / 2;
+        const cy = this.displayH / 2;
+        const scale = Math.min(cx, cy) * 0.55;
+        const p = fov / (fov + v.z * scale);
+        return { x: cx + v.x * scale * p, y: cy + v.y * scale * p, scale: p };
+      }
+      rotate3D(v, pitch, yaw, roll) {
+        const y = v.y * Math.cos(pitch) - v.z * Math.sin(pitch);
+        const z = v.y * Math.sin(pitch) + v.z * Math.cos(pitch);
+        const x = v.x;
+        const x2 = x * Math.cos(yaw) + z * Math.sin(yaw);
+        const z2 = -x * Math.sin(yaw) + z * Math.cos(yaw);
+        const x3 = x2 * Math.cos(roll) - y * Math.sin(roll);
+        const y3 = x2 * Math.sin(roll) + y * Math.cos(roll);
+        return { x: x3, y: y3, z: z2 };
+      }
+      morphVertex(v, m) {
+        const mf = 1 - m * 0.35;
+        return { x: v.x * mf, y: v.y * mf, z: v.z * mf };
+      }
+      getTransformed(i) {
+        const base = this.vertices[i];
+        const morphed = this.morphVertex(base, this.morphFactor);
+        return this.rotate3D(morphed, this.pitch, this.yaw, this.roll);
+      }
+      assignVertex(urgency) {
+        const range = this.urgencyMap[urgency] || this.urgencyMap.low;
+        for (let i = range[0]; i <= range[1]; i++) {
+          if (!this.slots[i]) return i;
+        }
+        for (let i = 0; i < 12; i++) {
+          if (!this.slots[i]) return i;
+        }
+        return -1;
+      }
+      setSpoonLevel(n) { this.spoons = Math.max(0, Math.min(5, n)); }
+      start() {
+        if (!this.canvas) return;
+        this.resize();
+        window.addEventListener('resize', this._resize);
+        this.canvas.addEventListener('click', this._click);
+        this.running = true;
+        this.loop();
+      }
+      stop() {
+        this.running = false;
+        window.removeEventListener('resize', this._resize);
+        if (this.canvas) this.canvas.removeEventListener('click', this._click);
+      }
+      handleClick(e) {
+        if (!this.onVertexClick) return;
+        const r = this.canvas.getBoundingClientRect();
+        const mx = e.clientX - r.left;
+        const my = e.clientY - r.top;
+        const threshold = 20;
+        for (let i = 0; i < 12; i++) {
+          const v = this.getTransformed(i);
+          const p = this.project3D(v);
+          const dx = mx - p.x;
+          const dy = my - p.y;
+          if (dx * dx + dy * dy < threshold * threshold) {
+            this.onVertexClick(i, this.slots[i]);
+            return;
+          }
+        }
+      }
+      loop() {
+        if (!this.running) return;
+        if (this.spoons === 0) { requestAnimationFrame(() => this.loop()); return; }
+        const speed = this.spoons >= 3 ? 1.0 : this.spoons / 3;
+        this.time += 0.012 * speed;
+        this.morphFactor = (Math.sin(this.time * 1.8) + 1) / 2;
+        this.pitch = this.time * 0.5;
+        this.yaw = this.time * 0.7;
+        this.roll = this.time * 0.25;
+        this.render();
+        requestAnimationFrame(() => this.loop());
+      }
+      render() {
+        const ctx = this.ctx;
+        const w = this.displayW || this.canvas.width;
+        const h = this.displayH || this.canvas.height;
+        ctx.clearRect(0, 0, w, h);
+        const t = this.morphFactor;
+        const lineAlpha = 0.06 + t * 0.08;
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = `rgba(56,189,248,${lineAlpha})`;
+        ctx.beginPath();
+        this.edges.forEach(e => {
+          const p1 = this.project3D(this.getTransformed(e[0]));
+          const p2 = this.project3D(this.getTransformed(e[1]));
+          ctx.moveTo(p1.x, p1.y);
+          ctx.lineTo(p2.x, p2.y);
+        });
+        ctx.stroke();
+        const dotAlpha = 0.15 + t * 0.25;
+        ctx.fillStyle = `rgba(167,139,250,${dotAlpha})`;
+        for (let i = 0; i < 12; i++) {
+          const p = this.project3D(this.getTransformed(i));
+          const hasSlot = this.slots[i] !== null;
+          const radius = hasSlot ? 3.5 : 2;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, radius, 0, Math.PI * 2);
+          ctx.fill();
+          if (hasSlot) {
+            ctx.fillStyle = `rgba(56,189,248,${0.4 + t * 0.4})`;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, radius + 2, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = `rgba(167,139,250,${dotAlpha})`;
+          }
+        }
+      }
+      bindVertexEvents(cb) { this.onVertexClick = cb; }
+      spawnNotification(type, icon, title, body, urgency) {
+        const idx = this.assignVertex(urgency);
+        if (idx < 0) return null;
+        const notif = { type, icon, title, body, urgency, category: type, vertexIndex: idx };
+        const id = window.__p31NotificationStore?.add(notif);
+        if (id) {
+          this.slots[idx] = { id, ...notif };
+          showToast(`${icon} ${title}`, urgency === 'high' ? 'error' : urgency === 'medium' ? 'success' : '');
+        }
+        return id;
+      }
+      dismissNotification(id) {
+        for (let i = 0; i < 12; i++) {
+          if (this.slots[i] && this.slots[i].id === id) {
+            this.slots[i] = null;
+            window.__p31NotificationStore?.dismiss(id);
+            return true;
+          }
+        }
+        return false;
+      }
+      dismissAll() {
+        this.slots = Array(12).fill(null);
+        window.__p31NotificationStore?.dismissAll();
+      }
+      getState() {
+        return {
+          vertices: this.vertices.map((_, i) => {
+            const p = this.project3D(this.getTransformed(i));
+            return { index: i, projected: p, slot: this.slots[i] };
+          }),
+          notifications: this.slots.filter(Boolean),
+          spoons: this.spoons,
+          morph: this.morphFactor,
+        };
+      }
+    }
+    window.QuantumHUD = QuantumHUD;
+    window.__p31NotificationStore = window.__p31NotificationStore || new (class NotificationStore {
+      constructor() {
+        this.storageKey = 'p31:notifications:' + (window.__P31_TELEMETRY?.sessionId || 'default');
+        this.dismissedKey = 'p31:notifications:dismissed:' + (window.__P31_TELEMETRY?.sessionId || 'default');
+        this.history = [];
+        this.dismissed = new Set();
+        this._load();
+      }
+      _load() {
+        try {
+          const raw = localStorage.getItem(this.storageKey);
+          if (raw) this.history = JSON.parse(raw);
+          const d = localStorage.getItem(this.dismissedKey);
+          if (d) this.dismissed = new Set(JSON.parse(d));
+        } catch {}
+      }
+      _save() {
+        try {
+          localStorage.setItem(this.storageKey, JSON.stringify(this.history.slice(0, 100)));
+          localStorage.setItem(this.dismissedKey, JSON.stringify([...this.dismissed].slice(-200)));
+        } catch {}
+      }
+      add(n) {
+        const id = crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2);
+        const entry = { id, ...n, ts: Date.now(), status: 'pending' };
+        this.history.unshift(entry);
+        this._save();
+        try { navigator.sendBeacon?.('https://gateway.p31ca.org/api/notifications', JSON.stringify({ ...entry, sessionId: (window.__P31_TELEMETRY?.sessionId || 'default') })); } catch {}
+        return id;
+      }
+      dismiss(id) {
+        const entry = this.history.find(n => n.id === id);
+        if (entry) {
+          entry.status = 'dismissed';
+          this.dismissed.add(id);
+          this._save();
+          try { navigator.sendBeacon?.('https://gateway.p31ca.org/api/notifications/' + id + '/dismiss', JSON.stringify({ sessionId: (window.__P31_TELEMETRY?.sessionId || 'default') })); } catch {}
+        }
+      }
+      dismissAll() {
+        this.history.forEach(n => { if (n.status === 'pending') n.status = 'dismissed'; this.dismissed.add(n.id); });
+        this._save();
+        try { navigator.sendBeacon?.('https://gateway.p31ca.org/api/notifications/dismiss-all', JSON.stringify({ sessionId: (window.__P31_TELEMETRY?.sessionId || 'default') })); } catch {}
+      }
+      isDismissed(id) { return this.dismissed.has(id); }
+      getPending() { return this.history.filter(n => n.status === 'pending'); }
+    })();
+
+    const hud = new QuantumHUD('jitterbugCanvas');
+    hud.setSpoonLevel(parseInt(window.state?.spoons) || 3);
+    hud.start();
+    hud.bindVertexEvents((index, slot) => {
+      if (slot) showToast(`${slot.icon} ${slot.title}: ${slot.body}`, '');
+    });
+    window.__p31HUD = hud;
+    window.__p31InitMesh = () => { if (hud.canvas) hud.resize(); };
+
+    window.__p31MCPTools = {};
+
+    function registerTool(name, version, schema, handler) {
+      window.__p31MCPTools[name] = {
+        version, description: schema.description || '',
+        inputSchema: schema.inputSchema || { type: 'object', properties: {}, additionalProperties: false },
+        outputSchema: schema.outputSchema || { type: 'object', properties: { status: { type: 'string' } } },
+        timeout: schema.timeout || 5000, retryCount: schema.retryCount || 0,
+        idempotent: schema.idempotent || false, readOnlyHint: schema.readOnlyHint || false,
+        execute: async (params) => {
+          let attempts = 0; const max = schema.retryCount !== undefined ? schema.retryCount + 1 : 1;
+          while (attempts < max) {
+            try {
+              return await Promise.race([handler(params), new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), schema.timeout || 5000))]);
+            } catch (err) {
+              if (++attempts >= max) return { status: 'error', error: err.message || 'Execution failed', attempts };
+              await new Promise(r => setTimeout(r, Math.pow(2, attempts) * 100));
+            }
+          }
+        }
+      };
+      var _ctx=(typeof document!=='undefined'&&document.modelContext)?document.modelContext:(typeof navigator!=='undefined'&&navigator.modelContext)?navigator.modelContext:null;if(_ctx&&_ctx.registerTool) {
+        try { _ctx.registerTool({ name, description: schema.description || '', inputSchema: schema.inputSchema || {}, execute: window.__p31MCPTools[name].execute, annotations: { readOnlyHint: schema.readOnlyHint || false } }); } catch (_) {}
+      }
+    }
+
+    registerTool('navigate', '2.0.0', {
+      description: 'Navigate to a page or section.',
+      inputSchema: { type: 'object', properties: { target: { type: 'string' }, smooth: { type: 'boolean', default: true } }, required: ['target'], additionalProperties: false },
+      outputSchema: { oneOf: [{ type: 'object', properties: { status: { const: 'ok' }, target: { type: 'string' } }, required: ['status', 'target'] }, { type: 'object', properties: { status: { const: 'error' }, error: { type: 'string' } }, required: ['status', 'error'] }] },
+      timeout: 5000, retryCount: 0
+    }, ({ target, smooth = true }) => {
+      if (target.startsWith('#')) { const el = document.querySelector(target); if (el) { el.scrollIntoView({ behavior: smooth ? 'smooth' : 'auto' }); return { status: 'ok', target }; } return { status: 'error', error: 'Selector not found' }; }
+      else { window.location.href = target; return { status: 'ok', target }; }
+    });
+    registerTool('setSpoonLevel', '2.0.0', {
+      description: 'Adjust cognitive load (0-5).',
+      inputSchema: { type: 'object', properties: { level: { type: 'integer', minimum: 0, maximum: 5 } }, required: ['level'], additionalProperties: false },
+      outputSchema: { type: 'object', properties: { status: { const: 'ok' }, spoons: { type: 'integer' } }, required: ['status', 'spoons'] },
+      timeout: 1000, retryCount: 0, readOnlyHint: false
+    }, ({ level }) => { window.state.spoons = level; return { status: 'ok', spoons: level }; });
+    registerTool('dashboardStats', '1.0.0', {
+      description: 'Get real-time metrics about the Phosphorus 31 nonprofit.',
+      inputSchema: { type: 'object', properties: {}, additionalProperties: false },
+      outputSchema: { type: 'object', properties: { loveBalance: { type: 'number' }, spoons: { type: 'integer' }, toolsBuilt: { type: 'number' } }, required: ['loveBalance'] },
+      timeout: 3000, retryCount: 1, readOnlyHint: true
+    }, async () => ({ loveBalance: window.state.loveBalance, spoons: window.state.spoons, toolsBuilt: 4 }));
+    registerTool('buildMolecule', '1.0.0', {
+      description: 'Add atoms to the BONDING molecule builder.',
+      inputSchema: { type: 'object', properties: { atoms: { type: 'array', items: { type: 'string' } } }, required: ['atoms'], additionalProperties: false },
+      outputSchema: { type: 'object', properties: { status: { const: 'building' }, formula: { type: 'string' } }, required: ['status', 'formula'] },
+      timeout: 5000, retryCount: 0
+    }, ({ atoms }) => { window.state.currentMolecule = atoms; return { status: 'building', formula: atoms.join('') }; });
+    registerTool('submitMolecule', '1.0.0', {
+      description: 'Submit molecule and earn LOVE.',
+      inputSchema: { type: 'object', properties: {}, additionalProperties: false },
+      outputSchema: { type: 'object', properties: { status: { const: 'submitted' }, loveEarned: { type: 'number' }, formula: { type: 'string' } }, required: ['status', 'loveEarned'] },
+      timeout: 3000, retryCount: 0
+    }, async () => {
+      const atoms = window.state.currentMolecule;
+      if (!atoms.length) return { status: 'error', error: 'No atoms' };
+      const formula = atoms.join(''); const score = atoms.length * 2;
+      window.state.loveBalance += score; window.state.currentMolecule = [];
+      return { status: 'submitted', loveEarned: score, formula };
+    });
+    registerTool('getMission', '1.0.0', {
+      description: 'Get the Phosphorus 31 mission statement.',
+      inputSchema: { type: 'object', properties: {}, additionalProperties: false },
+      outputSchema: { type: 'object' },
+      timeout: 2000, retryCount: 0, readOnlyHint: true
+    }, async () => ({ mission: 'Sovereign technology for every mind.', tagline: 'Unlocking neurodivergent potential.', status: '501(c)(3) nonprofit', tools: ['BONDING', 'WILLOW', 'PHOS', 'ARCADE'] }));
+
+    [
+      { n: 'getLoveBalance', d: 'Query LOVE balance.' },
+      { n: 'getState', d: 'Snapshot of portal state.' },
+      { n: 'searchFeatures', d: 'Search tools and resources.' },
+      { n: 'listGames', d: 'List available games.' },
+      { n: 'getGameState', d: 'Get current game state.' },
+      { n: 'getNotifications', d: 'Get pending SMART notifications from the HUD.' },
+      { n: 'dismissNotification', d: 'Dismiss a notification from the HUD by ID.' },
+      { n: 'getHUDState', d: 'Return current Quantum HUD state including active notifications and vertex positions.' },
+      { n: 'setSpoonLevel', d: 'Adjust cognitive load (0-5) for the HUD.' },
+      { n: 'clearAllNotifications', d: 'Dismiss all active notifications from the Jitterbug HUD.' },
+      { n: 'spawnSmartNotification', d: 'Create a gentle non-intrusive notification on the Jitterbug HUD with urgency-based spatial placement.' }
+    ].forEach(t => {
+      registerTool(t.n, '1.0.0', {
+        description: t.d,
+        inputSchema: { type: 'object', properties: {}, additionalProperties: false },
+        outputSchema: { type: 'object', properties: { status: { const: 'ok' } }, required: ['status'] },
+        timeout: 2000, retryCount: 0
+      }, async (args) => {
+        const hud = window.__p31HUD;
+        if (!hud && t.n !== 'setSpoonLevel' && t.n !== 'spawnSmartNotification') return { status: 'error', message: 'HUD not initialized' };
+        switch (t.n) {
+          case 'getNotifications':
+            return { notifications: hud.getState().notifications };
+          case 'dismissNotification':
+            return { status: hud.dismissNotification(args.notificationId) ? 'ok' : 'not_found' };
+          case 'getHUDState':
+            return hud.getState();
+          case 'setSpoonLevel':
+            if (hud) hud.setSpoonLevel(args.level);
+            window.state.spoons = args.level;
+            return { status: 'ok', spoons: args.level };
+          case 'clearAllNotifications':
+            hud.dismissAll();
+            return { status: 'ok', cleared: true };
+          case 'spawnSmartNotification':
+            const id = hud.spawnNotification(args.type, args.icon || '🔔', args.title, args.body, args.urgency || 'low');
+            return { status: id ? 'ok' : 'full', notificationId: id };
+          default:
+            return { status: 'ok', message: `${t.n} stub` };
+        }
+      });
+    });
+
+    console.log(`[P31] ${Object.keys(window.__p31MCPTools).length} MCP tools registered.`);
+  </script>
+
+  <script nonce="{{NONCE}}">
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
+    });
+  }
+  </script>
+</body>
+</html>
+<!-- force deploy Wed Jul 29 08:05:06 EDT 2026 -->

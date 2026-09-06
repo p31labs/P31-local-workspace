@@ -1,0 +1,35 @@
+---
+const commands = [
+  { cmd: 'p31 deploy', output: 'Deploying P31 stack to Cloudflare edge...', delay: 800 },
+  { cmd: 'p31 deploy', output: '✓ 12 Workers deployed', delay: 600 },
+  { cmd: '', output: '✓ 10 D1 databases provisioned', delay: 500 },
+  { cmd: '', output: '✓ 16 Durable Objects initialized', delay: 400 },
+  { cmd: '', output: '✓ 36 MCP tools registered', delay: 300 },
+  { cmd: 'p31 status', output: '', delay: 700 },
+  { cmd: '', output: 'Stack Status: Sovereign', delay: 300 },
+  { cmd: '', output: 'Workers: 12/12 active', delay: 200 },
+  { cmd: '', output: 'Mesh: connected (4 nodes)', delay: 200 },
+  { cmd: '', output: 'LOVE ledger: operational', delay: 200 },
+];
+---
+
+<div class="terminal animate-fade-in-up delay-400">
+  <div class="terminal__header">
+    <div class="terminal__dot"></div>
+    <div class="terminal__dot"></div>
+    <div class="terminal__dot"></div>
+  </div>
+  <div class="terminal__body" id="terminal-body">
+    {commands.map((line, i) => (
+      <div class="terminal__line" style="animation-delay: {i * 300}ms;">
+        {line.cmd && (
+          <span><span class="terminal__prompt">$ </span><span class="terminal__cmd">{line.cmd}</span></span>
+        )}
+        {line.output && <div class="terminal__output">{line.output}</div>}
+      </div>
+    ))}
+    <div class="terminal__line">
+      <span><span class="terminal__prompt">$ </span><span class="terminal__cursor"></span></span>
+    </div>
+  </div>
+</div>

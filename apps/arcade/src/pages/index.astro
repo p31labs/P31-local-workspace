@@ -1,0 +1,31 @@
+---
+import ArcadeLayout from '../layouts/ArcadeLayout.astro';
+import GameCard from '../components/GameCard';
+import StatsBar from '../components/StatsBar';
+import PlayerProvider from '../components/PlayerProvider';
+---
+
+<ArcadeLayout title="LOVE Arcade — Game Browser">
+  <div style="max-width: 72rem; margin: 0 auto; padding: 32px 24px;">
+    <div style="text-align: center; margin-bottom: 24px;">
+      <h1 style="font-size: 2.5rem; font-weight: 700; margin-bottom: 8px; background: linear-gradient(135deg, #00F0FF, #A78BFA); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">LOVE Arcade</h1>
+      <p style="color: rgba(245,245,247,0.5); font-size: 1.1rem; max-width: 560px; margin: 0 auto 20px;">
+        Play, create, and earn LOVE tokens. Every game adapts to your spoon level.
+      </p>
+    </div>
+
+    <PlayerProvider client:only="react">
+      <StatsBar client:only="react" />
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; margin-bottom: 48px; margin-top: 24px;">
+        <GameCard client:only="react" id="bashball" name="BASHBALL" description="Markov chain baseball. Built for Sebastian's 10th birthday." skin="tetra" deployUrl="/play/bashball" />
+        <GameCard client:only="react" id="gridiron" name="Gridiron" description="Strategic American football with spoon‑based play calling." skin="phos" deployUrl="/play/gridiron" />
+        <GameCard client:only="react" id="geodesic" name="Geodesic Builder" description="Snap primitives into rigid structures with Maxwell check." skin="willow" deployUrl="/play/geodesic" />
+        <GameCard client:only="react" id="jitterbug-puzzle" name="Jitterbug Puzzle" description="Match the morphing geometry target. Playable right here!" skin="tetra" deployUrl="/play/jitterbug" />
+        <GameCard client:only="react" id="strategy-board" name="Strategy Board" description="Turn‑based tetra tactics with minimax AI." skin="willow" deployUrl="/play/strategy" />
+        <GameCard client:only="react" id="card-table" name="Card Table" description="Poker, blackjack, and original P31 variants." skin="willow" deployUrl="/play/cards" />
+        <GameCard client:only="react" id="liquid-sculptor" name="Liquid Sculptor" description="Jitterbug Navier‑Stokes fluid sandbox." skin="phos" deployUrl="/play/liquid" />
+        <GameCard client:only="react" id="bonding" name="BONDING" description="Multiplayer molecule builder with real covalent bonding." skin="willow" deployUrl="https://bonding.p31ca.org" />
+      </div>
+    </PlayerProvider>
+  </div>
+</ArcadeLayout>

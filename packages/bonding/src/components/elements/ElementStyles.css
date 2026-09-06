@@ -1,0 +1,243 @@
+.element-grid-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  padding: 20px;
+}
+
+.element-selector {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.element-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.element-card {
+  background: rgba(0, 0, 0, 0.8);
+  border: 2px solid transparent;
+  border-radius: 8px;
+  padding: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.element-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.element-card.hydrogen {
+  border-color: #3b82f6;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), transparent);
+}
+
+.element-card.carbon {
+  border-color: #1f2937;
+  background: linear-gradient(135deg, rgba(31, 41, 55, 0.3), transparent);
+}
+
+.element-card.oxygen {
+  border-color: #ef4444;
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), transparent);
+}
+
+.element-card.phosphorus {
+  border-color: #10b981;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), transparent);
+}
+
+.element-symbol {
+  font-size: 2rem;
+  font-weight: bold;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.element-name {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #fff;
+}
+
+.element-stats {
+  font-size: 0.8rem;
+  color: #ccc;
+  margin-bottom: 10px;
+}
+
+.element-description {
+  font-size: 0.8rem;
+  color: #aaa;
+  line-height: 1.4;
+}
+
+.bonding-capacity {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  margin-top: 10px;
+}
+
+.bond-slot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #333;
+}
+
+.bond-slot.active {
+  background: #fff;
+}
+
+/* Player Status Styles */
+.player-status {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.atoms-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.atom-card {
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  padding: 15px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+}
+
+.atom-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.element-symbol {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.bond-count {
+  font-size: 0.9rem;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.atom-stats {
+  display: flex;
+  gap: 15px;
+  font-size: 0.8rem;
+  color: #ccc;
+}
+
+.bond-slots {
+  display: flex;
+  gap: 5px;
+  margin-top: 5px;
+}
+
+.bond-slot.filled {
+  background: #10b981;
+  box-shadow: 0 0 5px #10b981;
+}
+
+.bond-slot.empty {
+  background: #333;
+}
+
+/* Molecule Display Styles */
+.molecule-display {
+  grid-column: 1 / -1;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.molecule-card {
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 10px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 15px;
+  align-items: center;
+}
+
+.molecule-type {
+  font-weight: bold;
+  color: #fff;
+  font-size: 1.1rem;
+}
+
+.molecule-stability {
+  font-weight: bold;
+  color: #10b981;
+  font-size: 1rem;
+}
+
+.molecule-atoms {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.atom-symbol {
+  font-size: 1.5rem;
+  font-weight: bold;
+  padding: 5px 10px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.atom-symbol.h {
+  color: #3b82f6;
+  border-color: #3b82f6;
+}
+
+.atom-symbol.c {
+  color: #1f2937;
+  border-color: #1f2937;
+}
+
+.atom-symbol.o {
+  color: #ef4444;
+  border-color: #ef4444;
+}
+
+.atom-symbol.p {
+  color: #10b981;
+  border-color: #10b981;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .element-grid-container {
+    grid-template-columns: 1fr;
+  }
+  
+  .molecule-card {
+    grid-template-columns: 1fr;
+  }
+}

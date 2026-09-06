@@ -198,7 +198,120 @@ function deploy(options) {
   console.log(`\n  ✓ ${appName} deployed to ${env}\n`);
 }
 
-module.exports = { status, surfaces, deploy, love };
+module.exports = { status, surfaces, deploy, love, monetization };
+
+// ─── Monetization Engine ──────────────────────────────────────────────────────
+
+const REVENUE_URL = process.env.REVENUE_LEDGER_URL || 'https://revenue-ledger.trimtab-signal.workers.dev';
+const ENTITLEMENT_URL = process.env.ENTITLEMENT_URL || 'https://entitlement.trimtab-signal.workers.dev';
+const ALLOCATOR_URL = process.env.ALLOCATOR_URL || 'https://capital-allocator.trimtab-signal.workers.dev';
+
+function monetizationFetch(url, options = {}) {
+  const headers = { 'Content-Type': 'application/json', ...options.headers };
+  const body = options.body ? JSON.stringify(options.body) : undefined;
+  return fetchJSON(url, { method: options.method || 'GET', headers, body });
+}
+
+function monetization(options) {
+  const sub = options.subcommand || 'status';
+  const target = options.target || 'revenue';
+
+  if (target === 'revenue') {
+    if (sub === 'record') {
+      const result = monetizationFetch(`${REVENUE_URL}/revenue/record`, {
+        method: 'POST',
+        body: {
+          source: options.source,
+          payer_did: options['payer-did'],
+          merchant_did: options['merchant-did'],
+          amount_usdc: options.amount,
+          asset: options.asset,
+        },
+      });
+      if (result._error) { console.error(`[p31] Revenue record failed: ${result._error}`); process.exit(2); }
+      if (options.agent) return printJSON({ ...result, status: 'ok' });
+      console.log(`\n  ✓ Revenue recorded: ${result.hash.slice(0, 16)}...\n`);
+    } else if (sub === 'balance') {
+      const did = options.did || process.env.P31_USER_ID || 'guest';
+      const result = monetizationFetch(`${REVENUE_URL}/revenue/balance/${encodeURIComponent(did)}`);
+      if (result._error) { console.error(`[p31] Balance fetch failed: ${result._error}`); process.exit(2); }
+      if (options.agent) return printJSON({ ...result, status: 'ok' });
+      console.log(`\n  DID: ${did}`);
+      console.log(`  USDC: ${result.total_earned_usdc}`);
+      console.log(`  EUR:  ${result.total_earned_eur}`);
+      console.log(`  LOVE: ${result.total_earned_love}`);
+      console.log(`  Transactions: ${result.transaction_count}\n`);
+    } else {
+      const range = options.range || '30d';
+      const source = options.source;
+      const url = new URL(`${REVENUE_URL}/revenue/summary`);
+      if (source) url.searchParams.set('source', source);
+      url.searchParams.set('range', range);
+      const result = monetizationFetch(url.toString());
+      if (result._error) { console.error(`[p31] Summary fetch failed: ${result._error}`); process.exit(2); }
+      if (options.agent) return printJSON({ ...result, status: 'ok' });
+      console.log(`\n  Revenue Summary (${range})`);
+      console.log(`  Total USDC: ${result.total_usdc}`);
+      console.log(`  Total EUR:  ${result.total_eur}`);
+      console.log(`  Total LOVE: ${result.total_love}`);
+      console.log(`  Transactions: ${result.count}`);
+      console.log(`  Avg/tx: $${result.avg_per_transaction}\n`);
+    }
+  } else if (target === 'entitlement') {
+    if (sub === 'check') {
+      const did = options.did || process.env.P31_USER_ID || 'guest';
+      const result = monetizationFetch(`${ENTITLEMENT_URL}/entitlement/check`, {
+        method: 'POST',
+        body: { did, tool_id: options['tool-id'], estimated_cost_usdc: options.cost },
+      });
+      if (result._error) { console.error(`[p31] Entitlement check failed: ${result._error}`); process.exit(2); }
+      if (options.agent) return printJSON({ ...result, status: 'ok' });
+      console.log(`\n  Entitlement check for ${did}:`);
+      console.log(`  Tool: ${options['tool-id']}`);
+      console.log(`  Cost: $${options.cost}`);
+      console.log(`  Status: ${result.ok ? '✓ Authorized' : '✗ Denied'}`);
+      if (result.balance) console.log(`  Balance: $${result.balance}`);
+      if (result.message) console.log(`  Reason: ${result.message}`);
+      console.log('');
+    } else if (sub === 'tier') {
+      const did = options.did || process.env.P31_USER_ID || 'guest';
+      const result = monetizationFetch(`${ENTITLEMENT_URL}/entitlement/tier-set`, {
+        method: 'POST',
+        body: { did, tier: options.tier },
+      });
+      if (result._error) { console.error(`[p31] Tier set failed: ${result._error}`); process.exit(2); }
+      if (options.agent) return printJSON({ ...result, status: 'ok' });
+      console.log(`\n  ✓ Tier set to ${result.tier} for ${result.did}\n`);
+    }
+  } else if (target === 'allocation') {
+    if (sub === 'create') {
+      const result = monetizationFetch(`${ALLOCATOR_URL}/allocate`, {
+        method: 'POST',
+        body: {
+          source_tx_id: options['tx-id'],
+          amount_usdc: options.amount,
+          targets: [{ target: options.target, weight: parseFloat(options.weight || '1.0') }],
+        },
+      });
+      if (result._error) { console.error(`[p31] Allocation failed: ${result._error}`); process.exit(2); }
+      if (options.agent) return printJSON({ ...result, status: 'ok' });
+      console.log(`\n  ✓ Created ${result.allocations.length} allocation(s)\n`);
+      result.allocations.forEach((a, i) => {
+        console.log(`  ${i + 1}. ${a.target}: ${a.amount} USDC (${a.status})`);
+      });
+      console.log('');
+    } else if (sub === 'status') {
+      const targetName = options.target || 'yield';
+      const result = monetizationFetch(`${ALLOCATOR_URL}/allocation/status?target=${encodeURIComponent(targetName)}`);
+      if (result._error) { console.error(`[p31] Status fetch failed: ${result._error}`); process.exit(2); }
+      if (options.agent) return printJSON({ ...result, status: 'ok' });
+      console.log(`\n  Allocation Status: ${result.target}`);
+      console.log(`  Position: ${result.current_allocation} USDC`);
+      console.log(`  ROI: ${result.roi_bps} bps`);
+      console.log(`  Health: ${result.health_check}\n`);
+    }
+  }
+}
 
 // ─── LOVE Ledger ─────────────────────────────────────────────────────────────
 

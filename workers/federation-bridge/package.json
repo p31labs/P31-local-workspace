@@ -1,0 +1,22 @@
+{
+  "name": "federation-bridge",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "deploy": "wrangler deploy --env production",
+    "typecheck": "tsc --noEmit",
+    "dev": "wrangler dev",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@noble/post-quantum": "^0.6.1",
+    "hono": "^4.6.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.0.0",
+    "typescript": "^5.9.0",
+    "vitest": "^3.0.0",
+    "wrangler": "^4.0.0"
+  }
+}

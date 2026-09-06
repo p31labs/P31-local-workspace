@@ -1,0 +1,56 @@
+#!/usr/bin/env node
+/**
+ * pre-commit hook: lint + typecheck + secret scan
+ *
+ * Runs on all staged .ts/.tsx/.js/.mjs files.
+ * Bypass: git commit --no-verify (or set P31_SKIP_HOOKS=1)
+ */
+
+const { execSync } = require('child_process');
+const fs = require('fs');
+
+if (process.env.P31_SKIP_HOOKS) process.exit(0);
+
+function getStagedFiles() {
+  try {
+    const out = execSync('git diff --cached --name-only --diff-filter=ACMR', { encoding: 'utf-8' });
+    return out.split('\n').filter(Boolean);
+  } catch {
+    return [];
+  }
+}
+
+const staged = getStagedFiles();
+const tsFiles = staged.filter(f => /\.(ts|tsx)$/.test(f) && !f.includes('node_modules'));
+
+if (tsFiles.length === 0) process.exit(0);
+
+let exitCode = 0;
+
+// Run eslint on staged files
+try {
+  execSync(`npx eslint ${tsFiles.join(' ')} --max-warnings 0 2>/dev/null`, {
+    stdio: 'inherit',
+    timeout: 30000,
+  });
+} catch {
+  console.error('\n❌ ESLint failed on staged files. Fix errors before committing.');
+  exitCode = 1;
+}
+
+// Run typecheck if p31ca files changed
+const p31caFiles = tsFiles.filter(f => f.startsWith('p31ca/'));
+if (p31caFiles.length > 0) {
+  try {
+    execSync('npx tsc --noEmit 2>/dev/null', {
+      cwd: `${__dirname}/../p31ca`,
+      stdio: 'inherit',
+      timeout: 60000,
+    });
+  } catch {
+    console.error('\n❌ TypeScript check failed in p31ca. Fix errors before committing.');
+    exitCode = 1;
+  }
+}
+
+process.exit(exitCode);

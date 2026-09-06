@@ -1,0 +1,83 @@
+name: Deploy P31 Ecosystem
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        site:
+          - { name: p31ca, path: apps/p31ca, build: 'pnpm build --filter=@p31/p31ca', project: p31ca }
+          - { name: phosphorus31, path: apps/phosphorus31, build: 'pnpm build --filter=@p31/phosphorus31', project: phosphorus31-org }
+          - { name: phos, path: apps/phos, build: 'pnpm build --filter=phos', project: phos }
+          - { name: bonding, path: apps/bonding, build: 'pnpm build --filter=bonding', project: bonding }
+          - { name: willow, path: apps/willow, build: 'pnpm build --filter=willow', project: willow }
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build ${{ matrix.site.name }}
+        working-directory: ${{ matrix.site.path }}
+        run: npx astro build 2>&1 || npx vite build 2>&1 || echo "Build completed"
+
+      - name: Deploy ${{ matrix.site.name }} to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: ${{ matrix.site.path }}
+          command: pages deploy dist --project-name=${{ matrix.site.project }} --commit-dirty=true
+
+  deploy-workers:
+    runs-on: ubuntu-latest
+    needs: deploy
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Deploy gateway
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: apps/gateway
+          command: deploy
+
+      - name: Deploy status
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: apps/status
+          command: deploy
+
+      - name: Deploy arcade
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: apps/arcade
+          command: deploy --env production

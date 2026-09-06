@@ -1,0 +1,28 @@
+{
+  "name": "p31-social-worker",
+  "version": "2.0.0",
+  "description": "P31 Unified Social Worker — Multi-platform posting, scheduling, and Discord notifications",
+  "main": "worker.js",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "tail": "wrangler tail"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240612.0",
+    "wrangler": "^3.114.17"
+  },
+  "keywords": [
+    "cloudflare",
+    "social-media",
+    "automation",
+    "p31",
+    "twitter",
+    "reddit",
+    "bluesky",
+    "mastodon",
+    "cron"
+  ],
+  "author": "P31 Labs",
+  "license": "MIT"
+}

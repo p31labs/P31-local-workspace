@@ -1,0 +1,153 @@
+---
+const pages = [
+  { title: 'Introduction', href: '/getting-started' },
+  { title: 'Installation', href: '/getting-started/installation' },
+  { title: 'Quick Start', href: '/getting-started/quickstart' },
+  { title: 'Architecture Overview', href: '/architecture' },
+  { title: 'Sovereign Shell', href: '/architecture/shell' },
+  { title: 'Portals', href: '/architecture/portals' },
+  { title: 'Cloudflare Workers', href: '/architecture/workers' },
+  { title: 'Packages', href: '/architecture/packages' },
+  { title: 'Deployment', href: '/guides/deployment' },
+  { title: 'Security', href: '/guides/security' },
+  { title: 'Testing', href: '/guides/testing' },
+  { title: 'CI/CD', href: '/guides/ci-cd' },
+  { title: 'MCP Servers', href: '/reference/mcp' },
+  { title: 'Post-Quantum Crypto', href: '/reference/pqc' },
+  { title: 'EUDI Wallet', href: '/reference/eudi' },
+  { title: 'API Reference', href: '/reference/api' },
+];
+---
+
+<div class="search">
+  <input
+    id="search-input"
+    type="text"
+    placeholder="Search docs..."
+    autocomplete="off"
+  />
+  <div id="search-results" class="search-results"></div>
+</div>
+
+<script>
+  const pages = [
+    { title: 'Introduction', href: '/getting-started' },
+    { title: 'Installation', href: '/getting-started/installation' },
+    { title: 'Quick Start', href: '/getting-started/quickstart' },
+    { title: 'Architecture Overview', href: '/architecture' },
+    { title: 'Sovereign Shell', href: '/architecture/shell' },
+    { title: 'Portals', href: '/architecture/portals' },
+    { title: 'Cloudflare Workers', href: '/architecture/workers' },
+    { title: 'Packages', href: '/architecture/packages' },
+    { title: 'Deployment', href: '/guides/deployment' },
+    { title: 'Security', href: '/guides/security' },
+    { title: 'Testing', href: '/guides/testing' },
+    { title: 'CI/CD', href: '/guides/ci-cd' },
+    { title: 'MCP Servers', href: '/reference/mcp' },
+    { title: 'Post-Quantum Crypto', href: '/reference/pqc' },
+    { title: 'EUDI Wallet', href: '/reference/eudi' },
+    { title: 'API Reference', href: '/reference/api' },
+  ];
+
+  const searchInput = document.getElementById('search-input');
+  const searchResults = document.getElementById('search-results');
+
+  if (searchInput && searchResults) {
+    searchInput.addEventListener('input', (e) => {
+      const query = e.target.value.toLowerCase().trim();
+      if (query.length < 2) {
+        searchResults.innerHTML = '';
+        searchResults.style.display = 'none';
+        return;
+      }
+
+      const matches = pages.filter(p => 
+        p.title.toLowerCase().includes(query)
+      );
+
+      if (matches.length > 0) {
+        searchResults.innerHTML = matches
+          .map(p => `<a href="${p.href}" class="search-result-item">${p.title}</a>`)
+          .join('');
+        searchResults.style.display = 'block';
+      } else {
+        searchResults.innerHTML = '<div class="search-no-results">No results found</div>';
+        searchResults.style.display = 'block';
+      }
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.search')) {
+        searchResults.innerHTML = '';
+        searchResults.style.display = 'none';
+      }
+    });
+  }
+</script>
+
+<style>
+  .search {
+    position: relative;
+    margin-bottom: 16px;
+  }
+
+  .search input {
+    width: 100%;
+    padding: 8px 12px;
+    background: var(--bg);
+    border: 1px solid var(--b);
+    border-radius: 6px;
+    color: var(--t);
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .search input:focus {
+    border-color: var(--a);
+  }
+
+  .search input::placeholder {
+    color: var(--t2);
+  }
+
+  .search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: 4px;
+    background: var(--s);
+    border: 1px solid var(--b);
+    border-radius: 6px;
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 1000;
+    display: none;
+  }
+
+  .search-result-item {
+    display: block;
+    padding: 8px 12px;
+    color: var(--t);
+    text-decoration: none;
+    font-size: 14px;
+    border-bottom: 1px solid var(--b);
+  }
+
+  .search-result-item:last-child {
+    border-bottom: none;
+  }
+
+  .search-result-item:hover {
+    background: var(--b);
+    color: #fff;
+  }
+
+  .search-no-results {
+    padding: 12px;
+    color: var(--t2);
+    font-size: 13px;
+    text-align: center;
+  }
+</style>

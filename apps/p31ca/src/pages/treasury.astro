@@ -1,0 +1,97 @@
+---
+import MarketingShell from '../layouts/MarketingShell.astro';
+import CanonTopbar from '../components/islands/CanonTopbar.tsx';
+import SectionHeader from '../components/marketing/SectionHeader.astro';
+import CanonFooter from '../components/islands/CanonFooter.tsx';
+
+const REVENUE_LEDGER_URL = 'https://revenue-ledger.trimtab-signal.workers.dev';
+const ALLOCATION = [
+  { label: 'Operations', pct: '60%', note: 'Hosting, tools, and R&D' },
+  { label: 'Mission treasury', pct: '30%', note: 'Long-term reserve' },
+  { label: 'LOVE rewards', pct: '10%', note: 'Community care credits' },
+];
+---
+
+<MarketingShell title="Public treasury — P31 Labs" description="Revenue ledger for P31 Labs. Headline withheld pending ledger-chain integrity resolution; raw per-source data is live.">
+  <CanonTopbar client:load />
+
+  <main id="main-content" class="section">
+    <div class="max-w-4xl mx-auto px-6 md:px-12 lg:px-16">
+          <SectionHeader title="Public treasury" description="Every payment settles into a revenue ledger. This page reads it live; the hash chain is independently verifiable, though it is currently reporting an integrity gap (see status below)." align="left" />
+
+      <div class="mt-12 space-y-8">
+         <div class="glass-card p-8 text-center">
+           <div class="text-xs uppercase tracking-widest mb-2" style="color: var(--p31-text-tertiary);">Total revenue (USDC)</div>
+           <div id="treasury-total" class="text-5xl font-bold" style="color: var(--p31-accent);">—</div>
+           <div id="treasury-sub" class="text-sm mt-2" style="color: var(--p31-text-secondary);">Live ledger — see raw data below.</div>
+         </div>
+
+        <div class="glass-card p-8">
+          <h3 class="text-lg font-bold mb-5" style="color: var(--p31-text);">Allocation policy</h3>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {ALLOCATION.map((a) => (
+              <div class="text-center p-5 rounded-xl" style="background: var(--p31-surface);">
+                <div class="text-2xl font-bold" style="color: var(--p31-accent);">{a.pct}</div>
+                <div class="font-semibold text-sm mt-1" style="color: var(--p31-text);">{a.label}</div>
+                <div class="text-xs mt-1" style="color: var(--p31-text-tertiary);">{a.note}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div class="glass-card p-8">
+          <h3 class="text-lg font-bold mb-5" style="color: var(--p31-text);">Revenue by source</h3>
+          <div id="treasury-breakdown" class="space-y-3 text-sm" style="color: var(--p31-text-secondary);">—</div>
+        </div>
+
+        <div class="glass-card p-8">
+          <h3 class="text-lg font-bold mb-3" style="color: var(--p31-text);">Verify it yourself</h3>
+          <p class="text-sm leading-relaxed mb-4" style="color: var(--p31-text-secondary);">The ledger is append-only with a SHA-256 hash chain. The headline figure is withheld pending confirmation of the LOVE-token economics and resolution of a reported chain integrity gap; the raw per-source JSON and the chain verification endpoint are linked below.</p>
+          <div class="flex flex-wrap gap-3 text-sm">
+            <a href={REVENUE_LEDGER_URL + '/revenue/summary'} target="_blank" rel="noopener" class="px-4 py-2 rounded-lg border" style="border-color: var(--p31-glass-border); color: var(--p31-accent);">Raw summary JSON →</a>
+            <a href={REVENUE_LEDGER_URL + '/revenue/verify-chain'} target="_blank" rel="noopener" class="px-4 py-2 rounded-lg border" style="border-color: var(--p31-glass-border); color: var(--p31-accent);">Verify hash chain →</a>
+            <a href="https://af79c8f3.chump-dashboard.pages.dev" target="_blank" rel="noopener" class="px-4 py-2 rounded-lg border" style="border-color: var(--p31-glass-border); color: var(--p31-accent);">Operator dashboard →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <CanonFooter client:load />
+
+  <script is:inline>
+     var URL = 'https://revenue-ledger.trimtab-signal.workers.dev';
+     async function loadTreasury() {
+       var total = document.getElementById('treasury-total');
+       var sub = document.getElementById('treasury-sub');
+       var breakdown = document.getElementById('treasury-breakdown');
+       try {
+          var res = await fetch(URL + '/revenue/summary');
+          var d = await res.json();
+          // The headline is intentionally NOT computed from source_breakdown: the
+          // LOVE-token economics are unconfirmed (is LOVE a tokenized view of
+          // existing USDC, or separate value?). Until that is resolved against the
+          // ledger worker's source, no aggregate number is shown — only the raw
+          // per-source figures, which are non-opinionated.
+          total.textContent = '\u2014';
+          sub.textContent = (d.count || 0) + ' transactions \u00b7 avg $' + (Number(d.avg_per_transaction) || 0) + ' \u00b7 raw JSON below';
+          var sb = d.source_breakdown || {};
+          var keys = Object.keys(sb);
+          var rows = '';
+          if (keys.length) {
+            rows = keys.map(function (k) {
+              var v = sb[k];
+              return '<div class="flex justify-between"><span style="text-transform:capitalize">' + k + '</span><span>$' + (Number(v.total_usdc) || 0) + ' \u00b7 ' + (v.count || 0) + ' txns</span></div>';
+            }).join('');
+          } else {
+            rows = 'No per-source breakdown yet.';
+          }
+          breakdown.innerHTML = rows;
+       } catch (e) {
+         total.textContent = '\u2014';
+         sub.textContent = 'Ledger unreachable from this client.';
+       }
+     }
+     loadTreasury();
+   </script>
+</MarketingShell>

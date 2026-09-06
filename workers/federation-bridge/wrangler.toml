@@ -1,0 +1,29 @@
+name = "federation-bridge"
+main = "src/index.ts"
+compatibility_date = "2026-07-16"
+compatibility_flags = ["nodejs_compat"]
+
+# CWP-2026-031 Phase 3 — ActivityPub Federation Bridge.
+# Federates care attestations (SD-JWT VCs) to the Fediverse.
+# HTTP Signatures (RFC 9421) + Object Integrity Proofs (FEP-8b32).
+# Custom domain: federation.p31ca.org — auto-provisions DNS record + TLS cert.
+# (A `routes` entry would require a manually-created DNS record for the
+# subdomain; custom_domains provisions it on deploy.)
+
+[[custom_domains]]
+domain = "federation.p31ca.org"
+
+[[d1_databases]]
+binding = "LOVE_DB"
+database_name = "love-ledger"
+database_id = "592e3e2e-3203-4e0a-8342-9e85215ec8a6"
+
+[[r2_buckets]]
+binding = "AVATAR_BUCKET"
+bucket_name = "p31-avatars"
+
+[observability]
+enabled = true
+
+[cache]
+enabled = true

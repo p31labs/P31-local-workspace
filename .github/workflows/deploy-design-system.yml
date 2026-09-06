@@ -1,0 +1,80 @@
+name: Deploy Design System
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'packages/design-core/**'
+      - 'packages/ui/src/__stories__/**'
+      - 'packages/ui/src/templates/**'
+      - '.storybook/**'
+      - 'apps/design-hub/**'
+      - 'docs/templates/**'
+      - 'workers/design-mcp/**'
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-design-system
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build Storybook
+        run: pnpm build-storybook
+
+      - name: Build design-hub
+        run: pnpm -C apps/design-hub build
+
+      - name: Build MCP worker
+        run: cd workers/design-mcp && node build.mjs
+
+      - name: Generate A2UI catalog
+        run: node scripts/scan-a2ui-catalog.mjs
+
+      - name: Validate A2UI catalog
+        run: npx ajv-cli validate -s packages/interface-generator/src/adapters/a2ui.schema.json -d .well-known/a2ui-catalog.json
+
+      - name: Deploy Storybook
+        run: npx wrangler pages deploy storybook-static --project-name design-storybook --branch main --commit-dirty=true
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+      - name: Deploy design-hub
+        run: npx wrangler pages deploy apps/design-hub/dist --project-name design-hub --branch main --commit-dirty=true
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+      - name: Deploy MCP worker
+        run: cd workers/design-mcp && npx wrangler deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+      - name: Verify deployments
+        run: |
+          echo "Storybook: https://design-storybook-4d6.pages.dev"
+          echo "design-hub: https://design-hub-41l.pages.dev"
+          echo "MCP:       https://p31-design-mcp.trimtab-signal.workers.dev"
+          curl -sf https://design-storybook-4d6.pages.dev > /dev/null && echo "Storybook OK" || echo "Storybook FAIL"
+          curl -sf https://design-hub-41l.pages.dev > /dev/null && echo "design-hub OK" || echo "design-hub FAIL"
+          curl -sf https://p31-design-mcp.trimtab-signal.workers.dev/health > /dev/null && echo "MCP OK" || echo "MCP FAIL"

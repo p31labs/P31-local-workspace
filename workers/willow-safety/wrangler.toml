@@ -1,0 +1,9 @@
+name = "willow-safety"
+main = "src/index.ts"
+compatibility_date = "2026-07-19"
+
+[observability]
+enabled = true
+
+[ai]
+binding = "AI"

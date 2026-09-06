@@ -1,0 +1,61 @@
+{
+  "kind": "grant",
+  "filename": "P31_Grant_NGI-TALER_LOVE-Ledger.docx",
+  "program": "nlnet_taler",
+  "title": "NGI TALER (14th Open Call) — L.O.V.E.-Ledger",
+  "deadline": "August 1, 2026, 12:00 CEST",
+  "amount": "\u20AC15,000",
+  "body": [
+    { "type": "h1", "text": "ABSTRACT" },
+    { "type": "para", "text": "P31 Labs builds the open-source bridge software between the \u20ac470B informal care economy and GNU Taler. We do not act as a financial custodian. Instead, we provide a lightweight, local-first ledger that enables privacy-preserving micro-payments for care work (executive function support, emotional labour, household tasks) entirely within the family perimeter. This project validates the integration of Taler with our Sovereign Stack, ensuring that care compensation does not rely on predatory data-harvesting." },
+
+    { "type": "h1", "text": "COMPARISON WITH EXISTING / HISTORICAL EFFORTS" },
+    { "type": "bullet", "text": "PayPal / Ko-fi / GoFundMe — full financial surveillance; receipts only, not court-admissible." },
+    { "type": "bullet", "text": "Cryptocurrency (BTC/ETH) — public pseudonymous ledger; no custody chain, not admissible." },
+    { "type": "bullet", "text": "x402 (Linux Foundation) — HTTP-402 stablecoin payments; settlement visible. P31 uses x402 for API/MCP billing, not care flows." },
+    { "type": "bullet", "text": "GNU Taler (reference) — blind signatures, buyer anonymity + merchant transparency, near-zero fees; ships only a reference merchant/Exchange stack, no care accounting." },
+    { "type": "para", "text": "LOVE-Ledger is the missing non-custodial bridge that embeds Taler in the PHOS family mesh and cognitive-prosthetic layer — keeping settlement outside P31's perimeter to avoid custodial triggers. It combines Taler privacy with care-admissible accounting (eIDAS 2.0)." },
+
+    { "type": "h1", "text": "SIGNIFICANT TECHNICAL CHALLENGES" },
+    { "type": "numbered", "text": "Operating a Taler merchant backend without becoming a money transmitter — P31 is a Georgia nonprofit with a pending 501(c)(3) application; the Taler integration is structured as a care-grant/donation path, not a commercial exchange. Legal review in progress." },
+    { "type": "numbered", "text": "Bridging Taler to a local-first, often-offline PHOS mesh — the LOVE-Ledger worker acts as the Taler merchant adapter, caching transactions and syncing when connectivity returns." },
+    { "type": "numbered", "text": "Reconciling Taler's merchant transparency with family-perimeter privacy — Taler merchants see amount/date but not payer identity; the LOVE-Ledger hash-chain layer proves care occurred without exposing its emotional content." },
+    { "type": "numbered", "text": "'Send LOVE' UX at spoon-level 0 — the Cognitive Passport engine adapts UI by spoon level; at spoon 0 it reduces to a single zero-friction 'Send LOVE' button." },
+
+    { "type": "h1", "text": "ECOSYSTEM & ENGAGEMENT" },
+    { "type": "bullet", "text": "GNU Taler community — P31 operates a deployed Taler bridge (taler-exchange-bridge, wired to exchange.demo.taler.net) and the taler-bridge-billing worker. Code is open-source and contributes back." },
+    { "type": "bullet", "text": "NLnet / NGI TALER — submitted to the current TALER open call; P31 is an active participant in the Taler community." },
+    { "type": "bullet", "text": "Care-economy orgs — joint application with Stimpunks Foundation; networks include neurodivergent advocacy groups and family-court support contexts." },
+    { "type": "bullet", "text": "Neurodivergent advocacy & open-source community — 22 Zenodo papers, 7 production sites, ORCID 0009-0002-2492-9079; all code MIT-licensed at github.com/p31labs/P31-local-workspace." },
+
+    { "type": "h1", "text": "ARCHITECTURE" },
+    { "type": "para", "text": "PHOS Family Mesh \u2192 LOVE-Ledger Module (Open-Source Bridge) \u2192 Taler Merchant Backend \u2192 Taler Wallet \u2192 Banking settlement. P31 Labs develops the non-custodial bridge software, not the financial settlement layer, avoiding custodial regulatory triggers." },
+
+    { "type": "h1", "text": "OUR LIVE FOOTPRINT (VERIFIED)" },
+    { "type": "bullet", "text": "7 production Cloudflare Pages sites" },
+    { "type": "bullet", "text": "8+ active Workers (from a fleet of 30 unique Workers)" },
+    { "type": "bullet", "text": "22 functional cognitive surfaces" },
+    { "type": "bullet", "text": "Core BONDING engine: 95 passing automated tests" },
+    { "type": "bullet", "text": "Real-time health score: 16/20" },
+
+    { "type": "h1", "text": "WHY P31 LABS" },
+    { "type": "para", "text": "The L.O.V.E. protocol was born in the crucible of managing disability, a complex family court case, and a household with zero income. Bank transfers are invasive and informal arrangements create burnout. We understand firsthand that caregivers need frictionless, privacy-preserving micro-payments that do not rely on predatory data-harvesting or financial surveillance." },
+
+    { "type": "h1", "text": "BUDGET" },
+    { "type": "bullet", "text": "Engineering (Taler integration, local ledger): \u20ac8,000" },
+    { "type": "bullet", "text": "Documentation & Open-Source Commons: \u20ac3,000" },
+    { "type": "bullet", "text": "Community Engagement & Support: \u20ac2,000" },
+    { "type": "bullet", "text": "Legal & Compliance: \u20ac2,000" },
+    { "type": "field", "label": "Total Requested", "value": "\u20ac15,000" },
+    { "type": "para", "text": "Rates: ~\u20ac60/hour estimated (below commercial rates); all work performed by P31 Labs employees." },
+
+    { "type": "h1", "text": "GENERATIVE AI DISCLOSURE" },
+    { "type": "para", "text": "This proposal was drafted with the assistance of Kilo (openrouter/owl-alpha), an AI code assistant. GenAI was used for document structuring, formatting, and drafting. All technical content was directed and reviewed by William R. Johnson based on P31 Labs' existing L.O.V.E. protocol and family mesh infrastructure. A full prompt provenance log is maintained at docs/grants/prompt-provenance-log.md." },
+
+    { "type": "h1", "text": "SUPPORTING EVIDENCE (VERIFIED OPEN-ACCESS PORTFOLIO)" },
+    { "type": "bullet", "text": "Paper XII — The Sovereign Stack: Open-Source Hardware\u2013Software Architecture for Neurodivergent Assistive Technology — 10.5281/zenodo.19782969 (2026-04-26). Directly underpins the LOVE-Ledger hash-chain and Taler bridge." },
+    { "type": "bullet", "text": "The Tetrahedron Protocol: A Grand Unified Theory of Structural Resilience — 10.5281/zenodo.19004485 (2026-01-26, v2)" },
+    { "type": "bullet", "text": "P31 Labs Genesis Whitepaper — 10.5281/zenodo.19411363 (2026-04-04, v1)" },
+    { "type": "bullet", "text": "Full portfolio: 22 open-access Zenodo deposits under ORCID 0009-0002-2492-9079" }
+  ]
+}

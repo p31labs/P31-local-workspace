@@ -1,0 +1,27 @@
+{
+  "cwp": "CWP-P31-IB-2026-01",
+  "version": "1.0.0",
+  "updated": "2026-04-26",
+  "status": "issued_for_execution",
+  "deliverables": [
+    { "id": "D-IB1", "title": "CWP + strict plan + this matrix in repo", "status": "done", "pr": null, "verify": "integration-handoff/CONTROLLED-WORK-PACKAGE-INITIAL-BUILD.md" },
+    { "id": "D-IB2", "title": "Ground truth + /build edge redirect", "status": "done", "pr": null, "verify": "p31ca verify:ground-truth" },
+    { "id": "D-IB3", "title": "initial-build.html production shell (CWP id on page)", "status": "done", "pr": null, "verify": "fileSnippets initialBuild.page" },
+    { "id": "D-IB4", "title": "Single-sourced subject_id with planetary-onboard", "status": "done", "pr": null, "verify": "public/lib/p31-subject-id.js + ground-truth fileSnippets subjectIdDerivation.lib" },
+    { "id": "D-IB5", "title": "MVP PUT /state + PUT /tetra sequence + error UI", "status": "done", "pr": null, "verify": "public/lib/p31-initial-build-bake.js + initial-build.html" },
+    { "id": "D-IB6", "title": "Bake manifest in localStorage post-success", "status": "done", "pr": null, "verify": "p31.buildRecord in p31-initial-build-bake.js → localStorage p31_build_record" },
+    { "id": "D-IB7", "title": "MESH-MAP + AGENTS + review supplement + CWP-31 links", "status": "done", "pr": null, "verify": "doc cross-links" },
+    { "id": "D-IB8", "title": "Playwright or runbook: re-entry + partial failure", "status": "done", "pr": null, "verify": "CWP-32/RUNBOOK.md" },
+    { "id": "D-IB9", "title": "verify + verify:mesh on clean tree", "status": "done", "pr": null, "verify": "npm run verify, verify:mesh" },
+    { "id": "D-IB10", "title": "Close strict plan section 12 (onboard I/II/III, meta, allowlist, …)", "status": "done", "pr": null, "verify": "CWP-32/DECISIONS.md" }
+  ],
+  "phases": [
+    { "id": "IB-0", "name": "Route + shell + ground truth" },
+    { "id": "IB-1", "name": "Identity helper" },
+    { "id": "IB-2", "name": "Intake + validation" },
+    { "id": "IB-3", "name": "PUT wire + errors" },
+    { "id": "IB-4", "name": "Bake manifest" },
+    { "id": "IB-5", "name": "E2E + decisions" },
+    { "id": "IB-6", "name": "CWP closure 1.1.0" }
+  ]
+}

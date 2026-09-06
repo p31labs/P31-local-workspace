@@ -1,0 +1,123 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const title = 'MCP Servers';
+---
+
+<DocsLayout title={title}>
+  <div class="breadcrumb">
+    <a href="/">Docs</a>
+    <span>/</span>
+    <a href="/reference">Reference</a>
+    <span>/</span>
+    <span>MCP Servers</span>
+  </div>
+
+  <h1>MCP Servers</h1>
+  <p class="lead">The P31 ecosystem exposes 222+ tools across 17 MCP servers implementing the Model Context Protocol.</p>
+
+  <h2>Edge HTTP MCP Servers</h2>
+  <p>These servers are deployed as Cloudflare Workers and accessible via HTTP:</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Server</th>
+        <th>URL</th>
+        <th>Tools</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>p31-spaceship-earth</td>
+        <td><code>spaceship-relay.trimtab-signal.workers.dev/mcp</code></td>
+        <td>16</td>
+        <td>Dome geometry, system health, DUNA readiness, PQC ops, EUDI Wallet, session mgmt</td>
+      </tr>
+      <tr>
+        <td>p31-crypto-mcp</td>
+        <td><code>p31-crypto-mcp.trimtab-signal.workers.dev/mcp</code></td>
+        <td>12</td>
+        <td>ML-DSA-65, ML-KEM-768, SD-JWT, GNU Taler, x402 micropayments</td>
+      </tr>
+      <tr>
+        <td>p31-design-mcp</td>
+        <td><code>p31-design-mcp.trimtab-signal.workers.dev/mcp</code></td>
+        <td>23</td>
+        <td>DTCG token resolution, component schemas, layout generation, validation</td>
+      </tr>
+      <tr>
+        <td>p31-justice-hub</td>
+        <td><code>p31-justice-hub.trimtab-signal.workers.dev/mcp</code></td>
+        <td>8</td>
+        <td>Evidence vault, escrow engine, ODR, care-proof co-signature</td>
+      </tr>
+      <tr>
+        <td>bros</td>
+        <td><code>bros.trimtab-signal.workers.dev/mcp</code></td>
+        <td>8</td>
+        <td>Persona-switched care issuer, zero-state signaling, crisis ping</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>CLI MCP Servers</h2>
+  <p>These servers run locally via stdio and are part of the <code>andromeda-cli</code> package:</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Server</th>
+        <th>Tools</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Oasis CLI</td><td>11</td><td>Session state, design tokens, capabilities</td></tr>
+      <tr><td>Component Registry</td><td>5</td><td>Component discovery and registration</td></tr>
+      <tr><td>LOVE Ledger</td><td>4</td><td>LOVE balance, sync, anchor</td></tr>
+      <tr><td>PHOS Forge</td><td>32</td><td>Batch interface generation</td></tr>
+      <tr><td>Cognitive Prosthetic</td><td>47</td><td>Temporal grounding, EF, sensory adaptation</td></tr>
+      <tr><td>Cognitive Comms</td><td>20</td><td>Tone, replies, boundaries, agendas</td></tr>
+      <tr><td>MARGE Design Expert</td><td>14</td><td>Design compliance audit, glass/spoons/WCAG</td></tr>
+      <tr><td>BOB Structural Expert</td><td>14</td><td>Structural entropy, service graph, schema drift</td></tr>
+      <tr><td>SOULSAFE Protocol</td><td>14</td><td>3-gate verification, OQE, Red Board</td></tr>
+      <tr><td>Ground-Truth Registry</td><td>14</td><td>Fact lookup, file map, toolchain invariants</td></tr>
+      <tr><td>Design System (CLI)</td><td>8</td><td>Token resolve/list, component schema, validation</td></tr>
+      <tr><td>Spaceship (DUNA/Dome)</td><td>16</td><td>Dome status, PQC ops, EUDI export, mesh</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Transport Protocols</h2>
+  <ul>
+    <li><strong>Streamable HTTP</strong> — POST/GET <code>/mcp</code> (2025-06-18 spec)</li>
+    <li><strong>Stdio</strong> — JSON-RPC over stdin/stdout (local CLI servers)</li>
+    <li><strong>SSE</strong> — Server-Sent Events for notifications</li>
+  </ul>
+
+  <h2>Registry Presence</h2>
+  <p>P31 MCP servers are published to:</p>
+  <ul>
+    <li><a href="https://glama.ai">Glama</a> — 21,000+ servers</li>
+    <li><a href="https://smithery.ai">Smithery</a> — 7,000+ servers</li>
+    <li><a href="https://github.com/anthropics/official-registry">Official AAIF Registry</a> — 9,650+ servers</li>
+    <li><a href="https://huggingface.co/datasets/modelcontextprotocol/servers">HuggingFace</a> — 5,033+ servers</li>
+  </ul>
+
+  <div class="callout callout-info">
+    <div class="callout-title">Total: 222 Tools</div>
+    <p>Across 17 servers (5 edge HTTP + 12 CLI stdio), the P31 ecosystem exposes 222 tools for AI agents, covering crypto, design, care coordination, governance, and more.</p>
+  </div>
+
+  <div class="last-updated">Last updated: August 2026</div>
+</DocsLayout>
+
+<style>
+  .lead {
+    font-size: 18px;
+    color: var(--t2);
+    margin-bottom: 32px;
+    line-height: 1.7;
+  }
+</style>

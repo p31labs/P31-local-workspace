@@ -1,0 +1,118 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const title = 'Post-Quantum Cryptography';
+---
+
+<DocsLayout title={title}>
+  <div class="breadcrumb">
+    <a href="/">Docs</a>
+    <span>/</span>
+    <a href="/reference">Reference</a>
+    <span>/</span>
+    <span>Post-Quantum Cryptography</span>
+  </div>
+
+  <h1>Post-Quantum Cryptography</h1>
+  <p class="lead">P31 implements all three NIST FIPS standards for post-quantum cryptography, ensuring long-term security against quantum computer attacks.</p>
+
+  <h2>NIST Standards</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Algorithm</th>
+        <th>FIPS</th>
+        <th>Type</th>
+        <th>Key Size</th>
+        <th>Signature Size</th>
+        <th>Use Case</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>ML-KEM-768</strong></td>
+        <td>FIPS 203</td>
+        <td>KEM</td>
+        <td>1184 / 2400 bytes</td>
+        <td>1088 bytes</td>
+        <td>Secure key exchange</td>
+      </tr>
+      <tr>
+        <td><strong>ML-DSA-65</strong></td>
+        <td>FIPS 204</td>
+        <td>Signature</td>
+        <td>1952 / 4032 bytes</td>
+        <td>3309 bytes</td>
+        <td>Document signing, DID</td>
+      </tr>
+      <tr>
+        <td><strong>SLH-DSA-128s</strong></td>
+        <td>FIPS 205</td>
+        <td>Signature</td>
+        <td>32 / 64 bytes</td>
+        <td>7856 bytes</td>
+        <td>Long-term archival</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Triple-Signature Credentials</h2>
+  <p>P31 Cognitive Passports use triple-signature credentials for maximum security:</p>
+  <ol>
+    <li><strong>Ed25519</strong> — Classical signature (fast, widely supported)</li>
+    <li><strong>ML-DSA-65</strong> — Post-quantum lattice-based signature</li>
+    <li><strong>SLH-DSA-128s</strong> — Hash-based signature for long-term security</li>
+  </ol>
+
+  <div class="callout callout-info">
+    <div class="callout-title">Defense in Depth</div>
+    <p>Triple signatures ensure that even if one algorithm is compromised, the credential remains valid. This provides security against both classical and quantum adversaries.</p>
+  </div>
+
+  <h2>Usage in Workers</h2>
+  <pre><code>import {'{'} ml_kem768 {'}'} from '@noble/post-quantum/ml-kem.js';
+import {'{'} ml_dsa65 {'}'} from '@noble/post-quantum/ml-dsa.js';
+
+// Key encapsulation
+const kp = ml_kem768.keygen();
+const {'{'} cipherText, sharedSecret {'}'} = ml_kem768.encapsulate(kp.publicKey);
+const decapped = ml_kem768.decapsulate(cipherText, kp.secretKey);
+
+// Digital signature
+const msg = new TextEncoder().encode('document');
+const sig = ml_dsa65.sign(msg, kp.secretKey);
+const valid = ml_dsa65.verify(sig, msg, kp.publicKey);</code></pre>
+
+  <h2>DID Integration</h2>
+  <p>P31 DIDs support multiple key types:</p>
+  <ul>
+    <li><strong>did:key</strong> — Ed25519 (primary, Web Crypto)</li>
+    <li><strong>did:jwk</strong> — ML-DSA-65 (encoded as <code>kty:AKP</code>, RFC 9964)</li>
+    <li><strong>did:web</strong> — HTTPS domain resolution (DID Core v1.1 §8.3)</li>
+  </ul>
+
+  <h2>Migration Path</h2>
+  <p>The P31 stack supports hybrid classical + post-quantum cryptography during the transition period:</p>
+  <ol>
+    <li>Ed25519 signatures remain valid</li>
+    <li>ML-DSA-65 co-signatures are added incrementally</li>
+    <li>SLH-DSA-128s used for archival and high-value credentials</li>
+    <li>Full quantum-safe migration by 2030 (NIST timeline)</li>
+  </ol>
+
+  <h2>Testing</h2>
+  <p>PQC operations are tested with Vitest. Run the test suite:</p>
+  <pre><code>cd production/shell
+pnpm test src/__tests__/pqc-eudi.test.ts</code></pre>
+
+  <div class="last-updated">Last updated: August 2026</div>
+</DocsLayout>
+
+<style>
+  .lead {
+    font-size: 18px;
+    color: var(--t2);
+    margin-bottom: 32px;
+    line-height: 1.7;
+  }
+</style>

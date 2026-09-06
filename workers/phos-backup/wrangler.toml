@@ -1,0 +1,27 @@
+name = "phos-backup"
+main = "index.ts"
+compatibility_date = "2026-07-16"
+compatibility_flags = ["nodejs_compat"]
+
+# R2 bucket for cold backups
+[[r2_buckets]]
+binding = "PHOS_BACKUPS"
+bucket_name = "phos-d1-backups"
+
+# LOVE ledger D1 database
+[[d1_databases]]
+binding = "LOVE_DB"
+database_name = "love-ledger"
+database_id = "592e3e2e-3203-4e0a-8342-9e85215ec8a6"
+
+# Daily cron 0 2 * * * — implemented in index.ts (scheduled handler). Enabled
+# now that love-ledger's "0 */6 * * *" archive cron was dropped to free a
+# Free Plan cron slot.
+[triggers]
+crons = ["0 2 * * *"]
+
+[observability]
+enabled = true
+
+[cache]
+enabled = true

@@ -1,0 +1,18 @@
+name = "artifact-registry"
+main = "src/index.ts"
+compatibility_date = "2026-07-16"
+
+[[durable_objects.bindings]]
+name = "ARTIFACT_REGISTRY"
+class_name = "ArtifactRegistryDO"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["ArtifactRegistryDO"]
+
+[observability]
+enabled = true
+head_sampling_rate = 1.0
+
+[cache]
+enabled = true

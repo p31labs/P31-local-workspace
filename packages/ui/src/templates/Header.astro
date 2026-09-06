@@ -1,0 +1,23 @@
+---
+export interface Props {
+  brandSlot?: any;
+  navSlot?: any;
+  actionsSlot?: any;
+}
+const { brandSlot, navSlot, actionsSlot } = Astro.props;
+---
+
+<header
+  class="w-full"
+  style="height: var(--p31-header-h); display: flex; align-items: center; justify-content: space-between; padding-top: var(--p31-space-xs); padding-bottom: var(--p31-space-xs); gap: var(--p31-space-sm); max-width: var(--p31-max-width-xl); margin: 0 auto;"
+>
+  <div class="flex items-center" style="flex: 0 0 auto;">
+    {brandSlot && <slot name="brand-slot">{brandSlot}</slot>}
+  </div>
+  <nav class="flex items-center" style="flex: 1 1 auto; justify-content: center;" aria-label="Main navigation">
+    {navSlot && <slot name="nav-slot">{navSlot}</slot>}
+  </nav>
+  <div class="flex items-center" style="flex: 0 0 auto;">
+    {actionsSlot && <slot name="actions-slot">{actionsSlot}</slot>}
+  </div>
+</header>

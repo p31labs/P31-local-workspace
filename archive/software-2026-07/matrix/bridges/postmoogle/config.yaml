@@ -1,0 +1,72 @@
+# Postmoogle — Matrix email bridge for P31 court notification resilience
+# Docs: https://gitlab.com/etke.cc/postmoogle
+# Gap G: court email → Matrix room pipeline
+
+homeserver:
+  address: http://synapse:8008
+  domain: p31ca.org
+
+appservice:
+  address: http://bridge-postmoogle:25252
+  hostname: 0.0.0.0
+  port: 25252
+  id: postmoogle
+  bot_username: postmoogle
+  bot_displayname: "Court Alerts"
+  bot_avatar: mxc://maunium.net/TqQJFSgxBFLFQJIyYdTfExvJ
+  as_token: "${BRIDGE_POSTMOOGLE_AS_TOKEN}"
+  hs_token: "${BRIDGE_POSTMOOGLE_HS_TOKEN}"
+  database: /data/postmoogle.db
+
+# ── SMTP server (receives forwarded court emails) ─────────────────────
+smtp:
+  host: 0.0.0.0
+  port: 25
+  domain: postmoogle.p31ca.org
+  # TLS cert from Caddy volume
+  tls_cert: /data/tls/cert.pem
+  tls_key: /data/tls/key.pem
+
+# ── Relay (outbound — uses Gmail SMTP for sending) ────────────────────
+relay:
+  host: smtp.gmail.com
+  port: 587
+  username: will@p31ca.org
+  password: "${POSTMOOGLE_GMAIL_APP_PASSWORD}"
+  tls: starttls
+
+# ── Users ─────────────────────────────────────────────────────────────
+users:
+  - "@will:p31ca.org"
+
+# ── Permissions ───────────────────────────────────────────────────────
+allowlist:
+  - "*@camdencountyga.gov"
+  - "*@peachecourt.com"
+  - "*@enotifyme.com"
+  - "*@camdencounty.ga.gov"
+  - "*"   # accept all — DM bot to configure per-sender rooms
+
+# ── Bridge settings ───────────────────────────────────────────────────
+bridge:
+  subject_prefix: "[Email]"
+  # Auto-create rooms for incoming mail
+  rooms:
+    auto_create: true
+    # Court emails get dedicated rooms, others are threaded
+    dedicated_room_domains:
+      - camdencountyga.gov
+      - peachecourt.com
+      - enotifyme.com
+      - courts.ga.gov
+  # Archive timestamp in room name: critical for evidence chain
+  message_format: |
+    **From:** {{.From}}
+    **To:** {{.To}}
+    **Date:** {{.Date}}
+    **Subject:** {{.Subject}}
+    ---
+    {{.Body}}
+  encryption:
+    allow: false   # Evidence rooms must be readable without E2EE key import
+    default: false

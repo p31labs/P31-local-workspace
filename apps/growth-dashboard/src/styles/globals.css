@@ -1,0 +1,33 @@
+@import '@p31/design-core/css/base.css';
+@import '@p31/design-core/css/glass.css';
+@import '@p31/design-core/css/motion.css';
+@import '@p31/design-core/css/typography.css';
+@import '@p31/design-core/css/size-class.css';
+@import 'tailwindcss';
+
+@theme {
+  --color-void: var(--p31-void);
+  --color-void-deep: var(--p31-void-deep);
+  --color-surface: var(--p31-surface);
+  --color-surface2: var(--p31-surface2);
+  --color-cloud: var(--p31-text-secondary);
+  --color-ink: var(--p31-text-primary);
+  --color-muted: var(--p31-text-tertiary);
+  --color-quantum-cyan: var(--p31-accent);
+  --color-quantum-violet: var(--p31-accent-violet);
+  --color-quantum-gold: var(--p31-accent-gold);
+  --color-quantum-green: var(--p31-accent-green);
+  --color-quantum-red: var(--p31-accent-red);
+  --color-void-raised: var(--p31-surface);
+  --font-heading: var(--p31-font-mono);
+  --font-body: var(--p31-font-sans);
+  --font-mono: var(--p31-font-mono);
+}
+
+body {
+  background-color: var(--p31-void);
+  color: var(--p31-text-primary);
+  font-family: var(--p31-font-sans);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}

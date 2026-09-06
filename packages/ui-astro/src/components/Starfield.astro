@@ -1,0 +1,19 @@
+---
+interface Props {
+  spoons?: number;
+  voltage?: string;
+  safeMode?: boolean;
+  class?: string;
+}
+
+const { spoons, voltage, safeMode, class: className = '' } = Astro.props;
+---
+<div
+  class:list={['starfield-bg', className]}
+  data-spoons={spoons}
+  data-voltage={voltage}
+  data-safe-mode={safeMode}
+  aria-hidden="true"
+>
+  <canvas aria-hidden="true"></canvas>
+</div>

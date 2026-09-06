@@ -1,0 +1,3072 @@
+{
+  "$schema": "https://p31.ca/schemas/design-system.json",
+  "version": "3.1-willow",
+  "metadata": {
+    "name": "p31-quantum",
+    "description": "P31 Labs Quantum Design System — mathematically perfect, visually breathtaking",
+    "philosophy": "Everything derives from 16px × (4/3)^n, timed to 863 Hz.\nOne base. One ratio. Infinite scale.\n",
+    "canonical_constants": {
+      "base_unit": "16px",
+      "tetrahedral_ratio": 1.3333,
+      "golden_ratio": 1.618,
+      "larmor_hz": 863,
+      "sic_povm_overlap": 0.3333,
+      "k4_vertices": 4,
+      "beta_squared": 1,
+      "ei_number": "42-1888158"
+    }
+  },
+  "tokens": {
+    "root": {
+      "base_unit": {
+        "$type": "dimension",
+        "$value": "16px"
+      },
+      "tetrahedral_ratio": {
+        "$type": "number",
+        "$value": 1.3333
+      },
+      "golden_ratio": {
+        "$type": "number",
+        "$value": 1.618
+      },
+      "larmor_hz": {
+        "$type": "number",
+        "$value": 863
+      },
+      "sic_povm_overlap": {
+        "$type": "number",
+        "$value": 0.3333
+      },
+      "k4_vertices": {
+        "$type": "number",
+        "$value": 4
+      },
+      "beta_squared": {
+        "$type": "number",
+        "$value": 1
+      }
+    },
+    "scale": {
+      "xs": {
+        "$type": "dimension",
+        "$description": "Step -1: 12px",
+        "$value": "calc(var(--p31-base) * 0.75)"
+      },
+      "sm": {
+        "$type": "dimension",
+        "$description": "Step 0: 16px",
+        "$value": "var(--p31-base)"
+      },
+      "md": {
+        "$type": "dimension",
+        "$description": "Step +1: 21px",
+        "$value": "calc(var(--p31-base) * 1.3333)"
+      },
+      "lg": {
+        "$type": "dimension",
+        "$description": "Step +2: 28px",
+        "$value": "calc(var(--p31-base) * 1.7777)"
+      },
+      "xl": {
+        "$type": "dimension",
+        "$description": "Step +3: 38px",
+        "$value": "calc(var(--p31-base) * 2.3703)"
+      },
+      "2xl": {
+        "$type": "dimension",
+        "$description": "Step +4: 50px",
+        "$value": "calc(var(--p31-base) * 3.1604)"
+      },
+      "3xl": {
+        "$type": "dimension",
+        "$description": "Step +5: 67px",
+        "$value": "calc(var(--p31-base) * 4.2139)"
+      },
+      "4xl": {
+        "$type": "dimension",
+        "$description": "Step +6: 90px",
+        "$value": "calc(var(--p31-base) * 5.6186)"
+      }
+    },
+    "spacing": {
+      "xs": {
+        "$type": "dimension",
+        "$value": "clamp(var(--p31-scale-xs), 1vw, var(--p31-scale-sm))"
+      },
+      "sm": {
+        "$type": "dimension",
+        "$value": "clamp(var(--p31-scale-sm), 1.5vw, var(--p31-scale-md))"
+      },
+      "md": {
+        "$type": "dimension",
+        "$value": "clamp(var(--p31-scale-md), 2.5vw, var(--p31-scale-lg))"
+      },
+      "lg": {
+        "$type": "dimension",
+        "$value": "clamp(var(--p31-scale-lg), 3.5vw, var(--p31-scale-xl))"
+      },
+      "xl": {
+        "$type": "dimension",
+        "$value": "clamp(var(--p31-scale-xl), 5vw, var(--p31-scale-2xl))"
+      },
+      "2xl": {
+        "$type": "dimension",
+        "$value": "clamp(var(--p31-scale-2xl), 6.5vw, var(--p31-scale-3xl))"
+      },
+      "3xl": {
+        "$type": "dimension",
+        "$value": "clamp(var(--p31-scale-3xl), 8vw, var(--p31-scale-4xl))"
+      }
+    },
+    "typography": {
+      "base_unit": {
+        "$type": "dimension",
+        "$value": "var(--p31-base)"
+      },
+      "scale_ratio": {
+        "$type": "number",
+        "$value": 1.3333
+      },
+      "font_family": {
+        "sans": {
+          "$type": "fontFamily",
+          "$value": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+        },
+        "mono": {
+          "$type": "fontFamily",
+          "$value": "ui-monospace, SFMono-Regular, 'Fira Code', 'Fira Mono', 'Roboto Mono', 'JetBrains Mono', Menlo, Monaco, Consolas, monospace"
+        },
+        "inter": {
+          "$type": "fontFamily",
+          "$description": "Modern, tech-forward sans-serif for p31ca (the edgy twin)",
+          "$value": "'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif"
+        },
+        "atkinson": {
+          "$type": "fontFamily",
+          "$description": "Accessibility-first sans-serif for phosphorus31 (the accessible twin)",
+          "$value": "'Atkinson Hyperlegible', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif"
+        }
+      },
+      "size": {
+        "caption": {
+          "$type": "dimension",
+          "$value": "clamp(var(--p31-scale-xs), 0.8vw, var(--p31-scale-sm))"
+        },
+        "body": {
+          "$type": "dimension",
+          "$value": "clamp(calc(var(--p31-base) * 0.95), 1vw + 0.5rem, var(--p31-scale-sm))"
+        },
+        "label": {
+          "$type": "dimension",
+          "$value": "var(--p31-scale-sm)"
+        },
+        "h3": {
+          "$type": "dimension",
+          "$value": "clamp(var(--p31-scale-md), 2vw, var(--p31-scale-lg))"
+        },
+        "h2": {
+          "$type": "dimension",
+          "$value": "clamp(var(--p31-scale-lg), 3.5vw, var(--p31-scale-xl))"
+        },
+        "h1": {
+          "$type": "dimension",
+          "$value": "clamp(var(--p31-scale-xl), 5.6vw, var(--p31-scale-2xl))"
+        },
+        "display": {
+          "$type": "dimension",
+          "$value": "clamp(var(--p31-scale-2xl), 7vw, var(--p31-scale-3xl))"
+        }
+      },
+      "line_height": {
+        "tight": {
+          "$type": "number",
+          "$value": 1.1
+        },
+        "normal": {
+          "$type": "number",
+          "$value": 1.6
+        },
+        "loose": {
+          "$type": "number",
+          "$value": 1.8
+        }
+      },
+      "letter_spacing": {
+        "tight": {
+          "$type": "string",
+          "$value": "-0.02em"
+        },
+        "normal": {
+          "$type": "string",
+          "$value": "0em"
+        },
+        "wide": {
+          "$type": "string",
+          "$value": "0.05em"
+        }
+      },
+      "weight": {
+        "light": {
+          "$type": "number",
+          "$value": 300
+        },
+        "normal": {
+          "$type": "number",
+          "$value": 400
+        },
+        "medium": {
+          "$type": "number",
+          "$value": 500
+        },
+        "semibold": {
+          "$type": "number",
+          "$value": 600
+        },
+        "bold": {
+          "$type": "number",
+          "$value": 700
+        },
+        "extrabold": {
+          "$type": "number",
+          "$value": 800
+        }
+      }
+    },
+    "animation": {
+      "larmor_hz": {
+        "$type": "number",
+        "$value": 863
+      },
+      "speed_factor": {
+        "$type": "number",
+        "$description": "Global animation speed multiplier (0–1). Applied as calc(var(--p31-duration-*) * var(--p31-speed-factor)). Set via data-spoons: 0→0, 1→0, 2→0.25, 3→0.5, 4→0.75, 5→1",
+        "$value": 1
+      },
+      "duration": {
+        "fast": {
+          "$type": "duration",
+          "$value": "100ms"
+        },
+        "normal": {
+          "$type": "duration",
+          "$value": "300ms"
+        },
+        "slow": {
+          "$type": "duration",
+          "$value": "500ms"
+        }
+      },
+      "easing": {
+        "smooth": {
+          "$type": "string",
+          "$value": "cubic-bezier(0.4, 0, 0.2, 1)"
+        },
+        "snappy": {
+          "$type": "string",
+          "$value": "cubic-bezier(0.34, 1.56, 0.64, 1)"
+        },
+        "linear": {
+          "$type": "string",
+          "$value": "linear"
+        }
+      },
+      "k4_vertex_pulse": {
+        "duration": {
+          "$type": "duration",
+          "$value": "2000ms"
+        },
+        "easing": {
+          "$type": "string",
+          "$value": "cubic-bezier(0.4, 0, 0.2, 1)"
+        },
+        "min_radius": {
+          "$type": "dimension",
+          "$value": "5px"
+        },
+        "max_radius": {
+          "$type": "dimension",
+          "$value": "7px"
+        },
+        "stagger_offset": {
+          "$type": "duration",
+          "$value": "300ms"
+        }
+      },
+      "k4_edge_draw": {
+        "duration": {
+          "$type": "duration",
+          "$value": "3000ms"
+        },
+        "easing": {
+          "$type": "string",
+          "$value": "linear"
+        },
+        "delay_offset": {
+          "$type": "duration",
+          "$value": "500ms"
+        }
+      },
+      "k4_orbit": {
+        "duration": {
+          "$type": "duration",
+          "$value": "12000ms"
+        },
+        "easing": {
+          "$type": "string",
+          "$value": "linear"
+        }
+      }
+    },
+    "shadow": {
+      "none": {
+        "$type": "shadow",
+        "$value": "none"
+      },
+      "xs": {
+        "$type": "shadow",
+        "$value": "0 1px 2px 0 rgba(0, 0, 0, 0.05)"
+      },
+      "sm": {
+        "$type": "shadow",
+        "$value": "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)"
+      },
+      "md": {
+        "$type": "shadow",
+        "$value": "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)"
+      },
+      "lg": {
+        "$type": "shadow",
+        "$value": "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)"
+      },
+      "glow": {
+        "$type": "shadow",
+        "$value": "0 0 20px rgba(0, 240, 255, 0.4)"
+      }
+    },
+    "border": {
+      "width": {
+        "thin": {
+          "$type": "dimension",
+          "$value": "1px"
+        },
+        "normal": {
+          "$type": "dimension",
+          "$value": "2px"
+        },
+        "thick": {
+          "$type": "dimension",
+          "$value": "3px"
+        }
+      },
+      "radius": {
+        "none": {
+          "$type": "dimension",
+          "$value": "0"
+        },
+        "xs": {
+          "$type": "dimension",
+          "$value": "calc(var(--p31-scale-xs) / 2)"
+        },
+        "sm": {
+          "$type": "dimension",
+          "$value": "calc(var(--p31-scale-sm) / 2)"
+        },
+        "md": {
+          "$type": "dimension",
+          "$value": "calc(var(--p31-scale-md) / 2)"
+        },
+        "lg": {
+          "$type": "dimension",
+          "$value": "calc(var(--p31-scale-lg) / 2)"
+        },
+        "xl": {
+          "$type": "dimension",
+          "$value": "calc(var(--p31-scale-xl) / 2)"
+        },
+        "full": {
+          "$type": "dimension",
+          "$value": "9999px"
+        }
+      }
+    },
+    "breakpoints": {
+      "mobile": {
+        "$type": "dimension",
+        "$value": "0px"
+      },
+      "tablet": {
+        "$type": "dimension",
+        "$value": "768px"
+      },
+      "desktop": {
+        "$type": "dimension",
+        "$value": "1024px"
+      },
+      "wide": {
+        "$type": "dimension",
+        "$value": "1440px"
+      },
+      "ultrawide": {
+        "$type": "dimension",
+        "$value": "1920px"
+      }
+    },
+    "primitive": {
+      "color": {
+        "cyan": {
+          "$type": "color",
+          "$value": "oklch(65% 0.18 195)"
+        },
+        "violet": {
+          "$type": "color",
+          "$value": "oklch(65% 0.18 285)"
+        },
+        "gold": {
+          "$type": "color",
+          "$value": "oklch(65% 0.18 15)"
+        },
+        "green": {
+          "$type": "color",
+          "$value": "oklch(65% 0.18 105)"
+        },
+        "red": {
+          "$type": "color",
+          "$value": "oklch(65% 0.18 20)"
+        },
+        "iris": {
+          "$type": "color",
+          "$value": "oklch(65% 0.18 270)"
+        },
+        "void_deep": {
+          "$type": "color",
+          "$value": "oklch(8% 0.01 240)"
+        },
+        "void": {
+          "$type": "color",
+          "$value": "oklch(10% 0.01 240)"
+        },
+        "surface": {
+          "$type": "color",
+          "$value": "oklch(15% 0.015 240)"
+        },
+        "surface2": {
+          "$type": "color",
+          "$value": "oklch(22% 0.02 240)"
+        },
+        "text_primary": {
+          "$type": "color",
+          "$value": "oklch(96% 0.005 240)"
+        },
+        "text_secondary": {
+          "$type": "color",
+          "$description": "Raised from L75→L80: APCA body-text ≥60 on dark surfaces",
+          "$value": "oklch(80% 0.01 240)"
+        },
+        "text_tertiary": {
+          "$type": "color",
+          "$description": "Raised from L55→L78: APCA body-text ≥60 on dark surfaces",
+          "$value": "oklch(78% 0.01 240)"
+        },
+        "glass_surface": {
+          "$type": "color",
+          "$value": "oklch(100% 0.01 240 / 0.04)"
+        },
+        "glass_border": {
+          "$type": "color",
+          "$value": "oklch(100% 0.01 240 / 0.08)"
+        },
+        "glass_border_hover": {
+          "$type": "color",
+          "$value": "oklch(100% 0.01 240 / 0.15)"
+        },
+        "glass_surface_strong": {
+          "$type": "color",
+          "$value": "oklch(100% 0.01 240 / 0.08)"
+        },
+        "glass_surface_subtle": {
+          "$type": "color",
+          "$value": "oklch(100% 0.01 240 / 0.03)"
+        },
+        "glass_surface_body": {
+          "$type": "color",
+          "$description": "Shell --p31-glass-bg: body cards, starfield visible",
+          "$value": "oklch(100% 0.01 75 / 0.18)"
+        },
+        "glass_surface_strong_tier": {
+          "$type": "color",
+          "$description": "Shell --p31-glass-bg-strong: elevated overlays",
+          "$value": "oklch(100% 0.01 75 / 0.22)"
+        },
+        "glass_surface_overlay": {
+          "$type": "color",
+          "$description": "Shell --p31-glass-bg-overlay: drawers, overlays",
+          "$value": "oklch(100% 0.01 75 / 0.10)"
+        },
+        "glass_surface_light_tier": {
+          "$type": "color",
+          "$description": "Shell --p31-glass-bg-light: light glass",
+          "$value": "oklch(100% 0.01 75 / 0.10)"
+        },
+        "glass_border_tier": {
+          "$type": "color",
+          "$description": "Shell --p31-glass-border",
+          "$value": "oklch(100% 0.01 75 / 0.16)"
+        },
+        "glass_border_hover_tier": {
+          "$type": "color",
+          "$description": "Shell --p31-glass-border-hover",
+          "$value": "oklch(100% 0.01 75 / 0.25)"
+        },
+        "starfield_hearth": {
+          "$type": "color",
+          "$description": "Warm coral hearth glow for starfield ambient layer",
+          "$value": "oklch(55% 0.15 35)"
+        },
+        "starfield_teal": {
+          "$type": "color",
+          "$description": "Cool teal ambient glow for starfield upper layer",
+          "$value": "oklch(60% 0.08 185)"
+        },
+        "starfield_remembrance": {
+          "$type": "color",
+          "$description": "Warm white fixed-position remembrance stars",
+          "$value": "oklch(95% 0.01 80)"
+        },
+        "starfield_particle_teal": {
+          "$type": "color",
+          "$value": "oklch(70% 0.12 185 / 0.6)"
+        },
+        "starfield_particle_coral": {
+          "$type": "color",
+          "$value": "oklch(65% 0.14 40 / 0.5)"
+        },
+        "neon_cyan": {
+          "$type": "color",
+          "$description": "#00FFFF — primary phosphor cyan (LED mode default)",
+          "$value": "oklch(90.5% 0.155 194.8)"
+        },
+        "neon_magenta": {
+          "$type": "color",
+          "$description": "#FF00FF — phosphor magenta (secondary rail)",
+          "$value": "oklch(70.2% 0.322 328.4)"
+        },
+        "neon_violet": {
+          "$type": "color",
+          "$description": "#BF5FFF — phosphor violet (bonding axis)",
+          "$value": "oklch(67.0% 0.234 309.1)"
+        },
+        "neon_amber": {
+          "$type": "color",
+          "$description": "#FFD700 — phosphor amber (DUNA board, warnings)",
+          "$value": "oklch(88.7% 0.182 95.3)"
+        },
+        "neon_mint": {
+          "$type": "color",
+          "$description": "#00FF88 — phosphor mint (coherence, success)",
+          "$value": "oklch(87.6% 0.228 152.5)"
+        },
+        "neon_coral": {
+          "$type": "color",
+          "$description": "#FF6B6B — phosphor coral (error, tension)",
+          "$value": "oklch(71.2% 0.181 22.8)"
+        },
+        "neon_orange": {
+          "$type": "color",
+          "$description": "#FF8C42 — phosphor orange (heat, engagement)",
+          "$value": "oklch(75.4% 0.164 50.4)"
+        },
+        "neon_blue": {
+          "$type": "color",
+          "$description": "#00D4FF — phosphor blue (relay, mesh links)",
+          "$value": "oklch(80.4% 0.146 219.5)"
+        },
+        "neon_lavender": {
+          "$type": "color",
+          "$description": "#7A27FF raised from L53.9→L62 for APCA non-text ≥30 on void",
+          "$value": "oklch(62% 0.279 290.8)"
+        },
+        "neon_pink": {
+          "$type": "color",
+          "$description": "#FF00CC — phosphor pink (creative axis)",
+          "$value": "oklch(67.4% 0.293 340.4)"
+        },
+        "neon_dim": {
+          "$type": "color",
+          "$description": "Neon cyan at 35% alpha — secondary text on dark",
+          "$value": "oklch(90.5% 0.155 194.8 / 0.35)"
+        },
+        "neon_faint": {
+          "$type": "color",
+          "$description": "Neon cyan at 8% alpha — borders, dividers",
+          "$value": "oklch(90.5% 0.155 194.8 / 0.08)"
+        },
+        "neon_ghost": {
+          "$type": "color",
+          "$description": "Neon cyan at 3% alpha — glass card surface",
+          "$value": "oklch(90.5% 0.155 194.8 / 0.03)"
+        },
+        "void_s1": {
+          "$type": "color",
+          "$description": "Ship --s1: absolute OLED black",
+          "$value": "oklch(0% 0 0)"
+        },
+        "void_s2": {
+          "$type": "color",
+          "$description": "Ship --s2: #0a0a0a",
+          "$value": "oklch(4.9% 0 0)"
+        },
+        "void_s3": {
+          "$type": "color",
+          "$description": "Ship --s3: #111111",
+          "$value": "oklch(6.9% 0 0)"
+        },
+        "void_s4": {
+          "$type": "color",
+          "$description": "Ship --s4: #1a1a1a",
+          "$value": "oklch(10.5% 0 0)"
+        }
+      },
+      "spacing": {
+        "xs": {
+          "$type": "dimension",
+          "$value": "clamp(var(--p31-scale-xs), 1vw, var(--p31-scale-sm))"
+        },
+        "sm": {
+          "$type": "dimension",
+          "$value": "clamp(var(--p31-scale-sm), 1.5vw, var(--p31-scale-md))"
+        },
+        "md": {
+          "$type": "dimension",
+          "$value": "clamp(var(--p31-scale-md), 2.5vw, var(--p31-scale-lg))"
+        },
+        "lg": {
+          "$type": "dimension",
+          "$value": "clamp(var(--p31-scale-lg), 3.5vw, var(--p31-scale-xl))"
+        },
+        "xl": {
+          "$type": "dimension",
+          "$value": "clamp(var(--p31-scale-xl), 5vw, var(--p31-scale-2xl))"
+        },
+        "xxl": {
+          "$type": "dimension",
+          "$value": "{spacing.2xl}"
+        }
+      },
+      "radius": {
+        "sm": {
+          "$type": "dimension",
+          "$value": "calc(var(--p31-scale-sm) / 2)"
+        },
+        "md": {
+          "$type": "dimension",
+          "$value": "calc(var(--p31-scale-md) / 2)"
+        },
+        "lg": {
+          "$type": "dimension",
+          "$value": "calc(var(--p31-scale-lg) / 2)"
+        },
+        "xl": {
+          "$type": "dimension",
+          "$value": "calc(var(--p31-scale-xl) / 2)"
+        },
+        "full": {
+          "$type": "dimension",
+          "$value": "9999px"
+        }
+      },
+      "typography": {
+        "font_sans": {
+          "$type": "fontFamily",
+          "$value": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+        },
+        "font_mono": {
+          "$type": "fontFamily",
+          "$value": "ui-monospace, SFMono-Regular, 'Fira Code', 'Fira Mono', 'Roboto Mono', 'JetBrains Mono', Menlo, Monaco, Consolas, monospace"
+        }
+      },
+      "blur": {
+        "subtle": {
+          "$type": "dimension",
+          "$value": "8px"
+        },
+        "standard": {
+          "$type": "dimension",
+          "$value": "12px"
+        },
+        "strong": {
+          "$type": "dimension",
+          "$value": "24px"
+        }
+      },
+      "shadow": {
+        "glass": {
+          "$type": "shadow",
+          "$value": "0 8px 32px rgba(0,0,0,0.15)"
+        },
+        "glow_cyan": {
+          "$type": "shadow",
+          "$value": "0 0 20px rgba(0,240,255,0.25)"
+        },
+        "glow_cyan_hover": {
+          "$type": "shadow",
+          "$value": "0 0 30px rgba(0,240,255,0.4)"
+        },
+        "glow_neon": {
+          "$type": "shadow",
+          "$description": "Ship --glow-cyan: neon phosphor glow preset",
+          "$value": "0 0 6px oklch(90.5% 0.155 194.8), 0 0 20px oklch(90.5% 0.155 194.8 / 0.3)"
+        },
+        "glow_magenta": {
+          "$type": "shadow",
+          "$value": "0 0 6px oklch(70.2% 0.322 328.4), 0 0 20px oklch(70.2% 0.322 328.4 / 0.3)"
+        },
+        "glow_violet": {
+          "$type": "shadow",
+          "$value": "0 0 6px oklch(67.0% 0.234 309.1), 0 0 20px oklch(67.0% 0.234 309.1 / 0.3)"
+        },
+        "glow_amber": {
+          "$type": "shadow",
+          "$value": "0 0 6px oklch(88.7% 0.182 95.3), 0 0 20px oklch(88.7% 0.182 95.3 / 0.3)"
+        },
+        "glow_mint": {
+          "$type": "shadow",
+          "$value": "0 0 6px oklch(87.6% 0.228 152.5), 0 0 20px oklch(87.6% 0.228 152.5 / 0.3)"
+        },
+        "glow_coral": {
+          "$type": "shadow",
+          "$value": "0 0 6px oklch(71.2% 0.181 22.8), 0 0 20px oklch(71.2% 0.181 22.8 / 0.3)"
+        }
+      }
+    },
+    "semantic": {
+      "color": {
+        "background": {
+          "default": "oklch(10% 0.01 240)",
+          "alt": "oklch(15% 0.015 240)"
+        },
+        "accent": {
+          "default": "oklch(65% 0.18 195)",
+          "variant": "oklch(65% 0.18 285)",
+          "gold": "oklch(65% 0.18 15)",
+          "green": "oklch(65% 0.18 105)",
+          "red": "oklch(65% 0.18 20)",
+          "iris": "oklch(65% 0.18 270)"
+        },
+        "text": {
+          "primary": "oklch(96% 0.005 240)",
+          "secondary": "oklch(80% 0.01 240)",
+          "tertiary": "oklch(78% 0.01 240)"
+        },
+        "status": {
+          "online": "oklch(65% 0.18 105)",
+          "offline": "oklch(78% 0.01 240)",
+          "warning": "oklch(65% 0.18 15)",
+          "error": "oklch(65% 0.18 20)",
+          "info": "oklch(65% 0.18 195)"
+        },
+        "neon": {
+          "base": "oklch(90.5% 0.155 194.8)",
+          "dim": "oklch(90.5% 0.155 194.8 / 0.35)",
+          "faint": "oklch(90.5% 0.155 194.8 / 0.08)",
+          "ghost": "oklch(90.5% 0.155 194.8 / 0.03)"
+        }
+      }
+    },
+    "component": {
+      "glass_panel": {
+        "background": "oklch(100% 0.01 240 / 0.04)",
+        "backdrop_filter": "blur(12px)",
+        "webkit_backdrop_filter": "blur(12px)",
+        "border": "1px solid oklch(100% 0.01 240 / 0.08)",
+        "border_radius": "calc(var(--p31-scale-xl) / 2)",
+        "box_shadow": "0 8px 32px rgba(0,0,0,0.15)"
+      },
+      "header_candy": {
+        "background": "rgba(57,255,20,0.12)",
+        "backdrop_filter": "blur(16px)",
+        "webkit_backdrop_filter": "blur(16px)",
+        "border": "1px solid rgba(0,240,255,0.8)",
+        "border_radius": "16px",
+        "box_shadow": "0 0 30px rgba(0,240,255,0.25), inset 0 0 20px rgba(57,255,20,0.15)",
+        "max_width": "1440px",
+        "padding_x": "16px",
+        "padding_y": "4px",
+        "offset_top": "12px"
+      },
+      "crown_xs": {
+        "width": "calc(var(--p31-base) * 2.5)",
+        "height": "calc(var(--p31-base) * 2.5)"
+      },
+      "spoon_icon": {
+        "width": "18px",
+        "height": "18px",
+        "gap": "calc(var(--p31-base) * 0.25)"
+      },
+      "glass_card": {
+        "background": "oklch(100% 0.01 240 / 0.04)",
+        "backdrop_filter": "blur(12px)",
+        "webkit_backdrop_filter": "blur(12px)",
+        "border": "1px solid oklch(100% 0.01 240 / 0.08)",
+        "border_radius": "calc(var(--p31-scale-xl) / 2)",
+        "padding": "clamp(var(--p31-scale-lg), 3.5vw, var(--p31-scale-xl))",
+        "box_shadow": "0 8px 32px rgba(0,0,0,0.15)",
+        "border_hover": "oklch(100% 0.01 240 / 0.15)"
+      },
+      "glass_strong": {
+        "background": "oklch(100% 0.01 240 / 0.08)",
+        "backdrop_filter": "blur(24px)",
+        "webkit_backdrop_filter": "blur(24px)",
+        "border": "1px solid rgba(255,255,255,0.12)",
+        "border_radius": "calc(var(--p31-scale-xl) / 2)"
+      },
+      "glass_subtle": {
+        "background": "oklch(100% 0.01 240 / 0.03)",
+        "backdrop_filter": "blur(8px)",
+        "webkit_backdrop_filter": "blur(8px)",
+        "border": "1px solid rgba(255,255,255,0.06)",
+        "border_radius": "calc(var(--p31-scale-xl) / 2)"
+      },
+      "btn_primary": {
+        "background": "oklch(65% 0.18 195)",
+        "color": "oklch(10% 0.01 240)",
+        "font_weight": "700",
+        "padding": "clamp(var(--p31-scale-sm), 1.5vw, var(--p31-scale-md)) clamp(var(--p31-scale-lg), 3.5vw, var(--p31-scale-xl))",
+        "border_radius": "calc(var(--p31-scale-md) / 2)",
+        "font_size": "14px",
+        "box_shadow": "0 0 20px rgba(0,240,255,0.25)"
+      },
+      "btn_secondary": {
+        "background": "rgba(255,255,255,0.06)",
+        "color": "oklch(96% 0.005 240)",
+        "font_weight": "600",
+        "padding": "clamp(var(--p31-scale-sm), 1.5vw, var(--p31-scale-md)) clamp(var(--p31-scale-lg), 3.5vw, var(--p31-scale-xl))",
+        "border_radius": "calc(var(--p31-scale-md) / 2)",
+        "border": "1px solid rgba(255,255,255,0.1)",
+        "font_size": "14px"
+      },
+      "btn_ghost": {
+        "color": "oklch(80% 0.01 240)",
+        "font_weight": "600",
+        "padding": "clamp(var(--p31-scale-sm), 1.5vw, var(--p31-scale-md)) clamp(var(--p31-scale-lg), 3.5vw, var(--p31-scale-xl))",
+        "border_radius": "calc(var(--p31-scale-md) / 2)",
+        "font_size": "14px"
+      },
+      "starfield": {
+        "container_position": "fixed",
+        "container_inset": "0",
+        "container_z_index": "0",
+        "container_pointer_events": "none",
+        "container_bg": "oklch(8% 0.01 240)",
+        "canvas_display": "block",
+        "canvas_width": "100%",
+        "canvas_height": "100%"
+      },
+      "starfield_brand_p31ca": {
+        "hearth_color": "oklch(55% 0.15 35)",
+        "teal_color": "oklch(60% 0.08 185)",
+        "particle_count": "80",
+        "speed": "0.15"
+      },
+      "starfield_brand_phosphorus31": {
+        "hearth_color": "oklch(55% 0.10 70)",
+        "teal_color": "oklch(60% 0.06 130)",
+        "particle_count": "60",
+        "speed": "0.08"
+      }
+    },
+    "theme": {
+      "light": {
+        "background": {
+          "default": "#F8FAFC",
+          "alt": "#FFFFFF"
+        },
+        "text": {
+          "primary": "#0F172A",
+          "secondary": "rgba(15,23,42,0.6)",
+          "tertiary": "rgba(15,23,42,0.3)"
+        },
+        "glass_surface": "rgba(0,0,0,0.03)",
+        "glass_border": "rgba(0,0,0,0.08)",
+        "glass_border_hover": "rgba(0,0,0,0.15)"
+      }
+    }
+  },
+  "components": [
+    {
+      "name": "GlassPanel",
+      "description": "Glassmorphic elevated surface with backdrop blur.",
+      "css_class": "glass-panel",
+      "tool": "renderGlassPanel",
+      "aiGuidance": {
+        "useWhen": "You need a top-level surface that separates content sections with depth.",
+        "avoidWhen": "For compact inline content, use GlassCard or GlassSubtle instead.",
+        "examples": [
+          "Main content area wrapper",
+          "Settings panel container"
+        ]
+      },
+      "props": {
+        "padding": {
+          "type": "string",
+          "default": "md",
+          "options": [
+            "sm",
+            "md",
+            "lg"
+          ]
+        }
+      },
+      "slots": [
+        "default"
+      ],
+      "variants": [],
+      "tokens": {
+        "primitive.color.glass_surface": "oklch(100% 0.01 240 / 0.04)",
+        "primitive.color.glass_border": "oklch(100% 0.01 240 / 0.08)",
+        "primitive.color.surface2": "oklch(22% 0.02 240)",
+        "primitive.color.void_deep": "oklch(8% 0.01 240)",
+        "primitive.radius.xl": "calc(var(--p31-scale-xl) / 2)",
+        "primitive.radius.sm": "calc(var(--p31-scale-sm) / 2)",
+        "primitive.radius.lg": "calc(var(--p31-scale-lg) / 2)",
+        "primitive.shadow.glass": "0 8px 32px rgba(0,0,0,0.15)",
+        "primitive.spacing.xl": "clamp(var(--p31-scale-xl), 5vw, var(--p31-scale-2xl))",
+        "primitive.spacing.xxl": "{spacing.2xl}"
+      }
+    },
+    {
+      "name": "GlassCard",
+      "description": "Compact glassmorphic card with padding.",
+      "css_class": "glass-card",
+      "tool": "renderGlassCard",
+      "aiGuidance": {
+        "useWhen": "Displaying a single piece of content in a grid or list.",
+        "avoidWhen": "For full-width sections, use GlassPanel instead.",
+        "examples": [
+          "Product card in a grid",
+          "Info card in a dashboard"
+        ]
+      },
+      "props": {
+        "color": {
+          "type": "string",
+          "default": "accent",
+          "options": [
+            "accent",
+            "violet",
+            "gold",
+            "green",
+            "red"
+          ]
+        },
+        "padding": {
+          "type": "string",
+          "default": "lg",
+          "options": [
+            "sm",
+            "md",
+            "lg"
+          ]
+        },
+        "interactive": {
+          "type": "boolean",
+          "default": true
+        }
+      },
+      "slots": [
+        "default",
+        "header"
+      ],
+      "variants": [],
+      "tokens": {
+        "primitive.color.glass_surface": "oklch(100% 0.01 240 / 0.04)",
+        "primitive.color.glass_border": "oklch(100% 0.01 240 / 0.08)",
+        "primitive.color.glass_border_hover": "oklch(100% 0.01 240 / 0.15)",
+        "primitive.color.surface2": "oklch(22% 0.02 240)",
+        "primitive.color.void_deep": "oklch(8% 0.01 240)",
+        "primitive.radius.xl": "calc(var(--p31-scale-xl) / 2)",
+        "primitive.radius.sm": "calc(var(--p31-scale-sm) / 2)",
+        "primitive.radius.lg": "calc(var(--p31-scale-lg) / 2)",
+        "primitive.radius.full": "9999px",
+        "primitive.shadow.glass": "0 8px 32px rgba(0,0,0,0.15)",
+        "primitive.shadow.glow_cyan_hover": "0 0 30px rgba(0,240,255,0.4)",
+        "primitive.spacing.xs": "clamp(var(--p31-scale-xs), 1vw, var(--p31-scale-sm))",
+        "primitive.spacing.md": "clamp(var(--p31-scale-md), 2.5vw, var(--p31-scale-lg))",
+        "primitive.spacing.xl": "clamp(var(--p31-scale-xl), 5vw, var(--p31-scale-2xl))",
+        "primitive.spacing.xxl": "{spacing.2xl}",
+        "primitive.typography.font_sans": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+        "semantic.color.background.alt": "oklch(15% 0.015 240)",
+        "semantic.color.accent.gold": "oklch(65% 0.18 15)",
+        "semantic.color.accent.red": "oklch(65% 0.18 20)",
+        "semantic.color.accent.iris": "oklch(65% 0.18 270)"
+      }
+    },
+    {
+      "name": "GlassStrong",
+      "description": "High-opacity glass surface with strong blur.",
+      "css_class": "glass-strong",
+      "tool": "renderGlassStrong",
+      "aiGuidance": {
+        "useWhen": "Overlaying on busy or high-contrast backgrounds where text must remain readable.",
+        "avoidWhen": "On already-dark static backgrounds — use GlassSubtle or GlassCard instead.",
+        "examples": [
+          "Modal dialog backdrop",
+          "Floating toolbar over starfield"
+        ]
+      },
+      "props": {},
+      "slots": [
+        "default"
+      ],
+      "variants": [],
+      "tokens": {
+        "primitive.color.glass_surface_strong": "oklch(100% 0.01 240 / 0.08)",
+        "primitive.color.void_deep": "oklch(8% 0.01 240)",
+        "primitive.blur.strong": "24px",
+        "primitive.radius.xl": "calc(var(--p31-scale-xl) / 2)"
+      }
+    },
+    {
+      "name": "GlassSubtle",
+      "description": "Low-opacity glass surface with subtle blur.",
+      "css_class": "glass-subtle",
+      "tool": "renderGlassSubtle",
+      "aiGuidance": {
+        "useWhen": "Grouping related items without heavy visual weight.",
+        "avoidWhen": "For primary content areas or high-priority information.",
+        "examples": [
+          "Secondary sidebar panel",
+          "Input group wrapper"
+        ]
+      },
+      "props": {},
+      "slots": [
+        "default"
+      ],
+      "variants": [],
+      "tokens": {
+        "primitive.color.glass_surface_subtle": "oklch(100% 0.01 240 / 0.03)",
+        "primitive.color.surface2": "oklch(22% 0.02 240)",
+        "primitive.blur.subtle": "8px",
+        "primitive.radius.xl": "calc(var(--p31-scale-xl) / 2)"
+      }
+    },
+    {
+      "name": "Button",
+      "description": "Button component with primary, secondary, and ghost variants.",
+      "css_class": "btn-primary",
+      "tool": "renderButton",
+      "aiGuidance": {
+        "useWhen": "User needs to submit a form, confirm an action, or trigger a primary interaction.",
+        "avoidWhen": "Navigating between pages — use a link or TetraGrid navigation item instead.",
+        "examples": [
+          "Submit order",
+          "Save changes",
+          "Confirm deletion"
+        ]
+      },
+      "props": {
+        "variant": {
+          "type": "string",
+          "default": "primary",
+          "options": [
+            "primary",
+            "secondary",
+            "ghost"
+          ]
+        },
+        "size": {
+          "type": "string",
+          "default": "md",
+          "options": [
+            "sm",
+            "md",
+            "lg"
+          ]
+        }
+      },
+      "slots": [
+        "default"
+      ],
+      "variants": [
+        "btn-primary",
+        "btn-secondary",
+        "btn-ghost"
+      ],
+      "tokens": {
+        "semantic.color.accent.default": "oklch(65% 0.18 195)",
+        "primitive.color.void": "oklch(10% 0.01 240)",
+        "primitive.color.void_deep": "oklch(8% 0.01 240)",
+        "primitive.color.surface2": "oklch(22% 0.02 240)",
+        "primitive.spacing.sm": "clamp(var(--p31-scale-sm), 1.5vw, var(--p31-scale-md))",
+        "primitive.spacing.lg": "clamp(var(--p31-scale-lg), 3.5vw, var(--p31-scale-xl))",
+        "primitive.spacing.xl": "clamp(var(--p31-scale-xl), 5vw, var(--p31-scale-2xl))",
+        "primitive.radius.md": "calc(var(--p31-scale-md) / 2)",
+        "primitive.radius.sm": "calc(var(--p31-scale-sm) / 2)",
+        "primitive.radius.full": "9999px",
+        "primitive.shadow.glow_cyan": "0 0 20px rgba(0,240,255,0.25)",
+        "primitive.typography.font_sans": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+      }
+    },
+    {
+      "name": "SpoonMeter",
+      "description": "Real-time cognitive load indicator (0-5 scale).",
+      "css_class": "spoon-meter",
+      "tool": "renderSpoonMeter",
+      "aiGuidance": {
+        "useWhen": "Displaying current spoon level, adjusting UI density, or triggering crisis mode.",
+        "avoidWhen": "Decorative-only contexts where spoon state is irrelevant.",
+        "examples": [
+          "Header status bar",
+          "Settings accessibility panel"
+        ]
+      },
+      "props": {
+        "current": {
+          "type": "number",
+          "default": 3,
+          "range": [
+            0,
+            5
+          ]
+        },
+        "interactive": {
+          "type": "boolean",
+          "default": true
+        }
+      },
+      "slots": [],
+      "variants": [],
+      "tokens": {
+        "semantic.color.accent.default": "oklch(65% 0.18 195)",
+        "semantic.color.accent.gold": "oklch(65% 0.18 15)",
+        "semantic.color.accent.red": "oklch(65% 0.18 20)",
+        "semantic.color.accent.iris": "oklch(65% 0.18 270)",
+        "semantic.color.text.tertiary": "oklch(78% 0.01 240)",
+        "primitive.typography.font_sans": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+      }
+    },
+    {
+      "name": "TetraGrid",
+      "description": "4-column responsive grid for tetrahedral content layouts.",
+      "css_class": "tetra-grid",
+      "tool": "renderTetraGrid",
+      "aiGuidance": {
+        "useWhen": "Arranging 2-12 items in a responsive grid that collapses from 4 → 2 → 1 columns.",
+        "avoidWhen": "For two-column layouts, use a custom CSS grid instead.",
+        "examples": [
+          "Icon gallery",
+          "Feature cards",
+          "Research paper list"
+        ]
+      },
+      "props": {},
+      "slots": [
+        "default"
+      ],
+      "variants": [],
+      "tokens": {
+        "primitive.spacing.xs": "clamp(var(--p31-scale-xs), 1vw, var(--p31-scale-sm))",
+        "primitive.spacing.md": "clamp(var(--p31-scale-md), 2.5vw, var(--p31-scale-lg))",
+        "primitive.spacing.xl": "clamp(var(--p31-scale-xl), 5vw, var(--p31-scale-2xl))",
+        "primitive.spacing.xxl": "{spacing.2xl}"
+      }
+    },
+    {
+      "name": "HonestLabel",
+      "description": "Disclaimer badge for contested-science content.",
+      "css_class": "honest-label",
+      "tool": "renderHonestLabel",
+      "aiGuidance": {
+        "useWhen": "Marking content that requires scientific honesty or uncertainty disclosure.",
+        "avoidWhen": "For standard status indicators, use StatusBadge instead.",
+        "examples": [
+          "Contested research claim",
+          "Preliminary experimental result"
+        ]
+      },
+      "props": {},
+      "slots": [
+        "default"
+      ],
+      "variants": [],
+      "tokens": {
+        "primitive.typography.font_mono": "ui-monospace, SFMono-Regular, 'Fira Code', 'Fira Mono', 'Roboto Mono', 'JetBrains Mono', Menlo, Monaco, Consolas, monospace",
+        "primitive.typography.font_sans": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+        "semantic.color.text.tertiary": "oklch(78% 0.01 240)"
+      }
+    },
+    {
+      "name": "StatusBadge",
+      "description": "Status indicator badge with Live/Beta/Research variants.",
+      "css_class": "status-badge",
+      "tool": "renderStatusBadge",
+      "aiGuidance": {
+        "useWhen": "Communicating deployment status, release stage, or research phase.",
+        "avoidWhen": "For generic labels without status semantics.",
+        "examples": [
+          "Service health indicator",
+          "Release stage tag",
+          "Research phase marker"
+        ]
+      },
+      "props": {
+        "status": {
+          "type": "string",
+          "default": "live",
+          "options": [
+            "live",
+            "beta",
+            "research"
+          ]
+        }
+      },
+      "slots": [
+        "default"
+      ],
+      "variants": [
+        "status-badge-live",
+        "status-badge-beta",
+        "status-badge-research"
+      ],
+      "tokens": {
+        "semantic.color.accent.green": "oklch(65% 0.18 105)",
+        "semantic.color.accent.default": "oklch(65% 0.18 195)",
+        "semantic.color.accent.variant": "oklch(65% 0.18 285)",
+        "semantic.color.accent.gold": "oklch(65% 0.18 15)",
+        "semantic.color.accent.red": "oklch(65% 0.18 20)",
+        "semantic.color.accent.iris": "oklch(65% 0.18 270)",
+        "primitive.radius.sm": "calc(var(--p31-scale-sm) / 2)",
+        "primitive.spacing.xs": "clamp(var(--p31-scale-xs), 1vw, var(--p31-scale-sm))",
+        "primitive.typography.font_sans": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+      }
+    },
+    {
+      "name": "CrisisOverlay",
+      "description": "Full-screen breathing overlay shown when spoons=0.",
+      "css_class": "crisis-overlay",
+      "tool": "crisisOverlay",
+      "aiGuidance": {
+        "useWhen": "User spoon level reaches 0; requires immediate calming UI with a single exit action.",
+        "avoidWhen": "For non-emergency modals or informational popups.",
+        "examples": [
+          "Spoons depleted screen",
+          "Sensory overload break"
+        ]
+      },
+      "props": {
+        "message": {
+          "type": "string",
+          "default": "Rest. Breathe. The mesh holds."
+        },
+        "buttonLabel": {
+          "type": "string",
+          "default": "I'm Ready"
+        }
+      },
+      "slots": [],
+      "variants": [],
+      "tokens": {
+        "semantic.color.background.default": "oklch(10% 0.01 240)",
+        "primitive.color.void_deep": "oklch(8% 0.01 240)",
+        "primitive.typography.font_sans": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+      }
+    },
+    {
+      "name": "Starfield",
+      "description": "200-star twinkling canvas background with animation loop.",
+      "css_class": "starfield",
+      "tool": "renderStarfield",
+      "aiGuidance": {
+        "useWhen": "Adding ambient motion to the background of a hero or landing section.",
+        "avoidWhen": "When spoons=0 or prefers-reduced-motion is active — performance and accessibility.",
+        "examples": [
+          "PHOS landing background",
+          "Dashboard ambient layer"
+        ]
+      },
+      "props": {
+        "count": {
+          "type": "number",
+          "default": 200
+        },
+        "speed": {
+          "type": "number",
+          "default": 0.08
+        }
+      },
+      "slots": [],
+      "variants": [],
+      "tokens": {
+        "primitive.color.void_deep": "oklch(8% 0.01 240)",
+        "primitive.radius.full": "9999px",
+        "primitive.shadow.glow_cyan": "0 0 20px rgba(0,240,255,0.25)"
+      }
+    },
+    {
+      "name": "ThemeToggle",
+      "description": "Dark/light theme toggle button. Persists to localStorage under p31:theme.",
+      "css_class": "theme-toggle",
+      "tool": "themeToggle",
+      "aiGuidance": {
+        "useWhen": "Switching between dark and light visual themes in the header or settings.",
+        "avoidWhen": "When the app is dark-only or when theme is controlled by system preference only.",
+        "examples": [
+          "Header theme switcher",
+          "Accessibility settings"
+        ]
+      },
+      "props": {},
+      "slots": [],
+      "variants": [],
+      "tokens": {
+        "semantic.color.background.default": "oklch(10% 0.01 240)",
+        "theme.light.background.default": "#F8FAFC",
+        "theme.light.background.alt": "#FFFFFF",
+        "theme.light.text.primary": "#0F172A",
+        "theme.light.text.secondary": "rgba(15,23,42,0.6)",
+        "theme.light.text.tertiary": "rgba(15,23,42,0.3)",
+        "theme.light.glass_surface": "rgba(0,0,0,0.03)",
+        "theme.light.glass_border": "rgba(0,0,0,0.08)",
+        "theme.light.glass_border_hover": "rgba(0,0,0,0.15)",
+        "primitive.typography.font_sans": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+      }
+    },
+    {
+      "name": "CandyHeader",
+      "description": "Canonical P31 candy-pill header bar with phosphorous-green glass, cyan border, and glow shadow.",
+      "css_class": "candy-header",
+      "tool": "renderCandyHeader",
+      "aiGuidance": {
+        "useWhen": "Top-of-page site navigation bar. Must use the canonical candy-pill glass styling.",
+        "avoidWhen": "Inline headers within card content — use GlassCard or GlassPanel instead.",
+        "examples": [
+          "p31ca.org site header",
+          "PHOS app shell header"
+        ]
+      },
+      "props": {
+        "brand": {
+          "type": "string",
+          "default": "p31ca",
+          "options": [
+            "p31ca",
+            "phosphorus"
+          ]
+        }
+      },
+      "slots": [
+        "default"
+      ],
+      "variants": [],
+      "tokens": {
+        "component.header_candy": {
+          "background": "rgba(57,255,20,0.12)",
+          "backdrop_filter": "blur(16px)",
+          "webkit_backdrop_filter": "blur(16px)",
+          "border": "1px solid rgba(0,240,255,0.8)",
+          "border_radius": "16px",
+          "box_shadow": "0 0 30px rgba(0,240,255,0.25), inset 0 0 20px rgba(57,255,20,0.15)",
+          "max_width": "1440px",
+          "padding_x": "16px",
+          "padding_y": "4px",
+          "offset_top": "12px"
+        },
+        "component.crown_xs": {
+          "width": "calc(var(--p31-base) * 2.5)",
+          "height": "calc(var(--p31-base) * 2.5)"
+        },
+        "component.spoon_icon": {
+          "width": "18px",
+          "height": "18px",
+          "gap": "calc(var(--p31-base) * 0.25)"
+        },
+        "primitive.color.cyan": "oklch(65% 0.18 195)",
+        "primitive.color.void": "oklch(10% 0.01 240)"
+      }
+    },
+    {
+      "name": "Crown",
+      "description": "Animated tetrahedral crown brand glyph for header and brand surfaces.",
+      "css_class": "crown",
+      "tool": "renderCrown",
+      "aiGuidance": {
+        "useWhen": "Brand identity in headers, loading states, or empty states.",
+        "avoidWhen": "Decorative-only contexts where brand is irrelevant.",
+        "examples": [
+          "Site nav brand mark",
+          "App loading splash"
+        ]
+      },
+      "props": {
+        "size": {
+          "type": "string",
+          "default": "md",
+          "options": [
+            "xs",
+            "sm",
+            "md",
+            "lg"
+          ]
+        },
+        "brand": {
+          "type": "string",
+          "default": "p31ca",
+          "options": [
+            "p31ca",
+            "phosphorus"
+          ]
+        }
+      },
+      "slots": [],
+      "variants": [],
+      "tokens": {
+        "component.crown_xs": {
+          "width": "calc(var(--p31-base) * 2.5)",
+          "height": "calc(var(--p31-base) * 2.5)"
+        },
+        "primitive.color.cyan": "oklch(65% 0.18 195)",
+        "primitive.color.violet": "oklch(65% 0.18 285)",
+        "primitive.color.gold": "oklch(65% 0.18 15)",
+        "primitive.color.green": "oklch(65% 0.18 105)",
+        "primitive.color.iris": "oklch(65% 0.18 270)"
+      }
+    },
+    {
+      "name": "SpoonDial",
+      "description": "Icon-mode spoon meter for compact header placement, showing 5 SVG spoons with active/inactive opacity.",
+      "css_class": "spoon-dial",
+      "tool": "setSpoonLevel",
+      "aiGuidance": {
+        "useWhen": "Header spoon indicator where space is limited. Use mode=icon for compact display.",
+        "avoidWhen": "Full-width settings panel — use SpoonMeter instead.",
+        "examples": [
+          "Site header right side",
+          "Compact app bar"
+        ]
+      },
+      "props": {
+        "spoons": {
+          "type": "number",
+          "default": 3,
+          "range": [
+            0,
+            5
+          ]
+        }
+      },
+      "slots": [],
+      "variants": [],
+      "tokens": {
+        "component.spoon_icon": {
+          "width": "18px",
+          "height": "18px",
+          "gap": "calc(var(--p31-base) * 0.25)"
+        },
+        "semantic.color.accent.default": "oklch(65% 0.18 195)"
+      }
+    },
+    {
+      "name": "Card",
+      "description": "Generic glass card used across portals for content containers.",
+      "css_class": "card",
+      "tool": "renderCard",
+      "aiGuidance": {
+        "useWhen": "Wrapping a piece of content in a glassmorphic card with backdrop blur.",
+        "avoidWhen": "For top-level sections use GlassPanel instead.",
+        "examples": [
+          "Dashboard stat card",
+          "Content section wrapper"
+        ]
+      },
+      "props": {
+        "padding": {
+          "type": "string",
+          "default": "lg",
+          "options": [
+            "sm",
+            "md",
+            "lg"
+          ]
+        }
+      },
+      "slots": [
+        "default",
+        "header"
+      ],
+      "variants": [],
+      "tokens": {
+        "primitive.color.glass_surface": "oklch(100% 0.01 240 / 0.04)",
+        "primitive.color.glass_border": "oklch(100% 0.01 240 / 0.08)",
+        "primitive.color.glass_border_hover": "oklch(100% 0.01 240 / 0.15)",
+        "primitive.radius.lg": "calc(var(--p31-scale-lg) / 2)",
+        "primitive.radius.md": "calc(var(--p31-scale-md) / 2)",
+        "primitive.shadow.glass": "0 8px 32px rgba(0,0,0,0.15)",
+        "primitive.typography.font_sans": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+      }
+    },
+    {
+      "name": "Topbar",
+      "description": "Portal top navigation bar with glass effect, spoons-aware height, and brand accent.",
+      "css_class": "topbar",
+      "tool": "renderTopbar",
+      "aiGuidance": {
+        "useWhen": "Top-of-page navigation bar for portals. Includes spoon dial on right.",
+        "avoidWhen": "Use CandyHeader for standalone brand headers.",
+        "examples": [
+          "Willow companion topbar",
+          "Tetra Ops dashboard topbar"
+        ]
+      },
+      "props": {
+        "brand": {
+          "type": "string",
+          "default": "p31ca",
+          "options": [
+            "p31ca",
+            "phosphorus",
+            "willow"
+          ]
+        }
+      },
+      "slots": [
+        "left",
+        "center",
+        "right"
+      ],
+      "variants": [],
+      "tokens": {
+        "primitive.color.glass_surface": "oklch(100% 0.01 240 / 0.04)",
+        "primitive.color.void": "oklch(10% 0.01 240)",
+        "primitive.spacing.lg": "clamp(var(--p31-scale-lg), 3.5vw, var(--p31-scale-xl))",
+        "primitive.spacing.md": "clamp(var(--p31-scale-md), 2.5vw, var(--p31-scale-lg))",
+        "primitive.radius.md": "calc(var(--p31-scale-md) / 2)",
+        "primitive.typography.font_sans": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+      }
+    },
+    {
+      "name": "BottomNav",
+      "description": "Fixed bottom tab navigation for mobile-first portal layouts.",
+      "css_class": "bottom-nav",
+      "tool": "navigate",
+      "aiGuidance": {
+        "useWhen": "Mobile-first navigation with 3-5 tabs at the bottom of the viewport.",
+        "avoidWhen": "Desktop sidebar navigation — use left rail instead.",
+        "examples": [
+          "Tetra Ops bottom navigation",
+          "P31 Portal bottom tabs"
+        ]
+      },
+      "props": {
+        "items": {
+          "type": "array",
+          "default": []
+        }
+      },
+      "slots": [],
+      "variants": [],
+      "tokens": {
+        "primitive.color.glass_surface": "oklch(100% 0.01 240 / 0.04)",
+        "primitive.color.void": "oklch(10% 0.01 240)",
+        "primitive.spacing.sm": "clamp(var(--p31-scale-sm), 1.5vw, var(--p31-scale-md))",
+        "primitive.radius.md": "calc(var(--p31-scale-md) / 2)",
+        "primitive.typography.font_sans": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+      }
+    },
+    {
+      "name": "Badge",
+      "description": "Compact status or metric badge with optional dot indicator.",
+      "css_class": "badge",
+      "tool": "renderBadge",
+      "aiGuidance": {
+        "useWhen": "Displaying a compact metric, status, or tag in headers or cards.",
+        "avoidWhen": "For prominent status indicators use StatusBadge instead.",
+        "examples": [
+          "LOVE balance badge",
+          "System status badge"
+        ]
+      },
+      "props": {
+        "variant": {
+          "type": "string",
+          "default": "default",
+          "options": [
+            "default",
+            "accent",
+            "success",
+            "error"
+          ]
+        }
+      },
+      "slots": [
+        "default"
+      ],
+      "variants": [],
+      "tokens": {
+        "primitive.color.glass_surface": "oklch(100% 0.01 240 / 0.04)",
+        "primitive.color.glass_border": "oklch(100% 0.01 240 / 0.08)",
+        "primitive.radius.full": "9999px",
+        "primitive.spacing.xs": "clamp(var(--p31-scale-xs), 1vw, var(--p31-scale-sm))",
+        "primitive.spacing.md": "clamp(var(--p31-scale-md), 2.5vw, var(--p31-scale-lg))",
+        "primitive.typography.font_mono": "ui-monospace, SFMono-Regular, 'Fira Code', 'Fira Mono', 'Roboto Mono', 'JetBrains Mono', Menlo, Monaco, Consolas, monospace"
+      }
+    },
+    {
+      "name": "CompanionCard",
+      "description": "Child-friendly glass card for willow companion portal, with warm rounded styling.",
+      "css_class": "companion-card",
+      "tool": "companionCard",
+      "aiGuidance": {
+        "useWhen": "Displaying content in the willow child/teen companion portal.",
+        "avoidWhen": "For standard portal cards use Card or GlassCard.",
+        "examples": [
+          "Willow mood card",
+          "Willow game card"
+        ]
+      },
+      "props": {
+        "color": {
+          "type": "string",
+          "default": "accent",
+          "options": [
+            "accent",
+            "violet",
+            "gold",
+            "green",
+            "red"
+          ]
+        }
+      },
+      "slots": [
+        "default",
+        "header"
+      ],
+      "variants": [],
+      "tokens": {
+        "primitive.color.glass_surface": "oklch(100% 0.01 240 / 0.04)",
+        "primitive.color.glass_border": "oklch(100% 0.01 240 / 0.08)",
+        "primitive.radius.xl": "calc(var(--p31-scale-xl) / 2)",
+        "primitive.radius.lg": "calc(var(--p31-scale-lg) / 2)",
+        "primitive.radius.full": "9999px",
+        "primitive.shadow.glass": "0 8px 32px rgba(0,0,0,0.15)"
+      }
+    },
+    {
+      "name": "MoodBtn",
+      "description": "Mood selection button for the willow companion mood grid.",
+      "css_class": "mood-btn",
+      "tool": "moodBtn",
+      "aiGuidance": {
+        "useWhen": "Presenting mood options in a grid for the child companion check-in.",
+        "avoidWhen": "For standard buttons use Button instead.",
+        "examples": [
+          "Willow mood tracker grid"
+        ]
+      },
+      "props": {
+        "mood": {
+          "type": "string",
+          "default": "happy",
+          "options": [
+            "happy",
+            "calm",
+            "okay",
+            "sad",
+            "overwhelmed",
+            "angry",
+            "anxious",
+            "tired"
+          ]
+        }
+      },
+      "slots": [],
+      "variants": [],
+      "tokens": {
+        "primitive.radius.full": "9999px",
+        "primitive.spacing.md": "clamp(var(--p31-scale-md), 2.5vw, var(--p31-scale-lg))"
+      }
+    },
+    {
+      "name": "GameCard",
+      "description": "Game selection card for arcade/play sections.",
+      "css_class": "game-card",
+      "tool": "gameCard",
+      "aiGuidance": {
+        "useWhen": "Displaying a game or activity in a grid layout.",
+        "avoidWhen": "For non-game content use Card or GlassCard.",
+        "examples": [
+          "ARCADE game grid",
+          "Willow activity picker"
+        ]
+      },
+      "props": {
+        "spoons": {
+          "type": "string",
+          "default": "2-5"
+        }
+      },
+      "slots": [],
+      "variants": [],
+      "tokens": {
+        "primitive.color.glass_surface": "oklch(100% 0.01 240 / 0.04)",
+        "primitive.color.glass_border": "oklch(100% 0.01 240 / 0.08)",
+        "primitive.radius.lg": "calc(var(--p31-scale-lg) / 2)",
+        "primitive.typography.font_sans": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+      }
+    },
+    {
+      "name": "ChatBubble",
+      "description": "Chat message bubble for companion chat interface.",
+      "css_class": "chat-bubble",
+      "tool": "chatBubble",
+      "aiGuidance": {
+        "useWhen": "Displaying a chat message in the companion or portal chat interface.",
+        "avoidWhen": "For system notifications use Toast instead.",
+        "examples": [
+          "Willow companion chat",
+          "Support chat message"
+        ]
+      },
+      "props": {
+        "role": {
+          "type": "string",
+          "default": "user",
+          "options": [
+            "user",
+            "companion",
+            "system"
+          ]
+        }
+      },
+      "slots": [
+        "default"
+      ],
+      "variants": [],
+      "tokens": {
+        "primitive.radius.lg": "calc(var(--p31-scale-lg) / 2)",
+        "primitive.radius.md": "calc(var(--p31-scale-md) / 2)",
+        "primitive.typography.font_sans": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+        "primitive.color.surface2": "oklch(22% 0.02 240)",
+        "primitive.color.void_deep": "oklch(8% 0.01 240)"
+      }
+    },
+    {
+      "name": "PinKey",
+      "description": "PIN pad key for the willow companion PIN overlay.",
+      "css_class": "pin-key",
+      "tool": "pinKey",
+      "aiGuidance": {
+        "useWhen": "Rendering a single key on the PIN entry pad for child lock/unlock.",
+        "avoidWhen": "For form inputs use standard form elements instead.",
+        "examples": [
+          "Willow PIN overlay keypad"
+        ]
+      },
+      "props": {
+        "value": {
+          "type": "string",
+          "default": ""
+        }
+      },
+      "slots": [],
+      "variants": [],
+      "tokens": {
+        "primitive.radius.full": "9999px",
+        "primitive.spacing.md": "clamp(var(--p31-scale-md), 2.5vw, var(--p31-scale-lg))"
+      }
+    },
+    {
+      "name": "Toggle",
+      "description": "Binary toggle switch for settings pages.",
+      "css_class": "toggle",
+      "tool": "renderToggle",
+      "aiGuidance": {
+        "useWhen": "Toggling a binary setting on/off in preferences or settings panels.",
+        "avoidWhen": "For radio groups use standard radio inputs instead.",
+        "examples": [
+          "Dark mode toggle",
+          "Sound on/off toggle"
+        ]
+      },
+      "props": {
+        "checked": {
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "slots": [],
+      "variants": [],
+      "tokens": {
+        "primitive.radius.full": "9999px",
+        "primitive.color.glass_surface": "oklch(100% 0.01 240 / 0.04)",
+        "primitive.color.surface2": "oklch(22% 0.02 240)"
+      }
+    },
+    {
+      "name": "BreakOverlay",
+      "description": "Full-screen break timer overlay for the willow companion.",
+      "css_class": "break-overlay",
+      "tool": "breakOverlay",
+      "aiGuidance": {
+        "useWhen": "Displaying a scheduled break or sensory break for the child companion.",
+        "avoidWhen": "For crisis mode use CrisisOverlay instead — BreakOverlay is gentler.",
+        "examples": [
+          "Willow break timer",
+          "Scheduled sensory break"
+        ]
+      },
+      "props": {
+        "duration": {
+          "type": "number",
+          "default": 120
+        }
+      },
+      "slots": [],
+      "variants": [],
+      "tokens": {
+        "primitive.color.void_deep": "oklch(8% 0.01 240)",
+        "primitive.color.surface2": "oklch(22% 0.02 240)",
+        "primitive.radius.xl": "calc(var(--p31-scale-xl) / 2)"
+      }
+    },
+    {
+      "name": "Toast",
+      "description": "Transient notification toast for portal feedback.",
+      "css_class": "toast",
+      "tool": "showToast",
+      "aiGuidance": {
+        "useWhen": "Showing a brief success, error, or info message that auto-dismisses.",
+        "avoidWhen": "For persistent notifications use the NotificationStore or a modal.",
+        "examples": [
+          "Molecule submitted successfully",
+          "Wallet connected"
+        ]
+      },
+      "props": {
+        "type": {
+          "type": "string",
+          "default": "info",
+          "options": [
+            "info",
+            "success",
+            "error"
+          ]
+        },
+        "duration": {
+          "type": "number",
+          "default": 3000
+        }
+      },
+      "slots": [
+        "default"
+      ],
+      "variants": [],
+      "tokens": {
+        "primitive.color.glass_surface": "oklch(100% 0.01 240 / 0.04)",
+        "primitive.radius.md": "calc(var(--p31-scale-md) / 2)",
+        "primitive.typography.font_sans": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+        "semantic.color.accent.green": "oklch(65% 0.18 105)",
+        "semantic.color.accent.red": "oklch(65% 0.18 20)"
+      }
+    }
+  ],
+  "icons": [
+    {
+      "id": "k4-tetrahedron",
+      "name": "K4 Tetrahedron",
+      "file": "regular/k4-tetrahedron.svg",
+      "description": "Foundational structure, sovereignty",
+      "family": "regular",
+      "colors": [
+        "--p31-accent",
+        "--p31-accent-violet",
+        "--p31-text"
+      ],
+      "animated": true,
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 200 200\" width=\"100%\" height=\"100%\" role=\"img\" aria-label=\"K4 Tetrahedron animated icon\">\n  <title>K4 Tetrahedron</title>\n  <desc>A regular tetrahedron with glowing pulsing nodes representing sovereign foundational structure.</desc>\n  <style>\n    .k4-edge-p { stroke: var(--p31-accent, #00F0FF); stroke-width: 2; opacity: 0.4; stroke-dasharray: 200; stroke-dashoffset: 200; animation: edgeReveal 3s ease-out forwards; }\n    .k4-node-p { fill: var(--p31-accent, #00F0FF); }\n    .k4-node-s { fill: var(--p31-accent-violet, #A78BFA); }\n    .k4-node-n { fill: var(--p31-text, #F5F5F7); opacity: 0.9; }\n    .k4-center-p { fill: var(--p31-accent, #00F0FF); transform-origin: 100px 105px; animation: centerPulse 4s infinite ease-in-out; }\n    .k4-group { transform-origin: 100px 105px; animation: slowRotate 30s infinite linear; }\n    @keyframes edgeReveal { to { stroke-dashoffset: 0; opacity: 0.7; } }\n    @keyframes centerPulse { 0%, 100% { transform: scale(0.9); opacity: 0.6; filter: drop-shadow(0 0 4px var(--p31-accent, #00F0FF)); } 50% { transform: scale(1.15); opacity: 1; filter: drop-shadow(0 0 14px var(--p31-accent, #00F0FF)); } }\n    @keyframes slowRotate { to { transform: rotate(360deg); } }\n    @media (prefers-reduced-motion: reduce) { .k4-edge-p { animation: none; stroke-dashoffset: 0; opacity: 0.5; } .k4-center-p, .k4-group { animation: none; } .k4-center-p { transform: scale(1); opacity: 0.8; } }\n  </style>\n  <g class=\"k4-group\">\n    <line x1=\"100\" y1=\"35\" x2=\"40\" y2=\"145\" class=\"k4-edge-p\"/>\n    <line x1=\"100\" y1=\"35\" x2=\"160\" y2=\"145\" class=\"k4-edge-p\"/>\n    <line x1=\"100\" y1=\"35\" x2=\"100\" y2=\"145\" class=\"k4-edge-p\"/>\n    <line x1=\"40\" y1=\"145\" x2=\"160\" y2=\"145\" class=\"k4-edge-p\"/>\n    <line x1=\"40\" y1=\"145\" x2=\"100\" y2=\"145\" class=\"k4-edge-p\"/>\n    <line x1=\"160\" y1=\"145\" x2=\"100\" y2=\"145\" class=\"k4-edge-p\"/>\n    <circle cx=\"100\" cy=\"35\" r=\"5\" class=\"k4-node-p\"/>\n    <circle cx=\"40\" cy=\"145\" r=\"5\" class=\"k4-node-s\"/>\n    <circle cx=\"160\" cy=\"145\" r=\"5\" class=\"k4-node-n\"/>\n    <circle cx=\"100\" cy=\"105\" r=\"10\" class=\"k4-center-p\"/>\n  </g>\n</svg>"
+    },
+    {
+      "id": "molecule",
+      "name": "Molecule / Atom",
+      "file": "regular/molecule.svg",
+      "description": "Bonding, quantum mechanics, care connections",
+      "family": "regular",
+      "colors": [
+        "--p31-accent",
+        "--p31-accent-violet",
+        "--p31-text"
+      ],
+      "animated": true,
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 200 200\" width=\"100%\" height=\"100%\" role=\"img\" aria-label=\"Molecule animated icon\">\n  <title>Molecule / Atom</title>\n  <desc>A central nucleus with elliptical orbits and rotating electrons representing bonding and quantum mechanics.</desc>\n  <style>\n    .mo-orb-s { fill: none; stroke: var(--p31-accent-violet, #A78BFA); stroke-width: 1.5; opacity: 0.35; }\n    .mo-sys { transform-origin: 100px 100px; animation: moSpin 30s infinite linear; }\n    .mo-core-p { fill: var(--p31-accent-green, #34D399); transform-origin: 100px 100px; animation: moPulse 2.5s infinite alternate ease-in-out; }\n    .mo-elec-n { fill: var(--p31-text, #F5F5F7); opacity: 0.9; filter: drop-shadow(0 0 4px var(--p31-accent-green, #34D399)); }\n    @keyframes moSpin { to { transform: rotate(360deg); } }\n    @keyframes moPulse { 0% { transform: scale(0.9); filter: drop-shadow(0 0 4px var(--p31-accent-green, #34D399)); } 100% { transform: scale(1.12); filter: drop-shadow(0 0 14px var(--p31-accent-green, #34D399)); } }\n    @media (prefers-reduced-motion: reduce) { .mo-sys, .mo-core-p { animation: none; } .mo-core-p { transform: scale(1); opacity: 0.8; } }\n  </style>\n  <g class=\"mo-sys\">\n    <ellipse cx=\"100\" cy=\"100\" rx=\"75\" ry=\"25\" class=\"mo-orb-s\"/>\n    <ellipse cx=\"100\" cy=\"100\" rx=\"75\" ry=\"25\" class=\"mo-orb-s\" transform=\"rotate(60 100 100)\"/>\n    <ellipse cx=\"100\" cy=\"100\" rx=\"75\" ry=\"25\" class=\"mo-orb-s\" transform=\"rotate(120 100 100)\"/>\n    <circle cx=\"175\" cy=\"100\" r=\"4.5\" class=\"mo-elec-n\"/>\n    <circle cx=\"62\" cy=\"35\" r=\"4.5\" class=\"mo-elec-n\"/>\n    <circle cx=\"62\" cy=\"165\" r=\"4.5\" class=\"mo-elec-n\"/>\n  </g>\n  <circle cx=\"100\" cy=\"100\" r=\"14\" class=\"mo-core-p\"/>\n</svg>"
+    },
+    {
+      "id": "signal",
+      "name": "Signal",
+      "file": "regular/signal.svg",
+      "description": "Coordination, communication, mesh signalling",
+      "family": "regular",
+      "colors": [
+        "--p31-accent",
+        "--p31-accent-violet",
+        "--p31-text"
+      ],
+      "animated": true,
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 200 200\" width=\"100%\" height=\"100%\" role=\"img\" aria-label=\"Signal animated icon\">\n  <title>Signal</title>\n  <desc>Radiating care signal with concentric elliptical waves representing coordination and communication in the P31 mesh.</desc>\n  <style>\n    .sg-wave { fill: none; stroke-width: 2; stroke-linecap: round; opacity: 0; }\n    .sg-wave-p { stroke: var(--p31-accent, #00F0FF); }\n    .sg-wave-s { stroke: var(--p31-accent-violet, #A78BFA); }\n    .sg-wave-n { stroke: var(--p31-text, #F5F5F7); opacity: 0.5; }\n    .sg-w1 { animation: sgRipple 4s infinite 0s; }\n    .sg-w2 { animation: sgRipple 4s infinite 0.8s; }\n    .sg-w3 { animation: sgRipple 4s infinite 1.6s; }\n    .sg-w4 { animation: sgRipple 4s infinite 2.4s; }\n    .sg-core-p { fill: var(--p31-accent, #00F0FF); transform-origin: 100px 100px; animation: sgCore 2.5s infinite alternate ease-in-out; }\n    @keyframes sgRipple { 0% { transform: scale(0.1); opacity: 0.8; } 100% { transform: scale(1.1); opacity: 0; } }\n    @keyframes sgCore { 0% { transform: scale(0.85); filter: drop-shadow(0 0 2px var(--p31-accent, #00F0FF)); } 100% { transform: scale(1.15); filter: drop-shadow(0 0 16px var(--p31-accent, #00F0FF)); } }\n    @media (prefers-reduced-motion: reduce) { .sg-wave, .sg-core-p { animation: none; } .sg-wave { opacity: 0.15; transform: scale(0.5); } .sg-core-p { transform: scale(1); } }\n  </style>\n  <ellipse cx=\"100\" cy=\"100\" rx=\"20\" ry=\"50\" class=\"sg-wave sg-wave-p sg-w1\"/>\n  <ellipse cx=\"100\" cy=\"100\" rx=\"40\" ry=\"70\" class=\"sg-wave sg-wave-s sg-w2\"/>\n  <ellipse cx=\"100\" cy=\"100\" rx=\"60\" ry=\"90\" class=\"sg-wave sg-wave-n sg-w3\"/>\n  <ellipse cx=\"100\" cy=\"100\" rx=\"80\" ry=\"110\" class=\"sg-wave sg-wave-s sg-w4\"/>\n  <circle cx=\"100\" cy=\"100\" r=\"10\" class=\"sg-core-p\"/>\n</svg>"
+    },
+    {
+      "id": "mesh-node",
+      "name": "Mesh Node",
+      "file": "regular/mesh-node.svg",
+      "description": "Mesh infrastructure, distributed nodes",
+      "family": "regular",
+      "colors": [
+        "--p31-accent",
+        "--p31-accent-violet",
+        "--p31-text"
+      ],
+      "animated": true,
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 200 200\" width=\"100%\" height=\"100%\" role=\"img\" aria-label=\"Mesh Node animated icon\">\n  <title>Mesh Node</title>\n  <desc>Interconnected nodes with streaming connections representing the distributed sovereign mesh infrastructure.</desc>\n  <style>\n    .ms-line-s { stroke: var(--p31-accent-violet, #A78BFA); stroke-width: 1.5; opacity: 0.4; stroke-dasharray: 8 6; animation: msStream 15s infinite linear; }\n    .ms-line-d { stroke: var(--p31-accent-violet, #A78BFA); stroke-width: 1; opacity: 0.15; }\n    .ms-node-n { fill: var(--p31-text, #F5F5F7); animation: msBlink 4s infinite alternate ease-in-out; }\n    .ms-node-n { fill: var(--p31-text, #F5F5F7); animation: msBlink 4s infinite alternate ease-in-out; }\n    .ms-center-p { fill: var(--p31-accent-red, #FB7185); transform-origin: 100px 100px; animation: msAura 2s infinite alternate ease-in-out; }\n    .nd-1 { animation-delay: 0s; }\n    .nd-2 { animation-delay: 0.5s; }\n    .nd-3 { animation-delay: 1s; }\n    .nd-4 { animation-delay: 1.5s; }\n    .nd-5 { animation-delay: 2s; }\n    @keyframes msStream { to { stroke-dashoffset: 200; } }\n    @keyframes msBlink { 0% { r: 3; opacity: 0.4; } 100% { r: 5; opacity: 1; filter: drop-shadow(0 0 5px var(--p31-text, #F5F5F7)); } }\n    @keyframes msAura { 0% { r: 9; filter: drop-shadow(0 0 4px var(--p31-accent-red, #FB7185)); } 100% { r: 12; filter: drop-shadow(0 0 20px var(--p31-accent-red, #FB7185)); } }\n    @media (prefers-reduced-motion: reduce) { .ms-line-s, .ms-node-n, .ms-center-p { animation: none; } .ms-center-p { r: 10; opacity: 0.8; } .ms-node-n { r: 4; opacity: 0.7; } }\n  </style>\n  <line x1=\"100\" y1=\"100\" x2=\"30\" y2=\"50\" class=\"ms-line-s\"/>\n  <line x1=\"100\" y1=\"100\" x2=\"160\" y2=\"40\" class=\"ms-line-s\"/>\n  <line x1=\"100\" y1=\"100\" x2=\"170\" y2=\"150\" class=\"ms-line-s\"/>\n  <line x1=\"100\" y1=\"100\" x2=\"50\" y2=\"160\" class=\"ms-line-s\"/>\n  <line x1=\"100\" y1=\"100\" x2=\"100\" y2=\"20\" class=\"ms-line-s\"/>\n  <line x1=\"30\" y1=\"50\" x2=\"100\" y2=\"20\" class=\"ms-line-d\"/>\n  <line x1=\"160\" y1=\"40\" x2=\"100\" y2=\"20\" class=\"ms-line-d\"/>\n  <line x1=\"50\" y1=\"160\" x2=\"170\" y2=\"150\" class=\"ms-line-d\"/>\n  <circle cx=\"30\" cy=\"50\" class=\"ms-node-n nd-1\"/>\n  <circle cx=\"160\" cy=\"40\" class=\"ms-node-n nd-2\"/>\n  <circle cx=\"170\" cy=\"150\" class=\"ms-node-n nd-3\"/>\n    <circle cx=\"50\" cy=\"160\" class=\"ms-node-n nd-4\"/>\n  <circle cx=\"100\" cy=\"20\" class=\"ms-node-n nd-5\"/>\n  <circle cx=\"100\" cy=\"100\" class=\"ms-center-p\"/>\n</svg>"
+    },
+    {
+      "id": "spoon",
+      "name": "Spoon",
+      "file": "regular/spoon.svg",
+      "description": "Cognitive capacity, spoon-aware design",
+      "family": "regular",
+      "colors": [
+        "--p31-accent",
+        "--p31-accent-violet",
+        "--p31-text"
+      ],
+      "animated": true,
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 200 200\" width=\"100%\" height=\"100%\" role=\"img\" aria-label=\"Spoon animated icon\">\n  <title>Spoon</title>\n  <desc>An elegant spoon swaying slightly with a glowing bowl, representing cognitive capacity and spoon-aware design.</desc>\n  <style>\n    .sp-group { transform-origin: 100px 30px; animation: spSway 8s infinite ease-in-out; }\n    .sp-bowl-p { fill: var(--p31-accent-iris, #818CF8); animation: spGlow 3s infinite alternate ease-in-out; }\n    .sp-handle-s { stroke: var(--p31-accent-violet, #A78BFA); stroke-width: 5; stroke-linecap: round; fill: none; }\n    .sp-rip { fill: none; stroke: var(--p31-accent-violet, #A78BFA); opacity: 0; transform-origin: 100px 145px; }\n    .sp-rip-1 { animation: spExpand 5s infinite ease-out; }\n    .sp-rip-2 { animation: spExpand 5s infinite ease-out; animation-delay: 2.5s; }\n    .sp-finial-n { fill: var(--p31-text, #F5F5F7); opacity: 0.8; }\n    @keyframes spSway { 0%, 100% { transform: rotate(-8deg); } 50% { transform: rotate(8deg); } }\n    @keyframes spGlow { 0% { filter: drop-shadow(0 0 4px var(--p31-accent-iris, #818CF8)); opacity: 0.7; } 100% { filter: drop-shadow(0 0 16px var(--p31-accent-iris, #818CF8)); opacity: 1; } }\n    @keyframes spExpand { 0% { transform: scale(0.5); opacity: 0.8; stroke-width: 4; } 70% { transform: scale(2); opacity: 0; stroke-width: 1; } 100% { opacity: 0; } }\n    @media (prefers-reduced-motion: reduce) { .sp-group, .sp-bowl-p, .sp-rip { animation: none; } .sp-group { transform: rotate(0deg); } .sp-bowl-p { opacity: 0.8; } }\n  </style>\n  <g class=\"sp-group\">\n    <ellipse cx=\"100\" cy=\"145\" rx=\"22\" ry=\"32\" class=\"sp-rip sp-rip-1\"/>\n    <ellipse cx=\"100\" cy=\"145\" rx=\"22\" ry=\"32\" class=\"sp-rip sp-rip-2\"/>\n    <path d=\"M 100 30 Q 96 80 100 110\" class=\"sp-handle-s\"/>\n    <path d=\"M 100 110 Q 100 120 100 145\" class=\"sp-handle-s\" style=\"stroke-width:3\"/>\n    <ellipse cx=\"100\" cy=\"145\" rx=\"16\" ry=\"26\" class=\"sp-bowl-p\"/>\n    <circle cx=\"100\" cy=\"30\" r=\"6\" class=\"sp-finial-n\"/>\n  </g>\n</svg>"
+    },
+    {
+      "id": "p31-wordmark",
+      "name": "P31 Wordmark",
+      "file": "regular/p31-wordmark.svg",
+      "description": "Sovereign brand identity",
+      "family": "regular",
+      "colors": [
+        "--p31-accent",
+        "--p31-accent-violet",
+        "--p31-text"
+      ],
+      "animated": true,
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 200 200\" width=\"100%\" height=\"100%\" role=\"img\" aria-label=\"P31 Wordmark animated icon\">\n  <title>P31 Wordmark</title>\n  <desc>Stylized P31 text surrounded by counter-rotating geometric rings representing sovereign brand identity.</desc>\n  <style>\n    .wm-text-p { font-family: ui-sans-serif, system-ui, -apple-system, sans-serif; font-weight: 800; font-size: 64px; fill: var(--p31-accent-red, #FB7185); letter-spacing: -2px; }\n    .wm-glow { animation: wmGlow 3s infinite alternate ease-in-out; }\n    .wm-ring-o { fill: none; stroke: var(--p31-accent-red, #FB7185); stroke-width: 2; stroke-dasharray: 40 20; transform-origin: 100px 100px; animation: wmFwd 20s infinite linear; }\n    .wm-ring-i { fill: none; stroke: var(--p31-accent-violet, #A78BFA); stroke-width: 1.5; stroke-dasharray: 10 10; opacity: 0.5; transform-origin: 100px 100px; animation: wmRev 15s infinite linear; }\n    .wm-dot-n { fill: var(--p31-text, #F5F5F7); opacity: 0.7; }\n    @keyframes wmFwd { to { transform: rotate(360deg); } }\n    @keyframes wmRev { to { transform: rotate(-360deg); } }\n    @keyframes wmGlow { 0% { filter: drop-shadow(0 0 3px var(--p31-accent-red, #FB7185)); opacity: 0.85; } 100% { filter: drop-shadow(0 0 18px var(--p31-accent-red, #FB7185)); opacity: 1; } }\n    @media (prefers-reduced-motion: reduce) { .wm-ring-o, .wm-ring-i, .wm-glow { animation: none; } .wm-ring-o, .wm-ring-i { stroke-dashoffset: 0; } .wm-glow { opacity: 0.9; } }\n  </style>\n  <circle cx=\"100\" cy=\"100\" r=\"85\" class=\"wm-ring-o\"/>\n  <circle cx=\"100\" cy=\"100\" r=\"72\" class=\"wm-ring-i\"/>\n  <text x=\"100\" y=\"122\" text-anchor=\"middle\" class=\"wm-text-p wm-glow\">P31</text>\n  <circle cx=\"100\" cy=\"45\" r=\"3\" class=\"wm-dot-n\"/>\n  <circle cx=\"100\" cy=\"155\" r=\"3\" class=\"wm-dot-n\"/>\n</svg>"
+    },
+    {
+      "id": "love-heart",
+      "name": "LOVE Heart",
+      "file": "regular/love-heart.svg",
+      "description": "Care economy, LOVE ledger",
+      "family": "regular",
+      "colors": [
+        "--p31-accent",
+        "--p31-accent-violet",
+        "--p31-text"
+      ],
+      "animated": true,
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 200 200\" width=\"100%\" height=\"100%\" role=\"img\" aria-label=\"LOVE Heart animated icon\">\n  <title>LOVE Heart</title>\n  <desc>A geometric pulsing heart with an infinity-loop outline representing the care economy.</desc>\n  <style>\n    .lv-path-s { fill: none; stroke: var(--p31-accent, #00F0FF); stroke-width: 2; stroke-linecap: round; }\n    .lv-dash { stroke-dasharray: 12 16; animation: lvFlow 20s infinite linear; }\n    .lv-glow-p { fill: var(--p31-accent-violet, #A78BFA); transform-origin: 100px 100px; animation: lvBreath 4s infinite alternate ease-in-out; }\n    .lv-dot-n { fill: var(--p31-text, #F5F5F7); opacity: 0.8; }\n    @keyframes lvBreath { 0% { transform: scale(0.92); opacity: 0.6; filter: drop-shadow(0 0 4px var(--p31-accent-violet, #A78BFA)); } 100% { transform: scale(1.04); opacity: 0.95; filter: drop-shadow(0 0 20px var(--p31-accent-violet, #A78BFA)); } }\n    @keyframes lvFlow { to { stroke-dashoffset: 400; } }\n    @media (prefers-reduced-motion: reduce) { .lv-glow-p, .lv-dash { animation: none; } .lv-glow-p { transform: scale(1); opacity: 0.8; } .lv-dash { stroke-dashoffset: 0; } }\n  </style>\n  <path d=\"M100 165 C 100 165, 20 100, 20 50 C 20 15, 70 10, 100 45 C 130 10, 180 15, 180 50 C 180 100, 100 165, 100 165 Z\" class=\"lv-path-s lv-dash\" opacity=\"0.6\"/>\n  <path d=\"M100 150 C 100 150, 40 95, 40 55 C 40 30, 65 20, 100 50 C 135 20, 160 30, 160 55 C 160 95, 100 150, 100 150 Z\" class=\"lv-glow-p\"/>\n  <circle cx=\"100\" cy=\"45\" r=\"4\" class=\"lv-dot-n\"/>\n  <circle cx=\"100\" cy=\"155\" r=\"3\" fill=\"var(--p31-accent, #00F0FF)\" opacity=\"0.6\"/>\n</svg>"
+    },
+    {
+      "id": "863hz-resonance",
+      "name": "863 Hz Resonance",
+      "file": "regular/863hz-resonance.svg",
+      "description": "Phosphorus-31 Larmor frequency, quantum resonance",
+      "family": "regular",
+      "colors": [
+        "--p31-accent",
+        "--p31-accent-violet",
+        "--p31-text"
+      ],
+      "animated": true,
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 200 200\" width=\"100%\" height=\"100%\" role=\"img\" aria-label=\"863 Hz Resonance animated icon\">\n  <title>863 Hz Resonance</title>\n  <desc>Concentric expanding rings with crossing sine waves representing the Larmor frequency of phosphorus-31.</desc>\n  <style>\n    .res-ring-p { fill: none; stroke: var(--p31-accent-gold, #FBBF24); stroke-width: 1.5; opacity: 0; transform-origin: 100px 100px; animation: ringPulse 6s infinite ease-out; }\n    .res-ring-1 { animation-delay: 0s; }\n    .res-ring-2 { animation-delay: 2s; }\n    .res-ring-3 { animation-delay: 4s; }\n    .res-wave-s { fill: none; stroke: var(--p31-accent-violet, #A78BFA); stroke-width: 2; stroke-linecap: round; opacity: 0.5; }\n    .res-wave-1 { transform-origin: 100px 100px; animation: waveOscillate 8s infinite ease-in-out; }\n    .res-wave-2 { transform-origin: 100px 100px; animation: waveOscillate 8s infinite ease-in-out reverse; }\n    .res-core-p { fill: var(--p31-accent-gold, #FBBF24); transform-origin: 100px 100px; animation: coreOscillate 3s infinite alternate ease-in-out; }\n    .res-dot-n { fill: var(--p31-text, #F5F5F7); opacity: 0.8; }\n    @keyframes ringPulse { 0% { transform: scale(0.1); opacity: 1; stroke-width: 4; } 100% { transform: scale(1.05); opacity: 0; stroke-width: 1; } }\n    @keyframes waveOscillate { 0%, 100% { opacity: 0.3; transform: rotate(-3deg); } 50% { opacity: 0.7; transform: rotate(3deg); } }\n    @keyframes coreOscillate { 0% { filter: drop-shadow(0 0 2px var(--p31-accent-gold, #FBBF24)); opacity: 0.7; r: 8; } 100% { filter: drop-shadow(0 0 16px var(--p31-accent-gold, #FBBF24)); opacity: 1; r: 11; } }\n    @media (prefers-reduced-motion: reduce) { .res-ring-p { animation: none; opacity: 0.15; transform: scale(0.5); } .res-wave-1, .res-wave-2 { animation: none; opacity: 0.4; } .res-core-p { animation: none; opacity: 0.8; r: 9; } }\n  </style>\n  <circle cx=\"100\" cy=\"100\" r=\"90\" class=\"res-ring-p res-ring-1\"/>\n  <circle cx=\"100\" cy=\"100\" r=\"90\" class=\"res-ring-p res-ring-2\"/>\n  <circle cx=\"100\" cy=\"100\" r=\"90\" class=\"res-ring-p res-ring-3\"/>\n  <g class=\"res-wave-1\"><path d=\"M10 100 Q 55 40 100 100 T 190 100\" class=\"res-wave-s\"/></g>\n  <g class=\"res-wave-2\"><path d=\"M10 100 Q 55 160 100 100 T 190 100\" class=\"res-wave-s\"/></g>\n  <circle cx=\"100\" cy=\"100\" r=\"9\" class=\"res-core-p\"/>\n  <circle cx=\"100\" cy=\"50\" r=\"3\" class=\"res-dot-n\"/>\n</svg>"
+    },
+    {
+      "id": "sovereign-crown",
+      "name": "Sovereign Crown",
+      "file": "advanced/sovereign-crown.svg",
+      "description": "Sovereign authority, six-faceted leadership",
+      "family": "advanced",
+      "colors": [
+        "--p31-accent",
+        "--p31-accent-violet",
+        "--p31-accent-gold",
+        "--p31-accent-green",
+        "--p31-accent-iris",
+        "--p31-accent-red"
+      ],
+      "animated": true,
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 200 200\" width=\"100%\" height=\"100%\" role=\"img\" aria-label=\"Sovereign Crown animated icon\">\n  <title>Sovereign Crown</title>\n  <desc>A six-pointed sovereign crown with rotating accents, lighting nodes, and a radiant central jewel. 6-color palette.</desc>\n  <style>\n    .cr-crown { stroke: rgba(255,255,255,0.1); stroke-width: 0.75; stroke-linejoin: round; }\n    .cr-c1 { fill: var(--p31-accent, #00F0FF); }\n    .cr-c2 { fill: var(--p31-accent-violet, #A78BFA); }\n    .cr-c3 { fill: var(--p31-accent-gold, #FBBF24); }\n    .cr-c4 { fill: var(--p31-accent-green, #34D399); }\n    .cr-c5 { fill: var(--p31-accent-iris, #818CF8); }\n    .cr-c6 { fill: var(--p31-accent-red, #FB7185); }\n    .cr-master { transition: filter 0.6s ease-in-out, opacity 0.6s ease-in-out; }\n    .cr-jewel { filter: drop-shadow(0 0 4px currentColor); transform-origin: 100px 100px; }\n    .cr-j1 { animation: crOrbit 16s infinite linear; }\n    .cr-j3 { animation: crOrbit 16s infinite linear; animation-delay: -5.33s; }\n    .cr-j5 { animation: crOrbit 16s infinite linear; animation-delay: -10.67s; }\n    .cr-core { fill: var(--p31-accent, #00F0FF); transform-origin: 100px 100px; animation: crCore 3s infinite alternate ease-in-out; }\n    .cr-band { fill: none; stroke-width: 1.5; stroke-linecap: round; }\n    .cr-ring { fill: none; stroke-width: 1; opacity: 0.2; transform-origin: 100px 100px; }\n    .cr-b1 { stroke: var(--p31-accent, #00F0FF); animation: crBand 8s infinite linear; }\n    .cr-b2 { stroke: var(--p31-accent-violet, #A78BFA); animation: crBand 8s infinite linear reverse; }\n    .cr-b3 { stroke: var(--p31-accent-gold, #FBBF24); animation: crBand 8s infinite linear; }\n    @keyframes crOrbit { to { transform: rotate(360deg); } }\n    @keyframes crCore { 0% { transform: scale(0.85); filter: drop-shadow(0 0 4px var(--p31-accent, #00F0FF)); } 100% { transform: scale(1.1); filter: drop-shadow(0 0 20px var(--p31-accent, #00F0FF)); } }\n    @keyframes crBand { to { stroke-dashoffset: 400; } }\n    .cr-rotate { transform-origin: 100px 100px; animation: crRotate 30s infinite linear; }\n    @keyframes crRotate { to { transform: rotate(360deg); } }\n    .master-pulse .cr-master { filter: drop-shadow(0 0 22px var(--p31-accent, #00F0FF)) !important; opacity: 1 !important; }\n    @media (prefers-reduced-motion: reduce) { .cr-rotate, .cr-jewel, .cr-core, .cr-ring, .cr-band { animation: none; } .cr-core { r: 14; opacity: 0.9; } }\n  </style>\n  <!-- Static crown shape (stationary at top) -->\n  <g>\n    <path d=\"M 40 155 Q 60 80 70 38 Q 85 18 100 19 Q 115 18 130 38 Q 140 80 160 155\" class=\"cr-crown\" fill=\"none\" stroke=\"url(#crown-grad)\" stroke-width=\"2.5\"/>\n    <path d=\"M 40 155 Q 60 80 70 38 Q 85 18 100 19 Q 115 18 130 38 Q 140 80 160 155 Q 145 145 130 142 Q 115 139 100 139 Q 85 139 70 142 Q 55 145 40 155 Z\" fill=\"rgba(255,255,255,0.04)\"/>\n    <polygon points=\"100,19 108,38 128,38\" class=\"cr-c1\"/>\n    <polygon points=\"100,19 92,38 72,38\" class=\"cr-c2\"/>\n    <polygon points=\"70,38 78,55 92,38\" class=\"cr-c3\"/>\n    <polygon points=\"130,38 122,55 108,38\" class=\"cr-c4\"/>\n    <polygon points=\"72,38 85,60 100,58 92,38\" class=\"cr-c5\"/>\n    <polygon points=\"128,38 115,60 100,58 108,38\" class=\"cr-c6\"/>\n    <polygon points=\"100,52 108,70 100,82\" class=\"cr-c1\" opacity=\"0.7\"/>\n    <polygon points=\"100,52 92,70 100,82\" class=\"cr-c2\" opacity=\"0.7\"/>\n  </g>\n  <!-- Animated decorations (everything else moves) -->\n  <g class=\"cr-rotate\">\n    <circle cx=\"100\" cy=\"100\" r=\"88\" fill=\"none\" stroke=\"rgba(255,255,255,0.04)\" stroke-width=\"1\"/>\n    <!-- Removed outer dashed ring -->\n    <circle cx=\"100\" cy=\"100\" r=\"75\" class=\"cr-band cr-b1\" stroke-dasharray=\"60 30\"/>\n    <circle cx=\"100\" cy=\"100\" r=\"72\" class=\"cr-band cr-b2\" stroke-dasharray=\"30 60\"/>\n    <circle cx=\"100\" cy=\"100\" r=\"68\" class=\"cr-band cr-b3\" stroke-dasharray=\"50 50\"/>\n    <circle cx=\"100\" cy=\"38\" r=\"4.5\" class=\"cr-jewel cr-j1 cr-c3\"/>\n    <circle cx=\"130\" cy=\"38\" r=\"3.5\" class=\"cr-jewel cr-j3 cr-c6\"/>\n    <circle cx=\"144\" cy=\"75\" r=\"3\" class=\"cr-jewel cr-j5 cr-c4\"/>\n    <circle cx=\"100\" cy=\"100\" r=\"16\" class=\"cr-core cr-master\"/>\n    <circle cx=\"100\" cy=\"100\" r=\"11\" fill=\"none\" stroke=\"var(--p31-accent-violet, #A78BFA)\" stroke-width=\"1\" opacity=\"0.5\">\n      <animate attributeName=\"r\" from=\"11\" to=\"14\" dur=\"1.5s\" repeatCount=\"indefinite\"/>\n      <animate attributeName=\"opacity\" from=\"0.5\" to=\"0.2\" dur=\"1.5s\" repeatCount=\"indefinite\"/>\n    </circle>\n    <circle cx=\"100\" cy=\"100\" r=\"5\" fill=\"var(--p31-bg, #0A0A0F)\" opacity=\"0.9\"/>\n  </g>\n  <defs>\n    <linearGradient id=\"crown-grad\" x1=\"0%\" y1=\"0%\" x2=\"100%\" y2=\"100%\">\n      <stop offset=\"0%\" stop-color=\"#00F0FF\" stop-opacity=\"0.9\"/>\n      <stop offset=\"25%\" stop-color=\"#A78BFA\" stop-opacity=\"0.9\"/>\n      <stop offset=\"50%\" stop-color=\"#FBBF24\" stop-opacity=\"0.8\"/>\n      <stop offset=\"75%\" stop-color=\"#818CF8\" stop-opacity=\"0.9\"/>\n      <stop offset=\"100%\" stop-color=\"#00F0FF\" stop-opacity=\"0.9\"/>\n    </linearGradient>\n  </defs>\n</svg>"
+    },
+    {
+      "id": "prism-fold",
+      "name": "Prism Fold",
+      "file": "advanced/prism-fold.svg",
+      "description": "Geometric transformation, multi-facet perspective",
+      "family": "advanced",
+      "colors": [
+        "--p31-accent",
+        "--p31-accent-violet",
+        "--p31-accent-gold",
+        "--p31-accent-green",
+        "--p31-accent-iris",
+        "--p31-accent-red"
+      ],
+      "animated": true,
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 200 200\" width=\"100%\" height=\"100%\" role=\"img\" aria-label=\"Prism Fold animated icon\">\n  <title>Prism Fold</title>\n  <desc>A 3D geometric hexagon with six triangular facets that unfold and refold. 6-color palette, center pivot.</desc>\n  <style>\n    .pf-facet { stroke: rgba(255,255,255,0.1); stroke-width: 0.75; stroke-linejoin: round; }\n    .pf-c1 { fill: var(--p31-accent, #00F0FF); }\n    .pf-c2 { fill: var(--p31-accent-violet, #A78BFA); }\n    .pf-c3 { fill: var(--p31-accent-gold, #FBBF24); }\n    .pf-c4 { fill: var(--p31-accent-green, #34D399); }\n    .pf-c5 { fill: var(--p31-accent-iris, #818CF8); }\n    .pf-c6 { fill: var(--p31-accent-red, #FB7185); }\n    .pf-group { transform-origin: 100px 100px; animation: pfRotate 30s infinite linear; }\n    .pf-fold { transform-origin: var(--fx, 100px) var(--fy, 100px); animation: pfFold 4s infinite alternate ease-in-out; }\n    .pf-1 { --fx: 116px; --fy: 78px; animation-delay: 0s; }\n    .pf-2 { --fx: 100px; --fy: 72px; animation-delay: 0.5s; }\n    .pf-3 { --fx: 84px; --fy: 78px; animation-delay: 1s; }\n    .pf-4 { --fx: 87px; --fy: 110px; animation-delay: 1.5s; }\n    .pf-5 { --fx: 100px; --fy: 115px; animation-delay: 2s; }\n    .pf-6 { --fx: 113px; --fy: 110px; animation-delay: 2.5s; }\n    .pf-master { transition: opacity 0.4s ease, filter 0.4s ease; }\n    .pf-inner { fill: var(--p31-accent, #00F0FF); opacity: 0.1; transform-origin: 100px 100px; animation: pfInner 4s infinite alternate ease-in-out; }\n    @keyframes pfFold {\n      0% { transform: rotateX(0deg) rotateY(0deg); opacity: 0.55; stroke-width: 0.75; }\n      60% { transform: rotateX(35deg) rotateY(25deg); opacity: 1; stroke-width: 0.75; }\n      100% { transform: rotateX(25deg) rotateY(40deg); opacity: 0.55; stroke-width: 0.75; }\n    }\n    @keyframes pfInner { 0% { transform: scale(0.85); opacity: 0.05; } 100% { transform: scale(1.15); opacity: 0.16; } }\n    @keyframes pfRotate { to { transform: rotate(360deg); } }\n    @keyframes pfPulse { 0%, 100% { r: 46; opacity: 0.1; } 50% { r: 50; opacity: 0.2; } }\n    .pf-outer { fill: none; stroke: var(--p31-accent, #00F0FF); stroke-width: 1; opacity: 0.15; animation: pfPulse 3s infinite ease-in-out; transform-origin: 100px 100px; }\n    .master-pulse .pf-master { opacity: 0.35 !important; filter: drop-shadow(0 0 18px var(--p31-accent, #00F0FF)) !important; }\n    @media (prefers-reduced-motion: reduce) { .pf-group, .pf-fold, .pf-inner, .pf-master, .pf-outer { animation: none; } .pf-fold { transform: none; } .pf-inner { opacity: 0.1; } .pf-outer { opacity: 0.15; } }\n  </style>\n  <g class=\"pf-group\">\n    <circle cx=\"100\" cy=\"100\" r=\"46\" class=\"pf-outer\" stroke-dasharray=\"8 6\"/>\n    <circle cx=\"100\" cy=\"100\" r=\"60\" class=\"pf-inner pf-master\"/>\n    <polygon points=\"100,60 120,80 100,100\" class=\"pf-facet pf-c1 pf-fold pf-1\"/>\n    <polygon points=\"100,60 100,80 80,80\" class=\"pf-facet pf-c2 pf-fold pf-2\"/>\n    <polygon points=\"80,80 100,100 80,110\" class=\"pf-facet pf-c3 pf-fold pf-3\"/>\n    <polygon points=\"100,100 80,110 100,120\" class=\"pf-facet pf-c4 pf-fold pf-4\"/>\n    <polygon points=\"100,100 100,120 120,110\" class=\"pf-facet pf-c5 pf-fold pf-5\"/>\n    <polygon points=\"100,100 120,110 120,80\" class=\"pf-facet pf-c6 pf-fold pf-6\"/>\n  </g>\n</svg>"
+    },
+    {
+      "id": "nebula-burst",
+      "name": "Nebula Burst",
+      "file": "advanced/nebula-burst.svg",
+      "description": "Emergence, chaos to structure, generative particles",
+      "family": "advanced",
+      "colors": [
+        "--p31-accent",
+        "--p31-accent-violet",
+        "--p31-accent-gold",
+        "--p31-accent-green",
+        "--p31-accent-iris",
+        "--p31-accent-red"
+      ],
+      "animated": true,
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 200 200\" width=\"100%\" height=\"100%\" role=\"img\" aria-label=\"Nebula Burst animated icon\">\n  <title>Nebula Burst</title>\n  <desc>A generative particle cloud with expanding wave rings, representing emergence and structure from chaos. 6-color palette.</desc>\n  <style>\n    .nb-ripple { fill: none; stroke-width: 1.5; stroke-linecap: round; opacity: 0; transform-origin: 100px 100px; }\n    .nb-r1 { stroke: var(--p31-accent, #00F0FF); animation: nbRipple 6s infinite ease-out; }\n    .nb-r2 { stroke: var(--p31-accent-violet, #A78BFA); animation: nbRipple 6s infinite ease-out 2s; }\n    .nb-r3 { stroke: var(--p31-accent-gold, #FBBF24); animation: nbRipple 6s infinite ease-out 4s; }\n    .nb-r4 { stroke: var(--p31-accent-green, #34D399); animation: nbRipple 6s infinite ease-out 6s; }\n    @keyframes nbRipple { 0% { transform: scale(0.05); opacity: 0.7; stroke-width: 4; } 100% { transform: scale(1); opacity: 0; stroke-width: 1; } }\n    .nb-dot { r: 2.5; animation: nbDrift var(--d, 8s) infinite alternate ease-in-out; }\n    .nb-dot:nth-child(6n+1) { fill: var(--p31-accent, #00F0FF); }\n    .nb-dot:nth-child(6n+2) { fill: var(--p31-accent-violet, #A78BFA); }\n    .nb-dot:nth-child(6n+3) { fill: var(--p31-accent-gold, #FBBF24); }\n    .nb-dot:nth-child(6n+4) { fill: var(--p31-accent-green, #34D399); }\n    .nb-dot:nth-child(6n+5) { fill: var(--p31-accent-red, #FB7185); }\n    .nb-dot:nth-child(6n+6) { fill: var(--p31-accent-iris, #818CF8); }\n    @keyframes nbDrift { 0% { transform: translate(0, 0); opacity: 0.3; } 100% { transform: translate(var(--tx, 20px), var(--ty, -20px)); opacity: 0.9; } }\n    .nb-master { transition: opacity 0.4s ease, filter 0.4s ease; }\n    .nb-cluster { transform-origin: 100px 100px; animation: nbCluster 28s infinite ease-in-out; }\n    @keyframes nbCluster { 0%, 100% { transform: rotate(0deg) scale(1); } 25% { transform: rotate(3deg) scale(1.02); } 75% { transform: rotate(-3deg) scale(0.98); } }\n    .master-pulse .nb-master { opacity: 0.9 !important; filter: drop-shadow(0 0 12px var(--p31-accent, #00F0FF)) !important; }\n    @media (prefers-reduced-motion: reduce) { .nb-ripple, .nb-dot, .nb-cluster { animation: none; } .nb-dot { opacity: 0.5; transform: none; } .nb-ripple { opacity: 0; } }\n  </style>\n    <circle cx=\"100\" cy=\"100\" r=\"90\" class=\"nb-ripple nb-r1 nb-master\"/>\n  <circle cx=\"100\" cy=\"100\" r=\"90\" class=\"nb-ripple nb-r2\"/>\n  <circle cx=\"100\" cy=\"100\" r=\"90\" class=\"nb-ripple nb-r3\"/>\n  <circle cx=\"100\" cy=\"100\" r=\"90\" class=\"nb-ripple nb-r4\"/>\n  <g class=\"nb-cluster\">\n    <circle cx=\"100\" cy=\"40\" class=\"nb-dot\" style=\"--d:12s;--tx:15px;--ty:-10px\"/>\n    <circle cx=\"80\" cy=\"50\" class=\"nb-dot\" style=\"--d:9s;--tx:-10px;--ty:15px\"/>\n    <circle cx=\"120\" cy=\"45\" class=\"nb-dot\" style=\"--d:11s;--tx:12px;--ty:-8px\"/>\n    <circle cx=\"60\" cy=\"65\" class=\"nb-dot\" style=\"--d:7s;--tx:-8px;--ty:12px\"/>\n    <circle cx=\"140\" cy=\"60\" class=\"nb-dot\" style=\"--d:10s;--tx:14px;--ty:-12px\"/>\n    <circle cx=\"45\" cy=\"85\" class=\"nb-dot\" style=\"--d:8s;--tx:-12px;--ty:8px\"/>\n    <circle cx=\"155\" cy=\"80\" class=\"nb-dot\" style=\"--d:13s;--tx:10px;--ty:-14px\"/>\n    <circle cx=\"35\" cy=\"105\" class=\"nb-dot\" style=\"--d:6s;--tx:-14px;--ty:6px\"/>\n    <circle cx=\"165\" cy=\"100\" class=\"nb-dot\" style=\"--d:14s;--tx:16px;--ty:-10px\"/>\n    <circle cx=\"40\" cy=\"125\" class=\"nb-dot\" style=\"--d:9s;--tx:-10px;--ty:14px\"/>\n    <circle cx=\"160\" cy=\"120\" class=\"nb-dot\" style=\"--d:11s;--tx:12px;--ty:-6px\"/>\n    <circle cx=\"55\" cy=\"140\" class=\"nb-dot\" style=\"--d:7s;--tx:-8px;--ty:10px\"/>\n    <circle cx=\"145\" cy=\"135\" class=\"nb-dot\" style=\"--d:10s;--tx:14px;--ty:-12px\"/>\n    <circle cx=\"75\" cy=\"150\" class=\"nb-dot\" style=\"--d:8s;--tx:-12px;--ty:8px\"/>\n    <circle cx=\"125\" cy=\"148\" class=\"nb-dot\" style=\"--d:12s;--tx:10px;--ty:-10px\"/>\n    <circle cx=\"100\" cy=\"155\" class=\"nb-dot\" style=\"--d:6s;--tx:-14px;--ty:12px\"/>\n    <circle cx=\"90\" cy=\"35\" class=\"nb-dot\" style=\"--d:11s;--tx:8px;--ty:-15px\"/>\n    <circle cx=\"110\" cy=\"35\" class=\"nb-dot\" style=\"--d:9s;--tx:-8px;--ty:10px\"/>\n    <circle cx=\"50\" cy=\"100\" class=\"nb-dot\" style=\"--d:13s;--tx:16px;--ty:-8px\"/>\n    <circle cx=\"150\" cy=\"95\" class=\"nb-dot\" style=\"--d:7s;--tx:-10px;--ty:14px\"/>\n    <circle cx=\"95\" cy=\"60\" class=\"nb-dot\" style=\"--d:10s;--tx:12px;--ty:-12px\"/>\n    <circle cx=\"105\" cy=\"65\" class=\"nb-dot\" style=\"--d:8s;--tx:-14px;--ty:8px\"/>\n    <circle cx=\"70\" cy=\"90\" class=\"nb-dot\" style=\"--d:12s;--tx:10px;--ty:-10px\"/>\n    <circle cx=\"130\" cy=\"85\" class=\"nb-dot\" style=\"--d:6s;--tx:-8px;--ty:15px\"/>\n    <circle cx=\"85\" cy=\"115\" class=\"nb-dot\" style=\"--d:14s;--tx:14px;--ty:-6px\"/>\n    <circle cx=\"115\" cy=\"110\" class=\"nb-dot\" style=\"--d:9s;--tx:-12px;--ty:10px\"/>\n    <circle cx=\"75\" cy=\"130\" class=\"nb-dot\" style=\"--d:11s;--tx:8px;--ty:-14px\"/>\n    <circle cx=\"125\" cy=\"125\" class=\"nb-dot\" style=\"--d:7s;--tx:-10px;--ty:8px\"/>\n    <circle cx=\"100\" cy=\"75\" class=\"nb-dot\" style=\"--d:10s;--tx:15px;--ty:-10px\"/>\n    <circle cx=\"100\" cy=\"130\" class=\"nb-dot\" style=\"--d:8s;--tx:-12px;--ty:12px\"/>\n    <circle cx=\"65\" cy=\"105\" class=\"nb-dot\" style=\"--d:13s;--tx:10px;--ty:-8px\"/>\n    <circle cx=\"135\" cy=\"105\" class=\"nb-dot\" style=\"--d:6s;--tx:-14px;--ty:10px\"/>\n    <circle cx=\"90\" cy=\"90\" class=\"nb-dot\" style=\"--d:12s;--tx:8px;--ty:-12px\"/>\n    <circle cx=\"110\" cy=\"95\" class=\"nb-dot\" style=\"--d:9s;--tx:-10px;--ty:14px\"/>\n    <circle cx=\"80\" cy=\"75\" class=\"nb-dot\" style=\"--d:11s;--tx:12px;--ty:-8px\"/>\n    <circle cx=\"120\" cy=\"135\" class=\"nb-dot\" style=\"--d:7s;--tx:-8px;--ty:10px\"/>\n    <circle cx=\"100\" cy=\"50\" class=\"nb-dot\" style=\"--d:10s;--tx:14px;--ty:-14px\"/>\n    <circle cx=\"100\" cy=\"150\" class=\"nb-dot\" style=\"--d:8s;--tx:-12px;--ty:8px\"/>\n    <circle cx=\"55\" cy=\"95\" class=\"nb-dot\" style=\"--d:14s;--tx:10px;--ty:-12px\"/>\n    <circle cx=\"145\" cy=\"100\" class=\"nb-dot\" style=\"--d:6s;--tx:-14px;--ty:10px\"/>\n    <circle cx=\"70\" cy=\"110\" class=\"nb-dot\" style=\"--d:13s;--tx:8px;--ty:-15px\"/>\n    <circle cx=\"130\" cy=\"115\" class=\"nb-dot\" style=\"--d:9s;--tx:-10px;--ty:8px\"/>\n  </g>\n</svg>"
+    },
+    {
+      "id": "comet-orb",
+      "name": "Comet Orb",
+      "file": "advanced/comet-orb.svg",
+      "description": "Swirling energy, harmonized orbital motion",
+      "family": "advanced",
+      "colors": [
+        "--p31-accent",
+        "--p31-accent-violet",
+        "--p31-accent-gold",
+        "--p31-accent-green",
+        "--p31-accent-iris",
+        "--p31-accent-red"
+      ],
+      "animated": true,
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 200 200\" width=\"100%\" height=\"100%\" role=\"img\" aria-label=\"Comet Orb animated icon\">\n  <title>Comet Orb</title>\n  <desc>Swirling energy orb with harmonized elliptical rings and orbiting particles. 6-color palette, 48s sync cycle.</desc>\n  <style>\n    .co-ring { fill: none; stroke-width: 1.5; stroke-linecap: round; }\n    .co-orbit-1 { transform-origin: 100px 100px; animation: coCw 16s infinite linear; }\n    .co-orbit-2 { transform-origin: 100px 100px; animation: coCcw 12s infinite linear; }\n    .co-orbit-3 { transform-origin: 100px 100px; animation: coCw 16s infinite linear; }\n    .co-orbit-4 { transform-origin: 100px 100px; animation: coCcw 12s infinite linear; }\n    .co-r1 { stroke: var(--p31-accent, #00F0FF); stroke-dasharray: 44 156; animation: coDash 4s infinite linear; }\n    .co-r2 { stroke: var(--p31-accent-violet, #A78BFA); stroke-dasharray: 39 141; animation: coDash 4s infinite linear; }\n    .co-r3 { stroke: var(--p31-accent-gold, #FBBF24); stroke-dasharray: 50 150; animation: coDash 4s infinite linear reverse; }\n    .co-r4 { stroke: var(--p31-accent-green, #34D399); stroke-dasharray: 27 153; animation: coDash 4s infinite linear reverse; }\n    .co-c1 { fill: var(--p31-accent, #00F0FF); }\n    .co-c2 { fill: var(--p31-accent-violet, #A78BFA); }\n    .co-c3 { fill: var(--p31-accent-gold, #FBBF24); }\n    .co-c4 { fill: var(--p31-accent-green, #34D399); }\n    .co-c5 { fill: var(--p31-accent-red, #FB7185); }\n    .co-c6 { fill: var(--p31-accent-iris, #818CF8); }\n    .co-particle { filter: drop-shadow(0 0 3px currentColor); }\n    .co-p1 { animation: coCw 16s infinite linear; }\n    .co-p2 { animation: coCcw 12s infinite linear; }\n    .co-p3 { animation: coCw 16s infinite linear; }\n    .co-p4 { animation: coCcw 12s infinite linear; }\n    .co-p5 { animation: coCw 16s infinite linear; animation-delay: 8s; }\n    .co-p6 { animation: coCcw 12s infinite linear; animation-delay: 6s; }\n    .co-master { transition: filter 0.6s ease-in-out; }\n    .co-core { fill: var(--p31-accent, #00F0FF); transform-origin: 100px 100px; animation: coCore 2s infinite alternate ease-in-out; }\n    .co-trail { fill: none; stroke-width: 1; opacity: 0; }\n    .co-t1 { stroke: var(--p31-accent, #00F0FF); animation: coTrail 3s infinite ease-out; }\n    .co-t2 { stroke: var(--p31-accent-violet, #A78BFA); animation: coTrail 3s infinite ease-out; animation-delay: 1.5s; }\n    @keyframes coCw { to { transform: rotate(360deg); } }\n    @keyframes coCcw { to { transform: rotate(-360deg); } }\n    @keyframes coDash { to { stroke-dashoffset: 200; } }\n    @keyframes coCore { 0% { transform: scale(0.85); opacity: 0.8; filter: drop-shadow(0 0 4px var(--p31-accent, #00F0FF)); } 100% { transform: scale(1.1); opacity: 1; filter: drop-shadow(0 0 22px var(--p31-accent, #00F0FF)); } }\n    @keyframes coTrail { 0% { opacity: 0.5; stroke-width: 2.5; } 100% { opacity: 0; stroke-width: 0; } }\n    .master-pulse .co-master { filter: drop-shadow(0 0 22px var(--p31-accent, #00F0FF)) !important; }\n    @media (prefers-reduced-motion: reduce) { .co-orbit-1, .co-orbit-2, .co-orbit-3, .co-orbit-4, .co-particle, .co-core, .co-trail, .co-ring { animation: none; } .co-ring { stroke-dashoffset: 0; opacity: 0.3; } .co-core { r: 10; } }\n  </style>\n  <g class=\"co-orbit-1\">\n    <ellipse cx=\"100\" cy=\"100\" rx=\"88\" ry=\"30\" class=\"co-ring co-r1\"/>\n    <path d=\"M 100 70 Q 140 70 185 100 Q 140 130 100 130\" class=\"co-trail co-t1\"/>\n    <circle cx=\"185\" cy=\"100\" r=\"3.5\" class=\"co-particle co-c1 co-p1\"/>\n  </g>\n  <g class=\"co-orbit-2\">\n    <ellipse cx=\"100\" cy=\"100\" rx=\"78\" ry=\"26\" class=\"co-ring co-r2\" transform=\"rotate(60 100 100)\"/>\n    <circle cx=\"51\" cy=\"27\" r=\"3\" class=\"co-particle co-c5 co-p2\"/>\n  </g>\n  <g class=\"co-orbit-3\">\n    <ellipse cx=\"100\" cy=\"100\" rx=\"66\" ry=\"22\" class=\"co-ring co-r3\" transform=\"rotate(120 100 100)\"/>\n    <path d=\"M 100 80 Q 50 80 15 100 Q 50 120 100 120\" class=\"co-trail co-t2\"/>\n    <circle cx=\"15\" cy=\"100\" r=\"4\" class=\"co-particle co-c3 co-p3\"/>\n  </g>\n  <g class=\"co-orbit-4\">\n    <ellipse cx=\"100\" cy=\"100\" rx=\"54\" ry=\"18\" class=\"co-ring co-r4\" transform=\"rotate(30 100 100)\"/>\n    <circle cx=\"158\" cy=\"64\" r=\"2.5\" class=\"co-particle co-c4 co-p4\"/>\n  </g>\n  <circle cx=\"100\" cy=\"100\" r=\"10\" class=\"co-core co-master\"/>\n  <circle cx=\"42\" cy=\"66\" r=\"3\" class=\"co-particle co-c6 co-p5\"/>\n  <circle cx=\"158\" cy=\"134\" r=\"3\" class=\"co-particle co-c2 co-p6\"/>\n</svg>"
+    }
+  ],
+  "tools": {
+    "renderGlassPanel": {
+      "description": "Renders or controls the GlassPanel component",
+      "components": [
+        "GlassPanel"
+      ],
+      "tokens": [
+        "primitive.color.glass_surface",
+        "primitive.color.glass_border",
+        "primitive.color.surface2",
+        "primitive.color.void_deep",
+        "primitive.radius.xl",
+        "primitive.radius.sm",
+        "primitive.radius.lg",
+        "primitive.shadow.glass",
+        "primitive.spacing.xl",
+        "primitive.spacing.xxl"
+      ]
+    },
+    "renderGlassCard": {
+      "description": "Renders or controls the GlassCard component",
+      "components": [
+        "GlassCard"
+      ],
+      "tokens": [
+        "primitive.color.glass_surface",
+        "primitive.color.glass_border",
+        "primitive.color.glass_border_hover",
+        "primitive.color.surface2",
+        "primitive.color.void_deep",
+        "primitive.radius.xl",
+        "primitive.radius.sm",
+        "primitive.radius.lg",
+        "primitive.radius.full",
+        "primitive.shadow.glass",
+        "primitive.shadow.glow_cyan_hover",
+        "primitive.spacing.xs",
+        "primitive.spacing.md",
+        "primitive.spacing.xl",
+        "primitive.spacing.xxl",
+        "primitive.typography.font_sans",
+        "semantic.color.background.alt",
+        "semantic.color.accent.gold",
+        "semantic.color.accent.red",
+        "semantic.color.accent.iris"
+      ]
+    },
+    "renderGlassStrong": {
+      "description": "Renders or controls the GlassStrong component",
+      "components": [
+        "GlassStrong"
+      ],
+      "tokens": [
+        "primitive.color.glass_surface_strong",
+        "primitive.color.void_deep",
+        "primitive.blur.strong",
+        "primitive.radius.xl"
+      ]
+    },
+    "renderGlassSubtle": {
+      "description": "Renders or controls the GlassSubtle component",
+      "components": [
+        "GlassSubtle"
+      ],
+      "tokens": [
+        "primitive.color.glass_surface_subtle",
+        "primitive.color.surface2",
+        "primitive.blur.subtle",
+        "primitive.radius.xl"
+      ]
+    },
+    "renderButton": {
+      "description": "Renders or controls the Button component",
+      "components": [
+        "Button"
+      ],
+      "tokens": [
+        "semantic.color.accent.default",
+        "primitive.color.void",
+        "primitive.color.void_deep",
+        "primitive.color.surface2",
+        "primitive.spacing.sm",
+        "primitive.spacing.lg",
+        "primitive.spacing.xl",
+        "primitive.radius.md",
+        "primitive.radius.sm",
+        "primitive.radius.full",
+        "primitive.shadow.glow_cyan",
+        "primitive.typography.font_sans"
+      ]
+    },
+    "renderSpoonMeter": {
+      "description": "Renders or controls the SpoonMeter component",
+      "components": [
+        "SpoonMeter"
+      ],
+      "tokens": [
+        "semantic.color.accent.default",
+        "semantic.color.accent.gold",
+        "semantic.color.accent.red",
+        "semantic.color.accent.iris",
+        "semantic.color.text.tertiary",
+        "primitive.typography.font_sans"
+      ]
+    },
+    "renderTetraGrid": {
+      "description": "Renders or controls the TetraGrid component",
+      "components": [
+        "TetraGrid"
+      ],
+      "tokens": [
+        "primitive.spacing.xs",
+        "primitive.spacing.md",
+        "primitive.spacing.xl",
+        "primitive.spacing.xxl"
+      ]
+    },
+    "renderHonestLabel": {
+      "description": "Renders or controls the HonestLabel component",
+      "components": [
+        "HonestLabel"
+      ],
+      "tokens": [
+        "primitive.typography.font_mono",
+        "primitive.typography.font_sans",
+        "semantic.color.text.tertiary"
+      ]
+    },
+    "renderStatusBadge": {
+      "description": "Renders or controls the StatusBadge component",
+      "components": [
+        "StatusBadge"
+      ],
+      "tokens": [
+        "semantic.color.accent.green",
+        "semantic.color.accent.default",
+        "semantic.color.accent.variant",
+        "semantic.color.accent.gold",
+        "semantic.color.accent.red",
+        "semantic.color.accent.iris",
+        "primitive.radius.sm",
+        "primitive.spacing.xs",
+        "primitive.typography.font_sans"
+      ]
+    },
+    "crisisOverlay": {
+      "description": "Renders or controls the CrisisOverlay component",
+      "components": [
+        "CrisisOverlay"
+      ],
+      "tokens": [
+        "semantic.color.background.default",
+        "primitive.color.void_deep",
+        "primitive.typography.font_sans"
+      ]
+    },
+    "renderStarfield": {
+      "description": "Renders or controls the Starfield component",
+      "components": [
+        "Starfield"
+      ],
+      "tokens": [
+        "primitive.color.void_deep",
+        "primitive.radius.full",
+        "primitive.shadow.glow_cyan"
+      ]
+    },
+    "themeToggle": {
+      "description": "Renders or controls the ThemeToggle component",
+      "components": [
+        "ThemeToggle"
+      ],
+      "tokens": [
+        "semantic.color.background.default",
+        "theme.light.background.default",
+        "theme.light.background.alt",
+        "theme.light.text.primary",
+        "theme.light.text.secondary",
+        "theme.light.text.tertiary",
+        "theme.light.glass_surface",
+        "theme.light.glass_border",
+        "theme.light.glass_border_hover",
+        "primitive.typography.font_sans"
+      ]
+    },
+    "renderCandyHeader": {
+      "description": "Renders or controls the CandyHeader component",
+      "components": [
+        "CandyHeader"
+      ],
+      "tokens": [
+        "component.header_candy",
+        "component.crown_xs",
+        "component.spoon_icon",
+        "primitive.color.cyan",
+        "primitive.color.void"
+      ]
+    },
+    "renderCrown": {
+      "description": "Renders or controls the Crown component",
+      "components": [
+        "Crown"
+      ],
+      "tokens": [
+        "component.crown_xs",
+        "primitive.color.cyan",
+        "primitive.color.violet",
+        "primitive.color.gold",
+        "primitive.color.green",
+        "primitive.color.iris"
+      ]
+    },
+    "setSpoonLevel": {
+      "description": "Renders or controls the SpoonDial component",
+      "components": [
+        "SpoonDial"
+      ],
+      "tokens": [
+        "component.spoon_icon",
+        "semantic.color.accent.default"
+      ]
+    },
+    "renderCard": {
+      "description": "Renders or controls the Card component",
+      "components": [
+        "Card"
+      ],
+      "tokens": [
+        "primitive.color.glass_surface",
+        "primitive.color.glass_border",
+        "primitive.color.glass_border_hover",
+        "primitive.radius.lg",
+        "primitive.radius.md",
+        "primitive.shadow.glass",
+        "primitive.typography.font_sans"
+      ]
+    },
+    "renderTopbar": {
+      "description": "Renders or controls the Topbar component",
+      "components": [
+        "Topbar"
+      ],
+      "tokens": [
+        "primitive.color.glass_surface",
+        "primitive.color.void",
+        "primitive.spacing.lg",
+        "primitive.spacing.md",
+        "primitive.radius.md",
+        "primitive.typography.font_sans"
+      ]
+    },
+    "navigate": {
+      "description": "Renders or controls the BottomNav component",
+      "components": [
+        "BottomNav"
+      ],
+      "tokens": [
+        "primitive.color.glass_surface",
+        "primitive.color.void",
+        "primitive.spacing.sm",
+        "primitive.radius.md",
+        "primitive.typography.font_sans"
+      ]
+    },
+    "renderBadge": {
+      "description": "Renders or controls the Badge component",
+      "components": [
+        "Badge"
+      ],
+      "tokens": [
+        "primitive.color.glass_surface",
+        "primitive.color.glass_border",
+        "primitive.radius.full",
+        "primitive.spacing.xs",
+        "primitive.spacing.md",
+        "primitive.typography.font_mono"
+      ]
+    },
+    "companionCard": {
+      "description": "Renders or controls the CompanionCard component",
+      "components": [
+        "CompanionCard"
+      ],
+      "tokens": [
+        "primitive.color.glass_surface",
+        "primitive.color.glass_border",
+        "primitive.radius.xl",
+        "primitive.radius.lg",
+        "primitive.radius.full",
+        "primitive.shadow.glass"
+      ]
+    },
+    "moodBtn": {
+      "description": "Renders or controls the MoodBtn component",
+      "components": [
+        "MoodBtn"
+      ],
+      "tokens": [
+        "primitive.radius.full",
+        "primitive.spacing.md"
+      ]
+    },
+    "gameCard": {
+      "description": "Renders or controls the GameCard component",
+      "components": [
+        "GameCard"
+      ],
+      "tokens": [
+        "primitive.color.glass_surface",
+        "primitive.color.glass_border",
+        "primitive.radius.lg",
+        "primitive.typography.font_sans"
+      ]
+    },
+    "chatBubble": {
+      "description": "Renders or controls the ChatBubble component",
+      "components": [
+        "ChatBubble"
+      ],
+      "tokens": [
+        "primitive.radius.lg",
+        "primitive.radius.md",
+        "primitive.typography.font_sans",
+        "primitive.color.surface2",
+        "primitive.color.void_deep"
+      ]
+    },
+    "pinKey": {
+      "description": "Renders or controls the PinKey component",
+      "components": [
+        "PinKey"
+      ],
+      "tokens": [
+        "primitive.radius.full",
+        "primitive.spacing.md"
+      ]
+    },
+    "renderToggle": {
+      "description": "Renders or controls the Toggle component",
+      "components": [
+        "Toggle"
+      ],
+      "tokens": [
+        "primitive.radius.full",
+        "primitive.color.glass_surface",
+        "primitive.color.surface2"
+      ]
+    },
+    "breakOverlay": {
+      "description": "Renders or controls the BreakOverlay component",
+      "components": [
+        "BreakOverlay"
+      ],
+      "tokens": [
+        "primitive.color.void_deep",
+        "primitive.color.surface2",
+        "primitive.radius.xl"
+      ]
+    },
+    "showToast": {
+      "description": "Renders or controls the Toast component",
+      "components": [
+        "Toast"
+      ],
+      "tokens": [
+        "primitive.color.glass_surface",
+        "primitive.radius.md",
+        "primitive.typography.font_sans",
+        "semantic.color.accent.green",
+        "semantic.color.accent.red"
+      ]
+    }
+  },
+  "webmcp": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "MCPAnnotation",
+    "description": "WebMCP annotation schema for declarative UI bindings. Combines MCPAttributeSchema attributes with MCPAnnotation runtime fields.",
+    "type": "object",
+    "properties": {
+      "data-mcp-tool": {
+        "type": "string"
+      },
+      "data-mcp-state": {
+        "type": "string"
+      },
+      "data-mcp-target": {
+        "type": "string"
+      },
+      "data-mcp-type": {
+        "type": "string",
+        "enum": [
+          "control",
+          "action",
+          "state"
+        ]
+      },
+      "data-mcp-range": {
+        "type": "string"
+      },
+      "data-mcp-current": {
+        "oneOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "number"
+          }
+        ]
+      },
+      "data-mcp-href": {
+        "type": "string"
+      },
+      "data-mcp-external": {
+        "type": "string",
+        "pattern": "^(true|false)$"
+      },
+      "selector": {
+        "type": "string"
+      },
+      "tagName": {
+        "type": "string"
+      },
+      "childCount": {
+        "type": "number",
+        "minimum": 0
+      },
+      "isDisabled": {
+        "type": "boolean"
+      },
+      "warnings": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "required": [
+      "data-mcp-tool",
+      "selector",
+      "tagName",
+      "childCount",
+      "isDisabled",
+      "warnings"
+    ],
+    "additionalProperties": true
+  },
+  "sovereign": {
+    "bounding_boxes": {
+      "icon_xs": {
+        "width": "calc(var(--p31-base) * 1)",
+        "height": "calc(var(--p31-base) * 1)",
+        "container_display": "block",
+        "container_width": "100%",
+        "container_height": "100%",
+        "description": "Very small icon (status dots, inline badges)",
+        "usage": "status-indicator, badge"
+      },
+      "icon_sm": {
+        "width": "calc(var(--p31-base) * 1.3333)",
+        "height": "calc(var(--p31-base) * 1.3333)",
+        "container_display": "block",
+        "container_width": "100%",
+        "container_height": "100%",
+        "description": "Small icon (inline with text, nav icons)",
+        "usage": "nav-link-icon, button-icon"
+      },
+      "icon_md": {
+        "width": "calc(var(--p31-base) * 2)",
+        "height": "calc(var(--p31-base) * 2)",
+        "container_display": "block",
+        "container_width": "100%",
+        "container_height": "100%",
+        "description": "Medium icon (feature cards, section headers)",
+        "usage": "feature-card-icon, section-icon"
+      },
+      "icon_lg": {
+        "width": "calc(var(--p31-base) * 2.5)",
+        "height": "calc(var(--p31-base) * 2.5)",
+        "container_display": "block",
+        "container_width": "100%",
+        "container_height": "100%",
+        "description": "Large icon (brand crown in header, hero icons)",
+        "usage": "brand-mark, header-crown"
+      },
+      "icon_xl": {
+        "width": "calc(var(--p31-base) * 4)",
+        "height": "calc(var(--p31-base) * 4)",
+        "container_display": "block",
+        "container_width": "100%",
+        "container_height": "100%",
+        "description": "Extra large icon (hero crown, standalone graphic)",
+        "usage": "hero-crown, feature-hero"
+      },
+      "icon_favicon": {
+        "width": "calc(var(--p31-base) * 12)",
+        "height": "calc(var(--p31-base) * 12)",
+        "container_display": "block",
+        "container_width": "100%",
+        "container_height": "100%",
+        "description": "Favicon / app icon (browser tabs, mobile home screen)",
+        "usage": "favicon, app-icon, pwa-icon"
+      }
+    },
+    "layout_containers": {
+      "header": {
+        "height": "calc(var(--p31-base) * 3)",
+        "padding_y": "calc(var(--p31-base) * 0.25)",
+        "gap": "calc(var(--p31-base) * 1.3333)",
+        "align_items": "center",
+        "justify_content": "space-between",
+        "max_width": "1440px",
+        "margin": "0 auto",
+        "display": "flex",
+        "description": "Primary navigation header. Fixed height. Flex container. No child component may exceed height.",
+        "forbidden_child_properties": [
+          "marginTop",
+          "marginBottom",
+          "marginLeft",
+          "marginRight",
+          "margin",
+          "transform: translateY",
+          "position: relative",
+          "top",
+          "bottom"
+        ],
+        "allowed_child_properties": [
+          "display: block",
+          "width: 100%",
+          "height: 100%"
+        ]
+      },
+      "page_body": {
+        "max_width": "1200px",
+        "margin": "0 auto",
+        "padding_x": "calc(var(--p31-base) * 1.3333)",
+        "gap": "calc(var(--p31-base) * 1.7777)",
+        "description": "Main content area. Predictable padding and gaps derived from scale."
+      },
+      "section_hero": {
+        "padding_x": "calc(var(--p31-base) * 1.3333)",
+        "padding_top": "calc(var(--p31-scale-xl) * 0.5)",
+        "padding_bottom": "calc(var(--p31-base) * 2.3703)",
+        "gap": "calc(var(--p31-base) * 1.7777)",
+        "max_width": "1200px",
+        "margin": "0 auto",
+        "description": "Hero section. Consistent spacing from tokens."
+      },
+      "section_features": {
+        "padding_x": "calc(var(--p31-base) * 1.3333)",
+        "padding_top": "calc(var(--p31-base) * 2.3703)",
+        "padding_bottom": "calc(var(--p31-base) * 2.3703)",
+        "display": "grid",
+        "grid_template_columns": "repeat(auto-fill, minmax(280px, 1fr))",
+        "gap": "calc(var(--p31-base) * 1.3333)",
+        "max_width": "1200px",
+        "margin": "0 auto",
+        "description": "Feature grid. Uses grid layout with consistent gap."
+      },
+      "footer": {
+        "padding_x": "calc(var(--p31-base) * 1.3333)",
+        "padding_y": "calc(var(--p31-base) * 1.3333)",
+        "border_top": "1px solid rgba(255,255,255,0.08)",
+        "max_width": "1440px",
+        "margin": "0 auto",
+        "description": "Site footer. Bordered top, consistent padding, full-width cap."
+      }
+    },
+    "spacing_rules": {
+      "component_forbidden_properties": [
+        "marginTop",
+        "marginBottom",
+        "marginLeft",
+        "marginRight",
+        "margin",
+        "transform: translateY",
+        "transform: translateX",
+        "transform: translate",
+        "position: relative",
+        "position: absolute",
+        "top",
+        "bottom",
+        "left",
+        "right",
+        "display: inline-block"
+      ],
+      "component_forbidden_description": "Components do not declare external spacing. Only templates do.",
+      "template_allowed_properties": [
+        "gap",
+        "padding",
+        "paddingTop",
+        "paddingBottom",
+        "paddingLeft",
+        "paddingRight",
+        "paddingX",
+        "paddingY",
+        "align-items",
+        "justify-content",
+        "display: flex",
+        "display: grid",
+        "grid_template_columns",
+        "grid_template_rows",
+        "max_width",
+        "margin: 0 auto"
+      ],
+      "template_allowed_description": "Templates control all external spacing. Components control only internal geometry.",
+      "component_allowed_internal_properties": [
+        "background",
+        "backgroundColor",
+        "border",
+        "borderColor",
+        "borderRadius",
+        "boxShadow",
+        "color",
+        "fill",
+        "fontFamily",
+        "fontSize",
+        "fontWeight",
+        "height",
+        "lineHeight",
+        "opacity",
+        "overflow",
+        "padding",
+        "stroke",
+        "textAlign",
+        "textDecoration",
+        "textTransform",
+        "transition",
+        "width",
+        "zIndex"
+      ],
+      "component_allowed_description": "These properties control internal appearance only. They do not affect layout positioning."
+    },
+    "cascade_layers": {
+      "order": [
+        "reset",
+        "tokens",
+        "components",
+        "templates",
+        "overrides"
+      ],
+      "description": "Templates always override component styling cleanly without !important specificity wars.\nThis eliminates the need for !important hacks in Header.astro and other layout components.\n",
+      "layer_definitions": {
+        "reset": {
+          "description": "Normalize CSS, base resets. Lowest priority.",
+          "includes": "normalize.css, base.css"
+        },
+        "tokens": {
+          "description": "Design tokens (CSS variables). Second lowest priority.",
+          "includes": "tokens.css, all token files"
+        },
+        "components": {
+          "description": "Component-specific styles. Default priority.",
+          "includes": "component CSS, generated component styles"
+        },
+        "templates": {
+          "description": "Template/layout styles. Higher priority than components.",
+          "includes": "Header.astro styles, PageLayout.astro styles"
+        },
+        "overrides": {
+          "description": "Highest priority. One-off overrides for specific pages. Use sparingly.",
+          "includes": "page-specific styles, emergency fixes"
+        }
+      }
+    },
+    "svg_rules": {
+      "enforce_bounding_box": true,
+      "description": "All SVGs must fit inside a bounding box defined in bounding_boxes section.",
+      "svgo_transform": {
+        "removeViewBox": false,
+        "trimToVisibleContent": true,
+        "forceContainerAspect": true,
+        "cleanupAttrs": true,
+        "removeDoctype": true,
+        "removeEmptyText": true,
+        "removeEmptyContainers": true,
+        "cleanupIDs": true,
+        "convertShapeToPath": true,
+        "moveGroupAttrsToElems": true,
+        "collapseGroups": true,
+        "sortAttrs": true,
+        "description": "SVGO plugins to run on every SVG import. Automatically trims whitespace, tightens viewBox, and normalizes structure."
+      },
+      "viewBox_trimming": {
+        "enabled": true,
+        "padding": "2px",
+        "trim_to_visible_bounds": true,
+        "description": "Automatically recalculate viewBox to the visible bounding box of all paths. Removes descender whitespace."
+      },
+      "container_wrapping": {
+        "enabled": true,
+        "wrapper_display": "block",
+        "wrapper_width": "100%",
+        "wrapper_height": "100%",
+        "description": "All SVGs are wrapped in a container that enforces the bounding box dimensions."
+      }
+    },
+    "agent_prompt_injection": {
+      "description": "This section is injected into Claude, Gemini, and Kilo prompts.",
+      "claude": {
+        "role": "React / Component Developer",
+        "instruction": "When generating React components:\n1. Read the bounding_boxes section to know the exact dimensions of icons and SVG containers.\n2. NEVER use marginTop, marginBottom, or any forbidden property listed in spacing_rules.component_forbidden_properties.\n3. Always wrap SVGs in a container that matches the bounding box dimensions.\n4. Use internal styling only (component_allowed_internal_properties).\n5. Run your generated code through the SpatialValidator before submission.\n6. Use scale tokens (--p31-scale-*) for sizing. Derive everything from --p31-base.\n7. Use color.quantum tokens for accents, color.surface for backgrounds, color.text for typography.\n"
+      },
+      "gemini": {
+        "role": "Layout / Template Designer",
+        "instruction": "When designing page layouts and templates:\n1. Use the layout_containers section to define macro-architecture.\n2. Define slots with explicit bounding box expectations.\n3. Use only template_allowed_properties for external spacing.\n4. Understand that components cannot declare margin; spacing is your job.\n5. Respect the cascade_layers order — templates override components, not the other way around.\n6. Use scale tokens (--p31-scale-*) for spacing. Use spacing tokens (--p31-space-*) for gaps.\n7. Use typography.size tokens for font sizes. All are fluid clamp() values.\n"
+      },
+      "kilo": {
+        "role": "Implementation / Execution Engine",
+        "instruction": "When executing the build pipeline:\n1. Read the svg_rules section and run SVGO normalization on all SVG imports.\n2. Validate all components against the spacing_rules section using SpatialValidator.\n3. Fail the build if any component violates the rules.\n4. Ensure all generated code respects the cascade_layers order.\n5. Generate CSS from tokens using the export scripts in cli/tokens/.\n6. Run p31 health before deployment.\n"
+      }
+    },
+    "examples": {
+      "crown_svg": {
+        "description": "Crown.svg — how it should be configured to fit icon_lg bounding box",
+        "before": "<svg viewBox=\"0 0 200 200\" style={{ marginTop: '-4px' }}>  ← ❌ VIOLATION\n",
+        "after": "<svg viewBox=\"0 18 200 164\" className=\"crown-svg\">  ← ✅ CLEAN\n",
+        "notes": "- viewBox is trimmed to visible content (top whitespace removed)\n- No margin, marginTop, or transform hacks\n- SVG fills its 40×40 container naturally\n"
+      },
+      "header_example": {
+        "description": "Header.astro — how to use the Header layout container",
+        "code": "<div class=\"header-wrapper\">\n  <header class=\"header-container\">\n    <div class=\"header-brand-slot\">\n      <Crown />  ← Component with NO external spacing\n    </div>\n    <nav class=\"header-nav-slot\">\n      <a href=\"/\">Home</a>\n    </nav>\n    <div class=\"header-actions-slot\">\n      <SignInButton />  ← Component with NO external spacing\n    </div>\n  </header>\n</div>\n",
+        "notes": "- Header container enforces height: calc(var(--p31-base) * 3) = 48px\n- All children are centered via align-items: center\n- Components have no margin, so alignment is perfect\n- No hacks needed\n"
+      }
+    },
+    "property-overrides": {
+      "p31ca": {
+        "semantic-color": {
+          "primary": {
+            "$value": "oklch(65% 0.18 195)"
+          },
+          "secondary": {
+            "$value": "oklch(65% 0.18 285)"
+          }
+        },
+        "typography": {
+          "font-family": "'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif"
+        },
+        "glass": {
+          "glass_surface": {
+            "$value": "oklch(14% 0.02 260 / 0.35)"
+          },
+          "glass_border": {
+            "$value": "oklch(100% 0.01 240 / 0.12)"
+          },
+          "glass_surface_hover": {
+            "$value": "oklch(14% 0.02 260 / 0.45)"
+          },
+          "glass_border_hover": {
+            "$value": "oklch(100% 0.01 240 / 0.25)"
+          },
+          "glass_blur": {
+            "$value": "24px"
+          }
+        },
+        "starfield": {
+          "hearth_color": {
+            "$value": "oklch(55% 0.15 35)"
+          },
+          "teal_color": {
+            "$value": "oklch(60% 0.08 185)"
+          },
+          "particle_count": {
+            "$value": 80
+          },
+          "speed": {
+            "$value": 0.15
+          }
+        }
+      },
+      "phosphorus31": {
+        "semantic-color": {
+          "primary": {
+            "$value": "oklch(65% 0.18 105)"
+          },
+          "secondary": {
+            "$value": "oklch(65% 0.18 15)"
+          }
+        },
+        "typography": {
+          "font-family": "'Atkinson Hyperlegible', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif"
+        },
+        "glass": {
+          "glass_surface": {
+            "$value": "oklch(99% 0.01 85 / 0.55)"
+          },
+          "glass_border": {
+            "$value": "oklch(80% 0.02 75 / 0.3)"
+          },
+          "glass_surface_hover": {
+            "$value": "oklch(99% 0.01 85 / 0.65)"
+          },
+          "glass_border_hover": {
+            "$value": "oklch(70% 0.03 70 / 0.4)"
+          },
+          "glass_blur": {
+            "$value": "16px"
+          }
+        },
+        "starfield": {
+          "hearth_color": {
+            "$value": "oklch(55% 0.10 70)"
+          },
+          "teal_color": {
+            "$value": "oklch(60% 0.06 130)"
+          },
+          "particle_count": {
+            "$value": 60
+          },
+          "speed": {
+            "$value": 0.08
+          }
+        },
+        "nonprofit": {
+          "trust_indicators": {
+            "ein_badge": "501(c)(3) · EIN 42-1888158",
+            "transparency_link": "/financials",
+            "pilot_count_display": true
+          },
+          "conversion": {
+            "cta_min_height": "48px",
+            "cta_padding": "var(--p31-space-md) var(--p31-space-lg)",
+            "donate_button_color": "var(--p31-color-emerald)",
+            "volunteer_button_color": "var(--p31-color-amber)"
+          },
+          "accessibility": {
+            "min_contrast_ratio": 4.5,
+            "font_primary": "Atkinson Hyperlegible",
+            "touch_target_min": "48px"
+          }
+        }
+      },
+      "willow": {
+        "semantic-color": {
+          "primary": {
+            "$value": "oklch(65% 0.18 45)"
+          },
+          "secondary": {
+            "$value": "oklch(60% 0.15 200)"
+          }
+        },
+        "typography": {
+          "font-family": "\"Comic Sans MS\", \"Chalkboard SE\", cursive, sans-serif",
+          "font-display": "\"Comic Sans MS\", \"Chalkboard SE\", cursive"
+        },
+        "glass": {
+          "glass_surface": {
+            "$value": "rgba(255, 248, 240, 0.7)"
+          },
+          "glass_border": {
+            "$value": "rgba(200, 180, 160, 0.25)"
+          },
+          "glass_surface_hover": {
+            "$value": "rgba(255, 248, 240, 0.85)"
+          },
+          "glass_border_hover": {
+            "$value": "rgba(200, 180, 160, 0.35)"
+          },
+          "glass_blur": {
+            "$value": "16px"
+          }
+        },
+        "starfield": {
+          "hearth_color": {
+            "$value": "hsl(25, 80%, 50%)"
+          },
+          "teal_color": {
+            "$value": "hsl(200, 60%, 60%)"
+          },
+          "particle_count": {
+            "$value": 70
+          },
+          "speed": {
+            "$value": 0.08
+          }
+        },
+        "radii": {
+          "sm": {
+            "$value": "12px"
+          },
+          "md": {
+            "$value": "20px"
+          },
+          "lg": {
+            "$value": "28px"
+          },
+          "xl": {
+            "$value": "40px"
+          },
+          "full": {
+            "$value": "9999px"
+          }
+        },
+        "spacing": {
+          "xs": {
+            "$value": "0.5rem"
+          },
+          "sm": {
+            "$value": "0.75rem"
+          },
+          "md": {
+            "$value": "1.25rem"
+          },
+          "lg": {
+            "$value": "2rem"
+          },
+          "xl": {
+            "$value": "2.5rem"
+          },
+          "xxl": {
+            "$value": "4rem"
+          }
+        },
+        "duration": {
+          "fast": {
+            "$value": "200ms"
+          },
+          "normal": {
+            "$value": "400ms"
+          },
+          "slow": {
+            "$value": "600ms"
+          }
+        },
+        "easing": {
+          "default": {
+            "$value": "cubic-bezier(0.34, 1.56, 0.64, 1)"
+          }
+        },
+        "touch": {
+          "min": {
+            "$value": "56px"
+          },
+          "recommended": {
+            "$value": "64px"
+          }
+        },
+        "z_index": {
+          "starfield": {
+            "$value": 0
+          },
+          "topbar": {
+            "$value": 10
+          },
+          "toast": {
+            "$value": 9999
+          },
+          "crisis": {
+            "$value": 99999
+          }
+        },
+        "dark_mode": {
+          "glass_surface": {
+            "$value": "rgba(30, 28, 26, 0.8)"
+          },
+          "glass_border": {
+            "$value": "rgba(80, 75, 70, 0.3)"
+          },
+          "text": {
+            "$value": "oklch(90% 0.01 80)"
+          },
+          "text_secondary": {
+            "$value": "oklch(65% 0.02 80)"
+          }
+        }
+      }
+    },
+    "version_history": [
+      {
+        "version": "3.1-willow",
+        "date": "2026-07-29",
+        "changes": [
+          "Added willow brand to property-overrides (warm palette, child-friendly tokens)",
+          "Added touch section (min, recommended, large touch targets)",
+          "Added z_index section (starfield, topbar, toast, crisis, skip_link)",
+          {
+            "Willow portal": "Comic Sans, rounded radii, warm amber/terracotta palette"
+          }
+        ],
+        "author": "P31 Labs Engineering"
+      },
+      {
+        "version": 2,
+        "date": "2026-07-23",
+        "changes": [
+          "Added bounding_boxes section (icon_xs → icon_xl)",
+          "Added layout_containers section (header, page_body, section_hero, section_features)",
+          "Added spacing_rules section with component_forbidden_properties and template_allowed_properties",
+          "Added cascade_layers section with order and layer_definitions",
+          "Added svg_rules section with SVGO transform specs and viewBox trimming",
+          "Added agent_prompt_injection section for Claude, Gemini, and Kilo",
+          "Added examples section with Crown and Header demonstrations"
+        ],
+        "author": "P31 Labs Engineering"
+      },
+      {
+        "version": "3.0-quantum",
+        "date": "2026-07-24",
+        "changes": [
+          "Added root constants (base_unit, tetrahedral_ratio, golden_ratio, larmor_hz)",
+          "Added scale progression derived from 16px × (4/3)^n",
+          "Migrated all colors to OKLCH perceptual color space",
+          "Added spacing section with fluid clamp() values",
+          "Added typography section with fluid clamp() formulas",
+          "Added animation section with Larmor-derived durations",
+          "Added border section with derived radius values",
+          "Added breakpoints section",
+          "Refactored bounding_boxes to use derived scale values",
+          "Refactored layout_containers to use derived scale values",
+          "Refactored component values to use token references",
+          "Added usage metadata to all tokens for AI agent guidance",
+          "Expanded agent_prompt_injection with quantum design patterns",
+          "Migrated primitive colors to OKLCH for perceptual uniformity"
+        ],
+        "author": "P31 Labs Engineering"
+      }
+    ]
+  }
+}

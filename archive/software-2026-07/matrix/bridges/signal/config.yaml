@@ -1,0 +1,45 @@
+# mautrix-signal bridge config — Signal (linked device)
+homeserver:
+  address: http://synapse:8008
+  domain: p31ca.org
+  async_media: false
+
+appservice:
+  address: http://bridge-signal:29328
+  hostname: 0.0.0.0
+  port: 29328
+  database:
+    type: sqlite3
+    uri: /data/signal.db
+  id: signal
+  bot_username: signalbot
+  bot_displayname: Signal Bridge
+  as_token: "${BRIDGE_SIGNAL_AS_TOKEN}"
+  hs_token: "${BRIDGE_SIGNAL_HS_TOKEN}"
+
+signal:
+  # Signal acts as a linked device — does NOT replace the primary device
+  # Use !signal link to generate QR code
+  mode: normal
+
+bridge:
+  username_template: "signal_{{.}}"
+  command_prefix: "!signal"
+  permissions:
+    "@will:p31ca.org": admin
+
+  # E2EE preserved: Signal keys stay on device, bridge decrypts for routing only
+  encryption:
+    allow: true
+    default: true
+    require: true
+
+  # Keep Signal contacts synced
+  sync_direct_chat_list: true
+  sync_contacts_on_startup: true
+
+logging:
+  min_level: warn
+  writers:
+    - type: stdout
+      format: pretty-colored

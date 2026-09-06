@@ -1,0 +1,15 @@
+{
+  "name": "@p31/mcp-justice",
+  "version": "1.0.0",
+  "private": false,
+  "type": "module",
+  "license": "MIT",
+  "description": "P31 Sovereign Justice MCP Server — evidence vault, escrow, ODR, and Daubert tools for legal AI agents",
+  "repository": "github:p31labs/mcp-justice",
+  "keywords": ["p31", "mcp", "legal", "evidence", "escrow", "odr", "daubert", "court", "sovereign-justice"],
+  "main": "src/index.mjs",
+  "bin": { "p31-mcp-justice": "src/index.mjs" },
+  "scripts": { "start": "node src/index.mjs" },
+  "dependencies": {},
+  "devDependencies": { "typescript": "^5.7.0" }
+}

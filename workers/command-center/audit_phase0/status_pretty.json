@@ -1,0 +1,216 @@
+{
+    "updated": "2026-04-17T04:00:00Z",
+    "workers": [
+        {
+            "name": "phosphorus31-org",
+            "status": "online",
+            "url": "https://phosphorus31.org"
+        },
+        {
+            "name": "p31ca-org",
+            "status": "online",
+            "url": "https://p31ca.org"
+        },
+        {
+            "name": "ops-p31ca-org",
+            "status": "online",
+            "url": "https://ops.p31ca.org"
+        },
+        {
+            "name": "bonding-p31ca-org",
+            "status": "online",
+            "url": "https://bonding.p31ca.org"
+        },
+        {
+            "name": "command-center",
+            "status": "online",
+            "url": "https://command-center.trimtab-signal.workers.dev"
+        },
+        {
+            "name": "carrie-agent",
+            "status": "online",
+            "url": "https://carrie-agent.trimtab-signal.workers.dev"
+        },
+        {
+            "name": "p31-social-engine",
+            "status": "online",
+            "url": "https://p31-social-engine.trimtab-signal.workers.dev"
+        },
+        {
+            "name": "genesis-gate",
+            "status": "online",
+            "url": "https://genesis-gate.trimtab-signal.workers.dev"
+        },
+        {
+            "name": "p31-bonding-relay",
+            "status": "online",
+            "url": "https://p31-bonding-relay.trimtab-signal.workers.dev"
+        },
+        {
+            "name": "p31-telemetry",
+            "status": "online",
+            "url": "https://p31-telemetry.trimtab-signal.workers.dev"
+        },
+        {
+            "name": "p31-stripe-webhook",
+            "status": "online",
+            "url": "https://p31-stripe-webhook.trimtab-signal.workers.dev"
+        },
+        {
+            "name": "api-phosphorus31-org",
+            "status": "online",
+            "url": "https://api-phosphorus31-org.trimtab-signal.workers.dev"
+        },
+        {
+            "name": "fawn-guard",
+            "status": "online",
+            "url": "https://fawn-guard.trimtab-signal.workers.dev"
+        },
+        {
+            "name": "p31-signaling",
+            "status": "online",
+            "url": "https://p31-signaling.trimtab-signal.workers.dev"
+        },
+        {
+            "name": "p31-vault",
+            "status": "online",
+            "url": "https://p31-vault.pages.dev"
+        },
+        {
+            "name": "p31-mesh",
+            "status": "online",
+            "url": "https://p31-mesh.pages.dev"
+        },
+        {
+            "name": "p31-lab",
+            "status": "online",
+            "url": "https://p31-lab.trimtab-signal.workers.dev"
+        },
+        {
+            "name": "will-workshop",
+            "status": "online",
+            "url": "https://will-workshop.trimtab-signal.workers.dev"
+        },
+        {
+            "name": "bash-lab",
+            "status": "online",
+            "url": "https://bash-lab.trimtab-signal.workers.dev"
+        },
+        {
+            "name": "willow-garden",
+            "status": "online",
+            "url": "https://willow-garden.trimtab-signal.workers.dev"
+        },
+        {
+            "name": "christyn-corner",
+            "status": "online",
+            "url": "https://christyn-corner.trimtab-signal.workers.dev"
+        },
+        {
+            "name": "k4-cage",
+            "status": "online",
+            "url": "https://k4-cage.trimtab-signal.workers.dev"
+        },
+        {
+            "name": "p31-bouncer",
+            "status": "online",
+            "url": "https://p31-bouncer.trimtab-signal.workers.dev"
+        },
+        {
+            "name": "p31-phenix",
+            "status": "online",
+            "url": "https://p31-phenix.pages.dev"
+        },
+        {
+            "name": "p31-technical-library",
+            "status": "online",
+            "url": "https://p31-technical-library.pages.dev"
+        }
+    ],
+    "legal": {
+        "case": "Johnson v. Johnson, 2025CV936",
+        "next_hearing": "April 16, 2026 \u2014 11:00 AM",
+        "judge": "Chief Judge Scarlett",
+        "status": "Contempt hearing \u2014 discovery sent Apr 14",
+        "mcghan_deadline": "April 17, 2026"
+    },
+    "financial": {
+        "operating_buffer": "$530 (Ko-fi + Stripe) + Mercury account in review",
+        "grants_active": "Awesome Foundation $1K (April deliberation)",
+        "grants_pending": "NIDILRR Switzer $80K, FIP $250K/yr (inquiries sent, no response)",
+        "grants_dead": "ESG, Microsoft AI, Pollination, NDEP, Mission.Earth",
+        "corp_status": "P31 Labs Inc \u2014 Active (GA SoS). EIN: 42-1888158 (assigned Apr 13, 2026). 501(c)(3) not filed."
+    },
+    "research": {
+        "paper_xii": "Sovereign Stack \u2014 11pp, triple-gated, Zenodo-ready",
+        "bonding_tests": "413 / 30 suites",
+        "deployed_workers": 25,
+        "k4_phase": 3,
+        "k4_viz_url": "https://k4-cage.trimtab-signal.workers.dev/viz",
+        "k4_api_url": "https://k4-cage.trimtab-signal.workers.dev/api",
+        "phenix_url": "https://p31-phenix.pages.dev",
+        "hearing_ops_url": "https://ops.p31ca.org"
+    },
+    "dates": [
+        {
+            "date": "Apr 13",
+            "event": "EIN 42-1888158 assigned by IRS (CP 575E)"
+        },
+        {
+            "date": "Apr 14",
+            "event": "Mercury business bank account submitted (P31 Labs \u2014 in review, ~1 day)"
+        },
+        {
+            "date": "Apr 14",
+            "event": "Discovery sent to McGhan (3 docs)"
+        },
+        {
+            "date": "Apr 14",
+            "event": "K4 Phase 3 + Phenix Weave (p31-phenix.pages.dev) woven into fleet"
+        },
+        {
+            "date": "Apr 15",
+            "event": "Quantum Weave refactor: p31ca ABOUT pages + hub/lattice; phosphorus31 Layout strip + footer"
+        },
+        {
+            "date": "Apr 15",
+            "event": "Hearing Ops PWA \u2014 build + wrangler pages deploy (project p31-hearing-ops, branch main \u2192 ops.p31ca.org)"
+        },
+        {
+            "date": "Apr 14",
+            "event": "P31 Technical Library (Starlight) \u2014 build fixed, Pages project created, first deploy"
+        },
+        {
+            "date": "Apr 16",
+            "event": "CONTEMPT HEARING 11AM \u2014 Woodbine"
+        },
+        {
+            "date": "Apr 17",
+            "event": "Pages production deploy: p31ca hub (p31ca Pages main) + Hearing Ops PWA (p31-hearing-ops \u2192 ops.p31ca.org)"
+        },
+        {
+            "date": "Apr 17",
+            "event": "McGhan deadline"
+        },
+        {
+            "date": "Apr 30",
+            "event": "Camden County wellness baseline"
+        },
+        {
+            "date": "Apr 30",
+            "event": "Georgia Tech Summit"
+        },
+        {
+            "date": "May 19",
+            "event": "Neurotech Frontiers Summit"
+        },
+        {
+            "date": "Jun 1",
+            "event": "Stimpunks $3K opens"
+        },
+        {
+            "date": "Sep 30",
+            "event": "FERS filing deadline"
+        }
+    ]
+}

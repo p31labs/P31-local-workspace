@@ -1,0 +1,53 @@
+# Grant Radar — Weekly Funding Opportunity Scan
+# Scans grant tracking data for relevant upcoming deadlines.
+
+name: Grant Radar
+
+on:
+  schedule:
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+    inputs:
+      force_refresh:
+        description: 'Force fresh scan'
+        required: false
+        default: 'false'
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  scan:
+    name: Scan Grant Deadlines
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: List upcoming deadlines
+        run: |
+          echo "## Grant Radar $(date +%Y-%m-%d)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Upcoming Deadlines" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Check for deadline tracking files
+          for f in docs/P31_HardDeadlines.pdf docs/grants/*.md 2>/dev/null; do
+            if [ -f "$f" ]; then
+              echo "- $f" >> $GITHUB_STEP_SUMMARY
+            fi
+          done
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Scan complete. See grant tracking docs for details." >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload results
+        uses: actions/upload-artifact@v4
+        with:
+          name: grant-radar-results
+          path: docs/P31_HardDeadlines.pdf
+        continue-on-error: true

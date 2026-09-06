@@ -1,0 +1,11 @@
+/**
+ * @p31/skin-apex — APEX skin for the P31 design system.
+ * Gold accent, strong glass, technical hub.
+ */
+
+:root {
+  --p31-accent: #fbbf24;
+
+  --p31-glass-strong-bg: rgba(10,13,20,0.92);
+  --p31-blur-strong: 24px;
+}

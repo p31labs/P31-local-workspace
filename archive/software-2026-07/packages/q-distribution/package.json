@@ -1,0 +1,28 @@
+{
+  "name": "@p31/q-distribution",
+  "version": "1.0.0",
+  "description": "P31 Labs - Fisher-Escolà Q Statistical Distribution for cognitive capacity modelling",
+  "type": "module",
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "scripts": {
+    "test": "vitest run --passWithNoTests",
+    "build": "tsc --noEmit"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "^5.4.0",
+    "vitest": "^2.0.0"
+  },
+  "keywords": [
+    "beta-distribution",
+    "cognitive-capacity",
+    "spoon-theory",
+    "q-distribution",
+    "statistics",
+    "rng"
+  ],
+  "author": "P31 Labs",
+  "license": "MIT",
+  "homepage": "https://phosphorus31.org"
+}

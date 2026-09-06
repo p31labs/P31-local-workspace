@@ -1,0 +1,37 @@
+name = "p31-website-builder"
+main = "src/index.ts"
+compatibility_date = "2026-07-26"
+compatibility_flags = ["nodejs_compat"]
+
+workers_dev = true
+
+routes = [
+  { pattern = "builder.p31ca.org", custom_domain = true }
+]
+
+[observability]
+enabled = true
+
+[env.production]
+vars = { ENVIRONMENT = "production" }
+
+[env.staging]
+vars = { ENVIRONMENT = "staging" }
+
+# P31 MCP server for code generation
+[vars]
+MCP_SERVER_URL = "https://p31-mcp-server.trimtab-signal.workers.dev"
+A2UI_CATALOG_URL = "https://p31ca.org/.well-known/a2ui-catalog.json"
+DESIGN_TOKEN_URL = "https://render.p31ca.org/tokens.css"
+WEBMCP_ENABLED = "true"
+
+# D1 for storing generated page metadata
+[[d1_databases]]
+binding = "DB"
+database_name = "website-builder"
+database_id = ""
+
+# R2 for storing generated page assets
+[[r2_buckets]]
+binding = "ASSETS"
+bucket_name = "p31-website-builder"

@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "useDefineForClassFields": true,
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "allowJs": true,
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "strict": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noFallthroughCasesInSwitch": true,
+    "types": ["vite/client", "@webgpu/types"],
+    "paths": {
+      "@p31/shared": ["../packages/shared/src"],
+      "@p31/shared/*": ["../packages/shared/src/*"]
+    },
+    "baseUrl": "."
+  },
+  "include": ["src"],
+  "exclude": ["src/__tests__", "src/**/*.test.ts", "src/**/*.test.tsx", "../spaceship-earth", "src/components/QuantumEggHunt.js"]
+}

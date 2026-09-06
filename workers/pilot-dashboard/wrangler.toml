@@ -1,0 +1,22 @@
+name = "pilot-dashboard"
+main = "src/index.ts"
+compatibility_date = "2026-07-16"
+compatibility_flags = ["nodejs_compat"]
+
+# CWP-2026-027 C — pilot operations dashboard.
+# Binds the SHARED LOVE_DB (Free-Plan cap: no new D1 databases).
+# Set LOVE_AUTH_SECRET before deploy:
+#   npx wrangler secret put LOVE_AUTH_SECRET
+
+routes = [{ pattern = "pilot.p31ca.org/*", zone_name = "p31ca.org" }]
+
+[[d1_databases]]
+binding = "LOVE_DB"
+database_name = "love-ledger"
+database_id = "592e3e2e-3203-4e0a-8342-9e85215ec8a6"
+
+[observability]
+enabled = true
+
+[cache]
+enabled = true

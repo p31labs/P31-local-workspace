@@ -1,0 +1,23 @@
+name = "bros"
+main = "src/index.ts"
+compatibility_date = "2026-07-16"
+compatibility_flags = ["nodejs_compat"]
+
+[[durable_objects.bindings]]
+name = "SIGNALING_ROOM"
+class_name = "SignalingRoom"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["SignalingRoom"]
+
+[vars]
+ENVIRONMENT = "production"
+VERSION = "1.0.0"
+LOVE_BRIDGE_URL = "https://love-ledger.p31ca.org"
+
+[observability]
+enabled = true
+
+[cache]
+enabled = true

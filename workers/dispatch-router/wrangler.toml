@@ -1,0 +1,13 @@
+name = "dispatch-router"
+main = "src/index.ts"
+compatibility_date = "2026-07-16"
+
+[[services]]
+binding = "APP_SUPERVISOR"
+service = "app-supervisor"
+
+[observability]
+enabled = true
+
+[cache]
+enabled = true

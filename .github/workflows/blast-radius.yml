@@ -1,0 +1,45 @@
+name: Monorepo Blast Radius Check
+
+on:
+  pull_request:
+    paths:
+      - 'packages/ui/**'
+      - 'packages/design-core/**'
+      - 'packages/ui/package.json'
+      - 'packages/design-core/package.json'
+
+jobs:
+  build-all:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck shared packages
+        run: |
+          pnpm --filter @p31/design-core exec tsc --noEmit
+          pnpm --filter @p31/ui exec tsc --noEmit
+
+      - name: Build all consumer apps (parallel)
+        run: pnpm --filter "./apps/*" -r run build
+
+      - name: Run visual regression tests
+        run: pnpm run test:visual:ci
+        continue-on-error: false
+
+      - name: Run axe accessibility audit
+        run: pnpm run axe:ci
+        continue-on-error: true

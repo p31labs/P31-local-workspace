@@ -1,0 +1,30 @@
+{
+  "name": "@p31/bash",
+  "type": "module",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "deploy": "npm run build && npx wrangler pages deploy dist --project-name bash --branch=main --commit-dirty=true"
+  },
+  "dependencies": {
+    "@astrojs/cloudflare": "^12.6.13",
+    "@astrojs/react": "^4.4.2",
+    "@p31/design-core": "workspace:*",
+    "@p31/quantum-core": "workspace:*",
+    "@p31/ui": "workspace:*",
+    "astro": "^5.17.1",
+    "@tailwindcss/vite": "^4.2.1",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "tailwindcss": "^4.2.1",
+    "wrangler": "^4.97.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3"
+  }
+}

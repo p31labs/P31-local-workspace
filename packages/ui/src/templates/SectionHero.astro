@@ -1,0 +1,20 @@
+---
+export interface Props {
+  title?: string;
+}
+const { title, children } = Astro.props;
+---
+
+<section
+  class="flex flex-col"
+   style="max-width: var(--p31-max-width-lg); margin: 0 auto; padding-left: var(--p31-space-md); padding-right: var(--p31-space-md); padding-top: 11px; padding-bottom: 48px; gap: var(--p31-space-md);"
+>
+  {title && (
+    <h2 class="text-3xl md:text-4xl font-bold" style="color: var(--p31-text, #F5F5F7); line-height: 1.2;">
+      {title}
+    </h2>
+  )}
+  <div>
+    <slot />
+  </div>
+</section>

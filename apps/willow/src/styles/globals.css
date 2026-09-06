@@ -1,0 +1,85 @@
+/* WILLOW — Sovereign Delta Portal
+ * All visual tokens defer to @p31/design-core via var(--p31-*).
+ * The WILLOW skin (@p31/skin-willow) provides the specific accent/tint values
+ * (green accent, green-void, compact glass, emerald glow).
+ * This file only contains layout + app-specific overrides, not token definitions.
+ */
+
+@import '@p31/design-core/css/base.css';
+@import '@p31/design-core/css/glass.css';
+@import '@p31/design-core/css/motion.css';
+@import '@p31/design-core/css/typography.css';
+@import '@p31/design-core/css/size-class.css';
+@import '@p31/design-core/css/ambient.css';
+@import '@p31/design-core/css/container.css';
+@import '@p31/design-core/css/link-glow.css';
+@import '@p31/design-core/css/tokens.css';
+
+@import 'tailwindcss';
+
+@source "../../../../packages/ui/src";
+@source "../../../../packages/design-core/src";
+
+@theme {
+  --color-void: var(--p31-void);
+  --color-void-deep: var(--p31-void-deep);
+  --color-void-raised: var(--p31-surface);
+  --color-void-surface: var(--p31-surface2);
+  --color-void-elevated: var(--p31-surface3);
+  --color-ink: var(--p31-text-primary);
+  --color-cloud: var(--p31-text-secondary);
+  --color-mist: var(--p31-text-tertiary);
+
+  --font-sans: var(--p31-font-sans);
+  --font-mono: var(--p31-font-mono);
+  --font-mono-tech: var(--p31-font-mono);
+
+  --glass-blur-sm: var(--p31-blur-subtle);
+  --glass-blur-md: var(--p31-blur-standard);
+  --glass-blur-lg: var(--p31-blur-strong);
+  --glass-bg: var(--p31-glass-surface);
+  --glass-border: var(--p31-glass-border);
+  --glass-strong-bg: var(--p31-glass-strong-bg);
+
+  --glow-cyan: var(--p31-glow-cyan);
+  --glow-violet: var(--p31-glow-violet);
+  --glow-gold: var(--p31-glow-gold);
+  --glow-green: var(--p31-glow-green);
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: var(--p31-font-sans);
+  background: var(--p31-void);
+  color: var(--p31-text-primary);
+  min-height: 100dvh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root { min-height: 100dvh; display: flex; flex-direction: column; }
+
+::selection { background: var(--p31-accent-green); color: var(--p31-text); }
+:focus-visible { outline: 2px solid var(--p31-accent); outline-offset: 2px; border-radius: 4px; }
+
+[data-spoons='0'] .ui-chrome { display: none !important; }
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(52, 211, 153, 0.15); border-radius: 2px; }
+
+.willow-header { height: var(--p31-header-h); }
+
+/* WILLOW emerald pill header (inverted Crown) */
+[data-brand="willow"] {
+  --p31-nav-bg: rgba(52, 211, 153, 0.12);
+  --p31-nav-border: rgba(52, 211, 153, 0.6);
+  --p31-nav-glow: 0 0 30px rgba(52, 211, 153, 0.25);
+  --p31-nav-inset: inset 0 0 20px rgba(52, 211, 153, 0.15);
+}
+
+/* Safety: ensure --p31-nav-h is always defined for header spacing */
+:root {
+  --p31-nav-h: clamp(3.25rem, 2.75rem + 1.5vw, 4rem);
+}

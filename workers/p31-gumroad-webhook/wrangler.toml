@@ -1,0 +1,30 @@
+# P31 Gumroad Webhook
+name = "p31-gumroad-webhook"
+main = "src/index.ts"
+compatibility_date = "2026-07-16"
+compatibility_flags = ["nodejs_compat"]
+
+# Secrets:
+#   wrangler secret put GUMROAD_WEBHOOK_SECRET
+#   wrangler secret put DISCORD_WEBHOOK_URL
+#   wrangler secret put GUMROAD_TOKEN
+#   wrangler secret put GENESIS_GATE_URL
+#   wrangler secret put MERCHANT_DID
+
+REVENUE_LEDGER_URL = "https://revenue-ledger.trimtab-signal.workers.dev"
+
+# Bindings
+[[d1_databases]]
+binding = "DB"
+database_name = "p31-revenue-db"
+database_id = "d43bb91b-daa2-4621-be02-3e67daa09379"
+
+# [[queues]]
+# binding = "REVENUE_QUEUE"
+# queue = "p31-revenue"
+
+[observability]
+enabled = true
+
+[cache]
+enabled = true

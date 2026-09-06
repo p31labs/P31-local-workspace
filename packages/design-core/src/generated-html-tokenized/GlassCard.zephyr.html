@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>P31 × Zephyr — GlassCard Proof-of-Concept</title>
+
+  <!-- Zephyr Framework (CDN) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/zephyr-framework@1/zephyr-framework.min.css">
+
+  <!-- P31 Design Tokens -->
+  <style>
+    :root {
+      /* P31-Q token overrides for Zephyr components */
+      --z-transition-duration: 0.3s;
+      --z-transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
+      --z-border-radius: 1.5rem;
+      --z-border-radius-sm: 0.75rem;
+
+      /* P31 glass shadows */
+      --z-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+      --z-shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.25);
+
+      /* P31 backdrop blur */
+      --z-backdrop-blur: 12px;
+
+      /* P31 color tokens mapped to Zephyr */
+      --z-toast-bg: var(--p31-surface);
+      --z-toast-color: var(--p31-text);
+
+      /* Additional P31 token definitions for standalone use */
+      --p31-base: 16px;
+      --p31-scale-xs: calc(var(--p31-base) * 0.75);
+      --p31-scale-sm: var(--p31-base);
+      --p31-scale-md: calc(var(--p31-base) * 1.3333);
+      --p31-scale-lg: calc(var(--p31-base) * 1.7777);
+      --p31-scale-xl: calc(var(--p31-base) * 2.3703);
+      --p31-bg: oklch(10% 0.01 240);
+      --p31-surface: oklch(15% 0.015 240);
+      --p31-surface2: oklch(22% 0.02 240);
+      --p31-accent: oklch(65% 0.18 195);
+      --p31-accent-violet: oklch(65% 0.18 285);
+      --p31-text: oklch(96% 0.005 240);
+      --p31-text-secondary: oklch(75% 0.01 240);
+      --p31-text-tertiary: oklch(55% 0.01 240);
+      --p31-glass-bg: oklch(100% 0.01 240 / 0.04);
+      --p31-glass-border: oklch(100% 0.01 240 / 0.08);
+      --p31-glass-border-hover: oklch(100% 0.01 240 / 0.15);
+      --p31-glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+      --p31-glow-cyan: 0 0 20px rgba(0, 240, 255, 0.25);
+    }
+
+    body {
+      margin: 0;
+      padding: var(--p31-scale-xl);
+      background: var(--p31-bg);
+      color: var(--p31-text);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: var(--p31-scale-xl);
+      font-weight: 600;
+      margin: 0 0 var(--p31-scale-sm) 0;
+      color: var(--p31-accent);
+    }
+
+    .description {
+      font-size: var(--p31-scale-md);
+      color: var(--p31-text-secondary);
+      margin: 0 0 var(--p31-scale-lg) 0;
+    }
+
+    .section {
+      margin-bottom: var(--p31-scale-xl);
+    }
+
+    .section-title {
+      font-size: var(--p31-scale-md);
+      font-weight: 600;
+      color: var(--p31-text-secondary);
+      margin: 0 0 var(--p31-scale-sm) 0;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* P31 GlassCard override for Zephyr Modal */
+    z-modal {
+      --z-modal-bg: var(--p31-glass-bg);
+      --z-modal-border: 1px solid var(--p31-glass-border);
+      --z-modal-shadow: var(--p31-glass-shadow);
+      --z-modal-radius: var(--p31-scale-md);
+      --z-modal-backdrop: oklch(10% 0.01 240 / 0.6);
+      --z-modal-backdrop-blur: var(--p31-scale-md);
+    }
+
+    z-modal::backdrop {
+      background: var(--p31-glass-bg);
+      backdrop-filter: blur(var(--z-backdrop-blur));
+    }
+
+    z-modal dialog {
+      background: var(--p31-glass-bg);
+      border: 1px solid var(--p31-glass-border);
+      border-radius: var(--p31-scale-md);
+      box-shadow: var(--p31-glass-shadow), var(--p31-glow-cyan);
+      backdrop-filter: blur(var(--z-backdrop-blur));
+      color: var(--p31-text);
+      padding: var(--p31-scale-lg);
+    }
+
+    z-modal h2 {
+      margin: 0 0 var(--p31-scale-sm) 0;
+      font-size: var(--p31-scale-lg);
+      font-weight: 600;
+      color: var(--p31-accent);
+    }
+
+    z-modal p {
+      margin: 0 0 var(--p31-scale-md) 0;
+      color: var(--p31-text-secondary);
+      line-height: 1.6;
+    }
+
+    /* P31 Button styling */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--p31-scale-xs);
+      padding: var(--p31-scale-xs) var(--p31-scale-md);
+      border-radius: var(--p31-scale-sm);
+      font-weight: 600;
+      font-size: var(--p31-scale-sm);
+      cursor: pointer;
+      transition: all var(--z-transition-duration) var(--z-transition-timing);
+      border: none;
+    }
+
+    .btn-primary {
+      background: var(--p31-accent);
+      color: var(--p31-bg);
+      box-shadow: var(--p31-glow-cyan);
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 0 30px rgba(0, 240, 255, 0.4);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: var(--p31-glass-bg);
+      color: var(--p31-text);
+      border: 1px solid var(--p31-glass-border);
+    }
+
+    .btn-secondary:hover {
+      background: var(--p31-glass-border);
+      border-color: var(--p31-glass-border-hover);
+    }
+
+    /* Agent control panel */
+    .agent-panel {
+      background: var(--p31-glass-bg);
+      border: 1px solid var(--p31-glass-border);
+      border-radius: var(--p31-scale-md);
+      padding: var(--p31-scale-lg);
+      margin-top: var(--p31-scale-lg);
+    }
+
+    .agent-panel h3 {
+      margin: 0 0 var(--p31-scale-sm) 0;
+      font-size: var(--p31-scale-md);
+      font-weight: 600;
+      color: var(--p31-accent-violet);
+    }
+
+    .agent-panel code {
+      display: block;
+      padding: var(--p31-scale-sm);
+      background: var(--p31-surface2);
+      border-radius: var(--p31-scale-sm);
+      font-family: ui-monospace, SFMono-Regular, 'Fira Code', monospace;
+      font-size: var(--p31-scale-sm);
+      color: var(--p31-text-secondary);
+      overflow-x: auto;
+    }
+
+    .agent-panel .result {
+      margin-top: var(--p31-scale-sm);
+      padding: var(--p31-scale-sm);
+      background: var(--p31-surface2);
+      border-radius: var(--p31-scale-sm);
+      font-family: ui-monospace, SFMono-Regular, 'Fira Code', monospace;
+      font-size: var(--p31-scale-sm);
+      color: var(--p31-accent-green);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>P31 × Zephyr — GlassCard POC</h1>
+    <p class="description">
+      Proof-of-concept: Zephyr web component styled with P31-Q design tokens.
+      Pure CSS interactions. Agent-controllable via MCP.
+    </p>
+
+    <!-- Trigger Section -->
+    <div class="section">
+      <p class="section-title">Interactive Component</p>
+      <button class="btn btn-primary" data-action="open-modal" data-target="glass-card-modal">
+        Open GlassCard
+      </button>
+    </div>
+
+    <!-- Zephyr Modal styled as P31 GlassCard -->
+    <z-modal id="glass-card-modal">
+      <h2>GlassCard</h2>
+      <p>
+        This modal is a Zephyr <code>&lt;z-modal&gt;</code> component
+        styled entirely with P31-Q design tokens. No runtime JavaScript
+        is required for the glass effect, border, shadow, or transitions.
+      </p>
+      <p>
+        <strong>Agent API:</strong> An AI agent can open this modal with:
+        <code>Zephyr.agent.act('#glass-card-modal', 'open')</code>
+      </p>
+      <div style="display: flex; gap: var(--p31-scale-sm); justify-content: flex-end; margin-top: var(--p31-scale-lg);">
+        <button class="btn btn-secondary" data-action="close-modal" data-target="glass-card-modal">
+          Close
+        </button>
+        <button class="btn btn-primary" data-action="close-modal" data-target="glass-card-modal">
+          Confirm
+        </button>
+      </div>
+    </z-modal>
+
+    <!-- Agent Control Panel -->
+    <div class="agent-panel">
+      <h3>Agent Control Panel</h3>
+      <p style="color: var(--p31-text-secondary); margin: 0 0 var(--p31-scale-sm) 0;">
+        Click the buttons below to simulate agent control via Zephyr's Agent API.
+        These calls would normally come from an MCP server or AI assistant.
+      </p>
+
+      <button class="btn btn-primary" onclick="testAgentAct()">
+        Test: Zephyr.agent.act('#glass-card-modal', 'open')
+      </button>
+
+      <button class="btn btn-secondary" onclick="testAgentGetState()">
+        Test: Zephyr.agent.getState()
+      </button>
+
+      <button class="btn btn-secondary" onclick="testAgentGetSchema()">
+        Test: Zephyr.agent.getSchema()
+      </button>
+
+      <div id="agent-result" class="result" style="display: none;"></div>
+    </div>
+  </div>
+
+  <!-- Zephyr Framework JS (CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/zephyr-framework@1/zephyr-framework.min.js"></script>
+
+  <!-- Agent API Test Harness -->
+  <script>
+    function showResult(title, data) {
+      const el = document.getElementById('agent-result');
+      el.style.display = 'block';
+      el.innerHTML = `<strong>${title}:</strong><br>` +
+        JSON.stringify(data, null, 2)
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;');
+    }
+
+    function testAgentAct() {
+      const result = Zephyr.agent.act('#glass-card-modal', 'open');
+      showResult('Zephyr.agent.act()', result);
+    }
+
+    function testAgentGetState() {
+      const state = Zephyr.agent.getState();
+      const modalState = state.find(c => c.id === 'glass-card-modal');
+      showResult('Zephyr.agent.getState()', modalState || state);
+    }
+
+    function testAgentGetSchema() {
+      const schema = Zephyr.agent.getSchema();
+      const modalSchema = schema.components?.find(c => c.tag === 'z-modal');
+      showResult('Zephyr.agent.getSchema()', modalSchema || schema);
+    }
+
+    // Log Zephyr availability
+    console.log('Zephyr version:', typeof Zephyr !== 'undefined' ? 'loaded' : 'missing');
+    console.log('Agent API:', typeof Zephyr?.agent !== 'undefined' ? 'available' : 'missing');
+    console.log('WebMCP:', typeof Zephyr?.webmcp !== 'undefined' ? 'available' : 'missing');
+  </script>
+</body>
+</html>

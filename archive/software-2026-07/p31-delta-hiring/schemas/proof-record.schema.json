@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://p31labs.org/schemas/p31.proofRecord/1.0.0",
+  "title": "P31 proof record (portable candidate packet)",
+  "type": "object",
+  "required": [
+    "schema",
+    "id",
+    "created",
+    "updated",
+    "roleId",
+    "wcdId",
+    "consent",
+    "artifacts",
+    "selfAssessment",
+    "candidateNotes"
+  ],
+  "properties": {
+    "schema": { "const": "p31.proofRecord/1.0.0" },
+    "id": { "type": "string", "minLength": 4 },
+    "created": { "type": "string", "minLength": 10 },
+    "updated": { "type": "string", "minLength": 10 },
+    "roleId": { "type": "string" },
+    "wcdId": { "type": "string" },
+    "consent": {
+      "type": "object",
+      "required": ["dataProcessing", "shareWithReviewers", "version"],
+      "properties": {
+        "dataProcessing": { "type": "boolean" },
+        "shareWithReviewers": { "type": "boolean" },
+        "version": { "const": "1.0.0" }
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "kind", "label", "url"],
+        "properties": {
+          "id": { "type": "string" },
+          "kind": { "enum": ["repo", "url", "file", "other"] },
+          "label": { "type": "string" },
+          "url": { "type": "string" },
+          "notes": { "type": "string" },
+          "commitSha": { "type": "string", "pattern": "^[a-fA-F0-9]{7,40}$" }
+        }
+      }
+    },
+    "selfAssessment": { "type": "object" },
+    "candidateNotes": { "type": "string" }
+  }
+}

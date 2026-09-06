@@ -1,0 +1,11 @@
+/.well-known/*
+  Access-Control-Allow-Origin: *
+  Content-Type: application/json
+
+/dist/*
+  Cache-Control: public, max-age=86400, immutable
+
+*.html
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: tools=(self)

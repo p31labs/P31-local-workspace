@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>P31 Labs — Tools for Neurodivergent Families</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-void: #0A0A0F;
+            --bg-surface: #12121A;
+            --text-primary: #F5F5F7;
+            --text-cloud: rgba(245,245,247,0.6);
+            --text-muted: rgba(245,245,247,0.3);
+            --accent-cyan: #00F0FF;
+            --accent-violet: #A78BFA;
+            --accent-green: #34D399;
+            --glass-bg: rgba(255, 255, 255, 0.04);
+            --glass-border: rgba(255, 255, 255, 0.08);
+        }
+
+        body {
+            background: var(--bg-void);
+            color: var(--text-cloud);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* MOLECULAR STARFIELD BACKGROUND */
+        .starfield {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        .star {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            background: white;
+            border-radius: 50%;
+        }
+
+        /* Subtle molecular grid lines */
+        .molecule-grid {
+            position: fixed;
+            inset: -50%;
+            z-index: 1;
+            pointer-events: none;
+            opacity: 0.03;
+            background-image:
+                linear-gradient(rgba(0, 240, 255, 0.3) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 240, 255, 0.3) 1px, transparent 1px);
+            background-size: 80px 80px;
+            animation: gridDrift 40s linear infinite;
+        }
+
+        @keyframes gridDrift {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(80px, 80px); }
+        }
+
+        /* CONTENT WRAPPER */
+        .content {
+            position: relative;
+            z-index: 10;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* NAVBAR */
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(12px);
+            background: rgba(10, 10, 15, 0.85);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 16px 24px;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-weight: 700;
+            color: var(--accent-cyan);
+            font-size: 16px;
+            letter-spacing: 0.05em;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: var(--text-cloud);
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+
+        .nav-link:hover {
+            color: var(--accent-cyan);
+        }
+
+        /* SKIP TO CONTENT */
+        .skip-link {
+            position: absolute;
+            left: -9999px;
+            top: 8px;
+            z-index: 200;
+            background: var(--accent-cyan);
+            color: #0A0A0F;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            text-decoration: none;
+        }
+        .skip-link:focus {
+            left: 8px;
+        }
+
+        :focus-visible {
+            outline: 2px solid var(--accent-cyan);
+            outline-offset: 2px;
+        }
+
+        .btn {
+            display: inline-block;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: var(--accent-cyan);
+            color: #0A0A0F;
+            padding: 10px 20px;
+            border-radius: 12px;
+            border: none;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            will-change: transform;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
+        }
+
+        /* HERO SECTION */
+        .hero {
+            padding: 80px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 40px;
+        }
+
+        .k4-logo {
+            width: clamp(160px, 25vw, 200px);
+            height: clamp(160px, 25vw, 200px);
+            margin-bottom: 20px;
+            will-change: transform;
+        }
+
+        .hero-title {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 900;
+            color: var(--text-primary);
+            line-height: 1.1;
+            max-width: 900px;
+        }
+
+        .hero-title .accent {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-violet));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 18px;
+            color: var(--text-cloud);
+            max-width: 700px;
+            line-height: 1.8;
+        }
+
+        .hero-ctas {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid var(--accent-cyan);
+            color: var(--accent-cyan);
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(0, 240, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        /* ONBOARDING OVERLAY */
+        .onboarding-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(10, 10, 15, 0.95);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease-out;
+        }
+        .onboarding-overlay.hidden {
+            display: none;
+        }
+        .onboarding-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 48px;
+            max-width: 600px;
+            text-align: center;
+        }
+        .onboarding-title {
+            font-size: 28px;
+            font-weight: 900;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+        .onboarding-subtitle {
+            font-size: 16px;
+            color: var(--text-cloud);
+            margin-bottom: 32px;
+        }
+        .onboarding-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .onboarding-btn {
+            background: var(--glass-bg);
+            border: 2px solid var(--glass-border);
+            color: var(--text-primary);
+            padding: 16px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: left;
+            font-size: 14px;
+        }
+        .onboarding-btn:hover {
+            border-color: var(--accent-cyan);
+            background: rgba(0, 240, 255, 0.05);
+            transform: translateX(4px);
+        }
+        .onboarding-skip {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 12px;
+            cursor: pointer;
+            font-size: 13px;
+            text-decoration: underline;
+            transition: color 0.2s;
+        }
+        .onboarding-skip:hover {
+            color: var(--text-cloud);
+        }
+
+        /* AUDIENCE SEGMENTS */
+        .audience-segment {
+            display: none;
+        }
+        .audience-segment.active {
+            display: block;
+            animation: fadeIn 0.3s ease-out;
+        }
+        .audience-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+        .audience-badge {
+            display: inline-block;
+            background: rgba(0, 240, 255, 0.1);
+            border: 1px solid var(--accent-cyan);
+            color: var(--accent-cyan);
+            padding: 8px 16px;
+            border-radius: 24px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .audience-headline {
+            font-size: 28px;
+            font-weight: 900;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+        .audience-description {
+            font-size: 16px;
+            color: var(--text-cloud);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* COMPARISON TABLE */
+        .comparison-table {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 32px;
+            margin-top: 48px;
+            overflow-x: auto;
+        }
+        .comparison-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .comparison-table th {
+            text-align: left;
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-weight: 700;
+            color: var(--text-primary);
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .comparison-table td {
+            padding: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 14px;
+            color: var(--text-cloud);
+        }
+        .comparison-table tr:last-child td {
+            border-bottom: none;
+        }
+        .comparison-table .p31-row {
+            background: rgba(0, 240, 255, 0.05);
+        }
+
+        /* PRIVACY CHECK */
+        .privacy-check-btn {
+            background: rgba(52, 211, 153, 0.1);
+            border: 2px solid var(--accent-green);
+            color: var(--accent-green);
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .privacy-check-btn:hover {
+            background: rgba(52, 211, 153, 0.2);
+        }
+        .privacy-check-result {
+            background: rgba(52, 211, 153, 0.1);
+            border: 1px solid var(--accent-green);
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 12px;
+            font-size: 14px;
+            color: var(--text-cloud);
+            display: none;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: left;
+        }
+        .privacy-check-result.active {
+            display: block;
+            animation: fadeIn 0.3s ease-out;
+        }
+        .privacy-check-line {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(52, 211, 153, 0.2);
+        }
+        .privacy-check-line:last-child {
+            border-bottom: none;
+        }
+
+        /* SECTION */
+        .section {
+            padding: 80px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .section-title {
+            font-size: 32px;
+            font-weight: 900;
+            color: var(--text-primary);
+            margin-bottom: 48px;
+            text-align: center;
+        }
+
+        /* FEATURES GRID */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .feature-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 32px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: transform;
+        }
+
+        .feature-card:hover {
+            border-color: rgba(0, 240, 255, 0.3);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 32px rgba(0, 240, 255, 0.1);
+        }
+
+        .feature-icon {
+            font-size: 32px;
+            margin-bottom: 16px;
+        }
+
+        .feature-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+
+        .feature-desc {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.7;
+        }
+
+        /* SMART NOTIFICATIONS */
+        .notification-demo {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 24px;
+            margin-top: 24px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .notification {
+            background: rgba(52, 211, 153, 0.1);
+            border-left: 4px solid var(--accent-green);
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            font-size: 14px;
+        }
+
+        .notification-icon {
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        /* FOOTER */
+        footer {
+            padding: 48px 24px;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 24px;
+            justify-content: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .footer-link {
+            color: var(--accent-cyan);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-link:hover {
+            color: var(--accent-violet);
+        }
+
+        /* DATA-SPOONS MOTION SCALING */
+        [data-spoons="0"] *, [data-spoons="1"] * {
+            animation-duration: 0s !important;
+            transition-duration: 0s !important;
+        }
+        [data-spoons="2"] * {
+            animation-duration: 2s !important;
+            transition-duration: 0.6s !important;
+        }
+        [data-spoons="4"] * {
+            animation-duration: 0.75s !important;
+            transition-duration: 0.15s !important;
+        }
+        [data-spoons="5"] * {
+            animation-duration: 0.5s !important;
+            transition-duration: 0.1s !important;
+        }
+
+        /* CRISIS MODE OVERLAY */
+        .crisis-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: #0A0A0F;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 24px;
+        }
+        [data-spoons="0"] .crisis-overlay {
+            display: flex;
+        }
+        [data-spoons="0"] nav,
+        [data-spoons="0"] .content,
+        [data-spoons="0"] .starfield,
+        [data-spoons="0"] .molecule-grid,
+        [data-spoons="0"] .skip-link,
+        [data-spoons="0"] footer {
+            display: none;
+        }
+        .crisis-breathing-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 2px solid rgba(0,240,255,0.3);
+            animation: crisisBreathe 16s ease-in-out infinite;
+        }
+        @keyframes crisisBreathe {
+            0%, 100% { transform: scale(1); opacity: 0.6; }
+            25% { transform: scale(1.5); opacity: 1; }
+            50% { transform: scale(1.5); opacity: 1; }
+            75% { transform: scale(1); opacity: 0.6; }
+        }
+        .crisis-label {
+            color: var(--text-cloud);
+            font-size: 14px;
+            letter-spacing: 0.05em;
+        }
+        .crisis-exit {
+            background: transparent;
+            border: 1px solid var(--accent-cyan);
+            color: var(--accent-cyan);
+            padding: 8px 24px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+        .crisis-exit:hover {
+            background: rgba(0,240,255,0.1);
+        }
+
+        /* SPOON SELECTOR IN NAV */
+        .spoon-selector {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+        }
+        .spoon-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 1px solid var(--text-muted);
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .spoon-dot.active {
+            background: var(--accent-cyan);
+            border-color: var(--accent-cyan);
+        }
+
+        /* ANIMATIONS */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero {
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .nav-links {
+                gap: 16px;
+                font-size: 12px;
+            }
+
+            .hero {
+                padding: 60px 0;
+            }
+
+            .hero-ctas {
+                flex-direction: column;
+            }
+
+            .section {
+                padding: 60px 0;
+            }
+
+            .spoon-selector {
+                gap: 2px;
+            }
+            .spoon-dot {
+                width: 10px;
+                height: 10px;
+            }
+        }
+
+        /* REDUCED MOTION */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+            .molecule-grid {
+                animation: none;
+            }
+            .k4-logo line {
+                stroke-dashoffset: 0 !important;
+            }
+        }
+
+        /* PRINT STYLES */
+        @media print {
+            .starfield, .molecule-grid, nav {
+                display: none;
+            }
+            .k4-logo line {
+                stroke-dashoffset: 0 !important;
+                stroke-opacity: 0.6 !important;
+            }
+            .k4-logo circle {
+                r: 5 !important;
+                fill-opacity: 0.8 !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- CRISIS MODE OVERLAY -->
+    <div class="crisis-overlay" id="crisisOverlay">
+        <div class="crisis-breathing-circle"></div>
+        <p class="crisis-label">Breathe with the circle</p>
+        <button class="crisis-exit" id="crisisExit">I'm ready</button>
+    </div>
+
+    <!-- STARFIELD BACKGROUND -->
+    <canvas id="starfield" class="starfield" aria-hidden="true"></canvas>
+    <div class="molecule-grid" aria-hidden="true"></div>
+
+    <!-- ONBOARDING OVERLAY -->
+    <div class="onboarding-overlay" id="onboardingOverlay">
+        <div class="onboarding-card">
+            <h2 class="onboarding-title">What brings you here?</h2>
+            <p class="onboarding-subtitle">Let us know how we can help.</p>
+            <div class="onboarding-options">
+                <button class="onboarding-btn" onclick="setAudience('family')">
+                    <span>I'm a parent looking for tools</span>
+                </button>
+                <button class="onboarding-btn" onclick="setAudience('developer')">
+                    <span>I'm a developer interested in contributing</span>
+                </button>
+                <button class="onboarding-btn" onclick="setAudience('supporter')">
+                    <span>I want to support this work</span>
+                </button>
+                <button class="onboarding-btn" onclick="setAudience('researcher')">
+                    <span>I'm a researcher</span>
+                </button>
+                <button class="onboarding-skip" onclick="skipOnboarding()">Skip for now</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SKIP LINK -->
+    <a href="#main-content" class="skip-link">Skip to content</a>
+
+    <!-- NAVBAR -->
+    <nav>
+        <div class="nav-container">
+            <div class="logo">P31 Labs</div>
+            <div class="nav-links">
+                <a href="#features" class="nav-link">Features</a>
+                <a href="https://github.com/p31labs" class="nav-link">GitHub</a>
+                <a href="https://ko-fi.com/trimtab69420" class="btn-primary">Support Us</a>
+                <div class="spoon-selector" title="Energy level" aria-label="Energy level selector 1 to 5">
+                    <button class="spoon-dot" data-level="1" aria-label="Spoon level 1"></button>
+                    <button class="spoon-dot" data-level="2" aria-label="Spoon level 2"></button>
+                    <button class="spoon-dot active" data-level="3" aria-label="Spoon level 3"></button>
+                    <button class="spoon-dot" data-level="4" aria-label="Spoon level 4"></button>
+                    <button class="spoon-dot" data-level="5" aria-label="Spoon level 5"></button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main id="main-content" class="content">
+        <!-- HERO -->
+        <section class="hero">
+            <svg class="k4-logo" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="P31 Labs K4 tetrahedron" aria-hidden="true">
+                <defs>
+                    <filter id="glow-cyan">
+                        <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                        <feMerge>
+                            <feMergeNode in="coloredBlur"/>
+                            <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                    </filter>
+                    <radialGradient id="grad-cyan">
+                        <stop offset="0%" style="stop-color:#00F0FF;stop-opacity:1"/>
+                        <stop offset="100%" style="stop-color:#00F0FF;stop-opacity:0.3"/>
+                    </radialGradient>
+                    <radialGradient id="grad-violet">
+                        <stop offset="0%" style="stop-color:#A78BFA;stop-opacity:1"/>
+                        <stop offset="100%" style="stop-color:#A78BFA;stop-opacity:0.3"/>
+                    </radialGradient>
+                    <radialGradient id="grad-green">
+                        <stop offset="0%" style="stop-color:#34D399;stop-opacity:1"/>
+                        <stop offset="100%" style="stop-color:#34D399;stop-opacity:0.3"/>
+                    </radialGradient>
+                    <radialGradient id="grad-center">
+                        <stop offset="0%" style="stop-color:#00F0FF;stop-opacity:1"/>
+                        <stop offset="100%" style="stop-color:#A78BFA;stop-opacity:0.5"/>
+                    </radialGradient>
+                </defs>
+
+                <!-- Edges -->
+                <line x1="150" y1="50" x2="100" y2="230" stroke="rgba(0,240,255,0.3)" stroke-width="2" stroke-dasharray="200" stroke-dashoffset="200">
+                    <animate attributeName="stroke-dashoffset" from="200" to="0" dur="3s" repeatCount="indefinite"/>
+                </line>
+                <line x1="150" y1="50" x2="200" y2="230" stroke="rgba(167,139,250,0.3)" stroke-width="2" stroke-dasharray="200" stroke-dashoffset="200">
+                    <animate attributeName="stroke-dashoffset" from="200" to="0" dur="3.5s" begin="0.5s" repeatCount="indefinite"/>
+                </line>
+                <line x1="100" y1="230" x2="200" y2="230" stroke="rgba(52,211,153,0.3)" stroke-width="2" stroke-dasharray="100" stroke-dashoffset="100">
+                    <animate attributeName="stroke-dashoffset" from="100" to="0" dur="2.5s" begin="1s" repeatCount="indefinite"/>
+                </line>
+
+                <!-- Vertices -->
+                <circle cx="150" cy="50" r="6" fill="url(#grad-cyan)" filter="url(#glow-cyan)">
+                    <animate attributeName="r" from="5" to="7" dur="2s" repeatCount="indefinite"/>
+                </circle>
+                <circle cx="100" cy="230" r="6" fill="url(#grad-violet)">
+                    <animate attributeName="r" from="5" to="7" dur="2.3s" repeatCount="indefinite"/>
+                </circle>
+                <circle cx="200" cy="230" r="6" fill="url(#grad-green)">
+                    <animate attributeName="r" from="5" to="7" dur="2.6s" repeatCount="indefinite"/>
+                </circle>
+                <circle cx="150" cy="150" r="8" fill="url(#grad-center)" filter="url(#glow-cyan)">
+                    <animate attributeName="r" from="7" to="9" dur="1.5s" repeatCount="indefinite"/>
+                </circle>
+            </svg>
+
+            <h1 class="hero-title">
+                Tools built for <span class="accent">how your brain actually works</span>
+            </h1>
+            <p class="hero-subtitle">
+                Free, open-source assistive technology for neurodivergent families. No tracking. No paywalls. Just helpful tools that respect your cognition.
+            </p>
+            <div class="hero-ctas">
+                <a href="#features" class="btn btn-primary">Get Started</a>
+                <a href="https://phosphorus31.org/programs" class="btn btn-secondary">Learn More</a>
+            </div>
+        </section>
+
+        <!-- FEATURES (AUDIENCE-SPECIFIC) -->
+        <section class="section" id="features">
+            <!-- Family -->
+            <div class="audience-segment active" id="family-section">
+                <div class="audience-header">
+                    <span class="audience-badge">For Families</span>
+                    <h2 class="audience-headline">Tools for daily moments that matter</h2>
+                    <p class="audience-description">From medication reminders to connecting with your kids, we build tools that make neurodivergent family life easier.</p>
+                </div>
+                <div class="features">
+                    <div class="feature-card">
+                        <h3 class="feature-title">Medication Reminders</h3>
+                        <p class="feature-desc">Gentle reminders for meds, vitamins, and daily routines. Works offline. No nagging.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3 class="feature-title">Smart Breaks</h3>
+                        <p class="feature-desc">Alerts when you've been focused for 90 minutes. Suggestions that actually help you recharge.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3 class="feature-title">BONDING Game</h3>
+                        <p class="feature-desc">Play with your kids from different devices. Build molecules together. Every action is a documented moment.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Developer -->
+            <div class="audience-segment" id="developer-section">
+                <div class="audience-header">
+                    <span class="audience-badge">For Developers</span>
+                    <h2 class="audience-headline">Build assistive tech that matters</h2>
+                    <p class="audience-description">100% open source. No proprietary algorithms. Fork it, audit it, improve it. We need you.</p>
+                </div>
+                <div class="features">
+                    <div class="feature-card">
+                        <h3 class="feature-title">Fully Open Source</h3>
+                        <p class="feature-desc">Every line of code is on GitHub. MIT license. No hidden dependencies or backdoors.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3 class="feature-title">Works Offline</h3>
+                        <p class="feature-desc">No cloud dependency. No APIs calling home. Pure local-first architecture.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3 class="feature-title">Research-Backed</h3>
+                        <p class="feature-desc">Every tool tested with real families. Design decisions based on evidence, not guesses.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Supporter -->
+            <div class="audience-segment" id="supporter-section">
+                <div class="audience-header">
+                    <span class="audience-badge">For Supporters</span>
+                    <h2 class="audience-headline">Your support builds real tools</h2>
+                    <p class="audience-description">Every dollar goes directly to tools. No VC. No ads. No pressure to compromise the mission.</p>
+                </div>
+                <div class="features">
+                    <div class="feature-card">
+                        <h3 class="feature-title">100% Nonprofit</h3>
+                        <p class="feature-desc">Georgia 501(c)(3). Tax-deductible donations. All funding goes to development and maintenance.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3 class="feature-title">Transparent Budget</h3>
+                        <p class="feature-desc">See where every dollar goes. Monthly updates. No hidden overhead. Pure impact.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3 class="feature-title">Community-Driven</h3>
+                        <p class="feature-desc">Built by people who live this. We listen to families. We ship what matters.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Researcher -->
+            <div class="audience-segment" id="researcher-section">
+                <div class="audience-header">
+                    <span class="audience-badge">For Researchers</span>
+                    <h2 class="audience-headline">Data and frameworks for neurodivergent tech</h2>
+                    <p class="audience-description">Open access papers, datasets, and methodology. Help us build evidence-based assistive technology.</p>
+                </div>
+                <div class="features">
+                    <div class="feature-card">
+                        <h3 class="feature-title">Open Research</h3>
+                        <p class="feature-desc">All papers published on Zenodo with full DOIs. No paywalls. Raw datasets available.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3 class="feature-title">Real-World Data</h3>
+                        <p class="feature-desc">Tools tested with actual neurodivergent families. Outcomes documented. Methodology transparent.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3 class="feature-title">Collaborate With Us</h3>
+                        <p class="feature-desc">Co-author papers. Share data. Build frameworks together. The mission is collaborative.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Smart Notifications Demo -->
+            <div class="notification-demo" role="status" aria-live="polite" aria-label="Notification examples">
+                <h3 class="feature-title" style="margin-top: 0;">Smart Notifications (Example)</h3>
+                <div class="notification">
+                    <strong>Time to take meds</strong><br>
+                    <small style="color: var(--text-muted);">You usually take these at this time</small>
+                </div>
+                <div class="notification" style="background: rgba(0,240,255,0.1); border-color: var(--accent-cyan);">
+                    <strong>Break suggested</strong><br>
+                    <small style="color: var(--text-muted);">You've been focused for 90 minutes</small>
+                </div>
+                <div class="notification" style="background: rgba(167,139,250,0.1); border-color: var(--accent-violet);">
+                    <strong>Someone sent you a message</strong><br>
+                    <small style="color: var(--text-muted);">Via offline mesh when you're ready</small>
+                </div>
+            </div>
+        </section>
+
+        <!-- WHY P31? COMPARISON -->
+        <section class="section">
+            <h2 class="section-title">Why P31?</h2>
+            <div class="comparison-table">
+                <table role="table" aria-label="P31 Labs vs typical assistive technology comparison">
+                    <thead>
+                        <tr>
+                            <th scope="col">Feature</th>
+                            <th scope="col" style="color: var(--accent-violet);">Other Assistive Tech</th>
+                            <th scope="col" style="color: var(--accent-green);">P31 Labs</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Data Privacy</strong></td>
+                            <td style="color: var(--text-muted);">Sells user data</td>
+                            <td class="p31-row" style="color: var(--accent-green);">No tracking. Your data stays on your device.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Cost</strong></td>
+                            <td style="color: var(--text-muted);">Subscription fees</td>
+                            <td class="p31-row" style="color: var(--accent-green);">Free forever. Open source. Nonprofit.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Offline Support</strong></td>
+                            <td style="color: var(--text-muted);">Cloud-dependent</td>
+                            <td class="p31-row" style="color: var(--accent-green);">Works without internet. Local-first architecture.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Design</strong></td>
+                            <td style="color: var(--text-muted);">Built for neurotypical people</td>
+                            <td class="p31-row" style="color: var(--accent-green);">Built by and for neurodivergent people.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Code Access</strong></td>
+                            <td style="color: var(--text-muted);">Proprietary, closed source</td>
+                            <td class="p31-row" style="color: var(--accent-green);">100% open source. MIT license. Audit everything.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Research</strong></td>
+                            <td style="color: var(--text-muted);">Closed studies</td>
+                            <td class="p31-row" style="color: var(--accent-green);">Open research. Published on Zenodo. Raw data available.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Funding Model</strong></td>
+                            <td style="color: var(--text-muted);">VC-backed (growth pressure)</td>
+                            <td class="p31-row" style="color: var(--accent-green);">Grants and donations. No investors. Mission stays intact.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- PRIVACY VERIFICATION -->
+        <section class="section">
+            <h2 class="section-title">Privacy Verified</h2>
+            <div style="text-align: center; margin-bottom: 32px;">
+                <p style="font-size: 16px; color: var(--text-cloud); margin-bottom: 24px;">We're serious about privacy. Check it yourself.</p>
+                <button class="privacy-check-btn" onclick="runPrivacyCheck()">Run Privacy Check</button>
+                <div class="privacy-check-result" id="privacyCheckResult">
+                    <div class="privacy-check-line">Scanning for trackers... <strong style="color: var(--accent-green);">none found</strong></div>
+                    <div class="privacy-check-line">Checking cookies... <strong style="color: var(--accent-green);">none set</strong></div>
+                    <div class="privacy-check-line">Data stored locally... <strong style="color: var(--accent-green);">only on this device</strong></div>
+                    <div class="privacy-check-line">External calls... <strong style="color: var(--accent-green);">0 analytics services</strong></div>
+                    <div class="privacy-check-line" style="border: none; margin-top: 12px; color: var(--accent-green); font-weight: 600;">P31 Labs collects zero personal data</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TRUST VALUES -->
+        <section class="section">
+            <h2 class="section-title">Built on Trust</h2>
+            <div class="features">
+                <div class="feature-card">
+                    <h3 class="feature-title">100% Open Source</h3>
+                    <p class="feature-desc">All code published on GitHub. No proprietary algorithms. You can audit, modify, and contribute.</p>
+                </div>
+                <div class="feature-card">
+                    <h3 class="feature-title">Your Data, Your Rules</h3>
+                    <p class="feature-desc">No cloud sync without permission. No ad networks. No behavioral tracking. Privacy is not a feature, it's the default.</p>
+                </div>
+                <div class="feature-card">
+                    <h3 class="feature-title">Made by Neurodivergent Humans</h3>
+                    <p class="feature-desc">We live with ADHD, autism, and other neurodivergences. We build what we wish existed. We live this too.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-links">
+            <a href="https://github.com/p31labs" class="footer-link">GitHub</a>
+            <a href="https://discord.gg/p31" class="footer-link">Discord</a>
+            <a href="https://phosphorus31.org" class="footer-link">Nonprofit</a>
+            <a href="https://ko-fi.com/trimtab69420" class="footer-link">Support</a>
+        </div>
+        <p>P31 Labs, Inc. • Georgia 501(c)(3) • EIN 42-1888158</p>
+        <p style="margin-top: 12px; color: var(--text-muted); font-size: 12px;">Built with care for families who need something different.</p>
+    </footer>
+
+    <script>
+        (function() {
+            var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            var html = document.documentElement;
+            var spoons = 3;
+
+            function loadSpoons() {
+                try {
+                    var saved = localStorage.getItem('p31-spoons');
+                    if (saved !== null) spoons = parseInt(saved, 10);
+                } catch (e) {}
+                if (spoons < 0 || spoons > 5 || isNaN(spoons)) spoons = 3;
+                html.setAttribute('data-spoons', spoons);
+                updateSpoonDots();
+            }
+
+            function updateSpoonDots() {
+                var dots = document.querySelectorAll('.spoon-dot');
+                dots.forEach(function(d) {
+                    d.classList.toggle('active', parseInt(d.getAttribute('data-level'), 10) === spoons);
+                });
+            }
+
+            function setSpoons(level) {
+                spoons = level;
+                html.setAttribute('data-spoons', spoons);
+                try { localStorage.setItem('p31-spoons', spoons); } catch (e) {}
+                updateSpoonDots();
+            }
+
+            loadSpoons();
+
+            document.querySelectorAll('.spoon-dot').forEach(function(dot) {
+                dot.addEventListener('click', function() {
+                    setSpoons(parseInt(this.getAttribute('data-level'), 10));
+                });
+            });
+
+            var crisisExit = document.getElementById('crisisExit');
+            if (crisisExit) {
+                crisisExit.addEventListener('click', function() {
+                    setSpoons(3);
+                });
+            }
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && spoons === 0) {
+                    setSpoons(3);
+                }
+            });
+
+            var canvas = document.getElementById('starfield');
+            if (canvas && !reducedMotion) {
+                var ctx = canvas.getContext('2d');
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+
+                var stars = [];
+                var starCount = Math.floor((window.innerWidth * window.innerHeight) / 15000);
+                for (var i = 0; i < starCount; i++) {
+                    stars.push({
+                        x: Math.random() * canvas.width,
+                        y: Math.random() * canvas.height,
+                        radius: Math.random() * 1.5,
+                        opacity: Math.random() * 0.7 + 0.3,
+                        vx: (Math.random() - 0.5) * 0.2,
+                        vy: (Math.random() - 0.5) * 0.2
+                    });
+                }
+
+                var lastTime = 0;
+                var fps = window.innerWidth < 768 ? 30 : 60;
+                var interval = 1000 / fps;
+
+                function animate(timestamp) {
+                    if (reducedMotion || spoons <= 1) {
+                        requestAnimationFrame(animate);
+                        return;
+                    }
+                    var delta = timestamp - lastTime;
+                    if (delta < interval) {
+                        requestAnimationFrame(animate);
+                        return;
+                    }
+                    lastTime = timestamp - (delta % interval);
+
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.fillStyle = '#F5F5F7';
+                    for (var s = 0; s < stars.length; s++) {
+                        var star = stars[s];
+                        star.x += star.vx;
+                        star.y += star.vy;
+                        if (star.x < 0) star.x = canvas.width;
+                        if (star.x > canvas.width) star.x = 0;
+                        if (star.y < 0) star.y = canvas.height;
+                        if (star.y > canvas.height) star.y = 0;
+                        ctx.globalAlpha = star.opacity;
+                        ctx.beginPath();
+                        ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                    ctx.globalAlpha = 1;
+                    requestAnimationFrame(animate);
+                }
+                requestAnimationFrame(animate);
+            }
+
+            if (canvas) {
+                window.addEventListener('resize', function() {
+                    canvas.width = window.innerWidth;
+                    canvas.height = window.innerHeight;
+                });
+            }
+
+            window.setAudience = function(audience) {
+                try { localStorage.setItem('p31-audience', audience); } catch (e) {}
+                document.querySelectorAll('.audience-segment').forEach(function(s) { s.classList.remove('active'); });
+                var target = document.getElementById(audience + '-section');
+                if (target) target.classList.add('active');
+                var overlay = document.getElementById('onboardingOverlay');
+                if (overlay) overlay.classList.add('hidden');
+                var features = document.getElementById('features');
+                if (features) features.scrollIntoView({ behavior: 'smooth' });
+            };
+
+            window.skipOnboarding = function() {
+                setAudience('family');
+            };
+
+            window.addEventListener('load', function() {
+                try {
+                    var saved = localStorage.getItem('p31-audience');
+                    if (saved) setAudience(saved);
+                } catch (e) {}
+            });
+
+            window.runPrivacyCheck = function() {
+                var result = document.getElementById('privacyCheckResult');
+                if (result) result.classList.add('active');
+            };
+
+            window.scrollTo = function(id) {
+                var el = document.querySelector(id);
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+            };
+        })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+{
+  "name": "p31-telemetry-worker",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "test": "vitest run --coverage"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20241127.0",
+    "@vitest/coverage-v8": "^2.1.0",
+    "typescript": "^6.0.3",
+    "vitest": "^2.1.0",
+    "wrangler": "^3.97.0"
+  }
+}

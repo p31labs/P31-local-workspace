@@ -1,0 +1,25 @@
+{
+  "version": "0.1.0",
+  "catalog": [
+    {
+      "intent": "regulate",
+      "modifiers": ["deep-crafting", "zero-time-pressure", "solo-play"],
+      "description": "Items that support regulation through low-pressure, repetitive engagement"
+    },
+    {
+      "intent": "focus",
+      "modifiers": ["short-sessions", "puzzle-progression", "tactile-feedback"],
+      "description": "Stimulate sustained attention without overwhelming"
+    },
+    {
+      "intent": "social-rehearsal",
+      "modifiers": ["turn-based", "co-op-safe", "low-verbal"],
+      "description": "Practice social interaction in predictable, structured environments"
+    },
+    {
+      "intent": "sensory-soothe",
+      "modifiers": ["ambient-audio", "high-visual-saturation", "predictable-pacing"],
+      "description": "Provide calming sensory input without surprises"
+    }
+  ]
+}

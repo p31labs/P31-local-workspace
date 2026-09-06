@@ -1,0 +1,30 @@
+---
+export interface Props {
+  items?: Array<{ label: string; href: string; color: string }>;
+}
+
+const {
+  items = [
+    { label: 'Quantum', href: '/quantum/', color: 'var(--p31-color-emerald)' },
+    { label: 'Care', href: '/care/', color: 'var(--p31-color-amber)' },
+    { label: 'Research', href: '/research/', color: 'var(--p31-color-cyan)' },
+    { label: 'Impact', href: '/impact/', color: 'var(--p31-color-violet)' },
+  ],
+} = Astro.props;
+---
+
+<nav
+  class="flex justify-center"
+  style="position:fixed;top:var(--p31-nav-h);left:0;right:0;z-index:40;gap:var(--p31-space-xs);padding:var(--p31-space-xs) var(--p31-space-md);background:rgba(5,5,8,0.85);backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,0.04);"
+  aria-label="Tetrahedral navigation"
+>
+  {items.map((item) => (
+    <a
+      href={item.href}
+      style="color:{item.color};text-decoration:none;flex:0 0 auto;padding:var(--p31-space-xs) var(--p31-space-sm);font-size:var(--p31-scale-xs);font-family:var(--p31-font-mono);border-radius:var(--p31-radius-sm);transition:color var(--p31-duration-fast) var(--p31-easing-standard);"
+      class="hover:brightness-125"
+    >
+      ◈ {item.label}
+    </a>
+  ))}
+</nav>

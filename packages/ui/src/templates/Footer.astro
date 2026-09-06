@@ -1,0 +1,18 @@
+---
+export interface Props {
+  copyright?: string;
+}
+const { copyright, children } = Astro.props;
+---
+
+<footer
+  class="flex flex-col"
+  style="max-width: var(--p31-max-width-xl); margin: 0 auto; padding-left: var(--p31-space-md); padding-right: var(--p31-space-md); padding-top: var(--p31-space-md); padding-bottom: var(--p31-space-md); border-top: 1px solid rgba(255,255,255,0.08);"
+>
+  {children && <div class="flex-1"><slot /></div>}
+  {copyright && (
+    <div class="mt-6 pt-4 text-xs" style="color: var(--p31-text-tertiary, rgba(245,245,247,0.3)); border-top: 1px solid rgba(255,255,255,0.06);">
+      {copyright}
+    </div>
+  )}
+</footer>

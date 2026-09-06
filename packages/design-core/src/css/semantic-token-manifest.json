@@ -1,0 +1,976 @@
+{
+  "$schema": "https://p31.ca/schemas/semantic-token-manifest.json",
+  "version": "3.1-willow",
+  "metadata": {
+    "name": "p31-quantum",
+    "generated_at": "2026-08-11T15:17:55.240Z"
+  },
+  "toolTokenBindings": {
+    "GlassPanel": {
+      "tokens": [
+        {
+          "css": "--p31-color-glass_surface",
+          "raw": "oklch(100% 0.01 240 / 0.04)",
+          "resolved": "oklch(100% 0.01 240 / 0.04)"
+        },
+        {
+          "css": "--p31-color-glass_border",
+          "raw": "oklch(100% 0.01 240 / 0.08)",
+          "resolved": "oklch(100% 0.01 240 / 0.08)"
+        },
+        {
+          "css": "--p31-color-surface2",
+          "raw": "oklch(22% 0.02 240)",
+          "resolved": "oklch(22% 0.02 240)"
+        },
+        {
+          "css": "--p31-color-void_deep",
+          "raw": "oklch(8% 0.01 240)",
+          "resolved": "oklch(8% 0.01 240)"
+        },
+        {
+          "css": "--p31-radius-xl",
+          "raw": "{border.radius.xl}",
+          "resolved": "calc(var(--p31-scale-xl) / 2)"
+        },
+        {
+          "css": "--p31-radius-sm",
+          "raw": "{border.radius.sm}",
+          "resolved": "calc(var(--p31-scale-sm) / 2)"
+        },
+        {
+          "css": "--p31-radius-lg",
+          "raw": "{border.radius.lg}",
+          "resolved": "calc(var(--p31-scale-lg) / 2)"
+        },
+        {
+          "css": "--p31-shadow-glass",
+          "raw": "0 8px 32px rgba(0,0,0,0.15)",
+          "resolved": "0 8px 32px rgba(0,0,0,0.15)"
+        },
+        {
+          "css": "--p31-spacing-xl",
+          "raw": "{spacing.xl}",
+          "resolved": "clamp(var(--p31-scale-xl), 5vw, var(--p31-scale-2xl))"
+        },
+        {
+          "css": "--p31-spacing-xxl",
+          "raw": "{spacing.2xl}",
+          "resolved": "clamp(var(--p31-scale-2xl), 6.5vw, var(--p31-scale-3xl))"
+        }
+      ],
+      "props": [
+        "padding"
+      ]
+    },
+    "GlassCard": {
+      "tokens": [
+        {
+          "css": "--p31-color-glass_surface",
+          "raw": "oklch(100% 0.01 240 / 0.04)",
+          "resolved": "oklch(100% 0.01 240 / 0.04)"
+        },
+        {
+          "css": "--p31-color-glass_border",
+          "raw": "oklch(100% 0.01 240 / 0.08)",
+          "resolved": "oklch(100% 0.01 240 / 0.08)"
+        },
+        {
+          "css": "--p31-color-glass_border_hover",
+          "raw": "oklch(100% 0.01 240 / 0.15)",
+          "resolved": "oklch(100% 0.01 240 / 0.15)"
+        },
+        {
+          "css": "--p31-color-surface2",
+          "raw": "oklch(22% 0.02 240)",
+          "resolved": "oklch(22% 0.02 240)"
+        },
+        {
+          "css": "--p31-color-void_deep",
+          "raw": "oklch(8% 0.01 240)",
+          "resolved": "oklch(8% 0.01 240)"
+        },
+        {
+          "css": "--p31-radius-xl",
+          "raw": "{border.radius.xl}",
+          "resolved": "calc(var(--p31-scale-xl) / 2)"
+        },
+        {
+          "css": "--p31-radius-sm",
+          "raw": "{border.radius.sm}",
+          "resolved": "calc(var(--p31-scale-sm) / 2)"
+        },
+        {
+          "css": "--p31-radius-lg",
+          "raw": "{border.radius.lg}",
+          "resolved": "calc(var(--p31-scale-lg) / 2)"
+        },
+        {
+          "css": "--p31-radius-full",
+          "raw": "9999px",
+          "resolved": "9999px"
+        },
+        {
+          "css": "--p31-shadow-glass",
+          "raw": "0 8px 32px rgba(0,0,0,0.15)",
+          "resolved": "0 8px 32px rgba(0,0,0,0.15)"
+        },
+        {
+          "css": "--p31-shadow-glow_cyan_hover",
+          "raw": "0 0 30px rgba(0,240,255,0.4)",
+          "resolved": "0 0 30px rgba(0,240,255,0.4)"
+        },
+        {
+          "css": "--p31-spacing-xs",
+          "raw": "{spacing.xs}",
+          "resolved": "clamp(var(--p31-scale-xs), 1vw, var(--p31-scale-sm))"
+        },
+        {
+          "css": "--p31-spacing-md",
+          "raw": "{spacing.md}",
+          "resolved": "clamp(var(--p31-scale-md), 2.5vw, var(--p31-scale-lg))"
+        },
+        {
+          "css": "--p31-spacing-xl",
+          "raw": "{spacing.xl}",
+          "resolved": "clamp(var(--p31-scale-xl), 5vw, var(--p31-scale-2xl))"
+        },
+        {
+          "css": "--p31-spacing-xxl",
+          "raw": "{spacing.2xl}",
+          "resolved": "clamp(var(--p31-scale-2xl), 6.5vw, var(--p31-scale-3xl))"
+        },
+        {
+          "css": "--p31-typography-font_sans",
+          "raw": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+          "resolved": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+        }
+      ],
+      "props": [
+        "color",
+        "padding",
+        "interactive"
+      ]
+    },
+    "GlassStrong": {
+      "tokens": [
+        {
+          "css": "--p31-color-glass_surface_strong",
+          "raw": "oklch(100% 0.01 240 / 0.08)",
+          "resolved": "oklch(100% 0.01 240 / 0.08)"
+        },
+        {
+          "css": "--p31-color-void_deep",
+          "raw": "oklch(8% 0.01 240)",
+          "resolved": "oklch(8% 0.01 240)"
+        },
+        {
+          "css": "--p31-blur-strong",
+          "raw": "24px",
+          "resolved": "24px"
+        },
+        {
+          "css": "--p31-radius-xl",
+          "raw": "{border.radius.xl}",
+          "resolved": "calc(var(--p31-scale-xl) / 2)"
+        }
+      ],
+      "props": []
+    },
+    "GlassSubtle": {
+      "tokens": [
+        {
+          "css": "--p31-color-glass_surface_subtle",
+          "raw": "oklch(100% 0.01 240 / 0.03)",
+          "resolved": "oklch(100% 0.01 240 / 0.03)"
+        },
+        {
+          "css": "--p31-color-surface2",
+          "raw": "oklch(22% 0.02 240)",
+          "resolved": "oklch(22% 0.02 240)"
+        },
+        {
+          "css": "--p31-blur-subtle",
+          "raw": "8px",
+          "resolved": "8px"
+        },
+        {
+          "css": "--p31-radius-xl",
+          "raw": "{border.radius.xl}",
+          "resolved": "calc(var(--p31-scale-xl) / 2)"
+        }
+      ],
+      "props": []
+    },
+    "Button": {
+      "tokens": [
+        {
+          "css": "--p31-color-void",
+          "raw": "oklch(10% 0.01 240)",
+          "resolved": "oklch(10% 0.01 240)"
+        },
+        {
+          "css": "--p31-color-void_deep",
+          "raw": "oklch(8% 0.01 240)",
+          "resolved": "oklch(8% 0.01 240)"
+        },
+        {
+          "css": "--p31-color-surface2",
+          "raw": "oklch(22% 0.02 240)",
+          "resolved": "oklch(22% 0.02 240)"
+        },
+        {
+          "css": "--p31-spacing-sm",
+          "raw": "{spacing.sm}",
+          "resolved": "clamp(var(--p31-scale-sm), 1.5vw, var(--p31-scale-md))"
+        },
+        {
+          "css": "--p31-spacing-lg",
+          "raw": "{spacing.lg}",
+          "resolved": "clamp(var(--p31-scale-lg), 3.5vw, var(--p31-scale-xl))"
+        },
+        {
+          "css": "--p31-spacing-xl",
+          "raw": "{spacing.xl}",
+          "resolved": "clamp(var(--p31-scale-xl), 5vw, var(--p31-scale-2xl))"
+        },
+        {
+          "css": "--p31-radius-md",
+          "raw": "{border.radius.md}",
+          "resolved": "calc(var(--p31-scale-md) / 2)"
+        },
+        {
+          "css": "--p31-radius-sm",
+          "raw": "{border.radius.sm}",
+          "resolved": "calc(var(--p31-scale-sm) / 2)"
+        },
+        {
+          "css": "--p31-radius-full",
+          "raw": "9999px",
+          "resolved": "9999px"
+        },
+        {
+          "css": "--p31-shadow-glow_cyan",
+          "raw": "0 0 20px rgba(0,240,255,0.25)",
+          "resolved": "0 0 20px rgba(0,240,255,0.25)"
+        },
+        {
+          "css": "--p31-typography-font_sans",
+          "raw": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+          "resolved": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+        }
+      ],
+      "props": [
+        "variant",
+        "size"
+      ]
+    },
+    "SpoonMeter": {
+      "tokens": [
+        {
+          "css": "--p31-typography-font_sans",
+          "raw": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+          "resolved": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+        }
+      ],
+      "props": [
+        "current",
+        "interactive"
+      ]
+    },
+    "TetraGrid": {
+      "tokens": [
+        {
+          "css": "--p31-spacing-xs",
+          "raw": "{spacing.xs}",
+          "resolved": "clamp(var(--p31-scale-xs), 1vw, var(--p31-scale-sm))"
+        },
+        {
+          "css": "--p31-spacing-md",
+          "raw": "{spacing.md}",
+          "resolved": "clamp(var(--p31-scale-md), 2.5vw, var(--p31-scale-lg))"
+        },
+        {
+          "css": "--p31-spacing-xl",
+          "raw": "{spacing.xl}",
+          "resolved": "clamp(var(--p31-scale-xl), 5vw, var(--p31-scale-2xl))"
+        },
+        {
+          "css": "--p31-spacing-xxl",
+          "raw": "{spacing.2xl}",
+          "resolved": "clamp(var(--p31-scale-2xl), 6.5vw, var(--p31-scale-3xl))"
+        }
+      ],
+      "props": []
+    },
+    "HonestLabel": {
+      "tokens": [
+        {
+          "css": "--p31-typography-font_mono",
+          "raw": "ui-monospace, SFMono-Regular, 'Fira Code', 'Fira Mono', 'Roboto Mono', 'JetBrains Mono', Menlo, Monaco, Consolas, monospace",
+          "resolved": "ui-monospace, SFMono-Regular, 'Fira Code', 'Fira Mono', 'Roboto Mono', 'JetBrains Mono', Menlo, Monaco, Consolas, monospace"
+        },
+        {
+          "css": "--p31-typography-font_sans",
+          "raw": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+          "resolved": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+        }
+      ],
+      "props": []
+    },
+    "StatusBadge": {
+      "tokens": [
+        {
+          "css": "--p31-radius-sm",
+          "raw": "{border.radius.sm}",
+          "resolved": "calc(var(--p31-scale-sm) / 2)"
+        },
+        {
+          "css": "--p31-spacing-xs",
+          "raw": "{spacing.xs}",
+          "resolved": "clamp(var(--p31-scale-xs), 1vw, var(--p31-scale-sm))"
+        },
+        {
+          "css": "--p31-typography-font_sans",
+          "raw": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+          "resolved": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+        }
+      ],
+      "props": [
+        "status"
+      ]
+    },
+    "CrisisOverlay": {
+      "tokens": [
+        {
+          "css": "--p31-color-void_deep",
+          "raw": "oklch(8% 0.01 240)",
+          "resolved": "oklch(8% 0.01 240)"
+        },
+        {
+          "css": "--p31-typography-font_sans",
+          "raw": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+          "resolved": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+        }
+      ],
+      "props": [
+        "message",
+        "buttonLabel"
+      ]
+    },
+    "Starfield": {
+      "tokens": [
+        {
+          "css": "--p31-color-void_deep",
+          "raw": "oklch(8% 0.01 240)",
+          "resolved": "oklch(8% 0.01 240)"
+        },
+        {
+          "css": "--p31-radius-full",
+          "raw": "9999px",
+          "resolved": "9999px"
+        },
+        {
+          "css": "--p31-shadow-glow_cyan",
+          "raw": "0 0 20px rgba(0,240,255,0.25)",
+          "resolved": "0 0 20px rgba(0,240,255,0.25)"
+        }
+      ],
+      "props": [
+        "count",
+        "speed"
+      ]
+    },
+    "ThemeToggle": {
+      "tokens": [
+        {
+          "css": "--p31-typography-font_sans",
+          "raw": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+          "resolved": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+        }
+      ],
+      "props": []
+    },
+    "CandyHeader": {
+      "tokens": [
+        {
+          "css": "--p31-color-cyan",
+          "raw": "oklch(65% 0.18 195)",
+          "resolved": "oklch(65% 0.18 195)"
+        },
+        {
+          "css": "--p31-color-void",
+          "raw": "oklch(10% 0.01 240)",
+          "resolved": "oklch(10% 0.01 240)"
+        }
+      ],
+      "props": [
+        "brand"
+      ]
+    },
+    "Crown": {
+      "tokens": [
+        {
+          "css": "--p31-color-cyan",
+          "raw": "oklch(65% 0.18 195)",
+          "resolved": "oklch(65% 0.18 195)"
+        },
+        {
+          "css": "--p31-color-violet",
+          "raw": "oklch(65% 0.18 285)",
+          "resolved": "oklch(65% 0.18 285)"
+        },
+        {
+          "css": "--p31-color-gold",
+          "raw": "oklch(65% 0.18 15)",
+          "resolved": "oklch(65% 0.18 15)"
+        },
+        {
+          "css": "--p31-color-green",
+          "raw": "oklch(65% 0.18 105)",
+          "resolved": "oklch(65% 0.18 105)"
+        },
+        {
+          "css": "--p31-color-iris",
+          "raw": "oklch(65% 0.18 270)",
+          "resolved": "oklch(65% 0.18 270)"
+        }
+      ],
+      "props": [
+        "size",
+        "brand"
+      ]
+    },
+    "Card": {
+      "tokens": [
+        {
+          "css": "--p31-color-glass_surface",
+          "raw": "oklch(100% 0.01 240 / 0.04)",
+          "resolved": "oklch(100% 0.01 240 / 0.04)"
+        },
+        {
+          "css": "--p31-color-glass_border",
+          "raw": "oklch(100% 0.01 240 / 0.08)",
+          "resolved": "oklch(100% 0.01 240 / 0.08)"
+        },
+        {
+          "css": "--p31-color-glass_border_hover",
+          "raw": "oklch(100% 0.01 240 / 0.15)",
+          "resolved": "oklch(100% 0.01 240 / 0.15)"
+        },
+        {
+          "css": "--p31-radius-lg",
+          "raw": "{border.radius.lg}",
+          "resolved": "calc(var(--p31-scale-lg) / 2)"
+        },
+        {
+          "css": "--p31-radius-md",
+          "raw": "{border.radius.md}",
+          "resolved": "calc(var(--p31-scale-md) / 2)"
+        },
+        {
+          "css": "--p31-shadow-glass",
+          "raw": "0 8px 32px rgba(0,0,0,0.15)",
+          "resolved": "0 8px 32px rgba(0,0,0,0.15)"
+        },
+        {
+          "css": "--p31-typography-font_sans",
+          "raw": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+          "resolved": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+        }
+      ],
+      "props": [
+        "padding"
+      ]
+    },
+    "Topbar": {
+      "tokens": [
+        {
+          "css": "--p31-color-glass_surface",
+          "raw": "oklch(100% 0.01 240 / 0.04)",
+          "resolved": "oklch(100% 0.01 240 / 0.04)"
+        },
+        {
+          "css": "--p31-color-void",
+          "raw": "oklch(10% 0.01 240)",
+          "resolved": "oklch(10% 0.01 240)"
+        },
+        {
+          "css": "--p31-spacing-lg",
+          "raw": "{spacing.lg}",
+          "resolved": "clamp(var(--p31-scale-lg), 3.5vw, var(--p31-scale-xl))"
+        },
+        {
+          "css": "--p31-spacing-md",
+          "raw": "{spacing.md}",
+          "resolved": "clamp(var(--p31-scale-md), 2.5vw, var(--p31-scale-lg))"
+        },
+        {
+          "css": "--p31-radius-md",
+          "raw": "{border.radius.md}",
+          "resolved": "calc(var(--p31-scale-md) / 2)"
+        },
+        {
+          "css": "--p31-typography-font_sans",
+          "raw": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+          "resolved": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+        }
+      ],
+      "props": [
+        "brand"
+      ]
+    },
+    "BottomNav": {
+      "tokens": [
+        {
+          "css": "--p31-color-glass_surface",
+          "raw": "oklch(100% 0.01 240 / 0.04)",
+          "resolved": "oklch(100% 0.01 240 / 0.04)"
+        },
+        {
+          "css": "--p31-color-void",
+          "raw": "oklch(10% 0.01 240)",
+          "resolved": "oklch(10% 0.01 240)"
+        },
+        {
+          "css": "--p31-spacing-sm",
+          "raw": "{spacing.sm}",
+          "resolved": "clamp(var(--p31-scale-sm), 1.5vw, var(--p31-scale-md))"
+        },
+        {
+          "css": "--p31-radius-md",
+          "raw": "{border.radius.md}",
+          "resolved": "calc(var(--p31-scale-md) / 2)"
+        },
+        {
+          "css": "--p31-typography-font_sans",
+          "raw": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+          "resolved": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+        }
+      ],
+      "props": [
+        "items"
+      ]
+    },
+    "Badge": {
+      "tokens": [
+        {
+          "css": "--p31-color-glass_surface",
+          "raw": "oklch(100% 0.01 240 / 0.04)",
+          "resolved": "oklch(100% 0.01 240 / 0.04)"
+        },
+        {
+          "css": "--p31-color-glass_border",
+          "raw": "oklch(100% 0.01 240 / 0.08)",
+          "resolved": "oklch(100% 0.01 240 / 0.08)"
+        },
+        {
+          "css": "--p31-radius-full",
+          "raw": "9999px",
+          "resolved": "9999px"
+        },
+        {
+          "css": "--p31-spacing-xs",
+          "raw": "{spacing.xs}",
+          "resolved": "clamp(var(--p31-scale-xs), 1vw, var(--p31-scale-sm))"
+        },
+        {
+          "css": "--p31-spacing-md",
+          "raw": "{spacing.md}",
+          "resolved": "clamp(var(--p31-scale-md), 2.5vw, var(--p31-scale-lg))"
+        },
+        {
+          "css": "--p31-typography-font_mono",
+          "raw": "ui-monospace, SFMono-Regular, 'Fira Code', 'Fira Mono', 'Roboto Mono', 'JetBrains Mono', Menlo, Monaco, Consolas, monospace",
+          "resolved": "ui-monospace, SFMono-Regular, 'Fira Code', 'Fira Mono', 'Roboto Mono', 'JetBrains Mono', Menlo, Monaco, Consolas, monospace"
+        }
+      ],
+      "props": [
+        "variant"
+      ]
+    },
+    "CompanionCard": {
+      "tokens": [
+        {
+          "css": "--p31-color-glass_surface",
+          "raw": "oklch(100% 0.01 240 / 0.04)",
+          "resolved": "oklch(100% 0.01 240 / 0.04)"
+        },
+        {
+          "css": "--p31-color-glass_border",
+          "raw": "oklch(100% 0.01 240 / 0.08)",
+          "resolved": "oklch(100% 0.01 240 / 0.08)"
+        },
+        {
+          "css": "--p31-radius-xl",
+          "raw": "{border.radius.xl}",
+          "resolved": "calc(var(--p31-scale-xl) / 2)"
+        },
+        {
+          "css": "--p31-radius-lg",
+          "raw": "{border.radius.lg}",
+          "resolved": "calc(var(--p31-scale-lg) / 2)"
+        },
+        {
+          "css": "--p31-radius-full",
+          "raw": "9999px",
+          "resolved": "9999px"
+        },
+        {
+          "css": "--p31-shadow-glass",
+          "raw": "0 8px 32px rgba(0,0,0,0.15)",
+          "resolved": "0 8px 32px rgba(0,0,0,0.15)"
+        }
+      ],
+      "props": [
+        "color"
+      ]
+    },
+    "MoodBtn": {
+      "tokens": [
+        {
+          "css": "--p31-radius-full",
+          "raw": "9999px",
+          "resolved": "9999px"
+        },
+        {
+          "css": "--p31-spacing-md",
+          "raw": "{spacing.md}",
+          "resolved": "clamp(var(--p31-scale-md), 2.5vw, var(--p31-scale-lg))"
+        }
+      ],
+      "props": [
+        "mood"
+      ]
+    },
+    "GameCard": {
+      "tokens": [
+        {
+          "css": "--p31-color-glass_surface",
+          "raw": "oklch(100% 0.01 240 / 0.04)",
+          "resolved": "oklch(100% 0.01 240 / 0.04)"
+        },
+        {
+          "css": "--p31-color-glass_border",
+          "raw": "oklch(100% 0.01 240 / 0.08)",
+          "resolved": "oklch(100% 0.01 240 / 0.08)"
+        },
+        {
+          "css": "--p31-radius-lg",
+          "raw": "{border.radius.lg}",
+          "resolved": "calc(var(--p31-scale-lg) / 2)"
+        },
+        {
+          "css": "--p31-typography-font_sans",
+          "raw": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+          "resolved": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+        }
+      ],
+      "props": [
+        "spoons"
+      ]
+    },
+    "ChatBubble": {
+      "tokens": [
+        {
+          "css": "--p31-radius-lg",
+          "raw": "{border.radius.lg}",
+          "resolved": "calc(var(--p31-scale-lg) / 2)"
+        },
+        {
+          "css": "--p31-radius-md",
+          "raw": "{border.radius.md}",
+          "resolved": "calc(var(--p31-scale-md) / 2)"
+        },
+        {
+          "css": "--p31-typography-font_sans",
+          "raw": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+          "resolved": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+        },
+        {
+          "css": "--p31-color-surface2",
+          "raw": "oklch(22% 0.02 240)",
+          "resolved": "oklch(22% 0.02 240)"
+        },
+        {
+          "css": "--p31-color-void_deep",
+          "raw": "oklch(8% 0.01 240)",
+          "resolved": "oklch(8% 0.01 240)"
+        }
+      ],
+      "props": [
+        "role"
+      ]
+    },
+    "PinKey": {
+      "tokens": [
+        {
+          "css": "--p31-radius-full",
+          "raw": "9999px",
+          "resolved": "9999px"
+        },
+        {
+          "css": "--p31-spacing-md",
+          "raw": "{spacing.md}",
+          "resolved": "clamp(var(--p31-scale-md), 2.5vw, var(--p31-scale-lg))"
+        }
+      ],
+      "props": [
+        "value"
+      ]
+    },
+    "Toggle": {
+      "tokens": [
+        {
+          "css": "--p31-radius-full",
+          "raw": "9999px",
+          "resolved": "9999px"
+        },
+        {
+          "css": "--p31-color-glass_surface",
+          "raw": "oklch(100% 0.01 240 / 0.04)",
+          "resolved": "oklch(100% 0.01 240 / 0.04)"
+        },
+        {
+          "css": "--p31-color-surface2",
+          "raw": "oklch(22% 0.02 240)",
+          "resolved": "oklch(22% 0.02 240)"
+        }
+      ],
+      "props": [
+        "checked"
+      ]
+    },
+    "BreakOverlay": {
+      "tokens": [
+        {
+          "css": "--p31-color-void_deep",
+          "raw": "oklch(8% 0.01 240)",
+          "resolved": "oklch(8% 0.01 240)"
+        },
+        {
+          "css": "--p31-color-surface2",
+          "raw": "oklch(22% 0.02 240)",
+          "resolved": "oklch(22% 0.02 240)"
+        },
+        {
+          "css": "--p31-radius-xl",
+          "raw": "{border.radius.xl}",
+          "resolved": "calc(var(--p31-scale-xl) / 2)"
+        }
+      ],
+      "props": [
+        "duration"
+      ]
+    },
+    "Toast": {
+      "tokens": [
+        {
+          "css": "--p31-color-glass_surface",
+          "raw": "oklch(100% 0.01 240 / 0.04)",
+          "resolved": "oklch(100% 0.01 240 / 0.04)"
+        },
+        {
+          "css": "--p31-radius-md",
+          "raw": "{border.radius.md}",
+          "resolved": "calc(var(--p31-scale-md) / 2)"
+        },
+        {
+          "css": "--p31-typography-font_sans",
+          "raw": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+          "resolved": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+        }
+      ],
+      "props": [
+        "type",
+        "duration"
+      ]
+    }
+  },
+  "interactive": {
+    "speedFactorMapping": [
+      {
+        "spoons": 0,
+        "speed_factor": 0,
+        "label": "crisis — no motion"
+      },
+      {
+        "spoons": 1,
+        "speed_factor": 0,
+        "label": "minimal — no motion"
+      },
+      {
+        "spoons": 2,
+        "speed_factor": 0.25,
+        "label": "reduced"
+      },
+      {
+        "spoons": 3,
+        "speed_factor": 0.5,
+        "label": "standard"
+      },
+      {
+        "spoons": 4,
+        "speed_factor": 0.75,
+        "label": "calm"
+      },
+      {
+        "spoons": 5,
+        "speed_factor": 1,
+        "label": "brisk"
+      }
+    ],
+    "variable": "--p31-speed-factor",
+    "motionPreference": {
+      "css": "@media (prefers-reduced-motion: reduce)",
+      "behavior": "All --p31-duration-* multiplied by 0 via speed_factor",
+      "crisisMode": "data-spoons=\"0\": speed_factor = 0, CrisisOverlay rendered"
+    }
+  },
+  "animationTokens": {
+    "duration": {
+      "fast": "100ms",
+      "normal": "300ms",
+      "slow": "500ms"
+    },
+    "easing": {
+      "smooth": "cubic-bezier(0.4, 0, 0.2, 1)",
+      "snappy": "cubic-bezier(0.34, 1.56, 0.64, 1)",
+      "linear": "linear"
+    },
+    "speed_factor_css": "var(--p31-speed-factor)",
+    "speed_factor_default": "1"
+  },
+  "brandOverrides": {
+    "p31ca": {
+      "semantic-color": {
+        "primary": "oklch(65% 0.18 195)",
+        "secondary": "oklch(65% 0.18 285)"
+      },
+      "typography": {
+        "font-family": "{typography.font_family.inter}"
+      },
+      "glass": {
+        "glass_surface": "oklch(14% 0.02 260 / 0.35)",
+        "glass_border": "oklch(100% 0.01 240 / 0.12)",
+        "glass_surface_hover": "oklch(14% 0.02 260 / 0.45)",
+        "glass_border_hover": "oklch(100% 0.01 240 / 0.25)",
+        "glass_blur": "24px"
+      },
+      "starfield": {
+        "hearth_color": "oklch(55% 0.15 35)",
+        "teal_color": "oklch(60% 0.08 185)",
+        "particle_count": "80",
+        "speed": "0.15"
+      }
+    },
+    "phosphorus31": {
+      "semantic-color": {
+        "primary": "oklch(65% 0.18 105)",
+        "secondary": "oklch(65% 0.18 15)"
+      },
+      "typography": {
+        "font-family": "{typography.font_family.atkinson}"
+      },
+      "glass": {
+        "glass_surface": "oklch(99% 0.01 85 / 0.55)",
+        "glass_border": "oklch(80% 0.02 75 / 0.3)",
+        "glass_surface_hover": "oklch(99% 0.01 85 / 0.65)",
+        "glass_border_hover": "oklch(70% 0.03 70 / 0.4)",
+        "glass_blur": "16px"
+      },
+      "starfield": {
+        "hearth_color": "oklch(55% 0.10 70)",
+        "teal_color": "oklch(60% 0.06 130)",
+        "particle_count": "60",
+        "speed": "0.08"
+      },
+      "nonprofit": {
+        "trust_indicators": {
+          "ein_badge": "501(c)(3) · EIN 42-1888158",
+          "transparency_link": "/financials",
+          "pilot_count_display": true
+        },
+        "conversion": {
+          "cta_min_height": "48px",
+          "cta_padding": "var(--p31-space-md) var(--p31-space-lg)",
+          "donate_button_color": "var(--p31-color-emerald)",
+          "volunteer_button_color": "var(--p31-color-amber)"
+        },
+        "accessibility": {
+          "min_contrast_ratio": 4.5,
+          "font_primary": "Atkinson Hyperlegible",
+          "touch_target_min": "48px"
+        }
+      }
+    },
+    "willow": {
+      "semantic-color": {
+        "primary": "oklch(65% 0.18 45)",
+        "secondary": "oklch(60% 0.15 200)"
+      },
+      "typography": {
+        "font-family": "\"Comic Sans MS\", \"Chalkboard SE\", cursive, sans-serif",
+        "font-display": "\"Comic Sans MS\", \"Chalkboard SE\", cursive"
+      },
+      "glass": {
+        "glass_surface": "rgba(255, 248, 240, 0.7)",
+        "glass_border": "rgba(200, 180, 160, 0.25)",
+        "glass_surface_hover": "rgba(255, 248, 240, 0.85)",
+        "glass_border_hover": "rgba(200, 180, 160, 0.35)",
+        "glass_blur": "16px"
+      },
+      "starfield": {
+        "hearth_color": "hsl(25, 80%, 50%)",
+        "teal_color": "hsl(200, 60%, 60%)",
+        "particle_count": "70",
+        "speed": "0.08"
+      },
+      "radii": {
+        "sm": "12px",
+        "md": "20px",
+        "lg": "28px",
+        "xl": "40px",
+        "full": "9999px"
+      },
+      "spacing": {
+        "xs": "0.5rem",
+        "sm": "0.75rem",
+        "md": "1.25rem",
+        "lg": "2rem",
+        "xl": "2.5rem",
+        "xxl": "4rem"
+      },
+      "duration": {
+        "fast": "200ms",
+        "normal": "400ms",
+        "slow": "600ms"
+      },
+      "easing": {
+        "default": "cubic-bezier(0.34, 1.56, 0.64, 1)"
+      },
+      "touch": {
+        "min": "56px",
+        "recommended": "64px"
+      },
+      "z_index": {
+        "starfield": "0",
+        "topbar": "10",
+        "toast": "9999",
+        "crisis": "99999"
+      },
+      "dark_mode": {
+        "glass_surface": "rgba(30, 28, 26, 0.8)",
+        "glass_border": "rgba(80, 75, 70, 0.3)",
+        "text": "oklch(90% 0.01 80)",
+        "text_secondary": "oklch(65% 0.02 80)"
+      }
+    }
+  },
+  "references": {
+    "designSystem": "design-system.json",
+    "tokensCss": "packages/design-core/src/css/tokens.css",
+    "componentsYml": "cli/tokens/components.yml",
+    "tokensYml": "cli/tokens/tokens.yml"
+  }
+}

@@ -1,15 +1,19 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
-import tailwind from '@astrojs/tailwind';
 import react from '@astrojs/react';
+import tailwind from '@astrojs/tailwind';
 import cloudflare from '@astrojs/cloudflare';
 
 export default defineConfig({
   output: 'static',
   adapter: cloudflare(),
-  integrations: [tailwind(), react()],
+  integrations: [react(), tailwind()],
   site: 'https://p31ca.org',
   trailingSlash: 'always',
+  viewTransitions: true,
+  build: {
+    inlineStylesheets: 'auto',
+  },
   vite: {
     build: {
       sourcemap: false,

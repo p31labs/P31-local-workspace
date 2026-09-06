@@ -1,0 +1,10 @@
+name = "k4-cage-pwa"
+compatibility_date = "2026-07-16"
+compatibility_flags = ["nodejs_compat"]
+pages_build_output_dir = "."
+
+[observability]
+enabled = true
+
+[cache]
+enabled = true

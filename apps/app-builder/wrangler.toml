@@ -1,0 +1,25 @@
+name = "p31-app-builder"
+main = "src/index.ts"
+compatibility_date = "2026-07-26"
+compatibility_flags = ["nodejs_compat"]
+
+[observability]
+enabled = true
+
+[placement]
+mode = "smart"
+
+# KV for app cache
+# Commented by default — create with: wrangler kv:namespace create APP_BUILDER_KV
+# [[kv_namespaces]]
+# binding = "APP_BUILDER_KV"
+# id = ""
+
+# R2 for app artifacts
+# [[r2_buckets]]
+# binding = "APP_BUILDER_R2"
+# bucket_name = "p31-app-builder"
+
+# Environment variables
+# [vars]
+# VIBE_SANDBOX_URL = "https://vibe-sandbox.trimtab-signal.workers.dev"

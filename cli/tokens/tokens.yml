@@ -1,0 +1,1308 @@
+version: "3.1-willow"
+metadata:
+  name: p31-quantum
+  description: P31 Labs Quantum Design System — mathematically perfect, visually breathtaking
+  philosophy: |
+    Everything derives from 16px × (4/3)^n, timed to 863 Hz.
+    One base. One ratio. Infinite scale.
+  canonical_constants:
+    base_unit: "16px"
+    tetrahedral_ratio: 1.3333
+    golden_ratio: 1.618
+    larmor_hz: 863
+    sic_povm_overlap: 0.3333
+    k4_vertices: 4
+    beta_squared: 1
+    ei_number: "42-1888158"
+
+root:
+  base_unit:
+    $value: "16px"
+    $type: dimension
+  tetrahedral_ratio:
+    $value: 1.3333
+    $type: number
+  golden_ratio:
+    $value: 1.618
+    $type: number
+  larmor_hz:
+    $value: 863
+    $type: number
+  sic_povm_overlap:
+    $value: 0.3333
+    $type: number
+  k4_vertices:
+    $value: 4
+    $type: number
+  beta_squared:
+    $value: 1
+    $type: number
+
+scale:
+  xs:
+    $value: "calc(var(--p31-base) * 0.75)"
+    $type: dimension
+    $description: "Step -1: 12px"
+    usage: "small text, compact padding"
+  sm:
+    $value: "var(--p31-base)"
+    $type: dimension
+    $description: "Step 0: 16px"
+    usage: "body text, base grid unit"
+  md:
+    $value: "calc(var(--p31-base) * 1.3333)"
+    $type: dimension
+    $description: "Step +1: 21px"
+    usage: "small headings, button heights"
+  lg:
+    $value: "calc(var(--p31-base) * 1.7777)"
+    $type: dimension
+    $description: "Step +2: 28px"
+    usage: "medium headings, card padding"
+  xl:
+    $value: "calc(var(--p31-base) * 2.3703)"
+    $type: dimension
+    $description: "Step +3: 38px"
+    usage: "large headings, modal padding"
+  "2xl":
+    $value: "calc(var(--p31-base) * 3.1604)"
+    $type: dimension
+    $description: "Step +4: 50px"
+    usage: "hero title min, header height region"
+  "3xl":
+    $value: "calc(var(--p31-base) * 4.2139)"
+    $type: dimension
+    $description: "Step +5: 67px"
+    usage: "display banners, major section gaps"
+  "4xl":
+    $value: "calc(var(--p31-base) * 5.6186)"
+    $type: dimension
+    $description: "Step +6: 90px"
+    usage: "mega displays, hero section padding"
+
+spacing:
+  xs:
+    $value: "clamp(var(--p31-scale-xs), 1vw, var(--p31-scale-sm))"
+    $type: dimension
+    usage: "tiny gaps, micro-spacing"
+  sm:
+    $value: "clamp(var(--p31-scale-sm), 1.5vw, var(--p31-scale-md))"
+    $type: dimension
+    usage: "small component gaps"
+  md:
+    $value: "clamp(var(--p31-scale-md), 2.5vw, var(--p31-scale-lg))"
+    $type: dimension
+    usage: "standard component spacing"
+  lg:
+    $value: "clamp(var(--p31-scale-lg), 3.5vw, var(--p31-scale-xl))"
+    $type: dimension
+    usage: "medium section spacing"
+  xl:
+    $value: "clamp(var(--p31-scale-xl), 5vw, var(--p31-scale-2xl))"
+    $type: dimension
+    usage: "large section spacing"
+  "2xl":
+    $value: "clamp(var(--p31-scale-2xl), 6.5vw, var(--p31-scale-3xl))"
+    $type: dimension
+    usage: "hero section padding"
+  "3xl":
+    $value: "clamp(var(--p31-scale-3xl), 8vw, var(--p31-scale-4xl))"
+    $type: dimension
+    usage: "page-level spacing"
+
+typography:
+  base_unit:
+    $value: "var(--p31-base)"
+    $type: dimension
+  scale_ratio:
+    $value: 1.3333
+    $type: number
+  font_family:
+    sans:
+      $value: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+      $type: fontFamily
+    mono:
+      $value: "ui-monospace, SFMono-Regular, 'Fira Code', 'Fira Mono', 'Roboto Mono', 'JetBrains Mono', Menlo, Monaco, Consolas, monospace"
+      $type: fontFamily
+    inter:
+      $value: "'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif"
+      $type: fontFamily
+      $description: "Modern, tech-forward sans-serif for p31ca (the edgy twin)"
+    atkinson:
+      $value: "'Atkinson Hyperlegible', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif"
+      $type: fontFamily
+      $description: "Accessibility-first sans-serif for phosphorus31 (the accessible twin)"
+  size:
+    caption:
+      $value: "clamp(var(--p31-scale-xs), 0.8vw, var(--p31-scale-sm))"
+      $type: dimension
+      usage: "meta text, footnotes"
+    body:
+      $value: "clamp(calc(var(--p31-base) * 0.95), 1vw + 0.5rem, var(--p31-scale-sm))"
+      $type: dimension
+      usage: "primary reading text"
+    label:
+      $value: "var(--p31-scale-sm)"
+      $type: dimension
+      usage: "form labels, UI text"
+    h3:
+      $value: "clamp(var(--p31-scale-md), 2vw, var(--p31-scale-lg))"
+      $type: dimension
+      usage: "subsection headings"
+    h2:
+      $value: "clamp(var(--p31-scale-lg), 3.5vw, var(--p31-scale-xl))"
+      $type: dimension
+      usage: "section headings"
+    h1:
+      $value: "clamp(var(--p31-scale-xl), 5.6vw, var(--p31-scale-2xl))"
+      $type: dimension
+      usage: "page headings, hero titles"
+    display:
+      $value: "clamp(var(--p31-scale-2xl), 7vw, var(--p31-scale-3xl))"
+      $type: dimension
+      usage: "large displays, mega text"
+  line_height:
+    tight:
+      $value: 1.1
+      $type: number
+      usage: "headings"
+    normal:
+      $value: 1.6
+      $type: number
+      usage: "body text"
+    loose:
+      $value: 1.8
+      $type: number
+      usage: "accessible reading"
+  letter_spacing:
+    tight:
+      $value: "-0.02em"
+      $type: string
+      usage: "display text"
+    normal:
+      $value: "0em"
+      $type: string
+      usage: "body, headings"
+    wide:
+      $value: "0.05em"
+      $type: string
+      usage: "special emphasis"
+  weight:
+    light:
+      $value: 300
+      $type: number
+    normal:
+      $value: 400
+      $type: number
+    medium:
+      $value: 500
+      $type: number
+    semibold:
+      $value: 600
+      $type: number
+    bold:
+      $value: 700
+      $type: number
+    extrabold:
+      $value: 800
+      $type: number
+
+color:
+  quantum:
+    cyan:
+      $value: "oklch(65% 0.18 195)"
+      $type: color
+      $description: "Hue 195° — primary accent"
+      usage: "primary accent, UI focus"
+    violet:
+      $value: "oklch(65% 0.18 285)"
+      $type: color
+      $description: "Hue 285° — secondary accent"
+      usage: "secondary accent, gradients"
+    amber:
+      $value: "oklch(65% 0.18 15)"
+      $type: color
+      $description: "Hue 15° — warmth, warning"
+      usage: "warning, special states"
+    emerald:
+      $value: "oklch(65% 0.18 105)"
+      $type: color
+      $description: "Hue 105° — success, growth"
+      usage: "success, positive states"
+  surface:
+    bg:
+      $value: "oklch(12% 0.01 240)"
+      $type: color
+      usage: "page background"
+    card:
+      $value: "oklch(18% 0.015 240)"
+      $type: color
+      usage: "card backgrounds"
+    border:
+      $value: "oklch(28% 0.02 240)"
+      $type: color
+      usage: "borders, dividers"
+  text:
+    primary:
+      $value: "oklch(96% 0.005 240)"
+      $type: color
+      usage: "primary text content"
+    secondary:
+      $value: "oklch(75% 0.01 240)"
+      $type: color
+      usage: "secondary text, UI labels"
+    muted:
+      $value: "oklch(65% 0.01 240)"
+      $type: color
+      usage: "disabled, inactive states"
+    subtle:
+      $value: "oklch(45% 0.01 240)"
+      $type: color
+      usage: "minimally visible hints"
+  semantic:
+    success:
+      $value: "{color.quantum.emerald}"
+      $type: color
+    warning:
+      $value: "{color.quantum.amber}"
+      $type: color
+    error:
+      $value: "oklch(65% 0.18 20)"
+      $type: color
+    info:
+      $value: "{color.quantum.cyan}"
+      $type: color
+
+touch:
+  min:
+    $value: "48px"
+    $type: dimension
+    $description: "Minimum touch target for accessibility (WCAG 2.5.8)"
+    usage: "buttons, interactive controls"
+  recommended:
+    $value: "56px"
+    $type: dimension
+    $description: "Recommended touch target for child-friendly UIs"
+    usage: "willow portal, mobile-first interfaces"
+  large:
+    $value: "64px"
+    $type: dimension
+    $description: "Large touch target for maximum accessibility"
+    usage: "primary actions, emergency controls"
+
+z_index:
+  starfield:
+    $value: 0
+    $type: number
+    usage: "background canvas layer"
+  topbar:
+    $value: 10
+    $type: number
+    usage: "header and navigation bars"
+  toast:
+    $value: 9999
+    $type: number
+    usage: "notification popups"
+  crisis:
+    $value: 99999
+    $type: number
+    usage: "crisis overlay, PIN overlay"
+  skip_link:
+    $value: 100
+    $type: number
+    usage: "skip-to-content link"
+
+animation:
+  larmor_hz:
+    $value: 863
+    $type: number
+  speed_factor:
+    $value: 1
+    $type: number
+    $description: "Global animation speed multiplier (0–1). Applied as calc(var(--p31-duration-*) * var(--p31-speed-factor)). Set via data-spoons: 0→0, 1→0, 2→0.25, 3→0.5, 4→0.75, 5→1"
+    usage: "crisis mode=0, low=0, reduced=0.25, standard=0.5, calm=0.75, brisk=1.0"
+  duration:
+    fast:
+      $value: "100ms"
+      $type: duration
+      usage: "micro-interactions, hovers"
+    normal:
+      $value: "300ms"
+      $type: duration
+      usage: "transitions, fades, slides"
+    slow:
+      $value: "500ms"
+      $type: duration
+      usage: "entrance animations, modals"
+  easing:
+    smooth:
+      $value: "cubic-bezier(0.4, 0, 0.2, 1)"
+      $type: string
+      usage: "default ease"
+    snappy:
+      $value: "cubic-bezier(0.34, 1.56, 0.64, 1)"
+      $type: string
+      usage: "bounce"
+    linear:
+      $value: "linear"
+      $type: string
+      usage: "no easing"
+  k4_vertex_pulse:
+    duration:
+      $value: "2000ms"
+      $type: duration
+    easing:
+      $value: "cubic-bezier(0.4, 0, 0.2, 1)"
+      $type: string
+    min_radius:
+      $value: "5px"
+      $type: dimension
+    max_radius:
+      $value: "7px"
+      $type: dimension
+    stagger_offset:
+      $value: "300ms"
+      $type: duration
+  k4_edge_draw:
+    duration:
+      $value: "3000ms"
+      $type: duration
+    easing:
+      $value: "linear"
+      $type: string
+    delay_offset:
+      $value: "500ms"
+      $type: duration
+  k4_orbit:
+    duration:
+      $value: "12000ms"
+      $type: duration
+    easing:
+      $value: "linear"
+      $type: string
+
+shadow:
+  none:
+    $value: "none"
+    $type: shadow
+  xs:
+    $value: "0 1px 2px 0 rgba(0, 0, 0, 0.05)"
+    $type: shadow
+    usage: "subtle depth"
+  sm:
+    $value: "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)"
+    $type: shadow
+    usage: "cards, small elevation"
+  md:
+    $value: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)"
+    $type: shadow
+    usage: "medium elevation, popovers"
+  lg:
+    $value: "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)"
+    $type: shadow
+    usage: "modals, dropdowns"
+  glow:
+    $value: "0 0 20px rgba(0, 240, 255, 0.4)"
+    $type: shadow
+    usage: "focus states, emphasis"
+
+border:
+  width:
+    thin:
+      $value: "1px"
+      $type: dimension
+    normal:
+      $value: "2px"
+      $type: dimension
+    thick:
+      $value: "3px"
+      $type: dimension
+  radius:
+    none:
+      $value: "0"
+      $type: dimension
+    xs:
+      $value: "calc(var(--p31-scale-xs) / 2)"
+      $type: dimension
+    sm:
+      $value: "calc(var(--p31-scale-sm) / 2)"
+      $type: dimension
+    md:
+      $value: "calc(var(--p31-scale-md) / 2)"
+      $type: dimension
+    lg:
+      $value: "calc(var(--p31-scale-lg) / 2)"
+      $type: dimension
+    xl:
+      $value: "calc(var(--p31-scale-xl) / 2)"
+      $type: dimension
+    full:
+      $value: "9999px"
+      $type: dimension
+
+breakpoints:
+  mobile:
+    $value: "0px"
+    $type: dimension
+  tablet:
+    $value: "768px"
+    $type: dimension
+  desktop:
+    $value: "1024px"
+    $type: dimension
+  wide:
+    $value: "1440px"
+    $type: dimension
+  ultrawide:
+    $value: "1920px"
+    $type: dimension
+
+primitive:
+  color:
+    cyan:
+      $value: "oklch(65% 0.18 195)"
+      $type: color
+    violet:
+      $value: "oklch(65% 0.18 285)"
+      $type: color
+    gold:
+      $value: "oklch(65% 0.18 15)"
+      $type: color
+    green:
+      $value: "oklch(65% 0.18 105)"
+      $type: color
+    red:
+      $value: "oklch(65% 0.18 20)"
+      $type: color
+    iris:
+      $value: "oklch(65% 0.18 270)"
+      $type: color
+    void_deep:
+      $value: "oklch(8% 0.01 240)"
+      $type: color
+    void:
+      $value: "oklch(10% 0.01 240)"
+      $type: color
+    surface:
+      $value: "oklch(15% 0.015 240)"
+      $type: color
+    surface2:
+      $value: "oklch(22% 0.02 240)"
+      $type: color
+    text_primary:
+      $value: "oklch(96% 0.005 240)"
+      $type: color
+    text_secondary:
+      $value: "oklch(80% 0.01 240)"
+      $type: color
+      $description: "Raised from L75→L80: APCA body-text ≥60 on dark surfaces"
+    text_tertiary:
+      $value: "oklch(78% 0.01 240)"
+      $type: color
+      $description: "Raised from L55→L78: APCA body-text ≥60 on dark surfaces"
+    glass_surface:
+      $value: "oklch(100% 0.01 240 / 0.04)"
+      $type: color
+    glass_border:
+      $value: "oklch(100% 0.01 240 / 0.08)"
+      $type: color
+    glass_border_hover:
+      $value: "oklch(100% 0.01 240 / 0.15)"
+      $type: color
+    glass_surface_strong:
+      $value: "oklch(100% 0.01 240 / 0.08)"
+      $type: color
+    glass_surface_subtle:
+      $value: "oklch(100% 0.01 240 / 0.03)"
+      $type: color
+
+    # ─── Glass tiers (shell's SIC-POVM stack, 4 opacity tiers) ───
+    glass_surface_body:
+      $value: "oklch(100% 0.01 75 / 0.18)"
+      $type: color
+      $description: "Shell --p31-glass-bg: body cards, starfield visible"
+    glass_surface_strong_tier:
+      $value: "oklch(100% 0.01 75 / 0.22)"
+      $type: color
+      $description: "Shell --p31-glass-bg-strong: elevated overlays"
+    glass_surface_overlay:
+      $value: "oklch(100% 0.01 75 / 0.10)"
+      $type: color
+      $description: "Shell --p31-glass-bg-overlay: drawers, overlays"
+    glass_surface_light_tier:
+      $value: "oklch(100% 0.01 75 / 0.10)"
+      $type: color
+      $description: "Shell --p31-glass-bg-light: light glass"
+    glass_border_tier:
+      $value: "oklch(100% 0.01 75 / 0.16)"
+      $type: color
+      $description: "Shell --p31-glass-border"
+    glass_border_hover_tier:
+      $value: "oklch(100% 0.01 75 / 0.25)"
+      $type: color
+      $description: "Shell --p31-glass-border-hover"
+    starfield_hearth:
+      $value: "oklch(55% 0.15 35)"
+      $type: color
+      $description: "Warm coral hearth glow for starfield ambient layer"
+    starfield_teal:
+      $value: "oklch(60% 0.08 185)"
+      $type: color
+      $description: "Cool teal ambient glow for starfield upper layer"
+    starfield_remembrance:
+      $value: "oklch(95% 0.01 80)"
+      $type: color
+      $description: "Warm white fixed-position remembrance stars"
+    starfield_particle_teal:
+      $value: "oklch(70% 0.12 185 / 0.6)"
+      $type: color
+    starfield_particle_coral:
+      $value: "oklch(65% 0.14 40 / 0.5)"
+      $type: color
+
+    # ─── Neon Phosphor Vocabulary (Spaceship Earth cockpit) ───
+    # High-chroma phosphor set for OLED-black displays. Converted from the
+    # ship's original hex palette via culori (oklch). Kept deliberately bright
+    # for LED/glow surfaces — do NOT use for body text (contrast < 4.5:1).
+    # Canonical accent anchor for the family: oklch(90% 0.155 195).
+    neon_cyan:
+      $value: "oklch(90.5% 0.155 194.8)"
+      $type: color
+      $description: "#00FFFF — primary phosphor cyan (LED mode default)"
+    neon_magenta:
+      $value: "oklch(70.2% 0.322 328.4)"
+      $type: color
+      $description: "#FF00FF — phosphor magenta (secondary rail)"
+    neon_violet:
+      $value: "oklch(67.0% 0.234 309.1)"
+      $type: color
+      $description: "#BF5FFF — phosphor violet (bonding axis)"
+    neon_amber:
+      $value: "oklch(88.7% 0.182 95.3)"
+      $type: color
+      $description: "#FFD700 — phosphor amber (DUNA board, warnings)"
+    neon_mint:
+      $value: "oklch(87.6% 0.228 152.5)"
+      $type: color
+      $description: "#00FF88 — phosphor mint (coherence, success)"
+    neon_coral:
+      $value: "oklch(71.2% 0.181 22.8)"
+      $type: color
+      $description: "#FF6B6B — phosphor coral (error, tension)"
+    neon_orange:
+      $value: "oklch(75.4% 0.164 50.4)"
+      $type: color
+      $description: "#FF8C42 — phosphor orange (heat, engagement)"
+    neon_blue:
+      $value: "oklch(80.4% 0.146 219.5)"
+      $type: color
+      $description: "#00D4FF — phosphor blue (relay, mesh links)"
+    neon_lavender:
+      $value: "oklch(62% 0.279 290.8)"
+      $type: color
+      $description: "#7A27FF raised from L53.9→L62 for APCA non-text ≥30 on void"
+    neon_pink:
+      $value: "oklch(67.4% 0.293 340.4)"
+      $type: color
+      $description: "#FF00CC — phosphor pink (creative axis)"
+
+    # ─── Neon neutral alphas (glow falloffs) ───
+    neon_dim:
+      $value: "oklch(90.5% 0.155 194.8 / 0.35)"
+      $type: color
+      $description: "Neon cyan at 35% alpha — secondary text on dark"
+    neon_faint:
+      $value: "oklch(90.5% 0.155 194.8 / 0.08)"
+      $type: color
+      $description: "Neon cyan at 8% alpha — borders, dividers"
+    neon_ghost:
+      $value: "oklch(90.5% 0.155 194.8 / 0.03)"
+      $type: color
+      $description: "Neon cyan at 3% alpha — glass card surface"
+
+    # ─── Cockpit surface tiers (OLED-black, ship main.css) ───
+    void_s1:
+      $value: "oklch(0% 0 0)"
+      $type: color
+      $description: "Ship --s1: absolute OLED black"
+    void_s2:
+      $value: "oklch(4.9% 0 0)"
+      $type: color
+      $description: "Ship --s2: #0a0a0a"
+    void_s3:
+      $value: "oklch(6.9% 0 0)"
+      $type: color
+      $description: "Ship --s3: #111111"
+    void_s4:
+      $value: "oklch(10.5% 0 0)"
+      $type: color
+      $description: "Ship --s4: #1a1a1a"
+
+  spacing:
+    xs:
+      $value: "{spacing.xs}"
+      $type: dimension
+    sm:
+      $value: "{spacing.sm}"
+      $type: dimension
+    md:
+      $value: "{spacing.md}"
+      $type: dimension
+    lg:
+      $value: "{spacing.lg}"
+      $type: dimension
+    xl:
+      $value: "{spacing.xl}"
+      $type: dimension
+    xxl:
+      $value: "{spacing.2xl}"
+      $type: dimension
+
+  radius:
+    sm:
+      $value: "{border.radius.sm}"
+      $type: dimension
+    md:
+      $value: "{border.radius.md}"
+      $type: dimension
+    lg:
+      $value: "{border.radius.lg}"
+      $type: dimension
+    xl:
+      $value: "{border.radius.xl}"
+      $type: dimension
+    full:
+      $value: "9999px"
+      $type: dimension
+
+  typography:
+    font_sans:
+      $value: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+      $type: fontFamily
+    font_mono:
+      $value: "ui-monospace, SFMono-Regular, 'Fira Code', 'Fira Mono', 'Roboto Mono', 'JetBrains Mono', Menlo, Monaco, Consolas, monospace"
+      $type: fontFamily
+
+  blur:
+    subtle:
+      $value: "8px"
+      $type: dimension
+    standard:
+      $value: "12px"
+      $type: dimension
+    strong:
+      $value: "24px"
+      $type: dimension
+
+  shadow:
+    glass:
+      $value: "0 8px 32px rgba(0,0,0,0.15)"
+      $type: shadow
+    glow_cyan:
+      $value: "0 0 20px rgba(0,240,255,0.25)"
+      $type: shadow
+    glow_cyan_hover:
+      $value: "0 0 30px rgba(0,240,255,0.4)"
+      $type: shadow
+    glow_neon:
+      $value: "0 0 6px oklch(90.5% 0.155 194.8), 0 0 20px oklch(90.5% 0.155 194.8 / 0.3)"
+      $type: shadow
+      $description: "Ship --glow-cyan: neon phosphor glow preset"
+    glow_magenta:
+      $value: "0 0 6px oklch(70.2% 0.322 328.4), 0 0 20px oklch(70.2% 0.322 328.4 / 0.3)"
+      $type: shadow
+    glow_violet:
+      $value: "0 0 6px oklch(67.0% 0.234 309.1), 0 0 20px oklch(67.0% 0.234 309.1 / 0.3)"
+      $type: shadow
+    glow_amber:
+      $value: "0 0 6px oklch(88.7% 0.182 95.3), 0 0 20px oklch(88.7% 0.182 95.3 / 0.3)"
+      $type: shadow
+    glow_mint:
+      $value: "0 0 6px oklch(87.6% 0.228 152.5), 0 0 20px oklch(87.6% 0.228 152.5 / 0.3)"
+      $type: shadow
+    glow_coral:
+      $value: "0 0 6px oklch(71.2% 0.181 22.8), 0 0 20px oklch(71.2% 0.181 22.8 / 0.3)"
+      $type: shadow
+
+semantic:
+  color:
+    background:
+      default: "{primitive.color.void}"
+      alt: "{primitive.color.surface}"
+    accent:
+      default: "{primitive.color.cyan}"
+      variant: "{primitive.color.violet}"
+      gold: "{primitive.color.gold}"
+      green: "{primitive.color.green}"
+      red: "{primitive.color.red}"
+      iris: "{primitive.color.iris}"
+    text:
+      primary: "{primitive.color.text_primary}"
+      secondary: "{primitive.color.text_secondary}"
+      tertiary: "{primitive.color.text_tertiary}"
+    # Status semantics — never use --p31-accent-* directly for state.
+    # Aligned with shell's --p31-status-* aliases.
+    status:
+      online: "{primitive.color.green}"
+      offline: "{primitive.color.text_tertiary}"
+      warning: "{primitive.color.gold}"
+      error: "{primitive.color.red}"
+      info: "{primitive.color.cyan}"
+    # Neon phosphor semantics (cockpit) — the ship's --neon/--neon-* set.
+    neon:
+      base: "{primitive.color.neon_cyan}"
+      dim: "{primitive.color.neon_dim}"
+      faint: "{primitive.color.neon_faint}"
+      ghost: "{primitive.color.neon_ghost}"
+
+component:
+  glass_panel:
+    background: "{primitive.color.glass_surface}"
+    backdrop_filter: "blur({primitive.blur.standard})"
+    webkit_backdrop_filter: "blur({primitive.blur.standard})"
+    border: "1px solid {primitive.color.glass_border}"
+    border_radius: "{primitive.radius.xl}"
+    box_shadow: "{primitive.shadow.glass}"
+
+  header_candy:
+    background: "rgba(57,255,20,0.12)"
+    backdrop_filter: "blur(16px)"
+    webkit_backdrop_filter: "blur(16px)"
+    border: "1px solid rgba(0,240,255,0.8)"
+    border_radius: "16px"
+    box_shadow: "0 0 30px rgba(0,240,255,0.25), inset 0 0 20px rgba(57,255,20,0.15)"
+    max_width: "1440px"
+    padding_x: "16px"
+    padding_y: "4px"
+    offset_top: "12px"
+
+  crown_xs:
+    width: "calc(var(--p31-base) * 2.5)"
+    height: "calc(var(--p31-base) * 2.5)"
+
+  spoon_icon:
+    width: "18px"
+    height: "18px"
+    gap: "calc(var(--p31-base) * 0.25)"
+
+  glass_card:
+    background: "{primitive.color.glass_surface}"
+    backdrop_filter: "blur({primitive.blur.standard})"
+    webkit_backdrop_filter: "blur({primitive.blur.standard})"
+    border: "1px solid {primitive.color.glass_border}"
+    border_radius: "{primitive.radius.xl}"
+    padding: "{primitive.spacing.lg}"
+    box_shadow: "{primitive.shadow.glass}"
+    border_hover: "{primitive.color.glass_border_hover}"
+
+  glass_strong:
+    background: "{primitive.color.glass_surface_strong}"
+    backdrop_filter: "blur({primitive.blur.strong})"
+    webkit_backdrop_filter: "blur({primitive.blur.strong})"
+    border: "1px solid rgba(255,255,255,0.12)"
+    border_radius: "{primitive.radius.xl}"
+
+  glass_subtle:
+    background: "{primitive.color.glass_surface_subtle}"
+    backdrop_filter: "blur({primitive.blur.subtle})"
+    webkit_backdrop_filter: "blur({primitive.blur.subtle})"
+    border: "1px solid rgba(255,255,255,0.06)"
+    border_radius: "{primitive.radius.xl}"
+
+  btn_primary:
+    background: "{semantic.color.accent.default}"
+    color: "{primitive.color.void}"
+    font_weight: "700"
+    padding: "{primitive.spacing.sm} {primitive.spacing.lg}"
+    border_radius: "{primitive.radius.md}"
+    font_size: "14px"
+    box_shadow: "{primitive.shadow.glow_cyan}"
+
+  btn_secondary:
+    background: "rgba(255,255,255,0.06)"
+    color: "{semantic.color.text.primary}"
+    font_weight: "600"
+    padding: "{primitive.spacing.sm} {primitive.spacing.lg}"
+    border_radius: "{primitive.radius.md}"
+    border: "1px solid rgba(255,255,255,0.1)"
+    font_size: "14px"
+
+  btn_ghost:
+    color: "{semantic.color.text.secondary}"
+    font_weight: "600"
+    padding: "{primitive.spacing.sm} {primitive.spacing.lg}"
+    border_radius: "{primitive.radius.md}"
+    font_size: "14px"
+
+  starfield:
+    container_position: "fixed"
+    container_inset: "0"
+    container_z_index: "0"
+    container_pointer_events: "none"
+    container_bg: "{primitive.color.void_deep}"
+    canvas_display: "block"
+    canvas_width: "100%"
+    canvas_height: "100%"
+
+  starfield_brand_p31ca:
+    hearth_color: "{primitive.color.starfield_hearth}"
+    teal_color: "{primitive.color.starfield_teal}"
+    particle_count: "80"
+    speed: "0.15"
+
+  starfield_brand_phosphorus31:
+    hearth_color: "oklch(55% 0.10 70)"
+    teal_color: "oklch(60% 0.06 130)"
+    particle_count: "60"
+    speed: "0.08"
+
+theme:
+  light:
+    background:
+      default: "#F8FAFC"
+      alt: "#FFFFFF"
+    text:
+      primary: "#0F172A"
+      secondary: "rgba(15,23,42,0.6)"
+      tertiary: "rgba(15,23,42,0.3)"
+    glass_surface: "rgba(0,0,0,0.03)"
+    glass_border: "rgba(0,0,0,0.08)"
+    glass_border_hover: "rgba(0,0,0,0.15)"
+
+bounding_boxes:
+  icon_xs:
+    width: "calc(var(--p31-base) * 1)"
+    height: "calc(var(--p31-base) * 1)"
+    container_display: block
+    container_width: 100%
+    container_height: 100%
+    description: "Very small icon (status dots, inline badges)"
+    usage: "status-indicator, badge"
+  icon_sm:
+    width: "calc(var(--p31-base) * 1.3333)"
+    height: "calc(var(--p31-base) * 1.3333)"
+    container_display: block
+    container_width: 100%
+    container_height: 100%
+    description: "Small icon (inline with text, nav icons)"
+    usage: "nav-link-icon, button-icon"
+  icon_md:
+    width: "calc(var(--p31-base) * 2)"
+    height: "calc(var(--p31-base) * 2)"
+    container_display: block
+    container_width: 100%
+    container_height: 100%
+    description: "Medium icon (feature cards, section headers)"
+    usage: "feature-card-icon, section-icon"
+  icon_lg:
+    width: "calc(var(--p31-base) * 2.5)"
+    height: "calc(var(--p31-base) * 2.5)"
+    container_display: block
+    container_width: 100%
+    container_height: 100%
+    description: "Large icon (brand crown in header, hero icons)"
+    usage: "brand-mark, header-crown"
+  icon_xl:
+    width: "calc(var(--p31-base) * 4)"
+    height: "calc(var(--p31-base) * 4)"
+    container_display: block
+    container_width: 100%
+    container_height: 100%
+    description: "Extra large icon (hero crown, standalone graphic)"
+    usage: "hero-crown, feature-hero"
+  icon_favicon:
+    width: "calc(var(--p31-base) * 12)"
+    height: "calc(var(--p31-base) * 12)"
+    container_display: block
+    container_width: 100%
+    container_height: 100%
+    description: "Favicon / app icon (browser tabs, mobile home screen)"
+    usage: "favicon, app-icon, pwa-icon"
+
+layout_containers:
+  header:
+    height: "calc(var(--p31-base) * 3)"
+    padding_y: "calc(var(--p31-base) * 0.25)"
+    gap: "{scale.md}"
+    align_items: center
+    justify_content: space-between
+    max_width: "1440px"
+    margin: 0 auto
+    display: flex
+    description: "Primary navigation header. Fixed height. Flex container. No child component may exceed height."
+    forbidden_child_properties:
+      - marginTop
+      - marginBottom
+      - marginLeft
+      - marginRight
+      - margin
+      - "transform: translateY"
+      - "position: relative"
+      - top
+      - bottom
+    allowed_child_properties:
+      - "display: block"
+      - "width: 100%"
+      - "height: 100%"
+  page_body:
+    max_width: "1200px"
+    margin: 0 auto
+    padding_x: "{scale.md}"
+    gap: "{scale.lg}"
+    description: "Main content area. Predictable padding and gaps derived from scale."
+  section_hero:
+    padding_x: "{scale.md}"
+    padding_top: "calc(var(--p31-scale-xl) * 0.5)"
+    padding_bottom: "{scale.xl}"
+    gap: "{scale.lg}"
+    max_width: "1200px"
+    margin: 0 auto
+    description: "Hero section. Consistent spacing from tokens."
+  section_features:
+    padding_x: "{scale.md}"
+    padding_top: "{scale.xl}"
+    padding_bottom: "{scale.xl}"
+    display: grid
+    grid_template_columns: "repeat(auto-fill, minmax(280px, 1fr))"
+    gap: "{scale.md}"
+    max_width: "1200px"
+    margin: 0 auto
+    description: "Feature grid. Uses grid layout with consistent gap."
+  footer:
+    padding_x: "{scale.md}"
+    padding_y: "{scale.md}"
+    border_top: "1px solid rgba(255,255,255,0.08)"
+    max_width: "1440px"
+    margin: 0 auto
+    description: "Site footer. Bordered top, consistent padding, full-width cap."
+
+spacing_rules:
+  component_forbidden_properties:
+    - marginTop
+    - marginBottom
+    - marginLeft
+    - marginRight
+    - margin
+    - "transform: translateY"
+    - "transform: translateX"
+    - "transform: translate"
+    - "position: relative"
+    - "position: absolute"
+    - top
+    - bottom
+    - left
+    - right
+    - "display: inline-block"
+  component_forbidden_description: "Components do not declare external spacing. Only templates do."
+  template_allowed_properties:
+    - gap
+    - padding
+    - paddingTop
+    - paddingBottom
+    - paddingLeft
+    - paddingRight
+    - paddingX
+    - paddingY
+    - align-items
+    - justify-content
+    - "display: flex"
+    - "display: grid"
+    - grid_template_columns
+    - grid_template_rows
+    - max_width
+    - "margin: 0 auto"
+  template_allowed_description: "Templates control all external spacing. Components control only internal geometry."
+  component_allowed_internal_properties:
+    - background
+    - backgroundColor
+    - border
+    - borderColor
+    - borderRadius
+    - boxShadow
+    - color
+    - fill
+    - fontFamily
+    - fontSize
+    - fontWeight
+    - height
+    - lineHeight
+    - opacity
+    - overflow
+    - padding
+    - stroke
+    - textAlign
+    - textDecoration
+    - textTransform
+    - transition
+    - width
+    - zIndex
+  component_allowed_description: "These properties control internal appearance only. They do not affect layout positioning."
+
+cascade_layers:
+  order:
+    - reset
+    - tokens
+    - components
+    - templates
+    - overrides
+  description: |
+    Templates always override component styling cleanly without !important specificity wars.
+    This eliminates the need for !important hacks in Header.astro and other layout components.
+  layer_definitions:
+    reset:
+      description: "Normalize CSS, base resets. Lowest priority."
+      includes: "normalize.css, base.css"
+    tokens:
+      description: "Design tokens (CSS variables). Second lowest priority."
+      includes: "tokens.css, all token files"
+    components:
+      description: "Component-specific styles. Default priority."
+      includes: "component CSS, generated component styles"
+    templates:
+      description: "Template/layout styles. Higher priority than components."
+      includes: "Header.astro styles, PageLayout.astro styles"
+    overrides:
+      description: "Highest priority. One-off overrides for specific pages. Use sparingly."
+      includes: "page-specific styles, emergency fixes"
+
+svg_rules:
+  enforce_bounding_box: true
+  description: "All SVGs must fit inside a bounding box defined in bounding_boxes section."
+  svgo_transform:
+    removeViewBox: false
+    trimToVisibleContent: true
+    forceContainerAspect: true
+    cleanupAttrs: true
+    removeDoctype: true
+    removeEmptyText: true
+    removeEmptyContainers: true
+    cleanupIDs: true
+    convertShapeToPath: true
+    moveGroupAttrsToElems: true
+    collapseGroups: true
+    sortAttrs: true
+    description: "SVGO plugins to run on every SVG import. Automatically trims whitespace, tightens viewBox, and normalizes structure."
+  viewBox_trimming:
+    enabled: true
+    padding: 2px
+    trim_to_visible_bounds: true
+    description: "Automatically recalculate viewBox to the visible bounding box of all paths. Removes descender whitespace."
+  container_wrapping:
+    enabled: true
+    wrapper_display: block
+    wrapper_width: 100%
+    wrapper_height: 100%
+    description: "All SVGs are wrapped in a container that enforces the bounding box dimensions."
+
+agent_prompt_injection:
+  description: "This section is injected into Claude, Gemini, and Kilo prompts."
+  claude:
+    role: "React / Component Developer"
+    instruction: |
+      When generating React components:
+      1. Read the bounding_boxes section to know the exact dimensions of icons and SVG containers.
+      2. NEVER use marginTop, marginBottom, or any forbidden property listed in spacing_rules.component_forbidden_properties.
+      3. Always wrap SVGs in a container that matches the bounding box dimensions.
+      4. Use internal styling only (component_allowed_internal_properties).
+      5. Run your generated code through the SpatialValidator before submission.
+      6. Use scale tokens (--p31-scale-*) for sizing. Derive everything from --p31-base.
+      7. Use color.quantum tokens for accents, color.surface for backgrounds, color.text for typography.
+  gemini:
+    role: "Layout / Template Designer"
+    instruction: |
+      When designing page layouts and templates:
+      1. Use the layout_containers section to define macro-architecture.
+      2. Define slots with explicit bounding box expectations.
+      3. Use only template_allowed_properties for external spacing.
+      4. Understand that components cannot declare margin; spacing is your job.
+      5. Respect the cascade_layers order — templates override components, not the other way around.
+      6. Use scale tokens (--p31-scale-*) for spacing. Use spacing tokens (--p31-space-*) for gaps.
+      7. Use typography.size tokens for font sizes. All are fluid clamp() values.
+  kilo:
+    role: "Implementation / Execution Engine"
+    instruction: |
+      When executing the build pipeline:
+      1. Read the svg_rules section and run SVGO normalization on all SVG imports.
+      2. Validate all components against the spacing_rules section using SpatialValidator.
+      3. Fail the build if any component violates the rules.
+      4. Ensure all generated code respects the cascade_layers order.
+      5. Generate CSS from tokens using the export scripts in cli/tokens/.
+      6. Run p31 health before deployment.
+
+examples:
+  crown_svg:
+    description: "Crown.svg — how it should be configured to fit icon_lg bounding box"
+    before: |
+      <svg viewBox="0 0 200 200" style={{ marginTop: '-4px' }}>  ← ❌ VIOLATION
+    after: |
+      <svg viewBox="0 18 200 164" className="crown-svg">  ← ✅ CLEAN
+    notes: |
+      - viewBox is trimmed to visible content (top whitespace removed)
+      - No margin, marginTop, or transform hacks
+      - SVG fills its 40×40 container naturally
+  header_example:
+    description: "Header.astro — how to use the Header layout container"
+    code: |
+      <div class="header-wrapper">
+        <header class="header-container">
+          <div class="header-brand-slot">
+            <Crown />  ← Component with NO external spacing
+          </div>
+          <nav class="header-nav-slot">
+            <a href="/">Home</a>
+          </nav>
+          <div class="header-actions-slot">
+            <SignInButton />  ← Component with NO external spacing
+          </div>
+        </header>
+      </div>
+    notes: |
+      - Header container enforces height: calc(var(--p31-base) * 3) = 48px
+      - All children are centered via align-items: center
+      - Components have no margin, so alignment is perfect
+      - No hacks needed
+
+property-overrides:
+  $description: "Brand-specific semantic token overrides. Each brand inherits the full P31-Q token set and overrides only the values that express its unique personality."
+  p31ca:
+    $description: "The Forge — edgy, technical, experimental."
+    semantic-color:
+      primary: { $value: "{color.quantum.cyan}" }
+      secondary: { $value: "{color.quantum.violet}" }
+    typography:
+      font-family: "{typography.font_family.inter}"
+    glass:
+      glass_surface: { $value: "oklch(14% 0.02 260 / 0.35)" }
+      glass_border: { $value: "oklch(100% 0.01 240 / 0.12)" }
+      glass_surface_hover: { $value: "oklch(14% 0.02 260 / 0.45)" }
+      glass_border_hover: { $value: "oklch(100% 0.01 240 / 0.25)" }
+      glass_blur: { $value: "24px" }
+    starfield:
+      hearth_color: { $value: "oklch(55% 0.15 35)" }
+      teal_color: { $value: "oklch(60% 0.08 185)" }
+      particle_count: { $value: 80 }
+      speed: { $value: 0.15 }
+
+  phosphorus31:
+    $description: "The Garden — accessible, trusted, public-facing non-profit."
+    semantic-color:
+      primary: { $value: "{color.quantum.emerald}" }
+      secondary: { $value: "{color.quantum.amber}" }
+    typography:
+      font-family: "{typography.font_family.atkinson}"
+    glass:
+      glass_surface: { $value: "oklch(99% 0.01 85 / 0.55)" }
+      glass_border: { $value: "oklch(80% 0.02 75 / 0.3)" }
+      glass_surface_hover: { $value: "oklch(99% 0.01 85 / 0.65)" }
+      glass_border_hover: { $value: "oklch(70% 0.03 70 / 0.4)" }
+      glass_blur: { $value: "16px" }
+    starfield:
+      hearth_color: { $value: "oklch(55% 0.10 70)" }
+      teal_color: { $value: "oklch(60% 0.06 130)" }
+      particle_count: { $value: 60 }
+      speed: { $value: 0.08 }
+    nonprofit:
+      trust_indicators:
+        ein_badge: "501(c)(3) · EIN 42-1888158"
+        transparency_link: "/financials"
+        pilot_count_display: true
+      conversion:
+        cta_min_height: "48px"
+        cta_padding: "var(--p31-space-md) var(--p31-space-lg)"
+        donate_button_color: "var(--p31-color-emerald)"
+        volunteer_button_color: "var(--p31-color-amber)"
+      accessibility:
+        min_contrast_ratio: 4.5
+        font_primary: "Atkinson Hyperlegible"
+        touch_target_min: "48px"
+
+  willow:
+    $description: "The Sapling — child/teen companion portal. Warm, playful, accessible."
+    semantic-color:
+      primary: { $value: "oklch(65% 0.18 45)" }
+      secondary: { $value: "oklch(60% 0.15 200)" }
+    typography:
+      font-family: "\"Comic Sans MS\", \"Chalkboard SE\", cursive, sans-serif"
+      font-display: "\"Comic Sans MS\", \"Chalkboard SE\", cursive"
+    glass:
+      glass_surface: { $value: "rgba(255, 248, 240, 0.7)" }
+      glass_border: { $value: "rgba(200, 180, 160, 0.25)" }
+      glass_surface_hover: { $value: "rgba(255, 248, 240, 0.85)" }
+      glass_border_hover: { $value: "rgba(200, 180, 160, 0.35)" }
+      glass_blur: { $value: "16px" }
+    starfield:
+      hearth_color: { $value: "hsl(25, 80%, 50%)" }
+      teal_color: { $value: "hsl(200, 60%, 60%)" }
+      particle_count: { $value: 70 }
+      speed: { $value: 0.08 }
+    radii:
+      sm: { $value: "12px" }
+      md: { $value: "20px" }
+      lg: { $value: "28px" }
+      xl: { $value: "40px" }
+      full: { $value: "9999px" }
+    spacing:
+      xs: { $value: "0.5rem" }
+      sm: { $value: "0.75rem" }
+      md: { $value: "1.25rem" }
+      lg: { $value: "2rem" }
+      xl: { $value: "2.5rem" }
+      xxl: { $value: "4rem" }
+    duration:
+      fast: { $value: "200ms" }
+      normal: { $value: "400ms" }
+      slow: { $value: "600ms" }
+    easing:
+      default: { $value: "cubic-bezier(0.34, 1.56, 0.64, 1)" }
+    touch:
+      min: { $value: "56px" }
+      recommended: { $value: "64px" }
+    z_index:
+      starfield: { $value: 0 }
+      topbar: { $value: 10 }
+      toast: { $value: 9999 }
+      crisis: { $value: 99999 }
+    dark_mode:
+      glass_surface: { $value: "rgba(30, 28, 26, 0.8)" }
+      glass_border: { $value: "rgba(80, 75, 70, 0.3)" }
+      text: { $value: "oklch(90% 0.01 80)" }
+      text_secondary: { $value: "oklch(65% 0.02 80)" }
+
+version_history:
+  - version: 3.1-willow
+    date: 2026-07-29
+    changes:
+      - Added willow brand to property-overrides (warm palette, child-friendly tokens)
+      - Added touch section (min, recommended, large touch targets)
+      - Added z_index section (starfield, topbar, toast, crisis, skip_link)
+      - Willow portal: Comic Sans, rounded radii, warm amber/terracotta palette
+    author: "P31 Labs Engineering"
+  - version: 2.0
+    date: 2026-07-23
+    changes:
+      - Added bounding_boxes section (icon_xs → icon_xl)
+      - Added layout_containers section (header, page_body, section_hero, section_features)
+      - Added spacing_rules section with component_forbidden_properties and template_allowed_properties
+      - Added cascade_layers section with order and layer_definitions
+      - Added svg_rules section with SVGO transform specs and viewBox trimming
+      - Added agent_prompt_injection section for Claude, Gemini, and Kilo
+      - Added examples section with Crown and Header demonstrations
+    author: "P31 Labs Engineering"
+  - version: 3.0-quantum
+    date: 2026-07-24
+    changes:
+      - Added root constants (base_unit, tetrahedral_ratio, golden_ratio, larmor_hz)
+      - Added scale progression derived from 16px × (4/3)^n
+      - Migrated all colors to OKLCH perceptual color space
+      - Added spacing section with fluid clamp() values
+      - Added typography section with fluid clamp() formulas
+      - Added animation section with Larmor-derived durations
+      - Added border section with derived radius values
+      - Added breakpoints section
+      - Refactored bounding_boxes to use derived scale values
+      - Refactored layout_containers to use derived scale values
+      - Refactored component values to use token references
+      - Added usage metadata to all tokens for AI agent guidance
+      - Expanded agent_prompt_injection with quantum design patterns
+      - Migrated primitive colors to OKLCH for perceptual uniformity
+    author: "P31 Labs Engineering"

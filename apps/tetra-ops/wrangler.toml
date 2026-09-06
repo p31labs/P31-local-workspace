@@ -1,0 +1,12 @@
+name = "p31-tetra-ops"
+pages_build_output_dir = "dist"
+compatibility_date = "2026-07-26"
+compatibility_flags = ["nodejs_compat"]
+
+[observability]
+enabled = true
+
+[vars]
+TETRA_HUB_URL = "https://tetra-hub.trimtab-signal.workers.dev"
+RENDER_SERVICE = "https://render.p31ca.org"
+STORYBOOK_URL = "https://storybook.p31ca.org"

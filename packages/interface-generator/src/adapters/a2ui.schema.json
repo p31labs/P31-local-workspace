@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://p31ca.org/schemas/a2ui.schema.json",
+  "title": "A2UI Catalog Base Schema",
+  "type": "object",
+  "properties": {
+    "components": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "props": { "type": "object" },
+          "actions": { "type": "array" }
+        },
+        "required": ["name"]
+      }
+    }
+  },
+  "additionalProperties": true
+}

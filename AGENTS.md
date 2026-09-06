@@ -91,6 +91,7 @@ See `GLOBAL_IMPACT_REPORT.md` for the full citation-backed report.
 
 ## Architecture
 - **Stack:** Cloudflare Workers + Pages, Astro, React 19, Tailwind, Vite, pnpm workspaces
+- **CLI:** `@p31/cli` v3.0.0 — OpenCode face, P31 guts (TypeScript, Ink TUI, SQLite sessions, 3 LLM providers, 6 sovereign plugins, 280+ MCP tools)
 - **Frontend apps:** `apps/phos` (phos.p31ca.org), `apps/willow` (willow.p31ca.org), `apps/bonding` (bonding.p31ca.org), `apps/p31ca` (p31ca.org), `apps/phosphorus31` (phosphorus31.org)
 - **Backend workers:** `apps/gateway` (gateway.p31ca.org), `apps/status` (status.p31ca.org), `apps/auth` (p31-auth), `software/cloudflare-worker/llm-proxy` (p31-llm-proxy)
 - **Core data/orchestration workers:** `love-ledger` (deployed ledger), `jitterbug-api` (Ambient Exocortex brain-dump orchestrator — shares the `love-ledger` D1), `care-api`, `fhir`, `taler-exchange-bridge`, `taler-bridge-billing` (x402 pay-per-call). See `software/packages/jitterbug-api/README.md`.
@@ -107,6 +108,71 @@ Visual identity, component guidelines, and neuroinclusive invariants are encoded
 - **Single accent** — `quantum-cyan` is the only primary accent; never pure white/black text or backgrounds.
 
 ## Agent Tooling
+
+### @p31/cli v3.0.0 — OpenCode Face, P31 Guts
+
+The CLI is a sovereign AI agent for neurodivergent families, built on OpenCode's plugin system with P31's domain logic.
+
+**Architecture:**
+- TypeScript + Node.js (ESM-only)
+- OpenCode plugin system (6 P31 sovereign plugins)
+- SQLite per-session-tree sharding (`~/.p31/sessions/`)
+- 3 LLM providers: Anthropic, Google Gemini, OpenRouter (auto-detected)
+- Ink TUI with 3 themes: cyan cockpit, warm garden, crisis minimal
+
+**CLI Commands:**
+```bash
+p31 spoons [1|3|5]           # Set/view cognitive load level
+p31 session list|new|info    # Session management
+p31 chat --model <model>     # Interactive chat session
+p31 agent <task>             # Run autonomous agent
+p31 tui                      # Launch spoon-aware TUI
+p31 models                   # List available LLM models
+p31 mcp list|serve           # MCP tool management
+p31 phos <command>           # Phos-forge tools (26 subcommands)
+```
+
+**P31 Plugins (registered in opencode.json):**
+- `spoon-monitor` — UI adjusts to cognitive load
+- `sovereign-id` — DID:key generation and verification
+- `care-attest` — LOVE ledger care attestation
+- `pqc-tools` — ML-KEM-768, ML-DSA-65, SLH-DSA-128s
+- `mesh-visualize` — K4 mesh topology
+- `honest-label` — contested science flagging
+
+**Phos-Forge Subcommands (26 total):**
+- File classification: `adopt`, `status`, `classify`, `learn`, `rollback`, `watch`, `deploy`, `dashboard`
+- Cognitive: `state`, `estimate`, `calibrate`
+- Self-healer: `remediate`, `healer-log`, `healer-diag`
+- Monitoring: `reflex`, `tide`, `kappa`, `logbook`
+- Cartographer: `cartographer`, `trace`, `related`
+- Brain: `brain-dump`, `brain-sessions`
+- Research: `jitterbug`
+- Visualization: `aura`
+- Bus: `bus-emit`
+
+**TUI Slash Commands:**
+In the TUI chat view, type `/help` to see available slash commands (`/phos status`, `/phos state`, `/phos tide`, etc.)
+
+**MCP Servers (configured in opencode.json):**
+- `phos-forge` (local) — 29 tools via stdio
+- `p31-crypto-mcp` (remote) — 12 tools
+- `p31-justice-hub` (remote) — 8 tools
+- `bros` (remote) — 8 tools
+- `dads` (remote) — 7 tools
+- `x402-gateway` (remote) — 187 tools
+- `federation-bridge` (remote) — 12 tools
+- `ledger-bridge` (remote) — 8 tools
+- `care-mesh` (remote) — 6 tools
+
+**Build & Test:**
+```bash
+cd p31-cli
+npm run build    # tsc + vite build (~5s)
+npm test         # 23/23 tests passing
+```
+
+**Published:** `@p31/cli@3.0.0` on npm
 
 ### CLI Agent Mode
 Run `andromeda --agent` (or `-a`) for JSON output of session state, design tokens, and capabilities. Works in any context (TTY or non-TTY).

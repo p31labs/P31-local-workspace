@@ -1,0 +1,8 @@
+{
+  "name": "dispatch-router",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": { "deploy": "wrangler deploy", "dev": "wrangler dev" },
+  "devDependencies": { "@cloudflare/workers-types": "^4.20260317.1", "wrangler": "^4.85.0" }
+}

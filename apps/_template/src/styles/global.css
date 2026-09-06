@@ -1,0 +1,44 @@
+@import '@p31/design-core/css/all.css';
+@import "tailwindcss";
+
+@source "../../../packages/ui/src";
+
+@theme {
+  --color-void: var(--p31-void);
+  --color-surface: var(--p31-surface);
+  --color-cloud: var(--p31-text-secondary);
+  --color-ink: var(--p31-text-primary);
+  --color-quantum-cyan: var(--p31-accent);
+  --color-quantum-violet: var(--p31-accent-violet);
+  --color-quantum-gold: var(--p31-accent-gold);
+  --color-quantum-green: var(--p31-accent-green);
+  --color-quantum-red: var(--p31-accent-red);
+
+  --font-heading: var(--p31-font-sans);
+  --font-body: var(--p31-font-sans);
+  --font-mono-tech: var(--p31-font-mono);
+}
+
+body {
+  background-color: var(--p31-void);
+  color: var(--p31-text-secondary);
+  font-family: var(--p31-font-sans);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--p31-font-sans);
+  color: var(--p31-text-primary);
+}
+
+.stat-number {
+  font-family: var(--p31-font-mono);
+  font-size: var(--p31-text-4xl);
+  font-weight: 800;
+  line-height: 1;
+  background: linear-gradient(135deg, var(--p31-accent), var(--p31-accent-violet));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}

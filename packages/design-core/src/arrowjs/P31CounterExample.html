@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P31 + ArrowJS — GlassCard Counter</title>
+  <style>
+    /* P31 Design System — CSS Variables (from tokens.css) */
+    :root {
+      --p31-bg: oklch(10% 0.01 240);
+      --p31-surface: oklch(15% 0.015 240);
+      --p31-surface2: oklch(22% 0.02 240);
+      --p31-accent: oklch(65% 0.18 195);
+      --p31-accent-violet: oklch(65% 0.18 285);
+      --p31-accent-gold: oklch(65% 0.18 15);
+      --p31-accent-green: oklch(65% 0.18 105);
+      --p31-accent-red: oklch(65% 0.18 20);
+      --p31-text: oklch(96% 0.005 240);
+      --p31-text-secondary: oklch(75% 0.01 240);
+      --p31-text-tertiary: oklch(55% 0.01 240);
+      --p31-glass-bg: oklch(100% 0.01 240 / 0.04);
+      --p31-glass-border: oklch(100% 0.01 240 / 0.08);
+      --p31-glass-border-hover: oklch(100% 0.01 240 / 0.15);
+      --p31-glass-shadow: 0 8px 32px rgba(0,0,0,0.15);
+      --p31-blur-standard: 12px;
+      --p31-blur-strong: 24px;
+      --p31-spacing-sm: clamp(12px, 1.5vw, 21px);
+      --p31-spacing-md: clamp(21px, 2.5vw, 28px);
+      --p31-spacing-lg: clamp(28px, 3.5vw, 38px);
+      --p31-radius-md: calc(21px / 2);
+      --p31-radius-lg: calc(28px / 2);
+      --p31-radius-xl: calc(38px / 2);
+      --p31-radius-full: 9999px;
+      --p31-font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      --p31-font-mono: ui-monospace, SFMono-Regular, 'Fira Code', 'Fira Mono', 'Roboto Mono', 'JetBrains Mono', Menlo, Monaco, Consolas, monospace;
+      --p31-glow-cyan: 0 0 20px rgba(0,240,255,0.25);
+    }
+
+    /* Global resets */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--p31-bg, oklch(10% 0.01 240));
+      color: var(--p31-text, oklch(96% 0.005 240));
+      font-family: var(--p31-font-sans, system-ui, sans-serif);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: var(--p31-spacing-lg, 28px);
+    }
+
+    /* P31 Glass Card (from glass.css) */
+    .glass-card {
+      background: var(--p31-glass-bg, oklch(100% 0.01 240 / 0.04));
+      backdrop-filter: blur(var(--p31-blur-standard, 12px));
+      -webkit-backdrop-filter: blur(var(--p31-blur-standard, 12px));
+      border: 1px solid var(--p31-glass-border, oklch(100% 0.01 240 / 0.08));
+      border-radius: var(--p31-radius-xl, 19px);
+      padding: var(--p31-spacing-lg, 28px);
+      box-shadow: var(--p31-glass-shadow, 0 8px 32px rgba(0,0,0,0.15));
+      transition: all 0.3s ease;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .glass-card:hover {
+      border-color: var(--p31-glass-border-hover, oklch(100% 0.01 240 / 0.15));
+    }
+
+    /* Page header */
+    .header {
+      text-align: center;
+      margin-bottom: var(--p31-spacing-lg, 28px);
+    }
+
+    .header h1 {
+      font-size: 28px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .header .accent {
+      background: linear-gradient(135deg,
+        var(--p31-accent, oklch(65% 0.18 195)),
+        var(--p31-accent-violet, oklch(65% 0.18 285)));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .header p {
+      color: var(--p31-text-secondary, oklch(75% 0.01 240));
+      font-size: 14px;
+    }
+
+    /* Badge */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: var(--p31-radius-full, 9999px);
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .badge-arrow {
+      background: rgba(0, 240, 255, 0.1);
+      border: 1px solid rgba(0, 240, 255, 0.2);
+      color: var(--p31-accent, oklch(65% 0.18 195));
+    }
+
+    .badge-p31 {
+      background: rgba(167, 139, 250, 0.1);
+      border: 1px solid rgba(167, 139, 250, 0.2);
+      color: var(--p31-accent-violet, oklch(65% 0.18 285));
+    }
+
+    /* Status indicator */
+    .status-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--p31-accent-green, oklch(65% 0.18 105));
+      box-shadow: 0 0 8px var(--p31-accent-green, oklch(65% 0.18 105));
+      margin-right: 6px;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    /* Footnote */
+    .footnote {
+      margin-top: var(--p31-spacing-md, 21px);
+      font-size: 12px;
+      color: var(--p31-text-tertiary, oklch(55% 0.01 240));
+      text-align: center;
+    }
+
+    .footnote code {
+      font-family: var(--p31-font-mono, monospace);
+      font-size: 11px;
+      background: var(--p31-surface, oklch(15% 0.015 240));
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1><span class="accent">P31</span> + <span class="accent">ArrowJS</span></h1>
+    <p>Agent-generated UI via WASM sandbox — GlassCard Counter</p>
+  </div>
+
+  <!-- Mount point for the ArrowJS sandbox component -->
+  <div id="app" class="glass-card" style="min-height: 200px; display: flex; flex-direction: column; gap: 16px;">
+    <div style="display: flex; gap: 8px; align-items: center;">
+      <span class="badge badge-arrow"><span class="status-dot"></span>ArrowJS Sandbox</span>
+      <span class="badge badge-p31">P31 Sovereign</span>
+    </div>
+    <div id="counter-mount" style="flex: 1;"></div>
+  </div>
+
+  <p class="footnote">
+    Rendered via <code>@arrow-js/sandbox</code> QuickJS/WASM VM — no direct DOM access
+  </p>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "@arrow-js/core": "https://esm.sh/@arrow-js/core@1.0.6",
+      "@arrow-js/sandbox": "https://esm.sh/@arrow-js/sandbox@1.0.6",
+      "quickjs-emscripten": "https://esm.sh/quickjs-emscripten@0.32.0",
+      "acorn": "https://esm.sh/acorn@8.16.0",
+      "acorn-walk": "https://esm.sh/acorn-walk@8.3.4",
+      "magic-string": "https://esm.sh/magic-string@0.30.21",
+      "typescript": "https://esm.sh/typescript@5.9.3"
+    }
+  }
+  </script>
+
+  <script type="module">
+    import { sandbox } from '@arrow-js/sandbox'
+
+    // Agent-generated ArrowJS component code
+    // This string is the type of code an AI agent would produce at runtime
+    const agentCode = `
+      const state = reactive({
+        count: 42,
+        label: 'Agent-powered counter',
+        history: []
+      })
+
+      function increment() {
+        state.count++
+        state.history = [...state.history, { action: 'inc', value: state.count, ts: Date.now() }]
+      }
+
+      function decrement() {
+        state.count--
+        state.history = [...state.history, { action: 'dec', value: state.count, ts: Date.now() }]
+      }
+
+      function reset() {
+        state.count = 0
+        state.history = [...state.history, { action: 'reset', value: 0, ts: Date.now() }]
+      }
+
+      export default html\\\`
+        <div style="display:flex;flex-direction:column;gap:16px;height:100%;">
+          <!-- Header row -->
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-size:12px;color:rgba(245,245,247,0.4);text-transform:uppercase;letter-spacing:0.05em;">
+              \\\${() => state.label}
+            </span>
+            <span style="font-size:11px;font-family:monospace;color:rgba(245,245,247,0.3);">
+              sandboxed
+            </span>
+          </div>
+
+          <!-- Counter display -->
+          <div style="text-align:center;padding:16px 0;">
+            <div style="font-size:48px;font-weight:700;line-height:1;color:var(--p31-accent,oklch(65% 0.18 195));">
+              \\\${() => state.count}
+            </div>
+            <div style="font-size:12px;color:rgba(245,245,247,0.3);margin-top:4px;">
+              reactive state
+            </div>
+          </div>
+
+          <!-- Buttons -->
+          <div style="display:flex;gap:8px;justify-content:center;">
+            <button @click="\\\${decrement}"
+              style="flex:1;padding:12px;border-radius:12px;background:rgba(255,60,60,0.1);border:1px solid rgba(255,60,60,0.2);color:var(--p31-accent-red,oklch(65% 0.18 20));font-size:18px;font-weight:600;cursor:pointer;transition:all 0.15s ease;">
+              −
+            </button>
+            <button @click="\\\${reset}"
+              style="flex:1;padding:12px;border-radius:12px;background:rgba(245,245,247,0.06);border:1px solid rgba(245,245,247,0.1);color:var(--p31-text-secondary,oklch(75% 0.01 240));font-size:13px;cursor:pointer;transition:all 0.15s ease;">
+              Reset
+            </button>
+            <button @click="\\\${increment}"
+              style="flex:1;padding:12px;border-radius:12px;background:rgba(0,200,100,0.1);border:1px solid rgba(0,200,100,0.2);color:var(--p31-accent-green,oklch(65% 0.18 105));font-size:18px;font-weight:600;cursor:pointer;transition:all 0.15s ease;">
+              +
+            </button>
+          </div>
+
+          <!-- History (if any) -->
+          <div style="display:flex;flex-direction:column;gap:4px;margin-top:8px;">
+            \\\${() => state.history.length > 0 ? html\\\`
+              <span style="font-size:10px;color:rgba(245,245,247,0.25);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;">
+                Recent actions
+              </span>
+              \\\${state.history.slice(-3).reverse().map(entry => html\\\`
+                <div style="display:flex;justify-content:space-between;font-size:11px;font-family:monospace;color:rgba(245,245,247,0.3);">
+                  <span>\\\${entry.action}</span>
+                  <span>\\\${entry.value}</span>
+                </div>
+              \\\`)}
+            \\\` : html\\\`\\\`}
+          </div>
+        </div>
+      \\\`
+    `
+
+    // Run through the WASM sandbox
+    const view = sandbox({
+      source: { 'main.ts': agentCode },
+      shadowDOM: false,
+      onError: (err) => {
+        const mount = document.getElementById('counter-mount')
+        mount.innerHTML = `
+          <div style="padding:20px;text-align:center;">
+            <span style="color:var(--p31-accent-red, #FF4444);font-size:14px;">Sandbox Error</span>
+            <pre style="margin-top:8px;font-size:12px;color:rgba(245,245,247,0.5);">${err}</pre>
+          </div>
+        `
+      },
+    })
+
+    // Mount into the P31 glass card surface
+    view(document.getElementById('counter-mount'))
+  </script>
+</body>
+</html>

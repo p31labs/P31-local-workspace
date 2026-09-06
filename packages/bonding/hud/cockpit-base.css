@@ -1,0 +1,45 @@
+/**
+ * WCD-08 Phase A: Global CSS Additions
+ * 
+ * Sonnet: Add these rules to the existing global stylesheet
+ * (src/index.css or wherever @tailwind directives live).
+ * Do NOT replace existing CSS. Append.
+ */
+
+@layer base {
+  /* Deep void background — the cockpit exterior */
+  html, body, #root {
+    background: #050505;
+    color: #E0E0F0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overscroll-behavior: none;
+    overflow: hidden;
+  }
+
+  /* Fixed viewport — the game is a single-screen cockpit, not a scrollable page */
+  body {
+    position: fixed;
+    inset: 0;
+    /* touch-action on the body prevents pull-to-refresh and overscroll bounce
+       on Android Chrome. Individual interactive elements re-enable as needed. */
+    touch-action: none;
+  }
+
+  /* Safe area padding for notched/rounded displays */
+  #root {
+    padding: env(safe-area-inset-top) env(safe-area-inset-right)
+             env(safe-area-inset-bottom) env(safe-area-inset-left);
+  }
+}
+
+@layer utilities {
+  /* Hide scrollbars in ElementDock horizontal scroll */
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-none {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}

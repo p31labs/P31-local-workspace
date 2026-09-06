@@ -1,0 +1,56 @@
+/**
+ * @file spoon-orbit.css — P31 Spoon Orbit styles (canonical).
+ *
+ * Central breathing core pulse + spoon-aware orbit visibility (5 orbits).
+ * Reduced motion disables all animation. Respects Crisis Mode via .ui-chrome.
+ */
+
+@keyframes corePulse {
+  0%, 100% { transform: scale(1);    opacity: 0.8; }
+  50%      { transform: scale(1.15); opacity: 1; }
+}
+
+.core-pulse {
+  animation: corePulse 4s ease-in-out infinite;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+
+.orb, .orb-track {
+  transition: opacity 0.6s ease;
+}
+
+/* Spoon-aware orbit visibility — lit count = spoon level.
+   Moves in pairs: orbit-1(1spoon) … orbit-5(5spoons). */
+html[data-spoons="0"] .orbit-1, html[data-spoons="0"] .orbit-2,
+html[data-spoons="0"] .orbit-3, html[data-spoons="0"] .orbit-4,
+html[data-spoons="0"] .orbit-5 { opacity: 0; }
+
+html[data-spoons="1"] .orbit-2, html[data-spoons="1"] .orbit-3,
+html[data-spoons="1"] .orbit-4, html[data-spoons="1"] .orbit-5 { opacity: 0; }
+
+html[data-spoons="2"] .orbit-3, html[data-spoons="2"] .orbit-4,
+html[data-spoons="2"] .orbit-5 { opacity: 0; }
+
+html[data-spoons="3"] .orbit-4, html[data-spoons="3"] .orbit-5 { opacity: 0; }
+
+html[data-spoons="4"] .orbit-5 { opacity: 0; }
+
+/* Hover glow on clickable orbit button */
+.spoon-orbit-btn:hover {
+  transform: scale(1.05);
+}
+.spoon-orbit-btn:focus-visible {
+  outline: 2px solid var(--p31-accent);
+  outline-offset: 4px;
+  border-radius: 12px;
+}
+.spoon-orbit-btn:active {
+  transform: scale(0.97);
+}
+
+/* Reduced motion — WCAG 2.2 AAA */
+@media (prefers-reduced-motion: reduce) {
+  .core-pulse { animation: none !important; }
+  .spoon-orbit-btn:hover { transform: none; }
+}

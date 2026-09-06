@@ -1,0 +1,24 @@
+name = "roblox-bridge"
+main = "src/index.ts"
+compatibility_date = "2026-07-18"
+compatibility_flags = ["nodejs_compat", "global_fetch_strictly_public"]
+
+# Optional: URL of a local roblox-bridge-mcp instance (e.g. http://localhost:7842).
+# Set via wrangler secret put ROBLOX_BRIDGE_URL.
+# When unset, the bridge returns generated Luau code instead of proxying.
+
+# Optional: base URL of the shadow-bridge worker (LOVE minting / pending-love).
+# Set via wrangler secret put SHADOW_BRIDGE_URL.
+# When unset, /game/mint-love returns a queued response with a note.
+
+# Shares the love-ledger D1 for world storage
+[[d1_databases]]
+binding = "LOVE_DB"
+database_name = "love-ledger"
+database_id = "592e3e2e-3203-4e0a-8342-9e85215ec8a6"
+
+[observability]
+enabled = true
+
+[env.production]
+vars = { ENVIRONMENT = "production" }

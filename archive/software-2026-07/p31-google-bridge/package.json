@@ -1,0 +1,17 @@
+{
+  "name": "p31-google-bridge",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Cloudflare Worker — Google Workspace OAuth, token storage, minimal Calendar probe",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "preflight": "node scripts/preflight.mjs",
+    "print:redirect": "node scripts/print-redirect.mjs",
+    "check": "node scripts/preflight.mjs --no-wrangler",
+    "verify": "node scripts/verify.mjs"
+  },
+  "devDependencies": {
+    "wrangler": "^3.114.0"
+  }
+}

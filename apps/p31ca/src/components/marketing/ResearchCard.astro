@@ -1,0 +1,34 @@
+---
+interface Props {
+  id: string;
+  title: string;
+  authors: string;
+  year: number;
+  doi?: string;
+  tags?: string[];
+}
+
+const { id, title, authors, year, doi, tags = [] } = Astro.props;
+---
+
+<article class="glass-card animate-fade-in-up">
+  <div class="p-6 space-y-4">
+    <div class="flex flex-wrap gap-2">
+      {tags.map((tag) => (
+        <span class="px-2 py-1 text-xs font-mono rounded" style="background: rgba(6,182,212,0.1); color: var(--p31-accent); border: 1px solid rgba(6,182,212,0.2);">
+          {tag}
+        </span>
+      ))}
+    </div>
+    <h3 class="text-lg font-semibold" style="color: var(--p31-text);">{title}</h3>
+    <p class="text-sm" style="color: var(--p31-text-secondary);">{authors}</p>
+    <div class="flex items-center justify-between pt-2" style="border-top: 1px solid var(--p31-glass-border);">
+      <span class="text-xs font-mono" style="color: var(--p31-text-tertiary);">{year}</span>
+      {doi && (
+        <a href={`https://doi.org/${doi}`} target="_blank" rel="noopener" class="text-xs font-medium hover:underline" style="color: var(--p31-accent);">
+          DOI →
+        </a>
+      )}
+    </div>
+  </div>
+</article>

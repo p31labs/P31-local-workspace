@@ -1,0 +1,31 @@
+{
+  "kind": "grant",
+  "filename": "P31_Grant_Microsoft_AI_Accessibility.docx",
+  "program": "microsoft-ai-accessibility",
+  "title": "Microsoft AI for Accessibility Grant",
+  "deadline": "Rolling — submit after 501(c)(3) determination",
+  "amount": "$75,000",
+  "body": [
+    { "type": "h1", "text": "ABSTRACT" },
+    { "type": "para", "text": "P31 Labs requests $75,000 over 18 months under Microsoft's AI for Accessibility program to expand the Cognitive Passport's AI-assisted reasoning layer. The Cognitive Passport is a structured self-advocacy tool for medical, educational, and legal interactions. Funding would support: (1) multi-modal AI augmentation (speech-to-text, vision-to-text, reasoning-over-context), (2) accessibility testing with neurodivergent user panels, (3) deployment of an offline-capable PWA for low-connectivity settings, and (4) open-source publication of the reasoning engine under AGPLv3." },
+
+    { "type": "h1", "text": "ALIGNMENT WITH MICROSOFT MISSION" },
+    { "type": "para", "text": "Microsoft's AI for Accessibility program funds projects that build inclusive technology for people with disabilities. The Cognitive Passport directly serves autistic and neurodivergent individuals who face communication barriers in healthcare, education, and legal settings. The tool translates between neurodivergent internal representation and external institutional expectations — exactly the kind of assistive technology the program exists to amplify." },
+
+    { "type": "h1", "text": "TECHNICAL APPROACH" },
+    { "type": "bullet", "text": "Multi-modal capture: integrate Web Speech API, camera-based document scanning, and manual entry" },
+    { "type": "bullet", "text": "Context-aware reasoning: LangChain-style chain-of-thought over personal history log to surface relevant accommodation precedents" },
+    { "type": "bullet", "text": "Offline-first PWA: Service worker caching + IndexedDB so tool works without connectivity (critical for institutional dead zones)" },
+    { "type": "bullet", "text": "Open protocol: publish the reasoning chain format as an open spec others can implement" },
+
+    { "type": "h1", "text": "BUDGET ALLOCATION ($75,000)" },
+    { "type": "bullet", "text": "Personnel (part-time contractor, 20 hrs/wk × 18 mos): $45,000" },
+    { "type": "bullet", "text": "User research incentives (neurodivergent testers, travel): $12,000" },
+    { "type": "bullet", "text": "Accessibility certification (WCAG 2.1 AA audit, assistive tech compatibility): $8,000" },
+    { "type": "bullet", "text": "Infrastructure (Cloudflare Workers + R2 + D1 for 18 mos): $2,000" },
+    { "type": "bullet", "text": "Contingency (10%): $8,000" },
+
+    { "type": "h1", "text": "LEGAL STATUS NOTE" },
+    { "type": "para", "text": "P31 Labs, Inc. (EIN 42-1888158) has filed Form 1023-EZ; determination is pending. Microsoft accepts applications from organizations with pending 501(c)(3) status if CP 575E is attached, which we have. We will attach the Pay.gov submission confirmation (281TLBGO) and Georgia Articles of Incorporation." }
+  ]
+}

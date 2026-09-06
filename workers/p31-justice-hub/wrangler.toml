@@ -1,0 +1,42 @@
+name = "p31-justice-hub"
+main = "src/index.ts"
+compatibility_date = "2026-07-27"
+compatibility_flags = ["nodejs_compat"]
+
+[[d1_databases]]
+binding = "JUSTICE_D1"
+database_name = "sovereign-justice-db"
+database_id = "64381fff-b652-435c-8d48-ac5a1c7bf248"
+
+[[d1_databases]]
+binding = "LOVE_D1"
+database_name = "love-ledger"
+database_id = "592e3e2e-3203-4e0a-8342-9e85215ec8a6"
+
+[[r2_buckets]]
+binding = "EVIDENCE_R2"
+bucket_name = "sovereign-justice-evidence"
+
+[[kv_namespaces]]
+binding = "JUSTICE_KV"
+id = "0bbc1c71fcf24b19af7864654e453bd0"
+
+[[durable_objects.bindings]]
+name = "ESCROW_DO"
+class_name = "EscrowEngineDO"
+
+[[durable_objects.bindings]]
+name = "EVIDENCE_DO"
+class_name = "EvidenceVaultDO"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["EscrowEngineDO", "EvidenceVaultDO"]
+
+[vars]
+ENVIRONMENT = "production"
+VERSION = "1.0.0"
+EVIDENCE_RETENTION_DAYS = "365"
+
+[observability]
+enabled = true

@@ -1,0 +1,12 @@
+{
+  "name": "shadow-bridge",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Roblox → Genesis Gate telemetry bridge. Receives LOVE events from Roblox via HttpService and routes them through KV into Genesis Gate for court-admissible hash chains.",
+  "license": "AGPL-3.0",
+  "author": "P31 Labs, Inc. (EIN 42-1888158)",
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev"
+  }
+}

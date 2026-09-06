@@ -1,0 +1,27 @@
+{
+  "name": "p31-design-mcp",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "P31 Design System MCP Server — Token resolution, component schemas, layout generation, icon search, UI auditing for the P31 quantum design system",
+  "keywords": ["mcp", "design-system", "components", "layout", "tokens", "ui-audit", "webmcp", "p31", "neuroinclusive"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/p31labs/andromeda",
+    "directory": "workers/design-mcp"
+  },
+  "homepage": "https://p31ca.org",
+  "scripts": {
+    "build": "node build.mjs",
+    "deploy": "npm run build && wrangler deploy",
+    "dev": "wrangler dev",
+    "scan:mcp": "node ../../scripts/scan-mcp-annotations.mjs"
+  },
+  "dependencies": {
+    "yaml": "^2.3.1"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260317.1",
+    "wrangler": "^4.114.0"
+  }
+}

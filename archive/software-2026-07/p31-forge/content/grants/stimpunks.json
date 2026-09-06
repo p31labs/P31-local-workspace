@@ -1,0 +1,28 @@
+{
+  "kind": "grant",
+  "filename": "P31_Grant_Stimpunks_Foundation.docx",
+  "program": "stimpunks",
+  "title": "Stimpunks Foundation Micro-Grant",
+  "deadline": "Opens June 1, 2026 — apply immediately on open",
+  "amount": "$3,000",
+  "body": [
+    { "type": "h1", "text": "ABSTRACT" },
+    { "type": "para", "text": "P31 Labs seeks a $3,000 micro-grant from Stimpunks Foundation to complete the hardware prototyping phase of Node One (Totem) and secure preliminary IP protection. Stimpunks explicitly funds neurodivergent builders working on assistive technology — our project directly serves that mission: an open-hardware, LoRa-connected haptic feedback device for somatic self-regulation, built by an AuDHD operator for autistic families." },
+
+    { "type": "h1", "text": "NODE ONE — HARDWARE FOR NEURODIVERGENT SOMATIC REGULATION" },
+    { "type": "para", "text": "Node One (codename Totem) is an ESP32-S3-based palm device with DRV2605L haptic engine, SX1262 LoRa radio for off-grid mesh messaging, and NXP SE050 secure element for identity + signing. It provides programmable somatic self-regulation: timed haptic pulses (breathing cues), anxiety alerts, and emergency SOS broadcast to family mesh. The device exists to address a gap: commercial wearables either lock data in walled gardens or require constant phone proximity. Node One works standalone, mesh-only, zero-cloud." },
+
+    { "type": "h1", "text": "USE OF FUNDS ($3,000)" },
+    { "type": "bullet", "text": "Provisional patent filing × 2 (HERALD algorithm + Node One hardware claims): $130" },
+    { "type": "bullet", "text": "Copyright registration (group unpublished works, source code + docs): $65" },
+    { "type": "bullet", "text": "WIPO PROOF timestamps × 5 (priority dates for core IP): $110" },
+    { "type": "bullet", "text": "DOBE certification (Disability:IN) — supplier diversity channel access: $350" },
+    { "type": "bullet", "text": "PCB fabrication + components for 5 beta units: $800" },
+    { "type": "bullet", "text": "3D print filament + enclosure prototyping materials: $100" },
+    { "type": "bullet", "text": "Operator stipend (20 hrs × $25 — integration + testing): $500" },
+    { "type": "bullet", "text": "Buffer for unforeseen tooling/test equipment: $945" },
+
+    { "type": "h1", "text": "OPEN SOURCE COMMITMENT" },
+    { "type": "para", "text": "All hardware designs (KiCad, Fusion 360), firmware (ESP-IDF), and protocol specifications will be published under CERN-OHL-P-2.0 and GPLv3. We commit to upstreaming any driver improvements to the ESP32 ecosystem." }
+  ]
+}

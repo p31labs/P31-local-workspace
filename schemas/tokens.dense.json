@@ -1,0 +1,308 @@
+{
+  "tokens": {
+    "p31-root-base_unit": "16px",
+    "p31-root-tetrahedral_ratio": 1.3333,
+    "p31-root-golden_ratio": 1.618,
+    "p31-root-larmor_hz": 863,
+    "p31-root-sic_povm_overlap": 0.3333,
+    "p31-root-k4_vertices": 4,
+    "p31-root-beta_squared": 1,
+    "p31-scale-xs": "calc(var(--p31-base) * 0.75)",
+    "p31-scale-sm": "var(--p31-base)",
+    "p31-scale-md": "calc(var(--p31-base) * 1.3333)",
+    "p31-scale-lg": "calc(var(--p31-base) * 1.7777)",
+    "p31-scale-xl": "calc(var(--p31-base) * 2.3703)",
+    "p31-scale-2xl": "calc(var(--p31-base) * 3.1604)",
+    "p31-scale-3xl": "calc(var(--p31-base) * 4.2139)",
+    "p31-scale-4xl": "calc(var(--p31-base) * 5.6186)",
+    "p31-spacing-xs": "clamp(var(--p31-scale-xs), 1vw, var(--p31-scale-sm))",
+    "p31-spacing-sm": "clamp(var(--p31-scale-sm), 1.5vw, var(--p31-scale-md))",
+    "p31-spacing-md": "clamp(var(--p31-scale-md), 2.5vw, var(--p31-scale-lg))",
+    "p31-spacing-lg": "clamp(var(--p31-scale-lg), 3.5vw, var(--p31-scale-xl))",
+    "p31-spacing-xl": "clamp(var(--p31-scale-xl), 5vw, var(--p31-scale-2xl))",
+    "p31-spacing-2xl": "clamp(var(--p31-scale-2xl), 6.5vw, var(--p31-scale-3xl))",
+    "p31-spacing-3xl": "clamp(var(--p31-scale-3xl), 8vw, var(--p31-scale-4xl))",
+    "p31-typography-base_unit": "var(--p31-base)",
+    "p31-typography-scale_ratio": 1.3333,
+    "p31-typography-font_family-sans": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+    "p31-typography-font_family-mono": "ui-monospace, SFMono-Regular, 'Fira Code', 'Fira Mono', 'Roboto Mono', 'JetBrains Mono', Menlo, Monaco, Consolas, monospace",
+    "p31-typography-font_family-inter": "'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif",
+    "p31-typography-font_family-atkinson": "'Atkinson Hyperlegible', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif",
+    "p31-typography-size-caption": "clamp(var(--p31-scale-xs), 0.8vw, var(--p31-scale-sm))",
+    "p31-typography-size-body": "clamp(calc(var(--p31-base) * 0.95), 1vw + 0.5rem, var(--p31-scale-sm))",
+    "p31-typography-size-label": "var(--p31-scale-sm)",
+    "p31-typography-size-h3": "clamp(var(--p31-scale-md), 2vw, var(--p31-scale-lg))",
+    "p31-typography-size-h2": "clamp(var(--p31-scale-lg), 3.5vw, var(--p31-scale-xl))",
+    "p31-typography-size-h1": "clamp(var(--p31-scale-xl), 5.6vw, var(--p31-scale-2xl))",
+    "p31-typography-size-display": "clamp(var(--p31-scale-2xl), 7vw, var(--p31-scale-3xl))",
+    "p31-typography-line_height-tight": 1.1,
+    "p31-typography-line_height-normal": 1.6,
+    "p31-typography-line_height-loose": 1.8,
+    "p31-typography-letter_spacing-tight": "-0.02em",
+    "p31-typography-letter_spacing-normal": "0em",
+    "p31-typography-letter_spacing-wide": "0.05em",
+    "p31-typography-weight-light": 300,
+    "p31-typography-weight-normal": 400,
+    "p31-typography-weight-medium": 500,
+    "p31-typography-weight-semibold": 600,
+    "p31-typography-weight-bold": 700,
+    "p31-typography-weight-extrabold": 800,
+    "p31-animation-larmor_hz": 863,
+    "p31-animation-duration-fast": "100ms",
+    "p31-animation-duration-normal": "300ms",
+    "p31-animation-duration-slow": "500ms",
+    "p31-animation-easing-smooth": "cubic-bezier(0.4, 0, 0.2, 1)",
+    "p31-animation-easing-snappy": "cubic-bezier(0.34, 1.56, 0.64, 1)",
+    "p31-animation-easing-linear": "linear",
+    "p31-animation-k4_vertex_pulse-duration": "2000ms",
+    "p31-animation-k4_vertex_pulse-easing": "cubic-bezier(0.4, 0, 0.2, 1)",
+    "p31-animation-k4_vertex_pulse-min_radius": "5px",
+    "p31-animation-k4_vertex_pulse-max_radius": "7px",
+    "p31-animation-k4_vertex_pulse-stagger_offset": "300ms",
+    "p31-animation-k4_edge_draw-duration": "3000ms",
+    "p31-animation-k4_edge_draw-easing": "linear",
+    "p31-animation-k4_edge_draw-delay_offset": "500ms",
+    "p31-animation-k4_orbit-duration": "12000ms",
+    "p31-animation-k4_orbit-easing": "linear",
+    "p31-shadow-none": "none",
+    "p31-shadow-xs": "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
+    "p31-shadow-sm": "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)",
+    "p31-shadow-md": "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+    "p31-shadow-lg": "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+    "p31-shadow-glow": "0 0 20px rgba(0, 240, 255, 0.4)",
+    "p31-border-width-thin": "1px",
+    "p31-border-width-normal": "2px",
+    "p31-border-width-thick": "3px",
+    "p31-border-radius-none": "0",
+    "p31-border-radius-xs": "calc(var(--p31-scale-xs) / 2)",
+    "p31-border-radius-sm": "calc(var(--p31-scale-sm) / 2)",
+    "p31-border-radius-md": "calc(var(--p31-scale-md) / 2)",
+    "p31-border-radius-lg": "calc(var(--p31-scale-lg) / 2)",
+    "p31-border-radius-xl": "calc(var(--p31-scale-xl) / 2)",
+    "p31-border-radius-full": "9999px",
+    "p31-breakpoints-mobile": "0px",
+    "p31-breakpoints-tablet": "768px",
+    "p31-breakpoints-desktop": "1024px",
+    "p31-breakpoints-wide": "1440px",
+    "p31-breakpoints-ultrawide": "1920px",
+    "p31-primitive-color-cyan": "oklch(65% 0.18 195)",
+    "p31-primitive-color-violet": "oklch(65% 0.18 285)",
+    "p31-primitive-color-gold": "oklch(65% 0.18 15)",
+    "p31-primitive-color-green": "oklch(65% 0.18 105)",
+    "p31-primitive-color-red": "oklch(65% 0.18 20)",
+    "p31-primitive-color-iris": "oklch(65% 0.18 270)",
+    "p31-primitive-color-void_deep": "oklch(8% 0.01 240)",
+    "p31-primitive-color-void": "oklch(10% 0.01 240)",
+    "p31-primitive-color-surface": "oklch(15% 0.015 240)",
+    "p31-primitive-color-surface2": "oklch(22% 0.02 240)",
+    "p31-primitive-color-text_primary": "oklch(96% 0.005 240)",
+    "p31-primitive-color-text_secondary": "oklch(75% 0.01 240)",
+    "p31-primitive-color-text_tertiary": "oklch(55% 0.01 240)",
+    "p31-primitive-color-glass_surface": "oklch(100% 0.01 240 / 0.04)",
+    "p31-primitive-color-glass_border": "oklch(100% 0.01 240 / 0.08)",
+    "p31-primitive-color-glass_border_hover": "oklch(100% 0.01 240 / 0.15)",
+    "p31-primitive-color-glass_surface_strong": "oklch(100% 0.01 240 / 0.08)",
+    "p31-primitive-color-glass_surface_subtle": "oklch(100% 0.01 240 / 0.03)",
+    "p31-primitive-spacing-xs": "clamp(var(--p31-scale-xs), 1vw, var(--p31-scale-sm))",
+    "p31-primitive-spacing-sm": "clamp(var(--p31-scale-sm), 1.5vw, var(--p31-scale-md))",
+    "p31-primitive-spacing-md": "clamp(var(--p31-scale-md), 2.5vw, var(--p31-scale-lg))",
+    "p31-primitive-spacing-lg": "clamp(var(--p31-scale-lg), 3.5vw, var(--p31-scale-xl))",
+    "p31-primitive-spacing-xl": "clamp(var(--p31-scale-xl), 5vw, var(--p31-scale-2xl))",
+    "p31-primitive-spacing-xxl": "{spacing.2xl}",
+    "p31-primitive-radius-sm": "calc(var(--p31-scale-sm) / 2)",
+    "p31-primitive-radius-md": "calc(var(--p31-scale-md) / 2)",
+    "p31-primitive-radius-lg": "calc(var(--p31-scale-lg) / 2)",
+    "p31-primitive-radius-xl": "calc(var(--p31-scale-xl) / 2)",
+    "p31-primitive-radius-full": "9999px",
+    "p31-primitive-typography-font_sans": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+    "p31-primitive-typography-font_mono": "ui-monospace, SFMono-Regular, 'Fira Code', 'Fira Mono', 'Roboto Mono', 'JetBrains Mono', Menlo, Monaco, Consolas, monospace",
+    "p31-primitive-blur-subtle": "8px",
+    "p31-primitive-blur-standard": "12px",
+    "p31-primitive-blur-strong": "24px",
+    "p31-primitive-shadow-glass": "0 8px 32px rgba(0,0,0,0.15)",
+    "p31-primitive-shadow-glow_cyan": "0 0 20px rgba(0,240,255,0.25)",
+    "p31-primitive-shadow-glow_cyan_hover": "0 0 30px rgba(0,240,255,0.4)"
+  },
+  "components": [
+    {
+      "name": "GlassPanel",
+      "css_class": "glass-panel",
+      "props": [
+        {
+          "padding": "string"
+        }
+      ]
+    },
+    {
+      "name": "GlassCard",
+      "css_class": "glass-card",
+      "props": [
+        {
+          "color": "string"
+        },
+        {
+          "padding": "string"
+        },
+        {
+          "interactive": "boolean"
+        }
+      ]
+    },
+    {
+      "name": "GlassStrong",
+      "css_class": "glass-strong",
+      "props": []
+    },
+    {
+      "name": "GlassSubtle",
+      "css_class": "glass-subtle",
+      "props": []
+    },
+    {
+      "name": "Button",
+      "css_class": "btn-primary",
+      "props": [
+        {
+          "variant": "string"
+        },
+        {
+          "size": "string"
+        }
+      ]
+    },
+    {
+      "name": "SpoonMeter",
+      "css_class": "spoon-meter",
+      "props": [
+        {
+          "current": "number"
+        },
+        {
+          "interactive": "boolean"
+        }
+      ]
+    },
+    {
+      "name": "TetraGrid",
+      "css_class": "tetra-grid",
+      "props": []
+    },
+    {
+      "name": "HonestLabel",
+      "css_class": "honest-label",
+      "props": []
+    },
+    {
+      "name": "StatusBadge",
+      "css_class": "status-badge",
+      "props": [
+        {
+          "status": "string"
+        }
+      ]
+    },
+    {
+      "name": "CrisisOverlay",
+      "css_class": "crisis-overlay",
+      "props": [
+        {
+          "message": "string"
+        },
+        {
+          "buttonLabel": "string"
+        }
+      ]
+    },
+    {
+      "name": "Starfield",
+      "css_class": "starfield",
+      "props": [
+        {
+          "count": "number"
+        },
+        {
+          "speed": "number"
+        }
+      ]
+    },
+    {
+      "name": "ThemeToggle",
+      "css_class": "theme-toggle",
+      "props": []
+    },
+    {
+      "name": "CandyHeader",
+      "css_class": "candy-header",
+      "props": [
+        {
+          "brand": "string"
+        }
+      ]
+    },
+    {
+      "name": "Crown",
+      "css_class": "crown",
+      "props": [
+        {
+          "size": "string"
+        },
+        {
+          "brand": "string"
+        }
+      ]
+    },
+    {
+      "name": "SpoonDial",
+      "css_class": "spoon-dial",
+      "props": [
+        {
+          "spoons": "number"
+        }
+      ]
+    }
+  ],
+  "webmcp": {
+    "data-mcp-tool": {
+      "type": "string"
+    },
+    "data-mcp-state": {
+      "type": "string"
+    },
+    "data-mcp-target": {
+      "type": "string"
+    },
+    "data-mcp-type": {
+      "type": "string",
+      "enum": [
+        "control",
+        "action",
+        "state"
+      ]
+    },
+    "data-mcp-range": {
+      "type": "string"
+    },
+    "data-mcp-current": {},
+    "data-mcp-href": {
+      "type": "string"
+    },
+    "data-mcp-external": {
+      "type": "string"
+    },
+    "selector": {
+      "type": "string"
+    },
+    "tagName": {
+      "type": "string"
+    },
+    "childCount": {
+      "type": "number"
+    },
+    "isDisabled": {
+      "type": "boolean"
+    },
+    "warnings": {
+      "type": "array"
+    }
+  }
+}

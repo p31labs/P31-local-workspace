@@ -1,0 +1,39 @@
+---
+import MarketingShell from '../../layouts/MarketingShell.astro';
+import MarketingTopbar from '../../components/marketing/MarketingTopbar.astro';
+import SectionHeader from '../../components/marketing/SectionHeader.astro';
+import Footer from '../../components/marketing/Footer.astro';
+import blogPosts from '../../data/blog-posts.json';
+---
+
+<MarketingShell title="Blog — P31 Labs" description="Thoughts on sovereign infrastructure, neurodivergent technology, and open science.">
+  <MarketingTopbar slot="starfield" />
+  
+  <main id="main-content" class="section">
+    <div class="max-w-4xl mx-auto px-6 md:px-12 lg:px-16">
+      <SectionHeader title="Blog" description="Thoughts on sovereign infrastructure, neurodivergent technology, and open science." />
+      
+      <div class="mt-16 space-y-8">
+        {blogPosts.map((post, i) => (
+          <article class="glass-card animate-fade-in-up" style="animation-delay: {i * 100}ms;">
+            <div class="p-8">
+              <div class="flex items-center gap-3 mb-4">
+                <time class="text-xs font-mono" style="color: var(--p31-text-tertiary);">{post.date}</time>
+                <span class="text-xs" style="color: var(--p31-text-tertiary);">·</span>
+                <span class="text-xs font-medium" style="color: var(--p31-accent);">{post.tag}</span>
+              </div>
+              <h3 class="text-xl font-bold mb-3" style="color: var(--p31-text);">{post.title}</h3>
+              <p class="text-sm leading-relaxed mb-4" style="color: var(--p31-text-secondary);">{post.excerpt}</p>
+              <span class="text-sm font-medium inline-flex items-center gap-1" style="color: var(--p31-accent);">
+                Read more
+                <span class="group-hover:translate-x-1 transition-transform">→</span>
+              </span>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</MarketingShell>

@@ -1,0 +1,27 @@
+name = "terminal-relay"
+main = "src/index.ts"
+compatibility_date = "2026-07-17"
+compatibility_flags = ["nodejs_compat"]
+
+[[durable_objects.bindings]]
+name = "SANDBOX"
+class_name = "SandboxDO"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["SandboxDO"]
+
+[[d1_databases]]
+binding = "TERMINAL_DB"
+database_name = "terminal-sessions"
+database_id = ""
+
+# TODO: Add [exports.SandboxDO] section with type = "durable-object" and storage = "sqlite"
+# WARNING: Missing [exports] config for Durable Object(s) — manual handling required.
+
+[observability]
+enabled = true
+head_sampling_rate = 1.0
+
+[cache]
+enabled = true

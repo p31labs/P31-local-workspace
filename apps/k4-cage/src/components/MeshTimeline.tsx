@@ -1,0 +1,1 @@
+import { useCageStore } from '../hooks/useCageStore';export function MeshTimeline(){const{events}=useCageStore();return(<div className="mesh-timeline"><h3>Mesh Timeline</h3><div className="mesh-events">{events.map((e,i)=>(<div key={i} className="mesh-event"><span className="mesh-event-dot"/><span>{e}</span></div>))}</div></div>)}

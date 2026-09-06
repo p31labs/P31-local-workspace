@@ -1,0 +1,23 @@
+{
+  "name": "@p31/creation-accountant",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "typecheck": "tsc --noEmit",
+    "dry-run": "wrangler deploy --dry-run"
+  },
+  "dependencies": {
+    "@hono/zod-validator": "^0.4.0",
+    "hono": "^4.6.0",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.0.0",
+    "typescript": "^5.5.0",
+    "wrangler": "^4.0.0"
+  }
+}

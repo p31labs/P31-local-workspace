@@ -1,0 +1,11 @@
+# Cloudflare Pages — Hearing Ops ONLY. Custom domain: ops.p31ca.org
+# Must use a dedicated project name — NOT `p31ca` (that project is the p31ca.org hub).
+# Custom domains follow the project's *production* branch.
+
+name = "p31-hearing-ops"
+pages_build_output_dir = "dist"
+compatibility_date = "2026-07-16"
+compatibility_flags = ["nodejs_compat"]
+
+[cache]
+enabled = true

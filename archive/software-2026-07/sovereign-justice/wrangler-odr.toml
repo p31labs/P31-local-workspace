@@ -1,0 +1,15 @@
+name = "sovereign-justice-odr"
+main = "src/odr.ts"
+compatibility_date = "2026-07-16"
+
+[[d1_databases]]
+binding = "JUSTICE_D1"
+database_name = "sovereign-justice-db"
+database_id = "64381fff-b652-435c-8d48-ac5a1c7bf248"
+
+[observability]
+enabled = true
+head_sampling_rate = 0.1
+
+[cache]
+enabled = true

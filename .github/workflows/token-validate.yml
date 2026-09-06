@@ -1,0 +1,63 @@
+name: Token Validate + Performance Budget
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: token-validate-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate design tokens
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Validate CSS tokens (no hardcoded values in component styles)
+        run: |
+          echo "Checking for hardcoded pixel values in component CSS..."
+          if grep -rn --include='*.css' --include='*.astro' --include='*.tsx' --include='*.jsx' \
+            -E '(padding|margin|gap|width|height|min-height|max-width):[ ]*[0-9]+px' \
+            packages/ui/src/ apps/p31ca/src/ apps/phos/src/; then
+            echo "FAIL: Found hardcoded pixel values (use CSS variables instead)"
+            exit 1
+          else
+            echo "PASS: No hardcoded pixel values found"
+          fi
+
+      - name: Run design token auto-fix check
+        run: node scripts/auto-fix-tokens.mjs --check 2>&1 || true
+
+      - name: Build all apps
+        run: pnpm run build:apps
+
+      - name: Run performance budget check
+        run: node scripts/performance-budget.mjs
+
+      - name: Upload performance report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: token-validate-performance-report
+          path: performance-reports/
+          retention-days: 30

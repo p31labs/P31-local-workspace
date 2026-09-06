@@ -1,0 +1,76 @@
+---
+import ArcadeLayout from '../../layouts/ArcadeLayout.astro';
+
+export function getStaticPaths() {
+  return [
+    { params: { id: 'bashball' } },
+    { params: { id: 'gridiron' } },
+    { params: { id: 'strategy-board' } },
+    { params: { id: 'card-table' } },
+    { params: { id: 'liquid-sculptor' } },
+    { params: { id: 'jitterbug-puzzle' } },
+    { params: { id: 'bonding' } },
+  ];
+}
+
+const { id } = Astro.params;
+
+const games: Record<string, { name: string; description: string; skin: string; deployUrl: string }> = {
+  'bashball': { name: 'BASHBALL', description: 'Markov chain baseball — built for Sebastian\'s 10th birthday.', skin: 'tetra', deployUrl: '/play/bashball' },
+  'gridiron': { name: 'Gridiron', description: 'Strategic American football with spoon‑based play calling and franchise persistence.', skin: 'phos', deployUrl: 'https://p31-gridiron.pages.dev' },
+  'strategy-board': { name: 'Strategy Board', description: 'Turn‑based hex‑grid tactics with minimax AI.', skin: 'willow', deployUrl: 'https://p31-strategy.pages.dev' },
+  'card-table': { name: 'Card Table', description: 'Poker, blackjack, and original P31 variants with tournament mode.', skin: 'willow', deployUrl: 'https://p31-cards.pages.dev' },
+  'liquid-sculptor': { name: 'Liquid Sculptor', description: 'WebGL Navier‑Stokes fluid dynamics sandbox for creative play.', skin: 'phos', deployUrl: 'https://p31-liquid-sculptor.pages.dev' },
+  'jitterbug-puzzle': { name: 'Jitterbug Puzzle', description: 'Match the morphing geometry target. Cuboctahedron ↔ tetrahedron. Playable right here in the ARCADE.', skin: 'tetra', deployUrl: '/play/jitterbug' },
+  'bonding': { name: 'BONDING', description: 'Multiplayer molecule builder with real covalent bonding, LOVE economy, and quests.', skin: 'willow', deployUrl: 'https://bonding.p31ca.org' },
+};
+
+const game = games[id || ''];
+
+if (!game) {
+  return Astro.redirect('/');
+}
+
+const skinColors: Record<string, string> = {
+  tetra: '#FBBF24',
+  phos: '#A78BFA',
+  willow: '#34D399',
+};
+---
+
+<ArcadeLayout title={`${game.name} — LOVE Arcade`}>
+  <div style="max-width: 48rem; margin: 0 auto; padding: 32px 24px;">
+    <div style="margin-bottom: 32px;">
+      <a href="/" style="color: rgba(245,245,247,0.4); text-decoration: none; font-size: 0.85rem; font-family: monospace;">← Back to Arcade</a>
+    </div>
+
+    <div style="padding: 32px; background: rgba(255,255,255,0.03); border-radius: 24px; border: 1px solid rgba(255,255,255,0.06); margin-bottom: 24px;">
+      <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 16px;">
+        <div style="width: 48px; height: 48px; border-radius: 12px; background: {skinColors[game.skin] || '#00F0FF'}; opacity: 0.15; display: flex; align-items: center; justify-content: center;">
+          <span style="font-size: 1.5rem;">🎮</span>
+        </div>
+        <div>
+          <h1 style="font-size: 1.75rem; font-weight: 700; color: {skinColors[game.skin] || '#00F0FF'};">{game.name}</h1>
+          <span style="font-size: 0.75rem; color: rgba(245,245,247,0.3); text-transform: uppercase; font-family: monospace; letter-spacing: 0.08em;">skin-{game.skin}</span>
+        </div>
+      </div>
+      <p style="color: rgba(245,245,247,0.6); font-size: 1.05rem; line-height: 1.7;">{game.description}</p>
+    </div>
+
+    <div style="padding: 24px; background: rgba(255,255,255,0.02); border-radius: 16px; border: 1px solid rgba(255,255,255,0.04); margin-bottom: 24px;">
+      <h2 style="font-size: 1rem; font-weight: 600; color: rgba(245,245,247,0.6); margin-bottom: 12px;">How It Works</h2>
+      <ul style="color: rgba(245,245,247,0.5); font-size: 0.9rem; line-height: 1.8; padding-left: 20px;">
+        <li>Spoon‑gated difficulty — game complexity scales with your energy level</li>
+        <li>Jitterbug geometry — Fuller's transformative pattern as the core mechanic</li>
+        <li>LOVE rewards — earn tokens for every completed challenge</li>
+        <li>Cross‑platform — play on web or Roblox</li>
+      </ul>
+    </div>
+
+    <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+      <a href={game.deployUrl} target="_blank" rel="noopener" style="display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; border-radius: 12px; background: {skinColors[game.skin] || '#00F0FF'}; color: #0A0A0F; font-weight: 600; font-size: 0.9rem; text-decoration: none; transition: opacity 0.2s;">
+        Play Now →
+      </a>
+    </div>
+  </div>
+</ArcadeLayout>

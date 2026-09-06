@@ -1,0 +1,6 @@
+name = "docs"
+main = "src/pages/index.astro"
+compatibility_date = "2026-07-21"
+[observability]
+enabled = true
+head_sampling_rate = 0.1

@@ -1,0 +1,68 @@
+name: Design System Lint
+
+on:
+  pull_request:
+    paths:
+      - 'apps/p31ca/src/**'
+      - 'apps/phosphorus31/src/**'
+      - 'packages/ui/src/**'
+      - 'cli/tokens/**'
+      - 'cli/validators/**'
+  push:
+    branches:
+      - main
+      - feat/*
+
+jobs:
+  spatial-validation:
+    name: Spatial Validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - run: pnpm install
+
+      - name: Run Spatial Validator (p31ca)
+        run: node cli/validators/spatialValidator.mjs --tokens cli/tokens/tokens.yml --src apps/p31ca/src --strict
+
+      - name: Run Spatial Validator (phosphorus31)
+        run: node cli/validators/spatialValidator.mjs --tokens cli/tokens/tokens.yml --src apps/phosphorus31/src --strict
+
+      - name: Run Health Check
+        run: node cli/validators/spatialValidator.mjs --tokens cli/tokens/tokens.yml --src apps/p31ca/src --health
+
+  token-compliance:
+    name: Token Compliance
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - run: pnpm install
+
+      - name: Check for hardcoded colors in UI components
+        run: |
+          if grep -rE '#[0-9a-fA-F]{3,8}|rgba?\(' packages/ui/src/ --include='*.tsx' --include='*.astro' --include='*.css' --exclude-dir=node_modules; then
+            echo "❌ Hardcoded colors found in packages/ui/src/"
+            exit 1
+          fi
+
+      - name: Check for hardcoded spacing in templates
+        run: |
+          if grep -rE '(padding|margin|gap):\s*[0-9]+px' packages/ui/src/templates/ --include='*.astro' --exclude-dir=node_modules; then
+            echo "⚠️  Hardcoded spacing found in templates (consider using CSS variables)"
+            exit 1
+          fi

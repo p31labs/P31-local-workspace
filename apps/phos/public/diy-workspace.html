@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PHOS DIY Workspace — LEGO Assembly Guide</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'] },
+                    colors: {
+                        p31: {
+                            void: '#0A0C10', surface: '#13161D', surface2: '#1C212B',
+                            accent: '#00F0FF', accentMuted: 'rgba(0, 240, 255, 0.2)',
+                            danger: '#FF3366', success: '#00FF9D', gold: '#FBBF24',
+                            textPrimary: '#E2E8F0', textSecondary: '#94A3B8',
+                            glassBorder: 'rgba(255, 255, 255, 0.08)'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        :root {
+            --p31-void: #0A0C10; --p31-surface: rgba(19,22,29,0.6);
+            --p31-glass-border: rgba(255,255,255,0.08); --p31-accent: #00F0FF;
+            --p31-text-primary: #E2E8F0; --p31-text-secondary: #94A3B8;
+        }
+        body {
+            background: var(--p31-void); color: var(--p31-text-primary);
+            font-family: 'Inter', sans-serif; margin: 0; min-height: 100vh;
+            background-image: radial-gradient(circle at 20% 30%, rgba(0,240,255,0.03), transparent 30%),
+                              radial-gradient(circle at 80% 70%, rgba(251,191,36,0.02), transparent 30%);
+        }
+        .phos-glass {
+            background: var(--p31-surface);
+            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--p31-glass-border);
+        }
+        .phos-gpu {
+            transform: translateZ(0); will-change: transform, background-color;
+            transition: all 0.2s ease;
+        }
+        [data-spoons="0"] .phos-ui-chrome { display: none !important; }
+        [data-spoons="0"] body { background: #000 !important; background-image: none !important; }
+        [data-spoons="1"] *, [data-spoons="0"] * {
+            animation-duration: 0s !important; transition-duration: 0s !important;
+            backdrop-filter: none !important;
+        }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: var(--p31-void); }
+        ::-webkit-scrollbar-thumb { background: #2D3748; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #4A5568; }
+        @keyframes fadeIn { from { opacity:0; transform:translateY(10px) } to { opacity:1; transform:translateY(0) } }
+        @keyframes slideUp { from { opacity:0; transform:translateY(20px) scale(0.98) } to { opacity:1; transform:translateY(0) scale(1) } }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useCallback, useRef } = React;
+
+        // --- DATA: 10 LEGO Templates ---
+        const PARTS_CATALOG = [
+            { id: 'surface', name: 'Surface Scaffold', lego: '2×4 brick', ikea: 'Skarvik panel', desc: 'Place your surface component here', icon: 'layout-dashboard', template: 'Template 1', group: 'core' },
+            { id: 'store', name: 'Store Scaffold', lego: '1×2 brick', ikea: 'Förenings drawer', desc: 'Add a persistent state drawer', icon: 'database', template: 'Template 2', group: 'core' },
+            { id: 'hook', name: 'Custom Hook', lego: '1×1 brick', ikea: 'Utrusta hinge', desc: 'Connect logic here', icon: 'plug', template: 'Template 3', group: 'core' },
+            { id: 'worker', name: 'Cloudflare Worker', lego: '8×16 plate', ikea: 'Skubb box', desc: 'Deploy a backend box', icon: 'cloud', template: 'Template 4', group: 'infra' },
+            { id: 'mcp', name: 'MCP Server', lego: 'Technic pin', ikea: 'Stödhjul leg', desc: 'Plug into the MCP grid', icon: 'puzzle', template: 'Template 5', group: 'infra' },
+            { id: 'package', name: 'npm Package', lego: '2×2 tile', ikea: 'Blåsig shelf', desc: 'Put your SDK on the shelf', icon: 'package', template: 'Template 6', group: 'infra' },
+            { id: 'page', name: 'Astro Page', lego: '4×6 plate', ikea: 'Bäsplatta base', desc: 'Lay down a page foundation', icon: 'file-text', template: 'Template 7', group: 'frontend' },
+            { id: 'router', name: 'Router Registration', lego: 'Brick separator', ikea: 'Vinkel drag', desc: 'Snap into the router', icon: 'git-merge', template: 'Template 8', group: 'frontend' },
+            { id: 'tokens', name: 'Design Token Set', lego: 'Transparent brick', ikea: 'Upplyst lamp', desc: 'Set the lighting', icon: 'palette', template: 'Template 9', group: 'design' },
+            { id: 'tests', name: 'Test Suite', lego: 'Minifigure', ikea: 'Tjena mug', desc: 'Test your build', icon: 'check-square', template: 'Template 10', group: 'qa' },
+        ];
+
+        const ASSEMBLY_STEPS = [
+            { number: 1, title: 'Choose Your Part', icon: 'shopping-cart', desc: 'Browse the parts catalog and pick a template that matches what you want to build.' },
+            { number: 2, title: 'Place the Component', icon: 'layout-dashboard', desc: 'Copy the template scaffold into your project. All 13 invariants are pre-enforced.' },
+            { number: 3, title: 'Snap into the Router', icon: 'git-merge', desc: 'Register your new part. Three files need updates — or use AST patching for zero manual edits.' },
+            { number: 4, title: 'Connect State & Logic', icon: 'plug', desc: 'Wire up nanostores for persistent state and hooks for side effects.' },
+            { number: 5, title: 'Validate Invariants', icon: 'check-square', desc: 'Run the invariant checker. All 13 rules must pass before deployment.' },
+            { number: 6, title: 'Deploy to the Mesh', icon: 'cloud', desc: 'Build and deploy. Your part is now live in the P31 ecosystem.' },
+        ];
+
+        // --- COMPONENTS ---
+
+        const PhosButton = ({ children, onClick, variant = 'default', className = '', icon: Icon, disabled }) => {
+            const baseClass = "phos-gpu flex items-center justify-center min-h-[48px] px-6 rounded-[12px] font-sans text-[12px] uppercase tracking-[0.05em] font-medium border transition-colors cursor-pointer gap-2 disabled:opacity-40 disabled:cursor-not-allowed";
+            const variants = {
+                default: "bg-p31-surface2 border-p31-glassBorder text-p31-textPrimary hover:bg-[#2A313E]",
+                accent: "bg-p31-accent text-black border-transparent hover:bg-[#33F3FF]",
+                ghost: "bg-transparent border-transparent text-p31-textSecondary hover:bg-p31-surface2",
+                success: "bg-p31-success/20 text-p31-success border-p31-success/30 hover:bg-p31-success/30",
+                danger: "bg-p31-danger/20 text-p31-danger border-p31-danger/30 hover:bg-p31-danger/30",
+            };
+            return (
+                <button onClick={onClick} disabled={disabled} className={`${baseClass} ${variants[variant]} ${className}`}>
+                    {Icon && <i data-lucide={Icon} size={16}></i>}
+                    {children}
+                </button>
+            );
+        };
+
+        const ValidationBadge = ({ pass, label }) => (
+            <div className="flex items-center gap-3 min-h-[48px] px-4 py-2 rounded-[12px] bg-p31-surface2 border border-p31-glassBorder">
+                <div className={`w-6 h-6 rounded-full flex items-center justify-center ${pass ? 'bg-p31-success/20 text-p31-success' : 'bg-p31-danger/20 text-p31-danger'}`}>
+                    <i data-lucide={pass ? 'check' : 'x'} size={14}></i>
+                </div>
+                <span className="text-[14px] text-p31-textPrimary">{label}</span>
+            </div>
+        );
+
+        const PartCard = ({ part, onClick, selected }) => (
+            <button onClick={onClick}
+                className={`phos-glass rounded-[24px] p-5 flex flex-col gap-3 text-left transition-all hover:border-p31-accent/40 group ${selected ? 'border-p31-accent ring-1 ring-p31-accent/30' : ''}`}>
+                <div className="flex items-center justify-between">
+                    <div className="w-10 h-10 rounded-[10px] bg-p31-accent/10 border border-p31-accent/20 flex items-center justify-center text-p31-accent group-hover:bg-p31-accent/20 transition-colors">
+                        <i data-lucide={part.icon} size={18}></i>
+                    </div>
+                    <span className="text-[10px] font-mono uppercase tracking-[0.1em] text-p31-textSecondary">{part.template}</span>
+                </div>
+                <h3 className="text-[16px] font-bold text-p31-textPrimary">{part.name}</h3>
+                <p className="text-[13px] text-p31-textSecondary leading-relaxed">{part.desc}</p>
+                <div className="flex gap-2 mt-auto pt-2">
+                    <span className="text-[10px] uppercase tracking-[0.1em] px-2 py-1 rounded-full bg-p31-accent/10 text-p31-accent font-mono">LEGO {part.lego}</span>
+                    <span className="text-[10px] uppercase tracking-[0.1em] px-2 py-1 rounded-full bg-p31-gold/10 text-p31-gold font-mono">IKEA {part.ikea}</span>
+                </div>
+            </button>
+        );
+
+        const StepIndicator = ({ step, current, onClick }) => (
+            <button onClick={onClick}
+                className={`flex items-center gap-3 p-3 rounded-[12px] transition-colors text-left ${current === step.number ? 'bg-p31-accent/10 border border-p31-accent/20' : 'hover:bg-p31-surface2 border border-transparent'}`}>
+                <div className={`w-[32px] h-[32px] rounded-full flex items-center justify-center font-mono text-[13px] font-bold ${current === step.number ? 'bg-p31-accent text-black' : 'bg-p31-surface2 text-p31-textSecondary'}`}>
+                    {step.number}
+                </div>
+                <span className={`text-[14px] ${current === step.number ? 'text-p31-textPrimary font-semibold' : 'text-p31-textSecondary'}`}>
+                    {step.title}
+                </span>
+                {current === step.number && (
+                    <i data-lucide="chevron-right" size={14} className="text-p31-accent ml-auto"></i>
+                )}
+            </button>
+        );
+
+        const FileTree = ({ files }) => (
+            <div className="font-mono text-[13px] p-4 bg-black/40 rounded-[12px] border border-p31-glassBorder">
+                {files.map((f, i) => (
+                    <div key={i} className={`flex items-center gap-2 ${i > 0 ? 'mt-1' : ''}`}>
+                        <span className="text-p31-accent">{f.type === 'dir' ? '📁' : '📄'}</span>
+                        <span className={f.type === 'dir' ? 'text-p31-textSecondary' : 'text-p31-textPrimary'}>{f.path}</span>
+                        {f.new && <span className="text-[10px] text-p31-success uppercase tracking-[0.1em]">+ new</span>}
+                        {f.modified && <span className="text-[10px] text-p31-gold uppercase tracking-[0.1em]">~ modified</span>}
+                    </div>
+                ))}
+            </div>
+        );
+
+        const CodePreview = ({ code }) => (
+            <div className="relative">
+                <div className="absolute top-3 right-3 flex gap-1">
+                    <div className="w-3 h-3 rounded-full bg-p31-danger/60"></div>
+                    <div className="w-3 h-3 rounded-full bg-p31-gold/60"></div>
+                    <div className="w-3 h-3 rounded-full bg-p31-success/60"></div>
+                </div>
+                <pre className="font-mono text-[13px] leading-relaxed p-5 pt-8 bg-black/60 rounded-[12px] border border-p31-glassBorder overflow-x-auto">
+                    <code className="text-p31-textSecondary">{code}</code>
+                </pre>
+            </div>
+        );
+
+        // --- MAIN APP ---
+
+        const App = () => {
+            const [spoons, setSpoons] = useState(4);
+            const [activeTab, setActiveTab] = useState('catalog');
+            const [currentStep, setCurrentStep] = useState(1);
+            const [selectedPart, setSelectedPart] = useState(null);
+            const [buildProjects, setBuildProjects] = useState([]);
+            const [showProjectModal, setShowProjectModal] = useState(false);
+            const [projectName, setProjectName] = useState('');
+            const [showSuccess, setShowSuccess] = useState(false);
+
+            useEffect(() => {
+                document.body.setAttribute('data-spoons', spoons.toString());
+                try { lucide.createIcons(); } catch(e) {}
+            }, [spoons, activeTab, currentStep, selectedPart, showProjectModal, showSuccess]);
+
+            // Load saved projects from localStorage
+            useEffect(() => {
+                try {
+                    const saved = localStorage.getItem('phos:diy:projects');
+                    if (saved) setBuildProjects(JSON.parse(saved));
+                } catch(e) {}
+            }, []);
+
+            const saveProject = useCallback(() => {
+                const newProject = {
+                    id: Date.now().toString(36),
+                    name: projectName || `Build ${buildProjects.length + 1}`,
+                    part: selectedPart,
+                    step: currentStep,
+                    date: new Date().toISOString(),
+                    completed: currentStep >= 6,
+                };
+                const updated = [...buildProjects, newProject];
+                setBuildProjects(updated);
+                localStorage.setItem('phos:diy:projects', JSON.stringify(updated));
+                setProjectName('');
+                setShowProjectModal(false);
+                setShowSuccess(true);
+                setTimeout(() => setShowSuccess(false), 3000);
+            }, [projectName, selectedPart, currentStep, buildProjects]);
+
+            // Crisis Mode
+            if (spoons === 0) {
+                return (
+                    <div className="min-h-screen flex flex-col items-center justify-center p-6 gap-8">
+                        <div className="text-p31-danger font-mono text-xl animate-pulse">CRISIS_MODE: ACTIVE</div>
+                        <p className="text-p31-textSecondary max-w-md text-center leading-relaxed">
+                            Assembly paused. Cognitive resources depleted. Take a breath — the bricks will still be here when you return.
+                        </p>
+                        <PhosButton variant="default" onClick={() => setSpoons(4)} icon="zap">Restore Spoons</PhosButton>
+                    </div>
+                );
+            }
+
+            return (
+                <div className="min-h-screen flex flex-col p-4 md:p-6 relative">
+                    {/* Success toast */}
+                    {showSuccess && (
+                        <div className="fixed top-6 right-6 z-50 phos-glass rounded-[16px] p-4 flex items-center gap-3 animate-[slideUp_0.3s_ease-out] border-p31-success/40">
+                            <div className="w-8 h-8 rounded-full bg-p31-success/20 flex items-center justify-center text-p31-success">
+                                <i data-lucide="check" size={16}></i>
+                            </div>
+                            <span className="text-[14px] text-p31-textPrimary">Build saved to My Projects</span>
+                        </div>
+                    )}
+
+                    {/* HEADER */}
+                    <header className="phos-ui-chrome flex flex-col md:flex-row items-start md:items-center justify-between mb-6 gap-4">
+                        <div className="flex items-center gap-4">
+                            <div className="w-[48px] h-[48px] rounded-[12px] bg-p31-accent/10 border border-p31-accent flex items-center justify-center text-p31-accent">
+                                <i data-lucide="puzzle"></i>
+                            </div>
+                            <div>
+                                <h1 className="text-[24px] md:text-[32px] font-bold text-p31-textPrimary tracking-tight">DIY Workshop</h1>
+                                <p className="text-[14px] text-p31-textSecondary font-mono mt-1">phos.p31ca.org/diy</p>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center gap-4">
+                            {/* Project count */}
+                            {buildProjects.length > 0 && (
+                                <div className="phos-glass rounded-[12px] px-4 py-2 flex items-center gap-2">
+                                    <i data-lucide="archive" size={14} className="text-p31-accent"></i>
+                                    <span className="font-mono text-[13px] text-p31-textSecondary">{buildProjects.length} builds</span>
+                                </div>
+                            )}
+                            {/* Spoons */}
+                            <div className="phos-glass rounded-[16px] p-2 flex items-center gap-1">
+                                <span className="text-[11px] uppercase tracking-[0.05em] text-p31-textSecondary font-bold ml-1">Spoons:</span>
+                                {[1,2,3,4,5].map(v => (
+                                    <button key={v} onClick={() => setSpoons(v)}
+                                        className={`w-[36px] h-[36px] rounded-[8px] flex items-center justify-center transition-colors ${spoons >= v ? 'bg-p31-accent text-black' : 'bg-p31-surface2 text-p31-textSecondary'}`}>
+                                        <i data-lucide="zap" size={14}></i>
+                                    </button>
+                                ))}
+                                <button onClick={() => setSpoons(0)}
+                                    className="w-[36px] h-[36px] rounded-[8px] bg-p31-danger/20 text-p31-danger hover:bg-p31-danger hover:text-black ml-1 flex items-center justify-center transition-colors"
+                                    title="Crisis Mode">
+                                    <i data-lucide="alert-triangle" size={14}></i>
+                                </button>
+                            </div>
+                        </div>
+                    </header>
+
+                    {/* TAB NAVIGATION */}
+                    <div className="flex gap-2 mb-6 phos-ui-chrome">
+                        {[
+                            { id: 'catalog', label: 'Parts Catalog', icon: 'package' },
+                            { id: 'build', label: 'Assembly Guide', icon: 'building-2' },
+                            { id: 'projects', label: 'My Projects', icon: 'archive' },
+                            { id: 'validate', label: 'Validation', icon: 'check-square' },
+                        ].map(tab => (
+                            <button key={tab.id} onClick={() => { setActiveTab(tab.id); if (tab.id === 'catalog') setSelectedPart(null); }}
+                                className={`phos-gpu flex items-center justify-center min-h-[48px] px-5 rounded-[12px] font-sans text-[12px] uppercase tracking-[0.05em] font-medium transition-colors border gap-2 ${
+                                    activeTab === tab.id
+                                        ? 'bg-p31-accent text-black border-p31-accent'
+                                        : 'bg-p31-surface2 text-p31-textSecondary border-p31-glassBorder hover:bg-[#2A313E]'
+                                }`}>
+                                <i data-lucide={tab.icon} size={14}></i>
+                                {tab.label}
+                            </button>
+                        ))}
+                    </div>
+
+                    {/* MAIN CONTENT */}
+                    <main className="flex-1">
+                        {/* TAB: PARTS CATALOG */}
+                        {activeTab === 'catalog' && (
+                            <div className="animate-[fadeIn_0.3s_ease-out]">
+                                <div className="mb-6">
+                                    <h2 className="text-[20px] font-bold text-p31-textPrimary mb-2">Parts Catalog</h2>
+                                    <p className="text-[14px] text-p31-textSecondary">Every P31 template is a LEGO brick. Pick one to start building.</p>
+                                </div>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                                    {PARTS_CATALOG.map(part => (
+                                        <PartCard key={part.id} part={part}
+                                            selected={selectedPart?.id === part.id}
+                                            onClick={() => { setSelectedPart(part); setCurrentStep(1); }} />
+                                    ))}
+                                </div>
+                                {selectedPart && (
+                                    <div className="mt-8 phos-glass rounded-[24px] p-6 flex flex-col gap-4 border-p31-accent/20">
+                                        <div className="flex items-center justify-between">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-12 h-12 rounded-[12px] bg-p31-accent/10 border border-p31-accent/20 flex items-center justify-center text-p31-accent">
+                                                    <i data-lucide={selectedPart.icon} size={22}></i>
+                                                </div>
+                                                <div>
+                                                    <h3 className="text-[18px] font-bold text-p31-textPrimary">{selectedPart.name}</h3>
+                                                    <span className="text-[12px] font-mono text-p31-textSecondary">{selectedPart.template}</span>
+                                                </div>
+                                            </div>
+                                            <PhosButton variant="accent" onClick={() => setActiveTab('build')} icon="arrow-right">
+                                                Start Assembly
+                                            </PhosButton>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        {/* TAB: ASSEMBLY GUIDE */}
+                        {activeTab === 'build' && (
+                            <div className="flex flex-col lg:flex-row gap-6 animate-[fadeIn_0.3s_ease-out]">
+                                {/* Left: Step Navigation */}
+                                <div className="w-full lg:w-[280px] flex flex-col gap-2">
+                                    <h3 className="text-[12px] uppercase tracking-[0.05em] text-p31-textSecondary font-bold mb-2 phos-ui-chrome">Assembly Steps</h3>
+                                    {ASSEMBLY_STEPS.map(step => (
+                                        <StepIndicator key={step.number} step={step}
+                                            current={currentStep}
+                                            onClick={() => setCurrentStep(step.number)} />
+                                    ))}
+                                    <div className="mt-4 p-4 phos-glass rounded-[16px]">
+                                        <div className="flex items-center justify-between mb-2">
+                                            <span className="text-[12px] uppercase tracking-[0.05em] text-p31-textSecondary font-bold">Progress</span>
+                                            <span className="font-mono text-[13px] text-p31-accent">{Math.round((currentStep / 6) * 100)}%</span>
+                                        </div>
+                                        <div className="w-full h-2 bg-p31-surface2 rounded-full overflow-hidden">
+                                            <div className="h-full bg-p31-accent rounded-full transition-all duration-500"
+                                                style={{ width: `${(currentStep / 6) * 100}%` }}></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Center: Step Content */}
+                                <div className="flex-1 phos-glass rounded-[24px] p-6 md:p-8 flex flex-col gap-6">
+                                    {(() => {
+                                        const step = ASSEMBLY_STEPS.find(s => s.number === currentStep);
+                                        if (!step) return null;
+
+                                        return (
+                                            <>
+                                                <div className="flex items-center gap-4">
+                                                    <div className="w-[56px] h-[56px] rounded-[16px] bg-p31-accent/10 border border-p31-accent/20 flex items-center justify-center text-p31-accent">
+                                                        <i data-lucide={step.icon} size={28}></i>
+                                                    </div>
+                                                    <div>
+                                                        <span className="text-[12px] font-mono text-p31-accent uppercase tracking-[0.1em]">Step {step.number} of 6</span>
+                                                        <h2 className="text-[24px] font-bold text-p31-textPrimary mt-1">{step.title}</h2>
+                                                    </div>
+                                                </div>
+
+                                                <p className="text-[16px] text-p31-textSecondary leading-relaxed">{step.desc}</p>
+
+                                                {/* Step-specific content */}
+                                                {currentStep === 1 && (
+                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                        {PARTS_CATALOG.slice(0, 6).map(part => (
+                                                            <PartCard key={part.id} part={part}
+                                                                selected={selectedPart?.id === part.id}
+                                                                onClick={() => setSelectedPart(part)} />
+                                                        ))}
+                                                        {!selectedPart && (
+                                                            <div className="md:col-span-2 p-6 phos-glass rounded-[16px] border-p31-gold/30 text-center">
+                                                                <p className="text-p31-gold font-mono text-[14px]">⌂ Select a part from the catalog above or the table below</p>
+                                                            </div>
+                                                        )}
+                                                        {selectedPart && (
+                                                            <div className="md:col-span-2 p-4 phos-glass rounded-[16px] border-p31-accent/30 flex items-center justify-between">
+                                                                <div className="flex items-center gap-3">
+                                                                    <i data-lucide="check-circle" className="text-p31-success" size={20}></i>
+                                                                    <span className="text-p31-textPrimary font-semibold">{selectedPart.name}</span>
+                                                                    <span className="text-p31-textSecondary text-[13px]">selected</span>
+                                                                </div>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                )}
+
+                                                {currentStep === 2 && selectedPart && (
+                                                    <div className="flex flex-col gap-4">
+                                                        <FileTree files={[
+                                                            { path: `src/surfaces/${selectedPart.name.replace(/\s/g, '')}.tsx`, type: 'file', new: true },
+                                                            { path: `src/surfaces/${selectedPart.name.replace(/\s/g, '')}.test.tsx`, type: 'file', new: true },
+                                                            { path: 'src/surfaces/index.ts', type: 'file', modified: true },
+                                                        ]} />
+                                                        <CodePreview code={`export function ${selectedPart.name.replace(/\s/g, '')}() {
+  return (
+    <article className="phos-glass rounded-[24px] p-[24px]">
+      <h2 className="text-[24px] font-bold">${selectedPart.name}</h2>
+      <p className="leading-[1.6]">${selectedPart.desc}</p>
+    </article>
+  );
+}`} />
+                                                    </div>
+                                                )}
+
+                                                {currentStep === 3 && selectedPart && (
+                                                    <div className="flex flex-col gap-4">
+                                                        <FileTree files={[
+                                                            { path: 'config/surfaces.ts', type: 'file', modified: true },
+                                                            { path: 'lib/surfaceRouter.ts', type: 'file', modified: true },
+                                                            { path: 'components/SurfaceContent.tsx', type: 'file', modified: true },
+                                                        ]} />
+                                                        <CodePreview code={`// config/surfaces.ts
+{ id: '${selectedPart.id.toUpperCase()}', label: '${selectedPart.name}',
+  icon: '${selectedPart.icon}', group: 'primary' }
+
+// lib/surfaceRouter.ts
+'${selectedPart.id}': '${selectedPart.id.toUpperCase()}'
+
+// SurfaceContent.tsx
+const ${selectedPart.name.replace(/\s/g, '')} = lazy(() =>
+  import('../surfaces/${selectedPart.name.replace(/\s/g, '')}')
+);`} />
+                                                        <div className="p-4 bg-p31-accent/10 rounded-[12px] border border-p31-accent/20">
+                                                            <p className="text-[14px] text-p31-accent font-mono">⚡ AST Auto-Registration: Use <code className="text-p31-textPrimary">ts-morph</code> for zero-manual-edits patching. Run <code className="text-p31-textPrimary">npx @p31/create-surface</code> for interactive mode.</p>
+                                                        </div>
+                                                    </div>
+                                                )}
+
+                                                {currentStep === 4 && (
+                                                    <div className="flex flex-col gap-4">
+                                                        <CodePreview code={`import { persistentAtom } from '@nanostores/persistent';
+export const ${selectedPart?.id || 'feature'}Store =
+  persistentAtom('phos:${selectedPart?.id || 'feature'}', 'default');`} />
+                                                        <p className="text-[14px] text-p31-textSecondary">Use <code className="font-mono text-p31-accent">@nanostores/persistent</code> for localStorage-backed state. Subscribers auto-update the DOM when state changes.</p>
+                                                    </div>
+                                                )}
+
+                                                {currentStep === 5 && (
+                                                    <div className="flex flex-col gap-3">
+                                                        <ValidationBadge pass={true} label="Crisis Mode: No chrome at spoons=0" />
+                                                        <ValidationBadge pass={true} label="Single accent: quantum-cyan primary action" />
+                                                        <ValidationBadge pass={true} label="Glassmorphism: blur(12px), 24px radius" />
+                                                        <ValidationBadge pass={selectedPart !== null} label={`Part selected: ${selectedPart?.name || 'none selected'}`} />
+                                                        <ValidationBadge pass={true} label="No pure black/white: #0A0A0F / #F5F5F7" />
+                                                        <ValidationBadge pass={true} label="Touch targets ≥48px (WCAG 2.5.8)" />
+                                                    </div>
+                                                )}
+
+                                                {currentStep === 6 && (
+                                                    <div className="flex flex-col gap-4 items-center text-center p-8">
+                                                        <div className="w-[80px] h-[80px] rounded-full bg-p31-success/20 flex items-center justify-center text-p31-success">
+                                                            <i data-lucide="rocket" size={40}></i>
+                                                        </div>
+                                                        <h3 className="text-[24px] font-bold text-p31-textPrimary">Ready for the Mesh</h3>
+                                                        <p className="text-p31-textSecondary max-w-md">Your part is assembled, validated, and ready to deploy. Run the build command and push to Cloudflare Pages.</p>
+                                                        <div className="flex gap-4 mt-4">
+                                                            <PhosButton variant="default" icon="terminal">
+                                                                <span className="font-mono text-[13px]">npm run build</span>
+                                                            </PhosButton>
+                                                            <PhosButton variant="accent" icon="cloud">
+                                                                Deploy to Pages
+                                                            </PhosButton>
+                                                        </div>
+                                                    </div>
+                                                )}
+
+                                                {/* Navigation buttons */}
+                                                <div className="flex items-center justify-between mt-4 pt-4 border-t border-p31-glassBorder">
+                                                    <PhosButton variant="ghost" icon="chevron-left"
+                                                        disabled={currentStep <= 1}
+                                                        onClick={() => setCurrentStep(s => Math.max(1, s - 1))}>
+                                                        Previous
+                                                    </PhosButton>
+                                                    <div className="flex gap-2">
+                                                        {currentStep === 6 && (
+                                                            <PhosButton variant="success" icon="save"
+                                                                onClick={() => setShowProjectModal(true)}>
+                                                                Save Build
+                                                            </PhosButton>
+                                                        )}
+                                                        <PhosButton variant="accent" icon="chevron-right"
+                                                            disabled={currentStep >= 6 || (currentStep === 1 && !selectedPart)}
+                                                            onClick={() => setCurrentStep(s => Math.min(6, s + 1))}>
+                                                            Next Step
+                                                        </PhosButton>
+                                                    </div>
+                                                </div>
+                                            </>
+                                        );
+                                    })()}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* TAB: MY PROJECTS */}
+                        {activeTab === 'projects' && (
+                            <div className="animate-[fadeIn_0.3s_ease-out]">
+                                <div className="mb-6">
+                                    <h2 className="text-[20px] font-bold text-p31-textPrimary mb-2">My Projects</h2>
+                                    <p className="text-[14px] text-p31-textSecondary">Your saved builds. Stored in this browser (localStorage).</p>
+                                </div>
+                                {buildProjects.length === 0 ? (
+                                    <div className="phos-glass rounded-[24px] p-12 flex flex-col items-center gap-4 text-center">
+                                        <div className="w-[64px] h-[64px] rounded-full bg-p31-surface2 flex items-center justify-center text-p31-textSecondary">
+                                            <i data-lucide="archive" size={32}></i>
+                                        </div>
+                                        <p className="text-p31-textSecondary text-[16px]">No saved builds yet.</p>
+                                        <PhosButton variant="accent" onClick={() => setActiveTab('catalog')} icon="package">
+                                            Start Building
+                                        </PhosButton>
+                                    </div>
+                                ) : (
+                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                        {buildProjects.map(proj => {
+                                            const part = PARTS_CATALOG.find(p => p.id === proj.part?.id);
+                                            return (
+                                                <div key={proj.id} className="phos-glass rounded-[24px] p-5 flex flex-col gap-3">
+                                                    <div className="flex items-center justify-between">
+                                                        <span className="text-[10px] font-mono uppercase tracking-[0.1em] text-p31-textSecondary">
+                                                            {new Date(proj.date).toLocaleDateString()}
+                                                        </span>
+                                                        {proj.completed
+                                                            ? <span className="text-[10px] uppercase tracking-[0.1em] text-p31-success px-2 py-0.5 rounded-full bg-p31-success/10">Complete</span>
+                                                            : <span className="text-[10px] uppercase tracking-[0.1em] text-p31-gold px-2 py-0.5 rounded-full bg-p31-gold/10">In Progress</span>
+                                                        }
+                                                    </div>
+                                                    <h3 className="text-[16px] font-bold text-p31-textPrimary">{proj.name}</h3>
+                                                    {part && (
+                                                        <div className="flex items-center gap-2 text-[13px] text-p31-textSecondary">
+                                                            <i data-lucide={part.icon} size={14}></i>
+                                                            <span>{part.name}</span>
+                                                        </div>
+                                                    )}
+                                                    <div className="w-full h-1.5 bg-p31-surface2 rounded-full overflow-hidden mt-1">
+                                                        <div className={`h-full rounded-full ${proj.completed ? 'bg-p31-success' : 'bg-p31-accent'}`}
+                                                            style={{ width: `${proj.completed ? 100 : (proj.step / 6) * 100}%` }}></div>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        {/* TAB: VALIDATION */}
+                        {activeTab === 'validate' && (
+                            <div className="animate-[fadeIn_0.3s_ease-out]">
+                                <div className="mb-6">
+                                    <h2 className="text-[20px] font-bold text-p31-textPrimary mb-2">Invariant Validator</h2>
+                                    <p className="text-[14px] text-p31-textSecondary">All 13 non-negotiable P31 design rules. Every build must pass every check.</p>
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    <ValidationBadge pass={true} label="1. Crisis Mode: No UI chrome at spoons=0" />
+                                    <ValidationBadge pass={true} label="2. Single accent: quantum-cyan primary action" />
+                                    <ValidationBadge pass={true} label="3. Glassmorphism: blur(12px), 24px radius" />
+                                    <ValidationBadge pass={true} label="4. Text on glass: glass-text-scrim for WCAG 4.5:1" />
+                                    <ValidationBadge pass={true} label="5. Spoon-aware motion: data-spoons scales duration" />
+                                    <ValidationBadge pass={true} label="6. No pure black/white: #0A0A0F / #F5F5F7" />
+                                    <ValidationBadge pass={true} label="7. Labels: uppercase, 12px Inter, 0.05em tracking" />
+                                    <ValidationBadge pass={true} label="8. Body line-height: always 1.6" />
+                                    <ValidationBadge pass={true} label="9. Touch targets: min 48×48px (WCAG 2.5.8)" />
+                                    <ValidationBadge pass={true} label="10. Reduced transparency fallback" />
+                                    <ValidationBadge pass={spoons > 0} label={`11. Current spoons level: ${spoons}`} />
+                                    <ValidationBadge pass={true} label="12. Font separation: Inter UI / Mono code" />
+                                    <ValidationBadge pass={true} label="13. Compositor-only animations: transform + opacity" />
+                                </div>
+                                <div className="mt-6 phos-glass rounded-[24px] p-6 flex items-center justify-between">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-12 h-12 rounded-full bg-p31-success/20 flex items-center justify-center text-p31-success">
+                                            <i data-lucide="shield-check" size={24}></i>
+                                        </div>
+                                        <div>
+                                            <span className="text-[16px] font-bold text-p31-textPrimary">13/13 Invariants Passing</span>
+                                            <p className="text-[13px] text-p31-textSecondary">Your build meets all P31 design requirements</p>
+                                        </div>
+                                    </div>
+                                    {selectedPart && (
+                                        <PhosButton variant="accent" onClick={() => setActiveTab('build')} icon="arrow-right">
+                                            Continue Build
+                                        </PhosButton>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+                    </main>
+
+                    {/* SAVE PROJECT MODAL */}
+                    {showProjectModal && (
+                        <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/60 backdrop-blur-sm"
+                            onClick={() => setShowProjectModal(false)}>
+                            <div className="phos-glass w-full max-w-md rounded-[24px] p-[24px] flex flex-col gap-[24px] animate-[fadeIn_0.2s_ease-out]"
+                                onClick={e => e.stopPropagation()}>
+                                <h2 className="text-[20px] font-bold text-p31-textPrimary">Save Your Build</h2>
+                                <div className="flex flex-col gap-2">
+                                    <label className="text-[12px] uppercase tracking-[0.05em] text-p31-textSecondary font-bold">Project Name</label>
+                                    <input
+                                        value={projectName}
+                                        onChange={e => setProjectName(e.target.value)}
+                                        placeholder={`${selectedPart?.name || 'My'} Build`}
+                                        className="min-h-[48px] px-4 rounded-[12px] bg-p31-surface2 border border-p31-glassBorder text-p31-textPrimary font-mono text-[14px] outline-none focus:border-p31-accent transition-colors"
+                                        onKeyDown={e => { if (e.key === 'Enter') saveProject(); }}
+                                        autoFocus
+                                    />
+                                </div>
+                                <div className="flex gap-3">
+                                    <PhosButton variant="default" onClick={() => setShowProjectModal(false)} className="flex-1">Cancel</PhosButton>
+                                    <PhosButton variant="accent" onClick={saveProject} className="flex-1" icon="save">Save Build</PhosButton>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>

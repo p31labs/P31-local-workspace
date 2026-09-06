@@ -1,0 +1,17 @@
+{
+  "@context": {
+    "@version": 1.1,
+    "SpInResource": "https://p31.network/spin#SpInResource",
+    "id": "@id",
+    "type": "@type",
+    "physical_format": "https://p31.network/spin#physical_format",
+    "title": "https://schema.org/name",
+    "neuro_metadata": "https://p31.network/spin#neuro_metadata",
+    "monotropic_potential": "https://p31.network/spin#monotropic_potential",
+    "executive_function_requirement": "https://p31.network/spin#executive_function_requirement",
+    "multiplayer_anxiety_index": "https://p31.network/spin#multiplayer_anxiety_index",
+    "stimulation_profile": "https://p31.network/spin#stimulation_profile",
+    "custody_state": "https://p31.network/spin#custody_state",
+    "available_for_mesh_swap": "https://p31.network/spin#available_for_mesh_swap"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "name": "sovereign-justice",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev src/rag-pipeline.ts --config wrangler-rag.toml",
+    "deploy:rag": "wrangler deploy --config wrangler-rag.toml",
+    "deploy:evidence": "wrangler deploy --config wrangler-evidence.toml",
+    "deploy:escrow": "wrangler deploy --config wrangler-escrow.toml",
+    "deploy:all": "npm run deploy:rag && npm run deploy:evidence && npm run deploy:escrow",
+    "migrate": "wrangler d1 migrations apply JUSTICE_D1 --remote",
+    "migrate:local": "wrangler d1 migrations apply JUSTICE_D1 --local",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "sbom": "bash scripts/sbom.sh",
+    "d1:backup": "bash scripts/d1-backup.sh",
+    "rotate:taler": "bash scripts/rotate-taler-secrets.sh",
+    "k6": "k6 run tests/load/k6.js",
+    "k6:staging": "k6 run tests/load/k6.js -e BASE_URL=https://staging.sovereign-justice.trimtab-signal.workers.dev"
+  },
+  "dependencies": {
+    "@p31/sovereign": "workspace:*",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250301.0",
+    "typescript": "^5.7.0",
+    "vitest": "^3.0.0",
+    "wrangler": "4.107.0"
+  }
+}

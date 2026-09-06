@@ -1,0 +1,2493 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>P31 Environment Generator</title>
+    <meta name="description" content="Environment configuration generator for P31 monorepo projects. Forge-aware .env scaffolding for Cloudflare Workers, KV namespaces, and app secrets." />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
+          sans-serif;
+        background: #0f172a;
+        color: #e2e8f0;
+        min-height: 100vh;
+        line-height: 1.6;
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 24px;
+      }
+
+      /* Header */
+      .header {
+        margin-bottom: 24px;
+      }
+
+      .header-content {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 8px;
+      }
+
+      .logo {
+        width: 48px;
+        height: 48px;
+        background: linear-gradient(135deg, #3b82f6, #06b6d4);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+      }
+
+      h1 {
+        font-size: 28px;
+        font-weight: 700;
+        background: linear-gradient(135deg, #60a5fa, #22d3ee);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .subtitle {
+        color: #94a3b8;
+        font-size: 14px;
+      }
+
+      .forge-ref {
+        color: #7a27ff;
+      }
+
+      .forge-cmd {
+        font-size: 12px;
+        color: #94a3b8;
+      }
+
+      /* Layout */
+      .main-grid {
+        display: grid;
+        grid-template-columns: 320px 1fr;
+        gap: 24px;
+      }
+
+      @media (max-width: 1024px) {
+        .main-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* Sidebar */
+      .sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .panel {
+        background: #1e293b;
+        border: 1px solid #334155;
+        border-radius: 12px;
+        padding: 20px;
+      }
+
+      .panel-label {
+        display: block;
+        font-size: 13px;
+        font-weight: 500;
+        color: #94a3b8;
+        margin-bottom: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      select {
+        width: 100%;
+        background: #0f172a;
+        border: 1px solid #475569;
+        border-radius: 8px;
+        padding: 10px 12px;
+        font-size: 14px;
+        color: #e2e8f0;
+        cursor: pointer;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+        background-size: 16px;
+      }
+
+      select:focus {
+        outline: none;
+        border-color: #3b82f6;
+      }
+
+      select optgroup {
+        background: #1e293b;
+        color: #94a3b8;
+        font-weight: 600;
+      }
+
+      select option {
+        background: #0f172a;
+        color: #e2e8f0;
+      }
+
+      .description {
+        font-size: 12px;
+        color: #64748b;
+        margin-top: 8px;
+        line-height: 1.5;
+      }
+
+      .env-buttons {
+        display: flex;
+        gap: 8px;
+      }
+
+      .env-btn {
+        flex: 1;
+        padding: 10px;
+        border: none;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+        background: #334155;
+        color: #cbd5e1;
+      }
+
+      .env-btn:hover {
+        background: #475569;
+      }
+
+      .env-btn.active {
+        background: #3b82f6;
+        color: white;
+      }
+
+      .env-btn.active.prod {
+        background: #dc2626;
+      }
+
+      .checkbox-label {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+      }
+
+      .checkbox-label input {
+        width: 18px;
+        height: 18px;
+        accent-color: #3b82f6;
+      }
+
+      .checkbox-label span {
+        font-size: 14px;
+        color: #cbd5e1;
+      }
+
+      /* Variable Panel */
+      .variables-panel {
+        background: #1e293b;
+        border: 1px solid #334155;
+        border-radius: 12px;
+        overflow: hidden;
+      }
+
+      .panel-header {
+        padding: 20px;
+        border-bottom: 1px solid #334155;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .panel-header h2 {
+        font-size: 16px;
+        font-weight: 600;
+      }
+
+      .variable-count {
+        font-size: 12px;
+        color: #64748b;
+        background: #0f172a;
+        padding: 4px 10px;
+        border-radius: 20px;
+      }
+
+      .variables-content {
+        padding: 20px;
+        max-height: 600px;
+        overflow-y: auto;
+      }
+
+      .category-section {
+        margin-bottom: 24px;
+      }
+
+      .category-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 12px;
+        font-weight: 500;
+        font-size: 14px;
+      }
+
+      .category-icon {
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .database {
+        color: #60a5fa;
+      }
+      .api_keys {
+        color: #fbbf24;
+      }
+      .auth {
+        color: #4ade80;
+      }
+      .security {
+        color: #f87171;
+      }
+      .app_config {
+        color: #a78bfa;
+      }
+      .services {
+        color: #22d3ee;
+      }
+      .dev {
+        color: #94a3b8;
+      }
+
+      .variable-card {
+        background: #0f172a;
+        border: 1px solid #334155;
+        border-radius: 8px;
+        padding: 16px;
+        margin-bottom: 12px;
+      }
+
+      .variable-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 8px;
+      }
+
+      .variable-key {
+        font-family: "Monaco", "Consolas", monospace;
+        font-size: 13px;
+        color: #60a5fa;
+        font-weight: 500;
+      }
+
+      .required-badge {
+        font-size: 10px;
+        color: #f87171;
+        font-weight: 600;
+        text-transform: uppercase;
+      }
+
+      .get-key-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 11px;
+        color: #22d3ee;
+        text-decoration: none;
+        margin-top: 4px;
+      }
+
+      .get-key-link:hover {
+        text-decoration: underline;
+      }
+
+      .get-key-link svg {
+        width: 12px;
+        height: 12px;
+      }
+
+      .variable-description {
+        font-size: 12px;
+        color: #94a3b8;
+        margin-bottom: 10px;
+        line-height: 1.5;
+      }
+
+      .variable-input {
+        width: 100%;
+        background: #1e293b;
+        border: 1px solid #475569;
+        border-radius: 6px;
+        padding: 10px 12px;
+        font-size: 13px;
+        color: #e2e8f0;
+        font-family: "Monaco", "Consolas", monospace;
+      }
+
+      .variable-input:focus {
+        outline: none;
+        border-color: #3b82f6;
+      }
+
+      .variable-input.error {
+        border-color: #dc2626;
+        color: #fca5a5;
+      }
+
+      .validation-error {
+        font-size: 11px;
+        color: #f87171;
+        margin-top: 6px;
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #64748b;
+      }
+
+      .empty-state-icon {
+        font-size: 48px;
+        margin-bottom: 16px;
+        opacity: 0.5;
+      }
+
+      /* Output Panel */
+      .output-panel {
+        margin-top: 24px;
+        background: #1e293b;
+        border: 1px solid #334155;
+        border-radius: 12px;
+        overflow: hidden;
+      }
+
+      .output-tabs {
+        display: flex;
+        border-bottom: 1px solid #334155;
+        background: #0f172a;
+      }
+
+      .output-tab {
+        padding: 14px 24px;
+        border: none;
+        background: transparent;
+        color: #94a3b8;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+        border-bottom: 2px solid transparent;
+      }
+
+      .output-tab:hover {
+        color: #cbd5e1;
+        background: #1e293b;
+      }
+
+      .output-tab.active {
+        color: #60a5fa;
+        border-bottom-color: #60a5fa;
+        background: #1e293b;
+      }
+
+      .output-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 20px;
+        background: #0f172a;
+      }
+
+      .output-filename {
+        font-family: "Monaco", "Consolas", monospace;
+        font-size: 13px;
+        color: #94a3b8;
+      }
+
+      .copy-btn {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        background: #3b82f6;
+        border: none;
+        border-radius: 6px;
+        color: white;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .copy-btn:hover {
+        background: #2563eb;
+      }
+
+      .copy-btn.copied {
+        background: #22c55e;
+      }
+
+      .copy-btn svg {
+        width: 16px;
+        height: 16px;
+      }
+
+      .code-block {
+        padding: 20px;
+        background: #020617;
+        overflow-x: auto;
+      }
+
+      pre {
+        font-family: "Monaco", "Consolas", monospace;
+        font-size: 13px;
+        line-height: 1.6;
+        color: #e2e8f0;
+        white-space: pre-wrap;
+        word-break: break-all;
+      }
+
+      /* Security Footer */
+      .security-footer {
+        margin-top: 24px;
+        padding: 20px;
+        background: linear-gradient(
+          135deg,
+          rgba(220, 38, 38, 0.1),
+          rgba(234, 88, 12, 0.1)
+        );
+        border: 1px solid rgba(220, 38, 38, 0.3);
+        border-radius: 12px;
+      }
+
+      .security-content {
+        display: flex;
+        gap: 16px;
+      }
+
+      .security-icon {
+        width: 40px;
+        height: 40px;
+        background: rgba(220, 38, 38, 0.2);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+
+      .security-icon svg {
+        width: 24px;
+        height: 24px;
+        color: #f87171;
+      }
+
+      .security-text h3 {
+        font-size: 16px;
+        font-weight: 600;
+        color: #fca5a5;
+        margin-bottom: 8px;
+      }
+
+      .security-text ul {
+        list-style: none;
+        font-size: 13px;
+        color: #cbd5e1;
+      }
+
+      .security-text li {
+        margin-bottom: 6px;
+        padding-left: 16px;
+        position: relative;
+      }
+
+      .security-text li::before {
+        content: "•";
+        position: absolute;
+        left: 0;
+        color: #f87171;
+      }
+
+      .security-text code {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-family: "Monaco", "Consolas", monospace;
+        font-size: 12px;
+      }
+
+      /* Scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: #0f172a;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: #475569;
+        border-radius: 4px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: #64748b;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header class="header">
+        <div class="header-content">
+          <div class="logo">🔧</div>
+          <h1>P31 Environment Generator</h1>
+        </div>
+        <p class="subtitle">
+          Zero-friction environment variable configuration with validation and
+          best practices &nbsp;·&nbsp; <span class="forge-ref">The Forge</span>:
+          <code class="forge-cmd">python p31_forge.py input.md</code> → branded
+          HTML
+        </p>
+      </header>
+
+      <div class="main-grid">
+        <aside class="sidebar">
+          <div class="panel">
+            <label class="panel-label">Ecosystem</label>
+            <select id="ecosystemSelect">
+              <option value="">Select ecosystem...</option>
+              <optgroup label="P31 Ecosystem">
+                <option value="bonding">⚛️ BONDING Game</option>
+                <option value="spaceship_earth">🚀 Spaceship Earth</option>
+                <option value="donate_api">💎 Donate API</option>
+                <option value="discord_bot">🤖 Discord Bot</option>
+                <option value="social_dispatch">
+                  🔺 Social Dispatch (Operation Trimtab)
+                </option>
+                <option value="ai_inference">🧠 AI Inference Keys</option>
+                <option value="oracle_terminal">🔮 Oracle Terminal</option>
+              </optgroup>
+              <optgroup label="Generic Frameworks">
+                <option value="nodejs" selected>🟢 Node.js / Express</option>
+                <option value="python">🐍 Python / Django</option>
+                <option value="java">☕ Java / Spring Boot</option>
+                <option value="go">🐹 Go / Gin</option>
+                <option value="ruby">💎 Ruby / Rails</option>
+              </optgroup>
+            </select>
+            <p class="description" id="ecosystemDesc">
+              Generic Node.js application with Express server
+            </p>
+          </div>
+
+          <div class="panel">
+            <label class="panel-label">Framework</label>
+            <select id="frameworkSelect">
+              <option value="nodejs">Node.js / Express</option>
+              <option value="python">Python / Django / FastAPI</option>
+              <option value="java">Java / Spring Boot</option>
+              <option value="go">Go / Gin</option>
+              <option value="ruby">Ruby / Rails</option>
+            </select>
+          </div>
+
+          <div class="panel">
+            <label class="panel-label">Environment</label>
+            <div class="env-buttons">
+              <button class="env-btn active" data-env="development">Dev</button>
+              <button class="env-btn" data-env="staging">Staging</button>
+              <button class="env-btn prod" data-env="production">Prod</button>
+            </div>
+          </div>
+
+          <div class="panel">
+            <label class="checkbox-label">
+              <input type="checkbox" id="showOptional" checked />
+              <span>Show optional variables</span>
+            </label>
+          </div>
+        </aside>
+
+        <main>
+          <div class="variables-panel">
+            <div class="panel-header">
+              <h2>Environment Variables</h2>
+              <span class="variable-count" id="varCount">0 variables</span>
+            </div>
+            <div class="variables-content" id="variablesContent">
+              <div class="empty-state">
+                <div class="empty-state-icon">📝</div>
+                <p>Select an ecosystem to generate environment variables</p>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+
+      <div class="output-panel" id="outputPanel" style="display: none">
+        <div class="output-tabs">
+          <button class="output-tab active" data-tab="env">.env File</button>
+          <button class="output-tab" data-tab="github">GitHub CLI</button>
+          <button class="output-tab" data-tab="docker">Docker</button>
+        </div>
+        <div class="output-header">
+          <span class="output-filename" id="outputFilename">.env</span>
+          <button class="copy-btn" id="copyBtn">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+              />
+            </svg>
+            <span>Copy</span>
+          </button>
+        </div>
+        <div class="code-block">
+          <pre id="outputContent"># Select an ecosystem to generate output</pre>
+        </div>
+      </div>
+
+      <footer class="security-footer">
+        <div class="security-content">
+          <div class="security-icon">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+              />
+            </svg>
+          </div>
+          <div class="security-text">
+            <h3>Security Best Practices</h3>
+            <ul>
+              <li>
+                Never commit <code>.env</code> files to version control - add
+                them to <code>.gitignore</code>
+              </li>
+              <li>
+                Rotate any credentials immediately if accidentally exposed
+              </li>
+              <li>
+                Use environment-specific secrets (never reuse production keys in
+                dev)
+              </li>
+              <li>
+                Consider using a secrets manager (HashiCorp Vault, AWS Secrets
+                Manager, 1Password)
+              </li>
+              <li>
+                Enable branch protection rules requiring reviews before
+                deployment
+              </li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script>
+      // Icons SVG strings
+      const icons = {
+        database: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" /></svg>`,
+        api_keys: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" /></svg>`,
+        auth: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>`,
+        security: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>`,
+        app_config: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>`,
+        services: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>`,
+        dev: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>`,
+        external: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>`,
+      };
+
+      // Environment variable definitions
+      const ecosystemPresets = {
+        bonding: {
+          name: "BONDING Game",
+          description:
+            "Multiplayer molecular bonding game with Three.js and Cloudflare Workers",
+          variables: [
+            {
+              key: "VITE_RELAY_URL",
+              description: "Cloudflare Worker relay endpoint",
+              example: "https://bonding-relay.your-account.workers.dev",
+              required: true,
+              category: "services",
+              format: "url",
+              getUrl: "https://dash.cloudflare.com",
+              getLabel: "Cloudflare Dashboard",
+            },
+            {
+              key: "VITE_KV_NAMESPACE_ID",
+              description: "Cloudflare KV namespace for game state",
+              example: "abc123def456",
+              required: true,
+              category: "services",
+              getUrl: "https://dash.cloudflare.com",
+              getLabel: "Workers & Pages > KV",
+            },
+            {
+              key: "VITE_TURNSTILE_SITE_KEY",
+              description: "Cloudflare Turnstile site key for bot protection",
+              example: "0x4AAAAAA...",
+              required: false,
+              category: "security",
+              getUrl: "https://dash.cloudflare.com",
+              getLabel: "Turnstile",
+            },
+            {
+              key: "VITE_ANALYTICS_ID",
+              description: "Cloudflare Web Analytics site tag",
+              example: "123456789abcdef",
+              required: false,
+              category: "services",
+            },
+          ],
+        },
+        spaceship_earth: {
+          name: "Spaceship Earth",
+          description:
+            "Sovereign Mesh interface with WebGPU and cognitive shielding",
+          variables: [
+            {
+              key: "VITE_NODE_ZERO_URL",
+              description: "Node Zero mesh endpoint",
+              example: "wss://node-zero.local:8080",
+              required: true,
+              category: "services",
+              format: "url",
+            },
+            {
+              key: "VITE_SOVEREIGN_KEY",
+              description: "Sovereign identity private key",
+              example: "0x...",
+              required: true,
+              category: "security",
+              minLength: 64,
+            },
+            {
+              key: "VITE_TELEMETRY_ENDPOINT",
+              description: "Telemetry collection endpoint",
+              example: "https://telemetry.p31.workers.dev",
+              required: false,
+              category: "services",
+              format: "url",
+            },
+            {
+              key: "VITE_COGNITIVE_SHIELD_ENABLED",
+              description: "Enable cognitive shield",
+              example: "true",
+              required: false,
+              category: "security",
+              format: "boolean",
+            },
+          ],
+        },
+        donate_api: {
+          name: "Donate API",
+          description: "Stripe Checkout integration via Cloudflare Worker",
+          variables: [
+            {
+              key: "STRIPE_SECRET_KEY",
+              description: "Stripe API secret key (test/live)",
+              example: "sk_test_... or sk_live_...",
+              required: true,
+              category: "api_keys",
+              minLength: 20,
+              getUrl: "https://dashboard.stripe.com/apikeys",
+              getLabel: "Stripe Dashboard",
+            },
+            {
+              key: "STRIPE_PUBLISHABLE_KEY",
+              description: "Stripe publishable key",
+              example: "pk_test_... or pk_live_...",
+              required: true,
+              category: "api_keys",
+              minLength: 20,
+              getUrl: "https://dashboard.stripe.com/apikeys",
+              getLabel: "Stripe Dashboard",
+            },
+            {
+              key: "STRIPE_WEBHOOK_SECRET",
+              description: "Stripe webhook endpoint secret",
+              example: "whsec_...",
+              required: true,
+              category: "security",
+              minLength: 20,
+            },
+            {
+              key: "ALLOWED_ORIGINS",
+              description: "Comma-separated list of allowed CORS origins",
+              example: "https://phosphorus31.org,https://www.phosphorus31.org",
+              required: true,
+              category: "security",
+              format: "url",
+            },
+            {
+              key: "SUCCESS_URL",
+              description: "Redirect URL after successful donation",
+              example: "https://phosphorus31.org/thank-you",
+              required: true,
+              category: "app_config",
+              format: "url",
+            },
+            {
+              key: "CANCEL_URL",
+              description: "Redirect URL if donation cancelled",
+              example: "https://phosphorus31.org/donate",
+              required: true,
+              category: "app_config",
+              format: "url",
+            },
+          ],
+        },
+        discord_bot: {
+          name: "Discord Bot",
+          description:
+            "P31 Discord Bot for cognitive assistance and Spoon economy integration",
+          variables: [
+            {
+              key: "DISCORD_TOKEN",
+              description: "Discord bot token for authentication",
+              example: "your_discord_bot_token",
+              required: true,
+              category: "api_keys",
+              minLength: 50,
+              getUrl: "https://discord.com/developers/applications",
+              getLabel: "Discord Developer Portal",
+            },
+            {
+              key: "DISCORD_CLIENT_ID",
+              description:
+                "Discord application client ID — required to register slash commands (/quantum-egg, /863) via the REST API",
+              example: "1234567890123456789",
+              required: false,
+              category: "app_config",
+              getUrl: "https://discord.com/developers/applications",
+              getLabel: "Developer Portal → General Information",
+            },
+            {
+              key: "DISCORD_GUILD_ID",
+              description:
+                "Guild (server) ID for instant slash command deployment to WYE-Delta during dev — skips the 1-hour global cache",
+              example: "9876543210987654321",
+              required: false,
+              category: "dev",
+              getUrl: "https://discord.com/developers/applications",
+              getLabel: "Right-click server → Copy Server ID",
+            },
+            {
+              key: "BOT_PREFIX",
+              description: "Command prefix for the bot",
+              example: "p31",
+              required: true,
+              category: "app_config",
+            },
+            {
+              key: "BONDING_API_URL",
+              description: "API endpoint for BONDING game integration",
+              example: "https://bonding.p31ca.org/api",
+              required: true,
+              category: "services",
+              format: "url",
+            },
+            {
+              key: "NODE_ONE_API_URL",
+              description: "API endpoint for Node One hardware",
+              example: "http://localhost:3001/api",
+              required: false,
+              category: "services",
+              format: "url",
+            },
+            {
+              key: "SPOON_API_URL",
+              description: "API endpoint for Spoon economy",
+              example: "https://phosphorus31.org/api/spoons",
+              required: false,
+              category: "services",
+              format: "url",
+            },
+            {
+              key: "TELEMETRY_API_URL",
+              description: "Telemetry collection endpoint",
+              example: "",
+              required: false,
+              category: "services",
+              format: "url",
+            },
+              {
+                key: "NODE_ONE_STATUS_URL",
+                description: "Status endpoint for Node One hardware",
+                example: "http://localhost:3001/status",
+                required: false,
+                category: "services",
+                format: "url",
+              },
+              {
+                key: "CORTEX_API_URL",
+                description: "P31 Cortex AI agents endpoint",
+                example: "https://p31-cortex.workers.dev",
+                required: false,
+                category: "services",
+                format: "url",
+              },
+              {
+                key: "SCE_API_URL",
+                description: "Social Content Engine endpoint",
+                example: "https://p31labs.github.io/social-content-engine",
+                required: false,
+                category: "services",
+                format: "url",
+              },
+              {
+              key: "RESPONSE_TIMEOUT_MS",
+              description: "API response timeout in milliseconds",
+              example: "5000",
+              required: false,
+              category: "app_config",
+              format: "number",
+            },
+            {
+              key: "BONDING_CHANNEL_ID",
+              description: "Discord channel ID for BONDING commands",
+              example: "",
+              required: false,
+              category: "app_config",
+            },
+            {
+              key: "NODE_ONE_CHANNEL_ID",
+              description: "Discord channel ID for Node One commands",
+              example: "",
+              required: false,
+              category: "app_config",
+            },
+            {
+              key: "ANNOUNCEMENTS_CHANNEL_ID",
+              description: "Discord channel ID for announcements",
+              example: "",
+              required: false,
+              category: "app_config",
+            },
+            {
+              key: "SHOWCASE_CHANNEL_ID",
+              description:
+                "Discord channel ID for Quantum Egg Hunt Chemical Egg listener. Auto-scaffolded on bot boot if left blank — bot will create #showcase and bind this dynamically.",
+              example: "",
+              required: false,
+              category: "app_config",
+              getUrl: "https://discord.com/developers/applications",
+              getLabel: "Right-click channel → Copy ID",
+            },
+            {
+              key: "ENABLE_FAWN_DETECTION",
+              description:
+                "Enable fawn response detection for cognitive safety",
+              example: "true",
+              required: false,
+              category: "security",
+              format: "boolean",
+            },
+            {
+              key: "MAX_SPOON_DISPLAY",
+              description: "Maximum number of spoons to display in embed",
+              example: "12",
+              required: false,
+              category: "app_config",
+              format: "number",
+            },
+            {
+              key: "NODE_ONE_WEBHOOK_PORT",
+              description: "Port for Node One webhook server",
+              example: "3000",
+              required: false,
+              category: "services",
+              format: "number",
+            },
+          ],
+        },
+        social_dispatch: {
+          name: "Social Dispatch (Operation Trimtab)",
+          description:
+            "Quantum Egg Hunt wave automation — GitHub Actions + all social platform API keys including Substack, Mastodon, Bluesky, and Nostr",
+          variables: [
+            // Discord
+            {
+              key: "DISCORD_WEBHOOK",
+              description:
+                "Discord webhook URL for wave dispatches and announcements",
+              example: "https://discord.com/api/webhooks/...",
+              required: true,
+              category: "services",
+              format: "url",
+              getUrl: "https://discord.com/developers/applications",
+              getLabel: "Server Settings → Integrations → Webhooks",
+            },
+            // Ko-fi
+            {
+              key: "KOFI_WEBHOOK",
+              description:
+                "Ko-fi webhook URL for donation event notifications (ko-fi.com/trimtab69420)",
+              example: "https://ko-fi.com/...",
+              required: false,
+              category: "services",
+              format: "url",
+              getUrl: "https://ko-fi.com/manage/webhooks",
+              getLabel: "Ko-fi Dashboard → Webhooks",
+            },
+            // Twitter/X
+            {
+              key: "TWITTER_BEARER_TOKEN",
+              description:
+                "Twitter/X Bearer token for read API access (broadcast.yml uses this for WCD auto-tweets)",
+              example: "AAAA...",
+              required: false,
+              category: "api_keys",
+              minLength: 80,
+              getUrl: "https://developer.twitter.com/en/portal/dashboard",
+              getLabel: "Twitter Developer Portal",
+            },
+            {
+              key: "TWITTER_API_KEY",
+              description:
+                "Twitter/X API key (OAuth 1.0a — required for posting)",
+              example: "abc123...",
+              required: false,
+              category: "api_keys",
+              minLength: 20,
+              getUrl: "https://developer.twitter.com/en/portal/dashboard",
+              getLabel: "Twitter Developer Portal",
+            },
+            {
+              key: "TWITTER_API_SECRET",
+              description: "Twitter/X API secret key",
+              example: "xyz456...",
+              required: false,
+              category: "api_keys",
+              minLength: 20,
+            },
+            {
+              key: "TWITTER_ACCESS_TOKEN",
+              description: "Twitter/X OAuth access token",
+              example: "...",
+              required: false,
+              category: "api_keys",
+              minLength: 20,
+            },
+            {
+              key: "TWITTER_ACCESS_TOKEN_SECRET",
+              description: "Twitter/X OAuth access token secret",
+              example: "...",
+              required: false,
+              category: "api_keys",
+              minLength: 20,
+            },
+            // Reddit
+            {
+              key: "REDDIT_CLIENT_ID",
+              description: "Reddit OAuth2 client ID",
+              example: "abc123",
+              required: false,
+              category: "api_keys",
+              getUrl: "https://www.reddit.com/prefs/apps",
+              getLabel: "Reddit App Preferences",
+            },
+            {
+              key: "REDDIT_CLIENT_SECRET",
+              description: "Reddit OAuth2 client secret",
+              example: "xyz456...",
+              required: false,
+              category: "api_keys",
+            },
+            {
+              key: "REDDIT_USERNAME",
+              description: "Reddit account username for posting",
+              example: "trimtab_p31",
+              required: false,
+              category: "app_config",
+            },
+            {
+              key: "REDDIT_PASSWORD",
+              description: "Reddit account password",
+              example: "...",
+              required: false,
+              category: "api_keys",
+              minLength: 8,
+            },
+            // LinkedIn
+            {
+              key: "LINKEDIN_ACCESS_TOKEN",
+              description:
+                "LinkedIn OAuth2 access token for org page posts (Wave 3)",
+              example: "AQX...",
+              required: false,
+              category: "api_keys",
+              minLength: 20,
+              getUrl: "https://www.linkedin.com/developers/apps",
+              getLabel: "LinkedIn Developer Apps",
+            },
+            // Substack — no public write API; posts via email or Zapier automation
+            {
+              key: "SUBSTACK_EMAIL",
+              description:
+                "Substack publication email for Zapier/IFTTT automation (thegeodesicself.substack.com). No write API exists — use this for webhook-based triggers only.",
+              example: "trimtab.signal@proton.me",
+              required: false,
+              category: "services",
+            },
+            // Mastodon
+            {
+              key: "MASTODON_ACCESS_TOKEN",
+              description:
+                "Mastodon API access token for federated posting (p31_social_broadcast_worker.js)",
+              example: "...",
+              required: false,
+              category: "api_keys",
+              minLength: 40,
+              getUrl: "https://mastodon.social/settings/applications",
+              getLabel: "Mastodon → Settings → Applications",
+            },
+            {
+              key: "MASTODON_INSTANCE_URL",
+              description: "Mastodon instance base URL",
+              example: "https://mastodon.social",
+              required: false,
+              category: "services",
+              format: "url",
+            },
+            // Bluesky
+            {
+              key: "BLUESKY_IDENTIFIER",
+              description: "Bluesky handle or DID for AT Protocol posting",
+              example: "trimtab.bsky.social",
+              required: false,
+              category: "api_keys",
+              getUrl: "https://bsky.app/settings/app-passwords",
+              getLabel: "Bluesky → Settings → App Passwords",
+            },
+            {
+              key: "BLUESKY_APP_PASSWORD",
+              description:
+                "Bluesky app-specific password (not your account password)",
+              example: "xxxx-xxxx-xxxx-xxxx",
+              required: false,
+              category: "api_keys",
+              minLength: 19,
+            },
+            // Nostr
+            {
+              key: "NOSTR_PRIVATE_KEY",
+              description:
+                "Nostr nsec private key for decentralized publishing (hex or bech32)",
+              example: "nsec1...",
+              required: false,
+              category: "security",
+              minLength: 63,
+            },
+            {
+              key: "NOSTR_RELAY_URLS",
+              description: "Comma-separated Nostr relay WebSocket URLs",
+              example:
+                "wss://relay.damus.io,wss://nos.lol,wss://relay.nostr.band",
+              required: false,
+              category: "services",
+            },
+            // Zenodo
+            {
+              key: "ZENODO_ACCESS_TOKEN",
+              description:
+                "Zenodo API token for DOI publishing and record updates (DOI: 10.5281/zenodo.19004485)",
+              example: "...",
+              required: false,
+              category: "api_keys",
+              minLength: 40,
+              getUrl:
+                "https://zenodo.org/account/settings/applications/tokens/new/",
+              getLabel: "Zenodo → Account → Applications",
+            },
+            // Slack
+            {
+              key: "SLACK_WEBHOOK_URL",
+              description: "Slack incoming webhook for P31 team notifications",
+              example: "https://hooks.slack.com/services/...",
+              required: false,
+              category: "services",
+              format: "url",
+              getUrl: "https://api.slack.com/apps",
+              getLabel: "Slack API → Incoming Webhooks",
+            },
+            // Cloudflare
+            {
+              key: "CLOUDFLARE_API_TOKEN",
+              description:
+                "Cloudflare API token for Worker deployment (social-drop-automation, broadcast worker)",
+              example: "...",
+              required: false,
+              category: "api_keys",
+              minLength: 40,
+              getUrl: "https://dash.cloudflare.com/profile/api-tokens",
+              getLabel: "Cloudflare API Tokens",
+            },
+            {
+              key: "CLOUDFLARE_ACCOUNT_ID",
+              description: "Cloudflare account ID",
+              example: "abc123...",
+              required: false,
+              category: "services",
+              getUrl: "https://dash.cloudflare.com",
+              getLabel: "Cloudflare Dashboard → Account ID",
+            },
+            // Runtime control
+            {
+              key: "GITHUB_PAT",
+              description:
+                "Fine-grained GitHub Personal Access Token — needed when Cloudflare Workers (social-drop-automation) trigger social-dispatch.yml externally via the GitHub API. Internal Actions runs use secrets.GITHUB_TOKEN automatically.",
+              example: "github_pat_...",
+              required: false,
+              category: "api_keys",
+              minLength: 40,
+              getUrl: "https://github.com/settings/tokens?type=beta",
+              getLabel: "GitHub → Settings → Fine-grained tokens",
+            },
+            {
+              key: "WAVE_SELECTOR",
+              description:
+                'Default wave to dispatch (1-6 or "all"). Overridden by GitHub Actions input at runtime.',
+              example: "1",
+              required: false,
+              category: "app_config",
+            },
+            {
+              key: "DRY_RUN",
+              description: "Preview payload without posting to live platforms",
+              example: "true",
+              required: false,
+              category: "dev",
+              format: "boolean",
+            },
+          ],
+        },
+        ai_inference: {
+          name: "AI Inference Keys",
+          description:
+            "API keys for all AI models used across P31 — Claude, Gemini, OpenAI, DeepSeek",
+          variables: [
+            {
+              key: "ANTHROPIC_API_KEY",
+              description:
+                "Anthropic Claude API key (primary AI — Claude Sonnet/Opus for WCD execution, debugging, UI)",
+              example: "sk-ant-api03-...",
+              required: true,
+              category: "api_keys",
+              minLength: 40,
+              getUrl: "https://console.anthropic.com/settings/keys",
+              getLabel: "Anthropic Console",
+            },
+            {
+              key: "GEMINI_API_KEY",
+              description:
+                "Google Gemini API key (Gemini agent — grants, narrative, research synthesis, Substack generation)",
+              example: "AIzaSy...",
+              required: false,
+              category: "api_keys",
+              minLength: 30,
+              getUrl: "https://aistudio.google.com/app/apikey",
+              getLabel: "Google AI Studio",
+            },
+            {
+              key: "OPENAI_API_KEY",
+              description: "OpenAI API key (fallback / comparative analysis)",
+              example: "sk-proj-...",
+              required: false,
+              category: "api_keys",
+              minLength: 40,
+              getUrl: "https://platform.openai.com/api-keys",
+              getLabel: "OpenAI Platform",
+            },
+            {
+              key: "DEEPSEEK_API_KEY",
+              description:
+                "DeepSeek API key (ESP32 firmware only — Node Zero tag-out)",
+              example: "sk-...",
+              required: false,
+              category: "api_keys",
+              minLength: 30,
+              getUrl: "https://platform.deepseek.com",
+              getLabel: "DeepSeek Platform",
+            },
+          ],
+        },
+        oracle_terminal: {
+          name: "Oracle Terminal",
+          description:
+            "packages/oracle-terminal — Upstash Redis vector store + Ollama local inference",
+          variables: [
+            {
+              key: "PORT",
+              description: "Oracle Terminal server port",
+              example: "3002",
+              required: true,
+              category: "app_config",
+              format: "number",
+            },
+            {
+              key: "NODE_ENV",
+              description: "Environment mode",
+              example: "development",
+              required: true,
+              category: "app_config",
+            },
+            {
+              key: "UPSTASH_REDIS_URL",
+              description: "Upstash Redis REST URL for vector embeddings",
+              example: "https://....upstash.io",
+              required: true,
+              category: "database",
+              format: "url",
+              getUrl: "https://console.upstash.com",
+              getLabel: "Upstash Console",
+            },
+            {
+              key: "UPSTASH_VECTOR_REST_TOKEN",
+              description: "Upstash Vector REST auth token",
+              example: "...",
+              required: true,
+              category: "api_keys",
+              minLength: 20,
+            },
+            {
+              key: "CHAT_MODEL",
+              description: "Ollama chat model name",
+              example: "llama3.2",
+              required: false,
+              category: "app_config",
+            },
+            {
+              key: "EMBEDDING_MODEL",
+              description: "Ollama embedding model name",
+              example: "nomic-embed-text",
+              required: false,
+              category: "app_config",
+            },
+            {
+              key: "DISCORD_WEBHOOK_URL",
+              description: "Discord webhook for Oracle Terminal notifications",
+              example: "https://discord.com/api/webhooks/...",
+              required: false,
+              category: "services",
+              format: "url",
+            },
+            {
+              key: "DISCORD_BOT_TOKEN",
+              description: "Discord bot token for Oracle Terminal integration",
+              example: "...",
+              required: false,
+              category: "api_keys",
+              minLength: 50,
+            },
+            {
+              key: "CLINICAL_SAFETY_MODE",
+              description:
+                "Enable clinical safety guardrails for medical advice filtering",
+              example: "true",
+              required: false,
+              category: "security",
+              format: "boolean",
+            },
+            {
+              key: "DAILY_SPOON_LIMIT",
+              description:
+                "Max cognitive load units per day for AuDHD protection",
+              example: "10",
+              required: false,
+              category: "app_config",
+              format: "number",
+            },
+          ],
+        },
+        nodejs: {
+          name: "Node.js / Express",
+          description: "Generic Node.js application with Express server",
+          variables: [
+            {
+              key: "NODE_ENV",
+              description: "Application environment mode",
+              example: "development",
+              required: true,
+              category: "app_config",
+            },
+            {
+              key: "PORT",
+              description: "Server port number",
+              example: "3000",
+              required: true,
+              category: "app_config",
+              format: "number",
+            },
+            {
+              key: "DATABASE_URL",
+              description: "PostgreSQL connection string",
+              example: "postgresql://user:pass@localhost:5432/dbname",
+              required: true,
+              category: "database",
+              format: "url",
+            },
+            {
+              key: "REDIS_URL",
+              description: "Redis connection string",
+              example: "redis://localhost:6379",
+              required: false,
+              category: "database",
+              format: "url",
+            },
+            {
+              key: "JWT_SECRET",
+              description: "Secret key for JWT signing (min 32 chars)",
+              example: "your-super-secret-jwt-key-min-32-chars",
+              required: true,
+              category: "auth",
+              minLength: 32,
+            },
+            {
+              key: "JWT_EXPIRES_IN",
+              description: "JWT expiration time",
+              example: "7d",
+              required: false,
+              category: "auth",
+            },
+            {
+              key: "BCRYPT_ROUNDS",
+              description: "Number of bcrypt hashing rounds",
+              example: "12",
+              required: false,
+              category: "security",
+              format: "number",
+            },
+            {
+              key: "CORS_ORIGIN",
+              description: "Allowed CORS origin(s)",
+              example: "http://localhost:5173",
+              required: true,
+              category: "security",
+              format: "url",
+            },
+            {
+              key: "RATE_LIMIT_WINDOW_MS",
+              description: "Rate limit window in milliseconds",
+              example: "900000",
+              required: false,
+              category: "security",
+              format: "number",
+            },
+            {
+              key: "RATE_LIMIT_MAX",
+              description: "Max requests per window",
+              example: "100",
+              required: false,
+              category: "security",
+              format: "number",
+            },
+            {
+              key: "LOG_LEVEL",
+              description: "Winston/Pino log level",
+              example: "debug",
+              required: false,
+              category: "dev",
+            },
+            {
+              key: "API_KEY",
+              description: "Internal API authentication key",
+              example: "sk_live_...",
+              required: false,
+              category: "api_keys",
+              minLength: 20,
+            },
+            {
+              key: "NPM_TOKEN",
+              description: "NPM auth token for private packages",
+              example: "npm_...",
+              required: false,
+              category: "api_keys",
+            },
+          ],
+        },
+        python: {
+          name: "Python / Django",
+          description: "Python application with Django or FastAPI",
+          variables: [
+            {
+              key: "DJANGO_SETTINGS_MODULE",
+              description: "Django settings module path",
+              example: "myapp.settings.development",
+              required: true,
+              category: "app_config",
+            },
+            {
+              key: "SECRET_KEY",
+              description: "Django secret key (use get_random_secret_key)",
+              example: "django-insecure-...",
+              required: true,
+              category: "security",
+              minLength: 50,
+            },
+            {
+              key: "DEBUG",
+              description: "Enable debug mode",
+              example: "True",
+              required: true,
+              category: "dev",
+              format: "boolean",
+            },
+            {
+              key: "ALLOWED_HOSTS",
+              description: "Comma-separated allowed hosts",
+              example: "localhost,127.0.0.1",
+              required: true,
+              category: "security",
+            },
+            {
+              key: "DATABASE_URL",
+              description: "PostgreSQL connection string",
+              example: "postgres://user:pass@localhost:5432/dbname",
+              required: true,
+              category: "database",
+              format: "url",
+            },
+            {
+              key: "REDIS_URL",
+              description: "Redis connection string",
+              example: "redis://localhost:6379/0",
+              required: false,
+              category: "database",
+              format: "url",
+            },
+            {
+              key: "CELERY_BROKER_URL",
+              description: "Celery message broker URL",
+              example: "redis://localhost:6379/0",
+              required: false,
+              category: "services",
+              format: "url",
+            },
+            {
+              key: "EMAIL_BACKEND",
+              description: "Django email backend",
+              example: "django.core.mail.backends.smtp.EmailBackend",
+              required: false,
+              category: "services",
+            },
+            {
+              key: "AWS_ACCESS_KEY_ID",
+              description: "AWS access key for S3",
+              example: "AKIA...",
+              required: false,
+              category: "api_keys",
+              getUrl: "https://console.aws.amazon.com/iam",
+              getLabel: "AWS IAM",
+            },
+            {
+              key: "AWS_SECRET_ACCESS_KEY",
+              description: "AWS secret key",
+              example: "...",
+              required: false,
+              category: "api_keys",
+            },
+            {
+              key: "SENTRY_DSN",
+              description: "Sentry error tracking DSN",
+              example: "https://...",
+              required: false,
+              category: "services",
+              format: "url",
+            },
+            {
+              key: "PYTHONPATH",
+              description: "Python module search path",
+              example: "/app:/app/src",
+              required: false,
+              category: "dev",
+            },
+            {
+              key: "PIP_INDEX_URL",
+              description: "Custom PyPI index URL",
+              example: "https://pypi.org/simple",
+              required: false,
+              category: "dev",
+              format: "url",
+            },
+          ],
+        },
+        java: {
+          name: "Java / Spring Boot",
+          description: "Spring Boot application with typical Java stack",
+          variables: [
+            {
+              key: "SPRING_PROFILES_ACTIVE",
+              description: "Active Spring profiles",
+              example: "dev",
+              required: true,
+              category: "app_config",
+            },
+            {
+              key: "SERVER_PORT",
+              description: "Server port",
+              example: "8080",
+              required: true,
+              category: "app_config",
+              format: "number",
+            },
+            {
+              key: "SPRING_DATASOURCE_URL",
+              description: "JDBC database URL",
+              example: "jdbc:postgresql://localhost:5432/mydb",
+              required: true,
+              category: "database",
+              format: "url",
+            },
+            {
+              key: "SPRING_DATASOURCE_USERNAME",
+              description: "Database username",
+              example: "postgres",
+              required: true,
+              category: "database",
+            },
+            {
+              key: "SPRING_DATASOURCE_PASSWORD",
+              description: "Database password",
+              example: "secret",
+              required: true,
+              category: "database",
+              minLength: 8,
+            },
+            {
+              key: "SPRING_JPA_HIBERNATE_DDL_AUTO",
+              description: "Hibernate DDL strategy",
+              example: "update",
+              required: false,
+              category: "database",
+            },
+            {
+              key: "JWT_SECRET",
+              description: "JWT signing secret",
+              example: "your-secret-key-min-256-bits",
+              required: true,
+              category: "auth",
+              minLength: 32,
+            },
+            {
+              key: "JWT_EXPIRATION",
+              description: "JWT expiration in milliseconds",
+              example: "86400000",
+              required: false,
+              category: "auth",
+              format: "number",
+            },
+            {
+              key: "LOGGING_LEVEL_ROOT",
+              description: "Root logging level",
+              example: "INFO",
+              required: false,
+              category: "dev",
+            },
+            {
+              key: "SPRING_REDIS_HOST",
+              description: "Redis server host",
+              example: "localhost",
+              required: false,
+              category: "services",
+            },
+            {
+              key: "SPRING_REDIS_PORT",
+              description: "Redis server port",
+              example: "6379",
+              required: false,
+              category: "services",
+              format: "number",
+            },
+            {
+              key: "JAVA_OPTS",
+              description: "JVM options",
+              example: "-Xmx512m -XX:+UseG1GC",
+              required: false,
+              category: "dev",
+            },
+            {
+              key: "MAVEN_OPTS",
+              description: "Maven options",
+              example: "-Xmx1024m",
+              required: false,
+              category: "dev",
+            },
+          ],
+        },
+        go: {
+          name: "Go / Gin",
+          description: "Go application with Gin framework",
+          variables: [
+            {
+              key: "APP_ENV",
+              description: "Application environment",
+              example: "development",
+              required: true,
+              category: "app_config",
+            },
+            {
+              key: "PORT",
+              description: "Server port",
+              example: "8080",
+              required: true,
+              category: "app_config",
+              format: "number",
+            },
+            {
+              key: "DB_HOST",
+              description: "Database host",
+              example: "localhost",
+              required: true,
+              category: "database",
+            },
+            {
+              key: "DB_PORT",
+              description: "Database port",
+              example: "5432",
+              required: true,
+              category: "database",
+              format: "number",
+            },
+            {
+              key: "DB_USER",
+              description: "Database user",
+              example: "postgres",
+              required: true,
+              category: "database",
+            },
+            {
+              key: "DB_PASSWORD",
+              description: "Database password",
+              example: "secret",
+              required: true,
+              category: "database",
+              minLength: 8,
+            },
+            {
+              key: "DB_NAME",
+              description: "Database name",
+              example: "myapp",
+              required: true,
+              category: "database",
+            },
+            {
+              key: "DB_SSL_MODE",
+              description: "PostgreSQL SSL mode",
+              example: "disable",
+              required: false,
+              category: "database",
+            },
+            {
+              key: "JWT_SECRET",
+              description: "JWT secret key",
+              example: "your-secret-key",
+              required: true,
+              category: "auth",
+              minLength: 32,
+            },
+            {
+              key: "JWT_EXPIRY_HOURS",
+              description: "JWT expiry in hours",
+              example: "24",
+              required: false,
+              category: "auth",
+              format: "number",
+            },
+            {
+              key: "REDIS_ADDR",
+              description: "Redis address",
+              example: "localhost:6379",
+              required: false,
+              category: "services",
+            },
+            {
+              key: "REDIS_PASSWORD",
+              description: "Redis password",
+              example: "",
+              required: false,
+              category: "services",
+            },
+            {
+              key: "GIN_MODE",
+              description: "Gin framework mode",
+              example: "debug",
+              required: false,
+              category: "dev",
+            },
+            {
+              key: "GOPROXY",
+              description: "Go module proxy",
+              example: "https://proxy.golang.org,direct",
+              required: false,
+              category: "dev",
+              format: "url",
+            },
+            {
+              key: "GO_ENV",
+              description: "Go environment",
+              example: "development",
+              required: false,
+              category: "dev",
+            },
+          ],
+        },
+        ruby: {
+          name: "Ruby / Rails",
+          description: "Ruby on Rails application",
+          variables: [
+            {
+              key: "RAILS_ENV",
+              description: "Rails environment",
+              example: "development",
+              required: true,
+              category: "app_config",
+            },
+            {
+              key: "RACK_ENV",
+              description: "Rack environment",
+              example: "development",
+              required: false,
+              category: "app_config",
+            },
+            {
+              key: "PORT",
+              description: "Server port",
+              example: "3000",
+              required: true,
+              category: "app_config",
+              format: "number",
+            },
+            {
+              key: "DATABASE_URL",
+              description: "Database URL",
+              example: "postgres://user:pass@localhost/myapp_development",
+              required: true,
+              category: "database",
+              format: "url",
+            },
+            {
+              key: "SECRET_KEY_BASE",
+              description: "Rails secret key base",
+              example: "...",
+              required: true,
+              category: "security",
+              minLength: 64,
+            },
+            {
+              key: "RAILS_MASTER_KEY",
+              description: "Rails master key for credentials",
+              example: "...",
+              required: false,
+              category: "security",
+              minLength: 32,
+            },
+            {
+              key: "REDIS_URL",
+              description: "Redis URL",
+              example: "redis://localhost:6379/0",
+              required: false,
+              category: "database",
+              format: "url",
+            },
+            {
+              key: "RAILS_LOG_TO_STDOUT",
+              description: "Log to stdout",
+              example: "true",
+              required: false,
+              category: "dev",
+              format: "boolean",
+            },
+            {
+              key: "RAILS_SERVE_STATIC_FILES",
+              description: "Serve static files",
+              example: "true",
+              required: false,
+              category: "dev",
+              format: "boolean",
+            },
+            {
+              key: "SMTP_ADDRESS",
+              description: "SMTP server address",
+              example: "smtp.gmail.com",
+              required: false,
+              category: "services",
+            },
+            {
+              key: "SMTP_PORT",
+              description: "SMTP port",
+              example: "587",
+              required: false,
+              category: "services",
+              format: "number",
+            },
+            {
+              key: "SMTP_USERNAME",
+              description: "SMTP username",
+              example: "user@gmail.com",
+              required: false,
+              category: "services",
+            },
+            {
+              key: "SMTP_PASSWORD",
+              description: "SMTP password",
+              example: "...",
+              required: false,
+              category: "services",
+            },
+            {
+              key: "BUNDLE_PATH",
+              description: "Bundler install path",
+              example: "vendor/bundle",
+              required: false,
+              category: "dev",
+            },
+            {
+              key: "GEM_HOME",
+              description: "Gem installation directory",
+              example: "/usr/local/bundle",
+              required: false,
+              category: "dev",
+            },
+          ],
+        },
+      };
+
+      const categoryLabels = {
+        database: {
+          label: "Database",
+          icon: icons.database,
+          class: "database",
+        },
+        api_keys: {
+          label: "API Keys",
+          icon: icons.api_keys,
+          class: "api_keys",
+        },
+        auth: { label: "Authentication", icon: icons.auth, class: "auth" },
+        security: {
+          label: "Security",
+          icon: icons.security,
+          class: "security",
+        },
+        app_config: {
+          label: "App Config",
+          icon: icons.app_config,
+          class: "app_config",
+        },
+        services: {
+          label: "Services",
+          icon: icons.services,
+          class: "services",
+        },
+        dev: { label: "Development", icon: icons.dev, class: "dev" },
+      };
+
+      // Prepopulated from 00_INGEST/env and .env.canonical
+      const P31_PREPOPULATED = {
+        // AI Inference Keys
+        ANTHROPIC_API_KEY: "YOUR_ANTHROPIC_API_KEY",
+        GEMINI_API_KEY=***REDACTED***
+        OPENAI_API_KEY: "YOUR_OPENAI_API_KEY",
+        DEEPSEEK_API_KEY: "YOUR_DEEPSEEK_API_KEY",
+        // Discord
+        DISCORD_CLIENT_ID: "1485634254380601485",
+        SHOWCASE_CHANNEL_ID: "1486958712655581184",
+        // Constants
+        NOSTR_RELAYS:
+          "wss://relay.damus.io,wss://nos.lol,wss://relay.nostr.band",
+        VITE_RELAY_URL: "https://bonding-relay.trimtab-signal.workers.dev",
+        CORS_ORIGIN: "https://p31ca.org",
+        BONDING_API_URL: "https://bonding.p31ca.org/api",
+        SPOON_API_URL: "https://phosphorus31.org/api/spoons",
+        BOT_PREFIX: "p31",
+        ENABLE_FAWN_DETECTION: "true",
+        MAX_SPOON_DISPLAY: "12",
+        NODE_ONE_WEBHOOK_PORT: "3000",
+        RESPONSE_TIMEOUT_MS: "5000",
+      };
+
+      // State
+      let state = {
+        ecosystem: "nodejs",
+        framework: "nodejs",
+        environment: "development",
+        showOptional: true,
+        activeTab: "env",
+        values: { ...P31_PREPOPULATED }, // Auto-load all known P31 keys
+      };
+
+      // DOM Elements
+      const ecosystemSelect = document.getElementById("ecosystemSelect");
+      const frameworkSelect = document.getElementById("frameworkSelect");
+      const ecosystemDesc = document.getElementById("ecosystemDesc");
+      const variablesContent = document.getElementById("variablesContent");
+      const varCount = document.getElementById("varCount");
+      const outputPanel = document.getElementById("outputPanel");
+      const outputContent = document.getElementById("outputContent");
+      const outputFilename = document.getElementById("outputFilename");
+      const copyBtn = document.getElementById("copyBtn");
+      const showOptional = document.getElementById("showOptional");
+
+      // Validation
+      function validateValue(variable, value) {
+        if (variable.required && !value) {
+          return "This field is required";
+        }
+        if (value && variable.minLength && value.length < variable.minLength) {
+          return `Minimum ${variable.minLength} characters required`;
+        }
+        if (value && variable.format === "url") {
+          try {
+            new URL(value);
+          } catch {
+            return "Invalid URL format";
+          }
+        }
+        if (value && variable.format === "number" && isNaN(Number(value))) {
+          return "Must be a number";
+        }
+        if (
+          value &&
+          variable.format === "boolean" &&
+          !["true", "false", "1", "0"].includes(value.toLowerCase())
+        ) {
+          return "Must be true/false, 1, or 0";
+        }
+        return null;
+      }
+
+      // Get current variables
+      function getCurrentVariables() {
+        const preset = state.ecosystem
+          ? ecosystemPresets[state.ecosystem]
+          : null;
+        if (!preset) return [];
+
+        let vars = [...preset.variables];
+
+        // Add framework-specific vars
+        if (
+          state.ecosystem !== "bonding" &&
+          state.ecosystem !== "spaceship_earth" &&
+          state.ecosystem !== "donate_api"
+        ) {
+          const frameworkVars = {
+            nodejs: [
+              {
+                key: "NPM_TOKEN",
+                description: "NPM auth token for private packages",
+                example: "npm_...",
+                required: false,
+                category: "api_keys",
+              },
+              {
+                key: "YARN_TOKEN",
+                description: "Yarn auth token",
+                example: "...",
+                required: false,
+                category: "api_keys",
+              },
+            ],
+            python: [
+              {
+                key: "PYTHONPATH",
+                description: "Python module search path",
+                example: "/app:/app/src",
+                required: false,
+                category: "dev",
+              },
+              {
+                key: "PIP_INDEX_URL",
+                description: "Custom PyPI index URL",
+                example: "https://pypi.org/simple",
+                required: false,
+                category: "dev",
+                format: "url",
+              },
+            ],
+            java: [
+              {
+                key: "JAVA_OPTS",
+                description: "JVM options",
+                example: "-Xmx512m -XX:+UseG1GC",
+                required: false,
+                category: "dev",
+              },
+              {
+                key: "MAVEN_OPTS",
+                description: "Maven options",
+                example: "-Xmx1024m",
+                required: false,
+                category: "dev",
+              },
+            ],
+            go: [
+              {
+                key: "GOPROXY",
+                description: "Go module proxy",
+                example: "https://proxy.golang.org,direct",
+                required: false,
+                category: "dev",
+                format: "url",
+              },
+              {
+                key: "GO_ENV",
+                description: "Go environment",
+                example: "development",
+                required: false,
+                category: "dev",
+              },
+            ],
+            ruby: [
+              {
+                key: "BUNDLE_PATH",
+                description: "Bundler install path",
+                example: "vendor/bundle",
+                required: false,
+                category: "dev",
+              },
+              {
+                key: "GEM_HOME",
+                description: "Gem installation directory",
+                example: "/usr/local/bundle",
+                required: false,
+                category: "dev",
+              },
+            ],
+          };
+          vars.push(...(frameworkVars[state.framework] || []));
+        }
+
+        if (!state.showOptional) {
+          vars = vars.filter((v) => v.required);
+        }
+
+        return vars;
+      }
+
+      // Group variables by category
+      function groupVariables(vars) {
+        const groups = {};
+        Object.keys(categoryLabels).forEach((cat) => (groups[cat] = []));
+        vars.forEach((v) => {
+          if (groups[v.category]) groups[v.category].push(v);
+        });
+        return groups;
+      }
+
+      // Render variables
+      function renderVariables() {
+        const vars = getCurrentVariables();
+        const groups = groupVariables(vars);
+
+        varCount.textContent = `${vars.length} variable${vars.length !== 1 ? "s" : ""}`;
+
+        if (vars.length === 0) {
+          variablesContent.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">📝</div>
+            <p>Select an ecosystem to generate environment variables</p>
+          </div>
+        `;
+          outputPanel.style.display = "none";
+          return;
+        }
+
+        let html = "";
+        Object.entries(groups).forEach(([category, catVars]) => {
+          if (catVars.length === 0) return;
+          const info = categoryLabels[category];
+
+          html += `
+          <div class="category-section">
+            <div class="category-header ${info.class}">
+              <span class="category-icon">${info.icon}</span>
+              <span>${info.label}</span>
+            </div>
+            <div class="category-variables">
+        `;
+
+          catVars.forEach((v) => {
+            const value = state.values[v.key] || "";
+            const error = validateValue(v, value);
+            const errorClass = error && value ? "error" : "";
+
+            html += `
+            <div class="variable-card">
+              <div class="variable-header">
+                <div>
+                  <span class="variable-key">${v.key}</span>
+                  ${v.required ? '<span class="required-badge">Required</span>' : ""}
+                  ${
+                    v.getUrl
+                      ? `
+                    <a href="${v.getUrl}" target="_blank" rel="noopener" class="get-key-link">
+                      ${v.getLabel || "Get Key"}
+                      ${icons.external}
+                    </a>
+                  `
+                      : ""
+                  }
+                </div>
+              </div>
+              <p class="variable-description">${v.description}</p>
+              <input
+                type="text"
+                class="variable-input ${errorClass}"
+                value="${value}"
+                oninput="updateValue('${v.key}', this.value)"
+                placeholder="${v.example}"
+              >
+              ${error && value ? `<p class="validation-error">${error}</p>` : ""}
+            </div>
+          `;
+          });
+
+          html += "</div></div>";
+        });
+
+        variablesContent.innerHTML = html;
+        outputPanel.style.display = "block";
+        updateOutput();
+      }
+
+      // Update a value
+      window.updateValue = function (key, value) {
+        state.values[key] = value;
+        // Re-render to show validation
+        renderVariables();
+      };
+
+      // Generate output content
+      function generateEnvContent() {
+        const vars = getCurrentVariables();
+        const preset = ecosystemPresets[state.ecosystem];
+
+        const lines = [];
+        lines.push(
+          `# ${preset ? preset.name : state.framework.toUpperCase()} Environment`,
+        );
+        lines.push(`# Environment: ${state.environment}`);
+        lines.push(`# Generated: ${new Date().toISOString()}`);
+        lines.push("");
+        lines.push("#######################################");
+        lines.push("# SECURITY WARNING:");
+        lines.push("# - Never commit .env files to git");
+        lines.push("# - Add .env to .gitignore");
+        lines.push("# - Rotate leaked credentials immediately");
+        lines.push("#######################################");
+        lines.push("");
+
+        Object.entries(groupVariables(vars)).forEach(([category, catVars]) => {
+          if (catVars.length === 0) return;
+          const info = categoryLabels[category];
+          lines.push(`# ${info.label}`);
+          lines.push("#" + "=".repeat(40));
+          catVars.forEach((v) => {
+            const value = state.values[v.key] || "";
+            lines.push(`# ${v.description}`);
+            lines.push(v.required ? "# REQUIRED" : "# Optional");
+            lines.push(`${v.key}=${value || v.example}`);
+            lines.push("");
+          });
+        });
+
+        return lines.join("\n");
+      }
+
+      function generateGitHubCommands() {
+        const vars = getCurrentVariables();
+        const commands = [];
+
+        commands.push("# GitHub Actions Secrets Setup Commands");
+        commands.push(
+          "# Run these in your terminal after setting up your repository",
+        );
+        commands.push("");
+
+        vars
+          .filter((v) => v.required && state.values[v.key])
+          .forEach((v) => {
+            commands.push(
+              `gh secret set ${v.key} --body "${state.values[v.key]}"`,
+            );
+          });
+
+        if (commands.length === 3) {
+          commands.push(
+            "# No required secrets configured yet. Fill in required values first.",
+          );
+        }
+
+        return commands.join("\n");
+      }
+
+      function generateDockerEnv() {
+        const vars = getCurrentVariables();
+        const lines = [];
+
+        lines.push("# Docker Environment");
+        lines.push("# Copy to docker-compose.yml or use with --env-file");
+        lines.push("");
+
+        vars.forEach((v) => {
+          const value = state.values[v.key] || v.example;
+          lines.push(`${v.key}=${value}`);
+        });
+
+        return lines.join("\n");
+      }
+
+      function updateOutput() {
+        let content = "";
+        let filename = "";
+
+        switch (state.activeTab) {
+          case "env":
+            content = generateEnvContent();
+            filename = ".env";
+            break;
+          case "github":
+            content = generateGitHubCommands();
+            filename = "github-secrets.sh";
+            break;
+          case "docker":
+            content = generateDockerEnv();
+            filename = "docker.env";
+            break;
+        }
+
+        outputContent.textContent = content;
+        outputFilename.textContent = filename;
+      }
+
+      // Event Listeners
+      ecosystemSelect.addEventListener("change", (e) => {
+        state.ecosystem = e.target.value;
+        if (ecosystemPresets[state.ecosystem]) {
+          ecosystemDesc.textContent =
+            ecosystemPresets[state.ecosystem].description;
+          // Sync framework if it's a generic one
+          if (
+            !["bonding", "spaceship_earth", "donate_api"].includes(
+              state.ecosystem,
+            )
+          ) {
+            frameworkSelect.value = state.ecosystem;
+            state.framework = state.ecosystem;
+          }
+        } else {
+          ecosystemDesc.textContent = "Select an ecosystem";
+        }
+        // Preserve prepopulated values, only clear if truly switching to empty
+        if (Object.keys(P31_PREPOPULATED).length > 0) {
+          state.values = { ...P31_PREPOPULATED, ...state.values };
+        }
+        renderVariables();
+      });
+
+      frameworkSelect.addEventListener("change", (e) => {
+        state.framework = e.target.value;
+        // If we were on a P31 ecosystem, switch to generic
+        if (
+          !["bonding", "spaceship_earth", "donate_api"].includes(
+            state.ecosystem,
+          )
+        ) {
+          state.ecosystem = state.framework;
+          ecosystemSelect.value = state.framework;
+          ecosystemDesc.textContent =
+            ecosystemPresets[state.framework].description;
+        }
+        renderVariables();
+      });
+
+      document.querySelectorAll(".env-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          document
+            .querySelectorAll(".env-btn")
+            .forEach((b) => b.classList.remove("active"));
+          btn.classList.add("active");
+          state.environment = btn.dataset.env;
+          updateOutput();
+        });
+      });
+
+      showOptional.addEventListener("change", (e) => {
+        state.showOptional = e.target.checked;
+        renderVariables();
+      });
+
+      document.querySelectorAll(".output-tab").forEach((tab) => {
+        tab.addEventListener("click", () => {
+          document
+            .querySelectorAll(".output-tab")
+            .forEach((t) => t.classList.remove("active"));
+          tab.classList.add("active");
+          state.activeTab = tab.dataset.tab;
+          updateOutput();
+        });
+      });
+
+      copyBtn.addEventListener("click", () => {
+        navigator.clipboard.writeText(outputContent.textContent);
+        copyBtn.classList.add("copied");
+        copyBtn.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+        </svg>
+        <span>Copied!</span>
+      `;
+        setTimeout(() => {
+          copyBtn.classList.remove("copied");
+          copyBtn.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+          </svg>
+          <span>Copy</span>
+        `;
+        }, 2000);
+      });
+
+      // Initialize
+      renderVariables();
+    </script>
+  </body>
+</html>

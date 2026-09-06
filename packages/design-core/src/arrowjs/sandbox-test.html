@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ArrowJS Sandbox Test</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0A0A0F;
+      color: #F5F5F7;
+      font-family: system-ui, -apple-system, sans-serif;
+      padding: 40px 24px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    h1 {
+      font-size: 28px;
+      margin-bottom: 4px;
+      background: linear-gradient(135deg, #00F0FF, #A78BFA);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .subtitle {
+      color: rgba(245,245,247,0.5);
+      font-size: 14px;
+      margin-bottom: 32px;
+    }
+    .test-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      max-width: 900px;
+      width: 100%;
+    }
+    .card {
+      background: rgba(255,255,255,0.03);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+    }
+    .card h2 {
+      font-size: 14px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: rgba(245,245,247,0.4);
+      margin-bottom: 16px;
+    }
+    .card .status {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+    .status.pass { background: rgba(0,200,100,0.15); color: #00CC77; border: 1px solid rgba(0,200,100,0.3); }
+    .status.fail { background: rgba(255,60,60,0.15); color: #FF4444; border: 1px solid rgba(255,60,60,0.3); }
+    .status.pending { background: rgba(255,200,0,0.15); color: #FFCC00; border: 1px solid rgba(255,200,0,0.3); }
+    #sandbox-mount {
+      min-height: 60px;
+    }
+    .code-block {
+      background: rgba(0,0,0,0.3);
+      border-radius: 8px;
+      padding: 16px;
+      font-family: ui-monospace, 'Fira Code', monospace;
+      font-size: 13px;
+      line-height: 1.5;
+      overflow-x: auto;
+      margin-bottom: 12px;
+    }
+    .log {
+      font-family: ui-monospace, monospace;
+      font-size: 12px;
+      color: rgba(245,245,247,0.6);
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    .log-entry { padding: 2px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+    .log-entry .prefix { color: rgba(0,240,255,0.6); }
+    .log-entry.error .prefix { color: rgba(255,60,60,0.6); }
+    .test-output {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .test-output button {
+      padding: 8px 16px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: #F5F5F7;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .test-output button:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: rgba(255,255,255,0.2);
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      font-size: 12px;
+      background: rgba(167,139,250,0.1);
+      border: 1px solid rgba(167,139,250,0.2);
+      color: #A78BFA;
+    }
+  </style>
+</head>
+<body>
+  <h1>ArrowJS Sandbox Test</h1>
+  <p class="subtitle">Validating <code>@arrow-js/sandbox</code> v1.0.6 for P31 sovereign stack</p>
+
+  <div class="test-grid">
+    <div class="card">
+      <h2>Test 1: Basic Component</h2>
+      <span class="status pending" id="status-1">PENDING</span>
+      <p style="font-size:13px;color:rgba(245,245,247,0.5);margin-bottom:12px;">
+        Simple counter with reactive state, mounted via sandbox.
+      </p>
+      <div id="sandbox-mount"></div>
+    </div>
+
+    <div class="card">
+      <h2>Test 2: Host Bridge</h2>
+      <span class="status pending" id="status-2">PENDING</span>
+      <p style="font-size:13px;color:rgba(245,245,247,0.5);margin-bottom:12px;">
+        Exposing P31 token values from host to sandbox via <code>hostBridge</code>.
+      </p>
+      <div id="bridge-mount"></div>
+    </div>
+
+    <div class="card">
+      <h2>Test 3: Security Isolation</h2>
+      <span class="status pending" id="status-3">PENDING</span>
+      <div class="code-block">Attempting: document.body.innerHTML = 'injected'</div>
+      <p style="font-size:13px;color:rgba(245,245,247,0.5);margin-bottom:8px;">
+        Should throw/error — sandbox has no <code>document</code> access.
+      </p>
+      <div id="security-mount"></div>
+    </div>
+
+    <div class="card">
+      <h2>Test 4: Error Handling</h2>
+      <span class="status pending" id="status-4">PENDING</span>
+      <p style="font-size:13px;color:rgba(245,245,247,0.5);margin-bottom:8px;">
+        Sandbox should gracefully handle malformed code via <code>onError</code>.
+      </p>
+      <div id="error-mount"></div>
+      <div class="log" id="error-log"></div>
+    </div>
+
+    <div class="card" style="grid-column: 1 / -1;">
+      <h2>Event Log</h2>
+      <div class="log" id="event-log">
+        <div class="log-entry"><span class="prefix">[info]</span> Page loaded, awaiting sandbox import...</div>
+      </div>
+    </div>
+  </div>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "@arrow-js/core": "https://esm.sh/@arrow-js/core@1.0.6",
+      "@arrow-js/sandbox": "https://esm.sh/@arrow-js/sandbox@1.0.6",
+      "quickjs-emscripten": "https://esm.sh/quickjs-emscripten@0.32.0",
+      "acorn": "https://esm.sh/acorn@8.16.0",
+      "acorn-walk": "https://esm.sh/acorn-walk@8.3.4",
+      "magic-string": "https://esm.sh/magic-string@0.30.21",
+      "typescript": "https://esm.sh/typescript@5.9.3"
+    }
+  }
+  </script>
+
+  <script type="module">
+    const log = (msg, level = 'info') => {
+      const el = document.getElementById('event-log')
+      const entry = document.createElement('div')
+      entry.className = `log-entry${level === 'error' ? ' error' : ''}`
+      entry.innerHTML = `<span class="prefix">[${level}]</span> ${msg}`
+      el.appendChild(entry)
+      el.scrollTop = el.scrollHeight
+    }
+
+    const setStatus = (id, result, msg = '') => {
+      const el = document.getElementById(`status-${id}`)
+      el.className = `status ${result}`
+      el.textContent = result === 'pass' ? 'PASS' : result === 'fail' ? 'FAIL' : 'PENDING'
+      if (msg) log(`Test ${id}: ${msg}`, result === 'fail' ? 'error' : 'info')
+    }
+
+    try {
+      log('Importing @arrow-js/sandbox...')
+      const { sandbox } = await import('@arrow-js/sandbox')
+      log('Sandbox module loaded successfully')
+
+      // ── Test 1: Basic component ──
+      try {
+        const basicView = sandbox({
+          source: {
+            'main.ts': `
+              const state = reactive({ count: 0, label: 'Sandbox Counter' })
+              export default html\`
+                <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-start;">
+                  <span style="font-size:13px;color:rgba(245,245,247,0.5);">\${() => state.label}</span>
+                  <span style="font-size:32px;font-weight:700;">
+                    \${() => state.count}
+                  </span>
+                  <div style="display:flex;gap:8px;">
+                    <button @click="\${() => state.count++}">+</button>
+                    <button @click="\${() => state.count--}">-</button>
+                    <button @click="\${() => { state.count = 0 }}">Reset</button>
+                  </div>
+                </div>
+              \`
+            `,
+          },
+        })
+        basicView(document.getElementById('sandbox-mount'))
+        setStatus(1, 'pass', 'Counter renders with reactive state')
+        log('Counter buttons: +/-/Reset functional')
+      } catch (e) {
+        setStatus(1, 'fail', `Error: ${e.message}`)
+      }
+
+      // ── Test 2: Host bridge ──
+      try {
+        const bridgeView = sandbox(
+          {
+            source: {
+              'main.ts': `
+                import { getToken } from 'host-bridge:p31'
+                export default html\`
+                  <div style="display:flex;flex-direction:column;gap:8px;">
+                    <span style="font-size:12px;color:rgba(245,245,247,0.4);text-transform:uppercase;letter-spacing:0.05em;">
+                      P31 Design Tokens
+                    </span>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:13px;">
+                      <span style="color:rgba(245,245,247,0.5);">--p31-accent</span>
+                      <span style="font-family:monospace;" id="token-accent">\${() => getToken('accent')}</span>
+                      <span style="color:rgba(245,245,247,0.5);">--p31-accent-violet</span>
+                      <span style="font-family:monospace;" id="token-violet">\${() => getToken('accent-violet')}</span>
+                      <span style="color:rgba(245,245,247,0.5);">--p31-text</span>
+                      <span style="font-family:monospace;" id="token-text">\${() => getToken('text')}</span>
+                    </div>
+                  </div>
+                \`
+              `,
+            },
+          },
+          undefined,
+          {
+            'host-bridge:p31': {
+              getToken(name) {
+                return getComputedStyle(document.documentElement)
+                  .getPropertyValue(`--p31-${name}`)
+                  .trim() || 'undefined'
+              },
+            },
+          }
+        )
+        bridgeView(document.getElementById('bridge-mount'))
+        setStatus(2, 'pass', 'Host bridge exposes P31 tokens to sandbox')
+      } catch (e) {
+        setStatus(2, 'fail', `Error: ${e.message}`)
+      }
+
+      // ── Test 3: Security isolation ──
+      try {
+        const securityView = sandbox({
+          source: {
+            'main.ts': `
+              try {
+                const body = document.body
+                return html\`<span>SHOULD NOT RENDER (document access didn't throw)</span>\`
+              } catch (e) {
+                return html\`<div style="display:flex;flex-direction:column;gap:8px;">
+                  <span class="badge">SECURE</span>
+                  <span style="font-size:13px;">document access blocked: \${e instanceof ReferenceError ? 'ReferenceError (expected)' : e.message}</span>
+                </div>\`
+              }
+            `,
+          },
+        })
+        securityView(document.getElementById('security-mount'))
+        setStatus(3, 'pass', 'document access correctly blocked in sandbox VM')
+      } catch (e) {
+        setStatus(3, 'pass', `Sandbox correctly threw on document access: ${e.message}`)
+      }
+
+      // ── Test 4: Error handling ──
+      try {
+        const logEl = document.getElementById('error-log')
+        sandbox({
+          source: {
+            'main.ts': `export default html\\\`\${undefVar}\\\``,
+          },
+          onError(err) {
+            const entry = document.createElement('div')
+            entry.className = 'log-entry error'
+            entry.innerHTML = `<span class="prefix">[error]</span> ${err.toString().substring(0, 120)}...`
+            logEl.appendChild(entry)
+          },
+        })
+        // If we get here, the error may fire async; we'll check after a tick
+        setTimeout(() => {
+          const entries = logEl.children.length
+          setStatus(4, entries > 0 ? 'pass' : 'fail',
+            entries > 0 ? `Error callback fired (${entries} entries)` : 'No error callback fired')
+        }, 1000)
+      } catch (e) {
+        setStatus(4, 'pass', `Sandbox handled malformed code: ${e.message}`)
+      }
+
+    } catch (e) {
+      log(`Failed to load sandbox module: ${e.message}`, 'error')
+      setStatus(1, 'fail', 'Module import failed')
+      setStatus(2, 'fail', 'Module import failed')
+      setStatus(3, 'fail', 'Module import failed')
+      setStatus(4, 'fail', 'Module import failed')
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,113 @@
+<z-range
+  id="spoon-dial"
+  min="0"
+  max="5"
+  step="1"
+  value="3"
+  data-mcp-tool="spoonDial"
+  data-mcp-type="control"
+  data-mcp-range="0,5"
+  data-mcp-current="3"
+  data-mcp-target="spoon-dial"
+>
+  <style>
+    :host {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      --z-range-track-height: 6px;
+      --z-range-track-bg: var(--p31-glass-border, rgba(255,255,255,0.1));
+      --z-range-thumb-size: 24px;
+      --z-range-thumb-bg: var(--p31-accent-cyan, #00F0FF);
+      --z-range-fill-bg: var(--p31-accent-cyan, #00F0FF);
+    }
+    .label {
+      font-family: system-ui, -apple-system, sans-serif;
+      font-size: 13px;
+      color: var(--p31-text-secondary, rgba(245,245,247,0.6));
+      letter-spacing: 0.02em;
+    }
+    .dots {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+    }
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      flex-shrink: 0;
+      background: rgba(255,255,255,0.18);
+    }
+    .dot:hover {
+      transform: scale(1.35);
+    }
+    .dot.crisis {
+      background: rgba(251,113,133,0.9);
+      box-shadow: 0 0 8px rgba(251,113,133,0.5);
+    }
+    .dot.standard {
+      background: var(--p31-accent-cyan, #00F0FF);
+      box-shadow: 0 0 6px var(--p31-accent-cyan, #00F0FF);
+    }
+    .dot.full {
+      background: var(--p31-accent-violet, #A78BFA);
+      box-shadow: 0 0 6px var(--p31-accent-violet, #A78BFA);
+    }
+  </style>
+
+  <span class="label">Spoons: <span id="value-display">3</span>/5</span>
+
+  <div class="dots" id="dots-container">
+    <button class="dot" data-index="0" aria-label="Set spoons to 0"></button>
+    <button class="dot" data-index="1" aria-label="Set spoons to 1"></button>
+    <button class="dot" data-index="2" aria-label="Set spoons to 2"></button>
+    <button class="dot" data-index="3" aria-label="Set spoons to 3"></button>
+    <button class="dot" data-index="4" aria-label="Set spoons to 4"></button>
+    <button class="dot" data-index="5" aria-label="Set spoons to 5"></button>
+  </div>
+
+  <script>
+    (() => {
+      const range = document.getElementById('spoon-dial');
+      const display = document.getElementById('value-display');
+      const dots = document.querySelectorAll('.dot');
+
+      function updateDots(val) {
+        display.textContent = val;
+        range.dataset.mcpCurrent = val;
+        dots.forEach((dot, i) => {
+          dot.className = 'dot';
+          if (i <= val) {
+            if (val <= 1) dot.classList.add('crisis');
+            else if (val <= 3) dot.classList.add('standard');
+            else dot.classList.add('full');
+          }
+        });
+      }
+
+      range.addEventListener('input', () => {
+        const val = parseInt(range.value, 10);
+        updateDots(val);
+      });
+
+      dots.forEach((dot) => {
+        dot.addEventListener('click', () => {
+          const val = parseInt(dot.dataset.index, 10);
+          range.value = val;
+          updateDots(val);
+          range.dispatchEvent(new Event('input', { bubbles: true }));
+        });
+      });
+
+      updateDots(parseInt(range.value, 10));
+    })();
+  </script>
+</z-range>

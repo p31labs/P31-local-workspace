@@ -1,0 +1,27 @@
+{
+  "private": true,
+  "type": "module",
+  "name": "willow-preview",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@p31/design-core": "workspace:*",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "tone": "^15.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^4.7.0",
+    "vite": "^6.4.2",
+    "wrangler": "^4.97.0",
+    "typescript": "^5.7.0",
+    "vitest": "^3.0.0",
+    "@tailwindcss/vite": "^4.2.1",
+    "tailwindcss": "^4.2.1"
+  }
+}

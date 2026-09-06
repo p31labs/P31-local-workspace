@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"
+    />
+    <meta name="theme-color" content="#050505" />
+    <title>P31 Mesh | P31 Labs</title>
+    <meta
+      name="description"
+      content="WebRTC data channel mesh with Cloudflare signaling — vagal breath sync. Part of the P31 technical hub fleet."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap"
+    />
+    <link rel="stylesheet" href="https://p31ca.org/assets/hub-skin.css" />
+    <link rel="stylesheet" href="https://p31ca.org/assets/hub-about-shell.css" />
+    <link rel="stylesheet" href="./mesh-overrides.css" />
+  </head>
+  <body class="hub-about-page">
+    <nav class="nav">
+      <div class="nav-inner">
+        <a href="https://p31ca.org/" class="nav-brand">
+          <span class="hub-brand-mark" aria-hidden="true"></span>
+          <span class="nav-brand-label">P31 Labs</span>
+        </a>
+        <div class="nav-links">
+          <a href="https://p31ca.org/index.html" class="nav-link">← Hub</a>
+          <a href="https://github.com/p31labs" class="nav-link" target="_blank" rel="noopener noreferrer"
+            >GitHub</a
+          >
+          <a href="https://p31ca.org/index.html" class="nav-cta">Technical hub</a>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container">
+      <div class="hero mesh-hero-tight">
+        <h1>P31 Mesh</h1>
+        <div class="subtitle">WebRTC Data Channel — 0.1 Hz Vagal Sync</div>
+        <p class="tagline">
+          Peer data channels through <code>p31-signaling</code> — same topology as the hub fleet. Share node IDs,
+          link, then run shared exhale cues when the channel opens.
+        </p>
+        <span class="badge">LIVE</span>
+      </div>
+
+      <div class="detail-grid" style="grid-template-columns: 1fr">
+        <div class="detail-card">
+          <div class="mesh-status">
+            <div class="dot" id="statusDot"></div>
+            <span id="statusText" style="font-size: 13px">Initializing...</span>
+          </div>
+          <div class="mesh-label">Your node ID</div>
+          <div class="id-display" id="myId">...</div>
+          <div class="peer-count" id="peerCount"></div>
+        </div>
+
+        <div class="detail-card">
+          <div class="mesh-label">Connect to peer</div>
+          <input
+            type="text"
+            id="remoteId"
+            class="mesh-input"
+            placeholder="Paste peer ID here"
+            autocomplete="off"
+            spellcheck="false"
+          />
+          <button type="button" class="mesh-btn mesh-btn-primary" id="btnConnect" onclick="connect()" disabled>
+            LINK
+          </button>
+        </div>
+
+        <div class="detail-card" id="breathCard" style="display: none">
+          <div class="mesh-label" style="text-align: center">Vagal sync — 4-4-6</div>
+          <div class="breath-ring" id="breathRing">
+            <div class="breath-label" id="breathLabel">READY</div>
+            <div class="breath-timer" id="breathTimer">—</div>
+          </div>
+          <button type="button" class="mesh-btn mesh-btn-vagal" id="btnPulse" onclick="startBreath()">
+            START SYNC
+          </button>
+        </div>
+
+        <div class="detail-card">
+          <div class="mesh-label">Mesh log</div>
+          <div class="mesh-log" id="log"></div>
+        </div>
+      </div>
+
+      <p class="callout-p31" style="margin-top: 2rem">
+        <strong>P31 Labs, Inc.</strong> (EIN 42-1888158) — edge-deployed tools, no accounts. Fleet status above is
+        shared with <a href="https://p31ca.org/">p31ca.org</a>. This interface is not medical advice.
+      </p>
+    </div>
+
+    <script defer src="./mesh-app.js"></script>
+    <script type="module" src="./mesh-boot.js"></script>
+  </body>
+</html>

@@ -9,7 +9,7 @@
 // Check for --agent / -a BEFORE the TTY gate so agents can invoke from any ctx.
 // If a subcommand (status/surfaces/deploy) is present with --agent, the
 // subcommand handles it — so we skip this block.
-const _SUBCOMMANDS = ['status', 'surfaces', 'deploy', 'love'];
+const _SUBCOMMANDS = ['status', 'surfaces', 'deploy', 'love', 'monetization'];
 
 {
   const _args = process.argv.slice(2);
@@ -85,7 +85,7 @@ const _SUBCOMMANDS = ['status', 'surfaces', 'deploy', 'love'];
   const _matched = _args.find(a => _SUBCOMMANDS.includes(a));
   if (_matched) {
     const cmds = require('./commands');
-    const cmd = { status: cmds.status, surfaces: cmds.surfaces, deploy: cmds.deploy, love: cmds.love }[_matched];
+    const cmd = { status: cmds.status, surfaces: cmds.surfaces, deploy: cmds.deploy, love: cmds.love, monetization: cmds.monetization }[_matched];
     const opts = { agent: _args.includes('--agent') || _args.includes('-a') };
 
     // Extract per-command options
@@ -102,6 +102,22 @@ const _SUBCOMMANDS = ['status', 'surfaces', 'deploy', 'love'];
     if (_matched === 'love') {
       opts.subcommand = _args.find(a => ['status', 'balance', 'sync'].includes(a)) || 'status';
       opts.userId = getOpt('balance') || getOpt('sync') || process.env.P31_USER_ID || 'guest';
+    }
+    if (_matched === 'monetization') {
+      opts.target = _args.find(a => ['revenue', 'entitlement', 'allocation'].includes(a)) || 'revenue';
+      opts.subcommand = _args.find(a => ['record', 'balance', 'summary', 'check', 'tier', 'create', 'status'].includes(a)) || 'status';
+      opts.source = getOpt('--source');
+      opts.range = getOpt('--range') || '30d';
+      opts.did = getOpt('--did');
+      opts['payer-did'] = getOpt('--payer-did');
+      opts['merchant-did'] = getOpt('--merchant-did');
+      opts.amount = getOpt('--amount');
+      opts.asset = getOpt('--asset');
+      opts['tool-id'] = getOpt('--tool-id');
+      opts.cost = getOpt('--cost');
+      opts.tier = getOpt('--tier');
+      opts['tx-id'] = getOpt('--tx-id');
+      opts.weight = getOpt('--weight');
     }
 
     cmd(opts);
@@ -125,6 +141,8 @@ USAGE
   andromeda status       Check health of gateway and services
   andromeda surfaces     List PHOS surfaces
   andromeda deploy       Deploy an app to Cloudflare Pages/Workers
+  andromeda love         LOVE ledger status/balance/sync
+  andromeda monetization Monetization engine (revenue/entitlement/allocation)
   andromeda --agent      Output session state as JSON
   andromeda --help       Show this help
   andromeda --version    Show version
@@ -739,6 +757,7 @@ const PALETTE_COMMANDS = [
   '/mode build', '/mode plan', '/mode review', '/mode debug',
   '/clear', '/sandbox clear', '/export log',
   '/save', '/notify test', '/help',
+  'monetization revenue summary', 'monetization entitlement check',
 ];
 
 function openPalette() {

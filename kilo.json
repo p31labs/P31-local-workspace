@@ -1,0 +1,82 @@
+{
+  "$schema": "https://app.kilo.ai/config.json",
+  "permission": {
+    "bash": {
+      "pnpm run -r build": "allow",
+      "pnpm run build": "allow",
+      "pnpm run test*": "allow",
+      "pnpm run lint*": "allow",
+      "pnpm run axe*": "allow",
+      "pnpm run verify": "allow",
+      "npx playwright *": "allow",
+      "npx vitest *": "allow",
+      "npx tsc *": "allow",
+      "node cli/**": "allow",
+      "wrangler deploy --dry-run": "allow",
+      "ls *": "allow",
+      "cat *": "allow",
+      "find *": "allow",
+      "head *": "allow"
+    },
+    "edit": {
+      "packages/*": "allow",
+      "apps/*": "allow",
+      "cli/*": "allow",
+      "tools/*": "allow",
+      "workers/*": "allow",
+      "tests/*": "allow",
+      "*.md": "allow",
+      "*.json": "ask",
+      "*.yaml": "ask",
+      "*.yml": "ask"
+    },
+    "external_directory": {
+      "/tmp/kilo/*": "allow"
+    }
+  },
+  "instructions": [
+    ".kilo/rules/*.md",
+    "DESIGN.md",
+    "AGENTS.md",
+    "RULES.md"
+  ],
+  "mcp": {
+    "playwright": {
+      "type": "local",
+      "command": ["npx", "-y", "@playwright/mcp"],
+      "args": ["--caps=vision,devtools"],
+      "enabled": true,
+      "timeout": 30000
+    },
+    "p31-oasis": {
+      "type": "local",
+      "command": ["node", "cli/mcp-server.js"],
+      "enabled": false
+    },
+    "p31-component-registry": {
+      "type": "local",
+      "command": ["node", "cli/component-registry.js"],
+      "enabled": false
+    },
+    "p31-love-ledger": {
+      "type": "local",
+      "command": ["node", "cli/love-registry.js"],
+      "enabled": false
+    },
+    "p31-phos-forge": {
+      "type": "local",
+      "command": ["node", "tools/phos-forge/mcp-server.mjs"],
+      "enabled": false
+    },
+    "p31-marge-design": {
+      "type": "local",
+      "command": ["node", "cli/marge-server.js"],
+      "enabled": false
+    },
+    "p31-bob-structural": {
+      "type": "local",
+      "command": ["node", "cli/bob-server.js"],
+      "enabled": false
+    }
+  }
+}

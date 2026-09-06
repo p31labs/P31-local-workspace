@@ -1,0 +1,48 @@
+---
+import MarketingTopbar from '../components/marketing/MarketingTopbar.astro';
+---
+
+<footer class="border-t" style="border-color: var(--p31-glass-border); background: rgba(3, 7, 14, 0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);">
+  <div class="max-w-7xl mx-auto px-6 md:px-12 lg:px-16 py-12">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+      <div class="md:col-span-2">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm" style="background: var(--p31-accent); color: #000;">P31</div>
+          <span class="font-semibold" style="color: var(--p31-text);">Labs</span>
+        </div>
+        <p class="text-sm max-w-sm" style="color: var(--p31-text-secondary);">
+          Sovereign stack for neurodivergent families. Open source, open research, open future.
+        </p>
+      </div>
+      
+      <div>
+        <h4 class="text-sm font-semibold mb-4 uppercase tracking-wider" style="color: var(--p31-text);">Resources</h4>
+        <ul class="space-y-2">
+          <li><a href="/research" class="text-sm transition-colors hover:text-white" style="color: var(--p31-text-secondary);">Research</a></li>
+          <li><a href="/arcade" class="text-sm transition-colors hover:text-white" style="color: var(--p31-text-secondary);">Arcade</a></li>
+          <li><a href="/blog" class="text-sm transition-colors hover:text-white" style="color: var(--p31-text-secondary);">Blog</a></li>
+          <li><a href="https://zenodo.org/communities/p31labs" target="_blank" rel="noopener" class="text-sm transition-colors hover:text-white" style="color: var(--p31-text-secondary);">Zenodo</a></li>
+        </ul>
+      </div>
+      
+      <div>
+        <h4 class="text-sm font-semibold mb-4 uppercase tracking-wider" style="color: var(--p31-text);">Community</h4>
+        <ul class="space-y-2">
+          <li><a href="https://github.com/p31labs/P31-local-workspace" target="_blank" rel="noopener" class="text-sm transition-colors hover:text-white" style="color: var(--p31-text-secondary);">GitHub</a></li>
+          <li><a href="https://discord.gg/p31labs" target="_blank" rel="noopener" class="text-sm transition-colors hover:text-white" style="color: var(--p31-text-secondary);">Discord</a></li>
+          <li><a href="/get-involved" class="text-sm transition-colors hover:text-white" style="color: var(--p31-text-secondary);">Donate</a></li>
+          <li><a href="/about" class="text-sm transition-colors hover:text-white" style="color: var(--p31-text-secondary);">About</a></li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="mt-12 pt-8 flex flex-col md:flex-row items-center justify-between gap-4" style="border-top: 1px solid var(--p31-glass-border);">
+      <p class="text-xs" style="color: var(--p31-text-tertiary);">© 2025 P31 Labs. All rights reserved.</p>
+      <div class="flex items-center gap-4">
+        <a href="https://github.com/p31labs/P31-local-workspace" target="_blank" rel="noopener" class="text-sm transition-colors hover:text-white" style="color: var(--p31-text-tertiary);">GitHub</a>
+        <span style="color: var(--p31-text-tertiary);">·</span>
+        <span class="text-xs font-mono" style="color: var(--p31-text-tertiary);">Built on Cloudflare Workers</span>
+      </div>
+    </div>
+  </div>
+</footer>

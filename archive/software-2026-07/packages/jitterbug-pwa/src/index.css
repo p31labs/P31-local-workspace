@@ -1,0 +1,44 @@
+@import "tailwindcss";
+
+/* Scan the Universal Interface Generator package so its utility classes are generated */
+@source "../../interface-generator/src/**";
+
+@theme {
+  --color-void: #0A0A0F;
+  --color-surface: #12121A;
+  --color-surface2: #1C1C2A;
+  --color-quantum-cyan: #00F0FF;
+  --color-quantum-violet: #A78BFA;
+  --color-quantum-gold: #FBBF24;
+  --color-quantum-green: #34D399;
+  --color-quantum-red: #FB7185;
+  --color-cloud: #A1A1AA;
+}
+
+.glass-panel {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  backdrop-filter: blur(12px);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-quantum-cyan);
+  outline-offset: 2px;
+}
+
+/* Spoon-aware motion: fully disabled at spoons 0-1 (DESIGN.md / AGENTS.md) */
+[data-spoons="0"] *,
+[data-spoons="1"] * {
+  transition: none !important;
+  animation: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0ms !important;
+    animation-duration: 0ms !important;
+  }
+}

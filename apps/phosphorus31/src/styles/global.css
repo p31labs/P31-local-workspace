@@ -1,11 +1,8 @@
 /* Google Fonts — must precede all other rules */
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap');
 
-/* Design System — mathematical foundation from @p31/design-core v2.0.0 */
-@import '@p31/design-core/css/base.css';
-@import '@p31/design-core/css/glass.css';
-@import '@p31/design-core/css/motion.css';
-@import '@p31/design-core/css/typography.css';
+/* Design System — shared P31 design-core */
+@import '@p31/design-core/css/all.css';
 
 /* Tailwind v4 — single import replaces all v3 directives */
 @import "tailwindcss";

@@ -1,0 +1,42 @@
+name = "p31-design-mcp"
+main = "src/mcp/http-worker.ts"
+compatibility_date = "2026-08-21"
+compatibility_flags = ["nodejs_compat"]
+
+# Routes — custom domain mcp.design.p31ca.org is managed via Cloudflare
+# dashboard (custom domain attachment). Route declaration omitted here to
+# avoid deploy failures when the API token lacks zone permissions.
+# See src/mcp/tool-registry.ts for unified tool metadata.
+
+# [routes]
+#   pattern = "mcp.design.p31ca.org/*"
+#   zone_name = "p31ca.org"
+#   script = "p31-design-mcp"
+#   custom_domain = true
+
+# Exposed ports (for local dev via `wrangler dev`)
+# Default: 8787
+
+# Resource limits — 128 MB memory, 30s CPU (Worker limit)
+# No special placement needed.
+
+# P31 Design System MCP Server — HTTP transport for AI agents.
+# Deployed at: https://p31-design-mcp.trimtab-signal.workers.dev
+#              https://mcp.design.p31ca.org (Cloudflare dashboard custom domain)
+#
+# Endpoints:
+#   POST /mcp     — JSON-RPC 2.0 MCP endpoint (1 MB body cap)
+#   GET  /health   — Health check + tool count
+#   GET  /         — Service info (name, version, tool list)
+#   GET  /mcp     — 405 Method Not Allowed (use POST)
+#
+# Usage:
+#   curl -X POST https://mcp.design.p31ca.org/mcp \
+#     -H "Content-Type: application/json" \
+#     -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"list_tokens","arguments":{}}}' 
+
+# No D1/KV bindings needed for core tools.
+# Per-isolate rate limiting (60 req/min/IP) handled in-request — no KV/DO needed.
+
+[observability]
+enabled = true

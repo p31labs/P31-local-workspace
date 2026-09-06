@@ -25,7 +25,7 @@ export function health(surface: string, version = '0.0.1', checks: Record<string
     surface,
     version,
     timestamp: new Date().toISOString(),
-    status: allOk ? 'operational' : checks.length > 0 ? 'degraded' : 'operational',
+    status: allOk ? 'operational' : Object.keys(checks).length > 0 ? 'degraded' : 'operational',
     checks,
   };
 }

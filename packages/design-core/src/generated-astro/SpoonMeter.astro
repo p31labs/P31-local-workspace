@@ -1,0 +1,19 @@
+---
+// @file SpoonMeter — Cognitive load indicator (0-5 scale).
+// Auto-generated from components.yml.
+
+interface Props {
+  current?: number;
+  class?: string;
+}
+
+const { current = 3, class: className = '' } = Astro.props;
+---
+
+<div class={`flex items-center gap-1.5 ${className}`} role="img" aria-label={`Spoon level ${current} of 5`}>
+  <div class="w-2.5 h-2.5 rounded-full transition-all duration-300 bg-accent shadow-[0_0_6px_rgba(0,240,255,0.5)]" />
+  <div class="w-2.5 h-2.5 rounded-full transition-all duration-300 bg-accent shadow-[0_0_6px_rgba(0,240,255,0.5)]" />
+  <div class="w-2.5 h-2.5 rounded-full transition-all duration-300 bg-accent shadow-[0_0_6px_rgba(0,240,255,0.5)]" />
+  <div class="w-2.5 h-2.5 rounded-full transition-all duration-300 bg-white/10" />
+  <div class="w-2.5 h-2.5 rounded-full transition-all duration-300 bg-white/10" />
+</div>

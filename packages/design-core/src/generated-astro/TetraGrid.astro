@@ -1,0 +1,15 @@
+---
+// @file TetraGrid — 4-column responsive grid for tetrahedral layouts.
+// Auto-generated from components.yml.
+
+interface Props {
+  children: AstroSlotChildren;
+  class?: string;
+}
+
+const { children, class: className = '' } = Astro.props;
+---
+
+<div class={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 ${className}`}>
+  <slot />
+</div>

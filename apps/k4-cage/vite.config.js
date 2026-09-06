@@ -1,0 +1,5 @@
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import { VitePWA } from 'vite-plugin-pwa';
+export default defineConfig({ plugins: [react(), VitePWA({ registerType: 'autoUpdate', manifest: { name: 'K4 Cage', short_name: 'K4Cage', description: 'Family mesh — K4 tetrahedron topology', theme_color: '#0a0c10', background_color: '#0a0c10', display: 'standalone', icons: [{ src: '/icon-192.png', sizes: '192x192', type: 'image/png' }, { src: '/icon-512.png', sizes: '512x512', type: 'image/png' }] } })], build: { target: 'es2022', cssMinify: 'lightningcss', rollupOptions: { output: { manualChunks: { react: ['react', 'react-dom'], zustand: ['zustand'] } } } } });
+//# sourceMappingURL=vite.config.js.map

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" data-brand="phos" data-spoons="3" data-theme="bridge">
+  <head>
+    <script src="/fouc-killer.js"></script>
+    <script>
+      (function () {
+        var w = window.innerWidth;
+        var sc = 'regular';
+        if (w <= 480) sc = 'compact';
+        else if (w >= 768 && w <= 1023) sc = 'medium';
+        else if (w >= 1024) sc = 'expanded';
+        document.documentElement.dataset.sizeClass = sc;
+        var hasTouch = window.matchMedia('(pointer: coarse)').matches;
+        var hasMouse = window.matchMedia('(pointer: fine)').matches;
+        document.documentElement.dataset.input = hasTouch && hasMouse ? 'hybrid' : hasTouch ? 'touch' : 'mouse';
+      })();
+    </script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="PHOS — Cognitive prosthetic platform with spoon-aware UI for neurodivergent individuals." />
+    <meta name="theme-color" content="#050508" />
+    <meta http-equiv="origin-trial" content="A4rGnF5xw8cNifIvg1yPE2wYpDFs/Hxunt4xy5EyTKmtjxxYvA6by2pgYJpMxjplhLaqkwwWxXlneJ6F68BhHmUAAABweyJvcmlnaW4iOiJodHRwczovL3AzMWNhLm9yZzo0NDMiLCJmZWF0dXJlIjoiV2ViTUNQIiwiZXhwaXJ5IjoxNzg4OTYyMDYyLCJpc1N1YmRvbWFpbiI6dHJ1ZSwiaXNUaGlyZFBhcnR5Ijp0cnVlfQ==">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="apple-touch-icon" href="/icon-192.png" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
+    <title>PHOS — Phosphorus Human Operating Surface</title>
+    <script id="counterscale-script" data-site-id="phos" data-report-localhost="true" src="https://analytics.p31ca.org/tracker.js" defer></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(function(regs) {
+          regs.forEach(function(r) { r.unregister(); });
+        });
+      }
+    </script>
+  </head>
+  <body style="overflow-x: hidden;">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  <script>
+(function(){'use strict';
+var T={};
+T.setSpoonLevel={description:'Set spoon level 0-5',inputSchema:{type:'object',properties:{level:{type:'number',minimum:0,maximum:5}},required:['level']},execute:async function(a){var c=Math.max(0,Math.min(5,Number(a.level)));document.documentElement.setAttribute('data-spoons',String(c));var r=document.getElementById('spoon-dial');if(r){r.value=c;r.dispatchEvent(new Event('input',{bubbles:true}))}window.dispatchEvent(new CustomEvent('spoons:changed',{detail:{level:c},bubbles:true}));return{success:true,level:c}}};
+T.setStatus={description:'Set status badge',inputSchema:{type:'object',properties:{status:{type:'string',enum:['online','offline','busy','away']}},required:['status']},execute:async function(a){var b=document.querySelector('[data-mcp-tool="statusBadge"]');if(!b)return{success:false,error:'Not found'};b.dataset.status=b.dataset.mcpState=a.status;var l=b.querySelector('.status-label');if(l)l.textContent=a.status.charAt(0).toUpperCase()+a.status.slice(1);return{success:true,status:a.status}}};
+T.navigate={description:'Navigate to URL',inputSchema:{type:'object',properties:{href:{type:'string'},external:{type:'boolean'}},required:['href']},execute:async function(a){a.external?window.open(a.href,'_blank','noopener,noreferrer'):window.location.href=a.href;return{success:true,href:a.href}}};
+T.toggleDrawer={description:'Toggle drawer',inputSchema:{type:'object',properties:{state:{type:'string',enum:['open','closed','toggle']},target:{type:'string'}},required:['state']},execute:async function(a){var d=a.target?document.querySelector(a.target):document.querySelector('[data-mcp-tool="toggleDrawer"]');if(!d)return{success:false,error:'Not found'};var o=a.state==='toggle'?!d.hasAttribute('open'):a.state==='open';o?(d.setAttribute('open',''),d.dispatchEvent(new Event('open',{bubbles:true}))):(d.removeAttribute('open'),d.dispatchEvent(new Event('close',{bubbles:true})));return{success:true,state:o?'open':'closed'}}};
+var _ctx2=(typeof document!=='undefined'&&document.modelContext)?document.modelContext:(typeof navigator!=='undefined'&&navigator.modelContext)?navigator.modelContext:null;if(_ctx2){Object.keys(T).forEach(function(n){_ctx2.registerTool({name:n,description:T[n].description,inputSchema:T[n].inputSchema,execute:T[n].execute})})}
+window.__p31MCPTools=T;
+window.__p31MCPExec=function(n,a){return T[n]?T[n].execute(a):{success:false,error:'Unknown: '+n}};
+console.log('[P31] MCP dispatcher ready:',Object.keys(T).join(', '));
+})();
+</script>
+  </body>
+</html>

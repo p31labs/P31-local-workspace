@@ -1,131 +1,50 @@
 ---
-/**
- * About P31 Labs - Institutional Page
- * p31ca.org/about
- * 
- * Grant-ready institutional narrative
- */
-
-import AppShell from '../layouts/AppShell.astro';
-import contentNonprofit from '../../ground-truth/content/nonprofit.json';
-import meshConstants from '../data/p31-mesh-constants.json';
-
-const stats = [
-  { number: "0%", label: "Platform Fee", description: "Ethical monetization commitment" },
-  { number: "4", label: "Core Vertices", description: "Family mesh topology (K₄ architecture)" },
-];
-
-const principles = [
-  {
-    title: "Build",
-    description: "Open-source assistive technology for neurodivergent families. Edge-native infrastructure requiring no data center.",
-    icon: "🔧"
-  },
-  {
-    title: "Create", 
-    description: "Tools for cognitive sovereignty: Cognitive Passport, spoon tracking, and K₄ family mesh architecture.",
-    icon: "✨"
-  },
-  {
-    title: "Connect",
-    description: "Decentralized family coordination with zero surveillance. Private cages on the public internet.",
-    icon: "🌐"
-  }
-];
-
-const legal = {
-  name: "P31 Labs, Inc.",
-  ein: contentNonprofit.ein,
-  status: "Georgia nonprofit corporation",
-  irs: contentNonprofit.irsStatus === "pending" ? "501(c)(3) pending" : contentNonprofit.irsStatus,
-  founded: String(contentNonprofit.foundingYear),
-  mission: "Build, create, connect — establishing decentralized family mesh networks"
-};
+import MarketingShell from '../layouts/MarketingShell.astro';
+import MarketingTopbar from '../components/marketing/MarketingTopbar.astro';
+import SectionHeader from '../components/marketing/SectionHeader.astro';
+import Footer from '../components/marketing/Footer.astro';
 ---
 
-<AppShell
-  title="About P31 Labs"
-  description={`P31 Labs, Inc. is a Georgia nonprofit (EIN ${contentNonprofit.ein}) building open-source assistive technology for neurodivergent families. ${contentNonprofit.irsStatusDetail}.`}
-  routeName="about"
->
-  <div class="max-w-4xl mx-auto space-y-16 py-12">
-    
-    <!-- Hero -->
-    <div class="text-center space-y-6">
-      <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">
-        P31 Labs, Inc.
-      </h1>
-      <p class="text-xl text-zinc-400 max-w-2xl mx-auto leading-relaxed">
-        {legal.mission}
-      </p>
-      <div class="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-zinc-900/80 border border-zinc-800 text-sm">
-        <span class="text-zinc-500">EIN:</span>
-        <span class="text-zinc-300 font-mono">{legal.ein}</span>
-        <span class="text-zinc-700">|</span>
-        <span class="text-emerald-400">{legal.irs}</span>
-      </div>
-    </div>
-
-    <!-- Stats -->
-    <div class="grid grid-cols-4 gap-4">
-      {stats.map((stat) => (
-        <div class="text-center p-6 bg-zinc-900/50 rounded-xl border border-zinc-800">
-          <div class="text-3xl font-bold text-white mb-1">{stat.number}</div>
-          <div class="text-sm font-medium text-zinc-400 mb-2">{stat.label}</div>
-          <div class="text-xs text-zinc-500">{stat.description}</div>
-        </div>
-      ))}
-    </div>
-
-    <!-- Three Principles -->
-    <div class="space-y-6">
-      <h2 class="text-2xl font-semibold text-white text-center">Our Principles</h2>
-      <div class="grid grid-cols-3 gap-6">
-        {principles.map((p) => (
-          <div class="p-6 bg-zinc-900/50 rounded-xl border border-zinc-800">
-            <div class="text-3xl mb-4">{p.icon}</div>
-            <h3 class="text-lg font-semibold text-white mb-2">{p.title}</h3>
-            <p class="text-sm text-zinc-400 leading-relaxed">{p.description}</p>
+<MarketingShell title="About — P31 Labs" description="Mission, founder, and 501(c)(3) story of P31 Labs — sovereign stack for neurodivergent families.">
+  <MarketingTopbar slot="starfield" />
+  
+  <main id="main-content" class="section">
+    <div class="max-w-4xl mx-auto px-6 md:px-12 lg:px-16">
+      <SectionHeader title="About" description="Sovereign infrastructure for neurodivergent families, built by a father who needed it." align="left" />
+      
+      <div class="mt-16 space-y-8 animate-fade-in-up delay-200">
+        <div class="glass-card">
+          <div class="p-8 space-y-6">
+            <h3 class="text-2xl font-bold" style="color: var(--p31-text);">Mission</h3>
+            <p class="text-base leading-relaxed" style="color: var(--p31-text-secondary);">
+              P31 Labs exists to give neurodivergent families sovereign control over their data, identity, and care infrastructure. We believe that assistive technology should not be extractive, surveillance-based, or locked behind corporate walls.
+            </p>
+            <p class="text-base leading-relaxed" style="color: var(--p31-text-secondary);">
+              Our stack — 12 Cloudflare Workers, 10 D1 databases, 16 Durable Objects, 36 MCP tools — runs on the world's largest edge network. Zero server costs. Open source. Citable on Zenodo.
+            </p>
           </div>
-        ))}
-      </div>
-    </div>
+        </div>
 
-    <!-- Legal Structure -->
-    <div class="bg-zinc-900/50 rounded-xl border border-zinc-800 p-8">
-      <h2 class="text-xl font-semibold text-white mb-6">Legal Structure</h2>
-      <div class="grid grid-cols-2 gap-6 text-sm">
-        <div>
-          <div class="text-zinc-500 mb-1">Legal Name</div>
-          <div class="text-zinc-300">{legal.name}</div>
+        <div class="glass-card">
+          <div class="p-8 space-y-6">
+            <h3 class="text-2xl font-bold" style="color: var(--p31-text);">Founder</h3>
+            <p class="text-base leading-relaxed" style="color: var(--p31-text-secondary);">
+              Patrick is a software engineer and parent navigating the intersection of neurodivergence, care infrastructure, and sovereign technology. P31 Labs grew from a personal need into an open-source stack that anyone can deploy.
+            </p>
+          </div>
         </div>
-        <div>
-          <div class="text-zinc-500 mb-1">EIN</div>
-          <div class="text-zinc-300 font-mono">{legal.ein}</div>
-        </div>
-        <div>
-          <div class="text-zinc-500 mb-1">Status</div>
-          <div class="text-zinc-300">{legal.status}</div>
-        </div>
-        <div>
-          <div class="text-zinc-500 mb-1">IRS Status</div>
-          <div class="text-emerald-400">{legal.irs}</div>
+
+        <div class="glass-card">
+          <div class="p-8 space-y-6">
+            <h3 class="text-2xl font-bold" style="color: var(--p31-text);">501(c)(3) Status</h3>
+            <p class="text-base leading-relaxed" style="color: var(--p31-text-secondary);">
+              P31 Labs is organized as a 501(c)(3) nonprofit. Donations are tax-deductible to the fullest extent of the law. Our research is published on Zenodo under open licenses. Our code is on GitHub under AGPL.
+            </p>
+          </div>
         </div>
       </div>
     </div>
+  </main>
 
-    <!-- Links -->
-    <div class="flex flex-wrap justify-center gap-4">
-      <a href="https://phosphorus31.org/transparency" class="px-6 py-3 bg-zinc-800 hover:bg-zinc-700 rounded-lg text-zinc-300 transition-colors">
-        Transparency Report →
-      </a>
-      <a href="https://phosphorus31.org/vertices" class="px-6 py-3 bg-zinc-800 hover:bg-zinc-700 rounded-lg text-zinc-300 transition-colors">
-        Our Team →
-      </a>
-      <a href="/grants" class="px-6 py-3 bg-zinc-800 hover:bg-zinc-700 rounded-lg text-zinc-300 transition-colors">
-        Funding →
-      </a>
-    </div>
-
-  </div>
-</AppShell>
+  <Footer />
+</MarketingShell>

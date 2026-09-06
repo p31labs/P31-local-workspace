@@ -1,0 +1,16 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  icon: string;
+  href: string;
+}
+
+const { title, description, icon, href } = Astro.props;
+---
+
+<a href={href} class="feature-card animate-fade-in-up">
+  <div class="feature-card__icon">{icon}</div>
+  <h3 class="feature-card__title">{title}</h3>
+  <p class="feature-card__desc">{description}</p>
+</a>

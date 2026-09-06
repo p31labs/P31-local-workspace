@@ -1,0 +1,129 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const title = 'API Reference';
+---
+
+<DocsLayout title={title}>
+  <div class="breadcrumb">
+    <a href="/">Docs</a>
+    <span>/</span>
+    <a href="/reference">Reference</a>
+    <span>/</span>
+    <span>API Reference</span>
+  </div>
+
+  <h1>API Reference</h1>
+  <p class="lead">Complete reference for P31 APIs, endpoints, and data models.</p>
+
+  <h2>Core Workers</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Worker</th>
+        <th>URL</th>
+        <th>Purpose</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>gateway</td>
+        <td><code>gateway.p31ca.org</code></td>
+        <td>Main API gateway, AI chat, transcription</td>
+      </tr>
+      <tr>
+        <td>p31-llm-proxy</td>
+        <td><code>llm-proxy.trimtab-signal.workers.dev</code></td>
+        <td>LLM routing and proxying</td>
+      </tr>
+      <tr>
+        <td>love-ledger</td>
+        <td><code>love-ledger.p31ca.org</code></td>
+        <td>LOVE token ledger, care proofs, hash chain</td>
+      </tr>
+      <tr>
+        <td>ledger-bridge</td>
+        <td><code>ledger-bridge.trimtab-signal.workers.dev</code></td>
+        <td>On-chain attestation relay (Base Sepolia)</td>
+      </tr>
+      <tr>
+        <td>federation-bridge</td>
+        <td><code>federation.p31ca.org</code></td>
+        <td>DID resolution, credentials, DIDComm</td>
+      </tr>
+      <tr>
+        <td>p31-mcp-server</td>
+        <td><code>p31-mcp-server.trimtab-signal.workers.dev</code></td>
+        <td>MCP front door (9 P31 tools)</td>
+      </tr>
+      <tr>
+        <td>mcp-x402-gateway</td>
+        <td><code>mcp-x402-gateway.trimtab-signal.workers.dev</code></td>
+        <td>x402 payment-gated MCP routing</td>
+      </tr>
+      <tr>
+        <td>p31-status</td>
+        <td><code>status.p31ca.org</code></td>
+        <td>Health checks and status page</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Gateway Endpoints</h2>
+  <pre><code>POST /ai/chat           — Conversational AI (Bearer auth)
+POST /v1/chat/completions — OpenAI-compatible completions (Bearer auth)
+POST /transcribe         — Voice transcription (Bearer auth)
+GET  /api/phos/surfaces  — List PHOS surfaces (public)
+GET  /health             — Health check (public)</code></pre>
+
+  <h2>LOVE Ledger Endpoints</h2>
+  <pre><code>GET  /api/love/chain    — SHA-256 hash chain (court-admissible)
+GET  /api/love/export    — Full ledger export
+POST /api/love/earn      — Earn LOVE credits
+POST /api/love/spend     — Spend LOVE credits
+POST /withdraw           — Blind-signed LOVE withdrawal (Taler CBS)</code></pre>
+
+  <h2>Authentication</h2>
+  <p>All protected endpoints require a Bearer token:</p>
+  <pre><code>Authorization: Bearer &lt;JWT&gt;</code></pre>
+  <p>JWT sessions are stored in localStorage under <code>p31-auth</code>. DIDs can be used via <code>Authorization: Bearer &lt;did-key-signature&gt;</code>.</p>
+
+  <h2>Rate Limits</h2>
+  <p>Cloudflare Free Plan limits apply:</p>
+  <ul>
+    <li>100,000 requests/day per Worker</li>
+    <li>200,000 log events/day</li>
+    <li>10 D1 databases (shared across Workers)</li>
+    <li>5 cron triggers</li>
+  </ul>
+
+  <h2>Error Codes</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Code</th>
+        <th>Meaning</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>200</td><td>Success</td></tr>
+      <tr><td>400</td><td>Bad request</td></tr>
+      <tr><td>401</td><td>Unauthorized (missing/invalid token)</td></tr>
+      <tr><td>402</td><td>Payment required (x402 paid tools)</td></tr>
+      <tr><td>404</td><td>Not found</td></tr>
+      <tr><td>429</td><td>Rate limited</td></tr>
+      <tr><td>500</td><td>Internal server error</td></tr>
+    </tbody>
+  </table>
+
+  <div class="last-updated">Last updated: August 2026</div>
+</DocsLayout>
+
+<style>
+  .lead {
+    font-size: 18px;
+    color: var(--t2);
+    margin-bottom: 32px;
+    line-height: 1.7;
+  }
+</style>

@@ -1,0 +1,10 @@
+/**
+ * @p31/skin-phos — PHOS skin for the P31 design system.
+ * Violet accent, monospace headings, workspace-optimized glass.
+ */
+
+:root {
+  --p31-accent: #a78bfa;
+
+  --p31-glow-cyan: 0 0 20px rgba(167,139,250,0.25);
+}

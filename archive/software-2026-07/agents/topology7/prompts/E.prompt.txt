@@ -1,0 +1,9 @@
+PROMPT: Node E (E) [MiMo V2 Pro Free]
+- Objective: process inputs from A and B; emit merged results toward R or a shared accumulator.
+- Topology: A -> E, B -> E
+- Execution: merge inputs from A and B; emit combined payload to R (or shared accumulator)
+- Outputs: per-message logs; status to R
+- Validation criteria:
+- No duplication; correct cross-source merge
+- Notes:
+- Maintain a seen-payload cache to avoid re-processing

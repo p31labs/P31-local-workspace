@@ -1,0 +1,88 @@
+{
+  "schema": "p31.atmosphereRamp/1.0.0",
+  "version": "1.0.0",
+  "title": "P31 atmosphere ramps — per-surface tuning against universal canon",
+  "description": "Each ramp references keys from andromeda/software/design-tokens/p31-universal-canon.json (radius, typography.scaleRem, starfield.presets). Do not duplicate palette hexes here. soundProfile is UX policy for audio affordances, not shipped audio files.",
+  "ramps": [
+    {
+      "id": "garden-warm",
+      "starfieldPreset": "soup",
+      "radiusToken": "xl",
+      "typeScaleRem": "lg",
+      "motionBudget": 4,
+      "soundProfile": "organic",
+      "paletteEmphasis": "phosphorus",
+      "notes": "Garden / Phos — warm, open; starfield uses soup preset (higher cap per canon)."
+    },
+    {
+      "id": "bonding-play",
+      "starfieldPreset": "soup",
+      "radiusToken": "lg",
+      "typeScaleRem": "base",
+      "motionBudget": 6,
+      "soundProfile": "chemistry",
+      "paletteEmphasis": "teal",
+      "notes": "C.A.R.S. BONDING — game-first; same starfield family as soup demo surfaces."
+    },
+    {
+      "id": "hub-lobby",
+      "starfieldPreset": "hub",
+      "radiusToken": "md",
+      "typeScaleRem": "base",
+      "motionBudget": 3,
+      "soundProfile": "none",
+      "paletteEmphasis": "neutral",
+      "notes": "p31ca lobby — instrument neutral; canon hub starfield preset."
+    },
+    {
+      "id": "dome-cockpit",
+      "starfieldPreset": "hub",
+      "radiusToken": "sm",
+      "typeScaleRem": "sm",
+      "motionBudget": 5,
+      "soundProfile": "relay",
+      "paletteEmphasis": "teal",
+      "notes": "Dome / planetarium — dense chrome; orbit + quantum states consume motion budget."
+    },
+    {
+      "id": "command-breaker",
+      "starfieldPreset": "commandCenter",
+      "radiusToken": "sm",
+      "typeScaleRem": "xs",
+      "motionBudget": 2,
+      "soundProfile": "relay",
+      "paletteEmphasis": "coral",
+      "notes": "Local command center + EPCP posture — static-plate starfield per canon."
+    },
+    {
+      "id": "operator-desk-quiet",
+      "starfieldPreset": "operatorDesk",
+      "radiusToken": "md",
+      "typeScaleRem": "sm",
+      "motionBudget": 2,
+      "soundProfile": "none",
+      "paletteEmphasis": "neutral",
+      "notes": "Operator desk — read-first; lowest starfield alpha family."
+    },
+    {
+      "id": "lab-sovereign",
+      "starfieldPreset": "hub",
+      "radiusToken": "md",
+      "typeScaleRem": "sm",
+      "motionBudget": 3,
+      "soundProfile": "none",
+      "paletteEmphasis": "teal",
+      "notes": "Sovereign lab / telemetry shells — instrument-forward."
+    },
+    {
+      "id": "legal-document",
+      "starfieldPreset": null,
+      "radiusToken": "none",
+      "typeScaleRem": "md",
+      "motionBudget": 0,
+      "soundProfile": "forbidden",
+      "paletteEmphasis": "neutral",
+      "notes": "Court-adjacent static — starfield off; motion budget zero; no sound affordances."
+    }
+  ]
+}

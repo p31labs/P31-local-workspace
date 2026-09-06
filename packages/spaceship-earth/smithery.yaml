@@ -1,0 +1,35 @@
+name: p31-spaceship-earth
+description: P31 Spaceship Earth MCP Server — Dome geometry, system health, DUNA readiness, PQC operations, EUDI Wallet VC 2.1 export, session management, semantic search, mesh networking. 16 tools.
+version: "1.0.0"
+transport:
+  type: http
+  url: https://spaceship-relay.trimtab-signal.workers.dev/mcp
+  protocol: 2026-07-28
+tags:
+  - spaceship-earth
+  - dome
+  - geodesic
+  - post-quantum
+  - eudi-wallet
+  - semantic-search
+  - mesh-networking
+  - p31
+  - neuroinclusive
+tools:
+  - duna_status
+  - system_health
+  - dome_structure
+  - neo_pixel_control
+  - pqc_keygen
+  - pqc_sign
+  - pqc_verify
+  - kem_encapsulate
+  - kem_decapsulate
+  - eudi_export
+  - eudi_verify
+  - session_list
+  - session_export
+  - embedding_store
+  - embedding_search
+  - mesh_peers
+  - mesh_sync_status

@@ -1,0 +1,9 @@
+name = "p31-pwa"
+compatibility_date = "2026-07-16"
+compatibility_flags = ["nodejs_compat"]
+pages_build_output_dir = "dist"
+
+# No [build] — build runs locally or in dashboard (Git). Deploy: npm run build && npx wrangler pages deploy dist --project-name p31-pwa
+
+[cache]
+enabled = true

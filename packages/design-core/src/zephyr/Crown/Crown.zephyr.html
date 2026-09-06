@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>P31 × Zephyr — Crown Badge</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/zephyr-framework@1/zephyr-framework.min.css">
+  <style>
+    :root {
+      --p31-glass-bg: oklch(100% 0.01 240 / 0.04);
+      --p31-glass-border: oklch(100% 0.01 240 / 0.08);
+      --p31-radius-full: 9999px;
+      --p31-accent-violet: oklch(65% 0.18 285);
+      --p31-text-primary: oklch(96% 0.005 240);
+    }
+    body {
+      margin: 0;
+      padding: 40px 24px;
+      background: oklch(10% 0.01 240);
+      color: var(--p31-text-primary, #F5F5F7);
+      font-family: system-ui, -apple-system, sans-serif;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .demo-section {
+      background: var(--p31-glass-bg, rgba(255,255,255,0.06));
+      border: 1px solid var(--p31-glass-border, rgba(255,255,255,0.1));
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 16px;
+    }
+    .demo-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: rgba(245,245,247,0.5);
+      width: 100%;
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 style="font-size:28px;font-weight:600;margin:0;color:var(--p31-accent-violet,#A78BFA);">
+      Crown — Zephyr Port
+    </h1>
+    <p style="margin:0;color:rgba(245,245,247,0.6);">
+      P31 sovereignty/status badge using <code>&lt;z-badge&gt;</code> with
+      slot-based icon, label, and tooltip. Agent-controllable via MCP.
+    </p>
+
+    <!-- Default Crown Badge -->
+    <div class="demo-section">
+      <p class="demo-label">Default (Sovereign)</p>
+      <z-badge
+        variant="crown"
+        data-mcp-tool="crownDisplay"
+        data-mcp-state="active"
+        data-mcp-target="crown-badge"
+      >
+        <span slot="icon" style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;flex-shrink:0;overflow-hidden;">
+          <svg viewBox="0 16 200 168" width="100%" height="100%" role="img" aria-label="Crown">
+            <path d="M40 155Q60 80 70 38Q85 18 100 19Q115 18 130 38Q140 80 160 155" fill="none" stroke="currentColor" stroke-width="2.5" opacity="0.6"/>
+            <polygon points="100,19 108,38 128,38" fill="var(--p31-accent-violet,#A78BFA)" opacity="0.9"/>
+            <polygon points="100,19 92,38 72,38" fill="var(--p31-accent-violet,#A78BFA)" opacity="0.6"/>
+            <polygon points="70,38 78,55 92,38" fill="var(--p31-accent-gold,#FBBF24)"/>
+            <polygon points="130,38 122,55 108,38" fill="var(--p31-accent-green,#34D399)"/>
+            <circle cx="100" cy="100" r="5" fill="var(--p31-accent-violet,#A78BFA)"/>
+          </svg>
+        </span>
+        <span slot="label">Sovereign</span>
+        <span slot="tooltip">Full system access — sovereign role</span>
+      </z-badge>
+    </div>
+
+    <!-- Crown Badge — Admin -->
+    <div class="demo-section">
+      <p class="demo-label">Admin</p>
+      <z-badge
+        variant="crown"
+        data-mcp-tool="crownDisplay"
+        data-mcp-state="active"
+        data-mcp-target="crown-badge"
+      >
+        <span slot="icon" style="display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;flex-shrink:0;overflow-hidden;">
+          <svg viewBox="0 16 200 168" width="100%" height="100%" role="img" aria-label="Crown">
+            <path d="M40 155Q60 80 70 38Q85 18 100 19Q115 18 130 38Q140 80 160 155" fill="none" stroke="currentColor" stroke-width="2" opacity="0.4"/>
+            <polygon points="100,19 108,38 128,38" fill="var(--p31-accent-cyan,#00F0FF)" opacity="0.9"/>
+            <polygon points="100,19 92,38 72,38" fill="var(--p31-accent-cyan,#00F0FF)" opacity="0.6"/>
+            <polygon points="70,38 78,55 92,38" fill="var(--p31-accent-green,#34D399)"/>
+            <polygon points="130,38 122,55 108,38" fill="var(--p31-accent-iris,#818CF8)"/>
+            <circle cx="100" cy="100" r="5" fill="var(--p31-accent-cyan,#00F0FF)"/>
+          </svg>
+        </span>
+        <span slot="label">Admin</span>
+        <span slot="tooltip">Administrator — elevated privileges</span>
+      </z-badge>
+    </div>
+
+    <!-- Crown Badge — Moderator -->
+    <div class="demo-section">
+      <p class="demo-label">Moderator</p>
+      <z-badge
+        variant="crown"
+        data-mcp-tool="crownDisplay"
+        data-mcp-state="active"
+        data-mcp-target="crown-badge"
+      >
+        <span slot="icon" style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;flex-shrink:0;overflow-hidden;">
+          <svg viewBox="0 16 200 168" width="100%" height="100%" role="img" aria-label="Crown">
+            <path d="M40 155Q60 80 70 38Q85 18 100 19Q115 18 130 38Q140 80 160 155" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.3"/>
+            <polygon points="100,19 108,38 128,38" fill="var(--p31-accent-gold,#FBBF24)" opacity="0.9"/>
+            <polygon points="100,19 92,38 72,38" fill="var(--p31-accent-gold,#FBBF24)" opacity="0.6"/>
+            <polygon points="70,38 78,55 92,38" fill="var(--p31-accent-amber,#F59E0B)"/>
+            <polygon points="130,38 122,55 108,38" fill="var(--p31-accent-violet,#A78BFA)"/>
+            <circle cx="100" cy="100" r="5" fill="var(--p31-accent-gold,#FBBF24)"/>
+          </svg>
+        </span>
+        <span slot="label">Moderator</span>
+        <span slot="tooltip">Content moderation privileges</span>
+      </z-badge>
+    </div>
+
+    <!-- Agent Control Panel -->
+    <div style="background:var(--p31-glass-bg,rgba(255,255,255,0.06));border:1px solid var(--p31-glass-border,rgba(255,255,255,0.1));border-radius:16px;padding:24px;">
+      <h3 style="margin:0 0 12px 0;font-size:16px;font-weight:600;color:var(--p31-accent-violet,#A78BFA);">
+        Agent Control Panel
+      </h3>
+      <p style="margin:0 0 12px 0;font-size:13px;color:rgba(245,245,247,0.6);">
+        Simulate agent API calls. In production these come from an MCP server.
+      </p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button onclick="testAct()" style="padding:6px 12px;border-radius:8px;border:1px solid var(--p31-glass-border,rgba(255,255,255,0.1));background:var(--p31-glass-bg,rgba(255,255,255,0.06));color:var(--p31-text-primary,#F5F5F7);cursor:pointer;font-size:12px;">
+          Test: Zephyr.agent.act('z-badge', 'highlight')
+        </button>
+        <button onclick="testGetState()" style="padding:6px 12px;border-radius:8px;border:1px solid var(--p31-glass-border,rgba(255,255,255,0.1));background:var(--p31-glass-bg,rgba(255,255,255,0.06));color:var(--p31-text-primary,#F5F5F7);cursor:pointer;font-size:12px;">
+          Test: Zephyr.agent.getState()
+        </button>
+      </div>
+      <pre id="agent-result" style="margin-top:12px;padding:12px;background:rgba(0,0,0,0.2);border-radius:8px;font-size:12px;color:var(--p31-accent-violet,#A78BFA);display:none;overflow-x:auto;"></pre>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/zephyr-framework@1/zephyr-framework.min.js"></script>
+  <script>
+    (() => {
+      const resultEl = document.getElementById('agent-result');
+
+      function showResult(title, data) {
+        resultEl.style.display = 'block';
+        resultEl.innerHTML = '<strong>' + title + ':</strong>\n' + JSON.stringify(data, null, 2);
+      }
+
+      window.testAct = function () {
+        if (typeof Zephyr !== 'undefined' && Zephyr.agent) {
+          const result = Zephyr.agent.act('z-badge', 'highlight');
+          showResult('Zephyr.agent.act()', result);
+        } else {
+          showResult('Zephyr.agent.act()', { error: 'Zephyr Agent API not available' });
+        }
+      };
+
+      window.testGetState = function () {
+        if (typeof Zephyr !== 'undefined' && Zephyr.agent) {
+          const state = Zephyr.agent.getState();
+          showResult('Zephyr.agent.getState()', state);
+        } else {
+          showResult('Zephyr.agent.getState()', { error: 'Zephyr Agent API not available' });
+        }
+      };
+    })();
+  </script>
+</body>
+</html>

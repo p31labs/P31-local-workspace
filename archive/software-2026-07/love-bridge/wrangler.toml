@@ -1,0 +1,11 @@
+name = "love-bridge"
+main = "src/index.ts"
+compatibility_date = "2026-07-16"
+
+[env.production]
+routes = [
+  { pattern = "love-bridge.p31ca.org/*", zone_name = "p31ca.org" }
+]
+
+[cache]
+enabled = true

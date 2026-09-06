@@ -1,0 +1,21 @@
+name = "device-registry"
+main = "src/index.ts"
+compatibility_date = "2026-07-16"
+
+[[durable_objects.bindings]]
+name = "DEVICE_REGISTRY"
+class_name = "DeviceRegistryDO"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["DeviceRegistryDO"]
+
+# TODO: Add [exports.DeviceRegistryDO] section with type = "durable-object" and storage = "sqlite"
+# WARNING: Missing [exports] config for Durable Object(s) — manual handling required.
+
+[observability]
+enabled = true
+head_sampling_rate = 1.0
+
+[cache]
+enabled = true

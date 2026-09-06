@@ -1,0 +1,1 @@
+import{t as e}from"./Footer-L5eI48iR.js";var t={component:e,title:`Chrome/Footer`},n={};n.parameters={...n.parameters,docs:{...n.parameters?.docs,source:{originalSource:`{}`,...n.parameters?.docs?.source}}};var r=[`Default`];export{n as Default,r as __namedExportsOrder,t as default};

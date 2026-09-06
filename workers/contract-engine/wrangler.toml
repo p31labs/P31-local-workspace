@@ -1,0 +1,20 @@
+name = "contract-engine"
+main = "src/index.ts"
+compatibility_date = "2026-07-18"
+compatibility_flags = ["nodejs_compat"]
+
+[[d1_databases]]
+binding = "CONTRACTS_DB"
+database_name = "contracts-db"
+database_id = "f0e9df39-fa25-4307-b2a0-342ecff7b24e"
+
+[[durable_objects.bindings]]
+name = "CONTRACT_ENGINE_DO"
+class_name = "ContractEngine"
+
+[exports.ContractEngine]
+type = "durable-object"
+storage = "sqlite"
+
+[observability]
+enabled = true

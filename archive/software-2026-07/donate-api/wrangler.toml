@@ -1,0 +1,21 @@
+name = "donate-api"
+main = "src/worker.ts"
+compatibility_date = "2026-07-16"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+ALLOWED_ORIGIN = "https://phosphorus31.org"
+SUCCESS_URL = "https://phosphorus31.org/donate?success=1"
+CANCEL_URL = "https://phosphorus31.org/donate"
+
+# Set via wrangler secret:
+#   npx wrangler secret put PAYPAL_CLIENT_ID
+#   npx wrangler secret put PAYPAL_CLIENT_SECRET
+#   npx wrangler secret put PAYPAL_WEBHOOK_ID
+#   npx wrangler secret put DISCORD_WEBHOOK_URL
+
+[observability]
+enabled = true
+
+[cache]
+enabled = true

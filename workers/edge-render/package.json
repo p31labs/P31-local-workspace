@@ -1,0 +1,13 @@
+{
+  "name": "p31-edge-render",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "node build.mjs && npx wrangler dev",
+    "deploy": "node build.mjs && npx wrangler deploy"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0",
+    "wrangler": "^4.114.0"
+  }
+}

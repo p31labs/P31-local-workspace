@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html class="soup-app soup-app--gray-rock" lang="en" data-p31-appearance="hub">
+<!-- P31 egg: ?egglov=1 → spawnEggLovSandbox() — Li + V collide → LOV (src/reactions.ts); operator note for S.J. / W.J. -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+    <title>C.A.R.S.</title>
+    <meta name="description" content="C.A.R.S. — Collaborative Affective Realtime Sim: social molecules, co-presence, family rooms, P31 colors. bonding.p31ca.org/soup" />
+    <meta property="og:title" content="C.A.R.S. · Collaborative Affective Realtime Sim" />
+    <meta property="og:description" content="C.A.R.S. · Social molecules — clear colors, soft motion, together in one sim." />
+    <meta name="theme-color" content="#0f1115" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="P31 home" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700&family=JetBrains+Mono:ital,wght@0,400;0,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="cognitive-passport/p31-style.css">
+    <link rel="stylesheet" href="cognitive-passport/p31-responsive-surface.css">
+    <link rel="stylesheet" href="soup-quantum.css">
+    <script>
+      (function () {
+        document.documentElement.classList.toggle(
+          'soup-dev-panel',
+          /[?&]dev=1(?:&|$)/.test(location.search) || /[?&]debug(?:=1)?(?:&|$)/.test(location.search)
+        );
+      })();
+    </script>
+    <script src="cognitive-passport/lib/p31-subject-prefs.js"></script>
+    <script>
+      (function () {
+        var r = document.documentElement;
+        if (!r.classList.contains("soup-app")) return;
+        if (/[?&]alive=1(?:&|$)/.test(location.search)) {
+          r.classList.remove("soup-app--gray-rock");
+          return;
+        }
+        function wake() {
+          r.classList.remove("soup-app--gray-rock");
+        }
+        document.addEventListener("pointerdown", wake, { once: true, capture: true });
+        document.addEventListener("keydown", wake, { once: true, capture: true });
+      })();
+    </script>
+    <link rel="manifest" href="p31-bonding.webmanifest" crossorigin="anonymous" />
+    <link rel="apple-touch-icon" href="p31-bonding-icons/p31-icon.svg" />
+</head>
+<body class="p31-mesh-m-first">
+    <div id="container">
+        <header class="soup-app-header soup-app-header--psych" aria-label="C.A.R.S. · Collaborative Affective Realtime Sim">
+            <h1 class="soup-app-header__title"><abbr title="Collaborative Affective Realtime Sim">C.A.R.S.</abbr></h1>
+            <p class="soup-app-header__welcome" id="soup-welcome">Same bowl, same room—<strong>your people first</strong>. Calm defaults, clear feedback, no stranger scoreboard.</p>
+            <ul class="soup-psych-pillars" aria-label="What this interface optimizes for">
+                <li><span class="soup-psych-dot soup-psych-dot--calm" aria-hidden="true"></span> Calm (teal · safety)</li>
+                <li><span class="soup-psych-dot soup-psych-dot--warm" aria-hidden="true"></span> Warmth (coral · energy)</li>
+                <li><span class="soup-psych-dot soup-psych-dot--belong" aria-hidden="true"></span> Belonging (phosphor · we)</li>
+            </ul>
+            <p class="soup-aaso"><em>As above, so below:</em> the same <code>demo</code> / <code>build:doc-index</code> bar shows up in the <a class="p31-mesh-tap" href="docs/doc-library/index.html">doc library</a>, <a class="p31-mesh-tap" href="docs/physics-learn/index.html">physics learn</a>, <a class="p31-mesh-tap" href="p31-slicer.html" title="Kiri:Moto — browser FDM/CAM slicer (embedded)">browser slicer</a>, <a class="p31-mesh-tap" href="p31-sovereign-lab.html" title="Sovereign Lab — dome panes, serial, voice, foundry links">sovereign lab</a>, <a class="p31-mesh-tap" href="andromeda/04_SOFTWARE/p31ca/public/k4market.html">K4 market</a> (with <code>andromeda/</code>), <a class="p31-mesh-tap" href="fleet-portal.html">live fleet &amp; every URL</a> (<code>npm run build:fleet-portal</code>), <a class="p31-mesh-tap" href="p31-personal-howto.html">interactive how-to</a>, <a class="p31-mesh-tap" href="p31-device-setup.html">Chromebook &amp; phone setup</a>, <a class="p31-mesh-tap" href="poets-room.html">Poets room</a>, <a class="p31-mesh-tap" href="garden-phos-probe.html" title="Operator probe for Phos child companion API">Phos probe</a>, <a class="p31-mesh-tap" href="http://127.0.0.1:3131/">local command center</a> (<code>npm run command-center</code> — 3131), and <a class="p31-mesh-tap" href="docs/P31-DEPLOY-CANON.md">CONNECTION</a> (<code>npm run connection</code> — deploy · ecosystem · env · ops). <strong>Naming:</strong> <a class="p31-mesh-tap" href="docs/CARS-NAMING.md">C.A.R.S.</a>. <strong>When-scale</strong> (plan the work, work the plan): <a class="p31-mesh-tap" href="docs/PLAN-BONDING-SOUP-WHEN-SCALE.md">when-scale plan</a>. Prose in the tree, comfort in the tab. <span class="aaso-love" title="love">&#9829;</span><span class="aaso-3" title="&lt;3" aria-label="less than three"> &lt;3</span></p>
+        </header>
+
+        <div class="soup-larmor" id="soup-larmor" hidden>
+            <div class="soup-larmor__inner">
+                <span class="soup-larmor__familiar">31P</span>
+                <span class="soup-larmor__detail" id="larmor-coherence">—</span>
+            </div>
+        </div>
+        <div class="soup-hero--parents" id="parents-hero" role="region" aria-label="Parent and guardian notes">
+            <h2>For parents & guardians</h2>
+            <p class="soup-hero__p-tight">This page is <strong>local-first</strong>: you choose a shared <code>room</code> string for your household—it is not public matchmaking. Stay in the loop on which room name is in use.</p>
+            <p class="soup-hero__p-tight"><strong>Prep once</strong> (repo root): <code>npm run soup:prep</code> — compiles TypeScript into <code>dist/</code> and checks static assets. After a full <code>npm run verify</code>, <code>npm run soup:prep:check</code> re-checks without rebuilding. Then <strong>run two things</strong> while you play:</p>
+            <span class="ph-run"><code>npm run demo</code> — static server (port 8080)</span>
+            <span class="ph-run"><code>node spikes/mock-ws-server/server.js</code> — WebSocket (port 8082, or set <code>MOCK_WS_PORT</code>)</span>
+            <p class="soup-hero__p-tight soup-hero__p-secondary">Then open a <strong>second browser or tab</strong> with the same <code>room</code> and a different <code>name</code>. Use <strong>Copy invite link</strong> below when family play is active.</p>
+            <div class="parents-actions soup-tap">
+                <a id="parent-kid-view-link" href="#">Open kid-friendly view (larger UI)</a>
+                <button type="button" id="copy-kid-view-link" title="Same room + WebSocket, adds big-kid mode">Copy kid-view link</button>
+            </div>
+            <div id="parents-runbook-below" class="soup-runbook">
+                <div>Live · from this WebSocket (same lines as the server process prints, and <code>connectionInit</code>)</div>
+                <div id="parents-runbook-lines"></div>
+            </div>
+        </div>
+        <div class="soup-hero--kids" id="kids-hero" role="region" aria-label="Bigger play mode">
+            <div><strong>Bigger play</strong> — the soup fills more of the screen, buttons are easy to hit, and you can <strong>play in the same room</strong> with someone on another computer.</div>
+            <p class="soup-kids-hint">Quick name tags (same house: pick a <strong>room</strong> first, e.g. <code>living-room</code>):</p>
+            <div class="kids-actions soup-tap" id="kids-actions">
+                <span class="soup-kids-label">Play as</span>
+                <button type="button" data-kid-name="SJ" title="Label your molecules for this tab">S.J.</button>
+                <button type="button" data-kid-name="WJ" title="Label your molecules for this tab">W.J.</button>
+            </div>
+        </div>
+        <div id="canvas-wrap" class="soup-canvas-shell">
+        <canvas id="p31-soup-starfield" class="p31-soup-starfield-canvas" aria-hidden="true"></canvas>
+        <div id="presence-hud" aria-live="polite">
+            <div class="ph-inner">
+                <span class="ph-title" id="presence-title">Who’s here</span>
+                <div id="presence-chips" class="presence-chips"></div>
+            </div>
+        </div>
+        <canvas id="canvas" width="1600" height="800"></canvas>
+        </div>
+        <div id="info" aria-label="Status and log">
+            <h2 class="soup-sr-only">Status</h2>
+            <div class="stats soup-dev-telemetry">
+                <div class="stat">FPS: <span id="fps">--</span></div>
+                <div class="stat">Molecules: <span id="molecules">--</span></div>
+                <div class="stat">Ghost Molecules: <span id="ghost-molecules">--</span></div>
+                <div class="stat">Saved: <span id="saved-molecules">--</span></div>
+                <div class="stat">Atoms: <span id="atoms">--</span></div>
+                <div class="stat">LOD: <span id="lod">--</span></div>
+                <div class="stat" id="stat-reactions" title="A new reaction is a small shared win—informational, not a loot roll">Reactions: <span id="reactions">--</span></div>
+                <div class="stat">Audio: <span id="audio">--</span></div>
+            </div>
+            <div class="stats stats--connection">
+                <div class="stat stat--connection">
+                    <span id="connection-status" class="connection-status disconnected"></span>
+                    <span id="connection-text">Disconnected</span>
+                </div>
+                <div id="as-above-so-below" class="stat stat--as-above" title="README/parent text ↔ this socket ↔ server terminal">
+                    <span id="as-above-label">as above / so below</span>
+                </div>
+                <div id="network-family-row" class="stat stat--family soup-tap">
+                    <span id="family-room-label"></span>
+                    <button type="button" id="new-family-room">New private room</button>
+                    <button type="button" id="copy-family-link">Copy invite link</button>
+                </div>
+            </div>
+            <div class="stats adults-only soup-dev-meta">
+                <div class="stat soup-dev-stat soup-tap">
+                    <a href="cognitive-passport/index.html">Cognitive Passport (generator)</a>
+                    <span class="soup-dev-sep"> · </span>
+                    <a href="docs/doc-library/index.html" title="Prose in docs/ and AGENTS (above) → searchable index in-browser (below). After editing docs/*.md: npm run build:doc-index. In the UI: / to focus, ↓ first result, try chips, optional ?q=mesh.">Document library</a>
+                    <span class="soup-dev-sep"> · </span>
+                    <a href="docs/physics-learn/index.html" title="Progressive physics labs — local XP, p31.physicsLearn.v1">Physics learn</a>
+                    <span class="soup-dev-sep"> · </span>
+                    <a href="p31-sovereign-lab.html" title="Sovereign Lab — K₄ dome panes, trim coherence, serial, voice">Sovereign Lab</a>
+                    <span class="soup-dev-sep"> · </span>
+                    <a href="p31-slicer.html" title="Browser slicer — Kiri:Moto embedded">Slicer</a>
+                    <span class="soup-dev-sep"> · </span>
+                    <a href="http://127.0.0.1:5174/" title="GeodesicRoom GET /state preview — run npm run demo:geodesic-preview">Geodesic state</a>
+                    <span class="soup-dev-sep"> · </span>
+                    <a href="andromeda/04_SOFTWARE/p31ca/public/k4market.html" title="K4 market — live USDT spot klines on a tetrahedron (needs andromeda checkout)">K4 market</a>
+                    <span class="soup-dev-sep"> · </span>
+                    <a href="poets-room.html" title="Writing, narrative, doc search, mesh dialogue, geodesic — one lobby">Poets room</a>
+                    <span class="soup-dev-sep"> · </span><span>sync: npm run sync:passport</span>
+                </div>
+            </div>
+            <div class="stats adults-only soup-dev-meta">
+                <div class="stat soup-dev-stat soup-tap">
+                    <a href="p31-personal-howto.html">How-to (interactive)</a>
+                    <span class="soup-dev-sep"> · </span>
+                    <span>Command center (local, buttons)</span>
+                    <span class="soup-dev-sep"> — </span>
+                    <span>npm run command-center</span>
+                    <span class="soup-dev-sep"> · </span>
+                    <span>or Run Task: “P31: local command center”</span>
+                </div>
+            </div>
+            <div class="stats adults-only soup-dev-meta">
+                <div class="stat soup-dev-stat soup-tap">
+                    <span>Personal agent (PAR) —</span>
+                    <a href="andromeda/04_SOFTWARE/p31ca/public/planetary-onboard.html">planetary onboard</a>
+                    <span class="soup-dev-sep"> · </span>
+                    <a href="andromeda/04_SOFTWARE/p31ca/public/mesh-start.html">mesh start</a>
+                    <span class="soup-dev-sep"> · </span>
+                    <a href="andromeda/04_SOFTWARE/p31ca/public/connect.html" title="K₄ cage + satellites">connect</a>
+                    <span class="soup-dev-sep"> · </span>
+                    <a href="andromeda/04_SOFTWARE/p31ca/public/initial-build.html">create (initial build)</a>
+                    <span class="soup-dev-sep"> · </span>
+                    <a href="https://p31ca.org/build" rel="noopener" title="CWP-P31-IB-2026-01">p31ca.org/build</a>
+                    <span class="soup-dev-sep"> · </span>
+                    <span>CWP-31: <code>andromeda/.../integration-handoff/CWP-31/</code></span>
+                </div>
+            </div>
+
+            <!-- Performance Dashboard -->
+            <div class="adults-only soup-perf-block soup-dev-telemetry">
+                <div class="soup-perf-hdr" aria-label="Frame time graph">Frame graph</div>
+                <canvas id="performance-canvas" width="400" height="150"></canvas>
+            </div>
+
+            <div id="event-log" class="soup-event-stream soup-dev-telemetry"></div>
+            <div id="log" class="soup-dev-telemetry"></div>
+        </div>
+    </div>
+
+    <div id="soup-reward-toast" class="soup-reward-toast" role="status" aria-live="polite" hidden></div>
+    <div class="soup-tbar-dock" id="soup-tbar-dock" role="toolbar" aria-label="Main actions: tutorial, sync archive, memory"></div>
+
+    <script type="module">
+        import { SoupEngine } from './dist/soup.js';
+        import { TutorialSystem } from './dist/tutorial.js';
+        import { PerformanceDashboard } from './dist/performance-dashboard.js';
+        import { particleSystem } from './dist/particles.js';
+        import { MemoryPanel } from './dist/memory-panel.js';
+
+        /** P31 universal canon (hub) — canvas tints, matches cognitive-passport/p31-style.css */
+        const P31Q = {
+            void: '#0f1115',
+            paper: '#f0f1f2',
+            bond: 'rgba(77, 184, 168, 0.42)',
+            calm: { r: 77, g: 184, b: 168 },
+            lab: { r: 204, g: 98, b: 71 },
+            kitchen: { r: 59, g: 163, b: 114 },
+            deep: { r: 139, g: 124, b: 201 },
+            ping: '#cc6247',
+            labPanelBg: 'rgba(22, 25, 32, 0.94)',
+        };
+
+        fetch('p31-constants.json', { cache: 'no-store' })
+            .then((r) => (r.ok ? r.json() : null))
+            .then((c) => {
+                if (!c) return;
+                const p = c.physics || {};
+                const strip = document.getElementById('soup-larmor');
+                const el = document.getElementById('larmor-coherence');
+                if (strip && el && p.larmorHz != null) {
+                    const label = p.larmorLabel || 'Larmor reference';
+                    el.textContent = `${label} · ${p.larmorHz} Hz`;
+                    strip.removeAttribute('hidden');
+                }
+            })
+            .catch(() => {});
+
+        const DEMO_W = 1600;
+        const DEMO_H = 800;
+        const URL_MOCK_ROOM = 'mock';
+        const urlParams = new URLSearchParams(window.location.search);
+        const isKids = urlParams.has('kids') || urlParams.get('mode') === 'kids';
+        const isParents = urlParams.has('parents') || urlParams.get('mode') === 'parents';
+        if (isParents) {
+            document.documentElement.classList.add('parents-mode');
+        }
+        if (isKids) {
+            document.documentElement.classList.add('kids-mode');
+            const ptitle = document.getElementById('presence-title');
+            if (ptitle) ptitle.textContent = 'Who is here with you';
+        }
+        if (isParents && isKids) {
+            document.title = 'C.A.R.S. (family)';
+        } else if (isParents) {
+            document.title = 'C.A.R.S. (guardian)';
+        } else if (isKids) {
+            document.title = 'C.A.R.S. (big play)';
+        }
+
+        (function initSoupWelcomeCopy() {
+            const welcome = document.getElementById('soup-welcome');
+            if (!welcome) return;
+            if (isParents && isKids) {
+                welcome.innerHTML =
+                    'Family in one bowl—<strong>co-presence</strong> over the feed. Calm colors, clear moments.';
+            } else if (isKids) {
+                welcome.innerHTML =
+                    'You, S.J., W.J.—<strong>same bowl</strong>. Play and explore, not a race against strangers.';
+            } else if (isParents) {
+                welcome.innerHTML =
+                    'Guardian view—same bowl, <strong>their safety and clarity</strong> first. No stranger scoreboard.';
+            }
+        })();
+
+        let lastReactionCount = -1;
+
+        function buildKidViewUrl() {
+            const p = new URLSearchParams(window.location.search);
+            p.set('kids', '1');
+            p.set('parents', '1');
+            return (
+                window.location.origin +
+                window.location.pathname +
+                (p.toString() ? '?' + p.toString() : '')
+            );
+        }
+        const parentKidA = document.getElementById('parent-kid-view-link');
+        if (parentKidA) {
+            parentKidA.href = buildKidViewUrl();
+        }
+        const copyKidViewBtn = document.getElementById('copy-kid-view-link');
+        if (copyKidViewBtn) {
+            copyKidViewBtn.addEventListener('click', async () => {
+                const t = buildKidViewUrl();
+                try {
+                    await navigator.clipboard.writeText(t);
+                    copyKidViewBtn.textContent = 'Copied kid-view link';
+                    setTimeout(() => {
+                        copyKidViewBtn.textContent = 'Copy kid-view link';
+                    }, 2000);
+                } catch (e) {
+                    console.error(e);
+                }
+            });
+        }
+        const roomQ = (urlParams.get('room') || '').trim().slice(0, 64);
+        const nameQ = (urlParams.get('name') || '').trim().slice(0, 32);
+        let wsUrl = (urlParams.get('ws') || '').trim();
+        if (!wsUrl && roomQ && roomQ !== URL_MOCK_ROOM) {
+            wsUrl = 'ws://127.0.0.1:8082';
+        }
+        const isDebug = urlParams.has('debug');
+        /** Wall-time frame probe for Chromebook perf (docs/SOUP-PERF-BUDGET.md) — logs to console every 120 frames */
+        const perfProbe = urlParams.has('perf') || urlParams.get('perf') === '1';
+        const networkPlay =
+            roomQ && roomQ !== URL_MOCK_ROOM
+                ? { room: roomQ, displayName: nameQ || 'You' }
+                : null;
+
+        const kidsActionHost = document.getElementById('kids-actions');
+        if (kidsActionHost) {
+            kidsActionHost.addEventListener('click', (ev) => {
+                const btn = ev.target && ev.target.closest
+                    ? ev.target.closest('button[data-kid-name]')
+                    : null;
+                if (!btn) return;
+                const label = btn.getAttribute('data-kid-name') || 'You';
+                const p = new URLSearchParams(window.location.search);
+                p.set('name', label);
+                p.set('kids', '1');
+                if (isParents) p.set('parents', '1');
+                if (!p.get('room') || p.get('room') === URL_MOCK_ROOM) {
+                    p.set('room', 'our-house');
+                }
+                if (!p.get('ws')) {
+                    p.set('ws', 'ws://127.0.0.1:8082');
+                }
+                window.location.search = p.toString();
+            });
+        }
+
+        function buildInviteUrl() {
+            const u = new URL(
+                window.location.origin + window.location.pathname,
+                window.location.origin
+            );
+            if (isKids) u.searchParams.set('kids', '1');
+            if (isParents) u.searchParams.set('parents', '1');
+            if (roomQ && roomQ !== URL_MOCK_ROOM) {
+                u.searchParams.set('room', roomQ);
+            }
+            if (wsUrl) u.searchParams.set('ws', wsUrl);
+            return u.toString();
+        }
+
+        // WCD-33: set when running the archive Worker (e.g. npx wrangler dev / npm run archive:dev)
+        // window.BONDING_ARCHIVE_URL = 'http://127.0.0.1:8787';
+
+        const soup = new SoupEngine(
+            {
+                width: DEMO_W,
+                height: DEMO_H,
+                physicsHz: 30,
+                renderHz: 60,
+                cellSize: 50,
+                debug: isDebug,
+                lodThresholds: { fpsLow: 50, consecutiveFrames: 3 },
+            },
+            wsUrl,
+            networkPlay
+        );
+
+        soup.onNetworkWarmEdge = () => {
+            try {
+                window.__p31SoupStarfield?.notifyWarmEdge?.();
+            } catch (_) {
+                /* optional starfield */
+            }
+        };
+
+        const canvasWrap = document.getElementById('canvas-wrap');
+        soup.getZones().forEach((zone) => {
+            const zel = document.createElement('div');
+            zel.className = 'zone ' + zone.name;
+            zel.setAttribute('aria-hidden', 'true');
+            const d = zone.radius * 2;
+            zel.style.left = (zone.x - zone.radius) + 'px';
+            zel.style.top = (zone.y - zone.radius) + 'px';
+            zel.style.width = d + 'px';
+            zel.style.height = d + 'px';
+            canvasWrap.appendChild(zel);
+        });
+
+        // DOM elements
+        const canvas = document.getElementById('canvas');
+        canvas.width = DEMO_W;
+        canvas.height = DEMO_H;
+        const ctx = canvas.getContext('2d');
+        const fpsEl = document.getElementById('fps');
+        const moleculesEl = document.getElementById('molecules');
+        const atomsEl = document.getElementById('atoms');
+        const lodEl = document.getElementById('lod');
+        const reactionsEl = document.getElementById('reactions');
+        const audioEl = document.getElementById('audio');
+        const logEl = document.getElementById('log');
+        const familyRow = document.getElementById('network-family-row');
+        const familyLabel = document.getElementById('family-room-label');
+        const copyFamilyBtn = document.getElementById('copy-family-link');
+        if (networkPlay) {
+            familyRow.classList.add('soup-visible');
+            familyLabel.textContent =
+                'Family play · ' +
+                (roomQ || '') +
+                ' · you are "' +
+                (nameQ || 'You') +
+                '"';
+        }
+        copyFamilyBtn.addEventListener('click', async () => {
+            const text = buildInviteUrl();
+            try {
+                await navigator.clipboard.writeText(text);
+                copyFamilyBtn.textContent = 'Copied';
+                setTimeout(() => {
+                    copyFamilyBtn.textContent = 'Copy invite link';
+                }, 2000);
+            } catch (e) {
+                log('Copy failed: ' + (e && e.message));
+            }
+        });
+
+        const newRoomBtn = document.getElementById('new-family-room');
+        if (newRoomBtn) {
+            newRoomBtn.addEventListener('click', () => {
+                const slug =
+                    'shared-' +
+                    Math.random().toString(36).slice(2, 9) +
+                    '-' +
+                    Date.now().toString(36).slice(-4);
+                const p = new URLSearchParams(window.location.search);
+                p.set('room', slug);
+                p.delete('name');
+                if (wsUrl) p.set('ws', wsUrl);
+                if (isKids) p.set('kids', '1');
+                if (isParents) p.set('parents', '1');
+                window.location.search = p.toString();
+            });
+        }
+
+        function presenceHue(name) {
+            let h = 0;
+            const s = String(name);
+            for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0;
+            return Math.abs(h) % 360;
+        }
+
+        function escapeHtml(s) {
+            return String(s)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+
+        // Logging function
+        function log(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            logEl.innerHTML += `[${timestamp}] ${message}<br>`;
+            logEl.scrollTop = logEl.scrollHeight;
+            console.log(message);
+        }
+
+        // Set up event listeners for synthesis reactions
+        soup.onMoleculeCreated = (molecule) => {
+            log(`🧪 Created ${molecule.personality} molecule (${molecule.atoms.length} atoms)`);
+        };
+
+        soup.onReaction = (event) => {
+            log(`⚗️  ${event.type.toUpperCase()}: ${event.emotionalImpact}`);
+            if (event.type === 'synthesis') {
+                log(`💕 Synthesis: ${event.reactants.length} reactants → ${event.products.length} products`);
+                if (event.products.length > 0) {
+                    log(`   New compound: ${event.products[0].element}`);
+                }
+                void import('./design-assets/starfield/p31-mesh-touches.js').then((MT) => {
+                    const el0 = event.products[0] && event.products[0].element;
+                    const k = MT.starfieldBondingKeyFromProductElement(el0);
+                    if (k) window.__p31SoupStarfield?.setBondingMolecule?.(k);
+                });
+                const el0 = event.products[0] && event.products[0].element;
+                if (el0 === 'LOV') {
+                    log('💚 LOV — operator Easter egg (for S.J. / W.J.).');
+                    const toast = document.getElementById('soup-reward-toast');
+                    if (toast) {
+                        toast.textContent =
+                            'LOV — a compound that spells affection. Hidden on purpose. (Egg)';
+                        toast.hidden = false;
+                        setTimeout(() => {
+                            toast.hidden = true;
+                            toast.textContent = '';
+                        }, 4200);
+                    }
+                }
+            }
+        };
+
+        soup.onMoleculeDestroyed = (moleculeId) => {
+            log(`💥 Molecule destroyed: ${moleculeId}`);
+        };
+
+        if (new URLSearchParams(window.location.search).get('egglov') === '1') {
+            soup.spawnEggLovSandbox();
+            log('Egglov: Li + V seeded in the lab — collide for LOV (operator note for S.J. / W.J.).');
+        }
+
+        // Rendering function
+        function render() {
+            // Clear canvas
+            ctx.fillStyle = P31Q.void;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw bonds
+            ctx.strokeStyle = P31Q.bond;
+            ctx.lineWidth = 1;
+            soup.getBonds().forEach(bond => {
+                ctx.beginPath();
+                ctx.moveTo(bond.atom1.x, bond.atom1.y);
+                ctx.lineTo(bond.atom2.x, bond.atom2.y);
+                ctx.stroke();
+            });
+
+            // Draw atoms
+            soup.getAtoms().forEach(atom => {
+                // Different rendering for ghost molecules
+                const isGhost = atom.id.startsWith('ghost_');
+
+                if (isGhost) {
+                    // Ghost molecules: semi-transparent with dashed border
+                    ctx.save();
+                    ctx.globalAlpha = 0.7;
+                    ctx.fillStyle = atom.color;
+                    ctx.beginPath();
+                    ctx.arc(atom.x, atom.y, atom.radius, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Dashed border for ghosts
+                    ctx.strokeStyle = atom.color;
+                    ctx.lineWidth = 1;
+                    ctx.setLineDash([2, 2]);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+
+                    ctx.restore();
+
+                    // Ghost label
+                    ctx.fillStyle = 'rgba(240, 241, 242, 0.72)';
+                    ctx.font = '10px monospace';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(atom.element, atom.x, atom.y + 3);
+                } else {
+                    // Local molecules: solid rendering
+                    ctx.fillStyle = atom.color;
+                    ctx.beginPath();
+                    ctx.arc(atom.x, atom.y, atom.radius, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Draw element symbol
+                    ctx.fillStyle = P31Q.paper;
+                    ctx.font = '10px monospace';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(atom.element, atom.x, atom.y + 3);
+                }
+            });
+
+            // Draw incoming pings
+            const currentTime = performance.now();
+            soup.getIncomingPings().forEach(ping => {
+                if (currentTime < ping.expiresAt) {
+                    const alpha = Math.max(0, (ping.expiresAt - currentTime) / 10000); // Fade over 10 seconds
+                    ctx.save();
+                    ctx.globalAlpha = alpha;
+                    ctx.fillStyle = P31Q.ping;
+                    ctx.font = '20px serif';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(ping.emoji, ping.position.x, ping.position.y - 30);
+                    ctx.restore();
+                }
+            });
+
+            // Draw particle effects
+            particleSystem.render(ctx);
+
+            // Draw zone centers with breathing effects
+            soup.getZones().forEach(zone => {
+                // Breathing rhythm visualization for Calm Zone
+                let zoneRadius = 10;
+                let zoneAlpha = 0.3;
+
+                if (zone.name === 'calm') {
+                    const breathingAmplitude = soup.getZoneBreathingAmplitude('calm');
+                    zoneRadius = 10 + breathingAmplitude * 20; // Pulse between 10-30px
+                    zoneAlpha = 0.3 + breathingAmplitude * 0.4; // Glow between 0.3-0.7
+                    const c = P31Q.calm;
+
+                    // Draw breathing indicator ring
+                    ctx.strokeStyle = `rgba(${c.r}, ${c.g}, ${c.b}, ${zoneAlpha})`;
+                    ctx.lineWidth = 3;
+                    ctx.setLineDash([]);
+                    ctx.beginPath();
+                    ctx.arc(zone.x, zone.y, zoneRadius + 5, 0, Math.PI * 2);
+                    ctx.stroke();
+
+                    // Add breathing text indicator
+                    ctx.fillStyle = `rgba(${c.r}, ${c.g}, ${c.b}, ${zoneAlpha})`;
+                    ctx.font = '10px monospace';
+                    ctx.textAlign = 'center';
+                    const phaseText = breathingAmplitude > 0.6 ? 'INHALE' :
+                                    breathingAmplitude > 0.3 ? 'HOLD' : 'EXHALE';
+                    ctx.fillText(phaseText, zone.x, zone.y + zoneRadius + 20);
+                }
+
+                // Draw zone center
+                ctx.strokeStyle = `rgba(77, 184, 168, ${zoneAlpha * 0.5})`;
+                ctx.lineWidth = 1;
+                ctx.setLineDash([5, 5]);
+                ctx.beginPath();
+                ctx.arc(zone.x, zone.y, zoneRadius, 0, Math.PI * 2);
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                // Zone label
+                ctx.fillStyle = P31Q.paper;
+                ctx.font = '12px monospace';
+                ctx.textAlign = 'center';
+                ctx.fillText(zone.name.toUpperCase(), zone.x, zone.y - 15);
+            });
+
+            // Enhanced zone atmosphere rendering
+            soup.getZones().forEach(zone => {
+                let zoneColor = 'rgba(255, 255, 255, 0.05)'; // Default subtle glow
+
+                if (zone.name === 'calm') {
+                    const breathingAmplitude = soup.getZoneBreathingAmplitude('calm');
+                    const alpha = 0.05 + breathingAmplitude * 0.1;
+                    const c = P31Q.calm;
+                    zoneColor = `rgba(${c.r}, ${c.g}, ${c.b}, ${alpha})`;
+                } else if (zone.name === 'lab') {
+                    const o = P31Q.lab;
+                    zoneColor = `rgba(${o.r}, ${o.g}, ${o.b}, 0.1)`;
+                } else if (zone.name === 'kitchen') {
+                    const k = P31Q.kitchen;
+                    zoneColor = `rgba(${k.r}, ${k.g}, ${k.b}, 0.08)`;
+                } else if (zone.name === 'deep') {
+                    const d = P31Q.deep;
+                    zoneColor = `rgba(${d.r}, ${d.g}, ${d.b}, 0.08)`;
+                }
+
+                // Fill zone area with atmospheric color
+                ctx.fillStyle = zoneColor;
+                ctx.beginPath();
+                ctx.arc(zone.x, zone.y, zone.radius, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Add subtle particle effect for active zones
+                if (zone.name === 'calm') {
+                    const breathingAmplitude = soup.getZoneBreathingAmplitude('calm');
+                    const particleCount = Math.floor(breathingAmplitude * 8) + 3;
+                    const c = P31Q.calm;
+
+                    for (let i = 0; i < particleCount; i++) {
+                        const angle = (i / particleCount) * Math.PI * 2;
+                        const distance = zone.radius * (0.8 + Math.random() * 0.2);
+                        const px = zone.x + Math.cos(angle) * distance;
+                        const py = zone.y + Math.sin(angle) * distance;
+
+                        ctx.fillStyle = `rgba(${c.r}, ${c.g}, ${c.b}, ${0.3 + Math.random() * 0.4})`;
+                        ctx.beginPath();
+                        ctx.arc(px, py, 1 + Math.random() * 2, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                }
+            });
+
+            // Lab Zone UI Overlays - show stats for molecules in the lab
+            const labStats = getLabZoneStats();
+            if (labStats.totalAtoms > 0) {
+                const labZone = soup.getZones().find(z => z.name === 'lab');
+                if (labZone) {
+                    // Draw stats panel near lab zone
+                    const panelX = labZone.x - 120;
+                    const panelY = labZone.y - 80;
+
+                    // Panel background
+                    ctx.fillStyle = P31Q.labPanelBg;
+                    ctx.fillRect(panelX, panelY, 240, 60);
+
+                    // Panel border
+                    ctx.strokeStyle = P31Q.ping;
+                    ctx.lineWidth = 1;
+                    ctx.strokeRect(panelX, panelY, 240, 60);
+
+                    // Stats text
+                    ctx.fillStyle = P31Q.paper;
+                    ctx.font = '11px monospace';
+                    ctx.textAlign = 'left';
+                    ctx.fillText(`🏪 LAB STATION - ${labStats.totalAtoms} atoms`, panelX + 8, panelY + 18);
+                    ctx.fillText(`Molecules: ${labStats.totalMolecules}`, panelX + 8, panelY + 32);
+                    ctx.fillText(`Active Reactions: ${labStats.reactions}`, panelX + 8, panelY + 46);
+                }
+            }
+        }
+
+        // Update stats display
+        function updateStats() {
+            const stats = soup.getStats();
+            const connectionStatus = soup.getConnectionStatus();
+
+            fpsEl.textContent = stats.physics.fps;
+            moleculesEl.textContent = stats.molecules;
+            atomsEl.textContent = stats.physics.atoms;
+            lodEl.textContent = stats.physics.lodLevel;
+            const rc = stats.reactionHistory;
+            reactionsEl.textContent = rc;
+            if (lastReactionCount >= 0 && rc > lastReactionCount) {
+                const statRx = document.getElementById('stat-reactions');
+                if (statRx) {
+                    statRx.classList.add('soup-stat--moment');
+                    setTimeout(() => statRx.classList.remove('soup-stat--moment'), 1200);
+                }
+                const toast = document.getElementById('soup-reward-toast');
+                if (toast) {
+                    toast.textContent =
+                        'New bond in the bowl—a small shared win. (Feedback, not a loot box.)';
+                    toast.hidden = false;
+                    setTimeout(() => {
+                        toast.hidden = true;
+                        toast.textContent = '';
+                    }, 2800);
+                }
+            }
+            lastReactionCount = rc;
+            audioEl.textContent = stats.audio ? `${stats.audio.activeOscillators}/${stats.audio.maxOscillators}` : 'N/A';
+
+            // Update saved molecules count
+            const persistenceStats = soup.getPersistenceStats();
+            document.getElementById('saved-molecules').textContent = persistenceStats.savedMolecules;
+
+            // Update performance dashboard
+            performanceDashboard.updateMetrics(stats, soup);
+
+            // Update connection status
+            const statusEl = document.getElementById('connection-status');
+            const statusTextEl = document.getElementById('connection-text');
+
+            document.documentElement.dataset.soupLive = connectionStatus.connected ? '1' : '0';
+            document.documentElement.dataset.soupFamily = connectionStatus.familyMode ? '1' : '0';
+            const peersN = connectionStatus.roomPeers;
+            document.documentElement.dataset.soupPeers =
+                typeof peersN === 'number' && peersN >= 0 ? String(peersN) : '';
+
+            if (connectionStatus.connected) {
+                statusEl.className = 'connection-status connected';
+                if (connectionStatus.familyMode) {
+                    const peers = connectionStatus.roomPeers;
+                    const ptxt =
+                        peers >= 0
+                            ? `${peers} other client${peers === 1 ? '' : 's'}`
+                            : '…';
+                    statusTextEl.textContent = `Live · room "${connectionStatus.room}" · ${ptxt} · you: ${connectionStatus.displayName || '?'}`;
+                } else {
+                    let host = connectionStatus.url;
+                    try {
+                        const u = new URL(connectionStatus.url);
+                        host = u.host;
+                    } catch (e) { /* use raw */ }
+                    statusTextEl.textContent = `Live · ${host} · mock + NPCs`;
+                }
+            } else {
+                statusEl.className = 'connection-status disconnected';
+                const r = networkPlay
+                    ? ` · room “${roomQ}”${nameQ ? ' · ' + nameQ : ''}`
+                    : '';
+                const att = connectionStatus.reconnectAttempts ?? 0;
+                if (att === 0) {
+                    statusTextEl.textContent =
+                        'Quiet bowl — start the WebSocket server (see header) or add ?room=… & ?ws=… to invite family.' +
+                        r;
+                } else {
+                    statusTextEl.textContent = `Reconnecting… (${att})${r}`;
+                }
+            }
+
+            const ph = document.getElementById('presence-hud');
+            const chipHost = document.getElementById('presence-chips');
+            if (connectionStatus.connected && wsUrl) {
+                ph.classList.add('soup-hud--visible');
+                const me = connectionStatus.displayName || 'You';
+                const roster = connectionStatus.roster || [];
+                const youBorder = connectionStatus.familyMode
+                    ? 'var(--p31-phosphorus)'
+                    : 'var(--p31-cyan)';
+                let html = `<span class="presence-pill" style="border-color:${youBorder}">You · ${escapeHtml(me)}</span>`;
+                roster.forEach((p) => {
+                    const hue = presenceHue(p.displayName);
+                    html += ` <span class="presence-pill" style="border-color:hsl(${hue},50%,48%)">${escapeHtml(p.displayName)}</span>`;
+                });
+                chipHost.innerHTML = html;
+            } else {
+                ph.classList.remove('soup-hud--visible');
+                chipHost.innerHTML = '';
+            }
+
+            const abRow = document.getElementById('as-above-so-below');
+            const abLabel = document.getElementById('as-above-label');
+            if (abRow && abLabel) {
+                const lr = connectionStatus.localRunbook;
+                if (connectionStatus.connected && lr && lr.lines && lr.lines.length) {
+                    abRow.classList.add('soup-panel-visible');
+                    const short0 =
+                        lr.lines[0].length > 110
+                            ? lr.lines[0].slice(0, 110) + '…'
+                            : lr.lines[0];
+                    abLabel.textContent = `${lr.echo} · :${lr.port} — ${short0}`;
+                } else {
+                    abRow.classList.remove('soup-panel-visible');
+                }
+            }
+            const prb = document.getElementById('parents-runbook-below');
+            const prbl = document.getElementById('parents-runbook-lines');
+            if (prb && prbl) {
+                const lr2 = connectionStatus.localRunbook;
+                if (isParents && connectionStatus.connected && lr2 && lr2.lines) {
+                    prb.classList.add('soup-panel-visible');
+                    prbl.innerHTML = lr2.lines
+                        .map(
+                            (line) =>
+                                '<p class="soup-runbook-line">' +
+                                escapeHtml(line) +
+                                '</p>'
+                        )
+                        .join('');
+                } else {
+                    prb.classList.remove('soup-panel-visible');
+                    prbl.innerHTML = '';
+                }
+            }
+
+            // Update event log
+            const eventLog = soup.getEventLog();
+            const eventLogEl = document.getElementById('event-log');
+            const recentEvents = eventLog.slice(-5); // Show last 5 events
+
+            eventLogEl.innerHTML = recentEvents.map(event => {
+                const time = new Date(event.timestamp).toLocaleTimeString();
+                return `[${time}] ${event.message}`;
+            }).join('<br>');
+
+            // Update ghost molecule count
+            const ghostCount = soup.getGhostMolecules().size;
+            document.getElementById('ghost-molecules').textContent = ghostCount;
+        }
+
+        // Main animation loop
+        let lastTime = performance.now();
+        let prevRafWall = performance.now();
+        let perfAccumMs = 0;
+        let perfFrameCount = 0;
+        const PERF_LOG_FRAMES = 120;
+
+        async function animate() {
+            const currentTime = performance.now();
+            const deltaTime = (currentTime - lastTime) / 1000;
+            lastTime = currentTime;
+
+            if (perfProbe) {
+                const frameWallMs = currentTime - prevRafWall;
+                prevRafWall = currentTime;
+                perfAccumMs += frameWallMs;
+                perfFrameCount++;
+                if (perfFrameCount >= PERF_LOG_FRAMES) {
+                    const avg = perfAccumMs / perfFrameCount;
+                    const fps = avg > 0 ? 1000 / avg : 0;
+                    console.info(
+                        `[Soup perf] avg frame ${avg.toFixed(2)} ms (~${fps.toFixed(0)} fps) — ${perfFrameCount} frames — docs/SOUP-PERF-BUDGET.md`
+                    );
+                    perfAccumMs = 0;
+                    perfFrameCount = 0;
+                }
+            }
+
+            // Update soup simulation
+            soup.update(deltaTime);
+
+            // Render
+            render();
+
+            // Update stats
+            updateStats();
+
+            requestAnimationFrame(animate);
+        }
+
+        // Tutorial system
+        const tutorial = new TutorialSystem();
+
+        // Performance dashboard
+        const performanceCanvas = document.getElementById('performance-canvas');
+        const performanceDashboard = new PerformanceDashboard(performanceCanvas);
+
+        // Add tutorial button
+        const tutorialBtn = document.createElement('button');
+        tutorialBtn.type = 'button';
+        tutorialBtn.textContent = '📚 Tutorial';
+        tutorialBtn.className = 'soup-tbar soup-tbar--tutorial';
+        tutorialBtn.onclick = () => tutorial.startTutorial();
+        if (isKids) {
+            tutorialBtn.setAttribute('data-kids-tbar', '');
+        }
+        const tbarDock = document.getElementById('soup-tbar-dock');
+        (tbarDock || document.body).appendChild(tutorialBtn);
+
+        // Add sync button
+        const syncBtn = document.createElement('button');
+        syncBtn.type = 'button';
+        syncBtn.textContent = '🌐 Sync Archive';
+        syncBtn.className = 'soup-tbar soup-tbar--sync';
+        if (isKids) {
+            syncBtn.setAttribute('data-kids-tbar', '');
+        }
+        syncBtn.onclick = async () => {
+            syncBtn.disabled = true;
+            syncBtn.textContent = '⏳ Syncing...';
+            try {
+                await soup.syncGlobalArchive();
+                log('🌐 Global archive synchronized successfully');
+                syncBtn.textContent = '✅ Synced';
+                setTimeout(() => {
+                    syncBtn.textContent = '🌐 Sync Archive';
+                    syncBtn.disabled = false;
+                }, 2000);
+            } catch (error) {
+                log('❌ Failed to sync global archive: ' + error);
+                syncBtn.textContent = '❌ Sync Failed';
+                setTimeout(() => {
+                    syncBtn.textContent = '🌐 Sync Archive';
+                    syncBtn.disabled = false;
+                }, 3000);
+            }
+        };
+        (tbarDock || document.body).appendChild(syncBtn);
+
+        // Add memory button
+        const memoryBtn = document.createElement('button');
+        memoryBtn.type = 'button';
+        memoryBtn.textContent = '💾 Memory';
+        memoryBtn.className = 'soup-tbar soup-tbar--memory';
+        const memoryPanel = new MemoryPanel(soup);
+        memoryBtn.onclick = () => memoryPanel.show();
+        if (isKids) {
+            memoryBtn.setAttribute('data-kids-tbar', '');
+        }
+        (tbarDock || document.body).appendChild(memoryBtn);
+
+        // Initialize synthesis run
+        async function init() {
+            log('C.A.R.S. — engine running.');
+            if (isKids) {
+                log('🌈 Kids: bigger UI, bottom action bar. WebSocket needs the mock server (grown-up or runbook).');
+            }
+            if (isParents && !isKids) {
+                log('👪 Server + mock WebSocket from repo, same room in two tabs (runbook above).');
+            }
+
+            try {
+                await soup.resumeAudio();
+                log('✅ Audio initialized');
+                if (!isKids) {
+                    log('🎯 Watch for synthesis reactions between complementary atoms!');
+                } else {
+                    log('🎯 Build molecules and see what reacts — same science, bigger view.');
+                }
+                log('💕 H + O → H2O (Water formation)');
+                log('🔗 C + H → CH (Hydrocarbon building blocks)');
+                log('💪 Ca + O → CaO (Ionic compound formation)');
+                log('   Each reaction inherits blended personality traits');
+
+                // Auto-start tutorial for first-time users
+                if (tutorial.shouldShowTutorial()) {
+                    setTimeout(() => {
+                        log('🎓 First time here? Click the "Tutorial" button to learn how the sim works!');
+                        const reduce =
+                            typeof window.matchMedia === 'function' &&
+                            window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                        if (!reduce) {
+                            tutorialBtn.style.animation = 'soup-pulse 2.2s ease-in-out infinite';
+                        }
+                    }, 3000);
+                }
+
+                // Start the simulation (seed molecules from the engine module)
+                animate();
+            } catch (error) {
+                log(`❌ Initialization error: ${error.message}`);
+            }
+        }
+
+        // Start lab on page load
+        init();
+
+        // Lab zone statistics function
+        function getLabZoneStats() {
+            const labZone = soup.getZones().find(z => z.name === 'lab');
+            if (!labZone) return { totalAtoms: 0, totalMolecules: 0, reactions: 0 };
+
+            let totalAtoms = 0;
+            let totalMolecules = 0;
+            const atomsInLab = [];
+
+            // Count atoms and molecules in lab zone
+            soup.getAtoms().forEach(atom => {
+                const dx = atom.x - labZone.x;
+                const dy = atom.y - labZone.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance <= labZone.radius) {
+                    totalAtoms++;
+                    atomsInLab.push(atom.id);
+                }
+            });
+
+            // Count molecules that have atoms in the lab
+            const molecules = soup.getMolecules();
+            molecules.forEach(molecule => {
+                const atomsInZone = molecule.atoms.filter(atom => atomsInLab.includes(atom.id));
+                if (atomsInZone.length > 0) {
+                    totalMolecules++;
+                }
+            });
+
+            // Get reaction history (simplified - in real implementation would filter by zone)
+            const reactionHistory = soup.getReactionHistory();
+
+            return {
+                totalAtoms,
+                totalMolecules,
+                reactions: reactionHistory.length
+            };
+        }
+
+
+
+        // Make soup available globally for debugging
+        window.soup = soup;
+
+        void (async () => {
+            const el = document.getElementById('p31-soup-starfield');
+            if (!(el instanceof HTMLCanvasElement)) return;
+            try {
+                const mod = await import('./design-assets/starfield/p31-starfield.js');
+                const { config, hints } = await mod.resolveStarfieldConfig();
+                const api = mod.initStarfield(el, config, { surface: 'soup', touchRipple: true });
+                api.ingestTouchHints(hints);
+                window.__p31SoupStarfield = api;
+            } catch (e) {
+                /* Gray Rock — starfield optional offline */
+            }
+        })();
+    </script>
+</body>
+</html>

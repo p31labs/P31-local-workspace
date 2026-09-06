@@ -1,0 +1,13 @@
+name = "meshy-bridge"
+main = "src/index.ts"
+compatibility_date = "2026-07-16"
+
+[vars]
+MESHY_BASE_URL = "https://api.meshy.ai"
+
+[observability]
+enabled = true
+head_sampling_rate = 0.1
+
+[cache]
+enabled = true

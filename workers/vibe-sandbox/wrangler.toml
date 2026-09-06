@@ -1,0 +1,14 @@
+name = "vibe-sandbox"
+main = "src/index.ts"
+compatibility_date = "2026-07-18"
+compatibility_flags = ["nodejs_compat"]
+
+[observability]
+enabled = true
+
+# Note: egress control is a Cloudflare dashboard-level setting for this Worker
+# (block all outbound Internet except specific bindings)
+# Configure at dashboard.cloudflare.com > Workers > vibe-sandbox > Egress
+
+[cache]
+enabled = true

@@ -1,0 +1,7 @@
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import { useCageStore } from '../hooks/useCageStore';
+const POS = [{ x: 160, y: 30 }, { x: 280, y: 280 }, { x: 40, y: 280 }, { x: 160, y: 180 }];
+const CLR = ['#8b5cf6', '#5cb8ff', '#00d68f', '#ff7eb6'];
+const EDGES = [[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [2, 3]];
+export function TetraView() { const { nodes } = useCageStore(); return (_jsx("div", { className: "tetra-view", children: _jsxs("svg", { viewBox: "0 0 320 320", className: "tetra-svg", children: [EDGES.map(([a, b], i) => (_jsx("line", { x1: POS[a].x, y1: POS[a].y, x2: POS[b].x, y2: POS[b].y, stroke: "#252a38", strokeWidth: "1.5" }, i))), nodes.map((n, i) => { const p = POS[i], c = CLR[i]; return (_jsxs("g", { className: "tetra-node", children: [_jsx("circle", { cx: p.x, cy: p.y, r: i === 0 ? 26 : 18, fill: "none", stroke: n.online ? c : '#252a38', strokeWidth: n.online ? 2.5 : 1 }), _jsx("text", { x: p.x, y: p.y + 4, textAnchor: "middle", fill: n.online ? '#c8cdd8' : '#8b92a5', fontSize: "10", fontWeight: "700", children: n.name }), _jsx("text", { x: p.x, y: p.y + 16, textAnchor: "middle", fill: c, fontSize: "14", children: n.mood }), n.online && _jsx("circle", { cx: p.x + (i === 0 ? 20 : 13), cy: p.y - (i === 0 ? 20 : 13), r: "4", fill: c, opacity: "0.8", children: _jsx("animate", { attributeName: "opacity", values: "0.4;1;0.4", dur: "2s", repeatCount: "indefinite" }) })] }, n.id)); })] }) })); }
+//# sourceMappingURL=TetraView.js.map

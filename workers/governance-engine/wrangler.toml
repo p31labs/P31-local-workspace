@@ -1,0 +1,28 @@
+name = "governance-engine"
+main = "src/index.ts"
+compatibility_date = "2026-07-18"
+compatibility_flags = ["nodejs_compat"]
+
+[[d1_databases]]
+binding = "GOVERNANCE_DB"
+database_name = "governance-db"
+database_id = "ece98a7c-4e96-4802-9b7c-c1015e8ef69b"
+
+[[durable_objects.bindings]]
+name = "GOVERNANCE_ENGINE_DO"
+class_name = "GovernanceEngineDO"
+
+[[durable_objects.bindings]]
+name = "TALLY_ROOM_DO"
+class_name = "TallyRoom"
+
+[exports.GovernanceEngineDO]
+type = "durable-object"
+storage = "sqlite"
+
+[exports.TallyRoom]
+type = "durable-object"
+storage = "sqlite"
+
+[observability]
+enabled = true

@@ -1,0 +1,11 @@
+/**
+ * @p31/skin-tetra — TETRA skin for the P31 design system.
+ * Cyan/gold gradient accent, god-view dashboard chrome.
+ */
+
+:root {
+  --p31-accent: #00f0ff;
+
+  --p31-glass-strong-bg: rgba(10,13,20,0.92);
+  --p31-blur-strong: 24px;
+}
