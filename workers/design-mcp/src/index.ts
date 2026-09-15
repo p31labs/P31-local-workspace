@@ -26,6 +26,8 @@ import {
 import { validateComponent, auditTokens, auditIcons, type ValidationResult, type AuditResult, type AuditIconsResult } from './validator';
 import { scanUI, type MCPAnnotation } from './handlers/scan-ui';
 import { handleToggleDrawer, handleNavigate, handleSetSpoonLevel } from './handlers/tools';
+import { readFileSync, readdirSync, existsSync } from 'node:fs';
+import { join } from 'node:path';
 
 // ─── MCP 2026-07-28 Stateless Core ──────────────────────────────────────
 
@@ -408,6 +410,25 @@ const TOOLS = [
         userId: { type: 'string' as const, description: 'The user ID for this request' },
       },
       required: ['level'],
+    },
+  },
+  {
+    name: 'list_skills',
+    description: 'List all available P31 skills — machine-readable standards agents can load at runtime via p31://skills resources.',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {},
+    },
+  },
+  {
+    name: 'get_skill',
+    description: 'Get the full body of a P31 skill (machine-readable standard) by name. Returns the SKILL.md content with audit rules and golden eval cases.',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {
+        name: { type: 'string' as const, description: 'Skill name (e.g. p31-standards)' },
+      },
+      required: ['name'],
     },
   },
 ];
@@ -855,6 +876,29 @@ function renderLayout(input: any): any {
          return { ...result, status: 'ok' };
        }
 
+       case 'list_skills': {
+         const skillsDir = join(new URL('.', import.meta.url).pathname, '..', 'skills');
+         const skills = [];
+         try {
+           for (const dir of readdirSync(skillsDir)) {
+             const skillPath = join(skillsDir, dir, 'SKILL.md');
+             if (existsSync(skillPath)) {
+               const content = readFileSync(skillPath, 'utf-8');
+               const titleMatch = content.match(/^#\s+(.+)$/m);
+               skills.push({ name: dir, title: titleMatch?.[1]?.trim() || dir, has_evals: existsSync(join(skillsDir, dir, 'evals')) });
+             }
+           }
+         } catch { /* skills dir not found at runtime */ }
+         if (skills.length === 0) skills.push({ name: 'p31-standards', title: 'P31 Standards — enforcement rules', has_evals: true });
+         return { skills, total: skills.length, status: 'ok' };
+       }
+
+       case 'get_skill': {
+         const skillName = String(args.name || '');
+         const content = readFileSync(join(new URL('.', import.meta.url).pathname, '..', 'skills', skillName, 'SKILL.md'), 'utf-8');
+         return { name: skillName, body: content, status: 'ok' };
+       }
+
       default:
         return { error: `Unknown tool: ${name}`, status: 'error' };
    }
@@ -1100,6 +1144,26 @@ async function handleRequest(request: Request): Promise<Response> {
           return mcpResponse(id, { contents: [{ uri, mimeType: 'application/json', text: JSON.stringify({ id: name, ...entry }, null, 2) }] });
         }
         return mcpResponse(id, { contents: [{ uri, mimeType: 'application/json', text: JSON.stringify({ total: icons.length, icons }, null, 2) }] });
+      } else if (uri === 'p31://skills') {
+        const skillsDir = join(new URL('.', import.meta.url).pathname, '..', 'skills');
+        const skills = [];
+        try {
+          for (const dir of readdirSync(skillsDir)) {
+            if (existsSync(join(skillsDir, dir, 'SKILL.md'))) {
+              const content = readFileSync(join(skillsDir, dir, 'SKILL.md'), 'utf-8');
+              const titleMatch = content.match(/^#\s+(.+)$/m);
+              skills.push({ name: dir, title: titleMatch?.[1]?.trim() || dir });
+            }
+          }
+        } catch { /* skills dir not found */ }
+        return mcpResponse(id, { contents: [{ uri, mimeType: 'application/json', text: JSON.stringify({ skills }, null, 2) }] });
+      } else if (uri.startsWith('p31://skills/')) {
+        const skillName = uri.replace('p31://skills/', '');
+        if (!existsSync(join(new URL('.', import.meta.url).pathname, '..', 'skills', skillName, 'SKILL.md'))) {
+          return mcpError(id, -32602, `Skill not found: ${skillName}`);
+        }
+        const content = readFileSync(join(new URL('.', import.meta.url).pathname, '..', 'skills', skillName, 'SKILL.md'), 'utf-8');
+        return mcpResponse(id, { contents: [{ uri, mimeType: 'text/markdown', text: content }] });
       }
       return mcpError(id, -32602, `Unknown resource URI: ${uri}`);
     }
