@@ -8,15 +8,18 @@
  * Usage: node scripts/verify-skills-endpoint.mjs
  */
 import { spawn } from 'node:child_process';
-import { setTimeout } from 'node:timers/promises';
+import { setTimeout as setTimeoutPromise } from 'node:timers/promises';
+import { fileURLToPath } from 'node:url';
+import { dirname, resolve } from 'node:path';
 
 const PORT = 8787;
 const URL = `http://localhost:${PORT}`;
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 function spawnWrangler() {
   return new Promise((resolve, reject) => {
     const proc = spawn('npx', ['wrangler', 'dev', '--port', String(PORT), '--local'], {
-      cwd: new URL('..', import.meta.url).pathname,
+      cwd: resolve(__dirname, '..'),
       stdio: ['ignore', 'pipe', 'pipe'],
     });
     let ready = false;
@@ -62,7 +65,7 @@ async function main() {
   const proc = await spawnWrangler();
 
   try {
-    await setTimeout(5000);
+    await setTimeoutPromise(5000);
 
     console.log('Calling get_skill(p31-standards)...');
     const result = await callSkill('p31-standards');
@@ -95,7 +98,9 @@ async function main() {
     }
     console.log('PASS: list_skills verified via JSON-RPC');
   } finally {
-    proc.kill('SIGTERM');
+    if (typeof proc.kill === 'function') {
+      proc.kill('SIGTERM');
+    }
   }
 }
 
