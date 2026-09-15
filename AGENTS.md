@@ -1,490 +1,163 @@
-# P31 Labs — Agent Instructions
+# AGENTS.md — P31 Labs Design System
 
-## Project Overview
-P31 Labs builds open-source assistive technology for neurodivergent individuals. Monorepo at `/home/p31/P31-local-workspace`.
+## Identity
+You are operating inside the **P31 Labs** monorepo. The design system is the single source of truth for all P31 products: p31ca, phos, phosphorus31, willow, bonding, and the sovereign shell.
 
-## Research Findings (July 2026)
-
-Deep-web verification of the ecosystem's architecture, standards, and published
-packages against source code and authoritative registries. Below is the grounded
-verdict — a few overstated claims from earlier drafts have been corrected.
-
-### Standards (all verified)
-- **ERC-5192** — confirmed ([eips.ethereum.org/EIPS/eip-5192](https://eips.ethereum.org/EIPS/eip-5192)) as a standard.
-  **Correction (2026-07-13, CWP-2026-023/025 audit):** no P31 contract is actually ERC-5192
-  compliant. `LOVESBT.sol` (Base Sepolia `0x521cAD1b54CDDB2B6B53a30EBe050C429F9c6C55`) is
-  soulbound **by convention only** — `transfer`/`transferFrom` revert — but it does NOT implement
-  the ERC-5192 interface (`locked()`, `Locked` event, `supportsInterface(0xb45a3c0e)` are absent).
-  `CognitivePassport.sol` does **not exist** in the repo and is **not deployed**; the address
-  `0xa4bfb18fa7c5265e25b9a8915d1196a18d52299e` is unverified. The "Cognitive Passport" is a
-  local client-side document in PHOS (`apps/phos/src/surfaces/PassportSurface.tsx`), not an on-chain token.
-  `GenesisSpark.sol` is soulbound by convention but does not implement the full ERC-5192 interface.
-- **DID Core v1.0** — [W3C Recommendation](https://www.w3.org/TR/did-core/); IANA registers `did.json`.
-- **DID Core v1.1** — [W3C Candidate Recommendation](https://www.w3.org/TR/did-core/) (2026-03-05).
-  P31 supports `did:key` (Ed25519), `did:jwk` (ML-DSA-65 AKP, RFC 9964), and `did:web`
-  (HTTPS fetch per DID Core v1.1 §8.3). `resolveDIDAsync()` handles all three methods.
-  (CWP-2026-030 Phase 3)
-- **Sovereign DIDs (P31)** — primary `did:key` (Ed25519, Web Crypto) for on-chain care proofs;
-  plus a quantum-safe **`did:jwk`** (ML-DSA-65, encoded per IANA JOSE RFC 9964 as `kty:AKP`, **not**
-  `crv`). Both bind to an ETH address in `love-ledger`'s self-signed `identity_registry`. PHOS
-  **PQC Keys** surface (`/pqc-keys`) generates ML-KEM-768 + ML-DSA-44 + ML-DSA-65. (CWP-2026-025/026)
-  - **ML-DSA-65 care-proof co-signature (CWP-2026-027 A):** `ledger-bridge` `/care-proof` accepts an
-    optional `mldsa65_sig` (standard base64 of the 3309-byte ML-DSA-65 sig over the same canonical
-    `proof|…` message). Verified via `@noble/post-quantum` `ml_dsa65.verify` against
-    `identity_registry.mldsa65_pub`. If the DID has no ML-DSA-65 pub on file it falls back to Ed25519;
-    if it does, the co-signature is required. PHOS **Care SBT Mint** has a "Post-Quantum Co-Signature"
-    toggle that signs from the PQC vault and (re-)registers `mldsa65_pub`.
-  - **SD-JWT care credentials (CWP-2026-027 B):** `ledger-bridge` issues/verifies Selective
-    Disclosure JWTs (RFC 9901) pinned to **draft-ietf-oauth-sd-jwt-vc-17** (`typ:dc+sd-jwt`,
-    `_sd_alg:sha-256`), Ed25519-signed, SHA-256 (`@noble/hashes`) over salted disclosures. Endpoints:
-    `POST /credential/issue` and `POST /credential/verify`. Used by the pilot-dashboard "Active SD-JWTs" KPI.
-    `@sd-jwt/core` v0.20.0 installed as reference implementation (CWP-2026-030 Phase 2).
-- **WCAG 2.2** — [W3C Recommendation](https://www.w3.org/TR/WCAG22/) (2024-12-12);
-  `data-spoons` motion scaling, CrisisMode, skip links, `prefers-reduced-motion` are
-  **verified in code**. The automated axe-core audit runner (`scripts/audit-wcag.mjs`)
-  **exists** in the repo and is **wired into CI** via `axe-runner.yml` (continue-on-error: false).
-- **WebAuthn** — IANA Well-Known URI registry registers `webauthn` (W3C, 2026-01-23).
-- **MCP** — real protocol ([modelcontextprotocol.io](https://modelcontextprotocol.io)).
-- **GNU Taler** — real GNU project ([taler.net](https://taler.net)); P31 integration is **deployed** — `taler-exchange-bridge` is wired to `exchange.demo.taler.net` (see `docs/TALER_INTEGRATION.md`).
-- **A2A AgentCard** — `agent-card.json` is the **IANA-registered** agent-discovery
-  well-known (A2A / Linux Foundation, 2025-08-01). `agent-card.json` is served at
-  `apps/p31ca/public/.well-known/agent-card.json` with valid A2A schema; legacy
-  `agents.json` is retained for backward compatibility.
-
-### Correction: earlier false claim
-The earlier claim that "IETF is standardizing `/.well-known/agents.json`" is
-**FALSE** — IANA has no such entry. The correct registered standard is
-`agent-card.json`.
-
-### MCP servers (inventory)
-There are **4 in-repo MCP servers** (not 3 as previously stated), all hand-rolled JSON-RPC:
-| Server | File | Tools |
-|--------|------|-------|
-| Oasis CLI | `cli/mcp-server.js` | 11 |
-| Component Registry | `cli/component-registry.js` | 5 |
-| LOVE Ledger | `cli/love-registry.js` | 3 |
-| PHOS Forge | `tools/phos-forge/mcp-server.mjs` | 29 |
-| **Total** | | **~46** |
-
-### Published packages
-- **`andromeda-cli`** (1.1.2) — in-repo at `cli/`, published on npm.
-- **`@p31/agent-engine`** (0.1.0-alpha.0) — in-repo at `software/packages/agent-engine/`.
-- **`@p31/game-engine`** (0.1.0-alpha.0) — in-repo at `software/packages/game-engine/`.
-- **`@p31/cli` (2.0.0)** — **PHANTOM**: referenced in docs but has **no in-repo implementation**.
-  This is a documentation artifact; treat as unverified.
-
-### Court-admissible care records
-The deployed **simple** LOVE ledger worker (`apps/phos/src/workers/love-ledger/index.ts`)
-**does** implement a SHA-256 court-admissible hash chain (`love_chain` table,
-`prev_hash`/`entry_hash`, `GET /chain`, `GET /export`). Additional hash-chained
-court-admissible records also exist in `software/workers/legal-versioning.ts` and
-`software/sovereign-justice/src/evidence-vault.ts`. (Earlier drafts falsely claimed
-the LOVE ledger had no hash chain — that was only true of the *undeployed monolith*.)
-
-### Smithery
-12,148+ MCP servers (the earlier "6,000+" figure was understated).
-
-### Kilo.ai
-Real open-source agent (IDE/CLI/Cloud) with MCP support.
-
-See `GLOBAL_IMPACT_REPORT.md` for the full citation-backed report.
-
-## Architecture
-- **Stack:** Cloudflare Workers + Pages, Astro, React 19, Tailwind, Vite, pnpm workspaces
-- **CLI:** `@p31/cli` v3.0.0 — OpenCode face, P31 guts (TypeScript, Ink TUI, SQLite sessions, 3 LLM providers, 6 sovereign plugins, 280+ MCP tools)
-- **Frontend apps:** `apps/phos` (phos.p31ca.org), `apps/willow` (willow.p31ca.org), `apps/bonding` (bonding.p31ca.org), `apps/p31ca` (p31ca.org), `apps/phosphorus31` (phosphorus31.org)
-- **Backend workers:** `apps/gateway` (gateway.p31ca.org), `apps/status` (status.p31ca.org), `apps/auth` (p31-auth), `software/cloudflare-worker/llm-proxy` (p31-llm-proxy)
-- **Core data/orchestration workers:** `love-ledger` (deployed ledger), `jitterbug-api` (Ambient Exocortex brain-dump orchestrator — shares the `love-ledger` D1), `care-api`, `fhir`, `taler-exchange-bridge`, `taler-bridge-billing` (x402 pay-per-call). See `software/packages/jitterbug-api/README.md`.
-- **Agent / mesh workers (CWP-2026-015/016/017):** `agent-runtime` (Agents SDK tool runtime — `send_notification` + `generate_care_report`; `agent-runtime.trimtab-signal.workers.dev`), `care-mesh` (privacy-preserving care data mesh, Laplace DP + Ed25519-signed; `care-mesh.trimtab-signal.workers.dev`), `p31-mcp-server` (native MCP front door for the 9 P31 tools; `p31-mcp-server.trimtab-signal.workers.dev`). `mcp-x402-gateway` orchestrates tool routing. `ledger-bridge` (LIVE on-chain attestation relay to Base Sepolia contracts; `ledger-bridge.trimtab-signal.workers.dev`). See each worker's `RUNBOOK.md`.
-- **Shared packages:** `packages/design-system`, `packages/auth`
-- **Free Plan limits:** 100k req/day, 200k log events/day, 10 D1 databases, 5 cron triggers
-
-## Design System
-
-Visual identity, component guidelines, and neuroinclusive invariants are encoded in [`DESIGN.md`](./DESIGN.md) at the repo root (Google Labs `DESIGN.md` spec). When generating or modifying UI, agents MUST read `DESIGN.md` and must not violate its hard invariants:
-- **Spoon-aware motion** — all animation/transition respects the `data-spoons` (0–5) attribute; motion is fully disabled at `spoons` 0–1.
-- **Glassmorphism** — elevated surfaces use `.glass-panel` / `.glass-card` (`backdrop-filter: blur(12px)`, 24px radius).
-- **Crisis Mode** — at `spoons === 0` no UI chrome may render; only the breathing overlay + exit control (Escape / "I'm ready").
-- **Single accent** — `quantum-cyan` is the only primary accent; never pure white/black text or backgrounds.
-
-## Agent Tooling
-
-### @p31/cli v3.0.0 — OpenCode Face, P31 Guts
-
-The CLI is a sovereign AI agent for neurodivergent families, built on OpenCode's plugin system with P31's domain logic.
-
-**Architecture:**
-- TypeScript + Node.js (ESM-only)
-- OpenCode plugin system (6 P31 sovereign plugins)
-- SQLite per-session-tree sharding (`~/.p31/sessions/`)
-- 3 LLM providers: Anthropic, Google Gemini, OpenRouter (auto-detected)
-- Ink TUI with 3 themes: cyan cockpit, warm garden, crisis minimal
-
-**CLI Commands:**
+## Setup Commands
 ```bash
-p31 spoons [1|3|5]           # Set/view cognitive load level
-p31 session list|new|info    # Session management
-p31 chat --model <model>     # Interactive chat session
-p31 agent <task>             # Run autonomous agent
-p31 tui                      # Launch spoon-aware TUI
-p31 models                   # List available LLM models
-p31 mcp list|serve           # MCP tool management
-p31 phos <command>           # Phos-forge tools (26 subcommands)
+pnpm install              # Install dependencies
+pnpm build                # Build all packages
+pnpm test                 # Run test suites
+pnpm typecheck            # TypeScript strict mode
+pnpm gen:tokens           # Regenerate all token artifacts (CSS, TS, DTCG JSON)
 ```
 
-**P31 Plugins (registered in opencode.json):**
-- `spoon-monitor` — UI adjusts to cognitive load
-- `sovereign-id` — DID:key generation and verification
-- `care-attest` — LOVE ledger care attestation
-- `pqc-tools` — ML-KEM-768, ML-DSA-65, SLH-DSA-128s
-- `mesh-visualize` — K4 mesh topology
-- `honest-label` — contested science flagging
-
-**Phos-Forge Subcommands (26 total):**
-- File classification: `adopt`, `status`, `classify`, `learn`, `rollback`, `watch`, `deploy`, `dashboard`
-- Cognitive: `state`, `estimate`, `calibrate`
-- Self-healer: `remediate`, `healer-log`, `healer-diag`
-- Monitoring: `reflex`, `tide`, `kappa`, `logbook`
-- Cartographer: `cartographer`, `trace`, `related`
-- Brain: `brain-dump`, `brain-sessions`
-- Research: `jitterbug`
-- Visualization: `aura`
-- Bus: `bus-emit`
-
-**TUI Slash Commands:**
-In the TUI chat view, type `/help` to see available slash commands (`/phos status`, `/phos state`, `/phos tide`, etc.)
-
-**MCP Servers (configured in opencode.json):**
-- `phos-forge` (local) — 29 tools via stdio
-- `p31-crypto-mcp` (remote) — 12 tools
-- `p31-justice-hub` (remote) — 8 tools
-- `bros` (remote) — 8 tools
-- `dads` (remote) — 7 tools
-- `x402-gateway` (remote) — 187 tools
-- `federation-bridge` (remote) — 12 tools
-- `ledger-bridge` (remote) — 8 tools
-- `care-mesh` (remote) — 6 tools
-
-**Build & Test:**
+### Design Portal (production/portals/design)
+The design portal consumes the design system as a vendored tarball:
 ```bash
-cd p31-cli
-npm run build    # tsc + vite build (~5s)
-npm test         # 23/23 tests passing
+cd production/portals/design
+pnpm sync:vendor          # Regenerate vendor tarball from canonical design-core
+pnpm install              # Install with updated tarball
+pnpm typecheck            # Verify types
+pnpm test                 # Run tests
+pnpm build                # Build for deploy
 ```
 
-**Published:** `@p31/cli@3.0.0` on npm
+## Code Style
+- TypeScript strict mode, no `any` without justification
+- Single quotes, no semicolons
+- Functional patterns where possible
+- Compound component APIs over boolean props
+- All colors must use `var(--p31-*)` tokens — zero hardcoded hex in production code
+- Canvas/Three.js internals may use literals for performance
 
-### CLI Agent Mode
-Run `andromeda --agent` (or `-a`) for JSON output of session state, design tokens, and capabilities. Works in any context (TTY or non-TTY).
+## Design Token Architecture
 
-### CLI MCP Server
-Agents can invoke CLI commands via MCP (Model Context Protocol):
-```bash
-node cli/mcp-server.js
+### Single Source of Truth
+All visual decisions flow from **one file**:
 ```
-Reads JSON-RPC from stdin, writes to stdout. 11 tools: `oasis_status`, `oasis_save`, `oasis_theme`, `oasis_mode`, `oasis_clear`, `oasis_export_log`, `oasis_sandbox_clear`, `oasis_notify`, `oasis_add_todo`, `oasis_toggle_todo`, `oasis_execute`.
-
-### Edge-Aware Commands
-
-The CLI exposes edge-aware commands that work in both TTY and headless environments. All support `--agent` for JSON output:
-
-```bash
-andromeda status                  # Health check (gateway, phos, p31ca)
-andromeda surfaces                # List PHOS surfaces (23 available)
-andromeda love status             # LOVE ledger status (requires LOVE_LEDGER_URL env)
-andromeda love balance <userId>   # LOVE balance for a user
-andromeda love sync               # Sync local LOVE state
-andromeda deploy --app phos       # Build + deploy to Cloudflare Pages/Workers
+packages/design-core/src/theming/theme-store.ts
 ```
 
-`andromeda deploy` requires `CLOUDFLARE_API_TOKEN` environment variable. Apps: `phos`, `p31ca`, `phosphorus31`, `bonding`, `willow`, `gateway`.
+### Token Tiers
+1. **Primitives**: Raw OKLCH values (`color.palette.ocean.500`)
+2. **Semantic**: Meaningful assignments (`color.surface.primary`)
+3. **Component**: Component-specific (`button.primary.background`)
 
-`andromeda love status` requires `LOVE_LEDGER_URL` environment variable (defaults to `https://love-ledger.p31ca.org`).
+### Themes
+- 5 worlds: `garden`, `ocean`, `aurora`, `zen`, `volt`
+- 3 ages: `child`, `teen`, `adult`
+- 2 sensory modes: `muted`, `warmLight`
+- Total: 30 visual variants
 
-### CLI Global Installation
-
-Agents can install the `andromeda` CLI globally via npm, making it available in any environment (local shell, CI/CD, GitHub Actions) without cloning the monorepo:
-
+### Generation
+All artifacts are generated from `THEME_TOKENS`:
 ```bash
-npm install -g andromeda-cli
-andromeda --agent
+pnpm gen:tokens  # Emits CSS, TS, and W3C DTCG JSON
+```
+Outputs:
+- `src/css/theme-{id}.css` — `[data-theme]` blocks
+- `src/mcp/tokens-data.ts` — custom format for portal
+- `src/mcp/tokens.dtc.json` — W3C Design Tokens Format Module 2025.10
+- `src/mcp/tokens-dtc.ts` — TypeScript barrel
+
+### Color Space
+- **OKLCH** for all new tokens (perceptual uniformity, wide-gamut P3)
+- Hex fallbacks generated automatically for legacy browsers
+- Sensory transforms use pure OKLCH math (chroma scaling, hue blending)
+
+## Component API Patterns
+
+### Compound Components
+Prefer composable APIs over configurable monoliths:
+```tsx
+<Card>
+  <Card.Header />
+  <Card.Body />
+  <Card.Footer />
+</Card>
 ```
 
-The CLI exposes eight MCP servers (137 tools):
-- `node cli/mcp-server.js` — Oasis CLI tools (11 tools)
-- `node cli/component-registry.js` — Component Registry tools (5 tools)
-- `node cli/love-registry.js` — LOVE Ledger tools (4 tools: love_status, love_balance, love_sync, love_anchor)
-- `node tools/phos-forge/mcp-server.mjs` — PHOS Forge tools (29 tools)
-- `node cli/cognitive-prosthetic.js` — Cognitive Prosthetic tools (47 tools: temporal grounding, executive function, sensory adaptation, cognitive load, communication, crisis detection, memory scaffolding)
-- `node cli/cognitive-comms.js` — Cognitive Comms tools (20 tools: tone, replies, boundaries, accommodations, agendas)
-- `node cli/marge-server.js` — MARGE Design Expert tools (10 tools: design compliance audit, glass/spoons/WCAG/accent checks, contrast ratio, auto-fix)
-- `node cli/bob-server.js` — BOB Structural Expert tools (10 tools: structural entropy, service graph, schema drift, contract audit, state machines, config topology)
+### Controlled/Uncontrolled Duality
+Components accept either `defaultValue` (uncontrolled) or `value` + `onChange` (controlled).
 
-### P31 Automation Engine
-
-The `cli/p31-automation-engine.js` orchestrator codifies the Fortune 1 pipeline + Sierpinski Expansion into one runnable tool (zero deps, CommonJS). It is the unified nervous system for the CWP swarm, build/deploy, testing, validation, MCP audits, and health checks.
-
-```bash
-node cli/p31-automation-engine.js mcp      # spawn all 8 servers, count tools (137)
-node cli/p31-automation-engine.js triper   # node tests/triper/triper-runner.mjs --cert
-node cli/p31-automation-engine.js build    # pnpm -C apps/p31ca run build (non-fatal)
-node cli/p31-automation-engine.js test     # pnpm run test:unit (vitest unit suite, non-fatal)
-node cli/p31-automation-engine.js deploy   # wrangler deploy --dry-run (x402 worker, non-fatal)
-node cli/p31-automation-engine.js validate # TRIPER cert + L3.2 x402 worker validator
-node cli/p31-automation-engine.js monitor  # fetch status.p31ca.org/health per service
-node cli/p31-automation-engine.js swarm [id]  # [SIMULATED] CWP agent dispatch
-node cli/p31-automation-engine.js all      # run everything + print status table
-```
-
-`cli/validate-l3.2.js` automates the `cwp-2026-009-sierpinski-expansion/L3.2-VALIDATION-RUNBOOK.md` steps (install hygiene → worker install → `tsc --noEmit` → `wrangler deploy --dry-run`) and prints a copy-paste report block. It requires registry access and runs on the operator machine.
-
-Conceptual architecture: `docs/P31_AUTOMATION_ENGINE.md`.
-
-### x402 MCP Bridge (L3.4)
-
-The L3.2 x402 Worker cannot spawn children on Workers runtime, so a supervised Node
-service bridges the 4 stdio MCP servers to the edge. The Worker (L3.2) binds to
-it via service binding / `BRIDGE_URL` and is the 402 gate; the bridge is pure
-routing (initialize / tools/list fan-out / tools/call by name).
-
-```bash
-cd software/workers/mcp-x402-gateway/bridge
-node --test src/__tests__/bridge.test.mjs   # 7/7 green, 48 tools routed
-npm start                                     # POST /mcp on :8788, GET /health
-```
-
-- `src/backends.mjs` — 4 backend configs (oasis/registry/love stream, phosforge batch).
-- `src/stdio-client.mjs` — `StdioBackend` supervisor (crash → exp backoff, max 5 → unhealthy).
-- `src/router.mjs` / `src/index.mjs` — router + HTTP edge.
-- Runbook: `cwp-2026-009-sierpinski-expansion/L3.4-RUNBOOK.md`.
-
-### L5 Creation Economy (intent-driven worker model)
-
-Paradigm shift from **extractive** tollbooth pricing (per-call) to **co-creative**
-value-based settlement: the worker settles on *value created for the user*
-(spoons saved, care generated), not value extracted. Concept:
-`cwp-2026-009-sierpinski-expansion/L5-CREATION-ECONOMY.md`; CWP: `CWP-2026-010-creation-economy.md`.
-
-- `software/workers/intent-resolver/` — `POST /intent` parses intent (via
-  `@p31/interface-generator` `generateInterfaceFromIntent`) and returns a
-  **Creation Quote** (spoons_saved, care_value, love/usdc amounts). Spoon state
-  is client-measured (`data-spoons`); there is **no** edge D1 spoon store.
-- `software/workers/creation-accountant/` — `POST /receipt` measures the
-  pre/post `data-spoons` delta (renderer-reported, trustless) and writes a
-  hash-chained **creation receipt** to the LOVE ledger `love_chain` (D1 batch).
-- `software/workers/mcp-x402-gateway/` — `X-Creation-Unit: love|usdc`
-  routing layer + `POST /mcp` forwards to the L3.4 bridge. `love` path
-  checks `LOVE_LEDGER` balance and issues a blind-sig placeholder.
-- `apps/phos/src/workers/love-ledger/` — `/withdraw` issues blind-signed
-  LOVE credits (GNU Taler placeholder) atomically (D1 batch). Migration
-  `003_creation_accounting.sql` adds `love_chain.metadata` + `creation_penalties`.
-- Settlement is **dual / user-choice**: LOVE care-credit (non-extractive,
-  two-pool vesting) or x402 USDC. All Workers use **Web Crypto**
-  (no Node `crypto`) and **D1 batch** for atomicity.
-- **Settlement hardening (optimization pass):** `creation-accountant` signs
-  each receipt with **Ed25519** (`RECEIPT_SIGNER_PRIVATE_KEY`) into
-  `love_chain.signature`; `love-ledger /withdraw` verifies it
-  (`RECEIPT_SIGNER_PUBLIC_KEY`). LOVE-path requests on `mcp-x402`
-  require an HMAC-SHA256 (`LOVE_AUTH_SECRET`, 60s TTL) → 401 on
-  miss/expiry. Spoon-delta replay is blocked via `consumed_nonces`
-  (migration `004`). Intent quotes are edge-cached via `caches.default`.
-  GNU Taler blind signatures are **LIVE** in production via the CBS WASM
-  build (`BLIND_MODE='taler'`, `taler_cs.wasm`, delivered as Cloudflare
-  CompiledWasm). The earlier staging-only mock is fail-closed and no
-  longer used. See `AXIS-1_FINAL_DELIVERABLE.md` and
-  `plans/P31-WP-PQ-2026-001_PRE_POST_QUANTUM_CRYPTO_SECURITY.md`.
-
-### LOVE Ledger MCP Server
-
-Agents can query the LOVE ledger state via MCP:
-
-```bash
-node cli/love-registry.js
-```
-
-Tools:
-
-| Tool | Description |
-|------|-------------|
-| `love_status` | Get ledger status (total LOVE, care_score, pools, vesting) |
-| `love_balance` | Get LOVE balance for a user |
-| `love_sync` | Sync local LOVE state with the cloud ledger |
-
-### PHOS Capabilities
-Agents can discover PHOS endpoints via `/.well-known/agents.json`. Gateway exposes:
-- `POST /ai/chat` — conversational AI (Bearer auth required)
-- `POST /v1/chat/completions` — OpenAI-compatible completions (Bearer auth required)
-- `POST /transcribe` — voice transcription (Bearer auth required)
-- `GET /api/phos/surfaces` — list available PHOS surfaces (public)
-
-### Design Injection
-PHOS's LLM system prompt includes design tokens from `DESIGN.md` and adapts to the user's current spoon level (0–5).
-
-## Build & Deploy Commands
-
-### phos (Astro + React)
-Build: `cd apps/phos && bash node_modules/.bin/astro build` (Node 24 needs shell wrapper)
-Deploy: `cd apps/phos && npx wrangler pages deploy dist --project-name phos --commit-dirty=true`
-
-### p31ca (Astro static)
-Build: `cd apps/p31ca && bash node_modules/.bin/astro build`
-Deploy: `cd apps/p31ca && npx wrangler pages deploy dist --project-name p31ca --commit-dirty=true`
-
-### phosphorus31 (Astro hybrid)
-Build: `cd apps/phosphorus31 && npm run build`
-Deploy: `cd apps/phosphorus31 && npx wrangler pages deploy dist --project-name phosphorus31-org --commit-dirty=true`
-
-### bonding (Vite React SPA)
-Build: `cd apps/bonding && npm run build`
-Deploy: `cd apps/bonding && npx wrangler pages deploy dist --project-name bonding --commit-dirty=true`
-
-### willow (Vite React SPA)
-Build: `cd apps/willow && npm run build`
-Deploy: `cd apps/willow && npx wrangler pages deploy dist --project-name willow --commit-dirty=true`
-
-### gateway
-Deploy: `cd apps/gateway && npx wrangler deploy`
-
-### status
-Deploy: `cd apps/status && npx wrangler deploy`
-
-### auth
-Deploy: `cd apps/auth && npx wrangler deploy`
-
-### llm-proxy
-Deploy: `cd software/cloudflare-worker/llm-proxy && npx wrangler deploy`
-
-### counterscale
-Build server: `cd apps/counterscale/packages/server && npm run build`
-Deploy: `cd apps/counterscale/packages/server && npx wrangler deploy`
-
-## Infrastructure
-
-### Service Bindings
-- `gateway.phos_ai_proxy` → `p31-llm-proxy` (LLM routing)
-- Gateway routes: `/api/*` (auth-protected), `/ai/chat` (public, rewrites to LLM proxy)
-
-### Cron Triggers (5 max on Free Plan — account currently uses all 5)
-- p31-status: `*/15 * * * *`
-- command-center: `*/5 * * * *`
-- p31-cortex: `0 7,18 * * *`
-- counterscale: `0 2 * * *` (daily rollups)
-- phos-backup: `0 2 * * *` (daily LOVE ledger cold snapshot to R2)
-
-> Note: the deployed `love-ledger` worker has a `scheduled()` cold-archive handler
-> but **no `[triggers]` cron** (the 5-slot Free-Plan cap is full). Its archive is
-> covered by `phos-backup`'s daily cron instead. The earlier `love-ledger: 0 */6`
-> entry was removed to free a slot.
-
-### Observability
-- Built-in: `[observability] enabled = true` in wrangler.toml
-- Axiom OTLP: `https://api.axiom.co/v1/logs` (dataset: p31-workers)
-- Sentry: phos, bonding, gateway, auth (via @sentry/react or @sentry/cloudflare)
-
-### D1 Databases (10 of 10 used — at Free Plan cap)
-- p31-status-db, p31-auth, p31-cortex, love-ledger (`592e3e2e-…`), k4-cage-db, sovereign-justice-db, contracts-db, governance-db, buffer-worker-db, hrv-coherence-db
-- The `love-ledger` D1 (`592e3e2e-3203-4e0a-8342-9e85215ec8a6`) is **intentionally shared** by care-api (`CAPITAL_DB`), fhir (`DB`), jitterbug-api (`DB`), sovereign-justice (`LOVE_D1`), and care-mesh (`CARE_DB`) to stay within the 10-DB Free-Plan cap. `hrv-coherence-db` is the only freeable slot.
-
-### Analytics
-- Counterscale at analytics.p31ca.org (self-hosted, Analytics Engine)
-- Tracking: `<script defer src="https://analytics.p31ca.org/tracker.js" data-domain="SITE">`
-
-### Auth
-- DID:key cryptographic signing/verification exists for ledger writes (`apps/phos/src/workers/love-ledger`), but the dedicated DID:key login app/package (`apps/auth`, `packages/auth`) is NOT yet implemented (scaffolds only)
-- JWT session in localStorage under `p31-auth`
-- Write routes on gateway require `Authorization: Bearer <JWT>`
-
-## Counterscale Setup Notes
-- Analytics Engine dataset: `metricsDataset`, binding: `WEB_COUNTER_AE`
-- R2 bucket: `counterscale-daily-rollups`
-- Tracker package: `apps/counterscale/packages/tracker`
-- Build tracker first: `cd apps/counterscale/packages/tracker && npm run build`
-- Then copy: `cp ../tracker/dist/loader/tracker.js ../server/public/`
-- Then rebuild server: `cd apps/counterscale/packages/server && npm run build`
-
-## GitHub Actions Secrets (Manual — API token lacks secrets scope)
-These must be added at https://github.com/p31labs/P31-local-workspace/settings/secrets/actions:
-- `CLOUDFLARE_API_TOKEN` — Wrangler OAuth token (`cfoat_...` from `~/.wrangler/config/default.toml`) or Cloudflare API Token with Workers + Pages edit
-- `SENTRY_DSN` — Sentry project DSN (same value as `wrangler secret put SENTRY_DSN`)
-
-## Communication Style
-- Direct. Skip preamble. Output code and commands.
-- Never use submarine, naval, or military metaphors.
-- Spoon-aware UI (0–5 scale via `data-spoons` attribute) mandatory for all surfaces.
-
-## WCAG 2.2 AAA Compliance (Roadmap — Phase 2, CWP-2026-006)
-- **Touch targets:** ≥48×48px (WCAG 2.5.8 Enhanced) across all apps (bumped from 44px).
-- **Contrast ratios:** Current contrast meets AA in places (≥4.5:1), but `text-white/30` usage on dark backgrounds is being removed; ≥7:1 AAA pending.
-- **Focus indicators:** Global `:focus-visible` outline (2px `var(--phos-primary)`, offset 2px).
-- **Skip navigation:** The skip-link (`<a href="#main-content" class="skip-link">`) is present in p31ca, bonding-soup, PHOS, phosphorus31, and willow shells.
-- **Reduced motion:** `@media (prefers-reduced-motion: reduce)` sets all durations to 0ms (`motion.css`). `data-reduced-motion` attribute fallback. Crisis mode (spoons=0) also disables motion.
-- **ARIA labels:** All icon buttons have `aria-label`, all SVGs have `aria-hidden="true"`. Navigation has `role="navigation"` + `aria-label`. Chat messages use `aria-live="polite"`.
-- **Voice input:** `VoiceInputButton` detects `isSupported`, shows disabled state with "Voice input unavailable" when unsupported. Dual engine (local WASM + edge fallback).
-- **Keyboard navigation:** Tab order logical (left→right, top→bottom). Enter/Space triggers buttons. Escape closes magic drawer (handled in `PHOSMagicDrawer`).
+### Accessibility First
+- WCAG 2.2 AA minimum, AAA where possible
+- Touch targets ≥ 48px (WCAG 2.5.8 Enhanced)
+- Focus indicators: 2px accent outline, 2px offset
+- Skip navigation links on all pages
+- `prefers-reduced-motion` respected
+- ARIA labels on all icon buttons
 
 ## Testing
+- **Vitest**: unit tests for stores, utilities, generators
+- **Playwright**: visual regression, accessibility, E2E
+- **axe-core**: automated WCAG validation in CI
+- **Contrast**: APCA validation for glass + text pairs
 
-### Test suites
-- `tests/unit/mcp/mcp-servers.test.ts` — 22 MCP tests (PHOS Forge batch stdin, Oasis/Registry/LOVE streaming). Run: `npx vitest run tests/unit/mcp/`
-- `tests/unit/triper/uig-generate.triper.test.ts` — 22 TRIPER tests for `generateInterface` + `generateInterfaceFromIntent`. Run: `npx vitest run --config vitest.triper.config.ts`
-- `tests/mvp/<suite>/<suite>.triper.test.mjs` — 12 rebuilt MVP TRIPER suites (bonding, cars, personal, hub, mesh, simplex, email, epcp, geodesic, p31ca-user-sentinel, mesh-integrity, systems-integrity), 7 axis-tests each. Run all: `node tests/triper/triper-runner.mjs --cert`
-- `vitest.triper.config.ts` — separate config covering `tests/unit/triper/**` + `tests/mvp/**` (TRIPER tests use direct source imports, not workspace package resolution)
+## Design Gate
+Before any deploy, verify:
+- [ ] Zero hardcoded hex colors in production code (`grep -Er "#[0-9a-f]{6}" src --include="*.tsx" --include="*.css"`)
+- [ ] All colors use `var(--p31-*)` tokens
+- [ ] `pnpm gen:tokens` runs clean (no drift)
+- [ ] `pnpm typecheck` passes
+- [ ] `pnpm test` passes
 
-### Key patterns
-- **PHOS Forge is a batch-mode server** — reads all stdin until `end` event, not line-by-line. Tests must `spawn`, wait for `close`, then close stdin.
-- **Oasis/Registry/LOVE are streaming** — write JSON-RPC per line, read per line.
-- **`isValidDescription()`** in TRIPER tests validates structure + non-empty widgets (MVP suites seed `viewData` with generator-recognized keys so the description carries domain widgets).
-- **Crisis mode** (`spoons=0`) sets `crisisMode: true` but still produces widgets — the UI layer (CrisisOverlay) handles rendering, not the generator.
+## MCP Server
+The design system exposes an MCP server (`p31-design-mcp`) with tools for:
+- Token discovery (`list_tokens`, `search_tokens`, `resolve_token`, `list_tokens_dtc`)
+- Component metadata (`list_components`, `get_component`, `get_component_metadata`, `validate_component`)
+- Code generation (`generate_component`, `convert_component`)
+- CSS auditing (`audit_css`, `validate_parity`)
+- Design principles (`get_ui_principles`, `get_review_rules`)
+- Brand tokens (`resolve_brand`)
+- Contracts (`list_contracts`, `get_contract`, `validate_contract`) — full contract for any component; `validate_contract` checks hex, rgba, inline styles, emoji icons, forbidden patterns
+- Clarify (`clarify`) — detects semantic ambiguities (variant, surface type, message owner, spoon level, theme) before synthesis
+- Visual verification (`verify`, `diff`, `screenshot`) via `vlm-diff-mcp` — DOM-first, VLM-gated, token-budgeted; run `node node_modules/vlm-diff/dist/mcp/server.js`
+- Component preview (`ui://p31/component/:name` resources) — inline HTML previews of components with brand tokens
+- Spec-driven generation (`propose_from_spec`) — one-pass spec→propose→validate→preview pipeline
 
-### Environment
-- `.env.example` in repo root documents all required env vars (no real secrets).
-- `tests/triper/` has TRIPER cert runner (monorepo edition) and cert fixtures.
+## Chat surfaces
 
-### CWP-2026-043 dependency corrections (2026-07-14)
-- **`@fusefactory/fuse-three-forcegraph`** (v1.1.15) is the real, maintained 3D force-graph
-  library — but it is **WebGL GPGPU** (ping-pong render-to-texture compute via
-  `THREE.WebGLRenderer`), **not WebGPU**. API: `new Engine(canvas, opts).setData().start()`.
-- **`graph-gpu` and `badgefed` do not exist on npm** (404) — do not depend on them.
-- The live `spatial-dashboard.html` already uses **real WebGPU** (`3d-force-graph` +
-  `Graph.renderer(WebGPURenderer)`, guarded WebGL fallback) — superior to the WebGL-GPGPU path.
-- **BadgeFed** is a protocol, not a package: `federation-bridge` implements BadgeFed-style
-  credentialing natively (ActivityPub + SD-JWT VC via `ledger-bridge` + FEP-8b32 Object
-  Integrity Proofs) — `POST /credential/issue`, `/credential/verify`, `GET /credential/search`.
-- `federation-bridge` signs outbound activities with **FEP-8b32** (eddsa-2022 / Ed25519 over
-  JCS-canonicalized JSON) and verifies inbound proofs before accepting `Create`/`Announce`.
+Any P31 surface that hosts a conversation uses `ChatShell` from
+`@p31/design-core/compositions`. Do not reimplement the shell.
 
-### CWP-2026-044 corrections (2026-07-14)
-- **Hybrid PQC TLS is a Cloudflare ZONE setting, not a wrangler flag.** There is no
-  `compatibility_flags = ["hybrid_pqc_tls"]` entry and no `CF-PQC-Key-Exchange` response
-  header. Enable Post-Quantum at zone SSL/TLS → Edge Certificates; it propagates from the
-  Cloudflare edge, not per-Worker. Do not add a fake flag to any `wrangler.toml`.
-- **`@sd-jwt/core` v0.20.0 is ALREADY integrated** in `ledger-bridge/src/sdjwt.ts`
-  (CWP-2026-030 Phase 2) — Phase 4 of CWP-2026-044 was already satisfied; no rewrite needed.
-- **EUDI Wallet alignment (Phase 1) implemented:** `federation-bridge` now exposes
-  `CredentialIssuer`/`CredentialVerifier` DID-Document `service` endpoints, issues SD-JWT VCs
-  with `sub`/`vct`/`exp`, and serves a Status-List-2021-style `/credential/revocation/:id`
-  endpoint plus `POST /credential/revoke/:id`. `docs/CRYPTOGRAPHIC-INVENTORY.md` created
-  (NIST IR 8547). 10 federation-bridge tests pass (4 FEP-8b32 + 4 credentialing + 2 EUDI).
+The contract:
+- Layer 1 (viewport lock) is the consumer's job — `height: 100dvh; display: flex; flex-direction: column; overflow: hidden`.
+- Layer 2 (header row) is ChatShell's `header` slot. Merge page chrome into the topbar; do not stack a second header.
+- Layer 3 is the scrollable `children` plus the mobile `drawer`. The drawer auto-hides at container width ≥ 900px via `@container`.
 
-### CWP-2026-045 (Launch Frontier, 2026-07-14)
-- **Federation Bridge is now LIVE** at `https://federation.p31ca.org` (Cloudflare custom domain → auto-DNS + TLS) and `federation-bridge.trimtab-signal.workers.dev`. Deployed with `LOVE_DB` (shared love-ledger D1) + `ACTOR_PRIVATE_KEY`/`ACTOR_PUBLIC_KEY` (Ed25519 PEM, generated locally) + `LEDGER_BRIDGE_URL`.
-- **Prod bug fixed:** `ensureCredentialsTable` now runs at the top of every handler that touches `credentials` (issue/search/verify/revoke/revocation). Previously it ran only in `/credential/issue` AFTER the ledger-bridge fetch, so a failed/unregistered-DID issuance never created the table and every read endpoint 500'd. Now reads return `{"results":[]}` (200) and unknown-id lookups return 404.
-- **Observability** `[observability] enabled = true` is set on all 3 production workers (personal-swarm redeployed `5f3ad5c3`, ledger-bridge, federation-bridge).
-- **Cloudflare Alerts** (Worker Errors >5/min, D1 latency >1000ms, R2 503, CPU >90%) are configured on the **Cloudflare dashboard** (Alerts panel) — not via wrangler. `cf-monitor.mjs` (personal-swarm) streams `wrangler tail` and opens GitHub issues for new error signatures.
-- EUDI readiness documented in `docs/EUDI-READINESS.md`; NGI demo script in `docs/grants/NGI-DEMO-SCRIPT.md`. NGI proposals updated with live links + 41+ test coverage.
+Transient UI state is derived, never persisted:
+- `isStreaming` = `global isStreaming && activeThreadId === thread.id`
+- `isUnread` = `thread.updatedAt > thread.lastViewedAt`
+- Persist only the source of truth: `lastViewedAt`, message `timestamp`, `updatedAt`.
 
-### CWP-2026-046 (Launch Frontier — Ops, 2026-07-14)
-- **Verified 18 pilot families** in the live shared D1 `pilot_registry` (`rows_read: 18`, all `status:"active"`) via `wrangler d1 execute LOVE_DB --remote --command "..."` from a worker dir with the binding.
-- **`scripts/pilot-onboard.js` is STALE for wrangler 4.110**: its `queryD1` builds `wrangler d1 execute love-ledger --database-id <id> --remote --command "..."`, but this wrangler rejects `--database-id` ("Unknown arguments"). Use the binding form: `wrangler d1 execute LOVE_DB --remote --command "SQL"` from a worker dir. Also the script has **no `--send` mode** (CWP-2026-046 Phase 2.1 is inaccurate) — it only prints onboarding links (default) and marks `--onboard <did>` (a real D1 write). Sending invitations is manual outreach.
-- **Manual / not executable from the build agent:** NGI portal submission (NLnet), Cloudflare Alerts (dashboard), Hybrid PQC TLS zone toggle, demo video recording/upload. All documented as pending in `docs/grants/SUBMISSION-CHECKLIST.md`.
-- **Docs:** `docs/POST-LAUNCH-ROADMAP.md` created (feedback loops, scaling, honest known-gaps); `SUBMISSION-CHECKLIST.md` reconciled to 41+ worker tests + EUDI/crypto evidence + live `federation.p31ca.org` links.
+Never persist a boolean like `isUnread` — it goes stale on refresh and requires manual clearing.
 
-### CWP-2026-047 (Growth Frontier, 2026-07-14)
-- **Doc deliverables committed:** `docs/EUDI-CERTIFICATION.md` (passes matrix + honest known-gaps: `did:web` publication, aggregated Status-List-2021 bitstring, EBSI credential types, formal harness run, security audit), `docs/SUSTAINABILITY-ROADMAP.md` (projected funding/revenue — marked NOT yet received), `docs/COMMUNITY-GUIDE.md`, `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md` (all proposed/intended, not yet realised).
-- **FALSE claims in the CWP's Reality Check (do not propagate):** "NGI TALER/Fediversity submissions ✅ Submitted" is FALSE — they were never uploaded to NLnet (CWP-2026-046 left them as pending manual portal steps). "Cloudflare Alerts configured (dashboard) ✅" is FALSE — also still pending manual. The 18 pilots are `status:"active"` in `pilot_registry` (verified), not "invited / 5+ onboarded" via manual sends.
-- **CWP-2026-048 (Growth Frontier — Build, 2026-07-14) DONE in code:**
-  - **federation-bridge** (deployed `7a8b4dc8`, live `federation.p31ca.org`): added aggregated Status-List-2021 bitstring `GET /credential/revocation/list` (gzip+base64url, `StatusList2021` VC, 5-min cache); `GET /.well-known/did.json` (did:web, `application/did+json`, base58 multibase from `ACTOR_PUBLIC_KEY`); `GET /pilot/:did/status` (reads shared `pilot_registry`, CORS `*`) self-service portal backend. 13/13 tests pass.
-  - **`software/workers/fhir-bridge/`** (NEW, deployed `79ba56d4`): HL7 FHIR R5 bridge — `POST/GET /fhir/{Observation,Patient,Provenance}` mapping P31 care proofs → FHIR; shares love-ledger D1; `package.json`/`tsconfig`/`wrangler.toml`/`src/{index,mapping,types}.ts`/`test`. 4/4 tests pass.
-  - **`scripts/pilot-onboard.js`** fixed for wrangler 4.110 (uses `wrangler d1 execute LOVE_DB --remote` binding form from `software/workers/federation-bridge`, no `--database-id`; no fake `--send` — sending is manual).
-  - **PHOS** (`apps/phos`): `src/lib/i18n.ts` (en/es/fr/de dict + `useI18n` hook), `src/components/LangSwitcher.tsx`, `src/surfaces/OnboardingPortal.tsx` (reads `?did=`, fetches federation `/pilot/:did/status`, progress steps, i18n), `src/pages/portal.astro` (mounts portal `client:only="react"`). Typecheck clean. **PHOS NOT yet deployed** (heavy build; code ready).
-  - **Remaining manual / not built:** Cloudflare Hybrid PQC TLS (zone SSL/TLS toggle), Cloudflare Alerts (dashboard), NGI NLnet portal submission, EBSI credential types, full app-wide i18n rollout (only portal wired), demo video, pilot invite sends, signed follow-on funding. EUDI-READINESS gap (aggregated Status-List endpoint) is now CLOSED.
+## Chrome Components (v2.3.0+)
+The following compositions are now available in `@p31/design-core/compositions`:
+- **ChatShell** — Three-layer chat surface (header slot + scrollable children + mobile drawer, auto-hides ≥900px container)
+- **SectionStrip** — Desktop pill navigation strip (router-agnostic)
+- **CommandPalette** — Keyboard-first command palette (⌘K)
+- **Chameleon** — Adaptive theme controls (brand × world × age × sensory)
+- **PageHeader** — Inner-page hero: eyebrow, gradient title, lede
+
+## Governance
+- Token ownership: `@p31/design-core` maintainers
+- Component lifecycle: propose → review → build → document → release → measure
+- Deprecation: 3-month warning, `$deprecated` flag in DTCG JSON
+- Semantic versioning: MAJOR.MINOR.PATCH
+
+## Protection Systems — Mandatory Pre-Operation Checks
+
+Before any destructive git operation (`git checkout HEAD --`, `git reset --hard`, `git clean -fd`), a running agent MUST:
+1. Call `soulsafe_tagout` with the task surface — if it returns "not your call", hand off to the owner immediately.
+2. Call `soulsafe_severity` with the finding — if severity is critical or high, halt and hand off.
+
+SOULSAFE is registered in the runtime and available as an MCP server. No mechanical hook is required.
+
+## Links
+- Design portal: https://design.p31ca.org
+- W3C DTCG spec: https://design-tokens.github.io/community-group/format/1.0.0
+- WCAG 2.2: https://www.w3.org/TR/WCAG22/
+- MCP protocol: https://modelcontextprotocol.io
