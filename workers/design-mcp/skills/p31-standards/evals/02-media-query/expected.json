@@ -1,0 +1,8 @@
+{
+  "flags": [
+    { "line": 8, "rule": "no-media-queries", "severity": "SHOULD", "message": "Fixed @media breakpoint. Use container queries or fluid clamp()." }
+  ],
+  "passes": [
+    { "rule": "no-hardcoded-hex" }
+  ]
+}

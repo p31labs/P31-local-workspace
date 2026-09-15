@@ -1,0 +1,8 @@
+{
+  "flags": [
+    { "line": 3, "rule": "a11y-touch-target", "severity": "MUST", "message": "Touch target < 48px on coarse pointer (WCAG 2.5.8)." },
+    { "line": 4, "rule": "a11y-aria-label", "severity": "MUST", "message": "Icon-only control must have aria-label." },
+    { "line": 3, "rule": "no-inline-styles", "severity": "MUST", "message": "Inline style object. Declare tokens/classes instead." }
+  ],
+  "passes": []
+}

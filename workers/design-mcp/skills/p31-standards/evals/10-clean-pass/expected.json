@@ -1,0 +1,10 @@
+{
+  "flags": [],
+  "passes": [
+    { "rule": "no-hardcoded-hex" },
+    { "rule": "no-inline-styles" },
+    { "rule": "no-unstyled-tags" },
+    { "rule": "spoons-declared" },
+    { "rule": "chat-shell-contract", "message": "Uses ChatShell from @p31/design-core/compositions — correct." }
+  ]
+}

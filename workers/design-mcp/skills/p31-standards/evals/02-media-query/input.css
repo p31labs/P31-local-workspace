@@ -1,0 +1,14 @@
+.card {
+  container-type: inline-size;
+  padding: clamp(0.5rem, 2vw, 1rem);
+}
+
+.mobile-rule {
+  color: var(--p31-text-body);
+}
+
+@media (max-width: 768px) {
+  .mobile-rule {
+    padding: 8px;
+  }
+}

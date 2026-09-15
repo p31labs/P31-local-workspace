@@ -1,0 +1,6 @@
+{
+  "flags": [
+    { "line": 2, "rule": "motion-rhythm", "severity": "SHOULD", "message": "Animation duration not on P31 863Hz rhythm. Use var(--p31-motion-fast) and respect prefers-reduced-motion." }
+  ],
+  "passes": []
+}

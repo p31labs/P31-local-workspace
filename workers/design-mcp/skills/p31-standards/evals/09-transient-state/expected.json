@@ -1,0 +1,6 @@
+{
+  "flags": [],
+  "passes": [
+    { "rule": "transient-state", "message": "isUnread is derived (updatedAt > lastViewedAt), not persisted. Correct pattern." }
+  ]
+}

@@ -1,0 +1,4546 @@
+{
+  "generated_at": "2026-09-15T13:18:44.849Z",
+  "repos": {
+    "workspace": "/home/p31/P31-local-workspace",
+    "production": "/home/p31/production"
+  },
+  "count": 252,
+  "artifacts": [
+    {
+      "path": "production/monetization",
+      "repo": "production",
+      "name": "p31-monetization",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "production/portals/chat",
+      "repo": "production",
+      "name": "@p31-portals/chat",
+      "kind": "surface",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "production/portals/children",
+      "repo": "production",
+      "name": "@p31-portals/children",
+      "kind": "surface",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "production/portals/design",
+      "repo": "production",
+      "name": "@p31-portals/design",
+      "kind": "surface",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "production/portals/meatspace",
+      "repo": "production",
+      "name": "@p31-portals/meatspace",
+      "kind": "surface",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "production/portals/parent",
+      "repo": "production",
+      "name": "@p31-portals/parent",
+      "kind": "surface",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "production/portals/qpj",
+      "repo": "production",
+      "name": "@p31/portals-qpj",
+      "kind": "surface",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "production/portals/teen",
+      "repo": "production",
+      "name": "@p31-portals/teen",
+      "kind": "surface",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "production/portals/template",
+      "repo": "production",
+      "name": "@p31/portals-template",
+      "kind": "surface",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "production/shell",
+      "repo": "production",
+      "name": "p31-shell",
+      "kind": "surface",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "production/shell/scripts/verify-shell",
+      "repo": "production",
+      "name": "verify-shell",
+      "kind": "surface",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "production/tools/portal-vendor-sync/ui-src",
+      "repo": "production",
+      "name": "@p31/ui",
+      "kind": "surface",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "production/workers/p31-dispatch",
+      "repo": "production",
+      "name": "@p31/workers-p31-dispatch",
+      "kind": "worker",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "production/workers/p31-passport",
+      "repo": "production",
+      "name": "@p31/workers-p31-passport",
+      "kind": "worker",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": true,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/apps/agent-demo",
+      "repo": "workspace",
+      "name": "agent-demo",
+      "kind": "surface",
+      "manifests": {
+        "package": false,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/apps/app-builder",
+      "repo": "workspace",
+      "name": "p31-app-builder",
+      "kind": "surface",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/apps/arcade",
+      "repo": "workspace",
+      "name": "arcade",
+      "kind": "surface",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/apps/auth",
+      "repo": "workspace",
+      "name": "@p31/auth",
+      "kind": "surface",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/apps/bash",
+      "repo": "workspace",
+      "name": "@p31/bash",
+      "kind": "surface",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/apps/bonding",
+      "repo": "workspace",
+      "name": "bonding",
+      "kind": "surface",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/apps/counterscale",
+      "repo": "workspace",
+      "name": "counterscale",
+      "kind": "surface",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/apps/counterscale/packages/cli",
+      "repo": "workspace",
+      "name": "@counterscale/cli",
+      "kind": "surface",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/apps/counterscale/packages/eslint-config",
+      "repo": "workspace",
+      "name": "@counterscale/eslint-config",
+      "kind": "surface",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/apps/counterscale/packages/server",
+      "repo": "workspace",
+      "name": "@counterscale/server",
+      "kind": "surface",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/apps/counterscale/packages/tracker",
+      "repo": "workspace",
+      "name": "@counterscale/tracker",
+      "kind": "surface",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/apps/design-hub",
+      "repo": "workspace",
+      "name": "design-hub",
+      "kind": "surface",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/apps/docs",
+      "repo": "workspace",
+      "name": "p31-docs",
+      "kind": "surface",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/apps/game-builder",
+      "repo": "workspace",
+      "name": "game-builder",
+      "kind": "surface",
+      "manifests": {
+        "package": false,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/apps/gateway",
+      "repo": "workspace",
+      "name": "gateway",
+      "kind": "surface",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/apps/growth-dashboard",
+      "repo": "workspace",
+      "name": "growth-dashboard",
+      "kind": "surface",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/apps/k4-cage",
+      "repo": "workspace",
+      "name": "k4-cage",
+      "kind": "surface",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/apps/p31ca",
+      "repo": "workspace",
+      "name": "p31ca",
+      "kind": "surface",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/apps/p31ca/workers/fhir",
+      "repo": "workspace",
+      "name": "p31-fhir-worker",
+      "kind": "surface",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/apps/p31ca/workers/glass-box-ws",
+      "repo": "workspace",
+      "name": "glass-box-ws",
+      "kind": "surface",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/apps/p31ca/workers/passkey",
+      "repo": "workspace",
+      "name": "passkey",
+      "kind": "surface",
+      "manifests": {
+        "package": false,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/apps/p31ca/workers/sync",
+      "repo": "workspace",
+      "name": "p31-sync-worker",
+      "kind": "surface",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/apps/passport-www",
+      "repo": "workspace",
+      "name": "passport-www",
+      "kind": "surface",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": true,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/apps/phos",
+      "repo": "workspace",
+      "name": "phos",
+      "kind": "surface",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/apps/phos/src/workers/backup-export",
+      "repo": "workspace",
+      "name": "backup-export",
+      "kind": "surface",
+      "manifests": {
+        "package": false,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/apps/phos/src/workers/contract-engine",
+      "repo": "workspace",
+      "name": "contract-engine",
+      "kind": "surface",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/apps/phos/src/workers/governance-engine",
+      "repo": "workspace",
+      "name": "governance-engine",
+      "kind": "surface",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/apps/phos/src/workers/love-ledger",
+      "repo": "workspace",
+      "name": "love-ledger",
+      "kind": "surface",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": true,
+        "payment": false,
+        "surface": true,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/apps/phos/worker-ai-proxy",
+      "repo": "workspace",
+      "name": "phos-ai-proxy",
+      "kind": "surface",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/apps/phosphorus31",
+      "repo": "workspace",
+      "name": "planetary-planet",
+      "kind": "surface",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/apps/status",
+      "repo": "workspace",
+      "name": "status",
+      "kind": "surface",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/apps/storybook",
+      "repo": "workspace",
+      "name": "storybook",
+      "kind": "surface",
+      "manifests": {
+        "package": false,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/apps/tetra-ops",
+      "repo": "workspace",
+      "name": "tetra-ops",
+      "kind": "surface",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/apps/website-builder",
+      "repo": "workspace",
+      "name": "website-builder",
+      "kind": "surface",
+      "manifests": {
+        "package": false,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/apps/willow",
+      "repo": "workspace",
+      "name": "willow",
+      "kind": "surface",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/apps/willow-preview",
+      "repo": "workspace",
+      "name": "willow-preview",
+      "kind": "surface",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/buffer-worker",
+      "repo": "workspace",
+      "name": "buffer-worker",
+      "kind": "package",
+      "manifests": {
+        "package": false,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/cli",
+      "repo": "workspace",
+      "name": "andromeda-cli",
+      "kind": "mcp-server",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": true,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": true,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/crypto-monitor",
+      "repo": "workspace",
+      "name": "crypto-monitor",
+      "kind": "package",
+      "manifests": {
+        "package": false,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/ecosystem/analytics",
+      "repo": "workspace",
+      "name": "p31-analytics",
+      "kind": "surface",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/ecosystem/discord",
+      "repo": "workspace",
+      "name": "p31-oracle-bot",
+      "kind": "ledger",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": true,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/ecosystem/gamification",
+      "repo": "workspace",
+      "name": "p31-gamification",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/ecosystem/ipfs",
+      "repo": "workspace",
+      "name": "p31-ipfs-manager",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/ecosystem/middleware",
+      "repo": "workspace",
+      "name": "p31-middleware",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/fawn-guard",
+      "repo": "workspace",
+      "name": "fawn-guard",
+      "kind": "package",
+      "manifests": {
+        "package": false,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/k4-worker",
+      "repo": "workspace",
+      "name": "k4-cage-worker",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/p31-surrogate-backend",
+      "repo": "workspace",
+      "name": "p31-surrogate-backend",
+      "kind": "identity",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": true,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/p31labs/social-content-engine",
+      "repo": "workspace",
+      "name": "@p31labs/social-content-engine",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/packages/ble",
+      "repo": "workspace",
+      "name": "@p31/ble",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/packages/bonding",
+      "repo": "workspace",
+      "name": "@p31/bonding",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/packages/cognitive-passport",
+      "repo": "workspace",
+      "name": "@p31/cognitive-passport",
+      "kind": "identity",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": true,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/packages/design-core",
+      "repo": "workspace",
+      "name": "@p31/design-core",
+      "kind": "mcp-server",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": true,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": false,
+        "token": true
+      }
+    },
+    {
+      "path": "P31-local-workspace/packages/design-system",
+      "repo": "workspace",
+      "name": "@p31/design-system",
+      "kind": "design-token",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": true
+      }
+    },
+    {
+      "path": "P31-local-workspace/packages/design-validator",
+      "repo": "workspace",
+      "name": "@p31/design-validator",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/packages/economy",
+      "repo": "workspace",
+      "name": "@p31/economy",
+      "kind": "ledger",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": true,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/packages/forge-sdk",
+      "repo": "workspace",
+      "name": "@p31/forge-sdk",
+      "kind": "mcp-server",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": true,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/packages/game-engine",
+      "repo": "workspace",
+      "name": "@p31/game-engine",
+      "kind": "surface",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/packages/game-generator",
+      "repo": "workspace",
+      "name": "@p31/game-generator",
+      "kind": "surface",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/packages/gamification",
+      "repo": "workspace",
+      "name": "@p31/gamification",
+      "kind": "ledger",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": true,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/packages/geodesic-core",
+      "repo": "workspace",
+      "name": "@p31/geodesic-core",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/packages/interface-generator",
+      "repo": "workspace",
+      "name": "@p31/interface-generator",
+      "kind": "identity",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": true,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/packages/love-ledger",
+      "repo": "workspace",
+      "name": "@p31/love-ledger",
+      "kind": "ledger",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": true,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/packages/mcp-justice",
+      "repo": "workspace",
+      "name": "@p31/mcp-justice",
+      "kind": "mcp-server",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": true,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": true,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/packages/mcp-membrane",
+      "repo": "workspace",
+      "name": "@p31/mcp-membrane",
+      "kind": "mcp-server",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": true,
+        "ledger": true,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/packages/observatory",
+      "repo": "workspace",
+      "name": "@p31/observatory",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/packages/p31-mcp",
+      "repo": "workspace",
+      "name": "@p31/mcp-vibe",
+      "kind": "mcp-server",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": true,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/packages/protocol-commons",
+      "repo": "workspace",
+      "name": "@p31/protocol-commons",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/packages/quantum-core",
+      "repo": "workspace",
+      "name": "@p31/quantum-core",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/packages/rules",
+      "repo": "workspace",
+      "name": "@p31/rules",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/packages/shared",
+      "repo": "workspace",
+      "name": "@p31/shared",
+      "kind": "identity",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": true,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/packages/shared-core",
+      "repo": "workspace",
+      "name": "@p31/shared-core",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/packages/shared-identity",
+      "repo": "workspace",
+      "name": "@p31/shared-identity",
+      "kind": "surface",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": true,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/packages/shell-chrome",
+      "repo": "workspace",
+      "name": "@p31/shell-chrome",
+      "kind": "surface",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": false,
+        "token": true
+      }
+    },
+    {
+      "path": "P31-local-workspace/packages/skin-apex",
+      "repo": "workspace",
+      "name": "@p31/skin-apex",
+      "kind": "design-token",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": true
+      }
+    },
+    {
+      "path": "P31-local-workspace/packages/skin-phos",
+      "repo": "workspace",
+      "name": "@p31/skin-phos",
+      "kind": "design-token",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": true
+      }
+    },
+    {
+      "path": "P31-local-workspace/packages/skin-system",
+      "repo": "workspace",
+      "name": "@p31/skin-system",
+      "kind": "surface",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": false,
+        "token": true
+      }
+    },
+    {
+      "path": "P31-local-workspace/packages/skin-tetra",
+      "repo": "workspace",
+      "name": "@p31/skin-tetra",
+      "kind": "design-token",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": true
+      }
+    },
+    {
+      "path": "P31-local-workspace/packages/skin-willow",
+      "repo": "workspace",
+      "name": "@p31/skin-willow",
+      "kind": "design-token",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": true
+      }
+    },
+    {
+      "path": "P31-local-workspace/packages/sovereign",
+      "repo": "workspace",
+      "name": "@p31/sovereign",
+      "kind": "identity",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": true,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/packages/sovereign-core",
+      "repo": "workspace",
+      "name": "@p31/sovereign-core",
+      "kind": "identity",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": true,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/packages/sovereign-primitives",
+      "repo": "workspace",
+      "name": "@p31/sovereign-primitives",
+      "kind": "identity",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": true,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/packages/spaceship-earth",
+      "repo": "workspace",
+      "name": "@p31/spaceship-earth",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/packages/spaceship-earth/astro-landing",
+      "repo": "workspace",
+      "name": "spaceship-earth-astro-landing",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/packages/ui",
+      "repo": "workspace",
+      "name": "@p31/ui",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/packages/ui-astro",
+      "repo": "workspace",
+      "name": "@p31/ui-astro",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/packages/ui-mcp",
+      "repo": "workspace",
+      "name": "@p31/ui-mcp",
+      "kind": "mcp-server",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": true,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/packages/ui-react",
+      "repo": "workspace",
+      "name": "@p31/ui-react",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/packages/vibe-sdk",
+      "repo": "workspace",
+      "name": "@p31/vibe-sdk",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/phosphorus31.org/planetary-planet",
+      "repo": "workspace",
+      "name": "planetary-planet",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/schema-export",
+      "repo": "workspace",
+      "name": "@p31/cognitive-passport-schema",
+      "kind": "identity",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": true,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software",
+      "repo": "workspace",
+      "name": "p31-software",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/bonding",
+      "repo": "workspace",
+      "name": "@p31/bonding",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/cloudflare-pages/p31-mesh",
+      "repo": "workspace",
+      "name": "p31-mesh",
+      "kind": "package",
+      "manifests": {
+        "package": false,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/cloudflare-worker",
+      "repo": "workspace",
+      "name": "p31-orchestrator",
+      "kind": "ledger",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": true,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/cloudflare-worker/{project}",
+      "repo": "workspace",
+      "name": "{project}",
+      "kind": "package",
+      "manifests": {
+        "package": false,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/cloudflare-worker/bouncer",
+      "repo": "workspace",
+      "name": "p31-bouncer",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/cloudflare-worker/command-center",
+      "repo": "workspace",
+      "name": "epcp-command-center-tests",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/cloudflare-worker/p31-gumroad-webhook",
+      "repo": "workspace",
+      "name": "p31-gumroad-webhook",
+      "kind": "payment-rail",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": true,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/cloudflare-worker/q-factor",
+      "repo": "workspace",
+      "name": "q-factor",
+      "kind": "package",
+      "manifests": {
+        "package": false,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/cloudflare-worker/social-drop-automation",
+      "repo": "workspace",
+      "name": "p31-social-worker",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/discord/p31-bot",
+      "repo": "workspace",
+      "name": "p31-discord-bot",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/docs",
+      "repo": "workspace",
+      "name": "p31-docs",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/donate-api",
+      "repo": "workspace",
+      "name": "donate-api",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/extensions/p31-cockpit-panel",
+      "repo": "workspace",
+      "name": "p31-cockpit-panel",
+      "kind": "surface",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/extensions/p31-cognitive-shield",
+      "repo": "workspace",
+      "name": "p31-cognitive-shield",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/extensions/p31-progressive-disclosure",
+      "repo": "workspace",
+      "name": "p31-progressive-disclosure",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/extensions/p31-spoon-gauge",
+      "repo": "workspace",
+      "name": "p31-spoon-gauge",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/extensions/p31ca",
+      "repo": "workspace",
+      "name": "p31-centaur-ede",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/frontend",
+      "repo": "workspace",
+      "name": "p31-frontend",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/genesis-gate",
+      "repo": "workspace",
+      "name": "genesis-gate",
+      "kind": "package",
+      "manifests": {
+        "package": false,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/geodesic-room",
+      "repo": "workspace",
+      "name": "geodesic-room",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/k4-cage",
+      "repo": "workspace",
+      "name": "k4-cage",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/k4-cage-pwa",
+      "repo": "workspace",
+      "name": "k4-cage-pwa",
+      "kind": "package",
+      "manifests": {
+        "package": false,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/k4-hubs",
+      "repo": "workspace",
+      "name": "k4-hubs",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/k4-personal",
+      "repo": "workspace",
+      "name": "k4-personal",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/kenosis-mesh",
+      "repo": "workspace",
+      "name": "kenosis-mesh",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/love-bridge",
+      "repo": "workspace",
+      "name": "love-bridge",
+      "kind": "ledger",
+      "manifests": {
+        "package": false,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": true,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/p31-agent-hub",
+      "repo": "workspace",
+      "name": "p31-agent-hub",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/p31-cortex",
+      "repo": "workspace",
+      "name": "p31-cortex",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/p31-dashboard",
+      "repo": "workspace",
+      "name": "p31-dashboard",
+      "kind": "surface",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/p31-delta-hiring",
+      "repo": "workspace",
+      "name": "p31-delta-hiring",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/p31-forge",
+      "repo": "workspace",
+      "name": "p31-forge",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/p31-google-bridge",
+      "repo": "workspace",
+      "name": "p31-google-bridge",
+      "kind": "design-token",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": true
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/p31-hearing-ops",
+      "repo": "workspace",
+      "name": "p31-hearing-ops",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/p31-state",
+      "repo": "workspace",
+      "name": "p31-state",
+      "kind": "package",
+      "manifests": {
+        "package": false,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/packages/agent-engine",
+      "repo": "workspace",
+      "name": "@p31/agent-engine",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/packages/andromeda-gateway",
+      "repo": "workspace",
+      "name": "andromeda-gateway",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/packages/brain-dump-orchestrator",
+      "repo": "workspace",
+      "name": "@p31/brain-dump-orchestrator",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/packages/game-engine",
+      "repo": "workspace",
+      "name": "@p31/game-engine",
+      "kind": "surface",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/packages/genesis-spark-worker",
+      "repo": "workspace",
+      "name": "genesis-spark-worker",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/packages/harmonic-linter",
+      "repo": "workspace",
+      "name": "@p31/harmonic-linter",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/packages/interface-generator",
+      "repo": "workspace",
+      "name": "@p31/interface-generator",
+      "kind": "identity",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": true,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/packages/jitterbug-api",
+      "repo": "workspace",
+      "name": "@p31/jitterbug-api",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/packages/jitterbug-pwa",
+      "repo": "workspace",
+      "name": "@p31/jitterbug-pwa",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/packages/k4-mesh-core",
+      "repo": "workspace",
+      "name": "@p31/k4-mesh-core",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/packages/love-ledger",
+      "repo": "workspace",
+      "name": "@p31/love-ledger",
+      "kind": "ledger",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": true,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/packages/node-zero",
+      "repo": "workspace",
+      "name": "@p31/node-zero",
+      "kind": "identity",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": true,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/packages/node-zero/pwa",
+      "repo": "workspace",
+      "name": "p31-pwa",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/packages/oracle-terminal",
+      "repo": "workspace",
+      "name": "@p31/oracle-terminal",
+      "kind": "identity",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": true,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/packages/q-distribution",
+      "repo": "workspace",
+      "name": "@p31/q-distribution",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/packages/quantum-core",
+      "repo": "workspace",
+      "name": "@p31/quantum-core",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/packages/quantum-edge",
+      "repo": "workspace",
+      "name": "@p31/quantum-edge",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/packages/shared",
+      "repo": "workspace",
+      "name": "@p31/shared",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/packages/sovereign",
+      "repo": "workspace",
+      "name": "@p31/sovereign",
+      "kind": "identity",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": true,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/packages/sovereign-sdk",
+      "repo": "workspace",
+      "name": "@p31/sovereign-sdk",
+      "kind": "identity",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": true,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/phos-pwa",
+      "repo": "workspace",
+      "name": "phos-pwa",
+      "kind": "package",
+      "manifests": {
+        "package": false,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/sovereign-command-center",
+      "repo": "workspace",
+      "name": "sovereign-command-center",
+      "kind": "surface",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": true,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/sovereign-justice",
+      "repo": "workspace",
+      "name": "sovereign-justice",
+      "kind": "identity",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": true,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/spin-mesh",
+      "repo": "workspace",
+      "name": "spin-mesh",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/spin-mesh/logistics-do",
+      "repo": "workspace",
+      "name": "spin-logistics",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/spin-mesh/matchmaking-do",
+      "repo": "workspace",
+      "name": "spin-matchmaking",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/spoon-calculator",
+      "repo": "workspace",
+      "name": "spoon-calculator",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/telemetry-worker",
+      "repo": "workspace",
+      "name": "p31-telemetry-worker",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/unified-k4-cage",
+      "repo": "workspace",
+      "name": "unified-k4-cage",
+      "kind": "package",
+      "manifests": {
+        "package": false,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/workers",
+      "repo": "workspace",
+      "name": "p31-workers",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/workers/agent-runtime",
+      "repo": "workspace",
+      "name": "agent-runtime",
+      "kind": "worker",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/workers/care-mesh",
+      "repo": "workspace",
+      "name": "care-mesh",
+      "kind": "worker",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/workers/creation-accountant",
+      "repo": "workspace",
+      "name": "@p31/creation-accountant",
+      "kind": "worker",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": true,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/workers/federation-bridge",
+      "repo": "workspace",
+      "name": "federation-bridge",
+      "kind": "worker",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/workers/fhir-bridge",
+      "repo": "workspace",
+      "name": "fhir-bridge",
+      "kind": "worker",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/workers/intent-resolver",
+      "repo": "workspace",
+      "name": "@p31/intent-resolver",
+      "kind": "worker",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/workers/ledger-bridge",
+      "repo": "workspace",
+      "name": "ledger-bridge",
+      "kind": "worker",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": true,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/workers/love-chain-worker",
+      "repo": "workspace",
+      "name": "love-chain",
+      "kind": "worker",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": true,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/workers/mcp-x402-gateway",
+      "repo": "workspace",
+      "name": "mcp-x402-gateway",
+      "kind": "mcp-server",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": true,
+        "ledger": false,
+        "payment": true,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/workers/mcp-x402-gateway/bridge",
+      "repo": "workspace",
+      "name": "@p31/mcp-x402-bridge",
+      "kind": "mcp-server",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": true,
+        "ledger": false,
+        "payment": true,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/workers/p31-mcp-server",
+      "repo": "workspace",
+      "name": "p31-mcp-server",
+      "kind": "mcp-server",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": true,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/workers/personal-swarm",
+      "repo": "workspace",
+      "name": "personal-swarm",
+      "kind": "worker",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/workers/phos-backup",
+      "repo": "workspace",
+      "name": "phos-backup",
+      "kind": "worker",
+      "manifests": {
+        "package": false,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/workers/pilot-dashboard",
+      "repo": "workspace",
+      "name": "pilot-dashboard",
+      "kind": "worker",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/workers/secret-rotator",
+      "repo": "workspace",
+      "name": "secret-rotator",
+      "kind": "worker",
+      "manifests": {
+        "package": false,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/software/workers/sovereign-agent",
+      "repo": "workspace",
+      "name": "sovereign-agent",
+      "kind": "worker",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": true,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/tools/phos-forge",
+      "repo": "workspace",
+      "name": "phos-forge",
+      "kind": "package",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/agent-runtime",
+      "repo": "workspace",
+      "name": "agent-runtime",
+      "kind": "worker",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/app-supervisor",
+      "repo": "workspace",
+      "name": "app-supervisor",
+      "kind": "worker",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/artifact-registry",
+      "repo": "workspace",
+      "name": "artifact-registry",
+      "kind": "worker",
+      "manifests": {
+        "package": false,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/bouncer",
+      "repo": "workspace",
+      "name": "p31-bouncer",
+      "kind": "worker",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/bros",
+      "repo": "workspace",
+      "name": "bros",
+      "kind": "worker",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/care-api",
+      "repo": "workspace",
+      "name": "care-api",
+      "kind": "worker",
+      "manifests": {
+        "package": false,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/care-mesh",
+      "repo": "workspace",
+      "name": "care-mesh",
+      "kind": "worker",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/chat-sandbox",
+      "repo": "workspace",
+      "name": "chat-sandbox",
+      "kind": "worker",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/command-center",
+      "repo": "workspace",
+      "name": "epcp-command-center-tests",
+      "kind": "worker",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/component-registry",
+      "repo": "workspace",
+      "name": "p31-component-registry",
+      "kind": "worker",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/contract-engine",
+      "repo": "workspace",
+      "name": "contract-engine",
+      "kind": "worker",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/creation-accountant",
+      "repo": "workspace",
+      "name": "@p31/creation-accountant",
+      "kind": "worker",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": true,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/dads",
+      "repo": "workspace",
+      "name": "dads",
+      "kind": "worker",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/design-mcp",
+      "repo": "workspace",
+      "name": "p31-design-mcp",
+      "kind": "mcp-server",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": true,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": true
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/device-registry",
+      "repo": "workspace",
+      "name": "device-registry",
+      "kind": "worker",
+      "manifests": {
+        "package": false,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/dispatch-router",
+      "repo": "workspace",
+      "name": "dispatch-router",
+      "kind": "worker",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/edge-render",
+      "repo": "workspace",
+      "name": "p31-edge-render",
+      "kind": "worker",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/federation-bridge",
+      "repo": "workspace",
+      "name": "federation-bridge",
+      "kind": "worker",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/fhir-bridge",
+      "repo": "workspace",
+      "name": "fhir-bridge",
+      "kind": "worker",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/game-builder",
+      "repo": "workspace",
+      "name": "game-builder",
+      "kind": "worker",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/governance-engine",
+      "repo": "workspace",
+      "name": "governance-engine",
+      "kind": "worker",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/intent-resolver",
+      "repo": "workspace",
+      "name": "@p31/intent-resolver",
+      "kind": "worker",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/kill-switch",
+      "repo": "workspace",
+      "name": "kill-switch",
+      "kind": "worker",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/ledger-bridge",
+      "repo": "workspace",
+      "name": "ledger-bridge",
+      "kind": "worker",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": true,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/love-ledger",
+      "repo": "workspace",
+      "name": "love-ledger",
+      "kind": "worker",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": true,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/marketplace",
+      "repo": "workspace",
+      "name": "marketplace",
+      "kind": "worker",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/marketplace-catalog",
+      "repo": "workspace",
+      "name": "marketplace-catalog",
+      "kind": "worker",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/marketplace-mcp",
+      "repo": "workspace",
+      "name": "marketplace-mcp",
+      "kind": "mcp-server",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": true,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/mcp-registry",
+      "repo": "workspace",
+      "name": "@p31/mcp-registry",
+      "kind": "mcp-server",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": true,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/mcp-x402-gateway",
+      "repo": "workspace",
+      "name": "mcp-x402-gateway",
+      "kind": "mcp-server",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": true,
+        "ledger": false,
+        "payment": true,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/mcp-x402-gateway/bridge",
+      "repo": "workspace",
+      "name": "@p31/mcp-x402-bridge",
+      "kind": "mcp-server",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": true,
+        "ledger": false,
+        "payment": true,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/membrane-coordinator",
+      "repo": "workspace",
+      "name": "membrane-coordinator",
+      "kind": "worker",
+      "manifests": {
+        "package": false,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/meshy-bridge",
+      "repo": "workspace",
+      "name": "meshy-bridge",
+      "kind": "worker",
+      "manifests": {
+        "package": false,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/multiplayer-room",
+      "repo": "workspace",
+      "name": "multiplayer-room",
+      "kind": "worker",
+      "manifests": {
+        "package": false,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/notification-queue",
+      "repo": "workspace",
+      "name": "notification-queue",
+      "kind": "worker",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/oauth-relay",
+      "repo": "workspace",
+      "name": "p31-oauth-relay",
+      "kind": "worker",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/p31-crypto-mcp",
+      "repo": "workspace",
+      "name": "p31-crypto-mcp",
+      "kind": "mcp-server",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": true,
+        "ledger": false,
+        "payment": true,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/p31-gumroad-webhook",
+      "repo": "workspace",
+      "name": "p31-gumroad-webhook",
+      "kind": "worker",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": true,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/p31-justice-hub",
+      "repo": "workspace",
+      "name": "p31-justice-hub",
+      "kind": "worker",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/p31-mcp-server",
+      "repo": "workspace",
+      "name": "p31-mcp-server",
+      "kind": "mcp-server",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": true,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/personal-swarm",
+      "repo": "workspace",
+      "name": "personal-swarm",
+      "kind": "worker",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/phenix-wallet",
+      "repo": "workspace",
+      "name": "phenix-wallet",
+      "kind": "worker",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": true,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/phenix-wallet-mcp",
+      "repo": "workspace",
+      "name": "phenix-wallet-mcp",
+      "kind": "mcp-server",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": true,
+        "ledger": false,
+        "payment": true,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/phos",
+      "repo": "workspace",
+      "name": "p31-phos-worker",
+      "kind": "worker",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/phos-backup",
+      "repo": "workspace",
+      "name": "phos-backup",
+      "kind": "worker",
+      "manifests": {
+        "package": false,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/phos-triad",
+      "repo": "workspace",
+      "name": "p31-phos-triad",
+      "kind": "worker",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/phosphorus31",
+      "repo": "workspace",
+      "name": "p31-phosphorus31",
+      "kind": "worker",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/pilot-dashboard",
+      "repo": "workspace",
+      "name": "pilot-dashboard",
+      "kind": "worker",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/portal-chat",
+      "repo": "workspace",
+      "name": "portal-chat",
+      "kind": "worker",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/portal-worker",
+      "repo": "workspace",
+      "name": "portal-worker",
+      "kind": "worker",
+      "manifests": {
+        "package": false,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": true,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/q-factor",
+      "repo": "workspace",
+      "name": "q-factor",
+      "kind": "worker",
+      "manifests": {
+        "package": false,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/roblox-bridge",
+      "repo": "workspace",
+      "name": "roblox-bridge",
+      "kind": "worker",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/secret-rotator",
+      "repo": "workspace",
+      "name": "secret-rotator",
+      "kind": "worker",
+      "manifests": {
+        "package": false,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/shadow-bridge",
+      "repo": "workspace",
+      "name": "shadow-bridge",
+      "kind": "worker",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": true,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/signaling",
+      "repo": "workspace",
+      "name": "signaling",
+      "kind": "worker",
+      "manifests": {
+        "package": false,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/social-drop-automation",
+      "repo": "workspace",
+      "name": "p31-social-worker",
+      "kind": "worker",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/sovereign-agent",
+      "repo": "workspace",
+      "name": "sovereign-agent",
+      "kind": "worker",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": true,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/swarm-router",
+      "repo": "workspace",
+      "name": "swarm-router",
+      "kind": "worker",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/taler-bridge-billing",
+      "repo": "workspace",
+      "name": "taler-bridge-billing",
+      "kind": "worker",
+      "manifests": {
+        "package": false,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/terminal-relay",
+      "repo": "workspace",
+      "name": "terminal-relay",
+      "kind": "worker",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/tetra-tools",
+      "repo": "workspace",
+      "name": "tetra-tools",
+      "kind": "worker",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/vibe-generate",
+      "repo": "workspace",
+      "name": "vibe-generate",
+      "kind": "worker",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/vibe-sandbox",
+      "repo": "workspace",
+      "name": "vibe-sandbox",
+      "kind": "worker",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/willow",
+      "repo": "workspace",
+      "name": "p31-willow",
+      "kind": "worker",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/willow-chat",
+      "repo": "workspace",
+      "name": "willow-chat",
+      "kind": "worker",
+      "manifests": {
+        "package": true,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/willow-safety",
+      "repo": "workspace",
+      "name": "willow-safety",
+      "kind": "worker",
+      "manifests": {
+        "package": false,
+        "wrangler": true
+      },
+      "hints": {
+        "mcp": false,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    }
+  ]
+}
