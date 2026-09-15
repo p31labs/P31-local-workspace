@@ -76,3 +76,27 @@ ${iconCatalogEntries}
 
 fs.writeFileSync(OUT_FILE, output);
 console.log(`Generated ${OUT_FILE} (${(output.length / 1024).toFixed(1)} KB)`);
+
+// ─── Generate skills manifest from SKILL.md files ─────────────────
+
+const SKILLS_DIR = path.join(__dirname, 'skills');
+const OUT_SKILLS = path.join(__dirname, 'src', 'generated', 'skills.json');
+fs.mkdirSync(path.join(__dirname, 'src', 'generated'), { recursive: true });
+
+const skillsManifest = {};
+if (fs.existsSync(SKILLS_DIR)) {
+  for (const dir of fs.readdirSync(SKILLS_DIR)) {
+    const skillPath = path.join(SKILLS_DIR, dir, 'SKILL.md');
+    if (fs.existsSync(skillPath)) {
+      const body = fs.readFileSync(skillPath, 'utf-8');
+      const titleMatch = body.match(/^#\s+(.+)$/m);
+      skillsManifest[dir] = {
+        title: titleMatch?.[1]?.trim() || dir,
+        body,
+        has_evals: fs.existsSync(path.join(SKILLS_DIR, dir, 'evals')),
+      };
+    }
+  }
+}
+fs.writeFileSync(OUT_SKILLS, JSON.stringify(skillsManifest, null, 2));
+console.log(`Generated ${OUT_SKILLS} (${Object.keys(skillsManifest).length} skills)`);
