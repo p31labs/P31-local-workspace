@@ -20,6 +20,9 @@ jobs:
         run: node scripts/validate-core.mjs
       - name: Run p31-standards golden evals (10 cases, deterministic)
         run: node scripts/skills-eval.mjs
+      - name: Check skills manifest drift (build vs committed)
+        run: |
+          cd workers/design-mcp && node build.mjs && git diff --exit-code src/generated/skills.json
       - name: Hardcoded hex gate (AGENTS.md design gate)
         run: |
           if grep -rEn '#[0-9a-fA-F]{3,8}\b' apps --include='*.tsx' --include='*.astro' --include='*.css' --include='*.html' --exclude-dir=node_modules --exclude-dir=.wrangler --exclude-dir=dist 2>/dev/null; then
