@@ -3,7 +3,7 @@
 # Regenerate: node scripts/generate-core-yaml.mjs
 
 version: 1
-generated_at: 2026-09-15T13:23:21.478Z
+generated_at: 2026-09-15T13:45:55.664Z
 
 layers:
   L0:
@@ -1554,6 +1554,24 @@ entries:
     must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
     status: active
     notes: "workers/design-mcp — the canonical MCP surface"
+  - path: "P31-local-workspace/workers/design-mcp-v3"
+    repo: "workspace"
+    name: "@p31/design-mcp-v3"
+    kind: "mcp-server"
+    layer: L2
+    owns: ["stateless 2026-07-28 split-SDK surface (merge target for design-mcp)","hub-readied spoke","skills/list + skills/get over MCP"]
+    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values","duplicate tool logic (import from canonical surface)"]
+    status: active
+    notes: "workers/design-mcp-v3 — merge target; gateway added at 3+ spokes"
+  - path: "P31-local-workspace/workers/design-mcp/skills/p31-standards"
+    repo: "workspace"
+    name: "p31-standards"
+    kind: "skill"
+    layer: L2
+    owns: ["enforcement rules (no hex, no media queries, no inline styles, spoons, motion, a11y, contracts, transient state)","10 golden eval cases under evals/","agentskills.io machine-readable format"]
+    must_not: ["give non-deterministic advice","rely on agent self-reporting","drift from eval baselines"]
+    status: active
+    notes: "enforcement truth — CI runs scripts/skills-eval.mjs"
   - path: "P31-local-workspace/workers/device-registry"
     repo: "workspace"
     name: "device-registry"

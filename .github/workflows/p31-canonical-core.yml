@@ -1,0 +1,32 @@
+name: P31 Canonical Core
+
+on:
+  pull_request:
+  push:
+    branches: [main, feat/*]
+
+jobs:
+  canonical-core:
+    name: Canonical Core Gates
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Validate canonical core (4 gates)
+        run: node scripts/validate-core.mjs
+      - name: Run p31-standards golden evals (10 cases, deterministic)
+        run: node scripts/skills-eval.mjs
+      - name: Hardcoded hex gate (AGENTS.md design gate)
+        run: |
+          if grep -rEn '#[0-9a-fA-F]{3,8}\b' production --include='*.tsx' --include='*.astro' --include='*.css' --include='*.html' --exclude-dir=node_modules --exclude-dir=.wrangler --exclude-dir=dist 2>/dev/null; then
+            echo "❌ Hardcoded hex colors found in production src (use var(--p31-*) tokens)"
+            exit 1
+          fi
+      - name: Layer discipline (L3 must not import L2 internals)
+        run: |
+          if grep -rEn "from '(\\.\\./)*packages/design-core/src" apps production 2>/dev/null; then
+            echo "❌ Surface importing design-core src internals — import '@p31/design-core' package instead"
+            exit 1
+          fi

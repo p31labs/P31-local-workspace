@@ -1,9 +1,9 @@
 {
   "flags": [
-    { "line": 6, "rule": "no-hardcoded-hex", "severity": "MUST", "message": "Hardcoded hex color #FF0000. Use a var(--p31-*) token." },
-    { "line": 6, "rule": "no-inline-styles", "severity": "MUST", "message": "Inline style object. Declare tokens/classes instead." },
-    { "line": 7, "rule": "no-hardcoded-hex", "severity": "MUST", "message": "Hardcoded hex color #333. Use a var(--p31-*) token." },
-    { "line": 7, "rule": "no-inline-styles", "severity": "MUST", "message": "Inline style object. Declare tokens/classes instead." }
+    { "line": 5, "rule": "no-hardcoded-hex", "severity": "MUST", "message": "Hardcoded hex color #FF0000. Use a var(--p31-*) token." },
+    { "line": 5, "rule": "no-inline-styles", "severity": "MUST", "message": "Inline style object. Declare tokens/classes instead." },
+    { "line": 6, "rule": "no-hardcoded-hex", "severity": "MUST", "message": "Hardcoded hex color #333. Use a var(--p31-*) token." },
+    { "line": 6, "rule": "no-inline-styles", "severity": "MUST", "message": "Inline style object. Declare tokens/classes instead." }
   ],
   "passes": []
 }

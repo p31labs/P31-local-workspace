@@ -1,10 +1,10 @@
 {
-  "generated_at": "2026-09-15T13:18:44.849Z",
+  "generated_at": "2026-09-15T13:45:55.580Z",
   "repos": {
     "workspace": "/home/p31/P31-local-workspace",
     "production": "/home/p31/production"
   },
-  "count": 252,
+  "count": 254,
   "artifacts": [
     {
       "path": "production/monetization",
@@ -3604,6 +3604,37 @@
         "surface": false,
         "identity": false,
         "token": true
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/design-mcp-v3",
+      "repo": "workspace",
+      "name": "@p31/design-mcp-v3",
+      "kind": "mcp-server",
+      "manifests": {
+        "package": true,
+        "wrangler": false
+      },
+      "hints": {
+        "mcp": true,
+        "ledger": false,
+        "payment": false,
+        "surface": false,
+        "identity": false,
+        "token": false
+      }
+    },
+    {
+      "path": "P31-local-workspace/workers/design-mcp/skills/p31-standards",
+      "repo": "workspace",
+      "name": "p31-standards",
+      "kind": "skill",
+      "manifests": {
+        "package": false,
+        "wrangler": false
+      },
+      "hints": {
+        "skill": true
       }
     },
     {

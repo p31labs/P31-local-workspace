@@ -1,7 +1,7 @@
 {
   "flags": [
-    { "line": 5, "rule": "contract-prop-invented", "severity": "MUST", "message": "elevation=9 not in component contract. Use semantic parts (Card.Header/Card.Body/Card.Footer)." },
-    { "line": 5, "rule": "contract-prop-invented", "severity": "MUST", "message": "glow=\"green-glow\" not in component contract." }
+    { "line": 5, "rule": "contract-prop-invented", "severity": "MUST", "message": "elevation=9 not in Card contract. Use semantic parts (Card.Header/Body/Footer)." },
+    { "line": 5, "rule": "contract-prop-invented", "severity": "MUST", "message": "glow=\"green-glow\" not in Card contract. Use semantic parts (Card.Header/Body/Footer)." }
   ],
   "passes": []
 }

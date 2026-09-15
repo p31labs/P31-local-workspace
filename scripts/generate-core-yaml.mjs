@@ -54,7 +54,9 @@ function classify(path, name, hints) {
   if (/rules/i.test(name) && !/lovrules/i.test(lower)) return { layer: 'L1', status: 'active', owns: ['design rule constants (MUST/SHOULD/MAY)'], notes: 'consumed by validators' }
 
   // ---------- L2: Contracts ----------
+  if (hints.mcp && /design-mcp-v3/i.test(name)) return { layer: 'L2', status: 'active', owns: ['stateless 2026-07-28 split-SDK surface (merge target for design-mcp)', 'hub-readied spoke', 'skills/list + skills/get over MCP'], must_not: ['import L3 surfaces', 'render UI', 'hold user state across requests', 'hardcode token values', 'duplicate tool logic (import from canonical surface)'], notes: 'workers/design-mcp-v3 — merge target; gateway added at 3+ spokes' }
   if (hints.mcp && /design-mcp/i.test(name)) return { layer: 'L2', status: 'active', owns: ['34 canonical MCP tools (token + component + contract + clarify + propose)', 'server/discover (2026-07-28)', 'tool contract validation'], notes: 'workers/design-mcp — the canonical MCP surface' }
+  if (hints.skill && /p31-standards/i.test(name)) return { layer: 'L2', status: 'active', owns: ['enforcement rules (no hex, no media queries, no inline styles, spoons, motion, a11y, contracts, transient state)', '10 golden eval cases under evals/', 'agentskills.io machine-readable format'], must_not: ['give non-deterministic advice', 'rely on agent self-reporting', 'drift from eval baselines'], notes: 'enforcement truth — CI runs scripts/skills-eval.mjs' }
   if (hints.mcp && /crypto-mcp/i.test(name)) return { layer: 'L2', status: 'active', owns: ['ML-DSA-65/ML-KEM-768/SLH-DSA-128s', 'PQC keygen + sign + verify', 'SD-JWT issuance'], notes: 'post-quantum crypto layer for agent identity' }
   if (hints.mcp && /x402/i.test(hay)) return { layer: 'L2', status: 'active', owns: ['USDC/BTC micro-payment settlement', 'x402 v2 header negotiation', 'facilitator routing'], notes: 'payment contract over HTTP' }
   if (hints.mcp && /marketplace-mcp/i.test(name)) return { layer: 'L2', status: 'migrate-later', owns: ['marketplace discovery tools'], notes: 'merge into x402 contract or retire after migration' }
@@ -238,7 +240,7 @@ function classify(path, name, hints) {
 
 function main() {
   const rows = inventory.artifacts.map((a) => {
-    const { layer, status, owns, notes } = classify(a.path, a.name, a.hints)
+    const { layer, status, owns, must_not: rowMustNot, notes } = classify(a.path, a.name, a.hints)
     const entry = {
       path: a.path,
       repo: a.repo,
@@ -246,7 +248,7 @@ function main() {
       kind: a.kind,
       layer,
       owns,
-      must_not: layer === 'retire' ? [] : (LAYER_DEFAULTS[layer]?.must_not ?? []),
+      must_not: rowMustNot ?? (layer === 'retire' ? [] : (LAYER_DEFAULTS[layer]?.must_not ?? [])),
       status,
       notes,
     }

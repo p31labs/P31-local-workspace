@@ -104,9 +104,12 @@ function collectArtifacts(root) {
         existsSync(join(full, 'wrangler.jsonc')) ||
         existsSync(join(full, 'wrangler.json'))
       const hasTsc = existsSync(join(full, 'tsconfig.json'))
+      const hasSkill = existsSync(join(full, 'SKILL.md'))
 
       if (hasPkg || hasWrangler) {
         artifacts.push({ dir: full, hasPkg, hasWrangler, hasTsc })
+      } else if (hasSkill) {
+        artifacts.push({ dir: full, hasPkg: false, hasWrangler: false, hasTsc: false, hasSkill: true })
       }
       // always drill into subdirectories; only true roots (pkg/wrangler) are emitted
       if (entry !== 'node_modules') scan(full, depth + 1)
@@ -142,17 +145,24 @@ function classifyHints(path, manifest) {
   return { kind, flags }
 }
 
+/**
+ * Skill detection: a directory containing SKILL.md is a skill artifact.
+ */
+function classifySkill(dir) {
+  return { kind: 'skill', flags: { skill: true } }
+}
+
 function main() {
   const report = []
   const seen = new Set()
 
   const add = (root, repo) => {
-    for (const { dir, hasPkg, hasWrangler } of collectArtifacts(root)) {
+    for (const { dir, hasPkg, hasWrangler, hasTsc, hasSkill } of collectArtifacts(root)) {
       const rel = relative('/home/p31', dir)
       if (seen.has(rel)) continue
       seen.add(rel)
       const manifest = readManifest(dir)
-      const { kind, flags } = classifyHints(dir, manifest)
+      const { kind, flags } = hasSkill ? classifySkill(dir) : classifyHints(dir, manifest)
       report.push({
         path: rel,
         repo,

@@ -1,0 +1,58 @@
+# P31 Deterministic Approver Policy
+# Applies to: fleet-merged PRs gated by the confidence bot (DriftlessAF pattern).
+#
+# The approver IS NOT the model. It is a deterministic state machine that merges
+# ONLY when every gate is green on the EXACT commit SHA being merged, and there is
+# no active revert against the same change. This is the merge decision; the model
+# only grades. Confidence bot output is advisory metadata, never the decider.
+
+version: 1
+
+permissions:
+  contents: read
+
+merge_rules:
+  require_green_on_same_sha: true    # all checks must be green on the exact commit being merged, not a stale run
+  require_no_active_reverts: true    # .gh/auto-heal/reverts.jsonl must contain no open revert for this change key
+  require_no_failed_skips: true      # no skill eval may be silently skipped (a skip is a fail)
+
+required_checks:
+  canonical-core:        # .github/workflows/p31-canonical-core.yml
+    - node scripts/validate-core.mjs
+    - node scripts/skills-eval.mjs
+  lint:
+    - pnpm run lint:css          # design-lint.yml
+  boundary:
+    - check:boundaries           # L2/L3 import discipline (eslint-plugin-boundaries)
+
+confidence_threshold: 0.9
+# Merge proceeds when confidence >= 0.9 on the same SHA AND all required checks
+# are green AND no active revert. Confidence below 0.9 = human review required.
+
+confidence_inputs:
+  - token_audit_score          # score from propose_from_spec token audit (0-1)
+  - contract_validation        # validate_contract (hex/rgba/inline/emoji/forbidden) 0 or 1
+  - build                      # pnpm build exit 0
+  - test                       # pnpm test exit 0
+  - lint                       # all lint gates exit 0
+  - boundary_check             # check:boundaries exit 0
+  - revert_history             # no open revert for this change key (1 if clean)
+
+confidence_weights:
+  token_audit_score: 0.30
+  contract_validation: 0.25
+  build: 0.20
+  test: 0.10
+  lint: 0.10
+  boundary_check: 0.05
+  revert_history: 0.00     # gating, not scoring — a revert alone blocks merge
+
+human_review_required_when:
+  - confidence < 0.9
+  - any MUST violation from workers/design-mcp/skills/p31-standards
+  - a rule from the skill set exits nonzero and the change touches the excluded file
+  - requires no-skip guarantee is violated
+
+emergency:
+  - if any required check cannot be executed (missing script), the PR is BLOCKED, never auto-merged
+  - reverts are the top priority: any open revert instantly demotes confidence to 0
