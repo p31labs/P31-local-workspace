@@ -14,19 +14,23 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - name: Validate canonical core (4 gates)
+      - name: Install dependencies (for validate-core.mjs yaml dep)
+        run: pnpm install --frozen-lockfile
+      - name: Validate canonical core (5 gates)
         run: node scripts/validate-core.mjs
       - name: Run p31-standards golden evals (10 cases, deterministic)
         run: node scripts/skills-eval.mjs
       - name: Hardcoded hex gate (AGENTS.md design gate)
         run: |
-          if grep -rEn '#[0-9a-fA-F]{3,8}\b' production --include='*.tsx' --include='*.astro' --include='*.css' --include='*.html' --exclude-dir=node_modules --exclude-dir=.wrangler --exclude-dir=dist 2>/dev/null; then
-            echo "❌ Hardcoded hex colors found in production src (use var(--p31-*) tokens)"
+          if grep -rEn '#[0-9a-fA-F]{3,8}\b' apps --include='*.tsx' --include='*.astro' --include='*.css' --include='*.html' --exclude-dir=node_modules --exclude-dir=.wrangler --exclude-dir=dist 2>/dev/null; then
+            echo "❌ Hardcoded hex colors found in apps src (use var(--p31-*) tokens)"
             exit 1
           fi
       - name: Layer discipline (L3 must not import L2 internals)
         run: |
-          if grep -rEn "from '(\\.\\./)*packages/design-core/src" apps production 2>/dev/null; then
+          if grep -rEn "from '(\\.\\./)*packages/design-core/src" apps 2>/dev/null; then
             echo "❌ Surface importing design-core src internals — import '@p31/design-core' package instead"
             exit 1
           fi
+      - name: Hex gate smoke test (asserts gate detects hardcoded hex)
+        run: node scripts/smoke-hex-gate.mjs

@@ -14,8 +14,6 @@
     "skills:check": "node scripts/skills-eval.mjs"
   },
   "dependencies": {
-    "@modelcontextprotocol/server": "^2.0.0-beta",
-    "@modelcontextprotocol/client": "^2.0.0-beta",
     "@p31/design-core": "^2.3.0",
     "@p31/design-validator": "^1.2.0",
     "yaml": "^2.3.1",

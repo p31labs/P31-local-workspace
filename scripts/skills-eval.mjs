@@ -11,7 +11,11 @@
  * Reaches the SAME conclusion as the CI that gates a merge: if this exits
  * nonzero, the standard is broken. No agent self-reporting required.
  *
- * Usage: node scripts/skills-eval.mjs [--fix-baseline]
+ * Usage: node scripts/skills-eval.mjs
+ *
+ * Note: golden eval baselines are authored from SKILL.md audit rules and are
+ * contractually the source of truth. Do not rewrite baselines from actual
+ * output — fix the rule implementation or the case, never the baseline.
  */
 
 import fs from 'fs'
@@ -323,7 +327,6 @@ function runCase(caze) {
 }
 
 function main() {
-  const fixBaseline = process.argv.includes('--fix-baseline')
   const cases = loadCases(EVALS_ROOT)
   if (cases.length === 0) {
     console.error('No eval cases found under ' + EVALS_ROOT)
@@ -334,13 +337,6 @@ function main() {
   let failCount = 0
   for (const caze of cases) {
     const result = runCase(caze)
-    if (fixBaseline) {
-      const expectedFile = path.join(EVALS_ROOT, result.name, 'expected.json')
-      const flags = result.actual.map((f) => ({ line: f.line, rule: f.rule, message: f.message }))
-      fs.writeFileSync(expectedFile, JSON.stringify({ flags, passes: [] }, null, 2) + '\n')
-      console.log(`🔧 ${result.name}: baseline rewritten`)
-      continue
-    }
     if (result.problems.length === 0) {
       passCount++
       console.log(`✅ ${result.name}: ${result.actual.length} flag(s) match golden expectation`)
@@ -349,11 +345,6 @@ function main() {
       console.log(`❌ ${result.name}:`)
       for (const p of result.problems) console.log(`   - ${p}`)
     }
-  }
-
-  if (fixBaseline) {
-    console.log(`\nRewrote baselines for ${cases.length} case(s). Inspect and commit deliberately.`)
-    process.exit(0)
   }
 
   console.log(`\n${passCount} passed, ${failCount} failed (${cases.length} total)`)

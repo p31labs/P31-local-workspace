@@ -234,8 +234,30 @@ function classify(path, name, hints) {
   if (/software\/design-tokens/i.test(path)) return { layer: 'L1', status: 'active', owns: ['generated design-token artifacts'], notes: 'generated from design-core THEME_TOKENS' }
   if (/phosphorus31/i.test(path) && !/apps/i.test(path)) return { layer: 'L3', status: 'active', owns: ['phosphorus31.org surface'], notes: 'L3 marketing surface' }
 
-  // default for anything remaining
-  return { layer: 'L2', status: 'active', owns: ['artifact'], notes: 'unclassified — review and assign correct layer' }
+  // L3 surfaces — user-facing apps and production surfaces
+  if (/apps\//i.test(path)) return { layer: 'L3', status: 'active', owns: ['product surface (app)'], notes: 'L3 surface — app surface' }
+  // ecosystem/ — integration periphery
+  if (/ecosystem\//i.test(path)) return { layer: 'L2', status: 'migrate-later', owns: ['integration ecosystem'], notes: 'integration periphery — evaluate for consolidation' }
+  // remaining software/ (undeployed infrastructure not caught above)
+  if (/software\//i.test(path)) return { layer: 'L2', status: 'migrate-later', owns: ['undeployed software worker'], notes: 'undeployed infrastructure — evaluate for migration or retirement' }
+
+  // workspace root workers and utilities
+  if (/buffer-worker/i.test(name)) return { layer: 'L2', status: 'active', owns: ['buffer worker (Cloudflare Worker)'], notes: 'L2 worker contract' }
+  if (/crypto-monitor/i.test(name)) return { layer: 'L2', status: 'active', owns: ['crypto monitoring worker'], notes: 'L2 worker contract' }
+  if (/fawn-guard/i.test(name)) return { layer: 'L2', status: 'active', owns: ['fawn guard worker'], notes: 'L2 worker contract' }
+  if (/k4-worker$/i.test(path)) return { layer: 'L2', status: 'active', owns: ['K4 cage worker'], notes: 'L2 worker contract' }
+  if (/cli$/i.test(path)) return { layer: 'L2', status: 'active', owns: ['CLI + MCP surface'], notes: 'L2 MCP tool surface' }
+  if (/^P31-local-workspace\/software$/i.test(path)) return { layer: 'L2', status: 'migrate-later', owns: ['software repo umbrella'], notes: 'repo root — decompose into individual artifacts' }
+
+  // workspace root utilities and tools (tools/*, p31labs/*)
+  if (/tools\//i.test(path)) return { layer: 'L2', status: 'migrate-later', owns: ['tool / utility surface'], notes: 'workspace tool — evaluate for consolidation' }
+  if (/p31labs\//i.test(path)) return { layer: 'L2', status: 'migrate-later', owns: ['p31labs surface'], notes: 'workspace surface — evaluate for consolidation' }
+  if (/production\/tools\//i.test(path)) return { layer: 'L2', status: 'active', owns: ['production tool surface'], notes: 'L3 production tool' }
+  // production/ surfaces not covered above (portals, shell, monetization, campaign, assets are already classified)
+  if (/production\//i.test(path)) return { layer: 'L3', status: 'active', owns: ['production surface'], notes: 'L3 production surface' }
+
+  // default for anything remaining — intentionally a stub that fails validation
+  return { layer: 'L2', status: 'unclassified', owns: ['artifact'], notes: 'UNCLASSIFIED — review and assign correct layer' }
 }
 
 function main() {

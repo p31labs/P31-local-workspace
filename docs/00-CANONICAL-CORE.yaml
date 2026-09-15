@@ -3,7 +3,7 @@
 # Regenerate: node scripts/generate-core-yaml.mjs
 
 version: 1
-generated_at: 2026-09-15T13:45:55.664Z
+generated_at: 2026-09-15T14:07:14.774Z
 
 layers:
   L0:
@@ -317,10 +317,10 @@ entries:
     name: "@p31/ui"
     kind: "surface"
     layer: L2
-    owns: ["artifact"]
+    owns: ["tool / utility surface"]
     must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "unclassified — review and assign correct layer"
+    status: migrate-later
+    notes: "workspace tool — evaluate for consolidation"
   - path: "production/workers/p31-dispatch"
     repo: "production"
     name: "@p31/workers-p31-dispatch"
@@ -339,87 +339,6 @@ entries:
     must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
     status: active
     notes: "contract layer worker"
-  - path: "P31-local-workspace/apps/agent-demo"
-    repo: "workspace"
-    name: "agent-demo"
-    kind: "surface"
-    layer: L2
-    owns: ["artifact"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "unclassified — review and assign correct layer"
-  - path: "P31-local-workspace/apps/app-builder"
-    repo: "workspace"
-    name: "p31-app-builder"
-    kind: "surface"
-    layer: L2
-    owns: ["artifact"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "unclassified — review and assign correct layer"
-  - path: "P31-local-workspace/apps/arcade"
-    repo: "workspace"
-    name: "arcade"
-    kind: "surface"
-    layer: L2
-    owns: ["artifact"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "unclassified — review and assign correct layer"
-  - path: "P31-local-workspace/apps/bash"
-    repo: "workspace"
-    name: "@p31/bash"
-    kind: "surface"
-    layer: L2
-    owns: ["artifact"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "unclassified — review and assign correct layer"
-  - path: "P31-local-workspace/apps/counterscale"
-    repo: "workspace"
-    name: "counterscale"
-    kind: "surface"
-    layer: L2
-    owns: ["artifact"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "unclassified — review and assign correct layer"
-  - path: "P31-local-workspace/apps/design-hub"
-    repo: "workspace"
-    name: "design-hub"
-    kind: "surface"
-    layer: L2
-    owns: ["artifact"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "unclassified — review and assign correct layer"
-  - path: "P31-local-workspace/apps/docs"
-    repo: "workspace"
-    name: "p31-docs"
-    kind: "surface"
-    layer: L2
-    owns: ["artifact"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "unclassified — review and assign correct layer"
-  - path: "P31-local-workspace/apps/gateway"
-    repo: "workspace"
-    name: "gateway"
-    kind: "surface"
-    layer: L2
-    owns: ["artifact"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "unclassified — review and assign correct layer"
-  - path: "P31-local-workspace/apps/growth-dashboard"
-    repo: "workspace"
-    name: "growth-dashboard"
-    kind: "surface"
-    layer: L2
-    owns: ["artifact"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "unclassified — review and assign correct layer"
   - path: "P31-local-workspace/apps/p31ca/workers/fhir"
     repo: "workspace"
     name: "p31-fhir-worker"
@@ -429,24 +348,6 @@ entries:
     must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
     status: migrate-later
     notes: "integration contract — pending pilot decision"
-  - path: "P31-local-workspace/apps/passport-www"
-    repo: "workspace"
-    name: "passport-www"
-    kind: "surface"
-    layer: L2
-    owns: ["artifact"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "unclassified — review and assign correct layer"
-  - path: "P31-local-workspace/apps/phos"
-    repo: "workspace"
-    name: "phos"
-    kind: "surface"
-    layer: L2
-    owns: ["artifact"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "unclassified — review and assign correct layer"
   - path: "P31-local-workspace/apps/phos/src/workers/contract-engine"
     repo: "workspace"
     name: "contract-engine"
@@ -474,114 +375,51 @@ entries:
     must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
     status: active
     notes: "workers/love-ledger — deployed API"
-  - path: "P31-local-workspace/apps/phosphorus31"
-    repo: "workspace"
-    name: "planetary-planet"
-    kind: "surface"
-    layer: L2
-    owns: ["artifact"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "unclassified — review and assign correct layer"
-  - path: "P31-local-workspace/apps/status"
-    repo: "workspace"
-    name: "status"
-    kind: "surface"
-    layer: L2
-    owns: ["artifact"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "unclassified — review and assign correct layer"
-  - path: "P31-local-workspace/apps/storybook"
-    repo: "workspace"
-    name: "storybook"
-    kind: "surface"
-    layer: L2
-    owns: ["artifact"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "unclassified — review and assign correct layer"
-  - path: "P31-local-workspace/apps/tetra-ops"
-    repo: "workspace"
-    name: "tetra-ops"
-    kind: "surface"
-    layer: L2
-    owns: ["artifact"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "unclassified — review and assign correct layer"
-  - path: "P31-local-workspace/apps/website-builder"
-    repo: "workspace"
-    name: "website-builder"
-    kind: "surface"
-    layer: L2
-    owns: ["artifact"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "unclassified — review and assign correct layer"
-  - path: "P31-local-workspace/apps/willow"
-    repo: "workspace"
-    name: "willow"
-    kind: "surface"
-    layer: L2
-    owns: ["artifact"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "unclassified — review and assign correct layer"
-  - path: "P31-local-workspace/apps/willow-preview"
-    repo: "workspace"
-    name: "willow-preview"
-    kind: "surface"
-    layer: L2
-    owns: ["artifact"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "unclassified — review and assign correct layer"
   - path: "P31-local-workspace/buffer-worker"
     repo: "workspace"
     name: "buffer-worker"
     kind: "package"
     layer: L2
-    owns: ["artifact"]
+    owns: ["buffer worker (Cloudflare Worker)"]
     must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
     status: active
-    notes: "unclassified — review and assign correct layer"
+    notes: "L2 worker contract"
   - path: "P31-local-workspace/cli"
     repo: "workspace"
     name: "andromeda-cli"
     kind: "mcp-server"
     layer: L2
-    owns: ["artifact"]
+    owns: ["CLI + MCP surface"]
     must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
     status: active
-    notes: "unclassified — review and assign correct layer"
+    notes: "L2 MCP tool surface"
   - path: "P31-local-workspace/crypto-monitor"
     repo: "workspace"
     name: "crypto-monitor"
     kind: "package"
     layer: L2
-    owns: ["artifact"]
+    owns: ["crypto monitoring worker"]
     must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
     status: active
-    notes: "unclassified — review and assign correct layer"
+    notes: "L2 worker contract"
   - path: "P31-local-workspace/ecosystem/analytics"
     repo: "workspace"
     name: "p31-analytics"
     kind: "surface"
     layer: L2
-    owns: ["artifact"]
+    owns: ["integration ecosystem"]
     must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "unclassified — review and assign correct layer"
+    status: migrate-later
+    notes: "integration periphery — evaluate for consolidation"
   - path: "P31-local-workspace/ecosystem/discord"
     repo: "workspace"
     name: "p31-oracle-bot"
     kind: "ledger"
     layer: L2
-    owns: ["artifact"]
+    owns: ["integration ecosystem"]
     must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "unclassified — review and assign correct layer"
+    status: migrate-later
+    notes: "integration periphery — evaluate for consolidation"
   - path: "P31-local-workspace/ecosystem/gamification"
     repo: "workspace"
     name: "p31-gamification"
@@ -596,46 +434,46 @@ entries:
     name: "p31-ipfs-manager"
     kind: "package"
     layer: L2
-    owns: ["artifact"]
+    owns: ["integration ecosystem"]
     must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "unclassified — review and assign correct layer"
+    status: migrate-later
+    notes: "integration periphery — evaluate for consolidation"
   - path: "P31-local-workspace/ecosystem/middleware"
     repo: "workspace"
     name: "p31-middleware"
     kind: "package"
     layer: L2
-    owns: ["artifact"]
+    owns: ["integration ecosystem"]
     must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "unclassified — review and assign correct layer"
+    status: migrate-later
+    notes: "integration periphery — evaluate for consolidation"
   - path: "P31-local-workspace/fawn-guard"
     repo: "workspace"
     name: "fawn-guard"
     kind: "package"
     layer: L2
-    owns: ["artifact"]
+    owns: ["fawn guard worker"]
     must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
     status: active
-    notes: "unclassified — review and assign correct layer"
+    notes: "L2 worker contract"
   - path: "P31-local-workspace/k4-worker"
     repo: "workspace"
     name: "k4-cage-worker"
     kind: "package"
     layer: L2
-    owns: ["artifact"]
+    owns: ["K4 cage worker"]
     must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
     status: active
-    notes: "unclassified — review and assign correct layer"
+    notes: "L2 worker contract"
   - path: "P31-local-workspace/p31labs/social-content-engine"
     repo: "workspace"
     name: "@p31labs/social-content-engine"
     kind: "package"
     layer: L2
-    owns: ["artifact"]
+    owns: ["p31labs surface"]
     must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "unclassified — review and assign correct layer"
+    status: migrate-later
+    notes: "workspace surface — evaluate for consolidation"
   - path: "P31-local-workspace/packages/ble"
     repo: "workspace"
     name: "@p31/ble"
@@ -767,19 +605,19 @@ entries:
     name: "p31-software"
     kind: "package"
     layer: L2
-    owns: ["artifact"]
+    owns: ["software repo umbrella"]
     must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "unclassified — review and assign correct layer"
+    status: migrate-later
+    notes: "repo root — decompose into individual artifacts"
   - path: "P31-local-workspace/software/cloudflare-pages/p31-mesh"
     repo: "workspace"
     name: "p31-mesh"
     kind: "package"
     layer: L2
-    owns: ["artifact"]
+    owns: ["undeployed software worker"]
     must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "unclassified — review and assign correct layer"
+    status: migrate-later
+    notes: "undeployed infrastructure — evaluate for migration or retirement"
   - path: "P31-local-workspace/software/cloudflare-worker"
     repo: "workspace"
     name: "p31-orchestrator"
@@ -839,145 +677,145 @@ entries:
     name: "p31-discord-bot"
     kind: "package"
     layer: L2
-    owns: ["artifact"]
+    owns: ["undeployed software worker"]
     must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "unclassified — review and assign correct layer"
+    status: migrate-later
+    notes: "undeployed infrastructure — evaluate for migration or retirement"
   - path: "P31-local-workspace/software/docs"
     repo: "workspace"
     name: "p31-docs"
     kind: "package"
     layer: L2
-    owns: ["artifact"]
+    owns: ["undeployed software worker"]
     must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "unclassified — review and assign correct layer"
+    status: migrate-later
+    notes: "undeployed infrastructure — evaluate for migration or retirement"
   - path: "P31-local-workspace/software/donate-api"
     repo: "workspace"
     name: "donate-api"
     kind: "package"
     layer: L2
-    owns: ["artifact"]
+    owns: ["undeployed software worker"]
     must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "unclassified — review and assign correct layer"
+    status: migrate-later
+    notes: "undeployed infrastructure — evaluate for migration or retirement"
   - path: "P31-local-workspace/software/extensions/p31-cockpit-panel"
     repo: "workspace"
     name: "p31-cockpit-panel"
     kind: "surface"
     layer: L2
-    owns: ["artifact"]
+    owns: ["undeployed software worker"]
     must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "unclassified — review and assign correct layer"
+    status: migrate-later
+    notes: "undeployed infrastructure — evaluate for migration or retirement"
   - path: "P31-local-workspace/software/extensions/p31-cognitive-shield"
     repo: "workspace"
     name: "p31-cognitive-shield"
     kind: "package"
     layer: L2
-    owns: ["artifact"]
+    owns: ["undeployed software worker"]
     must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "unclassified — review and assign correct layer"
+    status: migrate-later
+    notes: "undeployed infrastructure — evaluate for migration or retirement"
   - path: "P31-local-workspace/software/extensions/p31-progressive-disclosure"
     repo: "workspace"
     name: "p31-progressive-disclosure"
     kind: "package"
     layer: L2
-    owns: ["artifact"]
+    owns: ["undeployed software worker"]
     must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "unclassified — review and assign correct layer"
+    status: migrate-later
+    notes: "undeployed infrastructure — evaluate for migration or retirement"
   - path: "P31-local-workspace/software/extensions/p31-spoon-gauge"
     repo: "workspace"
     name: "p31-spoon-gauge"
     kind: "package"
     layer: L2
-    owns: ["artifact"]
+    owns: ["undeployed software worker"]
     must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "unclassified — review and assign correct layer"
+    status: migrate-later
+    notes: "undeployed infrastructure — evaluate for migration or retirement"
   - path: "P31-local-workspace/software/extensions/p31ca"
     repo: "workspace"
     name: "p31-centaur-ede"
     kind: "package"
     layer: L2
-    owns: ["artifact"]
+    owns: ["undeployed software worker"]
     must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "unclassified — review and assign correct layer"
+    status: migrate-later
+    notes: "undeployed infrastructure — evaluate for migration or retirement"
   - path: "P31-local-workspace/software/frontend"
     repo: "workspace"
     name: "p31-frontend"
     kind: "package"
     layer: L2
-    owns: ["artifact"]
+    owns: ["undeployed software worker"]
     must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "unclassified — review and assign correct layer"
+    status: migrate-later
+    notes: "undeployed infrastructure — evaluate for migration or retirement"
   - path: "P31-local-workspace/software/genesis-gate"
     repo: "workspace"
     name: "genesis-gate"
     kind: "package"
     layer: L2
-    owns: ["artifact"]
+    owns: ["undeployed software worker"]
     must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "unclassified — review and assign correct layer"
+    status: migrate-later
+    notes: "undeployed infrastructure — evaluate for migration or retirement"
   - path: "P31-local-workspace/software/geodesic-room"
     repo: "workspace"
     name: "geodesic-room"
     kind: "package"
     layer: L2
-    owns: ["artifact"]
+    owns: ["undeployed software worker"]
     must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "unclassified — review and assign correct layer"
+    status: migrate-later
+    notes: "undeployed infrastructure — evaluate for migration or retirement"
   - path: "P31-local-workspace/software/k4-cage"
     repo: "workspace"
     name: "k4-cage"
     kind: "package"
     layer: L2
-    owns: ["artifact"]
+    owns: ["undeployed software worker"]
     must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "unclassified — review and assign correct layer"
+    status: migrate-later
+    notes: "undeployed infrastructure — evaluate for migration or retirement"
   - path: "P31-local-workspace/software/k4-cage-pwa"
     repo: "workspace"
     name: "k4-cage-pwa"
     kind: "package"
     layer: L2
-    owns: ["artifact"]
+    owns: ["undeployed software worker"]
     must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "unclassified — review and assign correct layer"
+    status: migrate-later
+    notes: "undeployed infrastructure — evaluate for migration or retirement"
   - path: "P31-local-workspace/software/k4-hubs"
     repo: "workspace"
     name: "k4-hubs"
     kind: "package"
     layer: L2
-    owns: ["artifact"]
+    owns: ["undeployed software worker"]
     must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "unclassified — review and assign correct layer"
+    status: migrate-later
+    notes: "undeployed infrastructure — evaluate for migration or retirement"
   - path: "P31-local-workspace/software/k4-personal"
     repo: "workspace"
     name: "k4-personal"
     kind: "package"
     layer: L2
-    owns: ["artifact"]
+    owns: ["undeployed software worker"]
     must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "unclassified — review and assign correct layer"
+    status: migrate-later
+    notes: "undeployed infrastructure — evaluate for migration or retirement"
   - path: "P31-local-workspace/software/kenosis-mesh"
     repo: "workspace"
     name: "kenosis-mesh"
     kind: "package"
     layer: L2
-    owns: ["artifact"]
+    owns: ["undeployed software worker"]
     must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "unclassified — review and assign correct layer"
+    status: migrate-later
+    notes: "undeployed infrastructure — evaluate for migration or retirement"
   - path: "P31-local-workspace/software/love-bridge"
     repo: "workspace"
     name: "love-bridge"
@@ -992,73 +830,73 @@ entries:
     name: "p31-agent-hub"
     kind: "package"
     layer: L2
-    owns: ["artifact"]
+    owns: ["undeployed software worker"]
     must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "unclassified — review and assign correct layer"
+    status: migrate-later
+    notes: "undeployed infrastructure — evaluate for migration or retirement"
   - path: "P31-local-workspace/software/p31-cortex"
     repo: "workspace"
     name: "p31-cortex"
     kind: "package"
     layer: L2
-    owns: ["artifact"]
+    owns: ["undeployed software worker"]
     must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "unclassified — review and assign correct layer"
+    status: migrate-later
+    notes: "undeployed infrastructure — evaluate for migration or retirement"
   - path: "P31-local-workspace/software/p31-dashboard"
     repo: "workspace"
     name: "p31-dashboard"
     kind: "surface"
     layer: L2
-    owns: ["artifact"]
+    owns: ["undeployed software worker"]
     must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "unclassified — review and assign correct layer"
+    status: migrate-later
+    notes: "undeployed infrastructure — evaluate for migration or retirement"
   - path: "P31-local-workspace/software/p31-delta-hiring"
     repo: "workspace"
     name: "p31-delta-hiring"
     kind: "package"
     layer: L2
-    owns: ["artifact"]
+    owns: ["undeployed software worker"]
     must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "unclassified — review and assign correct layer"
+    status: migrate-later
+    notes: "undeployed infrastructure — evaluate for migration or retirement"
   - path: "P31-local-workspace/software/p31-forge"
     repo: "workspace"
     name: "p31-forge"
     kind: "package"
     layer: L2
-    owns: ["artifact"]
+    owns: ["undeployed software worker"]
     must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "unclassified — review and assign correct layer"
+    status: migrate-later
+    notes: "undeployed infrastructure — evaluate for migration or retirement"
   - path: "P31-local-workspace/software/p31-google-bridge"
     repo: "workspace"
     name: "p31-google-bridge"
     kind: "design-token"
     layer: L2
-    owns: ["artifact"]
+    owns: ["undeployed software worker"]
     must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "unclassified — review and assign correct layer"
+    status: migrate-later
+    notes: "undeployed infrastructure — evaluate for migration or retirement"
   - path: "P31-local-workspace/software/p31-hearing-ops"
     repo: "workspace"
     name: "p31-hearing-ops"
     kind: "package"
     layer: L2
-    owns: ["artifact"]
+    owns: ["undeployed software worker"]
     must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "unclassified — review and assign correct layer"
+    status: migrate-later
+    notes: "undeployed infrastructure — evaluate for migration or retirement"
   - path: "P31-local-workspace/software/p31-state"
     repo: "workspace"
     name: "p31-state"
     kind: "package"
     layer: L2
-    owns: ["artifact"]
+    owns: ["undeployed software worker"]
     must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "unclassified — review and assign correct layer"
+    status: migrate-later
+    notes: "undeployed infrastructure — evaluate for migration or retirement"
   - path: "P31-local-workspace/software/packages/agent-engine"
     repo: "workspace"
     name: "@p31/agent-engine"
@@ -1208,19 +1046,19 @@ entries:
     name: "phos-pwa"
     kind: "package"
     layer: L2
-    owns: ["artifact"]
+    owns: ["undeployed software worker"]
     must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "unclassified — review and assign correct layer"
+    status: migrate-later
+    notes: "undeployed infrastructure — evaluate for migration or retirement"
   - path: "P31-local-workspace/software/sovereign-command-center"
     repo: "workspace"
     name: "sovereign-command-center"
     kind: "surface"
     layer: L2
-    owns: ["artifact"]
+    owns: ["undeployed software worker"]
     must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "unclassified — review and assign correct layer"
+    status: migrate-later
+    notes: "undeployed infrastructure — evaluate for migration or retirement"
   - path: "P31-local-workspace/software/sovereign-justice"
     repo: "workspace"
     name: "sovereign-justice"
@@ -1235,55 +1073,55 @@ entries:
     name: "spin-mesh"
     kind: "package"
     layer: L2
-    owns: ["artifact"]
+    owns: ["undeployed software worker"]
     must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "unclassified — review and assign correct layer"
+    status: migrate-later
+    notes: "undeployed infrastructure — evaluate for migration or retirement"
   - path: "P31-local-workspace/software/spin-mesh/logistics-do"
     repo: "workspace"
     name: "spin-logistics"
     kind: "package"
     layer: L2
-    owns: ["artifact"]
+    owns: ["undeployed software worker"]
     must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "unclassified — review and assign correct layer"
+    status: migrate-later
+    notes: "undeployed infrastructure — evaluate for migration or retirement"
   - path: "P31-local-workspace/software/spin-mesh/matchmaking-do"
     repo: "workspace"
     name: "spin-matchmaking"
     kind: "package"
     layer: L2
-    owns: ["artifact"]
+    owns: ["undeployed software worker"]
     must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "unclassified — review and assign correct layer"
+    status: migrate-later
+    notes: "undeployed infrastructure — evaluate for migration or retirement"
   - path: "P31-local-workspace/software/spoon-calculator"
     repo: "workspace"
     name: "spoon-calculator"
     kind: "package"
     layer: L2
-    owns: ["artifact"]
+    owns: ["undeployed software worker"]
     must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "unclassified — review and assign correct layer"
+    status: migrate-later
+    notes: "undeployed infrastructure — evaluate for migration or retirement"
   - path: "P31-local-workspace/software/telemetry-worker"
     repo: "workspace"
     name: "p31-telemetry-worker"
     kind: "package"
     layer: L2
-    owns: ["artifact"]
+    owns: ["undeployed software worker"]
     must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "unclassified — review and assign correct layer"
+    status: migrate-later
+    notes: "undeployed infrastructure — evaluate for migration or retirement"
   - path: "P31-local-workspace/software/unified-k4-cage"
     repo: "workspace"
     name: "unified-k4-cage"
     kind: "package"
     layer: L2
-    owns: ["artifact"]
+    owns: ["undeployed software worker"]
     must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "unclassified — review and assign correct layer"
+    status: migrate-later
+    notes: "undeployed infrastructure — evaluate for migration or retirement"
   - path: "P31-local-workspace/software/workers"
     repo: "workspace"
     name: "p31-workers"
@@ -1433,10 +1271,10 @@ entries:
     name: "phos-forge"
     kind: "package"
     layer: L2
-    owns: ["artifact"]
+    owns: ["tool / utility surface"]
     must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "unclassified — review and assign correct layer"
+    status: migrate-later
+    notes: "workspace tool — evaluate for consolidation"
   - path: "P31-local-workspace/workers/agent-runtime"
     repo: "workspace"
     name: "agent-runtime"
@@ -2094,6 +1932,33 @@ entries:
     must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
     status: active
     notes: "L3 shell surface"
+  - path: "P31-local-workspace/apps/agent-demo"
+    repo: "workspace"
+    name: "agent-demo"
+    kind: "surface"
+    layer: L3
+    owns: ["product surface (app)"]
+    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    status: active
+    notes: "L3 surface — app surface"
+  - path: "P31-local-workspace/apps/app-builder"
+    repo: "workspace"
+    name: "p31-app-builder"
+    kind: "surface"
+    layer: L3
+    owns: ["product surface (app)"]
+    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    status: active
+    notes: "L3 surface — app surface"
+  - path: "P31-local-workspace/apps/arcade"
+    repo: "workspace"
+    name: "arcade"
+    kind: "surface"
+    layer: L3
+    owns: ["product surface (app)"]
+    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    status: active
+    notes: "L3 surface — app surface"
   - path: "P31-local-workspace/apps/auth"
     repo: "workspace"
     name: "@p31/auth"
@@ -2103,6 +1968,15 @@ entries:
     must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
     status: active
     notes: "L3 auth UI"
+  - path: "P31-local-workspace/apps/bash"
+    repo: "workspace"
+    name: "@p31/bash"
+    kind: "surface"
+    layer: L3
+    owns: ["product surface (app)"]
+    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    status: active
+    notes: "L3 surface — app surface"
   - path: "P31-local-workspace/apps/bonding"
     repo: "workspace"
     name: "bonding"
@@ -2112,6 +1986,33 @@ entries:
     must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
     status: active
     notes: "L3 game surface"
+  - path: "P31-local-workspace/apps/counterscale"
+    repo: "workspace"
+    name: "counterscale"
+    kind: "surface"
+    layer: L3
+    owns: ["product surface (app)"]
+    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    status: active
+    notes: "L3 surface — app surface"
+  - path: "P31-local-workspace/apps/design-hub"
+    repo: "workspace"
+    name: "design-hub"
+    kind: "surface"
+    layer: L3
+    owns: ["product surface (app)"]
+    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    status: active
+    notes: "L3 surface — app surface"
+  - path: "P31-local-workspace/apps/docs"
+    repo: "workspace"
+    name: "p31-docs"
+    kind: "surface"
+    layer: L3
+    owns: ["product surface (app)"]
+    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    status: active
+    notes: "L3 surface — app surface"
   - path: "P31-local-workspace/apps/game-builder"
     repo: "workspace"
     name: "game-builder"
@@ -2121,6 +2022,24 @@ entries:
     must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
     status: migrate-later
     notes: "pending value assessment"
+  - path: "P31-local-workspace/apps/gateway"
+    repo: "workspace"
+    name: "gateway"
+    kind: "surface"
+    layer: L3
+    owns: ["product surface (app)"]
+    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    status: active
+    notes: "L3 surface — app surface"
+  - path: "P31-local-workspace/apps/growth-dashboard"
+    repo: "workspace"
+    name: "growth-dashboard"
+    kind: "surface"
+    layer: L3
+    owns: ["product surface (app)"]
+    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    status: active
+    notes: "L3 surface — app surface"
   - path: "P31-local-workspace/apps/k4-cage"
     repo: "workspace"
     name: "k4-cage"
@@ -2166,6 +2085,24 @@ entries:
     must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
     status: active
     notes: "L3 marketing + docs surface"
+  - path: "P31-local-workspace/apps/passport-www"
+    repo: "workspace"
+    name: "passport-www"
+    kind: "surface"
+    layer: L3
+    owns: ["product surface (app)"]
+    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    status: active
+    notes: "L3 surface — app surface"
+  - path: "P31-local-workspace/apps/phos"
+    repo: "workspace"
+    name: "phos"
+    kind: "surface"
+    layer: L3
+    owns: ["product surface (app)"]
+    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    status: active
+    notes: "L3 surface — app surface"
   - path: "P31-local-workspace/apps/phos/src/workers/backup-export"
     repo: "workspace"
     name: "backup-export"
@@ -2184,6 +2121,69 @@ entries:
     must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
     status: migrate-later
     notes: "L3 surface — pending phos architecture decision"
+  - path: "P31-local-workspace/apps/phosphorus31"
+    repo: "workspace"
+    name: "planetary-planet"
+    kind: "surface"
+    layer: L3
+    owns: ["product surface (app)"]
+    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    status: active
+    notes: "L3 surface — app surface"
+  - path: "P31-local-workspace/apps/status"
+    repo: "workspace"
+    name: "status"
+    kind: "surface"
+    layer: L3
+    owns: ["product surface (app)"]
+    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    status: active
+    notes: "L3 surface — app surface"
+  - path: "P31-local-workspace/apps/storybook"
+    repo: "workspace"
+    name: "storybook"
+    kind: "surface"
+    layer: L3
+    owns: ["product surface (app)"]
+    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    status: active
+    notes: "L3 surface — app surface"
+  - path: "P31-local-workspace/apps/tetra-ops"
+    repo: "workspace"
+    name: "tetra-ops"
+    kind: "surface"
+    layer: L3
+    owns: ["product surface (app)"]
+    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    status: active
+    notes: "L3 surface — app surface"
+  - path: "P31-local-workspace/apps/website-builder"
+    repo: "workspace"
+    name: "website-builder"
+    kind: "surface"
+    layer: L3
+    owns: ["product surface (app)"]
+    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    status: active
+    notes: "L3 surface — app surface"
+  - path: "P31-local-workspace/apps/willow"
+    repo: "workspace"
+    name: "willow"
+    kind: "surface"
+    layer: L3
+    owns: ["product surface (app)"]
+    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    status: active
+    notes: "L3 surface — app surface"
+  - path: "P31-local-workspace/apps/willow-preview"
+    repo: "workspace"
+    name: "willow-preview"
+    kind: "surface"
+    layer: L3
+    owns: ["product surface (app)"]
+    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    status: active
+    notes: "L3 surface — app surface"
   - path: "P31-local-workspace/p31-surrogate-backend"
     repo: "workspace"
     name: "p31-surrogate-backend"

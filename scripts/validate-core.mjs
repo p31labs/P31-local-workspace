@@ -23,7 +23,7 @@ const INVENTORY = join(ROOT, 'inventory.json')
 const CORE = join(ROOT, 'docs', '00-CANONICAL-CORE.yaml')
 
 const VALID_LAYERS = new Set(['L0', 'L1', 'L2', 'L3', 'retire'])
-const VALID_STATUS = new Set(['active', 'retire', 'consolidate', 'migrate-later'])
+const VALID_STATUS = new Set(['active', 'retire', 'consolidate', 'migrate-later', 'unclassified'])
 
 function fail(list, msg) {
   list.push(msg)
@@ -62,6 +62,13 @@ function main() {
   }
   for (const r of rows) {
     if (!artifactPath.has(r.path)) fail(problems, `GHOST ROW: "${r.path}" is not an artifact in inventory.json`)
+  }
+
+  // --- 1b. STUB CHECK — every row must classify ownership specifically ---
+  for (const r of rows) {
+    if (r.owns.length === 1 && r.owns[0] === 'artifact') {
+      fail(problems, `STUB ROW: "${r.path}" owns=["artifact"] is a placeholder — no real classification assigned`)
+    }
   }
 
   // --- 2. SINGLE-LAYER ---

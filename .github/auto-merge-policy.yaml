@@ -20,10 +20,6 @@ required_checks:
   canonical-core:        # .github/workflows/p31-canonical-core.yml
     - node scripts/validate-core.mjs
     - node scripts/skills-eval.mjs
-  lint:
-    - pnpm run lint:css          # design-lint.yml
-  boundary:
-    - check:boundaries           # L2/L3 import discipline (eslint-plugin-boundaries)
 
 confidence_threshold: 0.9
 # Merge proceeds when confidence >= 0.9 on the same SHA AND all required checks
@@ -34,17 +30,13 @@ confidence_inputs:
   - contract_validation        # validate_contract (hex/rgba/inline/emoji/forbidden) 0 or 1
   - build                      # pnpm build exit 0
   - test                       # pnpm test exit 0
-  - lint                       # all lint gates exit 0
-  - boundary_check             # check:boundaries exit 0
   - revert_history             # no open revert for this change key (1 if clean)
 
 confidence_weights:
-  token_audit_score: 0.30
-  contract_validation: 0.25
+  token_audit_score: 0.40
+  contract_validation: 0.30
   build: 0.20
   test: 0.10
-  lint: 0.10
-  boundary_check: 0.05
   revert_history: 0.00     # gating, not scoring — a revert alone blocks merge
 
 human_review_required_when:

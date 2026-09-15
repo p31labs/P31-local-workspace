@@ -43,14 +43,14 @@ The indestructible shape. When every surface is deleted, these four layers survi
 | **L2 Contracts** | MCP tool surface, LOV ledger, component contracts, payment rails, revenue chain, governance | import L3 surfaces, render UI, hold user state across requests, hardcode token values | `validate-core.mjs`, contract diff |
 | **L3 Surfaces** | Portals, chat, shell, marketing, CLI, game surfaces, static assets | import L2 internals directly, hardcode tokens, bypass mode guards, hold identity state, direct D1 writes | `validate-core.mjs`, WebMCP ModeGuard |
 
-## Classification summary (255 artifacts, generated 2026-09-15)
+## Classification summary (254 artifacts, generated 2026-09-15)
 
 | Layer | Count | Includes |
 |-------|-------|----------|
 | L0 | 11 | shared-identity, cognitive-passport, sovereign packages, quantum-core, interface-generator |
 | L1 | 21 | design-core, design-validator, skin packages, rules, tokens |
-| L2 | 187 | design-mcp, design-mcp-v3 (merge target), p31-standards skill, crypto-mcp, x402 gateways, love-ledger (pkg + workers + love-chain), economy, contract-engine, governance, payment rails, all workers |
-| L3 | 32 | all `portals/*`, production shell/monetization/campaign, apps (p31ca, bonding, k4-cage, auth) |
+| L2 | 169 | design-mcp, design-mcp-v3 (merge target), p31-standards skill, crypto-mcp, x402 gateways, love-ledger (pkg + workers + love-chain), economy, contract-engine, governance, payment rails, all workers, root utilities |
+| L3 | 50 | all `portals/*`, production shell/monetization/campaign/assets, all `apps/*` (p31ca, bonding, k4-cage, auth, phos, willow, etc.) |
 | retire | 3 | gumroad (workers + software copies), Ko-fi/PayPal/sponsors/Blockonomics links |
 
 ## Key decisions frozen here
@@ -74,10 +74,10 @@ node scripts/validate-core.mjs              # 4 gates: completeness, single-laye
 
 ## Enforcement primitives (Chained)
 
-- `workers/design-mcp/skills/p31-standards/SKILL.md` — the first machine-readable standard (agentskills.io format) with 10 golden eval cases under `evals/`.
+- `workers/design-mcp/skills/p31-standards/SKILL.md` — the first machine-readable standard (agentskills.io-compatible, with a P31 `audit:` extension) with 10 golden eval cases under `evals/`.
 - Fleet: reviewer → skillfixer → autofixer → loganalyzer → judge → **confidence bot** + deterministic approver (Cycle 2).
 - Standards are artifacts agents load, not prose. `RULES.md`/`CONSTITUTION.md` are human prose; **skills are the enforcement truth**, and they exit nonzero on drift the same way `validate-core.mjs` does on misclassification.
 
 ## What survives when everything else is deleted
 
-The identity atom, the token store, the contract surface. **This document is the collapse.** The classification is the compression: 252 artifacts declared their layer, nothing unclassified, nothing in two layers.
+The identity atom, the token store, the contract surface. **This document is the collapse.** The classification is the compression: 254 artifacts declared their layer, nothing unclassified, nothing in two layers.
