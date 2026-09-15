@@ -18,43 +18,41 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 
 function spawnWrangler() {
   return new Promise((resolve, reject) => {
-    const proc = spawn('npx', ['wrangler', 'dev', '--port', String(PORT), '--local'], {
+    const proc = spawn('npx', ['wrangler', 'dev', '--port', String(PORT), '--local', '--config', 'skills-fixture-wrangler.toml'], {
       cwd: resolve(__dirname, '..'),
       stdio: ['ignore', 'pipe', 'pipe'],
     });
     let ready = false;
     proc.stdout.on('data', (data) => {
       const text = data.toString();
-      if (!ready && (text.includes('http://') || text.includes('localhost') || text.includes('dev server'))) {
-        ready = true;
-        resolve(proc);
-      }
-    });
-    proc.stderr.on('data', (data) => {
-      const text = data.toString();
-      if (!ready && (text.includes('http://') || text.includes('localhost') || text.includes('dev server'))) {
-        ready = true;
-        resolve(proc);
-      }
-    });
+    if (!ready && text.includes('Ready on')) {
+      ready = true;
+      resolve(proc);
+    }
+  });
+  proc.stderr.on('data', (data) => {
+    const text = data.toString();
+    if (!ready && text.includes('Ready on')) {
+      ready = true;
+      resolve(proc);
+    }
+  });
     setTimeout(() => { if (!ready) resolve(proc); }, 15000);
     proc.on('error', reject);
   });
 }
 
-async function callSkill(name) {
+async function callTool(toolName, toolArgs) {
+  const body = JSON.stringify({
+    jsonrpc: '2.0',
+    id: 1,
+    method: 'tools/call',
+    params: { name: toolName, arguments: toolArgs },
+  });
   const res = await fetch(URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      jsonrpc: '2.0',
-      id: 1,
-      method: 'tools/call',
-      params: {
-        name: 'get_skill',
-        arguments: { name },
-      },
-    }),
+    body,
   });
   const json = await res.json();
   return json;
@@ -65,46 +63,49 @@ async function main() {
   const proc = await spawnWrangler();
 
   try {
-    await setTimeoutPromise(5000);
+    await setTimeoutPromise(10000);
 
     console.log('Calling get_skill(p31-standards)...');
-    const result = await callSkill('p31-standards');
+    const result = await callTool('get_skill', { name: 'p31-standards' });
 
     if (result.error) {
       throw new Error(`MCP error: ${JSON.stringify(result.error)}`);
     }
 
-    const content = JSON.parse(result.content?.[0]?.text || '{}');
+    const content = JSON.parse(result.result?.content?.[0]?.text || '{}');
     const body = content.body || '';
 
     if (!body.includes('No hardcoded')) {
       throw new Error('Response body missing "No hardcoded"');
     }
-    if (!body.includes('Failure Mode')) {
-      throw new Error('Response body missing "Failure Mode"');
+    if (!body.includes('FAILURE MODE')) {
+      throw new Error('Response body missing "FAILURE MODE"');
     }
 
     console.log('get_skill(p31-standards) returned', body.length, 'bytes');
     console.log('PASS: skills endpoint verified via JSON-RPC');
 
     console.log('Calling list_skills...');
-    const listResult = await callSkill('list_skills');
+    const listResult = await callTool('list_skills', {});
     if (listResult.error) {
       throw new Error(`list_skills error: ${JSON.stringify(listResult.error)}`);
     }
-    const listContent = JSON.parse(listResult.content?.[0]?.text || '{}');
+    const listContent = JSON.parse(listResult.result?.content?.[0]?.text || '{}');
     if (!listContent.skills?.some((s) => s.name === 'p31-standards')) {
       throw new Error('list_skills missing p31-standards');
     }
     console.log('PASS: list_skills verified via JSON-RPC');
+    process.exit(0);
   } finally {
     if (typeof proc.kill === 'function') {
       proc.kill('SIGTERM');
+      setTimeout(() => { if (typeof proc.kill === 'function') proc.kill('SIGKILL'); }, 3000);
     }
   }
 }
 
 main().catch((e) => {
   console.error('FAIL:', e.message);
+  console.error('CAUSE:', e.cause?.code, e.cause?.message);
   process.exit(1);
 });
