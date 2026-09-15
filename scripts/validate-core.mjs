@@ -65,9 +65,13 @@ function main() {
   }
 
   // --- 1b. STUB CHECK — every row must classify ownership specifically ---
+  const GENERIC_OWNS = ['undeployed software worker', 'undeployed / legacy worker', 'undeployed / legacy software worker', 'tool / utility surface', 'integration ecosystem', 'p31labs surface', 'software repo umbrella', 'product surface', 'software package']
   for (const r of rows) {
     if (r.owns.length === 1 && r.owns[0] === 'artifact') {
       fail(problems, `STUB ROW: "${r.path}" owns=["artifact"] is a placeholder — no real classification assigned`)
+    }
+    if (r.owns.length === 1 && GENERIC_OWNS.some(g => r.owns[0] === g)) {
+      fail(problems, `GENERIC OWNS: "${r.path}" owns=["${r.owns[0]}"] is a category label, not a classification`)
     }
   }
 

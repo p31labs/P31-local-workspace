@@ -48,10 +48,12 @@ The indestructible shape. When every surface is deleted, these four layers survi
 | Layer | Count | Includes |
 |-------|-------|----------|
 | L0 | 11 | shared-identity, cognitive-passport, sovereign packages, quantum-core, interface-generator |
-| L1 | 21 | design-core, design-validator, skin packages, rules, tokens |
-| L2 | 169 | design-mcp, design-mcp-v3 (merge target), p31-standards skill, crypto-mcp, x402 gateways, love-ledger (pkg + workers + love-chain), economy, contract-engine, governance, payment rails, all workers, root utilities |
-| L3 | 50 | all `portals/*`, production shell/monetization/campaign/assets, all `apps/*` (p31ca, bonding, k4-cage, auth, phos, willow, etc.) |
+| L1 | 20 | design-core, design-validator, skin packages, rules, tokens |
+| L2 | 151 | design-mcp, design-mcp-v3 (merge target), p31-standards skill, crypto-mcp, x402 gateways, love-ledger, economy, contract-engine, governance, payment rails, workers, packages, tools |
+| L3 | 69 | all `portals/*`, production shell/monetization/campaign/assets, all `apps/*`, k4-cage, jitterbug-pwa, p31-dashboard, phos, willow, sovereign-command-center, p31ca extensions |
 | retire | 3 | gumroad (workers + software copies), Ko-fi/PayPal/sponsors/Blockonomics links |
+
+All 254 entries carry per-artifact `owns` values. No generic category labels remain.
 
 ## Key decisions frozen here
 
@@ -69,7 +71,8 @@ The indestructible shape. When every surface is deleted, these four layers survi
 ```bash
 node scripts/generate-core-inventory.mjs    # walks both repos → inventory.json
 node scripts/generate-core-yaml.mjs         # applies classification rules → docs/00-CANONICAL-CORE.yaml
-node scripts/validate-core.mjs              # 4 gates: completeness, single-layer, no-retire-refs, layer discipline
+node scripts/semantic-classify.mjs          # per-artifact owns classification → docs/00-CANONICAL-CORE.yaml
+node scripts/validate-core.mjs              # 6 gates: completeness, single-layer, no-retire-refs, layer discipline, stub-check, generic-owns
 ```
 
 ## Enforcement primitives (Chained)

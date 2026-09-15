@@ -1,2309 +1,3699 @@
-# P31 Canonical Core — Cycle 1
+# P31 Canonical Core — Cycle 2.6
 # Machine-readable classification. Layer-level must_not inherited by all entries.
-# Regenerate: node scripts/generate-core-yaml.mjs
+# Generated: scripts/generate-core-inventory.mjs → inventory.json → scripts/generate-core-yaml.mjs
+# Semantically classified: scripts/semantic-classify.mjs (per-artifact owns, zero generic labels)
+# Validate: node scripts/validate-core.mjs (6 gates: completeness, single-layer, no-retire-refs, layer discipline, stub-check, generic-owns)
 
 version: 1
 generated_at: 2026-09-15T14:07:14.774Z
-
 layers:
   L0:
     name: identity
-    description: "The atom — never changes. DID:key, passport, sovereign primitives."
-    must_not: ["hold balances","render UI","import L1+ L2+ L3+ internals","contain component logic"]
+    description: The atom — never changes. DID:key, passport, sovereign primitives.
+    must_not:
+      - hold balances
+      - render UI
+      - import L1+ L2+ L3+ internals
+      - contain component logic
   L1:
     name: tokens
-    description: "Additive only, never subtractive. OKLCH, 863Hz, DTCG, 30 variants."
-    must_not: ["contain component logic","import L2+ L3+ internals","hold runtime state","expose network APIs"]
+    description: Additive only, never subtractive. OKLCH, 863Hz, DTCG, 30 variants.
+    must_not:
+      - contain component logic
+      - import L2+ L3+ internals
+      - hold runtime state
+      - expose network APIs
   L2:
     name: contracts
-    description: "Versioned, frozen, diffed. MCP tools, LOV ledger, payment rails, component contracts."
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    description: Versioned, frozen, diffed. MCP tools, LOV ledger, payment rails, component contracts.
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
   L3:
     name: surfaces
-    description: "Disposable, rebuild freely. Each reads from L0-L2, never around them."
-    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
-
+    description: Disposable, rebuild freely. Each reads from L0-L2, never around them.
+    must_not:
+      - import L2 internals directly (must go through contract API)
+      - hardcode tokens
+      - bypass mode guards
+      - hold identity state
+      - directly write to D1 without L2 wrapper
 entries:
-  - path: "P31-local-workspace/packages/cognitive-passport"
-    repo: "workspace"
+  - path: P31-local-workspace/packages/cognitive-passport
+    repo: workspace
     name: "@p31/cognitive-passport"
-    kind: "identity"
+    kind: identity
     layer: L0
-    owns: ["neurocognitive profile model","agentic intent decomposition"]
-    must_not: ["hold balances","render UI","import L1+ L2+ L3+ internals","contain component logic"]
+    owns:
+      - neurocognitive profile model
+      - agentic intent decomposition
+    must_not:
+      - hold balances
+      - render UI
+      - import L1+ L2+ L3+ internals
+      - contain component logic
     status: active
-    notes: "passport schema + scoring"
-  - path: "P31-local-workspace/packages/protocol-commons"
-    repo: "workspace"
+    notes: passport schema + scoring
+  - path: P31-local-workspace/packages/protocol-commons
+    repo: workspace
     name: "@p31/protocol-commons"
-    kind: "package"
+    kind: package
     layer: L0
-    owns: ["protocol-level shared types and helpers"]
-    must_not: ["hold balances","render UI","import L1+ L2+ L3+ internals","contain component logic"]
+    owns:
+      - protocol-level shared types and helpers
+    must_not:
+      - hold balances
+      - render UI
+      - import L1+ L2+ L3+ internals
+      - contain component logic
     status: active
-    notes: "cross-cutting protocol primitives"
-  - path: "P31-local-workspace/packages/shared-core"
-    repo: "workspace"
+    notes: cross-cutting protocol primitives
+  - path: P31-local-workspace/packages/shared-core
+    repo: workspace
     name: "@p31/shared-core"
-    kind: "package"
+    kind: package
     layer: L0
-    owns: ["shared types, constants, env config"]
-    must_not: ["hold balances","render UI","import L1+ L2+ L3+ internals","contain component logic"]
+    owns:
+      - shared types, constants, env config
+    must_not:
+      - hold balances
+      - render UI
+      - import L1+ L2+ L3+ internals
+      - contain component logic
     status: active
-    notes: "layer 0 shared foundation"
-  - path: "P31-local-workspace/packages/shared-identity"
-    repo: "workspace"
+    notes: layer 0 shared foundation
+  - path: P31-local-workspace/packages/shared-identity
+    repo: workspace
     name: "@p31/shared-identity"
-    kind: "surface"
+    kind: surface
     layer: L0
-    owns: ["DID:key generation","JWT auth","passport model"]
-    must_not: ["hold balances","render UI","import L1+ L2+ L3+ internals","contain component logic"]
+    owns:
+      - DID:key generation
+      - JWT auth
+      - passport model
+    must_not:
+      - hold balances
+      - render UI
+      - import L1+ L2+ L3+ internals
+      - contain component logic
     status: active
-    notes: "canonical identity source"
-  - path: "P31-local-workspace/packages/sovereign"
-    repo: "workspace"
+    notes: canonical identity source
+  - path: P31-local-workspace/packages/sovereign
+    repo: workspace
     name: "@p31/sovereign"
-    kind: "identity"
+    kind: identity
     layer: L0
-    owns: ["sovereign primitives (zero-knowledge, privacy, DID:key minting)"]
-    must_not: ["hold balances","render UI","import L1+ L2+ L3+ internals","contain component logic"]
+    owns:
+      - sovereign primitives (zero-knowledge, privacy, DID:key minting)
+    must_not:
+      - hold balances
+      - render UI
+      - import L1+ L2+ L3+ internals
+      - contain component logic
     status: active
-    notes: "layer 0 primitives for sovereign stack"
-  - path: "P31-local-workspace/packages/sovereign-core"
-    repo: "workspace"
+    notes: layer 0 primitives for sovereign stack
+  - path: P31-local-workspace/packages/sovereign-core
+    repo: workspace
     name: "@p31/sovereign-core"
-    kind: "identity"
+    kind: identity
     layer: L0
-    owns: ["sovereign primitives (zero-knowledge, privacy, DID:key minting)"]
-    must_not: ["hold balances","render UI","import L1+ L2+ L3+ internals","contain component logic"]
+    owns:
+      - sovereign primitives (zero-knowledge, privacy, DID:key minting)
+    must_not:
+      - hold balances
+      - render UI
+      - import L1+ L2+ L3+ internals
+      - contain component logic
     status: active
-    notes: "layer 0 primitives for sovereign stack"
-  - path: "P31-local-workspace/packages/sovereign-primitives"
-    repo: "workspace"
+    notes: layer 0 primitives for sovereign stack
+  - path: P31-local-workspace/packages/sovereign-primitives
+    repo: workspace
     name: "@p31/sovereign-primitives"
-    kind: "identity"
+    kind: identity
     layer: L0
-    owns: ["sovereign primitives (zero-knowledge, privacy, DID:key minting)"]
-    must_not: ["hold balances","render UI","import L1+ L2+ L3+ internals","contain component logic"]
+    owns:
+      - sovereign primitives (zero-knowledge, privacy, DID:key minting)
+    must_not:
+      - hold balances
+      - render UI
+      - import L1+ L2+ L3+ internals
+      - contain component logic
     status: active
-    notes: "layer 0 primitives for sovereign stack"
-  - path: "P31-local-workspace/schema-export"
-    repo: "workspace"
+    notes: layer 0 primitives for sovereign stack
+  - path: P31-local-workspace/schema-export
+    repo: workspace
     name: "@p31/cognitive-passport-schema"
-    kind: "identity"
+    kind: identity
     layer: L0
-    owns: ["neurocognitive profile model","agentic intent decomposition"]
-    must_not: ["hold balances","render UI","import L1+ L2+ L3+ internals","contain component logic"]
+    owns:
+      - neurocognitive profile model
+      - agentic intent decomposition
+    must_not:
+      - hold balances
+      - render UI
+      - import L1+ L2+ L3+ internals
+      - contain component logic
     status: active
-    notes: "passport schema + scoring"
-  - path: "P31-local-workspace/software/packages/node-zero"
-    repo: "workspace"
+    notes: passport schema + scoring
+  - path: P31-local-workspace/software/packages/node-zero
+    repo: workspace
     name: "@p31/node-zero"
-    kind: "identity"
+    kind: identity
     layer: L0
-    owns: ["zero-trust device bootstrapping"]
-    must_not: ["hold balances","render UI","import L1+ L2+ L3+ internals","contain component logic"]
+    owns:
+      - zero-trust device bootstrapping
+    must_not:
+      - hold balances
+      - render UI
+      - import L1+ L2+ L3+ internals
+      - contain component logic
     status: active
-    notes: "device identity bootstrapping"
-  - path: "P31-local-workspace/software/packages/sovereign"
-    repo: "workspace"
+    notes: device identity bootstrapping
+  - path: P31-local-workspace/software/packages/sovereign
+    repo: workspace
     name: "@p31/sovereign"
-    kind: "identity"
+    kind: identity
     layer: L0
-    owns: ["sovereign primitives (zero-knowledge, privacy, DID:key minting)"]
-    must_not: ["hold balances","render UI","import L1+ L2+ L3+ internals","contain component logic"]
+    owns:
+      - sovereign primitives (zero-knowledge, privacy, DID:key minting)
+    must_not:
+      - hold balances
+      - render UI
+      - import L1+ L2+ L3+ internals
+      - contain component logic
     status: active
-    notes: "layer 0 primitives for sovereign stack"
-  - path: "P31-local-workspace/software/packages/sovereign-sdk"
-    repo: "workspace"
+    notes: layer 0 primitives for sovereign stack
+  - path: P31-local-workspace/software/packages/sovereign-sdk
+    repo: workspace
     name: "@p31/sovereign-sdk"
-    kind: "identity"
+    kind: identity
     layer: L0
-    owns: ["sovereign primitives (zero-knowledge, privacy, DID:key minting)"]
-    must_not: ["hold balances","render UI","import L1+ L2+ L3+ internals","contain component logic"]
+    owns:
+      - sovereign primitives (zero-knowledge, privacy, DID:key minting)
+    must_not:
+      - hold balances
+      - render UI
+      - import L1+ L2+ L3+ internals
+      - contain component logic
     status: active
-    notes: "layer 0 primitives for sovereign stack"
-  - path: "P31-local-workspace/apps/counterscale/packages/cli"
-    repo: "workspace"
+    notes: layer 0 primitives for sovereign stack
+  - path: P31-local-workspace/apps/counterscale/packages/cli
+    repo: workspace
     name: "@counterscale/cli"
-    kind: "surface"
+    kind: surface
     layer: L1
-    owns: ["design-token package"]
-    must_not: ["contain component logic","import L2+ L3+ internals","hold runtime state","expose network APIs"]
+    owns:
+      - design-token package
+    must_not:
+      - contain component logic
+      - import L2+ L3+ internals
+      - hold runtime state
+      - expose network APIs
     status: active
-    notes: "design token / utility package"
-  - path: "P31-local-workspace/apps/counterscale/packages/eslint-config"
-    repo: "workspace"
+    notes: design token / utility package
+  - path: P31-local-workspace/apps/counterscale/packages/eslint-config
+    repo: workspace
     name: "@counterscale/eslint-config"
-    kind: "surface"
+    kind: surface
     layer: L1
-    owns: ["design-token package"]
-    must_not: ["contain component logic","import L2+ L3+ internals","hold runtime state","expose network APIs"]
+    owns:
+      - design-token package
+    must_not:
+      - contain component logic
+      - import L2+ L3+ internals
+      - hold runtime state
+      - expose network APIs
     status: active
-    notes: "design token / utility package"
-  - path: "P31-local-workspace/apps/counterscale/packages/server"
-    repo: "workspace"
+    notes: design token / utility package
+  - path: P31-local-workspace/apps/counterscale/packages/server
+    repo: workspace
     name: "@counterscale/server"
-    kind: "surface"
+    kind: surface
     layer: L1
-    owns: ["design-token package"]
-    must_not: ["contain component logic","import L2+ L3+ internals","hold runtime state","expose network APIs"]
+    owns:
+      - design-token package
+    must_not:
+      - contain component logic
+      - import L2+ L3+ internals
+      - hold runtime state
+      - expose network APIs
     status: active
-    notes: "design token / utility package"
-  - path: "P31-local-workspace/apps/counterscale/packages/tracker"
-    repo: "workspace"
+    notes: design token / utility package
+  - path: P31-local-workspace/apps/counterscale/packages/tracker
+    repo: workspace
     name: "@counterscale/tracker"
-    kind: "surface"
+    kind: surface
     layer: L1
-    owns: ["design-token package"]
-    must_not: ["contain component logic","import L2+ L3+ internals","hold runtime state","expose network APIs"]
+    owns:
+      - design-token package
+    must_not:
+      - contain component logic
+      - import L2+ L3+ internals
+      - hold runtime state
+      - expose network APIs
     status: active
-    notes: "design token / utility package"
-  - path: "P31-local-workspace/packages/design-core"
-    repo: "workspace"
+    notes: design token / utility package
+  - path: P31-local-workspace/packages/design-core
+    repo: workspace
     name: "@p31/design-core"
-    kind: "mcp-server"
+    kind: mcp-server
     layer: L1
-    owns: ["THEME_TOKENS (single source)","OKLCH color space","863Hz rhythm","DTCG export","compositions","recipes"]
-    must_not: ["contain component logic","import L2+ L3+ internals","hold runtime state","expose network APIs"]
+    owns:
+      - THEME_TOKENS (single source)
+      - OKLCH color space
+      - 863Hz rhythm
+      - DTCG export
+      - compositions
+      - recipes
+    must_not:
+      - contain component logic
+      - import L2+ L3+ internals
+      - hold runtime state
+      - expose network APIs
     status: active
-    notes: "canonical design-core, workspace packages/design-core"
-  - path: "P31-local-workspace/packages/design-system"
-    repo: "workspace"
+    notes: canonical design-core, workspace packages/design-core
+  - path: P31-local-workspace/packages/design-system
+    repo: workspace
     name: "@p31/design-system"
-    kind: "design-token"
+    kind: design-token
     layer: L1
-    owns: ["THEME_TOKENS (single source)","OKLCH color space","863Hz rhythm","DTCG export","compositions","recipes"]
-    must_not: ["contain component logic","import L2+ L3+ internals","hold runtime state","expose network APIs"]
+    owns:
+      - THEME_TOKENS (single source)
+      - OKLCH color space
+      - 863Hz rhythm
+      - DTCG export
+      - compositions
+      - recipes
+    must_not:
+      - contain component logic
+      - import L2+ L3+ internals
+      - hold runtime state
+      - expose network APIs
     status: active
-    notes: "canonical design-core, workspace packages/design-core"
-  - path: "P31-local-workspace/packages/design-validator"
-    repo: "workspace"
+    notes: canonical design-core, workspace packages/design-core
+  - path: P31-local-workspace/packages/design-validator
+    repo: workspace
     name: "@p31/design-validator"
-    kind: "package"
+    kind: package
     layer: L1
-    owns: ["token compliance checks","contract diff","WCAG contrast validation"]
-    must_not: ["contain component logic","import L2+ L3+ internals","hold runtime state","expose network APIs"]
+    owns:
+      - token compliance checks
+      - contract diff
+      - WCAG contrast validation
+    must_not:
+      - contain component logic
+      - import L2+ L3+ internals
+      - hold runtime state
+      - expose network APIs
     status: active
-    notes: "consumed by MCP + CI"
-  - path: "P31-local-workspace/packages/geodesic-core"
-    repo: "workspace"
+    notes: consumed by MCP + CI
+  - path: P31-local-workspace/packages/geodesic-core
+    repo: workspace
     name: "@p31/geodesic-core"
-    kind: "package"
+    kind: package
     layer: L1
-    owns: ["geodesic dome + tetrahedral geometry primitives"]
-    must_not: ["contain component logic","import L2+ L3+ internals","hold runtime state","expose network APIs"]
+    owns:
+      - geodesic dome + tetrahedral geometry primitives
+    must_not:
+      - contain component logic
+      - import L2+ L3+ internals
+      - hold runtime state
+      - expose network APIs
     status: active
-    notes: "K4 geometry source"
-  - path: "P31-local-workspace/packages/quantum-core"
-    repo: "workspace"
+    notes: K4 geometry source
+  - path: P31-local-workspace/packages/quantum-core
+    repo: workspace
     name: "@p31/quantum-core"
-    kind: "package"
+    kind: package
     layer: L1
-    owns: ["quantum-inspired math primitives (tetrahedral, quantum computing models)"]
-    must_not: ["contain component logic","import L2+ L3+ internals","hold runtime state","expose network APIs"]
+    owns:
+      - quantum-inspired math primitives (tetrahedral, quantum computing models)
+    must_not:
+      - contain component logic
+      - import L2+ L3+ internals
+      - hold runtime state
+      - expose network APIs
     status: active
-    notes: "math layer"
-  - path: "P31-local-workspace/packages/rules"
-    repo: "workspace"
+    notes: math layer
+  - path: P31-local-workspace/packages/rules
+    repo: workspace
     name: "@p31/rules"
-    kind: "package"
+    kind: package
     layer: L1
-    owns: ["design rule constants (MUST/SHOULD/MAY)"]
-    must_not: ["contain component logic","import L2+ L3+ internals","hold runtime state","expose network APIs"]
+    owns:
+      - design rule constants (MUST/SHOULD/MAY)
+    must_not:
+      - contain component logic
+      - import L2+ L3+ internals
+      - hold runtime state
+      - expose network APIs
     status: active
-    notes: "consumed by validators"
-  - path: "P31-local-workspace/packages/shared"
-    repo: "workspace"
+    notes: consumed by validators
+  - path: P31-local-workspace/packages/shared
+    repo: workspace
     name: "@p31/shared"
-    kind: "identity"
-    layer: L1
-    owns: ["design-token package"]
-    must_not: ["contain component logic","import L2+ L3+ internals","hold runtime state","expose network APIs"]
-    status: active
-    notes: "design token / utility package"
-  - path: "P31-local-workspace/packages/shell-chrome"
-    repo: "workspace"
-    name: "@p31/shell-chrome"
-    kind: "surface"
-    layer: L1
-    owns: ["design-token package"]
-    must_not: ["contain component logic","import L2+ L3+ internals","hold runtime state","expose network APIs"]
-    status: active
-    notes: "design token / utility package"
-  - path: "P31-local-workspace/packages/skin-apex"
-    repo: "workspace"
-    name: "@p31/skin-apex"
-    kind: "design-token"
-    layer: L1
-    owns: ["theme variant CSS/TS artifacts"]
-    must_not: ["contain component logic","import L2+ L3+ internals","hold runtime state","expose network APIs"]
-    status: active
-    notes: "generated from design-core THEME_TOKENS"
-  - path: "P31-local-workspace/packages/skin-phos"
-    repo: "workspace"
-    name: "@p31/skin-phos"
-    kind: "design-token"
-    layer: L1
-    owns: ["theme variant CSS/TS artifacts"]
-    must_not: ["contain component logic","import L2+ L3+ internals","hold runtime state","expose network APIs"]
-    status: active
-    notes: "generated from design-core THEME_TOKENS"
-  - path: "P31-local-workspace/packages/skin-system"
-    repo: "workspace"
-    name: "@p31/skin-system"
-    kind: "surface"
-    layer: L1
-    owns: ["theme variant CSS/TS artifacts"]
-    must_not: ["contain component logic","import L2+ L3+ internals","hold runtime state","expose network APIs"]
-    status: active
-    notes: "generated from design-core THEME_TOKENS"
-  - path: "P31-local-workspace/packages/skin-tetra"
-    repo: "workspace"
-    name: "@p31/skin-tetra"
-    kind: "design-token"
-    layer: L1
-    owns: ["theme variant CSS/TS artifacts"]
-    must_not: ["contain component logic","import L2+ L3+ internals","hold runtime state","expose network APIs"]
-    status: active
-    notes: "generated from design-core THEME_TOKENS"
-  - path: "P31-local-workspace/packages/skin-willow"
-    repo: "workspace"
-    name: "@p31/skin-willow"
-    kind: "design-token"
-    layer: L1
-    owns: ["theme variant CSS/TS artifacts"]
-    must_not: ["contain component logic","import L2+ L3+ internals","hold runtime state","expose network APIs"]
-    status: active
-    notes: "generated from design-core THEME_TOKENS"
-  - path: "P31-local-workspace/packages/ui"
-    repo: "workspace"
-    name: "@p31/ui"
-    kind: "package"
-    layer: L1
-    owns: ["design-token package"]
-    must_not: ["contain component logic","import L2+ L3+ internals","hold runtime state","expose network APIs"]
-    status: active
-    notes: "design token / utility package"
-  - path: "P31-local-workspace/packages/ui-astro"
-    repo: "workspace"
-    name: "@p31/ui-astro"
-    kind: "package"
-    layer: L1
-    owns: ["design-token package"]
-    must_not: ["contain component logic","import L2+ L3+ internals","hold runtime state","expose network APIs"]
-    status: active
-    notes: "design token / utility package"
-  - path: "P31-local-workspace/packages/ui-react"
-    repo: "workspace"
-    name: "@p31/ui-react"
-    kind: "package"
-    layer: L1
-    owns: ["design-token package"]
-    must_not: ["contain component logic","import L2+ L3+ internals","hold runtime state","expose network APIs"]
-    status: active
-    notes: "design token / utility package"
-  - path: "P31-local-workspace/software/packages/quantum-core"
-    repo: "workspace"
-    name: "@p31/quantum-core"
-    kind: "package"
-    layer: L1
-    owns: ["quantum-inspired math primitives (tetrahedral, quantum computing models)"]
-    must_not: ["contain component logic","import L2+ L3+ internals","hold runtime state","expose network APIs"]
-    status: active
-    notes: "math layer"
-  - path: "production/tools/portal-vendor-sync/ui-src"
-    repo: "production"
-    name: "@p31/ui"
-    kind: "surface"
+    kind: identity
     layer: L2
-    owns: ["tool / utility surface"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - shared modules (DEPRECATED — use @p31/shared-core, @p31/sovereign-primitives, @p31/cognitive-passport)
+    must_not:
+      - contain component logic
+      - import L2+ L3+ internals
+      - hold runtime state
+      - expose network APIs
     status: migrate-later
-    notes: "workspace tool — evaluate for consolidation"
-  - path: "production/workers/p31-dispatch"
-    repo: "production"
+    notes: deprecated — consolidate into L0 primitives
+  - path: P31-local-workspace/packages/shell-chrome
+    repo: workspace
+    name: "@p31/shell-chrome"
+    kind: surface
+    layer: L1
+    owns:
+      - design-token package
+    must_not:
+      - contain component logic
+      - import L2+ L3+ internals
+      - hold runtime state
+      - expose network APIs
+    status: active
+    notes: design token / utility package
+  - path: P31-local-workspace/packages/skin-apex
+    repo: workspace
+    name: "@p31/skin-apex"
+    kind: design-token
+    layer: L1
+    owns:
+      - theme variant CSS/TS artifacts
+    must_not:
+      - contain component logic
+      - import L2+ L3+ internals
+      - hold runtime state
+      - expose network APIs
+    status: active
+    notes: generated from design-core THEME_TOKENS
+  - path: P31-local-workspace/packages/skin-phos
+    repo: workspace
+    name: "@p31/skin-phos"
+    kind: design-token
+    layer: L1
+    owns:
+      - theme variant CSS/TS artifacts
+    must_not:
+      - contain component logic
+      - import L2+ L3+ internals
+      - hold runtime state
+      - expose network APIs
+    status: active
+    notes: generated from design-core THEME_TOKENS
+  - path: P31-local-workspace/packages/skin-system
+    repo: workspace
+    name: "@p31/skin-system"
+    kind: surface
+    layer: L1
+    owns:
+      - theme variant CSS/TS artifacts
+    must_not:
+      - contain component logic
+      - import L2+ L3+ internals
+      - hold runtime state
+      - expose network APIs
+    status: active
+    notes: generated from design-core THEME_TOKENS
+  - path: P31-local-workspace/packages/skin-tetra
+    repo: workspace
+    name: "@p31/skin-tetra"
+    kind: design-token
+    layer: L1
+    owns:
+      - theme variant CSS/TS artifacts
+    must_not:
+      - contain component logic
+      - import L2+ L3+ internals
+      - hold runtime state
+      - expose network APIs
+    status: active
+    notes: generated from design-core THEME_TOKENS
+  - path: P31-local-workspace/packages/skin-willow
+    repo: workspace
+    name: "@p31/skin-willow"
+    kind: design-token
+    layer: L1
+    owns:
+      - theme variant CSS/TS artifacts
+    must_not:
+      - contain component logic
+      - import L2+ L3+ internals
+      - hold runtime state
+      - expose network APIs
+    status: active
+    notes: generated from design-core THEME_TOKENS
+  - path: P31-local-workspace/packages/ui
+    repo: workspace
+    name: "@p31/ui"
+    kind: package
+    layer: L1
+    owns:
+      - design-token package
+    must_not:
+      - contain component logic
+      - import L2+ L3+ internals
+      - hold runtime state
+      - expose network APIs
+    status: active
+    notes: design token / utility package
+  - path: P31-local-workspace/packages/ui-astro
+    repo: workspace
+    name: "@p31/ui-astro"
+    kind: package
+    layer: L1
+    owns:
+      - design-token package
+    must_not:
+      - contain component logic
+      - import L2+ L3+ internals
+      - hold runtime state
+      - expose network APIs
+    status: active
+    notes: design token / utility package
+  - path: P31-local-workspace/packages/ui-react
+    repo: workspace
+    name: "@p31/ui-react"
+    kind: package
+    layer: L1
+    owns:
+      - design-token package
+    must_not:
+      - contain component logic
+      - import L2+ L3+ internals
+      - hold runtime state
+      - expose network APIs
+    status: active
+    notes: design token / utility package
+  - path: P31-local-workspace/software/packages/quantum-core
+    repo: workspace
+    name: "@p31/quantum-core"
+    kind: package
+    layer: L1
+    owns:
+      - quantum-inspired math primitives (tetrahedral, quantum computing models)
+    must_not:
+      - contain component logic
+      - import L2+ L3+ internals
+      - hold runtime state
+      - expose network APIs
+    status: active
+    notes: math layer
+  - path: production/tools/portal-vendor-sync/ui-src
+    repo: production
+    name: "@p31/ui"
+    kind: surface
+    layer: L3
+    owns:
+      - portal vendor sync UI (@p31/ui)
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
+    status: active
+    notes: L3 surface — production tool
+  - path: production/workers/p31-dispatch
+    repo: production
     name: "@p31/workers-p31-dispatch"
-    kind: "worker"
+    kind: worker
     layer: L2
-    owns: ["request routing + dispatch"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - request routing + dispatch
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
     notes: "contract: routing across services"
-  - path: "production/workers/p31-passport"
-    repo: "production"
+  - path: production/workers/p31-passport
+    repo: production
     name: "@p31/workers-p31-passport"
-    kind: "worker"
+    kind: worker
     layer: L2
-    owns: ["worker"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - passport authentication worker (@p31/workers-p31-passport)
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
-    notes: "contract layer worker"
-  - path: "P31-local-workspace/apps/p31ca/workers/fhir"
-    repo: "workspace"
-    name: "p31-fhir-worker"
-    kind: "surface"
+    notes: L2 auth contract
+  - path: P31-local-workspace/apps/p31ca/workers/fhir
+    repo: workspace
+    name: p31-fhir-worker
+    kind: surface
     layer: L2
-    owns: ["FHIR health data bridge"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - FHIR health data bridge
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: migrate-later
-    notes: "integration contract — pending pilot decision"
-  - path: "P31-local-workspace/apps/phos/src/workers/contract-engine"
-    repo: "workspace"
-    name: "contract-engine"
-    kind: "surface"
+    notes: integration contract — pending pilot decision
+  - path: P31-local-workspace/apps/phos/src/workers/contract-engine
+    repo: workspace
+    name: contract-engine
+    kind: surface
     layer: L2
-    owns: ["web3 contract ABI registry","on-chain verification"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - web3 contract ABI registry
+      - on-chain verification
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
-    notes: "EVM contract interaction layer"
-  - path: "P31-local-workspace/apps/phos/src/workers/governance-engine"
-    repo: "workspace"
-    name: "governance-engine"
-    kind: "surface"
+    notes: EVM contract interaction layer
+  - path: P31-local-workspace/apps/phos/src/workers/governance-engine
+    repo: workspace
+    name: governance-engine
+    kind: surface
     layer: L2
-    owns: ["on-chain governance voting","proposal + ratification flow"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - on-chain governance voting
+      - proposal + ratification flow
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
-    notes: "governance contract over EVM"
-  - path: "P31-local-workspace/apps/phos/src/workers/love-ledger"
-    repo: "workspace"
-    name: "love-ledger"
-    kind: "surface"
+    notes: governance contract over EVM
+  - path: P31-local-workspace/apps/phos/src/workers/love-ledger
+    repo: workspace
+    name: love-ledger
+    kind: surface
     layer: L2
-    owns: ["HTTP API wrapper over @p31/love-ledger","LOV earn/spend/give/donate/take endpoints"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - HTTP API wrapper over @p31/love-ledger
+      - LOV earn/spend/give/donate/take endpoints
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
-    notes: "workers/love-ledger — deployed API"
-  - path: "P31-local-workspace/buffer-worker"
-    repo: "workspace"
-    name: "buffer-worker"
-    kind: "package"
+    notes: workers/love-ledger — deployed API
+  - path: P31-local-workspace/buffer-worker
+    repo: workspace
+    name: buffer-worker
+    kind: package
     layer: L2
-    owns: ["buffer worker (Cloudflare Worker)"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - buffer worker (Cloudflare Worker)
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
-    notes: "L2 worker contract"
-  - path: "P31-local-workspace/cli"
-    repo: "workspace"
-    name: "andromeda-cli"
-    kind: "mcp-server"
+    notes: L2 worker contract
+  - path: P31-local-workspace/cli
+    repo: workspace
+    name: andromeda-cli
+    kind: mcp-server
     layer: L2
-    owns: ["CLI + MCP surface"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - CLI + MCP surface
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
-    notes: "L2 MCP tool surface"
-  - path: "P31-local-workspace/crypto-monitor"
-    repo: "workspace"
-    name: "crypto-monitor"
-    kind: "package"
+    notes: L2 MCP tool surface
+  - path: P31-local-workspace/crypto-monitor
+    repo: workspace
+    name: crypto-monitor
+    kind: package
     layer: L2
-    owns: ["crypto monitoring worker"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - crypto monitoring worker
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
-    notes: "L2 worker contract"
-  - path: "P31-local-workspace/ecosystem/analytics"
-    repo: "workspace"
-    name: "p31-analytics"
-    kind: "surface"
+    notes: L2 worker contract
+  - path: P31-local-workspace/ecosystem/analytics
+    repo: workspace
+    name: p31-analytics
+    kind: surface
     layer: L2
-    owns: ["integration ecosystem"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - analytics data collection and query service
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: migrate-later
-    notes: "integration periphery — evaluate for consolidation"
-  - path: "P31-local-workspace/ecosystem/discord"
-    repo: "workspace"
-    name: "p31-oracle-bot"
-    kind: "ledger"
+    notes: L2 integration — pending value assessment
+  - path: P31-local-workspace/ecosystem/discord
+    repo: workspace
+    name: p31-oracle-bot
+    kind: ledger
     layer: L2
-    owns: ["integration ecosystem"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: migrate-later
-    notes: "integration periphery — evaluate for consolidation"
-  - path: "P31-local-workspace/ecosystem/gamification"
-    repo: "workspace"
-    name: "p31-gamification"
-    kind: "package"
-    layer: L2
-    owns: ["LOV earn/spend game logic","spoon-dial scoring"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - Discord bot with cognitive accessibility features (oracle-bot)
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
-    notes: "consumes @p31/economy"
-  - path: "P31-local-workspace/ecosystem/ipfs"
-    repo: "workspace"
-    name: "p31-ipfs-manager"
-    kind: "package"
+    notes: L2 bot service contract
+  - path: P31-local-workspace/ecosystem/gamification
+    repo: workspace
+    name: p31-gamification
+    kind: package
     layer: L2
-    owns: ["integration ecosystem"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: migrate-later
-    notes: "integration periphery — evaluate for consolidation"
-  - path: "P31-local-workspace/ecosystem/middleware"
-    repo: "workspace"
-    name: "p31-middleware"
-    kind: "package"
-    layer: L2
-    owns: ["integration ecosystem"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: migrate-later
-    notes: "integration periphery — evaluate for consolidation"
-  - path: "P31-local-workspace/fawn-guard"
-    repo: "workspace"
-    name: "fawn-guard"
-    kind: "package"
-    layer: L2
-    owns: ["fawn guard worker"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - LOV earn/spend game logic
+      - spoon-dial scoring
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
-    notes: "L2 worker contract"
-  - path: "P31-local-workspace/k4-worker"
-    repo: "workspace"
-    name: "k4-cage-worker"
-    kind: "package"
+    notes: consumes @p31/economy
+  - path: P31-local-workspace/ecosystem/ipfs
+    repo: workspace
+    name: p31-ipfs-manager
+    kind: package
     layer: L2
-    owns: ["K4 cage worker"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - IPFS content management and pinning
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
+    status: migrate-later
+    notes: L2 integration — pending value assessment
+  - path: P31-local-workspace/ecosystem/middleware
+    repo: workspace
+    name: p31-middleware
+    kind: package
+    layer: L2
+    owns:
+      - middleware routing and translation layer
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
+    status: migrate-later
+    notes: L2 integration — pending value assessment
+  - path: P31-local-workspace/fawn-guard
+    repo: workspace
+    name: fawn-guard
+    kind: package
+    layer: L2
+    owns:
+      - fawn guard worker
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
-    notes: "L2 worker contract"
-  - path: "P31-local-workspace/p31labs/social-content-engine"
-    repo: "workspace"
+    notes: L2 worker contract
+  - path: P31-local-workspace/k4-worker
+    repo: workspace
+    name: k4-cage-worker
+    kind: package
+    layer: L2
+    owns:
+      - K4 cage worker
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
+    status: active
+    notes: L2 worker contract
+  - path: P31-local-workspace/p31labs/social-content-engine
+    repo: workspace
     name: "@p31labs/social-content-engine"
-    kind: "package"
+    kind: package
     layer: L2
-    owns: ["p31labs surface"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - social content generation and scheduling engine
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: migrate-later
-    notes: "workspace surface — evaluate for consolidation"
-  - path: "P31-local-workspace/packages/ble"
-    repo: "workspace"
+    notes: L2 content engine — pending consolidation
+  - path: P31-local-workspace/packages/ble
+    repo: workspace
     name: "@p31/ble"
-    kind: "package"
+    kind: package
     layer: L2
-    owns: ["BLE proximity detection"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - BLE proximity detection
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: migrate-later
-    notes: "pending device mesh strategy"
-  - path: "P31-local-workspace/packages/economy"
-    repo: "workspace"
+    notes: pending device mesh strategy
+  - path: P31-local-workspace/packages/economy
+    repo: workspace
     name: "@p31/economy"
-    kind: "ledger"
+    kind: ledger
     layer: L2
-    owns: ["LOV economics model","tokenomics parameters"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - LOV economics model
+      - tokenomics parameters
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
-    notes: "consumes @p31/love-ledger"
-  - path: "P31-local-workspace/packages/forge-sdk"
-    repo: "workspace"
+    notes: consumes @p31/love-ledger
+  - path: P31-local-workspace/packages/forge-sdk
+    repo: workspace
     name: "@p31/forge-sdk"
-    kind: "mcp-server"
+    kind: mcp-server
     layer: L2
-    owns: ["forge SDK (contract deployment)"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - forge SDK (contract deployment)
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: migrate-later
-    notes: "SDK for on-chain contract interaction"
-  - path: "P31-local-workspace/packages/game-engine"
-    repo: "workspace"
+    notes: SDK for on-chain contract interaction
+  - path: P31-local-workspace/packages/game-engine
+    repo: workspace
     name: "@p31/game-engine"
-    kind: "surface"
+    kind: surface
     layer: L2
-    owns: ["game engine runtime","state + rendering"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - game engine runtime (Maxwell rigidity, jitterbug geometry, geodesic primitives, spoon-gated)
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
-    notes: "contract: game runtime"
-  - path: "P31-local-workspace/packages/game-generator"
-    repo: "workspace"
+    notes: L2 game contract — @p31/game-engine
+  - path: P31-local-workspace/packages/game-generator
+    repo: workspace
     name: "@p31/game-generator"
-    kind: "surface"
+    kind: surface
     layer: L2
-    owns: ["procedural game generation"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - procedural game generation
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: migrate-later
-    notes: "pending value assessment"
-  - path: "P31-local-workspace/packages/gamification"
-    repo: "workspace"
+    notes: pending value assessment
+  - path: P31-local-workspace/packages/gamification
+    repo: workspace
     name: "@p31/gamification"
-    kind: "ledger"
+    kind: ledger
     layer: L2
-    owns: ["LOV earn/spend game logic","spoon-dial scoring"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - LOV earn/spend game logic
+      - spoon-dial scoring
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
-    notes: "consumes @p31/economy"
-  - path: "P31-local-workspace/packages/interface-generator"
-    repo: "workspace"
+    notes: consumes @p31/economy
+  - path: P31-local-workspace/packages/interface-generator
+    repo: workspace
     name: "@p31/interface-generator"
-    kind: "identity"
+    kind: identity
     layer: L2
-    owns: ["UI schema → code generation"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - UI schema → code generation
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: migrate-later
-    notes: "pending consolidation"
-  - path: "P31-local-workspace/packages/love-ledger"
-    repo: "workspace"
+    notes: pending consolidation
+  - path: P31-local-workspace/packages/love-ledger
+    repo: workspace
     name: "@p31/love-ledger"
-    kind: "ledger"
+    kind: ledger
     layer: L2
-    owns: ["LOV accounting primitives (ledger.ts, wallet.ts, vesting.ts, version.ts)","append-only hash chain"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - LOV accounting primitives (ledger.ts, wallet.ts, vesting.ts, version.ts)
+      - append-only hash chain
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
-    notes: "canonical @p31/love-ledger npm package"
-  - path: "P31-local-workspace/packages/mcp-justice"
-    repo: "workspace"
+    notes: canonical @p31/love-ledger npm package
+  - path: P31-local-workspace/packages/mcp-justice
+    repo: workspace
     name: "@p31/mcp-justice"
-    kind: "mcp-server"
+    kind: mcp-server
     layer: L2
-    owns: ["dispute resolution contracts","appeal workflow"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - dispute resolution contracts
+      - appeal workflow
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
-    notes: "contract layer for governance"
-  - path: "P31-local-workspace/packages/mcp-membrane"
-    repo: "workspace"
+    notes: contract layer for governance
+  - path: P31-local-workspace/packages/mcp-membrane
+    repo: workspace
     name: "@p31/mcp-membrane"
-    kind: "mcp-server"
+    kind: mcp-server
     layer: L2
-    owns: ["cross-boundary data layer","cell-membrane semantics"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - cross-boundary data layer
+      - cell-membrane semantics
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
-    notes: "L2 isolation layer for data flows"
-  - path: "P31-local-workspace/packages/observatory"
-    repo: "workspace"
+    notes: L2 isolation layer for data flows
+  - path: P31-local-workspace/packages/observatory
+    repo: workspace
     name: "@p31/observatory"
-    kind: "package"
+    kind: package
     layer: L2
-    owns: ["observability + metrics"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - observability + metrics
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: migrate-later
-    notes: "pending observability strategy"
-  - path: "P31-local-workspace/packages/p31-mcp"
-    repo: "workspace"
+    notes: pending observability strategy
+  - path: P31-local-workspace/packages/p31-mcp
+    repo: workspace
     name: "@p31/mcp-vibe"
-    kind: "mcp-server"
+    kind: mcp-server
     layer: L2
-    owns: ["vibe-coding MCP tools (app generation + deploy)"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - vibe-coding MCP server (app generation + deploy via MCP tools)
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
-    notes: "packages/p31-mcp — developer-facing MCP"
-  - path: "P31-local-workspace/packages/ui-mcp"
-    repo: "workspace"
+    notes: L2 MCP tool contract — @p31/mcp-vibe
+  - path: P31-local-workspace/packages/ui-mcp
+    repo: workspace
     name: "@p31/ui-mcp"
-    kind: "mcp-server"
+    kind: mcp-server
     layer: L2
-    owns: ["UI introspection tools for MCP clients"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - UI introspection tools for MCP clients
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
-    notes: "optional MCP surface for UI consumers"
-  - path: "P31-local-workspace/packages/vibe-sdk"
-    repo: "workspace"
+    notes: L2 MCP tool contract
+  - path: P31-local-workspace/packages/vibe-sdk
+    repo: workspace
     name: "@p31/vibe-sdk"
-    kind: "package"
+    kind: package
     layer: L2
-    owns: ["vibe SDK (code generation)"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - vibe SDK (code generation)
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: migrate-later
-    notes: "pending consolidation with mcp-vibe"
-  - path: "P31-local-workspace/software"
-    repo: "workspace"
-    name: "p31-software"
-    kind: "package"
+    notes: pending consolidation with mcp-vibe
+  - path: P31-local-workspace/software
+    repo: workspace
+    name: p31-software
+    kind: package
     layer: L2
-    owns: ["software repo umbrella"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - "software repo umbrella (decompose: identify canonical copy per domain)"
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: migrate-later
-    notes: "repo root — decompose into individual artifacts"
-  - path: "P31-local-workspace/software/cloudflare-pages/p31-mesh"
-    repo: "workspace"
-    name: "p31-mesh"
-    kind: "package"
+    notes: repo root — decompose into individual artifacts
+  - path: P31-local-workspace/software/cloudflare-pages/p31-mesh
+    repo: workspace
+    name: p31-mesh
+    kind: package
     layer: L2
-    owns: ["undeployed software worker"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - P31 mesh on Cloudflare Pages
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: migrate-later
-    notes: "undeployed infrastructure — evaluate for migration or retirement"
-  - path: "P31-local-workspace/software/cloudflare-worker"
-    repo: "workspace"
-    name: "p31-orchestrator"
-    kind: "ledger"
+    notes: pending value assessment
+  - path: P31-local-workspace/software/cloudflare-worker
+    repo: workspace
+    name: p31-orchestrator
+    kind: ledger
     layer: L2
-    owns: ["software orchestrator"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - software orchestrator
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: migrate-later
-    notes: "pending consolidation"
-  - path: "P31-local-workspace/software/cloudflare-worker/{project}"
-    repo: "workspace"
+    notes: pending consolidation
+  - path: P31-local-workspace/software/cloudflare-worker/{project}
+    repo: workspace
     name: "{project}"
-    kind: "package"
+    kind: package
     layer: L2
-    owns: ["undeployed / legacy worker"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - template Cloudflare Worker
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: migrate-later
-    notes: "evaluate for migration or retirement"
-  - path: "P31-local-workspace/software/cloudflare-worker/bouncer"
-    repo: "workspace"
-    name: "p31-bouncer"
-    kind: "package"
+    notes: scaffold — delete if unused
+  - path: P31-local-workspace/software/cloudflare-worker/bouncer
+    repo: workspace
+    name: p31-bouncer
+    kind: package
     layer: L2
-    owns: ["legacy bouncer"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - legacy access control bouncer
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: migrate-later
-    notes: "pending consolidation with production bouncer"
-  - path: "P31-local-workspace/software/cloudflare-worker/command-center"
-    repo: "workspace"
-    name: "epcp-command-center-tests"
-    kind: "package"
+    notes: evaluate for consolidation with production bouncer
+  - path: P31-local-workspace/software/cloudflare-worker/command-center
+    repo: workspace
+    name: epcp-command-center-tests
+    kind: package
     layer: L2
-    owns: ["legacy command center"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - EPCP Command Center E2E test suite
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: migrate-later
-    notes: "pending consolidation"
-  - path: "P31-local-workspace/software/cloudflare-worker/q-factor"
-    repo: "workspace"
-    name: "q-factor"
-    kind: "package"
+    notes: test infrastructure, not production
+  - path: P31-local-workspace/software/cloudflare-worker/q-factor
+    repo: workspace
+    name: q-factor
+    kind: package
     layer: L2
-    owns: ["quality factor scoring","compliance scoring"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - quality factor scoring
+      - compliance scoring
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
     notes: "contract: quality scoring"
-  - path: "P31-local-workspace/software/cloudflare-worker/social-drop-automation"
-    repo: "workspace"
-    name: "p31-social-worker"
-    kind: "package"
+  - path: P31-local-workspace/software/cloudflare-worker/social-drop-automation
+    repo: workspace
+    name: p31-social-worker
+    kind: package
     layer: L2
-    owns: ["undeployed / legacy worker"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: migrate-later
-    notes: "evaluate for migration or retirement"
-  - path: "P31-local-workspace/software/discord/p31-bot"
-    repo: "workspace"
-    name: "p31-discord-bot"
-    kind: "package"
+    owns:
+      - multi-platform posting, scheduling, and Discord notifications worker
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
+    status: active
+    notes: L2 social worker contract
+  - path: P31-local-workspace/software/discord/p31-bot
+    repo: workspace
+    name: p31-discord-bot
+    kind: package
     layer: L2
-    owns: ["undeployed software worker"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: migrate-later
-    notes: "undeployed infrastructure — evaluate for migration or retirement"
-  - path: "P31-local-workspace/software/docs"
-    repo: "workspace"
-    name: "p31-docs"
-    kind: "package"
+    owns:
+      - Discord bot with cognitive accessibility features
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
+    status: active
+    notes: L2 bot service contract
+  - path: P31-local-workspace/software/docs
+    repo: workspace
+    name: p31-docs
+    kind: package
+    layer: L3
+    owns:
+      - P31 documentation portal
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
+    status: active
+    notes: L3 surface — docs and guides
+  - path: P31-local-workspace/software/donate-api
+    repo: workspace
+    name: donate-api
+    kind: package
     layer: L2
-    owns: ["undeployed software worker"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: migrate-later
-    notes: "undeployed infrastructure — evaluate for migration or retirement"
-  - path: "P31-local-workspace/software/donate-api"
-    repo: "workspace"
-    name: "donate-api"
-    kind: "package"
+    owns:
+      - donation API endpoint
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
+    status: active
+    notes: L2 API contract
+  - path: P31-local-workspace/software/extensions/p31-cockpit-panel
+    repo: workspace
+    name: p31-cockpit-panel
+    kind: surface
+    layer: L3
+    owns:
+      - EDE unified status dashboard extension
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
+    status: active
+    notes: L3 surface
+  - path: P31-local-workspace/software/extensions/p31-cognitive-shield
+    repo: workspace
+    name: p31-cognitive-shield
+    kind: package
     layer: L2
-    owns: ["undeployed software worker"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: migrate-later
-    notes: "undeployed infrastructure — evaluate for migration or retirement"
-  - path: "P31-local-workspace/software/extensions/p31-cockpit-panel"
-    repo: "workspace"
-    name: "p31-cockpit-panel"
-    kind: "surface"
+    owns:
+      - email voltage scoring with 60s batching for neuro-regulation
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
+    status: active
+    notes: L2 cognitive tool — extension
+  - path: P31-local-workspace/software/extensions/p31-progressive-disclosure
+    repo: workspace
+    name: p31-progressive-disclosure
+    kind: package
     layer: L2
-    owns: ["undeployed software worker"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: migrate-later
-    notes: "undeployed infrastructure — evaluate for migration or retirement"
-  - path: "P31-local-workspace/software/extensions/p31-cognitive-shield"
-    repo: "workspace"
-    name: "p31-cognitive-shield"
-    kind: "package"
+    owns:
+      - UI complexity adaptation by operator spoon level (Layers 0-3)
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
+    status: active
+    notes: L2 UI tool — extension
+  - path: P31-local-workspace/software/extensions/p31-spoon-gauge
+    repo: workspace
+    name: p31-spoon-gauge
+    kind: package
     layer: L2
-    owns: ["undeployed software worker"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: migrate-later
-    notes: "undeployed infrastructure — evaluate for migration or retirement"
-  - path: "P31-local-workspace/software/extensions/p31-progressive-disclosure"
-    repo: "workspace"
-    name: "p31-progressive-disclosure"
-    kind: "package"
+    owns:
+      - real-time energy/capacity tracking for operators
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
+    status: active
+    notes: L2 monitoring — extension
+  - path: P31-local-workspace/software/extensions/p31ca
+    repo: workspace
+    name: p31-centaur-ede
+    kind: package
+    layer: L3
+    owns:
+      - p31ca Centaur EDE extension
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
+    status: active
+    notes: L3 surface
+  - path: P31-local-workspace/software/frontend
+    repo: workspace
+    name: p31-frontend
+    kind: package
+    layer: L3
+    owns:
+      - P31 frontend application shell
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
+    status: active
+    notes: L3 surface
+  - path: P31-local-workspace/software/genesis-gate
+    repo: workspace
+    name: genesis-gate
+    kind: package
     layer: L2
-    owns: ["undeployed software worker"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - genesis gate (onboarding authorization)
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: migrate-later
-    notes: "undeployed infrastructure — evaluate for migration or retirement"
-  - path: "P31-local-workspace/software/extensions/p31-spoon-gauge"
-    repo: "workspace"
-    name: "p31-spoon-gauge"
-    kind: "package"
+    notes: pending value assessment
+  - path: P31-local-workspace/software/geodesic-room
+    repo: workspace
+    name: geodesic-room
+    kind: package
+    layer: L3
+    owns:
+      - geodesic dome 3D visualization room
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
+    status: active
+    notes: L3 surface
+  - path: P31-local-workspace/software/k4-cage
+    repo: workspace
+    name: k4-cage
+    kind: package
+    layer: L3
+    owns:
+      - K4 tetrahedral cage browser application
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
+    status: active
+    notes: L3 surface
+  - path: P31-local-workspace/software/k4-cage-pwa
+    repo: workspace
+    name: k4-cage-pwa
+    kind: package
+    layer: L3
+    owns:
+      - K4 cage progressive web app
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
+    status: active
+    notes: L3 surface
+  - path: P31-local-workspace/software/k4-hubs
+    repo: workspace
+    name: k4-hubs
+    kind: package
+    layer: L3
+    owns:
+      - K4 virtual hub spaces
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
+    status: active
+    notes: L3 surface
+  - path: P31-local-workspace/software/k4-personal
+    repo: workspace
+    name: k4-personal
+    kind: package
+    layer: L3
+    owns:
+      - K4 personal workspace
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
+    status: active
+    notes: L3 surface
+  - path: P31-local-workspace/software/kenosis-mesh
+    repo: workspace
+    name: kenosis-mesh
+    kind: package
     layer: L2
-    owns: ["undeployed software worker"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - 7-node SIC-POVM serverless topology
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: migrate-later
-    notes: "undeployed infrastructure — evaluate for migration or retirement"
-  - path: "P31-local-workspace/software/extensions/p31ca"
-    repo: "workspace"
-    name: "p31-centaur-ede"
-    kind: "package"
+    notes: L2 mesh network
+  - path: P31-local-workspace/software/love-bridge
+    repo: workspace
+    name: love-bridge
+    kind: ledger
     layer: L2
-    owns: ["undeployed software worker"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - LOV bridge (cross-surface settlement)
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: migrate-later
-    notes: "undeployed infrastructure — evaluate for migration or retirement"
-  - path: "P31-local-workspace/software/frontend"
-    repo: "workspace"
-    name: "p31-frontend"
-    kind: "package"
+    notes: software/love-bridge — evaluate for consolidation
+  - path: P31-local-workspace/software/p31-agent-hub
+    repo: workspace
+    name: p31-agent-hub
+    kind: package
     layer: L2
-    owns: ["undeployed software worker"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: migrate-later
-    notes: "undeployed infrastructure — evaluate for migration or retirement"
-  - path: "P31-local-workspace/software/genesis-gate"
-    repo: "workspace"
-    name: "genesis-gate"
-    kind: "package"
+    owns:
+      - Workers AI agent session orchestration with SQLite DO
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
+    status: active
+    notes: L2 contract — agent hub
+  - path: P31-local-workspace/software/p31-cortex
+    repo: workspace
+    name: p31-cortex
+    kind: package
     layer: L2
-    owns: ["undeployed software worker"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - Cortex data orchestration layer with DB migration
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: migrate-later
-    notes: "undeployed infrastructure — evaluate for migration or retirement"
-  - path: "P31-local-workspace/software/geodesic-room"
-    repo: "workspace"
-    name: "geodesic-room"
-    kind: "package"
+    notes: L2 — pending value assessment
+  - path: P31-local-workspace/software/p31-dashboard
+    repo: workspace
+    name: p31-dashboard
+    kind: surface
+    layer: L3
+    owns:
+      - P31 operations dashboard (Astro)
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
+    status: active
+    notes: L3 surface
+  - path: P31-local-workspace/software/p31-delta-hiring
+    repo: workspace
+    name: p31-delta-hiring
+    kind: package
     layer: L2
-    owns: ["undeployed software worker"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - delta hiring platform
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: migrate-later
-    notes: "undeployed infrastructure — evaluate for migration or retirement"
-  - path: "P31-local-workspace/software/k4-cage"
-    repo: "workspace"
-    name: "k4-cage"
-    kind: "package"
+    notes: L2 — pending value assessment
+  - path: P31-local-workspace/software/p31-forge
+    repo: workspace
+    name: p31-forge
+    kind: package
     layer: L2
-    owns: ["undeployed software worker"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: migrate-later
-    notes: "undeployed infrastructure — evaluate for migration or retirement"
-  - path: "P31-local-workspace/software/k4-cage-pwa"
-    repo: "workspace"
-    name: "k4-cage-pwa"
-    kind: "package"
+    owns:
+      - document generation engine (court filings, letters, grants, memos, social posts)
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
+    status: active
+    notes: L2 contract — document SOT per p31-forge README
+  - path: P31-local-workspace/software/p31-google-bridge
+    repo: workspace
+    name: p31-google-bridge
+    kind: design-token
     layer: L2
-    owns: ["undeployed software worker"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - Google Bridge design-token API
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: migrate-later
-    notes: "undeployed infrastructure — evaluate for migration or retirement"
-  - path: "P31-local-workspace/software/k4-hubs"
-    repo: "workspace"
-    name: "k4-hubs"
-    kind: "package"
+    notes: L2 integration — pending value assessment
+  - path: P31-local-workspace/software/p31-hearing-ops
+    repo: workspace
+    name: p31-hearing-ops
+    kind: package
     layer: L2
-    owns: ["undeployed software worker"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: migrate-later
-    notes: "undeployed infrastructure — evaluate for migration or retirement"
-  - path: "P31-local-workspace/software/k4-personal"
-    repo: "workspace"
-    name: "k4-personal"
-    kind: "package"
+    owns:
+      - hearing operations dashboard and workflow
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
+    status: active
+    notes: L2 operational contract
+  - path: P31-local-workspace/software/p31-state
+    repo: workspace
+    name: p31-state
+    kind: package
     layer: L2
-    owns: ["undeployed software worker"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: migrate-later
-    notes: "undeployed infrastructure — evaluate for migration or retirement"
-  - path: "P31-local-workspace/software/kenosis-mesh"
-    repo: "workspace"
-    name: "kenosis-mesh"
-    kind: "package"
-    layer: L2
-    owns: ["undeployed software worker"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: migrate-later
-    notes: "undeployed infrastructure — evaluate for migration or retirement"
-  - path: "P31-local-workspace/software/love-bridge"
-    repo: "workspace"
-    name: "love-bridge"
-    kind: "ledger"
-    layer: L2
-    owns: ["LOV bridge (cross-surface settlement)"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: migrate-later
-    notes: "software/love-bridge — evaluate for consolidation"
-  - path: "P31-local-workspace/software/p31-agent-hub"
-    repo: "workspace"
-    name: "p31-agent-hub"
-    kind: "package"
-    layer: L2
-    owns: ["undeployed software worker"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: migrate-later
-    notes: "undeployed infrastructure — evaluate for migration or retirement"
-  - path: "P31-local-workspace/software/p31-cortex"
-    repo: "workspace"
-    name: "p31-cortex"
-    kind: "package"
-    layer: L2
-    owns: ["undeployed software worker"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: migrate-later
-    notes: "undeployed infrastructure — evaluate for migration or retirement"
-  - path: "P31-local-workspace/software/p31-dashboard"
-    repo: "workspace"
-    name: "p31-dashboard"
-    kind: "surface"
-    layer: L2
-    owns: ["undeployed software worker"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: migrate-later
-    notes: "undeployed infrastructure — evaluate for migration or retirement"
-  - path: "P31-local-workspace/software/p31-delta-hiring"
-    repo: "workspace"
-    name: "p31-delta-hiring"
-    kind: "package"
-    layer: L2
-    owns: ["undeployed software worker"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: migrate-later
-    notes: "undeployed infrastructure — evaluate for migration or retirement"
-  - path: "P31-local-workspace/software/p31-forge"
-    repo: "workspace"
-    name: "p31-forge"
-    kind: "package"
-    layer: L2
-    owns: ["undeployed software worker"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: migrate-later
-    notes: "undeployed infrastructure — evaluate for migration or retirement"
-  - path: "P31-local-workspace/software/p31-google-bridge"
-    repo: "workspace"
-    name: "p31-google-bridge"
-    kind: "design-token"
-    layer: L2
-    owns: ["undeployed software worker"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: migrate-later
-    notes: "undeployed infrastructure — evaluate for migration or retirement"
-  - path: "P31-local-workspace/software/p31-hearing-ops"
-    repo: "workspace"
-    name: "p31-hearing-ops"
-    kind: "package"
-    layer: L2
-    owns: ["undeployed software worker"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: migrate-later
-    notes: "undeployed infrastructure — evaluate for migration or retirement"
-  - path: "P31-local-workspace/software/p31-state"
-    repo: "workspace"
-    name: "p31-state"
-    kind: "package"
-    layer: L2
-    owns: ["undeployed software worker"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: migrate-later
-    notes: "undeployed infrastructure — evaluate for migration or retirement"
-  - path: "P31-local-workspace/software/packages/agent-engine"
-    repo: "workspace"
+    owns:
+      - application state management contract
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
+    status: active
+    notes: L2 state contract
+  - path: P31-local-workspace/software/packages/agent-engine
+    repo: workspace
     name: "@p31/agent-engine"
-    kind: "package"
+    kind: package
     layer: L2
-    owns: ["software package"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - "@p31/agent-engine — agent topology and runtime primitives"
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: migrate-later
-    notes: "evaluate: consolidate into workspace or retire"
-  - path: "P31-local-workspace/software/packages/andromeda-gateway"
-    repo: "workspace"
-    name: "andromeda-gateway"
-    kind: "package"
+    notes: L2 package contract
+  - path: P31-local-workspace/software/packages/andromeda-gateway
+    repo: workspace
+    name: andromeda-gateway
+    kind: package
     layer: L2
-    owns: ["software package"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - "@p31/andromeda-gateway — cross-repository gateway"
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: migrate-later
-    notes: "evaluate: consolidate into workspace or retire"
-  - path: "P31-local-workspace/software/packages/brain-dump-orchestrator"
-    repo: "workspace"
+    notes: L2 package contract
+  - path: P31-local-workspace/software/packages/brain-dump-orchestrator
+    repo: workspace
     name: "@p31/brain-dump-orchestrator"
-    kind: "package"
+    kind: package
     layer: L2
-    owns: ["software package"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - "@p31/brain-dump-orchestrator — knowledge dump orchestration"
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: migrate-later
-    notes: "evaluate: consolidate into workspace or retire"
-  - path: "P31-local-workspace/software/packages/game-engine"
-    repo: "workspace"
+    notes: L2 package contract
+  - path: P31-local-workspace/software/packages/game-engine
+    repo: workspace
     name: "@p31/game-engine"
-    kind: "surface"
+    kind: surface
     layer: L2
-    owns: ["game engine runtime","state + rendering"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - game engine runtime
+      - state + rendering
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
     notes: "contract: game runtime"
-  - path: "P31-local-workspace/software/packages/genesis-spark-worker"
-    repo: "workspace"
-    name: "genesis-spark-worker"
-    kind: "package"
+  - path: P31-local-workspace/software/packages/genesis-spark-worker
+    repo: workspace
+    name: genesis-spark-worker
+    kind: package
     layer: L2
-    owns: ["software package"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - "@p31/genesis-spark-worker — genesis server worker"
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: migrate-later
-    notes: "evaluate: consolidate into workspace or retire"
-  - path: "P31-local-workspace/software/packages/harmonic-linter"
-    repo: "workspace"
+    notes: L2 package contract
+  - path: P31-local-workspace/software/packages/harmonic-linter
+    repo: workspace
     name: "@p31/harmonic-linter"
-    kind: "package"
+    kind: package
     layer: L2
-    owns: ["software package"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - "@p31/harmonic-linter — harmonic analysis linter"
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: migrate-later
-    notes: "evaluate: consolidate into workspace or retire"
-  - path: "P31-local-workspace/software/packages/interface-generator"
-    repo: "workspace"
+    notes: L2 package contract
+  - path: P31-local-workspace/software/packages/interface-generator
+    repo: workspace
     name: "@p31/interface-generator"
-    kind: "identity"
+    kind: identity
     layer: L2
-    owns: ["UI schema → code generation"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - UI schema → code generation
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: migrate-later
-    notes: "pending consolidation"
-  - path: "P31-local-workspace/software/packages/jitterbug-api"
-    repo: "workspace"
+    notes: pending consolidation
+  - path: P31-local-workspace/software/packages/jitterbug-api
+    repo: workspace
     name: "@p31/jitterbug-api"
-    kind: "package"
+    kind: package
     layer: L2
-    owns: ["software package"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - "@p31/jitterbug-api — jitterbug math API"
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: migrate-later
-    notes: "evaluate: consolidate into workspace or retire"
-  - path: "P31-local-workspace/software/packages/jitterbug-pwa"
-    repo: "workspace"
+    notes: L2 package contract
+  - path: P31-local-workspace/software/packages/jitterbug-pwa
+    repo: workspace
     name: "@p31/jitterbug-pwa"
-    kind: "package"
-    layer: L2
-    owns: ["software package"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: migrate-later
-    notes: "evaluate: consolidate into workspace or retire"
-  - path: "P31-local-workspace/software/packages/k4-mesh-core"
-    repo: "workspace"
+    kind: package
+    layer: L3
+    owns:
+      - "@p31/jitterbug-pwa — jitterbug progressive web app"
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
+    status: active
+    notes: L3 surface
+  - path: P31-local-workspace/software/packages/k4-mesh-core
+    repo: workspace
     name: "@p31/k4-mesh-core"
-    kind: "package"
+    kind: package
     layer: L2
-    owns: ["software package"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - "@p31/k4-mesh-core — K4 mesh networking core"
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: migrate-later
-    notes: "evaluate: consolidate into workspace or retire"
-  - path: "P31-local-workspace/software/packages/love-ledger"
-    repo: "workspace"
+    notes: L2 package contract
+  - path: P31-local-workspace/software/packages/love-ledger
+    repo: workspace
     name: "@p31/love-ledger"
-    kind: "ledger"
+    kind: ledger
     layer: L2
-    owns: ["LOV accounting primitives (ledger.ts, wallet.ts, vesting.ts, version.ts)","append-only hash chain"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - LOV accounting primitives (ledger.ts, wallet.ts, vesting.ts, version.ts)
+      - append-only hash chain
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
-    notes: "canonical @p31/love-ledger npm package"
-  - path: "P31-local-workspace/software/packages/node-zero/pwa"
-    repo: "workspace"
-    name: "p31-pwa"
-    kind: "package"
-    layer: L2
-    owns: ["software package"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: migrate-later
-    notes: "evaluate: consolidate into workspace or retire"
-  - path: "P31-local-workspace/software/packages/oracle-terminal"
-    repo: "workspace"
+    notes: canonical @p31/love-ledger npm package
+  - path: P31-local-workspace/software/packages/node-zero/pwa
+    repo: workspace
+    name: p31-pwa
+    kind: package
+    layer: L3
+    owns:
+      - p31-pwa — node-zero progressive web app
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
+    status: active
+    notes: L3 surface
+  - path: P31-local-workspace/software/packages/oracle-terminal
+    repo: workspace
     name: "@p31/oracle-terminal"
-    kind: "identity"
+    kind: identity
     layer: L2
-    owns: ["oracle terminal (WASM skill execution)"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - oracle terminal (WASM skill execution)
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: migrate-later
-    notes: "pending value assessment"
-  - path: "P31-local-workspace/software/packages/q-distribution"
-    repo: "workspace"
+    notes: pending value assessment
+  - path: P31-local-workspace/software/packages/q-distribution
+    repo: workspace
     name: "@p31/q-distribution"
-    kind: "package"
+    kind: package
     layer: L2
-    owns: ["software package"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - "@p31/q-distribution — quantum distribution primitives"
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: migrate-later
-    notes: "evaluate: consolidate into workspace or retire"
-  - path: "P31-local-workspace/software/packages/quantum-edge"
-    repo: "workspace"
+    notes: L2 package contract
+  - path: P31-local-workspace/software/packages/quantum-edge
+    repo: workspace
     name: "@p31/quantum-edge"
-    kind: "package"
+    kind: package
     layer: L2
-    owns: ["software package"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - "@p31/quantum-edge — quantum edge compute"
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: migrate-later
-    notes: "evaluate: consolidate into workspace or retire"
-  - path: "P31-local-workspace/software/packages/shared"
-    repo: "workspace"
+    notes: L2 package contract
+  - path: P31-local-workspace/software/packages/shared
+    repo: workspace
     name: "@p31/shared"
-    kind: "package"
+    kind: package
     layer: L2
-    owns: ["software package"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - shared modules (DEPRECATED — use @p31/shared-core, @p31/sovereign-primitives, @p31/cognitive-passport)
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: migrate-later
-    notes: "evaluate: consolidate into workspace or retire"
-  - path: "P31-local-workspace/software/phos-pwa"
-    repo: "workspace"
-    name: "phos-pwa"
-    kind: "package"
-    layer: L2
-    owns: ["undeployed software worker"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: migrate-later
-    notes: "undeployed infrastructure — evaluate for migration or retirement"
-  - path: "P31-local-workspace/software/sovereign-command-center"
-    repo: "workspace"
-    name: "sovereign-command-center"
-    kind: "surface"
-    layer: L2
-    owns: ["undeployed software worker"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: migrate-later
-    notes: "undeployed infrastructure — evaluate for migration or retirement"
-  - path: "P31-local-workspace/software/sovereign-justice"
-    repo: "workspace"
-    name: "sovereign-justice"
-    kind: "identity"
-    layer: L2
-    owns: ["sovereign justice dispute system"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: migrate-later
-    notes: "pending consolidation with mcp-justice"
-  - path: "P31-local-workspace/software/spin-mesh"
-    repo: "workspace"
-    name: "spin-mesh"
-    kind: "package"
-    layer: L2
-    owns: ["undeployed software worker"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: migrate-later
-    notes: "undeployed infrastructure — evaluate for migration or retirement"
-  - path: "P31-local-workspace/software/spin-mesh/logistics-do"
-    repo: "workspace"
-    name: "spin-logistics"
-    kind: "package"
-    layer: L2
-    owns: ["undeployed software worker"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: migrate-later
-    notes: "undeployed infrastructure — evaluate for migration or retirement"
-  - path: "P31-local-workspace/software/spin-mesh/matchmaking-do"
-    repo: "workspace"
-    name: "spin-matchmaking"
-    kind: "package"
-    layer: L2
-    owns: ["undeployed software worker"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: migrate-later
-    notes: "undeployed infrastructure — evaluate for migration or retirement"
-  - path: "P31-local-workspace/software/spoon-calculator"
-    repo: "workspace"
-    name: "spoon-calculator"
-    kind: "package"
-    layer: L2
-    owns: ["undeployed software worker"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: migrate-later
-    notes: "undeployed infrastructure — evaluate for migration or retirement"
-  - path: "P31-local-workspace/software/telemetry-worker"
-    repo: "workspace"
-    name: "p31-telemetry-worker"
-    kind: "package"
-    layer: L2
-    owns: ["undeployed software worker"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: migrate-later
-    notes: "undeployed infrastructure — evaluate for migration or retirement"
-  - path: "P31-local-workspace/software/unified-k4-cage"
-    repo: "workspace"
-    name: "unified-k4-cage"
-    kind: "package"
-    layer: L2
-    owns: ["undeployed software worker"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: migrate-later
-    notes: "undeployed infrastructure — evaluate for migration or retirement"
-  - path: "P31-local-workspace/software/workers"
-    repo: "workspace"
-    name: "p31-workers"
-    kind: "package"
-    layer: L2
-    owns: ["undeployed / legacy software worker"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: migrate-later
-    notes: "evaluate for migration or retirement"
-  - path: "P31-local-workspace/software/workers/agent-runtime"
-    repo: "workspace"
-    name: "agent-runtime"
-    kind: "worker"
-    layer: L2
-    owns: ["agent execution runtime"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    notes: deprecated — consolidate into L0 primitives
+  - path: P31-local-workspace/software/phos-pwa
+    repo: workspace
+    name: phos-pwa
+    kind: package
+    layer: L3
+    owns:
+      - Phos progressive web app
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
-    notes: "L2 orchestration layer for agents"
-  - path: "P31-local-workspace/software/workers/care-mesh"
-    repo: "workspace"
-    name: "care-mesh"
-    kind: "worker"
+    notes: L3 surface
+  - path: P31-local-workspace/software/sovereign-command-center
+    repo: workspace
+    name: sovereign-command-center
+    kind: surface
+    layer: L3
+    owns:
+      - sovereign command center dashboard
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
+    status: active
+    notes: L3 surface
+  - path: P31-local-workspace/software/sovereign-justice
+    repo: workspace
+    name: sovereign-justice
+    kind: identity
     layer: L2
-    owns: ["care mesh coordination"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - sovereign justice dispute system
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
+    status: migrate-later
+    notes: pending consolidation with mcp-justice
+  - path: P31-local-workspace/software/spin-mesh
+    repo: workspace
+    name: spin-mesh
+    kind: package
+    layer: L2
+    owns:
+      - SpIn Barter Mesh — local-first physical media swap system
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
+    status: migrate-later
+    notes: L2 integration mesh, K4 extension
+  - path: P31-local-workspace/software/spin-mesh/logistics-do
+    repo: workspace
+    name: spin-logistics
+    kind: package
+    layer: L2
+    owns:
+      - SpIn mesh logistics service
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
+    status: migrate-later
+    notes: pending consolidation with spin-mesh
+  - path: P31-local-workspace/software/spin-mesh/matchmaking-do
+    repo: workspace
+    name: spin-matchmaking
+    kind: package
+    layer: L2
+    owns:
+      - SpIn mesh matchmaking service
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
+    status: migrate-later
+    notes: pending consolidation with spin-mesh
+  - path: P31-local-workspace/software/spoon-calculator
+    repo: workspace
+    name: spoon-calculator
+    kind: package
+    layer: L3
+    owns:
+      - personal energy management calculator
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
+    status: active
+    notes: L3 surface
+  - path: P31-local-workspace/software/telemetry-worker
+    repo: workspace
+    name: p31-telemetry-worker
+    kind: package
+    layer: L2
+    owns:
+      - telemetry collection and reporting worker
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
+    status: active
+    notes: L2 observability contract
+  - path: P31-local-workspace/software/unified-k4-cage
+    repo: workspace
+    name: unified-k4-cage
+    kind: package
+    layer: L2
+    owns:
+      - unified K4 cage computation
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
+    status: migrate-later
+    notes: pending consolidation with apps/k4-cage
+  - path: P31-local-workspace/software/workers
+    repo: workspace
+    name: p31-workers
+    kind: package
+    layer: L2
+    owns:
+      - p31-workers orchestration and dispatch layer
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
+    status: active
+    notes: L2 service contract
+  - path: P31-local-workspace/software/workers/agent-runtime
+    repo: workspace
+    name: agent-runtime
+    kind: worker
+    layer: L2
+    owns:
+      - agent execution runtime
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
+    status: active
+    notes: L2 orchestration layer for agents
+  - path: P31-local-workspace/software/workers/care-mesh
+    repo: workspace
+    name: care-mesh
+    kind: worker
+    layer: L2
+    owns:
+      - care mesh coordination
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
     notes: "contract: care coordination"
-  - path: "P31-local-workspace/software/workers/creation-accountant"
-    repo: "workspace"
+  - path: P31-local-workspace/software/workers/creation-accountant
+    repo: workspace
     name: "@p31/creation-accountant"
-    kind: "worker"
+    kind: worker
     layer: L2
-    owns: ["creation revenue accounting","LOV grant lifecycle"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - creation revenue accounting
+      - LOV grant lifecycle
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
-    notes: "financial contract"
-  - path: "P31-local-workspace/software/workers/federation-bridge"
-    repo: "workspace"
-    name: "federation-bridge"
-    kind: "worker"
+    notes: financial contract
+  - path: P31-local-workspace/software/workers/federation-bridge
+    repo: workspace
+    name: federation-bridge
+    kind: worker
     layer: L2
-    owns: ["cross-surface identity federation","JWT + DPoP"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - cross-surface identity federation
+      - JWT + DPoP
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
-    notes: "identity federation across surfaces"
-  - path: "P31-local-workspace/software/workers/fhir-bridge"
-    repo: "workspace"
-    name: "fhir-bridge"
-    kind: "worker"
+    notes: identity federation across surfaces
+  - path: P31-local-workspace/software/workers/fhir-bridge
+    repo: workspace
+    name: fhir-bridge
+    kind: worker
     layer: L2
-    owns: ["FHIR health data bridge"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - FHIR health data bridge
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: migrate-later
-    notes: "integration contract — pending pilot decision"
-  - path: "P31-local-workspace/software/workers/intent-resolver"
-    repo: "workspace"
+    notes: integration contract — pending pilot decision
+  - path: P31-local-workspace/software/workers/intent-resolver
+    repo: workspace
     name: "@p31/intent-resolver"
-    kind: "worker"
+    kind: worker
     layer: L2
-    owns: ["agentic intent → tool-call translation"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - agentic intent → tool-call translation
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
-    notes: "orchestration L2"
-  - path: "P31-local-workspace/software/workers/ledger-bridge"
-    repo: "workspace"
-    name: "ledger-bridge"
-    kind: "worker"
+    notes: orchestration L2
+  - path: P31-local-workspace/software/workers/ledger-bridge
+    repo: workspace
+    name: ledger-bridge
+    kind: worker
     layer: L2
-    owns: ["ledger HTTP adapter"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - ledger HTTP adapter
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
-    notes: "bridge over @p31/love-ledger"
-  - path: "P31-local-workspace/software/workers/love-chain-worker"
-    repo: "workspace"
-    name: "love-chain"
-    kind: "worker"
+    notes: bridge over @p31/love-ledger
+  - path: P31-local-workspace/software/workers/love-chain-worker
+    repo: workspace
+    name: love-chain
+    kind: worker
     layer: L2
-    owns: ["append-only love-chain sink (hash chain persistence)"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - append-only love-chain sink (hash chain persistence)
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
-    notes: "software/workers/love-chain-worker"
-  - path: "P31-local-workspace/software/workers/mcp-x402-gateway"
-    repo: "workspace"
-    name: "mcp-x402-gateway"
-    kind: "mcp-server"
+    notes: software/workers/love-chain-worker
+  - path: P31-local-workspace/software/workers/mcp-x402-gateway
+    repo: workspace
+    name: mcp-x402-gateway
+    kind: mcp-server
     layer: L2
-    owns: ["USDC/BTC micro-payment settlement","x402 v2 header negotiation","facilitator routing"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - USDC/BTC micro-payment settlement
+      - x402 v2 header negotiation
+      - facilitator routing
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
-    notes: "payment contract over HTTP"
-  - path: "P31-local-workspace/software/workers/mcp-x402-gateway/bridge"
-    repo: "workspace"
+    notes: payment contract over HTTP
+  - path: P31-local-workspace/software/workers/mcp-x402-gateway/bridge
+    repo: workspace
     name: "@p31/mcp-x402-bridge"
-    kind: "mcp-server"
+    kind: mcp-server
     layer: L2
-    owns: ["USDC/BTC micro-payment settlement","x402 v2 header negotiation","facilitator routing"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - USDC/BTC micro-payment settlement
+      - x402 v2 header negotiation
+      - facilitator routing
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
-    notes: "payment contract over HTTP"
-  - path: "P31-local-workspace/software/workers/personal-swarm"
-    repo: "workspace"
-    name: "personal-swarm"
-    kind: "worker"
+    notes: payment contract over HTTP
+  - path: P31-local-workspace/software/workers/personal-swarm
+    repo: workspace
+    name: personal-swarm
+    kind: worker
     layer: L2
-    owns: ["personal AI swarm orchestration"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - personal AI swarm orchestration
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: migrate-later
-    notes: "pending consolidation with agent-runtime"
-  - path: "P31-local-workspace/software/workers/phos-backup"
-    repo: "workspace"
-    name: "phos-backup"
-    kind: "worker"
+    notes: pending consolidation with agent-runtime
+  - path: P31-local-workspace/software/workers/phos-backup
+    repo: workspace
+    name: phos-backup
+    kind: worker
     layer: L2
-    owns: ["undeployed / legacy software worker"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - Phos backup and replication worker
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: migrate-later
-    notes: "evaluate for migration or retirement"
-  - path: "P31-local-workspace/software/workers/pilot-dashboard"
-    repo: "workspace"
-    name: "pilot-dashboard"
-    kind: "worker"
+    notes: pending consolidation
+  - path: P31-local-workspace/software/workers/pilot-dashboard
+    repo: workspace
+    name: pilot-dashboard
+    kind: worker
     layer: L2
-    owns: ["pilot metrics dashboard API"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - pilot metrics dashboard API
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: migrate-later
-    notes: "pending pilot expansion"
-  - path: "P31-local-workspace/software/workers/secret-rotator"
-    repo: "workspace"
-    name: "secret-rotator"
-    kind: "worker"
+    notes: pending pilot expansion
+  - path: P31-local-workspace/software/workers/secret-rotator
+    repo: workspace
+    name: secret-rotator
+    kind: worker
     layer: L2
-    owns: ["Cloudflare secret rotation","token expiry management"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - Cloudflare secret rotation
+      - token expiry management
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
-    notes: "ops contract"
-  - path: "P31-local-workspace/software/workers/sovereign-agent"
-    repo: "workspace"
-    name: "sovereign-agent"
-    kind: "worker"
+    notes: ops contract
+  - path: P31-local-workspace/software/workers/sovereign-agent
+    repo: workspace
+    name: sovereign-agent
+    kind: worker
     layer: L2
-    owns: ["sovereign agent runtime"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - sovereign agent runtime
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: migrate-later
-    notes: "pending sovereign stack consolidation"
-  - path: "P31-local-workspace/tools/phos-forge"
-    repo: "workspace"
-    name: "phos-forge"
-    kind: "package"
+    notes: pending sovereign stack consolidation
+  - path: P31-local-workspace/tools/phos-forge
+    repo: workspace
+    name: phos-forge
+    kind: package
     layer: L2
-    owns: ["tool / utility surface"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: migrate-later
-    notes: "workspace tool — evaluate for consolidation"
-  - path: "P31-local-workspace/workers/agent-runtime"
-    repo: "workspace"
-    name: "agent-runtime"
-    kind: "worker"
-    layer: L2
-    owns: ["agent execution runtime"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - Phos forge document tooling
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
-    notes: "L2 orchestration layer for agents"
-  - path: "P31-local-workspace/workers/app-supervisor"
-    repo: "workspace"
-    name: "app-supervisor"
-    kind: "worker"
+    notes: L2 tool contract
+  - path: P31-local-workspace/workers/agent-runtime
+    repo: workspace
+    name: agent-runtime
+    kind: worker
     layer: L2
-    owns: ["app supervision + health checks"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - agent execution runtime (software copy)
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
+    status: migrate-later
+    notes: duplicate — consolidate with workspace agent-runtime
+  - path: P31-local-workspace/workers/app-supervisor
+    repo: workspace
+    name: app-supervisor
+    kind: worker
+    layer: L2
+    owns:
+      - app supervision + health checks
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
     notes: "contract: application supervisor"
-  - path: "P31-local-workspace/workers/artifact-registry"
-    repo: "workspace"
-    name: "artifact-registry"
-    kind: "worker"
+  - path: P31-local-workspace/workers/artifact-registry
+    repo: workspace
+    name: artifact-registry
+    kind: worker
     layer: L2
-    owns: ["artifact catalog + manifest storage"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - artifact catalog and manifest storage
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
-    notes: "L2 artifact metadata store"
-  - path: "P31-local-workspace/workers/bouncer"
-    repo: "workspace"
-    name: "p31-bouncer"
-    kind: "worker"
+    notes: L2 registry contract
+  - path: P31-local-workspace/workers/bouncer
+    repo: workspace
+    name: p31-bouncer
+    kind: worker
     layer: L2
-    owns: ["worker"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - worker
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
-    notes: "contract layer worker"
-  - path: "P31-local-workspace/workers/bros"
-    repo: "workspace"
-    name: "bros"
-    kind: "worker"
+    notes: contract layer worker
+  - path: P31-local-workspace/workers/bros
+    repo: workspace
+    name: bros
+    kind: worker
     layer: L2
-    owns: ["worker"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "contract layer worker"
-  - path: "P31-local-workspace/workers/care-api"
-    repo: "workspace"
-    name: "care-api"
-    kind: "worker"
+    owns:
+      - bros social/friend network service
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
+    status: migrate-later
+    notes: pending value assessment
+  - path: P31-local-workspace/workers/care-api
+    repo: workspace
+    name: care-api
+    kind: worker
     layer: L2
-    owns: ["care session API"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - care session API
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
     notes: "contract: care data"
-  - path: "P31-local-workspace/workers/care-mesh"
-    repo: "workspace"
-    name: "care-mesh"
-    kind: "worker"
+  - path: P31-local-workspace/workers/care-mesh
+    repo: workspace
+    name: care-mesh
+    kind: worker
     layer: L2
-    owns: ["care mesh coordination"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - care mesh coordination
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
     notes: "contract: care coordination"
-  - path: "P31-local-workspace/workers/command-center"
-    repo: "workspace"
-    name: "epcp-command-center-tests"
-    kind: "worker"
+  - path: P31-local-workspace/workers/command-center
+    repo: workspace
+    name: epcp-command-center-tests
+    kind: worker
     layer: L2
-    owns: ["worker"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - worker
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
-    notes: "contract layer worker"
-  - path: "P31-local-workspace/workers/component-registry"
-    repo: "workspace"
-    name: "p31-component-registry"
-    kind: "worker"
+    notes: contract layer worker
+  - path: P31-local-workspace/workers/component-registry
+    repo: workspace
+    name: p31-component-registry
+    kind: worker
     layer: L2
-    owns: ["component catalog + validation"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - component catalog + validation
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
     notes: "contract: which components exist and their schemas"
-  - path: "P31-local-workspace/workers/contract-engine"
-    repo: "workspace"
-    name: "contract-engine"
-    kind: "worker"
+  - path: P31-local-workspace/workers/contract-engine
+    repo: workspace
+    name: contract-engine
+    kind: worker
     layer: L2
-    owns: ["web3 contract ABI registry","on-chain verification"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - web3 contract ABI registry
+      - on-chain verification
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
-    notes: "EVM contract interaction layer"
-  - path: "P31-local-workspace/workers/creation-accountant"
-    repo: "workspace"
+    notes: EVM contract interaction layer
+  - path: P31-local-workspace/workers/creation-accountant
+    repo: workspace
     name: "@p31/creation-accountant"
-    kind: "worker"
+    kind: worker
     layer: L2
-    owns: ["creation revenue accounting","LOV grant lifecycle"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - creation revenue accounting and LOV grant lifecycle
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
-    notes: "financial contract"
-  - path: "P31-local-workspace/workers/dads"
-    repo: "workspace"
-    name: "dads"
-    kind: "worker"
+    notes: L2 financial contract
+  - path: P31-local-workspace/workers/dads
+    repo: workspace
+    name: dads
+    kind: worker
     layer: L2
-    owns: ["worker"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "contract layer worker"
-  - path: "P31-local-workspace/workers/design-mcp"
-    repo: "workspace"
-    name: "p31-design-mcp"
-    kind: "mcp-server"
+    owns:
+      - DADS parent dashboard service
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
+    status: migrate-later
+    notes: pending value assessment
+  - path: P31-local-workspace/workers/design-mcp
+    repo: workspace
+    name: p31-design-mcp
+    kind: mcp-server
     layer: L2
-    owns: ["34 canonical MCP tools (token + component + contract + clarify + propose)","server/discover (2026-07-28)","tool contract validation"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - 34 canonical MCP tools (token + component + contract + clarify + propose)
+      - server/discover (2026-07-28)
+      - tool contract validation
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
-    notes: "workers/design-mcp — the canonical MCP surface"
-  - path: "P31-local-workspace/workers/design-mcp-v3"
-    repo: "workspace"
+    notes: workers/design-mcp — the canonical MCP surface
+  - path: P31-local-workspace/workers/design-mcp-v3
+    repo: workspace
     name: "@p31/design-mcp-v3"
-    kind: "mcp-server"
+    kind: mcp-server
     layer: L2
-    owns: ["stateless 2026-07-28 split-SDK surface (merge target for design-mcp)","hub-readied spoke","skills/list + skills/get over MCP"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values","duplicate tool logic (import from canonical surface)"]
+    owns:
+      - stateless 2026-07-28 split-SDK surface (merge target for design-mcp)
+      - hub-readied spoke
+      - skills/list + skills/get over MCP
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
+      - duplicate tool logic (import from canonical surface)
     status: active
-    notes: "workers/design-mcp-v3 — merge target; gateway added at 3+ spokes"
-  - path: "P31-local-workspace/workers/design-mcp/skills/p31-standards"
-    repo: "workspace"
-    name: "p31-standards"
-    kind: "skill"
+    notes: workers/design-mcp-v3 — merge target; gateway added at 3+ spokes
+  - path: P31-local-workspace/workers/design-mcp/skills/p31-standards
+    repo: workspace
+    name: p31-standards
+    kind: skill
     layer: L2
-    owns: ["enforcement rules (no hex, no media queries, no inline styles, spoons, motion, a11y, contracts, transient state)","10 golden eval cases under evals/","agentskills.io machine-readable format"]
-    must_not: ["give non-deterministic advice","rely on agent self-reporting","drift from eval baselines"]
+    owns:
+      - enforcement rules (no hex, no media queries, no inline styles, spoons, motion, a11y, contracts, transient state)
+      - 10 golden eval cases under evals/
+      - agentskills.io machine-readable format
+    must_not:
+      - give non-deterministic advice
+      - rely on agent self-reporting
+      - drift from eval baselines
     status: active
-    notes: "enforcement truth — CI runs scripts/skills-eval.mjs"
-  - path: "P31-local-workspace/workers/device-registry"
-    repo: "workspace"
-    name: "device-registry"
-    kind: "worker"
+    notes: enforcement truth — CI runs scripts/skills-eval.mjs
+  - path: P31-local-workspace/workers/device-registry
+    repo: workspace
+    name: device-registry
+    kind: worker
     layer: L2
-    owns: ["device capability + enrollment registry"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - device capability + enrollment registry
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
-    notes: "IoT / device trust layer"
-  - path: "P31-local-workspace/workers/dispatch-router"
-    repo: "workspace"
-    name: "dispatch-router"
-    kind: "worker"
+    notes: IoT / device trust layer
+  - path: P31-local-workspace/workers/dispatch-router
+    repo: workspace
+    name: dispatch-router
+    kind: worker
     layer: L2
-    owns: ["request routing + dispatch"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - request routing + dispatch
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
     notes: "contract: routing across services"
-  - path: "P31-local-workspace/workers/edge-render"
-    repo: "workspace"
-    name: "p31-edge-render"
-    kind: "worker"
+  - path: P31-local-workspace/workers/edge-render
+    repo: workspace
+    name: p31-edge-render
+    kind: worker
     layer: L2
-    owns: ["edge rendering (Cloudflare Pages functions)"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - edge rendering (Cloudflare Pages functions)
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
     notes: "contract: SSR + ISR"
-  - path: "P31-local-workspace/workers/federation-bridge"
-    repo: "workspace"
-    name: "federation-bridge"
-    kind: "worker"
+  - path: P31-local-workspace/workers/federation-bridge
+    repo: workspace
+    name: federation-bridge
+    kind: worker
     layer: L2
-    owns: ["cross-surface identity federation","JWT + DPoP"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - cross-surface identity federation (JWT + DPoP)
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
-    notes: "identity federation across surfaces"
-  - path: "P31-local-workspace/workers/fhir-bridge"
-    repo: "workspace"
-    name: "fhir-bridge"
-    kind: "worker"
+    notes: L2 identity contract
+  - path: P31-local-workspace/workers/fhir-bridge
+    repo: workspace
+    name: fhir-bridge
+    kind: worker
     layer: L2
-    owns: ["FHIR health data bridge"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - FHIR health data bridge
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: migrate-later
-    notes: "integration contract — pending pilot decision"
-  - path: "P31-local-workspace/workers/governance-engine"
-    repo: "workspace"
-    name: "governance-engine"
-    kind: "worker"
+    notes: integration — pending pilot decision
+  - path: P31-local-workspace/workers/governance-engine
+    repo: workspace
+    name: governance-engine
+    kind: worker
     layer: L2
-    owns: ["on-chain governance voting","proposal + ratification flow"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - on-chain governance voting
+      - proposal + ratification flow
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
-    notes: "governance contract over EVM"
-  - path: "P31-local-workspace/workers/intent-resolver"
-    repo: "workspace"
+    notes: governance contract over EVM
+  - path: P31-local-workspace/workers/intent-resolver
+    repo: workspace
     name: "@p31/intent-resolver"
-    kind: "worker"
+    kind: worker
     layer: L2
-    owns: ["agentic intent → tool-call translation"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - agentic intent → action translation
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
-    notes: "orchestration L2"
-  - path: "P31-local-workspace/workers/kill-switch"
-    repo: "workspace"
-    name: "kill-switch"
-    kind: "worker"
+    notes: L2 orchestration contract
+  - path: P31-local-workspace/workers/kill-switch
+    repo: workspace
+    name: kill-switch
+    kind: worker
     layer: L2
-    owns: ["emergency halt across all surfaces"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - emergency halt across all surfaces
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
-    notes: "safety contract, always on"
-  - path: "P31-local-workspace/workers/ledger-bridge"
-    repo: "workspace"
-    name: "ledger-bridge"
-    kind: "worker"
+    notes: safety contract, always on
+  - path: P31-local-workspace/workers/ledger-bridge
+    repo: workspace
+    name: ledger-bridge
+    kind: worker
     layer: L2
-    owns: ["ledger HTTP adapter"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - ledger HTTP adapter
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
-    notes: "bridge over @p31/love-ledger"
-  - path: "P31-local-workspace/workers/love-ledger"
-    repo: "workspace"
-    name: "love-ledger"
-    kind: "worker"
+    notes: bridge over @p31/love-ledger
+  - path: P31-local-workspace/workers/love-ledger
+    repo: workspace
+    name: love-ledger
+    kind: worker
     layer: L2
-    owns: ["HTTP API wrapper over @p31/love-ledger","LOV earn/spend/give/donate/take endpoints"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - HTTP API wrapper over @p31/love-ledger
+      - LOV earn/spend/give/donate/take endpoints
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
-    notes: "workers/love-ledger — deployed API"
-  - path: "P31-local-workspace/workers/marketplace"
-    repo: "workspace"
-    name: "marketplace"
-    kind: "worker"
+    notes: workers/love-ledger — deployed API
+  - path: P31-local-workspace/workers/marketplace
+    repo: workspace
+    name: marketplace
+    kind: worker
     layer: L2
-    owns: ["worker"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - marketplace discovery and listing service
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
-    notes: "contract layer worker"
-  - path: "P31-local-workspace/workers/marketplace-catalog"
-    repo: "workspace"
-    name: "marketplace-catalog"
-    kind: "worker"
+    notes: L2 marketplace contract
+  - path: P31-local-workspace/workers/marketplace-catalog
+    repo: workspace
+    name: marketplace-catalog
+    kind: worker
     layer: L2
-    owns: ["worker"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - marketplace catalog management
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
-    notes: "contract layer worker"
-  - path: "P31-local-workspace/workers/marketplace-mcp"
-    repo: "workspace"
-    name: "marketplace-mcp"
-    kind: "mcp-server"
+    notes: L2 marketplace contract
+  - path: P31-local-workspace/workers/marketplace-mcp
+    repo: workspace
+    name: marketplace-mcp
+    kind: mcp-server
     layer: L2
-    owns: ["marketplace discovery tools"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: migrate-later
-    notes: "merge into x402 contract or retire after migration"
-  - path: "P31-local-workspace/workers/mcp-registry"
-    repo: "workspace"
+    owns:
+      - marketplace MCP tools
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
+    status: active
+    notes: L2 MCP contract (merge into x402 or design-mcp)
+  - path: P31-local-workspace/workers/mcp-registry
+    repo: workspace
     name: "@p31/mcp-registry"
-    kind: "mcp-server"
+    kind: mcp-server
     layer: L2
-    owns: ["MCP server discovery + catalog","spoke registration registry"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - MCP server discovery + catalog
+      - spoke registration registry
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
-    notes: "hub-spoke pattern registry, consumed by mcp-gateway"
-  - path: "P31-local-workspace/workers/mcp-x402-gateway"
-    repo: "workspace"
-    name: "mcp-x402-gateway"
-    kind: "mcp-server"
+    notes: hub-spoke pattern registry, consumed by mcp-gateway
+  - path: P31-local-workspace/workers/mcp-x402-gateway
+    repo: workspace
+    name: mcp-x402-gateway
+    kind: mcp-server
     layer: L2
-    owns: ["USDC/BTC micro-payment settlement","x402 v2 header negotiation","facilitator routing"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - USDC/BTC micro-payment settlement
+      - x402 v2 header negotiation
+      - facilitator routing
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
-    notes: "payment contract over HTTP"
-  - path: "P31-local-workspace/workers/mcp-x402-gateway/bridge"
-    repo: "workspace"
+    notes: payment contract over HTTP
+  - path: P31-local-workspace/workers/mcp-x402-gateway/bridge
+    repo: workspace
     name: "@p31/mcp-x402-bridge"
-    kind: "mcp-server"
+    kind: mcp-server
     layer: L2
-    owns: ["USDC/BTC micro-payment settlement","x402 v2 header negotiation","facilitator routing"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - USDC/BTC micro-payment settlement
+      - x402 v2 header negotiation
+      - facilitator routing
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
-    notes: "payment contract over HTTP"
-  - path: "P31-local-workspace/workers/membrane-coordinator"
-    repo: "workspace"
-    name: "membrane-coordinator"
-    kind: "worker"
+    notes: payment contract over HTTP
+  - path: P31-local-workspace/workers/membrane-coordinator
+    repo: workspace
+    name: membrane-coordinator
+    kind: worker
     layer: L2
-    owns: ["cross-boundary data flow coordination"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - cross-boundary data flow coordination
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
-    notes: "L2 inter-surface coordination"
-  - path: "P31-local-workspace/workers/meshy-bridge"
-    repo: "workspace"
-    name: "meshy-bridge"
-    kind: "worker"
+    notes: L2 inter-surface coordination
+  - path: P31-local-workspace/workers/meshy-bridge
+    repo: workspace
+    name: meshy-bridge
+    kind: worker
     layer: L2
-    owns: ["Meshy API bridge (3D generation)"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - Meshy API bridge (3D generation)
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: migrate-later
-    notes: "integration — pending value assessment"
-  - path: "P31-local-workspace/workers/multiplayer-room"
-    repo: "workspace"
-    name: "multiplayer-room"
-    kind: "worker"
+    notes: integration — pending value assessment
+  - path: P31-local-workspace/workers/multiplayer-room
+    repo: workspace
+    name: multiplayer-room
+    kind: worker
     layer: L2
-    owns: ["multiplayer room session coordination"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - multiplayer room session coordination
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
     notes: "contract: multiplayer state sync"
-  - path: "P31-local-workspace/workers/notification-queue"
-    repo: "workspace"
-    name: "notification-queue"
-    kind: "worker"
+  - path: P31-local-workspace/workers/notification-queue
+    repo: workspace
+    name: notification-queue
+    kind: worker
     layer: L2
-    owns: ["outbound notification queue"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - outbound notification queue
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
     notes: "contract: messaging layer"
-  - path: "P31-local-workspace/workers/oauth-relay"
-    repo: "workspace"
-    name: "p31-oauth-relay"
-    kind: "worker"
+  - path: P31-local-workspace/workers/oauth-relay
+    repo: workspace
+    name: p31-oauth-relay
+    kind: worker
     layer: L2
-    owns: ["OAuth relay / token exchange"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - OAuth relay / token exchange
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
     notes: "contract: auth relay"
-  - path: "P31-local-workspace/workers/p31-crypto-mcp"
-    repo: "workspace"
-    name: "p31-crypto-mcp"
-    kind: "mcp-server"
+  - path: P31-local-workspace/workers/p31-crypto-mcp
+    repo: workspace
+    name: p31-crypto-mcp
+    kind: mcp-server
     layer: L2
-    owns: ["ML-DSA-65/ML-KEM-768/SLH-DSA-128s","PQC keygen + sign + verify","SD-JWT issuance"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - ML-DSA-65/ML-KEM-768/SLH-DSA-128s
+      - PQC keygen + sign + verify
+      - SD-JWT issuance
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
-    notes: "post-quantum crypto layer for agent identity"
-  - path: "P31-local-workspace/workers/p31-justice-hub"
-    repo: "workspace"
-    name: "p31-justice-hub"
-    kind: "worker"
+    notes: post-quantum crypto layer for agent identity
+  - path: P31-local-workspace/workers/p31-justice-hub
+    repo: workspace
+    name: p31-justice-hub
+    kind: worker
     layer: L2
-    owns: ["worker"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - sovereign justice dispute resolution hub
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
-    notes: "contract layer worker"
-  - path: "P31-local-workspace/workers/p31-mcp-server"
-    repo: "workspace"
-    name: "p31-mcp-server"
-    kind: "mcp-server"
+    notes: L2 governance contract
+  - path: P31-local-workspace/workers/p31-mcp-server
+    repo: workspace
+    name: p31-mcp-server
+    kind: mcp-server
     layer: L2
-    owns: ["general-purpose MCP server (13 tools: token, component, recipe, converter, audit)"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - "general-purpose MCP server (13 tools: token, component, recipe, converter, audit)"
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
-    notes: "workers/p31-mcp-server — secondary MCP surface"
-  - path: "P31-local-workspace/workers/personal-swarm"
-    repo: "workspace"
-    name: "personal-swarm"
-    kind: "worker"
+    notes: workers/p31-mcp-server — secondary MCP surface
+  - path: P31-local-workspace/workers/personal-swarm
+    repo: workspace
+    name: personal-swarm
+    kind: worker
     layer: L2
-    owns: ["personal AI swarm orchestration"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - personal AI swarm orchestration
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: migrate-later
-    notes: "pending consolidation with agent-runtime"
-  - path: "P31-local-workspace/workers/phenix-wallet"
-    repo: "workspace"
-    name: "phenix-wallet"
-    kind: "worker"
+    notes: pending consolidation with agent-runtime
+  - path: P31-local-workspace/workers/phenix-wallet
+    repo: workspace
+    name: phenix-wallet
+    kind: worker
     layer: L2
-    owns: ["crypto wallet state + balance"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - crypto wallet state + balance
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
     notes: "contract: wallet layer for LOV + USDC"
-  - path: "P31-local-workspace/workers/phenix-wallet-mcp"
-    repo: "workspace"
-    name: "phenix-wallet-mcp"
-    kind: "mcp-server"
+  - path: P31-local-workspace/workers/phenix-wallet-mcp
+    repo: workspace
+    name: phenix-wallet-mcp
+    kind: mcp-server
     layer: L2
-    owns: ["wallet introspection tools"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - wallet introspection tools
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: migrate-later
-    notes: "merge into design-mcp or retire after migration"
-  - path: "P31-local-workspace/workers/phos"
-    repo: "workspace"
-    name: "p31-phos-worker"
-    kind: "worker"
-    layer: L2
-    owns: ["worker"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    notes: merge into design-mcp or retire after migration
+  - path: P31-local-workspace/workers/phos
+    repo: workspace
+    name: p31-phos-worker
+    kind: worker
+    layer: L3
+    owns:
+      - Phos portal backend worker
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
-    notes: "contract layer worker"
-  - path: "P31-local-workspace/workers/phos-backup"
-    repo: "workspace"
-    name: "phos-backup"
-    kind: "worker"
+    notes: L3 surface backend
+  - path: P31-local-workspace/workers/phos-backup
+    repo: workspace
+    name: phos-backup
+    kind: worker
     layer: L2
-    owns: ["worker"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "contract layer worker"
-  - path: "P31-local-workspace/workers/phos-triad"
-    repo: "workspace"
-    name: "p31-phos-triad"
-    kind: "worker"
-    layer: L2
-    owns: ["worker"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "contract layer worker"
-  - path: "P31-local-workspace/workers/phosphorus31"
-    repo: "workspace"
-    name: "p31-phosphorus31"
-    kind: "worker"
-    layer: L2
-    owns: ["worker"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "contract layer worker"
-  - path: "P31-local-workspace/workers/pilot-dashboard"
-    repo: "workspace"
-    name: "pilot-dashboard"
-    kind: "worker"
-    layer: L2
-    owns: ["pilot metrics dashboard API"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - Phos backup and replication service
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: migrate-later
-    notes: "pending pilot expansion"
-  - path: "P31-local-workspace/workers/q-factor"
-    repo: "workspace"
-    name: "q-factor"
-    kind: "worker"
+    notes: pending consolidation
+  - path: P31-local-workspace/workers/phos-triad
+    repo: workspace
+    name: p31-phos-triad
+    kind: worker
     layer: L2
-    owns: ["quality factor scoring","compliance scoring"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - Phos triad coordination service
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
+    status: active
+    notes: L2 service contract
+  - path: P31-local-workspace/workers/phosphorus31
+    repo: workspace
+    name: p31-phosphorus31
+    kind: worker
+    layer: L3
+    owns:
+      - phosphorus31 portal backend worker
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
+    status: active
+    notes: L3 surface backend
+  - path: P31-local-workspace/workers/pilot-dashboard
+    repo: workspace
+    name: pilot-dashboard
+    kind: worker
+    layer: L2
+    owns:
+      - pilot metrics dashboard API
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
+    status: migrate-later
+    notes: pending pilot expansion
+  - path: P31-local-workspace/workers/q-factor
+    repo: workspace
+    name: q-factor
+    kind: worker
+    layer: L2
+    owns:
+      - quality factor scoring
+      - compliance scoring
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
     notes: "contract: quality scoring"
-  - path: "P31-local-workspace/workers/roblox-bridge"
-    repo: "workspace"
-    name: "roblox-bridge"
-    kind: "worker"
+  - path: P31-local-workspace/workers/roblox-bridge
+    repo: workspace
+    name: roblox-bridge
+    kind: worker
     layer: L2
-    owns: ["Roblox integration bridge"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - Roblox integration bridge
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: migrate-later
-    notes: "pending game integration decisions"
-  - path: "P31-local-workspace/workers/secret-rotator"
-    repo: "workspace"
-    name: "secret-rotator"
-    kind: "worker"
+    notes: pending game integration decisions
+  - path: P31-local-workspace/workers/secret-rotator
+    repo: workspace
+    name: secret-rotator
+    kind: worker
     layer: L2
-    owns: ["Cloudflare secret rotation","token expiry management"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - Cloudflare secret rotation
+      - token expiry management
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
-    notes: "ops contract"
-  - path: "P31-local-workspace/workers/shadow-bridge"
-    repo: "workspace"
-    name: "shadow-bridge"
-    kind: "worker"
+    notes: ops contract
+  - path: P31-local-workspace/workers/shadow-bridge
+    repo: workspace
+    name: shadow-bridge
+    kind: worker
     layer: L2
-    owns: ["shadow data bridge"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - shadow data bridge
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: migrate-later
-    notes: "pending value assessment"
-  - path: "P31-local-workspace/workers/signaling"
-    repo: "workspace"
-    name: "signaling"
-    kind: "worker"
+    notes: pending value assessment
+  - path: P31-local-workspace/workers/signaling
+    repo: workspace
+    name: signaling
+    kind: worker
     layer: L2
-    owns: ["WebSocket signaling (peer mesh)"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - WebSocket signaling (peer mesh)
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
     notes: "contract: real-time signaling"
-  - path: "P31-local-workspace/workers/social-drop-automation"
-    repo: "workspace"
-    name: "p31-social-worker"
-    kind: "worker"
+  - path: P31-local-workspace/workers/social-drop-automation
+    repo: workspace
+    name: p31-social-worker
+    kind: worker
     layer: L2
-    owns: ["worker"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - worker
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
-    notes: "contract layer worker"
-  - path: "P31-local-workspace/workers/sovereign-agent"
-    repo: "workspace"
-    name: "sovereign-agent"
-    kind: "worker"
+    notes: contract layer worker
+  - path: P31-local-workspace/workers/sovereign-agent
+    repo: workspace
+    name: sovereign-agent
+    kind: worker
     layer: L2
-    owns: ["sovereign agent runtime"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - sovereign agent runtime
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: migrate-later
-    notes: "pending sovereign stack consolidation"
-  - path: "P31-local-workspace/workers/swarm-router"
-    repo: "workspace"
-    name: "swarm-router"
-    kind: "worker"
+    notes: pending sovereign stack consolidation
+  - path: P31-local-workspace/workers/swarm-router
+    repo: workspace
+    name: swarm-router
+    kind: worker
     layer: L2
-    owns: ["swarm task routing"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - swarm task routing
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
     notes: "contract: swarm orchestration"
-  - path: "P31-local-workspace/workers/taler-bridge-billing"
-    repo: "workspace"
-    name: "taler-bridge-billing"
-    kind: "worker"
+  - path: P31-local-workspace/workers/taler-bridge-billing
+    repo: workspace
+    name: taler-bridge-billing
+    kind: worker
     layer: L2
-    owns: ["Taler billing bridge"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - Taler billing bridge
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: migrate-later
-    notes: "integration — evaluate retention"
-  - path: "P31-local-workspace/workers/terminal-relay"
-    repo: "workspace"
-    name: "terminal-relay"
-    kind: "worker"
+    notes: integration — evaluate retention
+  - path: P31-local-workspace/workers/terminal-relay
+    repo: workspace
+    name: terminal-relay
+    kind: worker
     layer: L2
-    owns: ["terminal relay (SSH/tmux bridge)"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - terminal relay (SSH/tmux bridge)
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: migrate-later
-    notes: "evaluate value; deprecate if unused"
-  - path: "P31-local-workspace/workers/tetra-tools"
-    repo: "workspace"
-    name: "tetra-tools"
-    kind: "worker"
+    notes: evaluate value; deprecate if unused
+  - path: P31-local-workspace/workers/tetra-tools
+    repo: workspace
+    name: tetra-tools
+    kind: worker
     layer: L2
-    owns: ["tetrahedral layout + K4 geometry tools"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - tetrahedral geometry computation tools
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
-    notes: "contract: geometry layer"
-  - path: "P31-local-workspace/workers/vibe-generate"
-    repo: "workspace"
-    name: "vibe-generate"
-    kind: "worker"
+    notes: L2 geometry contract
+  - path: P31-local-workspace/workers/vibe-generate
+    repo: workspace
+    name: vibe-generate
+    kind: worker
     layer: L2
-    owns: ["vibe code generation"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - vibe code generation
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: migrate-later
     notes: "evaluate: consolidate with p31-mcp or retire"
-  - path: "P31-local-workspace/workers/vibe-sandbox"
-    repo: "workspace"
-    name: "vibe-sandbox"
-    kind: "worker"
+  - path: P31-local-workspace/workers/vibe-sandbox
+    repo: workspace
+    name: vibe-sandbox
+    kind: worker
     layer: L2
-    owns: ["vibe code sandbox execution"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    owns:
+      - vibe code sandbox execution
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: migrate-later
     notes: "evaluate: consolidate with sandbox-sdk or retire"
-  - path: "P31-local-workspace/workers/willow"
-    repo: "workspace"
-    name: "p31-willow"
-    kind: "worker"
-    layer: L2
-    owns: ["worker"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "contract layer worker"
-  - path: "P31-local-workspace/workers/willow-safety"
-    repo: "workspace"
-    name: "willow-safety"
-    kind: "worker"
-    layer: L2
-    owns: ["worker"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
-    status: active
-    notes: "contract layer worker"
-  - path: "production/monetization"
-    repo: "production"
-    name: "p31-monetization"
-    kind: "package"
+  - path: P31-local-workspace/workers/willow
+    repo: workspace
+    name: p31-willow
+    kind: worker
     layer: L3
-    owns: ["monetization dashboard surface"]
-    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    owns:
+      - Willow portal backend worker
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: active
-    notes: "L3 monetization surface"
-  - path: "production/portals/chat"
-    repo: "production"
+    notes: L3 surface backend
+  - path: P31-local-workspace/workers/willow-safety
+    repo: workspace
+    name: willow-safety
+    kind: worker
+    layer: L2
+    owns:
+      - Willow safety monitoring service
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
+    status: migrate-later
+    notes: pending consolidation
+  - path: production/monetization
+    repo: production
+    name: p31-monetization
+    kind: package
+    layer: L3
+    owns:
+      - monetization dashboard surface
+    must_not:
+      - import L2 internals directly (must go through contract API)
+      - hardcode tokens
+      - bypass mode guards
+      - hold identity state
+      - directly write to D1 without L2 wrapper
+    status: active
+    notes: L3 monetization surface
+  - path: production/portals/chat
+    repo: production
     name: "@p31-portals/chat"
-    kind: "surface"
+    kind: surface
     layer: L3
-    owns: ["chat.p31ca.org (chat portal)"]
-    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    owns:
+      - chat.p31ca.org (chat portal)
+    must_not:
+      - import L2 internals directly (must go through contract API)
+      - hardcode tokens
+      - bypass mode guards
+      - hold identity state
+      - directly write to D1 without L2 wrapper
     status: active
-    notes: "L3 portal surface"
-  - path: "production/portals/children"
-    repo: "production"
+    notes: L3 portal surface
+  - path: production/portals/children
+    repo: production
     name: "@p31-portals/children"
-    kind: "surface"
+    kind: surface
     layer: L3
-    owns: ["children portal (6-12 age surface)"]
-    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    owns:
+      - children portal (6-12 age surface)
+    must_not:
+      - import L2 internals directly (must go through contract API)
+      - hardcode tokens
+      - bypass mode guards
+      - hold identity state
+      - directly write to D1 without L2 wrapper
     status: active
-    notes: "L3 portal surface"
-  - path: "production/portals/design"
-    repo: "production"
+    notes: L3 portal surface
+  - path: production/portals/design
+    repo: production
     name: "@p31-portals/design"
-    kind: "surface"
+    kind: surface
     layer: L3
-    owns: ["design.p31ca.org (design portal, Storybook)"]
-    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    owns:
+      - design.p31ca.org (design portal, Storybook)
+    must_not:
+      - import L2 internals directly (must go through contract API)
+      - hardcode tokens
+      - bypass mode guards
+      - hold identity state
+      - directly write to D1 without L2 wrapper
     status: active
-    notes: "L3 portal surface"
-  - path: "production/portals/meatspace"
-    repo: "production"
+    notes: L3 portal surface
+  - path: production/portals/meatspace
+    repo: production
     name: "@p31-portals/meatspace"
-    kind: "surface"
+    kind: surface
     layer: L3
-    owns: ["meatspace portal (adult surface)"]
-    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    owns:
+      - meatspace portal (adult surface)
+    must_not:
+      - import L2 internals directly (must go through contract API)
+      - hardcode tokens
+      - bypass mode guards
+      - hold identity state
+      - directly write to D1 without L2 wrapper
     status: active
-    notes: "L3 portal surface"
-  - path: "production/portals/parent"
-    repo: "production"
+    notes: L3 portal surface
+  - path: production/portals/parent
+    repo: production
     name: "@p31-portals/parent"
-    kind: "surface"
+    kind: surface
     layer: L3
-    owns: ["parent portal (adult guard + child profile)"]
-    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    owns:
+      - parent portal (adult guard + child profile)
+    must_not:
+      - import L2 internals directly (must go through contract API)
+      - hardcode tokens
+      - bypass mode guards
+      - hold identity state
+      - directly write to D1 without L2 wrapper
     status: active
-    notes: "L3 portal surface"
-  - path: "production/portals/qpj"
-    repo: "production"
+    notes: L3 portal surface
+  - path: production/portals/qpj
+    repo: production
     name: "@p31/portals-qpj"
-    kind: "surface"
+    kind: surface
     layer: L3
-    owns: ["qpj.p31ca.org (quantum pickle jar portal)"]
-    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    owns:
+      - qpj.p31ca.org (quantum pickle jar portal)
+    must_not:
+      - import L2 internals directly (must go through contract API)
+      - hardcode tokens
+      - bypass mode guards
+      - hold identity state
+      - directly write to D1 without L2 wrapper
     status: active
-    notes: "L3 portal surface, WebMCP Phase 1 complete"
-  - path: "production/portals/teen"
-    repo: "production"
+    notes: L3 portal surface, WebMCP Phase 1 complete
+  - path: production/portals/teen
+    repo: production
     name: "@p31-portals/teen"
-    kind: "surface"
+    kind: surface
     layer: L3
-    owns: ["teen portal (13-17 age surface)"]
-    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    owns:
+      - teen portal (13-17 age surface)
+    must_not:
+      - import L2 internals directly (must go through contract API)
+      - hardcode tokens
+      - bypass mode guards
+      - hold identity state
+      - directly write to D1 without L2 wrapper
     status: active
-    notes: "L3 portal surface"
-  - path: "production/portals/template"
-    repo: "production"
+    notes: L3 portal surface
+  - path: production/portals/template
+    repo: production
     name: "@p31/portals-template"
-    kind: "surface"
+    kind: surface
     layer: L3
-    owns: ["template portal scaffold"]
-    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    owns:
+      - template portal scaffold
+    must_not:
+      - import L2 internals directly (must go through contract API)
+      - hardcode tokens
+      - bypass mode guards
+      - hold identity state
+      - directly write to D1 without L2 wrapper
     status: active
-    notes: "L3 scaffold — use to create new portals"
-  - path: "production/shell"
-    repo: "production"
-    name: "p31-shell"
-    kind: "surface"
+    notes: L3 scaffold — use to create new portals
+  - path: production/shell
+    repo: production
+    name: p31-shell
+    kind: surface
     layer: L3
-    owns: ["app.p31ca.org (P31 shell app)"]
-    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    owns:
+      - app.p31ca.org (P31 shell app)
+    must_not:
+      - import L2 internals directly (must go through contract API)
+      - hardcode tokens
+      - bypass mode guards
+      - hold identity state
+      - directly write to D1 without L2 wrapper
     status: active
-    notes: "L3 shell surface"
-  - path: "production/shell/scripts/verify-shell"
-    repo: "production"
-    name: "verify-shell"
-    kind: "surface"
+    notes: L3 shell surface
+  - path: production/shell/scripts/verify-shell
+    repo: production
+    name: verify-shell
+    kind: surface
     layer: L3
-    owns: ["app.p31ca.org (P31 shell app)"]
-    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    owns:
+      - app.p31ca.org (P31 shell app)
+    must_not:
+      - import L2 internals directly (must go through contract API)
+      - hardcode tokens
+      - bypass mode guards
+      - hold identity state
+      - directly write to D1 without L2 wrapper
     status: active
-    notes: "L3 shell surface"
-  - path: "P31-local-workspace/apps/agent-demo"
-    repo: "workspace"
-    name: "agent-demo"
-    kind: "surface"
+    notes: L3 shell surface
+  - path: P31-local-workspace/apps/agent-demo
+    repo: workspace
+    name: agent-demo
+    kind: surface
     layer: L3
-    owns: ["product surface (app)"]
-    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    owns:
+      - product surface (app)
+    must_not:
+      - import L2 internals directly (must go through contract API)
+      - hardcode tokens
+      - bypass mode guards
+      - hold identity state
+      - directly write to D1 without L2 wrapper
     status: active
-    notes: "L3 surface — app surface"
-  - path: "P31-local-workspace/apps/app-builder"
-    repo: "workspace"
-    name: "p31-app-builder"
-    kind: "surface"
+    notes: L3 surface — app surface
+  - path: P31-local-workspace/apps/app-builder
+    repo: workspace
+    name: p31-app-builder
+    kind: surface
     layer: L3
-    owns: ["product surface (app)"]
-    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    owns:
+      - product surface (app)
+    must_not:
+      - import L2 internals directly (must go through contract API)
+      - hardcode tokens
+      - bypass mode guards
+      - hold identity state
+      - directly write to D1 without L2 wrapper
     status: active
-    notes: "L3 surface — app surface"
-  - path: "P31-local-workspace/apps/arcade"
-    repo: "workspace"
-    name: "arcade"
-    kind: "surface"
+    notes: L3 surface — app surface
+  - path: P31-local-workspace/apps/arcade
+    repo: workspace
+    name: arcade
+    kind: surface
     layer: L3
-    owns: ["product surface (app)"]
-    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    owns:
+      - product surface (app)
+    must_not:
+      - import L2 internals directly (must go through contract API)
+      - hardcode tokens
+      - bypass mode guards
+      - hold identity state
+      - directly write to D1 without L2 wrapper
     status: active
-    notes: "L3 surface — app surface"
-  - path: "P31-local-workspace/apps/auth"
-    repo: "workspace"
+    notes: L3 surface — app surface
+  - path: P31-local-workspace/apps/auth
+    repo: workspace
     name: "@p31/auth"
-    kind: "surface"
+    kind: surface
     layer: L3
-    owns: ["auth surface (login + passport)"]
-    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    owns:
+      - auth surface (login + passport)
+    must_not:
+      - import L2 internals directly (must go through contract API)
+      - hardcode tokens
+      - bypass mode guards
+      - hold identity state
+      - directly write to D1 without L2 wrapper
     status: active
-    notes: "L3 auth UI"
-  - path: "P31-local-workspace/apps/bash"
-    repo: "workspace"
+    notes: L3 auth UI
+  - path: P31-local-workspace/apps/bash
+    repo: workspace
     name: "@p31/bash"
-    kind: "surface"
+    kind: surface
     layer: L3
-    owns: ["product surface (app)"]
-    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    owns:
+      - product surface (app)
+    must_not:
+      - import L2 internals directly (must go through contract API)
+      - hardcode tokens
+      - bypass mode guards
+      - hold identity state
+      - directly write to D1 without L2 wrapper
     status: active
-    notes: "L3 surface — app surface"
-  - path: "P31-local-workspace/apps/bonding"
-    repo: "workspace"
-    name: "bonding"
-    kind: "surface"
+    notes: L3 surface — app surface
+  - path: P31-local-workspace/apps/bonding
+    repo: workspace
+    name: bonding
+    kind: surface
     layer: L3
-    owns: ["BONDING game surface"]
-    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    owns:
+      - BONDING game surface
+    must_not:
+      - import L2 internals directly (must go through contract API)
+      - hardcode tokens
+      - bypass mode guards
+      - hold identity state
+      - directly write to D1 without L2 wrapper
     status: active
-    notes: "L3 game surface"
-  - path: "P31-local-workspace/apps/counterscale"
-    repo: "workspace"
-    name: "counterscale"
-    kind: "surface"
+    notes: L3 game surface
+  - path: P31-local-workspace/apps/counterscale
+    repo: workspace
+    name: counterscale
+    kind: surface
     layer: L3
-    owns: ["product surface (app)"]
-    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    owns:
+      - product surface (app)
+    must_not:
+      - import L2 internals directly (must go through contract API)
+      - hardcode tokens
+      - bypass mode guards
+      - hold identity state
+      - directly write to D1 without L2 wrapper
     status: active
-    notes: "L3 surface — app surface"
-  - path: "P31-local-workspace/apps/design-hub"
-    repo: "workspace"
-    name: "design-hub"
-    kind: "surface"
+    notes: L3 surface — app surface
+  - path: P31-local-workspace/apps/design-hub
+    repo: workspace
+    name: design-hub
+    kind: surface
     layer: L3
-    owns: ["product surface (app)"]
-    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    owns:
+      - product surface (app)
+    must_not:
+      - import L2 internals directly (must go through contract API)
+      - hardcode tokens
+      - bypass mode guards
+      - hold identity state
+      - directly write to D1 without L2 wrapper
     status: active
-    notes: "L3 surface — app surface"
-  - path: "P31-local-workspace/apps/docs"
-    repo: "workspace"
-    name: "p31-docs"
-    kind: "surface"
+    notes: L3 surface — app surface
+  - path: P31-local-workspace/apps/docs
+    repo: workspace
+    name: p31-docs
+    kind: surface
     layer: L3
-    owns: ["product surface (app)"]
-    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    owns:
+      - product surface (app)
+    must_not:
+      - import L2 internals directly (must go through contract API)
+      - hardcode tokens
+      - bypass mode guards
+      - hold identity state
+      - directly write to D1 without L2 wrapper
     status: active
-    notes: "L3 surface — app surface"
-  - path: "P31-local-workspace/apps/game-builder"
-    repo: "workspace"
-    name: "game-builder"
-    kind: "surface"
+    notes: L3 surface — app surface
+  - path: P31-local-workspace/apps/game-builder
+    repo: workspace
+    name: game-builder
+    kind: surface
     layer: L3
-    owns: ["game builder UI + logic"]
-    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    owns:
+      - game builder UI + logic
+    must_not:
+      - import L2 internals directly (must go through contract API)
+      - hardcode tokens
+      - bypass mode guards
+      - hold identity state
+      - directly write to D1 without L2 wrapper
     status: migrate-later
-    notes: "pending value assessment"
-  - path: "P31-local-workspace/apps/gateway"
-    repo: "workspace"
-    name: "gateway"
-    kind: "surface"
+    notes: pending value assessment
+  - path: P31-local-workspace/apps/gateway
+    repo: workspace
+    name: gateway
+    kind: surface
     layer: L3
-    owns: ["product surface (app)"]
-    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    owns:
+      - product surface (app)
+    must_not:
+      - import L2 internals directly (must go through contract API)
+      - hardcode tokens
+      - bypass mode guards
+      - hold identity state
+      - directly write to D1 without L2 wrapper
     status: active
-    notes: "L3 surface — app surface"
-  - path: "P31-local-workspace/apps/growth-dashboard"
-    repo: "workspace"
-    name: "growth-dashboard"
-    kind: "surface"
+    notes: L3 surface — app surface
+  - path: P31-local-workspace/apps/growth-dashboard
+    repo: workspace
+    name: growth-dashboard
+    kind: surface
     layer: L3
-    owns: ["product surface (app)"]
-    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    owns:
+      - product surface (app)
+    must_not:
+      - import L2 internals directly (must go through contract API)
+      - hardcode tokens
+      - bypass mode guards
+      - hold identity state
+      - directly write to D1 without L2 wrapper
     status: active
-    notes: "L3 surface — app surface"
-  - path: "P31-local-workspace/apps/k4-cage"
-    repo: "workspace"
-    name: "k4-cage"
-    kind: "surface"
+    notes: L3 surface — app surface
+  - path: P31-local-workspace/apps/k4-cage
+    repo: workspace
+    name: k4-cage
+    kind: surface
     layer: L3
-    owns: ["K4 tetrahedral cage (WebGL)"]
-    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    owns:
+      - K4 tetrahedral cage (WebGL)
+    must_not:
+      - import L2 internals directly (must go through contract API)
+      - hardcode tokens
+      - bypass mode guards
+      - hold identity state
+      - directly write to D1 without L2 wrapper
     status: active
-    notes: "L3 experiential surface"
-  - path: "P31-local-workspace/apps/p31ca"
-    repo: "workspace"
-    name: "p31ca"
-    kind: "surface"
+    notes: L3 experiential surface
+  - path: P31-local-workspace/apps/p31ca
+    repo: workspace
+    name: p31ca
+    kind: surface
     layer: L3
-    owns: ["p31ca.org main site (Astro)"]
-    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    owns:
+      - p31ca.org main site (Astro)
+    must_not:
+      - import L2 internals directly (must go through contract API)
+      - hardcode tokens
+      - bypass mode guards
+      - hold identity state
+      - directly write to D1 without L2 wrapper
     status: active
-    notes: "L3 marketing + docs surface"
-  - path: "P31-local-workspace/apps/p31ca/workers/glass-box-ws"
-    repo: "workspace"
-    name: "glass-box-ws"
-    kind: "surface"
+    notes: L3 marketing + docs surface
+  - path: P31-local-workspace/apps/p31ca/workers/glass-box-ws
+    repo: workspace
+    name: glass-box-ws
+    kind: surface
     layer: L3
-    owns: ["p31ca.org main site (Astro)"]
-    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    owns:
+      - p31ca.org main site (Astro)
+    must_not:
+      - import L2 internals directly (must go through contract API)
+      - hardcode tokens
+      - bypass mode guards
+      - hold identity state
+      - directly write to D1 without L2 wrapper
     status: active
-    notes: "L3 marketing + docs surface"
-  - path: "P31-local-workspace/apps/p31ca/workers/passkey"
-    repo: "workspace"
-    name: "passkey"
-    kind: "surface"
+    notes: L3 marketing + docs surface
+  - path: P31-local-workspace/apps/p31ca/workers/passkey
+    repo: workspace
+    name: passkey
+    kind: surface
     layer: L3
-    owns: ["p31ca.org main site (Astro)"]
-    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    owns:
+      - p31ca.org main site (Astro)
+    must_not:
+      - import L2 internals directly (must go through contract API)
+      - hardcode tokens
+      - bypass mode guards
+      - hold identity state
+      - directly write to D1 without L2 wrapper
     status: active
-    notes: "L3 marketing + docs surface"
-  - path: "P31-local-workspace/apps/p31ca/workers/sync"
-    repo: "workspace"
-    name: "p31-sync-worker"
-    kind: "surface"
+    notes: L3 marketing + docs surface
+  - path: P31-local-workspace/apps/p31ca/workers/sync
+    repo: workspace
+    name: p31-sync-worker
+    kind: surface
     layer: L3
-    owns: ["p31ca.org main site (Astro)"]
-    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    owns:
+      - p31ca.org main site (Astro)
+    must_not:
+      - import L2 internals directly (must go through contract API)
+      - hardcode tokens
+      - bypass mode guards
+      - hold identity state
+      - directly write to D1 without L2 wrapper
     status: active
-    notes: "L3 marketing + docs surface"
-  - path: "P31-local-workspace/apps/passport-www"
-    repo: "workspace"
-    name: "passport-www"
-    kind: "surface"
+    notes: L3 marketing + docs surface
+  - path: P31-local-workspace/apps/passport-www
+    repo: workspace
+    name: passport-www
+    kind: surface
     layer: L3
-    owns: ["product surface (app)"]
-    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    owns:
+      - product surface (app)
+    must_not:
+      - import L2 internals directly (must go through contract API)
+      - hardcode tokens
+      - bypass mode guards
+      - hold identity state
+      - directly write to D1 without L2 wrapper
     status: active
-    notes: "L3 surface — app surface"
-  - path: "P31-local-workspace/apps/phos"
-    repo: "workspace"
-    name: "phos"
-    kind: "surface"
+    notes: L3 surface — app surface
+  - path: P31-local-workspace/apps/phos
+    repo: workspace
+    name: phos
+    kind: surface
     layer: L3
-    owns: ["product surface (app)"]
-    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    owns:
+      - product surface (app)
+    must_not:
+      - import L2 internals directly (must go through contract API)
+      - hardcode tokens
+      - bypass mode guards
+      - hold identity state
+      - directly write to D1 without L2 wrapper
     status: active
-    notes: "L3 surface — app surface"
-  - path: "P31-local-workspace/apps/phos/src/workers/backup-export"
-    repo: "workspace"
-    name: "backup-export"
-    kind: "surface"
+    notes: L3 surface — app surface
+  - path: P31-local-workspace/apps/phos/src/workers/backup-export
+    repo: workspace
+    name: backup-export
+    kind: surface
     layer: L3
-    owns: ["Phos portal surface"]
-    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    owns:
+      - Phos portal surface
+    must_not:
+      - import L2 internals directly (must go through contract API)
+      - hardcode tokens
+      - bypass mode guards
+      - hold identity state
+      - directly write to D1 without L2 wrapper
     status: migrate-later
-    notes: "L3 surface — pending phos architecture decision"
-  - path: "P31-local-workspace/apps/phos/worker-ai-proxy"
-    repo: "workspace"
-    name: "phos-ai-proxy"
-    kind: "surface"
+    notes: L3 surface — pending phos architecture decision
+  - path: P31-local-workspace/apps/phos/worker-ai-proxy
+    repo: workspace
+    name: phos-ai-proxy
+    kind: surface
     layer: L3
-    owns: ["Phos portal surface"]
-    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    owns:
+      - Phos portal surface
+    must_not:
+      - import L2 internals directly (must go through contract API)
+      - hardcode tokens
+      - bypass mode guards
+      - hold identity state
+      - directly write to D1 without L2 wrapper
     status: migrate-later
-    notes: "L3 surface — pending phos architecture decision"
-  - path: "P31-local-workspace/apps/phosphorus31"
-    repo: "workspace"
-    name: "planetary-planet"
-    kind: "surface"
+    notes: L3 surface — pending phos architecture decision
+  - path: P31-local-workspace/apps/phosphorus31
+    repo: workspace
+    name: planetary-planet
+    kind: surface
     layer: L3
-    owns: ["product surface (app)"]
-    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    owns:
+      - product surface (app)
+    must_not:
+      - import L2 internals directly (must go through contract API)
+      - hardcode tokens
+      - bypass mode guards
+      - hold identity state
+      - directly write to D1 without L2 wrapper
     status: active
-    notes: "L3 surface — app surface"
-  - path: "P31-local-workspace/apps/status"
-    repo: "workspace"
-    name: "status"
-    kind: "surface"
+    notes: L3 surface — app surface
+  - path: P31-local-workspace/apps/status
+    repo: workspace
+    name: status
+    kind: surface
     layer: L3
-    owns: ["product surface (app)"]
-    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    owns:
+      - product surface (app)
+    must_not:
+      - import L2 internals directly (must go through contract API)
+      - hardcode tokens
+      - bypass mode guards
+      - hold identity state
+      - directly write to D1 without L2 wrapper
     status: active
-    notes: "L3 surface — app surface"
-  - path: "P31-local-workspace/apps/storybook"
-    repo: "workspace"
-    name: "storybook"
-    kind: "surface"
+    notes: L3 surface — app surface
+  - path: P31-local-workspace/apps/storybook
+    repo: workspace
+    name: storybook
+    kind: surface
     layer: L3
-    owns: ["product surface (app)"]
-    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    owns:
+      - product surface (app)
+    must_not:
+      - import L2 internals directly (must go through contract API)
+      - hardcode tokens
+      - bypass mode guards
+      - hold identity state
+      - directly write to D1 without L2 wrapper
     status: active
-    notes: "L3 surface — app surface"
-  - path: "P31-local-workspace/apps/tetra-ops"
-    repo: "workspace"
-    name: "tetra-ops"
-    kind: "surface"
+    notes: L3 surface — app surface
+  - path: P31-local-workspace/apps/tetra-ops
+    repo: workspace
+    name: tetra-ops
+    kind: surface
     layer: L3
-    owns: ["product surface (app)"]
-    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    owns:
+      - product surface (app)
+    must_not:
+      - import L2 internals directly (must go through contract API)
+      - hardcode tokens
+      - bypass mode guards
+      - hold identity state
+      - directly write to D1 without L2 wrapper
     status: active
-    notes: "L3 surface — app surface"
-  - path: "P31-local-workspace/apps/website-builder"
-    repo: "workspace"
-    name: "website-builder"
-    kind: "surface"
+    notes: L3 surface — app surface
+  - path: P31-local-workspace/apps/website-builder
+    repo: workspace
+    name: website-builder
+    kind: surface
     layer: L3
-    owns: ["product surface (app)"]
-    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    owns:
+      - product surface (app)
+    must_not:
+      - import L2 internals directly (must go through contract API)
+      - hardcode tokens
+      - bypass mode guards
+      - hold identity state
+      - directly write to D1 without L2 wrapper
     status: active
-    notes: "L3 surface — app surface"
-  - path: "P31-local-workspace/apps/willow"
-    repo: "workspace"
-    name: "willow"
-    kind: "surface"
+    notes: L3 surface — app surface
+  - path: P31-local-workspace/apps/willow
+    repo: workspace
+    name: willow
+    kind: surface
     layer: L3
-    owns: ["product surface (app)"]
-    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    owns:
+      - product surface (app)
+    must_not:
+      - import L2 internals directly (must go through contract API)
+      - hardcode tokens
+      - bypass mode guards
+      - hold identity state
+      - directly write to D1 without L2 wrapper
     status: active
-    notes: "L3 surface — app surface"
-  - path: "P31-local-workspace/apps/willow-preview"
-    repo: "workspace"
-    name: "willow-preview"
-    kind: "surface"
+    notes: L3 surface — app surface
+  - path: P31-local-workspace/apps/willow-preview
+    repo: workspace
+    name: willow-preview
+    kind: surface
     layer: L3
-    owns: ["product surface (app)"]
-    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    owns:
+      - product surface (app)
+    must_not:
+      - import L2 internals directly (must go through contract API)
+      - hardcode tokens
+      - bypass mode guards
+      - hold identity state
+      - directly write to D1 without L2 wrapper
     status: active
-    notes: "L3 surface — app surface"
-  - path: "P31-local-workspace/p31-surrogate-backend"
-    repo: "workspace"
-    name: "p31-surrogate-backend"
-    kind: "identity"
+    notes: L3 surface — app surface
+  - path: P31-local-workspace/p31-surrogate-backend
+    repo: workspace
+    name: p31-surrogate-backend
+    kind: identity
     layer: L3
-    owns: ["p31 surrogate backend"]
-    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    owns:
+      - p31 surrogate backend
+    must_not:
+      - import L2 internals directly (must go through contract API)
+      - hardcode tokens
+      - bypass mode guards
+      - hold identity state
+      - directly write to D1 without L2 wrapper
     status: migrate-later
-    notes: "L3 backend surface — pending consolidation"
-  - path: "P31-local-workspace/packages/bonding"
-    repo: "workspace"
+    notes: L3 backend surface — pending consolidation
+  - path: P31-local-workspace/packages/bonding
+    repo: workspace
     name: "@p31/bonding"
-    kind: "package"
+    kind: package
     layer: L3
-    owns: ["BONDING game surface"]
-    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    owns:
+      - BONDING game surface
+    must_not:
+      - import L2 internals directly (must go through contract API)
+      - hardcode tokens
+      - bypass mode guards
+      - hold identity state
+      - directly write to D1 without L2 wrapper
     status: active
-    notes: "L3 game surface"
-  - path: "P31-local-workspace/packages/spaceship-earth"
-    repo: "workspace"
+    notes: L3 game surface
+  - path: P31-local-workspace/packages/spaceship-earth
+    repo: workspace
     name: "@p31/spaceship-earth"
-    kind: "package"
+    kind: package
     layer: L3
-    owns: ["Spaceship Earth UX"]
-    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    owns:
+      - Spaceship Earth UX
+    must_not:
+      - import L2 internals directly (must go through contract API)
+      - hardcode tokens
+      - bypass mode guards
+      - hold identity state
+      - directly write to D1 without L2 wrapper
     status: active
-    notes: "L3 experiential surface"
-  - path: "P31-local-workspace/packages/spaceship-earth/astro-landing"
-    repo: "workspace"
-    name: "spaceship-earth-astro-landing"
-    kind: "package"
+    notes: L3 experiential surface
+  - path: P31-local-workspace/packages/spaceship-earth/astro-landing
+    repo: workspace
+    name: spaceship-earth-astro-landing
+    kind: package
     layer: L3
-    owns: ["Spaceship Earth UX"]
-    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    owns:
+      - Spaceship Earth UX
+    must_not:
+      - import L2 internals directly (must go through contract API)
+      - hardcode tokens
+      - bypass mode guards
+      - hold identity state
+      - directly write to D1 without L2 wrapper
     status: active
-    notes: "L3 experiential surface"
-  - path: "P31-local-workspace/phosphorus31.org/planetary-planet"
-    repo: "workspace"
-    name: "planetary-planet"
-    kind: "package"
+    notes: L3 experiential surface
+  - path: P31-local-workspace/phosphorus31.org/planetary-planet
+    repo: workspace
+    name: planetary-planet
+    kind: package
     layer: L3
-    owns: ["phosphorus31.org surface"]
-    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    owns:
+      - phosphorus31.org surface
+    must_not:
+      - import L2 internals directly (must go through contract API)
+      - hardcode tokens
+      - bypass mode guards
+      - hold identity state
+      - directly write to D1 without L2 wrapper
     status: active
-    notes: "L3 marketing surface"
-  - path: "P31-local-workspace/software/bonding"
-    repo: "workspace"
+    notes: L3 marketing surface
+  - path: P31-local-workspace/software/bonding
+    repo: workspace
     name: "@p31/bonding"
-    kind: "package"
+    kind: package
     layer: L3
-    owns: ["BONDING game surface"]
-    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    owns:
+      - BONDING game surface
+    must_not:
+      - import L2 internals directly (must go through contract API)
+      - hardcode tokens
+      - bypass mode guards
+      - hold identity state
+      - directly write to D1 without L2 wrapper
     status: active
-    notes: "L3 game surface"
-  - path: "P31-local-workspace/workers/chat-sandbox"
-    repo: "workspace"
-    name: "chat-sandbox"
-    kind: "worker"
+    notes: L3 game surface
+  - path: P31-local-workspace/workers/chat-sandbox
+    repo: workspace
+    name: chat-sandbox
+    kind: worker
     layer: L3
-    owns: ["standalone chat sandbox (no surfaces)"]
-    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    owns:
+      - standalone chat sandbox (no surfaces)
+    must_not:
+      - import L2 internals directly (must go through contract API)
+      - hardcode tokens
+      - bypass mode guards
+      - hold identity state
+      - directly write to D1 without L2 wrapper
     status: active
-    notes: "L3 standalone surface; deploys to chat-sandbox.trimtab-signal"
-  - path: "P31-local-workspace/workers/game-builder"
-    repo: "workspace"
-    name: "game-builder"
-    kind: "worker"
+    notes: L3 standalone surface; deploys to chat-sandbox.trimtab-signal
+  - path: P31-local-workspace/workers/game-builder
+    repo: workspace
+    name: game-builder
+    kind: worker
     layer: L3
-    owns: ["game builder UI + logic"]
-    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    owns:
+      - game builder UI + logic
+    must_not:
+      - import L2 internals directly (must go through contract API)
+      - hardcode tokens
+      - bypass mode guards
+      - hold identity state
+      - directly write to D1 without L2 wrapper
     status: migrate-later
-    notes: "pending value assessment"
-  - path: "P31-local-workspace/workers/portal-chat"
-    repo: "workspace"
-    name: "portal-chat"
-    kind: "worker"
+    notes: pending value assessment
+  - path: P31-local-workspace/workers/portal-chat
+    repo: workspace
+    name: portal-chat
+    kind: worker
     layer: L3
-    owns: ["portal rendering + routing worker"]
-    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    owns:
+      - portal rendering + routing worker
+    must_not:
+      - import L2 internals directly (must go through contract API)
+      - hardcode tokens
+      - bypass mode guards
+      - hold identity state
+      - directly write to D1 without L2 wrapper
     status: active
-    notes: "L3 deployed portal worker"
-  - path: "P31-local-workspace/workers/portal-worker"
-    repo: "workspace"
-    name: "portal-worker"
-    kind: "worker"
+    notes: L3 deployed portal worker
+  - path: P31-local-workspace/workers/portal-worker
+    repo: workspace
+    name: portal-worker
+    kind: worker
     layer: L3
-    owns: ["portal rendering + routing worker"]
-    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    owns:
+      - portal rendering + routing worker
+    must_not:
+      - import L2 internals directly (must go through contract API)
+      - hardcode tokens
+      - bypass mode guards
+      - hold identity state
+      - directly write to D1 without L2 wrapper
     status: active
-    notes: "L3 deployed portal worker"
-  - path: "P31-local-workspace/workers/willow-chat"
-    repo: "workspace"
-    name: "willow-chat"
-    kind: "worker"
+    notes: L3 deployed portal worker
+  - path: P31-local-workspace/workers/willow-chat
+    repo: workspace
+    name: willow-chat
+    kind: worker
     layer: L3
-    owns: ["Willow chat surface"]
-    must_not: ["import L2 internals directly (must go through contract API)","hardcode tokens","bypass mode guards","hold identity state","directly write to D1 without L2 wrapper"]
+    owns:
+      - Willow chat surface
+    must_not:
+      - import L2 internals directly (must go through contract API)
+      - hardcode tokens
+      - bypass mode guards
+      - hold identity state
+      - directly write to D1 without L2 wrapper
     status: migrate-later
-    notes: "L3 — pending willow architecture decision"
-  - path: "P31-local-workspace/software/cloudflare-worker/p31-gumroad-webhook"
-    repo: "workspace"
-    name: "p31-gumroad-webhook"
-    kind: "payment-rail"
-    owns: ["Gumroad webhook processing"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    notes: L3 — pending willow architecture decision
+  - path: P31-local-workspace/software/cloudflare-worker/p31-gumroad-webhook
+    repo: workspace
+    name: p31-gumroad-webhook
+    kind: payment-rail
+    owns:
+      - Gumroad webhook processing
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: retire
-    notes: "legacy — retire after Stripe checkout unification"
-  - path: "P31-local-workspace/software/workers/p31-mcp-server"
-    repo: "workspace"
-    name: "p31-mcp-server"
-    kind: "mcp-server"
-    owns: ["(superseded by workers/p31-mcp-server)"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    notes: legacy — retire after Stripe checkout unification
+  - path: P31-local-workspace/software/workers/p31-mcp-server
+    repo: workspace
+    name: p31-mcp-server
+    kind: mcp-server
+    owns:
+      - (superseded by workers/p31-mcp-server)
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: retire
-    notes: "duplicate of workspace version — retire this copy"
-  - path: "P31-local-workspace/workers/p31-gumroad-webhook"
-    repo: "workspace"
-    name: "p31-gumroad-webhook"
-    kind: "worker"
-    owns: ["Gumroad webhook processing"]
-    must_not: ["import L3 surfaces","render UI","hold user state across requests","hardcode token values"]
+    notes: duplicate of workspace version — retire this copy
+  - path: P31-local-workspace/workers/p31-gumroad-webhook
+    repo: workspace
+    name: p31-gumroad-webhook
+    kind: worker
+    owns:
+      - Gumroad webhook processing
+    must_not:
+      - import L3 surfaces
+      - render UI
+      - hold user state across requests
+      - hardcode token values
     status: retire
-    notes: "legacy — retire after Stripe checkout unification"
+    notes: legacy — retire after Stripe checkout unification
