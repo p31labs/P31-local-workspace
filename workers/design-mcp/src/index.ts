@@ -11,7 +11,7 @@
  * Bind to: mcp.p31ca.org (or custom domain)
  */
 
-import { tokens, components, icons, iconCatalog } from './data';
+import { tokens, components, TOKENS_DTC, COMPONENT_DEFS, CATALOG, getCatalogEntry } from './data';
 import {
   proposeComponent,
   proposeIcon,
@@ -25,9 +25,119 @@ import {
 } from './proposer';
 import { validateComponent, auditTokens, auditIcons, type ValidationResult, type AuditResult, type AuditIconsResult } from './validator';
 import { scanUI, type MCPAnnotation } from './handlers/scan-ui';
-import { handleToggleDrawer, handleNavigate, handleSetSpoonLevel } from './handlers/tools';
+import { handleToggleDrawer, handleNavigate, handleSetSpoonLevel, handleListContracts, handleGetContract, handleValidateContract, handleClarify, handleProposeFromSpec, componentPreviewHtmlInline } from './handlers/tools';
 import skillsData from './generated/skills.json';
 const SKILLS = skillsData as Record<string, { title: string; body: string; has_evals: boolean }>;
+
+const BRAND_TOKENS_RESOLVED: Record<string, Record<string, any>> = {
+  p31ca: { '--p31-accent': 'var(--p31-accent)', '--p31-accent-violet': 'var(--p31-accent-violet)' },
+  phos: { '--p31-accent': 'var(--p31-accent)', '--p31-accent-emerald': 'var(--p31-color-emerald)' },
+  phosphorus31: { '--p31-accent': 'var(--p31-accent)', '--p31-accent-amber': 'var(--p31-color-amber)' },
+  willow: { '--p31-accent': 'var(--p31-accent)', '--p31-accent-violet': 'var(--p31-accent-violet)' },
+  bonding: { '--p31-accent': 'var(--p31-accent)', '--p31-accent-cyan': 'var(--p31-accent-cyan)' },
+};
+
+function designCoreCss(): string {
+  return `/* P31 Design Core CSS — the canonical token + recipe stylesheet.
+     Load at runtime via: <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@p31/design-core@latest/css/all.css">
+     This resource is a reference marker; the full CSS ships in the @p31/design-core package. */`;
+}
+
+/**
+ * Render the catalog as a self-contained HTML page for MCP Apps hosts
+ * (SEP-1865). Hosts render `text/html;profile=mcp-app` in a sandboxed iframe; JSON blobs
+ * render as inert text.
+ */
+function renderCatalogHtml(): string {
+  const entries = Object.entries(COMP_LIST).map(([name, def]: [string, any]) => ({
+    name,
+    description: def.description ?? '',
+    category: def.category ?? 'ambient',
+    css_class: def.css_class ?? name.toLowerCase(),
+    tokens: def.tokens ?? [],
+    spoonCost: def.category === 'action' ? 1 : def.category === 'surface' ? 2 : 1,
+  }));
+
+  const cards = entries.map((c) => `
+    <article class="catalog-card" data-category="${c.category}" data-name="${c.name}">
+      <div class="stage">
+        <span class="name">${h(c.name)}</span>
+        <code>.${h(c.css_class)}</code>
+      </div>
+      <p class="desc">${h(c.description)}</p>
+      <div class="meta">
+        <span class="cat">${h(c.category)}</span>
+        <span class="cost">◆ ${c.spoonCost}</span>
+      </div>
+    </article>
+  `).join('');
+
+  return `<!DOCTYPE html>
+<html lang="en" data-spoons="3">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@p31/design-core@2.3.0/css/all.css">
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 16px;
+    background: var(--p31-bg, #0a0a0f);
+    color: var(--p31-text, #f5f5f7);
+    font-family: var(--p31-font-sans, system-ui);
+    font-size: 13px;
+  }
+  h1 { font-size: 15px; margin: 0 0 12px; font-weight: 700; letter-spacing: 0.02em; }
+  .catalog-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
+  .catalog-card {
+    background: var(--p31-glass-bg, rgba(255,255,255,0.04));
+    border: 1px solid var(--p31-glass-border, rgba(255,255,255,0.08));
+    border-radius: 10px; padding: 10px;
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .stage {
+    display: flex; flex-direction: column; align-items: center;
+    padding: 10px 0; background: rgba(0,0,0,0.2); border-radius: 6px;
+    min-height: 56px; justify-content: center;
+  }
+  .stage .name { font-weight: 600; font-size: 12px; }
+  .stage code { font-size: 10px; opacity: 0.5; font-family: var(--p31-font-mono, monospace); }
+  .desc { margin: 0; font-size: 11px; opacity: 0.7; line-height: 1.4; min-height: 30px; }
+  .meta { display: flex; justify-content: space-between; font-size: 10px; }
+  .cat { color: var(--p31-accent, #00f0ff); text-transform: uppercase; letter-spacing: 0.05em; }
+  .cost { color: var(--p31-accent-gold, #fbbf24); font-family: var(--p31-font-mono, monospace); }
+</style>
+</head>
+<body>
+  <h1>P31 Component Catalog — ${entries.length} components</h1>
+  <div class="catalog-grid">${cards}</div>
+</body>
+</html>`;
+}
+
+// ─── Icon lazy loader ──────────────────────────────────────────────────
+
+let _iconsData: { icons: any[]; iconCatalog: Record<string, any> } | null = null;
+
+async function loadIconsData(): Promise<{ icons: any[]; iconCatalog: Record<string, any> }> {
+  if (_iconsData) return _iconsData;
+  try {
+    const mod = await import('./icons-data') as { icons: readonly any[]; iconCatalog: Record<string, any> };
+    _iconsData = { icons: [...(mod.icons ?? [])], iconCatalog: mod.iconCatalog ?? {} };
+    return _iconsData;
+  } catch {
+    return { icons: [], iconCatalog: {} };
+  }
+}
+
+/** Metadata-only icon data (SVG strings stripped) for list/search resources. */
+async function loadIconMeta(): Promise<Array<Record<string, any>>> {
+  const { icons } = await loadIconsData();
+  return icons.map((icon: any) => {
+    const { svg, ...meta } = icon;
+    return meta;
+  });
+}
 
 // ─── MCP 2026-07-28 Stateless Core ──────────────────────────────────────
 
@@ -80,28 +190,25 @@ function tokenResolve(pathStr: string): any {
 
 // ─── Component schema ────────────────────────────────────────────────────────
 
+// Use canonical COMPONENT_DEFS from design-core for all component tools
 interface CompDef {
   description?: string;
   css_class?: string;
-  aiGuidance?: {
-    useWhen?: string;
-    avoidWhen?: string;
-    examples?: string[];
-  };
+  aiGuidance?: { useWhen?: string[]; avoidWhen?: string[]; examples?: string[] };
   variants?: string[];
   props?: Record<string, { type?: string; default?: any; options?: string[]; range?: [number, number] }>;
   slots?: string[];
   tokens?: string[];
 }
 
-const COMP_LIST = components?.components || {};
+const COMP_LIST = COMPONENT_DEFS || {};
 
 function getComponent(name: string) {
   const key = Object.keys(COMP_LIST).find(
     k => k.toLowerCase() === name.toLowerCase()
   );
   if (!key) return null;
-  const raw: CompDef = COMP_LIST[key];
+  const raw = COMP_LIST[key];
 
   const props: Record<string, any> = {};
   for (const [pname, pdef] of Object.entries(raw.props || {})) {
@@ -109,8 +216,8 @@ function getComponent(name: string) {
       type: pdef.type || 'string',
       default: pdef.default,
     };
-    if (pdef.options) props[pname].options = pdef.options;
-    if (pdef.range) props[pname].range = pdef.range;
+    if ((pdef as any).options) props[pname].options = (pdef as any).options;
+    if ((pdef as any).range) props[pname].range = (pdef as any).range;
   }
 
   const resolvedTokens: Record<string, any> = {};
@@ -128,6 +235,10 @@ function getComponent(name: string) {
     slots: raw.slots || [],
     tokens: raw.tokens || [],
     resolved_tokens: resolvedTokens,
+    category: raw.category,
+    status: raw.status,
+    version: raw.version,
+    importPath: raw.importPath,
   };
 }
 
@@ -195,6 +306,58 @@ const TOOLS = [
       properties: {
         prefix: { type: 'string' as const, description: 'Optional filter prefix' },
       },
+    },
+  },
+  {
+    name: 'list_tokens_dtc',
+    description: 'List all P31 design tokens in W3C DTCG 2025.10 format. Returns the full token exchange format for design tool integration.',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {},
+    },
+  },
+  {
+    name: 'get_component_metadata',
+    description: 'Get structured metadata for a P31 component: props, slots, variants, accessibility requirements, status, and import path. Optimized for AI agent consumption.',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {
+        name: { type: 'string' as const, description: 'Component name, e.g. "GlassPanel", "Topbar", "SpoonDial"' },
+      },
+      required: ['name'],
+    },
+  },
+  {
+    name: 'component_catalog',
+    description: 'Get the full GenUI component catalog: every P31 component with description, props, tokens, variants, accessibility, AI guidance, and Storybook stories. Derived from the Storybook components manifest merged with canonical component definitions.',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {
+        category: { type: 'string' as const, enum: ['surface', 'navigation', 'action', 'feedback', 'accessibility', 'ambient'], description: 'Optional filter by component category.' },
+      },
+    },
+  },
+  {
+    name: 'search_catalog',
+    description: 'Search the component catalog by name, description, CSS class, category, tokens, or AI-guidance keywords. Returns matching entries including Storybook stories and render snippets.',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {
+        query: { type: 'string' as const, description: 'Search text (matches name, description, cssClass, category, tokens, aiGuidance useWhen/avoidWhen — e.g. "navigation", "spoons", "crisis", "glass").' },
+        category: { type: 'string' as const, enum: ['surface', 'navigation', 'action', 'feedback', 'accessibility', 'ambient'], description: 'Optional category filter.' },
+      },
+      required: ['query'],
+    },
+  },
+  {
+    name: 'resolve_brand',
+    description: 'Resolve a brand token set by extending a base theme. Returns merged tokens for the brand.',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {
+        brand: { type: 'string' as const, description: 'Brand ID: p31ca, phos, phosphorus31, willow, bonding' },
+      },
+      required: ['brand'],
     },
   },
   {
@@ -372,6 +535,17 @@ const TOOLS = [
     },
   },
   {
+    name: 'propose_from_spec',
+    description: 'Propose a component from a spec contract. Takes a spec name (e.g. button, glass-panel), looks up its contract, generates a proposal, validates it, and returns a visual baseline path. One-pass spec→verify pipeline.',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {
+        spec: { type: 'string' as const, description: 'Spec/component name (e.g. button, glass-panel, chat-composer). Must match a contract in specs/.' },
+      },
+      required: ['spec'],
+    },
+  },
+  {
     name: 'toggleDrawer',
     description: 'Open or close the navigation drawer',
     inputSchema: {
@@ -410,6 +584,49 @@ const TOOLS = [
         userId: { type: 'string' as const, description: 'The user ID for this request' },
       },
       required: ['level'],
+    },
+  },
+  {
+    name: 'list_contracts',
+    description: 'List all machine-readable component contracts with semantic parts, token categories, and required ARIA.',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {},
+    },
+  },
+  {
+    name: 'get_contract',
+    description: 'Fetch the full machine-readable contract for a specific component: closed token lists, semantic parts, required ARIA, interaction states, spoon rules, forbidden patterns.',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {
+        name: { type: 'string' as const, description: 'Component name (e.g. Button, GlassPanel, ChatMessage)' },
+      },
+      required: ['name'],
+    },
+  },
+  {
+    name: 'validate_contract',
+    description: 'Validate generated code against a component contract. Checks for hardcoded hex, inline styles, emoji icons, and forbidden patterns.',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {
+        name: { type: 'string' as const, description: 'Component name to validate against' },
+        code: { type: 'string' as const, description: 'Generated code to validate' },
+      },
+      required: ['name'],
+    },
+  },
+  {
+    name: 'clarify',
+    description: 'Detect ambiguities in a generation prompt before synthesis. Returns prioritized questions to resolve intent gaps that cause agents to invent tokens or skip required ARIA.',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {
+        prompt: { type: 'string' as const, description: 'The user prompt or generation request to analyze' },
+        context: { type: 'object' as const, description: 'Optional context (theme, brand, age, sensory mode)' },
+      },
+      required: ['prompt'],
     },
   },
   {
@@ -591,7 +808,7 @@ function renderLayout(input: any): any {
         const available = Object.keys(COMP_LIST).join(', ');
         return { error: `Unknown component "${args.name}". Available: ${available}`, status: 'error' };
       }
-      return { component: comp, status: 'ok' };
+      return { component: comp, catalog: getCatalogEntry(args.name), status: 'ok' };
     }
 
     case 'component_usage': {
@@ -600,14 +817,58 @@ function renderLayout(input: any): any {
         if (!comp) return { error: `Unknown component "${args.name}"`, status: 'error' };
         return { name: comp.name, component: comp, status: 'ok' };
       }
-      const all: Record<string, { description: string; css_class: string }> = {};
-      for (const key of Object.keys(COMP_LIST)) {
-        all[key] = {
-          description: (COMP_LIST[key] as CompDef).description || '',
-          css_class: (COMP_LIST[key] as CompDef).css_class || '',
-        };
-      }
+  const allEntries = Object.entries(COMP_LIST) as [string, Record<string, any>][];
+  const all: Record<string, { description: string; css_class: string }> = {};
+  for (const [key, raw] of allEntries) {
+    all[key] = {
+      description: (raw as any).description || '',
+      css_class: (raw as any).css_class || '',
+    };
+  }
       return { components: all, total: Object.keys(all).length, status: 'ok' };
+    }
+
+    case 'component_catalog': {
+      const categoryFilter = args.category;
+      const comps = categoryFilter
+        ? CATALOG.components.filter((c) => c.category === categoryFilter)
+        : CATALOG.components;
+      const categories = [...new Set(CATALOG.components.map((c) => c.category))];
+      return {
+        v: CATALOG.v,
+        generatedAt: CATALOG.generatedAt,
+        categories,
+        total: comps.length,
+        components: comps,
+        status: 'ok',
+      };
+    }
+
+    case 'search_catalog': {
+      const q = String(args.query || '').toLowerCase().trim();
+      const categoryFilter = args.category;
+      if (!q && !categoryFilter) return { error: 'Provide "query" or "category".', status: 'error' };
+      const matches = CATALOG.components.filter((c) => {
+        if (categoryFilter && c.category !== categoryFilter) return false;
+        if (!q) return true;
+        const haystack = [
+          c.name,
+          c.description,
+          c.cssClass,
+          c.category,
+          (c.tokens || []).join(' '),
+          (c.aiGuidance?.useWhen || []).join(' '),
+          (c.aiGuidance?.avoidWhen || []).join(' '),
+          (c as any).variants || [],
+        ].join(' ').toLowerCase();
+        return haystack.includes(q);
+      });
+      return {
+        query: args.query,
+        total: matches.length,
+        components: matches,
+        status: 'ok',
+      };
     }
 
     case 'token_list': {
@@ -632,6 +893,30 @@ function renderLayout(input: any): any {
       return { tokens: entries, total: Object.keys(entries).length, status: 'ok' };
     }
 
+    case 'list_tokens_dtc': {
+      return { tokens: TOKENS_DTC, count: Array.isArray(TOKENS_DTC) ? TOKENS_DTC.length : Object.keys(TOKENS_DTC).length, status: 'ok' };
+    }
+
+    case 'get_component_metadata': {
+      const def = COMPONENT_DEFS[args.name as string];
+      if (!def) {
+        const available = Object.keys(COMPONENT_DEFS).join(', ');
+        return { error: `Component not found: "${args.name}". Available: ${available}`, status: 'error' };
+      }
+      return { component: args.name, metadata: def, catalog: getCatalogEntry(args.name), status: 'ok' };
+    }
+
+    case 'resolve_brand': {
+      const brand = String(args.brand || '').trim();
+      if (!brand) return { error: 'Missing "brand" field.', status: 'error' };
+      const validBrands = ['p31ca', 'phos', 'phosphorus31', 'willow', 'bonding'];
+      if (!validBrands.includes(brand)) {
+        return { error: `Invalid brand: "${brand}". Valid: ${validBrands.join(', ')}`, status: 'error' };
+      }
+      const tokens = BRAND_TOKENS_RESOLVED[brand] || {};
+      return { brand, tokens, status: 'ok' };
+    }
+
     case 'layout_generate': {
       const result = renderLayout(args);
       return (args && args.format === 'a2ui')
@@ -640,44 +925,48 @@ function renderLayout(input: any): any {
     }
 
     case 'list_icons': {
+      const meta = await loadIconMeta();
       const familyFilter = args.family;
-      const filtered = familyFilter ? icons.filter((i) => i.family === familyFilter) : icons;
+      const filtered = familyFilter ? meta.filter((i: any) => i.family === familyFilter) : meta;
       return {
-        icons: filtered.map((i) => ({ id: i.id, name: i.name, family: i.family, colors: i.colors, animated: i.animated, description: i.description })),
+        icons: filtered,
         total: filtered.length,
         status: 'ok',
       };
     }
 
     case 'get_icon': {
-      const icon = icons.find((i) => i.id === args.name);
+      const { icons } = await loadIconsData();
+      const icon = icons.find((i: any) => i.id === args.name);
       if (!icon) return { error: `Icon not found: "${args.name}"`, status: 'error' };
       return { icon, status: 'ok' };
     }
 
     case 'icon_search': {
+      const meta = await loadIconMeta();
       const q = (args.query || '').toLowerCase();
       const familyFilter = args.family;
       if (!q) return { error: 'Missing "query" field.', status: 'error' };
-      const matches = icons.filter((i) => {
+      const matches = meta.filter((i: any) => {
         if (familyFilter && i.family !== familyFilter) return false;
-        const haystack = `${i.id} ${i.name} ${i.description} ${i.colors.join(' ')}`.toLowerCase();
+        const haystack = `${i.id} ${i.name} ${i.description} ${(i.colors || []).join(' ')}`.toLowerCase();
         return haystack.includes(q);
       });
       return {
         query: args.query,
-        results: matches.map((i) => ({ id: i.id, name: i.name, family: i.family, colors: i.colors, animated: i.animated, description: i.description })),
+        results: matches,
         total: matches.length,
         status: 'ok',
       };
     }
 
     case 'icon_preview': {
-      const icon = icons.find((i) => i.id === args.name);
+      const { icons } = await loadIconsData();
+      const icon = icons.find((i: any) => i.id === args.name);
       if (!icon) return { error: `Icon not found: "${args.name}"`, status: 'error' };
       const size = args.size || 'md';
       const SIZE_PX = { sm: 24, md: 40, lg: 64 };
-      const px = SIZE_PX[size] || 40;
+      const px = (SIZE_PX as Record<string, number>)[size] || 40;
       const colorSwatches = (icon.colors || []).map((c: string) => `<span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:${c};margin-right:4px;" title="${c}"></span>`).join('');
       const preview = `<div style="display:inline-flex;align-items:center;gap:12px;padding:12px 16px;border-radius:8px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);"><div style="width:${px}px;height:${px}px;display:flex;align-items:center;justify-content:center;border-radius:6px;background:rgba(0,240,255,0.06);"><span style="font-size:${px * 0.5}px;color:var(--p31-accent);">⬡</span></div><div><div style="font-size:13px;font-weight:600;color:var(--p31-text);margin-bottom:2px;">${icon.name}</div><div style="font-size:11px;color:var(--p31-text-tertiary);margin-bottom:4px;">${icon.family} &middot; ${icon.animated ? 'animated' : 'static'}</div><div style="display:flex;align-items:center;">${colorSwatches}</div></div></div>`;
       return {
@@ -689,15 +978,15 @@ function renderLayout(input: any): any {
         description: icon.description,
         size,
         preview,
-         status: 'ok',
-       };
-     }
+        status: 'ok',
+      };
+    }
 
       case 'generate_component': {
         const name = (args as any).name;
         const componentsUrl = 'https://github.com/p31labs/P31-local-workspace/blob/main/cli/tokens/components.yml';
         const cliCommand = `andromeda generate${name ? ` --component ${name}` : ''}`;
-        const available = ['GlassCard', 'GlassPanel', 'GlassStrong', 'GlassSubtle', 'Button', 'SpoonMeter', 'TetraGrid', 'HonestLabel', 'StatusBadge', 'CrisisOverlay', 'Starfield', 'ThemeToggle'];
+        const available = Object.keys(COMP_LIST);
         return {
           status: 'ok',
           message: 'Component generation runs at build time via the local CLI (not inside this edge worker).',
@@ -713,7 +1002,7 @@ function renderLayout(input: any): any {
         if (!query) return { error: 'Missing "query" field.', status: 'error' };
         const matches: any[] = [];
         for (const key of Object.keys(COMP_LIST)) {
-          const raw = COMP_LIST[key] as CompDef;
+          const raw = COMP_LIST[key] as Record<string, any>;
           const haystack = `${key} ${raw.description || ''} ${raw.css_class || ''} ${(raw.aiGuidance?.useWhen || '')} ${(raw.aiGuidance?.avoidWhen || '')} ${(raw.aiGuidance?.examples || []).join(' ')}`.toLowerCase();
           if (haystack.includes(query)) {
             matches.push({
@@ -762,7 +1051,14 @@ function renderLayout(input: any): any {
           return { error: `Component not found: "${targetName}". Available: ${available}`, status: 'error' };
         }
         const result = validateComponent(targetName, comp, tokens, COMP_LIST);
-        return { ...result, status: 'ok' };
+        const issues = [...result.errors, ...result.warnings];
+        if (args.code) {
+          const hasHex = /#[0-9a-fA-F]{3,8}/.test(args.code);
+          if (hasHex) issues.push('Hardcoded hex colors detected — use var(--p31-*) tokens');
+          const hasRgba = /rgba?\(/.test(args.code);
+          if (hasRgba) issues.push('Hardcoded rgba() detected — use var(--p31-*) tokens or color-mix()');
+        }
+        return { ...result, issues, status: 'ok' };
       }
 
       case 'audit_tokens': {
@@ -851,7 +1147,8 @@ function renderLayout(input: any): any {
       }
 
       case 'audit_icons': {
-        const result = auditIcons(icons, iconCatalog);
+        const { icons: iconList, iconCatalog: cat } = await loadIconsData();
+        const result = auditIcons(iconList, cat);
         return { ...result, status: 'ok' };
       }
 
@@ -871,26 +1168,51 @@ function renderLayout(input: any): any {
          return { ...result, status: 'ok' };
        }
 
-       case 'setSpoonLevel': {
-         const result = await handleSetSpoonLevel(args as { level: number, surfaceId?: string, userId?: string });
-         return { ...result, status: 'ok' };
-       }
+        case 'setSpoonLevel': {
+          const result = await handleSetSpoonLevel(args as { level: number, surfaceId?: string, userId?: string });
+          return { ...result, status: 'ok' };
+        }
 
-       case 'list_skills': {
-         const skills = Object.entries(SKILLS).map(([name, skill]) => ({
-           name,
-           title: skill.title,
-           has_evals: skill.has_evals,
-         }));
-         return { skills, total: skills.length, status: 'ok' };
-       }
+        case 'list_contracts': {
+          const contractsList = await handleListContracts();
+          return contractsList;
+        }
 
-       case 'get_skill': {
-         const skillName = String(args.name || '');
-         const skill = SKILLS[skillName];
-         if (!skill) return { error: `Skill not found: "${skillName}"`, status: 'error' };
-         return { name: skillName, body: skill.body, status: 'ok' };
-       }
+        case 'get_contract': {
+          const contractResult = await handleGetContract(args as { name: string });
+          return contractResult;
+        }
+
+        case 'validate_contract': {
+          const validateResult = await handleValidateContract(args as { name: string; code?: string });
+          return validateResult;
+        }
+
+        case 'clarify': {
+          const clarifyResult = await handleClarify(args as { prompt: string; context?: Record<string, any> });
+          return clarifyResult;
+        }
+
+        case 'propose_from_spec': {
+          const proposeResult = await handleProposeFromSpec(args as { spec: string });
+          return proposeResult;
+        }
+
+        case 'list_skills': {
+          const skills = Object.entries(SKILLS).map(([name, skill]) => ({
+            name,
+            title: skill.title,
+            has_evals: skill.has_evals,
+          }));
+          return { skills, total: skills.length, status: 'ok' };
+        }
+
+        case 'get_skill': {
+          const skillName = String(args.name || '');
+          const skill = SKILLS[skillName];
+          if (!skill) return { error: `Skill not found: "${skillName}"`, status: 'error' };
+          return { name: skillName, body: skill.body, status: 'ok' };
+        }
 
       default:
         return { error: `Unknown tool: ${name}`, status: 'error' };
@@ -1024,6 +1346,17 @@ async function handleRequest(request: Request): Promise<Response> {
     });
   }
 
+  // W3C DTCG token exchange format
+  if (request.method === 'GET' && url.pathname === '/tokens.dtc.json') {
+    return new Response(JSON.stringify(TOKENS_DTC), {
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'public, max-age=3600',
+        'Access-Control-Allow-Origin': '*',
+      },
+    });
+  }
+
   // ─── Component Generation Capacitor Cache ────────────────────────────────
   // In-memory Map with TTL. For production, swap to KV via wrangler binding.
   const _cacheStore = new Map<string, { ts: number; ttl: number }>();
@@ -1069,7 +1402,7 @@ async function handleRequest(request: Request): Promise<Response> {
   if (request.method === 'GET' && url.pathname === '/') {
     const toolList = TOOLS.map(t => `  <li><strong>${t.name}</strong> — ${t.description}</li>`).join('\n');
     const html = `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>P31 Design System MCP</title><style>body{font-family:system-ui,sans-serif;background:#0A0A0F;color:#F5F5F7;max-width:800px;margin:60px auto;padding:0 24px;}h1{color:#00F0FF;}pre{background:rgba(255,255,255,0.04);padding:12px;border-radius:8px;overflow-x:auto;}code{font-family:monospace;color:#A78BFA;}li{margin:8px 0;}</style></head><body><h1>P31 Design System MCP</h1><p>Streamable HTTP endpoint. Send JSON-RPC requests via POST.</p><h2>Tools (${TOOLS.length})</h2><ul>${toolList}</ul><h2>Example</h2><pre><code>curl -X POST ${url.origin}/ \\\\\n  -H "Content-Type: application/json" \\\\\n  -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"token_resolve","arguments":{"path":"semantic.color.accent.default"}}}'</code></pre><p style="color:rgba(245,245,247,0.3);margin-top:40px;font-size:12px;">P31 Labs &middot; Sovereign Design System &middot; ${new Date().toISOString()}</p></body></html>`;
-    return new Response(html, { headers: { 'Content-Type': 'text/html' } });
+    return new Response(html, { headers: { 'Content-Type': 'text/html;profile=mcp-app' } });
   }
 
   // POST — MCP JSON-RPC
@@ -1102,6 +1435,13 @@ async function handleRequest(request: Request): Promise<Response> {
           { uri: 'design://tokens', name: 'Design Tokens', description: 'P31 design tokens (DTCG 2.0). Append /path for a specific token.', mimeType: 'application/json' },
           { uri: 'design://components', name: 'Component Registry', description: 'P31 component definitions with props, slots, and tokens.', mimeType: 'application/json' },
           { uri: 'design://icons', name: 'Icon Catalog', description: 'P31 icon pack manifest (regular + advanced). Append /id for a single icon.', mimeType: 'application/json' },
+          { uri: 'ui://p31/component/button', name: 'Button Preview', description: 'Live Button component preview with brand tokens. MCP Apps: renders in sandboxed iframe.', mimeType: 'text/html;profile=mcp-app' },
+          { uri: 'ui://p31/component/chat-composer', name: 'Chat Composer Preview', description: 'Live ChatComposer component preview with brand tokens. MCP Apps: renders in sandboxed iframe.', mimeType: 'text/html;profile=mcp-app' },
+          { uri: 'ui://p31/component/chat-message', name: 'Chat Message Preview', description: 'Live ChatMessage component preview with brand tokens. MCP Apps: renders in sandboxed iframe.', mimeType: 'text/html;profile=mcp-app' },
+          { uri: 'ui://p31/component/glass-panel', name: 'Glass Panel Preview', description: 'Live GlassPanel component preview with brand tokens. MCP Apps: renders in sandboxed iframe.', mimeType: 'text/html;profile=mcp-app' },
+          { uri: 'ui://p31/component/artifact-pane', name: 'Artifact Pane Preview', description: 'Live ArtifactPane component preview with brand tokens. MCP Apps: renders in sandboxed iframe.', mimeType: 'text/html;profile=mcp-app' },
+          { uri: 'ui://p31/catalog', name: 'Component Catalog', description: 'Full P31 component catalog rendered as HTML (MCP Apps compatible).', mimeType: 'text/html;profile=mcp-app' },
+          { uri: 'ui://p31/icons', name: 'Icon Catalog', description: 'P31 icon metadata (without SVG payloads). Full SVGs via ui://p31/icon/:id.', mimeType: 'application/json' },
         ],
       });
 
@@ -1124,29 +1464,48 @@ async function handleRequest(request: Request): Promise<Response> {
           return mcpResponse(id, { contents: [{ uri, mimeType: 'application/json', text: JSON.stringify(comp, null, 2) }] });
         } else {
           const summaries = Object.keys(COMP_LIST).map(k => {
-            const c = COMP_LIST[k] as CompDef;
+            const c = COMP_LIST[k] as Record<string, any>;
             return { name: k, description: c.description, css_class: c.css_class };
           });
           return mcpResponse(id, { contents: [{ uri, mimeType: 'application/json', text: JSON.stringify({ total: summaries.length, components: summaries }, null, 2) }] });
         }
       } else if (uri === 'design://icons' || uri.startsWith('design://icons/')) {
+        const { iconCatalog } = await loadIconsData();
         const name = uri.replace('design://icons/', '').replace('design://icons', '');
         if (name) {
           const entry = iconCatalog[name];
           if (!entry) return mcpError(id, -32602, `Icon not found: ${name}`);
           return mcpResponse(id, { contents: [{ uri, mimeType: 'application/json', text: JSON.stringify({ id: name, ...entry }, null, 2) }] });
         }
-        return mcpResponse(id, { contents: [{ uri, mimeType: 'application/json', text: JSON.stringify({ total: icons.length, icons }, null, 2) }] });
+        const meta = await loadIconMeta();
+        return mcpResponse(id, { contents: [{ uri, mimeType: 'application/json', text: JSON.stringify({ total: meta.length, icons: meta }, null, 2) }] });
+      } else if (uri === 'ui://p31/icons') {
+        const meta = await loadIconMeta();
+        return mcpResponse(id, { contents: [{ uri, mimeType: 'application/json', text: JSON.stringify({ total: meta.length, icons: meta }, null, 2) }] });
+      } else if (uri.startsWith('ui://p31/icons/')) {
+        const { iconCatalog } = await loadIconsData();
+        const name = uri.replace('ui://p31/icons/', '');
+        if (!name) return mcpError(id, -32602, `Icon name required`);
+        const entry = iconCatalog[name];
+        if (!entry) return mcpError(id, -32602, `Icon not found: ${name}`);
+        return mcpResponse(id, { contents: [{ uri, mimeType: 'application/json', text: JSON.stringify({ id: name, ...entry }, null, 2) }] });
+      } else if (uri === 'ui://p31/tokens/css') {
+        return mcpResponse(id, { contents: [{ uri, mimeType: 'text/css', text: designCoreCss() }] });
+      } else if (uri.startsWith('ui://p31/component/')) {
+        const name = uri.replace('ui://p31/component/', '');
+        const html = componentPreviewHtmlInline(name);
+        return mcpResponse(id, { contents: [{ uri, mimeType: 'text/html;profile=mcp-app', text: html }] });
+      } else if (uri === 'ui://p31/catalog') {
+        return mcpResponse(id, { contents: [{ uri, mimeType: 'text/html;profile=mcp-app', text: renderCatalogHtml() }] });
       } else if (uri === 'p31://skills') {
-       } else if (uri === 'p31://skills') {
-         const skills = Object.entries(SKILLS).map(([name, skill]) => ({ name, title: skill.title }));
-         return mcpResponse(id, { contents: [{ uri, mimeType: 'application/json', text: JSON.stringify({ skills }, null, 2) }] });
-       } else if (uri.startsWith('p31://skills/')) {
-         const skillName = uri.replace('p31://skills/', '');
-         const skill = SKILLS[skillName];
-         if (!skill) return mcpError(id, -32602, `Skill not found: ${skillName}`);
-         return mcpResponse(id, { contents: [{ uri, mimeType: 'text/markdown', text: skill.body }] });
-       }
+        const skills = Object.entries(skillsData).map(([name, skill]) => ({ name, title: skill.title }));
+        return mcpResponse(id, { contents: [{ uri, mimeType: 'application/json', text: JSON.stringify({ skills }, null, 2) }] });
+      } else if (uri.startsWith('p31://skills/')) {
+        const skillName = uri.replace('p31://skills/', '');
+        const skill = SKILLS[skillName];
+        if (!skill) return mcpError(id, -32602, `Skill not found: ${skillName}`);
+        return mcpResponse(id, { contents: [{ uri, mimeType: 'text/markdown', text: skill.body }] });
+      }
       return mcpError(id, -32602, `Unknown resource URI: ${uri}`);
     }
 
