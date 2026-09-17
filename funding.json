@@ -1,0 +1,53 @@
+{
+  "name": "P31 Labs",
+  "description": "Open-source assistive technology for neurodivergent families. Agent-native CLI, LOVE token ledger, Mercury treasury integration, K4 mesh networking.",
+  "url": "https://github.com/p31labs/P31-local-workspace",
+  "license": "MIT",
+  "funding": [
+    {
+      "type": "flossfund",
+      "url": "https://floss.fund"
+    },
+    {
+      "type": "tether-grants",
+      "url": "https://tether.to/en/developer-grants"
+    },
+    {
+      "type": "xrpl-glow",
+      "url": "https://xrplcommons.org/glow"
+    },
+    {
+      "type": "ko-fi",
+      "url": "https://ko-fi.com/trimtab69420"
+    },
+    {
+      "type": "hack-club",
+      "url": "https://hcb.hackclub.com/donations/start/p31-labs"
+    }
+  ],
+  "projects": [
+    {
+      "name": "andromeda",
+      "description": "Agent-native CLI with provenance, cost governance, and execution contracts for AI agents",
+      "url": "https://github.com/p31labs/P31-local-workspace/tree/main/cli"
+    },
+    {
+      "name": "love-ledger",
+      "description": "LOVE token two-pool ledger with SHA-256 hash chain for care-accounting",
+      "url": "https://github.com/p31labs/P31-local-workspace/tree/main/workers/love-ledger"
+    },
+    {
+      "name": "spaceship-earth",
+      "description": "Geodesic dome 3D experience with DUNA readiness and mesh networking",
+      "url": "https://github.com/p31labs/P31-local-workspace/tree/main/packages/spaceship-earth"
+    },
+    {
+      "name": "bonding",
+      "description": "K4 chemistry game for neurodivergent learners — systems thinking through play",
+      "url": "https://github.com/p31labs/P31-local-workspace/tree/main/apps/bonding"
+    }
+  ],
+  "ai_policy": "no-essay",
+  "fiscal_host_required": false,
+  "updated": "2026-09-17"
+}
