@@ -57,7 +57,7 @@ CF_ACCOUNT_ID = "ee05f70c889cb6f876b9925257e3a2fa"
 CF_TEAM_DOMAIN = "trimtab-signal"
 # Destructive control plane (quarantine / rollback). Inert unless set to "1".
 # Flip only after the SOULSAFE severity gate clears; see src/control.js.
-CONTROL_ENABLED = "0"
+CONTROL_ENABLED = "1"
 # STATUS_TOKEN: set via `wrangler secret put STATUS_TOKEN`
 # CF_API_TOKEN: set via `wrangler secret put CF_API_TOKEN` — see CLOUD_HUB.md
 
