@@ -1,4 +1,38 @@
 # Active Grant Applications — Ready to Submit
+## No-Dependency Funding Path (Sept 17 update)
+
+**Status:** Open Source Collective denied (insufficient community involvement). Pivoting to no-fiscal-host model.
+
+### Grants not requiring fiscal sponsor
+| Grant | Amount | Deadline | Status |
+|-------|--------|----------|--------|
+| **Modest Needs** | Up to $1,000 | Rolling | Ready, submit this week |
+| **Tether Developer Grants** | $1,500–$4,000/task | Rolling | Ready — P31 crypto-mcp and x402 gateway are relevant |
+| **XRPL Commons Glow** | Varies | Quarterly until Dec 2026 | Ready — retroactive open-source contributions |
+| **FLOSS/fund** | Up to $1M/year | Rolling | Ready — no strings attached, global |
+| **FUTO Fellows** | Up to $40,000 | Rolling | Ready — software challenging tech oligopoly |
+| **Sequoia OSS Fellowship** | 6–12 months living expenses | Rolling | Ready — existing or new open-source project |
+
+### Grants requiring 501(c)(3) or fiscal sponsor
+| Grant | Amount | Deadline | Status |
+|-------|--------|----------|--------|
+| **Humanity AI** | $75K–$1M | Oct 21, 2026 | NEW — requires US 501(c)(3) lead or fiscal sponsor |
+| **NSF SBIR Phase I** | $305K | Nov 4, 2026 | NEW — requires US small business |
+| **Biswas Family Foundation** | $25K–$100K | Dec 15, 2026 | NEW — requires institutional affiliation |
+
+### Direct donation infrastructure
+- **p31ca.org/donate** — live, links to Ko-fi + Hack Club
+- **mcp-x402-gateway** — deployed, testnet only, facilitator credentials empty
+- **taler-bridge-billing** — deployed, has /donate endpoint, facilitator credentials empty
+- **love-ledger** — deployed, /health now returns 200
+- **p31-crypto-mcp** — deployed, Smithery published
+- **p31-design-mcp** — deployed, Smithery published
+
+### Critical blockers
+1. FACILITATOR_KEY_ID and FACILITATOR_SECRET_KEY are empty on x402 and taler workers
+2. No BTCPay Server deployed
+3. No self-hosted crypto checkout wired to donate page
+
 
 ## 0. Humanity AI Open Call
 **Amount:** $75,000–$1,000,000 (up to 3 years)  

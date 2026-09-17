@@ -342,6 +342,11 @@ export default {
       }
     }
 
+    // Route: GET /health — liveness probe
+    if (url.pathname === '/health' && request.method === 'GET') {
+      return json({ status: 'ok', service: 'love-ledger', version: '1.4.0', timestamp: Date.now() });
+    }
+
     return err('Not found', 404);
   },
 

@@ -10,6 +10,13 @@ NETWORK = "base-sepolia"
 PAY_TO = "0x51c285Df171C76bE36252e32679F098d90768413"
 FACILITATOR_URL = "https://facilitator.x402.org"
 REVENUE_INGEST_URL = "https://taler-bridge-billing.p31ca.org/api/revenue/ingest"
+# L5 — Entitlement service (OPTIONAL). When set, the gateway checks DID balance
+# before x402 payment. When empty or unset, the gateway skips entitlement and
+# falls through to x402 payment directly. The service is not yet deployed;
+# leaving this empty is the supported no-dependency configuration.
+ENTITLEMENT_URL = ""
+ENTITLEMENT_API_TOKEN = ""  # set via wrangler secret put ENTITLEMENT_API_TOKEN
+
 # L5 — Dual Settlement Router shares the LOVE ledger D1 + the L3.4 bridge URL.
 BRIDGE_URL = "https://mcp-x402-bridge.p31ca.org/mcp"
 X402_VERSION = "2.0"
@@ -22,10 +29,8 @@ X402_VERSION = "2.0"
 # AI model so the metering path works out-of-the-box; swap for any entitled
 # Workers AI model id, or wire Zhipu for true GLM.
 LOVE_LEDGER_URL = "https://love-ledger.p31ca.org"
-GLM_MODEL = "@cf/meta/llama-4-scout-17b-16e-instruct"
+GLM_MODEL = "@cf/meta/llama-4-scout-17b-16b-instruct"
 REVENUE_LEDGER_URL = "https://revenue-ledger.trimtab-signal.workers.dev"
-ENTITLEMENT_URL = "https://entitlement.trimtab-signal.workers.dev"
-ENTITLEMENT_API_TOKEN = ""  # set via wrangler secret put ENTITLEMENT_API_TOKEN
 
 # Axis-6 LOVE settlement HMAC shared secret. Centralised in the Cloudflare
 # Secrets Store (`p31-secrets`, store-id 33d48162fd6842869beeed3516e2909c) so a
