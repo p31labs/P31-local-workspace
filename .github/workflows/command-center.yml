@@ -1,0 +1,66 @@
+name: Command Center Tests
+
+on:
+  pull_request:
+    paths:
+      - 'workers/command-center/**'
+      - '.github/workflows/command-center.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'workers/command-center/**'
+      - '.github/workflows/command-center.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: command-center-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  jest:
+    name: Jest (unit + integration + security + perf)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install dependencies
+        working-directory: workers/command-center
+        run: npm ci
+      - name: Run unit tests
+        working-directory: workers/command-center
+        run: npm run test
+      - name: Run integration tests
+        working-directory: workers/command-center
+        run: npm run test:integration
+      - name: Run security tests
+        working-directory: workers/command-center
+        run: npm run test:security
+      - name: Run performance tests
+        working-directory: workers/command-center
+        run: npm run test:perf
+
+  e2e:
+    name: Playwright E2E (optional)
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
+    needs: jest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install dependencies
+        working-directory: workers/command-center
+        run: npm ci
+      - name: Install Playwright browsers
+        working-directory: workers/command-center
+        run: npx playwright install --with-deps chromium
+      - name: Run E2E tests
+        working-directory: workers/command-center
+        env:
+          TEST_BASE_URL: ${{ secrets.COMMAND_CENTER_URL || 'https://command-center.trimtab-signal.workers.dev' }}
+          STATUS_TOKEN: ${{ secrets.STATUS_TOKEN }}
+          CF_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: npm run test:e2e

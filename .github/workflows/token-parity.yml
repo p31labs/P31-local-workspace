@@ -1,0 +1,43 @@
+name: Token Parity
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  token-parity:
+    name: Design token drift detection
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Emit design tokens
+        run: pnpm --filter @p31/design-core emit:cli
+
+      - name: Check for hardcoded colors (check mode)
+        run: |
+          pnpm run auto-fix-tokens --check 2>&1 | tee /tmp/token-fix.log
+          if grep -q "Fixed [1-9]" /tmp/token-fix.log; then
+            echo "::error::Hardcoded colors detected. Run 'pnpm run auto-fix-tokens' to fix."
+            exit 1
+          fi
+        env:
+          NODE_OPTIONS: --max-old-space-size=4096
+
+      - name: Verify canonical token file is up to date
+        run: |
+          git diff --quiet packages/design-core/generated/tokens.json || {
+            echo "::warning::Canonical CLI tokens (generated/tokens.json) are out of sync. Run 'pnpm --filter @p31/design-core emit:cli'."
+          }

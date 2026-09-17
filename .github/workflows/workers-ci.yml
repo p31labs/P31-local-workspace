@@ -1,0 +1,143 @@
+name: Workers CI
+
+on:
+  pull_request:
+    paths:
+      - 'workers/**'
+      - 'software/cloudflare-worker/**'
+      - 'software/k4-cage/**'
+      - 'software/k4-personal/**'
+      - 'software/k4-hubs/**'
+      - 'software/p31-agent-hub/**'
+      - 'software/p31ca/workers/**'
+      - '.github/workflows/workers-ci.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'workers/**'
+      - 'software/cloudflare-worker/**'
+      - 'software/k4-cage/**'
+      - 'software/k4-personal/**'
+      - 'software/k4-hubs/**'
+      - 'software/p31-agent-hub/**'
+      - 'software/p31ca/workers/**'
+      - '.github/workflows/workers-ci.yml'
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: workers-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.find.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Install jq
+        run: npm install -g jq
+      - id: find
+        run: |
+          set -euo pipefail
+          WORKERS=$(find \
+            workers \
+            software/cloudflare-worker \
+            software/k4-cage \
+            software/k4-personal \
+            software/k4-hubs \
+            software/p31-agent-hub \
+            software/p31ca/workers \
+            -name wrangler.toml \
+            -not -path '*/node_modules/*' \
+            -exec dirname {} \; | sort -u | jq -R -s -c 'split("\n")[:-1]')
+          echo "all_workers=$WORKERS" >> $GITHUB_OUTPUT
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            CHANGED=$(git diff --name-only HEAD~1 HEAD 2>/dev/null || true)
+            FILTERED=$(echo "$CHANGED" | grep -E '^(workers/[^/]+/|software/(cloudflare-worker|k4-cage|k4-personal|k4-hubs|p31-agent-hub)/[^/]+/|software/p31ca/workers/[^/]+/)' | awk -F/ '{print $1"/"$2}' | sort -u | jq -R -s -c 'split("\n")[:-1]')
+            if [[ -z "$FILTERED" || "$FILTERED" == "[]" || "$FILTERED" == "null" ]]; then
+              echo "No changed worker dirs detected — running full matrix"
+              echo "matrix=$WORKERS" >> $GITHUB_OUTPUT
+            else
+              echo "Changed worker dirs: $FILTERED"
+              MATCHED=$(echo "$WORKERS" | jq -r '.[]' | while read -r w; do
+                base=$(echo "$w" | awk -F/ '{print $1"/"$2}')
+                echo "$FILTERED" | jq -r '.[]' | grep -qxF "$base" && echo "$w"
+              done | sort -u | jq -R -s -c 'split("\n")[:-1]')
+              if [[ -z "$MATCHED" || "$MATCHED" == "[]" ]]; then
+                echo "No matching worker dirs after intersect — running full matrix"
+                echo "matrix=$WORKERS" >> $GITHUB_OUTPUT
+              else
+                echo "matrix=$MATCHED" >> $GITHUB_OUTPUT
+              fi
+            fi
+          else
+            echo "matrix=$WORKERS" >> $GITHUB_OUTPUT
+          fi
+
+  dry-run:
+    name: Dry-run deploy (${{ matrix.worker }})
+    runs-on: ubuntu-latest
+    needs: discover
+    strategy:
+      fail-fast: false
+      matrix:
+        worker: ${{ fromJson(needs.discover.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Install wrangler
+        run: npm install -g wrangler
+      - name: Dry-run deploy
+        working-directory: ${{ matrix.worker }}
+        run: wrangler deploy --dry-run --outdir=/tmp/dry-run/${{ matrix.worker }}
+      - name: Probe live health (best-effort)
+        run: |
+          HEALTH_URL=""
+          case "${{ matrix.worker }}" in
+            workers/k4-cage) HEALTH_URL="https://k4-cage.trimtab-signal.workers.dev/health" ;;
+            workers/k4-personal) HEALTH_URL="https://k4-personal.trimtab-signal.workers.dev/health" ;;
+            workers/k4-hubs) HEALTH_URL="https://k4-hubs.trimtab-signal.workers.dev/health" ;;
+            workers/terminal-relay) HEALTH_URL="https://terminal-relay.trimtab-signal.workers.dev/api/health" ;;
+            workers/command-center) HEALTH_URL="https://command-center.trimtab-signal.workers.dev/api/health" ;;
+            workers/spaceship-relay) HEALTH_URL="https://spaceship-relay.trimtab-signal.workers.dev/mcp" ;;
+            workers/p31-dispatch) HEALTH_URL="https://p31-dispatch.trimtab-signal.workers.dev/health" ;;
+            workers/p31-passport) HEALTH_URL="https://p31-passport.trimtab-signal.workers.dev/health" ;;
+            workers/phos) HEALTH_URL="https://phos.p31ca.org/health" ;;
+            workers/bonding-relay) HEALTH_URL="https://bonding-relay.trimtab-signal.workers.dev/health" ;;
+            *) HEALTH_URL="" ;;
+          esac
+          if [[ -n "$HEALTH_URL" ]]; then
+            CODE=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 5 --max-time 15 "$HEALTH_URL" 2>/dev/null || echo 000)
+            if [[ "$CODE" =~ ^[23] ]]; then
+              echo "✅ ${{ matrix.worker }} live ($CODE)"
+            else
+              echo "⚠ ${{ matrix.worker }} live health $CODE — non-fatal for dry-run"
+            fi
+          fi
+
+  summary:
+    name: Workers CI summary
+    runs-on: ubuntu-latest
+    needs: [dry-run]
+    if: always()
+    steps:
+      - name: Report results
+        run: |
+          echo "Dry-run jobs: ${{ needs.dry-run.result }}"
+          PASS=$(echo '${{ toJson(needs.dry-run) }}' | jq -r '[.result // "skipped"] | map(select(. == "success")) | length')
+          FAIL=$(echo '${{ toJson(needs.dry-run) }}' | jq -r '[.result // "skipped"] | map(select(. == "failure")) | length')
+          SKIP=$(echo '${{ toJson(needs.dry-run) }}' | jq -r '[.result // "skipped"] | map(select(. == "skipped")) | length')
+          echo "✅ $PASS passed, ❌ $FAIL failed, ⏭ $SKIP skipped"
+          if [[ "$FAIL" -gt 0 ]]; then
+            echo "Failing workers:"
+            echo '${{ toJson(needs.dry-run) }}' | jq -r 'to_entries[] | select(.value.result == "failure") | "  ❌ " + .key'
+            exit 1
+          fi

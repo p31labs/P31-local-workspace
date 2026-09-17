@@ -15,6 +15,8 @@
 import { buildCloudHubHtml } from './cloud-hub-html.js';
 import { buildGodDashboardHtml } from './god-dashboard.js';
 import { handleSseStream } from './sse-stream.js';
+import { buildEye, controlEnabled } from './eye.js';
+import { handleQuarantine, handleRollback } from './control.js';
 import { CrdtSessionDO } from './crdt-session-do.js';
 export { CrdtSessionDO };
 
@@ -25,6 +27,19 @@ export class CrdtQueueProcessor extends CrdtSessionDO {}
 function accessLogEnabled(env) {
   const v = env && env.DEBUG_ACCESS_LOG;
   return env?.ENVIRONMENT === 'development' || v === '1' || v === 'true' || v === true;
+}
+
+/** Structured JSON logging. Always includes worker name + request ID. */
+function logEvent(env, event, data = {}) {
+  const requestId = data.requestId || 'local';
+  const payload = {
+    worker: 'command-center',
+    requestId,
+    event,
+    ...data,
+    ts: new Date().toISOString(),
+  };
+  console.log(JSON.stringify(payload));
 }
 
 // ── Cloudflare Access JWT helpers ──
@@ -136,7 +151,7 @@ async function authenticate(request, env) {
 function getRoleFromEmail(email) {
   if (!email) return 'none';
   const lower = email.toLowerCase();
-  if (lower.includes('will@p31ca.org') || lower.includes('classicwilly') || lower.includes('willyj1587')) return 'admin';
+  if (lower.includes('willyj1587@gmail.com') || lower.includes('classicwilly') || lower.includes('willyj1587')) return 'admin';
   if (lower.includes('legal@')) return 'legal';
   if (lower.includes('operator@')) return 'operator';
   if (lower.includes('reader@')) return 'reader';
@@ -473,7 +488,50 @@ export default {
      }
 
       if (url.pathname === '/api/health') {
+        logEvent(env, 'health.check', { ok: true });
         return jsonResponse({ ok: true, ts: new Date().toISOString() });
+      }
+
+      // ── Ops dashboard (lightweight, no auth required) ──
+      if (url.pathname === '/ops/status' && request.method === 'GET') {
+        logEvent(env, 'ops.dashboard.request');
+        const endpoints = [
+          ['mesh', 'https://mesh.p31ca.org/health'],
+          ['k4-cage', 'https://k4-cage.trimtab-signal.workers.dev/health'],
+          ['k4-personal', 'https://k4-personal.trimtab-signal.workers.dev/health'],
+          ['k4-hubs', 'https://k4-hubs.trimtab-signal.workers.dev/health'],
+          ['p31-dispatch', 'https://p31-dispatch.trimtab-signal.workers.dev/health'],
+          ['p31-passport', 'https://p31-passport.trimtab-signal.workers.dev/health'],
+          ['terminal-relay', 'https://terminal-relay.trimtab-signal.workers.dev/api/health'],
+          ['command-center', 'https://command-center.trimtab-signal.workers.dev/api/health'],
+          ['spaceship-relay', 'https://spaceship-relay.trimtab-signal.workers.dev/mcp'],
+          ['phos', 'https://phos.p31ca.org/health'],
+          ['bonding', 'https://bonding.p31ca.org/health'],
+          ['willow', 'https://willow.p31ca.org'],
+          ['p31ca', 'https://p31ca.org'],
+          ['phosphorus31', 'https://phosphorus31.org'],
+        ];
+        const results = await Promise.allSettled(
+          endpoints.map(async ([name, url]) => {
+            try {
+              const res = await fetch(url, { method: 'GET', signal: AbortSignal.timeout(10000) });
+              return { name, status: res.status, ok: res.status >= 200 && res.status < 400 };
+            } catch {
+              return { name, status: 0, ok: false };
+            }
+          })
+        );
+        const report = {
+          ts: new Date().toISOString(),
+          overall: 'ok',
+          surfaces: results.map((r, i) => {
+            const name = endpoints[i][0];
+            const val = r.status === 'fulfilled' ? r.value : { name, status: 0, ok: false };
+            if (!val.ok) report.overall = 'degraded';
+            return val;
+          }),
+        };
+        return jsonResponse(report);
       }
 
       // ── Self-Care AI: Quark / Nudi / Spark (public, rate-limited by Cloudflare) ──
@@ -492,13 +550,54 @@ export default {
          return handleAegisChat(request, env);
        }
 
+      // ── All-Seeing Eye aggregator ──
+      if (url.pathname === '/api/eye' && request.method === 'GET') {
+        return withAccess(request, env, 'reader', async () => {
+          try {
+            const data = await buildEye(env);
+            logEvent(env, 'eye.aggregate', { control_enabled: data.control_enabled, kpi: data.kpi });
+            return jsonResponse(data);
+          } catch (e) {
+            logEvent(env, 'eye.error', { error: e.message });
+            return jsonResponse({ error: e.message }, 500);
+          }
+        });
+      }
+
+      // ── Operator control plane (admin-only, audited, gated by CONTROL_ENABLED) ──
+      if (url.pathname === '/api/control/quarantine' && request.method === 'POST') {
+        if (!controlEnabled(env)) {
+          logEvent(env, 'control.disabled', { action: 'quarantine' });
+          return jsonResponse({ ok: false, error: 'control plane disabled (set CONTROL_ENABLED=1 to enable)' }, 503);
+        }
+        return withAccess(request, env, 'admin', async (auth) => {
+          const { status, body } = await handleQuarantine(request, env, auth);
+          logEvent(env, 'control.quarantine', { auth: auth?.email, status, body });
+          return jsonResponse(body, status);
+        });
+      }
+      if (url.pathname === '/api/control/rollback' && request.method === 'POST') {
+        if (!controlEnabled(env)) {
+          logEvent(env, 'control.disabled', { action: 'rollback' });
+          return jsonResponse({ ok: false, error: 'control plane disabled (set CONTROL_ENABLED=1 to enable)' }, 503);
+        }
+        return withAccess(request, env, 'admin', async (auth) => {
+          const { status, body } = await handleRollback(request, env, auth);
+          logEvent(env, 'control.rollback', { auth: auth?.email, status, body });
+          return jsonResponse(body, status);
+        });
+      }
+
      if (url.pathname === '/cloud' || url.pathname === '/cloud/') {
       return new Response(buildCloudHubHtml(env.CF_ACCOUNT_ID || ''), {
         headers: { 'content-type': 'text/html;charset=UTF-8', 'x-robots-tag': 'noindex' },
       });
     }
 
-      // ── Dashboard ──
+      // ── Dashboard: static assets when bound, legacy generated HTML otherwise ──
+      if (env.ASSETS) {
+        return env.ASSETS.fetch(request);
+      }
       return serveDashboard(env);
     } catch (e) {
       return jsonResponse({ error: 'Internal error', details: String(e) }, 500);

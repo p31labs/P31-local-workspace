@@ -73,3 +73,51 @@ jobs:
         run: cd k4-worker && npm ci
       - name: Run live E2E tests
         run: cd k4-worker && npm run test:live
+
+  lint-monorepo:
+    name: Lint (root eslint)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Run eslint
+        run: npx eslint .
+
+  design-system-invariants:
+    name: Design system invariants
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Hex gate (no hardcoded hex in production code)
+        run: node scripts/smoke-hex-gate.mjs
+
+  ground-truth:
+    name: Ground truth verification
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Verify ground truth
+        run: node apps/p31ca/scripts/verify-ground-truth.mjs
+
+  oqe-gate:
+    name: OQE hard gate (non-blocking)
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run OQE hard gate
+        run: bash scripts/oqe-hard-gate.sh || true

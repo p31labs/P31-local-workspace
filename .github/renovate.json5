@@ -1,0 +1,16 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended", ":semanticCommits"],
+  "packageRules": [
+    { "matchManagers": ["github-actions"], "groupName": "GitHub Actions" },
+    { "matchPackagePatterns": ["^react", "^@types/react", "^react-dom", "^@types/react-dom"], "groupName": "React ecosystem" },
+    { "matchPackagePatterns": ["^three", "^@types/three"], "groupName": "Three.js ecosystem" },
+    { "matchPackagePatterns": ["^wrangler", "^@cloudflare"], "groupName": "Cloudflare toolchain" },
+    { "matchPackagePatterns": ["^vitest", "^@vitest"], "groupName": "Vitest ecosystem" },
+    { "matchUpdateTypes": ["major"], "dependencyDashboardApproval": true }
+  ],
+  "minimumReleaseAge": "3 days",
+  "lockFileMaintenance": { "enabled": true, "schedule": ["before 6am on monday"] },
+  "prHourlyLimit": 4,
+  "prConcurrentLimit": 8
+}

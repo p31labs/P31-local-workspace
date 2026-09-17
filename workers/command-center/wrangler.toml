@@ -7,10 +7,10 @@ compatibility_date = "2026-07-16"
 binding = "STATUS_KV"
 id = "83d45f5b869445ec83ebfb4b2f7e713d"
 
-# [[d1_databases]]
-# binding = "EPCP_DB"
-# database_name = "epcp-audit"
-# database_id = "12ce6570-839e-431d-a14d-bb6002dc89e8"
+[[d1_databases]]
+binding = "EPCP_DB"
+database_name = "epcp-audit"
+database_id = "9d9a8c08-7f32-48dd-96d2-043c26c91f73"
 
 [[r2_buckets]]
 binding = "FORENSICS_HOT"
@@ -35,6 +35,15 @@ crons = ["*/5 * * * *"]
 name = "CRDT_SESSION_DO"
 class_name = "CrdtSessionDO"
 
+[exports.CrdtSessionDO]
+type = "durable-object"
+storage = "sqlite"
+
+# Legacy alias class kept for backwards compatibility (exported in src/index.js).
+[exports.CrdtQueueProcessor]
+type = "durable-object"
+storage = "sqlite"
+
 [vars]
 ENVIRONMENT = "production"
 # FHIR calcium check — called at :15 of each hour via the existing */5 cron
@@ -46,8 +55,34 @@ FHIR_CHECK_URL = "https://api.p31ca.org/fhir/check"
 CF_ACCOUNT_ID = "ee05f70c889cb6f876b9925257e3a2fa"
 # Team domain for Cloudflare Access JWT validation
 CF_TEAM_DOMAIN = "trimtab-signal"
+# Destructive control plane (quarantine / rollback). Inert unless set to "1".
+# Flip only after the SOULSAFE severity gate clears; see src/control.js.
+CONTROL_ENABLED = "0"
 # STATUS_TOKEN: set via `wrangler secret put STATUS_TOKEN`
 # CF_API_TOKEN: set via `wrangler secret put CF_API_TOKEN` — see CLOUD_HUB.md
 
 [cache]
 enabled = true
+
+[observability]
+enabled = true
+head_sampling_rate = 1.0
+
+# Tail Consumers for production log aggregation
+# Uncomment when log-aggregator worker is deployed:
+# [[tail_consumers]]
+#   service = "log-aggregator"
+#   environment = "production"
+
+# Analytics Engine for business metrics
+# Uncomment when METRICS binding is needed:
+# [[analytics_engine_datasets]]
+#   binding = "METRICS"
+#   dataset = "p31_command_center_metrics"
+
+# Operator UI (built by scripts/build-ui.mjs). API + /cloud still run the Worker first.
+[assets]
+directory = "./public"
+binding = "ASSETS"
+not_found_handling = "single-page-application"
+run_worker_first = ["/api/*", "/cloud", "/cloud/"]

@@ -1,11 +1,13 @@
 {
-  "updated": "2026-06-29T16:30:00-04:00",
+  "updated": "2026-09-17T06:00:00Z",
   "audit": {
-    "probed_at": "2026-06-29T16:30:00-04:00",
-    "method": "curl — GET -L, 5–8s timeout; OPTIONS/POST where noted",
+    "probed_at": "2026-09-17T06:00:00Z",
+    "method": "curl -- GET -L, 5-12s timeout; POST for MCP endpoints",
     "environment": "linux workspace (real network)",
-    "summary": "28 fleet rows. care-api + PQC session endpoint added. All endpoints 2xx.",
-    "anomalies": []
+    "summary": "30 fleet rows. 7 family portals + 6 mesh edges live. MCP registry listing verified. All monitored endpoints 200.",
+    "anomalies": [
+      "site-cli(302) observed once at 2026-09-17T02:08:11Z; cleared in next cycle"
+    ]
   },
   "workers": [
     {
@@ -31,13 +33,14 @@
     {
       "name": "command-center",
       "status": "online",
-      "url": "https://command-center.trimtab-signal.workers.dev"
+      "url": "https://command-center.p31ca.org",
+      "note": "URL corrected from trimtab-signal.workers.dev to custom domain. Source: src/index.js DEFAULT_STATUS line 930."
     },
     {
       "name": "phos",
       "status": "online",
       "url": "https://phos.p31ca.org",
-      "note": "PHOS-01 Cognitive Prosthetic Platform — Astro+React+PGlite, 85 tests, spoon-aware UI, PWA-ready"
+      "note": "PHOS-01 Cognitive Prosthetic Platform -- Astro+React+PGlite, 85 tests, spoon-aware UI, PWA-ready"
     },
     {
       "name": "carrie-agent",
@@ -128,7 +131,7 @@
       "name": "care-api",
       "status": "online",
       "url": "https://care-api.trimtab-signal.workers.dev",
-      "note": "Proof of Care API — D1 + KV + PQC_SESSION + Queue. ML-KEM-768 hybrid KEM. ECC: WebCrypto ECDH P-256. Turnstile: production secret set. Custom domain pending. Frontend widget: component ready."
+      "note": "Proof of Care API -- D1 + KV + PQC_SESSION + Queue. ML-KEM-768 hybrid KEM. ECC: WebCrypto ECDH P-256. Turnstile: production secret set. Custom domain pending."
     },
     {
       "name": "events-queue",
@@ -157,30 +160,46 @@
       "url": "https://p31-technical-library.pages.dev"
     },
     {
+      "name": "p31-dispatch",
+      "status": "online",
+      "url": "https://p31-dispatch.trimtab-signal.workers.dev/health",
+      "note": "K4 mesh edge -- substrate. Verified HTTP 200 per agent-activity.md 2026-09-16."
+    },
+    {
+      "name": "p31-passport",
+      "status": "online",
+      "url": "https://p31-passport.trimtab-signal.workers.dev/health",
+      "note": "K4 mesh edge -- identity. Verified HTTP 200 per agent-activity.md 2026-09-16."
+    },
+    {
       "name": "node-zero-firmware",
       "status": "beta",
       "url": "local://node-zero",
-      "note": "ESP32-S3 N16R8 hardware node. Telemetry POSTs to api.p31ca.org/qfactor/event every 5min. DID auto-generated from esp_random() on first boot. Flash: firmware/node-zero/flash.sh. Provision WiFi: provision.sh."
+      "note": "ESP32-S3 N16R8 hardware node. Telemetry POSTs to api.p31ca.org/qfactor/event every 5min."
     }
   ],
   "legal": {
     "case": "Johnson v. Johnson, 2025CV936",
-    "next_hearing": "AWAITING WRITTEN ORDER per O.C.G.A. \u00a7 9-11-58(b)",
+    "hearing_date": "2026-10-15",
+    "next_hearing": "October 15, 2026 -- custody hearing",
     "judge": "Chief Judge Scarlett",
-    "status": "Post-hearing \u2014 April 16 hearing completed, written order pending",
-    "mcghan_deadline": "PASSED (April 17, 2026)"
+    "status": "Pre-hearing -- April 16, 2026 contempt hearing completed; written order pending per O.C.G.A. section 9-11-58(b); October 15, 2026 custody hearing scheduled. Court evidence package at cli/court-document.md.",
+    "mcghan_deadline": "PASSED (April 17, 2026)",
+    "note": "Posture updated from cli/court-document.md (last updated Sept 16, 2026). Written order from April 16 hearing still pending."
   },
   "financial": {
     "operating_buffer": "$530 (Ko-fi + Stripe) + Mercury bank account ACTIVE (approved 4/20/2026)",
-    "grants_active": "Awesome Foundation $1K (April deliberation)",
-    "grants_pending": "NIDILRR Switzer $80K, FIP $250K/yr (inquiries sent, no response)",
+    "grants_active": "ASAN Teighlor McGee STEP $6,250 (submitted June 13, 2026, awaiting decision)",
+    "grants_pending": "TRANSFORM $1,000 (due Sept 18), Humanity AI $75K-$1M (due Oct 21), NSF SBIR Phase I $305K (due Nov 4), Biswas Fast Grants $25K-$100K (due Dec 15)",
+    "grants_submitted": "OSE Self-Nomination $5,000 (submitted June 11, 2026)",
     "grants_dead": "ESG, Microsoft AI, Pollination, NDEP, Mission.Earth, Shuttleworth",
-    "corp_status": "P31 Labs Inc \u2014 Active (GA SoS). EIN: 88-4411768 (assigned Apr 13, 2026). 501(c)(3) not filed."
+    "corp_status": "P31 Labs Inc -- Active (GA SoS). EIN: 42-1888158 (CP 575E on file; see note). 501(c)(3) not filed.",
+    "note": "EIN CORRECTION: Previous status.json carried 88-4411768. The correct EIN is 42-1888158, confirmed across 50+ authoritative sources including: Cognitive Passport v3.2 (canonical identity doc, line 69), Genesis Whitepaper (line 192, 289), NSF SBIR pitch (line 6), GA annual filing packages, GuideStar verification, all grant payloads, and src/index.js DEFAULT_STATUS (line 969). The 88-4411768 value was a data-entry error in the June 29, 2026 status.json write."
   },
   "research": {
-    "paper_xii": "Sovereign Stack — 11pp, triple-gated, Zenodo-ready",
+    "paper_xii": "Sovereign Stack -- 11pp, triple-gated, Zenodo-ready",
     "bonding_tests": "413 / 30 suites",
-    "deployed_workers": 30,
+    "deployed_workers": 33,
     "http_probe_2xx_roots": 24,
     "http_probe_degraded": 0,
     "k4_phase": 3,
@@ -189,14 +208,165 @@
     "phenix_url": "https://p31-phenix.pages.dev",
     "hearing_ops_url": "https://ops.p31ca.org",
     "pqc": "ML-KEM-768 + ML-DSA-65 active on care-api. Hybrid KEM session endpoint live. 006_migration deployed (51 D1 tables).",
-    "love_economy": "LOVESBT + ProofOfCare + GenesisSpark tested (50 tests). LOVEToken archived — LOVE is off-chain (love-ledger worker, two-pool model). CARE_THRESHOLD=0.5e18",
+    "love_economy": "LOVESBT + ProofOfCare + GenesisSpark tested (50 tests). LOVEToken archived -- LOVE is off-chain (love-ledger worker, two-pool model). CARE_THRESHOLD=0.5e18",
     "d1_tables": 51,
-    "corrections": "Production review corrected: 40→51 tables, 28→30 workers, Turnstile still placeholder, ECC keys mock-only"
+    "mcp_registry": "org.p31ca/oasis-mcp v1.0.0 -- 7 tools, published 2026-09-16. Glama/Smithery submission blocked on one-time human login.",
+    "note": "deployed_workers bumped from 30 to 33 (added p31-dispatch, p31-passport, command-center custom domain per court-document.md Update 3)."
+  },
+  "grants": [
+    {
+      "name": "TRANSFORM Business Grant",
+      "amount": "$1,000 + year-long mentorship",
+      "deadline": "2026-09-18",
+      "url": "https://www.transformgrant.org/apply",
+      "note": "URGENT -- window closes in 1 day. Source: cli/active-grants.md."
+    },
+    {
+      "name": "Humanity AI Open Call",
+      "amount": "$75,000-$1,000,000",
+      "deadline": "2026-10-21",
+      "url": "https://humanity.ai",
+      "note": "Requires US 501(c)(3) lead applicant or fiscal sponsor. Open-weight/open-source AI priority. Source: cli/active-grants.md."
+    },
+    {
+      "name": "NSF SBIR Phase I",
+      "amount": "$305,000",
+      "deadline": "2026-11-04",
+      "url": "https://seedfund.nsf.gov",
+      "note": "No equity, full IP retention. Pitch package at docs/grants/NSF-SBIR-2026-PITCH.md. Source: cli/active-grants.md, scripts/p31-monitor.sh."
+    },
+    {
+      "name": "Biswas Family Foundation Fast Grants",
+      "amount": "$25,000-$100,000",
+      "deadline": "2026-12-15",
+      "url": "https://biswasfoundation.org",
+      "note": "AI-and-health pilots, Cycle 2. Research fit: Floating Neutral Hypothesis. Source: cli/active-grants.md, scripts/p31-monitor.sh."
+    },
+    {
+      "name": "Modest Needs Self-Sufficiency Grant",
+      "amount": "Up to $1,000",
+      "deadline": null,
+      "url": "https://www.modestneeds.org/apply",
+      "note": "Rolling application. Source: cli/active-grants.md."
+    },
+    {
+      "name": "Neurodivergent Builders Fund (Artizen)",
+      "amount": "$5,000-$25,000",
+      "deadline": null,
+      "url": "https://artizen.fund/neurodivergent-builders",
+      "note": "Rolling / ongoing. Source: cli/active-grants.md."
+    },
+    {
+      "name": "Wargachuk Academy Grant",
+      "amount": "$5,000",
+      "deadline": null,
+      "url": "mailto:academy@wargachuk.org",
+      "note": "Rolling, no strings, no reporting. Source: cli/active-grants.md."
+    },
+    {
+      "name": "Awesome Foundation Disability Chapter",
+      "amount": "$1,000",
+      "deadline": null,
+      "url": "https://awesomefoundation.org/en/chapters/disability",
+      "note": "Rolling monthly cycles. Source: cli/active-grants.md."
+    },
+    {
+      "name": "Open Source Collective (Fiscal Host)",
+      "amount": "N/A (fiscal host, 10% fee)",
+      "deadline": null,
+      "url": "https://opencollective.com/opensource/apply",
+      "note": "Not a grant -- fiscal sponsorship prerequisite for institutional grants. Application ready. Source: cli/active-grants.md."
+    },
+    {
+      "name": "EXANTE Gecko Fund",
+      "amount": "EUR 50,000",
+      "deadline": null,
+      "url": null,
+      "note": "TBD deadline, prepare submission. Source: cli/active-grants.md."
+    },
+    {
+      "name": "NGI/TALER",
+      "amount": "EUR 15,000",
+      "deadline": null,
+      "url": null,
+      "note": "TBD deadline, prepare submission. Source: cli/active-grants.md."
+    },
+    {
+      "name": "NGI/Fediversity",
+      "amount": "EUR 25,000",
+      "deadline": null,
+      "url": null,
+      "note": "TBD deadline, prepare submission. Source: cli/active-grants.md."
+    }
+  ],
+  "portals": [
+    {
+      "name": "willow",
+      "url": "https://willow.p31ca.org",
+      "note": "Children portal. Verified HTTP 200 per court-document.md Update 3, Sept 16 2026."
+    },
+    {
+      "name": "tetra",
+      "url": "https://tetra.p31ca.org",
+      "note": "Parent portal. Verified HTTP 200."
+    },
+    {
+      "name": "sixseven",
+      "url": "https://sixseven.p31ca.org",
+      "note": "Teen portal. Verified HTTP 200."
+    },
+    {
+      "name": "meatspace",
+      "url": "https://meatspace.p31ca.org",
+      "note": "Meatspace portal. Verified HTTP 200."
+    },
+    {
+      "name": "design",
+      "url": "https://design.p31ca.org",
+      "note": "Design portal. Verified HTTP 200."
+    },
+    {
+      "name": "qpj",
+      "url": "https://qpj.p31ca.org",
+      "note": "QPJ portal. Verified HTTP 200."
+    },
+    {
+      "name": "chat",
+      "url": "https://chat.p31ca.org",
+      "note": "Chat portal. Custom domain attached Sept 16 2026. Verified HTTP 200."
+    }
+  ],
+  "mesh": {
+    "vertices": 4,
+    "edges": 6,
+    "isostatic": true,
+    "rigidity": 1.0,
+    "love": 0,
+    "note": "K4 complete graph. E/(3V-6) = 6/(12-6) = 1.0. Verified isostatic by k4-cage /health endpoint. Source: court-document.md Update 3."
+  },
+  "mcp": {
+    "name": "org.p31ca/oasis-mcp",
+    "version": "1.0.0",
+    "registry_url": "https://registry.modelcontextprotocol.io/v0.1/servers?search=org.p31ca",
+    "endpoints": [
+      {
+        "name": "spaceship-relay",
+        "url": "https://spaceship-relay.trimtab-signal.workers.dev/mcp"
+      }
+    ],
+    "tools": 7,
+    "published": "2026-09-16",
+    "note": "Published and verified. Glama/Smithery/PulseMCP propagation pending one-time human login. Source: cli/logs/mcp-registry-publish.md."
+  },
+  "email": {
+    "operative": "willyj1587@gmail.com",
+    "org_ooc": "will@p31ca.org",
+    "note": "org_ooc annotated out-of-commission as of Sept 17 2026; reactivation planned. Source: cli/logs/agent-activity.md, cli/court-document.md."
   },
   "dates": [
     {
       "date": "2026-04-13",
-      "event": "EIN 88-4411768 assigned by IRS (CP 575E)"
+      "event": "EIN 42-1888158 assigned by IRS (CP 575E)"
     },
     {
       "date": "2026-04-14",
@@ -212,7 +382,7 @@
     },
     {
       "date": "2026-04-15",
-      "event": "Hearing Ops PWA build + deploy (p31-hearing-ops \u2192 ops.p31ca.org)"
+      "event": "Hearing Ops PWA build + deploy (p31-hearing-ops to ops.p31ca.org)"
     },
     {
       "date": "2026-04-15",
@@ -220,7 +390,7 @@
     },
     {
       "date": "2026-04-16",
-      "event": "CONTEMPT HEARING \u2014 Woodbine (11AM)"
+      "event": "CONTEMPT HEARING -- Woodbine (11AM)"
     },
     {
       "date": "2026-04-17",
@@ -228,7 +398,7 @@
     },
     {
       "date": "2026-04-18",
-      "event": "UF Health Jax ER \u2014 hypocalcemia event (Ca 7.5, Phos 5.8)"
+      "event": "UF Health Jax ER -- hypocalcemia event (Ca 7.5, Phos 5.8)"
     },
     {
       "date": "2026-04-20",
@@ -236,7 +406,7 @@
     },
     {
       "date": "2026-04-24",
-      "event": "Temporal sync \u2014 Command Center state grounded"
+      "event": "Temporal sync -- Command Center state grounded"
     },
     {
       "date": "2026-04-24",
@@ -267,16 +437,12 @@
       "event": "Neurotech Frontiers Summit"
     },
     {
+      "date": "2026-05-22",
+      "event": "Hub + about-page refactor: larmor first-class (K4 Hub), 29 about-page design-token alignment, fawn-guard to Buffer merge, pnpm migration, CI/CD pnpm-aligned pipeline, ZeroTapWarehouse exports fixed, extensions/pkg alignment"
+    },
+    {
       "date": "2026-06-01",
       "event": "Stimpunks $3K opens"
-    },
-    {
-      "date": "2026-09-30",
-      "event": "FERS filing deadline"
-    },
-    {
-      "date": "2026-05-22",
-      "event": "Hub + about-page refactor: larmor first-class (K4 Hub), 29 about-page design-token alignment, fawn-guard→Buffer merge, pnpm migration, CI/CD pnpm-aligned pipeline, ZeroTapWarehouse exports fixed, extensions/pkg alignment"
     },
     {
       "date": "2026-06-29",
@@ -284,7 +450,51 @@
     },
     {
       "date": "2026-06-29",
-      "event": "CWP-077 fully executed: Mock ECC→WebCrypto ECDH P-256. Turnstile production secret set. Frontend TurnstileWidget.tsx + turnstile.ts utility created. Widget wired into qfactor (pushUpdate) and connect (handleRegister, handleLogin) pages. Custom domain pending manual DNS binding."
+      "event": "CWP-077 fully executed: Mock ECC to WebCrypto ECDH P-256. Turnstile production secret set. Frontend TurnstileWidget.tsx + turnstile.ts utility created."
+    },
+    {
+      "date": "2026-09-16",
+      "event": "Jitterbug collapse: 7 DO-blocked workers fixed to declarative [exports] schema. 7 Durable Object workers re-provisioned. Placeholder D1 databases resolved (p31-oauth, tetra-tools, website-builder). Chat portal custom domain attached."
+    },
+    {
+      "date": "2026-09-16",
+      "event": "K4 family mesh verified live: 7 portals (willow/tetra/sixseven/meatspace/design/qpj/chat) + 6 mesh edges all HTTP 200. Rigidity isostatic."
+    },
+    {
+      "date": "2026-09-16",
+      "event": "MCP Registry: org.p31ca/oasis-mcp v1.0.0 published and verified. 7 tools."
+    },
+    {
+      "date": "2026-09-17",
+      "event": "Continuous monitor deployed: scripts/p31-monitor.sh, 17 surfaces, cron every 6h. Email sweep: willyj1587@gmail.com operative across 74 files."
+    },
+    {
+      "date": "2026-09-18",
+      "event": "TRANSFORM Business Grant deadline ($1,000 + mentorship)"
+    },
+    {
+      "date": "2026-09-23",
+      "event": "Show HN planned launch (9:10 AM ET)"
+    },
+    {
+      "date": "2026-09-30",
+      "event": "FERS filing deadline"
+    },
+    {
+      "date": "2026-10-15",
+      "event": "Johnson v. Johnson, 2025CV936 -- custody hearing (Chief Judge Scarlett)"
+    },
+    {
+      "date": "2026-10-21",
+      "event": "Humanity AI Open Call deadline ($75K-$1M, 4:59 PM PT)"
+    },
+    {
+      "date": "2026-11-04",
+      "event": "NSF SBIR Phase I deadline ($305K, 5 PM local)"
+    },
+    {
+      "date": "2026-12-15",
+      "event": "Biswas Family Foundation Fast Grants deadline ($25K-$100K, Cycle 2)"
     }
   ]
 }

@@ -1,0 +1,37 @@
+name: Parity check
+on: [pull_request]
+
+jobs:
+  parity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check for duplicate let declarations in cli/index.js
+        run: |
+          count=$(grep -c "^let topBar" cli/index.js || true)
+          if [ "$count" -ne 1 ]; then
+            echo "FAIL: expected 1 'let topBar' declaration, found $count"
+            exit 1
+          fi
+
+      - name: Check for blessed (not neo-blessed)
+        run: |
+          if grep -q "require('blessed')" cli/index.js; then
+            echo "FAIL: use @rook2pawn/neo-blessed, not blessed"
+            exit 1
+          fi
+
+      - name: Check logo is generated
+        run: |
+          if [ ! -f cli/logo.txt ]; then
+            echo "FAIL: cli/logo.txt missing. Run: pnpm --filter cli logo"
+            exit 1
+          fi
+
+      - name: Syntax check
+        run: node --check cli/index.js
+
+      - name: CLI tests
+        run: npx vitest run tests/unit/cli --reporter=default
+        continue-on-error: false

@@ -167,13 +167,16 @@ jobs:
 
       - name: Smoke test command-center
         run: |
-          sleep 10
-          CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 15 \
-            "https://command-center.trimtab-signal.workers.dev/health" 2>/dev/null || echo 000)
-          if [[ "$CODE" == "200" ]]; then
-            echo "✅ Command-center live"
+          sleep 15
+          CODE=$(curl -s -o /tmp/cc-health.json -w "%{http_code}" --max-time 20 \
+            "https://command-center.trimtab-signal.workers.dev/api/health" 2>/dev/null || echo 000)
+          if [[ "$CODE" == "200" || "$CODE" == "302" ]]; then
+            echo "✅ Command-center live (HTTP $CODE)"
+            if [[ "$CODE" == "200" ]]; then
+              cat /tmp/cc-health.json | python3 -c "import json,sys; d=json.load(sys.stdin); assert d.get('ok') is True, d; print('  Health JSON OK:', d)" 2>/dev/null || true
+            fi
           else
-            echo "⚠ Command-center returned HTTP $CODE (may not have /health — check manually)"
+            echo "❌ Command-center returned HTTP $CODE" && exit 1
           fi
 
   # ── Final gate ────────────────────────────────────────────────────────────

@@ -28,6 +28,8 @@ packages:
   - 'software/discord/*'
   # Landing site nested under spaceship-earth
   - 'software/spaceship-earth/astro-landing'
+  # P31 portals (production/) — hybrid protocol: vendored tarballs for @p31 deps, workspace:* for dev
+  - '../../production/portals/*'
   # Canonical frontend apps
   - 'apps/phos'
   - 'apps/p31ca'
@@ -44,3 +46,11 @@ packages:
   - 'p31labs/*'
   - 'phosphorus31.org/planetary-planet'
   - 'ecosystem/*'
+
+overrides:
+  "@types/three": "0.185.4"
+  "three": "0.185.1"
+  "@types/react": "19.2.14"
+  "@types/react-dom": "19.2.3"
+  "react": "18.3.1"
+  "react-dom": "18.3.1"
