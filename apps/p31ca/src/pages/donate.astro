@@ -1,0 +1,96 @@
+---
+import MarketingShell from '../layouts/MarketingShell.astro';
+import CanonTopbar from '../components/islands/CanonTopbar.tsx';
+import SectionHeader from '../components/marketing/SectionHeader.astro';
+import CanonFooter from '../components/islands/CanonFooter.tsx';
+
+const BTCPAY_STORE_ID = '5nPURCXnK5UMYQF2K9LYSo52nzSEYfJXm8tncnQbKLF9';
+const BTCPAY_HOST = 'https://btcpay.p31ca.org';
+---
+
+<MarketingShell title="Donate — P31 Labs" description="Support P31 Labs. Accepting Bitcoin, USD, EUR, GBP via BTCPay — no middleman, no fees, self-custody.">
+  <CanonTopbar client:load />
+
+  <main id="main-content" class="section">
+    <div class="max-w-4xl mx-auto px-6 md:px-12 lg:px-16">
+      <SectionHeader title="Support P31 Labs" description="Direct, self-custody donations. No fiscal host, no platform fees, no AI detection." align="left" />
+
+      <div class="mt-12 space-y-8">
+        <div class="glass-card p-8">
+          <h3 class="text-lg font-bold mb-5" style="color: var(--p31-text);">Bitcoin / Self-custody</h3>
+          <p class="text-sm mb-6" style="color: var(--p31-text-secondary);">Pay with BTC, USD, EUR, or GBP via our self-hosted BTCPay Server. No middleman. No fees.</p>
+          <form method="POST" action="{BTCPAY_HOST}/api/v1/invoices" class="btcpay-form btcpay-form--block" id="btcpayForm">
+            <input type="hidden" name="storeId" value="{BTCPAY_STORE_ID}" />
+            <input type="hidden" name="jsonResponse" value="true" />
+            <input type="hidden" name="checkoutDesc" value="Donation to P31 Labs" />
+            <input type="hidden" name="browserRedirect" value="https://p31ca.org/donate?btcpay=success" />
+            <input type="hidden" name="notifyEmail" value="willyj1587@gmail.com" />
+            <input type="hidden" name="checkoutQueryString" value="lang=en" />
+            <div class="btcpay-custom-container">
+              <input class="btcpay-input-price" type="number" name="price" min="1" max="50000" step="1" value="10" data-price="10" style="width:209px;" />
+              <select name="currency" class="mt-3">
+                <option value="USD" selected>USD</option>
+                <option value="BTC">BTC</option>
+                <option value="EUR">EUR</option>
+                <option value="GBP">GBP</option>
+              </select>
+            </div>
+            <button type="submit" class="submit mt-4" name="submit" style="min-width:209px;min-height:57px;border-radius:4px;border-style:none;background-color:var(--p31-accent);cursor:pointer;" title="Pay with BTCPay Server, a Self-Hosted Bitcoin Payment Processor">
+              <span style="color:#fff; font-weight: 700;">Donate with BTCPay</span>
+            </button>
+          </form>
+          <div id="btcpay-success" class="mt-4 text-sm hidden" style="color: var(--p31-notif-green);">Thank you! Your donation has been received.</div>
+        </div>
+
+        <div class="glass-card p-8">
+          <h3 class="text-lg font-bold mb-5" style="color: var(--p31-text);">Other ways to support</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <a href="https://ko-fi.com/trimtab69420" target="_blank" rel="noopener noreferrer" class="p-4 rounded-xl text-center" style="background: var(--p31-surface); color: var(--p31-text);">
+              <div class="font-bold">Ko-fi</div>
+              <div class="text-xs mt-1" style="color: var(--p31-text-tertiary);">0% fees</div>
+            </a>
+            <a href="https://hcb.hackclub.com/donations/start/p31-labs" target="_blank" rel="noopener noreferrer" class="p-4 rounded-xl text-center" style="background: var(--p31-surface); color: var(--p31-text);">
+              <div class="font-bold">Hack Club</div>
+              <div class="text-xs mt-1" style="color: var(--p31-text-tertiary);">Fiscal host</div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <CanonFooter client:load />
+
+  <script is:inline>
+    (function() {
+      const form = document.getElementById('btcpayForm');
+      const success = document.getElementById('btcpay-success');
+      if (!form) return;
+
+      if (new URLSearchParams(location.search).get('btcpay') === 'success') {
+        success.classList.remove('hidden');
+      }
+
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+          if (xhr.readyState === 4 && xhr.status === 200 && xhr.responseText) {
+            try {
+              const data = JSON.parse(xhr.responseText);
+              if (window.btcpay && data.invoiceId) {
+                window.btcpay.appendInvoiceFrame(data.invoiceId);
+              } else if (data.invoiceId) {
+                window.location.href = '{BTCPAY_HOST}/i/' + data.invoiceId;
+              }
+            } catch(err) {
+              console.error('BTCPay response parse error:', err);
+            }
+          }
+        };
+        xhr.open('POST', form.getAttribute('action'), true);
+        xhr.send(new FormData(form));
+      });
+    })();
+  </script>
+</MarketingShell>
