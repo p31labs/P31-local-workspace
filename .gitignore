@@ -185,3 +185,6 @@ out/
 
 # Genesis invite state (idempotency tracker)
 .sent-invites.json
+
+# Large backup bundles (exceeds GitHub 100 MB limit)
+*.bundle
