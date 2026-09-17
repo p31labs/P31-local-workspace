@@ -1401,8 +1401,23 @@ async function handleRequest(request: Request): Promise<Response> {
   // Tool listing page (human-friendly)
   if (request.method === 'GET' && url.pathname === '/') {
     const toolList = TOOLS.map(t => `  <li><strong>${t.name}</strong> — ${t.description}</li>`).join('\n');
-    const html = `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>P31 Design System MCP</title><style>body{font-family:system-ui,sans-serif;background:#0A0A0F;color:#F5F5F7;max-width:800px;margin:60px auto;padding:0 24px;}h1{color:#00F0FF;}pre{background:rgba(255,255,255,0.04);padding:12px;border-radius:8px;overflow-x:auto;}code{font-family:monospace;color:#A78BFA;}li{margin:8px 0;}</style></head><body><h1>P31 Design System MCP</h1><p>Streamable HTTP endpoint. Send JSON-RPC requests via POST.</p><h2>Tools (${TOOLS.length})</h2><ul>${toolList}</ul><h2>Example</h2><pre><code>curl -X POST ${url.origin}/ \\\\\n  -H "Content-Type: application/json" \\\\\n  -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"token_resolve","arguments":{"path":"semantic.color.accent.default"}}}'</code></pre><p style="color:rgba(245,245,247,0.3);margin-top:40px;font-size:12px;">P31 Labs &middot; Sovereign Design System &middot; ${new Date().toISOString()}</p></body></html>`;
+    const html = `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>P31 Design System MCP</title><style>body{font-family:system-ui,sans-serif;background:#0A0A0F;color:#F5F5F7;max-width:800px;margin:60px auto;padding:0 24px;}h1{color:#00F0FF;}pre{background:rgba(255,255,255,0.04);padding:12px;border-radius:8px;overflow-x:auto;}code{font-family:monospace;color:#A78BFA;}li{margin:8px 0;}</style></head><body><h1>P31 Design System MCP</h1><p>Streamable HTTP endpoint. Send JSON-RPC requests via POST.</p><h2>Tools (${TOOLS.length})</h2><ul>${toolList}</ul><h2>Example</h2><pre><code>curl -X POST ${url.origin}/ \\\n  -H "Content-Type: application/json" \\\n  -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"token_resolve","arguments":{"path":"semantic.color.accent.default"}}}'</code></pre><p style="color:rgba(245,245,247,0.3);margin-top:40px;font-size:12px;">P31 Labs &middot; Sovereign Design System &middot; ${new Date().toISOString()}</p></body></html>`;
     return new Response(html, { headers: { 'Content-Type': 'text/html;profile=mcp-app' } });
+  }
+
+  // MCP server discovery card (Smithery / registry scanners)
+  if (request.method === 'GET' && url.pathname === '/.well-known/mcp/server-card.json') {
+    const card = {
+      name: 'p31-design-mcp',
+      description: 'P31 Design System MCP Server — Token resolution, component schemas, layout generation, icon search, UI auditing for the P31 quantum design system',
+      version: '0.1.0',
+      endpoint: 'https://p31-design-mcp.trimtab-signal.workers.dev/mcp',
+      transport: 'streamable-http',
+      repository: 'https://github.com/p31labs/andromeda',
+      homepage: 'https://p31ca.org',
+      keywords: ['design-system','components','layout','tokens','ui-audit','p31','neuroinclusive']
+    };
+    return new Response(JSON.stringify(card), { headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' } });
   }
 
   // POST — MCP JSON-RPC
@@ -1554,6 +1569,16 @@ async function handleRequest(request: Request): Promise<Response> {
 
     case 'ping':
       return mcpResponse(id, {});
+
+    case 'initialize':
+      return mcpResponse(id, {
+        protocolVersion: '2024-11-05',
+        capabilities: { tools: { listChanged: false } },
+        serverInfo: { name: 'p31-design-mcp', version: '0.1.0' },
+      });
+
+    case 'initialized':
+      return new Response(null, { status: 204, headers: { 'Access-Control-Allow-Origin': '*' } });
 
     default:
       if (id !== undefined) return mcpError(id, -32601, `Method not found: ${method}`);

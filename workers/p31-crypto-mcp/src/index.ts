@@ -105,6 +105,18 @@ export default {
         }
         if (rpcMethod === 'ping')
           return cors(JSON.stringify({ jsonrpc:'2.0', id:rpcId, result:{} }));
+        if (rpcMethod === 'initialize') {
+          return cors(JSON.stringify({
+            jsonrpc:'2.0', id:rpcId,
+            result:{
+              protocolVersion:'2024-11-05',
+              capabilities:{ tools:{ listChanged:false } },
+              serverInfo:{ name:'p31-crypto-mcp', version:'0.1.0' }
+            }
+          }));
+        }
+        if (rpcMethod === 'initialized')
+          return new Response(null, { status:200, headers:{ 'Access-Control-Allow-Origin':'*' } });
         return cors(JSON.stringify({ jsonrpc:'2.0', id:rpcId, error:{ code:-32601, message:`Method not found: ${rpcMethod}` } }), 400);
       } catch (e: any) {
         return cors(JSON.stringify({ jsonrpc:'2.0', id:null, error:{ code:-32700, message:`Parse error: ${e.message}` } }), 400);
@@ -113,6 +125,20 @@ export default {
 
     if (url.pathname === '/health' && request.method === 'GET')
       return cors(JSON.stringify({ status:'ok', service:'p31-crypto-mcp', version:'2.0.0', tools:TOOLS.length, backends:{ ledgerBridge:env.LEDGER_BRIDGE_URL, federationBridge:env.FEDERATION_BRIDGE_URL, talerBridge:env.TALER_BRIDGE_URL, x402Gateway:env.X402_GATEWAY_URL }, timestamp: new Date().toISOString() }));
+
+    if (url.pathname === '/.well-known/mcp/server-card.json' && request.method === 'GET') {
+      const card = {
+        name: 'p31-crypto-mcp',
+        description: 'P31 PQC Crypto MCP Server — ML-DSA-65 keygen/sign/verify, ML-KEM-768, SLH-DSA-128s, hybrid signatures, SD-JWT, x402 payment',
+        version: '0.1.0',
+        endpoint: 'https://p31-crypto-mcp.trimtab-signal.workers.dev/mcp',
+        transport: 'streamable-http',
+        repository: 'https://github.com/p31labs/andromeda',
+        homepage: 'https://p31ca.org',
+        keywords: ['post-quantum','cryptography','mldsa','mlkem','slhdsa','hybrid','sd-jwt','x402','p31']
+      };
+      return new Response(JSON.stringify(card), { headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' } });
+    }
 
     if (url.pathname === '/' && request.method === 'GET')
       return cors(JSON.stringify({ service:'p31-crypto-mcp', description:'Post-quantum crypto MCP wrapper', tools: TOOLS.map(t=>t.name), mcp:'POST /mcp, GET /mcp (SSE)' }));
