@@ -82,7 +82,7 @@ export function buildEpcpDashboardHtml() {
   html += '  out+="<div style=\\"width:80px;height:80px;background:radial-gradient(circle,rgba(0,240,255,0.2) 0%,transparent 70%);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:32px\\">⚡</div>";';
   html += '  out+="<div><h1>G.O.D. / <span class=\\"accent\\">EPCP</span></h1><div class=\\"sub\\">Grounded Operator Deck — Command Center</div></div>";';
   html += '  out+="<div class=\\"spoon-controls\\"><label>Spoons</label>";';
-  html += '  for(var s=0;s<=5;s++){out+="<button class=\\"spoon-btn\\" data-spoon=\\""+s+"\\" onclick=\\"document.body.dataset.spoons="+s+";document.querySelectorAll(\\'.spoon-btn\\').forEach(function(b){b.classList.remove(\\'active\\')});this.classList.add(\\'active\\')\\">"+s+"</button>"}';
+  html += '  for(var s=0;s<=5;s++){out+="<button class=\\"spoon-btn\\" data-spoon=\\""+s+"\\" onclick=\\"document.body.dataset.spoons="+s+";document.querySelectorAll(\\x27.spoon-btn\\x27\x27).forEach(function(b){b.classList.remove(\\x27active\\x27\x27)});this.classList.add(\\x27active\\x27\x27)\\">"+s+"</button>"}';
   html += '  out+="</div></header>";';
 
   // Auth info
@@ -128,14 +128,14 @@ export function buildEpcpDashboardHtml() {
   html += '  if(status.workers){';
   html += '    status.workers.forEach(function(w){';
   html += '      var dotClass=w.status==="online"?"online":w.status==="debug"?"degraded":"offline";';
-  html += '      out+="<div class=\\"worker-row\\" onclick=\\"toggleDetails(\\''"+w.name+"\\')\\">";';
+  html += '      out+="<div class=\\"worker-row\\" onclick=\\"toggleDetails(\\x27\x27"+w.name+"\\x27\x27)\\">";';
   html += '      out+="<div><span class=\\"status-dot "+dotClass+"\\"></span><span style=\\"font-weight:600\\">"+w.name+"</span></div>";';
   html += '      out+="<span style=\\"font-size:10px;color:var(--text-tertiary);text-transform:uppercase\\">"+w.status+"</span>";';
   html += '      out+="</div>";';
   html += '      out+="<div class=\\"worker-details\\" id=\\"details-"+w.name+"\\">";';
   html += '      out+="<div>Endpoint: <a href=\\""+w.url+"\\" target=\\"_blank\\" style=\\"color:var(--quantum-cyan)\\">"+w.url+"</a></div>";';
-  html += '      out+="<button class=\\"btn btn-danger\\" onclick=\\"panic(\\''"+w.name+"\\')\\">⚠ Quarantine</button>";';
-  html += '      out+="<button class=\\"btn btn-success\\" onclick=\\"rollback(\\''"+w.name+"\\')\\">↻ Rollback</button>";';
+  html += '      out+="<button class=\\"btn btn-danger\\" onclick=\\"panic(\\x27\x27"+w.name+"\\x27\x27)\\">⚠ Quarantine</button>";';
+  html += '      out+="<button class=\\"btn btn-success\\" onclick=\\"rollback(\\x27\x27"+w.name+"\\x27\x27)\\">↻ Rollback</button>";';
   html += '      out+="</div>";';
   html += '    });';
   html += '  }';
