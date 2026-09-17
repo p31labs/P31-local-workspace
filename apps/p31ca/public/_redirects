@@ -204,3 +204,10 @@
 /ops/  /god  301
 
 /api/phos/cognitive-state /api/phos/cognitive-state.json 200
+
+# Pre-rendered pages — trailing slash redirect (must be before SPA catch-all)
+/donate  /donate/  301
+/treasury  /treasury/  301
+
+# SPA catch-all — unmatched paths serve the Astro app shell (must be last)
+/* /index.html 200

@@ -19,8 +19,8 @@ const BTCPAY_HOST = 'https://btcpay.p31ca.org';
         <div class="glass-card p-8">
           <h3 class="text-lg font-bold mb-5" style="color: var(--p31-text);">Bitcoin / Self-custody</h3>
           <p class="text-sm mb-6" style="color: var(--p31-text-secondary);">Pay with BTC, USD, EUR, or GBP via our self-hosted BTCPay Server. No middleman. No fees.</p>
-          <form method="POST" action="{BTCPAY_HOST}/api/v1/invoices" class="btcpay-form btcpay-form--block" id="btcpayForm">
-            <input type="hidden" name="storeId" value="{BTCPAY_STORE_ID}" />
+          <form method="POST" action="https://btcpay.p31ca.org/api/v1/invoices" class="btcpay-form btcpay-form--block" id="btcpayForm">
+            <input type="hidden" name="storeId" value="5nPURCXnK5UMYQF2K9LYSo52nzSEYfJXm8tncnQbKLF9" />
             <input type="hidden" name="jsonResponse" value="true" />
             <input type="hidden" name="checkoutDesc" value="Donation to P31 Labs" />
             <input type="hidden" name="browserRedirect" value="https://p31ca.org/donate?btcpay=success" />
@@ -81,7 +81,7 @@ const BTCPAY_HOST = 'https://btcpay.p31ca.org';
               if (window.btcpay && data.invoiceId) {
                 window.btcpay.appendInvoiceFrame(data.invoiceId);
               } else if (data.invoiceId) {
-                window.location.href = '{BTCPAY_HOST}/i/' + data.invoiceId;
+                window.location.href = 'https://btcpay.p31ca.org/i/' + data.invoiceId;
               }
             } catch(err) {
               console.error('BTCPay response parse error:', err);

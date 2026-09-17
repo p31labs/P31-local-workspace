@@ -262,6 +262,20 @@
       "category": "seed_grant",
       "url": "https://www.awesomefoundation.org/",
       "submittedDate": "2026-03-10"
+    },
+    {
+      "id": "tether-developer-grants",
+      "program": "Tether Developer Grants",
+      "title": "p31-tether-wallet — Self-Custodial Wallet Backend with x402 Settlement",
+      "requestedAmount": "$3,500",
+      "currency": "USD",
+      "deadline": "rolling",
+      "status": "ready_for_submission",
+      "priority": "high",
+      "category": "open_source_payments",
+      "url": "https://tether.to/en/developer-grants",
+      "applicationDoc": "docs/grants/TETHER-DEVELOPER-GRANTS.md",
+      "notes": "Application drafted. Submission requires manual upload to Tether Developer Grants portal. p31-crypto-mcp already deployed and in MCP registry."
     }
   ],
   "immediateActions": [

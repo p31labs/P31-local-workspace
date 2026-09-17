@@ -19,6 +19,7 @@
     "./templates/SectionFeatures": "./src/templates/SectionFeatures.astro",
     "./templates/Footer": "./src/templates/Footer.astro",
     "./templates/TetraNav": "./src/templates/TetraNav.astro",
+    "./chrome": "./src/chrome/index.ts",
     "./chrome.css": "./src/chrome.css"
   },
   "dependencies": {

@@ -35,7 +35,9 @@
     "./generator": "./src/generator/componentGenerator.ts",
     "./generator/astro": "./src/generator/componentGenerator.astro.ts",
     "./generator/html": "./src/generator/componentGenerator.html.ts",
-    "./generator/wc": "./src/generator/componentGenerator.wc.ts"
+    "./generator/wc": "./src/generator/componentGenerator.wc.ts",
+    "./generated/Crown": "./src/generated/Crown.tsx",
+    "./generated/GlassCard": "./src/generated/GlassCard.tsx"
   },
   "scripts": {
     "build": "tsc",
