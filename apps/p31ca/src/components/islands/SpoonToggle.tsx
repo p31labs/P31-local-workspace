@@ -3,14 +3,6 @@
 import { useState, useEffect, useCallback } from 'react';
 
 const SPOON_LEVELS = [0, 1, 2, 3, 4, 5] as const;
-const THEME_MAP: Record<number, string> = {
-  0: 'crisis',
-  1: 'sanctuary',
-  2: 'sanctuary',
-  3: 'bridge',
-  4: 'quantum',
-  5: 'quantum',
-};
 
 export default function SpoonToggle() {
   const [spoons, setSpoonsState] = useState<number>(3);
@@ -21,14 +13,12 @@ export default function SpoonToggle() {
     const stored = parseInt(localStorage.getItem('p31:spoons') || '3', 10);
     setSpoonsState(stored);
     document.documentElement.setAttribute('data-spoons', String(stored));
-    document.documentElement.setAttribute('data-theme', THEME_MAP[stored] || 'quantum');
   }, []);
 
   const setSpoons = useCallback((level: number) => {
     setSpoonsState(level);
     localStorage.setItem('p31:spoons', String(level));
     document.documentElement.setAttribute('data-spoons', String(level));
-    document.documentElement.setAttribute('data-theme', THEME_MAP[level] || 'quantum');
   }, []);
 
   if (!mounted) {
@@ -51,7 +41,7 @@ export default function SpoonToggle() {
             spoons === level
               ? level === 0
                 ? 'bg-red-500 text-white'
-                : 'bg-quantum text-black'
+                : 'bg-brand-cyan text-black'
               : 'bg-white/10 text-gray-400 hover:text-white'
           }`}
           title={`Spoons = ${level}${level === 0 ? ' (Crisis Mode)' : ''}`}

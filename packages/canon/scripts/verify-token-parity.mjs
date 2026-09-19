@@ -29,7 +29,7 @@ import postcss from 'postcss';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = resolve(here, '..', '..', '..');
-const BASELINE = resolve(root, 'packages', 'design-core', 'src', 'css', 'all.css');
+const BASELINE = resolve(root, 'packages', 'canon', 'baseline', 'design-core-css', 'all.css');
 const CANDIDATE = resolve(root, 'packages', 'canon', 'dist', 'tokens.css');
 
 /** Load a CSS file, inlining local @import './x.css' in source order, so the

@@ -1,0 +1,238 @@
+/* P31 design-core — layout.css */
+/* Layout recipe classes derived from production shell and portal topbars/bottom navs. */
+
+/* ─── Shell Layout ─── */
+.shell {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  position: relative;
+  background: var(--p31-bg, oklch(14% 0.014 75));
+}
+
+/* ─── Viewport ─── */
+.viewport {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0 var(--p31-space-xs) var(--p31-space-xs);
+  position: relative;
+  z-index: var(--p31-z-content);
+}
+
+.viewport > * {
+  scroll-margin-top: calc(var(--p31-topbar-height) + var(--p31-space-xs));
+}
+
+/* ─── Topbar Variants ─── */
+.topbar-glass {
+  background: var(--p31-glass-bg);
+  backdrop-filter: var(--p31-glass-blur);
+  -webkit-backdrop-filter: var(--p31-glass-blur);
+  border: 1px solid var(--p31-glass-border);
+  border-radius: var(--p31-radius-candy);
+  box-shadow: inset 0 1px 0 color-mix(in oklch, var(--p31-text) 10%, transparent), inset 0 -1px 0 oklch(0% 0 0 / 0.18), var(--p31-glass-shadow);
+}
+
+.topbar-center-absolute {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  gap: var(--p31-space-tiny);
+  width: max-content;
+  flex-wrap: nowrap;
+}
+
+/* ─── Bottom Navigation ─── */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 64px;
+  background: var(--p31-glass-bg);
+  backdrop-filter: var(--p31-glass-blur);
+  -webkit-backdrop-filter: var(--p31-glass-blur);
+  border-top: 1px solid var(--p31-glass-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  z-index: var(--p31-z-topbar);
+}
+
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 12px;
+  color: var(--p31-text-tertiary);
+  text-decoration: none;
+  font-size: var(--p31-scale-xs);
+  transition: color var(--p31-duration-fast) ease;
+  min-height: 48px;
+  min-width: 48px;
+}
+
+.nav-item:hover,
+.nav-item.active {
+  color: var(--p31-accent);
+}
+
+.nav-item svg {
+  width: 24px;
+  height: 24px;
+  transition: transform var(--p31-duration-fast) ease;
+}
+
+.nav-item:hover svg {
+  transform: translateY(-2px);
+}
+
+/* ─── Admin Tabs ─── */
+.admin-tabs {
+  display: flex;
+  gap: 2px;
+  flex-wrap: wrap;
+}
+
+.admin-tab {
+  background: none;
+  border: none;
+  padding: 3px 7px;
+  border-radius: var(--p31-radius-sm);
+  color: var(--p31-text-tertiary);
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: all var(--p31-duration-fast) ease;
+}
+
+.admin-tab:hover {
+  color: var(--p31-text);
+  background: var(--p31-glass-bg);
+}
+
+.admin-tab.active {
+  color: var(--p31-accent);
+  background: var(--p31-glass-bg);
+}
+
+/* ─── Drawer ─── */
+.header-drawer {
+  position: fixed;
+  top: calc(var(--p31-topbar-height) + var(--p31-space-xs));
+  left: var(--p31-space-sm);
+  right: var(--p31-space-sm);
+  max-height: calc(100vh - var(--p31-topbar-height) - var(--p31-space-lg));
+  overflow-y: auto;
+  background: var(--p31-glass-bg);
+  backdrop-filter: var(--p31-glass-blur);
+  -webkit-backdrop-filter: var(--p31-glass-blur);
+  border: 1px solid var(--p31-glass-border);
+  border-radius: var(--p31-glass-radius);
+  box-shadow: var(--p31-glass-shadow);
+  z-index: calc(var(--p31-z-topbar) - 1);
+}
+
+/* ─── Page Header ─── */
+.page-header {
+  padding: var(--p31-space-lg) var(--p31-space-md);
+  border-bottom: 1px solid var(--p31-glass-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--p31-space-md);
+}
+
+.page-header__title {
+  font-size: var(--p31-scale-xl);
+  font-weight: 700;
+  color: var(--p31-text);
+  line-height: 1.2;
+}
+
+.page-header__controls {
+  display: flex;
+  align-items: center;
+  gap: var(--p31-space-sm);
+}
+
+/* ─── Grid System ─── */
+.grid-auto-154 {
+  display: grid;
+  grid-auto-rows: 154px;
+  gap: 12px;
+}
+
+.grid-auto-minmax {
+  display: grid;
+  grid-auto-rows: minmax(0, 1fr);
+  gap: 12px;
+  height: 100%;
+}
+
+/* ─── Card Constraints ─── */
+.card-constrained {
+  max-width: 280px;
+  min-width: 140px;
+  max-height: 160px;
+  min-height: 100px;
+}
+
+.card-graph-pinned {
+  margin-top: auto;
+  height: 32px;
+}
+
+/* ─── Floating Window ─── */
+.floating-window {
+  position: fixed;
+  background: var(--p31-glass-bg);
+  backdrop-filter: var(--p31-glass-blur);
+  -webkit-backdrop-filter: var(--p31-glass-blur);
+  border: 1px solid var(--p31-glass-border);
+  border-radius: var(--p31-glass-radius);
+  box-shadow: var(--p31-glass-shadow);
+  overflow: hidden;
+  z-index: var(--p31-z-floating);
+}
+
+.floating-window__header {
+  padding: 10px 14px;
+  background: var(--p31-glass-bg-strong);
+  border-bottom: 1px solid var(--p31-glass-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  cursor: grab;
+}
+
+.floating-window__header:active {
+  cursor: grabbing;
+}
+
+.floating-window__title {
+  font-size: var(--p31-scale-xs);
+  font-weight: 700;
+  color: var(--p31-text);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.floating-window__body {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--p31-space-sm);
+  font-size: var(--p31-scale-xs);
+  color: var(--p31-text-secondary);
+  line-height: 1.55;
+  min-height: 0;
+}

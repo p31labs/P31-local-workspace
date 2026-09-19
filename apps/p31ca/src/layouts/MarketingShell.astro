@@ -2,19 +2,24 @@
 interface Props {
   title?: string;
   description?: string;
+  theme?: string;
 }
 
 const {
   title = 'P31 Labs — Sovereign Stack for Neurodivergent Families',
   description = 'Open-source assistive technology. Sovereign identity, care economy, and open research for neurodivergent families.',
+  theme = 'ocean',
 } = Astro.props;
+
+import { resolveTheme } from '@p31/shared/theme/ids';
+const resolvedTheme = resolveTheme(theme);
 
 import '@p31/design-core/css/all.css';
 import '../styles/p31-style.css';
 ---
 
 <!doctype html>
-<html lang="en" data-spoons="3" data-theme="quantum">
+<html lang="en" data-spoons="3" data-theme="compat">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />

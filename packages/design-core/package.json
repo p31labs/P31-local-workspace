@@ -32,6 +32,7 @@
     "./mcp": "./src/mcp/server.ts",
     "./mcp/browser-dispatcher": "./src/mcp/browser-dispatcher.js",
     "./converter": "./src/converter/index.ts",
+    "./device": "./src/device.ts",
     "./generator": "./src/generator/componentGenerator.ts",
     "./generator/astro": "./src/generator/componentGenerator.astro.ts",
     "./generator/html": "./src/generator/componentGenerator.html.ts",
@@ -51,6 +52,7 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.6.1",
+    "@p31/canon": "workspace:*",
     "astro": "^5.18.1",
     "css-tree": "^3.1.0",
     "esprima": "^4.0.1",
