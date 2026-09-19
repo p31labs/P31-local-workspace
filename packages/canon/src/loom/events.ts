@@ -11,7 +11,7 @@
  *
  * Rules:
  *   - One writer per event kind. `focus`/`revise`/`approve`/`reject` are human;
- *     `traverse`/`propose`/`presence` are agent. The type encodes this.
+ *     `traverse`/`propose`/`review`/`presence` are agent. The type encodes this.
  *   - The reducer is pure and O(1) (it clones the proposal map only on mutation).
  *     State does NOT hold the event log — the log is the log; the scrubber reads
  *     it directly.
@@ -34,21 +34,38 @@ export type Writer = 'human' | 'agent';
 export type LoomEvent =
   | { seq: number; ts: string; writer: 'human'; kind: 'focus'; node: string }
   | { seq: number; ts: string; writer: 'agent'; kind: 'traverse'; from: string; to: string; reason: string }
-  | { seq: number; ts: string; writer: 'agent'; kind: 'propose'; id: string; node: string; body: unknown }
+  | { seq: number; ts: string; writer: 'agent'; kind: 'propose'; id: string; node: string; body: unknown; author?: string }
   | { seq: number; ts: string; writer: 'human'; kind: 'revise'; proposal: string; body: unknown }
   | { seq: number; ts: string; writer: 'human'; kind: 'approve'; proposal: string }
   | { seq: number; ts: string; writer: 'human'; kind: 'reject'; proposal: string; reason: string }
+  | { seq: number; ts: string; writer: 'agent'; kind: 'review'; agent: string; proposalId: string; decision: 'approve' | 'amend' | 'reject'; reason?: string; revision: number }
   | { seq: number; ts: string; writer: 'agent'; kind: 'presence'; node: string; attention: number };
 
 export type ProposalStatus = 'pending' | 'approved' | 'rejected';
+
+/** A derived record: the fold of a `review` event into a proposal's review
+ *  list. `seq`/`ts` are copied from the event for the canvas and scrubber —
+ *  nothing here is double-persisted; it is a DTO for consumers. */
+export interface Review {
+  agent: string;
+  decision: 'approve' | 'amend' | 'reject';
+  reason?: string;
+  revision: number;
+  seq: number;
+  ts: string;
+}
 
 export interface Proposal {
   id: string;
   node: string;
   body: unknown;
+  /** Set from the propose event's `author`, or 'unknown' for pre-author events. */
+  author: string;
   status: ProposalStatus;
   /** How many times a human has revised the draft. */
   revision: number;
+  /** Append-only agent reviews. Advisory — never changes `status`. */
+  reviews: Review[];
   reason?: string;
 }
 
@@ -97,8 +114,10 @@ export function reduce(state: LoomState, event: LoomEvent): LoomState {
         id: event.id,
         node: event.node,
         body: event.body,
+        author: event.author ?? 'unknown',
         status: 'pending',
         revision: 0,
+        reviews: [],
       });
       break;
     case 'revise': {
@@ -122,6 +141,27 @@ export function reduce(state: LoomState, event: LoomEvent): LoomState {
       if (p) {
         proposals = new Map(proposals);
         proposals.set(p.id, { ...p, status: 'rejected', reason: event.reason });
+      }
+      break;
+    }
+    case 'review': {
+      const p = proposals.get(event.proposalId);
+      if (p) {
+        proposals = new Map(proposals);
+        proposals.set(p.id, {
+          ...p,
+          reviews: [
+            ...p.reviews,
+            {
+              agent: event.agent,
+              decision: event.decision,
+              reason: event.reason,
+              revision: event.revision,
+              seq: event.seq,
+              ts: event.ts,
+            },
+          ],
+        });
       }
       break;
     }

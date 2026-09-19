@@ -28,13 +28,22 @@ moves the cursor. A `presence` event positions the cursor explicitly and sets
 the attention level. Both are agent-only; the reducer records them as
 `agentCursor` and `agentAttention`.
 
+## Cursor semantics
+
+`traverse` sets `agentCursor` to its `to` node. It does not move
+`agentAttention`. `presence` sets both `agentCursor` (to its `node`) and
+`agentAttention`. `review` does **not** move the cursor — a review is a
+decision, not a movement. If an agent wants its cursor at the reviewed node,
+it posts a `presence` event separately. The taxonomy: movement events move,
+decision events decide.
+
 ## Rules (all agents, no exceptions)
 
 1. **Every write goes through `commit(logPath, input)`.** Never append to the
    log directly. `scripts/check-loom-seal.mjs` enforces this.
 2. **The gate stamps `seq` and `ts`.** You never set them.
 3. **Writer-per-kind holds.** `focus`, `revise`, `approve`, `reject` are
-   human-only. `traverse`, `propose`, `presence` are agent-only.
+   human-only. `traverse`, `propose`, `review`, `presence` are agent-only.
 4. **The log is append-only.** Never rewrite, reorder, or mutate history.
 5. **You never write `registry.json`, contracts, or CSS.** Only events.
 6. **Read through the interface.** `readEvents(path)` to load,
@@ -69,24 +78,48 @@ not an enum**. Recommended shape: `<role>-<short-id>` (`substrate-a`,
 `presence-01`, `canvas-primary`). The choice is yours; the log records it. No
 code keys on model identity.
 
-## What is not in the schema yet
+## The review event
 
-Proposals and reviews are the intended lifecycle (propose → review → decide),
-but the substrate's event union today is:
-`focus`, `traverse`, `propose`, `revise`, `approve`, `reject`, `presence`.
-There is no `review` event and no agent-identity field. They arrive when a lane
-needs them — not before. Do not invent event kinds to pre-empt that.
+`review` is an agent-authored record of opinion on a proposal at a specific
+revision:
 
-## The human is the reviewer until a review event exists
+```
+{ kind: 'review', writer: 'agent', agent: string,
+  proposalId: string, decision: 'approve' | 'amend' | 'reject',
+  reason?: string, revision: number }
+```
 
-Changes to the frozen surface (`packages/canon/src/loom/**`) are gated on
-review. There is no `review` event kind yet; until one exists, the **human**
-reviews with the existing human-only events (`approve`, `reject`, `revise`).
-A non-semantic change — a comment, a doc link, whitespace — may be
-human-approved and flagged as such in the commit message. The moment a lane
-needs a schema change, that proposal is the doctrine's first live use and must
-be human-reviewed before it lands. Do not treat a schema change as "just a
-comment."
+Rules enforced by the gate:
+
+- `agent` must be a non-empty free-form string — not a model name.
+- `proposalId` must reference an existing proposal.
+- `revision` must equal the proposal's current revision. A review on a stale
+  revision is rejected — this prevents the approve-v1/reject-v2 ambiguity
+  where two reviewers silently disagree about which body they saw.
+- `reason` is required (non-empty after trim) when `decision !== 'approve'`.
+
+Agent reviews are advisory records. They do **not** change proposal status.
+The human `approve` and `reject` events are the sole authoritative status
+transitions. Higher-level semantics — self-review policy, quorum thresholds —
+are deliberately out of scope for the schema. Self-review currently records; a
+future policy may forbid it at a higher layer.
+
+## Agent reviews and human authority
+
+The `review` event kind exists. Agents post advisory reviews via the schema;
+agent reviews do not change proposal status. The human's `approve` and
+`reject` events remain the sole authoritative status transitions — no proposal
+is approved without a human deciding it, however many agent approvals
+accumulate. This preserves the human-in-the-loop guarantee.
+
+Before `review` existed, the human was also the only reviewer. That bootstrap
+is now closed: agents review, the human decides.
+
+Changes to the frozen surface (`packages/canon/src/loom/**`) continue to
+require human approval. A non-semantic change — a comment, a doc link,
+whitespace — may be human-approved and flagged as such in the commit message.
+A schema change goes through the same propose/review cycle agents use; the
+human is always the final approver.
 
 ## The gates
 

@@ -41,7 +41,7 @@ describe('deriveOverlay', () => {
   it('projects proposals to ghosts with status', () => {
     const s = state({});
     s.proposals = new Map([
-      ['p1', { id: 'p1', node: '.feature-card', body: {}, status: 'pending', revision: 0 }],
+      ['p1', { id: 'p1', node: '.feature-card', body: {}, author: 'unknown', status: 'pending', revision: 0, reviews: [] }],
     ]);
     const o = deriveOverlay(s, idIndex);
     expect(o.ghosts).toHaveLength(1);

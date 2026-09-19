@@ -5,8 +5,11 @@
  *
  *   - assigns `seq` and `ts` (the caller never does)
  *   - enforces writer-per-kind (focus/revise/approve/reject = human;
- *     traverse/propose/presence = agent)
- *   - rejects duplicate proposal ids and orphan approvals/revises/rejects
+ *     traverse/propose/review/presence = agent)
+ *   - rejects duplicate proposal ids and orphan approvals/revises/rejects/reviews
+ *   - rejects a review on a stale revision — the gate's job, not the reducer's,
+ *     because a review pinning a version the proposal no longer has is a
+ *     structural error, not a fold concern
  *   - proves the reducer is deterministic (double replay + canonical compare)
  *   - reconstructs state at any seq for the canvas scrubber
  *
@@ -23,14 +26,15 @@ export type Reducer = (state: LoomState, event: LoomEvent) => LoomState;
 export type LoomEventInput =
   | { writer: 'human'; kind: 'focus'; node: string }
   | { writer: 'agent'; kind: 'traverse'; from: string; to: string; reason: string }
-  | { writer: 'agent'; kind: 'propose'; id: string; node: string; body: unknown }
+  | { writer: 'agent'; kind: 'propose'; id: string; node: string; body: unknown; author?: string }
   | { writer: 'human'; kind: 'revise'; proposal: string; body: unknown }
   | { writer: 'human'; kind: 'approve'; proposal: string }
   | { writer: 'human'; kind: 'reject'; proposal: string; reason: string }
+  | { writer: 'agent'; kind: 'review'; agent: string; proposalId: string; decision: 'approve' | 'amend' | 'reject'; reason?: string; revision: number }
   | { writer: 'agent'; kind: 'presence'; node: string; attention: number };
 
 const HUMAN_KINDS = new Set(['focus', 'revise', 'approve', 'reject']);
-const AGENT_KINDS = new Set(['traverse', 'propose', 'presence']);
+const AGENT_KINDS = new Set(['traverse', 'propose', 'review', 'presence']);
 
 export interface GateResult {
   valid: boolean;
@@ -54,6 +58,9 @@ export function canonicalize(state: LoomState): string {
 export class ReplayGate {
   private log: LoomEvent[] = [];
   private proposalIds = new Set<string>();
+  /** id -> current revision (0 after propose, +1 per revise). Rebuilt on
+   *  rehydrate so a post-reload review is checked against the right revision. */
+  private proposalRevisions = new Map<string, number>();
   private seq = 0;
 
   /** Validate, stamp with seq + ts, append. seq is assigned by the gate. */
@@ -75,9 +82,39 @@ export class ReplayGate {
       return { valid: false, error: `unknown proposal: ${input.proposal}` };
     }
 
+    // Review validation. Reviews are advisory records: they do not change
+    // proposal status. The human's approve/reject events are the sole
+    // authoritative status transition. Higher-level semantics (self-review
+    // policy, quorum) are deliberately out of scope for the gate — the schema
+    // enforces structure, not policy. Self-review currently records; a future
+    // policy may forbid it at a higher layer.
+    if (input.kind === 'review') {
+      if (typeof input.agent !== 'string' || input.agent.trim().length === 0) {
+        return { valid: false, error: 'review.agent must be a non-empty string' };
+      }
+      if (!this.proposalIds.has(input.proposalId)) {
+        return { valid: false, error: `review references unknown proposal: ${input.proposalId}` };
+      }
+      const currentRev = this.proposalRevisions.get(input.proposalId) ?? 0;
+      if (input.revision !== currentRev) {
+        return {
+          valid: false,
+          error: `review revision ${input.revision} does not match current revision ${currentRev} for proposal ${input.proposalId}`,
+        };
+      }
+      if (input.decision !== 'approve' && (!input.reason || input.reason.trim().length === 0)) {
+        return { valid: false, error: `review with decision '${input.decision}' requires a non-empty reason` };
+      }
+    }
+
     const seq = this.seq;
     const event = { ...input, seq, ts: new Date().toISOString() } as LoomEvent;
-    if (input.kind === 'propose') this.proposalIds.add(input.id);
+    if (input.kind === 'propose') {
+      this.proposalIds.add(input.id);
+      this.proposalRevisions.set(input.id, 0);
+    } else if (input.kind === 'revise') {
+      this.proposalRevisions.set(input.proposal, (this.proposalRevisions.get(input.proposal) ?? 0) + 1);
+    }
     this.log.push(event);
     this.seq = seq + 1;
     return { valid: true };
@@ -116,6 +153,7 @@ export class ReplayGate {
   fromJSONL(text: string): GateResult {
     this.log = [];
     this.proposalIds = new Set();
+    this.proposalRevisions = new Map();
     this.seq = 0;
     for (const line of text.split('\n')) {
       if (!line.trim()) continue;
