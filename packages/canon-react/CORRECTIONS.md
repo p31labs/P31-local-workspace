@@ -531,3 +531,47 @@ corrected to the effective values.
 
 Flip (Phase 3) is blocked until the 19 are reconciled — that is the visual
 identity decision, and it remains the one unmade call.
+
+## 2026-09-19 — canon owns CSS (Path B) + p31ca imports canon directly
+
+Path B (`d812c289`): canon now owns the non-token CSS. `packages/canon/src/css/`
+holds the 12 component/layout stylesheets + `all.css`; `scripts/build-css.mjs`
+emits `dist/css/`; `generate-exports.mjs` derives `./css/*.css` (ghost-gated),
+and the build order is `gen:tokens → validate → build:css → gen:exports`
+(gen:exports is the only writer of `exports`, so `build:css` must precede it).
+design-core's 12 component files + `all.css` are now compat re-exports of
+`@p31/canon/css/<file>.css`.
+
+Declared boundary: component CSS internals (`quantum` tetra/sic/edge/phi,
+`ambient`, `container`, `size-class`) ride along verbatim and are **out of the
+parity gate's theme-token scope**. `theme-p31ca.css` / `theme-phosphorus31.css`
+are a competing theme-persona layer (`[data-theme='rebel']` / `[data-brand=…]`)
+that overlaps canon's model — **not migrated**; separate workstream.
+
+p31ca now imports canon directly (build exit 0):
+```
+MarketingShell.astro:17  @p31/design-core/css/all.css    -> @p31/canon/css/all.css
+p31-style.css:1          @p31/design-core/css/all.css    -> @p31/canon/css/all.css
+global.css:1             @p31/design-core/css/tokens.css -> @p31/canon/tokens.css
+```
+`@p31/design-core` remains in `apps/p31ca/package.json` (now unused); removal is
+blocked by pre-existing uncommitted package.json churn and was not swept.
+
+Path D — base.css-only consumer palette shift (accepted + documented):
+`phos`, `bonding`, `willow`, `growth-dashboard` import `base.css` without
+`tokens.css`, so pre-flip they rendered base.css's hex palette; post-flip
+base.css routes through `tokens.css → canon`, so they receive canon's compat
+palette:
+```
+--p31-surface    #12121A   -> oklch(15% 0.015 240)
+--p31-accent     #00F0FF   -> oklch(65% 0.18 195)
+--p31-radius-md  12px      -> calc(var(--p31-scale-md) / 2)
+```
+Evidence: `packages/canon/baseline/design-core-css/base.css:6,12,41` vs canon
+`dist/tokens.css` `:root`. This is unification, not regression. The parity gate
+models the `all.css` surface, so it cannot see this; per-consumer baselines in
+`verify-token-parity` are the alternative if preservation is required (not
+implemented).
+
+Gates: parity 0/0 (frozen baseline); p31ca/phos/bonding exit 0; undefined-var
+scan 3 pre-existing (`status-success`, `accent-bright`, `accent-glow`), 0 new.
