@@ -21,8 +21,9 @@ const repo = resolve(here, '..', '..', '..');
 
 const SCAN_DIRS = [
   join(repo, 'packages', 'canon', 'src', 'loom'),
+  join(repo, 'packages', 'canon', 'scripts'),
   join(repo, 'packages', 'canon-mcp', 'src'),
-  join(repo, 'apps', 'loom', 'src'),
+  join(repo, 'apps', 'loom'),
 ];
 
 const EXTS = /\.(ts|tsx|mjs|js|astro)$/;
@@ -37,6 +38,7 @@ function walk(dir) {
   let entries;
   try { entries = readdirSync(dir, { withFileTypes: true }); } catch { return out; }
   for (const e of entries) {
+    if (e.name === 'node_modules' || e.name === 'dist' || e.name === '.git') continue;
     const full = join(dir, e.name);
     if (e.isDirectory()) out = out.concat(walk(full));
     else if (EXTS.test(e.name)) out.push(full);
@@ -61,7 +63,12 @@ for (const dir of SCAN_DIRS) {
       // Raw filesystem appends belong only to the write module.
       if (!isWriteModule && /appendFileSync\s*\(/.test(line)) rule(file, n, 'appendFileSync', line);
       if (!isWriteModule && /createWriteStream\s*\(/.test(line)) rule(file, n, 'createWriteStream', line);
-      if (/writeFileSync\s*\(/.test(line) && /jsonl|LOOM_LOG|loom/i.test(line)) rule(file, n, 'writeFileSync(loom)', line);
+      // writeFileSync is only a bypass when it targets the LIVE log (a path
+      // resolved via LOOM_LOG / resolveLogPath(), or a literal events.jsonl).
+      // Test-fixture writes to temp files (e.g. toJSONL in the convergence
+      // test) are allowed — they precede the gate and write a fixture, not
+      // the log.
+      if (/writeFileSync\s*\(/.test(line) && /(?:LOOM_LOG|resolveLogPath\(\)|events\.jsonl)/.test(line)) rule(file, n, 'writeFileSync', line);
     });
   }
 }

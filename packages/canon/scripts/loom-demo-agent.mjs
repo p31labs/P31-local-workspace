@@ -10,13 +10,12 @@
  * awaitReviews() today always times out: the review event kind does not exist
  * in the substrate yet. It is a bounded wait, not a real wait.
  *
- * This lives in packages/canon/scripts (not canon-mcp/scripts) so the
- * check-no-agent-names gate covers it. The cross-package import of
- * canon-mcp/src/loom-tools.ts is deliberate — the demo exercises the same
- * handlers the MCP tools register. NOTE: check-loom-seal does NOT scan
- * packages/canon/scripts, so the "writes only through commit()" guarantee here
- * is enforced by test-loom-mcp-tools.mjs + this header's own discipline, not by
- * the seal gate. See the seal-coverage propose-back.
+ * This lives in packages/canon/scripts (not canon-mcp/scripts) so both the
+ * check-no-agent-names gate AND the check-loom-seal gate cover it. The
+ * cross-package import of canon-mcp/src/loom-tools.ts is deliberate — the demo
+ * exercises the same handlers the MCP tools register. Any direct append here
+ * (appendEvent/appendFileSync/createWriteStream/writeFileSync targeting the
+ * live log) fails the seal gate.
  *
  * Run: node scripts/loom-demo-agent.mjs [--iterations=N] [--seed=S]
  */

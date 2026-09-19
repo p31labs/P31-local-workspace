@@ -20,7 +20,7 @@ const SCAN_DIRS = [
   join(repo, 'packages', 'canon', 'src', 'loom'),
   join(repo, 'packages', 'canon', 'scripts'),
   join(repo, 'packages', 'canon-mcp', 'src'),
-  join(repo, 'apps', 'loom', 'src'),
+  join(repo, 'apps', 'loom'),
 ];
 
 /** Root instruction files — where a stray model name is most likely to land
@@ -41,6 +41,7 @@ function walk(dir) {
   let entries;
   try { entries = readdirSync(dir, { withFileTypes: true }); } catch { return out; }
   for (const e of entries) {
+    if (e.name === 'node_modules' || e.name === 'dist' || e.name === '.git') continue;
     const full = join(dir, e.name);
     if (e.isDirectory()) out = out.concat(walk(full));
     else if (EXTS.test(e.name)) out.push(full);
