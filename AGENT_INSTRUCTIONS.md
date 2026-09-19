@@ -24,6 +24,15 @@ Public specifiers (the frozen interface):
 `appendEvent` is internal. It is reachable only from `commit.ts`; the seal gate
 fails the build if any other module touches it.
 
+`packages/canon/scripts/loom-apply.mjs` is the human **apply** step — the
+bridge from "approved in the log" to "landed on disk". It reads the log for
+approved proposals with no applied marker, materializes the contract file, adds
+the export, regenerates the registry, and refuses to land if validate-contracts
+or validate-registry fails. "Applied" is a deployment fact, recorded in a
+sidecar (`.loom/applied.json`) next to the log, not in the log — the git commit
+records the landing. The apply step is a human action, never an agent event
+kind: no schema change, no new writer.
+
 A `traverse` event sets the agent cursor to its `to` node — walking the graph
 moves the cursor. A `presence` event positions the cursor explicitly and sets
 the attention level. Both are agent-only; the reducer records them as
