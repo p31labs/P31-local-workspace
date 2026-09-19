@@ -105,9 +105,10 @@ diff too or CI install fails.
 
 ## Propose-back to substrate (do not edit; file as proposals)
 
-- `check-loom-seal.mjs` and `check-no-agent-names.mjs` scan `apps/loom/src`
-  but not `apps/loom/vite.config.ts`. Widen to `apps/loom/` with
-  `node_modules`/`dist` filtered.
+- ~~`check-loom-seal.mjs` and `check-no-agent-names.mjs` scan `apps/loom/src`
+  but not `apps/loom/vite.config.ts`.~~ **Resolved** (`6469a45c`): both gates now
+  scan `apps/loom/` with `node_modules`/`dist` filtered, and `vite.config.ts` is
+  covered.
 - Node-identity namespacing in the log itself: canvas-side reconciliation is
   sufficient today. Only propose if a second consumer disagrees about the
   scheme.
