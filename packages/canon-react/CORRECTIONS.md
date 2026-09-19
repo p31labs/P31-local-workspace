@@ -498,3 +498,36 @@ accent hues), not a token subtraction. That decision is unmade and now named.
 Also: the pre-existing `translate: -50% -50%` fix on both auth dividers was
 committed standalone (`a7b9220f`) so it is no longer a dangling working-tree
 edit.
+
+## 2026-09-19 — canon token superset + parity gate (Phase 1–2 of "there can only be one")
+
+Phase 1 (`0245c57a`): canon absorbed design-core's entire token surface
+verbatim — the 85 `GLOBAL_COMPAT` tokens plus `CONDITIONAL_CSS` reproducing
+design-core's `[data-brand]` / `[data-spoons]` / `[data-dark-mode]` /
+`[data-theme="light"]` / `[data-portal]` blocks (emitted unlayered). canon now
+emits 131 tokens; design-core 114; **0 missing**. No visual change: design-core
+is still loaded unlayered and wins.
+
+Phase 2: `scripts/verify-token-parity.mjs` (`pnpm --filter @p31/canon
+verify:parity`), using postcss because design-core nests conditional rules
+inside `:root`. It asserts coverage and shared-context value parity. It is
+**RED by design** — 0 missing, **19 `:root` divergences** — the switch that
+blocks the Phase 3 flip:
+
+```
+--p31-bg/-surface/-surface2     chroma differs
+--p31-accent/-violet/-gold/-green/-red/-iris
+--p31-text-secondary/-tertiary  (tertiary 78% → 55% lightness)
+--p31-glass-bg/-border/-shadow
+--p31-font-sans/-mono           (font stacks)
+--p31-radius-sm/-md/-lg         (design-core calc(var(--p31-scale-*)/2) vs canon literals)
+```
+
+The gate compares declared strings, so the `calc()` radii may over-report; the
+palette/text/font differences are real. The gate already caught a real porting
+bug: design-core has **duplicate `[data-spoons]` blocks** whose later
+declarations win (`spoons=2 → blur(8px)`, not `4px`); `CONDITIONAL_CSS` was
+corrected to the effective values.
+
+Flip (Phase 3) is blocked until the 19 are reconciled — that is the visual
+identity decision, and it remains the one unmade call.

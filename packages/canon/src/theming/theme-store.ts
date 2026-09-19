@@ -544,8 +544,8 @@ export const CONDITIONAL_CSS = `
 }
 [data-spoons="0"] { --p31-speed-factor: 0; --p31-glass-blur: none; }
 [data-spoons="1"] { --p31-speed-factor: 0; --p31-glass-blur: none; }
-[data-spoons="2"] { --p31-speed-factor: 0.25; --p31-glass-blur: blur(4px); }
-[data-spoons="3"] { --p31-speed-factor: 0.5; --p31-glass-blur: blur(8px); }
+[data-spoons="2"] { --p31-speed-factor: 0.25; --p31-glass-blur: blur(8px); }
+[data-spoons="3"] { --p31-speed-factor: 0.5; --p31-glass-blur: blur(12px); }
 [data-spoons="4"] { --p31-speed-factor: 0.75; --p31-glass-blur: blur(12px); }
 [data-spoons="5"] { --p31-speed-factor: 1; --p31-glass-blur: blur(16px); }
 @media (prefers-reduced-motion: reduce) {

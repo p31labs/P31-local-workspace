@@ -9,6 +9,7 @@
     "gen:tokens": "node scripts/gen-tokens.mjs",
     "gen:exports": "node scripts/generate-exports.mjs",
     "validate:contracts": "node scripts/validate-contracts.mjs",
+    "verify:parity": "node scripts/verify-token-parity.mjs",
     "build": "npm run gen:tokens && npm run validate:contracts && npm run gen:exports"
   },
   "exports": {
