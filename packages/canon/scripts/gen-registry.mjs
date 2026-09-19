@@ -110,7 +110,12 @@ const classMap = new Map();
 if (existsSync(cssDir)) {
   for (const f of readdirSync(cssDir).filter((x) => x.endsWith('.css'))) {
     const text = readFileSync(join(cssDir, f), 'utf8');
-    for (const m of text.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
+    // Strip block comments first — otherwise `.class` names in prose (e.g.
+    // "size-class.css") leak into the selector capture and become phantom
+    // classes (the committed registry carried a phantom ".css" from exactly
+    // this). Must match ingest.ts's parseCss.
+    const cleaned = text.replace(/\/\*[\s\S]*?\*\//g, '');
+    for (const m of cleaned.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
       const body = m[2];
       const used = [...new Set([...body.matchAll(/var\((--p31-[a-z0-9-]+)/g)].map((x) => x[1]))];
       if (!used.length) continue;
