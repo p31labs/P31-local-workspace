@@ -345,23 +345,22 @@ server.registerTool(
       id: z.string().describe('Unique proposal id, e.g. "prop_demo_1".'),
       node: z.string().describe('Bare node name the proposal targets, e.g. ".feature-card".'),
       body: z.unknown().describe('The proposal body (any JSON).'),
+      author: z.string().optional().describe('Free-form agent identity (e.g. "presence-01"). Omit for "unknown".'),
     }),
   },
-  async ({ id, node, body }) => {
-    const r = propose(loomLogPath, id, node, body);
+  async ({ id, node, body, author }) => {
+    const r = propose(loomLogPath, id, node, body, author);
     return { content: [{ type: 'text', text: JSON.stringify(r) }], isError: !r.valid };
   },
 );
 
-// NOTE: this description promises "always times out" — a lie the moment a
-// review event kind lands. Update it in the same commit that adds reviews.
 server.registerTool(
   'loom_await',
   {
     description:
       'Wait for a review event on a proposal, up to timeoutMs. Returns { status: "timeout" } ' +
-      'when nothing arrives — a return value, not an error. Today it always times out: the ' +
-      'review event kind does not exist in the substrate yet.',
+      'when nothing arrives — a return value, not an error. Waits on the log file via fs.watch, ' +
+      'not polling.',
     inputSchema: z.object({
       proposalId: z.string(),
       timeoutMs: z.number().int().positive().max(120000).optional().describe('Default 30000, max 120000.'),

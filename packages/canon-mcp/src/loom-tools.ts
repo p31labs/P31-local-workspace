@@ -9,15 +9,14 @@
  * Every write goes through commit() — the seal gate fails the build otherwise.
  * Writer-per-kind holds: these handlers emit agent-only events (traverse,
  * propose, presence). They never focus/approve/reject/revise — those are human.
- *
- * NOTE on reviews: the substrate has no `review` event kind yet. awaitReviews()
- * polls for one, so today its only exercised path is timeout. That is honest —
- * the signature is shaped for the future without inventing the schema.
+ * Reviews are agent-only too, but this file does not emit them: an agent posts
+ * a review by calling commit() with kind 'review' (no dedicated handler yet —
+ * add one when a lane needs it).
  */
 import { commit, type CommitResult } from '@p31/canon/loom/commit';
 import { readEvents } from '@p31/canon/loom/jsonl';
-import { replay } from '@p31/canon/loom/events';
-import { existsSync } from 'node:fs';
+import { replay, type LoomEvent, type Review } from '@p31/canon/loom/events';
+import { existsSync, watch, type FSWatcher } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 
 /** The log every handler reads and writes. cwd-walk to the repo root, or the
@@ -39,9 +38,11 @@ export function resolveLogPath(): string {
 export interface ProposalView {
   id: string;
   node: string;
+  author: string;
   status: string;
   revision: number;
   body: unknown;
+  reviews: Review[];
 }
 
 export interface ObserveResult {
@@ -59,9 +60,11 @@ export function observe(logPath: string, proposalId?: string): ObserveResult {
   const proposals: ProposalView[] = [...state.proposals.values()].map((p) => ({
     id: p.id,
     node: p.node,
+    author: p.author,
     status: p.status,
     revision: p.revision,
     body: p.body,
+    reviews: p.reviews,
   }));
   const result: ObserveResult = {
     focused: state.focused,
@@ -81,20 +84,25 @@ export function traverse(logPath: string, from: string, to: string, reason: stri
   return commit(logPath, { writer: 'agent', kind: 'traverse', from, to, reason });
 }
 
-/** Agent-only: record a proposal against a node. The id is the caller's choice. */
-export function propose(logPath: string, id: string, node: string, body: unknown): CommitResult {
-  return commit(logPath, { writer: 'agent', kind: 'propose', id, node, body });
+/** Agent-only: record a proposal against a node. The id is the caller's choice.
+ *  `author` is the free-form agent identity; when omitted, the log records
+ *  'unknown' (pre-author events are read the same way). */
+export function propose(logPath: string, id: string, node: string, body: unknown, author?: string): CommitResult {
+  return commit(logPath, { writer: 'agent', kind: 'propose', id, node, body, author });
 }
 
 export interface AwaitResult {
   status: 'timeout' | 'complete';
-  reviews?: unknown[];
+  reviews?: LoomEvent[];
 }
 
 /**
  * Block until a review event lands for the proposal, or the timeout elapses.
- * A timeout is a RETURN VALUE, not an exception — the caller adapts. Today it
- * always times out because the review event kind does not exist yet.
+ * A timeout is a RETURN VALUE, not an exception — the caller adapts.
+ *
+ * Waits on fs.watch of the log file rather than polling: the server owns the
+ * file and re-reads it on change. An initial read is done first (a review may
+ * already exist before the watcher is armed). The deadline is authoritative.
  */
 export async function awaitReviews(
   logPath: string,
@@ -102,15 +110,43 @@ export async function awaitReviews(
   timeoutMs: number,
 ): Promise<AwaitResult> {
   const deadline = Date.now() + timeoutMs;
-  // Polls the log every 100 ms, re-reading it fully each time. Fine at small
-  // scale; when the review kind lands and this becomes a real wait, replace
-  // the poll with an SSE tail of the log — β-2's middleware already serves one.
-  while (Date.now() < deadline) {
-    const reviews = readEvents(logPath).filter(
-      (e) => (e as { kind?: string }).kind === 'review' && (e as { proposalId?: string }).proposalId === proposalId,
-    );
-    if (reviews.length > 0) return { status: 'complete', reviews };
-    await new Promise((r) => setTimeout(r, 100));
-  }
-  return { status: 'timeout' };
+  const reviewsFor = (): LoomEvent[] =>
+    readEvents(logPath).filter((e) => e.kind === 'review' && e.proposalId === proposalId);
+
+  // A review may have landed before the watcher is armed.
+  const already = reviewsFor();
+  if (already.length > 0) return { status: 'complete', reviews: already };
+
+  return new Promise<AwaitResult>((resolve) => {
+    let watcher: FSWatcher | null = null;
+    let timer: NodeJS.Timeout | null = null;
+    let settled = false;
+    const settle = (result: AwaitResult) => {
+      if (settled) return;
+      settled = true;
+      watcher?.close();
+      if (timer) clearTimeout(timer);
+      resolve(result);
+    };
+
+    timer = setTimeout(() => settle({ status: 'timeout' }), timeoutMs);
+
+    try {
+      watcher = watch(logPath, () => {
+        const reviews = reviewsFor();
+        if (reviews.length > 0) settle({ status: 'complete', reviews });
+      });
+    } catch {
+      // The log file does not exist yet (nothing proposed). Fall back to a
+      // bounded poll so the first commit still wakes this wait.
+      const poll = () => {
+        if (settled) return;
+        if (Date.now() >= deadline) return settle({ status: 'timeout' });
+        const reviews = reviewsFor();
+        if (reviews.length > 0) settle({ status: 'complete', reviews });
+        else setTimeout(poll, 50);
+      };
+      setTimeout(poll, 50);
+    }
+  });
 }

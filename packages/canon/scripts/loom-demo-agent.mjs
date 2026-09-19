@@ -7,8 +7,9 @@
  * which is what the MCP tools also exercise. Agent-only kinds (traverse,
  * propose) — never focus/approve/reject/revise.
  *
- * awaitReviews() today always times out: the review event kind does not exist
- * in the substrate yet. It is a bounded wait, not a real wait.
+ * awaitReviews() blocks until a review event lands, or times out as a return
+ * value. The demo posts no review, so its awaited proposal always times out —
+ * that exercises the wait's bounded-timeout path, not the review path.
  *
  * This lives in packages/canon/scripts (not canon-mcp/scripts) so both the
  * check-no-agent-names gate AND the check-loom-seal gate cover it. The
@@ -63,7 +64,7 @@ for (let i = 0; i < iterations; i++) {
   else console.error(`[demo] traverse FAILED: ${t.error}`);
 
   const id = `prop_demo_${Date.now()}_${i}`;
-  const p = propose(logPath, id, cls, { draft: true, iteration: i });
+  const p = propose(logPath, id, cls, { draft: true, iteration: i }, 'demo-agent');
   if (p.valid) {
     lastProposalId = id;
     console.log(`[demo] propose ${id} on ${cls} (seq ${p.event.seq})`);
@@ -78,6 +79,6 @@ for (let i = 0; i < iterations; i++) {
 
 if (lastProposalId) {
   const aw = await awaitReviews(logPath, lastProposalId, 500);
-  console.log(`[demo] awaitReviews(${lastProposalId}) -> ${aw.status} (expected: no review event kind yet)`);
+  console.log(`[demo] awaitReviews(${lastProposalId}) -> ${aw.status} (demo posts no review, so timeout is expected)`);
 }
 console.log(`[demo] done. log: ${logPath}`);
