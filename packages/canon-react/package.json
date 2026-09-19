@@ -1,0 +1,50 @@
+{
+  "name": "@p31/canon-react",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "description": "React consumer layer for @p31/canon. Components implemented against canon contracts.",
+  "scripts": {
+    "build": "tsup && node scripts/build-css.mjs",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "verify:contract": "node scripts/verify-contract.mjs",
+    "verify:css-vars": "node scripts/check-css-vars.mjs",
+    "gen:exports": "node scripts/gen-exports.mjs"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./client": {
+      "types": "./dist/client.d.ts",
+      "import": "./dist/client.js",
+      "require": "./dist/client.cjs"
+    },
+    "./styles.css": "./dist/styles.css",
+    "./package.json": "./package.json"
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "react-dom": ">=18"
+  },
+  "devDependencies": {
+    "@p31/canon": "workspace:*",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.5.2",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^4.7.0",
+    "jsdom": "^30.0.1",
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.0",
+    "vitest": "^3.0.0",
+    "vitest-axe": "^0.1.0"
+  }
+}

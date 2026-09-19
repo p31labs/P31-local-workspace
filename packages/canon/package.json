@@ -1,0 +1,30 @@
+{
+  "name": "@p31/canon",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "P31 CANON — tokens + contracts + CSS, fresh architecture. Generated exports only; no hand-maintained maps, no vendored theater.",
+  "sideEffects": false,
+  "scripts": {
+    "gen:tokens": "node scripts/gen-tokens.mjs",
+    "gen:exports": "node scripts/generate-exports.mjs",
+    "validate:contracts": "node scripts/validate-contracts.mjs",
+    "build": "npm run gen:tokens && npm run validate:contracts && npm run gen:exports"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./contracts": "./src/contracts/index.ts",
+    "./contracts/button.contract": "./src/contracts/button.contract.ts",
+    "./contracts/schema": "./src/contracts/schema.ts",
+    "./theming": "./src/theming/index.ts",
+    "./theming/theme-css": "./src/theming/theme-css.ts",
+    "./theming/theme-store": "./src/theming/theme-store.ts",
+    "./tokens.css": "./dist/tokens.css"
+  },
+  "devDependencies": {
+    "style-dictionary": "^4.4.0"
+  },
+  "dependencies": {
+    "zod": "^4.6.5"
+  }
+}

@@ -1,0 +1,1307 @@
+{
+  "p31": {
+    "base": {
+      "$value": "16px",
+      "$type": "dimension"
+    },
+    "scale-xs": {
+      "$value": "calc(var(--p31-base) * 0.75)",
+      "$type": "dimension"
+    },
+    "scale-sm": {
+      "$value": "var(--p31-base)",
+      "$type": "dimension"
+    },
+    "scale-md": {
+      "$value": "calc(var(--p31-base) * 1.3333)",
+      "$type": "dimension"
+    },
+    "scale-lg": {
+      "$value": "calc(var(--p31-base) * 1.7777)",
+      "$type": "dimension"
+    },
+    "scale-xl": {
+      "$value": "calc(var(--p31-base) * 2.3703)",
+      "$type": "dimension"
+    },
+    "scale-2xl": {
+      "$value": "calc(var(--p31-base) * 3.1604)",
+      "$type": "dimension"
+    },
+    "radius-sm": {
+      "$value": "8px",
+      "$type": "dimension"
+    },
+    "radius-md": {
+      "$value": "16px",
+      "$type": "dimension"
+    },
+    "radius-lg": {
+      "$value": "24px",
+      "$type": "dimension"
+    },
+    "radius-full": {
+      "$value": "9999px",
+      "$type": "dimension"
+    },
+    "font-sans": {
+      "$value": "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
+      "$type": "fontFamily"
+    },
+    "font-mono": {
+      "$value": "ui-monospace, 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace",
+      "$type": "fontFamily"
+    },
+    "color": {
+      "action": {
+        "primary": {
+          "$value": "oklch(70% 0.15 200)",
+          "$type": "color",
+          "$extensions": {
+            "p31": {
+              "themes": {
+                "cipher": "oklch(65% 0.18 195)",
+                "garden": "oklch(70% 0.15 145)",
+                "retro": "oklch(75% 0.18 80)",
+                "sunset": "oklch(72% 0.18 40)",
+                "mono": "oklch(80% 0 0)",
+                "aurora": "oklch(72% 0.16 250)",
+                "zen": "oklch(72% 0.1 75)",
+                "volt": "oklch(75% 0.17 190)"
+              }
+            }
+          }
+        },
+        "primary-hover": {
+          "$value": "oklch(70% 0.15 200 / 0.8)",
+          "$type": "color",
+          "$extensions": {
+            "p31": {
+              "themes": {
+                "cipher": "oklch(65% 0.18 195 / 0.8)",
+                "garden": "oklch(70% 0.15 145 / 0.8)",
+                "retro": "oklch(75% 0.18 80 / 0.8)",
+                "sunset": "oklch(72% 0.18 40 / 0.8)",
+                "mono": "oklch(80% 0 0 / 0.8)",
+                "aurora": "oklch(72% 0.16 250 / 0.8)",
+                "zen": "oklch(72% 0.1 75 / 0.8)",
+                "volt": "oklch(75% 0.17 190 / 0.8)"
+              }
+            }
+          }
+        },
+        "primary-text": {
+          "$value": "oklch(95% 0.02 230)",
+          "$type": "color",
+          "$extensions": {
+            "p31": {
+              "themes": {
+                "cipher": "oklch(96% 0.005 240)",
+                "garden": "oklch(95% 0.02 120)",
+                "retro": "oklch(95% 0.05 80)",
+                "sunset": "oklch(95% 0.03 50)",
+                "mono": "oklch(95% 0 0)",
+                "aurora": "oklch(95% 0.03 260)",
+                "zen": "oklch(93% 0.01 75)",
+                "volt": "oklch(96% 0.01 270)"
+              }
+            }
+          }
+        },
+        "secondary": {
+          "$value": "oklch(22% 0.045 240)",
+          "$type": "color",
+          "$extensions": {
+            "p31": {
+              "themes": {
+                "cipher": "oklch(22% 0.02 240)",
+                "garden": "oklch(25% 0.03 140)",
+                "retro": "oklch(18% 0.03 60)",
+                "sunset": "oklch(23% 0.04 30)",
+                "mono": "oklch(20% 0 0)",
+                "aurora": "oklch(20% 0.04 260)",
+                "zen": "oklch(25% 0.015 75)",
+                "volt": "oklch(25% 0.03 270)"
+              }
+            }
+          }
+        },
+        "secondary-text": {
+          "$value": "oklch(95% 0.02 230)",
+          "$type": "color",
+          "$extensions": {
+            "p31": {
+              "themes": {
+                "cipher": "oklch(96% 0.005 240)",
+                "garden": "oklch(95% 0.02 120)",
+                "retro": "oklch(95% 0.05 80)",
+                "sunset": "oklch(95% 0.03 50)",
+                "mono": "oklch(95% 0 0)",
+                "aurora": "oklch(95% 0.03 260)",
+                "zen": "oklch(93% 0.01 75)",
+                "volt": "oklch(96% 0.01 270)"
+              }
+            }
+          }
+        },
+        "ghost": {
+          "$value": "transparent",
+          "$type": "color"
+        },
+        "ghost-hover": {
+          "$value": "oklch(100% 0.01 230 / 0.04)",
+          "$type": "color",
+          "$extensions": {
+            "p31": {
+              "themes": {
+                "cipher": "oklch(100% 0.01 240 / 0.05)",
+                "garden": "oklch(100% 0.01 120 / 0.04)",
+                "retro": "oklch(100% 0.02 60 / 0.05)",
+                "sunset": "oklch(100% 0.01 30 / 0.06)",
+                "mono": "oklch(100% 0 0 / 0.05)",
+                "aurora": "oklch(100% 0.02 260 / 0.05)",
+                "zen": "oklch(100% 0.01 75 / 0.05)",
+                "volt": "oklch(100% 0.01 270 / 0.05)"
+              }
+            }
+          }
+        }
+      }
+    },
+    "space": {
+      "inline": {
+        "sm": {
+          "$value": "8px",
+          "$type": "dimension"
+        },
+        "md": {
+          "$value": "16px",
+          "$type": "dimension"
+        },
+        "lg": {
+          "$value": "24px",
+          "$type": "dimension"
+        }
+      }
+    },
+    "radius": {
+      "md": {
+        "$value": "16px",
+        "$type": "dimension"
+      }
+    },
+    "font": {
+      "size": {
+        "sm": {
+          "$value": "14px",
+          "$type": "dimension"
+        },
+        "md": {
+          "$value": "16px",
+          "$type": "dimension"
+        },
+        "lg": {
+          "$value": "20px",
+          "$type": "dimension"
+        }
+      }
+    },
+    "motion": {
+      "duration": {
+        "fast": {
+          "$value": "150ms",
+          "$type": "duration"
+        }
+      },
+      "easing": {
+        "standard": {
+          "$value": "cubic-bezier(0.4, 0, 0.2, 1)",
+          "$type": "cubicBezier"
+        }
+      }
+    }
+  },
+  "themes": {
+    "cipher": {
+      "p31": {
+        "base": {
+          "$value": "16px",
+          "$type": "dimension"
+        },
+        "scale-xs": {
+          "$value": "calc(var(--p31-base) * 0.75)",
+          "$type": "dimension"
+        },
+        "scale-sm": {
+          "$value": "var(--p31-base)",
+          "$type": "dimension"
+        },
+        "scale-md": {
+          "$value": "calc(var(--p31-base) * 1.3333)",
+          "$type": "dimension"
+        },
+        "scale-lg": {
+          "$value": "calc(var(--p31-base) * 1.7777)",
+          "$type": "dimension"
+        },
+        "scale-xl": {
+          "$value": "calc(var(--p31-base) * 2.3703)",
+          "$type": "dimension"
+        },
+        "scale-2xl": {
+          "$value": "calc(var(--p31-base) * 3.1604)",
+          "$type": "dimension"
+        },
+        "radius-sm": {
+          "$value": "8px",
+          "$type": "dimension"
+        },
+        "radius-md": {
+          "$value": "16px",
+          "$type": "dimension"
+        },
+        "radius-lg": {
+          "$value": "24px",
+          "$type": "dimension"
+        },
+        "radius-full": {
+          "$value": "9999px",
+          "$type": "dimension"
+        },
+        "font-sans": {
+          "$value": "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
+          "$type": "fontFamily"
+        },
+        "font-mono": {
+          "$value": "ui-monospace, 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace",
+          "$type": "fontFamily"
+        },
+        "bg": {
+          "$value": "oklch(10% 0.01 240)",
+          "$type": "color"
+        },
+        "surface": {
+          "$value": "oklch(15% 0.015 240)",
+          "$type": "color"
+        },
+        "surface2": {
+          "$value": "oklch(22% 0.02 240)",
+          "$type": "color"
+        },
+        "accent": {
+          "$value": "oklch(65% 0.18 195)",
+          "$type": "color"
+        },
+        "accent-cyan": {
+          "$value": "oklch(65% 0.18 195)",
+          "$type": "color"
+        },
+        "accent-violet": {
+          "$value": "oklch(65% 0.18 285)",
+          "$type": "color"
+        },
+        "accent-gold": {
+          "$value": "oklch(65% 0.18 15)",
+          "$type": "color"
+        },
+        "accent-green": {
+          "$value": "oklch(65% 0.18 105)",
+          "$type": "color"
+        },
+        "accent-red": {
+          "$value": "oklch(65% 0.18 30)",
+          "$type": "color"
+        },
+        "accent-iris": {
+          "$value": "oklch(65% 0.18 255)",
+          "$type": "color"
+        },
+        "text-primary": {
+          "$value": "oklch(96% 0.005 240)",
+          "$type": "color"
+        },
+        "text-secondary": {
+          "$value": "oklch(75% 0.01 240)",
+          "$type": "color"
+        },
+        "text-tertiary": {
+          "$value": "oklch(55% 0.01 240)",
+          "$type": "color"
+        },
+        "glass-bg": {
+          "$value": "oklch(100% 0.01 240 / 0.05)",
+          "$type": "color"
+        },
+        "glass-border": {
+          "$value": "oklch(100% 0.01 240 / 0.1)",
+          "$type": "color"
+        },
+        "glass-shadow": {
+          "$value": "0 8px 32px rgba(0, 0, 0, 0.2)",
+          "$type": "boxShadow"
+        }
+      }
+    },
+    "garden": {
+      "p31": {
+        "base": {
+          "$value": "16px",
+          "$type": "dimension"
+        },
+        "scale-xs": {
+          "$value": "calc(var(--p31-base) * 0.75)",
+          "$type": "dimension"
+        },
+        "scale-sm": {
+          "$value": "var(--p31-base)",
+          "$type": "dimension"
+        },
+        "scale-md": {
+          "$value": "calc(var(--p31-base) * 1.3333)",
+          "$type": "dimension"
+        },
+        "scale-lg": {
+          "$value": "calc(var(--p31-base) * 1.7777)",
+          "$type": "dimension"
+        },
+        "scale-xl": {
+          "$value": "calc(var(--p31-base) * 2.3703)",
+          "$type": "dimension"
+        },
+        "scale-2xl": {
+          "$value": "calc(var(--p31-base) * 3.1604)",
+          "$type": "dimension"
+        },
+        "radius-sm": {
+          "$value": "8px",
+          "$type": "dimension"
+        },
+        "radius-md": {
+          "$value": "16px",
+          "$type": "dimension"
+        },
+        "radius-lg": {
+          "$value": "24px",
+          "$type": "dimension"
+        },
+        "radius-full": {
+          "$value": "9999px",
+          "$type": "dimension"
+        },
+        "font-sans": {
+          "$value": "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
+          "$type": "fontFamily"
+        },
+        "font-mono": {
+          "$value": "ui-monospace, 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace",
+          "$type": "fontFamily"
+        },
+        "bg": {
+          "$value": "oklch(12% 0.02 140)",
+          "$type": "color"
+        },
+        "surface": {
+          "$value": "oklch(18% 0.025 140)",
+          "$type": "color"
+        },
+        "surface2": {
+          "$value": "oklch(25% 0.03 140)",
+          "$type": "color"
+        },
+        "accent": {
+          "$value": "oklch(70% 0.15 145)",
+          "$type": "color"
+        },
+        "accent-cyan": {
+          "$value": "oklch(70% 0.15 145)",
+          "$type": "color"
+        },
+        "accent-violet": {
+          "$value": "oklch(70% 0.15 185)",
+          "$type": "color"
+        },
+        "accent-gold": {
+          "$value": "oklch(75% 0.15 85)",
+          "$type": "color"
+        },
+        "accent-green": {
+          "$value": "oklch(70% 0.15 145)",
+          "$type": "color"
+        },
+        "accent-red": {
+          "$value": "oklch(65% 0.15 30)",
+          "$type": "color"
+        },
+        "accent-iris": {
+          "$value": "oklch(70% 0.15 220)",
+          "$type": "color"
+        },
+        "text-primary": {
+          "$value": "oklch(95% 0.02 120)",
+          "$type": "color"
+        },
+        "text-secondary": {
+          "$value": "oklch(78% 0.02 130)",
+          "$type": "color"
+        },
+        "text-tertiary": {
+          "$value": "oklch(55% 0.02 130)",
+          "$type": "color"
+        },
+        "glass-bg": {
+          "$value": "oklch(100% 0.01 120 / 0.04)",
+          "$type": "color"
+        },
+        "glass-border": {
+          "$value": "oklch(100% 0.01 120 / 0.1)",
+          "$type": "color"
+        },
+        "glass-shadow": {
+          "$value": "0 8px 32px rgba(0, 0, 0, 0.2)",
+          "$type": "boxShadow"
+        }
+      }
+    },
+    "retro": {
+      "p31": {
+        "base": {
+          "$value": "16px",
+          "$type": "dimension"
+        },
+        "scale-xs": {
+          "$value": "calc(var(--p31-base) * 0.75)",
+          "$type": "dimension"
+        },
+        "scale-sm": {
+          "$value": "var(--p31-base)",
+          "$type": "dimension"
+        },
+        "scale-md": {
+          "$value": "calc(var(--p31-base) * 1.3333)",
+          "$type": "dimension"
+        },
+        "scale-lg": {
+          "$value": "calc(var(--p31-base) * 1.7777)",
+          "$type": "dimension"
+        },
+        "scale-xl": {
+          "$value": "calc(var(--p31-base) * 2.3703)",
+          "$type": "dimension"
+        },
+        "scale-2xl": {
+          "$value": "calc(var(--p31-base) * 3.1604)",
+          "$type": "dimension"
+        },
+        "radius-sm": {
+          "$value": "8px",
+          "$type": "dimension"
+        },
+        "radius-md": {
+          "$value": "16px",
+          "$type": "dimension"
+        },
+        "radius-lg": {
+          "$value": "24px",
+          "$type": "dimension"
+        },
+        "radius-full": {
+          "$value": "9999px",
+          "$type": "dimension"
+        },
+        "font-sans": {
+          "$value": "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
+          "$type": "fontFamily"
+        },
+        "font-mono": {
+          "$value": "ui-monospace, 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace",
+          "$type": "fontFamily"
+        },
+        "bg": {
+          "$value": "oklch(8% 0.02 60)",
+          "$type": "color"
+        },
+        "surface": {
+          "$value": "oklch(12% 0.025 60)",
+          "$type": "color"
+        },
+        "surface2": {
+          "$value": "oklch(18% 0.03 60)",
+          "$type": "color"
+        },
+        "accent": {
+          "$value": "oklch(75% 0.18 80)",
+          "$type": "color"
+        },
+        "accent-cyan": {
+          "$value": "oklch(75% 0.18 80)",
+          "$type": "color"
+        },
+        "accent-violet": {
+          "$value": "oklch(70% 0.18 320)",
+          "$type": "color"
+        },
+        "accent-gold": {
+          "$value": "oklch(78% 0.18 70)",
+          "$type": "color"
+        },
+        "accent-green": {
+          "$value": "oklch(65% 0.18 140)",
+          "$type": "color"
+        },
+        "accent-red": {
+          "$value": "oklch(70% 0.18 30)",
+          "$type": "color"
+        },
+        "accent-iris": {
+          "$value": "oklch(70% 0.18 310)",
+          "$type": "color"
+        },
+        "text-primary": {
+          "$value": "oklch(95% 0.05 80)",
+          "$type": "color"
+        },
+        "text-secondary": {
+          "$value": "oklch(78% 0.04 75)",
+          "$type": "color"
+        },
+        "text-tertiary": {
+          "$value": "oklch(52% 0.03 70)",
+          "$type": "color"
+        },
+        "glass-bg": {
+          "$value": "oklch(100% 0.02 60 / 0.05)",
+          "$type": "color"
+        },
+        "glass-border": {
+          "$value": "oklch(100% 0.02 60 / 0.12)",
+          "$type": "color"
+        },
+        "glass-shadow": {
+          "$value": "0 8px 32px rgba(255, 180, 0, 0.08)",
+          "$type": "boxShadow"
+        }
+      }
+    },
+    "ocean": {
+      "p31": {
+        "base": {
+          "$value": "16px",
+          "$type": "dimension"
+        },
+        "scale-xs": {
+          "$value": "calc(var(--p31-base) * 0.75)",
+          "$type": "dimension"
+        },
+        "scale-sm": {
+          "$value": "var(--p31-base)",
+          "$type": "dimension"
+        },
+        "scale-md": {
+          "$value": "calc(var(--p31-base) * 1.3333)",
+          "$type": "dimension"
+        },
+        "scale-lg": {
+          "$value": "calc(var(--p31-base) * 1.7777)",
+          "$type": "dimension"
+        },
+        "scale-xl": {
+          "$value": "calc(var(--p31-base) * 2.3703)",
+          "$type": "dimension"
+        },
+        "scale-2xl": {
+          "$value": "calc(var(--p31-base) * 3.1604)",
+          "$type": "dimension"
+        },
+        "radius-sm": {
+          "$value": "8px",
+          "$type": "dimension"
+        },
+        "radius-md": {
+          "$value": "16px",
+          "$type": "dimension"
+        },
+        "radius-lg": {
+          "$value": "24px",
+          "$type": "dimension"
+        },
+        "radius-full": {
+          "$value": "9999px",
+          "$type": "dimension"
+        },
+        "font-sans": {
+          "$value": "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
+          "$type": "fontFamily"
+        },
+        "font-mono": {
+          "$value": "ui-monospace, 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace",
+          "$type": "fontFamily"
+        },
+        "bg": {
+          "$value": "oklch(10% 0.03 240)",
+          "$type": "color"
+        },
+        "surface": {
+          "$value": "oklch(15% 0.04 240)",
+          "$type": "color"
+        },
+        "surface2": {
+          "$value": "oklch(22% 0.045 240)",
+          "$type": "color"
+        },
+        "accent": {
+          "$value": "oklch(70% 0.15 200)",
+          "$type": "color"
+        },
+        "accent-cyan": {
+          "$value": "oklch(70% 0.15 200)",
+          "$type": "color"
+        },
+        "accent-violet": {
+          "$value": "oklch(65% 0.15 250)",
+          "$type": "color"
+        },
+        "accent-gold": {
+          "$value": "oklch(72% 0.15 40)",
+          "$type": "color"
+        },
+        "accent-green": {
+          "$value": "oklch(70% 0.15 160)",
+          "$type": "color"
+        },
+        "accent-red": {
+          "$value": "oklch(70% 0.15 20)",
+          "$type": "color"
+        },
+        "accent-iris": {
+          "$value": "oklch(70% 0.15 230)",
+          "$type": "color"
+        },
+        "text-primary": {
+          "$value": "oklch(95% 0.02 230)",
+          "$type": "color"
+        },
+        "text-secondary": {
+          "$value": "oklch(78% 0.02 235)",
+          "$type": "color"
+        },
+        "text-tertiary": {
+          "$value": "oklch(55% 0.02 235)",
+          "$type": "color"
+        },
+        "glass-bg": {
+          "$value": "oklch(100% 0.01 230 / 0.04)",
+          "$type": "color"
+        },
+        "glass-border": {
+          "$value": "oklch(100% 0.01 230 / 0.08)",
+          "$type": "color"
+        },
+        "glass-shadow": {
+          "$value": "0 8px 32px rgba(0, 100, 200, 0.1)",
+          "$type": "boxShadow"
+        }
+      }
+    },
+    "sunset": {
+      "p31": {
+        "base": {
+          "$value": "16px",
+          "$type": "dimension"
+        },
+        "scale-xs": {
+          "$value": "calc(var(--p31-base) * 0.75)",
+          "$type": "dimension"
+        },
+        "scale-sm": {
+          "$value": "var(--p31-base)",
+          "$type": "dimension"
+        },
+        "scale-md": {
+          "$value": "calc(var(--p31-base) * 1.3333)",
+          "$type": "dimension"
+        },
+        "scale-lg": {
+          "$value": "calc(var(--p31-base) * 1.7777)",
+          "$type": "dimension"
+        },
+        "scale-xl": {
+          "$value": "calc(var(--p31-base) * 2.3703)",
+          "$type": "dimension"
+        },
+        "scale-2xl": {
+          "$value": "calc(var(--p31-base) * 3.1604)",
+          "$type": "dimension"
+        },
+        "radius-sm": {
+          "$value": "8px",
+          "$type": "dimension"
+        },
+        "radius-md": {
+          "$value": "16px",
+          "$type": "dimension"
+        },
+        "radius-lg": {
+          "$value": "24px",
+          "$type": "dimension"
+        },
+        "radius-full": {
+          "$value": "9999px",
+          "$type": "dimension"
+        },
+        "font-sans": {
+          "$value": "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
+          "$type": "fontFamily"
+        },
+        "font-mono": {
+          "$value": "ui-monospace, 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace",
+          "$type": "fontFamily"
+        },
+        "bg": {
+          "$value": "oklch(12% 0.03 30)",
+          "$type": "color"
+        },
+        "surface": {
+          "$value": "oklch(17% 0.035 30)",
+          "$type": "color"
+        },
+        "surface2": {
+          "$value": "oklch(23% 0.04 30)",
+          "$type": "color"
+        },
+        "accent": {
+          "$value": "oklch(72% 0.18 40)",
+          "$type": "color"
+        },
+        "accent-cyan": {
+          "$value": "oklch(72% 0.18 40)",
+          "$type": "color"
+        },
+        "accent-violet": {
+          "$value": "oklch(70% 0.18 360)",
+          "$type": "color"
+        },
+        "accent-gold": {
+          "$value": "oklch(75% 0.18 60)",
+          "$type": "color"
+        },
+        "accent-green": {
+          "$value": "oklch(65% 0.18 140)",
+          "$type": "color"
+        },
+        "accent-red": {
+          "$value": "oklch(72% 0.18 25)",
+          "$type": "color"
+        },
+        "accent-iris": {
+          "$value": "oklch(70% 0.18 340)",
+          "$type": "color"
+        },
+        "text-primary": {
+          "$value": "oklch(95% 0.03 50)",
+          "$type": "color"
+        },
+        "text-secondary": {
+          "$value": "oklch(78% 0.03 40)",
+          "$type": "color"
+        },
+        "text-tertiary": {
+          "$value": "oklch(55% 0.03 35)",
+          "$type": "color"
+        },
+        "glass-bg": {
+          "$value": "oklch(100% 0.01 30 / 0.06)",
+          "$type": "color"
+        },
+        "glass-border": {
+          "$value": "oklch(100% 0.01 30 / 0.1)",
+          "$type": "color"
+        },
+        "glass-shadow": {
+          "$value": "0 8px 32px rgba(200, 100, 0, 0.08)",
+          "$type": "boxShadow"
+        }
+      }
+    },
+    "mono": {
+      "p31": {
+        "base": {
+          "$value": "16px",
+          "$type": "dimension"
+        },
+        "scale-xs": {
+          "$value": "calc(var(--p31-base) * 0.75)",
+          "$type": "dimension"
+        },
+        "scale-sm": {
+          "$value": "var(--p31-base)",
+          "$type": "dimension"
+        },
+        "scale-md": {
+          "$value": "calc(var(--p31-base) * 1.3333)",
+          "$type": "dimension"
+        },
+        "scale-lg": {
+          "$value": "calc(var(--p31-base) * 1.7777)",
+          "$type": "dimension"
+        },
+        "scale-xl": {
+          "$value": "calc(var(--p31-base) * 2.3703)",
+          "$type": "dimension"
+        },
+        "scale-2xl": {
+          "$value": "calc(var(--p31-base) * 3.1604)",
+          "$type": "dimension"
+        },
+        "radius-sm": {
+          "$value": "8px",
+          "$type": "dimension"
+        },
+        "radius-md": {
+          "$value": "16px",
+          "$type": "dimension"
+        },
+        "radius-lg": {
+          "$value": "24px",
+          "$type": "dimension"
+        },
+        "radius-full": {
+          "$value": "9999px",
+          "$type": "dimension"
+        },
+        "font-sans": {
+          "$value": "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
+          "$type": "fontFamily"
+        },
+        "font-mono": {
+          "$value": "ui-monospace, 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace",
+          "$type": "fontFamily"
+        },
+        "bg": {
+          "$value": "oklch(8% 0 0)",
+          "$type": "color"
+        },
+        "surface": {
+          "$value": "oklch(14% 0 0)",
+          "$type": "color"
+        },
+        "surface2": {
+          "$value": "oklch(20% 0 0)",
+          "$type": "color"
+        },
+        "accent": {
+          "$value": "oklch(80% 0 0)",
+          "$type": "color"
+        },
+        "accent-cyan": {
+          "$value": "oklch(75% 0 0)",
+          "$type": "color"
+        },
+        "accent-violet": {
+          "$value": "oklch(70% 0 0)",
+          "$type": "color"
+        },
+        "accent-gold": {
+          "$value": "oklch(78% 0 0)",
+          "$type": "color"
+        },
+        "accent-green": {
+          "$value": "oklch(72% 0 0)",
+          "$type": "color"
+        },
+        "accent-red": {
+          "$value": "oklch(68% 0 0)",
+          "$type": "color"
+        },
+        "accent-iris": {
+          "$value": "oklch(74% 0 0)",
+          "$type": "color"
+        },
+        "text-primary": {
+          "$value": "oklch(95% 0 0)",
+          "$type": "color"
+        },
+        "text-secondary": {
+          "$value": "oklch(75% 0 0)",
+          "$type": "color"
+        },
+        "text-tertiary": {
+          "$value": "oklch(50% 0 0)",
+          "$type": "color"
+        },
+        "glass-bg": {
+          "$value": "oklch(100% 0 0 / 0.05)",
+          "$type": "color"
+        },
+        "glass-border": {
+          "$value": "oklch(100% 0 0 / 0.1)",
+          "$type": "color"
+        },
+        "glass-shadow": {
+          "$value": "0 8px 32px rgba(0, 0, 0, 0.2)",
+          "$type": "boxShadow"
+        }
+      }
+    },
+    "aurora": {
+      "p31": {
+        "base": {
+          "$value": "16px",
+          "$type": "dimension"
+        },
+        "scale-xs": {
+          "$value": "calc(var(--p31-base) * 0.75)",
+          "$type": "dimension"
+        },
+        "scale-sm": {
+          "$value": "var(--p31-base)",
+          "$type": "dimension"
+        },
+        "scale-md": {
+          "$value": "calc(var(--p31-base) * 1.3333)",
+          "$type": "dimension"
+        },
+        "scale-lg": {
+          "$value": "calc(var(--p31-base) * 1.7777)",
+          "$type": "dimension"
+        },
+        "scale-xl": {
+          "$value": "calc(var(--p31-base) * 2.3703)",
+          "$type": "dimension"
+        },
+        "scale-2xl": {
+          "$value": "calc(var(--p31-base) * 3.1604)",
+          "$type": "dimension"
+        },
+        "radius-sm": {
+          "$value": "8px",
+          "$type": "dimension"
+        },
+        "radius-md": {
+          "$value": "16px",
+          "$type": "dimension"
+        },
+        "radius-lg": {
+          "$value": "24px",
+          "$type": "dimension"
+        },
+        "radius-full": {
+          "$value": "9999px",
+          "$type": "dimension"
+        },
+        "font-sans": {
+          "$value": "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
+          "$type": "fontFamily"
+        },
+        "font-mono": {
+          "$value": "ui-monospace, 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace",
+          "$type": "fontFamily"
+        },
+        "bg": {
+          "$value": "oklch(9% 0.03 260)",
+          "$type": "color"
+        },
+        "surface": {
+          "$value": "oklch(14% 0.035 260)",
+          "$type": "color"
+        },
+        "surface2": {
+          "$value": "oklch(20% 0.04 260)",
+          "$type": "color"
+        },
+        "accent": {
+          "$value": "oklch(72% 0.16 250)",
+          "$type": "color"
+        },
+        "accent-cyan": {
+          "$value": "oklch(65% 0.16 225)",
+          "$type": "color"
+        },
+        "accent-violet": {
+          "$value": "oklch(72% 0.16 250)",
+          "$type": "color"
+        },
+        "accent-gold": {
+          "$value": "oklch(75% 0.16 65)",
+          "$type": "color"
+        },
+        "accent-green": {
+          "$value": "oklch(70% 0.16 160)",
+          "$type": "color"
+        },
+        "accent-red": {
+          "$value": "oklch(70% 0.16 25)",
+          "$type": "color"
+        },
+        "accent-iris": {
+          "$value": "oklch(72% 0.16 290)",
+          "$type": "color"
+        },
+        "text-primary": {
+          "$value": "oklch(95% 0.03 260)",
+          "$type": "color"
+        },
+        "text-secondary": {
+          "$value": "oklch(78% 0.03 260)",
+          "$type": "color"
+        },
+        "text-tertiary": {
+          "$value": "oklch(55% 0.03 260)",
+          "$type": "color"
+        },
+        "glass-bg": {
+          "$value": "oklch(100% 0.02 260 / 0.05)",
+          "$type": "color"
+        },
+        "glass-border": {
+          "$value": "oklch(100% 0.02 260 / 0.1)",
+          "$type": "color"
+        },
+        "glass-shadow": {
+          "$value": "0 8px 32px rgba(100, 50, 200, 0.12)",
+          "$type": "boxShadow"
+        }
+      }
+    },
+    "zen": {
+      "p31": {
+        "base": {
+          "$value": "16px",
+          "$type": "dimension"
+        },
+        "scale-xs": {
+          "$value": "calc(var(--p31-base) * 0.75)",
+          "$type": "dimension"
+        },
+        "scale-sm": {
+          "$value": "var(--p31-base)",
+          "$type": "dimension"
+        },
+        "scale-md": {
+          "$value": "calc(var(--p31-base) * 1.3333)",
+          "$type": "dimension"
+        },
+        "scale-lg": {
+          "$value": "calc(var(--p31-base) * 1.7777)",
+          "$type": "dimension"
+        },
+        "scale-xl": {
+          "$value": "calc(var(--p31-base) * 2.3703)",
+          "$type": "dimension"
+        },
+        "scale-2xl": {
+          "$value": "calc(var(--p31-base) * 3.1604)",
+          "$type": "dimension"
+        },
+        "radius-sm": {
+          "$value": "8px",
+          "$type": "dimension"
+        },
+        "radius-md": {
+          "$value": "16px",
+          "$type": "dimension"
+        },
+        "radius-lg": {
+          "$value": "24px",
+          "$type": "dimension"
+        },
+        "radius-full": {
+          "$value": "9999px",
+          "$type": "dimension"
+        },
+        "font-sans": {
+          "$value": "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
+          "$type": "fontFamily"
+        },
+        "font-mono": {
+          "$value": "ui-monospace, 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace",
+          "$type": "fontFamily"
+        },
+        "bg": {
+          "$value": "oklch(14% 0.01 75)",
+          "$type": "color"
+        },
+        "surface": {
+          "$value": "oklch(19% 0.012 75)",
+          "$type": "color"
+        },
+        "surface2": {
+          "$value": "oklch(25% 0.015 75)",
+          "$type": "color"
+        },
+        "accent": {
+          "$value": "oklch(72% 0.1 75)",
+          "$type": "color"
+        },
+        "accent-cyan": {
+          "$value": "oklch(68% 0.1 190)",
+          "$type": "color"
+        },
+        "accent-violet": {
+          "$value": "oklch(70% 0.1 300)",
+          "$type": "color"
+        },
+        "accent-gold": {
+          "$value": "oklch(75% 0.12 75)",
+          "$type": "color"
+        },
+        "accent-green": {
+          "$value": "oklch(68% 0.1 140)",
+          "$type": "color"
+        },
+        "accent-red": {
+          "$value": "oklch(68% 0.12 25)",
+          "$type": "color"
+        },
+        "accent-iris": {
+          "$value": "oklch(70% 0.1 250)",
+          "$type": "color"
+        },
+        "text-primary": {
+          "$value": "oklch(93% 0.01 75)",
+          "$type": "color"
+        },
+        "text-secondary": {
+          "$value": "oklch(75% 0.012 75)",
+          "$type": "color"
+        },
+        "text-tertiary": {
+          "$value": "oklch(55% 0.01 75)",
+          "$type": "color"
+        },
+        "glass-bg": {
+          "$value": "oklch(100% 0.01 75 / 0.05)",
+          "$type": "color"
+        },
+        "glass-border": {
+          "$value": "oklch(100% 0.01 75 / 0.1)",
+          "$type": "color"
+        },
+        "glass-shadow": {
+          "$value": "0 8px 32px rgba(120, 100, 70, 0.1)",
+          "$type": "boxShadow"
+        }
+      }
+    },
+    "volt": {
+      "p31": {
+        "base": {
+          "$value": "16px",
+          "$type": "dimension"
+        },
+        "scale-xs": {
+          "$value": "calc(var(--p31-base) * 0.75)",
+          "$type": "dimension"
+        },
+        "scale-sm": {
+          "$value": "var(--p31-base)",
+          "$type": "dimension"
+        },
+        "scale-md": {
+          "$value": "calc(var(--p31-base) * 1.3333)",
+          "$type": "dimension"
+        },
+        "scale-lg": {
+          "$value": "calc(var(--p31-base) * 1.7777)",
+          "$type": "dimension"
+        },
+        "scale-xl": {
+          "$value": "calc(var(--p31-base) * 2.3703)",
+          "$type": "dimension"
+        },
+        "scale-2xl": {
+          "$value": "calc(var(--p31-base) * 3.1604)",
+          "$type": "dimension"
+        },
+        "radius-sm": {
+          "$value": "8px",
+          "$type": "dimension"
+        },
+        "radius-md": {
+          "$value": "16px",
+          "$type": "dimension"
+        },
+        "radius-lg": {
+          "$value": "24px",
+          "$type": "dimension"
+        },
+        "radius-full": {
+          "$value": "9999px",
+          "$type": "dimension"
+        },
+        "font-sans": {
+          "$value": "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
+          "$type": "fontFamily"
+        },
+        "font-mono": {
+          "$value": "ui-monospace, 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace",
+          "$type": "fontFamily"
+        },
+        "bg": {
+          "$value": "oklch(12% 0.02 270)",
+          "$type": "color"
+        },
+        "surface": {
+          "$value": "oklch(18% 0.025 270)",
+          "$type": "color"
+        },
+        "surface2": {
+          "$value": "oklch(25% 0.03 270)",
+          "$type": "color"
+        },
+        "accent": {
+          "$value": "oklch(75% 0.17 190)",
+          "$type": "color"
+        },
+        "accent-cyan": {
+          "$value": "oklch(75% 0.17 190)",
+          "$type": "color"
+        },
+        "accent-violet": {
+          "$value": "oklch(72% 0.17 300)",
+          "$type": "color"
+        },
+        "accent-gold": {
+          "$value": "oklch(78% 0.17 60)",
+          "$type": "color"
+        },
+        "accent-green": {
+          "$value": "oklch(72% 0.17 150)",
+          "$type": "color"
+        },
+        "accent-red": {
+          "$value": "oklch(72% 0.17 20)",
+          "$type": "color"
+        },
+        "accent-iris": {
+          "$value": "oklch(73% 0.17 260)",
+          "$type": "color"
+        },
+        "text-primary": {
+          "$value": "oklch(96% 0.01 270)",
+          "$type": "color"
+        },
+        "text-secondary": {
+          "$value": "oklch(80% 0.01 270)",
+          "$type": "color"
+        },
+        "text-tertiary": {
+          "$value": "oklch(58% 0.01 270)",
+          "$type": "color"
+        },
+        "glass-bg": {
+          "$value": "oklch(100% 0.01 270 / 0.05)",
+          "$type": "color"
+        },
+        "glass-border": {
+          "$value": "oklch(100% 0.01 270 / 0.12)",
+          "$type": "color"
+        },
+        "glass-shadow": {
+          "$value": "0 8px 32px rgba(0, 160, 220, 0.12)",
+          "$type": "boxShadow"
+        }
+      }
+    }
+  },
+  "component": {}
+}

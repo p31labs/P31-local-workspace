@@ -1,0 +1,21 @@
+{
+  "name": "@p31/canon-mcp",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "MCP server exposing @p31/canon's component contracts to agents. Agents call list_components → get_contract → validate_contract before writing code against the canon.",
+  "scripts": {
+    "start": "tsx src/server.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/server": "^2.0.0",
+    "@p31/canon": "file:../canon",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.4",
+    "tsx": "^4.19.0",
+    "typescript": "^5.9.3"
+  }
+}
