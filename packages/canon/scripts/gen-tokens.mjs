@@ -46,9 +46,12 @@ function typeFor(name) {
   if (name.startsWith('z-') || name === 'speed-factor') return 'number'
   if (
     name.startsWith('scale-') || name.startsWith('radius-') ||
-    name.startsWith('space-') || name.startsWith('type-') ||
-    name.startsWith('blur-') || name.startsWith('touch-') ||
-    name === 'base' || name === 'topbar-height' || name === 'glass-blur'
+    name.startsWith('space-') || name.startsWith('spacing-') ||
+    name.startsWith('type-') || name.startsWith('blur-') ||
+    name.startsWith('touch-') || name === 'base' ||
+    name === 'topbar-height' || name === 'glass-blur' ||
+    name === 'glass-radius' || name === 'card-padding' ||
+    ['h1', 'h2', 'h3', 'h4', 'body', 'body-sm', 'label', 'caption'].includes(name)
   ) return 'dimension'
   return 'color'
 }

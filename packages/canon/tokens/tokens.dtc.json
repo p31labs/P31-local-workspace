@@ -392,6 +392,114 @@
       "$value": "64px",
       "$type": "dimension"
     },
+    "void": {
+      "$value": "#0A0A0F",
+      "$type": "color"
+    },
+    "cloud": {
+      "$value": "#A1A1AA",
+      "$type": "color"
+    },
+    "glass-surface": {
+      "$value": "oklch(100% 0.01 240 / 0.04)",
+      "$type": "color"
+    },
+    "glass-surface-hover": {
+      "$value": "oklch(100% 0.01 240 / 0.06)",
+      "$type": "color"
+    },
+    "glass-radius": {
+      "$value": "24px",
+      "$type": "dimension"
+    },
+    "spacing-xs": {
+      "$value": "4px",
+      "$type": "dimension"
+    },
+    "spacing-sm": {
+      "$value": "8px",
+      "$type": "dimension"
+    },
+    "spacing-md": {
+      "$value": "16px",
+      "$type": "dimension"
+    },
+    "spacing-lg": {
+      "$value": "24px",
+      "$type": "dimension"
+    },
+    "spacing-xl": {
+      "$value": "32px",
+      "$type": "dimension"
+    },
+    "spacing-xxl": {
+      "$value": "64px",
+      "$type": "dimension"
+    },
+    "radius-none": {
+      "$value": "0",
+      "$type": "dimension"
+    },
+    "h1": {
+      "$value": "51px",
+      "$type": "dimension"
+    },
+    "h2": {
+      "$value": "38px",
+      "$type": "dimension"
+    },
+    "h3": {
+      "$value": "28px",
+      "$type": "dimension"
+    },
+    "h4": {
+      "$value": "21px",
+      "$type": "dimension"
+    },
+    "body": {
+      "$value": "16px",
+      "$type": "dimension"
+    },
+    "body-sm": {
+      "$value": "14px",
+      "$type": "dimension"
+    },
+    "label": {
+      "$value": "12px",
+      "$type": "dimension"
+    },
+    "caption": {
+      "$value": "7px",
+      "$type": "dimension"
+    },
+    "duration-instant": {
+      "$value": "62.5ms",
+      "$type": "duration"
+    },
+    "duration-standard": {
+      "$value": "250ms",
+      "$type": "duration"
+    },
+    "duration-slower": {
+      "$value": "1000ms",
+      "$type": "duration"
+    },
+    "easing-standard": {
+      "$value": "cubic-bezier(0.4, 0.0, 0.2, 1)",
+      "$type": "cubicBezier"
+    },
+    "easing-decelerate": {
+      "$value": "cubic-bezier(0.0, 0.0, 0.2, 1)",
+      "$type": "cubicBezier"
+    },
+    "easing-accelerate": {
+      "$value": "cubic-bezier(0.4, 0.0, 1.0, 1)",
+      "$type": "cubicBezier"
+    },
+    "card-padding": {
+      "$value": "24px",
+      "$type": "dimension"
+    },
     "color": {
       "action": {
         "primary": {
