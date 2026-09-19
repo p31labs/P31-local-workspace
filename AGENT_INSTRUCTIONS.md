@@ -72,6 +72,17 @@ but the substrate's event union today is:
 There is no `review` event and no agent-identity field. They arrive when a lane
 needs them — not before. Do not invent event kinds to pre-empt that.
 
+## The human is the reviewer until a review event exists
+
+Changes to the frozen surface (`packages/canon/src/loom/**`) are gated on
+review. There is no `review` event kind yet; until one exists, the **human**
+reviews with the existing human-only events (`approve`, `reject`, `revise`).
+A non-semantic change — a comment, a doc link, whitespace — may be
+human-approved and flagged as such in the commit message. The moment a lane
+needs a schema change, that proposal is the doctrine's first live use and must
+be human-reviewed before it lands. Do not treat a schema change as "just a
+comment."
+
 ## The gates
 
 - `check-no-agent-names.mjs` — no model names anywhere in the Loom surface.

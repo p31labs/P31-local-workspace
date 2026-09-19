@@ -23,9 +23,16 @@ const SCAN_DIRS = [
   join(repo, 'apps', 'loom', 'src'),
 ];
 
+/** Root instruction files — where a stray model name is most likely to land
+ *  and least likely to be noticed. */
+const SCAN_FILES = [
+  join(repo, 'AGENT_INSTRUCTIONS.md'),
+  join(repo, 'AGENTS.md'),
+];
+
 /** This file necessarily names the forbidden tokens to forbid them. */
 const ALLOWED = new Set(['check-no-agent-names.mjs']);
-const EXTS = /\.(ts|tsx|mjs|js)$/;
+const EXTS = /\.(ts|tsx|mjs|js|md)$/;
 /** Extend here if more vendor names must stay out. */
 const NAMES = /\b(deepseek|gemini|claude)\b/i;
 
@@ -42,15 +49,17 @@ function walk(dir) {
 }
 
 const hits = [];
-for (const dir of SCAN_DIRS) {
-  for (const file of walk(dir)) {
-    const base = file.slice(file.lastIndexOf('/') + 1);
-    if (ALLOWED.has(base)) continue;
-    readFileSync(file, 'utf8').split('\n').forEach((line, i) => {
-      const m = line.match(NAMES);
-      if (m) hits.push(`${file.replace(repo + '/', '')}:${i + 1}  [${m[1]}]  ${line.trim().slice(0, 90)}`);
-    });
-  }
+const targets = [];
+for (const dir of SCAN_DIRS) targets.push(...walk(dir));
+targets.push(...SCAN_FILES);
+
+for (const file of targets) {
+  const base = file.slice(file.lastIndexOf('/') + 1);
+  if (ALLOWED.has(base)) continue;
+  readFileSync(file, 'utf8').split('\n').forEach((line, i) => {
+    const m = line.match(NAMES);
+    if (m) hits.push(`${file.replace(repo + '/', '')}:${i + 1}  [${m[1]}]  ${line.trim().slice(0, 90)}`);
+  });
 }
 
 if (hits.length) {
