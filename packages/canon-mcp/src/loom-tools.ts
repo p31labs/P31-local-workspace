@@ -8,10 +8,8 @@
  *
  * Every write goes through commit() — the seal gate fails the build otherwise.
  * Writer-per-kind holds: these handlers emit agent-only events (traverse,
- * propose, presence). They never focus/approve/reject/revise — those are human.
- * Reviews are agent-only too, but this file does not emit them: an agent posts
- * a review by calling commit() with kind 'review' (no dedicated handler yet —
- * add one when a lane needs it).
+ * propose, review, presence). They never focus/approve/reject/revise — those
+ * are human.
  */
 import { commit, type CommitResult } from '@p31/canon/loom/commit';
 import { readEvents } from '@p31/canon/loom/jsonl';
@@ -76,6 +74,23 @@ export function traverse(logPath: string, from: string, to: string, reason: stri
  *  'unknown' (pre-author events are read the same way). */
 export function propose(logPath: string, id: string, node: string, body: unknown, author?: string): CommitResult {
   return commit(logPath, { writer: 'agent', kind: 'propose', id, node, body, author });
+}
+
+/** Agent-only: post an advisory review on a proposal. The gate stamps the
+ *  `revision` from the proposal's current state — the caller never sets it, so
+ *  a review always pins the version it actually saw. `reason` is required when
+ *  `decision` is amend or reject. */
+export function review(
+  logPath: string,
+  proposalId: string,
+  decision: 'approve' | 'amend' | 'reject',
+  agent: string,
+  reason?: string,
+): CommitResult {
+  const state = replay(readEvents(logPath));
+  const proposal = state.proposals.get(proposalId);
+  if (!proposal) return { valid: false, error: `unknown proposal: ${proposalId}` };
+  return commit(logPath, { writer: 'agent', kind: 'review', agent, proposalId, decision, reason, revision: proposal.revision });
 }
 
 export interface AwaitResult {

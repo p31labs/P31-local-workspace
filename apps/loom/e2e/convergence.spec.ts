@@ -16,14 +16,14 @@ const logPath = process.env.LOOM_LOG
  * β-2 canvas convergence — the write → render → SSE loop, end to end.
  *
  * Spawns the β-1 demo agent as a real child process, pointed at the SAME log
- * the dev middleware reads (LOOM_LOG). The agent appends traverse + propose
- * events through commit(); the canvas must reflect them via SSE without any
- * direct POST. Proposal ids are Date.now()-based, so assertions key on kind,
- * not id: a proposal ghost appears and the event log lists propose + agent.
+ * the dev middleware reads (LOOM_LOG). With two iterations the agent appends
+ * traverse + propose, then reviews the prior proposal; the canvas must reflect
+ * all of it via SSE without any direct POST. Proposal ids are Date.now()-based,
+ * so assertions key on kind, not id.
  */
 test('canvas reflects events the demo agent committed', async ({ page }) => {
   await new Promise<void>((resolveRun, rejectRun) => {
-    const child = spawn('node', [demoAgentPath, '--iterations=1', '--seed=1'], {
+    const child = spawn('node', [demoAgentPath, '--iterations=2', '--seed=1'], {
       env: { ...process.env, LOOM_LOG: logPath },
       stdio: ['ignore', 'ignore', 'pipe'],
     });
@@ -41,5 +41,6 @@ test('canvas reflects events the demo agent committed', async ({ page }) => {
   // The event log shows the agent's writes and their writer.
   await expect(page.getByText('propose', { exact: true }).first()).toHaveCount(1);
   await expect(page.getByText('traverse', { exact: true }).first()).toHaveCount(1);
+  await expect(page.getByText('review', { exact: true }).first()).toHaveCount(1);
   await expect(page.getByText('agent', { exact: true }).first()).toHaveCount(1);
 });

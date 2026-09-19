@@ -30,7 +30,7 @@ import { join, dirname, resolve, basename } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import type { ComponentContract } from '@p31/canon/contracts';
-import { observe, traverse, propose, awaitReviews, resolveLogPath } from './loom-tools';
+import { observe, traverse, propose, review, awaitReviews, resolveLogPath } from './loom-tools';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const canonRoot = resolve(here, '..', '..', 'canon');
@@ -350,6 +350,26 @@ server.registerTool(
   },
   async ({ id, node, body, author }) => {
     const r = propose(loomLogPath, id, node, body, author);
+    return { content: [{ type: 'text', text: JSON.stringify(r) }], isError: !r.valid };
+  },
+);
+
+server.registerTool(
+  'loom_review',
+  {
+    description:
+      'Post an advisory review on a proposal (agent-only). Records an opinion at the ' +
+      "proposal's current revision; does not change its status — only a human approve/reject " +
+      'does. reason is required when decision is amend or reject.',
+    inputSchema: z.object({
+      proposalId: z.string().describe('Id of the proposal to review.'),
+      decision: z.enum(['approve', 'amend', 'reject']).describe('Review verdict.'),
+      agent: z.string().describe('Free-form reviewer identity, e.g. "presence-02".'),
+      reason: z.string().optional().describe('Required when decision is amend or reject.'),
+    }),
+  },
+  async ({ proposalId, decision, agent, reason }) => {
+    const r = review(loomLogPath, proposalId, decision, agent, reason);
     return { content: [{ type: 'text', text: JSON.stringify(r) }], isError: !r.valid };
   },
 );

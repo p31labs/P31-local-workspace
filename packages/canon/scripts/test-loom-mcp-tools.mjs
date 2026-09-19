@@ -3,16 +3,15 @@
  * @p31/canon — test-loom-mcp-tools.mjs
  *
  * Smoke suite for the β-1 presence handlers (canon-mcp/src/loom-tools.ts):
- * observe / propose / traverse / awaitReviews. Writes to a TEMP log via
- * commit(); never touches the real log, never writes registry.json.
+ * observe / propose / traverse / review / awaitReviews. Writes to a TEMP log
+ * via commit(); never touches the real log, never writes registry.json.
  *
  * Run: node scripts/test-loom-mcp-tools.mjs  (from packages/canon)
  */
 import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { observe, traverse, propose, awaitReviews } from '../../canon-mcp/src/loom-tools.ts';
-import { commit } from '@p31/canon/loom/commit';
+import { observe, traverse, propose, review, awaitReviews } from '../../canon-mcp/src/loom-tools.ts';
 
 const fails = [];
 const ok = (c, m) => { if (!c) fails.push(m); };
@@ -46,20 +45,31 @@ try {
   const o2 = observe(logPath);
   ok(o2.agentPath.includes('.glass-card'), 'traverse extends agentPath');
 
-  // 5. awaitReviews resolves when a review lands during the wait (fs.watch).
+  // 5. review handler stamps the current revision and is advisory.
+  const rv = review(logPath, 'prop_1', 'approve', 'presence-02');
+  ok(rv.valid, `review handler valid (${rv.error ?? ''})`);
+  ok(rv.event?.revision === 0, `review handler stamps revision 0 (got ${rv.event?.revision})`);
+
+  // 6. awaitReviews resolves when a review lands during the wait (fs.watch).
   const wait = awaitReviews(logPath, 'prop_1', 2000);
   await new Promise((r) => setTimeout(r, 50));
-  const rv = commit(logPath, { writer: 'agent', kind: 'review', agent: 'presence-02', proposalId: 'prop_1', decision: 'approve', revision: 0 });
-  ok(rv.valid, `review commit valid (${rv.error ?? ''})`);
+  const rv2 = review(logPath, 'prop_1', 'amend', 'presence-03', 'needs mass');
+  ok(rv2.valid, `second review valid (${rv2.error ?? ''})`);
   const aw = await wait;
   ok(aw.status === 'complete', `awaitReviews resolves on review (got ${aw.status})`);
-  ok(Array.isArray(aw.reviews) && aw.reviews.length === 1, 'awaitReviews returns the review');
+  ok(Array.isArray(aw.reviews) && aw.reviews.length >= 1, 'awaitReviews returns the review');
 
-  // 6. observe now surfaces the review.
+  // 7. observe now surfaces both reviews, and status is still pending (advisory).
   const o3 = observe(logPath);
-  ok(o3.proposals[0].reviews.length === 1 && o3.proposals[0].reviews[0].agent === 'presence-02', 'observe surfaces the review');
+  ok(o3.proposals[0].reviews.length === 2, 'observe surfaces both reviews');
+  ok(o3.proposals[0].reviews[0].agent === 'presence-02', 'first review agent recorded');
+  ok(o3.proposals[0].status === 'pending', 'agent review does not change status');
 
-  // 7. awaitReviews still times out when no review is forthcoming (unreviewed proposal).
+  // 8. review of an unknown proposal fails cleanly.
+  const badReview = review(logPath, 'prop_nope', 'approve', 'presence-02');
+  ok(!badReview.valid, 'review of unknown proposal fails');
+
+  // 9. awaitReviews still times out when no review is forthcoming (unreviewed proposal).
   propose(logPath, 'prop_2', '.button', { draft: false }, 'presence-01');
   const awTimeout = await awaitReviews(logPath, 'prop_2', 200);
   ok(awTimeout.status === 'timeout', `awaitReviews times out on unreviewed proposal (got ${awTimeout.status})`);
@@ -72,4 +82,4 @@ if (fails.length) {
   for (const f of fails) console.error(`   • ${f}`);
   process.exit(1);
 }
-console.log('✅ loom mcp tools — observe/propose/traverse/awaitReviews, all green.');
+console.log('✅ loom mcp tools — observe/propose/traverse/review/awaitReviews, all green.');
