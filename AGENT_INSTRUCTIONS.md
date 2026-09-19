@@ -19,6 +19,7 @@ Public specifiers (the frozen interface):
 | `@p31/canon/loom/gate` | `ReplayGate`, `canonicalize` | validation + deterministic hashing |
 | `@p31/canon/loom/jsonl` | `readEvents`, `nextSeq` | the **read** side |
 | `@p31/canon/loom/commit` | `commit(logPath, input)` | the **only** write path |
+| `@p31/canon/loom/profiles` | `readProfile`, `writeProfile`, `HumanProfile` | the human profile store (outside the log) |
 
 `appendEvent` is internal. It is reachable only from `commit.ts`; the seal gate
 fails the build if any other module touches it.
@@ -158,9 +159,53 @@ Changes to the frozen surface that do **not** alter the event union — `gate.ts
 commit message, the same pattern as non-semantic changes. Only the event union
 is a schema change.
 
+## Human diversity
+
+Human-authored events may carry `humanId`, a stable opaque reference — never a
+name. The log does **not** carry age, gender, neurotype, digital literacy,
+pronouns, or display names. Those live in a profile store outside the log
+(`@p31/canon/loom/profiles`, `.loom/profiles/<id>.json`). The canvas resolves
+`humanId` against the store to adapt presentation; the log records the action.
+
+The baseline canvas satisfies the accessibility floor — adequate letter and
+line spacing, `prefers-reduced-motion` honored, high-contrast tokens, literal
+labels, flat navigation (no nested menus — the three-region layout is the
+ceiling). The profile tightens or loosens presentation from that floor; it
+never drops below it.
+
+Sensory accommodations and tier are **orthogonal**:
+- `presentation.*` (motion, letter/line spacing, density, saturation, literal
+  labels) applies regardless of tier.
+- `tier` (`beginner` | `intermediate` | `advanced`) controls what surfaces —
+  the digest, the event overlay, the scrubber, the survival bars, raw JSON.
+  It is progressive disclosure: the same `LoomState` behind all three. An
+  82-year-old advanced user and a 22-year-old beginner are different people;
+  the schema keeps their axes separate.
+
+The profile store is the one surface that carries PII, and it is a separate
+store — never the append-only log.
+
+## Mediation
+
+A human may be paired with a mediator agent (not the proposing agent). The
+mediator reads `observe()` for the artifact and `readProfile()` for the human's
+tier, and rewrites proposal bodies at that tier **for display only**. It never
+writes a `review`, `approve`, `reject`, or `revise`; its rewrite is a
+render-layer translation, not a log event.
+
+The human's decision in the log is always a decision about the **original**
+body, not the mediated one. Mediation is transparent: the log may show a
+`presence` event indicating mediated review, but no shadow revisions.
+
+The mediator's read-only constraint is enforced by **code review and by its
+location in a sealed directory**, not by the gate. The gate catches structural
+violations (writer-per-kind, orphan references, stale revisions); it cannot
+detect a mediator that writes a `propose` it should not have. Reviews of the
+mediator's code are the enforcement. The `loom_mediate` tool is that surface.
+
 ## The gates
 
 - `check-no-agent-names.mjs` — no model names anywhere in the Loom surface.
 - `check-loom-seal.mjs` — `commit()` is the only writer.
-- `test-loom-{replay,gate,determinism,convergence,commit}.mjs` — the substrate
+- `test-loom-{replay,gate,determinism,convergence,commit,profiles}.mjs` — the substrate
   is deterministic, sealed, and converges across independent processes.
