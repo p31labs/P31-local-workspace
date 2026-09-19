@@ -118,8 +118,13 @@ is now closed: agents review, the human decides.
 Changes to the frozen surface (`packages/canon/src/loom/**`) continue to
 require human approval. A non-semantic change — a comment, a doc link,
 whitespace — may be human-approved and flagged as such in the commit message.
-A schema change goes through the same propose/review cycle agents use; the
-human is always the final approver.
+A schema change (anything that alters the `events.ts` union) goes through the
+same propose/review cycle agents use; the human is always the final approver.
+
+Changes to the frozen surface that do **not** alter the event union — `gate.ts`,
+`commit.ts`, `jsonl.ts`, `log-path.ts` — are human-approved and flagged in the
+commit message, the same pattern as non-semantic changes. Only the event union
+is a schema change.
 
 ## The gates
 

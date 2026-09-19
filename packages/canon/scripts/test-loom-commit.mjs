@@ -10,7 +10,7 @@
  *
  * Run: node scripts/test-loom-commit.mjs  (from packages/canon)
  */
-import { mkdtempSync, rmSync, readFileSync } from 'node:fs';
+import { mkdtempSync, rmSync, readFileSync, existsSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { Worker } from 'node:worker_threads';
@@ -54,6 +54,23 @@ withDir((logPath) => {
   ok(!orphan.valid, 'orphan approve must be rejected');
   ok(readEvents(logPath).length === before, 'orphan rejection must not write');
 });
+
+// ── commit creates a missing log directory ─────────────────────────────
+// Regression for c467cd9f: the lock file lives next to the log, so a fresh
+// log in a directory that does not exist yet must be created before the lock
+// is acquired. The demo agent writes to <root>/.loom/events.jsonl, where
+// .loom/ does not exist on a fresh checkout.
+{
+  const dir = mkdtempSync(join(tmpdir(), 'loom-nested-'));
+  const nested = join(dir, 'sub', 'events.jsonl');
+  try {
+    const r = commit(nested, { writer: 'human', kind: 'focus', node: '--x' });
+    ok(r.valid, `commit creates missing log directory: ${r.error ?? ''}`);
+    ok(existsSync(join(dir, 'sub')), 'subdir was created');
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+}
 
 // ── concurrency ────────────────────────────────────────────────────────
 {
