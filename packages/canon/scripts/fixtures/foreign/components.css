@@ -1,0 +1,36 @@
+/* A small foreign design system — Tailwind-adjacent, NOT P31. Used to prove
+ * loom-ingest.mjs extracts structure from a system the Loom did not grow up on.
+ * Note the hardcoded hex in .btn-danger — the ingester records "no token
+ * consumed", it does not silently map it to a canon token. */
+.avatar {
+  display: inline-block;
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.avatar-sm {
+  width: 24px;
+  height: 24px;
+}
+
+.avatar-lg {
+  width: 48px;
+  height: 48px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  border-radius: var(--radius-md);
+}
+
+.btn-primary {
+  background: var(--color-primary);
+  color: var(--color-primary-text);
+}
+
+.btn-danger {
+  background: #ef4444;
+  color: #ffffff;
+}

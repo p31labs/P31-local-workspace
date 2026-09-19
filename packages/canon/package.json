@@ -14,7 +14,7 @@
     "verify:parity": "node scripts/verify-token-parity.mjs",
     "verify:agent-names": "node scripts/check-no-agent-names.mjs",
     "verify:loom-seal": "node scripts/check-loom-seal.mjs",
-    "test:loom": "node scripts/check-no-agent-names.mjs && node scripts/check-loom-seal.mjs && node scripts/test-loom-replay.mjs && node scripts/test-loom-gate.mjs && node scripts/test-loom-review.mjs && node scripts/test-loom-delegation.mjs && node scripts/test-loom-drift.mjs && node scripts/test-loom-determinism.mjs && node scripts/test-loom-convergence.mjs && node scripts/test-loom-commit.mjs && node scripts/test-loom-profiles.mjs && node scripts/test-loom-apply.mjs && node scripts/test-loom-coverage.mjs",
+    "test:loom": "node scripts/check-no-agent-names.mjs && node scripts/check-loom-seal.mjs && node scripts/test-loom-replay.mjs && node scripts/test-loom-gate.mjs && node scripts/test-loom-review.mjs && node scripts/test-loom-delegation.mjs && node scripts/test-loom-drift.mjs && node scripts/test-loom-determinism.mjs && node scripts/test-loom-convergence.mjs && node scripts/test-loom-commit.mjs && node scripts/test-loom-profiles.mjs && node scripts/test-loom-apply.mjs && node scripts/test-loom-coverage.mjs && node scripts/test-loom-ingest.mjs",
     "build:css": "node scripts/build-css.mjs",
     "build": "npm run gen:tokens && npm run validate:contracts && npm run build:css && npm run gen:registry && npm run validate:registry && npm run gen:exports"
   },
@@ -39,6 +39,7 @@
     "./loom/commit": "./src/loom/commit.ts",
     "./loom/events": "./src/loom/events.ts",
     "./loom/gate": "./src/loom/gate.ts",
+    "./loom/ingest": "./src/loom/ingest.ts",
     "./loom/jsonl": "./src/loom/jsonl.ts",
     "./loom/log-path": "./src/loom/log-path.ts",
     "./loom/profiles": "./src/loom/profiles.ts",
