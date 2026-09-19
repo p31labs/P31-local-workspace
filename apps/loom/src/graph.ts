@@ -7,8 +7,9 @@
  * layout so the graph doesn't reflow when the agent moves.
  *
  * Node ids are namespaced (`token:--p31-accent`, `class:.glass-card`,
- * `component:Button`, `theme:ocean`) so both writers can reference them in Loom
- * events without ambiguity.
+ * `component:Button`, `theme:ocean`). The event log uses BARE names
+ * (`--p31-accent`, `.glass-card`, `Button`, `ocean`); `buildIdIndex()` is the
+ * reverse map the overlay uses to reconcile the two.
  */
 import registry from '@p31/canon/registry.json';
 
@@ -16,6 +17,8 @@ export type Kind = 'token' | 'class' | 'component' | 'theme';
 
 export interface LoomNodeData extends Record<string, unknown> {
   label: string;
+  /** The bare name the log uses to reference this node. */
+  bare: string;
   kind: Kind;
   detail?: string;
 }
@@ -67,7 +70,7 @@ export function buildGraph() {
     nodes.push({
       id: `component:${c.name}`,
       position: { x: 0, y: 0 },
-      data: { label: c.name, kind: 'component', detail: c.intent },
+      data: { label: c.name, bare: c.name, kind: 'component', detail: c.intent },
     });
   }
 
@@ -76,7 +79,7 @@ export function buildGraph() {
     nodes.push({
       id: `theme:${t.id}`,
       position: themePos[i],
-      data: { label: t.name, kind: 'theme', detail: t.description },
+      data: { label: t.name, bare: t.id, kind: 'theme', detail: t.description },
     });
   });
 
@@ -85,7 +88,7 @@ export function buildGraph() {
     nodes.push({
       id: `token:${t.name}`,
       position: tokenPos[i],
-      data: { label: t.name.replace(/^--p31-/, ''), kind: 'token', detail: `${t.category} · ${t.value}` },
+      data: { label: t.name.replace(/^--p31-/, ''), bare: t.name, kind: 'token', detail: `${t.category} · ${t.value}` },
     });
   });
 
@@ -94,7 +97,7 @@ export function buildGraph() {
     nodes.push({
       id: `class:${c.name}`,
       position: classPos[i],
-      data: { label: c.name, kind: 'class', detail: c.files.join(', ') },
+      data: { label: c.name, bare: c.name, kind: 'class', detail: c.files.join(', ') },
     });
   });
 
@@ -120,4 +123,16 @@ export function buildGraph() {
   }
 
   return { nodes, edges, counts: registry.counts };
+}
+
+/** Reverse index: bare name -> namespaced id. Collisions fail loudly. */
+export function buildIdIndex(): Map<string, string> {
+  const index = new Map<string, string>();
+  for (const n of buildGraph().nodes) {
+    if (index.has(n.data.bare)) {
+      throw new Error(`id index collision: "${n.data.bare}" maps to both ${index.get(n.data.bare)} and ${n.id}`);
+    }
+    index.set(n.data.bare, n.id);
+  }
+  return index;
 }

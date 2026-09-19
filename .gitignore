@@ -188,3 +188,6 @@ out/
 
 # Large backup bundles (exceeds GitHub 100 MB limit)
 *.bundle
+
+# The Loom — append-only event log (generated, never committed)
+.loom/

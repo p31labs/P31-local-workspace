@@ -12,8 +12,8 @@ body {
 .loom-shell {
   display: grid;
   grid-template-columns: 1fr 320px;
-  grid-template-rows: 48px 1fr;
-  grid-template-areas: 'bar bar' 'canvas panel';
+  grid-template-rows: 48px 1fr auto;
+  grid-template-areas: 'bar bar' 'canvas panel' 'scrub scrub';
   height: 100%;
 }
 
@@ -27,6 +27,7 @@ body {
   font-size: 13px;
 }
 .loom-counts { color: var(--p31-text-secondary, #94a3b8); }
+.loom-agent { color: var(--p31-accent-violet, #a78bfa); font-size: 12px; }
 .loom-gate { margin-left: auto; color: var(--p31-accent, #00f0ff); font-size: 12px; }
 
 .loom-canvas { grid-area: canvas; min-height: 0; background: var(--p31-bg, #0a0e14); }
@@ -55,6 +56,18 @@ body {
 .loom-kind--component { color: var(--p31-accent-gold, #fbbf24); }
 .loom-kind--theme { color: var(--p31-accent-violet, #a78bfa); }
 
+.loom-actions { display: flex; gap: 8px; margin-top: 12px; }
+.loom-btn {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--p31-glass-border, rgba(255, 255, 255, 0.2));
+  background: var(--p31-surface, #12121a);
+  color: var(--p31-text, #e2e8f0);
+  cursor: pointer;
+}
+.loom-btn--ok { border-color: var(--p31-accent-green, #34d399); }
+.loom-btn--no { border-color: var(--p31-accent-red, #fb7185); }
+
 /* React Flow nodes — kind-coloured, legible on the void */
 .loom-node {
   font-size: 10px;
@@ -69,5 +82,48 @@ body {
 .loom-node--class { border-color: var(--p31-accent-green, #34d399); }
 .loom-node--component { border-color: var(--p31-accent-gold, #fbbf24); font-weight: 700; }
 .loom-node--theme { border-color: var(--p31-accent-violet, #a78bfa); }
+.loom-node--focused { outline: 2px solid var(--p31-accent, #00f0ff); outline-offset: 2px; }
+.loom-node--cursor { border-color: var(--p31-accent-violet, #a78bfa); border-width: 2px; }
+.loom-node--trail { background: var(--p31-accent-violet, #a78bfa); }
+.loom-node--proposal { border-style: dashed; border-color: var(--p31-accent-gold, #fbbf24); }
+.loom-node--proposal--pending { opacity: 0.7; }
+.loom-node--proposal--approved { border-style: solid; border-color: var(--p31-accent-green, #34d399); }
+.loom-node--proposal--rejected { border-color: var(--p31-accent-red, #fb7185); text-decoration: line-through; }
 
 .loom-edge { stroke: var(--p31-glass-border, rgba(255, 255, 255, 0.12)); }
+
+/* Event overlay */
+.ev { display: flex; flex-direction: column; gap: 8px; }
+.ev-head { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+.ev-count { color: var(--p31-text-tertiary, #64748b); }
+.ev-follow { margin-left: auto; font-size: 11px; background: none; border: none; color: var(--p31-accent, #00f0ff); cursor: pointer; }
+.ev-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.ev-empty { color: var(--p31-text-tertiary, #64748b); }
+.ev-item {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  padding: 4px 8px;
+  border-radius: 4px;
+  border-left: 2px solid transparent;
+  font-size: 12px;
+  font-family: var(--p31-font-mono, monospace);
+}
+.ev-item--human { border-left-color: var(--p31-accent, #00f0ff); }
+.ev-item--agent { border-left-color: var(--p31-accent-violet, #a78bfa); }
+.ev-item--cur { background: var(--p31-glass-surface, rgba(255, 255, 255, 0.06)); }
+.ev-seq { color: var(--p31-text-tertiary, #64748b); }
+.ev-writer { margin-left: auto; color: var(--p31-text-tertiary, #64748b); }
+
+/* Timeline scrubber */
+.loom-scrub {
+  grid-area: scrub;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+  border-top: 1px solid var(--p31-glass-border, rgba(255, 255, 255, 0.1));
+}
+.scrub { display: flex; align-items: center; gap: 12px; width: 100%; }
+.scrub-range { flex: 1; }
+.scrub-pos { font-family: var(--p31-font-mono, monospace); font-size: 12px; color: var(--p31-text-secondary, #94a3b8); }
