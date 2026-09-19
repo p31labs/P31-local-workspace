@@ -12,7 +12,8 @@
     "validate:contracts": "node scripts/validate-contracts.mjs",
     "validate:registry": "node scripts/validate-registry.mjs",
     "verify:parity": "node scripts/verify-token-parity.mjs",
-    "test:loom": "node scripts/test-loom-replay.mjs && node scripts/test-loom-gate.mjs && node scripts/test-loom-determinism.mjs && node scripts/test-loom-convergence.mjs && node scripts/test-loom-commit.mjs",
+    "verify:loom-seal": "node scripts/check-loom-seal.mjs",
+    "test:loom": "node scripts/check-loom-seal.mjs && node scripts/test-loom-replay.mjs && node scripts/test-loom-gate.mjs && node scripts/test-loom-determinism.mjs && node scripts/test-loom-convergence.mjs && node scripts/test-loom-commit.mjs",
     "build:css": "node scripts/build-css.mjs",
     "build": "npm run gen:tokens && npm run validate:contracts && npm run build:css && npm run gen:registry && npm run validate:registry && npm run gen:exports"
   },

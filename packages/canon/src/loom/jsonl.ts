@@ -1,37 +1,16 @@
 /**
  * @p31/canon — loom/jsonl.ts
  *
- * The append-only event sink/reader. No UI, no server, no opinion about who
- * writes — Path α (canvas) and Path β (canon-mcp) both append through this and
- * neither owns it. One line per event, seq-ordered on read.
+ * The READ side of the append-only log. Public and safe: reading cannot bypass
+ * the gate. The WRITE side lives in jsonl-write.internal.ts and is reachable
+ * only through commit(). If you need to append, use commit(logPath, input) —
+ * not this file.
  *
- * Durability: append + fsync. Corruption tolerance: a malformed line is
- * skipped, never fatal — the log is a record, not a database.
+ * Corruption tolerance: a malformed or partial line is skipped, never fatal —
+ * the log is a record, not a database.
  */
-import {
-  appendFileSync,
-  mkdirSync,
-  readFileSync,
-  existsSync,
-  openSync,
-  fsyncSync,
-  closeSync,
-} from 'node:fs';
-import { dirname } from 'node:path';
+import { readFileSync, existsSync } from 'node:fs';
 import type { LoomEvent } from './events.ts';
-
-/** Append one event as a JSONL line, creating the directory if needed. */
-export function appendEvent(path: string, event: LoomEvent): void {
-  mkdirSync(dirname(path), { recursive: true });
-  appendFileSync(path, JSON.stringify(event) + '\n');
-  try {
-    const fd = openSync(path, 'r');
-    fsyncSync(fd);
-    closeSync(fd);
-  } catch {
-    // fsync is best-effort; the append already succeeded.
-  }
-}
 
 /** Read every event, skipping malformed lines, sorted ascending by seq. */
 export function readEvents(path: string): LoomEvent[] {

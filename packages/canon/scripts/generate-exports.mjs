@@ -38,6 +38,7 @@ function walk(dir, prefix = []) {
     if (isDir) { Object.assign(map, walk(full, [...prefix, name])); continue }
     if (!isFile) continue
     if (!/\.(ts|tsx|astro)$/.test(name)) continue
+    if (name.endsWith('.internal.ts')) continue // internal module -> never a public specifier
     const segs = [...prefix, name.replace(/\.(ts|tsx|astro|css)$/, '')]
     if (name === 'index.ts') {
       const dirKey = prefix.length ? './' + prefix.join('/') : '.'

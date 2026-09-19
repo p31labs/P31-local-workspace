@@ -17,7 +17,8 @@
  */
 import { existsSync, openSync, closeSync, unlinkSync, statSync, writeSync } from 'node:fs';
 import { ReplayGate, type LoomEventInput } from './gate.ts';
-import { appendEvent, readEvents, nextSeq } from './jsonl.ts';
+import { readEvents, nextSeq } from './jsonl.ts';
+import { appendEvent } from './jsonl-write.internal.ts';
 import type { LoomEvent } from './events.ts';
 
 export interface CommitResult {
