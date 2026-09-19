@@ -1,0 +1,73 @@
+/* The Loom — portal chrome. Styled by canon's own tokens. */
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body, #root { height: 100%; margin: 0; }
+
+body {
+  background: var(--p31-bg, #0a0e14);
+  color: var(--p31-text, #e2e8f0);
+  font-family: var(--p31-font-sans, system-ui, sans-serif);
+}
+
+.loom-shell {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  grid-template-rows: 48px 1fr;
+  grid-template-areas: 'bar bar' 'canvas panel';
+  height: 100%;
+}
+
+.loom-bar {
+  grid-area: bar;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--p31-glass-border, rgba(255, 255, 255, 0.1));
+  font-size: 13px;
+}
+.loom-counts { color: var(--p31-text-secondary, #94a3b8); }
+.loom-gate { margin-left: auto; color: var(--p31-accent, #00f0ff); font-size: 12px; }
+
+.loom-canvas { grid-area: canvas; min-height: 0; background: var(--p31-bg, #0a0e14); }
+
+.loom-panel {
+  grid-area: panel;
+  border-left: 1px solid var(--p31-glass-border, rgba(255, 255, 255, 0.1));
+  padding: 16px;
+  overflow: auto;
+  font-size: 13px;
+}
+.loom-panel h2 { font-size: 15px; margin: 8px 0; }
+.loom-panel code { font-family: var(--p31-font-mono, monospace); font-size: 11px; color: var(--p31-text-tertiary, #64748b); }
+.loom-hint { color: var(--p31-text-tertiary, #64748b); }
+.loom-kind {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: var(--p31-glass-surface, rgba(255, 255, 255, 0.06));
+}
+.loom-kind--token { color: var(--p31-accent, #00f0ff); }
+.loom-kind--class { color: var(--p31-accent-green, #34d399); }
+.loom-kind--component { color: var(--p31-accent-gold, #fbbf24); }
+.loom-kind--theme { color: var(--p31-accent-violet, #a78bfa); }
+
+/* React Flow nodes — kind-coloured, legible on the void */
+.loom-node {
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 6px;
+  border: 1px solid var(--p31-glass-border, rgba(255, 255, 255, 0.14));
+  background: var(--p31-surface, #12121a);
+  color: var(--p31-text, #e2e8f0);
+  white-space: nowrap;
+}
+.loom-node--token { border-color: var(--p31-accent, #00f0ff); }
+.loom-node--class { border-color: var(--p31-accent-green, #34d399); }
+.loom-node--component { border-color: var(--p31-accent-gold, #fbbf24); font-weight: 700; }
+.loom-node--theme { border-color: var(--p31-accent-violet, #a78bfa); }
+
+.loom-edge { stroke: var(--p31-glass-border, rgba(255, 255, 255, 0.12)); }

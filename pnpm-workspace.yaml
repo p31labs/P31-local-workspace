@@ -1,6 +1,12 @@
 # P31 Andromeda — single workspace root (pnpm)
 # All install/build/test for JS/TS runs from repository root unless a package README says otherwise.
 
+# Link every workspace package into the root node_modules. Required for the
+# canon shipped-gate (validate-contracts.mjs resolves
+# workspaceRoot/node_modules/@scope/pkg for status: 'shipped') and for sibling
+# packages to import each other without an explicit dependency relationship.
+linkWorkspacePackages: true
+
 packages:
   # PHOS v2 — standalone Astro PWA (not under software/)
   - 'phos'
@@ -41,6 +47,7 @@ packages:
   - 'apps/auth'
   - 'apps/status'
   - 'apps/design-hub'
+  - 'apps/loom'
   # Repo-root satellite packages
   - 'cli'
   - 'p31labs/*'
