@@ -7,7 +7,7 @@
   ],
   "counts": {
     "tokens": 158,
-    "components": 1,
+    "components": 2,
     "cssClasses": 119,
     "themes": 9
   },
@@ -962,6 +962,54 @@
     }
   ],
   "components": [
+    {
+      "slug": "badge",
+      "name": "Badge",
+      "layer": "component",
+      "status": "planned",
+      "intent": "Display a compact status or category label. A small, non-interactive pill.",
+      "contract": "src/contracts/badge.contract.ts",
+      "import": "import { Badge } from '@p31/canon-react';",
+      "implemented": false,
+      "props": [
+        {
+          "name": "variant",
+          "type": "enum",
+          "required": false,
+          "options": [
+            "success",
+            "warning",
+            "error",
+            "info"
+          ],
+          "default": "info",
+          "description": "Semantic tone. success/warning/error/info map to the four status colours."
+        },
+        {
+          "name": "children",
+          "type": "node",
+          "required": true,
+          "options": null,
+          "default": null,
+          "description": "The label text."
+        }
+      ],
+      "variants": {
+        "variant": [
+          "success",
+          "warning",
+          "error",
+          "info"
+        ]
+      },
+      "states": [
+        "default"
+      ],
+      "tokens": [
+        "p31.radius-full",
+        "p31.scale-xs"
+      ]
+    },
     {
       "slug": "button",
       "name": "Button",

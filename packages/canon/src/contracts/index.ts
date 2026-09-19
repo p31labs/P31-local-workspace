@@ -15,3 +15,4 @@ export type {
 } from './schema';
 
 export { buttonContract } from './button.contract';
+export { badgeContract } from './badge.contract';
