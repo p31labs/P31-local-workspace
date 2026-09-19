@@ -391,3 +391,43 @@ verify-contract (restored)         exit 0   sha256 d3937647… unchanged
 Current byte counts are in the "evidence re-baseline" section above;
 `verify-contract.mjs` is now 6263 (was 4888, +1375 for the scorer).
 `verify-content-sources.mjs` is 2310 (accurate remediation message).
+
+## 2026-09-19 — love.json wired to its real source (p31ca blocker, half cleared)
+
+The review proposed rewriting love.json to match k4-cage `/api/mesh`. Checked
+that claim before acting:
+
+- `/api/mesh` **does** expose `totalLove` (top level, currently 3) plus
+  per-vertex `love` (will 1, sj 1, wj 0, christyn 0). An earlier read had
+  truncated past it.
+- The in-repo love-ledger worker (`apps/phos/src/workers/love-ledger/index.ts`)
+  has **no aggregate route** (only per-DID `/balance`, `/chain`, `/status`,
+  `/export`). The deployed `love-ledger.p31ca.org` exposes `/api/love/leaderboard`
+  and `/api/love/balance/:user`; summing the leaderboard gives ~1197, not 276.
+- love.json was hand-entered at creation (`ac06c045`); its
+  `vertices: {top,left,right,bottom}` keys had **no producer and no consumer**.
+- No page imports love.json (`index.astro` imports `nonprofit.json` + `stats.json`).
+
+Action: added `apps/p31ca/scripts/fetch-love-stats.mjs`, which GETs
+k4-cage `/api/mesh` and writes love.json in the API's real shape
+(`totalLove` + per-vertex-id values). Fail-closed: a failed or malformed
+fetch exits 1 and does **not** overwrite the file or bump `lastVerified`.
+Ran it:
+
+```
+totalLove: 276 → 3
+vertices:  { "will": 1, "sj": 1, "wj": 0, "christyn": 0 }
+lastVerified: 2026-09-19T17:24:44Z
+```
+
+Also: README table row updated; `verify-content-sources.mjs` guidance now
+lists love.json as auto-refreshable; `package.json` gains `fetch:love` /
+`fetch:stats`.
+
+Gate effect: `verify-content-sources` now fails **only** on `nonprofit.json`
+(IRS status — needs a human check). `verify-ground-truth` and
+`verify-content-consistency` remain green. `pnpm --filter p31ca build` is
+still red, blocked solely on nonprofit.json.
+
+The hand-entered `276 / 92-47-36-74` is superseded, not "corrected" — it was
+never sourced. Recorded so the change is not mistaken for a regression.

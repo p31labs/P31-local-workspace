@@ -9,7 +9,7 @@ This directory contains the authoritative source for every mutable value display
 | `nonprofit.json` | EIN, IRS status, founding date, policy effective dates | Monthly or on legal change | Manual |
 | `stats.json` | Dynamic stats — test counts, Zenodo views, Q-factor | Weekly (auto-fetched at build) | `scripts/fetch-content-stats.mjs` |
 | `constants.json` | Long-lived constants — FERS deadline, Larmor Hz, version pins | Yearly or on version bump | Manual |
-| `love.json` | Fallback LOVE ledger values | Monthly | Manual (update from live API) |
+| `love.json` | Fallback LOVE values (totalLove + per-vertex) | Monthly | `scripts/fetch-love-stats.mjs` (k4-cage `GET /api/mesh`) |
 
 ## How to Update
 
@@ -27,6 +27,9 @@ npm run verify:content
 ```bash
 node scripts/fetch-content-stats.mjs          # normal fetch
 node scripts/fetch-content-stats.mjs --force  # force update even if recent
+
+node scripts/fetch-love-stats.mjs             # love.json from k4-cage /api/mesh
+node scripts/fetch-love-stats.mjs --force     # force fetch regardless of staleness
 ```
 
 ### Check staleness

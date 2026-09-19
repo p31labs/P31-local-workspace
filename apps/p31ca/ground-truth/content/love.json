@@ -1,14 +1,15 @@
 {
   "schema": "p31.content.love/1.0.0",
   "version": "1.0.0",
-  "lastVerified": "2026-08-19T22:31:51.588Z",
+  "lastVerified": "2026-09-19T17:24:44.109Z",
   "stalenessThreshold": 30,
-  "totalLove": 276,
+  "source": "https://k4-cage.trimtab-signal.workers.dev/api/mesh",
+  "totalLove": 3,
   "vertices": {
-    "top": 92,
-    "left": 47,
-    "right": 36,
-    "bottom": 74
+    "will": 1,
+    "sj": 1,
+    "wj": 0,
+    "christyn": 0
   },
-  "note": "Fallback values for LOVE ledger display when k4-cage API is unreachable. Manually updated from live API periodically."
+  "note": "Fallback for the LOVE display when the k4-cage API is unreachable. Auto-fetched by scripts/fetch-love-stats.mjs from GET /api/mesh. Superseded hand-entered top/left/right/bottom values, which had no producer or consumer."
 }
