@@ -431,3 +431,33 @@ still red, blocked solely on nonprofit.json.
 
 The hand-entered `276 / 92-47-36-74` is superseded, not "corrected" — it was
 never sourced. Recorded so the change is not mistaken for a regression.
+
+## 2026-09-19 — first consumer: p31ca sign-in uses @p31/canon-react Button
+
+p31ca build went green first (nonprofit.json corrected; see below), then
+the first canon adoption: `apps/p31ca/src/pages/signin.astro` renders the
+contract `Button` instead of the hand-rolled `<button class="btn btn-primary">`.
+
+Token finding (the reason this was probed): p31ca's design-core does **not**
+define the semantic action/space/font/motion tokens the Button needs.
+`@p31/canon/dist/tokens.css` does — and it wraps them in `@layer p31.tokens`.
+design-core is **unlayered**, and unlayered declarations outrank layered ones,
+so on the 28 overlapping palette names (`--p31-bg`, `--p31-accent`,
+`--p31-radius-md`, …) design-core still wins; canon only fills the tokens
+design-core lacks. Import is page-scoped to signin.astro, so blast radius is
+one page. No shim was used.
+
+Rendered proof (`apps/p31ca/dist/signin/index.html`):
+```
+<button class="p31-button p31-button--primary p31-button--md w-full"
+        data-variant="primary" data-size="md" type="submit">
+```
+Page CSS `dist/_astro/signin.*.css` carries both the token var
+(`--p31-color-action-primary`) and `.p31-button--primary`.
+
+Also: IRS determination letter PDF stored at
+`apps/p31ca/ground-truth/legal/FinalLetter_42-1888158_P31LABSINC_04032026_v1.0.pdf`
+(sha256 3663a18f…, PDF title "501(c)(3) Exemption with Definitive Ruling of
+Public Charity Status"); `nonprofit.json.irsDeterminationLetter` points at it.
+
+`pnpm --filter p31ca build`: exit 0.
