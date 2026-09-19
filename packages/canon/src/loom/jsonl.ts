@@ -2,9 +2,9 @@
  * @p31/canon — loom/jsonl.ts
  *
  * The READ side of the append-only log. Public and safe: reading cannot bypass
- * the gate. The WRITE side lives in jsonl-write.internal.ts and is reachable
- * only through commit(). If you need to append, use commit(logPath, input) —
- * not this file.
+ * the gate. The WRITE side lives in jsonl-append.internal.ts and is reachable
+ * only through commit() (warp) or commitWeft() (weft). If you need to append,
+ * use one of those — not this file.
  *
  * Corruption tolerance: a malformed or partial line is skipped, never fatal —
  * the log is a record, not a database.

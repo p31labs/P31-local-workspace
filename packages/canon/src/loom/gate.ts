@@ -31,9 +31,10 @@ export type LoomEventInput =
   | { writer: 'human'; kind: 'approve'; proposal: string; humanId?: string }
   | { writer: 'human'; kind: 'reject'; proposal: string; reason: string; humanId?: string }
   | { writer: 'agent'; kind: 'review'; agent: string; proposalId: string; decision: 'approve' | 'amend' | 'reject'; reason?: string; revision: number; parentAgent?: string }
-  | { writer: 'agent'; kind: 'presence'; node: string; attention: number };
+  | { writer: 'agent'; kind: 'presence'; node: string; attention: number }
+  | { writer: 'human'; kind: 'view.save'; label: string; from: number; to: number; humanId?: string };
 
-const HUMAN_KINDS = new Set(['focus', 'revise', 'approve', 'reject']);
+const HUMAN_KINDS = new Set(['focus', 'revise', 'approve', 'reject', 'view.save']);
 const AGENT_KINDS = new Set(['traverse', 'propose', 'review', 'presence']);
 
 export interface GateResult {
@@ -52,6 +53,7 @@ export function canonicalize(state: LoomState): string {
     agentAttention: state.agentAttention,
     agentPath: state.agentPath,
     proposals,
+    saves: state.saves,
   });
 }
 
@@ -104,6 +106,25 @@ export class ReplayGate {
       }
       if (input.decision !== 'approve' && (!input.reason || input.reason.trim().length === 0)) {
         return { valid: false, error: `review with decision '${input.decision}' requires a non-empty reason` };
+      }
+    }
+
+    // view.save validation. A saved read is a canonical event: it names a
+    // window of the log. The label is the human's name for the read; the
+    // window must be non-empty, ordered, and within the log the gate has seen
+    // so far. `to` is inclusive and must reference an event that exists.
+    if (input.kind === 'view.save') {
+      if (typeof input.label !== 'string' || input.label.trim().length === 0) {
+        return { valid: false, error: 'view.save requires a non-empty label' };
+      }
+      if (!Number.isInteger(input.from) || !Number.isInteger(input.to)) {
+        return { valid: false, error: 'view.save from/to must be integers' };
+      }
+      if (input.from < 0 || input.to < input.from) {
+        return { valid: false, error: `view.save requires 0 <= from <= to (got ${input.from}..${input.to})` };
+      }
+      if (input.to >= this.seq) {
+        return { valid: false, error: `view.save.to ${input.to} is beyond the log head (${this.seq - 1})` };
       }
     }
 

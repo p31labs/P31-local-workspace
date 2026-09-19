@@ -9,6 +9,7 @@ function state(partial: Partial<LoomState>): LoomState {
     agentAttention: 1,
     agentPath: [],
     proposals: new Map(),
+    saves: [],
     ...partial,
   };
 }

@@ -39,9 +39,27 @@ export type LoomEvent =
   | { seq: number; ts: string; writer: 'human'; kind: 'approve'; proposal: string; humanId?: string }
   | { seq: number; ts: string; writer: 'human'; kind: 'reject'; proposal: string; reason: string; humanId?: string }
   | { seq: number; ts: string; writer: 'agent'; kind: 'review'; agent: string; proposalId: string; decision: 'approve' | 'amend' | 'reject'; reason?: string; revision: number; parentAgent?: string }
-  | { seq: number; ts: string; writer: 'agent'; kind: 'presence'; node: string; attention: number };
+  | { seq: number; ts: string; writer: 'agent'; kind: 'presence'; node: string; attention: number }
+  | { seq: number; ts: string; writer: 'human'; kind: 'view.save'; label: string; from: number; to: number; humanId?: string };
 
 export type ProposalStatus = 'pending' | 'approved' | 'rejected';
+
+/** A named read promoted into the warp. `view.save` says "this window of the
+ *  log is part of what the design system is" — a canonical event, not a weft
+ *  trace. It enters `LoomState.saves` and therefore `canonicalize`; the
+ *  artifact's identity includes its named readings. */
+export interface SavedRead {
+  id: string;
+  label: string;
+  /** The human whose read this is — `humanId`, or 'unknown'. */
+  viewer: string;
+  /** warpSeq at the start of the saved window. */
+  from: number;
+  /** warpSeq at the end of the saved window (inclusive). */
+  to: number;
+  seq: number;
+  ts: string;
+}
 
 /** A derived record: the fold of a `review` event into a proposal's review
  *  list. `seq`/`ts` are copied from the event for the canvas and scrubber —
@@ -85,6 +103,8 @@ export interface LoomState {
   agentPath: string[];
   /** Proposals by id, live status. */
   proposals: Map<string, Proposal>;
+  /** Named reads promoted into the warp via `view.save`. Append-only. */
+  saves: SavedRead[];
 }
 
 export function initialState(): LoomState {
@@ -94,6 +114,7 @@ export function initialState(): LoomState {
     agentAttention: 1,
     agentPath: [],
     proposals: new Map<string, Proposal>(),
+    saves: [],
   };
 }
 
@@ -126,7 +147,7 @@ function survival(prev: unknown, next: unknown): number {
 
 /** Pure fold. Returns a new state; never mutates the input or its maps. */
 export function reduce(state: LoomState, event: LoomEvent): LoomState {
-  let { focused, agentCursor, agentAttention, agentPath, proposals } = state;
+  let { focused, agentCursor, agentAttention, agentPath, proposals, saves } = state;
 
   switch (event.kind) {
     case 'focus':
@@ -202,9 +223,23 @@ export function reduce(state: LoomState, event: LoomEvent): LoomState {
       }
       break;
     }
+    case 'view.save':
+      saves = [
+        ...saves,
+        {
+          id: `save:${event.seq}`,
+          label: event.label,
+          viewer: event.humanId ?? 'unknown',
+          from: event.from,
+          to: event.to,
+          seq: event.seq,
+          ts: event.ts,
+        },
+      ];
+      break;
   }
 
-  return { focused, agentCursor, agentAttention, agentPath, proposals };
+  return { focused, agentCursor, agentAttention, agentPath, proposals, saves };
 }
 
 /** Fold the whole log, or only events with seq <= until. */

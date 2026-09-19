@@ -1,9 +1,11 @@
 /**
  * @p31/canon — loom/commit.ts
  *
- * The single write path. Every writer — the human CLI, the presence server,
- * the canvas, any agent — appends through commit(). It is the only function
- * that touches the JSONL file for writes.
+ * The single WARP write path. Every writer — the human CLI, the presence
+ * server, the canvas, any agent — appends through commit(). It is the only
+ * function that touches the artifact log for writes. (The weft has its own
+ * sealed path: commitWeft.ts. Both share the append + lock primitives in
+ * jsonl-append.internal.ts.)
  *
  * Invariant: commit(logPath, input) either (a) validates through ReplayGate,
  * persists via appendEvent, and returns the stamped event, or (b) returns an
@@ -15,60 +17,17 @@
  * two processes both read seq 41, both stamp 42, and the log has a duplicate
  * seq — a determinism violation, not a nit.
  */
-import { existsSync, openSync, closeSync, unlinkSync, statSync, writeSync, mkdirSync } from 'node:fs';
+import { existsSync, mkdirSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { ReplayGate, type LoomEventInput } from './gate.ts';
 import { readEvents, nextSeq } from './jsonl.ts';
-import { appendEvent } from './jsonl-write.internal.ts';
+import { appendEvent, acquireLock, releaseLock } from './jsonl-append.internal.ts';
 import type { LoomEvent } from './events.ts';
 
 export interface CommitResult {
   valid: boolean;
   error?: string;
   event?: LoomEvent;
-}
-
-const LOCK_SUFFIX = '.lock';
-const STALE_LOCK_MS = 10_000;
-const LOCK_TIMEOUT_MS = 5_000;
-const LOCK_RETRY_MS = 20;
-
-/** Synchronous sleep via Atomics — Node has no sync sleep primitive. */
-function sleepSync(ms: number): void {
-  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
-}
-
-function acquireLock(logPath: string): { lockPath: string } | { error: string } {
-  const lockPath = logPath + LOCK_SUFFIX;
-  const deadline = Date.now() + LOCK_TIMEOUT_MS;
-
-  while (Date.now() < deadline) {
-    try {
-      // O_EXCL create: atomic test-and-set.
-      const fd = openSync(lockPath, 'wx');
-      writeSync(fd, String(process.pid));
-      closeSync(fd);
-      return { lockPath };
-    } catch (err) {
-      if ((err as NodeJS.ErrnoException).code !== 'EEXIST') {
-        return { error: `lock create failed: ${(err as Error).message}` };
-      }
-      // Lock held. Is the holder dead?
-      try {
-        const age = Date.now() - statSync(lockPath).mtimeMs;
-        if (age > STALE_LOCK_MS) {
-          try { unlinkSync(lockPath); } catch { /* raced; loop retries */ }
-          continue;
-        }
-      } catch { /* lock vanished between EEXIST and stat; retry */ }
-      sleepSync(LOCK_RETRY_MS + Math.floor(Math.random() * LOCK_RETRY_MS));
-    }
-  }
-  return { error: `lock timeout after ${LOCK_TIMEOUT_MS}ms (another writer may be stuck)` };
-}
-
-function releaseLock(handle: { lockPath: string }): void {
-  try { unlinkSync(handle.lockPath); } catch { /* ignore */ }
 }
 
 export function commit(logPath: string, input: LoomEventInput): CommitResult {

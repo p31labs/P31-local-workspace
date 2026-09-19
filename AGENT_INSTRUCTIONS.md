@@ -15,14 +15,19 @@ Public specifiers (the frozen interface):
 
 | Specifier | Exports | Use |
 |---|---|---|
-| `@p31/canon/loom/events` | `LoomEvent`, `LoomState`, `reduce`, `replay` | the schema and the fold |
+| `@p31/canon/loom/events` | `LoomEvent`, `LoomState`, `reduce`, `replay`, `SavedRead` | the schema and the fold |
 | `@p31/canon/loom/gate` | `ReplayGate`, `canonicalize` | validation + deterministic hashing |
-| `@p31/canon/loom/jsonl` | `readEvents`, `nextSeq` | the **read** side |
-| `@p31/canon/loom/commit` | `commit(logPath, input)` | the **only** write path |
+| `@p31/canon/loom/jsonl` | `readEvents`, `nextSeq` | the **read** side of the warp |
+| `@p31/canon/loom/commit` | `commit(logPath, input)` | the **only** warp write path |
+| `@p31/canon/loom/weft` | `WeftEvent`, `WeftGate`, `readWeft`, `pruneWeft` | the operational read log |
+| `@p31/canon/loom/commitWeft` | `commitWeft(weftPath, input)` | the **only** weft write path |
+| `@p31/canon/loom/project` | `project(warp, weft, viewer, at)` | the viewer projection |
 | `@p31/canon/loom/profiles` | `readProfile`, `writeProfile`, `HumanProfile` | the human profile store (outside the log) |
 
-`appendEvent` is internal. It is reachable only from `commit.ts`; the seal gate
-fails the build if any other module touches it.
+`appendEvent` is internal. It lives in `jsonl-append.internal.ts` and is
+reachable only from `commit.ts` (warp) and `commitWeft.ts` (weft). Two logs,
+one append primitive, two sealed importers — the seal gate fails the build on
+a third importer.
 
 `packages/canon/scripts/loom-apply.mjs` is the human **apply** step — the
 bridge from "approved in the log" to "landed on disk". It reads the log for
@@ -49,11 +54,13 @@ decision events decide.
 
 ## Rules (all agents, no exceptions)
 
-1. **Every write goes through `commit(logPath, input)`.** Never append to the
-   log directly. `scripts/check-loom-seal.mjs` enforces this.
+1. **Every write goes through `commit(logPath, input)` (warp) or
+   `commitWeft(weftPath, input)` (weft).** Never append to either log
+   directly. `scripts/check-loom-seal.mjs` enforces this.
 2. **The gate stamps `seq` and `ts`.** You never set them.
-3. **Writer-per-kind holds.** `focus`, `revise`, `approve`, `reject` are
-   human-only. `traverse`, `propose`, `review`, `presence` are agent-only.
+3. **Writer-per-kind holds.** `focus`, `revise`, `approve`, `reject`,
+   `view.save` are human-only. `traverse`, `propose`, `review`, `presence` are
+   agent-only. The weft (`view.mode`/`view.pin`/`view.scrub`) is human-only.
 4. **The log is append-only.** Never rewrite, reorder, or mutate history.
 5. **You never write `registry.json`, contracts, or CSS.** Only events.
 6. **Read through the interface.** `readEvents(path)` to load,
@@ -119,6 +126,42 @@ truth" still holds.
 
 A proposal whose survival scores fall below ~0.5 per revision has been
 redirected, not refined. That is a signal the human should see.
+
+## The Weft
+
+The Loom keeps two logs.
+
+- **The warp** (`events.jsonl`) is the canonical artifact log. It holds
+  decisions: `propose`, `review`, `approve`, `reject`, `revise` — and now
+  `view.save`. Anything in the warp enters `canonicalize`, so the artifact's
+  identity includes its named readings.
+- **The weft** (`weft.jsonl`) is the operational read log. It holds attention:
+  `view.mode`, `view.pin`, `view.scrub`. Ephemeral, prunable, never canonical.
+
+Every system logs the work; the Loom logs the looking. The interface is not a
+window onto the log — it is a participant. Each act of viewing is a weft event
+stamped with the `warpSeq` it was emitted against, so a read is replayable
+against the artifact at the moment it happened.
+
+`view.save` is the promotion boundary: a human names a window of the warp and
+makes it canonical. The distinction is not volume — it is speech act. A read
+is a record; a saved read is a decision about the artifact.
+
+`focus` stays in the warp and is **not** a weft event, for a reason that is
+load-bearing: `focus` is an *addressed* signal — the human emits it to the
+agent as intent. Weft events are *unaddressed* traces — byproducts of
+navigation, addressed to no one. One is a message, one is exhaust. They live
+in different logs because they are different speech acts, not because they
+both happen to describe attention.
+
+`project(warp, weft, viewer, at)` is the paradigm function. It folds the warp
+to `at.warpSeq` and filters the weft to `viewer`'s reads, each stamped at or
+before that warp seq. It is pure — no model call, no I/O. If a model ever
+enters this path, the determinism contract dies. A model-assisted view is a
+third-order projection built *on top* of `project()`, never inside it.
+
+Two viewers of the same warp project differently. That divergence is not a
+bug; it is the point.
 
 ## The review event
 
