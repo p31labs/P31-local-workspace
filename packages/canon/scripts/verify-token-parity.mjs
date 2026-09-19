@@ -55,6 +55,35 @@ function tokenUnion(contexts) {
   return out;
 }
 
+/** Evaluate an innermost calc() of the form `A op B` in px. */
+function evalInnermostCalc(expr) {
+  const m = expr.trim().match(/^(-?[\d.]+)px\s*([+\-*/])\s*(-?[\d.]+)(?:px)?$/);
+  if (!m) return null;
+  const a = parseFloat(m[1]);
+  const b = parseFloat(m[3]);
+  const r = m[2] === '+' ? a + b : m[2] === '-' ? a - b : m[2] === '*' ? a * b : a / b;
+  return Number.isFinite(r) ? `${r}px` : null;
+}
+
+/** Resolve var(--p31-*) chains and simple px calc() so `calc(x/2)` and its
+ *  computed literal compare equal. Unknown/unsupported forms pass through. */
+function resolveValue(value, vars) {
+  let v = value;
+  for (let i = 0; i < 25; i++) {
+    const m = v.match(/var\((--p31-[a-z0-9-]+)\)/);
+    if (!m || !vars.has(m[1])) break;
+    v = v.replace(m[0], vars.get(m[1]));
+  }
+  for (let i = 0; i < 25; i++) {
+    const m = v.match(/calc\(([^()]+)\)/);
+    if (!m) break;
+    const r = evalInnermostCalc(m[1]);
+    if (r === null) break;
+    v = v.replace(m[0], r);
+  }
+  return v;
+}
+
 const baseline = parse(readFileSync(BASELINE, 'utf8'));
 const candidate = parse(readFileSync(CANDIDATE, 'utf8'));
 
@@ -63,12 +92,20 @@ const candTokens = tokenUnion(candidate);
 
 const missing = [...baseTokens.keys()].filter((t) => !candTokens.has(t));
 
+const baseRoot = baseline.get(':root') ?? new Map();
+const candRoot = candidate.get(':root') ?? new Map();
+
 const divergences = [];
 for (const [selector, vars] of baseline) {
   const cand = candidate.get(selector);
   if (!cand) continue; // context absent from candidate; coverage catches its tokens
+  const bVars = new Map([...baseRoot, ...vars]);
+  const cVars = new Map([...candRoot, ...cand]);
   for (const [token, value] of vars) {
-    if (cand.has(token) && cand.get(token) !== value) {
+    if (!cand.has(token)) continue;
+    const bResolved = resolveValue(value, bVars);
+    const cResolved = resolveValue(cand.get(token), cVars);
+    if (bResolved !== cResolved) {
       divergences.push({ selector, token, baseline: value, candidate: cand.get(token) });
     }
   }

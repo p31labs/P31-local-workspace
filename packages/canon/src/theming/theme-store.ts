@@ -496,51 +496,57 @@ export const GLOBAL_COMPAT: Record<string, string> = {
 };
 
 /** design-core conditional override blocks, reproduced verbatim. Emitted
- *  unlayered so their cascade position matches design-core's tokens.css. */
+ *  unlayered so their cascade position matches design-core's tokens.css.
+ *  NOTE: design-core nests [data-brand] INSIDE :root, so it compiles to the
+ *  descendant selector `:root [data-brand=…]` (it cannot match the attribute
+ *  on <html>). Reproduced nested here so the flip is behavior-preserving;
+ *  un-nesting is a deliberate later change, not a migration side effect. */
 export const CONDITIONAL_CSS = `
-[data-brand="p31ca"] {
-  --p31-glass-bg: oklch(14% 0.02 260 / 0.35);
-  --p31-glass-border: oklch(100% 0.01 240 / 0.12);
-  --p31-glass-border-hover: oklch(100% 0.01 240 / 0.25);
-  --p31-glass-blur: blur(24px);
-}
-[data-brand="phosphorus31"] {
-  --p31-glass-bg: oklch(99% 0.01 85 / 0.55);
-  --p31-glass-border: oklch(80% 0.02 75 / 0.3);
-  --p31-glass-border-hover: oklch(70% 0.03 70 / 0.4);
-  --p31-glass-blur: blur(16px);
-}
-[data-brand="willow"] {
-  --p31-glass-bg: rgba(255, 248, 240, 0.7);
-  --p31-glass-border: rgba(200, 180, 160, 0.25);
-  --p31-glass-blur: blur(16px);
-  --p31-text: oklch(25% 0.02 80);
-  --p31-text-secondary: oklch(55% 0.02 75);
-  --p31-accent: oklch(65% 0.18 45);
-  --p31-accent-alt: oklch(60% 0.15 200);
-  --p31-accent-gold: oklch(72% 0.14 80);
-  --p31-accent-green: oklch(70% 0.12 120);
-  --p31-accent-red: oklch(62% 0.15 10);
-  --p31-font-sans: "Comic Sans MS", "Chalkboard SE", cursive, sans-serif;
-  --p31-font-display: "Comic Sans MS", "Chalkboard SE", cursive;
-  --p31-radius-sm: 12px;
-  --p31-radius-md: 20px;
-  --p31-radius-lg: 28px;
-  --p31-radius-xl: 40px;
-  --p31-radius-full: 9999px;
-  --p31-space-xs: 0.5rem;
-  --p31-space-sm: 0.75rem;
-  --p31-space-md: 1.25rem;
-  --p31-space-lg: 2rem;
-  --p31-space-xl: 2.5rem;
-  --p31-space-2xl: 4rem;
-  --p31-duration-fast: 200ms;
-  --p31-duration-normal: 400ms;
-  --p31-duration-slow: 600ms;
-  --p31-easing-smooth: cubic-bezier(0.34, 1.56, 0.64, 1);
-  --p31-easing-snappy: cubic-bezier(0.34, 1.56, 0.64, 1);
-  --p31-touch-min: 56px;
-  --p31-touch-recommended: 64px;
+:root {
+  [data-brand="p31ca"] {
+    --p31-glass-bg: oklch(14% 0.02 260 / 0.35);
+    --p31-glass-border: oklch(100% 0.01 240 / 0.12);
+    --p31-glass-border-hover: oklch(100% 0.01 240 / 0.25);
+    --p31-glass-blur: blur(24px);
+  }
+  [data-brand="phosphorus31"] {
+    --p31-glass-bg: oklch(99% 0.01 85 / 0.55);
+    --p31-glass-border: oklch(80% 0.02 75 / 0.3);
+    --p31-glass-border-hover: oklch(70% 0.03 70 / 0.4);
+    --p31-glass-blur: blur(16px);
+  }
+  [data-brand="willow"] {
+    --p31-glass-bg: rgba(255, 248, 240, 0.7);
+    --p31-glass-border: rgba(200, 180, 160, 0.25);
+    --p31-glass-blur: blur(16px);
+    --p31-text: oklch(25% 0.02 80);
+    --p31-text-secondary: oklch(55% 0.02 75);
+    --p31-accent: oklch(65% 0.18 45);
+    --p31-accent-alt: oklch(60% 0.15 200);
+    --p31-accent-gold: oklch(72% 0.14 80);
+    --p31-accent-green: oklch(70% 0.12 120);
+    --p31-accent-red: oklch(62% 0.15 10);
+    --p31-font-sans: "Comic Sans MS", "Chalkboard SE", cursive, sans-serif;
+    --p31-font-display: "Comic Sans MS", "Chalkboard SE", cursive;
+    --p31-radius-sm: 12px;
+    --p31-radius-md: 20px;
+    --p31-radius-lg: 28px;
+    --p31-radius-xl: 40px;
+    --p31-radius-full: 9999px;
+    --p31-space-xs: 0.5rem;
+    --p31-space-sm: 0.75rem;
+    --p31-space-md: 1.25rem;
+    --p31-space-lg: 2rem;
+    --p31-space-xl: 2.5rem;
+    --p31-space-2xl: 4rem;
+    --p31-duration-fast: 200ms;
+    --p31-duration-normal: 400ms;
+    --p31-duration-slow: 600ms;
+    --p31-easing-smooth: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --p31-easing-snappy: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --p31-touch-min: 56px;
+    --p31-touch-recommended: 64px;
+  }
 }
 [data-spoons="0"] { --p31-speed-factor: 0; --p31-glass-blur: none; }
 [data-spoons="1"] { --p31-speed-factor: 0; --p31-glass-blur: none; }
