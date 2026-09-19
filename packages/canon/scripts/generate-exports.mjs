@@ -65,6 +65,18 @@ if (existsSync(join(root, 'dist', 'tokens.css'))) {
   derived['./tokens.css'] = './dist/tokens.css'
 }
 
+// Component/layout CSS — canon owns the non-token CSS too. Derived from
+// src/css/*.css and shipped to dist/css/ by scripts/build-css.mjs, which runs
+// BEFORE gen:exports in the build chain so the targets exist for the ghost gate.
+const cssDir = join(root, 'src', 'css')
+if (existsSync(cssDir)) {
+  for (const name of readdirSync(cssDir)) {
+    if (!name.endsWith('.css')) continue
+    const target = './dist/css/' + name
+    if (existsSync(join(root, target))) derived['./css/' + name] = target
+  }
+}
+
 // GHOST GATE — every target must resolve on disk before writing.
 const ghosts = []
 for (const [spec, target] of Object.entries(derived)) {

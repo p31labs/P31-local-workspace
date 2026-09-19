@@ -1,0 +1,13 @@
+/*
+ * @p31/canon — all.css
+ *
+ * The single stylesheet entry point: the generated token layer plus the
+ * component/layout CSS canon now owns. Import this instead of
+ * @p31/design-core/css/all.css.
+ */
+@import './tokens.css';
+@import './base.css';
+@import './layout.css';
+@import './recipes.css';
+@import './motion.css';
+@import './typography.css';

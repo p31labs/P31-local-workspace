@@ -1,0 +1,42 @@
+/* P31 design-core — motion.css */
+/* Spoon-aware motion scaling. DO NOT override these rules. */
+
+/* Reduced motion — universal kill switch */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+    transition-duration: 0s !important;
+    transition-delay: 0s !important;
+  }
+}
+
+/* Spoon 0–1: crisis — all motion disabled */
+[data-spoons="0"] *, [data-spoons="0"] *::before, [data-spoons="0"] *::after,
+[data-spoons="1"] *, [data-spoons="1"] *::before, [data-spoons="1"] *::after {
+  animation-duration: 0s !important;
+  transition-duration: 0s !important;
+}
+
+/* Spoon 2: slowed */
+[data-spoons="2"] *, [data-spoons="2"] *::before, [data-spoons="2"] *::after {
+  animation-duration: var(--p31-duration-slower) !important;
+  transition-duration: var(--p31-duration-slow) !important;
+}
+
+/* Spoon 4: accelerated */
+[data-spoons="4"] *, [data-spoons="4"] *::before, [data-spoons="4"] *::after {
+  animation-duration: var(--p31-duration-fast) !important;
+  transition-duration: var(--p31-duration-instant) !important;
+}
+
+/* Spoon 5: fast */
+[data-spoons="5"] *, [data-spoons="5"] *::before, [data-spoons="5"] *::after {
+  animation-duration: var(--p31-duration-instant) !important;
+  transition-duration: var(--p31-duration-instant) !important;
+}
+
+/* Glass panel hover — respect spoons */
+.glass-panel { transition: all var(--p31-duration-standard) var(--p31-easing-standard); }
+.glass-card { transition: all var(--p31-duration-standard) var(--p31-easing-standard); }
+.btn-primary, .btn-secondary, .btn-ghost { transition: all var(--p31-duration-fast) ease; }

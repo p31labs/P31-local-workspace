@@ -1,0 +1,15 @@
+/* ═══ Link hover: cyan→violet→green gradient + glow, no underline ═══
+ * Canonical definition. Imported via all.css. Do NOT redefine in apps. */
+.link-glow {
+  text-decoration: none !important;
+}
+
+.link-glow:hover {
+  text-decoration: none !important;
+  background: linear-gradient(100deg, #00F0FF 0%, #A78BFA 50%, #34D399 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 12px rgba(0, 240, 255, 0.55);
+  transition: text-shadow 0.3s ease;
+}
