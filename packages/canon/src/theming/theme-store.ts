@@ -495,6 +495,34 @@ export const GLOBAL_COMPAT: Record<string, string> = {
   '--p31-space-3xl': '64px',
 };
 
+/**
+ * Compat root values — design-core's exact `:root` values for the 18
+ * divergent shared names. Emitted at `:root` ONLY, so the theme-less surface
+ * matches design-core byte-for-byte while `[data-theme="ocean"]` etc. keep
+ * canon's values. This is the appearance-preserving baseline for the flip;
+ * removing it is the deliberate Phase 4 redesign.
+ */
+export const COMPAT_ROOT: Record<string, string> = {
+  '--p31-bg': 'oklch(10% 0.01 240)',
+  '--p31-surface': 'oklch(15% 0.015 240)',
+  '--p31-surface2': 'oklch(22% 0.02 240)',
+  '--p31-accent': 'oklch(65% 0.18 195)',
+  '--p31-accent-violet': 'oklch(65% 0.18 285)',
+  '--p31-accent-gold': 'oklch(65% 0.18 15)',
+  '--p31-accent-green': 'oklch(65% 0.18 105)',
+  '--p31-accent-red': 'oklch(65% 0.18 20)',
+  '--p31-accent-iris': 'oklch(65% 0.18 270)',
+  '--p31-text-secondary': 'oklch(80% 0.01 240)',
+  '--p31-text-tertiary': 'oklch(78% 0.01 240)',
+  '--p31-glass-bg': 'oklch(100% 0.01 240 / 0.04)',
+  '--p31-glass-border': 'oklch(100% 0.01 240 / 0.08)',
+  '--p31-glass-shadow': '0 8px 32px rgba(0,0,0,0.15)',
+  '--p31-font-sans': "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+  '--p31-font-mono': "ui-monospace, SFMono-Regular, 'Fira Code', 'Fira Mono', 'Roboto Mono', 'JetBrains Mono', Menlo, Monaco, Consolas, monospace",
+  '--p31-radius-md': 'calc(var(--p31-scale-md) / 2)',
+  '--p31-radius-lg': 'calc(var(--p31-scale-lg) / 2)',
+};
+
 /** design-core conditional override blocks, reproduced verbatim. Emitted
  *  unlayered so their cascade position matches design-core's tokens.css.
  *  NOTE: design-core nests [data-brand] INSIDE :root, so it compiles to the

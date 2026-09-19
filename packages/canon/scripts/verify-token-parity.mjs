@@ -29,8 +29,21 @@ import postcss from 'postcss';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = resolve(here, '..', '..', '..');
-const BASELINE = resolve(root, 'packages', 'design-core', 'src', 'css', 'tokens.css');
+const BASELINE = resolve(root, 'packages', 'design-core', 'src', 'css', 'all.css');
 const CANDIDATE = resolve(root, 'packages', 'canon', 'dist', 'tokens.css');
+
+/** Load a CSS file, inlining local @import './x.css' in source order, so the
+ *  baseline is design-core's FULL loaded surface (base + tokens + layout +
+ *  recipes + motion + typography), not just tokens.css. */
+function loadWithImports(entry, seen = new Set()) {
+  const file = resolve(entry);
+  if (seen.has(file)) return '';
+  seen.add(file);
+  const css = readFileSync(file, 'utf8');
+  return css.replace(/@import\s+['"]\.\/([^'"]+)['"]\s*;/g, (_, rel) =>
+    loadWithImports(resolve(dirname(file), rel), seen),
+  );
+}
 
 /** selector -> Map(token -> value), using each rule's DIRECT declarations. */
 function parse(css) {
@@ -84,7 +97,7 @@ function resolveValue(value, vars) {
   return v;
 }
 
-const baseline = parse(readFileSync(BASELINE, 'utf8'));
+const baseline = parse(loadWithImports(BASELINE));
 const candidate = parse(readFileSync(CANDIDATE, 'utf8'));
 
 const baseTokens = tokenUnion(baseline);

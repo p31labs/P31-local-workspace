@@ -26,7 +26,7 @@ import { writeFileSync, mkdirSync } from 'node:fs'
 import { join, dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import StyleDictionary from 'style-dictionary'
-import { THEMES, THEME_IDS, DEFAULT_THEME, BASE, SEMANTIC_MAP, GLOBAL_COMPAT, CONDITIONAL_CSS } from '../src/theming/theme-store.ts'
+import { THEMES, THEME_IDS, DEFAULT_THEME, BASE, SEMANTIC_MAP, GLOBAL_COMPAT, COMPAT_ROOT, CONDITIONAL_CSS } from '../src/theming/theme-store.ts'
 
 const here = dirname(fileURLToPath(import.meta.url))
 const root = resolve(here, '..')
@@ -177,12 +177,16 @@ function semanticCssVars(themeId) {
 }
 
 /** Emit `selector { --p31-*: value; }` from a theme's palette + semantic vars. */
-function cssBlock(selector, themeId, includeGlobals = false) {
+function cssBlock(selector, themeId, { globals = false, compatRoot = false } = {}) {
   const tokens = {
-    ...(includeGlobals ? GLOBAL_COMPAT : {}),
+    ...(globals ? GLOBAL_COMPAT : {}),
     ...THEMES[themeId].tokens,
     ...semanticCssVars(themeId),
   }
+  // Compat root values win over the theme palette AND the semantic slots at
+  // :root (e.g. canon's semantic radius.md literal vs design-core's palette
+  // --p31-radius-md). Themes keep canon's semantic values.
+  if (compatRoot) Object.assign(tokens, COMPAT_ROOT)
   const lines = Object.entries(tokens)
     .map(([prop, value]) => `  ${prop}: ${value};`)
     .join('\n')
@@ -197,7 +201,7 @@ const LAYER_ORDER = '@layer p31.tokens, p31.reset, p31.base, p31.layout, p31.com
 let css = '/**\n * @p31/canon — tokens.css. Do not edit directly; run `pnpm gen:tokens`.\n * Derived from src/theming/theme-store.ts (single source of truth).\n * Names are the runtime --p31-* contract; values change per theme.\n * Palette vars (--p31-bg, --p31-accent, …) AND semantic slots\n * (color.action.*, space.inline.*, font.size.*, motion.*) are emitted here.\n */\n\n'
 css += LAYER_ORDER + '\n'
 css += '@layer p31.tokens {\n'
-css += cssBlock(':root', DEFAULT_THEME, true)
+css += cssBlock(':root', DEFAULT_THEME, { globals: true, compatRoot: true })
 for (const id of THEME_IDS) {
   css += '\n' + cssBlock(`[data-theme="${id}"]`, id)
 }
