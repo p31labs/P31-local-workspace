@@ -461,3 +461,40 @@ Also: IRS determination letter PDF stored at
 Public Charity Status"); `nonprofit.json.irsDeterminationLetter` points at it.
 
 `pnpm --filter p31ca build`: exit 0.
+
+## 2026-09-19 — second adoption + token-value audit (the endgame question)
+
+Second consumer: `signup.astro` now also renders the contract Button with the
+same page-scoped token import. The two-page pattern holds; no new collision.
+
+Hydration: the first adoption rendered `<Button>` with no Astro client
+directive — SSR-only, so `Button.tsx`'s `handleClick` (the disabled/loading
+click-block) never ran in the browser. The contract was render-only. Both auth
+Buttons now use `client:load`; built output confirms
+`<astro-island component-export="Button" client="load" ssr>` pointing at
+`canon-react.*.js`. The behavioral contract is active in the consumer.
+
+Token-value audit. The 27-name overlap is NOT a rename — the values differ.
+Comparing `:root` in `packages/canon/dist/tokens.css` vs
+`packages/design-core/src/css/tokens.css`:
+
+```
+overlap 27 | identical 8 | DIFFERENT 19
+--p31-text-tertiary  design-core oklch(78% .01 240)   | canon oklch(55% .02 235)
+--p31-glass-bg       oklch(14% .02 260 / .35)         | oklch(100% .01 230 / .04)
+--p31-accent-gold    oklch(65% .18 15)                | oklch(72% .15 40)
+--p31-accent         oklch(65% .18 195)               | oklch(70% .15 200)
+--p31-bg             oklch(10% .01 240)               | oklch(10% .03 240)
+--p31-accent-violet  oklch(65% .18 285)               | oklch(65% .15 250)
+… (19 total)
+```
+
+Consequence: the `@layer` trick is a **coexistence** tactic, not a migration
+tactic. design-core keeps its values on the 19 differing names; canon only
+fills the action/space/font/motion tokens design-core lacks. Replacing
+design-core with canon is a **visual redesign** (text lightness, glass alpha,
+accent hues), not a token subtraction. That decision is unmade and now named.
+
+Also: the pre-existing `translate: -50% -50%` fix on both auth dividers was
+committed standalone (`a7b9220f`) so it is no longer a dangling working-tree
+edit.
