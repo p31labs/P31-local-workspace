@@ -14,6 +14,7 @@
 import { commit, type CommitResult } from '@p31/canon/loom/commit';
 import { readEvents } from '@p31/canon/loom/jsonl';
 import { replay, type LoomEvent, type Review } from '@p31/canon/loom/events';
+import { readProfile, type HumanProfile } from '@p31/canon/loom/profiles';
 import { watch, type FSWatcher } from 'node:fs';
 
 /** Re-export the canonical resolver so existing importers (server.ts, the demo
@@ -100,6 +101,60 @@ export function review(
 export interface AwaitResult {
   status: 'timeout' | 'complete';
   reviews?: LoomEvent[];
+}
+
+/**
+ * Mediator: render a proposal body at the human's tier for DISPLAY only.
+ *
+ * Reads the human's profile (tier + consent) and the proposal's artifact view
+ * via observe(). If the human consented (shareWithAgents.tier) and is at
+ * `beginner`, returns a `mediated` field — a plain-language, one-sentence
+ * "what this changes" summary plus the untouched original body. It NEVER
+ * writes a review, approve, reject, or revise; it does not touch the log.
+ *
+ * The human's decision in the log is always a decision about the ORIGINAL
+ * body. The mediation is a render-layer translation, not a shadow revision.
+ */
+export interface MediatedProposal extends ProposalView {
+  /** Set when a beginner-tier human consented to tier sharing. Plain-language
+   *  summary of the change; the original body remains authoritative. */
+  mediatedSummary?: string;
+}
+
+export function mediate(
+  logPath: string,
+  profilesDir: string,
+  humanId: string,
+  proposalId?: string,
+): ObserveResult & { mediated?: MediatedProposal } {
+  const view = observe(logPath, proposalId);
+  const profile: HumanProfile | null = readProfile(profilesDir, humanId);
+  if (!profile || profile.tier !== 'beginner' || profile.shareWithAgents?.tier !== true) {
+    return view;
+  }
+  const target = proposalId ? view.proposal : undefined;
+  if (!target) return view;
+
+  return {
+    ...view,
+    mediated: {
+      ...target,
+      mediatedSummary: summarize(target.body),
+    },
+  };
+}
+
+/** Deterministic, model-free plain-language summary of a proposal body. One
+ *  sentence: what node it touches and, when the body is a plain object, its
+ *  top-level keys. No model call — this is arithmetic over the body's shape. */
+function summarize(body: unknown): string {
+  if (body && typeof body === 'object' && !Array.isArray(body)) {
+    const keys = Object.keys(body as Record<string, unknown>);
+    if (keys.length > 0) return `This changes ${keys.join(', ')}.`;
+  }
+  if (Array.isArray(body)) return `This changes a list of ${body.length} items.`;
+  if (body === null || body === undefined) return 'This change has no detail.';
+  return `This changes: ${String(body).slice(0, 120)}.`;
 }
 
 /**

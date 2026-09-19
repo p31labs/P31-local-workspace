@@ -30,7 +30,7 @@ import { join, dirname, resolve, basename } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import type { ComponentContract } from '@p31/canon/contracts';
-import { observe, traverse, propose, review, awaitReviews, resolveLogPath } from './loom-tools';
+import { observe, traverse, propose, review, awaitReviews, mediate, resolveLogPath } from './loom-tools';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const canonRoot = resolve(here, '..', '..', 'canon');
@@ -112,6 +112,9 @@ const server = new McpServer({ name: 'p31-canon', version: '0.1.0' });
 
 // The Loom's shared log — resolved once, shared by all four loom_* tools.
 const loomLogPath = resolveLogPath();
+// The profile store sits next to the log directory, NOT inside it. The log
+// carries only the humanId reference; the store carries presentation data.
+const loomProfilesDir = join(dirname(loomLogPath), 'profiles');
 
 server.registerTool(
   'list_components',
@@ -389,6 +392,25 @@ server.registerTool(
   async ({ proposalId, timeoutMs }) => {
     const result = await awaitReviews(loomLogPath, proposalId, timeoutMs ?? 30_000);
     return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
+  },
+);
+
+server.registerTool(
+  'loom_mediate',
+  {
+    description:
+      'Render a proposal for a human at their tier (DISPLAY ONLY — never writes to the log). ' +
+      'Reads the human\'s profile and, if they are a beginner who consented to tier sharing, ' +
+      'returns a plain-language mediated summary alongside the untouched original body. The human\'s ' +
+      'decision is always about the original body; mediation is a render-layer translation, not a revision.',
+    inputSchema: z.object({
+      humanId: z.string().describe('Stable opaque human id, resolved from the profile store.'),
+      proposalId: z.string().optional().describe('If set, mediate this single proposal.'),
+    }),
+  },
+  async ({ humanId, proposalId }) => {
+    const view = mediate(loomLogPath, loomProfilesDir, humanId, proposalId);
+    return { content: [{ type: 'text', text: JSON.stringify(view, null, 2) }] };
   },
 );
 

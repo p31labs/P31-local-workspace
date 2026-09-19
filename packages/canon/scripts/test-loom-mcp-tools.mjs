@@ -11,7 +11,8 @@
 import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { observe, traverse, propose, review, awaitReviews } from '../../canon-mcp/src/loom-tools.ts';
+import { observe, traverse, propose, review, awaitReviews, mediate } from '../../canon-mcp/src/loom-tools.ts';
+import { writeProfile } from '../src/loom/profiles.ts';
 
 const fails = [];
 const ok = (c, m) => { if (!c) fails.push(m); };
@@ -77,9 +78,48 @@ try {
   rmSync(dir, { recursive: true, force: true });
 }
 
+// ── mediator ────────────────────────────────────────────────────────────
+{
+  const dir = mkdtempSync(join(tmpdir(), 'loom-med-'));
+  const logPath = join(dir, 'events.jsonl');
+  const profilesDir = join(dir, 'profiles');
+  try {
+    propose(logPath, 'prop_m', '.button', { variant: 'primary', size: 'md' }, 'presence-01');
+
+    // No profile -> no mediation, original body untouched.
+    const raw = mediate(logPath, profilesDir, 'human-x', 'prop_m');
+    ok(raw.mediated === undefined, 'no profile means no mediation');
+    ok(raw.proposal && raw.proposal.body.variant === 'primary', 'original body authoritative without mediation');
+
+    // Beginner + consent -> mediated summary, original body still present.
+    writeProfile(profilesDir, {
+      id: 'human-x',
+      tier: 'beginner',
+      shareWithAgents: { tier: true, presentation: false },
+    });
+    const med = mediate(logPath, profilesDir, 'human-x', 'prop_m');
+    ok(typeof med.mediated?.mediatedSummary === 'string' && med.mediated.mediatedSummary.length > 0,
+      'beginner+consent returns a mediated summary');
+    ok(med.mediated.body.variant === 'primary', 'mediated view carries the original body');
+    ok(med.mediated.mediatedSummary.includes('variant'), 'summary names the body keys');
+
+    // Advanced tier -> no mediation even with consent.
+    writeProfile(profilesDir, { id: 'human-y', tier: 'advanced', shareWithAgents: { tier: true, presentation: true } });
+    const adv = mediate(logPath, profilesDir, 'human-y', 'prop_m');
+    ok(adv.mediated === undefined, 'advanced tier gets no mediation');
+
+    // Beginner WITHOUT consent -> no mediation.
+    writeProfile(profilesDir, { id: 'human-z', tier: 'beginner', shareWithAgents: { tier: false, presentation: false } });
+    const noconsent = mediate(logPath, profilesDir, 'human-z', 'prop_m');
+    ok(noconsent.mediated === undefined, 'beginner without consent gets no mediation');
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+}
+
 if (fails.length) {
   console.error(`\n❌ LOOM MCP TOOLS FAILED — ${fails.length} failure(s):`);
   for (const f of fails) console.error(`   • ${f}`);
   process.exit(1);
 }
-console.log('✅ loom mcp tools — observe/propose/traverse/review/awaitReviews, all green.');
+console.log('✅ loom mcp tools — observe/propose/traverse/review/awaitReviews/mediate, all green.');
