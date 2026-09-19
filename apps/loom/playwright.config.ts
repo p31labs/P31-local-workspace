@@ -8,5 +8,6 @@ export default defineConfig({
     url: 'http://localhost:5191',
     reuseExistingServer: !process.env.CI,
     timeout: 30_000,
+    env: { LOOM_LOG: process.env.LOOM_LOG ?? '.loom/ci-events.jsonl' },
   },
 });

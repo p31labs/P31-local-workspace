@@ -36,6 +36,7 @@ export default function App() {
   const { events, state, seq, scrub, follow } = useLoomState();
   const overlay = useMemo(() => deriveOverlay(state, idIndex), [state, idIndex]);
   const [selectedProposal, setSelectedProposal] = useState<string | null>(null);
+  const [rejectReason, setRejectReason] = useState('');
 
   const nodes: Node[] = useMemo(() => {
     const trail = new Set(overlay.pathIds);
@@ -131,16 +132,32 @@ export default function App() {
               >
                 Approve
               </button>
+            </div>
+            <div className="loom-reject">
+              <input
+                className="loom-reason"
+                placeholder="reason (optional)"
+                value={rejectReason}
+                onChange={(e) => setRejectReason(e.target.value)}
+              />
               <button
                 className="loom-btn loom-btn--no"
-                onClick={() => void postEvent({ writer: 'human', kind: 'reject', proposal: proposal.id, reason: '' })}
+                onClick={() => {
+                  void postEvent({
+                    writer: 'human',
+                    kind: 'reject',
+                    proposal: proposal.id,
+                    reason: rejectReason.trim() || 'rejected by human',
+                  });
+                  setRejectReason('');
+                }}
               >
                 Reject
               </button>
             </div>
           </div>
         ) : (
-          <EventOverlay events={events} seq={seq} onFollow={follow} />
+          <EventOverlay events={events} seq={seq} onFollow={follow} onSelect={scrub} />
         )}
       </aside>
 

@@ -50,7 +50,15 @@ function loomMiddleware(): Plugin {
             Connection: 'keep-alive',
             'X-Accel-Buffering': 'no',
           });
-          let lastSeq = readEvents(logPath).reduce((m, e) => Math.max(m, e.seq), -1);
+          // Honor Last-Event-ID so an EventSource reconnect resumes where it
+          // dropped, not at the head. Events committed during the disconnect
+          // window must not be silently lost.
+          const header = req.headers['last-event-id'];
+          const lastEventId = Array.isArray(header) ? header[0] : header;
+          let lastSeq =
+            lastEventId !== undefined && lastEventId !== ''
+              ? Number(lastEventId)
+              : readEvents(logPath).reduce((m, e) => Math.max(m, e.seq), -1);
           const timer = setInterval(() => {
             for (const e of readEvents(logPath)) {
               if (e.seq > lastSeq) {
