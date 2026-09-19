@@ -12,6 +12,7 @@
     "validate:contracts": "node scripts/validate-contracts.mjs",
     "validate:registry": "node scripts/validate-registry.mjs",
     "verify:parity": "node scripts/verify-token-parity.mjs",
+    "test:loom": "node scripts/test-loom-replay.mjs",
     "build:css": "node scripts/build-css.mjs",
     "build": "npm run gen:tokens && npm run validate:contracts && npm run build:css && npm run gen:registry && npm run validate:registry && npm run gen:exports"
   },
@@ -33,6 +34,7 @@
     "./css/recipes.css": "./dist/css/recipes.css",
     "./css/size-class.css": "./dist/css/size-class.css",
     "./css/typography.css": "./dist/css/typography.css",
+    "./loom/events": "./src/loom/events.ts",
     "./registry.json": "./registry.json",
     "./theming": "./src/theming/index.ts",
     "./theming/theme-css": "./src/theming/theme-css.ts",
