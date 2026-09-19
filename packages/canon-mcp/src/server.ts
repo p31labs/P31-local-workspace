@@ -30,6 +30,7 @@ import { join, dirname, resolve, basename } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import type { ComponentContract } from '@p31/canon/contracts';
+import { observe, traverse, propose, awaitReviews, resolveLogPath } from './loom-tools';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const canonRoot = resolve(here, '..', '..', 'canon');
@@ -108,6 +109,9 @@ if (REGISTRY.size === 0) {
 }
 
 const server = new McpServer({ name: 'p31-canon', version: '0.1.0' });
+
+// The Loom's shared log — resolved once, shared by all four loom_* tools.
+const loomLogPath = resolveLogPath();
 
 server.registerTool(
   'list_components',
@@ -291,6 +295,79 @@ server.registerTool(
         },
       ],
     };
+  },
+);
+
+// ── Loom presence tools ────────────────────────────────────────────────
+// The agent-facing half of the shared event log. Every write goes through
+// commit(); these emit agent-only events (traverse/propose). Observe/await
+// read the log. See loom-tools.ts for the shared handlers.
+
+server.registerTool(
+  'loom_observe',
+  {
+    description:
+      'Observe the live Loom: what the human is focused on, where the agent cursor is, ' +
+      'the agent attention level, and every open proposal. Reads the current state of the shared log.',
+    inputSchema: z.object({
+      proposalId: z.string().optional().describe('If set, also return this single proposal (or null).'),
+    }),
+  },
+  async ({ proposalId }) => {
+    const view = observe(loomLogPath, proposalId);
+    return { content: [{ type: 'text', text: JSON.stringify(view, null, 2) }] };
+  },
+);
+
+server.registerTool(
+  'loom_traverse',
+  {
+    description:
+      'Record a traversal step through the design-system graph (agent-only). Appends to the shared log through the gate.',
+    inputSchema: z.object({
+      from: z.string().describe('Bare node name the traversal starts from, e.g. "--p31-accent".'),
+      to: z.string().describe('Bare node name the traversal ends at, e.g. ".glass-card".'),
+      reason: z.string().describe('Why the step was taken, e.g. "referenced-by".'),
+    }),
+  },
+  async ({ from, to, reason }) => {
+    const r = traverse(loomLogPath, from, to, reason);
+    return { content: [{ type: 'text', text: JSON.stringify(r) }], isError: !r.valid };
+  },
+);
+
+server.registerTool(
+  'loom_propose',
+  {
+    description:
+      'Propose a change against a node in the graph (agent-only). The id is caller-chosen and must be unique. Appends through the gate.',
+    inputSchema: z.object({
+      id: z.string().describe('Unique proposal id, e.g. "prop_demo_1".'),
+      node: z.string().describe('Bare node name the proposal targets, e.g. ".feature-card".'),
+      body: z.unknown().describe('The proposal body (any JSON).'),
+    }),
+  },
+  async ({ id, node, body }) => {
+    const r = propose(loomLogPath, id, node, body);
+    return { content: [{ type: 'text', text: JSON.stringify(r) }], isError: !r.valid };
+  },
+);
+
+server.registerTool(
+  'loom_await',
+  {
+    description:
+      'Wait for a review event on a proposal, up to timeoutMs. Returns { status: "timeout" } ' +
+      'when nothing arrives — a return value, not an error. Today it always times out: the ' +
+      'review event kind does not exist in the substrate yet.',
+    inputSchema: z.object({
+      proposalId: z.string(),
+      timeoutMs: z.number().int().positive().max(120000).optional().describe('Default 30000, max 120000.'),
+    }),
+  },
+  async ({ proposalId, timeoutMs }) => {
+    const result = await awaitReviews(loomLogPath, proposalId, timeoutMs ?? 30_000);
+    return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
   },
 );
 
