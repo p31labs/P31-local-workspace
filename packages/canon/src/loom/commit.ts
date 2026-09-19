@@ -15,7 +15,8 @@
  * two processes both read seq 41, both stamp 42, and the log has a duplicate
  * seq — a determinism violation, not a nit.
  */
-import { existsSync, openSync, closeSync, unlinkSync, statSync, writeSync } from 'node:fs';
+import { existsSync, openSync, closeSync, unlinkSync, statSync, writeSync, mkdirSync } from 'node:fs';
+import { dirname } from 'node:path';
 import { ReplayGate, type LoomEventInput } from './gate.ts';
 import { readEvents, nextSeq } from './jsonl.ts';
 import { appendEvent } from './jsonl-write.internal.ts';
@@ -71,6 +72,9 @@ function releaseLock(handle: { lockPath: string }): void {
 }
 
 export function commit(logPath: string, input: LoomEventInput): CommitResult {
+  // The lock file lives next to the log; ensure the directory exists before
+  // acquiring it (appendEvent also mkdirs, but only after the lock is held).
+  mkdirSync(dirname(logPath), { recursive: true });
   const lock = acquireLock(logPath);
   if ('error' in lock) return { valid: false, error: lock.error };
 
