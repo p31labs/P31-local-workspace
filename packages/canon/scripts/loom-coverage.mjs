@@ -16,6 +16,7 @@ export const TONE_WORDS = new Set([
   'primary', 'secondary', 'ghost',
   'active', 'disabled', 'loading', 'pending', 'approved', 'rejected',
   'online', 'offline',
+  'default', 'selected',
 ]);
 
 /** Positional words — children that partition a container along an axis.

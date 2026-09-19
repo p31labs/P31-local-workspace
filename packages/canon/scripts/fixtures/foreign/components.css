@@ -1,27 +1,33 @@
 /* A small foreign design system — Tailwind-adjacent, NOT P31. Used to prove
  * loom-ingest.mjs extracts structure from a system the Loom did not grow up on.
- * Note the hardcoded hex in .btn-danger — the ingester records "no token
- * consumed", it does not silently map it to a canon token. */
-.avatar {
-  display: inline-block;
+ * The .chip family is a real component: a base class with three tone variants
+ * that consume tokens. The .btn-danger hardcodes #ef4444 — the ingester records
+ * "no token consumed", it does not silently map it to a canon token. */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
   border-radius: var(--radius-full);
-  overflow: hidden;
+  padding: var(--space-2);
 }
 
-.avatar-sm {
-  width: 24px;
-  height: 24px;
+.chip-default {
+  background: var(--color-muted);
+  color: var(--color-text);
 }
 
-.avatar-lg {
-  width: 48px;
-  height: 48px;
+.chip-selected {
+  background: var(--color-primary);
+  color: var(--color-primary-text);
+}
+
+.chip-disabled {
+  background: var(--color-disabled);
+  color: var(--color-disabled-text);
 }
 
 .btn {
   display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
   border-radius: var(--radius-md);
 }
 
