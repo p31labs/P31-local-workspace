@@ -3,8 +3,13 @@ import react from '@vitejs/plugin-react';
 import { commit } from '@p31/canon/loom/commit';
 import { readEvents } from '@p31/canon/loom/jsonl';
 import { resolveLogPath } from '@p31/canon/loom/log-path';
+import { readProfile } from '@p31/canon/loom/profiles';
+import { dirname, join } from 'node:path';
 
 const logPath = resolveLogPath();
+// The profile store sits next to the log directory, NOT inside the log. It is
+// a separate store keyed by humanId; the log only carries the id reference.
+const profilesDir = join(dirname(logPath), 'profiles');
 
 /**
  * Dev-only middleware. The canvas writes only through POST /api/loom/event,
@@ -40,6 +45,15 @@ function loomMiddleware(): Plugin {
         if (req.method === 'GET' && path === '/events') {
           res.setHeader('Content-Type', 'application/json');
           res.end(JSON.stringify(readEvents(logPath)));
+          return;
+        }
+
+        if (req.method === 'GET' && path.startsWith('/profile/')) {
+          const id = decodeURIComponent(path.slice('/profile/'.length));
+          const profile = id ? readProfile(profilesDir, id) : null;
+          res.setHeader('Content-Type', 'application/json');
+          res.statusCode = profile ? 200 : 404;
+          res.end(JSON.stringify(profile));
           return;
         }
 

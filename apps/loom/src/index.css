@@ -3,6 +3,31 @@
 
 html, body, #root { height: 100%; margin: 0; }
 
+/* Accessibility floor. The default canvas already clears WCAG 2.2 AA + the
+ * COGA baseline. The profile store (see src/lib/profile.ts) tightens or
+ * loosens these custom properties from this floor — never below it.
+ * - letter/line spacing: dyslexia (extra-large spacing is the evidence-backed
+ *   fix; coloured overlays are NOT — evidence is contradictory).
+ * - density: ADHD + age (flat layouts, no nested navigation).
+ */
+:root {
+  --loom-letter-spacing: 0.02em;
+  --loom-line-height: 1.5;
+  --loom-density: 'comfortable';
+}
+
+/* Reduced motion — vestibular, autism, sensory. Collapse every non-essential
+ * transition and animation under the OS-level preference. Play is user-initiated
+ * and discrete, so the scrubber's logic is untouched; only decorative motion is
+ * neutralized. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 body {
   background: var(--p31-bg, #0a0e14);
   color: var(--p31-text, #e2e8f0);
@@ -27,6 +52,7 @@ body {
   font-size: 13px;
 }
 .loom-counts { color: var(--p31-text-secondary, #94a3b8); }
+.loom-human { color: var(--p31-text-secondary, #94a3b8); font-size: 12px; }
 .loom-agent { color: var(--p31-accent-violet, #a78bfa); font-size: 12px; }
 .loom-gate { margin-left: auto; color: var(--p31-accent, #00f0ff); font-size: 12px; }
 
@@ -41,7 +67,10 @@ body {
 }
 .loom-panel h2 { font-size: 15px; margin: 8px 0; }
 .loom-panel code { font-family: var(--p31-font-mono, monospace); font-size: 11px; color: var(--p31-text-tertiary, #64748b); }
+.loom-panel { line-height: var(--loom-line-height); }
+.loom-panel p { letter-spacing: var(--loom-letter-spacing); }
 .loom-hint { color: var(--p31-text-tertiary, #64748b); }
+.loom-summary { color: var(--p31-text-secondary, #94a3b8); letter-spacing: var(--loom-letter-spacing); line-height: var(--loom-line-height); }
 .loom-kind {
   display: inline-block;
   padding: 2px 8px;
@@ -111,6 +140,54 @@ body {
 
 .loom-edge { stroke: var(--p31-glass-border, rgba(255, 255, 255, 0.12)); }
 
+/* Progressive disclosure: advanced-only surfaces. */
+.loom-shell[data-tier='beginner'] .loom-survival-track,
+.loom-shell[data-tier='intermediate'] .loom-survival-track { display: none; }
+.loom-json {
+  margin-top: 12px;
+  padding: 8px;
+  border-radius: 6px;
+  background: var(--p31-surface, #12121a);
+  border: 1px solid var(--p31-glass-border, rgba(255, 255, 255, 0.2));
+  font-family: var(--p31-font-mono, monospace);
+  font-size: 11px;
+  overflow: auto;
+  max-height: 240px;
+  color: var(--p31-text-secondary, #94a3b8);
+}
+.loom-more {
+  margin-top: 12px;
+  width: 100%;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--p31-glass-border, rgba(255, 255, 255, 0.2));
+  background: none;
+  color: var(--p31-accent, #00f0ff);
+  cursor: pointer;
+  font-size: 12px;
+}
+
+/* Beginner digest */
+.digest-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.digest-item {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  width: 100%;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid var(--p31-glass-border, rgba(255, 255, 255, 0.14));
+  background: var(--p31-surface, #12121a);
+  color: var(--p31-text, #e2e8f0);
+  cursor: pointer;
+  font-size: 13px;
+  letter-spacing: var(--loom-letter-spacing);
+  line-height: var(--loom-line-height);
+}
+.digest-id { color: var(--p31-accent-gold, #fbbf24); }
+.digest-node { color: var(--p31-text, #e2e8f0); }
+.digest-author { margin-left: auto; color: var(--p31-text-tertiary, #64748b); }
+
 /* Event overlay */
 .ev { display: flex; flex-direction: column; gap: 8px; }
 .ev-head { display: flex; align-items: center; gap: 8px; font-size: 13px; }
@@ -127,6 +204,8 @@ body {
   border-left: 2px solid transparent;
   font-size: 12px;
   font-family: var(--p31-font-mono, monospace);
+  letter-spacing: var(--loom-letter-spacing);
+  line-height: var(--loom-line-height);
   cursor: pointer;
 }
 .ev-item--human { border-left-color: var(--p31-accent, #00f0ff); }

@@ -11,7 +11,9 @@ import {
 import { buildGraph, buildIdIndex } from './graph';
 import { useLoomState } from './lib/useLoomState';
 import { deriveOverlay } from './lib/overlay';
+import { useProfile } from './lib/useProfile';
 import { EventOverlay } from './components/EventOverlay';
+import { ProposalDigest } from './components/ProposalDigest';
 import { ProposalNode } from './components/ProposalNode';
 import { TimelineScrubber } from './components/TimelineScrubber';
 import type { LoomEventInput } from '@p31/canon/loom/gate';
@@ -19,12 +21,13 @@ import type { LoomEventInput } from '@p31/canon/loom/gate';
 const nodeTypes = { proposal: ProposalNode };
 
 /** The canvas writes ONLY through /api/loom/event -> commit(). */
-async function postEvent(input: LoomEventInput): Promise<void> {
+async function postEvent(input: LoomEventInput, humanId: string | null): Promise<void> {
   try {
+    const body = humanId ? { input: { ...input, humanId } } : { input };
     await fetch('/api/loom/event', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ input }),
+      body: JSON.stringify(body),
     });
   } catch {
     // middleware absent (production build) — no-op
@@ -37,9 +40,19 @@ export default function App() {
   const positions = useMemo(() => new Map(baseNodes.map((n) => [n.id, n.position])), [baseNodes]);
 
   const { events, state, seq, scrub, follow } = useLoomState();
+  const { humanId, profile, overrides, tier } = useProfile();
   const overlay = useMemo(() => deriveOverlay(state, idIndex), [state, idIndex]);
   const [selectedProposal, setSelectedProposal] = useState<string | null>(null);
   const [rejectReason, setRejectReason] = useState('');
+  const [notYet, setNotYet] = useState(false);
+  const [showMore, setShowMore] = useState(false);
+
+  // Progressive disclosure: beginner surfaces the digest; the "show me more"
+  // toggle promotes the surface to the full overlay for this session. The
+  // log is unchanged — the tier changes what the canvas surfaces.
+  const effectiveTier = showMore ? 'advanced' : tier;
+  const showOverlay = effectiveTier !== 'beginner';
+  const showScrubber = effectiveTier === 'advanced';
 
   const nodes: Node[] = useMemo(() => {
     const trail = new Set(overlay.pathIds);
@@ -86,23 +99,39 @@ export default function App() {
   const onNodeClick: NodeMouseHandler = useCallback((_event, node) => {
     const id = String(node.id);
     if (id.startsWith('ghost:')) {
+      setNotYet(false);
+      setRejectReason('');
       setSelectedProposal(id.slice('ghost:'.length));
       return;
     }
     setSelectedProposal(null);
+    setNotYet(false);
+    setRejectReason('');
     const bare = (node.data as { bare?: string }).bare;
-    if (bare) void postEvent({ writer: 'human', kind: 'focus', node: bare });
+    if (bare) void postEvent({ writer: 'human', kind: 'focus', node: bare }, humanId);
+  }, [humanId]);
+
+  const selectProposal = useCallback((id: string) => {
+    setNotYet(false);
+    setRejectReason('');
+    setSelectedProposal(id);
   }, []);
 
   const proposal = selectedProposal ? state.proposals.get(selectedProposal) : null;
 
   return (
-    <div className="loom-shell">
+    <div className="loom-shell" data-tier={effectiveTier} style={overrides}>
       <header className="loom-bar">
         <strong>The Loom</strong>
         <span className="loom-counts">
           {counts.tokens} tokens · {counts.cssClasses} classes · {counts.components} component · {counts.themes} themes
         </span>
+        {profile?.displayName && (
+          <span className="loom-human" title={profile.pronouns ?? undefined}>
+            {profile.displayName}
+            {profile.pronouns ? ` (${profile.pronouns})` : ''}
+          </span>
+        )}
         {state.agentCursor && (
           <span className="loom-agent">
             agent @ {state.agentCursor} · attention {overlay.attention.toFixed(2)}
@@ -136,45 +165,72 @@ export default function App() {
             <p className="loom-hint">
               node: {proposal.node} · status: {proposal.status} · rev {proposal.revision}
             </p>
+            <p className="loom-summary">
+              An agent proposed a change to <code>{proposal.node}</code>
+              {proposal.author !== 'unknown' ? ` · authored by ${proposal.author}` : ''}.
+              Nothing in the canon changes until you approve.
+            </p>
             <div className="loom-actions">
               <button
                 className="loom-btn loom-btn--ok"
-                onClick={() => void postEvent({ writer: 'human', kind: 'approve', proposal: proposal.id })}
+                onClick={() => void postEvent({ writer: 'human', kind: 'approve', proposal: proposal.id }, humanId)}
               >
-                Approve
+                {effectiveTier === 'beginner' ? 'Looks good' : 'Approve'}
               </button>
+              {effectiveTier === 'beginner' && !notYet ? (
+                <button className="loom-btn loom-btn--no" onClick={() => setNotYet(true)}>
+                  Not yet
+                </button>
+              ) : (
+                <div className="loom-reject">
+                  <input
+                    className="loom-reason"
+                    placeholder="reason (optional)"
+                    value={rejectReason}
+                    onChange={(e) => setRejectReason(e.target.value)}
+                  />
+                  <button
+                    className="loom-btn loom-btn--no"
+                    onClick={() => {
+                      void postEvent(
+                        {
+                          writer: 'human',
+                          kind: 'reject',
+                          proposal: proposal.id,
+                          reason: rejectReason.trim() || (effectiveTier === 'beginner' ? 'deferred by human' : 'rejected by human'),
+                        },
+                        humanId,
+                      );
+                      setRejectReason('');
+                      setNotYet(false);
+                    }}
+                  >
+                    Reject
+                  </button>
+                </div>
+              )}
             </div>
-            <div className="loom-reject">
-              <input
-                className="loom-reason"
-                placeholder="reason (optional)"
-                value={rejectReason}
-                onChange={(e) => setRejectReason(e.target.value)}
-              />
-              <button
-                className="loom-btn loom-btn--no"
-                onClick={() => {
-                  void postEvent({
-                    writer: 'human',
-                    kind: 'reject',
-                    proposal: proposal.id,
-                    reason: rejectReason.trim() || 'rejected by human',
-                  });
-                  setRejectReason('');
-                }}
-              >
-                Reject
-              </button>
-            </div>
+            {effectiveTier === 'advanced' && (
+              <pre className="loom-json">{JSON.stringify(proposal.body, null, 2)}</pre>
+            )}
           </div>
-        ) : (
+        ) : showOverlay ? (
           <EventOverlay events={events} seq={seq} onFollow={follow} onSelect={scrub} />
+        ) : (
+          <ProposalDigest state={state} onSelect={selectProposal} />
+        )}
+        {tier === 'beginner' && !proposal && (
+          <button className="loom-more" onClick={() => setShowMore((v) => !v)}>
+            {showMore ? 'show me less' : 'show me more'}
+          </button>
         )}
       </aside>
 
-      <footer className="loom-scrub">
-        <TimelineScrubber logLength={events.length} currentSeq={seq} onSeqChange={scrub} />
-      </footer>
+      {showScrubber && (
+        <footer className="loom-scrub">
+          <TimelineScrubber logLength={events.length} currentSeq={seq} onSeqChange={scrub} />
+        </footer>
+      )}
     </div>
   );
 }
