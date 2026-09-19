@@ -23,6 +23,11 @@ Public specifiers (the frozen interface):
 `appendEvent` is internal. It is reachable only from `commit.ts`; the seal gate
 fails the build if any other module touches it.
 
+A `traverse` event sets the agent cursor to its `to` node — walking the graph
+moves the cursor. A `presence` event positions the cursor explicitly and sets
+the attention level. Both are agent-only; the reducer records them as
+`agentCursor` and `agentAttention`.
+
 ## Rules (all agents, no exceptions)
 
 1. **Every write goes through `commit(logPath, input)`.** Never append to the

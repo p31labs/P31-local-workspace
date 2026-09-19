@@ -353,6 +353,8 @@ server.registerTool(
   },
 );
 
+// NOTE: this description promises "always times out" — a lie the moment a
+// review event kind lands. Update it in the same commit that adds reviews.
 server.registerTool(
   'loom_await',
   {

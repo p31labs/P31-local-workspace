@@ -102,6 +102,9 @@ export async function awaitReviews(
   timeoutMs: number,
 ): Promise<AwaitResult> {
   const deadline = Date.now() + timeoutMs;
+  // Polls the log every 100 ms, re-reading it fully each time. Fine at small
+  // scale; when the review kind lands and this becomes a real wait, replace
+  // the poll with an SSE tail of the log — β-2's middleware already serves one.
   while (Date.now() < deadline) {
     const reviews = readEvents(logPath).filter(
       (e) => (e as { kind?: string }).kind === 'review' && (e as { proposalId?: string }).proposalId === proposalId,
