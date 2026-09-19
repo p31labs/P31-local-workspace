@@ -38,7 +38,19 @@ export function presentationOverrides(profile: HumanProfile | null): Record<stri
   return out;
 }
 
-/** Resolve a profile's tier, defaulting to 'advanced' (the full surface). */
-export function resolveTier(profile: HumanProfile | null): 'beginner' | 'intermediate' | 'advanced' {
+/** Resolve a profile's tier, defaulting to 'advanced' (the full surface). A
+ *  `?tier=` URL param overrides the stored tier for the session — a demo
+ *  affordance so a reader can see the tier system without hand-writing JSON.
+ *  The store remains authoritative; the param only promotes/demotes display. */
+export type Tier = 'beginner' | 'intermediate' | 'advanced';
+
+const TIERS: readonly Tier[] = ['beginner', 'intermediate', 'advanced'];
+
+export function resolveTier(
+  profile: HumanProfile | null,
+  search: string = typeof location !== 'undefined' ? location.search : '',
+): Tier {
+  const param = new URLSearchParams(search).get('tier');
+  if (param && (TIERS as readonly string[]).includes(param)) return param as Tier;
   return profile?.tier ?? 'advanced';
 }

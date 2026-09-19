@@ -12,6 +12,7 @@ import { buildGraph, buildIdIndex } from './graph';
 import { useLoomState } from './lib/useLoomState';
 import { deriveOverlay } from './lib/overlay';
 import { useProfile } from './lib/useProfile';
+import { effectiveTier, resolveSurface, rejectReasonFor, approveLabel } from './lib/surface';
 import { EventOverlay } from './components/EventOverlay';
 import { ProposalDigest } from './components/ProposalDigest';
 import { ProposalNode } from './components/ProposalNode';
@@ -50,9 +51,9 @@ export default function App() {
   // Progressive disclosure: beginner surfaces the digest; the "show me more"
   // toggle promotes the surface to the full overlay for this session. The
   // log is unchanged — the tier changes what the canvas surfaces.
-  const effectiveTier = showMore ? 'advanced' : tier;
-  const showOverlay = effectiveTier !== 'beginner';
-  const showScrubber = effectiveTier === 'advanced';
+  const effTier = effectiveTier(tier, showMore);
+  const surface = resolveSurface(effTier);
+  const { showOverlay, showScrubber } = surface;
 
   const nodes: Node[] = useMemo(() => {
     const trail = new Set(overlay.pathIds);
@@ -120,7 +121,7 @@ export default function App() {
   const proposal = selectedProposal ? state.proposals.get(selectedProposal) : null;
 
   return (
-    <div className="loom-shell" data-tier={effectiveTier} style={overrides}>
+    <div className="loom-shell" data-tier={effTier} style={overrides}>
       <header className="loom-bar">
         <strong>The Loom</strong>
         <span className="loom-counts">
@@ -175,9 +176,9 @@ export default function App() {
                 className="loom-btn loom-btn--ok"
                 onClick={() => void postEvent({ writer: 'human', kind: 'approve', proposal: proposal.id }, humanId)}
               >
-                {effectiveTier === 'beginner' ? 'Looks good' : 'Approve'}
+                {approveLabel(effTier)}
               </button>
-              {effectiveTier === 'beginner' && !notYet ? (
+              {effTier === 'beginner' && !notYet ? (
                 <button className="loom-btn loom-btn--no" onClick={() => setNotYet(true)}>
                   Not yet
                 </button>
@@ -197,7 +198,7 @@ export default function App() {
                           writer: 'human',
                           kind: 'reject',
                           proposal: proposal.id,
-                          reason: rejectReason.trim() || (effectiveTier === 'beginner' ? 'deferred by human' : 'rejected by human'),
+                          reason: rejectReasonFor(effTier, rejectReason),
                         },
                         humanId,
                       );
@@ -210,7 +211,7 @@ export default function App() {
                 </div>
               )}
             </div>
-            {effectiveTier === 'advanced' && (
+            {effTier === 'advanced' && (
               <pre className="loom-json">{JSON.stringify(proposal.body, null, 2)}</pre>
             )}
           </div>

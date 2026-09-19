@@ -194,8 +194,10 @@ writes a `review`, `approve`, `reject`, or `revise`; its rewrite is a
 render-layer translation, not a log event.
 
 The human's decision in the log is always a decision about the **original**
-body, not the mediated one. Mediation is transparent: the log may show a
-`presence` event indicating mediated review, but no shadow revisions.
+body, not the mediated one. Mediation is silent: the mediator's read is not
+recorded, and the human's decision is the only log entry. A deployment that
+needs auditable mediation may post a `presence` event — the schema supports
+it — but the reference mediator does not. There are no shadow revisions.
 
 The mediator's read-only constraint is enforced by **code review and by its
 location in a sealed directory**, not by the gate. The gate catches structural

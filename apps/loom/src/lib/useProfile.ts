@@ -15,7 +15,10 @@ export interface UseProfile {
 }
 
 export function useProfile(): UseProfile {
-  const [humanId] = useState<string | null>(() => resolveHumanId());
+  const search = typeof location !== 'undefined' ? location.search : '';
+  // Resolves once. Navigating between ?id= / ?tier= values in the same
+  // session does not re-resolve; reload to switch identity or tier.
+  const [humanId] = useState<string | null>(() => resolveHumanId(search));
   const [profile, setProfile] = useState<HumanProfile | null>(null);
 
   useEffect(() => {
@@ -36,6 +39,6 @@ export function useProfile(): UseProfile {
     humanId,
     profile,
     overrides: presentationOverrides(profile),
-    tier: resolveTier(profile),
+    tier: resolveTier(profile, search),
   };
 }

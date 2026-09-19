@@ -28,6 +28,9 @@ function loomMiddleware(): Plugin {
           req.on('data', (c) => (body += c));
           req.on('end', () => {
             try {
+              // `input.humanId` is client-asserted. There is no authentication.
+              // A future authenticated wrapper sets it server-side from the
+              // session before commit(); the client value is advisory only.
               const { input } = JSON.parse(body || '{}');
               const r = commit(logPath, input);
               res.setHeader('Content-Type', 'application/json');
