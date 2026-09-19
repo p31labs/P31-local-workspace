@@ -395,3 +395,186 @@ export const SEMANTIC_MAP: Record<string, SemanticSlot> = {
   'motion.duration.fast':   { literal: '150ms',                            type: 'duration' },
   'motion.easing.standard': { literal: 'cubic-bezier(0.4, 0, 0.2, 1)',     type: 'cubicBezier' },
 };
+
+// ============================================================================
+// design-core compatibility layer — Phase 1 absorption
+// ============================================================================
+// Ported VERBATIM from @p31/design-core/src/css/tokens.css so canon can become
+// the sole token writer. Nothing here is reconciled against canon's palette:
+// the 27 names both systems define keep their divergent values until the
+// deliberate redesign (Phase 4). GLOBAL_COMPAT tokens are theme-agnostic and
+// are emitted once in :root. CONDITIONAL_CSS reproduces design-core's brand /
+// spoon / dark / light / portal override blocks and is emitted UNLAYERED after
+// the layered theme blocks so the cascade matches design-core exactly.
+
+export const GLOBAL_COMPAT: Record<string, string> = {
+  '--p31-accent-alt': 'oklch(65% 0.18 285)',
+  '--p31-text': 'oklch(96% 0.005 240)',
+  '--p31-glass-border-hover': 'oklch(100% 0.01 240 / 0.15)',
+  '--p31-glass-blur': 'blur(12px)',
+  '--p31-glass-bg-strong': 'oklch(100% 0.01 75 / 0.22)',
+  '--p31-glass-bg-overlay': 'oklch(100% 0.01 75 / 0.10)',
+  '--p31-glass-bg-light': 'oklch(100% 0.01 75 / 0.10)',
+  '--p31-glass-border-strong': 'oklch(100% 0.01 75 / 0.16)',
+  '--p31-glass-border-strong-hover': 'oklch(100% 0.01 75 / 0.25)',
+  '--p31-glow-cyan': '0 0 20px rgba(0,240,255,0.25)',
+  '--p31-glow-neon': '0 0 6px oklch(90.5% 0.155 194.8), 0 0 20px oklch(90.5% 0.155 194.8 / 0.3)',
+  '--p31-glow-magenta': '0 0 6px oklch(70.2% 0.322 328.4), 0 0 20px oklch(70.2% 0.322 328.4 / 0.3)',
+  '--p31-glow-violet': '0 0 6px oklch(67.0% 0.234 309.1), 0 0 20px oklch(67.0% 0.234 309.1 / 0.3)',
+  '--p31-glow-amber': '0 0 6px oklch(88.7% 0.182 95.3), 0 0 20px oklch(88.7% 0.182 95.3 / 0.3)',
+  '--p31-glow-mint': '0 0 6px oklch(87.6% 0.228 152.5), 0 0 20px oklch(87.6% 0.228 152.5 / 0.3)',
+  '--p31-glow-coral': '0 0 6px oklch(71.2% 0.181 22.8), 0 0 20px oklch(71.2% 0.181 22.8 / 0.3)',
+  '--p31-neon': 'oklch(90.5% 0.155 194.8)',
+  '--p31-neon-dim': 'oklch(90.5% 0.155 194.8 / 0.35)',
+  '--p31-neon-faint': 'oklch(90.5% 0.155 194.8 / 0.08)',
+  '--p31-neon-ghost': 'oklch(90.5% 0.155 194.8 / 0.03)',
+  '--p31-neon-cyan': 'oklch(90.5% 0.155 194.8)',
+  '--p31-neon-magenta': 'oklch(70.2% 0.322 328.4)',
+  '--p31-neon-violet': 'oklch(67.0% 0.234 309.1)',
+  '--p31-neon-amber': 'oklch(88.7% 0.182 95.3)',
+  '--p31-neon-mint': 'oklch(87.6% 0.228 152.5)',
+  '--p31-neon-coral': 'oklch(71.2% 0.181 22.8)',
+  '--p31-neon-orange': 'oklch(75.4% 0.164 50.4)',
+  '--p31-neon-blue': 'oklch(80.4% 0.146 219.5)',
+  '--p31-neon-lavender': 'oklch(62% 0.279 290.8)',
+  '--p31-neon-pink': 'oklch(67.4% 0.293 340.4)',
+  '--p31-surface-s1': 'oklch(0% 0 0)',
+  '--p31-surface-s2': 'oklch(4.9% 0 0)',
+  '--p31-surface-s3': 'oklch(6.9% 0 0)',
+  '--p31-surface-s4': 'oklch(10.5% 0 0)',
+  '--p31-status-online': 'oklch(65% 0.18 105)',
+  '--p31-status-offline': 'oklch(78% 0.01 240)',
+  '--p31-status-warning': 'oklch(65% 0.18 15)',
+  '--p31-status-error': 'oklch(65% 0.18 20)',
+  '--p31-status-info': 'oklch(65% 0.18 195)',
+  '--p31-scale-3xl': 'calc(var(--p31-base) * 4.2139)',
+  '--p31-scale-4xl': 'calc(var(--p31-base) * 5.6186)',
+  '--p31-type-caption': 'clamp(var(--p31-scale-xs), 0.8vw, var(--p31-scale-sm))',
+  '--p31-type-body': 'clamp(calc(var(--p31-base) * 0.95), 1vw + 0.5rem, var(--p31-scale-sm))',
+  '--p31-type-label': 'var(--p31-scale-sm)',
+  '--p31-type-h3': 'clamp(var(--p31-scale-md), 2vw, var(--p31-scale-lg))',
+  '--p31-type-h2': 'clamp(var(--p31-scale-lg), 3.5vw, var(--p31-scale-xl))',
+  '--p31-type-h1': 'clamp(var(--p31-scale-xl), 5.6vw, var(--p31-scale-2xl))',
+  '--p31-type-display': 'clamp(var(--p31-scale-2xl), 7vw, var(--p31-scale-3xl))',
+  '--p31-font-display': "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+  '--p31-duration-fast': '100ms',
+  '--p31-duration-normal': '300ms',
+  '--p31-duration-slow': '500ms',
+  '--p31-easing-smooth': 'cubic-bezier(0.4, 0, 0.2, 1)',
+  '--p31-easing-snappy': 'cubic-bezier(0.34, 1.56, 0.64, 1)',
+  '--p31-easing-linear': 'linear',
+  '--p31-speed-factor': '1',
+  '--p31-starfield-hearth': 'oklch(55% 0.15 35)',
+  '--p31-starfield-teal': 'oklch(60% 0.08 185)',
+  '--p31-starfield-remembrance': 'oklch(95% 0.01 80)',
+  '--p31-starfield-particle-teal': 'oklch(70% 0.12 185 / 0.6)',
+  '--p31-starfield-particle-coral': 'oklch(65% 0.14 40 / 0.5)',
+  '--p31-blur-subtle': '8px',
+  '--p31-blur-standard': '12px',
+  '--p31-blur-strong': '24px',
+  '--p31-space-xs': 'clamp(var(--p31-scale-xs), 1vw, var(--p31-scale-sm))',
+  '--p31-space-sm': 'clamp(var(--p31-scale-sm), 1.5vw, var(--p31-scale-md))',
+  '--p31-space-md': 'clamp(var(--p31-scale-md), 2.5vw, var(--p31-scale-lg))',
+  '--p31-space-lg': 'clamp(var(--p31-scale-lg), 3.5vw, var(--p31-scale-xl))',
+  '--p31-space-xl': 'clamp(var(--p31-scale-xl), 5vw, var(--p31-scale-2xl))',
+  '--p31-space-2xl': 'clamp(var(--p31-scale-2xl), 6.5vw, var(--p31-scale-3xl))',
+  '--p31-space-tiny': '2px',
+  '--p31-radius-xl': 'calc(var(--p31-scale-xl) / 2)',
+  '--p31-radius-candy': '24px',
+  '--p31-touch-min': '48px',
+  '--p31-touch-recommended': '56px',
+  '--p31-touch-large': '64px',
+  '--p31-z-starfield': '0',
+  '--p31-z-topbar': '10',
+  '--p31-z-toast': '9999',
+  '--p31-z-crisis': '99999',
+  '--p31-z-skip-link': '100',
+  '--p31-topbar-height': '64px',
+  '--p31-z-content': '1',
+  '--p31-z-floating': '60',
+  '--p31-space-3xl': '64px',
+};
+
+/** design-core conditional override blocks, reproduced verbatim. Emitted
+ *  unlayered so their cascade position matches design-core's tokens.css. */
+export const CONDITIONAL_CSS = `
+[data-brand="p31ca"] {
+  --p31-glass-bg: oklch(14% 0.02 260 / 0.35);
+  --p31-glass-border: oklch(100% 0.01 240 / 0.12);
+  --p31-glass-border-hover: oklch(100% 0.01 240 / 0.25);
+  --p31-glass-blur: blur(24px);
+}
+[data-brand="phosphorus31"] {
+  --p31-glass-bg: oklch(99% 0.01 85 / 0.55);
+  --p31-glass-border: oklch(80% 0.02 75 / 0.3);
+  --p31-glass-border-hover: oklch(70% 0.03 70 / 0.4);
+  --p31-glass-blur: blur(16px);
+}
+[data-brand="willow"] {
+  --p31-glass-bg: rgba(255, 248, 240, 0.7);
+  --p31-glass-border: rgba(200, 180, 160, 0.25);
+  --p31-glass-blur: blur(16px);
+  --p31-text: oklch(25% 0.02 80);
+  --p31-text-secondary: oklch(55% 0.02 75);
+  --p31-accent: oklch(65% 0.18 45);
+  --p31-accent-alt: oklch(60% 0.15 200);
+  --p31-accent-gold: oklch(72% 0.14 80);
+  --p31-accent-green: oklch(70% 0.12 120);
+  --p31-accent-red: oklch(62% 0.15 10);
+  --p31-font-sans: "Comic Sans MS", "Chalkboard SE", cursive, sans-serif;
+  --p31-font-display: "Comic Sans MS", "Chalkboard SE", cursive;
+  --p31-radius-sm: 12px;
+  --p31-radius-md: 20px;
+  --p31-radius-lg: 28px;
+  --p31-radius-xl: 40px;
+  --p31-radius-full: 9999px;
+  --p31-space-xs: 0.5rem;
+  --p31-space-sm: 0.75rem;
+  --p31-space-md: 1.25rem;
+  --p31-space-lg: 2rem;
+  --p31-space-xl: 2.5rem;
+  --p31-space-2xl: 4rem;
+  --p31-duration-fast: 200ms;
+  --p31-duration-normal: 400ms;
+  --p31-duration-slow: 600ms;
+  --p31-easing-smooth: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --p31-easing-snappy: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --p31-touch-min: 56px;
+  --p31-touch-recommended: 64px;
+}
+[data-spoons="0"] { --p31-speed-factor: 0; --p31-glass-blur: none; }
+[data-spoons="1"] { --p31-speed-factor: 0; --p31-glass-blur: none; }
+[data-spoons="2"] { --p31-speed-factor: 0.25; --p31-glass-blur: blur(4px); }
+[data-spoons="3"] { --p31-speed-factor: 0.5; --p31-glass-blur: blur(8px); }
+[data-spoons="4"] { --p31-speed-factor: 0.75; --p31-glass-blur: blur(12px); }
+[data-spoons="5"] { --p31-speed-factor: 1; --p31-glass-blur: blur(16px); }
+@media (prefers-reduced-motion: reduce) {
+  :root { --p31-speed-factor: 0; }
+}
+[data-dark-mode="true"] {
+  --p31-glass-bg: rgba(30, 28, 26, 0.8);
+  --p31-glass-border: rgba(80, 75, 70, 0.3);
+  --p31-text: oklch(90% 0.01 80);
+  --p31-text-secondary: oklch(65% 0.02 80);
+}
+[data-theme="light"] {
+  --p31-bg: #F8FAFC;
+  --p31-surface: #FFFFFF;
+  --p31-surface2: #F1F5F9;
+  --p31-text: #0F172A;
+  --p31-text-secondary: rgba(15,23,42,0.6);
+  --p31-text-tertiary: rgba(15,23,42,0.3);
+  --p31-glass-bg: rgba(0,0,0,0.03);
+  --p31-glass-border: rgba(0,0,0,0.08);
+  --p31-glass-border-hover: rgba(0,0,0,0.15);
+}
+[data-portal="mesh"] { --p31-portal-accent: var(--p31-accent); --p31-portal-glow: rgba(0, 240, 255, 0.08); }
+[data-portal="research"] { --p31-portal-accent: var(--p31-accent-violet); --p31-portal-glow: rgba(167, 139, 250, 0.08); }
+[data-portal="quantum"] { --p31-portal-accent: var(--p31-accent-alt); --p31-portal-glow: rgba(139, 92, 246, 0.08); }
+[data-portal="build"] { --p31-portal-accent: var(--p31-accent-green); --p31-portal-glow: rgba(52, 211, 153, 0.08); }
+[data-portal="blog"] { --p31-portal-accent: var(--p31-accent); --p31-portal-glow: rgba(0, 240, 255, 0.06); }
+[data-portal="passport"] { --p31-portal-accent: var(--p31-accent-iris); --p31-portal-glow: rgba(139, 92, 246, 0.08); }
+[data-portal="care"] { --p31-portal-accent: var(--p31-accent-gold); --p31-portal-glow: rgba(251, 191, 36, 0.08); }
+[data-portal] main,
+[data-portal] .portal-content { position: relative; z-index: 1; }
+`;

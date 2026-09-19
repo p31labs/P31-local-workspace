@@ -26,7 +26,7 @@ import { writeFileSync, mkdirSync } from 'node:fs'
 import { join, dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import StyleDictionary from 'style-dictionary'
-import { THEMES, THEME_IDS, DEFAULT_THEME, BASE, SEMANTIC_MAP } from '../src/theming/theme-store.ts'
+import { THEMES, THEME_IDS, DEFAULT_THEME, BASE, SEMANTIC_MAP, GLOBAL_COMPAT, CONDITIONAL_CSS } from '../src/theming/theme-store.ts'
 
 const here = dirname(fileURLToPath(import.meta.url))
 const root = resolve(here, '..')
@@ -39,9 +39,17 @@ mkdirSync(join(tokensDir, 'dist'), { recursive: true })
 
 /** Map a --p31-* name to its DTCG $type. */
 function typeFor(name) {
-  if (name === 'glass-shadow') return 'boxShadow'
+  if (name === 'glass-shadow' || name.startsWith('glow-')) return 'boxShadow'
   if (name.startsWith('font-')) return 'fontFamily'
-  if (name.startsWith('scale-') || name.startsWith('radius-') || name === 'base') return 'dimension'
+  if (name.startsWith('duration-')) return 'duration'
+  if (name.startsWith('easing-')) return 'cubicBezier'
+  if (name.startsWith('z-') || name === 'speed-factor') return 'number'
+  if (
+    name.startsWith('scale-') || name.startsWith('radius-') ||
+    name.startsWith('space-') || name.startsWith('type-') ||
+    name.startsWith('blur-') || name.startsWith('touch-') ||
+    name === 'base' || name === 'topbar-height' || name === 'glass-blur'
+  ) return 'dimension'
   return 'color'
 }
 
@@ -90,6 +98,13 @@ const p31 = {}
 
 // Primitives (theme-agnostic)
 for (const [full, value] of Object.entries(BASE)) {
+  const name = bare(full)
+  p31[name] = dt(value, typeFor(name))
+}
+
+// design-core compatibility tokens (Phase 1 absorption) — same namespace,
+// verbatim values, no reconciliation yet.
+for (const [full, value] of Object.entries(GLOBAL_COMPAT)) {
   const name = bare(full)
   p31[name] = dt(value, typeFor(name))
 }
@@ -162,8 +177,12 @@ function semanticCssVars(themeId) {
 }
 
 /** Emit `selector { --p31-*: value; }` from a theme's palette + semantic vars. */
-function cssBlock(selector, themeId) {
-  const tokens = { ...THEMES[themeId].tokens, ...semanticCssVars(themeId) }
+function cssBlock(selector, themeId, includeGlobals = false) {
+  const tokens = {
+    ...(includeGlobals ? GLOBAL_COMPAT : {}),
+    ...THEMES[themeId].tokens,
+    ...semanticCssVars(themeId),
+  }
   const lines = Object.entries(tokens)
     .map(([prop, value]) => `  ${prop}: ${value};`)
     .join('\n')
@@ -178,11 +197,13 @@ const LAYER_ORDER = '@layer p31.tokens, p31.reset, p31.base, p31.layout, p31.com
 let css = '/**\n * @p31/canon — tokens.css. Do not edit directly; run `pnpm gen:tokens`.\n * Derived from src/theming/theme-store.ts (single source of truth).\n * Names are the runtime --p31-* contract; values change per theme.\n * Palette vars (--p31-bg, --p31-accent, …) AND semantic slots\n * (color.action.*, space.inline.*, font.size.*, motion.*) are emitted here.\n */\n\n'
 css += LAYER_ORDER + '\n'
 css += '@layer p31.tokens {\n'
-css += cssBlock(':root', DEFAULT_THEME)
+css += cssBlock(':root', DEFAULT_THEME, true)
 for (const id of THEME_IDS) {
   css += '\n' + cssBlock(`[data-theme="${id}"]`, id)
 }
 css += '}\n'
+css += '\n/* ── design-core compatibility (unlayered) — Phase 1 absorption ── */\n'
+css += CONDITIONAL_CSS
 writeFileSync(join(distDir, 'tokens.css'), css)
 
 // ---------------------------------------------------------------------
