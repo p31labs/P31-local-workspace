@@ -2,10 +2,11 @@
 /**
  * @p31/canon-react — verify-contract.mjs
  *
- * Three deterministic scorers applied to Button against buttonContract:
- *   prop-validity   every declared prop exists in the contract
- *   enum-validity   every enum union matches the contract's options
- *   import-match    the contract importStatement matches the canonical import
+ * Four deterministic scorers applied to Button against buttonContract:
+ *   shape-completeness  every schema-declared top-level field is present
+ *   prop-validity       every declared prop exists in the contract
+ *   enum-validity       every enum union matches the contract's options
+ *   import-match        the contract importStatement matches the canonical import
  *
  * Static analysis — it reads source, not runtime. A runtime eval harness
  * comes in Phase 3; this catches source-level drift today.
@@ -105,6 +106,33 @@ for (const [state, spec] of Object.entries(contract.interactionStates)) {
   }
 }
 
+// ── shape-completeness ─────────────────────────────────────────────
+// The contract is the only input to the derived-state harness. If a
+// top-level field is dropped — e.g. during a file reconstruction — the
+// schema can still accept the remainder because `caveats`, `antiExamples`,
+// and `status` are defaulted. This scorer makes "structurally complete"
+// machine-checked instead of a prose claim.
+const requiredFields = [
+  'name', 'layer', 'status', 'intent', 'props', 'tokenContract',
+  'semanticParts', 'requiredAria', 'interactionStates',
+  'caveats', 'sources', 'importStatement', 'antiExamples',
+];
+for (const field of requiredFields) {
+  if (!(field in contract)) {
+    fail(`shape-completeness: contract is missing top-level field "${field}"`);
+    continue;
+  }
+  const value = contract[field];
+  const empty =
+    value === undefined ||
+    value === null ||
+    (Array.isArray(value) && value.length === 0) ||
+    (typeof value === 'object' && !Array.isArray(value) && Object.keys(value).length === 0);
+  if (empty) {
+    fail(`shape-completeness: field "${field}" is present but empty`);
+  }
+}
+
 if (failures.length) {
   console.error('\n❌ canon-react verify-contract FAILED:');
   for (const f of failures) console.error(`   • ${f}`);
@@ -113,6 +141,7 @@ if (failures.length) {
 }
 
 console.log(`✅ canon-react verify-contract: Button matches contract`);
+console.log(`   shape-completeness ✓ (${requiredFields.length} fields)`);
 console.log(`   prop-validity  ✓ (${contract.props.length} props)`);
 console.log(`   enum-validity  ✓ (${enumProbes.length} enums)`);
 console.log(`   import-match   ✓ ("${expectedImport}")`);

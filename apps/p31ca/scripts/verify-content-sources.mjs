@@ -50,8 +50,9 @@ function main() {
     for (const issue of issues) {
       console.error(`  • ${issue}`);
     }
-    console.error(`\n  Run: node scripts/fetch-content-stats.mjs --force`);
-    console.error(`  Or manually update lastVerified in the affected files.\n`);
+    console.error(`\n  Auto-refreshable:   stats.json → node scripts/fetch-content-stats.mjs --force`);
+    console.error(`  Manual (live/human): love.json (LOVE ledger), nonprofit.json (IRS status), constants.json`);
+    console.error(`  Do NOT bump lastVerified without re-verifying the values — a re-stamp with no check is a false pass.\n`);
 
     if (!DRY_RUN) process.exit(1);
   }

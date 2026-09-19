@@ -270,9 +270,16 @@ requiredAria, semanticParts, antiExamples — and written at
 `packages/canon/src/contracts/button.contract.ts`. The probe artifact
 was then deleted from the contracts directory.
 
-Final byte count of the restored file: 6026 bytes (structural content
-matches the 7767-byte record; the difference is comment/description
-verbosity). All gates pass at this byte count — see gate results below.
+Final byte count of the restored file: 6026 bytes. The "7767-byte record"
+cited above is the fixture-era snapshot (files table under "Fixture
+derivation") — a DIFFERENT revision, not the file that was lost. Byte
+counts are not a completeness proof: two revisions of the same contract
+differ by comment/description verbosity. Structural completeness is now
+machine-checked by the `shape-completeness` scorer in `verify-contract.mjs`,
+which asserts every top-level field of `ComponentContractSchema` is present
+and non-empty (negative-tested: removing `caveats` fails the scorer with
+exit 1). Byte counts are evidence of what is on disk; the scorer is evidence
+of what is in the file.
 
 Evidence (all captured in the same session):
   schema tsc --noEmit → clean, exit 0
@@ -281,8 +288,15 @@ Evidence (all captured in the same session):
   canon-react pnpm test → 14/14, exit 0
   canon-react check-css-vars → 17/17, exit 0
   playwright verify-states → 6/6, exit 0
-  differential (error state w/ fixture) → 7 tests, 6 pass, 1 fail on assertion, exit 0
+  differential (error state w/ fixture) → 7 tests, 6 pass, 1 fail on assertion, exit 1
   after restore → 6/6, exit 0
+
+NOTE (evidence correction): the differential's exit code was first recorded
+as 0 here. That was wrong — the capturing command was
+`npx playwright test … | tail -15; echo "pw_exit=$?"`, and `$?` after a
+pipe is `tail`'s status, not Playwright's. A run with 1 failed test exits 1.
+The line now records 1. Same pipe-masking bug class; see the Shell Hygiene
+rule in AGENTS.md.
 
 Root-cause rule added: never run a destructive `rm` in the same shell
 line as any other operation, and back up to a path that command cannot
@@ -290,8 +304,90 @@ touch before the delete runs. The loss was preventable.
 
 Still red:
   pnpm --filter p31ca build → exit 1 (pre-build content freshness).
-  love.json and nonprofit.json are 738h stale vs the 720h threshold.
+  love.json and nonprofit.json are stale vs the 720h threshold.
   `fetch-content-stats.mjs --force` only refreshes stats.json.
   love.json needs LIVE k4-cage ledger values; nonprofit.json needs
   current IRS status. Both are human actions or dashboard checks,
   not code changes. Logged as the next owner's blocker.
+
+## 2026-09-19 — evidence re-baseline + recoverability
+
+All prior byte-count tables in this file are historical snapshots of
+different revisions. The current on-disk revision (sha256 of
+button.contract.ts: d3937647…; 6026 bytes) is:
+
+```
+schema.ts                    12863
+button.contract.ts            6026
+validate-contracts.mjs        7989
+migrate-contract.mjs          5901
+verify-contract.mjs           6263  (+ shape-completeness scorer)
+tests/e2e/verify-states.spec.ts 3828
+check-css-vars.mjs            2969
+```
+
+Recoverability: `packages/canon`, `packages/canon-react`, `packages/canon-mcp`,
+and the Button harness (`tests/e2e/verify-states.spec.ts`,
+`playwright-button.config.ts`) were untracked — the reason the
+button.contract.ts loss could not be recovered from git. They are now
+tracked (commit 7410886d). Untracked is unrecoverable; that is closed.
+
+## 2026-09-19 — p31ca content freshness: verification attempted, no bypass
+
+`pnpm --filter p31ca build` still exits 1 at the prebuild freshness gate
+(`verify-content-sources.mjs`): love.json + nonprofit.json `lastVerified`
+2026-08-19, 31d > the 30d threshold. Checked whether the values can be
+re-verified live (2026-09-19):
+
+```
+GET https://k4-cage.trimtab-signal.workers.dev/api/mesh        → 200
+    exposes topology / vertices(4) / edges(6) + per-node love
+    (Will 1, S.J. 1, W.J. 0, Christyn 0). No totalLove=276 and no
+    92/47/36/74 breakdown — love.json's shape is a different source.
+GET /api/love|ledger|stats|summary|mesh/love on k4-cage        → 404
+GET https://love-ledger.p31ca.org/health                       → 200 (v1.4.0)
+GET /api/love|stats|summary|ledger|v1/stats, /openapi.json     → 404
+```
+
+No reachable, authorized endpoint exposes love.json's fields. nonprofit.json's
+`irsStatus` is an external legal fact (IRS determination letter) with no API.
+
+Decision: did NOT bump `lastVerified` and did NOT raise `stalenessThreshold`.
+`ground-truth/content/README.md` documents both files as **monthly** manual
+updates, so 30d is the correct threshold; raising it or re-stamping would be
+a bypass, not a fix ("prove or caveat, never fake"). The gate is
+expected-red and is not caused by the canon work.
+
+Also fixed the gate's remediation message: it told the operator to run
+`fetch-content-stats.mjs --force`, which only touches stats.json and would
+not clear love/nonprofit. It now separates auto-refreshable from manual
+files and warns against re-stamping without a check.
+
+Owner action required (not a code change):
+- `love.json` — supply live LOVE ledger totals (`totalLove`, `vertices.*`).
+- `nonprofit.json` — confirm IRS status / determination letter for EIN 42-1888158.
+
+## 2026-09-19 — final gate table (post-fix)
+
+Captured with explicit exit codes, no pipe masking (`cmd > file 2>&1; echo $?`):
+
+```
+canon validate-contracts     exit 0   1 validated, 290 tokens, 6-state record
+canon tsc --noEmit           exit 0
+canon-react verify-contract  exit 0   shape-completeness(13), prop(5), enum(2), import, state-record(6)
+canon-react pnpm test        exit 0   14/14
+canon-react check-css-vars   exit 0   17/17 var(--p31-*)
+playwright verify-states     exit 0   6/6 (chromium)
+verify-content-sources       exit 1   expected-red: love/nonprofit stale — owner action, see above
+```
+
+Negative test of the new scorer (a gate, not a label):
+
+```
+verify-contract (caveats removed)  exit 1   shape-completeness: contract is missing top-level field "caveats"
+verify-contract (restored)         exit 0   sha256 d3937647… unchanged
+```
+
+Current byte counts are in the "evidence re-baseline" section above;
+`verify-contract.mjs` is now 6263 (was 4888, +1375 for the scorer).
+`verify-content-sources.mjs` is 2310 (accurate remediation message).

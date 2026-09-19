@@ -148,6 +148,10 @@ The following compositions are now available in `@p31/design-core/compositions`:
 - Deprecation: 3-month warning, `$deprecated` flag in DTCG JSON
 - Semantic versioning: MAJOR.MINOR.PATCH
 
+## Shell Hygiene
+- A pipe masks failure: `cmd | tail; echo $?` reports `tail`'s status, not `cmd`'s. Use `set -o pipefail`, read `${PIPESTATUS[0]}`, or drop the pipe. A recorded "exit 0" after a command that failed is an evidence lie.
+- Never run a destructive `rm` in the same shell line as any other operation. Back up to a path that line cannot touch before the delete runs.
+
 ## Protection Systems — Mandatory Pre-Operation Checks
 
 Before any destructive git operation (`git checkout HEAD --`, `git reset --hard`, `git clean -fd`), a running agent MUST:
