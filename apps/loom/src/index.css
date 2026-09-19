@@ -100,6 +100,15 @@ body {
 .loom-node--proposal--approved { border-style: solid; border-color: var(--p31-accent-green, #34d399); }
 .loom-node--proposal--rejected { border-color: var(--p31-accent-red, #fb7185); text-decoration: line-through; }
 
+/* Proposal ghost: label + body-survival bar */
+.loom-proposal-node { display: flex; flex-direction: column; gap: 3px; }
+.loom-proposal-label { font-size: 10px; white-space: nowrap; }
+.loom-survival-track { display: block; width: 64px; height: 3px; border-radius: 2px; background: rgba(255,255,255,0.1); overflow: hidden; }
+.loom-survival-fill { display: block; height: 100%; border-radius: 2px; transition: width 0.2s ease; }
+.loom-survival--ok { background: var(--p31-accent-green, #34d399); }
+.loom-survival--warn { background: var(--p31-accent-gold, #fbbf24); }
+.loom-survival--drift { background: var(--p31-accent-red, #fb7185); }
+
 .loom-edge { stroke: var(--p31-glass-border, rgba(255, 255, 255, 0.12)); }
 
 /* Event overlay */

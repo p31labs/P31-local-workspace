@@ -12,8 +12,11 @@ import { buildGraph, buildIdIndex } from './graph';
 import { useLoomState } from './lib/useLoomState';
 import { deriveOverlay } from './lib/overlay';
 import { EventOverlay } from './components/EventOverlay';
+import { ProposalNode } from './components/ProposalNode';
 import { TimelineScrubber } from './components/TimelineScrubber';
 import type { LoomEventInput } from '@p31/canon/loom/gate';
+
+const nodeTypes = { proposal: ProposalNode };
 
 /** The canvas writes ONLY through /api/loom/event -> commit(). */
 async function postEvent(input: LoomEventInput): Promise<void> {
@@ -58,10 +61,17 @@ export default function App() {
     const ghosts = overlay.ghosts.map((g) => {
       const target = g.nodeId ? positions.get(g.nodeId) : undefined;
       const pos = target ? { x: target.x + 64, y: target.y + 28 } : { x: 0, y: 0 };
+      const survival = Math.max(0, Math.min(1, g.overallSurvival));
+      const tone = survival > 0.8 ? 'loom-survival--ok' : survival > 0.5 ? 'loom-survival--warn' : 'loom-survival--drift';
       return {
         id: `ghost:${g.id}`,
         position: pos,
-        data: { label: `✳ ${g.id} · ${g.status}${g.nodeId ? '' : ' · unresolved'}` },
+        type: 'proposal',
+        data: {
+          label: `✳ ${g.id} · ${g.status}${g.nodeId ? '' : ' · unresolved'}`,
+          survival: g.overallSurvival,
+          tone,
+        },
         className: `loom-node loom-node--proposal loom-node--proposal--${g.status}`,
       };
     });
@@ -105,6 +115,7 @@ export default function App() {
         <ReactFlow
           nodes={nodes}
           edges={edges}
+          nodeTypes={nodeTypes}
           onNodeClick={onNodeClick}
           fitView
           minZoom={0.03}

@@ -13,6 +13,8 @@ export interface GhostProposal {
   /** Namespaced graph id the proposal targets, or null if unresolved. */
   nodeId: string | null;
   status: Proposal['status'];
+  /** Mean body survival across revisions, 1.0 = untouched. */
+  overallSurvival: number;
 }
 
 export interface Overlay {
@@ -38,6 +40,7 @@ export function deriveOverlay(state: LoomState, idIndex: Map<string, string>): O
       id: p.id,
       nodeId: idIndex.get(p.node) ?? null,
       status: p.status,
+      overallSurvival: p.overallSurvival,
     })),
   };
 }

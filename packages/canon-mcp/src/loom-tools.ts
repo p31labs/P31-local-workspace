@@ -28,6 +28,8 @@ export interface ProposalView {
   revision: number;
   body: unknown;
   reviews: Review[];
+  revisionSurvival: number[];
+  overallSurvival: number;
 }
 
 export interface ObserveResult {
@@ -50,6 +52,8 @@ export function observe(logPath: string, proposalId?: string): ObserveResult {
     revision: p.revision,
     body: p.body,
     reviews: p.reviews,
+    revisionSurvival: p.revisionSurvival,
+    overallSurvival: p.overallSurvival,
   }));
   const result: ObserveResult = {
     focused: state.focused,

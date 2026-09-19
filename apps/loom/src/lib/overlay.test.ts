@@ -41,12 +41,22 @@ describe('deriveOverlay', () => {
   it('projects proposals to ghosts with status', () => {
     const s = state({});
     s.proposals = new Map([
-      ['p1', { id: 'p1', node: '.feature-card', body: {}, author: 'unknown', status: 'pending', revision: 0, reviews: [] }],
+      ['p1', { id: 'p1', node: '.feature-card', body: {}, author: 'unknown', status: 'pending', revision: 0, reviews: [], revisionSurvival: [], overallSurvival: 1.0 }],
     ]);
     const o = deriveOverlay(s, idIndex);
     expect(o.ghosts).toHaveLength(1);
     expect(o.ghosts[0].nodeId).toBe('class:.feature-card');
     expect(o.ghosts[0].status).toBe('pending');
+    expect(o.ghosts[0].overallSurvival).toBe(1.0);
+  });
+
+  it('carries overallSurvival through to the ghost', () => {
+    const s = state({});
+    s.proposals = new Map([
+      ['p1', { id: 'p1', node: '.feature-card', body: {}, author: 'unknown', status: 'pending', revision: 1, reviews: [], revisionSurvival: [0.3], overallSurvival: 0.3 }],
+    ]);
+    const o = deriveOverlay(s, idIndex);
+    expect(o.ghosts[0].overallSurvival).toBe(0.3);
   });
 
   it('reports attention', () => {
