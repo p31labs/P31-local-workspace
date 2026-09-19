@@ -2,7 +2,7 @@ import { defineConfig, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
 import { commit } from '@p31/canon/loom/commit';
 import { readEvents } from '@p31/canon/loom/jsonl';
-import { resolveLogPath } from './src/lib/logPath';
+import { resolveLogPath } from '@p31/canon/loom/log-path';
 
 const logPath = resolveLogPath();
 

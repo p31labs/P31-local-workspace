@@ -9,7 +9,7 @@
  * Run: pnpm seed  (from apps/loom)
  */
 import { commit } from '@p31/canon/loom/commit';
-import { resolveLogPath } from '../src/lib/logPath.ts';
+import { resolveLogPath } from '@p31/canon/loom/log-path';
 
 const logPath = resolveLogPath();
 

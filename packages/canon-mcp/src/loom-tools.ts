@@ -16,24 +16,11 @@
 import { commit, type CommitResult } from '@p31/canon/loom/commit';
 import { readEvents } from '@p31/canon/loom/jsonl';
 import { replay, type LoomEvent, type Review } from '@p31/canon/loom/events';
-import { existsSync, watch, type FSWatcher } from 'node:fs';
-import { dirname, join, resolve } from 'node:path';
+import { watch, type FSWatcher } from 'node:fs';
 
-/** The log every handler reads and writes. cwd-walk to the repo root, or the
- *  LOOM_LOG env var. Same convention as the canvas's middleware so both sides
- *  of the log agree on one file. */
-export function resolveLogPath(): string {
-  if (process.env.LOOM_LOG) return process.env.LOOM_LOG;
-  let dir = resolve(process.cwd());
-  for (;;) {
-    if (existsSync(join(dir, 'pnpm-workspace.yaml'))) {
-      return join(dir, '.loom', 'events.jsonl');
-    }
-    const parent = dirname(dir);
-    if (parent === dir) throw new Error('repo root not found (no pnpm-workspace.yaml up the tree)');
-    dir = parent;
-  }
-}
+/** Re-export the canonical resolver so existing importers (server.ts, the demo
+ *  agent) keep their surface. The implementation lives in @p31/canon. */
+export { resolveLogPath } from '@p31/canon/loom/log-path';
 
 export interface ProposalView {
   id: string;
