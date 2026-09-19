@@ -6,6 +6,7 @@
   "description": "MCP server exposing @p31/canon's component contracts to agents. Agents call list_components → get_contract → validate_contract before writing code against the canon.",
   "scripts": {
     "start": "tsx src/server.ts",
+    "start:http": "tsx src/http.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
