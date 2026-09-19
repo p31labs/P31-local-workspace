@@ -1,0 +1,146 @@
+/**
+ * @p31/canon — loom/gate.ts
+ *
+ * The Loom's integrity gate. Sits between the append API and the log:
+ *
+ *   - assigns `seq` and `ts` (the caller never does)
+ *   - enforces writer-per-kind (focus/revise/approve/reject = human;
+ *     traverse/propose/presence = agent)
+ *   - rejects duplicate proposal ids and orphan approvals/revises/rejects
+ *   - proves the reducer is deterministic (double replay + canonical compare)
+ *   - reconstructs state at any seq for the canvas scrubber
+ *
+ * It is the contract both parallel paths build against: if an event is in the
+ * log, it is guaranteed to replay. The agent appends through this; it never
+ * writes registry.json, contracts, or CSS.
+ */
+import type { LoomEvent, LoomState } from './events.ts';
+import { initialState, reduce as defaultReduce } from './events.ts';
+
+export type Reducer = (state: LoomState, event: LoomEvent) => LoomState;
+
+/** An event before the gate stamps it with seq + ts. */
+export type LoomEventInput =
+  | { writer: 'human'; kind: 'focus'; node: string }
+  | { writer: 'agent'; kind: 'traverse'; from: string; to: string; reason: string }
+  | { writer: 'agent'; kind: 'propose'; id: string; node: string; body: unknown }
+  | { writer: 'human'; kind: 'revise'; proposal: string; body: unknown }
+  | { writer: 'human'; kind: 'approve'; proposal: string }
+  | { writer: 'human'; kind: 'reject'; proposal: string; reason: string }
+  | { writer: 'agent'; kind: 'presence'; node: string; attention: number };
+
+const HUMAN_KINDS = new Set(['focus', 'revise', 'approve', 'reject']);
+const AGENT_KINDS = new Set(['traverse', 'propose', 'presence']);
+
+export interface GateResult {
+  valid: boolean;
+  error?: string;
+}
+
+/** Deterministic serialization of LoomState — the hashing surface for parity. */
+export function canonicalize(state: LoomState): string {
+  const proposals = [...state.proposals.entries()]
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([k, v]) => [k, { ...v }]);
+  return JSON.stringify({
+    focused: state.focused,
+    agentCursor: state.agentCursor,
+    agentAttention: state.agentAttention,
+    agentPath: state.agentPath,
+    proposals,
+  });
+}
+
+export class ReplayGate {
+  private log: LoomEvent[] = [];
+  private proposalIds = new Set<string>();
+  private seq = 0;
+
+  /** Validate, stamp with seq + ts, append. seq is assigned by the gate. */
+  append(input: LoomEventInput): GateResult {
+    const expected = HUMAN_KINDS.has(input.kind) ? 'human' : 'agent';
+    if (!HUMAN_KINDS.has(input.kind) && !AGENT_KINDS.has(input.kind)) {
+      return { valid: false, error: `unknown kind: ${(input as { kind: string }).kind}` };
+    }
+    if (input.writer !== expected) {
+      return { valid: false, error: `kind '${input.kind}' requires writer='${expected}', got '${input.writer}'` };
+    }
+    if (input.kind === 'propose' && this.proposalIds.has(input.id)) {
+      return { valid: false, error: `duplicate proposal id: ${input.id}` };
+    }
+    if (
+      (input.kind === 'revise' || input.kind === 'approve' || input.kind === 'reject') &&
+      !this.proposalIds.has(input.proposal)
+    ) {
+      return { valid: false, error: `unknown proposal: ${input.proposal}` };
+    }
+
+    const seq = this.seq;
+    const event = { ...input, seq, ts: new Date().toISOString() } as LoomEvent;
+    if (input.kind === 'propose') this.proposalIds.add(input.id);
+    this.log.push(event);
+    this.seq = seq + 1;
+    return { valid: true };
+  }
+
+  /** Replay the whole log twice and compare canonical state. Determinism proof. */
+  verify(reducer: Reducer = defaultReduce, seed: LoomState = initialState()): GateResult {
+    const a = this.fold(reducer, seed);
+    const b = this.fold(reducer, seed);
+    if (canonicalize(a) !== canonicalize(b)) {
+      return { valid: false, error: 'reducer is nondeterministic (two folds diverged)' };
+    }
+    return { valid: true };
+  }
+
+  private fold(reducer: Reducer, seed: LoomState): LoomState {
+    let s = seed;
+    for (const e of this.log) s = reducer(s, e);
+    return s;
+  }
+
+  /** State after folding events with seq <= until. For the canvas scrubber. */
+  stateAt(seq: number, reducer: Reducer = defaultReduce, seed: LoomState = initialState()): LoomState {
+    let s = seed;
+    for (const e of this.log) {
+      if (e.seq > seq) break;
+      s = reducer(s, e);
+    }
+    return s;
+  }
+
+  toJSONL(): string {
+    return this.log.map((e) => JSON.stringify(e)).join('\n');
+  }
+
+  fromJSONL(text: string): GateResult {
+    this.log = [];
+    this.proposalIds = new Set();
+    this.seq = 0;
+    for (const line of text.split('\n')) {
+      if (!line.trim()) continue;
+      let parsed: LoomEvent;
+      try {
+        parsed = JSON.parse(line) as LoomEvent;
+      } catch {
+        return { valid: false, error: `corrupt line: ${line.slice(0, 48)}` };
+      }
+      const { seq, ts, ...rest } = parsed as LoomEvent & { seq: number; ts: string };
+      const r = this.append(rest as LoomEventInput);
+      if (!r.valid) return r;
+      const last = this.log[this.log.length - 1];
+      last.seq = seq;
+      last.ts = ts;
+      this.seq = Math.max(this.seq, seq + 1);
+    }
+    return { valid: true };
+  }
+
+  getLog(): readonly LoomEvent[] {
+    return this.log;
+  }
+
+  getLogLength(): number {
+    return this.log.length;
+  }
+}
