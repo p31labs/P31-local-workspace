@@ -1,11 +1,20 @@
 {
   "schema": "p31.content.nonprofit/1.0.0",
   "version": "1.0.0",
-  "lastVerified": "2026-08-19T22:31:51.588Z",
+  "lastVerified": "2026-09-19T17:34:09.000Z",
   "stalenessThreshold": 30,
   "ein": "42-1888158",
-  "irsStatus": "pending",
-  "irsStatusDetail": "501(c)(3) application submitted, awaiting determination letter",
+  "irsStatus": "determined",
+  "irsStatusDetail": "501(c)(3) determination granted. Effective date of exemption 2026-04-03; IRS determination letter (Letter 947) dated 2026-05-13. Classified as a public charity under IRC 170(b)(1)(A)(vi); contributions deductible under IRC 170. Listed on IRS Publication 78 (deductibility code PC). IRS Business Master File ruling date 2026-05-01 (ProPublica extract current_2026_08_19).",
+  "irsEffectiveDate": "2026-04-03",
+  "irsLetterDate": "2026-05-13",
+  "irsRulingDate": "2026-05-01",
+  "irsPublicCharityStatus": "170(b)(1)(A)(vi)",
+  "irsPublication78": true,
+  "irsDeductibilityCode": "PC",
+  "irsDeterminationLetter": "FinalLetter_42-1888158_P31LABSINC_04032026_v1.0.pdf",
+  "annualReturnRequired": "990-N (e-Postcard) for tax year 2026; 990 or 990-EZ if gross receipts exceed thresholds",
+  "autoRevocationRisk": "Exempt status is automatically revoked after 3 consecutive years of non-filing (IRS letter, para 3).",
   "foundingYear": 2026,
   "entityType": "Georgia nonprofit corporation",
   "policyEffective": "2026-06-10",
@@ -18,5 +27,9 @@
       "effective": "2026-06-10",
       "lastUpdated": "2026-06-10"
     }
-  }
+  },
+  "sources": [
+    "https://projects.propublica.org/nonprofits/organizations/421888158",
+    "https://apps.irs.gov/app/eos"
+  ]
 }
