@@ -1,5 +1,8 @@
 # AGENTS.md — P31 Labs Design System
 
+> The Loom (shared agent/human event log) has its own doctrine: see
+> [AGENT_INSTRUCTIONS.md](./AGENT_INSTRUCTIONS.md).
+
 ## Identity
 You are operating inside the **P31 Labs** monorepo. The design system is the single source of truth for all P31 products: p31ca, phos, phosphorus31, willow, bonding, and the sovereign shell.
 

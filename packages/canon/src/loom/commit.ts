@@ -1,9 +1,9 @@
 /**
  * @p31/canon — loom/commit.ts
  *
- * The single write path. Every writer — human CLI, Gemini's MCP server,
- * Claude's canvas, DeepSeek's tooling — appends through commit(). It is the
- * only function that touches the JSONL file for writes.
+ * The single write path. Every writer — the human CLI, the presence server,
+ * the canvas, any agent — appends through commit(). It is the only function
+ * that touches the JSONL file for writes.
  *
  * Invariant: commit(logPath, input) either (a) validates through ReplayGate,
  * persists via appendEvent, and returns the stamped event, or (b) returns an

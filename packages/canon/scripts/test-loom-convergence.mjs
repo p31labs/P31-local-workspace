@@ -4,8 +4,8 @@
  *
  * Real convergence: three independent worker processes read the SAME JSONL log
  * from disk and fold it independently. Their canonical state hashes must be
- * identical. This is the proof that a second writer (Path β) and a third
- * (Claude's canvas) will see the same world DeepSeek's reducer produces.
+ * identical. This is the proof that a second writer and a third (the canvas
+ * role) will see the same world the substrate's reducer produces.
  *
  * Run: node scripts/test-loom-convergence.mjs  (from packages/canon)
  */
