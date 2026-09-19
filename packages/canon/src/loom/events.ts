@@ -34,11 +34,11 @@ export type Writer = 'human' | 'agent';
 export type LoomEvent =
   | { seq: number; ts: string; writer: 'human'; kind: 'focus'; node: string }
   | { seq: number; ts: string; writer: 'agent'; kind: 'traverse'; from: string; to: string; reason: string }
-  | { seq: number; ts: string; writer: 'agent'; kind: 'propose'; id: string; node: string; body: unknown; author?: string }
+  | { seq: number; ts: string; writer: 'agent'; kind: 'propose'; id: string; node: string; body: unknown; author?: string; parentAgent?: string }
   | { seq: number; ts: string; writer: 'human'; kind: 'revise'; proposal: string; body: unknown }
   | { seq: number; ts: string; writer: 'human'; kind: 'approve'; proposal: string }
   | { seq: number; ts: string; writer: 'human'; kind: 'reject'; proposal: string; reason: string }
-  | { seq: number; ts: string; writer: 'agent'; kind: 'review'; agent: string; proposalId: string; decision: 'approve' | 'amend' | 'reject'; reason?: string; revision: number }
+  | { seq: number; ts: string; writer: 'agent'; kind: 'review'; agent: string; proposalId: string; decision: 'approve' | 'amend' | 'reject'; reason?: string; revision: number; parentAgent?: string }
   | { seq: number; ts: string; writer: 'agent'; kind: 'presence'; node: string; attention: number };
 
 export type ProposalStatus = 'pending' | 'approved' | 'rejected';
@@ -66,6 +66,11 @@ export interface Proposal {
   revision: number;
   /** Append-only agent reviews. Advisory — never changes `status`. */
   reviews: Review[];
+  /** Survival score for each revise. Index i = survival of revision i+1
+   *  against revision i (Jaccard of leaf key=value pairs). Empty at revision 0. */
+  revisionSurvival: number[];
+  /** Mean of revisionSurvival, or 1.0 when there are no revisions. */
+  overallSurvival: number;
   reason?: string;
 }
 
@@ -90,6 +95,33 @@ export function initialState(): LoomState {
     agentPath: [],
     proposals: new Map<string, Proposal>(),
   };
+}
+
+/** Flatten an arbitrary JSON body into leaf `path=value` strings, deterministic.
+ *  Keys become path segments, array indices are `[i]`, scalars are `JSON.stringify`d
+ *  so a string `"1"` and a number `1` never collide. */
+function flatten(value: unknown, prefix = ''): string[] {
+  if (value === null || typeof value !== 'object') {
+    return [`${prefix}=${JSON.stringify(value)}`];
+  }
+  if (Array.isArray(value)) {
+    return value.flatMap((v, i) => flatten(v, `${prefix}[${i}]`));
+  }
+  return Object.entries(value as Record<string, unknown>).flatMap(([k, v]) =>
+    flatten(v, prefix ? `${prefix}.${k}` : k),
+  );
+}
+
+/** Jaccard overlap of two bodies' leaf key=value pairs. 1.0 = identical leaves;
+ *  0.0 = no shared leaves. Both-empty is 1.0 (no change); one-empty is 0.0. */
+function survival(prev: unknown, next: unknown): number {
+  const a = new Set(flatten(prev));
+  const b = new Set(flatten(next));
+  if (a.size === 0 && b.size === 0) return 1.0;
+  if (a.size === 0 || b.size === 0) return 0.0;
+  let inter = 0;
+  for (const x of a) if (b.has(x)) inter++;
+  return inter / (a.size + b.size - inter);
 }
 
 /** Pure fold. Returns a new state; never mutates the input or its maps. */
@@ -118,13 +150,18 @@ export function reduce(state: LoomState, event: LoomEvent): LoomState {
         status: 'pending',
         revision: 0,
         reviews: [],
+        revisionSurvival: [],
+        overallSurvival: 1.0,
       });
       break;
     case 'revise': {
       const p = proposals.get(event.proposal);
       if (p) {
         proposals = new Map(proposals);
-        proposals.set(p.id, { ...p, body: event.body, revision: p.revision + 1 });
+        const s = survival(p.body, event.body);
+        const revisionSurvival = [...p.revisionSurvival, s];
+        const overallSurvival = revisionSurvival.reduce((a, b) => a + b, 0) / revisionSurvival.length;
+        proposals.set(p.id, { ...p, body: event.body, revision: p.revision + 1, revisionSurvival, overallSurvival });
       }
       break;
     }

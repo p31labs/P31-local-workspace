@@ -78,6 +78,38 @@ not an enum**. Recommended shape: `<role>-<short-id>` (`substrate-a`,
 `presence-01`, `canvas-primary`). The choice is yours; the log records it. No
 code keys on model identity.
 
+## Delegation
+
+An agent spawned by another agent sets `parentAgent` on its `propose` and
+`review` events to its spawner's identity. A top-level agent omits the field.
+
+The log then records the delegation chain: an event's `agent` plus its
+`parentAgent`, recursively. This is the audit surface — attribution flows
+through the chain. The reducer and gate do nothing with the field; it is data,
+not structure.
+
+Nested delegation beyond one level is discouraged. Prefer chained top-level
+agents over recursion: AAuth caps delegation chains at one hop, and deep
+hierarchies accumulate drift across delegation layers (Agent Drift, 2026).
+The gate does **not** enforce this. The log records what happened; the
+doctrine advises what should have.
+
+## Drift
+
+Every `revise` computes a survival score: the Jaccard overlap of leaf
+`key=value` pairs between the prior body and the new body. The proposal
+carries `revisionSurvival` (one entry per revise) and `overallSurvival`
+(their mean, or 1.0 with no revisions).
+
+The metric is deterministic, computed without model calls, and agent-agnostic:
+it does not care whether a human or an agent wrote the revise. It measures
+whether the artifact is holding its shape across the chain. It is a fold of
+the log's own bodies, not an external judgment — "the log is the source of
+truth" still holds.
+
+A proposal whose survival scores fall below ~0.5 per revision has been
+redirected, not refined. That is a signal the human should see.
+
 ## The review event
 
 `review` is an agent-authored record of opinion on a proposal at a specific

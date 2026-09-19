@@ -26,11 +26,11 @@ export type Reducer = (state: LoomState, event: LoomEvent) => LoomState;
 export type LoomEventInput =
   | { writer: 'human'; kind: 'focus'; node: string }
   | { writer: 'agent'; kind: 'traverse'; from: string; to: string; reason: string }
-  | { writer: 'agent'; kind: 'propose'; id: string; node: string; body: unknown; author?: string }
+  | { writer: 'agent'; kind: 'propose'; id: string; node: string; body: unknown; author?: string; parentAgent?: string }
   | { writer: 'human'; kind: 'revise'; proposal: string; body: unknown }
   | { writer: 'human'; kind: 'approve'; proposal: string }
   | { writer: 'human'; kind: 'reject'; proposal: string; reason: string }
-  | { writer: 'agent'; kind: 'review'; agent: string; proposalId: string; decision: 'approve' | 'amend' | 'reject'; reason?: string; revision: number }
+  | { writer: 'agent'; kind: 'review'; agent: string; proposalId: string; decision: 'approve' | 'amend' | 'reject'; reason?: string; revision: number; parentAgent?: string }
   | { writer: 'agent'; kind: 'presence'; node: string; attention: number };
 
 const HUMAN_KINDS = new Set(['focus', 'revise', 'approve', 'reject']);
