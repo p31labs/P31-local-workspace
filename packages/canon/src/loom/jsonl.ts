@@ -48,7 +48,8 @@ export function readEvents(path: string): LoomEvent[] {
   return events.sort((a, b) => a.seq - b.seq);
 }
 
-/** The next sequence number to use for a log. */
+/** The next sequence number to use for a log. Empty log -> 0, so the first
+ *  event is seq 0 and always matches what ReplayGate stamps. */
 export function nextSeq(events: readonly LoomEvent[]): number {
-  return events.reduce((max, e) => Math.max(max, e.seq), 0) + 1;
+  return events.reduce((max, e) => Math.max(max, e.seq), -1) + 1;
 }

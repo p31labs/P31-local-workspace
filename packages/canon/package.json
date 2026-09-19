@@ -12,7 +12,7 @@
     "validate:contracts": "node scripts/validate-contracts.mjs",
     "validate:registry": "node scripts/validate-registry.mjs",
     "verify:parity": "node scripts/verify-token-parity.mjs",
-    "test:loom": "node scripts/test-loom-replay.mjs && node scripts/test-loom-gate.mjs && node scripts/test-loom-determinism.mjs && node scripts/test-loom-convergence.mjs",
+    "test:loom": "node scripts/test-loom-replay.mjs && node scripts/test-loom-gate.mjs && node scripts/test-loom-determinism.mjs && node scripts/test-loom-convergence.mjs && node scripts/test-loom-commit.mjs",
     "build:css": "node scripts/build-css.mjs",
     "build": "npm run gen:tokens && npm run validate:contracts && npm run build:css && npm run gen:registry && npm run validate:registry && npm run gen:exports"
   },
@@ -34,6 +34,7 @@
     "./css/recipes.css": "./dist/css/recipes.css",
     "./css/size-class.css": "./dist/css/size-class.css",
     "./css/typography.css": "./dist/css/typography.css",
+    "./loom/commit": "./src/loom/commit.ts",
     "./loom/events": "./src/loom/events.ts",
     "./loom/gate": "./src/loom/gate.ts",
     "./loom/jsonl": "./src/loom/jsonl.ts",
