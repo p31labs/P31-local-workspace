@@ -77,6 +77,11 @@ if (existsSync(cssDir)) {
   }
 }
 
+// The generated catalog. gen:registry writes it before gen:exports runs.
+if (existsSync(join(root, 'registry.json'))) {
+  derived['./registry.json'] = './registry.json'
+}
+
 // GHOST GATE — every target must resolve on disk before writing.
 const ghosts = []
 for (const [spec, target] of Object.entries(derived)) {

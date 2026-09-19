@@ -1,0 +1,2479 @@
+{
+  "generatedFrom": [
+    "dist/tokens.css",
+    "src/contracts/*.contract.ts",
+    "src/css/*.css",
+    "src/theming/theme-store.ts"
+  ],
+  "counts": {
+    "tokens": 158,
+    "components": 1,
+    "cssClasses": 119,
+    "themes": 9
+  },
+  "tokens": [
+    {
+      "name": "--p31-accent",
+      "value": "oklch(65% 0.18 195)",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-accent-alt",
+      "value": "oklch(65% 0.18 285)",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-accent-cyan",
+      "value": "oklch(70% 0.15 200)",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-accent-gold",
+      "value": "oklch(65% 0.18 15)",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-accent-green",
+      "value": "oklch(65% 0.18 105)",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-accent-iris",
+      "value": "oklch(65% 0.18 270)",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-accent-red",
+      "value": "oklch(65% 0.18 20)",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-accent-violet",
+      "value": "oklch(65% 0.18 285)",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-base",
+      "value": "16px",
+      "tier": "primitive",
+      "category": "other"
+    },
+    {
+      "name": "--p31-bg",
+      "value": "oklch(10% 0.01 240)",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-blur-standard",
+      "value": "12px",
+      "tier": "primitive",
+      "category": "other"
+    },
+    {
+      "name": "--p31-blur-strong",
+      "value": "24px",
+      "tier": "primitive",
+      "category": "other"
+    },
+    {
+      "name": "--p31-blur-subtle",
+      "value": "8px",
+      "tier": "primitive",
+      "category": "other"
+    },
+    {
+      "name": "--p31-body",
+      "value": "16px",
+      "tier": "primitive",
+      "category": "typography"
+    },
+    {
+      "name": "--p31-body-sm",
+      "value": "14px",
+      "tier": "primitive",
+      "category": "typography"
+    },
+    {
+      "name": "--p31-caption",
+      "value": "7px",
+      "tier": "primitive",
+      "category": "typography"
+    },
+    {
+      "name": "--p31-card-padding",
+      "value": "24px",
+      "tier": "primitive",
+      "category": "spacing"
+    },
+    {
+      "name": "--p31-cloud",
+      "value": "#A1A1AA",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-color-action-ghost",
+      "value": "transparent",
+      "tier": "semantic",
+      "category": "color"
+    },
+    {
+      "name": "--p31-color-action-ghost-hover",
+      "value": "oklch(100% 0.01 230 / 0.04)",
+      "tier": "semantic",
+      "category": "color"
+    },
+    {
+      "name": "--p31-color-action-primary",
+      "value": "oklch(70% 0.15 200)",
+      "tier": "semantic",
+      "category": "color"
+    },
+    {
+      "name": "--p31-color-action-primary-hover",
+      "value": "oklch(70% 0.15 200 / 0.8)",
+      "tier": "semantic",
+      "category": "color"
+    },
+    {
+      "name": "--p31-color-action-primary-text",
+      "value": "oklch(95% 0.02 230)",
+      "tier": "semantic",
+      "category": "color"
+    },
+    {
+      "name": "--p31-color-action-secondary",
+      "value": "oklch(22% 0.045 240)",
+      "tier": "semantic",
+      "category": "color"
+    },
+    {
+      "name": "--p31-color-action-secondary-text",
+      "value": "oklch(95% 0.02 230)",
+      "tier": "semantic",
+      "category": "color"
+    },
+    {
+      "name": "--p31-duration-fast",
+      "value": "100ms",
+      "tier": "primitive",
+      "category": "motion"
+    },
+    {
+      "name": "--p31-duration-instant",
+      "value": "62.5ms",
+      "tier": "primitive",
+      "category": "motion"
+    },
+    {
+      "name": "--p31-duration-normal",
+      "value": "300ms",
+      "tier": "primitive",
+      "category": "motion"
+    },
+    {
+      "name": "--p31-duration-slow",
+      "value": "500ms",
+      "tier": "primitive",
+      "category": "motion"
+    },
+    {
+      "name": "--p31-duration-slower",
+      "value": "1000ms",
+      "tier": "primitive",
+      "category": "motion"
+    },
+    {
+      "name": "--p31-duration-standard",
+      "value": "250ms",
+      "tier": "primitive",
+      "category": "motion"
+    },
+    {
+      "name": "--p31-easing-accelerate",
+      "value": "cubic-bezier(0.4, 0.0, 1.0, 1)",
+      "tier": "primitive",
+      "category": "motion"
+    },
+    {
+      "name": "--p31-easing-decelerate",
+      "value": "cubic-bezier(0.0, 0.0, 0.2, 1)",
+      "tier": "primitive",
+      "category": "motion"
+    },
+    {
+      "name": "--p31-easing-linear",
+      "value": "linear",
+      "tier": "primitive",
+      "category": "motion"
+    },
+    {
+      "name": "--p31-easing-smooth",
+      "value": "cubic-bezier(0.4, 0, 0.2, 1)",
+      "tier": "primitive",
+      "category": "motion"
+    },
+    {
+      "name": "--p31-easing-snappy",
+      "value": "cubic-bezier(0.34, 1.56, 0.64, 1)",
+      "tier": "primitive",
+      "category": "motion"
+    },
+    {
+      "name": "--p31-easing-standard",
+      "value": "cubic-bezier(0.4, 0.0, 0.2, 1)",
+      "tier": "primitive",
+      "category": "motion"
+    },
+    {
+      "name": "--p31-font-display",
+      "value": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+      "tier": "primitive",
+      "category": "typography"
+    },
+    {
+      "name": "--p31-font-mono",
+      "value": "ui-monospace, SFMono-Regular, 'Fira Code', 'Fira Mono', 'Roboto Mono', 'JetBrains Mono', Menlo, Monaco, Consolas, monospace",
+      "tier": "primitive",
+      "category": "typography"
+    },
+    {
+      "name": "--p31-font-sans",
+      "value": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+      "tier": "primitive",
+      "category": "typography"
+    },
+    {
+      "name": "--p31-font-size-lg",
+      "value": "20px",
+      "tier": "semantic",
+      "category": "typography"
+    },
+    {
+      "name": "--p31-font-size-md",
+      "value": "16px",
+      "tier": "semantic",
+      "category": "typography"
+    },
+    {
+      "name": "--p31-font-size-sm",
+      "value": "14px",
+      "tier": "semantic",
+      "category": "typography"
+    },
+    {
+      "name": "--p31-glass-bg",
+      "value": "oklch(100% 0.01 240 / 0.04)",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-glass-bg-light",
+      "value": "oklch(100% 0.01 75 / 0.10)",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-glass-bg-overlay",
+      "value": "oklch(100% 0.01 75 / 0.10)",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-glass-bg-strong",
+      "value": "oklch(100% 0.01 75 / 0.22)",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-glass-blur",
+      "value": "blur(12px)",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-glass-border",
+      "value": "oklch(100% 0.01 240 / 0.08)",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-glass-border-hover",
+      "value": "oklch(100% 0.01 240 / 0.15)",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-glass-border-strong",
+      "value": "oklch(100% 0.01 75 / 0.16)",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-glass-border-strong-hover",
+      "value": "oklch(100% 0.01 75 / 0.25)",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-glass-radius",
+      "value": "24px",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-glass-shadow",
+      "value": "0 8px 32px rgba(0,0,0,0.15)",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-glass-surface",
+      "value": "oklch(100% 0.01 240 / 0.04)",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-glass-surface-hover",
+      "value": "oklch(100% 0.01 240 / 0.06)",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-glow-amber",
+      "value": "0 0 6px oklch(88.7% 0.182 95.3), 0 0 20px oklch(88.7% 0.182 95.3 / 0.3)",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-glow-coral",
+      "value": "0 0 6px oklch(71.2% 0.181 22.8), 0 0 20px oklch(71.2% 0.181 22.8 / 0.3)",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-glow-cyan",
+      "value": "0 0 20px rgba(0,240,255,0.25)",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-glow-magenta",
+      "value": "0 0 6px oklch(70.2% 0.322 328.4), 0 0 20px oklch(70.2% 0.322 328.4 / 0.3)",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-glow-mint",
+      "value": "0 0 6px oklch(87.6% 0.228 152.5), 0 0 20px oklch(87.6% 0.228 152.5 / 0.3)",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-glow-neon",
+      "value": "0 0 6px oklch(90.5% 0.155 194.8), 0 0 20px oklch(90.5% 0.155 194.8 / 0.3)",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-glow-violet",
+      "value": "0 0 6px oklch(67.0% 0.234 309.1), 0 0 20px oklch(67.0% 0.234 309.1 / 0.3)",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-h1",
+      "value": "51px",
+      "tier": "primitive",
+      "category": "typography"
+    },
+    {
+      "name": "--p31-h2",
+      "value": "38px",
+      "tier": "primitive",
+      "category": "typography"
+    },
+    {
+      "name": "--p31-h3",
+      "value": "28px",
+      "tier": "primitive",
+      "category": "typography"
+    },
+    {
+      "name": "--p31-h4",
+      "value": "21px",
+      "tier": "primitive",
+      "category": "typography"
+    },
+    {
+      "name": "--p31-label",
+      "value": "12px",
+      "tier": "primitive",
+      "category": "typography"
+    },
+    {
+      "name": "--p31-motion-duration-fast",
+      "value": "150ms",
+      "tier": "semantic",
+      "category": "motion"
+    },
+    {
+      "name": "--p31-motion-easing-standard",
+      "value": "cubic-bezier(0.4, 0, 0.2, 1)",
+      "tier": "semantic",
+      "category": "motion"
+    },
+    {
+      "name": "--p31-neon",
+      "value": "oklch(90.5% 0.155 194.8)",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-neon-amber",
+      "value": "oklch(88.7% 0.182 95.3)",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-neon-blue",
+      "value": "oklch(80.4% 0.146 219.5)",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-neon-coral",
+      "value": "oklch(71.2% 0.181 22.8)",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-neon-cyan",
+      "value": "oklch(90.5% 0.155 194.8)",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-neon-dim",
+      "value": "oklch(90.5% 0.155 194.8 / 0.35)",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-neon-faint",
+      "value": "oklch(90.5% 0.155 194.8 / 0.08)",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-neon-ghost",
+      "value": "oklch(90.5% 0.155 194.8 / 0.03)",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-neon-lavender",
+      "value": "oklch(62% 0.279 290.8)",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-neon-magenta",
+      "value": "oklch(70.2% 0.322 328.4)",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-neon-mint",
+      "value": "oklch(87.6% 0.228 152.5)",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-neon-orange",
+      "value": "oklch(75.4% 0.164 50.4)",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-neon-pink",
+      "value": "oklch(67.4% 0.293 340.4)",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-neon-violet",
+      "value": "oklch(67.0% 0.234 309.1)",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-portal-accent",
+      "value": "var(--p31-accent)",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-portal-glow",
+      "value": "rgba(0, 240, 255, 0.08)",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-radius-candy",
+      "value": "24px",
+      "tier": "primitive",
+      "category": "radius"
+    },
+    {
+      "name": "--p31-radius-full",
+      "value": "9999px",
+      "tier": "primitive",
+      "category": "radius"
+    },
+    {
+      "name": "--p31-radius-lg",
+      "value": "calc(var(--p31-scale-lg) / 2)",
+      "tier": "primitive",
+      "category": "radius"
+    },
+    {
+      "name": "--p31-radius-md",
+      "value": "calc(var(--p31-scale-md) / 2)",
+      "tier": "semantic",
+      "category": "radius"
+    },
+    {
+      "name": "--p31-radius-none",
+      "value": "0",
+      "tier": "primitive",
+      "category": "radius"
+    },
+    {
+      "name": "--p31-radius-sm",
+      "value": "8px",
+      "tier": "primitive",
+      "category": "radius"
+    },
+    {
+      "name": "--p31-radius-xl",
+      "value": "calc(var(--p31-scale-xl) / 2)",
+      "tier": "primitive",
+      "category": "radius"
+    },
+    {
+      "name": "--p31-scale-2xl",
+      "value": "calc(var(--p31-base) * 3.1604)",
+      "tier": "primitive",
+      "category": "typography"
+    },
+    {
+      "name": "--p31-scale-3xl",
+      "value": "calc(var(--p31-base) * 4.2139)",
+      "tier": "primitive",
+      "category": "typography"
+    },
+    {
+      "name": "--p31-scale-4xl",
+      "value": "calc(var(--p31-base) * 5.6186)",
+      "tier": "primitive",
+      "category": "typography"
+    },
+    {
+      "name": "--p31-scale-lg",
+      "value": "calc(var(--p31-base) * 1.7777)",
+      "tier": "primitive",
+      "category": "typography"
+    },
+    {
+      "name": "--p31-scale-md",
+      "value": "calc(var(--p31-base) * 1.3333)",
+      "tier": "primitive",
+      "category": "typography"
+    },
+    {
+      "name": "--p31-scale-sm",
+      "value": "var(--p31-base)",
+      "tier": "primitive",
+      "category": "typography"
+    },
+    {
+      "name": "--p31-scale-xl",
+      "value": "calc(var(--p31-base) * 2.3703)",
+      "tier": "primitive",
+      "category": "typography"
+    },
+    {
+      "name": "--p31-scale-xs",
+      "value": "calc(var(--p31-base) * 0.75)",
+      "tier": "primitive",
+      "category": "typography"
+    },
+    {
+      "name": "--p31-space-2xl",
+      "value": "clamp(var(--p31-scale-2xl), 6.5vw, var(--p31-scale-3xl))",
+      "tier": "primitive",
+      "category": "spacing"
+    },
+    {
+      "name": "--p31-space-3xl",
+      "value": "64px",
+      "tier": "primitive",
+      "category": "spacing"
+    },
+    {
+      "name": "--p31-space-inline-lg",
+      "value": "24px",
+      "tier": "semantic",
+      "category": "spacing"
+    },
+    {
+      "name": "--p31-space-inline-md",
+      "value": "16px",
+      "tier": "semantic",
+      "category": "spacing"
+    },
+    {
+      "name": "--p31-space-inline-sm",
+      "value": "8px",
+      "tier": "semantic",
+      "category": "spacing"
+    },
+    {
+      "name": "--p31-space-lg",
+      "value": "clamp(var(--p31-scale-lg), 3.5vw, var(--p31-scale-xl))",
+      "tier": "primitive",
+      "category": "spacing"
+    },
+    {
+      "name": "--p31-space-md",
+      "value": "clamp(var(--p31-scale-md), 2.5vw, var(--p31-scale-lg))",
+      "tier": "primitive",
+      "category": "spacing"
+    },
+    {
+      "name": "--p31-space-sm",
+      "value": "clamp(var(--p31-scale-sm), 1.5vw, var(--p31-scale-md))",
+      "tier": "primitive",
+      "category": "spacing"
+    },
+    {
+      "name": "--p31-space-tiny",
+      "value": "2px",
+      "tier": "primitive",
+      "category": "spacing"
+    },
+    {
+      "name": "--p31-space-xl",
+      "value": "clamp(var(--p31-scale-xl), 5vw, var(--p31-scale-2xl))",
+      "tier": "primitive",
+      "category": "spacing"
+    },
+    {
+      "name": "--p31-space-xs",
+      "value": "clamp(var(--p31-scale-xs), 1vw, var(--p31-scale-sm))",
+      "tier": "primitive",
+      "category": "spacing"
+    },
+    {
+      "name": "--p31-spacing-lg",
+      "value": "24px",
+      "tier": "primitive",
+      "category": "spacing"
+    },
+    {
+      "name": "--p31-spacing-md",
+      "value": "16px",
+      "tier": "primitive",
+      "category": "spacing"
+    },
+    {
+      "name": "--p31-spacing-sm",
+      "value": "8px",
+      "tier": "primitive",
+      "category": "spacing"
+    },
+    {
+      "name": "--p31-spacing-xl",
+      "value": "32px",
+      "tier": "primitive",
+      "category": "spacing"
+    },
+    {
+      "name": "--p31-spacing-xs",
+      "value": "4px",
+      "tier": "primitive",
+      "category": "spacing"
+    },
+    {
+      "name": "--p31-spacing-xxl",
+      "value": "64px",
+      "tier": "primitive",
+      "category": "spacing"
+    },
+    {
+      "name": "--p31-speed-factor",
+      "value": "1",
+      "tier": "primitive",
+      "category": "motion"
+    },
+    {
+      "name": "--p31-starfield-hearth",
+      "value": "oklch(55% 0.15 35)",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-starfield-particle-coral",
+      "value": "oklch(65% 0.14 40 / 0.5)",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-starfield-particle-teal",
+      "value": "oklch(70% 0.12 185 / 0.6)",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-starfield-remembrance",
+      "value": "oklch(95% 0.01 80)",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-starfield-teal",
+      "value": "oklch(60% 0.08 185)",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-status-error",
+      "value": "oklch(65% 0.18 20)",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-status-info",
+      "value": "oklch(65% 0.18 195)",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-status-offline",
+      "value": "oklch(78% 0.01 240)",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-status-online",
+      "value": "oklch(65% 0.18 105)",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-status-warning",
+      "value": "oklch(65% 0.18 15)",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-surface",
+      "value": "oklch(15% 0.015 240)",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-surface-s1",
+      "value": "oklch(0% 0 0)",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-surface-s2",
+      "value": "oklch(4.9% 0 0)",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-surface-s3",
+      "value": "oklch(6.9% 0 0)",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-surface-s4",
+      "value": "oklch(10.5% 0 0)",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-surface2",
+      "value": "oklch(22% 0.02 240)",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-text",
+      "value": "oklch(96% 0.005 240)",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-text-primary",
+      "value": "oklch(96% 0.005 240)",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-text-secondary",
+      "value": "oklch(80% 0.01 240)",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-text-tertiary",
+      "value": "oklch(78% 0.01 240)",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-topbar-height",
+      "value": "64px",
+      "tier": "primitive",
+      "category": "layout"
+    },
+    {
+      "name": "--p31-touch-large",
+      "value": "64px",
+      "tier": "primitive",
+      "category": "other"
+    },
+    {
+      "name": "--p31-touch-min",
+      "value": "48px",
+      "tier": "primitive",
+      "category": "other"
+    },
+    {
+      "name": "--p31-touch-recommended",
+      "value": "56px",
+      "tier": "primitive",
+      "category": "other"
+    },
+    {
+      "name": "--p31-type-body",
+      "value": "clamp(calc(var(--p31-base) * 0.95), 1vw + 0.5rem, var(--p31-scale-sm))",
+      "tier": "primitive",
+      "category": "typography"
+    },
+    {
+      "name": "--p31-type-caption",
+      "value": "clamp(var(--p31-scale-xs), 0.8vw, var(--p31-scale-sm))",
+      "tier": "primitive",
+      "category": "typography"
+    },
+    {
+      "name": "--p31-type-display",
+      "value": "clamp(var(--p31-scale-2xl), 7vw, var(--p31-scale-3xl))",
+      "tier": "primitive",
+      "category": "typography"
+    },
+    {
+      "name": "--p31-type-h1",
+      "value": "clamp(var(--p31-scale-xl), 5.6vw, var(--p31-scale-2xl))",
+      "tier": "primitive",
+      "category": "typography"
+    },
+    {
+      "name": "--p31-type-h2",
+      "value": "clamp(var(--p31-scale-lg), 3.5vw, var(--p31-scale-xl))",
+      "tier": "primitive",
+      "category": "typography"
+    },
+    {
+      "name": "--p31-type-h3",
+      "value": "clamp(var(--p31-scale-md), 2vw, var(--p31-scale-lg))",
+      "tier": "primitive",
+      "category": "typography"
+    },
+    {
+      "name": "--p31-type-label",
+      "value": "var(--p31-scale-sm)",
+      "tier": "primitive",
+      "category": "typography"
+    },
+    {
+      "name": "--p31-void",
+      "value": "#0A0A0F",
+      "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-z-content",
+      "value": "1",
+      "tier": "primitive",
+      "category": "layout"
+    },
+    {
+      "name": "--p31-z-crisis",
+      "value": "99999",
+      "tier": "primitive",
+      "category": "layout"
+    },
+    {
+      "name": "--p31-z-floating",
+      "value": "60",
+      "tier": "primitive",
+      "category": "layout"
+    },
+    {
+      "name": "--p31-z-skip-link",
+      "value": "100",
+      "tier": "primitive",
+      "category": "layout"
+    },
+    {
+      "name": "--p31-z-starfield",
+      "value": "0",
+      "tier": "primitive",
+      "category": "layout"
+    },
+    {
+      "name": "--p31-z-toast",
+      "value": "9999",
+      "tier": "primitive",
+      "category": "layout"
+    },
+    {
+      "name": "--p31-z-topbar",
+      "value": "10",
+      "tier": "primitive",
+      "category": "layout"
+    }
+  ],
+  "components": [
+    {
+      "slug": "button",
+      "name": "Button",
+      "layer": "component",
+      "status": "shipped",
+      "intent": "Trigger an action in the current context. The primary interactive surface.",
+      "contract": "src/contracts/button.contract.ts",
+      "import": "import { Button } from '@p31/canon-react';",
+      "implemented": true,
+      "props": [
+        {
+          "name": "variant",
+          "type": "enum",
+          "required": false,
+          "options": [
+            "primary",
+            "secondary",
+            "ghost"
+          ],
+          "default": "primary",
+          "description": "Visual emphasis. primary = main action, secondary = alternative, ghost = tertiary."
+        },
+        {
+          "name": "size",
+          "type": "enum",
+          "required": false,
+          "options": [
+            "sm",
+            "md",
+            "lg"
+          ],
+          "default": "md",
+          "description": "Control size. Affects padding, font, and touch target."
+        },
+        {
+          "name": "disabled",
+          "type": "boolean",
+          "required": false,
+          "options": null,
+          "default": "false",
+          "description": "When true, the button is not interactive and renders aria-disabled."
+        },
+        {
+          "name": "loading",
+          "type": "boolean",
+          "required": false,
+          "options": null,
+          "default": "false",
+          "description": "When true, sets aria-busy and blocks interaction. Renders a spinner before the label in default (non-asChild) mode."
+        },
+        {
+          "name": "children",
+          "type": "node",
+          "required": true,
+          "options": null,
+          "default": null,
+          "description": "The button label / content."
+        }
+      ],
+      "variants": {
+        "variant": [
+          "primary",
+          "secondary",
+          "ghost"
+        ],
+        "size": [
+          "sm",
+          "md",
+          "lg"
+        ]
+      },
+      "states": [
+        "default",
+        "hover",
+        "focus-visible",
+        "active",
+        "disabled",
+        "loading"
+      ],
+      "tokens": [
+        "p31.color.action.primary",
+        "p31.color.action.primary-hover",
+        "p31.color.action.primary-text",
+        "p31.color.action.secondary",
+        "p31.color.action.secondary-text",
+        "p31.color.action.ghost",
+        "p31.color.action.ghost-hover",
+        "p31.space.inline.sm",
+        "p31.space.inline.md",
+        "p31.space.inline.lg",
+        "p31.radius.md",
+        "p31.font.size.sm",
+        "p31.font.size.md",
+        "p31.font.size.lg",
+        "p31.motion.duration.fast",
+        "p31.motion.easing.standard"
+      ]
+    }
+  ],
+  "cssClasses": [
+    {
+      "name": ".a2-data-card",
+      "files": [
+        "a2ui-datacard.css",
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-font-mono",
+        "--p31-glass-bg",
+        "--p31-glass-blur",
+        "--p31-glass-border",
+        "--p31-glass-radius",
+        "--p31-neon-faint",
+        "--p31-neon-ghost",
+        "--p31-radius-lg",
+        "--p31-spacing-lg",
+        "--p31-text"
+      ]
+    },
+    {
+      "name": ".a2-data-card-action",
+      "files": [
+        "a2ui-datacard.css",
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-body-sm",
+        "--p31-duration-fast",
+        "--p31-easing-standard",
+        "--p31-font-mono",
+        "--p31-radius-sm"
+      ]
+    },
+    {
+      "name": ".a2-data-card-action--danger",
+      "files": [
+        "a2ui-datacard.css",
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-accent-red",
+        "--p31-status-error",
+        "--p31-text"
+      ]
+    },
+    {
+      "name": ".a2-data-card-action--primary",
+      "files": [
+        "a2ui-datacard.css",
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-accent",
+        "--p31-bg",
+        "--p31-neon",
+        "--p31-neon-faint"
+      ]
+    },
+    {
+      "name": ".a2-data-card-actions",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-spacing-md",
+        "--p31-spacing-sm"
+      ]
+    },
+    {
+      "name": ".a2-data-card-body",
+      "files": [
+        "a2ui-datacard.css",
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-spacing-md",
+        "--p31-text-secondary"
+      ]
+    },
+    {
+      "name": ".a2-data-card-close",
+      "files": [
+        "a2ui-datacard.css",
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-duration-fast",
+        "--p31-easing-standard",
+        "--p31-glass-bg",
+        "--p31-neon",
+        "--p31-radius-sm",
+        "--p31-text",
+        "--p31-text-secondary",
+        "--p31-text-tertiary"
+      ]
+    },
+    {
+      "name": ".a2-data-card-header",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-spacing-md"
+      ]
+    },
+    {
+      "name": ".a2-data-card-metric-label",
+      "files": [
+        "a2ui-datacard.css",
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-label",
+        "--p31-text-secondary",
+        "--p31-text-tertiary"
+      ]
+    },
+    {
+      "name": ".a2-data-card-metric-value",
+      "files": [
+        "a2ui-datacard.css",
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-accent",
+        "--p31-h2",
+        "--p31-text-secondary"
+      ]
+    },
+    {
+      "name": ".a2-data-card-metrics",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-spacing-lg",
+        "--p31-spacing-md"
+      ]
+    },
+    {
+      "name": ".a2-data-card-status",
+      "files": [
+        "a2ui-datacard.css",
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-label",
+        "--p31-radius-full",
+        "--p31-radius-sm"
+      ]
+    },
+    {
+      "name": ".a2-data-card-subtitle",
+      "files": [
+        "a2ui-datacard.css",
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-body-sm",
+        "--p31-text-secondary",
+        "--p31-text-tertiary"
+      ]
+    },
+    {
+      "name": ".a2-data-card-title",
+      "files": [
+        "a2ui-datacard.css",
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-h3",
+        "--p31-text"
+      ]
+    },
+    {
+      "name": ".a2-data-card-title-row",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-spacing-md"
+      ]
+    },
+    {
+      "name": ".active",
+      "files": [
+        "layout.css",
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-accent",
+        "--p31-glass-bg"
+      ]
+    },
+    {
+      "name": ".admin-tab",
+      "files": [
+        "layout.css",
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-accent",
+        "--p31-body-sm",
+        "--p31-duration-fast",
+        "--p31-easing-standard",
+        "--p31-glass-bg",
+        "--p31-glass-border",
+        "--p31-radius-sm",
+        "--p31-text",
+        "--p31-text-secondary",
+        "--p31-text-tertiary"
+      ]
+    },
+    {
+      "name": ".admin-tabs",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-glass-border",
+        "--p31-spacing-lg",
+        "--p31-spacing-sm"
+      ]
+    },
+    {
+      "name": ".badge",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-radius-full",
+        "--p31-scale-xs"
+      ]
+    },
+    {
+      "name": ".badge-error",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-accent-red"
+      ]
+    },
+    {
+      "name": ".badge-info",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-accent"
+      ]
+    },
+    {
+      "name": ".badge-success",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-accent-green"
+      ]
+    },
+    {
+      "name": ".badge-warning",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-accent-gold"
+      ]
+    },
+    {
+      "name": ".bottom-nav",
+      "files": [
+        "layout.css",
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-glass-bg",
+        "--p31-glass-blur",
+        "--p31-glass-border",
+        "--p31-z-topbar"
+      ]
+    },
+    {
+      "name": ".breath-circle",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-accent-green"
+      ]
+    },
+    {
+      "name": ".btn",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-duration-fast",
+        "--p31-radius-md",
+        "--p31-scale-sm",
+        "--p31-spacing-lg",
+        "--p31-spacing-sm"
+      ]
+    },
+    {
+      "name": ".btn-ghost",
+      "files": [
+        "motion.css",
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-duration-fast",
+        "--p31-glass-bg",
+        "--p31-text",
+        "--p31-text-secondary"
+      ]
+    },
+    {
+      "name": ".btn-primary",
+      "files": [
+        "motion.css",
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-accent",
+        "--p31-duration-fast",
+        "--p31-void"
+      ]
+    },
+    {
+      "name": ".btn-secondary",
+      "files": [
+        "motion.css",
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-accent-violet",
+        "--p31-duration-fast"
+      ]
+    },
+    {
+      "name": ".card-graph-pinned",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-spacing-lg"
+      ]
+    },
+    {
+      "name": ".clickable",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-accent",
+        "--p31-duration-instant",
+        "--p31-text"
+      ]
+    },
+    {
+      "name": ".code-block",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-font-mono",
+        "--p31-glass-border",
+        "--p31-radius-md",
+        "--p31-spacing-md",
+        "--p31-void"
+      ]
+    },
+    {
+      "name": ".container",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-spacing-lg"
+      ]
+    },
+    {
+      "name": ".copy-btn",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-accent",
+        "--p31-duration-fast",
+        "--p31-easing-standard",
+        "--p31-glass-bg",
+        "--p31-glass-border",
+        "--p31-label",
+        "--p31-radius-sm",
+        "--p31-text-secondary"
+      ]
+    },
+    {
+      "name": ".cr-master",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-duration-standard",
+        "--p31-easing-standard"
+      ]
+    },
+    {
+      "name": ".crisis-overlay",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-bg"
+      ]
+    },
+    {
+      "name": ".css",
+      "files": [
+        "layout.css",
+        "recipes.css",
+        "typography.css"
+      ],
+      "tokens": [
+        "--p31-bg",
+        "--p31-duration-standard",
+        "--p31-easing-standard",
+        "--p31-font-mono",
+        "--p31-glass-bg",
+        "--p31-glass-blur",
+        "--p31-glass-border",
+        "--p31-glass-radius",
+        "--p31-glass-shadow",
+        "--p31-h1",
+        "--p31-radius-lg"
+      ]
+    },
+    {
+      "name": ".exit-btn",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-accent",
+        "--p31-duration-standard",
+        "--p31-easing-standard",
+        "--p31-glass-bg",
+        "--p31-glass-border",
+        "--p31-radius-full",
+        "--p31-text"
+      ]
+    },
+    {
+      "name": ".feature-card",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-glass-bg",
+        "--p31-glass-border",
+        "--p31-radius-xl"
+      ]
+    },
+    {
+      "name": ".feature-card__desc",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-text-secondary"
+      ]
+    },
+    {
+      "name": ".feature-card__icon",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-radius-md"
+      ]
+    },
+    {
+      "name": ".feature-card__title",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-text"
+      ]
+    },
+    {
+      "name": ".floating-window",
+      "files": [
+        "layout.css",
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-glass-bg",
+        "--p31-glass-blur",
+        "--p31-glass-border",
+        "--p31-glass-radius",
+        "--p31-glass-shadow",
+        "--p31-z-floating"
+      ]
+    },
+    {
+      "name": ".floating-window__body",
+      "files": [
+        "layout.css"
+      ],
+      "tokens": [
+        "--p31-scale-xs",
+        "--p31-space-sm",
+        "--p31-text-secondary"
+      ]
+    },
+    {
+      "name": ".floating-window__header",
+      "files": [
+        "layout.css",
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-glass-bg-strong",
+        "--p31-glass-border"
+      ]
+    },
+    {
+      "name": ".floating-window__title",
+      "files": [
+        "layout.css",
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-body-sm",
+        "--p31-scale-xs",
+        "--p31-text"
+      ]
+    },
+    {
+      "name": ".glass-box",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-glass-blur",
+        "--p31-glass-border",
+        "--p31-glass-radius",
+        "--p31-glass-shadow",
+        "--p31-glass-surface"
+      ]
+    },
+    {
+      "name": ".glass-box-hover",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-accent",
+        "--p31-accent-glow",
+        "--p31-duration-standard",
+        "--p31-easing-standard",
+        "--p31-glass-surface"
+      ]
+    },
+    {
+      "name": ".glass-card",
+      "files": [
+        "motion.css",
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-bg",
+        "--p31-duration-standard",
+        "--p31-easing-standard",
+        "--p31-glass-bg",
+        "--p31-glass-blur",
+        "--p31-glass-border",
+        "--p31-glass-border-hover",
+        "--p31-glass-radius",
+        "--p31-glass-shadow",
+        "--p31-spacing-lg"
+      ]
+    },
+    {
+      "name": ".glass-navbar",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-glass-bg",
+        "--p31-glass-blur",
+        "--p31-glass-border",
+        "--p31-glass-radius",
+        "--p31-spacing-md",
+        "--p31-spacing-sm"
+      ]
+    },
+    {
+      "name": ".glass-panel",
+      "files": [
+        "motion.css",
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-bg",
+        "--p31-duration-standard",
+        "--p31-easing-standard",
+        "--p31-glass-bg",
+        "--p31-glass-blur",
+        "--p31-glass-border",
+        "--p31-glass-border-hover",
+        "--p31-glass-radius",
+        "--p31-glass-shadow",
+        "--p31-glass-surface-hover"
+      ]
+    },
+    {
+      "name": ".glass-strong",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-bg",
+        "--p31-glass-bg-strong",
+        "--p31-glass-border",
+        "--p31-glass-border-strong",
+        "--p31-glass-radius",
+        "--p31-glass-shadow"
+      ]
+    },
+    {
+      "name": ".glass-subtle",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-bg",
+        "--p31-glass-bg-light",
+        "--p31-glass-border",
+        "--p31-glass-radius"
+      ]
+    },
+    {
+      "name": ".header-drawer",
+      "files": [
+        "layout.css",
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-glass-bg",
+        "--p31-glass-blur",
+        "--p31-glass-border",
+        "--p31-glass-radius",
+        "--p31-glass-shadow",
+        "--p31-space-lg",
+        "--p31-space-sm",
+        "--p31-space-xs",
+        "--p31-spacing-lg",
+        "--p31-topbar-height",
+        "--p31-z-topbar"
+      ]
+    },
+    {
+      "name": ".honest-label",
+      "files": [
+        "quantum.css",
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-accent-red",
+        "--p31-label",
+        "--p31-radius-sm",
+        "--p31-space-sm",
+        "--p31-space-xl"
+      ]
+    },
+    {
+      "name": ".input",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-accent",
+        "--p31-duration-fast",
+        "--p31-glass-border",
+        "--p31-radius-md",
+        "--p31-scale-sm",
+        "--p31-spacing-md",
+        "--p31-spacing-sm",
+        "--p31-text",
+        "--p31-text-tertiary"
+      ]
+    },
+    {
+      "name": ".k4-edge",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-accent"
+      ]
+    },
+    {
+      "name": ".k4-node",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-accent",
+        "--p31-duration-standard",
+        "--p31-easing-standard",
+        "--p31-glass-bg",
+        "--p31-glass-border",
+        "--p31-radius-md"
+      ]
+    },
+    {
+      "name": ".metric-badge",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-accent",
+        "--p31-duration-instant",
+        "--p31-glass-bg",
+        "--p31-glass-border",
+        "--p31-radius-sm",
+        "--p31-scale-xs",
+        "--p31-text",
+        "--p31-text-secondary"
+      ]
+    },
+    {
+      "name": ".nav-item",
+      "files": [
+        "layout.css",
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-accent",
+        "--p31-duration-fast",
+        "--p31-scale-xs",
+        "--p31-text-tertiary"
+      ]
+    },
+    {
+      "name": ".offline",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-accent-red"
+      ]
+    },
+    {
+      "name": ".outcome",
+      "files": [
+        "quantum.css"
+      ],
+      "tokens": [
+        "--p31-space-sm"
+      ]
+    },
+    {
+      "name": ".p31-crisis-button",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-accent",
+        "--p31-radius-md"
+      ]
+    },
+    {
+      "name": ".p31-crisis-message",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-body",
+        "--p31-text"
+      ]
+    },
+    {
+      "name": ".page-header",
+      "files": [
+        "layout.css",
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-glass-border",
+        "--p31-space-lg",
+        "--p31-space-md",
+        "--p31-spacing-xl"
+      ]
+    },
+    {
+      "name": ".page-header__controls",
+      "files": [
+        "layout.css",
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-space-sm",
+        "--p31-spacing-md"
+      ]
+    },
+    {
+      "name": ".page-header__title",
+      "files": [
+        "layout.css",
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-h1",
+        "--p31-scale-xl",
+        "--p31-text"
+      ]
+    },
+    {
+      "name": ".preview",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-glass-border",
+        "--p31-glass-radius",
+        "--p31-spacing-xl"
+      ]
+    },
+    {
+      "name": ".preview-label",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-label",
+        "--p31-spacing-md",
+        "--p31-text-tertiary"
+      ]
+    },
+    {
+      "name": ".preview-section",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-spacing-xl"
+      ]
+    },
+    {
+      "name": ".rounded",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-radius-md"
+      ]
+    },
+    {
+      "name": ".shell",
+      "files": [
+        "layout.css"
+      ],
+      "tokens": [
+        "--p31-bg"
+      ]
+    },
+    {
+      "name": ".sic-gauge",
+      "files": [
+        "quantum.css",
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-accent-gold",
+        "--p31-accent-green",
+        "--p31-accent-red",
+        "--p31-space-lg",
+        "--p31-space-sm"
+      ]
+    },
+    {
+      "name": ".skip-link",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-accent",
+        "--p31-radius-md",
+        "--p31-spacing-md",
+        "--p31-spacing-sm",
+        "--p31-void",
+        "--p31-z-skip-link"
+      ]
+    },
+    {
+      "name": ".spoon-btn",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-accent",
+        "--p31-duration-instant",
+        "--p31-glass-bg",
+        "--p31-text",
+        "--p31-text-tertiary"
+      ]
+    },
+    {
+      "name": ".spoon-dial",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-glass-border",
+        "--p31-radius-full"
+      ]
+    },
+    {
+      "name": ".stack-diagonal",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-accent"
+      ]
+    },
+    {
+      "name": ".stack-node",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-radius-md"
+      ]
+    },
+    {
+      "name": ".stack-node__count",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-font-mono",
+        "--p31-text-tertiary"
+      ]
+    },
+    {
+      "name": ".stack-node__icon",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-accent",
+        "--p31-radius-md"
+      ]
+    },
+    {
+      "name": ".stack-node__label",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-text"
+      ]
+    },
+    {
+      "name": ".starfield-bg",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-z-starfield"
+      ]
+    },
+    {
+      "name": ".status-dot",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-accent-green",
+        "--p31-accent-red"
+      ]
+    },
+    {
+      "name": ".terminal",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-font-mono",
+        "--p31-glass-border",
+        "--p31-radius-lg"
+      ]
+    },
+    {
+      "name": ".terminal__body",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-text-secondary"
+      ]
+    },
+    {
+      "name": ".terminal__cmd",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-text"
+      ]
+    },
+    {
+      "name": ".terminal__cursor",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-accent"
+      ]
+    },
+    {
+      "name": ".terminal__header",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-glass-border"
+      ]
+    },
+    {
+      "name": ".terminal__output",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-text-tertiary"
+      ]
+    },
+    {
+      "name": ".terminal__prompt",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-accent"
+      ]
+    },
+    {
+      "name": ".terminal__success",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-status-success"
+      ]
+    },
+    {
+      "name": ".tetra-grid",
+      "files": [
+        "quantum.css",
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-space-xl",
+        "--p31-tetra-overlap"
+      ]
+    },
+    {
+      "name": ".tetra-nav",
+      "files": [
+        "quantum.css"
+      ],
+      "tokens": [
+        "--p31-quantum-cyan",
+        "--p31-space-sm",
+        "--p31-tetra-overlap"
+      ]
+    },
+    {
+      "name": ".text-accent",
+      "files": [
+        "typography.css"
+      ],
+      "tokens": [
+        "--p31-accent"
+      ]
+    },
+    {
+      "name": ".text-body",
+      "files": [
+        "typography.css"
+      ],
+      "tokens": [
+        "--p31-body"
+      ]
+    },
+    {
+      "name": ".text-caption",
+      "files": [
+        "typography.css"
+      ],
+      "tokens": [
+        "--p31-caption"
+      ]
+    },
+    {
+      "name": ".text-code",
+      "files": [
+        "typography.css"
+      ],
+      "tokens": [
+        "--p31-font-mono"
+      ]
+    },
+    {
+      "name": ".text-dim",
+      "files": [
+        "typography.css"
+      ],
+      "tokens": [
+        "--p31-text-tertiary"
+      ]
+    },
+    {
+      "name": ".text-gold",
+      "files": [
+        "typography.css"
+      ],
+      "tokens": [
+        "--p31-accent-gold"
+      ]
+    },
+    {
+      "name": ".text-green",
+      "files": [
+        "typography.css"
+      ],
+      "tokens": [
+        "--p31-accent-green"
+      ]
+    },
+    {
+      "name": ".text-h1",
+      "files": [
+        "typography.css"
+      ],
+      "tokens": [
+        "--p31-h1"
+      ]
+    },
+    {
+      "name": ".text-h2",
+      "files": [
+        "typography.css"
+      ],
+      "tokens": [
+        "--p31-h2"
+      ]
+    },
+    {
+      "name": ".text-h3",
+      "files": [
+        "typography.css"
+      ],
+      "tokens": [
+        "--p31-h3"
+      ]
+    },
+    {
+      "name": ".text-h4",
+      "files": [
+        "typography.css"
+      ],
+      "tokens": [
+        "--p31-h4"
+      ]
+    },
+    {
+      "name": ".text-label",
+      "files": [
+        "typography.css"
+      ],
+      "tokens": [
+        "--p31-label"
+      ]
+    },
+    {
+      "name": ".text-muted",
+      "files": [
+        "typography.css"
+      ],
+      "tokens": [
+        "--p31-text-secondary"
+      ]
+    },
+    {
+      "name": ".text-red",
+      "files": [
+        "typography.css"
+      ],
+      "tokens": [
+        "--p31-accent-red"
+      ]
+    },
+    {
+      "name": ".text-violet",
+      "files": [
+        "typography.css"
+      ],
+      "tokens": [
+        "--p31-accent-violet"
+      ]
+    },
+    {
+      "name": ".title-shimmer",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-accent",
+        "--p31-accent-gold",
+        "--p31-accent-green"
+      ]
+    },
+    {
+      "name": ".topbar",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-duration-fast",
+        "--p31-easing-standard",
+        "--p31-glass-bg",
+        "--p31-glass-blur",
+        "--p31-glass-border",
+        "--p31-glass-shadow",
+        "--p31-radius-candy",
+        "--p31-space-sm",
+        "--p31-space-xs",
+        "--p31-text",
+        "--p31-topbar-height",
+        "--p31-z-topbar"
+      ]
+    },
+    {
+      "name": ".topbar-center",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-space-tiny"
+      ]
+    },
+    {
+      "name": ".topbar-center-absolute",
+      "files": [
+        "layout.css"
+      ],
+      "tokens": [
+        "--p31-space-tiny"
+      ]
+    },
+    {
+      "name": ".topbar-glass",
+      "files": [
+        "layout.css",
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-glass-bg",
+        "--p31-glass-blur",
+        "--p31-glass-border",
+        "--p31-glass-radius",
+        "--p31-glass-shadow",
+        "--p31-radius-candy",
+        "--p31-text"
+      ]
+    },
+    {
+      "name": ".topbar-left",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-accent",
+        "--p31-scale-lg",
+        "--p31-space-xs"
+      ]
+    },
+    {
+      "name": ".topbar-right",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-space-tiny"
+      ]
+    },
+    {
+      "name": ".trust-item",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-duration-standard",
+        "--p31-easing-standard",
+        "--p31-glass-bg",
+        "--p31-glass-border",
+        "--p31-radius-xl"
+      ]
+    },
+    {
+      "name": ".trust-item__label",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-text-secondary"
+      ]
+    },
+    {
+      "name": ".trust-item__number",
+      "files": [
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-accent",
+        "--p31-accent-bright"
+      ]
+    },
+    {
+      "name": ".viewport",
+      "files": [
+        "layout.css",
+        "recipes.css"
+      ],
+      "tokens": [
+        "--p31-space-xs",
+        "--p31-topbar-height",
+        "--p31-z-content"
+      ]
+    }
+  ],
+  "themes": [
+    {
+      "id": "cipher",
+      "name": "Cipher",
+      "description": "Quantum cyan and violet on void",
+      "isDefault": false,
+      "tokenCount": 29
+    },
+    {
+      "id": "garden",
+      "name": "Garden",
+      "description": "Warm soil greens — growth and calm",
+      "isDefault": false,
+      "tokenCount": 29
+    },
+    {
+      "id": "retro",
+      "name": "Retro",
+      "description": "CRT amber — warm glow, terminal vibes",
+      "isDefault": false,
+      "tokenCount": 29
+    },
+    {
+      "id": "ocean",
+      "name": "Ocean",
+      "description": "Deep blue depths — teal and coral",
+      "isDefault": true,
+      "tokenCount": 29
+    },
+    {
+      "id": "sunset",
+      "name": "Sunset",
+      "description": "Warm dusk — orange and rose gold",
+      "isDefault": false,
+      "tokenCount": 29
+    },
+    {
+      "id": "mono",
+      "name": "Mono",
+      "description": "Clean monochrome — black, white, gray",
+      "isDefault": false,
+      "tokenCount": 29
+    },
+    {
+      "id": "aurora",
+      "name": "Aurora",
+      "description": "Nebula bloom — greens and violets in motion",
+      "isDefault": false,
+      "tokenCount": 29
+    },
+    {
+      "id": "zen",
+      "name": "Zen",
+      "description": "Still earth — warm neutrals, minimal contrast",
+      "isDefault": false,
+      "tokenCount": 29
+    },
+    {
+      "id": "volt",
+      "name": "Volt",
+      "description": "Electric — sharp cyan and violet, high contrast",
+      "isDefault": false,
+      "tokenCount": 29
+    }
+  ]
+}

@@ -8,10 +8,11 @@
   "scripts": {
     "gen:tokens": "node scripts/gen-tokens.mjs",
     "gen:exports": "node scripts/generate-exports.mjs",
+    "gen:registry": "node scripts/gen-registry.mjs",
     "validate:contracts": "node scripts/validate-contracts.mjs",
     "verify:parity": "node scripts/verify-token-parity.mjs",
     "build:css": "node scripts/build-css.mjs",
-    "build": "npm run gen:tokens && npm run validate:contracts && npm run build:css && npm run gen:exports"
+    "build": "npm run gen:tokens && npm run validate:contracts && npm run build:css && npm run gen:registry && npm run gen:exports"
   },
   "exports": {
     ".": "./src/index.ts",
@@ -31,6 +32,7 @@
     "./css/recipes.css": "./dist/css/recipes.css",
     "./css/size-class.css": "./dist/css/size-class.css",
     "./css/typography.css": "./dist/css/typography.css",
+    "./registry.json": "./registry.json",
     "./theming": "./src/theming/index.ts",
     "./theming/theme-css": "./src/theming/theme-css.ts",
     "./theming/theme-store": "./src/theming/theme-store.ts",
