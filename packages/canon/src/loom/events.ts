@@ -32,12 +32,12 @@
 export type Writer = 'human' | 'agent';
 
 export type LoomEvent =
-  | { seq: number; ts: string; writer: 'human'; kind: 'focus'; node: string }
+  | { seq: number; ts: string; writer: 'human'; kind: 'focus'; node: string; humanId?: string }
   | { seq: number; ts: string; writer: 'agent'; kind: 'traverse'; from: string; to: string; reason: string }
   | { seq: number; ts: string; writer: 'agent'; kind: 'propose'; id: string; node: string; body: unknown; author?: string; parentAgent?: string }
-  | { seq: number; ts: string; writer: 'human'; kind: 'revise'; proposal: string; body: unknown }
-  | { seq: number; ts: string; writer: 'human'; kind: 'approve'; proposal: string }
-  | { seq: number; ts: string; writer: 'human'; kind: 'reject'; proposal: string; reason: string }
+  | { seq: number; ts: string; writer: 'human'; kind: 'revise'; proposal: string; body: unknown; humanId?: string }
+  | { seq: number; ts: string; writer: 'human'; kind: 'approve'; proposal: string; humanId?: string }
+  | { seq: number; ts: string; writer: 'human'; kind: 'reject'; proposal: string; reason: string; humanId?: string }
   | { seq: number; ts: string; writer: 'agent'; kind: 'review'; agent: string; proposalId: string; decision: 'approve' | 'amend' | 'reject'; reason?: string; revision: number; parentAgent?: string }
   | { seq: number; ts: string; writer: 'agent'; kind: 'presence'; node: string; attention: number };
 
