@@ -121,7 +121,7 @@ export async function createServer(): Promise<McpServer> {
     'list_components',
     {
       description:
-        'List every component that has a machine-readable contract in the P31 canon. ' +
+        '[contract] List every component that has a machine-readable contract in the P31 canon. ' +
         'Call this first to discover what exists before writing code.',
       inputSchema: z.object({
         layer: z
@@ -144,7 +144,7 @@ export async function createServer(): Promise<McpServer> {
     'get_contract',
     {
       description:
-        'Read the FULL contract for a single component — props, semantics, required ARIA, ' +
+        '[contract] Read the FULL contract for a single component — props, semantics, required ARIA, ' +
         'token references, import statement. Read this before writing any code against the component.',
       inputSchema: z.object({
         component: z.string().describe('Component name, case-insensitive. e.g. "Button".'),
@@ -174,7 +174,7 @@ export async function createServer(): Promise<McpServer> {
     'validate_props',
     {
       description:
-        'Validate a props payload AGAINST a component contract. Returns every violation: ' +
+        '[validation] Validate a props payload AGAINST a component contract. Returns every violation: ' +
         'unknown props, invalid enum values, missing required props. Call this after writing ' +
         'component code to prove it satisfies the contract. NOTE: this tool validates a props ' +
         'object, not the contract definition itself — contract-definition validation happens at ' +
@@ -243,7 +243,7 @@ export async function createServer(): Promise<McpServer> {
     'list_tokens',
     {
       description:
-        'List every token that EXISTS in the canon DTCG tree — BOTH namespaces. ' +
+        '[tokens] List every token that EXISTS in the canon DTCG tree — BOTH namespaces. ' +
         'Each result is flagged contractResolvable: only tokens whose path starts with ' +
         '"p31." may be referenced by a component contract (validate-contracts hard-gates ' +
         'on the p31.* namespace). Tokens under "themes.<id>.*" are the per-theme palette ' +
@@ -312,7 +312,7 @@ export async function createServer(): Promise<McpServer> {
     'list_docs',
     {
       description:
-        'List the design-system documentation index (DSDS) — components, tokens, ' +
+        '[docs] List the design-system documentation index (DSDS) — components, tokens, ' +
         'themes, foundations, patterns, guides, chunks. Filter by entity type, or omit ' +
         'to receive the summary + counts. Reads packages/canon/dsds.json.',
       inputSchema: z.object({
@@ -400,6 +400,176 @@ export async function createServer(): Promise<McpServer> {
     },
   );
 
+  // ── Agent-surface tools ────────────────────────────────────────────────
+  // The "smallest agent does big things" surface: the immutable baseline rules
+  // (get_design_md), token resolution (resolve_token), and output self-proof
+  // (validate_output). These let an agent inherit the floor and lint its own
+  // output before proposing — without parsing CSS or re-deriving contracts.
+
+  server.registerTool(
+    'get_design_md',
+    {
+      description:
+        "[docs] The design system's immutable baseline rules, condensed into one document. " +
+        'Read this before generating any component or CSS so the output inherits the floor by default.',
+      inputSchema: z.object({}),
+    },
+    async () => {
+      const md = [
+        '# P31 Design System — baseline rules',
+        '',
+        'These are immutable floors. Generated code must meet every one.',
+        '',
+        '## Typography',
+        '- Minimum text size 12px (0.75rem). Never smaller.',
+        '- Values (changing numbers) use the mono font; labels use sans.',
+        '',
+        '## Touch targets',
+        '- Minimum 24x24 CSS px per interactive element; 44x44 for primary actions.',
+        '',
+        '## Color',
+        '- No hardcoded hex. Always `var(--p31-*)` tokens.',
+        '- Never rely on color alone to convey meaning.',
+        '',
+        '## Motion',
+        '- Honor `prefers-reduced-motion` at the floor. Animate transform/opacity only.',
+        '',
+        '## Cognitive load',
+        '- Fewer than five main choices per surface.',
+        '- Plain language by default; technical terms only when necessary.',
+      ].join('\n');
+      return { content: [{ type: 'text', text: md }] };
+    },
+  );
+
+  server.registerTool(
+    'resolve_token',
+    {
+      description:
+        '[tokens] Resolve a semantic token path (e.g. "p31.color.action.primary") to its ' +
+        'DTCG value, CSS variable, and contract-resolvable flag. Call this when you need the ' +
+        'exact value/var for a token instead of listing every token.',
+      inputSchema: z.object({
+        token: z.string().describe('Dot path into the DTCG tree, e.g. "p31.color.action.primary".'),
+      }),
+    },
+    async ({ token }) => {
+      let leaves: Array<{ path: string; value: unknown; type: string }> = [];
+      try {
+        const raw = JSON.parse(readFileSync(dtcgPath, 'utf8'));
+        leaves = walkDtcg(raw, []);
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err);
+        return {
+          content: [{ type: 'text', text: JSON.stringify({ error: 'dtcg_unreadable', message: msg }) }],
+          isError: true,
+        };
+      }
+      const leaf = leaves.find((t) => t.path === token);
+      if (!leaf) {
+        return {
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify({
+                error: 'token_not_found',
+                message: `No token at "${token}". Call list_tokens to see what exists.`,
+              }),
+            },
+          ],
+          isError: true,
+        };
+      }
+      const cssVar = `--${token.replace(/\./g, '-')}`;
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(
+              {
+                path: leaf.path,
+                value: leaf.value,
+                type: leaf.type,
+                cssVar,
+                contractResolvable: leaf.path.startsWith('p31.'),
+              },
+              null,
+              2,
+            ),
+          },
+        ],
+      };
+    },
+  );
+
+  server.registerTool(
+    'validate_output',
+    {
+      description:
+        '[validation] Validate a generated props payload against a component contract AND flag ' +
+        'any hardcoded hex color in a prop value (should be a token). Returns every violation: ' +
+        'unknown props, invalid enums, missing required props, and hex values.',
+      inputSchema: z.object({
+        component: z.string().describe('Component name, case-insensitive. e.g. "Button".'),
+        props: z.record(z.string(), z.unknown()).describe('The props object to validate.'),
+      }),
+    },
+    async ({ component, props }) => {
+      const contract = REGISTRY.get(component.toLowerCase());
+      if (!contract) {
+        return {
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify({
+                error: 'component_not_found',
+                message: `No contract registered for "${component}".`,
+              }),
+            },
+          ],
+          isError: true,
+        };
+      }
+
+      const violations: Array<{ kind: string; prop?: string; message: string }> = [];
+      const declared = new Map(contract.props.map((p) => [p.name, p]));
+
+      for (const key of Object.keys(props)) {
+        if (!declared.has(key)) {
+          violations.push({
+            kind: 'unknown_prop',
+            prop: key,
+            message: `"${key}" is not declared on ${contract.name}. Declared: ${[...declared.keys()].join(', ')}`,
+          });
+        }
+      }
+
+      for (const def of contract.props) {
+        const provided = props[def.name];
+        if (def.required && provided === undefined) {
+          violations.push({ kind: 'missing_required', prop: def.name, message: `"${def.name}" is required on ${contract.name}.` });
+        } else if (def.type === 'enum' && provided !== undefined) {
+          const options = def.options ?? [];
+          if (!options.includes(String(provided))) {
+            violations.push({ kind: 'invalid_enum', prop: def.name, message: `"${provided}" is not a valid option. Valid: ${options.join(', ')}` });
+          }
+        }
+        if (provided !== undefined && typeof provided === 'string' && /#[0-9a-fA-F]{6}/.test(provided)) {
+          violations.push({ kind: 'hardcoded_hex', prop: def.name, message: `"${def.name}" uses a hardcoded hex "${provided}" — use a var(--p31-*) token.` });
+        }
+      }
+
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify({ component: contract.name, valid: violations.length === 0, violations }, null, 2),
+          },
+        ],
+      };
+    },
+  );
+
   // ── Loom presence tools ────────────────────────────────────────────────
   // The agent-facing half of the shared event log. Every write goes through
   // commit(); these emit agent-only events (traverse/propose). Observe/await
@@ -409,7 +579,7 @@ export async function createServer(): Promise<McpServer> {
     'loom_observe',
     {
       description:
-        'Observe the live Loom: what the human is focused on, where the agent cursor is, ' +
+        '[observe] Observe the live Loom: what the human is focused on, where the agent cursor is, ' +
         'the agent attention level, and every open proposal. Reads the current state of the shared log.',
       inputSchema: z.object({
         proposalId: z.string().optional().describe('If set, also return this single proposal (or null).'),
@@ -425,7 +595,7 @@ export async function createServer(): Promise<McpServer> {
     'loom_traverse',
     {
       description:
-        'Record a traversal step through the design-system graph (agent-only). Appends to the shared log through the gate.',
+        '[act] Record a traversal step through the design-system graph (agent-only). Appends to the shared log through the gate.',
       inputSchema: z.object({
         from: z.string().describe('Bare node name the traversal starts from, e.g. "--p31-accent".'),
         to: z.string().describe('Bare node name the traversal ends at, e.g. ".glass-card".'),
@@ -442,7 +612,7 @@ export async function createServer(): Promise<McpServer> {
     'loom_propose',
     {
       description:
-        'Propose a change against a node in the graph (agent-only). The id is caller-chosen and must be unique. Appends through the gate.',
+        '[act] Propose a change against a node in the graph (agent-only). The id is caller-chosen and must be unique. Appends through the gate.',
       inputSchema: z.object({
         id: z.string().describe('Unique proposal id, e.g. "prop_demo_1".'),
         node: z.string().describe('Bare node name the proposal targets, e.g. ".feature-card".'),
@@ -460,7 +630,7 @@ export async function createServer(): Promise<McpServer> {
     'loom_review',
     {
       description:
-        'Post an advisory review on a proposal (agent-only). Records an opinion at the ' +
+        '[act] Post an advisory review on a proposal (agent-only). Records an opinion at the ' +
         "proposal's current revision; does not change its status — only a human approve/reject " +
         'does. reason is required when decision is amend or reject.',
       inputSchema: z.object({
@@ -480,7 +650,7 @@ export async function createServer(): Promise<McpServer> {
     'loom_await',
     {
       description:
-        'Wait for a review event on a proposal, up to timeoutMs. Returns { status: "timeout" } ' +
+        '[act] Wait for a review event on a proposal, up to timeoutMs. Returns { status: "timeout" } ' +
         'when nothing arrives — a return value, not an error. Waits on the log file via fs.watch, ' +
         'not polling.',
       inputSchema: z.object({
@@ -498,7 +668,7 @@ export async function createServer(): Promise<McpServer> {
     'loom_mediate',
     {
       description:
-        'Render a proposal for a human at their tier (DISPLAY ONLY — never writes to the log). ' +
+        '[mediate] Render a proposal for a human at their tier (DISPLAY ONLY — never writes to the log). ' +
         'Reads the human\'s profile and, if they are a beginner who consented to tier sharing, ' +
         'returns a plain-language mediated summary alongside the untouched original body. The human\'s ' +
         'decision is always about the original body; mediation is a render-layer translation, not a revision.',
