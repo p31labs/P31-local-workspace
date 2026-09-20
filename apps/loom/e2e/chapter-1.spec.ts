@@ -13,8 +13,9 @@ test.beforeEach(() => {
 
 /**
  * Chapter 1 — Meet Lumi. A fresh visitor:
- * 1. Sees the Launchpad → presses Start → sees Lumi + "Say hello"
- * 2. Taps Lumi → celebration → a `focus` event lands in the log.
+ * 1. Sees the Launchpad → presses Start → sees Lumi waving + "Say hello"
+ * 2. Taps → celebration pulse → "Hi! I'm Lumi." → "What's next"
+ * 3. The `focus` event landed in the log.
  */
 test('chapter 1 — fresh visitor meets Lumi and taps', async ({ page }) => {
   await page.goto('/');
@@ -23,17 +24,23 @@ test('chapter 1 — fresh visitor meets Lumi and taps', async ({ page }) => {
   await expect(page.locator('.launchpad-start')).toHaveCount(1, { timeout: 5000 });
   await page.locator('.launchpad-start').click();
 
-  // Chapter 1: Lumi + one action button, no chrome.
+  // Chapter 1: Lumi arrives waving, one action button, no chrome.
   await expect(page.locator('.chapter-lumi')).toHaveCount(1, { timeout: 5000 });
   await expect(page.locator('.chapter-action')).toHaveCount(1, { timeout: 5000 });
+  await expect(page.locator('.lumi-wrap--wave')).toHaveCount(1, { timeout: 5000 });
   await expect(page.locator('.loom-bar')).toBeHidden();
 
-  // Tap Lumi → celebration → focus event in the log.
+  // Tap → celebration. The focus event lands in the log (the Say hello button
+  // stays mounted, disabled, during the pulse).
   await page.locator('.chapter-action').click();
   await expect(page.locator('.chapter-celebration')).toHaveCount(1, { timeout: 3000 });
-
-  // The focus event committed to the log.
   await page.waitForFunction(() => {
     return document.querySelectorAll('[data-agent-action="loom.focus"]').length > 0;
   }, { timeout: 5000 });
+
+  // Once the pulse settles: the greeting and the hand-off appear.
+  await expect(page.getByText('Hi! I\u2019m Lumi.', { exact: false }).first()).toHaveCount(1, {
+    timeout: 5000,
+  });
+  await expect(page.locator('.chapter-next')).toHaveCount(1, { timeout: 5000 });
 });

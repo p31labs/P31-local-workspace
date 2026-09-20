@@ -616,11 +616,52 @@ body {
   padding: 32px;
   text-align: center;
 }
-.lumi { width: 140px; height: 140px; animation: lumi-bob 3s ease-in-out infinite; }
+/* Lumi — the agent's face. The wrap carries the wave + glow; the svg keeps
+ * the idle bob (transform-only, scaled by --motion-scale). */
+.lumi-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.lumi { width: 140px; height: 140px; animation: lumi-bob calc(3s * var(--motion-scale)) ease-in-out infinite; }
 @keyframes lumi-bob {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-8px); }
 }
+.lumi-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background: radial-gradient(circle, oklch(80% 0.16 75 / 0.38), transparent 70%);
+  filter: blur(10px);
+  transform: scale(1);
+  transition:
+    transform calc(0.6s * var(--motion-scale)) ease,
+    opacity calc(0.6s * var(--motion-scale)) ease;
+  pointer-events: none;
+}
+.lumi-wrap--greeting .lumi-glow { transform: scale(1.18); }
+/* Arrival wave — one-shot tilt, sits on the wrap so it composes with the bob
+ * (which is on the svg) instead of fighting it for the animation property.
+ * Under prefers-reduced-motion the duration collapses and the gesture is
+ * effectively skipped with no JS branch. */
+.lumi-wrap--wave { animation: lumi-wave calc(1.8s * var(--motion-scale)) ease-in-out; }
+@keyframes lumi-wave {
+  0%   { transform: rotate(0deg); }
+  12%  { transform: rotate(-9deg); }
+  26%  { transform: rotate(7deg); }
+  40%  { transform: rotate(-6deg); }
+  54%  { transform: rotate(4deg); }
+  68%  { transform: rotate(-2deg); }
+  82%  { transform: rotate(1deg); }
+  100% { transform: rotate(0deg); }
+}
+.lumi-body { fill: var(--p31-accent, #fbbf24); }
+.lumi-face,
+.lumi-face--hidden { transition: opacity calc(0.3s * var(--motion-scale)) ease; }
+.lumi-face { opacity: 1; }
+.lumi-face--hidden { opacity: 0; }
 .launchpad-title {
   margin: 0;
   font-size: 2rem;
@@ -677,57 +718,96 @@ body {
 .chapter-lumi {
   width: 160px;
   height: 160px;
+  position: relative;
+}
+.chapter-lumi .lumi-wrap {
+  width: 100%;
+  height: 100%;
 }
 .chapter-lumi svg {
   width: 100%;
   height: 100%;
 }
-.chapter-lumi--celebrate {
-  animation: chapter-celebrate 0.6s ease-in-out;
-}
-@keyframes chapter-celebrate {
-  0% { transform: scale(1); }
-  30% { transform: scale(1.25) rotate(5deg); }
-  60% { transform: scale(1.15) rotate(-3deg); }
-  100% { transform: scale(1) rotate(0); }
-}
 .chapter-lumi--small {
   width: 100px;
   height: 100px;
 }
+/* Celebration pulse — a translucent amber ring that blooms out from Lumi once
+ * on a celebrated action. Drives the celebrated phase via animationend, so
+ * reduced-motion users (duration ~12ms) land there almost instantly with no
+ * separate code path. */
+.chapter-pulse {
+  position: absolute;
+  inset: -24px;
+  border-radius: 9999px;
+  background: radial-gradient(circle, oklch(80% 0.16 75 / 0.5), transparent 70%);
+  opacity: 0;
+  pointer-events: none;
+}
+.chapter-pulse--active {
+  animation: chapter-pulse-out calc(1.2s * var(--motion-scale)) ease-out;
+}
+@keyframes chapter-pulse-out {
+  0%   { opacity: 0.6; transform: scale(0.7); }
+  60%  { opacity: 0.25; transform: scale(1.15); }
+  100% { opacity: 0; transform: scale(1.3); }
+}
 .chapter-action {
-  min-height: 64px;
+  min-height: 64px; /* 64px child/elder touch target, not just the 48px floor */
   min-width: 200px;
-  padding: 12px 32px;
+  padding: 0 32px;
   border: none;
-  border-radius: 14px;
-  background: var(--p31-accent, #fbbf24);
+  border-radius: 9999px;
+  background: linear-gradient(180deg, var(--p31-accent-gold, #fcd34d), var(--p31-accent, #fbbf24));
   color: var(--p31-bg, #1a120b);
   font-size: 1.25rem;
   font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
-  transition: transform calc(0.2s * var(--motion-scale)) ease,
-    box-shadow calc(0.2s * var(--motion-scale)) ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    0 8px 24px rgba(255, 170, 40, 0.28);
+  transition: transform calc(0.15s * var(--motion-scale)) ease,
+    box-shadow calc(0.15s * var(--motion-scale)) ease,
+    opacity calc(0.15s * var(--motion-scale)) ease;
 }
-.chapter-action:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+.chapter-action:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 10px 28px rgba(255, 170, 40, 0.36);
 }
+.chapter-action:active:not(:disabled) {
+  transform: translateY(0) scale(0.98);
+}
+.chapter-action:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.chapter-action svg { flex-shrink: 0; }
 .chapter-action--ok {
-  background: var(--p31-accent-green, #34d399);
+  background: linear-gradient(180deg, var(--p31-accent-green, #4ade80), var(--p31-accent-green, #34d399));
   color: var(--p31-bg, #1a120b);
 }
 .chapter-action--no {
-  background: var(--p31-accent-red, #fb7185);
+  background: linear-gradient(180deg, var(--p31-accent-red, #fb7185), var(--p31-accent-red, #fb7185));
   color: var(--p31-bg, #1a120b);
+}
+.chapter-title {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  color: var(--p31-text-primary, #f8fafc);
 }
 .chapter-celebration {
   font-size: 2rem;
   font-weight: 700;
   letter-spacing: -0.02em;
   color: var(--p31-accent, #fbbf24);
-  animation: chapter-pop 1s ease-out;
+  animation: chapter-pop calc(1s * var(--motion-scale)) ease-out;
 }
 @keyframes chapter-pop {
   0% { transform: scale(0.5); opacity: 0; }
@@ -738,7 +818,7 @@ body {
   margin-top: 12px;
   padding: 8px 20px;
   min-height: 44px;
-  border-radius: 8px;
+  border-radius: 9999px;
   border: 1px solid var(--p31-glass-border, rgba(255, 255, 255, 0.2));
   background: transparent;
   color: var(--p31-text, #e2e8f0);
