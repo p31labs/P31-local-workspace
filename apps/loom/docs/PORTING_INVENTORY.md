@@ -1,10 +1,10 @@
-# Porting inventory — 2026-09-20T21:22:05.683Z
+# Porting inventory — 2026-09-20T21:37:42.663Z
 
 Scanned **51 files** under `apps/loom/src`.
 
 ## Tokens
-- Used: **40**
-- Resolve against canon: **34**
+- Used: **42**
+- Resolve against canon: **36**
 - Used but not declared in canon: **6**
 
   Drift — either typos, or gaps the canon needs to close:
@@ -184,4 +184,4 @@ Scanned **51 files** under `apps/loom/src`.
 - `sound-` — 3 classes
 
 ## Raw values that should be tokens
-- `apps/loom/src/index.css` — width: 320px, padding: 4px, min-height: 32px, min-height: 44px, min-width: 44px, width: 1px, height: 1px, width: 380px, gap: 18px, min-width: 96px, width: 90px, height: 2px (+85 more)
+- `apps/loom/src/index.css` — width: 320px, padding: 4px, min-height: 32px, min-height: 44px, min-width: 44px, width: 1px, height: 1px, width: 380px, min-width: 96px, width: 90px, height: 2px, width: 220px (+70 more)

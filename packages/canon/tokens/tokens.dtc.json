@@ -814,8 +814,16 @@
           "$value": "8px",
           "$type": "dimension"
         },
+        "md-tight": {
+          "$value": "12px",
+          "$type": "dimension"
+        },
         "md": {
           "$value": "16px",
+          "$type": "dimension"
+        },
+        "lg-tight": {
+          "$value": "20px",
           "$type": "dimension"
         },
         "lg": {

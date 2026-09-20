@@ -451,7 +451,9 @@ export const SEMANTIC_MAP: Record<string, SemanticSlot> = {
   // -------------------------------------------------------------------------
   'layout.spacing.xs': { literal: '4px',  type: 'dimension' },
   'layout.spacing.sm': { literal: '8px',  type: 'dimension' },
+  'layout.spacing.md-tight': { literal: '12px', type: 'dimension' },
   'layout.spacing.md': { literal: '16px', type: 'dimension' },
+  'layout.spacing.lg-tight': { literal: '20px', type: 'dimension' },
   'layout.spacing.lg': { literal: '24px', type: 'dimension' },
   'layout.spacing.xl': { literal: '32px', type: 'dimension' },
   'layout.density.factor': { literal: '1', type: 'number' },

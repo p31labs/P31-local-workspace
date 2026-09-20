@@ -230,7 +230,7 @@
   color: var(--p31-text-secondary, rgb(148, 163, 184));
   pointer-events: none;
 }
-.jb-row { display: flex; gap: 18px; align-items: baseline; }
+.jb-row { display: flex; gap: var(--p31-layout-spacing-lg-tight); align-items: baseline; }
 .jb-key { color: var(--p31-text-tertiary, rgb(100, 116, 139)); min-width: 96px; }
 .jb-val { color: var(--p31-text, rgb(226, 232, 240)); font-weight: 500; }
 .jb-val.closed { color: var(--p31-accent-gold, rgb(251, 191, 36)); text-shadow: 0 0 12px var(--p31-glow-amber, rgba(251, 191, 36, 0.5)); }
@@ -241,12 +241,12 @@
 .jb-controls {
   position: absolute;
   bottom: 36px; right: 40px;
-  display: flex; flex-direction: column; gap: 14px; align-items: flex-end;
+  display: flex; flex-direction: column; gap: var(--p31-layout-spacing-md); align-items: flex-end;
   font-family: var(--p31-font-mono, monospace);
   font-size: 0.75rem; letter-spacing: 0.15em;
   color: var(--p31-text-tertiary, rgb(100, 116, 139));
 }
-.jb-slider { display: flex; align-items: center; gap: 14px; }
+.jb-slider { display: flex; align-items: center; gap: var(--p31-layout-spacing-md); }
 .jb-slider input[type='range'] {
   -webkit-appearance: none; appearance: none;
   width: 220px; height: 2px;
@@ -265,7 +265,7 @@
   cursor: pointer; box-shadow: 0 0 14px var(--p31-glow-amber, rgba(251, 191, 36, 0.5));
 }
 .jb-tval { min-width: 42px; text-align: right; color: var(--p31-text, rgb(226, 232, 240)); }
-.jb-btns { display: flex; gap: 10px; }
+.jb-btns { display: flex; gap: var(--p31-layout-spacing-md-tight); }
 .jb-btns button {
   font-family: var(--p31-font-mono, monospace);
   font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase;
@@ -328,7 +328,7 @@
 .loom-kind--component { color: var(--p31-accent-gold, #fbbf24); }
 .loom-kind--theme { color: var(--p31-accent-violet, #a78bfa); }
 
-.loom-actions { display: flex; gap: var(--p31-layout-spacing-sm); margin-top: 12px; }
+.loom-actions { display: flex; gap: var(--p31-layout-spacing-sm); margin-top: var(--p31-layout-spacing-md-tight); }
 .loom-reject { display: flex; gap: var(--p31-layout-spacing-sm); margin-top: 8px; align-items: center; }
 .loom-reason {
   flex: 1;
@@ -340,7 +340,7 @@
   font-size: 12px;
 }
 .loom-btn {
-  padding: 6px 12px;
+  padding: var(--p31-layout-spacing-sm) var(--p31-layout-spacing-md-tight);
   min-height: 44px;
   border-radius: 6px;
   border: 1px solid var(--p31-glass-border, rgba(255, 255, 255, 0.2));
@@ -396,7 +396,7 @@
 .loom-shell[data-tier='beginner'] .loom-survival-track,
 .loom-shell[data-tier='intermediate'] .loom-survival-track { display: none; }
 .loom-json {
-  margin-top: 12px;
+  margin-top: var(--p31-layout-spacing-md-tight);
   padding: var(--p31-layout-spacing-sm);
   border-radius: 6px;
   background: var(--p31-surface, #12121a);
@@ -408,9 +408,9 @@
   color: var(--p31-text-secondary, #94a3b8);
 }
 .loom-more {
-  margin-top: 12px;
+  margin-top: var(--p31-layout-spacing-md-tight);
   width: 100%;
-  padding: 6px 12px;
+  padding: var(--p31-layout-spacing-sm) var(--p31-layout-spacing-md-tight);
   min-height: 44px;
   border-radius: 6px;
   border: 1px solid var(--p31-glass-border, rgba(255, 255, 255, 0.2));
@@ -482,14 +482,14 @@
     inset 0 1px 0 hsl(var(--loom-light-hue) 80% 80% / calc(var(--loom-light-intensity) * 0.28)),
     0 8px 32px rgba(0, 0, 0, calc(0.35 + var(--loom-light-intensity) * 0.15));
 }
-.scrub { display: flex; align-items: center; gap: 12px; width: 100%; }
+.scrub { display: flex; align-items: center; gap: var(--p31-layout-spacing-md-tight); width: 100%; }
 .scrub-range { flex: 1; }
 .scrub-pos { font-family: var(--p31-font-mono, monospace); font-size: 12px; color: var(--p31-text-secondary, #94a3b8); }
 
 /* Trace scale — the field's atomic end: a DOM waterfall of zone traces. */
 .ts { display: flex; flex-direction: column; height: 100%; overflow: hidden; }
 .ts-head {
-  display: flex; align-items: center; gap: 12px;
+  display: flex; align-items: center; gap: var(--p31-layout-spacing-md-tight);
   padding: var(--p31-layout-spacing-sm) var(--p31-layout-spacing-md);
   border-bottom: 1px solid var(--p31-glass-border, rgba(255, 255, 255, 0.1));
   font-family: var(--p31-font-mono, monospace); font-size: 12px;
@@ -498,7 +498,7 @@
 .ts-count { margin-left: auto; color: var(--p31-text-tertiary, #64748b); }
 .ts-body { flex: 1; overflow-y: auto; }
 .ts-row {
-  display: flex; align-items: center; gap: 10px;
+  display: flex; align-items: center; gap: var(--p31-layout-spacing-md-tight);
   padding: 0 16px;
   border-bottom: 1px solid var(--p31-glass-surface, rgba(255, 255, 255, 0.06));
   font-family: var(--p31-font-mono, monospace); font-size: 12px;
@@ -582,7 +582,7 @@
   left: 0;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--p31-layout-spacing-sm);
   pointer-events: none;
   z-index: 15;
   transition-property: transform;
@@ -629,7 +629,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 20px;
+  gap: var(--p31-layout-spacing-lg-tight);
   height: 100%;
   padding: var(--p31-layout-spacing-xl);
   text-align: center;
@@ -754,7 +754,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 20px;
+  gap: var(--p31-layout-spacing-lg-tight);
   height: 100%;
   width: 100%;
   padding: var(--p31-layout-spacing-xl);
@@ -877,7 +877,7 @@
   100% { transform: scale(1); opacity: 1; }
 }
 .chapter-next {
-  margin-top: 12px;
+  margin-top: var(--p31-layout-spacing-md-tight);
   padding: 8px 20px;
   min-height: var(--p31-touch-min); /* 48px family floor — the child's and elder's hand-off */
   border-radius: var(--p31-radius-full);
@@ -890,9 +890,9 @@
 .chapter-proposal {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--p31-layout-spacing-md-tight);
   max-width: 400px;
-  padding: 20px;
+  padding: var(--p31-layout-spacing-lg-tight);
   border-radius: 14px;
   border: 1px solid var(--p31-glass-border, rgba(255, 255, 255, 0.14));
   background: var(--p31-surface, #12121a);
@@ -909,7 +909,7 @@
 }
 .chapter-actions {
   display: flex;
-  gap: 12px;
+  gap: var(--p31-layout-spacing-md-tight);
   justify-content: center;
   flex-wrap: wrap;
 }
@@ -1423,23 +1423,15 @@
 }
 
 /* ── Raw-value triage (the porting inventory's remaining queue) ──────────
- * The values below are the only ones still hardcoded in this stylesheet.
- * They are NOT an oversight to be "cleaned up" blindly — they fall into
- * three buckets, and each must be handled differently:
+ * The spacing scale was extended (canon now has 12px and 20px steps) and the
+ * off-scale gaps snapped to it, so the queue is now just:
  *
  *   1. Micro-elements (keep as literals — no token should exist for these):
  *      width/height 1–8px dots, bars, indicators (survival track, event
- *      marks, range sliders), and the 0.01ms reduced-motion floor.
+ *      marks, range sliders), the 3px proposal-node stack gap, the 5px
+ *      reason-input padding, and the 0.01ms reduced-motion floor.
  *
- *   2. Off-scale spacing (gap/padding 6, 10, 12, 14, 18, 20px): the canon
- *      spacing scale is 4/8/16/24/32 — these sit between steps. They are
- *      drift, not design. Two resolutions, decided outside a port commit:
- *      (a) snap to the nearest step (a visual change — needs a browser look
- *      at each), or (b) extend the canon scale with intermediate tokens
- *      (--p31-layout-spacing-2xl etc.) and convert. Do not invent tokens by
- *      hand; the canon generator owns them.
- *
- *   3. Chrome sizes (width 90, 220, 240, 280, 320, 360, 380, 400, 480,
+ *   2. Chrome sizes (width 90, 220, 240, 280, 320, 360, 380, 400, 480,
  *      820px; the instrument and Jitterbug readouts): deliberate layout
  *      constants with no spacing-token intent. Keep, or lift to tokens only
  *      if a width scale is ever added to the canon.
