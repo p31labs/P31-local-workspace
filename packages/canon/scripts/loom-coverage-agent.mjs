@@ -13,7 +13,7 @@
  *
  * Run: node scripts/loom-coverage-agent.mjs [--limit=N]
  */
-import { readFileSync, readdirSync } from 'node:fs';
+import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { propose, traverse, resolveLogPath } from '../../canon-mcp/src/loom-tools.ts';
@@ -24,6 +24,7 @@ import {
   buildContractBody,
   pascalize,
 } from './loom-coverage.mjs';
+import { rankByField } from '../../field/src/loop.ts';
 
 function arg(name, dflt) {
   const i = process.argv.indexOf(`--${name}`);
@@ -36,6 +37,10 @@ const here = dirname(fileURLToPath(import.meta.url));
 const root = resolve(here, '..');
 const registry = JSON.parse(readFileSync(join(root, 'registry.json'), 'utf8'));
 const limit = Number(arg('limit', '5'));
+// Optional field traces (JSON array of @p31/field Trace objects). When present
+// and non-empty, the coverage agent ranks by field attention instead of the
+// static signal. Zone ids are the family base names (e.g. ".badge").
+const tracesPath = arg('traces', null);
 
 // ── scan CSS into class -> { files, tokens } ───────────────────────────
 const cssDir = join(root, 'src', 'css');
@@ -70,7 +75,25 @@ const dtcgTokens = resolveAll(dtcg);
 // ── rank + filter ──────────────────────────────────────────────────────
 const families = detectFamilies(classVars);
 const contracted = registry.components.map((c) => c.name);
-const candidates = uncontractedFamilies(families, contracted).slice(0, limit);
+let candidates = uncontractedFamilies(families, contracted).slice(0, limit);
+
+// Field-driven ranking: when traces are supplied, re-rank the candidate set
+// by field attention (pressure + hazard − failure history, over the static
+// signal as prior). Zones are the family base names.
+if (tracesPath && existsSync(tracesPath)) {
+  const traces = JSON.parse(readFileSync(tracesPath, 'utf8'));
+  if (Array.isArray(traces) && traces.length > 0) {
+    const atMs = Date.now();
+    const ranked = rankByField(
+      candidates.map((f) => ({ id: f.base, signal: f.signal })),
+      traces,
+      atMs,
+    );
+    const order = new Map(ranked.map((r, i) => [r.id, i]));
+    candidates = [...candidates].sort((a, b) => (order.get(a.base) ?? 0) - (order.get(b.base) ?? 0));
+    console.log(`[coverage-agent] ranked by field (${traces.length} traces): ${candidates.map((c) => c.base).join(', ')}`);
+  }
+}
 
 if (candidates.length === 0) {
   console.log('[coverage-agent] no uncontracted component families; the canon is fully contracted.');
