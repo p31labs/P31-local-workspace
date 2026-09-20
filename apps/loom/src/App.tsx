@@ -48,6 +48,16 @@ async function postEvent(input: LoomEventInput, humanId: string | null): Promise
   }
 }
 
+/** A coarse, gentle age string — the ADHD time-blindness affordance. */
+function timeAgo(ts: string): string {
+  const mins = Math.floor((Date.now() - new Date(ts).getTime()) / 60000);
+  if (mins < 1) return 'just now';
+  if (mins < 60) return `~${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `~${hrs}h ago`;
+  return `~${Math.floor(hrs / 24)}d ago`;
+}
+
 export default function App() {
   const { nodes: baseNodes, edges: baseEdges, counts } = useMemo(() => buildGraph(), []);
   const idIndex = useMemo(() => buildIdIndex(), []);
@@ -120,6 +130,24 @@ export default function App() {
     if (!p) return null;
     return { x: p.x * viewport.zoom + viewport.x, y: p.y * viewport.zoom + viewport.y };
   }, [state.agentCursor, idIndex, positions, viewport]);
+
+  // "Continue where you left off" — the most recent named save within a day,
+  // surfaced as a working-memory affordance (external structure for ADHD).
+  const recentSave = useMemo(() => {
+    const saves = state.saves;
+    if (saves.length === 0) return null;
+    const last = saves[saves.length - 1];
+    if (last.to === seq) return null; // already at (or past) the saved point
+    if (Date.now() - new Date(last.ts).getTime() > 24 * 3600 * 1000) return null;
+    return last;
+  }, [state.saves, seq]);
+
+  const saveView = useCallback(() => {
+    void postEvent(
+      { writer: 'human', kind: 'view.save', label: focus ?? 'field', from: 0, to: seq },
+      humanId,
+    );
+  }, [focus, seq, humanId]);
 
   const nodes: Node[] = useMemo(() => {
     const trail = new Set(overlay.pathIds);
@@ -237,7 +265,33 @@ export default function App() {
             agent @ {state.agentCursor} · attention {overlay.attention.toFixed(2)}
           </span>
         )}
+        {recentSave && (
+          <button
+            className="loom-continue"
+            onClick={() => scrub(recentSave.to)}
+            title={`Saved "${recentSave.label}" — jump back to it`}
+            data-agent-kind="action"
+            data-agent-action="view.continue"
+            data-agent-danger="none"
+            data-agent-confirm="never"
+          >
+            ↩ Continue: {recentSave.label} ({timeAgo(recentSave.ts)})
+          </button>
+        )}
         <span className="loom-gate">human + agent, one log</span>
+        {events.length > 0 && (
+          <button
+            className="loom-save"
+            onClick={saveView}
+            title="Name and keep this view"
+            data-agent-kind="action"
+            data-agent-action="view.save"
+            data-agent-danger="none"
+            data-agent-confirm="never"
+          >
+            Save
+          </button>
+        )}
         <button
           className="loom-mode"
           onClick={() => {

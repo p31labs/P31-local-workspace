@@ -98,6 +98,26 @@ body {
 .loom-human { color: var(--p31-text-secondary, #94a3b8); font-size: 12px; }
 .loom-agent { color: var(--p31-accent-violet, #a78bfa); font-size: 12px; }
 .loom-gate { margin-left: auto; color: var(--p31-accent, #00f0ff); font-size: 12px; }
+.loom-continue {
+  padding: 4px 10px;
+  min-height: 32px;
+  border-radius: 6px;
+  border: 1px solid var(--p31-accent, #00f0ff);
+  background: transparent;
+  color: var(--p31-accent, #00f0ff);
+  font-size: 12px;
+  cursor: pointer;
+}
+.loom-save {
+  padding: 4px 10px;
+  min-height: 32px;
+  border-radius: 6px;
+  border: 1px solid var(--p31-glass-border, rgba(255, 255, 255, 0.2));
+  background: transparent;
+  color: var(--p31-text, #e2e8f0);
+  font-size: 12px;
+  cursor: pointer;
+}
 .loom-mode {
   margin-left: 8px;
   padding: 4px 10px;
