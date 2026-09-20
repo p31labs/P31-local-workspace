@@ -22,6 +22,7 @@ import {
   type Scene,
   type Reading,
   type ZoneReading,
+  type Trace,
   type WeftEventLike,
 } from '@p31/field';
 import registry from '@p31/canon/registry.json';
@@ -34,6 +35,8 @@ export interface InstrumentState {
   scene: Scene;
   visible: ZoneReading[];
   hidden: number;
+  /** All traces (warp + weft) — the raw input for the trace scale. */
+  traces: Trace[];
   /** Deposit the current reading as a `view.read` weft event. Stable. */
   emitRead: (humanId: string | null) => void;
 }
@@ -134,5 +137,5 @@ export function useInstrument(events: LoomEvent[], focus: string | null): Instru
     [warpSeq],
   );
 
-  return { reading, scene, visible, hidden, emitRead };
+  return { reading, scene, visible, hidden, traces, emitRead };
 }

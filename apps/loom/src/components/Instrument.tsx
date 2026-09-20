@@ -10,24 +10,32 @@
  * the animation loop does not run — the instrument is a static reading.
  */
 import { useEffect, useRef } from 'react';
-import type { Scene, Reading } from '@p31/field';
+import { TICK_BAND_Y, type Scene, type Reading } from '@p31/field';
 import { resolveToken, watchTheme } from '../lib/tokens';
 
 const PULSE_MS = 4000;
+/** How far above the tick band a click still counts as "enter the trace scale". */
+const TICK_BAND_HIT_PAD = 0.06;
 
 interface Props {
   scene: Scene;
   reading: Reading;
   /** Zoom to a zone (constellation → zone); null returns to the field. */
   onFocus?: (id: string | null) => void;
+  /** Enter the trace scale for the focused zone (from the zone's tick band). */
+  onTrace?: () => void;
 }
 
-export function Instrument({ scene, reading, onFocus }: Props) {
+export function Instrument({ scene, reading, onFocus, onTrace }: Props) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const sceneRef = useRef(scene);
   sceneRef.current = scene;
+  const readingRef = useRef(reading);
+  readingRef.current = reading;
   const onFocusRef = useRef(onFocus);
   onFocusRef.current = onFocus;
+  const onTraceRef = useRef(onTrace);
+  onTraceRef.current = onTrace;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -117,6 +125,18 @@ export function Instrument({ scene, reading, onFocus }: Props) {
         }
       }
 
+      // Trace ticks — the time-axis sparkline (zone scale). One marker per
+      // trace, positioned by ts along [0,1], sized by decay, colored by frame.
+      for (const k of s.ticks) {
+        ctx.fillStyle = resolveToken(k.frameToken);
+        const x = k.t * width;
+        const y = TICK_BAND_Y * height;
+        const r = (0.004 + 0.006 * k.size) * unit;
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
       // The pulse — a ring at the top that expands and fades with the clock.
       if (!reduceMotion) {
         const px = 0.5 * width;
@@ -164,6 +184,15 @@ export function Instrument({ scene, reading, onFocus }: Props) {
       const x = (e.clientX - rect.left) / rect.width;
       const y = (e.clientY - rect.top) / rect.height;
       const s = sceneRef.current;
+
+      // The tick band (zone scale, below the K₄ and readouts) is the entry
+      // gesture into the trace scale. Clicking there drills into the traces
+      // rather than de-focusing.
+      if (readingRef.current.scale === 'zone' && y >= TICK_BAND_Y - TICK_BAND_HIT_PAD) {
+        onTraceRef.current?.();
+        return;
+      }
+
       let hit: string | null = null;
       for (const d of s.dots) {
         const dx = d.x - x;

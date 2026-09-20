@@ -13,12 +13,14 @@ import { useLoomState } from './lib/useLoomState';
 import { useInstrument } from './lib/useInstrument';
 import { deriveOverlay } from './lib/overlay';
 import { useProfile } from './lib/useProfile';
-import { effectiveTier, resolveSurface, rejectReasonFor, approveLabel } from './lib/surface';
+import { effectiveTier, resolveSurface, rejectReasonFor } from './lib/surface';
 import { EventOverlay } from './components/EventOverlay';
 import { Instrument } from './components/Instrument';
 import { ProposalDigest } from './components/ProposalDigest';
 import { ProposalNode } from './components/ProposalNode';
+import { ProposalReviewPanel } from './components/ProposalReviewPanel';
 import { TimelineScrubber } from './components/TimelineScrubber';
+import { TraceScale } from './components/TraceScale';
 import type { LoomEventInput } from '@p31/canon/loom/gate';
 
 const nodeTypes = { proposal: ProposalNode };
@@ -58,6 +60,7 @@ export default function App() {
   const [notYet, setNotYet] = useState(false);
   const [showMore, setShowMore] = useState(false);
   const [mode, setMode] = useState<'canvas' | 'instrument' | 'jitterbug'>('canvas');
+  const [traceView, setTraceView] = useState(false);
 
   // Reading is writing: opening the instrument or zooming to a zone deposits
   // a `view.read` in the weft, which feeds back into the field.
@@ -137,6 +140,29 @@ export default function App() {
 
   const proposal = selectedProposal ? state.proposals.get(selectedProposal) : null;
 
+  const approve = useCallback(() => {
+    if (!proposal) return;
+    void postEvent({ writer: 'human', kind: 'approve', proposal: proposal.id }, humanId);
+  }, [proposal, humanId]);
+
+  const reject = useCallback(
+    (reason: string) => {
+      if (!proposal) return;
+      void postEvent(
+        {
+          writer: 'human',
+          kind: 'reject',
+          proposal: proposal.id,
+          reason: rejectReasonFor(effTier, reason),
+        },
+        humanId,
+      );
+      setRejectReason('');
+      setNotYet(false);
+    },
+    [proposal, effTier, humanId],
+  );
+
   return (
     <div className="loom-shell" data-tier={effTier} style={overrides}>
       <header className="loom-bar">
@@ -161,6 +187,7 @@ export default function App() {
           onClick={() => {
             setMode((m) => (m === 'canvas' ? 'instrument' : m === 'instrument' ? 'jitterbug' : 'canvas'));
             setFocus(null);
+            setTraceView(false);
           }}
           aria-pressed={mode !== 'canvas'}
         >
@@ -170,7 +197,20 @@ export default function App() {
 
       <main className="loom-canvas">
         {mode === 'instrument' ? (
-          <Instrument scene={instrument.scene} reading={instrument.reading} onFocus={setFocus} />
+          traceView && focus ? (
+            <TraceScale
+              traces={instrument.traces.filter((t) => t.zone === focus)}
+              zoneId={focus}
+              onBack={() => setTraceView(false)}
+            />
+          ) : (
+            <Instrument
+              scene={instrument.scene}
+              reading={instrument.reading}
+              onFocus={setFocus}
+              onTrace={() => setTraceView(true)}
+            />
+          )
         ) : mode === 'jitterbug' ? (
           <Suspense fallback={<div className="loom-loading">opening the jitterbug…</div>}>
             <JitterbugScene />
@@ -195,61 +235,16 @@ export default function App() {
 
       <aside className="loom-panel">
         {proposal ? (
-          <div>
-            <div className="loom-kind loom-kind--component">proposal</div>
-            <h2>{proposal.id}</h2>
-            <p className="loom-hint">
-              node: {proposal.node} · status: {proposal.status} · rev {proposal.revision}
-            </p>
-            <p className="loom-summary">
-              An agent proposed a change to <code>{proposal.node}</code>
-              {proposal.author !== 'unknown' ? ` · authored by ${proposal.author}` : ''}.
-              Nothing in the canon changes until you approve.
-            </p>
-            <div className="loom-actions">
-              <button
-                className="loom-btn loom-btn--ok"
-                onClick={() => void postEvent({ writer: 'human', kind: 'approve', proposal: proposal.id }, humanId)}
-              >
-                {approveLabel(effTier)}
-              </button>
-              {effTier === 'beginner' && !notYet ? (
-                <button className="loom-btn loom-btn--no" onClick={() => setNotYet(true)}>
-                  Not yet
-                </button>
-              ) : (
-                <div className="loom-reject">
-                  <input
-                    className="loom-reason"
-                    placeholder="reason (optional)"
-                    value={rejectReason}
-                    onChange={(e) => setRejectReason(e.target.value)}
-                  />
-                  <button
-                    className="loom-btn loom-btn--no"
-                    onClick={() => {
-                      void postEvent(
-                        {
-                          writer: 'human',
-                          kind: 'reject',
-                          proposal: proposal.id,
-                          reason: rejectReasonFor(effTier, rejectReason),
-                        },
-                        humanId,
-                      );
-                      setRejectReason('');
-                      setNotYet(false);
-                    }}
-                  >
-                    Reject
-                  </button>
-                </div>
-              )}
-            </div>
-            {effTier === 'advanced' && (
-              <pre className="loom-json">{JSON.stringify(proposal.body, null, 2)}</pre>
-            )}
-          </div>
+          <ProposalReviewPanel
+            proposal={proposal}
+            tier={effTier}
+            reason={rejectReason}
+            notYet={notYet}
+            onApprove={approve}
+            onReject={reject}
+            onReasonChange={setRejectReason}
+            onToggleNotYet={() => setNotYet(true)}
+          />
         ) : showOverlay ? (
           <EventOverlay events={events} seq={seq} onFollow={follow} onSelect={scrub} />
         ) : (
