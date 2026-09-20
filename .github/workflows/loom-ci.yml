@@ -1,0 +1,49 @@
+name: Loom — inclusive design-system gates
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  gates:
+    name: Inclusive + loom + canon gates
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Inclusive gate (font size, touch targets, hex, copy coverage)
+        run: pnpm --filter @p31/canon verify:inclusive
+      - name: Loom gate suite (seal, determinism, gate, replay)
+        run: pnpm --filter @p31/canon test:loom
+      - name: canon-mcp typecheck
+        run: pnpm --filter @p31/canon-mcp typecheck
+      - name: Loom typecheck
+        run: pnpm --filter @p31/loom typecheck
+      - name: Loom unit tests
+        run: pnpm --filter @p31/loom test
+      - name: Build canon (emits dist/tokens.css consumed by the Loom)
+        run: pnpm --filter @p31/canon build
+      - name: Loom production build
+        run: pnpm --filter @p31/loom build
+
+  e2e:
+    name: Loom e2e (Playwright)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Build canon (emits dist/tokens.css for the dev server)
+        run: pnpm --filter @p31/canon build
+      - name: Install Playwright Chromium
+        run: pnpm --filter @p31/loom exec playwright install --with-deps chromium
+      - name: Loom e2e
+        run: pnpm --filter @p31/loom test:e2e
