@@ -1,0 +1,19 @@
+{
+  "name": "@p31/field",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "P31 Field — a stigmergic trace ecology over the canon graph. The executable runtime for the structural-informational layer of the P31 research papers; the physical-biological layer is cited, never computed.",
+  "license": "AGPL-3.0",
+  "sideEffects": false,
+  "scripts": {
+    "test": "node scripts/test-field.mjs",
+    "typecheck": "tsc --noEmit"
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0"
+  }
+}
