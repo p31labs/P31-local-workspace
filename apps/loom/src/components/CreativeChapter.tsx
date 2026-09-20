@@ -5,6 +5,7 @@ import { ReviewCard } from './ReviewCard';
 import { SharedChip } from './SharedChip';
 import { SoundToggle } from './SoundToggle';
 import { useLoomSound } from '../lib/useLoomSound';
+import { CHILD_COLORS } from '../lib/colors';
 import type { LoomEvent } from '@p31/canon/loom/events';
 import type { LoomEventInput } from '@p31/canon/loom/gate';
 
@@ -16,14 +17,6 @@ interface Props {
 }
 
 type Stage = 'pick' | 'review' | 'celebrating' | 'celebrated';
-
-/** Child-facing colors. Not token names — the swatch is the icon, the word
- *  is the label. */
-const COLORS = [
-  { name: 'Amber', token: '--p31-accent' },
-  { name: 'Green', token: '--p31-accent-green' },
-  { name: 'Pink', token: '--p31-accent-iris' },
-] as const;
 
 const REVIEW_TEXT = 'I like this! Can I make it for you?';
 
@@ -146,7 +139,7 @@ export function CreativeChapter({ events, onProgress, commit }: Props) {
       {stage === 'pick' && (
         <>
           <p className="chapter-subtitle">What color should we make?</p>
-          <ColorPicker colors={COLORS} onPick={handlePick} />
+          <ColorPicker colors={CHILD_COLORS} onPick={handlePick} />
         </>
       )}
 
