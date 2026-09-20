@@ -1533,6 +1533,53 @@
   line-height: var(--loom-line-height);
   color: var(--p31-text-secondary, #cbd5e1);
 }
+.docs-log {
+  display: flex;
+  flex-direction: column;
+  gap: var(--p31-layout-spacing-sm);
+}
+.docs-log-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--p31-layout-spacing-md);
+}
+.docs-log-btn {
+  min-height: 48px;
+  min-width: 48px;
+  border-radius: var(--p31-radius-sm, 8px);
+  border: 1px solid var(--p31-glass-border, rgba(255, 255, 255, 0.12));
+  background: var(--p31-glass-bg, rgba(255, 255, 255, 0.06));
+  color: var(--p31-text-primary, #f8fafc);
+  font-size: 1rem;
+  cursor: pointer;
+}
+.docs-log-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.docs-log-pos {
+  font-family: var(--p31-font-mono, ui-monospace, monospace);
+  font-size: 0.85rem;
+  color: var(--p31-text-secondary, #cbd5e1);
+}
+.docs-log-state {
+  display: flex;
+  flex-direction: column;
+  gap: var(--p31-layout-spacing-xs);
+  padding: var(--p31-layout-spacing-md);
+  border-radius: var(--p31-radius-sm, 8px);
+  border: 1px solid var(--p31-glass-border, rgba(255, 255, 255, 0.12));
+  background: var(--p31-glass-bg, rgba(255, 255, 255, 0.06));
+}
+.docs-log-line {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--p31-text-secondary, #cbd5e1);
+}
+.docs-log-line code {
+  font-family: var(--p31-font-mono, ui-monospace, monospace);
+  color: var(--p31-text-primary, #f8fafc);
+}
 }
 
 /* ── Raw-value triage (the porting inventory's remaining queue) ──────────
