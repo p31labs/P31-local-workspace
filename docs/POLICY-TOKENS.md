@@ -50,22 +50,18 @@ without re-deriving it.
 
 ## Honest limitations
 
-The policy surface is real but not yet complete at the canvas boundary:
+The policy surface reaches the canvas. The color probe resolves inside
+`.loom-shell` (`src/lib/tokens.ts` `resolveToken`), so muted accents reach both
+the Instrument's 2D canvas and the Jitterbug's WebGL uniforms
+(`resolveTokenRgb`); letter-spacing and literal-labels reach it too.
 
-- **Muted saturation reaches the DOM, not the canvas.** `[data-saturation='muted']`
-  swaps `--p31-accent` on `.loom-shell`, but the canvas color resolver
-  (`src/lib/tokens.ts` `resolveToken`) reads from a probe appended to
-  `document.body`, so it sees the `:root` value, not the shell override. The
-  Instrument's drawn colors stay full-saturation under `muted`.
-- **Density does not reach the canvas readouts.** The spacing scale re-roots
-  the DOM chrome; the canvas readout font size and spacing are not yet density-
-  scaled.
-- **Letter-spacing and literal-labels *do* reach the canvas** — the former via
-  `src/lib/canvas-text.ts` reading `.loom-shell`, the latter via the React
-  context. The gap is specifically the color and size resolution paths.
-
-These are the difference between "the axes are wired" and "the axes change
-every pixel." Closing them is the next slice of canvas work, not a doc fix.
+The one remaining gap: **density scales canvas text size, not canvas layout.**
+`drawTrackedText` multiplies type size by `--p31-layout-density-factor`, so the
+readout text grows or shrinks — but the readouts' *positions*, gaps, and bar
+geometry are computed in `@p31/field`'s `layout.ts`, which has no density
+concept. Under a density tier the text scales while its coordinates do not.
+Closing that means teaching `projectInstrument` the density factor and adjusting
+readout geometry — a `packages/field` change, not a Loom one, and its own slice.
 
 ## Why this matters
 

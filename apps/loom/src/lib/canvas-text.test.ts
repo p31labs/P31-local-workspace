@@ -41,4 +41,17 @@ describe('drawTrackedText', () => {
     expect(ctx.letterSpacing).toBe('0px');
     expect(ctx.fillText).toHaveBeenCalled();
   });
+
+  it('scales the type by the density factor read from .loom-shell', () => {
+    const shell = document.createElement('div');
+    shell.className = 'loom-shell';
+    shell.style.setProperty('--p31-layout-density-factor', '1.25');
+    document.body.appendChild(shell);
+
+    const ctx = mockCtx();
+    drawTrackedText(ctx, 'hi', 0, 0, { sizePx: 20, fillStyle: '#fff', fontFallback: 'monospace' });
+    expect(ctx.font).toContain('25px'); // 20 * 1.25
+
+    shell.remove();
+  });
 });

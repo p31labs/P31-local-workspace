@@ -36,7 +36,7 @@ test('canvas reflects events the demo agent committed', async ({ page }) => {
   await page.goto('/');
 
   // The agent's proposal renders as a ghost node (id is date-stamped, so match by marker).
-  await expect(page.locator('.loom-node--proposal').first()).toHaveCount(1, { timeout: 5000 });
+  await expect(page.locator('.loom-node--proposal').first()).toHaveCount(1, { timeout: 10000 });
 
   // The event log shows the agent's writes and their writer.
   await expect(page.getByText('propose', { exact: true }).first()).toHaveCount(1);

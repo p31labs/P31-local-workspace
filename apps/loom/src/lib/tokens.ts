@@ -11,8 +11,9 @@
  *     `color: var(--x)` — returns the USED color, which Canvas accepts.
  *
  * Resolved colors are cached and invalidated when the active theme changes
- * (a MutationObserver on `documentElement[data-theme]`), so a theme switch
- * re-reads the tokens instead of re-rendering stale ones.
+ * (a MutationObserver on `documentElement[data-theme]`) or when a presentation
+ * axis flips (a MutationObserver on `.loom-shell[data-saturation|data-density]`),
+ * so a theme switch re-reads the tokens instead of re-rendering stale ones.
  */
 
 const FALLBACKS: Record<string, string> = {
@@ -34,8 +35,13 @@ function getProbe(): HTMLSpanElement {
     probe.setAttribute('aria-hidden', 'true');
     probe.style.cssText =
       'position:absolute;left:-9999px;top:-9999px;visibility:hidden;pointer-events:none;';
-    document.body.appendChild(probe);
   }
+  // Parent the probe inside .loom-shell so it inherits the shell's scoped
+  // custom-property overrides — [data-saturation='muted'] re-roots --p31-accent,
+  // [data-density] re-roots the spacing/factor tokens. Fall back to body before
+  // the shell mounts; the next resolve re-parents once it does.
+  const parent = document.querySelector<HTMLElement>('.loom-shell') ?? document.body;
+  if (probe.parentElement !== parent) parent.appendChild(probe);
   return probe;
 }
 
@@ -48,23 +54,32 @@ export function resolveToken(token: string): string {
   el.style.color = `var(${token})`;
   const used = getComputedStyle(el).color;
   // `transparent`/`rgba(0, 0, 0, 0)` mean the token did not resolve — the
-  // theme's value is absent. Fall back to the rgb literal.
-  const value = !used || used === 'transparent' || used === 'rgba(0, 0, 0, 0)'
+  // theme's value is absent. A literal `var(--…)` string means the environment
+  // (e.g. jsdom) does not substitute custom properties in `.color`. Either way,
+  // fall back to the rgb literal.
+  const value = !used || used === 'transparent' || used === 'rgba(0, 0, 0, 0)' || used.includes('var(')
     ? (FALLBACKS[token] ?? 'rgb(226, 232, 240)')
     : used;
   cache.set(token, value);
   return value;
 }
 
-/** Invalidate the cache when the theme attribute changes. Idempotent. */
+/** Invalidate the cache when the theme attribute OR a presentation axis flips.
+ *  Idempotent. */
 export function watchTheme(cb?: () => void): () => void {
-  const root = document.documentElement;
   const observer = new MutationObserver(() => {
     cache = new Map();
     rgbCache = new Map();
     cb?.();
   });
-  observer.observe(root, { attributes: true, attributeFilter: ['data-theme'] });
+  observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  const shell = document.querySelector<HTMLElement>('.loom-shell');
+  if (shell) {
+    observer.observe(shell, {
+      attributes: true,
+      attributeFilter: ['data-saturation', 'data-density', 'data-literal-labels', 'data-motion'],
+    });
+  }
   return () => observer.disconnect();
 }
 

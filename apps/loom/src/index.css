@@ -411,6 +411,7 @@ body {
  * grows. Every consumer of var(--p31-layout-spacing-*) inherits the shift. */
 .loom-shell[data-density='compact'] {
   --loom-panel-width: 280px;
+  --p31-layout-density-factor: 0.75;
   --p31-layout-spacing-xs: 2px;
   --p31-layout-spacing-sm: 4px;
   --p31-layout-spacing-md: 8px;
@@ -419,6 +420,7 @@ body {
 }
 .loom-shell[data-density='spacious'] {
   --loom-panel-width: 360px;
+  --p31-layout-density-factor: 1.25;
   --p31-layout-spacing-xs: 6px;
   --p31-layout-spacing-sm: 12px;
   --p31-layout-spacing-md: 24px;

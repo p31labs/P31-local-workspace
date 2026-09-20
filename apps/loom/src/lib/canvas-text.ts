@@ -67,7 +67,9 @@ export function drawTrackedText(
   y: number,
   opts: CanvasTextOptions,
 ): void {
-  const size = Math.max(MIN_FONT_PX, opts.sizePx);
+  // Density scales the type; the 12px accessibility floor still holds.
+  const density = readEm('--p31-layout-density-factor', 1);
+  const size = Math.max(MIN_FONT_PX, opts.sizePx * density);
   const family = opts.fontToken
     ? resolveFontFamily(opts.fontToken, opts.fontFallback ?? 'monospace')
     : (opts.fontFallback ?? 'monospace');
