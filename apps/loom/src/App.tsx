@@ -20,12 +20,13 @@ import { EventOverlay } from './components/EventOverlay';
 import { Instrument } from './components/Instrument';
 import { ProposalDigest } from './components/ProposalDigest';
 import { ProposalNode } from './components/ProposalNode';
+import { LoomNode } from './components/LoomNode';
 import { ProposalReviewPanel } from './components/ProposalReviewPanel';
 import { TimelineScrubber } from './components/TimelineScrubber';
 import { TraceScale } from './components/TraceScale';
 import type { LoomEventInput } from '@p31/canon/loom/gate';
 
-const nodeTypes = { proposal: ProposalNode };
+const nodeTypes = { proposal: ProposalNode, loom: LoomNode };
 
 // Lazy-load the WebGL closure scene so three.js (and its ~530 kB) is fetched
 // only when the user enters the Jitterbug mode — the Canvas mode stays lean.
@@ -99,16 +100,20 @@ export default function App() {
   // coordinates) mapped through the ReactFlow viewport (pan + zoom).
   const cursorPos = useMemo(() => {
     if (!state.agentCursor) return null;
-    const p = positions.get(state.agentCursor);
+    // agentCursor is a bare node name; resolve it to the namespaced id the
+    // graph positions are keyed by (token:--p31-accent vs --p31-accent).
+    const namespaced = idIndex.get(state.agentCursor) ?? state.agentCursor;
+    const p = positions.get(namespaced);
     if (!p) return null;
     return { x: p.x * viewport.zoom + viewport.x, y: p.y * viewport.zoom + viewport.y };
-  }, [state.agentCursor, positions, viewport]);
+  }, [state.agentCursor, idIndex, positions, viewport]);
 
   const nodes: Node[] = useMemo(() => {
     const trail = new Set(overlay.pathIds);
     const base = baseNodes.map((n) => ({
       id: n.id,
       position: n.position,
+      type: 'loom',
       data: n.data,
       className: [
         'loom-node',
