@@ -52,8 +52,8 @@ body {
   grid-area: bar;
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 0 16px;
+  gap: var(--p31-layout-spacing-md);
+  padding: 0 var(--p31-layout-spacing-md);
   border-bottom: 1px solid var(--p31-glass-border, rgba(255, 255, 255, 0.1));
   font-size: 13px;
 }
@@ -205,7 +205,7 @@ body {
 .loom-panel {
   grid-area: panel;
   border-left: 1px solid var(--p31-glass-border, rgba(255, 255, 255, 0.1));
-  padding: 16px;
+  padding: var(--p31-layout-spacing-md);
   overflow: auto;
   font-size: 13px;
 }
@@ -317,10 +317,10 @@ body {
 .digest-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
 .digest-item {
   display: flex;
-  gap: 8px;
+  gap: var(--p31-layout-spacing-sm);
   align-items: baseline;
   width: 100%;
-  padding: 8px;
+  padding: var(--p31-layout-spacing-sm);
   border-radius: 6px;
   border: 1px solid var(--p31-glass-border, rgba(255, 255, 255, 0.14));
   background: var(--p31-surface, #12121a);
@@ -343,9 +343,9 @@ body {
 .ev-empty { color: var(--p31-text-tertiary, #64748b); }
 .ev-item {
   display: flex;
-  gap: 8px;
+  gap: var(--p31-layout-spacing-sm);
   align-items: baseline;
-  padding: 4px 8px;
+  padding: var(--p31-layout-spacing-xs) var(--p31-layout-spacing-sm);
   border-radius: 4px;
   border-left: 2px solid transparent;
   font-size: 12px;
@@ -365,8 +365,8 @@ body {
   grid-area: scrub;
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 8px 16px;
+  gap: var(--p31-layout-spacing-sm);
+  padding: var(--p31-layout-spacing-sm) var(--p31-layout-spacing-md);
   border-top: 1px solid var(--p31-glass-border, rgba(255, 255, 255, 0.1));
 }
 .scrub { display: flex; align-items: center; gap: 12px; width: 100%; }
@@ -406,20 +406,36 @@ body {
  * on .loom-shell (App.tsx) and consumed here. Defaults live on :root.
  */
 
-/* Density: the panel width scales with the tier. */
-.loom-shell[data-density='spacious'] { --loom-panel-width: 360px; }
-.loom-shell[data-density='compact'] { --loom-panel-width: 280px; }
+/* Density: re-root the layout spacing scale (canon's comfortable defaults are
+ * the :root values) and scale the panel column. Compact shrinks; spacious
+ * grows. Every consumer of var(--p31-layout-spacing-*) inherits the shift. */
+.loom-shell[data-density='compact'] {
+  --loom-panel-width: 280px;
+  --p31-layout-spacing-xs: 2px;
+  --p31-layout-spacing-sm: 4px;
+  --p31-layout-spacing-md: 8px;
+  --p31-layout-spacing-lg: 16px;
+  --p31-layout-spacing-xl: 24px;
+}
+.loom-shell[data-density='spacious'] {
+  --loom-panel-width: 360px;
+  --p31-layout-spacing-xs: 6px;
+  --p31-layout-spacing-sm: 12px;
+  --p31-layout-spacing-md: 24px;
+  --p31-layout-spacing-lg: 32px;
+  --p31-layout-spacing-xl: 48px;
+}
 
-/* Color saturation: muted reduces chroma on the DOM chrome/overlays only —
- * never on the canvas containers, so a running WebGL/2D canvas isn't forced to
- * re-rasterize every frame. Token-level muted chroma is the deferred real fix. */
-.loom-shell[data-saturation='muted'] .loom-bar,
-.loom-shell[data-saturation='muted'] .loom-panel,
-.loom-shell[data-saturation='muted'] .loom-scrub,
-.loom-shell[data-saturation='muted'] .jb-phase,
-.loom-shell[data-saturation='muted'] .jb-readouts,
-.loom-shell[data-saturation='muted'] .jb-controls,
-.loom-shell[data-saturation='muted'] .instrument-hint { filter: saturate(0.7); }
+/* Color saturation: muted swaps the accent palette for chroma-reduced variants
+ * (token-level, no compositor filter over the canvas). The muted variants are
+ * emitted by canon as --p31-color-accent-muted etc. */
+.loom-shell[data-saturation='muted'] {
+  --p31-accent: var(--p31-color-accent-muted);
+  --p31-accent-violet: var(--p31-color-accent-violet-muted);
+  --p31-accent-gold: var(--p31-color-accent-gold-muted);
+  --p31-accent-green: var(--p31-color-accent-green-muted);
+  --p31-accent-red: var(--p31-color-accent-red-muted);
+}
 
 /* Motion: the tier re-scales a single --motion-scale factor that every
  * token-driven transition multiplies (see :root). "none" collapses motion to
