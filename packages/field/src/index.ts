@@ -145,43 +145,16 @@ export function redBoardFactor(rb: RedBoard | undefined): number {
   }
 }
 
-/** Outcome → value factor. A failure is still informative (it marks where not
- *  to go), so it carries positive weight — less than success, more than none. */
-function outcomeFactor(o: Outcome | undefined): number {
-  switch (o) {
-    case 'success':
-      return 1;
-    case 'failure':
-      return 0.7;
-    default:
-      return 0.85;
-  }
-}
-
-/**
- * Behavioral trust — coherence-weighted, not success-weighted (Proof of Care,
- * Paper XI §3.1, structurally; SOULSAFE for competence). A trace's consensus
- * weight is its coherence factor times its outcome value, so a successful
- * trace from a decoherent actor (0.5 × 1) weighs less than a failed trace
- * from a coherent one (1 × 0.7). Out-of-lane traces are excluded entirely
- * (tag-out, not scoring).
- *
- * trust is the decay-weighted mean consensus weight of the actor's in-lane
- * traces; 0.5 when the actor has none (neutral, unknown).
- */
-export function trust(actor: string, traces: readonly Trace[], atMs: number, halfLife: number): number {
-  const own = traces.filter((t) => t.actor === actor && t.coherence === 'in-lane');
-  if (own.length === 0) return 0.5;
-
-  let num = 0;
-  let den = 0;
-  for (const t of own) {
-    const w = decay(t, atMs, halfLife);
-    num += redBoardFactor(t.redBoard) * outcomeFactor(t.outcome) * w;
-    den += w;
-  }
-  return den > 0 ? num / den : 0.5;
-}
+// Behavioral trust — coherence × outcome × volatility × confidence — lives
+// in trust.ts, along with the competence and Red Board model inputs. Re-export
+// so the package surface stays one import.
+export {
+  trust,
+  volatility,
+  confidence,
+  type CompetenceModel,
+  type RedBoardModel,
+} from './trust.ts';
 
 /** An out-of-lane trace is rejected, not weighted (SOULSAFE Triad lockout,
  *  Paper XIX §3.1). Returns 0 for out-of-lane; otherwise the decayed weight. */
@@ -191,8 +164,9 @@ export function traceWeight(trace: Trace, atMs: number, halfLife: number): numbe
 }
 
 /** Signal pressure at a zone: the sum of decayed, coherence-gated weights.
- *  Pressure is a continuous field, not a vote count. */
-export function pressure(zone: Zone, traces: readonly Trace[], atMs: number, halfLife: number): number {
+ *  Pressure is a continuous field, not a vote count. Takes anything with an
+ *  id — a full Zone, or a lightweight Rankable from loop.ts. */
+export function pressure(zone: { id: string }, traces: readonly Trace[], atMs: number, halfLife: number): number {
   let total = 0;
   for (const t of traces) {
     if (t.zone !== zone.id) continue;
@@ -208,7 +182,7 @@ export function pressure(zone: Zone, traces: readonly Trace[], atMs: number, hal
  * not failure. Returns 0 (fresh) … 1 (severed).
  */
 export function hazard(
-  zone: Zone,
+  zone: { id: string },
   traces: readonly Trace[],
   atMs: number,
   halfLife: number,
@@ -260,3 +234,13 @@ export function oneThirdDiagnostic(
   if (total === 0) return null;
   return Math.min(...top) / total;
 }
+
+// The Sierpiński gasket — local completeness without global enclosure. The
+// Field's failure mode, named. Re-exported so the package surface stays one
+// import; it is also the falsification lane's first concrete target.
+export {
+  sierpinskiGasket,
+  enclosureGap,
+  SIERPINSKI_DIMENSION,
+  type SierpinskiLevel,
+} from './sierpinski.ts';

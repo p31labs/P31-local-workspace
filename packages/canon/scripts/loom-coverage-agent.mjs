@@ -25,6 +25,8 @@ import {
   pascalize,
 } from './loom-coverage.mjs';
 import { rankByField } from '../../field/src/loop.ts';
+import { trust } from '../../field/src/trust.ts';
+import { commitWeft } from '../src/loom/commitWeft.ts';
 
 function arg(name, dflt) {
   const i = process.argv.indexOf(`--${name}`);
@@ -75,36 +77,42 @@ const dtcgTokens = resolveAll(dtcg);
 // ── rank + filter ──────────────────────────────────────────────────────
 const families = detectFamilies(classVars);
 const contracted = registry.components.map((c) => c.name);
-let candidates = uncontractedFamilies(families, contracted).slice(0, limit);
+const candidates = uncontractedFamilies(families, contracted).slice(0, limit);
 
-// Field-driven ranking: when traces are supplied, re-rank the candidate set
-// by field attention (pressure + hazard − failure history, over the static
-// signal as prior). Zones are the family base names.
-if (tracesPath && existsSync(tracesPath)) {
-  const traces = JSON.parse(readFileSync(tracesPath, 'utf8'));
-  if (Array.isArray(traces) && traces.length > 0) {
-    const atMs = Date.now();
-    const ranked = rankByField(
-      candidates.map((f) => ({ id: f.base, signal: f.signal })),
-      traces,
-      atMs,
-    );
-    const order = new Map(ranked.map((r, i) => [r.id, i]));
-    candidates = [...candidates].sort((a, b) => (order.get(a.base) ?? 0) - (order.get(b.base) ?? 0));
-    console.log(`[coverage-agent] ranked by field (${traces.length} traces): ${candidates.map((c) => c.base).join(', ')}`);
-  }
+// Field-driven ranking. Traces are optional; when absent the field is empty
+// and the ranking falls back to static signal. Either way, rankByField
+// returns the per-zone pressure/hazard we stamp onto each field.decision
+// event, so the loop records what it actually decided on.
+const fieldTraces = tracesPath && existsSync(tracesPath)
+  ? JSON.parse(readFileSync(tracesPath, 'utf8'))
+  : [];
+const atMs = Date.now();
+const ranked = rankByField(
+  candidates.map((f) => ({ id: f.base, signal: f.signal })),
+  Array.isArray(fieldTraces) ? fieldTraces : [],
+  atMs,
+);
+const order = new Map(ranked.map((r, i) => [r.id, i]));
+const fieldByZone = new Map(ranked.map((r) => [r.id, r]));
+if (ranked.length > 0 && Array.isArray(fieldTraces) && fieldTraces.length > 0) {
+  console.log(`[coverage-agent] ranked by field (${fieldTraces.length} traces): ${ranked.map((r) => r.id).join(', ')}`);
 }
 
-if (candidates.length === 0) {
+// Re-sort candidates into field order (stable — untouched zones keep their
+// relative static order because rankByField preserves signal as prior).
+const ordered = [...candidates].sort((a, b) => (order.get(a.base) ?? 0) - (order.get(b.base) ?? 0));
+
+if (ordered.length === 0) {
   console.log('[coverage-agent] no uncontracted component families; the canon is fully contracted.');
   process.exit(0);
 }
 
 const runId = `coverage-run-${Date.now()}`;
 const logPath = resolveLogPath();
+const weftPath = join(dirname(logPath), 'weft.jsonl');
 let proposed = 0;
 
-for (const family of candidates) {
+for (const family of ordered) {
   const tokenContract = groundTokens(classVars, family, dtcgTokens);
   const body = buildContractBody(family, tokenContract, dtcgTokens);
   const id = `prop_${pascalize(family.base).toLowerCase()}_${Date.now()}_${proposed}`;
@@ -116,9 +124,25 @@ for (const family of candidates) {
   if (p.valid) {
     proposed++;
     console.log(`[coverage-agent] propose ${id} → ${body.name} (${family.modifierCount} variants, ${tokenContract.length} tokens, signal ${family.signal})`);
+
+    // Record the field's decision: what pressure/hazard/trust drove this
+    // proposal. This is the trace outcomeCorrelation later pairs against
+    // the human's approve/reject. The acting agent is `runId` — a fresh
+    // actor, so trust is neutral; the field's snapshot is what matters.
+    const zone = fieldByZone.get(family.base) ?? { pressure: 0, hazard: 0 };
+    const r = commitWeft(weftPath, {
+      kind: 'field.decision',
+      zone: family.base,
+      proposalId: id,
+      pressure: zone.pressure,
+      hazard: zone.hazard,
+      trust: trust(runId, fieldTraces, atMs),
+      warpSeq: p.event.seq,
+    });
+    if (!r.valid) console.error(`[coverage-agent] field.decision FAILED for ${family.base}: ${r.error}`);
   } else {
     console.error(`[coverage-agent] propose FAILED for ${family.base}: ${p.error}`);
   }
 }
 
-console.log(`[coverage-agent] done. ${proposed}/${candidates.length} proposals, parentAgent=${runId}`);
+console.log(`[coverage-agent] done. ${proposed}/${ordered.length} proposals, parentAgent=${runId}`);
