@@ -1,5 +1,12 @@
 # Porting agent brief — Loom → canon + React
 
+> **Status: port complete.** The Phase A/B port landed across commits
+> `f5867add` → `3a1f0c26`. This brief is retained as the *method* for porting
+> any future app into the canon shape — it is no longer a to-do list for the
+> Loom. The completion criteria below all read as satisfied: 0 missing AAF
+> actions, 0 used-but-not-in-canon tokens, a documented micro-element list,
+> 21 e2e + 59 unit green.
+
 You are porting the live Loom (`apps/loom/src`) to the canon + React layout
 the production system expects. The prototype era is over. The live app already
 uses the real transport (`/api/loom/event`, `postEvent`, SSE); the canon
