@@ -51,6 +51,33 @@ const MIN_TARGET_PX = 24;
 const HEX = /#[0-9a-fA-F]{6}/g;
 const FONT_SIZE = /font-size:\s*([0-9.]+)(px|rem)/g;
 
+const COPY_TS = join(repo, 'apps', 'loom', 'src', 'lib', 'copy.ts');
+const COPY_SCAN_DIRS = [join(repo, 'apps', 'loom', 'src'), join(repo, 'packages', 'field', 'src')];
+const MIN_COPY_COVERAGE = 1;
+
+/** Extract the PLAIN map keys from copy.ts (bare identifiers or single-quoted
+ *  strings). Comments are skipped. */
+function readPlainKeys(copyTsPath) {
+  const text = readFileSync(copyTsPath, 'utf8');
+  const start = text.indexOf('const PLAIN');
+  if (start === -1) return { keys: [], error: 'PLAIN map not found in copy.ts' };
+  const open = text.indexOf('{', start);
+  const close = text.indexOf('\n};', open);
+  if (close === -1) return { keys: [], error: 'PLAIN map is not closed' };
+  const body = text.slice(open + 1, close);
+  const keys = [];
+  for (const line of body.split('\n')) {
+    const t = line.trim();
+    if (!t || t.startsWith('//') || t.startsWith('*')) continue;
+    const idx = t.indexOf(':');
+    if (idx === -1) continue;
+    let k = t.slice(0, idx).trim();
+    if (k.startsWith("'") && k.endsWith("'")) k = k.slice(1, -1);
+    if (k) keys.push(k);
+  }
+  return { keys };
+}
+
 /** Interactive selectors whose hit area is gated. `sel` is the base selector
  *  (pseudo-class / modifier / attribute variants are excluded by requiring a
  *  `{` immediately after the selector, so each shared rule is measured once). */
@@ -249,8 +276,36 @@ for (const file of walk(srcDir)) {
   }
 }
 
+// ── (d) plain-language copy coverage ─────────────────────────────────────
+// The PLAIN map in copy.ts is the curated set of technical terms that must
+// have a plain-language equivalent. Coverage = share of those terms that are
+// still referenced somewhere in the source surface (so the map doesn't rot).
+// This measures map → source grounding, NOT source → map completeness: a brand
+// new technical term added without a map entry is NOT detected by this check.
+const copyReport = { total: 0, dead: [], error: null };
+{
+  const { keys, error } = readPlainKeys(COPY_TS);
+  if (error) {
+    copyReport.error = error;
+  } else {
+    copyReport.total = keys.length;
+    for (const key of keys) {
+      let found = false;
+      outer: for (const dir of COPY_SCAN_DIRS) {
+        for (const file of walk(dir)) {
+          if (!/\.(ts|tsx|css|mjs)$/.test(file) || file.endsWith('copy.ts')) continue;
+          if (readFileSync(file, 'utf8').includes(key)) { found = true; break outer; }
+        }
+      }
+      if (!found) copyReport.dead.push(key);
+    }
+  }
+}
+
 // ── report ───────────────────────────────────────────────────────────────
 const total = findings.font.length + findings.color.length + findings.touch.length;
+const copyCoverage = copyReport.total === 0 ? 1 : (copyReport.total - copyReport.dead.length) / copyReport.total;
+const copyFail = copyReport.error !== null || copyCoverage < MIN_COPY_COVERAGE;
 
 console.log(`\nInclusive design gate — ${rel(srcDir)}\n`);
 
@@ -272,7 +327,16 @@ for (const f of findings.touch) {
   console.log(`  ${f.where}  ${f.detail}`);
 }
 
-console.log(`\nSummary: ${total} finding(s) — font ${findings.font.length}, color ${findings.color.length}, touch ${findings.touch.length}.`);
+console.log(`\nPlain-language copy coverage (${copyReport.total - copyReport.dead.length}/${copyReport.total} — ${(copyCoverage * 100).toFixed(0)}%)`);
+if (copyReport.error) {
+  console.log(`  ${copyReport.error}`);
+} else if (copyReport.dead.length === 0) {
+  console.log('  all PLAIN terms grounded in source');
+} else {
+  for (const k of copyReport.dead) console.log(`  uncovered: ${k}`);
+}
+
+console.log(`\nSummary: ${total} finding(s) — font ${findings.font.length}, color ${findings.color.length}, touch ${findings.touch.length}${copyFail ? ', copy FAIL' : ''}.`);
 console.log('Grades mechanics, not cognition. Plain-language quality is human review.');
 
-process.exit(total === 0 ? 0 : 1);
+process.exit(total === 0 && !copyFail ? 0 : 1);

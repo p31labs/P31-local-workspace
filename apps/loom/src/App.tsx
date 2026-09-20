@@ -15,6 +15,7 @@ import { deriveOverlay } from './lib/overlay';
 import { useProfile } from './lib/useProfile';
 import { effectiveTier, resolveSurface, rejectReasonFor } from './lib/surface';
 import { floorMotion, PresentationContext, type Presentation } from './lib/usePresentation';
+import { AgentCursor } from './components/AgentCursor';
 import { EventOverlay } from './components/EventOverlay';
 import { Instrument } from './components/Instrument';
 import { ProposalDigest } from './components/ProposalDigest';
@@ -62,6 +63,7 @@ export default function App() {
   const [showMore, setShowMore] = useState(false);
   const [mode, setMode] = useState<'canvas' | 'instrument' | 'jitterbug'>('canvas');
   const [traceView, setTraceView] = useState(false);
+  const [viewport, setViewport] = useState({ x: 0, y: 0, zoom: 1 });
 
   // Reading is writing: opening the instrument or zooming to a zone deposits
   // a `view.read` in the weft, which feeds back into the field.
@@ -92,6 +94,15 @@ export default function App() {
     () => ({ literalLabels, motion }),
     [literalLabels, motion],
   );
+
+  // The agent cursor's screen position: the agent's current node (flow
+  // coordinates) mapped through the ReactFlow viewport (pan + zoom).
+  const cursorPos = useMemo(() => {
+    if (!state.agentCursor) return null;
+    const p = positions.get(state.agentCursor);
+    if (!p) return null;
+    return { x: p.x * viewport.zoom + viewport.x, y: p.y * viewport.zoom + viewport.y };
+  }, [state.agentCursor, positions, viewport]);
 
   const nodes: Node[] = useMemo(() => {
     const trail = new Set(overlay.pathIds);
@@ -217,6 +228,10 @@ export default function App() {
             setTraceView(false);
           }}
           aria-pressed={mode !== 'canvas'}
+          data-agent-kind="action"
+          data-agent-action="mode.toggle"
+          data-agent-danger="none"
+          data-agent-confirm="never"
         >
           {mode === 'canvas' ? 'Instrument' : mode === 'instrument' ? 'Jitterbug' : 'Canvas'}
         </button>
@@ -243,20 +258,24 @@ export default function App() {
             <JitterbugScene />
           </Suspense>
         ) : (
-          <ReactFlow
-            nodes={nodes}
-            edges={edges}
-            nodeTypes={nodeTypes}
-            onNodeClick={onNodeClick}
-            fitView
-            minZoom={0.03}
-            maxZoom={4}
-            proOptions={{ hideAttribution: true }}
-          >
-            <Background gap={40} size={1} />
-            <MiniMap pannable zoomable />
-            <Controls />
-          </ReactFlow>
+          <>
+            <ReactFlow
+              nodes={nodes}
+              edges={edges}
+              nodeTypes={nodeTypes}
+              onNodeClick={onNodeClick}
+              onMove={(_, vp) => setViewport(vp)}
+              fitView
+              minZoom={0.03}
+              maxZoom={4}
+              proOptions={{ hideAttribution: true }}
+            >
+              <Background gap={40} size={1} />
+              <MiniMap pannable zoomable />
+              <Controls />
+            </ReactFlow>
+            <AgentCursor position={cursorPos} label={state.agentCursor ?? undefined} />
+          </>
         )}
       </main>
 
@@ -279,7 +298,14 @@ export default function App() {
           <ProposalDigest state={state} onSelect={selectProposal} />
         )}
         {tier === 'beginner' && !proposal && (
-          <button className="loom-more" onClick={() => setShowMore((v) => !v)}>
+          <button
+            className="loom-more"
+            onClick={() => setShowMore((v) => !v)}
+            data-agent-kind="action"
+            data-agent-action="surface.show_more"
+            data-agent-danger="none"
+            data-agent-confirm="never"
+          >
             {showMore ? 'show me less' : 'show me more'}
           </button>
         )}

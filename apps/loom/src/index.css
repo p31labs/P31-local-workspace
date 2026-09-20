@@ -13,6 +13,9 @@ html, body, #root { height: 100%; margin: 0; }
 :root {
   --loom-letter-spacing: 0.02em;
   --loom-line-height: 1.5;
+  /* Every token-driven transition multiplies this factor. OS reduced-motion
+   * seeds 0.01; the profile motion tier re-scales it (see the axes below). */
+  --motion-scale: 1;
 }
 
 /* Reduced motion — vestibular, autism, sensory. Collapse every non-essential
@@ -25,6 +28,9 @@ html, body, #root { height: 100%; margin: 0; }
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+  /* Seed the motion-scale floor for CSS (the JS floorMotion() re-applies the
+   * same boundary in App.tsx). */
+  :root { --motion-scale: 0.01; }
 }
 
 body {
@@ -108,7 +114,7 @@ body {
   line-height: 1.5;
   font-style: italic;
   color: var(--p31-text, rgb(226, 232, 240));
-  transition: opacity 0.8s ease;
+  transition: opacity calc(0.8s * var(--motion-scale)) ease;
   opacity: 0.92;
 }
 .jb-quote.fade { opacity: 0; }
@@ -175,7 +181,7 @@ body {
   padding: 8px 16px; cursor: pointer;
   min-height: 44px;
   min-width: 44px;
-  transition: border-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
+  transition: border-color calc(0.25s * var(--motion-scale)) ease, color calc(0.25s * var(--motion-scale)) ease, box-shadow calc(0.25s * var(--motion-scale)) ease;
 }
 .jb-btns button:hover { border-color: var(--p31-accent-gold, rgb(251, 191, 36)); color: var(--p31-accent-gold, rgb(251, 191, 36)); }
 .jb-btns button.on { border-color: var(--p31-accent-gold, rgb(251, 191, 36)); color: var(--p31-accent-gold, rgb(251, 191, 36)); }
@@ -272,7 +278,7 @@ body {
 .loom-proposal-node { display: flex; flex-direction: column; gap: 3px; }
 .loom-proposal-label { font-size: 0.75rem; white-space: nowrap; }
 .loom-survival-track { display: block; width: 64px; height: 3px; border-radius: 2px; background: rgba(255,255,255,0.1); overflow: hidden; }
-.loom-survival-fill { display: block; height: 100%; border-radius: 2px; transition: width 0.2s ease; }
+.loom-survival-fill { display: block; height: 100%; border-radius: 2px; transition: width calc(0.2s * var(--motion-scale)) ease; }
 .loom-survival--ok { background: var(--p31-accent-green, #34d399); }
 .loom-survival--warn { background: var(--p31-accent-gold, #fbbf24); }
 .loom-survival--drift { background: var(--p31-accent-red, #fb7185); }
@@ -415,15 +421,12 @@ body {
 .loom-shell[data-saturation='muted'] .jb-controls,
 .loom-shell[data-saturation='muted'] .instrument-hint { filter: saturate(0.7); }
 
-/* Motion: none — collapse every transition/animation. Mirrors the
- * prefers-reduced-motion block, but user-chosen rather than OS-chosen. */
-.loom-shell[data-motion='none'] *,
-.loom-shell[data-motion='none'] *::before,
-.loom-shell[data-motion='none'] *::after {
-  animation-duration: 0.01ms !important;
-  animation-iteration-count: 1 !important;
-  transition-duration: 0.01ms !important;
-}
+/* Motion: the tier re-scales a single --motion-scale factor that every
+ * token-driven transition multiplies (see :root). "none" collapses motion to
+ * ~instant; "reduced" halves it. Non-token motion (keyframes, enter/exit
+ * utilities) would need its own narrow kill switch here — the Loom has none. */
+.loom-shell[data-motion='reduced'] { --motion-scale: 0.5; }
+.loom-shell[data-motion='none'] { --motion-scale: 0.01; }
 
 /* Motion: reduced — drop decorative glow only (text-shadow/box-shadow). */
 .loom-shell[data-motion='reduced'] .jb-val.closed,
@@ -432,3 +435,43 @@ body {
 .loom-shell[data-motion='none'] .jb-slider input[type='range']::-webkit-slider-thumb { box-shadow: none; }
 .loom-shell[data-motion='reduced'] .jb-slider input[type='range']::-moz-range-thumb,
 .loom-shell[data-motion='none'] .jb-slider input[type='range']::-moz-range-thumb { box-shadow: none; }
+
+/* ── Agent cursor (presence) ───────────────────────────────────────────
+ * A DOM overlay that makes the agent's traversal visible. Positioned by
+ * transform (compositor-safe); the ease duration is locked to --motion-scale
+ * so reduced/none motion shorten or teleport it. */
+.loom-canvas { position: relative; }
+.agent-cursor {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  pointer-events: none;
+  z-index: 15;
+  transition-property: transform;
+  transition-duration: calc(320ms * var(--motion-scale));
+  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+  will-change: transform;
+}
+.agent-cursor-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: var(--p31-accent-violet, rgb(167, 139, 250));
+  box-shadow: 0 0 12px var(--p31-accent-violet, rgb(167, 139, 250));
+}
+.agent-cursor-label {
+  font-family: var(--p31-font-mono, monospace);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  color: var(--p31-text-secondary, rgb(148, 163, 184));
+  background: rgba(10, 14, 20, 0.6);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  padding: 2px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
