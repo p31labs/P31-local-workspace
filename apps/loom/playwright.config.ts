@@ -4,6 +4,10 @@ export default defineConfig({
   globalSetup: './e2e/global-setup.ts',
   testDir: './e2e',
   use: { baseURL: 'http://localhost:5191' },
+  // The specs share one log file (.loom/ci-events.jsonl); several clear it in
+  // beforeEach to stay self-contained. Serial workers keep that clearing from
+  // racing another spec's commits.
+  workers: 1,
   webServer: {
     command: 'pnpm dev',
     url: 'http://localhost:5191',

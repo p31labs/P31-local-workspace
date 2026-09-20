@@ -16,9 +16,13 @@ import { useProfile } from './lib/useProfile';
 import { useTheme } from './lib/useTheme';
 import { effectiveTier, resolveSurface, rejectReasonFor } from './lib/surface';
 import { floorMotion, PresentationContext, type Presentation } from './lib/usePresentation';
+import { useProgression } from './lib/useProgression';
 import { AgentCursor } from './components/AgentCursor';
+import { BuilderChapter } from './components/BuilderChapter';
+import { ChildChapter } from './components/ChildChapter';
 import { EventOverlay } from './components/EventOverlay';
 import { Instrument } from './components/Instrument';
+import { Launchpad } from './components/Launchpad';
 import { ProposalDigest } from './components/ProposalDigest';
 import { ProposalNode } from './components/ProposalNode';
 import { LoomNode } from './components/LoomNode';
@@ -65,6 +69,7 @@ export default function App() {
   const positions = useMemo(() => new Map(baseNodes.map((n) => [n.id, n.position])), [baseNodes]);
 
   const { events, state, seq, scrub, follow } = useLoomState();
+  const chapter = useProgression(events);
   const { humanId, profile, overrides, tier, presentation: prefs } = useProfile();
   const { theme, current, cycleTheme } = useTheme();
   const overlay = useMemo(() => deriveOverlay(state, idIndex), [state, idIndex]);
@@ -74,9 +79,39 @@ export default function App() {
   const [rejectReason, setRejectReason] = useState('');
   const [notYet, setNotYet] = useState(false);
   const [showMore, setShowMore] = useState(false);
-  const [mode, setMode] = useState<'canvas' | 'instrument' | 'jitterbug'>('canvas');
+  const [mode, setMode] = useState<'launchpad' | 'canvas' | 'instrument' | 'jitterbug'>(() => {
+    if (typeof location === 'undefined') return 'launchpad';
+    const m = new URLSearchParams(location.search).get('mode');
+    return m === 'canvas' || m === 'instrument' || m === 'jitterbug' ? m : 'launchpad';
+  });
   const [traceView, setTraceView] = useState(false);
   const [viewport, setViewport] = useState({ x: 0, y: 0, zoom: 1 });
+  const [started, setStarted] = useState(false);
+  // The chapter journey is gated behind the Launchpad: a child who entered via
+  // Start sees the chapters; a direct /?mode=canvas visitor (instrument) never
+  // gets switched into a chapter view by a stray focus event.
+  const isLevel1 = mode === 'launchpad' || (started && chapter <= 2);
+
+  // Chapter progression: after the child has focused (chapter 1), Lumi
+  // proposes after a beat — that's the bridge to the builder view. Only in
+  // the Launchpad journey (started); a direct canvas visitor isn't a child.
+  useEffect(() => {
+    if (!started || chapter !== 1) return;
+    const t = setTimeout(() => {
+      void postEvent(
+        {
+          writer: 'agent',
+          kind: 'propose',
+          id: `lumi-idea-${Date.now()}`,
+          node: 'lumi',
+          body: { change: 'add a warm color to the field' },
+          author: 'lumi',
+        },
+        null,
+      );
+    }, 3000);
+    return () => clearTimeout(t);
+  }, [started, chapter]);
 
   // Reading is writing: opening the instrument or zooming to a zone deposits
   // a `view.read` in the weft, which feeds back into the field.
@@ -252,7 +287,8 @@ export default function App() {
       <div
         className="loom-shell"
         data-theme={theme}
-      data-tier={effTier}
+        data-loom-level={isLevel1 ? '1' : '2'}
+        data-tier={effTier}
       data-density={density}
       data-motion={motion}
       data-saturation={saturation}
@@ -331,7 +367,9 @@ export default function App() {
       </header>
 
       <main className="loom-canvas">
-        {mode === 'instrument' ? (
+        {mode === 'launchpad' ? (
+          <Launchpad onStart={() => { setStarted(true); setMode('canvas'); }} />
+        ) : mode === 'instrument' ? (
           traceView && focus ? (
             <TraceScale
               traces={instrument.traces.filter((t) => t.zone === focus)}
@@ -350,26 +388,53 @@ export default function App() {
           <Suspense fallback={<div className="loom-loading">opening the jitterbug…</div>}>
             <JitterbugScene />
           </Suspense>
-        ) : (
-          <>
-            <ReactFlow
-              nodes={nodes}
-              edges={edges}
-              nodeTypes={nodeTypes}
-              onNodeClick={onNodeClick}
-              onMove={(_, vp) => setViewport(vp)}
-              fitView
-              minZoom={0.03}
-              maxZoom={4}
-              proOptions={{ hideAttribution: true }}
-            >
-              <Background gap={40} size={1} />
-              <MiniMap pannable zoomable />
-              <Controls />
-            </ReactFlow>
-            <AgentCursor position={cursorPos} label={state.agentCursor ?? undefined} />
-          </>
-        )}
+        ) : mode === 'canvas' ? (
+          started && chapter === 2 ? (
+            <BuilderChapter
+              events={events}
+              onProgress={() => setMode('instrument')}
+              onApprove={(proposalId) =>
+                void postEvent(
+                  { writer: 'human', kind: 'approve', proposal: proposalId },
+                  humanId,
+                )
+              }
+              onReject={(proposalId, reason) =>
+                void postEvent(
+                  { writer: 'human', kind: 'reject', proposal: proposalId, reason },
+                  humanId,
+                )
+              }
+            />
+          ) : started && chapter <= 1 ? (
+            <ChildChapter
+              onProgress={() => setMode('instrument')}
+              onFocus={(node) =>
+                void postEvent({ writer: 'human', kind: 'focus', node }, humanId)
+              }
+            />
+          ) : (
+            <>
+              <ReactFlow
+                nodes={nodes}
+                edges={edges}
+                nodeTypes={nodeTypes}
+                onNodeClick={onNodeClick}
+                onMove={(_, vp) => setViewport(vp)}
+                fitView
+                fitViewOptions={{ duration: 0 }}
+                minZoom={0.03}
+                maxZoom={4}
+                proOptions={{ hideAttribution: true }}
+              >
+                <Background gap={40} size={1} />
+                <MiniMap pannable zoomable />
+                <Controls />
+              </ReactFlow>
+              <AgentCursor position={cursorPos} label={state.agentCursor ?? undefined} />
+            </>
+          )
+        ) : null}
       </main>
 
       <aside className="loom-panel">

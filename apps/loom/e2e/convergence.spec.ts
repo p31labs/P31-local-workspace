@@ -33,7 +33,16 @@ test('canvas reflects events the demo agent committed', async ({ page }) => {
     child.on('exit', (code) => (code === 0 ? resolveRun() : rejectRun(new Error(`demo agent exited ${code}: ${err}`))));
   });
 
-  await page.goto('/');
+  await page.goto('/?mode=canvas');
+
+  // Give the graph a moment to render its initial nodes before asserting on
+  // the agent's proposal ghosts (React Flow lays out on first paint).
+  await page.waitForFunction(() => {
+    const r = document.querySelector('[data-agent-action="loom.focus"]');
+    if (!r) return false;
+    const rect = r.getBoundingClientRect();
+    return rect.width >= 2 && rect.height >= 2;
+  }, { timeout: 5000 });
 
   // The agent's proposal renders as a ghost node (id is date-stamped, so match by marker).
   await expect(page.locator('.loom-node--proposal').first()).toHaveCount(1, { timeout: 10000 });

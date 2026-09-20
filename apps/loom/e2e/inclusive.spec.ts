@@ -1,4 +1,15 @@
 import { test, expect, type Page } from '@playwright/test'
+import { writeFileSync, mkdirSync } from 'node:fs'
+import { dirname, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+const here = dirname(fileURLToPath(import.meta.url))
+const logPath = resolve(here, '..', '.loom', 'ci-events.jsonl')
+
+test.beforeEach(() => {
+  mkdirSync(dirname(logPath), { recursive: true })
+  writeFileSync(logPath, '')
+})
 
 /**
  * Inclusive design — structural proof.
@@ -40,7 +51,7 @@ async function fontSizeOf(page: Page, selector: string): Promise<number> {
 }
 
 test('Jitterbug does not autoplay until Play is pressed', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('/?mode=canvas')
 
   // Default shell: advanced tier, full surface.
   await expect(page.locator('.loom-shell')).toHaveAttribute('data-tier', 'advanced')
@@ -59,7 +70,7 @@ test('Jitterbug does not autoplay until Play is pressed', async ({ page }) => {
 })
 
 test('shell layout is immutable across mode switches', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('/?mode=canvas')
 
   const bar = page.locator('.loom-bar')
   const panel = page.locator('.loom-panel')
@@ -103,7 +114,7 @@ const scenarios: Scenario[] = [
 
 for (const scenario of scenarios) {
   test(`presentation prefs reach the shell — ${scenario.name}`, async ({ page }) => {
-    await page.goto(`/?${scenario.params}`)
+    await page.goto(`/?mode=canvas&${scenario.params}`)
 
     const shell = page.locator('.loom-shell')
     await expect(shell).toHaveAttribute('data-density', scenario.shell.density)

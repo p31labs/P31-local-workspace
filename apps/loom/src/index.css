@@ -584,3 +584,182 @@ body {
   border-radius: 4px;
   white-space: nowrap;
 }
+
+/* ── The Launchpad (level 1) — the warm front door ─────────────────────
+ * One screen, one character, one button. The instrument's chrome is gated
+ * behind data-loom-level="2"; at level 1 the canvas fills the whole shell.
+ */
+.loom-shell[data-loom-level='1'] {
+  grid-template-rows: 1fr;
+  grid-template-columns: 1fr;
+  grid-template-areas: 'canvas';
+}
+.loom-shell[data-loom-level='1'] .loom-bar,
+.loom-shell[data-loom-level='1'] .loom-panel,
+.loom-shell[data-loom-level='1'] .loom-scrub { display: none; }
+
+.launchpad {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  height: 100%;
+  padding: 32px;
+  text-align: center;
+}
+.lumi { width: 140px; height: 140px; animation: lumi-bob 3s ease-in-out infinite; }
+@keyframes lumi-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+.launchpad-title {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--p31-text-primary, #f8fafc);
+}
+.launchpad-copy {
+  margin: 0;
+  font-size: 1.125rem;
+  line-height: 1.5;
+  color: var(--p31-text-secondary, #cbd5e1);
+  max-width: 34ch;
+}
+.launchpad-start {
+  min-height: 56px;
+  min-width: 200px;
+  padding: 12px 32px;
+  border: none;
+  border-radius: 14px;
+  background: var(--p31-accent, #fbbf24);
+  color: var(--p31-bg, #1a120b);
+  font-size: 1.25rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+/* ── Chapters — the child's first views ───────────────────── */
+.chapter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  height: 100%;
+  width: 100%;
+  padding: 32px;
+  text-align: center;
+  background: var(--p31-bg, #0a0e14);
+}
+.chapter-copy {
+  margin: 0;
+  font-size: 1.5rem;
+  line-height: 1.5;
+  color: var(--p31-text-primary, #f8fafc);
+  max-width: 30ch;
+}
+.chapter-hint {
+  margin: 0;
+  font-size: 1.25rem;
+  color: var(--p31-text-secondary, #cbd5e1);
+}
+.chapter-lumi {
+  width: 160px;
+  height: 160px;
+}
+.chapter-lumi svg {
+  width: 100%;
+  height: 100%;
+}
+.chapter-lumi--celebrate {
+  animation: chapter-celebrate 0.6s ease-in-out;
+}
+@keyframes chapter-celebrate {
+  0% { transform: scale(1); }
+  30% { transform: scale(1.25) rotate(5deg); }
+  60% { transform: scale(1.15) rotate(-3deg); }
+  100% { transform: scale(1) rotate(0); }
+}
+.chapter-lumi--small {
+  width: 100px;
+  height: 100px;
+}
+.chapter-action {
+  min-height: 64px;
+  min-width: 200px;
+  padding: 12px 32px;
+  border: none;
+  border-radius: 14px;
+  background: var(--p31-accent, #fbbf24);
+  color: var(--p31-bg, #1a120b);
+  font-size: 1.25rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  transition: transform calc(0.2s * var(--motion-scale)) ease,
+    box-shadow calc(0.2s * var(--motion-scale)) ease;
+}
+.chapter-action:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+}
+.chapter-action--ok {
+  background: var(--p31-accent-green, #34d399);
+  color: var(--p31-bg, #1a120b);
+}
+.chapter-action--no {
+  background: var(--p31-accent-red, #fb7185);
+  color: var(--p31-bg, #1a120b);
+}
+.chapter-celebration {
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--p31-accent, #fbbf24);
+  animation: chapter-pop 1s ease-out;
+}
+@keyframes chapter-pop {
+  0% { transform: scale(0.5); opacity: 0; }
+  50% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+.chapter-next {
+  margin-top: 12px;
+  padding: 8px 20px;
+  min-height: 44px;
+  border-radius: 8px;
+  border: 1px solid var(--p31-glass-border, rgba(255, 255, 255, 0.2));
+  background: transparent;
+  color: var(--p31-text, #e2e8f0);
+  font-size: 14px;
+  cursor: pointer;
+}
+.chapter-proposal {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 400px;
+  padding: 20px;
+  border-radius: 14px;
+  border: 1px solid var(--p31-glass-border, rgba(255, 255, 255, 0.14));
+  background: var(--p31-surface, #12121a);
+}
+.chapter-proposal-node {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--p31-accent, #00f0ff);
+}
+.chapter-proposal-body {
+  font-size: 1rem;
+  color: var(--p31-text-secondary, #cbd5e1);
+  line-height: 1.5;
+}
+.chapter-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
