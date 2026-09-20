@@ -1,0 +1,53 @@
+name: Deploy Loom
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "apps/loom/**"
+      - "packages/canon/**"
+      - ".github/workflows/loom-deploy.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: loom-deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      # wrangler-action fails on pnpm workspaces (workspace:* protocol) without
+      # a globally pre-installed wrangler — same pattern as deploy-workers.yml.
+      - name: Install wrangler globally
+        run: npm install -g wrangler@4
+
+      - name: Install dependencies (no scripts)
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Build canon (emits tokens.css consumed by the Loom)
+        run: pnpm --filter @p31/canon build
+
+      - name: Build Loom
+        run: pnpm --filter @p31/loom build
+
+      - name: Deploy Pages (static + Functions)
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy apps/loom/dist --project-name=loom --commit-dirty=true
+
+      - name: Deploy SSE Worker
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy -c apps/loom/worker/wrangler.toml

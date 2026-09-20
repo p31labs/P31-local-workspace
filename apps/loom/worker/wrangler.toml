@@ -1,0 +1,31 @@
+# The Loom — SSE Worker. A separate Worker because the broadcast primitive
+# (Durable Objects) is not available to Pages Functions.
+name = "loom-sse"
+main = "index.ts"
+compatibility_date = "2026-07-04"
+compatibility_flags = ["nodejs_compat"]
+
+[observability]
+enabled = true
+
+# CONFIG REQUIRED — same D1 database as the Pages project.
+[[d1_databases]]
+binding = "LOOM_D1"
+database_name = "loom"
+database_id = "REPLACE_WITH_D1_ID"
+
+# CONFIG REQUIRED — route the /stream and /broadcast paths here, e.g.:
+#   routes = [
+#     { pattern = "loom.p31ca.org/stream", script = "loom-sse" },
+#     { pattern = "loom.p31ca.org/broadcast", script = "loom-sse" },
+#   ]
+# Or bind a custom domain in the dashboard.
+
+[durable_objects]
+bindings = [
+  { name = "LOG_BROADCASTER", class_name = "LogBroadcaster" },
+]
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["LogBroadcaster"]

@@ -1,6 +1,25 @@
-# Cloudflare Pages — the Loom (Vite SPA → dist/).
-# Custom domain: loom.p31ca.org (attach in the dashboard).
-name = "p31-portal-loom"
+# The Loom — Cloudflare Pages project.
+# Mirrors apps/p31ca/wrangler.toml (pages_build_output_dir = "dist").
+name = "loom"
 pages_build_output_dir = "dist"
-compatibility_date = "2026-09-19"
-compatibility_flags = ["nodejs_compat"]
+compatibility_date = "2026-07-04"
+
+# CONFIG REQUIRED — set these in the Cloudflare dashboard / as secrets:
+#   * LOOM_D1 — a D1 database created via `wrangler d1 create loom`. This
+#     binding points the REST API (Pages Functions) at the log.
+#   * CLOUDFLARE_ACCESS_DOMAIN — the Zero Trust team domain, e.g.
+#     https://p31.cloudflareaccess.com
+#   * CLOUDFLARE_ACCESS_AUD — the Access application audience tag for the
+#     Loom's application.
+# These are Cloudflare-side values; the code below consumes them via the
+# env bindings and the Access Pages plugin.
+
+[[d1_databases]]
+binding = "LOOM_D1"
+database_name = "loom"
+# CONFIG REQUIRED — replace with the id from `wrangler d1 create loom`.
+database_id = "REPLACE_WITH_D1_ID"
+
+[vars]
+CLOUDFLARE_ACCESS_DOMAIN = "https://REPLACE.cloudflareaccess.com"
+CLOUDFLARE_ACCESS_AUD = "REPLACE_WITH_ACCESS_AUD"

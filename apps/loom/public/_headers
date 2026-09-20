@@ -1,0 +1,38 @@
+# Cloudflare Pages headers — static fallback. The nonce-bearing CSP is set by
+# functions/_middleware.ts on HTML responses; this covers the rest.
+/*
+  Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), interest-cohort=()
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Embedder-Policy: require-corp
+  Cross-Origin-Resource-Policy: same-origin
+  X-XSS-Protection: 0
+
+# Hashed Vite assets are immutable — cache long.
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Fonts and icons — self-hosted, cacheable.
+/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+/icons/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# The shell and the manifest must never be served stale: the shell carries the
+# per-request nonce; the manifest controls installability.
+/*
+  Cache-Control: no-cache, must-revalidate
+/manifest.webmanifest
+  Cache-Control: no-cache, must-revalidate
+  Content-Type: application/manifest+json
+/sw.js
+  Cache-Control: no-cache, must-revalidate
+
+# WebSocket/SSE upgrade paths
+/stream
+  X-Accel-Buffering: no
+/broadcast
+  X-Accel-Buffering: no
