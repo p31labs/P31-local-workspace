@@ -6,6 +6,8 @@ import { readEvents } from '@p31/canon/loom/jsonl';
 import { readWeft } from '@p31/canon/loom/weft';
 import { resolveLogPath } from '@p31/canon/loom/log-path';
 import { readProfile } from '@p31/canon/loom/profiles';
+import { ReplayGate, type LoomEventInput } from '@p31/canon/loom/gate';
+import type { LoomEvent } from '@p31/canon/loom/events';
 import { dirname, join } from 'node:path';
 
 const logPath = resolveLogPath();
@@ -126,6 +128,45 @@ function loomMiddleware(): Plugin {
 }
 
 export default defineConfig({
-  plugins: [react(), loomMiddleware()],
+  plugins: [react(), loomMiddleware(), snapshotPlugin()],
   server: { port: 5191, host: true },
 });
+
+/** A fixed, gate-validated human+agent session, so a static deploy (no /api)
+ *  still renders a live-looking field. Node names are real registry ids. */
+const DEMO_EVENTS: LoomEventInput[] = [
+  { writer: 'human', kind: 'focus', node: '--p31-accent' },
+  { writer: 'agent', kind: 'traverse', from: '--p31-accent', to: '.a2-data-card', reason: 'referenced-by' },
+  { writer: 'agent', kind: 'traverse', from: '--p31-accent', to: '.a2-data-card-action', reason: 'styled-by' },
+  { writer: 'agent', kind: 'propose', id: 'prop_demo_1', node: '.a2-data-card', body: { rounded: true, size: 'lg' } },
+  { writer: 'agent', kind: 'traverse', from: '.a2-data-card', to: '.a2-data-card-header', reason: 'nested-in' },
+  { writer: 'agent', kind: 'presence', node: '.a2-data-card-action', attention: 0.7 },
+  { writer: 'agent', kind: 'review', agent: 'demo-reviewer', proposalId: 'prop_demo_1', decision: 'approve', revision: 0 },
+  { writer: 'human', kind: 'focus', node: '.a2-data-card-action' },
+  { writer: 'agent', kind: 'traverse', from: '.a2-data-card-action', to: '--p31-accent-gold', reason: 'uses-token' },
+  { writer: 'agent', kind: 'traverse', from: '.a2-data-card-header', to: '--p31-accent-green', reason: 'uses-token' },
+];
+
+/** Build-time snapshot: fold the demo session through the gate (validates +
+ *  stamps seq) and emit it as a static asset the client can fall back to when
+ *  /api/loom/events 404s. Timestamps are spread over the last ~45 min so the
+ *  field has structure; useLoomState re-anchors the newest to "now" at load. */
+function snapshotPlugin(): Plugin {
+  return {
+    name: 'loom-snapshot',
+    generateBundle() {
+      const gate = new ReplayGate();
+      for (const input of DEMO_EVENTS) {
+        const r = gate.append(input);
+        if (!r.valid) throw new Error(`demo event ${input.kind} failed: ${r.error}`);
+      }
+      const log = gate.getLog();
+      const n = log.length;
+      const events: LoomEvent[] = log.map((e, i) => ({
+        ...e,
+        ts: new Date(Date.now() - (n - 1 - i) * 5 * 60 * 1000).toISOString(),
+      }));
+      this.emitFile({ type: 'asset', fileName: 'events.snapshot.json', source: JSON.stringify(events) });
+    },
+  };
+}

@@ -24,15 +24,33 @@ export function useLoomState(): LoomLog {
   const [events, setEvents] = useState<LoomEvent[]>([]);
   const [pinned, setPinned] = useState<number | null>(null);
 
-  // Initial load.
+  // Initial load. Prefer the live log; on a static deploy (no /api) fall back
+  // to the build-time snapshot, re-anchoring timestamps so the demo field is
+  // "recent" rather than however old the snapshot is.
   useEffect(() => {
     let alive = true;
-    fetch('/api/loom/events')
-      .then((r) => r.json())
-      .then((es: LoomEvent[]) => {
+    (async () => {
+      try {
+        const res = await fetch('/api/loom/events');
+        if (!res.ok) throw new Error(`events ${res.status}`);
+        const es: LoomEvent[] = await res.json();
         if (alive) setEvents(es);
-      })
-      .catch(() => {});
+      } catch {
+        try {
+          const snap = (await (await fetch('/events.snapshot.json')).json()) as LoomEvent[];
+          if (!alive || !Array.isArray(snap) || snap.length === 0) return;
+          const last = new Date(snap[snap.length - 1].ts).getTime();
+          const offset = Date.now() - last;
+          const anchored = snap.map((e) => ({
+            ...e,
+            ts: new Date(new Date(e.ts).getTime() + offset).toISOString(),
+          }));
+          if (alive) setEvents(anchored);
+        } catch {
+          // no snapshot either — stay empty
+        }
+      }
+    })();
     return () => {
       alive = false;
     };
