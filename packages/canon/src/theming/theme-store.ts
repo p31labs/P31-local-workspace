@@ -353,9 +353,11 @@ export interface SemanticSlot {
   /** A literal value used identically across every theme. */
   literal?: string;
   /** DTCG $type. */
-  type: 'color' | 'dimension' | 'duration' | 'cubicBezier';
+  type: 'color' | 'dimension' | 'duration' | 'cubicBezier' | 'number';
   /** Optional opacity multiplier applied to the palette value's OKLCH alpha channel. */
   opacity?: number;
+  /** Optional target OKLCH chroma for a muted/desaturated variant of a palette color. */
+  chroma?: number;
 }
 
 export const SEMANTIC_MAP: Record<string, SemanticSlot> = {
@@ -403,6 +405,28 @@ export const SEMANTIC_MAP: Record<string, SemanticSlot> = {
   'frame.connection': { literal: 'oklch(75.3% 0.158 76.8)',  type: 'color' },
   'frame.rhythm':     { literal: 'oklch(67.9% 0.118 346.3)', type: 'color' },
   'frame.creation':   { literal: 'oklch(62% 0.13 165.5)',    type: 'color' },
+
+  // -------------------------------------------------------------------------
+  // Muted accents — chroma-reduced variants of the per-theme accent palette.
+  // Same hue + lightness, reduced chroma, so a "muted" surface de-saturates
+  // without shifting hue identity. Consumed by [data-saturation='muted'].
+  // -------------------------------------------------------------------------
+  'color.accent.muted':        { palette: 'accent',        type: 'color', chroma: 0.05 },
+  'color.accent.violet.muted': { palette: 'accent-violet', type: 'color', chroma: 0.05 },
+  'color.accent.gold.muted':   { palette: 'accent-gold',   type: 'color', chroma: 0.05 },
+  'color.accent.green.muted':  { palette: 'accent-green',  type: 'color', chroma: 0.05 },
+  'color.accent.red.muted':    { palette: 'accent-red',    type: 'color', chroma: 0.05 },
+
+  // -------------------------------------------------------------------------
+  // Layout — the spacing scale and the density factor. Canon owns the base
+  // scale; the Loom's presentation axes scale it at runtime (density, motion).
+  // -------------------------------------------------------------------------
+  'layout.spacing.xs': { literal: '4px',  type: 'dimension' },
+  'layout.spacing.sm': { literal: '8px',  type: 'dimension' },
+  'layout.spacing.md': { literal: '16px', type: 'dimension' },
+  'layout.spacing.lg': { literal: '24px', type: 'dimension' },
+  'layout.spacing.xl': { literal: '32px', type: 'dimension' },
+  'layout.density.factor': { literal: '1', type: 'number' },
 };
 
 // ============================================================================

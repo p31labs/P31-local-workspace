@@ -48,6 +48,17 @@ const MIN_FONT_PX = 12;
 const MIN_FONT_REM = 0.75;
 const MIN_TARGET_PX = 24;
 
+/** Canon's comfortable-tier spacing tokens, used to resolve var() references
+ *  in touch-target estimation (the gate cannot run the cascade, so it uses the
+ *  declared defaults). */
+const SPACING_DEFAULTS = {
+  '--p31-layout-spacing-xs': '4px',
+  '--p31-layout-spacing-sm': '8px',
+  '--p31-layout-spacing-md': '16px',
+  '--p31-layout-spacing-lg': '24px',
+  '--p31-layout-spacing-xl': '32px',
+};
+
 const HEX = /#[0-9a-fA-F]{6}/g;
 const FONT_SIZE = /font-size:\s*([0-9.]+)(px|rem)/g;
 
@@ -127,9 +138,13 @@ function selectorContext(lines, idx) {
   return '';
 }
 
-/** Parse a value like `12px`, `0.68rem` into px. Returns null if unparseable. */
+/** Parse a value like `12px`, `0.68rem`, or `var(--p31-layout-spacing-sm)`
+ *  into px. Returns null if unparseable. */
 function pxValue(value) {
-  const m = /^([0-9.]+)\s*(px|rem)?/.exec(value.trim());
+  const v = value.trim();
+  const varM = v.match(/^var\((--p31-layout-spacing-[a-z]+)\)$/);
+  if (varM && SPACING_DEFAULTS[varM[1]]) return pxValue(SPACING_DEFAULTS[varM[1]]);
+  const m = /^([0-9.]+)\s*(px|rem)?/.exec(v);
   if (!m) return null;
   const n = parseFloat(m[1]);
   const unit = m[2] ?? 'px';

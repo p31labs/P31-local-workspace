@@ -86,15 +86,24 @@ function bare(name) {
 // Contracts resolve against p31.* only (namespace gate in validate-contracts).
 // External consumers (Figma, Tokens Studio) inspect themes.<id>.* for palettes.
 
+/** Reduce an OKLCH color's chroma component, preserving hue + lightness. */
+function reduceChroma(value, chroma) {
+  const m = value.match(/^oklch\(([^\s]+)\s+([^\s]+)\s+([^\s/]+)(\s*\/\s*[^)]+)?\)$/)
+  if (!m) return value
+  return `oklch(${m[1]} ${chroma} ${m[3]}${m[4] ?? ''})`
+}
+
 /** Resolve a semantic slot for a specific theme. */
 function resolveSlot(slot, themeId) {
   if (slot.literal !== undefined) return slot.literal
   const paletteKey = `--p31-${slot.palette}`
   const palette = THEMES[themeId]?.tokens?.[paletteKey]
   if (!palette) return undefined
-  if (slot.opacity === undefined) return palette
+  let value = palette
+  if (slot.chroma !== undefined) value = reduceChroma(value, slot.chroma)
+  if (slot.opacity === undefined) return value
   // OKLCH opacity: inject `/ alpha` before the closing paren.
-  return palette.replace(/\)$/, ` / ${slot.opacity})`)
+  return value.replace(/\)$/, ` / ${slot.opacity})`)
 }
 
 const p31 = {}

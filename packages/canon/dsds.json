@@ -24,7 +24,7 @@
     }
   ],
   "tokens": {
-    "count": 406,
+    "count": 417,
     "entries": [
       {
         "id": "p31.color.action.primary",
@@ -145,6 +145,72 @@
         "type": "token",
         "path": "p31.frame.creation",
         "tokenType": "color"
+      },
+      {
+        "id": "p31.color.accent.muted",
+        "type": "token",
+        "path": "p31.color.accent.muted",
+        "tokenType": "color"
+      },
+      {
+        "id": "p31.color.accent.violet.muted",
+        "type": "token",
+        "path": "p31.color.accent.violet.muted",
+        "tokenType": "color"
+      },
+      {
+        "id": "p31.color.accent.gold.muted",
+        "type": "token",
+        "path": "p31.color.accent.gold.muted",
+        "tokenType": "color"
+      },
+      {
+        "id": "p31.color.accent.green.muted",
+        "type": "token",
+        "path": "p31.color.accent.green.muted",
+        "tokenType": "color"
+      },
+      {
+        "id": "p31.color.accent.red.muted",
+        "type": "token",
+        "path": "p31.color.accent.red.muted",
+        "tokenType": "color"
+      },
+      {
+        "id": "p31.layout.spacing.xs",
+        "type": "token",
+        "path": "p31.layout.spacing.xs",
+        "tokenType": "dimension"
+      },
+      {
+        "id": "p31.layout.spacing.sm",
+        "type": "token",
+        "path": "p31.layout.spacing.sm",
+        "tokenType": "dimension"
+      },
+      {
+        "id": "p31.layout.spacing.md",
+        "type": "token",
+        "path": "p31.layout.spacing.md",
+        "tokenType": "dimension"
+      },
+      {
+        "id": "p31.layout.spacing.lg",
+        "type": "token",
+        "path": "p31.layout.spacing.lg",
+        "tokenType": "dimension"
+      },
+      {
+        "id": "p31.layout.spacing.xl",
+        "type": "token",
+        "path": "p31.layout.spacing.xl",
+        "tokenType": "dimension"
+      },
+      {
+        "id": "p31.layout.density.factor",
+        "type": "token",
+        "path": "p31.layout.density.factor",
+        "tokenType": "number"
       }
     ],
     "note": "Semantic slots (p31.*) are contract-resolvable. The full 406-leaf tree (primitives + per-theme palettes) lives in tokens/tokens.dtc.json. Frame tokens (--p31-frame-*) are render metadata, not artifacts — omitted from the field zone graph (see registry.json frames)."

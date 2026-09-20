@@ -6,7 +6,7 @@
     "src/theming/theme-store.ts"
   ],
   "counts": {
-    "tokens": 158,
+    "tokens": 169,
     "components": 2,
     "cssClasses": 118,
     "themes": 9,
@@ -119,6 +119,36 @@
       "name": "--p31-cloud",
       "value": "#A1A1AA",
       "tier": "primitive",
+      "category": "color"
+    },
+    {
+      "name": "--p31-color-accent-gold-muted",
+      "value": "oklch(72% 0.05 40)",
+      "tier": "semantic",
+      "category": "color"
+    },
+    {
+      "name": "--p31-color-accent-green-muted",
+      "value": "oklch(70% 0.05 160)",
+      "tier": "semantic",
+      "category": "color"
+    },
+    {
+      "name": "--p31-color-accent-muted",
+      "value": "oklch(70% 0.05 200)",
+      "tier": "semantic",
+      "category": "color"
+    },
+    {
+      "name": "--p31-color-accent-red-muted",
+      "value": "oklch(70% 0.05 20)",
+      "tier": "semantic",
+      "category": "color"
+    },
+    {
+      "name": "--p31-color-accent-violet-muted",
+      "value": "oklch(65% 0.05 250)",
+      "tier": "semantic",
       "category": "color"
     },
     {
@@ -420,6 +450,42 @@
       "value": "12px",
       "tier": "primitive",
       "category": "typography"
+    },
+    {
+      "name": "--p31-layout-density-factor",
+      "value": "1",
+      "tier": "semantic",
+      "category": "other"
+    },
+    {
+      "name": "--p31-layout-spacing-lg",
+      "value": "24px",
+      "tier": "semantic",
+      "category": "other"
+    },
+    {
+      "name": "--p31-layout-spacing-md",
+      "value": "16px",
+      "tier": "semantic",
+      "category": "other"
+    },
+    {
+      "name": "--p31-layout-spacing-sm",
+      "value": "8px",
+      "tier": "semantic",
+      "category": "other"
+    },
+    {
+      "name": "--p31-layout-spacing-xl",
+      "value": "32px",
+      "tier": "semantic",
+      "category": "other"
+    },
+    {
+      "name": "--p31-layout-spacing-xs",
+      "value": "4px",
+      "tier": "semantic",
+      "category": "other"
     },
     {
       "name": "--p31-motion-duration-fast",
