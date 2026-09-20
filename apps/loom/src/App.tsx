@@ -72,6 +72,19 @@ export default function App() {
     if (mode === 'instrument') instrument.emitRead(humanId);
   }, [mode, focus, instrument.emitRead, humanId]);
 
+  // Attention-as-light: the field's reading is the light. Entropy raises the
+  // intensity; the most-severed zone shifts the hue (cyan 195 → red 255). The
+  // shadow stays fixed — a moving light disorients. Re-reads as the field cools.
+  useEffect(() => {
+    const shell = document.querySelector<HTMLElement>('.loom-shell');
+    if (!shell) return;
+    const zones = instrument.reading.zones;
+    const maxHazard = zones.length > 0 ? Math.max(...zones.map((z) => z.hazard)) : 0;
+    const entropy = instrument.reading.complexity.entropy;
+    shell.style.setProperty('--loom-light-intensity', (0.3 + entropy * 0.5).toFixed(3));
+    shell.style.setProperty('--loom-light-hue', String(Math.round(195 + maxHazard * 60)));
+  }, [instrument.reading]);
+
   // Progressive disclosure: beginner surfaces the digest; the "show me more"
   // toggle promotes the surface to the full overlay for this session. The
   // log is unchanged — the tier changes what the canvas surfaces.

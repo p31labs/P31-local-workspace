@@ -16,6 +16,12 @@ html, body, #root { height: 100%; margin: 0; }
   /* Every token-driven transition multiplies this factor. OS reduced-motion
    * seeds 0.01; the profile motion tier re-scales it (see the axes below). */
   --motion-scale: 1;
+  /* Attention-as-light: the field resolves these at render time (App.tsx).
+   * Intensity is the field's entropy (cold ~0.3, busy ~0.8); hue is the
+   * hazard (195 cyan → 255 red). The shadow stays fixed — a moving light
+   * disorients. Defaults are the calm field. */
+  --loom-light-intensity: 0.3;
+  --loom-light-hue: 195;
 }
 
 /* Reduced motion — vestibular, autism, sensory. Collapse every non-essential
@@ -55,6 +61,12 @@ body {
   gap: var(--p31-layout-spacing-md);
   padding: 0 var(--p31-layout-spacing-md);
   border-bottom: 1px solid var(--p31-glass-border, rgba(255, 255, 255, 0.1));
+  background: rgba(10, 14, 20, 0.55);
+  backdrop-filter: blur(18px) saturate(1.6);
+  -webkit-backdrop-filter: blur(18px) saturate(1.6);
+  box-shadow:
+    inset 0 1px 0 hsl(var(--loom-light-hue) 80% 80% / calc(var(--loom-light-intensity) * 0.28)),
+    0 8px 32px rgba(0, 0, 0, calc(0.35 + var(--loom-light-intensity) * 0.15));
   font-size: 13px;
 }
 .loom-counts { color: var(--p31-text-secondary, #94a3b8); }
@@ -207,6 +219,12 @@ body {
   border-left: 1px solid var(--p31-glass-border, rgba(255, 255, 255, 0.1));
   padding: var(--p31-layout-spacing-md);
   overflow: auto;
+  background: rgba(10, 14, 20, 0.55);
+  backdrop-filter: blur(18px) saturate(1.6);
+  -webkit-backdrop-filter: blur(18px) saturate(1.6);
+  box-shadow:
+    inset 0 1px 0 hsl(var(--loom-light-hue) 80% 80% / calc(var(--loom-light-intensity) * 0.28)),
+    0 8px 32px rgba(0, 0, 0, calc(0.35 + var(--loom-light-intensity) * 0.15));
   font-size: 13px;
 }
 .loom-panel h2 { font-size: 15px; margin: 8px 0; }
@@ -368,6 +386,12 @@ body {
   gap: var(--p31-layout-spacing-sm);
   padding: var(--p31-layout-spacing-sm) var(--p31-layout-spacing-md);
   border-top: 1px solid var(--p31-glass-border, rgba(255, 255, 255, 0.1));
+  background: rgba(10, 14, 20, 0.55);
+  backdrop-filter: blur(18px) saturate(1.6);
+  -webkit-backdrop-filter: blur(18px) saturate(1.6);
+  box-shadow:
+    inset 0 1px 0 hsl(var(--loom-light-hue) 80% 80% / calc(var(--loom-light-intensity) * 0.28)),
+    0 8px 32px rgba(0, 0, 0, calc(0.35 + var(--loom-light-intensity) * 0.15));
 }
 .scrub { display: flex; align-items: center; gap: 12px; width: 100%; }
 .scrub-range { flex: 1; }
