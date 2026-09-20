@@ -89,3 +89,4 @@ deploy the backend with the app. See `docs/DECISIONS.md`.
 - `docs/DECISIONS.md` — the decisions behind the shape, and what's still open
 - `docs/HUMAN_TEST_PLAN.md` — the protocol for the test no suite can run
 - `docs/PORTING_AGENT_BRIEF.md` — how to port any future app into the canon shape
+- `docs/MAP.md` — the documentation index; the one screen that shows how the corpus connects

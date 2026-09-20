@@ -151,3 +151,5 @@ class-based selectors are correct here.
 - `../README.md` — what the Loom is; the method ports apps like it
 - `./STANDARDS.md` — the gates the method keeps green
 - `./DECISIONS.md` — the decisions that produced the shape the method ports
+
+- `./MAP.md` — the doc index; where this page sits

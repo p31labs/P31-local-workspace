@@ -147,3 +147,5 @@ the middleware — the two things the docs agree not to touch casually.
 - `./STANDARDS.md` — the conformance each decision enables
 - `./HUMAN_TEST_PLAN.md` — the trigger for the open persistence question
 - `./CONCEPTS.yml` — the concept registry the decisions define
+
+- `./MAP.md` — the doc index; where this page sits

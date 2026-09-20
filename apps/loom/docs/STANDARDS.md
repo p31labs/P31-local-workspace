@@ -81,3 +81,5 @@ from the documented shape.
 - `./DECISIONS.md` — why each conformance posture was chosen (004: reduced motion, 003: sound)
 - `./HUMAN_TEST_PLAN.md` — the test that checks conformance against real humans
 - `./PORTING_AGENT_BRIEF.md` — the method that keeps these claims true
+
+- `./MAP.md` — the doc index; where this page sits
