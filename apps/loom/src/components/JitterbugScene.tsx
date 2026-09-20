@@ -42,6 +42,8 @@ import {
   jitterbugClose,
 } from '@p31/field';
 import { resolveTokenRgb, watchTheme } from '../lib/tokens';
+import { useLiteralLabels, useMotion } from '../lib/usePresentation';
+import { copy } from '../lib/copy';
 
 // ── Deterministic hash + PRNG (stable geometry across reloads) ──────────
 function hash01(s: string): number {
@@ -405,6 +407,13 @@ export function JitterbugScene() {
   const rBarRef = useRef<HTMLElement | null>(null);
   const resetBtnRef = useRef<HTMLButtonElement | null>(null);
 
+  const literal = useLiteralLabels();
+  const literalRef = useRef(literal);
+  literalRef.current = literal;
+  const motion = useMotion();
+  const motionRef = useRef(motion);
+  motionRef.current = motion;
+
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -718,11 +727,11 @@ export function JitterbugScene() {
       if (q) {
         q.classList.add('fade');
         setTimeout(() => {
-          q.textContent = PHASE_TEXT[idx].quote;
+          q.textContent = copy(PHASE_TEXT[idx].quote, literalRef.current);
           q.classList.remove('fade');
         }, 260);
       }
-      if (a) a.textContent = PHASE_TEXT[idx].attrib;
+      if (a) a.textContent = copy(PHASE_TEXT[idx].attrib, literalRef.current);
     };
 
     const updateReadouts = (t: number) => {
@@ -730,7 +739,7 @@ export function JitterbugScene() {
       const vol = jitterbugVolume(t);
       const contractions = jitterbugClose(ZONES);
       const remaining = Math.round(contractions * (1 - t));
-      if (rPhaseRef.current) rPhaseRef.current.textContent = phase.name;
+      if (rPhaseRef.current) rPhaseRef.current.textContent = copy(phase.name, literalRef.current);
       if (rVolumeRef.current) rVolumeRef.current.textContent = vol.toFixed(3);
       if (rBetaRef.current) {
         rBetaRef.current.textContent = phase.beta2 === 1 ? '1 — enclosed' : '0 — open';
@@ -752,10 +761,16 @@ export function JitterbugScene() {
 
     const drawFrame = (elapsed: number) => {
       const t = tRef.current;
+      // Ambient clock — the idle glow, breath, and drift. When motion is
+      // reduced it advances at a quarter rate; when none it is frozen. The
+      // closure phase `t` and the user-initiated Play flash are separate and
+      // keep working regardless.
+      const m = motionRef.current;
+      const ambient = m === 'full' ? elapsed : m === 'reduced' ? elapsed * 0.25 : 0;
       jbUniforms.uT.value = t;
-      jbUniforms.uTime.value = elapsed;
+      jbUniforms.uTime.value = ambient;
       jbUniforms.uFlash.value = flashRef.current;
-      zoneUniforms.uTime.value = elapsed;
+      zoneUniforms.uTime.value = ambient;
 
       // Wireframes: crossfade by proximity to each click-stop.
       for (let i = 0; i < PHASE_KEYS.length; i++) {
@@ -801,11 +816,11 @@ export function JitterbugScene() {
       zoneGeom.attributes.aHazard.needsUpdate = true;
 
       // Sierpiński drift, plus a slow breath so it reads as alive.
-      const breath = 1 + Math.sin(elapsed * 0.6) * 0.06;
+      const breath = 1 + Math.sin(ambient * 0.6) * 0.06;
       sierpMat.opacity = 0.35 * breath;
-      sierpLines.rotation.y = elapsed * 0.03;
-      sierpLines.rotation.x = Math.sin(elapsed * 0.05) * 0.15;
-      sierpLinesFar.rotation.y = -elapsed * 0.015;
+      sierpLines.rotation.y = ambient * 0.03;
+      sierpLines.rotation.x = Math.sin(ambient * 0.05) * 0.15;
+      sierpLinesFar.rotation.y = -ambient * 0.015;
 
       applyCamera();
       updatePhaseText(t);
@@ -913,15 +928,15 @@ export function JitterbugScene() {
       </div>
 
       <div className="jb-readouts">
-        <div className="jb-row"><span className="jb-key">PHASE</span><span className="jb-val" ref={rPhaseRef}>—</span></div>
-        <div className="jb-row"><span className="jb-key">VOLUME</span><span className="jb-val" ref={rVolumeRef}>—</span></div>
-        <div className="jb-row"><span className="jb-key">BETTI β₂</span><span className="jb-val" ref={rBetaRef}>—</span></div>
+        <div className="jb-row"><span className="jb-key">{copy('PHASE', literal)}</span><span className="jb-val" ref={rPhaseRef}>—</span></div>
+        <div className="jb-row"><span className="jb-key">{copy('VOLUME', literal)}</span><span className="jb-val" ref={rVolumeRef}>—</span></div>
+        <div className="jb-row"><span className="jb-key">{copy('BETTI β₂', literal)}</span><span className="jb-val" ref={rBetaRef}>—</span></div>
         <div className="jb-row">
-          <span className="jb-key">CLOSURE</span>
+          <span className="jb-key">{copy('CLOSURE', literal)}</span>
           <span className="jb-val" ref={rClosureRef}>—</span>
           <span className="jb-bar"><i ref={rBarRef} /></span>
         </div>
-        <div className="jb-row"><span className="jb-key">SIERPIŃSKI</span><span className="jb-val jb-hot">β₂ = 0 · always</span></div>
+        <div className="jb-row"><span className="jb-key">{copy('SIERPIŃSKI', literal)}</span><span className="jb-val jb-hot">{copy('β₂ = 0 · always', literal)}</span></div>
       </div>
 
       <div className="jb-controls">

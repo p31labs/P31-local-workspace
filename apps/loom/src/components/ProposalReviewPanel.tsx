@@ -1,6 +1,8 @@
 import type { Proposal } from '@p31/canon/loom/events'
 import type { Tier } from '../lib/profile'
 import { approveLabel } from '../lib/surface'
+import { useLiteralLabels } from '../lib/usePresentation'
+import { summarizeBody } from '../lib/copy'
 
 interface Props {
   proposal: Proposal
@@ -11,6 +13,8 @@ interface Props {
   onReject: (reason: string) => void
   onReasonChange: (reason: string) => void
   onToggleNotYet: () => void
+  /** Optional — when provided, a "Back to field" button is rendered. */
+  onBack?: () => void
 }
 
 /**
@@ -28,9 +32,16 @@ export function ProposalReviewPanel({
   onReject,
   onReasonChange,
   onToggleNotYet,
+  onBack,
 }: Props) {
+  const literal = useLiteralLabels()
   return (
     <div>
+      {onBack && (
+        <button className="loom-btn" type="button" onClick={onBack}>
+          ← Back to field
+        </button>
+      )}
       <div className="loom-kind loom-kind--component">proposal</div>
       <h2>{proposal.id}</h2>
       <p className="loom-hint">
@@ -64,7 +75,11 @@ export function ProposalReviewPanel({
         )}
       </div>
       {tier === 'advanced' && (
-        <pre className="loom-json">{JSON.stringify(proposal.body, null, 2)}</pre>
+        literal ? (
+          <p className="loom-summary">{summarizeBody(proposal.body)}</p>
+        ) : (
+          <pre className="loom-json">{JSON.stringify(proposal.body, null, 2)}</pre>
+        )
       )}
     </div>
   )

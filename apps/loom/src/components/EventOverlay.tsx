@@ -1,4 +1,6 @@
 import type { LoomEvent } from '@p31/canon/loom/events';
+import { useLiteralLabels } from '../lib/usePresentation';
+import { copy } from '../lib/copy';
 
 interface Props {
   events: LoomEvent[];
@@ -12,6 +14,7 @@ function writerClass(writer: LoomEvent['writer']): string {
 }
 
 export function EventOverlay({ events, seq, onFollow, onSelect }: Props) {
+  const literal = useLiteralLabels();
   return (
     <div className="ev">
       <div className="ev-head">
@@ -22,7 +25,9 @@ export function EventOverlay({ events, seq, onFollow, onSelect }: Props) {
         </button>
       </div>
       <ul className="ev-list">
-        {events.length === 0 && <li className="ev-empty">no events yet</li>}
+        {events.length === 0 && (
+          <li className="ev-empty">{copy('no events yet', literal)}</li>
+        )}
         {events.map((e) => (
           <li
             key={e.seq}
@@ -31,7 +36,7 @@ export function EventOverlay({ events, seq, onFollow, onSelect }: Props) {
           >
             <span className="ev-seq">#{e.seq}</span>
             <span className="ev-kind">{e.kind}</span>
-            <span className="ev-writer">{e.writer}</span>
+            <span className="ev-writer">{copy(e.writer, literal)}</span>
           </li>
         ))}
       </ul>

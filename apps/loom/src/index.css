@@ -13,7 +13,6 @@ html, body, #root { height: 100%; margin: 0; }
 :root {
   --loom-letter-spacing: 0.02em;
   --loom-line-height: 1.5;
-  --loom-density: 'comfortable';
 }
 
 /* Reduced motion — vestibular, autism, sensory. Collapse every non-essential
@@ -35,8 +34,9 @@ body {
 }
 
 .loom-shell {
+  --loom-panel-width: 320px;
   display: grid;
-  grid-template-columns: 1fr 320px;
+  grid-template-columns: 1fr var(--loom-panel-width);
   grid-template-rows: 48px 1fr auto;
   grid-template-areas: 'bar bar' 'canvas panel' 'scrub scrub';
   height: 100%;
@@ -58,6 +58,8 @@ body {
 .loom-mode {
   margin-left: 8px;
   padding: 4px 10px;
+  min-height: 44px;
+  min-width: 44px;
   border-radius: 6px;
   border: 1px solid var(--p31-glass-border, rgba(255, 255, 255, 0.2));
   background: var(--p31-surface, #12121a);
@@ -113,7 +115,7 @@ body {
 .jb-attrib {
   margin-top: 14px;
   font-family: var(--p31-font-mono, monospace);
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   letter-spacing: 0.3em;
   text-transform: uppercase;
   color: var(--p31-text-tertiary, rgb(100, 116, 139));
@@ -123,7 +125,7 @@ body {
   position: absolute;
   bottom: 36px; left: 40px;
   font-family: var(--p31-font-mono, monospace);
-  font-size: 0.72rem;
+  font-size: 0.8rem;
   letter-spacing: 0.12em;
   line-height: 1.9;
   color: var(--p31-text-secondary, rgb(148, 163, 184));
@@ -142,7 +144,7 @@ body {
   bottom: 36px; right: 40px;
   display: flex; flex-direction: column; gap: 14px; align-items: flex-end;
   font-family: var(--p31-font-mono, monospace);
-  font-size: 0.68rem; letter-spacing: 0.15em;
+  font-size: 0.75rem; letter-spacing: 0.15em;
   color: var(--p31-text-tertiary, rgb(100, 116, 139));
 }
 .jb-slider { display: flex; align-items: center; gap: 14px; }
@@ -167,10 +169,12 @@ body {
 .jb-btns { display: flex; gap: 10px; }
 .jb-btns button {
   font-family: var(--p31-font-mono, monospace);
-  font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase;
+  font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase;
   background: transparent; color: var(--p31-text, rgb(226, 232, 240));
   border: 1px solid var(--p31-glass-border, rgba(255, 255, 255, 0.16));
   padding: 8px 16px; cursor: pointer;
+  min-height: 44px;
+  min-width: 44px;
   transition: border-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
 }
 .jb-btns button:hover { border-color: var(--p31-accent-gold, rgb(251, 191, 36)); color: var(--p31-accent-gold, rgb(251, 191, 36)); }
@@ -179,7 +183,7 @@ body {
 @media (max-width: 820px) {
   .jb-phase { max-width: 240px; }
   .jb-quote { font-size: 1rem; }
-  .jb-readouts, .jb-controls { font-size: 0.58rem; }
+  .jb-readouts, .jb-controls { font-size: 0.75rem; }
   .jb-slider input[type='range'] { width: 140px; }
 }
 
@@ -200,7 +204,7 @@ body {
   font-size: 13px;
 }
 .loom-panel h2 { font-size: 15px; margin: 8px 0; }
-.loom-panel code { font-family: var(--p31-font-mono, monospace); font-size: 11px; color: var(--p31-text-tertiary, #64748b); }
+.loom-panel code { font-family: var(--p31-font-mono, monospace); font-size: 0.75rem; color: var(--p31-text-tertiary, #64748b); }
 .loom-panel { line-height: var(--loom-line-height); }
 .loom-panel p { letter-spacing: var(--loom-letter-spacing); }
 .loom-hint { color: var(--p31-text-tertiary, #64748b); }
@@ -209,7 +213,7 @@ body {
   display: inline-block;
   padding: 2px 8px;
   border-radius: 999px;
-  font-size: 11px;
+  font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   background: var(--p31-glass-surface, rgba(255, 255, 255, 0.06));
@@ -232,6 +236,7 @@ body {
 }
 .loom-btn {
   padding: 6px 12px;
+  min-height: 44px;
   border-radius: 6px;
   border: 1px solid var(--p31-glass-border, rgba(255, 255, 255, 0.2));
   background: var(--p31-surface, #12121a);
@@ -243,7 +248,7 @@ body {
 
 /* React Flow nodes — kind-coloured, legible on the void */
 .loom-node {
-  font-size: 10px;
+  font-size: 0.75rem;
   padding: 2px 6px;
   border-radius: 6px;
   border: 1px solid var(--p31-glass-border, rgba(255, 255, 255, 0.14));
@@ -265,7 +270,7 @@ body {
 
 /* Proposal ghost: label + body-survival bar */
 .loom-proposal-node { display: flex; flex-direction: column; gap: 3px; }
-.loom-proposal-label { font-size: 10px; white-space: nowrap; }
+.loom-proposal-label { font-size: 0.75rem; white-space: nowrap; }
 .loom-survival-track { display: block; width: 64px; height: 3px; border-radius: 2px; background: rgba(255,255,255,0.1); overflow: hidden; }
 .loom-survival-fill { display: block; height: 100%; border-radius: 2px; transition: width 0.2s ease; }
 .loom-survival--ok { background: var(--p31-accent-green, #34d399); }
@@ -284,7 +289,7 @@ body {
   background: var(--p31-surface, #12121a);
   border: 1px solid var(--p31-glass-border, rgba(255, 255, 255, 0.2));
   font-family: var(--p31-font-mono, monospace);
-  font-size: 11px;
+  font-size: 0.75rem;
   overflow: auto;
   max-height: 240px;
   color: var(--p31-text-secondary, #94a3b8);
@@ -293,6 +298,7 @@ body {
   margin-top: 12px;
   width: 100%;
   padding: 6px 12px;
+  min-height: 44px;
   border-radius: 6px;
   border: 1px solid var(--p31-glass-border, rgba(255, 255, 255, 0.2));
   background: none;
@@ -326,7 +332,7 @@ body {
 .ev { display: flex; flex-direction: column; gap: 8px; }
 .ev-head { display: flex; align-items: center; gap: 8px; font-size: 13px; }
 .ev-count { color: var(--p31-text-tertiary, #64748b); }
-.ev-follow { margin-left: auto; font-size: 11px; background: none; border: none; color: var(--p31-accent, #00f0ff); cursor: pointer; }
+.ev-follow { margin-left: auto; font-size: 0.75rem; background: none; border: none; color: var(--p31-accent, #00f0ff); cursor: pointer; min-height: 24px; min-width: 24px; }
 .ev-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
 .ev-empty { color: var(--p31-text-tertiary, #64748b); }
 .ev-item {
@@ -369,7 +375,7 @@ body {
   border-bottom: 1px solid var(--p31-glass-border, rgba(255, 255, 255, 0.1));
   font-family: var(--p31-font-mono, monospace); font-size: 12px;
 }
-.ts-back { background: none; border: none; color: var(--p31-accent, #00f0ff); cursor: pointer; font: inherit; padding: 0; }
+.ts-back { background: none; border: none; color: var(--p31-accent, #00f0ff); cursor: pointer; font: inherit; padding: 0; min-height: 24px; min-width: 24px; }
 .ts-count { margin-left: auto; color: var(--p31-text-tertiary, #64748b); }
 .ts-body { flex: 1; overflow-y: auto; }
 .ts-row {
@@ -379,8 +385,8 @@ body {
   font-family: var(--p31-font-mono, monospace); font-size: 12px;
   position: relative;
 }
-.ts-day { position: absolute; right: 12px; top: -9px; background: var(--p31-surface, #12121a); color: var(--p31-text-tertiary, #64748b); font-size: 10px; padding: 0 4px; }
-.ts-gap { position: absolute; left: 96px; top: -9px; background: var(--p31-surface, #12121a); color: var(--p31-accent-gold, #fbbf24); font-size: 10px; padding: 0 4px; }
+.ts-day { position: absolute; right: 12px; top: -9px; background: var(--p31-surface, #12121a); color: var(--p31-text-tertiary, #64748b); font-size: 0.75rem; padding: 0 4px; }
+.ts-gap { position: absolute; left: 96px; top: -9px; background: var(--p31-surface, #12121a); color: var(--p31-accent-gold, #fbbf24); font-size: 0.75rem; padding: 0 4px; }
 .ts-track { position: relative; width: 80px; height: 6px; flex: none; background: var(--p31-glass-border, rgba(255, 255, 255, 0.1)); border-radius: 3px; }
 .ts-mark { position: absolute; top: 50%; transform: translate(-50%, -50%); width: 6px; height: 6px; border-radius: 50%; }
 .ts-pill { width: 8px; height: 8px; border-radius: 50%; flex: none; }
@@ -388,3 +394,41 @@ body {
 .ts-coherence { color: var(--p31-text-secondary, #94a3b8); }
 .ts-outcome { color: var(--p31-text-tertiary, #64748b); }
 .ts-ts { margin-left: auto; color: var(--p31-text-tertiary, #64748b); white-space: nowrap; }
+
+/* ── Inclusive presentation axes ────────────────────────────────────────
+ * Density/motion/saturation/literal-labels are surfaced as data-* attributes
+ * on .loom-shell (App.tsx) and consumed here. Defaults live on :root.
+ */
+
+/* Density: the panel width scales with the tier. */
+.loom-shell[data-density='spacious'] { --loom-panel-width: 360px; }
+.loom-shell[data-density='compact'] { --loom-panel-width: 280px; }
+
+/* Color saturation: muted reduces chroma on the DOM chrome/overlays only —
+ * never on the canvas containers, so a running WebGL/2D canvas isn't forced to
+ * re-rasterize every frame. Token-level muted chroma is the deferred real fix. */
+.loom-shell[data-saturation='muted'] .loom-bar,
+.loom-shell[data-saturation='muted'] .loom-panel,
+.loom-shell[data-saturation='muted'] .loom-scrub,
+.loom-shell[data-saturation='muted'] .jb-phase,
+.loom-shell[data-saturation='muted'] .jb-readouts,
+.loom-shell[data-saturation='muted'] .jb-controls,
+.loom-shell[data-saturation='muted'] .instrument-hint { filter: saturate(0.7); }
+
+/* Motion: none — collapse every transition/animation. Mirrors the
+ * prefers-reduced-motion block, but user-chosen rather than OS-chosen. */
+.loom-shell[data-motion='none'] *,
+.loom-shell[data-motion='none'] *::before,
+.loom-shell[data-motion='none'] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
+
+/* Motion: reduced — drop decorative glow only (text-shadow/box-shadow). */
+.loom-shell[data-motion='reduced'] .jb-val.closed,
+.loom-shell[data-motion='none'] .jb-val.closed { text-shadow: none; }
+.loom-shell[data-motion='reduced'] .jb-slider input[type='range']::-webkit-slider-thumb,
+.loom-shell[data-motion='none'] .jb-slider input[type='range']::-webkit-slider-thumb { box-shadow: none; }
+.loom-shell[data-motion='reduced'] .jb-slider input[type='range']::-moz-range-thumb,
+.loom-shell[data-motion='none'] .jb-slider input[type='range']::-moz-range-thumb { box-shadow: none; }

@@ -3,7 +3,7 @@
  *
  * The canvas is presentation-layer: it resolves a `humanId` (URL param wins,
  * then localStorage, then anonymous) and applies profile-driven presentation
- * overrides. The log records the action + `humanId`; this module owns the
+ * preferences. The log records the action + `humanId`; this module owns the
  * display side. No PII reaches the log.
  *
  * Note: `?id=` has no auth. It is a dev/demo convenience, not an identity
@@ -25,16 +25,70 @@ export function resolveHumanId(search: string = typeof location !== 'undefined' 
   return null;
 }
 
-/** Map a profile's presentation prefs onto CSS custom-property overrides. */
-export function presentationOverrides(profile: HumanProfile | null): Record<string, string> {
-  if (!profile?.presentation) return {};
-  const p = profile.presentation;
+/** The discrete presentation tiers, resolved from profile + URL params. */
+export interface PresentationPrefs {
+  density: 'compact' | 'comfortable' | 'spacious';
+  motion: 'full' | 'reduced' | 'none';
+  saturation: 'normal' | 'muted';
+  literalLabels: boolean;
+  letterSpacing: 'normal' | 'wide' | 'extra-wide';
+  lineSpacing: 'normal' | 'loose';
+}
+
+/**
+ * Resolve the presentation preferences. URL params win over the profile (a
+ * demo/testing affordance mirroring `?tier=`): `?density=`, `?motion=`,
+ * `?saturation=`, `?literal=1|0`, `?spacing=`, `?line=`. The profile store
+ * remains authoritative; params only promote/demote display for the session.
+ */
+export function resolvePresentation(
+  profile: HumanProfile | null,
+  search: string = typeof location !== 'undefined' ? location.search : '',
+): PresentationPrefs {
+  const p = profile?.presentation;
+  const params = new URLSearchParams(search);
+
+  const pick = <T extends string>(
+    param: string,
+    profileVal: T | undefined,
+    allowed: readonly T[],
+    fallback: T,
+  ): T => {
+    const v = params.get(param) as T | null;
+    if (v && (allowed as readonly string[]).includes(v)) return v;
+    if (profileVal && (allowed as readonly string[]).includes(profileVal)) return profileVal;
+    return fallback;
+  };
+
+  const literal = params.get('literal');
+  const literalLabels =
+    literal === '1' ? true : literal === '0' ? false : (p?.literalLabels ?? false);
+
+  return {
+    density: pick('density', p?.density, ['compact', 'comfortable', 'spacious'], 'comfortable'),
+    motion: pick('motion', p?.motion, ['full', 'reduced', 'none'], 'full'),
+    saturation: pick('saturation', p?.colorSaturation, ['normal', 'muted'], 'normal'),
+    literalLabels,
+    letterSpacing: pick('spacing', p?.letterSpacing, ['normal', 'wide', 'extra-wide'], 'normal'),
+    lineSpacing: pick('line', p?.lineSpacing, ['normal', 'loose'], 'normal'),
+  };
+}
+
+/**
+ * Map presentation prefs onto the CSS custom properties the DOM actually
+ * consumes (letter-spacing, line-height). The discrete tiers (density, motion,
+ * saturation, literal) are surfaced via `data-*` attributes + the React
+ * presentation context, not CSS vars — one channel per concern.
+ */
+export function presentationOverrides(
+  profile: HumanProfile | null,
+  search: string = typeof location !== 'undefined' ? location.search : '',
+): Record<string, string> {
+  const prefs = resolvePresentation(profile, search);
   const out: Record<string, string> = {};
-  if (p.letterSpacing === 'wide') out['--loom-letter-spacing'] = '0.06em';
-  if (p.letterSpacing === 'extra-wide') out['--loom-letter-spacing'] = '0.12em';
-  if (p.lineSpacing === 'loose') out['--loom-line-height'] = '1.8';
-  if (p.density === 'spacious') out['--loom-density'] = 'spacious';
-  if (p.density === 'compact') out['--loom-density'] = 'compact';
+  if (prefs.letterSpacing === 'wide') out['--loom-letter-spacing'] = '0.06em';
+  else if (prefs.letterSpacing === 'extra-wide') out['--loom-letter-spacing'] = '0.12em';
+  if (prefs.lineSpacing === 'loose') out['--loom-line-height'] = '1.8';
   return out;
 }
 

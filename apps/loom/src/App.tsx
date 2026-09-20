@@ -14,6 +14,7 @@ import { useInstrument } from './lib/useInstrument';
 import { deriveOverlay } from './lib/overlay';
 import { useProfile } from './lib/useProfile';
 import { effectiveTier, resolveSurface, rejectReasonFor } from './lib/surface';
+import { floorMotion, PresentationContext, type Presentation } from './lib/usePresentation';
 import { EventOverlay } from './components/EventOverlay';
 import { Instrument } from './components/Instrument';
 import { ProposalDigest } from './components/ProposalDigest';
@@ -51,7 +52,7 @@ export default function App() {
   const positions = useMemo(() => new Map(baseNodes.map((n) => [n.id, n.position])), [baseNodes]);
 
   const { events, state, seq, scrub, follow } = useLoomState();
-  const { humanId, profile, overrides, tier } = useProfile();
+  const { humanId, profile, overrides, tier, presentation: prefs } = useProfile();
   const overlay = useMemo(() => deriveOverlay(state, idIndex), [state, idIndex]);
   const [focus, setFocus] = useState<string | null>(null);
   const instrument = useInstrument(events, focus);
@@ -74,6 +75,23 @@ export default function App() {
   const effTier = effectiveTier(tier, showMore);
   const surface = resolveSurface(effTier);
   const { showOverlay, showScrubber } = surface;
+
+  // Presentation axes for the shell. The discrete tiers resolve in useProfile
+  // (resolvePresentation); CSS selects on the data-* attributes and JS/canvas/
+  // WebGL read them through the presentation context. The OS reduced-motion
+  // floor is applied here once, to both the data attribute and the context.
+  const density = prefs.density;
+  const saturation = prefs.saturation;
+  const literalLabels = prefs.literalLabels;
+  const osReduced =
+    typeof window !== 'undefined' &&
+    typeof window.matchMedia === 'function' &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const motion = floorMotion(prefs.motion, osReduced);
+  const presentation = useMemo<Presentation>(
+    () => ({ literalLabels, motion }),
+    [literalLabels, motion],
+  );
 
   const nodes: Node[] = useMemo(() => {
     const trail = new Set(overlay.pathIds);
@@ -164,7 +182,16 @@ export default function App() {
   );
 
   return (
-    <div className="loom-shell" data-tier={effTier} style={overrides}>
+    <PresentationContext.Provider value={presentation}>
+      <div
+        className="loom-shell"
+      data-tier={effTier}
+      data-density={density}
+      data-motion={motion}
+      data-saturation={saturation}
+        data-literal-labels={literalLabels ? '1' : '0'}
+      style={overrides}
+    >
       <header className="loom-bar">
         <strong>The Loom</strong>
         <span className="loom-counts">
@@ -244,6 +271,7 @@ export default function App() {
             onReject={reject}
             onReasonChange={setRejectReason}
             onToggleNotYet={() => setNotYet(true)}
+            onBack={() => setSelectedProposal(null)}
           />
         ) : showOverlay ? (
           <EventOverlay events={events} seq={seq} onFollow={follow} onSelect={scrub} />
@@ -262,6 +290,7 @@ export default function App() {
           <TimelineScrubber logLength={events.length} currentSeq={seq} onSeqChange={scrub} />
         </footer>
       )}
-    </div>
+      </div>
+    </PresentationContext.Provider>
   );
 }

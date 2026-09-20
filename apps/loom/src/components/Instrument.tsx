@@ -12,6 +12,9 @@
 import { useEffect, useRef } from 'react';
 import { TICK_BAND_Y, type Scene, type Reading } from '@p31/field';
 import { resolveToken, watchTheme } from '../lib/tokens';
+import { useLiteralLabels } from '../lib/usePresentation';
+import { copy } from '../lib/copy';
+import { drawTrackedText } from '../lib/canvas-text';
 
 const PULSE_MS = 4000;
 /** How far above the tick band a click still counts as "enter the trace scale". */
@@ -36,6 +39,9 @@ export function Instrument({ scene, reading, onFocus, onTrace }: Props) {
   onFocusRef.current = onFocus;
   const onTraceRef = useRef(onTrace);
   onTraceRef.current = onTrace;
+  const literal = useLiteralLabels();
+  const literalRef = useRef(literal);
+  literalRef.current = literal;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -90,29 +96,38 @@ export function Instrument({ scene, reading, onFocus, onTrace }: Props) {
       }
       ctx.globalAlpha = 1;
 
-      // Text.
+      // Text — drawn through the canvas-text helper so the font family and the
+      // `--loom-letter-spacing` axis are honored (Canvas 2D cannot read CSS vars).
       for (const t of s.text) {
-        ctx.fillStyle = resolveToken(t.colorToken);
-        ctx.font = `${t.weight} ${Math.max(10, t.size * height)}px ${
-          t.mono ? 'var(--p31-font-mono, monospace)' : 'var(--p31-font-sans, sans-serif)'
-        }`;
-        ctx.textAlign = t.align ?? 'left';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(t.text, t.x * width, t.y * height);
+        drawTrackedText(ctx, t.text, t.x * width, t.y * height, {
+          sizePx: t.size * height,
+          fillStyle: resolveToken(t.colorToken),
+          weight: t.weight,
+          fontToken: t.mono ? '--p31-font-mono' : '--p31-font-sans',
+          fontFallback: t.mono ? 'monospace' : 'sans-serif',
+          align: (t.align ?? 'left') as CanvasTextAlign,
+        });
       }
 
       // Readouts — label, value, and a horizontal bar.
       for (const r of s.readouts) {
         const x = r.x * width;
         const y = r.y * height;
-        const fontSize = Math.max(10, 0.014 * height);
-        ctx.font = `500 ${fontSize}px var(--p31-font-mono, monospace)`;
-        ctx.textAlign = 'left';
-        ctx.textBaseline = 'middle';
-        ctx.fillStyle = resolveToken('--p31-text-tertiary');
-        ctx.fillText(r.label, x, y);
-        ctx.fillStyle = resolveToken('--p31-text');
-        ctx.fillText(r.value, x + width * 0.10, y);
+        const fontSize = Math.max(12, 0.014 * height);
+        drawTrackedText(ctx, copy(r.label, literalRef.current), x, y, {
+          sizePx: fontSize,
+          fillStyle: resolveToken('--p31-text-tertiary'),
+          weight: 500,
+          fontToken: '--p31-font-mono',
+          fontFallback: 'monospace',
+        });
+        drawTrackedText(ctx, r.value, x + width * 0.10, y, {
+          sizePx: fontSize,
+          fillStyle: resolveToken('--p31-text'),
+          weight: 500,
+          fontToken: '--p31-font-mono',
+          fontFallback: 'monospace',
+        });
         if (r.bar !== undefined) {
           const bx = x + width * 0.20;
           const bw = width * 0.14;

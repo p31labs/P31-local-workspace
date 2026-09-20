@@ -5,12 +5,13 @@
  */
 import { useEffect, useState } from 'react';
 import type { HumanProfile } from '@p31/canon/loom/profiles';
-import { resolveHumanId, presentationOverrides, resolveTier } from './profile';
+import { resolveHumanId, presentationOverrides, resolveTier, resolvePresentation, type PresentationPrefs } from './profile';
 
 export interface UseProfile {
   humanId: string | null;
   profile: HumanProfile | null;
   overrides: Record<string, string>;
+  presentation: PresentationPrefs;
   tier: 'beginner' | 'intermediate' | 'advanced';
 }
 
@@ -38,7 +39,8 @@ export function useProfile(): UseProfile {
   return {
     humanId,
     profile,
-    overrides: presentationOverrides(profile),
+    overrides: presentationOverrides(profile, search),
+    presentation: resolvePresentation(profile, search),
     tier: resolveTier(profile, search),
   };
 }
