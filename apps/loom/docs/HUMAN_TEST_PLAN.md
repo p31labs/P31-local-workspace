@@ -88,3 +88,8 @@ persistence question is separately tracked (see `DECISIONS.md`).
 ## Session log
 
 _Add dated entries below. One heading per session. Verbatim quotes only._
+## Related Documents
+
+- `../README.md` — how to run and deploy the app you are about to hand over
+- `./DECISIONS.md` — entry 007 (the static demo) and the Open section (persistence)
+- `./STANDARDS.md` — the conformance the test is checking against

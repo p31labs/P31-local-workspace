@@ -141,3 +141,9 @@ static demo is the honest state, and IndexedDB is premature.
 
 **Do not start this without the trigger.** It touches the canon's gate and
 the middleware — the two things the docs agree not to touch casually.
+## Related Documents
+
+- `../README.md` — what the Loom is; every decision here shapes this app
+- `./STANDARDS.md` — the conformance each decision enables
+- `./HUMAN_TEST_PLAN.md` — the trigger for the open persistence question
+- `./CONCEPTS.yml` — the concept registry the decisions define

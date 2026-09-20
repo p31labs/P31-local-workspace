@@ -146,3 +146,8 @@ class-based selectors are correct here.
   never one without the other.
 - Do not port the `docs/` directory. Documentation is not a React artifact.
 - Do not touch the transport (`/api/loom/event`, `postEvent`, SSE). It works.
+## Related Documents
+
+- `../README.md` — what the Loom is; the method ports apps like it
+- `./STANDARDS.md` — the gates the method keeps green
+- `./DECISIONS.md` — the decisions that produced the shape the method ports

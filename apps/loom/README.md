@@ -83,9 +83,9 @@ deploy the backend with the app. See `docs/DECISIONS.md`.
 - **The canon** (`packages/canon`) owns tokens (DTCG 2025.10), contracts, and
   the writer-per-kind gate. The app only consumes.
 
-## Further reading
+## Related Documents
 
-- `docs/STANDARDS.md` — where the Loom sits against WCAG 2.2, DTCG, and AAF.
-- `docs/DECISIONS.md` — the decisions behind the shape, and what's still open.
-- `docs/HUMAN_TEST_PLAN.md` — the protocol for the test no suite can run.
-- `docs/PORTING_AGENT_BRIEF.md` — how to port any future app into the canon shape.
+- `docs/STANDARDS.md` — where the Loom sits against WCAG 2.2, DTCG, and AAF
+- `docs/DECISIONS.md` — the decisions behind the shape, and what's still open
+- `docs/HUMAN_TEST_PLAN.md` — the protocol for the test no suite can run
+- `docs/PORTING_AGENT_BRIEF.md` — how to port any future app into the canon shape

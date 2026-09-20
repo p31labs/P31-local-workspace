@@ -75,3 +75,9 @@ intentional.
 The `port-audit` script is the CI gate: it fails if any `data-agent-action` in
 the source is missing from the manifest, or if the manifest's structure drifts
 from the documented shape.
+## Related Documents
+
+- `../README.md` — what the Loom is; every conformance claim here is about this app
+- `./DECISIONS.md` — why each conformance posture was chosen (004: reduced motion, 003: sound)
+- `./HUMAN_TEST_PLAN.md` — the test that checks conformance against real humans
+- `./PORTING_AGENT_BRIEF.md` — the method that keeps these claims true
