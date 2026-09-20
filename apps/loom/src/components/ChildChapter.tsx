@@ -1,9 +1,10 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Lumi } from './Lumi';
 import { Orb } from './Orb';
 import { SharedChip } from './SharedChip';
 import { SoundToggle } from './SoundToggle';
 import { useLoomSound } from '../lib/useLoomSound';
+import { useLoomProjection } from '../lib/useLoomProjection';
 import type { LoomEvent } from '@p31/canon/loom/events';
 
 interface Props {
@@ -37,10 +38,7 @@ export function ChildChapter({ onProgress, onFocus, events }: Props) {
   const sound = useLoomSound();
 
   // The chip counts the child's own actions — never the agent's.
-  const humanCount = useMemo(
-    () => events.filter((e) => e.writer === 'human').length,
-    [events],
-  );
+  const { humanCount } = useLoomProjection(events);
 
   const handleHello = useCallback(() => {
     setPhase('celebrating');

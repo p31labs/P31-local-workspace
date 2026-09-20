@@ -1,8 +1,9 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Lumi } from './Lumi';
 import { ProposalCard } from './ProposalCard';
 import { SharedChip } from './SharedChip';
 import { useLoomSound } from '../lib/useLoomSound';
+import { useLoomProjection } from '../lib/useLoomProjection';
 import type { LoomEvent } from '@p31/canon/loom/events';
 
 interface Props {
@@ -40,39 +41,28 @@ export function BuilderChapter({ events, onProgress, onApprove, onReject }: Prop
   const [decided, setDecided] = useState<'yes' | 'not-yet' | null>(null);
   const sound = useLoomSound();
 
-  const humanCount = useMemo(
-    () => events.filter((e) => e.writer === 'human').length,
-    [events],
-  );
-
-  const proposal = useMemo(() => {
-    for (let i = events.length - 1; i >= 0; i--) {
-      const e = events[i];
-      if (e.writer === 'agent' && e.kind === 'propose') return e;
-    }
-    return undefined;
-  }, [events]);
+  const { humanCount, latestPropose } = useLoomProjection(events);
 
   const handleApprove = useCallback(() => {
-    if (!proposal) return;
+    if (!latestPropose) return;
     setDecided('yes');
     setPhase('celebrating');
     sound.play('celebrate');
-    onApprove(proposal.id);
-  }, [proposal, onApprove, sound]);
+    onApprove(latestPropose.id);
+  }, [latestPropose, onApprove, sound]);
 
   const handleReject = useCallback(() => {
-    if (!proposal) return;
+    if (!latestPropose) return;
     setDecided('not-yet');
     setPhase('celebrating');
     // The defer cue, not the celebrate cue — different sound, equal warmth.
     sound.play('defer');
-    onReject(proposal.id, 'not-yet');
-  }, [proposal, onReject, sound]);
+    onReject(latestPropose.id, 'not-yet');
+  }, [latestPropose, onReject, sound]);
 
   const handlePulseEnd = useCallback(() => setPhase('celebrated'), []);
 
-  if (!proposal) {
+  if (!latestPropose) {
     return (
       <div className="chapter chapter--builder">
         <div className="chapter-topbar">
@@ -115,7 +105,7 @@ export function BuilderChapter({ events, onProgress, onApprove, onReject }: Prop
       </h1>
 
       <ProposalCard
-        proposal={proposalText(proposal.body)}
+        proposal={proposalText(latestPropose.body)}
         onApprove={handleApprove}
         onReject={handleReject}
         decided={decided}

@@ -16,7 +16,9 @@
  * so a theme switch re-reads the tokens instead of re-rendering stale ones.
  */
 
-const FALLBACKS: Record<string, string> = {
+import type { P31TokenName } from '@p31/canon/tokens';
+
+const FALLBACKS: Partial<Record<P31TokenName, string>> = {
   '--p31-accent': 'rgb(0, 240, 255)',
   '--p31-accent-green': 'rgb(52, 211, 153)',
   '--p31-accent-gold': 'rgb(251, 191, 36)',
@@ -58,7 +60,7 @@ export function resolveToken(token: string): string {
   // (e.g. jsdom) does not substitute custom properties in `.color`. Either way,
   // fall back to the rgb literal.
   const value = !used || used === 'transparent' || used === 'rgba(0, 0, 0, 0)' || used.includes('var(')
-    ? (FALLBACKS[token] ?? 'rgb(226, 232, 240)')
+    ? (FALLBACKS[token as P31TokenName] ?? 'rgb(226, 232, 240)')
     : used;
   cache.set(token, value);
   return value;

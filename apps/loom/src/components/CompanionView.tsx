@@ -1,7 +1,7 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Lumi } from './Lumi';
 import { MadeArtifact } from './MadeArtifact';
-import { colorTokenFor } from '../lib/colors';
+import { useLoomProjection } from '../lib/useLoomProjection';
 import type { LoomEvent } from '@p31/canon/loom/events';
 import type { LoomEventInput } from '@p31/canon/loom/gate';
 
@@ -39,17 +39,7 @@ const SCREENS: readonly Screen[] = ['welcome', 'artifact'];
 export function CompanionView({ events, onExit, commit }: Props) {
   const [screen, setScreen] = useState<Screen>('welcome');
 
-  const colorInfo = useMemo(() => {
-    for (let i = events.length - 1; i >= 0; i--) {
-      const e = events[i];
-      if (e.writer !== 'agent' || e.kind !== 'propose') continue;
-      const body = e.body as { color?: unknown } | undefined;
-      if (typeof body?.color !== 'string') continue;
-      const token = colorTokenFor(body.color);
-      if (token) return { name: body.color, token };
-    }
-    return null;
-  }, [events]);
+  const { colorInfo } = useLoomProjection(events);
 
   const idx = SCREENS.indexOf(screen);
   const canGoForward = idx < SCREENS.length - 1;

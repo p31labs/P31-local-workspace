@@ -1,10 +1,10 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import { Lumi } from './Lumi';
 import { MadeArtifact } from './MadeArtifact';
 import { SharedChip } from './SharedChip';
 import { SoundToggle } from './SoundToggle';
 import { useLoomSound } from '../lib/useLoomSound';
-import { colorTokenFor } from '../lib/colors';
+import { useLoomProjection } from '../lib/useLoomProjection';
 import type { LoomEvent } from '@p31/canon/loom/events';
 import type { LoomEventInput } from '@p31/canon/loom/gate';
 
@@ -34,22 +34,7 @@ interface Props {
 export function WorkshopChapter({ events, onProgress, commit }: Props) {
   const sound = useLoomSound();
 
-  const colorInfo = useMemo(() => {
-    for (let i = events.length - 1; i >= 0; i--) {
-      const e = events[i];
-      if (e.writer !== 'agent' || e.kind !== 'propose') continue;
-      const body = e.body as { color?: unknown } | undefined;
-      if (typeof body?.color !== 'string') continue;
-      const token = colorTokenFor(body.color);
-      if (token) return { name: body.color, token };
-    }
-    return null;
-  }, [events]);
-
-  const humanCount = useMemo(
-    () => events.filter((e) => e.writer === 'human').length,
-    [events],
-  );
+  const { humanCount, colorInfo } = useLoomProjection(events);
 
   const handleArtifactTap = useCallback(() => {
     sound.play('celebrate');

@@ -1,10 +1,10 @@
-# Porting inventory — 2026-09-20T20:21:03.974Z
+# Porting inventory — 2026-09-20T20:41:57.990Z
 
-Scanned **50 files** under `apps/loom/src`.
+Scanned **51 files** under `apps/loom/src`.
 
 ## Tokens
-- Used: **35**
-- Resolve against canon: **29**
+- Used: **38**
+- Resolve against canon: **32**
 - Used but not declared in canon: **6**
 
   Drift — either typos, or gaps the canon needs to close:
@@ -14,7 +14,7 @@ Scanned **50 files** under `apps/loom/src`.
   - `--loom-line-height`  ← apps/loom/src/index.css
   - `--loom-panel-width`  ← apps/loom/src/index.css
   - `--motion-scale`  ← apps/loom/src/index.css
-- Declared in canon but never used: **144**
+- Declared in canon but never used: **141**
 
   Dead tokens — safe to prune, or a signal of an unfinished area:
   - `--p31-accent-alt`
@@ -143,9 +143,6 @@ Scanned **50 files** under `apps/loom/src`.
   - `--p31-surface-s3`
   - `--p31-surface-s4`
   - `--p31-topbar-height`
-  - `--p31-touch-large`
-  - `--p31-touch-min`
-  - `--p31-touch-recommended`
   - `--p31-type-body`
   - `--p31-type-caption`
   - `--p31-type-display`
@@ -189,4 +186,4 @@ Scanned **50 files** under `apps/loom/src`.
 - `sound-` — 3 classes
 
 ## Raw values that should be tokens
-- `apps/loom/src/index.css` — width: 320px, padding: 4px, min-height: 32px, min-height: 44px, min-width: 44px, width: 1px, height: 1px, width: 380px, gap: 18px, min-width: 96px, width: 90px, height: 2px (+112 more)
+- `apps/loom/src/index.css` — width: 320px, padding: 4px, min-height: 32px, min-height: 44px, min-width: 44px, width: 1px, height: 1px, width: 380px, gap: 18px, min-width: 96px, width: 90px, height: 2px (+102 more)

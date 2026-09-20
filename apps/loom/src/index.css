@@ -9,6 +9,8 @@
  * perceptual space for a single color); it is only avoided as the
  * interpolation space of a mix. See tailwindlabs/tailwindcss#15201.
  * Gate: no declaration here uses the oklch space for a color-mix(). */
+@layer reset, base, tokens, components, utilities, overrides;
+
 @font-face { font-family: 'Space Grotesk'; font-style: normal; font-weight: 400; font-display: swap; src: url('/fonts/space-grotesk-400.woff2') format('woff2'); }
 @font-face { font-family: 'Space Grotesk'; font-style: normal; font-weight: 500; font-display: swap; src: url('/fonts/space-grotesk-500.woff2') format('woff2'); }
 @font-face { font-family: 'Space Grotesk'; font-style: normal; font-weight: 600; font-display: swap; src: url('/fonts/space-grotesk-600.woff2') format('woff2'); }
@@ -19,9 +21,11 @@
 @font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 700; font-display: swap; src: url('/fonts/jetbrains-mono-700.woff2') format('woff2'); }
 
 /* The Loom — portal chrome. Styled by canon's own tokens. */
-*, *::before, *::after { box-sizing: border-box; }
+@layer base {
+  *, *::before, *::after { box-sizing: border-box; }
 
-html, body, #root { height: 100%; margin: 0; }
+  html, body, #root { height: 100%; margin: 0; }
+}
 
 /* Accessibility floor. The default canvas already clears WCAG 2.2 AA + the
  * COGA baseline. The profile store (see src/lib/profile.ts) tightens or
@@ -30,6 +34,7 @@ html, body, #root { height: 100%; margin: 0; }
  *   fix; coloured overlays are NOT — evidence is contradictory).
  * - density: ADHD + age (flat layouts, no nested navigation).
  */
+@layer tokens {
 :root {
   --loom-letter-spacing: 0.02em;
   --loom-line-height: 1.5;
@@ -48,6 +53,7 @@ html, body, #root { height: 100%; margin: 0; }
    * Grotesk / JetBrains Mono split (see the @font-face blocks above). */
   --p31-font-sans: 'Space Grotesk', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --p31-font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', 'Fira Code', monospace;
+}
 }
 
 /* Reduced motion — vestibular, autism, sensory. Collapse every non-essential
@@ -78,12 +84,15 @@ html, body, #root { height: 100%; margin: 0; }
   }
 }
 
-body {
-  background: var(--p31-bg, #0a0e14);
-  color: var(--p31-text, #e2e8f0);
-  font-family: var(--p31-font-sans, system-ui, sans-serif);
+@layer base {
+  body {
+    background: var(--p31-bg, #0a0e14);
+    color: var(--p31-text, #e2e8f0);
+    font-family: var(--p31-font-sans, system-ui, sans-serif);
+  }
 }
 
+@layer components {
 .loom-shell {
   --loom-panel-width: 320px;
   display: grid;
@@ -698,7 +707,7 @@ body {
   max-width: 34ch;
 }
 .launchpad-start {
-  min-height: 56px;
+  min-height: var(--p31-touch-recommended);
   min-width: 200px;
   padding: 12px 32px;
   border: none;
@@ -778,7 +787,7 @@ body {
   100% { opacity: 0; transform: scale(1.3); }
 }
 .chapter-action {
-  min-height: 64px; /* 64px child/elder touch target, not just the 48px floor */
+  min-height: var(--p31-touch-large); /* 64px child/elder touch target, not just the 48px floor */
   min-width: 200px;
   padding: 0 32px;
   border: none;
@@ -884,7 +893,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-height: 48px;
+  min-height: var(--p31-touch-min);
   gap: var(--p31-layout-spacing-md);
   margin-bottom: var(--p31-layout-spacing-md);
 }
@@ -913,8 +922,8 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  min-height: 48px;
-  min-width: 48px;
+  min-height: var(--p31-touch-min);
+  min-width: var(--p31-touch-min);
   padding: 0 16px;
   border-radius: 9999px;
   border: 1px solid var(--p31-glass-border, rgba(255, 255, 255, 0.12));
@@ -1059,7 +1068,7 @@ body {
 /* Both buttons carry the same visual weight — "Not yet" is not a cancel, it
  * is a decision. Same size, same shape, same presence. */
 .proposal-action {
-  min-height: 56px;
+  min-height: var(--p31-touch-recommended);
   min-width: 148px;
   padding: 0 var(--p31-layout-spacing-lg);
   border-radius: 9999px;
@@ -1185,7 +1194,7 @@ body {
   margin-block: var(--p31-layout-spacing-md);
 }
 .made-artifact-btn {
-  min-height: 64px;
+  min-height: var(--p31-touch-large);
   min-width: 220px;
   padding: 0 var(--p31-layout-spacing-xl);
   border-radius: 9999px;
@@ -1329,8 +1338,8 @@ body {
   display: inline-flex;
   align-items: center;
   gap: var(--p31-layout-spacing-sm);
-  min-height: 48px;
-  min-width: 48px;
+  min-height: var(--p31-touch-min);
+  min-width: var(--p31-touch-min);
   padding: 0 var(--p31-layout-spacing-md) 0 var(--p31-layout-spacing-sm);
   border-radius: 9999px;
   border: 1px solid var(--p31-glass-border, rgba(255, 255, 255, 0.12));
@@ -1358,7 +1367,7 @@ body {
   display: inline-flex;
   align-items: center;
   gap: var(--p31-layout-spacing-sm);
-  min-height: 64px;
+  min-height: var(--p31-touch-large);
   min-width: 220px;
   padding: 0 var(--p31-layout-spacing-xl);
   border-radius: 9999px;
@@ -1382,4 +1391,5 @@ body {
 .companion-next:focus-visible {
   outline: 3px solid var(--p31-text-primary, #f8fafc);
   outline-offset: 3px;
+}
 }
