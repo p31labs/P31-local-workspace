@@ -74,8 +74,8 @@ export const BASE = {
   '--p31-radius-md': '16px',
   '--p31-radius-lg': '24px',
   '--p31-radius-full': '9999px',
-  '--p31-font-sans': "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
-  '--p31-font-mono': "ui-monospace, 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace",
+  '--p31-font-sans': "'Space Grotesk', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
+  '--p31-font-mono': "'JetBrains Mono', ui-monospace, 'SF Mono', 'Fira Code', monospace",
 };
 
 /**

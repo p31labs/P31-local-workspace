@@ -1,3 +1,14 @@
+/* Self-hosted typefaces — Space Grotesk (display/body sans) + JetBrains Mono
+ * (values/readouts). woff2, OFL, font-display: swap. */
+@font-face { font-family: 'Space Grotesk'; font-style: normal; font-weight: 400; font-display: swap; src: url('/fonts/space-grotesk-400.woff2') format('woff2'); }
+@font-face { font-family: 'Space Grotesk'; font-style: normal; font-weight: 500; font-display: swap; src: url('/fonts/space-grotesk-500.woff2') format('woff2'); }
+@font-face { font-family: 'Space Grotesk'; font-style: normal; font-weight: 600; font-display: swap; src: url('/fonts/space-grotesk-600.woff2') format('woff2'); }
+@font-face { font-family: 'Space Grotesk'; font-style: normal; font-weight: 700; font-display: swap; src: url('/fonts/space-grotesk-700.woff2') format('woff2'); }
+@font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 400; font-display: swap; src: url('/fonts/jetbrains-mono-400.woff2') format('woff2'); }
+@font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 500; font-display: swap; src: url('/fonts/jetbrains-mono-500.woff2') format('woff2'); }
+@font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 600; font-display: swap; src: url('/fonts/jetbrains-mono-600.woff2') format('woff2'); }
+@font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 700; font-display: swap; src: url('/fonts/jetbrains-mono-700.woff2') format('woff2'); }
+
 /* The Loom — portal chrome. Styled by canon's own tokens. */
 *, *::before, *::after { box-sizing: border-box; }
 
@@ -70,6 +81,7 @@ body {
   font-size: 13px;
 }
 .loom-counts { color: var(--p31-text-secondary, #94a3b8); }
+.loom-bar strong { font-weight: 600; letter-spacing: -0.02em; }
 .loom-human { color: var(--p31-text-secondary, #94a3b8); font-size: 12px; }
 .loom-agent { color: var(--p31-accent-violet, #a78bfa); font-size: 12px; }
 .loom-gate { margin-left: auto; color: var(--p31-accent, #00f0ff); font-size: 12px; }
@@ -125,6 +137,8 @@ body {
   font-size: 1.35rem;
   line-height: 1.5;
   font-style: italic;
+  font-weight: 600;
+  letter-spacing: -0.02em;
   color: var(--p31-text, rgb(226, 232, 240));
   transition: opacity calc(0.8s * var(--motion-scale)) ease;
   opacity: 0.92;
@@ -227,7 +241,7 @@ body {
     0 8px 32px rgba(0, 0, 0, calc(0.35 + var(--loom-light-intensity) * 0.15));
   font-size: 13px;
 }
-.loom-panel h2 { font-size: 15px; margin: 8px 0; }
+.loom-panel h2 { font-size: 15px; margin: 8px 0; font-weight: 600; letter-spacing: -0.02em; }
 .loom-panel code { font-family: var(--p31-font-mono, monospace); font-size: 0.75rem; color: var(--p31-text-tertiary, #64748b); }
 .loom-panel { line-height: var(--loom-line-height); }
 .loom-panel p { letter-spacing: var(--loom-letter-spacing); }
