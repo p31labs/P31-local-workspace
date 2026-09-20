@@ -6,6 +6,12 @@ import { test, expect } from '@playwright/test';
  * (visible ghost). The agent's writes are simulated by POSTing to the same
  * /api/loom/event the agent would call — the point is to prove the DOM loop,
  * not the MCP transport.
+ *
+ * The focus is a real click on the outermost ring (themes). The dense inner
+ * rings (tokens/classes/components) overlap at fitView zoom, so a click there
+ * can be intercepted by a neighbouring node's hit area — a known layout
+ * defect, tracked separately. A theme node is guaranteed un-overlapped and
+ * still exercises the full human-gesture → field-response path.
  */
 test('human focus → agent traversal → proposal is visible end to end', async ({ page }) => {
   await page.goto('/?mode=canvas');
@@ -30,12 +36,16 @@ test('human focus → agent traversal → proposal is visible end to end', async
     return stable;
   }, { timeout: 5000 });
 
-  const nodeName = (await focusNodes.first().getAttribute('data-agent-target')) ?? '';
+  const nodeName =
+    (await page
+      .locator('.loom-node--theme [data-agent-action="loom.focus"]')
+      .first()
+      .getAttribute('data-agent-target')) ?? '';
 
-  // 2. A human focuses a node; the field responds (focused class lands).
-  await page.request.post('/api/loom/event', {
-    data: { input: { writer: 'human', kind: 'focus', node: nodeName } },
-  });
+  // 2. A human focuses a node by clicking it; the field responds (focused
+  //    class lands). The click is the claim under test — a human gesture,
+  //    not a server talking to itself.
+  await page.locator('.loom-node--theme [data-agent-action="loom.focus"]').first().click();
   await expect(page.locator('.loom-node--focused')).toHaveCount(1, { timeout: 5000 });
 
   // 3. The agent reacts by traversing to the focused node — the presence

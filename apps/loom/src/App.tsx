@@ -423,6 +423,7 @@ export default function App() {
                 onMove={(_, vp) => setViewport(vp)}
                 fitView
                 fitViewOptions={{ duration: 0 }}
+                nodeClickDistance={16}
                 minZoom={0.03}
                 maxZoom={4}
                 proOptions={{ hideAttribution: true }}

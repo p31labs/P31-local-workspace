@@ -333,10 +333,18 @@ body {
 .loom-btn--ok { border-color: var(--p31-accent-green, #34d399); }
 .loom-btn--no { border-color: var(--p31-accent-red, #fb7185); }
 
-/* React Flow nodes — kind-coloured, legible on the void */
+/* React Flow nodes — kind-coloured, legible on the void. Every node carries a
+ * WCAG 2.5.8 minimum 24×24 hit area (aligned, centered) so the graph stays
+ * clickable even when fitView shrinks the label; the visible label itself is
+ * unchanged. */
 .loom-node {
   font-size: 0.75rem;
   padding: 2px 6px;
+  min-width: 24px;
+  min-height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   border-radius: 6px;
   border: 1px solid var(--p31-glass-border, rgba(255, 255, 255, 0.14));
   background: var(--p31-surface, #12121a);
