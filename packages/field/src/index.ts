@@ -244,3 +244,20 @@ export {
   SIERPINSKI_DIMENSION,
   type SierpinskiLevel,
 } from './sierpinski.ts';
+
+// The Instrument — the UI substrate that scales with the system. A pure
+// projection of (zones, traces, atMs) into a Reading with a clock, a
+// measured complexity, and a scaling contract. Re-exported so the package
+// surface stays one import.
+export {
+  projectInstrument,
+  selectConstellation,
+  shannonEntropy,
+  edgeDensity,
+  whiteSpaceRatio,
+  RENDER_BUDGET,
+  type Reading,
+  type ZoneReading,
+  type Complexity,
+  type InstrumentScale,
+} from './instrument.ts';
