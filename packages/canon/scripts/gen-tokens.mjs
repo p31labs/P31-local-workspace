@@ -157,7 +157,26 @@ for (const id of THEME_IDS) {
   themes[id] = { p31: themeP31 }
 }
 
-const dtcg = { p31, themes, component: {} }
+// DTCG top-level metadata. `$schema` declares the Format Module version this
+// export conforms to; `$extensions.p31` carries the vendor namespace (P31)
+// with version + provenance. This matches the version @p31/design-core already
+// declares in its manifest.json so the two token systems agree on one spec
+// revision. NOTE: "2025.10" is the best-known current snapshot available
+// offline; bump it here AND in design-core/manifest.json once a newer snapshot
+// is verified against design-tokens.org.
+const dtcg = {
+  $schema: 'https://design-tokens.org/schemas/format/2025.10',
+  $extensions: {
+    p31: {
+      version: '2025.10',
+      name: 'P31 Labs Design System',
+      description: 'Design canon DTCG export — primitives, semantic slots, per-theme palettes.',
+    },
+  },
+  p31,
+  themes,
+  component: {},
+}
 writeFileSync(dtcgPath, JSON.stringify(dtcg, null, 2) + '\n')
 
 // ---------------------------------------------------------------------

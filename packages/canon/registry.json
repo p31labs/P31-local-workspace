@@ -9,7 +9,8 @@
     "tokens": 158,
     "components": 2,
     "cssClasses": 118,
-    "themes": 9
+    "themes": 9,
+    "frames": 4
   },
   "tokens": [
     {
@@ -2501,6 +2502,28 @@
       "description": "Electric — sharp cyan and violet, high contrast",
       "isDefault": false,
       "tokenCount": 29
+    }
+  ],
+  "frames": [
+    {
+      "name": "--p31-frame-connection",
+      "value": "oklch(75.3% 0.158 76.8)",
+      "category": "frame"
+    },
+    {
+      "name": "--p31-frame-creation",
+      "value": "oklch(62% 0.13 165.5)",
+      "category": "frame"
+    },
+    {
+      "name": "--p31-frame-rhythm",
+      "value": "oklch(67.9% 0.118 346.3)",
+      "category": "frame"
+    },
+    {
+      "name": "--p31-frame-structure",
+      "value": "oklch(73.5% 0.117 236.2)",
+      "category": "frame"
     }
   ]
 }

@@ -7,6 +7,7 @@
   "sideEffects": false,
   "scripts": {
     "gen:tokens": "node scripts/gen-tokens.mjs",
+    "gen:dsds": "node scripts/gen-dsds.mjs",
     "gen:exports": "node scripts/generate-exports.mjs",
     "gen:registry": "node scripts/gen-registry.mjs",
     "validate:contracts": "node scripts/validate-contracts.mjs",
@@ -16,11 +17,12 @@
     "verify:loom-seal": "node scripts/check-loom-seal.mjs",
     "test:loom": "node scripts/check-no-agent-names.mjs && node scripts/check-loom-seal.mjs && node scripts/test-loom-replay.mjs && node scripts/test-loom-gate.mjs && node scripts/test-loom-review.mjs && node scripts/test-loom-delegation.mjs && node scripts/test-loom-drift.mjs && node scripts/test-loom-determinism.mjs && node scripts/test-loom-convergence.mjs && node scripts/test-loom-commit.mjs && node scripts/test-loom-profiles.mjs && node scripts/test-loom-apply.mjs && node scripts/test-loom-coverage.mjs && node scripts/test-loom-ingest.mjs && node scripts/test-loom-project.mjs",
     "build:css": "node scripts/build-css.mjs",
-    "build": "npm run gen:tokens && npm run validate:contracts && npm run build:css && npm run gen:registry && npm run validate:registry && npm run gen:exports"
+    "build": "npm run gen:tokens && npm run validate:contracts && npm run gen:dsds && npm run build:css && npm run gen:registry && npm run validate:registry && npm run gen:exports"
   },
   "exports": {
     ".": "./src/index.ts",
     "./contracts": "./src/contracts/index.ts",
+    "./contracts/badge.contract": "./src/contracts/badge.contract.ts",
     "./contracts/button.contract": "./src/contracts/button.contract.ts",
     "./contracts/schema": "./src/contracts/schema.ts",
     "./css/a2ui-datacard.css": "./dist/css/a2ui-datacard.css",

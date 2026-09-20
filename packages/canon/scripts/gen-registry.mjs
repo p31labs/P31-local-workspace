@@ -51,12 +51,27 @@ const firstDecl = new Map();
 for (const m of css.matchAll(/(--p31-[a-z0-9-]+)\s*:\s*([^;]+);/g)) {
   if (!firstDecl.has(m[1])) firstDecl.set(m[1], m[2].trim());
 }
-const tokens = [...firstDecl.keys()].sort().map((name) => ({
-  name,
-  value: rootDecls.get(name) ?? firstDecl.get(name),
-  tier: semanticNames.has(name) ? 'semantic' : 'primitive',
-  category: category(name),
-}));
+// Frame tokens are render metadata — the field's own categorical trace colors —
+// not design artifacts. They stay resolvable in dist/tokens.css, but are kept
+// out of `tokens` so they never become field zones (self-reference: the field
+// must not render its own visual vocabulary as objects it then traces).
+const FRAME_PREFIX = '--p31-frame-';
+const allTokenNames = [...firstDecl.keys()].sort();
+const tokens = allTokenNames
+  .filter((name) => !name.startsWith(FRAME_PREFIX))
+  .map((name) => ({
+    name,
+    value: rootDecls.get(name) ?? firstDecl.get(name),
+    tier: semanticNames.has(name) ? 'semantic' : 'primitive',
+    category: category(name),
+  }));
+const frames = allTokenNames
+  .filter((name) => name.startsWith(FRAME_PREFIX))
+  .map((name) => ({
+    name,
+    value: rootDecls.get(name) ?? firstDecl.get(name),
+    category: 'frame',
+  }));
 
 // ── themes ─────────────────────────────────────────────────────────────
 const themes = THEME_IDS.map((id) => ({
@@ -145,11 +160,13 @@ const registry = {
     components: components.length,
     cssClasses: cssClasses.length,
     themes: themes.length,
+    frames: frames.length,
   },
   tokens,
   components,
   cssClasses,
   themes,
+  frames,
 };
 
 writeFileSync(join(root, 'registry.json'), JSON.stringify(registry, null, 2) + '\n');

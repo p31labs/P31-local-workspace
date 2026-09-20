@@ -14,7 +14,9 @@
  * stored.
  *
  * Zone model (locked decision): every registry artifact is a zone — 287
- * today (158 tokens, 2 components, 118 classes, 9 themes). Each zone is a
+ * today (158 tokens, 2 components, 118 classes, 9 themes). Frame tokens are
+ * excluded — they are render metadata, not artifacts (see gen-registry.mjs).
+ * Each zone is a
  * complete K₄ over the four artifact kinds {component, class, token, theme};
  * the artifact's own kind-vertex carries the artifact's name, the other
  * three carry the kind labels. A zone is rigid (β₂ = 1) iff it is a complete

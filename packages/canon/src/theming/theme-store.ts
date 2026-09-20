@@ -394,6 +394,15 @@ export const SEMANTIC_MAP: Record<string, SemanticSlot> = {
   // -------------------------------------------------------------------------
   'motion.duration.fast':   { literal: '150ms',                            type: 'duration' },
   'motion.easing.standard': { literal: 'cubic-bezier(0.4, 0, 0.2, 1)',     type: 'cubicBezier' },
+
+  // -------------------------------------------------------------------------
+  // Frame — the four nominal trace categories. Okabe-Ito colorblind-safe set,
+  // converted to OKLCH (cool/warm temperature alternation). No polarity.
+  // -------------------------------------------------------------------------
+  'frame.structure':  { literal: 'oklch(73.5% 0.117 236.2)', type: 'color' },
+  'frame.connection': { literal: 'oklch(75.3% 0.158 76.8)',  type: 'color' },
+  'frame.rhythm':     { literal: 'oklch(67.9% 0.118 346.3)', type: 'color' },
+  'frame.creation':   { literal: 'oklch(62% 0.13 165.5)',    type: 'color' },
 };
 
 // ============================================================================

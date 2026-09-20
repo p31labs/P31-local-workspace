@@ -4,6 +4,47 @@ This file is the durable record of canon-intent fixes. Trust the byte
 counts here over any session/transcript narrative; the walkers in
 `scripts/validate-contracts.mjs` and `canon-mcp` agree with the numbers.
 
+## 2026-09-20 — Spec alignment: DTCG metadata + DSDS scaffold (no token change)
+
+- **DTCG top-level metadata** (`scripts/gen-tokens.mjs`): the emitted
+  `tokens/tokens.dtc.json` now carries `$schema` + `$extensions.p31`
+  (`version`, `name`, `description`) so the canon DTCG export declares the
+  same Format Module revision that `@p31/design-core` already declares in its
+  `manifest.json`. Both pin **2025.10** — the best-known snapshot available
+  offline. ASSUMPTION (verify before bumping): if a newer snapshot exists on
+  design-tokens.org, bump the string in BOTH `gen-tokens.mjs` and
+  `design-core/manifest.json` (+ the `design-validator` assertion).
+- **No token drift**: metadata adds no `$value` leaves. `validate-contracts`
+  still reports **402 tokens**; `verify-token-parity` still **0 missing / 0
+  divergence** (canon remains a drop-in for design-core). Byte size of
+  `tokens.dtc.json` grew only by the metadata block (45,703 → 45,979).
+- **DSDS scaffold** (new): `scripts/gen-dsds.mjs` emits `dsds.json` — a
+  machine-readable Design System Documentation Spec graph (components, tokens,
+  themes, foundations, patterns, guides, chunks) derived from ground truth
+  (contracts + `theme-store.ts` + the DTCG tree). Wired into the build chain
+  (`gen:dsds`), exported as `./dsds.json`, and served by canon-mcp as a new
+  `list_docs` tool. Re-run `pnpm --filter @p31/canon gen:dsds` after any
+  contract/token change so the doc index never lies.
+  **This is a scaffold, not a full DSDS integration.** `components` is complete
+  (both contracts); `themes` is complete (9); `tokens` carries the 16
+  contract-resolvable semantic slots + a pointer to the 402-leaf tree in
+  `tokens/tokens.dtc.json`. `foundations`/`patterns`/`guides`/`chunks` are
+  hand-authored and will drift. Follow-ups: derive foundations from the token
+  tree's top-level groups, add the 118 CSS-class entries, and source patterns
+  from the CSS selector families instead of prose.
+- **list_docs filter bug (fixed):** the tool's `type` enum was singular
+  (`token`, `component`, …) while dsds.json keys are plural — every filter
+  returned `no_entities`. The handler now maps `token` → `tokens` (etc.) and
+  special-cases `tokens` (a `{ count, entries, note }` object, not a list).
+- **Seal-gate fix (apps/loom)**: earlier session dropped model-name doc files
+  (`GEMINI_UI_PROMPT.md`, guide) into `apps/loom/`, tripping
+  `check-no-agent-names.mjs`. Renamed to `AGENT_UI_PROMPT.md` and rewrote all
+  model references to role language. `test:loom` (all 14 gates) green again.
+
+Ground-truth regate: `pnpm --filter @p31/canon build`, `pnpm --filter
+@p31/canon test:loom`, `pnpm --filter @p31/design-validator test`,
+`pnpm --filter @p31/canon-react typecheck` — all exit 0.
+
 ## 2026-09-19 — Fix 5 was real work; the "no-op retraction" is WRONG
 
 A prior session retracted Fix 5 claiming "themes.<id>.* was never stripped,

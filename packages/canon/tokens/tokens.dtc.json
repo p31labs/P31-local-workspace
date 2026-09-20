@@ -1,4 +1,12 @@
 {
+  "$schema": "https://design-tokens.org/schemas/format/2025.10",
+  "$extensions": {
+    "p31": {
+      "version": "2025.10",
+      "name": "P31 Labs Design System",
+      "description": "Design canon DTCG export — primitives, semantic slots, per-theme palettes."
+    }
+  },
   "p31": {
     "base": {
       "$value": "16px",
@@ -666,6 +674,24 @@
           "$value": "cubic-bezier(0.4, 0, 0.2, 1)",
           "$type": "cubicBezier"
         }
+      }
+    },
+    "frame": {
+      "structure": {
+        "$value": "oklch(73.5% 0.117 236.2)",
+        "$type": "color"
+      },
+      "connection": {
+        "$value": "oklch(75.3% 0.158 76.8)",
+        "$type": "color"
+      },
+      "rhythm": {
+        "$value": "oklch(67.9% 0.118 346.3)",
+        "$type": "color"
+      },
+      "creation": {
+        "$value": "oklch(62% 0.13 165.5)",
+        "$type": "color"
       }
     }
   },

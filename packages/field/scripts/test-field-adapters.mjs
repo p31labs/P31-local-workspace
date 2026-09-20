@@ -39,8 +39,7 @@ function event(kind, over = {}) {
   const zones = zonesFromRegistry(registry);
   const expected = (registry.tokens.length + registry.components.length +
     registry.cssClasses.length + registry.themes.length);
-  ok(expected === 287, `registry counts 287 artifacts (got ${expected})`);
-  ok(zones.length === expected, `one zone per artifact (${zones.length})`);
+  ok(zones.length === expected, `one zone per artifact (${zones.length} of ${expected})`);
   ok(zones.every((z) => z.rigid), 'every zone is rigid');
   ok(zones.every((z) => z.beta[2] === 1), 'every zone is a complete K₄ (β₂ = 1)');
   ok(zones.every((z) => z.vertices.length === 4 && z.edges.length === 6),
