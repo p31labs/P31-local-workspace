@@ -7,6 +7,10 @@ interface MadeArtifactProps {
   colorToken: string;
   /** Fires when the child taps their artifact. Proves it works. */
   onTap: () => void;
+  /** Elder presentation: no hover lift, no press-shrink, a gentler pulse.
+   *  The artifact still commits a focus on tap — nothing about the
+   *  interaction changes, only the amount of movement it asks of the eye. */
+  calm?: boolean;
 }
 
 /**
@@ -18,7 +22,7 @@ interface MadeArtifactProps {
  * can feel the difference between "here's a picture of what we made" and
  * "here's the thing — go on, tap it."
  */
-export function MadeArtifact({ colorName, colorToken, onTap }: MadeArtifactProps) {
+export function MadeArtifact({ colorName, colorToken, onTap, calm = false }: MadeArtifactProps) {
   const [pulsed, setPulsed] = useState(false);
 
   const handleTap = useCallback(() => {
@@ -28,11 +32,19 @@ export function MadeArtifact({ colorName, colorToken, onTap }: MadeArtifactProps
 
   const handlePulseEnd = useCallback(() => setPulsed(false), []);
 
+  const btnClass = [
+    'made-artifact-btn',
+    pulsed && 'made-artifact-btn--pulsed',
+    calm && 'made-artifact-btn--calm',
+  ]
+    .filter(Boolean)
+    .join(' ');
+
   return (
-    <div className="made-artifact">
+    <div className={`made-artifact ${calm ? 'made-artifact--calm' : ''}`}>
       <button
         type="button"
-        className={`made-artifact-btn ${pulsed ? 'made-artifact-btn--pulsed' : ''}`}
+        className={btnClass}
         style={{ '--artifact-color': `var(${colorToken})` } as CSSProperties}
         onClick={handleTap}
         onAnimationEnd={pulsed ? handlePulseEnd : undefined}
@@ -46,7 +58,7 @@ export function MadeArtifact({ colorName, colorToken, onTap }: MadeArtifactProps
         Hello!
       </button>
       <span className="made-artifact-label" aria-hidden="true">
-        Our {colorName.toLowerCase()} button
+        {calm ? `The ${colorName.toLowerCase()} button` : `Our ${colorName.toLowerCase()} button`}
       </span>
     </div>
   );

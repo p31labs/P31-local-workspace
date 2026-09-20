@@ -22,6 +22,7 @@ import { BuilderChapter } from './components/BuilderChapter';
 import { ChildChapter } from './components/ChildChapter';
 import { CreativeChapter } from './components/CreativeChapter';
 import { WorkshopChapter } from './components/WorkshopChapter';
+import { CompanionView } from './components/CompanionView';
 import { EventOverlay } from './components/EventOverlay';
 import { Instrument } from './components/Instrument';
 import { Launchpad } from './components/Launchpad';
@@ -81,10 +82,10 @@ export default function App() {
   const [rejectReason, setRejectReason] = useState('');
   const [notYet, setNotYet] = useState(false);
   const [showMore, setShowMore] = useState(false);
-  const [mode, setMode] = useState<'launchpad' | 'canvas' | 'instrument' | 'jitterbug' | 'creative' | 'workshop'>(() => {
+  const [mode, setMode] = useState<'launchpad' | 'canvas' | 'instrument' | 'jitterbug' | 'creative' | 'workshop' | 'companion'>(() => {
     if (typeof location === 'undefined') return 'launchpad';
     const m = new URLSearchParams(location.search).get('mode');
-    return m === 'canvas' || m === 'instrument' || m === 'jitterbug' || m === 'creative' || m === 'workshop' ? m : 'launchpad';
+    return m === 'canvas' || m === 'instrument' || m === 'jitterbug' || m === 'creative' || m === 'workshop' || m === 'companion' ? m : 'launchpad';
   });
   const [traceView, setTraceView] = useState(false);
   const [viewport, setViewport] = useState({ x: 0, y: 0, zoom: 1 });
@@ -96,6 +97,7 @@ export default function App() {
     mode === 'launchpad' ||
     mode === 'creative' ||
     mode === 'workshop' ||
+    mode === 'companion' ||
     (started && mode === 'canvas' && chapter <= 3);
 
   // Chapter progression: after the child has "made something happen" (tapped
@@ -401,6 +403,14 @@ export default function App() {
           <Suspense fallback={<div className="loom-loading">opening the jitterbug…</div>}>
             <JitterbugScene />
           </Suspense>
+        ) : mode === 'companion' ? (
+          <CompanionView
+            events={events}
+            onExit={() => setMode('launchpad')}
+            commit={(event) =>
+              void postEvent(event, event.writer === 'human' ? humanId : null)
+            }
+          />
         ) : mode === 'workshop' ? (
           <WorkshopChapter
             events={events}

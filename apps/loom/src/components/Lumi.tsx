@@ -6,17 +6,29 @@
  * prefers-reduced-motion is honored for free via the token, with no JS
  * branching.
  *
- * Two presentation flags, both owned by the caller:
+ * Three presentation flags, all owned by the caller:
  *   - `wave`    a one-shot arrival tilt (Chapter 1's "Lumi waves"); plays once
  *               and settles into the idle bob.
  *   - `greeting` the happy face (arch eyes + big smile) + a brighter glow,
  *               used once an action has been celebrated.
+ *   - `calm`    the companion view's slower bob (6s instead of 3s). The wave
+ *               is suppressed when calm — a one-shot tilt is a child's
+ *               gesture, not an elder's.
  */
-export function Lumi({ wave = false, greeting = false }: { wave?: boolean; greeting?: boolean }) {
+export function Lumi({
+  wave = false,
+  greeting = false,
+  calm = false,
+}: {
+  wave?: boolean;
+  greeting?: boolean;
+  calm?: boolean;
+}) {
   const wrapClass = [
     'lumi-wrap',
     wave && 'lumi-wrap--wave',
     greeting && 'lumi-wrap--greeting',
+    calm && 'lumi-wrap--calm',
   ]
     .filter(Boolean)
     .join(' ');
