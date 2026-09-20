@@ -13,6 +13,7 @@ import { useLoomState } from './lib/useLoomState';
 import { useInstrument } from './lib/useInstrument';
 import { deriveOverlay } from './lib/overlay';
 import { useProfile } from './lib/useProfile';
+import { useTheme } from './lib/useTheme';
 import { effectiveTier, resolveSurface, rejectReasonFor } from './lib/surface';
 import { floorMotion, PresentationContext, type Presentation } from './lib/usePresentation';
 import { AgentCursor } from './components/AgentCursor';
@@ -65,6 +66,7 @@ export default function App() {
 
   const { events, state, seq, scrub, follow } = useLoomState();
   const { humanId, profile, overrides, tier, presentation: prefs } = useProfile();
+  const { theme, current, cycleTheme } = useTheme();
   const overlay = useMemo(() => deriveOverlay(state, idIndex), [state, idIndex]);
   const [focus, setFocus] = useState<string | null>(null);
   const instrument = useInstrument(events, focus);
@@ -249,6 +251,7 @@ export default function App() {
     <PresentationContext.Provider value={presentation}>
       <div
         className="loom-shell"
+        data-theme={theme}
       data-tier={effTier}
       data-density={density}
       data-motion={motion}
@@ -299,6 +302,17 @@ export default function App() {
             Save
           </button>
         )}
+        <button
+          className="loom-theme"
+          onClick={cycleTheme}
+          title="Change the look"
+          data-agent-kind="action"
+          data-agent-action="theme.cycle"
+          data-agent-danger="none"
+          data-agent-confirm="never"
+        >
+          {current.emoji} {current.label}
+        </button>
         <button
           className="loom-mode"
           onClick={() => {

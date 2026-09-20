@@ -124,6 +124,16 @@ body {
   font-size: 12px;
   cursor: pointer;
 }
+.loom-theme {
+  padding: 4px 10px;
+  min-height: 32px;
+  border-radius: 6px;
+  border: 1px solid var(--p31-glass-border, rgba(255, 255, 255, 0.2));
+  background: transparent;
+  color: var(--p31-text, #e2e8f0);
+  font-size: 12px;
+  cursor: pointer;
+}
 .loom-mode {
   margin-left: 8px;
   padding: 4px 10px;
