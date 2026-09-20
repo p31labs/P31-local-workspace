@@ -50,6 +50,19 @@ html, body, #root { height: 100%; margin: 0; }
   :root { --motion-scale: 0.01; }
 }
 
+/* Reduced transparency — the glass stack's accessibility counterpart to
+ * reduced motion. An opaque surface + no backdrop blur honors the OS setting
+ * (Reduce transparency on macOS/iOS) instead of frosting over it. */
+@media (prefers-reduced-transparency: reduce) {
+  .loom-bar,
+  .loom-panel,
+  .loom-scrub {
+    background: var(--p31-surface, #12121a);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
 body {
   background: var(--p31-bg, #0a0e14);
   color: var(--p31-text, #e2e8f0);

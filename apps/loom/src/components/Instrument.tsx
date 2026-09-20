@@ -95,7 +95,9 @@ export function Instrument({ scene, reading, onFocus, onTrace }: Props) {
       for (const d of s.dots) {
         const hot = topIds.has(d.id);
         if (hot) {
-          ctx.shadowBlur = 20 * d.fillOpacity;
+          // Clamp to the documented 4-12 shadowBlur budget — above 12 the
+          // softness gain is negligible but the draw cost grows non-linearly.
+          ctx.shadowBlur = Math.min(12, 20 * d.fillOpacity);
           ctx.shadowColor = `hsl(${Math.round(195 + (hotById.get(d.id) ?? 0) * 60)} 80% 60%)`;
         }
         ctx.globalAlpha = d.fillOpacity;
