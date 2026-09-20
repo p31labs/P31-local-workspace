@@ -12,6 +12,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
+    "port-audit": "node scripts/port-audit.mjs --out docs/PORTING_INVENTORY.md",
     "seed": "node scripts/seed-log.mjs"
   },
   "dependencies": {

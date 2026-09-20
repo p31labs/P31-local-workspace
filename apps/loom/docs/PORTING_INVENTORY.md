@@ -1,0 +1,206 @@
+# Porting inventory — 2026-09-20T19:55:19.755Z
+
+Scanned **50 files** under `apps/loom/src`.
+
+## Tokens
+- Used: **35**
+- Resolve against canon: **29**
+- Used but not declared in canon: **6**
+
+  Drift — either typos, or gaps the canon needs to close:
+  - `--loom-letter-spacing`  ← apps/loom/src/index.css
+  - `--loom-light-hue`  ← apps/loom/src/index.css
+  - `--loom-light-intensity`  ← apps/loom/src/index.css
+  - `--loom-line-height`  ← apps/loom/src/index.css
+  - `--loom-panel-width`  ← apps/loom/src/index.css
+  - `--motion-scale`  ← apps/loom/src/index.css
+- Declared in canon but never used: **144**
+
+  Dead tokens — safe to prune, or a signal of an unfinished area:
+  - `--p31-accent-alt`
+  - `--p31-accent-cyan`
+  - `--p31-accent-iris`
+  - `--p31-base`
+  - `--p31-blur-standard`
+  - `--p31-blur-strong`
+  - `--p31-blur-subtle`
+  - `--p31-body`
+  - `--p31-body-sm`
+  - `--p31-caption`
+  - `--p31-card-padding`
+  - `--p31-cloud`
+  - `--p31-color-action-ghost`
+  - `--p31-color-action-ghost-hover`
+  - `--p31-color-action-primary`
+  - `--p31-color-action-primary-hover`
+  - `--p31-color-action-primary-text`
+  - `--p31-color-action-secondary`
+  - `--p31-color-action-secondary-text`
+  - `--p31-duration-fast`
+  - `--p31-duration-instant`
+  - `--p31-duration-normal`
+  - `--p31-duration-slow`
+  - `--p31-duration-slower`
+  - `--p31-duration-standard`
+  - `--p31-easing-accelerate`
+  - `--p31-easing-decelerate`
+  - `--p31-easing-linear`
+  - `--p31-easing-smooth`
+  - `--p31-easing-snappy`
+  - `--p31-easing-standard`
+  - `--p31-font-display`
+  - `--p31-font-size-lg`
+  - `--p31-font-size-md`
+  - `--p31-font-size-sm`
+  - `--p31-frame-connection`
+  - `--p31-frame-rhythm`
+  - `--p31-frame-structure`
+  - `--p31-glass-bg-light`
+  - `--p31-glass-bg-overlay`
+  - `--p31-glass-bg-strong`
+  - `--p31-glass-blur`
+  - `--p31-glass-border-hover`
+  - `--p31-glass-border-strong`
+  - `--p31-glass-border-strong-hover`
+  - `--p31-glass-radius`
+  - `--p31-glass-shadow`
+  - `--p31-glass-surface-hover`
+  - `--p31-glow-coral`
+  - `--p31-glow-cyan`
+  - `--p31-glow-magenta`
+  - `--p31-glow-mint`
+  - `--p31-glow-neon`
+  - `--p31-glow-violet`
+  - `--p31-h1`
+  - `--p31-h2`
+  - `--p31-h3`
+  - `--p31-h4`
+  - `--p31-label`
+  - `--p31-layout-density-factor`
+  - `--p31-motion-duration-fast`
+  - `--p31-motion-easing-standard`
+  - `--p31-neon`
+  - `--p31-neon-amber`
+  - `--p31-neon-blue`
+  - `--p31-neon-coral`
+  - `--p31-neon-cyan`
+  - `--p31-neon-dim`
+  - `--p31-neon-faint`
+  - `--p31-neon-ghost`
+  - `--p31-neon-lavender`
+  - `--p31-neon-magenta`
+  - `--p31-neon-mint`
+  - `--p31-neon-orange`
+  - `--p31-neon-pink`
+  - `--p31-neon-violet`
+  - `--p31-portal-accent`
+  - `--p31-portal-glow`
+  - `--p31-radius-candy`
+  - `--p31-radius-full`
+  - `--p31-radius-lg`
+  - `--p31-radius-md`
+  - `--p31-radius-none`
+  - `--p31-radius-sm`
+  - `--p31-radius-xl`
+  - `--p31-scale-2xl`
+  - `--p31-scale-3xl`
+  - `--p31-scale-4xl`
+  - `--p31-scale-lg`
+  - `--p31-scale-md`
+  - `--p31-scale-sm`
+  - `--p31-scale-xl`
+  - `--p31-scale-xs`
+  - `--p31-space-2xl`
+  - `--p31-space-3xl`
+  - `--p31-space-inline-lg`
+  - `--p31-space-inline-md`
+  - `--p31-space-inline-sm`
+  - `--p31-space-lg`
+  - `--p31-space-md`
+  - `--p31-space-sm`
+  - `--p31-space-tiny`
+  - `--p31-space-xl`
+  - `--p31-space-xs`
+  - `--p31-spacing-lg`
+  - `--p31-spacing-md`
+  - `--p31-spacing-sm`
+  - `--p31-spacing-xl`
+  - `--p31-spacing-xs`
+  - `--p31-spacing-xxl`
+  - `--p31-speed-factor`
+  - `--p31-starfield-hearth`
+  - `--p31-starfield-particle-coral`
+  - `--p31-starfield-particle-teal`
+  - `--p31-starfield-remembrance`
+  - `--p31-starfield-teal`
+  - `--p31-status-error`
+  - `--p31-status-info`
+  - `--p31-status-offline`
+  - `--p31-status-online`
+  - `--p31-status-warning`
+  - `--p31-surface-s1`
+  - `--p31-surface-s2`
+  - `--p31-surface-s3`
+  - `--p31-surface-s4`
+  - `--p31-topbar-height`
+  - `--p31-touch-large`
+  - `--p31-touch-min`
+  - `--p31-touch-recommended`
+  - `--p31-type-body`
+  - `--p31-type-caption`
+  - `--p31-type-display`
+  - `--p31-type-h1`
+  - `--p31-type-h2`
+  - `--p31-type-h3`
+  - `--p31-type-label`
+  - `--p31-void`
+  - `--p31-z-content`
+  - `--p31-z-crisis`
+  - `--p31-z-floating`
+  - `--p31-z-skip-link`
+  - `--p31-z-starfield`
+  - `--p31-z-toast`
+  - `--p31-z-topbar`
+
+## AAF actions
+- Used: **17**
+- In manifest: **5**
+- Used but not in manifest: **12**
+
+  Add these to the manifest before merge:
+  - `artifact.tap`  ← apps/loom/src/components/MadeArtifact.tsx
+  - `chapter.sound.toggle`  ← apps/loom/src/components/SoundToggle.tsx
+  - `chapter.workshop.open`  ← apps/loom/src/components/WorkshopChapter.tsx
+  - `color.pick`  ← apps/loom/src/components/ColorPicker.tsx
+  - `color.repick`  ← apps/loom/src/components/ReviewCard.tsx
+  - `companion.back`  ← apps/loom/src/components/CompanionView.tsx
+  - `companion.next`  ← apps/loom/src/components/CompanionView.tsx
+  - `companion.view`  ← apps/loom/src/components/CompanionView.tsx
+  - `make.confirm`  ← apps/loom/src/components/ReviewCard.tsx
+  - `proposal.approve`  ← apps/loom/src/components/ProposalCard.tsx
+  - `proposal.defer`  ← apps/loom/src/components/ProposalCard.tsx
+  - `theme.cycle`  ← apps/loom/src/App.tsx
+- In manifest but never used: **4**
+
+## Event kinds
+- Used: **5**
+- In canon: **5**
+- Used but not in canon: **0**
+- In canon but never used: **4**
+
+## Class-name prefixes in use
+- `chapter-` — 20 classes
+- `color-` — 5 classes
+- `companion-` — 9 classes
+- `jb-` — 15 classes
+- `launchpad-` — 4 classes
+- `loom-` — 49 classes
+- `lumi-` — 10 classes
+- `made-` — 6 classes
+- `orb-` — 5 classes
+- `proposal-` — 7 classes
+- `shared-` — 2 classes
+- `sound-` — 3 classes
+
+## Raw values that should be tokens
+- `apps/loom/src/index.css` — width: 320px, padding: 4px, min-height: 32px, min-height: 44px, min-width: 44px, width: 1px, height: 1px, width: 380px, gap: 18px, min-width: 96px, width: 90px, height: 2px (+112 more)
