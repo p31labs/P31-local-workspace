@@ -37,6 +37,20 @@
       "danger": "medium",
       "confirm": "review",
       "schema": { "id": "string", "node": "string", "body": "object" }
+    },
+    {
+      "name": "view.save",
+      "kind": "action",
+      "danger": "none",
+      "confirm": "never",
+      "schema": { "label": "string", "from": "number", "to": "number" }
+    },
+    {
+      "name": "view.continue",
+      "kind": "action",
+      "danger": "none",
+      "confirm": "never",
+      "schema": { "to": "number" }
     }
   ],
   "data-agent-attributes": {

@@ -49,8 +49,8 @@ async function postEvent(input: LoomEventInput, humanId: string | null): Promise
 }
 
 /** A coarse, gentle age string — the ADHD time-blindness affordance. */
-function timeAgo(ts: string): string {
-  const mins = Math.floor((Date.now() - new Date(ts).getTime()) / 60000);
+function timeAgo(ts: string, now: number): string {
+  const mins = Math.floor((now - new Date(ts).getTime()) / 60000);
   if (mins < 1) return 'just now';
   if (mins < 60) return `~${mins}m ago`;
   const hrs = Math.floor(mins / 60);
@@ -133,14 +133,21 @@ export default function App() {
 
   // "Continue where you left off" — the most recent named save within a day,
   // surfaced as a working-memory affordance (external structure for ADHD).
+  // `now` bumps once a minute so the "~N ago" estimate stays live, not frozen.
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    const t = setInterval(() => setNow(Date.now()), 60_000);
+    return () => clearInterval(t);
+  }, []);
+
   const recentSave = useMemo(() => {
     const saves = state.saves;
     if (saves.length === 0) return null;
     const last = saves[saves.length - 1];
     if (last.to === seq) return null; // already at (or past) the saved point
-    if (Date.now() - new Date(last.ts).getTime() > 24 * 3600 * 1000) return null;
+    if (now - new Date(last.ts).getTime() > 24 * 3600 * 1000) return null;
     return last;
-  }, [state.saves, seq]);
+  }, [state.saves, seq, now]);
 
   const saveView = useCallback(() => {
     void postEvent(
@@ -275,7 +282,7 @@ export default function App() {
             data-agent-danger="none"
             data-agent-confirm="never"
           >
-            ↩ Continue: {recentSave.label} ({timeAgo(recentSave.ts)})
+            ↩ Continue: {recentSave.label} ({timeAgo(recentSave.ts, now)})
           </button>
         )}
         <span className="loom-gate">human + agent, one log</span>
