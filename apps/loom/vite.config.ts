@@ -166,7 +166,7 @@ function snapshotPlugin(): Plugin {
         ...e,
         ts: new Date(Date.now() - (n - 1 - i) * 5 * 60 * 1000).toISOString(),
       }));
-      this.emitFile({ type: 'asset', fileName: 'events.snapshot.json', source: JSON.stringify(events) });
+      this.emitFile({ type: 'asset', fileName: 'events.seed.json', source: JSON.stringify(events) });
     },
   };
 }

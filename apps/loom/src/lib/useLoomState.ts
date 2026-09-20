@@ -37,7 +37,7 @@ export function useLoomState(): LoomLog {
         if (alive) setEvents(es);
       } catch {
         try {
-          const snap = (await (await fetch('/events.snapshot.json')).json()) as LoomEvent[];
+          const snap = (await (await fetch('/events.seed.json')).json()) as LoomEvent[];
           if (!alive || !Array.isArray(snap) || snap.length === 0) return;
           const last = new Date(snap[snap.length - 1].ts).getTime();
           const offset = Date.now() - last;
