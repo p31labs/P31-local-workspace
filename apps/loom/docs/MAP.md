@@ -66,3 +66,4 @@ wherever they appear bare.
 - `./HUMAN_TEST_PLAN.md` — the test that decides whether the design works
 - `./PORTING_AGENT_BRIEF.md` — the method for the next app
 - `./CONCEPTS.yml` — the registry this page renders
+- `./SECURITY.md` — the security, privacy, and conformance posture

@@ -102,12 +102,16 @@ function loomMiddleware(): Plugin {
           });
           // Honor Last-Event-ID so an EventSource reconnect resumes where it
           // dropped, not at the head. Events committed during the disconnect
-          // window must not be silently lost.
+          // window must not be silently lost. Manual reconnects (mobile
+          // backoff) cannot set the header, so a ?lastEventId= query param is
+          // honored as a fallback.
           const header = req.headers['last-event-id'];
-          const lastEventId = Array.isArray(header) ? header[0] : header;
+          const headerValue = Array.isArray(header) ? header[0] : header;
+          const query = new URL(req.url ?? '/', 'http://localhost').searchParams.get('lastEventId');
+          const resume = headerValue ?? query;
           let lastSeq =
-            lastEventId !== undefined && lastEventId !== ''
-              ? Number(lastEventId)
+            resume !== undefined && resume !== ''
+              ? Number(resume)
               : readEvents(logPath).reduce((m, e) => Math.max(m, e.seq), -1);
           const timer = setInterval(() => {
             for (const e of readEvents(logPath)) {

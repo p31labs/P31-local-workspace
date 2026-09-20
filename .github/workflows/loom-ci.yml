@@ -15,7 +15,15 @@ jobs:
         with:
           node-version: 24
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile --ignore-scripts
+      - name: Supply-chain gate — reproducible install, no scripts
+        run: pnpm install --frozen-lockfile --ignore-scripts --offline
+      - name: Dependency audit (fail on high or above)
+        run: pnpm audit --audit-level=high
+      - name: SBOM emission (CycloneDX)
+        run: pnpm sbom --sbom-format=cyclonedx --output ./sbom.loom.json
+      - name: Manifest JSON gate
+        run: pnpm --filter @p31/loom manifest:check
       - name: Inclusive gate (font size, touch targets, hex, copy coverage)
         run: pnpm --filter @p31/canon verify:inclusive
       - name: Loom gate suite (seal, determinism, gate, replay)

@@ -757,7 +757,9 @@
   gap: var(--p31-layout-spacing-lg-tight);
   height: 100%;
   width: 100%;
-  padding: var(--p31-layout-spacing-xl);
+  padding: calc(var(--p31-layout-spacing-xl) + env(safe-area-inset-top))
+    var(--p31-layout-spacing-xl)
+    calc(var(--p31-layout-spacing-xl) + env(safe-area-inset-bottom));
   text-align: center;
   background: var(--p31-bg, #0a0e14);
 }
@@ -1312,12 +1314,17 @@
  * controls themselves. Every control is at least 48px tall; the artifact is
  * 64. No element below 16px. */
 .companion {
-  min-height: 100vh;
+  /* dvh = the visible viewport (the keyboard-shortened or Dynamic Island
+   * viewport), not the larger 100vh. iOS 26 has a known regression where
+   * 100vh + viewport-fit=cover mis-renders; dvh resolves it. */
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  padding: var(--p31-layout-spacing-xl) var(--p31-layout-spacing-lg);
+  padding: calc(var(--p31-layout-spacing-xl) + env(safe-area-inset-top))
+    var(--p31-layout-spacing-lg)
+    calc(var(--p31-layout-spacing-xl) + env(safe-area-inset-bottom));
   background: var(--p31-bg, #0a0e14);
   color: var(--p31-text-primary, #f8fafc);
   font-family: var(--p31-font-sans);

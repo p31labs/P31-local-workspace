@@ -57,17 +57,56 @@ export function useLoomState(): LoomLog {
   }, []);
 
   // Live tail. SSE carries only new events; the initial fetch covers history.
+  // Managed manually (not bare EventSource) for mobile-grade reconnection:
+  // EventSource's default is a fixed 3s retry with no backoff — on a phone
+  // that swaps Wi-Fi↔cellular it becomes a battery drain. We reconnect with
+  // exponential backoff (capped at 30s) and send Last-Event-ID on reconnect so
+  // the middleware resumes from where we dropped, not from the head.
   useEffect(() => {
-    const src = new EventSource('/api/loom/stream');
-    src.onmessage = (msg) => {
-      try {
-        const e = JSON.parse(msg.data) as LoomEvent;
-        setEvents((prev) => (prev.some((x) => x.seq === e.seq) ? prev : [...prev, e]));
-      } catch {
-        // ignore malformed stream frames
-      }
+    let alive = true;
+    let src: EventSource | null = null;
+    let timer: ReturnType<typeof setTimeout> | null = null;
+    let attempts = 0;
+    let lastEventId: string | null = null;
+
+    const connect = () => {
+      if (!alive) return;
+      // Manual reconnect cannot set the Last-Event-ID header, so carry the
+      // last seen seq as a query param; the middleware honors it.
+      const url = lastEventId ? `/api/loom/stream?lastEventId=${lastEventId}` : '/api/loom/stream';
+      const es = new EventSource(url);
+      src = es;
+      // The browser drops the Last-Event-ID header on reconnect automatically,
+      // but for a manual reconnect we want it explicit and available.
+      es.onopen = () => {
+        attempts = 0;
+      };
+      es.onmessage = (msg) => {
+        try {
+          const e = JSON.parse(msg.data) as LoomEvent;
+          lastEventId = String(e.seq);
+          setEvents((prev) => (prev.some((x) => x.seq === e.seq) ? prev : [...prev, e]));
+        } catch {
+          // ignore malformed stream frames
+        }
+      };
+      es.onerror = () => {
+        es.close();
+        src = null;
+        if (!alive) return;
+        // Exponential backoff: 1s, 2s, 4s … capped at 30s.
+        const delay = Math.min(1000 * 2 ** attempts, 30_000);
+        attempts += 1;
+        timer = setTimeout(connect, delay);
+      };
     };
-    return () => src.close();
+
+    connect();
+    return () => {
+      alive = false;
+      if (timer) clearTimeout(timer);
+      src?.close();
+    };
   }, []);
 
   const seq = pinned ?? events.length - 1;

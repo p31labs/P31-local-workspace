@@ -83,3 +83,5 @@ from the documented shape.
 - `./PORTING_AGENT_BRIEF.md` — the method that keeps these claims true
 
 - `./MAP.md` — the doc index; where this page sits
+
+- `./SECURITY.md` — the deployed perimeter and the COPPA/EAA posture that conformance feeds
