@@ -1,12 +1,15 @@
 import { defineConfig, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
 import { commit } from '@p31/canon/loom/commit';
+import { commitWeft } from '@p31/canon/loom/commitWeft';
 import { readEvents } from '@p31/canon/loom/jsonl';
+import { readWeft } from '@p31/canon/loom/weft';
 import { resolveLogPath } from '@p31/canon/loom/log-path';
 import { readProfile } from '@p31/canon/loom/profiles';
 import { dirname, join } from 'node:path';
 
 const logPath = resolveLogPath();
+const weftPath = join(dirname(logPath), 'weft.jsonl');
 // The profile store sits next to the log directory, NOT inside the log. It is
 // a separate store keyed by humanId; the log only carries the id reference.
 const profilesDir = join(dirname(logPath), 'profiles');
@@ -48,6 +51,34 @@ function loomMiddleware(): Plugin {
         if (req.method === 'GET' && path === '/events') {
           res.setHeader('Content-Type', 'application/json');
           res.end(JSON.stringify(readEvents(logPath)));
+          return;
+        }
+
+        // Weft: the operational read log. POST writes a read (commitWeft);
+        // GET returns the reads (readWeft). Same client-asserted humanId
+        // caveat as /event — advisory until an authenticated wrapper lands.
+        if (req.method === 'POST' && path === '/weft') {
+          let body = '';
+          req.on('data', (c) => (body += c));
+          req.on('end', () => {
+            try {
+              const { input } = JSON.parse(body || '{}');
+              const r = commitWeft(weftPath, input);
+              res.setHeader('Content-Type', 'application/json');
+              res.statusCode = r.valid ? 200 : 400;
+              res.end(JSON.stringify(r.valid ? { valid: true, event: r.event } : { valid: false, error: r.error }));
+            } catch (e) {
+              res.statusCode = 400;
+              res.setHeader('Content-Type', 'application/json');
+              res.end(JSON.stringify({ valid: false, error: String(e) }));
+            }
+          });
+          return;
+        }
+
+        if (req.method === 'GET' && path === '/weft') {
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify(readWeft(weftPath)));
           return;
         }
 

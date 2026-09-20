@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from 'react';
 import {
   ReactFlow,
   Background,
@@ -10,16 +10,24 @@ import {
 } from '@xyflow/react';
 import { buildGraph, buildIdIndex } from './graph';
 import { useLoomState } from './lib/useLoomState';
+import { useInstrument } from './lib/useInstrument';
 import { deriveOverlay } from './lib/overlay';
 import { useProfile } from './lib/useProfile';
 import { effectiveTier, resolveSurface, rejectReasonFor, approveLabel } from './lib/surface';
 import { EventOverlay } from './components/EventOverlay';
+import { Instrument } from './components/Instrument';
 import { ProposalDigest } from './components/ProposalDigest';
 import { ProposalNode } from './components/ProposalNode';
 import { TimelineScrubber } from './components/TimelineScrubber';
 import type { LoomEventInput } from '@p31/canon/loom/gate';
 
 const nodeTypes = { proposal: ProposalNode };
+
+// Lazy-load the WebGL closure scene so three.js (and its ~530 kB) is fetched
+// only when the user enters the Jitterbug mode — the Canvas mode stays lean.
+const JitterbugScene = lazy(() =>
+  import('./components/JitterbugScene').then((m) => ({ default: m.JitterbugScene })),
+);
 
 /** The canvas writes ONLY through /api/loom/event -> commit(). */
 async function postEvent(input: LoomEventInput, humanId: string | null): Promise<void> {
@@ -43,10 +51,19 @@ export default function App() {
   const { events, state, seq, scrub, follow } = useLoomState();
   const { humanId, profile, overrides, tier } = useProfile();
   const overlay = useMemo(() => deriveOverlay(state, idIndex), [state, idIndex]);
+  const [focus, setFocus] = useState<string | null>(null);
+  const instrument = useInstrument(events, focus);
   const [selectedProposal, setSelectedProposal] = useState<string | null>(null);
   const [rejectReason, setRejectReason] = useState('');
   const [notYet, setNotYet] = useState(false);
   const [showMore, setShowMore] = useState(false);
+  const [mode, setMode] = useState<'canvas' | 'instrument' | 'jitterbug'>('canvas');
+
+  // Reading is writing: opening the instrument or zooming to a zone deposits
+  // a `view.read` in the weft, which feeds back into the field.
+  useEffect(() => {
+    if (mode === 'instrument') instrument.emitRead(humanId);
+  }, [mode, focus, instrument.emitRead, humanId]);
 
   // Progressive disclosure: beginner surfaces the digest; the "show me more"
   // toggle promotes the surface to the full overlay for this session. The
@@ -139,23 +156,41 @@ export default function App() {
           </span>
         )}
         <span className="loom-gate">human + agent, one log</span>
+        <button
+          className="loom-mode"
+          onClick={() => {
+            setMode((m) => (m === 'canvas' ? 'instrument' : m === 'instrument' ? 'jitterbug' : 'canvas'));
+            setFocus(null);
+          }}
+          aria-pressed={mode !== 'canvas'}
+        >
+          {mode === 'canvas' ? 'Instrument' : mode === 'instrument' ? 'Jitterbug' : 'Canvas'}
+        </button>
       </header>
 
       <main className="loom-canvas">
-        <ReactFlow
-          nodes={nodes}
-          edges={edges}
-          nodeTypes={nodeTypes}
-          onNodeClick={onNodeClick}
-          fitView
-          minZoom={0.03}
-          maxZoom={4}
-          proOptions={{ hideAttribution: true }}
-        >
-          <Background gap={40} size={1} />
-          <MiniMap pannable zoomable />
-          <Controls />
-        </ReactFlow>
+        {mode === 'instrument' ? (
+          <Instrument scene={instrument.scene} reading={instrument.reading} onFocus={setFocus} />
+        ) : mode === 'jitterbug' ? (
+          <Suspense fallback={<div className="loom-loading">opening the jitterbug…</div>}>
+            <JitterbugScene />
+          </Suspense>
+        ) : (
+          <ReactFlow
+            nodes={nodes}
+            edges={edges}
+            nodeTypes={nodeTypes}
+            onNodeClick={onNodeClick}
+            fitView
+            minZoom={0.03}
+            maxZoom={4}
+            proOptions={{ hideAttribution: true }}
+          >
+            <Background gap={40} size={1} />
+            <MiniMap pannable zoomable />
+            <Controls />
+          </ReactFlow>
+        )}
       </main>
 
       <aside className="loom-panel">
