@@ -20,12 +20,14 @@ export type WeftEvent =
   | { seq: number; ts: string; kind: 'view.mode'; mode: WeftMode; warpSeq: number; humanId?: string }
   | { seq: number; ts: string; kind: 'view.pin'; node: string; pinned: boolean; warpSeq: number; humanId?: string }
   | { seq: number; ts: string; kind: 'view.scrub'; at: number; warpSeq: number; humanId?: string }
+  | { seq: number; ts: string; kind: 'view.read'; scale: 'constellation' | 'zone' | 'trace'; focus: string | null; entropy: number; whiteSpace: number; warpSeq: number; humanId?: string }
   | { seq: number; ts: string; kind: 'field.decision'; zone: string; proposalId: string; pressure: number; hazard: number; trust: number; warpSeq: number; humanId?: string };
 
 export type WeftEventInput =
   | { kind: 'view.mode'; mode: WeftMode; warpSeq: number; humanId?: string }
   | { kind: 'view.pin'; node: string; pinned: boolean; warpSeq: number; humanId?: string }
   | { kind: 'view.scrub'; at: number; warpSeq: number; humanId?: string }
+  | { kind: 'view.read'; scale: 'constellation' | 'zone' | 'trace'; focus: string | null; entropy: number; whiteSpace: number; warpSeq: number; humanId?: string }
   | { kind: 'field.decision'; zone: string; proposalId: string; pressure: number; hazard: number; trust: number; warpSeq: number; humanId?: string };
 
 export interface WeftGateResult {
@@ -55,6 +57,15 @@ export class WeftGate {
     } else if (input.kind === 'view.scrub') {
       if (!Number.isInteger(input.at) || input.at < 0) {
         return { valid: false, error: `view.scrub.at must be a non-negative integer (got ${input.at})` };
+      }
+    } else if (input.kind === 'view.read') {
+      if (!['constellation', 'zone', 'trace'].includes(input.scale)) {
+        return { valid: false, error: `unknown view.read scale: ${input.scale}` };
+      }
+      for (const k of ['entropy', 'whiteSpace'] as const) {
+        if (typeof input[k] !== 'number' || !Number.isFinite(input[k])) {
+          return { valid: false, error: `view.read.${k} must be a finite number` };
+        }
       }
     } else if (input.kind === 'field.decision') {
       if (typeof input.zone !== 'string' || input.zone.trim().length === 0) {
