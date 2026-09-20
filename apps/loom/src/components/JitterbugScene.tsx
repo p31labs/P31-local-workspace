@@ -11,6 +11,11 @@
  *     tetrahedron) as t goes 0 → 1. Only the terminal tetrahedron is a K₄
  *     (β₂ = 1): it encloses.
  *
+ * Each click-stop also carries a bright wireframe of its own edges — the
+ * particle cloud is the surface, the wireframe is the shape. They crossfade
+ * at the stops (t = 0, 1/3, 2/3, 1) so the polyhedron the cloud is passing
+ * through is always legible, never just fuzz.
+ *
  * Two volume orbs make the duality literal: one shrinks (physical size,
  * `jitterbugVolume`^(1/3)), one grows (enclosed volume, β₂ 0 → 1).
  *
@@ -47,6 +52,7 @@ function hash01(s: string): number {
   }
   return (h >>> 0) / 0x100000000;
 }
+
 function mulberry32(seed: number): () => number {
   let a = seed >>> 0;
   return () => {
@@ -77,8 +83,29 @@ const VERTS = {
   tet: [V(1, 1, 1), V(1, -1, -1), V(-1, 1, -1), V(-1, -1, 1)],
 };
 
-// Triangular faces (indices into VERTS.*). The cuboctahedron's six squares
-// are triangulated, giving 8 + 12 = 20 triangles.
+// ── Edge derivation by nearest-neighbour distance. Robust: no hardcoded
+//    index tables — every real edge of a convex polyhedron is one of its
+//    closest vertex pairs. Take the K closest, K = the edge count.
+function closestEdges(verts: THREE.Vector3[], count: number): [number, number][] {
+  const pairs: { i: number; j: number; d: number }[] = [];
+  for (let i = 0; i < verts.length; i++) {
+    for (let j = i + 1; j < verts.length; j++) {
+      pairs.push({ i, j, d: verts[i].distanceTo(verts[j]) });
+    }
+  }
+  pairs.sort((a, b) => a.d - b.d);
+  return pairs.slice(0, count).map(({ i, j }) => [i, j]);
+}
+
+const EDGES = {
+  ve: closestEdges(VERTS.ve, 24),   // cuboctahedron
+  ico: closestEdges(VERTS.ico, 30), // icosahedron
+  octa: closestEdges(VERTS.octa, 12), // octahedron
+  tet: closestEdges(VERTS.tet, 6),  // tetrahedron (all pairs)
+};
+
+// ── Triangular faces (indices into VERTS.*). The cuboctahedron's six
+//    squares are triangulated, giving 8 + 12 = 20 triangles.
 const FACES = {
   ve: [
     [0, 4, 8], [0, 5, 9], [1, 4, 10], [1, 5, 11],
@@ -132,8 +159,6 @@ function sampleOnFaces(
 // ── The Sierpiński tetrahedron — recurses and never closes ──────────────
 function sierpinskiEdges(depth: number): [THREE.Vector3, THREE.Vector3][] {
   const corners = VERTS.tet;
-  const base: [THREE.Vector3, THREE.Vector3][] = [];
-  for (let i = 0; i < 4; i++) for (let j = i + 1; j < 4; j++) base.push([corners[i], corners[j]]);
   const sub = (cs: THREE.Vector3[], d: number): [THREE.Vector3, THREE.Vector3][] => {
     if (d === 0) {
       const e: [THREE.Vector3, THREE.Vector3][] = [];
@@ -156,6 +181,26 @@ function zonePosition(id: string, scale: number): [number, number, number] {
   const r = Math.sqrt(Math.max(0, 1 - y * y));
   const theta = hash01(id + '#theta') * Math.PI * 2;
   return [Math.cos(theta) * r * scale, y * scale, Math.sin(theta) * r * scale];
+}
+
+// ── Wireframe geometry: an edge list scaled to the phase's radius ───────
+function wireframePositions(
+  verts: THREE.Vector3[],
+  edges: [number, number][],
+  scale: number,
+): Float32Array {
+  const pos = new Float32Array(edges.length * 6);
+  edges.forEach(([i, j], k) => {
+    const a = verts[i];
+    const b = verts[j];
+    pos[k * 6] = a.x * scale;
+    pos[k * 6 + 1] = a.y * scale;
+    pos[k * 6 + 2] = a.z * scale;
+    pos[k * 6 + 3] = b.x * scale;
+    pos[k * 6 + 4] = b.y * scale;
+    pos[k * 6 + 5] = b.z * scale;
+  });
+  return pos;
 }
 
 // ── GLSL: simplex noise (Ashima / McEwan, MIT) ──────────────────────────
@@ -208,6 +253,9 @@ float snoise(vec3 v){
 }
 `;
 
+// Point cloud. Points are deliberately few and small so additive blending
+// accumulates into a glow, not a white blowout: ~8k points at 60/dist (vs
+// the earlier 60k at 300/dist) is a ~25× reduction in per-pixel overlap.
 const JB_VERT = `
 uniform float uT;
 uniform float uTime;
@@ -242,30 +290,33 @@ void main() {
   float energy = 4.0 * transition * (1.0 - transition);
   vec3 dir = normalize(pos + 0.001);
   float n = snoise(pos * 1.8 + vec3(0.0, uTime * 0.25, 0.0) + aRandom * 3.0);
-  pos += dir * n * 0.09 * energy;
+  pos += dir * n * 0.06 * energy;
 
   vColor = mix(uCool, uWarm, uT);
-  vColor = mix(vColor, vec3(1.0), uFlash * 0.9);
-  vAlpha = (0.45 + 0.55 * uT) * (0.5 + 0.5 * (1.0 - energy * 0.4)) * (0.85 + 0.15 * aRandom);
+  vColor = mix(vColor, vec3(1.0), uFlash * 0.7);
+  vAlpha = (0.20 + 0.28 * uT) * (0.6 + 0.4 * (1.0 - energy * 0.5)) * (0.8 + 0.2 * aRandom);
 
   vec4 mv = modelViewMatrix * vec4(pos, 1.0);
   float dist = -mv.z;
-  gl_PointSize = aSize * (300.0 / dist) * (1.0 + uT * 0.35 + uFlash * 1.5);
+  gl_PointSize = aSize * (60.0 / dist) * (1.0 + uT * 0.25 + uFlash * 1.2);
   gl_Position = projectionMatrix * mv;
 }
 `;
 
+// Soft Reinhard-ish tone map on the source color — additive hotspots reach
+// "bright", not "pure white".
 const JB_FRAG = `
 varying vec3 vColor;
 varying float vAlpha;
 void main() {
   vec2 uv = gl_PointCoord - 0.5;
   float r = length(uv);
-  float core = pow(smoothstep(0.5, 0.0, r), 1.6);
-  float halo = smoothstep(0.5, 0.15, r) * 0.35;
+  float core = pow(smoothstep(0.5, 0.0, r), 1.7);
+  float halo = smoothstep(0.5, 0.15, r) * 0.18;
   float a = (core + halo) * vAlpha;
   if (a < 0.01) discard;
-  gl_FragColor = vec4(vColor, a);
+  vec3 c = vColor / (vColor + vec3(0.75));
+  gl_FragColor = vec4(c * 1.35, a);
 }
 `;
 
@@ -286,7 +337,7 @@ void main() {
   vColor = mix(base, uDanger, aHazard);
   vAlpha = 0.35 + 0.6 * aPressure + 0.4 * aHazard;
   vec4 mv = modelViewMatrix * vec4(pos, 1.0);
-  gl_PointSize = (50.0 / -mv.z) * (0.7 + aPressure * 1.3 + aHazard * 0.8);
+  gl_PointSize = (40.0 / -mv.z) * (0.7 + aPressure * 1.3 + aHazard * 0.8);
   gl_Position = projectionMatrix * mv;
 }
 `;
@@ -303,6 +354,30 @@ void main() {
 }
 `;
 
+// K₄ vertex markers — bright dots at the tetrahedron vertices, visible only
+// at the terminal phase, so the enclosure is unmistakable.
+const K4_VERT = `
+uniform float uSize;
+void main() {
+  vec4 mv = modelViewMatrix * vec4(position, 1.0);
+  gl_PointSize = uSize * (90.0 / -mv.z);
+  gl_Position = projectionMatrix * mv;
+}
+`;
+const K4_FRAG = `
+uniform vec3 uColor;
+uniform float uWeight;
+void main() {
+  vec2 uv = gl_PointCoord - 0.5;
+  float r = length(uv);
+  float core = pow(smoothstep(0.5, 0.0, r), 1.4);
+  float halo = smoothstep(0.5, 0.1, r) * 0.4;
+  float a = (core + halo) * uWeight;
+  if (a < 0.02) discard;
+  gl_FragColor = vec4(uColor, a);
+}
+`;
+
 const PHASE_TEXT = [
   { quote: 'Sizeless, nuclear, omnidirectionally pulsing.', attrib: 'Vector equilibrium — β₂ = 0' },
   { quote: 'The golden ratio enters. The squares split into triangles.', attrib: 'Icosahedron — 30 edges' },
@@ -310,7 +385,11 @@ const PHASE_TEXT = [
   { quote: 'The minimum-limit-case structural system of Universe.', attrib: 'Tetrahedron — K₄, β₂ = 1' },
 ];
 
-const N_POINTS = 60000;
+// 8k points, not 60k. Fewer, larger points read as structure; many tiny
+// points read as fog.
+const N_POINTS = 8000;
+const PHASE_STOPS = [0, 1 / 3, 2 / 3, 1] as const;
+const PHASE_KEYS = ['ve', 'ico', 'octa', 'tet'] as const;
 
 export function JitterbugScene() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -379,7 +458,6 @@ export function JitterbugScene() {
       camera.lookAt(0, 0, 0);
     };
 
-    // ── Resolve tokens → colors (single source: CSS) ────────────────────
     const tokens = () => ({
       bg: resolveTokenRgb('--p31-bg'),
       accent: resolveTokenRgb('--p31-accent'),
@@ -409,7 +487,7 @@ export function JitterbugScene() {
       zTargetH[i] = zHazard[i];
     });
 
-    // ── Sierpiński wireframe (two scales) ───────────────────────────────
+    // ── Sierpiński wireframe (two scales), brightened + slowly breathing ─
     const sierpClose = sierpinskiEdges(4);
     const sierpFar = sierpinskiEdges(2);
     const mkSierp = (edges: [THREE.Vector3, THREE.Vector3][], scale: number) => {
@@ -428,8 +506,16 @@ export function JitterbugScene() {
     };
     const sierpGeom = mkSierp(sierpClose, 2.6);
     const sierpGeomFar = mkSierp(sierpFar, 4.8);
-    const sierpMat = new THREE.LineBasicMaterial({ transparent: true, opacity: 0.16, blending: THREE.AdditiveBlending, depthWrite: false });
-    const sierpMatFar = new THREE.LineBasicMaterial({ transparent: true, opacity: 0.07, blending: THREE.AdditiveBlending, depthWrite: false });
+    // The Sierpiński is the constant against which closure reads. It has to
+    // be present, not ghostly.
+    const sierpMat = new THREE.LineBasicMaterial({
+      transparent: true, opacity: 0.35,
+      blending: THREE.AdditiveBlending, depthWrite: false,
+    });
+    const sierpMatFar = new THREE.LineBasicMaterial({
+      transparent: true, opacity: 0.15,
+      blending: THREE.AdditiveBlending, depthWrite: false,
+    });
     const sierpLines = new THREE.LineSegments(sierpGeom, sierpMat);
     const sierpLinesFar = new THREE.LineSegments(sierpGeomFar, sierpMatFar);
     scene.add(sierpLines, sierpLinesFar);
@@ -446,7 +532,7 @@ export function JitterbugScene() {
     const aSize = new Float32Array(N_POINTS);
     const aRandom = new Float32Array(N_POINTS);
     for (let i = 0; i < N_POINTS; i++) {
-      aSize[i] = 0.4 + rand() * 0.9;
+      aSize[i] = 0.5 + rand() * 0.7;
       aRandom[i] = rand();
     }
     const jbGeom = new THREE.BufferGeometry();
@@ -475,6 +561,50 @@ export function JitterbugScene() {
     });
     const jitterbug = new THREE.Points(jbGeom, jbMat);
     scene.add(jitterbug);
+
+    // ── Per-phase wireframes (the shape of each click-stop) ─────────────
+    const phaseScales: Record<(typeof PHASE_KEYS)[number], number> = {
+      ve: scaleVe, ico: scaleIco, octa: scaleOcta, tet: scaleTet,
+    };
+    const wireMats: THREE.LineBasicMaterial[] = [];
+    const wires: THREE.LineSegments[] = [];
+    for (const k of PHASE_KEYS) {
+      const pos = wireframePositions(VERTS[k], EDGES[k], phaseScales[k]);
+      const g = new THREE.BufferGeometry();
+      g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+      const m = new THREE.LineBasicMaterial({
+        transparent: true, opacity: 0,
+        blending: THREE.AdditiveBlending, depthWrite: false,
+      });
+      const ls = new THREE.LineSegments(g, m);
+      scene.add(ls);
+      wireMats.push(m);
+      wires.push(ls);
+    }
+
+    // ── K₄ vertex markers — bright dots at the tetrahedron vertices ─────
+    const k4Geom = new THREE.BufferGeometry();
+    const k4Pos = new Float32Array(4 * 3);
+    for (let i = 0; i < 4; i++) {
+      k4Pos[i * 3] = VERTS.tet[i].x * scaleTet;
+      k4Pos[i * 3 + 1] = VERTS.tet[i].y * scaleTet;
+      k4Pos[i * 3 + 2] = VERTS.tet[i].z * scaleTet;
+    }
+    k4Geom.setAttribute('position', new THREE.BufferAttribute(k4Pos, 3));
+    const k4Uniforms = {
+      uWeight: { value: 0 },
+      uSize: { value: 1.4 },
+      uColor: { value: new THREE.Vector3() },
+    };
+    const k4Mat = new THREE.ShaderMaterial({
+      uniforms: k4Uniforms,
+      vertexShader: K4_VERT,
+      fragmentShader: K4_FRAG,
+      transparent: true,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+    });
+    scene.add(new THREE.Points(k4Geom, k4Mat));
 
     // ── Field zones ─────────────────────────────────────────────────────
     const zoneGeom = new THREE.BufferGeometry();
@@ -517,17 +647,17 @@ export function JitterbugScene() {
       zoneUniforms.uDanger.value.set(...c.red);
       sierpMat.color.setRGB(...c.accent);
       sierpMatFar.color.setRGB(...c.accent);
+      wireMats.forEach((m) => m.color.setRGB(...c.accent));
       orbAMat.color.setRGB(...c.accent);
       orbBMat.color.setRGB(...c.gold);
+      k4Uniforms.uColor.value.set(...c.gold);
     };
     setTheme();
 
-    // ── Interaction state (refs, shared with the loop + handlers) ───────
     const mouseNDC = new THREE.Vector2(0, 0);
     const raycaster = new THREE.Raycaster();
     raycaster.params.Points.threshold = 0.18;
 
-    // ── Pointer / orbit handlers ────────────────────────────────────────
     const onPointerDown = (e: PointerEvent) => {
       dragging = true;
       lastX = e.clientX;
@@ -561,7 +691,6 @@ export function JitterbugScene() {
     };
     window.addEventListener('resize', onResize);
 
-    // ── Slider / play wiring (imperative, no React re-render in the loop) ──
     const slider = sliderRef.current;
     const setT = (t: number) => {
       tRef.current = Math.max(0, Math.min(1, t));
@@ -611,7 +740,13 @@ export function JitterbugScene() {
       if (rBarRef.current) rBarRef.current.style.width = `${(1 - t) * 100}%`;
     };
 
-    // ── Frame ───────────────────────────────────────────────────────────
+    // Triangular crossfade weight for a phase: 1 at its stop, 0 one stop
+    // away, linear between. The four weights always sum to 1.
+    const phaseWeight = (t: number, stop: number): number => {
+      const d = Math.abs(t - stop);
+      return Math.max(0, 1 - d / (1 / 3));
+    };
+
     let raf = 0;
     let lastTime = performance.now();
 
@@ -622,10 +757,22 @@ export function JitterbugScene() {
       jbUniforms.uFlash.value = flashRef.current;
       zoneUniforms.uTime.value = elapsed;
 
+      // Wireframes: crossfade by proximity to each click-stop.
+      for (let i = 0; i < PHASE_KEYS.length; i++) {
+        const w = phaseWeight(t, PHASE_STOPS[i]);
+        wireMats[i].opacity = w * 0.75;
+        wires[i].visible = w > 0.01;
+      }
+
+      // K₄ vertex markers: only near the terminal tetrahedron.
+      const k4w = phaseWeight(t, 1);
+      k4Uniforms.uWeight.value = k4w * (1 + flashRef.current * 1.5);
+      k4Uniforms.uSize.value = 1.2 + 0.6 * k4w;
+
       // Volume orbs.
       const physR = 0.55 * Math.cbrt(jitterbugVolume(t));
       orbA.scale.setScalar(physR);
-      orbAMat.opacity = 0.08 * (1 - t * 0.5);
+      orbAMat.opacity = 0.10 * (1 - t * 0.5);
       const enclosed = t >= 1 ? 1 : Math.max(0, (t - 0.85) / 0.15);
       orbB.scale.setScalar(Math.max(0.001, 0.4 * enclosed));
       orbBMat.opacity = 0.35 * enclosed + 0.25 * flashRef.current;
@@ -653,7 +800,9 @@ export function JitterbugScene() {
       (zoneGeom.attributes.aHazard.array as Float32Array).set(zHazard);
       zoneGeom.attributes.aHazard.needsUpdate = true;
 
-      // Sierpiński drift.
+      // Sierpiński drift, plus a slow breath so it reads as alive.
+      const breath = 1 + Math.sin(elapsed * 0.6) * 0.06;
+      sierpMat.opacity = 0.35 * breath;
       sierpLines.rotation.y = elapsed * 0.03;
       sierpLines.rotation.x = Math.sin(elapsed * 0.05) * 0.15;
       sierpLinesFar.rotation.y = -elapsed * 0.015;
@@ -686,7 +835,6 @@ export function JitterbugScene() {
       if (!reduceMotion) raf = requestAnimationFrame(loop);
     };
 
-    // Play button.
     const playBtn = playBtnRef.current;
     const onPlay = () => {
       if (reduceMotion) return;
@@ -700,7 +848,6 @@ export function JitterbugScene() {
     };
     if (playBtn) playBtn.addEventListener('click', onPlay);
 
-    // Reset.
     const resetBtn = resetBtnRef.current;
     const onReset = () => {
       playing = false;
@@ -715,10 +862,8 @@ export function JitterbugScene() {
     };
     if (resetBtn) resetBtn.addEventListener('click', onReset);
 
-    // Theme change re-resolves tokens into the uniforms.
     const stopWatch = watchTheme(() => setTheme());
 
-    // Kick off.
     updatePhaseText(0);
     updateReadouts(0);
     if (reduceMotion) {
@@ -744,6 +889,10 @@ export function JitterbugScene() {
       sierpMatFar.dispose();
       jbGeom.dispose();
       jbMat.dispose();
+      wireMats.forEach((m) => m.dispose());
+      wires.forEach((w) => w.geometry.dispose());
+      k4Geom.dispose();
+      k4Mat.dispose();
       zoneGeom.dispose();
       zoneMat.dispose();
       orbGeom.dispose();
