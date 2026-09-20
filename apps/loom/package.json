@@ -14,6 +14,7 @@
     "test:e2e": "playwright test",
     "port-audit": "node scripts/port-audit.mjs --out docs/PORTING_INVENTORY.md",
     "docs-audit": "node scripts/docs-audit.mjs --out docs/DOCS_INVENTORY.md",
+    "manifest:check": "node -e \"JSON.parse(require('fs').readFileSync('public/.well-known/agent-manifest.json','utf8')); console.log('manifest: valid JSON')\"",
     "seed": "node scripts/seed-log.mjs"
   },
   "dependencies": {

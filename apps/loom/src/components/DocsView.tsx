@@ -156,7 +156,14 @@ function LogPane({ url }: { url: string }): ReactElement {
     return s;
   }, [events, at]);
 
-  if (error) return <p className="docs-pane-note">Could not load the seed: {error}</p>;
+  if (error) {
+    return (
+      <p className="docs-pane-note">
+        The seed is not reachable here ({error}). It is a build-time asset the
+        dev server now serves too; a production build guarantees it.
+      </p>
+    );
+  }
   if (!events) return <p className="docs-pane-note">Loading…</p>;
   if (events.length === 0) return <p className="docs-pane-note">The seed is empty.</p>;
 

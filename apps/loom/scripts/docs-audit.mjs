@@ -51,6 +51,10 @@ const GENERATED = ['PORTING_INVENTORY.md', 'DOCS_INVENTORY.md'];
 //   - events.seed.json          a build-time asset served at /events.seed.json
 //   - base.css, chapters.css, chrome.css, companion.css  the DECISIONS 005
 //     "if index.css crosses ~2000 lines, split by layer into ..." hypotheticals
+// This whitelist is hand-maintained and will rot if it grows silently. The
+// four .css names exist ONLY as the DECISIONS 005 hypothetical split; if that
+// decision changes, remove them here. Anything added to this list needs a
+// reason in a comment, matching how the port-audit whitelists runtime assets.
 const KNOWN_RUNTIME_OR_FUTURE = new Set([
   'events.seed.json',
   'base.css',

@@ -5,18 +5,8 @@ import { test, expect } from '@playwright/test';
  * hidden, reads the running contract (tokens + manifest), so it cannot drift.
  */
 test('docs mode renders the live token and manifest contract', async ({ page }) => {
-  // The seed is a build-time asset, not served by the dev server — route it
-  // to a deterministic fixture so the log pane's fold can be verified.
-  await page.route('/events.seed.json', (route) => {
-    void route.fulfill({
-      contentType: 'application/json',
-      body: JSON.stringify([
-        { seq: 0, ts: '2026-01-01T00:00:00.000Z', writer: 'human', kind: 'focus', node: '--p31-accent' },
-        { seq: 1, ts: '2026-01-01T00:00:00.000Z', writer: 'agent', kind: 'traverse', from: '--p31-accent', to: '.a2-data-card', reason: 'test' },
-      ]),
-    });
-  });
-
+  // The seed is served by the dev middleware (/events.seed.json) and by the
+  // build — this test exercises the real route, not a stub.
   await page.goto('/?mode=docs');
 
   // The region is present, and no instrument chrome leaks in.

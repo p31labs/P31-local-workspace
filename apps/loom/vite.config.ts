@@ -147,25 +147,40 @@ const DEMO_EVENTS: LoomEventInput[] = [
   { writer: 'agent', kind: 'traverse', from: '.a2-data-card-header', to: '--p31-accent-green', reason: 'uses-token' },
 ];
 
+/** Fold the demo session through the gate (validates + stamps seq) and spread
+ *  timestamps over the last ~45 min so the field has structure. Used by both
+ *  the build-time snapshot plugin and the dev server route, so the seed is
+ *  identical wherever it is served. */
+function buildSeedEvents(): LoomEvent[] {
+  const gate = new ReplayGate();
+  for (const input of DEMO_EVENTS) {
+    const r = gate.append(input);
+    if (!r.valid) throw new Error(`demo event ${input.kind} failed: ${r.error}`);
+  }
+  const log = gate.getLog();
+  const n = log.length;
+  return log.map((e, i) => ({
+    ...e,
+    ts: new Date(Date.now() - (n - 1 - i) * 5 * 60 * 1000).toISOString(),
+  }));
+}
+
 /** Build-time snapshot: fold the demo session through the gate (validates +
  *  stamps seq) and emit it as a static asset the client can fall back to when
- *  /api/loom/events 404s. Timestamps are spread over the last ~45 min so the
- *  field has structure; useLoomState re-anchors the newest to "now" at load. */
+ *  /api/loom/events 404s. In dev, a configureServer route serves the SAME
+ *  fold at /events.seed.json, so the docs log pane works on `pnpm dev` too. */
 function snapshotPlugin(): Plugin {
   return {
     name: 'loom-snapshot',
+    configureServer(server) {
+      server.middlewares.use('/events.seed.json', (_req, res) => {
+        res.setHeader('Content-Type', 'application/json');
+        res.setHeader('Cache-Control', 'no-store');
+        res.end(JSON.stringify(buildSeedEvents()));
+      });
+    },
     generateBundle() {
-      const gate = new ReplayGate();
-      for (const input of DEMO_EVENTS) {
-        const r = gate.append(input);
-        if (!r.valid) throw new Error(`demo event ${input.kind} failed: ${r.error}`);
-      }
-      const log = gate.getLog();
-      const n = log.length;
-      const events: LoomEvent[] = log.map((e, i) => ({
-        ...e,
-        ts: new Date(Date.now() - (n - 1 - i) * 5 * 60 * 1000).toISOString(),
-      }));
+      const events = buildSeedEvents();
       this.emitFile({ type: 'asset', fileName: 'events.seed.json', source: JSON.stringify(events) });
     },
   };

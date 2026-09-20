@@ -68,31 +68,36 @@ function readCanonEventKinds() {
 
 function readManifestActions() {
   if (!existsSync(MANIFEST)) return new Set();
+  const raw = readFileSync(MANIFEST, 'utf8');
+  let json;
   try {
-    const json = JSON.parse(readFileSync(MANIFEST, 'utf8'));
-    const names = new Set();
-    // Scope to the actions array only. The manifest also carries a top-level
-    // `name` (the app's display name) and `data-agent-attributes.action`
-    // (an attribute type string) — walking the whole JSON would report those
-    // as actions, which they are not.
-    const actions = json?.actions;
-    if (Array.isArray(actions)) {
-      for (const a of actions) {
-        if (a && typeof a === 'object') {
+    json = JSON.parse(raw);
+  } catch (e) {
+    // The manifest is load-bearing — a hand edit that breaks the JSON must be
+    // a hard failure, not a silent "0 actions" that floods every action as
+    // missing. The report carries manifestError so the gate stays loud.
+    return { names: new Set(), error: `manifest is not valid JSON: ${String(e)}` };
+  }
+  const names = new Set();
+  // Scope to the actions array only. The manifest also carries a top-level
+  // `name` (the app's display name) and `data-agent-attributes.action`
+  // (an attribute type string) — walking the whole JSON would report those
+  // as actions, which they are not.
+  const actions = json?.actions;
+  if (Array.isArray(actions)) {
+    for (const a of actions) {
+      if (a && typeof a === 'object') {
           if (typeof a.name === 'string') names.add(a.name);
           if (typeof a.action === 'string') names.add(a.action);
         }
       }
     }
-    return names;
-  } catch {
-    return new Set();
-  }
+    return { names, error: undefined };
 }
 
 const canonTokens = readCanonTokens();
 const canonKinds = readCanonEventKinds();
-const canonActions = readManifestActions();
+const { names: canonActions, error: manifestError } = readManifestActions();
 
 // ── Extraction ───────────────────────────────────────────────────────────────
 const usedTokens = new Map(); // token -> [file]
@@ -172,6 +177,7 @@ const report = {
   generatedAt: new Date().toISOString(),
   fileCount: FILES.length,
   manifestExists: existsSync(MANIFEST),
+  manifestError,
 
   tokens: {
     used: usedTokens.size,
@@ -209,7 +215,7 @@ if (AS_JSON) {
   );
   if (OUT) writeFileSync(OUT, out);
   else console.log(out);
-  process.exit(0);
+  process.exit(report.manifestError ? 1 : 0);
 }
 
 const md = [];
@@ -220,6 +226,15 @@ md.push(`# Porting inventory — ${report.generatedAt}`);
 md.push('');
 md.push(`Scanned **${report.fileCount} files** under \`apps/loom/src\`.`);
 md.push('');
+
+if (report.manifestError) {
+  md.push('## ❌ MANIFEST ERROR');
+  md.push(`The manifest at \`${MANIFEST}\` is not valid JSON. A hand edit to a
+load-bearing file must not be a silent "0 actions" — every action now reports
+as missing because the file cannot be read. Fix the JSON before anything
+else. ${report.manifestError}`);
+  md.push('');
+}
 
 md.push('## Tokens');
 md.push(`- Used: **${report.tokens.used}**`);
@@ -287,3 +302,4 @@ if (OUT) {
 } else {
   console.log(out);
 }
+process.exit(report.manifestError ? 1 : 0);

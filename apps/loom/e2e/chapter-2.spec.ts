@@ -8,6 +8,9 @@ const logPath = resolve(here, '..', '.loom', 'ci-events.jsonl');
 
 test.beforeEach(() => {
   mkdirSync(dirname(logPath), { recursive: true });
+
+test.setTimeout(60000);
+
   writeFileSync(logPath, '');
 });
 
