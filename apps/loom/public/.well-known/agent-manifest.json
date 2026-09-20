@@ -137,6 +137,14 @@
       "description": "The companion view region — the 70-year-old's window into the log. Informational marker, not an action an agent should invoke on its own; it exists so the region is discoverable."
     },
     {
+      "name": "companion.open",
+      "kind": "action",
+      "danger": "none",
+      "confirm": "never",
+      "schema": {},
+      "description": "Open the companion view from the launchpad. The elder's door — a quiet secondary control below Start. Switches the shell to companion mode; commits nothing to the log. A returning visitor whose log has an artifact lands on what they made; a fresh visitor lands on a gentle empty state."
+    },
+    {
       "name": "make.confirm",
       "kind": "action",
       "danger": "none",

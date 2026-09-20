@@ -29,3 +29,26 @@ test('a fresh visitor sees the launchpad, then meets Lumi', async ({ page }) => 
   await expect(page.locator('.chapter-action')).toHaveCount(1, { timeout: 5000 });
   await expect(page.locator('.loom-bar')).toBeHidden();
 });
+
+/**
+ * The elder's door. The launchpad carries a quiet secondary control —
+ * "See what you and Lumi made" — that opens the companion view without
+ * entering the child's arc. It is 48px (the family floor) and opens the
+ * elder's window even when the log is empty (the empty state points back).
+ */
+test('the elder can find the companion view from the launchpad', async ({ page }) => {
+  await page.goto('/');
+
+  const door = page.locator('[data-agent-action="companion.open"]');
+  await expect(door).toHaveCount(1, { timeout: 5000 });
+  // The elder's door is a real target, not a tiny link.
+  const box = await door.boundingBox();
+  expect(box?.height ?? 0).toBeGreaterThanOrEqual(48);
+
+  // It opens the companion view; the launchpad chrome is gone.
+  await door.click();
+  await expect(page.locator('[data-agent-action="companion.view"]')).toHaveCount(1, {
+    timeout: 5000,
+  });
+  await expect(page.locator('.launchpad-start')).toHaveCount(0);
+});

@@ -1,4 +1,4 @@
-# Porting inventory — 2026-09-20T21:03:29.417Z
+# Porting inventory — 2026-09-20T21:22:05.683Z
 
 Scanned **51 files** under `apps/loom/src`.
 
@@ -158,8 +158,8 @@ Scanned **51 files** under `apps/loom/src`.
   - `--p31-z-topbar`
 
 ## AAF actions
-- Used: **17**
-- In manifest: **17**
+- Used: **18**
+- In manifest: **18**
 - Used but not in manifest: **0**
 - In manifest but never used: **2**
 
@@ -174,7 +174,7 @@ Scanned **51 files** under `apps/loom/src`.
 - `color-` — 5 classes
 - `companion-` — 9 classes
 - `jb-` — 15 classes
-- `launchpad-` — 4 classes
+- `launchpad-` — 5 classes
 - `loom-` — 49 classes
 - `lumi-` — 10 classes
 - `made-` — 6 classes
@@ -184,4 +184,4 @@ Scanned **51 files** under `apps/loom/src`.
 - `sound-` — 3 classes
 
 ## Raw values that should be tokens
-- `apps/loom/src/index.css` — width: 320px, padding: 4px, min-height: 32px, min-height: 44px, min-width: 44px, width: 1px, height: 1px, width: 380px, gap: 18px, min-width: 96px, width: 90px, height: 2px (+87 more)
+- `apps/loom/src/index.css` — width: 320px, padding: 4px, min-height: 32px, min-height: 44px, min-width: 44px, width: 1px, height: 1px, width: 380px, gap: 18px, min-width: 96px, width: 90px, height: 2px (+85 more)

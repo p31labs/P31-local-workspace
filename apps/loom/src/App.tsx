@@ -383,7 +383,10 @@ export default function App() {
 
       <main className="loom-canvas">
         {mode === 'launchpad' ? (
-          <Launchpad onStart={() => { setStarted(true); setMode('canvas'); }} />
+          <Launchpad
+            onStart={() => { setStarted(true); setMode('canvas'); }}
+            onCompanion={() => setMode('companion')}
+          />
         ) : mode === 'instrument' ? (
           traceView && focus ? (
             <TraceScale

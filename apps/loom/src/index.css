@@ -709,15 +709,43 @@
 .launchpad-start {
   min-height: var(--p31-touch-recommended);
   min-width: 200px;
-  padding: 12px 32px;
+  padding: 0 var(--p31-layout-spacing-xl);
   border: none;
-  border-radius: 14px;
+  border-radius: var(--p31-radius-full);
   background: var(--p31-accent, #fbbf24);
   color: var(--p31-bg, #1a120b);
   font-size: 1.25rem;
   font-weight: 700;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+/* The elder's door — quiet, secondary, 48px (family floor). A link in
+ * substance: no fill, no shadow, reads as a way in, not a second CTA. */
+.launchpad-companion {
+  margin-top: var(--p31-layout-spacing-md);
+  min-height: var(--p31-touch-min);
+  padding: 0 var(--p31-layout-spacing-md);
+  border: none;
+  background: none;
+  color: var(--p31-text-secondary, #cbd5e1);
+  font-family: var(--p31-font-sans);
+  font-size: 17px;
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  cursor: pointer;
+  transition: color calc(0.15s * var(--motion-scale)) ease;
+}
+.launchpad-companion:hover {
+  color: var(--p31-text-primary, #f8fafc);
+}
+.launchpad-companion:focus-visible {
+  outline: 3px solid var(--p31-text-primary, #f8fafc);
+  outline-offset: 3px;
 }
 
 /* ── Chapters — the child's first views ───────────────────── */
@@ -851,7 +879,7 @@
 .chapter-next {
   margin-top: 12px;
   padding: 8px 20px;
-  min-height: 44px;
+  min-height: var(--p31-touch-min); /* 48px family floor — the child's and elder's hand-off */
   border-radius: var(--p31-radius-full);
   border: 1px solid var(--p31-glass-border, rgba(255, 255, 255, 0.2));
   background: transparent;
@@ -1393,3 +1421,28 @@
   outline-offset: 3px;
 }
 }
+
+/* ── Raw-value triage (the porting inventory's remaining queue) ──────────
+ * The values below are the only ones still hardcoded in this stylesheet.
+ * They are NOT an oversight to be "cleaned up" blindly — they fall into
+ * three buckets, and each must be handled differently:
+ *
+ *   1. Micro-elements (keep as literals — no token should exist for these):
+ *      width/height 1–8px dots, bars, indicators (survival track, event
+ *      marks, range sliders), and the 0.01ms reduced-motion floor.
+ *
+ *   2. Off-scale spacing (gap/padding 6, 10, 12, 14, 18, 20px): the canon
+ *      spacing scale is 4/8/16/24/32 — these sit between steps. They are
+ *      drift, not design. Two resolutions, decided outside a port commit:
+ *      (a) snap to the nearest step (a visual change — needs a browser look
+ *      at each), or (b) extend the canon scale with intermediate tokens
+ *      (--p31-layout-spacing-2xl etc.) and convert. Do not invent tokens by
+ *      hand; the canon generator owns them.
+ *
+ *   3. Chrome sizes (width 90, 220, 240, 280, 320, 360, 380, 400, 480,
+ *      820px; the instrument and Jitterbug readouts): deliberate layout
+ *      constants with no spacing-token intent. Keep, or lift to tokens only
+ *      if a width scale is ever added to the canon.
+ *
+ * The porting inventory (docs/PORTING_INVENTORY.md) regenerates this list on
+ * every `pnpm port-audit`; it is the queue, not a failure state. */
