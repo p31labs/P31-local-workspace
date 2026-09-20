@@ -7,7 +7,7 @@
   "license": "AGPL-3.0",
   "sideEffects": false,
   "scripts": {
-    "test": "node scripts/test-field.mjs",
+    "test": "node scripts/test-field.mjs && node scripts/test-field-trust.mjs && node scripts/test-field-loop.mjs && node scripts/test-field-sierpinski.mjs && node scripts/test-field-falsification.mjs",
     "typecheck": "tsc --noEmit"
   },
   "exports": {
