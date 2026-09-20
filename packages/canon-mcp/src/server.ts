@@ -802,17 +802,22 @@ export async function createServer(): Promise<McpServer> {
   // Drift guard: the hand-maintained TOOL_CATALOG must match the registered
   // tools, both directions. A new tool without a catalog entry would otherwise
   // be silently invisible to search_tools while still callable directly.
-  const registered = Object.keys(
-    (server as unknown as { _registeredTools: Record<string, unknown> })._registeredTools,
-  ).sort();
-  const catalog = TOOL_CATALOG.map((t) => t.name).sort();
-  const extra = registered.filter((n) => !catalog.includes(n));
-  const missing = catalog.filter((n) => !registered.includes(n));
-  if (extra.length || missing.length) {
-    throw new Error(
-      `canon-mcp tool catalog drift — registered but not in catalog: ${extra.join(', ') || 'none'}; ` +
-        `in catalog but not registered: ${missing.join(', ') || 'none'}`,
-    );
+  // _registeredTools is SDK-internal; if a future SDK version renames it,
+  // degrade to a warning rather than a confusing startup throw.
+  const internals = (server as unknown as { _registeredTools?: Record<string, unknown> })._registeredTools;
+  if (internals) {
+    const registered = Object.keys(internals).sort();
+    const catalog = TOOL_CATALOG.map((t) => t.name).sort();
+    const extra = registered.filter((n) => !catalog.includes(n));
+    const missing = catalog.filter((n) => !registered.includes(n));
+    if (extra.length || missing.length) {
+      throw new Error(
+        `canon-mcp tool catalog drift — registered but not in catalog: ${extra.join(', ') || 'none'}; ` +
+          `in catalog but not registered: ${missing.join(', ') || 'none'}`,
+      );
+    }
+  } else {
+    console.warn('canon-mcp: _registeredTools not exposed by this SDK version — skipping the tool-catalog drift guard.');
   }
 
   return server;
