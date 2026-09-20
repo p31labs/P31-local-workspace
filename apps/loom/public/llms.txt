@@ -1,0 +1,30 @@
+# The Loom
+
+A design system shown as a live conversation between a human and an agent.
+A child, a builder, and a grandparent share one append-only event log; the
+agent (Lumi) reacts to what they do, and what they build together is real.
+
+The Loom is one app that consumes @p31/canon. It is not the canon; it is a
+consumer. Its purpose is to exercise the canon's tokens, contracts, and gate
+in a full human arc, and to be portable to any future app that wants the same.
+
+## Docs
+
+- [README](README.md): what the Loom is, who it's for, how to run it
+- [MAP](docs/MAP.md): the documentation index and concept graph
+- [STANDARDS](docs/STANDARDS.md): WCAG 2.2, DTCG, AAF conformance
+- [DECISIONS](docs/DECISIONS.md): the decisions behind the shape, and what's open
+- [HUMAN_TEST_PLAN](docs/HUMAN_TEST_PLAN.md): the family test protocol
+- [PORTING_AGENT_BRIEF](docs/PORTING_AGENT_BRIEF.md): how to port a new app into the canon
+
+## Contract
+
+- [agent-manifest.json](.well-known/agent-manifest.json): the AAF manifest — every action, its schema, danger level, and confirm policy
+- tokens: the typed `P31TokenName` contract, exported by `@p31/canon/tokens` (source: `packages/canon/src/tokens.ts`)
+
+## Notes
+
+This file is for agent comprehension and matches the app's AAF posture. It is
+deliberately not an SEO play: the 2026 data on llms.txt shows no citation
+uplift, and a future contributor who sees this file should know it exists to
+help an agent navigate the corpus, not to improve discoverability.
