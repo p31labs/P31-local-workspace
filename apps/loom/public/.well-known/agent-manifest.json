@@ -129,6 +129,14 @@
       "description": "Advance to the next screen in the companion view ('Show me'). Commits a human focus event on 'companion-next-{screen}'. Never auto-advances; nothing moves without a tap."
     },
     {
+      "name": "docs.view",
+      "kind": "action",
+      "danger": "none",
+      "confirm": "never",
+      "schema": {},
+      "description": "The ?mode=docs region — the live-contract surface (tokens, actions, the log fold). Informational marker, not an action an agent should invoke on its own; it exists so the region is discoverable. Hidden from any switcher; ?mode=docs only."
+    },
+    {
       "name": "companion.view",
       "kind": "action",
       "danger": "none",
