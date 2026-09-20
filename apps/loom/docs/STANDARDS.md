@@ -50,8 +50,8 @@ it is *"safe to use"* — many tools and organizations already implement it. It
 is not on the W3C Standards Track (it is a Community Group report), which
 means the format is stable for production but may still evolve. The canon's
 `verify:parity` gate and Style Dictionary validation are the guardrails
-against that evolution. `gen:tokens` regenerates `tokens.css`, the DTCG
-export, and the typed `P31TokenName` contract from `theme-store.ts` — the
+against that evolution. `gen:tokens` regenerates `packages/canon/dist/tokens.css`, the DTCG
+export, and the typed `P31TokenName` contract from `packages/canon/src/theming/theme-store.ts` — the
 single source of truth.
 
 ## AAF — agent accessibility

@@ -5,7 +5,7 @@
 > any future app into the canon shape — it is no longer a to-do list for the
 > Loom. The completion criteria below all read as satisfied: 0 missing AAF
 > actions, 0 used-but-not-in-canon tokens, a documented micro-element list,
-> 21 e2e + 59 unit green.
+> the e2e suite + 59 unit green.
 
 You are porting the live Loom (`apps/loom/src`) to the canon + React layout
 the production system expects. The prototype era is over. The live app already
@@ -14,8 +14,8 @@ generator wants the real *shape*.
 
 ## Read these first, in order
 
-1. `docs/PROTOTYPE_MASTER_PROMPT.md` — the design constraints (the three
-   humans, the hard rules, the porting contract).
+1. `docs/LOOM-INCLUSIVE-WORK-PACKAGE.md` — the design constraints (the three humans,
+   the hard rules, the porting contract).
 2. `docs/PORTING_INVENTORY.md` — the current drift report. Every token, AAF
    action, class prefix, and event kind the live app uses.
 3. `packages/canon/dist/tokens.css` — the canonical tokens. **These names are
@@ -59,7 +59,7 @@ it is already correct. The port is a mechanical lift.
 2. **Never introduce a token.** If the inventory reports a used-but-not-in-canon
    token, that's a bug to fix at the *use site*, not a token to add. If a color
    is genuinely missing, note it in a `<!-- TOKEN GAP -->` comment and use the
-   closest existing token — do not add to `tokens.css` by hand.
+   closest existing token — do not add to `packages/canon/dist/tokens.css` by hand.
 3. **Never introduce an AAF action.** If a component needs an action that isn't
    in the manifest, add it to the manifest in the *same* commit, and write the
    entry as if a fresh agent will read it a year from now.
@@ -68,7 +68,7 @@ it is already correct. The port is a mechanical lift.
 5. **Every commit must leave `pnpm test` and `pnpm test:e2e` green.** The port
    is a refactor, not a feature.
 6. **The e2e tests are the contract.** If a test fails after the port, the port
-   is wrong — not the test. The 19 e2e + 59 unit tests describe the design's
+   is wrong — not the test. The e2e + 59 unit tests describe the design's
    behavior; they do not describe the prototype's.
 
 ## What to do when the inventory finds a missing action
@@ -130,7 +130,7 @@ Run `pnpm port-audit`. The port is complete when:
 
 A second condition worth stating: the class-name selectors in the e2e tests are
 a *feature*, not a liability. The layered single-file stylesheet keeps class
-names stable, so the 20 e2e tests keep selecting `.chapter-action`,
+names stable, so the e2e tests keep selecting `.chapter-action`,
 `.made-artifact-label`, etc. — no `data-testid` layer, no selector migration.
 The AAF attributes remain the agent-legibility layer; class names are the test
 contract. Do not introduce a `data-testid` attribute to "fix" the tests — the

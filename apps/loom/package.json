@@ -13,6 +13,7 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "port-audit": "node scripts/port-audit.mjs --out docs/PORTING_INVENTORY.md",
+    "docs-audit": "node scripts/docs-audit.mjs --out docs/DOCS_INVENTORY.md",
     "seed": "node scripts/seed-log.mjs"
   },
   "dependencies": {

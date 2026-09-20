@@ -25,7 +25,7 @@ built on a single event log that is the only thing that must survive.
   tokens, contracts, and gate, but it does not own them.
 - **Not a persisted product yet.** The static build serves a pre-seeded demo
   journey (`events.seed.json`); a live, shared, persistent log needs the
-  backend (`/api/loom/event`). See `DECISIONS.md` entry 007 and the Open
+  backend (`/api/loom/event`). See `docs/DECISIONS.md` entry 007 and the Open
   section.
 - **Not a kids' tutorial app.** The chapters are a vehicle for the co-presence
   loop — human and agent, one log — not an educational game. The arc is
@@ -53,7 +53,7 @@ append-only log. `?mode=` switches the surface:
 
 ```bash
 pnpm --filter @p31/loom test        # 59 unit tests
-pnpm --filter @p31/loom test:e2e    # 21 Playwright e2e specs
+pnpm --filter @p31/loom test:e2e    # the full Playwright e2e suite
 pnpm --filter @p31/loom port-audit  # inventory: tokens / AAF / event kinds / raw values
 ```
 
@@ -70,7 +70,7 @@ pnpm --filter @p31/loom preview     # serve dist locally
 
 A static deploy is a **demo**: it renders a pre-seeded journey, and choices do
 not persist. For a real family session, run the dev server on a LAN device, or
-deploy the backend with the app. See `DECISIONS.md`.
+deploy the backend with the app. See `docs/DECISIONS.md`.
 
 ## How the pieces fit
 
