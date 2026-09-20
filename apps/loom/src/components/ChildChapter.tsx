@@ -1,12 +1,15 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Lumi } from './Lumi';
 import { Orb } from './Orb';
+import { SharedChip } from './SharedChip';
 import { SoundToggle } from './SoundToggle';
 import { useLoomSound } from '../lib/useLoomSound';
+import type { LoomEvent } from '@p31/canon/loom/events';
 
 interface Props {
   onProgress: () => void;
   onFocus: (node: string) => void;
+  events: LoomEvent[];
 }
 
 type Phase = 'waiting' | 'celebrating' | 'celebrated';
@@ -28,10 +31,16 @@ type Phase = 'waiting' | 'celebrating' | 'celebrated';
  * reduced-motion users (duration ~12ms via --motion-scale) land there almost
  * instantly with no separate code path.
  */
-export function ChildChapter({ onProgress, onFocus }: Props) {
+export function ChildChapter({ onProgress, onFocus, events }: Props) {
   const [stage, setStage] = useState<'lumi' | 'orb'>('lumi');
   const [phase, setPhase] = useState<Phase>('waiting');
   const sound = useLoomSound();
+
+  // The chip counts the child's own actions — never the agent's.
+  const humanCount = useMemo(
+    () => events.filter((e) => e.writer === 'human').length,
+    [events],
+  );
 
   const handleHello = useCallback(() => {
     setPhase('celebrating');
@@ -61,8 +70,9 @@ export function ChildChapter({ onProgress, onFocus }: Props) {
   return (
     <div className="chapter chapter--child">
       {!isLumi && (
-        <div className="chapter-header">
+        <div className="chapter-topbar">
           <SoundToggle enabled={sound.enabled} onToggle={sound.toggle} />
+          <SharedChip count={humanCount} />
         </div>
       )}
 

@@ -90,7 +90,8 @@ export default function App() {
   // The chapter journey is gated behind the Launchpad: a child who entered via
   // Start sees the chapters; a direct /?mode=canvas visitor (instrument) never
   // gets switched into a chapter view by a stray focus event.
-  const isLevel1 = mode === 'launchpad' || (started && chapter <= 2);
+  const isLevel1 =
+    mode === 'launchpad' || (started && mode === 'canvas' && chapter <= 3);
 
   // Chapter progression: after the child has "made something happen" (tapped
   // the field orb — a focus on `orb`), Lumi proposes after a beat — that's
@@ -396,7 +397,9 @@ export default function App() {
             <JitterbugScene />
           </Suspense>
         ) : mode === 'canvas' ? (
-          started && chapter === 2 ? (
+          // BuilderChapter holds through chapter 3 (a decision exists) so the
+          // celebration and hand-off can land before the workshop unlocks.
+          started && (chapter === 2 || chapter === 3) ? (
             <BuilderChapter
               events={events}
               onProgress={() => setMode('instrument')}
@@ -415,6 +418,7 @@ export default function App() {
             />
           ) : started && chapter <= 1 ? (
             <ChildChapter
+              events={events}
               onProgress={() => setMode('instrument')}
               onFocus={(node) =>
                 void postEvent({ writer: 'human', kind: 'focus', node }, humanId)

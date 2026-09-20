@@ -26,7 +26,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 const STORAGE_KEY = 'loom:sound';
 
-type Cue = 'tap' | 'celebrate';
+type Cue = 'tap' | 'celebrate' | 'defer';
 
 interface CueSpec {
   freqs: number[];
@@ -37,6 +37,9 @@ interface CueSpec {
 const CUES: Record<Cue, CueSpec> = {
   tap: { freqs: [660], duration: 0.08, gain: 0.05 },
   celebrate: { freqs: [523, 659, 784], duration: 0.28, gain: 0.07 },
+  // "Not yet" is a valid decision, not a failure — a soft descending settle,
+  // never a minor chord. The two answers sound different but equally warm.
+  defer: { freqs: [440, 392], duration: 0.22, gain: 0.05 },
 };
 
 function readInitialEnabled(): boolean {

@@ -24,12 +24,13 @@ export function Lumi({ wave = false, greeting = false }: { wave?: boolean; greet
   return (
     <div className={wrapClass}>
       <span className="lumi-glow" aria-hidden="true" />
-      <svg
-        className="lumi"
-        viewBox="0 0 120 120"
-        role="img"
-        aria-label="Lumi, a friendly glowing orb"
-      >
+      <div className="lumi-anim">
+        <svg
+          className="lumi"
+          viewBox="0 0 120 120"
+          role="img"
+          aria-label="Lumi, a friendly glowing orb"
+        >
         <circle className="lumi-body" cx="60" cy="60" r="52" />
 
         <g className={greeting ? 'lumi-face--hidden' : 'lumi-face'}>
@@ -68,6 +69,7 @@ export function Lumi({ wave = false, greeting = false }: { wave?: boolean; greet
           />
         </g>
       </svg>
+      </div>
     </div>
   );
 }

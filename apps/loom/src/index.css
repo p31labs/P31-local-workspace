@@ -616,15 +616,24 @@ body {
   padding: 32px;
   text-align: center;
 }
-/* Lumi — the agent's face. The wrap carries the wave + glow; the svg keeps
- * the idle bob (transform-only, scaled by --motion-scale). */
+/* Lumi — the agent's face. The wrap owns the idle bob; an inner div owns the
+ * arrival wave. They live on separate HTML elements so both animate
+ * `transform` without the CSS animation-precedence rule silencing one — and
+ * both are GPU-composited (transforms on SVG *elements* aren't reliably
+ * accelerated in several engines). The svg itself is static. */
 .lumi-wrap {
   position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  animation: lumi-bob calc(3s * var(--motion-scale)) ease-in-out infinite;
 }
-.lumi { width: 140px; height: 140px; animation: lumi-bob calc(3s * var(--motion-scale)) ease-in-out infinite; }
+.lumi-anim {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.lumi { width: 140px; height: 140px; animation: none; }
 @keyframes lumi-bob {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-8px); }
@@ -642,11 +651,10 @@ body {
   pointer-events: none;
 }
 .lumi-wrap--greeting .lumi-glow { transform: scale(1.18); }
-/* Arrival wave — one-shot tilt, sits on the wrap so it composes with the bob
- * (which is on the svg) instead of fighting it for the animation property.
- * Under prefers-reduced-motion the duration collapses and the gesture is
- * effectively skipped with no JS branch. */
-.lumi-wrap--wave { animation: lumi-wave calc(1.8s * var(--motion-scale)) ease-in-out; }
+/* Arrival wave — one-shot tilt on the inner div, so it composes with the bob
+ * (which is on the wrap). Under prefers-reduced-motion the duration collapses
+ * and the gesture is effectively skipped with no JS branch. */
+.lumi-wrap--wave .lumi-anim { animation: lumi-wave calc(1.8s * var(--motion-scale)) ease-in-out; }
 @keyframes lumi-wave {
   0%   { transform: rotate(0deg); }
   12%  { transform: rotate(-9deg); }
@@ -657,6 +665,10 @@ body {
   82%  { transform: rotate(1deg); }
   100% { transform: rotate(0deg); }
 }
+/* Sizing passthrough inside a sized chapter slot. */
+.chapter-lumi .lumi-wrap,
+.chapter-lumi .lumi-anim { width: 100%; height: 100%; }
+.chapter-lumi .lumi-anim svg { width: 100%; height: 100%; }
 .lumi-body { fill: var(--p31-accent, #fbbf24); }
 .lumi-face,
 .lumi-face--hidden { transition: opacity calc(0.3s * var(--motion-scale)) ease; }
@@ -856,14 +868,33 @@ body {
   flex-wrap: wrap;
 }
 
-/* ── Chapter header — holds the sound toggle. Left-aligned so it reads as a
- * control, not decoration. The min-height keeps the row from collapsing when
- * the toggle is the only thing in it. */
-.chapter-header {
+/* Chapter top bar — holds the sound toggle (when visible) and the shared
+ * chip. Space-between so the toggle reads left and the count reads right;
+ * 48px minimum so it never collapses. */
+.chapter-topbar {
   display: flex;
-  justify-content: flex-start;
+  align-items: center;
+  justify-content: space-between;
   min-height: 48px;
+  gap: var(--p31-layout-spacing-md);
   margin-bottom: var(--p31-layout-spacing-md);
+}
+
+/* The shared chip. Descriptive, never a score — "You've done N things with
+ * Lumi". Counts the child's own actions only. */
+.shared-chip {
+  font-family: var(--p31-font-sans);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--p31-text-tertiary, #64748b);
+  letter-spacing: 0.01em;
+  margin-left: auto;
+}
+.shared-chip-count {
+  font-family: var(--p31-font-mono, ui-monospace, monospace);
+  font-weight: 700;
+  color: var(--p31-text-secondary, #cbd5e1);
+  padding-inline: 2px;
 }
 
 /* Opt-in sound toggle. Visible, 48px minimum, aria-pressed reflects state.
@@ -988,4 +1019,78 @@ body {
 }
 .orb--active .orb-glow {
   opacity: 1;
+}
+
+/* ── Proposal card — Lumi's idea + the two-answer decision. */
+.proposal-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--p31-layout-spacing-lg);
+  align-items: center;
+  text-align: center;
+  padding: var(--p31-layout-spacing-lg);
+  border-radius: 16px;
+  background: var(--p31-glass-bg, rgba(255, 255, 255, 0.06));
+  border: 1px solid var(--p31-glass-border, rgba(255, 255, 255, 0.12));
+  max-width: 36ch;
+}
+.proposal-text {
+  margin: 0;
+  font-size: 19px;
+  line-height: var(--loom-line-height);
+  color: var(--p31-text-primary, #f8fafc);
+  font-weight: 500;
+}
+.proposal-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--p31-layout-spacing-md);
+}
+/* Both buttons carry the same visual weight — "Not yet" is not a cancel, it
+ * is a decision. Same size, same shape, same presence. */
+.proposal-action {
+  min-height: 56px;
+  min-width: 148px;
+  padding: 0 var(--p31-layout-spacing-lg);
+  border-radius: 9999px;
+  border: 1px solid transparent;
+  font-family: var(--p31-font-sans);
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    transform calc(0.15s * var(--motion-scale)) ease,
+    box-shadow calc(0.15s * var(--motion-scale)) ease,
+    opacity calc(0.15s * var(--motion-scale)) ease;
+}
+.proposal-action:focus-visible {
+  outline: 3px solid var(--p31-text-primary, #f8fafc);
+  outline-offset: 3px;
+}
+.proposal-action:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+.proposal-action--yes {
+  color: var(--p31-bg, #1a120b);
+  background: linear-gradient(180deg, var(--p31-accent-gold, #fcd34d), var(--p31-accent, #fbbf24));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    0 8px 24px rgba(255, 170, 40, 0.28);
+}
+.proposal-action--yes:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+.proposal-action--not-yet {
+  /* Deliberately the same weight as yes, not a ghost. "Not yet" is a real
+   * answer, so it reads as a real button. */
+  color: var(--p31-text-primary, #f8fafc);
+  background: var(--p31-surface2, #2d2d3d);
+  border-color: var(--p31-glass-border, rgba(255, 255, 255, 0.12));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+.proposal-action--not-yet:hover:not(:disabled) {
+  transform: translateY(-1px);
+  border-color: var(--p31-text-tertiary, #64748b);
 }

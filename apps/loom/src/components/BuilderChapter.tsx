@@ -1,7 +1,9 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Lumi } from './Lumi';
+import { ProposalCard } from './ProposalCard';
+import { SharedChip } from './SharedChip';
+import { useLoomSound } from '../lib/useLoomSound';
 import type { LoomEvent } from '@p31/canon/loom/events';
-import { copy } from '../lib/copy';
 
 interface Props {
   events: LoomEvent[];
@@ -10,75 +12,121 @@ interface Props {
   onReject: (proposalId: string, reason: string) => void;
 }
 
+type Phase = 'proposing' | 'celebrating' | 'celebrated';
+
+function proposalText(body: unknown): string {
+  if (body !== null && typeof body === 'object' && !Array.isArray(body)) {
+    const change = (body as Record<string, unknown>).change;
+    if (typeof change === 'string') return `I want to ${change}. Is that okay?`;
+  }
+  return 'I want to make the buttons rounder. Is that okay?';
+}
+
+/**
+ * The "Lumi has an idea" beat. Lumi proposes in plain language; the child
+ * answers Yes or Not yet. Both answers are completions — each commits an
+ * event (approve / reject) and each celebrates. "Not yet" is a valid
+ * decision, not a failure: same weight of button, gentler copy and a soft
+ * descending sound instead of the ascending chime.
+ *
+ * Same phase discipline as the earlier beats: `phase` is local choreography,
+ * the log is the durable record, and the celebrated state is driven by the
+ * pulse's animationend (so reduced-motion collapses it to ~instant with no
+ * separate path). The buttons stay mounted, disabled, through the pulse so
+ * the AAF actions remain in the DOM while the commit lands.
+ */
 export function BuilderChapter({ events, onProgress, onApprove, onReject }: Props) {
-  const proposal = events.find((e) => e.kind === 'propose') as
-    | (LoomEvent & { id: string; node: string })
-    | undefined;
+  const [phase, setPhase] = useState<Phase>('proposing');
+  const [decided, setDecided] = useState<'yes' | 'not-yet' | null>(null);
+  const sound = useLoomSound();
+
+  const humanCount = useMemo(
+    () => events.filter((e) => e.writer === 'human').length,
+    [events],
+  );
+
+  const proposal = useMemo(() => {
+    for (let i = events.length - 1; i >= 0; i--) {
+      const e = events[i];
+      if (e.writer === 'agent' && e.kind === 'propose') return e;
+    }
+    return undefined;
+  }, [events]);
+
+  const handleApprove = useCallback(() => {
+    if (!proposal) return;
+    setDecided('yes');
+    setPhase('celebrating');
+    sound.play('celebrate');
+    onApprove(proposal.id);
+  }, [proposal, onApprove, sound]);
+
+  const handleReject = useCallback(() => {
+    if (!proposal) return;
+    setDecided('not-yet');
+    setPhase('celebrating');
+    // The defer cue, not the celebrate cue — different sound, equal warmth.
+    sound.play('defer');
+    onReject(proposal.id, 'not-yet');
+  }, [proposal, onReject, sound]);
+
+  const handlePulseEnd = useCallback(() => setPhase('celebrated'), []);
 
   if (!proposal) {
     return (
       <div className="chapter chapter--builder">
+        <div className="chapter-topbar">
+          <SharedChip count={humanCount} />
+        </div>
         <div className="chapter-lumi chapter-lumi--small">
           <Lumi />
         </div>
         <p className="chapter-copy">Lumi has an idea.</p>
         <p className="chapter-hint">Lumi is thinking…</p>
-        <button className="chapter-next" onClick={onProgress} type="button">
-          Next →
-        </button>
       </div>
     );
   }
 
-  const p = { id: proposal.id, node: proposal.node };
-
-  const approve = useCallback(() => {
-    onApprove(p.id);
-  }, [p.id, onApprove]);
-
-  const reject = useCallback(() => {
-    onReject(p.id, 'deferred for now');
-  }, [p.id, onReject]);
+  const celebrating = phase === 'celebrating';
+  const title =
+    phase === 'proposing'
+      ? 'Lumi has an idea.'
+      : decided === 'yes'
+        ? 'Great! Let\u2019s make it.'
+        : 'Okay. Maybe later.';
 
   return (
     <div className="chapter chapter--builder">
+      <div className="chapter-topbar">
+        <SharedChip count={humanCount} />
+      </div>
+
       <div className="chapter-lumi chapter-lumi--small">
-        <Lumi />
+        <span
+          className={`chapter-pulse ${celebrating ? 'chapter-pulse--active' : ''}`}
+          aria-hidden="true"
+          onAnimationEnd={celebrating ? handlePulseEnd : undefined}
+        />
+        <Lumi greeting={phase !== 'proposing'} />
       </div>
-      <p className="chapter-copy">Lumi has an idea.</p>
-      <div className="chapter-proposal">
-        <div className="chapter-proposal-node">{copy(p.node, false)}</div>
-        <div className="chapter-proposal-body">
-          Add a warm color to the field.
-        </div>
-        <div className="chapter-actions">
-          <button
-            className="chapter-action chapter-action--ok"
-            onClick={approve}
-            type="button"
-            data-agent-kind="action"
-            data-agent-action="approve"
-            data-agent-danger="none"
-            data-agent-confirm="never"
-          >
-            Looks good
-          </button>
-          <button
-            className="chapter-action chapter-action--no"
-            onClick={reject}
-            type="button"
-            data-agent-kind="action"
-            data-agent-action="reject"
-            data-agent-danger="none"
-            data-agent-confirm="never"
-          >
-            Not yet
-          </button>
-        </div>
-      </div>
-      <button className="chapter-next" onClick={onProgress} type="button">
-        Next →
-      </button>
+
+      <h1 className="chapter-title" aria-live="polite">
+        {title}
+      </h1>
+
+      <ProposalCard
+        proposal={proposalText(proposal.body)}
+        onApprove={handleApprove}
+        onReject={handleReject}
+        decided={decided}
+        celebrating={celebrating}
+      />
+
+      {phase === 'celebrated' && (
+        <button className="chapter-next" onClick={onProgress} type="button">
+          See what we made &rarr;
+        </button>
+      )}
     </div>
   );
 }
