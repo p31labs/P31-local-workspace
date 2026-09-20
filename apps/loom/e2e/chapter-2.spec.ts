@@ -12,19 +12,21 @@ test.beforeEach(() => {
 });
 
 /**
- * Chapter 2 — Lumi has an idea. After a focus event exists, the
- * builder view shows Lumi's proposal (auto-committed by the agent),
- * and the child can approve or defer.
+ * Chapter 2 — Lumi has an idea. After the child has made something happen
+ * (tapped the field orb), Lumi proposes; the builder view shows the
+ * proposal, and the child can approve or defer.
  */
 test('chapter 2 — Lumi proposes, child responds', async ({ page }) => {
   await page.goto('/');
 
-  // Meet Lumi and tap so a focus event exists (Chapter 1 → Chapter 2).
+  // Launchpad → meet Lumi → make something happen (tap the orb).
   await page.locator('.launchpad-start').click();
   await page.locator('.chapter-action').click();
-  await expect(page.locator('.chapter-lumi')).toHaveCount(1, { timeout: 5000 });
+  const orb = page.locator('[data-agent-action="loom.focus"][data-agent-target="orb"]');
+  await expect(orb).toHaveCount(1, { timeout: 5000 });
+  await orb.click();
 
-  // Chapter 2: Lumi has an idea (auto-proposed after 2s).
+  // Lumi has an idea — the proposal renders in the builder view.
   await expect(page.locator('.chapter-proposal')).toHaveCount(1, { timeout: 10000 });
 
   // The child says "Looks good."

@@ -92,11 +92,18 @@ export default function App() {
   // gets switched into a chapter view by a stray focus event.
   const isLevel1 = mode === 'launchpad' || (started && chapter <= 2);
 
-  // Chapter progression: after the child has focused (chapter 1), Lumi
-  // proposes after a beat — that's the bridge to the builder view. Only in
-  // the Launchpad journey (started); a direct canvas visitor isn't a child.
+  // Chapter progression: after the child has "made something happen" (tapped
+  // the field orb — a focus on `orb`), Lumi proposes after a beat — that's
+  // the bridge to the builder view. Triggering off the orb tap, not a bare
+  // chapter check, keeps the orb beat (Make something happen) from racing the
+  // propose. Only in the Launchpad journey (started); a direct canvas visitor
+  // isn't a child.
   useEffect(() => {
     if (!started || chapter !== 1) return;
+    const madeItHappen = events.some(
+      (e) => e.writer === 'human' && e.kind === 'focus' && e.node === 'orb',
+    );
+    if (!madeItHappen) return;
     const t = setTimeout(() => {
       void postEvent(
         {
@@ -109,9 +116,9 @@ export default function App() {
         },
         null,
       );
-    }, 3000);
+    }, 3500);
     return () => clearTimeout(t);
-  }, [started, chapter]);
+  }, [started, chapter, events]);
 
   // Reading is writing: opening the instrument or zooming to a zone deposits
   // a `view.read` in the weft, which feeds back into the field.

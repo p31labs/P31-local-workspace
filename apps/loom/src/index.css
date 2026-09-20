@@ -740,7 +740,11 @@ body {
   position: absolute;
   inset: -24px;
   border-radius: 9999px;
-  background: radial-gradient(circle, oklch(80% 0.16 75 / 0.5), transparent 70%);
+  background: radial-gradient(
+    circle,
+    color-mix(in oklch, var(--p31-accent, #fbbf24) 50%, transparent),
+    transparent 70%
+  );
   opacity: 0;
   pointer-events: none;
 }
@@ -850,4 +854,138 @@ body {
   gap: 12px;
   justify-content: center;
   flex-wrap: wrap;
+}
+
+/* ── Chapter header — holds the sound toggle. Left-aligned so it reads as a
+ * control, not decoration. The min-height keeps the row from collapsing when
+ * the toggle is the only thing in it. */
+.chapter-header {
+  display: flex;
+  justify-content: flex-start;
+  min-height: 48px;
+  margin-bottom: var(--p31-layout-spacing-md);
+}
+
+/* Opt-in sound toggle. Visible, 48px minimum, aria-pressed reflects state.
+ * The label states the current state ("Sound on"/"Sound off"), not the
+ * action ("Mute"). */
+.sound-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 48px;
+  min-width: 48px;
+  padding: 0 16px;
+  border-radius: 9999px;
+  border: 1px solid var(--p31-glass-border, rgba(255, 255, 255, 0.12));
+  background: var(--p31-glass-bg, rgba(255, 255, 255, 0.06));
+  color: var(--p31-text-secondary, #cbd5e1);
+  font-family: var(--p31-font-sans);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background calc(0.15s * var(--motion-scale)) ease,
+    color calc(0.15s * var(--motion-scale)) ease,
+    border-color calc(0.15s * var(--motion-scale)) ease;
+}
+.sound-toggle:hover {
+  color: var(--p31-text-primary, #f8fafc);
+  border-color: var(--p31-text-tertiary, #64748b);
+}
+.sound-toggle:focus-visible {
+  outline: 3px solid var(--p31-text-primary, #f8fafc);
+  outline-offset: 3px;
+}
+.sound-toggle[aria-pressed='true'] {
+  color: var(--p31-accent, #fbbf24);
+  border-color: color-mix(in oklch, var(--p31-accent, #fbbf24) 60%, transparent);
+}
+.sound-toggle-icon { flex-shrink: 0; }
+
+/* ── The field orb — Chapter 2's "make something happen" object.
+ * The button is the full hit area (96px, well above the 48px floor and the
+ * 64px child/elder target). The visible circle is a radial-gradient div (not
+ * an SVG) so its scale/glow transitions composite on the GPU. */
+.chapter-orb-stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 140px;
+  min-width: 140px;
+  margin-block: var(--p31-layout-spacing-md);
+}
+.orb {
+  position: relative;
+  width: 96px;
+  height: 96px;
+  min-width: 96px;
+  min-height: 96px;
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  outline-offset: 4px;
+}
+.orb:focus-visible {
+  outline: 3px solid var(--p31-text-primary, #f8fafc);
+}
+.orb:disabled {
+  cursor: default;
+}
+.orb-visual {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background:
+    radial-gradient(
+      circle at 35% 30%,
+      oklch(88% 0.14 75),
+      var(--p31-accent, #fbbf24) 55%,
+      oklch(58% 0.14 60) 100%
+    );
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.35),
+    0 8px 24px rgba(255, 170, 40, 0.28);
+  transform: scale(1);
+  transition:
+    transform calc(0.25s * var(--motion-scale)) ease-out,
+    box-shadow calc(0.25s * var(--motion-scale)) ease-out;
+}
+.orb--active .orb-visual {
+  transform: scale(1.12);
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.45),
+    0 12px 36px rgba(255, 170, 40, 0.5);
+}
+.orb--spent .orb-visual {
+  /* Spent orbs dim rather than vanish — the child can still see what they
+     did. This is the visual equivalent of the celebration chime. */
+  background:
+    radial-gradient(
+      circle at 35% 30%,
+      oklch(55% 0.08 75),
+      oklch(38% 0.06 60) 100%
+    );
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.15);
+}
+.orb-glow {
+  position: absolute;
+  inset: -16px;
+  border-radius: 9999px;
+  background: radial-gradient(
+    circle,
+    color-mix(in oklch, var(--p31-accent, #fbbf24) 50%, transparent),
+    transparent 70%
+  );
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity calc(0.4s * var(--motion-scale)) ease-out;
+}
+.orb--active .orb-glow {
+  opacity: 1;
 }
