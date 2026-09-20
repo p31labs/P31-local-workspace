@@ -51,6 +51,118 @@
       "danger": "none",
       "confirm": "never",
       "schema": { "to": "number" }
+    },
+    {
+      "name": "artifact.tap",
+      "kind": "action",
+      "danger": "none",
+      "confirm": "never",
+      "schema": {},
+      "description": "The child taps the artifact they made in Chapter 5 (the Workshop). Commits a human focus event on 'artifact'. Purely celebratory proof the artifact is alive — no state change."
+    },
+    {
+      "name": "chapter.sound.toggle",
+      "kind": "action",
+      "danger": "none",
+      "confirm": "never",
+      "schema": {},
+      "description": "Flip the opt-in sound preference for the child-facing chapters. Device-local (localStorage), never committed to the log. Sound is off by default; this is the only way it turns on."
+    },
+    {
+      "name": "chapter.workshop.open",
+      "kind": "action",
+      "danger": "none",
+      "confirm": "never",
+      "schema": {},
+      "description": "The hand-off from Chapter 5's workshop threshold into the full instrument. Commits a human focus event on 'workshop-open', then the shell switches mode. The door opens only when the child taps it — no auto-advance."
+    },
+    {
+      "name": "color.pick",
+      "kind": "action",
+      "danger": "none",
+      "confirm": "never",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "color": { "type": "string", "enum": ["Amber", "Green", "Pink"] }
+        },
+        "required": ["color"]
+      },
+      "description": "The child picks a color in Chapter 4 (You have an idea). Commits a human focus event on the color node, then Lumi formalizes it as an agent proposal. The pick is the child's idea made concrete."
+    },
+    {
+      "name": "color.repick",
+      "kind": "action",
+      "danger": "none",
+      "confirm": "never",
+      "schema": {},
+      "description": "Return from Lumi's review to the color picker in Chapter 4. A reversal, not a rejection — commits a human focus event on 'color-picker'. Fully reversible; a new pick produces a new proposal, never a duplicate for the same color."
+    },
+    {
+      "name": "companion.back",
+      "kind": "action",
+      "danger": "none",
+      "confirm": "never",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "screen": { "type": "string", "enum": ["welcome", "artifact"] }
+        }
+      },
+      "description": "Return to the previous screen in the companion view. On the first screen, exits to the launchpad. Commits a human focus event on 'companion-back-{screen}'. Every companion screen has a visible Back."
+    },
+    {
+      "name": "companion.next",
+      "kind": "action",
+      "danger": "none",
+      "confirm": "never",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "screen": { "type": "string", "enum": ["welcome", "artifact"] }
+        }
+      },
+      "description": "Advance to the next screen in the companion view ('Show me'). Commits a human focus event on 'companion-next-{screen}'. Never auto-advances; nothing moves without a tap."
+    },
+    {
+      "name": "companion.view",
+      "kind": "action",
+      "danger": "none",
+      "confirm": "never",
+      "schema": {},
+      "description": "The companion view region — the 70-year-old's window into the log. Informational marker, not an action an agent should invoke on its own; it exists so the region is discoverable."
+    },
+    {
+      "name": "make.confirm",
+      "kind": "action",
+      "danger": "none",
+      "confirm": "never",
+      "schema": {},
+      "description": "The child accepts Lumi's offer to make their idea ('Yes, make it') in Chapter 4. Commits a human approve event on Lumi's proposal. The child's own decision, so no confirmation is required."
+    },
+    {
+      "name": "proposal.approve",
+      "kind": "action",
+      "danger": "none",
+      "confirm": "never",
+      "schema": {},
+      "description": "The child accepts Lumi's proposal in Chapter 3 ('Yes, do it'). Commits a human approve event. The proposal becomes real only on this event."
+    },
+    {
+      "name": "proposal.defer",
+      "kind": "action",
+      "danger": "none",
+      "confirm": "never",
+      "schema": {},
+      "description": "The child declines Lumi's proposal for now ('Not yet') in Chapter 3. Commits a human reject event with reason 'not-yet'. A valid decision, not a failure — no retry, no re-prompt."
+    },
+    {
+      "name": "theme.cycle",
+      "kind": "action",
+      "danger": "none",
+      "confirm": "never",
+      "schema": {},
+      "description": "Cycle the shell's theme in the top bar. Presentation-layer only (localStorage), never committed to the log. Purely cosmetic; safe to invoke."
     }
   ],
   "data-agent-attributes": {

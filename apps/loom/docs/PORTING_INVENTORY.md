@@ -1,4 +1,4 @@
-# Porting inventory — 2026-09-20T19:55:19.755Z
+# Porting inventory — 2026-09-20T20:21:03.974Z
 
 Scanned **50 files** under `apps/loom/src`.
 
@@ -164,22 +164,8 @@ Scanned **50 files** under `apps/loom/src`.
 
 ## AAF actions
 - Used: **17**
-- In manifest: **5**
-- Used but not in manifest: **12**
-
-  Add these to the manifest before merge:
-  - `artifact.tap`  ← apps/loom/src/components/MadeArtifact.tsx
-  - `chapter.sound.toggle`  ← apps/loom/src/components/SoundToggle.tsx
-  - `chapter.workshop.open`  ← apps/loom/src/components/WorkshopChapter.tsx
-  - `color.pick`  ← apps/loom/src/components/ColorPicker.tsx
-  - `color.repick`  ← apps/loom/src/components/ReviewCard.tsx
-  - `companion.back`  ← apps/loom/src/components/CompanionView.tsx
-  - `companion.next`  ← apps/loom/src/components/CompanionView.tsx
-  - `companion.view`  ← apps/loom/src/components/CompanionView.tsx
-  - `make.confirm`  ← apps/loom/src/components/ReviewCard.tsx
-  - `proposal.approve`  ← apps/loom/src/components/ProposalCard.tsx
-  - `proposal.defer`  ← apps/loom/src/components/ProposalCard.tsx
-  - `theme.cycle`  ← apps/loom/src/App.tsx
+- In manifest: **17**
+- Used but not in manifest: **0**
 - In manifest but never used: **4**
 
 ## Event kinds
