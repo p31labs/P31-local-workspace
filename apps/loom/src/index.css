@@ -33,6 +33,12 @@ html, body, #root { height: 100%; margin: 0; }
    * disorients. Defaults are the calm field. */
   --loom-light-intensity: 0.3;
   --loom-light-hue: 195;
+  /* The Loom renders at data-theme="compat", whose COMPAT_ROOT overrides the
+   * font tokens at :root with design-core's system stack. Re-point them here —
+   * unlayered, so this wins over the layered canon tokens — for the Space
+   * Grotesk / JetBrains Mono split (see the @font-face blocks above). */
+  --p31-font-sans: 'Space Grotesk', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --p31-font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', 'Fira Code', monospace;
 }
 
 /* Reduced motion — vestibular, autism, sensory. Collapse every non-essential
