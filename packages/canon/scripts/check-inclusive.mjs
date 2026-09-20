@@ -43,6 +43,8 @@ const here = dirname(fileURLToPath(import.meta.url));
 const repo = resolve(here, '..', '..', '..');
 const srcDir = resolve(process.argv[2] ?? join(repo, 'apps', 'loom', 'src'));
 
+// SYNC WITH: packages/canon-mcp/src/server.ts — get_design_md floor text
+// (12px/0.75rem text, 24x24/44x44 targets). Keep both in lockstep.
 const ROOT_PX = 16;
 const MIN_FONT_PX = 12;
 const MIN_FONT_REM = 0.75;

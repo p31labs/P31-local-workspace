@@ -444,6 +444,10 @@ body {
 .loom-shell[data-motion='reduced'] { --motion-scale: 0.5; }
 .loom-shell[data-motion='none'] { --motion-scale: 0.01; }
 
+/* Third-party motion: React Flow animates node drag/pan internally, outside
+ * the --motion-scale tokens. Kill it outright under motion='none'. */
+.loom-shell[data-motion='none'] .react-flow * { transition: none !important; }
+
 /* Motion: reduced — drop decorative glow only (text-shadow/box-shadow). */
 .loom-shell[data-motion='reduced'] .jb-val.closed,
 .loom-shell[data-motion='none'] .jb-val.closed { text-shadow: none; }

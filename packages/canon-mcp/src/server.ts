@@ -415,6 +415,8 @@ export async function createServer(): Promise<McpServer> {
       inputSchema: z.object({}),
     },
     async () => {
+      // SYNC WITH: packages/canon/scripts/check-inclusive.mjs (MIN_FONT_PX,
+      // MIN_TARGET_PX). Keep these numbers identical to the gate.
       const md = [
         '# P31 Design System — baseline rules',
         '',
