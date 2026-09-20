@@ -172,6 +172,30 @@ function readingAt(n, atMs = 1000) {
   ok(new Set(bars.map((b) => b.barToken)).size === 1, 'all three bars share one accent hue — a description, not a judgment');
 }
 
+// ── 9. zone scale: trace ticks on a single time axis ────────────────────
+{
+  const now = 1000000;
+  const traces = [
+    tr({ zone: 'z0', ts: now - 3 * HALF, frame: 'structure' }),
+    tr({ zone: 'z0', ts: now - 1 * HALF, frame: 'connection' }),
+    tr({ zone: 'z0', ts: now, frame: 'creation' }),
+  ];
+  const r = projectInstrument([zone(0)], traces, now, 'z0', HALF);
+  const scene = layoutZone(r, traces, 0);
+
+  ok(scene.ticks.length === 3, `three traces → three ticks (got ${scene.ticks.length})`);
+  const t = scene.ticks.map((k) => k.t);
+  ok(t[0] <= t[1] && t[1] <= t[2], 'ticks are ordered by time along the axis (t ascending)');
+  const sizes = scene.ticks.map((k) => k.size);
+  ok(sizes[2] > sizes[0], 'newest trace → largest tick (decay shrinks older traces)');
+  ok(scene.ticks.every((k) => k.frameToken.startsWith('--p31-frame-')), 'every tick carries a frame token NAME, not a color');
+  ok(new Set(scene.ticks.map((k) => k.frameToken)).size === 3, 'each frame maps to its own token (structure/connection/creation distinct)');
+  ok(scene.text.some((x) => x.text === '▸ 3 traces' && x.y === 0.88), 'the tick band carries a discoverable affordance label at TICK_BAND_Y');
+
+  const scene2 = layoutZone(r, traces, 0);
+  ok(JSON.stringify(scene.ticks) === JSON.stringify(scene2.ticks), 'ticks are deterministic (same input → same ticks)');
+}
+
 if (fails.length) {
   console.error(`\n❌ FIELD LAYOUT FAILED — ${fails.length} failure(s):`);
   for (const f of fails) console.error(`   • ${f}`);

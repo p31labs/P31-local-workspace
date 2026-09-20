@@ -26,6 +26,7 @@
  */
 
 import type { Reading, ZoneReading } from './instrument.ts';
+import type { Frame } from './index.ts';
 
 export interface DotPrimitive {
   id: string;
@@ -64,11 +65,22 @@ export interface ReadoutPrimitive {
   barToken?: string;
 }
 
+export interface TickPrimitive {
+  /** Position along the zone's time axis ∈ [0,1], from the trace's ts. */
+  t: number;
+  /** Decayed size ∈ [0,1] (field half-life). The render layer adds the
+   *  deposit pulse; this is the steady state. */
+  size: number;
+  /** The frame's token NAME (resolved later), never a color. */
+  frameToken: string;
+}
+
 export interface Scene {
   dots: DotPrimitive[];
   lines: LinePrimitive[];
   text: TextPrimitive[];
   readouts: ReadoutPrimitive[];
+  ticks: TickPrimitive[];
   pulsePhase: number;
 }
 
@@ -82,7 +94,29 @@ export const PALETTE = {
   faint: '--p31-text-tertiary',    // faint
   strong: '--p31-text',            // headings
   edge: '--p31-glass-border',      // K₄ edges, grid
+  frameStructure: '--p31-frame-structure',     // nominal frame hue (Okabe-Ito)
+  frameConnection: '--p31-frame-connection',
+  frameRhythm: '--p31-frame-rhythm',
+  frameCreation: '--p31-frame-creation',
 } as const;
+
+/** Frame → token. The four frames are nominal — unordered, no polarity — so
+ *  each maps to a distinct categorical hue (Okabe-Ito), never a semantic
+ *  green/red. The render layer resolves the token name, not a color. */
+export const FRAME_TOKEN: Record<Frame, string> = {
+  structure: PALETTE.frameStructure,
+  connection: PALETTE.frameConnection,
+  rhythm: PALETTE.frameRhythm,
+  creation: PALETTE.frameCreation,
+};
+
+/** The field half-life (7 days), matching `projectInstrument`'s default. */
+const HALF_LIFE = 7 * 24 * 3600 * 1000;
+
+/** The trace band's vertical position (normalized [0,1]) — shared by the
+ *  layout (the affordance label) and the render layer (tick y + hit test),
+ *  so moving the band is a one-line change, not three. */
+export const TICK_BAND_Y = 0.88;
 
 /** FNV-1a → [0,1). Same id, same value, forever. */
 function hash01(s: string): number {
@@ -194,25 +228,27 @@ export function layoutConstellation(
       bar: reading.complexity.whiteSpace,  barToken: PALETTE.accent },
   );
 
-  return { dots, lines: [], text, readouts, pulsePhase };
+  return { dots, lines: [], text, readouts, ticks: [], pulsePhase };
 }
 
 /**
  * Lay out the zone scale. Given a focused zone, expand to its K₄: four
- * vertices at the compass points, six edges between them. Trace ticks along
- * each edge accumulate in the render layer.
+ * vertices at the compass points, six edges between them, and a single
+ * time-axis sparkline of its traces (one tick per trace, colored by frame,
+ * sized by decay).
  */
 export function layoutZone(
   reading: Reading,
-  traces: readonly { ts: number }[],
+  traces: readonly { ts: number; frame: Frame }[],
   pulsePhase: number,
 ): Scene {
   const dots: DotPrimitive[] = [];
   const lines: LinePrimitive[] = [];
   const text: TextPrimitive[] = [];
   const readouts: ReadoutPrimitive[] = [];
+  const ticks: TickPrimitive[] = [];
   const zone = reading.zones[0];
-  if (!zone) return { dots, lines, text, readouts, pulsePhase };
+  if (!zone) return { dots, lines, text, readouts, ticks, pulsePhase };
 
   const cx = 0.5, cy = 0.5, R = 0.28;
   const vertices = ['component', 'class', 'token', 'theme'];
@@ -263,7 +299,29 @@ export function layoutZone(
     { x: 0.5, y: 0.29, label: 'TRACES',   value: String(traces.length) },
   );
 
-  return { dots, lines, text, readouts, pulsePhase };
+  // The trace-band affordance — a discoverable label at the tick band's y,
+  // so the render layer's click-to-enter gesture has a visible target.
+  text.push({
+    x: 0.06, y: TICK_BAND_Y,
+    text: `▸ ${traces.length} traces`,
+    size: 0.02, weight: 400, colorToken: PALETTE.faint,
+    align: 'left', mono: true,
+  });
+
+  // The trace sparkline — one tick per trace on a single time axis. Position
+  // is ts normalized to [0,1]; size is the decayed weight (older → smaller).
+  const sorted = [...traces].sort((a, b) => a.ts - b.ts);
+  if (sorted.length > 0) {
+    const minTs = sorted[0].ts;
+    const span = Math.max(1, sorted[sorted.length - 1].ts - minTs);
+    for (const tr of sorted) {
+      const dt = reading.atMs - tr.ts;
+      const size = dt <= 0 ? 1 : Math.pow(0.5, dt / HALF_LIFE);
+      ticks.push({ t: (tr.ts - minTs) / span, size, frameToken: FRAME_TOKEN[tr.frame] });
+    }
+  }
+
+  return { dots, lines, text, readouts, ticks, pulsePhase };
 }
 
 /**
@@ -281,6 +339,7 @@ export function layoutTrace(reading: Reading, pulsePhase: number): Scene {
       align: 'center', mono: true,
     }],
     readouts: [],
+    ticks: [],
     pulsePhase,
   };
 }
@@ -288,7 +347,7 @@ export function layoutTrace(reading: Reading, pulsePhase: number): Scene {
 /** Dispatch by scale. */
 export function layout(
   reading: Reading,
-  traces: readonly { ts: number }[],
+  traces: readonly { ts: number; frame: Frame }[],
   visible: readonly ZoneReading[],
   hidden: number,
   pulsePhase: number,

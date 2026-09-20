@@ -286,11 +286,14 @@ export {
   layoutZone,
   layoutTrace,
   PALETTE,
+  FRAME_TOKEN,
+  TICK_BAND_Y,
   type Scene,
   type DotPrimitive,
   type LinePrimitive,
   type TextPrimitive,
   type ReadoutPrimitive,
+  type TickPrimitive,
 } from './layout.ts';
 
 // The bridge from the real system — registry.json → zones, warp → traces.
