@@ -245,6 +245,20 @@ export {
   type SierpinskiLevel,
 } from './sierpinski.ts';
 
+// The Jitterbug — the Field's closure, named. The topological twin of the
+// Sierpiński gasket: the contraction from the open vector equilibrium to the
+// closed tetrahedron (β₂ = 1). Re-exported so the package surface stays one
+// import.
+export {
+  jitterbugPhase,
+  jitterbugVolume,
+  jitterbugClose,
+  jitterbugClosed,
+  JITTERBUG_PHASES,
+  type JitterbugPhase,
+  type JitterbugPhaseName,
+} from './jitterbug.ts';
+
 // The Instrument — the UI substrate that scales with the system. A pure
 // projection of (zones, traces, atMs) into a Reading with a clock, a
 // measured complexity, and a scaling contract. Re-exported so the package
@@ -261,3 +275,31 @@ export {
   type Complexity,
   type InstrumentScale,
 } from './instrument.ts';
+
+// The Instrument's render layer — pure primitives (dots, lines, text,
+// readouts) with token names and fill opacity, no var()/color-mix() (which
+// Canvas 2D cannot parse). Re-exported so the package surface stays one
+// import; the React render layer resolves token names via getComputedStyle.
+export {
+  layout,
+  layoutConstellation,
+  layoutZone,
+  layoutTrace,
+  PALETTE,
+  type Scene,
+  type DotPrimitive,
+  type LinePrimitive,
+  type TextPrimitive,
+  type ReadoutPrimitive,
+} from './layout.ts';
+
+// The bridge from the real system — registry.json → zones, warp → traces.
+// Re-exported so the package surface stays one import.
+export {
+  zonesFromRegistry,
+  tracesFromWarp,
+  tracesFromWeft,
+  type Registry,
+  type WarpEvent,
+  type WeftEventLike,
+} from './adapters.ts';
