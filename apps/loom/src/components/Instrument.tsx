@@ -83,7 +83,21 @@ export function Instrument({ scene, reading, onFocus, onTrace }: Props) {
       }
 
       // Dots. Fill opacity = pressure; stroke hue = hazard; width = pressure.
+      // Field-driven glow: only the top-8 hottest zones emit light — shadowBlur
+      // is expensive, so never glow every dot.
+      const zoneReadings = readingRef.current.zones;
+      const hotById = new Map<string, number>();
+      for (const z of zoneReadings) hotById.set(z.id, z.hazard);
+      const topIds = new Set(
+        [...zoneReadings].sort((a, b) => b.pressure - a.pressure).slice(0, 8).map((z) => z.id),
+      );
+
       for (const d of s.dots) {
+        const hot = topIds.has(d.id);
+        if (hot) {
+          ctx.shadowBlur = 20 * d.fillOpacity;
+          ctx.shadowColor = `hsl(${Math.round(195 + (hotById.get(d.id) ?? 0) * 60)} 80% 60%)`;
+        }
         ctx.globalAlpha = d.fillOpacity;
         ctx.fillStyle = resolveToken(d.fillToken);
         ctx.strokeStyle = resolveToken(d.strokeToken);
@@ -91,6 +105,7 @@ export function Instrument({ scene, reading, onFocus, onTrace }: Props) {
         ctx.beginPath();
         ctx.arc(d.x * width, d.y * height, d.r * unit, 0, Math.PI * 2);
         ctx.fill();
+        if (hot) ctx.shadowBlur = 0;
         ctx.globalAlpha = 1;
         ctx.stroke();
       }
