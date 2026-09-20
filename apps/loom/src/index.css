@@ -1094,3 +1094,72 @@ body {
   transform: translateY(-1px);
   border-color: var(--p31-text-tertiary, #64748b);
 }
+
+/* ── Chapter subtitle — the one-line question under the heading. */
+.chapter-subtitle {
+  margin: 0;
+  font-family: var(--p31-font-sans);
+  font-size: 17px;
+  line-height: var(--loom-line-height);
+  color: var(--p31-text-secondary, #cbd5e1);
+  text-align: center;
+}
+
+/* ── Color picker — Chapter 4's authoring surface.
+ * The swatch is a button; the circle inside is 64px; the button's padding
+ * extends the hit area to 96px. Focus ring lands on the button, not the
+ * circle, so it surrounds the full target. */
+.color-picker {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  gap: var(--p31-layout-spacing-lg);
+  padding-block: var(--p31-layout-spacing-md);
+}
+.color-swatch {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--p31-layout-spacing-sm);
+  min-width: 96px;
+  min-height: 96px;
+  padding: var(--p31-layout-spacing-sm);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  border-radius: 16px;
+  transition: transform calc(0.15s * var(--motion-scale)) ease;
+}
+.color-swatch:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+.color-swatch:focus-visible {
+  outline: 3px solid var(--p31-text-primary, #f8fafc);
+  outline-offset: 3px;
+}
+.color-swatch:disabled {
+  cursor: default;
+}
+.color-swatch-circle {
+  width: 64px;
+  height: 64px;
+  border-radius: 9999px;
+  background: var(--swatch-color);
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.35),
+    0 4px 16px rgba(0, 0, 0, 0.2);
+  transition: box-shadow calc(0.15s * var(--motion-scale)) ease;
+}
+.color-swatch:hover:not(:disabled) .color-swatch-circle {
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.45),
+    0 6px 20px rgba(0, 0, 0, 0.3);
+}
+.color-swatch-label {
+  font-family: var(--p31-font-sans);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--p31-text-secondary, #cbd5e1);
+  letter-spacing: 0.01em;
+}

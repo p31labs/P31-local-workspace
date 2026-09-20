@@ -20,6 +20,7 @@ import { useProgression } from './lib/useProgression';
 import { AgentCursor } from './components/AgentCursor';
 import { BuilderChapter } from './components/BuilderChapter';
 import { ChildChapter } from './components/ChildChapter';
+import { CreativeChapter } from './components/CreativeChapter';
 import { EventOverlay } from './components/EventOverlay';
 import { Instrument } from './components/Instrument';
 import { Launchpad } from './components/Launchpad';
@@ -79,10 +80,10 @@ export default function App() {
   const [rejectReason, setRejectReason] = useState('');
   const [notYet, setNotYet] = useState(false);
   const [showMore, setShowMore] = useState(false);
-  const [mode, setMode] = useState<'launchpad' | 'canvas' | 'instrument' | 'jitterbug'>(() => {
+  const [mode, setMode] = useState<'launchpad' | 'canvas' | 'instrument' | 'jitterbug' | 'creative'>(() => {
     if (typeof location === 'undefined') return 'launchpad';
     const m = new URLSearchParams(location.search).get('mode');
-    return m === 'canvas' || m === 'instrument' || m === 'jitterbug' ? m : 'launchpad';
+    return m === 'canvas' || m === 'instrument' || m === 'jitterbug' || m === 'creative' ? m : 'launchpad';
   });
   const [traceView, setTraceView] = useState(false);
   const [viewport, setViewport] = useState({ x: 0, y: 0, zoom: 1 });
@@ -91,7 +92,7 @@ export default function App() {
   // Start sees the chapters; a direct /?mode=canvas visitor (instrument) never
   // gets switched into a chapter view by a stray focus event.
   const isLevel1 =
-    mode === 'launchpad' || (started && mode === 'canvas' && chapter <= 3);
+    mode === 'launchpad' || mode === 'creative' || (started && mode === 'canvas' && chapter <= 3);
 
   // Chapter progression: after the child has "made something happen" (tapped
   // the field orb — a focus on `orb`), Lumi proposes after a beat — that's
@@ -396,13 +397,22 @@ export default function App() {
           <Suspense fallback={<div className="loom-loading">opening the jitterbug…</div>}>
             <JitterbugScene />
           </Suspense>
+        ) : mode === 'creative' ? (
+          <CreativeChapter
+            events={events}
+            onProgress={() => setMode('instrument')}
+            commit={(event) =>
+              void postEvent(event, event.writer === 'human' ? humanId : null)
+            }
+          />
         ) : mode === 'canvas' ? (
           // BuilderChapter holds through chapter 3 (a decision exists) so the
-          // celebration and hand-off can land before the workshop unlocks.
+          // celebration and hand-off can land before Chapter 4 (the child's
+          // own idea) unlocks.
           started && (chapter === 2 || chapter === 3) ? (
             <BuilderChapter
               events={events}
-              onProgress={() => setMode('instrument')}
+              onProgress={() => setMode('creative')}
               onApprove={(proposalId) =>
                 void postEvent(
                   { writer: 'human', kind: 'approve', proposal: proposalId },
