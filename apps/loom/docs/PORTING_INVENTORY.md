@@ -1,4 +1,4 @@
-# Porting inventory — 2026-09-20T20:41:57.990Z
+# Porting inventory — 2026-09-20T20:51:39.101Z
 
 Scanned **51 files** under `apps/loom/src`.
 
@@ -163,7 +163,7 @@ Scanned **51 files** under `apps/loom/src`.
 - Used: **17**
 - In manifest: **17**
 - Used but not in manifest: **0**
-- In manifest but never used: **4**
+- In manifest but never used: **2**
 
 ## Event kinds
 - Used: **5**

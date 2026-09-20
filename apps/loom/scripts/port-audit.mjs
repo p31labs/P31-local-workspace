@@ -71,15 +71,19 @@ function readManifestActions() {
   try {
     const json = JSON.parse(readFileSync(MANIFEST, 'utf8'));
     const names = new Set();
-    const walkActions = (node) => {
-      if (Array.isArray(node)) return node.forEach(walkActions);
-      if (node && typeof node === 'object') {
-        if (typeof node.name === 'string') names.add(node.name);
-        if (typeof node.action === 'string') names.add(node.action);
-        for (const v of Object.values(node)) walkActions(v);
+    // Scope to the actions array only. The manifest also carries a top-level
+    // `name` (the app's display name) and `data-agent-attributes.action`
+    // (an attribute type string) — walking the whole JSON would report those
+    // as actions, which they are not.
+    const actions = json?.actions;
+    if (Array.isArray(actions)) {
+      for (const a of actions) {
+        if (a && typeof a === 'object') {
+          if (typeof a.name === 'string') names.add(a.name);
+          if (typeof a.action === 'string') names.add(a.action);
+        }
       }
-    };
-    walkActions(json);
+    }
     return names;
   } catch {
     return new Set();

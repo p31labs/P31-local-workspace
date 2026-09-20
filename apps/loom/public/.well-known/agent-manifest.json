@@ -29,14 +29,18 @@
       "kind": "action",
       "danger": "low",
       "confirm": "optional",
-      "schema": { "from": "string", "to": "string", "reason": "string" }
+      "surfaced": "agent-side",
+      "schema": { "from": "string", "to": "string", "reason": "string" },
+      "description": "Agent-side verb, not a UI affordance. The agent moves from one graph node to another. Never appears as a data-agent-action in the DOM; the agent commits it directly to the log."
     },
     {
       "name": "loom.propose",
       "kind": "action",
       "danger": "medium",
       "confirm": "review",
-      "schema": { "id": "string", "node": "string", "body": "object" }
+      "surfaced": "agent-side",
+      "schema": { "id": "string", "node": "string", "body": "object" },
+      "description": "Agent-side verb, not a UI affordance. The agent formalizes an idea as a proposal the human can then approve or defer. Never appears as a data-agent-action in the DOM; the agent commits it directly to the log."
     },
     {
       "name": "view.save",

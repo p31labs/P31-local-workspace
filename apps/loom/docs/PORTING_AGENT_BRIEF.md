@@ -30,8 +30,8 @@ The live app is well-structured. The port is mostly *relocation*, not rewrite:
 | Live location | Port target |
 |---|---|
 | `apps/loom/src/index.css` (canon tokens in `:root`) | `import '@p31/canon/tokens.css'` (delete the canon `:root` block; the generator owns it). The `--loom-*` and `--motion-scale` locals are loom-chrome and stay. |
-| `apps/loom/src/index.css` (all `.loom-*`, `.lumi-*`, `.chapter-*`, etc.) | split by component; each component gets a co-located CSS module |
-| `apps/loom/src/components/*.tsx` | same file, same name, but CSS classes become `styles.x` references |
+| `apps/loom/src/index.css` (all `.loom-*`, `.lumi-*`, `.chapter-*`, etc.) | **NOT CSS modules.** The stylesheet is already organized into cascade layers (`@layer reset, base, tokens, components, utilities, overrides`, declared once at the top). The chapter components share a common vocabulary (`.chapter-*`, `.lumi-*`, `.made-*`), so per-component modules would force a shared module — one file with extra ceremony. Class names stay stable, so the e2e class selectors stay green. If `index.css` crosses ~2000 lines, split it by layer into plain files (`base.css`, `chapters.css`, `chrome.css`, `companion.css`) — still no hashing. |
+| `apps/loom/src/components/*.tsx` | same file, same name; class names unchanged (the layer order handles precedence) |
 | `apps/loom/src/lib/useLoomSound.ts`, `lib/colors.ts` | `apps/loom/src/hooks/` and `apps/loom/src/lib/` per canon directory convention |
 | `postEvent(event, id)` calls | `commit(input)` from `@p31/canon/loom/commit` — the live app's transport middleware wraps it, so call sites don't change shape |
 | `data-agent-*` attributes | unchanged — they already match the manifest |
@@ -42,9 +42,13 @@ it is already correct. The port is a mechanical lift.
 
 ## Rules
 
-1. **One component per commit.** Port Lumi first, then ChildChapter, then…
-   Each commit runs `pnpm port-audit` and shrinks the raw-value section of
-   the inventory.
+1. **One raw-value group per commit.** Work the inventory's "raw values that
+   should be tokens" queue top to bottom, committing in small groups (e.g. the
+   launchpad group, then the chapter group, then the companion group). Each
+   commit runs `pnpm port-audit` and shrinks the raw-value section of the
+   inventory. This replaces the earlier "one component per commit" rule, which
+   assumed a CSS-module split; the stylesheet is a single layered file, so the
+   queue is worked in-place.
 2. **Never introduce a token.** If the inventory reports a used-but-not-in-canon
    token, that's a bug to fix at the *use site*, not a token to add. If a color
    is genuinely missing, note it in a `<!-- TOKEN GAP -->` comment and use the
@@ -63,9 +67,10 @@ it is already correct. The port is a mechanical lift.
 ## What to do when the inventory finds a missing action
 
 The inventory's AAF section lists every `data-agent-action` the live app uses
-that isn't in the manifest. As of this writing there are 12. Add each in the
-same commit as the component that uses it, following the existing entries'
-shape:
+that isn't in the manifest. The Phase A pass filled the 12 that were missing;
+as of this writing the audit reports 0 used-but-unmanifested actions. Add any
+new one in the same commit as the component that uses it, following the
+existing entries' shape:
 
 ```json
 {
@@ -80,6 +85,12 @@ shape:
 The entry's `name` is what the UI and tests reference; the `schema` is the
 contract an agent needs before it may invoke the action. Write the description
 as if a model is deciding whether it's allowed to call it.
+
+Two manifest entries are deliberately *not* UI affordances: `loom.traverse`
+and `loom.propose` carry `"surfaced": "agent-side"` — the agent commits them
+directly to the log and they never appear as `data-agent-action` in the DOM.
+Leave that marker intact; it is what tells the audit and a scanning model that
+their absence from the DOM is intentional, not a gap.
 
 ## What to do when the inventory finds a raw value
 
@@ -107,8 +118,16 @@ Run `pnpm port-audit`. The port is complete when:
 - `rawValues` is empty (or every remaining entry is a documented, token-lifted
   design constant).
 - `pnpm test` and `pnpm test:e2e` are green.
-- `git log --oneline` shows one commit per ported component, not one giant
-  "port everything" commit.
+- `git log --oneline` shows small, themed commits (one raw-value group each),
+  not one giant "port everything" commit.
+
+A second condition worth stating: the class-name selectors in the e2e tests are
+a *feature*, not a liability. The layered single-file stylesheet keeps class
+names stable, so the 20 e2e tests keep selecting `.chapter-action`,
+`.made-artifact-label`, etc. — no `data-testid` layer, no selector migration.
+The AAF attributes remain the agent-legibility layer; class names are the test
+contract. Do not introduce a `data-testid` attribute to "fix" the tests — the
+class-based selectors are correct here.
 
 ## What NOT to do
 
