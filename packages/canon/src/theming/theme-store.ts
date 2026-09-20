@@ -24,7 +24,8 @@ export type ThemeId =
   | 'mono'
   | 'aurora'
   | 'zen'
-  | 'volt';
+  | 'volt'
+  | 'family';
 
 export const THEME_IDS: readonly ThemeId[] = [
   'cipher',
@@ -36,6 +37,7 @@ export const THEME_IDS: readonly ThemeId[] = [
   'aurora',
   'zen',
   'volt',
+  'family',
 ] as const;
 
 export const DEFAULT_THEME: ThemeId = 'ocean';
@@ -142,6 +144,32 @@ export const THEMES: Record<ThemeId, P31Theme> = {
       '--p31-glass-bg': 'oklch(100% 0.01 120 / 0.04)',
       '--p31-glass-border': 'oklch(100% 0.01 120 / 0.1)',
       '--p31-glass-shadow': '0 8px 32px rgba(0, 0, 0, 0.2)',
+    },
+  },
+
+  family: {
+    id: 'family',
+    label: 'Family',
+    emoji: '🌻',
+    description: 'Warm amber and peach — together, not technical',
+    tokens: {
+      ...BASE,
+      '--p31-bg': 'oklch(17% 0.03 55)',
+      '--p31-surface': 'oklch(23% 0.04 55)',
+      '--p31-surface2': 'oklch(29% 0.045 55)',
+      '--p31-accent': 'oklch(80% 0.16 75)',
+      '--p31-accent-cyan': 'oklch(80% 0.16 75)',
+      '--p31-accent-violet': 'oklch(72% 0.16 20)',
+      '--p31-accent-gold': 'oklch(83% 0.16 65)',
+      '--p31-accent-green': 'oklch(72% 0.16 145)',
+      '--p31-accent-red': 'oklch(68% 0.16 25)',
+      '--p31-accent-iris': 'oklch(72% 0.16 320)',
+      '--p31-text-primary': 'oklch(97% 0.02 70)',
+      '--p31-text-secondary': 'oklch(82% 0.03 70)',
+      '--p31-text-tertiary': 'oklch(60% 0.03 65)',
+      '--p31-glass-bg': 'oklch(100% 0.02 60 / 0.05)',
+      '--p31-glass-border': 'oklch(100% 0.02 60 / 0.12)',
+      '--p31-glass-shadow': '0 8px 32px rgba(255, 170, 40, 0.08)',
     },
   },
 

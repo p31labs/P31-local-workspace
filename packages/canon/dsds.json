@@ -24,7 +24,7 @@
     }
   ],
   "tokens": {
-    "count": 417,
+    "count": 446,
     "entries": [
       {
         "id": "p31.color.action.primary",
@@ -286,6 +286,14 @@
       "name": "Volt",
       "emoji": "⚡",
       "description": "Electric — sharp cyan and violet, high contrast",
+      "default": false
+    },
+    {
+      "id": "family",
+      "type": "theme",
+      "name": "Family",
+      "emoji": "🌻",
+      "description": "Warm amber and peach — together, not technical",
       "default": false
     }
   ],

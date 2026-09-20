@@ -523,7 +523,8 @@
                 "mono": "oklch(80% 0 0)",
                 "aurora": "oklch(72% 0.16 250)",
                 "zen": "oklch(72% 0.1 75)",
-                "volt": "oklch(75% 0.17 190)"
+                "volt": "oklch(75% 0.17 190)",
+                "family": "oklch(80% 0.16 75)"
               }
             }
           }
@@ -541,7 +542,8 @@
                 "mono": "oklch(80% 0 0 / 0.8)",
                 "aurora": "oklch(72% 0.16 250 / 0.8)",
                 "zen": "oklch(72% 0.1 75 / 0.8)",
-                "volt": "oklch(75% 0.17 190 / 0.8)"
+                "volt": "oklch(75% 0.17 190 / 0.8)",
+                "family": "oklch(80% 0.16 75 / 0.8)"
               }
             }
           }
@@ -559,7 +561,8 @@
                 "mono": "oklch(95% 0 0)",
                 "aurora": "oklch(95% 0.03 260)",
                 "zen": "oklch(93% 0.01 75)",
-                "volt": "oklch(96% 0.01 270)"
+                "volt": "oklch(96% 0.01 270)",
+                "family": "oklch(97% 0.02 70)"
               }
             }
           }
@@ -577,7 +580,8 @@
                 "mono": "oklch(20% 0 0)",
                 "aurora": "oklch(20% 0.04 260)",
                 "zen": "oklch(25% 0.015 75)",
-                "volt": "oklch(25% 0.03 270)"
+                "volt": "oklch(25% 0.03 270)",
+                "family": "oklch(29% 0.045 55)"
               }
             }
           }
@@ -595,7 +599,8 @@
                 "mono": "oklch(95% 0 0)",
                 "aurora": "oklch(95% 0.03 260)",
                 "zen": "oklch(93% 0.01 75)",
-                "volt": "oklch(96% 0.01 270)"
+                "volt": "oklch(96% 0.01 270)",
+                "family": "oklch(97% 0.02 70)"
               }
             }
           }
@@ -617,7 +622,8 @@
                 "mono": "oklch(100% 0 0 / 0.05)",
                 "aurora": "oklch(100% 0.02 260 / 0.05)",
                 "zen": "oklch(100% 0.01 75 / 0.05)",
-                "volt": "oklch(100% 0.01 270 / 0.05)"
+                "volt": "oklch(100% 0.01 270 / 0.05)",
+                "family": "oklch(100% 0.02 60 / 0.05)"
               }
             }
           }
@@ -637,7 +643,8 @@
                 "mono": "oklch(80% 0.05 0)",
                 "aurora": "oklch(72% 0.05 250)",
                 "zen": "oklch(72% 0.05 75)",
-                "volt": "oklch(75% 0.05 190)"
+                "volt": "oklch(75% 0.05 190)",
+                "family": "oklch(80% 0.05 75)"
               }
             }
           }
@@ -656,7 +663,8 @@
                   "mono": "oklch(70% 0.05 0)",
                   "aurora": "oklch(72% 0.05 250)",
                   "zen": "oklch(70% 0.05 300)",
-                  "volt": "oklch(72% 0.05 300)"
+                  "volt": "oklch(72% 0.05 300)",
+                  "family": "oklch(72% 0.05 20)"
                 }
               }
             }
@@ -676,7 +684,8 @@
                   "mono": "oklch(78% 0.05 0)",
                   "aurora": "oklch(75% 0.05 65)",
                   "zen": "oklch(75% 0.05 75)",
-                  "volt": "oklch(78% 0.05 60)"
+                  "volt": "oklch(78% 0.05 60)",
+                  "family": "oklch(83% 0.05 65)"
                 }
               }
             }
@@ -695,7 +704,8 @@
                   "sunset": "oklch(65% 0.05 140)",
                   "mono": "oklch(72% 0.05 0)",
                   "zen": "oklch(68% 0.05 140)",
-                  "volt": "oklch(72% 0.05 150)"
+                  "volt": "oklch(72% 0.05 150)",
+                  "family": "oklch(72% 0.05 145)"
                 }
               }
             }
@@ -715,7 +725,8 @@
                   "mono": "oklch(68% 0.05 0)",
                   "aurora": "oklch(70% 0.05 25)",
                   "zen": "oklch(68% 0.05 25)",
-                  "volt": "oklch(72% 0.05 20)"
+                  "volt": "oklch(72% 0.05 20)",
+                  "family": "oklch(68% 0.05 25)"
                 }
               }
             }
@@ -1901,6 +1912,126 @@
         },
         "glass-shadow": {
           "$value": "0 8px 32px rgba(0, 160, 220, 0.12)",
+          "$type": "boxShadow"
+        }
+      }
+    },
+    "family": {
+      "p31": {
+        "base": {
+          "$value": "16px",
+          "$type": "dimension"
+        },
+        "scale-xs": {
+          "$value": "calc(var(--p31-base) * 0.75)",
+          "$type": "dimension"
+        },
+        "scale-sm": {
+          "$value": "var(--p31-base)",
+          "$type": "dimension"
+        },
+        "scale-md": {
+          "$value": "calc(var(--p31-base) * 1.3333)",
+          "$type": "dimension"
+        },
+        "scale-lg": {
+          "$value": "calc(var(--p31-base) * 1.7777)",
+          "$type": "dimension"
+        },
+        "scale-xl": {
+          "$value": "calc(var(--p31-base) * 2.3703)",
+          "$type": "dimension"
+        },
+        "scale-2xl": {
+          "$value": "calc(var(--p31-base) * 3.1604)",
+          "$type": "dimension"
+        },
+        "radius-sm": {
+          "$value": "8px",
+          "$type": "dimension"
+        },
+        "radius-md": {
+          "$value": "16px",
+          "$type": "dimension"
+        },
+        "radius-lg": {
+          "$value": "24px",
+          "$type": "dimension"
+        },
+        "radius-full": {
+          "$value": "9999px",
+          "$type": "dimension"
+        },
+        "font-sans": {
+          "$value": "'Space Grotesk', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
+          "$type": "fontFamily"
+        },
+        "font-mono": {
+          "$value": "'JetBrains Mono', ui-monospace, 'SF Mono', 'Fira Code', monospace",
+          "$type": "fontFamily"
+        },
+        "bg": {
+          "$value": "oklch(17% 0.03 55)",
+          "$type": "color"
+        },
+        "surface": {
+          "$value": "oklch(23% 0.04 55)",
+          "$type": "color"
+        },
+        "surface2": {
+          "$value": "oklch(29% 0.045 55)",
+          "$type": "color"
+        },
+        "accent": {
+          "$value": "oklch(80% 0.16 75)",
+          "$type": "color"
+        },
+        "accent-cyan": {
+          "$value": "oklch(80% 0.16 75)",
+          "$type": "color"
+        },
+        "accent-violet": {
+          "$value": "oklch(72% 0.16 20)",
+          "$type": "color"
+        },
+        "accent-gold": {
+          "$value": "oklch(83% 0.16 65)",
+          "$type": "color"
+        },
+        "accent-green": {
+          "$value": "oklch(72% 0.16 145)",
+          "$type": "color"
+        },
+        "accent-red": {
+          "$value": "oklch(68% 0.16 25)",
+          "$type": "color"
+        },
+        "accent-iris": {
+          "$value": "oklch(72% 0.16 320)",
+          "$type": "color"
+        },
+        "text-primary": {
+          "$value": "oklch(97% 0.02 70)",
+          "$type": "color"
+        },
+        "text-secondary": {
+          "$value": "oklch(82% 0.03 70)",
+          "$type": "color"
+        },
+        "text-tertiary": {
+          "$value": "oklch(60% 0.03 65)",
+          "$type": "color"
+        },
+        "glass-bg": {
+          "$value": "oklch(100% 0.02 60 / 0.05)",
+          "$type": "color"
+        },
+        "glass-border": {
+          "$value": "oklch(100% 0.02 60 / 0.12)",
+          "$type": "color"
+        },
+        "glass-shadow": {
+          "$value": "0 8px 32px rgba(255, 170, 40, 0.08)",
           "$type": "boxShadow"
         }
       }

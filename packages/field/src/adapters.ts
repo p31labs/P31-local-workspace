@@ -13,8 +13,8 @@
  * can read the field without knowing how the registry or the warp are
  * stored.
  *
- * Zone model (locked decision): every registry artifact is a zone — 298
- * today (169 tokens, 2 components, 118 classes, 9 themes). Frame tokens are
+ * Zone model (locked decision): every registry artifact is a zone — 299
+ * today (169 tokens, 2 components, 118 classes, 10 themes). Frame tokens are
  * excluded — they are render metadata, not artifacts (see gen-registry.mjs).
  * Each zone is a
  * complete K₄ over the four artifact kinds {component, class, token, theme};

@@ -9,7 +9,7 @@
     "tokens": 169,
     "components": 2,
     "cssClasses": 118,
-    "themes": 9,
+    "themes": 10,
     "frames": 4
   },
   "tokens": [
@@ -2566,6 +2566,13 @@
       "id": "volt",
       "name": "Volt",
       "description": "Electric — sharp cyan and violet, high contrast",
+      "isDefault": false,
+      "tokenCount": 29
+    },
+    {
+      "id": "family",
+      "name": "Family",
+      "description": "Warm amber and peach — together, not technical",
       "isDefault": false,
       "tokenCount": 29
     }
