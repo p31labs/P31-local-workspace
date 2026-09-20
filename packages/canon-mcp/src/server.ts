@@ -90,6 +90,39 @@ async function buildRegistry(): Promise<{
   return { registry, dropped };
 }
 
+// ── Tool catalog — progressive disclosure ────────────────────────────────
+// The search index behind search_tools / get_tool_details. Mirrors the tools
+// registered below: `family` is the description's namespace tag, `oneLine` is
+// the summary an agent sees before loading a full schema, `params` names the
+// inputs. Keep in sync with the registerTool calls — a new tool needs an entry.
+type ToolFamily = 'contract' | 'tokens' | 'validation' | 'docs' | 'observe' | 'act' | 'mediate';
+
+interface ToolEntry {
+  name: string;
+  family: ToolFamily;
+  oneLine: string;
+  params: string[];
+}
+
+const TOOL_CATALOG: ToolEntry[] = [
+  { name: 'search_tools', family: 'docs', oneLine: 'Search the tool catalog by family or keyword.', params: ['query', 'family'] },
+  { name: 'get_tool_details', family: 'docs', oneLine: 'Full instructions and params for one tool.', params: ['name', 'dense'] },
+  { name: 'get_design_md', family: 'docs', oneLine: 'The immutable baseline rules.', params: ['dense'] },
+  { name: 'list_docs', family: 'docs', oneLine: 'List the DSDS documentation index.', params: ['type'] },
+  { name: 'list_tokens', family: 'tokens', oneLine: 'List every token in the DTCG tree.', params: ['prefix', 'resolvable'] },
+  { name: 'resolve_token', family: 'tokens', oneLine: 'Resolve a token path to value + CSS var.', params: ['token'] },
+  { name: 'list_components', family: 'contract', oneLine: 'List every component with a contract.', params: ['layer'] },
+  { name: 'get_contract', family: 'contract', oneLine: 'Read the full contract for one component.', params: ['component'] },
+  { name: 'validate_props', family: 'validation', oneLine: 'Validate a props payload against a contract.', params: ['component', 'props'] },
+  { name: 'validate_output', family: 'validation', oneLine: 'Validate props and flag hardcoded hex.', params: ['component', 'props'] },
+  { name: 'loom_observe', family: 'observe', oneLine: 'Observe the live Loom state.', params: ['proposalId'] },
+  { name: 'loom_traverse', family: 'act', oneLine: 'Record a traversal step.', params: ['from', 'to', 'reason'] },
+  { name: 'loom_propose', family: 'act', oneLine: 'Propose a change against a node.', params: ['id', 'node', 'body', 'author'] },
+  { name: 'loom_review', family: 'act', oneLine: 'Post an advisory review on a proposal.', params: ['proposalId', 'decision', 'agent', 'reason'] },
+  { name: 'loom_await', family: 'act', oneLine: 'Wait for a review event on a proposal.', params: ['proposalId', 'timeoutMs'] },
+  { name: 'loom_mediate', family: 'mediate', oneLine: "Render a proposal at the human's tier.", params: ['humanId', 'proposalId'] },
+];
+
 export async function createServer(): Promise<McpServer> {
   const { registry: REGISTRY, dropped: DROPPED } = await buildRegistry();
 
@@ -116,6 +149,75 @@ export async function createServer(): Promise<McpServer> {
   // The profile store sits next to the log directory, NOT inside it. The log
   // carries only the humanId reference; the store carries presentation data.
   const loomProfilesDir = join(dirname(loomLogPath), 'profiles');
+
+  // ── Progressive disclosure ──────────────────────────────────────────────
+  // Two meta-tools so a small agent can find the right tool without loading
+  // all 16 schemas into context. search_tools returns names + one-liners;
+  // get_tool_details returns the full params for a single tool on demand.
+
+  server.registerTool(
+    'search_tools',
+    {
+      description:
+        '[docs] Search the tool catalog by namespace family or keyword. Returns name + family + ' +
+        'one-line purpose only — call this first to find the right tool without loading every schema.',
+      inputSchema: z.object({
+        query: z.string().optional().describe('Substring to match against tool name or one-line purpose.'),
+        family: z.enum(['contract', 'tokens', 'validation', 'docs', 'observe', 'act', 'mediate']).optional().describe('Filter by namespace family.'),
+      }),
+    },
+    async ({ query, family }) => {
+      const q = query?.toLowerCase();
+      const hits = TOOL_CATALOG
+        .filter((t) => !family || t.family === family)
+        .filter((t) => !q || t.name.toLowerCase().includes(q) || t.oneLine.toLowerCase().includes(q))
+        .map(({ name, family: f, oneLine }) => ({ name, family: f, oneLine }));
+      return {
+        content: [{ type: 'text', text: JSON.stringify({ count: hits.length, tools: hits }, null, 2) }],
+      };
+    },
+  );
+
+  server.registerTool(
+    'get_tool_details',
+    {
+      description:
+        '[docs] Return the full instructions and input params for ONE tool. Call after search_tools ' +
+        'narrows the choice. Pass dense=true to strip prose and return only name/family/params.',
+      inputSchema: z.object({
+        name: z.string().describe('Tool name, e.g. "resolve_token".'),
+        dense: z.boolean().optional().describe('Return only name, family, and params as JSON.'),
+      }),
+    },
+    async ({ name, dense }) => {
+      const entry = TOOL_CATALOG.find((t) => t.name === name);
+      if (!entry) {
+        return {
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify({
+                error: 'tool_not_found',
+                message: `No tool named "${name}". Call search_tools to see what exists.`,
+              }),
+            },
+          ],
+          isError: true,
+        };
+      }
+      if (dense) {
+        return {
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify({ name: entry.name, family: entry.family, oneLine: entry.oneLine, params: entry.params }, null, 2),
+            },
+          ],
+        };
+      }
+      return { content: [{ type: 'text', text: JSON.stringify(entry, null, 2) }] };
+    },
+  );
 
   server.registerTool(
     'list_components',
@@ -412,9 +514,21 @@ export async function createServer(): Promise<McpServer> {
       description:
         "[docs] The design system's immutable baseline rules, condensed into one document. " +
         'Read this before generating any component or CSS so the output inherits the floor by default.',
-      inputSchema: z.object({}),
+      inputSchema: z.object({
+        dense: z.boolean().optional().describe('Return structural JSON instead of prose.'),
+      }),
     },
-    async () => {
+    async ({ dense }) => {
+      if (dense) {
+        const floor = [
+          { rule: 'min_text_size', value: '12px (0.75rem)' },
+          { rule: 'min_touch_target', value: '24x24px (44x44 primary)' },
+          { rule: 'color', value: 'var(--p31-*) only, no hardcoded hex, no color-only meaning' },
+          { rule: 'motion', value: 'honor prefers-reduced-motion; animate transform/opacity only' },
+          { rule: 'cognitive_load', value: 'fewer than five choices; plain language' },
+        ];
+        return { content: [{ type: 'text', text: JSON.stringify({ design_system: 'P31', floor }, null, 2) }] };
+      }
       // SYNC WITH: packages/canon/scripts/check-inclusive.mjs (MIN_FONT_PX,
       // MIN_TARGET_PX). Keep these numbers identical to the gate.
       const md = [
@@ -684,6 +798,22 @@ export async function createServer(): Promise<McpServer> {
       return { content: [{ type: 'text', text: JSON.stringify(view, null, 2) }] };
     },
   );
+
+  // Drift guard: the hand-maintained TOOL_CATALOG must match the registered
+  // tools, both directions. A new tool without a catalog entry would otherwise
+  // be silently invisible to search_tools while still callable directly.
+  const registered = Object.keys(
+    (server as unknown as { _registeredTools: Record<string, unknown> })._registeredTools,
+  ).sort();
+  const catalog = TOOL_CATALOG.map((t) => t.name).sort();
+  const extra = registered.filter((n) => !catalog.includes(n));
+  const missing = catalog.filter((n) => !registered.includes(n));
+  if (extra.length || missing.length) {
+    throw new Error(
+      `canon-mcp tool catalog drift — registered but not in catalog: ${extra.join(', ') || 'none'}; ` +
+        `in catalog but not registered: ${missing.join(', ') || 'none'}`,
+    );
+  }
 
   return server;
 }

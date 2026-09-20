@@ -1,0 +1,53 @@
+{
+  "version": "1.0",
+  "name": "P31 Loom",
+  "description": "The design system as a live graph. Human and agent, co-present.",
+  "actions": [
+    {
+      "name": "mode.toggle",
+      "kind": "action",
+      "danger": "none",
+      "confirm": "never",
+      "schema": { "modes": ["canvas", "instrument", "jitterbug"] }
+    },
+    {
+      "name": "surface.show_more",
+      "kind": "action",
+      "danger": "none",
+      "confirm": "never",
+      "schema": {}
+    },
+    {
+      "name": "loom.focus",
+      "kind": "action",
+      "danger": "none",
+      "confirm": "never",
+      "schema": { "nodeId": "string" }
+    },
+    {
+      "name": "loom.traverse",
+      "kind": "action",
+      "danger": "low",
+      "confirm": "optional",
+      "schema": { "from": "string", "to": "string", "reason": "string" }
+    },
+    {
+      "name": "loom.propose",
+      "kind": "action",
+      "danger": "medium",
+      "confirm": "review",
+      "schema": { "id": "string", "node": "string", "body": "object" }
+    }
+  ],
+  "data-agent-attributes": {
+    "kind": ["action", "field", "status"],
+    "action": "string",
+    "danger": ["none", "low", "high"],
+    "confirm": ["never", "optional", "review", "required"]
+  },
+  "mcp": {
+    "server": "p31-canon",
+    "discovery": ["search_tools", "get_tool_details"],
+    "families": ["contract", "tokens", "validation", "docs", "observe", "act", "mediate"]
+  }
+}
