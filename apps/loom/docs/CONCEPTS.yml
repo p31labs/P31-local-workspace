@@ -1,0 +1,75 @@
+# Concept registry — the canonical definition of every recurring concept in
+# the Loom's doc corpus and code.
+#
+# The weave is STRICTLY ADDITIVE: it inserts a link where a concept appears
+# bare, and never replaces an existing link. Idempotent by construction.
+#
+# The registry is the reviewable artifact. A concept is added here once, its
+# canonical definition resolves to one place, and MAP.md renders the graph.
+# The docs-audit does not yet check that every alias is linked everywhere; it
+# lists the concepts the corpus mentions so a future weave pass has a
+# reviewable target set.
+
+concepts:
+  the-log:
+    canonical: docs/DECISIONS.md#001--event-log-is-the-source-of-truth-state-is-derived
+    aliases:
+      - "the event log"
+      - "the append-only log"
+      - "the shared log"
+      - "the log"
+    description: >-
+      The append-only event log; the source of truth every visible state
+      folds over.
+
+  the-gate:
+    canonical: packages/canon/src/loom/gate.ts
+    aliases:
+      - "the canon gate"
+      - "the writer-per-kind gate"
+    description: >-
+      The canon's writer-per-kind check: propose/review are agent-only;
+      approve/reject are human-only.
+
+  lumi:
+    canonical: apps/loom/src/components/Lumi.tsx
+    aliases: ["the agent", "the orb"]
+    description: >-
+      The agent's face — a friendly orb. No model name, no vendor.
+
+  the-companion-view:
+    canonical: docs/DECISIONS.md#006--the-launchpad-carries-two-doors
+    aliases: ["the companion", "the elder's view"]
+    description: >-
+      The 70-year-old's window into the log: one sentence per screen, a
+      visible Back, no counts, no timers.
+
+  the-canon:
+    canonical: packages/canon/src/theming/theme-store.ts
+    aliases: ["@p31/canon", "the design system"]
+    description: >-
+      The design system the Loom consumes: tokens, contracts, the gate. Its
+      single source of truth is theme-store.ts.
+
+  the-phase-machine:
+    canonical: docs/DECISIONS.md#004--reduced-motion-collapses-duration-never-disables-animation
+    aliases:
+      - "the chapter phase machine"
+      - "waiting-celebrating-celebrated"
+    description: >-
+      Every chapter is `waiting → celebrating → celebrated`, driven by
+      `animationend`, never `setTimeout`.
+
+  the-artifact:
+    canonical: apps/loom/src/components/MadeArtifact.tsx
+    aliases: ["what they made", "the child's artifact"]
+    description: >-
+      The thing the child and Lumi made together, derived from the log, in
+      Chapter 5.
+
+  the-seed:
+    canonical: docs/DECISIONS.md#002--snapshots-are-an-optimization-not-an-event-kind
+    aliases: ["events.seed.json", "the demo seed"]
+    description: >-
+      The static deploy's build-time seed of the demo journey. A seed, not a
+      snapshot.
