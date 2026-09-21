@@ -1,0 +1,65 @@
+name: Publish @p31/canon
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to publish (must already be bumped in packages/canon/package.json)"
+        required: false
+        default: "current"
+  push:
+    tags:
+      - "canon-v*"
+
+# The one job that can publish. Trusted Publishing via npm OIDC: the npm
+# package has this repo+workflow as its trusted publisher, so the publish
+# credential is a short-lived OIDC token exchanged by npm's CLI — there is NO
+# NPM_TOKEN secret anywhere. Provenance (Sigstore) attaches automatically via
+# --provenance, linking the tarball to this exact commit + workflow.
+permissions:
+  id-token: write # required for npm trusted publishing + Sigstore provenance
+  contents: read
+
+concurrency:
+  group: publish-canon
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      # npm CLI >= 11.5.1 is required for trusted publishing. Node 24 ships it.
+      - name: Confirm npm CLI version
+        run: npm --version
+
+      - name: Install dependencies (no scripts)
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      # Build emits DESIGN.md, DTCG, CSS, contracts, exports — the full canon.
+      - name: Build canon
+        run: pnpm --filter @p31/canon build
+
+      # Run the Loom gate suite (seal, determinism, hash-chain, love, anchor).
+      # The seal gate runs here — the publish job is the enforcement point.
+      - name: Loom gate suite
+        run: pnpm --filter @p31/canon test:loom
+
+      # Pack and inspect first — a dry-run the reader can re-run locally with:
+      #   pnpm --filter @p31/canon pack --dry-run
+      - name: Pack (dry run)
+        run: pnpm --filter @p31/canon pack
+
+      # The actual publish. pnpm rewrites workspace:* refs; --provenance mints
+      # the Sigstore attestation; access is public (scoped packages default to
+      # restricted). The tag/workflow_dispatch gates who can trigger this.
+      - name: Publish to npm (Trusted Publishing + provenance)
+        run: pnpm --filter @p31/canon publish --no-git-checks --access public --provenance
+        env:
+          NPM_CONFIG_PROVENANCE: "true"
