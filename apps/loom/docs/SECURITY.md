@@ -94,6 +94,34 @@ procurement reviewer or a European customer asks for first.
   `wrangler secret put`; the deploy workflow reads `CLOUDFLARE_API_TOKEN` /
   `CLOUDFLARE_ACCOUNT_ID` from GitHub secrets.
 
+## Live deployment (verified)
+
+The Cloudflare surface is deployed and exercised end-to-end:
+
+- **Pages** — `https://loom-8z0.pages.dev` (static SPA, Pages Functions for
+  `/api/loom/*`, per-request nonce CSP, PWA manifest + service worker).
+- **SSE Worker** — `https://loom-sse.trimtab-signal.workers.dev` (Durable
+  Object fan-out, gated by the internal service token).
+- **D1** — the `loom` database holds the events table; the gate-validated
+  append path and the SSE stream both run against it.
+
+Verified live: `POST /api/loom/event` (gate-validated, written to D1),
+`GET /api/loom/events` (full log), `GET /api/loom/stream` (SSE through Pages →
+secret proxy → Worker DO fan-out), the nonce CSP (`strict-dynamic` + Trusted
+Types), and `/manifest.webmanifest`.
+
+**Interim posture.** Cloudflare Access is the intended edge auth, but its
+application lives in the Zero Trust dashboard and cannot be provisioned from
+the repo. Until `CLOUDFLARE_ACCESS_AUD` is configured there, the Access gate
+in `functions/api/loom/_middleware.ts` is OFF with a logged warning — the
+API is open (a documented interim, not an accident). The internal `/stream`
+and `/broadcast` paths are protected by the service token regardless.
+
+**Remaining dashboard config** (the four values the repo cannot infer):
+the Access application's team domain + aud tag, and optionally the `LOOM_SSE`
+service binding (Settings → Functions → Bindings) — the secret-proxy fallback
+works without it.
+
 ## Related Documents
 
 - `../README.md` — what the Loom is
