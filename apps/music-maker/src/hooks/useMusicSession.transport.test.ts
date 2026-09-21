@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { act, renderHook, waitFor } from '@testing-library/react';
+import { act, cleanup, renderHook, waitFor } from '@testing-library/react';
 import { useMusicSession } from './useMusicSession';
 
 /**
@@ -81,6 +81,7 @@ function stubTransports() {
 
 describe('useMusicSession transport', () => {
   beforeEach(() => {
+    cleanup(); // unmount the prior render's hook (no globals:true in this config)
     FakeWebSocket.instances = [];
     vi.restoreAllMocks();
     vi.unstubAllGlobals();
@@ -158,6 +159,47 @@ describe('useMusicSession transport', () => {
       void result.current.placeZone([0, 0, 3], 'oxygen').then((r) => { infraResult = r; });
     });
     await waitFor(() => expect(infraResult).toEqual({ ok: false, reason: 'infra' }));
+
+    vi.unstubAllGlobals();
+  });
+
+  it('folds the senders own commit-ack event into the local zone list (the place bug)', async () => {
+    stubFetchEvents('[]');
+    stubTransports();
+    Object.defineProperty(window, 'location', {
+      value: { protocol: 'http:', host: 'localhost:5291', search: '' },
+      writable: true,
+    });
+    const { result } = renderHook(() => useMusicSession());
+    const ws = FakeWebSocket.instances[0];
+    act(() => ws.fireOpen());
+
+    // Place a zone; the DO echoes commit-ack WITH the committed event (the
+    // sender is excluded from the broadcast, so this ack is the sender's only
+    // copy). The zone must appear in result.current.zones — no reconnect.
+    let placeResult: unknown;
+    act(() => {
+      void result.current.placeZone([1, 2, 3], 'hydrogen').then((r) => { placeResult = r; });
+    });
+    const reqId = JSON.parse(ws.sent[ws.sent.length - 1]).requestId as string;
+    act(() => ws.fireMessage(JSON.stringify({
+      type: 'commit-ack',
+      requestId: reqId,
+      valid: true,
+      event: {
+        seq: 5,
+        ts: '2026-09-21T00:00:00.000Z',
+        writer: 'human',
+        kind: 'instrument.zone.place',
+        node: 'zone:placed',
+        position: [1, 2, 3],
+        timbre: 'hydrogen',
+      },
+    })));
+    await waitFor(() => expect(placeResult).toEqual({ ok: true }));
+    await waitFor(() => {
+      expect(result.current.zones.some((z) => z.id === 'zone:placed' && z.position[0] === 1)).toBe(true);
+    });
 
     vi.unstubAllGlobals();
   });

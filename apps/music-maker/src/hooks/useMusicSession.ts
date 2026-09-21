@@ -96,6 +96,31 @@ export function zonesFromEvents(es: LoomEvent[]): MusicZone[] {
     }));
 }
 
+/** Pure: fold ONE committed event into the zone list (place → add, clear →
+ *  remove, name → rename). Both the live-stream `committed` branch and the
+ *  `commitAck` branch use this — the sender's own commit must land locally too
+ *  (the DO broadcasts to OTHER sockets, excluding the sender; the sender only
+ *  gets the commit-ack). One code path, both branches. */
+export function applyEventToZones(zones: MusicZone[], e: LoomEvent): MusicZone[] {
+  if (e.kind === 'instrument.zone.place') {
+    if (zoneById(zones, e.node)) return zones;
+    return [
+      ...zones,
+      {
+        id: e.node,
+        position: (e as LoomEvent & { position: [number, number, number] }).position,
+        timbre: (e as LoomEvent & { timbre: Timbre }).timbre,
+        name: (e as LoomEvent & { name?: string }).name ?? '',
+      },
+    ];
+  }
+  if (e.kind === 'instrument.zone.clear') return zones.filter((z) => z.id !== e.node);
+  if (e.kind === 'instrument.zone.name') {
+    return zones.map((z) => (z.id === e.node ? { ...z, name: (e as LoomEvent & { name: string }).name } : z));
+  }
+  return zones;
+}
+
 /** Pure: given the newest-first remote-trigger list and the highest seq already
  *  consumed, return the unseen triggers in arrival order (oldest first). The
  *  list is capped at 8 for display, but tracking by SEQ (not array length)
@@ -115,7 +140,7 @@ export function unseenRemoteTriggers(list: RemoteTrigger[], lastSeenSeq: number)
 export type StreamFrame =
   | { kind: 'control'; seq: number }
   | { kind: 'ephemeral'; trigger: EphemeralTrigger }
-  | { kind: 'commitAck'; requestId: string; valid: boolean; error?: string }
+  | { kind: 'commitAck'; requestId: string; valid: boolean; error?: string; event?: LoomEvent }
   | { kind: 'committed'; event: LoomEvent };
 
 export function classifyFrame(data: string): StreamFrame | null {
@@ -129,6 +154,7 @@ export function classifyFrame(data: string): StreamFrame | null {
         requestId: parsed.requestId as string,
         valid: parsed.valid as boolean,
         error: parsed.error as string | undefined,
+        event: parsed.event as LoomEvent | undefined,
       };
     }
     if ('seq' in parsed && 'kind' in parsed) return { kind: 'committed', event: parsed as unknown as LoomEvent };
@@ -172,7 +198,9 @@ export function useMusicSession(): MusicSession {
         if (!res.ok) throw new Error(`events ${res.status}`);
         const es = (await res.json()) as LoomEvent[];
         if (!alive) return;
-        setZones(zonesFromEvents(es));
+        // FOLD the initial load onto the current list (dedup by id) so a fast
+        // commit-ack that landed before this fetch resolves is not wiped.
+        setZones((prev) => es.reduce(applyEventToZones, prev));
       } catch {
         // No log — empty field. The planetarium starts silent.
       }
@@ -207,6 +235,13 @@ export function useMusicSession(): MusicSession {
         if (pending) {
           pendingCommitsRef.current.delete(frame.requestId);
           pending.resolve(frame.valid ? { ok: true } : { ok: false, reason: 'gate' });
+          // The sender's own commit must land locally. The DO echoes the
+          // committed event in the ack but broadcasts it only to OTHER sockets
+          // (the sender is excluded). Without folding it here, the placing
+          // client's zone list never updates — "place a zone does nothing."
+          if (frame.valid && frame.event) {
+            setZones((prev) => applyEventToZones(prev, frame.event!));
+          }
         }
         return;
       }
@@ -224,25 +259,7 @@ export function useMusicSession(): MusicSession {
       }
       const e = frame.event;
       lastEventId = String(e.seq);
-      setZones((prev) => {
-        if (e.kind === 'instrument.zone.place') {
-          if (zoneById(prev, e.node)) return prev;
-          return [
-            ...prev,
-            {
-              id: e.node,
-              position: (e as LoomEvent & { position: [number, number, number] }).position,
-              timbre: (e as LoomEvent & { timbre: Timbre }).timbre,
-              name: (e as LoomEvent & { name?: string }).name ?? '',
-            },
-          ];
-        }
-        if (e.kind === 'instrument.zone.clear') return prev.filter((z) => z.id !== e.node);
-        if (e.kind === 'instrument.zone.name') {
-          return prev.map((z) => (z.id === e.node ? { ...z, name: (e as LoomEvent & { name: string }).name } : z));
-        }
-        return prev;
-      });
+      setZones((prev) => applyEventToZones(prev, e));
     };
 
     // ── Transport: WS-first, SSE fallback. Explicit 4-state machine.
@@ -304,13 +321,14 @@ export function useMusicSession(): MusicSession {
         }, 240_000);
         // B1: reconcile missed committed events on (re)connect. The DO's
         // committed-resume frame only hints at the tail seq; the client
-        // re-fetches /events and replaces the zone list — the same code path
-        // as the initial load, so a reconnect converges exactly like a fresh
-        // visit. Ephemeral history is not replayed (it is gone by definition).
+        // re-fetches /events and FOLDS the committed events onto the current
+        // zone list (applyEventToZones dedups place events by id). Replacing
+        // outright would race a fast commit-ack: a zone placed between open
+        // and this fetch resolving would be wiped. Folding preserves both.
         void fetch('/api/music/events')
           .then((r) => (r.ok ? (r.json() as Promise<LoomEvent[]>) : null))
           .then((es) => {
-            if (es && alive) setZones(zonesFromEvents(es));
+            if (es && alive) setZones((prev) => es.reduce(applyEventToZones, prev));
           })
           .catch(() => {});
       };

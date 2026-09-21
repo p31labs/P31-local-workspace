@@ -21,9 +21,34 @@
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
-  background: var(--p31-bg);
+  /* Transparent so the canon starfield (a fixed layer behind) shows through. */
+  background: transparent;
   color: var(--p31-text);
   font: 16px/1.5 system-ui, -apple-system, sans-serif;
+}
+
+/* The canon starfield background recipe (packages/canon/dist/css/recipes.css
+   .starfield-bg): a fixed layer at --p31-z-starfield, pointer-events none. */
+.starfield-bg {
+  position: fixed;
+  inset: 0;
+  z-index: var(--p31-z-starfield);
+  pointer-events: none;
+  overflow: hidden;
+}
+.starfield-bg canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* The stage and scene canvases are transparent so the starfield reads through
+   the audio-reactive sphere. */
+.mm-stage {
+  background: transparent;
+}
+.spatial-canvas {
+  background: transparent;
 }
 
 .mm-topbar {
@@ -108,6 +133,8 @@
   pointer-events: none;
 }
 .mm-strong { color: var(--p31-text); font-weight: 700; }
+.mm-near { color: var(--p31-text-secondary); }
+.mm-near em { color: var(--p31-accent); font-style: normal; font-weight: 600; }
 
 /* The hybrid 2D/3D zone panel (TimbreSpace pattern): 3D to select + trigger,
    this 2D panel for the committed sound/name surface. 48px targets. */

@@ -158,12 +158,13 @@ function SpatialSceneImpl({
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.setSize(canvas.clientWidth || window.innerWidth, canvas.clientHeight || window.innerHeight);
 
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(...resolveTokenRgb('--p31-bg'));
+    // Transparent so the canon starfield (fixed layer behind) reads through.
+    scene.background = null;
     const camera = new THREE.PerspectiveCamera(
       55,
       (canvas.clientWidth || window.innerWidth) / (canvas.clientHeight || window.innerHeight),
@@ -384,6 +385,56 @@ void main() {
       burstState[i] = { x: p[0], y: p[1], z: p[2], at: Date.now(), dirs, active: true };
     };
 
+    // ── Connection lines — the "wires route musical events" pattern. ──────
+    // When two zones are triggered within a short window, draw a line between
+    // them (additive glow, fading with the trigger decay). The lines make the
+    // musical cause-and-effect visible — you can SEE which zones were played
+    // together. Max CONNECTION_MAX lines; a ring buffer reuses them.
+    const CONNECTION_MAX = 48;
+    const CONNECTION_WINDOW_MS = 3000; // two triggers this close → connect
+    const connectionSegments = new Float32Array(CONNECTION_MAX * 6);
+    const connectionAlpha = new Float32Array(CONNECTION_MAX * 2);
+    const connectionGeom = new THREE.BufferGeometry();
+    connectionGeom.setAttribute('position', new THREE.BufferAttribute(connectionSegments, 3));
+    connectionGeom.setAttribute('aAlpha', new THREE.BufferAttribute(connectionAlpha, 1));
+    const CONNECTION_FRAG = `
+uniform vec3 uAccent;
+varying float vAlpha;
+void main() { gl_FragColor = vec4(uAccent, vAlpha); }`;
+    const connectionUniforms = {
+      uAccent: { value: new THREE.Vector3(...resolveTokenRgb('--p31-accent-green')) },
+    };
+    const connectionMat = new THREE.ShaderMaterial({
+      uniforms: connectionUniforms,
+      vertexShader: BURST_VERT, // aAlpha → vAlpha
+      fragmentShader: CONNECTION_FRAG,
+      transparent: true,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+    });
+    const connections = new THREE.LineSegments(connectionGeom, connectionMat);
+    connections.frustumCulled = false;
+    scene.add(connections);
+    // Per-zone most-recent trigger timestamps, newest first; used to pair
+    // nearby triggers into lines. Cleared as lines age out.
+    const recentTriggers = new Map<string, number[]>(); // zoneId -> [ts]
+    let connectionCursor = 0;
+    const addConnection = (a: [number, number, number], b: [number, number, number]) => {
+      const i = connectionCursor % CONNECTION_MAX;
+      connectionCursor += 1;
+      const seg = i * 6;
+      connectionSegments[seg] = a[0];
+      connectionSegments[seg + 1] = a[1];
+      connectionSegments[seg + 2] = a[2];
+      connectionSegments[seg + 3] = b[0];
+      connectionSegments[seg + 4] = b[1];
+      connectionSegments[seg + 5] = b[2];
+      connectionAlpha[i * 2] = 1;
+      connectionAlpha[i * 2 + 1] = 1;
+      (connectionGeom.attributes.position as THREE.BufferAttribute).needsUpdate = true;
+      (connectionGeom.attributes.aAlpha as THREE.BufferAttribute).needsUpdate = true;
+    };
+
     // ── A4: pointer mode. Mouse = camera orbit (a desktop must not be frozen);
     //    one touch = listener move ("one finger is you"); two touches =
     //    camera orbit. Restores the prototype's explicit mode selection that
@@ -523,6 +574,7 @@ void main() {
       guide.visible = true;
       trail.visible = mode === 'constellation' || mode === 'terrain';
       bursts.visible = mode === 'bursts';
+      connections.visible = mode === 'constellation';
 
       // Listener trail — every frame pushes the current position, so the wake
       // of the performance is always visible. The listener moves on drag; the
@@ -534,19 +586,48 @@ void main() {
       // fade over ~900ms. Reduced motion shortens the window.
       const burstWindow = reducedMotion ? 300 : 900;
       // Spawn bursts for zones whose trigger list just grew (compare against
-      // the count we last saw per zone).
+      // the count we last saw per zone). Connection lines pair a new trigger
+      // with any OTHER zone triggered within the window.
       for (const zone of zs) {
         const hits = tr[zone.id] ?? [];
         const lastSeen = lastBurstCount.get(zone.id) ?? 0;
         if (hits.length > lastSeen) {
           // New trigger(s) — spawn one burst per new hit at the zone's pos.
           const n = hits.length - lastSeen;
+          const newHits = hits.slice(Math.max(0, hits.length - n));
           for (let b = 0; b < Math.min(n, 4); b++) {
             spawnBurst([zone.position[0], zone.position[1], zone.position[2]]);
+          }
+          // Connection lines: this zone just sounded — connect it to any zone
+          // that sounded within the window (the "wires route musical events"
+          // pattern — musical cause-and-effect, made visible).
+          recentTriggers.set(zone.id, [...(recentTriggers.get(zone.id) ?? []), ...newHits].slice(-8));
+          for (const [oid, tsArr] of recentTriggers) {
+            if (oid === zone.id) continue;
+            const o = zs.find((x) => x.id === oid);
+            if (!o) continue;
+            const paired = tsArr.some((t) => now - t < CONNECTION_WINDOW_MS) || newHits.some((t) => now - t < CONNECTION_WINDOW_MS);
+            if (paired) {
+              addConnection(
+                [zone.position[0], zone.position[1], zone.position[2]],
+                [o.position[0], o.position[1], o.position[2]],
+              );
+            }
+          }
+          // Drop zones no longer in the composition from the recents map.
+          for (const [id] of recentTriggers) {
+            if (!zs.some((x) => x.id === id)) recentTriggers.delete(id);
           }
         }
         lastBurstCount.set(zone.id, hits.length);
       }
+      // Fade connection lines out with the trigger decay (same burst window).
+      for (let i = 0; i < CONNECTION_MAX; i++) {
+        const fade = connectionAlpha[i * 2] * 0.985;
+        connectionAlpha[i * 2] = fade;
+        connectionAlpha[i * 2 + 1] = fade;
+      }
+      (connectionGeom.attributes.aAlpha as THREE.BufferAttribute).needsUpdate = true;
       // Advance + write bursts into the geometry.
       for (let i = 0; i < BURST_MAX; i++) {
         const s = burstState[i];
@@ -636,6 +717,8 @@ void main() {
       trailMat.dispose();
       burstGeom.dispose();
       burstMat.dispose();
+      connectionGeom.dispose();
+      connectionMat.dispose();
       renderer.dispose();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps

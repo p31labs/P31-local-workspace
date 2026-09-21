@@ -39,7 +39,7 @@ describe('classifyFrame', () => {
 
   it('classifies a commit-ack echo', () => {
     const f = classifyFrame(JSON.stringify({ type: 'commit-ack', requestId: 'c1', valid: true, event: PLACE }));
-    expect(f).toEqual({ kind: 'commitAck', requestId: 'c1', valid: true, error: undefined });
+    expect(f).toEqual({ kind: 'commitAck', requestId: 'c1', valid: true, error: undefined, event: PLACE });
   });
 
   it('classifies a committed LoomEvent', () => {

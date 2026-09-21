@@ -20,6 +20,7 @@ import { SpatialScene } from './scene/SpatialScene';
 import { SoundToggle } from './components/SoundToggle';
 import { ZoneListbox } from './components/ZoneListbox';
 import { ZonePanel } from './components/ZonePanel';
+import { Starfield } from './components/Starfield';
 import { useInstrumentSound } from './hooks/useInstrumentSound';
 import { useMusicSession, unseenRemoteTriggers } from './hooks/useMusicSession';
 import { phyllotaxisPosition, type Timbre } from './scene/musicZone';
@@ -166,6 +167,23 @@ export default function App() {
     return engineRef.current?.getEnergy() ?? { bass: 0, mid: 0, treble: 0, master: 0 };
   }, []);
 
+  // The zone nearest the listener — the readout shows it so moving yourself
+  // has feedback ("you're near the sun now").
+  const nearestZone = useMemo(() => {
+    if (session.zones.length === 0 || !listener) return null;
+    let best: (typeof session.zones)[number] | null = null;
+    let bestD = Infinity;
+    for (const z of session.zones) {
+      const d = Math.hypot(
+        z.position[0] - listener[0],
+        z.position[1] - listener[1],
+        z.position[2] - listener[2],
+      );
+      if (d < bestD) { bestD = d; best = z; }
+    }
+    return best;
+  }, [session.zones, listener]);
+
   // Place a zone at the current phyllotaxis slot for the count. Refuses past
   // the node budget with a clear message — the family-scale baseline is 8–16.
   const handlePlace = useCallback(() => {
@@ -222,6 +240,8 @@ export default function App() {
 
   return (
     <div className="mm-shell" data-motion={reducedMotion ? 'reduced' : 'full'}>
+      {/* The canon starfield — a fixed layer behind everything. */}
+      <Starfield />
       <header className="mm-topbar">
         <h1 className="mm-title">the spatial instrument</h1>
         <div className="mm-controls">
@@ -303,6 +323,9 @@ export default function App() {
         <div className="mm-readout">
           <span className="mm-strong">{session.zones.length}</span> / {MAX_ZONES} zones · sound {sound.enabled ? 'on' : 'off'} ·
           drag to look · one-finger drag is <em>you</em>
+          {nearestZone && (
+            <span className="mm-near"> · nearest: <em>{nearestZone.name || nearestZone.id}</em></span>
+          )}
         </div>
       </main>
 
