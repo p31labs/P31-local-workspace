@@ -119,6 +119,19 @@ the theme store.
 - **zen** — accent `oklch(72% 0.1 75)`
 - **volt** — accent `oklch(75% 0.17 190)`
 
+## Decision records
+
+The `why` behind the tokens. Each ADR is one decision, immutable once
+accepted, superseded never edited. See `adr/` for the full records.
+
+| # | Status | Decision |
+|---|---|---|
+| 001 | Accepted | ADR-001-the-family-touch-floor-is-48px — `--p31-touch-min` is **48px** (the family floor), with `--p31-touch-recommended` |
+| 002 | Accepted | ADR-002-the-artifact-is-a-button-not-a-preview-image — The artifact is a **button** (`made-artifact-btn`), styled with the family |
+| 003 | Accepted | ADR-003-color-is-oklch-not-oklab-or-hsl — All new tokens are **OKLCH** (`--p31-bg`, `--p31-accent`, `--p31-text-*`, the |
+| 004 | Accepted | ADR-004-the-companion-view-has-no-chip — The companion view has **no chip**. No counts, no numbers, no badges. The |
+| 005 | Accepted | ADR-005-the-phase-machine-is-animationend-driven-never-settimeout — The phase machine is **driven by `animationend`**, and reduced motion is |
+
 ## Do / Don't
 
 - **Do** use `var(--p31-*)` tokens; never hardcode hex, rgba, or inline styles.

@@ -18,7 +18,7 @@
  *
  * Run: node scripts/gen-design.mjs  (from packages/canon, after gen:tokens)
  */
-import { readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync, readdirSync } from 'node:fs';
 import { join, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -166,6 +166,37 @@ body.push(
   '',
   ...themeIds.map((t) => `- **${t.id}**${themeAccents[t.id] ? ` — accent \`${themeAccents[t.id]}\`` : ''}`),
   '',
+);
+
+// Decision records — the ADR index. An agent reading DESIGN.md sees not just
+// the tokens but the reasoning behind them. Read from packages/canon/adr/.
+const ADR_DIR = join(root, 'adr');
+const adrs = [];
+if (existsSync(ADR_DIR)) {
+  for (const f of readdirSync(ADR_DIR).filter((n) => /^ADR-\d+-.+\.md$/.test(n)).sort()) {
+    const text = readFileSync(join(ADR_DIR, f), 'utf8');
+    const num = (f.match(/^ADR-(\d+)-/) ?? [])[1];
+    const status = (text.match(/^\*\*Status\*\*:?\s*(\w+)/m) ?? [])[1] ?? '?';
+    const titleLine = (text.split('\n')[0] ?? f).replace(/^# /, '');
+    const decision = (text.match(/^## Decision\s*\n\s*(.+)$/m) ?? [])[1] ?? '';
+    adrs.push({ num, status, title: titleLine, decision: decision.slice(0, 160) });
+  }
+}
+if (adrs.length) {
+  body.push(
+    '## Decision records',
+    '',
+    'The `why` behind the tokens. Each ADR is one decision, immutable once',
+    'accepted, superseded never edited. See `adr/` for the full records.',
+    '',
+    '| # | Status | Decision |',
+    '|---|---|---|',
+    ...adrs.map((a) => `| ${a.num} | ${a.status} | ${a.title}${a.decision ? ` — ${a.decision}` : ''} |`),
+    '',
+  );
+}
+
+body.push(
   '## Do / Don\'t',
   '',
   '- **Do** use `var(--p31-*)` tokens; never hardcode hex, rgba, or inline styles.',
