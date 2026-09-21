@@ -1,0 +1,124 @@
+/* The music maker — index.css.
+ *
+ * Token-only. No hex, no rgb, no oklch literals — every color/spacing/motion
+ * value comes from a --p31-* token (the canon's tokens.css). The 48px family
+ * floor applies to anything a child or elder touches; child/elder-primary
+ * controls are 56px (--p31-touch-recommended), the sound toggle is 64px
+ * (--p31-touch-large). Reduced motion collapses the motion scale to 0.01 —
+ * never `animation: none` (the same load-bearing rule as the Loom). */
+
+:root {
+  --motion-scale: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  :root { --motion-scale: 0.01; }
+}
+
+.mm-shell {
+  --p31-touch-min: 48px;
+  --p31-touch-recommended: 56px;
+  --p31-touch-large: 64px;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: var(--p31-bg);
+  color: var(--p31-text);
+  font: 16px/1.5 system-ui, -apple-system, sans-serif;
+}
+
+.mm-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--p31-space-md);
+  flex-wrap: wrap;
+  padding: var(--p31-space-md);
+  border-bottom: 1px solid var(--p31-glass-border);
+  background: var(--p31-glass-bg);
+}
+
+.mm-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--p31-text);
+}
+
+.mm-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--p31-space-sm);
+  flex-wrap: wrap;
+}
+
+.sound-toggle,
+.mm-btn {
+  min-height: var(--p31-touch-recommended);
+  min-width: var(--p31-touch-recommended);
+  padding: 0 var(--p31-space-md);
+  border: 1px solid var(--p31-glass-border);
+  border-radius: var(--p31-radius-lg);
+  background: var(--p31-glass-bg);
+  color: var(--p31-text);
+  font: 600 16px/1 system-ui, sans-serif;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background calc(120ms * var(--motion-scale)) ease,
+    color calc(120ms * var(--motion-scale)) ease,
+    transform calc(120ms * var(--motion-scale)) ease;
+}
+.sound-toggle { min-height: var(--p31-touch-large); }
+.sound-toggle:active,
+.mm-btn:active { transform: translateY(1px); }
+.sound-toggle[aria-pressed='true'] { background: var(--p31-accent-green); color: var(--p31-bg); }
+.mm-btn-accent { background: var(--p31-accent); color: var(--p31-bg); }
+.mm-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.mm-stage {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+
+.spatial-scene {
+  position: absolute;
+  inset: 0;
+}
+.spatial-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: none;
+}
+
+.mm-readout {
+  position: absolute;
+  left: var(--p31-space-md);
+  bottom: var(--p31-space-md);
+  padding: var(--p31-space-sm) var(--p31-space-md);
+  border: 1px solid var(--p31-glass-border);
+  border-radius: var(--p31-radius-lg);
+  background: var(--p31-glass-bg);
+  color: var(--p31-text-secondary);
+  font-size: 14px;
+  backdrop-filter: blur(12px);
+  pointer-events: none;
+}
+.mm-strong { color: var(--p31-text); font-weight: 700; }
+
+@media (prefers-reduced-transparency: reduce) {
+  .mm-topbar,
+  .mm-readout,
+  .sound-toggle,
+  .mm-btn {
+    backdrop-filter: none;
+    background: var(--p31-bg);
+  }
+}
+
+@media (max-width: 640px) {
+  .mm-topbar { flex-direction: column; align-items: flex-start; }
+}

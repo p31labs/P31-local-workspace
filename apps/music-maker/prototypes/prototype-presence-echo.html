@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="compat">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>prototype-presence-echo — the ephemeral channel, two tabs</title>
+<meta name="description" content="P31 music maker prototype 2: one tab's zone-touch echoes in another within the latency budget. Proves the collaboration path before it's wired into the real log." />
+<style>
+  /* ── Canon tokens, inlined (prototype discipline). Values verbatim from
+     packages/canon/dist/tokens.css. ── */
+  :root {
+    --p31-bg: oklch(10% 0.01 240);
+    --p31-surface: oklch(15% 0.015 240);
+    --p31-text: oklch(96% 0.005 240);
+    --p31-text-secondary: oklch(80% 0.01 240);
+    --p31-text-tertiary: oklch(60% 0.01 240);
+    --p31-accent: oklch(65% 0.18 195);
+    --p31-accent-gold: oklch(65% 0.18 15);
+    --p31-accent-green: oklch(65% 0.18 105);
+    --p31-accent-red: oklch(65% 0.18 20);
+    --p31-glass-bg: oklch(100% 0.01 240 / 0.04);
+    --p31-glass-border: oklch(100% 0.01 240 / 0.1);
+    --p31-touch-min: 48px;
+    --p31-touch-recommended: 56px;
+    --p31-touch-large: 64px;
+    --p31-radius-lg: 16px;
+    --p31-space-sm: 8px;
+    --p31-space-md: 16px;
+    --p31-space-lg: 24px;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; height: 100%; }
+  body {
+    background: var(--p31-bg);
+    color: var(--p31-text);
+    font: 16px/1.5 system-ui, -apple-system, sans-serif;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    min-height: 100dvh;
+  }
+
+  header, footer { padding: var(--p31-space-md); }
+  header h1 { margin: 0 0 4px; font-size: 18px; }
+  header p { margin: 0; color: var(--p31-text-secondary); font-size: 14px; }
+
+  main {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: var(--p31-space-md);
+    padding: var(--p31-space-md);
+    align-content: start;
+  }
+
+  .zone {
+    min-height: var(--p31-touch-large);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    border: 1px solid var(--p31-glass-border);
+    border-radius: var(--p31-radius-lg);
+    background: var(--p31-glass-bg);
+    color: var(--p31-text);
+    font: 600 15px/1.2 system-ui, sans-serif;
+    cursor: pointer;
+    transition: background 120ms ease, transform 120ms ease, box-shadow 120ms ease;
+  }
+  .zone small { font-weight: 400; color: var(--p31-text-tertiary); font-size: 12px; }
+  .zone:hover { border-color: var(--p31-accent); }
+  .zone.remote { background: var(--p31-accent-gold); color: var(--p31-bg); box-shadow: 0 0 0 2px var(--p31-accent-gold); }
+  .zone.mine   { background: var(--p31-accent);     color: var(--p31-bg); box-shadow: 0 0 0 2px var(--p31-accent); }
+  .zone.spark  { transform: scale(1.06); }
+  .zone .who { font-size: 11px; }
+
+  .log {
+    padding: var(--p31-space-md);
+    font-family: ui-monospace, monospace;
+    font-size: 12px;
+    color: var(--p31-text-secondary);
+    border-top: 1px solid var(--p31-glass-border);
+    max-height: 120px;
+    overflow-y: auto;
+  }
+  .log b { color: var(--p31-accent-green); }
+  .log .ephemeral { color: var(--p31-accent-gold); }
+
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    background: var(--p31-accent-gold);
+    color: var(--p31-bg);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition-duration: 0.01ms !important; }
+  }
+  @media (prefers-reduced-transparency: reduce) {
+    .zone { backdrop-filter: none; background: var(--p31-bg); }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>presence echo — <span class="badge" id="tabBadge">this tab</span></h1>
+  <p>Open this file in two tabs (serve it over http:// — BroadcastChannel needs a shared origin). Tap a zone here; it echoes in the other tab. The echo is <strong>ephemeral</strong> — never persisted, never in any log.</p>
+</header>
+
+<main id="board"></main>
+
+<footer class="log" id="log"></footer>
+
+<script>
+'use strict';
+
+// ── The ephemeral channel. §6 Option A in production is an ungated broadcast
+//    endpoint on the SSE worker. This prototype has no server, so the ephemeral
+//    channel is the browser's own same-origin one: BroadcastChannel, with a
+//    localStorage storage-event fallback for engines that route file:// oddly.
+//    Both are ephemeral by construction — nothing here is ever written to a log.
+//    The production port replaces this transport with Option A; the SHAPE of
+//    the message is identical (type:'ephemeral', zone, origin) so the port is
+//    mechanical. ───────────────────────────────────────────────────────────────
+
+const CHANNEL = 'p31-music-presence-prototype';
+const myId = Math.random().toString(36).slice(2, 7);   // this tab's handle
+
+const bc = ('BroadcastChannel' in window) ? new BroadcastChannel(CHANNEL) : null;
+if (bc) {
+  bc.onmessage = (ev) => handleEphemeral(ev.data);
+} else {
+  window.addEventListener('storage', (e) => {
+    if (e.key === CHANNEL && e.newValue) handleEphemeral(JSON.parse(e.newValue));
+  });
+}
+
+function broadcast(msg) {
+  const m = { ...msg, _from: myId, _t: Date.now() };
+  if (bc) { bc.postMessage(m); }
+  else { localStorage.setItem(CHANNEL, JSON.stringify(m)); }
+}
+
+// ── The board: 8 zones, each a trigger. Tapping one plays it HERE (sound is
+//    off by default — the toggle is the same rule as the Loom) and broadcasts
+//    an ephemeral trigger so the OTHER tab echoes it. ─────────────────────────
+
+const ZONES = Array.from({ length: 8 }, (_, i) => ({ id: `zone-${i + 1}`, note: [261.63, 293.66, 329.63, 392.0, 440.0, 523.25, 587.33, 659.25][i] }));
+const board = document.getElementById('board');
+
+let soundOn = false;
+let ctx = null;
+function ensureAudio() {
+  if (ctx) { if (ctx.state === 'suspended') ctx.resume(); return ctx; }
+  const Ctor = window.AudioContext || window.webkitAudioContext;
+  if (!Ctor) return null;
+  ctx = new Ctor();
+  return ctx;
+}
+function playNote(zone) {
+  if (!soundOn) return;
+  const ac = ensureAudio();
+  if (!ac) return;
+  const t = ac.currentTime;
+  const osc = ac.createOscillator();
+  const g = ac.createGain();
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(zone.note, t);
+  g.gain.setValueAtTime(0, t);
+  g.gain.linearRampToValueAtTime(0.4, t + 0.02);
+  g.gain.exponentialRampToValueAtTime(0.001, t + 0.8);
+  osc.connect(g).connect(ac.destination);
+  osc.start(t); osc.stop(t + 0.9);
+}
+
+const els = new Map();
+for (const z of ZONES) {
+  const el = document.createElement('button');
+  el.type = 'button';
+  el.className = 'zone';
+  el.innerHTML = `${z.id}<small>${z.note.toFixed(0)} Hz</small><span class="who"></span>`;
+  el.setAttribute('data-agent-kind', 'action');
+  el.setAttribute('data-agent-action', 'instrument.zone.trigger');  // ephemeral
+  el.setAttribute('data-agent-danger', 'none');
+  el.setAttribute('data-agent-confirm', 'never');
+  el.addEventListener('click', () => {
+    playNote(z);
+    spark(el, 'mine');
+    broadcast({ type: 'ephemeral', kind: 'zone.trigger', zone: z.id });
+    log(`[ephemeral] this tab triggered ${z.id}`);
+  });
+  board.appendChild(el);
+  els.set(z.id, el);
+}
+
+function spark(el, who) {
+  el.classList.remove('mine', 'remote', 'spark');
+  void el.offsetWidth; // restart the transition
+  el.classList.add(who, 'spark');
+  const whoEl = el.querySelector('.who');
+  if (whoEl) whoEl.textContent = who === 'mine' ? `me (${myId})` : `them (${myId === el.dataset.from ? '' : (el.dataset.from || '?')})`;
+  setTimeout(() => { el.classList.remove('spark'); el.classList.remove('mine', 'remote'); }, 400);
+}
+
+// ── Incoming ephemeral → echo visibly (and audibly if sound is on). The echo
+//    is the SAME visual path as a local trigger — a struck zone brightens and
+//    cools, whether or not sound is on. ───────────────────────────────────────
+
+function handleEphemeral(m) {
+  if (!m || m._from === myId || m.type !== 'ephemeral' || m.kind !== 'zone.trigger') return;
+  const el = els.get(m.zone);
+  if (!el) return;
+  el.dataset.from = m._from;
+  playNote(ZONES.find((z) => z.id === m.zone));   // remote echo is audible only if sound is on HERE
+  spark(el, 'remote');
+  const latency = Date.now() - m._t;
+  log(`[ephemeral] <span class="ephemeral">${m._from}</span> triggered ${m.zone} — echoed in <b>${latency}ms</b>`);
+}
+
+// ── Log + sound toggle (the same opt-in rule as the Loom) ────────────────────
+const logEl = document.getElementById('log');
+function log(s) {
+  const div = document.createElement('div');
+  div.innerHTML = s;
+  logEl.prepend(div);
+  while (logEl.children.length > 24) logEl.lastChild.remove();
+}
+
+const header = document.querySelector('header p');
+const toggle = document.createElement('button');
+toggle.type = 'button';
+toggle.className = 'zone';
+toggle.style.gridColumn = '1 / -1';
+toggle.style.minHeight = 'var(--p31-touch-recommended)';
+toggle.textContent = 'Sound off';
+toggle.setAttribute('data-agent-kind', 'action');
+toggle.setAttribute('data-agent-action', 'instrument.sound.toggle');
+toggle.setAttribute('data-agent-danger', 'none');
+toggle.setAttribute('data-agent-confirm', 'never');
+toggle.addEventListener('click', () => {
+  soundOn = !soundOn;
+  toggle.textContent = soundOn ? 'Sound on' : 'Sound off';
+  toggle.style.background = soundOn ? 'var(--p31-accent-green)' : 'var(--p31-glass-bg)';
+  toggle.style.color = soundOn ? 'var(--p31-bg)' : 'var(--p31-text)';
+  if (soundOn) ensureAudio();   // the user gesture
+});
+document.getElementById('board').insertBefore(toggle, board.firstChild);
+
+document.getElementById('tabBadge').textContent = `this tab is ${myId}`;
+log(`[system] tab ${myId} listening on ephemeral channel. Open a second tab to see it echo.`);
+log(`[system] sound is OFF by default — tap the toggle before you hear anything.`);
+</script>
+</body>
+</html>

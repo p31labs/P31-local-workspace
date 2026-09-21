@@ -51,9 +51,12 @@ export type LoomEventInput =
   | { writer: 'human'; kind: 'reject'; proposal: string; reason: string; scope?: 'personal' | 'shared' | 'session'; statedBy?: string; humanId?: string }
   | { writer: 'agent'; kind: 'review'; agent: string; proposalId: string; decision: 'approve' | 'amend' | 'reject'; reason?: string; revision: number; parentAgent?: string }
   | { writer: 'agent'; kind: 'presence'; node: string; attention: number }
-  | { writer: 'human'; kind: 'view.save'; label: string; from: number; to: number; scope?: 'personal' | 'shared' | 'session'; statedBy?: string; humanId?: string };
+  | { writer: 'human'; kind: 'view.save'; label: string; from: number; to: number; scope?: 'personal' | 'shared' | 'session'; statedBy?: string; humanId?: string }
+  | { writer: 'human'; kind: 'instrument.zone.place'; node: string; position: [number, number, number]; timbre: string; name?: string; scope?: 'personal' | 'shared' | 'session'; statedBy?: string; humanId?: string }
+  | { writer: 'human'; kind: 'instrument.zone.clear'; node: string; scope?: 'personal' | 'shared' | 'session'; statedBy?: string; humanId?: string }
+  | { writer: 'human'; kind: 'instrument.zone.name'; node: string; name: string; scope?: 'personal' | 'shared' | 'session'; statedBy?: string; humanId?: string };
 
-const HUMAN_KINDS = new Set(['focus', 'revise', 'approve', 'reject', 'view.save']);
+const HUMAN_KINDS = new Set(['focus', 'revise', 'approve', 'reject', 'view.save', 'instrument.zone.place', 'instrument.zone.clear', 'instrument.zone.name']);
 const AGENT_KINDS = new Set(['traverse', 'propose', 'review', 'presence']);
 
 export interface GateResult {

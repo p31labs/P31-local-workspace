@@ -1,0 +1,30 @@
+{
+  "name": "@p31/music-maker",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "The spatial music maker — a collaborative instrument where a family places sounds in a 3D field and hears each other play, live, across devices.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@p31/canon": "workspace:*",
+    "@p31/field": "workspace:*",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "three": "0.185.1"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@types/three": "^0.185.4",
+    "@vitejs/plugin-react": "^4.7.0",
+    "typescript": "^5.7.0",
+    "vite": "^6.4.2",
+    "vitest": "^3.0.0"
+  }
+}

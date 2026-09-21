@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="compat">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>prototype-spatial-touch — the spatial instrument core loop</title>
+<meta name="description" content="P31 music maker prototype 1: zones on a sphere, PannerNode + AudioListener, touch-drag the listener. Proves the core loop before any collaboration or log plumbing exists." />
+<style>
+  /* ── Canon tokens, inlined (prototype discipline: single-file HTML, no build
+     step, iterated in a browser tab). Values copied verbatim from
+     packages/canon/dist/tokens.css — do not drift from the canon. ── */
+  :root {
+    --p31-bg: oklch(10% 0.01 240);
+    --p31-surface: oklch(15% 0.015 240);
+    --p31-text: oklch(96% 0.005 240);
+    --p31-text-secondary: oklch(80% 0.01 240);
+    --p31-text-tertiary: oklch(60% 0.01 240);
+    --p31-accent: oklch(65% 0.18 195);
+    --p31-accent-gold: oklch(65% 0.18 15);
+    --p31-accent-green: oklch(65% 0.18 105);
+    --p31-accent-red: oklch(65% 0.18 20);
+    --p31-glass-bg: oklch(100% 0.01 240 / 0.04);
+    --p31-glass-border: oklch(100% 0.01 240 / 0.1);
+    --p31-touch-min: 48px;
+    --p31-touch-recommended: 56px;
+    --p31-touch-large: 64px;
+    --p31-radius-lg: 16px;
+    --p31-space-sm: 8px;
+    --p31-space-md: 16px;
+    --p31-space-lg: 24px;
+    --p31-duration-fast: 120ms;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; height: 100%; }
+  body {
+    background: var(--p31-bg);
+    color: var(--p31-text);
+    font: 16px/1.5 system-ui, -apple-system, sans-serif;
+    overscroll-behavior: none;
+    touch-action: none;
+  }
+
+  #stage {
+    position: fixed;
+    inset: 0;
+    display: block;
+    touch-action: none;
+  }
+
+  /* ── HUD ── */
+  .hud {
+    position: fixed;
+    left: var(--p31-space-md);
+    top: var(--p31-space-md);
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: var(--p31-space-sm);
+    max-width: 320px;
+  }
+  .panel {
+    background: var(--p31-glass-bg);
+    border: 1px solid var(--p31-glass-border);
+    border-radius: var(--p31-radius-lg);
+    padding: var(--p31-space-md);
+    backdrop-filter: blur(12px);
+  }
+  .panel h1 { margin: 0 0 4px; font-size: 18px; font-weight: 700; }
+  .panel p { margin: 0 0 var(--p31-space-sm); color: var(--p31-text-secondary); font-size: 14px; }
+  .row { display: flex; align-items: center; gap: var(--p31-space-sm); flex-wrap: wrap; }
+
+  button {
+    min-width: var(--p31-touch-recommended);
+    min-height: var(--p31-touch-recommended);
+    padding: 0 var(--p31-space-md);
+    border: 1px solid var(--p31-glass-border);
+    border-radius: var(--p31-radius-lg);
+    background: var(--p31-glass-bg);
+    color: var(--p31-text);
+    font: 600 16px/1 system-ui, sans-serif;
+    cursor: pointer;
+    transition: background var(--p31-duration-fast) ease, color var(--p31-duration-fast) ease;
+  }
+  button:active { transform: translateY(1px); }
+  button[aria-pressed="true"] { background: var(--p31-accent); color: var(--p31-bg); }
+  button.on { background: var(--p31-accent); color: var(--p31-bg); }
+  button.sound { min-width: var(--p31-touch-large); min-height: var(--p31-touch-large); }
+  button.sound.on { background: var(--p31-accent-green); color: var(--p31-bg); }
+
+  .readout { font-family: ui-monospace, monospace; font-size: 13px; color: var(--p31-text-tertiary); }
+
+  .hint {
+    position: fixed;
+    right: var(--p31-space-md);
+    bottom: var(--p31-space-md);
+    z-index: 2;
+    color: var(--p31-text-tertiary);
+    font-size: 13px;
+    text-align: right;
+    pointer-events: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+  }
+  @media (prefers-reduced-transparency: reduce) {
+    .panel { backdrop-filter: none; background: var(--p31-bg); }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="stage" aria-label="The spatial instrument — drag to move yourself, tap a zone to hear it"></canvas>
+
+<div class="hud">
+  <div class="panel">
+    <h1>the spatial instrument</h1>
+    <p>Zones are sounds in space. Tap a zone to hear it. Drag anywhere to move <em>you</em> — the sound moves with your position, not the camera.</p>
+    <div class="row">
+      <button id="sound" class="sound" type="button"
+        data-agent-kind="action" data-agent-action="instrument.sound.toggle"
+        data-agent-danger="none" data-agent-confirm="never" aria-pressed="false">Sound off</button>
+      <button id="mode" type="button"
+        data-agent-kind="action" data-agent-action="instrument.mapping.toggle"
+        data-agent-danger="none" data-agent-confirm="never" aria-pressed="false">height → pitch</button>
+    </div>
+    <div class="readout" id="readout"></div>
+  </div>
+</div>
+
+<div class="hint" id="hint">drag = move yourself · tap a zone = play it</div>
+
+<script>
+'use strict';
+
+// ── Deterministic zone placement (phyllotaxis-ish sphere, stable across
+//    reloads). Mirrors the hash01 pattern in JitterbugScene.tsx so geometry
+//    never re-rolls. ──────────────────────────────────────────────────────────
+function hash01(s) {
+  let h = 2166136261 >>> 0;
+  for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return (h >>> 0) / 0x100000000;
+}
+function zonePos(id, scale) {
+  const y = 1 - hash01(id + '#y') * 2;
+  const r = Math.sqrt(Math.max(0, 1 - y * y));
+  const theta = hash01(id + '#theta') * Math.PI * 2;
+  return [Math.cos(theta) * r * scale, y * scale, Math.sin(theta) * r * scale];
+}
+
+const PENTATONIC = [261.63, 293.66, 329.63, 392.0, 440.0, 523.25, 587.33, 659.25];
+const N = 12;
+const RADIUS = 4;
+
+// One zone = id + position + a base note on the pentatonic ladder.
+const zones = Array.from({ length: N }, (_, i) => {
+  const id = `z${i}`;
+  const [x, y, z] = zonePos(id, RADIUS);
+  const noteIdx = Math.min(PENTATONIC.length - 1, Math.floor(hash01(id + '#note') * PENTATONIC.length));
+  return { id, x, y, z, note: PENTATONIC[noteIdx], noteIdx, spark: 0 };
+});
+
+// ── Audio ────────────────────────────────────────────────────────────────────
+let ctx = null;            // AudioContext — created ONLY on the sound gesture.
+let master = null;
+let soundOn = false;
+let hrtf = true;           // panningModel; falls back to equalpower silently.
+const panners = new Map(); // zone.id -> PannerNode
+
+function ensureAudio() {
+  if (ctx) {
+    if (ctx.state === 'suspended') ctx.resume();
+    return ctx;
+  }
+  const Ctor = window.AudioContext || window.webkitAudioContext;
+  if (!Ctor) return null;
+  ctx = new Ctor();
+
+  // Hard gain ceiling (the non-negotiable rule): a child mashing six zones at
+  // once must not spike. Limiter behavior from the master gain + compressor.
+  master = ctx.createGain();
+  master.gain.value = 0.6;                       // the ceiling
+  const comp = ctx.createDynamicsCompressor();
+  comp.threshold.value = -24;
+  comp.knee.value = 20;
+  comp.ratio.value = 6;
+  comp.attack.value = 0.004;
+  comp.release.value = 0.24;
+  master.connect(comp).connect(ctx.destination);
+
+  // Node budget check (prototype): HRTF is the most expensive node type, so
+  // probe once and step down silently. A mid-range phone cold-starting HRTF is
+  // the documented gap; the fallback must be indistinguishable in interaction.
+  const t0 = performance.now();
+  for (const z of zones) {
+    const p = ctx.createPanner();
+    p.panningModel = hrtf ? 'HRTF' : 'equalpower';
+    p.distanceModel = 'inverse';
+    p.refDistance = RADIUS * 0.5;    // falloff proportionate to the sphere
+    p.maxDistance = RADIUS * 3;
+    p.setPosition(z.x, z.y, z.z);
+    p.connect(master);
+    panners.set(z.id, p);
+  }
+  const coldStart = performance.now() - t0;
+  if (coldStart > 80) {               // ~35ms is fine; >80ms means HRTF is too heavy
+    hrtf = false;
+    panners.forEach((p) => { p.panningModel = 'equalpower'; });
+    // silent — the user never hears "reduced quality"
+  }
+  return ctx;
+}
+
+// One zone's voice: oscillator → per-zone gain envelope → the zone's panner.
+function trigger(zone, brightness) {
+  const ac = ensureAudio();
+  if (!ac || !soundOn) return false;
+  const now = ac.currentTime;
+  const osc = ac.createOscillator();
+  const g = ac.createGain();
+  osc.type = brightness > 0.5 ? 'triangle' : 'sine';
+  osc.frequency.setValueAtTime(zone.note, now);
+  g.gain.setValueAtTime(0, now);
+  g.gain.linearRampToValueAtTime(0.5, now + 0.02);
+  g.gain.exponentialRampToValueAtTime(0.001, now + 1.2);
+  osc.connect(g);
+  g.connect(panners.get(zone.id));
+  osc.start(now);
+  osc.stop(now + 1.3);
+  return true;
+}
+
+// ── The mapping being tested. §2 of the build prompt leaves this open:
+//    "height → pitch or timbre brightness (not yet decided — prototype both)."
+//    Both channels are wired; the toggle flips which one height drives.
+let mapping = 'pitch';   // 'pitch' | 'brightness'
+function zoneTone(z) {
+  const h = (z.y + RADIUS) / (2 * RADIUS);        // 0 bottom … 1 top
+  if (mapping === 'pitch') return { freq: PENTATONIC[Math.round(h * (PENTATONIC.length - 1))], bright: 0.2 };
+  return { freq: z.note, bright: h };
+}
+
+// ── Listener ─────────────────────────────────────────────────────────────────
+const listener = { x: 0, y: 0, z: 3 };            // start just off the sphere
+function pushListener() {
+  if (!ctx) return;
+  ctx.listener.setPosition(listener.x, listener.y, listener.z);
+  // Face the sphere centre so front/back is intuitive.
+  ctx.listener.setOrientation(-listener.x, -listener.y, -listener.z, 0, 1, 0);
+}
+
+// ── Canvas + projection (a tiny manual perspective; no three.js in a
+//    single-file prototype). ──────────────────────────────────────────────────
+const canvas = document.getElementById('stage');
+const ctx2d = canvas.getContext('2d');
+let W = 0, H = 0, dpr = 1;
+function resize() {
+  dpr = Math.min(window.devicePixelRatio || 1, 2);
+  W = window.innerWidth; H = window.innerHeight;
+  canvas.width = W * dpr; canvas.height = H * dpr;
+  ctx2d.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+resize(); window.addEventListener('resize', resize);
+
+const cam = { yaw: 0, pitch: 0.3, dist: 9 };
+function project(p) {
+  // camera space
+  const cy = Math.cos(cam.yaw), sy = Math.sin(cam.yaw);
+  const cp = Math.cos(cam.pitch), sp = Math.sin(cam.pitch);
+  let x = p.x, y = p.y, z = p.z;
+  // yaw
+  const x1 = x * cy - z * sy;
+  const z1 = x * sy + z * cy;
+  // pitch
+  const y2 = y * cp - z1 * sp;
+  const z2 = y * sp + z1 * cp;
+  const depth = cam.dist - z2;                    // positive in front of camera
+  if (depth < 0.1) return null;
+  const s = (H * 0.5) / depth;
+  return { sx: W / 2 + x1 * s, sy: H / 2 - y2 * s, depth };
+}
+
+function draw() {
+  ctx2d.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--p31-bg');
+  ctx2d.fillRect(0, 0, W, H);
+
+  const accent = getCSS('--p31-accent');
+  const gold = getCSS('--p31-accent-gold');
+  const green = getCSS('--p31-accent-green');
+  const text = getCSS('--p31-text');
+  const tertiary = getCSS('--p31-text-tertiary');
+
+  // faint sphere guide
+  ctx2d.strokeStyle = tertiary; ctx2d.globalAlpha = 0.15;
+  ctx2d.beginPath(); ctx2d.arc(W / 2, H / 2, H * 0.28, 0, Math.PI * 2); ctx2d.stroke();
+  ctx2d.globalAlpha = 1;
+
+  // zones, back to front
+  const ordered = zones.map((z) => ({ z, p: project(z) })).filter((o) => o.p).sort((a, b) => a.p.depth - b.p.depth);
+  for (const { z, p } of ordered) {
+    const { freq, bright } = zoneTone(z);
+    const dist = Math.hypot(z.x - listener.x, z.y - listener.y, z.z - listener.z);
+    // distance gain (accessible baseline: stereo pan + distance-loudness) is
+    // audio; the visual twin is brightness+size falling off with distance.
+    const loud = Math.max(0.25, 1 - (dist / (RADIUS * 2)));
+    const col = mapping === 'pitch' ? accent : (bright > 0.5 ? green : gold);
+    const size = 8 + 8 * loud + z.spark * 6;
+    ctx2d.beginPath();
+    ctx2d.fillStyle = col;
+    ctx2d.globalAlpha = 0.35 + 0.65 * loud;
+    ctx2d.arc(p.sx, p.sy, size, 0, Math.PI * 2);
+    ctx2d.fill();
+    ctx2d.globalAlpha = 1;
+    ctx2d.fillStyle = text;
+    ctx2d.font = '10px ui-monospace, monospace';
+    ctx2d.fillText(z.id, p.sx + 10, p.sy - 8);
+    // note label (which channel height is driving)
+    ctx2d.fillStyle = tertiary;
+    ctx2d.fillText(mapping === 'pitch' ? freq.toFixed(0) + ' Hz' : 'bright ' + bright.toFixed(2), p.sx + 10, p.sy + 4);
+  }
+
+  // the listener — "you are here", a visible marker independent of the camera
+  const lp = project(listener);
+  if (lp) {
+    ctx2d.beginPath();
+    ctx2d.fillStyle = text;
+    ctx2d.globalAlpha = 0.9;
+    ctx2d.arc(lp.sx, lp.sy, 6, 0, Math.PI * 2);
+    ctx2d.fill();
+    ctx2d.strokeStyle = text; ctx2d.globalAlpha = 0.5; ctx2d.lineWidth = 2;
+    ctx2d.beginPath(); ctx2d.arc(lp.sx, lp.sy, 12, 0, Math.PI * 2); ctx2d.stroke();
+    ctx2d.globalAlpha = 1;
+    ctx2d.fillStyle = tertiary; ctx2d.font = '11px ui-monospace, monospace';
+    ctx2d.fillText('you', lp.sx + 16, lp.sy - 8);
+  }
+
+  // spark decay (the "played note glows, then cools" loop)
+  let any = false;
+  for (const z of zones) { if (z.spark > 0.001) { z.spark *= 0.9; any = true; } }
+  if (any) requestAnimationFrame(draw);
+}
+
+function getCSS(v) { return getComputedStyle(document.documentElement).getPropertyValue(v); }
+
+// ── Interaction: touch-drag moves the LISTENER (the spatial model), not the
+//    camera. Camera still orbits/zooms with two fingers — but one finger is
+//    you. ─────────────────────────────────────────────────────────────────────
+let touchMode = null; // 'listener' | 'cam'
+let lastX = 0, lastY = 0;
+
+function pointerDelta(e) { const p = e.touches ? e.touches[0] : e; return { x: p.clientX, y: p.clientY }; }
+
+canvas.addEventListener('pointerdown', (e) => {
+  const t = e.touches ? e.touches.length : (e.pointerType === 'touch' ? 1 : 0);
+  touchMode = t >= 2 ? 'cam' : 'listener';
+  const p = pointerDelta(e); lastX = p.x; lastY = p.y;
+  canvas.setPointerCapture(e.pointerId);
+});
+canvas.addEventListener('pointermove', (e) => {
+  const p = pointerDelta(e);
+  const dx = p.x - lastX, dy = p.y - lastY;
+  lastX = p.x; lastY = p.y;
+  if (touchMode === 'listener') {
+    // drag "you" across the sphere surface: map screen delta to a sphere move.
+    const k = 0.012;
+    listener.x += dx * k; listener.z += dy * k;
+    const r = Math.hypot(listener.x, listener.y, listener.z);
+    if (r > 0.01) { listener.x *= 4.5 / r; listener.y *= 4.5 / r; listener.z *= 4.5 / r; }
+    pushListener();
+  } else if (touchMode === 'cam') {
+    cam.yaw -= dx * 0.005;
+    cam.pitch = Math.max(-1.5, Math.min(1.5, cam.pitch - dy * 0.005));
+  }
+  draw();
+});
+canvas.addEventListener('pointerup', () => { touchMode = null; });
+
+// tap a zone to play it (only the topmost under the finger)
+canvas.addEventListener('click', (e) => {
+  const p = pointerDelta(e);
+  const ordered = zones.map((z) => ({ z, p: project(z) })).filter((o) => o.p).sort((a, b) => a.p.depth - b.p.depth);
+  for (const { z, pp } of ordered) {
+    if (Math.hypot(pp.sx - p.x, pp.sy - p.y) < 22) {
+      z.spark = 1;                       // visual echo happens whether or not sound is on
+      const tone = zoneTone(z);
+      const played = trigger(z, tone.bright);
+      setReadout(`zone ${z.id}: ${z.note.toFixed(0)} Hz at (${z.x.toFixed(1)}, ${z.y.toFixed(1)}, ${z.z.toFixed(1)}) — ${played ? 'played' : 'muted'}`);
+      draw();
+      return;
+    }
+  }
+});
+
+// ── Controls ─────────────────────────────────────────────────────────────────
+const soundBtn = document.getElementById('sound');
+soundBtn.addEventListener('click', () => {
+  soundOn = !soundOn;
+  soundBtn.classList.toggle('on', soundOn);
+  soundBtn.setAttribute('aria-pressed', String(soundOn));
+  soundBtn.textContent = soundOn ? 'Sound on' : 'Sound off';
+  if (soundOn) { ensureAudio(); pushListener(); }  // the user gesture that may resume audio
+});
+
+const modeBtn = document.getElementById('mode');
+modeBtn.addEventListener('click', () => {
+  mapping = mapping === 'pitch' ? 'brightness' : 'pitch';
+  modeBtn.classList.toggle('on', mapping === 'brightness');
+  modeBtn.setAttribute('aria-pressed', String(mapping === 'brightness'));
+  modeBtn.textContent = mapping === 'pitch' ? 'height → pitch' : 'height → timbre';
+  draw();
+});
+
+const readoutEl = document.getElementById('readout');
+function setReadout(s) { readoutEl.textContent = s; }
+
+// reduced motion: one static frame, no ambient loop (there is none anyway —
+// the scene is static except spark decay, which is event-driven).
+requestAnimationFrame(draw);
+setReadout('sound is off. tap the toggle — no sound plays before you do, every session, every device.');
+</script>
+</body>
+</html>

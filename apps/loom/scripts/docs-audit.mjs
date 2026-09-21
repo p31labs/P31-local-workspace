@@ -60,15 +60,6 @@ const KNOWN_RUNTIME_OR_FUTURE = new Set([
   'base.css',
   'chapters.css',
   'chrome.css',
-  // The music maker's planned production files — referenced by
-  // MUSIC_MAKER_BUILD_PROMPT.md before they exist. They are the build's
-  // output, same class as the DECISIONS 005 hypothetical CSS. Remove them
-  // here once apps/music-maker lands.
-  'apps/music-maker/src/audio/SpatialInstrumentEngine.ts',
-  'apps/music-maker/src/scene/SpatialScene.tsx',
-  'apps/music-maker/src/scene/MusicZone.tsx',
-  'apps/music-maker/src/hooks/useInstrumentSound.ts',
-  'apps/music-maker/src/components/SoundToggle.tsx',
   // The production chat WS pattern — a real file in the sibling repo at
   // /home/p31/production, not resolvable from this monorepo. Valid, not
   // here.

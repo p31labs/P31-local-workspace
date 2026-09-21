@@ -290,6 +290,62 @@
       "confirm": "never",
       "schema": {},
       "description": "Cycle the shell's theme in the top bar. Presentation-layer only (localStorage), never committed to the log. Purely cosmetic; safe to invoke."
+    },
+    {
+      "name": "instrument.zone.trigger",
+      "kind": "action",
+      "danger": "none",
+      "confirm": "never",
+      "schema": { "zoneId": "string" },
+      "description": "Tap a zone in the spatial music maker to hear it. EPHEMERAL — broadcast over the live presence channel, never committed to the log, never gated, never persisted. Carries data-agent-action so an agent or test can trigger it non-visually."
+    },
+    {
+      "name": "instrument.zone.place",
+      "kind": "action",
+      "danger": "low",
+      "confirm": "optional",
+      "schema": { "position": "array", "timbre": "string", "name": "string" },
+      "description": "Place a new zone in the spatial music maker. Gesture-driven in the UI (drag-and-drop / long-press-and-release); the gesture's completion callback carries the same data-agent-action semantics a button would. Commits an instrument.zone.place event through the gate — the score is replayable and provenance-tracked."
+    },
+    {
+      "name": "instrument.zone.clear",
+      "kind": "action",
+      "danger": "medium",
+      "confirm": "review",
+      "schema": { "zoneId": "string" },
+      "description": "Remove a zone from the spatial music maker. Commits an instrument.zone.clear event — the removal is a log entry like any other composition change, so the arrangement stays provenance-tracked."
+    },
+    {
+      "name": "instrument.zone.name",
+      "kind": "action",
+      "danger": "none",
+      "confirm": "never",
+      "schema": { "zoneId": "string", "name": "string" },
+      "description": "Rename a zone in the spatial music maker. Commits an instrument.zone.name event through the gate."
+    },
+    {
+      "name": "instrument.sound.toggle",
+      "kind": "action",
+      "danger": "none",
+      "confirm": "never",
+      "schema": {},
+      "description": "Flip the opt-in sound preference for the spatial music maker. Device-local (localStorage), never committed to the log. Sound is off by default on every device, every session; this is the only way it turns on. A shared session where one family member enabled sound does not turn sound on for another family member's device."
+    },
+    {
+      "name": "instrument.listener.move",
+      "kind": "action",
+      "danger": "none",
+      "confirm": "never",
+      "schema": { "position": "array" },
+      "description": "The listener-position control — a drag surface on the spatial music scene. EPHEMERAL, not committed: moving yourself in the field is a live presence act, never a log entry. Carries data-agent-action so a test or agent can drive it non-visually."
+    },
+    {
+      "name": "instrument.mapping.toggle",
+      "kind": "action",
+      "danger": "none",
+      "confirm": "never",
+      "schema": { "mapping": "string" },
+      "description": "Flip the vertical spatial encoding between height→pitch and height→timbre-brightness. Prototype-validated (prototype-spatial-touch.html); the decision is made empirically with a family member, not by spec."
     }
   ],
   "data-agent-attributes": {

@@ -52,7 +52,15 @@ export type LoomEvent =
   | { seq: number; ts: string; writer: 'human'; kind: 'reject'; proposal: string; reason: string; scope?: LoomScope; statedBy?: string; humanId?: string }
   | { seq: number; ts: string; writer: 'agent'; kind: 'review'; agent: string; proposalId: string; decision: 'approve' | 'amend' | 'reject'; reason?: string; revision: number; parentAgent?: string }
   | { seq: number; ts: string; writer: 'agent'; kind: 'presence'; node: string; attention: number }
-  | { seq: number; ts: string; writer: 'human'; kind: 'view.save'; label: string; from: number; to: number; scope?: LoomScope; statedBy?: string; humanId?: string };
+  | { seq: number; ts: string; writer: 'human'; kind: 'view.save'; label: string; from: number; to: number; scope?: LoomScope; statedBy?: string; humanId?: string }
+  // Music maker — committed composition events. The score (zone arrangement)
+  // is a replayable, provenance-tracked log entry exactly like `focus` or
+  // `approve`. The live act of a zone sounding when touched is NOT a kind —
+  // it is ephemeral and never reaches commit() (see apps/loom/docs/
+  // MUSIC_MAKER_BUILD_PROMPT.md §4/§6).
+  | { seq: number; ts: string; writer: 'human'; kind: 'instrument.zone.place'; node: string; position: [number, number, number]; timbre: string; name?: string; scope?: LoomScope; statedBy?: string; humanId?: string }
+  | { seq: number; ts: string; writer: 'human'; kind: 'instrument.zone.clear'; node: string; scope?: LoomScope; statedBy?: string; humanId?: string }
+  | { seq: number; ts: string; writer: 'human'; kind: 'instrument.zone.name'; node: string; name: string; scope?: LoomScope; statedBy?: string; humanId?: string };
 
 export type ProposalStatus = 'pending' | 'approved' | 'rejected';
 
@@ -248,6 +256,15 @@ export function reduce(state: LoomState, event: LoomEvent): LoomState {
           ts: event.ts,
         },
       ];
+      break;
+    // Music-maker composition events. The zone state lives in the app, not in
+    // LoomState — the reducer only needs to be deterministic over them, which
+    // it is by construction (no case = no state change). Kept explicit so a
+    // fold that reaches these kinds is auditable, and so the gate's double-
+    // replay determinism proof covers them.
+    case 'instrument.zone.place':
+    case 'instrument.zone.clear':
+    case 'instrument.zone.name':
       break;
   }
 
