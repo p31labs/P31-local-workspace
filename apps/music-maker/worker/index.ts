@@ -25,6 +25,21 @@
  * The Vite dev middleware (vite.config.ts) serves the SAME client contract
  * over SSE for local iteration; this Worker is the deployed transport. The
  * client does not care which — the endpoint paths and message shapes match.
+ *
+ * Production hardening (Tier 1):
+ *   • Auth — when MUSIC_ACCESS_AUD is set, the WS upgrade and HTTP endpoints
+ *     require a valid Cloudflare Access CF_Authorization cookie (the Loom's
+ *     posture, one auth story across both apps). When unset, the room is open
+ *     (pre-Access; documented as the known gap).
+ *   • Keepalive — setWebSocketAutoResponse answers client pings at the edge
+ *     WITHOUT waking the DO (Hibernation-safe). No DO-side setInterval.
+ *   • Per-socket state — serializeAttachment/deserializeAttachment survive
+ *     eviction; the room rebuilds from the sockets themselves.
+ *   • Frame cap — 64KB max inbound frame; oversize frames are rejected before
+ *     parse.
+ *   • Schema validation — ephemeral presence frames are sanitized at the DO
+ *     boundary (the gate already validates committed events).
+ *   • Structured logging — JSON console.log, indexed by Workers Logs.
  */
 
 import { DurableObject } from 'cloudflare:workers';
@@ -35,12 +50,63 @@ import { hashRecord, GENESIS_PREV_HASH, type ChainRecord } from '@p31/canon/loom
 export interface Env {
   MUSIC_D1: D1Database;
   MUSIC_ROOM: DurableObjectNamespace<MusicRoom>;
+  /** Cloudflare Access AUD tag. When set, the WS upgrade + HTTP endpoints
+   *  require a valid CF_Authorization cookie (the Loom's auth posture). When
+   *  absent (pre-Access), the room is open — document this as the known gap
+   *  until Access is wired. One auth story across both apps. */
+  MUSIC_ACCESS_AUD?: string;
 }
+
+/** Max inbound WS frame size (bytes). A child mashing zones must not be able
+ *  to flood the room with a multi-MB frame; reject over the cap before parse. */
+const MAX_FRAME_BYTES = 64 * 1024;
 
 /** A room id. One DO instance per room; the family's room is keyed by a shared
  *  family id in the URL (e.g. /stream?room=family-abc). */
 function roomKey(url: URL): string {
   return url.searchParams.get('room')?.trim() || 'family';
+}
+
+/** Structured log — JSON so Workers Logs indexes it (observability.logs.
+ *  enabled = true in wrangler.toml). */
+function log(env: Env, event: Record<string, unknown>): void {
+  // eslint-disable-next-line no-console
+  console.log(JSON.stringify({ app: 'music-presence', ...event }));
+}
+
+/** Cloudflare Access auth check. When MUSIC_ACCESS_AUD is unset the room is
+ *  open (pre-Access). When set, the CF_Authorization cookie must present a
+ *  valid Access JWT with the configured aud. The JWT is opaque to us — Access
+ *  issues and validates it at the edge — so the check is: cookie present and
+ *  non-empty, aud embedded, not expired. */
+function authorized(request: Request, env: Env): boolean {
+  if (!env.MUSIC_ACCESS_AUD) return true;
+  const cookie = request.headers.get('Cookie') ?? '';
+  const m = cookie.match(/(?:^|;\s*)CF_Authorization=([^;]+)/);
+  if (!m) return false;
+  try {
+    const [, payloadB64] = m[1].split('.');
+    const payload = JSON.parse(atob(payloadB64.replace(/-/g, '+').replace(/_/g, '/'))) as {
+      aud?: string[] | string;
+      exp?: number;
+    };
+    const auds = Array.isArray(payload.aud) ? payload.aud : [payload.aud];
+    const expOk = !payload.exp || payload.exp * 1000 > Date.now();
+    return expOk && auds.includes(env.MUSIC_ACCESS_AUD);
+  } catch {
+    return false;
+  }
+}
+
+/** Validate an ephemeral trigger shape at the DO boundary (Tier 1e). The gate
+ *  validates committed events; the DO validates presence frames. Returns a
+ *  sanitized frame, or null to reject. */
+function sanitizeEphemeral(msg: Record<string, unknown>): { zone: string; origin: string; type: 'ephemeral'; kind: 'zone.trigger' } | null {
+  if (msg.type !== 'ephemeral') return null;
+  if (msg.kind !== 'zone.trigger') return null;
+  if (typeof msg.zone !== 'string' || msg.zone.length === 0 || msg.zone.length > 128) return null;
+  if (typeof msg.origin !== 'string' || msg.origin.length === 0 || msg.origin.length > 64) return null;
+  return { type: 'ephemeral', kind: 'zone.trigger', zone: msg.zone, origin: msg.origin };
 }
 
 // ── D1-backed log adapter (the production write path). ──────────────────────
@@ -105,12 +171,24 @@ export class MusicRoom extends DurableObject<Env> {
     const upgrade = request.headers.get('Upgrade');
 
     if (url.pathname.endsWith('/stream') && upgrade?.toLowerCase() === 'websocket') {
+      if (!authorized(request, this.env)) {
+        log(this.env, { ev: 'ws_reject_unauth', room: roomKey(url) });
+        return new Response('Forbidden', { status: 403 });
+      }
       // Hibernation WebSocket API: accept in fetch, broadcast via
       // ctx.getWebSockets() in webSocketMessage. The DO can sleep between
       // messages — no billable Duration while the room is idle.
       const pair = new WebSocketPair();
       const [client, server] = Object.values(pair);
       this.ctx.acceptWebSocket(server);
+      // Tier 1a: the runtime answers protocol-level pings WITHOUT waking the
+      // object. The client sends a 'ping' every ~4min; the edge replies. A
+      // DO-side setInterval would defeat hibernation — never do that.
+      this.ctx.setWebSocketAutoResponse(new WebSocketRequestResponsePair('ping', 'pong'));
+      // Tier 1b: per-socket state survives eviction — the room rebuilds from
+      // the sockets themselves when the DO wakes.
+      server.serializeAttachment({ joinedAt: Date.now(), room: roomKey(url) });
+      log(this.env, { ev: 'ws_connected', room: roomKey(url) });
       // On connect, tell the client the tail seq. The client re-fetches
       // /events itself to reconcile missed events (fetch-on-reconnect); the DO
       // does not replay the log over the socket — reconciliation lives in one
@@ -120,6 +198,11 @@ export class MusicRoom extends DurableObject<Env> {
       const last = events[events.length - 1];
       server.send(JSON.stringify({ type: 'committed-resume', seq: last?.seq ?? -1 }));
       return new Response(null, { status: 101, webSocket: client });
+    }
+
+    if (!authorized(request, this.env)) {
+      log(this.env, { ev: 'http_reject_unauth', path: url.pathname });
+      return new Response('Forbidden', { status: 403 });
     }
 
     // ── Committed write via HTTP — the SSE-DEV FALLBACK. The production path
@@ -134,8 +217,10 @@ export class MusicRoom extends DurableObject<Env> {
       try {
         const event = await appendEvent(this.env, body.input!);
         this.broadcastCommitted(event);
+        log(this.env, { ev: 'event_committed', seq: event.seq, kind: event.kind });
         return Response.json({ valid: true, event });
       } catch (e) {
+        log(this.env, { ev: 'event_rejected', error: String(e) });
         return Response.json({ valid: false, error: String(e) }, { status: 400 });
       }
     }
@@ -143,8 +228,12 @@ export class MusicRoom extends DurableObject<Env> {
     // ── Ephemeral broadcast via HTTP — the SSE-DEV FALLBACK. Same unverified
     //    under Hibernation caveat as /event: the production path is the WS.
     if (url.pathname.endsWith('/ephemeral') && request.method === 'POST') {
-      const msg = await request.json();
-      this.broadcastEphemeral(msg);
+      const msg = (await request.json()) as Record<string, unknown>;
+      const clean = sanitizeEphemeral(msg);
+      if (!clean) {
+        return Response.json({ valid: false, error: 'malformed ephemeral frame' }, { status: 400 });
+      }
+      this.broadcastEphemeral(clean);
       return Response.json({ valid: true, ephemeral: true });
     }
 
@@ -169,7 +258,18 @@ export class MusicRoom extends DurableObject<Env> {
    *   • A message carrying type:'ephemeral' is presence: broadcast to the
    *     other sockets; the sender already applied it locally. Never persisted. */
   async webSocketMessage(ws: WebSocket, message: string | ArrayBuffer): Promise<void> {
+    // Tier 1c: frame size cap before any parse — a child mashing zones must
+    // not flood the room with a multi-MB frame.
+    const size = typeof message === 'string' ? message.length : message.byteLength;
+    if (size > MAX_FRAME_BYTES) {
+      log(this.env, { ev: 'ws_frame_oversize', bytes: size });
+      ws.send(JSON.stringify({ type: 'frame-rejected', error: 'frame too large' }));
+      return;
+    }
     if (typeof message !== 'string') return;
+    // The client's keepalive 'ping' is not JSON — the edge's auto-response
+    // answers it without waking the DO; nothing to do here.
+    if (message === 'ping') return;
     let msg: Record<string, unknown>;
     try {
       msg = JSON.parse(message) as Record<string, unknown>;
@@ -184,6 +284,7 @@ export class MusicRoom extends DurableObject<Env> {
     if (isCommit) {
       try {
         const event = await appendEvent(this.env, msg.input as LoomEventInput);
+        log(this.env, { ev: 'ws_event_committed', seq: event.seq, kind: event.kind });
         // Echo confirmation to the sender (resolves its promise truthfully).
         if (requestId) {
           ws.send(JSON.stringify({ type: 'commit-ack', requestId, valid: true, event }));
@@ -193,6 +294,7 @@ export class MusicRoom extends DurableObject<Env> {
           if (socket !== ws) socket.send(JSON.stringify(event));
         }
       } catch (e) {
+        log(this.env, { ev: 'ws_event_rejected', error: String(e) });
         if (requestId) {
           ws.send(JSON.stringify({ type: 'commit-ack', requestId, valid: false, error: String(e) }));
         }
@@ -201,19 +303,25 @@ export class MusicRoom extends DurableObject<Env> {
     }
 
     if (isEphemeral) {
+      // Tier 1e: schema-validate presence frames at the DO boundary.
+      const clean = sanitizeEphemeral(msg);
+      if (!clean) {
+        ws.send(JSON.stringify({ type: 'frame-rejected', error: 'malformed ephemeral frame' }));
+        return;
+      }
       for (const socket of this.ctx.getWebSockets()) {
-        if (socket !== ws) socket.send(JSON.stringify(msg));
+        if (socket !== ws) socket.send(JSON.stringify(clean));
       }
       return;
     }
   }
 
   // B2: at compat date 2026-07-04 the runtime auto-replies to Close frames;
-  // calling ws.close() is safe but no longer required. The DO keeps no
-  // per-socket state (broadcast enumerates getWebSockets() on demand), so
-  // there is nothing to clean up here.
-  async webSocketClose(_ws: WebSocket): Promise<void> {
-    // no-op
+  // calling ws.close() is safe but no longer required. No per-socket cleanup
+  // needed beyond a disconnect log (the broadcast enumerates getWebSockets()).
+  async webSocketClose(ws: WebSocket): Promise<void> {
+    const att = ws.deserializeAttachment() as { joinedAt?: number; room?: string } | null;
+    log(this.env, { ev: 'ws_disconnected', room: att?.room ?? 'unknown' });
   }
 
   private broadcastCommitted(event: LoomEvent): void {

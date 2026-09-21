@@ -17,6 +17,7 @@ One screen. Where every doc lives, what it's for, and how they connect.
 | [`FAMILY_PILOT.md`](./FAMILY_PILOT.md) | Whoever runs the real family test | You're about to hand the URL to three humans |
 | [`MUSIC_MAKER_BUILD_PROMPT.md`](./MUSIC_MAKER_BUILD_PROMPT.md) | A new agent building the collaborative spatial music maker | You're starting the music-maker build; paste this whole doc into the agent |
 | [`../../music-maker/docs/DEPLOY_RUNBOOK.md`](../../music-maker/docs/DEPLOY_RUNBOOK.md) | The Pilot (Cloudflare account holder) + the agent deploying the music maker | You're about to deploy the spatial music maker to production; run the pre-flight → deploy → post-flight → coast checklists |
+| [`../../music-maker/docs/INCIDENT_CARD.md`](../../music-maker/docs/INCIDENT_CARD.md) | Whoever is looking at a broken music maker | Something's wrong at the deployed URL; read the one-page failure table + rollback before anything else |
 | [`CONCEPTS.yml`](./CONCEPTS.yml) | The concept registry | You want the canonical definition of the log, the gate, Lumi, the artifact… |
 | [`PORTING_INVENTORY.md`](./PORTING_INVENTORY.md) | — | Generated. Do not read; the generator reads it. |
 | [`DOCS_INVENTORY.md`](./DOCS_INVENTORY.md) | — | Generated. Do not read; the generator reads it. |

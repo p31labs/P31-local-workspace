@@ -12,6 +12,17 @@ workers_dev = true
 [observability]
 enabled = true
 
+# Workers Logs: collect + index the structured JSON logs emitted by the DO.
+# GA, enabled by default on new Workers; explicit here for clarity.
+[observability.logs]
+enabled = true
+
+# AUTH — Cloudflare Access posture (the Loom's). When MUSIC_ACCESS_AUD is set
+# (wrangler secret put MUSIC_ACCESS_AUD <aud>), the WS upgrade and HTTP
+# endpoints require a valid CF_Authorization cookie. When unset, the room is
+# open. Set it when the Access application is wired.
+#   wrangler secret put MUSIC_ACCESS_AUD
+
 # CONFIG REQUIRED — a D1 database for the committed composition log.
 # Created via: wrangler d1 create music-maker (2026-09-21, region ENAM).
 # Schema applied via: wrangler d1 execute music-maker --remote --file=schema.sql

@@ -167,14 +167,16 @@ export default function App() {
     const pos = phyllotaxisPosition(session.zones.length, Math.max(16, session.zones.length + 1), RADIUS);
     void session.placeZone(pos, 'hydrogen').then((r) => {
       if (!r.ok) {
-        // A dropped transport must not read as "the gate refused" — they are
+        // A dropped transport, a stalled commit, and a service outage are
         // different failures with different fixes.
         announce(
           r.reason === 'gate'
             ? `the placement was not accepted.`
             : r.reason === 'timeout'
               ? `the connection stalled — the zone may not have landed.`
-              : `the connection dropped — the zone may not have landed.`,
+              : r.reason === 'infra'
+                ? `the service is having trouble — try again in a moment.`
+                : `the connection dropped — the zone may not have landed.`,
         );
       }
     });
@@ -189,7 +191,9 @@ export default function App() {
             ? `the clear was not accepted.`
             : r.reason === 'timeout'
               ? `the connection stalled — the zone may still be here.`
-              : `the connection dropped — the zone may still be here.`,
+              : r.reason === 'infra'
+                ? `the service is having trouble — try again in a moment.`
+                : `the connection dropped — the zone may still be here.`,
         );
       }
     });

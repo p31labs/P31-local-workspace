@@ -52,7 +52,7 @@ interface PendingCommit {
  *  window; 'network' = the transport errored before a result arrived. */
 export type CommitResult =
   | { ok: true }
-  | { ok: false; reason: 'gate' | 'timeout' | 'network' };
+  | { ok: false; reason: 'gate' | 'timeout' | 'network' | 'infra' };
 
 export interface MusicSession {
   zones: MusicZone[];
@@ -245,34 +245,50 @@ export function useMusicSession(): MusicSession {
       });
     };
 
-    // ── Transport: WS-first, SSE fallback. The production transport is the
-    //    WebSocket (worker/ Durable Object); the dev middleware serves SSE.
-    //    We TRY WebSocket first regardless of protocol — a dev Vite server that
-    //    can't upgrade falls back to SSE on error. `?transport=sse` forces SSE
-    //    (e.g. a proxy that blocks WebSocket).
+    // ── Transport: WS-first, SSE fallback. Explicit 4-state machine.
+    //    The production transport is the WebSocket (worker/ Durable Object);
+    //    the dev middleware serves SSE.
     //
-    //    OSCILLATION POLICY (deliberate): the code is symmetric — a WS drop
-    //    falls to SSE, an SSE drop retries WS. On a network that permanently
-    //    blocks WS, this oscillates WS→SSE→WS… but the SHARED backoff counter
-    //    bounds the rate (1s, 2s, 4s… capped 30s), so it is a slow probe of
-    //    whether WS has recovered, not a busy loop. A symmetric reconnect is
-    //    better than a permanent SSE lock-in when a flaky network comes back.
-    //    If that ever proves chatty on a real family device, switch to
-    //    one-way: once on SSE, stay there until the next page load.
-    let transport: 'ws' | 'sse' = new URLSearchParams(location.search).get('transport') === 'sse'
-      ? 'sse'
-      : 'ws';
+    //    STATES (one-way degradation):
+    //      connecting        → WS attempt in progress (or SSE if forced)
+    //      ws-connected      → WebSocket live (the production transport)
+    //      sse-degraded      → SSE live; DEGRADED and stays degraded for the
+    //                          session. A WS drop is NOT retried mid-session —
+    //                          a WS-blocked network must not oscillate
+    //                          WS→SSE→WS→SSE forever at the backoff rate (the
+    //                          historical bug). The next page load tries WS
+    //                          again.
+    //      offline           → both transports failed; backoff, then re-try
+    //                          the LAST-DEGRADED transport (never flip back to
+    //                          WS once degraded).
+    //
+    //    BACKOFF: exponential 500ms → 30s, capped, with 0-500ms jitter, on a
+    //    SHARED counter so N clients never reconnect in lockstep (thundering
+    //    herd). Reset on a successful open.
+    //    KEEPALIVE: while ws-connected, send a 'ping' every ~4 minutes — the
+    //    Cloudflare edge answers protocol-level pings WITHOUT waking the DO
+    //    (Hibernation), keeping the socket past the 100s idle timeout at zero
+    //    wake cost. A DO-side setInterval would defeat hibernation.
+    let transport: 'connecting' | 'ws-connected' | 'sse-degraded' | 'offline' =
+      new URLSearchParams(location.search).get('transport') === 'sse'
+        ? 'sse-degraded'
+        : 'connecting';
+    let keepalive: ReturnType<typeof setInterval> | null = null;
 
     const schedule = (fn: () => void) => {
-      // Shared backoff counter across BOTH transports — resetting it on a
-      // fallback would let N clients reconnect in lockstep (thundering herd).
-      const delay = Math.min(1000 * 2 ** attempts, 30_000);
+      const base = Math.min(500 * 2 ** attempts, 30_000);
+      const jitter = Math.floor(Math.random() * 500);
       attempts += 1;
-      timer = setTimeout(fn, delay);
+      timer = setTimeout(fn, base + jitter);
+    };
+
+    const stopKeepalive = () => {
+      if (keepalive) { clearInterval(keepalive); keepalive = null; }
     };
 
     const connectWebSocket = () => {
       if (!alive) return;
+      transport = 'connecting';
       const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
       const wsUrl = `${proto}//${location.host}/api/music/stream${location.search}`;
       const socket = new WebSocket(wsUrl);
@@ -280,7 +296,12 @@ export function useMusicSession(): MusicSession {
       liveWsRef.current = socket;
       socket.onopen = () => {
         attempts = 0;
-        transport = 'ws';
+        transport = 'ws-connected';
+        stopKeepalive();
+        // Client keepalive: the edge answers without waking the DO.
+        keepalive = setInterval(() => {
+          if (socket.readyState === WebSocket.OPEN) socket.send('ping');
+        }, 240_000);
         // B1: reconcile missed committed events on (re)connect. The DO's
         // committed-resume frame only hints at the tail seq; the client
         // re-fetches /events and replaces the zone list — the same code path
@@ -297,13 +318,15 @@ export function useMusicSession(): MusicSession {
       socket.onclose = () => {
         ws = null;
         if (liveWsRef.current === socket) liveWsRef.current = null;
+        stopKeepalive();
         if (!alive) return;
-        // WS failed → fall back to SSE (and stay there for the session).
-        if (transport === 'ws') {
-          transport = 'sse';
+        if (transport !== 'sse-degraded') {
+          // WS drop → degrade to SSE, and STAY degraded for the session.
+          transport = 'sse-degraded';
           schedule(connectEventSource);
         } else {
-          schedule(connectWebSocket);
+          transport = 'offline';
+          schedule(connectEventSource);
         }
       };
       socket.onerror = () => socket.close();
@@ -316,26 +339,29 @@ export function useMusicSession(): MusicSession {
       src = es;
       es.onopen = () => {
         attempts = 0;
-        // A dropped SSE re-tries WS first (the production transport).
-        transport = 'sse';
+        // Degraded, and stays degraded — never flips back to WS mid-session.
+        transport = 'sse-degraded';
       };
       es.onmessage = (msg) => handleFrame(String((msg as MessageEvent).data));
       es.onerror = () => {
         es.close();
         src = null;
         if (!alive) return;
-        schedule(transport === 'sse' ? connectWebSocket : connectEventSource);
+        transport = 'offline';
+        // Re-try the DEGRADED transport (SSE) — one-way, no WS flip-back.
+        schedule(connectEventSource);
       };
     };
 
     // Always start WS-first (unless forced to SSE); the fallback handles the
     // dev Vite middleware, which serves SSE instead of upgrading.
-    if (transport === 'sse') connectEventSource();
+    if (transport === 'sse-degraded') connectEventSource();
     else connectWebSocket();
 
     return () => {
       alive = false;
       if (timer) clearTimeout(timer);
+      stopKeepalive();
       liveWsRef.current = null;
       src?.close();
       ws?.close();
@@ -377,7 +403,16 @@ const commitOverTransport = useCallback(async (input: LoomEventInput): Promise<C
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ input }),
       });
-      const r = (await res.json()) as { valid: boolean; error?: string };
+      // A 5xx or an unparseable body means the SERVICE is down (D1 write
+      // failing) — that's 'infra', distinct from 'gate' (the canon refused)
+      // and 'network' (we couldn't reach it at all).
+      if (!res.ok) return { ok: false, reason: 'infra' };
+      let r: { valid: boolean; error?: string };
+      try {
+        r = (await res.json()) as { valid: boolean; error?: string };
+      } catch {
+        return { ok: false, reason: 'infra' };
+      }
       return r.valid ? { ok: true } : { ok: false, reason: 'gate' };
     } catch {
       return { ok: false, reason: 'network' };

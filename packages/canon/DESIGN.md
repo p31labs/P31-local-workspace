@@ -131,6 +131,10 @@ accepted, superseded never edited. See `adr/` for the full records.
 | 003 | Accepted | ADR-003-color-is-oklch-not-oklab-or-hsl — All new tokens are **OKLCH** (`--p31-bg`, `--p31-accent`, `--p31-text-*`, the |
 | 004 | Accepted | ADR-004-the-companion-view-has-no-chip — The companion view has **no chip**. No counts, no numbers, no badges. The |
 | 005 | Accepted | ADR-005-the-phase-machine-is-animationend-driven-never-settimeout — The phase machine is **driven by `animationend`**, and reduced motion is |
+| 006 | Accepted | ADR-006-music-maker-static-zone-sphere — The spatial music maker keeps zones **static on a sphere** and moves the **listener** (one finger is you); the audio + visual coordinates never disagree |
+| 007 | Accepted | ADR-007-music-maker-hrtf-by-device-signals — HRTF is chosen by **device signals** (Safari UA, hardwareConcurrency, outputLatency), never by a runtime panner probe — the probe measures nothing |
+| 008 | Accepted | ADR-008-music-maker-composition-vs-performance — **Composition is committed** (gate + D1 + hash-chain); **performance is ephemeral** (WebSocket broadcast, never persisted) |
+| 009 | Accepted | ADR-009-music-maker-raycast-plus-listbox — Zones trigger by **canvas raycast** (pointer) AND a **hidden listbox** (keyboard / screen reader), sharing one callback |
 
 ## Do / Don't
 

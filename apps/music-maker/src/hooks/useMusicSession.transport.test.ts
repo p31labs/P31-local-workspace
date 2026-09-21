@@ -60,6 +60,20 @@ function stubFetchEvents(body: string) {
   }));
 }
 
+function stubFetchEvent500() {
+  vi.stubGlobal('fetch', vi.fn(async (input: RequestInfo | URL) => {
+    const url = String(input);
+    if (url.endsWith('/events')) {
+      return { ok: true, json: async () => [] } as Response;
+    }
+    if (url.endsWith('/event')) {
+      // A 5xx = the SERVICE is down (D1 write failing), not a gate refusal.
+      return { ok: false, status: 500 } as Response;
+    }
+    throw new Error(`unexpected fetch: ${url}`);
+  }));
+}
+
 function stubTransports() {
   vi.stubGlobal('WebSocket', FakeWebSocket);
   vi.stubGlobal('EventSource', class {});
@@ -128,4 +142,23 @@ describe('useMusicSession transport', () => {
 
     vi.unstubAllGlobals();
   }, 20_000);
+
+  it('maps a 5xx committed-write response to reason:"infra", not "gate"', async () => {
+    stubFetchEvent500();
+    stubTransports();
+    Object.defineProperty(window, 'location', {
+      value: { protocol: 'http:', host: 'localhost:5291', search: '' },
+      writable: true,
+    });
+    const { result } = renderHook(() => useMusicSession());
+    // Force the HTTP fallback: never fire the WS open, so the live socket is
+    // not in play. placeZone then POSTs /event, which returns 500.
+    let infraResult: unknown;
+    act(() => {
+      void result.current.placeZone([0, 0, 3], 'oxygen').then((r) => { infraResult = r; });
+    });
+    await waitFor(() => expect(infraResult).toEqual({ ok: false, reason: 'infra' }));
+
+    vi.unstubAllGlobals();
+  });
 });

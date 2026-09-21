@@ -1,15 +1,21 @@
 # Deploy runbook — the spatial music maker
 
-> **STATUS: DEPLOYED LIVE — 2026-09-21.** `music-presence` is live at
+> **STATUS: DEPLOYED + HARDENED — 2026-09-21.** `music-presence` is live at
 > `https://music-presence.trimtab-signal.workers.dev` (D1 `music-maker`,
 > `database_id 4c26bc1a-…`, account `ee05f70c…`). Phases 0–3.2 below were
 > executed in full-auto and PASSED — including the SQLite DO namespace
 > provision ("Durable Object exports reconciliation: Created: MusicRoom") and
 > the production WebSocket smoke (commit-ack, committed broadcast, ephemeral
-> fan-out with self-echo exclusion, and post-hibernation wake). What remains
-> is human-verifiable: Phase 3.3 (browser smoke on a real device) and Phase 4
-> (coast: rollback drill, observability baseline after the first family
-> session). Re-run this runbook from the top for any FUTURE deploy.
+> fan-out with self-echo exclusion, and post-hibernation wake). A hardening
+> pass added: transport state machine (one-way degradation), Hibernation-safe
+> keepalive (edge ping→pong), 64KB frame cap, ephemeral schema validation,
+> `reason:infra` on D1 failure, structured JSON logs, Cloudflare Access auth
+> (opt-in via `MUSIC_ACCESS_AUD`), and 4 canon ADRs + an incident card —
+> re-verified in production (oversize rejection + edge ping→pong green).
+> What remains is human-verifiable: Phase 3.3 (browser smoke on a real
+> device), auth wire-up (set the Access AUD + `wrangler secret put`), the
+> backup drill, and Phase 4 coast. Re-run this runbook from the top for any
+> FUTURE deploy.
 
 Enterprise production pre-flight → deploy → post-flight → coast guide for
 `apps/music-maker`. Fully interactive: each checkbox names WHO does it
