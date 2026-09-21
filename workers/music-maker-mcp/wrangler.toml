@@ -1,0 +1,11 @@
+name = "music-maker-mcp"
+main = "src/index.ts"
+compatibility_date = "2026-07-16"
+compatibility_flags = ["nodejs_compat"]
+
+# The tools' base URL — the deployed music-presence worker. Override for dev:
+#   wrangler secret put MUSIC_API_URL http://localhost:5291
+[observability]
+enabled = true
+[observability.logs]
+enabled = true

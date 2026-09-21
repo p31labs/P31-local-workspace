@@ -62,6 +62,12 @@ const SERVERS: McpServerEntry[] = [
     description: "P31 Shell — interactive shell access (remote)",
   },
   {
+    name: "music-maker-mcp",
+    url: "https://music-maker-mcp.trimtab-signal.workers.dev/mcp",
+    category: "remote",
+    description: "Spatial music maker — observe/place/clear/name/trigger the family's composition (5 tools)",
+  },
+  {
     name: "p31-cli",
     url: "http://localhost:8788/mcp",
     category: "local",

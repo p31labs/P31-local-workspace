@@ -329,10 +329,10 @@ importers:
     dependencies:
       '@astrojs/react':
         specifier: ^5.0.4
-        version: 5.0.7(@types/node@25.6.0)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(jiti@1.21.7)(lightningcss@1.32.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(terser@5.46.1)(tsx@4.23.12)(yaml@2.9.0)
+        version: 5.0.7(@types/node@25.6.0)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(jiti@2.6.1)(lightningcss@1.32.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(terser@5.46.1)(tsx@4.23.12)(yaml@2.9.0)
       '@astrojs/tailwind':
         specifier: ^6.0.2
-        version: 6.0.2(astro@5.18.1(@azure/identity@4.13.1)(@azure/storage-blob@12.31.0)(@types/node@25.6.0)(@upstash/redis@1.37.0)(aws4fetch@1.0.20)(idb-keyval@6.2.2)(ioredis@5.10.1)(jiti@1.21.7)(lightningcss@1.32.0)(rollup@4.60.0)(terser@5.46.1)(tsx@4.23.12)(typescript@6.0.3)(yaml@2.9.0))(tailwindcss@3.4.19(tsx@4.23.12)(yaml@2.9.0))(ts-node@10.9.2(@types/node@25.6.0)(typescript@6.0.3))
+        version: 6.0.2(astro@5.18.1(@azure/identity@4.13.1)(@azure/storage-blob@12.31.0)(@types/node@25.6.0)(@upstash/redis@1.37.0)(aws4fetch@1.0.20)(idb-keyval@6.2.2)(ioredis@5.10.1)(jiti@2.6.1)(lightningcss@1.32.0)(rollup@4.60.0)(terser@5.46.1)(tsx@4.23.12)(typescript@6.0.3)(yaml@2.9.0))(tailwindcss@3.4.19(tsx@4.23.12)(yaml@2.9.0))(ts-node@10.9.2(@types/node@25.6.0)(typescript@6.0.3))
       '@p31/design-core':
         specifier: workspace:*
         version: link:../../packages/design-core
@@ -350,7 +350,7 @@ importers:
         version: link:../../packages/ui
       astro:
         specifier: ^5.17.1
-        version: 5.18.1(@azure/identity@4.13.1)(@azure/storage-blob@12.31.0)(@types/node@25.6.0)(@upstash/redis@1.37.0)(aws4fetch@1.0.20)(idb-keyval@6.2.2)(ioredis@5.10.1)(jiti@1.21.7)(lightningcss@1.32.0)(rollup@4.60.0)(terser@5.46.1)(tsx@4.23.12)(typescript@6.0.3)(yaml@2.9.0)
+        version: 5.18.1(@azure/identity@4.13.1)(@azure/storage-blob@12.31.0)(@types/node@25.6.0)(@upstash/redis@1.37.0)(aws4fetch@1.0.20)(idb-keyval@6.2.2)(ioredis@5.10.1)(jiti@2.6.1)(lightningcss@1.32.0)(rollup@4.60.0)(terser@5.46.1)(tsx@4.23.12)(typescript@6.0.3)(yaml@2.9.0)
       react:
         specifier: 18.3.1
         version: 18.3.1
@@ -363,7 +363,7 @@ importers:
     devDependencies:
       '@astrojs/cloudflare':
         specifier: ^12.6.13
-        version: 12.6.13(@types/node@25.6.0)(astro@5.18.1(@azure/identity@4.13.1)(@azure/storage-blob@12.31.0)(@types/node@25.6.0)(@upstash/redis@1.37.0)(aws4fetch@1.0.20)(idb-keyval@6.2.2)(ioredis@5.10.1)(jiti@1.21.7)(lightningcss@1.32.0)(rollup@4.60.0)(terser@5.46.1)(tsx@4.23.12)(typescript@6.0.3)(yaml@2.9.0))(bufferutil@4.1.0)(jiti@1.21.7)(lightningcss@1.32.0)(terser@5.46.1)(tsx@4.23.12)(utf-8-validate@5.0.10)(yaml@2.9.0)
+        version: 12.6.13(@types/node@25.6.0)(astro@5.18.1(@azure/identity@4.13.1)(@azure/storage-blob@12.31.0)(@types/node@25.6.0)(@upstash/redis@1.37.0)(aws4fetch@1.0.20)(idb-keyval@6.2.2)(ioredis@5.10.1)(jiti@2.6.1)(lightningcss@1.32.0)(rollup@4.60.0)(terser@5.46.1)(tsx@4.23.12)(typescript@6.0.3)(yaml@2.9.0))(bufferutil@4.1.0)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1)(tsx@4.23.12)(utf-8-validate@5.0.10)(yaml@2.9.0)
       '@types/node':
         specifier: ^25.6.0
         version: 25.6.0
@@ -1247,6 +1247,25 @@ importers:
         version: 20.19.37
       typescript:
         specifier: ^5.7.0
+        version: 5.9.3
+
+  packages/music-maker-mcp:
+    dependencies:
+      '@modelcontextprotocol/server':
+        specifier: ^2.0.0
+        version: 2.0.0
+      zod:
+        specifier: ^4.6.5
+        version: 4.6.5
+    devDependencies:
+      '@types/node':
+        specifier: ^22.20.4
+        version: 22.20.4
+      tsx:
+        specifier: ^4.19.0
+        version: 4.23.12
+      typescript:
+        specifier: ^5.9.3
         version: 5.9.3
 
   packages/observatory:
@@ -2200,11 +2219,11 @@ importers:
     dependencies:
       astro:
         specifier: ^5.18.1
-        version: 5.18.1(@azure/identity@4.13.1)(@azure/storage-blob@12.31.0)(@types/node@25.6.0)(@upstash/redis@1.37.0)(aws4fetch@1.0.20)(idb-keyval@6.2.2)(ioredis@5.10.1)(jiti@2.6.1)(lightningcss@1.32.0)(rollup@4.60.0)(terser@5.46.1)(tsx@4.23.12)(typescript@6.0.3)(yaml@2.9.0)
+        version: 5.18.1(@azure/identity@4.13.1)(@azure/storage-blob@12.31.0)(@types/node@25.6.0)(@upstash/redis@1.37.0)(aws4fetch@1.0.20)(idb-keyval@6.2.2)(ioredis@5.10.1)(jiti@1.21.7)(lightningcss@1.32.0)(rollup@4.60.0)(terser@5.46.1)(tsx@4.23.12)(typescript@6.0.3)(yaml@2.9.0)
     devDependencies:
       '@astrojs/tailwind':
         specifier: ^6.0.2
-        version: 6.0.2(astro@5.18.1(@azure/identity@4.13.1)(@azure/storage-blob@12.31.0)(@types/node@25.6.0)(@upstash/redis@1.37.0)(aws4fetch@1.0.20)(idb-keyval@6.2.2)(ioredis@5.10.1)(jiti@2.6.1)(lightningcss@1.32.0)(rollup@4.60.0)(terser@5.46.1)(tsx@4.23.12)(typescript@6.0.3)(yaml@2.9.0))(tailwindcss@3.4.19(tsx@4.23.12)(yaml@2.9.0))(ts-node@10.9.2(@types/node@25.6.0)(typescript@6.0.3))
+        version: 6.0.2(astro@5.18.1(@azure/identity@4.13.1)(@azure/storage-blob@12.31.0)(@types/node@25.6.0)(@upstash/redis@1.37.0)(aws4fetch@1.0.20)(idb-keyval@6.2.2)(ioredis@5.10.1)(jiti@1.21.7)(lightningcss@1.32.0)(rollup@4.60.0)(terser@5.46.1)(tsx@4.23.12)(typescript@6.0.3)(yaml@2.9.0))(tailwindcss@3.4.19(tsx@4.23.12)(yaml@2.9.0))(ts-node@10.9.2(@types/node@25.6.0)(typescript@6.0.3))
       '@types/node':
         specifier: ^25.6.0
         version: 25.6.0
@@ -22109,30 +22128,6 @@ snapshots:
 
   '@assemblyscript/loader@0.9.4': {}
 
-  '@astrojs/cloudflare@12.6.13(@types/node@25.6.0)(astro@5.18.1(@azure/identity@4.13.1)(@azure/storage-blob@12.31.0)(@types/node@25.6.0)(@upstash/redis@1.37.0)(aws4fetch@1.0.20)(idb-keyval@6.2.2)(ioredis@5.10.1)(jiti@1.21.7)(lightningcss@1.32.0)(rollup@4.60.0)(terser@5.46.1)(tsx@4.23.12)(typescript@6.0.3)(yaml@2.9.0))(bufferutil@4.1.0)(jiti@1.21.7)(lightningcss@1.32.0)(terser@5.46.1)(tsx@4.23.12)(utf-8-validate@5.0.10)(yaml@2.9.0)':
-    dependencies:
-      '@astrojs/internal-helpers': 0.7.6
-      '@astrojs/underscore-redirects': 1.0.0
-      '@cloudflare/workers-types': 4.20260702.1
-      astro: 5.18.1(@azure/identity@4.13.1)(@azure/storage-blob@12.31.0)(@types/node@25.6.0)(@upstash/redis@1.37.0)(aws4fetch@1.0.20)(idb-keyval@6.2.2)(ioredis@5.10.1)(jiti@1.21.7)(lightningcss@1.32.0)(rollup@4.60.0)(terser@5.46.1)(tsx@4.23.12)(typescript@6.0.3)(yaml@2.9.0)
-      tinyglobby: 0.2.15
-      vite: 6.4.2(@types/node@25.6.0)(jiti@1.21.7)(lightningcss@1.32.0)(terser@5.46.1)(tsx@4.23.12)(yaml@2.9.0)
-      wrangler: 4.59.2(@cloudflare/workers-types@4.20260702.1)(bufferutil@4.1.0)(utf-8-validate@5.0.10)
-    transitivePeerDependencies:
-      - '@types/node'
-      - bufferutil
-      - jiti
-      - less
-      - lightningcss
-      - sass
-      - sass-embedded
-      - stylus
-      - sugarss
-      - terser
-      - tsx
-      - utf-8-validate
-      - yaml
-
   '@astrojs/cloudflare@12.6.13(@types/node@25.6.0)(astro@5.18.1(@azure/identity@4.13.1)(@azure/storage-blob@12.31.0)(@types/node@25.6.0)(@upstash/redis@1.37.0)(aws4fetch@1.0.20)(idb-keyval@6.2.2)(ioredis@5.10.1)(jiti@2.6.1)(lightningcss@1.32.0)(rollup@4.60.0)(terser@5.46.1)(tsx@4.23.12)(typescript@6.0.3)(yaml@2.9.0))(bufferutil@4.1.0)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1)(tsx@4.23.12)(utf-8-validate@5.0.10)(yaml@2.9.0)':
     dependencies:
       '@astrojs/internal-helpers': 0.7.6
@@ -22244,17 +22239,17 @@ snapshots:
       - tsx
       - yaml
 
-  '@astrojs/react@5.0.7(@types/node@25.6.0)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(jiti@1.21.7)(lightningcss@1.32.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(terser@5.46.1)(tsx@4.23.12)(yaml@2.9.0)':
+  '@astrojs/react@5.0.7(@types/node@25.6.0)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(jiti@2.6.1)(lightningcss@1.32.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(terser@5.46.1)(tsx@4.23.12)(yaml@2.9.0)':
     dependencies:
       '@astrojs/internal-helpers': 0.10.0
       '@types/react': 19.2.14
       '@types/react-dom': 19.2.3(@types/react@19.2.14)
-      '@vitejs/plugin-react': 5.2.0(vite@7.3.6(@types/node@25.6.0)(jiti@1.21.7)(lightningcss@1.32.0)(terser@5.46.1)(tsx@4.23.12)(yaml@2.9.0))
+      '@vitejs/plugin-react': 5.2.0(vite@7.3.6(@types/node@25.6.0)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1)(tsx@4.23.12)(yaml@2.9.0))
       devalue: 5.8.1
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
       ultrahtml: 1.6.0
-      vite: 7.3.6(@types/node@25.6.0)(jiti@1.21.7)(lightningcss@1.32.0)(terser@5.46.1)(tsx@4.23.12)(yaml@2.9.0)
+      vite: 7.3.6(@types/node@25.6.0)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1)(tsx@4.23.12)(yaml@2.9.0)
     transitivePeerDependencies:
       - '@types/node'
       - jiti
@@ -31567,7 +31562,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@vitejs/plugin-react@5.2.0(vite@7.3.6(@types/node@25.6.0)(jiti@1.21.7)(lightningcss@1.32.0)(terser@5.46.1)(tsx@4.23.12)(yaml@2.9.0))':
+  '@vitejs/plugin-react@5.2.0(vite@7.3.6(@types/node@25.6.0)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1)(tsx@4.23.12)(yaml@2.9.0))':
     dependencies:
       '@babel/core': 7.29.0
       '@babel/plugin-transform-react-jsx-self': 7.27.1(@babel/core@7.29.0)
@@ -31575,7 +31570,7 @@ snapshots:
       '@rolldown/pluginutils': 1.0.0-rc.3
       '@types/babel__core': 7.20.5
       react-refresh: 0.18.0
-      vite: 7.3.6(@types/node@25.6.0)(jiti@1.21.7)(lightningcss@1.32.0)(terser@5.46.1)(tsx@4.23.12)(yaml@2.9.0)
+      vite: 7.3.6(@types/node@25.6.0)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1)(tsx@4.23.12)(yaml@2.9.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -31703,7 +31698,7 @@ snapshots:
       obug: 2.1.1
       std-env: 4.0.0
       tinyrainbow: 3.1.0
-      vitest: 4.1.8(@opentelemetry/api@1.9.1)(@types/node@25.6.0)(@vitest/coverage-v8@4.1.8)(jsdom@25.0.1(bufferutil@4.1.0)(utf-8-validate@5.0.10))(vite@6.4.2(@types/node@25.6.0)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1)(tsx@4.23.12)(yaml@2.9.0))
+      vitest: 4.1.8(@opentelemetry/api@1.9.1)(@types/node@25.6.0)(@vitest/coverage-v8@4.1.8)(jsdom@29.1.1(@noble/hashes@2.2.0))(vite@8.0.8(@types/node@25.6.0)(esbuild@0.28.1)(jiti@2.6.1)(terser@5.46.1)(tsx@4.23.12)(yaml@2.9.0))
 
   '@vitest/expect@1.6.1':
     dependencies:
@@ -34113,7 +34108,7 @@ snapshots:
       '@astrojs/telemetry': 3.3.0
       '@capsizecss/unpack': 4.0.0
       '@oslojs/encoding': 1.1.0
-      '@rollup/pluginutils': 5.3.0(rollup@4.60.0)
+      '@rollup/pluginutils': 5.3.0(rollup@2.80.0)
       acorn: 8.17.0
       aria-query: 5.3.2
       axobject-query: 4.1.0
@@ -47069,7 +47064,7 @@ snapshots:
       tsx: 4.23.12
       yaml: 2.9.0
 
-  vite@7.3.6(@types/node@25.6.0)(jiti@1.21.7)(lightningcss@1.32.0)(terser@5.46.1)(tsx@4.23.12)(yaml@2.9.0):
+  vite@7.3.6(@types/node@25.6.0)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1)(tsx@4.23.12)(yaml@2.9.0):
     dependencies:
       esbuild: 0.28.1
       fdir: 6.5.0(picomatch@4.0.4)
@@ -47080,7 +47075,7 @@ snapshots:
     optionalDependencies:
       '@types/node': 25.6.0
       fsevents: 2.3.3
-      jiti: 1.21.7
+      jiti: 2.6.1
       lightningcss: 1.32.0
       terser: 5.46.1
       tsx: 4.23.12

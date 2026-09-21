@@ -1,0 +1,10 @@
+{
+  "name": "music-maker-mcp",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@modelcontextprotocol/server": "^2.0.0",
+    "@p31/music-maker-mcp": "workspace:*",
+    "zod": "^4.6.5"
+  }
+}
