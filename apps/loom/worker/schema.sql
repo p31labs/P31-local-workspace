@@ -9,7 +9,8 @@ CREATE TABLE IF NOT EXISTS events (
   seq INTEGER PRIMARY KEY,
   ts  TEXT NOT NULL,
   data TEXT NOT NULL,
-  prev_hash TEXT NOT NULL DEFAULT ''
+  prev_hash TEXT NOT NULL DEFAULT '',
+  scope TEXT NOT NULL DEFAULT 'shared'
 );
 
 CREATE INDEX IF NOT EXISTS events_ts ON events(ts);

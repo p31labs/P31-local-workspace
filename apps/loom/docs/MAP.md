@@ -41,10 +41,12 @@ graph LR
   DECISIONS --> |"008 tamper-evident"| CHAIN[the prev_hash chain]
   DECISIONS --> |"010 SBT anchor"| SBTANCHOR[the SBT anchor]
   DECISIONS --> |"011 code names"| CODENAME[pickle code names]
+  DECISIONS --> |"012 scope"| SCOPE[the privacy boundary]
   STANDARDS -.audit trails.-> CHAIN
   CHAIN -.cross-anchor.-> LOVE[the LOVE care ledger]
   SBTANCHOR -.witnesses.-> QPJ[the QPJ portal chain]
   CODENAME -.names.-> LOVE
+  SCOPE -.enforced at read.-> CHAIN
   AUDIT[AUDIT_STANDARDS] -.positions.-> CHAIN
   AUDIT -.positions.-> LOVE
   LOVE_INTEGRATION[LOVE_INTEGRATION] --> LOVE
@@ -85,6 +87,9 @@ wherever they appear bare.
 - **code names** — the stable pickle `prefix·suffix` derived from a
   DID/humanId; how the Loom names people without exposing DIDs. Canonical:
   `packages/canon/src/loom/codename.ts`, `DECISIONS.md` #011.
+- **the scope boundary** — `personal` / `shared` / `session` (reserved):
+  visibility enforced at the read path, never by asking a client to "ignore"
+  private records. Canonical: `DECISIONS.md` #012, `SECURITY.md`.
 
 ## Related Documents
 

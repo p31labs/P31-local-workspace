@@ -31,16 +31,28 @@
 
 export type Writer = 'human' | 'agent';
 
+/** The visibility scope of an event.
+ *  - `personal` — a specific human's private record. MUST carry a humanId
+ *    (the gate enforces it); readable only by that humanId at the read path.
+ *  - `shared` — the family's co-presence record. MUST NOT carry a humanId
+ *    (the gate enforces it); readable by every household member.
+ *  - `session` — reserved. The type allows it; no writer emits it yet. When a
+ *    concrete live-only signal needs it (presence is the candidate), it gets
+ *    a writer and the reasoning that justifies it. Two scopes is a real
+ *    decision; three is a bet, so it is not written yet.
+ */
+export type LoomScope = 'personal' | 'shared' | 'session';
+
 export type LoomEvent =
-  | { seq: number; ts: string; writer: 'human'; kind: 'focus'; node: string; humanId?: string }
+  | { seq: number; ts: string; writer: 'human'; kind: 'focus'; node: string; scope?: LoomScope; humanId?: string }
   | { seq: number; ts: string; writer: 'agent'; kind: 'traverse'; from: string; to: string; reason: string }
   | { seq: number; ts: string; writer: 'agent'; kind: 'propose'; id: string; node: string; body: unknown; author?: string; parentAgent?: string }
-  | { seq: number; ts: string; writer: 'human'; kind: 'revise'; proposal: string; body: unknown; humanId?: string }
-  | { seq: number; ts: string; writer: 'human'; kind: 'approve'; proposal: string; humanId?: string }
-  | { seq: number; ts: string; writer: 'human'; kind: 'reject'; proposal: string; reason: string; humanId?: string }
+  | { seq: number; ts: string; writer: 'human'; kind: 'revise'; proposal: string; body: unknown; scope?: LoomScope; humanId?: string }
+  | { seq: number; ts: string; writer: 'human'; kind: 'approve'; proposal: string; scope?: LoomScope; humanId?: string }
+  | { seq: number; ts: string; writer: 'human'; kind: 'reject'; proposal: string; reason: string; scope?: LoomScope; humanId?: string }
   | { seq: number; ts: string; writer: 'agent'; kind: 'review'; agent: string; proposalId: string; decision: 'approve' | 'amend' | 'reject'; reason?: string; revision: number; parentAgent?: string }
   | { seq: number; ts: string; writer: 'agent'; kind: 'presence'; node: string; attention: number }
-  | { seq: number; ts: string; writer: 'human'; kind: 'view.save'; label: string; from: number; to: number; humanId?: string };
+  | { seq: number; ts: string; writer: 'human'; kind: 'view.save'; label: string; from: number; to: number; scope?: LoomScope; humanId?: string };
 
 export type ProposalStatus = 'pending' | 'approved' | 'rejected';
 

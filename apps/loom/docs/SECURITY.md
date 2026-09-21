@@ -119,6 +119,26 @@ the AAF manifest as `verification.verify` / `verification.provenance`. The
 chain is the log's integrity layer; the documented gap is per-record
 signatures (ECDSA P-256), which would bind writer identity cryptographically.
 
+**Scope — privacy boundary.** Each event is `personal`, `shared`, or
+`session` (reserved, no writers). The gate enforces shape: a `personal` event
+must carry a humanId; a `shared` event must not (a family record carries the
+family, not an individual — identity is surfaced via code names). Visibility
+is enforced at the **read path always** — `GET /api/loom/events` and the SSE
+stream return shared events plus the caller's own personal events, filtered at
+the query, never by asking the client to "ignore" the private ones.
+`/provenance/:seq` redacts personal records the caller cannot read (`data:
+null, redacted: true`) while preserving the chain link.
+
+**Scope and the Access interim — a promise, not proof.** The write path binds
+a `personal` event's humanId to the authenticated principal **only when
+Cloudflare Access is configured**. While Access is OFF (the documented
+interim), identity may come from the `X-Human-Id` header — the same class of
+affordance as the `?id=` URL param. A personal event whose declared humanId
+does not match the header identity is still rejected, but the header itself is
+not cryptographically verified. This is a privacy *promise* in the interim,
+not enforcement; it becomes enforcement the moment `CLOUDFLARE_ACCESS_AUD` is
+set (see `ACCESS_RUNBOOK.md`).
+
 **Interim posture.** Cloudflare Access is the intended edge auth, but its
 application lives in the Zero Trust dashboard and cannot be provisioned from
 the repo. Until `CLOUDFLARE_ACCESS_AUD` is configured there, the Access gate

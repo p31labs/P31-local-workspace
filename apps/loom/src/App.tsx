@@ -43,10 +43,38 @@ const JitterbugScene = lazy(() =>
   import('./components/JitterbugScene').then((m) => ({ default: m.JitterbugScene })),
 );
 
-/** The canvas writes ONLY through /api/loom/event -> commit(). */
-async function postEvent(input: LoomEventInput, humanId: string | null): Promise<void> {
+/** Decide the scope of a human event from the canvas: a focus on a `color-*`
+ *  node is the child's private idea (personal); every other human action
+ *  (the orb, an approval, a rejection, a saved read) is family co-presence
+ *  (shared). Agent events are always shared. */
+function scopeFor(input: LoomEventInput): 'personal' | 'shared' {
+  if (input.writer === 'agent') return 'shared';
+  if (input.kind === 'focus' && typeof input.node === 'string' && input.node.startsWith('color-')) {
+    return 'personal';
+  }
+  return 'shared';
+}
+
+function commitThrough(humanId: string | null) {
+  return (event: LoomEventInput) => {
+    const scope = scopeFor(event);
+    // A personal scope is only valid with an identity. An anonymous session
+    // (no humanId yet) falls back to shared — a scope nobody can enforce is a
+    // leak, and the gate rejects it.
+    const effective = scope === 'personal' && humanId ? 'personal' : 'shared';
+    return void postEvent(event, event.writer === 'human' ? humanId : null, effective);
+  };
+}
+async function postEvent(
+  input: LoomEventInput,
+  humanId: string | null,
+  scope: 'personal' | 'shared' = 'shared',
+): Promise<void> {
   try {
-    const body = humanId ? { input: { ...input, humanId } } : { input };
+    const body =
+      humanId && scope === 'personal'
+        ? { input: { ...input, scope, humanId } }
+        : { input: { ...input, scope } };
     await fetch('/api/loom/event', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -412,9 +440,7 @@ export default function App() {
           <CompanionView
             events={events}
             onExit={() => setMode('launchpad')}
-            commit={(event) =>
-              void postEvent(event, event.writer === 'human' ? humanId : null)
-            }
+            commit={commitThrough(humanId)}
           />
         ) : mode === 'docs' ? (
           <DocsView />
@@ -422,17 +448,13 @@ export default function App() {
           <WorkshopChapter
             events={events}
             onProgress={() => setMode('instrument')}
-            commit={(event) =>
-              void postEvent(event, event.writer === 'human' ? humanId : null)
-            }
+            commit={commitThrough(humanId)}
           />
         ) : mode === 'creative' ? (
           <CreativeChapter
             events={events}
             onProgress={() => setMode('workshop')}
-            commit={(event) =>
-              void postEvent(event, event.writer === 'human' ? humanId : null)
-            }
+            commit={commitThrough(humanId)}
           />
         ) : mode === 'canvas' ? (
           // BuilderChapter holds through chapter 3 (a decision exists) so the

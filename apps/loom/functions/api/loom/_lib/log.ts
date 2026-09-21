@@ -1,4 +1,4 @@
-import { ReplayGate, type LoomEventInput } from '@p31/canon/loom/gate';
+import { ReplayGate, normalizeLegacyScope, type LoomEventInput } from '@p31/canon/loom/gate';
 import type { LoomEvent } from '@p31/canon/loom/events';
 import {
   hashRecord,
@@ -26,23 +26,42 @@ export interface D1Env {
 }
 
 /** The raw row shape — the ChainRecord the hash-chain module consumes. */
-export async function readRecords(env: D1Env): Promise<ChainRecord[]> {
+export interface LoomRecord extends ChainRecord {
+  scope: 'personal' | 'shared' | 'session';
+}
+
+export async function readRecords(env: D1Env): Promise<LoomRecord[]> {
   const { results } = await env.LOOM_D1.prepare(
-    'SELECT seq, ts, data, prev_hash FROM events ORDER BY seq ASC',
-  ).all<{ seq: number; ts: string; data: string; prev_hash: string }>();
+    'SELECT seq, ts, data, prev_hash, scope FROM events ORDER BY seq ASC',
+  ).all<{ seq: number; ts: string; data: string; prev_hash: string; scope: string }>();
   return (results ?? []).map((r) => ({
     seq: r.seq,
     ts: r.ts,
     data: r.data,
     prev_hash: r.prev_hash ?? GENESIS_PREV_HASH,
+    scope: (r.scope ?? 'shared') as LoomRecord['scope'],
   }));
 }
 
-export async function readEvents(env: D1Env): Promise<LoomEvent[]> {
-  const records = await readRecords(env);
-  return records.map((r) => {
+/**
+ * SCOPED read — the enforcement point. Returns shared events plus the caller's
+ * own personal events. A personal event authored by someone else is
+ * STRUCTURALLY invisible here: it is filtered at the D1 query, never in JS,
+ * never by asking the model to "ignore" it. When `callerId` is null (anonymous
+ * / Access OFF), only shared events are returned.
+ */
+export async function readEvents(env: D1Env, callerId?: string | null): Promise<LoomEvent[]> {
+  const { results } = await env.LOOM_D1.prepare(
+    `SELECT seq, ts, data, scope FROM events
+     WHERE scope = 'shared'
+        OR (scope = 'personal' AND json_extract(data, '$.humanId') = ?)
+     ORDER BY seq ASC`,
+  )
+    .bind(callerId ?? '')
+    .all<{ seq: number; ts: string; data: string; scope: string }>();
+  return (results ?? []).map((r) => {
     const event = JSON.parse(r.data) as LoomEvent;
-    return { ...event, seq: r.seq, ts: r.ts };
+    return { ...event, seq: r.seq, ts: r.ts, scope: (r.scope ?? 'shared') as LoomEvent['scope'] };
   });
 }
 
@@ -53,7 +72,7 @@ export async function appendEvent(env: D1Env, input: LoomEventInput): Promise<Lo
   const existing = await readRecords(env);
   for (const r of existing) {
     const e = JSON.parse(r.data) as LoomEventInput;
-    const rr = gate.append(e);
+    const rr = gate.append(normalizeLegacyScope(e));
     if (!rr.valid) throw new Error(`replay rejected existing event: ${rr.error}`);
   }
   const result = gate.append(input);
@@ -68,9 +87,10 @@ export async function appendEvent(env: D1Env, input: LoomEventInput): Promise<Lo
   // prev_hash was backfilled (or is the genesis sentinel) is left untouched;
   // the chain is recomputed only forward, at append time.
   const head = existing.length ? await hashRecord(existing[existing.length - 1]) : GENESIS_PREV_HASH;
+  const scope = 'scope' in event && event.scope ? event.scope : 'shared';
 
-  await env.LOOM_D1.prepare('INSERT INTO events (seq, ts, data, prev_hash) VALUES (?, ?, ?, ?)')
-    .bind(event.seq, event.ts, JSON.stringify(event), head)
+  await env.LOOM_D1.prepare('INSERT INTO events (seq, ts, data, prev_hash, scope) VALUES (?, ?, ?, ?, ?)')
+    .bind(event.seq, event.ts, JSON.stringify(event), head, scope)
     .run();
   return event;
 }

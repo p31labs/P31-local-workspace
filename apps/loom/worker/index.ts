@@ -45,19 +45,22 @@ function authorized(request: Request, env: Env): boolean {
 interface Subscriber {
   controller: ReadableStreamDefaultController<Uint8Array>;
   lastSeq: number;
+  /** The caller's identity for scoped fan-out. null = anonymous (shared only). */
+  humanId: string | null;
   heartbeat?: ReturnType<typeof setInterval>;
 }
 
 async function readEvents(env: Env): Promise<LoomEvent[]> {
   try {
-    const { results } = await env.LOOM_D1.prepare('SELECT seq, ts, data FROM events ORDER BY seq ASC').all<{
+    const { results } = await env.LOOM_D1.prepare('SELECT seq, ts, data, scope FROM events ORDER BY seq ASC').all<{
       seq: number;
       ts: string;
       data: string;
+      scope: string;
     }>();
     return (results ?? []).map((r) => {
       const event = JSON.parse(r.data) as LoomEvent;
-      return { ...event, seq: r.seq, ts: r.ts };
+      return { ...event, seq: r.seq, ts: r.ts, scope: (r.scope ?? 'shared') as LoomEvent['scope'] };
     });
   } catch (e) {
     console.error('[readEvents] D1 read failed', String(e));
@@ -95,11 +98,15 @@ export class LogBroadcaster extends DurableObject<Env> {
     const header = request.headers.get('Last-Event-ID') ?? '';
     const query = url.searchParams.get('lastEventId') ?? '';
     const resume = Number(header || query || -1);
+    // Caller identity for scoped fan-out: the Pages stream proxy forwards the
+    // authenticated identity (or the interim X-Human-Id) as ?humanId=. A
+    // personal event is streamed only to the subscriber it belongs to.
+    const humanId = url.searchParams.get('humanId')?.trim() || null;
 
     const id = crypto.randomUUID();
     const stream = new ReadableStream<Uint8Array>({
       start: (controller) => {
-        this.subscribers.set(id, { controller, lastSeq: resume });
+        this.subscribers.set(id, { controller, lastSeq: resume, humanId });
         void this.emit().catch((e) => console.error('[stream] emit failed', String(e)));
         const heartbeat = setInterval(() => {
           try {
@@ -127,12 +134,19 @@ export class LogBroadcaster extends DurableObject<Env> {
     });
   }
 
-  /** Re-read D1 and push any new events to every subscriber. */
+  /** Re-read D1 and push any new events to every subscriber, scoped. A shared
+   *  event goes to every subscriber; a personal event goes only to the
+   *  subscriber whose humanId matches the event's owner. */
   private async emit(): Promise<void> {
     const events = await readEvents(this.env);
     for (const [id, sub] of this.subscribers) {
       for (const e of events) {
         if (e.seq > sub.lastSeq) {
+          // Scope filter: personal events stream only to their owner.
+          if (e.scope === 'personal') {
+            const owner = (e as LoomEvent & { humanId?: string }).humanId ?? '';
+            if (!sub.humanId || owner !== sub.humanId) continue;
+          }
           sub.lastSeq = e.seq;
           try {
             sub.controller.enqueue(encoder.encode(`id: ${e.seq}\ndata: ${JSON.stringify(e)}\n\n`));

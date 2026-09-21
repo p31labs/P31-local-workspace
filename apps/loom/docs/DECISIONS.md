@@ -244,6 +244,34 @@ same name, in the Loom and in QPJ.
 privacy-safe proof-shape gate now includes it (and asserts it never leaks the
 DID). A future MCP surface names tools by codename, not DID.
 
+## 012 — Scope is the privacy boundary; enforcement lives at the read path
+
+**Decision.** Every event is `personal`, `shared`, or `session` (reserved —
+allowed by the type, no writers yet; two scopes is a real decision, three is a
+bet). The gate enforces *shape* (personal must carry a humanId; shared must
+not — a family record carries the family, not an individual). Visibility is
+enforced at the **read path always** — `/events` and the SSE stream filter at
+the query, never by asking a model to "ignore" the private ones. Provenance
+redacts personal records the caller cannot read while preserving the chain
+link. The write path binds a personal event's humanId to the authenticated
+principal **when Access is on**; in the interim it trusts `X-Human-Id` (a
+promise, documented in SECURITY.md).
+
+**Why.** The family-memory research is unambiguous: *"If the system fetches
+everybody's memories and asks the model to ignore the private ones, isolation
+has already failed."* Scope must live where the data is read, not in a prompt
+or a client-side filter. The child's color picks are personal; the orb, an
+approval, and the family artifact are shared — the artifact derives from the
+agent's `propose` (shared), not the private focus, so the companion view still
+works. Agent events are shared by co-presence, not by writer-per-kind (that
+rule is about who writes; scope is about who reads).
+
+**Consequences.** Legacy rows (pre-scope, shared with a humanId) replay through
+`normalizeLegacyScope`, which strips the humanId in memory — the stored `data`
+is part of the hash chain and never mutated. `session` is reserved: when a
+live-only signal (presence is the candidate) needs it, it gets a writer and the
+reasoning that justifies it.
+
 ## Related Documents
 
 - `../README.md` — what the Loom is; every decision here shapes this app

@@ -20,10 +20,31 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     return Response.json({ valid: false, error: 'invalid JSON' }, { status: 400 });
   }
 
-  // Bind the authenticated principal as the writer identity when the caller
-  // has not supplied one (humanId is client-asserted and advisory).
+  // Writer identity. When Access is ON, the JWT `sub` is authoritative and is
+  // BOUND onto any personal event (the client-asserted humanId is ignored —
+  // never trust a user ID sent in a form field or URL). When Access is OFF,
+  // the interim posture: identity may come from the X-Human-Id header, and a
+  // personal event's declared humanId must match it (a promise, not proof —
+  // SECURITY.md documents this). A personal event without a matching identity
+  // is rejected even in the interim.
   const access = (context.data as { access?: { payload: Record<string, unknown> } }).access;
-  const subject = access?.payload?.sub;
+  const sub = access?.payload?.sub as string | undefined;
+  const header = context.request.headers.get('X-Human-Id')?.trim() || undefined;
+  const principal = sub ?? header;
+
+  const scope = 'scope' in input && input.scope ? input.scope : 'shared';
+  if (scope === 'personal') {
+    if (sub) {
+      // Access is authoritative — rebind the humanId to the authenticated sub.
+      input = { ...input, humanId: sub };
+    } else if (!principal || input.humanId !== principal) {
+      // Interim: no Access. The declared humanId must match the header identity.
+      return Response.json(
+        { valid: false, error: `personal event's humanId must match the caller identity (X-Human-Id)` },
+        { status: 401 },
+      );
+    }
+  }
 
   try {
     const event = await appendEvent(context.env, input);
@@ -38,7 +59,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       const headers = { [INTERNAL_HEADER]: context.env.LOOM_INTERNAL_SECRET };
       await fetch(`${context.env.LOOM_SSE_URL}/broadcast`, { method: 'POST', headers }).catch(() => {});
     }
-    return Response.json({ valid: true, event, subject });
+    return Response.json({ valid: true, event, subject: sub ?? null });
   } catch (e) {
     return Response.json({ valid: false, error: String(e) }, { status: 400 });
   }

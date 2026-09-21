@@ -22,17 +22,34 @@ import { initialState, reduce as defaultReduce } from './events.ts';
 
 export type Reducer = (state: LoomState, event: LoomEvent) => LoomState;
 
+/**
+ * Normalize a legacy event for replay through the (now scope-strict) gate.
+ * Old rows predate the scope field: they are `shared` by default but may carry
+ * a humanId. The gate rejects shared-with-humanId (a family record carries the
+ * family, not an individual) — so on replay we strip the humanId from events
+ * that have no explicit scope. Events that explicitly declare `personal` keep
+ * their humanId. The stored `data` (part of the hash chain) is never mutated;
+ * only the in-memory replay is normalized.
+ */
+export function normalizeLegacyScope(input: LoomEventInput | LoomEvent): LoomEventInput {
+  const e = input as Record<string, unknown>;
+  if (e.scope === 'personal') return input as LoomEventInput;
+  // No scope (or an explicit non-personal scope): drop the humanId.
+  const { humanId: _humanId, ...rest } = input as LoomEventInput & { humanId?: string };
+  return rest as LoomEventInput;
+}
+
 /** An event before the gate stamps it with seq + ts. */
 export type LoomEventInput =
-  | { writer: 'human'; kind: 'focus'; node: string; humanId?: string }
+  | { writer: 'human'; kind: 'focus'; node: string; scope?: 'personal' | 'shared' | 'session'; humanId?: string }
   | { writer: 'agent'; kind: 'traverse'; from: string; to: string; reason: string }
   | { writer: 'agent'; kind: 'propose'; id: string; node: string; body: unknown; author?: string; parentAgent?: string }
-  | { writer: 'human'; kind: 'revise'; proposal: string; body: unknown; humanId?: string }
-  | { writer: 'human'; kind: 'approve'; proposal: string; humanId?: string }
-  | { writer: 'human'; kind: 'reject'; proposal: string; reason: string; humanId?: string }
+  | { writer: 'human'; kind: 'revise'; proposal: string; body: unknown; scope?: 'personal' | 'shared' | 'session'; humanId?: string }
+  | { writer: 'human'; kind: 'approve'; proposal: string; scope?: 'personal' | 'shared' | 'session'; humanId?: string }
+  | { writer: 'human'; kind: 'reject'; proposal: string; reason: string; scope?: 'personal' | 'shared' | 'session'; humanId?: string }
   | { writer: 'agent'; kind: 'review'; agent: string; proposalId: string; decision: 'approve' | 'amend' | 'reject'; reason?: string; revision: number; parentAgent?: string }
   | { writer: 'agent'; kind: 'presence'; node: string; attention: number }
-  | { writer: 'human'; kind: 'view.save'; label: string; from: number; to: number; humanId?: string };
+  | { writer: 'human'; kind: 'view.save'; label: string; from: number; to: number; scope?: 'personal' | 'shared' | 'session'; humanId?: string };
 
 const HUMAN_KINDS = new Set(['focus', 'revise', 'approve', 'reject', 'view.save']);
 const AGENT_KINDS = new Set(['traverse', 'propose', 'review', 'presence']);
@@ -73,6 +90,26 @@ export class ReplayGate {
     }
     if (input.writer !== expected) {
       return { valid: false, error: `kind '${input.kind}' requires writer='${expected}', got '${input.writer}'` };
+    }
+    // Scope shape check — structural, never authorization. A `personal` event
+    // must name its owner (a scope nobody can enforce is a leak); a `shared`
+    // event must NOT carry a humanId (a family record carries the family, not
+    // an individual — identity is surfaced via code names, never raw ids).
+    // Agent events are always `shared`: the agent is co-present by definition,
+    // and the writer-per-kind rule already isolates it from human personal
+    // state. `session` is reserved — allowed by the type, no writers yet.
+    // The scope DEFAULTS to 'shared' when absent — so a new event that carries
+    // a humanId without declaring 'personal' is rejected (the App must opt
+    // into personal explicitly). Legacy rows are tolerated by the adapters
+    // (they strip humanId from shared events on replay / at the read path).
+    const scope = 'scope' in input && input.scope ? input.scope : 'shared';
+    if (scope === 'personal') {
+      const maybe = input as LoomEventInput & { humanId?: string };
+      if (!maybe.humanId || maybe.humanId.trim().length === 0) {
+        return { valid: false, error: `kind '${input.kind}' is 'personal' but carries no humanId` };
+      }
+    } else if (scope === 'shared' && (input as LoomEventInput & { humanId?: string }).humanId) {
+      return { valid: false, error: `kind '${input.kind}' is 'shared' but carries a humanId` };
     }
     if (input.kind === 'propose' && this.proposalIds.has(input.id)) {
       return { valid: false, error: `duplicate proposal id: ${input.id}` };
@@ -185,7 +222,7 @@ export class ReplayGate {
         return { valid: false, error: `corrupt line: ${line.slice(0, 48)}` };
       }
       const { seq, ts, ...rest } = parsed as LoomEvent & { seq: number; ts: string };
-      const r = this.append(rest as LoomEventInput);
+      const r = this.append(normalizeLegacyScope(rest as LoomEventInput));
       if (!r.valid) return r;
       const last = this.log[this.log.length - 1];
       last.seq = seq;

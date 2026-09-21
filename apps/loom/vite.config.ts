@@ -143,8 +143,17 @@ function loomMiddleware(): Plugin {
         }
 
         if (req.method === 'GET' && path === '/events') {
+          // Scoped read (dev mirror of the D1 Function): shared events + the
+          // caller's own personal events. Identity from the X-Human-Id header
+          // (the interim affordance); without it, shared only.
+          const caller = req.headers['x-human-id'] ? String(req.headers['x-human-id']).trim() : undefined;
+          const all = readEvents(logPath);
+          const visible = all.filter((e) => {
+            if ((e as LoomEvent & { scope?: string }).scope !== 'personal') return true;
+            return caller && (e as LoomEvent & { humanId?: string }).humanId === caller;
+          });
           res.setHeader('Content-Type', 'application/json');
-          res.end(JSON.stringify(readEvents(logPath)));
+          res.end(JSON.stringify(visible));
           return;
         }
 
@@ -189,12 +198,28 @@ function loomMiddleware(): Plugin {
           }
           const verdict = await verifyChain(chain);
           const sliceVerdict = await verifyChain(upto);
+          // Redaction (dev mirror of the Function): a personal record the
+          // caller cannot read returns prev_hash/seq/ts with data:null +
+          // redacted:true; the chain stays verifiable.
+          const caller = req.headers['x-human-id'] ? String(req.headers['x-human-id']).trim() : undefined;
+          const redacted = upto.map((r) => {
+            const event = JSON.parse(r.data) as LoomEvent & { humanId?: string };
+            const isPersonal = event.scope === 'personal';
+            const mayRead = !isPersonal || (caller && event.humanId === caller);
+            return {
+              seq: r.seq,
+              ts: r.ts,
+              prev_hash: r.prev_hash,
+              scope: r.scope,
+              ...(mayRead ? { data: event } : { data: null, redacted: true }),
+            };
+          });
           res.setHeader('Content-Type', 'application/json');
           res.setHeader('Cache-Control', 'no-store');
           res.end(
             JSON.stringify({
               target,
-              chain: upto,
+              chain: redacted,
               verified: verdict.valid,
               brokenAt: verdict.brokenAt,
               head: sliceVerdict.head,
