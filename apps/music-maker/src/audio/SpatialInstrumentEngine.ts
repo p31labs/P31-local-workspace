@@ -69,12 +69,6 @@ export interface SpatialInstrumentOptions {
 const DEFAULT_CEILING = 0.6;
 const DEFAULT_MAX_ZONES = 16;
 const DEFAULT_HRTF_BUDGET_MS = 60;
-/** The HRTF probe batch. Larger than the old 4 so the measurement isn't lost
- *  in performance.now() timer resolution (often 1ms). ~24ms across a batch is
- *  a number that actually registers on the timer. */
-const HRTF_PROBE_BATCH = 24;
-/** HRTF probe samples — the median of 3, not a single noisy reading. */
-const HRTF_PROBE_SAMPLES = 3;
 
 /** The family-scale node budget (§5.2). Exported so the UI (App) refuses at
  *  the same count the engine enforces — one source of truth, no drift. */
@@ -267,52 +261,70 @@ export class SpatialInstrumentEngine {
     return this.ctx;
   }
 
-  /** Choose the panning model BEFORE the real graph is built. The HRTF probe
-   *  measures a throwaway batch of panners so the decision is made with real
-   *  evidence, then the throwaways are discarded — the real panners are created
-   *  once, with the chosen model. A low-end phone that cold-starts HRTF over
-   *  budget steps down to equalpower silently (interaction identical, fidelity
-   *  lower). See §3.5.
+  /** Choose the panning model BEFORE the real graph is built. Device signals
+   *  are the PRIMARY decision — a multi-panner probe was itself a jank hazard
+   *  (research: setting HRTF can freeze ~800ms while the HRTF DB loads; a
+   *  24×3=72-panner probe on a low-end device causes the very jank it measures).
    *
-   *  Reliability: performance.now() is deliberately coarse (≥100µs, often 1ms),
-   *  so a 4-panner batch can read 0ms and falsely report "HRTF is fast". The
-   *  probe uses a larger batch across 3 samples and takes the MEDIAN. A coarse
-   *  device gate (outputLatency, hardwareConcurrency) is checked first — a
-   *  clearly low-end device skips the probe entirely. Thresholds are
-   *  provisional and device-calibrated, like the budget. */
+   *  Order of decisions:
+   *   1. Opt-in or forced equalpower → equalpower.
+   *   2. Mobile Safari → equalpower (research: "Mobile Safari has limited
+   *      support for HRTF and ConvolverNode; fall back to StereoPannerNode +
+   *      simple gain control"). Safari is also the browser that lacks Web MIDI.
+   *   3. Low-end device signal (hardwareConcurrency ≤ 4 or outputLatency >
+   *      50ms) → equalpower, no probe.
+   *   4. sessionStorage cache → reuse a previous decision (no re-probe per
+   *      enable() within a session, no per-tab probe).
+   *   5. Only if still ambiguous: ONE throwaway HRTF panner, measured once.
+   *      The result is cached for the session. Thresholds are provisional and
+   *      device-calibrated. */
   private choosePanningModel(): PanningModelType {
     if (this.opts.panningModel !== 'HRTF') return this.opts.panningModel;
     if (!this.ctx || !this.master) return this.opts.panningModel;
 
-    // Coarse device gate — skip the probe on clearly low-end hardware.
+    // 1. Mobile Safari → equalpower. /^((?!chrome|android).)*safari/i misses
+    //    Chrome-on-iOS, so also check the vendor. One family-browser gate
+    //    covers both HRTF limits and Web MIDI absence.
+    const ua = typeof navigator !== 'undefined' ? navigator.userAgent : '';
+    const isSafari =
+      /^((?!chrome|android).)*safari/i.test(ua) ||
+      (/iPad|iPhone|iPod/.test(ua) && !/CriOS/.test(ua));
+    if (isSafari) return 'equalpower';
+
+    // 2. Low-end device signal.
     const hw = (navigator.hardwareConcurrency ?? 8);
     const latency = this.ctx.outputLatency ?? 0;
     if (hw <= 4 || latency > 0.05) return 'equalpower';
 
-    // Tiebreaker: median of N batch samples.
-    const samples: number[] = [];
-    for (let s = 0; s < HRTF_PROBE_SAMPLES; s++) {
-      const probes: PannerNode[] = [];
-      const t0 = performance.now();
-      for (let i = 0; i < HRTF_PROBE_BATCH; i++) {
-        const p = this.ctx.createPanner();
-        p.panningModel = 'HRTF';
-        p.distanceModel = 'inverse';
-        p.refDistance = this.opts.radius * 0.5;
-        p.maxDistance = this.opts.radius * 3;
-        p.connect(this.master);
-        probes.push(p);
-      }
-      samples.push(performance.now() - t0);
-      for (const p of probes) p.disconnect();
+    // 3. sessionStorage cache — the decision is stable within a session and
+    //    the HRTF DB load is a one-time cost per context, not per probe.
+    try {
+      const cached = sessionStorage.getItem('music-maker:panning-model');
+      if (cached === 'HRTF' || cached === 'equalpower') return cached;
+    } catch {
+      // sessionStorage unavailable — fall through to the probe.
     }
-    samples.sort((a, b) => a - b);
-    const median = samples[1];
+
+    // 4. Single throwaway panner, measured once. Creating one HRTF panner is
+    //    the operation that loads the HRTF DB (the ~800ms freeze on first
+    //    set); several are no more informative, just more jank.
+    const t0 = performance.now();
+    const probe = this.ctx.createPanner();
+    probe.panningModel = 'HRTF';
+    probe.distanceModel = 'inverse';
+    probe.refDistance = this.opts.radius * 0.5;
+    probe.maxDistance = this.opts.radius * 3;
+    probe.connect(this.master);
+    const elapsed = performance.now() - t0;
+    probe.disconnect();
 
     // Reference, not a spec: the IEEE 2025 WebXR study measures ~35ms HRTF
-    // cold-start on a mid-range Android. Budget is a provisional constant to
-    // calibrate on the family's real devices.
-    return median > this.opts.hrtfProbeBudgetMs ? 'equalpower' : 'HRTF';
+    // cold-start on a mid-range Android. Provisional, device-calibrated.
+    const model = elapsed > this.opts.hrtfProbeBudgetMs ? 'equalpower' : 'HRTF';
+    try {
+      sessionStorage.setItem('music-maker:panning-model', model);
+    } catch { /* non-fatal */ }
+    return model;
   }
 
   private buildPendingZones(): void {

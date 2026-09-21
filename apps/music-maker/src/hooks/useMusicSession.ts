@@ -42,8 +42,17 @@ export interface RemoteTrigger {
 /** A pending committed-write, resolved when the DO's commit-ack echoes back.
  *  Keyed by requestId so a WS round-trip resolves the right promise. */
 interface PendingCommit {
-  resolve: (valid: boolean) => void;
+  resolve: (result: CommitResult) => void;
 }
+
+/** The outcome of a committed write. Discriminated so a caller can tell a real
+ *  gate rejection from a dropped transport or a silent timeout — "the
+ *  instrument is full" and "your connection dropped" are different messages.
+ *  reason: 'gate' = the canon rejected it; 'timeout' = no ack within the
+ *  window; 'network' = the transport errored before a result arrived. */
+export type CommitResult =
+  | { ok: true }
+  | { ok: false; reason: 'gate' | 'timeout' | 'network' };
 
 export interface MusicSession {
   zones: MusicZone[];
@@ -52,12 +61,12 @@ export interface MusicSession {
   /** Recently seen remote trigger ids (newest first, capped at 8 for display).
    *  Each carries a monotonic `seq` for reliable delta tracking. */
   remoteTriggers: RemoteTrigger[];
-  /** Commit a placement — returns true when the gate accepted it. */
-  placeZone: (position: [number, number, number], timbre: Timbre, name?: string) => Promise<boolean>;
+  /** Commit a placement — the gate's verdict, or why it didn't land. */
+  placeZone: (position: [number, number, number], timbre: Timbre, name?: string) => Promise<CommitResult>;
   /** Commit a clear. */
-  clearZone: (id: string) => Promise<boolean>;
+  clearZone: (id: string) => Promise<CommitResult>;
   /** Commit a rename. */
-  nameZone: (id: string, name: string) => Promise<boolean>;
+  nameZone: (id: string, name: string) => Promise<CommitResult>;
   /** Ephemeral — never persisted. Triggers the zone's sound + glow locally
    *  and broadcasts the trigger to other devices. */
   triggerZone: (id: string) => void;
@@ -197,7 +206,7 @@ export function useMusicSession(): MusicSession {
         const pending = pendingCommitsRef.current.get(frame.requestId);
         if (pending) {
           pendingCommitsRef.current.delete(frame.requestId);
-          pending.resolve(frame.valid);
+          pending.resolve(frame.valid ? { ok: true } : { ok: false, reason: 'gate' });
         }
         return;
       }
@@ -236,12 +245,27 @@ export function useMusicSession(): MusicSession {
       });
     };
 
+    // ── Transport: WS-first, SSE fallback. The production transport is the
+    //    WebSocket (worker/ Durable Object); the dev middleware serves SSE.
+    //    We TRY WebSocket first regardless of protocol — a dev Vite server that
+    //    can't upgrade falls back to SSE on error. `?transport=sse` forces SSE
+    //    (e.g. a proxy that blocks WebSocket); once fallen back, stay on SSE
+    //    for the session (a mid-session transport flip is more disruptive than
+    //    the difference), but a dropped SSE re-tries WS first.
+    let transport: 'ws' | 'sse' = new URLSearchParams(location.search).get('transport') === 'sse'
+      ? 'sse'
+      : 'ws';
+
+    const schedule = (fn: () => void) => {
+      // Shared backoff counter across BOTH transports — resetting it on a
+      // fallback would let N clients reconnect in lockstep (thundering herd).
+      const delay = Math.min(1000 * 2 ** attempts, 30_000);
+      attempts += 1;
+      timer = setTimeout(fn, delay);
+    };
+
     const connectWebSocket = () => {
       if (!alive) return;
-      // Production: the Durable Object upgrades /stream to a WebSocket. Same
-      // endpoint path, same frames. Ephemeral triggers are sent over THIS
-      // socket (the DO's webSocketMessage broadcasts them); committed writes
-      // still POST /event.
       const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
       const wsUrl = `${proto}//${location.host}/api/music/stream${location.search}`;
       const socket = new WebSocket(wsUrl);
@@ -249,6 +273,7 @@ export function useMusicSession(): MusicSession {
       liveWsRef.current = socket;
       socket.onopen = () => {
         attempts = 0;
+        transport = 'ws';
         // B1: reconcile missed committed events on (re)connect. The DO's
         // committed-resume frame only hints at the tail seq; the client
         // re-fetches /events and replaces the zone list — the same code path
@@ -266,46 +291,40 @@ export function useMusicSession(): MusicSession {
         ws = null;
         if (liveWsRef.current === socket) liveWsRef.current = null;
         if (!alive) return;
-        const delay = Math.min(1000 * 2 ** attempts, 30_000);
-        attempts += 1;
-        timer = setTimeout(connectWebSocket, delay);
+        // WS failed → fall back to SSE (and stay there for the session).
+        if (transport === 'ws') {
+          transport = 'sse';
+          schedule(connectEventSource);
+        } else {
+          schedule(connectWebSocket);
+        }
       };
       socket.onerror = () => socket.close();
     };
 
     const connectEventSource = () => {
       if (!alive) return;
-      // Dev middleware: SSE with Last-Event-ID resume (mobile backoff).
       const url = lastEventId ? `/api/music/stream?lastEventId=${lastEventId}` : '/api/music/stream';
       const es = new EventSource(url);
       src = es;
-      es.onopen = () => { attempts = 0; };
+      es.onopen = () => {
+        attempts = 0;
+        // A dropped SSE re-tries WS first (the production transport).
+        transport = 'sse';
+      };
       es.onmessage = (msg) => handleFrame(String((msg as MessageEvent).data));
       es.onerror = () => {
         es.close();
         src = null;
         if (!alive) return;
-        const delay = Math.min(1000 * 2 ** attempts, 30_000);
-        attempts += 1;
-        timer = setTimeout(connectEventSource, delay);
+        schedule(transport === 'sse' ? connectWebSocket : connectEventSource);
       };
     };
 
-    // Prefer WebSocket (production transport); fall back to EventSource (dev)
-    // only when the upgrade fails — e.g. the dev middleware, which serves SSE.
-    // A ?transport=ws query param forces WebSocket so the production path can
-    // be exercised against `wrangler dev` locally.
-    const prefersWs = () => {
-      try {
-        const force = new URLSearchParams(location.search).get('transport');
-        if (force === 'ws') return true;
-        return typeof WebSocket === 'function' && location.protocol === 'https:';
-      } catch {
-        return false;
-      }
-    };
-    if (prefersWs()) connectWebSocket();
-    else connectEventSource();
+    // Always start WS-first (unless forced to SSE); the fallback handles the
+    // dev Vite middleware, which serves SSE instead of upgrading.
+    if (transport === 'sse') connectEventSource();
+    else connectWebSocket();
 
     return () => {
       alive = false;
@@ -320,22 +339,29 @@ export function useMusicSession(): MusicSession {
   // WebSocket when open (reliable fan-out under Hibernation, with a commit-ack
   // echo resolving the promise), else the HTTP POST /event endpoint (the SSE
   // dev transport). Both return whether the gate accepted it.
-  const commitOverTransport = useCallback(async (input: LoomEventInput): Promise<boolean> => {
+const commitOverTransport = useCallback(async (input: LoomEventInput): Promise<CommitResult> => {
     const socket = liveWsRef.current;
     if (socket && socket.readyState === WebSocket.OPEN) {
       const requestId = `c${++commitSeqRef.current}`;
-      return new Promise<boolean>((resolve) => {
+      return new Promise<CommitResult>((resolve) => {
         const timer = setTimeout(() => {
           pendingCommitsRef.current.delete(requestId);
-          resolve(false); // no ack within the timeout — treat as not accepted
+          // No ack within the window — the transport likely dropped it.
+          resolve({ ok: false, reason: 'timeout' });
         }, 10_000);
         pendingCommitsRef.current.set(requestId, {
-          resolve: (valid) => {
+          resolve: (result) => {
             clearTimeout(timer);
-            resolve(valid);
+            resolve(result);
           },
         });
-        socket.send(JSON.stringify({ requestId, input }));
+        try {
+          socket.send(JSON.stringify({ requestId, input }));
+        } catch {
+          pendingCommitsRef.current.delete(requestId);
+          clearTimeout(timer);
+          resolve({ ok: false, reason: 'network' });
+        }
       });
     }
     try {
@@ -345,13 +371,13 @@ export function useMusicSession(): MusicSession {
         body: JSON.stringify({ input }),
       });
       const r = (await res.json()) as { valid: boolean; error?: string };
-      return r.valid;
+      return r.valid ? { ok: true } : { ok: false, reason: 'gate' };
     } catch {
-      return false;
+      return { ok: false, reason: 'network' };
     }
   }, []);
 
-  const placeZone = useCallback(async (position: [number, number, number], timbre: Timbre, name?: string): Promise<boolean> => {
+  const placeZone = useCallback(async (position: [number, number, number], timbre: Timbre, name?: string): Promise<CommitResult> => {
     return commitOverTransport({
       writer: 'human',
       kind: 'instrument.zone.place',
@@ -362,11 +388,11 @@ export function useMusicSession(): MusicSession {
     });
   }, [commitOverTransport]);
 
-  const clearZone = useCallback(async (id: string): Promise<boolean> => {
+  const clearZone = useCallback(async (id: string): Promise<CommitResult> => {
     return commitOverTransport({ writer: 'human', kind: 'instrument.zone.clear', node: id });
   }, [commitOverTransport]);
 
-  const nameZone = useCallback(async (id: string, name: string): Promise<boolean> => {
+  const nameZone = useCallback(async (id: string, name: string): Promise<CommitResult> => {
     return commitOverTransport({ writer: 'human', kind: 'instrument.zone.name', node: id, name });
   }, [commitOverTransport]);
 

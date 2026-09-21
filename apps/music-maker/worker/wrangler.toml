@@ -30,20 +30,28 @@ bindings = [
 # The modern runtime declaration for a Hibernation WebSocket DO. Without the
 # `exports` entry, the runtime does not route the Hibernation handlers
 # (webSocketMessage / webSocketClose / getWebSockets) to this class — the
-# frames never fan out. `storage = "legacy-kv"` gives the DO its durable state
-# (needed to track hibernated sockets) WITHOUT DO-local SQLite — committed
-# events still go through D1. If the room ever moves to DO SQLite, that's a
-# separate decision taken before first deploy (changing storage later is not
-# possible on a deployed class).
+# frames never fan out.
+#
+# `storage = "sqlite"` is REQUIRED by Cloudflare policy (changelog 2026-07-09):
+# new Durable Object namespaces must use the SQLite storage backend; legacy-kv
+# is only accepted for accounts that already provisioned a KV namespace. A
+# fresh account has none — legacy-kv would fail first deploy. getWebSockets()
+# survives hibernation on ANY backend, so SQLite changes nothing about the
+# room's socket tracking. Committed events still go through D1 (MUSIC_D1 is a
+# separate binding); DO SQLite is only the namespace backend, not a log store.
 [exports.MusicRoom]
 type = "durable-object"
-storage = "legacy-kv"
+storage = "sqlite"
 
-# NO [[migrations]] entry: this DO writes through D1 (MUSIC_D1), not DO-local
-# SQLite storage. new_sqlite_classes would enable storage the DO never calls,
-# and per Cloudflare docs cannot be added to a class that has already deployed
-# without it. If the room ever moves to DO SQLite, that's a separate decision
-# taken before first deploy.
+# NO [[migrations]] entry: DO class lifecycle is handled by the [exports]
+# declaration above (the modern declarative form). The DO writes committed
+# events through D1 (MUSIC_D1), not DO-local SQLite; DO SQLite storage is the
+# required namespace backend, nothing more.
+
+# CONFIG REQUIRED — D1 setup is a USER action (needs your Cloudflare account):
+#   wrangler d1 create music-maker        → gives a database_id
+#   wrangler d1 execute music-maker --remote --file=schema.sql
+# then paste that database_id below. The committed composition log lives here.
 
 # A custom route/domain can be added later; workers.dev gives a reachable URL
 # for testing. The client connects to /stream?room=<family-id>.

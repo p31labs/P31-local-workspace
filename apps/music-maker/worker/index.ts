@@ -122,7 +122,13 @@ export class MusicRoom extends DurableObject<Env> {
       return new Response(null, { status: 101, webSocket: client });
     }
 
-    // ── Committed write — the D1 path, not Node commit(). ──────────────
+    // ── Committed write via HTTP — the SSE-DEV FALLBACK. The production path
+    //    is the WebSocket (the client sends commits over its socket; the DO's
+    //    webSocketMessage appends + broadcasts). This HTTP endpoint exists for
+    //    non-WebSocket clients and the SSE dev middleware's contract parity.
+    //    NOTE: its fan-out (broadcastCommitted) is UNVERIFIED under Hibernation
+    //    — the miniflare smoke test showed an HTTP-initiated broadcast not
+    //    enumerating hibernated sockets. The WS path is the proven one.
     if (url.pathname.endsWith('/event') && request.method === 'POST') {
       const body = (await request.json()) as { input?: LoomEventInput };
       try {
@@ -134,7 +140,8 @@ export class MusicRoom extends DurableObject<Env> {
       }
     }
 
-    // ── Ephemeral broadcast — ungated, never persisted. ────────────────
+    // ── Ephemeral broadcast via HTTP — the SSE-DEV FALLBACK. Same unverified
+    //    under Hibernation caveat as /event: the production path is the WS.
     if (url.pathname.endsWith('/ephemeral') && request.method === 'POST') {
       const msg = await request.json();
       this.broadcastEphemeral(msg);

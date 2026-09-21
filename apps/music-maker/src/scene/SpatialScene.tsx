@@ -23,7 +23,7 @@
  * glow. Per-frame DOM updates (the C1 agent buttons' positions) are written
  * directly to the elements via a ref map — no React state at 60fps.
  */
-import { useEffect, useRef } from 'react';
+import { memo, useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { resolveTokenRgb } from '../lib/tokens';
 import { MusicZone, type MusicZoneProps } from './MusicZone';
@@ -46,7 +46,7 @@ export interface SpatialSceneProps {
 const RADIUS = 2.2;
 const LISTENER_DRAG_SPEED = 0.012;
 
-export function SpatialScene({
+function SpatialSceneImpl({
   zones,
   triggers,
   listener,
@@ -367,5 +367,16 @@ export function SpatialScene({
     </div>
   );
 }
+
+/**
+ * Memoized scene. The scene is mostly imperative (refs + a RAF loop); its React
+ * render only maps zone spans and MusicZone children. Memoizing keeps an App
+ * state change that isn't scene input (e.g. a live-region announcement) from
+ * re-running that map. The refs are synced every render, so the RAF loop reads
+ * the latest zones/triggers regardless. Props are shallow-compared; the scene
+ * inputs (zones/triggers/listener/selectedId) are new references exactly when
+ * they change, and the callbacks are stable, so default comparison is right.
+ */
+export const SpatialScene = memo(SpatialSceneImpl);
 
 export type { MusicZoneProps };

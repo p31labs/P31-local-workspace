@@ -142,6 +142,27 @@
   pointer-events: none;
 }
 
+/* The keyboard zone list (P3): visually hidden, but IN the tab order. A
+   keyboard user focuses it and drives selection with the arrow keys; the
+   live region announces. Clipped like the agent spans so it never covers the
+   canvas. */
+.mm-zone-list {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+  list-style: none;
+}
+.mm-zone-list:focus-visible {
+  outline: none;
+}
+
 @media (prefers-reduced-transparency: reduce) {
   .mm-topbar,
   .mm-readout,

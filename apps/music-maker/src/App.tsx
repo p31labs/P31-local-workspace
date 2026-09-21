@@ -18,6 +18,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { SpatialInstrumentEngine, FAMILY_ZONE_BUDGET, type TimbreProfile } from './audio/SpatialInstrumentEngine';
 import { SpatialScene } from './scene/SpatialScene';
 import { SoundToggle } from './components/SoundToggle';
+import { ZoneListbox } from './components/ZoneListbox';
 import { useInstrumentSound } from './hooks/useInstrumentSound';
 import { useMusicSession, unseenRemoteTriggers } from './hooks/useMusicSession';
 import { phyllotaxisPosition, type Timbre } from './scene/musicZone';
@@ -164,12 +165,35 @@ export default function App() {
       return;
     }
     const pos = phyllotaxisPosition(session.zones.length, Math.max(16, session.zones.length + 1), RADIUS);
-    void session.placeZone(pos, 'hydrogen');
+    void session.placeZone(pos, 'hydrogen').then((r) => {
+      if (!r.ok) {
+        // A dropped transport must not read as "the gate refused" — they are
+        // different failures with different fixes.
+        announce(
+          r.reason === 'gate'
+            ? `the placement was not accepted.`
+            : r.reason === 'timeout'
+              ? `the connection stalled — the zone may not have landed.`
+              : `the connection dropped — the zone may not have landed.`,
+        );
+      }
+    });
   }, [session, announce]);
 
   const handleClear = useCallback(() => {
-    if (selectedId) void session.clearZone(selectedId);
-  }, [selectedId, session]);
+    if (!selectedId) return;
+    void session.clearZone(selectedId).then((r) => {
+      if (!r.ok) {
+        announce(
+          r.reason === 'gate'
+            ? `the clear was not accepted.`
+            : r.reason === 'timeout'
+              ? `the connection stalled — the zone may still be here.`
+              : `the connection dropped — the zone may still be here.`,
+        );
+      }
+    });
+  }, [selectedId, session, announce]);
 
   // ── Named accessibility gaps (tracked, not silently deferred) ─────────────
   // 1. Vertical encoding has no NON-AUDIO fallback. The height→pitch /
@@ -237,6 +261,11 @@ export default function App() {
           selectedId={selectedId}
           reducedMotion={reducedMotion}
         />
+        {/* The keyboard twin of the canvas tap — a screen-reader user (or anyone
+            without a pointer) reaches the zones via Tab, moves selection with
+            the arrow keys, and triggers with Enter/Space. Same onZoneTrigger as
+            the canvas raycast; selection + trigger announce via the live region. */}
+        <ZoneListbox zones={session.zones} onZoneTrigger={handleZoneTrigger} announce={announce} />
         <div className="mm-readout">
           <span className="mm-strong">{session.zones.length}</span> / {MAX_ZONES} zones · sound {sound.enabled ? 'on' : 'off'} ·
           drag to look · one-finger drag is <em>you</em>
