@@ -13,6 +13,7 @@ import { useLoomState } from './lib/useLoomState';
 import { useInstrument } from './lib/useInstrument';
 import { deriveOverlay } from './lib/overlay';
 import { useProfile } from './lib/useProfile';
+import { useLumiMemory } from './lib/useLumiMemory';
 import { useTheme } from './lib/useTheme';
 import { effectiveTier, resolveSurface, rejectReasonFor } from './lib/surface';
 import { floorMotion, PresentationContext, type Presentation } from './lib/usePresentation';
@@ -112,6 +113,7 @@ export default function App() {
   const { events, state, seq, scrub, follow } = useLoomState();
   const chapter = useProgression(events);
   const { humanId, profile, overrides, tier, presentation: prefs, care } = useProfile();
+  const lumiMemory = useLumiMemory();
   const { theme, current, cycleTheme } = useTheme();
   const overlay = useMemo(() => deriveOverlay(state, idIndex), [state, idIndex]);
   const [focus, setFocus] = useState<string | null>(null);
@@ -427,6 +429,7 @@ export default function App() {
             onStart={() => { setStarted(true); setMode('canvas'); }}
             onCompanion={() => setMode('companion')}
             onFamily={() => setMode('family')}
+            memory={lumiMemory}
           />
         ) : mode === 'instrument' ? (
           traceView && focus ? (

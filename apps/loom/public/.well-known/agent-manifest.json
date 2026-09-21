@@ -252,6 +252,14 @@
       "description": "Return from the family view to the launchpad. Commits a shared focus on 'family-back'."
     },
     {
+      "name": "family.memory",
+      "kind": "status",
+      "danger": "none",
+      "confirm": "never",
+      "schema": {},
+      "description": "Lumi's memory line on the launchpad — one derived sentence about what was made before ('You and Lumi have made N things together'). Folded from the log, never auto-advancing; the child still taps Start. Informational."
+    },
+    {
       "name": "family.care",
       "kind": "status",
       "danger": "none",

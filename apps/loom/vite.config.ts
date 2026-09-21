@@ -10,6 +10,7 @@ import { ReplayGate, type LoomEventInput } from '@p31/canon/loom/gate';
 import type { LoomEvent } from '@p31/canon/loom/events';
 import { hashRecord, verifyChain, GENESIS_PREV_HASH, type ChainRecord } from '@p31/canon/loom/hash-chain';
 import { loomHeadAnchor, sbtAnchor, LOVE_GENESIS_HASH, type SbtBlock } from '@p31/canon/loom/anchor';
+import { foldMemory } from '@p31/canon/loom/memory';
 import { fetchCareProof } from './functions/api/loom/_lib/love';
 import { dirname, join } from 'node:path';
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs';
@@ -154,6 +155,21 @@ function loomMiddleware(): Plugin {
           });
           res.setHeader('Content-Type', 'application/json');
           res.end(JSON.stringify(visible));
+          return;
+        }
+
+        // Lumi's memory — the deterministic fold over the scoped log (dev
+        // mirror of the /api/loom/memory Function).
+        if (req.method === 'GET' && path === '/memory') {
+          const caller = req.headers['x-human-id'] ? String(req.headers['x-human-id']).trim() : undefined;
+          const all = readEvents(logPath);
+          const visible = all.filter((e) => {
+            if ((e as LoomEvent & { scope?: string }).scope !== 'personal') return true;
+            return caller && (e as LoomEvent & { humanId?: string }).humanId === caller;
+          });
+          res.setHeader('Content-Type', 'application/json');
+          res.setHeader('Cache-Control', 'no-store');
+          res.end(JSON.stringify(foldMemory(visible)));
           return;
         }
 

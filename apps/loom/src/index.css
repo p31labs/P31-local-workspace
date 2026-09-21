@@ -748,6 +748,16 @@
   outline-offset: 3px;
 }
 
+/* Lumi's memory line — derived, never auto-advancing. One plain sentence
+ * about what was made before; the child still taps Start. */
+.launchpad-memory {
+  margin: 0 0 var(--p31-layout-spacing-md);
+  font-size: 17px;
+  line-height: 1.5;
+  color: var(--p31-text-secondary, #cbd5e1);
+  max-width: 30ch;
+}
+
 /* The doors row — companion + family, side by side, both 48px. */
 .launchpad-doors {
   display: flex;
