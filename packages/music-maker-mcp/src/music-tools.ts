@@ -18,6 +18,8 @@
  * the deployed worker in production and the Vite dev middleware locally.
  */
 
+import { codename } from '@p31/canon/loom/codename';
+
 let base = process.env.MUSIC_API_URL ?? 'https://music-presence.trimtab-signal.workers.dev';
 
 /** Set the worker URL at runtime (the Worker wrapper passes its env). */
@@ -30,6 +32,8 @@ export interface MusicZone {
   position: [number, number, number];
   timbre: string;
   name: string;
+  /** The pickle code name of the family member who placed the zone. */
+  author?: string;
 }
 
 export interface ObserveResult {
@@ -61,8 +65,19 @@ export async function observe(): Promise<ObserveResult> {
       position: e.position as [number, number, number],
       timbre: String(e.timbre ?? 'hydrogen'),
       name: String(e.name ?? ''),
+      author: authorOf(e),
     }));
   return { zones, count: zones.length };
+}
+
+/** The pickle code name of the event's author — statedBy if already a code
+ *  name, else derived from the humanId via the canon's deterministic function. */
+function authorOf(e: Record<string, unknown>): string | undefined {
+  const statedBy = e.statedBy;
+  if (typeof statedBy === 'string' && statedBy.trim()) return statedBy;
+  const humanId = e.humanId;
+  if (typeof humanId === 'string' && humanId.trim()) return codename(humanId);
+  return undefined;
 }
 
 /** Commit a placement — gate-validated, seq-stamped, hash-chained. */

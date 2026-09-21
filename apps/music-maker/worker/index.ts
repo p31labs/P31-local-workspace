@@ -63,10 +63,44 @@ export interface Env {
  *  to flood the room with a multi-MB frame; reject over the cap before parse. */
 const MAX_FRAME_BYTES = 64 * 1024;
 
-/** A room id. One DO instance per room; the family's room is keyed by a shared
- *  family id in the URL (e.g. /stream?room=family-abc). */
-function roomKey(url: URL): string {
+/** A room id. One DO instance per room. When Cloudflare Access is wired
+ *  (MUSIC_ACCESS_AUD set), the room key derives from the AUTHENTICATED
+ *  identity (a stable hash of the Access email) — the room is the family's
+ *  instrument, keyed by who's playing, NOT a URL param anyone can forge.
+ *  Pre-Access, it falls back to the shared ?room= query (the open-room gap). */
+function roomKey(request: Request): string {
+  const url = new URL(request.url);
+  const identity = identityFrom(request);
+  if (identity) return `family:${hash24(identity.email)}`;
   return url.searchParams.get('room')?.trim() || 'family';
+}
+
+/** A stable 24-char hex digest of a string (FNV-1a), for room-key derivation
+ *  from identity — never the raw email in the room id. */
+function hash24(s: string): string {
+  let h = 2166136261 >>> 0;
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return (h >>> 0).toString(16).padStart(8, '0').repeat(3).slice(0, 24);
+}
+
+/** The authenticated identity (email) from the Access CF_Authorization JWT,
+ *  or null when Access isn't wired / no valid cookie. */
+function identityFrom(request: Request): { email: string } | null {
+  const cookie = request.headers.get('Cookie') ?? '';
+  const m = cookie.match(/(?:^|;\s*)CF_Authorization=([^;]+)/);
+  if (!m) return null;
+  try {
+    const [, payloadB64] = m[1].split('.');
+    const payload = JSON.parse(atob(payloadB64.replace(/-/g, '+').replace(/_/g, '/'))) as {
+      email?: string;
+    };
+    return payload.email ? { email: payload.email } : null;
+  } catch {
+    return null;
+  }
 }
 
 /** Structured log — JSON so Workers Logs indexes it (observability.logs.
@@ -83,6 +117,8 @@ function log(env: Env, event: Record<string, unknown>): void {
  *  non-empty, aud embedded, not expired. */
 function authorized(request: Request, env: Env): boolean {
   if (!env.MUSIC_ACCESS_AUD) return true;
+  // A valid CF_Authorization cookie whose aud matches the configured Access
+  // app. Identity (email) flows through the same JWT for room-key derivation.
   const cookie = request.headers.get('Cookie') ?? '';
   const m = cookie.match(/(?:^|;\s*)CF_Authorization=([^;]+)/);
   if (!m) return false;
@@ -174,7 +210,7 @@ export class MusicRoom extends DurableObject<Env> {
 
     if (url.pathname.endsWith('/stream') && upgrade?.toLowerCase() === 'websocket') {
       if (!authorized(request, this.env)) {
-        log(this.env, { ev: 'ws_reject_unauth', room: roomKey(url) });
+        log(this.env, { ev: 'ws_reject_unauth', room: roomKey(request) });
         return new Response('Forbidden', { status: 403 });
       }
       // Hibernation WebSocket API: accept in fetch, broadcast via
@@ -189,8 +225,8 @@ export class MusicRoom extends DurableObject<Env> {
       this.ctx.setWebSocketAutoResponse(new WebSocketRequestResponsePair('ping', 'pong'));
       // Tier 1b: per-socket state survives eviction — the room rebuilds from
       // the sockets themselves when the DO wakes.
-      server.serializeAttachment({ joinedAt: Date.now(), room: roomKey(url) });
-      log(this.env, { ev: 'ws_connected', room: roomKey(url) });
+      server.serializeAttachment({ joinedAt: Date.now(), room: roomKey(request) });
+      log(this.env, { ev: 'ws_connected', room: roomKey(request) });
       // On connect, tell the client the tail seq. The client re-fetches
       // /events itself to reconcile missed events (fetch-on-reconnect); the DO
       // does not replay the log over the socket — reconciliation lives in one
@@ -347,7 +383,7 @@ export default {
     // assets (the React SPA). not_found_handling = "single-page-application"
     // makes unknown SPA routes return index.html.
     if (url.pathname.startsWith('/api/music/')) {
-      const room = roomKey(url);
+      const room = roomKey(request);
       const id = env.MUSIC_ROOM.idFromName(room);
       return env.MUSIC_ROOM.get(id).fetch(request);
     }

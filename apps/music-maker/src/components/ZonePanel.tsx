@@ -55,6 +55,12 @@ export function ZonePanel({ zone, onRename, announce }: ZonePanelProps) {
         <span className="mm-zone-panel-key">timbre</span>
         <span className="mm-zone-panel-val">{zone.timbre}</span>
       </div>
+      {zone.author && (
+        <div className="mm-zone-panel-row">
+          <span className="mm-zone-panel-key">placed by</span>
+          <span className="mm-zone-panel-val">{zone.author}</span>
+        </div>
+      )}
       <form
         className="mm-zone-panel-row"
         onSubmit={(e) => {

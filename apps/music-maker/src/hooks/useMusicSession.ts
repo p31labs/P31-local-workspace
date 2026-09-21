@@ -17,6 +17,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { LoomEvent } from '@p31/canon/loom/events';
 import type { LoomEventInput } from '@p31/canon/loom/gate';
+import { codename } from '@p31/canon/loom/codename';
 import type { MusicZone, Timbre } from '../scene/musicZone';
 
 export interface EphemeralTrigger {
@@ -82,6 +83,17 @@ function zoneById(zones: MusicZone[], id: string): MusicZone | undefined {
   return zones.find((z) => z.id === id);
 }
 
+/** The family member who committed an event — the pickle code name, derived
+ *  from the event's statedBy (already a code name) or humanId (derived via the
+ *  canon's deterministic code-name function). Never a raw DID. */
+function authorOf(e: LoomEvent): string | undefined {
+  const statedBy = (e as LoomEvent & { statedBy?: string }).statedBy;
+  if (statedBy && statedBy.trim()) return statedBy;
+  const humanId = (e as LoomEvent & { humanId?: string }).humanId;
+  if (humanId && humanId.trim()) return codename(humanId);
+  return undefined;
+}
+
 /** Pure: reduce committed events to the zone list. Deterministic — the same
  *  event list yields the same zones, so reconnect reconciliation (B1) and the
  *  initial load use one code path. Extracted for testability. */
@@ -93,6 +105,7 @@ export function zonesFromEvents(es: LoomEvent[]): MusicZone[] {
       position: (e as LoomEvent & { position: [number, number, number] }).position,
       timbre: (e as LoomEvent & { timbre: Timbre }).timbre,
       name: (e as LoomEvent & { name?: string }).name ?? '',
+      author: authorOf(e),
     }));
 }
 
@@ -111,6 +124,7 @@ export function applyEventToZones(zones: MusicZone[], e: LoomEvent): MusicZone[]
         position: (e as LoomEvent & { position: [number, number, number] }).position,
         timbre: (e as LoomEvent & { timbre: Timbre }).timbre,
         name: (e as LoomEvent & { name?: string }).name ?? '',
+        author: authorOf(e),
       },
     ];
   }

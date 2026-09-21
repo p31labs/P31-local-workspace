@@ -17,6 +17,10 @@ export interface MusicZone {
   position: [number, number, number];
   timbre: Timbre;
   name: string;
+  /** The pickle code name of the family member who placed the zone — a
+   *  stable, friendly handle that never exposes a raw DID (the canon's
+   *  code-name system). Absent for legacy zones placed before identity. */
+  author?: string;
 }
 
 export interface TriggerTrace {
