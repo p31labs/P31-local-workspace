@@ -9,6 +9,7 @@ import { readProfile } from '@p31/canon/loom/profiles';
 import { ReplayGate, type LoomEventInput } from '@p31/canon/loom/gate';
 import type { LoomEvent } from '@p31/canon/loom/events';
 import { hashRecord, verifyChain, GENESIS_PREV_HASH, type ChainRecord } from '@p31/canon/loom/hash-chain';
+import { fetchCareProof } from './functions/api/loom/_lib/love';
 import { dirname, join } from 'node:path';
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 
@@ -216,6 +217,21 @@ function loomMiddleware(): Plugin {
           res.setHeader('Content-Type', 'application/json');
           res.statusCode = profile ? 200 : 404;
           res.end(JSON.stringify(profile));
+          return;
+        }
+
+        if (req.method === 'GET' && path.startsWith('/love/')) {
+          const did = decodeURIComponent(path.slice('/love/'.length));
+          if (!did) {
+            res.statusCode = 400;
+            res.setHeader('Content-Type', 'application/json');
+            res.end(JSON.stringify({ error: 'did is required' }));
+            return;
+          }
+          const proof = await fetchCareProof({}, did);
+          res.setHeader('Content-Type', 'application/json');
+          res.setHeader('Cache-Control', 'no-store');
+          res.end(JSON.stringify(proof));
           return;
         }
 

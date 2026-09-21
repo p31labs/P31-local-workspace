@@ -199,6 +199,20 @@
       "description": "Return the event chain from genesis to the given seq, each record carrying its prev_hash, plus the recomputed verdict and the head commitment. The artifact a reviewer asks for. A read."
     },
     {
+      "name": "profile.love",
+      "kind": "action",
+      "danger": "none",
+      "confirm": "never",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "did": { "type": "string", "description": "The LOVE did:key to read" }
+        },
+        "required": ["did"]
+      },
+      "description": "Read the privacy-preserving care proof for a LOVE DID: bound, careScore, verified (>= 0.5), sovereignty/performance pools, totalEarned. Returns what the ledger attests WITHOUT the care events — the LOVE privacy promise surfaced in the Loom. A read; safe for any caller with a session."
+    },
+    {
       "name": "theme.cycle",
       "kind": "action",
       "danger": "none",
