@@ -16,12 +16,18 @@
  *
  * The "played note glows" pressure is computed here per frame with @p31/field
  * decay (§5.4) and written straight into each zone's uGlow uniform.
+ *
+ * Re-render discipline: the RAF loop lives in one []-dep effect and reads
+ * zones/triggers/selectedId through REFS (synced on every render), never the
+ * mount-time closure. Without the refs, zones added after mount would never
+ * glow. Per-frame DOM updates (the C1 agent buttons' positions) are written
+ * directly to the elements via a ref map — no React state at 60fps.
  */
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { resolveTokenRgb } from '../lib/tokens';
 import { MusicZone, type MusicZoneProps } from './MusicZone';
-import { phyllotaxisPosition, zoneGlow, type MusicZone as ZoneModel } from './musicZone';
+import { zoneGlow, type MusicZone as ZoneModel } from './musicZone';
 
 export interface SpatialSceneProps {
   zones: ZoneModel[];
@@ -50,14 +56,26 @@ export function SpatialScene({
   reducedMotion,
 }: SpatialSceneProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
+  // ── A1: refs synced every render — the []-dep effect reads THESE, not the
+  //    mount-time closure. Without them a zone added via SSE/WS after mount
+  //    would never glow, pulse, or be selectable.
+  const zonesRef = useRef(zones);
+  zonesRef.current = zones;
+  const triggersRef = useRef(triggers);
+  triggersRef.current = triggers;
+  const selectedRef = useRef(selectedId);
+  selectedRef.current = selectedId;
   const onZoneTriggerRef = useRef(onZoneTrigger);
   onZoneTriggerRef.current = onZoneTrigger;
   const onListenerChangeRef = useRef(onListenerChange);
   onListenerChangeRef.current = onListenerChange;
 
-  // Zone points + their uniforms, keyed by zone id. Built imperatively once;
-  // positions update when a placed zone lands.
+  // Zone points + their uniforms, keyed by zone id. Built imperatively once.
   const zoneMap = useRef(new Map<string, THREE.Points>());
+  // C1 agent buttons (the AAF surface per zone), keyed by zone id. The frame
+  // loop positions them directly — no React state at 60fps.
+  const zoneButtons = useRef(new Map<string, HTMLButtonElement>());
   // The in-scene listener position — mutable across frames.
   const listenerRef = useRef(listener);
   listenerRef.current = listener;
@@ -97,9 +115,6 @@ export function SpatialScene({
     markerGroup.add(marker, markerRing);
     scene.add(markerGroup);
 
-    // Shared mutable listener position (written by drag handlers, read by the
-    // frame). The parent's listener prop stays the source of truth for audio;
-    // this ref tracks the in-scene position between commits.
     const setMarker = (p: [number, number, number]) => {
       listenerRef.current = p;
       markerGroup.position.set(p[0], p[1], p[2]);
@@ -118,18 +133,15 @@ export function SpatialScene({
     );
     scene.add(guide);
 
-    // ── Camera orbit (drag) + the listener is NOT the camera. The one-finger
-    //    interaction from the prototype: a single touch drag moves YOU across
-    //    the sphere surface; two touches (or a mouse drag) orbit the camera.
-    //    The listener move is a gesture-driven action (§8 of the build prompt)
-    //    — it carries the instrument.listener.move data-agent-action semantics
-    //    documented at the call site, since there is no single DOM element to
-    //    hang the attribute on. It is EPHEMERAL: moving yourself is a live
-    //    presence act, never a committed log entry.
+    // ── A4: pointer mode. Mouse = camera orbit (a desktop must not be frozen);
+    //    one touch = listener move ("one finger is you"); two touches =
+    //    camera orbit. Restores the prototype's explicit mode selection that
+    //    was lost in the port (the old touchCount approach never fired either
+    //    branch for a mouse).
     let yaw = 0;
     let pitch = 0.35;
-    let dragging = false;
-    let touchCount = 0;
+    let mode: 'none' | 'camera' | 'listener' = 'none';
+    const activePointers = new Set<number>();
     let lastX = 0;
     let lastY = 0;
 
@@ -144,22 +156,27 @@ export function SpatialScene({
     };
 
     const onPointerDown = (e: PointerEvent) => {
-      dragging = true;
-      touchCount += 1;
+      activePointers.add(e.pointerId);
       lastX = e.clientX;
       lastY = e.clientY;
+      if (e.pointerType === 'mouse') mode = 'camera';
+      else mode = activePointers.size >= 2 ? 'camera' : 'listener';
+      try { canvas.setPointerCapture(e.pointerId); } catch { /* ignore */ }
     };
     const onPointerMove = (e: PointerEvent) => {
-      if (!dragging) return;
+      if (mode === 'none') return;
       const dx = e.clientX - lastX;
       const dy = e.clientY - lastY;
       lastX = e.clientX;
       lastY = e.clientY;
-      if (touchCount >= 2) {
+      if (mode === 'camera') {
         yaw -= dx * 0.005;
         pitch = Math.max(-1.5, Math.min(1.5, pitch - dy * 0.005));
-      } else if (e.pointerType === 'touch') {
-        // Move the listener on the sphere surface (one finger is you).
+      } else if (mode === 'listener') {
+        // Move the listener on the sphere surface (one finger is you). The
+        // listener move is a gesture-driven action (§8) — ephemeral, never
+        // committed; the C1 button for the listener is documented at the
+        // call site since there is no single DOM element to hang it on.
         const [lx, ly, lz] = listenerRef.current;
         let nx = lx + dx * LISTENER_DRAG_SPEED;
         let nz = lz + dy * LISTENER_DRAG_SPEED;
@@ -174,9 +191,10 @@ export function SpatialScene({
         onListenerChangeRef.current(next);
       }
     };
-    const onPointerUp = () => {
-      dragging = false;
-      touchCount = Math.max(0, touchCount - 1);
+    const onPointerUp = (e: PointerEvent) => {
+      activePointers.delete(e.pointerId);
+      if (activePointers.size === 0) mode = 'none';
+      try { canvas.releasePointerCapture(e.pointerId); } catch { /* ignore */ }
     };
     canvas.addEventListener('pointerdown', onPointerDown);
     window.addEventListener('pointermove', onPointerMove);
@@ -205,16 +223,36 @@ export function SpatialScene({
     const drawFrame = (elapsed: number) => {
       ambient = elapsed;
       const now = Date.now();
-      for (const zone of zones) {
+      const zs = zonesRef.current;
+      const tr = triggersRef.current;
+      const sel = selectedRef.current;
+      const w = canvas.clientWidth || window.innerWidth;
+      const h = canvas.clientHeight || window.innerHeight;
+
+      for (const zone of zs) {
         const pts = zoneMap.current.get(zone.id);
         if (!pts) continue;
         const mat = pts.material as THREE.ShaderMaterial;
-        const hits = triggers[zone.id] ?? [];
+        const hits = tr[zone.id] ?? [];
         let glow = 0;
         for (const ts of hits) glow += zoneGlow({ zone: zone.id, ts, actor: 'human' }, now);
         mat.uniforms.uTime.value = ambient;
         mat.uniforms.uGlow.value = Math.min(1, glow);
-        pts.scale.setScalar(zone.id === selectedId ? 1.15 : 1);
+        pts.scale.setScalar(zone.id === sel ? 1.15 : 1);
+
+        // C1: position the agent button at the zone's projected screen point.
+        const btn = zoneButtons.current.get(zone.id);
+        if (btn) {
+          const v = new THREE.Vector3(zone.position[0], zone.position[1], zone.position[2]);
+          v.project(camera);
+          if (v.z < 1) {
+            btn.style.left = `${(v.x * 0.5 + 0.5) * w}px`;
+            btn.style.top = `${(-v.y * 0.5 + 0.5) * h}px`;
+            btn.style.display = 'block';
+          } else {
+            btn.style.display = 'none';
+          }
+        }
       }
       applyCamera();
       renderer.render(scene, camera);
@@ -253,15 +291,41 @@ export function SpatialScene({
   };
   const handleDispose = (id: string) => {
     zoneMap.current.delete(id);
+    zoneButtons.current.delete(id);
   };
 
   return (
     <div className="spatial-scene" role="img" aria-label="The spatial instrument — zones of sound around you. Drag to look around.">
       <canvas ref={canvasRef} className="spatial-canvas" />
-      <div className="spatial-listener" aria-hidden="true" style={{ display: 'none' }} />
+
+      {/* C1: the AAF surface per zone. Invisible to sighted users (clipped),
+          discoverable to agents and tests — the honest DOM surface for
+          instrument.zone.trigger, since the visual zone is a canvas point with
+          no DOM element. Positioned each frame via zoneButtons ref. */}
+      {zones.map((z) => (
+        <button
+          key={z.id}
+          type="button"
+          ref={(el) => {
+            if (el) zoneButtons.current.set(z.id, el);
+            else zoneButtons.current.delete(z.id);
+          }}
+          className="mm-zone-agent"
+          onClick={() => onZoneTriggerRef.current(z.id)}
+          data-agent-kind="action"
+          data-agent-action="instrument.zone.trigger"
+          data-agent-danger="none"
+          data-agent-confirm="never"
+          aria-label={`Play ${z.name || z.id}`}
+          tabIndex={-1}
+        >
+          {z.name || z.id}
+        </button>
+      ))}
+
       {zones.map((z) => (
         <MusicZone
-          key={z.id}
+          key={`three-${z.id}`}
           id={z.id}
           position={z.position}
           accentRgb={resolveTokenRgb('--p31-accent')}

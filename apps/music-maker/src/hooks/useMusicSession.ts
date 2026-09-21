@@ -52,6 +52,38 @@ function zoneById(zones: MusicZone[], id: string): MusicZone | undefined {
   return zones.find((z) => z.id === id);
 }
 
+/** Pure: reduce committed events to the zone list. Deterministic — the same
+ *  event list yields the same zones, so reconnect reconciliation (B1) and the
+ *  initial load use one code path. Extracted for testability. */
+export function zonesFromEvents(es: LoomEvent[]): MusicZone[] {
+  return es
+    .filter((e) => e.kind === 'instrument.zone.place')
+    .map((e) => ({
+      id: e.node,
+      position: (e as LoomEvent & { position: [number, number, number] }).position,
+      timbre: (e as LoomEvent & { timbre: Timbre }).timbre,
+      name: (e as LoomEvent & { name?: string }).name ?? '',
+    }));
+}
+
+/** The live-stream frame kinds the client understands. A control frame from
+ *  the worker (committed-resume) must never be treated as a LoomEvent; an
+ *  ephemeral trigger is broadcast presence, never persisted. Pure, so the
+ *  discrimination is testable without the transport. */
+export type StreamFrame = LoomEvent | EphemeralTrigger | { type: 'committed-resume'; seq: number };
+
+export function classifyFrame(data: string): StreamFrame | null {
+  try {
+    const parsed = JSON.parse(data) as StreamFrame;
+    const t = (parsed as { type?: unknown }).type;
+    if (t === 'committed-resume' || t === 'ephemeral') return parsed;
+    if ('seq' in parsed && 'kind' in parsed) return parsed as LoomEvent;
+    return null;
+  } catch {
+    return null;
+  }
+}
+
 export function useMusicSession(): MusicSession {
   const [zones, setZones] = useState<MusicZone[]>([]);
   const [triggers, setTriggers] = useState<Record<string, number[]>>({});
@@ -71,15 +103,7 @@ export function useMusicSession(): MusicSession {
         if (!res.ok) throw new Error(`events ${res.status}`);
         const es = (await res.json()) as LoomEvent[];
         if (!alive) return;
-        const placed = es.filter((e) => e.kind === 'instrument.zone.place');
-        setZones(
-          placed.map((e) => ({
-            id: e.node,
-            position: (e as LoomEvent & { position: [number, number, number] }).position,
-            timbre: (e as LoomEvent & { timbre: Timbre }).timbre,
-            name: (e as LoomEvent & { name?: string }).name ?? '',
-          })),
-        );
+        setZones(zonesFromEvents(es));
       } catch {
         // No log — empty field. The planetarium starts silent.
       }
@@ -103,44 +127,47 @@ export function useMusicSession(): MusicSession {
 
     // One frame handler for both transports. Ephemeral vs committed is decided
     // by shape, never by transport — a debug log can tag which is which.
+    // `committed-resume` (the worker's connect hint) is explicitly skipped:
+    // it is a control frame, never a LoomEvent. Pure discrimination via
+    // classifyFrame so the rules are unit-testable.
     const handleFrame = (data: string) => {
-      try {
-        const parsed = JSON.parse(data) as LoomEvent | EphemeralTrigger;
-        if ((parsed as EphemeralTrigger).type === 'ephemeral') {
-          const m = parsed as EphemeralTrigger;
-          if (m.kind !== 'zone.trigger' || m.origin === originRef.current) return;
-          setRemoteTriggers((prev) => [{ zone: m.zone, origin: m.origin, at: Date.now() }, ...prev].slice(0, 8));
-          // A remote trigger also glows locally (visual echo).
-          setTriggers((prev) => ({
-            ...prev,
-            [m.zone]: [...(prev[m.zone] ?? []), Date.now()].slice(-16),
-          }));
-          return;
-        }
-        const e = parsed as LoomEvent;
-        lastEventId = String(e.seq);
-        setZones((prev) => {
-          if (e.kind === 'instrument.zone.place') {
-            if (zoneById(prev, e.node)) return prev;
-            return [
-              ...prev,
-              {
-                id: e.node,
-                position: (e as LoomEvent & { position: [number, number, number] }).position,
-                timbre: (e as LoomEvent & { timbre: Timbre }).timbre,
-                name: (e as LoomEvent & { name?: string }).name ?? '',
-              },
-            ];
-          }
-          if (e.kind === 'instrument.zone.clear') return prev.filter((z) => z.id !== e.node);
-          if (e.kind === 'instrument.zone.name') {
-            return prev.map((z) => (z.id === e.node ? { ...z, name: (e as LoomEvent & { name: string }).name } : z));
-          }
-          return prev;
-        });
-      } catch {
-        // ignore malformed frames
+      const parsed = classifyFrame(data);
+      if (!parsed) return;
+      // A frame that carries an explicit `type` is either a control frame
+      // (committed-resume) or an ephemeral trigger — never a LoomEvent.
+      if ('type' in parsed) {
+        if (parsed.type === 'committed-resume') return;
+        const m = parsed;
+        if (m.kind !== 'zone.trigger' || m.origin === originRef.current) return;
+        setRemoteTriggers((prev) => [{ zone: m.zone, origin: m.origin, at: Date.now() }, ...prev].slice(0, 8));
+        // A remote trigger also glows locally (visual echo).
+        setTriggers((prev) => ({
+          ...prev,
+          [m.zone]: [...(prev[m.zone] ?? []), Date.now()].slice(-16),
+        }));
+        return;
       }
+      const e = parsed;
+      lastEventId = String(e.seq);
+      setZones((prev) => {
+        if (e.kind === 'instrument.zone.place') {
+          if (zoneById(prev, e.node)) return prev;
+          return [
+            ...prev,
+            {
+              id: e.node,
+              position: (e as LoomEvent & { position: [number, number, number] }).position,
+              timbre: (e as LoomEvent & { timbre: Timbre }).timbre,
+              name: (e as LoomEvent & { name?: string }).name ?? '',
+            },
+          ];
+        }
+        if (e.kind === 'instrument.zone.clear') return prev.filter((z) => z.id !== e.node);
+        if (e.kind === 'instrument.zone.name') {
+          return prev.map((z) => (z.id === e.node ? { ...z, name: (e as LoomEvent & { name: string }).name } : z));
+        }
+        return prev;
+      });
     };
 
     const connectWebSocket = () => {
@@ -151,7 +178,20 @@ export function useMusicSession(): MusicSession {
       const wsUrl = `${proto}//${location.host}/api/music/stream${location.search}`;
       const socket = new WebSocket(wsUrl);
       ws = socket;
-      socket.onopen = () => { attempts = 0; };
+      socket.onopen = () => {
+        attempts = 0;
+        // B1: reconcile missed committed events on (re)connect. The DO's
+        // committed-resume frame only hints at the tail seq; the client
+        // re-fetches /events and replaces the zone list — the same code path
+        // as the initial load, so a reconnect converges exactly like a fresh
+        // visit. Ephemeral history is not replayed (it is gone by definition).
+        void fetch('/api/music/events')
+          .then((r) => (r.ok ? (r.json() as Promise<LoomEvent[]>) : null))
+          .then((es) => {
+            if (es && alive) setZones(zonesFromEvents(es));
+          })
+          .catch(() => {});
+      };
       socket.onmessage = (ev) => handleFrame(String(ev.data));
       socket.onclose = () => {
         ws = null;

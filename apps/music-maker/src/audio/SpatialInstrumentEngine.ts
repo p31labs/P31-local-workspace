@@ -69,7 +69,16 @@ export interface SpatialInstrumentOptions {
 const DEFAULT_CEILING = 0.6;
 const DEFAULT_MAX_ZONES = 16;
 const DEFAULT_HRTF_BUDGET_MS = 60;
-const PROBE_PANNERS = 4;
+/** The HRTF probe batch. Larger than the old 4 so the measurement isn't lost
+ *  in performance.now() timer resolution (often 1ms). ~24ms across a batch is
+ *  a number that actually registers on the timer. */
+const HRTF_PROBE_BATCH = 24;
+/** HRTF probe samples — the median of 3, not a single noisy reading. */
+const HRTF_PROBE_SAMPLES = 3;
+
+/** The family-scale node budget (§5.2). Exported so the UI (App) refuses at
+ *  the same count the engine enforces — one source of truth, no drift. */
+export const FAMILY_ZONE_BUDGET = DEFAULT_MAX_ZONES;
 
 interface PendingZone {
   voice: ZoneVoice;
@@ -259,34 +268,51 @@ export class SpatialInstrumentEngine {
   }
 
   /** Choose the panning model BEFORE the real graph is built. The HRTF probe
-   *  uses a small throwaway batch of panners so the decision is made with a
-   *  real measurement, then the throwaways are discarded — the real panners
-   *  are created once, with the chosen model. A low-end phone that cold-starts
-   *  HRTF over budget steps down to equalpower silently (interaction identical,
-   *  fidelity lower). See §3.5. */
+   *  measures a throwaway batch of panners so the decision is made with real
+   *  evidence, then the throwaways are discarded — the real panners are created
+   *  once, with the chosen model. A low-end phone that cold-starts HRTF over
+   *  budget steps down to equalpower silently (interaction identical, fidelity
+   *  lower). See §3.5.
+   *
+   *  Reliability: performance.now() is deliberately coarse (≥100µs, often 1ms),
+   *  so a 4-panner batch can read 0ms and falsely report "HRTF is fast". The
+   *  probe uses a larger batch across 3 samples and takes the MEDIAN. A coarse
+   *  device gate (outputLatency, hardwareConcurrency) is checked first — a
+   *  clearly low-end device skips the probe entirely. Thresholds are
+   *  provisional and device-calibrated, like the budget. */
   private choosePanningModel(): PanningModelType {
     if (this.opts.panningModel !== 'HRTF') return this.opts.panningModel;
     if (!this.ctx || !this.master) return this.opts.panningModel;
 
-    const probes: PannerNode[] = [];
-    const t0 = performance.now();
-    for (let i = 0; i < PROBE_PANNERS; i++) {
-      const p = this.ctx.createPanner();
-      p.panningModel = 'HRTF';
-      p.distanceModel = 'inverse';
-      p.refDistance = this.opts.radius * 0.5;
-      p.maxDistance = this.opts.radius * 3;
-      p.connect(this.master);
-      probes.push(p);
+    // Coarse device gate — skip the probe on clearly low-end hardware.
+    const hw = (navigator.hardwareConcurrency ?? 8);
+    const latency = this.ctx.outputLatency ?? 0;
+    if (hw <= 4 || latency > 0.05) return 'equalpower';
+
+    // Tiebreaker: median of N batch samples.
+    const samples: number[] = [];
+    for (let s = 0; s < HRTF_PROBE_SAMPLES; s++) {
+      const probes: PannerNode[] = [];
+      const t0 = performance.now();
+      for (let i = 0; i < HRTF_PROBE_BATCH; i++) {
+        const p = this.ctx.createPanner();
+        p.panningModel = 'HRTF';
+        p.distanceModel = 'inverse';
+        p.refDistance = this.opts.radius * 0.5;
+        p.maxDistance = this.opts.radius * 3;
+        p.connect(this.master);
+        probes.push(p);
+      }
+      samples.push(performance.now() - t0);
+      for (const p of probes) p.disconnect();
     }
-    const elapsed = performance.now() - t0;
-    for (const p of probes) p.disconnect();
+    samples.sort((a, b) => a - b);
+    const median = samples[1];
 
     // Reference, not a spec: the IEEE 2025 WebXR study measures ~35ms HRTF
-    // cold-start on a mid-range Android. This budget is a provisional constant
-    // to calibrate on the family's real devices (prototype used >80ms for a
-    // full 12-zone batch; the production probe budgets per small batch).
-    return elapsed > this.opts.hrtfProbeBudgetMs ? 'equalpower' : 'HRTF';
+    // cold-start on a mid-range Android. Budget is a provisional constant to
+    // calibrate on the family's real devices.
+    return median > this.opts.hrtfProbeBudgetMs ? 'equalpower' : 'HRTF';
   }
 
   private buildPendingZones(): void {

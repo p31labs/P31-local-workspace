@@ -9,15 +9,17 @@
  *      another family member's device. The only thing that turns it on is a
  *      tap on the toggle IN THIS SESSION on THIS device.
  *   2. Every triggered sound has a visual echo — callers must render the
- *      zone glow regardless of whether `play` returned true.
+ *      zone glow regardless of whether sound fired.
  *   3. The preference persists per-device (localStorage), so a family member
  *      who turns sound on keeps it on for their next session.
  *
- * The mute-state/localStorage logic is extracted so the Loom's useLoomSound
- * and this hook could share a primitive; here it's self-contained to keep the
- * standalone app independent of the Loom's chapter context.
+ * This hook owns NO AudioContext. The SpatialInstrumentEngine is the single
+ * context owner and creates it inside enable() — the user gesture. The hook
+ * only tracks the opt-in state; the App's toggle handler calls engine.enable()
+ * in the same tap. (Previously the hook created its own context, so a session
+ * had two — one of them dead and never closed.)
  */
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 
 const STORAGE_KEY = 'music-maker:sound';
 
@@ -36,16 +38,13 @@ function readInitialEnabled(): boolean {
 export interface UseInstrumentSoundResult {
   /** Whether sound is enabled in this session on this device. */
   enabled: boolean;
-  /** The user gesture — the toggle tap. */
+  /** Flip the preference. The caller must call engine.enable()/disable() in
+   *  the same gesture handler — the engine owns the single AudioContext. */
   toggle: () => void;
-  /** Ensure the AudioContext exists/resumes. Returns the context or null.
-   *  Only ever called from a user-gesture handler. */
-  resume: () => AudioContext | null;
 }
 
 export function useInstrumentSound(): UseInstrumentSoundResult {
   const [enabled, setEnabled] = useState<boolean>(readInitialEnabled);
-  const ctxRef = useRef<AudioContext | null>(null);
 
   const toggle = useCallback(() => {
     setEnabled((prev) => {
@@ -59,30 +58,5 @@ export function useInstrumentSound(): UseInstrumentSoundResult {
     });
   }, []);
 
-  const resume = useCallback((): AudioContext | null => {
-    if (typeof window === 'undefined') return null;
-    try {
-      if (!ctxRef.current) {
-        const Ctor =
-          window.AudioContext ??
-          (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-        if (!Ctor) return null;
-        ctxRef.current = new Ctor();
-      }
-      const ctx = ctxRef.current;
-      if (ctx.state === 'suspended') void ctx.resume();
-      return ctx;
-    } catch {
-      return null;
-    }
-  }, []);
-
-  useEffect(() => {
-    return () => {
-      void ctxRef.current?.close().catch(() => {});
-      ctxRef.current = null;
-    };
-  }, []);
-
-  return { enabled, toggle, resume };
+  return { enabled, toggle };
 }

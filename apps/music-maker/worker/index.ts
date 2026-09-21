@@ -111,14 +111,14 @@ export class MusicRoom extends DurableObject<Env> {
       const pair = new WebSocketPair();
       const [client, server] = Object.values(pair);
       this.ctx.acceptWebSocket(server);
-      // On connect, resend the committed composition tail so a joining device
-      // converges even if it lost the /events fetch. Ephemeral history is not
-      // replayed (it is gone — ephemeral by definition).
+      // On connect, tell the client the tail seq. The client re-fetches
+      // /events itself to reconcile missed events (fetch-on-reconnect); the DO
+      // does not replay the log over the socket — reconciliation lives in one
+      // place on the client. The frame is explicitly typed so the client never
+      // mistakes it for a committed LoomEvent.
       const events = await readEvents(this.env);
       const last = events[events.length - 1];
-      if (last) {
-        server.send(JSON.stringify({ type: 'committed-resume', seq: last.seq }));
-      }
+      server.send(JSON.stringify({ type: 'committed-resume', seq: last?.seq ?? -1 }));
       return new Response(null, { status: 101, webSocket: client });
     }
 
@@ -165,8 +165,12 @@ export class MusicRoom extends DurableObject<Env> {
     }
   }
 
-  async webSocketClose(ws: WebSocket): Promise<void> {
-    ws.close();
+  // B2: at compat date 2026-07-04 the runtime auto-replies to Close frames;
+  // calling ws.close() is safe but no longer required. The DO keeps no
+  // per-socket state (broadcast enumerates getWebSockets() on demand), so
+  // there is nothing to clean up here.
+  async webSocketClose(_ws: WebSocket): Promise<void> {
+    // no-op
   }
 
   private broadcastCommitted(event: LoomEvent): void {

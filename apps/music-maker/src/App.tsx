@@ -15,7 +15,7 @@
  * prop was dead state and was removed.
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { SpatialInstrumentEngine, type TimbreProfile } from './audio/SpatialInstrumentEngine';
+import { SpatialInstrumentEngine, FAMILY_ZONE_BUDGET, type TimbreProfile } from './audio/SpatialInstrumentEngine';
 import { SpatialScene } from './scene/SpatialScene';
 import { SoundToggle } from './components/SoundToggle';
 import { useInstrumentSound } from './hooks/useInstrumentSound';
@@ -30,8 +30,8 @@ const TIMBRE_PROFILES: Record<Timbre, TimbreProfile> = {
 };
 
 const RADIUS = 2.2;
-/** The family-scale node budget (§5.2) — must match the engine's maxZones. */
-const MAX_ZONES = 16;
+/** The family-scale node budget (§5.2) — single source: the engine's. */
+const MAX_ZONES = FAMILY_ZONE_BUDGET;
 
 export default function App() {
   const sound = useInstrumentSound();
@@ -52,15 +52,19 @@ export default function App() {
     };
   }, []);
 
-  // Sound toggle: the user gesture that may resume audio.
+  // Sound toggle: the user gesture. The ENGINE owns the single AudioContext —
+  // turning ON calls engine.enable(), which creates/resumes it inside this
+  // gesture handler. The hook tracks only the preference (no context of its
+  // own, so a session never has two).
   const handleToggle = useCallback(() => {
     sound.toggle();
-    if (!sound.enabled) {
-      // Turning ON: resume the context inside this gesture handler.
-      sound.resume();
-      engineRef.current?.enable();
-    } else {
+    if (sound.enabled) {
+      // Turning OFF.
       engineRef.current?.disable();
+    } else {
+      // Turning ON — this call IS the user gesture; the engine builds its
+      // single graph here.
+      engineRef.current?.enable();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sound.toggle, sound.enabled]);
@@ -103,6 +107,8 @@ export default function App() {
     if (announceTimer.current) clearTimeout(announceTimer.current);
     announceTimer.current = setTimeout(() => setAnnouncement(text), 200);
   }, []);
+  // C3: the last remote-echo announcement time — remote echoes floor at 2s.
+  const remoteAnnounceAt = useRef(0);
   useEffect(() => () => { if (announceTimer.current) clearTimeout(announceTimer.current); }, []);
 
   const handleZoneTrigger = useCallback(
@@ -124,16 +130,31 @@ export default function App() {
       const z = session.zones.find((x) => x.id === id);
       const p = z ? TIMBRE_PROFILES[z.timbre] ?? TIMBRE_PROFILES.hydrogen : TIMBRE_PROFILES.hydrogen;
       engineRef.current?.trigger(id, p);
-      announce(`someone played ${session.zoneName(id)}`);
+      // C3: remote echoes are floored at one announcement per 2s so a peer
+      // mashing zones doesn't flood the live region. Local triggers announce
+      // immediately (handleZoneTrigger).
+      const now = Date.now();
+      if (now - remoteAnnounceAt.current >= 2000) {
+        remoteAnnounceAt.current = now;
+        announce(`someone played ${session.zoneName(id)}`);
+      }
     },
-    [session.zones, session, announce],
+    [session, announce],
   );
 
-  // A remote trigger also plays here (if sound is on this device).
-  const lastRemote = session.remoteTriggers[0];
+  // A3: process EVERY new remote trigger since the last run, not just the
+  // head. remoteTriggers is newest-first; two peers playing within the same
+  // React batch must not drop the earlier note. Track the count already seen.
+  const processedRemoteRef = useRef(0);
   useEffect(() => {
-    if (lastRemote) handleRemoteZoneTrigger(lastRemote.zone);
-  }, [lastRemote, handleRemoteZoneTrigger]);
+    const seen = processedRemoteRef.current;
+    const fresh = session.remoteTriggers.slice(0, session.remoteTriggers.length - seen);
+    // Iterate oldest-first so the play order matches arrival.
+    for (let i = fresh.length - 1; i >= 0; i--) {
+      handleRemoteZoneTrigger(fresh[i].zone);
+    }
+    processedRemoteRef.current = session.remoteTriggers.length;
+  }, [session.remoteTriggers, handleRemoteZoneTrigger]);
 
   // Place a zone at the current phyllotaxis slot for the count. Refuses past
   // the node budget with a clear message — the family-scale baseline is 8–16.

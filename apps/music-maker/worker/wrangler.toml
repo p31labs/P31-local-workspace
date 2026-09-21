@@ -27,9 +27,11 @@ bindings = [
   { name = "MUSIC_ROOM", class_name = "MusicRoom" },
 ]
 
-[[migrations]]
-tag = "v1"
-new_sqlite_classes = ["MusicRoom"]
+# NO [[migrations]] entry: this DO writes through D1 (MUSIC_D1), not DO-local
+# SQLite storage. new_sqlite_classes would enable storage the DO never calls,
+# and per Cloudflare docs cannot be added to a class that has already deployed
+# without it. If the room ever moves to DO SQLite, that's a separate decision
+# taken before first deploy.
 
 # A custom route/domain can be added later; workers.dev gives a reachable URL
 # for testing. The client connects to /stream?room=<family-id>.
