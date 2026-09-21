@@ -11,6 +11,8 @@ One screen. Where every doc lives, what it's for, and how they connect.
 | [`DECISIONS.md`](./DECISIONS.md) | A future contributor | You're wondering why something is the way it is, or what's still open |
 | [`HUMAN_TEST_PLAN.md`](./HUMAN_TEST_PLAN.md) | Whoever is running the family test | You're about to put the app in front of a human |
 | [`PORTING_AGENT_BRIEF.md`](./PORTING_AGENT_BRIEF.md) | Whoever is porting a new app into the canon | You're starting a new app that consumes `@p31/canon` |
+| [`AUDIT_STANDARDS.md`](./AUDIT_STANDARDS.md) | An auditor, a procurement reviewer, a standards-body reader | You want the Loom's log positioned against GAR / AAT / EU AI Act |
+| [`LOVE_INTEGRATION.md`](./LOVE_INTEGRATION.md) | Anyone bridging the Loom and the care economy | You're wiring identity / care proof / the cross-anchor |
 | [`CONCEPTS.yml`](./CONCEPTS.yml) | The concept registry | You want the canonical definition of the log, the gate, Lumi, the artifact… |
 | [`PORTING_INVENTORY.md`](./PORTING_INVENTORY.md) | — | Generated. Do not read; the generator reads it. |
 | [`DOCS_INVENTORY.md`](./DOCS_INVENTORY.md) | — | Generated. Do not read; the generator reads it. |
@@ -37,6 +39,10 @@ graph LR
   DECISIONS --> |"007 static demo"| PERSIST[persistence - open]
   DECISIONS --> |"008 tamper-evident"| CHAIN[the prev_hash chain]
   STANDARDS -.audit trails.-> CHAIN
+  CHAIN -.cross-anchor.-> LOVE[the LOVE care ledger]
+  AUDIT[AUDIT_STANDARDS] -.positions.-> CHAIN
+  AUDIT -.positions.-> LOVE
+  LOVE_INTEGRATION[LOVE_INTEGRATION] --> LOVE
 ```
 
 ## The concept graph
@@ -62,6 +68,12 @@ wherever they appear bare.
 - **the prev_hash chain** — the log's tamper-evidence layer: each record links
   to the one before it; `/verify` recomputes and names any break. Canonical:
   `packages/canon/src/loom/hash-chain.ts`, `DECISIONS.md` #008.
+- **the cross-anchor** — the Loom's `/verify` head committed into the LOVE
+  ledger's SHA-256 chain as a `LOOM_HEAD` entry; one provable root. Canonical:
+  `packages/canon/src/loom/anchor.ts`, `AUDIT_STANDARDS.md` §5.
+- **the care proof** — the privacy-preserving read: what the LOVE ledger
+  attests (careScore, verified, pools) without the care events. Canonical:
+  `packages/canon/src/loom/love.ts`, `LOVE_INTEGRATION.md` Tier 2.
 
 ## Related Documents
 
@@ -70,5 +82,7 @@ wherever they appear bare.
 - `./DECISIONS.md` — the decisions the concepts above resolve to
 - `./HUMAN_TEST_PLAN.md` — the test that decides whether the design works
 - `./PORTING_AGENT_BRIEF.md` — the method for the next app
+- `./AUDIT_STANDARDS.md` — the audit-trail positioning
+- `./LOVE_INTEGRATION.md` — the care-economy bridge
 - `./CONCEPTS.yml` — the registry this page renders
 - `./SECURITY.md` — the security, privacy, and conformance posture

@@ -116,6 +116,8 @@ of 2026-09):
 
 - `../README.md` — what the Loom is; every conformance claim here is about this app
 - `./DECISIONS.md` — why each conformance posture was chosen (004: reduced motion, 003: sound)
+- `./AUDIT_STANDARDS.md` — the audit-trail conformance this page summarizes
+- `./LOVE_INTEGRATION.md` — the care-economy posture
 - `./HUMAN_TEST_PLAN.md` — the test that checks conformance against real humans
 - `./PORTING_AGENT_BRIEF.md` — the method that keeps these claims true
 

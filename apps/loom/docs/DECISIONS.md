@@ -166,10 +166,34 @@ The chain proves *something changed and where*; it does not yet prove *who
 wrote* a given record beyond the gate's writer-per-kind field. Signature
 support is the natural next increment.
 
+## 009 — Identity is LOVE-bound; privacy is structural
+
+**Decision.** A profile may carry a `loveDid` — the LOVE ledger identity. When
+bound, the Loom resolves the family member's care proof via
+`/api/loom/love/:did` and shows a gentle verified-caregiver presence. The
+care proof is derived by `@p31/canon/loom/love` from the ledger's balance
+shape — a pure fold whose output is **structurally** verdicts + pools, never
+the care events.
+
+**Why.** The log records actions + an optional `humanId`; it is not a person
+record. Binding identity to the care economy gives the Loom a real identity
+signal (care_score, verified status) and a privacy story: prove care without
+exposing intimacy. The proof shape is gated at the module boundary, so the
+"never the events" promise is enforced by construction, not by convention.
+
+**Consequences.** `HumanProfile.loveDid` is optional; an unbinding profile is
+anonymous. The `verified` threshold is 0.5, mirroring love-ledger's
+CARE_THRESHOLD and ProofOfCare.sol. The cross-anchor (`/api/loom/anchor`)
+extends the same trust story to the ledger's chain: the Loom's `/verify` head
+committed as a `LOOM_HEAD` entry. The anchor write awaits a dedicated
+service-to-service token (documented in `LOVE_INTEGRATION.md`); reads are live.
+
 ## Related Documents
 
 - `../README.md` — what the Loom is; every decision here shapes this app
 - `./STANDARDS.md` — the conformance each decision enables
+- `./AUDIT_STANDARDS.md` — the audit-trail positioning #008 enables
+- `./LOVE_INTEGRATION.md` — the care-economy bridge #009 decides
 - `./HUMAN_TEST_PLAN.md` — the trigger for the open persistence question
 - `./CONCEPTS.yml` — the concept registry the decisions define
 
