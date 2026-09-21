@@ -136,5 +136,8 @@ works without it.
 - `../README.md` — what the Loom is
 - `./STANDARDS.md` — WCAG 2.2, DTCG, AAF conformance
 - `./DECISIONS.md` — the decisions behind the shape
+- `./AUDIT_STANDARDS.md` — the audit-trail + integrity positioning
+- `./LOVE_INTEGRATION.md` — the care-economy bridge + the service token decision
+- `./ACCESS_RUNBOOK.md` — how the interim Access-off posture ends
 - `./PORTING_AGENT_BRIEF.md` — the port method
 - `./MAP.md` — the doc index

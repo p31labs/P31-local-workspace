@@ -13,6 +13,7 @@ One screen. Where every doc lives, what it's for, and how they connect.
 | [`PORTING_AGENT_BRIEF.md`](./PORTING_AGENT_BRIEF.md) | Whoever is porting a new app into the canon | You're starting a new app that consumes `@p31/canon` |
 | [`AUDIT_STANDARDS.md`](./AUDIT_STANDARDS.md) | An auditor, a procurement reviewer, a standards-body reader | You want the Loom's log positioned against GAR / AAT / EU AI Act |
 | [`LOVE_INTEGRATION.md`](./LOVE_INTEGRATION.md) | Anyone bridging the Loom and the care economy | You're wiring identity / care proof / the cross-anchor |
+| [`ACCESS_RUNBOOK.md`](./ACCESS_RUNBOOK.md) | Whoever flips the API gate from OFF to ON | You have 5 minutes and the Zero Trust dashboard |
 | [`CONCEPTS.yml`](./CONCEPTS.yml) | The concept registry | You want the canonical definition of the log, the gate, Lumi, the artifact… |
 | [`PORTING_INVENTORY.md`](./PORTING_INVENTORY.md) | — | Generated. Do not read; the generator reads it. |
 | [`DOCS_INVENTORY.md`](./DOCS_INVENTORY.md) | — | Generated. Do not read; the generator reads it. |
@@ -84,5 +85,6 @@ wherever they appear bare.
 - `./PORTING_AGENT_BRIEF.md` — the method for the next app
 - `./AUDIT_STANDARDS.md` — the audit-trail positioning
 - `./LOVE_INTEGRATION.md` — the care-economy bridge
+- `./ACCESS_RUNBOOK.md` — the gate-flip procedure
 - `./CONCEPTS.yml` — the registry this page renders
 - `./SECURITY.md` — the security, privacy, and conformance posture

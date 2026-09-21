@@ -110,25 +110,38 @@ it persisted but silently discarded events would not be.
 
 ---
 
-## Open — offline-first persistence (scoped, not decided)
+## Open — offline-first persistence (researched, trigger-gated)
 
 **The question.** The family test may show that the static demo is not enough
 — the child asks "where did my thing go." If it does, a static deploy needs a
 real log without a backend.
 
+**The research settled the engine.** An empirical 2026 comparison of six sync
+engines (Zero, PowerSync, ElectricSQL, Yjs, Automerge, ShareDB) found that
+**relational engines win on "The Long Now"** (durable local storage, filtered
+replication); CRDT engines win on multi-writer collaboration. The Loom's log
+is append-only and single-writer-per-session (the gate enforces it) — that is
+the **relational** case, not the CRDT case. The candidate is **Zero**
+(Rocicorp, 1.0 released mid-2026): relational, no conflict resolver needed
+(the server owns the write order), optimistic writes with synchronous
+in-memory reads. PowerSync is the alternative only if the Loom ever needs
+multi-writer (it does not today); ElectricSQL is read-path only — wrong shape.
+
 **The architecture (the candidate).** A two-layer log, the offline-first
 pattern:
-- **Client log** in IndexedDB drives the UI immediately and locally. Appends
-  are optimistically applied; reads never wait on the network.
-- **Server log** is authoritative. Sync runs when the network is available;
-  the client replays its pending events into the server, and the server's
-  `seq` is the conflict arbiter.
+- **Client log** in IndexedDB (via Zero) drives the UI immediately and
+  locally. Appends are optimistically applied; reads never wait on the
+  network.
+- **Server log** (D1) is authoritative. Sync runs over the existing SSE
+  stream (`last-event-id` resume is already in the middleware); the server's
+  `seq` is the conflict arbiter. The `prev_hash` chain (#008) continues to
+  hold on both sides — the server recomputes and verifies.
 
 **The tradeoffs, named so the decision is cheaper when the trigger fires.**
 - **Conflict resolution for a two-writer log.** The Loom's gate assigns
-  `seq`; a client log and a server log must reconcile who owns the cursor.
-  Single-writer-per-session (the canon's existing rule) is the escape hatch:
-  one active session owns the log, others read.
+  `seq`; Zero's server-owned write order removes the conflict resolver. If a
+  client logs offline then reconnects, the server replays and re-links the
+  chain.
 - **The sync protocol.** Push-on-connect, pull-on-reconnect, with the
   `last-event-id` SSE pattern already in the middleware as a model.
 - **First load with no server.** The client must distinguish "empty log"
@@ -140,7 +153,8 @@ showing that non-persistence is a problem worth solving. Until then, the
 static demo is the honest state, and IndexedDB is premature.
 
 **Do not start this without the trigger.** It touches the canon's gate and
-the middleware — the two things the docs agree not to touch casually.
+the middleware — the two things the docs agree not to touch casually. When it
+starts, Zero is the researched first choice.
 ## 008 — The log is tamper-evident (prev_hash chain)
 
 **Decision.** Every stored record carries a `prev_hash` — SHA-256 of the
