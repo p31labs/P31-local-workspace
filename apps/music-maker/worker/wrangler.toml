@@ -13,14 +13,12 @@ workers_dev = true
 enabled = true
 
 # CONFIG REQUIRED — a D1 database for the committed composition log.
-# Create with: wrangler d1 create music-maker
-# Then paste the id below and run `wrangler d1 migrations apply music-maker`.
-# The schema mirrors the Loom's events table (schema.sql).
+# Created via: wrangler d1 create music-maker (2026-09-21, region ENAM).
+# Schema applied via: wrangler d1 execute music-maker --remote --file=schema.sql
 [[d1_databases]]
 binding = "MUSIC_D1"
 database_name = "music-maker"
-# CONFIG REQUIRED — replace with the id from `wrangler d1 create music-maker`.
-database_id = "REPLACE_WITH_D1_ID"
+database_id = "4c26bc1a-d1cf-4e31-94e4-2f51c0c21436"
 
 [durable_objects]
 bindings = [
@@ -47,11 +45,6 @@ storage = "sqlite"
 # declaration above (the modern declarative form). The DO writes committed
 # events through D1 (MUSIC_D1), not DO-local SQLite; DO SQLite storage is the
 # required namespace backend, nothing more.
-
-# CONFIG REQUIRED — D1 setup is a USER action (needs your Cloudflare account):
-#   wrangler d1 create music-maker        → gives a database_id
-#   wrangler d1 execute music-maker --remote --file=schema.sql
-# then paste that database_id below. The committed composition log lives here.
 
 # A custom route/domain can be added later; workers.dev gives a reachable URL
 # for testing. The client connects to /stream?room=<family-id>.

@@ -1,5 +1,16 @@
 # Deploy runbook — the spatial music maker
 
+> **STATUS: DEPLOYED LIVE — 2026-09-21.** `music-presence` is live at
+> `https://music-presence.trimtab-signal.workers.dev` (D1 `music-maker`,
+> `database_id 4c26bc1a-…`, account `ee05f70c…`). Phases 0–3.2 below were
+> executed in full-auto and PASSED — including the SQLite DO namespace
+> provision ("Durable Object exports reconciliation: Created: MusicRoom") and
+> the production WebSocket smoke (commit-ack, committed broadcast, ephemeral
+> fan-out with self-echo exclusion, and post-hibernation wake). What remains
+> is human-verifiable: Phase 3.3 (browser smoke on a real device) and Phase 4
+> (coast: rollback drill, observability baseline after the first family
+> session). Re-run this runbook from the top for any FUTURE deploy.
+
 Enterprise production pre-flight → deploy → post-flight → coast guide for
 `apps/music-maker`. Fully interactive: each checkbox names WHO does it
 (**Pilot** = a human with Cloudflare credentials; **Co-Pilot** = the agent;
@@ -23,13 +34,13 @@ Research-grounded against Cloudflare's docs as of 2026-07/08/09:
 
 ## Phase 0 — Account readiness (Pilot)
 
-- [ ] **Pilot** — Cloudflare account exists, **Workers Paid** plan (Durable Objects require it).
-- [ ] **Pilot** — `wrangler whoami` shows the right account:
+- [x] **Pilot** — Cloudflare account exists, **Workers Paid** plan (Durable Objects require it).
+- [x] **Pilot** — `wrangler whoami` shows the right account:
   ```bash
   cd apps/music-maker/worker
   npx wrangler whoami --json | jq '{loggedIn, accounts: [.accounts[] | {name, id}]}'
   ```
-- [ ] **Pilot** — API token configured for CI (Workers Scripts:Edit, D1:Edit, Account Settings:Read) if not doing interactive login.
+- [x] **Pilot** — API token configured for CI (Workers Scripts:Edit, D1:Edit, Account Settings:Read) if not doing interactive login.
 
 **Gate:** do not proceed until `wrangler whoami` shows a logged-in account with Workers Paid.
 
@@ -37,38 +48,38 @@ Research-grounded against Cloudflare's docs as of 2026-07/08/09:
 
 ## Phase 1 — Pre-flight (Co-Pilot, local)
 
-- [ ] **Co-Pilot** — `storage` is `"sqlite"`:
+- [x] **Co-Pilot** — `storage` is `"sqlite"`:
   ```bash
   cd apps/music-maker/worker
   grep -A3 '\[exports.MusicRoom\]' wrangler.toml
   # [exports.MusicRoom] / type = "durable-object" / storage = "sqlite"
   ```
-- [ ] **Co-Pilot** — no legacy `[[migrations]]`:
+- [x] **Co-Pilot** — no legacy `[[migrations]]`:
   ```bash
   grep -c '\[\[migrations\]\]' wrangler.toml   # expected 0
   ```
-- [ ] **Co-Pilot** — D1 binding present, `database_id` is a real UUID (not the placeholder):
+- [x] **Co-Pilot** — D1 binding present, `database_id` is a real UUID (not the placeholder):
   ```bash
   grep -A5 '\[\[d1_databases\]\]' wrangler.toml
   ```
-- [ ] **Co-Pilot** — worker typechecks:
+- [x] **Co-Pilot** — worker typechecks:
   ```bash
   npx wrangler types && npx tsc -p tsconfig.json
   ```
-- [ ] **Co-Pilot** — `wrangler deploy --dry-run` passes:
+- [x] **Co-Pilot** — `wrangler deploy --dry-run` passes:
   ```bash
   npx wrangler deploy --dry-run --outdir /tmp/mm-deploy-check
   ```
-- [ ] **Co-Pilot** — music-maker gates:
+- [x] **Co-Pilot** — music-maker gates:
   ```bash
   cd apps/music-maker && pnpm run typecheck && pnpm test && pnpm run build
   ```
-- [ ] **Co-Pilot** — loom + canon regression gates:
+- [x] **Co-Pilot** — loom + canon regression gates:
   ```bash
   cd apps/loom && pnpm run docs-audit && pnpm run port-audit
   cd packages/canon && node --experimental-strip-types scripts/test-loom-determinism.mjs && node --experimental-strip-types scripts/test-loom-gate.mjs
   ```
-- [ ] **Co-Pilot** — local WS smoke against `wrangler dev --local` passes (commit-ack, committed broadcast, ephemeral fan-out, self-echo exclusion). See `prototypes/` + the two-client script pattern used in prior passes.
+- [x] **Co-Pilot** — local WS smoke against `wrangler dev --local` passes (commit-ack, committed broadcast, ephemeral fan-out, self-echo exclusion). See `prototypes/` + the two-client script pattern used in prior passes.
 
 **Gate:** local smoke must pass before touching production.
 
@@ -76,26 +87,26 @@ Research-grounded against Cloudflare's docs as of 2026-07/08/09:
 
 ## Phase 2 — Deploy (Pilot approves, Co-Pilot executes)
 
-- [ ] **Pilot** — create the production D1 database:
+- [x] **Pilot** — create the production D1 database:
   ```bash
   cd apps/music-maker/worker
   npx wrangler d1 create music-maker
   ```
   Copy the printed `database_id` into `wrangler.toml`, replacing `REPLACE_WITH_D1_ID`.
-- [ ] **Pilot** — confirm the ID is real:
+- [x] **Pilot** — confirm the ID is real:
   ```bash
   grep 'database_id' wrangler.toml   # a UUID, not the placeholder
   ```
-- [ ] **Co-Pilot** — apply the schema to production:
+- [x] **Co-Pilot** — apply the schema to production:
   ```bash
   npx wrangler d1 execute music-maker --remote --file=schema.sql
   ```
-- [ ] **Co-Pilot** — verify the tables exist remotely:
+- [x] **Co-Pilot** — verify the tables exist remotely:
   ```bash
   npx wrangler d1 execute music-maker --remote --command="SELECT name FROM sqlite_master WHERE type='table'"
   # events, d1_migrations
   ```
-- [ ] **Pilot** — approve; **Co-Pilot** deploys:
+- [x] **Pilot** — approve; **Co-Pilot** deploys:
   ```bash
   npx wrangler deploy
   ```
@@ -110,24 +121,24 @@ Research-grounded against Cloudflare's docs as of 2026-07/08/09:
 
 ## Phase 3 — Post-flight (Co-Pilot then Observer)
 
-- [ ] **Co-Pilot** — `GET /events` returns 200:
+- [x] **Co-Pilot** — `GET /events` returns 200:
   ```bash
   curl -s -o /dev/null -w "%{http_code}" https://<DEPLOYED_URL>/events
   curl -s https://<DEPLOYED_URL>/events | jq .   # [] on first deploy
   ```
-- [ ] **Co-Pilot** — a committed write passes the gate:
+- [x] **Co-Pilot** — a committed write passes the gate:
   ```bash
   curl -s -X POST https://<DEPLOYED_URL>/event \
     -H 'Content-Type: application/json' \
     -d '{"input":{"writer":"human","kind":"instrument.zone.place","node":"zone:postflight","position":[0,1,0],"timbre":"hydrogen"}}' | jq .
   ```
-- [ ] **Co-Pilot** — two-client WS smoke against the DEPLOYED URL: commit-ack to sender, committed broadcast to the other client, ephemeral fan-out with self-echo exclusion, committed-resume on connect.
-- [ ] **Co-Pilot** — hibernation wake on production: connect a WS client, wait 12+ seconds, send a message, confirm the frame arrives and `getWebSockets()` still enumerates the socket.
+- [x] **Co-Pilot** — two-client WS smoke against the DEPLOYED URL: commit-ack to sender, committed broadcast to the other client, ephemeral fan-out with self-echo exclusion, committed-resume on connect.
+- [x] **Co-Pilot** — hibernation wake on production: connect a WS client, wait 12+ seconds, send a message, confirm the frame arrives and `getWebSockets()` still enumerates the socket.
 - [ ] **Observer** — browser smoke on a real device: sound off on first load; toggle enables audio; place a zone; trigger a zone (sound + glow); a second device sees the placement live; keyboard listbox works; reduced-motion honored.
 
 **Gate:** if any post-flight step fails, fix and redeploy. Do not hand the URL to the family test.
 
-- [ ] **Co-Pilot** — clean up test data:
+- [x] **Co-Pilot** — clean up test data:
   ```bash
   npx wrangler d1 execute music-maker --remote --command="DELETE FROM events WHERE data LIKE '%zone:postflight%'"
   ```
@@ -136,11 +147,11 @@ Research-grounded against Cloudflare's docs as of 2026-07/08/09:
 
 ## Phase 4 — Coast (steady-state)
 
-- [ ] **Co-Pilot** — Workers Logs live:
+- [x] **Co-Pilot** — Workers Logs live:
   ```bash
   npx wrangler tail --format=json | head -20
   ```
-- [ ] **Co-Pilot** — D1 row count within budget (family scale = a few rows/session):
+- [x] **Co-Pilot** — D1 row count within budget (family scale = a few rows/session):
   ```bash
   npx wrangler d1 execute music-maker --remote --command="SELECT COUNT(*) FROM events"
   ```
