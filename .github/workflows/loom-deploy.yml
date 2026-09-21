@@ -38,12 +38,34 @@ jobs:
       - name: Build Loom
         run: pnpm --filter @p31/loom build
 
-      - name: Deploy Pages (static + Functions)
+      # D1 migrations — idempotent. schema.sql creates the table fresh; the
+      # prev_hash ALTER covers pre-existing deployments. Both are safe to run
+      # every deploy.
+      - name: Apply D1 schema
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy apps/loom/dist --project-name=loom --commit-dirty=true
+          command: d1 execute loom --remote --file apps/loom/worker/schema.sql
+      - name: Add prev_hash column (idempotent)
+        uses: cloudflare/wrangler-action@v3
+        continue-on-error: true
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: d1 execute loom --remote --command "ALTER TABLE events ADD COLUMN prev_hash TEXT NOT NULL DEFAULT '';"
+
+      # pages deploy discovers the Functions bundle relative to the CWD's
+      # wrangler.toml (pages_build_output_dir = "dist"). Deploy from apps/loom
+      # so the API Functions are included; deploying apps/loom/dist from the
+      # repo root uploads only the static SPA and silently drops /api/loom/*.
+      - name: Deploy Pages (static + Functions)
+        working-directory: apps/loom
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy dist --project-name=loom --commit-dirty=true
 
       - name: Deploy SSE Worker
         uses: cloudflare/wrangler-action@v3
