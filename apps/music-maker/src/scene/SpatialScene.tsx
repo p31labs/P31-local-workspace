@@ -75,7 +75,7 @@ export function SpatialScene({
   const zoneMap = useRef(new Map<string, THREE.Points>());
   // C1 agent buttons (the AAF surface per zone), keyed by zone id. The frame
   // loop positions them directly — no React state at 60fps.
-  const zoneButtons = useRef(new Map<string, HTMLButtonElement>());
+  const zoneButtons = useRef(new Map<string, HTMLElement>());
   // The in-scene listener position — mutable across frames.
   const listenerRef = useRef(listener);
   listenerRef.current = listener;
@@ -155,10 +155,24 @@ export function SpatialScene({
       camera.lookAt(0, 0, 0);
     };
 
+    // Tap-to-trigger: a pointerdown+up with negligible movement (no drag) is a
+    // tap on a zone. The visual zones are THREE.Points, so a raycast finds the
+    // one under the cursor and calls onZoneTrigger. This is the real pointer
+    // path for instrument.zone.trigger; the C1 DOM spans are the discoverable
+    // AAF surface, not the interaction.
+    const raycaster = new THREE.Raycaster();
+    raycaster.params.Points.threshold = 0.22;
+    let tapStartX = 0;
+    let tapStartY = 0;
+    let pointerMoved = false;
+
     const onPointerDown = (e: PointerEvent) => {
       activePointers.add(e.pointerId);
       lastX = e.clientX;
       lastY = e.clientY;
+      tapStartX = e.clientX;
+      tapStartY = e.clientY;
+      pointerMoved = false;
       if (e.pointerType === 'mouse') mode = 'camera';
       else mode = activePointers.size >= 2 ? 'camera' : 'listener';
       try { canvas.setPointerCapture(e.pointerId); } catch { /* ignore */ }
@@ -169,6 +183,7 @@ export function SpatialScene({
       const dy = e.clientY - lastY;
       lastX = e.clientX;
       lastY = e.clientY;
+      if (Math.hypot(e.clientX - tapStartX, e.clientY - tapStartY) > 8) pointerMoved = true;
       if (mode === 'camera') {
         yaw -= dx * 0.005;
         pitch = Math.max(-1.5, Math.min(1.5, pitch - dy * 0.005));
@@ -192,9 +207,22 @@ export function SpatialScene({
       }
     };
     const onPointerUp = (e: PointerEvent) => {
+      const wasTap = !pointerMoved;
       activePointers.delete(e.pointerId);
       if (activePointers.size === 0) mode = 'none';
       try { canvas.releasePointerCapture(e.pointerId); } catch { /* ignore */ }
+      // A tap (no drag) on the canvas triggers the zone under the cursor.
+      if (wasTap && activePointers.size === 0) {
+        const w = canvas.clientWidth || window.innerWidth;
+        const h = canvas.clientHeight || window.innerHeight;
+        const ndc = new THREE.Vector2((e.clientX / w) * 2 - 1, -(e.clientY / h) * 2 + 1);
+        raycaster.setFromCamera(ndc, camera);
+        const hits = raycaster.intersectObjects([...zoneMap.current.values()], false);
+        const hit = hits.find((x) => x.object && x.object.userData?.zoneId);
+        if (hit && hit.object) {
+          onZoneTriggerRef.current(hit.object.userData.zoneId);
+        }
+      }
     };
     canvas.addEventListener('pointerdown', onPointerDown);
     window.addEventListener('pointermove', onPointerMove);
@@ -287,6 +315,7 @@ export function SpatialScene({
   // Register each zone's THREE.Points with the shared map so the loop can
   // update its uniforms. Zones that arrive late (committed via SSE) land here.
   const handleReady = (points: THREE.Points, id: string) => {
+    points.userData.zoneId = id; // the raycast tap uses this to resolve the zone
     zoneMap.current.set(id, points);
   };
   const handleDispose = (id: string) => {
@@ -301,26 +330,27 @@ export function SpatialScene({
       {/* C1: the AAF surface per zone. Invisible to sighted users (clipped),
           discoverable to agents and tests — the honest DOM surface for
           instrument.zone.trigger, since the visual zone is a canvas point with
-          no DOM element. Positioned each frame via zoneButtons ref. */}
+          no DOM element. NON-interactive spans: they must never intercept
+          pointer events (a clipped <button> can swallow canvas drags on some
+          browsers); the trigger itself is the canvas tap, and agent/test
+          invocation goes through the AAF attribute, not a click. */}
       {zones.map((z) => (
-        <button
+        <span
           key={z.id}
-          type="button"
           ref={(el) => {
             if (el) zoneButtons.current.set(z.id, el);
             else zoneButtons.current.delete(z.id);
           }}
           className="mm-zone-agent"
-          onClick={() => onZoneTriggerRef.current(z.id)}
+          aria-hidden="true"
+          data-zone-id={z.id}
           data-agent-kind="action"
           data-agent-action="instrument.zone.trigger"
           data-agent-danger="none"
           data-agent-confirm="never"
-          aria-label={`Play ${z.name || z.id}`}
-          tabIndex={-1}
         >
           {z.name || z.id}
-        </button>
+        </span>
       ))}
 
       {zones.map((z) => (

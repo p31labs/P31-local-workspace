@@ -19,7 +19,7 @@ import { SpatialInstrumentEngine, FAMILY_ZONE_BUDGET, type TimbreProfile } from 
 import { SpatialScene } from './scene/SpatialScene';
 import { SoundToggle } from './components/SoundToggle';
 import { useInstrumentSound } from './hooks/useInstrumentSound';
-import { useMusicSession } from './hooks/useMusicSession';
+import { useMusicSession, unseenRemoteTriggers } from './hooks/useMusicSession';
 import { phyllotaxisPosition, type Timbre } from './scene/musicZone';
 
 const TIMBRE_PROFILES: Record<Timbre, TimbreProfile> = {
@@ -143,17 +143,17 @@ export default function App() {
   );
 
   // A3: process EVERY new remote trigger since the last run, not just the
-  // head. remoteTriggers is newest-first; two peers playing within the same
-  // React batch must not drop the earlier note. Track the count already seen.
-  const processedRemoteRef = useRef(0);
+  // head. Tracked by monotonic SEQ — the presence list is capped at 8 for
+  // display, so tracking by array length would silently stall once the cap
+  // drops old entries. unseenRemoteTriggers returns the unseen ones in arrival
+  // order; the play order then matches arrival.
+  const lastRemoteSeqRef = useRef(0);
   useEffect(() => {
-    const seen = processedRemoteRef.current;
-    const fresh = session.remoteTriggers.slice(0, session.remoteTriggers.length - seen);
-    // Iterate oldest-first so the play order matches arrival.
-    for (let i = fresh.length - 1; i >= 0; i--) {
-      handleRemoteZoneTrigger(fresh[i].zone);
+    const unseen = unseenRemoteTriggers(session.remoteTriggers, lastRemoteSeqRef.current);
+    for (const t of unseen) {
+      lastRemoteSeqRef.current = t.seq;
+      handleRemoteZoneTrigger(t.zone);
     }
-    processedRemoteRef.current = session.remoteTriggers.length;
   }, [session.remoteTriggers, handleRemoteZoneTrigger]);
 
   // Place a zone at the current phyllotaxis slot for the count. Refuses past

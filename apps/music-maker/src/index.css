@@ -123,8 +123,10 @@
   border: 0;
 }
 
-/* The per-zone agent buttons (C1): positioned by the scene's frame loop,
-   invisible to sighted users but a real DOM surface for agents and tests. */
+/* The per-zone agent surfaces (C1): positioned by the scene's frame loop,
+   invisible to sighted users but a real DOM surface for agents and tests.
+   They are non-interactive SPANS — pointer-events: none means they can never
+   swallow a canvas drag or tap (a clipped <button> can, on some browsers). */
 .mm-zone-agent {
   position: absolute;
   width: var(--p31-touch-min);
@@ -137,6 +139,7 @@
   white-space: nowrap;
   border: 0;
   background: transparent;
+  pointer-events: none;
 }
 
 @media (prefers-reduced-transparency: reduce) {

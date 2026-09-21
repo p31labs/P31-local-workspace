@@ -6,7 +6,9 @@ import { useInstrumentSound } from './useInstrumentSound';
  * A2 regression guard: the hook owns NO AudioContext. The engine is the single
  * context owner (created inside enable(), the user gesture). Previously the
  * hook created its own context, so a session had two — one dead, never closed.
- * This test pins that the hook alone constructs no context and never resumes.
+ *
+ * Also pins the master-prompt rule: sound starts OFF every session, with NO
+ * localStorage persistence. A fresh session is always silent until a tap.
  */
 
 describe('useInstrumentSound', () => {
@@ -16,7 +18,7 @@ describe('useInstrumentSound', () => {
     // react-dom needs the real jsdom window during render).
     vi.stubGlobal('AudioContext', Ctor);
     const { result } = renderHook(() => useInstrumentSound());
-    // Toggle on + off twice: the hook only flips localStorage state.
+    // Toggle on + off twice: the hook only flips the session flag.
     act(() => result.current.toggle());
     act(() => result.current.toggle());
     act(() => result.current.toggle());
@@ -24,12 +26,19 @@ describe('useInstrumentSound', () => {
     vi.unstubAllGlobals();
   });
 
-  it('persists the opt-in state per device (localStorage)', () => {
-    localStorage.clear();
+  it('starts OFF every session — no localStorage persistence', () => {
+    localStorage.setItem('music-maker:sound', 'on');
     const { result } = renderHook(() => useInstrumentSound());
+    // Even with a stale stored preference, a fresh session is silent.
     expect(result.current.enabled).toBe(false);
+    expect(localStorage.getItem('music-maker:sound')).toBe('on'); // never read/written
+  });
+
+  it('flips the session flag on toggle', () => {
+    const { result } = renderHook(() => useInstrumentSound());
     act(() => result.current.toggle());
     expect(result.current.enabled).toBe(true);
-    expect(localStorage.getItem('music-maker:sound')).toBe('on');
+    act(() => result.current.toggle());
+    expect(result.current.enabled).toBe(false);
   });
 });

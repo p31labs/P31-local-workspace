@@ -14,8 +14,9 @@
  * Manual EventSource reconnection with exponential backoff + Last-Event-ID
  * resume (mobile-grade), exactly the Loom's useLoomState pattern.
  */
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { LoomEvent } from '@p31/canon/loom/events';
+import type { LoomEventInput } from '@p31/canon/loom/gate';
 import type { MusicZone, Timbre } from '../scene/musicZone';
 
 export interface EphemeralTrigger {
@@ -25,12 +26,32 @@ export interface EphemeralTrigger {
   origin: string;
 }
 
+/** A remote trigger as surfaced to the consumer. `seq` is a MONOTONIC counter
+ *  (local to this device, not the log's seq) so a consumer can track which
+ *  remote triggers it has already played. The presence echo list is capped at
+ *  8 for display, but the counter must NOT reset when the cap drops old
+ *  entries — otherwise a consumer tracking by array length would silently stop
+ *  playing new triggers once the list is full. */
+export interface RemoteTrigger {
+  zone: string;
+  origin: string;
+  at: number;
+  seq: number;
+}
+
+/** A pending committed-write, resolved when the DO's commit-ack echoes back.
+ *  Keyed by requestId so a WS round-trip resolves the right promise. */
+interface PendingCommit {
+  resolve: (valid: boolean) => void;
+}
+
 export interface MusicSession {
   zones: MusicZone[];
   /** Zone id -> recent trigger timestamps (drive the glow decay). */
   triggers: Record<string, number[]>;
-  /** Recently seen remote trigger ids (for presence echo). */
-  remoteTriggers: Array<{ zone: string; origin: string; at: number }>;
+  /** Recently seen remote trigger ids (newest first, capped at 8 for display).
+   *  Each carries a monotonic `seq` for reliable delta tracking. */
+  remoteTriggers: RemoteTrigger[];
   /** Commit a placement — returns true when the gate accepted it. */
   placeZone: (position: [number, number, number], timbre: Timbre, name?: string) => Promise<boolean>;
   /** Commit a clear. */
@@ -66,18 +87,42 @@ export function zonesFromEvents(es: LoomEvent[]): MusicZone[] {
     }));
 }
 
-/** The live-stream frame kinds the client understands. A control frame from
- *  the worker (committed-resume) must never be treated as a LoomEvent; an
- *  ephemeral trigger is broadcast presence, never persisted. Pure, so the
- *  discrimination is testable without the transport. */
-export type StreamFrame = LoomEvent | EphemeralTrigger | { type: 'committed-resume'; seq: number };
+/** Pure: given the newest-first remote-trigger list and the highest seq already
+ *  consumed, return the unseen triggers in arrival order (oldest first). The
+ *  list is capped at 8 for display, but tracking by SEQ (not array length)
+ *  means a full cap never stalls the delta — the monotonic seq still advances.
+ *  Pure, so the A3 delta rule is unit-testable. */
+export function unseenRemoteTriggers(list: RemoteTrigger[], lastSeenSeq: number): RemoteTrigger[] {
+  const unseen = list.filter((t) => t.seq > lastSeenSeq);
+  return unseen.reverse(); // newest-first → oldest-first (arrival order)
+}
+
+/** The live-stream frame kinds the client understands. classifyFrame returns a
+ *  TAGGED union so consumers never re-check `type` with `in` — the cases are
+ *  explicit: control (the worker's committed-resume hint, never a LoomEvent),
+ *  ephemeral (broadcast presence, never persisted), commitAck (a committed-
+ *  write echo resolving the caller's promise), committed (a real LoomEvent).
+ *  Pure, so the discrimination is testable without a transport. */
+export type StreamFrame =
+  | { kind: 'control'; seq: number }
+  | { kind: 'ephemeral'; trigger: EphemeralTrigger }
+  | { kind: 'commitAck'; requestId: string; valid: boolean; error?: string }
+  | { kind: 'committed'; event: LoomEvent };
 
 export function classifyFrame(data: string): StreamFrame | null {
   try {
-    const parsed = JSON.parse(data) as StreamFrame;
-    const t = (parsed as { type?: unknown }).type;
-    if (t === 'committed-resume' || t === 'ephemeral') return parsed;
-    if ('seq' in parsed && 'kind' in parsed) return parsed as LoomEvent;
+    const parsed = JSON.parse(data) as Record<string, unknown>;
+    if (parsed.type === 'committed-resume') return { kind: 'control', seq: parsed.seq as number };
+    if (parsed.type === 'ephemeral') return { kind: 'ephemeral', trigger: parsed as unknown as EphemeralTrigger };
+    if (parsed.type === 'commit-ack') {
+      return {
+        kind: 'commitAck',
+        requestId: parsed.requestId as string,
+        valid: parsed.valid as boolean,
+        error: parsed.error as string | undefined,
+      };
+    }
+    if ('seq' in parsed && 'kind' in parsed) return { kind: 'committed', event: parsed as unknown as LoomEvent };
     return null;
   } catch {
     return null;
@@ -87,12 +132,27 @@ export function classifyFrame(data: string): StreamFrame | null {
 export function useMusicSession(): MusicSession {
   const [zones, setZones] = useState<MusicZone[]>([]);
   const [triggers, setTriggers] = useState<Record<string, number[]>>({});
-  const [remoteTriggers, setRemoteTriggers] = useState<Array<{ zone: string; origin: string; at: number }>>([]);
+  const [remoteTriggers, setRemoteTriggers] = useState<RemoteTrigger[]>([]);
   const zonesRef = useRef<MusicZone[]>([]);
   zonesRef.current = zones;
   const triggersRef = useRef<Record<string, number[]>>(triggers);
   triggersRef.current = triggers;
   const originRef = useRef(`device:${Math.random().toString(36).slice(2, 8)}`);
+  // Monotonic counter for remote triggers — survives the display cap so a
+  // consumer's delta tracking never stalls when the list is full.
+  const remoteSeqRef = useRef(0);
+  // The live WebSocket (when the production transport is active). Ephemeral
+  // triggers are sent over THIS socket — the DO's webSocketMessage broadcasts
+  // them to other clients. When no WS is open (SSE dev transport), ephemeral
+  // falls back to the HTTP POST /ephemeral endpoint.
+  const liveWsRef = useRef<WebSocket | null>(null);
+  // Committed-write round-trips over the WS: requestId -> resolver. Resolved
+  // when the DO's commit-ack echo returns.
+  const pendingCommitsRef = useRef(new Map<string, PendingCommit>());
+  const commitSeqRef = useRef(0);
+  // The committed events streamed since the last reconnect reconciliation, so
+  // a client never double-applies the same seq.
+  const seenSeqRef = useRef(-1);
 
   // ── Initial composition load (the committed log) ───────────────────────
   useEffect(() => {
@@ -127,19 +187,25 @@ export function useMusicSession(): MusicSession {
 
     // One frame handler for both transports. Ephemeral vs committed is decided
     // by shape, never by transport — a debug log can tag which is which.
-    // `committed-resume` (the worker's connect hint) is explicitly skipped:
-    // it is a control frame, never a LoomEvent. Pure discrimination via
-    // classifyFrame so the rules are unit-testable.
+    // Pure discrimination via classifyFrame (a tagged union) so the rules are
+    // unit-testable; a control frame (committed-resume) is never a LoomEvent.
     const handleFrame = (data: string) => {
-      const parsed = classifyFrame(data);
-      if (!parsed) return;
-      // A frame that carries an explicit `type` is either a control frame
-      // (committed-resume) or an ephemeral trigger — never a LoomEvent.
-      if ('type' in parsed) {
-        if (parsed.type === 'committed-resume') return;
-        const m = parsed;
+      const frame = classifyFrame(data);
+      if (!frame) return;
+      if (frame.kind === 'control') return;
+      if (frame.kind === 'commitAck') {
+        const pending = pendingCommitsRef.current.get(frame.requestId);
+        if (pending) {
+          pendingCommitsRef.current.delete(frame.requestId);
+          pending.resolve(frame.valid);
+        }
+        return;
+      }
+      if (frame.kind === 'ephemeral') {
+        const m = frame.trigger;
         if (m.kind !== 'zone.trigger' || m.origin === originRef.current) return;
-        setRemoteTriggers((prev) => [{ zone: m.zone, origin: m.origin, at: Date.now() }, ...prev].slice(0, 8));
+        const seq = ++remoteSeqRef.current;
+        setRemoteTriggers((prev) => [{ zone: m.zone, origin: m.origin, at: Date.now(), seq }, ...prev].slice(0, 8));
         // A remote trigger also glows locally (visual echo).
         setTriggers((prev) => ({
           ...prev,
@@ -147,7 +213,7 @@ export function useMusicSession(): MusicSession {
         }));
         return;
       }
-      const e = parsed;
+      const e = frame.event;
       lastEventId = String(e.seq);
       setZones((prev) => {
         if (e.kind === 'instrument.zone.place') {
@@ -173,11 +239,14 @@ export function useMusicSession(): MusicSession {
     const connectWebSocket = () => {
       if (!alive) return;
       // Production: the Durable Object upgrades /stream to a WebSocket. Same
-      // endpoint path, same frames.
+      // endpoint path, same frames. Ephemeral triggers are sent over THIS
+      // socket (the DO's webSocketMessage broadcasts them); committed writes
+      // still POST /event.
       const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
       const wsUrl = `${proto}//${location.host}/api/music/stream${location.search}`;
       const socket = new WebSocket(wsUrl);
       ws = socket;
+      liveWsRef.current = socket;
       socket.onopen = () => {
         attempts = 0;
         // B1: reconcile missed committed events on (re)connect. The DO's
@@ -195,6 +264,7 @@ export function useMusicSession(): MusicSession {
       socket.onmessage = (ev) => handleFrame(String(ev.data));
       socket.onclose = () => {
         ws = null;
+        if (liveWsRef.current === socket) liveWsRef.current = null;
         if (!alive) return;
         const delay = Math.min(1000 * 2 ** attempts, 30_000);
         attempts += 1;
@@ -223,8 +293,12 @@ export function useMusicSession(): MusicSession {
 
     // Prefer WebSocket (production transport); fall back to EventSource (dev)
     // only when the upgrade fails — e.g. the dev middleware, which serves SSE.
+    // A ?transport=ws query param forces WebSocket so the production path can
+    // be exercised against `wrangler dev` locally.
     const prefersWs = () => {
       try {
+        const force = new URLSearchParams(location.search).get('transport');
+        if (force === 'ws') return true;
         return typeof WebSocket === 'function' && location.protocol === 'https:';
       } catch {
         return false;
@@ -236,27 +310,39 @@ export function useMusicSession(): MusicSession {
     return () => {
       alive = false;
       if (timer) clearTimeout(timer);
+      liveWsRef.current = null;
       src?.close();
       ws?.close();
     };
   }, []);
 
-  const placeZone = useCallback(async (position: [number, number, number], timbre: Timbre, name?: string): Promise<boolean> => {
-    const id = `zone:${Date.now().toString(36)}`;
+  // Commit a composition event over the active transport: over the live
+  // WebSocket when open (reliable fan-out under Hibernation, with a commit-ack
+  // echo resolving the promise), else the HTTP POST /event endpoint (the SSE
+  // dev transport). Both return whether the gate accepted it.
+  const commitOverTransport = useCallback(async (input: LoomEventInput): Promise<boolean> => {
+    const socket = liveWsRef.current;
+    if (socket && socket.readyState === WebSocket.OPEN) {
+      const requestId = `c${++commitSeqRef.current}`;
+      return new Promise<boolean>((resolve) => {
+        const timer = setTimeout(() => {
+          pendingCommitsRef.current.delete(requestId);
+          resolve(false); // no ack within the timeout — treat as not accepted
+        }, 10_000);
+        pendingCommitsRef.current.set(requestId, {
+          resolve: (valid) => {
+            clearTimeout(timer);
+            resolve(valid);
+          },
+        });
+        socket.send(JSON.stringify({ requestId, input }));
+      });
+    }
     try {
       const res = await fetch('/api/music/event', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          input: {
-            writer: 'human',
-            kind: 'instrument.zone.place',
-            node: id,
-            position,
-            timbre,
-            ...(name ? { name } : {}),
-          },
-        }),
+        body: JSON.stringify({ input }),
       });
       const r = (await res.json()) as { valid: boolean; error?: string };
       return r.valid;
@@ -264,34 +350,25 @@ export function useMusicSession(): MusicSession {
       return false;
     }
   }, []);
+
+  const placeZone = useCallback(async (position: [number, number, number], timbre: Timbre, name?: string): Promise<boolean> => {
+    return commitOverTransport({
+      writer: 'human',
+      kind: 'instrument.zone.place',
+      node: `zone:${Date.now().toString(36)}`,
+      position,
+      timbre,
+      ...(name ? { name } : {}),
+    });
+  }, [commitOverTransport]);
 
   const clearZone = useCallback(async (id: string): Promise<boolean> => {
-    try {
-      const res = await fetch('/api/music/event', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ input: { writer: 'human', kind: 'instrument.zone.clear', node: id } }),
-      });
-      const r = (await res.json()) as { valid: boolean; error?: string };
-      return r.valid;
-    } catch {
-      return false;
-    }
-  }, []);
+    return commitOverTransport({ writer: 'human', kind: 'instrument.zone.clear', node: id });
+  }, [commitOverTransport]);
 
   const nameZone = useCallback(async (id: string, name: string): Promise<boolean> => {
-    try {
-      const res = await fetch('/api/music/event', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ input: { writer: 'human', kind: 'instrument.zone.name', node: id, name } }),
-      });
-      const r = (await res.json()) as { valid: boolean; error?: string };
-      return r.valid;
-    } catch {
-      return false;
-    }
-  }, []);
+    return commitOverTransport({ writer: 'human', kind: 'instrument.zone.name', node: id, name });
+  }, [commitOverTransport]);
 
   const localTrigger = useCallback((id: string) => {
     setTriggers((prev) => ({ ...prev, [id]: [...(prev[id] ?? []), Date.now()].slice(-16) }));
@@ -301,6 +378,16 @@ export function useMusicSession(): MusicSession {
     (id: string) => {
       localTrigger(id);
       const m: EphemeralTrigger = { type: 'ephemeral', kind: 'zone.trigger', zone: id, origin: originRef.current };
+      // Production: send over the live WebSocket — the DO's webSocketMessage
+      // broadcasts to the other clients. (HTTP POST /ephemeral is the SSE-dev
+      // fallback; under WebSocket Hibernation an HTTP fan-out from a separate
+      // fetch invocation may not enumerate the hibernated sockets, so the WS
+      // is the reliable path.)
+      const socket = liveWsRef.current;
+      if (socket && socket.readyState === WebSocket.OPEN) {
+        socket.send(JSON.stringify(m));
+        return;
+      }
       void fetch('/api/music/ephemeral', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -314,5 +401,13 @@ export function useMusicSession(): MusicSession {
     return zoneById(zonesRef.current, id)?.name || id;
   }, []);
 
-  return { zones, triggers, remoteTriggers, placeZone, clearZone, nameZone, triggerZone, localTrigger, zoneName };
+  // Stable return object: the consumer's callbacks depend on `session`, and a
+  // fresh object every render would re-create those callbacks (and re-run the
+  // effects that depend on them) on every zones/triggers change. Memoize on
+  // the values that actually change.
+  return useMemo(
+    () => ({ zones, triggers, remoteTriggers, placeZone, clearZone, nameZone, triggerZone, localTrigger, zoneName }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [zones, triggers, remoteTriggers, placeZone, clearZone, nameZone, triggerZone, localTrigger],
+  );
 }

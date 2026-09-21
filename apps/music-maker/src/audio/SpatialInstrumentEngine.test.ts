@@ -39,6 +39,10 @@ function fakeAudioContext() {
     currentTime: 0,
     state: 'suspended',
     destination,
+    // >0.05s output latency trips the engine's coarse device gate, so the HRTF
+    // probe is skipped in tests (the 24×3 panner probe is pure noise on a fake
+    // context and slows every enable()).
+    outputLatency: 0.1,
     createGain: () => makeNode(),
     createPanner: () => makeNode(),
     createOscillator: () => {

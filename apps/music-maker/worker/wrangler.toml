@@ -27,6 +27,18 @@ bindings = [
   { name = "MUSIC_ROOM", class_name = "MusicRoom" },
 ]
 
+# The modern runtime declaration for a Hibernation WebSocket DO. Without the
+# `exports` entry, the runtime does not route the Hibernation handlers
+# (webSocketMessage / webSocketClose / getWebSockets) to this class — the
+# frames never fan out. `storage = "legacy-kv"` gives the DO its durable state
+# (needed to track hibernated sockets) WITHOUT DO-local SQLite — committed
+# events still go through D1. If the room ever moves to DO SQLite, that's a
+# separate decision taken before first deploy (changing storage later is not
+# possible on a deployed class).
+[exports.MusicRoom]
+type = "durable-object"
+storage = "legacy-kv"
+
 # NO [[migrations]] entry: this DO writes through D1 (MUSIC_D1), not DO-local
 # SQLite storage. new_sqlite_classes would enable storage the DO never calls,
 # and per Cloudflare docs cannot be added to a class that has already deployed

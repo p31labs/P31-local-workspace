@@ -149,19 +149,55 @@ export class MusicRoom extends DurableObject<Env> {
     return new Response('not found', { status: 404 });
   }
 
-  /** An ephemeral trigger or cursor update arrives on one socket. Broadcast it
-   *  to every OTHER socket in the room; the sending socket already applied it
-   *  locally. Never persisted. */
+  /** A message from a client socket. The WS is the RELIABLE fan-out path: a
+   *  broadcast initiated from a fetch invocation (the HTTP /ephemeral or
+   *  /event endpoints) may not enumerate sockets after the DO hibernates —
+   *  Cloudflare's Hibernation model routes webSocketMessage reliably, so the
+   *  client sends BOTH ephemeral triggers and committed writes over its socket.
+   *
+   *   • A message with an `input` shape is a COMMITTED write: gate-validate,
+   *     append to D1, echo the confirmation back to the SENDER (with the
+   *     requestId so the caller can resolve its promise), and broadcast to the
+   *     other sockets.
+   *   • A message carrying type:'ephemeral' is presence: broadcast to the
+   *     other sockets; the sender already applied it locally. Never persisted. */
   async webSocketMessage(ws: WebSocket, message: string | ArrayBuffer): Promise<void> {
     if (typeof message !== 'string') return;
-    let msg: unknown;
+    let msg: Record<string, unknown>;
     try {
-      msg = JSON.parse(message);
+      msg = JSON.parse(message) as Record<string, unknown>;
     } catch {
       return;
     }
-    for (const socket of this.ctx.getWebSockets()) {
-      if (socket !== ws) socket.send(JSON.stringify(msg));
+
+    const isEphemeral = msg.type === 'ephemeral';
+    const isCommit = msg.input !== undefined && typeof msg.input === 'object';
+    const requestId = typeof msg.requestId === 'string' ? msg.requestId : undefined;
+
+    if (isCommit) {
+      try {
+        const event = await appendEvent(this.env, msg.input as LoomEventInput);
+        // Echo confirmation to the sender (resolves its promise truthfully).
+        if (requestId) {
+          ws.send(JSON.stringify({ type: 'commit-ack', requestId, valid: true, event }));
+        }
+        // Broadcast to the other sockets.
+        for (const socket of this.ctx.getWebSockets()) {
+          if (socket !== ws) socket.send(JSON.stringify(event));
+        }
+      } catch (e) {
+        if (requestId) {
+          ws.send(JSON.stringify({ type: 'commit-ack', requestId, valid: false, error: String(e) }));
+        }
+      }
+      return;
+    }
+
+    if (isEphemeral) {
+      for (const socket of this.ctx.getWebSockets()) {
+        if (socket !== ws) socket.send(JSON.stringify(msg));
+      }
+      return;
     }
   }
 
