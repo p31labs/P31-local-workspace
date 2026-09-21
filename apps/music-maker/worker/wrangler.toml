@@ -1,0 +1,35 @@
+# The music maker — presence Worker. The production transport for the
+# log/presence split (§6 Option B): a Durable Object per music room with
+# WebSocket Hibernation — the DO sleeps when idle (no billable Duration) and
+# wakes to broadcast. Committed events go through the D1 log path.
+name = "music-presence"
+main = "index.ts"
+compatibility_date = "2026-07-04"
+compatibility_flags = ["nodejs_compat"]
+
+workers_dev = true
+
+[observability]
+enabled = true
+
+# CONFIG REQUIRED — a D1 database for the committed composition log.
+# Create with: wrangler d1 create music-maker
+# Then paste the id below and run `wrangler d1 migrations apply music-maker`.
+# The schema mirrors the Loom's events table (schema.sql).
+[[d1_databases]]
+binding = "MUSIC_D1"
+database_name = "music-maker"
+# CONFIG REQUIRED — replace with the id from `wrangler d1 create music-maker`.
+database_id = "REPLACE_WITH_D1_ID"
+
+[durable_objects]
+bindings = [
+  { name = "MUSIC_ROOM", class_name = "MusicRoom" },
+]
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["MusicRoom"]
+
+# A custom route/domain can be added later; workers.dev gives a reachable URL
+# for testing. The client connects to /stream?room=<family-id>.

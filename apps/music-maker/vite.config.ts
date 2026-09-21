@@ -19,9 +19,17 @@ import type { LoomEvent } from '@p31/canon/loom/events';
  *     console visibly tags which is which. The stream also tails committed
  *     events with Last-Event-ID resume, exactly like the Loom's /stream.
  *
- * A deployed port replaces this middleware with the production worker; the
- * client contract (two endpoints, one SSE stream, distinguishable types) is
- * the same shape a Durable Object (Option B) would serve.
+ * ── THE DUAL PATH (read before changing this file) ─────────────────────────
+ * This middleware is the LOCAL mirror only. The PRODUCTION transport is the
+ * `worker/` Durable Object (music-presence), which serves the SAME client
+ * contract: POST /event, POST /ephemeral, GET /events, and a live stream —
+ * but over WebSocket Hibernation instead of SSE, and writing committed events
+ * through the D1 log adapter, NOT this Node commit() (Node fs cannot run in
+ * workerd). This is one production transport + one dev mirror — the build
+ * prompt's "pick one, don't build both" rule is honored as written: only the
+ * deployed worker is production. If you change an endpoint path or message
+ * shape here, change it in worker/index.ts too; the client must not care
+ * which transport it reached.
  */
 function musicMiddleware(): Plugin {
   const logPath = resolveLogPath();
@@ -67,7 +75,7 @@ function musicMiddleware(): Plugin {
           req.on('end', () => {
             try {
               const msg = JSON.parse(body || '{}');
-              const frame = `event: ephemeral\ndata: ${JSON.stringify(msg)}\n\n`;
+              const frame = `data: ${JSON.stringify(msg)}\n\n`;
               for (const client of ephemeralClients) {
                 if (!client.writableEnded) client.write(frame);
               }
@@ -99,12 +107,16 @@ function musicMiddleware(): Plugin {
               ? Number(resume)
               : readEvents(logPath).reduce((m, e) => Math.max(m, e.seq), -1);
 
-          // Committed tail (poll, like the Loom's dev stream).
-          const timer = setInterval(() => {
+          // Frames are UNNAMED data: lines so the client's single onmessage
+          // handler receives them — the client discriminates ephemeral vs
+          // committed by payload shape (type:'ephemeral'), not by SSE event
+          // name. This mirrors the WebSocket transport's frame shape exactly
+          // (worker/index.ts), so the two transports speak the same contract.
+          const committedTail = setInterval(() => {
             for (const e of readEvents(logPath)) {
               if (e.seq > lastSeq) {
                 lastSeq = e.seq;
-                res.write(`id: ${e.seq}\nevent: event\ndata: ${JSON.stringify(e)}\n\n`);
+                res.write(`id: ${e.seq}\ndata: ${JSON.stringify(e)}\n\n`);
               }
             }
           }, 250);
@@ -112,7 +124,7 @@ function musicMiddleware(): Plugin {
           // Ephemeral fan-out (pushed directly).
           ephemeralClients.add(res);
           req.on('close', () => {
-            clearInterval(timer);
+            clearInterval(committedTail);
             ephemeralClients.delete(res);
           });
           return;

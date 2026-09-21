@@ -87,50 +87,27 @@ export function useMusicSession(): MusicSession {
     return () => { alive = false; };
   }, []);
 
-  // ── Live tail: committed events + ephemeral triggers on one stream. ────
+  // ── Live tail: committed events + ephemeral triggers on one stream. The
+  //    transport is transport-agnostic: production serves this over a
+  //    WebSocket (worker/ Durable Object, Hibernation), the dev middleware
+  //    serves it over SSE (vite.config.ts). Both speak the same JSON frames —
+  //    a frame is ephemeral iff it carries type:'ephemeral'; anything else is
+  //    a committed LoomEvent. WebSocket preferred; EventSource fallback. ─────
   useEffect(() => {
     let alive = true;
     let src: EventSource | null = null;
+    let ws: WebSocket | null = null;
     let timer: ReturnType<typeof setTimeout> | null = null;
     let attempts = 0;
     let lastEventId: string | null = null;
 
-    const connect = () => {
-      if (!alive) return;
-      const url = lastEventId ? `/api/music/stream?lastEventId=${lastEventId}` : '/api/music/stream';
-      const es = new EventSource(url);
-      src = es;
-      es.onopen = () => { attempts = 0; };
-      es.addEventListener('event', (msg) => {
-        try {
-          const e = JSON.parse((msg as MessageEvent).data) as LoomEvent;
-          lastEventId = String(e.seq);
-          setZones((prev) => {
-            if (e.kind === 'instrument.zone.place') {
-              if (zoneById(prev, e.node)) return prev;
-              return [
-                ...prev,
-                {
-                  id: e.node,
-                  position: (e as LoomEvent & { position: [number, number, number] }).position,
-                  timbre: (e as LoomEvent & { timbre: Timbre }).timbre,
-                  name: (e as LoomEvent & { name?: string }).name ?? '',
-                },
-              ];
-            }
-            if (e.kind === 'instrument.zone.clear') return prev.filter((z) => z.id !== e.node);
-            if (e.kind === 'instrument.zone.name') {
-              return prev.map((z) => (z.id === e.node ? { ...z, name: (e as LoomEvent & { name: string }).name } : z));
-            }
-            return prev;
-          });
-        } catch {
-          // ignore malformed committed frames
-        }
-      });
-      es.addEventListener('ephemeral', (msg) => {
-        try {
-          const m = JSON.parse((msg as MessageEvent).data) as EphemeralTrigger;
+    // One frame handler for both transports. Ephemeral vs committed is decided
+    // by shape, never by transport — a debug log can tag which is which.
+    const handleFrame = (data: string) => {
+      try {
+        const parsed = JSON.parse(data) as LoomEvent | EphemeralTrigger;
+        if ((parsed as EphemeralTrigger).type === 'ephemeral') {
+          const m = parsed as EphemeralTrigger;
           if (m.kind !== 'zone.trigger' || m.origin === originRef.current) return;
           setRemoteTriggers((prev) => [{ zone: m.zone, origin: m.origin, at: Date.now() }, ...prev].slice(0, 8));
           // A remote trigger also glows locally (visual echo).
@@ -138,25 +115,89 @@ export function useMusicSession(): MusicSession {
             ...prev,
             [m.zone]: [...(prev[m.zone] ?? []), Date.now()].slice(-16),
           }));
-        } catch {
-          // ignore malformed ephemeral frames
+          return;
         }
-      });
+        const e = parsed as LoomEvent;
+        lastEventId = String(e.seq);
+        setZones((prev) => {
+          if (e.kind === 'instrument.zone.place') {
+            if (zoneById(prev, e.node)) return prev;
+            return [
+              ...prev,
+              {
+                id: e.node,
+                position: (e as LoomEvent & { position: [number, number, number] }).position,
+                timbre: (e as LoomEvent & { timbre: Timbre }).timbre,
+                name: (e as LoomEvent & { name?: string }).name ?? '',
+              },
+            ];
+          }
+          if (e.kind === 'instrument.zone.clear') return prev.filter((z) => z.id !== e.node);
+          if (e.kind === 'instrument.zone.name') {
+            return prev.map((z) => (z.id === e.node ? { ...z, name: (e as LoomEvent & { name: string }).name } : z));
+          }
+          return prev;
+        });
+      } catch {
+        // ignore malformed frames
+      }
+    };
+
+    const connectWebSocket = () => {
+      if (!alive) return;
+      // Production: the Durable Object upgrades /stream to a WebSocket. Same
+      // endpoint path, same frames.
+      const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const wsUrl = `${proto}//${location.host}/api/music/stream${location.search}`;
+      const socket = new WebSocket(wsUrl);
+      ws = socket;
+      socket.onopen = () => { attempts = 0; };
+      socket.onmessage = (ev) => handleFrame(String(ev.data));
+      socket.onclose = () => {
+        ws = null;
+        if (!alive) return;
+        const delay = Math.min(1000 * 2 ** attempts, 30_000);
+        attempts += 1;
+        timer = setTimeout(connectWebSocket, delay);
+      };
+      socket.onerror = () => socket.close();
+    };
+
+    const connectEventSource = () => {
+      if (!alive) return;
+      // Dev middleware: SSE with Last-Event-ID resume (mobile backoff).
+      const url = lastEventId ? `/api/music/stream?lastEventId=${lastEventId}` : '/api/music/stream';
+      const es = new EventSource(url);
+      src = es;
+      es.onopen = () => { attempts = 0; };
+      es.onmessage = (msg) => handleFrame(String((msg as MessageEvent).data));
       es.onerror = () => {
         es.close();
         src = null;
         if (!alive) return;
         const delay = Math.min(1000 * 2 ** attempts, 30_000);
         attempts += 1;
-        timer = setTimeout(connect, delay);
+        timer = setTimeout(connectEventSource, delay);
       };
     };
 
-    connect();
+    // Prefer WebSocket (production transport); fall back to EventSource (dev)
+    // only when the upgrade fails — e.g. the dev middleware, which serves SSE.
+    const prefersWs = () => {
+      try {
+        return typeof WebSocket === 'function' && location.protocol === 'https:';
+      } catch {
+        return false;
+      }
+    };
+    if (prefersWs()) connectWebSocket();
+    else connectEventSource();
+
     return () => {
       alive = false;
       if (timer) clearTimeout(timer);
       src?.close();
+      ws?.close();
     };
   }, []);
 

@@ -33,8 +33,7 @@ export interface SpatialSceneProps {
   /** Called when a zone is triggered by a pointer. */
   onZoneTrigger: (id: string) => void;
   selectedId: string | null;
-  /** 0..1 ambient clock (advanced by the caller; frozen under reduced motion). */
-  time: number;
+  /** True under OS prefers-reduced-motion — the scene draws one static frame. */
   reducedMotion: boolean;
 }
 
@@ -48,7 +47,6 @@ export function SpatialScene({
   onListenerChange,
   onZoneTrigger,
   selectedId,
-  time,
   reducedMotion,
 }: SpatialSceneProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -195,6 +193,13 @@ export function SpatialScene({
     window.addEventListener('resize', onResize);
 
     // ── Per-frame zone updates: glow decay + pulse clock. ────────────────
+    // Optimization threshold (measured, not speculative): each zone is one
+    // THREE.Points = one draw call. At the family baseline (8–16 zones) this
+    // is fine. If the composition ever exceeds ~20 zones, convert the zones to
+    // a single instanced geometry (one draw call) — research on three.js
+    // batching: "too many draw calls hurt performance; instancing batches many
+    // copies into one." Do NOT convert before there are measured many zones;
+    // the current approach is simpler and correct at this scale.
     let raf = 0;
     let ambient = 0;
     const drawFrame = (elapsed: number) => {

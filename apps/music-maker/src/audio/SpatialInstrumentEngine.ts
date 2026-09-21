@@ -17,7 +17,10 @@
  *     this session. `soundEnabled` is the only gate.
  *   • No sound object exceeds the master gain ceiling regardless of how many
  *     zones trigger at once (a child mashing six zones must not spike).
- *   • AudioContext is created/resumed only on a user gesture.
+ *   • AudioContext is created/resumed only on a user gesture. Zones can be
+ *     loaded from the committed log BEFORE the toggle is tapped — they are
+ *     held in a pending buffer and the audio graph is built inside enable(),
+ *     never speculatively on mount.
  *   • HRTF fallback to equalpower is automatic and silent — interaction is
  *     identical, only fidelity differs.
  *
@@ -51,9 +54,27 @@ export interface SpatialInstrumentOptions {
   panningModel?: PannerOptions['panningModel'];
   /** Sphere radius — distance falloff is computed from it (§5.1). */
   radius: number;
+  /** Family-scale node budget (§5.2). The engine refuses past this. */
+  maxZones?: number;
+  /**
+   * The HRTF cold-start budget, milliseconds, per PROBE batch of panners.
+   * Research (IEEE 2025 WebXR) measures ~35ms HRTF cold-start on a mid-range
+   * Android; the reference is a provisional number, not a spec — calibrate
+   * this on the family's actual devices. The probe uses a small throwaway
+   * batch so the choice is made BEFORE the real graph is built.
+   */
+  hrtfProbeBudgetMs?: number;
 }
 
 const DEFAULT_CEILING = 0.6;
+const DEFAULT_MAX_ZONES = 16;
+const DEFAULT_HRTF_BUDGET_MS = 60;
+const PROBE_PANNERS = 4;
+
+interface PendingZone {
+  voice: ZoneVoice;
+  profile: TimbreProfile;
+}
 
 export class SpatialInstrumentEngine {
   private ctx: AudioContext | null = null;
@@ -62,14 +83,19 @@ export class SpatialInstrumentEngine {
   private voiceGains = new Map<string, GainNode>();
   private voiceFilters = new Map<string, BiquadFilterNode>();
   private voiceOscs = new Map<string, OscillatorNode[]>();
+  private pendingZones = new Map<string, PendingZone>();
   private readonly opts: Required<SpatialInstrumentOptions>;
   private soundEnabled = false;
+  private effectiveModel: PanningModelType | null = null;
+  private listenerPosition: [number, number, number] = [0, 0, 0];
 
   constructor(opts: SpatialInstrumentOptions) {
     this.opts = {
       masterCeiling: opts.masterCeiling ?? DEFAULT_CEILING,
       panningModel: opts.panningModel ?? 'HRTF',
       radius: opts.radius,
+      maxZones: opts.maxZones ?? DEFAULT_MAX_ZONES,
+      hrtfProbeBudgetMs: opts.hrtfProbeBudgetMs ?? DEFAULT_HRTF_BUDGET_MS,
     };
   }
 
@@ -77,11 +103,27 @@ export class SpatialInstrumentEngine {
     return this.soundEnabled;
   }
 
-  /** The user gesture: the sound toggle tap. No other call creates the context. */
+  /** The number of zones in the composition (pending + built). */
+  get zoneCount(): number {
+    return this.pendingZones.size + this.voicePanners.size;
+  }
+
+  get maxZones(): number {
+    return this.opts.maxZones;
+  }
+
+  /** The user gesture: the sound toggle tap. No other call creates the context.
+   *  Building the graph here — not on mount — is the §3.4 gesture boundary. */
   enable(): void {
     this.soundEnabled = true;
     const ac = this.ensureContext();
-    if (ac && ac.state === 'suspended') void ac.resume();
+    if (!ac) return;
+    if (ac.state === 'suspended') void ac.resume();
+    this.buildPendingZones();
+    // The listener position may have been set before sound was enabled (a
+    // silent no-op then). Push the current position now, or the listener
+    // would sit at the origin — likely inside the sphere.
+    this.pushListener();
   }
 
   disable(): void {
@@ -89,37 +131,27 @@ export class SpatialInstrumentEngine {
     if (this.ctx && this.ctx.state === 'running') void this.ctx.suspend();
   }
 
-  /** Create a zone's voice. Idempotent per zone id. */
-  addZone(voice: ZoneVoice, profile: TimbreProfile): void {
-    const ac = this.ensureContext();
-    if (!ac) return;
-    if (this.voicePanners.has(voice.id)) return;
-
-    const panner = ac.createPanner();
-    panner.panningModel = this.opts.panningModel;
-    panner.distanceModel = 'inverse';
-    // refDistance/maxDistance from the sphere radius so falloff feels
-    // proportionate regardless of how many zones are on it (§5.1).
-    panner.refDistance = this.opts.radius * 0.5;
-    panner.maxDistance = this.opts.radius * 3;
-    panner.setPosition(voice.x, voice.y, voice.z);
-
-    const filter = ac.createBiquadFilter();
-    filter.type = 'lowpass';
-    filter.frequency.value = 400 + profile.brightness * 6000;
-    filter.Q.value = 0.8;
-
-    const gain = ac.createGain();
-    gain.gain.value = 0;
-
-    panner.connect(filter);
-    filter.connect(gain);
-    gain.connect(this.master!);
-
-    this.voicePanners.set(voice.id, panner);
-    this.voiceGains.set(voice.id, gain);
-    this.voiceFilters.set(voice.id, filter);
-    this.voiceOscs.set(voice.id, []);
+  /**
+   * Queue a zone's voice. Idempotent per zone id. Returns false when the
+   * composition is already at the node budget (§5.2) — the caller should
+   * surface that refusal, not let the graph grow unbounded.
+   *
+   * A zone added AFTER the context is live (sound already enabled) is built
+   * immediately; a zone added before the toggle is held in the pending buffer
+   * and built inside enable().
+   */
+  addZone(voice: ZoneVoice, profile: TimbreProfile): boolean {
+    if (this.voicePanners.has(voice.id) || this.pendingZones.has(voice.id)) return true;
+    if (this.zoneCount >= this.opts.maxZones) return false;
+    if (this.ctx && this.master) {
+      // The graph is already live (sound on): build this voice now.
+      this.buildVoice(voice, profile);
+      return true;
+    }
+    // Store only the data. The AudioContext and its nodes are built inside
+    // enable(), on the user gesture — never here, never speculatively.
+    this.pendingZones.set(voice.id, { voice, profile });
+    return true;
   }
 
   removeZone(id: string): void {
@@ -135,11 +167,12 @@ export class SpatialInstrumentEngine {
     this.voiceGains.delete(id);
     this.voiceFilters.delete(id);
     this.voiceOscs.delete(id);
+    this.pendingZones.delete(id);
   }
 
-  /** The ids of the zones currently in the audio graph. */
+  /** The ids of all zones in the composition (pending + built). */
   zoneIds(): string[] {
-    return [...this.voicePanners.keys()];
+    return [...new Set([...this.voicePanners.keys(), ...this.pendingZones.keys()])];
   }
 
   /**
@@ -171,23 +204,36 @@ export class SpatialInstrumentEngine {
     return true;
   }
 
-  /** Move the listener. Throttled to animation-frame rate by the caller. */
+  /** Move the listener. Remembered even before the context exists, so the
+   *  first enable() hears the position the user already moved to. Throttled to
+   *  animation-frame rate by the caller. */
   setListener(x: number, y: number, z: number): void {
-    const ac = this.ctx;
-    if (!ac) return;
-    ac.listener.setPosition(x, y, z);
-    ac.listener.setOrientation(-x, -y, -z, 0, 1, 0);
+    this.listenerPosition = [x, y, z];
+    this.pushListener();
   }
 
   /** Release the graph. */
   dispose(): void {
     const ac = this.ctx;
-    if (!ac) return;
-    for (const id of [...this.voicePanners.keys()]) this.removeZone(id);
-    this.master?.disconnect();
-    void ac.close().catch(() => {});
+    if (ac) {
+      for (const id of [...this.voicePanners.keys()]) this.removeZone(id);
+      this.master?.disconnect();
+      void ac.close().catch(() => {});
+    }
+    this.pendingZones.clear();
     this.ctx = null;
     this.master = null;
+    this.effectiveModel = null;
+  }
+
+  // ── Internal ──────────────────────────────────────────────────────────────
+
+  private pushListener(): void {
+    const ac = this.ctx;
+    if (!ac) return;
+    const [x, y, z] = this.listenerPosition;
+    ac.listener.setPosition(x, y, z);
+    ac.listener.setOrientation(-x, -y, -z, 0, 1, 0);
   }
 
   private ensureContext(): AudioContext | null {
@@ -210,5 +256,82 @@ export class SpatialInstrumentEngine {
     this.master.connect(comp).connect(this.ctx.destination);
 
     return this.ctx;
+  }
+
+  /** Choose the panning model BEFORE the real graph is built. The HRTF probe
+   *  uses a small throwaway batch of panners so the decision is made with a
+   *  real measurement, then the throwaways are discarded — the real panners
+   *  are created once, with the chosen model. A low-end phone that cold-starts
+   *  HRTF over budget steps down to equalpower silently (interaction identical,
+   *  fidelity lower). See §3.5. */
+  private choosePanningModel(): PanningModelType {
+    if (this.opts.panningModel !== 'HRTF') return this.opts.panningModel;
+    if (!this.ctx || !this.master) return this.opts.panningModel;
+
+    const probes: PannerNode[] = [];
+    const t0 = performance.now();
+    for (let i = 0; i < PROBE_PANNERS; i++) {
+      const p = this.ctx.createPanner();
+      p.panningModel = 'HRTF';
+      p.distanceModel = 'inverse';
+      p.refDistance = this.opts.radius * 0.5;
+      p.maxDistance = this.opts.radius * 3;
+      p.connect(this.master);
+      probes.push(p);
+    }
+    const elapsed = performance.now() - t0;
+    for (const p of probes) p.disconnect();
+
+    // Reference, not a spec: the IEEE 2025 WebXR study measures ~35ms HRTF
+    // cold-start on a mid-range Android. This budget is a provisional constant
+    // to calibrate on the family's real devices (prototype used >80ms for a
+    // full 12-zone batch; the production probe budgets per small batch).
+    return elapsed > this.opts.hrtfProbeBudgetMs ? 'equalpower' : 'HRTF';
+  }
+
+  private buildPendingZones(): void {
+    const ac = this.ctx;
+    if (!ac || !this.master) return;
+
+    for (const { voice, profile } of this.pendingZones.values()) {
+      this.buildVoice(voice, profile);
+    }
+    this.pendingZones.clear();
+  }
+
+  /** Build one zone's PannerNode → filter → gain chain into the live graph. */
+  private buildVoice(voice: ZoneVoice, profile: TimbreProfile): void {
+    const ac = this.ctx;
+    if (!ac || !this.master) return;
+    // TS cannot narrow `this.effectiveModel` through the null-check (it's a
+    // mutable class field), so pick a local once.
+    const model = this.effectiveModel ?? this.choosePanningModel();
+    this.effectiveModel = model;
+
+    const panner = ac.createPanner();
+    panner.panningModel = model;
+    panner.distanceModel = 'inverse';
+    // refDistance/maxDistance from the sphere radius so falloff feels
+    // proportionate regardless of how many zones are on it (§5.1).
+    panner.refDistance = this.opts.radius * 0.5;
+    panner.maxDistance = this.opts.radius * 3;
+    panner.setPosition(voice.x, voice.y, voice.z);
+
+    const filter = ac.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.value = 400 + profile.brightness * 6000;
+    filter.Q.value = 0.8;
+
+    const gain = ac.createGain();
+    gain.gain.value = 0;
+
+    panner.connect(filter);
+    filter.connect(gain);
+    gain.connect(this.master);
+
+    this.voicePanners.set(voice.id, panner);
+    this.voiceGains.set(voice.id, gain);
+    this.voiceFilters.set(voice.id, filter);
+    this.voiceOscs.set(voice.id, []);
   }
 }
