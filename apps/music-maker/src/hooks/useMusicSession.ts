@@ -249,9 +249,16 @@ export function useMusicSession(): MusicSession {
     //    WebSocket (worker/ Durable Object); the dev middleware serves SSE.
     //    We TRY WebSocket first regardless of protocol — a dev Vite server that
     //    can't upgrade falls back to SSE on error. `?transport=sse` forces SSE
-    //    (e.g. a proxy that blocks WebSocket); once fallen back, stay on SSE
-    //    for the session (a mid-session transport flip is more disruptive than
-    //    the difference), but a dropped SSE re-tries WS first.
+    //    (e.g. a proxy that blocks WebSocket).
+    //
+    //    OSCILLATION POLICY (deliberate): the code is symmetric — a WS drop
+    //    falls to SSE, an SSE drop retries WS. On a network that permanently
+    //    blocks WS, this oscillates WS→SSE→WS… but the SHARED backoff counter
+    //    bounds the rate (1s, 2s, 4s… capped 30s), so it is a slow probe of
+    //    whether WS has recovered, not a busy loop. A symmetric reconnect is
+    //    better than a permanent SSE lock-in when a flaky network comes back.
+    //    If that ever proves chatty on a real family device, switch to
+    //    one-way: once on SSE, stay there until the next page load.
     let transport: 'ws' | 'sse' = new URLSearchParams(location.search).get('transport') === 'sse'
       ? 'sse'
       : 'ws';

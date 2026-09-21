@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { SpatialInstrumentEngine } from './SpatialInstrumentEngine';
 
 /**
@@ -8,7 +8,7 @@ import { SpatialInstrumentEngine } from './SpatialInstrumentEngine';
  * context creation, the node budget, and the listener-push-on-enable behavior.
  */
 
-function fakeAudioContext() {
+function fakeAudioContext(opts?: { outputLatency?: number }) {
   const destination = { connect: () => {} };
   const nodes: Array<Record<string, unknown>> = [];
   const makeNode = () => {
@@ -39,10 +39,11 @@ function fakeAudioContext() {
     currentTime: 0,
     state: 'suspended',
     destination,
-    // >0.05s output latency trips the engine's coarse device gate, so the HRTF
-    // probe is skipped in tests (the 24×3 panner probe is pure noise on a fake
-    // context and slows every enable()).
-    outputLatency: 0.1,
+    // Default >0.05s output latency trips the engine's low-end gate, so tests
+    // skip to equalpower quickly. Pass outputLatency: 0.01 to test the Safari
+    // and cache paths (which the low-end gate would otherwise short-circuit).
+    outputLatency: opts?.outputLatency ?? 0.1,
+    nodes,
     createGain: () => makeNode(),
     createPanner: () => makeNode(),
     createOscillator: () => {
@@ -64,6 +65,12 @@ function fakeAudioContext() {
 const PROFILE: import('./SpatialInstrumentEngine').TimbreProfile = { oscType: 'sine', volume: 0.5, attack: 0.02, decay: 1, frequency: 440, brightness: 0.5 };
 
 describe('SpatialInstrumentEngine', () => {
+  beforeEach(() => {
+    // The panning-model decision is cached in sessionStorage; clear it so a
+    // prior test's decision can't leak into the next.
+    sessionStorage.clear();
+  });
+
   it('never plays before the toggle — the #1 non-negotiable rule', () => {
     vi.stubGlobal('window', { AudioContext: fakeAudioContext });
     const engine = new SpatialInstrumentEngine({ radius: 2.2 });
@@ -130,6 +137,46 @@ describe('SpatialInstrumentEngine', () => {
     engine.enable();
     expect(engine.addZone({ id: 'late', x: 0, y: 0, z: 2 }, PROFILE)).toBe(true);
     expect(engine.trigger('late', PROFILE)).toBe(true);
+    vi.unstubAllGlobals();
+  });
+
+  it('uses equalpower on Mobile Safari — no HRTF probe (family-browser gate)', () => {
+    // A Safari UA with LOW output latency (so the low-end gate doesn't fire
+    // first) must still land on equalpower: Mobile Safari has limited HRTF /
+    // ConvolverNode support, and is the browser without Web MIDI.
+    const ctx = fakeAudioContext({ outputLatency: 0.01 });
+    const Ctor = vi.fn(() => ctx);
+    vi.stubGlobal('window', { AudioContext: Ctor });
+    vi.stubGlobal('navigator', {
+      userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15',
+      hardwareConcurrency: 8,
+    });
+    const engine = new SpatialInstrumentEngine({ radius: 2.2 });
+    engine.enable();
+    engine.addZone({ id: 'z1', x: 0, y: 0, z: 2 }, PROFILE);
+    // Every panner the engine created for zones must be equalpower.
+    const fake = ctx as unknown as { nodes: Array<Record<string, unknown>> };
+    const panners = fake.nodes.filter((n) => n.distanceModel !== '');
+    expect(panners.length).toBeGreaterThan(0);
+    for (const p of panners) expect(p.panningModel).toBe('equalpower');
+    vi.unstubAllGlobals();
+  });
+
+  it('keeps HRTF on a capable non-Safari device with no cached decision', () => {
+    const ctx = fakeAudioContext({ outputLatency: 0.01 });
+    const Ctor = vi.fn(() => ctx);
+    vi.stubGlobal('window', { AudioContext: Ctor });
+    vi.stubGlobal('navigator', {
+      userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+      hardwareConcurrency: 8,
+    });
+    const engine = new SpatialInstrumentEngine({ radius: 2.2 });
+    engine.enable();
+    engine.addZone({ id: 'z1', x: 0, y: 0, z: 2 }, PROFILE);
+    const fake = ctx as unknown as { nodes: Array<Record<string, unknown>> };
+    const panners = fake.nodes.filter((n) => n.distanceModel !== '');
+    expect(panners.length).toBeGreaterThan(0);
+    for (const p of panners) expect(p.panningModel).toBe('HRTF');
     vi.unstubAllGlobals();
   });
 });

@@ -16,6 +16,7 @@ One screen. Where every doc lives, what it's for, and how they connect.
 | [`ACCESS_RUNBOOK.md`](./ACCESS_RUNBOOK.md) | Whoever flips the API gate from OFF to ON | You have 5 minutes and the Zero Trust dashboard |
 | [`FAMILY_PILOT.md`](./FAMILY_PILOT.md) | Whoever runs the real family test | You're about to hand the URL to three humans |
 | [`MUSIC_MAKER_BUILD_PROMPT.md`](./MUSIC_MAKER_BUILD_PROMPT.md) | A new agent building the collaborative spatial music maker | You're starting the music-maker build; paste this whole doc into the agent |
+| [`../../music-maker/docs/DEPLOY_RUNBOOK.md`](../../music-maker/docs/DEPLOY_RUNBOOK.md) | The Pilot (Cloudflare account holder) + the agent deploying the music maker | You're about to deploy the spatial music maker to production; run the pre-flight → deploy → post-flight → coast checklists |
 | [`CONCEPTS.yml`](./CONCEPTS.yml) | The concept registry | You want the canonical definition of the log, the gate, Lumi, the artifact… |
 | [`PORTING_INVENTORY.md`](./PORTING_INVENTORY.md) | — | Generated. Do not read; the generator reads it. |
 | [`DOCS_INVENTORY.md`](./DOCS_INVENTORY.md) | — | Generated. Do not read; the generator reads it. |

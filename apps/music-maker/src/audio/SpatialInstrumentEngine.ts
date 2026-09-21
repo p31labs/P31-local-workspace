@@ -56,19 +56,10 @@ export interface SpatialInstrumentOptions {
   radius: number;
   /** Family-scale node budget (§5.2). The engine refuses past this. */
   maxZones?: number;
-  /**
-   * The HRTF cold-start budget, milliseconds, per PROBE batch of panners.
-   * Research (IEEE 2025 WebXR) measures ~35ms HRTF cold-start on a mid-range
-   * Android; the reference is a provisional number, not a spec — calibrate
-   * this on the family's actual devices. The probe uses a small throwaway
-   * batch so the choice is made BEFORE the real graph is built.
-   */
-  hrtfProbeBudgetMs?: number;
 }
 
 const DEFAULT_CEILING = 0.6;
 const DEFAULT_MAX_ZONES = 16;
-const DEFAULT_HRTF_BUDGET_MS = 60;
 
 /** The family-scale node budget (§5.2). Exported so the UI (App) refuses at
  *  the same count the engine enforces — one source of truth, no drift. */
@@ -98,7 +89,6 @@ export class SpatialInstrumentEngine {
       panningModel: opts.panningModel ?? 'HRTF',
       radius: opts.radius,
       maxZones: opts.maxZones ?? DEFAULT_MAX_ZONES,
-      hrtfProbeBudgetMs: opts.hrtfProbeBudgetMs ?? DEFAULT_HRTF_BUDGET_MS,
     };
   }
 
@@ -261,10 +251,13 @@ export class SpatialInstrumentEngine {
     return this.ctx;
   }
 
-  /** Choose the panning model BEFORE the real graph is built. Device signals
-   *  are the PRIMARY decision — a multi-panner probe was itself a jank hazard
-   *  (research: setting HRTF can freeze ~800ms while the HRTF DB loads; a
-   *  24×3=72-panner probe on a low-end device causes the very jank it measures).
+  /** Choose the panning model BEFORE the real graph is built. Device signals are
+   *  the whole decision. There is deliberately NO runtime probe: creating a
+   *  panner node does not load the HRTF database — that happens on the first
+   *  AUDIO sample it processes, which is too late to switch models. A "probe"
+   *  that measures panner creation returns ~0ms on every device and caches a
+   *  fake result; it was removed for that reason. We step down to equalpower
+   *  when the signals predict trouble, and accept HRTF elsewhere.
    *
    *  Order of decisions:
    *   1. Opt-in or forced equalpower → equalpower.
@@ -272,12 +265,12 @@ export class SpatialInstrumentEngine {
    *      support for HRTF and ConvolverNode; fall back to StereoPannerNode +
    *      simple gain control"). Safari is also the browser that lacks Web MIDI.
    *   3. Low-end device signal (hardwareConcurrency ≤ 4 or outputLatency >
-   *      50ms) → equalpower, no probe.
-   *   4. sessionStorage cache → reuse a previous decision (no re-probe per
-   *      enable() within a session, no per-tab probe).
-   *   5. Only if still ambiguous: ONE throwaway HRTF panner, measured once.
-   *      The result is cached for the session. Thresholds are provisional and
-   *      device-calibrated. */
+   *      50ms) → equalpower.
+   *   4. sessionStorage cache → reuse a previous decision (the HRTF DB load is
+   *      a one-time cost per context, not per enable).
+   *   5. Otherwise → HRTF (the IEEE 2025 WebXR study: HRTF measurably beats
+   *      equalpower for localization; accept it unless signals say otherwise).
+   *      Thresholds are provisional and device-calibrated. */
   private choosePanningModel(): PanningModelType {
     if (this.opts.panningModel !== 'HRTF') return this.opts.panningModel;
     if (!this.ctx || !this.master) return this.opts.panningModel;
@@ -296,35 +289,19 @@ export class SpatialInstrumentEngine {
     const latency = this.ctx.outputLatency ?? 0;
     if (hw <= 4 || latency > 0.05) return 'equalpower';
 
-    // 3. sessionStorage cache — the decision is stable within a session and
-    //    the HRTF DB load is a one-time cost per context, not per probe.
+    // 3. sessionStorage cache — the decision is stable within a session.
     try {
       const cached = sessionStorage.getItem('music-maker:panning-model');
       if (cached === 'HRTF' || cached === 'equalpower') return cached;
     } catch {
-      // sessionStorage unavailable — fall through to the probe.
+      // sessionStorage unavailable — fall through to the default.
     }
 
-    // 4. Single throwaway panner, measured once. Creating one HRTF panner is
-    //    the operation that loads the HRTF DB (the ~800ms freeze on first
-    //    set); several are no more informative, just more jank.
-    const t0 = performance.now();
-    const probe = this.ctx.createPanner();
-    probe.panningModel = 'HRTF';
-    probe.distanceModel = 'inverse';
-    probe.refDistance = this.opts.radius * 0.5;
-    probe.maxDistance = this.opts.radius * 3;
-    probe.connect(this.master);
-    const elapsed = performance.now() - t0;
-    probe.disconnect();
-
-    // Reference, not a spec: the IEEE 2025 WebXR study measures ~35ms HRTF
-    // cold-start on a mid-range Android. Provisional, device-calibrated.
-    const model = elapsed > this.opts.hrtfProbeBudgetMs ? 'equalpower' : 'HRTF';
+    // 4. Default: HRTF. Persist the decision for the rest of the session.
     try {
-      sessionStorage.setItem('music-maker:panning-model', model);
+      sessionStorage.setItem('music-maker:panning-model', 'HRTF');
     } catch { /* non-fatal */ }
-    return model;
+    return 'HRTF';
   }
 
   private buildPendingZones(): void {
