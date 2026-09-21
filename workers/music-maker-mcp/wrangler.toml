@@ -3,8 +3,14 @@ main = "src/index.ts"
 compatibility_date = "2026-07-16"
 compatibility_flags = ["nodejs_compat"]
 
-# The tools' base URL — the deployed music-presence worker. Override for dev:
-#   wrangler secret put MUSIC_API_URL http://localhost:5291
+# Service binding to the music-presence worker — the tools call the deployed
+# worker via an INTERNAL binding (fetch to a worker.dev URL from another
+# workers.dev can hit DNS 1042). The browser never sees this; identity is
+# carried inside the service call.
+[[services]]
+binding = "MUSIC_PRESENCE"
+service = "music-presence"
+
 [observability]
 enabled = true
 [observability.logs]

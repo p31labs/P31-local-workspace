@@ -1,90 +1,18 @@
 /**
  * music-maker-mcp — Cloudflare Worker wrapper.
  *
- * Hosts the music-maker MCP server (the same tools in packages/music-maker-mcp
- * src/server.ts) at /mcp. The tool handlers call the DEPLOYED music-presence
- * worker over HTTP (music-tools.ts points MUSIC_API_URL at
- * https://music-presence.trimtab-signal.workers.dev by default), so this Worker
- * needs no D1/DO bindings — it's a stateless MCP relay over the music maker's
- * own API. The mcp-registry Worker discovers it here.
- *
- * The music_tools module is bundled from packages/music-maker-mcp/src.
+ * Hosts the music-maker MCP server at /mcp. The tool handlers call the
+ * music-presence worker over a SERVICE BINDING (env.MUSIC_PRESENCE), not a
+ * public workers.dev fetch (which fails DNS 1042 between subdomains). The
+ * fetcher is passed INTO createWorkerHandler so the server's tools use the
+ * binding — no reliance on shared module state. The browser never sees this;
+ * identity is carried inside the service call.
  */
-import { McpServer } from '@modelcontextprotocol/server';
-import { WebStandardStreamableHTTPServerTransport } from '@modelcontextprotocol/server';
-import { z } from 'zod';
-import * as music from '@p31/music-maker-mcp/music-tools';
-
-// The tools' base URL. In production, the music-presence worker. Overridable
-// via env for a local dev target.
-const MUSIC_API = (env: Env) => env.MUSIC_API_URL ?? 'https://music-presence.trimtab-signal.workers.dev';
+import { createWorkerHandler } from '@p31/music-maker-mcp/server';
 
 interface Env {
-  MUSIC_API_URL?: string;
-}
-
-function registerTools(server: McpServer): void {
-  server.registerTool(
-    'music_observe',
-    {
-      description:
-        'Read the spatial music maker composition — the family\u2019s score. Returns every zone with position, timbre, and name. Committed, provenance-tracked.',
-      inputSchema: z.object({}),
-    },
-    async () => {
-      const zones = await music.observe();
-      return { content: [{ type: 'text', text: JSON.stringify(zones, null, 2) }] };
-    },
-  );
-  server.registerTool(
-    'music_place',
-    {
-      description:
-        'Place a new zone at a 3D position with a timbre. COMMITTED — through the canon gate, seq-stamped, hash-chained.',
-      inputSchema: z.object({
-        position: z.array(z.number()).length(3),
-        timbre: z.enum(['hydrogen', 'carbon', 'oxygen', 'phosphor']),
-        name: z.string().optional(),
-      }),
-    },
-    async ({ position, timbre, name }) => {
-      const r = await music.place(position as [number, number, number], timbre, name);
-      return { content: [{ type: 'text', text: JSON.stringify(r, null, 2) }] };
-    },
-  );
-  server.registerTool(
-    'music_clear',
-    {
-      description: 'Remove a zone. COMMITTED — the removal is a log entry.',
-      inputSchema: z.object({ zoneId: z.string() }),
-    },
-    async ({ zoneId }) => {
-      const r = await music.clear(zoneId);
-      return { content: [{ type: 'text', text: JSON.stringify(r, null, 2) }] };
-    },
-  );
-  server.registerTool(
-    'music_name',
-    {
-      description: 'Rename a zone. COMMITTED — the name is part of the score.',
-      inputSchema: z.object({ zoneId: z.string(), name: z.string() }),
-    },
-    async ({ zoneId, name }) => {
-      const r = await music.name(zoneId, name);
-      return { content: [{ type: 'text', text: JSON.stringify(r, null, 2) }] };
-    },
-  );
-  server.registerTool(
-    'music_trigger',
-    {
-      description: 'Trigger a zone — EPHEMERAL, never persisted, broadcast live.',
-      inputSchema: z.object({ zoneId: z.string() }),
-    },
-    async ({ zoneId }) => {
-      const r = await music.trigger(zoneId);
-      return { content: [{ type: 'text', text: JSON.stringify(r, null, 2) }] };
-    },
-  );
+  /** Service binding to the music-presence worker. */
+  MUSIC_PRESENCE: Fetcher;
 }
 
 export default {
@@ -96,18 +24,16 @@ export default {
     if (url.pathname !== '/mcp') {
       return new Response('not found', { status: 404 });
     }
-
-    // Set the tools' base URL from env so the worker's fetch targets the
-    // deployed music-presence worker (or a dev override).
-    music.setBaseUrl(env.MUSIC_API_URL);
-
-    const server = new McpServer({ name: 'music-maker-mcp', version: '0.0.1' });
-    registerTools(server);
-    const transport = new WebStandardStreamableHTTPServerTransport({
-      sessionIdGenerator: undefined,
-      enableJsonResponse: true,
-    });
-    await server.connect(transport);
-    return transport.handleRequest(request);
+// Route the tools' fetches through the service binding. Accept absolute
+    // (default base) or relative inputs and route the PATH to the bound worker.
+    // The Request for the binding must carry an ABSOLUTE URL (the binding's
+    // own host), not a bare path — a relative Request throws "Invalid URL".
+    const fetcher: typeof fetch = (input, init) => {
+      const raw = String(input);
+      const u = raw.startsWith('http') ? new URL(raw) : new URL(raw, 'https://music-presence.internal');
+      return env.MUSIC_PRESENCE.fetch(new Request(`https://music-presence.internal${u.pathname}${u.search}`, init ?? {}));
+    };
+    const handler = await createWorkerHandler(fetcher);
+    return handler(request);
   },
 };

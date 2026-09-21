@@ -5,7 +5,7 @@
   "type": "module",
   "description": "MCP server exposing the spatial music maker to agents. Agents call music_observe → music_place/clear/name (committed through the canon gate) → music_trigger (ephemeral presence), over HTTP to the deployed worker.",
   "scripts": {
-    "start": "tsx src/server.ts",
+    "start": "tsx src/stdio.ts",
     "start:http": "tsx src/http.ts",
     "typecheck": "tsc --noEmit"
   },

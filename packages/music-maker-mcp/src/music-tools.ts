@@ -20,11 +20,21 @@
 
 import { codename } from '@p31/canon/loom/codename';
 
-let base = process.env.MUSIC_API_URL ?? 'https://music-presence.trimtab-signal.workers.dev';
+let base = process.env.MUSIC_API_URL || 'https://music-presence.trimtab-signal.workers.dev';
 
 /** Set the worker URL at runtime (the Worker wrapper passes its env). */
 export function setBaseUrl(url?: string): void {
   if (url) base = url;
+}
+
+/** The fetch implementation the tools use. Defaults to global fetch (local
+ *  Node / http.ts). The Cloudflare Worker wrapper overrides this with its
+ *  MUSIC_PRESENCE service binding, so the tools call the music-presence
+ *  worker over an INTERNAL binding — not a DNS-dependent public fetch (which
+ *  fails with error 1042 between workers.dev subdomains). */
+let fetcher: typeof fetch = (...args) => fetch(...args);
+export function setFetcher(f: typeof fetch): void {
+  fetcher = f;
 }
 
 export interface MusicZone {
@@ -48,7 +58,8 @@ export interface WriteResult {
 }
 
 async function httpJson(path: string, init?: RequestInit): Promise<unknown> {
-  const res = await fetch(`${base}${path}`, {
+  const effectiveBase = base || 'https://music-presence.trimtab-signal.workers.dev';
+  const res = await fetcher(`${effectiveBase}${path}`, {
     ...init,
     headers: { 'Content-Type': 'application/json', ...(init?.headers ?? {}) },
   });

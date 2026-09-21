@@ -15,7 +15,7 @@
  * Run: npm run start   (tsx, stdio transport)
  */
 import { McpServer } from '@modelcontextprotocol/server';
-import { serveStdio } from '@modelcontextprotocol/server/stdio';
+import { WebStandardStreamableHTTPServerTransport } from '@modelcontextprotocol/server';
 import { z } from 'zod';
 import * as music from './music-tools';
 
@@ -94,4 +94,20 @@ export async function createServer(): Promise<McpServer> {
   return server;
 }
 
-serveStdio(createServer);
+/**
+ * A stateless HTTP handler for edge deployment (the music-maker-mcp Worker).
+ * Builds a fresh server per request (registering the tools) and connects the
+ * MCP Streamable HTTP transport (JSON responses, no session persistence —
+ * matching the 2026 sessionless MCP direction). Reused by http.ts (local
+ * Node) and the Cloudflare Worker wrapper.
+ */
+export async function createWorkerHandler(fetcher?: typeof fetch): Promise<(request: Request) => Promise<Response>> {
+  if (fetcher) music.setFetcher(fetcher);
+  const server = await createServer();
+  const transport = new WebStandardStreamableHTTPServerTransport({
+    sessionIdGenerator: undefined,
+    enableJsonResponse: true,
+  });
+  await server.connect(transport);
+  return (request: Request) => transport.handleRequest(request);
+}

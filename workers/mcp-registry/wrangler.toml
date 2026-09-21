@@ -9,3 +9,10 @@ enabled = true
 [[kv_namespaces]]
 binding = "REGISTRY_KV"
 id = "0f08cff0858a40b49da004ba9d90f900"
+
+# Service bindings to the MCP servers this registry can reach internally.
+# Public workers.dev → workers.dev fetch fails DNS 1042; a service binding
+# routes the probe/call without the public URL hop.
+[[services]]
+binding = "MUSIC_MAKER_MCP"
+service = "music-maker-mcp"

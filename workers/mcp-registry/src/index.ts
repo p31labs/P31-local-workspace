@@ -14,6 +14,8 @@
 
 interface Env {
   REGISTRY_KV: KVNamespace;
+  /** Service binding to music-maker-mcp — internal probe/call path. */
+  MUSIC_MAKER_MCP?: Fetcher;
 }
 
 interface McpServerEntry {
@@ -21,6 +23,9 @@ interface McpServerEntry {
   url: string;
   category: "remote" | "local";
   description: string;
+  /** Optional service binding name — when set, calls go through the binding
+   *  (internal) instead of a public workers.dev fetch (which fails DNS 1042). */
+  binding?: keyof Env;
   tools?: string[];
 }
 
@@ -66,6 +71,7 @@ const SERVERS: McpServerEntry[] = [
     url: "https://music-maker-mcp.trimtab-signal.workers.dev/mcp",
     category: "remote",
     description: "Spatial music maker — observe/place/clear/name/trigger the family's composition (5 tools)",
+    binding: "MUSIC_MAKER_MCP",
   },
   {
     name: "p31-cli",
@@ -89,27 +95,59 @@ function json(data: unknown, status = 200): Response {
 
 const KV_TTL = 300; // 5 minutes
 
-async function fetchTools(url: string, timeoutMs = 5000): Promise<string[]> {
+async function fetchTools(env: Env, server: McpServerEntry, timeoutMs = 5000): Promise<string[]> {
   try {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), timeoutMs);
 
-    const res = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Accept: "application/json" },
-      body: JSON.stringify({
-        jsonrpc: "2.0",
-        id: 1,
-        method: "tools/list",
-        params: {},
-      }),
-      signal: controller.signal,
+    const body = JSON.stringify({
+      jsonrpc: "2.0",
+      id: 1,
+      method: "tools/list",
+      params: {},
     });
+    const headers = {
+      "Content-Type": "application/json",
+      Accept: "application/json, text/event-stream",
+    };
+
+    // Prefer a service binding (internal, no DNS 1042). Otherwise public URL.
+    let res: Response;
+    const binding = server.binding ? (env[server.binding] as Fetcher | undefined) : undefined;
+    if (binding) {
+      const target = new URL(server.url);
+      res = await binding.fetch(new Request(target.toString(), {
+        method: "POST",
+        headers,
+        body,
+        signal: controller.signal,
+      }));
+    } else {
+      res = await fetch(server.url, {
+        method: "POST",
+        headers,
+        body,
+        signal: controller.signal,
+      });
+    }
     clearTimeout(timer);
 
     if (!res.ok) return [];
-    const data = (await res.json()) as any;
-    const tools = data?.result?.tools;
+    // MCP Streamable HTTP may return plain JSON OR an SSE-framed payload
+    // (`data: {...}\n\n`). Parse both.
+    let text = "";
+    try { text = await res.text(); } catch { return []; }
+    let parsed: any = null;
+    try {
+      parsed = JSON.parse(text.replace(/^data:\s*/gm, "").trim());
+    } catch {
+      // If the body was SSE with multiple events, take the last JSON object.
+      const frames = text.split("\n\n").map((f) => f.replace(/^data:\s*/, "").trim()).filter(Boolean);
+      for (let i = frames.length - 1; i >= 0; i--) {
+        try { parsed = JSON.parse(frames[i]); break; } catch { /* skip */ }
+      }
+    }
+    const tools = parsed?.result?.tools;
     if (!Array.isArray(tools)) return [];
     return tools.map((t: any) => t.name).filter(Boolean);
   } catch {
@@ -130,7 +168,7 @@ async function getServerTools(
   const cached = await env.REGISTRY_KV.get(cacheKey);
   if (cached) return JSON.parse(cached);
 
-  const tools = await fetchTools(server.url);
+  const tools = await fetchTools(env, server);
   if (tools.length > 0) {
     await env.REGISTRY_KV.put(cacheKey, JSON.stringify(tools), { expirationTtl: KV_TTL });
   }
@@ -258,14 +296,33 @@ async function handleRequest(request: Request, env: Env): Promise<Response> {
     try {
       const controller = new AbortController();
       const timer = setTimeout(() => controller.abort(), 10000);
-      const res = await fetch(server.url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify(body),
-        signal: controller.signal,
-      });
+      const headers = { "Content-Type": "application/json", Accept: "application/json, text/event-stream" };
+      const binding = server.binding ? (env[server.binding] as Fetcher | undefined) : undefined;
+      let res: Response;
+      if (binding) {
+        const target = new URL(server.url);
+        res = await binding.fetch(new Request(target.toString(), {
+          method: "POST",
+          headers,
+          body: JSON.stringify(body),
+          signal: controller.signal,
+        }));
+      } else {
+        res = await fetch(server.url, {
+          method: "POST",
+          headers,
+          body: JSON.stringify(body),
+          signal: controller.signal,
+        });
+      }
       clearTimeout(timer);
-      const data = await res.json().catch(() => null);
+      // MCP Streamable HTTP may return SSE-framed JSON (`data: {...}`) — unwrap
+      // it so callers get plain JSON (the same response shape as the target's
+      // result field).
+      let text = "";
+      try { text = await res.text(); } catch { text = ""; }
+      let data: unknown = null;
+      try { data = JSON.parse(text.replace(/^data:\s*/gm, "").trim()); } catch { data = null; }
       return json(data, res.status);
     } catch (e: any) {
       return json({ error: `upstream error: ${String(e?.message ?? e)}` }, 502);
