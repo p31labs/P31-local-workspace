@@ -15,6 +15,7 @@ One screen. Where every doc lives, what it's for, and how they connect.
 | [`LOVE_INTEGRATION.md`](./LOVE_INTEGRATION.md) | Anyone bridging the Loom and the care economy | You're wiring identity / care proof / the cross-anchor |
 | [`ACCESS_RUNBOOK.md`](./ACCESS_RUNBOOK.md) | Whoever flips the API gate from OFF to ON | You have 5 minutes and the Zero Trust dashboard |
 | [`FAMILY_PILOT.md`](./FAMILY_PILOT.md) | Whoever runs the real family test | You're about to hand the URL to three humans |
+| [`MUSIC_MAKER_BUILD_PROMPT.md`](./MUSIC_MAKER_BUILD_PROMPT.md) | A new agent building the collaborative spatial music maker | You're starting the music-maker build; paste this whole doc into the agent |
 | [`CONCEPTS.yml`](./CONCEPTS.yml) | The concept registry | You want the canonical definition of the log, the gate, Lumi, the artifact… |
 | [`PORTING_INVENTORY.md`](./PORTING_INVENTORY.md) | — | Generated. Do not read; the generator reads it. |
 | [`DOCS_INVENTORY.md`](./DOCS_INVENTORY.md) | — | Generated. Do not read; the generator reads it. |
