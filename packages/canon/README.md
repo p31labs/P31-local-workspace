@@ -28,8 +28,8 @@ pnpm install
 pnpm build          # regenerates DTCG, CSS, contracts, exports, DESIGN.md
 ```
 
-Drop `DESIGN.md` in your project root and any AI coding agent (Claude Code,
-Gemini CLI, the P31 MCP surface) instantly understands how P31 UI should look.
+Drop `DESIGN.md` in your project root and any AI coding agent (your CLI of
+choice, the P31 MCP surface) instantly understands how P31 UI should look.
 
 ## Design principles
 
