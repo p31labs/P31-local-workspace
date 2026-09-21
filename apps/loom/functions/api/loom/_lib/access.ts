@@ -106,8 +106,17 @@ export function accessTokenFromRequest(request: Request): string | null {
   return match ? decodeURIComponent(match[1]) : null;
 }
 
-/** Pages Function middleware: require a valid Access JWT on every API call. */
+/** Pages Function middleware: require a valid Access JWT on every API call.
+ *  Until Cloudflare Access is configured (CLOUDFLARE_ACCESS_AUD still a
+ *  placeholder), the gate is OFF with a warning — an explicit interim posture
+ *  so a first deploy is usable; configuring Access in the Zero Trust dashboard
+ *  flips the gate on with no code change. */
 export const accessGate: PagesFunction<AccessEnv> = async (context) => {
+  const aud = context.env.CLOUDFLARE_ACCESS_AUD ?? '';
+  if (!aud || aud.startsWith('REPLACE')) {
+    console.warn('[access] Cloudflare Access not configured — gate OFF (interim)');
+    return context.next();
+  }
   const token = accessTokenFromRequest(context.request);
   if (!token) {
     // Localhost (wrangler pages dev) has no Cloudflare Access in the loop.

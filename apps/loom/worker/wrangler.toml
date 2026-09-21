@@ -5,6 +5,10 @@ main = "index.ts"
 compatibility_date = "2026-07-04"
 compatibility_flags = ["nodejs_compat"]
 
+# Reached via the Pages project's service binding (LOOM_SSE); workers.dev gives
+# a reachable URL for testing. A custom route/domain can be added later.
+workers_dev = true
+
 [observability]
 enabled = true
 
@@ -12,7 +16,7 @@ enabled = true
 [[d1_databases]]
 binding = "LOOM_D1"
 database_name = "loom"
-database_id = "REPLACE_WITH_D1_ID"
+database_id = "87f9bc5c-e74e-4c61-8405-a0ed04671194"
 
 # CONFIG REQUIRED — route the /stream and /broadcast paths here, e.g.:
 #   routes = [

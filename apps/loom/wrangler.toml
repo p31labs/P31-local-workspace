@@ -18,8 +18,15 @@ compatibility_date = "2026-07-04"
 binding = "LOOM_D1"
 database_name = "loom"
 # CONFIG REQUIRED — replace with the id from `wrangler d1 create loom`.
-database_id = "REPLACE_WITH_D1_ID"
+database_id = "87f9bc5c-e74e-4c61-8405-a0ed04671194"
 
 [vars]
 CLOUDFLARE_ACCESS_DOMAIN = "https://REPLACE.cloudflareaccess.com"
 CLOUDFLARE_ACCESS_AUD = "REPLACE_WITH_ACCESS_AUD"
+
+# Service binding to the SSE Worker — the Pages Functions proxy /stream and
+# /broadcast to it (the Worker's Durable Object cannot be reached from Pages
+# Functions directly).
+services = [
+  { binding = "LOOM_SSE", service = "loom-sse" },
+]

@@ -19,10 +19,28 @@ import type { LoomEvent } from '@p31/canon/loom/events';
 interface Env {
   LOOM_D1: D1Database;
   LOG_BROADCASTER: DurableObjectNamespace<LogBroadcaster>;
+  /** Shared service token — the Pages Functions send it when proxying /stream
+   *  and /broadcast (either via the service binding or, until that dashboard
+   *  binding is set, via the public workers.dev URL). The client never holds
+   *  it. */
+  LOOM_INTERNAL_SECRET?: string;
 }
 
 const HEARTBEAT_MS = 15_000;
 const POLL_MS = 5_000;
+
+/** The header the Pages Functions use to authenticate internal calls. */
+const INTERNAL_HEADER = 'X-Loom-Internal';
+
+function authorized(request: Request, env: Env): boolean {
+  const secret = env.LOOM_INTERNAL_SECRET;
+  if (!secret) {
+    // No secret configured — deny internal calls rather than risk an open
+    // stream on the public workers.dev URL.
+    return false;
+  }
+  return request.headers.get(INTERNAL_HEADER) === secret;
+}
 
 interface Subscriber {
   controller: ReadableStreamDefaultController<Uint8Array>;
@@ -31,28 +49,45 @@ interface Subscriber {
 }
 
 async function readEvents(env: Env): Promise<LoomEvent[]> {
-  const { results } = await env.LOOM_D1.prepare('SELECT seq, ts, data FROM events ORDER BY seq ASC').all<{
-    seq: number;
-    ts: string;
-    data: string;
-  }>();
-  return (results ?? []).map((r) => {
-    const event = JSON.parse(r.data) as LoomEvent;
-    return { ...event, seq: r.seq, ts: r.ts };
-  });
+  try {
+    const { results } = await env.LOOM_D1.prepare('SELECT seq, ts, data FROM events ORDER BY seq ASC').all<{
+      seq: number;
+      ts: string;
+      data: string;
+    }>();
+    return (results ?? []).map((r) => {
+      const event = JSON.parse(r.data) as LoomEvent;
+      return { ...event, seq: r.seq, ts: r.ts };
+    });
+  } catch (e) {
+    console.error('[readEvents] D1 read failed', String(e));
+    return [];
+  }
 }
 
 const encoder = new TextEncoder();
 
 export class LogBroadcaster extends DurableObject<Env> {
   private subscribers = new Map<string, Subscriber>();
+  private env: Env;
+
+  constructor(ctx: DurableObjectState, env: Env) {
+    super(ctx, env);
+    // The base class may not populate this.env in every runtime — capture it
+    // explicitly so the D1 binding is always reachable.
+    this.env = env;
+  }
 
   async fetch(request: Request): Promise<Response> {
     const url = new URL(request.url);
 
     // Force an immediate fan-out after a Pages Function append.
     if (url.pathname.endsWith('/broadcast')) {
-      await this.emit();
+      try {
+        await this.emit();
+      } catch (e) {
+        console.error('[broadcast] emit failed', String(e));
+      }
       return new Response('ok', { status: 202 });
     }
 
@@ -65,7 +100,7 @@ export class LogBroadcaster extends DurableObject<Env> {
     const stream = new ReadableStream<Uint8Array>({
       start: (controller) => {
         this.subscribers.set(id, { controller, lastSeq: resume });
-        void this.emit(); // deliver the resume gap immediately
+        void this.emit().catch((e) => console.error('[stream] emit failed', String(e)));
         const heartbeat = setInterval(() => {
           try {
             controller.enqueue(encoder.encode(': heartbeat\n\n'));
@@ -73,7 +108,8 @@ export class LogBroadcaster extends DurableObject<Env> {
             clearInterval(heartbeat);
           }
         }, HEARTBEAT_MS);
-        this.subscribers.get(id)!.heartbeat = heartbeat;
+        const sub = this.subscribers.get(id);
+        if (sub) sub.heartbeat = heartbeat;
       },
       cancel: () => {
         const sub = this.subscribers.get(id);
@@ -115,7 +151,15 @@ export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
     if (url.pathname === '/health') return new Response('ok', { status: 200 });
-    // Route stream and broadcast into the DO.
-    return env.LOG_BROADCASTER.get('loom').fetch(request);
+    // /stream and /broadcast are internal — the Pages Functions proxy them
+    // with the service token. Reject anonymous hits on the public workers.dev
+    // URL.
+    if (!authorized(request, env)) {
+      return new Response('Forbidden', { status: 403 });
+    }
+    // Route stream and broadcast into the DO. The modern runtime requires a
+    // DurableObjectId, not a raw name string.
+    const id = env.LOG_BROADCASTER.idFromName('loom');
+    return env.LOG_BROADCASTER.get(id).fetch(request);
   },
 };

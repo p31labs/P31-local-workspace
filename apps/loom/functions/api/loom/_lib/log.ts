@@ -38,7 +38,10 @@ export async function appendEvent(env: D1Env, input: LoomEventInput): Promise<Lo
   }
   const result = gate.append(input);
   if (!result.valid) throw new Error(`gate rejected ${input.kind}: ${result.error}`);
-  const event = result.event;
+  // The gate's append returns {valid, error} — the committed event is the last
+  // entry of its internal log.
+  const log = gate.getLog();
+  const event = log[log.length - 1];
   await env.LOOM_D1.prepare('INSERT INTO events (seq, ts, data) VALUES (?, ?, ?)')
     .bind(event.seq, event.ts, JSON.stringify(event))
     .run();

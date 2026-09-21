@@ -1,8 +1,16 @@
 import { appendEvent } from './_lib/log';
 import type { LoomEventInput } from '@p31/canon/loom/gate';
 
+interface Env {
+  LOOM_SSE?: Fetcher;
+  LOOM_SSE_URL?: string;
+  LOOM_INTERNAL_SECRET?: string;
+}
+
+const INTERNAL_HEADER = 'X-Loom-Internal';
+
 /** POST /api/loom/event — validate via the gate and append to D1. */
-export const onRequestPost: PagesFunction = async (context) => {
+export const onRequestPost: PagesFunction<Env> = async (context) => {
   let input: LoomEventInput;
   try {
     const body = (await context.request.json()) as { input?: LoomEventInput };
@@ -19,19 +27,19 @@ export const onRequestPost: PagesFunction = async (context) => {
 
   try {
     const event = await appendEvent(context.env, input);
-    // Broadcast to the SSE Worker's Durable Object so connected clients see
-    // the new event without polling.
-    await broadcast(event);
-    return Response.json({ valid: true, event });
+    // Low-latency fan-out: tell the SSE Worker's Durable Object to re-read D1
+    // and push to connected clients. The Worker also polls D1 as a fallback.
+    // Prefers the service binding; falls back to the workers.dev URL with the
+    // internal service token. The write path never depends on this.
+    const broadcastUrl = new Request('https://loom-sse.local/broadcast', { method: 'POST' });
+    if (context.env.LOOM_SSE) {
+      await context.env.LOOM_SSE.fetch(broadcastUrl, context.env).catch(() => {});
+    } else if (context.env.LOOM_SSE_URL && context.env.LOOM_INTERNAL_SECRET) {
+      const headers = { [INTERNAL_HEADER]: context.env.LOOM_INTERNAL_SECRET };
+      await fetch(`${context.env.LOOM_SSE_URL}/broadcast`, { method: 'POST', headers }).catch(() => {});
+    }
+    return Response.json({ valid: true, event, subject });
   } catch (e) {
     return Response.json({ valid: false, error: String(e) }, { status: 400 });
   }
 };
-
-/** CONFIG REQUIRED — the SSE Worker's service binding (service_bindings) and
- *  the Durable Object namespace must be declared for this broadcast to fire.
- *  Until then the write path is correct and the SSE stream simply polls D1. */
-async function broadcast(_event: unknown): Promise<void> {
-  // Replaced at config time with a fetch to the SSE Worker's DO broadcast
-  // endpoint, authenticated by a service token or the same Access JWT.
-}
