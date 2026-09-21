@@ -39,17 +39,19 @@ export function normalizeLegacyScope(input: LoomEventInput | LoomEvent): LoomEve
   return rest as LoomEventInput;
 }
 
-/** An event before the gate stamps it with seq + ts. */
+/** An event before the gate stamps it with seq + ts. `statedBy` is the
+ *  writer's code name (a handle, never a raw id) — how a shared family event
+ *  names its author without exposing a humanId. */
 export type LoomEventInput =
-  | { writer: 'human'; kind: 'focus'; node: string; scope?: 'personal' | 'shared' | 'session'; humanId?: string }
+  | { writer: 'human'; kind: 'focus'; node: string; scope?: 'personal' | 'shared' | 'session'; statedBy?: string; humanId?: string }
   | { writer: 'agent'; kind: 'traverse'; from: string; to: string; reason: string }
   | { writer: 'agent'; kind: 'propose'; id: string; node: string; body: unknown; author?: string; parentAgent?: string }
-  | { writer: 'human'; kind: 'revise'; proposal: string; body: unknown; scope?: 'personal' | 'shared' | 'session'; humanId?: string }
-  | { writer: 'human'; kind: 'approve'; proposal: string; scope?: 'personal' | 'shared' | 'session'; humanId?: string }
-  | { writer: 'human'; kind: 'reject'; proposal: string; reason: string; scope?: 'personal' | 'shared' | 'session'; humanId?: string }
+  | { writer: 'human'; kind: 'revise'; proposal: string; body: unknown; scope?: 'personal' | 'shared' | 'session'; statedBy?: string; humanId?: string }
+  | { writer: 'human'; kind: 'approve'; proposal: string; scope?: 'personal' | 'shared' | 'session'; statedBy?: string; humanId?: string }
+  | { writer: 'human'; kind: 'reject'; proposal: string; reason: string; scope?: 'personal' | 'shared' | 'session'; statedBy?: string; humanId?: string }
   | { writer: 'agent'; kind: 'review'; agent: string; proposalId: string; decision: 'approve' | 'amend' | 'reject'; reason?: string; revision: number; parentAgent?: string }
   | { writer: 'agent'; kind: 'presence'; node: string; attention: number }
-  | { writer: 'human'; kind: 'view.save'; label: string; from: number; to: number; scope?: 'personal' | 'shared' | 'session'; humanId?: string };
+  | { writer: 'human'; kind: 'view.save'; label: string; from: number; to: number; scope?: 'personal' | 'shared' | 'session'; statedBy?: string; humanId?: string };
 
 const HUMAN_KINDS = new Set(['focus', 'revise', 'approve', 'reject', 'view.save']);
 const AGENT_KINDS = new Set(['traverse', 'propose', 'review', 'presence']);

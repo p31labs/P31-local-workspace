@@ -252,14 +252,6 @@
       "description": "Return from the family view to the launchpad. Commits a shared focus on 'family-back'."
     },
     {
-      "name": "family.undo",
-      "kind": "action",
-      "danger": "low",
-      "confirm": "optional",
-      "schema": {},
-      "description": "Append a compensating shared event ('family-undo-{seq}') — the receipt of the latest shared moment is never deleted, it is superseded in the log. The log is append-only and tamper-evident; undo is an event, never a delete."
-    },
-    {
       "name": "family.care",
       "kind": "status",
       "danger": "none",

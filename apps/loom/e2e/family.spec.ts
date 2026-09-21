@@ -64,36 +64,30 @@ test('family view — the family door opens; the artifact and receipt render', a
   expect(p.verified).toBe(true);
 });
 
-test('family view — personal events never appear; undo appends, never deletes', async ({ request }) => {
-  // Alice writes a personal event; Bob writes a shared event.
+test('family view — shared events carry a statedBy code name, never a raw id', async ({ request }) => {
+  // Alice writes a personal event; Bob writes a shared event WITH statedBy
+  // (the code name the App attaches for an identified writer).
   await request.post('/api/loom/event', {
     headers: { 'X-Human-Id': 'alice' },
     data: { input: { writer: 'human', kind: 'focus', node: 'color-amber', scope: 'personal', humanId: 'alice' } },
   });
   await request.post('/api/loom/event', {
     headers: { 'X-Human-Id': 'bob' },
-    data: { input: { writer: 'human', kind: 'focus', node: 'orb', scope: 'shared' } },
+    data: { input: { writer: 'human', kind: 'focus', node: 'orb', scope: 'shared', statedBy: 'Dill·ember' } },
   });
 
   // The family page reads the SCOPED /events (shared + the caller's own
   // personal). An anonymous read sees shared only — the personal color pick
-  // must never surface in the family receipt or events feed.
+  // must never surface. The shared event carries statedBy, never a raw id.
   const events = await (await request.get('/api/loom/events')).json();
+  const shared = events.find((e: { node?: string }) => e.node === 'orb');
+  expect(shared).toBeTruthy();
+  expect(shared.statedBy).toBe('Dill·ember');
+  expect(shared.humanId).toBeUndefined(); // a handle, never a raw id
   const nodes = events.map((e: { node?: string }) => e.node);
-  expect(nodes).toContain('orb');
   expect(nodes).not.toContain('color-amber');
 
-  // Undo is an event: appending 'family-undo-{seq}' grows the log, it does
-  // not remove the original. The chain stays intact (provenance verified).
-  const before = events.length;
-  await request.post('/api/loom/event', {
-    headers: { 'X-Human-Id': 'bob' },
-    data: { input: { writer: 'human', kind: 'focus', node: 'family-undo-1', scope: 'shared' } },
-  });
-  const after = await (await request.get('/api/loom/events')).json();
-  expect(after.length).toBe(before + 1);
-  expect(after.some((e: { node?: string }) => e.node === 'family-undo-1')).toBe(true);
-
+  // The log grew from Bob's shared event; the chain stays verified.
   const v = await (await request.get('/api/loom/verify')).json();
-  expect(v.valid).toBe(true); // the log was appended, not rewritten
+  expect(v.valid).toBe(true);
 });

@@ -44,15 +44,15 @@ export type Writer = 'human' | 'agent';
 export type LoomScope = 'personal' | 'shared' | 'session';
 
 export type LoomEvent =
-  | { seq: number; ts: string; writer: 'human'; kind: 'focus'; node: string; scope?: LoomScope; humanId?: string }
+  | { seq: number; ts: string; writer: 'human'; kind: 'focus'; node: string; scope?: LoomScope; statedBy?: string; humanId?: string }
   | { seq: number; ts: string; writer: 'agent'; kind: 'traverse'; from: string; to: string; reason: string }
   | { seq: number; ts: string; writer: 'agent'; kind: 'propose'; id: string; node: string; body: unknown; author?: string; parentAgent?: string }
-  | { seq: number; ts: string; writer: 'human'; kind: 'revise'; proposal: string; body: unknown; scope?: LoomScope; humanId?: string }
-  | { seq: number; ts: string; writer: 'human'; kind: 'approve'; proposal: string; scope?: LoomScope; humanId?: string }
-  | { seq: number; ts: string; writer: 'human'; kind: 'reject'; proposal: string; reason: string; scope?: LoomScope; humanId?: string }
+  | { seq: number; ts: string; writer: 'human'; kind: 'revise'; proposal: string; body: unknown; scope?: LoomScope; statedBy?: string; humanId?: string }
+  | { seq: number; ts: string; writer: 'human'; kind: 'approve'; proposal: string; scope?: LoomScope; statedBy?: string; humanId?: string }
+  | { seq: number; ts: string; writer: 'human'; kind: 'reject'; proposal: string; reason: string; scope?: LoomScope; statedBy?: string; humanId?: string }
   | { seq: number; ts: string; writer: 'agent'; kind: 'review'; agent: string; proposalId: string; decision: 'approve' | 'amend' | 'reject'; reason?: string; revision: number; parentAgent?: string }
   | { seq: number; ts: string; writer: 'agent'; kind: 'presence'; node: string; attention: number }
-  | { seq: number; ts: string; writer: 'human'; kind: 'view.save'; label: string; from: number; to: number; scope?: LoomScope; humanId?: string };
+  | { seq: number; ts: string; writer: 'human'; kind: 'view.save'; label: string; from: number; to: number; scope?: LoomScope; statedBy?: string; humanId?: string };
 
 export type ProposalStatus = 'pending' | 'approved' | 'rejected';
 

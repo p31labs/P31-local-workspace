@@ -2,7 +2,6 @@ import { useCallback, useMemo } from 'react';
 import { MadeArtifact } from './MadeArtifact';
 import { Lumi } from './Lumi';
 import { useLoomProjection } from '../lib/useLoomProjection';
-import { codename } from '@p31/canon/loom/codename';
 import type { LoomEvent } from '@p31/canon/loom/events';
 import type { LoomEventInput } from '@p31/canon/loom/gate';
 
@@ -34,10 +33,15 @@ interface Props {
  *   - Shared-scope events ONLY. Personal records never reach this surface —
  *     the read path already filtered them out before this component saw them.
  *   - One sentence, no counts-as-scores. The care circle is presence, not a
- *     leaderboard.
+ *     leaderboard — and it shows the SESSION's own care record, not a
+ *     household aggregate (that needs a family registry this view does not
+ *     have; it is labelled honestly as "your care record").
  *   - Every shared write gets a receipt (its seq), and the receipt links to
- *     /provenance/:seq — "prove what happened." Undo is an event, never a
- *     delete (the log is append-only and tamper-evident).
+ *     /provenance/:seq — "prove what happened."
+ *   - No Undo button: this is a READ surface. Reversal is a writing action and
+ *     belongs to the chapters (where `color.repick` is already fully
+ *     reversible). A read page offering an Undo that only appends an event
+ *     would be a button that promises what it cannot deliver.
  *   - No auto-advance, no timers, no chip.
  */
 export function FamilyView({ events, care, onExit, commit }: Props) {
@@ -58,14 +62,6 @@ export function FamilyView({ events, care, onExit, commit }: Props) {
   const handleArtifactTap = useCallback(() => {
     commit({ writer: 'human', kind: 'focus', node: 'family-artifact' });
   }, [commit]);
-
-  // Undo is a compensating shared event (a "revert" focus). The log is
-  // append-only: we never delete, we append the reversal. Provenance shows
-  // both the original and the undo, in order.
-  const handleUndo = useCallback(() => {
-    if (!receipt) return;
-    commit({ writer: 'human', kind: 'focus', node: `family-undo-${receipt.seq}` });
-  }, [receipt, commit]);
 
   const handleBack = useCallback(() => {
     commit({ writer: 'human', kind: 'focus', node: 'family-back' });
@@ -110,15 +106,17 @@ export function FamilyView({ events, care, onExit, commit }: Props) {
           </p>
         )}
 
-        {/* Care circle — presence, not a score. */}
+        {/* Care circle — presence, not a score. Shows the SESSION's own care
+         * record, labelled honestly; a household aggregate needs a family
+         * registry this view does not yet have. */}
         <div className="family-care" data-agent-kind="status" data-agent-action="family.care">
           {care && care.bound ? (
             <>
               <p className="family-care-name">{care.codename}</p>
               <p className="family-care-line">
                 {care.verified
-                  ? `a verified caregiver in this family (care ${Math.round(care.careScore * 100)}%).`
-                  : 'a caregiver building a record here.'}
+                  ? `your care record — a verified caregiver (care ${Math.round(care.careScore * 100)}%).`
+                  : 'your care record — building it here.'}
               </p>
               <p className="family-care-pools">
                 Sovereignty pool {Math.round(care.sovereigntyPool)} · Performance pool {Math.round(care.performancePool)}
@@ -126,7 +124,7 @@ export function FamilyView({ events, care, onExit, commit }: Props) {
             </>
           ) : (
             <p className="family-care-line">
-              No care record bound yet — the family's LOVE journey starts with their first care act.
+              No care record bound to this session yet — the LOVE journey starts with a care act.
             </p>
           )}
         </div>
@@ -148,17 +146,6 @@ export function FamilyView({ events, care, onExit, commit }: Props) {
               >
                 Prove it
               </a>
-              <button
-                type="button"
-                className="family-undo"
-                onClick={handleUndo}
-                data-agent-kind="action"
-                data-agent-action="family.undo"
-                data-agent-danger="low"
-                data-agent-confirm="optional"
-              >
-                Undo
-              </button>
             </div>
           </div>
         )}
@@ -167,9 +154,11 @@ export function FamilyView({ events, care, onExit, commit }: Props) {
   );
 }
 
-/** A one-line, plain-language description of an event, naming people by code
- *  name (never a raw id). Shared events carry no humanId, so the actor is
- *  "someone in the family" unless an agent authored it. */
+/** A one-line, plain-language description of an event. Shared human events
+ *  carry `statedBy` — the writer's CODE NAME (a handle, never a raw id) — so
+ *  the family page can name who did something without exposing identity. An
+ *  event without a statedBy (anonymous, or an agent event) reads as "someone"
+ *  or by Lumi's role. */
 function describeEvent(e: LoomEvent): string {
   if (e.writer === 'agent') {
     switch (e.kind) {
@@ -178,21 +167,22 @@ function describeEvent(e: LoomEvent): string {
       case 'traverse':
         return 'Lumi looked around';
       case 'review':
-        return `Lumi reviewed ${codename(e.agent)}'s work`;
+        return 'Lumi reviewed a proposal';
       default:
         return 'Lumi was here';
     }
   }
+  const who = e.statedBy ? e.statedBy : 'someone';
   switch (e.kind) {
     case 'focus':
-      return `someone focused on ${e.node}`;
+      return `${who} focused on ${e.node}`;
     case 'approve':
-      return 'someone said yes';
+      return `${who} said yes`;
     case 'reject':
-      return 'someone said not yet';
+      return `${who} said not yet`;
     case 'view.save':
-      return 'someone saved a read';
+      return `${who} saved a read`;
     default:
-      return 'someone did something';
+      return `${who} did something`;
   }
 }

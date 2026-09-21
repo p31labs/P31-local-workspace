@@ -35,6 +35,7 @@ import { ProposalReviewPanel } from './components/ProposalReviewPanel';
 import { TimelineScrubber } from './components/TimelineScrubber';
 import { TraceScale } from './components/TraceScale';
 import type { LoomEventInput } from '@p31/canon/loom/gate';
+import { codename } from '@p31/canon/loom/codename';
 
 const nodeTypes = { proposal: ProposalNode, loom: LoomNode };
 
@@ -72,10 +73,17 @@ async function postEvent(
   scope: 'personal' | 'shared' = 'shared',
 ): Promise<void> {
   try {
-    const body =
-      humanId && scope === 'personal'
-        ? { input: { ...input, scope, humanId } }
-        : { input: { ...input, scope } };
+    // A shared human event names its author by CODE NAME (a handle, never a
+    // raw id). The scope rule forbids humanId on shared events; statedBy is
+    // how the family page says who did something without exposing identity.
+    // Agent events are left untouched (the gate enforces their shared scope).
+    const withIdentity = (() => {
+      if (input.writer === 'agent') return input;
+      if (scope === 'personal' && humanId) return { ...input, scope, humanId };
+      if (scope === 'shared' && humanId) return { ...input, scope, statedBy: codename(humanId) };
+      return { ...input, scope };
+    })();
+    const body = { input: withIdentity };
     await fetch('/api/loom/event', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

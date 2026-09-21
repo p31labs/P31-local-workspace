@@ -41,6 +41,14 @@ const gate = () => new ReplayGate();
   assert(r.error?.includes('shared'), 'error must name shared');
 }
 
+// 2b. shared MAY carry statedBy — a code-name handle, never a raw id. The
+// family page names its authors this way without exposing identity.
+{
+  const g = gate();
+  const r = g.append({ writer: 'human', kind: 'focus', node: 'orb', scope: 'shared', statedBy: 'Dill·ember' });
+  assert(r.valid, 'shared with statedBy (a handle) must be accepted');
+}
+
 // Default (no scope) is shared — so a human event with a humanId is rejected
 // unless it declares personal.
 {
