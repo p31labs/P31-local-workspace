@@ -141,6 +141,31 @@ static demo is the honest state, and IndexedDB is premature.
 
 **Do not start this without the trigger.** It touches the canon's gate and
 the middleware — the two things the docs agree not to touch casually.
+## 008 — The log is tamper-evident (prev_hash chain)
+
+**Decision.** Every stored record carries a `prev_hash` — SHA-256 of the
+previous record's RFC 8785 canonical preimage. The D1 row is
+`(seq, ts, data, prev_hash)`; the genesis record's link is `''`. Rewriting,
+reordering, or deleting any record breaks the chain at the next seq, and
+`GET /api/loom/verify` returns exactly where.
+
+**Why.** The log-as-runtime is only worth claiming if it is provable. The
+IETF AAT draft specifies this exact pattern (`prev_hash` via RFC 8785); the
+W3C AIVS group wants portable self-verifiable session proofs — `/verify` is
+the first half of that. A single field, computed at append, turns the log from
+*ordered* to *tamper-evident*.
+
+**Where the hash lives.** The `prev_hash` sits on the *record* (the D1 row),
+not inside the `LoomEvent` object. The canon's event union stays frozen — the
+event is what it is; the chain is metadata about the storage, kept beside it.
+The dev middleware mirrors D1 with a per-log chain sidecar (`.loom/*.chain.jsonl`),
+and the e2e `e2e/trust-layer.spec.ts:32` proves a disk tamper breaks the chain.
+
+**The documented gap.** Signatures (ECDSA P-256 per AAT) are not yet present.
+The chain proves *something changed and where*; it does not yet prove *who
+wrote* a given record beyond the gate's writer-per-kind field. Signature
+support is the natural next increment.
+
 ## Related Documents
 
 - `../README.md` — what the Loom is; every decision here shapes this app

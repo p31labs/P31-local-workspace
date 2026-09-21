@@ -75,6 +75,43 @@ intentional.
 The `port-audit` script is the CI gate: it fails if any `data-agent-action` in
 the source is missing from the manifest, or if the manifest's structure drifts
 from the documented shape.
+
+## Agent audit trails — the prev_hash chain
+
+The log is tamper-evident by construction. Each stored record carries a
+`prev_hash` — SHA-256 (lowercase hex) of the previous record's RFC 8785 (JCS)
+canonical preimage (`{ seq, ts, data, prev_hash }`), computed by
+`@p31/canon/loom/hash-chain`. Rewriting, reordering, or deleting any record
+breaks the chain at the next seq.
+
+The D1 schema (`events.seq, ts, data, prev_hash`) is the deployed runtime; the
+dev middleware mirrors it with a per-log chain sidecar so the local server and
+the e2e suite exercise the same contract as the edge.
+
+Two endpoints expose the chain:
+- `GET /api/loom/verify` — replay the log, recompute the chain, return
+  `{ valid, checked, brokenAt, head, expected, found }`. Never cached.
+- `GET /api/loom/provenance/:seq` — the chain from genesis to `seq`, each
+  record with its `prev_hash`, plus the recomputed verdict and the head
+  commitment.
+
+Both are registered in the AAF manifest as `verification.verify` and
+`verification.provenance` (`danger: none`, `confirm: never` — reads, not
+mutations), so the manifest stays the single surface list.
+
+Positioning against the drafting standards landscape (all are pre-ratified as
+of 2026-09):
+- **IETF GAR** (`draft-sato-soos-gar-02`) — the Loom's log is a Session Audit
+  Record: its `seq` ordering is the causal chain.
+- **IETF AAT** (`draft-sharif-agent-audit-trail-00`) — the chain is the
+  `prev_hash` + RFC 8785 pattern the draft specifies; the `data` payload is the
+  operation-level record. Signatures (ECDSA P-256) are the documented gap.
+- **EU AI Act Art. 12/19** — automatic event logging with auditability is met
+  by construction (obligations applied 2026-08-02); 6-month retention is a D1
+  lifecycle rule, not yet implemented.
+- **W3C AIVS** — `/verify` is the first half of a self-verifiable proof bundle;
+  the linked chain is the second.
+
 ## Related Documents
 
 - `../README.md` — what the Loom is; every conformance claim here is about this app

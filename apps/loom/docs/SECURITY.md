@@ -110,6 +110,15 @@ Verified live: `POST /api/loom/event` (gate-validated, written to D1),
 secret proxy → Worker DO fan-out), the nonce CSP (`strict-dynamic` + Trusted
 Types), and `/manifest.webmanifest`.
 
+**Integrity.** The log is tamper-evident: each D1 row carries `prev_hash`, and
+`GET /api/loom/verify` recomputes the chain and names the seq of any rewrite,
+reorder, or deletion (never cached — a stale 200 must not mask a tamper).
+`GET /api/loom/provenance/:seq` returns the chain from genesis to a seq with
+each record's link, for review. Both are reads (`danger: none`), registered in
+the AAF manifest as `verification.verify` / `verification.provenance`. The
+chain is the log's integrity layer; the documented gap is per-record
+signatures (ECDSA P-256), which would bind writer identity cryptographically.
+
 **Interim posture.** Cloudflare Access is the intended edge auth, but its
 application lives in the Zero Trust dashboard and cannot be provisioned from
 the repo. Until `CLOUDFLARE_ACCESS_AUD` is configured there, the Access gate

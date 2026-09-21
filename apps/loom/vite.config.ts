@@ -8,13 +8,79 @@ import { resolveLogPath } from '@p31/canon/loom/log-path';
 import { readProfile } from '@p31/canon/loom/profiles';
 import { ReplayGate, type LoomEventInput } from '@p31/canon/loom/gate';
 import type { LoomEvent } from '@p31/canon/loom/events';
+import { hashRecord, verifyChain, GENESIS_PREV_HASH, type ChainRecord } from '@p31/canon/loom/hash-chain';
 import { dirname, join } from 'node:path';
+import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 
 const logPath = resolveLogPath();
+// The dev chain sidecar: the D1-row equivalent (seq, ts, data, prev_hash),
+// stored one record per line next to the log. The JSONL holds the events the
+// canon owns; the sidecar holds the chain links the trust endpoints verify.
+// Tampering a JSONL line (or a sidecar line) breaks the chain.
+const chainPath = logPath.replace(/\.jsonl$/, '.chain.jsonl');
 const weftPath = join(dirname(logPath), 'weft.jsonl');
 // The profile store sits next to the log directory, NOT inside the log. It is
 // a separate store keyed by humanId; the log only carries the id reference.
 const profilesDir = join(dirname(logPath), 'profiles');
+
+/** Read the dev chain sidecar as a record list, sorted ascending by seq. */
+function readChain(): ChainRecord[] {
+  if (!existsSync(chainPath)) return [];
+  return readFileSync(chainPath, 'utf8')
+    .split('\n')
+    .filter((l) => l.trim())
+    .map((l) => JSON.parse(l) as ChainRecord)
+    .sort((a, b) => a.seq - b.seq);
+}
+
+/** Rebuild the whole chain sidecar from the canonical event log. Used when the
+ *  log has events but the sidecar is missing or out of sync (e.g. a test that
+ *  clears the JSONL but not the sidecar, or the first run after this feature
+ *  landed). Deterministic: given the same log, the same sidecar is produced. */
+async function rebuildChain(logEvents: LoomEvent[]): Promise<ChainRecord[]> {
+  const records: ChainRecord[] = [];
+  let prevHash = GENESIS_PREV_HASH;
+  for (const e of logEvents) {
+    const record: ChainRecord = { seq: e.seq, ts: e.ts, data: JSON.stringify(e), prev_hash: prevHash };
+    records.push(record);
+    prevHash = await hashRecord(record);
+  }
+  return records;
+}
+
+/** Append one record to the dev chain sidecar (create if missing). */
+function appendChain(record: ChainRecord): void {
+  mkdirSync(dirname(chainPath), { recursive: true });
+  writeFileSync(chainPath, readChain().concat([record]).map((r) => JSON.stringify(r)).join('\n') + '\n');
+}
+
+/** Overwrite the chain sidecar with a full rebuild (bootstrap / desync fix). */
+function writeChain(records: readonly ChainRecord[]): void {
+  mkdirSync(dirname(chainPath), { recursive: true });
+  writeFileSync(chainPath, records.map((r) => JSON.stringify(r)).join('\n') + '\n');
+}
+
+/**
+ * After the log has grown by one committed event, extend the chain sidecar by
+ * exactly that record. The sidecar is APPEND-ONLY in normal operation — the
+ * prev_hash of the new record is the hash of the current head, mirroring the
+ * D1 adapter (INSERT with prev_hash = hash of the previous row). Only when the
+ * sidecar has desynced from the log (missing/stale — e.g. a seeded log before
+ * this feature, or a test that clears the JSONL) is the whole chain rebuilt.
+ */
+async function extendChain(logEvents: LoomEvent[]): Promise<void> {
+  let chain = readChain();
+  // logEvents already includes the just-committed event. If the sidecar is
+  // behind by exactly that one event, append it; otherwise rebuild.
+  if (chain.length === logEvents.length - 1) {
+    const head = chain.length ? await hashRecord(chain[chain.length - 1]) : GENESIS_PREV_HASH;
+    const event = logEvents[logEvents.length - 1];
+    const record: ChainRecord = { seq: event.seq, ts: event.ts, data: JSON.stringify(event), prev_hash: head };
+    appendChain(record);
+  } else {
+    writeChain(await rebuildChain(logEvents));
+  }
+}
 
 /**
  * Dev-only middleware. The canvas writes only through POST /api/loom/event,
@@ -25,13 +91,13 @@ function loomMiddleware(): Plugin {
   return {
     name: 'loom-dev-middleware',
     configureServer(server) {
-      server.middlewares.use('/api/loom', (req, res, next) => {
+      server.middlewares.use('/api/loom', async (req, res, next) => {
         const path = new URL(req.url ?? '/', 'http://localhost').pathname;
 
         if (req.method === 'POST' && path === '/event') {
           let body = '';
           req.on('data', (c) => (body += c));
-          req.on('end', () => {
+          req.on('end', async () => {
             try {
               // `input.humanId` is client-asserted. There is no authentication.
               // A future authenticated wrapper sets it server-side from the
@@ -40,6 +106,11 @@ function loomMiddleware(): Plugin {
               const r = commit(logPath, input);
               res.setHeader('Content-Type', 'application/json');
               res.statusCode = r.valid ? 200 : 400;
+              if (r.valid) {
+                // Keep the dev chain sidecar in lockstep with the log — one
+                // appended record per committed event, linked to the head.
+                await extendChain(readEvents(logPath));
+              }
               res.end(JSON.stringify(r.valid ? { valid: true, event: r.event } : { valid: false, error: r.error }));
             } catch (e) {
               res.statusCode = 400;
@@ -53,6 +124,61 @@ function loomMiddleware(): Plugin {
         if (req.method === 'GET' && path === '/events') {
           res.setHeader('Content-Type', 'application/json');
           res.end(JSON.stringify(readEvents(logPath)));
+          return;
+        }
+
+        // Trust layer: recompute the prev_hash chain over the log and the
+        // sidecar. A dev log that was seeded before this feature (or a test
+        // that clears the JSONL) is rebuilt deterministically on demand.
+        if (req.method === 'GET' && path === '/verify') {
+          const logEvents = readEvents(logPath);
+          let chain = readChain();
+          if (chain.length !== logEvents.length) chain = await rebuildChain(logEvents);
+          verifyChain(chain)
+            .then((verdict) => {
+              res.setHeader('Content-Type', 'application/json');
+              res.setHeader('Cache-Control', 'no-store');
+              res.end(JSON.stringify(verdict));
+            })
+            .catch((e) => {
+              res.statusCode = 500;
+              res.setHeader('Content-Type', 'application/json');
+              res.end(JSON.stringify({ valid: false, error: String(e) }));
+            });
+          return;
+        }
+
+        if (req.method === 'GET' && path.startsWith('/provenance/')) {
+          const target = Number(decodeURIComponent(path.slice('/provenance/'.length)));
+          if (!Number.isInteger(target) || target < 0) {
+            res.statusCode = 400;
+            res.setHeader('Content-Type', 'application/json');
+            res.end(JSON.stringify({ error: 'seq must be a non-negative integer' }));
+            return;
+          }
+          const logEvents = readEvents(logPath);
+          let chain = readChain();
+          if (chain.length !== logEvents.length) chain = await rebuildChain(logEvents);
+          const upto = chain.filter((r) => r.seq <= target);
+          if (upto.length === 0 || upto[upto.length - 1].seq !== target) {
+            res.statusCode = 404;
+            res.setHeader('Content-Type', 'application/json');
+            res.end(JSON.stringify({ error: `no event at seq ${target}` }));
+            return;
+          }
+          const verdict = await verifyChain(chain);
+          const sliceVerdict = await verifyChain(upto);
+          res.setHeader('Content-Type', 'application/json');
+          res.setHeader('Cache-Control', 'no-store');
+          res.end(
+            JSON.stringify({
+              target,
+              chain: upto,
+              verified: verdict.valid,
+              brokenAt: verdict.brokenAt,
+              head: sliceVerdict.head,
+            }),
+          );
           return;
         }
 

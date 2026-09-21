@@ -177,6 +177,28 @@
       "description": "The child declines Lumi's proposal for now ('Not yet') in Chapter 3. Commits a human reject event with reason 'not-yet'. A valid decision, not a failure — no retry, no re-prompt."
     },
     {
+      "name": "verification.verify",
+      "kind": "action",
+      "danger": "none",
+      "confirm": "never",
+      "schema": {},
+      "description": "Replay the log and return the tamper-evidence verdict: valid, the seq the walk reached, the head hash, and — if the chain is broken — the seq, expected, and found hashes. A read, not a mutation. Safe for any caller with a session."
+    },
+    {
+      "name": "verification.provenance",
+      "kind": "action",
+      "danger": "none",
+      "confirm": "never",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "seq": { "type": "integer", "minimum": 0 }
+        },
+        "required": ["seq"]
+      },
+      "description": "Return the event chain from genesis to the given seq, each record carrying its prev_hash, plus the recomputed verdict and the head commitment. The artifact a reviewer asks for. A read."
+    },
+    {
       "name": "theme.cycle",
       "kind": "action",
       "danger": "none",

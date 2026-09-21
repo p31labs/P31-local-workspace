@@ -35,6 +35,8 @@ graph LR
   DECISIONS --> |"005 stylesheet"| CSS[single layered sheet]
   DECISIONS --> |"006 two doors"| COMPANION[the companion view]
   DECISIONS --> |"007 static demo"| PERSIST[persistence - open]
+  DECISIONS --> |"008 tamper-evident"| CHAIN[the prev_hash chain]
+  STANDARDS -.audit trails.-> CHAIN
 ```
 
 ## The concept graph
@@ -57,6 +59,9 @@ wherever they appear bare.
   `apps/loom/src/components/MadeArtifact.tsx`.
 - **the seed** — `events.seed.json`, the static deploy's demo seed. Canonical:
   `DECISIONS.md` #002.
+- **the prev_hash chain** — the log's tamper-evidence layer: each record links
+  to the one before it; `/verify` recomputes and names any break. Canonical:
+  `packages/canon/src/loom/hash-chain.ts`, `DECISIONS.md` #008.
 
 ## Related Documents
 
