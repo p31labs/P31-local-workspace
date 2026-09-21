@@ -202,6 +202,29 @@ extends the same trust story to the ledger's chain: the Loom's `/verify` head
 committed as a `LOOM_HEAD` entry. The anchor write awaits a dedicated
 service-to-service token (documented in `LOVE_INTEGRATION.md`); reads are live.
 
+## 010 — The SBT anchor: witness, never re-derive
+
+**Decision.** `POST /api/loom/anchor/sbt` witnesses a QPJ SBT block into the
+Loom's D1 `sbt_anchors` table, making the portal's client-side (localStorage)
+hash chain server-authoritative. The Loom does **not** recompute the block's
+hash — QPJ hashes with insertion-order `JSON.stringify`; the Loom uses RFC
+8785 JCS; they would disagree. The block's own `hash` is an opaque witness
+value, and the per-DID linkage (block N's prevHash must equal the anchored
+hash of block N-1) is what turns the local chain into a provable one.
+
+**Why.** The production portal's SBT chain is forgeable — anyone can edit
+localStorage. Anchoring each block's hash server-side, linked per-DID, means
+a rewritten block breaks the chain the next time the portal tries to anchor,
+and the Loom can prove it. This is the convergence the 2026 scan called for:
+the Loom is the trust layer the older portals lacked.
+
+**Consequences.** The anchor is idempotent (a retried block returns
+`inserted: false`, not 409 — only a *different* genesis is a replay). CORS is
+a locked allowlist (`LOOM_CORS_ORIGINS`, defaulting to the seven `*.p31ca.org`
+portals + localhost) — CORS is browser-enforced only and is NOT auth; the
+real control is Cloudflare Access + the linkage check. AAF `anchor.sbt`
+(`danger: low`) registers the surface; the port-audit stays at 0 missing.
+
 ## Related Documents
 
 - `../README.md` — what the Loom is; every decision here shapes this app

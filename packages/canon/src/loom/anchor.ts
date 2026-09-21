@@ -71,3 +71,74 @@ export async function loomHeadAnchor(
   const entryHash = await sha256Hex(message)
   return { entryType, payload, prevHash: lovePrevHash, entryHash, message }
 }
+
+// ── SBT anchoring ─────────────────────────────────────────────────────
+//
+// The QPJ portal (portals/qpj/src/lib/sbt.ts) keeps a client-side SBT hash
+// chain in localStorage: sha256(JSON.stringify(payload)) per block, with
+// prevHash = prior block's hash. The Loom's cross-anchor makes that chain
+// PROVABLE by witnessing each block's own hash as an opaque payload in a
+// LOOM_SBT entry.
+//
+// Why opaque: QPJ hashes with insertion-order JSON.stringify; the Loom uses
+// RFC 8785 (sorted keys). Recomputing QPJ's hash here would disagree. Instead
+// the Loom commits to the value QPJ already computed — "this chain head was X
+// at time T, witnessed" — and stores the per-DID block linkage so a later
+// /verify-style walk can prove no anchored block was rewritten.
+
+/** The QPJ SBT block, as produced by portals/qpj/src/lib/sbt.ts appendSBT.
+ *  `hash` is the block's own SHA-256 over its payload (QPJ's convention). */
+export interface SbtBlock {
+  id: string
+  kind: string
+  name: string
+  description: string
+  issuedAt: string
+  blockNumber: number
+  prevHash: string | null
+  metadata: Record<string, unknown>
+  tetrahedronHash: string
+  hash: string
+}
+
+/** The payload of a LOOM_SBT anchor — the DID + the block's own hash. The
+ *  block itself is stored alongside (see the Function); the entry commits to
+ *  the hash and the linkage, not a re-derivation. */
+export interface SbtAnchorPayload {
+  did: string
+  blockHash: string
+  blockNumber: number
+  prevBlockHash: string | null
+  anchoredAt: string
+}
+
+export interface SbtAnchor {
+  entryType: 'LOOM_SBT'
+  payload: SbtAnchorPayload
+  /** The love-ledger head this entry would follow (or genesis). */
+  prevHash: string
+  /** The hash love-ledger would record — the witness commitment. */
+  entryHash: string
+  /** The exact message that was hashed — court-admissible. */
+  message: string
+}
+
+/** Compute a complete LOOM_SBT witness anchor for a QPJ block. The block's
+ *  own `hash` is treated as an opaque witness value — never re-derived. */
+export async function sbtAnchor(
+  did: string,
+  block: SbtBlock,
+  lovePrevHash: string,
+): Promise<SbtAnchor> {
+  const entryType = 'LOOM_SBT' as const
+  const payload: SbtAnchorPayload = {
+    did,
+    blockHash: block.hash,
+    blockNumber: block.blockNumber,
+    prevBlockHash: block.prevHash,
+    anchoredAt: new Date().toISOString(),
+  }
+  const message = loveMessage(entryType, payload, lovePrevHash)
+  const entryHash = await sha256Hex(message)
+  return { entryType, payload, prevHash: lovePrevHash, entryHash, message }
+}

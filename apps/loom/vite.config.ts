@@ -9,7 +9,7 @@ import { readProfile } from '@p31/canon/loom/profiles';
 import { ReplayGate, type LoomEventInput } from '@p31/canon/loom/gate';
 import type { LoomEvent } from '@p31/canon/loom/events';
 import { hashRecord, verifyChain, GENESIS_PREV_HASH, type ChainRecord } from '@p31/canon/loom/hash-chain';
-import { loomHeadAnchor, LOVE_GENESIS_HASH } from '@p31/canon/loom/anchor';
+import { loomHeadAnchor, sbtAnchor, LOVE_GENESIS_HASH, type SbtBlock } from '@p31/canon/loom/anchor';
 import { fetchCareProof } from './functions/api/loom/_lib/love';
 import { dirname, join } from 'node:path';
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs';
@@ -54,6 +54,25 @@ async function rebuildChain(logEvents: LoomEvent[]): Promise<ChainRecord[]> {
 function appendChain(record: ChainRecord): void {
   mkdirSync(dirname(chainPath), { recursive: true });
   writeFileSync(chainPath, readChain().concat([record]).map((r) => JSON.stringify(r)).join('\n') + '\n');
+}
+
+// Dev-only SBT anchor store. The deployed Function persists to D1
+// (sbt_anchors table); the dev server keeps an in-memory Map so the e2e suite
+// can exercise the same linkage + witness semantics without a database.
+// Keyed by DID -> array of anchored blocks { block, entryHash }.
+const sbtAnchors = new Map<string, Array<{ block: SbtBlock; entryHash: string }>>();
+
+function lastSbtAnchor(did: string): { block: SbtBlock; entryHash: string } | null {
+  const arr = sbtAnchors.get(did);
+  return arr && arr.length ? arr[arr.length - 1] : null;
+}
+
+function insertSbtAnchor(did: string, block: SbtBlock, entryHash: string): boolean {
+  const arr = sbtAnchors.get(did) ?? [];
+  if (arr.some((a) => a.block.hash === block.hash)) return false; // idempotent
+  arr.push({ block, entryHash });
+  sbtAnchors.set(did, arr);
+  return true;
 }
 
 /** Overwrite the chain sidecar with a full rebuild (bootstrap / desync fix). */
@@ -258,6 +277,68 @@ function loomMiddleware(): Plugin {
               writePath: 'awaits dedicated service-to-service token (see docs/LOVE_INTEGRATION.md)',
             }),
           );
+          return;
+        }
+
+        if (req.method === 'POST' && path === '/anchor/sbt') {
+          let body = '';
+          req.on('data', (c) => (body += c));
+          req.on('end', async () => {
+            try {
+              const parsed = JSON.parse(body || '{}') as { did?: string; block?: SbtBlock };
+              const did = parsed?.did;
+              const block = parsed?.block;
+              if (!did || !block || !/^[0-9a-f]{64}$/.test(block.hash)) {
+                res.statusCode = 400;
+                res.setHeader('Content-Type', 'application/json');
+                res.end(JSON.stringify({ error: 'did and a valid 64-hex block.hash are required' }));
+                return;
+              }
+              if (!Number.isInteger(block.blockNumber) || block.blockNumber < 0) {
+                res.statusCode = 400;
+                res.setHeader('Content-Type', 'application/json');
+                res.end(JSON.stringify({ error: 'block.blockNumber must be a non-negative integer' }));
+                return;
+              }
+
+              // Per-DID linkage (dev mirror of the D1 Function).
+              const last = lastSbtAnchor(did);
+              if (last && last.block.hash === block.hash) {
+                // Idempotent retry of the same block.
+                const entryPrev = last.entryHash;
+                const anchor = await sbtAnchor(did, block, entryPrev);
+                res.setHeader('Content-Type', 'application/json');
+                res.setHeader('Cache-Control', 'no-store');
+                res.end(JSON.stringify({ ...anchor, anchored: false, inserted: false }));
+                return;
+              }
+              if (block.blockNumber > 0) {
+                if (!last || block.prevHash !== last.block.hash) {
+                  res.statusCode = 409;
+                  res.setHeader('Content-Type', 'application/json');
+                  res.end(JSON.stringify({ error: `linkage broken: block ${block.blockNumber} prevHash does not match last anchored hash for ${did}` }));
+                  return;
+                }
+              } else if (last) {
+                res.statusCode = 409;
+                res.setHeader('Content-Type', 'application/json');
+                res.end(JSON.stringify({ error: `genesis already anchored for ${did}` }));
+                return;
+              }
+
+              const entryPrev = last?.entryHash ?? LOVE_GENESIS_HASH;
+              const anchor = await sbtAnchor(did, block, entryPrev);
+              const inserted = insertSbtAnchor(did, block, anchor.entryHash);
+
+              res.setHeader('Content-Type', 'application/json');
+              res.setHeader('Cache-Control', 'no-store');
+              res.end(JSON.stringify({ ...anchor, anchored: inserted, inserted }));
+            } catch (e) {
+              res.statusCode = 400;
+              res.setHeader('Content-Type', 'application/json');
+              res.end(JSON.stringify({ error: String(e) }));
+            }
+          });
           return;
         }
 

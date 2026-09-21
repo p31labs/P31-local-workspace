@@ -13,3 +13,21 @@ CREATE TABLE IF NOT EXISTS events (
 );
 
 CREATE INDEX IF NOT EXISTS events_ts ON events(ts);
+
+-- SBT anchors: the QPJ portal's client-side SBT hash chain, witnessed by the
+-- Loom. Each row stores one anchored block per DID, with the block's own hash
+-- (QPJ's convention) as the witness value and the block linkage so a walk can
+-- prove no anchored block was rewritten. entry_hash is the LOVE-format
+-- LOOM_SBT commitment. (did, block_number) is the per-DID chain cursor.
+CREATE TABLE IF NOT EXISTS sbt_anchors (
+  did TEXT NOT NULL,
+  block_number INTEGER NOT NULL,
+  block_hash TEXT NOT NULL,
+  prev_block_hash TEXT,
+  payload TEXT NOT NULL,
+  entry_hash TEXT NOT NULL,
+  created_at TEXT NOT NULL,
+  PRIMARY KEY (did, block_number)
+);
+
+CREATE INDEX IF NOT EXISTS sbt_anchors_did ON sbt_anchors(did, block_number);

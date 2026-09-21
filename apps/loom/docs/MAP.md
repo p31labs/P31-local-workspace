@@ -39,8 +39,10 @@ graph LR
   DECISIONS --> |"006 two doors"| COMPANION[the companion view]
   DECISIONS --> |"007 static demo"| PERSIST[persistence - open]
   DECISIONS --> |"008 tamper-evident"| CHAIN[the prev_hash chain]
+  DECISIONS --> |"010 SBT anchor"| SBTANCHOR[the SBT anchor]
   STANDARDS -.audit trails.-> CHAIN
   CHAIN -.cross-anchor.-> LOVE[the LOVE care ledger]
+  SBTANCHOR -.witnesses.-> QPJ[the QPJ portal chain]
   AUDIT[AUDIT_STANDARDS] -.positions.-> CHAIN
   AUDIT -.positions.-> LOVE
   LOVE_INTEGRATION[LOVE_INTEGRATION] --> LOVE
@@ -75,6 +77,9 @@ wherever they appear bare.
 - **the care proof** — the privacy-preserving read: what the LOVE ledger
   attests (careScore, verified, pools) without the care events. Canonical:
   `packages/canon/src/loom/love.ts`, `LOVE_INTEGRATION.md` Tier 2.
+- **the SBT anchor** — the QPJ portal's client-side SBT chain, witnessed by
+  the Loom (per-DID linkage, opaque hash). Canonical:
+  `packages/canon/src/loom/anchor.ts`, `DECISIONS.md` #010.
 
 ## Related Documents
 

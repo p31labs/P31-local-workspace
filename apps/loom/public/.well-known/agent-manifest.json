@@ -213,6 +213,21 @@
       "description": "Read the privacy-preserving care proof for a LOVE DID: bound, careScore, verified (>= 0.5), sovereignty/performance pools, totalEarned. Returns what the ledger attests WITHOUT the care events — the LOVE privacy promise surfaced in the Loom. A read; safe for any caller with a session."
     },
     {
+      "name": "anchor.sbt",
+      "kind": "action",
+      "danger": "low",
+      "confirm": "never",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "did": { "type": "string" },
+          "block": { "type": "object" }
+        },
+        "required": ["did", "block"]
+      },
+      "description": "Witness a QPJ SBT block into the Loom's anchor store — makes the portal's client-side hash chain server-authoritative. Verifies the per-DID linkage (a rewritten block breaks it); witnesses the block's own hash as opaque (never re-derived). A write, but only to the anchor store — the log itself is untouched."
+    },
+    {
       "name": "theme.cycle",
       "kind": "action",
       "danger": "none",

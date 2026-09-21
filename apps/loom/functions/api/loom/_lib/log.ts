@@ -74,3 +74,69 @@ export async function appendEvent(env: D1Env, input: LoomEventInput): Promise<Lo
     .run();
   return event;
 }
+
+// ── SBT anchor store ───────────────────────────────────────────────────
+
+export interface SbtAnchorRow {
+  did: string;
+  blockNumber: number;
+  blockHash: string;
+  prevBlockHash: string | null;
+  payload: string;
+  entryHash: string;
+  createdAt: string;
+}
+
+/** The last anchored block for a DID, or null when none yet. The per-DID
+ *  linkage check uses this: an incoming block's prevHash must equal the last
+ *  anchored block's hash. */
+export async function readLastAnchor(env: D1Env, did: string): Promise<SbtAnchorRow | null> {
+  const row = await env.LOOM_D1.prepare(
+    'SELECT did, block_number, block_hash, prev_block_hash, payload, entry_hash, created_at FROM sbt_anchors WHERE did = ? ORDER BY block_number DESC LIMIT 1',
+  )
+    .bind(did)
+    .first<{
+      did: string;
+      block_number: number;
+      block_hash: string;
+      prev_block_hash: string | null;
+      payload: string;
+      entry_hash: string;
+      created_at: string;
+    }>();
+  if (!row) return null;
+  return {
+    did: row.did,
+    blockNumber: row.block_number,
+    blockHash: row.block_hash,
+    prevBlockHash: row.prev_block_hash,
+    payload: row.payload,
+    entryHash: row.entry_hash,
+    createdAt: row.created_at,
+  };
+}
+
+/** Insert an SBT anchor. Returns false when the block hash is already
+ *  anchored for that DID (idempotent — a retried POST re-anchors nothing). */
+export async function insertAnchor(
+  env: D1Env,
+  did: string,
+  blockNumber: number,
+  blockHash: string,
+  prevBlockHash: string | null,
+  payload: unknown,
+  entryHash: string,
+): Promise<boolean> {
+  const dup = await env.LOOM_D1.prepare(
+    'SELECT 1 FROM sbt_anchors WHERE did = ? AND block_hash = ? LIMIT 1',
+  )
+    .bind(did, blockHash)
+    .first();
+  if (dup) return false;
+  await env.LOOM_D1.prepare(
+    'INSERT INTO sbt_anchors (did, block_number, block_hash, prev_block_hash, payload, entry_hash, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)',
+  )
+    .bind(did, blockNumber, blockHash, prevBlockHash, JSON.stringify(payload), entryHash, new Date().toISOString())
+    .run();
+  return true;
+}
