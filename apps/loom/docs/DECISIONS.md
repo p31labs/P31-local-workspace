@@ -225,6 +225,25 @@ portals + localhost) — CORS is browser-enforced only and is NOT auth; the
 real control is Cloudflare Access + the linkage check. AAF `anchor.sbt`
 (`danger: low`) registers the surface; the port-audit stays at 0 missing.
 
+## 011 — Code names: pickle names, never raw DIDs
+
+**Decision.** Every family-facing and agent-facing surface names a person by a
+stable pickle code name (`@p31/canon/loom/codename`) — a deterministic
+`prefix·suffix` derived from the DID/humanId — never the raw DID. The LOVE
+care proof now carries `codename` alongside `did`.
+
+**Why.** Ported from QPJ's pickle-name generator (the QPJ portal's
+portals/qpj/src/lib/pickleNames.ts file, where it names the tetrahedron mesh
+vertices — a sibling repo, not a resolvable Loom path). The log, companion
+view, and any agent should be able to name a family member without exposing
+the DID. The codename is privacy-preserving by construction (deterministic,
+never contains the seed) and collision-avoiding (exclude set). Same person →
+same name, in the Loom and in QPJ.
+
+**Consequences.** `careProofOf` derives `codename` from `did`. The
+privacy-safe proof-shape gate now includes it (and asserts it never leaks the
+DID). A future MCP surface names tools by codename, not DID.
+
 ## Related Documents
 
 - `../README.md` — what the Loom is; every decision here shapes this app

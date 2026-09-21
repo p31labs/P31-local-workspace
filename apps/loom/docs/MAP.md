@@ -40,9 +40,11 @@ graph LR
   DECISIONS --> |"007 static demo"| PERSIST[persistence - open]
   DECISIONS --> |"008 tamper-evident"| CHAIN[the prev_hash chain]
   DECISIONS --> |"010 SBT anchor"| SBTANCHOR[the SBT anchor]
+  DECISIONS --> |"011 code names"| CODENAME[pickle code names]
   STANDARDS -.audit trails.-> CHAIN
   CHAIN -.cross-anchor.-> LOVE[the LOVE care ledger]
   SBTANCHOR -.witnesses.-> QPJ[the QPJ portal chain]
+  CODENAME -.names.-> LOVE
   AUDIT[AUDIT_STANDARDS] -.positions.-> CHAIN
   AUDIT -.positions.-> LOVE
   LOVE_INTEGRATION[LOVE_INTEGRATION] --> LOVE
@@ -80,6 +82,9 @@ wherever they appear bare.
 - **the SBT anchor** — the QPJ portal's client-side SBT chain, witnessed by
   the Loom (per-DID linkage, opaque hash). Canonical:
   `packages/canon/src/loom/anchor.ts`, `DECISIONS.md` #010.
+- **code names** — the stable pickle `prefix·suffix` derived from a
+  DID/humanId; how the Loom names people without exposing DIDs. Canonical:
+  `packages/canon/src/loom/codename.ts`, `DECISIONS.md` #011.
 
 ## Related Documents
 

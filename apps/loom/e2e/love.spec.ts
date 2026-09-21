@@ -15,6 +15,7 @@ test('love care proof — a DID resolves to a care proof, never the events', asy
 
   // The shape is stable regardless of ledger reachability.
   expect(proof).toHaveProperty('did');
+  expect(proof).toHaveProperty('codename');
   expect(proof).toHaveProperty('bound');
   expect(proof).toHaveProperty('careScore');
   expect(proof).toHaveProperty('verified');
@@ -27,6 +28,11 @@ test('love care proof — a DID resolves to a care proof, never the events', asy
   const body = JSON.stringify(proof);
   expect(body).not.toContain('transactions');
   expect(body).not.toContain('event');
+
+  // The codename is a stable pickle name that never leaks the raw DID.
+  expect(typeof proof.codename).toBe('string');
+  expect(proof.codename).toContain('·');
+  expect(proof.codename).not.toContain('did:key');
 
   // careScore is a number in [0,1]; verified is its boolean verdict.
   expect(proof.careScore).toBeGreaterThanOrEqual(0);

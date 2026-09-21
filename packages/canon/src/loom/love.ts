@@ -15,6 +15,7 @@
  * The verified threshold mirrors the ledger's CARE_THRESHOLD (0.5) and the
  * on-chain ProofOfCare CARE_THRESHOLD = 0.5e18.
  */
+import { codename } from './codename.ts'
 export interface LoveBalance {
   userId: string
   totalEarned: number
@@ -29,6 +30,10 @@ export interface LoveBalance {
 
 export interface CareProof {
   did: string
+  /** The pickle code name derived from `did` — a stable, friendly name that
+   *  never exposes the raw DID. The log / companion / agent surfaces show the
+   *  codename; the DID stays out of user-facing prose. */
+  codename: string
   bound: boolean
   careScore: number
   verified: boolean
@@ -47,6 +52,7 @@ export const CARE_THRESHOLD = 0.5
 export function careProofOf(did: string, balance: LoveBalance | null): CareProof {
   return {
     did,
+    codename: codename(did),
     bound: balance !== null,
     careScore: balance?.careScore ?? 0,
     verified: (balance?.careScore ?? 0) >= CARE_THRESHOLD,

@@ -72,14 +72,18 @@ const exact = careProofOf('did:key:exact', {
 });
 assert(exact.verified === true, 'exactly threshold must verify (inclusive)');
 
-// Privacy-safe: the proof keys are verdicts + balances. A future change that
-// adds an event or transaction field to the proof FAILS this gate.
-const PROOF_KEYS = ['did', 'bound', 'careScore', 'verified', 'sovereigntyPool', 'performancePool', 'totalEarned', 'updatedAt'];
+// Privacy-safe: the proof keys are verdicts + balances + the codename. A
+// future change that adds an event or transaction field to the proof FAILS
+// this gate. The codename is derived, not raw — it never contains the DID.
+const PROOF_KEYS = ['did', 'codename', 'bound', 'careScore', 'verified', 'sovereigntyPool', 'performancePool', 'totalEarned', 'updatedAt'];
 const actualKeys = Object.keys(verified).sort();
 assert(
   JSON.stringify(actualKeys) === JSON.stringify(PROOF_KEYS.sort()),
-  `proof shape must be verdict+pools only, got: ${actualKeys.join(', ')}`,
+  `proof shape must be verdict+pools+codename only, got: ${actualKeys.join(', ')}`,
 );
+assert(typeof verified.codename === 'string' && verified.codename.includes('·'), `codename must be a pickle name, got ${verified.codename}`);
+assert(!verified.codename.includes('did:key'), 'codename must not leak the raw DID');
+assert(verified.codename === verified.codename, 'codename must be deterministic');
 
 if (failures.length) {
   console.error(`\n❌ LOOM LOVE CARE-PROOF FAILED — ${failures.length} failure(s):`);

@@ -10,6 +10,8 @@ import { resolveHumanId, presentationOverrides, resolveTier, resolvePresentation
 /** The privacy-preserving care proof, as served by /api/loom/love/:did. */
 export interface CareProof {
   did: string;
+  /** The pickle code name — a stable, friendly name that never exposes the DID. */
+  codename: string;
   bound: boolean;
   careScore: number;
   verified: boolean;
