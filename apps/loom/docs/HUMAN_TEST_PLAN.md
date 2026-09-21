@@ -88,6 +88,27 @@ persistence question is separately tracked (see `DECISIONS.md`).
 ## Session log
 
 _Add dated entries below. One heading per session. Verbatim quotes only._
+
+### 2026-09-21 — Scripted walkthrough (evidence, not humans)
+
+Ran `e2e/human-walkthrough.spec.ts` — three roles (child `literal=1`, builder
+default, elder `motion=reduced&density=spacious&literal=1`), full arc, 18
+screenshots (`test-results/human-walkthrough/`). All three completed the arc
+unassisted by an agent; every beat asserted against the master prompt's hard
+rules.
+
+**Findings the walkthrough caught before a human did** (both fixed):
+- `.chapter-next` — `font-size: 14px`, below the 16px family floor. Now 16px.
+- `.shared-chip` ("You've done N things with Lumi") — `font-size: 15px`. Now 16px.
+
+**What it could NOT prove**: the walkthrough is compliance, not usability. It
+cannot tell us whether a 7-year-old's first tap is self-evident, whether a
+70-year-old finds the elder's door without being told, or whether a child asks
+"where did my thing go" on reload. Those are the questions only the humans can
+answer. This file's protocol stands.
+
+**Status**: the scripted gate is green; the real family test has not run.
+The app is ready to hand over at `https://loom-8z0.pages.dev`.
 ## Related Documents
 
 - `../README.md` — how to run and deploy the app you are about to hand over
