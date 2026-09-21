@@ -42,11 +42,14 @@ graph LR
   DECISIONS --> |"010 SBT anchor"| SBTANCHOR[the SBT anchor]
   DECISIONS --> |"011 code names"| CODENAME[pickle code names]
   DECISIONS --> |"012 scope"| SCOPE[the privacy boundary]
+  DECISIONS --> |"013 family view"| FAMILY[one short shared page]
   STANDARDS -.audit trails.-> CHAIN
   CHAIN -.cross-anchor.-> LOVE[the LOVE care ledger]
   SBTANCHOR -.witnesses.-> QPJ[the QPJ portal chain]
   CODENAME -.names.-> LOVE
   SCOPE -.enforced at read.-> CHAIN
+  FAMILY -.reads shared only.-> SCOPE
+  FAMILY -.provenance one tap.-> CHAIN
   AUDIT[AUDIT_STANDARDS] -.positions.-> CHAIN
   AUDIT -.positions.-> LOVE
   LOVE_INTEGRATION[LOVE_INTEGRATION] --> LOVE
@@ -90,6 +93,9 @@ wherever they appear bare.
 - **the scope boundary** — `personal` / `shared` / `session` (reserved):
   visibility enforced at the read path, never by asking a client to "ignore"
   private records. Canonical: `DECISIONS.md` #012, `SECURITY.md`.
+- **the family view** — one short shared page: the artifact, the care circle,
+  the last shared moments, provenance one tap away. Canonical:
+  `apps/loom/src/components/FamilyView.tsx`, `DECISIONS.md` #013.
 
 ## Related Documents
 

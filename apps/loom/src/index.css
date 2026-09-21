@@ -748,6 +748,37 @@
   outline-offset: 3px;
 }
 
+/* The doors row — companion + family, side by side, both 48px. */
+.launchpad-doors {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--p31-layout-spacing-xs);
+  margin-top: var(--p31-layout-spacing-sm);
+}
+/* The family's door — the whole household's shared page. */
+.launchpad-family {
+  min-height: var(--p31-touch-min);
+  padding: 0 var(--p31-layout-spacing-md);
+  border: none;
+  background: none;
+  color: var(--p31-text-secondary, #cbd5e1);
+  font-family: var(--p31-font-sans);
+  font-size: 17px;
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  cursor: pointer;
+  transition: color calc(0.15s * var(--motion-scale)) ease;
+}
+.launchpad-family:hover {
+  color: var(--p31-text-primary, #f8fafc);
+}
+.launchpad-family:focus-visible {
+  outline: 3px solid var(--p31-text-primary, #f8fafc);
+  outline-offset: 3px;
+}
+
 /* ── Chapters — the child's first views ───────────────────── */
 .chapter {
   display: flex;
@@ -1424,6 +1455,170 @@
     0 10px 28px rgba(255, 170, 40, 0.36);
 }
 .companion-next:focus-visible {
+  outline: 3px solid var(--p31-text-primary, #f8fafc);
+  outline-offset: 3px;
+}
+
+/* ── Family view — ?mode=family, one short page the whole household reads
+ * together. Same family floor as the companion: 48px targets, ≥16px text,
+ * no auto-advance, no timers, no chip. Shared-scope only. */
+.family {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: calc(var(--p31-layout-spacing-xl) + env(safe-area-inset-top))
+    var(--p31-layout-spacing-lg)
+    calc(var(--p31-layout-spacing-xl) + env(safe-area-inset-bottom));
+  background: var(--p31-bg, #0a0e14);
+  color: var(--p31-text-primary, #f8fafc);
+  font-family: var(--p31-font-sans);
+  opacity: 0;
+  animation: enter calc(0.6s * var(--motion-scale)) ease-out forwards;
+}
+.family-row {
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+}
+.family-row--top {
+  justify-content: flex-start;
+}
+.family-stage {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: var(--p31-layout-spacing-lg);
+  width: 100%;
+  max-width: 480px;
+}
+.family-lumi {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.family-sentence {
+  margin: 0;
+  font-size: 20px;
+  line-height: 1.4;
+  font-weight: 500;
+  color: var(--p31-text-primary, #f8fafc);
+  max-width: 26ch;
+}
+.family-sentence--empty {
+  color: var(--p31-text-secondary, #cbd5e1);
+  font-weight: 400;
+}
+.family-back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--p31-layout-spacing-sm);
+  min-height: var(--p31-touch-min);
+  min-width: var(--p31-touch-min);
+  padding: 0 var(--p31-layout-spacing-md) 0 var(--p31-layout-spacing-sm);
+  border-radius: var(--p31-radius-full);
+  border: 1px solid var(--p31-glass-border, rgba(255, 255, 255, 0.12));
+  background: transparent;
+  color: var(--p31-text-secondary, #cbd5e1);
+  font-family: var(--p31-font-sans);
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    color calc(0.15s * var(--motion-scale)) ease,
+    border-color calc(0.15s * var(--motion-scale)) ease;
+}
+.family-back:hover {
+  color: var(--p31-text-primary, #f8fafc);
+  border-color: var(--p31-text-tertiary, #64748b);
+}
+.family-back:focus-visible {
+  outline: 3px solid var(--p31-text-primary, #f8fafc);
+  outline-offset: 3px;
+}
+/* Care circle — presence, never a score. */
+.family-care {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--p31-layout-spacing-xs);
+  max-width: 32ch;
+}
+.family-care-name {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--p31-text-primary, #f8fafc);
+}
+.family-care-line {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--p31-text-secondary, #cbd5e1);
+}
+.family-care-pools {
+  margin: 0;
+  font-size: 14px;
+  color: var(--p31-text-tertiary, #64748b);
+}
+/* Receipt — the latest shared moment, with provenance + undo. */
+.family-receipt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--p31-layout-spacing-sm);
+  max-width: 40ch;
+  padding: var(--p31-layout-spacing-md);
+  border-radius: var(--p31-radius-md);
+  border: 1px solid var(--p31-glass-border, rgba(255, 255, 255, 0.14));
+  background: var(--p31-glass-bg, rgba(255, 255, 255, 0.06));
+}
+.family-receipt-line {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.4;
+  color: var(--p31-text-secondary, #cbd5e1);
+}
+.family-receipt-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--p31-layout-spacing-md);
+}
+.family-proof,
+.family-undo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--p31-touch-min);
+  min-width: var(--p31-touch-min);
+  padding: 0 var(--p31-layout-spacing-lg);
+  border-radius: var(--p31-radius-full);
+  font-family: var(--p31-font-sans);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+}
+.family-proof {
+  border: 1px solid var(--p31-glass-border, rgba(255, 255, 255, 0.2));
+  background: transparent;
+  color: var(--p31-text-primary, #f8fafc);
+}
+.family-undo {
+  border: none;
+  background: var(--p31-accent-gold, #fbbf24);
+  color: var(--p31-bg, #1a120b);
+}
+.family-proof:hover,
+.family-undo:hover {
+  filter: brightness(1.08);
+}
+.family-proof:focus-visible,
+.family-undo:focus-visible {
   outline: 3px solid var(--p31-text-primary, #f8fafc);
   outline-offset: 3px;
 }

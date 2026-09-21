@@ -272,6 +272,29 @@ is part of the hash chain and never mutated. `session` is reserved: when a
 live-only signal (presence is the candidate) needs it, it gets a writer and the
 reasoning that justifies it.
 
+## 013 — The family view: one short shared page
+
+**Decision.** `?mode=family` is one page the whole household (and their agents)
+reads together: the shared artifact, the care circle, the last shared moments,
+and a receipt with provenance + Undo. It reads **shared-scope only** — the
+scoped read (#012) already filtered personal records out before the component
+saw them, and the component refuses to render one as defense in depth.
+
+**Why.** The family-memory pattern is explicit: "one short page everyone
+reads, one write path, provenance always recorded." The companion view is the
+elder's window; the chapters are the child's arc; the family view is the
+surface the whole household opens together. The receipt is the proof surface:
+"prove what happened" links to `/provenance/:seq`, and Undo is an **event**,
+never a delete — the log is append-only and tamper-evident, so reversal
+appends a compensating event (`family-undo-{seq}`) that provenance shows in
+order.
+
+**Consequences.** The launchpad gains a third door (`family.open`, 48px).
+Personal events never reach the surface (the read path + the component both
+guard it). The care circle shows presence, never a score. The receipt's
+provenance link doubles as the trust-layer demo: one tap from a family page to
+the verifiable chain.
+
 ## Related Documents
 
 - `../README.md` — what the Loom is; every decision here shapes this app

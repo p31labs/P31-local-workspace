@@ -23,6 +23,7 @@ import { ChildChapter } from './components/ChildChapter';
 import { CreativeChapter } from './components/CreativeChapter';
 import { WorkshopChapter } from './components/WorkshopChapter';
 import { CompanionView } from './components/CompanionView';
+import { FamilyView } from './components/FamilyView';
 import { DocsView } from './components/DocsView';
 import { EventOverlay } from './components/EventOverlay';
 import { Instrument } from './components/Instrument';
@@ -102,7 +103,7 @@ export default function App() {
 
   const { events, state, seq, scrub, follow } = useLoomState();
   const chapter = useProgression(events);
-  const { humanId, profile, overrides, tier, presentation: prefs } = useProfile();
+  const { humanId, profile, overrides, tier, presentation: prefs, care } = useProfile();
   const { theme, current, cycleTheme } = useTheme();
   const overlay = useMemo(() => deriveOverlay(state, idIndex), [state, idIndex]);
   const [focus, setFocus] = useState<string | null>(null);
@@ -111,10 +112,10 @@ export default function App() {
   const [rejectReason, setRejectReason] = useState('');
   const [notYet, setNotYet] = useState(false);
   const [showMore, setShowMore] = useState(false);
-  const [mode, setMode] = useState<'launchpad' | 'canvas' | 'instrument' | 'jitterbug' | 'creative' | 'workshop' | 'companion' | 'docs'>(() => {
+  const [mode, setMode] = useState<'launchpad' | 'canvas' | 'instrument' | 'jitterbug' | 'creative' | 'workshop' | 'companion' | 'family' | 'docs'>(() => {
     if (typeof location === 'undefined') return 'launchpad';
     const m = new URLSearchParams(location.search).get('mode');
-    return m === 'canvas' || m === 'instrument' || m === 'jitterbug' || m === 'creative' || m === 'workshop' || m === 'companion' || m === 'docs' ? m : 'launchpad';
+    return m === 'canvas' || m === 'instrument' || m === 'jitterbug' || m === 'creative' || m === 'workshop' || m === 'companion' || m === 'family' || m === 'docs' ? m : 'launchpad';
   });
   const [traceView, setTraceView] = useState(false);
   const [viewport, setViewport] = useState({ x: 0, y: 0, zoom: 1 });
@@ -127,6 +128,7 @@ export default function App() {
     mode === 'creative' ||
     mode === 'workshop' ||
     mode === 'companion' ||
+    mode === 'family' ||
     mode === 'docs' ||
     (started && mode === 'canvas' && chapter <= 3);
 
@@ -416,6 +418,7 @@ export default function App() {
           <Launchpad
             onStart={() => { setStarted(true); setMode('canvas'); }}
             onCompanion={() => setMode('companion')}
+            onFamily={() => setMode('family')}
           />
         ) : mode === 'instrument' ? (
           traceView && focus ? (
@@ -439,6 +442,13 @@ export default function App() {
         ) : mode === 'companion' ? (
           <CompanionView
             events={events}
+            onExit={() => setMode('launchpad')}
+            commit={commitThrough(humanId)}
+          />
+        ) : mode === 'family' ? (
+          <FamilyView
+            events={events}
+            care={care}
             onExit={() => setMode('launchpad')}
             commit={commitThrough(humanId)}
           />

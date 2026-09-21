@@ -45,6 +45,15 @@ The gate is OFF when `CLOUDFLARE_ACCESS_AUD` is unset or a `REPLACE` placeholder
    the same identity.
 - **The interim posture ends**: `SECURITY.md`'s "Access gate OFF with a
    logged warning" section becomes history.
+- **The scope boundary becomes real**: the Loom's privacy boundary (`personal`
+  events — see `DECISIONS.md` #012) is enforced at the read path always, but
+  it is only *meaningful* once the caller has an identity. In the deployed
+  default (anonymous, Access OFF), every event is `shared` — nothing is hidden.
+  Configuring Access is what turns "the scope promise is made to no one" into
+  enforcement: personal events bind to the authenticated `sub`, and another
+  humanId's personal records are invisible. **Do not run the family test until
+  this step is done** — the test's privacy findings would be measuring a
+  promise, not the system.
 - **Nothing else changes**: the SSE worker's internal `/stream` and
   `/broadcast` stay protected by the service token regardless.
 

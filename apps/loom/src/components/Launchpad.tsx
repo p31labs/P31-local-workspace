@@ -7,16 +7,25 @@ import { Lumi } from './Lumi';
  * its chrome are gated behind this (data-loom-level), so a 7-year-old and a
  * 70-year-old both find the same warm entry point.
  *
- * Two doors:
+ * Three doors:
  *   - `Start` (primary) opens the child's arc.
- *   - `See what you and Lumi made` (quiet, below) opens the companion view —
- *     the elder's window into the same log. It is deliberately secondary:
- *     a link, not a second primary CTA, and 48px tall because an elder
- *     touches it. A returning visitor whose log has an artifact lands on
- *     "This is what you made." A fresh visitor lands on a gentle "go say
- *     hello first."
+ *   - `See what you and Lumi made` (quiet) opens the companion view — the
+ *     elder's window into the same log.
+ *   - `See what the family made` (quiet) opens the family view — one short
+ *     page the whole household (and their agents) reads together: the shared
+ *     artifact, the care circle, the last shared moments, with provenance one
+ *     tap away.
+ * All doors are 48px tall (the family floor) and never auto-advance.
  */
-export function Launchpad({ onStart, onCompanion }: { onStart: () => void; onCompanion: () => void }) {
+export function Launchpad({
+  onStart,
+  onCompanion,
+  onFamily,
+}: {
+  onStart: () => void;
+  onCompanion: () => void;
+  onFamily: () => void;
+}) {
   return (
     <div className="launchpad">
       <Lumi />
@@ -25,17 +34,30 @@ export function Launchpad({ onStart, onCompanion }: { onStart: () => void; onCom
       <button className="launchpad-start" onClick={onStart} type="button">
         ▶ Start
       </button>
-      <button
-        className="launchpad-companion"
-        onClick={onCompanion}
-        type="button"
-        data-agent-kind="action"
-        data-agent-action="companion.open"
-        data-agent-danger="none"
-        data-agent-confirm="never"
-      >
-        See what you and Lumi made
-      </button>
+      <div className="launchpad-doors">
+        <button
+          className="launchpad-companion"
+          onClick={onCompanion}
+          type="button"
+          data-agent-kind="action"
+          data-agent-action="companion.open"
+          data-agent-danger="none"
+          data-agent-confirm="never"
+        >
+          See what you and Lumi made
+        </button>
+        <button
+          className="launchpad-family"
+          onClick={onFamily}
+          type="button"
+          data-agent-kind="action"
+          data-agent-action="family.open"
+          data-agent-danger="none"
+          data-agent-confirm="never"
+        >
+          See what the family made
+        </button>
+      </div>
     </div>
   );
 }
