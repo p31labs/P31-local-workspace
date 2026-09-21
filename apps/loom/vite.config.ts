@@ -9,6 +9,7 @@ import { readProfile } from '@p31/canon/loom/profiles';
 import { ReplayGate, type LoomEventInput } from '@p31/canon/loom/gate';
 import type { LoomEvent } from '@p31/canon/loom/events';
 import { hashRecord, verifyChain, GENESIS_PREV_HASH, type ChainRecord } from '@p31/canon/loom/hash-chain';
+import { loomHeadAnchor, LOVE_GENESIS_HASH } from '@p31/canon/loom/anchor';
 import { fetchCareProof } from './functions/api/loom/_lib/love';
 import { dirname, join } from 'node:path';
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs';
@@ -217,6 +218,46 @@ function loomMiddleware(): Plugin {
           res.setHeader('Content-Type', 'application/json');
           res.statusCode = profile ? 200 : 404;
           res.end(JSON.stringify(profile));
+          return;
+        }
+
+        if (req.method === 'GET' && path === '/anchor') {
+          const logEvents = readEvents(logPath);
+          let chain = readChain();
+          if (chain.length !== logEvents.length) chain = await rebuildChain(logEvents);
+          const verdict = await verifyChain(chain);
+
+          // LOVE chain head, live. Outage -> genesis.
+          let loveHead = LOVE_GENESIS_HASH;
+          try {
+            const r = await fetch(`${process.env.LOVE_LEDGER_URL ?? 'https://love-ledger.p31ca.org'}/api/love/chain`);
+            if (r.ok) {
+              const { chain: loveChain } = (await r.json()) as { chain: Array<{ entry_hash: string }> };
+              loveHead = loveChain?.[0]?.entry_hash ?? LOVE_GENESIS_HASH;
+            }
+          } catch {
+            // ledger unreachable
+          }
+
+          const anchor = await loomHeadAnchor(
+            {
+              loomHead: verdict.head,
+              loomSeq: verdict.checked,
+              brokenAt: verdict.brokenAt,
+              verified: verdict.valid,
+              anchoredAt: new Date().toISOString(),
+            },
+            loveHead,
+          );
+          res.setHeader('Content-Type', 'application/json');
+          res.setHeader('Cache-Control', 'no-store');
+          res.end(
+            JSON.stringify({
+              ...anchor,
+              status: 'dry-run',
+              writePath: 'awaits dedicated service-to-service token (see docs/LOVE_INTEGRATION.md)',
+            }),
+          );
           return;
         }
 
