@@ -50,6 +50,8 @@ import { hashRecord, GENESIS_PREV_HASH, type ChainRecord } from '@p31/canon/loom
 export interface Env {
   MUSIC_D1: D1Database;
   MUSIC_ROOM: DurableObjectNamespace<MusicRoom>;
+  /** The built SPA (static assets) — served for every non-/api/music request. */
+  ASSETS: Fetcher;
   /** Cloudflare Access AUD tag. When set, the WS upgrade + HTTP endpoints
    *  require a valid CF_Authorization cookie (the Loom's auth posture). When
    *  absent (pre-Access), the room is open — document this as the known gap
@@ -340,8 +342,15 @@ export class MusicRoom extends DurableObject<Env> {
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
-    const room = roomKey(url);
-    const id = env.MUSIC_ROOM.idFromName(room);
-    return env.MUSIC_ROOM.get(id).fetch(request);
+    // The UI and the transport share ONE origin. Every /api/music/* request
+    // routes to the room DO; everything else is served from the built static
+    // assets (the React SPA). not_found_handling = "single-page-application"
+    // makes unknown SPA routes return index.html.
+    if (url.pathname.startsWith('/api/music/')) {
+      const room = roomKey(url);
+      const id = env.MUSIC_ROOM.idFromName(room);
+      return env.MUSIC_ROOM.get(id).fetch(request);
+    }
+    return env.ASSETS.fetch(request);
   },
 };

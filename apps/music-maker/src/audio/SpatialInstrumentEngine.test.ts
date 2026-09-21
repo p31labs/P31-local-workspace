@@ -55,6 +55,19 @@ function fakeAudioContext(opts?: { outputLatency?: number }) {
     },
     createBiquadFilter: () => makeNode(),
     createDynamicsCompressor: () => makeNode(),
+    createAnalyser: () => {
+      const n = makeNode() as Record<string, unknown> & {
+        fftSize: number;
+        smoothingTimeConstant: number;
+        frequencyBinCount: number;
+        getByteFrequencyData: () => void;
+      };
+      n.fftSize = 128;
+      n.smoothingTimeConstant = 0.65;
+      n.frequencyBinCount = 64;
+      n.getByteFrequencyData = () => {};
+      return n;
+    },
     listener: { setPosition: () => {}, setOrientation: () => {} },
     resume: vi.fn(() => Promise.resolve()),
     suspend: vi.fn(() => Promise.resolve()),

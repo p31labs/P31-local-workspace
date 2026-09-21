@@ -41,10 +41,78 @@ export interface SpatialSceneProps {
   selectedId: string | null;
   /** True under OS prefers-reduced-motion — the scene draws one static frame. */
   reducedMotion: boolean;
+  /** The engine's live three-band energy + master level — drives the sphere.
+   *  A stable reference so the RAF loop reads it without allocation. */
+  getEnergy: () => { bass: number; mid: number; treble: number; master: number };
+  /** Render mode: constellation (points+trails), terrain (reactive sphere
+   *  prominent), bursts (trigger explosions). One 48px button cycles them. */
+  renderMode: 'constellation' | 'terrain' | 'bursts';
 }
 
 const RADIUS = 2.2;
 const LISTENER_DRAG_SPEED = 0.012;
+const TRAIL_LENGTH = 240; // listener path sample count (~4s at 60fps)
+
+// ── Deterministic PRNG + GLSL simplex noise (Ashima / McEwan, MIT) — the
+//    same helpers JitterbugScene uses, so geometry and bursts never re-roll.
+function mulberry32(seed: number): () => number {
+  let a = seed >>> 0;
+  return () => {
+    a |= 0;
+    a = (a + 0x6d2b79f5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+const NOISE_GLSL = `
+vec3 mod289(vec3 x){return x - floor(x * (1.0/289.0)) * 289.0;}
+vec4 mod289(vec4 x){return x - floor(x * (1.0/289.0)) * 289.0;}
+vec4 permute(vec4 x){return mod289(((x*34.0)+1.0)*x);}
+vec4 taylorInvSqrt(vec4 r){return 1.79284291400159 - 0.85373472095314 * r;}
+float snoise(vec3 v){
+  const vec2 C = vec2(1.0/6.0, 1.0/3.0);
+  const vec4 D = vec4(0.0, 0.5, 1.0, 2.0);
+  vec3 i  = floor(v + dot(v, C.yyy));
+  vec3 x0 = v - i + dot(i, C.xxx);
+  vec3 g = step(x0.yzx, x0.xyz);
+  vec3 l = 1.0 - g;
+  vec3 i1 = min(g.xyz, l.zxy);
+  vec3 i2 = max(g.xyz, l.zxy);
+  vec3 x1 = x0 - i1 + 1.0 * C.xxx;
+  vec3 x2 = x0 - i2 + 2.0 * C.xxx;
+  vec3 x3 = x0 - 1.0 + 3.0 * C.xxx;
+  i = mod289(i);
+  vec4 p = permute( permute( permute(
+             i.z + vec4(0.0, i1.z, i2.z, 1.0))
+           + i.y + vec4(0.0, i1.y, i2.y, 1.0))
+           + i.x + vec4(0.0, i1.x, i2.x, 1.0));
+  float n_ = 0.142857142857;
+  vec3 ns = n_ * D.wyz - D.xzx;
+  vec4 j = p - 49.0 * floor(p * ns.z * ns.z);
+  vec4 x_ = floor(j * ns.z);
+  vec4 y_ = floor(j - 7.0 * x_);
+  vec4 x = x_ * ns.x + ns.yyyy;
+  vec4 y = y_ * ns.x + ns.yyyy;
+  vec4 h = 1.0 - abs(x) - abs(y);
+  vec4 b0 = vec4(x.xy, y.xy);
+  vec4 b1 = vec4(x.zw, y.zw);
+  vec4 s0 = floor(b0)*2.0 + 1.0;
+  vec4 s1 = floor(b1)*2.0 + 1.0;
+  vec4 sh = -step(h, vec4(0.0));
+  vec4 a0 = b0.xzyw + s0.xzyw*sh.xxyy;
+  vec4 a1 = b1.xzyw + s1.xzyw*sh.zzww;
+  vec3 p0 = vec3(a0.xy, h.x);
+  vec3 p1 = vec3(a0.zw, h.y);
+  vec3 p2 = vec3(a1.xy, h.z);
+  vec3 p3 = vec3(a1.zw, h.w);
+  vec4 norm = taylorInvSqrt(vec4(dot(p0,p0), dot(p1,p1), dot(p2,p2), dot(p3,p3)));
+  p0 *= norm.x; p1 *= norm.y; p2 *= norm.z; p3 *= norm.w;
+  vec4 m = max(0.6 - vec4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0);
+  m = m * m;
+  return 42.0 * dot(m*m, vec4(dot(p0,x0), dot(p1,x1), dot(p2,x2), dot(p3,x3)));
+}`;
 
 function SpatialSceneImpl({
   zones,
@@ -54,6 +122,8 @@ function SpatialSceneImpl({
   onZoneTrigger,
   selectedId,
   reducedMotion,
+  getEnergy,
+  renderMode,
 }: SpatialSceneProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
@@ -70,6 +140,10 @@ function SpatialSceneImpl({
   onZoneTriggerRef.current = onZoneTrigger;
   const onListenerChangeRef = useRef(onListenerChange);
   onListenerChangeRef.current = onListenerChange;
+  const getEnergyRef = useRef(getEnergy);
+  getEnergyRef.current = getEnergy;
+  const renderModeRef = useRef(renderMode);
+  renderModeRef.current = renderMode;
 
   // Zone points + their uniforms, keyed by zone id. Built imperatively once.
   const zoneMap = useRef(new Map<string, THREE.Points>());
@@ -121,7 +195,73 @@ function SpatialSceneImpl({
     };
     setMarker(listener);
 
-    // ── Sphere guide — a faint wireframe so the space reads as a space. ──
+    // ── The reactive sphere — the membrane that breathes with the music. ──
+    // Vertex displacement by band: bass swells the whole form, mid makes
+    // ripples, treble adds fine detail. Fresnel rim glow tracks the master
+    // level. A sphere that moves with the sound is the difference between a
+    // visualizer and an instrument (the research: audio-reactive shaders are
+    // the single highest-impact change; Perlin noise + Fresnel beat photo-
+    // realism for this purpose). No hex/rgb/oklch literals — colors are
+    // tokens resolved to vec3 uniforms.
+    const SPHERE_VERT = `
+uniform float uTime;
+uniform vec3 uAccent;
+uniform float uBass;
+uniform float uMid;
+uniform float uTreble;
+varying vec3 vNormal;
+varying vec3 vPos;
+varying float vEnergy;
+${NOISE_GLSL}
+void main() {
+  vec3 p = position;
+  float n = snoise(position * 1.4 + vec3(0.0, uTime * 0.3, 0.0));
+  float swell = uBass * 0.35;                     // bass: whole-form swell
+  float ripple = uMid * 0.18 * snoise(position * 3.0 + uTime * 0.6); // mid: ripples
+  float detail = uTreble * 0.08 * snoise(position * 7.0 - uTime * 0.9); // treble: detail
+  p *= 1.0 + swell + ripple + detail;
+  vNormal = normalize(normalMatrix * normal);
+  vPos = (modelViewMatrix * vec4(p, 1.0)).xyz;
+  vEnergy = uBass * 0.5 + uMid * 0.3 + uTreble * 0.2;
+  gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.0);
+}`;
+    const SPHERE_FRAG = `
+uniform vec3 uAccent;
+uniform float uMaster;
+varying vec3 vNormal;
+varying vec3 vPos;
+varying float vEnergy;
+void main() {
+  vec3 n = normalize(vNormal);
+  vec3 v = normalize(-vPos);
+  float fresnel = pow(1.0 - max(dot(n, v), 0.0), 2.0);
+  vec3 base = uAccent * (0.18 + 0.10 * vEnergy);
+  vec3 rim = uAccent * fresnel * (0.55 + uMaster * 0.45);
+  float alpha = 0.22 + fresnel * 0.45 + uMaster * 0.3;
+  gl_FragColor = vec4(base + rim, alpha);
+}`;
+    const sphereGeom = new THREE.SphereGeometry(RADIUS, 64, 40);
+    const sphereUniforms = {
+      uTime: { value: 0 },
+      uAccent: { value: new THREE.Vector3(...resolveTokenRgb('--p31-accent')) },
+      uBass: { value: 0 },
+      uMid: { value: 0 },
+      uTreble: { value: 0 },
+      uMaster: { value: 0 },
+    };
+    const sphereMat = new THREE.ShaderMaterial({
+      uniforms: sphereUniforms,
+      vertexShader: SPHERE_VERT,
+      fragmentShader: SPHERE_FRAG,
+      transparent: true,
+      side: THREE.DoubleSide,
+      depthWrite: false,
+    });
+    const sphere = new THREE.Mesh(sphereGeom, sphereMat);
+    scene.add(sphere);
+
+    // A faint wireframe outline stays so the space reads as a space even at
+    // zero energy (reduced motion / sound off).
     const guide = new THREE.Mesh(
       new THREE.SphereGeometry(RADIUS, 24, 16),
       new THREE.MeshBasicMaterial({
@@ -132,6 +272,117 @@ function SpatialSceneImpl({
       }),
     );
     scene.add(guide);
+
+    // ── The listener trail — the path is the score, made visible. ────────
+    // A fixed-length ring of positions; each frame shifts one sample in and
+    // advances the head, so the trail shows where you've been (and the line
+    // fades toward the tail). Driven by the listener's actual movement, so it
+    // is the performance's visible wake.
+    const trailPositions = new Float32Array(TRAIL_LENGTH * 3);
+    const trailColors = new Float32Array(TRAIL_LENGTH * 3);
+    const trailGeom = new THREE.BufferGeometry();
+    trailGeom.setAttribute('position', new THREE.BufferAttribute(trailPositions, 3));
+    trailGeom.setAttribute('color', new THREE.BufferAttribute(trailColors, 3));
+    const trailMat = new THREE.LineBasicMaterial({
+      vertexColors: true,
+      transparent: true,
+      opacity: 0.7,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+    });
+    const trail = new THREE.Line(trailGeom, trailMat);
+    trail.frustumCulled = false;
+    scene.add(trail);
+    let trailHead = 0;
+    const trailAccent = new THREE.Vector3(...resolveTokenRgb('--p31-accent'));
+    const trailText = new THREE.Vector3(...resolveTokenRgb('--p31-text'));
+    const pushTrail = (p: [number, number, number]) => {
+      const i = trailHead % TRAIL_LENGTH;
+      trailPositions[i * 3] = p[0];
+      trailPositions[i * 3 + 1] = p[1];
+      trailPositions[i * 3 + 2] = p[2];
+      // Fade colors from the head (bright) to the tail (dim).
+      for (let k = 0; k < TRAIL_LENGTH; k++) {
+        const age = (i - k + TRAIL_LENGTH) % TRAIL_LENGTH; // 0 = newest
+        const fade = 1 - (age / TRAIL_LENGTH);
+        trailColors[k * 3] = trailAccent.x * fade;
+        trailColors[k * 3 + 1] = trailAccent.y * fade;
+        trailColors[k * 3 + 2] = trailAccent.z * fade;
+      }
+      trailHead = (trailHead + 1) % TRAIL_LENGTH;
+      (trailGeom.attributes.position as THREE.BufferAttribute).needsUpdate = true;
+      (trailGeom.attributes.color as THREE.BufferAttribute).needsUpdate = true;
+    };
+    // Seed the trail with the starting position so it doesn't begin empty.
+    for (let k = 0; k < TRAIL_LENGTH; k++) {
+      trailPositions[k * 3] = listener[0];
+      trailPositions[k * 3 + 1] = listener[1];
+      trailPositions[k * 3 + 2] = listener[2];
+    }
+    trailHead = 0;
+
+    // ── Zone bursts — each trigger is a small radial explosion. ───────────
+    // A pool of line-segment bursts, one per recent trigger; each burst has
+    // N rays that grow and fade. Reuses the additive glow language.
+    const BURST_RAYS = 10;
+    const BURST_MAX = 24;
+    const burstSegments = new Float32Array(BURST_MAX * BURST_RAYS * 6);
+    const burstAlphas = new Float32Array(BURST_MAX);
+    const burstGeom = new THREE.BufferGeometry();
+    const burstAttr = new THREE.BufferAttribute(burstSegments, 3);
+    const burstVertexAlpha = new Float32Array(BURST_MAX * BURST_RAYS * 2);
+    burstGeom.setAttribute('position', burstAttr);
+    burstGeom.setAttribute('aAlpha', new THREE.BufferAttribute(burstVertexAlpha, 1));
+    const BURST_VERT = `
+attribute float aAlpha;
+varying float vAlpha;
+void main() {
+  vAlpha = aAlpha;
+  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+}`;
+    const BURST_FRAG = `
+uniform vec3 uAccent;
+varying float vAlpha;
+void main() {
+  gl_FragColor = vec4(uAccent, vAlpha);
+}`;
+    const burstUniforms = {
+      uAccent: { value: new THREE.Vector3(...resolveTokenRgb('--p31-accent-gold')) },
+    };
+    const burstMat = new THREE.ShaderMaterial({
+      uniforms: burstUniforms,
+      vertexShader: BURST_VERT,
+      fragmentShader: BURST_FRAG,
+      transparent: true,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+    });
+    const bursts = new THREE.LineSegments(burstGeom, burstMat);
+    bursts.frustumCulled = false;
+    scene.add(bursts);
+    // burst state: position, activeAt, seeded ray directions, growth
+    const burstState: Array<{
+      x: number; y: number; z: number; at: number;
+      dirs: Float32Array; active: boolean;
+    }> = [];
+    let burstCursor = 0;
+    const rand = mulberry32(0xb4adc);
+    // Per-zone last-seen trigger count, to spawn exactly one burst per new hit.
+    const lastBurstCount = new Map<string, number>();
+    const spawnBurst = (p: [number, number, number]) => {
+      const i = burstCursor % BURST_MAX;
+      burstCursor += 1;
+      const dirs = new Float32Array(BURST_RAYS * 3);
+      for (let r = 0; r < BURST_RAYS; r++) {
+        // Random unit-ish direction (seeded, stable).
+        const theta = rand() * Math.PI * 2;
+        const phi = Math.acos(2 * rand() - 1);
+        dirs[r * 3] = Math.sin(phi) * Math.cos(theta);
+        dirs[r * 3 + 1] = Math.sin(phi) * Math.sin(theta);
+        dirs[r * 3 + 2] = Math.cos(phi);
+      }
+      burstState[i] = { x: p[0], y: p[1], z: p[2], at: Date.now(), dirs, active: true };
+    };
 
     // ── A4: pointer mode. Mouse = camera orbit (a desktop must not be frozen);
     //    one touch = listener move ("one finger is you"); two touches =
@@ -254,8 +505,80 @@ function SpatialSceneImpl({
       const zs = zonesRef.current;
       const tr = triggersRef.current;
       const sel = selectedRef.current;
+      const mode = renderModeRef.current;
       const w = canvas.clientWidth || window.innerWidth;
       const h = canvas.clientHeight || window.innerHeight;
+
+      // Energy drives the reactive sphere (bass swell, mid ripples, treble
+      // detail, Fresnel by master). Sound off → zeros → the sphere holds its
+      // wireframe ghost. Reduced motion freezes the deformation via a near-
+      // zero time drift (the time uniform is the frame clock, not ambient).
+      const e = getEnergyRef.current();
+      sphereUniforms.uTime.value = ambient;
+      sphereUniforms.uBass.value = e.bass;
+      sphereUniforms.uMid.value = e.mid;
+      sphereUniforms.uTreble.value = e.treble;
+      sphereUniforms.uMaster.value = e.master;
+      sphere.visible = mode === 'terrain';
+      guide.visible = true;
+      trail.visible = mode === 'constellation' || mode === 'terrain';
+      bursts.visible = mode === 'bursts';
+
+      // Listener trail — every frame pushes the current position, so the wake
+      // of the performance is always visible. The listener moves on drag; the
+      // trail also "rests" (same point) when idle, keeping the ring warm.
+      const [lx, ly, lz] = listenerRef.current;
+      pushTrail([lx, ly, lz]);
+
+      // Zone bursts — a triggered zone spawns an explosion; bursts grow and
+      // fade over ~900ms. Reduced motion shortens the window.
+      const burstWindow = reducedMotion ? 300 : 900;
+      // Spawn bursts for zones whose trigger list just grew (compare against
+      // the count we last saw per zone).
+      for (const zone of zs) {
+        const hits = tr[zone.id] ?? [];
+        const lastSeen = lastBurstCount.get(zone.id) ?? 0;
+        if (hits.length > lastSeen) {
+          // New trigger(s) — spawn one burst per new hit at the zone's pos.
+          const n = hits.length - lastSeen;
+          for (let b = 0; b < Math.min(n, 4); b++) {
+            spawnBurst([zone.position[0], zone.position[1], zone.position[2]]);
+          }
+        }
+        lastBurstCount.set(zone.id, hits.length);
+      }
+      // Advance + write bursts into the geometry.
+      for (let i = 0; i < BURST_MAX; i++) {
+        const s = burstState[i];
+        const age = s ? now - s.at : 9999;
+        const life = 1 - Math.min(1, age / burstWindow); // 1 → 0
+        burstAlphas[i] = s && s.active && life > 0 ? life : 0;
+        const base = i * BURST_RAYS * 6;
+        for (let r = 0; r < BURST_RAYS; r++) {
+          const seg = base + r * 6;
+          if (s && burstAlphas[i] > 0) {
+            const grow = 1 - life; // 0 → 1
+            const len = 0.12 + grow * 0.3;
+            burstSegments[seg] = s.x;
+            burstSegments[seg + 1] = s.y;
+            burstSegments[seg + 2] = s.z;
+            burstSegments[seg + 3] = s.x + s.dirs[r * 3] * len;
+            burstSegments[seg + 4] = s.y + s.dirs[r * 3 + 1] * len;
+            burstSegments[seg + 5] = s.z + s.dirs[r * 3 + 2] * len;
+          } else {
+            burstSegments[seg] = 0;
+            burstSegments[seg + 1] = 0;
+            burstSegments[seg + 2] = 0;
+            burstSegments[seg + 3] = 0;
+            burstSegments[seg + 4] = 0;
+            burstSegments[seg + 5] = 0;
+          }
+          burstVertexAlpha[i * BURST_RAYS * 2 + r * 2] = burstAlphas[i];
+          burstVertexAlpha[i * BURST_RAYS * 2 + r * 2 + 1] = burstAlphas[i];
+        }
+      }
+      (burstGeom.attributes.position as THREE.BufferAttribute).needsUpdate = true;
+      (burstGeom.attributes.aAlpha as THREE.BufferAttribute).needsUpdate = true;
 
       for (const zone of zs) {
         const pts = zoneMap.current.get(zone.id);
@@ -305,8 +628,14 @@ function SpatialSceneImpl({
       markerMat.dispose();
       markerRing.geometry.dispose();
       (markerRing.material as THREE.Material).dispose();
+      sphereGeom.dispose();
+      sphereMat.dispose();
       guide.geometry.dispose();
       (guide.material as THREE.Material).dispose();
+      trailGeom.dispose();
+      trailMat.dispose();
+      burstGeom.dispose();
+      burstMat.dispose();
       renderer.dispose();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps

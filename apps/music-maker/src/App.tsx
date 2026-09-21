@@ -19,6 +19,7 @@ import { SpatialInstrumentEngine, FAMILY_ZONE_BUDGET, type TimbreProfile } from 
 import { SpatialScene } from './scene/SpatialScene';
 import { SoundToggle } from './components/SoundToggle';
 import { ZoneListbox } from './components/ZoneListbox';
+import { ZonePanel } from './components/ZonePanel';
 import { useInstrumentSound } from './hooks/useInstrumentSound';
 import { useMusicSession, unseenRemoteTriggers } from './hooks/useMusicSession';
 import { phyllotaxisPosition, type Timbre } from './scene/musicZone';
@@ -41,6 +42,7 @@ export default function App() {
   const [listener, setListener] = useState<[number, number, number]>([0, 0, 1.8]);
   const [mapping, setMapping] = useState<'pitch' | 'brightness'>('pitch');
   const [announcement, setAnnouncement] = useState<string | null>(null);
+  const [renderMode, setRenderMode] = useState<'constellation' | 'terrain' | 'bursts'>('constellation');
 
   // The audio engine — created once, fed by the session's zone list.
   const engineRef = useRef<SpatialInstrumentEngine | null>(null);
@@ -157,6 +159,13 @@ export default function App() {
     }
   }, [session.remoteTriggers, handleRemoteZoneTrigger]);
 
+  // The scene reads the engine's live three-band energy every frame — a stable
+  // callback over the ref so the memoized scene doesn't re-render on energy
+  // changes (the RAF loop reads it directly). Zeros before sound is on.
+  const getEnergy = useCallback(() => {
+    return engineRef.current?.getEnergy() ?? { bass: 0, mid: 0, treble: 0, master: 0 };
+  }, []);
+
   // Place a zone at the current phyllotaxis slot for the count. Refuses past
   // the node budget with a clear message — the family-scale baseline is 8–16.
   const handlePlace = useCallback(() => {
@@ -231,6 +240,18 @@ export default function App() {
           </button>
           <button
             type="button"
+            className="mm-btn"
+            onClick={() => setRenderMode((m) => (m === 'constellation' ? 'terrain' : m === 'terrain' ? 'bursts' : 'constellation'))}
+            data-agent-kind="action"
+            data-agent-action="instrument.render.toggle"
+            data-agent-danger="none"
+            data-agent-confirm="never"
+            aria-pressed={renderMode !== 'constellation'}
+          >
+            {renderMode}
+          </button>
+          <button
+            type="button"
             className="mm-btn mm-btn-accent"
             onClick={handlePlace}
             data-agent-kind="action"
@@ -264,12 +285,21 @@ export default function App() {
           onZoneTrigger={handleZoneTrigger}
           selectedId={selectedId}
           reducedMotion={reducedMotion}
+          getEnergy={getEnergy}
+          renderMode={renderMode}
         />
         {/* The keyboard twin of the canvas tap — a screen-reader user (or anyone
             without a pointer) reaches the zones via Tab, moves selection with
             the arrow keys, and triggers with Enter/Space. Same onZoneTrigger as
             the canvas raycast; selection + trigger announce via the live region. */}
         <ZoneListbox zones={session.zones} onZoneTrigger={handleZoneTrigger} announce={announce} />
+        {/* The hybrid 2D/3D control: the selected zone's timbre + rename, the
+            committed surface (instrument.zone.name). Edits in 3D, sound/name in 2D. */}
+        <ZonePanel
+          zone={session.zones.find((z) => z.id === selectedId) ?? null}
+          onRename={(id, name) => void session.nameZone(id, name)}
+          announce={announce}
+        />
         <div className="mm-readout">
           <span className="mm-strong">{session.zones.length}</span> / {MAX_ZONES} zones · sound {sound.enabled ? 'on' : 'off'} ·
           drag to look · one-finger drag is <em>you</em>

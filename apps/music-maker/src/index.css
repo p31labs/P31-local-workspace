@@ -109,6 +109,60 @@
 }
 .mm-strong { color: var(--p31-text); font-weight: 700; }
 
+/* The hybrid 2D/3D zone panel (TimbreSpace pattern): 3D to select + trigger,
+   this 2D panel for the committed sound/name surface. 48px targets. */
+.mm-zone-panel {
+  position: absolute;
+  right: var(--p31-space-md);
+  top: var(--p31-space-md);
+  min-width: 240px;
+  padding: var(--p31-space-md);
+  border: 1px solid var(--p31-glass-border);
+  border-radius: var(--p31-radius-lg);
+  background: var(--p31-glass-bg);
+  backdrop-filter: blur(12px);
+  display: flex;
+  flex-direction: column;
+  gap: var(--p31-space-sm);
+  z-index: var(--p31-z-floating);
+}
+.mm-zone-panel-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--p31-text);
+}
+.mm-zone-panel-row {
+  display: flex;
+  align-items: center;
+  gap: var(--p31-space-sm);
+}
+.mm-zone-panel-key {
+  color: var(--p31-text-secondary);
+  font-size: 14px;
+  min-width: 48px;
+}
+.mm-zone-panel-val {
+  color: var(--p31-text);
+  font-size: 14px;
+  text-transform: capitalize;
+}
+.mm-zone-panel-input {
+  min-height: var(--p31-touch-recommended);
+  min-width: 0;
+  flex: 1;
+  padding: 0 var(--p31-space-sm);
+  border: 1px solid var(--p31-glass-border);
+  border-radius: var(--p31-radius-md);
+  background: var(--p31-surface);
+  color: var(--p31-text);
+  font: 16px/1.4 system-ui, sans-serif;
+}
+.mm-zone-panel-input:focus-visible {
+  outline: 2px solid var(--p31-accent);
+  outline-offset: 2px;
+}
+
 /* The trigger announcements — visually hidden, screen-reader visible. */
 .mm-live {
   position: absolute;

@@ -9,6 +9,13 @@ compatibility_flags = ["nodejs_compat"]
 
 workers_dev = true
 
+# Serve the BUILT React app (the spatial instrument UI) from this same Worker —
+# the client uses relative /api/music/* paths, so the UI and the API must share
+# one origin. Build first: cd apps/music-maker && pnpm run build, then deploy
+# from apps/music-maker/worker. Unknown routes fall back to index.html (the
+# React router needs that).
+assets = { directory = "../dist", binding = "ASSETS", not_found_handling = "single-page-application" }
+
 [observability]
 enabled = true
 

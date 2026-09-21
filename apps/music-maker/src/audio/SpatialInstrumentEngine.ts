@@ -73,6 +73,8 @@ interface PendingZone {
 export class SpatialInstrumentEngine {
   private ctx: AudioContext | null = null;
   private master: GainNode | null = null;
+  private analyser: AnalyserNode | null = null;
+  private analyserData: Uint8Array<ArrayBuffer> | null = null;
   private voicePanners = new Map<string, PannerNode>();
   private voiceGains = new Map<string, GainNode>();
   private voiceFilters = new Map<string, BiquadFilterNode>();
@@ -216,6 +218,8 @@ export class SpatialInstrumentEngine {
     this.pendingZones.clear();
     this.ctx = null;
     this.master = null;
+    this.analyser = null;
+    this.analyserData = null;
     this.effectiveModel = null;
   }
 
@@ -248,7 +252,43 @@ export class SpatialInstrumentEngine {
     comp.release.value = 0.24;
     this.master.connect(comp).connect(this.ctx.destination);
 
+    // Analyser after the compressor — drives the audio-reactive scene. Reads
+    // the post-ceiling mix so the visuals track what the family actually
+    // hears (bass/mid/treble bands + a smoothed master energy).
+    this.analyser = this.ctx.createAnalyser();
+    this.analyser.fftSize = 128;
+    this.analyser.smoothingTimeConstant = 0.65;
+    this.analyserData = new Uint8Array(this.analyser.frequencyBinCount);
+    comp.connect(this.analyser);
+
     return this.ctx;
+  }
+
+  /** Three-band energy + master level, 0..1 each, for the audio-reactive scene.
+   *  Returns a stable object so the RAF loop can read it every frame without
+   *  allocation. Falls back to zeros before the context exists (the scene
+   *  still renders; it just doesn't breathe until sound is on). */
+  getEnergy(): { bass: number; mid: number; treble: number; master: number } {
+    if (!this.ctx || !this.analyser || !this.analyserData) {
+      return { bass: 0, mid: 0, treble: 0, master: 0 };
+    }
+    this.analyser.getByteFrequencyData(this.analyserData);
+    const d = this.analyserData;
+    const n = d.length; // 64 bins for fftSize 128
+    // Bass ~ 40–250Hz → bins 0..5; mid ~ 250–4k → bins 6..30; treble above.
+    let bass = 0; let mid = 0; let treble = 0; let sum = 0;
+    const bin = (i: number) => d[Math.min(n - 1, i)] / 255;
+    for (let i = 0; i < 6; i++) bass += bin(i);
+    for (let i = 6; i < 31; i++) mid += bin(i);
+    for (let i = 31; i < n; i++) treble += bin(i);
+    for (let i = 0; i < n; i++) sum += bin(i);
+    const avg = (v: number, c: number) => Math.min(1, v / Math.max(1, c) * 1.6);
+    return {
+      bass: avg(bass, 6),
+      mid: avg(mid, 25),
+      treble: avg(treble, n - 31),
+      master: Math.min(1, sum / n),
+    };
   }
 
   /** Choose the panning model BEFORE the real graph is built. Device signals are

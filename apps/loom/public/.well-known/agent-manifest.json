@@ -346,6 +346,14 @@
       "confirm": "never",
       "schema": { "mapping": "string" },
       "description": "Flip the vertical spatial encoding between height→pitch and height→timbre-brightness. Prototype-validated (prototype-spatial-touch.html); the decision is made empirically with a family member, not by spec."
+    },
+    {
+      "name": "instrument.render.toggle",
+      "kind": "action",
+      "danger": "none",
+      "confirm": "never",
+      "schema": { "mode": "string" },
+      "description": "Cycle the spatial scene's render mode: constellation (points + the listener's path trail), terrain (the audio-reactive sphere prominent), bursts (explosions at every trigger). Presentation-layer only; the composition and the audio graph are unchanged."
     }
   ],
   "data-agent-attributes": {
