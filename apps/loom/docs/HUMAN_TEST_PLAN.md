@@ -109,10 +109,17 @@ answer. This file's protocol stands.
 
 **Status**: the scripted gate is green; the real family test has not run.
 The app is ready to hand over at `https://loom-8z0.pages.dev`.
+
+The real test now runs as a **pilot platform** — three identities, a live
+shared log, a capture sheet, and a seed/reset script. See `FAMILY_PILOT.md`
+for the protocol; Cloudflare Access must be ON first (`ACCESS_RUNBOOK.md`),
+because scope is a promise until the caller has an identity.
 ## Related Documents
 
 - `../README.md` — how to run and deploy the app you are about to hand over
 - `./DECISIONS.md` — entry 007 (the static demo) and the Open section (persistence)
 - `./STANDARDS.md` — the conformance the test is checking against
+- `./FAMILY_PILOT.md` — the platform that runs this protocol
+- `./ACCESS_RUNBOOK.md` — the prerequisite (Access ON)
 
 - `./MAP.md` — the doc index; where this page sits

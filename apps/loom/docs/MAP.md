@@ -14,6 +14,7 @@ One screen. Where every doc lives, what it's for, and how they connect.
 | [`AUDIT_STANDARDS.md`](./AUDIT_STANDARDS.md) | An auditor, a procurement reviewer, a standards-body reader | You want the Loom's log positioned against GAR / AAT / EU AI Act |
 | [`LOVE_INTEGRATION.md`](./LOVE_INTEGRATION.md) | Anyone bridging the Loom and the care economy | You're wiring identity / care proof / the cross-anchor |
 | [`ACCESS_RUNBOOK.md`](./ACCESS_RUNBOOK.md) | Whoever flips the API gate from OFF to ON | You have 5 minutes and the Zero Trust dashboard |
+| [`FAMILY_PILOT.md`](./FAMILY_PILOT.md) | Whoever runs the real family test | You're about to hand the URL to three humans |
 | [`CONCEPTS.yml`](./CONCEPTS.yml) | The concept registry | You want the canonical definition of the log, the gate, Lumi, the artifact… |
 | [`PORTING_INVENTORY.md`](./PORTING_INVENTORY.md) | — | Generated. Do not read; the generator reads it. |
 | [`DOCS_INVENTORY.md`](./DOCS_INVENTORY.md) | — | Generated. Do not read; the generator reads it. |
@@ -43,6 +44,8 @@ graph LR
   DECISIONS --> |"011 code names"| CODENAME[pickle code names]
   DECISIONS --> |"012 scope"| SCOPE[the privacy boundary]
   DECISIONS --> |"013 family view"| FAMILY[one short shared page]
+  DECISIONS --> |"014 memory"| MEMORY[Lumi's fold, not a store]
+  DECISIONS --> |"016 pilot"| PILOT[the family test platform]
   STANDARDS -.audit trails.-> CHAIN
   CHAIN -.cross-anchor.-> LOVE[the LOVE care ledger]
   SBTANCHOR -.witnesses.-> QPJ[the QPJ portal chain]
@@ -50,6 +53,8 @@ graph LR
   SCOPE -.enforced at read.-> CHAIN
   FAMILY -.reads shared only.-> SCOPE
   FAMILY -.provenance one tap.-> CHAIN
+  MEMORY -.folds shared.-> SCOPE
+  PILOT -.needs identity.-> ACCESS[ACCESS_RUNBOOK]
   AUDIT[AUDIT_STANDARDS] -.positions.-> CHAIN
   AUDIT -.positions.-> LOVE
   LOVE_INTEGRATION[LOVE_INTEGRATION] --> LOVE
@@ -96,6 +101,9 @@ wherever they appear bare.
 - **the family view** — one short shared page: the artifact, the care circle,
   the last shared moments, provenance one tap away. Canonical:
   `apps/loom/src/components/FamilyView.tsx`, `DECISIONS.md` #013.
+- **Lumi's memory** — a deterministic fold of the log into four tiers
+  (episodic/semantic/procedural/narrative), never a store. Canonical:
+  `packages/canon/src/loom/memory.ts`, `DECISIONS.md` #014.
 
 ## Related Documents
 

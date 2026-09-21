@@ -295,6 +295,56 @@ guard it). The care circle shows presence, never a score. The receipt's
 provenance link doubles as the trust-layer demo: one tap from a family page to
 the verifiable chain.
 
+## 014 — Lumi's memory is a fold, not a store
+
+**Decision.** Lumi's persistent memory is **derived** from the log, never
+stored separately. `@p31/canon/loom/memory` folds the scoped shared events
+into four tiers — episodic (recent events), semantic (colors picked, nodes
+focused), procedural (approved proposals), narrative (one plain sentence) —
+deterministically. `GET /api/loom/memory` returns the fold; the launchpad shows
+the narrative line when there is prior work.
+
+**Why.** A Durable Object memory store was the initial candidate and rejected:
+the log IS the memory substrate, and a separate store would be a second source
+of truth that could drift from the prev_hash chain. The fold is deterministic
+(same events → same memory) and edge-safe, so the Worker, the dev middleware,
+and a test always agree. No LLM on the critical path — AI phrasing is a gated
+later increment.
+
+**Consequences.** Memory respects scope: the fold reads shared-only, so a
+personal record's content never surfaces. The launchpad line never
+auto-advances (the child still taps Start). The "welcome back" increment — Lumi
+offers to continue via the existing propose gate, the child approves — builds
+on this fold. That keeps co-presence: memory exists, but nothing appears
+without a tap.
+
+## 015 — The canon tiers are consumer-pulled
+
+**Decision.** The canon's tiering follows the four-tier model (tokens →
+semantic components → product slots → eject), but the full tiers are built only
+when a real consumer exists. The seam (a typed adapter contract) + the Loom as
+the reference adapter are the current work; product slots and eject wait for a
+portal that imports `@p31/canon`.
+
+**Why.** There are two design systems — `@p31/canon` (the Loom's) and
+`@p31/design-core` (what the portals consume). Tiering the canon is only
+meaningful if a portal actually consumes it; today there is no second
+consumer. Building full product slots speculatively would be a library that
+sits unused. The family pilot is the likely first pull.
+
+## 016 — The family test is a pilot platform, not a one-off
+
+**Decision.** The family test runs as a **platform**: three identities (child /
+elder / caregiver), a live shared D1 log, a `FAMILY_PILOT.md` protocol with a
+capture sheet (timing rows + verbatim quotes), and a seed/reset script. It
+requires Cloudflare Access ON first — scope is a promise, not proof, until an
+identity is real.
+
+**Why.** The scripted walkthrough produced evidence, not the thing that
+matters: a 7-year-old's first tap and a 70-year-old's confusion. A platform
+makes the test repeatable across sessions and families, feeds verbatim results
+into `HUMAN_TEST_PLAN.md`, and is the first real consumer of the canon's tiers.
+
 ## Related Documents
 
 - `../README.md` — what the Loom is; every decision here shapes this app
