@@ -23,7 +23,7 @@ jobs:
         env:
           SMITHERY_API_TOKEN: ${{ secrets.SMITHERY_API_TOKEN }}
         run: |
-          smithery mcp publish "https://mcp-registry.trimtab-signal.workers.dev/mcp" -n p31labs/mcp-marketplace
+          smithery mcp publish "https://mcp-registry.trimtab-signal.workers.dev/mcp" -n trimtab-signal/mcp-marketplace
       - name: ARD discovery check
         run: |
           pip install -q ard-publish

@@ -97,3 +97,9 @@ server-card from the URL you submit. The card + /mcp endpoint are verified live:
 - Glama: `glama.json` at repo root (maintainers: p31labs).
 - Official registry: `server.json` (`io.github.p31labs/mcp-marketplace`) + `.github/workflows/publish-mcp.yml` (OIDC).
 - CI sweep: `.github/workflows/mcp-distribution-sweep.yml` (mcp-submit + smithery CLI + ard-publish on `v*` tags).
+
+## Namespace corrected (2026-09-24)
+The Smithery/Glama/GitHub identity is **trimtab-signal**, not p31labs.
+- Smithery: `trimtab-signal/mcp-marketplace` — **published successfully** (deployment PENDING).
+- server.json namespace: `io.github.trimtab-signal/mcp-marketplace`.
+- glama.json maintainers: `["trimtab-signal"]`.
