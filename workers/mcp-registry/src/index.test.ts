@@ -889,11 +889,11 @@ describe('MCP-native discovery surface + well-known card', () => {
     vi.stubGlobal('fetch', fetchMock)
     const env = envWith(fetchMock)
     const init = await (await handleRequest(req('https://registry.local/mcp', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'initialize', params: { protocolVersion: '2025-11-25' } }) }), env)).json()
-    expect(init.protocolVersion).toBe('2025-11-25')
-    expect(init.serverInfo.name).toBe('p31-mcp-marketplace')
+    expect(init.result.protocolVersion).toBe('2025-11-25')
+    expect(init.result.serverInfo.name).toBe('p31-mcp-marketplace')
 
     const list = await (await handleRequest(req('https://registry.local/mcp', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', id: 2, method: 'tools/list', params: {} }) }), env)).json()
-    expect(list.tools.map((t: any) => t.name)).toEqual(['list_servers', 'get_server', 'call_tool'])
+    expect(list.result.tools.map((t: any) => t.name)).toEqual(['list_servers', 'get_server', 'call_tool'])
   })
 
   it('list_servers + call_tool work through the MCP surface', async () => {
@@ -903,11 +903,11 @@ describe('MCP-native discovery surface + well-known card', () => {
     await handleRequest(req('https://registry.local/servers', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: 'mock-srv', name: 'Mock Server', endpoint: REMOTE_URL, category: 'crypto', description: 'x' }) }), env)
 
     const ls = await (await handleRequest(req('https://registry.local/mcp', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', id: 3, method: 'tools/call', params: { name: 'list_servers', arguments: { category: 'crypto' } } }) }), env)).json()
-    const servers = JSON.parse(ls.content[0].text)
+    const servers = JSON.parse(ls.result.content[0].text)
     expect(servers.some((s: any) => s.id === 'mock-srv')).toBe(true)
 
     const ct = await (await handleRequest(req('https://registry.local/mcp', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', id: 4, method: 'tools/call', params: { name: 'call_tool', arguments: { server: 'mock-srv', tool: 'read_stuff', arguments: {} } } }) }), env)).json()
-    expect(JSON.stringify(ct.content)).toContain('ok')
+    expect(JSON.stringify(ct.result.content)).toContain('ok')
   })
 })
 
@@ -919,8 +919,8 @@ describe('MCP surface is guarded (sanitizer/audit/auth) + carries governance', (
     await handleRequest(req('https://registry.local/servers', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: 'mock-srv', name: 'Mock Server', endpoint: REMOTE_URL, category: 'crypto', description: 'x' }) }), env)
     const res = await handleRequest(req('https://registry.local/mcp', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/call', params: { name: 'call_tool', arguments: { server: 'mock-srv', tool: 'read_stuff', arguments: { q: 'https://evil.example/hook' } } } }) }), env)
     const data = await res.json()
-    expect(data.isError).toBe(true)
-    expect(JSON.stringify(data.content)).toContain('external URL')
+    expect(data.result.isError).toBe(true)
+    expect(JSON.stringify(data.result.content)).toContain('external URL')
   })
 
   it('audits MCP call_tool invocations', async () => {
@@ -942,7 +942,7 @@ describe('MCP surface is guarded (sanitizer/audit/auth) + carries governance', (
     await handleRequest(req('https://registry.local/servers', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: 'mock-srv', name: 'Mock Server', endpoint: REMOTE_URL, category: 'crypto', description: 'x' }) }), env)
     const res = await handleRequest(req('https://registry.local/mcp', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/call', params: { name: 'get_server', arguments: { id: 'mock-srv' } } }) }), env)
     const data = await res.json()
-    const gov = JSON.parse(data.content[0].text)
+    const gov = JSON.parse(data.result.content[0].text)
     expect(gov.status).toBe('unverified')
     expect(gov.scan).toBeDefined()
     expect(gov.toolCount).toBe(2)

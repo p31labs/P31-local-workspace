@@ -1784,13 +1784,13 @@ async function handleMcpSurface(env: Env, request: Request): Promise<Response> {
   const params = body?.params ?? {}
 
   if (method === 'initialize') {
-    return json({ protocolVersion: PROBE_PROTOCOL_VERSION, capabilities: { tools: {} }, serverInfo: { name: 'p31-mcp-marketplace', version: '2.0.0' } })
+    return json({ jsonrpc: '2.0', id: rpcId, result: { protocolVersion: PROBE_PROTOCOL_VERSION, capabilities: { tools: {} }, serverInfo: { name: 'p31-mcp-marketplace', version: '2.0.0' } } })
   }
   if (method === 'notifications/initialized') {
     return new Response(null, { status: 200, headers: corsHeaders() })
   }
   if (method === 'tools/list') {
-    return json({ tools: MCP_SURFACE_TOOLS })
+    return json({ jsonrpc: '2.0', id: rpcId, result: { tools: MCP_SURFACE_TOOLS } })
   }
   if (method === 'tools/call') {
     const name = params?.name
@@ -1801,28 +1801,28 @@ async function handleMcpSurface(env: Env, request: Request): Promise<Response> {
       if (args.status) u.searchParams.set('status', args.status)
       const res = await handleListServers(env, u)
       const data: any = await res.json()
-      return json({ content: [{ type: 'text', text: JSON.stringify(data.servers ?? []) }] })
+      return json({ jsonrpc: '2.0', id: rpcId, result: { content: [{ type: 'text', text: JSON.stringify(data.servers ?? []) }] } })
     }
     if (name === 'get_server') {
       const entry = await findEntry(env, args.id)
-      if (!entry) return json({ content: [{ type: 'text', text: JSON.stringify({ error: 'server not found' }) }] })
+      if (!entry) return json({ jsonrpc: '2.0', id: rpcId, result: { content: [{ type: 'text', text: JSON.stringify({ error: 'server not found' }) }], isError: true } })
       const schemas = await getToolSchemas(env, entry)
       const health = await probeHealth(env, entry)
       const gov = await summary(env, entry, schemas, health)
-      return json({ content: [{ type: 'text', text: JSON.stringify({ id: gov.id, name: gov.name, endpoint: gov.endpoint, status: gov.status, health: gov.health, toolCount: gov.toolCount, scan: gov.scan, review: gov.review, capabilities: gov.capabilities, drifted: gov.drifted, readOnlySafe: gov.readOnlySafe, tools: schemas.map((t) => ({ name: t.name, description: t.description, inputSchema: t.inputSchema })) }) }] })
+      return json({ jsonrpc: '2.0', id: rpcId, result: { content: [{ type: 'text', text: JSON.stringify({ id: gov.id, name: gov.name, endpoint: gov.endpoint, status: gov.status, health: gov.health, toolCount: gov.toolCount, scan: gov.scan, review: gov.review, capabilities: gov.capabilities, drifted: gov.drifted, readOnlySafe: gov.readOnlySafe, tools: schemas.map((t) => ({ name: t.name, description: t.description, inputSchema: t.inputSchema })) }) }] } })
     }
     if (name === 'call_tool') {
       const entry = await findEntry(env, args.server)
-      if (!entry) return json({ content: [{ type: 'text', text: JSON.stringify({ error: 'server not found' }) }], isError: true })
+      if (!entry) return json({ jsonrpc: '2.0', id: rpcId, result: { content: [{ type: 'text', text: JSON.stringify({ error: 'server not found' }) }], isError: true } })
       const r = await proxyToolCall(env, entry, String(args.tool ?? ''), (args.arguments ?? {}) as Record<string, unknown>, request)
-      if (!r.ok) return json({ content: [{ type: 'text', text: JSON.stringify(r.body) }], isError: true })
+      if (!r.ok) return json({ jsonrpc: '2.0', id: rpcId, result: { content: [{ type: 'text', text: JSON.stringify(r.body) }], isError: true } })
       const content = (r.body as any)?.content ?? [{ type: 'text', text: JSON.stringify(r.body) }]
-      return json({ content })
+      return json({ jsonrpc: '2.0', id: rpcId, result: { content } })
     }
-    return json({ error: { code: -32602, message: `unknown tool: ${name}` }, id: rpcId }, 400)
+    return json({ jsonrpc: '2.0', id: rpcId, error: { code: -32602, message: `unknown tool: ${name}` } })
   }
-  if (method === 'ping') return json({})
-  return json({ error: { code: -32601, message: `method not found: ${method}` }, id: rpcId }, 400)
+  if (method === 'ping') return json({ jsonrpc: '2.0', id: rpcId, result: {} })
+  return json({ jsonrpc: '2.0', id: rpcId, error: { code: -32601, message: `method not found: ${method}` } })
 }
 
 function wellKnownCard() {
@@ -1868,6 +1868,20 @@ async function handleArd(env: Env): Promise<Response> {
     ],
   }
   return json(manifest)
+}
+
+/** AI catalog companion manifest (linked via <link rel="ai-catalog">). */
+async function handleAiCatalog(env: Env): Promise<Response> {
+  const catalog = {
+    name: 'P31 MCP Marketplace',
+    description: 'Governed catalog of MCP servers with live health probes, tool schemas, scanner verdicts, Ed25519 review signatures, and a sanitized call proxy.',
+    resources: [
+      { type: 'application/mcp-server-card+json', url: 'https://mcp-registry.trimtab-signal.workers.dev/.well-known/mcp/server-card.json' },
+      { type: 'application/ard+json', url: 'https://mcp-registry.trimtab-signal.workers.dev/.well-known/ard.json' },
+      { type: 'mcp', endpoint: 'https://mcp-registry.trimtab-signal.workers.dev/mcp' },
+    ],
+  }
+  return json(catalog)
 }
 
 // ─── HTML listing (kept light; the portal is the real UI) ──────────────────
@@ -1953,8 +1967,9 @@ async function handleRequest(request: Request, env: Env): Promise<Response> {
   }
   // Server card served at every SEP-1649/SEP-2127 well-known alias.
   if (url.pathname === '/.well-known/mcp/server-card.json' || url.pathname === '/.well-known/mcp/server.json' || url.pathname === '/.well-known/mcp.json' || url.pathname === '/.well-known/mcp') return handleWellKnownMcp(env);
-  // Agentic Resource Discovery manifest.
+  // Agentic Resource Discovery manifest + AI catalog companion.
   if (url.pathname === '/.well-known/ard.json') return handleArd(env);
+  if (url.pathname === '/.well-known/ai-catalog.json') return handleAiCatalog(env);
   // Robots with the ARD Agentmap advertisement (helps crawl-based discovery).
   if (url.pathname === '/robots.txt' && request.method === 'GET') {
     return new Response('User-agent: *\nAllow: /\nAgentmap: https://mcp-registry.trimtab-signal.workers.dev/.well-known/ard.json\n', { headers: { 'Content-Type': 'text/plain', ...corsHeaders() } });
