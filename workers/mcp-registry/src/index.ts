@@ -841,7 +841,7 @@ async function appendError(env: Env, ev: Omit<ErrorEvent, 'ts'>): Promise<void> 
 // OTLP/HTTP collector endpoint is configured, POSTs in OTLP JSON; otherwise
 // the KV structured log (appendLog) already carries the same fields.
 
-async function emitOtapEvent(env: Env, name: string, attrs: Record<string, string | number | boolean | undefined>): Promise<void> {
+async function emitOtlpEvent(env: Env, name: string, attrs: Record<string, string | number | boolean | undefined>): Promise<void> {
   const endpoint = env.OTEL_EXPORTER_OTLP_ENDPOINT;
   if (!endpoint) return;
   const payload = {
@@ -1316,10 +1316,18 @@ async function handleCall(env: Env, id: string, request: Request): Promise<Respo
   const toolSchema = (await getToolSchemas(env, entry)).find((t) => t.name === toolName)?.inputSchema;
   const sanitized = validateArgs(args as Record<string, unknown>, toolSchema as { properties?: Record<string, { type?: string }> });
   if (!sanitized.ok) {
+    // Per-IP cap on the rejection path so a hostile caller can't burn KV
+    // writes with a flood of garbage (N2 residual).
+    const ip = (request.headers.get('CF-Connecting-IP') || request.headers.get('x-forwarded-for') || 'unknown').split(',')[0].trim();
+    const rlKey = KV_RATELIMIT_PREFIX + 'sanitizer:' + ip;
+    const rl = Number((await env.REGISTRY_KV.get(rlKey)) ?? '0');
+    await env.REGISTRY_KV.put(rlKey, String(rl + 1), { expirationTtl: 3600 });
+    if (rl >= 100) return json({ error: { code: -32029, message: 'too many rejected requests from this client' } }, 429);
+
     const k = KV_REJECTIONS_PREFIX + `${entry.id}:${toolName}`;
     const n = Number((await env.REGISTRY_KV.get(k)) ?? '0');
     await env.REGISTRY_KV.put(k, String(n + 1), { expirationTtl: 600 });
-    void emitOtapEvent(env, 'tool_rejected', { serverId: entry.id, tool: String(toolName), reason: sanitized.reason, status: String(sanitized.status) }).catch(() => {});
+    void emitOtlpEvent(env, 'tool_rejected', { serverId: entry.id, tool: String(toolName), reason: sanitized.reason, status: String(sanitized.status) }).catch(() => {});
     return json({ error: { code: -32000, message: `rejected: ${sanitized.reason}`, field: sanitized.field } }, sanitized.status);
   }
 
@@ -1363,7 +1371,7 @@ async function handleCall(env: Env, id: string, request: Request): Promise<Respo
   });
 
   // C1 — OTLP-shaped tool_result event (KV fallback; OTLP export if configured).
-  void emitOtapEvent(env, 'tool_result', { serverId: entry.id, tool: String(toolName), ok, latencyMs }).catch(() => {});
+  void emitOtlpEvent(env, 'tool_result', { serverId: entry.id, tool: String(toolName), ok, latencyMs }).catch(() => {});
 
   if (!ok) return json({ error: res.error, errorCode: res.error?.code }, 502, rlHeaders);
   return json(res.result, 200, rlHeaders);
@@ -1522,16 +1530,24 @@ async function handleAnomalies(env: Env, request: Request): Promise<Response> {
     if (n >= 50) findings.push({ type: 'call_spike', severity: 'high', serverId: sid, detail: `${n} proxied calls in the last 5 minutes` });
   }
 
-  // N2 — sanitizer rejection hotspots (rejections:<serverId>:<toolName> counter).
-  const rejList = await env.REGISTRY_KV.list({ prefix: KV_REJECTIONS_PREFIX });
-  for (const key of rejList.keys) {
-    const v = await env.REGISTRY_KV.get(key.name).catch(() => null)
-    const n = Number(v ?? '0')
-    if (n >= 5) {
-      const [, sid, tool] = key.name.split(':')
-      findings.push({ type: 'sanitizer_rejections', severity: 'medium', serverId: sid ?? undefined, detail: `${n} rejected calls for ${tool ?? key.name} in the last 10 minutes` })
+  // N2 — sanitizer rejection hotspots (rejections:<serverId>:<toolName> counter),
+  // paginated so KV's 1000-key list limit never silently truncates findings.
+  let cursor: string | undefined
+  let scanned = 0
+  do {
+    const rejList = await env.REGISTRY_KV.list({ prefix: KV_REJECTIONS_PREFIX, cursor, limit: 1000 })
+    cursor = rejList.list_complete ? undefined : rejList.cursor
+    for (const key of rejList.keys) {
+      scanned++
+      const v = await env.REGISTRY_KV.get(key.name).catch(() => null)
+      const n = Number(v ?? '0')
+      if (n >= 5) {
+        const [, sid, tool] = key.name.split(':')
+        findings.push({ type: 'sanitizer_rejections', severity: 'medium', serverId: sid ?? undefined, detail: `${n} rejected calls for ${tool ?? key.name} in the last 10 minutes` })
+      }
+      if (scanned >= 5000) break
     }
-  }
+  } while (cursor && scanned < 5000)
 
   // 3) write-tool calls against read-only-safe servers (from the audit log).
   const entries = await getAllEntries(env);
