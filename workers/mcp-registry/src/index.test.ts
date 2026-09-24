@@ -909,3 +909,42 @@ describe('MCP-native discovery surface + well-known card', () => {
     expect(JSON.stringify(ct.content)).toContain('ok')
   })
 })
+
+describe('MCP surface is guarded (sanitizer/audit/auth) + carries governance', () => {
+  it('rejects a sanitizer-flagged arg through MCP call_tool and records it', async () => {
+    const fetchMock = buildFetch({ [REMOTE_URL]: { tools: GOOD_TOOLS } })
+    vi.stubGlobal('fetch', fetchMock)
+    const env = adminEnvWith(fetchMock)
+    await handleRequest(req('https://registry.local/servers', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: 'mock-srv', name: 'Mock Server', endpoint: REMOTE_URL, category: 'crypto', description: 'x' }) }), env)
+    const res = await handleRequest(req('https://registry.local/mcp', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/call', params: { name: 'call_tool', arguments: { server: 'mock-srv', tool: 'read_stuff', arguments: { q: 'https://evil.example/hook' } } } }) }), env)
+    const data = await res.json()
+    expect(data.isError).toBe(true)
+    expect(JSON.stringify(data.content)).toContain('external URL')
+  })
+
+  it('audits MCP call_tool invocations', async () => {
+    const fetchMock = buildFetch({ [REMOTE_URL]: { tools: GOOD_TOOLS, callResult: { ok: true } } })
+    vi.stubGlobal('fetch', fetchMock)
+    const env = adminEnvWith(fetchMock)
+    await handleRequest(req('https://registry.local/servers', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: 'mock-srv', name: 'Mock Server', endpoint: REMOTE_URL, category: 'crypto', description: 'x' }) }), env)
+    await handleRequest(req('https://registry.local/mcp', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/call', params: { name: 'call_tool', arguments: { server: 'mock-srv', tool: 'read_stuff', arguments: {} } } }) }), env)
+    const audit = await (await handleRequest(req('https://registry.local/audit?limit=1'), env)).json()
+    const last = audit.entries[audit.entries.length - 1]
+    expect(last.tool).toBe('read_stuff')
+    expect(last.serverId).toBe('mock-srv')
+  })
+
+  it('get_server surfaces scan/review/health/status governance', async () => {
+    const fetchMock = buildFetch({ [REMOTE_URL]: { tools: GOOD_TOOLS } })
+    vi.stubGlobal('fetch', fetchMock)
+    const env = adminEnvWith(fetchMock)
+    await handleRequest(req('https://registry.local/servers', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: 'mock-srv', name: 'Mock Server', endpoint: REMOTE_URL, category: 'crypto', description: 'x' }) }), env)
+    const res = await handleRequest(req('https://registry.local/mcp', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/call', params: { name: 'get_server', arguments: { id: 'mock-srv' } } }) }), env)
+    const data = await res.json()
+    const gov = JSON.parse(data.content[0].text)
+    expect(gov.status).toBe('unverified')
+    expect(gov.scan).toBeDefined()
+    expect(gov.toolCount).toBe(2)
+    expect(gov.tools.map((t: any) => t.name)).toContain('create_thing')
+  })
+})

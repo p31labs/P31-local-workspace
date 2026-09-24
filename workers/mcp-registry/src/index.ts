@@ -1441,39 +1441,48 @@ async function handleCall(env: Env, id: string, request: Request): Promise<Respo
 
   const toolName = body?.params?.name ?? (typeof body?.name === 'string' ? body.name : 'unknown');
   const args = body?.params?.arguments ?? body?.arguments ?? {};
-  const risk = toolRisk({ name: String(toolName) });
+  const r = await proxyToolCall(env, entry, String(toolName), (args as Record<string, unknown>) ?? {}, request);
+  return json(r.body, r.status, r.rlHeaders ?? {});
+}
 
-  // REQUIRE_AUTH_WRITE — optional strict-mode gate: reject anonymous write-risk
-  // calls. Default OFF: the proxied servers are public, so this is for
-  // deployments where the upstream is also private (see SECURITY.md M1).
+/**
+ * Shared guarded proxy path — used by BOTH the REST /servers/:id/call handler
+ * and the MCP-native call_tool surface, so every proxied invocation gets the
+ * same: REQUIRE_AUTH_WRITE gate → sanitizer → per-tool quota → capability
+ * token → signed audit entry → OTLP event.
+ */
+async function proxyToolCall(
+  env: Env,
+  entry: McpServerEntry,
+  toolName: string,
+  args: Record<string, unknown>,
+  request: Request,
+): Promise<{ ok: boolean; status: number; rlHeaders?: Record<string, string>; body: unknown }> {
+  const risk = toolRisk({ name: toolName });
+
   if (env.REQUIRE_AUTH_WRITE === '1' && risk === 'write') {
     const principal = await resolvePrincipal(env, request)
     if (principal === 'anonymous') {
-      return json({ error: { code: -32000, message: 'write tools require an authenticated principal' } }, 401)
+      return { ok: false, status: 401, body: { error: { code: -32000, message: 'write tools require an authenticated principal' } } }
     }
   }
 
-  // N2 — runtime argument sanitization before the upstream call.
   const toolSchema = (await getToolSchemas(env, entry)).find((t) => t.name === toolName)?.inputSchema;
-  const sanitized = validateArgs(args as Record<string, unknown>, toolSchema as { properties?: Record<string, { type?: string }> });
+  const sanitized = validateArgs(args, toolSchema as { properties?: Record<string, { type?: string }> });
   if (!sanitized.ok) {
-    // Per-IP cap on the rejection path so a hostile caller can't burn KV
-    // writes with a flood of garbage (N2 residual).
     const ip = (request.headers.get('CF-Connecting-IP') || request.headers.get('x-forwarded-for') || 'unknown').split(',')[0].trim();
     const rlKey = KV_RATELIMIT_PREFIX + 'sanitizer:' + ip;
     const rl = Number((await env.REGISTRY_KV.get(rlKey)) ?? '0');
     await env.REGISTRY_KV.put(rlKey, String(rl + 1), { expirationTtl: 3600 });
-    if (rl >= 100) return json({ error: { code: -32029, message: 'too many rejected requests from this client' } }, 429);
-
+    if (rl >= 100) return { ok: false, status: 429, body: { error: { code: -32029, message: 'too many rejected requests from this client' } } };
     const k = KV_REJECTIONS_PREFIX + `${entry.id}:${toolName}`;
     const n = Number((await env.REGISTRY_KV.get(k)) ?? '0');
     await env.REGISTRY_KV.put(k, String(n + 1), { expirationTtl: 600 });
-    void emitOtlpEvent(env, 'tool_rejected', { serverId: entry.id, tool: String(toolName), reason: sanitized.reason, status: String(sanitized.status) }).catch(() => {});
-    return json({ error: { code: -32000, message: `rejected: ${sanitized.reason}`, field: sanitized.field } }, sanitized.status);
+    void emitOtlpEvent(env, 'tool_rejected', { serverId: entry.id, tool: toolName, reason: sanitized.reason, status: String(sanitized.status) }).catch(() => {});
+    return { ok: false, status: sanitized.status, body: { error: { code: -32000, message: `rejected: ${sanitized.reason}`, field: sanitized.field } } };
   }
 
-  // A3 — per-tool quota enforcement before the upstream call (429/402).
-  const quota = await enforceToolQuota(env, request, entry, String(toolName), risk);
+  const quota = await enforceToolQuota(env, request, entry, toolName, risk);
   const rlHeaders = {
     'X-RateLimit-Limit': String(quota.limit),
     'X-RateLimit-Remaining': String(quota.remaining),
@@ -1483,39 +1492,33 @@ async function handleCall(env: Env, id: string, request: Request): Promise<Respo
     const msg = quota.status === 402
       ? { error: { code: -32029, message: `quota exhausted for ${toolName} — upgrade plan` } }
       : { error: { code: -32029, message: `rate limited — ${toolName} (${quota.limit}/min)` } };
-    return json(msg, quota.status, rlHeaders);
+    return { ok: false, status: quota.status, rlHeaders, body: msg };
   }
 
   const start = Date.now();
-  // N1 — mint a session-scoped capability token for write tools and attach it
-  // to the upstream request; issuance is recorded in the audit chain.
   let capToken: { token: string; exp: number } | null = null;
   const extraHeaders: Record<string, string> = {};
   if (risk === 'write') {
-    capToken = await mintCapabilityToken(env, { serverId: entry.id, tool: String(toolName), principal: await resolvePrincipal(env, request) });
+    capToken = await mintCapabilityToken(env, { serverId: entry.id, tool: toolName, principal: await resolvePrincipal(env, request) });
     if (capToken) extraHeaders['X-Capability-Token'] = capToken.token;
   }
-  const res = await rpcCall(env, entry, 'tools/call', body?.params ?? body, 10000, extraHeaders);
+  const res = await rpcCall(env, entry, 'tools/call', { name: toolName, arguments: args }, 10000, extraHeaders);
   const latencyMs = Date.now() - start;
   const ok = !res.error;
 
-  // Tamper-evident + signed audit trail of every proxied call — written
-  // before the response so the chain is verifiable in order.
   await appendAudit(env, {
     serverId: entry.id,
-    tool: String(toolName),
+    tool: toolName,
     risk,
-    args: (args as Record<string, unknown>) ?? {},
+    args,
     latencyMs,
     status: ok ? 'done' : 'error',
-    capToken: capToken ? { aud: entry.id, tool: String(toolName), exp: capToken.exp } : undefined,
+    capToken: capToken ? { aud: entry.id, tool: toolName, exp: capToken.exp } : undefined,
   });
+  void emitOtlpEvent(env, 'tool_result', { serverId: entry.id, tool: toolName, ok, latencyMs }).catch(() => {});
 
-  // C1 — OTLP-shaped tool_result event (KV fallback; OTLP export if configured).
-  void emitOtlpEvent(env, 'tool_result', { serverId: entry.id, tool: String(toolName), ok, latencyMs }).catch(() => {});
-
-  if (!ok) return json({ error: res.error, errorCode: res.error?.code }, 502, rlHeaders);
-  return json(res.result, 200, rlHeaders);
+  if (!ok) return { ok: false, status: 502, rlHeaders, body: { error: res.error, errorCode: res.error?.code } };
+  return { ok: true, status: 200, rlHeaders, body: res.result };
 }
 
 // ─── Governance: community moderation queue ─────────────────────────────────
@@ -1804,14 +1807,17 @@ async function handleMcpSurface(env: Env, request: Request): Promise<Response> {
       const entry = await findEntry(env, args.id)
       if (!entry) return json({ content: [{ type: 'text', text: JSON.stringify({ error: 'server not found' }) }] })
       const schemas = await getToolSchemas(env, entry)
-      return json({ content: [{ type: 'text', text: JSON.stringify({ id: entry.id, name: entry.name, endpoint: entry.endpoint, tools: schemas.map((t) => ({ name: t.name, description: t.description, inputSchema: t.inputSchema })) }) }] })
+      const health = await probeHealth(env, entry)
+      const gov = await summary(env, entry, schemas, health)
+      return json({ content: [{ type: 'text', text: JSON.stringify({ id: gov.id, name: gov.name, endpoint: gov.endpoint, status: gov.status, health: gov.health, toolCount: gov.toolCount, scan: gov.scan, review: gov.review, capabilities: gov.capabilities, drifted: gov.drifted, readOnlySafe: gov.readOnlySafe, tools: schemas.map((t) => ({ name: t.name, description: t.description, inputSchema: t.inputSchema })) }) }] })
     }
     if (name === 'call_tool') {
       const entry = await findEntry(env, args.server)
-      if (!entry) return json({ content: [{ type: 'text', text: JSON.stringify({ error: 'server not found' }) }] })
-      const res = await rpcCall(env, entry, 'tools/call', { name: args.tool, arguments: args.arguments ?? {} }, 10000)
-      if (res.error) return json({ content: [{ type: 'text', text: JSON.stringify({ error: res.error }) }], isError: true })
-      return json({ content: res.result?.content ?? [{ type: 'text', text: JSON.stringify(res.result) }] })
+      if (!entry) return json({ content: [{ type: 'text', text: JSON.stringify({ error: 'server not found' }) }], isError: true })
+      const r = await proxyToolCall(env, entry, String(args.tool ?? ''), (args.arguments ?? {}) as Record<string, unknown>, request)
+      if (!r.ok) return json({ content: [{ type: 'text', text: JSON.stringify(r.body) }], isError: true })
+      const content = (r.body as any)?.content ?? [{ type: 'text', text: JSON.stringify(r.body) }]
+      return json({ content })
     }
     return json({ error: { code: -32602, message: `unknown tool: ${name}` }, id: rpcId }, 400)
   }
