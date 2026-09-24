@@ -1,0 +1,68 @@
+---
+import MarketingShell from '../../layouts/MarketingShell.astro';
+import CanonTopbar from '../../components/islands/CanonTopbar.tsx';
+import Footer from '../../components/marketing/Footer.astro';
+
+const post = {
+  title: 'I built a governed MCP marketplace from an island in Georgia',
+  date: '2026-09-29',
+  tag: 'Engineering',
+};
+---
+<MarketingShell theme="cipher" background="dome" title={`${post.title} — P31 Labs`} description="A retired submarine engineering technician on a Georgia island built a governed MCP marketplace — and found three bugs the industry doesn't know it has.">
+  <CanonTopbar client:load pageTitle="Blog" />
+  <main id="main-content" class="section">
+    <div class="max-w-3xl mx-auto px-6 md:px-12 lg:px-16 py-16">
+      <div class="mb-10">
+        <div class="flex items-center gap-3 mb-4">
+          <time class="text-xs font-mono" style="color: var(--p31-text-tertiary);">{post.date}</time>
+          <span class="text-xs" style="color: var(--p31-text-tertiary);">·</span>
+          <span class="text-xs font-medium" style="color: var(--p31-accent);">{post.tag}</span>
+        </div>
+        <h1 class="text-3xl md:text-4xl leading-tight" style="font-family: var(--p31-font-serif, Georgia, serif); font-weight: 400; letter-spacing: -0.015em; color: var(--p31-text);">{post.title}</h1>
+      </div>
+
+      <article class="glass-card p-8 md:p-10 text-sm leading-relaxed space-y-6" style="color: var(--p31-text-secondary);">
+
+        <p>I spent 16 years as a Navy engineering technician on submarines. I retired, moved to an island in southeast Georgia, and last year started reading about the Model Context Protocol. This is what I built and what I learned.</p>
+
+        <p><strong style="color: var(--p31-text);">The problem.</strong> Every MCP directory I looked at was a list of links. No health checks. No way to know if a server was alive. No way to see what a tool actually did before you called it. No audit trail of what got called. In the submarine world we don't ship a system that trusts the operator to remember to check. We ship a system where checking is baked in and forgetting is impossible.</p>
+
+        <p>So I built the marketplace as if it needed to survive an inspection.</p>
+
+        <p><strong style="color: var(--p31-text);">What it does.</strong></p>
+        <ul style="padding-left: 1.25rem;">
+          <li>Live health probes on every server, cached and re-verified</li>
+          <li>Full tool schemas pulled at probe time, so you see the real API before you call it</li>
+          <li>A tool-poisoning scanner that runs on registration — instruction override, exfiltration sinks, credential grabs, invisible unicode, semantic mismatch</li>
+          <li>Ed25519 signatures on every review decision</li>
+          <li>A sanitized call proxy — size caps, command/URL sink detection, base64 bombs, binary magic</li>
+          <li>A hash-chained, Ed25519-signed audit log of every proxied call</li>
+          <li>A Durable Object-backed ledger so the chain can't fork</li>
+          <li>RBAC — viewer, publisher, reviewer, admin</li>
+          <li>An MCP-native surface, so an agent can <code style="font-family: var(--p31-font-mono); font-size: .9em;">tools/list</code> and discover the marketplace via <code style="font-family: var(--p31-font-mono); font-size: .9em;">list_servers / get_server / call_tool</code></li>
+        </ul>
+        <p>Concretely: calling <code style="font-family: var(--p31-font-mono); font-size: .9em;">pqc_verify</code> with an external URL as an argument gets rejected by the sanitizer, counted as a rejection, and logged to the audit chain — you can watch it happen live.</p>
+
+        <p><strong style="color: var(--p31-text);">Three bugs I found that I think the industry doesn't know yet.</strong></p>
+        <ol style="padding-left: 1.25rem;">
+          <li><strong style="color: var(--p31-text);">The official MCP Registry is stdio-only.</strong> <code style="font-family: var(--p31-font-mono); font-size: .9em;">mcp-publisher validate</code> rejects <code style="font-family: var(--p31-font-mono); font-size: .9em;">transport.type != "stdio"</code> in the packages block. Remote HTTP servers cannot be published there. Not prominent in the docs, and it means the "publish once, federate everywhere" story only works for locally-installed servers. If you run a remote MCP server, that registry is not for you — and no one tells you until you try.</li>
+          <li><strong style="color: var(--p31-text);">Every real MCP client requires the JSON-RPC envelope.</strong> My server returned bare result objects. My unit tests passed because I was asserting against my own responses. Then I connected a real MCP SDK client and it failed on the first message. Smithery's introspector reported "No capabilities found." If you're building an MCP server and testing only against your own mocks, you probably have this bug. The fix is one line; finding it requires a real client.</li>
+          <li><strong style="color: var(--p31-text);">Durable Object append failures leave permanent forked chains.</strong> If a DO append throws transiently, the DO has a hole. My backfill only ran when <code style="font-family: var(--p31-font-mono); font-size: .9em;">size() === 0</code>, so the next read skipped the hole and served a forked chain as authoritative. The fix is to compare the DO head to the KV head on every read and replay the suffix. If your ledger isn't doing that comparison, you have a silent integrity bug.</li>
+        </ol>
+
+        <p><strong style="color: var(--p31-text);">Why the background matters.</strong> A submarine doesn't have a "try again later" failure mode. If a system can fail silently, that's a defect, not a design choice. Software governance in the LLM era is heading exactly toward this standard: audit trails, tamper-evidence, non-repudiation, revocation. Most of the industry is still discovering it needs these. I didn't have to discover it — I came from a place that already knew.</p>
+
+        <p><strong style="color: var(--p31-text);">The honest state.</strong> I don't have a team, a network, or anyone in the MCP space. I'm one person on an island with an AI as my only collaborator. A daily digest script tells me what's actually happening — right now it shows zero real traffic. Every call in the audit log is mine. That's the honest state.</p>
+
+        <p>If you've built an MCP server and want it in a catalog with live governance, register it. The pipeline runs a real liveness probe and a tool-description scanner, and it either passes or it doesn't.</p>
+
+        <p style="display:flex; gap:.75rem; flex-wrap:wrap;">
+          <a href="https://mcp.p31ca.org" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg font-semibold no-underline" style="background: var(--p31-accent); color: var(--p31-void);">Marketplace →</a>
+          <a href="https://github.com/p31labs/P31-local-workspace" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg font-semibold border no-underline" style="border-color: var(--p31-glass-border); color: var(--p31-text);">Code →</a>
+        </p>
+      </article>
+    </div>
+  </main>
+  <Footer />
+</MarketingShell>
