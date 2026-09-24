@@ -497,10 +497,14 @@ async function rpcCall(
   try { text = await res.text(); } catch { return { error: { code: -32000, message: 'empty response' } }; }
 
   let parsed: any = null;
+  // SSE unwrap: MCP Streamable HTTP may return `data: {...}` and/or
+  // `event: message\ndata: {...}` frames — strip both the event + data
+  // prefixes from each line, then parse (single frame or last JSON frame).
+  const stripSse = (s: string) => s.replace(/^event:\s*[^\n]*\n?/gm, '').replace(/^data:\s*/gm, '').trim();
   try {
-    parsed = JSON.parse(text.replace(/^data:\s*/gm, '').trim());
+    parsed = JSON.parse(stripSse(text));
   } catch {
-    const frames = text.split('\n\n').map((f) => f.replace(/^data:\s*/, '').trim()).filter(Boolean);
+    const frames = text.split('\n\n').map(stripSse).filter(Boolean);
     for (let i = frames.length - 1; i >= 0; i--) {
       try { parsed = JSON.parse(frames[i]); break; } catch { /* skip */ }
     }
@@ -1744,6 +1748,94 @@ async function handleRoles(env: Env, request: Request): Promise<Response> {
   return json({ principal, role, assigned: true });
 }
 
+// ─── MCP-native discovery surface + well-known server card ─────────────────
+// The marketplace itself is an MCP server: agents can tools/list → list_servers
+// → get_server → call_tool and consume the catalog via the protocol. This is
+// the "marketplace for agents" premise, and it makes the marketplace
+// registrable in MCP directories.
+
+const MCP_SURFACE_TOOLS = [
+  {
+    name: 'list_servers',
+    description: 'List the MCP marketplace catalog (optional category/status filter).',
+    inputSchema: { type: 'object', properties: { category: { type: 'string', description: 'design|crypto|government|finance|social|infra|local' }, status: { type: 'string', description: 'live|unverified|degraded|down' } } },
+  },
+  {
+    name: 'get_server',
+    description: 'Get a server\'s detail + tool schemas by id.',
+    inputSchema: { type: 'object', properties: { id: { type: 'string', description: 'server id (e.g. p31-crypto, context7)' } }, required: ['id'] },
+  },
+  {
+    name: 'call_tool',
+    description: 'Invoke a tool on a registered server through the marketplace proxy (sanitized, audited, quota-gated).',
+    inputSchema: { type: 'object', properties: { server: { type: 'string' }, tool: { type: 'string' }, arguments: { type: 'object' } }, required: ['server', 'tool'] },
+  },
+]
+
+async function handleMcpSurface(env: Env, request: Request): Promise<Response> {
+  const bodyText = await request.text().catch(() => '')
+  let body: any = null
+  try { body = JSON.parse(bodyText || 'null') } catch { body = null }
+  const rpcId = body?.id ?? null
+  const method = body?.method ?? ''
+  const params = body?.params ?? {}
+
+  if (method === 'initialize') {
+    return json({ protocolVersion: PROBE_PROTOCOL_VERSION, capabilities: { tools: {} }, serverInfo: { name: 'p31-mcp-marketplace', version: '2.0.0' } })
+  }
+  if (method === 'notifications/initialized') {
+    return new Response(null, { status: 200, headers: corsHeaders() })
+  }
+  if (method === 'tools/list') {
+    return json({ tools: MCP_SURFACE_TOOLS })
+  }
+  if (method === 'tools/call') {
+    const name = params?.name
+    const args = params?.arguments ?? {}
+    if (name === 'list_servers') {
+      const u = new URL('https://registry.local/servers')
+      if (args.category) u.searchParams.set('category', args.category)
+      if (args.status) u.searchParams.set('status', args.status)
+      const res = await handleListServers(env, u)
+      const data: any = await res.json()
+      return json({ content: [{ type: 'text', text: JSON.stringify(data.servers ?? []) }] })
+    }
+    if (name === 'get_server') {
+      const entry = await findEntry(env, args.id)
+      if (!entry) return json({ content: [{ type: 'text', text: JSON.stringify({ error: 'server not found' }) }] })
+      const schemas = await getToolSchemas(env, entry)
+      return json({ content: [{ type: 'text', text: JSON.stringify({ id: entry.id, name: entry.name, endpoint: entry.endpoint, tools: schemas.map((t) => ({ name: t.name, description: t.description, inputSchema: t.inputSchema })) }) }] })
+    }
+    if (name === 'call_tool') {
+      const entry = await findEntry(env, args.server)
+      if (!entry) return json({ content: [{ type: 'text', text: JSON.stringify({ error: 'server not found' }) }] })
+      const res = await rpcCall(env, entry, 'tools/call', { name: args.tool, arguments: args.arguments ?? {} }, 10000)
+      if (res.error) return json({ content: [{ type: 'text', text: JSON.stringify({ error: res.error }) }], isError: true })
+      return json({ content: res.result?.content ?? [{ type: 'text', text: JSON.stringify(res.result) }] })
+    }
+    return json({ error: { code: -32602, message: `unknown tool: ${name}` }, id: rpcId }, 400)
+  }
+  if (method === 'ping') return json({})
+  return json({ error: { code: -32601, message: `method not found: ${method}` }, id: rpcId }, 400)
+}
+
+async function handleWellKnownMcp(env: Env): Promise<Response> {
+  const card = {
+    name: 'p31-mcp-marketplace',
+    description: 'P31 MCP Marketplace — governed catalog of MCP servers with live health, tool schemas, scanner verdicts, and a sandboxed call proxy. Discover via list_servers/get_server, invoke via call_tool.',
+    version: '2.0.0',
+    endpoint: 'https://mcp-registry.trimtab-signal.workers.dev/mcp',
+    transport: 'streamable-http',
+    serverInfo: { name: 'p31-mcp-marketplace', version: '2.0.0' },
+    capabilities: { tools: true },
+    repository: 'https://github.com/p31labs/P31-local-workspace',
+    homepage: 'https://mcp.p31ca.org',
+    keywords: ['mcp', 'marketplace', 'registry', 'sovereign', 'post-quantum'],
+    license: 'Apache-2.0',
+  }
+  return json(card)
+}
+
 // ─── HTML listing (kept light; the portal is the real UI) ──────────────────
 
 function htmlPage(summaries: Array<Awaited<ReturnType<typeof summary>>>): string {
@@ -1819,6 +1911,13 @@ async function handleRequest(request: Request, env: Env): Promise<Response> {
   }
 
     if (url.pathname === '/health') return handleHealth(env);
+
+  // MCP-native discovery surface + well-known card
+  if (url.pathname === '/mcp' && request.method === 'POST') return handleMcpSurface(env, request);
+  if (url.pathname === '/mcp' && request.method === 'GET') {
+    return new Response('event: endpoint\ndata: {"mcp":"p31-mcp-marketplace"}\n\n', { headers: { 'Content-Type': 'text/event-stream', ...corsHeaders() } });
+  }
+  if (url.pathname === '/.well-known/mcp/server-card.json' || url.pathname === '/.well-known/mcp') return handleWellKnownMcp(env);
 
   if (url.pathname === '/categories' && request.method === 'GET') return handleCategories(env);
 

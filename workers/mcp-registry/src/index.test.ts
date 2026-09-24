@@ -870,3 +870,42 @@ describe('REQUIRE_AUTH_WRITE flag (M1 gate)', () => {
     expect(readCall.status).toBe(200)
   })
 })
+
+describe('MCP-native discovery surface + well-known card', () => {
+  it('serves a well-known server card', async () => {
+    const fetchMock = buildFetch({})
+    vi.stubGlobal('fetch', fetchMock)
+    const env = envWith(fetchMock)
+    const res = await handleRequest(req('https://registry.local/.well-known/mcp/server-card.json'), env)
+    expect(res.status).toBe(200)
+    const card = await res.json()
+    expect(card.name).toBe('p31-mcp-marketplace')
+    expect(card.endpoint).toContain('/mcp')
+  })
+
+  it('handles initialize + tools/list on /mcp', async () => {
+    const fetchMock = buildFetch({})
+    vi.stubGlobal('fetch', fetchMock)
+    const env = envWith(fetchMock)
+    const init = await (await handleRequest(req('https://registry.local/mcp', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'initialize', params: { protocolVersion: '2025-11-25' } }) }), env)).json()
+    expect(init.protocolVersion).toBe('2025-11-25')
+    expect(init.serverInfo.name).toBe('p31-mcp-marketplace')
+
+    const list = await (await handleRequest(req('https://registry.local/mcp', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', id: 2, method: 'tools/list', params: {} }) }), env)).json()
+    expect(list.tools.map((t: any) => t.name)).toEqual(['list_servers', 'get_server', 'call_tool'])
+  })
+
+  it('list_servers + call_tool work through the MCP surface', async () => {
+    const fetchMock = buildFetch({ [REMOTE_URL]: { tools: GOOD_TOOLS, callResult: { ok: true } } })
+    vi.stubGlobal('fetch', fetchMock)
+    const env = envWith(fetchMock)
+    await handleRequest(req('https://registry.local/servers', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: 'mock-srv', name: 'Mock Server', endpoint: REMOTE_URL, category: 'crypto', description: 'x' }) }), env)
+
+    const ls = await (await handleRequest(req('https://registry.local/mcp', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', id: 3, method: 'tools/call', params: { name: 'list_servers', arguments: { category: 'crypto' } } }) }), env)).json()
+    const servers = JSON.parse(ls.content[0].text)
+    expect(servers.some((s: any) => s.id === 'mock-srv')).toBe(true)
+
+    const ct = await (await handleRequest(req('https://registry.local/mcp', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', id: 4, method: 'tools/call', params: { name: 'call_tool', arguments: { server: 'mock-srv', tool: 'read_stuff', arguments: {} } } }) }), env)).json()
+    expect(JSON.stringify(ct.content)).toContain('ok')
+  })
+})
