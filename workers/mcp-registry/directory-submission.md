@@ -61,3 +61,21 @@ review signatures, and a sanitized + audited call proxy. Agents discover it via
 - Some third-party servers exceed the 10s proxy timeout on cold start (grep.app
   first call) — surfaced as a clear error; retry usually succeeds. Bump the call
   timeout in `handleCall` if you want a longer budget.
+## Verified (2026-09-24) — API keys cannot drive registration
+Glama's MCP API (`https://glama.ai/api/mcp/v1/*`) is **read-only + telemetry**
+(GET servers/connectors/instances, POST telemetry/usage). There is **no
+registration endpoint** — the API key reads the directory, it does not publish.
+Smithery has **no public registration API** — publishing is GitHub-linked
+(smithery.yaml) or the "Add server" website flow.
+
+Registration therefore goes through each site's **UI**, which fetches the
+server-card from the URL you submit. The card + /mcp endpoint are verified live:
+
+- Card: `https://mcp-registry.trimtab-signal.workers.dev/.well-known/mcp/server-card.json`
+- MCP:  `https://mcp-registry.trimtab-signal.workers.dev/mcp` (SSE + initialize OK, CORS `*`)
+
+## Submission URLs (paste the card URL in the UI)
+- **Glama**: sign in → https://glama.ai/mcp → "Add server" → paste the card URL
+- **Smithery**: sign in → https://smithery.ai/servers → "Add server by URL" → paste `https://mcp-registry.trimtab-signal.workers.dev/mcp`
+- **PulseMCP**: https://www.pulsemcp.com/submit
+- **mcp.so**: https://mcp.so/submit
