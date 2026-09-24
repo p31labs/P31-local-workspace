@@ -6,13 +6,47 @@ compatibility_flags = ["nodejs_compat"]
 [observability]
 enabled = true
 
+# Secrets (ADMIN_TOKEN, REVIEW_SIGNING_KEY, REVIEW_SIGNING_KEY_PREV) are set via
+# `wrangler secret put` — never committed. Local dev values live in .dev.vars
+# (gitignored).
+
 [[kv_namespaces]]
 binding = "REGISTRY_KV"
 id = "0f08cff0858a40b49da004ba9d90f900"
 
 # Service bindings to the MCP servers this registry can reach internally.
 # Public workers.dev → workers.dev fetch fails DNS 1042; a service binding
-# routes the probe/call without the public URL hop.
+# routes the probe/call without the public URL hop. Each remote catalog entry
+# in the same Cloudflare account gets a binding here; entries without a
+# binding fall back to public fetch (custom domains work fine).
 [[services]]
 binding = "MUSIC_MAKER_MCP"
 service = "music-maker-mcp"
+
+[[services]]
+binding = "P31_CRYPTO_MCP"
+service = "p31-crypto-mcp"
+
+[[services]]
+binding = "P31_JUSTICE_HUB"
+service = "p31-justice-hub"
+
+[[services]]
+binding = "BROS"
+service = "bros"
+
+[[services]]
+binding = "DADS"
+service = "dads"
+
+[[services]]
+binding = "MARKETPLACE"
+service = "marketplace-mcp"
+
+[[services]]
+binding = "PHENIX_WALLET"
+service = "phenix-wallet-mcp"
+
+[[services]]
+binding = "X402_GATEWAY"
+service = "mcp-x402-gateway"

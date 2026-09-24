@@ -1,0 +1,25 @@
+name: mcp-registry
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  registry:
+    name: Registry Gates
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install dependencies
+        run: cd workers/mcp-registry && npm ci
+      - name: Typecheck
+        run: cd workers/mcp-registry && npx tsc --noEmit
+      - name: Unit tests
+        run: cd workers/mcp-registry && npx vitest run
+      - name: wrangler deploy --dry-run (bundle validation)
+        run: cd workers/mcp-registry && npx wrangler deploy --dry-run --outdir=/tmp/registry-bundle

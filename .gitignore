@@ -191,3 +191,6 @@ out/
 
 # The Loom — append-only event log (generated, never committed)
 .loom/
+
+# Wrangler local secrets (never commit)
+.dev.vars
