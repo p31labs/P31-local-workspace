@@ -846,3 +846,27 @@ describe('N4: Access JWT principal + group→role', () => {
     expect((await bad.json()).principal).toBe('anonymous')
   })
 })
+
+describe('REQUIRE_AUTH_WRITE flag (M1 gate)', () => {
+  it('rejects anonymous write calls only when the flag is on; identifies users pass', async () => {
+    const fetchMock = buildFetch({ [REMOTE_URL]: { tools: GOOD_TOOLS, callResult: { ok: true } } })
+    vi.stubGlobal('fetch', fetchMock)
+    const base = adminEnvWith(fetchMock)
+    await handleRequest(req('https://registry.local/servers', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: 'mock-srv', name: 'Mock Server', endpoint: REMOTE_URL, category: 'crypto', description: 'x' }) }), base)
+    const call = (env: any, principal?: string) => handleRequest(req('https://registry.local/servers/mock-srv/call', { method: 'POST', headers: { 'Content-Type': 'application/json', ...(principal ? { 'X-Principal': principal } : {}) }, body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/call', params: { name: 'create_thing', arguments: {} } }) }), env)
+
+    // default (flag off): anonymous write call succeeds
+    expect((await call(base)).status).toBe(200)
+
+    // flag on: anonymous write call → 401
+    const strict = { ...base, REQUIRE_AUTH_WRITE: '1' }
+    expect((await call(strict)).status).toBe(401)
+
+    // flag on + identified principal → 200
+    expect((await call(strict, 'ops@p31ca.org')).status).toBe(200)
+
+    // flag on + anonymous READ call → 200
+    const readCall = await handleRequest(req('https://registry.local/servers/mock-srv/call', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', id: 2, method: 'tools/call', params: { name: 'read_stuff', arguments: {} } }) }), strict)
+    expect(readCall.status).toBe(200)
+  })
+})

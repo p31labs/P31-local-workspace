@@ -16,9 +16,10 @@ findings; two moderate/informational recommendations below.
 `POST /servers/:id/call` relays write-risk tools (e.g. `pqc_sign`, `taler_pay`)
 to any caller without an authenticated principal. **Mitigation**: the proxied
 servers are already public endpoints, so the proxy is a convenience layer, not
-a privilege escalation; the sanitizer + per-tool quotas bound abuse. For
-strict deployments, set env `REQUIRE_AUTH_WRITE=1` (not yet implemented) to
-reject write calls whose principal is `anonymous`.
+a privilege escalation; the sanitizer + per-tool quotas bound abuse.
+**Implemented (default OFF)**: set `REQUIRE_AUTH_WRITE=1` (env var) to reject
+write calls whose principal is `anonymous` — use in deployments where the
+upstream is also private.
 
 ### I1 (info) — capability tokens are metadata, not enforcement
 The 60s `X-Capability-Token` is attached upstream and recorded in the audit
@@ -42,7 +43,7 @@ silently falls back to `X-Principal`/anonymous.
   via `X-Principal` cannot escalate privileges.
 
 ## Hardening backlog
-1. `REQUIRE_AUTH_WRITE` env flag (M1).
+1. `REQUIRE_AUTH_WRITE` env flag (M1) — **implemented, default OFF**, 2026-09-24.
 2. Capability-token verification hook on the upstream (I1) — requires server
    support.
 3. Retire `REVIEW_SIGNING_KEY_PREV` ~30 days after the 2026-09-24 rotation.

@@ -67,6 +67,8 @@ interface Env {
   CF_ACCESS_CERT_URL?: string;
   /** Cloudflare Access application audience tag (CF_ACCESS_AUD). */
   CF_ACCESS_AUD?: string;
+  /** When "1", reject anonymous write-risk proxy calls (strict deployments). */
+  REQUIRE_AUTH_WRITE?: string;
 }
 
 // ─── Types ──────────────────────────────────────────────────────────────────
@@ -1436,6 +1438,16 @@ async function handleCall(env: Env, id: string, request: Request): Promise<Respo
   const toolName = body?.params?.name ?? (typeof body?.name === 'string' ? body.name : 'unknown');
   const args = body?.params?.arguments ?? body?.arguments ?? {};
   const risk = toolRisk({ name: String(toolName) });
+
+  // REQUIRE_AUTH_WRITE — optional strict-mode gate: reject anonymous write-risk
+  // calls. Default OFF: the proxied servers are public, so this is for
+  // deployments where the upstream is also private (see SECURITY.md M1).
+  if (env.REQUIRE_AUTH_WRITE === '1' && risk === 'write') {
+    const principal = await resolvePrincipal(env, request)
+    if (principal === 'anonymous') {
+      return json({ error: { code: -32000, message: 'write tools require an authenticated principal' } }, 401)
+    }
+  }
 
   // N2 — runtime argument sanitization before the upstream call.
   const toolSchema = (await getToolSchemas(env, entry)).find((t) => t.name === toolName)?.inputSchema;
