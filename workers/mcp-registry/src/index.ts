@@ -1,6 +1,9 @@
 import { createPrivateKey, createPublicKey, sign, verify } from 'node:crypto';
 import { scanToolSurface } from './scanner';
 import { validateArgs, validateBodySize } from './sanitizer';
+import { LedgerLog } from './ledger-do';
+
+export { LedgerLog };
 
 /**
  * mcp-registry — P31 MCP Server Marketplace API (Phase 1)
@@ -36,6 +39,8 @@ const SUPPORTED_PROTOCOL_VERSIONS = new Set([
 
 interface Env {
   REGISTRY_KV: KVNamespace;
+  /** Durable Object binding for the audit + transparency hash chains (N3). */
+  LEDGER?: DurableObjectNamespace;
   /** Service bindings to same-account MCP workers (bypass DNS 1042). */
   MUSIC_MAKER_MCP?: Fetcher;
   P31_CRYPTO_MCP?: Fetcher;
@@ -672,6 +677,44 @@ function canonical(payload: unknown): string {
   return JSON.stringify(payload, Object.keys(payload as object).sort());
 }
 
+/** Resolve the DO stub for a given ledger ('audit' | 'transparency'). */
+function ledgerStub(env: Env, name: 'audit' | 'transparency'): LedgerLog | null {
+  if (!env.LEDGER) return null
+  try {
+    const id = env.LEDGER.idFromName(name)
+    return env.LEDGER.get(id) as unknown as LedgerLog
+  } catch {
+    return null
+  }
+}
+
+/**
+ * Read a ledger: DO is authoritative. If the DO is empty but KV holds history
+ * (pre-migration entries), backfill the DO from KV in chain order, then read
+ * from the DO. Falls back to KV if the DO is unavailable.
+ */
+async function readLedger(env: Env, name: 'audit' | 'transparency', kvLogKey: string, kvHeadKey: string): Promise<{ log: any[]; head: string; source: 'do' | 'kv' }> {
+  const doStub = ledgerStub(env, name)
+  const kvRaw = await env.REGISTRY_KV.get(kvLogKey)
+  const kvLog: any[] = kvRaw ? JSON.parse(kvRaw) : []
+  if (doStub) {
+    try {
+      if ((await doStub.size()) === 0 && kvLog.length > 0) {
+        const backfill = await doStub.backfill(kvLog)
+        if (!backfill.ok) {
+          // Chain couldn't be backfilled intact — read from KV to avoid loss.
+          return { log: kvLog, head: (await env.REGISTRY_KV.get(kvHeadKey)) ?? 'GENESIS', source: 'kv' }
+        }
+      }
+      const exported = await doStub.exportAll()
+      return { log: exported.log, head: exported.head, source: 'do' }
+    } catch {
+      /* DO unavailable — fall back to KV */
+    }
+  }
+  return { log: kvLog, head: (await env.REGISTRY_KV.get(kvHeadKey)) ?? 'GENESIS', source: 'kv' }
+}
+
 /** Canonical fields an auditor needs to recompute hash + signature. */
 function auditCanonical(e: Pick<AuditEntry, 'seq' | 'ts' | 'serverId' | 'tool' | 'risk' | 'args' | 'latencyMs' | 'status' | 'capToken'> & { prev: string }) {
   return canonical({ prev: e.prev, seq: e.seq, ts: e.ts, serverId: e.serverId, tool: e.tool, risk: e.risk, args: e.args, latencyMs: e.latencyMs, status: e.status, capToken: e.capToken });
@@ -691,6 +734,16 @@ async function appendAudit(env: Env, payload: Omit<AuditEntry, 'seq' | 'ts' | 'p
   if (log.length > AUDIT_MAX) log.splice(0, log.length - AUDIT_MAX);
   await env.REGISTRY_KV.put(KV_AUDIT_LOG, JSON.stringify(log));
   await env.REGISTRY_KV.put(KV_AUDIT_HEAD, hash);
+  // N3 — dual-write to the Durable Object (authoritative); KV stays as legacy
+  // fallback through the transition. DO failure is non-fatal for appends.
+  const doStub = ledgerStub(env, 'audit');
+  if (doStub) {
+    try {
+      await doStub.append(entry as any);
+    } catch {
+      /* DO unavailable — KV remains the durable store */
+    }
+  }
   return entry;
 }
 
@@ -744,6 +797,15 @@ async function appendTransparency(env: Env, ev: Omit<TransparencyEntry, 'seq' | 
   if (log.length > AUDIT_MAX) log.splice(0, log.length - AUDIT_MAX);
   await env.REGISTRY_KV.put(KV_TRANSPARENCY_LOG, JSON.stringify(log));
   await env.REGISTRY_KV.put(KV_TRANSPARENCY_HEAD, hash);
+  // N3 — dual-write to the transparency Durable Object (authoritative).
+  const doStub = ledgerStub(env, 'transparency');
+  if (doStub) {
+    try {
+      await doStub.append(entry as any);
+    } catch {
+      /* DO unavailable — KV remains the durable store */
+    }
+  }
 }
 
 // ─── A4: capability drift (contentHash of the tools/list surface) ──────────
@@ -1437,8 +1499,7 @@ async function handleReview(env: Env, id: string, request: Request): Promise<Res
 
 async function handleAudit(env: Env, request: Request): Promise<Response> {
   const verify = await verifyAuditChain(env);
-  const raw = await env.REGISTRY_KV.get(KV_AUDIT_LOG);
-  const log: AuditEntry[] = raw ? JSON.parse(raw) : [];
+  const { log, head, source } = await readLedger(env, 'audit', KV_AUDIT_LOG, KV_AUDIT_HEAD);
   const limit = Math.min(Number(new URL(request.url).searchParams.get('limit') ?? '50'), 500);
   const entries = log.slice(-limit);
   if (new URL(request.url).searchParams.get('verify') === 'signatures') {
@@ -1450,15 +1511,28 @@ async function handleAudit(env: Env, request: Request): Promise<Response> {
         valid: e.sig ? await ed25519Verify(env, { prev: e.prev, seq: e.seq, ts: e.ts, serverId: e.serverId, tool: e.tool, risk: e.risk, args: e.args, latencyMs: e.latencyMs, status: e.status, capToken: e.capToken }, e.sig) : false,
       })),
     );
-    return json({ chain: verify, head: (await env.REGISTRY_KV.get(KV_AUDIT_HEAD)) ?? 'GENESIS', entries, signatureCheck: sigResults });
+    return json({ chain: verify, head, entries, source, signatureCheck: sigResults });
   }
-  return json({ chain: verify, head: (await env.REGISTRY_KV.get(KV_AUDIT_HEAD)) ?? 'GENESIS', entries });
+  return json({ chain: verify, head, entries, source });
+}
+
+async function handleAuditExport(env: Env, _request: Request): Promise<Response> {
+  const { log, head, source } = await readLedger(env, 'audit', KV_AUDIT_LOG, KV_AUDIT_HEAD);
+  const lines = log.map((e) => JSON.stringify(e)).join('\n')
+  const body = `# P31 MCP audit chain — ${log.length} entries · head ${head} · source ${source}\n${lines}\n`
+  return new Response(body, {
+    status: 200,
+    headers: {
+      'Content-Type': 'text/plain; charset=utf-8',
+      'Content-Disposition': 'attachment; filename="p31-mcp-audit.ndjson"',
+      ...corsHeaders(),
+    },
+  })
 }
 
 async function handleTransparency(env: Env, request: Request): Promise<Response> {
   const limit = Math.min(Number(new URL(request.url).searchParams.get('limit') ?? '50'), 500);
-  const raw = await env.REGISTRY_KV.get(KV_TRANSPARENCY_LOG);
-  const log: TransparencyEntry[] = raw ? JSON.parse(raw) : [];
+  const { log, head, source } = await readLedger(env, 'transparency', KV_TRANSPARENCY_LOG, KV_TRANSPARENCY_HEAD);
   let prev = 'GENESIS';
   let ok = true;
   for (const e of log) {
@@ -1467,7 +1541,7 @@ async function handleTransparency(env: Env, request: Request): Promise<Response>
     if (recomputed !== e.hash) { ok = false; break; }
     prev = e.hash;
   }
-  return json({ chain: { ok, checked: log.length, head: prev }, events: log.slice(-limit) });
+  return json({ chain: { ok, checked: log.length, head: prev }, events: log.slice(-limit), source });
 }
 
 async function handleLogs(env: Env, request: Request): Promise<Response> {
@@ -1662,12 +1736,13 @@ async function handleRequest(request: Request, env: Env): Promise<Response> {
     return new Response(null, { status: 204, headers: corsHeaders() });
   }
 
-  if (url.pathname === '/health') return handleHealth(env);
+    if (url.pathname === '/health') return handleHealth(env);
 
   if (url.pathname === '/categories' && request.method === 'GET') return handleCategories(env);
 
   // Observability
   if (url.pathname === '/audit' && request.method === 'GET') return handleAudit(env, request);
+  if (url.pathname === '/audit/export' && request.method === 'GET') return handleAuditExport(env, request);
   if (url.pathname === '/transparency' && request.method === 'GET') return handleTransparency(env, request);
   if (url.pathname === '/logs' && request.method === 'GET') return handleLogs(env, request);
   if (url.pathname === '/errors' && request.method === 'GET') return handleErrors(env, request);
@@ -1766,6 +1841,8 @@ export const __internal = {
   getCapabilityMeta,
   validateArgs,
   validateBodySize,
+  ledgerStub,
+  readLedger,
   getRole,
   resolvePrincipal,
   requireRole,

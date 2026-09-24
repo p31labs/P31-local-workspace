@@ -697,3 +697,77 @@ describe('N2: runtime argument sanitization via the proxy', () => {
     expect(res.status).toBe(413)
   })
 })
+
+// ─── N3: Durable Object-backed ledger ───────────────────────────────────────
+function mockLedgerNamespace() {
+  const instances = new Map<string, { log: any[]; head: string }>()
+  const make = (id: string) => ({
+    append: async (e: any) => {
+      const s = instances.get(id) ?? { log: [], head: 'GENESIS' }
+      if (e.prev !== s.head) return { ok: false, reason: 'prev mismatch' }
+      s.log.push(e)
+      s.head = e.hash
+      instances.set(id, s)
+      return { ok: true }
+    },
+    backfill: async (entries: any[]) => {
+      const s = instances.get(id) ?? { log: [], head: 'GENESIS' }
+      let prev = s.head
+      for (const e of entries) { if (e.prev !== prev) return { ok: false, reason: 'break' }; s.log.push(e); prev = e.hash }
+      instances.set(id, s)
+      return { ok: true, written: s.log.length }
+    },
+    exportAll: async () => ({ log: instances.get(id)?.log ?? [], head: instances.get(id)?.head ?? 'GENESIS' }),
+    size: async () => instances.get(id)?.log.length ?? 0,
+  })
+  const getStub = (id: string) => make(id)
+  return { idFromName: (name: string) => name, get: (id: string) => getStub(String(id)) }
+}
+
+describe('N3: ledger dual-write + export', () => {
+  it('dual-writes audit entries to the DO and serves them as the read source', async () => {
+    const fetchMock = buildFetch({ [REMOTE_URL]: { tools: GOOD_TOOLS, callResult: { ok: true } } })
+    vi.stubGlobal('fetch', fetchMock)
+    const env = { ...adminEnvWith(fetchMock), LEDGER: mockLedgerNamespace() as any }
+    await handleRequest(req('https://registry.local/servers', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: 'mock-srv', name: 'Mock Server', endpoint: REMOTE_URL, category: 'crypto', description: 'x' }) }), env)
+    await handleRequest(req('https://registry.local/servers/mock-srv/call', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/call', params: { name: 'read_stuff', arguments: {} } }) }), env)
+
+    const audit = await (await handleRequest(req('https://registry.local/audit'), env)).json()
+    expect(audit.source).toBe('do')
+    expect(audit.entries.length).toBe(1)
+
+    const exported = await handleRequest(req('https://registry.local/audit/export'), env)
+    expect(exported.status).toBe(200)
+    const text = await exported.text()
+    expect(text).toContain('read_stuff')
+    expect(text).toContain('head')
+  })
+
+  it('backfills the DO from KV when the DO is empty (migration)', async () => {
+    const fetchMock = buildFetch({ [REMOTE_URL]: { tools: GOOD_TOOLS, callResult: { ok: true } } })
+    vi.stubGlobal('fetch', fetchMock)
+    // First: no LEDGER bound → writes land in KV only.
+    const kvEnv = adminEnvWith(fetchMock)
+    await handleRequest(req('https://registry.local/servers', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: 'mock-srv', name: 'Mock Server', endpoint: REMOTE_URL, category: 'crypto', description: 'x' }) }), kvEnv)
+    await handleRequest(req('https://registry.local/servers/mock-srv/call', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/call', params: { name: 'read_stuff', arguments: {} } }) }), kvEnv)
+
+    // Now attach an empty DO and read → it backfills from KV and serves from DO.
+    const doEnv = { ...kvEnv, LEDGER: mockLedgerNamespace() as any }
+    const audit = await (await handleRequest(req('https://registry.local/audit'), doEnv)).json()
+    expect(audit.source).toBe('do')
+    expect(audit.entries.length).toBe(1)
+    const stubSize = await (doEnv.LEDGER.get('audit') as any).size()
+    expect(stubSize).toBe(1)
+  })
+
+  it('falls back to KV when no DO is bound', async () => {
+    const fetchMock = buildFetch({ [REMOTE_URL]: { tools: GOOD_TOOLS, callResult: { ok: true } } })
+    vi.stubGlobal('fetch', fetchMock)
+    const env = adminEnvWith(fetchMock) // no LEDGER
+    await handleRequest(req('https://registry.local/servers', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: 'mock-srv', name: 'Mock Server', endpoint: REMOTE_URL, category: 'crypto', description: 'x' }) }), env)
+    await handleRequest(req('https://registry.local/servers/mock-srv/call', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/call', params: { name: 'read_stuff', arguments: {} } }) }), env)
+    const audit = await (await handleRequest(req('https://registry.local/audit'), env)).json()
+    expect(audit.source).toBe('kv')
+    expect(audit.entries.length).toBe(1)
+  })
+})
