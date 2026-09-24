@@ -697,22 +697,40 @@ async function readLedger(env: Env, name: 'audit' | 'transparency', kvLogKey: st
   const doStub = ledgerStub(env, name)
   const kvRaw = await env.REGISTRY_KV.get(kvLogKey)
   const kvLog: any[] = kvRaw ? JSON.parse(kvRaw) : []
+  const kvHead = (await env.REGISTRY_KV.get(kvHeadKey)) ?? 'GENESIS'
   if (doStub) {
     try {
       if ((await doStub.size()) === 0 && kvLog.length > 0) {
+        // Cold start / migration: replay the full KV chain into the DO.
         const backfill = await doStub.backfill(kvLog)
         if (!backfill.ok) {
           // Chain couldn't be backfilled intact — read from KV to avoid loss.
-          return { log: kvLog, head: (await env.REGISTRY_KV.get(kvHeadKey)) ?? 'GENESIS', source: 'kv' }
+          return { log: kvLog, head: kvHead, source: 'kv' }
         }
       }
       const exported = await doStub.exportAll()
+      // Reconcile: a transient DO append failure leaves a hole (size() > 0,
+      // so the empty-only backfill above never runs). If the DO head diverges
+      // from KV, replay the KV suffix after the DO's existing prefix; the DO
+      // backfill verifies prev === head, so it can only repair — never fork.
+      if (exported.head !== kvHead) {
+        const suffix = kvLog.slice(exported.log.length)
+        if (suffix.length > 0) {
+          const reconciled = await doStub.backfill(suffix)
+          if (!reconciled.ok) {
+            // DO is unrecoverable this pass — serve the intact KV chain.
+            return { log: kvLog, head: kvHead, source: 'kv' }
+          }
+          const reExported = await doStub.exportAll()
+          return { log: reExported.log, head: reExported.head, source: 'do' }
+        }
+      }
       return { log: exported.log, head: exported.head, source: 'do' }
     } catch {
       /* DO unavailable — fall back to KV */
     }
   }
-  return { log: kvLog, head: (await env.REGISTRY_KV.get(kvHeadKey)) ?? 'GENESIS', source: 'kv' }
+  return { log: kvLog, head: kvHead, source: 'kv' }
 }
 
 /** Canonical fields an auditor needs to recompute hash + signature. */
@@ -747,16 +765,16 @@ async function appendAudit(env: Env, payload: Omit<AuditEntry, 'seq' | 'ts' | 'p
   return entry;
 }
 
-async function verifyAuditChain(env: Env): Promise<{ ok: boolean; checked: number; head: string; signed: number; sigOk: boolean }> {
-  const raw = await env.REGISTRY_KV.get(KV_AUDIT_LOG);
-  const log: AuditEntry[] = raw ? JSON.parse(raw) : [];
+async function verifyAuditChain(env: Env, log?: AuditEntry[]): Promise<{ ok: boolean; checked: number; head: string; signed: number; sigOk: boolean }> {
+  const raw = log ? null : await env.REGISTRY_KV.get(KV_AUDIT_LOG);
+  const entries: AuditEntry[] = log ?? (raw ? JSON.parse(raw) : []);
   let prev = 'GENESIS';
   let signed = 0;
   let sigOk = true;
-  for (const e of log) {
+  for (const e of entries) {
     const body = { prev, seq: e.seq, ts: e.ts, serverId: e.serverId, tool: e.tool, risk: e.risk, args: e.args, latencyMs: e.latencyMs, status: e.status, capToken: e.capToken };
     const recomputed = await sha256Hex(canonical(body));
-    if (recomputed !== e.hash) return { ok: false, checked: log.length, head: prev, signed, sigOk };
+    if (recomputed !== e.hash) return { ok: false, checked: entries.length, head: prev, signed, sigOk };
     if (e.sig) {
       signed += 1;
       const good = await ed25519Verify(env, body, e.sig);
@@ -764,7 +782,7 @@ async function verifyAuditChain(env: Env): Promise<{ ok: boolean; checked: numbe
     }
     prev = e.hash;
   }
-  return { ok: true, checked: log.length, head: prev, signed, sigOk };
+  return { ok: true, checked: entries.length, head: prev, signed, sigOk };
 }
 
 // ─── Governance: transparency lifecycle log (server events) ────────────────
@@ -1498,8 +1516,8 @@ async function handleReview(env: Env, id: string, request: Request): Promise<Res
 // ─── Observability: audit, structured logs, error ingestion ────────────────
 
 async function handleAudit(env: Env, request: Request): Promise<Response> {
-  const verify = await verifyAuditChain(env);
   const { log, head, source } = await readLedger(env, 'audit', KV_AUDIT_LOG, KV_AUDIT_HEAD);
+  const verify = await verifyAuditChain(env, log); // chain over the returned source
   const limit = Math.min(Number(new URL(request.url).searchParams.get('limit') ?? '50'), 500);
   const entries = log.slice(-limit);
   if (new URL(request.url).searchParams.get('verify') === 'signatures') {

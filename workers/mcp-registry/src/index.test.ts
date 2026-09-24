@@ -699,8 +699,12 @@ describe('N2: runtime argument sanitization via the proxy', () => {
 })
 
 // ─── N3: Durable Object-backed ledger ───────────────────────────────────────
-function mockLedgerNamespace() {
+function mockLedgerNamespace(seed?: Record<string, any[]>) {
   const instances = new Map<string, { log: any[]; head: string }>()
+  for (const [id, entries] of Object.entries(seed ?? {})) {
+    const last = entries[entries.length - 1]
+    instances.set(id, { log: entries, head: last ? last.hash : 'GENESIS' })
+  }
   const make = (id: string) => ({
     append: async (e: any) => {
       const s = instances.get(id) ?? { log: [], head: 'GENESIS' }
@@ -769,5 +773,30 @@ describe('N3: ledger dual-write + export', () => {
     const audit = await (await handleRequest(req('https://registry.local/audit'), env)).json()
     expect(audit.source).toBe('kv')
     expect(audit.entries.length).toBe(1)
+  })
+})
+
+describe('N3: DO reconciliation', () => {
+  it('replays the KV suffix when the DO has a hole (head divergence)', async () => {
+    // Build KV-only history [1,2,3] first (no LEDGER bound).
+    const fetchMock = buildFetch({ [REMOTE_URL]: { tools: GOOD_TOOLS, callResult: { ok: true } } })
+    vi.stubGlobal('fetch', fetchMock)
+    const kvEnv = adminEnvWith(fetchMock)
+    await handleRequest(req('https://registry.local/servers', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: 'mock-srv', name: 'Mock Server', endpoint: REMOTE_URL, category: 'crypto', description: 'x' }) }), kvEnv)
+    for (let i = 0; i < 3; i++) {
+      await handleRequest(req('https://registry.local/servers/mock-srv/call', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', id: i + 1, method: 'tools/call', params: { name: 'read_stuff', arguments: { n: i } } }) }), kvEnv)
+    }
+    const kvRaw = await kvEnv.REGISTRY_KV.get('audit:log')
+    const kvLog = JSON.parse(kvRaw)
+
+    // Now attach a DO pre-seeded with ONLY the first entry (simulating a hole).
+    const seedEnv = { ...kvEnv, LEDGER: mockLedgerNamespace({ audit: [kvLog[0]] }) as any }
+    const audit = await (await handleRequest(req('https://registry.local/audit'), seedEnv)).json()
+    expect(audit.source).toBe('do')
+    expect(audit.entries.length).toBe(3)
+    expect(audit.chain.ok).toBe(true)
+    expect(audit.chain.checked).toBe(3)
+    const stub = (seedEnv.LEDGER.get('audit') as any)
+    expect(await stub.size()).toBe(3)
   })
 })
