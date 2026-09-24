@@ -242,3 +242,27 @@ All logs go to `~/.p31/yardmaster-cron.log`.
 - Money stream scripts run as the `p31` user, no elevated privileges
 - `.env.master` contains all secrets, sourced at deploy time (never committed)
 - Onboarding portal is read-only (no write endpoints); state is dumped, not modified
+
+---
+
+## 11. mcp-registry operations (marketplace backend)
+
+Worker: `workers/mcp-registry` — deploy with `pnpm --dir workers/mcp-registry deploy` (or `wrangler deploy` in that dir). CI: `.github/workflows/mcp-registry.yml` (Node 22; wrangler v4 requires ≥22).
+
+### Secrets (never committed)
+Set via `wrangler secret put`, values in `.dev.vars` (gitignored) for local dev:
+- `ADMIN_TOKEN` — admin bearer for `/roles`, `/logs`, `/errors`, `/anomalies`, `/servers/pending`.
+- `REVIEW_SIGNING_KEY` — base64 32-byte Ed25519 seed for audit/review/capability-token signing.
+- `REVIEW_SIGNING_KEY_PREV` — previous seed, kept for verifying historical audit entries after rotation. Retire after a calendar window (e.g., 30 days post-rotation).
+
+### Durable Object (N3)
+`LEDGER` binding backs the audit + transparency hash chains (`LedgerLog`, one instance per log name `audit`/`transparency`). Dual-write KV + DO during transition; `readLedger` reconciles DO holes from the KV suffix and falls back to KV if the DO is unavailable. `GET /audit/export` streams the signed NDJSON chain.
+
+### Cloudflare Access (N4)
+When `mcp.p31ca.org` is behind Access, set `CF_ACCESS_CERT_URL` + `CF_ACCESS_AUD`. The registry verifies `Cf-Access-Jwt-Assertion`, resolves the email principal, and maps IdP groups to roles via `POST /roles {"group": "...", "role": "reviewer"}`. Without Access, `X-Principal` / `CF-Access-Authenticated-User-Email` still work.
+
+### Key endpoints
+`GET /servers` `GET /categories` `GET /servers/:id` `GET /servers/:id/tools` `GET /servers/:id/health`
+`GET /servers/:id/call` (proxy) `POST /servers` (register) `POST /servers/:id/review`
+`GET /servers/pending` `GET /me` `POST /roles` `GET /audit` `GET /audit/export`
+`GET /transparency` `GET /logs` `GET /errors` `GET /anomalies` `POST /ingest/errors`
