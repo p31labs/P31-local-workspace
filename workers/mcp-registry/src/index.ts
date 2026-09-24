@@ -1825,21 +1825,45 @@ async function handleMcpSurface(env: Env, request: Request): Promise<Response> {
   return json({ error: { code: -32601, message: `method not found: ${method}` }, id: rpcId }, 400)
 }
 
-async function handleWellKnownMcp(env: Env): Promise<Response> {
-  const card = {
+function wellKnownCard() {
+  return {
+    $schema: 'https://static.modelcontextprotocol.io/schemas/mcp-server-card/v1.json',
     name: 'p31-mcp-marketplace',
-    description: 'P31 MCP Marketplace — governed catalog of MCP servers with live health, tool schemas, scanner verdicts, and a sandboxed call proxy. Discover via list_servers/get_server, invoke via call_tool.',
     version: '2.0.0',
-    endpoint: 'https://mcp-registry.trimtab-signal.workers.dev/mcp',
-    transport: 'streamable-http',
+    description: 'P31 MCP Marketplace — governed catalog of MCP servers with live health, tool schemas, scanner verdicts, and a sandboxed call proxy. Discover via list_servers/get_server, invoke via call_tool.',
+    protocolVersion: PROBE_PROTOCOL_VERSION,
     serverInfo: { name: 'p31-mcp-marketplace', version: '2.0.0' },
+    transport: { type: 'streamable-http', endpoint: 'https://mcp-registry.trimtab-signal.workers.dev/mcp' },
     capabilities: { tools: true },
+    authentication: { required: false },
     repository: 'https://github.com/p31labs/P31-local-workspace',
     homepage: 'https://mcp.p31ca.org',
     keywords: ['mcp', 'marketplace', 'registry', 'sovereign', 'post-quantum'],
     license: 'Apache-2.0',
   }
-  return json(card)
+}
+
+async function handleWellKnownMcp(env: Env): Promise<Response> {
+  return json(wellKnownCard())
+}
+
+/** Agentic Resource Discovery (ARD) — next-gen discovery protocol manifest. */
+async function handleArd(env: Env): Promise<Response> {
+  const manifest = {
+    $schema: 'https://ard.spec.community/v0.1/schema.json',
+    version: 1,
+    displayName: 'P31 MCP Marketplace',
+    entryPoints: [
+      {
+        name: 'p31-mcp-marketplace',
+        type: 'mcp-server',
+        description: 'Governed catalog of MCP servers — discover (list_servers), inspect (get_server), and invoke (call_tool) with live health, scanner verdicts, and Ed25519 review signatures.',
+        url: 'https://mcp-registry.trimtab-signal.workers.dev/.well-known/mcp/server-card.json',
+        queries: ['mcp marketplace', 'find an mcp server', 'discover mcp tools', 'call an mcp tool'],
+      },
+    ],
+  }
+  return json(manifest)
 }
 
 // ─── HTML listing (kept light; the portal is the real UI) ──────────────────
@@ -1923,7 +1947,10 @@ async function handleRequest(request: Request, env: Env): Promise<Response> {
   if (url.pathname === '/mcp' && request.method === 'GET') {
     return new Response('event: endpoint\ndata: {"mcp":"p31-mcp-marketplace"}\n\n', { headers: { 'Content-Type': 'text/event-stream', ...corsHeaders() } });
   }
-  if (url.pathname === '/.well-known/mcp/server-card.json' || url.pathname === '/.well-known/mcp') return handleWellKnownMcp(env);
+  // Server card served at every SEP-1649/SEP-2127 well-known alias.
+  if (url.pathname === '/.well-known/mcp/server-card.json' || url.pathname === '/.well-known/mcp/server.json' || url.pathname === '/.well-known/mcp.json' || url.pathname === '/.well-known/mcp') return handleWellKnownMcp(env);
+  // Agentic Resource Discovery manifest.
+  if (url.pathname === '/.well-known/ard.json') return handleArd(env);
 
   if (url.pathname === '/categories' && request.method === 'GET') return handleCategories(env);
 

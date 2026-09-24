@@ -807,7 +807,7 @@ describe('N4: Access JWT principal + group→role', () => {
     // RSA key + JWKS + signed JWT (mocks Cloudflare Access).
     const { publicKey, privateKey } = await (await import('jose')).generateKeyPair('RS256')
     const jwks = { keys: [(await (await import('jose')).exportJWK(publicKey))] }
-    const token = await new (await import('jose')).SignJWT({ email: 'ops@p31ca.org', groups: ['p31-reviewers', 'everyone'] })
+    const token = await new (await import('jose')).SignJWT({ email: 'willyj1587@gmail.com', groups: ['p31-reviewers', 'everyone'] })
       .setProtectedHeader({ alg: 'RS256' })
       .setIssuedAt()
       .setExpirationTime('1h')
@@ -831,7 +831,7 @@ describe('N4: Access JWT principal + group→role', () => {
 
     // with token → email principal, viewer role (no group mapping yet)
     const me1 = await (await handleRequest(req('https://registry.local/me', { headers }), env)).json()
-    expect(me1.principal).toBe('ops@p31ca.org')
+    expect(me1.principal).toBe('willyj1587@gmail.com')
     expect(me1.role).toBe('viewer')
 
     // map the IdP group → reviewer
@@ -863,7 +863,7 @@ describe('REQUIRE_AUTH_WRITE flag (M1 gate)', () => {
     expect((await call(strict)).status).toBe(401)
 
     // flag on + identified principal → 200
-    expect((await call(strict, 'ops@p31ca.org')).status).toBe(200)
+    expect((await call(strict, 'willyj1587@gmail.com')).status).toBe(200)
 
     // flag on + anonymous READ call → 200
     const readCall = await handleRequest(req('https://registry.local/servers/mock-srv/call', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', id: 2, method: 'tools/call', params: { name: 'read_stuff', arguments: {} } }) }), strict)
@@ -880,7 +880,8 @@ describe('MCP-native discovery surface + well-known card', () => {
     expect(res.status).toBe(200)
     const card = await res.json()
     expect(card.name).toBe('p31-mcp-marketplace')
-    expect(card.endpoint).toContain('/mcp')
+    expect(card.transport.endpoint).toContain('/mcp')
+    expect(card.protocolVersion).toBe('2025-11-25')
   })
 
   it('handles initialize + tools/list on /mcp', async () => {

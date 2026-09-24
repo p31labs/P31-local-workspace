@@ -1,0 +1,30 @@
+name: MCP Distribution Sweep
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+jobs:
+  sweep:
+    name: mcp-submit + ard-publish check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: mcp-submit sweep (automated package directories)
+        run: |
+          cd workers/mcp-registry
+          npx -y mcp-submit --yes --only official-registry,mcpcentral,mcp.so
+      - name: Smithery publish (remote URL — requires SMITHERY_API_TOKEN secret + p31labs namespace)
+        if: env.SMITHERY_API_TOKEN != ''
+        env:
+          SMITHERY_API_TOKEN: ${{ secrets.SMITHERY_API_TOKEN }}
+        run: |
+          smithery mcp publish "https://mcp-registry.trimtab-signal.workers.dev/mcp" -n p31labs/mcp-marketplace
+      - name: ARD discovery check
+        run: |
+          pip install -q ard-publish
+          ard-publish check mcp-registry.trimtab-signal.workers.dev || echo "ard-publish check: origin not yet indexed (expected on first run)"

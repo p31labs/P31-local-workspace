@@ -79,3 +79,21 @@ server-card from the URL you submit. The card + /mcp endpoint are verified live:
 - **Smithery**: sign in → https://smithery.ai/servers → "Add server by URL" → paste `https://mcp-registry.trimtab-signal.workers.dev/mcp`
 - **PulseMCP**: https://www.pulsemcp.com/submit
 - **mcp.so**: https://mcp.so/submit
+
+## Verified remote-registration mechanics (2026-09-24)
+- **Smithery CLI works** for remote URLs — but the **namespace must already exist**,
+  and it's GitHub-account-linked (not created by the API key):
+  `smithery mcp publish "https://mcp-registry.trimtab-signal.workers.dev/mcp" -n p31labs/mcp-marketplace`
+  → 404 "Namespace not found" until `p31labs` exists (connect GitHub via `smithery auth login`).
+- **Glama**: no registration API — "Add server" UI, or `glama.json` in the repo for auto-crawl (~24h).
+- **mcp-submit**: detects the local npm package (stdio). Remote-HTTP servers use Smithery CLI
+  for the URL publish; mcp-submit covers the package-based directories (official/MCPCentral/mcp.so/awesome lists).
+
+## Discovery artifacts (live, verified)
+- Server card at all well-known aliases: `/.well-known/mcp.json`, `/.well-known/mcp/server-card.json`,
+  `/.well-known/mcp/server.json`, `/.well-known/mcp` (SEP-1649 + SEP-2127 fields: `$schema`, `protocolVersion`,
+  `serverInfo`, `transport`, `capabilities`, `authentication.required`).
+- ARD manifest: `/.well-known/ard.json` (mcp-server entry → server card).
+- Glama: `glama.json` at repo root (maintainers: p31labs).
+- Official registry: `server.json` (`io.github.p31labs/mcp-marketplace`) + `.github/workflows/publish-mcp.yml` (OIDC).
+- CI sweep: `.github/workflows/mcp-distribution-sweep.yml` (mcp-submit + smithery CLI + ard-publish on `v*` tags).
