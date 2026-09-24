@@ -1847,19 +1847,23 @@ async function handleWellKnownMcp(env: Env): Promise<Response> {
   return json(wellKnownCard())
 }
 
-/** Agentic Resource Discovery (ARD) — next-gen discovery protocol manifest. */
+/** Agentic Resource Discovery (ARD) — canonical manifest (spec v1.0). */
 async function handleArd(env: Env): Promise<Response> {
   const manifest = {
-    $schema: 'https://ard.spec.community/v0.1/schema.json',
-    version: 1,
-    displayName: 'P31 MCP Marketplace',
-    entryPoints: [
+    specVersion: '1.0',
+    host: {
+      displayName: 'mcp-registry.trimtab-signal.workers.dev',
+      identifier: 'did:web:mcp-registry.trimtab-signal.workers.dev',
+    },
+    entries: [
       {
-        name: 'p31-mcp-marketplace',
-        type: 'mcp-server',
-        description: 'Governed catalog of MCP servers — discover (list_servers), inspect (get_server), and invoke (call_tool) with live health, scanner verdicts, and Ed25519 review signatures.',
+        identifier: 'urn:air:mcp-registry.trimtab-signal.workers.dev:mcp:p31-mcp-marketplace',
+        displayName: 'P31 MCP Marketplace',
+        type: 'application/mcp-server-card+json',
         url: 'https://mcp-registry.trimtab-signal.workers.dev/.well-known/mcp/server-card.json',
-        queries: ['mcp marketplace', 'find an mcp server', 'discover mcp tools', 'call an mcp tool'],
+        description: 'Governed catalog of MCP servers — discover, inspect, and invoke tools via the marketplace proxy.',
+        representativeQueries: ['find an MCP server for a task', 'discover MCP tools', 'call an MCP tool'],
+        trustManifest: { identity: 'did:web:mcp-registry.trimtab-signal.workers.dev' },
       },
     ],
   }
@@ -1951,6 +1955,10 @@ async function handleRequest(request: Request, env: Env): Promise<Response> {
   if (url.pathname === '/.well-known/mcp/server-card.json' || url.pathname === '/.well-known/mcp/server.json' || url.pathname === '/.well-known/mcp.json' || url.pathname === '/.well-known/mcp') return handleWellKnownMcp(env);
   // Agentic Resource Discovery manifest.
   if (url.pathname === '/.well-known/ard.json') return handleArd(env);
+  // Robots with the ARD Agentmap advertisement (helps crawl-based discovery).
+  if (url.pathname === '/robots.txt' && request.method === 'GET') {
+    return new Response('User-agent: *\nAllow: /\nAgentmap: https://mcp-registry.trimtab-signal.workers.dev/.well-known/ard.json\n', { headers: { 'Content-Type': 'text/plain', ...corsHeaders() } });
+  }
 
   if (url.pathname === '/categories' && request.method === 'GET') return handleCategories(env);
 

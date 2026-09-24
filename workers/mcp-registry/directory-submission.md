@@ -103,3 +103,18 @@ The Smithery/Glama/GitHub identity is **trimtab-signal**, not p31labs.
 - Smithery: `trimtab-signal/mcp-marketplace` — **published successfully** (deployment PENDING).
 - server.json namespace: `io.github.trimtab-signal/mcp-marketplace`.
 - glama.json maintainers: `["trimtab-signal"]`.
+
+## Verified 2026-09-24 (round 2)
+- **Official MCP Registry is stdio-only**: the schema rejects `transport.type != "stdio"`
+  in `packages`. Remote HTTP servers are NOT publishable there. Removed
+  `server.json` + `publish-mcp.yml` (dead for a remote server).
+- **Smithery published**: `trimtab-signal/mcp-marketplace` created, release accepted
+  (deployment was PENDING — confirm the tool list renders in the Smithery UI).
+- **ARD manifest** rebuilt with `ard-publish init` (canonical spec v1.0 shape):
+  `/.well-known/ard.json` + `robots.txt` `Agentmap:` line. `ard-publish validate` = 0 errors.
+  **Submitted + indexed** on Neuronto (`ard-publish submit`). Discovery audit:
+  grade C 70/100 — Neuronto returns the domain; 5/6 registries not yet (propagation).
+- **mcp-submit sweep removed from CI**: it detects the local npm package as stdio
+  (wrong for a remote HTTP server). The sweep now does Smithery CLI publish + ARD submit only.
+- Remaining: confirm Smithery deployment in the UI; GitHub Actions runners are blocked
+  by the account's billing (nothing can run in CI until that's resolved).
