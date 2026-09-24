@@ -1,4 +1,5 @@
 import { createPrivateKey, createPublicKey, sign, verify } from 'node:crypto';
+import * as jose from 'jose';
 import { scanToolSurface } from './scanner';
 import { validateArgs, validateBodySize } from './sanitizer';
 import { LedgerLog } from './ledger-do';
@@ -62,6 +63,10 @@ interface Env {
   SCANNER_LLM_ENABLED?: string;
   /** Principal reported when authenticating via ADMIN_TOKEN (default admin-token). */
   ADMIN_PRINCIPAL?: string;
+  /** Cloudflare Access JWKS endpoint (https://<team>.cloudflareaccess.com/cdn-cgi/access/certs). */
+  CF_ACCESS_CERT_URL?: string;
+  /** Cloudflare Access application audience tag (CF_ACCESS_AUD). */
+  CF_ACCESS_AUD?: string;
 }
 
 // ─── Types ──────────────────────────────────────────────────────────────────
@@ -428,6 +433,7 @@ const KV_TRANSPARENCY_HEAD = 'transparency:head';
 const KV_BASELINE_PREFIX = 'baseline:';
 const KV_BASELINE_SCHEMAS_PREFIX = 'baseline:schemas:';
 const KV_ROLES_PREFIX = 'roles:authn:';
+const KV_GROUP_ROLES_PREFIX = 'roles:mapping:';
 const KV_TOOLRATE_PREFIX = 'ratelimit:tool:';
 const KV_REJECTIONS_PREFIX = 'rejections:';
 const KV_TTL = 300; // 5 minutes for tool schemas
@@ -962,7 +968,36 @@ async function emitOtlpEvent(env: Env, name: string, attrs: Record<string, strin
 type Role = 'viewer' | 'publisher' | 'reviewer' | 'admin'
 const ROLE_RANK: Record<Role, number> = { viewer: 0, publisher: 1, reviewer: 2, admin: 3 }
 
-function resolvePrincipal(request: Request): string {
+/**
+ * Verify a Cloudflare Access JWT (Cf-Access-Jwt-Assertion) against the
+ * configured JWKS + audience. Returns the principal (email/sub) and IdP
+ * groups, or null when no token/config is present or verification fails.
+ * The JWKS is cached in KV via jose's jwksCache so Access tokens verify
+ * without a network fetch on every request.
+ */
+const KV_ACCESS_JWKS = 'access:jwks'
+
+async function verifyAccessJwt(env: Env, request: Request): Promise<{ principal: string; groups: string[] } | null> {
+  const token = request.headers.get('Cf-Access-Jwt-Assertion')
+  const certUrl = env.CF_ACCESS_CERT_URL
+  const aud = env.CF_ACCESS_AUD
+  if (!token || !certUrl || !aud) return null
+  try {
+    const raw = await env.REGISTRY_KV.get(KV_ACCESS_JWKS)
+    const cache: jose.JWKSCacheInput = raw ? JSON.parse(raw) : {}
+    const jwks = jose.createRemoteJWKSet(new URL(certUrl), { [jose.jwksCache]: cache })
+    const { payload } = await jose.jwtVerify(token, jwks, { audience: aud })
+    await env.REGISTRY_KV.put(KV_ACCESS_JWKS, JSON.stringify(cache), { expirationTtl: 3600 })
+    const groups = Array.isArray(payload.groups) ? payload.groups.map(String) : []
+    return { principal: String(payload.email ?? payload.sub ?? 'access-user'), groups }
+  } catch {
+    return null
+  }
+}
+
+async function resolvePrincipal(env: Env, request: Request): Promise<string> {
+  const access = await verifyAccessJwt(env, request)
+  if (access) return access.principal
   const x = request.headers.get('X-Principal')?.trim()
   if (x) return x
   const cf = request.headers.get('CF-Access-Authenticated-User-Email')?.trim()
@@ -974,7 +1009,17 @@ async function getRole(env: Env, request: Request): Promise<Role> {
   const token = env.ADMIN_TOKEN
   const bearer = request.headers.get('Authorization')?.replace(/^Bearer\s+/i, '') ?? request.headers.get('X-Admin-Token')
   if (token && bearer === token) return 'admin'
-  const principal = resolvePrincipal(request)
+  // N4 — IdP groups → roles via roles:mapping:<group> (highest wins).
+  const access = await verifyAccessJwt(env, request)
+  if (access) {
+    let best: Role = 'viewer'
+    for (const g of access.groups) {
+      const stored = await env.REGISTRY_KV.get(KV_GROUP_ROLES_PREFIX + g)
+      if (stored && ROLE_RANK[stored as Role] > ROLE_RANK[best]) best = stored as Role
+    }
+    if (best !== 'viewer') return best
+  }
+  const principal = await resolvePrincipal(env, request)
   if (principal === 'anonymous') return 'viewer'
   const stored = await env.REGISTRY_KV.get(KV_ROLES_PREFIX + principal)
   return (stored as Role) || 'viewer'
@@ -983,7 +1028,7 @@ async function getRole(env: Env, request: Request): Promise<Role> {
 /** Resolve the acting principal, honoring the admin-token machine principal. */
 async function resolveActingPrincipal(env: Env, request: Request): Promise<string> {
   const role = await getRole(env, request)
-  const p = resolvePrincipal(request)
+  const p = await resolvePrincipal(env, request)
   if (role === 'admin' && p === 'anonymous') return env.ADMIN_PRINCIPAL || 'admin-token'
   return p
 }
@@ -993,7 +1038,7 @@ interface AuthResult { ok: boolean; principal: string; role: Role }
 async function requireRole(request: Request, env: Env, allowed: Role[]): Promise<AuthResult> {
   const role = await getRole(env, request)
   const ok = allowed.some((r) => ROLE_RANK[role] >= ROLE_RANK[r])
-  return { ok, principal: resolvePrincipal(request), role }
+  return { ok, principal: await resolvePrincipal(env, request), role }
 }
 
 function roleError(result: AuthResult): Response {
@@ -1431,7 +1476,7 @@ async function handleCall(env: Env, id: string, request: Request): Promise<Respo
   let capToken: { token: string; exp: number } | null = null;
   const extraHeaders: Record<string, string> = {};
   if (risk === 'write') {
-    capToken = await mintCapabilityToken(env, { serverId: entry.id, tool: String(toolName), principal: resolvePrincipal(request) });
+    capToken = await mintCapabilityToken(env, { serverId: entry.id, tool: String(toolName), principal: await resolvePrincipal(env, request) });
     if (capToken) extraHeaders['X-Capability-Token'] = capToken.token;
   }
   const res = await rpcCall(env, entry, 'tools/call', body?.params ?? body, 10000, extraHeaders);
@@ -1672,9 +1717,16 @@ async function handleRoles(env: Env, request: Request): Promise<Response> {
   const auth = await requireAdmin(request, env);
   if (!auth.ok) return roleError(auth);
   const body: any = await request.json().catch(() => null);
-  const { principal, role } = body ?? {};
-  if (!principal || !['viewer', 'publisher', 'reviewer', 'admin'].includes(role)) {
-    return json({ error: 'required: principal + role (viewer|publisher|reviewer|admin)' }, 400);
+  const { principal, group, role } = body ?? {};
+  if (!['viewer', 'publisher', 'reviewer', 'admin'].includes(role)) {
+    return json({ error: 'required: role (viewer|publisher|reviewer|admin) + principal OR group' }, 400);
+  }
+  if (group) {
+    await env.REGISTRY_KV.put(KV_GROUP_ROLES_PREFIX + String(group), role);
+    return json({ group, role, assigned: true });
+  }
+  if (!principal) {
+    return json({ error: 'required: principal + role (or group + role)' }, 400);
   }
   await env.REGISTRY_KV.put(KV_ROLES_PREFIX + String(principal), role);
   return json({ principal, role, assigned: true });
@@ -1864,6 +1916,7 @@ export const __internal = {
   getRole,
   resolvePrincipal,
   requireRole,
+  verifyAccessJwt,
   OFFICIAL_CATALOG,
   PROBE_PROTOCOL_VERSION,
   SUPPORTED_PROTOCOL_VERSIONS,

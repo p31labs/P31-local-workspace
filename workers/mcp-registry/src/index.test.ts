@@ -800,3 +800,49 @@ describe('N3: DO reconciliation', () => {
     expect(await stub.size()).toBe(3)
   })
 })
+
+// ─── N4: Cloudflare Access JWT verification ─────────────────────────────────
+describe('N4: Access JWT principal + group→role', () => {
+  it('verifies a signed Access JWT, resolves the email principal, and maps groups to roles', async () => {
+    // RSA key + JWKS + signed JWT (mocks Cloudflare Access).
+    const { publicKey, privateKey } = await (await import('jose')).generateKeyPair('RS256')
+    const jwks = { keys: [(await (await import('jose')).exportJWK(publicKey))] }
+    const token = await new (await import('jose')).SignJWT({ email: 'ops@p31ca.org', groups: ['p31-reviewers', 'everyone'] })
+      .setProtectedHeader({ alg: 'RS256' })
+      .setIssuedAt()
+      .setExpirationTime('1h')
+      .setAudience('test-aud')
+      .sign(privateKey)
+
+    const base = buildFetch({})
+    const fetchMock = vi.fn(async (url: string | URL, init?: RequestInit) => {
+      return base(url, init)
+    })
+    vi.stubGlobal('fetch', fetchMock)
+    const env = adminEnvWith(fetchMock)
+    env.CF_ACCESS_CERT_URL = 'https://mock.access/certs'
+    env.CF_ACCESS_AUD = 'test-aud'
+    // Pre-seed the KV JWKS cache so verification never hits the network.
+    await env.REGISTRY_KV.put('access:jwks', JSON.stringify({ uat: Date.now(), jwks: { keys: jwks.keys } }))
+
+    const headers = { 'Cf-Access-Jwt-Assertion': token }
+    // anonymous without token → viewer
+    expect((await (await handleRequest(req('https://registry.local/me'), env)).json()).role).toBe('viewer')
+
+    // with token → email principal, viewer role (no group mapping yet)
+    const me1 = await (await handleRequest(req('https://registry.local/me', { headers }), env)).json()
+    expect(me1.principal).toBe('ops@p31ca.org')
+    expect(me1.role).toBe('viewer')
+
+    // map the IdP group → reviewer
+    await handleRequest(req('https://registry.local/roles', { method: 'POST', ...ADMIN, headers: { ...ADMIN.headers, 'Content-Type': 'application/json' }, body: JSON.stringify({ group: 'p31-reviewers', role: 'reviewer' }) }), env)
+
+    const me2 = await (await handleRequest(req('https://registry.local/me', { headers }), env)).json()
+    expect(me2.role).toBe('reviewer')
+    expect(me2.can.review).toBe(true)
+
+    // a forged/expired token is rejected → falls back to anonymous
+    const bad = await handleRequest(req('https://registry.local/me', { headers: { 'Cf-Access-Jwt-Assertion': 'garbage' } }), env)
+    expect((await bad.json()).principal).toBe('anonymous')
+  })
+})
