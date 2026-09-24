@@ -663,3 +663,37 @@ describe('R3: admin token resolves as a machine principal', () => {
     expect(me.role).toBe('admin')
   })
 })
+
+describe('N2: runtime argument sanitization via the proxy', () => {
+  it('rejects a call with an external URL in a non-URL field and counts it', async () => {
+    const fetchMock = buildFetch({ [REMOTE_URL]: { tools: GOOD_TOOLS } })
+    vi.stubGlobal('fetch', fetchMock)
+    const env = adminEnvWith(fetchMock)
+    await handleRequest(req('https://registry.local/servers', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: 'mock-srv', name: 'Mock Server', endpoint: REMOTE_URL, category: 'crypto', description: 'x' }) }), env)
+
+    const res = await handleRequest(req('https://registry.local/servers/mock-srv/call', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/call', params: { name: 'read_stuff', arguments: { q: 'https://evil.example/hook' } } }) }), env)
+    expect(res.status).toBe(400)
+    const data = await res.json()
+    expect(data.error.message).toContain('external URL')
+  })
+
+  it('accepts a URL when the tool schema declares a URL-shaped field', async () => {
+    const URL_TOOLS = [{ name: 'fetch_url', description: 'fetch a url', inputSchema: { type: 'object', properties: { url: { type: 'string', description: 'target' } }, required: ['url'] } }]
+    const fetchMock = buildFetch({ [REMOTE_URL]: { tools: URL_TOOLS, callResult: { ok: true } } })
+    vi.stubGlobal('fetch', fetchMock)
+    const env = adminEnvWith(fetchMock)
+    await handleRequest(req('https://registry.local/servers', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: 'mock-srv', name: 'Mock Server', endpoint: REMOTE_URL, category: 'crypto', description: 'x' }) }), env)
+    const res = await handleRequest(req('https://registry.local/servers/mock-srv/call', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/call', params: { name: 'fetch_url', arguments: { url: 'https://example.com/a' } } }) }), env)
+    expect(res.status).toBe(200)
+  })
+
+  it('rejects oversized bodies with 413', async () => {
+    const fetchMock = buildFetch({ [REMOTE_URL]: { tools: GOOD_TOOLS } })
+    vi.stubGlobal('fetch', fetchMock)
+    const env = adminEnvWith(fetchMock)
+    await handleRequest(req('https://registry.local/servers', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: 'mock-srv', name: 'Mock Server', endpoint: REMOTE_URL, category: 'crypto', description: 'x' }) }), env)
+    const bigArg = 'x'.repeat(70 * 1024)
+    const res = await handleRequest(req('https://registry.local/servers/mock-srv/call', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/call', params: { name: 'read_stuff', arguments: { q: bigArg } } }) }), env)
+    expect(res.status).toBe(413)
+  })
+})

@@ -72,9 +72,9 @@ export function scanText(text: string): ScanFlag[] {
   }
   push(HIGH_FLAG, INSTRUCTION_OVERRIDE)
   push(HIGH_STEERING, MODEL_STEERING)
-  push(HIGH_EXFIL, EXFIL_VERBS)
+  // Exfiltration is only flagged when a verb is paired with a sink target —
+  // a bare "fetch"/"send" verb is legitimate for many tools.
   if (EXFIL_VERBS.test(t) && EXFIL_SINK.test(t)) push(HIGH_EXFIL, EXFIL_SINK, 2)
-  else if (EXFIL_SINK.test(t)) push(LOW_URL, EXFIL_SINK)
   push(HIGH_CRED, CREDENTIAL_GRAB)
   push(MED_UNICODE, INVISIBLE_UNICODE)
   push(MED_OBFUSCATED, OBFUSCATED_BLOB)

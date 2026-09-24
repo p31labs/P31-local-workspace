@@ -1,5 +1,6 @@
 import { createPrivateKey, createPublicKey, sign, verify } from 'node:crypto';
 import { scanToolSurface } from './scanner';
+import { validateArgs, validateBodySize } from './sanitizer';
 
 /**
  * mcp-registry — P31 MCP Server Marketplace API (Phase 1)
@@ -423,6 +424,7 @@ const KV_BASELINE_PREFIX = 'baseline:';
 const KV_BASELINE_SCHEMAS_PREFIX = 'baseline:schemas:';
 const KV_ROLES_PREFIX = 'roles:authn:';
 const KV_TOOLRATE_PREFIX = 'ratelimit:tool:';
+const KV_REJECTIONS_PREFIX = 'rejections:';
 const KV_TTL = 300; // 5 minutes for tool schemas
 const HEALTH_TTL = 120; // 2 minutes for health probes
 const RATE_LIMIT_MAX = 5;
@@ -1299,12 +1301,27 @@ async function handleCall(env: Env, id: string, request: Request): Promise<Respo
   if (!entry) return json({ error: 'server not found' }, 404);
   if (entry.kind === 'local') return json({ error: 'local server not reachable from the edge' }, 503);
 
-  const body: any = await request.json().catch(() => null);
+  const bodyText = await request.text().catch(() => '');
+  const sizeCheck = validateBodySize(bodyText);
+  if (!sizeCheck.ok) return json({ error: { code: -32000, message: sizeCheck.reason } }, 413);
+  let body: any = null
+  try { body = JSON.parse(bodyText || 'null') } catch { body = null }
   if (!body) return json({ error: 'invalid JSON body' }, 400);
 
   const toolName = body?.params?.name ?? (typeof body?.name === 'string' ? body.name : 'unknown');
   const args = body?.params?.arguments ?? body?.arguments ?? {};
   const risk = toolRisk({ name: String(toolName) });
+
+  // N2 — runtime argument sanitization before the upstream call.
+  const toolSchema = (await getToolSchemas(env, entry)).find((t) => t.name === toolName)?.inputSchema;
+  const sanitized = validateArgs(args as Record<string, unknown>, toolSchema as { properties?: Record<string, { type?: string }> });
+  if (!sanitized.ok) {
+    const k = KV_REJECTIONS_PREFIX + `${entry.id}:${toolName}`;
+    const n = Number((await env.REGISTRY_KV.get(k)) ?? '0');
+    await env.REGISTRY_KV.put(k, String(n + 1), { expirationTtl: 600 });
+    void emitOtapEvent(env, 'tool_rejected', { serverId: entry.id, tool: String(toolName), reason: sanitized.reason, status: String(sanitized.status) }).catch(() => {});
+    return json({ error: { code: -32000, message: `rejected: ${sanitized.reason}`, field: sanitized.field } }, sanitized.status);
+  }
 
   // A3 — per-tool quota enforcement before the upstream call (429/402).
   const quota = await enforceToolQuota(env, request, entry, String(toolName), risk);
@@ -1503,6 +1520,17 @@ async function handleAnomalies(env: Env, request: Request): Promise<Response> {
   for (const e of recentCalls) callByServer.set(e.serverId ?? '?', (callByServer.get(e.serverId ?? '?') ?? 0) + 1);
   for (const [sid, n] of callByServer) {
     if (n >= 50) findings.push({ type: 'call_spike', severity: 'high', serverId: sid, detail: `${n} proxied calls in the last 5 minutes` });
+  }
+
+  // N2 — sanitizer rejection hotspots (rejections:<serverId>:<toolName> counter).
+  const rejList = await env.REGISTRY_KV.list({ prefix: KV_REJECTIONS_PREFIX });
+  for (const key of rejList.keys) {
+    const v = await env.REGISTRY_KV.get(key.name).catch(() => null)
+    const n = Number(v ?? '0')
+    if (n >= 5) {
+      const [, sid, tool] = key.name.split(':')
+      findings.push({ type: 'sanitizer_rejections', severity: 'medium', serverId: sid ?? undefined, detail: `${n} rejected calls for ${tool ?? key.name} in the last 10 minutes` })
+    }
   }
 
   // 3) write-tool calls against read-only-safe servers (from the audit log).
@@ -1720,6 +1748,8 @@ export const __internal = {
   mintCapabilityToken,
   getScanMeta,
   getCapabilityMeta,
+  validateArgs,
+  validateBodySize,
   getRole,
   resolvePrincipal,
   requireRole,
