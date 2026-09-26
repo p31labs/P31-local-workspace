@@ -1,0 +1,20 @@
+---
+// @file Topbar — Fixed glass navigation header.
+// Auto-generated from components.yml.
+
+interface Props {
+  brand?: AstroSlotChildren;
+  left?: AstroSlotChildren;
+  center?: AstroSlotChildren;
+  right?: AstroSlotChildren;
+  class?: string;
+}
+
+const { brand, left, center, right, class: className = '' } = Astro.props;
+---
+
+<header class={`topbar glass-navbar ${className}`}>
+  <div class="topbar-left">{brand || left}</div>
+  <div class="topbar-center">{center}</div>
+  <div class="topbar-right">{right}</div>
+</header>

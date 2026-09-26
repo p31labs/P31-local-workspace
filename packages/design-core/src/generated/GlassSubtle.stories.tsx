@@ -4,7 +4,7 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { GlassSubtle } from './GlassSubtle';
+import { GlassSubtle } from './GlassSubtle.js';
 
 const meta: Meta<typeof GlassSubtle> = {
   title: 'Components/GlassSubtle',

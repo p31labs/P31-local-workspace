@@ -1,0 +1,6 @@
+/* P31 recipe modules — canonical cascade order.
+   The consolidated legacy sheet stays first (it is the source of record,
+   parsed by generate-mcp-data); newer modules load after it. */
+@import '../css/recipes.css';
+@import './forms.css';
+@import './responsive.css';

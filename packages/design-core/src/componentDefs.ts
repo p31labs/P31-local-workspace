@@ -23,6 +23,9 @@ export interface ComponentDef {
   slots?: string[];
   variants?: string[];
   accessibility?: string[];
+  status?: 'stable' | 'beta' | 'deprecated';
+  version?: string;
+  importPath?: string;
 }
 
 export const COMPONENT_CATEGORIES = [
@@ -55,6 +58,9 @@ export const COMPONENT_DEFS: Record<string, ComponentDef> = {
     slots: ['default'],
     variants: ['default', 'hover'],
     accessibility: ['Uses semantic glass tokens for contrast', 'Focus styles inherit from global :focus-visible'],
+    status: 'stable',
+    version: '1.0.0',
+    importPath: '@p31/design-core/compositions',
   },
 
   GlassCard: {
@@ -75,6 +81,9 @@ export const COMPONENT_DEFS: Record<string, ComponentDef> = {
     slots: ['default'],
     variants: ['default', 'strong'],
     accessibility: ['Minimum padding ensures touch target compliance'],
+    status: 'stable',
+    version: '1.0.0',
+    importPath: '@p31/design-core/compositions',
   },
 
   Topbar: {
@@ -96,6 +105,9 @@ export const COMPONENT_DEFS: Record<string, ComponentDef> = {
     slots: ['left', 'center', 'right'],
     variants: ['default', 'glass-navbar'],
     accessibility: ['Fixed position requires z-index management', 'Skip links recommended below topbar'],
+    status: 'stable',
+    version: '1.0.0',
+    importPath: '@p31/design-core/compositions',
   },
 
   BottomNav: {
@@ -115,6 +127,9 @@ export const COMPONENT_DEFS: Record<string, ComponentDef> = {
     slots: ['default'],
     variants: ['default', 'mobile', 'tablet'],
     accessibility: ['Minimum 48px touch targets', 'Active state clearly indicated', 'aria-selected on active item'],
+    status: 'stable',
+    version: '1.0.0',
+    importPath: '@p31/design-core/compositions',
   },
 
   SpoonDial: {
@@ -134,6 +149,9 @@ export const COMPONENT_DEFS: Record<string, ComponentDef> = {
     slots: ['default'],
     variants: ['default', 'crisis'],
     accessibility: ['Role: radiogroup', 'aria-checked on each button', 'Labels for each level'],
+    status: 'stable',
+    version: '1.0.0',
+    importPath: '@p31/design-core/compositions',
   },
 
   Button: {
@@ -155,6 +173,9 @@ export const COMPONENT_DEFS: Record<string, ComponentDef> = {
     slots: ['default'],
     variants: ['primary', 'secondary', 'ghost'],
     accessibility: ['Minimum 48px height', 'Disabled state clearly indicated', 'Focus ring visible'],
+    status: 'stable',
+    version: '1.0.0',
+    importPath: '@p31/design-core/compositions',
   },
 
   StatusBadge: {
@@ -174,6 +195,9 @@ export const COMPONENT_DEFS: Record<string, ComponentDef> = {
     slots: ['default'],
     variants: ['success', 'warning', 'error', 'info'],
     accessibility: ['Color + icon for colorblind users', 'Screen reader text included'],
+    status: 'stable',
+    version: '1.0.0',
+    importPath: '@p31/design-core/compositions',
   },
 
   MetricBadge: {
@@ -195,6 +219,9 @@ export const COMPONENT_DEFS: Record<string, ComponentDef> = {
     slots: ['default'],
     variants: ['default', 'clickable'],
     accessibility: ['Icon has aria-hidden or accessible name', 'Value is screen-reader accessible'],
+    status: 'stable',
+    version: '1.0.0',
+    importPath: '@p31/design-core/compositions',
   },
 
   Starfield: {
@@ -215,6 +242,9 @@ export const COMPONENT_DEFS: Record<string, ComponentDef> = {
     slots: ['default'],
     variants: ['default', 'warm', 'reduced-motion'],
     accessibility: ['aria-hidden="true"', 'Respects prefers-reduced-motion', 'Disabled at spoons=0'],
+    status: 'stable',
+    version: '1.0.0',
+    importPath: '@p31/design-core/starfield',
   },
 
   CrisisOverlay: {
@@ -234,6 +264,135 @@ export const COMPONENT_DEFS: Record<string, ComponentDef> = {
     slots: ['default'],
     variants: ['default'],
     accessibility: ['Full screen focus trap', 'Escape key exits', 'High contrast text'],
+    status: 'stable',
+    version: '1.0.0',
+    importPath: '@p31/design-core/crisis-overlay',
+  },
+
+  SectionStrip: {
+    description: 'Desktop pill navigation strip. Use for primary section navigation on wide viewports.',
+    css_class: 'section-strip',
+    category: 'navigation',
+    tokens: ['glass.bg', 'glass.border', 'radius.candy', 'accent', 'text.secondary'],
+    aiGuidance: {
+      useWhen: ['Desktop primary navigation', 'Section switching', 'Router-agnostic nav'],
+      avoidWhen: ['Mobile navigation (use BottomNav)', 'More than 7 items', 'Modal contexts'],
+      examples: ['<SectionStrip items={sections} onSelect={navigate} />'],
+    },
+    props: {
+      items: { type: 'SectionItem[]', description: 'Nav items: { id, label, icon?, active? }' },
+      onSelect: { type: '(id: string) => void', description: 'Called with the selected section id' },
+      className: { type: 'string', description: 'Additional CSS classes' },
+      style: { type: 'CSSProperties', description: 'Inline styles' },
+    },
+    slots: ['default'],
+    variants: ['default'],
+    accessibility: ['aria-current="page" on active tab', 'Minimum 48px targets', 'Keyboard navigable buttons'],
+    status: 'stable',
+    version: '2.2.0',
+    importPath: '@p31/design-core/compositions',
+  },
+
+  CommandPalette: {
+    description: 'Keyboard-friendly command palette (⌘K). Use for site-wide search and command invocation.',
+    css_class: 'cmdk',
+    category: 'navigation',
+    tokens: ['glass.bg', 'glass.border', 'glass.blur', 'accent', 'radius.md', 'z.modal'],
+    aiGuidance: {
+      useWhen: ['Site-wide search', 'Command invocation', 'Keyboard-first power users'],
+      avoidWhen: ['Inline search within forms', 'Primary navigation', 'Mobile-first (native) flows'],
+      examples: ['<CommandPalette open={open} onClose={close} items={commands} onSelect={run} />'],
+    },
+    props: {
+      open: { type: 'boolean', required: true, description: 'Controlled open state' },
+      onClose: { type: '() => void', required: true, description: 'Close callback' },
+      items: { type: 'CommandItem[]', required: true, description: 'Searchable items: { id, label, description?, icon?, keywords? }' },
+      onSelect: { type: '(id: string) => void', required: true, description: 'Called with the selected item id' },
+      placeholder: { type: 'string', default: 'Search…', description: 'Input placeholder' },
+      leadingIcon: { type: 'ReactNode', description: 'Optional leading icon' },
+    },
+    slots: ['default'],
+    variants: ['default'],
+    accessibility: ['role=dialog + aria-modal', 'role=listbox / option', 'ArrowUp/Down + Enter + Escape keys', 'Arrow keys cycle results'],
+    status: 'stable',
+    version: '2.2.0',
+    importPath: '@p31/design-core/compositions',
+  },
+
+  Chameleon: {
+    description: 'Adaptive theme controls: brand × world × age × sensory modes. Zero-reload token swaps.',
+    css_class: 'chameleon',
+    category: 'ambient',
+    tokens: ['theme.*', 'brand.*', 'accent', 'sensory.muted', 'sensory.warmLight'],
+    aiGuidance: {
+      useWhen: ['Theme switching', 'Brand switching', 'Accessibility (muted/dusk) controls'],
+      avoidWhen: ['Inline content panels', 'Nested dialog contexts', 'Restricted UI shells'],
+      examples: ['<Chameleon />', '<Chameleon className="topbar-right" />'],
+    },
+    props: {
+      className: { type: 'string', description: 'Additional CSS classes' },
+      style: { type: 'CSSProperties', description: 'Inline styles' },
+    },
+    slots: ['default'],
+    variants: ['default'],
+    accessibility: ['aria-haspopup=dialog', 'aria-expanded', 'aria-pressed on chips', 'Escape closes panel'],
+    status: 'stable',
+    version: '2.2.0',
+    importPath: '@p31/design-core/compositions',
+  },
+
+  PageHeader: {
+    description: 'Inner-page hero: mono eyebrow, gradient title, and lede. Use at the top of content routes.',
+    css_class: 'page-header-route',
+    category: 'surface',
+    tokens: ['title.gradient', 'text.secondary', 'spacing.lg'],
+    aiGuidance: {
+      useWhen: ['Route/page headers', 'Content hero sections', 'Documentation pages'],
+      avoidWhen: ['Topbar/brand headers', 'Modal headers', 'List item headers'],
+      examples: ['<PageHeader eyebrow="System" title="Tokens" lede="..." />'],
+    },
+    props: {
+      eyebrow: { type: 'string', required: true, description: 'Mono eyebrow label' },
+      title: { type: 'string', required: true, description: 'Page title' },
+      lede: { type: 'string', description: 'Supporting lede paragraph' },
+      children: { type: 'ReactNode', description: 'Optional action cluster (rendered in .page-actions)' },
+      className: { type: 'string', description: 'Additional CSS classes' },
+      style: { type: 'CSSProperties', description: 'Inline styles' },
+    },
+    slots: ['default'],
+    variants: ['default', 'actions'],
+    accessibility: ['Semantic <header> + <h1>', 'Visual gradient paired with text', 'Actions are keyboard reachable'],
+    status: 'stable',
+    version: '2.2.0',
+    importPath: '@p31/design-core/compositions',
+  },
+
+  Footer: {
+    description: 'Site footer with configurable columns, branding, and legal text.',
+    css_class: 'site-footer',
+    category: 'surface',
+    tokens: ['surface.bg', 'text.primary', 'text.secondary', 'border.subtle', 'spacing.lg'],
+    aiGuidance: {
+      useWhen: ['Page footers', 'Site-wide navigation', 'Legal/copyright notices'],
+      avoidWhen: ['Inline content areas', 'Modal footers', 'Inline content separators'],
+      examples: ['<Footer columns={systemColumns} />'],
+    },
+    props: {
+      columns: { type: 'FooterColumn[]', description: 'Footer column groups with title and links' },
+      brandLabel: { type: 'string', default: 'P31', description: 'Brand label text' },
+      brandIcon: { type: 'ReactNode', description: 'Optional brand icon' },
+      tagline: { type: 'string', default: 'Sovereign, neuroinclusive interface foundation.', description: 'Tagline text' },
+      copyright: { type: 'string', description: 'Optional copyright year/owner' },
+      legalText: { type: 'string', default: 'MIT · built on DTCG tokens', description: 'Legal/license text' },
+      className: { type: 'string', description: 'Additional CSS classes' },
+      style: { type: 'CSSProperties', description: 'Inline styles' },
+    },
+    slots: ['default'],
+    variants: ['default'],
+    accessibility: ['Semantic <footer> element', 'ARIA labels on navigation sections', 'Link text is descriptive'],
+    status: 'stable',
+    version: '2.2.0',
+    importPath: '@p31/design-core/compositions',
   },
 };
 

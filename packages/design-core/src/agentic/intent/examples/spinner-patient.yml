@@ -1,0 +1,9 @@
+component: PatientSpinner
+narrative: |
+  Waiting indicator that stays calm; no motion at spoons 0-1 by contract.
+  Must be findable without reading, operable with one finger, zero motion.
+constraints:
+  accessibility: { wcag: AAA, contrast: 7, touchTarget: 64 }
+  spoonAware: [0, 1]
+  loveSemantics:
+    - { trigger: on-ready, reward: 3, recipient: [user], description: Self-advocacy }

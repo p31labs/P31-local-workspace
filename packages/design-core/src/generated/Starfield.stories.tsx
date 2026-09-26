@@ -4,7 +4,7 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { Starfield } from './Starfield';
+import { Starfield } from './Starfield.js';
 
 const meta: Meta<typeof Starfield> = {
   title: 'Components/Starfield',

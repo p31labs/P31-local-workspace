@@ -37,6 +37,8 @@ import {
   RECIPES_CSS,
   RECIPE_CATEGORIES,
 } from './shared.js';
+import { TOKENS_DTC } from './tokens-dtc.js';
+import { resolveBrandTokens } from '../theming/theme-store.js';
 
 import type {
   McpRequest,
@@ -107,6 +109,12 @@ export function handleToolCall(name: string, args: Record<string, any> = {}): To
 
         return {
           content: [{ type: 'text', text: JSON.stringify({ count: matches.length, matches }, null, 2) }],
+        };
+      }
+
+      case 'list_tokens_dtc': {
+        return {
+          content: [{ type: 'text', text: JSON.stringify(TOKENS_DTC, null, 2) }],
         };
       }
 
@@ -219,6 +227,57 @@ export function handleToolCall(name: string, args: Record<string, any> = {}): To
         const css = RECIPE_MAP[name];
         if (!css) return { content: [{ type: 'text', text: `Recipe not found: ${name}` }], isError: true };
         return { content: [{ type: 'text', text: css }] };
+      }
+
+      case 'get_component_metadata': {
+        const { name } = args;
+        if (!name) return { content: [{ type: 'text', text: 'Missing required arg: name' }], isError: true };
+        const def = getComponentDef(name);
+        if (!def) return { content: [{ type: 'text', text: `Component not found: ${name}` }], isError: true };
+        return {
+          content: [{ type: 'text', text: JSON.stringify(def, null, 2) }],
+        };
+      }
+
+      case 'validate_component': {
+        const { name, code } = args;
+        if (!name) return { content: [{ type: 'text', text: 'Missing required arg: name' }], isError: true };
+        const def = getComponentDef(name);
+        if (!def) return { content: [{ type: 'text', text: `Component not found: ${name}` }], isError: true };
+        const issues: string[] = [];
+        if (code) {
+          const hasHex = /#[0-9a-fA-F]{3,8}/.test(code);
+          if (hasHex) issues.push('Hardcoded hex colors detected — use var(--p31-*) tokens');
+          const hasRgba = /rgba?\(/.test(code);
+          if (hasRgba) issues.push('Hardcoded rgba() detected — use var(--p31-*) tokens or color-mix()');
+        }
+        const usesTokens = def.tokens.length > 0;
+        if (!usesTokens) issues.push('Component does not declare any design tokens');
+        return {
+          content: [{
+            type: 'text',
+            text: JSON.stringify({
+              component: name,
+              valid: issues.length === 0,
+              issues,
+              tokenCount: def.tokens.length,
+              status: def.status || 'stable',
+            }, null, 2),
+          }],
+        };
+      }
+
+      case 'resolve_brand': {
+        const { brand } = args;
+        if (!brand) return { content: [{ type: 'text', text: 'Missing required arg: brand' }], isError: true };
+        try {
+          const tokens = resolveBrandTokens(brand as 'p31ca' | 'phos' | 'phosphorus31' | 'willow' | 'bonding');
+          return {
+            content: [{ type: 'text', text: JSON.stringify({ brand, tokens, count: Object.keys(tokens).length }, null, 2) }],
+          };
+        } catch (e) {
+          return { content: [{ type: 'text', text: `Invalid brand: ${brand}. Valid: p31ca, phos, phosphorus31, willow, bonding` }], isError: true };
+        }
       }
 
       // ─── Converter ────────────────────────────────────────────────────

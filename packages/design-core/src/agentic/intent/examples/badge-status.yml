@@ -1,0 +1,9 @@
+component: StatusBadge
+narrative: |
+  Glanceable connection status; color never the only signal (text always present). Warm but never
+  gamified-feeling; dismisses itself politely at moderate spoons.
+constraints:
+  accessibility: { wcag: AA, contrast: 4.5, touchTarget: 44 }
+  performance: { bundle: 1, renderTime: 16.67 }
+  loveSemantics:
+    - { trigger: display-on-earn, reward: 0, recipient: [system] }

@@ -1,0 +1,23 @@
+/* ─── P31 Responsive ladder (spec §Tablet) ────────────────────
+   Mobile-first 375 → Tablet 768 → Desktop 1024 → Large 1440.
+   Complements the tetra/sidebar rules already in the legacy sheet. */
+
+.container {
+  max-width: 100%;
+  padding-inline: var(--p31-space-md);
+}
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--p31-space-md); }
+.grid-3 { display: grid; grid-template-columns: 1fr; gap: var(--p31-space-md); }
+
+@media (min-width: 768px) {
+  .container { padding-inline: var(--p31-space-lg); }
+  .grid-3 { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (min-width: 1024px) {
+  .container { max-width: 1280px; margin-inline: auto; padding-inline: var(--p31-space-xl); }
+}
+
+@media (min-width: 1440px) {
+  .container { max-width: 1440px; }
+}

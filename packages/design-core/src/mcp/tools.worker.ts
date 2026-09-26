@@ -60,7 +60,7 @@ export interface ${name}Props {
 
 export function ${name}({ children, className, padding = 'md', style }: ${name}Props) {
   const paddingClasses = { sm: 'p-4', md: 'p-6', lg: 'p-8' };
-  const cls = \`\${paddingClasses[padding]} rounded-2xl border border-white/[0.06] backdrop-blur-xl bg-void-raised/60 shadow-[0_4px_16px_rgba(0,0,0,0.3)] \${className || ''}\`;
+  const cls = \`\${paddingClasses[padding]} rounded-2xl border border-white/[0.06] backdrop-blur-xl bg-void-raised/60 shadow-[0_4px_16px_color-mix(in_oklch,var(--p31-void)_30%,transparent)] \${className || ''}\`;
   return <div className={cls} style={style}>{children}</div>;
 }
 
@@ -81,7 +81,7 @@ export interface ${name}Props {
 }
 
 export function ${name}({ children, strong, className, style }: ${name}Props) {
-  const cls = \`rounded-2xl border border-white/[0.06] backdrop-blur-xl \${strong ? 'bg-void-raised/80 shadow-[0_8px_32px_rgba(0,0,0,0.4)]' : 'bg-void-raised/60 shadow-[0_4px_16px_rgba(0,0,0,0.3)]'} \${className || ''}\`;
+  const cls = \`rounded-2xl border border-white/[0.06] backdrop-blur-xl \${strong ? 'bg-void-raised/80 shadow-[0_8px_32px_color-mix(in_oklch,var(--p31-void)_40%,transparent)]' : 'bg-void-raised/60 shadow-[0_4px_16px_color-mix(in_oklch,var(--p31-void)_30%,transparent)]'} \${className || ''}\`;
   return <div className={cls} style={style}>{children}</div>;
 }
 
@@ -212,7 +212,7 @@ export interface ${name}Props {
 
 export function ${name}({ children, variant = 'primary', disabled, onClick, type = 'button', className }: ${name}Props) {
   const variantCls = {
-    primary: 'bg-accent text-void hover:bg-accent/90 shadow-[0_0_12px_rgba(0,240,255,0.4)] focus-visible:ring-accent',
+    primary: 'bg-accent text-void hover:bg-accent/90 shadow-[0_0_12px_color-mix(in_oklch,var(--p31-accent)_40%,transparent)] focus-visible:ring-accent',
     secondary: 'bg-void-raised/80 border border-white/10 text-text hover:border-white/20 focus-visible:ring-violet',
     ghost: 'bg-transparent text-text-secondary hover:text-text hover:bg-white/5 focus-visible:ring-white/20',
   };
@@ -396,7 +396,7 @@ export interface ${name}Props {
 }
 
 export function ${name}({ children, className, style }: ${name}Props) {
-  const cls = \`rounded-2xl border border-white/[0.08] backdrop-blur-2xl bg-void-raised/80 shadow-[0_8px_32px_rgba(0,0,0,0.4)] \${className || ''}\`;
+  const cls = \`rounded-2xl border border-white/[0.08] backdrop-blur-2xl bg-void-raised/80 shadow-[0_8px_32px_color-mix(in_oklch,var(--p31-void)_40%,transparent)] \${className || ''}\`;
   return <div className={cls} style={style}>{children}</div>;
 }
 
@@ -416,7 +416,7 @@ export interface ${name}Props {
 }
 
 export function ${name}({ children, className, style }: ${name}Props) {
-  const cls = \`rounded-2xl border border-white/[0.06] backdrop-blur-xl bg-void-raised/60 shadow-[0_4px_16px_rgba(0,0,0,0.3)] \${className || ''}\`;
+  const cls = \`rounded-2xl border border-white/[0.06] backdrop-blur-xl bg-void-raised/60 shadow-[0_4px_16px_color-mix(in_oklch,var(--p31-void)_30%,transparent)] \${className || ''}\`;
   return <div className={cls} style={style}>{children}</div>;
 }
 

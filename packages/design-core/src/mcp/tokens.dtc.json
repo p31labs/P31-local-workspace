@@ -1,0 +1,196 @@
+{
+  "$schema": "https://design-tokens.github.io/community-group/format/1.0.0",
+  "$type": "object",
+  "color": {
+    "background": {
+      "default": {
+        "$type": "color",
+        "$value": "oklch(10% 0.01 240)",
+        "$description": "Page background — deepest void"
+      },
+      "void": {
+        "$type": "color",
+        "$value": "oklch(4% 0.005 240)",
+        "$description": "Void black — deepest surface"
+      },
+      "alt": {
+        "$type": "color",
+        "$value": "oklch(12% 0.015 240)",
+        "$description": "Primary surface — cards, panels"
+      },
+      "alt2": {
+        "$type": "color",
+        "$value": "oklch(13% 0.02 240)",
+        "$description": "Secondary surface — elevated panels"
+      }
+    },
+    "accent": {
+      "default": {
+        "$type": "color",
+        "$value": "oklch(73% 0.18 195)",
+        "$description": "Primary accent — interactive elements"
+      },
+      "variant": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0.71,
+            0.18,
+            285
+          ],
+          "alpha": 1
+        },
+        "$description": "Secondary accent — complementary hue"
+      },
+      "violet": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0.7,
+            0.14,
+            275
+          ],
+          "alpha": 1
+        },
+        "$description": "Violet accent — tertiary interactions"
+      },
+      "gold": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0.71,
+            0.18,
+            15
+          ],
+          "alpha": 1
+        },
+        "$description": "Gold accent — warnings, highlights"
+      },
+      "green": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0.69,
+            0.18,
+            105
+          ],
+          "alpha": 1
+        },
+        "$description": "Green accent — success, online status"
+      },
+      "red": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0.71,
+            0.18,
+            20
+          ],
+          "alpha": 1
+        },
+        "$description": "Red accent — error, critical states"
+      }
+    },
+    "notification": {
+      "gold": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0.71,
+            0.18,
+            15
+          ],
+          "alpha": 1
+        },
+        "$description": "Notification accent — medication/reminders"
+      },
+      "green": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0.69,
+            0.18,
+            105
+          ],
+          "alpha": 1
+        },
+        "$description": "Notification accent — movement/wellness"
+      },
+      "violet": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0.7,
+            0.14,
+            275
+          ],
+          "alpha": 1
+        },
+        "$description": "Notification accent — social/messages"
+      },
+      "cyan": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0.71,
+            0.18,
+            195
+          ],
+          "alpha": 1
+        },
+        "$description": "Notification accent — bonding/collaboration"
+      },
+      "rose": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0.71,
+            0.18,
+            20
+          ],
+          "alpha": 1
+        },
+        "$description": "Notification accent — grants/deadlines"
+      }
+    },
+    "text": {
+      "primary": {
+        "$type": "color",
+        "$value": "oklch(96% 0.005 240)",
+        "$description": "Primary text — highest contrast"
+      },
+      "secondary": {
+        "$type": "color",
+        "$value": "oklch(83% 0.01 240)",
+        "$description": "Secondary text — supporting content"
+      },
+      "tertiary": {
+        "$type": "color",
+        "$value": "oklch(76% 0.01 240)",
+        "$description": "Tertiary text — captions, hints"
+      }
+    },
+    "glass": {
+      "background": {
+        "$type": "color",
+        "$value": "oklch(10% 0.012 240 / 0.90)",
+        "$description": "Glass background — translucent overlay"
+      },
+      "border": {
+        "$type": "color",
+        "$value": "oklch(100% 0.01 240 / 0.16)",
+        "$description": "Glass border — subtle separation"
+      }
+    }
+  }
+}

@@ -13,8 +13,8 @@ import {
   resolveRawToken,
   generateWC,
   generateWebComponents,
-} from './componentGenerator.wc';
-import type { ComponentDef, TokensFile } from './componentGenerator.wc';
+} from './componentGenerator.wc.js';
+import type { ComponentDef, TokensFile } from './componentGenerator.wc.js';
 
 const MOCK_TOKENS: TokensFile = {
   version: '2.0',

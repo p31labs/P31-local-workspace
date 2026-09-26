@@ -1,0 +1,51 @@
+/* ─── P31 Accessibility & Crisis Completion ───────────────────
+   Inlined via base.css chain so crisis relief never FOUCs.
+   Spec: UPGRADE §Crisis Mode (Complete). */
+
+/* High-contrast text at spoons 0–1 */
+[data-spoons="0"],
+[data-spoons="1"] {
+  --p31-text-secondary: var(--p31-text);
+  --p31-text-tertiary: var(--p31-text);
+}
+
+[data-spoons="0"] {
+  font-weight: var(--p31-font-weight-emphasis, 500);
+}
+
+/* Hide decorative SVGs in crisis mode */
+[data-spoons="0"] svg.decorative,
+[data-spoons="0"] .decorative,
+[data-spoons="1"] svg.decorative,
+[data-spoons="1"] .decorative {
+  display: none !important;
+}
+
+/* Enhanced focus: no glow, hard outline, high contrast */
+[data-spoons="0"] *:focus-visible,
+[data-spoons="1"] *:focus-visible {
+  outline: 2px solid var(--p31-text);
+  outline-offset: 3px;
+  box-shadow: none !important;
+}
+
+/* Force opaque hover states — no translucency during crisis */
+[data-spoons="0"] *:hover,
+[data-spoons="1"] *:hover {
+  opacity: 1 !important;
+}
+
+/* Opaque modal overlays (belt-and-braces with forms.css) */
+[data-spoons="0"] .modal-overlay,
+[data-spoons="0"] [role="dialog"],
+[data-spoons="1"] .modal-overlay,
+[data-spoons="1"] [role="dialog"] {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Kill every ambient animation loop */
+[data-spoons="0"] *,
+[data-spoons="1"] * {
+  animation-iteration-count: 1 !important;
+}

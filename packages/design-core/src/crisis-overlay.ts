@@ -33,7 +33,7 @@ const STYLES = `
   }
   .message {
     margin-top: 32px;
-    color: var(--p31-cloud, ${typeof COLORS.cloud === 'string' ? COLORS.cloud : '#A1A1AA'});
+    color: var(--p31-cloud, ${typeof COLORS.cloud === 'string' ? COLORS.cloud : 'oklch(0.712 0.013 286)'});
     font-size: 14px;
     text-align: center;
   }

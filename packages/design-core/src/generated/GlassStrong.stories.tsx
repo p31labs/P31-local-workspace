@@ -4,7 +4,7 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { GlassStrong } from './GlassStrong';
+import { GlassStrong } from './GlassStrong.js';
 
 const meta: Meta<typeof GlassStrong> = {
   title: 'Components/GlassStrong',

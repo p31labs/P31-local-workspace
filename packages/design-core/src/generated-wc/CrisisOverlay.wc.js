@@ -21,8 +21,8 @@ template.innerHTML = `
   align-items: center;
   justify-content: center;
   gap: 24px;
-    --p31-semantic-color-background-default: #0A0A0F;
-    --p31-primitive-color-void_deep: #050508;
+    --p31-semantic-color-background-default: oklch(10% 0.01 240);
+    --p31-primitive-color-void_deep: oklch(8% 0.01 240);
     --p31-primitive-typography-font_sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);

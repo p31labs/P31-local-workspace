@@ -1,0 +1,122 @@
+/* P31 design-core — base.css */
+/* Generated from @p31/design-core tokens. Do not edit directly. */
+
+:root {
+  --p31-void: oklch(0.147 0.011 285);
+  --p31-surface: oklch(0.186 0.016 285);
+  --p31-surface2: oklch(0.233 0.027 284);
+  --p31-cloud: oklch(0.712 0.013 286);
+  --p31-text-primary: oklch(96% 0.005 240);
+  --p31-text-secondary: oklch(80% 0.01 240);
+  --p31-text-tertiary: oklch(78% 0.01 240);
+  --p31-accent: oklch(0.870 0.148 203);
+  --p31-accent-violet: oklch(0.709 0.159 294);
+  --p31-accent-gold: oklch(0.837 0.164 84);
+  --p31-accent-green: oklch(0.773 0.153 163);
+  --p31-accent-red: oklch(0.719 0.169 13);
+  --p31-accent-iris: oklch(0.680 0.158 277);
+
+  --p31-glass-surface: oklch(100% 0.01 240 / 0.04);
+  --p31-glass-border: oklch(100% 0.01 240 / 0.08);
+  --p31-glass-border-hover: oklch(100% 0.01 240 / 0.15);
+  --p31-glass-surface-hover: oklch(100% 0.01 240 / 0.06);
+  --p31-glass-blur: blur(12px);
+  --p31-glass-radius: 24px;
+  --p31-glass-shadow: 0 8px 32px oklch(NaN NaN NaN);
+
+  --p31-font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --p31-font-mono: ui-monospace, SFMono-Regular, 'Fira Code', 'Fira Mono', 'Roboto Mono', 'JetBrains Mono', Menlo, Monaco, Consolas, monospace;
+
+  --p31-spacing-xs: 4px;
+  --p31-spacing-sm: 8px;
+  --p31-spacing-md: 16px;
+  --p31-spacing-lg: 24px;
+  --p31-spacing-xl: 32px;
+  --p31-spacing-xxl: 64px;
+
+  --p31-space-tiny: 2px;
+
+  --p31-radius-none: 0;
+  --p31-radius-sm: 8px;
+  --p31-radius-md: 12px;
+  --p31-radius-lg: 24px;
+  --p31-radius-full: 9999px;
+
+  --p31-radius-candy: 24px;
+
+  --p31-h1: 51px;
+  --p31-h2: 38px;
+  --p31-h3: 28px;
+  --p31-h4: 21px;
+  --p31-body: 16px;
+  --p31-body-sm: 14px;
+  --p31-label: 12px;
+  --p31-caption: 7px;
+
+  --p31-duration-instant: 62.5ms;
+  --p31-duration-fast: 125ms;
+  --p31-duration-standard: 250ms;
+  --p31-duration-slow: 500ms;
+  --p31-duration-slower: 1000ms;
+
+  --p31-easing-standard: cubic-bezier(0.4, 0.0, 0.2, 1);
+  --p31-easing-decelerate: cubic-bezier(0.0, 0.0, 0.2, 1);
+  --p31-easing-accelerate: cubic-bezier(0.4, 0.0, 1.0, 1);
+
+  --p31-topbar-height: 64px;
+  --p31-z-content: 1;
+  --p31-z-floating: 60;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  font-family: var(--p31-font-sans);
+  font-size: var(--p31-body);
+  line-height: 1.6;
+  color: var(--p31-text-primary);
+  background: var(--p31-void);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background: var(--p31-void);
+  color: var(--p31-text-primary);
+}
+
+h1 { font-size: var(--p31-h1); font-weight: 500; line-height: 1.1; letter-spacing: -0.02em; }
+h2 { font-size: var(--p31-h2); font-weight: 500; line-height: 1.2; }
+h3 { font-size: var(--p31-h3); font-weight: 500; line-height: 1.3; }
+h4 { font-size: var(--p31-h4); font-weight: 500; line-height: 1.3; }
+
+a { color: var(--p31-accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+code, pre {
+  font-family: var(--p31-font-mono);
+  font-size: 13px;
+}
+
+/* ─── Reduced motion (global guard) ───────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ─── Animation ghosting guards ─────────────────────────────
+   Infinite/ambient animations must not keep running on elements
+   that are hidden or offscreen (older devices stutter on
+   visibility transitions). Hosts toggle [data-hidden] or the
+   .is-offscreen class when a layer is not visible.            */
+[data-hidden="true"] *, .is-offscreen *,
+[data-hidden="true"], .is-offscreen {
+  animation-play-state: paused !important;
+}

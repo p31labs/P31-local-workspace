@@ -1,0 +1,26 @@
+---
+// @file BottomNav — Fixed bottom navigation bar for mobile-first apps.
+// Auto-generated from components.yml.
+
+interface Props {
+  items: { icon: AstroSlotChildren; label: string; href: string; active?: boolean }[];
+  activeIndex?: number;
+  class?: string;
+}
+
+const { items, activeIndex = 0, class: className = '' } = Astro.props;
+---
+
+<nav class={`bottom-nav ${className}`} role="navigation" aria-label="Main">
+  {items.map((item, i) => (
+    <a
+      key={i}
+      href={item.href}
+      class={`nav-item ${i === activeIndex ? 'active' : ''}`}
+      aria-current={i === activeIndex ? 'page' : undefined}
+    >
+      {item.icon}
+      <span>{item.label}</span>
+    </a>
+  ))}
+</nav>

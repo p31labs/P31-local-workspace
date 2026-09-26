@@ -5,7 +5,7 @@
 
 import { describe, it, expect } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { CrisisOverlay } from './CrisisOverlay';
+import { CrisisOverlay } from './CrisisOverlay.js';
 
 describe('CrisisOverlay', () => {
   it('renders without children', () => {

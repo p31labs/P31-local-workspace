@@ -1,0 +1,25 @@
+---
+// @file SectionStrip — Desktop pill navigation strip.
+// Auto-generated from components.yml. Router-agnostic.
+
+interface Props {
+  items: { id: string; label: string; active?: boolean }[];
+  onSelect?: (id: string) => void;
+  class?: string;
+}
+
+const { items, onSelect, class: className = '' } = Astro.props;
+---
+
+<nav class={`section-strip ${className}`.trim()} aria-label="Design system sections">
+  {items.map((s) => (
+    <button
+      type="button"
+      class={`section-tab${s.active ? ' is-active' : ''}`}
+      onClick={() => onSelect?.(s.id)}
+      aria-current={s.active ? 'page' : undefined}
+    >
+      {s.label}
+    </button>
+  ))}
+</nav>

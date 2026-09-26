@@ -5,7 +5,7 @@
 
 import { describe, it, expect } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { CandyHeader } from './CandyHeader';
+import { CandyHeader } from './CandyHeader.js';
 
 describe('CandyHeader', () => {
   it('renders children', () => {

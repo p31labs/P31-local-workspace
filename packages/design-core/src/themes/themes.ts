@@ -51,7 +51,7 @@ export const THEMES: Record<string, P31Theme> = {
       '--p31-text-tertiary': 'oklch(55% 0.01 240)',
       '--p31-glass-bg': 'oklch(100% 0.01 240 / 0.04)',
       '--p31-glass-border': 'oklch(100% 0.01 240 / 0.08)',
-      '--p31-glass-shadow': '0 8px 32px rgba(0, 0, 0, 0.15)',
+      '--p31-glass-shadow': '0 8px 32px oklch(NaN NaN NaN)',
     },
   },
 
@@ -77,7 +77,7 @@ export const THEMES: Record<string, P31Theme> = {
       '--p31-text-tertiary': 'oklch(55% 0.02 130)',
       '--p31-glass-bg': 'oklch(100% 0.01 120 / 0.06)',
       '--p31-glass-border': 'oklch(100% 0.01 120 / 0.1)',
-      '--p31-glass-shadow': '0 8px 32px rgba(0, 0, 0, 0.2)',
+      '--p31-glass-shadow': '0 8px 32px oklch(NaN NaN NaN)',
     },
   },
 
@@ -103,7 +103,7 @@ export const THEMES: Record<string, P31Theme> = {
       '--p31-text-tertiary': 'oklch(50% 0.03 70)',
       '--p31-glass-bg': 'oklch(100% 0.01 60 / 0.05)',
       '--p31-glass-border': 'oklch(100% 0.01 60 / 0.12)',
-      '--p31-glass-shadow': '0 8px 32px rgba(255, 180, 0, 0.08)',
+      '--p31-glass-shadow': '0 8px 32px oklch(NaN NaN NaN)',
       '--p31-font-mono': "'VT323', 'Fira Code', ui-monospace, monospace",
     },
   },
@@ -130,7 +130,7 @@ export const THEMES: Record<string, P31Theme> = {
       '--p31-text-tertiary': 'oklch(55% 0.02 235)',
       '--p31-glass-bg': 'oklch(100% 0.01 230 / 0.04)',
       '--p31-glass-border': 'oklch(100% 0.01 230 / 0.08)',
-      '--p31-glass-shadow': '0 8px 32px rgba(0, 100, 200, 0.1)',
+      '--p31-glass-shadow': '0 8px 32px oklch(NaN NaN NaN)',
     },
   },
 
@@ -156,7 +156,7 @@ export const THEMES: Record<string, P31Theme> = {
       '--p31-text-tertiary': 'oklch(55% 0.03 35)',
       '--p31-glass-bg': 'oklch(100% 0.01 30 / 0.06)',
       '--p31-glass-border': 'oklch(100% 0.01 30 / 0.1)',
-      '--p31-glass-shadow': '0 8px 32px rgba(200, 100, 0, 0.08)',
+      '--p31-glass-shadow': '0 8px 32px oklch(NaN NaN NaN)',
     },
   },
 
@@ -182,7 +182,7 @@ export const THEMES: Record<string, P31Theme> = {
       '--p31-text-tertiary': 'oklch(50% 0 0)',
       '--p31-glass-bg': 'oklch(100% 0 0 / 0.05)',
       '--p31-glass-border': 'oklch(100% 0 0 / 0.1)',
-      '--p31-glass-shadow': '0 8px 32px rgba(0, 0, 0, 0.2)',
+      '--p31-glass-shadow': '0 8px 32px oklch(NaN NaN NaN)',
     },
   },
 };
@@ -194,12 +194,12 @@ export function applyTheme(themeId: string): void {
   root.setAttribute('data-theme', skinId);
   root.setAttribute('data-theme-label', skinId);
   const tokens: Record<string, string> = {
-    cipher: { '--p31-bg':'#0a0a0f','--p31-surface':'#12121a','--p31-accent':'#00f0ff','--p31-accent-violet':'#a78bfa','--p31-accent-gold':'#fbbf24','--p31-text-primary':'#f5f5f7' },
-    willow: { '--p31-bg':'#070d0a','--p31-surface':'#0d1812','--p31-accent':'#34d399','--p31-text-primary':'#f0f2f5','--p31-glass-bg':'rgba(7,13,10,0.9)','--p31-glass-border':'rgba(52,211,153,0.12)' },
-    ocean:  { '--p31-bg':'#0a1a2a','--p31-surface':'#0f2030','--p31-accent':'#00d1ff','--p31-accent-violet':'#60a5fa' },
-    mono:   { '--p31-bg':'#0a0a0a','--p31-surface':'#1a1a1a','--p31-accent':'#aaaaaa','--p31-accent-violet':'#888888' },
-    retro:  { '--p31-bg':'#0a0a0a','--p31-accent':'#ffcc00','--p31-accent-violet':'#ff66cc' },
-  }[skinId] || { '--p31-bg':'#0a0a0f','--p31-surface':'#12121a','--p31-accent':'#00f0ff','--p31-accent-violet':'#a78bfa','--p31-text-primary':'#f5f5f7' };
+    cipher: { '--p31-bg':'oklch(0.147 0.011 285)','--p31-surface':'oklch(0.186 0.016 285)','--p31-accent':'oklch(0.870 0.148 203)','--p31-accent-violet':'oklch(0.709 0.159 294)','--p31-accent-gold':'oklch(0.837 0.164 84)','--p31-text-primary':'oklch(0.971 0.003 286)' },
+    willow: { '--p31-bg':'oklch(0.151 0.012 164)','--p31-surface':'oklch(0.196 0.020 160)','--p31-accent':'oklch(0.773 0.153 163)','--p31-text-primary':'oklch(0.960 0.005 258)','--p31-glass-bg':'oklch(NaN NaN NaN)','--p31-glass-border':'oklch(NaN NaN NaN)' },
+    ocean:  { '--p31-bg':'oklch(0.213 0.039 250)','--p31-surface':'oklch(0.237 0.039 248)','--p31-accent':'oklch(0.797 0.147 221)','--p31-accent-violet':'oklch(0.714 0.143 255)' },
+    mono:   { '--p31-bg':'oklch(0.145 0.000 90)','--p31-surface':'oklch(0.218 0.000 90)','--p31-accent':'oklch(0.738 0.000 90)','--p31-accent-violet':'oklch(0.627 0.000 90)' },
+    retro:  { '--p31-bg':'oklch(0.145 0.000 90)','--p31-accent':'oklch(0.865 0.177 90)','--p31-accent-violet':'oklch(0.734 0.215 343)' },
+  }[skinId] || { '--p31-bg':'oklch(0.147 0.011 285)','--p31-surface':'oklch(0.186 0.016 285)','--p31-accent':'oklch(0.870 0.148 203)','--p31-accent-violet':'oklch(0.709 0.159 294)','--p31-text-primary':'oklch(0.971 0.003 286)' };
   for (const [key, val] of Object.entries(tokens)) {
     root.style.setProperty(key, val as string);
   }

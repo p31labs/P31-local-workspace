@@ -1,19 +1,27 @@
 ---
-// @file SpoonMeter — Cognitive load indicator (0-5 scale).
+// @file SpoonMeter — Cognitive load meter for Astro.
 // Auto-generated from components.yml.
 
 interface Props {
-  current?: number;
+  spoons: number;
+  onChange?: (level: number) => void;
   class?: string;
 }
 
-const { current = 3, class: className = '' } = Astro.props;
+const { spoons, onChange, class: className = '' } = Astro.props;
 ---
 
-<div class={`flex items-center gap-1.5 ${className}`} role="img" aria-label={`Spoon level ${current} of 5`}>
-  <div class="w-2.5 h-2.5 rounded-full transition-all duration-300 bg-accent shadow-[0_0_6px_rgba(0,240,255,0.5)]" />
-  <div class="w-2.5 h-2.5 rounded-full transition-all duration-300 bg-accent shadow-[0_0_6px_rgba(0,240,255,0.5)]" />
-  <div class="w-2.5 h-2.5 rounded-full transition-all duration-300 bg-accent shadow-[0_0_6px_rgba(0,240,255,0.5)]" />
-  <div class="w-2.5 h-2.5 rounded-full transition-all duration-300 bg-white/10" />
-  <div class="w-2.5 h-2.5 rounded-full transition-all duration-300 bg-white/10" />
+<div class={`flex items-center gap-1 ${className}`} role="img" aria-label={`Spoon level ${spoons} of 5`}>
+  {Array.from({ length: 5 }, (_, i) => (
+    <span
+      class={`w-[18px] h-[18px] ${i < spoons ? 'text-accent' : 'text-white/20'}`}
+      aria-hidden="true"
+    >
+      <svg viewBox="0 0 200 200" fill="currentColor">
+        <path d="M100 30 Q96 80 100 110 Q100 120 100 145" stroke="currentColor" stroke-width="5" fill="none" stroke-linecap="round"/>
+        <ellipse cx="100" cy="145" rx="16" ry="26" fill="currentColor"/>
+        <circle cx="100" cy="30" r="6" fill="currentColor"/>
+      </svg>
+    </span>
+  ))}
 </div>

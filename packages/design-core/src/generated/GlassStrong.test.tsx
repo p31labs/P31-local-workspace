@@ -5,7 +5,7 @@
 
 import { describe, it, expect } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { GlassStrong } from './GlassStrong';
+import { GlassStrong } from './GlassStrong.js';
 
 describe('GlassStrong', () => {
   it('renders children', () => {

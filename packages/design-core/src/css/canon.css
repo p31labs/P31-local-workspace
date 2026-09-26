@@ -1,0 +1,365 @@
+/* canon.css — extracted verbatim from production/shell/src/index.css
+   Canonical physics-token layer + component disciplines.
+   App-specific selectors excluded; loaded AFTER all.css. */
+
+/* ──── Physics tokens: 863Hz · Kuramoto · tetrahedral ──── */
+:root {
+  color-scheme: dark;
+
+  /* ─── SPACING: Tetrahedral Grid (4px base) ─── */
+  --p31-space-micro: 4px;  /* 1 × base (4 vertices of K₄) */
+  --p31-space-tiny: 8px;   /* 2 × base */
+  --p31-space-xs: 12px;    /* 3 × base (triadic closure) */
+  --p31-space-sm: 16px;    /* 4 × base */
+  --p31-space-md: 24px;    /* 6 × base (6 edges of K₄) */
+  --p31-space-lg: 36px;    /* 9 × base (3²) */
+  --p31-space-xl: 48px;    /* 12 × base */
+  --p31-space-2xl: 64px;   /* 16 × base */
+
+  /* ─── SEMANTIC SPACING (purpose-driven) ─── */
+  --p31-space-inside: var(--p31-space-tiny, 8px);          /* Label ↔ field */
+  --p31-space-component: var(--p31-space-sm, 16px);        /* Card internal padding */
+  --p31-space-section: var(--p31-space-xl, 48px);          /* Page vertical padding */
+
+  /* ─── DURATION: Larmor Precession (863 Hz) ─── */
+  --p31-duration-instant: 86ms;   /* 863 Hz ÷ 10 — hover, focus */
+  --p31-duration-fast: 172ms;     /* 863 Hz ÷ 5 — press, toggle */
+  --p31-duration-base: 431ms;     /* 863 Hz ÷ 2 — page transitions */
+  --p31-duration-heartbeat: 863ms; /* 863 Hz canonical — pulse indicator */
+  --p31-duration-slow: 1726ms;    /* 2 × 863 Hz — ambient */
+
+  /* ─── EASING: Kuramoto Phase Transition ─── */
+  --p31-ease-kuramoto: cubic-bezier(0.7, 0, 0.2, 1);
+  --p31-ease-rigid: cubic-bezier(0.8, 0, 0.2, 1);
+
+  /* ─── BASE VALUES (unchanged) ─── */
+  --p31-base: 16px;
+  --p31-bg: oklch(14% 0.014 270);
+  --p31-surface: oklch(19% 0.017 270);
+  --p31-surface2: oklch(25% 0.02 270);
+  --p31-accent: oklch(65% 0.14 45);
+  --p31-accent-alt: oklch(70% 0.09 150);
+  --p31-accent-green: oklch(70% 0.12 152);
+  --p31-accent-red: oklch(64% 0.13 22);
+  --p31-accent-gold: oklch(80% 0.135 88);
+  --p31-accent-violet: oklch(60% 0.1 28);
+  --p31-text: oklch(93% 0.012 270);
+  --p31-text-secondary: oklch(78% 0.018 270);
+  --p31-text-tertiary: oklch(70% 0.015 270);
+
+  /* ─── GLASS: SIC-POVM Overlap (starfield-visible) ─── */
+  --p31-glass-opacity: 0.18;           /* Body cards — starfield visible */
+  --p31-glass-opacity-light: 0.10;     /* Overlays, drawers */
+  --p31-glass-bg: oklch(100% 0.01 75 / 0.10);
+  --p31-glass-bg-strong: oklch(100% 0.01 75 / 0.14);
+  --p31-glass-bg-overlay: oklch(100% 0.01 75 / 0.10);
+  --p31-glass-bg-light: oklch(100% 0.01 75 / 0.10);
+  --p31-glass-bg-dark: oklch(NaN NaN NaN);
+  --p31-glass-bg-dark-strong: oklch(NaN NaN NaN);
+  --p31-glass-border: oklch(100% 0.01 75 / 0.16);
+  --p31-glass-border-hover: oklch(100% 0.01 75 / 0.25);
+  --p31-glass-blur: blur(14px);
+  --p31-glass-shadow: 0 8px 24px oklch(10% .02 60 / .35);
+
+  /* ─── BORDER RADIUS: Protected Volume ─── */
+  --p31-radius-sm: 2px;    /* Buttons (affordance) */
+  --p31-radius-md: 4px;
+  --p31-radius-lg: 8px;
+  --p31-radius-xl: 12px;
+  --p31-radius-full: 9999px;
+  --p31-radius-candy: 18px;
+
+  /* ─── LAYOUT (unchanged) ─── */
+  --p31-node-actions-width: 220px;
+  --p31-chat-max-width: 808px;
+  --p31-topbar-height: 56px;
+  --p31-header-height: 61px;
+  --p31-chat-sidebar-width: 280px;
+  --p31-speed-factor: 1;
+
+  /* ─── FONTS (unchanged) ─── */
+  --p31-font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
+  --p31-font-mono: 'Fira Code', ui-monospace, monospace;
+  /* Modular typography scale — 1.25× ratio (perfect fourth) */
+  --p31-scale-xs: 10px;
+  --p31-scale-sm: 13px;
+  --p31-scale-md: 16px;
+  --p31-scale-lg: 20px;
+  --p31-scale-xl: 25px;
+  --p31-scale-2xl: 32px;
+  --p31-scale-3xl: 67px;
+  /* Semantic status aliases — never use --p31-accent-* directly for state */
+  --p31-status-online:  var(--p31-accent-green);
+  --p31-status-offline: var(--p31-text-tertiary);
+  --p31-status-warning: var(--p31-accent-gold);
+  --p31-status-error:   var(--p31-accent-red);
+  --p31-status-info:    var(--p31-accent);
+  /* Breakpoint tokens — all media queries use these */
+  --p31-breakpoint-mobile: 480px;
+  --p31-breakpoint-tablet: 768px;
+  --p31-breakpoint-desktop: 1024px;
+  --p31-breakpoint-wide: 1400px;
+  /* Z-index invariants — never hardcode z-index, use these tokens */
+  --p31-z-starfield: 0;
+  --p31-z-base: 0;
+  --p31-z-content: 10;
+  --p31-z-topbar: 20;
+  --p31-z-hub: 150;
+  --p31-z-sticky: 20;
+  --p31-z-floating: 50;
+  --p31-z-assistant: 80;
+  --p31-z-palette: 90;
+  --p31-z-dropdown: 100;
+  --p31-z-pocket: 8000;
+  --p31-z-a2ui: 5000;
+  --p31-z-overlay: 1000;
+  --p31-z-modal: 1000;
+  --p31-z-toast: 10000;
+  --p31-z-crisis: 99999;
+  --p31-z-max: 99999;
+}
+
+/* ──── Spoon speed factor ──── */
+[data-spoons="0"], [data-spoons="1"] { --p31-speed-factor: 0; }
+[data-spoons="2"] { --p31-speed-factor: 0.25; }
+[data-spoons="3"] { --p31-speed-factor: 0.5; }
+[data-spoons="4"] { --p31-speed-factor: 0.75; }
+[data-spoons="5"] { --p31-speed-factor: 1; }
+
+/* ──── Base ──── */
+html, body {
+  height: 100%;
+  overflow: hidden;
+  background: var(--p31-bg, oklch(14% 0.014 75));
+  color: var(--p31-text);
+  font-family: var(--p31-font-sans);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ──── Buttons (sharp, protected volume) ──── */
+.btn {
+  padding: 12px 20px;
+  border-radius: var(--p31-radius-full);
+  border: 1px solid var(--p31-glass-border);
+  background: var(--p31-glass-bg);
+  color: var(--p31-text);
+  font-weight: 600;
+  font-size: var(--p31-scale-xs);
+  font-family: var(--p31-font-sans);
+  cursor: pointer;
+  min-height: 44px;
+  transition: all var(--p31-duration-instant) ease;
+}
+.btn:hover { border-color: var(--p31-accent); }
+
+/* ──── Glass card system (header strips, tint chameleon, anchored graphs) ──── */
+.panel, .glass-card, .akinator-question-card {
+  background: var(--p31-glass-bg);
+  border: 1px solid var(--p31-glass-border);
+  border-radius: var(--p31-radius-lg);
+  -webkit-backdrop-filter: var(--p31-glass-blur);
+  backdrop-filter: var(--p31-glass-blur);
+  box-shadow: var(--p31-glass-shadow);
+  transition: border-color var(--p31-duration-instant), background var(--p31-duration-instant);
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .panel, .glass-card, .akinator-question-card {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+.glass-card {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  overflow: hidden;
+  border-radius: var(--p31-radius-xl);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: none;
+  transition: border-color var(--p31-duration-instant) var(--p31-ease-kuramoto),
+              background var(--p31-duration-instant) var(--p31-ease-kuramoto),
+              transform var(--p31-duration-fast) var(--p31-ease-kuramoto);
+}
+.glass-card.interactive { cursor: pointer; }
+.glass-card.interactive:hover {
+  transform: translateY(-2px);
+  border-color: var(--card-tint-color, var(--p31-accent));
+}
+.glass-card.interactive:focus-visible {
+  outline: 2px solid var(--p31-accent);
+  outline-offset: 2px;
+}
+.glass-card-title {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--p31-space-xs);
+  padding: var(--p31-space-xs) var(--p31-space-sm);
+  background: var(--p31-glass-bg);
+  border-bottom: 1px solid var(--p31-glass-border);
+  font-size: var(--p31-scale-sm);
+  font-weight: 700;
+  color: var(--p31-text);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  transition: background var(--p31-duration-base) var(--p31-ease-kuramoto),
+              border-color var(--p31-duration-base) var(--p31-ease-kuramoto);
+}
+.glass-card-title-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--p31-space-xs);
+}
+.glass-card[data-has-tint] .glass-card-title {
+  background: color-mix(in oklch, var(--card-tint-color) 15%, transparent);
+  border-bottom: 1px solid color-mix(in oklch, var(--card-tint-color) 40%, var(--p31-glass-border));
+  color: var(--card-tint-text);
+}
+.glass-card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: var(--p31-space-xs);
+  padding: var(--p31-space-component);
+  overflow-y: auto;
+}
+.glass-card-body.body-centered {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--p31-space-sm) var(--p31-space-xs);
+}
+/* ─── Card data rows & toggles (token-native card primitives) ─── */
+.card-data-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--p31-space-xs);
+  padding: var(--p31-space-micro) 0;
+  border-bottom: 1px solid var(--p31-glass-border);
+}
+.card-data-row:last-of-type {
+  border-bottom: none;
+}
+.card-data-row-label {
+  font-size: var(--p31-scale-sm);
+  color: var(--p31-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.card-data-row-value-group {
+  display: flex;
+  align-items: center;
+  gap: var(--p31-space-tiny);
+}
+.card-data-row-value {
+  font-size: var(--p31-scale-sm);
+  font-weight: 600;
+  color: var(--p31-text);
+}
+.card-data-row-highlight {
+  font-size: var(--p31-scale-xs);
+  color: var(--highlight-color, var(--p31-accent));
+}
+.card-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--p31-space-xs);
+  padding: var(--p31-space-tiny) 0;
+  margin: 0 calc(-1 * var(--p31-space-tiny));
+  padding-left: var(--p31-space-tiny);
+  padding-right: var(--p31-space-tiny);
+  border-radius: var(--p31-radius-sm);
+  cursor: pointer;
+  transition: background var(--p31-duration-fast) var(--p31-ease-kuramoto);
+}
+.card-toggle:hover {
+  background: var(--p31-glass-bg-dark);
+}
+.card-toggle:focus-visible {
+  outline: 2px solid var(--p31-accent);
+  outline-offset: 2px;
+}
+
+/* ──── Starfield stage ──── */
+.starfield-bg {
+  position: fixed;
+  inset: 0;
+  z-index: var(--p31-z-starfield);
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* ──── Card anatomy & discipline (CLAUDE.md §Design System) ──── */
+.card-value {
+  font-size: var(--p31-scale-2xl);
+  font-weight: 700;
+}
+.card-sub {
+  font-size: var(--p31-scale-xs);
+  color: var(--p31-text-tertiary);
+}
+.card-label {
+  font-size: var(--p31-scale-sm);
+  font-weight: 600;
+  color: var(--p31-text);
+}
+.card-meta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+  font-size: var(--p31-scale-xs);
+  color: var(--p31-text-tertiary);
+}
+.card-graph-zone {
+  margin-top: auto;
+  height: 32px;
+}
+.card-sparkline {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 32px;
+  width: 100%;
+}
+.card-sparkline-bar {
+  flex: 1;
+  border-radius: 1px;
+  min-width: 3px;
+  transition: height var(--p31-duration-base) var(--p31-ease-kuramoto),
+              background var(--p31-duration-instant) var(--p31-ease-kuramoto);
+}
+.pill {
+  padding: 2px 10px;
+  border-radius: var(--p31-radius-full);
+  background: var(--p31-glass-bg);
+  border: 1px solid var(--p31-glass-border);
+  font-size: var(--p31-scale-xs);
+  color: var(--p31-text);
+}
+
+/* Dashboard grid — fixed rows, fixed columns, ≤16px gap */
+.a2-grid-dashboard {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-auto-rows: 154px;
+  gap: 14px;
+}
+@media (max-width: 767px) {
+  .a2-grid-dashboard { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ──── Crisis stillness for canon components ──── */
+[data-spoons="0"] *, [data-spoons="0"] *::before, [data-spoons="0"] *::after,
+[data-spoons="1"] *, [data-spoons="1"] *::before, [data-spoons="1"] *::after {
+  animation-duration: 0ms !important;
+  transition-duration: 0ms !important;
+}
+[data-spoons="0"] .starfield-bg { opacity: 0.25; }

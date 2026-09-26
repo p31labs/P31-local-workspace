@@ -4,7 +4,7 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { HonestLabel } from './HonestLabel';
+import { HonestLabel } from './HonestLabel.js';
 
 const meta: Meta<typeof HonestLabel> = {
   title: 'Components/HonestLabel',

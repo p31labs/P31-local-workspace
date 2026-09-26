@@ -1,0 +1,32 @@
+/* @p31ca/design-core — aggregate component CSS. NON-GENERATED.
+ *
+ * This is the file all.css should have been. all.css is the style-dictionary
+ * token dump only; consumers that import it alone render every composition
+ * unstyled. Import this aggregate instead: it bundles every layer a consumer
+ * needs to render the canon's compositions.
+ *
+ * Order matters:
+ *   1. physics tokens (canon) + generated tokens (all) + token layer
+ *   2. base reset, layout, typography
+ *   3. motion, glass, quantum
+ *   4. component styles — recipes (topbar/spoon/status/metric/nav/btn/glass)
+ *      and chrome (section-strip/cmdk/chameleon/page-header)
+ *   5. utility layers (container/size/link-glow/ambient/a2ui)
+ */
+
+@import './canon.css';
+@import './all.css';
+@import './tokens.css';
+@import './base.css';
+@import './layout.css';
+@import './typography.css';
+@import './motion.css';
+@import './glass.css';
+@import './quantum.css';
+@import './recipes.css';
+@import './chrome.css';
+@import './container.css';
+@import './size-class.css';
+@import './link-glow.css';
+@import './ambient.css';
+@import './a2ui-datacard.css';

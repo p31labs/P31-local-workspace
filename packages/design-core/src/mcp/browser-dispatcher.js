@@ -1,6 +1,6 @@
 (function(){'use strict';
 var d=document,w=window;
-function sc(l){return l<2?'var(--p31-accent-red,#fb7185)':l<4?'var(--p31-accent-gold,#fbbf24)':'var(--p31-accent,#00F0FF)'}
+function sc(l){return l<2?'var(--p31-accent-red,oklch(0.719 0.169 13))':l<4?'var(--p31-accent-gold,oklch(0.837 0.164 84))':'var(--p31-accent,oklch(0.870 0.148 203))'}
 function updDial(l){
  var e=d.getElementById('spoon-dial');if(!e)return;
  if(typeof e.value!=='undefined')e.value=l;
@@ -13,7 +13,7 @@ function updBadge(s){
  var e=d.querySelector('[data-mcp-tool="statusBadge"]')||d.getElementById('status-badge');if(!e)return;
  e.setAttribute('data-status',s);
  var dt=e.querySelector('[data-status-dot],[data-dot],.status-dot'),lbl=e.querySelector('[data-status-label],[data-label],.status-label');
- var C={online:'var(--p31-accent-green,#34d399)',offline:'var(--p31-accent-red,#fb7185)',busy:'var(--p31-accent-gold,#fbbf24)',away:'var(--p31-text-tertiary,#94a3b8)'};
+ var C={online:'var(--p31-accent-green,oklch(0.773 0.153 163))',offline:'var(--p31-accent-red,oklch(0.719 0.169 13))',busy:'var(--p31-accent-gold,oklch(0.837 0.164 84))',away:'var(--p31-text-tertiary,oklch(0.711 0.035 257))'};
  if(dt)dt.style.background=C[s]||C.away;
  if(lbl)lbl.textContent=s[0].toUpperCase()+s.slice(1);
 }

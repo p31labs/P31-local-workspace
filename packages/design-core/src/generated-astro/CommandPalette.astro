@@ -1,0 +1,34 @@
+---
+// @file CommandPalette — Keyboard-friendly command palette.
+// Auto-generated from components.yml. Controlled open state.
+
+interface Props {
+  items: { id: string; label: string; description?: string }[];
+  placeholder?: string;
+  open?: boolean;
+  class?: string;
+}
+
+const { items, placeholder = 'Search…', open = false, class: className = '' } = Astro.props;
+---
+
+{open && (
+  <div class={`cmdk-overlay ${className}`.trim()} role="presentation">
+    <div class="cmdk-panel" role="dialog" aria-label="Command palette" aria-modal="true">
+      <div class="cmdk-input-row">
+        <input class="cmdk-input" placeholder={placeholder} aria-label={placeholder} />
+        <kbd class="cmdk-kbd">esc</kbd>
+      </div>
+      <ul class="cmdk-list" role="listbox" aria-label="Results">
+        {items.map((s) => (
+          <li>
+            <button class="cmdk-item" role="option" aria-selected="false">
+              <span class="cmdk-label">{s.label}</span>
+              {s.description && <span class="cmdk-path">{s.description}</span>}
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+)}

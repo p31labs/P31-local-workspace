@@ -1,0 +1,15 @@
+---
+// @file Footer — Site footer with configurable columns, branding, and legal text.
+// Auto-generated from components.yml.
+
+interface Props {
+  children: AstroSlotChildren;
+  class?: string;
+}
+
+const { children, class: className = '' } = Astro.props;
+---
+
+<div class={className}>
+  <slot />
+</div>

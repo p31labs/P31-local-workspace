@@ -14,49 +14,49 @@ template.innerHTML = `
   <style>
 :host {
   display: block;
-    --p31-primitive-color-glass_surface: rgba(255,255,255,0.04);
-    --p31-primitive-color-glass_border: rgba(255,255,255,0.08);
-    --p31-primitive-color-glass_border_hover: rgba(255,255,255,0.15);
-    --p31-primitive-color-surface2: #1C1C2A;
-    --p31-primitive-color-void_deep: #050508;
-    --p31-primitive-radius-xl: 24px;
-    --p31-primitive-radius-sm: 8px;
-    --p31-primitive-radius-lg: 16px;
+    --p31-primitive-color-glass_surface: oklch(100% 0.01 240 / 0.04);
+    --p31-primitive-color-glass_border: oklch(100% 0.01 240 / 0.08);
+    --p31-primitive-color-glass_border_hover: oklch(100% 0.01 240 / 0.15);
+    --p31-primitive-color-surface2: oklch(22% 0.02 240);
+    --p31-primitive-color-void_deep: oklch(8% 0.01 240);
+    --p31-primitive-radius-xl: calc(var(--p31-scale-xl) / 2);
+    --p31-primitive-radius-sm: calc(var(--p31-scale-sm) / 2);
+    --p31-primitive-radius-lg: calc(var(--p31-scale-lg) / 2);
     --p31-primitive-radius-full: 9999px;
-    --p31-primitive-shadow-glass: 0 8px 32px rgba(0,0,0,0.15);
-    --p31-primitive-shadow-glow_cyan_hover: 0 0 30px rgba(0,240,255,0.4);
-    --p31-primitive-spacing-xs: 4px;
-    --p31-primitive-spacing-md: 16px;
-    --p31-primitive-spacing-xl: 32px;
-    --p31-primitive-spacing-xxl: 64px;
+    --p31-primitive-shadow-glass: 0 8px 32px oklch(NaN NaN NaN);
+    --p31-primitive-shadow-glow_cyan_hover: 0 0 30px oklch(NaN NaN NaN);
+    --p31-primitive-spacing-xs: clamp(var(--p31-scale-xs), 1vw, var(--p31-scale-sm));
+    --p31-primitive-spacing-md: clamp(var(--p31-scale-md), 2.5vw, var(--p31-scale-lg));
+    --p31-primitive-spacing-xl: clamp(var(--p31-scale-xl), 5vw, var(--p31-scale-2xl));
+    --p31-primitive-spacing-xxl: {spacing.2xl};
     --p31-primitive-typography-font_sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    --p31-semantic-color-background-alt: #12121A;
-    --p31-semantic-color-accent-gold: #FBBF24;
-    --p31-semantic-color-accent-red: #FB7185;
-    --p31-semantic-color-accent-iris: #818CF8;
+    --p31-semantic-color-background-alt: oklch(15% 0.015 240);
+    --p31-semantic-color-accent-gold: oklch(65% 0.18 15);
+    --p31-semantic-color-accent-red: oklch(65% 0.18 20);
+    --p31-semantic-color-accent-iris: oklch(65% 0.18 270);
   border-radius: var(--p31-primitive-radius-xl);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255,255,255,0.08);
+  border: 1px solid oklch(100% 0.01 240 / 0.08);
   box-shadow: var(--p31-primitive-shadow-glass);
   transition: border-color 0.2s ease;
 }
 :host(:hover) {
-  border-color: rgba(255,255,255,0.15);
+  border-color: oklch(100% 0.01 240 / 0.15);
 }
 :host([padding="sm"]) { padding: var(--p31-primitive-spacing-sm); }
 :host([padding="lg"]) { padding: var(--p31-primitive-spacing-lg); }
 :host([color="violet"]) {
-  --p31-accent: #A78BFA;
+  --p31-accent: oklch(65% 0.18 285);
 }
 :host([color="gold"]) {
-  --p31-accent: #FBBF24;
+  --p31-accent: oklch(65% 0.18 15);
 }
 :host([color="green"]) {
-  --p31-accent: #34D399;
+  --p31-accent: oklch(65% 0.18 105);
 }
 :host([color="red"]) {
-  --p31-accent: #FB7185;
+  --p31-accent: oklch(65% 0.18 20);
 }
 ::slotted(*) { color: var(--p31-semantic-color-text-primary); }
 

@@ -1,7 +1,15 @@
 ---
-// @file Starfield — Canvas background placeholder for Astro.
+// @file Starfield — 200-star twinkling canvas background with animation loop.
 // Auto-generated from components.yml.
-// For the live animated version, use the React component via client:only.
+
+interface Props {
+  children: AstroSlotChildren;
+  class?: string;
+}
+
+const { children, class: className = '' } = Astro.props;
 ---
 
-<canvas class="fixed inset-0 pointer-events-none" aria-hidden="true" />
+<div class={className}>
+  <slot />
+</div>

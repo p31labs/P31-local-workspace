@@ -6,9 +6,11 @@
  */
 
 import { readdirSync, readFileSync, statSync } from 'fs';
-import { join, relative } from 'path';
+import { join, relative, resolve, dirname } from 'path';
+import { fileURLToPath } from 'url';
 
-const ROOT = process.cwd();
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const ROOT = resolve(__dirname, '..', '..', '..');
 const SCAN_DIRS = [
   'production/shell/src',
   'production/portals',

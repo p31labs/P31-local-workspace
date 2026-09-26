@@ -4,7 +4,7 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { SpoonMeter } from './SpoonMeter';
+import { SpoonMeter } from './SpoonMeter.js';
 
 const meta: Meta<typeof SpoonMeter> = {
   title: 'Components/SpoonMeter',

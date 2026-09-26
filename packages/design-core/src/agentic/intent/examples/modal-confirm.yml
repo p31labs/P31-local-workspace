@@ -1,0 +1,22 @@
+# ConfirmModal — canon §II reference spec
+component: ConfirmModal
+narrative: |
+  An modal that asks for explicit confirmation before consequential actions. Celebratory at high spoon
+  levels, minimal and restful at low. Every successful action earns LOVE
+  credit for the user and their caregiver.
+constraints:
+  accessibility: { wcag: AAA, contrast: 7, touchTarget: 48 }
+  spoonAware: true
+  performance: { bundle: 3, renderTime: 16.67 }
+  loveSemantics:
+    - trigger: on-confirm
+      reward: 5
+      recipient: [user, caregiver]
+      description: Affirmed intention
+variants:
+  - { name: affirm, description: Positive action, color: accent, icon: check-circle }
+  - { name: cancel, description: Graceful exit, color: neutral, icon: x-circle }
+  - { name: exploratory, description: Curious low-risk action, color: teal, icon: search }
+interactions:
+  - { event: hover, condition: spoonLevel >= 3, action: showTooltip, motion: none }
+  - { event: pressed, condition: always, action: hapticFeedback(medium), reward: +1 LOVE }

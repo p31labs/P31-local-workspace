@@ -5,7 +5,7 @@
 
 import { describe, it, expect } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { SpoonMeter } from './SpoonMeter';
+import { SpoonMeter } from './SpoonMeter.js';
 
 describe('SpoonMeter', () => {
   it('renders without children', () => {

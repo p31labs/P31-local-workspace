@@ -13,22 +13,22 @@
   },
   "tokens": {
     "color": {
-      "quantum-cyan":   { "$value": "#00F0FF", "$type": "color", "$description": "Primary accent for interactive elements, CTAs, mesh highlights", "$extensions": { "p31": { "usage": "accent, primary buttons, focus indicators", "accessibility": "WCAG 2.2 AA on dark backgrounds" } } },
-      "quantum-violet": { "$value": "#A78BFA", "$type": "color", "$description": "Secondary accent for supporting actions and decorative elements", "$extensions": { "p31": { "usage": "secondary actions, decorative elements" } } },
-      "quantum-gold":   { "$value": "#FBBF24", "$type": "color", "$description": "Special accent for donor-facing elements and achievement indicators", "$extensions": { "p31": { "usage": "donor elements, spark indicators, achievements" } } },
-      "quantum-green":  { "$value": "#34D399", "$type": "color", "$description": "Success state and online indicator", "$extensions": { "p31": { "usage": "success states, online indicators" } } },
-      "quantum-red":    { "$value": "#FB7185", "$type": "color", "$description": "Error state and destructive action indicator", "$extensions": { "p31": { "usage": "error states, destructive actions, crisis indicators" } } },
-      "quantum-iris":   { "$value": "#818CF8", "$type": "color", "$description": "Tertiary highlight for links and federation context", "$extensions": { "p31": { "usage": "tertiary highlight, links-in-context, federation" } } },
-      "void-deep":      { "$value": "#050508", "$type": "color", "$description": "Deepest background layer for terminal, code surfaces", "$extensions": { "p31": { "usage": "code blocks, terminal interfaces" } } },
-      "void":           { "$value": "#0A0A0F", "$type": "color", "$description": "Primary background — deep, non-reflective void", "$extensions": { "p31": { "usage": "primary background", "accessibility": "base for all dark surfaces" } } },
-      "surface":        { "$value": "#12121A", "$type": "color", "$description": "Raised card and container backgrounds", "$extensions": { "p31": { "usage": "card backgrounds, raised elements" } } },
-      "surface-2":      { "$value": "#1C1C2A", "$type": "color", "$description": "Nested surface for scrollbar tracks and secondary containers", "$extensions": { "p31": { "usage": "nested surfaces, scrollbar track" } } },
-      "cloud":          { "$value": "#A1A1AA", "$type": "color", "$description": "Muted body text and low-emphasis content", "$extensions": { "p31": { "usage": "muted body text" } } },
-      "text-primary":   { "$value": "#F5F5F7", "$type": "color", "$description": "Primary text for headings and body — never use pure white", "$extensions": { "p31": { "usage": "headings and primary body text", "accessibility": "WCAG 2.2 AA on void background (12.7:1)" } } },
-      "text-secondary": { "$value": "rgba(245,245,247,0.6)", "$type": "color", "$description": "Supporting text and metadata", "$extensions": { "p31": { "usage": "supporting text, metadata" } } },
-      "text-tertiary":  { "$value": "rgba(245,245,247,0.3)", "$type": "color", "$description": "Low-emphasis text and placeholders", "$extensions": { "p31": { "usage": "placeholders, lowest emphasis" } } },
-      "red":            { "$value": "#FB7185", "$type": "color", "$description": "Error state alias", "$extensions": { "p31": { "usage": "error states" } } },
-      "iris":           { "$value": "#818CF8", "$type": "color", "$description": "Tertiary highlight alias", "$extensions": { "p31": { "usage": "tertiary highlight" } } }
+      "quantum-cyan":   { "$value": "oklch(0.870 0.148 203)", "$type": "color", "$description": "Primary accent for interactive elements, CTAs, mesh highlights", "$extensions": { "p31": { "usage": "accent, primary buttons, focus indicators", "accessibility": "WCAG 2.2 AA on dark backgrounds" } } },
+      "quantum-violet": { "$value": "oklch(0.709 0.159 294)", "$type": "color", "$description": "Secondary accent for supporting actions and decorative elements", "$extensions": { "p31": { "usage": "secondary actions, decorative elements" } } },
+      "quantum-gold":   { "$value": "oklch(0.837 0.164 84)", "$type": "color", "$description": "Special accent for donor-facing elements and achievement indicators", "$extensions": { "p31": { "usage": "donor elements, spark indicators, achievements" } } },
+      "quantum-green":  { "$value": "oklch(0.773 0.153 163)", "$type": "color", "$description": "Success state and online indicator", "$extensions": { "p31": { "usage": "success states, online indicators" } } },
+      "quantum-red":    { "$value": "oklch(0.719 0.169 13)", "$type": "color", "$description": "Error state and destructive action indicator", "$extensions": { "p31": { "usage": "error states, destructive actions, crisis indicators" } } },
+      "quantum-iris":   { "$value": "oklch(0.680 0.158 277)", "$type": "color", "$description": "Tertiary highlight for links and federation context", "$extensions": { "p31": { "usage": "tertiary highlight, links-in-context, federation" } } },
+      "void-deep":      { "$value": "oklch(0.117 0.009 285)", "$type": "color", "$description": "Deepest background layer for terminal, code surfaces", "$extensions": { "p31": { "usage": "code blocks, terminal interfaces" } } },
+      "void":           { "$value": "oklch(0.147 0.011 285)", "$type": "color", "$description": "Primary background — deep, non-reflective void", "$extensions": { "p31": { "usage": "primary background", "accessibility": "base for all dark surfaces" } } },
+      "surface":        { "$value": "oklch(0.186 0.016 285)", "$type": "color", "$description": "Raised card and container backgrounds", "$extensions": { "p31": { "usage": "card backgrounds, raised elements" } } },
+      "surface-2":      { "$value": "oklch(0.233 0.027 284)", "$type": "color", "$description": "Nested surface for scrollbar tracks and secondary containers", "$extensions": { "p31": { "usage": "nested surfaces, scrollbar track" } } },
+      "cloud":          { "$value": "oklch(0.712 0.013 286)", "$type": "color", "$description": "Muted body text and low-emphasis content", "$extensions": { "p31": { "usage": "muted body text" } } },
+      "text-primary":   { "$value": "oklch(0.971 0.003 286)", "$type": "color", "$description": "Primary text for headings and body — never use pure white", "$extensions": { "p31": { "usage": "headings and primary body text", "accessibility": "WCAG 2.2 AA on void background (12.7:1)" } } },
+      "text-secondary": { "$value": "oklch(NaN NaN NaN)", "$type": "color", "$description": "Supporting text and metadata", "$extensions": { "p31": { "usage": "supporting text, metadata" } } },
+      "text-tertiary":  { "$value": "oklch(NaN NaN NaN)", "$type": "color", "$description": "Low-emphasis text and placeholders", "$extensions": { "p31": { "usage": "placeholders, lowest emphasis" } } },
+      "red":            { "$value": "oklch(0.719 0.169 13)", "$type": "color", "$description": "Error state alias", "$extensions": { "p31": { "usage": "error states" } } },
+      "iris":           { "$value": "oklch(0.680 0.158 277)", "$type": "color", "$description": "Tertiary highlight alias", "$extensions": { "p31": { "usage": "tertiary highlight" } } }
     },
     "semantic-color": {
       "primary":   { "$value": "{color.quantum-cyan}",   "$type": "color", "$description": "Primary accent — the single most important action per screen" },
@@ -76,18 +76,18 @@
       "slower":   { "$value": 1000, "$type": "duration", "$description": "Slower — page transitions (1 beat)" }
     },
     "shadow": {
-      "glass":       { "$value": { "color": "rgba(0,0,0,0.15)", "offsetX": "0px", "offsetY": "8px", "blur": "32px", "spread": "0px" }, "$type": "shadow", "$description": "Default glass panel shadow" },
-      "glass-hover": { "$value": { "color": "rgba(0,0,0,0.25)", "offsetX": "0px", "offsetY": "12px", "blur": "48px", "spread": "0px" }, "$type": "shadow", "$description": "Glass panel hover shadow — deeper lift" },
-      "glow-cyan":   { "$value": { "color": "rgba(0,240,255,0.25)", "offsetX": "0px", "offsetY": "0px", "blur": "20px", "spread": "0px" }, "$type": "shadow", "$description": "Quantum-cyan glow for primary interactive states" },
-      "glow-violet": { "$value": { "color": "rgba(167,139,250,0.25)", "offsetX": "0px", "offsetY": "0px", "blur": "20px", "spread": "0px" }, "$type": "shadow", "$description": "Violet glow for secondary interactive states" },
-      "glow-gold":   { "$value": { "color": "rgba(251,191,36,0.25)", "offsetX": "0px", "offsetY": "0px", "blur": "20px", "spread": "0px" }, "$type": "shadow", "$description": "Gold glow for achievement and spark states" },
-      "glow-green":  { "$value": { "color": "rgba(52,211,153,0.25)", "offsetX": "0px", "offsetY": "0px", "blur": "20px", "spread": "0px" }, "$type": "shadow", "$description": "Green glow for success states" },
-      "glow-red":    { "$value": { "color": "rgba(251,113,133,0.25)", "offsetX": "0px", "offsetY": "0px", "blur": "20px", "spread": "0px" }, "$type": "shadow", "$description": "Red glow for error states" }
+      "glass":       { "$value": { "color": "oklch(NaN NaN NaN)", "offsetX": "0px", "offsetY": "8px", "blur": "32px", "spread": "0px" }, "$type": "shadow", "$description": "Default glass panel shadow" },
+      "glass-hover": { "$value": { "color": "oklch(NaN NaN NaN)", "offsetX": "0px", "offsetY": "12px", "blur": "48px", "spread": "0px" }, "$type": "shadow", "$description": "Glass panel hover shadow — deeper lift" },
+      "glow-cyan":   { "$value": { "color": "oklch(NaN NaN NaN)", "offsetX": "0px", "offsetY": "0px", "blur": "20px", "spread": "0px" }, "$type": "shadow", "$description": "Quantum-cyan glow for primary interactive states" },
+      "glow-violet": { "$value": { "color": "oklch(NaN NaN NaN)", "offsetX": "0px", "offsetY": "0px", "blur": "20px", "spread": "0px" }, "$type": "shadow", "$description": "Violet glow for secondary interactive states" },
+      "glow-gold":   { "$value": { "color": "oklch(NaN NaN NaN)", "offsetX": "0px", "offsetY": "0px", "blur": "20px", "spread": "0px" }, "$type": "shadow", "$description": "Gold glow for achievement and spark states" },
+      "glow-green":  { "$value": { "color": "oklch(NaN NaN NaN)", "offsetX": "0px", "offsetY": "0px", "blur": "20px", "spread": "0px" }, "$type": "shadow", "$description": "Green glow for success states" },
+      "glow-red":    { "$value": { "color": "oklch(NaN NaN NaN)", "offsetX": "0px", "offsetY": "0px", "blur": "20px", "spread": "0px" }, "$type": "shadow", "$description": "Red glow for error states" }
     },
     "border": {
-      "glass":       { "$value": { "color": "rgba(255,255,255,0.08)", "width": "1px", "style": "solid" }, "$type": "border", "$description": "Default glass panel border" },
-      "glass-hover": { "$value": { "color": "rgba(255,255,255,0.15)", "width": "1px", "style": "solid" }, "$type": "border", "$description": "Glass panel hover border" },
-      "glass-strong":{ "$value": { "color": "rgba(255,255,255,0.12)", "width": "1px", "style": "solid" }, "$type": "border", "$description": "Strong glass border for navbars and overlays" }
+      "glass":       { "$value": { "color": "oklch(NaN NaN NaN)", "width": "1px", "style": "solid" }, "$type": "border", "$description": "Default glass panel border" },
+      "glass-hover": { "$value": { "color": "oklch(NaN NaN NaN)", "width": "1px", "style": "solid" }, "$type": "border", "$description": "Glass panel hover border" },
+      "glass-strong":{ "$value": { "color": "oklch(NaN NaN NaN)", "width": "1px", "style": "solid" }, "$type": "border", "$description": "Strong glass border for navbars and overlays" }
     }
   },
   "component-tokens": {
@@ -142,10 +142,10 @@
     },
     "btn-secondary": {
       "$value": {
-        "backgroundColor": "rgba(167,139,250,0.1)",
+        "backgroundColor": "oklch(NaN NaN NaN)",
         "textColor": "{color.quantum-violet}",
         "rounded": "{radii.md}",
-        "border": { "color": "rgba(167,139,250,0.3)", "width": "1px", "style": "solid" },
+        "border": { "color": "oklch(NaN NaN NaN)", "width": "1px", "style": "solid" },
         "padding": "{spacing.sm} {spacing.lg}"
       },
       "$type": "composition",
@@ -159,10 +159,10 @@
     },
     "btn-ghost": {
       "$value": {
-        "backgroundColor": "rgba(255,255,255,0.05)",
+        "backgroundColor": "oklch(NaN NaN NaN)",
         "textColor": "{color.text-secondary}",
         "rounded": "{radii.md}",
-        "border": { "color": "rgba(255,255,255,0.1)", "width": "1px", "style": "solid" },
+        "border": { "color": "oklch(NaN NaN NaN)", "width": "1px", "style": "solid" },
         "padding": "{spacing.sm} {spacing.lg}"
       },
       "$type": "composition",
@@ -284,32 +284,32 @@
       "mono": "JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace"
     },
     "colors": {
-      "palette": ["#00F0FF", "#A78BFA", "#FBBF24", "#34D399"],
-      "accent": "#00F0FF",
+      "palette": ["oklch(0.870 0.148 203)", "oklch(0.709 0.159 294)", "oklch(0.837 0.164 84)", "oklch(0.773 0.153 163)"],
+      "accent": "oklch(0.870 0.148 203)",
       "tokens": {
-        "voidDeep": "#050508",
-        "void": "#0A0A0F",
-        "surface": "#12121A",
-        "surface2": "#1C1C2A",
-        "cloud": "#A1A1AA",
-        "textPrimary": "#F5F5F7",
-        "textSecondary": "rgba(245,245,247,0.6)",
-        "textTertiary": "rgba(245,245,247,0.3)",
-        "accent": "#00F0FF",
-        "violet": "#A78BFA",
-        "gold": "#FBBF24",
-        "green": "#34D399",
-        "red": "#FB7185",
-        "iris": "#818CF8"
+        "voidDeep": "oklch(0.117 0.009 285)",
+        "void": "oklch(0.147 0.011 285)",
+        "surface": "oklch(0.186 0.016 285)",
+        "surface2": "oklch(0.233 0.027 284)",
+        "cloud": "oklch(0.712 0.013 286)",
+        "textPrimary": "oklch(0.971 0.003 286)",
+        "textSecondary": "oklch(NaN NaN NaN)",
+        "textTertiary": "oklch(NaN NaN NaN)",
+        "accent": "oklch(0.870 0.148 203)",
+        "violet": "oklch(0.709 0.159 294)",
+        "gold": "oklch(0.837 0.164 84)",
+        "green": "oklch(0.773 0.153 163)",
+        "red": "oklch(0.719 0.169 13)",
+        "iris": "oklch(0.680 0.158 277)"
       },
       "glass": {
-        "surface": "rgba(255,255,255,0.04)",
-        "border": "rgba(255,255,255,0.08)",
-        "borderHover": "rgba(255,255,255,0.15)",
-        "surfaceHover": "rgba(255,255,255,0.06)",
+        "surface": "oklch(NaN NaN NaN)",
+        "border": "oklch(NaN NaN NaN)",
+        "borderHover": "oklch(NaN NaN NaN)",
+        "surfaceHover": "oklch(NaN NaN NaN)",
         "blur": "12px",
         "radius": "24px",
-        "shadow": "0 8px 32px rgba(0,0,0,0.15)"
+        "shadow": "0 8px 32px oklch(NaN NaN NaN)"
       }
     },
     "radii": {

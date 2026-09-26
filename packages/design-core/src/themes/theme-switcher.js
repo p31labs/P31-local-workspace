@@ -154,12 +154,12 @@
     orb.innerHTML = '<span id="p31-theme-emoji">' + THEMES[currentTheme].emoji + '</span>';
     orb.style.cssText =
       'position:fixed;bottom:24px;right:24px;width:56px;height:56px;' +
-      'border-radius:50%;border:2px solid var(--p31-glass-border,rgba(255,255,255,0.1));' +
-      'background:var(--p31-glass-bg,rgba(255,255,255,0.06));' +
+      'border-radius:50%;border:2px solid var(--p31-glass-border,oklch(NaN NaN NaN));' +
+      'background:var(--p31-glass-bg,oklch(NaN NaN NaN));' +
       'backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);' +
       'cursor:pointer;z-index:9999;display:flex;align-items:center;justify-content:center;' +
       'font-size:24px;transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);' +
-      'box-shadow:0 4px 20px rgba(0,0,0,0.3);user-select:none;';
+      'box-shadow:0 4px 20px oklch(NaN NaN NaN);user-select:none;';
 
     // Orb animation states
     var animating = false;
@@ -201,8 +201,8 @@
     tooltip.style.cssText =
       'position:fixed;bottom:84px;right:24px;' +
       'padding:8px 12px;border-radius:8px;' +
-      'background:var(--p31-surface,rgba(0,0,0,0.8));' +
-      'border:1px solid var(--p31-glass-border,rgba(255,255,255,0.1));' +
+      'background:var(--p31-surface,oklch(NaN NaN NaN));' +
+      'border:1px solid var(--p31-glass-border,oklch(NaN NaN NaN));' +
       'color:var(--p31-text-secondary);font-size:11px;' +
       'opacity:0;transition:opacity 0.2s ease;' +
       'pointer-events:none;z-index:9998;' +

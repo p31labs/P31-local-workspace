@@ -1,2 +1,7 @@
-/* P31 design-core — glass.css. Now provided by @p31/canon; compat re-export. */
-@import '@p31/canon/css/glass.css';
+/* P31 design-core — glass.css.
+   Glassmorphism recipe classes (.glass-panel, .glass-card, .glass-navbar,
+   .glass-strong, .glass-subtle, .glass-box, .btn-*, .code-block).
+   Single source of truth: recipes.css (Glass Morphism Tiers section).
+   Self-contained aggregation entry so the ./css/glass.css export resolves
+   for existing consumers without a @p31/canon dependency. */
+@import './recipes.css';

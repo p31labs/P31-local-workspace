@@ -1,17 +1,15 @@
 ---
-// @file CrisisOverlay — Full-screen breathing overlay.
+// @file CrisisOverlay — Full-screen breathing overlay shown when spoons=0.
 // Auto-generated from components.yml.
 
 interface Props {
-  message?: string;
-  buttonLabel?: string;
+  children: AstroSlotChildren;
   class?: string;
 }
 
-const { message = 'Rest. Breathe. The mesh holds.', buttonLabel = "I'm Ready", class: className = '' } = Astro.props;
+const { children, class: className = '' } = Astro.props;
 ---
 
-<div class={`fixed inset-0 z-50 flex flex-col items-center justify-center gap-6 bg-void/90 backdrop-blur-sm ${className}`}>
-  <slot name="message">{message}</slot>
-  <slot name="button">{buttonLabel}</slot>
+<div class={className}>
+  <slot />
 </div>

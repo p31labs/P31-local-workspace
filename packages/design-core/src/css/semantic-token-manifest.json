@@ -45,8 +45,8 @@
         },
         {
           "css": "--p31-shadow-glass",
-          "raw": "0 8px 32px rgba(0,0,0,0.15)",
-          "resolved": "0 8px 32px rgba(0,0,0,0.15)"
+          "raw": "0 8px 32px oklch(NaN NaN NaN)",
+          "resolved": "0 8px 32px oklch(NaN NaN NaN)"
         },
         {
           "css": "--p31-spacing-xl",
@@ -112,13 +112,13 @@
         },
         {
           "css": "--p31-shadow-glass",
-          "raw": "0 8px 32px rgba(0,0,0,0.15)",
-          "resolved": "0 8px 32px rgba(0,0,0,0.15)"
+          "raw": "0 8px 32px oklch(NaN NaN NaN)",
+          "resolved": "0 8px 32px oklch(NaN NaN NaN)"
         },
         {
           "css": "--p31-shadow-glow_cyan_hover",
-          "raw": "0 0 30px rgba(0,240,255,0.4)",
-          "resolved": "0 0 30px rgba(0,240,255,0.4)"
+          "raw": "0 0 30px oklch(NaN NaN NaN)",
+          "resolved": "0 0 30px oklch(NaN NaN NaN)"
         },
         {
           "css": "--p31-spacing-xs",
@@ -251,8 +251,8 @@
         },
         {
           "css": "--p31-shadow-glow_cyan",
-          "raw": "0 0 20px rgba(0,240,255,0.25)",
-          "resolved": "0 0 20px rgba(0,240,255,0.25)"
+          "raw": "0 0 20px oklch(NaN NaN NaN)",
+          "resolved": "0 0 20px oklch(NaN NaN NaN)"
         },
         {
           "css": "--p31-typography-font_sans",
@@ -372,8 +372,8 @@
         },
         {
           "css": "--p31-shadow-glow_cyan",
-          "raw": "0 0 20px rgba(0,240,255,0.25)",
-          "resolved": "0 0 20px rgba(0,240,255,0.25)"
+          "raw": "0 0 20px oklch(NaN NaN NaN)",
+          "resolved": "0 0 20px oklch(NaN NaN NaN)"
         }
       ],
       "props": [
@@ -470,8 +470,8 @@
         },
         {
           "css": "--p31-shadow-glass",
-          "raw": "0 8px 32px rgba(0,0,0,0.15)",
-          "resolved": "0 8px 32px rgba(0,0,0,0.15)"
+          "raw": "0 8px 32px oklch(NaN NaN NaN)",
+          "resolved": "0 8px 32px oklch(NaN NaN NaN)"
         },
         {
           "css": "--p31-typography-font_sans",
@@ -618,8 +618,8 @@
         },
         {
           "css": "--p31-shadow-glass",
-          "raw": "0 8px 32px rgba(0,0,0,0.15)",
-          "resolved": "0 8px 32px rgba(0,0,0,0.15)"
+          "raw": "0 8px 32px oklch(NaN NaN NaN)",
+          "resolved": "0 8px 32px oklch(NaN NaN NaN)"
         }
       ],
       "props": [
@@ -914,10 +914,10 @@
         "font-display": "\"Comic Sans MS\", \"Chalkboard SE\", cursive"
       },
       "glass": {
-        "glass_surface": "rgba(255, 248, 240, 0.7)",
-        "glass_border": "rgba(200, 180, 160, 0.25)",
-        "glass_surface_hover": "rgba(255, 248, 240, 0.85)",
-        "glass_border_hover": "rgba(200, 180, 160, 0.35)",
+        "glass_surface": "oklch(NaN NaN NaN)",
+        "glass_border": "oklch(NaN NaN NaN)",
+        "glass_surface_hover": "oklch(NaN NaN NaN)",
+        "glass_border_hover": "oklch(NaN NaN NaN)",
         "glass_blur": "16px"
       },
       "starfield": {
@@ -960,8 +960,8 @@
         "crisis": "99999"
       },
       "dark_mode": {
-        "glass_surface": "rgba(30, 28, 26, 0.8)",
-        "glass_border": "rgba(80, 75, 70, 0.3)",
+        "glass_surface": "oklch(NaN NaN NaN)",
+        "glass_border": "oklch(NaN NaN NaN)",
         "text": "oklch(90% 0.01 80)",
         "text_secondary": "oklch(65% 0.02 80)"
       }

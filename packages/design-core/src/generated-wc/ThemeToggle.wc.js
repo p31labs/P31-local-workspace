@@ -14,25 +14,25 @@ template.innerHTML = `
   <style>
 :host {
   display: inline-flex;
-    --p31-semantic-color-background-default: #0A0A0F;
-    --p31-theme-light-background-default: #F8FAFC;
-    --p31-theme-light-background-alt: #FFFFFF;
-    --p31-theme-light-text-primary: #0F172A;
-    --p31-theme-light-text-secondary: rgba(15,23,42,0.6);
-    --p31-theme-light-text-tertiary: rgba(15,23,42,0.3);
-    --p31-theme-light-glass_surface: rgba(0,0,0,0.03);
-    --p31-theme-light-glass_border: rgba(0,0,0,0.08);
-    --p31-theme-light-glass_border_hover: rgba(0,0,0,0.15);
+    --p31-semantic-color-background-default: oklch(10% 0.01 240);
+    --p31-theme-light-background-default: oklch(0.984 0.003 248);
+    --p31-theme-light-background-alt: oklch(1.000 0.000 90);
+    --p31-theme-light-text-primary: oklch(0.208 0.040 266);
+    --p31-theme-light-text-secondary: oklch(NaN NaN NaN);
+    --p31-theme-light-text-tertiary: oklch(NaN NaN NaN);
+    --p31-theme-light-glass_surface: oklch(NaN NaN NaN);
+    --p31-theme-light-glass_border: oklch(NaN NaN NaN);
+    --p31-theme-light-glass_border_hover: oklch(NaN NaN NaN);
     --p31-primitive-typography-font_sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   padding: 8px;
   border-radius: 9999px;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: oklch(NaN NaN NaN);
+  border: 1px solid oklch(NaN NaN NaN);
   cursor: pointer;
   transition: border-color 0.2s ease;
 }
 :host(:hover) {
-  border-color: rgba(255,255,255,0.2);
+  border-color: oklch(NaN NaN NaN);
 }
 
   </style>

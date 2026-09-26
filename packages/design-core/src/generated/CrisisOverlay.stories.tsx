@@ -4,7 +4,7 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { CrisisOverlay } from './CrisisOverlay';
+import { CrisisOverlay } from './CrisisOverlay.js';
 
 const meta: Meta<typeof CrisisOverlay> = {
   title: 'Components/CrisisOverlay',

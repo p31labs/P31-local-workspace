@@ -1,0 +1,9 @@
+component: CrisisExit
+narrative: |
+  The single control a user in crisis taps to leave crisis mode when ready.
+  Must be findable without reading, operable with one finger, zero motion.
+constraints:
+  accessibility: { wcag: AAA, contrast: 7, touchTarget: 64 }
+  spoonAware: [0, 1]
+  loveSemantics:
+    - { trigger: on-ready, reward: 3, recipient: [user], description: Self-advocacy }

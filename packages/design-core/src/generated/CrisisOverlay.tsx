@@ -1,44 +1,31 @@
 /**
- * @file CrisisOverlay — Full-screen breathing overlay shown when spoons=0.
+ * @file CrisisOverlay — Full-screen crisis mode overlay.
  * Auto-generated from components.yml.
- *
- * @a2ui-component CrisisOverlay
- * @a2ui-props message string - Display text
- * @a2ui-props onDismiss string - Action ID to exit crisis mode
- * @a2ui-props visible boolean - Controls overlay visibility
- * @a2ui-example {"component":"CrisisOverlay","message":"Take a moment. Breathe.","onDismiss":"exit-crisis","visible":true}
  */
 
 import type { ReactNode } from 'react';
 
 export interface CrisisOverlayProps {
-  message?: string;
-  buttonLabel?: string;
   onReady?: () => void;
+  message?: string;
   className?: string;
-  style?: React.CSSProperties;
 }
 
-export function CrisisOverlay({
-  message = 'Rest. Breathe. The mesh holds.',
-  buttonLabel = "I'm Ready",
-  onReady,
-  className,
-  style
-}: CrisisOverlayProps) {
+export function CrisisOverlay({ onReady, message = 'Rest. Breathe. The mesh holds.', className }: CrisisOverlayProps) {
   return (
-    <div className={`fixed inset-0 z-50 flex flex-col items-center justify-center gap-6 bg-void/90 backdrop-blur-sm ${className || ''}`} style={style}>
-      <div className="text-center">
-        <p className="text-2xl font-light text-text mb-2">{message}</p>
-      </div>
-      {onReady && (
+    <div className={`crisis-overlay ${className || ''}`} data-spoons="0">
+      <div className="flex flex-col items-center justify-center gap-6 p-10 min-h-screen">
+        <p className="text-xl font-light text-center" style={{ color: 'var(--p31-text)' }}>
+          {message}
+        </p>
         <button
+          type="button"
           onClick={onReady}
-          className="px-6 py-3 rounded-lg bg-accent text-void font-medium hover:bg-accent/90 transition-colors min-h-[44px]"
+          className="btn btn-primary"
         >
-          {buttonLabel}
+          I'm Ready
         </button>
-      )}
+      </div>
     </div>
   );
 }

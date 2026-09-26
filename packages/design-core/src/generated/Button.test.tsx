@@ -5,7 +5,7 @@
 
 import { describe, it, expect } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { Button } from './Button';
+import { Button } from './Button.js';
 
 describe('Button', () => {
   it('renders children', () => {

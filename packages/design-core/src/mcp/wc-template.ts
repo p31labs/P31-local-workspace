@@ -69,7 +69,7 @@ ${GLASS_BASE}
 }
 :host([strong]) {
   background: var(--p31-glass-surface-hover);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 8px 32px oklch(0 0 0 / 0.4);
 }
 :host(:hover) {
   border-color: var(--p31-glass-border-hover);
@@ -191,7 +191,7 @@ button[variant="ghost"] {
   background: transparent;
   color: var(--p31-text-secondary);
 }
-button[variant="ghost"]:hover { background: rgba(255, 255, 255, 0.05); color: var(--p31-text-primary); }
+button[variant="ghost"]:hover { background: oklch(NaN NaN NaN); color: var(--p31-text-primary); }
 button:disabled { opacity: 0.5; cursor: not-allowed; }
 button:focus-visible { outline: 2px solid var(--p31-accent); outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) {

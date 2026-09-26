@@ -4,7 +4,7 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { CandyHeader } from './CandyHeader';
+import { CandyHeader } from './CandyHeader.js';
 
 const meta: Meta<typeof CandyHeader> = {
   title: 'Components/CandyHeader',

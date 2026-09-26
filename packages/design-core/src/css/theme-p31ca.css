@@ -12,11 +12,11 @@
 :root[data-brand='p31ca'] {
   --p31-accent: oklch(65% 0.28 195);          /* quantum cyan */
   --p31-accent-shimmer: oklch(70% 0.32 195);
-  --p31-bg: oklch(8% 0.01 240);              /* deeper void */
-  --p31-surface: oklch(12% 0.015 240);
-  --p31-surface2: oklch(18% 0.02 240);
-  --p31-text: oklch(97% 0.005 240);
-  --p31-text-secondary: oklch(72% 0.01 240);
+  --p31-bg: oklch(8% 0.01 270);              /* deeper void */
+  --p31-surface: oklch(12% 0.015 270);
+  --p31-surface2: oklch(18% 0.02 270);
+  --p31-text: oklch(97% 0.005 270);
+  --p31-text-secondary: oklch(72% 0.01 270);
   --p31-glass-surface: oklch(100% 0.01 240 / 0.03);
   --p31-glass-border: oklch(100% 0.01 240 / 0.08);
   font-family: 'Plus Jakarta Sans', 'JetBrains Mono', system-ui, sans-serif;

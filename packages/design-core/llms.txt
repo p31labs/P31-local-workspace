@@ -1,0 +1,27 @@
+# P31 Design System — machine-readable index
+
+For AI agents. Every item resolves to a canonical source. Never invent a token,
+component, or value that is not listed here.
+
+## Tokens
+- DTCG (canonical): `packages/canon/tokens/tokens.dtc.json`
+- Runtime CSS: `packages/canon/dist/tokens.css`
+- Theme store (source of truth): `packages/canon/src/theming/theme-store.ts`
+
+## Motion
+- `packages/design-core/src/math/motion.ts` — M3 Expressive springs, spoon mapping
+
+## Components (canonical defs)
+- `packages/design-core/src/componentDefs.ts` — props, tokens, accessibility, aiGuidance
+- Compositions: `@p31/design-core/compositions` (ChatShell, SectionStrip, CommandPalette, Chameleon, PageHeader)
+- Governance: `@p31/governance` (ChainTimeline, VerifyButton, EnforcementGauge, RefusalFeed, ProposalQueue, SovereignBadge, LumiIdentityCard)
+
+## Live surfaces
+- p31ca.org · phos.p31ca.org · phosphorus31.org · loom.p31ca.org
+- loom-sse.trimtab-signal.workers.dev (SSE health) · p31-doc-relay.trimtab-signal.workers.dev (y-websocket relay)
+
+## Standards alignment
+- IETF Agent Audit Trail `draft-sharif-agent-audit-trail-04` (AAT)
+- IETF `draft-wei-aic-jwt` (AIC-JWT) · `draft-prakash-aip` (AIP) · `draft-burls-mtac` (MTAC)
+- IETF WIMSE `draft-ietf-wimse-arch-08`
+- EU AI Act Art. 12 (high-risk logging: 2 Dec 2027 / 2 Aug 2028) + Art. 50 transparency (2 Aug 2026)

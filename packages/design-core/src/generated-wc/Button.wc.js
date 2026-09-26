@@ -14,17 +14,17 @@ template.innerHTML = `
   <style>
 :host {
   display: inline-flex;
-    --p31-semantic-color-accent-default: #00F0FF;
-    --p31-primitive-color-void: #0A0A0F;
-    --p31-primitive-color-void_deep: #050508;
-    --p31-primitive-color-surface2: #1C1C2A;
-    --p31-primitive-spacing-sm: 8px;
-    --p31-primitive-spacing-lg: 24px;
-    --p31-primitive-spacing-xl: 32px;
-    --p31-primitive-radius-md: 12px;
-    --p31-primitive-radius-sm: 8px;
+    --p31-semantic-color-accent-default: oklch(65% 0.18 195);
+    --p31-primitive-color-void: oklch(10% 0.01 240);
+    --p31-primitive-color-void_deep: oklch(8% 0.01 240);
+    --p31-primitive-color-surface2: oklch(22% 0.02 240);
+    --p31-primitive-spacing-sm: clamp(var(--p31-scale-sm), 1.5vw, var(--p31-scale-md));
+    --p31-primitive-spacing-lg: clamp(var(--p31-scale-lg), 3.5vw, var(--p31-scale-xl));
+    --p31-primitive-spacing-xl: clamp(var(--p31-scale-xl), 5vw, var(--p31-scale-2xl));
+    --p31-primitive-radius-md: calc(var(--p31-scale-md) / 2);
+    --p31-primitive-radius-sm: calc(var(--p31-scale-sm) / 2);
     --p31-primitive-radius-full: 9999px;
-    --p31-primitive-shadow-glow_cyan: 0 0 20px rgba(0,240,255,0.25);
+    --p31-primitive-shadow-glow_cyan: 0 0 20px oklch(NaN NaN NaN);
     --p31-primitive-typography-font_sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   align-items: center;
   justify-content: center;
@@ -48,9 +48,9 @@ template.innerHTML = `
   filter: brightness(1.1);
 }
 :host([variant="secondary"]) {
-  background: rgba(255,255,255,0.06);
+  background: oklch(NaN NaN NaN);
   color: var(--p31-semantic-color-text-primary);
-  border: 1px solid rgba(255,255,255,0.1);
+  border: 1px solid oklch(NaN NaN NaN);
 }
 :host([variant="ghost"]) {
   background: transparent;

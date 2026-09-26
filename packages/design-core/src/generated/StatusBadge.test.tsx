@@ -5,7 +5,7 @@
 
 import { describe, it, expect } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { StatusBadge } from './StatusBadge';
+import { StatusBadge } from './StatusBadge.js';
 
 describe('StatusBadge', () => {
   it('renders children', () => {

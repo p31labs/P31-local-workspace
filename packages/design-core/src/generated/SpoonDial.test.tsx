@@ -5,7 +5,7 @@
 
 import { describe, it, expect } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { SpoonDial } from './SpoonDial';
+import { SpoonDial } from './SpoonDial.js';
 
 describe('SpoonDial', () => {
   it('renders without children', () => {

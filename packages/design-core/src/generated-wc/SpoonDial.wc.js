@@ -15,7 +15,7 @@ template.innerHTML = `
 :host {
   display: block;
     --p31-component-spoon_icon: [object Object];
-    --p31-semantic-color-accent-default: #00F0FF;
+    --p31-semantic-color-accent-default: oklch(65% 0.18 195);
     --p31-primitive-color-text-tertiary: var(--p31-primitive-color-text-tertiary);
 }
 

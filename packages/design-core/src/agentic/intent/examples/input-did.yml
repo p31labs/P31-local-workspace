@@ -1,0 +1,9 @@
+component: DidInput
+narrative: |
+  Caregiver enters a DID for ledger attribution; mistakes are expensive so validation is loud.
+  Engagement matters more than goal completion; must stay functional at spoon 0.
+constraints:
+  accessibility: { wcag: AA, contrast: 4.5, touchTarget: 44 }
+  performance: { bundle: 2, renderTime: 16.67 }
+  loveSemantics:
+    - { trigger: on-valid-did, reward: 1, recipient: [user], description: Correct attribution }

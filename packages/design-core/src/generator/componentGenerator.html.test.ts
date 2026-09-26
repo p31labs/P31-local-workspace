@@ -1,6 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { readFileSync } from 'fs';
-import { generateStaticHtml } from './componentGenerator.html';
+import { generateStaticHtml } from './componentGenerator.html.js';
 import { join } from 'path';
 import os from 'os';
 
@@ -14,7 +13,9 @@ describe('componentGenerator.html', () => {
     const result = generateStaticHtml({ componentsPath: COMPONENTS_YAML, tokensPath: TOKENS_YAML, outputDir: tmpDir });
     expect(result.length).toBeGreaterThanOrEqual(1);
     for (const item of result) {
-      expect(readFileSync(item.path, 'utf-8')).toContain('<!DOCTYPE html>');
+      // generateHtml is the dry-run API: returns in-memory output, does not write to disk.
+      expect(item.code).toContain('<!DOCTYPE html>');
+      expect(item.path).toMatch(/\.html$/);
     }
   });
 
@@ -24,7 +25,7 @@ describe('componentGenerator.html', () => {
     expect(result).toHaveLength(1);
     expect(result[0].name).toBe('Button');
     expect(result[0].path).toMatch(/Button\.html$/);
-    const content = readFileSync(result[0].path, 'utf-8');
+    const content = result[0].code;
     expect(content).toContain('<!DOCTYPE html>');
     expect(content).toContain('Button');
     expect(content).toContain('copy-btn');

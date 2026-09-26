@@ -4,7 +4,7 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { GlassPanel } from './GlassPanel';
+import { GlassPanel } from './GlassPanel.js';
 
 const meta: Meta<typeof GlassPanel> = {
   title: 'Components/GlassPanel',

@@ -4,7 +4,7 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { SpoonDial } from './SpoonDial';
+import { SpoonDial } from './SpoonDial.js';
 
 const meta: Meta<typeof SpoonDial> = {
   title: 'Components/SpoonDial',

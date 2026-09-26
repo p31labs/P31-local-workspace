@@ -1,2 +1,15 @@
-/* P31 design-core — link-glow.css. Now provided by @p31/canon; compat re-export. */
-@import '@p31/canon/css/link-glow.css';
+/* ═══ Link hover: cyan→violet→green gradient + glow, no underline ═══
+ * Canonical definition. Imported via all.css. Do NOT redefine in apps. */
+.link-glow {
+  text-decoration: none !important;
+}
+
+.link-glow:hover {
+  text-decoration: none !important;
+  background: linear-gradient(100deg, oklch(0.870 0.148 203) 0%, oklch(0.709 0.159 294) 50%, oklch(0.773 0.153 163) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 12px oklch(NaN NaN NaN);
+  transition: text-shadow 0.3s ease;
+}

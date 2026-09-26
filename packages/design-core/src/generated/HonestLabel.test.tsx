@@ -5,7 +5,7 @@
 
 import { describe, it, expect } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { HonestLabel } from './HonestLabel';
+import { HonestLabel } from './HonestLabel.js';
 
 describe('HonestLabel', () => {
   it('renders children', () => {

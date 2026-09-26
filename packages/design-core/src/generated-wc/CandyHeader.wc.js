@@ -17,8 +17,8 @@ template.innerHTML = `
     --p31-component-header_candy: [object Object];
     --p31-component-crown_xs: [object Object];
     --p31-component-spoon_icon: [object Object];
-    --p31-primitive-color-cyan: #00F0FF;
-    --p31-primitive-color-void: #0A0A0F;
+    --p31-primitive-color-cyan: oklch(65% 0.18 195);
+    --p31-primitive-color-void: oklch(10% 0.01 240);
 }
 
   </style>

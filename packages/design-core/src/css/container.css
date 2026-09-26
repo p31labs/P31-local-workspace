@@ -1,2 +1,155 @@
-/* P31 design-core — container.css. Now provided by @p31/canon; compat re-export. */
-@import '@p31/canon/css/container.css';
+/* ── P31 Container Query Layer ──
+ * Opt-in, additive system for component-level responsiveness.
+ * Complements (does NOT replace) size-class.css (viewport/device-class)
+ * and spoon-aware motion (data-spoons). Use container-type on a parent,
+ * then @container in descendants, to adapt to PARENT width.
+ */
+
+/* Opt-in: mark an element as a query container */
+[data-container] {
+  container-type: inline-size;
+}
+
+/* Fluid type/spacing tokens relative to the nearest container (cqi) */
+[data-container-adaptive] {
+  --p31-container-font: clamp(0.75rem, 1.2cqi + 0.5rem, 1.25rem);
+  --p31-container-padding: clamp(0.5rem, 1cqi, 1.5rem);
+  --p31-container-gap: clamp(0.25rem, 0.8cqi, 1rem);
+}
+
+/* Auto-grid: 2 cols default, collapses to 1 in narrow containers,
+   expands to 3 in wide containers. Respects parent width, not viewport. */
+[data-container-grid] {
+  display: grid;
+  container-type: inline-size;
+  gap: var(--p31-container-gap, 0.75rem);
+  grid-template-columns: repeat(2, 1fr);
+}
+
+@container (max-width: 400px) {
+  [data-container-grid] {
+    grid-template-columns: 1fr;
+  }
+}
+
+@container (min-width: 800px) {
+  [data-container-grid] {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Narrow-container refinement for leaderboard-style rows */
+@container (max-width: 360px) {
+  [data-container-adaptive] .leaderboard-entry {
+    font-size: 0.75rem;
+    gap: 4px;
+  }
+
+  [data-container-adaptive] .leaderboard-rank {
+    width: 16px;
+  }
+}
+
+/* ─── ChatShell: three-layer stack + mobile artifact drawer ─── */
+.chat-shell {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 0;
+  min-height: 0;
+  min-width: 0;
+  position: relative;
+}
+
+.chat-shell-header {
+  flex-shrink: 0;
+  min-width: 0;
+}
+
+.chat-shell-body {
+  flex: 1 1 0;
+  min-height: 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.chat-shell-drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.chat-shell-drawer--open {
+  pointer-events: auto;
+  visibility: visible;
+}
+
+.chat-shell-drawer-backdrop {
+  position: absolute;
+  inset: 0;
+  background: oklch(0% 0 0 / 0.5);
+  opacity: 0;
+  transition: opacity 200ms ease;
+}
+
+.chat-shell-drawer--open .chat-shell-drawer-backdrop {
+  opacity: 1;
+}
+
+.chat-shell-drawer-panel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+  background: var(--p31-surface, Canvas);
+  transform: translateY(100%);
+  transition: transform 200ms ease;
+}
+
+.chat-shell-drawer--open .chat-shell-drawer-panel {
+  transform: translateY(0);
+}
+
+.chat-shell-drawer-head {
+  flex-shrink: 0;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--p31-space-xs, 0.25rem);
+  padding: var(--p31-space-xs, 0.25rem) var(--p31-space-sm, 0.5rem);
+  border-bottom: 1px solid var(--p31-glass-border, currentColor);
+  background: var(--p31-surface, Canvas);
+}
+
+.chat-shell-drawer-title {
+  font-weight: 700;
+  font-size: var(--p31-scale-sm, 1rem);
+  color: var(--p31-text, CanvasText);
+}
+
+.chat-shell-drawer-body {
+  flex: 1 1 0;
+  min-height: 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* On wide containers the shell drawer is suppressed; consumers render side-by-side. */
+@container (min-width: 900px) {
+  .chat-shell-drawer {
+    display: none;
+  }
+}

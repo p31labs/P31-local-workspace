@@ -76,6 +76,14 @@ export const MCP_TOOLS: McpToolSchema[] = [
     },
   },
   {
+    name: 'list_tokens_dtc',
+    description: 'List all P31 design tokens in W3C Design Tokens Format Module 2025.10 (DTCG) JSON. Returns the complete token set with $value, $type, and $description fields for AI consumption and design-tool interchange.',
+    inputSchema: {
+      type: 'object',
+      properties: {},
+    },
+  },
+  {
     name: 'list_components',
     description: `List all available P31 design system components with their CSS classes, category, and AI guidance. Supports category filtering. Valid categories: ${COMPONENT_CATEGORIES.join(', ')}.`,
     inputSchema: {
@@ -102,6 +110,53 @@ export const MCP_TOOLS: McpToolSchema[] = [
         },
       },
       required: ['name'],
+    },
+  },
+  {
+    name: 'get_component_metadata',
+    description: 'Get structured metadata for a P31 component: props, slots, variants, accessibility requirements, status, and import path. Optimized for AI agent consumption.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        name: {
+          type: 'string',
+          description: 'Component name, e.g. "GlassPanel", "Topbar", "SpoonDial"',
+        },
+      },
+      required: ['name'],
+    },
+  },
+  {
+    name: 'validate_component',
+    description: 'Validate a component usage against P31 design rules. Checks for hardcoded colors, token usage, and component-specific constraints.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        name: {
+          type: 'string',
+          description: 'Component name to validate against',
+        },
+        code: {
+          type: 'string',
+          description: 'Optional code snippet to validate',
+        },
+      },
+      required: ['name'],
+    },
+  },
+  {
+    name: 'resolve_brand',
+    description: 'Resolve a brand token set by extending a base theme. Returns the merged token map for the requested brand (e.g. p31ca, phos, phosphorus31, willow, bonding).',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        brand: {
+          type: 'string',
+          enum: ['p31ca', 'phos', 'phosphorus31', 'willow', 'bonding'],
+          description: 'Brand identifier',
+        },
+      },
+      required: ['brand'],
     },
   },
   {

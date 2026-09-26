@@ -16,18 +16,18 @@ template.innerHTML = `
   display: inline-flex;
   align-items: center;
   gap: 6px;
-    --p31-semantic-color-accent-default: #00F0FF;
-    --p31-semantic-color-accent-gold: #FBBF24;
-    --p31-semantic-color-accent-red: #FB7185;
-    --p31-semantic-color-accent-iris: #818CF8;
-    --p31-semantic-color-text-tertiary: rgba(245,245,247,0.3);
+    --p31-semantic-color-accent-default: oklch(65% 0.18 195);
+    --p31-semantic-color-accent-gold: oklch(65% 0.18 15);
+    --p31-semantic-color-accent-red: oklch(65% 0.18 20);
+    --p31-semantic-color-accent-iris: oklch(65% 0.18 270);
+    --p31-semantic-color-text-tertiary: oklch(78% 0.01 240);
     --p31-primitive-typography-font_sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
 .dot {
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.1);
+  background: oklch(NaN NaN NaN);
   transition: all 0.3s ease;
 }
 .dot.filled {

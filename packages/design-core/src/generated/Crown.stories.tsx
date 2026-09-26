@@ -4,7 +4,7 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { Crown } from './Crown';
+import { Crown } from './Crown.js';
 
 const meta: Meta<typeof Crown> = {
   title: 'Components/Crown',

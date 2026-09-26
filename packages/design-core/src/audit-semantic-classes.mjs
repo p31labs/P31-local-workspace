@@ -5,9 +5,11 @@
  */
 
 import { readdirSync, readFileSync, statSync } from 'fs';
-import { join, relative } from 'path';
+import { join, relative, resolve, dirname } from 'path';
+import { fileURLToPath } from 'url';
 
-const ROOT = process.cwd();
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const ROOT = resolve(__dirname, '..', '..', '..');
 const SCAN_DIRS = [
   'apps/p31ca/src',
   'apps/phosphorus31/src',

@@ -14,20 +14,20 @@ template.innerHTML = `
   <style>
 :host {
   display: block;
-    --p31-primitive-color-glass_surface: rgba(255,255,255,0.04);
-    --p31-primitive-color-glass_border: rgba(255,255,255,0.08);
-    --p31-primitive-color-surface2: #1C1C2A;
-    --p31-primitive-color-void_deep: #050508;
-    --p31-primitive-radius-xl: 24px;
-    --p31-primitive-radius-sm: 8px;
-    --p31-primitive-radius-lg: 16px;
-    --p31-primitive-shadow-glass: 0 8px 32px rgba(0,0,0,0.15);
-    --p31-primitive-spacing-xl: 32px;
-    --p31-primitive-spacing-xxl: 64px;
+    --p31-primitive-color-glass_surface: oklch(100% 0.01 240 / 0.04);
+    --p31-primitive-color-glass_border: oklch(100% 0.01 240 / 0.08);
+    --p31-primitive-color-surface2: oklch(22% 0.02 240);
+    --p31-primitive-color-void_deep: oklch(8% 0.01 240);
+    --p31-primitive-radius-xl: calc(var(--p31-scale-xl) / 2);
+    --p31-primitive-radius-sm: calc(var(--p31-scale-sm) / 2);
+    --p31-primitive-radius-lg: calc(var(--p31-scale-lg) / 2);
+    --p31-primitive-shadow-glass: 0 8px 32px oklch(NaN NaN NaN);
+    --p31-primitive-spacing-xl: clamp(var(--p31-scale-xl), 5vw, var(--p31-scale-2xl));
+    --p31-primitive-spacing-xxl: {spacing.2xl};
   border-radius: var(--p31-primitive-radius-xl);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255,255,255,0.08);
+  border: 1px solid oklch(100% 0.01 240 / 0.08);
   box-shadow: var(--p31-primitive-shadow-glass);
 }
 :host([padding="sm"]) { padding: var(--p31-primitive-spacing-sm); }

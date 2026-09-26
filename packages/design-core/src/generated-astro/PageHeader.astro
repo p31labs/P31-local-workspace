@@ -1,0 +1,19 @@
+---
+// @file PageHeader — Inner-page hero: mono eyebrow, gradient title, lede.
+// Auto-generated from components.yml.
+
+interface Props {
+  eyebrow: string;
+  title: string;
+  lede?: string;
+  class?: string;
+}
+
+const { eyebrow, title, lede, class: className = '' } = Astro.props;
+---
+
+<header class={`page-header-route ${className}`.trim()}>
+  <span class="hero-eyebrow">{eyebrow}</span>
+  <h1>{title}</h1>
+  {lede && <p class="page-lede">{lede}</p>}
+</header>

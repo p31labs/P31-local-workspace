@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+// @ts-expect-error — cli/tokens/figma-sync.mjs is plain ESM JS without a type surface; runtime-only test dep
 import { transformTokensToFigmaVariables, resolveValue, toFigmaType } from '../../../../cli/tokens/figma-sync.mjs';
 
 describe('figma-sync', () => {

@@ -1,2 +1,64 @@
-/* P31 design-core — ambient.css. Now provided by @p31/canon; compat re-export. */
-@import '@p31/canon/css/ambient.css';
+/* ── P31 Ambient / Depth-of-Field Layer ──
+ * Ephemeralization + Synergy (CWP-2026-073).
+ * Surfaces declare focus state via [data-ui-active]. Soft-ambient is the
+ * default: everything glows; focusing one demotes the rest to "ghost".
+ * No single-surface hard-kill — backwards-compatible with WILLOW/PHOS which
+ * render several lit panels at once.
+ */
+
+:root {
+  --p31-ambient-opacity: 0.2;
+  --p31-ambient-blur: 6px;
+  --p31-hero-filter: drop-shadow(0 0 30px var(--p31-accent)) brightness(1.1);
+  --p31-ambient-filter: blur(var(--p31-ambient-blur)) opacity(var(--p31-ambient-opacity));
+}
+
+/* Molecular starfield background — replaces harsh dotted grids */
+body {
+  background-color: var(--p31-void, oklch(0.130 0.027 262));
+  background-image:
+    radial-gradient(circle at 50% -20%, oklch(NaN NaN NaN) 0%, transparent 55%),
+    radial-gradient(circle at 10% 80%, oklch(NaN NaN NaN) 0%, transparent 45%),
+    radial-gradient(circle at 90% 90%, oklch(NaN NaN NaN) 0%, transparent 45%);
+  color: var(--p31-text-primary, oklch(0.971 0.003 286));
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Baseline: surface is live and glowing (WILLOW/PHOS default). */
+[data-ui-active='true'] {
+  filter: none;
+  z-index: 5;
+  transition: filter var(--p31-duration-fast) ease, opacity var(--p31-duration-fast) ease;
+}
+
+/* Focused surface: hero spotlight. */
+[data-ui-active='hero'] {
+  filter: var(--p31-hero-filter);
+  z-index: 10;
+  transition: filter var(--p31-duration-standard) ease;
+  pointer-events: auto;
+}
+
+/* Demoted surface: ghosted into the void, non-interactive until refocused. */
+[data-ui-active='ghost'] {
+  filter: var(--p31-ambient-filter);
+  z-index: 1;
+  transition: filter var(--p31-duration-fast) ease, opacity var(--p31-duration-fast) ease;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  [data-ui-active='ghost'] {
+    filter: none;
+    opacity: 0.35;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-ui-active='true'],
+  [data-ui-active='hero'],
+  [data-ui-active='ghost'] {
+    transition: none;
+  }
+}

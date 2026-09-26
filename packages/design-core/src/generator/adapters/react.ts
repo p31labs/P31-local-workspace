@@ -35,11 +35,12 @@ export interface ${name}Props {
   className?: string;
   strong?: boolean;
   style?: React.CSSProperties;
+  onClick?: React.MouseEventHandler<HTMLDivElement>;
 }
 
-export function ${name}({ children, className, strong, style }: ${name}Props) {
-  const cls = \`rounded-2xl border border-white/[0.06] backdrop-blur-xl \${strong ? 'bg-void-raised/80 shadow-[0_8px_32px_rgba(0,0,0,0.4)]' : 'bg-void-raised/60 shadow-[0_4px_16px_rgba(0,0,0,0.3)]'} \${className || ''}\`;
-  return <div className={cls} style={style}>{children}</div>;
+export function ${name}({ children, className, strong, style, onClick }: ${name}Props) {
+  const cls = \`rounded-2xl border border-white/[0.06] backdrop-blur-xl \${strong ? 'bg-void-raised/80 shadow-[0_8px_32px_color-mix(in_oklch,var(--p31-void)_40%,transparent)]' : 'bg-void-raised/60 shadow-[0_4px_16px_color-mix(in_oklch,var(--p31-void)_30%,transparent)]'} \${className || ''}\`;
+  return <div onClick={onClick} className={cls} style={style}>{children}</div>;
 }
 
 export default ${name};
@@ -61,7 +62,7 @@ export interface ${name}Props {
 
 export function ${name}({ children, className, padding = 'md', style }: ${name}Props) {
   const paddingClasses = { sm: 'p-4', md: 'p-6', lg: 'p-8' };
-  const cls = \`\${paddingClasses[padding]} rounded-2xl border border-white/[0.06] backdrop-blur-xl bg-void-raised/60 shadow-[0_4px_16px_rgba(0,0,0,0.3)] \${className || ''}\`;
+  const cls = \`\${paddingClasses[padding]} rounded-2xl border border-white/[0.06] backdrop-blur-xl bg-void-raised/60 shadow-[0_4px_16px_color-mix(in_oklch,var(--p31-void)_30%,transparent)] \${className || ''}\`;
   return <div className={cls} style={style}>{children}</div>;
 }
 
@@ -82,7 +83,7 @@ export interface ${name}Props {
 }
 
 export function ${name}({ children, className, style }: ${name}Props) {
-  const cls = \`rounded-2xl border border-white/[0.08] backdrop-blur-2xl bg-void-raised/80 shadow-[0_8px_32px_rgba(0,0,0,0.4)] \${className || ''}\`;
+  const cls = \`rounded-2xl border border-white/[0.08] backdrop-blur-2xl bg-void-raised/80 shadow-[0_8px_32px_color-mix(in_oklch,var(--p31-void)_40%,transparent)] \${className || ''}\`;
   return <div className={cls} style={style}>{children}</div>;
 }
 
@@ -103,7 +104,7 @@ export interface ${name}Props {
 }
 
 export function ${name}({ children, className, style }: ${name}Props) {
-  const cls = \`rounded-2xl border border-white/[0.06] backdrop-blur-xl bg-void-raised/60 shadow-[0_4px_16px_rgba(0,0,0,0.3)] \${className || ''}\`;
+  const cls = \`rounded-2xl border border-white/[0.06] backdrop-blur-xl bg-void-raised/60 shadow-[0_4px_16px_color-mix(in_oklch,var(--p31-void)_30%,transparent)] \${className || ''}\`;
   return <div className={cls} style={style}>{children}</div>;
 }
 
@@ -128,7 +129,7 @@ export interface ${name}Props {
 
 export function ${name}({ children, variant = 'primary', disabled, onClick, type = 'button', className }: ${name}Props) {
   const variantCls = {
-    primary: 'bg-accent text-void hover:bg-accent/90 shadow-[0_0_12px_rgba(0,240,255,0.4)] focus-visible:ring-accent',
+    primary: 'bg-accent text-void hover:bg-accent/90 shadow-[0_0_12px_color-mix(in_oklch,var(--p31-accent)_40%,transparent)] focus-visible:ring-accent',
     secondary: 'bg-void-raised/80 border border-white/10 text-text hover:border-white/20 focus-visible:ring-violet',
     ghost: 'bg-transparent text-text-secondary hover:text-text hover:bg-white/5 focus-visible:ring-white/20',
   };
@@ -408,6 +409,260 @@ export function ${name}({ onReady, message = 'Rest. Breathe. The mesh holds.', c
         </button>
       </div>
     </div>
+  );
+}
+
+export default ${name};
+`,
+
+  SectionStrip: (name, def) => `/**
+ * @file ${name} — Desktop pill navigation strip.
+ * Auto-generated from components.yml. Router-agnostic: shell owns active state + navigation.
+ */
+
+import type { ReactNode, CSSProperties } from 'react';
+
+export interface SectionItem {
+  id: string;
+  label: string;
+  icon?: ReactNode;
+  active?: boolean;
+}
+
+export interface ${name}Props {
+  items: SectionItem[];
+  onSelect?: (id: string) => void;
+  className?: string;
+  style?: CSSProperties;
+}
+
+export function ${name}({ items, onSelect, className = '', style }: ${name}Props) {
+  return (
+    <nav className={\`section-strip \${className}\`.trim()} aria-label="Design system sections" style={style}>
+      {items.map((s) => (
+        <button
+          key={s.id}
+          type="button"
+          className={\`section-tab\${s.active ? ' is-active' : ''}\`}
+          onClick={() => onSelect?.(s.id)}
+          aria-current={s.active ? 'page' : undefined}
+        >
+          {s.icon}
+          {s.label}
+        </button>
+      ))}
+    </nav>
+  );
+}
+
+export default ${name};
+`,
+
+  CommandPalette: (name, def) => `/**
+ * @file ${name} — Keyboard-friendly command palette.
+ * Auto-generated from components.yml. Controlled open state; shell owns item actions.
+ */
+
+import { useEffect, useMemo, useRef, useState } from 'react';
+import type { ReactNode } from 'react';
+
+export interface CommandItem {
+  id: string;
+  label: string;
+  description?: string;
+  icon?: ReactNode;
+  keywords?: string;
+}
+
+export interface ${name}Props {
+  open: boolean;
+  onClose: () => void;
+  items: CommandItem[];
+  onSelect: (id: string) => void;
+  placeholder?: string;
+  leadingIcon?: ReactNode;
+}
+
+export function ${name}({ open, onClose, items, onSelect, placeholder = 'Search…', leadingIcon }: ${name}Props) {
+  const [query, setQuery] = useState('');
+  const [active, setActive] = useState(0);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    setQuery('');
+    setActive(0);
+    const t = window.setTimeout(() => inputRef.current?.focus(), 0);
+    return () => window.clearTimeout(t);
+  }, [open]);
+
+  const results = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return items.filter((s) => {
+      if (!q) return true;
+      return \`\${s.label} \${s.description ?? ''} \${s.keywords ?? ''}\`.toLowerCase().includes(q);
+    });
+  }, [items, query]);
+
+  const run = (id: string) => { onSelect(id); onClose(); };
+
+  if (!open) return null;
+
+  return (
+    <div className="cmdk-overlay" onClick={onClose} role="presentation">
+      <div className="cmdk-panel" role="dialog" aria-label="Command palette" aria-modal="true"
+        onClick={(e) => e.stopPropagation()}>
+        <div className="cmdk-input-row">
+          {leadingIcon}
+          <input ref={inputRef} className="cmdk-input" value={query}
+            onChange={(e) => setQuery(e.target.value)} placeholder={placeholder} aria-label={placeholder} />
+          <kbd className="cmdk-kbd">esc</kbd>
+        </div>
+        <ul className="cmdk-list" role="listbox" aria-label="Results">
+          {results.map((s, i) => (
+            <li key={s.id}>
+              <button className={\`cmdk-item\${i === active ? ' is-active' : ''}\`}
+                onMouseEnter={() => setActive(i)} onClick={() => run(s.id)}
+                role="option" aria-selected={i === active}>
+                {s.icon}
+                <span className="cmdk-label">{s.label}</span>
+                {s.description && <span className="cmdk-path">{s.description}</span>}
+              </button>
+            </li>
+          ))}
+          {results.length === 0 && <li className="cmdk-empty">No matches.</li>}
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+export default ${name};
+`,
+
+  Chameleon: (name, def) => `/**
+ * @file ${name} — Adaptive theme controls (brand × world × age × sensory).
+ * Auto-generated from components.yml. Zero-reload token swaps via theme-store.
+ */
+
+import { useEffect, useRef, useState } from 'react';
+import { useThemeStore, resolveBrandTokens, THEME_TOKENS, type ThemeId, type BrandId, type AgeTier } from '../theming/theme-store';
+
+const BRANDS: BrandId[] = ['p31ca', 'phos', 'phosphorus31', 'willow', 'bonding'];
+const AGES: AgeTier[] = ['child', 'teen', 'adult'];
+const WORLD_LABELS: Record<ThemeId, string> = { garden: 'Garden', ocean: 'Ocean', aurora: 'Aurora', zen: 'Zen', volt: 'Volt' };
+
+export interface ${name}Props {
+  className?: string;
+  style?: React.CSSProperties;
+}
+
+export function ${name}({ className = '', style }: ${name}Props) {
+  const [open, setOpen] = useState(false);
+  const [brand, setBrand] = useState<BrandId>('p31ca');
+  const ref = useRef<HTMLDivElement>(null);
+  const { theme, age, muted, warmLight, setTheme, setAge, setMuted, setWarmLight } = useThemeStore();
+
+  useEffect(() => {
+    if (!open) return;
+    const onDoc = (e: MouseEvent) => { if (!ref.current?.contains(e.target as Node)) setOpen(false); };
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setOpen(false);
+    document.addEventListener('mousedown', onDoc);
+    document.addEventListener('keydown', onKey);
+    return () => { document.removeEventListener('mousedown', onDoc); document.removeEventListener('keydown', onKey); };
+  }, [open]);
+
+  const applyBrand = (next: BrandId) => {
+    setBrand(next);
+    const tokens = resolveBrandTokens(next);
+    Object.entries(tokens).forEach(([key, value]) => document.documentElement.style.setProperty(key, value as string));
+  };
+
+  const swatch = (id: ThemeId) => THEME_TOKENS[id]?.['--p31-accent'];
+
+  return (
+    <div ref={ref} className={\`chameleon \${className}\`.trim()} style={style}>
+      <button className="chameleon-trigger" onClick={() => setOpen((o) => !o)}
+        aria-haspopup="dialog" aria-expanded={open} aria-label="Adaptive theme controls"
+        title="Chameleon — brand, world, and sensory controls">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+          strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <path d="M12 3a9 9 0 0 0-9 9h4a5 5 0 0 1 5 5v.4a3.6 3.6 0 0 1-3.6 3.6H12a9 9 0 1 0 0-18z" />
+        </svg>
+        <span className="chameleon-dot" style={{ background: swatch(theme) }} aria-hidden="true" />
+      </button>
+      {open && (
+        <div className="chameleon-panel" style={{ width: 264 }} role="dialog" aria-label="Adaptive theme controls">
+          <span className="chameleon-label">Brand</span>
+          <div className="chameleon-row chameleon-brands" role="group" aria-label="Brand">
+            {BRANDS.map((b) => (
+              <button key={b} className={\`brand-chip\${brand === b ? ' is-active' : ''}\`}
+                onClick={() => applyBrand(b)} aria-pressed={brand === b} title={brand === b ? \`\${b} (current)\` : b}>
+                {b}
+              </button>
+            ))}
+          </div>
+          <span className="chameleon-label">World</span>
+          <div className="chameleon-row" role="group" aria-label="Color world">
+            {(Object.keys(THEME_TOKENS) as ThemeId[]).map((id) => (
+              <button key={id} className={\`world-dot \${theme === id ? 'is-active' : ''}\`}
+                style={{ background: swatch(id) }} onClick={() => setTheme(id)}
+                aria-pressed={theme === id} title={\`\${WORLD_LABELS[id]}\${theme === id ? ' (current)' : ''}\`}>
+                <span className="sr-only">{WORLD_LABELS[id]}</span>
+              </button>
+            ))}
+          </div>
+          <div className="chameleon-row chameleon-seg" role="group" aria-label="Age tier">
+            {AGES.map((a) => (
+              <button key={a} className={\`seg \${age === a ? 'is-active' : ''}\`}
+                onClick={() => setAge(a)} aria-pressed={age === a}>
+                {a}
+              </button>
+            ))}
+          </div>
+          <div className="chameleon-row chameleon-toggles">
+            <label className="toggle">
+              <input type="checkbox" checked={muted} onChange={(e) => setMuted(e.target.checked)} />
+              <span>Muted</span>
+            </label>
+            <label className="toggle">
+              <input type="checkbox" checked={warmLight} onChange={(e) => setWarmLight(e.target.checked)} />
+              <span>Warm dusk</span>
+            </label>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default ${name};
+`,
+
+  PageHeader: (name, def) => `/**
+ * @file ${name} — Inner-page hero: mono eyebrow, gradient title, lede.
+ * Auto-generated from components.yml.
+ */
+
+import type { ReactNode, CSSProperties } from 'react';
+
+export interface ${name}Props {
+  eyebrow: string;
+  title: string;
+  lede?: string;
+  children?: ReactNode;
+  className?: string;
+  style?: CSSProperties;
+}
+
+export function ${name}({ eyebrow, title, lede, children, className = '', style }: ${name}Props) {
+  return (
+    <header className={\`page-header-route \${className}\`.trim()} style={style}>
+      <span className="hero-eyebrow">{eyebrow}</span>
+      <h1>{title}</h1>
+      {lede && <p className="page-lede">{lede}</p>}
+      {children && <div className="page-actions">{children}</div>}
+    </header>
   );
 }
 

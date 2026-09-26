@@ -1,0 +1,18 @@
+component: PortalHero
+narrative: |
+  The landing statement of the design-system portal. It must make an engineer
+  feel something in under two seconds, then invite them to touch the system —
+  the scrubber makes Fuller's transformation theirs to drive, returning to
+  autonomous breathing on release. Celebratory at high spoons, still at low.
+constraints:
+  accessibility: { wcag: AAA, contrast: 7, touchTarget: 48 }
+  spoonAware: true
+  performance: { bundle: 3, renderTime: 16.67 }
+  loveSemantics:
+    - { trigger: on-interact, reward: 1, recipient: [user], description: Curiosity }
+variants:
+  - { name: primary, description: Lead the eye to exploration, color: accent }
+  - { name: secondary, description: Agent entry, color: neutral }
+interactions:
+  - { event: scrub, condition: always, action: hand-drive-jitterbug-phase, motion: none }
+  - { event: release, condition: always, action: resume-autoplay, motion: fast }

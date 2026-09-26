@@ -30,7 +30,7 @@ interface Props {
 }
 
 const { children, strong = false, class: className = '' } = Astro.props;
-const baseCls = \`rounded-2xl border border-white/[0.06] backdrop-blur-xl \${strong ? 'bg-void-raised/80 shadow-[0_8px_32px_rgba(0,0,0,0.4)]' : 'bg-void-raised/60 shadow-[0_4px_16px_rgba(0,0,0,0.3)]'} \${className}\`;
+const baseCls = \`rounded-2xl border border-white/[0.06] backdrop-blur-xl \${strong ? 'bg-void-raised/80 shadow-[0_8px_32px_color-mix(in_oklch,var(--p31-void)_40%,transparent)]' : 'bg-void-raised/60 shadow-[0_4px_16px_color-mix(in_oklch,var(--p31-void)_30%,transparent)]'} \${className}\`;
 ---
 
 <div class={baseCls}>
@@ -50,7 +50,7 @@ interface Props {
 
 const { children, padding = 'md', class: className = '' } = Astro.props;
 const paddingClasses = { sm: 'p-4', md: 'p-6', lg: 'p-8' };
-const baseCls = \`\${paddingClasses[padding]} rounded-2xl border border-white/[0.06] backdrop-blur-xl bg-void-raised/60 shadow-[0_4px_16px_rgba(0,0,0,0.3)] \${className}\`;
+const baseCls = \`\${paddingClasses[padding]} rounded-2xl border border-white/[0.06] backdrop-blur-xl bg-void-raised/60 shadow-[0_4px_16px_color-mix(in_oklch,var(--p31-void)_30%,transparent)] \${className}\`;
 ---
 
 <div class={baseCls}>
@@ -68,7 +68,7 @@ interface Props {
 }
 
 const { children, class: className = '' } = Astro.props;
-const baseCls = \`rounded-2xl border border-white/[0.08] backdrop-blur-2xl bg-void-raised/80 shadow-[0_8px_32px_rgba(0,0,0,0.4)] \${className}\`;
+const baseCls = \`rounded-2xl border border-white/[0.08] backdrop-blur-2xl bg-void-raised/80 shadow-[0_8px_32px_color-mix(in_oklch,var(--p31-void)_40%,transparent)] \${className}\`;
 ---
 
 <div class={baseCls}>
@@ -86,7 +86,7 @@ interface Props {
 }
 
 const { children, class: className = '' } = Astro.props;
-const baseCls = \`rounded-2xl border border-white/[0.06] backdrop-blur-xl bg-void-raised/60 shadow-[0_4px_16px_rgba(0,0,0,0.3)] \${className}\`;
+const baseCls = \`rounded-2xl border border-white/[0.06] backdrop-blur-xl bg-void-raised/60 shadow-[0_4px_16px_color-mix(in_oklch,var(--p31-void)_30%,transparent)] \${className}\`;
 ---
 
 <div class={baseCls}>
@@ -107,7 +107,7 @@ interface Props {
 
 const { children, variant = 'primary', disabled, class: className = '' } = Astro.props;
 const variantCls = {
-  primary: 'bg-accent text-void hover:bg-accent/90 shadow-[0_0_12px_rgba(0,240,255,0.4)] focus-visible:ring-accent',
+  primary: 'bg-accent text-void hover:bg-accent/90 shadow-[0_0_12px_color-mix(in_oklch,var(--p31-accent)_40%,transparent)] focus-visible:ring-accent',
   secondary: 'bg-void-raised/80 border border-white/10 text-text hover:border-white/20 focus-visible:ring-violet',
   ghost: 'bg-transparent text-text-secondary hover:text-text hover:bg-white/5 focus-visible:ring-white/20',
 };
@@ -219,12 +219,114 @@ const { level, onChange, class: className = '' } = Astro.props;
       role="radio"
       aria-checked={i === level}
       aria-label={\`Spoons = \${i}\`}
-      title={\`Cognitive load level \${i}\`}
-    />
+title={\`Cognitive load level \${i}\`}
+      />
+    ))}
+  </div>
+`,
+  SectionStrip: (name, def) => `---
+// @file ${name} — Desktop pill navigation strip.
+// Auto-generated from components.yml. Router-agnostic.
+
+interface Props {
+  items: { id: string; label: string; active?: boolean }[];
+  onSelect?: (id: string) => void;
+  class?: string;
+}
+
+const { items, onSelect, class: className = '' } = Astro.props;
+---
+
+<nav class={\`section-strip \${className}\`.trim()} aria-label="Design system sections">
+  {items.map((s) => (
+    <button
+      type="button"
+      class={\`section-tab\${s.active ? ' is-active' : ''}\`}
+      onClick={() => onSelect?.(s.id)}
+      aria-current={s.active ? 'page' : undefined}
+    >
+      {s.label}
+    </button>
   ))}
+</nav>
+`,
+  CommandPalette: (name, def) => `---
+// @file ${name} — Keyboard-friendly command palette.
+// Auto-generated from components.yml. Controlled open state.
+
+interface Props {
+  items: { id: string; label: string; description?: string }[];
+  placeholder?: string;
+  open?: boolean;
+  class?: string;
+}
+
+const { items, placeholder = 'Search…', open = false, class: className = '' } = Astro.props;
+---
+
+{open && (
+  <div class={\`cmdk-overlay \${className}\`.trim()} role="presentation">
+    <div class="cmdk-panel" role="dialog" aria-label="Command palette" aria-modal="true">
+      <div class="cmdk-input-row">
+        <input class="cmdk-input" placeholder={placeholder} aria-label={placeholder} />
+        <kbd class="cmdk-kbd">esc</kbd>
+      </div>
+      <ul class="cmdk-list" role="listbox" aria-label="Results">
+        {items.map((s) => (
+          <li>
+            <button class="cmdk-item" role="option" aria-selected="false">
+              <span class="cmdk-label">{s.label}</span>
+              {s.description && <span class="cmdk-path">{s.description}</span>}
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+)}
+`,
+  Chameleon: (name, def) => `---
+// @file ${name} — Adaptive theme controls (brand × world × age × sensory).
+// Auto-generated from components.yml. Wraps the canonical React implementation.
+
+interface Props {
+  class?: string;
+}
+
+const { class: className = '' } = Astro.props;
+---
+
+<div class={\`chameleon \${className}\`.trim()}>
+  <button class="chameleon-trigger" type="button" aria-haspopup="dialog" aria-expanded="false"
+    aria-label="Adaptive theme controls" title="Chameleon — brand, world, and sensory controls">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+      strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M12 3a9 9 0 0 0-9 9h4a5 5 0 0 1 5 5v.4a3.6 3.6 0 0 1-3.6 3.6H12a9 9 0 1 0 0-18z" />
+    </svg>
+  </button>
 </div>
 `,
-};
+  PageHeader: (name, def) => `---
+// @file ${name} — Inner-page hero: mono eyebrow, gradient title, lede.
+// Auto-generated from components.yml.
+
+interface Props {
+  eyebrow: string;
+  title: string;
+  lede?: string;
+  class?: string;
+}
+
+const { eyebrow, title, lede, class: className = '' } = Astro.props;
+---
+
+<header class={\`page-header-route \${className}\`.trim()}>
+  <span class="hero-eyebrow">{eyebrow}</span>
+  <h1>{title}</h1>
+  {lede && <p class="page-lede">{lede}</p>}
+</header>
+`,
+  };
 
 function getTemplate(name: string, def: ComponentDef): string {
   const templateFn = COMPONENT_TEMPLATES[name];

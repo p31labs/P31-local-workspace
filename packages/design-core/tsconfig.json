@@ -13,5 +13,12 @@
     "isolatedModules": true,
     "jsx": "react-jsx"
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": [
+    "src/**/*.stories.tsx",
+    "src/**/*.test.ts",
+    "src/generated/**/*.stories.tsx",
+    "src/agentic",
+    "scripts"
+  ]
 }

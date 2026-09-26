@@ -15,11 +15,11 @@ template.innerHTML = `
 :host {
   display: block;
     --p31-component-crown_xs: [object Object];
-    --p31-primitive-color-cyan: #00F0FF;
-    --p31-primitive-color-violet: #A78BFA;
-    --p31-primitive-color-gold: #FBBF24;
-    --p31-primitive-color-green: #34D399;
-    --p31-primitive-color-iris: #818CF8;
+    --p31-primitive-color-cyan: oklch(65% 0.18 195);
+    --p31-primitive-color-violet: oklch(65% 0.18 285);
+    --p31-primitive-color-gold: oklch(65% 0.18 15);
+    --p31-primitive-color-green: oklch(65% 0.18 105);
+    --p31-primitive-color-iris: oklch(65% 0.18 270);
 }
 
   </style>

@@ -12,12 +12,12 @@
 :root[data-brand='phosphorus31'] {
   --p31-accent: oklch(50% 0.18 150);          /* emerald */
   --p31-accent-gold: oklch(65% 0.18 45);     /* warm gold */
-  --p31-bg: oklch(98% 0.008 85);             /* warm off-white */
-  --p31-surface: oklch(95% 0.012 80);
-  --p31-surface2: oklch(90% 0.015 75);
-  --p31-text: oklch(15% 0.012 60);
-  --p31-text-secondary: oklch(35% 0.015 60);
-  --p31-text-tertiary: oklch(50% 0.012 60);
+  --p31-bg: oklch(98% 0.008 270);             /* warm off-white */
+  --p31-surface: oklch(95% 0.012 270);
+  --p31-surface2: oklch(90% 0.015 270);
+  --p31-text: oklch(15% 0.012 270);
+  --p31-text-secondary: oklch(35% 0.015 270);
+  --p31-text-tertiary: oklch(50% 0.012 270);
   --p31-glass-surface: oklch(100% 0.01 240 / 0.35);
   --p31-glass-border: oklch(100% 0.01 240 / 0.15);
   --p31-glass-blur: blur(16px);
@@ -39,7 +39,22 @@
 :root[data-theme='caretaker'] .gap-xl { gap: 36px; }
 
 :root[data-theme='caretaker'] {
-  --p31-radius-lg: 28px;
-  --p31-radius-xl: 32px;
-  --p31-radius-candy: 32px;
+  --p31-radius-sm: 6px;
+  --p31-radius-md: 4px;
+  --p31-radius-lg: 8px;
+  --p31-radius-xl: 10px;
+  --p31-radius-candy: 12px;
+
+  /* Tighter section spacing — dense, premium rhythm. */
+  --p31-space-xs: 0.5rem;
+  --p31-space-sm: 0.75rem;
+  --p31-space-md: 1rem;
+  --p31-space-lg: 1.5rem;
+  --p31-space-xl: 2rem;
+  --p31-space-2xl: 3rem;
+}
+
+/* Tight radius on all buttons under the light persona. */
+:root[data-theme='caretaker'] button {
+  border-radius: 8px;
 }

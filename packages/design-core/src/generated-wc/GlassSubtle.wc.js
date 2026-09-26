@@ -14,14 +14,14 @@ template.innerHTML = `
   <style>
 :host {
   display: block;
-    --p31-primitive-color-glass_surface_subtle: rgba(255,255,255,0.03);
-    --p31-primitive-color-surface2: #1C1C2A;
+    --p31-primitive-color-glass_surface_subtle: oklch(100% 0.01 240 / 0.03);
+    --p31-primitive-color-surface2: oklch(22% 0.02 240);
     --p31-primitive-blur-subtle: 8px;
-    --p31-primitive-radius-xl: 24px;
+    --p31-primitive-radius-xl: calc(var(--p31-scale-xl) / 2);
   border-radius: var(--p31-primitive-radius-xl);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 8px oklch(NaN NaN NaN);
 }
 ::slotted(*) { color: var(--p31-semantic-color-text-primary); }
 

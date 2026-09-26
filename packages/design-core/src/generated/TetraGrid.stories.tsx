@@ -4,7 +4,7 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { TetraGrid } from './TetraGrid';
+import { TetraGrid } from './TetraGrid.js';
 
 const meta: Meta<typeof TetraGrid> = {
   title: 'Components/TetraGrid',
