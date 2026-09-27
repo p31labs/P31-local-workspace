@@ -32,6 +32,7 @@ export function SpoonDial({ level, value, onChange, min = 0, max = 5, className 
         <button
           key={n}
           type="button"
+          role="radio"
           className={`spoon-btn${n === current ? ' active' : ''}`}
           aria-checked={n === current ? 'true' : 'false'}
           aria-label={`Spoons = ${n}`}
