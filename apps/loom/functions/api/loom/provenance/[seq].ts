@@ -1,5 +1,6 @@
-import { verifyChain, type ChainRecord } from '@p31/canon/loom/hash-chain';
-import { readRecords, type LoomRecord } from '../_lib/log';
+import { verifyChain, type ChainRecord } from '@p31ca/canon/loom/hash-chain';
+import { readRecords, type LoomPagesEnv, type LoomRecord } from '../_lib/log';
+import { handlePreflight, withCors, type CorsEnv } from '../_lib/cors';
 
 /**
  * GET /api/loom/provenance/:seq — the event chain from genesis to the given
@@ -15,11 +16,18 @@ import { readRecords, type LoomRecord } from '../_lib/log';
  * preserved — the next record's prev_hash still commits to this record's
  * preimage) with data: null, redacted: true. The raw payload is never exposed.
  * Shared records and the caller's own personal records return full data.
+ *
+ * CORS-enabled for the chain-verification widget on p31ca.org / phosphorus31.org.
  */
-export const onRequestGet: PagesFunction<unknown, 'seq'> = async (context) => {
+export type ProvenanceEnv = LoomPagesEnv & CorsEnv;
+
+export const onRequestGet: PagesFunction<ProvenanceEnv, 'seq'> = async (context) => {
+  const { env, request } = context;
+  const preflight = handlePreflight(env, request);
+  if (preflight) return preflight;
   const target = Number(context.params.seq);
   if (!Number.isInteger(target) || target < 0) {
-    return Response.json({ error: 'seq must be a non-negative integer' }, { status: 400 });
+    return withCors(env, request, Response.json({ error: 'seq must be a non-negative integer' }, { status: 400 }));
   }
 
   // Caller identity — same resolution as the scoped read: Access sub when ON,
@@ -29,11 +37,11 @@ export const onRequestGet: PagesFunction<unknown, 'seq'> = async (context) => {
   const header = context.request.headers.get('X-Human-Id')?.trim() || undefined;
   const callerId = (sub as string | undefined) ?? (header || undefined);
 
-  const records = await readRecords(context.env);
+  const records = await readRecords(env);
   const upto: LoomRecord[] = records.filter((r) => r.seq <= target);
 
   if (upto.length === 0 || upto[upto.length - 1].seq !== target) {
-    return Response.json({ error: `no event at seq ${target}` }, { status: 404 });
+    return withCors(env, request, Response.json({ error: `no event at seq ${target}` }, { status: 404 }));
   }
 
   // Verify the WHOLE log (tamper-evidence is scope-blind) but report the head
@@ -56,14 +64,18 @@ export const onRequestGet: PagesFunction<unknown, 'seq'> = async (context) => {
     };
   });
 
-  return Response.json(
-    {
-      target,
-      chain,
-      verified: verdict.valid,
-      brokenAt: verdict.brokenAt,
-      head: sliceVerdict.head,
-    },
-    { headers: { 'Cache-Control': 'no-store' } },
+  return withCors(
+    env,
+    request,
+    Response.json(
+      {
+        target,
+        chain,
+        verified: verdict.valid,
+        brokenAt: verdict.brokenAt,
+        head: sliceVerdict.head,
+      },
+      { headers: { 'Cache-Control': 'no-store' } },
+    ),
   );
 };

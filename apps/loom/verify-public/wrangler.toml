@@ -1,0 +1,21 @@
+# Public read-only chain-verification surface for The Loom.
+#
+# Separate Pages project (loom-verify) — intentionally OUTSIDE the loom Access
+# app, so any visitor (grant reviewer, auditor, prospective user) can verify
+# the hash chain with no account and no token. Bound to the SAME D1 database
+# (loom) as the gated app; the verdicts are computed live from the real log.
+#
+# Privacy: /verify and /refusals/verify return aggregate chain state only
+# (hashes, no payloads). /provenance/:seq returns chain linkage plus event
+# summaries for SHARED records; personal records are redacted (data: null).
+name = "loom-verify"
+pages_build_output_dir = "."
+compatibility_date = "2026-07-04"
+
+[[d1_databases]]
+binding = "LOOM_D1"
+database_name = "loom"
+database_id = "87f9bc5c-e74e-4c61-8405-a0ed04671194"
+
+[vars]
+LOOM_CORS_ORIGINS = "https://p31ca.org,https://www.p31ca.org,https://phosphorus31.org,https://loom-verify.pages.dev"

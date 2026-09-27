@@ -23,6 +23,10 @@ const DEFAULT_ORIGINS = [
   'https://meatspace.p31ca.org',
   'https://design.p31ca.org',
   'https://chat.p31ca.org',
+  'https://p31ca.org',
+  'https://www.p31ca.org',
+  'https://phosphorus31.org',
+  'https://loom-verify.pages.dev',
 ];
 
 function corsOrigins(env: CorsEnv): string[] {
