@@ -45,7 +45,7 @@
   appearance: none;
   width: 100%;
   padding: var(--p31-spacing-sm) var(--p31-spacing-xl) var(--p31-spacing-sm) var(--p31-spacing-md);
-  background: oklch(NaN NaN NaN);
+  background: var(--p31-glass-bg);
   border: 1px solid var(--p31-glass-border);
   border-radius: var(--p31-radius-md);
   color: var(--p31-text);
@@ -60,7 +60,7 @@
 .select:focus {
   outline: none;
   border-color: var(--p31-accent);
-  box-shadow: 0 0 0 3px oklch(NaN NaN NaN);
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--p31-accent) 25%, transparent);
 }
 .select:hover { border-color: var(--p31-glass-border-strong); }
 .select:disabled { opacity: 0.45; cursor: not-allowed; }
@@ -296,4 +296,38 @@
 [data-spoons="0"] .btn, [data-spoons="1"] .btn {
   transform: none !important;
   box-shadow: none !important;
+}
+
+/* ─── Checkbox field + Dropdown field (WP-2026-09-28) ────────────────────
+   Label rows wrapping the .checkbox / .select recipes. */
+.checkbox-field,
+.dropdown-field {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--p31-space-3);
+  min-width: 0;
+}
+.checkbox-field__label,
+.dropdown-field__label {
+  font-size: var(--p31-type-label, var(--p31-scale-xs));
+  color: var(--p31-text-secondary);
+  user-select: none;
+  min-width: 0;
+}
+.dropdown-field {
+  flex-direction: column;
+  align-items: stretch;
+}
+.dropdown-field__label {
+  margin-bottom: var(--p31-space-1);
+}
+/* Indeterminate checkbox — dash glyph on the accent box (mirrors checked). */
+.checkbox[aria-checked='mixed'] .checkbox-box {
+  background: var(--p31-accent);
+  border-color: var(--p31-accent);
+}
+.checkbox[aria-checked='mixed'] .checkbox-box svg {
+  opacity: 1;
+  transform: scale(1);
+  color: var(--p31-void, oklch(0.147 0.011 285));
 }

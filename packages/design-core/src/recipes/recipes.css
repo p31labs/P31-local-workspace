@@ -34,7 +34,8 @@
 .glass-card:hover {
   border-color: var(--p31-glass-border-hover);
   transform: translateY(-4px);
-  box-shadow: 0 20px 40px oklch(NaN NaN NaN), 0 0 0 1px oklch(NaN NaN NaN);
+  box-shadow: 0 20px 40px color-mix(in oklch, var(--p31-void) 30%, transparent),
+              0 0 0 1px color-mix(in oklch, var(--p31-accent) 18%, transparent);
 }
 
 .glass-navbar {
@@ -1441,3 +1442,108 @@
 .p-4 { padding: var(--p31-space-4); }
 .p-6 { padding: var(--p31-space-5); }
 .p-8 { padding: var(--p31-space-6); }
+
+/* ─── Badge tones (WP-2026-09-28) ───────────────────────────────────────
+   Badge composition tints via data-tone. Subtle color-mix on dark — text
+   stays on near-dark so WCAG contrast holds (matches the portal's chip
+   pattern). The StatusBadge tone classes (badge-success/…) are untouched. */
+.badge[data-tone='success'] {
+  background: color-mix(in oklch, var(--p31-accent-green) 16%, transparent);
+  color: var(--p31-accent-green);
+  border: 1px solid color-mix(in oklch, var(--p31-accent-green) 35%, transparent);
+}
+.badge[data-tone='warning'] {
+  background: color-mix(in oklch, var(--p31-accent-gold) 16%, transparent);
+  color: var(--p31-accent-gold);
+  border: 1px solid color-mix(in oklch, var(--p31-accent-gold) 35%, transparent);
+}
+.badge[data-tone='error'] {
+  background: color-mix(in oklch, var(--p31-accent-red) 16%, transparent);
+  color: var(--p31-accent-red);
+  border: 1px solid color-mix(in oklch, var(--p31-accent-red) 35%, transparent);
+}
+.badge[data-tone='info'] {
+  background: color-mix(in oklch, var(--p31-accent) 16%, transparent);
+  color: var(--p31-accent);
+  border: 1px solid color-mix(in oklch, var(--p31-accent) 35%, transparent);
+}
+.badge[data-tone='neutral'] {
+  background: var(--p31-glass-bg);
+  color: var(--p31-text-secondary);
+  border: 1px solid var(--p31-glass-border);
+}
+
+/* ─── Card composition (WP-2026-09-28) ────────────────────────────────── */
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--p31-space-3);
+  min-width: 0;
+}
+.card--p-sm { padding: var(--p31-space-4); }
+.card--p-md { padding: var(--p31-space-5); }
+.card--p-lg { padding: var(--p31-space-6); }
+.card--interactive { cursor: pointer; }
+.card__title {
+  margin: 0;
+  font-size: var(--p31-scale-md);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--p31-text);
+}
+.card__desc {
+  margin: 0;
+  font-size: var(--p31-scale-sm);
+  color: var(--p31-text-secondary);
+  line-height: 1.5;
+}
+
+/* ─── CandyHeader (WP-2026-09-28) ─────────────────────────────────────── */
+.candy-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--p31-space-2);
+  padding: var(--p31-space-5) var(--p31-space-6);
+  background: var(--p31-glass-bg);
+  border: 1px solid var(--p31-glass-border);
+  border-radius: var(--p31-radius-candy);
+  backdrop-filter: var(--p31-glass-blur);
+  -webkit-backdrop-filter: var(--p31-glass-blur);
+  box-shadow: var(--p31-glass-shadow);
+}
+.candy-header__eyebrow {
+  margin: 0;
+  font-size: var(--p31-scale-xs);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--p31-accent);
+}
+.candy-header__title {
+  margin: 0;
+  font-size: var(--p31-scale-xl);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--p31-text);
+}
+.candy-header__lede {
+  margin: 0;
+  font-size: var(--p31-scale-sm);
+  color: var(--p31-text-secondary);
+  line-height: 1.5;
+  max-width: 60ch;
+}
+
+/* ─── Crown (WP-2026-09-28) ───────────────────────────────────────────── */
+.crown {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--p31-space-2);
+  color: var(--p31-accent);
+}
+.crown__label {
+  font-family: var(--p31-font-mono);
+  font-size: var(--p31-scale-sm);
+  font-weight: 600;
+  color: var(--p31-text-secondary);
+}
