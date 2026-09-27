@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { GlassCard } from '@p31/ui/chrome';
-import { GlowButton } from '@p31/ui/chrome';
-import { usePassport } from '@p31/ui/passport';
+import { GlassCard } from '@p31ca/ui/chrome';
+import { GlowButton } from '@p31ca/ui/chrome';
+import { usePassport } from '@p31ca/ui/passport';
 
 interface ListingFormProps {
   onSubmit: (data: any) => void;
@@ -169,7 +169,7 @@ export function ListingForm({ onSubmit, onCancel }: ListingFormProps) {
           <GlowButton color="cyan" type="submit" className="flex-1">
             Create Listing
           </GlowButton>
-          <GlowButton color="ghost" onClick={onCancel}>Cancel</GlowButton>
+          <GlowButton variant="ghost" onClick={onCancel}>Cancel</GlowButton>
         </div>
       </form>
     </GlassCard>

@@ -7,7 +7,7 @@ import { CradleScene } from './CradleScene';
 import { WorkerMesh } from './WorkerMesh';
 import { useSpoonStore } from '../state/spoonStore';
 import type { SceneKind } from '../state/spoonStore';
-import { K4Graph } from '@p31/quantum-core';
+import { K4Graph } from '@p31ca/quantum-core';
 
 const k4Topology = new K4Graph();
 

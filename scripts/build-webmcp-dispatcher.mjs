@@ -29,7 +29,7 @@ const dispatcherCode = `/**
  * Include this script in your app to enable agent control.
  *
  * Usage:
- *   import { initWebMcpDispatcher } from '@p31/ui/webmcp';
+ *   import { initWebMcpDispatcher } from '@p31ca/ui/webmcp';
  *   initWebMcpDispatcher();
  */
 

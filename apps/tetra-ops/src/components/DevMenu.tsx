@@ -5,7 +5,7 @@
  */
 
 import { useState, useEffect, useRef, useCallback, type ReactNode } from 'react';
-import { trackUiEvent } from '@p31/ui';
+import { trackUiEvent } from '@p31ca/ui';
 const PASSPORT_CREATED_KEY = 'passport_created';
 
 export interface DevMenuTool {

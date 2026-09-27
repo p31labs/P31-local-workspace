@@ -66,7 +66,7 @@ cd apps/willow && pnpm build && npx wrangler pages deploy dist --project-name wi
 
 ```ts
 // Import a component
-import { BrandMark, SpoonDial, GlassCard, GlowButton } from '@p31/ui/chrome';
+import { BrandMark, SpoonDial, GlassCard, GlowButton } from '@p31ca/ui/chrome';
 
 // Apply a skin
 import '@p31/skin-willow';
@@ -80,7 +80,7 @@ applySkin('phos');
 
 - **Spoon-aware**: All UI respects `data-spoons` (0–5) on `<html>`. Spoon 0 hides chrome.
 - **Token-first**: Never hardcode colors or sizes. Use `var(--p31-accent)`, `var(--p31-void)`, etc.
-- **One core, many skins**: `@p31/design-core` is the immutable source. Skins override tokens.
+- **One core, many skins**: `@p31ca/design-core` is the immutable source. Skins override tokens.
 - **Catalog**: Browse components, apps, and skins at `hub.p31ca.org`.
 
 ## Where to Go Next

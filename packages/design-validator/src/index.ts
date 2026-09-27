@@ -1,5 +1,5 @@
 /**
- * @p31/design-validator — enforces @p31/design-core invariants on generated UI.
+ * @p31/design-validator — enforces @p31ca/design-core invariants on generated UI.
  *
  * Usage:
  *   import { validateUI, validateFile, validateComponent } from '@p31/design-validator';
@@ -87,7 +87,7 @@ export interface ValidationOptions {
 // ---------------------------------------------------------------------------
 
 function loadManifest(): InvariantManifest {
-  // Resolve @p31/design-core package root via node_modules traversal
+  // Resolve @p31ca/design-core package root via node_modules traversal
   const candidates = [
     resolve(import.meta.dirname, '../design-core/manifest.json'),
     resolve(import.meta.dirname, '../../design-core/manifest.json'),
@@ -101,7 +101,7 @@ function loadManifest(): InvariantManifest {
       // continue
     }
   }
-  throw new Error('Could not locate @p31/design-core/manifest.json');
+  throw new Error('Could not locate @p31ca/design-core/manifest.json');
 }
 
 const m = loadManifest();
@@ -196,7 +196,7 @@ export function validateUI(html: string, options: ValidationOptions = {}): Valid
 
   // 10. At least one allowed component present
   if (!hasAllowedComponent(html)) {
-    warnings.push('No recognized @p31/ui component classes found — ensure you are using the allowed component set');
+    warnings.push('No recognized @p31ca/ui component classes found — ensure you are using the allowed component set');
   }
 
   const valid = strict ? errors.length === 0 && warnings.length === 0 : errors.length === 0;
@@ -224,7 +224,7 @@ export function validateComponentNames(components: string[]): ValidationResult {
 
   for (const name of components) {
     if (!m.components.allowed.includes(name)) {
-      errors.push(`"${name}" is not in the allowed component list — see @p31/design-core manifest`);
+      errors.push(`"${name}" is not in the allowed component list — see @p31ca/design-core manifest`);
     }
   }
 

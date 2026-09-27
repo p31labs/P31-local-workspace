@@ -1,5 +1,5 @@
 /**
- * @p31/quantum-core/src/bandit.ts — Contextual bandit RL for UI variant selection.
+ * @p31ca/quantum-core/src/bandit.ts — Contextual bandit RL for UI variant selection.
  *
  * ⚠️ HONEST LABEL
  * Contested-science metaphor made literal. No scientific claims.

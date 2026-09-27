@@ -1,4 +1,4 @@
-# @p31/love-ledger — Deployment
+# @p31ca/love-ledger — Deployment
 
 ## Build
 ```bash
@@ -12,12 +12,12 @@ npm publish
 
 ## Post-publish verification
 ```bash
-npm view @p31/love-ledger version
+npm view @p31ca/love-ledger version
 ```
 
 ## Consumer install
 ```bash
-npm install @p31/love-ledger
+npm install @p31ca/love-ledger
 ```
 
 ## Runbook

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { COMPONENTS } from '../data/components';
 import { APPS } from '../data/apps';
-import { trackUiEvent } from '@p31/ui';
+import { trackUiEvent } from '@p31ca/ui';
 
 interface CounterscaleEvent {
   eg: string;

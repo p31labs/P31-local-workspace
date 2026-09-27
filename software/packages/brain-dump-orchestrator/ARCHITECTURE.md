@@ -93,7 +93,7 @@ interface BrainDump {
 **Files:** `src/integrations/`
 
 - **`cortex-do-adapter.ts`** — Stub for Cloudflare Durable Object dispatch. Requires `ORCHESTRATOR_DO` binding.
-- **`agent-engine-adapter.ts`** — Stub for `@p31/agent-engine` in‑process dispatch.
+- **`agent-engine-adapter.ts`** — Stub for `@p31ca/agent-engine` in‑process dispatch.
 - **`llm-adapter.ts`** — Generic LLM adapter with configurable provider, API key, base URL, and model.
 - **`file-system-adapter.ts`** — Reads/writes deliverables to the local filesystem.
 

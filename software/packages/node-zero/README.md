@@ -5,9 +5,9 @@
 Three packages. 439 tests. Zero runtime dependencies. One live app.
 
 [![Live App](https://img.shields.io/badge/app-node--zero.pages.dev-31ffa3?style=flat-square)](https://node-zero.pages.dev)
-[![npm node-zero](https://img.shields.io/npm/v/@p31/node-zero?label=%40p31%2Fnode-zero&style=flat-square)](https://www.npmjs.com/package/@p31/node-zero)
-[![npm love-ledger](https://img.shields.io/npm/v/@p31/love-ledger?label=%40p31%2Flove-ledger&style=flat-square)](https://www.npmjs.com/package/@p31/love-ledger)
-[![npm game-engine](https://img.shields.io/npm/v/@p31/game-engine?label=%40p31%2Fgame-engine&style=flat-square)](https://www.npmjs.com/package/@p31/game-engine)
+[![npm node-zero](https://img.shields.io/npm/v/@p31ca/node-zero?label=%40p31%2Fnode-zero&style=flat-square)](https://www.npmjs.com/package/@p31ca/node-zero)
+[![npm love-ledger](https://img.shields.io/npm/v/@p31ca/love-ledger?label=%40p31%2Flove-ledger&style=flat-square)](https://www.npmjs.com/package/@p31ca/love-ledger)
+[![npm game-engine](https://img.shields.io/npm/v/@p31ca/game-engine?label=%40p31%2Fgame-engine&style=flat-square)](https://www.npmjs.com/package/@p31ca/game-engine)
 
 ---
 
@@ -50,23 +50,23 @@ ESP32 **PlatformIO** stub for the edge pairing challenge (`POST /api/hardware/ch
 
 The three packages connect through adapters and events — no hard dependencies between them. Each works standalone. Together they form a complete assistive technology platform.
 
-### @p31/node-zero — Protocol
+### @p31ca/node-zero — Protocol
 
 Cryptographic identity (ECDSA P-256), encrypted persistence (AES-GCM), reactive state, peer bonds with trust scoring, and transport-agnostic message routing. The foundation.
 
-→ [npm](https://www.npmjs.com/package/@p31/node-zero) · [source](src/)
+→ [npm](https://www.npmjs.com/package/@p31ca/node-zero) · [source](src/)
 
-### @p31/love-ledger — Economy
+### @p31ca/love-ledger — Economy
 
 L.O.V.E. tokens (Ledger of Ontological Volume and Entropy). Soulbound, non-transferable. Earned through building and caring. 50/50 split into Sovereignty and Performance pools. Age-gated vesting protects children's tokens.
 
-→ [GitHub](https://github.com/p31labs/love-ledger) · [npm](https://www.npmjs.com/package/@p31/love-ledger)
+→ [GitHub](https://github.com/p31labs/love-ledger) · [npm](https://www.npmjs.com/package/@p31ca/love-ledger)
 
-### @p31/game-engine — Building
+### @p31ca/game-engine — Building
 
 Geodesic construction from Platonic solids. Every structure validated against Maxwell's rigidity criterion (E ≥ 3V − 6). Player progression through five tiers, seven seed challenges, daily quests, build streaks.
 
-→ [GitHub](https://github.com/p31labs/game-engine) · [npm](https://www.npmjs.com/package/@p31/game-engine)
+→ [GitHub](https://github.com/p31labs/game-engine) · [npm](https://www.npmjs.com/package/@p31ca/game-engine)
 
 ---
 
@@ -81,7 +81,7 @@ This is not a metaphor. It is the design principle.
 ## Project structure
 
 ```
-├── src/            # @p31/node-zero source
+├── src/            # @p31ca/node-zero source
 ├── __tests__/      # 220 tests
 ├── pwa/            # Vite PWA (auto-deploys to Cloudflare Pages)
 │   ├── src/

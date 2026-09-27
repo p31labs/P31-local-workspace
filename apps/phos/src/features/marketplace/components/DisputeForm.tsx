@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { GlassCard } from '@p31/ui/chrome';
-import { GlowButton } from '@p31/ui/chrome';
+import { GlassCard } from '@p31ca/ui/chrome';
+import { GlowButton } from '@p31ca/ui/chrome';
 
 interface DisputeFormProps {
   tradeId: string;
@@ -72,7 +72,7 @@ export function DisputeForm({ tradeId, onSubmit, onCancel }: DisputeFormProps) {
           <GlowButton color="violet" type="submit" className="flex-1" disabled={loading}>
             {loading ? 'Filing...' : 'File Dispute'}
           </GlowButton>
-          <GlowButton color="ghost" onClick={onCancel}>Cancel</GlowButton>
+          <GlowButton variant="ghost" onClick={onCancel}>Cancel</GlowButton>
         </div>
       </form>
     </GlassCard>

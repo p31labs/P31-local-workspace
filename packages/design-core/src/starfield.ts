@@ -1,7 +1,7 @@
 /**
  * P31 Unified Starfield — Canvas 2D ambient mesh.
- * Merges @p31/ui/starfield.ts (325 lines) with p31-starfield.js (917 lines).
- * All visual values imported from @p31/design-core tokens.
+ * Merges @p31ca/ui/starfield.ts (325 lines) with p31-starfield.js (917 lines).
+ * All visual values imported from @p31ca/design-core tokens.
  * Spoon-aware, framework-agnostic, zero dependencies (except design-core).
  */
 

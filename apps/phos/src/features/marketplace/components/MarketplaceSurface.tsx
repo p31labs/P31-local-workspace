@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { GlassCard } from '@p31/ui/chrome';
-import { GlowButton } from '@p31/ui/chrome';
-import { usePassport } from '@p31/ui/passport';
+import { GlassCard } from '@p31ca/ui/chrome';
+import { GlowButton } from '@p31ca/ui/chrome';
+import { usePassport } from '@p31ca/ui/passport';
 import { TrustBadge } from './TrustBadge';
 
 // ─── Types ────────────────────────────────────────────────────────────
@@ -272,7 +272,7 @@ function OfferForm({ listing, onSubmit, onCancel }: { listing: Listing; onSubmit
       )}
       <div className="flex gap-2">
         <GlowButton color="violet" type="submit" className="flex-1">Submit Offer</GlowButton>
-        <GlowButton color="ghost" onClick={onCancel}>Cancel</GlowButton>
+        <GlowButton variant="ghost" onClick={onCancel}>Cancel</GlowButton>
       </div>
     </form>
   );

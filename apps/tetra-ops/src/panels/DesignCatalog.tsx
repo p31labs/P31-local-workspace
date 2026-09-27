@@ -1,5 +1,5 @@
 /**
- * @file DesignCatalog — Grid of all @p31/ui components with install commands.
+ * @file DesignCatalog — Grid of all @p31ca/ui components with install commands.
  */
 
 import { useState } from 'react';

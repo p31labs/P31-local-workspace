@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAtmosphere } from '../components/AtmosphereProvider';
-import { K4Hero } from '@p31/ui/K4Hero';
-import '@p31/ui/k4-hero.css';
+import { K4Hero } from '@p31ca/ui/K4Hero';
+import '@p31ca/ui/k4-hero.css';
 
 export const GreetingSurface: React.FC<{ className?: string }> = ({ className }) => {
   const { grayRock, spoons, setSurface } = useAtmosphere();

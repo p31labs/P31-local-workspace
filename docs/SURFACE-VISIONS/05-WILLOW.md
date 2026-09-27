@@ -60,7 +60,7 @@
 
 ### Header
 ```
-K4 Hero component (from @p31/ui)
+K4 Hero component (from @p31ca/ui)
 App title: "Willow"
 ```
 
@@ -117,7 +117,7 @@ Provides Willow-specific context to generated interfaces
 
 ### K4 Hero (Header)
 ```
-Component: <K4Hero /> from @p31/ui
+Component: <K4Hero /> from @p31ca/ui
 Size: smaller than landing surfaces (header-sized)
 Position: top of page, above title
 ```

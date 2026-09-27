@@ -12,8 +12,8 @@ const config = {
     viteConfig.resolve = viteConfig.resolve || {};
     viteConfig.resolve.alias = {
       ...viteConfig.resolve.alias,
-      '@p31/ui': path.resolve(__dirname, '../packages/ui/src'),
-      '@p31/design-core': path.resolve(__dirname, '../packages/design-core/src'),
+      '@p31ca/ui': path.resolve(__dirname, '../packages/ui/src'),
+      '@p31ca/design-core': path.resolve(__dirname, '../packages/design-core/src'),
     };
     return viteConfig;
   },

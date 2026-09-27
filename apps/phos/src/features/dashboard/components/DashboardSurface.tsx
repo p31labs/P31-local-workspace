@@ -1,6 +1,6 @@
 import { useState, use } from 'react';
-import { GlassCard } from '@p31/ui/chrome';
-import { GlowButton } from '@p31/ui/chrome';
+import { GlassCard } from '@p31ca/ui/chrome';
+import { GlowButton } from '@p31ca/ui/chrome';
 
 interface WorkerStatus {
   name: string;

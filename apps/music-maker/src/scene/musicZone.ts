@@ -63,6 +63,35 @@ export function phyllotaxisPosition(index: number, count: number, radius: number
   return [Math.cos(theta) * r * radius, y * radius, Math.sin(theta) * r * radius];
 }
 
+/** ⚠️ HONEST LABEL: the six phosphate-tetrahedron sites from the Posner
+ *  molecule model (`@p31ca/quantum-core/src/posner.ts` — a simplified structural
+ *  model for visualization; the Posner coherence story is a CONTESTED
+ *  hypothesis, not established physics). Vendored raw coordinates, scaled here
+ *  to the instrument's sphere radius. */
+const POSNER_P_RAW: [number, number, number][] = [
+  [1.28, 0, 0],
+  [-1.28, 0, 0],
+  [0, 1.28, 0],
+  [0, -1.28, 0],
+  [0, 0, 1.28],
+  [0, 0, -1.28],
+];
+
+/**
+ * Default placement for the instrument: the six phosphorus sites of the
+ * molecule (which ring at the 863 Hz Larmor frequency), then the field beyond
+ * the molecule (phyllotaxis) for any extra zones. The first six zones ARE the
+ * molecule; the composition fills it before it overflows.
+ */
+export function posnerSitePosition(index: number, radius = 2.2): [number, number, number] {
+  if (index >= 0 && index < POSNER_P_RAW.length) {
+    const scale = radius / 1.28;
+    const [x, y, z] = POSNER_P_RAW[index];
+    return [x * scale, y * scale, z * scale];
+  }
+  return phyllotaxisPosition(Math.max(0, index - POSNER_P_RAW.length), 10, radius);
+}
+
 export function makeZone(id: string, position: [number, number, number], timbre: Timbre = 'hydrogen', name = ''): MusicZone {
   return { id, position, timbre, name: name || id };
 }

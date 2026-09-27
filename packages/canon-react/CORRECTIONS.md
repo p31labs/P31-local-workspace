@@ -550,11 +550,11 @@ that overlaps canon's model — **not migrated**; separate workstream.
 
 p31ca now imports canon directly (build exit 0):
 ```
-MarketingShell.astro:17  @p31/design-core/css/all.css    -> @p31/canon/css/all.css
-p31-style.css:1          @p31/design-core/css/all.css    -> @p31/canon/css/all.css
-global.css:1             @p31/design-core/css/tokens.css -> @p31/canon/tokens.css
+MarketingShell.astro:17  @p31ca/design-core/css/all.css    -> @p31/canon/css/all.css
+p31-style.css:1          @p31ca/design-core/css/all.css    -> @p31/canon/css/all.css
+global.css:1             @p31ca/design-core/css/tokens.css -> @p31/canon/tokens.css
 ```
-`@p31/design-core` remains in `apps/p31ca/package.json` (now unused); removal is
+`@p31ca/design-core` remains in `apps/p31ca/package.json` (now unused); removal is
 blocked by pre-existing uncommitted package.json churn and was not swept.
 
 Path D — base.css-only consumer palette shift (accepted + documented):

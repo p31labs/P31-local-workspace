@@ -1,4 +1,4 @@
-import { generateLuau, generateP31Skin, type GameSnapshot } from '@p31/game-engine';
+import { generateLuau, generateP31Skin, type GameSnapshot } from '@p31ca/game-engine';
 import type { GameDefinition } from '../schema';
 
 export function renderRoblox(def: GameDefinition): {

@@ -1,4 +1,4 @@
-# @p31/design-core
+# @p31ca/design-core
 
 Canonical P31 Design System — tokens, primitives, compositions, recipes, MCP server, agentic intent pipeline.
 
@@ -29,9 +29,9 @@ import {
   SpoonDial,
   Starfield,
   CrisisOverlay,
-} from '@p31/design-core/compositions';
+} from '@p31ca/design-core/compositions';
 
-import '@p31/design-core/css/all.css';
+import '@p31ca/design-core/css/all.css';
 ```
 
 ## Commands
@@ -73,7 +73,7 @@ src/theming/theme-store.ts
 - **Chameleon** — Adaptive theme controls (brand × world × age × sensory)
 - **PageHeader** — Inner-page hero: eyebrow, gradient title, lede
 
-All compositions are router-agnostic, token-driven, and exported from `@p31/design-core/compositions`.
+All compositions are router-agnostic, token-driven, and exported from `@p31ca/design-core/compositions`.
 
 ## MCP Server
 
@@ -157,7 +157,7 @@ pnpm build          # Build for deploy
 
 ## Governance
 
-- Token ownership: `@p31/design-core` maintainers
+- Token ownership: `@p31ca/design-core` maintainers
 - Component lifecycle: propose → review → build → document → release → measure
 - Deprecation: 3-month warning, `$deprecated` flag in DTCG JSON
 - Semantic versioning: MAJOR.MINOR.PATCH

@@ -1,5 +1,5 @@
 /**
- * @p31/quantum-core/src/feedbackLoop.ts — Phase 5: close the ring.
+ * @p31ca/quantum-core/src/feedbackLoop.ts — Phase 5: close the ring.
  *
  * ⚠️ HONEST LABEL
  * Contested-science metaphor made literal (see sicPovm.ts, morphogeneticField.ts).

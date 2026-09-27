@@ -163,7 +163,7 @@ try {
   pty = require('node-pty');
 } catch (e) {
   console.error('[P31] TUI dependencies not available. Install build essentials and reinstall:');
-  console.error('[P31]   npm install -g @p31/andromeda-cli');
+  console.error('[P31]   npm install -g @p31ca/andromeda-cli');
   console.error('[P31] For headless agent mode, use: andromeda --agent');
   process.exit(1);
 }

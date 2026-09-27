@@ -1,5 +1,5 @@
 /**
- * @p31/quantum-core/src/d20.ts — d20 / 8-ball weighted selection engine.
+ * @p31ca/quantum-core/src/d20.ts — d20 / 8-ball weighted selection engine.
  *
  * ⚠️ HONEST LABEL
  * Contested-science metaphor made literal. No scientific claims.

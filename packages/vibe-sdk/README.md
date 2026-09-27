@@ -1,15 +1,15 @@
-# @p31/vibe-sdk
+# @p31ca/vibe-sdk
 
 **P31 Vibe Coding SDK** — programmatic access to the P31 Vibe Coding Engine. Generate, deploy, audit, and manage apps from your own code.
 
 ## Quick Start
 
 ```bash
-npm install @p31/vibe-sdk
+npm install @p31ca/vibe-sdk
 ```
 
 ```typescript
-import { P31Client } from '@p31/vibe-sdk';
+import { P31Client } from '@p31ca/vibe-sdk';
 
 const p31 = new P31Client({
   familyId: 'did:key:your-family-id',
@@ -125,7 +125,7 @@ Returns: `{ ok, service, apps, families, audit_events }`
 ## Platform Architecture
 
 ```
-Developer code → @p31/vibe-sdk
+Developer code → @p31ca/vibe-sdk
      │
      ├── p31.generate() → phos.p31ca.org/api/vibe/generate
      │                   → Gateway → Multi-agent pipeline

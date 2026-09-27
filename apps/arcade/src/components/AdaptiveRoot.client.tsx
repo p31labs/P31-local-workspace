@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useAdaptiveStore } from '@p31/ui/adaptive/adaptiveStore';
+import { useAdaptiveStore } from '@p31ca/ui/adaptive/adaptiveStore';
 
 export default function AdaptiveRoot() {
   const setDecision = useAdaptiveStore((s) => s.setDecision);

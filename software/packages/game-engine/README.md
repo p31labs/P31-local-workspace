@@ -2,7 +2,7 @@
 
 **Geodesic building game for the P31 assistive technology platform.**
 
-Build structures from Platonic solids. Every structure is validated against Maxwell's rigidity criterion. The economy runs on [@p31/love-ledger](https://www.npmjs.com/package/@p31/love-ledger). Identity and bonds come from [@p31/node-zero](https://www.npmjs.com/package/@p31/node-zero).
+Build structures from Platonic solids. Every structure is validated against Maxwell's rigidity criterion. The economy runs on [@p31ca/love-ledger](https://www.npmjs.com/package/@p31ca/love-ledger). Identity and bonds come from [@p31ca/node-zero](https://www.npmjs.com/package/@p31ca/node-zero).
 
 This is not a metaphor. The tetrahedron is the minimum stable system in 3D because it's the only polyhedron where every vertex connects to every other vertex. The game teaches this through building.
 
@@ -67,8 +67,8 @@ const snap = game.export();
 
 ```typescript
 import { GameEngine } from "@p31/game-engine";
-import { LedgerEngine } from "@p31/love-ledger";
-import { NodeZero } from "@p31/node-zero";
+import { LedgerEngine } from "@p31ca/love-ledger";
+import { NodeZero } from "@p31ca/node-zero";
 
 const ledger = new LedgerEngine(nodeId);
 const game = new GameEngine(nodeId, {
@@ -190,8 +190,8 @@ maxwellAnalysis(vertices: number, edges: number): RigidityAnalysis
 
 ## Related Packages
 
-- [@p31/node-zero](https://www.npmjs.com/package/@p31/node-zero) — Protocol layer. Identity, bonds, vault, state.
-- [@p31/love-ledger](https://www.npmjs.com/package/@p31/love-ledger) — Economic layer. LOVE transactions, wallet, vesting.
+- [@p31ca/node-zero](https://www.npmjs.com/package/@p31ca/node-zero) — Protocol layer. Identity, bonds, vault, state.
+- [@p31ca/love-ledger](https://www.npmjs.com/package/@p31ca/love-ledger) — Economic layer. LOVE transactions, wallet, vesting.
 
 ## License
 

@@ -1,5 +1,5 @@
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { GlassCard } from '@p31/ui/chrome';
+import { GlassCard } from '@p31ca/ui/chrome';
 import type { Pilot } from '../types/pilot';
 
 interface TrendChartProps {

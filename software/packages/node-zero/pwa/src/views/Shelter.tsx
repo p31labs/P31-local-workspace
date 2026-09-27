@@ -1,13 +1,13 @@
 const stack = [
-  ["@p31/node-zero", "0.2.0-α.0", "220 tests", "#6366f1"],
-  ["@p31/love-ledger", "0.1.0-α.0", "115 tests", "#f59e0b"],
-  ["@p31/game-engine", "0.1.0-α.0", "104 tests", "#31ffa3"],
+  ["@p31ca/node-zero", "0.2.0-α.0", "220 tests", "#6366f1"],
+  ["@p31ca/love-ledger", "0.1.0-α.0", "115 tests", "#f59e0b"],
+  ["@p31ca/game-engine", "0.1.0-α.0", "104 tests", "#31ffa3"],
 ] as const;
 
 const links = [
-  ["npm: @p31/node-zero", "https://www.npmjs.com/package/@p31/node-zero"],
-  ["npm: @p31/love-ledger", "https://www.npmjs.com/package/@p31/love-ledger"],
-  ["npm: @p31/game-engine", "https://www.npmjs.com/package/@p31/game-engine"],
+  ["npm: @p31ca/node-zero", "https://www.npmjs.com/package/@p31ca/node-zero"],
+  ["npm: @p31ca/love-ledger", "https://www.npmjs.com/package/@p31ca/love-ledger"],
+  ["npm: @p31ca/game-engine", "https://www.npmjs.com/package/@p31ca/game-engine"],
   ["GitHub: p31labs", "https://github.com/p31labs"],
 ] as const;
 

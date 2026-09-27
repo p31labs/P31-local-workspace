@@ -10,8 +10,8 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@p31/design-core': path.resolve(__dirname, '../design-core/src/index.ts'),
-      '@p31/quantum-core': path.resolve(__dirname, '../quantum-core/src/feedback.ts'),
+      '@p31ca/design-core': path.resolve(__dirname, '../design-core/src/index.ts'),
+      '@p31ca/quantum-core': path.resolve(__dirname, '../quantum-core/src/feedback.ts'),
     },
   },
 });

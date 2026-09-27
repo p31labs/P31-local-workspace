@@ -4,7 +4,7 @@
  */
 
 import { useState } from 'react';
-import { GlassCard, GlowButton } from '@p31/ui/chrome';
+import { GlassCard, GlowButton } from '@p31ca/ui/chrome';
 import { createConsent, verifyConsent, ConsentRecord } from '../lib/consent';
 
 interface ParentalConsentProps {

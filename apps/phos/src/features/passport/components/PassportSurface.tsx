@@ -2,21 +2,21 @@
  * @file PassportSurface — Real sovereign Cognitive Passport viewer.
  *
  * Replaces the old fake surface (which minted random hex → fake did:key). Now
- * reads the real Ed25519 identity + passport from IndexedDB via @p31/ui/passport,
+ * reads the real Ed25519 identity + passport from IndexedDB via @p31ca/ui/passport,
  * shows the deterministic face, DID, public key, and offers export/import/reset.
  * If no passport exists, it shows the onboarding generator.
  */
 
 import { useState, useEffect } from 'react';
-import { GlassCard } from '@p31/ui/chrome';
-import { GlowButton } from '@p31/ui/chrome';
-import { usePassport, passportFace } from '@p31/ui/passport';
-import { emitAlert } from '@p31/ui/alerts';
-import { exportBackup, importBackup } from '@p31/ui/passport/backup';
-import { generateMLDSA65Identity, loadMLDSA65Identity } from '@p31/ui/passport/pqc';
-import { generateDIDDocument, exportDIDDocumentJSON } from '@p31/ui/passport/did-document';
-import { saveCredential, listCredentials, type StoredCredential } from '@p31/ui/passport/store';
-import { exportEUDIWallet, serializeEUDIWallet } from '@p31/ui/passport/eudi';
+import { GlassCard } from '@p31ca/ui/chrome';
+import { GlowButton } from '@p31ca/ui/chrome';
+import { usePassport, passportFace } from '@p31ca/ui/passport';
+import { emitAlert } from '@p31ca/ui/alerts';
+import { exportBackup, importBackup } from '@p31ca/ui/passport/backup';
+import { generateMLDSA65Identity, loadMLDSA65Identity } from '@p31ca/ui/passport/pqc';
+import { generateDIDDocument, exportDIDDocumentJSON } from '@p31ca/ui/passport/did-document';
+import { saveCredential, listCredentials, type StoredCredential } from '@p31ca/ui/passport/store';
+import { exportEUDIWallet, serializeEUDIWallet } from '@p31ca/ui/passport/eudi';
 import { PassportGenerator } from './PassportGenerator';
 
 export function PassportSurface() {

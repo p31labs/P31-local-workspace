@@ -3,8 +3,8 @@
 **One command to start building on the P31 Vibe Coding Platform.**
 
 ```bash
-npx @p31/vibe-sdk generate "Build a star-catching game" --sparkly
-npx @p31/mcp-vibe vibe-deploy --name "Star Catcher" --html "<h1>⭐</h1>"
+npx @p31ca/vibe-sdk generate "Build a star-catching game" --sparkly
+npx @p31ca/mcp-vibe vibe-deploy --name "Star Catcher" --html "<h1>⭐</h1>"
 ```
 
 ## Quick Start
@@ -34,8 +34,8 @@ open https://phos.p31ca.org/vibe  # Open the Vibe Studio
 
 | Tool | Description |
 |------|-------------|
-| `@p31/vibe-sdk` | Programmatic code generation and deployment |
-| `@p31/mcp-vibe` | MCP server for AI agents (Claude, Cursor, Copilot) |
+| `@p31ca/vibe-sdk` | Programmatic code generation and deployment |
+| `@p31ca/mcp-vibe` | MCP server for AI agents (Claude, Cursor, Copilot) |
 | `p31 vibe` CLI | Command-line interface for generation and deployment |
 | PHOS Vibe Studio | Full visual IDE with multi-agent pipeline |
 | Calcium Cage | 9-level progressive onboarding game |
@@ -44,7 +44,7 @@ open https://phos.p31ca.org/vibe  # Open the Vibe Studio
 
 ### SDK Usage
 ```typescript
-import { P31Client } from '@p31/vibe-sdk';
+import { P31Client } from '@p31ca/vibe-sdk';
 const p31 = new P31Client({ familyId: 'your-family-id' });
 const app = await p31.generate({ prompt: 'Build a memory game', vibeTags: ['playful'], ageGroup: 'child' });
 const deployed = await p31.deploy({ name: 'Memory Game', ...app });
@@ -58,7 +58,7 @@ Add to Claude Desktop, Cursor, or any MCP-compatible client:
   "mcpServers": {
     "p31-vibe": {
       "command": "npx",
-      "args": ["@p31/mcp-vibe"]
+      "args": ["@p31ca/mcp-vibe"]
     }
   }
 }

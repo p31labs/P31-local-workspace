@@ -1,5 +1,5 @@
 /**
- * @module @p31/love-ledger
+ * @module @p31ca/love-ledger
  * @description L.O.V.E. — Ledger of Ontological Volume and Entropy
  *
  * Economic layer for the P31 assistive technology ecosystem.

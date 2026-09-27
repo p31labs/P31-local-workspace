@@ -1,6 +1,6 @@
 # P31 UI Engineering Guardrails
 
-Machine-executable rules for all AI agents interacting with the `@p31/ui` and `@p31/design-core` packages. Violations of these rules cause build failures, visual regressions, or monorepo breakage.
+Machine-executable rules for all AI agents interacting with the `@p31ca/ui` and `@p31ca/design-core` packages. Violations of these rules cause build failures, visual regressions, or monorepo breakage.
 
 ---
 
@@ -47,7 +47,7 @@ Machine-executable rules for all AI agents interacting with the `@p31/ui` and `@
 
 ## 4. Monorepo Blast Radius Protocol
 
-**Any modification to shared packages (`@p31/ui`, `@p31/design-core`) requires building ALL consumer apps before marking the task complete.**
+**Any modification to shared packages (`@p31ca/ui`, `@p31ca/design-core`) requires building ALL consumer apps before marking the task complete.**
 
 Mandatory verification:
 ```bash
@@ -139,14 +139,14 @@ Example: `feat(ui): add crisis-overlay component [phos]`
 
 ## 10. Mandatory Macro-Shell Wrapping
 
-Every route or page MUST use the correct canonical layout shell from `@p31/ui` as the root structural component:
+Every route or page MUST use the correct canonical layout shell from `@p31ca/ui` as the root structural component:
 
 | App | Shell | Import Path |
 |-----|-------|-------------|
-| `p31ca` | `<LandingShell>` | `import { LandingShell } from '@p31/ui'` |
-| `phosphorus31` | `<LandingShell>` | `import { LandingShell } from '@p31/ui'` |
-| `phos` | `<WorkspaceShell>` | `import { WorkspaceShell } from '@p31/ui'` |
-| `willow` | `<ConversationShell>` | `import { ConversationShell } from '@p31/ui'` |
+| `p31ca` | `<LandingShell>` | `import { LandingShell } from '@p31ca/ui'` |
+| `phosphorus31` | `<LandingShell>` | `import { LandingShell } from '@p31ca/ui'` |
+| `phos` | `<WorkspaceShell>` | `import { WorkspaceShell } from '@p31ca/ui'` |
+| `willow` | `<ConversationShell>` | `import { ConversationShell } from '@p31ca/ui'` |
 
 Raw `<div>`, `<main>`, or `<header>` at the page root is FORBIDDEN. Layout must be achieved within a shell.
 

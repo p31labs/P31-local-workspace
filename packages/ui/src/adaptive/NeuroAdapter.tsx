@@ -1,5 +1,5 @@
 /**
- * @p31/ui/src/adaptive/NeuroAdapter.tsx — Neuroadaptive input layer.
+ * @p31ca/ui/src/adaptive/NeuroAdapter.tsx — Neuroadaptive input layer.
  *
  * ⚠️ HONEST LABEL
  * Contested-science metaphor made literal. No medical or scientific claims.
@@ -17,7 +17,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useAdaptiveStore } from './adaptiveStore';
-import { computeAdaptation, type AdaptationDecision, type BehaviorSignals } from '@p31/quantum-core/edgeAdaptation';
+import { computeAdaptation, type AdaptationDecision, type BehaviorSignals } from '@p31ca/quantum-core/edgeAdaptation';
 
 export interface CognitiveLoadEstimate {
   /** Estimated cognitive load 0..1. */
@@ -111,7 +111,6 @@ export function useNeuroAdapter(
   });
 
   const clicksRef = useRef<number[]>([]);
-  const idleTimerRef = useRef<ReturnType<typeof setTimeout>>();
   const lastActivityRef = useRef<number>(Date.now());
   const errorsRef = useRef<number>(0);
   const scrollCountRef = useRef<number>(0);

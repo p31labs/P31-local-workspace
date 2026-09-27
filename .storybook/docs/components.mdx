@@ -18,14 +18,14 @@ The P31 Crown mark — a 200×168 SVG icon symbolizing cognitive sovereignty. Ac
 - **ViewBox:** `0 16 200 168`
 - **Accessibility:** Includes `<title>` and `<desc>` elements
 - **Variants:** Icon-only (full P31 tetrahedral mark)
-- **Import:** `import { Crown } from '@p31/design-core/generated/Crown'`
+- **Import:** `import { Crown } from '@p31ca/design-core/generated/Crown'`
 
 ### GlassCard
 The canonical glassmorphic card container. Wraps content with the P31 glass aesthetic.
 
 - **Glass tier:** Standard (`.glass-panel` base)
 - **Hover:** Lifts 2px, border brightens
-- **Import:** `import { GlassCard } from '@p31/design-core/generated/GlassCard'`
+- **Import:** `import { GlassCard } from '@p31ca/design-core/generated/GlassCard'`
 
 ### Button
 Three-variant button component with quantum-cyan primary accent.
@@ -33,59 +33,59 @@ Three-variant button component with quantum-cyan primary accent.
 - **Variants:** `primary` | `secondary` | `ghost`
 - **Sizes:** `sm` | `md` | `lg`
 - **Accessibility:** `min-height: 44px`, `min-width: 44px`, focus-visible ring
-- **Import:** `import { Button } from '@p31/design-core/generated/Button'`
+- **Import:** `import { Button } from '@p31ca/design-core/generated/Button'`
 
 ### SpoonDial
 Cognitive load indicator and adjustment control. Shows current spoon level (0–5) with mode switching.
 
 - **Modes:** Full dial, compact icon, hidden (crisis)
-- **Import:** `import { SpoonDial } from '@p31/design-core/generated/SpoonDial'`
+- **Import:** `import { SpoonDial } from '@p31ca/design-core/generated/SpoonDial'`
 
 ### CrisisOverlay
 Full-screen breathing overlay for crisis mode (spoons = 0). Only exit control is visible.
 
 - **Behavior:** Renders when `data-spoons="0"`
 - **Controls:** Escape key, "I'm ready" button
-- **Import:** `import { CrisisOverlay } from '@p31/design-core/generated/CrisisOverlay'`
+- **Import:** `import { CrisisOverlay } from '@p31ca/design-core/generated/CrisisOverlay'`
 
 ---
 
 ## UI Chrome Components
 
-These components live in `packages/ui/src/chrome/` and are available via `@p31/ui/chrome`.
+These components live in `packages/ui/src/chrome/` and are available via `@p31ca/ui/chrome`.
 
 ### SiteNav
 Primary navigation with candy-pill segments and active state detection.
 
 - **Features:** Route-based active highlighting, tetrahedral nav structure
-- **Import:** `import { SiteNav } from '@p31/ui/chrome'`
+- **Import:** `import { SiteNav } from '@p31ca/ui/chrome'`
 
 ### BrandMark
 App-specific brand identity with icon + name + tagline.
 
 - **Props:** `appName`, `tagline`, `icon`
-- **Import:** `import { BrandMark } from '@p31/ui/chrome'`
+- **Import:** `import { BrandMark } from '@p31ca/ui/chrome'`
 
 ### Footer
 Standard P31 site footer with links, copyright, and mesh status.
 
-- **Import:** `import { Footer } from '@p31/ui/chrome'`
+- **Import:** `import { Footer } from '@p31ca/ui/chrome'`
 
 ### SkipLink
 WCAG 2.2 skip-navigation link for keyboard users.
 
 - **Behavior:** Hidden until focused, then visible at top of page
-- **Import:** `import { SkipLink } from '@p31/ui/chrome'`
+- **Import:** `import { SkipLink } from '@p31ca/ui/chrome'`
 
 ### SovereigntyStrip
 Top-of-page status bar showing sovereignty status and quantum mesh health.
 
-- **Import:** `import { SovereigntyStrip } from '@p31/ui/chrome'`
+- **Import:** `import { SovereigntyStrip } from '@p31ca/ui/chrome'`
 
 ### GlowButton
 Animated glow-effect button for high-emphasis actions.
 
-- **Import:** `import { GlowButton } from '@p31/ui/chrome'`
+- **Import:** `import { GlowButton } from '@p31ca/ui/chrome'`
 
 ---
 
@@ -134,16 +134,16 @@ Layout templates in `packages/ui/src/templates/` that control page structure:
 
 ```tsx
 // From design-core (canonical source)
-import { Crown } from '@p31/design-core/generated/Crown';
-import { GlassCard } from '@p31/design-core/generated/GlassCard';
-import { Button } from '@p31/design-core/generated/Button';
+import { Crown } from '@p31ca/design-core/generated/Crown';
+import { GlassCard } from '@p31ca/design-core/generated/GlassCard';
+import { Button } from '@p31ca/design-core/generated/Button';
 
 // From ui/chrome (application chrome)
-import { SiteNav, BrandMark, Footer } from '@p31/ui/chrome';
+import { SiteNav, BrandMark, Footer } from '@p31ca/ui/chrome';
 
 // From ui/templates (Astro-only)
-import Page from '@p31/ui/templates/Page.astro';
-import TetraNav from '@p31/ui/templates/TetraNav.astro';
+import Page from '@p31ca/ui/templates/Page.astro';
+import TetraNav from '@p31ca/ui/templates/TetraNav.astro';
 ```
 
 ---

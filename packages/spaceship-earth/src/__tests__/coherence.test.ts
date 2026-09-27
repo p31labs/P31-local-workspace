@@ -3,7 +3,7 @@
  *
  * Validates: coherence mapping from spoons/engagement/entropy, monotonic
  * energy response, field chaos scaling, and the Fawn-Guard coherence gate.
- * All math is the contested-science metaphor from @p31/quantum-core — these
+ * All math is the contested-science metaphor from @p31ca/quantum-core — these
  * tests assert ENGINE behavior, not any physical claim.
  */
 import { describe, it, expect } from 'vitest';

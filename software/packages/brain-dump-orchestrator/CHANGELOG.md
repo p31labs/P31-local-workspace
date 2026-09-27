@@ -26,7 +26,7 @@
 
 ### Next Steps
 - Implement `CortexDOAdapter` with Cloudflare Durable Object bindings
-- Implement `AgentEngineAdapter` with `@p31/agent-engine` import
+- Implement `AgentEngineAdapter` with `@p31ca/agent-engine` import
 - Add `--dry-run` flag to `run` command
 - Add signal file persistence to repository root
 - Improve CLI to auto‑detect `.json` vs `.md` axes input

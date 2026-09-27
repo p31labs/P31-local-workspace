@@ -35,7 +35,7 @@ npm install
 node index.js
 ```
 
-The package is `@p31/andromeda-cli`; the in-TUI name is **P31 Oasis CLI**.
+The package is `@p31ca/andromeda-cli`; the in-TUI name is **P31 Oasis CLI**.
 
 > **Note:** The CLI *requires* an interactive TTY. If you run it without a TTY, only `--version` and `--help` work.
 
@@ -594,7 +594,7 @@ The interactive terrain user interface for the P31 ecosystem.
 
 ## Overview
 
-The CLI is a local-only, blessed + node-pty interactive TUI branded **P31 Oasis CLI**. It provides a dashboard with LOG, SANDBOX, META, and TODOS panes. The package is `@p31/andromeda-cli` with binary `andromeda`.
+The CLI is a local-only, blessed + node-pty interactive TUI branded **P31 Oasis CLI**. It provides a dashboard with LOG, SANDBOX, META, and TODOS panes. The package is `@p31ca/andromeda-cli` with binary `andromeda`.
 
 **Important:** A TTY is required. Without one, only `--version` and `--help` work.
 
@@ -612,7 +612,7 @@ node index.js
 
 | Flag | Output |
 |------|--------|
-| --version, -v | @p31/andromeda-cli v1.0.0 |
+| --version, -v | @p31ca/andromeda-cli v1.0.0 |
 | --help, -h | Usage: andromeda \| andromeda --help \| andromeda --version |
 
 These only respond in a non-TTY environment. In a TTY the TUI launches immediately.

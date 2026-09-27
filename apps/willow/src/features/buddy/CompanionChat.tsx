@@ -5,7 +5,7 @@
  */
 
 import { useRef, useState, useEffect } from 'react';
-import { GlassCard } from '@p31/ui/chrome';
+import { GlassCard } from '@p31ca/ui/chrome';
 import { useWillowStore, MOODS } from '../../store/willowStore';
 import { WillowChipBar } from '../../components/WillowChipBar';
 

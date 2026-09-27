@@ -1,11 +1,11 @@
 /**
- * @file PageBuilder — DevMenu panel: drag-and-drop page assembly from @p31/ui blocks.
+ * @file PageBuilder — DevMenu panel: drag-and-drop page assembly from @p31ca/ui blocks.
  * HTML5 native drag-and-drop. No external deps. Vertical block stack + export.
  */
 
 import { useState, useRef, useEffect } from 'react';
 import { COMPONENTS, type PropDef, type ComponentEntry } from '../data/components';
-import { EphemeralProvider, AdaptiveLayout } from '@p31/ui';
+import { EphemeralProvider, AdaptiveLayout } from '@p31ca/ui';
 
 interface PageMeta { id: string; name: string; blocks: PageBlock[]; createdAt: number; }
 
@@ -172,9 +172,9 @@ export function PageBuilder() {
   };
 
   const exportProject = () => {
-    const pkg = { name: 'p31-page', version: '1.0.0', private: true, type: 'module', scripts: { dev: 'vite', build: 'vite build', preview: 'vite preview' }, dependencies: { react: '^19.0.0', 'react-dom': '^19.0.0', '@p31/design-core': '^1.0.0', '@p31/ui': '^1.0.0' }, devDependencies: { vite: '^8.0.0', '@vitejs/plugin-react': '^4.0.0' } };
+    const pkg = { name: 'p31-page', version: '1.0.0', private: true, type: 'module', scripts: { dev: 'vite', build: 'vite build', preview: 'vite preview' }, dependencies: { react: '^19.0.0', 'react-dom': '^19.0.0', '@p31ca/design-core': '^1.0.0', '@p31ca/ui': '^1.0.0' }, devDependencies: { vite: '^8.0.0', '@vitejs/plugin-react': '^4.0.0' } };
     const vc = `import { defineConfig } from 'vite';\nimport react from '@vitejs/plugin-react';\nexport default defineConfig({ plugins: [react()] });`;
-    const app = `import React from 'react';\nimport '@p31/design-core/css/all.css';\nimport { EphemeralProvider, AdaptiveLayout } from '@p31/ui';\n\n${exportImports()}\n\nexport default function App() {\n  return (\n    <EphemeralProvider ambientMode="soft">\n      <AdaptiveLayout>\n${exportJSX()}\n      </AdaptiveLayout>\n    </EphemeralProvider>\n  );\n}`;
+    const app = `import React from 'react';\nimport '@p31ca/design-core/css/all.css';\nimport { EphemeralProvider, AdaptiveLayout } from '@p31ca/ui';\n\n${exportImports()}\n\nexport default function App() {\n  return (\n    <EphemeralProvider ambientMode="soft">\n      <AdaptiveLayout>\n${exportJSX()}\n      </AdaptiveLayout>\n    </EphemeralProvider>\n  );\n}`;
     const main = `import React from 'react';\nimport { createRoot } from 'react-dom/client';\nimport App from './App';\nconst el = document.getElementById('root');\nif (el) createRoot(el).render(<App />);`;
     const html = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>P31 Page</title></head><body><div id="root"></div><script type="module" src="./src/main.tsx"></script></body></html>';
     const files = { 'package.json': JSON.stringify(pkg, null, 2), 'vite.config.ts': vc, 'index.html': html, 'src/main.tsx': main, 'src/App.tsx': app };

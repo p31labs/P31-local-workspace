@@ -123,7 +123,7 @@ P31 is an open-source, 5-layer protocol stack purpose-built for **trusted AI-age
 
 | Metric | Value |
 |--------|-------|
-| npm packages published | 3 (`andromeda-cli`, `@p31/agent-engine`, `@p31/game-engine`) |
+| npm packages published | 3 (`andromeda-cli`, `@p31ca/agent-engine`, `@p31ca/game-engine`) |
 | License | Apache 2.0 (all packages) |
 | CLI servers | 8 (open source, stdio JSON-RPC 2.0) |
 | Edge workers | 5 MCP workers + 7 portal deployments |
@@ -197,8 +197,8 @@ User Action → DOM mutation (data-spoons/data-love-balance)
 | Package | Version | License | Purpose |
 |---------|---------|---------|---------|
 | `andromeda-cli` | latest (npm) | Apache 2.0 | CLI MCP server framework |
-| `@p31/agent-engine` | latest (npm) | Apache 2.0 | AI agent orchestration |
-| `@p31/game-engine` | latest (npm) | Apache 2.0 | Adaptive game framework |
+| `@p31ca/agent-engine` | latest (npm) | Apache 2.0 | AI agent orchestration |
+| `@p31ca/game-engine` | latest (npm) | Apache 2.0 | Adaptive game framework |
 
 ### Repository Structure
 

@@ -3,8 +3,8 @@
  * Orb, XP bar, mood selector, today's quests. Ported from prototype.
  */
 
-import { GlassCard, GlowButton } from '@p31/ui/chrome';
-import { QuantumLayer } from '@p31/ui/quantum';
+import { GlassCard, GlowButton } from '@p31ca/ui/chrome';
+import { QuantumLayer } from '@p31ca/ui/quantum';
 import { useWillowStore, MOODS } from '../../store/willowStore';
 
 export function HomeScreen({ onQuests }: { onQuests?: () => void }) {

@@ -77,7 +77,7 @@ This completes the **query → proposal → validation → evolution** loop—a 
 
 ### 2.6 Layer 6: Agentic Infrastructure — MCP Tooling
 
-The P31 CLI (`@p31/cli`) provides **26 tools across 7 categories**, with spoon-aware UI that adapts to cognitive load levels (1/3/5). The CLI enables:
+The P31 CLI (`@p31ca/cli`) provides **26 tools across 7 categories**, with spoon-aware UI that adapts to cognitive load levels (1/3/5). The CLI enables:
 
 - Interactive chat sessions with sovereign agents
 - Autonomous agent execution
@@ -176,7 +176,7 @@ The P31 stack is not just a technical artifact—it is a reference implementatio
 3. A2UI v0.9: The New Standard for Portable, Framework-Agnostic Generative UI — Google Developers Blog
 4. Carbon MCP — GitHub
 5. System Bridge MCP — GitHub
-6. @p31/cli — npm
+6. @p31ca/cli — npm
 7. SWARM Research Paper Template — GitHub
 
 ---

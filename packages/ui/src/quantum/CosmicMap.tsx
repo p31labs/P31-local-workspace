@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { HOUSE_NEURO_MAP } from '@p31/quantum-core/cosmic';
+import { HOUSE_NEURO_MAP } from '@p31ca/quantum-core/cosmic';
 
 export function CosmicMap() {
   const houses = useMemo(() => HOUSE_NEURO_MAP, []);

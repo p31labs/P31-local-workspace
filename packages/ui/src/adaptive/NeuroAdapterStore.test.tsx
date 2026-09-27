@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { estimateCognitiveLoad } from './NeuroAdapter';
-import { computeAdaptation } from '@p31/quantum-core/edgeAdaptation';
+import { computeAdaptation } from '@p31ca/quantum-core/edgeAdaptation';
 import { useAdaptiveStore } from './adaptiveStore';
 
 describe('NeuroAdapter → edgeAdaptation → store pipeline', () => {

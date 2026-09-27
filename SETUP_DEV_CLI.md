@@ -9,10 +9,10 @@ This comprehensive CLI application provides a complete setup and development env
 ### Installation
 ```bash
 # Install the CLI globally
-npm install -g @p31/andromeda-cli
+npm install -g @p31ca/andromeda-cli
 
 # Or run directly
-npx @p31/andromeda-cli setup
+npx @p31ca/andromeda-cli setup
 ```
 
 ### Basic Usage

@@ -1,6 +1,6 @@
 import type { GameDefinition, GeneratedGame } from '@p31/game-generator/schema';
 import { buildDefinition, generateGame } from '@p31/game-generator/generator';
-import { gatedGameConfig, GameEngine, generateLuau, generateP31Skin } from '@p31/game-engine';
+import { gatedGameConfig, GameEngine, generateLuau, generateP31Skin } from '@p31ca/game-engine';
 import type { GameBuilderInput } from '@p31/game-generator/schema';
 
 const PLINTH_MCP_URL = 'http://127.0.0.1:9876/mcp';

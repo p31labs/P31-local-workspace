@@ -16,7 +16,7 @@
 | Meatspace | `meatspace` | meatspace.p31ca.org | bonding MVP | `meatspace-bonding-mvp.html` | Built (56 KB, static HTML) |
 | Developer | `developer/p31ca` | p31ca.org | p31ca | `index.html` | Built (13 MB dist) |
 | Institutional | `institutional/phosphorus31` | phosphorus31.org | phosphorus31 | `index.html` | Built (71 KB static HTML) |
-| Design | `design/deploy` | design.p31ca.org | design portal (React) | `index.html` | Built (240 KB dist, uses @p31/ui + @p31/design-core) |
+| Design | `design/deploy` | design.p31ca.org | design portal (React) | `index.html` | Built (240 KB dist, uses @p31ca/ui + @p31ca/design-core) |
 
 **Shared infrastructure:** `production/shared/` (worker, manifest, quantum-hud.js, state-sync.js, components.css)
 **Shared assets:** `production/assets/` (p31-ui.umd.js, p31-ui.umd.css, components.css, icons, webmcp-registry)
@@ -29,7 +29,7 @@
 - **Why:** Already has a bonding MVP in the meatspace portal (7 bonding references). The full app at `apps/bonding` is a complete React/TSX app with `BondingUIGSurface.tsx`, `WalletConnect.tsx`, `TrustBadge.tsx`, `LoveBalance.tsx`, `identity.ts`, `love.ts`.
 - **Build status:** Built (`dist/` = 1.8 MB, 68 deployable files)
 - **Has:** wrangler.toml, vite.config.ts, vitest.config.ts, tsconfig.json, src/App.tsx, src/main.tsx
-- **Uses workspace pkg:** No direct @p31/ui or @p31/design-core dependency yet
+- **Uses workspace pkg:** No direct @p31ca/ui or @p31ca/design-core dependency yet
 - **Integration path:** Replace the bonding MVP in `meatspace/meatspace-bonding-mvp.html` with a dynamic integration of the full bonding app. The bonding app's `data-brand="meatspace"` already matches the portal's brand.
 - **Effort:** Low — swap static HTML for a portal integration pattern similar to the design portal
 
@@ -37,7 +37,7 @@
 - **Why:** Deployed as `children/willow-portal.html`. Has `features/portal/PortalScreen.tsx` (81 lines) and `features/portal/CaregiverPortal.tsx` (97 lines) with full spoon system, mood, persona, game navigation (binding, breath, jitterbug, memory).
 - **Build status:** Built (`dist/` = 644 KB)
 - **Portal mode:** Static HTML export, not a live React app
-- **Integration path:** The design portal (`production/portals/design/`) demonstrates how to integrate willow as a live React portal using `@p31/ui`'s `GreyRock` and `NeuroAdapter` components. Willow could be integrated the same way to make the children portal dynamic rather than static HTML.
+- **Integration path:** The design portal (`production/portals/design/`) demonstrates how to integrate willow as a live React portal using `@p31ca/ui`'s `GreyRock` and `NeuroAdapter` components. Willow could be integrated the same way to make the children portal dynamic rather than static HTML.
 - **Effort:** Medium — requires wiring willow's portal screens into the design portal's React shell
 
 ### 2.3 `tetra-ops` (apps/tetra-ops) — Already a portal
@@ -73,21 +73,21 @@
 - **Effort:** High — phos is a monolithic app; extracting features for portal integration requires significant refactoring
 - **Recommendation:** Start with phos's `features/bonding` and `features/dashboard` components as they are the most portal-aligned
 
-### 3.2 `@p31/ui` (packages/ui) — Infrastructure
-- **Why:** The design portal (`production/portals/design/`) already demonstrates the pattern: it uses `@p31/ui/adaptive/GreyRock`, `@p31/ui/adaptive/NeuroAdapter`, `@p31/design-core/css/all.css`. This is the proven integration pattern.
+### 3.2 `@p31ca/ui` (packages/ui) — Infrastructure
+- **Why:** The design portal (`production/portals/design/`) already demonstrates the pattern: it uses `@p31ca/ui/adaptive/GreyRock`, `@p31ca/ui/adaptive/NeuroAdapter`, `@p31ca/design-core/css/all.css`. This is the proven integration pattern.
 - **Current version:** v1.3.0 (103 files, 3.3 MB)
 - **Build status:** Has build scripts (`build:umd`, `build`) but no dist yet at package level
-- **Integration path:** All new portals should adopt the design portal's pattern of using `@p31/ui` components with `GreyRock` + `NeuroAdapter` wrappers
+- **Integration path:** All new portals should adopt the design portal's pattern of using `@p31ca/ui` components with `GreyRock` + `NeuroAdapter` wrappers
 - **Effort:** Low to adopt; the pattern already exists in the design portal
 
 ### 3.3 `design` portal (production/portals/design/) — Proven Pattern
-- **Why:** This is the only portal that uses live React with @p31/ui and @p31/design-core. It demonstrates the exact integration pattern: `GreyRock` for adaptive rendering, `useNeuroAdapter` for spoon-based cognitive load, `@p31/design-core/css/all.css` for design tokens.
+- **Why:** This is the only portal that uses live React with @p31ca/ui and @p31ca/design-core. It demonstrates the exact integration pattern: `GreyRock` for adaptive rendering, `useNeuroAdapter` for spoon-based cognitive load, `@p31ca/design-core/css/all.css` for design tokens.
 - **Status:** Built (240 KB dist), has `deploy` script targeting Cloudflare Pages project `design-hub`
 - **Integration path:** Use this as the template for all future portal integrations. Other portals should migrate from static HTML to this React-based pattern.
 - **Effort:** Reference implementation — use as-is for new portal components
 
 ### 3.4 `growth-dashboard` (apps/growth-dashboard)
-- **Why:** Dashboard app with React/Vite, 26 files, uses @p31/ui workspace dependency. Has charts (TrendChart, SourceChart, StatusChart, MetricsCards, PilotTable, SyncStatus).
+- **Why:** Dashboard app with React/Vite, 26 files, uses @p31ca/ui workspace dependency. Has charts (TrendChart, SourceChart, StatusChart, MetricsCards, PilotTable, SyncStatus).
 - **Build status:** Built (`dist/` = 744 KB)
 - **Portal mode:** Vite + Wrangler, deployable
 - **Integration path:** Could be integrated as a dashboard widget/tab in the teen or parent portal
@@ -111,8 +111,8 @@ These workspace packages should be available to all portals:
 
 | Package | Version | Portal Role |
 |---------|---------|-------------|
-| `@p31/ui` | 1.3.0 | Component library (GreyRock, NeuroAdapter, A2UI) |
-| `@p31/design-core` | 2.1.0 | Design tokens & CSS (`css/all.css`) |
+| `@p31ca/ui` | 1.3.0 | Component library (GreyRock, NeuroAdapter, A2UI) |
+| `@p31ca/design-core` | 2.1.0 | Design tokens & CSS (`css/all.css`) |
 | `@p31/shared` | 0.0.1 | Shared utilities (580 files) |
 | `@p31/skin-willow` | 1.0.0 | CSS theming for willow portal |
 | `@p31/skin-tetra` | 1.0.0 | CSS theming for tetra portal |
@@ -133,9 +133,9 @@ These workspace packages should be available to all portals:
 | parent (tetra-ops) | Dashboard, arcade, bonding, market, play | Dynamic React, A2UI components | Same as above |
 | teen (p31ca) | Home, catalog, dashboard, play, profile, bonding | Dynamic React, A2UI components | phos features (dashboard, bonding) |
 | meatspace (bonding MVP) | Bonding MVP only | Full bonding app, other features | `apps/bonding` full app |
-| developer (p31ca) | Full p31ca with workers | A2UI component interactivity | @p31/ui components for portal shell |
-| institutional (phosphorus31) | Astro site | Dynamic React, A2UI components | Integrate @p31/ui pattern |
-| design (React) | @p31/ui + @p31/design-core working portal | Template for other portals | Use as the template pattern |
+| developer (p31ca) | Full p31ca with workers | A2UI component interactivity | @p31ca/ui components for portal shell |
+| institutional (phosphorus31) | Astro site | Dynamic React, A2UI components | Integrate @p31ca/ui pattern |
+| design (React) | @p31ca/ui + @p31ca/design-core working portal | Template for other portals | Use as the template pattern |
 
 ---
 
@@ -143,7 +143,7 @@ These workspace packages should be available to all portals:
 
 ### Phase 1 — Adopt the design portal pattern
 1. Use `production/portals/design/` as the template for all portals
-2. Each portal should use `@p31/ui/adaptive/GreyRock` + `useNeuroAdapter` + `@p31/design-core/css/all.css`
+2. Each portal should use `@p31ca/ui/adaptive/GreyRock` + `useNeuroAdapter` + `@p31ca/design-core/css/all.css`
 3. The design portal is already deployed and working — it's the reference implementation
 
 ### Phase 2 — Replace static HTML portals with dynamic React
@@ -169,10 +169,10 @@ The design portal (`production/portals/design/`) demonstrates the pattern:
 
 ```tsx
 // App wrapper pattern (from design portal's main.tsx)
-import { GreyRock } from '@p31/ui/adaptive/GreyRock';
-import { useNeuroAdapter } from '@p31/ui/adaptive/NeuroAdapter';
-import '@p31/design-core/css/all.css';
-import '@p31/ui/chrome.css';
+import { GreyRock } from '@p31ca/ui/adaptive/GreyRock';
+import { useNeuroAdapter } from '@p31ca/ui/adaptive/NeuroAdapter';
+import '@p31ca/design-core/css/all.css';
+import '@p31ca/ui/chrome.css';
 
 function AdaptiveRoot({ children }) {
   useNeuroAdapter({ emitInterval: 2000 });

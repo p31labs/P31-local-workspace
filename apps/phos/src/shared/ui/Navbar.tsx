@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useSpoonStore } from '../stores/spoonStore';
-import { AppNav } from '@p31/ui/chrome';
+import { AppNav } from '@p31ca/ui/chrome';
 
 const NAV_GROUPS: { group: string; items: { to: string; label: string }[] }[] = [
   {

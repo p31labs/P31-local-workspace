@@ -4,5 +4,5 @@
    Single source of truth: recipes.css (Glass Morphism Tiers section).
    This file was deleted in dbe54698; the rules now live in recipes.css.
    Kept as a build-safe aggregation entry so the
-   `@p31/design-core/css/glass.css` export resolves for existing consumers. */
+   `@p31ca/design-core/css/glass.css` export resolves for existing consumers. */
 @import './recipes.css';

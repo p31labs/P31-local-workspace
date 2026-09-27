@@ -2,11 +2,11 @@
  * @file CanonFooter — p31ca wrapper around the shared canonical Footer.
  *
  * Maps p31ca's own Resources/Community columns onto the ecosystem's single data-
- * driven @p31/ui/chrome <Footer> so every marketing surface renders the SAME
+ * driven @p31ca/ui/chrome <Footer> so every marketing surface renders the SAME
  * canon footer design with site-specific links.
  */
 
-import { Footer, type FooterColumn, type FooterLink } from '@p31/ui/chrome';
+import { Footer, type FooterColumn, type FooterLink } from '@p31ca/ui/chrome';
 
 const BLURB = 'ownable stack for cognitively diverse families. Open source, open research, open future.';
 

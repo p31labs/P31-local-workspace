@@ -2,7 +2,7 @@ import { useRef, useLayoutEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { useSpoonStore } from '../state/spoonStore';
-import { posnerAtoms, bondThreshold } from '@p31/quantum-core/posner';
+import { posnerAtoms, bondThreshold } from '@p31ca/quantum-core/posner';
 
 const ATOMS = posnerAtoms();
 

@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { GlassCard, GlowButton } from '@p31/ui/chrome';
+import { GlassCard, GlowButton } from '@p31ca/ui/chrome';
 
 interface Entry {
   type: 'input' | 'output';

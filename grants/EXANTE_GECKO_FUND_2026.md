@@ -5,7 +5,7 @@
 | **Applicant** | P31 Labs, Inc. |
 | **EIN** | 42-1888158 |
 | **Operator** | William R. Johnson, Founder |
-| **Contact** | will@p31ca.org |
+| **Contact** | willyj1587@gmail.com |
 | **Fund** | EXANTE Gecko Fund |
 | **Amount Requested** | €50,000 |
 | **Duration** | 12 months |
@@ -129,7 +129,7 @@ This produces a four-layer cryptographic audit trail suitable for evidentiary pr
 - **Function:** SHA-256 hash chain telemetry bus
 - **Endpoints:** `POST /event`, `GET /events?since=...`
 
-### @p31/game-engine
+### @p31ca/game-engine
 - **Status:** v0.1.0-alpha.0, 104/104 tests passing
 - **Features:** Platonic solid building (icosahedron, dodecahedron, tetrahedron)
 - **LOVE hooks:** Geometry primitives wired to LOVE credit issuance on structural milestones

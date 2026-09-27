@@ -1,9 +1,9 @@
 /**
  * @file SiteNav — phosphorus31-specific nav config.
- * Uses the shared @p31/ui/chrome SiteNav component with brand="phosphorus".
+ * Uses the shared @p31ca/ui/chrome SiteNav component with brand="phosphorus".
  */
 
-import { SiteNav } from '@p31/ui/chrome';
+import { SiteNav } from '@p31ca/ui/chrome';
 
 const NAV_LINKS = [
   { href: '/', label: 'Home' },

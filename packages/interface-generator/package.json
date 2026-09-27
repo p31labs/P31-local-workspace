@@ -20,8 +20,8 @@
     "test:watch": "vitest --config vitest.config.ts"
   },
   "dependencies": {
-    "@p31/design-core": "workspace:*",
-    "@p31/quantum-core": "workspace:*"
+    "@p31ca/design-core": "workspace:*",
+    "@p31ca/quantum-core": "workspace:*"
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0",

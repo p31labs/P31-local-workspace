@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
-import { K4Graph } from '@p31/quantum-core';
-import { TETRA } from '@p31/design-core/math';
+import { K4Graph } from '@p31ca/quantum-core';
+import { TETRA } from '@p31ca/design-core/math';
 
 export function K4Topology() {
   const graph = useMemo(() => new K4Graph(), []);

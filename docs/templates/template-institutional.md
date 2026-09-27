@@ -73,10 +73,10 @@ section-spacing: var(--p31-space-xl) top + bottom
 | Component | Import | Purpose |
 |-----------|--------|---------|
 | `Layout` | `../layouts/Layout.astro` | Page shell with meta, JSON-LD |
-| `Page` | `@p31/ui/templates/Page` | Content wrapper |
-| `SectionHero` | `@p31/ui/templates/SectionHero` | Hero section |
-| `SectionFeatures` | `@p31/ui/templates/SectionFeatures` | Grid sections |
-| `Footer` | `@p31/ui/templates/Footer` | Page footer |
+| `Page` | `@p31ca/ui/templates/Page` | Content wrapper |
+| `SectionHero` | `@p31ca/ui/templates/SectionHero` | Hero section |
+| `SectionFeatures` | `@p31ca/ui/templates/SectionFeatures` | Grid sections |
+| `Footer` | `@p31ca/ui/templates/Footer` | Page footer |
 
 ## Components NOT Used
 

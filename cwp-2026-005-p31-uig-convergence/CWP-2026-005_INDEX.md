@@ -100,7 +100,7 @@ The following break a naive `apps/*`/`packages/*` glob and were deliberately exc
 - `apps/bonding`, `apps/auth`, `apps/status`, `apps/design-hub` — standalone npm apps (lockfile + node_modules, **no package.json**). Adding them to the workspace without a manifest fails install.
 - `apps/design-tokens` — **symlink** to `software/design-tokens` (untracked).
 - Root `packages/*` stubs: `auth`, `p31-core`, `shared` (deleted), `sovereign-core`, `ui-facets`, `vscode-extension` — some empty/phantom; `shared` duplicates real `software/packages/shared` (collision).
-- `@p31/cli` — **PHANTOM** (referenced in `site/README-site.md`, which is a *submodule* — out of scope, edit reverted).
+- `@p31ca/cli` — **PHANTOM** (referenced in `site/README-site.md`, which is a *submodule* — out of scope, edit reverted).
 - **Approach:** one app at a time; add a real `package.json` (or convert to `workspace:*`) before enlisting; never glob-blast.
 
 ### Phase 0.1 — secret rotation (USER ACTION)

@@ -2,8 +2,8 @@ import { useRef, useEffect, useState, useCallback } from 'react';
 import {
   createJitterbug, tickJitterbug, setJitterbugTarget, jitterbugVertices,
   jitterbugEdges, spoonMorphSpeed, gatedPrimitives,
-} from '@p31/game-engine';
-import type { JitterbugState } from '@p31/game-engine';
+} from '@p31ca/game-engine';
+import type { JitterbugState } from '@p31ca/game-engine';
 
 type TargetShape = 'cuboctahedron' | 'icosahedron' | 'octahedron' | 'tetrahedron';
 const TARGETS: { shape: TargetShape; phase: number; label: string; love: number }[] = [

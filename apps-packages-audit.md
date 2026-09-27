@@ -112,17 +112,17 @@
 | Package | Size | Files (excl. node_modules) | Package name (npm) | Version | Type | Scripts | Purpose |
 |---------|------|---------------------------|-------------------|---------|------|---------|---------|
 | `bonding` | 8.5 MB / 307 files | 307 | `@p31/bonding` | 0.1.0 | module | 9 scripts | Full Astro + Wrangler app with bonding functionality, workers, hud component |
-| `design-core` | 1.3 MB / 202 files | 202 | `@p31/design-core` | 2.1.0 | module | _(none listed)_ | Design token system, Astro components, CSS, TS/TSX source |
+| `design-core` | 1.3 MB / 202 files | 202 | `@p31ca/design-core` | 2.1.0 | module | _(none listed)_ | Design token system, Astro components, CSS, TS/TSX source |
 | `design-validator` | 72 KB / 6 files | 6 | `@p31/design-validator` | 0.1.0 | module | 3 scripts | Validation utility for design tokens |
-| `forge-sdk` | 380 KB / 35 files | 35 | `@p31/forge-sdk` | 1.0.0 | module | 3 scripts | SDK for forging/building p31 artifacts |
-| `game-engine` | 536 KB / 76 files | 76 | `@p31/game-engine` | 0.2.0-alpha.0 | module | 3 scripts | Game engine core library |
+| `forge-sdk` | 380 KB / 35 files | 35 | `@p31ca/forge-sdk` | 1.0.0 | module | 3 scripts | SDK for forging/building p31 artifacts |
+| `game-engine` | 536 KB / 76 files | 76 | `@p31ca/game-engine` | 0.2.0-alpha.0 | module | 3 scripts | Game engine core library |
 | `game-generator` | 44 KB / 6 files | 6 | `@p31/game-generator` | 0.1.0-alpha.0 | module | _(none)_ | Game generation utilities |
-| `gamification` | 88 KB / 10 files | 10 | `@p31/gamification` | 1.0.0 | module | _(none)_ | Gamification logic |
+| `gamification` | 88 KB / 10 files | 10 | `@p31ca/gamification` | 1.0.0 | module | _(none)_ | Gamification logic |
 | `interface-generator` | 236 KB / 28 files | 28 | `@p31/interface-generator` | 0.1.0 | module | 2 scripts | UI interface generation |
-| `mcp-justice` | 28 KB / 2 files | 2 | `@p31/mcp-justice` | 1.0.0 | module | 1 script | MCP (Model Context Protocol) server — public package |
-| `mcp-membrane` | 392 KB / 34 files | 34 | `@p31/mcp-membrane` | 1.0.0 | module | 3 scripts | MCP membrane/bridge |
-| `p31-mcp` | 24 KB / 2 files | 2 | `@p31/mcp-vibe` | 1.0.0 | module | 1 script | MCP server — public package |
-| `quantum-core` | 104 KB / 18 files | 18 | `@p31/quantum-core` | 0.1.0 | module | _(none)_ | Quantum computing core library |
+| `mcp-justice` | 28 KB / 2 files | 2 | `@p31ca/mcp-justice` | 1.0.0 | module | 1 script | MCP (Model Context Protocol) server — public package |
+| `mcp-membrane` | 392 KB / 34 files | 34 | `@p31ca/mcp-membrane` | 1.0.0 | module | 3 scripts | MCP membrane/bridge |
+| `p31-mcp` | 24 KB / 2 files | 2 | `@p31ca/mcp-vibe` | 1.0.0 | module | 1 script | MCP server — public package |
+| `quantum-core` | 104 KB / 18 files | 18 | `@p31ca/quantum-core` | 0.1.0 | module | _(none)_ | Quantum computing core library |
 | `shared` | 3.2 MB / 580 files | 580 | `@p31/shared` | 0.0.1 | module | 8 scripts | Shared utilities, most files of any package |
 | `skin-apex` | 8 KB / 2 files | 2 | `@p31/skin-apex` | 1.0.0 | module | _(none)_ | CSS skin/theming for Apex |
 | `skin-phos` | 8 KB / 2 files | 2 | `@p31/skin-phos` | 1.0.0 | module | _(none)_ | CSS skin/theming for Phos |
@@ -131,38 +131,38 @@
 | `skin-willow` | 12 KB / 3 files | 3 | `@p31/skin-willow` | 1.0.0 | module | _(none)_ | CSS skin/theming for Willow |
 | `sovereign` | 48 KB / 8 files | 8 | `@p31/sovereign` | 0.0.2 | module | _(none)_ | Sovereign infrastructure |
 | `spaceship-earth` | 4.5 MB / 196 files | 196 | `@p31/spaceship-earth` | 0.0.1 | module | 4 scripts | Full Astro app with webgpu, workers, landing page |
-| `ui` | 3.3 MB / 103 files | 103 | `@p31/ui` | 1.3.0 | module | 2 scripts | Component library (main UI package), Astro components |
+| `ui` | 3.3 MB / 103 files | 103 | `@p31ca/ui` | 1.3.0 | module | 2 scripts | Component library (main UI package), Astro components |
 | `ui-mcp` | 60 KB / 7 files | 7 | `@p31/ui-mcp` | 0.1.0 | module | 2 scripts | UI MCP bridge |
-| `vibe-sdk` | 40 KB / 4 files | 4 | `@p31/vibe-sdk` | 1.0.0 | module | _(none)_ | Public SDK package |
+| `vibe-sdk` | 40 KB / 4 files | 4 | `@p31ca/vibe-sdk` | 1.0.0 | module | _(none)_ | Public SDK package |
 
 ### 3.3 Package Categories
 
 **UI/Design System (core):**
-- `ui` (@p31/ui) — v1.3.0 — 103 files, Astro components
-- `design-core` (@p31/design-core) — v2.1.0 — 202 files, design tokens & CSS
+- `ui` (@p31ca/ui) — v1.3.0 — 103 files, Astro components
+- `design-core` (@p31ca/design-core) — v2.1.0 — 202 files, design tokens & CSS
 - `design-validator` (@p31/design-validator) — v0.1.0 — 6 files, validation
 - `skin-*` (5 packages) — per-app theming CSS
 
 **MCP (Model Context Protocol) Servers:**
-- `mcp-justice` (@p31/mcp-justice) — public, v1.0.0
-- `p31-mcp` (@p31/mcp-vibe) — public, v1.0.0
-- `mcp-membrane` (@p31/mcp-membrane) — v1.0.0
+- `mcp-justice` (@p31ca/mcp-justice) — public, v1.0.0
+- `p31-mcp` (@p31ca/mcp-vibe) — public, v1.0.0
+- `mcp-membrane` (@p31ca/mcp-membrane) — v1.0.0
 - `ui-mcp` (@p31/ui-mcp) — v0.1.0
 
 **SDK/Build Tools:**
-- `forge-sdk` (@p31/forge-sdk) — v1.0.0 — build/forge utilities
-- `vibe-sdk` (@p31/vibe-sdk) — v1.0.0 — public SDK
+- `forge-sdk` (@p31ca/forge-sdk) — v1.0.0 — build/forge utilities
+- `vibe-sdk` (@p31ca/vibe-sdk) — v1.0.0 — public SDK
 - `interface-generator` (@p31/interface-generator) — v0.1.0
 - `game-generator` (@p31/game-generator) — v0.1.0-alpha.0
 
 **Game/Entertainment:**
-- `game-engine` (@p31/game-engine) — v0.2.0-alpha.0
-- `gamification` (@p31/gamification) — v1.0.0
+- `game-engine` (@p31ca/game-engine) — v0.2.0-alpha.0
+- `gamification` (@p31ca/gamification) — v1.0.0
 - `spaceship-earth` (@p31/spaceship-earth) — v0.0.1
 
 **Utility/Infrastructure:**
 - `shared` (@p31/shared) — v0.0.1 — 580 files, most files in any package
-- `quantum-core` (@p31/quantum-core) — v0.1.0
+- `quantum-core` (@p31ca/quantum-core) — v0.1.0
 - `sovereign` (@p31/sovereign) — v0.0.2
 - `bonding` (@p31/bonding) — v0.1.0 (also a full app)
 
@@ -190,7 +190,7 @@
 - Package: `andromeda-cli` v1.1.2
 - 53 files
 - Described as "Sovereign, agent-native CLI for the P31 ecosystem"
-- Depends on `@p31/design-core`, `@p31/design-validator`, `@p31/quantum-core`, `@p31/interface-generator` (all workspace packages)
+- Depends on `@p31ca/design-core`, `@p31/design-validator`, `@p31ca/quantum-core`, `@p31/interface-generator` (all workspace packages)
 - Provides TUI (blessed), MCP server, and `--agent` JSON mode
 
 ### 4.3 Other Root-Level Directories

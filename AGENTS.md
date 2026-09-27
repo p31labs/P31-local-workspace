@@ -123,7 +123,7 @@ The design system exposes an MCP server (`p31-design-mcp`) with tools for:
 ## Chat surfaces
 
 Any P31 surface that hosts a conversation uses `ChatShell` from
-`@p31/design-core/compositions`. Do not reimplement the shell.
+`@p31ca/design-core/compositions`. Do not reimplement the shell.
 
 The contract:
 - Layer 1 (viewport lock) is the consumer's job — `height: 100dvh; display: flex; flex-direction: column; overflow: hidden`.
@@ -138,7 +138,7 @@ Transient UI state is derived, never persisted:
 Never persist a boolean like `isUnread` — it goes stale on refresh and requires manual clearing.
 
 ## Chrome Components (v2.3.0+)
-The following compositions are now available in `@p31/design-core/compositions`:
+The following compositions are now available in `@p31ca/design-core/compositions`:
 - **ChatShell** — Three-layer chat surface (header slot + scrollable children + mobile drawer, auto-hides ≥900px container)
 - **SectionStrip** — Desktop pill navigation strip (router-agnostic)
 - **CommandPalette** — Keyboard-first command palette (⌘K)
@@ -146,7 +146,7 @@ The following compositions are now available in `@p31/design-core/compositions`:
 - **PageHeader** — Inner-page hero: eyebrow, gradient title, lede
 
 ## Governance
-- Token ownership: `@p31/design-core` maintainers
+- Token ownership: `@p31ca/design-core` maintainers
 - Component lifecycle: propose → review → build → document → release → measure
 - Deprecation: 3-month warning, `$deprecated` flag in DTCG JSON
 - Semantic versioning: MAJOR.MINOR.PATCH

@@ -5,7 +5,7 @@
  */
 
 import { useRef, useState, useEffect, useCallback } from 'react';
-import { GlassCard, GlowButton } from '@p31/ui/chrome';
+import { GlassCard, GlowButton } from '@p31ca/ui/chrome';
 import { useWillowStore } from '../../store/willowStore';
 
 const COLORS = ['#34d399', '#00f0ff', '#a78bfa', '#fbbf24', '#fb7185', '#f0f2f5', '#f97316', '#ec4899', '#60a5fa', '#84cc16'];

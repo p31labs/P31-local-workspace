@@ -11,8 +11,8 @@
  *   - Age-gated vesting for founding nodes
  *
  * Imports from local source. Swap to npm packages:
- *   import { WebCryptoIdentityProvider, ... } from "@p31/node-zero";
- *   import { LedgerEngine } from "@p31/love-ledger";
+ *   import { WebCryptoIdentityProvider, ... } from "@p31ca/node-zero";
+ *   import { LedgerEngine } from "@p31ca/love-ledger";
  *
  * Usage:
  *   npm create vite@latest shelter -- --template react
@@ -689,7 +689,7 @@ export default function App() {
         fontSize: 9, color: W.textDim, letterSpacing: "0.06em",
         fontFamily: "monospace",
       }}>
-        @p31/node-zero · @p31/love-ledger · {transactions.length} transactions · 307 tests
+        @p31ca/node-zero · @p31ca/love-ledger · {transactions.length} transactions · 307 tests
         <br />
         <span style={{ color: AMBER[700] }}>P31 LABS</span> · SOULBOUND · ZERO DEPENDENCIES
       </div>

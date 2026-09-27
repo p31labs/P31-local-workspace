@@ -2,7 +2,7 @@
 
 ## Context
 
-The `@p31/love-ledger` package implements a two-pool wallet where every LOVE earned is split 50/50:
+The `@p31ca/love-ledger` package implements a two-pool wallet where every LOVE earned is split 50/50:
 - **Sovereignty Pool** (50%): Immutable, non-spendable record of care given/received
 - **Performance Pool** (50%): Liquid based on Care Score (0-1, locked at CS=0, fully accessible at CS=1)
 

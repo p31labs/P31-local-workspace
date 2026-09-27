@@ -3,7 +3,7 @@
  *
  * Validates: the canonical SIC-POVM invariant (overlap = 1/3), the density-matrix
  * mapping, probability bounds/sum, mode dominance, and entropy as a coherence proxy.
- * All math is the contested-science metaphor from @p31/quantum-core — these tests
+ * All math is the contested-science metaphor from @p31ca/quantum-core — these tests
  * assert the ENGINE behavior, not any physical claim.
  */
 import { describe, it, expect } from 'vitest';

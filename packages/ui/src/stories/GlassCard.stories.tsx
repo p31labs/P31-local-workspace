@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { GlassCard, type GlassCardProps } from '@p31/ui/chrome';
+import { GlassCard, type GlassCardProps } from '@p31ca/ui/chrome';
 
 type GlassCardStoryProps = GlassCardProps & {
   color?: 'accent' | 'violet' | 'gold';

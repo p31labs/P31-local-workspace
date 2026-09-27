@@ -3,7 +3,7 @@
  * @description The LedgerEngine listens to Node Zero protocol events and
  * translates them into LOVE transactions.
  *
- * It does not import @p31/node-zero directly. Instead, it accepts events
+ * It does not import @p31ca/node-zero directly. Instead, it accepts events
  * through a simple `ingest(eventType, payload)` method. This keeps the
  * ledger decoupled from the protocol — any event source can drive it.
  *

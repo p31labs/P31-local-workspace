@@ -1,16 +1,16 @@
 /**
- * @p31/ui K4 Hero — vanilla SVG renderer.
+ * @p31ca/ui K4 Hero — vanilla SVG renderer.
  *
  * Usage (any framework):
- *   import { renderK4Hero } from '@p31/ui/k4-hero';
- *   import '@p31/ui/k4-hero.css';
+ *   import { renderK4Hero } from '@p31ca/ui/k4-hero';
+ *   import '@p31ca/ui/k4-hero.css';
  *   renderK4Hero(document.getElementById('k4-container'));
  *
  * Or inline:
  *   <div id="k4-container"></div>
  *   <script type="module">
- *     import { renderK4Hero } from '@p31/ui/k4-hero';
- *     import '@p31/ui/k4-hero.css';
+ *     import { renderK4Hero } from '@p31ca/ui/k4-hero';
+ *     import '@p31ca/ui/k4-hero.css';
  *     renderK4Hero(document.getElementById('k4-container'));
  *   </script>
  */

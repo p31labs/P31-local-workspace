@@ -4,11 +4,11 @@ import { OrbitControls, Line } from '@react-three/drei';
 import { EffectComposer, Bloom } from '@react-three/postprocessing';
 import * as THREE from 'three';
 import { usePlayer } from '../components/PlayerProvider';
-import { useGameEngine } from '@p31/game-engine/react';
+import { useGameEngine } from '@p31ca/game-engine/react';
 import {
   createStructure, placePiece as place, analyzeStructure, PRIMITIVES,
   gatedPrimitives, type PrimitiveType, type Structure,
-} from '@p31/game-engine';
+} from '@p31ca/game-engine';
 import { AchievementToast } from './common/AchievementToast';
 import { playNote, P31_F } from './common/sound';
 

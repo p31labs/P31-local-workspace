@@ -276,7 +276,7 @@ const CLASSIFICATIONS = {
   // === Production ===
   'production/tools/portal-vendor-sync/ui-src': {
     layer: 'L3', status: 'active',
-    owns: ['portal vendor sync UI (@p31/ui)'],
+    owns: ['portal vendor sync UI (@p31ca/ui)'],
     notes: 'L3 surface — production tool',
   },
   'production/workers/p31-passport': {
@@ -323,7 +323,7 @@ const CLASSIFICATIONS = {
   'P31-local-workspace/packages/p31-mcp': {
     layer: 'L2', status: 'active',
     owns: ['vibe-coding MCP server (app generation + deploy via MCP tools)'],
-    notes: 'L2 MCP tool contract — @p31/mcp-vibe',
+    notes: 'L2 MCP tool contract — @p31ca/mcp-vibe',
   },
   'P31-local-workspace/packages/ui-mcp': {
     layer: 'L2', status: 'active',
@@ -338,7 +338,7 @@ const CLASSIFICATIONS = {
   'P31-local-workspace/packages/game-engine': {
     layer: 'L2', status: 'active',
     owns: ['game engine runtime (Maxwell rigidity, jitterbug geometry, geodesic primitives, spoon-gated)'],
-    notes: 'L2 game contract — @p31/game-engine',
+    notes: 'L2 game contract — @p31ca/game-engine',
   },
   // === Remaining 22 entries (Cycle 2.6) ===
   'P31-local-workspace/software/k4-cage': {
@@ -378,7 +378,7 @@ const CLASSIFICATIONS = {
   },
   'P31-local-workspace/software/packages/agent-engine': {
     layer: 'L2', status: 'migrate-later',
-    owns: ['@p31/agent-engine — agent topology and runtime primitives'],
+    owns: ['@p31ca/agent-engine — agent topology and runtime primitives'],
     notes: 'L2 package contract',
   },
   'P31-local-workspace/software/packages/andromeda-gateway': {

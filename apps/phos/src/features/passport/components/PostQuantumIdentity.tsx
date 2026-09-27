@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { GlassCard, GlowButton } from '@p31/ui/chrome';
-import { usePassport } from '@p31/ui/passport';
-import { listCredentials } from '@p31/ui/passport/store';
+import { GlassCard, GlowButton } from '@p31ca/ui/chrome';
+import { usePassport } from '@p31ca/ui/passport';
+import { listCredentials } from '@p31ca/ui/passport/store';
 
 export function PostQuantumIdentity() {
   const { passport } = usePassport();

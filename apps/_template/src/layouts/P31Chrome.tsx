@@ -5,11 +5,11 @@
  */
 
 import { useEffect, useState } from 'react';
-import { SovereigntyStrip, CompanionPanel } from '@p31/ui/chrome';
-import { NotificationContainer } from '@p31/ui/alerts';
-import { trackComponentUsage } from '@p31/ui';
-import '@p31/ui/chrome.css';
-import '@p31/ui/spoon-orbit.css';
+import { SovereigntyStrip, CompanionPanel } from '@p31ca/ui/chrome';
+import { NotificationContainer } from '@p31ca/ui/alerts';
+import { trackComponentUsage } from '@p31ca/ui';
+import '@p31ca/ui/chrome.css';
+import '@p31ca/ui/spoon-orbit.css';
 
 export default function P31Chrome() {
   const [open, setOpen] = useState(false);

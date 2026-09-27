@@ -10,7 +10,7 @@
 | Concept | Source | P31 Implementation |
 |---------|--------|-------------------|
 | SIC-POVM d=2 | Tetrahedron Protocol (Zenodo, Feb 2026) | `packages/quantum-core/src/sicPovm.ts` |
-| K₄ complete graph | Maxwell rigidity criterion | `k4-worker/src/engine/graph.ts`, re-exported as `@p31/quantum-core/k4` |
+| K₄ complete graph | Maxwell rigidity criterion | `k4-worker/src/engine/graph.ts`, re-exported as `@p31ca/quantum-core/k4` |
 | Posner molecule Ca₉(PO₄)₆ | Fisher (2015), Adams et al. (2025 *Sci Rep*) | `packages/quantum-core/src/posner.ts` |
 | Tetrahedral geometry preserves entanglement | Gassab et al. (2025 *Entropy*, Waterloo/Helsinki) | Confirms K₄ graph topology; referenced in docs |
 | SIC-POVM overlap = 1/3 | Tetrahedron Protocol; Gassab et al. (2025) | Verified in `tests/unit/quantum/sicPovm.test.ts` |

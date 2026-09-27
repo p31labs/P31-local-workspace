@@ -7,6 +7,8 @@
 
 **P31 Andromeda** is the decentralized, zero-telemetry cognitive operating system engineered by P31 Labs, Inc. -- a Georgia domestic nonprofit (501(c)(3) pending). It provides local-first mesh networking, verifiable ADA Title II compliance tools, and autonomic cognitive insulation for neurodivergent operators.
 
+> ⚠️ **npm scope migration (2026-09-27):** `@p31/*` is **orphaned** -- publish access to that scope is lost. All active packages live under **`@p31ca/*`** (e.g. `@p31ca/ui`, `@p31ca/design-core`, `@p31ca/cli`). **Do not depend on `@p31/*` for new work** -- depend on `@p31ca/*`. Workspace-internal names that were never published (`@p31/shared`, `@p31/interface-generator`, `@p31/design-system`, and the `software/packages/*` forks) remain workspace-resolved and are intentionally untouched.
+
 ## Repository Topology (K4 Invariant)
 
 ```
@@ -39,6 +41,16 @@ pnpm run dev
 - **OpenSSF Scorecard** -- ensures supply chain integrity.
 - **Branch protection** -- `main` requires PR + 1 approval + passing status checks.
 - **Vulnerability reporting** -- via [GitHub Security Advisories](https://github.com/p31labs/andromeda/security/advisories).
+
+## Agent governance — the reference implementation
+
+P31 runs a governance stack aligned with the IETF's 2026 agent-identity and audit work: **Agent Audit Trail** (SHA-256 per RFC 8785, EU AI Act compliant), **AIC-JWT / AIP** (capability-bound agent identity), and **MTAC** (Ed25519 + ML-DSA-65 post-quantum signatures), aligned with the WIMSE working group. The Loom — a family-scoped, self-hosted co-presence agent — enforces "proposes, never acts" at the gate (its "Proof-of-Behavior" enforcement layer), with a refusal sidecar any third party can verify.
+
+- `docs/PROOF-OF-BEHAVIOR.md` — the compliance mapping (each IETF draft → the code path)
+- `docs/POSITIONING.md` — the competitive claim
+- `docs/GRANT-PIPELINE.md` — verified open funding (Rural AI Catalyst, Sentient $42M, NLnet)
+
+Live: `loom.p31ca.org` (Access-gated), `GET /api/loom/verify`, 7 production portals.
 
 ## Funding
 

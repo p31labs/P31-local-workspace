@@ -45,13 +45,13 @@ jobs:
 
       - name: Run critical tests
         run: cd software && pnpm turbo run test \
-          --filter=@p31/agent-engine \
+          --filter=@p31ca/agent-engine \
           --filter=@p31/bonding \
-          --filter=@p31/game-engine \
+          --filter=@p31ca/game-engine \
           --filter=@p31/harmonic-linter \
-          --filter=@p31/love-ledger \
-          --filter=@p31/node-zero \
-          --filter=@p31/quantum-core \
+          --filter=@p31ca/love-ledger \
+          --filter=@p31ca/node-zero \
+          --filter=@p31ca/quantum-core \
           --filter=@p31/shared \
           --filter=@p31/jitterbug-api \
           --filter=@p31/jitterbug-pwa \

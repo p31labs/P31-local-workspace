@@ -9,7 +9,7 @@
 
 **Entity Status:** Georgia Domestic Nonprofit Corporation, 501(c)(3) pending  
 **Principal Address:** Saint Marys, Georgia  
-**Contact:** willyj1587@gmail.com (operative) | will@p31ca.org (OOC — reactivating soon)  
+**Contact:** willyj1587@gmail.com (operative) | willyj1587@gmail.com (OOC — reactivating soon)  
 **GitHub:** https://github.com/p31labs  
 **Website:** https://p31ca.org  
 
@@ -23,7 +23,7 @@ P31 Labs is an active, publicly-visible technology project developing open-sourc
 
 | Metric | Value | Source |
 |--------|-------|--------|
-| Published npm packages | 4+ | npmjs.com/package/@p31/cli, andromeda-cli, @p31/node-zero, @p31/love-ledger |
+| Published npm packages | 4+ | npmjs.com/package/@p31ca/cli, andromeda-cli, @p31ca/node-zero, @p31ca/love-ledger |
 | GitHub repositories | 15+ | github.com/p31labs |
 | MCP Registry listing | Live — 7 tools, org.p31ca/oasis-mcp v1.0.0 | registry.modelcontextprotocol.io |
 | Landing pages deployed | 9 live (HTTP 200) | p31ca.org, phosphorus31.org, cli.p31ca.org, + 7 family portals |
@@ -37,13 +37,13 @@ P31 Labs is an active, publicly-visible technology project developing open-sourc
 
 ### Products in Development
 
-1. **P31 Sovereign CLI** (`@p31/cli`) — Spoon-aware AI chat interface for neurodivergent families. Published on npm. Installable via curl one-liner. Used by families for daily AI interaction adapted to cognitive load.
+1. **P31 Sovereign CLI** (`@p31ca/cli`) — Spoon-aware AI chat interface for neurodivergent families. Published on npm. Installable via curl one-liner. Used by families for daily AI interaction adapted to cognitive load.
 
 2. **Oasis TUI** (`andromeda-cli`) — Governance control-plane for AI agents. Exposes MCP server with 7 tools (4-tool funnel + 3 Spaceship Earth proxies). Published on npm. Zero vulnerabilities (Snyk). TypeScript clean build.
 
-3. **Node Zero Protocol** (`@p31/node-zero`) — Identity, state, vault, and bond primitives for assistive mesh networks. 180/180 tests passing. Zero runtime dependencies. WebCrypto-native.
+3. **Node Zero Protocol** (`@p31ca/node-zero`) — Identity, state, vault, and bond primitives for assistive mesh networks. 180/180 tests passing. Zero runtime dependencies. WebCrypto-native.
 
-4. **LOVE Ledger** (`@p31/love-ledger`) — Economic layer translating mesh events into transactions. Two-pool wallet design. 115/115 tests passing.
+4. **LOVE Ledger** (`@p31ca/love-ledger`) — Economic layer translating mesh events into transactions. Two-pool wallet design. 115/115 tests passing.
 
 5. **PHOS Forge** — 26+ cognitive tools embedded in P31 CLI (file adoption, cognitive state, self-healer, jitterbug research).
 
@@ -91,7 +91,7 @@ As of September 2026, the project is actively maintained with:
 | Technology | https://phosphorus31.org/technology | Institutional tech overview |
 | Install docs | https://cli.p31ca.org | Installation guides |
 | MCP Registry | https://registry.modelcontextprotocol.io/v0.1/servers?search=org.p31ca/oasis-mcp | Official registry listing |
-| npm packages | https://www.npmjs.com/package/@p31/cli | Sovereign CLI |
+| npm packages | https://www.npmjs.com/package/@p31ca/cli | Sovereign CLI |
 | npm packages | https://www.npmjs.com/package/andromeda-cli | Oasis TUI |
 | GitHub | https://github.com/p31labs | All repositories |
 | Ko-fi | https://ko-fi.com/trimtab69420/shop | Community support |
@@ -111,7 +111,7 @@ The project has public traction, sustainable funding pathways, built monetizatio
 
 - GitHub profile: https://github.com/p31labs
 - MCP Registry: https://registry.modelcontextprotocol.io/v0.1/servers?search=org.p31ca/oasis-mcp
-- npm packages: https://www.npmjs.com/package/@p31/cli
+- npm packages: https://www.npmjs.com/package/@p31ca/cli
 - Website: https://p31ca.org
 - Zenodo research: https://zenodo.org/search?q=author:%22William+R.+Johnson%22
 - Ko-fi support: https://ko-fi.com/trimtab69420

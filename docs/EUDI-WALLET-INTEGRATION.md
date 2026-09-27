@@ -19,7 +19,7 @@ a EUDI-compatible wallet document:
 ### Usage
 
 ```ts
-import { exportEUDIWallet, serializeEUDIWallet } from '@p31/ui/passport/eudi';
+import { exportEUDIWallet, serializeEUDIWallet } from '@p31ca/ui/passport/eudi';
 
 const wallet = await exportEUDIWallet(passport, identity);
 const json = serializeEUDIWallet(wallet);
@@ -32,7 +32,7 @@ P31 generates OID4VP (OpenID for Verifiable Presentations) for wallet-based
 verification flows:
 
 ```ts
-import { generatePresentation, presentationToQRData } from '@p31/ui/passport/presentation';
+import { generatePresentation, presentationToQRData } from '@p31ca/ui/passport/presentation';
 
 const presentation = await generatePresentation(passport, identity);
 const qrData = presentationToQRData(presentation);
@@ -44,7 +44,7 @@ const qrData = presentationToQRData(presentation);
 The `QRDisplay` component renders OID4VP presentation URIs as QR codes:
 
 ```tsx
-import { QRDisplay } from '@p31/ui/passport/QRDisplay';
+import { QRDisplay } from '@p31ca/ui/passport/QRDisplay';
 
 <QRDisplay data={qrUri} size={200} label="Scan with EUDI Wallet" />
 ```

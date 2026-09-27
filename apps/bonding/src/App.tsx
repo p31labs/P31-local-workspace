@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { BondingUIGSurface } from './components/BondingUIGSurface';
-import { K4Hero } from '@p31/ui/K4Hero';
-import '@p31/ui/k4-hero.css';
-import { mountStarfield } from '@p31/ui/starfield';
-import '@p31/ui/starfield.css';
+import { K4Hero } from '@p31ca/ui/K4Hero';
+import '@p31ca/ui/k4-hero.css';
+import { mountStarfield } from '@p31ca/ui/starfield';
+import '@p31ca/ui/starfield.css';
 
 function getUrlParam(key: string): string | null {
   if (typeof window === 'undefined') return null;

@@ -100,10 +100,10 @@ apps/game-builder/
 
 ## Dependencies
 
-- `@p31/game-engine` — Geodesic building engine, jitterbug geometry, spoon-gating
+- `@p31ca/game-engine` — Geodesic building engine, jitterbug geometry, spoon-gating
 - `@p31/game-generator` — Game definition schema + builder
-- `@p31/design-core` — P31 design tokens (CSS variables)
-- `@p31/ui` — P31 React components (GlassPanel, SpoonMeter, etc.)
+- `@p31ca/design-core` — P31 design tokens (CSS variables)
+- `@p31ca/ui` — P31 React components (GlassPanel, SpoonMeter, etc.)
 
 ## Spoon-Gating in Games
 

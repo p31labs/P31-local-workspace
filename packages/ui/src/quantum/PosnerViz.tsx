@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
-import { posnerAtoms, createPosnerState, updatePosnerCoherence } from '@p31/quantum-core/posner';
-import { TETRA } from '@p31/design-core/math';
+import { posnerAtoms, createPosnerState, updatePosnerCoherence } from '@p31ca/quantum-core/posner';
+import { TETRA } from '@p31ca/design-core/math';
 
 export function PosnerViz() {
   const atoms = useMemo(() => posnerAtoms(), []);

@@ -3,7 +3,7 @@
  *
  * Same six-phase flow; FORMING uses WebCryptoIdentityProvider, BORN/ALIVE use
  * LedgerEngine + GameEngine. Run from N0 with sibling folders love-ledger and
- * game-engine, or use npm: @p31/node-zero, @p31/love-ledger, @p31/game-engine.
+ * game-engine, or use npm: @p31ca/node-zero, @p31ca/love-ledger, @p31ca/game-engine.
  *
  * Local dev (sibling packages):
  *   import { WebCryptoIdentityProvider } from "./src/backends/webcrypto-identity.js";
@@ -11,7 +11,7 @@
  *   import { GameEngine } from "../game-engine/src/engine.js";
  *   import { SEED_CHALLENGES } from "../game-engine/src/challenges.js";
  *
- * NPM: replace with @p31/node-zero, @p31/love-ledger, @p31/game-engine.
+ * NPM: replace with @p31ca/node-zero, @p31ca/love-ledger, @p31ca/game-engine.
  */
 
 import { useState, useEffect, useRef, useCallback } from "react";

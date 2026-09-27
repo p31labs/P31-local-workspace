@@ -1,5 +1,5 @@
 /**
- * @p31/quantum-core — quantum computing primitives for the P31 ecosystem.
+ * @p31ca/quantum-core — quantum computing primitives for the P31 ecosystem.
  *
  * ⚠️ HONEST LABEL
  * All modules in this package are computational models, not established physics.

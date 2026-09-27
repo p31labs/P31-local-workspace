@@ -5,7 +5,7 @@
  * The game is a structural building environment where players construct
  * geodesic forms from primitive polyhedra. Every structure is validated
  * against Maxwell's rigidity criterion (E ≥ 3V - 6). The economy runs
- * on @p31/love-ledger. Identity and bonds come from @p31/node-zero.
+ * on @p31ca/love-ledger. Identity and bonds come from @p31ca/node-zero.
  */
 
 // ─── Geometry ───────────────────────────────────────────────────────

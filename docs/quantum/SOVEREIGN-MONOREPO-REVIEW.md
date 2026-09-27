@@ -29,7 +29,7 @@ The component inventory is **100% accurate**. The monorepo is architecturally so
 ### RISK #1: Crown SVG Divergence (Fixable, Medium Priority)
 
 **Current state:**
-- `Crown.astro` in `@p31/ui` (source of truth, animation: vertex pulse + edge draw)
+- `Crown.astro` in `@p31ca/ui` (source of truth, animation: vertex pulse + edge draw)
 - `Crown.tsx` in `phos` (custom React, may drift)
 - `Crown.tsx` in `willow` (custom React, may drift)
 
@@ -39,7 +39,7 @@ The component inventory is **100% accurate**. The monorepo is architecturally so
 
 **Impact:** Low (only affects PHOS and WILLOW UI). But violates "single source of truth" principle.
 
-**Solution:** Export `Crown.tsx` from `@p31/ui/react`, use it in both SPAs. One animation spec, one component, two implementations (Astro + React, both from same spec).
+**Solution:** Export `Crown.tsx` from `@p31ca/ui/react`, use it in both SPAs. One animation spec, one component, two implementations (Astro + React, both from same spec).
 
 ---
 
@@ -77,7 +77,7 @@ The component inventory is **100% accurate**. The monorepo is architecturally so
 
 | Risk | Impact | Effort | Priority | Action |
 |------|--------|--------|----------|--------|
-| Crown divergence | Low | 4 hours | HIGH | Export `Crown.tsx` from `@p31/ui/react` |
+| Crown divergence | Low | 4 hours | HIGH | Export `Crown.tsx` from `@p31ca/ui/react` |
 | Legacy CSS noise | Low | 15 min | HIGH | Delete 5 files |
 | Spoon meter fragmented | Medium | 2 days | MEDIUM | Hoist store, update quantum-design-system.css |
 
@@ -113,7 +113,7 @@ git commit -m "chore: remove legacy CSS files (no active references)"
 
 ---
 
-### Step 2: Export Crown from `@p31/ui/react` (4 hours)
+### Step 2: Export Crown from `@p31ca/ui/react` (4 hours)
 
 **Current structure:**
 ```
@@ -260,11 +260,11 @@ export type { CrownProps } from './react/Crown'
 
 // apps/phos/src/App.tsx — UPDATE
 - import { Crown } from './components/Crown'
-+ import { Crown } from '@p31/ui/react'
++ import { Crown } from '@p31ca/ui/react'
 
 // apps/willow/src/WillowApp.tsx — UPDATE
 - import { Crown } from './components/Crown'
-+ import { Crown } from '@p31/ui/react'
++ import { Crown } from '@p31ca/ui/react'
 ```
 
 **Verification:**
@@ -302,7 +302,7 @@ npm run e2e
 
 ```bash
 git add -A
-git commit -m "refactor: unify Crown component into @p31/ui/react export"
+git commit -m "refactor: unify Crown component into @p31ca/ui/react export"
 ```
 
 ---
@@ -364,7 +364,7 @@ apps (all 4)
 
 ```
 Monday:    Delete legacy CSS files + test
-Tuesday:   Export Crown from @p31/ui/react + update imports
+Tuesday:   Export Crown from @p31ca/ui/react + update imports
 Wednesday: Visual regression verification + commit
 Thursday:  Code review + merge to main
 Friday:    Deploy to staging (all 4 apps)
@@ -385,8 +385,8 @@ Friday:         E2E test all 4 apps × 6 spoon levels (not just 3)
 
 ### Phase 1 Complete When:
 - [ ] 5 legacy CSS files deleted
-- [ ] Crown.tsx exported from `@p31/ui/react`
-- [ ] phos and willow import Crown from `@p31/ui`
+- [ ] Crown.tsx exported from `@p31ca/ui/react`
+- [ ] phos and willow import Crown from `@p31ca/ui`
 - [ ] All 23 E2E tests pass
 - [ ] All 12 visual regression baselines unchanged
 - [ ] Zero console errors on any app

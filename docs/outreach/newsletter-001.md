@@ -10,8 +10,8 @@ After months of building, the P31 Vibe Coding Platform is live. Here's what we'v
 
 - **🧬 The Calcium Cage** — 9-level progressive onboarding game. Learn phosphorus, calcium, K₄ topology, 863 Hz, LOVE economy, sovereign identity, and the multi-agent pipeline — through interactive discovery.
 - **🎨 Vibe Studio** — Three-pane visual IDE. Type what you want, get working HTML/CSS/JS instantly. Sandboxed iframe preview. Multi-agent pipeline with MARGE design audit and self-correction.
-- **📦 @p31/vibe-sdk** — npm package with 6 methods. Generate, deploy, list, delete, audit, and health-check apps programmatically.
-- **🤖 @p31/mcp-vibe** — MCP server with 4 tools. AI agents (Claude, Cursor, Copilot) can now deploy apps to P31 via natural language.
+- **📦 @p31ca/vibe-sdk** — npm package with 6 methods. Generate, deploy, list, delete, audit, and health-check apps programmatically.
+- **🤖 @p31ca/mcp-vibe** — MCP server with 4 tools. AI agents (Claude, Cursor, Copilot) can now deploy apps to P31 via natural language.
 - **🏗️ App Supervisor** — Deploy apps with one click. Each app gets its own URL, SQLite state, and family isolation. Rate limited and audit logged.
 - **📱 WILLOW** — Child companion app rebuilt with 10 functional panels, SEO, and gamification.
 - **🌐 p31ca.org** — Family mesh landing page with BOB/MARGE tributes, live fleet status, and the CLI installation.
@@ -19,7 +19,7 @@ After months of building, the P31 Vibe Coding Platform is live. Here's what we'v
 ## By the Numbers
 
 - **12 workers** deployed on Cloudflare
-- **32 MCP tools** across PHOS Forge + @p31/mcp-vibe  
+- **32 MCP tools** across PHOS Forge + @p31ca/mcp-vibe  
 - **9 levels** in the Calcium Cage
 - **6 agents** in the vibe pipeline
 - **22 papers** on Zenodo
@@ -29,7 +29,7 @@ After months of building, the P31 Vibe Coding Platform is live. Here's what we'v
 ## What's Next
 
 **Week of July 21:**
-- Publish @p31/vibe-sdk and @p31/mcp-vibe to npm
+- Publish @p31ca/vibe-sdk and @p31ca/mcp-vibe to npm
 - Launch GitHub Discussions for community support
 - First community call — Thursday, July 23, 16:00 UTC
 

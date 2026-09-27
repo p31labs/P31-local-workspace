@@ -3,7 +3,7 @@
  *
  * Six phases: VOID → CONVERSE → COVENANT → FORMING → BORN → ALIVE.
  * Simulated identity/ledger/structure. For real stack use quantum-hello-world-wired.jsx
- * and wire @p31/node-zero, @p31/love-ledger, @p31/game-engine.
+ * and wire @p31ca/node-zero, @p31ca/love-ledger, @p31ca/game-engine.
  */
 
 import { useState, useEffect, useRef, useCallback } from "react";

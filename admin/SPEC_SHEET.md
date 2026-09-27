@@ -325,9 +325,9 @@ Persisted via IndexedDB (economyStore). Hydrated on app load.
 | Package | Path | Purpose |
 |---------|------|---------|
 | @p31/shared | packages/shared | Quantum shaders, sovereign PWA bootstrap, common types |
-| @p31/node-zero | packages/node-zero | Identity boot, state axis management |
-| @p31/love-ledger | packages/love-ledger | LOVE token economy, vesting |
-| @p31/game-engine | packages/game-engine | Quests, challenges, player progress |
+| @p31ca/node-zero | packages/node-zero | Identity boot, state axis management |
+| @p31ca/love-ledger | packages/love-ledger | LOVE token economy, vesting |
+| @p31ca/game-engine | packages/game-engine | Quests, challenges, player progress |
 | @p31/sovereign | packages/sovereign | Vault sync, Daubert export, CRDT |
 
 ---

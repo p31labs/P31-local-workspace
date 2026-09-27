@@ -7,7 +7,7 @@ The P31 skin system enables runtime theming by injecting CSS custom property ove
 ## Architecture
 
 ```
-@p31/design-core            # Base tokens (primitive values)
+@p31ca/design-core            # Base tokens (primitive values)
        ↓
 @p31/skin-willow/index.css  # Skin overrides (semantic + component tokens)
        ↓

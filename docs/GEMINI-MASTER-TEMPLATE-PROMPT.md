@@ -285,7 +285,7 @@ if (process.argv[1]?.endsWith('server.js') || process.argv[1]?.endsWith('server.
 ---
 // src/pages/my-page.astro
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { K4Hero } from '@p31/ui/K4Hero';
+import { K4Hero } from '@p31ca/ui/K4Hero';
 ---
 <BaseLayout title="My Page">
   <a href="#main-content" class="skip-link">Skip to main content</a>
@@ -336,7 +336,7 @@ import { K4Hero } from '@p31/ui/K4Hero';
 
 ### Pattern J: Spoon-Aware Motion CSS
 ```css
-/* These selectors in @p31/design-core/css/motion.css scale animation duration: */
+/* These selectors in @p31ca/design-core/css/motion.css scale animation duration: */
 [data-spoons="0"] *, [data-spoons="1"] * {
   animation-duration: 0s !important;
   transition-duration: 0s !important;

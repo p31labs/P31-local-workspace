@@ -22,7 +22,7 @@ The following are **technical/infrastructure terms** and are **NOT** banned:
 
 | Term | Context | Why Allowed |
 |------|---------|-------------|
-| quantum | File/module names (`quantum.css`, `@p31/ui/quantum`) | Technical module naming |
+| quantum | File/module names (`quantum.css`, `@p31ca/ui/quantum`) | Technical module naming |
 | data-theme="quantum" | Theme attribute | Design system token |
 | quantum-cyan | CSS variable / color token | Design token |
 | quantum-violet | CSS variable / color token | Design token |

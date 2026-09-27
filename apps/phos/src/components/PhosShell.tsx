@@ -1,7 +1,7 @@
 /**
  * @file PhosShell.tsx — PHOS adult-workspace shell (Track B, CWP-2026-072).
  *
- * Uses the canonical WorkspaceShell layout from @p31/ui.
+ * Uses the canonical WorkspaceShell layout from @p31ca/ui.
  * Crisis overlay is the design-core web component, always rendered (visibility
  * controlled by data-spoons via CSS). Starfield, device-class, and the p31-ready
  * listener remain at the App root (see main.tsx).
@@ -9,9 +9,9 @@
 
 import { Outlet, useNavigate } from 'react-router-dom';
 import { SkipLink } from '../shared/ui';
-import { WorkspaceShell } from '@p31/ui';
-import type { SiteNavLink } from '@p31/ui/chrome';
-import { EphemeralProvider } from '@p31/ui';
+import { WorkspaceShell } from '@p31ca/ui';
+import type { SiteNavLink } from '@p31ca/ui/chrome';
+import { EphemeralProvider } from '@p31ca/ui';
 
 const NAV_LINKS: SiteNavLink[] = [
   { href: '/', label: 'Conversation' },

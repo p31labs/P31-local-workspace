@@ -38,7 +38,7 @@
 ### 2.2 Out of scope (unless a separate CWP reopens)
 
 - Family **cage** bridge, `k4-cage` writes, or SUPER-CENTAUR server work.
-- **@p31/agent-engine** chat personality wiring beyond existing `PUT /state` `profile` slice.
+- **@p31ca/agent-engine** chat personality wiring beyond existing `PUT /state` `profile` slice.
 - **Local LLM** or non–Workers-AI inference in k4-personal.
 - Storing full **Cognitive Passport** long form in the DO (link-out only in v1).
 - **COPPA** legal conclusion in code; household policy in prose only (see `docs/PLAN-KIDS-VIBE-CODING.md`).

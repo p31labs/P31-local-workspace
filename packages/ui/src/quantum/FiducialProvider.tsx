@@ -1,6 +1,6 @@
 import { createContext, useContext, type ReactNode } from 'react';
-import { sicPovmFiducial } from '@p31/quantum-core/sic-povm';
-import { TETRA } from '@p31/design-core/math';
+import { sicPovmFiducial } from '@p31ca/quantum-core/sic-povm';
+import { TETRA } from '@p31ca/design-core/math';
 
 export interface FiducialContextValue {
   fiducialVector: [number, number];

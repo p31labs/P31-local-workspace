@@ -27,13 +27,13 @@ npx wrangler pages deploy dist --project-name my-new-site --branch=main
 ## What's inside
 
 - `src/layouts/Layout.astro` — the canonical shell (nav, starfield, crisis overlay, sovereignty chrome).
-- `src/pages/index.astro` — example page using `Section`, `StatTiles`, `CardGrid` from `@p31/ui/layout`.
+- `src/pages/index.astro` — example page using `Section`, `StatTiles`, `CardGrid` from `@p31ca/ui/layout`.
 - `src/data/*.json` — content lives here; pages render it. No hard-coded text.
-- `src/styles/global.css` — imports `@p31/design-core/css/all.css` (all tokens).
+- `src/styles/global.css` — imports `@p31ca/design-core/css/all.css` (all tokens).
 
 ## The rules (so every site feels the same)
 
-1. Import tokens only from `@p31/design-core`. Never override them.
+1. Import tokens only from `@p31ca/design-core`. Never override them.
 2. Use `glass-card` / `glass-subtle` / `glass-panel` for surfaces.
 3. Put `link-glow` on every clickable card/link.
 4. Never use dynamic Tailwind classes (`text-quantum-${x}`) — use static literals.

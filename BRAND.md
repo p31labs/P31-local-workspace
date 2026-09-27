@@ -128,7 +128,7 @@ P31 uses a 4px base unit with a 1.333 perfect-fourth scale (following the tetrah
 
 | Asset | Format | Location |
 |-------|--------|----------|
-| Tetrahedron icon (SVG) | .svg | `@p31/ui/chrome/BrandMark` |
+| Tetrahedron icon (SVG) | .svg | `@p31ca/ui/chrome/BrandMark` |
 | Full lockup | .svg | Design system package |
 | Favicon | .svg | `apps/p31ca/public/favicon.svg` |
 | Social card | .png | `apps/p31ca/public/og-image.png` |

@@ -4,7 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { describe, it, expect, vi } from 'vitest';
 import Dashboard from '../components/Dashboard';
 
-vi.mock('@p31/ui/chrome', () => ({
+vi.mock('@p31ca/ui/chrome', () => ({
   GlassCard: ({ children, className }: { children: React.ReactNode; className?: string }) => (
     <div data-testid="glass-card" className={className}>{children}</div>
   ),

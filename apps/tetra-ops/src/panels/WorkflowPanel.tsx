@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { TEMPLATES, executeWorkflow, type WorkflowTemplate, type StepResult } from '../lib/workflowEngine';
-import { trackComponentUsage } from '@p31/ui';
+import { trackComponentUsage } from '@p31ca/ui';
 
 const CAT_COLORS: Record<string, string> = {
   app: '#00f0ff',

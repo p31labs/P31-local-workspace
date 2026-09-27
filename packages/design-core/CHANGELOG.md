@@ -1,4 +1,4 @@
-# @p31/design-core — Changelog
+# @p31ca/design-core — Changelog
 
 ## 3.0.0 — 2026-09-24
 
@@ -22,7 +22,7 @@
 - **Storybook + Components Manifest** — `.storybook/main.ts` + `preview.ts` with `@storybook/react-vite`, `@storybook/addon-docs`, `@storybook/addon-a11y`, `@storybook/addon-mcp`, and `features: { componentsManifest: true }`. Canonical chrome/components stories live in `src/compositions/__stories__/` (one CSF per component). `pnpm storybook:build` emits `storybook-static/manifests/components.json` (41 documented components).
 - **Agent-facing GenUI Catalog** — `scripts/storybook-to-catalog.mts` merges the Storybook manifest with canonical `COMPONENT_DEFS` into `src/genui/catalog.ts` (Zod-validated: `CatalogSchema`, `ComponentEntrySchema`) plus a `catalog.json` sidecar. 33 entries (15 canonical + 18 generated), each with props, tokens, variants, accessibility, AI guidance, and Storybook stories/snippets.
 - **MCP Catalog Tools** — `component_catalog` (full catalog, optional category filter) and `search_catalog` (name/description/CSS class/category/tokens/guidance keyword search). `get_component_metadata` and `component_schema` now also return the matching `catalog` entry.
-- **Chrome Compositions** — Four new router-agnostic compositions exported from `@p31/design-core/compositions`:
+- **Chrome Compositions** — Four new router-agnostic compositions exported from `@p31ca/design-core/compositions`:
   - `SectionStrip` — Desktop pill navigation strip with `items` + `onSelect` callback
   - `CommandPalette` — Keyboard-first command palette (⌘K) with fuzzy search, keyboard nav, controlled `open`/`onClose`
   - `Chameleon` — Adaptive theme controls: brand × world × age × sensory modes, zero-reload token swaps via theme-store
@@ -62,7 +62,7 @@
 
 ### Added
 - `./css/link-glow.css` — new named export for the canonical `link-glow` hover
-  utility. Import directly: `@import '@p31/design-core/css/link-glow.css';`
+  utility. Import directly: `@import '@p31ca/design-core/css/link-glow.css';`
   Also included in `all.css` (no breaking change).
 
 ### Changed

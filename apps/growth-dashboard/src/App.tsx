@@ -1,5 +1,5 @@
 import { Suspense, lazy } from 'react';
-import { GlassCard } from '@p31/ui/chrome';
+import { GlassCard } from '@p31ca/ui/chrome';
 
 const Dashboard = lazy(() => import('./components/Dashboard'));
 

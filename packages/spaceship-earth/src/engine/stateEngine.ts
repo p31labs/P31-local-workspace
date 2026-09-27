@@ -1,7 +1,7 @@
 /**
  * @file stateEngine.ts — Phase 1 SIC-POVM ship state engine.
  *
- * Contested-science metaphor made literal (see @p31/quantum-core/sicPovm).
+ * Contested-science metaphor made literal (see @p31ca/quantum-core/sicPovm).
  * The engine maps the passport observables (spoons → energy, careScore →
  * well-being, engagement → connection) onto a qubit density matrix and
  * measures it against the canonical SIC-POVM frame.

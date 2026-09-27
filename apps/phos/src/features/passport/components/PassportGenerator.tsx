@@ -5,10 +5,10 @@
  */
 
 import { useState } from 'react';
-import { GlassCard } from '@p31/ui/chrome';
-import { GlowButton } from '@p31/ui/chrome';
-import { generateOneLiner, type OnboardingInput } from '@p31/ui/passport';
-import { usePassport } from '@p31/ui/passport';
+import { GlassCard } from '@p31ca/ui/chrome';
+import { GlowButton } from '@p31ca/ui/chrome';
+import { generateOneLiner, type OnboardingInput } from '@p31ca/ui/passport';
+import { usePassport } from '@p31ca/ui/passport';
 
 const FEDERATION_API = 'https://gateway.p31ca.org/api/federation';
 

@@ -10,7 +10,7 @@
     { "type": "field", "label": "Applicant", "value": "P31 Labs, Inc." },
     { "type": "field", "label": "EIN", "value": "42-1888158" },
     { "type": "field", "label": "Operator", "value": "William R. Johnson, Founder" },
-    { "type": "field", "label": "Contact", "value": "will@p31ca.org" },
+    { "type": "field", "label": "Contact", "value": "willyj1587@gmail.com" },
     { "type": "field", "label": "Fund", "value": "EXANTE Gecko Fund" },
     { "type": "field", "label": "Amount Requested", "value": "\u20ac50,000" },
     { "type": "field", "label": "Duration", "value": "12 months" },
@@ -60,7 +60,7 @@
     { "type": "bullet", "text": "Shadow Bridge \u2014 Live, KV-backed, tested. Endpoints /game/join, /game/leave, /game/action, /game/auth/spawn, /health. Lua scripts Portal.lua, ChatMirror.lua complete. R15 migration guide written. Unit-tested; Studio integration pending (Vinegar setup)." },
     { "type": "bullet", "text": "L.O.V.E. Ledger \u2014 Prototype (Smart contract + Worker v1.3.0). ProofOfCare.sol Care_Score oracle with 24h half-life decay. love-ledger.ts D1 + DO atomic transactions, two-pool model. LOVEToken.sol archived; LOVE balances now live in the off-chain love-ledger worker (two-pool). On-chain attestations are LOVESBT (ERC-5192) badges only. 40/40 Phoenix Wallet tests pass; Ledger tests in development." },
     { "type": "bullet", "text": "Genesis Gate \u2014 Live at genesis-gate.trimtab-signal.workers.dev. SHA-256 hash chain telemetry bus. Endpoints POST /event, GET /events?since=..." },
-    { "type": "bullet", "text": "@p31/game-engine \u2014 v0.1.0-alpha.0, 104/104 tests passing. Platonic solid building; LOVE hooks wired to credit issuance on structural milestones." },
+    { "type": "bullet", "text": "@p31ca/game-engine \u2014 v0.1.0-alpha.0, 104/104 tests passing. Platonic solid building; LOVE hooks wired to credit issuance on structural milestones." },
 
     { "type": "h1", "text": "6. DELIVERABLES (12 MONTHS)" },
     { "type": "bullet", "text": "Phase 1 (Months 1\u20133): Shadow Bridge v1.0 \u2014 Roblox Studio integration, R15 compliance, 5 families with active LOVE event streams." },

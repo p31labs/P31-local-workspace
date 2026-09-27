@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { K4Graph } from '@p31/quantum-core/k4';
+import { K4Graph } from '@p31ca/quantum-core/k4';
 
 const VERTEX_COLORS = ['#00F0FF', '#A78BFA', '#FBBF24', '#34D399'];
 const EDGE_COLORS = ['#6EE7B7', '#FCD34D', '#6EE7B7', '#D8B4FE', '#A7F3D0', '#FDE68A'];

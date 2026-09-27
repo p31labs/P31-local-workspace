@@ -9,7 +9,7 @@ counts here over any session/transcript narrative; the walkers in
 - **DTCG top-level metadata** (`scripts/gen-tokens.mjs`): the emitted
   `tokens/tokens.dtc.json` now carries `$schema` + `$extensions.p31`
   (`version`, `name`, `description`) so the canon DTCG export declares the
-  same Format Module revision that `@p31/design-core` already declares in its
+  same Format Module revision that `@p31ca/design-core` already declares in its
   `manifest.json`. Both pin **2025.10** — the best-known snapshot available
   offline. ASSUMPTION (verify before bumping): if a newer snapshot exists on
   design-tokens.org, bump the string in BOTH `gen-tokens.mjs` and

@@ -327,7 +327,7 @@ the reference adapter are the current work; product slots and eject wait for a
 portal that imports `@p31/canon`.
 
 **Why.** There are two design systems — `@p31/canon` (the Loom's) and
-`@p31/design-core` (what the portals consume). Tiering the canon is only
+`@p31ca/design-core` (what the portals consume). Tiering the canon is only
 meaningful if a portal actually consumes it; today there is no second
 consumer. Building full product slots speculatively would be a library that
 sits unused. The family pilot is the likely first pull.

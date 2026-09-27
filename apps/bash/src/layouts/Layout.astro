@@ -1,15 +1,15 @@
 ---
-import '@p31/design-core/css/base.css';
-import '@p31/design-core/css/glass.css';
-import '@p31/design-core/css/motion.css';
-import '@p31/design-core/css/typography.css';
-import '@p31/design-core/css/size-class.css';
-import '@p31/design-core/css/ambient.css';
-import '@p31/design-core/css/container.css';
-import '@p31/design-core/css/link-glow.css';
-import '@p31/design-core/css/quantum.css';
+import '@p31ca/design-core/css/base.css';
+import '@p31ca/design-core/css/glass.css';
+import '@p31ca/design-core/css/motion.css';
+import '@p31ca/design-core/css/typography.css';
+import '@p31ca/design-core/css/size-class.css';
+import '@p31ca/design-core/css/ambient.css';
+import '@p31ca/design-core/css/container.css';
+import '@p31ca/design-core/css/link-glow.css';
+import '@p31ca/design-core/css/quantum.css';
 import '../styles/global.css';
-import { EphemeralProvider } from '@p31/ui';
+import { EphemeralProvider } from '@p31ca/ui';
 import Head from './Head.astro';
 import SiteNav from './SiteNav.tsx';
 import CrisisIsland from './CrisisIsland.tsx';
@@ -50,7 +50,7 @@ const { hideNav = false, ...headProps } = Astro.props;
     <BashChrome client:load />
 
     <script>
-      import { mountStarfield } from '@p31/design-core/starfield';
+      import { mountStarfield } from '@p31ca/design-core/starfield';
 
       try {
         const spoons = parseInt(

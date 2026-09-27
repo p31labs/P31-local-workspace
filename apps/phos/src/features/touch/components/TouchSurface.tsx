@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
-import { GlassCard } from '@p31/ui/chrome';
-import { GlowButton } from '@p31/ui/chrome';
+import { GlassCard } from '@p31ca/ui/chrome';
+import { GlowButton } from '@p31ca/ui/chrome';
 import { useSpoon } from '../../../shared/hooks/useSpoon';
 
 export function TouchSurface() {
@@ -12,7 +12,7 @@ export function TouchSurface() {
     <div className="max-w-2xl mx-auto p-6 space-y-6" data-mcp-tool="touchSurface" data-mcp-state="idle">
       <GlassCard className="p-6">
         <h1 className="text-2xl font-bold text-quantum-cyan font-mono-tech mb-1">Touch</h1>
-        <p className="text-cloud/50 text-sm">Live design tokens from @p31/design-core.</p>
+        <p className="text-cloud/50 text-sm">Live design tokens from @p31ca/design-core.</p>
       </GlassCard>
       <GlassCard className="p-6 grid grid-cols-2 gap-3">
         {vars.map((v) => (

@@ -14,7 +14,7 @@ Continue the P31–Roblox integration beyond the current P0–P2 code-generation
 | `p31-game-builder` | `https://p31-game-builder.trimtab-signal.workers.dev` | ✅ Live | Latest |
 
 ### What Works Today
-1. **Code Generation → Luau**: `game-builder` exports `GameSnapshot` → `@p31/game-engine` `generateLuau()` + `generateP31Skin()` → posts to `roblox-bridge/deploy`
+1. **Code Generation → Luau**: `game-builder` exports `GameSnapshot` → `@p31ca/game-engine` `generateLuau()` + `generateP31Skin()` → posts to `roblox-bridge/deploy`
 2. **Bridge Fallback**: `roblox-bridge/deploy` returns generated Luau with P31 skin even without a live Roblox backend configured
 3. **LOVE Queueing**: `shadow-bridge/game/action` records actions, detects milestones, queues LOVE for shell sync via `/game/pending-love`
 4. **Game Sessions**: `game-builder` creates in-memory `GameSession` with `GameEngine` (Maxwell rigidity, spoon-gating, challenges)

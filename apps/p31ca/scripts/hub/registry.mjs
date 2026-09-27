@@ -1465,7 +1465,7 @@ export const registry = [
       'IBM Quantum bridge: execute circuits against IBM hardware via cloud API'
     ],
     howTo: [
-      'Import MLKEM or MLDSA from @p31/quantum-core — keygen(), encapsulate(), sign(), verify()',
+      'Import MLKEM or MLDSA from @p31ca/quantum-core — keygen(), encapsulate(), sign(), verify()',
       'HybridPQCScheme: generateHybridKeyPair() → signAndEncapsulate() → decapsulateAndVerify()',
       'All operations synchronous, zero WASM, runs in Node + Cloudflare Workers + browser'
     ],

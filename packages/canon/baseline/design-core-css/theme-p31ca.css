@@ -2,10 +2,10 @@
  * P31 Theme Persona — REBEL (p31ca.org / BASH / PHOS)
  *
  * Dense, high-contrast, dark-void palette with quantum-cyan accents and
- * monospace-leaning typography. Import AFTER @p31/design-core/css/all.css.
+ * monospace-leaning typography. Import AFTER @p31ca/design-core/css/all.css.
  *
  * Usage in app shell:
- *   import '@p31/design-core/css/theme-p31ca.css';
+ *   import '@p31ca/design-core/css/theme-p31ca.css';
  */
 
 :root[data-theme='rebel'],

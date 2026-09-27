@@ -12,8 +12,8 @@
 
 ## Scope
 
-- [ ] @p31/design-core
-- [ ] @p31/ui
+- [ ] @p31ca/design-core
+- [ ] @p31ca/ui
 - [ ] @p31/skin-system
 - [ ] @p31/skin-*
 - [ ] PHOS app

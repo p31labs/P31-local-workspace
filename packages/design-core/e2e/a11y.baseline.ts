@@ -2,7 +2,7 @@
  * Ecosystem-wide A11y baseline.
  * All portals must pass these rules. Portal-specific overrides are documented in their own e2e/.
  *
- * Source: @p31/design-core/e2e/a11y.baseline.ts
+ * Source: @p31ca/design-core/e2e/a11y.baseline.ts
  * Consumed by: all portal e2e/a11y.spec.ts via package resolution
  */
 

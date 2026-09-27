@@ -12,8 +12,8 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@p31/design-core": "workspace:*",
-    "@p31/ui": "workspace:*",
+    "@p31ca/design-core": "workspace:*",
+    "@p31ca/ui": "workspace:*",
     "@tanstack/react-query": "^5.59.0",
     "recharts": "^2.13.0",
     "react": "^19.2.4",

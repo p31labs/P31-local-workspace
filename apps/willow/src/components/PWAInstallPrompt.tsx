@@ -9,7 +9,7 @@
  */
 
 import { useEffect, useState, useCallback } from 'react';
-import { GlassCard, GlowButton } from '@p31/ui/chrome';
+import { GlassCard, GlowButton } from '@p31ca/ui/chrome';
 
 function isIosSafari(): boolean {
   if (typeof navigator === 'undefined') return false;

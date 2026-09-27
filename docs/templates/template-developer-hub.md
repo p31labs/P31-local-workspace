@@ -71,12 +71,12 @@ section-spacing: space-y-6 to space-y-10
 | Component | Import | Purpose |
 |-----------|--------|---------|
 | `AppShell` | `../layouts/AppShell.astro` | Page layout, meta, nav |
-| `Crown` | `@p31/ui/chrome/Crown` | Brand mark in hero (size lg) |
-| `SectionHero` | `@p31/ui/templates/SectionHero` | Hero section wrapper |
-| `SectionFeatures` | `@p31/ui/templates/SectionFeatures` | Feature grid (4-col) |
-| `Footer` | `@p31/ui/templates/Footer` | Standard footer |
-| Glass classes | `@p31/design-core/css/glass.css` | `.glass-card`, `.glass-subtle`, `.glass-strong` |
-| Buttons | `@p31/design-core/css/glass.css` | `.btn-primary`, `.btn-secondary`, `.btn-ghost` |
+| `Crown` | `@p31ca/ui/chrome/Crown` | Brand mark in hero (size lg) |
+| `SectionHero` | `@p31ca/ui/templates/SectionHero` | Hero section wrapper |
+| `SectionFeatures` | `@p31ca/ui/templates/SectionFeatures` | Feature grid (4-col) |
+| `Footer` | `@p31ca/ui/templates/Footer` | Standard footer |
+| Glass classes | `@p31ca/design-core/css/glass.css` | `.glass-card`, `.glass-subtle`, `.glass-strong` |
+| Buttons | `@p31ca/design-core/css/glass.css` | `.btn-primary`, `.btn-secondary`, `.btn-ghost` |
 
 ## Tokens Used
 

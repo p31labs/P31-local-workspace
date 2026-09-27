@@ -11,32 +11,32 @@ runs:
       run: cd software && pnpm turbo run typecheck \
         --filter=@p31/shared \
         --filter=@p31/bonding \
-        --filter=@p31/node-zero \
+        --filter=@p31ca/node-zero \
         --filter=@p31/spaceship-earth
 
     - name: Build packages
       shell: bash
       run: cd software && pnpm turbo run build \
-        --filter=@p31/agent-engine \
+        --filter=@p31ca/agent-engine \
         --filter=@p31/bonding \
-        --filter=@p31/game-engine \
+        --filter=@p31ca/game-engine \
         --filter=@p31/harmonic-linter \
-        --filter=@p31/love-ledger \
-        --filter=@p31/node-zero \
-        --filter=@p31/quantum-core \
+        --filter=@p31ca/love-ledger \
+        --filter=@p31ca/node-zero \
+        --filter=@p31ca/quantum-core \
         --filter=@p31/shared \
         --filter=@p31/spaceship-earth
 
     - name: Run tests (all green packages)
       shell: bash
       run: cd software && pnpm turbo run test \
-        --filter=@p31/agent-engine \
+        --filter=@p31ca/agent-engine \
         --filter=@p31/bonding \
-        --filter=@p31/game-engine \
+        --filter=@p31ca/game-engine \
         --filter=@p31/harmonic-linter \
-        --filter=@p31/love-ledger \
-        --filter=@p31/node-zero \
-        --filter=@p31/quantum-core \
+        --filter=@p31ca/love-ledger \
+        --filter=@p31ca/node-zero \
+        --filter=@p31ca/quantum-core \
         --filter=@p31/shared
 
     - name: Turborepo remote cache
@@ -44,6 +44,6 @@ runs:
       shell: bash
       run: cd software && pnpm turbo run build \
         --filter=@p31/bonding \
-        --filter=@p31/node-zero \
+        --filter=@p31ca/node-zero \
         --filter=@p31/spaceship-earth \
         --remote

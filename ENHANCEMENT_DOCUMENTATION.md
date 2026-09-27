@@ -38,8 +38,8 @@ This document details the comprehensive enhancements implemented to improve the 
     "baseUrl": ".",
     "paths": {
       "@p31/shared": ["packages/shared/src"],
-      "@p31/game-engine": ["packages/game-engine/src"],
-      "@p31/agent-engine": ["packages/agent-engine/src"]
+      "@p31ca/game-engine": ["packages/game-engine/src"],
+      "@p31ca/agent-engine": ["packages/agent-engine/src"]
     }
   },
   "include": [

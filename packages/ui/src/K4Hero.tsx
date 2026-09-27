@@ -1,9 +1,9 @@
 /**
- * @p31/ui K4 Hero — React wrapper.
+ * @p31ca/ui K4 Hero — React wrapper.
  *
  * Usage:
- *   import { K4Hero } from '@p31/ui/K4Hero';
- *   import '@p31/ui/k4-hero.css';
+ *   import { K4Hero } from '@p31ca/ui/K4Hero';
+ *   import '@p31ca/ui/k4-hero.css';
  *
  *   <K4Hero />
  *   <K4Hero className="my-custom-class" />

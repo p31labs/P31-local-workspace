@@ -4,7 +4,7 @@
 
 **Schema:** `p31.universalCanon/2.0.0` · **Canon version:** `2.0.0` · **Generated:** `2026-07-15T23:27:57.841Z`
 
-*P31 universal design canon — @p31/design-core v2.0.0 (mathematical foundation)*
+*P31 universal design canon — @p31ca/design-core v2.0.0 (mathematical foundation)*
 
 All visual values derived from PHI (1.618), Perfect Fourth (1.333), 4-multiple grid, OKLCH color space, and musical tempo (120 BPM). Single source of truth. Every surface imports from design-core. Divergence is a type error.
 

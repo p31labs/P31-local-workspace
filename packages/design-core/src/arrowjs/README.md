@@ -167,7 +167,7 @@ ArrowJS provides exactly the missing piece in P31's sovereign stack: **safe exec
 
 | Phase | Effort | Description |
 |-------|--------|-------------|
-| **Phase 1** | 2-3 days | Integrate `@arrow-js/sandbox` into `@p31/ui`, create `P31SandboxSurface` wrapper component |
+| **Phase 1** | 2-3 days | Integrate `@arrow-js/sandbox` into `@p31ca/ui`, create `P31SandboxSurface` wrapper component |
 | **Phase 2** | 3-5 days | Build P31 host bridge (token access, spoon-level, crisis mode); write MCP tools for sandbox code injection |
 | **Phase 3** | 2 days | Wire into PHOS / Willow chat surfaces; add Playwright visual tests |
 | **Phase 4** | Ongoing | SIMD-optimized WASM, CPU budget enforcement, deeper QuickJS hardening |

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
-import { GlassCard } from '@p31/ui/chrome';
-import { GlowButton } from '@p31/ui/chrome';
+import { GlassCard } from '@p31ca/ui/chrome';
+import { GlowButton } from '@p31ca/ui/chrome';
 import { useSpoon } from '../../../shared/hooks/useSpoon';
 
 export function SensorySurface() {

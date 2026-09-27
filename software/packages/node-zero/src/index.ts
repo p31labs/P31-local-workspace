@@ -1,5 +1,5 @@
 /**
- * @module @p31/node-zero
+ * @module @p31ca/node-zero
  * @description Node Zero Protocol — the foundational data model and
  * communication layer for P31 Labs' assistive technology ecosystem.
  *

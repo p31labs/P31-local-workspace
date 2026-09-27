@@ -9,20 +9,20 @@
  *   - Vault with per-layer DEK wrapping and real encryption
  *   - Care score with exponential decay and hysteresis tier transitions
  *
- * Imports from the @p31/node-zero package (local source).
+ * Imports from the @p31ca/node-zero package (local source).
  * Requires React 18+ and a bundler (Vite recommended).
  *
  * Usage:
  *   npm create vite@latest demo -- --template react
  *   cd demo && npm i && cp ../node-zero-demo.jsx src/App.jsx
- *   # Add "../src" to vite resolve alias or install @p31/node-zero
+ *   # Add "../src" to vite resolve alias or install @p31ca/node-zero
  *   npm run dev
  */
 
 import { useState, useEffect, useRef, useCallback } from "react";
 
 // ─── Real Protocol Imports ──────────────────────────────────────────
-// Change these to "@p31/node-zero" or "@p31/node-zero/primitives" etc.
+// Change these to "@p31ca/node-zero" or "@p31ca/node-zero/primitives" etc.
 // if using the published package instead of local source.
 
 import { WebCryptoIdentityProvider } from "./src/backends/webcrypto-identity.js";
@@ -389,7 +389,7 @@ export default function App() {
           <div style={{ width: 5, height: 5, borderRadius: "50%", backgroundColor: "#22c55e", animation: "pulse 2s infinite" }} />
           <span style={{ fontSize: 14, fontWeight: 700, letterSpacing: -0.5 }}>Node Zero Protocol</span>
         </div>
-        <p style={{ fontSize: 8, opacity: 0.15, marginLeft: 11, marginBottom: 16 }}>P31 Labs · @p31/node-zero · Real 5-phase bond · AES-256-GCM · WebCrypto</p>
+        <p style={{ fontSize: 8, opacity: 0.15, marginLeft: 11, marginBottom: 16 }}>P31 Labs · @p31ca/node-zero · Real 5-phase bond · AES-256-GCM · WebCrypto</p>
 
         {/* Node Alpha */}
         <Card
@@ -484,7 +484,7 @@ export default function App() {
 
         {/* Footer */}
         <div style={{ textAlign: "center", marginTop: 16, fontSize: 8, opacity: 0.1, fontFamily: "monospace" }}>
-          @p31/node-zero · npm · 192 tests · 0 dependencies
+          @p31ca/node-zero · npm · 192 tests · 0 dependencies
         </div>
       </div>
     </div>

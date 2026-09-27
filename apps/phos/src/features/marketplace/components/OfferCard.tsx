@@ -1,5 +1,5 @@
-import { GlassCard } from '@p31/ui/chrome';
-import { GlowButton } from '@p31/ui/chrome';
+import { GlassCard } from '@p31ca/ui/chrome';
+import { GlowButton } from '@p31ca/ui/chrome';
 
 interface OfferCardProps {
   offer: {
@@ -59,7 +59,7 @@ export function OfferCard({ offer, onAccept, onReject }: OfferCardProps) {
           <GlowButton color="cyan" size="sm" onClick={onAccept} className="flex-1">
             Accept
           </GlowButton>
-          <GlowButton color="ghost" size="sm" onClick={onReject} className="flex-1">
+          <GlowButton variant="ghost" size="sm" onClick={onReject} className="flex-1">
             Reject
           </GlowButton>
         </div>

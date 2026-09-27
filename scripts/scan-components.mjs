@@ -1,6 +1,6 @@
 /**
  * scan-components.mjs — Automated component usage scanner.
- * Scans all 5 apps for @p31/ui imports and outputs JSON to stdout.
+ * Scans all 5 apps for @p31ca/ui imports and outputs JSON to stdout.
  *
  * Usage: node scripts/scan-components.mjs
  * Output: Prints JSON to stdout, also writes to ground-truth/component-usage.json
@@ -76,4 +76,4 @@ if (!existsSync(gtDir)) mkdirSync(gtDir, { recursive: true });
 writeFileSync(resolve(gtDir, 'component-usage.json'), JSON.stringify(output, null, 2));
 
 console.log(JSON.stringify(output, null, 2));
-console.error(`\n\x1b[32m✓\x1b[0m Scanned ${APP_DIRS.length} apps. Found ${Object.keys(output).length} unique \x1b[1m@p31/ui\x1b[0m imports.`);
+console.error(`\n\x1b[32m✓\x1b[0m Scanned ${APP_DIRS.length} apps. Found ${Object.keys(output).length} unique \x1b[1m@p31ca/ui\x1b[0m imports.`);

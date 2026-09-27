@@ -115,7 +115,7 @@ CORRECT:
   <ChatShell.Header>...</ChatShell.Header>
 </ChatShell>
 ```
-WHY: Chat surfaces MUST use ChatShell from `@p31/design-core/compositions`. Do not reimplement (AGENTS.md Chat Surfaces contract).
+WHY: Chat surfaces MUST use ChatShell from `@p31ca/design-core/compositions`. Do not reimplement (AGENTS.md Chat Surfaces contract).
 
 ## Rule 5 — Spoon cost declared
 

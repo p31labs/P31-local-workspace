@@ -1,5 +1,5 @@
 /**
- * @p31/quantum-core/src/edgeAdaptation.ts — Real-time edge adaptation primitives.
+ * @p31ca/quantum-core/src/edgeAdaptation.ts — Real-time edge adaptation primitives.
  *
  * ⚠️ HONEST LABEL
  * Contested-science metaphor made literal. No scientific claims.

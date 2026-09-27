@@ -1,16 +1,16 @@
 /**
  * @file WillowShell.tsx — WILLOW mobile shell (canonical ConversationShell).
  *
- * Uses the canonical ConversationShell layout from @p31/ui.
+ * Uses the canonical ConversationShell layout from @p31ca/ui.
  * Starfield + tab routing + CrisisOverlay + CaregiverPortal.
  * Single-screen tab state (home, draw, portal, quests, buddy).
  */
 
 import { useEffect, useRef, useState } from 'react';
-import { mountStarfield } from '@p31/design-core/starfield';
-import type { StarfieldInstance } from '@p31/design-core';
+import { mountStarfield } from '@p31ca/design-core/starfield';
+import type { StarfieldInstance } from '@p31ca/design-core';
 import { useWillowStore } from '../store/willowStore';
-import { ConversationShell } from '@p31/ui';
+import { ConversationShell } from '@p31ca/ui';
 import { CrisisOverlay } from './CrisisOverlay';
 import { DrawScreen } from '../features/draw/DrawScreen';
 import { PortalScreen } from '../features/portal/PortalScreen';
@@ -19,7 +19,7 @@ import { CompanionChat } from '../features/buddy/CompanionChat';
 import { ChatSurface } from '../features/chat/components/ChatSurface';
 import { PinGate } from './PinGate';
 import { CaregiverPortal } from '../features/portal/CaregiverPortal';
-import { EphemeralProvider } from '@p31/ui';
+import { EphemeralProvider } from '@p31ca/ui';
 
 type TabId = 'home' | 'draw' | 'portal' | 'quests' | 'buddy';
 type PortalStage = 'closed' | 'pin' | 'open';

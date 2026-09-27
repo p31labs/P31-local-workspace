@@ -35,10 +35,10 @@ checked against authoritative registries and specifications.
 | Package | Version | Description |
 |---------|---------|-------------|
 | `andromeda-cli` | 1.1.2 | CLI with `--agent` JSON mode + MCP server (agent-native, neuroinclusive) |
-| `@p31/agent-engine` | 0.1.0-alpha.0 | Core engine for personalized AI agents in the P31 ecosystem |
-| `@p31/game-engine` | 0.1.0-alpha.0 | Geodesic building game engine (Maxwell rigidity, 7 seed challenges) |
+| `@p31ca/agent-engine` | 0.1.0-alpha.0 | Core engine for personalized AI agents in the P31 ecosystem |
+| `@p31ca/game-engine` | 0.1.0-alpha.0 | Geodesic building game engine (Maxwell rigidity, 7 seed challenges) |
 
-All packages were verified present on the npm registry. (Note: `@p31/cli` is a
+All packages were verified present on the npm registry. (Note: `@p31ca/cli` is a
 documentation artifact with no in-repo implementation — not listed here.)
 
 ## 3. Agent-Native Infrastructure

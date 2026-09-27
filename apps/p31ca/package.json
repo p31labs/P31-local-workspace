@@ -4,6 +4,7 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
+    "prebuild": "node scripts/verify-ground-truth.mjs && node scripts/verify-content-sources.mjs && node scripts/verify-content-consistency.mjs && node scripts/verify-compliance-drift.mjs && (node scripts/fetch-substack.mjs || true)",
     "build": "astro build",
     "fetch:love": "node scripts/fetch-love-stats.mjs",
     "fetch:stats": "node scripts/fetch-content-stats.mjs",
@@ -12,12 +13,22 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/check": "^0.9.10",
     "@astrojs/react": "^5.0.4",
     "@astrojs/tailwind": "^6.0.2",
+    "@p31/controls": "workspace:*",
+    "@p31ca/design-core": "workspace:*",
+    "@p31/shared": "workspace:*",
+    "@p31/shared-identity": "workspace:*",
+    "@p31/shell-chrome": "workspace:*",
+    "@p31ca/ui": "workspace:*",
     "astro": "^5.17.1",
+    "mermaid": "^12.0.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "tailwindcss": "^3.4.19"
+    "rehype-mermaid-lite": "^1.1.0",
+    "tailwindcss": "^3.4.19",
+    "typescript": "^7.0.2"
   },
   "devDependencies": {
     "@astrojs/cloudflare": "^12.6.13",

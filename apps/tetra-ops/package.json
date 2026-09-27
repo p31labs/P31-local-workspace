@@ -13,11 +13,11 @@
     "deploy": "pnpm build && npx wrangler pages deploy dist --project-name p31ca-ops --branch=main --commit-dirty=true"
   },
   "dependencies": {
-    "@p31/design-core": "workspace:*",
-    "@p31/game-engine": "workspace:*",
-    "@p31/quantum-core": "workspace:*",
+    "@p31ca/design-core": "workspace:*",
+    "@p31ca/game-engine": "workspace:*",
+    "@p31ca/quantum-core": "workspace:*",
     "@p31/skin-system": "workspace:*",
-    "@p31/ui": "workspace:*",
+    "@p31ca/ui": "workspace:*",
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.6.1",
     "idb-keyval": "^6.2.2",

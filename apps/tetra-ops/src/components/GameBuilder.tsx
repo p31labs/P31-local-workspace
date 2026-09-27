@@ -11,10 +11,10 @@ import {
   spoonMorphSpeed,
   type JitterbugState,
   type GatedGameConfig,
-} from '@p31/game-engine';
-import { SEED_CHALLENGES } from '@p31/game-engine/challenges';
-import { TIER_THRESHOLDS } from '@p31/game-engine/types';
-import type { PlayerTier } from '@p31/game-engine';
+} from '@p31ca/game-engine';
+import { SEED_CHALLENGES } from '@p31ca/game-engine/challenges';
+import { TIER_THRESHOLDS } from '@p31ca/game-engine/types';
+import type { PlayerTier } from '@p31ca/game-engine';
 
 type GameType = 'jitterbug' | 'collector' | 'builder' | 'cards' | 'sports';
 type SizeClass = 'compact' | 'regular' | 'medium' | 'expanded';

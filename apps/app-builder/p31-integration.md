@@ -111,7 +111,7 @@ Every generated app has design tokens injected at generation time:
 </head>
 ```
 
-**Token source of truth:** `@p31/design-core/src/css/tokens.css` (canonical) or the edge-render worker's `tokensToCSS()` from `design-system.json`.
+**Token source of truth:** `@p31ca/design-core/src/css/tokens.css` (canonical) or the edge-render worker's `tokensToCSS()` from `design-system.json`.
 
 **Injection rules:**
 - All CSS `var(--p31-*)` references MUST have fallbacks (guardrail #1)

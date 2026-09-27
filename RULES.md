@@ -4,7 +4,7 @@ These are **executable rules** that agents and CI can enforce. Each rule include
 
 ## Rule 1: No Hardcoded Colors
 
-**Constraint:** Colors MUST come from `@p31/design-core` tokens. No invented hex values.
+**Constraint:** Colors MUST come from `@p31ca/design-core` tokens. No invented hex values.
 
 **Check:**
 ```bash

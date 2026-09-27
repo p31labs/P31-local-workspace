@@ -1,4 +1,4 @@
-import { SiteNav } from '@p31/ui/chrome';
+import { SiteNav } from '@p31ca/ui/chrome';
 
 const NAV_LINKS = [
   { href: '/', label: 'Home' },

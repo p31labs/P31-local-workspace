@@ -71,11 +71,11 @@ function classify(path, name, hints) {
   if (hints.mcp && /ui-mcp/i.test(name)) return { layer: 'L2', status: 'active', owns: ['UI introspection tools for MCP clients'], notes: 'optional MCP surface for UI consumers' }
   if (hints.mcp && /mcp-vibe|p31-mcp$/i.test(name)) return { layer: 'L2', status: 'active', owns: ['vibe-coding MCP tools (app generation + deploy)'], notes: 'packages/p31-mcp — developer-facing MCP' }
 
-  if (/love-ledger/i.test(name) && /packages/i.test(path)) return { layer: 'L2', status: 'active', owns: ['LOV accounting primitives (ledger.ts, wallet.ts, vesting.ts, version.ts)', 'append-only hash chain'], notes: 'canonical @p31/love-ledger npm package' }
-  if (/love-ledger/i.test(name) && /workers/i.test(path)) return { layer: 'L2', status: 'active', owns: ['HTTP API wrapper over @p31/love-ledger', 'LOV earn/spend/give/donate/take endpoints'], notes: 'workers/love-ledger — deployed API' }
+  if (/love-ledger/i.test(name) && /packages/i.test(path)) return { layer: 'L2', status: 'active', owns: ['LOV accounting primitives (ledger.ts, wallet.ts, vesting.ts, version.ts)', 'append-only hash chain'], notes: 'canonical @p31ca/love-ledger npm package' }
+  if (/love-ledger/i.test(name) && /workers/i.test(path)) return { layer: 'L2', status: 'active', owns: ['HTTP API wrapper over @p31ca/love-ledger', 'LOV earn/spend/give/donate/take endpoints'], notes: 'workers/love-ledger — deployed API' }
   if (/love-chain/i.test(name)) return { layer: 'L2', status: 'active', owns: ['append-only love-chain sink (hash chain persistence)'], notes: 'software/workers/love-chain-worker' }
   if (/love-bridge/i.test(name)) return { layer: 'L2', status: 'migrate-later', owns: ['LOV bridge (cross-surface settlement)'], notes: 'software/love-bridge — evaluate for consolidation' }
-  if (/economy/i.test(name)) return { layer: 'L2', status: 'active', owns: ['LOV economics model', 'tokenomics parameters'], notes: 'consumes @p31/love-ledger' }
+  if (/economy/i.test(name)) return { layer: 'L2', status: 'active', owns: ['LOV economics model', 'tokenomics parameters'], notes: 'consumes @p31ca/love-ledger' }
   if (/gamification/i.test(name)) return { layer: 'L2', status: 'active', owns: ['LOV earn/spend game logic', 'spoon-dial scoring'], notes: 'consumes @p31/economy' }
   if (/contract-engine/i.test(name)) return { layer: 'L2', status: 'active', owns: ['web3 contract ABI registry', 'on-chain verification'], notes: 'EVM contract interaction layer' }
   if (/governance-engine/i.test(name)) return { layer: 'L2', status: 'active', owns: ['on-chain governance voting', 'proposal + ratification flow'], notes: 'governance contract over EVM' }
@@ -97,7 +97,7 @@ function classify(path, name, hints) {
   if (/fhir-bridge|fhir/i.test(name)) return { layer: 'L2', status: 'migrate-later', owns: ['FHIR health data bridge'], notes: 'integration contract — pending pilot decision' }
   if (/federation-bridge/i.test(name)) return { layer: 'L2', status: 'active', owns: ['cross-surface identity federation', 'JWT + DPoP'], notes: 'identity federation across surfaces' }
   if (/intent-resolver/i.test(name)) return { layer: 'L2', status: 'active', owns: ['agentic intent → tool-call translation'], notes: 'orchestration L2' }
-  if (/ledger-bridge/i.test(name)) return { layer: 'L2', status: 'active', owns: ['ledger HTTP adapter'], notes: 'bridge over @p31/love-ledger' }
+  if (/ledger-bridge/i.test(name)) return { layer: 'L2', status: 'active', owns: ['ledger HTTP adapter'], notes: 'bridge over @p31ca/love-ledger' }
   if (/membrane-coordinator/i.test(name)) return { layer: 'L2', status: 'active', owns: ['cross-boundary data flow coordination'], notes: 'L2 inter-surface coordination' }
   if (/meshy-bridge/i.test(name)) return { layer: 'L2', status: 'migrate-later', owns: ['Meshy API bridge (3D generation)'], notes: 'integration — pending value assessment' }
   if (/taler-bridge|billing/i.test(name)) return { layer: 'L2', status: 'migrate-later', owns: ['Taler billing bridge'], notes: 'integration — evaluate retention' }
@@ -208,7 +208,7 @@ function classify(path, name, hints) {
 
   // remaining software packages
   if (/software\/packages/i.test(path)) {
-    if (/love-ledger/i.test(name)) return { layer: 'L2', status: 'active', owns: ['@p31/love-ledger (software copy — canonical npm package)'], notes: 'this is the source of truth for the npm package' }
+    if (/love-ledger/i.test(name)) return { layer: 'L2', status: 'active', owns: ['@p31ca/love-ledger (software copy — canonical npm package)'], notes: 'this is the source of truth for the npm package' }
     if (/interface-generator/i.test(name)) return { layer: 'L2', status: 'migrate-later', owns: ['interface generator (software copy)'], notes: 'duplicate of workspace — keep one' }
     if (/sovereign/i.test(name)) return { layer: 'L0', status: 'migrate-later', owns: ['sovereign SDK (software copy)'], notes: 'duplicate — keep workspace copy' }
     return { layer: 'L2', status: 'migrate-later', owns: ['software package'], notes: 'evaluate: consolidate into workspace or retire' }

@@ -1,8 +1,8 @@
-# @p31/game-engine
+# @p31ca/game-engine
 
 **Geodesic building game for the P31 assistive technology platform.**
 
-Build structures from Platonic solids. Every structure is validated against Maxwell's rigidity criterion. The economy runs on [@p31/love-ledger](https://www.npmjs.com/package/@p31/love-ledger). Identity and bonds come from [@p31/node-zero](https://www.npmjs.com/package/@p31/node-zero).
+Build structures from Platonic solids. Every structure is validated against Maxwell's rigidity criterion. The economy runs on [@p31ca/love-ledger](https://www.npmjs.com/package/@p31ca/love-ledger). Identity and bonds come from [@p31ca/node-zero](https://www.npmjs.com/package/@p31ca/node-zero).
 
 This is not a metaphor. The tetrahedron is the minimum stable system in 3D because it's the only polyhedron where every vertex connects to every other vertex. The game teaches this through building.
 
@@ -11,7 +11,7 @@ Built by [P31 Labs](https://phosphorus31.org), a Georgia 501(c)(3) nonprofit dev
 ## Install
 
 ```bash
-npm install @p31/game-engine
+npm install @p31ca/game-engine
 ```
 
 ## What It Does
@@ -29,7 +29,7 @@ npm install @p31/game-engine
 ## Quick Start
 
 ```typescript
-import { GameEngine, vec3, SEED_CHALLENGES } from "@p31/game-engine";
+import { GameEngine, vec3, SEED_CHALLENGES } from "@p31ca/game-engine";
 
 // Boot with optional ledger adapter
 const game = new GameEngine("my-node-id", {
@@ -66,9 +66,9 @@ const snap = game.export();
 ## Wiring to the Full Stack
 
 ```typescript
-import { GameEngine } from "@p31/game-engine";
-import { LedgerEngine } from "@p31/love-ledger";
-import { NodeZero } from "@p31/node-zero";
+import { GameEngine } from "@p31ca/game-engine";
+import { LedgerEngine } from "@p31ca/love-ledger";
+import { NodeZero } from "@p31ca/node-zero";
 
 const ledger = new LedgerEngine(nodeId);
 const game = new GameEngine(nodeId, {
@@ -174,7 +174,7 @@ game.on("LEVEL_UP", handler)
 ### `maxwellAnalysis`
 
 ```typescript
-import { maxwellAnalysis } from "@p31/game-engine/geometry";
+import { maxwellAnalysis } from "@p31ca/game-engine/geometry";
 
 maxwellAnalysis(vertices: number, edges: number): RigidityAnalysis
 // { vertices, edges, maxwellThreshold, coherence, isRigid, degreesOfFreedom, isOverConstrained }
@@ -190,8 +190,8 @@ maxwellAnalysis(vertices: number, edges: number): RigidityAnalysis
 
 ## Related Packages
 
-- [@p31/node-zero](https://www.npmjs.com/package/@p31/node-zero) — Protocol layer. Identity, bonds, vault, state.
-- [@p31/love-ledger](https://www.npmjs.com/package/@p31/love-ledger) — Economic layer. LOVE transactions, wallet, vesting.
+- [@p31ca/node-zero](https://www.npmjs.com/package/@p31ca/node-zero) — Protocol layer. Identity, bonds, vault, state.
+- [@p31ca/love-ledger](https://www.npmjs.com/package/@p31ca/love-ledger) — Economic layer. LOVE transactions, wallet, vesting.
 
 ## License
 

@@ -1,7 +1,7 @@
 import { useRef, useEffect, useState, useCallback } from 'react';
 import { usePlayer } from '../components/PlayerProvider';
-import { useGameEngine } from '@p31/game-engine/react';
-import { jitterbugVertices, jitterbugEdges } from '@p31/game-engine';
+import { useGameEngine } from '@p31ca/game-engine/react';
+import { jitterbugVertices, jitterbugEdges } from '@p31ca/game-engine';
 import { LOVE_REWARDS, store, xpToLevel, xpForLevel, ParticleSystem } from './common/index.js';
 import { playNote, playChord, playRiser, P31_F } from './common/sound.js';
 

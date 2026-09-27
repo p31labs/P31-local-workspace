@@ -4,7 +4,7 @@
  */
 
 import { useState } from 'react';
-import { GlassCard, GlowButton } from '@p31/ui/chrome';
+import { GlassCard, GlowButton } from '@p31ca/ui/chrome';
 import { useWillowStore, SKILLS } from '../../store/willowStore';
 
 export function QuestsScreen() {

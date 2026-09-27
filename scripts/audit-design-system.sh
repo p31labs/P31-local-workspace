@@ -50,7 +50,7 @@ for app in p31ca phosphorus31 phos willow; do
   f="${ENTRY_FILES[$app]}"
   missing=""
   for mod in base glass motion typography size-class ambient container quantum link-glow; do
-    grep -q "@p31/design-core/css/${mod}.css" "$f" 2>/dev/null || missing="$missing $mod"
+    grep -q "@p31ca/design-core/css/${mod}.css" "$f" 2>/dev/null || missing="$missing $mod"
   done
   if [ -z "$missing" ]; then
     pass "$app: all 9 design-core CSS modules"
@@ -85,12 +85,12 @@ check_brand_spoons willow "apps/willow/index.html apps/willow/src/"
 # ── 5. Crown/GlassCard resolve from design-core ──
 echo ""
 echo "5. Crown/GlassCard import resolution..."
-if grep -r "from ['\\\"]@p31/design-core/generated/Crown" packages/ui/src/ 2>/dev/null | grep -q .; then
+if grep -r "from ['\\\"]@p31ca/design-core/generated/Crown" packages/ui/src/ 2>/dev/null | grep -q .; then
   pass "Crown imported from design-core (via ui/chrome)"
 else
   fail "Crown NOT imported from design-core"
 fi
-if grep -r "from ['\\\"]@p31/design-core/generated/GlassCard" packages/ui/src/ 2>/dev/null | grep -q .; then
+if grep -r "from ['\\\"]@p31ca/design-core/generated/GlassCard" packages/ui/src/ 2>/dev/null | grep -q .; then
   pass "GlassCard imported from design-core (via ui/chrome)"
 else
   fail "GlassCard NOT imported from design-core"
@@ -114,10 +114,10 @@ fi
 echo ""
 echo "7. App dependencies..."
 for app in p31ca phosphorus31 phos willow; do
-  if grep -q '"@p31/design-core"' "apps/$app/package.json" 2>/dev/null; then
-    pass "$app depends on @p31/design-core"
+  if grep -q '"@p31ca/design-core"' "apps/$app/package.json" 2>/dev/null; then
+    pass "$app depends on @p31ca/design-core"
   else
-    fail "$app missing @p31/design-core dependency"
+    fail "$app missing @p31ca/design-core dependency"
   fi
 done
 

@@ -52,7 +52,7 @@
 ### K4 Hero (Splash Mode)
 ```
 Position: above title
-Component: <K4Hero /> from @p31/ui
+Component: <K4Hero /> from @p31ca/ui
 Size: default (280px viewBox)
 Animation: spoon-aware CSS from k4-hero.css
 ```
@@ -170,6 +170,6 @@ The K4 Hero is hidden in generative mode
 - No glassmorphism — solid backgrounds reduce visual complexity for children
 - The spoon selector is a radiogroup with 48x48px buttons — large touch targets for children
 - Two modes: splash (landing) and generative (game) — template the splash mode
-- K4 Hero is from `@p31/ui` package — use the React wrapper `<K4Hero />`
+- K4 Hero is from `@p31ca/ui` package — use the React wrapper `<K4Hero />`
 - The enter button uses cyan accent with semi-transparent background
 - Keep the layout centered and narrow (640px max) — focused, not sprawling

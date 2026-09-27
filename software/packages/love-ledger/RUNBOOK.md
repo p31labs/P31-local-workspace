@@ -1,7 +1,7 @@
-# @p31/love-ledger — Runbook
+# @p31ca/love-ledger — Runbook
 
 ## Package health
-- Version: `npm view @p31/love-ledger version`
+- Version: `npm view @p31ca/love-ledger version`
 - Tests: `npm test`
 - Build: `npm run build`
 

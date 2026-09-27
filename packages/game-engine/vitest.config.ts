@@ -28,7 +28,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@p31/game-engine': path.resolve(__dirname, './src')
+      '@p31ca/game-engine': path.resolve(__dirname, './src')
     }
   }
 });

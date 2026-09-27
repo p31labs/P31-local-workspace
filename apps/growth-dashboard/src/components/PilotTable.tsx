@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { GlassCard } from '@p31/ui/chrome';
+import { GlassCard } from '@p31ca/ui/chrome';
 import type { Pilot, SortField, SortDir } from '../types/pilot';
 import { useSortedPilots } from '../hooks/usePilots';
 

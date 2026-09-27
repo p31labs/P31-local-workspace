@@ -4,11 +4,11 @@
 
 | Tier | Description | Where | Example |
 |------|-------------|-------|---------|
-| **Primitive** | Raw values (hex, px, ms) | `@p31/design-core/css/base.css` `:root` | `--p31-accent: #00F0FF` |
+| **Primitive** | Raw values (hex, px, ms) | `@p31ca/design-core/css/base.css` `:root` | `--p31-accent: #00F0FF` |
 | **Semantic** | Purpose-bound tokens that reference primitives | App `@theme` blocks | `--color-quantum-cyan: var(--p31-accent)` |
 | **Component** | Inline style overrides on specific components | Skins (`@p31/skin-*/index.css`) | `--p31-nav-h: 46px` |
 
-Rule: **No hardcoded hex, px, or rgba in `@p31/ui` components.** Use `var(--p31-*)` tokens. Every value traces back to `design-core`.
+Rule: **No hardcoded hex, px, or rgba in `@p31ca/ui` components.** Use `var(--p31-*)` tokens. Every value traces back to `design-core`.
 
 ## Component Maturity Model
 
@@ -42,7 +42,7 @@ Rule: **No hardcoded hex, px, or rgba in `@p31/ui` components.** Use `var(--p31-
 ## Contribution Workflow
 
 1. **Propose**: Open an issue describing the component or change.
-2. **Build**: Create the component in `@p31/ui` with token-first styling.
+2. **Build**: Create the component in `@p31ca/ui` with token-first styling.
 3. **Document**: Add a `.stories.tsx` file and a catalog entry in `components.ts`.
 4. **Adopt**: Wire into at least one app to validate.
 5. **Promote**: After adoption by 2+ apps, move from Alpha → Beta → Stable.
@@ -56,8 +56,8 @@ Rule: **No hardcoded hex, px, or rgba in `@p31/ui` components.** Use `var(--p31-
 
 ## Review Process
 
-- All `@p31/ui` changes must typecheck (`npx tsc --noEmit`) in PHOS + WILLOW.
-- All `@p31/design-core` changes must build in all 4 apps.
+- All `@p31ca/ui` changes must typecheck (`npx tsc --noEmit`) in PHOS + WILLOW.
+- All `@p31ca/design-core` changes must build in all 4 apps.
 - Breaking changes require a migration guide in the changelog.
 - Token additions require a catalog entry update.
 

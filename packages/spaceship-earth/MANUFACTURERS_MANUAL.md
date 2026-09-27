@@ -172,7 +172,7 @@ now implemented and covered by the vitest suite (193 tests, all green).
 | `src/engine/dockMath.ts` | 1 | Dock allocation + system probabilities + dock JSON generation | `integration.test.ts` |
 
 All engine files carry the contested-science disclaimer: the math is a
-metaphor borrowed from `@p31/quantum-core` and asserts **engine behavior only** —
+metaphor borrowed from `@p31ca/quantum-core` and asserts **engine behavior only** —
 no physical, medical, or scientific claim is made.
 
 ### 3.1 Key Engine Contracts

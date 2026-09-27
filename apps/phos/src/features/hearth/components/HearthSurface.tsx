@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { GlassCard } from '@p31/ui/chrome';
-import { GlowButton } from '@p31/ui/chrome';
-import { QuantumLayer } from '@p31/ui/quantum';
+import { GlassCard } from '@p31ca/ui/chrome';
+import { GlowButton } from '@p31ca/ui/chrome';
+import { QuantumLayer } from '@p31ca/ui/quantum';
 import { useSpoon } from '../../../shared/hooks/useSpoon';
 
 interface Intention {

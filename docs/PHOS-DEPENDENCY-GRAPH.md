@@ -57,23 +57,23 @@ phos@2.0.0 (Astro 5 + React 19)
 │
 └── Workspace Packages
     ├── @p31/design-system@file:../../packages/design-system
-    ├── @p31/ui@file:../../packages/ui
+    ├── @p31ca/ui@file:../../packages/ui
     └── @p31/interface-generator@workspace:*
 ```
 
 ### 1.2 Workspace Package Dependencies (tree)
 
 ```
-@p31/design-core@2.0.0
+@p31ca/design-core@2.0.0
   └── (zero deps — pure CSS + TypeScript tokens)
 
-@p31/ui@1.2.0
-  └── @p31/design-core@workspace:*
+@p31ca/ui@1.2.0
+  └── @p31ca/design-core@workspace:*
 
 @p31/design-system@1.0.0-deprecated
   └── (no deps — replaced by design-core)
 
-@p31/forge-sdk@1.0.0 (published npm)
+@p31ca/forge-sdk@1.0.0 (published npm)
   ├── react@^19.0.0 (peer)
   ├── react-dom@^19.0.0 (peer)
   ├── dockview@^1.7.0
@@ -81,20 +81,20 @@ phos@2.0.0 (Astro 5 + React 19)
   ├── @xterm/addon-fit@^0.10.0
   └── @cloudflare/sandbox@^0.8.0
 
-@p31/gamification@1.0.0
+@p31ca/gamification@1.0.0
   ├── idb-keyval@^6.2.1
   └── zustand@^5.0.0
 
-@p31/mcp-membrane@1.0.0 (published npm)
+@p31ca/mcp-membrane@1.0.0 (published npm)
   └── node-fetch@^3.3.0
 
-@p31/mcp-vibe@1.0.0 (published npm)
+@p31ca/mcp-vibe@1.0.0 (published npm)
   └── (zero deps — pure stdio MCP server)
 
-@p31/mcp-justice@1.0.0 (published npm)
+@p31ca/mcp-justice@1.0.0 (published npm)
   └── (zero deps — pure stdio MCP server)
 
-@p31/vibe-sdk@1.0.0 (published npm)
+@p31ca/vibe-sdk@1.0.0 (published npm)
   └── (zero deps — pure TypeScript SDK)
 
 @p31/spaceship-earth@0.0.1 (private, React PWA)
@@ -584,15 +584,15 @@ Total                                                                  137 tools
 ### 6.2 Published MCP Packages (npm)
 
 ```
-@p31/mcp-membrane@1.0.0
+@p31ca/mcp-membrane@1.0.0
   └── 7 tools: membrane_status, membrane_dora, membrane_history,
               membrane_deploy_check, membrane_dora_scorecard,
               membrane_artifact_mint, membrane_ping
 
-@p31/mcp-vibe@1.0.0
+@p31ca/mcp-vibe@1.0.0
   └── tools: vibe_generate, vibe_deploy, vibe_status, vibe_list
 
-@p31/mcp-justice@1.0.0
+@p31ca/mcp-justice@1.0.0
   └── tools: evidence_vault, escrow_create, escrow_release, odr_submit,
              daubert_check, court_admissible
 ```
@@ -669,7 +669,7 @@ The critical rendering path from cold start:
            └─→ PHOSPromptBar (chat input, no blocking)
 
 First paint blockers:
-  - @p31/design-core CSS (imported via globals.css)
+  - @p31ca/design-core CSS (imported via globals.css)
   - tailwind base/components/utilities (150KB+)
   - Astro SSR shell → client hydration
 

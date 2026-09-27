@@ -9,7 +9,7 @@ export class AgentEngineAdapter {
       statusLine: `AgentEngine integration stub for ${agent.axisId}`,
       startedAt,
       completedAt: new Date().toISOString(),
-      error: 'AgentEngineAdapter is a stub — implement by importing AgentEngine from @p31/agent-engine',
+      error: 'AgentEngineAdapter is a stub — implement by importing AgentEngine from @p31ca/agent-engine',
     };
   }
 

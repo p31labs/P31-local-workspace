@@ -69,7 +69,7 @@
 ### GreetingSurface (Landing)
 ```
 Full viewport, centered
-K4 Hero SVG (from @p31/ui)
+K4 Hero SVG (from @p31ca/ui)
 "P³¹" text: text-4xl, font-mono, text-emerald-400
 "spoons: N/5" label: text-xs, font-mono, text-zinc-500
 Buttons: "Enter" (emerald border/text), "Compass" (zinc border/text)
@@ -232,7 +232,7 @@ All use `will-change: transform, opacity; transform: translateZ(0); backface-vis
 
 ## Content Sections (Greeting Surface)
 
-1. **K4 Hero** — animated tetrahedron SVG (from `@p31/ui`)
+1. **K4 Hero** — animated tetrahedron SVG (from `@p31ca/ui`)
 2. **Title** — `P³¹` in emerald monospace
 3. **Spoon indicator** — `spoons: N/5`
 4. **Enter button** — emerald accent

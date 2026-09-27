@@ -1,8 +1,8 @@
 ---
-import '@p31/design-core/css/all.css';
-import '@p31/ui/chrome.css';
+import '@p31ca/design-core/css/all.css';
+import '@p31ca/ui/chrome.css';
 import '../styles/globals.css';
-import { EphemeralProvider } from '@p31/ui';
+import { EphemeralProvider } from '@p31ca/ui';
 import AdaptiveRoot from '../components/AdaptiveRoot.client';
 
 const { title = 'LOVE Arcade' } = Astro.props;
@@ -67,7 +67,7 @@ const { title = 'LOVE Arcade' } = Astro.props;
     <p31-crisis-overlay message="Rest. Breathe. The mesh holds. Exit when ready." button-label="I'm Ready"></p31-crisis-overlay>
 
     <script>
-      import { registerP31CrisisOverlay } from '@p31/design-core/crisis-overlay';
+      import { registerP31CrisisOverlay } from '@p31ca/design-core/crisis-overlay';
       registerP31CrisisOverlay();
     </script>
   </body>

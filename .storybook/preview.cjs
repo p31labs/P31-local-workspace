@@ -1,6 +1,6 @@
 const React = require('react');
 
-require('@p31/design-core/css/tokens.css');
+require('@p31ca/design-core/css/tokens.css');
 
 const preview = {
   parameters: {

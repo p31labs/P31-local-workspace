@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { GlassCard } from '@p31/ui/chrome';
+import { GlassCard } from '@p31ca/ui/chrome';
 
 interface CounterscaleRow {
   eg?: string;

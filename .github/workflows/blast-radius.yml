@@ -30,8 +30,8 @@ jobs:
 
       - name: Typecheck shared packages
         run: |
-          pnpm --filter @p31/design-core exec tsc --noEmit
-          pnpm --filter @p31/ui exec tsc --noEmit
+          pnpm --filter @p31ca/design-core exec tsc --noEmit
+          pnpm --filter @p31ca/ui exec tsc --noEmit
 
       - name: Build all consumer apps (parallel)
         run: pnpm --filter "./apps/*" -r run build

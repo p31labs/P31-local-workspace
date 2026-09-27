@@ -3,10 +3,10 @@ import Companion from './components/Companion';
 import VoiceScreen from './components/VoiceScreen';
 import DrawScreen from './components/DrawScreen';
 import MoodTracker from './components/MoodTracker';
-import { K4Hero } from '@p31/ui/K4Hero';
-import '@p31/ui/k4-hero.css';
-import { mountStarfield } from '@p31/ui/starfield';
-import '@p31/ui/starfield.css';
+import { K4Hero } from '@p31ca/ui/K4Hero';
+import '@p31ca/ui/k4-hero.css';
+import { mountStarfield } from '@p31ca/ui/starfield';
+import '@p31ca/ui/starfield.css';
 import FamilyScreen from './components/FamilyScreen';
 import { UIGWillowWrapper } from './components/UIGWillowWrapper';
 

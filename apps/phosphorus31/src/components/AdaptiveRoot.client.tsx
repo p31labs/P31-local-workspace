@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
-import { useAdaptiveStore } from '@p31/ui/adaptive/adaptiveStore';
-import { useNeuroAdapter } from '@p31/ui/adaptive/NeuroAdapter';
+import { useAdaptiveStore } from '@p31ca/ui/adaptive/adaptiveStore';
+import { useNeuroAdapter } from '@p31ca/ui/adaptive/NeuroAdapter';
 
 export default function AdaptiveRoot() {
   useNeuroAdapter({ emitInterval: 2000 });

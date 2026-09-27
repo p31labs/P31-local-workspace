@@ -9,7 +9,7 @@ The cage holds. 863 Hz. K₄ is planar. β₂ = 1.
 ---
 
 > **TL;DR**
-> - P31 sites are **Astro 5 + `@p31/design-core` + `@p31/ui`** — one design system, every app, zero drift.
+> - P31 sites are **Astro 5 + `@p31ca/design-core` + `@p31ca/ui`** — one design system, every app, zero drift.
 > - Scaffold a new site in one command: `node cli/index.js new-site <name> --domain <domain> --pages <cf-project>`.
 > - All tokens, spoon-aware motion, accessibility, and security headers come pre-configured. You write content.
 
@@ -52,7 +52,7 @@ Expected output:
 - Deployed to **Cloudflare Pages** via `wrangler pages deploy dist`.
 - Monorepo: `pnpm` workspaces. Apps under `apps/*`, shared packages under `packages/*`.
 
-### Source of Truth — `@p31/design-core`
+### Source of Truth — `@p31ca/design-core`
 All tokens/utilities are CSS variables and opt-in layers imported from here:
 
 | Layer | File | Invariant |
@@ -65,10 +65,10 @@ All tokens/utilities are CSS variables and opt-in layers imported from here:
 
 Import the whole system with:
 ```js
-import '@p31/design-core/css/all.css';
+import '@p31ca/design-core/css/all.css';
 ```
 
-### Shared Components — `@p31/ui/layout`
+### Shared Components — `@p31ca/ui/layout`
 | Component | Props |
 |-----------|-------|
 | `Section` | `{ header: { eyebrow?, title, description?, align? }, children }` |
@@ -78,11 +78,11 @@ import '@p31/design-core/css/all.css';
 
 `CardGrid` maps `status` to a **static** color set (`published`, `peer-review`, `preprint`, `draft`, `live`, `dev`, `prototype`) — **never use dynamic Tailwind classes** like `text-quantum-${x}`; they are purged by Tailwind v4 JIT. Cards with `href` automatically receive `link-glow`.
 
-Chrome comes from `@p31/ui/chrome` (`SiteNav`, `SovereigntyStrip`, `CompanionPanel`, `Footer`, `GlassCard`, `GlowButton`, `SpoonDial`, `SkipLink`) plus `EphemeralProvider` from `@p31/ui`. The crisis breathing overlay is a web component registered from `@p31/design-core/crisis-overlay` (`<p31-crisis-overlay>`). The sovereign chrome strip (SovereigntyStrip + CompanionPanel + notifications) is assembled per-site in `apps/<name>/src/layouts/P31Chrome.tsx`. The starfield is mounted imperatively via `mountStarfield()` from `@p31/design-core/starfield`.
+Chrome comes from `@p31ca/ui/chrome` (`SiteNav`, `SovereigntyStrip`, `CompanionPanel`, `Footer`, `GlassCard`, `GlowButton`, `SpoonDial`, `SkipLink`) plus `EphemeralProvider` from `@p31ca/ui`. The crisis breathing overlay is a web component registered from `@p31ca/design-core/crisis-overlay` (`<p31-crisis-overlay>`). The sovereign chrome strip (SovereigntyStrip + CompanionPanel + notifications) is assembled per-site in `apps/<name>/src/layouts/P31Chrome.tsx`. The starfield is mounted imperatively via `mountStarfield()` from `@p31ca/design-core/starfield`.
 
 ### Canonical Shell
 Every site's `Layout.astro` (see `apps/_template/src/layouts/Layout.astro`) must:
-1. Import all `@p31/design-core/css/*` layers + `global.css`.
+1. Import all `@p31ca/design-core/css/*` layers + `global.css`.
 2. Set `data-spoons="3"` and `data-theme="quantum"` on `<html>`, with an inline bootstrap script restoring saved spoon/size-class before hydration.
 3. Render `SiteNav`, `EphemeralProvider` wrapping `<slot/>`, `FooterIsland`, `<p31-crisis-overlay>`, and the app-specific P31Chrome (SovereigntyStrip + CompanionPanel), and mount the starfield.
 4. Include a skip link and respect `prefers-reduced-motion`.
@@ -101,7 +101,7 @@ npx wrangler pages deploy dist --project-name <pages-project> --branch=main
 > Harmless — always link to the canonical `/about/` form in nav.
 
 ### Extension Protocol
-To add a new variant/prop: edit the shared package (`@p31/design-core` for tokens, `@p31/ui` for components), bump its version, update consuming apps. **Never** add app-local CSS overrides or duplicate components.
+To add a new variant/prop: edit the shared package (`@p31ca/design-core` for tokens, `@p31ca/ui` for components), bump its version, update consuming apps. **Never** add app-local CSS overrides or duplicate components.
 
 ---
 
@@ -109,7 +109,7 @@ To add a new variant/prop: edit the shared package (`@p31/design-core` for token
 
 **Problem:** rapidly stand up a new P31 property (site or app) that is pixel- and behavior-consistent with `p31ca.org` and `phosphorus31.org`, without re-deriving the design system.
 
-**Input contract:** `apps/_template` (the starter box), `@p31/design-core`, `@p31/ui`.
+**Input contract:** `apps/_template` (the starter box), `@p31ca/design-core`, `@p31ca/ui`.
 
 **Procedure:**
 1. `andromeda new-site <name> [--domain d] [--pages p]` — clones `_template`, rewrites `TEMPLATE_PROJECT`/`TEMPLATE_DOMAIN` placeholders in `package.json`, `wrangler.toml`, `astro.config.mjs`, `src/pages/index.astro`, and prints next steps. (Equivalent manual: `cp -r apps/_template apps/<name>` + sed the placeholders.)
@@ -119,7 +119,7 @@ To add a new variant/prop: edit the shared package (`@p31/design-core` for token
 **Invariants (CI should assert):**
 - No `text-quantum-${...}` / `bg-quantum-${...}` template literals in markup (purge-unsafe).
 - Every `<a>` that is a card/nav link carries `link-glow`.
-- No `:root` or hard-coded color/spacing values; all tokens resolve from `@p31/design-core`.
+- No `:root` or hard-coded color/spacing values; all tokens resolve from `@p31ca/design-core`.
 - `data-spoons` + `data-size-class` present on `<html>`.
 
 **Reference implementations:** `apps/p31ca` (technical hub, `AppShell.astro`), `apps/phosphorus31` (institutional, `Layout.astro`), `apps/_template` (minimal).
@@ -188,7 +188,7 @@ It's safe, it's consistent, and it's ours. That's the whole point. 💛
 
 - [ ] Scaffolded from `apps/_template` (or `andromeda new-site <name>`).
 - [ ] `package.json` `name` + `wrangler.toml` `name`/`pages_build_output_dir` set; `TEMPLATE_DOMAIN` replaced.
-- [ ] `src/layouts/Layout.astro` imports `@p31/design-core/css/all.css` + `global.css`; renders `SiteNav`, `EphemeralProvider`, `Footer`, the crisis overlay (`<p31-crisis-overlay>` from `@p31/design-core/crisis-overlay`), and mounts starfield.
+- [ ] `src/layouts/Layout.astro` imports `@p31ca/design-core/css/all.css` + `global.css`; renders `SiteNav`, `EphemeralProvider`, `Footer`, the crisis overlay (`<p31-crisis-overlay>` from `@p31ca/design-core/crisis-overlay`), and mounts starfield.
 - [ ] `data-spoons` + `data-size-class` set on `<html>`.
 - [ ] All cards use `glass-card` / `glass-subtle` / `glass-panel`.
 - [ ] All clickable card/link `<a>` carry `link-glow`.
@@ -201,4 +201,4 @@ It's safe, it's consistent, and it's ours. That's the whole point. 💛
 ---
 
 *This document is the single source of truth. When the design system evolves,
-update `@p31/design-core` / `@p31/ui` and propagate — do not patch individual apps.*
+update `@p31ca/design-core` / `@p31ca/ui` and propagate — do not patch individual apps.*

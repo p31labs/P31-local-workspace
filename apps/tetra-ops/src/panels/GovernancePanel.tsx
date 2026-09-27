@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { trackUiEvent } from '@p31/ui';
+import { trackUiEvent } from '@p31ca/ui';
 
 interface VibeMetrics {
   totalExecutions: number;

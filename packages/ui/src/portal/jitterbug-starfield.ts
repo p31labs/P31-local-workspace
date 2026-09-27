@@ -1,6 +1,6 @@
 /**
  * Jitterbug Molecular Starfield — combined background system.
- * Composes @p31/design-core starfield (particles + connections + glows)
+ * Composes @p31ca/design-core starfield (particles + connections + glows)
  * with Buckminster Fuller's jitterbug (morphing cuboctahedron→icosahedron→octahedron).
  *
  * Spoon-aware, zero framework dependencies, mounts to any container div.
@@ -10,7 +10,7 @@
 interface Vec3 { x: number; y: number; z: number; }
 
 /* ═════════════════════════════════════════════════════════════════ */
-/* Jitterbug Geometry Engine (from @p31/game-engine)                 */
+/* Jitterbug Geometry Engine (from @p31ca/game-engine)                 */
 /* ═════════════════════════════════════════════════════════════════ */
 
 const PHI = (1 + Math.sqrt(5)) / 2;
@@ -57,7 +57,7 @@ function spoonMorphSpeed(spoons: number): number {
 }
 
 /* ═════════════════════════════════════════════════════════════════ */
-/* Starfield Engine (simplified from @p31/design-core/starfield)     */
+/* Starfield Engine (simplified from @p31ca/design-core/starfield)     */
 /* ═════════════════════════════════════════════════════════════════ */
 
 interface Particle {

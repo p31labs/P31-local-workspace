@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { Crown, type CrownProps } from '@p31/ui/chrome';
+import { Crown, type CrownProps } from '@p31ca/ui/chrome';
 
 const meta: Meta<typeof Crown> = {
   component: Crown,

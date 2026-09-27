@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import { sicPovmProbabilities, sicPovmFidelity } from '@p31/quantum-core/sic-povm';
+import { sicPovmProbabilities, sicPovmFidelity } from '@p31ca/quantum-core/sic-povm';
 
 const COLORS = ['#00F0FF', '#A78BFA', '#FBBF24', '#34D399'];
 const LABELS = ['|ψ₁⟩', '|ψ₂⟩', '|ψ₃⟩', '|ψ₄⟩'];

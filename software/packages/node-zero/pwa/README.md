@@ -2,7 +2,7 @@
 
 Phosphorus 31 — assistive technology platform. Identity, economy, and geodesic building for neurodivergent minds.
 
-Built on three packages: [@p31/node-zero](https://www.npmjs.com/package/@p31/node-zero) (protocol), [@p31/love-ledger](https://www.npmjs.com/package/@p31/love-ledger) (economy), [@p31/game-engine](https://www.npmjs.com/package/@p31/game-engine) (building).
+Built on three packages: [@p31ca/node-zero](https://www.npmjs.com/package/@p31ca/node-zero) (protocol), [@p31ca/love-ledger](https://www.npmjs.com/package/@p31ca/love-ledger) (economy), [@p31ca/game-engine](https://www.npmjs.com/package/@p31ca/game-engine) (building).
 
 ## Dev
 

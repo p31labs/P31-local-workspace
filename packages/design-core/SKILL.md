@@ -44,7 +44,7 @@ never quietly passed off as spec.
 - Use `componentDefs.ts` for props and `aiGuidance.useWhen/avoidWhen`.
 - Accessibility: WCAG 2.2 AA minimum, 48px touch targets, `:focus-visible`,
   `prefers-reduced-motion` respected.
-- Chat surfaces: use `ChatShell` from `@p31/design-core/compositions`; never
+- Chat surfaces: use `ChatShell` from `@p31ca/design-core/compositions`; never
   reimplement the shell.
 - Governance surfaces (chain, identity, refusals, enforcement): use the
   `@p31/governance` components — they render the audit layer with the correct

@@ -1,8 +1,8 @@
-import '@p31/design-core/css/base.css';
-import '@p31/design-core/css/glass.css';
-import '@p31/design-core/css/motion.css';
-import '@p31/design-core/css/typography.css';
-import '@p31/ui/chrome.css';
+import '@p31ca/design-core/css/base.css';
+import '@p31ca/design-core/css/glass.css';
+import '@p31ca/design-core/css/motion.css';
+import '@p31ca/design-core/css/typography.css';
+import '@p31ca/ui/chrome.css';
 
 import type { Preview } from '@storybook/react';
 

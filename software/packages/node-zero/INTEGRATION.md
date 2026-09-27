@@ -1,16 +1,16 @@
 # Auto-Forwarder Integration Guide
 
-The forwarder is part of node-zero as of v0.2.0. It wires NodeZero protocol events to @p31/love-ledger and @p31/game-engine automatically.
+The forwarder is part of node-zero as of v0.2.0. It wires NodeZero protocol events to @p31ca/love-ledger and @p31ca/game-engine automatically.
 
 ## Usage
 
 ```typescript
-import { wire, boot } from "@p31/node-zero/forwarder";
+import { wire, boot } from "@p31ca/node-zero/forwarder";
 // or from main entry:
-import { wire, NodeZero, ... } from "@p31/node-zero";
+import { wire, NodeZero, ... } from "@p31ca/node-zero";
 
-import { LedgerEngine } from "@p31/love-ledger";
-import { GameEngine } from "@p31/game-engine";
+import { LedgerEngine } from "@p31ca/love-ledger";
+import { GameEngine } from "@p31ca/game-engine";
 
 const ledger = new LedgerEngine(nodeId);
 const game = new GameEngine(nodeId, {

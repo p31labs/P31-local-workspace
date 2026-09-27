@@ -1,7 +1,7 @@
 /**
- * @p31/canon — theming/theme-store.ts
+ * @p31ca/canon — theming/theme-store.ts
  * ==============================================================
- * THE file that was a ghost in @p31/ui (exported as
+ * THE file that was a ghost in @p31ca/ui (exported as
  * "./theming/theme-store" but never present on disk).
  *
  * In CANON this file is REAL. It is the single source of truth
@@ -25,7 +25,8 @@ export type ThemeId =
   | 'aurora'
   | 'zen'
   | 'volt'
-  | 'family';
+  | 'family'
+  | 'sunlight';
 
 export const THEME_IDS: readonly ThemeId[] = [
   'cipher',
@@ -38,6 +39,7 @@ export const THEME_IDS: readonly ThemeId[] = [
   'zen',
   'volt',
   'family',
+  'sunlight',
 ] as const;
 
 export const DEFAULT_THEME: ThemeId = 'ocean';
@@ -170,6 +172,33 @@ export const THEMES: Record<ThemeId, P31Theme> = {
       '--p31-glass-bg': 'oklch(100% 0.02 60 / 0.05)',
       '--p31-glass-border': 'oklch(100% 0.02 60 / 0.12)',
       '--p31-glass-shadow': '0 8px 32px rgba(255, 170, 40, 0.08)',
+    },
+  },
+
+  sunlight: {
+    id: 'sunlight',
+    label: 'Sunlight',
+    emoji: '☀️',
+    description: 'Warm cream canvas, dark ink, terracotta — the human front door',
+    tokens: {
+      ...BASE,
+      '--p31-bg': 'oklch(97% 0.01 85)',
+      '--p31-surface': 'oklch(100% 0.005 90)',
+      '--p31-surface2': 'oklch(94% 0.012 85)',
+      '--p31-accent': 'oklch(55% 0.15 40)',
+      '--p31-accent-cyan': 'oklch(62% 0.14 190)',
+      '--p31-accent-violet': 'oklch(55% 0.15 300)',
+      '--p31-accent-gold': 'oklch(62% 0.14 80)',
+      '--p31-accent-green': 'oklch(55% 0.13 150)',
+      '--p31-accent-red': 'oklch(55% 0.15 25)',
+      '--p31-accent-iris': 'oklch(55% 0.15 250)',
+      '--p31-text': 'oklch(22% 0.015 80)',
+      '--p31-text-primary': 'oklch(22% 0.015 80)',
+      '--p31-text-secondary': 'oklch(38% 0.015 80)',
+      '--p31-text-tertiary': 'oklch(55% 0.015 80)',
+      '--p31-glass-bg': 'oklch(100% 0.005 90 / 0.6)',
+      '--p31-glass-border': 'oklch(80% 0.02 85 / 0.25)',
+      '--p31-glass-shadow': '0 8px 32px rgba(120, 80, 40, 0.12)',
     },
   },
 
@@ -426,6 +455,39 @@ export const SEMANTIC_MAP: Record<string, SemanticSlot> = {
   'motion.easing.standard': { literal: 'cubic-bezier(0.4, 0, 0.2, 1)',     type: 'cubicBezier' },
 
   // -------------------------------------------------------------------------
+  // Motion — M3 Expressive spring physics (2026). Spatial springs overshoot
+  // (damping < 1); effect springs are critically damped (color/opacity). The
+  // comma-joined literal carries curve + duration; consumers split on '|'.
+  // Values mirror Google's published M3 Expressive spring set.
+  // -------------------------------------------------------------------------
+  'motion.spring.expressive.fast.spatial':   { literal: 'cubic-bezier(0.42, 1.67, 0.21, 0.90)|350ms', type: 'cubicBezier' },
+  'motion.spring.expressive.fast.effects':   { literal: 'cubic-bezier(0.31, 0.80, 0.34, 1.00)|150ms', type: 'cubicBezier' },
+  'motion.spring.expressive.default.spatial': { literal: 'cubic-bezier(0.38, 1.21, 0.22, 1.00)|500ms', type: 'cubicBezier' },
+  'motion.spring.expressive.default.effects': { literal: 'cubic-bezier(0.34, 0.80, 0.34, 1.00)|200ms', type: 'cubicBezier' },
+  'motion.spring.expressive.slow.spatial':   { literal: 'cubic-bezier(0.38, 0.86, 0.22, 1.00)|650ms', type: 'cubicBezier' },
+  'motion.spring.expressive.slow.effects':   { literal: 'cubic-bezier(0.34, 0.80, 0.34, 1.00)|300ms', type: 'cubicBezier' },
+  'motion.spring.standard.spatial':          { literal: 'cubic-bezier(0.2, 0, 0, 1)|300ms',           type: 'cubicBezier' },
+
+  // -------------------------------------------------------------------------
+  // Motion — shape morph (icon-button rounded↔circle) + tonal elevation
+  // -------------------------------------------------------------------------
+  'motion.shapeMorph.duration': { literal: '300ms', type: 'duration' },
+  'elevation.level1.tint':      { literal: '0.05',  type: 'number' },
+  'elevation.level2.tint':      { literal: '0.08',  type: 'number' },
+  'elevation.level3.tint':      { literal: '0.11',  type: 'number' },
+
+  // -------------------------------------------------------------------------
+  // Typography — M3 Expressive emphasized type scale (weight 600/700, tighter
+  // tracking). Parallel to the plain type-* slots; consumers opt in.
+  // -------------------------------------------------------------------------
+  'type.emphasized.body':  { literal: '500 16px/1.4 system-ui, sans-serif', type: 'dimension' },
+  'type.emphasized.label': { literal: '600 14px/1.2 system-ui, sans-serif', type: 'dimension' },
+  'type.emphasized.h3':    { literal: '600 20px/1.25 system-ui, sans-serif', type: 'dimension' },
+  'type.emphasized.h2':    { literal: '600 28px/1.2 system-ui, sans-serif', type: 'dimension' },
+  'type.emphasized.h1':    { literal: '700 40px/1.15 system-ui, sans-serif', type: 'dimension' },
+  'type.emphasized.display': { literal: '700 64px/1.1 system-ui, sans-serif', type: 'dimension' },
+
+  // -------------------------------------------------------------------------
   // Frame — the four nominal trace categories. Okabe-Ito colorblind-safe set,
   // converted to OKLCH (cool/warm temperature alternation). No polarity.
   // -------------------------------------------------------------------------
@@ -462,7 +524,7 @@ export const SEMANTIC_MAP: Record<string, SemanticSlot> = {
 // ============================================================================
 // design-core compatibility layer — Phase 1 absorption
 // ============================================================================
-// Ported VERBATIM from @p31/design-core/src/css/tokens.css so canon can become
+// Ported VERBATIM from @p31ca/design-core/src/css/tokens.css so canon can become
 // the sole token writer. Nothing here is reconciled against canon's palette:
 // the 27 names both systems define keep their divergent values until the
 // deliberate redesign (Phase 4). GLOBAL_COMPAT tokens are theme-agnostic and
@@ -527,6 +589,38 @@ export const GLOBAL_COMPAT: Record<string, string> = {
   '--p31-easing-snappy': 'cubic-bezier(0.34, 1.56, 0.64, 1)',
   '--p31-easing-linear': 'linear',
   '--p31-speed-factor': '1',
+  // M3 Expressive springs (2026) — curve and duration emitted as a single
+  // `transition-timing-function` + `transition-duration` pair consumers can
+  // read directly. Spatial overshoots; effects are critically damped.
+  '--p31-spring-expressive-fast-spatial': 'cubic-bezier(0.42, 1.67, 0.21, 0.90)',
+  '--p31-spring-expressive-fast-spatial-ms': '350ms',
+  '--p31-spring-expressive-fast-effects': 'cubic-bezier(0.31, 0.80, 0.34, 1.00)',
+  '--p31-spring-expressive-fast-effects-ms': '150ms',
+  '--p31-spring-expressive-default-spatial': 'cubic-bezier(0.38, 1.21, 0.22, 1.00)',
+  '--p31-spring-expressive-default-spatial-ms': '500ms',
+  '--p31-spring-expressive-default-effects': 'cubic-bezier(0.34, 0.80, 0.34, 1.00)',
+  '--p31-spring-expressive-default-effects-ms': '200ms',
+  '--p31-spring-expressive-slow-spatial': 'cubic-bezier(0.38, 0.86, 0.22, 1.00)',
+  '--p31-spring-expressive-slow-spatial-ms': '650ms',
+  '--p31-spring-expressive-slow-effects': 'cubic-bezier(0.34, 0.80, 0.34, 1.00)',
+  '--p31-spring-expressive-slow-effects-ms': '300ms',
+  '--p31-spring-standard-spatial': 'cubic-bezier(0.2, 0, 0, 1)',
+  '--p31-spring-standard-spatial-ms': '300ms',
+  '--p31-shape-morph-duration': '300ms',
+  '--p31-elevation-level1-tint': '0.05',
+  // Governance chain semantic colors — the audit layer's visual vocabulary.
+  '--p31-chain-verified': '#788c5d',
+  '--p31-chain-broken': '#c0392b',
+  '--p31-chain-pending': '#d97757',
+  '--p31-elevation-level2-tint': '0.08',
+  '--p31-elevation-level3-tint': '0.11',
+  // M3 Expressive emphasized type scale.
+  '--p31-type-emphasized-body': '500 16px/1.4 system-ui, sans-serif',
+  '--p31-type-emphasized-label': '600 14px/1.2 system-ui, sans-serif',
+  '--p31-type-emphasized-h3': '600 20px/1.25 system-ui, sans-serif',
+  '--p31-type-emphasized-h2': '600 28px/1.2 system-ui, sans-serif',
+  '--p31-type-emphasized-h1': '700 40px/1.15 system-ui, sans-serif',
+  '--p31-type-emphasized-display': '700 64px/1.1 system-ui, sans-serif',
   '--p31-starfield-hearth': 'oklch(55% 0.15 35)',
   '--p31-starfield-teal': 'oklch(60% 0.08 185)',
   '--p31-starfield-remembrance': 'oklch(95% 0.01 80)',

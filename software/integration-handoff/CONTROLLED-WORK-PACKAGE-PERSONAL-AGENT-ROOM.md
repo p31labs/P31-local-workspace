@@ -18,7 +18,7 @@
 | **p31-agent-hub** | **Orchestrator** with bindings to multiple Workers; keep **AGENT_HUB_SECRET** for non-public; **not** the primary private channel for minors. |
 | **CWP-P31-SC-2026-01** | SUPER-CENTAUR ↔ **Ring D**; uses **`CWP-30/mesh-bridge.ts`**. **Sister** CWP; inventory alignment only here. |
 | **CWP-P31-ECO-2026-01** | p31ca **hub/catalog** unification. **Sister** CWP; PAR does **not** require merging catalog work. |
-| **@p31/agent-engine** | TypeScript **library** (personality/skills) — **not** wired to k4-personal runtime; future integration is **out of band** until a sub-CWP reopens scope. |
+| **@p31ca/agent-engine** | TypeScript **library** (personality/skills) — **not** wired to k4-personal runtime; future integration is **out of band** until a sub-CWP reopens scope. |
 | **CWP-P31-IB-2026-01** | **Initial Build** — intake → bake **personal tetra** before/during first handoff; **sister** CWP. **`https://p31ca.org/build`**. `integration-handoff/CWP-32/`. **Does not** replace PAR; **consumes** same `subject_id` + k4-personal. |
 
 ---
@@ -167,7 +167,7 @@
 - Replacing **Workers AI** with **local** LLM inference on the Worker (cost/size); **separate** spike.
 - **Merging** **p31-agent-hub** into **k4-personal** (remains two Workers).
 - **phosphorus31.org** **SUPER-CENTAUR** server work (CWP-SC).
-- **Full** **@p31/agent-engine** integration (Discord, etc.).
+- **Full** **@p31ca/agent-engine** integration (Discord, etc.).
 
 ---
 

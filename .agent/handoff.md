@@ -23,7 +23,7 @@
 - `2a94265` ci: add production gates (hex scan + v:gate)
 - `.github/workflows/p31-production.yml` created
 - Hex gate: scans `portals/` for hardcoded hex (excludes node_modules, dist, .wrangler, vendor)
-- v:gate: asserts @p31/design-core 2.3.0 + @p31/ui 1.3.1 from vendor tarballs
+- v:gate: asserts @p31ca/design-core 2.3.0 + @p31ca/ui 1.3.1 from vendor tarballs
 - Note: existing hardcoded hex found in `portals/children/src/components/` — gate will fail until those are fixed
 
 ## Open Questions — Resolved

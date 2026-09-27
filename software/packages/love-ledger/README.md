@@ -1,4 +1,4 @@
-# @p31/love-ledger — L.O.V.E. Ledger
+# @p31ca/love-ledger — L.O.V.E. Ledger
 
 <!-- pmm-badge -->
 ![PMM Maturity](../../.p31/badges/love-ledger.svg)
@@ -10,7 +10,7 @@ Economic layer for the P31 assistive technology ecosystem. Tracks care transacti
 
 ## Install
 ```bash
-npm install @p31/love-ledger
+npm install @p31ca/love-ledger
 ```
 
 ## Build
