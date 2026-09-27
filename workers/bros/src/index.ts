@@ -351,6 +351,22 @@ export default {
       });
     }
 
+    if (url.pathname === '/.well-known/mcp/server-card.json' && method === 'GET') {
+      return cors(JSON.stringify({
+        $schema: 'https://schema.smithery.ai/server-card.json',
+        name: 'bros',
+        description: 'P31 Bros MCP — signaling rooms, persona switching, care issuance, and crisis ping for the family mesh.',
+        version: '2.0.0',
+        serverInfo: { name: 'p31-bros', version: '2.0.0' },
+        endpoint: 'https://bros.trimtab-signal.workers.dev/mcp',
+        transport: 'streamable-http',
+        authentication: { type: 'none' },
+        tools: BROS_TOOLS.map((t) => ({ name: t.name, description: t.description, inputSchema: t.inputSchema })),
+        resources: [],
+        prompts: [],
+      }));
+    }
+
     if (url.pathname === '/mcp' && method === 'GET') {
       const body = new ReadableStream({
         start(controller) {
@@ -366,6 +382,16 @@ export default {
     if (url.pathname === '/mcp' && method === 'POST') {
       try {
         const { id: rpcId, method: rpcMethod, params } = await request.json<any>();
+
+        if (rpcMethod === 'initialize') {
+          const requested = params?.protocolVersion;
+          const protocolVersion = ['2025-11-25', '2025-06-18', '2025-03-26', '2024-11-05', '2024-10-07'].includes(requested) ? requested : '2025-11-25';
+          return cors(JSON.stringify({ jsonrpc: '2.0', id: rpcId, result: { protocolVersion, capabilities: { tools: {} }, serverInfo: { name: 'p31-bros', version: '2.0.0' } } }));
+        }
+
+        if (rpcMethod === 'notifications/initialized') {
+          return cors(JSON.stringify({ jsonrpc: '2.0', id: rpcId, result: {} }));
+        }
 
         if (rpcMethod === 'tools/list')
           return cors(JSON.stringify({ jsonrpc: '2.0', id: rpcId, result: { tools: BROS_TOOLS } }));

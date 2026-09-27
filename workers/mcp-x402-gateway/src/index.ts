@@ -517,6 +517,22 @@ app.get("/.well-known/mcp-pricing", (c) => c.json({
   tools: PRICING,
 }));
 
+// MCP Server Card (Smithery discovery).
+app.get("/.well-known/mcp/server-card.json", (c) => c.json({
+  $schema: "https://schema.smithery.ai/server-card.json",
+  name: "mcp-x402-gateway",
+  description: "P31 x402 payment gateway for MCP — free, metered, and premium tools with a 402 challenge. Proxies the P31 tool suite.",
+  version: "2.0.0",
+  serverInfo: { name: "p31-mcp-x402-gateway", version: "2.0.0" },
+  endpoint: "https://mcp-x402-gateway.trimtab-signal.workers.dev/mcp",
+  transport: "streamable-http",
+  authentication: { type: "none" },
+  tools: Object.entries(PRICING).map(([name, spec]) => ({ name, description: spec.description })),
+  resources: [],
+  prompts: [],
+  pricing: "/.well-known/mcp-pricing",
+}));
+
 // MCP Server Card (2026-07-28 spec). Advertises the gateway's capabilities
 // so agents can discover it without an initialize handshake.
 app.get("/.well-known/mcp", (c) => c.json({

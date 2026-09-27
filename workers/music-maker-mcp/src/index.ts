@@ -21,6 +21,27 @@ export default {
     if (url.pathname === '/health') {
       return Response.json({ ok: true, service: 'music-maker-mcp' });
     }
+    if (url.pathname === '/.well-known/mcp/server-card.json') {
+      return Response.json({
+        $schema: 'https://schema.smithery.ai/server-card.json',
+        name: 'music-maker-mcp',
+        description: 'P31 Music Maker MCP — compose, arrange, and perform family music through the music-presence worker.',
+        version: '0.0.1',
+        serverInfo: { name: 'music-maker-mcp', version: '0.0.1' },
+        endpoint: 'https://music-maker-mcp.trimtab-signal.workers.dev/mcp',
+        transport: 'streamable-http',
+        authentication: { type: 'none' },
+        tools: [
+          { name: 'music_observe', description: 'Read the spatial music maker composition — every zone with position, timbre, and name.' },
+          { name: 'music_place', description: 'Place a new zone in the spatial music maker at a 3D position with a timbre.' },
+          { name: 'music_clear', description: 'Remove a zone from the spatial music maker.' },
+          { name: 'music_name', description: 'Rename a zone in the spatial music maker.' },
+          { name: 'music_trigger', description: 'Trigger a zone — broadcast the live sound to family devices.' },
+        ],
+        resources: [],
+        prompts: [],
+      });
+    }
     if (url.pathname !== '/mcp') {
       return new Response('not found', { status: 404 });
     }

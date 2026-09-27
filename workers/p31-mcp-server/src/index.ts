@@ -116,6 +116,22 @@ export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
 
+    if (url.pathname === "/.well-known/mcp/server-card.json") {
+      return Response.json({
+        $schema: "https://schema.smithery.ai/server-card.json",
+        name: "p31-mcp-server",
+        description: "P31 MCP Server — phos-forge cognitive tools, jitterbug research, cartographer search, and the universal interface generator.",
+        version: "1.0.0",
+        serverInfo: { name: "p31-mcp-server", version: "1.0.0" },
+        endpoint: "https://p31-mcp-server.trimtab-signal.workers.dev/mcp",
+        transport: "streamable-http",
+        authentication: { type: "none" },
+        tools: P31_TOOLS.map((t) => ({ name: t.name, description: t.description, inputSchema: t.schema })),
+        resources: [],
+        prompts: [],
+      });
+    }
+
     if (url.pathname === "/health") {
       return Response.json({
         status: "ok",

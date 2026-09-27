@@ -375,6 +375,23 @@ export default {
       });
     }
 
+    // MCP Server Card (Smithery discovery)
+    if (url.pathname === '/.well-known/mcp/server-card.json' && method === 'GET') {
+      return cors(JSON.stringify({
+        $schema: 'https://schema.smithery.ai/server-card.json',
+        name: 'p31-justice-hub',
+        description: 'P31 Justice Hub MCP — case management, 2-of-3 multi-sig escrow, SHA-256 evidence chains, and blind ODR settlement.',
+        version: '1.0.0',
+        serverInfo: { name: 'p31-justice-hub', version: '1.0.0' },
+        endpoint: 'https://p31-justice-hub.trimtab-signal.workers.dev/mcp',
+        transport: 'streamable-http',
+        authentication: { type: 'none' },
+        tools: JUSTICE_TOOLS.map((t) => ({ name: t.name, description: t.description, inputSchema: t.inputSchema })),
+        resources: [],
+        prompts: [],
+      }));
+    }
+
     // Streamable HTTP: GET /mcp returns SSE notification stream
     if (url.pathname === '/mcp' && method === 'GET') {
       const body = new ReadableStream({
@@ -399,6 +416,16 @@ export default {
       try {
         const body = await request.json<any>();
         const { id: rpcId, method: rpcMethod, params } = body;
+
+        if (rpcMethod === 'initialize') {
+          const requested = params?.protocolVersion;
+          const protocolVersion = ['2025-11-25', '2025-06-18', '2025-03-26', '2024-11-05', '2024-10-07'].includes(requested) ? requested : '2025-11-25';
+          return cors(JSON.stringify({ jsonrpc: '2.0', id: rpcId, result: { protocolVersion, capabilities: { tools: {} }, serverInfo: { name: 'p31-justice-hub', version: '1.0.0' } } }));
+        }
+
+        if (rpcMethod === 'notifications/initialized') {
+          return cors(JSON.stringify({ jsonrpc: '2.0', id: rpcId, result: {} }));
+        }
 
         if (rpcMethod === 'tools/list') {
           return cors(JSON.stringify({ jsonrpc: '2.0', id: rpcId, result: { tools: JUSTICE_TOOLS } }));

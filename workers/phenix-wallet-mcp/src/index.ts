@@ -443,7 +443,23 @@ export default {
     const url = new URL(request.url);
 
     if (url.pathname === '/health') {
-      return corsResponse(JSON.stringify({ status: 'ok', service: 'phenix-wallet-mcp', tools: TOOL_LIST.length, protocol: '2026-07-28', ts: new Date().toISOString() }));
+      return corsResponse(JSON.stringify({ status: 'ok', service: 'phenix-wallet-mcp', tools: TOOL_LIST.length, protocol: '2025-11-25', ts: new Date().toISOString() }));
+    }
+
+    if (url.pathname === '/.well-known/mcp/server-card.json' && request.method === 'GET') {
+      return corsResponse(JSON.stringify({
+        $schema: 'https://schema.smithery.ai/server-card.json',
+        name: 'phenix-wallet-mcp',
+        description: 'P31 Phenix Wallet MCP — DID identity, AES-256-GCM vault sessions, SD-JWT credentials, ZK proofs, and social recovery.',
+        version: '1.0.0',
+        serverInfo: { name: 'phenix-wallet-mcp', version: '1.0.0' },
+        endpoint: 'https://phenix-wallet-mcp.trimtab-signal.workers.dev/mcp',
+        transport: 'streamable-http',
+        authentication: { type: 'none' },
+        tools: TOOL_LIST.map((t) => ({ name: t.name, description: t.description, inputSchema: t.inputSchema })),
+        resources: [],
+        prompts: [],
+      }));
     }
 
     if (request.method !== 'POST') {
@@ -454,6 +470,16 @@ export default {
     try { rpc = await request.json(); } catch { return corsResponse(JSON.stringify({ jsonrpc: '2.0', error: { code: -32700, message: 'Parse error' } }), 400); }
 
     const { method, id, params } = rpc;
+
+    if (method === 'initialize') {
+      const requested = params?.protocolVersion;
+      const protocolVersion = ['2025-11-25', '2025-06-18', '2025-03-26', '2024-11-05', '2024-10-07'].includes(requested) ? requested : '2025-11-25';
+      return corsResponse(JSON.stringify({ jsonrpc: '2.0', id, result: { protocolVersion, capabilities: { tools: {} }, serverInfo: { name: 'phenix-wallet-mcp', version: '1.0.0' } } }));
+    }
+
+    if (method === 'notifications/initialized') {
+      return corsResponse(JSON.stringify({ jsonrpc: '2.0', id, result: {} }));
+    }
 
     if (method === 'tools/list') {
       return corsResponse(JSON.stringify({ jsonrpc: '2.0', id, result: { tools: TOOL_LIST } }));
