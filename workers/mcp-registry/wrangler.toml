@@ -61,3 +61,22 @@ service = "phenix-wallet-mcp"
 [[services]]
 binding = "X402_GATEWAY"
 service = "mcp-x402-gateway"
+[[services]]
+binding = "ROBLOX_BRIDGE"
+service = "roblox-bridge"
+
+[[services]]
+binding = "P31_MCP_SERVER"
+service = "p31-mcp-server"
+
+[[services]]
+binding = "P31_SHELL"
+service = "p31-shell"
+
+[[services]]
+binding = "SPACESHIP_RELAY"
+service = "spaceship-relay"
+
+[[services]]
+binding = "DESIGN_MCP"
+service = "p31-design-mcp"

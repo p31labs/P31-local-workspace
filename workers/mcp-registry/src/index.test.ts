@@ -56,7 +56,7 @@ interface MockServerBehavior {
 }
 
 function buildFetch(behaviors: Record<string, MockServerBehavior>) {
-  return vi.fn(async (url: string | URL, init?: RequestInit) => {
+  const fn = vi.fn(async (url: string | URL, init?: RequestInit) => {
     const endpoint = String(url);
     const body = JSON.parse(String(init?.body ?? '{}'));
     const method = body?.method;
@@ -92,6 +92,7 @@ function buildFetch(behaviors: Record<string, MockServerBehavior>) {
     }
     return new Response(JSON.stringify({ jsonrpc: '2.0', id: body.id, error: { code: -32601, message: `Method not found: ${method}` } }), { status: 400 });
   });
+  return fn;
 }
 
 const REMOTE_URL = 'https://mock.example.com/mcp';
@@ -277,6 +278,52 @@ describe('POST /servers/:name/call', () => {
     expect(res.status).toBe(200);
     const data = await res.json();
     expect(JSON.stringify(data)).toContain('signed');
+  });
+
+  it('forwards the dual Accept header to the upstream MCP server', async () => {
+    const fetchMock = buildFetch({ [REMOTE_URL]: { tools: GOOD_TOOLS, callResult: { ok: true } } });
+    vi.stubGlobal('fetch', fetchMock);
+    const env = envWith(fetchMock);
+    await handleRequest(req('https://registry.local/servers', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: 'mock-srv', name: 'Mock Server', endpoint: REMOTE_URL, category: 'crypto', description: 'x' }),
+    }), env);
+
+    const res = await handleRequest(req('https://registry.local/servers/mock-srv/call', {
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json, text/event-stream' },
+      body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/call', params: { name: 'create_thing', arguments: {} } }),
+    }), env);
+    expect(res.status).toBe(200);
+
+    const upstreamCall = fetchMock.mock.calls.find(([url, init]) => {
+      const body = JSON.parse(String((init as RequestInit)?.body ?? '{}'));
+      return body?.method === 'tools/call';
+    });
+    expect(upstreamCall).toBeDefined();
+    const headers = (upstreamCall![1] as RequestInit).headers as Record<string, string>;
+    expect(headers['Accept']).toBe('application/json, text/event-stream');
+  });
+
+  it('falls back to the dual Accept when the client sends a single media type', async () => {
+    const fetchMock = buildFetch({ [REMOTE_URL]: { tools: GOOD_TOOLS, callResult: { ok: true } } });
+    vi.stubGlobal('fetch', fetchMock);
+    const env = envWith(fetchMock);
+    await handleRequest(req('https://registry.local/servers', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: 'mock-srv', name: 'Mock Server', endpoint: REMOTE_URL, category: 'crypto', description: 'x' }),
+    }), env);
+
+    await handleRequest(req('https://registry.local/servers/mock-srv/call', {
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/call', params: { name: 'create_thing', arguments: {} } }),
+    }), env);
+
+    const upstreamCall = fetchMock.mock.calls.find(([url, init]) => {
+      const body = JSON.parse(String((init as RequestInit)?.body ?? '{}'));
+      return body?.method === 'tools/call';
+    });
+    const headers = (upstreamCall![1] as RequestInit).headers as Record<string, string>;
+    expect(headers['Accept']).toBe('application/json, text/event-stream');
   });
 });
 

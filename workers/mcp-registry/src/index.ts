@@ -51,6 +51,11 @@ interface Env {
   MARKETPLACE?: Fetcher;
   PHENIX_WALLET?: Fetcher;
   X402_GATEWAY?: Fetcher;
+  ROBLOX_BRIDGE?: Fetcher;
+  P31_MCP_SERVER?: Fetcher;
+  P31_SHELL?: Fetcher;
+  SPACESHIP_RELAY?: Fetcher;
+  DESIGN_MCP?: Fetcher;
   /** Admin bearer token for moderation + observability endpoints. */
   ADMIN_TOKEN?: string;
   /** Base64 32-byte Ed25519 seed used to sign review decisions. */
@@ -268,6 +273,7 @@ const OFFICIAL_CATALOG: McpServerEntry[] = [
     status: 'live',
     verify: { alg: 'ML-DSA-65', checkedAt: '2026-09-23T00:00:00Z' },
     readOnlySafe: false,
+    binding: 'ROBLOX_BRIDGE',
   },
   {
     id: 'p31-mcp-server',
@@ -282,6 +288,7 @@ const OFFICIAL_CATALOG: McpServerEntry[] = [
     status: 'live',
     verify: { alg: 'ML-DSA-65', checkedAt: '2026-09-23T00:00:00Z' },
     readOnlySafe: false,
+    binding: 'P31_MCP_SERVER',
   },
   {
     id: 'p31-shell',
@@ -296,6 +303,7 @@ const OFFICIAL_CATALOG: McpServerEntry[] = [
     status: 'degraded',
     verify: { alg: 'ML-DSA-65', checkedAt: '2026-09-23T00:00:00Z' },
     readOnlySafe: false,
+    binding: 'P31_SHELL',
   },
   {
     id: 'x402-gateway',
@@ -325,20 +333,22 @@ const OFFICIAL_CATALOG: McpServerEntry[] = [
     status: 'degraded',
     verify: { alg: 'ML-DSA-65', checkedAt: '2026-09-23T00:00:00Z' },
     readOnlySafe: false,
+    binding: 'SPACESHIP_RELAY',
   },
   {
     id: 'design-mcp',
     name: 'Design System MCP',
-    endpoint: 'https://design-mcp.trimtab-signal.workers.dev/',
+    endpoint: 'https://p31-design-mcp.trimtab-signal.workers.dev/mcp',
     kind: 'remote',
     category: 'design',
     description: 'P31 Design System — tokens, components, recipes, generation, WCAG audit, parity validation.',
     tags: ['design-system', 'tokens', 'components', 'audit'],
     author: 'P31 Labs, Inc.',
     icon: '🎨',
-    status: 'degraded',
+    status: 'live',
     verify: { alg: 'ML-DSA-65', checkedAt: '2026-09-23T00:00:00Z' },
     readOnlySafe: true,
+    binding: 'DESIGN_MCP',
   },
   {
     id: 'soulsafe',
@@ -1498,6 +1508,15 @@ async function proxyToolCall(
   const start = Date.now();
   let capToken: { token: string; exp: number } | null = null;
   const extraHeaders: Record<string, string> = {};
+  // Preserve the client's Accept header through to the upstream MCP server.
+  // MCP Streamable HTTP requires BOTH `application/json` and
+  // `text/event-stream` — forward the client's value when it already carries
+  // both, otherwise fall back to the protocol-mandated default (rpcCall does
+  // the same for probes). Never downgrade to a single media type.
+  const clientAccept = request.headers.get('Accept');
+  if (clientAccept && clientAccept.includes('application/json') && clientAccept.includes('text/event-stream')) {
+    extraHeaders['Accept'] = clientAccept;
+  }
   if (risk === 'write') {
     capToken = await mintCapabilityToken(env, { serverId: entry.id, tool: toolName, principal: await resolvePrincipal(env, request) });
     if (capToken) extraHeaders['X-Capability-Token'] = capToken.token;
