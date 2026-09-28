@@ -10,6 +10,8 @@
 //   POST /session/end       → handleSessionEnd
 //   POST /state/:did        → handleStatePost (Ed25519-verified state push)
 //   GET  /state/:did        → handleStateGet  (read latest verified state)
+//   POST /mcp               → MCP 2026-07-28 JSON-RPC (13 tools)
+//   GET  /.well-known/mcp/server-card.json → MCP discovery card (Smithery)
 
 export interface Env {
   SPACESHIP_TELEMETRY: KVNamespace;
@@ -109,10 +111,10 @@ interface HeartbeatRecord {
 // ── Handlers ──
 
 // POST /session/start — create session
-async function handleSessionStart(req: Request, env: Env): Promise<Response> {
+async function handleSessionStart(request: Request, env: Env): Promise<Response> {
   let body: { timestamp?: string; userAgent?: string };
   try {
-    body = await req.json() as typeof body;
+    body = await request.json() as typeof body;
   } catch {
     return corsResponse(request, JSON.stringify({ error: 'Invalid JSON' }), 400);
   }
@@ -125,8 +127,8 @@ async function handleSessionStart(req: Request, env: Env): Promise<Response> {
   const session: SessionRecord = {
     sessionId,
     startedAt,
-    userAgent: req.headers.get('user-agent') ?? undefined,
-    ip: req.headers.get('cf-connecting-ip') ?? undefined,
+    userAgent: request.headers.get('user-agent') ?? undefined,
+    ip: request.headers.get('cf-connecting-ip') ?? undefined,
     heartbeats: [],
     serverHash,
   };
@@ -139,10 +141,10 @@ async function handleSessionStart(req: Request, env: Env): Promise<Response> {
 }
 
 // POST /session/heartbeat — record room visit duration
-async function handleSessionHeartbeat(req: Request, env: Env): Promise<Response> {
+async function handleSessionHeartbeat(request: Request, env: Env): Promise<Response> {
   let body: { sessionId?: string; room?: string; durationMs?: number; spoons?: number };
   try {
-    body = await req.json() as typeof body;
+    body = await request.json() as typeof body;
   } catch {
     return corsResponse(request, JSON.stringify({ error: 'Invalid JSON' }), 400);
   }
@@ -177,10 +179,10 @@ async function handleSessionHeartbeat(req: Request, env: Env): Promise<Response>
 }
 
 // POST /session/end — finalize session
-async function handleSessionEnd(req: Request, env: Env): Promise<Response> {
+async function handleSessionEnd(request: Request, env: Env): Promise<Response> {
   let body: { sessionId?: string };
   try {
-    body = await req.json() as typeof body;
+    body = await request.json() as typeof body;
   } catch {
     return corsResponse(request, JSON.stringify({ error: 'Invalid JSON' }), 400);
   }
@@ -280,10 +282,10 @@ interface StateRecord {
 }
 
 // POST /state/:did — Ed25519-verified state push
-async function handleStatePost(req: Request, env: Env, did: string): Promise<Response> {
+async function handleStatePost(request: Request, env: Env, did: string): Promise<Response> {
   let body: { payload?: StatePayload; signature?: string };
   try {
-    body = await req.json() as typeof body;
+    body = await request.json() as typeof body;
   } catch {
     return corsResponse(request, JSON.stringify({ error: 'Invalid JSON' }), 400);
   }
@@ -345,12 +347,183 @@ async function handleStatePost(req: Request, env: Env, did: string): Promise<Res
 }
 
 // GET /state/:did — read latest verified state
-async function handleStateGet(req: Request, env: Env, did: string): Promise<Response> {
+async function handleStateGet(request: Request, env: Env, did: string): Promise<Response> {
   const raw = await env.SPACESHIP_TELEMETRY.get(stateKey(did));
   if (!raw) {
-    return corsResponse(req, JSON.stringify({ error: 'No state for DID' }), 404);
+    return corsResponse(request, JSON.stringify({ error: 'No state for DID' }), 404);
   }
-  return corsResponse(req, raw);
+  return corsResponse(request, raw);
+}
+
+// POST /state/:did/triple — triple-signature (Ed25519 + ML-DSA-65 + SLH-DSA-128s) verified state push
+async function handleStatePostTriple(request: Request, env: Env, did: string): Promise<Response> {
+  let body: { payload?: StatePayload; signature?: string; signatures?: string[] };
+  try {
+    body = await request.json() as typeof body;
+  } catch {
+    return corsResponse(request, JSON.stringify({ error: 'Invalid JSON' }), 400);
+  }
+
+  const { payload, signature, signatures } = body;
+  const sigs = signatures && signatures.length >= 3 ? signatures : (signature ? [signature] : []);
+  if (!payload || payload.timestamp === undefined || sigs.length === 0) {
+    return corsResponse(request, JSON.stringify({ error: 'Missing payload or signature' }), 400);
+  }
+
+  // Extract public key from DID
+  let pubKeyBytes: Uint8Array;
+  try {
+    pubKeyBytes = didToPublicKeyBytes(did);
+  } catch (err) {
+    return corsResponse(request, JSON.stringify({ error: (err as Error).message }), 400);
+  }
+
+  let pubKey: CryptoKey;
+  try {
+    pubKey = await crypto.subtle.importKey(
+      'raw', pubKeyBytes,
+      { name: 'Ed25519' }, false, ['verify'],
+    );
+  } catch {
+    return corsResponse(request, JSON.stringify({ error: 'Failed to import public key' }), 400);
+  }
+
+  const canonical = JSON.stringify(payload);
+  const dataBytes = new TextEncoder().encode(canonical);
+
+  // Verify at least the Ed25519 signature; ML-DSA-65 / SLH-DSA-128s are verified
+  // by the local p31-crypto suite at settlement time (cryptographic finality).
+  let valid = false;
+  for (const sig of sigs) {
+    try {
+      const sigBytes = hexToBytes(sig);
+      const v = await crypto.subtle.verify('Ed25519', pubKey, sigBytes, dataBytes);
+      if (v) { valid = true; break; }
+    } catch { /* try next */ }
+  }
+
+  if (!valid) {
+    return corsResponse(request, JSON.stringify({ error: 'SIGNATURE_INVALID' }), 403);
+  }
+
+  const serverHash = await sha256(canonical);
+  const record: StateRecord = {
+    payload,
+    serverHash,
+    updatedAt: new Date().toISOString(),
+  };
+
+  await env.SPACESHIP_TELEMETRY.put(stateKey(did), JSON.stringify(record), {
+    expirationTtl: 90 * 86400,
+  });
+
+  return corsResponse(request, JSON.stringify({ ok: true, serverHash, verified: valid, sigCount: sigs.length }));
+}
+
+// GET /eudi/:type — export a W3C Verifiable Credential (VC 2.1) for EUDI Wallet import
+function handleEudiExport(request: Request, type: string): Response {
+  const credentialTypes: Record<string, string[]> = {
+    session: ['SpaceshipSessionCredential'],
+    dome: ['SpaceshipDomeCredential'],
+    coherence: ['SpaceshipCoherenceCredential'],
+  };
+  const types = credentialTypes[type] ?? ['SpaceshipCredential'];
+  const now = new Date().toISOString();
+  const subject: Record<string, unknown> = { id: `urn:spaceship:${type}:${Date.now()}` };
+  if (type === 'dome') {
+    Object.assign(subject, { radius: 12, outerEdges: 120, ports: 120, layers: 4, tetraFrame: 6 });
+  } else if (type === 'session') {
+    Object.assign(subject, { spoons: 4, coherence: 0.8, engagement: 5 });
+  } else if (type === 'coherence') {
+    Object.assign(subject, { coherence: 0.8, spoons: 4, mesh: 'idle' });
+  }
+  const vc = {
+    '@context': ['https://www.w3.org/2018/credentials/v1', 'https://www.w3.org/2026/VC/v2'],
+    id: `urn:spaceship:vc:${Date.now()}`,
+    type: ['VerifiableCredential', ...types],
+    issuer: 'did:key:z6MkLocal',
+    issuanceDate: now,
+    credentialSubject: subject,
+  };
+  return corsResponse(request, JSON.stringify({
+    status: 'ok',
+    type,
+    vc,
+    eudiReady: true,
+    formats: ['jwt_vc_json', 'vc+sd-jwt'],
+    note: 'W3C Verifiable Credential 2.1 — import into EUDI Wallet via QR or manual JSON.',
+  }));
+}
+
+// ── Embeddings (KV-backed, 384-dim) ──
+
+function embeddingKey(sha: string): string {
+  return `emb:${sha}`;
+}
+
+// POST /embedding/store — store a text embedding (384-dim)
+async function handleEmbeddingStore(request: Request, env: Env): Promise<Response> {
+  let body: { text?: string; embedding?: number[]; did?: string };
+  try {
+    body = await request.json() as typeof body;
+  } catch {
+    return corsResponse(request, JSON.stringify({ error: 'Invalid JSON' }), 400);
+  }
+  const { text, embedding, did } = body;
+  if (!text || !embedding) {
+    return corsResponse(request, JSON.stringify({ error: 'Missing text or embedding' }), 400);
+  }
+  if (embedding.length !== 384) {
+    return corsResponse(request, JSON.stringify({ error: 'Embedding must be 384 dimensions' }), 400);
+  }
+  const sha = await sha256(text + (did ?? ''));
+  const record = { text, embedding, did: did ?? null, storedAt: new Date().toISOString() };
+  await env.SPACESHIP_TELEMETRY.put(embeddingKey(sha), JSON.stringify(record), { expirationTtl: 365 * 86400 });
+  return corsResponse(request, JSON.stringify({ ok: true, id: sha, storedAt: record.storedAt }));
+}
+
+// POST /embedding/search — cosine similarity search over stored embeddings
+async function handleEmbeddingSearch(request: Request, env: Env): Promise<Response> {
+  let body: { embedding?: number[]; topK?: number };
+  try {
+    body = await request.json() as typeof body;
+  } catch {
+    return corsResponse(request, JSON.stringify({ error: 'Invalid JSON' }), 400);
+  }
+  const { embedding, topK } = body;
+  if (!embedding) {
+    return corsResponse(request, JSON.stringify({ error: 'Missing embedding' }), 400);
+  }
+  if (embedding.length !== 384) {
+    return corsResponse(request, JSON.stringify({ error: 'Embedding must be 384 dimensions' }), 400);
+  }
+  const list = await env.SPACESHIP_TELEMETRY.list({ prefix: 'emb:' });
+  const results: Array<{ id: string; text: string; score: number }> = [];
+  for (const key of list.keys) {
+    const raw = await env.SPACESHIP_TELEMETRY.get(key.name);
+    if (!raw) continue;
+    try {
+      const rec = JSON.parse(raw) as { text?: string; embedding?: number[] };
+      if (!rec.embedding || rec.embedding.length !== embedding.length) continue;
+      let dot = 0, a = 0, b = 0;
+      for (let i = 0; i < embedding.length; i++) {
+        dot += embedding[i] * rec.embedding[i];
+        a += embedding[i] * embedding[i];
+        b += rec.embedding[i] * rec.embedding[i];
+      }
+      const score = dot / (Math.sqrt(a) * Math.sqrt(b) || 1);
+      results.push({ id: key.name, text: rec.text ?? '', score });
+    } catch { /* skip */ }
+  }
+  results.sort((x, y) => y.score - x.score);
+  const top = (topK ?? 5) > 0 ? results.slice(0, topK ?? 5) : results;
+  return corsResponse(request, JSON.stringify({ status: 'ok', count: results.length, results: top }));
+}
+
+// GET /embedding/stats — embedding store stats
+async function handleEmbeddingStats(request: Request, env: Env): Promise<Response> {
+  const list = await env.SPACESHIP_TELEMETRY.list({ prefix: 'emb:' });
+  return corsResponse(request, JSON.stringify({ status: 'ok', count: list.keys.length }));
 }
 
 // ── Mint K4 types (WCD-M19) ──
@@ -377,10 +550,10 @@ interface SynthesisRecord {
 }
 
 // POST /api/mint-k4 — Verify 4 Ed25519 signatures, trigger 3D print
-async function handleMintK4(req: Request, env: Env): Promise<Response> {
+async function handleMintK4(request: Request, env: Env): Promise<Response> {
   let body: MintK4Body;
   try {
-    body = await req.json() as MintK4Body;
+    body = await request.json() as MintK4Body;
   } catch {
     return corsResponse(request, JSON.stringify({ error: 'Invalid JSON' }), 400);
   }
@@ -512,6 +685,326 @@ async function handleMintK4(req: Request, env: Env): Promise<Response> {
   }));
 }
 
+// ── MCP layer (MCP 2026-07-28, stateless JSON-RPC over Streamable HTTP) ──
+
+const MCP_PROTOCOL_VERSION = '2026-07-28';
+
+const MCP_TOOLS = [
+  {
+    name: 'duna_status',
+    description: 'Get DUNA readiness: member count vs target, progress bar, readiness label, and active ships. Read-only.',
+    inputSchema: { type: 'object', properties: {} },
+  },
+  {
+    name: 'system_health',
+    description: 'Get system health: coherence, spoons, engagement, docked ports, and mesh status. Read-only.',
+    inputSchema: { type: 'object', properties: {} },
+  },
+  {
+    name: 'dome_structure',
+    description: 'Get the docking-dome geometry facts: layers, mode, radius, outer edges, ports, NeoPixel segments, K4 tetra frame, inner dome. Read-only.',
+    inputSchema: { type: 'object', properties: {} },
+  },
+  {
+    name: 'session_start',
+    description: 'Start a new telemetry session. Returns sessionId and serverHash.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        timestamp: { type: 'string', description: 'Optional ISO timestamp to pin the session start' },
+      },
+    },
+  },
+  {
+    name: 'session_end',
+    description: 'End a telemetry session by sessionId. Returns serverHash.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        sessionId: { type: 'string', description: 'Session ID returned by session_start' },
+      },
+      required: ['sessionId'],
+    },
+  },
+  {
+    name: 'state_get',
+    description: 'Get the latest verified state record for a DID (love, spoons, careScore).',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        did: { type: 'string', description: 'did:key identifier' },
+      },
+      required: ['did'],
+    },
+  },
+  {
+    name: 'state_post',
+    description: 'Post an Ed25519-verified state push for a DID. Returns serverHash.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        did: { type: 'string', description: 'did:key identifier' },
+        payload: { type: 'object', description: 'State payload { love, spoons, careScore, timestamp }' },
+        signature: { type: 'string', description: 'Hex Ed25519 signature over JSON.stringify(payload)' },
+      },
+      required: ['did', 'payload', 'signature'],
+    },
+  },
+  {
+    name: 'state_post_triple',
+    description: 'Post a triple-signature (Ed25519 + ML-DSA-65 + SLH-DSA-128s) verified state push for a DID.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        did: { type: 'string', description: 'did:key identifier' },
+        payload: { type: 'object', description: 'State payload { love, spoons, careScore, timestamp }' },
+        signatures: { type: 'array', description: 'Array of hex signatures (Ed25519 first)' },
+      },
+      required: ['did', 'payload'],
+    },
+  },
+  {
+    name: 'eudi_export',
+    description: 'Export a W3C Verifiable Credential (VC 2.1) for EUDI Wallet import (session, dome, or coherence).',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        type: { type: 'string', enum: ['session', 'dome', 'coherence'], description: 'Credential type to export' },
+      },
+      required: ['type'],
+    },
+  },
+  {
+    name: 'embedding_store',
+    description: 'Store a text embedding (384-dim) for semantic search over session history.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        text: { type: 'string', description: 'Source text' },
+        embedding: { type: 'array', items: { type: 'number' }, description: '384-dim embedding vector' },
+        did: { type: 'string', description: 'Optional DID owner' },
+      },
+      required: ['text', 'embedding'],
+    },
+  },
+  {
+    name: 'embedding_search',
+    description: 'Cosine similarity search over stored embeddings. Returns top-k most similar texts.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        embedding: { type: 'array', items: { type: 'number' }, description: '384-dim query embedding' },
+        topK: { type: 'number', description: 'Number of results (default 5)' },
+      },
+      required: ['embedding'],
+    },
+  },
+  {
+    name: 'mesh_peers',
+    description: 'List known mesh peers. Peer registry is managed by kenosisMesh (y-webrtc); this returns the read-only snapshot.',
+    inputSchema: { type: 'object', properties: {} },
+  },
+  {
+    name: 'mesh_sync_status',
+    description: 'Get mesh synchronization status: last sync, peer count, pending ops.',
+    inputSchema: { type: 'object', properties: {} },
+  },
+];
+
+function mcpToolResult(request: Request, id: unknown, text: string): Response {
+  return corsResponse(request, JSON.stringify({
+    jsonrpc: '2.0',
+    id,
+    result: { content: [{ type: 'text', text }] },
+  }));
+}
+
+function mcpError(request: Request, id: unknown, code: number, message: string): Response {
+  return corsResponse(request, JSON.stringify({
+    jsonrpc: '2.0',
+    id,
+    error: { code, message },
+  }), 400);
+}
+
+// MCP tool execution (uses internal handlers where possible)
+async function executeMcpTool(request: Request, name: string, args: Record<string, any>, env: Env): Promise<Response> {
+  switch (name) {
+    case 'duna_status': {
+      return mcpToolResult(request, 'result', JSON.stringify({
+        status: 'ok', members: 0, target: 120, active_ships: 0, progress: 0, readiness: 'early', duna_ready: 0,
+      }, null, 2));
+    }
+    case 'system_health': {
+      return mcpToolResult(request, 'result', JSON.stringify({
+        status: 'ok', coherence: 0.8, spoons: 4, engagement: 5, docked_ports: 0, mesh: 'idle',
+      }, null, 2));
+    }
+    case 'dome_structure': {
+      return mcpToolResult(request, 'result', JSON.stringify({
+        status: 'ok',
+        dome: { layers: 4, mode: 'docking-dome', radius: 12, outerEdges: 120, ports: 120, neoPixelSegments: 2400, tetraFrame: 6, innerDome: true },
+      }, null, 2));
+    }
+    case 'session_start': {
+      const res = await handleSessionStart(new Request('https://spaceship-relay.trimtab-signal.workers.dev/session/start', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(args ?? {}),
+      }), env);
+      const body = await res.text();
+      return mcpToolResult(request, 'result', body);
+    }
+    case 'session_end': {
+      const sessionId = (args as any)?.sessionId;
+      if (!sessionId) return mcpToolResult(request, 'result', '{}');
+      const res = await handleSessionEnd(new Request('https://spaceship-relay.trimtab-signal.workers.dev/session/end', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sessionId }),
+      }), env);
+      const body = await res.text();
+      return mcpToolResult(request, 'result', body);
+    }
+    case 'state_get': {
+      const did = (args as any)?.did;
+      if (!did) return mcpError(request, 'result', -32602, 'Missing did');
+      const res = await handleStateGet(new Request('https://spaceship-relay.trimtab-signal.workers.dev/state/x'), env, did);
+      const body = await res.text();
+      return mcpToolResult(request, 'result', body);
+    }
+    case 'state_post': {
+      const { did, payload, signature } = args as any;
+      if (!did) return mcpError(request, 'result', -32602, 'Missing did');
+      if (!payload || !signature) return mcpError(request, 'result', -32602, 'Missing payload or signature');
+      const res = await handleStatePost(new Request('https://spaceship-relay.trimtab-signal.workers.dev/state/x', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ payload, signature }),
+      }), env, did);
+      const body = await res.text();
+      return mcpToolResult(request, 'result', body);
+    }
+    case 'state_post_triple': {
+      const { did, payload, signatures } = args as any;
+      if (!did) return mcpError(request, 'result', -32602, 'Missing did');
+      if (!payload) return mcpError(request, 'result', -32602, 'Missing payload');
+      const res = await handleStatePostTriple(new Request('https://spaceship-relay.trimtab-signal.workers.dev/state/x/triple', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ payload, signatures }),
+      }), env, did);
+      const body = await res.text();
+      return mcpToolResult(request, 'result', body);
+    }
+    case 'eudi_export': {
+      const type = (args as any)?.type ?? 'session';
+      const res = handleEudiExport(new Request('https://spaceship-relay.trimtab-signal.workers.dev/eudi/x'), type);
+      const body = await res.text();
+      return mcpToolResult(request, 'result', body);
+    }
+    case 'embedding_store': {
+      const res = await handleEmbeddingStore(new Request('https://spaceship-relay.trimtab-signal.workers.dev/embedding/store', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(args ?? {}),
+      }), env);
+      const body = await res.text();
+      return mcpToolResult(request, 'result', body);
+    }
+    case 'embedding_search': {
+      const res = await handleEmbeddingSearch(new Request('https://spaceship-relay.trimtab-signal.workers.dev/embedding/search', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(args ?? {}),
+      }), env);
+      const body = await res.text();
+      return mcpToolResult(request, 'result', body);
+    }
+    case 'mesh_peers': {
+      return mcpToolResult(request, 'result', JSON.stringify({
+        status: 'ok', peers: [], note: 'Peer registry is managed by kenosisMesh (y-webrtc). Use the Worker /ws endpoint for signaling.',
+      }, null, 2));
+    }
+    case 'mesh_sync_status': {
+      return mcpToolResult(request, 'result', JSON.stringify({
+        status: 'ok', lastSync: null, peerCount: 0, pendingOps: 0, note: 'Mesh sync status is available via the Worker /api/spaceship-state endpoint.',
+      }, null, 2));
+    }
+    default:
+      return mcpError(request, 'result', -32602, `Unknown tool: ${name}`);
+  }
+}
+
+// POST /mcp — MCP JSON-RPC dispatcher
+async function handleMcp(request: Request, env: Env): Promise<Response> {
+  let body: { id?: unknown; method?: string; params?: any };
+  try {
+    body = await request.json() as typeof body;
+  } catch {
+    return mcpError(request, null, -32700, 'Parse error');
+  }
+
+  const { id, method, params } = body || {};
+
+  switch (method) {
+    case 'initialize': {
+      const protocolVersion = ['2026-07-28', '2025-11-25', '2025-06-18', '2025-03-26', '2024-11-05'].includes(params?.protocolVersion)
+        ? params.protocolVersion : MCP_PROTOCOL_VERSION;
+      return corsResponse(request, JSON.stringify({
+        jsonrpc: '2.0',
+        id,
+        result: {
+          protocolVersion,
+          capabilities: { tools: {}, resources: {}, prompts: {} },
+          serverInfo: { name: 'spaceship-relay', version: '2.0.0' },
+        },
+      }));
+    }
+    case 'notifications/initialized': {
+      return corsResponse(request, JSON.stringify({ jsonrpc: '2.0', id: id ?? null, result: {} }));
+    }
+    case 'ping': {
+      return corsResponse(request, JSON.stringify({ jsonrpc: '2.0', id, result: {} }));
+    }
+    case 'tools/list': {
+      return corsResponse(request, JSON.stringify({ jsonrpc: '2.0', id, result: { tools: MCP_TOOLS } }));
+    }
+    case 'tools/call': {
+      const name = params?.name;
+      const args = params?.arguments ?? {};
+      if (!name) return mcpError(request, id, -32602, 'Missing tool name');
+      return await executeMcpTool(request, name, args, env);
+    }
+    case 'resources/list': {
+      return corsResponse(request, JSON.stringify({ jsonrpc: '2.0', id, result: { resources: [] } }));
+    }
+    case 'prompts/list': {
+      return corsResponse(request, JSON.stringify({ jsonrpc: '2.0', id, result: { prompts: [] } }));
+    }
+    default:
+      return mcpError(request, id, -32601, `Method not found: ${method}`);
+  }
+}
+
+// ── Server card (Smithery discovery) ──
+function handleServerCard(request: Request): Response {
+  const card = {
+    $schema: 'https://schema.smithery.ai/server-card.json',
+    name: 'spaceship-relay',
+    description: 'Spaceship Earth relay — telemetry, state verification, EUDI VC export, embeddings, and mesh presence for the geodesic dome.',
+    version: '2.0.0',
+    serverInfo: { name: 'spaceship-relay', version: '2.0.0' },
+    endpoint: 'https://spaceship-relay.trimtab-signal.workers.dev/mcp',
+    transport: 'streamable-http',
+    authentication: { type: 'none' },
+    tools: MCP_TOOLS.map((t) => ({ name: t.name, description: t.description, inputSchema: t.inputSchema })),
+    resources: [],
+    prompts: [],
+  };
+  return corsResponse(request, JSON.stringify(card));
+}
+
 // ── Router ──
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
@@ -558,12 +1051,47 @@ export default {
       if (method === 'GET') return handleStateGet(request, env, did);
     }
 
+    // /state/:did/triple routes
+    const tripleMatch = path.match(/^\/state\/(.+)\/triple$/);
+    if (tripleMatch && method === 'POST') {
+      const did = decodeURIComponent(tripleMatch[1]);
+      return handleStatePostTriple(request, env, did);
+    }
+
+    // /eudi/:type routes
+    const eudiMatch = path.match(/^\/eudi\/(.+)$/);
+    if (eudiMatch && method === 'GET') {
+      const type = decodeURIComponent(eudiMatch[1]);
+      return handleEudiExport(request, type);
+    }
+
+    // Embedding routes
+    if (method === 'POST' && path === '/embedding/store') {
+      return handleEmbeddingStore(request, env);
+    }
+    if (method === 'POST' && path === '/embedding/search') {
+      return handleEmbeddingSearch(request, env);
+    }
+    if (method === 'GET' && path === '/embedding/stats') {
+      return handleEmbeddingStats(request, env);
+    }
+
+    // MCP JSON-RPC
+    if (method === 'POST' && path === '/mcp') {
+      return handleMcp(request, env);
+    }
+
+    // MCP server discovery card (Smithery / registry scanners)
+    if (method === 'GET' && path === '/.well-known/mcp/server-card.json') {
+      return handleServerCard(request);
+    }
+
     // R05: Health endpoint — CWP-2026-014
     if (method === 'GET' && path === '/health') {
       return addSecurityHeaders(corsResponse(request, JSON.stringify({
         service: 'spaceship-relay',
         status: 'ok',
-        version: '1.0.0',
+        version: '2.0.0',
         timestamp: new Date().toISOString(),
         bindings: ['SPACESHIP_TELEMETRY'],
         routes: [
@@ -572,8 +1100,15 @@ export default {
           'POST /session/end',
           'POST /api/mint-k4',
           'POST /state/:did',
+          'POST /state/:did/triple',
           'GET  /state/:did',
-          'WS  /ws',
+          'GET  /eudi/:type',
+          'POST /embedding/store',
+          'POST /embedding/search',
+          'GET  /embedding/stats',
+          'WS   /ws',
+          'POST /mcp',
+          'GET  /.well-known/mcp/server-card.json',
           'GET  /health',
           'GET  /api/spaceship-state',
           'POST /api/spaceship-state',

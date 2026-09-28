@@ -12,6 +12,7 @@
  */
 
 import { tokens, components, TOKENS_DTC, COMPONENT_DEFS, CATALOG, getCatalogEntry } from './data';
+import { guardXaa } from './xaa-auth';
 import {
   proposeComponent,
   proposeIcon,
@@ -39,8 +40,8 @@ const BRAND_TOKENS_RESOLVED: Record<string, Record<string, any>> = {
 
 function designCoreCss(): string {
   return `/* P31 Design Core CSS — the canonical token + recipe stylesheet.
-     Load at runtime via: <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@p31/design-core@latest/css/all.css">
-     This resource is a reference marker; the full CSS ships in the @p31/design-core package. */`;
+     Load at runtime via: <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@p31ca/design-core@latest/css/all.css">
+     This resource is a reference marker; the full CSS ships in the @p31ca/design-core package. */`;
 }
 
 /**
@@ -77,7 +78,7 @@ function renderCatalogHtml(): string {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@p31/design-core@2.3.0/css/all.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@p31ca/design-core@2.3.0/css/all.css">
 <style>
   * { box-sizing: border-box; }
   body {
@@ -1325,8 +1326,15 @@ function mcpError(id: any, code: number, message: string) {
   });
 }
 
-async function handleRequest(request: Request): Promise<Response> {
+async function handleRequest(request: Request, env?: Record<string, string | undefined>): Promise<Response> {
   const url = new URL(request.url);
+
+  // Enterprise-Managed Authorization (Okta XAA) — opt-in via env. When
+  // XAA_ISSUER or XAA_AUD is set, a present-but-invalid assertion is rejected.
+  if (env?.XAA_ISSUER || env?.XAA_AUD) {
+    const xaaErr = await guardXaa(request, { issuer: env.XAA_ISSUER, expectAud: env.XAA_AUD });
+    if (xaaErr) return xaaErr;
+  }
 
   // CORS preflight
   if (request.method === 'OPTIONS') {
@@ -1408,14 +1416,28 @@ async function handleRequest(request: Request): Promise<Response> {
   // MCP server discovery card (Smithery / registry scanners)
   if (request.method === 'GET' && url.pathname === '/.well-known/mcp/server-card.json') {
     const card = {
+      $schema: 'https://schema.smithery.ai/server-card.json',
       name: 'p31-design-mcp',
       description: 'P31 Design System MCP Server — Token resolution, component schemas, layout generation, icon search, UI auditing for the P31 quantum design system',
       version: '0.1.0',
+      serverInfo: { name: 'p31-design-mcp', version: '0.1.0' },
       endpoint: 'https://p31-design-mcp.trimtab-signal.workers.dev/mcp',
       transport: 'streamable-http',
+      authentication: { type: 'none' },
       repository: 'https://github.com/p31labs/andromeda',
       homepage: 'https://p31ca.org',
-      keywords: ['design-system','components','layout','tokens','ui-audit','p31','neuroinclusive']
+      keywords: ['design-system','components','layout','tokens','ui-audit','p31','neuroinclusive'],
+      tools: TOOLS.map((t) => ({ name: t.name, description: t.description, inputSchema: t.inputSchema })),
+      resources: [
+        { uri: 'design://tokens', name: 'Design Tokens', description: 'P31 design tokens (DTCG 2.0). Append /path for a specific token.', mimeType: 'application/json' },
+        { uri: 'design://components', name: 'Component Registry', description: 'P31 component definitions with props, slots, and tokens.', mimeType: 'application/json' },
+        { uri: 'design://icons', name: 'Icon Catalog', description: 'P31 icon pack manifest (regular + advanced). Append /id for a single icon.', mimeType: 'application/json' },
+      ],
+      prompts: [
+        { name: 'generate_landing_page', description: 'Generate a landing page layout with hero section, product grid, and CTA block.' },
+        { name: 'generate_product_grid', description: 'Generate a responsive card grid of products.' },
+        { name: 'generate_research_page', description: 'Generate a card grid of research papers.' },
+      ],
     };
     return new Response(JSON.stringify(card), { headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' } });
   }
@@ -1587,7 +1609,7 @@ async function handleRequest(request: Request): Promise<Response> {
 }
 
 export default {
-  async fetch(request: Request): Promise<Response> {
-    return handleRequest(request);
+  async fetch(request: Request, env?: Record<string, string | undefined>): Promise<Response> {
+    return handleRequest(request, env);
   },
 };
