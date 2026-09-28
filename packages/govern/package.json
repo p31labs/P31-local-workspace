@@ -1,0 +1,32 @@
+{
+  "name": "@p31ca/govern",
+  "version": "0.1.0",
+  "private": false,
+  "type": "module",
+  "description": "The P31 universal governance runtime — the seam every domain constitution conforms to. Governs any system (design, monetization, justice, and beyond) via the same seven primitives: canonical source, gates, negative controls, ratchets, runbooks, lessons, fleet registration.",
+  "author": "P31 Labs",
+  "license": "MIT",
+  "homepage": "https://p31ca.org",
+  "files": [
+    "dist",
+    "constitution.schema.json"
+  ],
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js",
+    "./schema": "./constitution.schema.json",
+    "./cli": "./dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "test": "node --test dist/*.test.js",
+    "self-test": "node dist/cli.js self-test",
+    "govern:init": "node dist/cli.js init"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0",
+    "@types/node": "^22.0.0"
+  }
+}

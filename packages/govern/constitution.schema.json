@@ -1,0 +1,168 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://p31ca.org/schemas/govern/constitution.schema.json",
+  "title": "P31 domain constitution",
+  "description": "The machine-readable contract every governed domain declares. Conforming to this schema is what makes a domain governable by @p31ca/govern — the structure is identical across design, monetization, justice, and any future domain; only the content changes. A constitution that does not validate is not a constitution (it is a hand-edited mirror).",
+  "type": "object",
+  "required": [
+    "schema",
+    "domain",
+    "version",
+    "canonicalSource",
+    "mirrors",
+    "gates",
+    "ratchets",
+    "runbooks",
+    "lessons",
+    "fleet",
+    "review"
+  ],
+  "properties": {
+    "schema": {
+      "const": "https://p31ca.org/schemas/govern/constitution.schema.json",
+      "description": "Self-identifies as conformant. Prevents drift between the schema and the constitution."
+    },
+    "domain": {
+      "type": "string",
+      "description": "Domain name, e.g. design, monetization, justice."
+    },
+    "version": {
+      "type": "string",
+      "description": "Constitution version (semver). Governance evolves; the constitution must be versioned."
+    },
+    "canonicalSource": {
+      "type": "object",
+      "required": ["path", "description"],
+      "properties": {
+        "path": { "type": "string" },
+        "description": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "mirrors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path", "generatedFrom"],
+        "properties": {
+          "path": { "type": "string" },
+          "generatedFrom": { "type": "string" },
+          "parityGate": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "gates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "command", "state", "owner", "scope", "remediation", "negativeControl"],
+        "properties": {
+          "id": { "type": "string" },
+          "command": { "type": "string" },
+          "state": {
+            "type": "string",
+            "enum": ["OBSERVATIONAL", "WARNING", "BLOCKING"],
+            "description": "OBSERVATIONAL: runs, does not fail. WARNING: annotates, does not fail. BLOCKING: fails CI."
+          },
+          "owner": { "type": "string" },
+          "scope": { "type": "string" },
+          "remediation": { "type": "string" },
+          "negativeControl": {
+            "type": "object",
+            "required": ["type", "command", "expected"],
+            "properties": {
+              "type": { "enum": ["fixture", "mutation", "capability"] },
+              "command": { "type": "string" },
+              "expected": { "enum": ["exit-nonzero"] }
+            },
+            "additionalProperties": false
+          },
+          "enforcementMoment": {
+            "type": "string",
+            "enum": ["pre-commit", "ci", "weekly", "event"]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "ratchets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "baseline", "countSource", "lockThreshold"],
+        "properties": {
+          "id": { "type": "string" },
+          "baseline": { "type": "number" },
+          "countSource": { "type": "string", "description": "Command that produces the current count." },
+          "lockThreshold": { "type": "number", "description": "Headroom > this forces the floor down in the same commit." }
+        },
+        "additionalProperties": false
+      }
+    },
+    "runbooks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "path", "owner", "lastVerified"],
+        "properties": {
+          "id": { "type": "string" },
+          "path": { "type": "string" },
+          "owner": { "type": "string" },
+          "lastVerified": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "lessons": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "rootCause", "prevention"],
+        "properties": {
+          "id": { "type": "string" },
+          "rootCause": {
+            "oneOf": [
+              { "type": "string" },
+              {
+                "type": "object",
+                "required": ["unproven", "ruledOut"],
+                "properties": {
+                  "unproven": { "const": true },
+                  "ruledOut": { "type": "array", "items": { "type": "string" } }
+                },
+                "additionalProperties": false
+              }
+            ]
+          },
+          "prevention": { "type": "string", "description": "Must resolve to a real runbook id or gate id — a sentiment is not a prevention." }
+        },
+        "additionalProperties": false
+      }
+    },
+    "fleet": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["rule", "moment"],
+        "properties": {
+          "rule": { "type": "string" },
+          "moment": { "type": "string", "enum": ["pre-commit", "ci", "weekly", "event"] }
+        },
+        "additionalProperties": false
+      }
+    },
+    "review": {
+      "type": "object",
+      "required": ["who", "artifact", "cadence", "onFailure"],
+      "properties": {
+        "who": { "type": "string" },
+        "artifact": { "type": "string" },
+        "cadence": { "type": "string" },
+        "onFailure": { "type": "string" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
