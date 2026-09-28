@@ -112,7 +112,7 @@ export class EvidenceVaultDO extends DurableObject<Env> {
 
       const entry = rows[0] as any;
       const chainInput = JSON.stringify({
-        evidenceId: entryId, caseId: entry.caseId,
+        entryId, caseId: entry.caseId,
         payloadHash: entry.payloadHash, prevHash: entry.prevHash, ts: entry.ts
       });
       const recomputed = bytesToHex(new Uint8Array(
@@ -284,13 +284,13 @@ async function executeJusticeTool(name: string, args: any, env: Env): Promise<an
       const caseId = `case-${id()}`;
       await env.JUSTICE_D1.prepare(
         `INSERT INTO evidence_cases (id, title, description, party_a_did, party_b_did, status, metadata, created_at)
-         VALUES (?, ?, ?, ?, ?, 'active', ?, datetime('now'))`
+         VALUES (?, ?, ?, ?, ?, 'open', ?, datetime('now'))`
       ).bind(caseId, title, description || '', partyADid, partyBDid, '{}').run();
       return { caseId, status: 'created' };
     }
 
     case 'justice_case_list': {
-      const { status = 'active' } = args;
+      const { status = 'open' } = args;
       const result = await env.JUSTICE_D1.prepare(
         `SELECT id, title, status, party_a_did, party_b_did, created_at FROM evidence_cases WHERE status = ? ORDER BY created_at DESC LIMIT 50`
       ).bind(status).all<any>();
@@ -298,7 +298,7 @@ async function executeJusticeTool(name: string, args: any, env: Env): Promise<an
     }
 
     case 'justice_evidence_deposit': {
-      const stub = env.EVIDENCE_DO.get(env.EVIDENCE_DO.idFromName(args.caseId));
+      const stub = env.EVIDENCE_DO.get(env.EVIDENCE_DO.idFromName('vault'));
       const res = await stub.fetch(new Request('http://internal/deposit', {
         method: 'POST', body: JSON.stringify(args),
       }));
@@ -306,7 +306,7 @@ async function executeJusticeTool(name: string, args: any, env: Env): Promise<an
     }
 
     case 'justice_evidence_verify': {
-      const stub = env.EVIDENCE_DO.get(env.EVIDENCE_DO.idFromName('verify'));
+      const stub = env.EVIDENCE_DO.get(env.EVIDENCE_DO.idFromName('vault'));
       const res = await stub.fetch(new Request('http://internal/verify', {
         method: 'POST', body: JSON.stringify(args),
       }));
