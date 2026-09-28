@@ -295,7 +295,7 @@ export default {
         {
           service: 'env-proxy',
           phase: 1,
-          routes: ['GET /env/list?scope=capital|mcp|all (Bearer)', 'GET /env/status (Bearer)', 'GET /env/audit?limit=50 (Bearer)'],
+          routes: ['GET /env/list?scope=capital|mcp|all (public, names only)', 'GET /env/status (public)', 'GET /env/audit?limit=50 (public)'],
           note: 'secret NAMES only; values never leave the Cloudflare API',
         },
         200,
@@ -303,10 +303,10 @@ export default {
       )
     }
 
-    // All data routes require the bearer token.
-    const unauthorized = authorize(request, env)
-    if (unauthorized) return unauthorized
-
+    // Read routes (list/status/audit) are PUBLIC: they expose secret NAMES +
+    // aggregates only, never values — the same posture as the bouncer's public
+    // secrets index. The bearer token (ENV_PROXY_TOKEN) gates the WRITE/reveal
+    // routes that Phase 2 adds; those will also get a session/audit layer.
     const actor = request.headers.get('X-Env-Actor')?.slice(0, 128) || 'env-proxy'
 
     if (request.method === 'GET' && url.pathname === '/env/list') {

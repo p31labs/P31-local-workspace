@@ -14,12 +14,13 @@ CF_ACCOUNT_ID = "ee05f70c889cb6f876b9925257e3a2fa"
 ALLOWED_ORIGINS = "*"
 
 # Required secrets (wrangler secret put, never in code):
-#   ENV_PROXY_TOKEN — bearer token the .env app sends on every request.
+#   ENV_PROXY_TOKEN — bearer token for the WRITE/reveal routes (Phase 2).
 #   CF_API_TOKEN    — scoped API token: "Workers Scripts: Read" +
-#                     "Account Secrets Store: Read" (workers_scripts:read,
-#                     account.secrets-store:read). NOT YET SET (see README.md).
+#                     "Account Secrets Store: Read". NOT YET SET (see README.md).
+# CF_API_TOKEN is NOT in `required` so Phase-1 (names-only public reads) can
+# deploy without it; /env/list returns an honest "not configured" until set.
 [secrets]
-required = ["ENV_PROXY_TOKEN", "CF_API_TOKEN"]
+required = ["ENV_PROXY_TOKEN"]
 
 [[d1_databases]]
 binding = "ENV_META"
