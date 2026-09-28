@@ -10,16 +10,28 @@ NETWORK = "base-sepolia"
 PAY_TO = "0x51c285Df171C76bE36252e32679F098d90768413"
 FACILITATOR_URL = "https://facilitator.x402.org"
 REVENUE_INGEST_URL = "https://taler-bridge-billing.p31ca.org/api/revenue/ingest"
-# L5 — Entitlement service (OPTIONAL). When set, the gateway checks DID balance
-# before x402 payment. When empty or unset, the gateway skips entitlement and
-# falls through to x402 payment directly. The service is not yet deployed;
-# leaving this empty is the supported no-dependency configuration.
-ENTITLEMENT_URL = ""
+# L5 — Entitlement service (preflight credit gate). When set, the gateway calls
+# POST {ENTITLEMENT_URL}/entitlement/check with {did, tool_id,
+# estimated_cost_usdc} BEFORE accepting an x402 payment; a 402 from the
+# entitlement check blocks the call (insufficient balance), a 200 {ok:true}
+# falls through to the x402 payment middleware. The service is live at
+# https://entitlement.trimtab-signal.workers.dev (p31-capital-machine
+# entitlement worker, D1 entitlement-db). After a paid call the gateway posts
+# POST {ENTITLEMENT_URL}/entitlement/consume to debit the DID balance.
+ENTITLEMENT_URL = "https://entitlement.trimtab-signal.workers.dev"
 ENTITLEMENT_API_TOKEN = ""  # set via wrangler secret put ENTITLEMENT_API_TOKEN
 
 # L5 — Dual Settlement Router shares the LOVE ledger D1 + the L3.4 bridge URL.
 BRIDGE_URL = "https://mcp-x402-bridge.p31ca.org/mcp"
 X402_VERSION = "2.0"
+
+# Entitlement service binding — the gateway calls the entitlement worker via
+# the service binding (https://entitlement.internal), NOT the public URL:
+# worker→worker subrequests to *.trimtab-signal.workers.dev fail with
+# error 1042. ENTITLEMENT_URL above remains as the external fallback.
+[[services]]
+binding = "ENTITLEMENT"
+service = "entitlement"
 
 # Phase 4 — Reserve & Refund GLM metering. LOVE_LEDGER_URL is where the
 # /llm/* billing endpoints live. GLM_MODEL is the Workers AI model id served

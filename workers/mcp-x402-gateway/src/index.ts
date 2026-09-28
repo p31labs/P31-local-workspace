@@ -42,6 +42,10 @@ interface Env {
   // Revenue-ledger integration (Phase 1 completion).
   REVENUE_LEDGER_URL?: string;
   // Entitlement Service — preflight credit gate (Phase 2).
+  // Service binding is the primary path (worker→worker fetch to a public
+  // *.workers.dev subrequest fails with error 1042); ENTITLEMENT_URL is the
+  // fallback for non-sibling / external deployments.
+  ENTITLEMENT?: Fetcher;
   ENTITLEMENT_URL?: string;
   ENTITLEMENT_API_TOKEN?: string;
   // Workers AI binding (GLM-4.7-Flash + others).
@@ -196,16 +200,19 @@ app.use("/mcp", async (c, next) => {
   if (!did) return next(); // no DID = anonymous, let x402 handle payment
 
   const entitlementUrl = c.env.ENTITLEMENT_URL;
-  if (!entitlementUrl) return next(); // entitlement not configured, fall through to x402
+  if (!c.env.ENTITLEMENT && !entitlementUrl) return next(); // entitlement not configured, fall through to x402
 
   try {
-    const checkUrl = `${entitlementUrl}/entitlement/check`;
+    // Service binding (https://entitlement.internal) is the primary path —
+    // public worker→worker subrequests on *.trimtab-signal.workers.dev fail
+    // with 404 / error 1042. ENTITLEMENT_URL is the external fallback.
+    const checkUrl = c.env.ENTITLEMENT ? "https://entitlement.internal/entitlement/check" : `${entitlementUrl}/entitlement/check`;
     const headers: Record<string, string> = { "Content-Type": "application/json" };
     if (c.env.ENTITLEMENT_API_TOKEN) {
       headers["Authorization"] = `Bearer ${c.env.ENTITLEMENT_API_TOKEN}`;
     }
 
-    const res = await fetch(checkUrl, {
+    const init: RequestInit = {
       method: "POST",
       headers,
       body: JSON.stringify({
@@ -213,12 +220,14 @@ app.use("/mcp", async (c, next) => {
         tool_id: toolName,
         estimated_cost_usdc: priced.price,
       }),
-    });
+    };
+
+    const res = c.env.ENTITLEMENT ? await c.env.ENTITLEMENT.fetch(checkUrl, init) : await fetch(checkUrl, init);
 
     if (!res.ok) {
-      const data = (await res.json().catch(() => ({}))) as { error?: string };
+      const data = (await res.json().catch(() => ({}))) as { error?: string; message?: string };
       return c.json({
-        error: data.error || "Entitlement check failed",
+        error: data.error || data.message || "Entitlement check failed",
         x402_version: "2.0",
         tool: toolName,
         cost: priced.price,
@@ -226,15 +235,18 @@ app.use("/mcp", async (c, next) => {
     }
 
     const result = await res.json() as any;
-    if (!result.ok) {
+    // entitlement's respond.ok() wraps the payload: {success:true, data:{ok:true,...}}.
+    // Normalize so both wrapped and bare {ok} shapes pass the gate.
+    const payload = result?.data ?? result;
+    if (!payload?.ok) {
       return c.json({
-        error: result.message || "Insufficient entitlement balance",
+        error: payload?.message || "Insufficient entitlement balance",
         x402_version: "2.0",
         tool: toolName,
         cost: priced.price,
-        balance: result.balance,
+        balance: payload?.balance,
       }, 402, {
-        "X-Entitlement-Balance": result.balance || "0",
+        "X-Entitlement-Balance": payload?.balance || "0",
         "X-Entitlement-Required": priced.price,
       });
     }
@@ -328,20 +340,21 @@ async function recordX402Revenue(c: AppContext["Bindings"], toolName: string, di
 
 // mcp-x402-gateway → entitlement service (consume balance after payment).
 async function consumeEntitlement(c: AppContext["Bindings"], did: string, toolName: string, price: string, execCtx: ExecutionContext) {
-  const url = c.ENTITLEMENT_URL;
-  if (!url || !did) return;
+  if ((!c.ENTITLEMENT && !c.ENTITLEMENT_URL) || !did) return;
+  const url = c.ENTITLEMENT ? "https://entitlement.internal/entitlement/consume" : `${c.ENTITLEMENT_URL}/entitlement/consume`;
   const txHash = `x402-${toolName}-${crypto.randomUUID()}`;
+  const init = {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      did,
+      tool_id: toolName,
+      amount_usdc: price,
+      tx_hash: txHash,
+    }),
+  };
   execCtx.waitUntil(
-    fetch(`${url}/entitlement/consume`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        did,
-        tool_id: toolName,
-        amount_usdc: price,
-        tx_hash: txHash,
-      }),
-    }).catch(() => {})
+    (c.ENTITLEMENT ? c.ENTITLEMENT.fetch(url, init) : fetch(url, init)).catch(() => {})
   );
 }
 
