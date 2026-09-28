@@ -21,8 +21,16 @@ database_name = "loom"
 database_id = "87f9bc5c-e74e-4c61-8405-a0ed04671194"
 
 [vars]
-CLOUDFLARE_ACCESS_DOMAIN = "https://REPLACE.cloudflareaccess.com"
-CLOUDFLARE_ACCESS_AUD = "REPLACE_WITH_ACCESS_AUD"
+CLOUDFLARE_ACCESS_DOMAIN = "https://p31ca.cloudflareaccess.com"
+# Loom Access app (2026-09-28, recreated after WS-4): self-hosted,
+# loom-8z0.pages.dev, preview_urls_enabled = true (gates <hash>.loom-8z0.pages.dev
+# under one AUD). Old aud 632d76e1… pointed at the deleted app — replaced by
+# the recreated app's aud (matches the zone-scoped Loom app 8f7cd3a7-…).
+CLOUDFLARE_ACCESS_AUD = "2518af42a528ac91104f4110f764c2e477abf30d66a0ab07c3362c56941aa8a9"
+# LUMI enforcement rollout state — see docs/GOVERNANCE.md. Start in OBSERVE
+# (records would-be refusals, allows events); promote to enforce per the
+# runbook once the observation window is clean.
+LUMI_ENFORCEMENT = "observe"
 
 # Service binding to the SSE Worker — the Pages Functions proxy /stream and
 # /broadcast to it (the Worker's Durable Object cannot be reached from Pages
