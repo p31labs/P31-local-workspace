@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+import { json } from './evidence-vault';
 
 describe('Evidence Vault', () => {
   it('should create a valid case payload', () => {
@@ -38,5 +39,19 @@ describe('Evidence Vault', () => {
     const entry3 = { chainHash: 'hash003', chainPrevHash: 'hash002' };
     expect(entry2.chainPrevHash).toBe(entry1.chainHash);
     expect(entry3.chainPrevHash).toBe(entry2.chainHash);
+  });
+
+  it('json() accepts a Request in the status position (WS-7 1101 regression)', () => {
+    const req = new Request('https://phos.p31ca.org/api/cases');
+    const res = json({ cases: [], count: 0 }, req);
+    expect(res.status).toBe(200);
+    expect(res.headers.get('Content-Type')).toBe('application/json');
+  });
+
+  it('json() still honors an explicit status with a trailing request', () => {
+    const req = new Request('https://phos.p31ca.org/api/cases');
+    const res = json({ error: 'Authentication required' }, 401, req);
+    expect(res.status).toBe(401);
+    expect(res.headers.get('Content-Type')).toBe('application/json');
   });
 });

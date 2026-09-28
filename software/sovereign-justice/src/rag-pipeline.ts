@@ -54,7 +54,11 @@ function corsHeaders(request: Request): Record<string, string> {
   };
 }
 
-function json(body: unknown, status = 200, request?: Request): Response {
+function json(body: unknown, status: number | Request = 200, request?: Request): Response {
+  if (status instanceof Request) {
+    request = status;
+    status = 200;
+  }
   return new Response(JSON.stringify(body), {
     status,
     headers: { 'Content-Type': 'application/json', ...(request ? corsHeaders(request) : {}) },
