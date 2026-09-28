@@ -16,6 +16,7 @@ const SURFACE_PATHS: Record<string, string> = {
   OPEN_LEDGER: '/open-ledger',
   BARTER: '/barter',
   GOVERNANCE: '/governance',
+  JUSTICE: '/justice',
   PASSPORT: '/passport',
   FEEDBACK: '/feedback',
   SANCTUARY: '/sanctuary',

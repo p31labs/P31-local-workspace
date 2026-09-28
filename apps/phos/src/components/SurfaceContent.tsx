@@ -40,6 +40,9 @@ const ShakeStream = lazy(() =>
 const WarehouseSurface = lazy(() =>
   import('../surfaces/WarehouseSurface').then(m => ({ default: m.WarehouseSurface }))
 );
+const SovereignJustice = lazy(() =>
+  import('../features/justice/components/SovereignJustice').then(m => ({ default: m.SovereignJustice }))
+);
 
 function SurfaceSkeleton() {
   return (
@@ -139,6 +142,13 @@ export function SurfaceContent({ currentSurface, setSurface, spoons, isGuest, is
 
     case 'GOVERNANCE':
       return <GovernanceSurface />;
+
+    case 'JUSTICE':
+      return (
+        <Suspense fallback={<SurfaceSkeleton />}>
+          <SovereignJustice />
+        </Suspense>
+      );
 
     case 'PASSPORT':
       return <PassportSurface />;
