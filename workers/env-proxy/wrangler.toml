@@ -1,0 +1,33 @@
+# env-proxy — BFF for the Quantum Material .env app (Phase 1, read-only).
+# Lists Worker secret NAMES (values never leave the Cloudflare API) against the
+# curated fleet manifest, plus D1-backed audit + status aggregation.
+name = "env-proxy"
+main = "src/index.ts"
+compatibility_date = "2026-07-16"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+# Cloudflare account id whose Worker scripts are probed.
+CF_ACCOUNT_ID = "ee05f70c889cb6f876b9925257e3a2fa"
+# CORS: the standalone .env app origin. "*" for now — set to
+# https://env.p31ca.org when that origin is confirmed.
+ALLOWED_ORIGINS = "*"
+
+# Required secrets (wrangler secret put, never in code):
+#   ENV_PROXY_TOKEN — bearer token the .env app sends on every request.
+#   CF_API_TOKEN    — scoped API token: "Workers Scripts: Read" +
+#                     "Account Secrets Store: Read" (workers_scripts:read,
+#                     account.secrets-store:read). NOT YET SET (see README.md).
+[secrets]
+required = ["ENV_PROXY_TOKEN", "CF_API_TOKEN"]
+
+[[d1_databases]]
+binding = "ENV_META"
+database_name = "env-meta"
+database_id = "708c0214-8b60-4997-8c11-d1d2845b3073"
+
+[observability]
+enabled = true
+
+[cache]
+enabled = true
