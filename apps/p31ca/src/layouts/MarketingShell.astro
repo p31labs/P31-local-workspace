@@ -1,25 +1,56 @@
 ---
+/**
+ * MarketingShell — the theming shell for P31 public surfaces.
+ *
+ * Provides the <html>/<head>/<body> chrome, the resolved data-theme, and the
+ * ambient background layer. Theme + background resolve from the canonical
+ * page-themes registry (@p31ca/canon/theming/page-themes) keyed on the current
+ * pathname, so a page's look is declared in one place and the shell reads it.
+ * Pages may still override via explicit props (title/description always do).
+ *
+ * The chrome (CanonTopbar, CommandPalette, LedController) lives HERE, not in
+ * the slot, so the three-act navigation + instrument persist across navigations.
+ * Astro View Transitions (transition:persist) keeps the ambient dome/starfield
+ * and chrome alive between pages — no remount, no state loss. The swap-fade
+ * script dims the ambient layer during the transition to hide the WebGL
+ * one-frame stutter the View Transitions API causes.
+ */
+import { resolveTheme } from '@p31/shared/theme/ids';
+import { pageTheme } from '@p31ca/canon/theming/page-themes';
+import { ViewTransitions } from 'astro:transitions';
+import MolecularHeart from '../components/background/MolecularHeart.tsx';
+import Starfield from '../components/background/Starfield.tsx';
+import HeartPulse from '../components/islands/HeartPulse.tsx';
+import CanonTopbar from '../components/islands/CanonTopbar.tsx';
+import LedController from '../components/LedController.tsx';
+import CommandPalette from '../components/CommandPalette.tsx';
+
 interface Props {
   title?: string;
   description?: string;
+  /** Canon theme id override (ocean/cipher/sunlight/garden/...). Omit to use the registry. */
   theme?: string;
+  /** Ambient background layer override. Omit to use the registry. */
+  background?: 'dome' | 'heart' | 'calm-gradient' | 'mesh' | 'none';
 }
 
 const {
   title = 'P31 Labs — Sovereign Stack for Neurodivergent Families',
   description = 'Open-source assistive technology. Sovereign identity, care economy, and open research for neurodivergent families.',
-  theme = 'ocean',
+  theme,
+  background,
 } = Astro.props;
 
-import { resolveTheme } from '@p31/shared/theme/ids';
-const resolvedTheme = resolveTheme(theme);
+const cfg = pageTheme(Astro.url.pathname);
+const resolvedTheme = resolveTheme(theme ?? cfg.theme);
+const ambient = background ?? cfg.background;
 
-import '@p31/canon/css/all.css';
+import '@p31ca/canon/css/all.css';
 import '../styles/p31-style.css';
 ---
 
 <!doctype html>
-<html lang="en" data-spoons="3" data-theme="compat">
+<html lang="en" data-spoons="3" data-theme={resolvedTheme} style="background: var(--p31-bg, #030712);">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -36,21 +67,35 @@ import '../styles/p31-style.css';
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Lora:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
     <title>{title}</title>
+    <ViewTransitions />
     <slot name="head" />
+    <!-- WS-3 WebMCP origin-trial slot (Chrome 149-156, expires 2026-11-17 00:00 UTC). No token yet. Insert here:
+         <meta http-equiv="origin-trial" content="TOKEN_FOR_https://p31ca.org"> -->
   </head>
-  <body class="min-h-screen antialiased" style="background: var(--p31-bg, #030712); color: var(--p31-text, #e2e8f0); font-family: var(--p31-font-sans, 'Plus Jakarta Sans', system-ui, sans-serif); line-height: 1.6; -webkit-font-smoothing: antialiased; overflow-x: hidden;">
+  <body class="min-h-screen antialiased" style="background: transparent; color: var(--p31-text, #e2e8f0); font-family: var(--p31-font-sans, 'Plus Jakarta Sans', system-ui, sans-serif); line-height: 1.6; -webkit-font-smoothing: antialiased; overflow-x: hidden;">
     <a href="#main-content" class="skip-link">Skip to main content</a>
-    
-    <!-- Ambient starfield background -->
-    <slot name="starfield">
-      <div class="fixed inset-0 pointer-events-none" aria-hidden="true" style="z-index: var(--p31-z-starfield, 0); background: radial-gradient(circle at 50% -20%, rgba(6,182,212,0.12) 0%, transparent 55%), radial-gradient(circle at 10% 80%, rgba(16,185,129,0.07) 0%, transparent 45%), radial-gradient(circle at 90% 90%, rgba(139,92,246,0.07) 0%, transparent 45%); background-color: var(--p31-void, #030712);"></div>
-    </slot>
+
+    <!-- Ambient background layer (calm, spoon-aware) — owned by the shell,
+         persisted across navigations via transition:persist -->
+    <div id="p31-ambient" class="p31-ambient">
+      {ambient === 'dome' && <Starfield client:load transition:persist />}
+      {ambient === 'dome' && <MolecularHeart client:only="react" transition:persist />}
+      {ambient === 'heart' && <HeartPulse client:load transition:persist spoons={3} />}
+      {ambient === 'calm-gradient' && <div class="fixed inset-0 pointer-events-none p31-cal-gradient" aria-hidden="true"></div>}
+    </div>
+
+    <!-- The chrome — persists across navigations, never in the slot -->
+    <CanonTopbar client:load transition:persist />
 
     <div id="main-content" class="relative" style="z-index: var(--p31-content, 10);">
       <slot />
     </div>
+
+    <!-- Bottom-left: command palette. Bottom-right: LED controller. -->
+    <CommandPalette client:load transition:persist />
+    <LedController client:load transition:persist />
 
     <script is:inline>
       (function () {
@@ -58,5 +103,73 @@ import '../styles/p31-style.css';
         document.documentElement.setAttribute('data-spoons', String(spoons));
       })();
     </script>
+
+    <!-- Swap-fade: dim the ambient layer during the view transition so the
+         WebGL renderer's one-frame pause is hidden. -->
+    <script is:inline>
+      (function () {
+        var ambient = document.getElementById('p31-ambient');
+        if (!ambient) return;
+        document.addEventListener('astro:before-swap', function () {
+          if (ambient) ambient.classList.add('is-swapping');
+        });
+        document.addEventListener('astro:after-swap', function () {
+          if (ambient) {
+            ambient.classList.remove('is-swapping');
+            ambient.style.opacity = '1';
+          }
+        });
+      })();
+    </script>
+
+    <!-- Mermaid: render <pre class="mermaid"> blocks client-side with a
+         graceful fallback (the source stays visible if rendering fails).
+         rehype-mermaid-lite produces the pre.mermaid elements from markdown
+         fences; .astro pages can write them directly. -->
+    <script>
+      import mermaid from 'mermaid';
+      window.addEventListener('DOMContentLoaded', () => {
+        const blocks = document.querySelectorAll('pre.mermaid:not([data-rendered])');
+        if (!blocks.length) return;
+        mermaid.initialize({ startOnLoad: false, theme: 'base', securityLevel: 'strict' });
+        blocks.forEach((block, i) => {
+          mermaid
+            .render(`mermaid-${Date.now()}-${i}`, block.textContent || '')
+            .then(({ svg }) => {
+              block.innerHTML = svg;
+              block.setAttribute('data-rendered', '1');
+            })
+            .catch(() => {
+              /* graceful fallback — leave the source code block visible */
+            });
+        });
+      });
+    </script>
   </body>
 </html>
+
+<style>
+  .p31-ambient {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    transition: opacity 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  /* During a view transition the WebGL renderer pauses one frame; the swap
+     fade dims the ambient layer so the stutter is invisible. */
+  .p31-ambient.is-swapping {
+    opacity: 0.35;
+  }
+  .p31-cal-gradient {
+    position: fixed;
+    inset: 0;
+    z-index: var(--p31-z-starfield, 0);
+    pointer-events: none;
+    background:
+      radial-gradient(circle at 50% -20%, color-mix(in oklab, var(--p31-accent) 14%, transparent) 0%, transparent 55%),
+      radial-gradient(circle at 10% 80%, color-mix(in oklab, var(--p31-accent-green) 8%, transparent) 0%, transparent 45%),
+      radial-gradient(circle at 90% 90%, color-mix(in oklab, var(--p31-accent-violet) 8%, transparent) 0%, transparent 45%);
+    background-color: var(--p31-bg, #030712);
+  }
+</style>
