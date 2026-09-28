@@ -1,0 +1,105 @@
+{
+  "schema": "https://p31ca.org/schemas/govern/constitution.schema.json",
+  "domain": "monetization",
+  "version": "0.1.0",
+  "canonicalSource": {
+    "path": "/home/p31/p31-capital-machine/workers/entitlement/x402.ts",
+    "description": "The entitlement + x402 payment contract — the rules that govern who can access paid tools and what a valid payment looks like."
+  },
+  "mirrors": [
+    {
+      "path": "monetization/src/api/client.ts",
+      "generatedFrom": "entitlement contract (x402.ts)",
+      "parityGate": "entitlement-parity"
+    },
+    {
+      "path": "monetization/src/lib/phenixWallet.ts",
+      "generatedFrom": "wallet + payment state",
+      "parityGate": "wallet-parity"
+    }
+  ],
+  "gates": [
+    {
+      "id": "entitlement-preflight",
+      "command": "curl -s -X POST https://entitlement.trimtab-signal.workers.dev/preflight -d '{}'",
+      "state": "OBSERVATIONAL",
+      "owner": "monetization",
+      "scope": "entitlement worker preflight route",
+      "remediation": "runbooks/RUNBOOK-monetization-entitlement.md",
+      "negativeControl": {
+        "type": "fixture",
+        "command": "scripts/nc/entitlement-preflight.mjs",
+        "expected": "exit-nonzero"
+      },
+      "enforcementMoment": "ci"
+    },
+    {
+      "id": "x402-verify",
+      "command": "node /home/p31/p31-capital-machine/workers/entitlement/x402.test.ts",
+      "state": "OBSERVATIONAL",
+      "owner": "monetization",
+      "scope": "x402 verify route (must reject invalid payment headers)",
+      "remediation": "runbooks/RUNBOOK-monetization-entitlement.md",
+      "negativeControl": {
+        "type": "fixture",
+        "command": "scripts/nc/x402-verify.mjs",
+        "expected": "exit-nonzero"
+      },
+      "enforcementMoment": "ci"
+    },
+    {
+      "id": "revenue-ledger-integrity",
+      "command": "echo 'TODO: ledger-integrity check (compare D1 rows vs summary endpoints)'",
+      "state": "OBSERVATIONAL",
+      "owner": "monetization",
+      "scope": "revenue-ledger D1: every summary must reconcile with raw rows",
+      "remediation": "runbooks/RUNBOOK-monetization-ledger.md",
+      "negativeControl": {
+        "type": "fixture",
+        "command": "scripts/nc/ledger-integrity.mjs",
+        "expected": "exit-nonzero"
+      },
+      "enforcementMoment": "weekly"
+    }
+  ],
+  "ratchets": [
+    {
+      "id": "stale-payment-debt",
+      "baseline": 0,
+      "countSource": "scripts/count-stale-payments.mjs",
+      "lockThreshold": 1
+    }
+  ],
+  "runbooks": [
+    {
+      "id": "RUNBOOK-monetization-entitlement",
+      "path": "runbooks/RUNBOOK-monetization-entitlement.md",
+      "owner": "monetization",
+      "lastVerified": "2026-09-28"
+    },
+    {
+      "id": "RUNBOOK-monetization-ledger",
+      "path": "runbooks/RUNBOOK-monetization-ledger.md",
+      "owner": "monetization",
+      "lastVerified": "2026-09-28"
+    }
+  ],
+  "lessons": [
+    {
+      "id": "M-001",
+      "rootCause": "monetization portal hardcoded its own workers.dev origin for the live badge, bypassing the portal's worker and its RBAC",
+      "prevention": "gate:entitlement-preflight (scope includes client routes)"
+    }
+  ],
+  "fleet": [
+    { "rule": "entitlement-preflight", "moment": "ci" },
+    { "rule": "x402-verify", "moment": "ci" },
+    { "rule": "revenue-ledger-integrity", "moment": "weekly" }
+  ],
+  "review": {
+    "who": "monetization maintainers",
+    "artifact": "entitlement x402.ts + revenue-ledger schema + the monetization constitution",
+    "cadence": "monthly; before any pricing or payment change",
+    "onFailure": "demote the affected gate to OBSERVATIONAL until the failure is understood; do not ship a payment change"
+  }
+}

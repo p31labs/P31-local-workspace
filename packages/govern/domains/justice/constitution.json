@@ -1,0 +1,90 @@
+{
+  "schema": "https://p31ca.org/schemas/govern/constitution.schema.json",
+  "domain": "justice",
+  "version": "0.1.0",
+  "canonicalSource": {
+    "path": "/home/p31/P31-local-workspace/workers/p31-justice-hub/src/index.ts",
+    "description": "The evidence-chain schema: SHA-256-chained records, each entry links to the prior chainHash, with dual Ed25519 + ML-DSA-65 signatures. The chain is the truth; case metadata and the audit log are mirrors."
+  },
+  "mirrors": [
+    {
+      "path": "p31-justice-hub D1 evidence table",
+      "generatedFrom": "evidence-chain schema (index.ts evidence deposit)",
+      "parityGate": "evidence-chain-verify"
+    },
+    {
+      "path": "justice case metadata + ODR records",
+      "generatedFrom": "case + escrow + odr tables",
+      "parityGate": "case-integrity"
+    }
+  ],
+  "gates": [
+    {
+      "id": "evidence-chain-verify",
+      "command": "curl -s https://p31-justice-hub.trimtab-signal.workers.dev/api/evidence/verify",
+      "state": "OBSERVATIONAL",
+      "owner": "justice",
+      "scope": "evidence entries: chainHash must link prevHash, dual signatures must verify",
+      "remediation": "runbooks/RUNBOOK-justice-evidence.md",
+      "negativeControl": {
+        "type": "fixture",
+        "command": "scripts/nc/evidence-chain.mjs",
+        "expected": "exit-nonzero"
+      },
+      "enforcementMoment": "weekly"
+    },
+    {
+      "id": "escrow-multisig",
+      "command": "echo 'TODO: escrow 2-of-3 release requires two distinct signer DIDs'",
+      "state": "OBSERVATIONAL",
+      "owner": "justice",
+      "scope": "escrow release: 2-of-3 multi-sig consensus",
+      "remediation": "runbooks/RUNBOOK-justice-escrow.md",
+      "negativeControl": {
+        "type": "fixture",
+        "command": "scripts/nc/escrow-multisig.mjs",
+        "expected": "exit-nonzero"
+      },
+      "enforcementMoment": "weekly"
+    }
+  ],
+  "ratchets": [
+    {
+      "id": "unresolved-cases",
+      "baseline": 0,
+      "countSource": "scripts/count-unresolved-cases.mjs",
+      "lockThreshold": 1
+    }
+  ],
+  "runbooks": [
+    {
+      "id": "RUNBOOK-justice-evidence",
+      "path": "runbooks/RUNBOOK-justice-evidence.md",
+      "owner": "justice",
+      "lastVerified": "2026-09-28"
+    },
+    {
+      "id": "RUNBOOK-justice-escrow",
+      "path": "runbooks/RUNBOOK-justice-escrow.md",
+      "owner": "justice",
+      "lastVerified": "2026-09-28"
+    }
+  ],
+  "lessons": [
+    {
+      "id": "J-001",
+      "rootCause": "legacy evidence worker served a stale mixed bundle; a destructive redeploy was avoided because the deployed Taler/feedback/DO source was not fully in the workspace",
+      "prevention": "gate:evidence-chain-verify (scope includes the live worker source vs the deployed bundle)"
+    }
+  ],
+  "fleet": [
+    { "rule": "evidence-chain-verify", "moment": "weekly" },
+    { "rule": "escrow-multisig", "moment": "weekly" }
+  ],
+  "review": {
+    "who": "justice maintainers + legal review",
+    "artifact": "evidence-chain schema + case/escrow/odr records + the justice constitution",
+    "cadence": "monthly; before any evidence or escrow policy change",
+    "onFailure": "demote the affected gate to OBSERVATIONAL until the failure is understood; do not release escrow funds on an unverified chain"
+  }
+}
