@@ -286,8 +286,19 @@ Every governance finding (like L-009's 158 chain link breaks) is a nonconformity
 | Negative controls | `node tools/system-test/negative-controls/sabotage.mjs` | any NC that cannot fail |
 | Governance validation | `node packages/govern/dist/cli.js validate <constitution>` | invalid constitution |
 | Chain integrity | `node packages/govern/domains/audit/scripts/audit-chain-verify.mjs` | broken hash/linkage |
+| Judge calibration | hand-scored tranche vs the judge, raw agreement ≥ 0.80 AND κ ≥ 0.60 | any judge output treated as evidence |
 
 Every gate prints a stable token on success. If you cannot paste the token, the gate did not pass. A gate that cannot be shown to fail is furniture — every gate has a negative control.
+
+**The judge rule (calibrate before trust):** A new LLM judge has NO authority
+until it has been calibrated against a small hand-scored tranche and passed the
+trust bar (raw agreement ≥ 0.80, Cohen's κ ≥ 0.60). Until then, its outputs are
+labeled ADVISORY in the artifact itself, and downstream consumers must not
+treat them as evidence. Every rubric the session introduces (bench scoring,
+preservation scoring, any future judge) is a new instrument and must pass this
+gate before producing numbers anyone acts on. This rule exists because an
+uncalibrated judge was re-introduced five times in one session under different
+names (bench judge, model pin, temperature, variance, preservation rubric).
 
 ---
 
