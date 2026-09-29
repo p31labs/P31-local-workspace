@@ -11,9 +11,9 @@ Every claim in this governance suite is backed by a runnable artifact. This regi
 
 | Claim | Artifact | Command | Expected |
 |---|---|---|---|
-| Runtime tests pass | `dist/*.test.js` | `node --test dist/*.test.js` | 21/21 pass |
+| Runtime tests pass | `dist/*.test.js` | `node --test dist/*.test.js` | 23/23 pass |
 | Runtime compiles | `dist/` | `npx tsc --noEmit && npx tsc` | clean |
-| Runtime self-governs | `constitution.json` | `govern self-test constitution.json` | 3/3 proven |
+| Runtime self-governs | `constitution.json` | `govern self-test constitution.json` | 5/5 proven |
 | Runtime ratchet at floor | `KNOWN_GAPS.md` | `govern ratchet constitution.json` | at baseline (0) |
 | Loader works | `scripts/nc/_canonical.mjs` | `node scripts/nc/loader-self-test.mjs` | `NEGATIVE_CONTROL_OK` |
 
@@ -29,7 +29,11 @@ Every claim in this governance suite is backed by a runnable artifact. This regi
 | Justice governed | `domains/justice/` | `govern audit domains/justice/constitution.json` | GOVERNED |
 | Audit gates proven | `domains/audit/` | `govern self-test domains/audit/constitution.json` | 2/2 proven |
 | Audit governed | `domains/audit/` | `govern reconcile specs/enterprise.govern.yaml && govern audit domains/audit/constitution.json` | GOVERNED |
-| All domains valid | — | `govern validate` on each of the 5 constitutions | valid |
+| Forge gates proven | `domains/forge/` | `govern self-test domains/forge/constitution.json` | 2/2 proven |
+| Forge governed | `domains/forge/` | `govern audit domains/forge/constitution.json` | GOVERNED |
+| Family gates proven | `domains/family/` | `govern self-test domains/family/constitution.json` | 2/2 proven |
+| Family declared, not governed | `domains/family/` | `govern audit domains/family/constitution.json` | valid; K₃ (court vacant) |
+| All domains valid | — | `govern validate` on each of the 7 constitutions | valid |
 
 ## 3. Enterprise evidence
 

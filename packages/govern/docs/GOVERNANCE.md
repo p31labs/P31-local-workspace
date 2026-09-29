@@ -10,7 +10,7 @@
 
 ## 1. What this governs
 
-The P31 Sovereign Stack is five governed domains — **design, monetization, justice, audit, and govern** (the runtime itself) — composed under one enterprise constitution. Each domain declares its own gates, ratchets, runbooks, and lessons in a `constitution.json` that conforms to the P31 constitution schema. The enterprise spec (`specs/enterprise.govern.yaml`) declares the five domains, the four inter-domain contracts, and the cross-cutting audit configuration.
+The P31 Sovereign Stack is seven governed domains — **design, monetization, justice, audit, forge, family, and govern** (the runtime itself) — composed under one enterprise constitution. Each domain declares its own gates, ratchets, runbooks, and lessons in a `constitution.json` that conforms to the P31 constitution schema. The enterprise spec (`specs/enterprise.govern.yaml`) declares six enterprise domains (design, monetization, justice, audit, forge, govern), five inter-domain contracts, and the cross-cutting audit configuration. Family is declared but not yet enterprise: its gates are OBSERVATIONAL and its review is K₃ (court vacant) until an independent reviewer is named.
 
 The runtime (`@p31ca/govern`) is the seam: the same seven primitives — canonical source, gates, negative controls, ratchets, runbooks, lessons, fleet — apply to every domain. A domain that does not validate is not a domain.
 
@@ -24,9 +24,13 @@ Every BLOCKING domain requires a four-party review: **user** (consumes the guara
 | monetization | monetization-consumer | monetization-engineer | monetization-genesis-chain | monetization-reviewer |
 | justice | justice-participant | justice-engineer | justice-genesis-chain | justice-reviewer |
 | audit | audit-consumer | audit-runtime | enterprise-genesis-chain | audit-reviewer |
+| forge | forge-consumer | forge-runtime | forge-genesis-chain | forge-reviewer |
 | govern | govern-consumer | govern-runtime | genesis-chain | govern-reviewer |
+| family | child | family-guardian | family-genesis-chain | *(vacant — K₃)* |
 
-**Known tension:** the design domain's `review.who.issuer` is `design-core`, which is also a gate owner. This is a K₄ conflict — the issuer and a gate owner are the same party. Resolution requires naming a distinct maintainer or third party as issuer. This is a human move, not an automatable one. Disclosed in KNOWN_GAPS G6.
+**Known tensions:**
+- The design domain's `review.who.issuer` is `design-core`, which is also a gate owner. This is a K₄ conflict — the issuer and a gate owner are the same party. Resolution requires naming a distinct maintainer or third party as issuer. This is a human move, not an automatable one. Disclosed in the design constitution's `aspirational[]` (DECISIONS.md H1).
+- The family domain's `review.who.court` is vacant. It audits as K₃ — declared, not governed on the four-party dimension. Naming a placeholder would be green-by-syntax; the honest state is an empty court until a real independent reviewer consents.
 
 ## 3. The negative-control contract
 
@@ -50,16 +54,19 @@ The audit domain's own chain is excluded from its orphan-blocks ratchet: the rec
 | monetization | 3 | BLOCKING | 3/3 proven | GOVERNED |
 | justice | 2 | BLOCKING | 2/2 proven | GOVERNED |
 | audit | 2 | BLOCKING | 2/2 proven | GOVERNED (after reconcile) |
-| govern | 3 | BLOCKING | 3/3 proven | GOVERNED |
+| forge | 2 | BLOCKING | 2/2 proven | GOVERNED |
+| govern | 5 | BLOCKING | 5/5 proven | GOVERNED |
+| family | 2 | OBSERVATIONAL | 2/2 proven | declared (K₃ — court vacant) |
 
 **Honest boundary:** the monetization and justice gate commands now invoke real canonical logic and are driven by `--state` fixtures in the NCs. However, the count sources for their ratchets (`stale-payment-debt`, `unresolved-cases`) return `{"count": 0}` because the D1/Durable Object stores are not reachable from the local runtime. The ratchets are wired, not yet enforcing against production debt. Disclosed in KNOWN_GAPS G1.
 
 ## 6. The enterprise contracts
 
-The four inter-domain contracts, as enforced by `govern compose` (the composer refuses a contract whose provider gate is not BLOCKING):
+The five inter-domain contracts, as enforced by `govern compose` (the composer refuses a contract whose provider gate is not BLOCKING):
 
 | Contract | Provider | Consumers | Provider gate | Enforced |
 |---|---|---|---|---|
+| documents-are-canonical | forge | design, monetization, justice, audit | system-test | ✅ |
 | design-tokens-stable | design | monetization, justice, audit | canon-purity | ✅ |
 | entitlement-events-recorded | monetization | justice, audit | revenue-ledger-integrity | ✅ |
 | evidence-custody-verified | justice | monetization, audit | evidence-chain-verify | ✅ |
