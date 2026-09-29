@@ -51,6 +51,24 @@ not things the agent believes. If a fact is not here and not in the last
 | Live: exact bench failure now converges | `gracefulConvergence` + `convergeWithChain` | full-synthesis, 3034 chars, 22.7s |
 | Verify suite | `verify.mjs --claims self-claims.json` | PASS 16/16 |
 
+## Verified facts (added: inference-speed baseline, 2026-09-29)
+
+| Fact | Verification command | Result |
+|---|---|---|
+| TTFT/TPS telemetry live | `dispatchLLM(...,{returnModel:true})` | ttft_ms/tps/total_ms/cached_prompt_tokens in return + event bus |
+| x-session-affinity LANDED | `grep sessionId router.mjs` | header sent when opts.sessionId set |
+| Cached tokens = 0 on deepseek-v4-flash + glm-5.3-flash | live 2-call affinity test | 20-40% prefill claim NOT verifiable on these models |
+| glm-5.3 accrues ~27 cached tok/call automatically | bench telemetry | prompt repeatability drives cache, not affinity header |
+| Batch API ABSENT | probed ai/v1/batch, ai/batch, ai/v1/chat/batches | code 7000 "No route for that URI" |
+| Speed baseline | bench jitterbug leg, 64 calls / 1828s | research facets ~51s/call (dominant), convergence ~13s, judge ~36s |
+| Score variance | same judge, 2 runs | mean 0.719 vs 0.604 — judge noisy run-to-run |
+
+## Open threads (NOT active — one at a time)
+
+- **speed-rank-3**: faster research-tier model to attack the ~150s/prompt
+  facet stage (dominant measured cost). Needs a catalog probe for a
+  lower-latency research model + before/after on the baseline.
+
 ## Open threads (NOT active — one at a time)
 
 - **bench-frontier**: run the frontier leg (`--models glm-5.3,deepseek-v4-pro`)
