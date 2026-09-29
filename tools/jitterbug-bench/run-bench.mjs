@@ -46,7 +46,7 @@ async function judgeReport(report, promptRubric) {
     .join('\n')
   const sys = 'You are a calibrated rubric judge. For each criterion, return one of: Satisfied, Partially, Not Satisfied. For negative criteria, return Present or Absent. Output strict JSON: {"scores":[{"id":"...","verdict":"..."}]}'
   const user = `## Report\n${report}\n\n## Criteria\n${criteria}`
-  const raw = await callLLM(sys, user, { intent: { task: 'reasoning', tag: 'reasoning', privacy: 'workers-ai' }, model: JUDGE_MODEL })
+  const raw = await callLLM(sys, user, { intent: { task: 'reasoning', tag: 'reasoning', privacy: 'workers-ai' }, model: JUDGE_MODEL, temperature: 0 })
   try {
     const cleaned = String(raw).replace(/```(?:json)?/gi, '').replace(/```/g, '').trim()
     return JSON.parse(cleaned)
