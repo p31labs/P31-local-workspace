@@ -1355,15 +1355,6 @@ importers:
         specifier: ^5.5.0
         version: 5.9.3
 
-  packages/govern:
-    devDependencies:
-      '@types/node':
-        specifier: ^22.0.0
-        version: 22.20.4
-      typescript:
-        specifier: ^5.7.0
-        version: 5.9.3
-
   packages/governance:
     dependencies:
       '@p31ca/design-core':
