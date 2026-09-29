@@ -75,6 +75,27 @@ not things the agent believes. If a fact is not here and not in the last
 | Full convergence suite | node hooks | 6/6 PASS after B+C |
 | N=3 bench running | /tmp/bench-n3.out | prompt 1 scored 0.500 at temp 0 (run 1) |
 
+## Verified facts (added: Path E harness + purpose sourcing, 2026-09-29)
+
+| Fact | Verification command | Result |
+|---|---|---|
+| Compression harness self-test | `__testDiagnose` + `--dry-run` | 5-criterion rubric, 120 map + 38 reduce pairs walk clean |
+| Facet/brief pairing | checkpoint regex parse | 39/40 checkpoints, session/level/facet correlation verified |
+| Cost model | `__testCost` + live telemetry | glm out $4.40/M vs gemma $0.30/M; cumulative $0.3765 USD |
+| Purpose targets sourced | review applied | 0.70 (rubric pass line) not 0.80; 3x = hypothesis-to-measure |
+| N=3 bench run 1 | /tmp/bench-n3.out | 0.500 / 0.690 / 0.722 so far (temp-0 judge) |
+
+## Open threads (NOT active — one at a time)
+
+- **path-e-live-run**: `node convergence/diagnose-compression.mjs` (live
+  temp-0 judge) after the N=3 bench finishes — inference contention gate.
+  Output: map_loss_rate + reduce_loss_rate + per-criterion.
+- **path-d-probe-run**: `node tools/jitterbug-bench/probe-models.mjs` after
+  the N=3 bench finishes. Then the research-model swap decision (gated on
+  probe + rubric spot-check).
+- **cost-parity-measure**: compute jitterbug vs frontier quality-per-dollar
+  from the N=3 telemetry + cost.mjs — resolves the 3x hypothesis.
+
 ## Open threads (NOT active — one at a time)
 
 - **path-d-probe-run**: run probe-models.mjs after N=3 bench finishes (rate
