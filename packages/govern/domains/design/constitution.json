@@ -295,7 +295,7 @@
     },
     {
       "id": "L-006",
-      "rootCause": "config change altered behavior elsewhere (project name \u2192 snapshot suffix)",
+      "rootCause": "config change altered behavior elsewhere (project name → snapshot suffix)",
       "prevention": "RUNBOOK-config-blast-radius",
       "oqe": {
         "evidenceClass": "test-suite",
@@ -384,7 +384,8 @@
   "aspirational": [
     "SIC-POVM is a research-only track (docs/SIC-POVM_RESEARCH.md): claims of SIC-POVM deployment in the design system are incorrect and must not appear in grant or engineering docs.",
     "K4 is planar: the rigidity claim rests on volumetric enclosure (beta-2 = 1), not non-planarity.",
-    "Quantum cognition and Betti-number telemetry are diagnostic vocabulary only \u2014 not design-system components."
+    "Quantum cognition and Betti-number telemetry are diagnostic vocabulary only — not design-system components.",
+    "K4 issuer conflict (H1): review.who.issuer is design-core, which is ALSO a gate owner (canon-purity, token-audit). A single party holding both the issuer vertex and the enforcement vertex weakens co-equality. The four-party topology is claimed structurally, but the issuer and a gate owner are the same party until a distinct issuer is named (DECISIONS.md H1). Naming a placeholder issuer would pass shape validation while failing the structural requirement. The court and issuer must be distinct people, not roles that resolve to the same maintainer."
   ],
   "resolutionRoot": "../../../../../production"
 }
