@@ -85,6 +85,27 @@ not things the agent believes. If a fact is not here and not in the last
 | Purpose targets sourced | review applied | 0.70 (rubric pass line) not 0.80; 3x = hypothesis-to-measure |
 | N=3 bench run 1 | /tmp/bench-n3.out | 0.500 / 0.690 / 0.722 so far (temp-0 judge) |
 
+## Verified facts (added: review flags addressed, 2026-09-29)
+
+| Fact | Verification command | Result |
+|---|---|---|
+| Judge rule in runbook §9 | `grep "judge rule" AGENT-RUNBOOK.md` | calibrate-before-trust gate added |
+| sessionId flows to telemetry | live dispatchLLM | `session_id: calib-test-2` in event |
+| Cost scoped to session | `telemetryCostUsd(path, sessionId)` | filter added, verified |
+| diagnose --since version window | `--since 17:00` | 36 map pairs (current runs) vs 120 full |
+| Preservation calibration harness | `--harvest` + calibrate | 13-pair/65-verdict tranche, math verified |
+| N=3 run 2 prompt 1 | /tmp/bench-n3.out | 0.806 vs 0.500 run 1 — same-prompt variance 0.306 CONFIRMED |
+
+## Open threads (NOT active — one at a time)
+
+- **preservation-judge-handscore**: fill the 65-verdict
+  preservation-sheet.json (human step), run calibrate-preservation.mjs, pass
+  trust bar before Path E rates are authoritative.
+- **path-e-live-run**: `diagnose-compression.mjs --since <window>` after N=3.
+- **path-d-probe-run**: `probe-models.mjs` after N=3.
+- **cost-parity-measure**: jitterbug vs frontier quality-per-dollar from N=3
+  telemetry (session-scoped now) + cost.mjs.
+
 ## Open threads (NOT active — one at a time)
 
 - **path-e-live-run**: `node convergence/diagnose-compression.mjs` (live
