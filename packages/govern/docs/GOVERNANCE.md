@@ -20,7 +20,7 @@ Every BLOCKING domain requires a four-party review: **user** (consumes the guara
 
 | Domain | user | issuer | ledger | court |
 |---|---|---|---|---|
-| design | design-consumer | design-core | genesis-chain | design-reviewer |
+| design | design-consumer | p31-governance-issuer | genesis-chain | design-reviewer |
 | monetization | monetization-consumer | monetization-engineer | monetization-genesis-chain | monetization-reviewer |
 | justice | justice-participant | justice-engineer | justice-genesis-chain | justice-reviewer |
 | audit | audit-consumer | audit-runtime | enterprise-genesis-chain | audit-reviewer |
@@ -29,7 +29,7 @@ Every BLOCKING domain requires a four-party review: **user** (consumes the guara
 | family | child | family-guardian | family-genesis-chain | *(vacant — K₃)* |
 
 **Known tensions:**
-- The design domain's `review.who.issuer` is `design-core`, which is also a gate owner. This is a K₄ conflict — the issuer and a gate owner are the same party. Resolution requires naming a distinct maintainer or third party as issuer. This is a human move, not an automatable one. Disclosed in the design constitution's `aspirational[]` (DECISIONS.md H1).
+- **Resolved (2026-09-29):** the design domain's issuer was `design-core`, which is also a gate owner — a K₄ conflict. Built up by naming a distinct governance-layer issuer: `p31-governance-issuer` issues the constitution and approves governance contracts, while `design-core` remains the gate owner/maintainer. Four parties are now genuinely distinct.
 - The family domain's `review.who.court` is vacant. It audits as K₃ — declared, not governed on the four-party dimension. Naming a placeholder would be green-by-syntax; the honest state is an empty court until a real independent reviewer consents.
 
 ## 3. The negative-control contract

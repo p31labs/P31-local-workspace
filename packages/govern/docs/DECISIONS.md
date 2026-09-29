@@ -61,7 +61,7 @@
 
 | # | Decision | Why it's human |
 |---|---|---|
-| H1 | Design's K₄ issuer conflict (G6) | Requires naming a distinct maintainer/third party as issuer |
+| H1 | ~~Design's K₄ issuer conflict (G6)~~ — **RESOLVED 2026-09-29** | Issuer split to `p31-governance-issuer`; `design-core` remains gate owner; four parties distinct |
 | H2 | Point CI at `govern audit enterprise-constitution.json` + `govern reconcile` as deploy blocks (G7) | Requires naming the CI moment |
 | H3 | Configure live read-only endpoints for the count sources (G1) | Requires exposing D1/DO read state in production |
 
