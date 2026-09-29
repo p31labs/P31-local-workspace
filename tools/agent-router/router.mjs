@@ -63,6 +63,15 @@ export async function runStage(stage, systemPrompt, userInput, opts = {}) {
   const errors = []
   let lastModel = null
 
+  // Per-stage maxTokens: coding (mechanic) needs headroom for component +
+  // tests + story; reasoning (architect) is compact; extraction is small.
+  const STAGE_MAX_TOKENS = {
+    'dillpickle-narrator': 1024,
+    'cornichon-architect': 1024,
+    'breadbutter-mechanic': 4096,
+    'gherkin-firmware': 1024,
+  }
+
   // Cross-step accumulation (Schema Validation Retry): prior-stage errors
   // become warnings in this stage's input so the failure doesn't repeat.
   const accumulated = priorErrors.length
@@ -71,8 +80,9 @@ export async function runStage(stage, systemPrompt, userInput, opts = {}) {
 
   while (attempts <= maxRetries) {
     const body = attempts > 0 ? `${accumulated}\n\nPrevious output failed validation. Fix ONLY these errors:\n${errors.join('\n')}` : accumulated
+    const maxTokens = STAGE_MAX_TOKENS[stage] ?? 1024
     try {
-      const { content, modelUsed } = await routeToWorkersAI(systemPrompt, body, intentTag, 1024, 0.2)
+      const { content, modelUsed } = await routeToWorkersAI(systemPrompt, body, intentTag, maxTokens, 0.2)
       lastModel = modelUsed
       const v = parseAndValidate(stage, content)
       if (v.ok) {
