@@ -71,6 +71,30 @@
         "evidenceClass": "test-suite",
         "reference": "tools/family/negative-controls/cradle-semantic.mjs"
       }
+    },
+    {
+      "id": "pickle-names",
+      "command": "node /home/p31/P31-local-workspace/tools/family/pickle-names-gate.mjs",
+      "state": "BLOCKING",
+      "owner": [
+        {
+          "type": "role",
+          "id": "family-guardian",
+          "scope": "family identity integrity"
+        }
+      ],
+      "scope": "@p31ca/sovereign-primitives pickle-names invariants — determinism, vocabulary-closed, collision-free, unique canonical passports",
+      "remediation": "runbooks/RUNBOOK-pickle-names.md",
+      "negativeControl": {
+        "type": "fixture",
+        "command": "/home/p31/P31-local-workspace/tools/family/negative-controls/pickle-names.mjs",
+        "expected": "proof-marker"
+      },
+      "enforcementMoment": "ci",
+      "oqe": {
+        "evidenceClass": "test-suite",
+        "reference": "tools/family/negative-controls/pickle-names.mjs"
+      }
     }
   ],
   "ratchets": [],
@@ -85,6 +109,17 @@
         }
       ],
       "lastVerified": "2026-09-28"
+    },
+    {
+      "id": "RUNBOOK-pickle-names",
+      "path": "runbooks/RUNBOOK-pickle-names.md",
+      "owner": [
+        {
+          "type": "role",
+          "id": "family-guardian"
+        }
+      ],
+      "lastVerified": "2026-09-29"
     }
   ],
   "lessons": [
