@@ -1,25 +1,48 @@
 {
-  "name": "@p31/sovereign-primitives",
-  "version": "0.0.1",
-  "private": true,
+  "name": "@p31ca/sovereign-primitives",
+  "version": "0.0.2",
+  "private": false,
   "type": "module",
   "description": "Identity and cryptographic primitives for the P31 Labs ecosystem",
-  "author": "P31 Labs <hello@p31ca.org>",
+  "author": "P31 Labs <willyj1587@gmail.com>",
   "license": "MIT",
   "homepage": "https://p31ca.org",
   "repository": {
     "type": "git",
-    "url": "https://github.com/p31labs/andromeda.git",
+    "url": "git+https://github.com/p31labs/andromeda.git",
     "directory": "packages/sovereign-primitives"
   },
   "scripts": {
+    "clean": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\"",
     "build": "tsc",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
-    "test": "vitest run --passWithNoTests"
+    "test": "vitest run --passWithNoTests",
+    "prepublishOnly": "npm run clean && npm run build && npm run test"
   },
-  "main": "src/index.ts",
-  "types": "src/index.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/index.js",
+    "dist/index.d.ts",
+    "dist/capabilityToken.js",
+    "dist/capabilityToken.d.ts",
+    "dist/composite.js",
+    "dist/composite.d.ts",
+    "dist/postQuantum.js",
+    "dist/postQuantum.d.ts",
+    "dist/crypto.js",
+    "dist/crypto.d.ts",
+    "dist/audioEngine.js",
+    "dist/audioEngine.d.ts",
+    "dist/trust",
+    "dist/pickle-names",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
     "@noble/post-quantum": "^0.6.1"
   },
@@ -27,6 +50,25 @@
     "typescript": "^5.5.0"
   },
   "exports": {
-    ".": "./src/index.ts"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./capability-token": {
+      "types": "./dist/capabilityToken.d.ts",
+      "import": "./dist/capabilityToken.js"
+    },
+    "./composite": {
+      "types": "./dist/composite.d.ts",
+      "import": "./dist/composite.js"
+    },
+    "./post-quantum": {
+      "types": "./dist/postQuantum.d.ts",
+      "import": "./dist/postQuantum.js"
+    },
+    "./pickle-names": {
+      "types": "./dist/pickle-names/export.d.ts",
+      "import": "./dist/pickle-names/export.js"
+    }
   }
 }
