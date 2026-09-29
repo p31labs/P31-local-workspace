@@ -37,7 +37,10 @@ export function callCostUsd({ model, promptTokens = 0, completionTokens = 0 }) {
 }
 
 // Aggregate cost across a telemetry log (router.decision events). USD.
-export function telemetryCostUsd(eventsPath = '/tmp/phos-forge/events.jsonl') {
+// Optional sessionId filter scopes the cost to ONE session's calls —
+// required for quality-per-dollar, which must measure a single run's cost,
+// not the whole shared log (the log also holds probes, tests, live probes).
+export function telemetryCostUsd(eventsPath = '/tmp/phos-forge/events.jsonl', sessionId = null) {
   if (!existsSync(eventsPath)) return 0;
   let total = 0;
   const lines = readFileSync(eventsPath, 'utf-8').split('\n').filter(Boolean);
@@ -45,6 +48,7 @@ export function telemetryCostUsd(eventsPath = '/tmp/phos-forge/events.jsonl') {
     try {
       const ev = JSON.parse(line);
       const p = ev.payload ?? ev;
+      if (sessionId && p.session_id !== sessionId) continue;
       if (p.model && (p.prompt_tokens || p.completion_tokens)) {
         total += callCostUsd({ model: p.model, promptTokens: p.prompt_tokens ?? 0, completionTokens: p.completion_tokens ?? 0 });
       }

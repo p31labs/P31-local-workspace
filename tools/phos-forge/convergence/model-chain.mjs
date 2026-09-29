@@ -68,6 +68,7 @@ function buildCallOnce(model, system, opts) {
       maxTokens: callOpts?.maxTokens ?? 2000,
       temperature: callOpts?.temperature ?? 0.3,
       timeoutMs: opts.timeoutMs ?? 180000,
+      sessionId: opts.sessionId ?? null,
     });
     return r;
   };

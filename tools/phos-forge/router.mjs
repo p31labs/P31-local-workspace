@@ -53,7 +53,7 @@ function getBioState() {
   return { spoons };
 }
 
-function emitTelemetry(intent, targetModel, fallbackUsed, sovereign, r = {}) {
+function emitTelemetry(intent, targetModel, fallbackUsed, sovereign, r = {}, opts = {}) {
   try {
     appendFileSync(
       EVENTS_PATH,
@@ -65,6 +65,7 @@ function emitTelemetry(intent, targetModel, fallbackUsed, sovereign, r = {}) {
           sovereign,
           fallback_used: fallbackUsed,
           spoons: getBioState().spoons,
+          session_id: opts.sessionId ?? null,
           ttft_ms: r.ttftMs ?? null,
           tps: r.tps ?? null,
           total_ms: r.totalMs ?? null,
@@ -388,7 +389,7 @@ export async function dispatchLLM(system, user, intent = {}, opts = {}) {
     const r = await routeToWorkersAI(
       system, user, tag, maxTokens, temperature, opts.timeoutMs ?? 120000, opts,
     );
-    emitTelemetry(intent, r.modelUsed, false, false, r);
+    emitTelemetry(intent, r.modelUsed, false, false, r, opts);
     return opts.returnModel ? r : r.content;
   }
 

@@ -111,11 +111,12 @@ const RESEARCH_CHEAP = 'research';
 const RESEARCH_STRONG = 'synthesis';
 const CONVERGE_MODEL = 'synthesis';
 
-async function runResearch(facet, parentContext, index, privacy) {
+async function runResearch(facet, parentContext, index, privacy, sessionId) {
   return callLLM(RESEARCH_SYSTEM, `## Facet\n${facet}\n\n## Context from parent synthesis\n${trimContext(parentContext)}\n\nExplore this facet in depth.`, {
     intent: { task: 'research', tag: 'fast', privacy },
     maxTokens: 4096,
     temperature: 0.8,
+    sessionId,
   });
 }
 
@@ -136,6 +137,7 @@ async function runConvergence(researchTexts, privacy, session, level) {
       reasoningEffort: 'low',
       originalQuestion: `Merge these ${researchTexts.length} research outputs into a unified synthesis.`,
       timeoutMs: 180000,
+      sessionId: session,
     });
     return r.content;
   };
@@ -247,6 +249,7 @@ Format:
         intent: { task: 'synthesis', tag: 'synthesis', privacy },
         maxTokens: 2048,
         temperature: 0.5,
+        sessionId: session,
       });
       facets = parseFacets(splitResult) || [];
       if (facets.length < gated.factor) {
@@ -277,7 +280,7 @@ Format:
     // Spawn parallel research
     const researchPromises = facets.map((facet, i) => {
       busEmit('jitterbug.research_started', { session, level, index: i, facet: facet.title });
-      return runResearch(facet.prompt, currentContext, i, privacy).then(result => {
+      return runResearch(facet.prompt, currentContext, i, privacy, session).then(result => {
         saveArtifact(session, level, `research-${i + 1}.md`, `# ${facet.title}\n\n${result}`);
         busEmit('jitterbug.research_complete', { session, level, index: i });
         return result;
