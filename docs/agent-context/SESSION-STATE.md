@@ -96,6 +96,27 @@ not things the agent believes. If a fact is not here and not in the last
 | Preservation calibration harness | `--harvest` + calibrate | 13-pair/65-verdict tranche, math verified |
 | N=3 run 2 prompt 1 | /tmp/bench-n3.out | 0.806 vs 0.500 run 1 — same-prompt variance 0.306 CONFIRMED |
 
+## Verified facts (added: N=3 run 1 + rename hazard, 2026-09-29)
+
+| Fact | Verification command | Result |
+|---|---|---|
+| Run 1 complete (temp-0 judge) | runs/2026-09-29-N1-fixed/results.json | mean 0.718, pass@k 50% — 0.500/0.690/0.722/0.958 |
+| Run 2 in progress | /tmp/bench-n3.out | 0.806 (p1), 0.714 (p2) |
+| Rename hazard found+fixed | wrapper 'latest' pick | run 1 was mislabeled N1 (held compression-report); moved real data to N1-fixed |
+| Same-prompt variance | run2 p1 0.806 vs run1 p1 0.500 | 0.306 — pipeline variance, temp-0 judge alone insufficient |
+
+## Open threads (NOT active — one at a time)
+
+- **n3-bench-finish**: run 2 (in progress) + run 3. When ALL DONE, aggregate
+  per-prompt mean ± stddev across N1-fixed/N2/N3. Watch the rename at run-3
+  completion (compression/ mtime hazard).
+- **preservation-judge-handscore**: fill 65-verdict preservation-sheet.json
+  (human step), run calibrate-preservation.mjs.
+- **path-e-live-run**: after N=3 + preservation judge calibrated.
+- **path-d-probe-run**: after N=3.
+- **cost-parity-measure**: jitterbug vs frontier quality-per-dollar (session-
+  scoped) from N=3 telemetry.
+
 ## Open threads (NOT active — one at a time)
 
 - **preservation-judge-handscore**: fill the 65-verdict
