@@ -26,8 +26,13 @@
  * Usage:
  *   node tools/phos-forge/convergence/diagnose-compression.mjs            # live judge
  *   node tools/phos-forge/convergence/diagnose-compression.mjs --dry-run  # fake judge
+ *   node tools/phos-forge/convergence/diagnose-compression.mjs --since 2026-09-29T17:00
+ *     # scope to checkpoints written after this ISO timestamp (version window).
+ *     # Required: the disk holds checkpoints from MULTIPLE pipeline versions
+ *     # (pre-temp-fix, pinned-judge, post-resilience). Mixing them measures
+ *     # 'average loss across every variant' — not a useful diagnostic.
  */
-import { readFileSync, writeFileSync, mkdirSync, readdirSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, readdirSync, existsSync, statSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import crypto from 'node:crypto';
@@ -87,13 +92,16 @@ function facetFor(session, level, i) {
   return existsSync(p) ? readFileSync(p, 'utf-8') : null;
 }
 
-function checkpoints() {
+function checkpoints(since = null) {
   return readdirSync(CHECKPOINT_DIR)
     .filter((f) => f.endsWith('-convergence.json') && !f.startsWith('test-'))
     .map((f) => {
       const m = f.match(/^([0-9a-f]+)-l(\d)-convergence\.json$/);
       if (!m) return null;
-      const d = JSON.parse(readFileSync(resolve(CHECKPOINT_DIR, f), 'utf-8'));
+      const p = resolve(CHECKPOINT_DIR, f);
+      // Version-window filter: exclude checkpoints written before `since`.
+      if (since && statSync(p).mtime < new Date(since).getTime()) return null;
+      const d = JSON.parse(readFileSync(p, 'utf-8'));
       return { session: m[1], level: Number(m[2]), briefs: d.briefs ?? [], synthesis: d.synthesis ?? '', file: f };
     })
     .filter(Boolean);
@@ -110,6 +118,8 @@ async function judge(source, target, kind) {
 
 async function main() {
   const dryRun = process.argv.includes('--dry-run');
+  const sinceArg = process.argv.find((a) => a === '--since');
+  const since = sinceArg ? process.argv[process.argv.indexOf(sinceArg) + 1] : null;
   const judgeFn = dryRun
     ? async (s, t, k) => {
         // deterministic fake judge: all Satisfied (used to test the harness)
@@ -120,8 +130,9 @@ async function main() {
   mkdirSync(OUT_DIR, { recursive: true });
   const mapResults = [];
   const reduceResults = [];
+  const pairs = [];
 
-  for (const cp of checkpoints()) {
+  for (const cp of checkpoints(since)) {
     // MAP: each brief vs its facet
     for (let i = 0; i < cp.briefs.length; i++) {
       const facet = facetFor(cp.session, cp.level, i);
@@ -129,6 +140,7 @@ async function main() {
       const j = await judgeFn(facet, cp.briefs[i], 'map');
       const rate = computePreservationRate(j);
       mapResults.push({ session: cp.session, level: cp.level, index: i, rate, judgement: j });
+      pairs.push({ id: `${cp.session}-l${cp.level}-m${i}`, kind: 'map', session: cp.session, level: cp.level, judgement: j });
       process.stdout.write(`map ${cp.session}/l${cp.level}/f${i}: ${rate.toFixed(2)}  `);
     }
     // REDUCE: synthesis vs the brief-set (fidelity of the merge)
@@ -137,6 +149,7 @@ async function main() {
       const j = await judgeFn(briefSet, cp.synthesis, 'reduce');
       const rate = computePreservationRate(j);
       reduceResults.push({ session: cp.session, level: cp.level, rate, judgement: j });
+      pairs.push({ id: `${cp.session}-l${cp.level}-r`, kind: 'reduce', session: cp.session, level: cp.level, judgement: j });
       process.stdout.write(`reduce ${cp.session}/l${cp.level}: ${rate.toFixed(2)}  `);
     }
     process.stdout.write('\n');
@@ -164,6 +177,7 @@ async function main() {
   const report = {
     generated: new Date().toISOString(),
     dryRun,
+    since: since ?? null,
     nMap: mapResults.length,
     nReduce: reduceResults.length,
     mapLossRate: 1 - mean(mapResults.map((r) => r.rate)),
@@ -171,6 +185,7 @@ async function main() {
     perCriterion: critReport,
   };
   writeFileSync(resolve(OUT_DIR, 'compression-report.json'), JSON.stringify({ report, mapResults, reduceResults }, null, 2));
+  writeFileSync(resolve(OUT_DIR, 'pairs.json'), JSON.stringify({ pairs }, null, 2));
 
   console.log('\n=== Compression Loss Report ===');
   console.log(`map_loss_rate   = ${(report.mapLossRate * 100).toFixed(1)}%  (n=${report.nMap})`);
