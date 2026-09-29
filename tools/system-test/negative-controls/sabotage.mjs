@@ -16,16 +16,19 @@ const ROOT = '/home/p31'
 const GOVERN = `${ROOT}/P31-local-workspace/packages/govern`
 const TEST = `${ROOT}/P31-local-workspace/tools/system-test`
 
-// Residue guard: a leftover .sabotage-bak from a prior run means the last
-// teardown did NOT complete — the system may be carrying forward corruption.
+// Residue guard: a leftover .sabotage-bak or __nc__* fixture from a prior run
+// means the last teardown did NOT complete — the system may be carrying
+// forward corruption. Scans every tree the suite's NCs can mutate, including
+// design-core/src where the canon-purity NC writes its NaN fixture.
 function assertNoResidue() {
   const leftovers = execSync(
-    `find ${ROOT}/P31-local-workspace/packages/govern ${ROOT}/P31-local-workspace/tools/phos-forge -name '*.sabotage-bak' 2>/dev/null`,
+    `find ${ROOT}/P31-local-workspace/packages/govern ${ROOT}/P31-local-workspace/tools/phos-forge ${ROOT}/P31-local-workspace/packages/design-core/src -name '*.sabotage-bak' -o -name '__nc__*' 2>/dev/null`,
     { encoding: 'utf8' },
   ).trim().split('\n').filter(Boolean)
   if (leftovers.length > 0) {
-    console.error(`✗ sabotage pre-flight: leftover .sabotage-bak from a prior run: ${leftovers.join(', ')}`)
-    console.error('  The previous sabotage teardown did not complete — the system may be corrupted.')
+    console.error(`✗ sabotage pre-flight: leftover residue from a prior run: ${leftovers.join(', ')}`)
+    console.error('  The previous teardown did not complete — the system may be corrupted.')
+    console.error('  Remove the listed files (they are generated fixtures), then re-run.')
     process.exit(1)
   }
 }
