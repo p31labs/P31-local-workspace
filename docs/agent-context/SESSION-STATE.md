@@ -136,11 +136,20 @@ Do NOT touch runs/ until run 3 completes.
 | Validation gate wired | `npm run gate` (design-core) | includes tokens:validate |
 | Unitless line-height -> DTCG number | converter | lineHeight 1.2 -> $type number (dimension rejects unit:'') |
 
+## Verified facts (added: canon DTCG, 2026-09-29)
+
+| Fact | Verification command | Result |
+|---|---|---|
+| canon tokens.dtc.json DTCG-valid | `dtokens check` | PASSED exit 0 (was 4427 errors) |
+| gen-tokens.mjs emits structured DTCG | regenerate + check | CSS-string -> objects |
+| Data bug caught: sunset violet hue 360 | theme-store.ts | fixed to 0 (invalid in OKLCH) |
+| Contracts resolve after conversion | `validate-contracts.mjs` | PASSED |
+| Parity (design-core drop-in) | `verify-token-parity.mjs` | 0 divergences |
+| Both token sources strict-valid | validate.mjs --only | design-core + canon PASSED |
+
 ## Open threads (NOT active — one at a time)
 
-- **canon-converter**: extend the converter to packages/canon/tokens/tokens.dtc.json
-  (522 leaves, flat dot-keys p31.*, themes/, component/). The SKILL.md names
-  this as the canonical source — it must pass DTCG too.
+
 - **DESIGN.md**: the missing Layer-2 agent contract (research: prose rules = 0%
   compliance; DESIGN.md = machine-enforced). Write from tokens + canon decisions.
 - **catalog A/B**: measure P31's bad-component rate (ungoverned vs catalog-
