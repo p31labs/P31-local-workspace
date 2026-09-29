@@ -13,6 +13,7 @@ import { fileURLToPath } from 'node:url';
 import { parseIntent, summarize } from './intent/parser';
 import { runQaGates } from './qa/gates';
 import { loadExampleSpecs } from './orchestrate';
+import { JsonlAgenticAuditSink, hashInput } from './audit';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const [cmd, ...rest] = process.argv.slice(2);
@@ -65,13 +66,27 @@ switch (cmd) {
       res.errors?.forEach((e) => console.error(`   ${e}`));
       process.exit(1);
     }
-    const report = runQaGates(res.spec!);
+const report = runQaGates(res.spec!);
     console.log(`OPUS QA REPORT — ${res.spec!.component}`);
     for (const c of report.checks) {
       const mark = c.status === 'pass' ? '✅' : c.status === 'warn' ? '⚠️' : '❌';
       console.log(`  ${mark} ${c.name}: ${c.detail}`);
     }
     console.log(report.approved ? 'Status: ✅ APPROVED' : 'Status: 🔴 REJECTED');
+
+    // Provenance root: record this gate verdict into the design audit chain.
+    const sink = JsonlAgenticAuditSink.default();
+    const block = sink.append({
+      domain: 'design',
+      stage: 'opus-architect',
+      component: res.spec!.component,
+      inputHash: hashInput(readFileSync(file, 'utf8')),
+      gateVerdict: report.approved ? 'approved' : 'rejected',
+      humanCheckpoint: 'not-required',
+      summary: `${report.checks.filter((c) => c.status === 'reject').length} rejects`,
+    });
+    console.log(`  (audit block #${block.blockNumber} → ${block.currentHash.slice(0, 16)}…)`);
+
     process.exit(report.approved ? 0 : 1);
   }
 
