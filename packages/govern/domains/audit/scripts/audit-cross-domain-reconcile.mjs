@@ -30,13 +30,18 @@ if (overrideDir) {
     if (existsSync(p)) chains.push(p);
   }
 } else {
-  const base = resolve(scriptDir, '../../../domains');
-  for (const entry of readdirSync(base)) {
-    const p = resolve(base, entry, '.govern-audit.jsonl');
+  // Source of truth: the enterprise spec's domain list. This MUST mirror
+  // `govern reconcile`'s domain enumeration exactly — a declared-but-not-
+  // governed domain (e.g. family) is not an enterprise orphan.
+  const specPath = resolve(scriptDir, '../../../specs/enterprise.govern.yaml');
+  const { parse } = await import('yaml');
+  const spec = parse(readFileSync(specPath, 'utf8'));
+  const specDir = resolve(specPath, '..');
+  for (const d of spec.domains ?? []) {
+    const conPath = resolve(specDir, d.ref);
+    const p = resolve(dirname(conPath), '.govern-audit.jsonl');
     if (existsSync(p)) chains.push(p);
   }
-  const runtimeChain = resolve(scriptDir, '../../../.govern-audit.jsonl');
-  if (existsSync(runtimeChain)) chains.push(runtimeChain);
 }
 chains.sort();
 

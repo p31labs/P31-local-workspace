@@ -23,18 +23,21 @@ if (overrideDir) {
     if (existsSync(p)) chains.push(p);
   }
 } else {
-  const base = resolve(scriptDir, '../../../domains');
-  for (const entry of readdirSync(base)) {
-    // The audit domain is the reconciler; its own ledger is mirrored by the
-    // same reconcile that reads it (idempotent, self-consistent). Counting its
-    // own pending block would be infinite regress — the reconciler cannot be
-    // its own orphan. The court vertex (K4) is the check on the reconciler.
-    if (entry === 'audit') continue;
-    const p = resolve(base, entry, '.govern-audit.jsonl');
+  // Source of truth: the enterprise spec's domain list. A declared-but-not-
+  // governed domain (e.g. family, K3/OBSERVATIONAL) is NOT an enterprise
+  // orphan — it simply isn't part of the enterprise timeline until governed.
+  // This must mirror `govern reconcile`'s domain enumeration exactly, or the
+  // gate and the reconciler will disagree about what an orphan is.
+  const specPath = resolve(scriptDir, '../../../specs/enterprise.govern.yaml');
+  const { readFileSync } = await import('node:fs');
+  const { parse } = await import('yaml');
+  const spec = parse(readFileSync(specPath, 'utf8'));
+  const specDir = resolve(specPath, '..');
+  for (const d of spec.domains ?? []) {
+    const conPath = resolve(specDir, d.ref);
+    const p = resolve(dirname(conPath), '.govern-audit.jsonl');
     if (existsSync(p)) chains.push(p);
   }
-  const runtimeChain = resolve(scriptDir, '../../../.govern-audit.jsonl');
-  if (existsSync(runtimeChain)) chains.push(runtimeChain);
 }
 
 const enterpriseHashes = new Set();
