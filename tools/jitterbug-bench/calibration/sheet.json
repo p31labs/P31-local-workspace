@@ -8,7 +8,7 @@
       "axis": "Explicit Criteria",
       "criterion": "Specifies a deterministic generation algorithm",
       "weight": 3,
-      "human_verdict": "",
+      "human_verdict": "Satisfied",
       "judge_verdict": "Satisfied"
     },
     {
@@ -17,7 +17,7 @@
       "axis": "Explicit Criteria",
       "criterion": "Provides a collision-probability bound",
       "weight": 3,
-      "human_verdict": "",
+      "human_verdict": "Not Satisfied",
       "judge_verdict": "Not Satisfied"
     },
     {
@@ -26,7 +26,7 @@
       "axis": "Explicit Criteria",
       "criterion": "Defines testable invariants (as assertions)",
       "weight": 2,
-      "human_verdict": "",
+      "human_verdict": "Not Satisfied",
       "judge_verdict": "Not Satisfied"
     },
     {
@@ -35,7 +35,7 @@
       "axis": "Explicit Criteria",
       "criterion": "Cites a real PRNG or hash function (cyrb128, mulberry32, etc.)",
       "weight": 2,
-      "human_verdict": "",
+      "human_verdict": "Satisfied",
       "judge_verdict": "Satisfied"
     },
     {
@@ -44,7 +44,7 @@
       "axis": "Implicit Criteria",
       "criterion": "Infers that vocabulary changes break existing names",
       "weight": 2,
-      "human_verdict": "",
+      "human_verdict": "Not Satisfied",
       "judge_verdict": "Not Satisfied"
     },
     {
@@ -53,7 +53,7 @@
       "axis": "Implicit Criteria",
       "criterion": "Addresses the case where the seed leaks",
       "weight": 2,
-      "human_verdict": "",
+      "human_verdict": "Satisfied",
       "judge_verdict": "Satisfied"
     },
     {
@@ -62,7 +62,7 @@
       "axis": "Synthesis",
       "criterion": "Connects the privacy argument to the algorithm choice",
       "weight": 2,
-      "human_verdict": "",
+      "human_verdict": "Satisfied",
       "judge_verdict": "Satisfied"
     },
     {
@@ -71,7 +71,7 @@
       "axis": "References",
       "criterion": "Citations resolve",
       "weight": 1,
-      "human_verdict": "",
+      "human_verdict": "Not Satisfied",
       "judge_verdict": "Not Satisfied"
     },
     {
@@ -80,7 +80,7 @@
       "axis": "Communication",
       "criterion": "Algorithm is presented as runnable pseudocode",
       "weight": 1,
-      "human_verdict": "",
+      "human_verdict": "Not Satisfied",
       "judge_verdict": "Not Satisfied"
     },
     {
@@ -89,7 +89,7 @@
       "axis": "Negative",
       "criterion": "Does NOT claim the system is 'anonymous' if it is pseudonymous",
       "weight": -2,
-      "human_verdict": "",
+      "human_verdict": "Absent",
       "judge_verdict": "Present"
     },
     {
@@ -98,7 +98,7 @@
       "axis": "Negative",
       "criterion": "Does NOT use a reversible encoding as the 'privacy' mechanism",
       "weight": -3,
-      "human_verdict": "",
+      "human_verdict": "Absent",
       "judge_verdict": "Present"
     },
     {
@@ -107,7 +107,7 @@
       "axis": "Explicit Criteria",
       "criterion": "Specifies a hash-linked, append-only audit chain",
       "weight": 3,
-      "human_verdict": "",
+      "human_verdict": "Satisfied",
       "judge_verdict": "Satisfied"
     },
     {
@@ -116,7 +116,7 @@
       "axis": "Explicit Criteria",
       "criterion": "Defines the human-approval gate for irreversible actions",
       "weight": 3,
-      "human_verdict": "",
+      "human_verdict": "Satisfied",
       "judge_verdict": "Satisfied"
     },
     {
@@ -125,7 +125,7 @@
       "axis": "Explicit Criteria",
       "criterion": "Provides a concrete schema for the audit block",
       "weight": 2,
-      "human_verdict": "",
+      "human_verdict": "Not Satisfied",
       "judge_verdict": "Not Satisfied"
     },
     {
@@ -134,7 +134,7 @@
       "axis": "Explicit Criteria",
       "criterion": "Cites NIST AI RMF, ISO 42001, SOX ITGC, IETF GAR, or FedRAMP 20x",
       "weight": 3,
-      "human_verdict": "",
+      "human_verdict": "Not Satisfied",
       "judge_verdict": "Not Satisfied"
     },
     {
@@ -143,7 +143,7 @@
       "axis": "Implicit Criteria",
       "criterion": "Infers the 'verifiable without trusting the vendor' requirement",
       "weight": 3,
-      "human_verdict": "",
+      "human_verdict": "Satisfied",
       "judge_verdict": "Satisfied"
     },
     {
@@ -152,7 +152,7 @@
       "axis": "Implicit Criteria",
       "criterion": "Addresses nonhuman-identity lifecycle (joiner-mover-leaver)",
       "weight": 2,
-      "human_verdict": "",
+      "human_verdict": "Not Satisfied",
       "judge_verdict": "Not Satisfied"
     },
     {
@@ -161,7 +161,7 @@
       "axis": "Synthesis",
       "criterion": "Maps at least two frameworks onto one architecture",
       "weight": 2,
-      "human_verdict": "",
+      "human_verdict": "Satisfied",
       "judge_verdict": "Satisfied"
     },
     {
@@ -170,7 +170,7 @@
       "axis": "References",
       "criterion": "Citations resolve to real, relevant sources",
       "weight": 2,
-      "human_verdict": "",
+      "human_verdict": "Not Satisfied",
       "judge_verdict": "Not Satisfied"
     },
     {
@@ -179,7 +179,7 @@
       "axis": "Communication",
       "criterion": "Architecture has named components and data flows",
       "weight": 1,
-      "human_verdict": "",
+      "human_verdict": "Satisfied",
       "judge_verdict": "Satisfied"
     },
     {
@@ -188,7 +188,7 @@
       "axis": "Negative",
       "criterion": "Does NOT propose logs that nobody reads (governance theatre)",
       "weight": -3,
-      "human_verdict": "",
+      "human_verdict": "Absent",
       "judge_verdict": "Absent"
     },
     {
@@ -197,7 +197,7 @@
       "axis": "Negative",
       "criterion": "Does NOT propose rubber-stamp approvals",
       "weight": -2,
-      "human_verdict": "",
+      "human_verdict": "Absent",
       "judge_verdict": "Absent"
     }
   ]
