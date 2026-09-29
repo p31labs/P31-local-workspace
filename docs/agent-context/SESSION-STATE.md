@@ -125,6 +125,28 @@ Current status: run 3 in progress (fresh 2026-09-29/). Will complete cleanly.
 Effective N after run 3 = N1 + N3 (N=2), plus run 2's partial stdout.
 Do NOT touch runs/ until run 3 completes.
 
+## Verified facts (added: DTCG token validation, 2026-09-29)
+
+| Fact | Verification command | Result |
+|---|---|---|
+| design-core tokens.json was NOT DTCG-valid | `dtokens check` | 1494 schema errors (CSS-string $value) |
+| Converter produces valid DTCG | `dtokens check tokens.dtc.json` | PASSED, exit 0 (163 leaves) |
+| CSS-function values excluded from interchange | converter design | 20 calc/var/blur leaves stay in CSS layer |
+| canon/tokens.dtc.json also NOT DTCG-valid | `dtokens check` | 4427 schema errors — needs canon converter |
+| Validation gate wired | `npm run gate` (design-core) | includes tokens:validate |
+| Unitless line-height -> DTCG number | converter | lineHeight 1.2 -> $type number (dimension rejects unit:'') |
+
+## Open threads (NOT active — one at a time)
+
+- **canon-converter**: extend the converter to packages/canon/tokens/tokens.dtc.json
+  (522 leaves, flat dot-keys p31.*, themes/, component/). The SKILL.md names
+  this as the canonical source — it must pass DTCG too.
+- **DESIGN.md**: the missing Layer-2 agent contract (research: prose rules = 0%
+  compliance; DESIGN.md = machine-enforced). Write from tokens + canon decisions.
+- **catalog A/B**: measure P31's bad-component rate (ungoverned vs catalog-
+  governed) — the number nobody has.
+- **MCP deploy**: mcp.design.p31ca.org is not live (000). Deploy http-worker.
+
 ## Open threads (NOT active — one at a time)
 
 ## Open threads (NOT active — one at a time)
