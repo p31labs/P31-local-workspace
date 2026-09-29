@@ -1,4 +1,224 @@
 {
-  "results": [],
-  "summary": []
+  "results": [
+    {
+      "prompt": "01-spoon-aware-adaptation",
+      "source": "jitterbug",
+      "compliance": 0.5833333333333334,
+      "judgement": {
+        "scores": [
+          {
+            "id": "ER-1",
+            "verdict": "Not Satisfied"
+          },
+          {
+            "id": "ER-2",
+            "verdict": "Not Satisfied"
+          },
+          {
+            "id": "ER-3",
+            "verdict": "Partially"
+          },
+          {
+            "id": "ER-4",
+            "verdict": "Satisfied"
+          },
+          {
+            "id": "IR-1",
+            "verdict": "Satisfied"
+          },
+          {
+            "id": "IR-2",
+            "verdict": "Satisfied"
+          },
+          {
+            "id": "SY-1",
+            "verdict": "Satisfied"
+          },
+          {
+            "id": "RF-1",
+            "verdict": "Not Satisfied"
+          },
+          {
+            "id": "CM-1",
+            "verdict": "Satisfied"
+          },
+          {
+            "id": "NG-1",
+            "verdict": "Absent"
+          },
+          {
+            "id": "NG-2",
+            "verdict": "Absent"
+          }
+        ]
+      }
+    },
+    {
+      "prompt": "02-family-safe-governance",
+      "source": "jitterbug",
+      "compliance": 0.4523809523809524,
+      "judgement": {
+        "scores": [
+          {
+            "id": "ER-1",
+            "verdict": "Satisfied"
+          },
+          {
+            "id": "ER-2",
+            "verdict": "Satisfied"
+          },
+          {
+            "id": "ER-3",
+            "verdict": "Partially"
+          },
+          {
+            "id": "ER-4",
+            "verdict": "Not Satisfied"
+          },
+          {
+            "id": "IR-1",
+            "verdict": "Partially"
+          },
+          {
+            "id": "IR-2",
+            "verdict": "Not Satisfied"
+          },
+          {
+            "id": "SY-1",
+            "verdict": "Not Satisfied"
+          },
+          {
+            "id": "RF-1",
+            "verdict": "Not Satisfied"
+          },
+          {
+            "id": "CM-1",
+            "verdict": "Satisfied"
+          },
+          {
+            "id": "NG-1",
+            "verdict": "Absent"
+          },
+          {
+            "id": "NG-2",
+            "verdict": "Absent"
+          }
+        ]
+      }
+    },
+    {
+      "prompt": "03-privacy-preserving-identity",
+      "source": "jitterbug",
+      "compliance": 0.6666666666666666,
+      "judgement": {
+        "scores": [
+          {
+            "id": "ER-1",
+            "verdict": "Satisfied"
+          },
+          {
+            "id": "ER-2",
+            "verdict": "Satisfied"
+          },
+          {
+            "id": "ER-3",
+            "verdict": "Not Satisfied"
+          },
+          {
+            "id": "ER-4",
+            "verdict": "Satisfied"
+          },
+          {
+            "id": "IR-1",
+            "verdict": "Not Satisfied"
+          },
+          {
+            "id": "IR-2",
+            "verdict": "Satisfied"
+          },
+          {
+            "id": "SY-1",
+            "verdict": "Satisfied"
+          },
+          {
+            "id": "RF-1",
+            "verdict": "Not Satisfied"
+          },
+          {
+            "id": "CM-1",
+            "verdict": "Not Satisfied"
+          },
+          {
+            "id": "NG-1",
+            "verdict": "Absent"
+          },
+          {
+            "id": "NG-2",
+            "verdict": "Absent"
+          }
+        ]
+      }
+    },
+    {
+      "prompt": "04-step-level-routing",
+      "source": "jitterbug",
+      "compliance": 0.8125,
+      "judgement": {
+        "scores": [
+          {
+            "id": "ER-1",
+            "verdict": "Partially"
+          },
+          {
+            "id": "ER-2",
+            "verdict": "Satisfied"
+          },
+          {
+            "id": "ER-3",
+            "verdict": "Satisfied"
+          },
+          {
+            "id": "ER-4",
+            "verdict": "Satisfied"
+          },
+          {
+            "id": "IR-1",
+            "verdict": "Satisfied"
+          },
+          {
+            "id": "IR-2",
+            "verdict": "Satisfied"
+          },
+          {
+            "id": "SY-1",
+            "verdict": "Satisfied"
+          },
+          {
+            "id": "RF-1",
+            "verdict": "Not Satisfied"
+          },
+          {
+            "id": "CM-1",
+            "verdict": "Partially"
+          },
+          {
+            "id": "NG-1",
+            "verdict": "Absent"
+          },
+          {
+            "id": "NG-2",
+            "verdict": "Absent"
+          }
+        ]
+      }
+    }
+  ],
+  "summary": [
+    {
+      "source": "jitterbug",
+      "mean_compliance": 0.6287202380952381,
+      "pass_at_k": 0.25,
+      "n": 4
+    }
+  ]
 }
