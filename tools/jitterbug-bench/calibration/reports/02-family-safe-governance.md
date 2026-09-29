@@ -1,0 +1,25 @@
+## Consensus
+- All three briefs converge on a layered governance architecture for high-stakes agentic AI: a decoupled Agentic Core, an interception-style Sentinel/Authority Layer, and a Human Anchor for irreversible actions.
+- Irreversible/high-risk actions demand stronger verification than routine ones — all briefs propose tiered risk-based execution paths (routine/pre-authorized vs. full validation vs. human sign-off).
+- "Break-Glass" emergency override is universally accepted as necessary to resolve the latency-safety paradox, with the shared caveat that it must be heavily audited and constrained.
+- Cryptographic binding and immutable audit trails are foundational: version-controlled Policy Canons (Brief 1), hash-then-sign NRIOs (Brief 2), and Immutable Audit Ledgers with Re-identification Certificates (Brief 3).
+- ABAC appears in Briefs 1 and 3 as the symbolic policy enforcement mechanism, with semantic attributes preferred over raw data.
+- Shared case domains (child welfare, assisted living) and shared open risks: unquantified latency, unvalidated empirical performance, and truncated implementation details.
+- All briefs recognize that naive mechanisms fail: prompt wrappers fail (B1), Approve/Deny buttons fail (B2), single-level pseudonymization fails (B3).
+
+## Divergence
+- **Break-Glass design conflict:** Brief 1 specifies a single-use, heavily audited protocol; Brief 2 uses VDF time-locks with delayed validity and regulator alerts; Brief 3 reduces a k=3 threshold to k=1 — explicitly flagged as a single-share abuse vector. These are incompatible defaults with different threat models (coercion vs. speed vs. insider abuse).
+- **Human Anchor topology:** Brief 1 implies a single Human Anchor sign-off; Brief 2 distributes authority into m-of-n threshold quorums (FROST/Schnorr) to remove coercion points; Brief 3 distributes cryptographic shares across institutional stakeholders (judicial, agency, auditor, operator, responder). Quorum-of-persons vs. quorum-of-institutions is an unresolved structural choice.
+- **Privacy architecture:** Brief 3's two-tier tokenization (ECT/PSI with TEE/HSM mapping) is absent from Briefs 1 and 2, which assume the Sentinel sees action payloads — potentially including PII — directly.
+- **Semantic verification mechanism:** Brief 1 relies on a constrained Judge LLM (with its own ungoverned failure modes); Brief 2 requires a deterministic dual-path reconstruction engine (assumed to exist); Brief 3 sidesteps via ABAC attributes but risks inference leakage. No brief validates its semantic layer.
+- **Latency handling:** Brief 1's Fast/Slow Path split vs. Brief 3's threshold reconstruction latency vs. Brief 2's unmeasured signing overhead — different mechanisms, none empirically benchmarked.
+- **Edge cases preserved:** semantic bypassing via sequence-level letter-vs-spirit attacks (B1); Context Injection UI/payload mismatch (B2); governance paralysis from semantic blindness on synthetic IDs (B3); multi-signer coercion in m-of-n (B2, unaddressed).
+
+## Synthesis
+The three briefs are complementary layers of one architecture, not competitors: Brief 1 supplies the control-plane topology (Sentinel sidecar, tiered validation, Policy Canon), Brief 2 supplies the human-authorization cryptography (NRIO, threshold signatures), and Brief 3 supplies the data-governance substrate (tokenization, ledger, institutional key custody). The unified design:
+
+1. **Integrate, don't parallelize:** The Sentinel (B1) should be the enforcement point that *consumes* NRIOs (B2) and operates over tokenized attributes (B3), so all three layers share one interception point rather than three overlapping gates.
+2. **Resolve Break-Glass by composition:** Adopt B2's VDF time-lock + immediate regulator alert as the wrapper, B3's k=1 threshold reduction as the trigger, and B1's single-use audit constraint as the bound. The single-share abuse vector is mitigated because the k=1 share only unlocks a time-delayed, alert-emitting, single-use action — not silent access.
+3. **Carry forward:** NRIO with dual-path verification as the mandatory interface for irreversible actions; two-tier ECT/PSI tokenization with ABAC attributes feeding the Sentinel (this also partially answers B1's Judge-LLM governance gap — the Judge sees attributes, not identities); institutional threshold custody (B3) as the root-of-trust layer above B2's per-action quorums.
+4. **Deprioritize:** The Judge LLM as sole semantic validator (B1) — its reliability is unproven and it duplicates B2's deterministic reconstruction; treat it as a fallback or advisory tier only. Single-person Human Anchor sign-off (B1's default) should be superseded by threshold schemes.
+5. **Critical gap to close first:** No brief empirically validates latency in life-critical paths, and all three truncate before implementation detail. A reference implementation benchmarking the Fast Path, threshold signing, and Break-Glass end-to-end latency is the highest-priority next step — the architecture's viability hinges on it.

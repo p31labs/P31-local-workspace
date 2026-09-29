@@ -35,13 +35,18 @@ async function runFrontierForPrompt(text, tag) {
   return { source: `frontier:${tag}`, report: r ?? '', session: null }
 }
 
+// The rubric DECLARES deepseek-v4-flash as judge; the router's `reasoning`
+// intent otherwise selects the highest-price reasoning model (glm-5.3 — the
+// stalling model). Pin the judge so declared == actual.
+const JUDGE_MODEL = '@cf/deepseek-ai/deepseek-v4-flash-0731'
+
 async function judgeReport(report, promptRubric) {
   const criteria = promptRubric.rubrics
     .map((r) => `- [${r.id}] ${r.criterion} (weight ${r.weight}, axis ${r.axis})`)
     .join('\n')
   const sys = 'You are a calibrated rubric judge. For each criterion, return one of: Satisfied, Partially, Not Satisfied. For negative criteria, return Present or Absent. Output strict JSON: {"scores":[{"id":"...","verdict":"..."}]}'
   const user = `## Report\n${report}\n\n## Criteria\n${criteria}`
-  const raw = await callLLM(sys, user, { intent: { task: 'reasoning', tag: 'reasoning', privacy: 'workers-ai' } })
+  const raw = await callLLM(sys, user, { intent: { task: 'reasoning', tag: 'reasoning', privacy: 'workers-ai' }, model: JUDGE_MODEL })
   try {
     const cleaned = String(raw).replace(/```(?:json)?/gi, '').replace(/```/g, '').trim()
     return JSON.parse(cleaned)
@@ -101,7 +106,7 @@ async function main() {
       const j = await judgeReport(row.report, promptRubric)
       const compliance = computeCompliance(j, promptRubric)
       console.log(`  -> ${row.source}: compliance ${compliance.toFixed(3)}`)
-      results.push({ prompt: id, source: row.source, compliance, judgement: j })
+      results.push({ prompt: id, source: row.source, compliance, judgement: j, report: row.report, session: row.session })
     }
   }
 

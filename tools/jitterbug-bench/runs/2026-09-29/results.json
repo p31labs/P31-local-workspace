@@ -3,7 +3,7 @@
     {
       "prompt": "01-spoon-aware-adaptation",
       "source": "jitterbug",
-      "compliance": 0.5833333333333334,
+      "compliance": 0.5,
       "judgement": {
         "scores": [
           {
@@ -12,11 +12,11 @@
           },
           {
             "id": "ER-2",
-            "verdict": "Not Satisfied"
+            "verdict": "Partially"
           },
           {
             "id": "ER-3",
-            "verdict": "Partially"
+            "verdict": "Not Satisfied"
           },
           {
             "id": "ER-4",
@@ -32,7 +32,7 @@
           },
           {
             "id": "SY-1",
-            "verdict": "Satisfied"
+            "verdict": "Partially"
           },
           {
             "id": "RF-1",
@@ -51,12 +51,14 @@
             "verdict": "Absent"
           }
         ]
-      }
+      },
+      "report": "## Consensus\n\nAll three briefs converge on a core architecture and philosophy:\n\n- **Semantic Token Resolver pattern**: A typed mapping layer (React Context `CapacityProvider`) translating a discrete `spoon_count` (0–5) into multi-dimensional design tokens (density, verbosity, actionPriority, complexity/instructionalTone, visualNoise), rather than conditional component swapping. All cite this as the antidote to \"component soup\" and layout jitter.\n- **Capability decoupled from complexity**: Simplify the task, not the user. Actions are simplified or collapsed at low capacity, never hidden — preserving capability parity and avoiding paternalism/infantilization.\n- **Predictability as a first-class constraint (W3C COGA)**: Tier shifts should be user-initiated or explicitly signaled; spatially stable \"anchors\" (nav, primary action bar) must remain fixed while only the content area adapts.\n- **Persistent escape hatch**: Every low-tier state needs a \"Show All Options\" / \"Complexity Escape Hatch\" — a mode switch, not a help icon — enabling ad-hoc access to complexity without a full reset.\n- **Plain Language (WCAG 3.1.5)** at ~Grade 6 readability, with direct (non-patronizing) tone.\n- **A 0-state safety pattern**: spoon_count 0 requires a functional \"Safety Mode\" / \"Single Critical Path\" — one primary action plus emergency exit — rather than a sparse void.\n- **Failure-mode matrix as validation instrument**: shared taxonomy of risks (dial misreads, over-restriction, infantilization, layout shift, 0-state deadlock) with mitigations, intended for validation with neurodivergent cohorts.\n- **Hybrid behavioral suggestion model**: Behavioral signals may *suggest* tier changes but never force them, to preserve autonomy.\n- **Shared open risks**: telemetry thresholds undefined; no empirical validation yet; six-tier granularity may be too coarse; surveillance-like perception of behavioral inference.\n\n## Divergence\n\n- **State management substrate**: Briefs 1–2 propose naive React Context + typed resolver; Brief 3 argues this is insufficient and prescribes a Finite State Machine (XState) with Transition Guards, explicitly calling Context-based if/else logic inadequate for capacity transitions. Brief 3 also flags FSM maintenance burden as a risk the others don't address.\n- **System-initiated changes**: Brief 1 permits user-initiated-only shifts; Brief 2 allows system-initiated changes if explicitly signaled via toast prompts; Brief 3's Hybrid Advisory Model has telemetry *suggest* downgrades. These span a spectrum from prohibition to advisory nudging.\n- **Escape hatch semantics**: Brief 2 frames it as ad-hoc access to *specific* complexity (partial, targeted); Brief 3's Safety Hatch *overrides actionPriority to 'all'* (a global state override). Brief 1's \"Show All Options\" is closer to a full reset — the granularity of the override differs.\n- **Detection/measurement**: Brief 3 uniquely specifies concrete metrics (error rates, CLS, bounce rate at level 0, repeated hidden-element access attempts); Briefs 1–2 leave measurement abstract.\n- **Token dimensions**: Brief 1 includes `instructionalTone` and `complexity`; Brief 3 includes `colorContrast`; Brief 2 emphasizes `visualNoise`. The token vocabulary isn't unified.\n- **Failure-mode completeness**: Brief 2 admits its matrix is truncated (Dial Misread mitigations incomplete); Brief 1 claims a complete matrix; Brief 3 restructures the taxonomy into three domains (Input Integrity, Agency/Dignity, Structural Predictability) — a different organizing scheme.\n- **Over-estimation Trap**: Brief 3 uniquely identifies users *masking or misjudging* capacity (ADHD/Autism) as an input-integrity failure; Briefs 1–2 treat misreads primarily as a dial/UX problem.\n\n## Synthesis\n\n**Carry forward — a unified architecture:**\n\n1. **Layered state model**: Adopt Brief 3's FSM (XState) with transition guards as the substrate, but keep Briefs 1–2's typed Semantic Token Resolver as the *output layer* the FSM feeds. This resolves the Context-vs-FSM divergence: the resolver centralizes spoon_count→token logic (Brief 1's anti-drift concern), while the FSM governs *when and how* transitions occur (Brief 3's predictability concern). The resolver remains the single choke point components consume, preventing logic drift.\n2. **Unified token vocabulary**: Merge dimensions — density, verbosity, complexity, actionPriority, instructionalTone, visualNoise, colorContrast — into one typed token set with a documented tier mapping table.\n3. **Advisory-only system shifts, on a consent spectrum**: Standardize on Brief 3's Hybrid Advisory Model with Brief 2's explicit toast signaling: telemetry may *suggest*, user confirms, and suggestions are always explainable (\"we noticed X — simplify your view?\"). Never auto-apply. This addresses the surveillance concern via transparency rather than prohibition.\n4. **Tiered escape hatch**: Bridge the granularity divergence with a two-level hatch — Brief 2's targeted per-feature expansion as the default, escalating to Brief 3's global actionPriority='all' override. Style as a mode switch, not a help icon (Brief 3's discoverability insight).\n5. **Input Integrity as a first-class failure domain**: Elevate Brief 3's Over-estimation Trap into the shared failure-mode matrix, adopting Brief 3's three-domain taxonomy (Input Integrity, Agency/Dignity, Structural Predictability) as the organizing structure, with Brief 1's trigger/mitigation rows folded in — this also repairs Brief 2's truncated matrix.\n6. **Concrete measurement plan**: Adopt Brief 3's metrics (CLS, error rates, level-0 bounce, hidden-element access attempts) plus Brief 1's cognitive-load validation and Brief 3's infantilization sentiment measurement as the empirical validation protocol with neurodivergent cohorts.\n\n**Deprioritize:**\n- Debates over the exact tier count (6 vs. fewer) — defer to empirical testing of perceptual distinctiveness rather than resolving architecturally.\n- Full behavioral telemetry implementation — keep the *interface* for suggestions defined but leave threshold tuning as a post-validation task.\n- Brief 1's \"Focus Mode\" branding specifics — the pattern (simplified actions, not hidden) is consensus; naming is cosmetic.\n\n**Highest-priority open question:** empirical validation. All three briefs converge on the same gap — no user testing yet. The synthesized architecture is internally coherent but rests on unvalidated assumptions about tier distinctiveness, escape-hatch discoverability, and perceived agency. A cohort study using the merged failure-mode matrix as its test plan is the critical next step.",
+      "session": "d0ed2234"
     },
     {
       "prompt": "02-family-safe-governance",
       "source": "jitterbug",
-      "compliance": 0.4523809523809524,
+      "compliance": 0.5714285714285714,
       "judgement": {
         "scores": [
           {
@@ -69,7 +71,7 @@
           },
           {
             "id": "ER-3",
-            "verdict": "Partially"
+            "verdict": "Not Satisfied"
           },
           {
             "id": "ER-4",
@@ -77,7 +79,7 @@
           },
           {
             "id": "IR-1",
-            "verdict": "Partially"
+            "verdict": "Satisfied"
           },
           {
             "id": "IR-2",
@@ -85,7 +87,7 @@
           },
           {
             "id": "SY-1",
-            "verdict": "Not Satisfied"
+            "verdict": "Satisfied"
           },
           {
             "id": "RF-1",
@@ -104,12 +106,14 @@
             "verdict": "Absent"
           }
         ]
-      }
+      },
+      "report": "## Consensus\n- All three briefs converge on a layered governance architecture for high-stakes agentic AI: a decoupled Agentic Core, an interception-style Sentinel/Authority Layer, and a Human Anchor for irreversible actions.\n- Irreversible/high-risk actions demand stronger verification than routine ones — all briefs propose tiered risk-based execution paths (routine/pre-authorized vs. full validation vs. human sign-off).\n- \"Break-Glass\" emergency override is universally accepted as necessary to resolve the latency-safety paradox, with the shared caveat that it must be heavily audited and constrained.\n- Cryptographic binding and immutable audit trails are foundational: version-controlled Policy Canons (Brief 1), hash-then-sign NRIOs (Brief 2), and Immutable Audit Ledgers with Re-identification Certificates (Brief 3).\n- ABAC appears in Briefs 1 and 3 as the symbolic policy enforcement mechanism, with semantic attributes preferred over raw data.\n- Shared case domains (child welfare, assisted living) and shared open risks: unquantified latency, unvalidated empirical performance, and truncated implementation details.\n- All briefs recognize that naive mechanisms fail: prompt wrappers fail (B1), Approve/Deny buttons fail (B2), single-level pseudonymization fails (B3).\n\n## Divergence\n- **Break-Glass design conflict:** Brief 1 specifies a single-use, heavily audited protocol; Brief 2 uses VDF time-locks with delayed validity and regulator alerts; Brief 3 reduces a k=3 threshold to k=1 — explicitly flagged as a single-share abuse vector. These are incompatible defaults with different threat models (coercion vs. speed vs. insider abuse).\n- **Human Anchor topology:** Brief 1 implies a single Human Anchor sign-off; Brief 2 distributes authority into m-of-n threshold quorums (FROST/Schnorr) to remove coercion points; Brief 3 distributes cryptographic shares across institutional stakeholders (judicial, agency, auditor, operator, responder). Quorum-of-persons vs. quorum-of-institutions is an unresolved structural choice.\n- **Privacy architecture:** Brief 3's two-tier tokenization (ECT/PSI with TEE/HSM mapping) is absent from Briefs 1 and 2, which assume the Sentinel sees action payloads — potentially including PII — directly.\n- **Semantic verification mechanism:** Brief 1 relies on a constrained Judge LLM (with its own ungoverned failure modes); Brief 2 requires a deterministic dual-path reconstruction engine (assumed to exist); Brief 3 sidesteps via ABAC attributes but risks inference leakage. No brief validates its semantic layer.\n- **Latency handling:** Brief 1's Fast/Slow Path split vs. Brief 3's threshold reconstruction latency vs. Brief 2's unmeasured signing overhead — different mechanisms, none empirically benchmarked.\n- **Edge cases preserved:** semantic bypassing via sequence-level letter-vs-spirit attacks (B1); Context Injection UI/payload mismatch (B2); governance paralysis from semantic blindness on synthetic IDs (B3); multi-signer coercion in m-of-n (B2, unaddressed).\n\n## Synthesis\nThe three briefs are complementary layers of one architecture, not competitors: Brief 1 supplies the control-plane topology (Sentinel sidecar, tiered validation, Policy Canon), Brief 2 supplies the human-authorization cryptography (NRIO, threshold signatures), and Brief 3 supplies the data-governance substrate (tokenization, ledger, institutional key custody). The unified design:\n\n1. **Integrate, don't parallelize:** The Sentinel (B1) should be the enforcement point that *consumes* NRIOs (B2) and operates over tokenized attributes (B3), so all three layers share one interception point rather than three overlapping gates.\n2. **Resolve Break-Glass by composition:** Adopt B2's VDF time-lock + immediate regulator alert as the wrapper, B3's k=1 threshold reduction as the trigger, and B1's single-use audit constraint as the bound. The single-share abuse vector is mitigated because the k=1 share only unlocks a time-delayed, alert-emitting, single-use action — not silent access.\n3. **Carry forward:** NRIO with dual-path verification as the mandatory interface for irreversible actions; two-tier ECT/PSI tokenization with ABAC attributes feeding the Sentinel (this also partially answers B1's Judge-LLM governance gap — the Judge sees attributes, not identities); institutional threshold custody (B3) as the root-of-trust layer above B2's per-action quorums.\n4. **Deprioritize:** The Judge LLM as sole semantic validator (B1) — its reliability is unproven and it duplicates B2's deterministic reconstruction; treat it as a fallback or advisory tier only. Single-person Human Anchor sign-off (B1's default) should be superseded by threshold schemes.\n5. **Critical gap to close first:** No brief empirically validates latency in life-critical paths, and all three truncate before implementation detail. A reference implementation benchmarking the Fast Path, threshold signing, and Break-Glass end-to-end latency is the highest-priority next step — the architecture's viability hinges on it.",
+      "session": "ead505dc"
     },
     {
       "prompt": "03-privacy-preserving-identity",
       "source": "jitterbug",
-      "compliance": 0.6666666666666666,
+      "compliance": 0.2222222222222222,
       "judgement": {
         "scores": [
           {
@@ -118,7 +122,7 @@
           },
           {
             "id": "ER-2",
-            "verdict": "Satisfied"
+            "verdict": "Not Satisfied"
           },
           {
             "id": "ER-3",
@@ -150,19 +154,21 @@
           },
           {
             "id": "NG-1",
-            "verdict": "Absent"
+            "verdict": "Present"
           },
           {
             "id": "NG-2",
-            "verdict": "Absent"
+            "verdict": "Present"
           }
         ]
-      }
+      },
+      "report": "## Consensus\n\nAll three briefs converge on the same core architecture and threat model:\n\n- **Reject non-cryptographic PRNGs for identity derivation.** Brief 1 establishes that xorshift128+/splitmix64/mulberry32 are linear over GF(2) and state-recoverable; Briefs 2 and 3 implicitly accept this by building on keyed hashing instead.\n- **HMAC-SHA256 is the mandated derivation function.** All briefs agree naive `Hash(salt || seed)` is unsafe due to Merkle-Damgård length-extension, and that HMAC is the proven PRF (with FIPS/NIST standing).\n- **The salt/key is a Root of Trust.** All identify key compromise as the dominant residual risk, converting the system into a verifiable lookup table (Brief 2's \"dictionary/verification attack\" = Brief 3's \"Verification/Linkage Attack\"). All recommend HSM/secret-manager storage (AWS KMS, HashiCorp Vault).\n- **Modulo bias is real and must be handled.** Briefs 2 and 3 both give the same mitigation: rejection sampling for provable uniformity, with the power-of-two vocabulary as an engineering shortcut (Brief 2).\n- **Low-entropy seeds are an attack multiplier.** Brief 1 (timestamp brute-force) and Brief 3 (rainbow-table enumeration) agree: require high-entropy seeds such as UUIDv4.\n- **Performance is a non-issue.** Brief 1 asserts microsecond-scale costs; Brief 2 notes BLAKE3 parallelism. Cryptographic derivation overhead is negligible in registration/session contexts.\n- **Shared open gaps:** all research was truncated before a complete reference implementation, and none empirically validates collision/bias behavior at deployment scale.\n\n## Divergence\n\n- **HMAC-SHA256 vs. keyed BLAKE3.** Brief 1 and 3 default to HMAC-SHA256; Brief 2 elevates BLAKE3 as faster (native keyed mode, SIMD, length-extension-immune) but flags its weaker standardization vs. FIPS compliance. Trade-off: throughput vs. auditability/regulatory acceptance.\n- **Rotation semantics.** Brief 2 treats salt rotation as a rare but legitimate breaking migration event. Brief 3 frames rotation as a fundamental dilemma — it breaks the stable-alias invariant and per-user salts destroy cross-service derivability. Brief 3 is more pessimistic about any rotation path.\n- **Bias materiality.** Brief 3 asks for a quantified threshold of when modulo bias becomes material and notes compounding with birthday collisions; Brief 2 treats rejection sampling as mandatory regardless of cost, while flagging its throughput overhead as an open question. No brief resolves when the shortcut (`V` = power of two) is acceptable vs. lazy.\n- **Scope of attack surface.** Brief 1 emphasizes PRNG state recovery and related-seed correlation (BaseSeed + UserID patterns leaking user relationships); Briefs 2–3 focus entirely on post-HMAC key-compromise and bias risks. Brief 1's related-seed claim is unproven and unaddressed by the others.\n- **Unresolved specifics:** salt size guidance beyond \"≥32 bytes\" (Brief 2), post-compromise recovery strategy (Brief 2), insider-threat access to the pepper (Brief 3), and empirical attack-complexity measurements (Brief 1).\n\n## Synthesis\n\nThe three briefs are complementary layers of one design rather than competing proposals. The unified architecture:\n\n1. **Derivation pipeline:** `Alias = HMAC-SHA256(K, Seed)` (or keyed BLAKE3 where FIPS is not required and batch throughput matters), with 128-bit digest slices, high-entropy seeds (UUIDv4), and **no** shared base-seed or per-user derived seeds — each seed independently random to kill Brief 1's correlation concern.\n2. **Key management:** treat K as a pepper in an HSM/KMS; accept Brief 3's stricter framing that rotation fundamentally breaks alias stability, so design for *non-rotation* and instead plan a versioned re-derivation migration (alias_v1, alias_v2 with a lookup mapping) if compromise ever occurs — this bridges Brief 2's \"rotation as migration\" and Brief 3's \"determinism dilemma.\"\n3. **Index mapping:** rejection sampling as the default; power-of-two vocabulary as an accepted shortcut when word-list curation permits, resolving Brief 2/3's bias-cost tension.\n4. **Carry forward:** the GF(2) linearity argument (Brief 1) as the definitive justification for excluding fast PRNGs; the length-extension analysis and modulo-bias math (Briefs 2–3) as the canonical pitfall documentation.\n5. **Deprioritize:** BLAKE3 adoption unless throughput benchmarks justify departing from FIPS-blessed HMAC; per-user salts (destroy derivability); any further investment in \"fixing\" non-crypto PRNGs.\n6. **Priority validation work:** complete the truncated reference implementation, benchmark rejection-sampling overhead, empirically measure collision rates at family scale (tens of thousands of aliases), and formally bound the related-seed correlation claim before treating it as a hard requirement.",
+      "session": "7b854d40"
     },
     {
       "prompt": "04-step-level-routing",
       "source": "jitterbug",
-      "compliance": 0.8125,
+      "compliance": 0.5,
       "judgement": {
         "scores": [
           {
@@ -175,7 +181,7 @@
           },
           {
             "id": "ER-3",
-            "verdict": "Satisfied"
+            "verdict": "Partially"
           },
           {
             "id": "ER-4",
@@ -199,25 +205,27 @@
           },
           {
             "id": "CM-1",
-            "verdict": "Partially"
+            "verdict": "Not Satisfied"
           },
           {
             "id": "NG-1",
-            "verdict": "Absent"
+            "verdict": "Present"
           },
           {
             "id": "NG-2",
-            "verdict": "Absent"
+            "verdict": "Present"
           }
         ]
-      }
+      },
+      "report": "## Consensus\n- Step-Level Routing (SLR) — decomposing a query into a DAG of sub-tasks and routing each node to a heterogeneous model tier — is the shared paradigm, attributed to the AgentRouter (ICML 2026) framework. All three briefs position it as the shift from model-centric to workflow-centric AI.\n- Architecture is consistent across briefs: an SLM-based decomposition/intent layer (Llama-3-8B, Mistral-7B, Phi-3), a routing/dispatch layer, a heterogeneous Tier 1–3 execution pool (GPT-4o, Claude Haiku, Mistral-Large, Llama-3-8B), and a validation layer (structural + semantic checks).\n- Cost gains rest on the Pareto distribution of task complexity: trivial sub-tasks offloaded to sub-cent SLMs (100–1000x cheaper than frontier models) collapse the weighted average cost, even accounting for decomposition token overhead.\n- Shared failure modes: (1) the \"Stubborn Router\" infinite low-tier retry loop, mitigated by escalation caps/counters (N=3); (2) contextual fragmentation/semantic drift (\"telephone game\" erosion), mitigated by context anchoring — injecting original intent into every step; (3) the \"Constraint Tax,\" where rigid JSON schemas degrade SLM reasoning, mitigated by Soft Validation / post-hoc correction.\n- All briefs acknowledge the routing overhead (\"Routing Tax\"/\"Step Tax\") as the primary latency cost, partially offset by SLM throughput and intra-query parallelism on independent DAG nodes.\n- All three briefs are truncated and flag the same open risks: hypothetical (not empirical) cost figures, unvalidated SLM decomposition quality, and unproven escalation/validation policies.\n\n## Divergence\n- **Latency verdict:** Brief 2 reports latency *worsening* (12s → 14s) due to sequential router RTT; Brief 3 argues the Step Tax is *offset* by speculative execution and SLM tokens-per-second; Brief 1 notes parallelism on independent DAG nodes can *beat* monolithic latency. These are compatible only conditionally — the outcome depends on DAG fan-out, step count n, and speculative-execuction hit rates.\n- **Cost framing:** Brief 1 conditions SLR's win on high step count n and majority-Tier-3 execution (implying low-n queries may not benefit); Brief 2 presents flat hypothetical figures (~10x vs GPT-4o); Brief 3 grounds savings in the Compute-to-Value Ratio math without n-conditional caveats. Brief 1 is the most conservative on the \"order-of-magnitude\" claim.\n- **Deferral mechanism:** Brief 1 specifies conformal prediction-based deferral (escalate when prediction set cardinality |C| > k, with unvalidated threshold tuning); Briefs 2 and 3 use simpler capability-registry lookup and probabilistic failure counters. These represent different rigor/complexity trade-offs.\n- **Context management:** Brief 2 proposes Tiered Context Injection (condensed state + critical constraints + raw artifacts); Brief 3 proposes Contextual Anchoring (full original prompt re-injection); Brief 1 proposes per-step validation against original intent. These differ in token cost vs fidelity.\n- **Architectural emphasis:** Brief 2 uniquely includes a State Manager and Capability Registry as first-class components; Brief 1 uniquely includes deterministic validation tools (Puppeteer/Lighthouse) and mid-tier \"schema hardening\" as a middle path between soft and strict validation.\n\n## Synthesis\nThe three briefs describe the same system at different confidence levels; the synthesis is a conditional, not universal, recommendation.\n\n**Carry forward:**\n- The four-layer architecture, merged: SLM decomposition → hybrid router (conformal difficulty estimation where calibrated, simple failure counters as fallback) → heterogeneous execution pool with speculative execution and DAG parallelism → dual-layer validation with deterministic tools where applicable.\n- A **query-adaptive cost model**: route to SLR only when predicted step count n and complexity distribution favor it (Brief 1's caveat); fall back to monolithic frontier models for low-n or high-interdependence queries. This reconciles Brief 1's conservatism with Briefs 2–3's optimism.\n- **Layered context strategy**: Contextual Anchoring (original prompt) for short pipelines; Tiered Context Injection for long ones where re-injection costs dominate. Per-step semantic validation against original intent as the drift backstop.\n- **Escalation policy**: hard cap at N=3 failures with probabilistic tier upgrades, plus mid-tier schema hardening as the intermediate step between soft validation and strict enforcement.\n\n**Deprioritize:**\n- The flat \"10x savings\" headline claim — it is hypothetical and n-dependent; replace with the conditional Pareto framing.\n- Conformal deferral (|C| > k) as a default — keep as an experimental upgrade until threshold tuning is validated across domains.\n\n**Critical gaps to close before production:** empirical cost/latency benchmarks (all figures are hypothetical), SLM decomposition quality evaluation, semantic-erosion measurement across multi-model chains, and the truncated implementation details (pseudo-code, edge-case sections) in all three briefs.",
+      "session": "803d7c27"
     }
   ],
   "summary": [
     {
       "source": "jitterbug",
-      "mean_compliance": 0.6287202380952381,
-      "pass_at_k": 0.25,
+      "mean_compliance": 0.4484126984126984,
+      "pass_at_k": 0,
       "n": 4
     }
   ]
