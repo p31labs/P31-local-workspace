@@ -53,9 +53,11 @@ not things the agent believes. If a fact is not here and not in the last
 
 ## Open threads (NOT active — one at a time)
 
-- **bench-re-run**: re-run `run-bench.mjs --skip-frontier` to score all 4
-  prompts against the fixed convergence (jitterbug leg). This is the active
-  thread after this fix.
+- **bench-frontier**: run the frontier leg (`--models glm-5.3,deepseek-v4-pro`)
+  now that jitterbug produces scored output. Requires judge calibration first
+  (human-coded tranche, trust bar agreement>=0.80 / kappa>=0.60).
+- **judge-calibration**: hand-score 8-12 criteria across 2 reports to calibrate
+  deepseek-v4-flash judge before scores are authoritative.
 
 ## Open threads (NOT active — one at a time)
 
