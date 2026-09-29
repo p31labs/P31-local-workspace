@@ -9,6 +9,7 @@ domains:
   - { name: govern,       ref: ../constitution.json }
   - { name: audit,        ref: ../domains/audit/constitution.json }
   - { name: forge,        ref: ../domains/forge/constitution.json }
+  - { name: family,       ref: ../domains/family/constitution.json }
 interDomainContracts:
   - id: documents-are-canonical
     provider: forge

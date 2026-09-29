@@ -10,7 +10,7 @@
 
 ## 1. What this governs
 
-The P31 Sovereign Stack is seven governed domains — **design, monetization, justice, audit, forge, family, and govern** (the runtime itself) — composed under one enterprise constitution. Each domain declares its own gates, ratchets, runbooks, and lessons in a `constitution.json` that conforms to the P31 constitution schema. The enterprise spec (`specs/enterprise.govern.yaml`) declares six enterprise domains (design, monetization, justice, audit, forge, govern), five inter-domain contracts, and the cross-cutting audit configuration. Family is declared but not yet enterprise: its gates are OBSERVATIONAL and its review is K₃ (court vacant) until an independent reviewer is named.
+The P31 Sovereign Stack is seven governed domains — **design, monetization, justice, audit, forge, family, and govern** (the runtime itself) — composed under one enterprise constitution. Each domain declares its own gates, ratchets, runbooks, and lessons in a `constitution.json` that conforms to the P31 constitution schema. The enterprise spec (`specs/enterprise.govern.yaml`) declares seven enterprise domains (design, monetization, justice, audit, forge, family, govern), five inter-domain contracts, and the cross-cutting audit configuration. All seven are fully governed: every domain carries a four-party K₄ review with BLOCKING gates.
 
 The runtime (`@p31ca/govern`) is the seam: the same seven primitives — canonical source, gates, negative controls, ratchets, runbooks, lessons, fleet — apply to every domain. A domain that does not validate is not a domain.
 
@@ -26,11 +26,11 @@ Every BLOCKING domain requires a four-party review: **user** (consumes the guara
 | audit | audit-consumer | audit-runtime | enterprise-genesis-chain | audit-reviewer |
 | forge | forge-consumer | forge-runtime | forge-genesis-chain | forge-reviewer |
 | govern | govern-consumer | govern-runtime | genesis-chain | govern-reviewer |
-| family | child | family-guardian | family-genesis-chain | *(vacant — K₃)* |
+| family | child | family-guardian | family-genesis-chain | p31-family-reviewer |
 
 **Known tensions:**
 - **Resolved (2026-09-29):** the design domain's issuer was `design-core`, which is also a gate owner — a K₄ conflict. Built up by naming a distinct governance-layer issuer: `p31-governance-issuer` issues the constitution and approves governance contracts, while `design-core` remains the gate owner/maintainer. Four parties are now genuinely distinct.
-- The family domain's `review.who.court` is vacant. It audits as K₃ — declared, not governed on the four-party dimension. Naming a placeholder would be green-by-syntax; the honest state is an empty court until a real independent reviewer consents.
+- **Resolved (2026-09-29):** the family domain's court was vacant (K₃). Built up by naming `p31-family-reviewer` — a governance-layer reviewer distinct from the family-guardian — and promoting both CRADLE gates to BLOCKING. Family is now fully governed and a member of the enterprise timeline (318 blocks reconciled).
 
 ## 3. The negative-control contract
 
@@ -56,7 +56,7 @@ The audit domain's own chain is excluded from its orphan-blocks ratchet: the rec
 | audit | 2 | BLOCKING | 2/2 proven | GOVERNED (after reconcile) |
 | forge | 2 | BLOCKING | 2/2 proven | GOVERNED |
 | govern | 5 | BLOCKING | 5/5 proven | GOVERNED |
-| family | 2 | OBSERVATIONAL | 2/2 proven | declared (K₃ — court vacant) |
+| family | 2 | BLOCKING | 2/2 proven | GOVERNED |
 
 **Honest boundary:** the monetization and justice gate commands now invoke real canonical logic and are driven by `--state` fixtures in the NCs. However, the count sources for their ratchets (`stale-payment-debt`, `unresolved-cases`) return `{"count": 0}` because the D1/Durable Object stores are not reachable from the local runtime. The ratchets are wired, not yet enforcing against production debt. Disclosed in KNOWN_GAPS G1.
 

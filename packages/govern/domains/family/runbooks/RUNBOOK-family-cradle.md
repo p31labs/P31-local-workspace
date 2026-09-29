@@ -86,9 +86,11 @@ state, not a failure of this runbook.
   the child seems off, that is the signal — not the absence of a hold.
 
 - **The interceptor is not yet wired into any production message path.**
-  As of 2026-09-28 the library exists and the tests pass, but no live
-  session routes through it. Week 2 is the wiring. Until then, the gates
-  run in CI and the interceptor does not run at all.
+  As of 2026-09-29 the library exists and the tests pass, but no live
+  session routes through it. The governance build-up (K₄, BLOCKING) is
+  complete; the operational wiring is the next build-up, tracked
+  separately. Until then, the gates run in CI and the interceptor does
+  not run at all.
 
 - **A hold without a human response is a silent failure.** The `notify`
   callback fires; the guardian must act. If the notify channel is down,
@@ -101,9 +103,7 @@ state, not a failure of this runbook.
   age does not exist yet. When it does, the interceptor must read from it
   in a tamper-evident way, not from the message.
 
-- **The court is vacant.** This domain does not meet the K₄ four-party
-  requirement. A single-party domain is not a fully governed domain.
-  Naming an independent reviewer is the next step, not an optional one.
+- **The court is `p31-family-reviewer`.** As of 2026-09-29 the family domain is fully governed (K₄, BLOCKING). The reviewer verifies family governance without reading family memories. Keep this role genuinely independent of the guardian — that is what makes the fourth party real.
 
 - **Do not weaken a case to make the suite pass.** If a false-negative
   case suddenly holds (the interceptor improved), update the case's

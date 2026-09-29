@@ -32,7 +32,7 @@ Every claim in this governance suite is backed by a runnable artifact. This regi
 | Forge gates proven | `domains/forge/` | `govern self-test domains/forge/constitution.json` | 2/2 proven |
 | Forge governed | `domains/forge/` | `govern audit domains/forge/constitution.json` | GOVERNED |
 | Family gates proven | `domains/family/` | `govern self-test domains/family/constitution.json` | 2/2 proven |
-| Family declared, not governed | `domains/family/` | `govern audit domains/family/constitution.json` | valid; K₃ (court vacant) |
+| Family governed | `domains/family/` | `govern audit domains/family/constitution.json` | GOVERNED (K₄, BLOCKING) |
 | All domains valid | — | `govern validate` on each of the 7 constitutions | valid |
 
 ## 3. Enterprise evidence

@@ -41,6 +41,11 @@
       "path": "../domains/forge/constitution.json",
       "generatedFrom": "enterprise.govern.yaml",
       "parityGate": "validate-forge"
+    },
+    {
+      "path": "../domains/family/constitution.json",
+      "generatedFrom": "enterprise.govern.yaml",
+      "parityGate": "validate-family"
     }
   ],
   "gates": [
