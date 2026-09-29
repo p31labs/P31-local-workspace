@@ -57,7 +57,13 @@ export async function convergeWithChain(system, user, opts = {}) {
       const servedModel = (typeof text === 'object' && text !== null && text.modelUsed) ? text.modelUsed : model;
       if (content && content.trim().length > 0) {
         recordSuccess(servedModel);
-        return { content, modelUsed: servedModel, recovered, attempts, chain: chain.slice(0, i + 1), attemptLog };
+        const lat = typeof text === 'object' && text !== null ? text : {};
+        return {
+          content, modelUsed: servedModel, recovered, attempts, chain: chain.slice(0, i + 1), attemptLog,
+          ttftMs: lat.ttftMs ?? null, tps: lat.tps ?? null, totalMs: lat.totalMs ?? null,
+          promptTokens: lat.promptTokens ?? null, completionTokens: lat.completionTokens ?? null,
+          cachedPromptTokens: lat.cachedPromptTokens ?? null,
+        };
       }
       recordFailure(model);
       attemptLog.push({ model, state: 'empty', attempts });

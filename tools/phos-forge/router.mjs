@@ -53,7 +53,7 @@ function getBioState() {
   return { spoons };
 }
 
-function emitTelemetry(intent, targetModel, fallbackUsed, sovereign) {
+function emitTelemetry(intent, targetModel, fallbackUsed, sovereign, r = {}) {
   try {
     appendFileSync(
       EVENTS_PATH,
@@ -65,6 +65,12 @@ function emitTelemetry(intent, targetModel, fallbackUsed, sovereign) {
           sovereign,
           fallback_used: fallbackUsed,
           spoons: getBioState().spoons,
+          ttft_ms: r.ttftMs ?? null,
+          tps: r.tps ?? null,
+          total_ms: r.totalMs ?? null,
+          prompt_tokens: r.promptTokens ?? null,
+          completion_tokens: r.completionTokens ?? null,
+          cached_prompt_tokens: r.cachedPromptTokens ?? null,
           timestamp: new Date().toISOString(),
         },
       }) + '\n',
@@ -242,12 +248,16 @@ async function routeToWorkersAI(system, user, intentTag, maxTokens, temperature,
   const MAX_ATTEMPTS = 4;
   let lastRetryable = null;
   for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+    const callStart = performance.now();
     try {
       const resp = await fetch(WORKERS_AI_BASE(accountId), {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
+          // x-session-affinity routes requests to the model instance holding
+          // the cached prefix tensors, maximizing Workers AI prompt-cache hits.
+          ...(opts.sessionId ? { 'x-session-affinity': opts.sessionId } : {}),
         },
         body: JSON.stringify({
           model,
@@ -258,6 +268,7 @@ async function routeToWorkersAI(system, user, intentTag, maxTokens, temperature,
         }),
         signal: AbortSignal.timeout(timeoutMs),
       });
+      const timeToFirstByte = performance.now() - callStart; // time to response headers
       if (!resp.ok) {
         const body = await resp.text().catch(() => '');
         const err = new Error(`[router] Workers AI ${resp.status} (${model}): ${body.slice(0, 200)}`);
@@ -269,7 +280,28 @@ async function routeToWorkersAI(system, user, intentTag, maxTokens, temperature,
       const data = await resp.json();
       const msg = data.choices?.[0]?.message ?? {};
       const content = msg.content ?? msg.reasoning_content ?? '';
-      if (content) return { content, modelUsed: model };
+      if (content) {
+        const usage = data.usage ?? {};
+        const promptTokens = usage.prompt_tokens ?? 0;
+        const completionTokens = usage.completion_tokens ?? 0;
+        const totalMs = performance.now() - callStart;
+        // Non-streaming Workers AI returns the full body at once; headers
+        // arrive at ~completion, so timeToFirstByte ~= total time. The honest
+        // throughput metric is completion_tokens / total time (includes prefill).
+        const effectiveTps = totalMs > 0 && completionTokens > 0
+          ? (completionTokens / totalMs) * 1000 : 0;
+        return {
+          content,
+          modelUsed: model,
+          ttftMs: Math.round(timeToFirstByte),
+          tps: Math.round(effectiveTps * 10) / 10,
+          totalMs: Math.round(totalMs),
+          promptTokens,
+          completionTokens,
+          cachedPromptTokens: usage.prompt_tokens_details?.cached_tokens
+            ?? (typeof usage.cached_tokens === 'number' ? usage.cached_tokens : 0),
+        };
+      }
       lastRetryable = new Error(`[router] Workers AI returned empty content (${model})`);
       throw lastRetryable;
     } catch (e) {
@@ -353,11 +385,11 @@ export async function dispatchLLM(system, user, intent = {}, opts = {}) {
   // The intent→model table lives in this router (single source of truth).
   if (intent.privacy === 'workers-ai') {
     const tag = intent.tag || 'general';
-    const { content, modelUsed } = await routeToWorkersAI(
+    const r = await routeToWorkersAI(
       system, user, tag, maxTokens, temperature, opts.timeoutMs ?? 120000, opts,
     );
-    emitTelemetry(intent, modelUsed, false, false);
-    return opts.returnModel ? { content, modelUsed } : content;
+    emitTelemetry(intent, r.modelUsed, false, false, r);
+    return opts.returnModel ? r : r.content;
   }
 
   // 2. Select tier based on spoons + task
