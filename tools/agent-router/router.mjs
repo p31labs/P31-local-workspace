@@ -17,6 +17,8 @@
  */
 import { routeToWorkersAI } from '../phos-forge/router.mjs'
 import { parseAndValidate } from './agent-schema.mjs'
+import { semanticCheck } from './semantic-check.mjs'
+import { emitRoutingBlock } from './routing-audit.mjs'
 
 const STAGE_INTENT = {
   'dillpickle-narrator': 'fast',
@@ -54,23 +56,41 @@ function record(stage, m) {
 export async function runStage(stage, systemPrompt, userInput, opts = {}) {
   const intentTag = opts.intentTag ?? STAGE_INTENT[stage]
   const maxRetries = STAGE_MAX_RETRIES[stage]
+  const priorErrors = opts.priorErrors ?? [] // cross-step error accumulation
   if (!intentTag) return { ok: false, errors: [`unknown stage: ${stage}`] }
 
   let attempts = 0
   const errors = []
   let lastModel = null
 
+  // Cross-step accumulation (Schema Validation Retry): prior-stage errors
+  // become warnings in this stage's input so the failure doesn't repeat.
+  const accumulated = priorErrors.length
+    ? `${userInput}\n\n[prior-stage feedback — avoid repeating these failures]\n${priorErrors.slice(-5).join('\n')}`
+    : userInput
+
   while (attempts <= maxRetries) {
-    const body = attempts > 0 ? `${userInput}\n\nPrevious output failed validation. Fix ONLY these errors:\n${errors.join('\n')}` : userInput
+    const body = attempts > 0 ? `${accumulated}\n\nPrevious output failed validation. Fix ONLY these errors:\n${errors.join('\n')}` : accumulated
     try {
-      const { content, modelUsed } = await routeToWorkersAI(systemPrompt, body, intentTag)
+      const { content, modelUsed } = await routeToWorkersAI(systemPrompt, body, intentTag, 1024, 0.2)
       lastModel = modelUsed
       const v = parseAndValidate(stage, content)
-      record(stage, { schema_valid: v.ok, wrong_but_valid: false })
       if (v.ok) {
-        return { ok: true, output: v.parsed, attempts: attempts + 1, modelUsed, errors: [] }
+        // Layer 2: semantic + family-context check. Schema-valid but
+        // semantically wrong is the wrong_but_valid class — the metric.
+        const s = semanticCheck(stage, v.parsed)
+        record(stage, { schema_valid: true, wrong_but_valid: !s.ok })
+        if (s.ok) {
+          emitRoutingBlock({ stage, intentTag, modelUsed, attempts: attempts + 1, ok: true })
+          return { ok: true, output: v.parsed, attempts: attempts + 1, modelUsed, errors: [] }
+        }
+        // Schema-valid but semantically off — this is wrong-valid drift.
+        errors.push(...s.errors.slice(0, 4))
+        attempts++
+        continue
       }
       // Schema-invalid — accumulate errors, retry with feedback.
+      record(stage, { schema_valid: false, wrong_but_valid: false })
       errors.push(...v.errors.slice(0, 4))
       attempts++
     } catch (e) {
@@ -81,6 +101,7 @@ export async function runStage(stage, systemPrompt, userInput, opts = {}) {
     }
   }
 
+  emitRoutingBlock({ stage, intentTag, modelUsed: lastModel, attempts, ok: false, errors: errors.slice(0, 3) })
   return { ok: false, output: null, attempts, modelUsed: lastModel, errors }
 }
 

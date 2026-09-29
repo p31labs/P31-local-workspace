@@ -1,0 +1,63 @@
+{
+  "source": "packages/design-core/src/primitives/*.tsx",
+  "generated": "2026-09-29",
+  "note": "The Mechanic (Bread & Butter) assembles from these — never invents components. Family context: every component must honor 'the street never shows a human name', spoon-awareness via CSS custom properties, and AAA contrast for child-facing surfaces.",
+  "components": {
+    "Button": {
+      "path": "src/primitives/Button.tsx",
+      "api": { "children": "ReactNode", "variant": "primary|secondary|ghost", "disabled": "boolean", "onClick": "fn", "type": "button|submit|reset", "className": "string" },
+      "tokens": ["--p31-accent", "--p31-text", "--p31-void", "--p31-void-raised"],
+      "accessibility": { "wcagDefault": "AA", "childFacingRequires": "AAA", "keyboardFocusable": true },
+      "familyContext": "Primary action. Child-facing variant must be AAA (7:1). Spoon-aware: reduce glow at low spoons."
+    },
+    "IconButton": {
+      "path": "src/primitives/Button.tsx",
+      "note": "Button with icon slot — same API, aria-label required",
+      "tokens": ["--p31-accent", "--p31-text"],
+      "accessibility": { "ariaLabelRequired": true, "wcagDefault": "AA" },
+      "familyContext": "Icon-only control — must carry aria-label, never an emoji-only label."
+    },
+    "Toggle": {
+      "path": "src/primitives/Checkbox.tsx",
+      "note": "Boolean switch (uses Checkbox primitive with role=switch)",
+      "tokens": ["--p31-accent", "--p31-text"],
+      "accessibility": { "wcagDefault": "AA", "keyboardFocusable": true },
+      "familyContext": "Spoon-aware: low-spoon users need a large, forgiving toggle (>=48px touch)."
+    },
+    "Input": {
+      "path": "src/primitives/Input.tsx",
+      "api": { "value": "string", "onChange": "fn", "placeholder": "string", "type": "string", "label": "string" },
+      "tokens": ["--p31-void-raised", "--p31-text", "--p31-border"],
+      "accessibility": { "labelRequired": true, "wcagDefault": "AA" },
+      "familyContext": "Text entry. Label always visible — never placeholder-only (elder/child readability)."
+    },
+    "Select": {
+      "path": "src/primitives/Select.tsx",
+      "api": { "value": "string", "onChange": "fn", "options": "Array<{value,label}>" },
+      "tokens": ["--p31-void-raised", "--p31-text"],
+      "accessibility": { "labelRequired": true, "wcagDefault": "AA" },
+      "familyContext": "Choice selection. Options must be plain-language, not jargon."
+    },
+    "Modal": {
+      "path": "src/primitives/Modal.tsx",
+      "api": { "open": "boolean", "onClose": "fn", "title": "string", "children": "ReactNode" },
+      "tokens": ["--p31-overlay", "--p31-void-raised", "--p31-text"],
+      "accessibility": { "focusTrap": true, "escapeCloses": true, "ariaModal": true },
+      "familyContext": "Focused dialog. Must trap focus and restore it on close — never trap a child."
+    },
+    "Toast": {
+      "path": "src/primitives/Toast.tsx",
+      "api": { "message": "string", "tone": "info|success|warning|danger", "autoDismissMs": "number" },
+      "tokens": ["--p31-accent", "--p31-danger", "--p31-success"],
+      "accessibility": { "ariaLive": "polite", "wcagDefault": "AA" },
+      "familyContext": "Transient notice. Spoon-aware: low-spoon users need longer auto-dismiss or no auto-dismiss."
+    },
+    "Card": {
+      "path": "src/primitives/Card.tsx",
+      "api": { "children": "ReactNode", "title": "string", "className": "string" },
+      "tokens": ["--p31-void-raised", "--p31-text"],
+      "accessibility": { "wcagDefault": "AA" },
+      "familyContext": "Contained surface. Content must remain readable at AA minimum."
+    }
+  }
+}

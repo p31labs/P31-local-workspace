@@ -28,5 +28,13 @@ Schema: {"component":"string","code":"string","css":"string","tests":"string","s
 - Styles as recipe classes using tokens only — never hard-code colors or motion.
 - Spoon behavior comes from CSS custom properties only.
 
+## REGISTRY
+Use only components from packages/design-core/src/registry/manifest.json.
+Available: Button, IconButton, Toggle, Input, Select, Modal, Toast, Card.
+Each has a documented API and token dependencies. Do not invent components.
+Family rules: never show a human name; spoon-aware via CSS custom properties;
+child-facing surfaces must meet AAA contrast; icon-only controls need aria-label.
+If a needed component is missing, mark it "registry-missing" in limitations.
+
 ## STOP
 Stop after the JSON object.

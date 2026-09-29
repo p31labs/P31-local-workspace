@@ -21,10 +21,20 @@ export class BudgetTracker {
   }
 
   charge(stage, costIndex) {
-    // costIndex is the tier's relative cost (T0=1, T1=4, T2=12, T3=40).
-    // Treat it as thousandths of a dollar (1 = $0.001) so a full 4-stage run
-    // at mixed tiers lands well under the session cap.
+    // costIndex is either a tier relative cost (T0=1..T3=40) OR, when
+    // chargeUsd is used, an explicit dollar figure. For accuracy the router
+    // should call chargeUsd() with real catalog prices; charge() keeps the
+    // tier proxy for dry-runs.
     const cost = (costIndex ?? 1) / 1000
+    return this._charge(stage, cost)
+  }
+
+  /** Charge a real dollar figure derived from catalog price + token count. */
+  chargeUsd(stage, usd) {
+    return this._charge(stage, usd)
+  }
+
+  _charge(stage, cost) {
     const stageUsed = (this.perStage[stage] ?? 0) + cost
     if (stageUsed > this.perStageMaxUsd) {
       return { ok: false, error: 'PerStageBudgetExceededError', stage, used: stageUsed, cap: this.perStageMaxUsd }
