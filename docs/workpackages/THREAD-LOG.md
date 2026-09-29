@@ -9,3 +9,4 @@ switch. The active facet is always in `SESSION-STATE.md`.
 | 2026-09-29 | V | C — context protocol | V committed; context is the next delivery layer |
 | 2026-09-29 | C | P — parallel paths | C committed; decomposition needed before payload |
 | 2026-09-29 | P | S — synthesis | P committed; converge the delivery mechanism |
+| 2026-09-29 | S | Facet B — human anchor | mechanism converged; payload #1: the anchor |

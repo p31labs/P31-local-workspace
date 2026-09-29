@@ -394,7 +394,8 @@
     "SIC-POVM is a research-only track (docs/SIC-POVM_RESEARCH.md): claims of SIC-POVM deployment in the design system are incorrect and must not appear in grant or engineering docs.",
     "K4 is planar: the rigidity claim rests on volumetric enclosure (beta-2 = 1), not non-planarity.",
     "Quantum cognition and Betti-number telemetry are diagnostic vocabulary only — not design-system components.",
-    "K4 issuer resolved: review.who.issuer is now p31-governance-issuer, a distinct governance-layer role separate from design-core (the gate owner/maintainer). The four-party topology is structurally real: user (design-consumer), issuer (p31-governance-issuer), ledger (genesis-chain), court (design-reviewer). This resolves the H1 conflict by building up — naming a genuinely distinct issuer rather than demoting to K3."
+    "K4 issuer resolved: review.who.issuer is now p31-governance-issuer, a distinct governance-layer role separate from design-core (the gate owner/maintainer). The four-party topology is structurally real: user (design-consumer), issuer (p31-governance-issuer), ledger (genesis-chain), court (design-reviewer). This resolves the H1 conflict by building up — naming a genuinely distinct issuer rather than demoting to K3.",
+    "Human anchor disclosed (Wye, not Delta): the design court is a single reviewer identified by pickle name Half-Sour (the family's adult builder). By the runtime's own diagnose(), a single review owner is a Wye topology — one severance and the domain floats. This is recorded, not hidden. The delta aspiration (co-equal reviewers) is future work; full delta is never the goal — an anchored mesh is. Canon changes require a hash-bound human-approval block (design approve --by <pickle-name>); the approval is bound to the spec's SHA-256, so an edited spec invalidates it. See packages/design-core/src/agentic/approve.ts."
   ],
   "resolutionRoot": "../../../../../production"
 }

@@ -7,8 +7,8 @@ not things the agent believes. If a fact is not here and not in the last
 
 ## Active facet
 
-`V` — verification gate (built, committed). Next: `C` context protocol,
-then `P` parallel paths, then `S` synthesis.
+`Facet B` — human anchor (Thread A). Built: approve.ts, `design approve`,
+`design audit --canon`. Next: commit + synthesis.
 
 ## Verified facts (checked this session)
 
@@ -24,6 +24,11 @@ then `P` parallel paths, then `S` synthesis.
 | verify.mjs NC proves it can fail | `node tools/agent-verify/nc/run.mjs` | ✅ NEGATIVE_CONTROL_OK |
 | design pipeline stages renamed to lantern-* | `grep "lantern-" src/agentic/orchestrate.ts` | ✅ |
 | audit block records lantern-architect | `tail -1 design/.govern-audit.jsonl` | ✅ block #487 |
+| human-approval block (Half-Sour) | `tail -1 design/.govern-audit.jsonl` | ✅ block #488, reviewer Half-Sour |
+| canon gate approves + falls through | `design audit --canon button-affirm.yml` | ✅ approved + LANTERN QA pass |
+| canon gate blocks unapproved | `design audit --canon __nc__fail-contrast.yml` | ✅ exit 1 |
+| approve w/o --by refused | `design approve <spec>` | ✅ exit 1 (no silent default) |
+| human-anchor tests | `pnpm test` (design-core) | ✅ 6/6 |
 
 ## Open threads (NOT active — one at a time)
 

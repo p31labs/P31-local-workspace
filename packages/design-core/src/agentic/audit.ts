@@ -33,14 +33,25 @@ export interface AgenticEventPayload {
 export interface AgenticBlock {
   blockNumber: number
   timestamp: string
-  eventType: 'genesis' | 'agentic'
-  payload: AgenticEventPayload
+  eventType: 'genesis' | 'agentic' | 'human-approval'
+  payload: AgenticEventPayload | HumanApprovalPayloadLike
   prevHash: string
   currentHash: string
 }
 
+/** The human-approval payload shape (defined fully in approve.ts). */
+export interface HumanApprovalPayloadLike {
+  domain: string
+  reviewer: string
+  component: string
+  inputHash: string
+  decision: 'approved' | 'rejected'
+  scope: 'canon-change' | 'advisory'
+  note?: string
+}
+
 export interface AgenticAuditSink {
-  append(payload: AgenticEventPayload): AgenticBlock
+  append(payload: AgenticEventPayload | HumanApprovalPayloadLike): AgenticBlock
   readonly chainPath: string
 }
 
@@ -81,7 +92,7 @@ export class JsonlAgenticAuditSink implements AgenticAuditSink {
     return JSON.parse(lines[lines.length - 1]) as AgenticBlock
   }
 
-  append(payload: AgenticEventPayload): AgenticBlock {
+  append(payload: AgenticEventPayload | HumanApprovalPayloadLike): AgenticBlock {
     const last = this.last()
     const blockNumber = last ? last.blockNumber + 1 : 0
     const prevHash = last ? last.currentHash : '0'.repeat(64)

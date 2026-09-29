@@ -2,8 +2,10 @@
 /**
  * p31 design CLI — agentic design system entry point.
  *   design list                 validate + tabulate all bundled intents
- *   design audit <file.yml>     parse + run Opus gates, exit 1 on reject
+ *   design audit <file.yml>     parse + run Lantern gates, exit 1 on reject
  *   design audit --nc           negative control: assert a known-bad fixture is rejected
+ *   design audit --canon <file> require a human approval block bound to the spec hash
+ *   design approve <file> --by <pickle>  emit a human-approval block (the anchor)
  *   design create <Name>        scaffold an intent draft
  *   design variant <file.yml>   emit a derived variant spec to stdout
  */
@@ -14,6 +16,7 @@ import { parseIntent, summarize } from './intent/parser';
 import { runQaGates } from './qa/gates';
 import { loadExampleSpecs } from './orchestrate';
 import { JsonlAgenticAuditSink, hashInput } from './audit';
+import { approveSpec, findApproval, hashSpec, DESIGN_REVIEWER_PICKLE } from './approve';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const [cmd, ...rest] = process.argv.slice(2);
@@ -36,6 +39,30 @@ switch (cmd) {
   }
 
   case 'audit': {
+    // Canon gate: an irreversible design decision requires a human approval
+    // block bound to the spec's exact hash. "Never go full delta" — the human
+    // anchor is required, not optional. Stale (spec changed) = blocked.
+    if (rest[0] === '--canon') {
+      const file = rest[1] ?? fail('usage: design audit --canon <file.yml>');
+      if (!existsSync(file)) fail(`not found: ${file}`);
+      const inputHash = hashSpec(file);
+      const sink = JsonlAgenticAuditSink.default();
+      const approval = findApproval(sink, inputHash);
+      if (!approval) {
+        console.error('🔴 CANON GATE: no human approval bound to this spec hash.');
+        console.error(`   hash: ${inputHash.slice(0, 16)}…`);
+        console.error(`   approve with: design approve ${file} --by <pickle-name>`);
+        process.exit(1);
+      }
+      const p = approval.payload as { reviewer: string; decision: string };
+      if (p.decision !== 'approved') {
+        console.error(`🔴 CANON GATE: spec was ${p.decision} by ${p.reviewer} (block #${approval.blockNumber}).`);
+        process.exit(1);
+      }
+      console.log(`✅ CANON GATE: approved by ${p.reviewer} (block #${approval.blockNumber}).`);
+      // fall through to the normal audit below — the spec must ALSO pass gates
+    }
+
     // Negative control: a gate that cannot be shown to fail is furniture.
     // Assert that the bundled failing fixture is REJECTED (exit 1). If the
     // gate ever approves it, the gate has no teeth — exit 1 with an error.
@@ -51,14 +78,15 @@ switch (cmd) {
       if (!res.ok) fail(`negative-control fixture is invalid YAML — it must parse, then reject (${res.errors?.join('; ')})`);
       const report = runQaGates(res.spec!);
       if (report.approved) {
-        console.error('✗ NEGATIVE CONTROL FAILED: a 3:1 contrast / 32px touch fixture was APPROVED — the Opus gate is furniture.');
+        console.error('✗ NEGATIVE CONTROL FAILED: a 3:1 contrast / 32px touch fixture was APPROVED — the Lantern Architect gate is furniture.');
         process.exit(1);
       }
       console.log('✅ NEGATIVE CONTROL OK: known-bad fixture rejected (gate can fail).');
       process.exit(0);
     }
 
-    const file = rest[0] ?? fail('usage: design audit <file.yml>');
+    const isCanon = rest[0] === '--canon';
+    const file = (isCanon ? rest[1] : rest[0]) ?? fail('usage: design audit <file.yml>');
     if (!existsSync(file)) fail(`not found: ${file}`);
     const res = parseIntent(readFileSync(file, 'utf8'));
     if (!res.ok) {
@@ -67,7 +95,7 @@ switch (cmd) {
       process.exit(1);
     }
 const report = runQaGates(res.spec!);
-    console.log(`OPUS QA REPORT — ${res.spec!.component}`);
+    console.log(`LANTERN ARCHITECT QA REPORT — ${res.spec!.component}`);
     for (const c of report.checks) {
       const mark = c.status === 'pass' ? '✅' : c.status === 'warn' ? '⚠️' : '❌';
       console.log(`  ${mark} ${c.name}: ${c.detail}`);
@@ -88,6 +116,28 @@ const report = runQaGates(res.spec!);
     console.log(`  (audit block #${block.blockNumber} → ${block.currentHash.slice(0, 16)}…)`);
 
     process.exit(report.approved ? 0 : 1);
+  }
+
+  case 'approve': {
+    const file = rest[0] ?? fail('usage: design approve <file.yml> --by <pickle-name> [--note "..."] [--reject] [--advisory]');
+    if (!existsSync(file)) fail(`not found: ${file}`);
+    const byIdx = rest.indexOf('--by');
+    if (byIdx === -1 || !rest[byIdx + 1]) {
+      fail(`approve requires --by <pickle-name> — no hidden default identity (the "no silent default" rule)`);
+    }
+    const reviewer = rest[byIdx + 1];
+    const noteIdx = rest.indexOf('--note');
+    const note = noteIdx !== -1 ? (rest[noteIdx + 1] ?? '') : '';
+    const decision = rest.includes('--reject') ? 'rejected' : 'approved';
+    const scope = rest.includes('--advisory') ? 'advisory' : 'canon-change';
+
+    const res = parseIntent(readFileSync(file, 'utf8'));
+    if (!res.ok) fail(`cannot approve an invalid spec: ${res.errors?.join('; ')}`);
+
+    const block = approveSpec({ file, reviewer, decision, scope, note });
+    console.log(`${decision === 'approved' ? '✅' : '🔴'} ${decision.toUpperCase()} — ${res.spec!.component}`);
+    console.log(`   by ${reviewer} · scope ${scope} · block #${block.blockNumber} → ${block.currentHash.slice(0, 16)}…`);
+    process.exit(decision === 'approved' ? 0 : 1);
   }
 
   case 'create': {
