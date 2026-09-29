@@ -13,18 +13,33 @@ synthesis, by keeping the pipeline owned, gated, and open.
 
 ## What "win" means
 
-| Dimension | Metric that matters | Current value | Target |
+| Dimension | Metric that matters | Current value | Target (sourced) |
 |---|---|---|---|
-| Quality | rubric compliance | 0.604-0.719 (noisy) | >= 0.80 (parity-adjacent) |
-| Cost | quality-per-dollar (compliance / model cost) | high per-prompt cost | >= 3x frontier per dollar |
+| Quality | rubric compliance | 0.604-0.719 (noisy, pre-temp-0) | >= 0.70 (the rubric's own pass line) |
+| Cost | quality-per-dollar (compliance / measured token cost) | high per-prompt cost | >= 3x frontier per dollar (MEASURED, not assumed) |
 | Sovereignty | zero frontier-model dependency | satisfied | holds |
 | Governance | every artifact hash-linked + audited | satisfied | holds |
 
+**Target sourcing (the review's correction):**
+- **0.70, not 0.80.** The rubric.json `pass_threshold` is 0.70 — that is the
+  pipeline's own defined line of "acceptable." The ResearchRubrics benchmark
+  (ICLR 2026) shows even strong deep-research systems average *under 0.68*.
+  0.80 was aspirational and unsourced; 0.70 is defensible as the rubric's
+  native gate. It is still above the measured frontier-DR average.
+- **3x is a hypothesis to MEASURE, not a claim.** quality-per-dollar needs a
+  denominator: total cost per prompt = sum over every call of
+  (prompt_tokens + completion_tokens) × price-per-token from the catalog
+  (models-catalog.json). This is now computable from the live telemetry
+  (router.decision events record prompt_tokens/completion_tokens; catalog
+  has priceInUsdPerM/priceOutUsdPerM). The 3x figure becomes a target only
+  after that measurement exists — until then it is an aspiration, labeled as
+  such.
+
 The comparison against glm-5.3 (0.856) is NOT the scoreboard. The scoreboard
-is: "can a sovereign pipeline reach quality-parity-adjacent at a fraction of
-the cost, without any vendor lock?" If the answer is 0.80+ at 3x the
-quality-per-dollar, the Jitterbug wins its objective even while glm-5.3 wins
-the single-prompt comparison.
+is: "can a sovereign pipeline reach >= 0.70 (the rubric's pass line) at a
+measured >= 3x quality-per-dollar, without any vendor lock?" If the answer is
+yes, the Jitterbug wins its objective even while glm-5.3 wins the single-prompt
+comparison.
 
 ## Why not the other two options
 
@@ -41,6 +56,6 @@ the single-prompt comparison.
   "injecting more context worsens compression" — so the fix is better briefs,
   not more briefs.
 - Speed work (B/C) is done and valuable, but it does not close the quality
-  gap. Do not optimize speed further until quality reaches the 0.80 target.
+  gap. Do not optimize speed further until quality reaches the 0.70 target.
 - The benchmark's job is to measure progress toward THIS objective, not to
   produce a scoreboard against frontier models.
