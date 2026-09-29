@@ -319,6 +319,15 @@
         "evidenceClass": "test-suite",
         "reference": "tests/acceptance/ratchet.mjs"
       }
+    },
+    {
+      "id": "L-009",
+      "rootCause": "governance chains are not append-only in git: audit-chain-verify reports 158 prevHash link breaks across 6 domain chains (forge 103, audit 29, design 13, justice 5, monetization 4, family 4). Blocks were removed/reordered after the fact; each block's own hash is valid but prevHash does not link to the prior currentHash. Present since the 0.3.0 wave (forge had 7 breaks at 41df6648). The tamper-evidence property is currently broken.",
+      "prevention": "gate:self-test + RUNBOOK-root-cause-proof — re-anchor chains via a documented genesis regeneration before audit-chain-verify can pass as BLOCKING",
+      "oqe": {
+        "evidenceClass": "test-suite",
+        "reference": "domains/audit/scripts/audit-chain-verify.mjs"
+      }
     }
   ],
   "fleet": [
