@@ -17,6 +17,10 @@
 
 import { writeFileSync, readFileSync, existsSync, mkdirSync } from 'node:fs';
 import { resolve } from 'node:path';
+import {
+  hashContent, cacheGet, cachePut,
+  cacheGetSemantic, cachePutSemantic,
+} from './semantic-cache.mjs';
 
 const CHECKPOINT_DIR = '/tmp/phos-jitterbug/checkpoints';
 
@@ -62,14 +66,28 @@ function saveCheckpoint(session, state) {
 }
 
 // Map step — compact each facet to a brief. Checkpointed after each facet so
-// a crash on facet k preserves facets 0..k-1.
+// a crash on facet k preserves facets 0..k-1. Semantic cache checked BEFORE
+// the compaction call: byte-identical and near-duplicate facets reuse the
+// cached brief instead of paying for inference.
 async function mapFacets(session, researchTexts, callFn, opts = {}) {
   const saved = loadCheckpoint(session);
   const briefs = saved?.briefs?.slice() ?? [];
   const errors = saved?.errors?.slice() ?? [];
+  const cacheStats = { hits: 0, misses: 0 };
 
   for (let i = briefs.length; i < researchTexts.length; i++) {
     const facet = researchTexts[i];
+    const inputHash = hashContent(facet.slice(0, 6000));
+    const exact = cacheGet('brief', inputHash);
+    const semantic = exact !== null ? null : cacheGetSemantic('brief', facet.slice(0, 2000));
+    const cachedBrief = exact ?? semantic?.value ?? null;
+    if (cachedBrief) {
+      cacheStats.hits++;
+      briefs.push(String(cachedBrief).trim());
+      saveCheckpoint(session, { briefs, errors, step: 'map', at: i + 1 });
+      continue;
+    }
+    cacheStats.misses++;
     try {
       const brief = await callFn(COMPACT_SYSTEM, `Research output ${i + 1}:\n\n${facet.slice(0, 6000)}`, {
         maxTokens: 512,
@@ -80,6 +98,8 @@ async function mapFacets(session, researchTexts, callFn, opts = {}) {
         throw new Error('compaction-empty');
       }
       briefs.push(brief.trim());
+      cachePut('brief', inputHash, brief.trim());
+      cachePutSemantic('brief', facet.slice(0, 2000), brief.trim());
     } catch (e) {
       errors.push({ index: i, error: e.message });
       // Degrade-in-place: keep the raw facet so no content is lost, mark it
@@ -88,15 +108,26 @@ async function mapFacets(session, researchTexts, callFn, opts = {}) {
     }
     saveCheckpoint(session, { briefs, errors, step: 'map', at: i + 1 });
   }
-  return { briefs, errors };
+  return { briefs, errors, cacheStats };
 }
 
 // Reduce step — synthesize the briefs into the final convergence.
 async function reduceBriefs(session, briefs, callFn, opts = {}) {
   const saved = loadCheckpoint(session);
-  if (saved?.synthesis) return { synthesis: saved.synthesis, reduced: true };
+  if (saved?.synthesis) return { synthesis: saved.synthesis, reduced: true, cacheStats: { hits: 1, misses: 0 } };
 
   const combined = briefs.map((b, i) => `## Brief ${i + 1}\n${b}`).join('\n\n');
+  const briefSetHash = hashContent(combined);
+  // Reduce cache: exact-tier on the combined brief set; semantic tier on a
+  // truncated fingerprint (near-duplicate brief sets reuse the synthesis).
+  const exactSynthesis = cacheGet('synthesis', briefSetHash);
+  const semanticSynthesis = exactSynthesis !== null ? null : cacheGetSemantic('synthesis', combined.slice(0, 3000));
+  const cachedSynthesis = exactSynthesis ?? semanticSynthesis?.value ?? null;
+  if (cachedSynthesis) {
+    saveCheckpoint(session, { briefs, synthesis: cachedSynthesis, step: 'reduce', at: 'done' });
+    return { synthesis: String(cachedSynthesis).trim(), reduced: true, cacheStats: { hits: 1, misses: 0 } };
+  }
+
   const synthesis = await callFn(REDUCE_SYSTEM, `Merge these ${briefs.length} research briefs into a unified synthesis:\n\n${combined}`, {
     maxTokens: 3000,
     temperature: 0.2,
@@ -105,15 +136,21 @@ async function reduceBriefs(session, briefs, callFn, opts = {}) {
   if (!synthesis || synthesis.trim().length < 200) {
     throw new Error('reduce-empty');
   }
-  saveCheckpoint(session, { briefs, synthesis, step: 'reduce', at: 'done' });
-  return { synthesis: synthesis.trim(), reduced: true };
+  const syn = synthesis.trim();
+  cachePut('synthesis', briefSetHash, syn);
+  cachePutSemantic('synthesis', combined.slice(0, 3000), syn);
+  saveCheckpoint(session, { briefs, synthesis: syn, step: 'reduce', at: 'done' });
+  return { synthesis: syn, reduced: true, cacheStats: { hits: 0, misses: 1 } };
 }
 
-// Full resilient convergence: map then reduce, both checkpointed.
+// Full resilient convergence: map then reduce, both checkpointed + cached.
 export async function resilientConvergence(session, researchTexts, callFn, opts = {}) {
-  const { briefs, errors } = await mapFacets(session, researchTexts, callFn, opts);
-  const { synthesis } = await reduceBriefs(session, briefs, callFn, opts);
-  return { synthesis, briefs, errors, checkpoint: checkpointPath(session) };
+  const { briefs, errors, cacheStats } = await mapFacets(session, researchTexts, callFn, opts);
+  const { synthesis, cacheStats: reduceStats } = await reduceBriefs(session, briefs, callFn, opts);
+  return {
+    synthesis, briefs, errors, checkpoint: checkpointPath(session),
+    cacheStats: { map: cacheStats, reduce: reduceStats },
+  };
 }
 
 // Test hook — deterministic map/reduce with a fake callFn.
