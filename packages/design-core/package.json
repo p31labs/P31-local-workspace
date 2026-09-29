@@ -3,7 +3,7 @@
   "version": "3.0.0",
   "private": true,
   "type": "module",
-  "description": "P31 Unified Design System — Quantum Material (OKLCH/color-mix) token stance, tokens, primitives, compositions, recipes, MCP server, agentic intent pipeline.",
+  "description": "P31 Unified Design System \u2014 Quantum Material (OKLCH/color-mix) token stance, tokens, primitives, compositions, recipes, MCP server, agentic intent pipeline.",
   "author": "P31 Labs <hello@p31ca.org>",
   "license": "AGPL-3.0",
   "exports": {
@@ -91,7 +91,7 @@
   "scripts": {
     "build": "tsc",
     "typecheck": "tsc --noEmit",
-    "gen:tokens": "style-dictionary build --config gen/style-dictionary.config.mjs && tsx scripts/gen-tokens.mts",
+    "gen:tokens": "style-dictionary build --config gen/style-dictionary.config.mjs && tsx scripts/gen-tokens.mts && node scripts/canon-purity.mjs",
     "mcp": "tsx src/mcp/server.ts",
     "convert": "tsx src/converter/cli.ts",
     "generate": "tsx scripts/generate-components.ts --all",
@@ -101,6 +101,9 @@
     "audit:components": "node src/audit-components.mjs",
     "audit:semantic": "node src/audit-semantic-classes.mjs",
     "test": "vitest run --passWithNoTests",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "canon-purity": "node scripts/canon-purity.mjs",
+    "gate": "npm run canon-purity && npm run tokens:validate && npm run typecheck && npm run test && npm run build",
+    "tokens:validate": "node /home/p31/P31-local-workspace/tools/token-validation/src/validate.mjs"
   }
 }

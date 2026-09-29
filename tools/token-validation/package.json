@@ -1,0 +1,13 @@
+{
+  "name": "@p31/token-validation",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "check": "node src/check.mjs",
+    "check:dtcg": "dtokens check ../../packages/design-core/tokens/tokens.json"
+  },
+  "dependencies": {
+    "@design-token-kit/cli": "latest"
+  }
+}
