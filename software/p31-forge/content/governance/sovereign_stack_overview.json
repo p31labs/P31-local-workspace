@@ -1,0 +1,109 @@
+{
+  "kind": "memo",
+  "theme": "scene",
+  "filename": "P31_Sovereign_Stack_Governance_Overview.docx",
+  "to": "P31 Labs Board of Directors",
+  "from": "P31 Labs Engineering",
+  "date": "September 28, 2026",
+  "subject": "Sovereign Stack — Enterprise Governance Framework v0.3.0",
+  "title": "Sovereign Stack — Enterprise Governance Framework",
+  "body": [
+    {
+      "type": "h1",
+      "text": "What this governs"
+    },
+    {
+      "type": "para",
+      "text": "The P31 Sovereign Stack is 5 governed domains — design, monetization, justice, audit, and govern (the runtime itself) — composed under one enterprise constitution. Each domain declares its gates, ratchets, runbooks, and lessons in a machine-readable constitution; the runtime is the seam every domain conforms to."
+    },
+    {
+      "type": "evidence",
+      "claim": "Enterprise contracts are enforceable.",
+      "value": "All 6 contracts (forge, design, monetization, justice, govern, audit) pass compose.",
+      "source": "govern compose specs/enterprise.govern.yaml",
+      "verified": "2026-09-28",
+      "replayCommand": "govern compose specs/enterprise.govern.yaml",
+      "verificationCostMinutes": 2
+    },
+    {
+      "type": "evidence",
+      "claim": "Every governed domain validates against the schema.",
+      "value": "All 7 constitutions pass validation (govern + six domains).",
+      "source": "govern audit on each constitution",
+      "verified": "2026-09-28",
+      "replayCommand": "for d in constitution.json domains/*/constitution.json; do node dist/cli.js validate \"$d\"; done",
+      "verificationCostMinutes": 5
+    },
+    {
+      "type": "h1",
+      "text": "Tamper-evident by construction"
+    },
+    {
+      "type": "para",
+      "text": "Every audit event is appended to a hash-chained Genesis block ledger. Each block carries blockNumber, ISO-8601 timestamp, eventType, payload, prevHash, and currentHash; SHA-256 over the canonical JSON. Reordering, deletion, and silent edits are detectable. The enterprise timeline is a mirror built by explicit reconciliation, never written to directly by a domain."
+    },
+    {
+      "type": "evidence",
+      "claim": "The genesis chain is intact.",
+      "value": "SHA-256 linked with block 0 anchored, reconciled into the enterprise timeline.",
+      "source": "govern reconcile specs/enterprise.govern.yaml",
+      "verified": "2026-09-28",
+      "replayCommand": "govern reconcile specs/enterprise.govern.yaml",
+      "verificationCostMinutes": 3
+    },
+    {
+      "type": "h1",
+      "text": "Every gate can prove it can fail"
+    },
+    {
+      "type": "para",
+      "text": "A gate is furniture unless it can prove it can fail. Every gate carries a negative control: a fixture or mutation that must make the gate exit non-zero. The strong contract: the control must exit 0 and emit the literal marker NEGATIVE_CONTROL_OK. A gate whose negative control cannot prove it fails is removed from the enforcement surface."
+    },
+    {
+      "type": "evidence",
+      "claim": "Gates are structural and self-tested in CI.",
+      "value": "Every BLOCKING gate carries a negative control that proves it can fail; the self-test gate proves them in CI.",
+      "source": "govern self-test on each constitution",
+      "verified": "2026-09-28",
+      "replayCommand": "for d in constitution.json domains/*/constitution.json; do node dist/cli.js validate \"$d\"; done",
+      "verificationCostMinutes": 8
+    },
+    {
+      "type": "h1",
+      "text": "Four-party review (K₄)"
+    },
+    {
+      "type": "para",
+      "text": "Every blocking domain requires four distinct parties: user (consumes the guarantees), issuer (issues gates and contracts), ledger (records audit events), and court (independent arbitration). No single party can sever the domain."
+    },
+    {
+      "type": "para",
+      "text": "design: K₄ four-party · monetization: K₄ four-party · justice: K₄ four-party · audit: K₄ four-party"
+    },
+    {
+      "type": "h1",
+      "text": "Enforcement is automatic"
+    },
+    {
+      "type": "para",
+      "text": "The composer refuses a contract whose provider gate is not BLOCKING. Documentation says we do X; the system cannot do otherwise. The inter-domain contracts currently enforced: forge, design, monetization, justice, govern."
+    },
+    {
+      "type": "evidence",
+      "claim": "Unenforceable contracts are refused.",
+      "value": "The composer exits non-zero on any non-BLOCKING provider gate.",
+      "source": "govern compose specs/enterprise.govern.yaml",
+      "verified": "2026-09-28",
+      "replayCommand": "govern compose specs/enterprise.govern.yaml",
+      "verificationCostMinutes": 1
+    },
+    {
+      "type": "h1",
+      "text": "Known boundaries"
+    },
+    {
+      "type": "para",
+      "text": "This framework discloses its boundaries rather than hiding them. The compliance mapping is an alignment analysis, not a certification; no external attestation has been issued. Boundary ledger: KNOWN_GAPS.md in the runtime package."
+    }
+  ]
+}

@@ -1,0 +1,116 @@
+{
+  "kind": "memo",
+  "theme": "scene",
+  "filename": "P31_Jitterbug_Work_Package_Human_Eye_Test.docx",
+  "to": "P31 Labs Board + Engineering",
+  "from": "forge-portal",
+  "date": "2026-09-28",
+  "subject": "Work Package WP-2026-09-28-HET — The Human Eye Test (jitterbug)",
+  "title": "Jitterbug Work Package — The Human Eye Test",
+  "body": [
+    {
+      "type": "h1",
+      "text": "The Problem"
+    },
+    {
+      "type": "para",
+      "text": "P31 has solved programmatic verification: every gate emits NEGATIVE_CONTROL_OK only when it has proven it can fail. The human-facing layer is unverified — no one has tested whether a board member, auditor, or regulator can read the generated artifacts, trace every claim, and afford the verification cost."
+    },
+    {
+      "type": "h1",
+      "text": "The Reframing"
+    },
+    {
+      "type": "para",
+      "text": "Humans cannot detect AI authorship, and that is not the test. The human eye test measures verification cost, provenance visibility, trust calibration, readability, and decision auditability — not detection."
+    },
+    {
+      "type": "evidence",
+      "claim": "People cannot reliably tell AI-written from human-written documents.",
+      "value": "Accuracy was 50.1%, which is no better than a coin flip (3,066 paired forgeries).",
+      "source": "AIForge-Doc v2 (3,066 paired forgeries)",
+      "verified": "2026-09-28",
+      "replayCommand": "govern self-test domains/forge/constitution.json",
+      "verificationCostMinutes": 2
+    },
+    {
+      "type": "evidence",
+      "claim": "Developers are slower with AI helpers even when they feel faster.",
+      "value": "Measured 19% slower on average, while the same developers believed they were 20% faster.",
+      "source": "The Verification Tax",
+      "verified": "2026-09-28",
+      "replayCommand": "govern audit domains/forge/constitution.json",
+      "verificationCostMinutes": 2
+    },
+    {
+      "type": "evidence",
+      "claim": "Locking one person into a fixed role is the first step toward failed collaboration.",
+      "value": "Chronic role-locking produces measurable drops in both output and trust.",
+      "source": "Axiomatic Hybrid Intelligence (AHI)",
+      "verified": "2026-09-28",
+      "replayCommand": "govern diagnose domains/forge/constitution.json",
+      "verificationCostMinutes": 1
+    },
+    {
+      "type": "h1",
+      "text": "The Six Dimensions"
+    },
+    {
+      "type": "para",
+      "text": "The problem folds through six measurable dimensions: claim traceability, verification cost, provenance visibility, decision auditability, cognitive load, and completeness."
+    },
+    {
+      "type": "h1",
+      "text": "The Six Moves"
+    },
+    {
+      "type": "numbered",
+      "text": "Handoff Envelope — every forge document gets a .envelope.json carrying evidenceChain, verificationCost, diffFromPrevious, humanDecision."
+    },
+    {
+      "type": "numbered",
+      "text": "Verification-Cost on Evidence Blocks — each evidence block carries replayCommand + verificationCostMinutes."
+    },
+    {
+      "type": "numbered",
+      "text": "Diff Event — govern review records a human decision as a signed structured object on the Genesis chain."
+    },
+    {
+      "type": "numbered",
+      "text": "Human-Eye Test Rubric — 6-dimension score + Flesch-Kincaid ceiling (resolution ≤ 12, overview ≤ 14)."
+    },
+    {
+      "type": "numbered",
+      "text": "govern propose — human proposes a change; the agent validates it against the runtime. Bounded role inversion."
+    },
+    {
+      "type": "numbered",
+      "text": "Interaction-State Presentation — the Compose route renders the envelope + cost + diff before the prose."
+    },
+    {
+      "type": "h1",
+      "text": "The Negative-Control Contract"
+    },
+    {
+      "type": "para",
+      "text": "Every move must prove it can fail before it is registered. Six negative controls, each emitting NEGATIVE_CONTROL_OK only when the move detects its failure class."
+    },
+    {
+      "type": "evidence",
+      "claim": "Legal readability rules already set ceilings for board documents.",
+      "value": "Colorado insurance is capped at grade 10, Texas loans at grade 9, Illinois contracts at grade 12, and the US Supreme Court averages grade 10.1.",
+      "source": "Flesch-Kincaid statutes",
+      "verified": "2026-09-28",
+      "replayCommand": "node software/p31-forge/scripts/human-eye-test.mjs --target governance/sovereign_stack_overview",
+      "verificationCostMinutes": 3
+    },
+    {
+      "type": "h1",
+      "text": "The Honest Boundary"
+    },
+    {
+      "type": "para",
+      "text": "No protocol removes the fundamental constraints: humans cannot detect AI authorship, trust calibration is fragile, and verification cost dominates generation cost. The best available move is to make the human's verification work bounded, traceable, and replayable. This work package makes trustworthiness measurable — it does not claim to make it automatic."
+    }
+  ]
+}

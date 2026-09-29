@@ -1,0 +1,127 @@
+{
+  "kind": "memo",
+  "theme": "scene",
+  "filename": "P31_Research_Report_Audit_Verification_Enterprise.docx",
+  "to": "P31 Labs Board + Engineering + Auditors",
+  "from": "forge-portal · jitterbug (catalog-driven, Workers AI)",
+  "date": "2026-09-28",
+  "subject": "Ground-Truth Research Report — Reducing Human Verification Cost in Governance Documents",
+  "title": "The Handoff Envelope Wins: Ground-Truth Research on Auditor Verification Cost",
+  "body": [
+    {
+      "type": "h1",
+      "text": "Executive Summary"
+    },
+    {
+      "type": "para",
+      "text": "This report answers a single question: which mechanism most reduces human verification cost for an auditor of P31 governance documents? Three candidates were researched in parallel by the jitterbug fractal research workflow (catalog-driven model selection, Workers AI): a Handoff Envelope with Replay Commands, Verification-Cost Labels on evidence blocks, and a Flesch-Kincaid Readability Gate. Both independent research facets converge on the same conclusion."
+    },
+    {
+      "type": "evidence",
+      "claim": "The two research tracks reach the same conclusion.",
+      "value": "A handoff envelope with replay commands is the winning mechanism.",
+      "source": "jitterbug session 86e0c784, convergence-1.md",
+      "verified": "2026-09-28",
+      "replayCommand": "node tools/phos-forge/jitterbug.mjs \"audit verification cost\" --factor 2 --depth 1 --workers-ai",
+      "verificationCostMinutes": 6
+    },
+    {
+      "type": "h1",
+      "text": "Why the Envelope Wins"
+    },
+    {
+      "type": "para",
+      "text": "The Handoff Envelope converts a high-variance cognitive task into a low-variance deterministic task. It shifts the auditor from detective (reconstructing truth by reading) to judge (validating a reconstruction by executing). Verification cost decomposes into cognitive load, search/retrieval cost, and re-computation cost; the envelope attacks re-computation directly, which the other two mechanisms only manage symptomatically."
+    },
+    {
+      "type": "para",
+      "text": "The technical shape is a hermetic execution environment: a state snapshot (Merkle root), a dependency manifest (pinned versions + crypto primitives), and a deterministic replay script (Nix expression or WASM module) that reproduces the evidence block when executed. The primary failure mode is non-determinism: unpinned API calls or external entropy produce a hash mismatch, causing false negatives."
+    },
+    {
+      "type": "evidence",
+      "claim": "The design has clear predecessors.",
+      "value": "It builds on reproducible builds (Nix and Guix), event sourcing, and the Docker precedent.",
+      "source": "documented prior-art reasoning (reproducible builds / event sourcing / Docker); see CITATION_LEDGER.md tier-B note",
+      "verified": "2026-09-28",
+      "replayCommand": "cat P31-local-workspace/docs/grounding/CITATION_LEDGER.md",
+      "verificationCostMinutes": 1
+    },
+    {
+      "type": "h1",
+      "text": "The Two Alternatives, Scored"
+    },
+    {
+      "type": "para",
+      "text": "Verification-Cost Labels add a metadata layer (complexity_score, estimated man-hours, verification_type) enabling triage-based auditing. Their failure mode is label inflation: a malicious actor can mark a complex fraud as low-cost. The Readability Gate (Flesch-Kincaid ceiling) reduces cognitive load but risks the Precision-Simplicity Paradox: forcing low readability can strip governance documents of the legal precision the auditor actually needs."
+    },
+    {
+      "type": "h1",
+      "text": "Ground-Truth Citations"
+    },
+    {
+      "type": "para",
+      "text": "Every claim in this report is traceable to the P31 ground-truth registry (p31-agents/ground-truth.json, 47 verified facts) or to a replayable jitterbug artifact. No claim without a source; no source without a verified date."
+    },
+    {
+      "type": "evidence",
+      "claim": "The verify suite has an established baseline.",
+      "value": "Roughly 186 of 186 gates pass, and the suite is run twice before any deploy.",
+      "source": "ground-truth verify-baseline",
+      "verified": "2026-09-28",
+      "replayCommand": "python3 -c \"import json; f=json.load(open('/home/p31/p31-agents/ground-truth.json'))['facts']; print([x['claim'] for x in f if x['key']=='verify-baseline'])\"",
+      "verificationCostMinutes": 1
+    },
+    {
+      "type": "evidence",
+      "claim": "The care score has a fixed weighting.",
+      "value": "Spoons count for 40%, love 30%, mesh 20%, and rituals 10%.",
+      "source": "ground-truth care-score-formula",
+      "verified": "2026-09-28",
+      "replayCommand": "python3 -c \"import json; f=json.load(open('/home/p31/p31-agents/ground-truth.json'))['facts']; print([x['claim'] for x in f if x['key']=='care-score-formula'])\"",
+      "verificationCostMinutes": 1
+    },
+    {
+      "type": "evidence",
+      "claim": "Color tokens follow a strict standard.",
+      "value": "Only OKLCH and color-mix are allowed; raw hex or rgba values are forbidden.",
+      "source": "ground-truth quantum-material-token-stance",
+      "verified": "2026-09-28",
+      "replayCommand": "python3 -c \"import json; f=json.load(open('/home/p31/p31-agents/ground-truth.json'))['facts']; print([x['claim'] for x in f if x['key']=='quantum-material-token-stance'])\"",
+      "verificationCostMinutes": 1
+    },
+    {
+      "type": "evidence",
+      "claim": "The workspace is deployed.",
+      "value": "workspace.p31ca.org is served from production/portals/workspace/.",
+      "source": "ground-truth workspace-live-deploy",
+      "verified": "2026-09-28",
+      "replayCommand": "python3 -c \"import json; f=json.load(open('/home/p31/p31-agents/ground-truth.json'))['facts']; print([x['claim'] for x in f if x['key']=='workspace-live-deploy'])\"",
+      "verificationCostMinutes": 1
+    },
+    {
+      "type": "h1",
+      "text": "The Enterprise Recommendation"
+    },
+    {
+      "type": "para",
+      "text": "Adopt the Handoff Envelope as the primary audit-verification mechanism, and layer Verification-Cost Labels on top as the triage surface. Enforce a readability ceiling on board-facing documents, but only as a floor guard, not a precision stripper. This maps directly to the forge's existing evidence-block contract: every evidence block already carries claim / value / source / verified; extend it with replayCommand and verificationCostMinutes, and the envelope is the document itself."
+    },
+    {
+      "type": "evidence",
+      "claim": "Model choice is driven by a live catalog.",
+      "value": "31 Workers AI models were probed; each intent maps to requirements and then to a model.",
+      "source": "tools/phos-forge/models-catalog.json (fetched 2026-09-28)",
+      "verified": "2026-09-28",
+      "replayCommand": "node tools/phos-forge/scripts/probe-models.mjs",
+      "verificationCostMinutes": 3
+    },
+    {
+      "type": "para",
+      "text": "The jitterbug run itself is the proof of the mechanism: two research facets (gemma-4-26b, the catalog-selected fast model) converged through glm-5.3 (the synthesis frontier) into a single cited recommendation, with every step recorded on the event bus and reproducible by replay command."
+    },
+    {
+      "type": "para",
+      "text": "Honest boundary: the verification figures in this memo (186/186 gates, 31 probed models, care-score weights) are drawn from the runtime's own counts and the conversation record. They are reproducible by the replay commands listed beside each claim, and they are not an external certification. The medRxiv-derived Lilo Engine figure cited in the family domain is bench-battery-scoped, not clinically validated. Nothing here should be read as a claim stronger than the replay command can reproduce."
+    }
+  ]
+}
