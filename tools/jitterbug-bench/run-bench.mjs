@@ -30,16 +30,30 @@ const skipJitterbug = process.argv.includes('--skip-jitterbug')
 const skipFrontier = process.argv.includes('--skip-frontier')
 const FRONTIER_MODELS = ['glm-5.3', 'deepseek-v4-pro']
 
+// Tag -> actual Workers AI model ID. These MUST be the full catalog IDs; the
+// tag is a human label, not a router intent. The router's selectModel(tag)
+// does not map these strings.
+const MODEL_BY_TAG = {
+  'glm-5.3': '@cf/zai-org/glm-5.3',
+  'deepseek-v4-pro': '@cf/deepseek-ai/deepseek-v4-pro-0813',
+}
+
 async function runJitterbugForPrompt(text) {
   const r = await runJitterbug(text, { depth: 2, factor: 3, workersAI: true })
   return { source: 'jitterbug', report: r.output ?? '', session: r.session }
 }
 
 async function runFrontierForPrompt(text, tag) {
+  // The `model:` override MUST be pinned — the intent `tag` is NOT a model
+  // selector. selectModel('glm-5.3') falls back to `general` requirements
+  // (median-price, 60k context) which resolves to deepseek-v4-flash — so the
+  // earlier 'frontier:glm-5.3' and 'frontier:deepseek-v4-pro' legs BOTH ran
+  // deepseek-v4-flash. That baseline was mislabeled; the frontier comparison
+  // never measured a frontier model. Pin the model explicitly here.
   const r = await callLLM(
     'You are a deep research agent. Produce a structured, citation-backed report. Every claim must have a resolvable citation.',
     text,
-    { intent: { task: 'research', tag, privacy: 'workers-ai' } },
+    { intent: { task: 'research', tag, privacy: 'workers-ai' }, model: MODEL_BY_TAG[tag] },
   )
   return { source: `frontier:${tag}`, report: r ?? '', session: null }
 }
