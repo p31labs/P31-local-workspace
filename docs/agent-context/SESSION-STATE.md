@@ -129,9 +129,7 @@ Do NOT touch runs/ until run 3 completes.
 
 ## Open threads (NOT active — one at a time)
 
-- **n3-bench-finish**: run 2 (in progress) + run 3. When ALL DONE, aggregate
-  per-prompt mean ± stddev across N1-fixed/N2/N3. Watch the rename at run-3
-  completion (compression/ mtime hazard).
+- ~~n3-bench-finish~~ DONE — see WP-N3-VARIANCE.md: mean 0.646 ± 0.179.
 - **preservation-judge-handscore**: fill 65-verdict preservation-sheet.json
   (human step), run calibrate-preservation.mjs.
 - **path-e-live-run**: after N=3 + preservation judge calibrated.
