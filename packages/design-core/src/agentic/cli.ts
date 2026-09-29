@@ -3,15 +3,18 @@
  * p31 design CLI — agentic design system entry point.
  *   design list                 validate + tabulate all bundled intents
  *   design audit <file.yml>     parse + run Opus gates, exit 1 on reject
+ *   design audit --nc           negative control: assert a known-bad fixture is rejected
  *   design create <Name>        scaffold an intent draft
  *   design variant <file.yml>   emit a derived variant spec to stdout
  */
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { parseIntent, summarize } from './intent/parser';
 import { runQaGates } from './qa/gates';
 import { loadExampleSpecs } from './orchestrate';
 
+const __dirname = dirname(fileURLToPath(import.meta.url));
 const [cmd, ...rest] = process.argv.slice(2);
 
 function fail(msg: string): never {
@@ -32,6 +35,28 @@ switch (cmd) {
   }
 
   case 'audit': {
+    // Negative control: a gate that cannot be shown to fail is furniture.
+    // Assert that the bundled failing fixture is REJECTED (exit 1). If the
+    // gate ever approves it, the gate has no teeth — exit 1 with an error.
+    if (rest[0] === '--nc') {
+      const fixture = join(
+        __dirname,
+        'intent',
+        'examples',
+        '__nc__fail-contrast.yml',
+      );
+      if (!existsSync(fixture)) fail(`negative-control fixture missing: ${fixture}`);
+      const res = parseIntent(readFileSync(fixture, 'utf8'));
+      if (!res.ok) fail(`negative-control fixture is invalid YAML — it must parse, then reject (${res.errors?.join('; ')})`);
+      const report = runQaGates(res.spec!);
+      if (report.approved) {
+        console.error('✗ NEGATIVE CONTROL FAILED: a 3:1 contrast / 32px touch fixture was APPROVED — the Opus gate is furniture.');
+        process.exit(1);
+      }
+      console.log('✅ NEGATIVE CONTROL OK: known-bad fixture rejected (gate can fail).');
+      process.exit(0);
+    }
+
     const file = rest[0] ?? fail('usage: design audit <file.yml>');
     if (!existsSync(file)) fail(`not found: ${file}`);
     const res = parseIntent(readFileSync(file, 'utf8'));
