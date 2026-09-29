@@ -40,6 +40,22 @@ not things the agent believes. If a fact is not here and not in the last
 | Routing provenance records failure | routing block #515 `ok: false` | failure is a governed artifact |
 | Fix committed | `3b8658bc` per-stage maxTokens | mechanic 4096 headroom |
 
+## Verified facts (added: jitterbug bench, 2026-09-29)
+
+| Fact | Verification command | Result |
+|---|---|---|
+| Bench harness works | `run-bench.mjs` (detached) | 4 prompts load, rubric valid, jitterbug invoked |
+| Jitterbug research facets produce real output | `/tmp/phos-jitterbug/<session>/level-0/research-*.md` | 3 × 8.3-8.5KB facets with Miserandino/Sweller citations |
+| Convergence stage fails on large input | bench log | glm-5.3 returns empty on combined research facets |
+| Direct glm-5.3 synthesis works on small input | `routeToWorkersAI('synthesis')` | 791 chars, model glm-5.3 |
+| Root cause | `runConvergence` maxTokens=2000 + large combined input | glm-5.3 empty-response on big synthesis context |
+
+## Open threads (NOT active — one at a time)
+
+- **jitterbug-convergence-fix**: convergence stage needs retry-on-empty or
+  smaller synthesis window. This blocks the bench from producing reports.
+  This is the active thread after this bench run.
+
 ## Open threads (NOT active — one at a time)
 
 - **Thread A — agentic design anchor:** the human anchor (approve.ts,
