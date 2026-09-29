@@ -5,6 +5,8 @@ import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import crypto from 'crypto';
 import { dispatchLLM } from './router.mjs';
+import { gracefulConvergence } from './convergence/graceful.mjs';
+import { convergeWithChain } from './convergence/model-chain.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const SESSION_DIR = '/tmp/phos-jitterbug';
@@ -117,14 +119,40 @@ async function runResearch(facet, parentContext, index, privacy) {
   });
 }
 
-async function runConvergence(researchTexts, privacy) {
-  const combined = researchTexts.map((t, i) => `## Research Output ${i + 1}\n${trimContext(t)}`).join('\n\n');
-  return callLLM(CONVERGE_SYSTEM, `Converge these ${researchTexts.length} research outputs into a unified synthesis:\n\n${combined}`, {
-    intent: { task: 'synthesis', tag: 'synthesis', privacy },
-    maxTokens: 2000,
-    temperature: 0.3,
-    timeoutMs: 180000, // kimi-k2.6 (1T params) needs ~35s+; budget for the slow frontier path
+async function runConvergence(researchTexts, privacy, session, level) {
+  // Enterprise convergence: graceful degradation cascade (never empty).
+  //  - Layer 1: OGC planner selects direct/chunked strategy
+  //  - Layer 2: map-reduce chunking with checkpointing (resilient.mjs)
+  //  - Layer 3: stall recovery with strong-nudge retry (stall-recovery.mjs)
+  //  - Layer 4: model fallback chain + circuit breaker (model-chain.mjs)
+  //  - Layer 5: graceful cascade to concatenated-briefs (graceful.mjs)
+  //
+  // The router forwards reasoning_effort:'low' to Workers AI (root-cause fix
+  // for GLM/Kimi stalling — no visible content when reasoning exhausts the
+  // completion cap).
+  const callFn = async (system, user, opts = {}) => {
+    const r = await convergeWithChain(system, user, {
+      ...opts,
+      reasoningEffort: 'low',
+      originalQuestion: `Merge these ${researchTexts.length} research outputs into a unified synthesis.`,
+      timeoutMs: 180000,
+    });
+    return r.content;
+  };
+
+  const result = await gracefulConvergence(`${session}-l${level}`, researchTexts, callFn, {});
+
+  // Record the convergence decision in the audit chain — the convergence is
+  // itself a governed artifact.
+  busEmit('jitterbug.convergence_completed', {
+    session, level,
+    convergenceLevel: result.level,
+    degraded: result.degraded ?? false,
+    stageTrace: result.stageTrace,
+    errors: result.errors,
   });
+
+  return result.synthesis;
 }
 
 function parseFacets(text) {
@@ -263,7 +291,7 @@ Format:
 
     // Converge
     busEmit('jitterbug.convergence_started', { session, level });
-    const convergence = await runConvergence(researchResults, privacy);
+    const convergence = await runConvergence(researchResults, privacy, session, level);
 
     // Validate convergence output structure
     const hasStructure = /^(## Consensus|## Divergence|## Synthesis)/m.test(convergence);

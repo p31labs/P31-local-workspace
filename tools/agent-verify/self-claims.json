@@ -30,6 +30,60 @@
       "name": "sabotage NC exists (system-test negative control)",
       "type": "file-exists",
       "path": "tools/system-test/negative-controls/sabotage.mjs"
+    },
+    {
+      "name": "convergence/planner.mjs exists",
+      "type": "file-exists",
+      "path": "tools/phos-forge/convergence/planner.mjs"
+    },
+    {
+      "name": "convergence/resilient.mjs exists",
+      "type": "file-exists",
+      "path": "tools/phos-forge/convergence/resilient.mjs"
+    },
+    {
+      "name": "convergence/stall-recovery.mjs exists",
+      "type": "file-exists",
+      "path": "tools/phos-forge/convergence/stall-recovery.mjs"
+    },
+    {
+      "name": "convergence/model-health.mjs exists",
+      "type": "file-exists",
+      "path": "tools/phos-forge/convergence/model-health.mjs"
+    },
+    {
+      "name": "convergence/graceful.mjs exists",
+      "type": "file-exists",
+      "path": "tools/phos-forge/convergence/graceful.mjs"
+    },
+    {
+      "name": "convergence/model-chain.mjs exists",
+      "type": "file-exists",
+      "path": "tools/phos-forge/convergence/model-chain.mjs"
+    },
+    {
+      "name": "jitterbug imports graceful convergence",
+      "type": "file-contains",
+      "path": "tools/phos-forge/jitterbug.mjs",
+      "pattern": "convergence/graceful.mjs"
+    },
+    {
+      "name": "router forwards reasoning_effort (root-cause fix)",
+      "type": "file-contains",
+      "path": "tools/phos-forge/router.mjs",
+      "pattern": "reasoning_effort: reasoningEffort"
+    },
+    {
+      "name": "convergence unit tests pass (deterministic, no LLM)",
+      "type": "command-passes",
+      "command": "node --eval \"import('./convergence/planner.mjs').then(async m=>{const t=m.__testPlan(); if(!(t.direct==='direct'&&t.chunked==='chunked'&&t.deferred==='deferred'))process.exit(1)}); import('./convergence/stall-recovery.mjs').then(async m=>{const t=await m.__testStallRecovery(); if(!(t.recovered&&t.textLen>0))process.exit(1)}); import('./convergence/model-health.mjs').then(async m=>{const t=m.__testModelHealth(); if(!(t.bState==='OPEN'&&t.bSinks))process.exit(1)}); import('./convergence/resilient.mjs').then(async m=>{const t=await m.__testResilient(); if(!(t.briefs===2&&t.hasSynthesis))process.exit(1)}); import('./convergence/graceful.mjs').then(async m=>{const t=await m.__testGraceful(); if(!(t.level==='concatenated-briefs'&&t.hasContent&&t.degraded))process.exit(1)});\"",
+      "cwd": "tools/phos-forge"
+    },
+    {
+      "name": "convergence negative control: stall-recovery throws bounded (3 attempts)",
+      "type": "command-passes",
+      "command": "node --eval \"import('./convergence/stall-recovery.mjs').then(async m=>{try{await m.callWithStallRecovery('s','u',async()=>'');process.exit(1)}catch(e){if(e.message!=='empty-response')process.exit(1)}})\"",
+      "cwd": "tools/phos-forge"
     }
   ]
 }

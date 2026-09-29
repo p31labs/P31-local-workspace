@@ -216,14 +216,24 @@ const MODEL_BY_INTENT = {} // removed — selection is catalog-driven via select
 const WORKERS_AI_BASE = (accountId) =>
   `https://api.cloudflare.com/client/v4/accounts/${accountId}/ai/v1/chat/completions`;
 
-async function routeToWorkersAI(system, user, intentTag, maxTokens, temperature, timeoutMs = 120000) {
+async function routeToWorkersAI(system, user, intentTag, maxTokens, temperature, timeoutMs = 120000, opts = {}) {
   const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
   const token = process.env.CF_API_TOKEN;
   if (!accountId || !token) {
     throw new Error('[router] Workers AI not configured: CLOUDFLARE_ACCOUNT_ID / CF_API_TOKEN unset');
   }
-  const model = selectModel(intentTag)
+  // Explicit model override for fallback chains (convergence Layer 4). When
+  // absent, the catalog-driven selectModel picks by intent capability.
+  const model = opts.model ?? selectModel(intentTag);
   if (!model) throw new Error(`[router] no model selected for intent "${intentTag}" (catalog empty?)`);
+
+  // Reasoning models (GLM, Kimi, DeepSeek-R, QwQ) burn the output token budget
+  // on chain-of-thought first, emitting NO visible content when the reasoning
+  // exhausts the completion cap. The documented fix (cloudflare/ai
+  // workers-ai-provider@3.1.12) is to forward `reasoning_effort` so the model
+  // does not starve the response. Default to 'low' for synthesis-like work;
+  // callers may override. This is the ROOT-CAUSE fix for convergence stalling.
+  const reasoningEffort = opts.reasoningEffort ?? 'low';
 
   // Transient empty-content / 5xx retries. Workers AI can return an empty
   // `content` under burst (reasoning models especially). A single empty
@@ -244,6 +254,7 @@ async function routeToWorkersAI(system, user, intentTag, maxTokens, temperature,
           messages: [{ role: 'system', content: system }, { role: 'user', content: user }],
           max_tokens: maxTokens,
           temperature,
+          reasoning_effort: reasoningEffort,
         }),
         signal: AbortSignal.timeout(timeoutMs),
       });
@@ -343,10 +354,10 @@ export async function dispatchLLM(system, user, intent = {}, opts = {}) {
   if (intent.privacy === 'workers-ai') {
     const tag = intent.tag || 'general';
     const { content, modelUsed } = await routeToWorkersAI(
-      system, user, tag, maxTokens, temperature, opts.timeoutMs ?? 120000,
+      system, user, tag, maxTokens, temperature, opts.timeoutMs ?? 120000, opts,
     );
     emitTelemetry(intent, modelUsed, false, false);
-    return content;
+    return opts.returnModel ? { content, modelUsed } : content;
   }
 
   // 2. Select tier based on spoons + task
