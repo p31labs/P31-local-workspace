@@ -9,621 +9,1539 @@
   },
   "p31": {
     "base": {
-      "$value": "16px",
-      "$type": "dimension"
-    },
-    "scale-xs": {
-      "$value": "calc(var(--p31-base) * 0.75)",
-      "$type": "dimension"
-    },
-    "scale-sm": {
-      "$value": "var(--p31-base)",
-      "$type": "dimension"
-    },
-    "scale-md": {
-      "$value": "calc(var(--p31-base) * 1.3333)",
-      "$type": "dimension"
-    },
-    "scale-lg": {
-      "$value": "calc(var(--p31-base) * 1.7777)",
-      "$type": "dimension"
-    },
-    "scale-xl": {
-      "$value": "calc(var(--p31-base) * 2.3703)",
-      "$type": "dimension"
-    },
-    "scale-2xl": {
-      "$value": "calc(var(--p31-base) * 3.1604)",
+      "$value": {
+        "value": 16,
+        "unit": "px"
+      },
       "$type": "dimension"
     },
     "radius-sm": {
-      "$value": "8px",
+      "$value": {
+        "value": 8,
+        "unit": "px"
+      },
       "$type": "dimension"
     },
     "radius-md": {
-      "$value": "16px",
+      "$value": {
+        "value": 16,
+        "unit": "px"
+      },
       "$type": "dimension"
     },
     "radius-lg": {
-      "$value": "24px",
+      "$value": {
+        "value": 24,
+        "unit": "px"
+      },
       "$type": "dimension"
     },
     "radius-full": {
-      "$value": "9999px",
+      "$value": {
+        "value": 9999,
+        "unit": "px"
+      },
       "$type": "dimension"
     },
     "font-sans": {
-      "$value": "'Space Grotesk', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
+      "$value": [
+        "Space Grotesk",
+        "system-ui",
+        "-apple-system",
+        "Segoe UI",
+        "Roboto",
+        "sans-serif"
+      ],
       "$type": "fontFamily"
     },
     "font-mono": {
-      "$value": "'JetBrains Mono', ui-monospace, 'SF Mono', 'Fira Code', monospace",
+      "$value": [
+        "JetBrains Mono",
+        "ui-monospace",
+        "SF Mono",
+        "Fira Code",
+        "monospace"
+      ],
       "$type": "fontFamily"
     },
     "accent-alt": {
-      "$value": "oklch(65% 0.18 285)",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.65,
+          0.18,
+          285
+        ]
+      },
       "$type": "color"
     },
     "text": {
-      "$value": "oklch(96% 0.005 240)",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.96,
+          0.005,
+          240
+        ]
+      },
       "$type": "color"
     },
     "glass-border-hover": {
-      "$value": "oklch(100% 0.01 240 / 0.15)",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          1,
+          0.01,
+          240
+        ],
+        "alpha": 0.15
+      },
       "$type": "color"
     },
-    "glass-blur": {
-      "$value": "blur(12px)",
-      "$type": "dimension"
-    },
     "glass-bg-strong": {
-      "$value": "oklch(100% 0.01 75 / 0.22)",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          1,
+          0.01,
+          75
+        ],
+        "alpha": 0.22
+      },
       "$type": "color"
     },
     "glass-bg-overlay": {
-      "$value": "oklch(100% 0.01 75 / 0.10)",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          1,
+          0.01,
+          75
+        ],
+        "alpha": 0.1
+      },
       "$type": "color"
     },
     "glass-bg-light": {
-      "$value": "oklch(100% 0.01 75 / 0.10)",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          1,
+          0.01,
+          75
+        ],
+        "alpha": 0.1
+      },
       "$type": "color"
     },
     "glass-border-strong": {
-      "$value": "oklch(100% 0.01 75 / 0.16)",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          1,
+          0.01,
+          75
+        ],
+        "alpha": 0.16
+      },
       "$type": "color"
     },
     "glass-border-strong-hover": {
-      "$value": "oklch(100% 0.01 75 / 0.25)",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          1,
+          0.01,
+          75
+        ],
+        "alpha": 0.25
+      },
       "$type": "color"
     },
-    "glow-cyan": {
-      "$value": "0 0 20px rgba(0,240,255,0.25)",
-      "$type": "boxShadow"
-    },
-    "glow-neon": {
-      "$value": "0 0 6px oklch(90.5% 0.155 194.8), 0 0 20px oklch(90.5% 0.155 194.8 / 0.3)",
-      "$type": "boxShadow"
-    },
-    "glow-magenta": {
-      "$value": "0 0 6px oklch(70.2% 0.322 328.4), 0 0 20px oklch(70.2% 0.322 328.4 / 0.3)",
-      "$type": "boxShadow"
-    },
-    "glow-violet": {
-      "$value": "0 0 6px oklch(67.0% 0.234 309.1), 0 0 20px oklch(67.0% 0.234 309.1 / 0.3)",
-      "$type": "boxShadow"
-    },
-    "glow-amber": {
-      "$value": "0 0 6px oklch(88.7% 0.182 95.3), 0 0 20px oklch(88.7% 0.182 95.3 / 0.3)",
-      "$type": "boxShadow"
-    },
-    "glow-mint": {
-      "$value": "0 0 6px oklch(87.6% 0.228 152.5), 0 0 20px oklch(87.6% 0.228 152.5 / 0.3)",
-      "$type": "boxShadow"
-    },
-    "glow-coral": {
-      "$value": "0 0 6px oklch(71.2% 0.181 22.8), 0 0 20px oklch(71.2% 0.181 22.8 / 0.3)",
-      "$type": "boxShadow"
-    },
     "neon": {
-      "$value": "oklch(90.5% 0.155 194.8)",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.905,
+          0.155,
+          194.8
+        ]
+      },
       "$type": "color"
     },
     "neon-dim": {
-      "$value": "oklch(90.5% 0.155 194.8 / 0.35)",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.905,
+          0.155,
+          194.8
+        ],
+        "alpha": 0.35
+      },
       "$type": "color"
     },
     "neon-faint": {
-      "$value": "oklch(90.5% 0.155 194.8 / 0.08)",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.905,
+          0.155,
+          194.8
+        ],
+        "alpha": 0.08
+      },
       "$type": "color"
     },
     "neon-ghost": {
-      "$value": "oklch(90.5% 0.155 194.8 / 0.03)",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.905,
+          0.155,
+          194.8
+        ],
+        "alpha": 0.03
+      },
       "$type": "color"
     },
     "neon-cyan": {
-      "$value": "oklch(90.5% 0.155 194.8)",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.905,
+          0.155,
+          194.8
+        ]
+      },
       "$type": "color"
     },
     "neon-magenta": {
-      "$value": "oklch(70.2% 0.322 328.4)",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.7020000000000001,
+          0.322,
+          328.4
+        ]
+      },
       "$type": "color"
     },
     "neon-violet": {
-      "$value": "oklch(67.0% 0.234 309.1)",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.67,
+          0.234,
+          309.1
+        ]
+      },
       "$type": "color"
     },
     "neon-amber": {
-      "$value": "oklch(88.7% 0.182 95.3)",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.887,
+          0.182,
+          95.3
+        ]
+      },
       "$type": "color"
     },
     "neon-mint": {
-      "$value": "oklch(87.6% 0.228 152.5)",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.8759999999999999,
+          0.228,
+          152.5
+        ]
+      },
       "$type": "color"
     },
     "neon-coral": {
-      "$value": "oklch(71.2% 0.181 22.8)",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.7120000000000001,
+          0.181,
+          22.8
+        ]
+      },
       "$type": "color"
     },
     "neon-orange": {
-      "$value": "oklch(75.4% 0.164 50.4)",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.754,
+          0.164,
+          50.4
+        ]
+      },
       "$type": "color"
     },
     "neon-blue": {
-      "$value": "oklch(80.4% 0.146 219.5)",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.804,
+          0.146,
+          219.5
+        ]
+      },
       "$type": "color"
     },
     "neon-lavender": {
-      "$value": "oklch(62% 0.279 290.8)",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.62,
+          0.279,
+          290.8
+        ]
+      },
       "$type": "color"
     },
     "neon-pink": {
-      "$value": "oklch(67.4% 0.293 340.4)",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.674,
+          0.293,
+          340.4
+        ]
+      },
       "$type": "color"
     },
     "surface-s1": {
-      "$value": "oklch(0% 0 0)",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0,
+          0,
+          0
+        ]
+      },
       "$type": "color"
     },
     "surface-s2": {
-      "$value": "oklch(4.9% 0 0)",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.049,
+          0,
+          0
+        ]
+      },
       "$type": "color"
     },
     "surface-s3": {
-      "$value": "oklch(6.9% 0 0)",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.069,
+          0,
+          0
+        ]
+      },
       "$type": "color"
     },
     "surface-s4": {
-      "$value": "oklch(10.5% 0 0)",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.105,
+          0,
+          0
+        ]
+      },
       "$type": "color"
     },
     "status-online": {
-      "$value": "oklch(65% 0.18 105)",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.65,
+          0.18,
+          105
+        ]
+      },
       "$type": "color"
     },
     "status-offline": {
-      "$value": "oklch(78% 0.01 240)",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.78,
+          0.01,
+          240
+        ]
+      },
       "$type": "color"
     },
     "status-warning": {
-      "$value": "oklch(65% 0.18 15)",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.65,
+          0.18,
+          15
+        ]
+      },
       "$type": "color"
     },
     "status-error": {
-      "$value": "oklch(65% 0.18 20)",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.65,
+          0.18,
+          20
+        ]
+      },
       "$type": "color"
     },
     "status-info": {
-      "$value": "oklch(65% 0.18 195)",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.65,
+          0.18,
+          195
+        ]
+      },
       "$type": "color"
     },
-    "scale-3xl": {
-      "$value": "calc(var(--p31-base) * 4.2139)",
-      "$type": "dimension"
-    },
-    "scale-4xl": {
-      "$value": "calc(var(--p31-base) * 5.6186)",
-      "$type": "dimension"
-    },
-    "type-caption": {
-      "$value": "clamp(var(--p31-scale-xs), 0.8vw, var(--p31-scale-sm))",
-      "$type": "dimension"
-    },
-    "type-body": {
-      "$value": "clamp(calc(var(--p31-base) * 0.95), 1vw + 0.5rem, var(--p31-scale-sm))",
-      "$type": "dimension"
-    },
-    "type-label": {
-      "$value": "var(--p31-scale-sm)",
-      "$type": "dimension"
-    },
-    "type-h3": {
-      "$value": "clamp(var(--p31-scale-md), 2vw, var(--p31-scale-lg))",
-      "$type": "dimension"
-    },
-    "type-h2": {
-      "$value": "clamp(var(--p31-scale-lg), 3.5vw, var(--p31-scale-xl))",
-      "$type": "dimension"
-    },
-    "type-h1": {
-      "$value": "clamp(var(--p31-scale-xl), 5.6vw, var(--p31-scale-2xl))",
-      "$type": "dimension"
-    },
-    "type-display": {
-      "$value": "clamp(var(--p31-scale-2xl), 7vw, var(--p31-scale-3xl))",
-      "$type": "dimension"
-    },
     "font-display": {
-      "$value": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+      "$value": [
+        "system-ui",
+        "-apple-system",
+        "BlinkMacSystemFont",
+        "Segoe UI",
+        "Roboto",
+        "Helvetica Neue",
+        "Arial",
+        "sans-serif"
+      ],
       "$type": "fontFamily"
     },
     "duration-fast": {
-      "$value": "100ms",
+      "$value": {
+        "value": 100,
+        "unit": "ms"
+      },
       "$type": "duration"
     },
     "duration-normal": {
-      "$value": "300ms",
+      "$value": {
+        "value": 300,
+        "unit": "ms"
+      },
       "$type": "duration"
     },
     "duration-slow": {
-      "$value": "500ms",
+      "$value": {
+        "value": 500,
+        "unit": "ms"
+      },
       "$type": "duration"
     },
     "easing-smooth": {
-      "$value": "cubic-bezier(0.4, 0, 0.2, 1)",
+      "$value": [
+        0.4,
+        0,
+        0.2,
+        1
+      ],
       "$type": "cubicBezier"
     },
     "easing-snappy": {
-      "$value": "cubic-bezier(0.34, 1.56, 0.64, 1)",
-      "$type": "cubicBezier"
-    },
-    "easing-linear": {
-      "$value": "linear",
+      "$value": [
+        0.34,
+        1.56,
+        0.64,
+        1
+      ],
       "$type": "cubicBezier"
     },
     "speed-factor": {
-      "$value": "1",
+      "$value": 1,
+      "$type": "number"
+    },
+    "spring-expressive-fast-spatial": {
+      "$value": [
+        0.42,
+        1.67,
+        0.21,
+        0.9
+      ],
+      "$type": "cubicBezier"
+    },
+    "spring-expressive-fast-spatial-ms": {
+      "$value": {
+        "value": 350,
+        "unit": "ms"
+      },
+      "$type": "duration"
+    },
+    "spring-expressive-fast-effects": {
+      "$value": [
+        0.31,
+        0.8,
+        0.34,
+        1
+      ],
+      "$type": "cubicBezier"
+    },
+    "spring-expressive-fast-effects-ms": {
+      "$value": {
+        "value": 150,
+        "unit": "ms"
+      },
+      "$type": "duration"
+    },
+    "spring-expressive-default-spatial": {
+      "$value": [
+        0.38,
+        1.21,
+        0.22,
+        1
+      ],
+      "$type": "cubicBezier"
+    },
+    "spring-expressive-default-spatial-ms": {
+      "$value": {
+        "value": 500,
+        "unit": "ms"
+      },
+      "$type": "duration"
+    },
+    "spring-expressive-default-effects": {
+      "$value": [
+        0.34,
+        0.8,
+        0.34,
+        1
+      ],
+      "$type": "cubicBezier"
+    },
+    "spring-expressive-default-effects-ms": {
+      "$value": {
+        "value": 200,
+        "unit": "ms"
+      },
+      "$type": "duration"
+    },
+    "spring-expressive-slow-spatial": {
+      "$value": [
+        0.38,
+        0.86,
+        0.22,
+        1
+      ],
+      "$type": "cubicBezier"
+    },
+    "spring-expressive-slow-spatial-ms": {
+      "$value": {
+        "value": 650,
+        "unit": "ms"
+      },
+      "$type": "duration"
+    },
+    "spring-expressive-slow-effects": {
+      "$value": [
+        0.34,
+        0.8,
+        0.34,
+        1
+      ],
+      "$type": "cubicBezier"
+    },
+    "spring-expressive-slow-effects-ms": {
+      "$value": {
+        "value": 300,
+        "unit": "ms"
+      },
+      "$type": "duration"
+    },
+    "spring-standard-spatial": {
+      "$value": [
+        0.2,
+        0,
+        0,
+        1
+      ],
+      "$type": "cubicBezier"
+    },
+    "spring-standard-spatial-ms": {
+      "$value": {
+        "value": 300,
+        "unit": "ms"
+      },
+      "$type": "duration"
+    },
+    "elevation-level1-tint": {
+      "$value": 0.05,
+      "$type": "number"
+    },
+    "elevation-level2-tint": {
+      "$value": 0.08,
+      "$type": "number"
+    },
+    "elevation-level3-tint": {
+      "$value": 0.11,
       "$type": "number"
     },
     "starfield-hearth": {
-      "$value": "oklch(55% 0.15 35)",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.55,
+          0.15,
+          35
+        ]
+      },
       "$type": "color"
     },
     "starfield-teal": {
-      "$value": "oklch(60% 0.08 185)",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.6,
+          0.08,
+          185
+        ]
+      },
       "$type": "color"
     },
     "starfield-remembrance": {
-      "$value": "oklch(95% 0.01 80)",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.95,
+          0.01,
+          80
+        ]
+      },
       "$type": "color"
     },
     "starfield-particle-teal": {
-      "$value": "oklch(70% 0.12 185 / 0.6)",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.7,
+          0.12,
+          185
+        ],
+        "alpha": 0.6
+      },
       "$type": "color"
     },
     "starfield-particle-coral": {
-      "$value": "oklch(65% 0.14 40 / 0.5)",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.65,
+          0.14,
+          40
+        ],
+        "alpha": 0.5
+      },
       "$type": "color"
     },
     "blur-subtle": {
-      "$value": "8px",
+      "$value": {
+        "value": 8,
+        "unit": "px"
+      },
       "$type": "dimension"
     },
     "blur-standard": {
-      "$value": "12px",
+      "$value": {
+        "value": 12,
+        "unit": "px"
+      },
       "$type": "dimension"
     },
     "blur-strong": {
-      "$value": "24px",
-      "$type": "dimension"
-    },
-    "space-xs": {
-      "$value": "clamp(var(--p31-scale-xs), 1vw, var(--p31-scale-sm))",
-      "$type": "dimension"
-    },
-    "space-sm": {
-      "$value": "clamp(var(--p31-scale-sm), 1.5vw, var(--p31-scale-md))",
-      "$type": "dimension"
-    },
-    "space-md": {
-      "$value": "clamp(var(--p31-scale-md), 2.5vw, var(--p31-scale-lg))",
-      "$type": "dimension"
-    },
-    "space-lg": {
-      "$value": "clamp(var(--p31-scale-lg), 3.5vw, var(--p31-scale-xl))",
-      "$type": "dimension"
-    },
-    "space-xl": {
-      "$value": "clamp(var(--p31-scale-xl), 5vw, var(--p31-scale-2xl))",
-      "$type": "dimension"
-    },
-    "space-2xl": {
-      "$value": "clamp(var(--p31-scale-2xl), 6.5vw, var(--p31-scale-3xl))",
+      "$value": {
+        "value": 24,
+        "unit": "px"
+      },
       "$type": "dimension"
     },
     "space-tiny": {
-      "$value": "2px",
-      "$type": "dimension"
-    },
-    "radius-xl": {
-      "$value": "calc(var(--p31-scale-xl) / 2)",
+      "$value": {
+        "value": 2,
+        "unit": "px"
+      },
       "$type": "dimension"
     },
     "radius-candy": {
-      "$value": "24px",
+      "$value": {
+        "value": 24,
+        "unit": "px"
+      },
       "$type": "dimension"
     },
     "touch-min": {
-      "$value": "48px",
+      "$value": {
+        "value": 48,
+        "unit": "px"
+      },
       "$type": "dimension"
     },
     "touch-recommended": {
-      "$value": "56px",
+      "$value": {
+        "value": 56,
+        "unit": "px"
+      },
       "$type": "dimension"
     },
     "touch-large": {
-      "$value": "64px",
+      "$value": {
+        "value": 64,
+        "unit": "px"
+      },
       "$type": "dimension"
     },
     "z-starfield": {
-      "$value": "0",
+      "$value": 0,
       "$type": "number"
     },
     "z-topbar": {
-      "$value": "10",
+      "$value": 10,
       "$type": "number"
     },
     "z-toast": {
-      "$value": "9999",
+      "$value": 9999,
       "$type": "number"
     },
     "z-crisis": {
-      "$value": "99999",
+      "$value": 99999,
       "$type": "number"
     },
     "z-skip-link": {
-      "$value": "100",
+      "$value": 100,
       "$type": "number"
     },
     "topbar-height": {
-      "$value": "64px",
+      "$value": {
+        "value": 64,
+        "unit": "px"
+      },
       "$type": "dimension"
     },
     "z-content": {
-      "$value": "1",
+      "$value": 1,
       "$type": "number"
     },
     "z-floating": {
-      "$value": "60",
+      "$value": 60,
       "$type": "number"
     },
     "space-3xl": {
-      "$value": "64px",
+      "$value": {
+        "value": 64,
+        "unit": "px"
+      },
       "$type": "dimension"
     },
-    "void": {
-      "$value": "#0A0A0F",
-      "$type": "color"
-    },
-    "cloud": {
-      "$value": "#A1A1AA",
-      "$type": "color"
-    },
     "glass-surface": {
-      "$value": "oklch(100% 0.01 240 / 0.04)",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          1,
+          0.01,
+          240
+        ],
+        "alpha": 0.04
+      },
       "$type": "color"
     },
     "glass-surface-hover": {
-      "$value": "oklch(100% 0.01 240 / 0.06)",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          1,
+          0.01,
+          240
+        ],
+        "alpha": 0.06
+      },
       "$type": "color"
     },
     "glass-radius": {
-      "$value": "24px",
+      "$value": {
+        "value": 24,
+        "unit": "px"
+      },
       "$type": "dimension"
     },
     "spacing-xs": {
-      "$value": "4px",
+      "$value": {
+        "value": 4,
+        "unit": "px"
+      },
       "$type": "dimension"
     },
     "spacing-sm": {
-      "$value": "8px",
+      "$value": {
+        "value": 8,
+        "unit": "px"
+      },
       "$type": "dimension"
     },
     "spacing-md": {
-      "$value": "16px",
+      "$value": {
+        "value": 16,
+        "unit": "px"
+      },
       "$type": "dimension"
     },
     "spacing-lg": {
-      "$value": "24px",
+      "$value": {
+        "value": 24,
+        "unit": "px"
+      },
       "$type": "dimension"
     },
     "spacing-xl": {
-      "$value": "32px",
+      "$value": {
+        "value": 32,
+        "unit": "px"
+      },
       "$type": "dimension"
     },
     "spacing-xxl": {
-      "$value": "64px",
+      "$value": {
+        "value": 64,
+        "unit": "px"
+      },
       "$type": "dimension"
     },
     "radius-none": {
-      "$value": "0",
+      "$value": {
+        "value": 0,
+        "unit": "px"
+      },
       "$type": "dimension"
     },
     "h1": {
-      "$value": "51px",
+      "$value": {
+        "value": 51,
+        "unit": "px"
+      },
       "$type": "dimension"
     },
     "h2": {
-      "$value": "38px",
+      "$value": {
+        "value": 38,
+        "unit": "px"
+      },
       "$type": "dimension"
     },
     "h3": {
-      "$value": "28px",
+      "$value": {
+        "value": 28,
+        "unit": "px"
+      },
       "$type": "dimension"
     },
     "h4": {
-      "$value": "21px",
+      "$value": {
+        "value": 21,
+        "unit": "px"
+      },
       "$type": "dimension"
     },
     "body": {
-      "$value": "16px",
+      "$value": {
+        "value": 16,
+        "unit": "px"
+      },
       "$type": "dimension"
     },
     "body-sm": {
-      "$value": "14px",
+      "$value": {
+        "value": 14,
+        "unit": "px"
+      },
       "$type": "dimension"
     },
     "label": {
-      "$value": "12px",
+      "$value": {
+        "value": 12,
+        "unit": "px"
+      },
       "$type": "dimension"
     },
     "caption": {
-      "$value": "7px",
+      "$value": {
+        "value": 7,
+        "unit": "px"
+      },
       "$type": "dimension"
     },
     "duration-instant": {
-      "$value": "62.5ms",
+      "$value": {
+        "value": 62.5,
+        "unit": "ms"
+      },
       "$type": "duration"
     },
     "duration-standard": {
-      "$value": "250ms",
+      "$value": {
+        "value": 250,
+        "unit": "ms"
+      },
       "$type": "duration"
     },
     "duration-slower": {
-      "$value": "1000ms",
+      "$value": {
+        "value": 1000,
+        "unit": "ms"
+      },
       "$type": "duration"
     },
     "easing-standard": {
-      "$value": "cubic-bezier(0.4, 0.0, 0.2, 1)",
+      "$value": [
+        0.4,
+        0,
+        0.2,
+        1
+      ],
       "$type": "cubicBezier"
     },
     "easing-decelerate": {
-      "$value": "cubic-bezier(0.0, 0.0, 0.2, 1)",
+      "$value": [
+        0,
+        0,
+        0.2,
+        1
+      ],
       "$type": "cubicBezier"
     },
     "easing-accelerate": {
-      "$value": "cubic-bezier(0.4, 0.0, 1.0, 1)",
+      "$value": [
+        0.4,
+        0,
+        1,
+        1
+      ],
       "$type": "cubicBezier"
     },
     "card-padding": {
-      "$value": "24px",
+      "$value": {
+        "value": 24,
+        "unit": "px"
+      },
       "$type": "dimension"
     },
     "color": {
       "action": {
         "primary": {
-          "$value": "oklch(70% 0.15 200)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.7,
+              0.15,
+              200
+            ]
+          },
           "$type": "color",
           "$extensions": {
             "p31": {
               "themes": {
-                "cipher": "oklch(65% 0.18 195)",
-                "garden": "oklch(70% 0.15 145)",
-                "retro": "oklch(75% 0.18 80)",
-                "sunset": "oklch(72% 0.18 40)",
-                "mono": "oklch(80% 0 0)",
-                "aurora": "oklch(72% 0.16 250)",
-                "zen": "oklch(72% 0.1 75)",
-                "volt": "oklch(75% 0.17 190)",
-                "family": "oklch(80% 0.16 75)"
+                "cipher": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    0.65,
+                    0.18,
+                    195
+                  ]
+                },
+                "garden": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    0.7,
+                    0.15,
+                    145
+                  ]
+                },
+                "retro": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    0.75,
+                    0.18,
+                    80
+                  ]
+                },
+                "sunset": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    0.72,
+                    0.18,
+                    40
+                  ]
+                },
+                "mono": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    0.8,
+                    0,
+                    0
+                  ]
+                },
+                "aurora": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    0.72,
+                    0.16,
+                    250
+                  ]
+                },
+                "zen": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    0.72,
+                    0.1,
+                    75
+                  ]
+                },
+                "volt": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    0.75,
+                    0.17,
+                    190
+                  ]
+                },
+                "family": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    0.8,
+                    0.16,
+                    75
+                  ]
+                },
+                "sunlight": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    0.55,
+                    0.15,
+                    40
+                  ]
+                }
               }
             }
           }
         },
         "primary-hover": {
-          "$value": "oklch(70% 0.15 200 / 0.8)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.7,
+              0.15,
+              200
+            ],
+            "alpha": 0.8
+          },
           "$type": "color",
           "$extensions": {
             "p31": {
               "themes": {
-                "cipher": "oklch(65% 0.18 195 / 0.8)",
-                "garden": "oklch(70% 0.15 145 / 0.8)",
-                "retro": "oklch(75% 0.18 80 / 0.8)",
-                "sunset": "oklch(72% 0.18 40 / 0.8)",
-                "mono": "oklch(80% 0 0 / 0.8)",
-                "aurora": "oklch(72% 0.16 250 / 0.8)",
-                "zen": "oklch(72% 0.1 75 / 0.8)",
-                "volt": "oklch(75% 0.17 190 / 0.8)",
-                "family": "oklch(80% 0.16 75 / 0.8)"
+                "cipher": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    0.65,
+                    0.18,
+                    195
+                  ],
+                  "alpha": 0.8
+                },
+                "garden": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    0.7,
+                    0.15,
+                    145
+                  ],
+                  "alpha": 0.8
+                },
+                "retro": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    0.75,
+                    0.18,
+                    80
+                  ],
+                  "alpha": 0.8
+                },
+                "sunset": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    0.72,
+                    0.18,
+                    40
+                  ],
+                  "alpha": 0.8
+                },
+                "mono": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    0.8,
+                    0,
+                    0
+                  ],
+                  "alpha": 0.8
+                },
+                "aurora": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    0.72,
+                    0.16,
+                    250
+                  ],
+                  "alpha": 0.8
+                },
+                "zen": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    0.72,
+                    0.1,
+                    75
+                  ],
+                  "alpha": 0.8
+                },
+                "volt": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    0.75,
+                    0.17,
+                    190
+                  ],
+                  "alpha": 0.8
+                },
+                "family": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    0.8,
+                    0.16,
+                    75
+                  ],
+                  "alpha": 0.8
+                },
+                "sunlight": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    0.55,
+                    0.15,
+                    40
+                  ],
+                  "alpha": 0.8
+                }
               }
             }
           }
         },
         "primary-text": {
-          "$value": "oklch(95% 0.02 230)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.95,
+              0.02,
+              230
+            ]
+          },
           "$type": "color",
           "$extensions": {
             "p31": {
               "themes": {
-                "cipher": "oklch(96% 0.005 240)",
-                "garden": "oklch(95% 0.02 120)",
-                "retro": "oklch(95% 0.05 80)",
-                "sunset": "oklch(95% 0.03 50)",
-                "mono": "oklch(95% 0 0)",
-                "aurora": "oklch(95% 0.03 260)",
-                "zen": "oklch(93% 0.01 75)",
-                "volt": "oklch(96% 0.01 270)",
-                "family": "oklch(97% 0.02 70)"
+                "cipher": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    0.96,
+                    0.005,
+                    240
+                  ]
+                },
+                "garden": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    0.95,
+                    0.02,
+                    120
+                  ]
+                },
+                "retro": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    0.95,
+                    0.05,
+                    80
+                  ]
+                },
+                "sunset": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    0.95,
+                    0.03,
+                    50
+                  ]
+                },
+                "mono": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    0.95,
+                    0,
+                    0
+                  ]
+                },
+                "aurora": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    0.95,
+                    0.03,
+                    260
+                  ]
+                },
+                "zen": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    0.93,
+                    0.01,
+                    75
+                  ]
+                },
+                "volt": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    0.96,
+                    0.01,
+                    270
+                  ]
+                },
+                "family": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    0.97,
+                    0.02,
+                    70
+                  ]
+                },
+                "sunlight": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    0.22,
+                    0.015,
+                    80
+                  ]
+                }
               }
             }
           }
         },
         "secondary": {
-          "$value": "oklch(22% 0.045 240)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.22,
+              0.045,
+              240
+            ]
+          },
           "$type": "color",
           "$extensions": {
             "p31": {
               "themes": {
-                "cipher": "oklch(22% 0.02 240)",
-                "garden": "oklch(25% 0.03 140)",
-                "retro": "oklch(18% 0.03 60)",
-                "sunset": "oklch(23% 0.04 30)",
-                "mono": "oklch(20% 0 0)",
-                "aurora": "oklch(20% 0.04 260)",
-                "zen": "oklch(25% 0.015 75)",
-                "volt": "oklch(25% 0.03 270)",
-                "family": "oklch(29% 0.045 55)"
+                "cipher": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    0.22,
+                    0.02,
+                    240
+                  ]
+                },
+                "garden": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    0.25,
+                    0.03,
+                    140
+                  ]
+                },
+                "retro": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    0.18,
+                    0.03,
+                    60
+                  ]
+                },
+                "sunset": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    0.23,
+                    0.04,
+                    30
+                  ]
+                },
+                "mono": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    0.2,
+                    0,
+                    0
+                  ]
+                },
+                "aurora": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    0.2,
+                    0.04,
+                    260
+                  ]
+                },
+                "zen": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    0.25,
+                    0.015,
+                    75
+                  ]
+                },
+                "volt": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    0.25,
+                    0.03,
+                    270
+                  ]
+                },
+                "family": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    0.29,
+                    0.045,
+                    55
+                  ]
+                },
+                "sunlight": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    0.94,
+                    0.012,
+                    85
+                  ]
+                }
               }
             }
           }
         },
         "secondary-text": {
-          "$value": "oklch(95% 0.02 230)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.95,
+              0.02,
+              230
+            ]
+          },
           "$type": "color",
           "$extensions": {
             "p31": {
               "themes": {
-                "cipher": "oklch(96% 0.005 240)",
-                "garden": "oklch(95% 0.02 120)",
-                "retro": "oklch(95% 0.05 80)",
-                "sunset": "oklch(95% 0.03 50)",
-                "mono": "oklch(95% 0 0)",
-                "aurora": "oklch(95% 0.03 260)",
-                "zen": "oklch(93% 0.01 75)",
-                "volt": "oklch(96% 0.01 270)",
-                "family": "oklch(97% 0.02 70)"
+                "cipher": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    0.96,
+                    0.005,
+                    240
+                  ]
+                },
+                "garden": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    0.95,
+                    0.02,
+                    120
+                  ]
+                },
+                "retro": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    0.95,
+                    0.05,
+                    80
+                  ]
+                },
+                "sunset": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    0.95,
+                    0.03,
+                    50
+                  ]
+                },
+                "mono": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    0.95,
+                    0,
+                    0
+                  ]
+                },
+                "aurora": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    0.95,
+                    0.03,
+                    260
+                  ]
+                },
+                "zen": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    0.93,
+                    0.01,
+                    75
+                  ]
+                },
+                "volt": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    0.96,
+                    0.01,
+                    270
+                  ]
+                },
+                "family": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    0.97,
+                    0.02,
+                    70
+                  ]
+                },
+                "sunlight": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    0.22,
+                    0.015,
+                    80
+                  ]
+                }
               }
             }
           }
         },
-        "ghost": {
-          "$value": "transparent",
-          "$type": "color"
-        },
         "ghost-hover": {
-          "$value": "oklch(100% 0.01 230 / 0.04)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              1,
+              0.01,
+              230
+            ],
+            "alpha": 0.04
+          },
           "$type": "color",
           "$extensions": {
             "p31": {
               "themes": {
-                "cipher": "oklch(100% 0.01 240 / 0.05)",
-                "garden": "oklch(100% 0.01 120 / 0.04)",
-                "retro": "oklch(100% 0.02 60 / 0.05)",
-                "sunset": "oklch(100% 0.01 30 / 0.06)",
-                "mono": "oklch(100% 0 0 / 0.05)",
-                "aurora": "oklch(100% 0.02 260 / 0.05)",
-                "zen": "oklch(100% 0.01 75 / 0.05)",
-                "volt": "oklch(100% 0.01 270 / 0.05)",
-                "family": "oklch(100% 0.02 60 / 0.05)"
+                "cipher": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    1,
+                    0.01,
+                    240
+                  ],
+                  "alpha": 0.05
+                },
+                "garden": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    1,
+                    0.01,
+                    120
+                  ],
+                  "alpha": 0.04
+                },
+                "retro": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    1,
+                    0.02,
+                    60
+                  ],
+                  "alpha": 0.05
+                },
+                "sunset": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    1,
+                    0.01,
+                    30
+                  ],
+                  "alpha": 0.06
+                },
+                "mono": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    1,
+                    0,
+                    0
+                  ],
+                  "alpha": 0.05
+                },
+                "aurora": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    1,
+                    0.02,
+                    260
+                  ],
+                  "alpha": 0.05
+                },
+                "zen": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    1,
+                    0.01,
+                    75
+                  ],
+                  "alpha": 0.05
+                },
+                "volt": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    1,
+                    0.01,
+                    270
+                  ],
+                  "alpha": 0.05
+                },
+                "family": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    1,
+                    0.02,
+                    60
+                  ],
+                  "alpha": 0.05
+                },
+                "sunlight": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    1,
+                    0.005,
+                    90
+                  ],
+                  "alpha": 0.6
+                }
               }
             }
           }
@@ -631,40 +1549,196 @@
       },
       "accent": {
         "muted": {
-          "$value": "oklch(70% 0.05 200)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.7,
+              0.05,
+              200
+            ]
+          },
           "$type": "color",
           "$extensions": {
             "p31": {
               "themes": {
-                "cipher": "oklch(65% 0.05 195)",
-                "garden": "oklch(70% 0.05 145)",
-                "retro": "oklch(75% 0.05 80)",
-                "sunset": "oklch(72% 0.05 40)",
-                "mono": "oklch(80% 0.05 0)",
-                "aurora": "oklch(72% 0.05 250)",
-                "zen": "oklch(72% 0.05 75)",
-                "volt": "oklch(75% 0.05 190)",
-                "family": "oklch(80% 0.05 75)"
+                "cipher": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    0.65,
+                    0.05,
+                    195
+                  ]
+                },
+                "garden": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    0.7,
+                    0.05,
+                    145
+                  ]
+                },
+                "retro": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    0.75,
+                    0.05,
+                    80
+                  ]
+                },
+                "sunset": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    0.72,
+                    0.05,
+                    40
+                  ]
+                },
+                "mono": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    0.8,
+                    0.05,
+                    0
+                  ]
+                },
+                "aurora": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    0.72,
+                    0.05,
+                    250
+                  ]
+                },
+                "zen": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    0.72,
+                    0.05,
+                    75
+                  ]
+                },
+                "volt": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    0.75,
+                    0.05,
+                    190
+                  ]
+                },
+                "family": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    0.8,
+                    0.05,
+                    75
+                  ]
+                },
+                "sunlight": {
+                  "colorSpace": "oklch",
+                  "components": [
+                    0.55,
+                    0.05,
+                    40
+                  ]
+                }
               }
             }
           }
         },
         "violet": {
           "muted": {
-            "$value": "oklch(65% 0.05 250)",
+            "$value": {
+              "colorSpace": "oklch",
+              "components": [
+                0.65,
+                0.05,
+                250
+              ]
+            },
             "$type": "color",
             "$extensions": {
               "p31": {
                 "themes": {
-                  "cipher": "oklch(65% 0.05 285)",
-                  "garden": "oklch(70% 0.05 185)",
-                  "retro": "oklch(70% 0.05 320)",
-                  "sunset": "oklch(70% 0.05 360)",
-                  "mono": "oklch(70% 0.05 0)",
-                  "aurora": "oklch(72% 0.05 250)",
-                  "zen": "oklch(70% 0.05 300)",
-                  "volt": "oklch(72% 0.05 300)",
-                  "family": "oklch(72% 0.05 20)"
+                  "cipher": {
+                    "colorSpace": "oklch",
+                    "components": [
+                      0.65,
+                      0.05,
+                      285
+                    ]
+                  },
+                  "garden": {
+                    "colorSpace": "oklch",
+                    "components": [
+                      0.7,
+                      0.05,
+                      185
+                    ]
+                  },
+                  "retro": {
+                    "colorSpace": "oklch",
+                    "components": [
+                      0.7,
+                      0.05,
+                      320
+                    ]
+                  },
+                  "sunset": {
+                    "colorSpace": "oklch",
+                    "components": [
+                      0.7,
+                      0.05,
+                      0
+                    ]
+                  },
+                  "mono": {
+                    "colorSpace": "oklch",
+                    "components": [
+                      0.7,
+                      0.05,
+                      0
+                    ]
+                  },
+                  "aurora": {
+                    "colorSpace": "oklch",
+                    "components": [
+                      0.72,
+                      0.05,
+                      250
+                    ]
+                  },
+                  "zen": {
+                    "colorSpace": "oklch",
+                    "components": [
+                      0.7,
+                      0.05,
+                      300
+                    ]
+                  },
+                  "volt": {
+                    "colorSpace": "oklch",
+                    "components": [
+                      0.72,
+                      0.05,
+                      300
+                    ]
+                  },
+                  "family": {
+                    "colorSpace": "oklch",
+                    "components": [
+                      0.72,
+                      0.05,
+                      20
+                    ]
+                  },
+                  "sunlight": {
+                    "colorSpace": "oklch",
+                    "components": [
+                      0.55,
+                      0.05,
+                      300
+                    ]
+                  }
                 }
               }
             }
@@ -672,20 +1746,98 @@
         },
         "gold": {
           "muted": {
-            "$value": "oklch(72% 0.05 40)",
+            "$value": {
+              "colorSpace": "oklch",
+              "components": [
+                0.72,
+                0.05,
+                40
+              ]
+            },
             "$type": "color",
             "$extensions": {
               "p31": {
                 "themes": {
-                  "cipher": "oklch(65% 0.05 15)",
-                  "garden": "oklch(75% 0.05 85)",
-                  "retro": "oklch(78% 0.05 70)",
-                  "sunset": "oklch(75% 0.05 60)",
-                  "mono": "oklch(78% 0.05 0)",
-                  "aurora": "oklch(75% 0.05 65)",
-                  "zen": "oklch(75% 0.05 75)",
-                  "volt": "oklch(78% 0.05 60)",
-                  "family": "oklch(83% 0.05 65)"
+                  "cipher": {
+                    "colorSpace": "oklch",
+                    "components": [
+                      0.65,
+                      0.05,
+                      15
+                    ]
+                  },
+                  "garden": {
+                    "colorSpace": "oklch",
+                    "components": [
+                      0.75,
+                      0.05,
+                      85
+                    ]
+                  },
+                  "retro": {
+                    "colorSpace": "oklch",
+                    "components": [
+                      0.78,
+                      0.05,
+                      70
+                    ]
+                  },
+                  "sunset": {
+                    "colorSpace": "oklch",
+                    "components": [
+                      0.75,
+                      0.05,
+                      60
+                    ]
+                  },
+                  "mono": {
+                    "colorSpace": "oklch",
+                    "components": [
+                      0.78,
+                      0.05,
+                      0
+                    ]
+                  },
+                  "aurora": {
+                    "colorSpace": "oklch",
+                    "components": [
+                      0.75,
+                      0.05,
+                      65
+                    ]
+                  },
+                  "zen": {
+                    "colorSpace": "oklch",
+                    "components": [
+                      0.75,
+                      0.05,
+                      75
+                    ]
+                  },
+                  "volt": {
+                    "colorSpace": "oklch",
+                    "components": [
+                      0.78,
+                      0.05,
+                      60
+                    ]
+                  },
+                  "family": {
+                    "colorSpace": "oklch",
+                    "components": [
+                      0.83,
+                      0.05,
+                      65
+                    ]
+                  },
+                  "sunlight": {
+                    "colorSpace": "oklch",
+                    "components": [
+                      0.62,
+                      0.05,
+                      80
+                    ]
+                  }
                 }
               }
             }
@@ -693,19 +1845,90 @@
         },
         "green": {
           "muted": {
-            "$value": "oklch(70% 0.05 160)",
+            "$value": {
+              "colorSpace": "oklch",
+              "components": [
+                0.7,
+                0.05,
+                160
+              ]
+            },
             "$type": "color",
             "$extensions": {
               "p31": {
                 "themes": {
-                  "cipher": "oklch(65% 0.05 105)",
-                  "garden": "oklch(70% 0.05 145)",
-                  "retro": "oklch(65% 0.05 140)",
-                  "sunset": "oklch(65% 0.05 140)",
-                  "mono": "oklch(72% 0.05 0)",
-                  "zen": "oklch(68% 0.05 140)",
-                  "volt": "oklch(72% 0.05 150)",
-                  "family": "oklch(72% 0.05 145)"
+                  "cipher": {
+                    "colorSpace": "oklch",
+                    "components": [
+                      0.65,
+                      0.05,
+                      105
+                    ]
+                  },
+                  "garden": {
+                    "colorSpace": "oklch",
+                    "components": [
+                      0.7,
+                      0.05,
+                      145
+                    ]
+                  },
+                  "retro": {
+                    "colorSpace": "oklch",
+                    "components": [
+                      0.65,
+                      0.05,
+                      140
+                    ]
+                  },
+                  "sunset": {
+                    "colorSpace": "oklch",
+                    "components": [
+                      0.65,
+                      0.05,
+                      140
+                    ]
+                  },
+                  "mono": {
+                    "colorSpace": "oklch",
+                    "components": [
+                      0.72,
+                      0.05,
+                      0
+                    ]
+                  },
+                  "zen": {
+                    "colorSpace": "oklch",
+                    "components": [
+                      0.68,
+                      0.05,
+                      140
+                    ]
+                  },
+                  "volt": {
+                    "colorSpace": "oklch",
+                    "components": [
+                      0.72,
+                      0.05,
+                      150
+                    ]
+                  },
+                  "family": {
+                    "colorSpace": "oklch",
+                    "components": [
+                      0.72,
+                      0.05,
+                      145
+                    ]
+                  },
+                  "sunlight": {
+                    "colorSpace": "oklch",
+                    "components": [
+                      0.55,
+                      0.05,
+                      150
+                    ]
+                  }
                 }
               }
             }
@@ -713,20 +1936,98 @@
         },
         "red": {
           "muted": {
-            "$value": "oklch(70% 0.05 20)",
+            "$value": {
+              "colorSpace": "oklch",
+              "components": [
+                0.7,
+                0.05,
+                20
+              ]
+            },
             "$type": "color",
             "$extensions": {
               "p31": {
                 "themes": {
-                  "cipher": "oklch(65% 0.05 30)",
-                  "garden": "oklch(65% 0.05 30)",
-                  "retro": "oklch(70% 0.05 30)",
-                  "sunset": "oklch(72% 0.05 25)",
-                  "mono": "oklch(68% 0.05 0)",
-                  "aurora": "oklch(70% 0.05 25)",
-                  "zen": "oklch(68% 0.05 25)",
-                  "volt": "oklch(72% 0.05 20)",
-                  "family": "oklch(68% 0.05 25)"
+                  "cipher": {
+                    "colorSpace": "oklch",
+                    "components": [
+                      0.65,
+                      0.05,
+                      30
+                    ]
+                  },
+                  "garden": {
+                    "colorSpace": "oklch",
+                    "components": [
+                      0.65,
+                      0.05,
+                      30
+                    ]
+                  },
+                  "retro": {
+                    "colorSpace": "oklch",
+                    "components": [
+                      0.7,
+                      0.05,
+                      30
+                    ]
+                  },
+                  "sunset": {
+                    "colorSpace": "oklch",
+                    "components": [
+                      0.72,
+                      0.05,
+                      25
+                    ]
+                  },
+                  "mono": {
+                    "colorSpace": "oklch",
+                    "components": [
+                      0.68,
+                      0.05,
+                      0
+                    ]
+                  },
+                  "aurora": {
+                    "colorSpace": "oklch",
+                    "components": [
+                      0.7,
+                      0.05,
+                      25
+                    ]
+                  },
+                  "zen": {
+                    "colorSpace": "oklch",
+                    "components": [
+                      0.68,
+                      0.05,
+                      25
+                    ]
+                  },
+                  "volt": {
+                    "colorSpace": "oklch",
+                    "components": [
+                      0.72,
+                      0.05,
+                      20
+                    ]
+                  },
+                  "family": {
+                    "colorSpace": "oklch",
+                    "components": [
+                      0.68,
+                      0.05,
+                      25
+                    ]
+                  },
+                  "sunlight": {
+                    "colorSpace": "oklch",
+                    "components": [
+                      0.55,
+                      0.05,
+                      25
+                    ]
+                  }
                 }
               }
             }
@@ -737,37 +2038,58 @@
     "space": {
       "inline": {
         "sm": {
-          "$value": "8px",
+          "$value": {
+            "value": 8,
+            "unit": "px"
+          },
           "$type": "dimension"
         },
         "md": {
-          "$value": "16px",
+          "$value": {
+            "value": 16,
+            "unit": "px"
+          },
           "$type": "dimension"
         },
         "lg": {
-          "$value": "24px",
+          "$value": {
+            "value": 24,
+            "unit": "px"
+          },
           "$type": "dimension"
         }
       }
     },
     "radius": {
       "md": {
-        "$value": "16px",
+        "$value": {
+          "value": 16,
+          "unit": "px"
+        },
         "$type": "dimension"
       }
     },
     "font": {
       "size": {
         "sm": {
-          "$value": "14px",
+          "$value": {
+            "value": 14,
+            "unit": "px"
+          },
           "$type": "dimension"
         },
         "md": {
-          "$value": "16px",
+          "$value": {
+            "value": 16,
+            "unit": "px"
+          },
           "$type": "dimension"
         },
         "lg": {
-          "$value": "20px",
+          "$value": {
+            "value": 20,
+            "unit": "px"
+          },
           "$type": "dimension"
         }
       }
@@ -775,69 +2097,230 @@
     "motion": {
       "duration": {
         "fast": {
-          "$value": "150ms",
+          "$value": {
+            "value": 150,
+            "unit": "ms"
+          },
           "$type": "duration"
         }
       },
       "easing": {
         "standard": {
-          "$value": "cubic-bezier(0.4, 0, 0.2, 1)",
+          "$value": [
+            0.4,
+            0,
+            0.2,
+            1
+          ],
           "$type": "cubicBezier"
+        }
+      },
+      "spring": {
+        "expressive": {
+          "fast": {
+            "spatial": {
+              "$value": [
+                0.42,
+                1.67,
+                0.21,
+                0.9
+              ],
+              "$type": "cubicBezier"
+            },
+            "effects": {
+              "$value": [
+                0.31,
+                0.8,
+                0.34,
+                1
+              ],
+              "$type": "cubicBezier"
+            }
+          },
+          "default": {
+            "spatial": {
+              "$value": [
+                0.38,
+                1.21,
+                0.22,
+                1
+              ],
+              "$type": "cubicBezier"
+            },
+            "effects": {
+              "$value": [
+                0.34,
+                0.8,
+                0.34,
+                1
+              ],
+              "$type": "cubicBezier"
+            }
+          },
+          "slow": {
+            "spatial": {
+              "$value": [
+                0.38,
+                0.86,
+                0.22,
+                1
+              ],
+              "$type": "cubicBezier"
+            },
+            "effects": {
+              "$value": [
+                0.34,
+                0.8,
+                0.34,
+                1
+              ],
+              "$type": "cubicBezier"
+            }
+          }
+        },
+        "standard": {
+          "spatial": {
+            "$value": [
+              0.2,
+              0,
+              0,
+              1
+            ],
+            "$type": "cubicBezier"
+          }
+        }
+      },
+      "shapeMorph": {
+        "duration": {
+          "$value": {
+            "value": 300,
+            "unit": "ms"
+          },
+          "$type": "duration"
+        }
+      }
+    },
+    "elevation": {
+      "level1": {
+        "tint": {
+          "$value": 0.05,
+          "$type": "number"
+        }
+      },
+      "level2": {
+        "tint": {
+          "$value": 0.08,
+          "$type": "number"
+        }
+      },
+      "level3": {
+        "tint": {
+          "$value": 0.11,
+          "$type": "number"
         }
       }
     },
     "frame": {
       "structure": {
-        "$value": "oklch(73.5% 0.117 236.2)",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0.735,
+            0.117,
+            236.2
+          ]
+        },
         "$type": "color"
       },
       "connection": {
-        "$value": "oklch(75.3% 0.158 76.8)",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0.753,
+            0.158,
+            76.8
+          ]
+        },
         "$type": "color"
       },
       "rhythm": {
-        "$value": "oklch(67.9% 0.118 346.3)",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0.679,
+            0.118,
+            346.3
+          ]
+        },
         "$type": "color"
       },
       "creation": {
-        "$value": "oklch(62% 0.13 165.5)",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0.62,
+            0.13,
+            165.5
+          ]
+        },
         "$type": "color"
       }
     },
     "layout": {
       "spacing": {
         "xs": {
-          "$value": "4px",
+          "$value": {
+            "value": 4,
+            "unit": "px"
+          },
           "$type": "dimension"
         },
         "sm": {
-          "$value": "8px",
+          "$value": {
+            "value": 8,
+            "unit": "px"
+          },
           "$type": "dimension"
         },
         "md-tight": {
-          "$value": "12px",
+          "$value": {
+            "value": 12,
+            "unit": "px"
+          },
           "$type": "dimension"
         },
         "md": {
-          "$value": "16px",
+          "$value": {
+            "value": 16,
+            "unit": "px"
+          },
           "$type": "dimension"
         },
         "lg-tight": {
-          "$value": "20px",
+          "$value": {
+            "value": 20,
+            "unit": "px"
+          },
           "$type": "dimension"
         },
         "lg": {
-          "$value": "24px",
+          "$value": {
+            "value": 24,
+            "unit": "px"
+          },
           "$type": "dimension"
         },
         "xl": {
-          "$value": "32px",
+          "$value": {
+            "value": 32,
+            "unit": "px"
+          },
           "$type": "dimension"
         }
       },
       "density": {
         "factor": {
-          "$value": "1",
+          "$value": 1,
           "$type": "number"
         }
       }
@@ -847,1200 +2330,2508 @@
     "cipher": {
       "p31": {
         "base": {
-          "$value": "16px",
-          "$type": "dimension"
-        },
-        "scale-xs": {
-          "$value": "calc(var(--p31-base) * 0.75)",
-          "$type": "dimension"
-        },
-        "scale-sm": {
-          "$value": "var(--p31-base)",
-          "$type": "dimension"
-        },
-        "scale-md": {
-          "$value": "calc(var(--p31-base) * 1.3333)",
-          "$type": "dimension"
-        },
-        "scale-lg": {
-          "$value": "calc(var(--p31-base) * 1.7777)",
-          "$type": "dimension"
-        },
-        "scale-xl": {
-          "$value": "calc(var(--p31-base) * 2.3703)",
-          "$type": "dimension"
-        },
-        "scale-2xl": {
-          "$value": "calc(var(--p31-base) * 3.1604)",
+          "$value": {
+            "value": 16,
+            "unit": "px"
+          },
           "$type": "dimension"
         },
         "radius-sm": {
-          "$value": "8px",
+          "$value": {
+            "value": 8,
+            "unit": "px"
+          },
           "$type": "dimension"
         },
         "radius-md": {
-          "$value": "16px",
+          "$value": {
+            "value": 16,
+            "unit": "px"
+          },
           "$type": "dimension"
         },
         "radius-lg": {
-          "$value": "24px",
+          "$value": {
+            "value": 24,
+            "unit": "px"
+          },
           "$type": "dimension"
         },
         "radius-full": {
-          "$value": "9999px",
+          "$value": {
+            "value": 9999,
+            "unit": "px"
+          },
           "$type": "dimension"
         },
         "font-sans": {
-          "$value": "'Space Grotesk', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
+          "$value": [
+            "Space Grotesk",
+            "system-ui",
+            "-apple-system",
+            "Segoe UI",
+            "Roboto",
+            "sans-serif"
+          ],
           "$type": "fontFamily"
         },
         "font-mono": {
-          "$value": "'JetBrains Mono', ui-monospace, 'SF Mono', 'Fira Code', monospace",
+          "$value": [
+            "JetBrains Mono",
+            "ui-monospace",
+            "SF Mono",
+            "Fira Code",
+            "monospace"
+          ],
           "$type": "fontFamily"
         },
         "bg": {
-          "$value": "oklch(10% 0.01 240)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.1,
+              0.01,
+              240
+            ]
+          },
           "$type": "color"
         },
         "surface": {
-          "$value": "oklch(15% 0.015 240)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.15,
+              0.015,
+              240
+            ]
+          },
           "$type": "color"
         },
         "surface2": {
-          "$value": "oklch(22% 0.02 240)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.22,
+              0.02,
+              240
+            ]
+          },
           "$type": "color"
         },
         "accent": {
-          "$value": "oklch(65% 0.18 195)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.65,
+              0.18,
+              195
+            ]
+          },
           "$type": "color"
         },
         "accent-cyan": {
-          "$value": "oklch(65% 0.18 195)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.65,
+              0.18,
+              195
+            ]
+          },
           "$type": "color"
         },
         "accent-violet": {
-          "$value": "oklch(65% 0.18 285)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.65,
+              0.18,
+              285
+            ]
+          },
           "$type": "color"
         },
         "accent-gold": {
-          "$value": "oklch(65% 0.18 15)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.65,
+              0.18,
+              15
+            ]
+          },
           "$type": "color"
         },
         "accent-green": {
-          "$value": "oklch(65% 0.18 105)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.65,
+              0.18,
+              105
+            ]
+          },
           "$type": "color"
         },
         "accent-red": {
-          "$value": "oklch(65% 0.18 30)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.65,
+              0.18,
+              30
+            ]
+          },
           "$type": "color"
         },
         "accent-iris": {
-          "$value": "oklch(65% 0.18 255)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.65,
+              0.18,
+              255
+            ]
+          },
           "$type": "color"
         },
         "text-primary": {
-          "$value": "oklch(96% 0.005 240)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.96,
+              0.005,
+              240
+            ]
+          },
           "$type": "color"
         },
         "text-secondary": {
-          "$value": "oklch(75% 0.01 240)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.75,
+              0.01,
+              240
+            ]
+          },
           "$type": "color"
         },
         "text-tertiary": {
-          "$value": "oklch(55% 0.01 240)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.55,
+              0.01,
+              240
+            ]
+          },
           "$type": "color"
         },
         "glass-bg": {
-          "$value": "oklch(100% 0.01 240 / 0.05)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              1,
+              0.01,
+              240
+            ],
+            "alpha": 0.05
+          },
           "$type": "color"
         },
         "glass-border": {
-          "$value": "oklch(100% 0.01 240 / 0.1)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              1,
+              0.01,
+              240
+            ],
+            "alpha": 0.1
+          },
           "$type": "color"
-        },
-        "glass-shadow": {
-          "$value": "0 8px 32px rgba(0, 0, 0, 0.2)",
-          "$type": "boxShadow"
         }
       }
     },
     "garden": {
       "p31": {
         "base": {
-          "$value": "16px",
-          "$type": "dimension"
-        },
-        "scale-xs": {
-          "$value": "calc(var(--p31-base) * 0.75)",
-          "$type": "dimension"
-        },
-        "scale-sm": {
-          "$value": "var(--p31-base)",
-          "$type": "dimension"
-        },
-        "scale-md": {
-          "$value": "calc(var(--p31-base) * 1.3333)",
-          "$type": "dimension"
-        },
-        "scale-lg": {
-          "$value": "calc(var(--p31-base) * 1.7777)",
-          "$type": "dimension"
-        },
-        "scale-xl": {
-          "$value": "calc(var(--p31-base) * 2.3703)",
-          "$type": "dimension"
-        },
-        "scale-2xl": {
-          "$value": "calc(var(--p31-base) * 3.1604)",
+          "$value": {
+            "value": 16,
+            "unit": "px"
+          },
           "$type": "dimension"
         },
         "radius-sm": {
-          "$value": "8px",
+          "$value": {
+            "value": 8,
+            "unit": "px"
+          },
           "$type": "dimension"
         },
         "radius-md": {
-          "$value": "16px",
+          "$value": {
+            "value": 16,
+            "unit": "px"
+          },
           "$type": "dimension"
         },
         "radius-lg": {
-          "$value": "24px",
+          "$value": {
+            "value": 24,
+            "unit": "px"
+          },
           "$type": "dimension"
         },
         "radius-full": {
-          "$value": "9999px",
+          "$value": {
+            "value": 9999,
+            "unit": "px"
+          },
           "$type": "dimension"
         },
         "font-sans": {
-          "$value": "'Space Grotesk', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
+          "$value": [
+            "Space Grotesk",
+            "system-ui",
+            "-apple-system",
+            "Segoe UI",
+            "Roboto",
+            "sans-serif"
+          ],
           "$type": "fontFamily"
         },
         "font-mono": {
-          "$value": "'JetBrains Mono', ui-monospace, 'SF Mono', 'Fira Code', monospace",
+          "$value": [
+            "JetBrains Mono",
+            "ui-monospace",
+            "SF Mono",
+            "Fira Code",
+            "monospace"
+          ],
           "$type": "fontFamily"
         },
         "bg": {
-          "$value": "oklch(12% 0.02 140)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.12,
+              0.02,
+              140
+            ]
+          },
           "$type": "color"
         },
         "surface": {
-          "$value": "oklch(18% 0.025 140)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.18,
+              0.025,
+              140
+            ]
+          },
           "$type": "color"
         },
         "surface2": {
-          "$value": "oklch(25% 0.03 140)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.25,
+              0.03,
+              140
+            ]
+          },
           "$type": "color"
         },
         "accent": {
-          "$value": "oklch(70% 0.15 145)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.7,
+              0.15,
+              145
+            ]
+          },
           "$type": "color"
         },
         "accent-cyan": {
-          "$value": "oklch(70% 0.15 145)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.7,
+              0.15,
+              145
+            ]
+          },
           "$type": "color"
         },
         "accent-violet": {
-          "$value": "oklch(70% 0.15 185)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.7,
+              0.15,
+              185
+            ]
+          },
           "$type": "color"
         },
         "accent-gold": {
-          "$value": "oklch(75% 0.15 85)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.75,
+              0.15,
+              85
+            ]
+          },
           "$type": "color"
         },
         "accent-green": {
-          "$value": "oklch(70% 0.15 145)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.7,
+              0.15,
+              145
+            ]
+          },
           "$type": "color"
         },
         "accent-red": {
-          "$value": "oklch(65% 0.15 30)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.65,
+              0.15,
+              30
+            ]
+          },
           "$type": "color"
         },
         "accent-iris": {
-          "$value": "oklch(70% 0.15 220)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.7,
+              0.15,
+              220
+            ]
+          },
           "$type": "color"
         },
         "text-primary": {
-          "$value": "oklch(95% 0.02 120)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.95,
+              0.02,
+              120
+            ]
+          },
           "$type": "color"
         },
         "text-secondary": {
-          "$value": "oklch(78% 0.02 130)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.78,
+              0.02,
+              130
+            ]
+          },
           "$type": "color"
         },
         "text-tertiary": {
-          "$value": "oklch(55% 0.02 130)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.55,
+              0.02,
+              130
+            ]
+          },
           "$type": "color"
         },
         "glass-bg": {
-          "$value": "oklch(100% 0.01 120 / 0.04)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              1,
+              0.01,
+              120
+            ],
+            "alpha": 0.04
+          },
           "$type": "color"
         },
         "glass-border": {
-          "$value": "oklch(100% 0.01 120 / 0.1)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              1,
+              0.01,
+              120
+            ],
+            "alpha": 0.1
+          },
           "$type": "color"
-        },
-        "glass-shadow": {
-          "$value": "0 8px 32px rgba(0, 0, 0, 0.2)",
-          "$type": "boxShadow"
         }
       }
     },
     "retro": {
       "p31": {
         "base": {
-          "$value": "16px",
-          "$type": "dimension"
-        },
-        "scale-xs": {
-          "$value": "calc(var(--p31-base) * 0.75)",
-          "$type": "dimension"
-        },
-        "scale-sm": {
-          "$value": "var(--p31-base)",
-          "$type": "dimension"
-        },
-        "scale-md": {
-          "$value": "calc(var(--p31-base) * 1.3333)",
-          "$type": "dimension"
-        },
-        "scale-lg": {
-          "$value": "calc(var(--p31-base) * 1.7777)",
-          "$type": "dimension"
-        },
-        "scale-xl": {
-          "$value": "calc(var(--p31-base) * 2.3703)",
-          "$type": "dimension"
-        },
-        "scale-2xl": {
-          "$value": "calc(var(--p31-base) * 3.1604)",
+          "$value": {
+            "value": 16,
+            "unit": "px"
+          },
           "$type": "dimension"
         },
         "radius-sm": {
-          "$value": "8px",
+          "$value": {
+            "value": 8,
+            "unit": "px"
+          },
           "$type": "dimension"
         },
         "radius-md": {
-          "$value": "16px",
+          "$value": {
+            "value": 16,
+            "unit": "px"
+          },
           "$type": "dimension"
         },
         "radius-lg": {
-          "$value": "24px",
+          "$value": {
+            "value": 24,
+            "unit": "px"
+          },
           "$type": "dimension"
         },
         "radius-full": {
-          "$value": "9999px",
+          "$value": {
+            "value": 9999,
+            "unit": "px"
+          },
           "$type": "dimension"
         },
         "font-sans": {
-          "$value": "'Space Grotesk', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
+          "$value": [
+            "Space Grotesk",
+            "system-ui",
+            "-apple-system",
+            "Segoe UI",
+            "Roboto",
+            "sans-serif"
+          ],
           "$type": "fontFamily"
         },
         "font-mono": {
-          "$value": "'JetBrains Mono', ui-monospace, 'SF Mono', 'Fira Code', monospace",
+          "$value": [
+            "JetBrains Mono",
+            "ui-monospace",
+            "SF Mono",
+            "Fira Code",
+            "monospace"
+          ],
           "$type": "fontFamily"
         },
         "bg": {
-          "$value": "oklch(8% 0.02 60)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.08,
+              0.02,
+              60
+            ]
+          },
           "$type": "color"
         },
         "surface": {
-          "$value": "oklch(12% 0.025 60)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.12,
+              0.025,
+              60
+            ]
+          },
           "$type": "color"
         },
         "surface2": {
-          "$value": "oklch(18% 0.03 60)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.18,
+              0.03,
+              60
+            ]
+          },
           "$type": "color"
         },
         "accent": {
-          "$value": "oklch(75% 0.18 80)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.75,
+              0.18,
+              80
+            ]
+          },
           "$type": "color"
         },
         "accent-cyan": {
-          "$value": "oklch(75% 0.18 80)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.75,
+              0.18,
+              80
+            ]
+          },
           "$type": "color"
         },
         "accent-violet": {
-          "$value": "oklch(70% 0.18 320)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.7,
+              0.18,
+              320
+            ]
+          },
           "$type": "color"
         },
         "accent-gold": {
-          "$value": "oklch(78% 0.18 70)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.78,
+              0.18,
+              70
+            ]
+          },
           "$type": "color"
         },
         "accent-green": {
-          "$value": "oklch(65% 0.18 140)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.65,
+              0.18,
+              140
+            ]
+          },
           "$type": "color"
         },
         "accent-red": {
-          "$value": "oklch(70% 0.18 30)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.7,
+              0.18,
+              30
+            ]
+          },
           "$type": "color"
         },
         "accent-iris": {
-          "$value": "oklch(70% 0.18 310)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.7,
+              0.18,
+              310
+            ]
+          },
           "$type": "color"
         },
         "text-primary": {
-          "$value": "oklch(95% 0.05 80)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.95,
+              0.05,
+              80
+            ]
+          },
           "$type": "color"
         },
         "text-secondary": {
-          "$value": "oklch(78% 0.04 75)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.78,
+              0.04,
+              75
+            ]
+          },
           "$type": "color"
         },
         "text-tertiary": {
-          "$value": "oklch(52% 0.03 70)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.52,
+              0.03,
+              70
+            ]
+          },
           "$type": "color"
         },
         "glass-bg": {
-          "$value": "oklch(100% 0.02 60 / 0.05)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              1,
+              0.02,
+              60
+            ],
+            "alpha": 0.05
+          },
           "$type": "color"
         },
         "glass-border": {
-          "$value": "oklch(100% 0.02 60 / 0.12)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              1,
+              0.02,
+              60
+            ],
+            "alpha": 0.12
+          },
           "$type": "color"
-        },
-        "glass-shadow": {
-          "$value": "0 8px 32px rgba(255, 180, 0, 0.08)",
-          "$type": "boxShadow"
         }
       }
     },
     "ocean": {
       "p31": {
         "base": {
-          "$value": "16px",
-          "$type": "dimension"
-        },
-        "scale-xs": {
-          "$value": "calc(var(--p31-base) * 0.75)",
-          "$type": "dimension"
-        },
-        "scale-sm": {
-          "$value": "var(--p31-base)",
-          "$type": "dimension"
-        },
-        "scale-md": {
-          "$value": "calc(var(--p31-base) * 1.3333)",
-          "$type": "dimension"
-        },
-        "scale-lg": {
-          "$value": "calc(var(--p31-base) * 1.7777)",
-          "$type": "dimension"
-        },
-        "scale-xl": {
-          "$value": "calc(var(--p31-base) * 2.3703)",
-          "$type": "dimension"
-        },
-        "scale-2xl": {
-          "$value": "calc(var(--p31-base) * 3.1604)",
+          "$value": {
+            "value": 16,
+            "unit": "px"
+          },
           "$type": "dimension"
         },
         "radius-sm": {
-          "$value": "8px",
+          "$value": {
+            "value": 8,
+            "unit": "px"
+          },
           "$type": "dimension"
         },
         "radius-md": {
-          "$value": "16px",
+          "$value": {
+            "value": 16,
+            "unit": "px"
+          },
           "$type": "dimension"
         },
         "radius-lg": {
-          "$value": "24px",
+          "$value": {
+            "value": 24,
+            "unit": "px"
+          },
           "$type": "dimension"
         },
         "radius-full": {
-          "$value": "9999px",
+          "$value": {
+            "value": 9999,
+            "unit": "px"
+          },
           "$type": "dimension"
         },
         "font-sans": {
-          "$value": "'Space Grotesk', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
+          "$value": [
+            "Space Grotesk",
+            "system-ui",
+            "-apple-system",
+            "Segoe UI",
+            "Roboto",
+            "sans-serif"
+          ],
           "$type": "fontFamily"
         },
         "font-mono": {
-          "$value": "'JetBrains Mono', ui-monospace, 'SF Mono', 'Fira Code', monospace",
+          "$value": [
+            "JetBrains Mono",
+            "ui-monospace",
+            "SF Mono",
+            "Fira Code",
+            "monospace"
+          ],
           "$type": "fontFamily"
         },
         "bg": {
-          "$value": "oklch(10% 0.03 240)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.1,
+              0.03,
+              240
+            ]
+          },
           "$type": "color"
         },
         "surface": {
-          "$value": "oklch(15% 0.04 240)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.15,
+              0.04,
+              240
+            ]
+          },
           "$type": "color"
         },
         "surface2": {
-          "$value": "oklch(22% 0.045 240)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.22,
+              0.045,
+              240
+            ]
+          },
           "$type": "color"
         },
         "accent": {
-          "$value": "oklch(70% 0.15 200)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.7,
+              0.15,
+              200
+            ]
+          },
           "$type": "color"
         },
         "accent-cyan": {
-          "$value": "oklch(70% 0.15 200)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.7,
+              0.15,
+              200
+            ]
+          },
           "$type": "color"
         },
         "accent-violet": {
-          "$value": "oklch(65% 0.15 250)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.65,
+              0.15,
+              250
+            ]
+          },
           "$type": "color"
         },
         "accent-gold": {
-          "$value": "oklch(72% 0.15 40)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.72,
+              0.15,
+              40
+            ]
+          },
           "$type": "color"
         },
         "accent-green": {
-          "$value": "oklch(70% 0.15 160)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.7,
+              0.15,
+              160
+            ]
+          },
           "$type": "color"
         },
         "accent-red": {
-          "$value": "oklch(70% 0.15 20)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.7,
+              0.15,
+              20
+            ]
+          },
           "$type": "color"
         },
         "accent-iris": {
-          "$value": "oklch(70% 0.15 230)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.7,
+              0.15,
+              230
+            ]
+          },
           "$type": "color"
         },
         "text-primary": {
-          "$value": "oklch(95% 0.02 230)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.95,
+              0.02,
+              230
+            ]
+          },
           "$type": "color"
         },
         "text-secondary": {
-          "$value": "oklch(78% 0.02 235)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.78,
+              0.02,
+              235
+            ]
+          },
           "$type": "color"
         },
         "text-tertiary": {
-          "$value": "oklch(55% 0.02 235)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.55,
+              0.02,
+              235
+            ]
+          },
           "$type": "color"
         },
         "glass-bg": {
-          "$value": "oklch(100% 0.01 230 / 0.04)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              1,
+              0.01,
+              230
+            ],
+            "alpha": 0.04
+          },
           "$type": "color"
         },
         "glass-border": {
-          "$value": "oklch(100% 0.01 230 / 0.08)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              1,
+              0.01,
+              230
+            ],
+            "alpha": 0.08
+          },
           "$type": "color"
-        },
-        "glass-shadow": {
-          "$value": "0 8px 32px rgba(0, 100, 200, 0.1)",
-          "$type": "boxShadow"
         }
       }
     },
     "sunset": {
       "p31": {
         "base": {
-          "$value": "16px",
-          "$type": "dimension"
-        },
-        "scale-xs": {
-          "$value": "calc(var(--p31-base) * 0.75)",
-          "$type": "dimension"
-        },
-        "scale-sm": {
-          "$value": "var(--p31-base)",
-          "$type": "dimension"
-        },
-        "scale-md": {
-          "$value": "calc(var(--p31-base) * 1.3333)",
-          "$type": "dimension"
-        },
-        "scale-lg": {
-          "$value": "calc(var(--p31-base) * 1.7777)",
-          "$type": "dimension"
-        },
-        "scale-xl": {
-          "$value": "calc(var(--p31-base) * 2.3703)",
-          "$type": "dimension"
-        },
-        "scale-2xl": {
-          "$value": "calc(var(--p31-base) * 3.1604)",
+          "$value": {
+            "value": 16,
+            "unit": "px"
+          },
           "$type": "dimension"
         },
         "radius-sm": {
-          "$value": "8px",
+          "$value": {
+            "value": 8,
+            "unit": "px"
+          },
           "$type": "dimension"
         },
         "radius-md": {
-          "$value": "16px",
+          "$value": {
+            "value": 16,
+            "unit": "px"
+          },
           "$type": "dimension"
         },
         "radius-lg": {
-          "$value": "24px",
+          "$value": {
+            "value": 24,
+            "unit": "px"
+          },
           "$type": "dimension"
         },
         "radius-full": {
-          "$value": "9999px",
+          "$value": {
+            "value": 9999,
+            "unit": "px"
+          },
           "$type": "dimension"
         },
         "font-sans": {
-          "$value": "'Space Grotesk', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
+          "$value": [
+            "Space Grotesk",
+            "system-ui",
+            "-apple-system",
+            "Segoe UI",
+            "Roboto",
+            "sans-serif"
+          ],
           "$type": "fontFamily"
         },
         "font-mono": {
-          "$value": "'JetBrains Mono', ui-monospace, 'SF Mono', 'Fira Code', monospace",
+          "$value": [
+            "JetBrains Mono",
+            "ui-monospace",
+            "SF Mono",
+            "Fira Code",
+            "monospace"
+          ],
           "$type": "fontFamily"
         },
         "bg": {
-          "$value": "oklch(12% 0.03 30)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.12,
+              0.03,
+              30
+            ]
+          },
           "$type": "color"
         },
         "surface": {
-          "$value": "oklch(17% 0.035 30)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.17,
+              0.035,
+              30
+            ]
+          },
           "$type": "color"
         },
         "surface2": {
-          "$value": "oklch(23% 0.04 30)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.23,
+              0.04,
+              30
+            ]
+          },
           "$type": "color"
         },
         "accent": {
-          "$value": "oklch(72% 0.18 40)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.72,
+              0.18,
+              40
+            ]
+          },
           "$type": "color"
         },
         "accent-cyan": {
-          "$value": "oklch(72% 0.18 40)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.72,
+              0.18,
+              40
+            ]
+          },
           "$type": "color"
         },
         "accent-violet": {
-          "$value": "oklch(70% 0.18 360)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.7,
+              0.18,
+              0
+            ]
+          },
           "$type": "color"
         },
         "accent-gold": {
-          "$value": "oklch(75% 0.18 60)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.75,
+              0.18,
+              60
+            ]
+          },
           "$type": "color"
         },
         "accent-green": {
-          "$value": "oklch(65% 0.18 140)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.65,
+              0.18,
+              140
+            ]
+          },
           "$type": "color"
         },
         "accent-red": {
-          "$value": "oklch(72% 0.18 25)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.72,
+              0.18,
+              25
+            ]
+          },
           "$type": "color"
         },
         "accent-iris": {
-          "$value": "oklch(70% 0.18 340)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.7,
+              0.18,
+              340
+            ]
+          },
           "$type": "color"
         },
         "text-primary": {
-          "$value": "oklch(95% 0.03 50)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.95,
+              0.03,
+              50
+            ]
+          },
           "$type": "color"
         },
         "text-secondary": {
-          "$value": "oklch(78% 0.03 40)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.78,
+              0.03,
+              40
+            ]
+          },
           "$type": "color"
         },
         "text-tertiary": {
-          "$value": "oklch(55% 0.03 35)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.55,
+              0.03,
+              35
+            ]
+          },
           "$type": "color"
         },
         "glass-bg": {
-          "$value": "oklch(100% 0.01 30 / 0.06)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              1,
+              0.01,
+              30
+            ],
+            "alpha": 0.06
+          },
           "$type": "color"
         },
         "glass-border": {
-          "$value": "oklch(100% 0.01 30 / 0.1)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              1,
+              0.01,
+              30
+            ],
+            "alpha": 0.1
+          },
           "$type": "color"
-        },
-        "glass-shadow": {
-          "$value": "0 8px 32px rgba(200, 100, 0, 0.08)",
-          "$type": "boxShadow"
         }
       }
     },
     "mono": {
       "p31": {
         "base": {
-          "$value": "16px",
-          "$type": "dimension"
-        },
-        "scale-xs": {
-          "$value": "calc(var(--p31-base) * 0.75)",
-          "$type": "dimension"
-        },
-        "scale-sm": {
-          "$value": "var(--p31-base)",
-          "$type": "dimension"
-        },
-        "scale-md": {
-          "$value": "calc(var(--p31-base) * 1.3333)",
-          "$type": "dimension"
-        },
-        "scale-lg": {
-          "$value": "calc(var(--p31-base) * 1.7777)",
-          "$type": "dimension"
-        },
-        "scale-xl": {
-          "$value": "calc(var(--p31-base) * 2.3703)",
-          "$type": "dimension"
-        },
-        "scale-2xl": {
-          "$value": "calc(var(--p31-base) * 3.1604)",
+          "$value": {
+            "value": 16,
+            "unit": "px"
+          },
           "$type": "dimension"
         },
         "radius-sm": {
-          "$value": "8px",
+          "$value": {
+            "value": 8,
+            "unit": "px"
+          },
           "$type": "dimension"
         },
         "radius-md": {
-          "$value": "16px",
+          "$value": {
+            "value": 16,
+            "unit": "px"
+          },
           "$type": "dimension"
         },
         "radius-lg": {
-          "$value": "24px",
+          "$value": {
+            "value": 24,
+            "unit": "px"
+          },
           "$type": "dimension"
         },
         "radius-full": {
-          "$value": "9999px",
+          "$value": {
+            "value": 9999,
+            "unit": "px"
+          },
           "$type": "dimension"
         },
         "font-sans": {
-          "$value": "'Space Grotesk', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
+          "$value": [
+            "Space Grotesk",
+            "system-ui",
+            "-apple-system",
+            "Segoe UI",
+            "Roboto",
+            "sans-serif"
+          ],
           "$type": "fontFamily"
         },
         "font-mono": {
-          "$value": "'JetBrains Mono', ui-monospace, 'SF Mono', 'Fira Code', monospace",
+          "$value": [
+            "JetBrains Mono",
+            "ui-monospace",
+            "SF Mono",
+            "Fira Code",
+            "monospace"
+          ],
           "$type": "fontFamily"
         },
         "bg": {
-          "$value": "oklch(8% 0 0)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.08,
+              0,
+              0
+            ]
+          },
           "$type": "color"
         },
         "surface": {
-          "$value": "oklch(14% 0 0)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.14,
+              0,
+              0
+            ]
+          },
           "$type": "color"
         },
         "surface2": {
-          "$value": "oklch(20% 0 0)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.2,
+              0,
+              0
+            ]
+          },
           "$type": "color"
         },
         "accent": {
-          "$value": "oklch(80% 0 0)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.8,
+              0,
+              0
+            ]
+          },
           "$type": "color"
         },
         "accent-cyan": {
-          "$value": "oklch(75% 0 0)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.75,
+              0,
+              0
+            ]
+          },
           "$type": "color"
         },
         "accent-violet": {
-          "$value": "oklch(70% 0 0)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.7,
+              0,
+              0
+            ]
+          },
           "$type": "color"
         },
         "accent-gold": {
-          "$value": "oklch(78% 0 0)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.78,
+              0,
+              0
+            ]
+          },
           "$type": "color"
         },
         "accent-green": {
-          "$value": "oklch(72% 0 0)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.72,
+              0,
+              0
+            ]
+          },
           "$type": "color"
         },
         "accent-red": {
-          "$value": "oklch(68% 0 0)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.68,
+              0,
+              0
+            ]
+          },
           "$type": "color"
         },
         "accent-iris": {
-          "$value": "oklch(74% 0 0)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.74,
+              0,
+              0
+            ]
+          },
           "$type": "color"
         },
         "text-primary": {
-          "$value": "oklch(95% 0 0)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.95,
+              0,
+              0
+            ]
+          },
           "$type": "color"
         },
         "text-secondary": {
-          "$value": "oklch(75% 0 0)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.75,
+              0,
+              0
+            ]
+          },
           "$type": "color"
         },
         "text-tertiary": {
-          "$value": "oklch(50% 0 0)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.5,
+              0,
+              0
+            ]
+          },
           "$type": "color"
         },
         "glass-bg": {
-          "$value": "oklch(100% 0 0 / 0.05)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              1,
+              0,
+              0
+            ],
+            "alpha": 0.05
+          },
           "$type": "color"
         },
         "glass-border": {
-          "$value": "oklch(100% 0 0 / 0.1)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              1,
+              0,
+              0
+            ],
+            "alpha": 0.1
+          },
           "$type": "color"
-        },
-        "glass-shadow": {
-          "$value": "0 8px 32px rgba(0, 0, 0, 0.2)",
-          "$type": "boxShadow"
         }
       }
     },
     "aurora": {
       "p31": {
         "base": {
-          "$value": "16px",
-          "$type": "dimension"
-        },
-        "scale-xs": {
-          "$value": "calc(var(--p31-base) * 0.75)",
-          "$type": "dimension"
-        },
-        "scale-sm": {
-          "$value": "var(--p31-base)",
-          "$type": "dimension"
-        },
-        "scale-md": {
-          "$value": "calc(var(--p31-base) * 1.3333)",
-          "$type": "dimension"
-        },
-        "scale-lg": {
-          "$value": "calc(var(--p31-base) * 1.7777)",
-          "$type": "dimension"
-        },
-        "scale-xl": {
-          "$value": "calc(var(--p31-base) * 2.3703)",
-          "$type": "dimension"
-        },
-        "scale-2xl": {
-          "$value": "calc(var(--p31-base) * 3.1604)",
+          "$value": {
+            "value": 16,
+            "unit": "px"
+          },
           "$type": "dimension"
         },
         "radius-sm": {
-          "$value": "8px",
+          "$value": {
+            "value": 8,
+            "unit": "px"
+          },
           "$type": "dimension"
         },
         "radius-md": {
-          "$value": "16px",
+          "$value": {
+            "value": 16,
+            "unit": "px"
+          },
           "$type": "dimension"
         },
         "radius-lg": {
-          "$value": "24px",
+          "$value": {
+            "value": 24,
+            "unit": "px"
+          },
           "$type": "dimension"
         },
         "radius-full": {
-          "$value": "9999px",
+          "$value": {
+            "value": 9999,
+            "unit": "px"
+          },
           "$type": "dimension"
         },
         "font-sans": {
-          "$value": "'Space Grotesk', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
+          "$value": [
+            "Space Grotesk",
+            "system-ui",
+            "-apple-system",
+            "Segoe UI",
+            "Roboto",
+            "sans-serif"
+          ],
           "$type": "fontFamily"
         },
         "font-mono": {
-          "$value": "'JetBrains Mono', ui-monospace, 'SF Mono', 'Fira Code', monospace",
+          "$value": [
+            "JetBrains Mono",
+            "ui-monospace",
+            "SF Mono",
+            "Fira Code",
+            "monospace"
+          ],
           "$type": "fontFamily"
         },
         "bg": {
-          "$value": "oklch(9% 0.03 260)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.09,
+              0.03,
+              260
+            ]
+          },
           "$type": "color"
         },
         "surface": {
-          "$value": "oklch(14% 0.035 260)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.14,
+              0.035,
+              260
+            ]
+          },
           "$type": "color"
         },
         "surface2": {
-          "$value": "oklch(20% 0.04 260)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.2,
+              0.04,
+              260
+            ]
+          },
           "$type": "color"
         },
         "accent": {
-          "$value": "oklch(72% 0.16 250)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.72,
+              0.16,
+              250
+            ]
+          },
           "$type": "color"
         },
         "accent-cyan": {
-          "$value": "oklch(65% 0.16 225)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.65,
+              0.16,
+              225
+            ]
+          },
           "$type": "color"
         },
         "accent-violet": {
-          "$value": "oklch(72% 0.16 250)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.72,
+              0.16,
+              250
+            ]
+          },
           "$type": "color"
         },
         "accent-gold": {
-          "$value": "oklch(75% 0.16 65)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.75,
+              0.16,
+              65
+            ]
+          },
           "$type": "color"
         },
         "accent-green": {
-          "$value": "oklch(70% 0.16 160)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.7,
+              0.16,
+              160
+            ]
+          },
           "$type": "color"
         },
         "accent-red": {
-          "$value": "oklch(70% 0.16 25)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.7,
+              0.16,
+              25
+            ]
+          },
           "$type": "color"
         },
         "accent-iris": {
-          "$value": "oklch(72% 0.16 290)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.72,
+              0.16,
+              290
+            ]
+          },
           "$type": "color"
         },
         "text-primary": {
-          "$value": "oklch(95% 0.03 260)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.95,
+              0.03,
+              260
+            ]
+          },
           "$type": "color"
         },
         "text-secondary": {
-          "$value": "oklch(78% 0.03 260)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.78,
+              0.03,
+              260
+            ]
+          },
           "$type": "color"
         },
         "text-tertiary": {
-          "$value": "oklch(55% 0.03 260)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.55,
+              0.03,
+              260
+            ]
+          },
           "$type": "color"
         },
         "glass-bg": {
-          "$value": "oklch(100% 0.02 260 / 0.05)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              1,
+              0.02,
+              260
+            ],
+            "alpha": 0.05
+          },
           "$type": "color"
         },
         "glass-border": {
-          "$value": "oklch(100% 0.02 260 / 0.1)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              1,
+              0.02,
+              260
+            ],
+            "alpha": 0.1
+          },
           "$type": "color"
-        },
-        "glass-shadow": {
-          "$value": "0 8px 32px rgba(100, 50, 200, 0.12)",
-          "$type": "boxShadow"
         }
       }
     },
     "zen": {
       "p31": {
         "base": {
-          "$value": "16px",
-          "$type": "dimension"
-        },
-        "scale-xs": {
-          "$value": "calc(var(--p31-base) * 0.75)",
-          "$type": "dimension"
-        },
-        "scale-sm": {
-          "$value": "var(--p31-base)",
-          "$type": "dimension"
-        },
-        "scale-md": {
-          "$value": "calc(var(--p31-base) * 1.3333)",
-          "$type": "dimension"
-        },
-        "scale-lg": {
-          "$value": "calc(var(--p31-base) * 1.7777)",
-          "$type": "dimension"
-        },
-        "scale-xl": {
-          "$value": "calc(var(--p31-base) * 2.3703)",
-          "$type": "dimension"
-        },
-        "scale-2xl": {
-          "$value": "calc(var(--p31-base) * 3.1604)",
+          "$value": {
+            "value": 16,
+            "unit": "px"
+          },
           "$type": "dimension"
         },
         "radius-sm": {
-          "$value": "8px",
+          "$value": {
+            "value": 8,
+            "unit": "px"
+          },
           "$type": "dimension"
         },
         "radius-md": {
-          "$value": "16px",
+          "$value": {
+            "value": 16,
+            "unit": "px"
+          },
           "$type": "dimension"
         },
         "radius-lg": {
-          "$value": "24px",
+          "$value": {
+            "value": 24,
+            "unit": "px"
+          },
           "$type": "dimension"
         },
         "radius-full": {
-          "$value": "9999px",
+          "$value": {
+            "value": 9999,
+            "unit": "px"
+          },
           "$type": "dimension"
         },
         "font-sans": {
-          "$value": "'Space Grotesk', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
+          "$value": [
+            "Space Grotesk",
+            "system-ui",
+            "-apple-system",
+            "Segoe UI",
+            "Roboto",
+            "sans-serif"
+          ],
           "$type": "fontFamily"
         },
         "font-mono": {
-          "$value": "'JetBrains Mono', ui-monospace, 'SF Mono', 'Fira Code', monospace",
+          "$value": [
+            "JetBrains Mono",
+            "ui-monospace",
+            "SF Mono",
+            "Fira Code",
+            "monospace"
+          ],
           "$type": "fontFamily"
         },
         "bg": {
-          "$value": "oklch(14% 0.01 75)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.14,
+              0.01,
+              75
+            ]
+          },
           "$type": "color"
         },
         "surface": {
-          "$value": "oklch(19% 0.012 75)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.19,
+              0.012,
+              75
+            ]
+          },
           "$type": "color"
         },
         "surface2": {
-          "$value": "oklch(25% 0.015 75)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.25,
+              0.015,
+              75
+            ]
+          },
           "$type": "color"
         },
         "accent": {
-          "$value": "oklch(72% 0.1 75)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.72,
+              0.1,
+              75
+            ]
+          },
           "$type": "color"
         },
         "accent-cyan": {
-          "$value": "oklch(68% 0.1 190)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.68,
+              0.1,
+              190
+            ]
+          },
           "$type": "color"
         },
         "accent-violet": {
-          "$value": "oklch(70% 0.1 300)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.7,
+              0.1,
+              300
+            ]
+          },
           "$type": "color"
         },
         "accent-gold": {
-          "$value": "oklch(75% 0.12 75)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.75,
+              0.12,
+              75
+            ]
+          },
           "$type": "color"
         },
         "accent-green": {
-          "$value": "oklch(68% 0.1 140)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.68,
+              0.1,
+              140
+            ]
+          },
           "$type": "color"
         },
         "accent-red": {
-          "$value": "oklch(68% 0.12 25)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.68,
+              0.12,
+              25
+            ]
+          },
           "$type": "color"
         },
         "accent-iris": {
-          "$value": "oklch(70% 0.1 250)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.7,
+              0.1,
+              250
+            ]
+          },
           "$type": "color"
         },
         "text-primary": {
-          "$value": "oklch(93% 0.01 75)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.93,
+              0.01,
+              75
+            ]
+          },
           "$type": "color"
         },
         "text-secondary": {
-          "$value": "oklch(75% 0.012 75)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.75,
+              0.012,
+              75
+            ]
+          },
           "$type": "color"
         },
         "text-tertiary": {
-          "$value": "oklch(55% 0.01 75)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.55,
+              0.01,
+              75
+            ]
+          },
           "$type": "color"
         },
         "glass-bg": {
-          "$value": "oklch(100% 0.01 75 / 0.05)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              1,
+              0.01,
+              75
+            ],
+            "alpha": 0.05
+          },
           "$type": "color"
         },
         "glass-border": {
-          "$value": "oklch(100% 0.01 75 / 0.1)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              1,
+              0.01,
+              75
+            ],
+            "alpha": 0.1
+          },
           "$type": "color"
-        },
-        "glass-shadow": {
-          "$value": "0 8px 32px rgba(120, 100, 70, 0.1)",
-          "$type": "boxShadow"
         }
       }
     },
     "volt": {
       "p31": {
         "base": {
-          "$value": "16px",
-          "$type": "dimension"
-        },
-        "scale-xs": {
-          "$value": "calc(var(--p31-base) * 0.75)",
-          "$type": "dimension"
-        },
-        "scale-sm": {
-          "$value": "var(--p31-base)",
-          "$type": "dimension"
-        },
-        "scale-md": {
-          "$value": "calc(var(--p31-base) * 1.3333)",
-          "$type": "dimension"
-        },
-        "scale-lg": {
-          "$value": "calc(var(--p31-base) * 1.7777)",
-          "$type": "dimension"
-        },
-        "scale-xl": {
-          "$value": "calc(var(--p31-base) * 2.3703)",
-          "$type": "dimension"
-        },
-        "scale-2xl": {
-          "$value": "calc(var(--p31-base) * 3.1604)",
+          "$value": {
+            "value": 16,
+            "unit": "px"
+          },
           "$type": "dimension"
         },
         "radius-sm": {
-          "$value": "8px",
+          "$value": {
+            "value": 8,
+            "unit": "px"
+          },
           "$type": "dimension"
         },
         "radius-md": {
-          "$value": "16px",
+          "$value": {
+            "value": 16,
+            "unit": "px"
+          },
           "$type": "dimension"
         },
         "radius-lg": {
-          "$value": "24px",
+          "$value": {
+            "value": 24,
+            "unit": "px"
+          },
           "$type": "dimension"
         },
         "radius-full": {
-          "$value": "9999px",
+          "$value": {
+            "value": 9999,
+            "unit": "px"
+          },
           "$type": "dimension"
         },
         "font-sans": {
-          "$value": "'Space Grotesk', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
+          "$value": [
+            "Space Grotesk",
+            "system-ui",
+            "-apple-system",
+            "Segoe UI",
+            "Roboto",
+            "sans-serif"
+          ],
           "$type": "fontFamily"
         },
         "font-mono": {
-          "$value": "'JetBrains Mono', ui-monospace, 'SF Mono', 'Fira Code', monospace",
+          "$value": [
+            "JetBrains Mono",
+            "ui-monospace",
+            "SF Mono",
+            "Fira Code",
+            "monospace"
+          ],
           "$type": "fontFamily"
         },
         "bg": {
-          "$value": "oklch(12% 0.02 270)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.12,
+              0.02,
+              270
+            ]
+          },
           "$type": "color"
         },
         "surface": {
-          "$value": "oklch(18% 0.025 270)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.18,
+              0.025,
+              270
+            ]
+          },
           "$type": "color"
         },
         "surface2": {
-          "$value": "oklch(25% 0.03 270)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.25,
+              0.03,
+              270
+            ]
+          },
           "$type": "color"
         },
         "accent": {
-          "$value": "oklch(75% 0.17 190)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.75,
+              0.17,
+              190
+            ]
+          },
           "$type": "color"
         },
         "accent-cyan": {
-          "$value": "oklch(75% 0.17 190)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.75,
+              0.17,
+              190
+            ]
+          },
           "$type": "color"
         },
         "accent-violet": {
-          "$value": "oklch(72% 0.17 300)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.72,
+              0.17,
+              300
+            ]
+          },
           "$type": "color"
         },
         "accent-gold": {
-          "$value": "oklch(78% 0.17 60)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.78,
+              0.17,
+              60
+            ]
+          },
           "$type": "color"
         },
         "accent-green": {
-          "$value": "oklch(72% 0.17 150)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.72,
+              0.17,
+              150
+            ]
+          },
           "$type": "color"
         },
         "accent-red": {
-          "$value": "oklch(72% 0.17 20)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.72,
+              0.17,
+              20
+            ]
+          },
           "$type": "color"
         },
         "accent-iris": {
-          "$value": "oklch(73% 0.17 260)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.73,
+              0.17,
+              260
+            ]
+          },
           "$type": "color"
         },
         "text-primary": {
-          "$value": "oklch(96% 0.01 270)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.96,
+              0.01,
+              270
+            ]
+          },
           "$type": "color"
         },
         "text-secondary": {
-          "$value": "oklch(80% 0.01 270)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.8,
+              0.01,
+              270
+            ]
+          },
           "$type": "color"
         },
         "text-tertiary": {
-          "$value": "oklch(58% 0.01 270)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.58,
+              0.01,
+              270
+            ]
+          },
           "$type": "color"
         },
         "glass-bg": {
-          "$value": "oklch(100% 0.01 270 / 0.05)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              1,
+              0.01,
+              270
+            ],
+            "alpha": 0.05
+          },
           "$type": "color"
         },
         "glass-border": {
-          "$value": "oklch(100% 0.01 270 / 0.12)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              1,
+              0.01,
+              270
+            ],
+            "alpha": 0.12
+          },
           "$type": "color"
-        },
-        "glass-shadow": {
-          "$value": "0 8px 32px rgba(0, 160, 220, 0.12)",
-          "$type": "boxShadow"
         }
       }
     },
     "family": {
       "p31": {
         "base": {
-          "$value": "16px",
-          "$type": "dimension"
-        },
-        "scale-xs": {
-          "$value": "calc(var(--p31-base) * 0.75)",
-          "$type": "dimension"
-        },
-        "scale-sm": {
-          "$value": "var(--p31-base)",
-          "$type": "dimension"
-        },
-        "scale-md": {
-          "$value": "calc(var(--p31-base) * 1.3333)",
-          "$type": "dimension"
-        },
-        "scale-lg": {
-          "$value": "calc(var(--p31-base) * 1.7777)",
-          "$type": "dimension"
-        },
-        "scale-xl": {
-          "$value": "calc(var(--p31-base) * 2.3703)",
-          "$type": "dimension"
-        },
-        "scale-2xl": {
-          "$value": "calc(var(--p31-base) * 3.1604)",
+          "$value": {
+            "value": 16,
+            "unit": "px"
+          },
           "$type": "dimension"
         },
         "radius-sm": {
-          "$value": "8px",
+          "$value": {
+            "value": 8,
+            "unit": "px"
+          },
           "$type": "dimension"
         },
         "radius-md": {
-          "$value": "16px",
+          "$value": {
+            "value": 16,
+            "unit": "px"
+          },
           "$type": "dimension"
         },
         "radius-lg": {
-          "$value": "24px",
+          "$value": {
+            "value": 24,
+            "unit": "px"
+          },
           "$type": "dimension"
         },
         "radius-full": {
-          "$value": "9999px",
+          "$value": {
+            "value": 9999,
+            "unit": "px"
+          },
           "$type": "dimension"
         },
         "font-sans": {
-          "$value": "'Space Grotesk', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
+          "$value": [
+            "Space Grotesk",
+            "system-ui",
+            "-apple-system",
+            "Segoe UI",
+            "Roboto",
+            "sans-serif"
+          ],
           "$type": "fontFamily"
         },
         "font-mono": {
-          "$value": "'JetBrains Mono', ui-monospace, 'SF Mono', 'Fira Code', monospace",
+          "$value": [
+            "JetBrains Mono",
+            "ui-monospace",
+            "SF Mono",
+            "Fira Code",
+            "monospace"
+          ],
           "$type": "fontFamily"
         },
         "bg": {
-          "$value": "oklch(17% 0.03 55)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.17,
+              0.03,
+              55
+            ]
+          },
           "$type": "color"
         },
         "surface": {
-          "$value": "oklch(23% 0.04 55)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.23,
+              0.04,
+              55
+            ]
+          },
           "$type": "color"
         },
         "surface2": {
-          "$value": "oklch(29% 0.045 55)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.29,
+              0.045,
+              55
+            ]
+          },
           "$type": "color"
         },
         "accent": {
-          "$value": "oklch(80% 0.16 75)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.8,
+              0.16,
+              75
+            ]
+          },
           "$type": "color"
         },
         "accent-cyan": {
-          "$value": "oklch(80% 0.16 75)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.8,
+              0.16,
+              75
+            ]
+          },
           "$type": "color"
         },
         "accent-violet": {
-          "$value": "oklch(72% 0.16 20)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.72,
+              0.16,
+              20
+            ]
+          },
           "$type": "color"
         },
         "accent-gold": {
-          "$value": "oklch(83% 0.16 65)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.83,
+              0.16,
+              65
+            ]
+          },
           "$type": "color"
         },
         "accent-green": {
-          "$value": "oklch(72% 0.16 145)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.72,
+              0.16,
+              145
+            ]
+          },
           "$type": "color"
         },
         "accent-red": {
-          "$value": "oklch(68% 0.16 25)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.68,
+              0.16,
+              25
+            ]
+          },
           "$type": "color"
         },
         "accent-iris": {
-          "$value": "oklch(72% 0.16 320)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.72,
+              0.16,
+              320
+            ]
+          },
           "$type": "color"
         },
         "text-primary": {
-          "$value": "oklch(97% 0.02 70)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.97,
+              0.02,
+              70
+            ]
+          },
           "$type": "color"
         },
         "text-secondary": {
-          "$value": "oklch(82% 0.03 70)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.82,
+              0.03,
+              70
+            ]
+          },
           "$type": "color"
         },
         "text-tertiary": {
-          "$value": "oklch(60% 0.03 65)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.6,
+              0.03,
+              65
+            ]
+          },
           "$type": "color"
         },
         "glass-bg": {
-          "$value": "oklch(100% 0.02 60 / 0.05)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              1,
+              0.02,
+              60
+            ],
+            "alpha": 0.05
+          },
           "$type": "color"
         },
         "glass-border": {
-          "$value": "oklch(100% 0.02 60 / 0.12)",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              1,
+              0.02,
+              60
+            ],
+            "alpha": 0.12
+          },
+          "$type": "color"
+        }
+      }
+    },
+    "sunlight": {
+      "p31": {
+        "base": {
+          "$value": {
+            "value": 16,
+            "unit": "px"
+          },
+          "$type": "dimension"
+        },
+        "radius-sm": {
+          "$value": {
+            "value": 8,
+            "unit": "px"
+          },
+          "$type": "dimension"
+        },
+        "radius-md": {
+          "$value": {
+            "value": 16,
+            "unit": "px"
+          },
+          "$type": "dimension"
+        },
+        "radius-lg": {
+          "$value": {
+            "value": 24,
+            "unit": "px"
+          },
+          "$type": "dimension"
+        },
+        "radius-full": {
+          "$value": {
+            "value": 9999,
+            "unit": "px"
+          },
+          "$type": "dimension"
+        },
+        "font-sans": {
+          "$value": [
+            "Space Grotesk",
+            "system-ui",
+            "-apple-system",
+            "Segoe UI",
+            "Roboto",
+            "sans-serif"
+          ],
+          "$type": "fontFamily"
+        },
+        "font-mono": {
+          "$value": [
+            "JetBrains Mono",
+            "ui-monospace",
+            "SF Mono",
+            "Fira Code",
+            "monospace"
+          ],
+          "$type": "fontFamily"
+        },
+        "bg": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.97,
+              0.01,
+              85
+            ]
+          },
           "$type": "color"
         },
-        "glass-shadow": {
-          "$value": "0 8px 32px rgba(255, 170, 40, 0.08)",
-          "$type": "boxShadow"
+        "surface": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              1,
+              0.005,
+              90
+            ]
+          },
+          "$type": "color"
+        },
+        "surface2": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.94,
+              0.012,
+              85
+            ]
+          },
+          "$type": "color"
+        },
+        "accent": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.55,
+              0.15,
+              40
+            ]
+          },
+          "$type": "color"
+        },
+        "accent-cyan": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.62,
+              0.14,
+              190
+            ]
+          },
+          "$type": "color"
+        },
+        "accent-violet": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.55,
+              0.15,
+              300
+            ]
+          },
+          "$type": "color"
+        },
+        "accent-gold": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.62,
+              0.14,
+              80
+            ]
+          },
+          "$type": "color"
+        },
+        "accent-green": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.55,
+              0.13,
+              150
+            ]
+          },
+          "$type": "color"
+        },
+        "accent-red": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.55,
+              0.15,
+              25
+            ]
+          },
+          "$type": "color"
+        },
+        "accent-iris": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.55,
+              0.15,
+              250
+            ]
+          },
+          "$type": "color"
+        },
+        "text": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.22,
+              0.015,
+              80
+            ]
+          },
+          "$type": "color"
+        },
+        "text-primary": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.22,
+              0.015,
+              80
+            ]
+          },
+          "$type": "color"
+        },
+        "text-secondary": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.38,
+              0.015,
+              80
+            ]
+          },
+          "$type": "color"
+        },
+        "text-tertiary": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.55,
+              0.015,
+              80
+            ]
+          },
+          "$type": "color"
+        },
+        "glass-bg": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              1,
+              0.005,
+              90
+            ],
+            "alpha": 0.6
+          },
+          "$type": "color"
+        },
+        "glass-border": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.8,
+              0.02,
+              85
+            ],
+            "alpha": 0.25
+          },
+          "$type": "color"
         }
       }
     }

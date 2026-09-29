@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * @p31/canon — gen-tokens.mjs
+ * @p31ca/canon — gen-tokens.mjs
  *
  * THE ONLY token writer. There is exactly one source of truth —
  * ../../src/theming/theme-store.ts (THEMES + BASE) — and this script
@@ -39,11 +39,12 @@ mkdirSync(join(tokensDir, 'dist'), { recursive: true })
 
 /** Map a --p31-* name to its DTCG $type. */
 function typeFor(name) {
-  if (name === 'glass-shadow' || name.startsWith('glow-')) return 'boxShadow'
+  if (name === 'glass-shadow' || name.startsWith('glow-')) return 'shadow'
   if (name.startsWith('font-')) return 'fontFamily'
   if (name.startsWith('duration-')) return 'duration'
-  if (name.startsWith('easing-')) return 'cubicBezier'
-  if (name.startsWith('z-') || name === 'speed-factor') return 'number'
+  if (name.endsWith('-ms')) return 'duration'
+  if (name.startsWith('easing-') || name.startsWith('spring-')) return 'cubicBezier'
+  if (name.startsWith('z-') || name === 'speed-factor' || name.includes('tint')) return 'number'
   if (
     name.startsWith('scale-') || name.startsWith('radius-') ||
     name.startsWith('space-') || name.startsWith('spacing-') ||
@@ -56,9 +57,79 @@ function typeFor(name) {
   return 'color'
 }
 
+// ---------------------------------------------------------------------
+// CSS-string -> DTCG structured value converters.
+// theme-store.ts holds CSS-native values (oklch(...), 16px, calc(...)).
+// The strict DTCG 2025.10 schema requires structured $value objects, not
+// CSS strings — SD's validation is lenient, dtokens check is strict. These
+// converters emit the structured form so the file conforms to the schema it
+// declares. CSS-function values (calc/var/blur) have NO portable DTCG form;
+// they are excluded from the DTCG export (they belong to the CSS-emit layer).
+// ---------------------------------------------------------------------
+
+const CSS_FUNCTION_RE = /^(calc|var|clamp|min|max|blur|drop-shadow)\(/
+
+function oklchToObject(value) {
+  const m = String(value).match(/^oklch\(\s*([\d.]+%?)\s+([\d.]+%?)\s+([\d.]+)\s*(?:\/\s*([\d.]+%?))?\s*\)$/i)
+  if (!m) return null
+  const num = (s) => (typeof s === 'string' && s.endsWith('%') ? parseFloat(s) / 100 : parseFloat(s))
+  const components = [num(m[1]), num(m[2]), num(m[3])]
+  return m[4] !== undefined ? { colorSpace: 'oklch', components, alpha: num(m[4]) } : { colorSpace: 'oklch', components }
+}
+
+function dimToObject(value) {
+  const m = String(value).match(/^([\d.]+)([a-z%]*)$/i)
+  if (!m) return null
+  // A bare `0` dimension is semantically 0px — DTCG rejects empty unit.
+  const unit = m[2] || (parseFloat(m[1]) === 0 ? 'px' : '')
+  return { value: parseFloat(m[1]), unit }
+}
+
+function cubicToArray(value) {
+  // Accept both '0.4 0 0.2 1' and 'cubic-bezier(0.4, 0, 0.2, 1)' forms.
+  const m = String(value).match(/cubic-bezier\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)\s*\)/i)
+  const parts = m
+    ? [m[1], m[2], m[3], m[4]].map(Number)
+    : String(value).trim().split(/\s+/).map(Number)
+  return parts.length === 4 && parts.every((n) => !Number.isNaN(n)) ? parts : null
+}
+
+function fontFamilyToArray(value) {
+  return String(value).split(',').map((s) => s.replace(/['"]/g, '').trim()).filter(Boolean)
+}
+
+// Emit a strict-DTCG $value for a given $type + raw CSS string.
+// Returns null for css-function values (not portable) and unparseable values.
+function dtcgValue(type, raw) {
+  if (typeof raw !== 'string') return raw
+  if (raw.startsWith('{') && raw.endsWith('}')) return raw // alias ref
+  if (CSS_FUNCTION_RE.test(raw)) return null // calc/var/blur — not portable
+  switch (type) {
+    case 'color': return oklchToObject(raw)
+    case 'dimension': return dimToObject(raw)
+    case 'duration': return dimToObject(raw)
+    case 'fontFamily': return fontFamilyToArray(raw)
+    case 'cubicBezier': return cubicToArray(raw)
+    case 'number': {
+      const n = parseFloat(raw)
+      return Number.isNaN(n) ? null : n
+    }
+    case 'boxShadow': return raw // shadow strings stay as CSS — flagged below
+    case 'shadow': return null // composite shadow parsing is a separate concern; not portable as a string
+    default: return raw
+  }
+}
+
+/** Build a DTCG token node, converting CSS-string values to structured form. */
 function dt(value, type, desc) {
-  const node = { $value: value, $type: type }
-  if (desc) node.$description = desc
+  const structured = dtcgValue(type, value)
+  const node = { $value: structured ?? value, $type: type }
+  if (structured === null) {
+    // css-function value: mark non-portable so the export step can drop it.
+    node.$description = `${desc ?? ''} [css-dependent: '${value}']`.trim()
+  } else if (desc) {
+    node.$description = desc
+  }
   return node
 }
 
@@ -111,26 +182,36 @@ const p31 = {}
 // Primitives (theme-agnostic)
 for (const [full, value] of Object.entries(BASE)) {
   const name = bare(full)
-  p31[name] = dt(value, typeFor(name))
+  const node = dt(value, typeFor(name))
+  // css-dependent (calc/var/blur) — no portable DTCG form; skip.
+  if ((node.$description ?? '').includes('css-dependent')) continue
+  p31[name] = node
 }
 
 // design-core compatibility tokens (Phase 1 absorption) — same namespace,
 // verbatim values, no reconciliation yet.
 for (const [full, value] of Object.entries(GLOBAL_COMPAT)) {
   const name = bare(full)
-  p31[name] = dt(value, typeFor(name))
+  const node = dt(value, typeFor(name))
+  if ((node.$description ?? '').includes('css-dependent')) continue
+  p31[name] = node
 }
 
 // Semantic slots — default-theme value in $value, per-theme map in $extensions
 for (const [path, slot] of Object.entries(SEMANTIC_MAP)) {
   const defaultValue = resolveSlot(slot, DEFAULT_THEME)
-  const node = { $value: defaultValue, $type: slot.type }
+  // Convert the default value to structured DTCG; css-dependent slots are
+  // dropped from the contract-resolvable tree (they are not portable).
+  const defaultStructured = dtcgValue(slot.type, defaultValue)
+  if (defaultStructured === null) continue // css-dependent — not portable
+  const node = { $value: defaultStructured, $type: slot.type }
 
   // Per-theme overrides ride along; Style Dictionary ignores unknown $extensions.
   const themesExt = {}
   for (const id of THEME_IDS) {
     const v = resolveSlot(slot, id)
-    if (v !== undefined && v !== defaultValue) themesExt[id] = v
+    const sv = dtcgValue(slot.type, v)
+    if (v !== undefined && sv !== null && JSON.stringify(sv) !== JSON.stringify(defaultStructured)) themesExt[id] = sv
   }
   if (Object.keys(themesExt).length) {
     node.$extensions = { p31: { themes: themesExt } }
@@ -161,14 +242,16 @@ for (const id of THEME_IDS) {
   const themeP31 = {}
   for (const [full, value] of Object.entries(THEMES[id].tokens)) {
     const name = bare(full)
-    themeP31[name] = dt(value, typeFor(name))
+    const node = dt(value, typeFor(name))
+    if ((node.$description ?? '').includes('css-dependent')) continue
+    themeP31[name] = node
   }
   themes[id] = { p31: themeP31 }
 }
 
 // DTCG top-level metadata. `$schema` declares the Format Module version this
 // export conforms to; `$extensions.p31` carries the vendor namespace (P31)
-// with version + provenance. This matches the version @p31/design-core already
+// with version + provenance. This matches the version @p31ca/design-core already
 // declares in its manifest.json so the two token systems agree on one spec
 // revision. NOTE: "2025.10" is the best-known current snapshot available
 // offline; bump it here AND in design-core/manifest.json once a newer snapshot
@@ -229,7 +312,7 @@ function cssBlock(selector, themeId, { globals = false, compatRoot = false } = {
 // layered rules inside p31.components can be beaten by p31.utilities.
 const LAYER_ORDER = '@layer p31.tokens, p31.reset, p31.base, p31.layout, p31.components, p31.utilities;\n'
 
-let css = '/**\n * @p31/canon — tokens.css. Do not edit directly; run `pnpm gen:tokens`.\n * Derived from src/theming/theme-store.ts (single source of truth).\n * Names are the runtime --p31-* contract; values change per theme.\n * Palette vars (--p31-bg, --p31-accent, …) AND semantic slots\n * (color.action.*, space.inline.*, font.size.*, motion.*) are emitted here.\n */\n\n'
+let css = '/**\n * @p31ca/canon — tokens.css. Do not edit directly; run `pnpm gen:tokens`.\n * Derived from src/theming/theme-store.ts (single source of truth).\n * Names are the runtime --p31-* contract; values change per theme.\n * Palette vars (--p31-bg, --p31-accent, …) AND semantic slots\n * (color.action.*, space.inline.*, font.size.*, motion.*) are emitted here.\n */\n\n'
 css += LAYER_ORDER + '\n'
 css += '@layer p31.tokens {\n'
 css += cssBlock(':root', DEFAULT_THEME, { globals: true, compatRoot: true })
@@ -258,7 +341,7 @@ for (const full of Object.keys(COMPAT_ROOT)) nameSet.add(full)
 for (const full of Object.keys(semanticCssVars(DEFAULT_THEME))) nameSet.add(full)
 const sortedNames = [...nameSet].sort()
 const tokensTs = `/**
- * @p31/canon — tokens.ts (GENERATED by scripts/gen-tokens.mjs — do not edit).
+ * @p31ca/canon — tokens.ts (GENERATED by scripts/gen-tokens.mjs — do not edit).
  * Derived from src/theming/theme-store.ts (single source of truth).
  *
  * The typed name contract for --p31-*. Consumers (Canvas resolvers, fallback

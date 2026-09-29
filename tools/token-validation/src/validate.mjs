@@ -44,14 +44,9 @@ try {
 
   // The canon token file is also CSS-string-shaped; report its status so the
   // gap is visible until the canon converter lands.
-  console.log(`\n▶ validating ${CANON} …`);
-  try {
-    run(DTOKENS, ['check', CANON]);
-    console.log('✅ canon tokens.dtc.json — PASSED');
-  } catch (e) {
-    const count = String(e.stdout ?? '').split('\n').filter((l) => l.includes('[schema] error')).length;
-    console.log(`⚠️  canon tokens.dtc.json — NOT YET DTCG-VALID (${count} schema errors; CSS-string values need the canon converter).`);
-  }
+  console.log(`▶ validating ${CANON} …`);
+  run(DTOKENS, ['check', CANON]);
+  console.log('✅ canon tokens.dtc.json — PASSED');
 
   console.log('\n✅ DTCG token validation PASSED (design-core).');
   process.exit(0);

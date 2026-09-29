@@ -266,7 +266,7 @@ export const THEMES: Record<ThemeId, P31Theme> = {
       '--p31-surface2': 'oklch(23% 0.04 30)',
       '--p31-accent': 'oklch(72% 0.18 40)',
       '--p31-accent-cyan': 'oklch(72% 0.18 40)',
-      '--p31-accent-violet': 'oklch(70% 0.18 360)',
+      '--p31-accent-violet': 'oklch(70% 0.18 0)', // was 360 — hue 360 ≡ 0 in OKLCH; strict DTCG requires < 360
       '--p31-accent-gold': 'oklch(75% 0.18 60)',
       '--p31-accent-green': 'oklch(65% 0.18 140)',
       '--p31-accent-red': 'oklch(72% 0.18 25)',
