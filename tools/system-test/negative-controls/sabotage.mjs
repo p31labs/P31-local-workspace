@@ -20,11 +20,24 @@ const TEST = `${ROOT}/P31-local-workspace/tools/system-test`
 // means the last teardown did NOT complete — the system may be carrying
 // forward corruption. Scans every tree the suite's NCs can mutate, including
 // design-core/src where the canon-purity NC writes its NaN fixture.
+// __nc__* files that are TRACKED by git are intentional committed fixtures
+// (e.g. design-core's negative-control intent); only UNTRACKED ones are
+// residue from an interrupted run.
 function assertNoResidue() {
-  const leftovers = execSync(
-    `find ${ROOT}/P31-local-workspace/packages/govern ${ROOT}/P31-local-workspace/tools/phos-forge ${ROOT}/P31-local-workspace/packages/design-core/src -name '*.sabotage-bak' -o -name '__nc__*' 2>/dev/null`,
+  const found = execSync(
+    `find ${ROOT}/P31-local-workspace/packages/govern ${ROOT}/P31-local-workspace/tools/phos-forge ${ROOT}/P31-local-workspace/packages/design-core/src \\( -name '*.sabotage-bak' -o -name '__nc__*' \\) 2>/dev/null`,
     { encoding: 'utf8' },
   ).trim().split('\n').filter(Boolean)
+  // Tracked set: committed fixtures are intentional, not residue. Compute once.
+  const tracked = new Set(
+    execSync(`git -C ${ROOT}/P31-local-workspace ls-files`, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim().split('\n').filter(Boolean),
+  )
+  // Only flag files that are NOT tracked (i.e. leftover residue, not committed fixtures).
+  const repoRoot = `${ROOT}/P31-local-workspace`
+  const leftovers = found.filter((f) => {
+    const rel = f.replace(repoRoot + '/', '')
+    return !tracked.has(rel)
+  })
   if (leftovers.length > 0) {
     console.error(`✗ sabotage pre-flight: leftover residue from a prior run: ${leftovers.join(', ')}`)
     console.error('  The previous teardown did not complete — the system may be corrupted.')
