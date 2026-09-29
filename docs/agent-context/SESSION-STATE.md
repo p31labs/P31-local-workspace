@@ -63,6 +63,27 @@ not things the agent believes. If a fact is not here and not in the last
 | Speed baseline | bench jitterbug leg, 64 calls / 1828s | research facets ~51s/call (dominant), convergence ~13s, judge ~36s |
 | Score variance | same judge, 2 runs | mean 0.719 vs 0.604 — judge noisy run-to-run |
 
+## Verified facts (added: parallel paths B/C, 2026-09-29)
+
+| Fact | Verification command | Result |
+|---|---|---|
+| Judge deterministic at temp 0 | 2 consecutive judge calls | identical JSON verdicts |
+| Semantic cache exact+semantic tiers | `__testSemanticCache` | 3/3 unit + 3 NC PASS |
+| ParaCascade high-complexity parallel | live convergeWithChain | mode=parallel, GLM won, 9.3s / 111.6 tps |
+| ParaCascade low-complexity early-route | live convergeWithChain | mode=early-route, glm-5.3-flash, 1219 chars |
+| Complexity heuristic | `__testComplexity` | easy->low, hard->high + 2 NC |
+| Full convergence suite | node hooks | 6/6 PASS after B+C |
+| N=3 bench running | /tmp/bench-n3.out | prompt 1 scored 0.500 at temp 0 (run 1) |
+
+## Open threads (NOT active — one at a time)
+
+- **path-d-probe-run**: run probe-models.mjs after N=3 bench finishes (rate
+  contention). Then decide the research-model swap (gated on probe + rubric
+  spot-check).
+- **path-e-compression-loss**: after Path A variance data lands — measure
+  facets->synthesis direct vs facets->briefs->synthesis, score with temp-0
+  judge, per-criterion diff.
+
 ## Open threads (NOT active — one at a time)
 
 - **speed-rank-3**: faster research-tier model to attack the ~150s/prompt

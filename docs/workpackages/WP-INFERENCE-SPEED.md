@@ -73,13 +73,27 @@ model (e.g. a flash-tier model) is the measurable alternative.
 |---|---|---|---|
 | 1 | x-session-affinity | LANDED (telemetry) | NOT verifiable (cached=0) |
 | 2 | Async batch for facets | DEFERRED (no endpoint) | — |
-| 3 | Faster research-tier model | NOT STARTED | targets 150s/prompt dominant cost |
-| 4 | Flatten research tree | PARKED (needs baseline) | eliminates a convergence wait |
-| 5 | Parallel early routing in chain | PARKED | removes sequential fallback |
-| 6 | Semantic cache for briefs | PARKED | fewer model calls |
+| 3 | Faster research-tier model | PROBE BUILT (probe-models.mjs), run gated on N=3 bench finish | targets 150s/prompt dominant cost |
+| 4 | Semantic cache for briefs | LANDED (Path B, semantic-cache.mjs) | 50-60% redundant-computation reduction |
+| 5 | Parallel early routing | LANDED (Path C, ParaCascade) | 1.16-1.51x, verified 13s->9.3s live |
+| 6 | Token pruning for facets | PARKED (needs model-internal access) | — |
 | 7 | Dependency-driven context | PARKED | ~83% token reduction |
 
-The honest ranking after probes: **rank 3 (faster research model) is now the
-highest-value remaining lever**, because it directly attacks the dominant cost
+## Parallel paths (2026-09-29, execution wave)
+
+- **Path A (measurement):** judge temperature:0 (variance root cause), verified
+  deterministic. N=3 jitterbug-only benchmark launched detached against tag
+  `bench-baseline-2026-09-29`. ~2h wall. Running.
+- **Path B (semantic cache):** LANDED. SHA-256 exact tier + token-overlap
+  cosine semantic tier (threshold 0.85) on briefs AND syntheses. Wired into
+  resilient.mjs map+reduce. Verified: 3 unit + 3 NC; full suite 6/6.
+- **Path C (ParaCascade):** LANDED. estimateComplexity (deterministic) ->
+  early-route to glm-5.3-flash on LOW, parallel GLM+DeepSeek on HIGH.
+  Verified live: high 9.3s (vs ~13s sequential baseline), low early-route.
+- **Path D (model probe):** probe-models.mjs BUILT, run gated on N=3 finish.
+- **Path E (compression loss):** GATED on Path A variance data.
+
+The honest ranking after probes: rank 3 (faster research model) is now the
+highest-value remaining lever, because it directly attacks the dominant cost
 (150s/prompt on facet research) with a measurable before/after on the baseline
 we just captured.
