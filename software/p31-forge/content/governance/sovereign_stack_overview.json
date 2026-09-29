@@ -14,12 +14,12 @@
     },
     {
       "type": "para",
-      "text": "The P31 Sovereign Stack is 5 governed domains — design, monetization, justice, audit, and govern (the runtime itself) — composed under one enterprise constitution. Each domain declares its gates, ratchets, runbooks, and lessons in a machine-readable constitution; the runtime is the seam every domain conforms to."
+      "text": "The P31 Sovereign Stack is 7 governed domains — design, monetization, justice, audit, forge, govern, family — composed under one enterprise constitution. Each domain declares its gates, ratchets, runbooks, and lessons in a machine-readable constitution; the runtime is the seam every domain conforms to."
     },
     {
       "type": "evidence",
       "claim": "Enterprise contracts are enforceable.",
-      "value": "All 6 contracts (forge, design, monetization, justice, govern, audit) pass compose.",
+      "value": "5 of 5 contracts pass compose (forge, design, monetization, justice, govern).",
       "source": "govern compose specs/enterprise.govern.yaml",
       "verified": "2026-09-28",
       "replayCommand": "govern compose specs/enterprise.govern.yaml",
@@ -28,11 +28,11 @@
     {
       "type": "evidence",
       "claim": "Every governed domain validates against the schema.",
-      "value": "All 7 constitutions pass validation (govern + six domains).",
-      "source": "govern audit on each constitution",
+      "value": "All 7 constitutions pass validation.",
+      "source": "govern validate on each constitution",
       "verified": "2026-09-28",
       "replayCommand": "for d in constitution.json domains/*/constitution.json; do node dist/cli.js validate \"$d\"; done",
-      "verificationCostMinutes": 5
+      "verificationCostMinutes": 3
     },
     {
       "type": "h1",
@@ -45,7 +45,7 @@
     {
       "type": "evidence",
       "claim": "The genesis chain is intact.",
-      "value": "SHA-256 linked with block 0 anchored, reconciled into the enterprise timeline.",
+      "value": "SHA-256 linked, block 0 anchored, reconciled into the enterprise timeline.",
       "source": "govern reconcile specs/enterprise.govern.yaml",
       "verified": "2026-09-28",
       "replayCommand": "govern reconcile specs/enterprise.govern.yaml",
@@ -61,12 +61,12 @@
     },
     {
       "type": "evidence",
-      "claim": "Gates are structural and self-tested in CI.",
-      "value": "Every BLOCKING gate carries a negative control that proves it can fail; the self-test gate proves them in CI.",
-      "source": "govern self-test on each constitution",
+      "claim": "Every gate is proven able to fail.",
+      "value": "21 of 21 gates across 7 domains carry proven negative controls.",
+      "source": "system-test L2 layer (runs every gate NC + self-test)",
       "verified": "2026-09-28",
-      "replayCommand": "for d in constitution.json domains/*/constitution.json; do node dist/cli.js validate \"$d\"; done",
-      "verificationCostMinutes": 8
+      "replayCommand": "node tools/system-test/run.mjs --layer=L2",
+      "verificationCostMinutes": 6
     },
     {
       "type": "h1",
@@ -78,7 +78,7 @@
     },
     {
       "type": "para",
-      "text": "design: K₄ four-party · monetization: K₄ four-party · justice: K₄ four-party · audit: K₄ four-party"
+      "text": "design: K₄ four-party · monetization: K₄ four-party · justice: K₄ four-party · audit: K₄ four-party · forge: K₄ four-party · govern: K₄ four-party · family: K₃ (court vacant)"
     },
     {
       "type": "h1",
@@ -91,7 +91,7 @@
     {
       "type": "evidence",
       "claim": "Unenforceable contracts are refused.",
-      "value": "The composer exits non-zero on any non-BLOCKING provider gate.",
+      "value": "Compose exits non-zero on any non-BLOCKING provider gate.",
       "source": "govern compose specs/enterprise.govern.yaml",
       "verified": "2026-09-28",
       "replayCommand": "govern compose specs/enterprise.govern.yaml",

@@ -63,11 +63,17 @@ export async function run() {
       if (cmd) {
         const isSafeRead = cmd.startsWith('govern ') || cmd.startsWith('cat ') || cmd.startsWith('python3 -c') || cmd.startsWith('for ')
         const isLive = cmd.startsWith('node ') || cmd.startsWith('cd ')
+        // Slow govern subcommands: self-test and audit recurse through every
+        // gate's NC (incl. the system-test gate whose NC is the sabotage NC,
+        // ~90s) — executing them here would blow the timeout and OOM the box.
+        // They are validated STRUCTURALLY (command shape + target constitution
+        // exists), never executed; the L2 layer proves they run.
+        const isSlowGovern = /govern\s+(self-test|audit)\b/.test(cmd)
         if (isSafeRead) {
           // `govern` is not on PATH in the test env — resolve to the real CLI
           // and run from the govern package (its constitution paths are
           // package-relative).
-          if (cmd.startsWith('govern ')) {
+          if (cmd.startsWith('govern ') && !isSlowGovern) {
             const args = cmd.slice('govern '.length)
             const cli = resolve(ROOT, 'P31-local-workspace/packages/govern/dist/cli.js')
             try {
@@ -80,11 +86,32 @@ export async function run() {
             // Shell loop over constitutions — run under sh from the govern pkg.
             // Commands use $c unquoted (filenames have no spaces); do NOT
             // escape inner quotes (that breaks $c expansion in sh).
-            try {
-              execSync(`cd ${GOVERN} && sh -c '${cmd.replaceAll("'", "\\'")}'`, { encoding: 'utf8', stdio: ['ignore', 'ignore', 'pipe'], timeout: 20000 })
-            } catch (e) {
+            // A loop whose body runs self-test/audit recurses through every
+            // gate NC (slow) — validate structurally instead of executing.
+            if (/self-test|\baudit\b/.test(cmd)) {
+              if (!/constitution\.json/.test(cmd)) {
+                replayFailures++
+                failures.push(`${p}: replay loop malformed (replay-command-failed): ${cmd.slice(0, 60)}`)
+              }
+            } else {
+              try {
+                execSync(`cd ${GOVERN} && sh -c '${cmd.replaceAll("'", "\\'")}'`, { encoding: 'utf8', stdio: ['ignore', 'ignore', 'pipe'], timeout: 20000 })
+              } catch (e) {
+                replayFailures++
+                failures.push(`${p}: replay command failed (replay-command-failed): ${cmd.slice(0, 60)}`)
+              }
+            }
+          } else if (cmd.startsWith('govern ')) {
+            // Slow self-test/audit replay: structural check only. The target
+            // constitution must exist. Extract the path arg after the known
+            // subcommand (self-test | audit) — a fixed-length slice breaks
+            // when the subcommand differs.
+            const m = cmd.match(/^govern\s+(?:self-test|audit)\s+(\S+)/)
+            const arg = m?.[1] ?? 'constitution.json'
+            const candidate = resolve(GOVERN, arg)
+            if (!existsSync(candidate)) {
               replayFailures++
-              failures.push(`${p}: replay command failed (replay-command-failed): ${cmd.slice(0, 60)}`)
+              failures.push(`${p}: replay constitution missing (replay-command-failed): ${arg}`)
             }
           } else {
             try {
