@@ -13,7 +13,16 @@ import { resolve } from 'node:path'
 import { runJitterbug, callLLM } from '../phos-forge/jitterbug.mjs'
 
 const BENCH = '/home/p31/P31-local-workspace/tools/jitterbug-bench'
-const OUT = resolve(BENCH, 'runs', new Date().toISOString().slice(0, 10))
+// Explicit --out <suffix> lets each N write to its OWN directory (e.g.
+// runs/2026-09-29-N1). Without it, every N writes to the same date dir and
+// any rename/aggregation must guess 'latest' — the mtime-guessing wrapper
+// mislabeled a run and a concurrent dir move crashed a run. Fix: one dir
+// per N, no renames, no guessing.
+const outSuffixArg = process.argv.find((a) => a === '--out')
+const outSuffix = outSuffixArg ? process.argv[process.argv.indexOf(outSuffixArg) + 1] : null
+const OUT = outSuffix
+  ? resolve(BENCH, 'runs', new Date().toISOString().slice(0, 10) + '-' + outSuffix)
+  : resolve(BENCH, 'runs', new Date().toISOString().slice(0, 10))
 if (!existsSync(OUT)) mkdirSync(OUT, { recursive: true })
 
 const rubric = JSON.parse(readFileSync(resolve(BENCH, 'rubric.json'), 'utf8'))
