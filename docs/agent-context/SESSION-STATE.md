@@ -30,6 +30,16 @@ not things the agent believes. If a fact is not here and not in the last
 | approve w/o --by refused | `design approve <spec>` | ✅ exit 1 (no silent default) |
 | human-anchor tests | `pnpm test` (design-core) | ✅ 6/6 |
 
+## Verified facts (added: live pipeline run, 2026-09-29)
+
+| Fact | Verification command | Result |
+|---|---|---|
+| Live 4-stage pipeline ran | `pipeline-runner.mjs` (background) | narrator ✅, architect ✅, mechanic ✗ |
+| Mechanic failure cause | `runStage` maxTokens=1024 too small | kimi-k2.7-code returned empty |
+| Semantic checker works | `wrong_but_valid_rate 0.5` on narrator | caught a schema-valid-but-wrong output |
+| Routing provenance records failure | routing block #515 `ok: false` | failure is a governed artifact |
+| Fix committed | `3b8658bc` per-stage maxTokens | mechanic 4096 headroom |
+
 ## Open threads (NOT active — one at a time)
 
 - **Thread A — agentic design anchor:** the human anchor (approve.ts,
