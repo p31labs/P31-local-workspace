@@ -105,6 +105,28 @@ not things the agent believes. If a fact is not here and not in the last
 | Rename hazard found+fixed | wrapper 'latest' pick | run 1 was mislabeled N1 (held compression-report); moved real data to N1-fixed |
 | Same-prompt variance | run2 p1 0.806 vs run1 p1 0.500 | 0.306 — pipeline variance, temp-0 judge alone insufficient |
 
+## Finding: run 2 LOST to a directory collision (2026-09-29, my error)
+
+Sequence: run 1 completed -> saved to N1-fixed. I moved 2026-09-29 -> N1-fixed
+at 17:42 WHILE run 2 (started 17:35) was running. Run 2's bench had created
+runs/2026-09-29/ at start; my move removed it. At 17:49 run 2 finished and
+tried to write results.json -> ENOENT (dir gone). Run 2 crashed, scores lost
+(stdout only: 0.806 p1 / 0.714 p2 / 0.278 p3; p4 never scored).
+
+Compounding: the wrapper's mtime-based 'latest' pick then renamed the
+compression/ dir (newest, from my 17:43 pairs.json write) to 2026-09-29-N2.
+So N2 contains my compression diagnostics, not run 2. Recoverable.
+
+Root cause: I edited the runs/ directory mid-benchmark. The discipline
+violation is mine. The wrapper's mtime-based rename is fragile and should be
+replaced (fixed-name OUT dir + explicit N suffix, no 'latest' guessing).
+
+Current status: run 3 in progress (fresh 2026-09-29/). Will complete cleanly.
+Effective N after run 3 = N1 + N3 (N=2), plus run 2's partial stdout.
+Do NOT touch runs/ until run 3 completes.
+
+## Open threads (NOT active — one at a time)
+
 ## Open threads (NOT active — one at a time)
 
 - **n3-bench-finish**: run 2 (in progress) + run 3. When ALL DONE, aggregate
