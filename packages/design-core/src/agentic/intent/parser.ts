@@ -9,7 +9,7 @@ export interface ParseResult {
 
 /**
  * Parses an Intent DSL document (YAML) into a validated IntentSpec.
- * The narrative requirement enforces the Gemini contract: no component
+ * The narrative requirement enforces the Dillpickle Narrator contract: no component
  * ships without a stated human need.
  */
 export function parseIntent(yamlSource: string): ParseResult {
@@ -29,7 +29,7 @@ export function parseIntent(yamlSource: string): ParseResult {
   return { ok: true, spec: parsed.data };
 }
 
-/** One-line summary per constraint — what Opus reads first. */
+/** One-line summary per constraint — what Cornichon Architect reads first. */
 export function summarize(spec: IntentSpec): string[] {
   const c = spec.constraints;
   const lines = [

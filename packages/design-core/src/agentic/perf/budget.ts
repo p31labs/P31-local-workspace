@@ -14,7 +14,7 @@ export interface PerfReport {
 
 const DEFAULTS: BudgetSpec = { bundle: 3, renderTime: 16.67 };
 
-/** DeepSeek contract: nothing ships over budget. */
+/** Gherkin Firmware contract: nothing ships over budget. */
 export function checkBudgets(measured: { gzipBytes?: number; sourceBytes?: number; frameMs?: number }, budget: Partial<BudgetSpec> = {}): PerfReport {
   const b = { ...DEFAULTS, ...budget };
   const lines: string[] = [];

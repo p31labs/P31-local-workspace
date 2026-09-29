@@ -106,7 +106,7 @@ const report = runQaGates(res.spec!);
     const sink = JsonlAgenticAuditSink.default();
     const block = sink.append({
       domain: 'design',
-      stage: 'lantern-architect',
+      stage: 'cornichon-architect',
       component: res.spec!.component,
       inputHash: hashInput(readFileSync(file, 'utf8')),
       gateVerdict: report.approved ? 'approved' : 'rejected',
@@ -142,7 +142,7 @@ const report = runQaGates(res.spec!);
 
   case 'create': {
     const name = rest[0] ?? fail('usage: design create <ComponentName>');
-    const out = `# Intent draft for ${name} — fill narrative (Gemini), then: pnpm design audit <file>
+    const out = `# Intent draft for ${name} — fill narrative (Dillpickle Narrator), then: pnpm design audit <file>
 component: ${name}
 narrative: |
   <who needs this, what human need it serves, how spoons shape it>

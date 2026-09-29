@@ -40,7 +40,7 @@ export const variantSchema = z.object({
 
 export const intentSpecSchema = z.object({
   component: z.string().min(1),
-  narrative: z.string().min(20, 'narrative must explain the human need (Gemini contract)'),
+  narrative: z.string().min(20, 'narrative must explain the human need (Dillpickle Narrator contract)'),
   constraints: z
     .object({
       accessibility: accessibilitySchema.default({}),

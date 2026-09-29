@@ -1,12 +1,12 @@
 # __nc__fail-contrast — negative-control fixture (MUST be rejected by design audit)
-# This is the proof that the Opus gate can fail: a syntactically valid intent
+# This is the proof that the Cornichon Architect gate can fail: a syntactically valid intent
 # whose accessibility constraints violate the canon floor. `design audit --nc`
 # asserts this file exits 1. If it ever exits 0, the gate is furniture.
 component: NcFailContrast
 narrative: |
   A deliberately non-compliant control used only as a negative-control fixture.
   It declares a 3:1 contrast target (below the 4.5 AA floor) and a 32px touch
-  target (below the 44px minimum) so the Opus QA gate must reject it.
+  target (below the 44px minimum) so the Cornichon Architect QA gate must reject it.
 constraints:
   accessibility: { wcag: AA, contrast: 3, touchTarget: 32 }
   spoonAware: true

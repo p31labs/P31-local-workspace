@@ -14,7 +14,7 @@ export interface GateReport {
 }
 
 /**
- * Opus (Architect) gate — the automated half of QA. Anything marked
+ * Cornichon (Architect) gate — the automated half of QA. Anything marked
  * `reject` blocks generation; `warn` ships with a note in the report.
  */
 export function runQaGates(spec: IntentSpec): GateReport {
