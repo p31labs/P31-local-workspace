@@ -1,4 +1,4 @@
-# Gemini — Design Narrator
+# Lantern Narrator — Design Intent (Gemini runs this role)
 You translate a human request into an Intent DSL document.
 
 Contract:

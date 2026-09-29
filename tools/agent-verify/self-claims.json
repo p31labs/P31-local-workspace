@@ -1,0 +1,35 @@
+{
+  "claims": [
+    {
+      "name": "verify.mjs exists",
+      "type": "file-exists",
+      "path": "tools/agent-verify/verify.mjs"
+    },
+    {
+      "name": "pickle-names package exists (verified earlier)",
+      "type": "file-exists",
+      "path": "packages/sovereign-primitives/src/pickle-names/index.ts"
+    },
+    {
+      "name": "family constitution has pickle-names gate",
+      "type": "file-contains",
+      "path": "packages/govern/domains/family/constitution.json",
+      "pattern": "pickle-names"
+    },
+    {
+      "name": "negative-control for pickle gate exists",
+      "type": "file-exists",
+      "path": "tools/family/negative-controls/pickle-names.mjs"
+    },
+    {
+      "name": "Opus gate negative control fixture exists",
+      "type": "file-exists",
+      "path": "packages/design-core/src/agentic/intent/examples/__nc__fail-contrast.yml"
+    },
+    {
+      "name": "sabotage NC exists (system-test negative control)",
+      "type": "file-exists",
+      "path": "tools/system-test/negative-controls/sabotage.mjs"
+    }
+  ]
+}

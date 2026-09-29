@@ -1,0 +1,9 @@
+{
+  "claims": [
+    {
+      "name": "hallucinated build guard (file must NOT exist)",
+      "type": "file-exists",
+      "path": "packages/design-core/src/agentic/approve.ts"
+    }
+  ]
+}

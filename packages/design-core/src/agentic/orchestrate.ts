@@ -7,7 +7,7 @@ import type { IntentSpec } from './intent/schema';
 const EXAMPLES = join(dirname(fileURLToPath(import.meta.url)), 'intent/examples');
 
 export interface AgentStage {
-  agent: 'gemini-narrator' | 'opus-architect' | 'sonnet-mechanic' | 'deepseek-firmware';
+  agent: 'lantern-narrator' | 'lantern-architect' | 'lantern-mechanic' | 'lantern-firmware';
   /** What this stage receives */
   input: string;
   /** What this stage must produce */
@@ -19,10 +19,10 @@ export interface AgentStage {
 /** The canonical tag-out plan for one component (canon §IV). */
 export function pipelinePlan(): AgentStage[] {
   return [
-    { agent: 'gemini-narrator', input: 'user request + design principles', output: 'Intent YAML (validated)' },
-    { agent: 'opus-architect', input: 'Intent YAML', output: 'approved spec + trade-off rationale', gate: 'qa-gates' },
-    { agent: 'sonnet-mechanic', input: 'approved spec', output: 'component + recipes.css additions + tests + stories' },
-    { agent: 'deepseek-firmware', input: 'generated code', output: 'profile report vs budget', gate: 'perf-budget' },
+    { agent: 'lantern-narrator', input: 'user request + design principles', output: 'Intent YAML (validated)' },
+    { agent: 'lantern-architect', input: 'Intent YAML', output: 'approved spec + trade-off rationale', gate: 'qa-gates' },
+    { agent: 'lantern-mechanic', input: 'approved spec', output: 'component + recipes.css additions + tests + stories' },
+    { agent: 'lantern-firmware', input: 'generated code', output: 'profile report vs budget', gate: 'perf-budget' },
   ];
 }
 

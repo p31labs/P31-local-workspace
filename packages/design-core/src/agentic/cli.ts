@@ -78,7 +78,7 @@ const report = runQaGates(res.spec!);
     const sink = JsonlAgenticAuditSink.default();
     const block = sink.append({
       domain: 'design',
-      stage: 'opus-architect',
+      stage: 'lantern-architect',
       component: res.spec!.component,
       inputHash: hashInput(readFileSync(file, 'utf8')),
       gateVerdict: report.approved ? 'approved' : 'rejected',

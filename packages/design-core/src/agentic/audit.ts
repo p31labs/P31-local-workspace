@@ -15,7 +15,7 @@ import { appendFileSync, readFileSync, existsSync } from 'node:fs'
 import { resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-export type AgentStage = 'gemini-narrator' | 'opus-architect' | 'sonnet-mechanic' | 'deepseek-firmware'
+export type AgentStage = 'lantern-narrator' | 'lantern-architect' | 'lantern-mechanic' | 'lantern-firmware'
 
 export interface AgenticEventPayload {
   domain: string
