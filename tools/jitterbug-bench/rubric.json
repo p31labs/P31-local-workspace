@@ -1,0 +1,96 @@
+{
+  "version": "1.0",
+  "framework": "ResearchRubrics",
+  "grading": {
+    "scale": { "satisfied": 1.0, "partially": 0.5, "not_satisfied": 0.0 },
+    "formula": "sum(weight * score) / sum(positive_weights)",
+    "negative_rubrics": "subtract weight from numerator when present",
+    "pass_threshold": 0.70
+  },
+  "judge": {
+    "model": "deepseek-v4-flash",
+    "trust_bar": { "raw_agreement": 0.80, "cohens_kappa": 0.60 },
+    "blind": true,
+    "primary_grading": "ternary",
+    "secondary_grading": "binary"
+  },
+  "prompts": {
+    "01-spoon-aware-adaptation": {
+      "domain": "Design systems / accessibility",
+      "complexity": { "breadth": "Moderate", "nesting": "Deep", "exploration": "High" },
+      "rubrics": [
+        { "id": "ER-1", "axis": "Explicit Criteria", "criterion": "Cites primary spoon-theory sources (Miserandino or peer-reviewed)", "weight": 2.0 },
+        { "id": "ER-2", "axis": "Explicit Criteria", "criterion": "Names specific WCAG 2.2 / COGA success criteria", "weight": 2.0 },
+        { "id": "ER-3", "axis": "Explicit Criteria", "criterion": "Proposes concrete design tokens with names and values", "weight": 3.0 },
+        { "id": "ER-4", "axis": "Explicit Criteria", "criterion": "Includes a failure-mode analysis for wrong dial state", "weight": 2.0 },
+        { "id": "IR-1", "axis": "Implicit Criteria", "criterion": "Infers that low capacity must not mean loss of agency", "weight": 2.0 },
+        { "id": "IR-2", "axis": "Implicit Criteria", "criterion": "Addresses the transition between capacity levels", "weight": 2.0 },
+        { "id": "SY-1", "axis": "Synthesis", "criterion": "Connects evidence to token design (not two separate sections)", "weight": 2.0 },
+        { "id": "RF-1", "axis": "References", "criterion": "Every claim has a citation that resolves", "weight": 2.0 },
+        { "id": "CM-1", "axis": "Communication", "criterion": "Report is structured with named sections", "weight": 1.0 },
+        { "id": "NG-1", "axis": "Negative", "criterion": "Does NOT recommend hiding critical information at low capacity", "weight": -3.0 },
+        { "id": "NG-2", "axis": "Negative", "criterion": "Does NOT infantilise the user (no 'simple mode' framing)", "weight": -2.0 }
+      ]
+    },
+    "02-family-safe-governance": {
+      "domain": "AI governance / compliance",
+      "complexity": { "breadth": "High", "nesting": "Deep", "exploration": "Medium" },
+      "rubrics": [
+        { "id": "ER-1", "axis": "Explicit Criteria", "criterion": "Specifies a hash-linked, append-only audit chain", "weight": 3.0 },
+        { "id": "ER-2", "axis": "Explicit Criteria", "criterion": "Defines the human-approval gate for irreversible actions", "weight": 3.0 },
+        { "id": "ER-3", "axis": "Explicit Criteria", "criterion": "Provides a concrete schema for the audit block", "weight": 2.0 },
+        { "id": "ER-4", "axis": "Explicit Criteria", "criterion": "Cites NIST AI RMF, ISO 42001, SOX ITGC, IETF GAR, or FedRAMP 20x", "weight": 3.0 },
+        { "id": "IR-1", "axis": "Implicit Criteria", "criterion": "Infers the 'verifiable without trusting the vendor' requirement", "weight": 3.0 },
+        { "id": "IR-2", "axis": "Implicit Criteria", "criterion": "Addresses nonhuman-identity lifecycle (joiner-mover-leaver)", "weight": 2.0 },
+        { "id": "SY-1", "axis": "Synthesis", "criterion": "Maps at least two frameworks onto one architecture", "weight": 2.0 },
+        { "id": "RF-1", "axis": "References", "criterion": "Citations resolve to real, relevant sources", "weight": 2.0 },
+        { "id": "CM-1", "axis": "Communication", "criterion": "Architecture has named components and data flows", "weight": 1.0 },
+        { "id": "NG-1", "axis": "Negative", "criterion": "Does NOT propose logs that nobody reads (governance theatre)", "weight": -3.0 },
+        { "id": "NG-2", "axis": "Negative", "criterion": "Does NOT propose rubber-stamp approvals", "weight": -2.0 }
+      ]
+    },
+    "03-privacy-preserving-identity": {
+      "domain": "Cryptography / privacy engineering",
+      "complexity": { "breadth": "Moderate", "nesting": "Intermediate", "exploration": "Medium" },
+      "rubrics": [
+        { "id": "ER-1", "axis": "Explicit Criteria", "criterion": "Specifies a deterministic generation algorithm", "weight": 3.0 },
+        { "id": "ER-2", "axis": "Explicit Criteria", "criterion": "Provides a collision-probability bound", "weight": 3.0 },
+        { "id": "ER-3", "axis": "Explicit Criteria", "criterion": "Defines testable invariants (as assertions)", "weight": 2.0 },
+        { "id": "ER-4", "axis": "Explicit Criteria", "criterion": "Cites a real PRNG or hash function (cyrb128, mulberry32, etc.)", "weight": 2.0 },
+        { "id": "IR-1", "axis": "Implicit Criteria", "criterion": "Infers that vocabulary changes break existing names", "weight": 2.0 },
+        { "id": "IR-2", "axis": "Implicit Criteria", "criterion": "Addresses the case where the seed leaks", "weight": 2.0 },
+        { "id": "SY-1", "axis": "Synthesis", "criterion": "Connects the privacy argument to the algorithm choice", "weight": 2.0 },
+        { "id": "RF-1", "axis": "References", "criterion": "Citations resolve", "weight": 1.0 },
+        { "id": "CM-1", "axis": "Communication", "criterion": "Algorithm is presented as runnable pseudocode", "weight": 1.0 },
+        { "id": "NG-1", "axis": "Negative", "criterion": "Does NOT claim the system is 'anonymous' if it is pseudonymous", "weight": -2.0 },
+        { "id": "NG-2", "axis": "Negative", "criterion": "Does NOT use a reversible encoding as the 'privacy' mechanism", "weight": -3.0 }
+      ]
+    },
+    "04-step-level-routing": {
+      "domain": "AI systems / routing",
+      "complexity": { "breadth": "High", "nesting": "Deep", "exploration": "High" },
+      "rubrics": [
+        { "id": "ER-1", "axis": "Explicit Criteria", "criterion": "Provides a routing table (stage -> tier)", "weight": 3.0 },
+        { "id": "ER-2", "axis": "Explicit Criteria", "criterion": "Defines a concrete escalation rule", "weight": 3.0 },
+        { "id": "ER-3", "axis": "Explicit Criteria", "criterion": "Specifies the schema + semantic validation contract", "weight": 3.0 },
+        { "id": "ER-4", "axis": "Explicit Criteria", "criterion": "Cites AgentRouter, Constraint Tax, Conformal Cascade, or CHI EA '26", "weight": 3.0 },
+        { "id": "IR-1", "axis": "Implicit Criteria", "criterion": "Infers that schema validity does not equal semantic correctness", "weight": 3.0 },
+        { "id": "IR-2", "axis": "Implicit Criteria", "criterion": "Addresses the cost-quality trade-off explicitly", "weight": 2.0 },
+        { "id": "SY-1", "axis": "Synthesis", "criterion": "Integrates routing + validation + cost into one design", "weight": 3.0 },
+        { "id": "RF-1", "axis": "References", "criterion": "Citations resolve", "weight": 2.0 },
+        { "id": "CM-1", "axis": "Communication", "criterion": "Decision rules are unambiguous (no 'it depends')", "weight": 2.0 },
+        { "id": "NG-1", "axis": "Negative", "criterion": "Does NOT route every step to the frontier model", "weight": -3.0 },
+        { "id": "NG-2", "axis": "Negative", "criterion": "Does NOT use raw confidence as the deferral rule", "weight": -2.0 }
+      ]
+    }
+  },
+  "scoring": {
+    "compliance_score": "sum(weight * score) / sum(positive_weights)",
+    "coverage_rate": "criteria_satisfied / total_criteria",
+    "wrong_but_valid_rate": "schema_valid_but_semantically_wrong / total_structured_outputs",
+    "benchmark_metrics": {
+      "mean_compliance": "average compliance across prompts",
+      "pass_at_k": "fraction of prompts where compliance >= 0.70"
+    }
+  }
+}
