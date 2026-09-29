@@ -721,19 +721,28 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   server.on('error', (err) => console.error('MCP Server error:', err));
   console.error('PHOS Forge MCP server ready (stdio transport)');
   console.error('Supports tools:', Object.keys(server.tools).join(', '));
-  const chunks = [];
-  process.stdin.on('data', (d) => chunks.push(d));
-  process.stdin.on('end', async () => {
-    const lines = Buffer.concat(chunks).toString().trim().split('\n');
+  let buffer = '';
+  process.stdin.setEncoding('utf8');
+  process.stdin.on('data', (d) => {
+    buffer += d;
+    const lines = buffer.split('\n');
+    buffer = lines.pop();
     for (const line of lines) {
       if (!line.trim()) continue;
-      try {
-        const request = JSON.parse(line);
-        const response = await server.handleRequest(request);
-        if (response) process.stdout.write(JSON.stringify(response) + '\n');
-      } catch (e) {
-        process.stdout.write(JSON.stringify({ jsonrpc: '2.0', error: { code: -32700, message: 'Parse error' } }) + '\n');
-      }
+      handleLine(line);
     }
   });
+  process.stdin.on('end', () => {
+    if (buffer.trim()) handleLine(buffer);
+  });
+
+  async function handleLine(line) {
+    try {
+      const request = JSON.parse(line);
+      const response = await server.handleRequest(request);
+      if (response) process.stdout.write(JSON.stringify(response) + '\n');
+    } catch (e) {
+      process.stdout.write(JSON.stringify({ jsonrpc: '2.0', error: { code: -32700, message: 'Parse error' } }) + '\n');
+    }
+  }
 }

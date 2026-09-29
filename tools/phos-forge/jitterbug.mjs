@@ -63,6 +63,11 @@ function busEmit(type, payload) {
 
 export async function callLLM(system, user, opts = {}) {
   const intent = opts.intent || { task: 'synthesis', privacy: 'standard' };
+  // The --allow-ollama flag (threaded through opts.privacy) forces sovereign
+  // routing to local Ollama when set — otherwise the hardcoded 'standard'
+  // falls through to cloud tiers that will fail without API keys. Without
+  // this, the flag was cosmetic: a bug.
+  if (opts.privacy) intent.privacy = opts.privacy;
   return dispatchLLM(system, user, intent, opts);
 }
 
@@ -104,20 +109,21 @@ const RESEARCH_CHEAP = 'research';
 const RESEARCH_STRONG = 'synthesis';
 const CONVERGE_MODEL = 'synthesis';
 
-async function runResearch(facet, parentContext, index) {
+async function runResearch(facet, parentContext, index, privacy) {
   return callLLM(RESEARCH_SYSTEM, `## Facet\n${facet}\n\n## Context from parent synthesis\n${trimContext(parentContext)}\n\nExplore this facet in depth.`, {
-    intent: { task: 'research', privacy: 'standard' },
+    intent: { task: 'research', tag: 'fast', privacy },
     maxTokens: 4096,
     temperature: 0.8,
   });
 }
 
-async function runConvergence(researchTexts) {
+async function runConvergence(researchTexts, privacy) {
   const combined = researchTexts.map((t, i) => `## Research Output ${i + 1}\n${trimContext(t)}`).join('\n\n');
   return callLLM(CONVERGE_SYSTEM, `Converge these ${researchTexts.length} research outputs into a unified synthesis:\n\n${combined}`, {
-    intent: { task: 'synthesis', privacy: 'standard' },
+    intent: { task: 'synthesis', tag: 'synthesis', privacy },
     maxTokens: 2000,
     temperature: 0.3,
+    timeoutMs: 180000, // kimi-k2.6 (1T params) needs ~35s+; budget for the slow frontier path
   });
 }
 
@@ -153,6 +159,12 @@ export async function runJitterbug(problem, opts = {}) {
   const requestedFactor = opts.factor || 4;
   const requestedDepth = opts.depth || 3;
   const gated = getGatedConfig(requestedFactor, requestedDepth);
+  // Routing mode: --workers-ai → direct Workers AI REST (intent-tagged, the
+  // default for Workers-AI-only); --gateway → AI Gateway dynamic route;
+  // --allow-ollama → local Ollama. The model is chosen by intent strength.
+  const privacy = opts.workersAI ? 'workers-ai'
+    : opts.gateway ? 'gateway'
+    : opts.allowOllama ? 'sovereign' : 'standard';
 
   if (gated.depth === 0) {
     return { error: `Spoon level ${gated.spoon} is too low for any research depth. (tier: ${gated.tier}) Use --force or wait for spoon recovery.`, gated };
@@ -204,7 +216,7 @@ Format:
 2. **Title** — description
 ...`;
       const splitResult = await callLLM('You are a research strategist. Split problems into non-overlapping facets.', splitPrompt, {
-        intent: { task: 'synthesis', privacy: 'standard' },
+        intent: { task: 'synthesis', tag: 'synthesis', privacy },
         maxTokens: 2048,
         temperature: 0.5,
       });
@@ -237,7 +249,7 @@ Format:
     // Spawn parallel research
     const researchPromises = facets.map((facet, i) => {
       busEmit('jitterbug.research_started', { session, level, index: i, facet: facet.title });
-      return runResearch(facet.prompt, currentContext, i).then(result => {
+      return runResearch(facet.prompt, currentContext, i, privacy).then(result => {
         saveArtifact(session, level, `research-${i + 1}.md`, `# ${facet.title}\n\n${result}`);
         busEmit('jitterbug.research_complete', { session, level, index: i });
         return result;
@@ -251,7 +263,7 @@ Format:
 
     // Converge
     busEmit('jitterbug.convergence_started', { session, level });
-    const convergence = await runConvergence(researchResults);
+    const convergence = await runConvergence(researchResults, privacy);
 
     // Validate convergence output structure
     const hasStructure = /^(## Consensus|## Divergence|## Synthesis)/m.test(convergence);
@@ -294,12 +306,16 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     const di = args.findIndex(a => a === '--depth' || a === '-d');
     const depth = di >= 0 ? parseInt(args[di + 1], 10) || 3 : 3;
     const allowOllama = args.includes('--allow-ollama');
+    const workersAI = args.includes('--workers-ai');
+    const gateway = args.includes('--gateway');
     const gated = getGatedConfig(factor, depth);
     console.log(JSON.stringify({
       mode: 'DRY-RUN',
       problem,
       requested: { factor, depth },
       allowOllama,
+      gateway,
+      workersAI,
       gated,
       estimatedCalls: gated.depth * (gated.factor + 1) + (gated.depth > 0 ? 0 : 0),
       artifacts: `${SESSION_DIR}/<session-id>/`,
@@ -317,6 +333,8 @@ Usage:
   phos jitterbug --factor 3 --depth 2   Configure branching and depth
   phos jitterbug --dry-run              Preview what would be executed
   phos jitterbug --allow-ollama         Enable Ollama fallback (noisy 1.5B)
+  phos jitterbug --gateway              Route through Cloudflare AI Gateway (Workers AI, intent-routed)
+  phos jitterbug --workers-ai           Route directly to Workers AI (intent-tagged, needs CF_API_TOKEN)
 
 Spoon gating:
   Level 4-5: factor=4, depth=3 (15 LLM calls)
@@ -333,8 +351,10 @@ Output artifacts saved to /tmp/phos-jitterbug/<session-id>/
   const di = args.findIndex(a => a === '--depth' || a === '-d');
   const depth = di >= 0 ? parseInt(args[di + 1], 10) || 3 : 3;
   const allowOllama = args.includes('--allow-ollama');
+  const workersAI = args.includes('--workers-ai');
+  const gateway = args.includes('--gateway');
 
-  runJitterbug(problem, { factor, depth, allowOllama })
+  runJitterbug(problem, { factor, depth, allowOllama, gateway, workersAI })
     .then(result => {
       if (result.error) {
         console.error(result.error);
@@ -344,7 +364,7 @@ Output artifacts saved to /tmp/phos-jitterbug/<session-id>/
       console.log(`\n---`);
       console.log(`Session: ${result.session}`);
       console.log(`Spoons: ${result.gated.spoon}/5 (${result.gated.tier})`);
-      console.log(`Ollama: ${result.gated.allowOllama ? 'enabled' : 'disabled (default)'}`);
+      console.log(`Routing: ${workersAI ? 'workers-ai (intent-tagged)' : gateway ? 'gateway (Workers AI)' : allowOllama ? 'ollama' : 'standard'}`);
       console.log(`Artifacts: ${SESSION_DIR}/${result.session}/`);
     })
     .catch(err => {
