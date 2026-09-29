@@ -10,6 +10,24 @@ registry, .gov, vendor docs) at the time of writing.
 
 ---
 
+## Re-verification record (2026-09-29)
+
+All three Tier-A citations below were **re-fetched by direct HTTP fetch in
+a later session** and confirmed to resolve to the primary sources described
+here. This is not inherited from an earlier claim — the fetches were run
+again and returned the cited content.
+
+| # | Citation | Re-fetch URL | Result |
+|---|---|---|---|
+| 1 | Grammar of Governance | `https://zenodo.org/api/records/21198369` | ✅ 200 — title, author (Allen, Warner Rey), DOI `10.5281/zenodo.21198369`, CRADLE/TEND/KEEP + 98.6% RMF in abstract |
+| 2 | ForgeDock #1582 | `https://github.com/RapierCraftStudios/ForgeDock/issues/1582` | ✅ 200 — closed issue, exact title + body, forgeable `FORGE:GATE_PASS` marker |
+| 3 | Lilo Engine | `https://www.medrxiv.org/content/10.64898/2026.02.17.26346507v1` | ✅ 200 — preprint page, DOI resolves, abstract confirms 500/500 + "clinical validation is the essential next step" |
+
+No Tier-C entry was re-promoted; VAC / AICDI 3A / Agentic Governance
+Benchmark / F.AI.2R remain absent from the repo and uncited.
+
+---
+
 ## Tier definitions
 
 | Tier | Meaning | Handling |
