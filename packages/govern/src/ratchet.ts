@@ -22,10 +22,10 @@ export function runRatchets(con: Constitution, baseDir: string): RatchetResult[]
   for (const r of con.ratchets) {
     let current = NaN;
     try {
-      const cmd = r.countSource;
-      const full = resolve(baseDir, cmd.startsWith('./') ? cmd.slice(2) : cmd);
+      const [prog, ...args] = r.countSource.split(/\s+/);
+      const full = resolve(baseDir, prog.startsWith('./') ? prog.slice(2) : prog);
       // The count source emits a JSON {count: N} or a bare number on stdout.
-      const out = execSync(`node ${full}`, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], timeout: 20000 }).trim();
+      const out = execSync(`node ${full} ${args.join(' ')}`, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], timeout: 20000 }).trim();
       const match = out.match(/["']count["']\s*:\s*(\d+)|^(\d+)$/);
       current = match ? Number(match[1] ?? match[2]) : NaN;
     } catch (e: unknown) {

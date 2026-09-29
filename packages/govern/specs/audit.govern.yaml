@@ -1,0 +1,65 @@
+domain: audit
+version: "0.1.0"
+description: The P31 audit tier — cross-domain event reconciliation and the unified Genesis chain.
+genesisTimestamp: "2026-09-29T00:00:00.000Z"
+canonicalSource:
+  path: packages/govern/src/sink.ts
+  description: The AuditSink interface + the JsonlHashChainSink — the single definition of what an audit event is.
+  oqe:
+    evidenceClass: primary-source
+    reference: packages/govern/src/sink.ts
+mirrors:
+  - path: domains/*/.govern-audit.jsonl
+    generatedFrom: packages/govern/src/sink.ts
+    parityGate: audit-chain-verify
+gates:
+  - id: audit-chain-verify
+    description: Every Genesis chain in every domain links block N to block N-1 with no gaps.
+    command: node scripts/audit-chain-verify.mjs
+    state: BLOCKING
+    scope: domains/*/.govern-audit.jsonl
+    owner:
+      - type: role
+        id: audit-runtime
+    remediation: runbooks/RUNBOOK-audit-chain.md
+    oqe:
+      evidenceClass: test-suite
+      reference: scripts/nc/audit-chain-verify.mjs
+    generateRunbook: true
+    generateNegativeControl: true
+  - id: audit-cross-domain-reconcile
+    description: Every domain's latest block is present in the enterprise timeline.
+    command: node scripts/audit-cross-domain-reconcile.mjs
+    state: BLOCKING
+    scope: domains/*/.govern-audit.jsonl + enterprise-audit.jsonl
+    owner:
+      - type: role
+        id: audit-runtime
+    remediation: runbooks/RUNBOOK-audit-reconcile.md
+    oqe:
+      evidenceClass: test-suite
+      reference: scripts/nc/audit-cross-domain-reconcile.mjs
+    generateRunbook: true
+    generateNegativeControl: true
+ratchets:
+  - id: orphan-blocks
+    description: Blocks in any domain chain that have no matching enterprise timeline entry.
+    baseline: 0
+    countSource: scripts/count-orphan-blocks.mjs
+    lockThreshold: 0
+review:
+  cadence: weekly
+  onFailure: the enterprise timeline is not authoritative until every domain reconciles
+  abdication:
+    afterCleanCycles: 24
+    requiresHumanSignoff: true
+  fourParty:
+    user:   { type: role, id: p31-family }
+    issuer: { type: role, id: audit-runtime }
+    ledger: { type: system, id: enterprise-genesis-chain }
+    court:  { type: role, id: p31-reviewer }
+  singleOwner:
+    - type: role
+      id: audit-runtime
+aspirational:
+  - SIC-POVM and quantum cognition are research-only — the audit tier is classical SHA-256 only.

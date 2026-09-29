@@ -1,0 +1,68 @@
+name: P31 Sovereign Stack
+version: "0.3.0"
+genesisTimestamp: "2026-09-28T00:00:00.000Z"
+description: The P31 enterprise constitution — the four governed domains and the contracts between them.
+domains:
+  - { name: design,       ref: ../domains/design/constitution.json }
+  - { name: monetization, ref: ../domains/monetization/constitution.json }
+  - { name: justice,      ref: ../domains/justice/constitution.json }
+  - { name: govern,       ref: ../constitution.json }
+  - { name: audit,        ref: ../domains/audit/constitution.json }
+  - { name: forge,        ref: ../domains/forge/constitution.json }
+interDomainContracts:
+  - id: documents-are-canonical
+    provider: forge
+    consumers: [design, monetization, justice, audit]
+    guarantee: Every published document derives from a governed content pack and compiles through the canonical forge pipeline.
+    evidence: { evidenceClass: primary-source, reference: production/portals/forge/src/data/manifest.json }
+    gate: system-test
+  - id: design-tokens-stable
+    provider: design
+    consumers: [monetization, justice, audit]
+    guarantee: Token values are stable within a major version.
+    evidence: { evidenceClass: primary-source, reference: packages/canon/src/theming/theme-store.ts }
+    gate: canon-purity
+  - id: entitlement-events-recorded
+    provider: monetization
+    consumers: [justice, audit]
+    guarantee: Every entitlement event is recorded in the revenue ledger with a hash-chain anchor.
+    evidence: { evidenceClass: api-response, reference: "GET /revenue/summary" }
+    gate: revenue-ledger-integrity
+  - id: evidence-custody-verified
+    provider: justice
+    consumers: [monetization, audit]
+    guarantee: Evidence deposits are SHA-256 chained and dual-signed.
+    evidence: { evidenceClass: test-suite, reference: workers/p31-justice-hub/src/index.ts }
+    gate: evidence-chain-verify
+  - id: runtime-validates-domains
+    provider: govern
+    consumers: [design, monetization, justice, audit]
+    guarantee: Every domain constitution validates against schema 0.3.0 and its gates prove they can fail.
+    evidence: { evidenceClass: test-suite, reference: src/govern.test.ts }
+    gate: govern-self-test
+crossCutting:
+  identity:
+    canonicalSource: packages/canon/src/theming/theme-store.ts
+    oqe: { evidenceClass: primary-source, reference: packages/canon/src/theming/theme-store.ts }
+  capacity:
+    model: spoon-dial
+    range: [0, 5]
+    contract: at capacity 0 all mutation surfaces render read-only
+    oqe: { evidenceClass: test-suite, reference: tests/acceptance/dial-axis }
+  audit:
+    chainName: genesis
+    sink: jsonl-hash-chain
+review:
+  cadence: monthly; before any schema version bump
+  onFailure: the enterprise cannot add a new domain until every existing domain reconciles
+  abdication:
+    afterCleanCycles: 24
+    requiresHumanSignoff: true
+  fourParty:
+    user:   { type: role, id: p31-family }
+    issuer: { type: role, id: p31-labs }
+    ledger: { type: system, id: enterprise-genesis-chain }
+    court:  { type: role, id: p31-reviewer }
+aspirational:
+  - Cross-domain reconciliation is declared but not yet enforced (count-contract-violations.mjs is a stub).
+  - On-chain SBTs are research-only — the enterprise governs via did:key + the LOVE ledger.

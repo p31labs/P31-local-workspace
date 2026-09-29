@@ -1,10 +1,15 @@
 {
-  "schema": "https://p31ca.org/schemas/govern/constitution.schema.json",
+  "schema": "https://p31ca.org/schemas/govern/constitution/0.3.0.json",
   "domain": "justice",
-  "version": "0.1.0",
+  "version": "0.3.0",
+  "genesisTimestamp": "2026-09-28T00:00:00.000Z",
   "canonicalSource": {
     "path": "/home/p31/P31-local-workspace/workers/p31-justice-hub/src/index.ts",
-    "description": "The evidence-chain schema: SHA-256-chained records, each entry links to the prior chainHash, with dual Ed25519 + ML-DSA-65 signatures. The chain is the truth; case metadata and the audit log are mirrors."
+    "description": "The evidence-chain schema: SHA-256-chained records, each entry links to the prior chainHash, with dual Ed25519 + ML-DSA-65 signatures. The chain is the truth; case metadata and the audit log are mirrors.",
+    "oqe": {
+      "evidenceClass": "primary-source",
+      "reference": "workers/p31-justice-hub/src/index.ts"
+    }
   },
   "mirrors": [
     {
@@ -15,37 +20,57 @@
     {
       "path": "justice case metadata + ODR records",
       "generatedFrom": "case + escrow + odr tables",
-      "parityGate": "case-integrity"
+      "parityGate": "evidence-chain-verify"
     }
   ],
   "gates": [
     {
       "id": "evidence-chain-verify",
-      "command": "curl -s https://p31-justice-hub.trimtab-signal.workers.dev/api/evidence/verify",
-      "state": "OBSERVATIONAL",
-      "owner": "justice",
+      "command": "node scripts/gates/evidence-chain-verify.mjs",
+      "state": "BLOCKING",
+      "owner": [
+        {
+          "type": "role",
+          "id": "justice",
+          "scope": "evidence chain"
+        }
+      ],
       "scope": "evidence entries: chainHash must link prevHash, dual signatures must verify",
       "remediation": "runbooks/RUNBOOK-justice-evidence.md",
       "negativeControl": {
         "type": "fixture",
         "command": "scripts/nc/evidence-chain.mjs",
-        "expected": "exit-nonzero"
+        "expected": "proof-marker"
       },
-      "enforcementMoment": "weekly"
+      "enforcementMoment": "weekly",
+      "oqe": {
+        "evidenceClass": "test-suite",
+        "reference": "scripts/nc/evidence-chain.mjs"
+      }
     },
     {
       "id": "escrow-multisig",
-      "command": "echo 'TODO: escrow 2-of-3 release requires two distinct signer DIDs'",
-      "state": "OBSERVATIONAL",
-      "owner": "justice",
+      "command": "node scripts/gates/escrow-multisig.mjs",
+      "state": "BLOCKING",
+      "owner": [
+        {
+          "type": "role",
+          "id": "justice",
+          "scope": "escrow"
+        }
+      ],
       "scope": "escrow release: 2-of-3 multi-sig consensus",
       "remediation": "runbooks/RUNBOOK-justice-escrow.md",
       "negativeControl": {
         "type": "fixture",
         "command": "scripts/nc/escrow-multisig.mjs",
-        "expected": "exit-nonzero"
+        "expected": "proof-marker"
       },
-      "enforcementMoment": "weekly"
+      "enforcementMoment": "weekly",
+      "oqe": {
+        "evidenceClass": "test-suite",
+        "reference": "scripts/nc/escrow-multisig.mjs"
+      }
     }
   ],
   "ratchets": [
@@ -60,13 +85,23 @@
     {
       "id": "RUNBOOK-justice-evidence",
       "path": "runbooks/RUNBOOK-justice-evidence.md",
-      "owner": "justice",
+      "owner": [
+        {
+          "type": "role",
+          "id": "justice"
+        }
+      ],
       "lastVerified": "2026-09-28"
     },
     {
       "id": "RUNBOOK-justice-escrow",
       "path": "runbooks/RUNBOOK-justice-escrow.md",
-      "owner": "justice",
+      "owner": [
+        {
+          "type": "role",
+          "id": "justice"
+        }
+      ],
       "lastVerified": "2026-09-28"
     }
   ],
@@ -74,17 +109,60 @@
     {
       "id": "J-001",
       "rootCause": "legacy evidence worker served a stale mixed bundle; a destructive redeploy was avoided because the deployed Taler/feedback/DO source was not fully in the workspace",
-      "prevention": "gate:evidence-chain-verify (scope includes the live worker source vs the deployed bundle)"
+      "prevention": "RUNBOOK-justice-evidence + gate:evidence-chain-verify",
+      "oqe": {
+        "evidenceClass": "deploy-log",
+        "reference": "workers/p31-justice-hub (redeploy log)"
+      }
     }
   ],
   "fleet": [
-    { "rule": "evidence-chain-verify", "moment": "weekly" },
-    { "rule": "escrow-multisig", "moment": "weekly" }
+    {
+      "rule": "evidence-chain-verify",
+      "moment": "weekly"
+    },
+    {
+      "rule": "escrow-multisig",
+      "moment": "weekly"
+    }
   ],
   "review": {
-    "who": "justice maintainers + legal review",
-    "artifact": "evidence-chain schema + case/escrow/odr records + the justice constitution",
+    "who": {
+      "user": {
+        "type": "role",
+        "id": "justice-participant",
+        "scope": "consumes the domain's guarantees"
+      },
+      "issuer": {
+        "type": "role",
+        "id": "justice-engineer",
+        "scope": "issues gates + contracts"
+      },
+      "ledger": {
+        "type": "system",
+        "id": "justice-genesis-chain",
+        "scope": "records audit events"
+      },
+      "court": {
+        "type": "role",
+        "id": "justice-reviewer",
+        "scope": "independent arbitration"
+      }
+    },
     "cadence": "monthly; before any evidence or escrow policy change",
-    "onFailure": "demote the affected gate to OBSERVATIONAL until the failure is understood; do not release escrow funds on an unverified chain"
-  }
+    "onFailure": "demote the affected gate to OBSERVATIONAL until the failure is understood; do not release escrow funds on an unverified chain",
+    "abdication": {
+      "afterCleanCycles": 12,
+      "requiresHumanSignoff": true
+    }
+  },
+  "auditLog": {
+    "chainName": "justice",
+    "sink": "jsonl-hash-chain"
+  },
+  "aspirational": [
+    "On-chain escrow settlement and SBT-anchored case credentials are research \u2014 justice governance currently uses the 2-of-3 multi-sig escrow + hash-chained evidence, not on-chain settlement.",
+    "The escrow-multisig negative control (scripts/nc/escrow-multisig.mjs) is declared but not yet written \u2014 the gate cannot prove it can fail until it exists.",
+    "SIC-POVM is research-only and must not be cited as an evidence-chaining primitive."
+  ]
 }

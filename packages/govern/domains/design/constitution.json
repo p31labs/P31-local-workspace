@@ -1,113 +1,390 @@
 {
-  "schema": "https://p31ca.org/schemas/govern/constitution.schema.json",
+  "schema": "https://p31ca.org/schemas/govern/constitution/0.3.0.json",
   "domain": "design",
-  "version": "0.1.0",
+  "version": "0.3.0",
+  "genesisTimestamp": "2026-09-28T00:00:00.000Z",
   "canonicalSource": {
     "path": "/home/p31/P31-local-workspace/packages/canon/src/theming/theme-store.ts",
-    "description": "The declared single source of truth for all design tokens (per the @p31ca/canon package declaration)."
+    "description": "The declared single source of truth for all design tokens (per the @p31ca/canon package declaration).",
+    "oqe": {
+      "evidenceClass": "primary-source",
+      "reference": "packages/canon/src/theming/theme-store.ts"
+    }
   },
   "mirrors": [
-    { "path": "packages/design-core/src/css/tokens.css", "generatedFrom": "theme-store.ts", "parityGate": "verify-token-parity" },
-    { "path": "packages/design-core/manifest.json", "generatedFrom": "theme-store.ts", "parityGate": "verify-token-parity" },
-    { "path": "packages/design-core/tokens/tokens.json", "generatedFrom": "theme-store.ts", "parityGate": "verify-token-parity" }
+    {
+      "path": "packages/design-core/src/css/tokens.css",
+      "generatedFrom": "theme-store.ts",
+      "parityGate": "token-audit"
+    },
+    {
+      "path": "packages/design-core/manifest.json",
+      "generatedFrom": "theme-store.ts",
+      "parityGate": "token-audit"
+    },
+    {
+      "path": "packages/design-core/tokens/tokens.json",
+      "generatedFrom": "theme-store.ts",
+      "parityGate": "token-audit"
+    }
   ],
   "gates": [
     {
       "id": "canon-purity",
       "command": "node /home/p31/P31-local-workspace/packages/design-core/scripts/canon-purity.mjs",
       "state": "BLOCKING",
-      "owner": "design-core",
+      "owner": [
+        {
+          "type": "role",
+          "id": "design-core",
+          "scope": "token canonical source"
+        }
+      ],
       "scope": "design-core/src/** manifest.json tokens/",
       "remediation": "runbooks/RUNBOOK-canonical-source.md",
       "negativeControl": {
         "type": "capability",
         "command": "/home/p31/production/portals/design/tests/acceptance/negative-controls/canon-purity.mjs",
-        "expected": "exit-nonzero"
+        "expected": "proof-marker"
       },
-      "enforcementMoment": "ci"
+      "enforcementMoment": "ci",
+      "oqe": {
+        "evidenceClass": "test-suite",
+        "reference": "tests/acceptance/negative-controls/canon-purity.mjs"
+      }
     },
     {
       "id": "token-audit",
       "command": "node /home/p31/P31-local-workspace/packages/design-core/scripts/token-audit.mjs",
       "state": "BLOCKING",
-      "owner": "design-core",
+      "owner": [
+        {
+          "type": "role",
+          "id": "design-core",
+          "scope": "token audit"
+        }
+      ],
       "scope": "design-core/src/** (non-allowlisted)",
       "remediation": "runbooks/RUNBOOK-canonical-source.md",
       "negativeControl": {
         "type": "capability",
         "command": "/home/p31/production/portals/design/tests/acceptance/negative-controls/token-audit.mjs",
-        "expected": "exit-nonzero"
+        "expected": "proof-marker"
       },
-      "enforcementMoment": "ci"
+      "enforcementMoment": "ci",
+      "oqe": {
+        "evidenceClass": "test-suite",
+        "reference": "tests/acceptance/negative-controls/token-audit.mjs"
+      }
     },
     {
       "id": "image-distinctness",
       "command": "node /home/p31/production/portals/design/tests/acceptance/check-image-distinctness.mjs",
       "state": "BLOCKING",
-      "owner": "design-portal",
+      "owner": [
+        {
+          "type": "role",
+          "id": "design-portal",
+          "scope": "acceptance baselines"
+        }
+      ],
       "scope": "tests/acceptance/__screenshots__/acceptance-freeze.spec.ts/*.png",
       "remediation": "runbooks/RUNBOOK-gate-self-test.md",
       "negativeControl": {
         "type": "mutation",
         "command": "/home/p31/production/portals/design/tests/acceptance/negative-controls/image-distinctness.mjs",
-        "expected": "exit-nonzero"
+        "expected": "proof-marker"
       },
-      "enforcementMoment": "ci"
+      "enforcementMoment": "ci",
+      "oqe": {
+        "evidenceClass": "test-suite",
+        "reference": "tests/acceptance/negative-controls/image-distinctness.mjs"
+      }
     },
     {
       "id": "acceptance-ratchet",
       "command": "node /home/p31/production/portals/design/tests/acceptance/ratchet.mjs",
       "state": "BLOCKING",
-      "owner": "design-portal",
+      "owner": [
+        {
+          "type": "role",
+          "id": "design-portal",
+          "scope": "acceptance ratchet"
+        }
+      ],
       "scope": "tests/acceptance/known-fails.json",
       "remediation": "runbooks/RUNBOOK-ratchet-wiring.md",
       "negativeControl": {
         "type": "mutation",
         "command": "/home/p31/production/portals/design/tests/acceptance/negative-controls/acceptance-ratchet.mjs",
-        "expected": "exit-nonzero"
+        "expected": "proof-marker"
       },
-      "enforcementMoment": "ci"
+      "enforcementMoment": "ci",
+      "oqe": {
+        "evidenceClass": "test-suite",
+        "reference": "tests/acceptance/negative-controls/acceptance-ratchet.mjs"
+      }
+    },
+    {
+      "id": "self-test",
+      "command": "node /home/p31/production/portals/design/tests/acceptance/gate-self-test.mjs",
+      "state": "BLOCKING",
+      "owner": [
+        {
+          "type": "role",
+          "id": "design-portal",
+          "scope": "gate self-test"
+        }
+      ],
+      "scope": "all registered gates across design/monetization/justice",
+      "remediation": "runbooks/RUNBOOK-gate-self-test.md",
+      "negativeControl": {
+        "type": "mutation",
+        "command": "/home/p31/production/portals/design/tests/acceptance/negative-controls/gate-self-test.mjs",
+        "expected": "proof-marker"
+      },
+      "enforcementMoment": "ci",
+      "oqe": {
+        "evidenceClass": "test-suite",
+        "reference": "tests/acceptance/negative-controls/gate-self-test.mjs"
+      }
     }
   ],
   "ratchets": [
     {
       "id": "orphan-debt",
       "baseline": 15,
-      "countSource": "/home/p31/P31-local-workspace/packages/govern/scripts/read-orphan-count.mjs",
+      "countSource": "/home/p31/P31-local-workspace/packages/govern/scripts/read-orphan-count.mjs /home/p31/production/portals/design/tests/acceptance/orphan-count.json",
       "lockThreshold": 2
     }
   ],
   "runbooks": [
-    { "id": "RUNBOOK-generated-artifact", "path": "runbooks/RUNBOOK-generated-artifact.md", "owner": "design-core", "lastVerified": "2026-09-28" },
-    { "id": "RUNBOOK-gate-self-test", "path": "runbooks/RUNBOOK-gate-self-test.md", "owner": "design-portal", "lastVerified": "2026-09-28" },
-    { "id": "RUNBOOK-canonical-source", "path": "runbooks/RUNBOOK-canonical-source.md", "owner": "design-core", "lastVerified": "2026-09-28" },
-    { "id": "RUNBOOK-baseline-approval", "path": "runbooks/RUNBOOK-baseline-approval.md", "owner": "design-portal", "lastVerified": "2026-09-28" },
-    { "id": "RUNBOOK-root-cause-proof", "path": "runbooks/RUNBOOK-root-cause-proof.md", "owner": "design-core", "lastVerified": "2026-09-28" },
-    { "id": "RUNBOOK-config-blast-radius", "path": "runbooks/RUNBOOK-config-blast-radius.md", "owner": "design-portal", "lastVerified": "2026-09-28" },
-    { "id": "RUNBOOK-ratchet-wiring", "path": "runbooks/RUNBOOK-ratchet-wiring.md", "owner": "design-portal", "lastVerified": "2026-09-28" }
+    {
+      "id": "RUNBOOK-generated-artifact",
+      "path": "runbooks/RUNBOOK-generated-artifact.md",
+      "owner": [
+        {
+          "type": "role",
+          "id": "design-core"
+        }
+      ],
+      "lastVerified": "2026-09-28"
+    },
+    {
+      "id": "RUNBOOK-gate-self-test",
+      "path": "runbooks/RUNBOOK-gate-self-test.md",
+      "owner": [
+        {
+          "type": "role",
+          "id": "design-portal"
+        }
+      ],
+      "lastVerified": "2026-09-28"
+    },
+    {
+      "id": "RUNBOOK-canonical-source",
+      "path": "runbooks/RUNBOOK-canonical-source.md",
+      "owner": [
+        {
+          "type": "role",
+          "id": "design-core"
+        }
+      ],
+      "lastVerified": "2026-09-28"
+    },
+    {
+      "id": "RUNBOOK-baseline-approval",
+      "path": "runbooks/RUNBOOK-baseline-approval.md",
+      "owner": [
+        {
+          "type": "role",
+          "id": "design-portal"
+        }
+      ],
+      "lastVerified": "2026-09-28"
+    },
+    {
+      "id": "RUNBOOK-root-cause-proof",
+      "path": "runbooks/RUNBOOK-root-cause-proof.md",
+      "owner": [
+        {
+          "type": "role",
+          "id": "design-core"
+        }
+      ],
+      "lastVerified": "2026-09-28"
+    },
+    {
+      "id": "RUNBOOK-config-blast-radius",
+      "path": "runbooks/RUNBOOK-config-blast-radius.md",
+      "owner": [
+        {
+          "type": "role",
+          "id": "design-portal"
+        }
+      ],
+      "lastVerified": "2026-09-28"
+    },
+    {
+      "id": "RUNBOOK-ratchet-wiring",
+      "path": "runbooks/RUNBOOK-ratchet-wiring.md",
+      "owner": [
+        {
+          "type": "role",
+          "id": "design-portal"
+        }
+      ],
+      "lastVerified": "2026-09-28"
+    }
   ],
   "lessons": [
-    { "id": "L-001", "rootCause": { "unproven": true, "ruledOut": ["generator produces NaN for achromatic (atan2(0,0)=0)"] }, "prevention": "RUNBOOK-canonical-source + gate:canon-purity" },
-    { "id": "L-002", "rootCause": "package never compiled because nothing consumed it", "prevention": "gate:self-test" },
-    { "id": "L-003", "rootCause": "declared a source without a wired parity gate", "prevention": "RUNBOOK-canonical-source + parity gate" },
-    { "id": "L-004", "rootCause": "--update-snapshots treated as a build step", "prevention": "RUNBOOK-baseline-approval" },
-    { "id": "L-005", "rootCause": { "unproven": true, "ruledOut": ["migrate-oklch emits NaN (atan2 gives 0)"] }, "prevention": "RUNBOOK-root-cause-proof" },
-    { "id": "L-006", "rootCause": "config change altered behavior elsewhere (project name → snapshot suffix)", "prevention": "RUNBOOK-config-blast-radius" },
-    { "id": "L-007", "rootCause": "selector matched zero elements and reported a verdict", "prevention": "gate:self-test" },
-    { "id": "L-008", "rootCause": "ratchet built with no caller", "prevention": "RUNBOOK-ratchet-wiring + gate:acceptance-ratchet" }
+    {
+      "id": "L-001",
+      "rootCause": {
+        "unproven": true,
+        "ruledOut": [
+          "generator produces NaN for achromatic (atan2(0,0)=0)"
+        ]
+      },
+      "prevention": "RUNBOOK-canonical-source + gate:canon-purity",
+      "oqe": {
+        "evidenceClass": "test-suite",
+        "reference": "tests/acceptance/known-fails.json (L-001)"
+      }
+    },
+    {
+      "id": "L-002",
+      "rootCause": "package never compiled because nothing consumed it",
+      "prevention": "RUNBOOK-gate-self-test + gate:self-test",
+      "oqe": {
+        "evidenceClass": "test-suite",
+        "reference": "tests/acceptance/gate-self-test.mjs"
+      }
+    },
+    {
+      "id": "L-003",
+      "rootCause": "declared a source without a wired parity gate",
+      "prevention": "RUNBOOK-canonical-source + gate:canon-purity",
+      "oqe": {
+        "evidenceClass": "test-suite",
+        "reference": "tests/acceptance/negative-controls/canon-purity.mjs"
+      }
+    },
+    {
+      "id": "L-004",
+      "rootCause": "--update-snapshots treated as a build step",
+      "prevention": "RUNBOOK-baseline-approval",
+      "oqe": {
+        "evidenceClass": "test-suite",
+        "reference": "tests/acceptance/baseline-approval"
+      }
+    },
+    {
+      "id": "L-005",
+      "rootCause": {
+        "unproven": true,
+        "ruledOut": [
+          "migrate-oklch emits NaN (atan2 gives 0)"
+        ]
+      },
+      "prevention": "RUNBOOK-root-cause-proof",
+      "oqe": {
+        "evidenceClass": "test-suite",
+        "reference": "tests/acceptance/known-fails.json (L-005)"
+      }
+    },
+    {
+      "id": "L-006",
+      "rootCause": "config change altered behavior elsewhere (project name \u2192 snapshot suffix)",
+      "prevention": "RUNBOOK-config-blast-radius",
+      "oqe": {
+        "evidenceClass": "test-suite",
+        "reference": "playwright.config.ts (snapshotPathTemplate)"
+      }
+    },
+    {
+      "id": "L-007",
+      "rootCause": "selector matched zero elements and reported a verdict",
+      "prevention": "RUNBOOK-gate-self-test + gate:self-test",
+      "oqe": {
+        "evidenceClass": "test-suite",
+        "reference": "tests/acceptance/gate-self-test.mjs"
+      }
+    },
+    {
+      "id": "L-008",
+      "rootCause": "ratchet built with no caller",
+      "prevention": "RUNBOOK-ratchet-wiring + gate:acceptance-ratchet",
+      "oqe": {
+        "evidenceClass": "test-suite",
+        "reference": "tests/acceptance/ratchet.mjs"
+      }
+    }
   ],
   "fleet": [
-    { "rule": "canon-purity", "moment": "ci" },
-    { "rule": "token-audit", "moment": "ci" },
-    { "rule": "image-distinctness", "moment": "ci" },
-    { "rule": "acceptance-ratchet", "moment": "ci" },
-    { "rule": "runbooks:check", "moment": "pre-commit" },
-    { "rule": "lessons:check", "moment": "pre-commit" }
+    {
+      "rule": "canon-purity",
+      "moment": "ci"
+    },
+    {
+      "rule": "token-audit",
+      "moment": "ci"
+    },
+    {
+      "rule": "image-distinctness",
+      "moment": "ci"
+    },
+    {
+      "rule": "acceptance-ratchet",
+      "moment": "ci"
+    },
+    {
+      "rule": "runbooks:check",
+      "moment": "pre-commit"
+    },
+    {
+      "rule": "lessons:check",
+      "moment": "pre-commit"
+    }
   ],
   "review": {
-    "who": "design-portal + design-core maintainers",
-    "artifact": "tests/acceptance/__screenshots__/manifest.json + gates.json + runbooks/*.md lastVerified",
+    "who": {
+      "user": {
+        "type": "role",
+        "id": "design-consumer",
+        "scope": "consumes design tokens"
+      },
+      "issuer": {
+        "type": "role",
+        "id": "design-core",
+        "scope": "issues tokens + gates"
+      },
+      "ledger": {
+        "type": "system",
+        "id": "genesis-chain",
+        "scope": "records design audit events"
+      },
+      "court": {
+        "type": "role",
+        "id": "design-reviewer",
+        "scope": "independent design arbitration"
+      }
+    },
     "cadence": "monthly; before any baseline regeneration",
-    "onFailure": "demote the affected gate to OBSERVATIONAL until the failure is understood"
-  }
+    "onFailure": "demote the affected gate to OBSERVATIONAL until the failure is understood",
+    "abdication": {
+      "afterCleanCycles": 12,
+      "requiresHumanSignoff": true
+    }
+  },
+  "auditLog": {
+    "chainName": "genesis",
+    "sink": "jsonl-hash-chain"
+  },
+  "aspirational": [
+    "SIC-POVM is a research-only track (docs/SIC-POVM_RESEARCH.md): claims of SIC-POVM deployment in the design system are incorrect and must not appear in grant or engineering docs.",
+    "K4 is planar: the rigidity claim rests on volumetric enclosure (beta-2 = 1), not non-planarity.",
+    "Quantum cognition and Betti-number telemetry are diagnostic vocabulary only \u2014 not design-system components."
+  ],
+  "resolutionRoot": "../../../../../production"
 }

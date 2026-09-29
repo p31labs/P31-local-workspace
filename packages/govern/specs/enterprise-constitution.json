@@ -1,0 +1,285 @@
+{
+  "schema": "https://p31ca.org/schemas/govern/constitution/0.3.0.json",
+  "domain": "P31 Sovereign Stack",
+  "version": "0.3.0",
+  "genesisTimestamp": "2026-09-28T00:00:00.000Z",
+  "canonicalSource": {
+    "path": "enterprise.govern.yaml",
+    "description": "The P31 enterprise constitution — the four governed domains and the contracts between them.",
+    "oqe": {
+      "evidenceClass": "primary-source",
+      "reference": "enterprise.govern.yaml"
+    }
+  },
+  "mirrors": [
+    {
+      "path": "../domains/design/constitution.json",
+      "generatedFrom": "enterprise.govern.yaml",
+      "parityGate": "validate-design"
+    },
+    {
+      "path": "../domains/monetization/constitution.json",
+      "generatedFrom": "enterprise.govern.yaml",
+      "parityGate": "validate-monetization"
+    },
+    {
+      "path": "../domains/justice/constitution.json",
+      "generatedFrom": "enterprise.govern.yaml",
+      "parityGate": "validate-justice"
+    },
+    {
+      "path": "../constitution.json",
+      "generatedFrom": "enterprise.govern.yaml",
+      "parityGate": "validate-govern"
+    },
+    {
+      "path": "../domains/audit/constitution.json",
+      "generatedFrom": "enterprise.govern.yaml",
+      "parityGate": "validate-audit"
+    },
+    {
+      "path": "../domains/forge/constitution.json",
+      "generatedFrom": "enterprise.govern.yaml",
+      "parityGate": "validate-forge"
+    }
+  ],
+  "gates": [
+    {
+      "id": "contract:documents-are-canonical",
+      "command": "govern audit domains/forge/constitution.json",
+      "state": "BLOCKING",
+      "owner": [
+        {
+          "type": "role",
+          "id": "p31-labs"
+        }
+      ],
+      "scope": "forge → design, monetization, justice, audit",
+      "remediation": "runbooks/RUNBOOK-contract-documents-are-canonical.md",
+      "negativeControl": {
+        "type": "mutation",
+        "command": "scripts/nc/contract-documents-are-canonical.mjs",
+        "expected": "proof-marker"
+      },
+      "enforcementMoment": "ci",
+      "oqe": {
+        "evidenceClass": "primary-source",
+        "reference": "production/portals/forge/src/data/manifest.json"
+      }
+    },
+    {
+      "id": "contract:design-tokens-stable",
+      "command": "govern audit domains/design/constitution.json",
+      "state": "BLOCKING",
+      "owner": [
+        {
+          "type": "role",
+          "id": "p31-labs"
+        }
+      ],
+      "scope": "design → monetization, justice, audit",
+      "remediation": "runbooks/RUNBOOK-contract-design-tokens-stable.md",
+      "negativeControl": {
+        "type": "mutation",
+        "command": "scripts/nc/contract-design-tokens-stable.mjs",
+        "expected": "proof-marker"
+      },
+      "enforcementMoment": "ci",
+      "oqe": {
+        "evidenceClass": "primary-source",
+        "reference": "packages/canon/src/theming/theme-store.ts"
+      }
+    },
+    {
+      "id": "contract:entitlement-events-recorded",
+      "command": "govern audit domains/monetization/constitution.json",
+      "state": "BLOCKING",
+      "owner": [
+        {
+          "type": "role",
+          "id": "p31-labs"
+        }
+      ],
+      "scope": "monetization → justice, audit",
+      "remediation": "runbooks/RUNBOOK-contract-entitlement-events-recorded.md",
+      "negativeControl": {
+        "type": "mutation",
+        "command": "scripts/nc/contract-entitlement-events-recorded.mjs",
+        "expected": "proof-marker"
+      },
+      "enforcementMoment": "ci",
+      "oqe": {
+        "evidenceClass": "api-response",
+        "reference": "GET /revenue/summary"
+      }
+    },
+    {
+      "id": "contract:evidence-custody-verified",
+      "command": "govern audit domains/justice/constitution.json",
+      "state": "BLOCKING",
+      "owner": [
+        {
+          "type": "role",
+          "id": "p31-labs"
+        }
+      ],
+      "scope": "justice → monetization, audit",
+      "remediation": "runbooks/RUNBOOK-contract-evidence-custody-verified.md",
+      "negativeControl": {
+        "type": "mutation",
+        "command": "scripts/nc/contract-evidence-custody-verified.mjs",
+        "expected": "proof-marker"
+      },
+      "enforcementMoment": "ci",
+      "oqe": {
+        "evidenceClass": "test-suite",
+        "reference": "workers/p31-justice-hub/src/index.ts"
+      }
+    },
+    {
+      "id": "contract:runtime-validates-domains",
+      "command": "govern audit domains/govern/constitution.json",
+      "state": "BLOCKING",
+      "owner": [
+        {
+          "type": "role",
+          "id": "p31-labs"
+        }
+      ],
+      "scope": "govern → design, monetization, justice, audit",
+      "remediation": "runbooks/RUNBOOK-contract-runtime-validates-domains.md",
+      "negativeControl": {
+        "type": "mutation",
+        "command": "scripts/nc/contract-runtime-validates-domains.mjs",
+        "expected": "proof-marker"
+      },
+      "enforcementMoment": "ci",
+      "oqe": {
+        "evidenceClass": "test-suite",
+        "reference": "src/govern.test.ts"
+      }
+    }
+  ],
+  "ratchets": [
+    {
+      "id": "cross-domain-violations",
+      "baseline": 0,
+      "countSource": "scripts/count-contract-violations.mjs",
+      "lockThreshold": 0
+    }
+  ],
+  "runbooks": [
+    {
+      "id": "RUNBOOK-contract-documents-are-canonical",
+      "path": "runbooks/RUNBOOK-contract-documents-are-canonical.md",
+      "owner": [
+        {
+          "type": "role",
+          "id": "p31-labs"
+        }
+      ],
+      "lastVerified": "2026-09-29"
+    },
+    {
+      "id": "RUNBOOK-contract-design-tokens-stable",
+      "path": "runbooks/RUNBOOK-contract-design-tokens-stable.md",
+      "owner": [
+        {
+          "type": "role",
+          "id": "p31-labs"
+        }
+      ],
+      "lastVerified": "2026-09-29"
+    },
+    {
+      "id": "RUNBOOK-contract-entitlement-events-recorded",
+      "path": "runbooks/RUNBOOK-contract-entitlement-events-recorded.md",
+      "owner": [
+        {
+          "type": "role",
+          "id": "p31-labs"
+        }
+      ],
+      "lastVerified": "2026-09-29"
+    },
+    {
+      "id": "RUNBOOK-contract-evidence-custody-verified",
+      "path": "runbooks/RUNBOOK-contract-evidence-custody-verified.md",
+      "owner": [
+        {
+          "type": "role",
+          "id": "p31-labs"
+        }
+      ],
+      "lastVerified": "2026-09-29"
+    },
+    {
+      "id": "RUNBOOK-contract-runtime-validates-domains",
+      "path": "runbooks/RUNBOOK-contract-runtime-validates-domains.md",
+      "owner": [
+        {
+          "type": "role",
+          "id": "p31-labs"
+        }
+      ],
+      "lastVerified": "2026-09-29"
+    }
+  ],
+  "lessons": [],
+  "fleet": [
+    {
+      "rule": "contract:documents-are-canonical",
+      "moment": "ci"
+    },
+    {
+      "rule": "contract:design-tokens-stable",
+      "moment": "ci"
+    },
+    {
+      "rule": "contract:entitlement-events-recorded",
+      "moment": "ci"
+    },
+    {
+      "rule": "contract:evidence-custody-verified",
+      "moment": "ci"
+    },
+    {
+      "rule": "contract:runtime-validates-domains",
+      "moment": "ci"
+    }
+  ],
+  "review": {
+    "who": {
+      "user": {
+        "type": "role",
+        "id": "p31-family"
+      },
+      "issuer": {
+        "type": "role",
+        "id": "p31-labs"
+      },
+      "ledger": {
+        "type": "system",
+        "id": "enterprise-genesis-chain"
+      },
+      "court": {
+        "type": "role",
+        "id": "p31-reviewer"
+      }
+    },
+    "cadence": "monthly; before any schema version bump",
+    "onFailure": "the enterprise cannot add a new domain until every existing domain reconciles",
+    "abdication": {
+      "afterCleanCycles": 24,
+      "requiresHumanSignoff": true
+    }
+  },
+  "auditLog": {
+    "chainName": "genesis",
+    "sink": "jsonl-hash-chain"
+  },
+  "aspirational": [
+    "Cross-domain reconciliation is declared but not yet enforced (count-contract-violations.mjs is a stub).",
+    "On-chain SBTs are research-only — the enterprise governs via did:key + the LOVE ledger."
+  ]
+}

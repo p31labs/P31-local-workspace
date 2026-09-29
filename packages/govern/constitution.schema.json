@@ -1,41 +1,41 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://p31ca.org/schemas/govern/constitution.schema.json",
+  "$id": "https://p31ca.org/schemas/govern/constitution/0.3.0.json",
   "title": "P31 domain constitution",
-  "description": "The machine-readable contract every governed domain declares. Conforming to this schema is what makes a domain governable by @p31ca/govern — the structure is identical across design, monetization, justice, and any future domain; only the content changes. A constitution that does not validate is not a constitution (it is a hand-edited mirror).",
+  "description": "The machine-readable contract every governed domain declares. Conforming to this schema is what makes a domain governable by @p31ca/govern. The structure is identical across design, monetization, justice, and any future domain; only the content changes. A constitution that does not validate is not a constitution — it is a hand-edited mirror.",
   "type": "object",
   "required": [
-    "schema",
-    "domain",
-    "version",
-    "canonicalSource",
-    "mirrors",
-    "gates",
-    "ratchets",
-    "runbooks",
-    "lessons",
-    "fleet",
-    "review"
+    "schema", "domain", "version", "genesisTimestamp",
+    "canonicalSource", "mirrors", "gates", "ratchets",
+    "runbooks", "lessons", "fleet", "review", "auditLog", "aspirational"
   ],
   "properties": {
     "schema": {
-      "const": "https://p31ca.org/schemas/govern/constitution.schema.json",
-      "description": "Self-identifies as conformant. Prevents drift between the schema and the constitution."
+      "const": "https://p31ca.org/schemas/govern/constitution/0.3.0.json",
+      "description": "Version-in-URI. When the schema changes, the URI changes, and constitutions migrate explicitly. There is no separate version field to drift from the URI."
     },
-    "domain": {
-      "type": "string",
-      "description": "Domain name, e.g. design, monetization, justice."
-    },
+    "domain": { "type": "string", "minLength": 1 },
     "version": {
       "type": "string",
-      "description": "Constitution version (semver). Governance evolves; the constitution must be versioned."
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "The constitution's own version. Distinct from the schema version — a domain's constitution evolves independently of the schema it conforms to."
+    },
+    "genesisTimestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "The moment governance began for this domain. The domain's Genesis Gate. Without it, there is no way to answer 'how long has this been governed?'"
+    },
+    "resolutionRoot": {
+      "type": "string",
+      "description": "Optional. The directory (relative to the constitution's own directory) that runbook and mirror paths resolve against. Defaults to the constitution's own directory (constitutionRoot). Lets a domain point at runbooks that live in a sibling repo or a shared library without copying them. Additive-optional — constitutions without it are unaffected."
     },
     "canonicalSource": {
       "type": "object",
-      "required": ["path", "description"],
+      "required": ["path", "description", "oqe"],
       "properties": {
-        "path": { "type": "string" },
-        "description": { "type": "string" }
+        "path": { "type": "string", "minLength": 1 },
+        "description": { "type": "string", "minLength": 1 },
+        "oqe": { "$ref": "#/$defs/oqe" }
       },
       "additionalProperties": false
     },
@@ -43,45 +43,53 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["path", "generatedFrom"],
+        "required": ["path", "generatedFrom", "parityGate"],
         "properties": {
-          "path": { "type": "string" },
-          "generatedFrom": { "type": "string" },
-          "parityGate": { "type": "string" }
+          "path": { "type": "string", "minLength": 1 },
+          "generatedFrom": { "type": "string", "minLength": 1 },
+          "parityGate": { "type": "string", "minLength": 1 }
         },
         "additionalProperties": false
-      }
+      },
+      "description": "Every artifact that claims to represent the canonical source. A mirror without a parityGate is an unchecked claim."
     },
     "gates": {
       "type": "array",
+      "minItems": 1,
       "items": {
         "type": "object",
-        "required": ["id", "command", "state", "owner", "scope", "remediation", "negativeControl"],
+        "required": ["id", "command", "state", "owner", "scope", "remediation", "negativeControl", "oqe"],
         "properties": {
-          "id": { "type": "string" },
-          "command": { "type": "string" },
+          "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+          "command": { "type": "string", "minLength": 1 },
           "state": {
             "type": "string",
-            "enum": ["OBSERVATIONAL", "WARNING", "BLOCKING"],
-            "description": "OBSERVATIONAL: runs, does not fail. WARNING: annotates, does not fail. BLOCKING: fails CI."
+            "enum": ["OBSERVATIONAL", "WARNING", "BLOCKING"]
           },
-          "owner": { "type": "string" },
-          "scope": { "type": "string" },
-          "remediation": { "type": "string" },
+          "owner": { "$ref": "#/$defs/credentialRef" },
+          "scope": { "type": "string", "minLength": 1 },
+          "remediation": {
+            "type": "string",
+            "pattern": "^(runbooks/RUNBOOK-|docs/)",
+            "description": "A pointer to the runbook that tells you how to fix the failure. A gate whose remediation is 'fix it' has zero information content."
+          },
           "negativeControl": {
             "type": "object",
             "required": ["type", "command", "expected"],
             "properties": {
               "type": { "enum": ["fixture", "mutation", "capability"] },
-              "command": { "type": "string" },
-              "expected": { "enum": ["exit-nonzero"] }
+              "command": { "type": "string", "minLength": 1 },
+              "expected": {
+                "const": "proof-marker",
+                "description": "The strong contract the runtime enforces: the negative control must exit 0 AND emit the literal NEGATIVE_CONTROL_OK marker. Exit 0 without the marker = the control did nothing (furniture). Exit non-zero = the control is broken. A gate whose negative control cannot prove it fails is furniture."
+              }
             },
             "additionalProperties": false
           },
           "enforcementMoment": {
-            "type": "string",
             "enum": ["pre-commit", "ci", "weekly", "event"]
-          }
+          },
+          "oqe": { "$ref": "#/$defs/oqe" }
         },
         "additionalProperties": false
       }
@@ -92,10 +100,10 @@
         "type": "object",
         "required": ["id", "baseline", "countSource", "lockThreshold"],
         "properties": {
-          "id": { "type": "string" },
-          "baseline": { "type": "number" },
-          "countSource": { "type": "string", "description": "Command that produces the current count." },
-          "lockThreshold": { "type": "number", "description": "Headroom > this forces the floor down in the same commit." }
+          "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+          "baseline": { "type": "integer", "minimum": 0 },
+          "countSource": { "type": "string", "minLength": 1 },
+          "lockThreshold": { "type": "integer", "minimum": 0 }
         },
         "additionalProperties": false
       }
@@ -106,10 +114,10 @@
         "type": "object",
         "required": ["id", "path", "owner", "lastVerified"],
         "properties": {
-          "id": { "type": "string" },
-          "path": { "type": "string" },
-          "owner": { "type": "string" },
-          "lastVerified": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" }
+          "id": { "type": "string", "pattern": "^RUNBOOK-[a-z0-9-]+$" },
+          "path": { "type": "string", "minLength": 1 },
+          "owner": { "$ref": "#/$defs/credentialRef" },
+          "lastVerified": { "type": "string", "format": "date" }
         },
         "additionalProperties": false
       }
@@ -118,24 +126,29 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["id", "rootCause", "prevention"],
+        "required": ["id", "rootCause", "prevention", "oqe"],
         "properties": {
-          "id": { "type": "string" },
+          "id": { "type": "string", "pattern": "^[A-Z]-\\d+$" },
           "rootCause": {
             "oneOf": [
-              { "type": "string" },
+              { "type": "string", "minLength": 1 },
               {
                 "type": "object",
                 "required": ["unproven", "ruledOut"],
                 "properties": {
                   "unproven": { "const": true },
-                  "ruledOut": { "type": "array", "items": { "type": "string" } }
+                  "ruledOut": { "type": "array", "items": { "type": "string" }, "minItems": 1 }
                 },
                 "additionalProperties": false
               }
             ]
           },
-          "prevention": { "type": "string", "description": "Must resolve to a real runbook id or gate id — a sentiment is not a prevention." }
+          "prevention": {
+            "type": "string",
+            "pattern": "(RUNBOOK-[a-z0-9-]+|gate:[a-z0-9-]+)",
+            "description": "Must resolve to a real runbook id or a gate id. A sentiment is not a prevention."
+          },
+          "oqe": { "$ref": "#/$defs/oqe" }
         },
         "additionalProperties": false
       }
@@ -146,22 +159,114 @@
         "type": "object",
         "required": ["rule", "moment"],
         "properties": {
-          "rule": { "type": "string" },
-          "moment": { "type": "string", "enum": ["pre-commit", "ci", "weekly", "event"] }
+          "rule": { "type": "string", "minLength": 1 },
+          "moment": { "enum": ["pre-commit", "ci", "weekly", "event"] }
         },
         "additionalProperties": false
       }
     },
     "review": {
       "type": "object",
-      "required": ["who", "artifact", "cadence", "onFailure"],
+      "required": ["who", "cadence", "onFailure", "abdication"],
       "properties": {
-        "who": { "type": "string" },
-        "artifact": { "type": "string" },
-        "cadence": { "type": "string" },
-        "onFailure": { "type": "string" }
+        "who": {
+          "oneOf": [
+            { "$ref": "#/$defs/fourPartyReview" },
+            { "$ref": "#/$defs/credentialRef" }
+          ],
+          "description": "BLOCKING domains require the four-party K4 topology (User, Issuer, Ledger, Court). OBSERVATIONAL domains may declare a single review credential during bootstrapping. The Scutum Fidei argument: only four vertices guarantee co-equality; three collapses to K3 (planar, no enclosed volume); two is a line; one is a point."
+        },
+        "cadence": { "type": "string", "minLength": 1 },
+        "onFailure": { "type": "string", "minLength": 1 },
+        "abdication": {
+          "type": "object",
+          "required": ["afterCleanCycles", "requiresHumanSignoff"],
+          "properties": {
+            "afterCleanCycles": { "type": "integer", "minimum": 1 },
+            "requiresHumanSignoff": { "const": true }
+          },
+          "additionalProperties": false,
+          "description": "The review cadence's terminal state. Paper XXV: 'if it requires the creator to maintain it, it has failed.' After N clean cycles, the domain transitions to ABDICATED — self-governing. The transition requires explicit human sign-off (the Centaur boundary: the runtime does the work, the human retains final authority)."
+        }
       },
       "additionalProperties": false
+    },
+    "auditLog": {
+      "type": "object",
+      "required": ["chainName", "sink"],
+      "properties": {
+        "chainName": {
+          "type": "string",
+          "description": "A domain may name its chain 'genesis' to match Paper XII's Genesis Block contract. The runtime stays generic; the constitution names the chain."
+        },
+        "sink": {
+          "type": "string",
+          "enum": ["jsonl-hash-chain", "stdout"],
+          "default": "jsonl-hash-chain"
+        }
+      },
+      "additionalProperties": false
+    },
+    "aspirational": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "description": "Claims the domain intends but does not yet enforce. Per Paper XIX: a claim without traceable OQE is aspirational, not true. Research-only claims are parked here, never silently promoted."
+    }
+  },
+  "$defs": {
+    "oqe": {
+      "type": "object",
+      "required": ["evidenceClass", "reference"],
+      "properties": {
+        "evidenceClass": {
+          "enum": [
+            "test-suite",
+            "compiler",
+            "deploy-log",
+            "primary-source",
+            "doi",
+            "api-response",
+            "legal-record"
+          ]
+        },
+        "reference": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Where the evidence lives: a file path, a URL, a DOI, a command that reproduces it."
+        }
+      },
+      "additionalProperties": false,
+      "description": "Objective Quality Evidence. The 7 evidence classes are per Paper XIX (SOULSAFE). A claim without a traceable OQE source is aspirational."
+    },
+    "credential": {
+      "type": "object",
+      "required": ["type", "id"],
+      "properties": {
+        "type": { "enum": ["did:key", "sbt", "role", "system"] },
+        "id": { "type": "string", "minLength": 1 },
+        "issuer": { "type": "string" },
+        "scope": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "credentialRef": {
+      "oneOf": [
+        { "type": "string", "minLength": 1 },
+        { "type": "array", "items": { "$ref": "#/$defs/credential" }, "minItems": 1 }
+      ],
+      "description": "Either a role name (during bootstrapping) or a credential array. A string is acceptable at OBSERVATIONAL; a credential array is required at BLOCKING."
+    },
+    "fourPartyReview": {
+      "type": "object",
+      "required": ["user", "issuer", "ledger", "court"],
+      "properties": {
+        "user": { "$ref": "#/$defs/credential" },
+        "issuer": { "$ref": "#/$defs/credential" },
+        "ledger": { "$ref": "#/$defs/credential" },
+        "court": { "$ref": "#/$defs/credential" }
+      },
+      "additionalProperties": false,
+      "description": "The K4 four-party attestation: User, Issuer, Ledger, Court. The classical CBS analogue of the SIC-POVM's four measurement outcomes — the deployable primitive. (SIC-POVM itself is research-only and must never be claimed as deployed.)"
     }
   },
   "additionalProperties": false

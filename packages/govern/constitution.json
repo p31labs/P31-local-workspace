@@ -1,0 +1,256 @@
+{
+  "schema": "https://p31ca.org/schemas/govern/constitution/0.3.0.json",
+  "domain": "govern",
+  "version": "0.3.0",
+  "genesisTimestamp": "2026-09-28T00:00:00.000Z",
+  "canonicalSource": {
+    "path": "constitution.schema.json",
+    "description": "The constitution schema is the canonical source for what it means to be governed. Every domain conforms to it; the runtime validates against it. The runtime's own claims are traceable to its own evidence.",
+    "oqe": {
+      "evidenceClass": "primary-source",
+      "reference": "constitution.schema.json"
+    }
+  },
+  "mirrors": [
+    {
+      "path": "README.md",
+      "generatedFrom": "constitution.schema.json",
+      "parityGate": "govern-validate"
+    },
+    {
+      "path": "domains/design/constitution.json",
+      "generatedFrom": "constitution.schema.json",
+      "parityGate": "govern-validate"
+    }
+  ],
+  "gates": [
+    {
+      "id": "govern-self-test",
+      "command": "node dist/cli.js self-test constitution.json",
+      "state": "BLOCKING",
+      "owner": [
+        {
+          "type": "role",
+          "id": "govern-runtime",
+          "scope": "self-governance"
+        }
+      ],
+      "scope": "packages/govern/src/** test/negative-controls/**",
+      "remediation": "runbooks/RUNBOOK-gate-self-test.md",
+      "negativeControl": {
+        "type": "fixture",
+        "command": "test/negative-controls/furniture-gate.mjs",
+        "expected": "proof-marker"
+      },
+      "enforcementMoment": "ci",
+      "oqe": {
+        "evidenceClass": "test-suite",
+        "reference": "src/govern.test.ts (furniture detection)"
+      }
+    },
+    {
+      "id": "govern-validate",
+      "command": "node dist/cli.js validate constitution.json",
+      "state": "BLOCKING",
+      "owner": [
+        {
+          "type": "role",
+          "id": "govern-runtime",
+          "scope": "self-governance"
+        }
+      ],
+      "scope": "packages/govern/constitution.schema.json packages/govern/domains/**",
+      "remediation": "runbooks/RUNBOOK-canonical-source.md",
+      "negativeControl": {
+        "type": "fixture",
+        "command": "test/negative-controls/invalid-constitution.mjs",
+        "expected": "proof-marker"
+      },
+      "enforcementMoment": "ci",
+      "oqe": {
+        "evidenceClass": "test-suite",
+        "reference": "src/govern.test.ts (validation)"
+      }
+    },
+    {
+      "id": "govern-ratchet",
+      "command": "node dist/cli.js ratchet constitution.json",
+      "state": "BLOCKING",
+      "owner": [
+        {
+          "type": "role",
+          "id": "govern-runtime",
+          "scope": "self-governance"
+        }
+      ],
+      "scope": "packages/govern/KNOWN_GAPS.md",
+      "remediation": "runbooks/RUNBOOK-ratchet-wiring.md",
+      "negativeControl": {
+        "type": "fixture",
+        "command": "test/negative-controls/ratchet-lock-gain.mjs",
+        "expected": "proof-marker"
+      },
+      "enforcementMoment": "ci",
+      "oqe": {
+        "evidenceClass": "test-suite",
+        "reference": "src/govern.test.ts (lock-the-gain)"
+      }
+    },
+    {
+      "id": "docs-check",
+      "command": "node scripts/docs-check.mjs",
+      "state": "BLOCKING",
+      "owner": [
+        {
+          "type": "role",
+          "id": "govern-runtime",
+          "scope": "doc suite integrity"
+        }
+      ],
+      "scope": "packages/govern/docs/** scripts/docs-check.mjs",
+      "remediation": "runbooks/RUNBOOK-canonical-source.md",
+      "negativeControl": {
+        "type": "fixture",
+        "command": "test/negative-controls/docs-check.mjs",
+        "expected": "proof-marker"
+      },
+      "enforcementMoment": "ci",
+      "oqe": {
+        "evidenceClass": "test-suite",
+        "reference": "test/negative-controls/docs-check.mjs"
+      }
+    },
+    {
+      "id": "system-test",
+      "command": "node /home/p31/P31-local-workspace/tools/system-test/run.mjs",
+      "state": "BLOCKING",
+      "owner": [
+        {
+          "type": "role",
+          "id": "govern-runtime",
+          "scope": "cross-domain system invariants"
+        }
+      ],
+      "scope": "packages/govern + production/portals + software/p31-forge + tools/phos-forge",
+      "remediation": "runbooks/RUNBOOK-system-test.md",
+      "negativeControl": {
+        "type": "fixture",
+        "command": "/home/p31/P31-local-workspace/tools/system-test/negative-controls/sabotage.mjs",
+        "expected": "proof-marker"
+      },
+      "enforcementMoment": "ci",
+      "oqe": {
+        "evidenceClass": "test-suite",
+        "reference": "tools/system-test/negative-controls/sabotage.mjs"
+      }
+    }
+  ],
+  "ratchets": [
+    {
+      "id": "known-gaps",
+      "baseline": 0,
+      "countSource": "scripts/count-known-gaps.mjs",
+      "lockThreshold": 2
+    }
+  ],
+  "runbooks": [
+    {
+      "id": "RUNBOOK-gate-self-test",
+      "path": "runbooks/RUNBOOK-gate-self-test.md",
+      "owner": [
+        {
+          "type": "role",
+          "id": "govern-runtime"
+        }
+      ],
+      "lastVerified": "2026-09-28"
+    },
+    {
+      "id": "RUNBOOK-canonical-source",
+      "path": "runbooks/RUNBOOK-canonical-source.md",
+      "owner": [
+        {
+          "type": "role",
+          "id": "govern-runtime"
+        }
+      ],
+      "lastVerified": "2026-09-28"
+    },
+    {
+      "id": "RUNBOOK-ratchet-wiring",
+      "path": "runbooks/RUNBOOK-ratchet-wiring.md",
+      "owner": [
+        {
+          "type": "role",
+          "id": "govern-runtime"
+        }
+      ],
+      "lastVerified": "2026-09-28"
+    }
+  ],
+  "lessons": [
+    {
+      "id": "G-001",
+      "rootCause": "the runtime was built before the schema was stable; gaps existed because the schema did not yet require what the gaps fix",
+      "prevention": "RUNBOOK-gate-self-test + gate:govern-self-test",
+      "oqe": {
+        "evidenceClass": "primary-source",
+        "reference": "KNOWN_GAPS.md"
+      }
+    }
+  ],
+  "fleet": [
+    {
+      "rule": "govern-self-test",
+      "moment": "ci"
+    },
+    {
+      "rule": "govern-validate",
+      "moment": "pre-commit"
+    },
+    {
+      "rule": "govern-ratchet",
+      "moment": "ci"
+    }
+  ],
+  "review": {
+    "who": {
+      "user": {
+        "type": "role",
+        "id": "govern-consumer",
+        "scope": "consumes governed domains"
+      },
+      "issuer": {
+        "type": "role",
+        "id": "govern-runtime",
+        "scope": "issues gates"
+      },
+      "ledger": {
+        "type": "system",
+        "id": "genesis-chain",
+        "scope": "records audit events"
+      },
+      "court": {
+        "type": "role",
+        "id": "govern-reviewer",
+        "scope": "independent arbitration"
+      }
+    },
+    "cadence": "monthly; before any schema version bump",
+    "onFailure": "the runtime does not gate any domain until its own audit is green",
+    "abdication": {
+      "afterCleanCycles": 12,
+      "requiresHumanSignoff": true
+    }
+  },
+  "auditLog": {
+    "chainName": "genesis",
+    "sink": "jsonl-hash-chain"
+  },
+  "aspirational": [
+    "SIC-POVM is a research-only track (docs/SIC-POVM_RESEARCH.md): it is NOT a deployed or deployable primitive. Claims of SIC-POVM deployment in the runtime are incorrect and must not appear in grant or engineering docs.",
+    "K4 is planar. The rigidity claim rests on volumetric enclosure (beta-2 = 1), not non-planarity. Paper IV retracts the earlier non-planar claim.",
+    "ERC-7787 (Soulbound Degradable Governance) is the governance-decay standard the spoon-dial composition anticipates; on-chain SBTs are not yet integrated."
+  ],
+  "resolutionRoot": "../../../production"
+}

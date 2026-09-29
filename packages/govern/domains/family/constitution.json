@@ -1,0 +1,94 @@
+{
+  "schema": "https://p31ca.org/schemas/govern/constitution/0.3.0.json",
+  "domain": "family",
+  "version": "0.1.0",
+  "genesisTimestamp": "2026-09-28T00:00:00.000Z",
+  "canonicalSource": {
+    "path": "tools/family/cradle-intercept.mjs",
+    "description": "The CRADLE message interceptor — the gate that holds at child-safety boundaries. Built from The Grammar of Governance (CRADLE mode): the gate does not reach; it waits.",
+    "oqe": { "evidenceClass": "primary-source", "reference": "tools/family/cradle-intercept.mjs" }
+  },
+  "mirrors": [
+    {
+      "path": "tools/family/negative-controls/cradle-hold.mjs",
+      "generatedFrom": "cradle-intercept.mjs",
+      "parityGate": "cradle-hold"
+    },
+    {
+      "path": "tools/family/negative-controls/cradle-semantic.mjs",
+      "generatedFrom": "cradle-intercept.mjs",
+      "parityGate": "cradle-semantic"
+    }
+  ],
+  "gates": [
+    {
+      "id": "cradle-hold",
+      "command": "node /home/p31/P31-local-workspace/tools/family/negative-controls/cradle-hold.mjs",
+      "state": "OBSERVATIONAL",
+      "owner": [{ "type": "role", "id": "family-guardian", "scope": "CRADLE mode" }],
+      "scope": "tools/family/cradle-intercept.mjs — grooming, self-harm, PII extraction, 3h reassertion",
+      "remediation": "runbooks/RUNBOOK-family-cradle.md",
+      "negativeControl": {
+        "type": "fixture",
+        "command": "/home/p31/P31-local-workspace/tools/family/negative-controls/cradle-hold.mjs",
+        "expected": "proof-marker"
+      },
+      "enforcementMoment": "ci",
+      "oqe": { "evidenceClass": "test-suite", "reference": "tools/family/negative-controls/cradle-hold.mjs" }
+    },
+    {
+      "id": "cradle-semantic",
+      "command": "node /home/p31/P31-local-workspace/tools/family/negative-controls/cradle-semantic.mjs",
+      "state": "OBSERVATIONAL",
+      "owner": [{ "type": "role", "id": "family-guardian", "scope": "CRADLE mode" }],
+      "scope": "tools/family/cradle-intercept.mjs — probe-stack grooming, notify contract, fail-closed-on-uncertainty",
+      "remediation": "runbooks/RUNBOOK-family-cradle.md",
+      "negativeControl": {
+        "type": "fixture",
+        "command": "/home/p31/P31-local-workspace/tools/family/negative-controls/cradle-semantic.mjs",
+        "expected": "proof-marker"
+      },
+      "enforcementMoment": "ci",
+      "oqe": { "evidenceClass": "test-suite", "reference": "tools/family/negative-controls/cradle-semantic.mjs" }
+    }
+  ],
+  "ratchets": [],
+  "runbooks": [
+    {
+      "id": "RUNBOOK-family-cradle",
+      "path": "runbooks/RUNBOOK-family-cradle.md",
+      "owner": [{ "type": "role", "id": "family-guardian" }],
+      "lastVerified": "2026-09-28"
+    }
+  ],
+  "lessons": [
+    {
+      "id": "F-001",
+      "rootCause": "a probe-stack grooming message (school? siblings? alone?) was ALLOWED because no single regex fired — the regex layer missed the stacked pattern",
+      "prevention": "gate:cradle-semantic + gate:cradle-hold",
+      "oqe": { "evidenceClass": "test-suite", "reference": "tools/family/negative-controls/cradle-semantic.mjs" }
+    }
+  ],
+  "fleet": [
+    { "rule": "cradle-hold", "moment": "ci" },
+    { "rule": "cradle-semantic", "moment": "ci" }
+  ],
+  "review": {
+    "who": {
+      "user": { "type": "role", "id": "child", "scope": "the guarantee is for them" },
+      "issuer": { "type": "role", "id": "family-guardian", "scope": "builds + maintains the family system" },
+      "ledger": { "type": "system", "id": "family-genesis-chain", "scope": "records family audit events" }
+    },
+    "cadence": "monthly; before any change to the CRADLE/TEND gate set",
+    "onFailure": "demote the affected gate to OBSERVATIONAL until the failure is understood",
+    "abdication": { "afterCleanCycles": 24, "requiresHumanSignoff": true }
+  },
+  "auditLog": { "chainName": "family", "sink": "jsonl-hash-chain" },
+  "aspirational": [
+    "The court is NOT claimed. review.who declares only three real parties: user (child), issuer (family-guardian), ledger (family-genesis-chain). There is no fourth party, named or placeholder. The family domain does not meet the K4 four-party requirement and audits as DECLARED, NOT GOVERNED on that dimension. Naming a placeholder would pass shape validation while failing the structural requirement — the green-by-syntax failure the runtime exists to prevent. An independent reviewer is named when a real one consents.",
+    "TEND mode (the elder dignity layer) is not yet built — its gates (tend-dignity reach/refusal) are future work. The Lilo Engine's 100% crisis recall is bench-battery-scoped, not clinical; clinical validation is the essential next step before TEND claims BLOCKING.",
+    "The LOVE Ledger vesting schedule (10%@13, 25%@16, 50%@18, 75%@21, 100%@25) is a documented design; the contract is compiled but not deployed and the vesting logic is not in the contract source. The milestone scaffold is aspirational until the contract is real.",
+    "The child-safety interceptor is CRADLE-only. The local model host (NAS, Ollama) that makes the gate structurally the only door is not yet stood up; the cloud path currently fails open unless Guardrails is block-mode and streaming disabled.",
+    "SIC-POVM and quantum cognition are research-only — the family layer is classical ML-KEM-768 + ML-DSA-65 (FIPS 203/204) hybrid, deployed where the substrate allows."
+  ]
+}

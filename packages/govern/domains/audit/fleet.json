@@ -1,0 +1,13 @@
+{
+  "domain": "audit",
+  "registrations": [
+    {
+      "rule": "audit-chain-verify",
+      "moment": "ci"
+    },
+    {
+      "rule": "audit-cross-domain-reconcile",
+      "moment": "ci"
+    }
+  ]
+}

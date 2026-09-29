@@ -1,0 +1,143 @@
+{
+  "schema": "https://p31ca.org/schemas/govern/constitution/0.3.0.json",
+  "domain": "forge",
+  "version": "0.1.0",
+  "genesisTimestamp": "2026-09-28T00:00:00.000Z",
+  "canonicalSource": {
+    "path": "production/portals/forge/src/data/manifest.json",
+    "description": "The forge content-pack manifest \u2014 derived by walking the real forge content tree. Every published document derives from a governed content pack; the manifest is the canonical index.",
+    "oqe": {
+      "evidenceClass": "primary-source",
+      "reference": "production/portals/forge/src/data/manifest.json"
+    }
+  },
+  "mirrors": [
+    {
+      "path": "software/p31-forge/content/**/*.json",
+      "generatedFrom": "production/portals/forge/src/data/manifest.json",
+      "parityGate": "system-test"
+    }
+  ],
+  "gates": [
+    {
+      "id": "token-audit",
+      "command": "cd /home/p31/production/portals/forge && node /home/p31/P31-local-workspace/packages/design-core/scripts/token-audit.mjs",
+      "state": "BLOCKING",
+      "owner": [
+        {
+          "type": "role",
+          "id": "forge-portal",
+          "scope": "portal source color discipline"
+        }
+      ],
+      "scope": "production/portals/forge/src/** (no raw hex/rgba)",
+      "remediation": "runbooks/RUNBOOK-forge-pipeline.md",
+      "negativeControl": {
+        "type": "fixture",
+        "command": "/home/p31/production/portals/forge/tests/acceptance/negative-controls/token-audit.mjs",
+        "expected": "proof-marker"
+      },
+      "enforcementMoment": "ci",
+      "oqe": {
+        "evidenceClass": "test-suite",
+        "reference": "production/portals/forge/tests/acceptance/negative-controls/token-audit.mjs"
+      }
+    },
+    {
+      "id": "system-test",
+      "command": "node /home/p31/production/portals/forge/scripts/system-test.mjs",
+      "state": "BLOCKING",
+      "owner": [
+        {
+          "type": "role",
+          "id": "forge-portal",
+          "scope": "end-to-end pipeline"
+        }
+      ],
+      "scope": "manifest integrity + API contract + store + token-audit + build + acceptance",
+      "remediation": "runbooks/RUNBOOK-forge-pipeline.md",
+      "negativeControl": {
+        "type": "fixture",
+        "command": "/home/p31/production/portals/forge/tests/acceptance/negative-controls/system-test.mjs",
+        "expected": "proof-marker"
+      },
+      "enforcementMoment": "ci",
+      "oqe": {
+        "evidenceClass": "test-suite",
+        "reference": "production/portals/forge/tests/acceptance/negative-controls/system-test.mjs"
+      }
+    }
+  ],
+  "ratchets": [
+    {
+      "id": "pending-baselines",
+      "baseline": 2,
+      "countSource": "scripts/count-pending-baselines.mjs",
+      "lockThreshold": 1
+    }
+  ],
+  "runbooks": [
+    {
+      "id": "RUNBOOK-forge-pipeline",
+      "path": "runbooks/RUNBOOK-forge-pipeline.md",
+      "owner": [
+        {
+          "type": "role",
+          "id": "forge-portal"
+        }
+      ],
+      "lastVerified": "2026-09-28"
+    }
+  ],
+  "lessons": [],
+  "fleet": [
+    {
+      "rule": "token-audit",
+      "moment": "ci"
+    },
+    {
+      "rule": "system-test",
+      "moment": "ci"
+    }
+  ],
+  "review": {
+    "who": {
+      "user": {
+        "type": "role",
+        "id": "forge-consumer",
+        "scope": "consumes published documents"
+      },
+      "issuer": {
+        "type": "role",
+        "id": "forge-portal",
+        "scope": "issues packs + gates"
+      },
+      "ledger": {
+        "type": "system",
+        "id": "forge-genesis-chain",
+        "scope": "records compile events"
+      },
+      "court": {
+        "type": "role",
+        "id": "forge-reviewer",
+        "scope": "independent document arbitration"
+      }
+    },
+    "cadence": "monthly; before any content-pack schema change",
+    "onFailure": "demote the affected gate to OBSERVATIONAL until the failure is understood",
+    "abdication": {
+      "afterCleanCycles": 12,
+      "requiresHumanSignoff": true
+    }
+  },
+  "auditLog": {
+    "chainName": "forge",
+    "sink": "jsonl-hash-chain"
+  },
+  "aspirational": [
+    "Playwright acceptance baselines are pending \u2014 image-distinctness is not yet a BLOCKING gate. The pending-baselines ratchet tracks this debt (baseline 1).",
+    "Real auth (token exchange from the workspace session) is not yet wired \u2014 compile uses VITE_FORGE_KEY as a local-dev fallback.",
+    "Multi-tenant org scoping and D1-backed compile history are future work.",
+    "SIC-POVM and quantum cognition are research-only \u2014 the forge is classical SHA-256 + OKLCH."
+  ]
+}

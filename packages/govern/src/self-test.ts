@@ -29,9 +29,13 @@ export function runSelfTest(con: Constitution, baseDir: string): SelfTestResult[
       // Run the negative control command (relative to the constitution's dir).
       const cmd = gate.negativeControl.command;
       const full = resolve(baseDir, cmd.startsWith('./') ? cmd.slice(2) : cmd);
-      execSync(`node ${full}`, { stdio: 'pipe', timeout: 30000 });
-      canFail = true; // negative control exited 0 = the gate correctly FAILED
-      detail = 'negative control proved the gate can fail';
+      const out = execSync(`node ${full}`, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], timeout: 30000 });
+      // STRONG CONTRACT: the nc must exit 0 AND emit the proof marker.
+      // An nc that exits 0 without the marker did nothing (furniture).
+      canFail = out.includes('NEGATIVE_CONTROL_OK');
+      detail = canFail
+        ? 'negative control proved the gate can fail'
+        : 'negative control exited 0 but did not emit NEGATIVE_CONTROL_OK (it did nothing — furniture)';
     } catch (e: unknown) {
       canFail = false;
       detail = `GATE IS FURNITURE or broken negative control (exit ${(e as { status?: number }).status ?? 1})`;
