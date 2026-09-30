@@ -30,8 +30,14 @@
   /* CHAPTER — scopes each section and gives it a designed rhythm. This was
      the missing rule: the HTML carried class="chapter" but the CSS had no
      .chapter selector, so sections rendered with zero spacing/scope. */
-  .chapter { margin: 0 0 1.2cm; }
+  .chapter { margin: 0 0 1.2cm; break-before: page; }
+  .chapter:first-of-type { break-before: auto; }
   .chapter h2 { margin-top: 0; }
+  /* Chapter kicker — the mono uppercase label above the section title that
+     frames each chapter as a named section (the ATS page-opening pattern:
+     'SECTION 02 · CONSENSUS' above 'Consensus'). Without it, content pages
+     read as continuation prose. */
+  .chapter-kicker { font-family: var(--mono); font-size: 8.5pt; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin: 0 0 4px; }
   /* Body lists — marked now emits <ul><li>; style the markers + spacing so
      bullets render as designed list items, not loose text. */
   .body ul { margin: 0.4cm 0 0.4cm 0.9cm; padding-left: 0.5cm; }

@@ -53,7 +53,7 @@ function main() {
   if (!/<th>ID<\/th>/.test(html)) failures.push('evidence table missing ledger-ID column ([E#] traceability)')
 
   // 4. styled vocabulary present
-  for (const [name, token] of [['cover', 'class="cover"'], ['methodology', 'class="methodology"'], ['striking', 'class="striking"'], ['appendix', 'Evidence Appendix'], ['paged-footer', '@bottom-center']]) {
+  for (const [name, token] of [['cover', 'class="cover"'], ['methodology', 'class="methodology"'], ['striking', 'class="striking"'], ['appendix', 'Evidence Appendix'], ['paged-footer', '@bottom-center'], ['chapter-kicker', 'chapter-kicker']]) {
     if (!html.includes(token)) failures.push(`missing styled element: ${name}`)
   }
 

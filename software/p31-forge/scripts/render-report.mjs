@@ -196,8 +196,9 @@ function renderHtml({ session, sections, summary, claims, verifySummary }) {
 
   const chapters = Object.entries(sections)
     .map(
-      ([name, sec]) => `
+      ([name, sec], idx) => `
       <section class="chapter">
+        <div class="chapter-kicker">SECTION ${String(idx + 1).padStart(2, '0')} · ${name.toUpperCase()}</div>
         <h2>${name}</h2>
         <div class="body">${mdToHtmlFrag(sec.body)}</div>
       </section>`,
