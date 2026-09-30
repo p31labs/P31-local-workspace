@@ -208,6 +208,26 @@ Consensus/Divergence/Synthesis — the model did NOT emit ## Summary. Its report
 fails the grade-8 gate (FK 9.7, DRAFT) as designed. Old/Summary-less sessions
 cannot pass the plain-language gate; they need re-running with the new prompt.
 
+## Verified facts (added: Thread 1 done, 2026-09-29)
+
+| Fact | Verification command | Result |
+|---|---|---|
+| Summary retry fires when model skips | fresh jitterbug run bc43d641 | summarySource=retry, Summary landed plain |
+| Full pipeline passes live | run-report bc43d641 | report gate + layout gate + 7-page PDF |
+| Running footer on content, clean cover | PyPDF2 extract | pages 2-7 footer, page 1 clean |
+| FK ceiling corrected to grade 10 | research (JMIR/iHE) | plain summaries land at grade 9 |
+
+## Open threads (NOT active — one at a time)
+
+- **side-by-side-ACCEPTANCE-TEST**: read /tmp/report/bc43d641.report.pdf
+  next to /home/p31/P31 Labs — ATS Accelerator 2026.pdf. Does a reader learn
+  the finding in 10s, comparable hierarchy + running footer? THIS is the test.
+- **fonts-to-ship**: drop real woff2 into software/p31-forge/fonts/.
+- **layout-vision-loop**: PaperFit image rendering (text subset built).
+- **0-external-claims**: bc43d641 rendered 0/0 verified — its plain summary
+  has no citation markers; the honest render shows 0/0. Consider whether a
+  report with zero external grounding should still be produced.
+
 ## Open threads (NOT active — one at a time)
 
 - **summary-enforcement**: the model sometimes skips ## Summary. Options:
