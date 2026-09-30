@@ -242,6 +242,28 @@ parity is confirmed; the aesthetic call (does a reader learn the finding in
 | Layout gate refined | prose-continuation false positive | passes, genuine stranded lines still caught |
 | Pipeline green | run-report bc43d641 | both gates + 7-page PDF pass |
 
+## Verified facts (added: chapter kickers, 2026-09-29)
+
+| Fact | Verification command | Result |
+|---|---|---|
+| Chapter kickers emitted | grep report.html | SECTION 01-04 (SUMMARY/CONSENSUS/DIVERGENCE/SYNTHESIS) |
+| break-before: page | .chapter rule | each chapter opens fresh; PDF 7 -> 9 pages |
+| Both gates pass | run-report bc43d641 | report + layout, 9-page PDF |
+| Reviewer direction honored | no auto-pull-quote, no stat callouts | skipped (would produce garbage from prose) |
+
+## Open threads (NOT active — one at a time)
+
+- **HUMAN-ACCEPTANCE-READ**: side-by-side re-opened with 9 fresh pages.
+  Does the forge report now read as a designed research report (named
+  sections, fresh pages)? The honest bar: the report is a research report,
+  not a pitch deck — expect it to read as well-structured research, not
+  like the ATS grant pitch.
+- **0-external-claims**: bc43d641 renders 0/0 verified. Still open.
+- **fonts-to-ship**: drop real woff2 into software/p31-forge/fonts/.
+- **convergence-prompt-pullquotes**: if the read says content still needs
+  visual anchors, the fix is a prompt change (emit explicit > KEY FINDING
+  per section), not auto-promoting bolded bullet fragments.
+
 ## Open threads (NOT active — one at a time)
 
 - **HUMAN-ACCEPTANCE-READ**: re-open /tmp/report/side-by-side.html (pages
