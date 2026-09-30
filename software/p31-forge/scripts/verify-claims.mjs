@@ -80,9 +80,15 @@ async function main() {
   const ledger = [...loadLedger(VERIFIED_FACTS), ...loadLedger(CITATION_LEDGER)]
   const verified = claims.claims.map((c) => verifyClaim(c, ledger))
 
+  // Evidence-ledger pattern (researchloop E1..En): every claim gets a stable
+  // ledger ID. The renderer cites [E#]; a claim with no external source is
+  // still ledgered (as prose/synthesis attribution) so provenance is total.
+  verified.forEach((c, i) => { c.ledgerId = `E${i + 1}` })
+
   const counts = verified.reduce((a, c) => { a[c.verdict] = (a[c.verdict] || 0) + 1; return a }, {})
   claims.claims = verified
   claims.verifySummary = { ...counts, total: verified.length }
+  claims.ledger = verified.map((c) => ({ ledgerId: c.ledgerId, sentence: c.sentence, sources: c.sources, verdict: c.verdict }))
 
   const oi = process.argv.indexOf('--out')
   const out = oi >= 0 ? process.argv[oi + 1] : '/tmp/report/claims.verified.json'

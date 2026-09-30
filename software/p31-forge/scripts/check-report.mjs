@@ -49,9 +49,11 @@ function main() {
   const quoteBlocks = (html.match(/✓ EVIDENCE/g) ?? []).length
   if (!hasTable) failures.push('evidence appendix is not a table')
   if (quoteBlocks > 3) failures.push(`evidence wall: ${quoteBlocks} blockquote evidence blocks (should be a table)`)
+  // 3b. the evidence table must carry ledger IDs (researchloop [E#] traceability)
+  if (!/<th>ID<\/th>/.test(html)) failures.push('evidence table missing ledger-ID column ([E#] traceability)')
 
   // 4. styled vocabulary present
-  for (const [name, token] of [['cover', 'class="cover"'], ['methodology', 'class="methodology"'], ['striking', 'class="striking"'], ['appendix', 'Evidence Appendix']]) {
+  for (const [name, token] of [['cover', 'class="cover"'], ['methodology', 'class="methodology"'], ['striking', 'class="striking"'], ['appendix', 'Evidence Appendix'], ['paged-footer', '@bottom-center']]) {
     if (!html.includes(token)) failures.push(`missing styled element: ${name}`)
   }
 

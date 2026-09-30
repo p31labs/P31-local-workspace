@@ -144,13 +144,15 @@ function renderHtml({ session, sections, summary, claims, verifySummary }) {
   const total = claims.length
   const thesis = summary.takeaway.replace(/<[^>]*>/g, '').slice(0, 120)
 
-  // Evidence appendix as a TABLE, not a wall of blocks.
+  // Evidence appendix as a TABLE, not a wall of blocks. Each row cites its
+  // evidence-ledger ID [E#] (researchloop pattern) for traceability.
   const evidenceRows = claims
     .map((c) => {
       const clean = c.sentence.replace(/\*\*/g, '').replace(/\*/g, '').slice(0, 90)
       const src = (c.sources ?? []).join(', ') || '—'
       const verdict = (c.verdict ?? 'no-source').toUpperCase()
-      return `<tr><td>${clean}</td><td class="mono">${src}</td><td class="mono ${verdict === 'VERIFIED' ? 'ok' : 'warn'}">${verdict}</td></tr>`
+      const lid = c.ledgerId ?? `E${(claims.indexOf(c)) + 1}`
+      return `<tr><td class="mono">${lid}</td><td>${clean}</td><td class="mono">${src}</td><td class="mono ${verdict === 'VERIFIED' ? 'ok' : 'warn'}">${verdict}</td></tr>`
     })
     .join('\n')
 
@@ -181,8 +183,12 @@ function renderHtml({ session, sections, summary, claims, verifySummary }) {
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; }
   body { font-family: var(--sans); color: var(--text); background: var(--paper); font-size: 11pt; line-height: 1.6; }
+  /* Baseline grid + typographic controls (kami + effective-print-design) */
+  body { orphans: 3; widows: 3; }
+  h1, h2, h3 { break-after: avoid; }
+  table, .card, blockquote { break-inside: avoid; }
 
-  /* ── COVER (dark) ── */
+  /* ── COVER (dark, ATS bar: dark #0D0D12 only on the cover) ── */
   .cover { background: var(--ink); color: #E6F1FF; padding: 3.5cm 2.5cm 2.5cm; min-height: 100vh; page-break-after: always; }
   .cover .kicker { font-family: var(--mono); font-size: 10pt; color: var(--accent); letter-spacing: 0.12em; text-transform: uppercase; }
   .cover h1 { font-family: var(--serif); font-size: 34pt; line-height: 1.15; margin: 0.6cm 0; font-weight: 400; }
@@ -190,7 +196,7 @@ function renderHtml({ session, sections, summary, claims, verifySummary }) {
   .cover .meta { font-family: var(--mono); font-size: 9pt; color: #8FA3B5; line-height: 1.8; }
   .cover .striking { font-size: 48pt; font-weight: 700; color: var(--accent); margin-top: 1.5cm; }
 
-  /* ── CONTENT ── */
+  /* ── CONTENT (warm cream — NOT white, per kami) ── */
   .page { max-width: 17cm; margin: 0 auto; padding: 1.5cm 1.2cm; }
   .methodology { font-family: var(--mono); font-size: 8.5pt; color: var(--text-dim); border-top: 1px solid var(--rule); padding-top: 0.6cm; margin: 1.2cm 0; }
   h2 { font-family: var(--serif); font-size: 18pt; color: var(--ink); border-bottom: 2px solid var(--accent); padding-bottom: 4px; margin-top: 1.2cm; page-break-before: always; }
@@ -200,26 +206,47 @@ function renderHtml({ session, sections, summary, claims, verifySummary }) {
   .body strong { color: var(--ink); }
   .body blockquote { border-left: 3px solid var(--accent); margin: 0.4cm 0; padding-left: 0.6cm; color: var(--text-dim); font-style: italic; }
   .summary-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.4cm; margin: 0.5cm 0; }
-  .card { background: #fff; border: 1px solid var(--rule); border-radius: 8px; padding: 0.4cm 0.5cm; page-break-inside: avoid; }
+  /* Warm card surface — the kami rule: warm cream, never pure #fff */
+  .card { background: #FDFCFA; border: 1px solid var(--rule); border-radius: 8px; padding: 0.4cm 0.5cm; page-break-inside: avoid; }
   .card .lbl { font-family: var(--mono); font-size: 8pt; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-dim); }
   .card .val { font-size: 11pt; }
 
-  /* ── EVIDENCE TABLE ── */
+  /* ── EVIDENCE TABLE (tabular-nums — numbers stack consistently) ── */
   table { width: 100%; border-collapse: collapse; margin: 0.5cm 0; page-break-inside: avoid; }
   th { font-family: var(--mono); font-size: 8.5pt; text-transform: uppercase; letter-spacing: 0.08em; text-align: left; color: var(--text-dim); border-bottom: 1px solid var(--ink); padding: 6px 8px; }
   td { border-bottom: 1px solid var(--rule); padding: 6px 8px; font-size: 9.5pt; vertical-align: top; }
-  .mono { font-family: var(--mono); font-size: 8.5pt; }
+  .mono { font-family: var(--mono); font-size: 8.5pt; font-variant-numeric: tabular-nums; }
   .ok { color: var(--verified); font-weight: 600; }
   .warn { color: var(--warn); }
 
-  /* ── RUNNING FOOTER ── */
+  /* ── PAGED MEDIA (native Chrome 131+ margin boxes — the running footer
+        repeats on every content page; the cover is its own named page) ── */
   @media print {
-    @page { size: A4; margin: 20mm 16mm; }
-    @page :first { margin: 0; }
-    .cover { min-height: auto; height: 297mm; }
+    @page {
+      size: A4;
+      margin: 20mm 16mm 22mm;
+      @bottom-center {
+        content: 'P31 Labs · CC BY-SA 4.0 · p31ca.org · github.com/p31labs';
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 8pt;
+        color: #8FA3B5;
+      }
+      @bottom-right {
+        content: counter(page);
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 9pt;
+        color: #8FA3B5;
+      }
+    }
+    @page cover-page {
+      margin: 0;
+      @bottom-center { content: none; }
+      @bottom-right { content: none; }
+    }
+    .cover { page: cover-page; min-height: auto; height: 297mm; }
     body { font-size: 10.5pt; }
   }
-  .footer { font-family: var(--mono); font-size: 8pt; color: var(--text-dim); text-align: center; margin-top: 1.5cm; }
+  .footer { display: none; } /* replaced by native @page margin boxes */
 </style>
 </head>
 <body>
@@ -251,7 +278,7 @@ function renderHtml({ session, sections, summary, claims, verifySummary }) {
     <section class="chapter">
       <h2>Evidence Appendix</h2>
       <table>
-        <thead><tr><th>Claim</th><th>Source</th><th>Verdict</th></tr></thead>
+        <thead><tr><th>ID</th><th>Claim</th><th>Source</th><th>Verdict</th></tr></thead>
         <tbody>${evidenceRows}</tbody>
       </table>
     </section>
