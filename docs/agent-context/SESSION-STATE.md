@@ -191,6 +191,36 @@ Do NOT touch runs/ until run 3 completes.
 | Template extracted | booklet/report.css (4291 chars) | reusable, gate checks it exists + vocabulary |
 | Pipeline green | run-report session 04311260 | gate PASSED, PDF 109KB |
 
+## Verified facts (added: production modules, 2026-09-29)
+
+| Fact | Verification command | Result |
+|---|---|---|
+| Plain-language Summary contract | `__testSummaryPrompt` | plain FK 5.8<=8 ok, dense 22.0>8 rejected |
+| CONVERGE_SYSTEM requires ## Summary | grep jitterbug.mjs | present (grade 6-8, 200-350 words) |
+| Font base64 embedding | embed-fonts.mjs | real font -> 507KB data-URI CSS |
+| Layout gate | check-layout.py | catches widow page (1-line) + orphan start |
+| Report gate grade-8 hard | NC dense takeaway | FK >8 = DRAFT, fails |
+| Verify suite | verify.mjs | 22/22 PASS |
+
+## Honest finding (2026-09-29): glm-5.3 skipped the ## Summary section
+A depth-1 jitterbug run (session b1839d41) with the NEW prompt produced only
+Consensus/Divergence/Synthesis — the model did NOT emit ## Summary. Its report
+fails the grade-8 gate (FK 9.7, DRAFT) as designed. Old/Summary-less sessions
+cannot pass the plain-language gate; they need re-running with the new prompt.
+
+## Open threads (NOT active — one at a time)
+
+- **summary-enforcement**: the model sometimes skips ## Summary. Options:
+  re-run on gate-DRAFT (loop), or post-validate the convergence and re-prompt
+  once when Summary is absent. The gate currently hard-fails (honest) but the
+  pipeline stops before PDF.
+- **fonts-to-ship**: put real Lora/JetBrains Mono/Plus Jakarta Sans woff2 in
+  software/p31-forge/fonts/ to embed (currently DejaVu fallback).
+- **layout-vision-loop**: PaperFit pattern — render pages to images, detect
+  margin overflow/rivers/balance (text-detectable subset is built).
+- **report-vs-ats-side-by-side**: read /tmp/report/<session>.report.pdf next
+  to /home/p31/P31 Labs — ATS Accelerator 2026.pdf.
+
 ## Open threads (NOT active — one at a time)
 
 - **report-vs-ats-side-by-side**: open /tmp/report/04311260.report.pdf next
