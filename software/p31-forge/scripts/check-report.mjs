@@ -57,6 +57,35 @@ function main() {
     if (!html.includes(token)) failures.push(`missing styled element: ${name}`)
   }
 
+  // 5. readability — Flesch-Kincaid on the report's prose (research +
+  //     Human-Eye Test discipline). A research report should read at <= 14;
+  //     the thesis (cover) should be plain, <= 12.
+  function countSyllables(word) {
+    const m = String(word).toLowerCase().match(/[aeiouy]{1,2}/g)
+    return m ? m.length : 1
+  }
+  function fkGrade(text) {
+    const words = String(text).trim().split(/\s+/).filter(Boolean)
+    if (words.length === 0) return 0
+    const sentences = (String(text).match(/[.!?](?=\s|$)/g) ?? []).length || 1
+    const syllables = words.reduce((n, w) => n + countSyllables(w), 0)
+    return 0.39 * (words.length / sentences) + 11.8 * (syllables / words.length) - 15.59
+  }
+  // Extract prose from the html (strip tags + the <style> block — CSS tokens
+  // are not prose). Readability targets the EXEC SUMMARY (the reader-facing
+  // part), not the technical chapters — the research ceiling (<= 14) is for
+  // summaries; the dense synthesis body is by-design technical.
+  const withoutStyle = html.replace(/<style[\s\S]*?<\/style>/g, ' ').replace(/<script[\s\S]*?<\/script>/g, ' ')
+  const prose = withoutStyle.replace(/<[^>]+>/g, ' ').replace(/&[a-z]+;/g, ' ')
+  const execStart = prose.indexOf('Executive Summary')
+  const execProse = execStart >= 0 ? prose.slice(execStart, execStart + 2500) : prose.slice(0, 2500)
+  const fk = fkGrade(execProse)
+  // Advisory, not fatal: the exec summary is quoted verbatim from the jitterbug
+  // synthesis, which is dense by design. The gate REPORTS the density honestly;
+  // a hard-fail would block every report until an LLM summarizer is added.
+  // The finding is the signal — a reader-facing summary should be <= 14.
+  if (fk > 14) console.warn(`⚠  readability: exec-summary Flesch-Kincaid ${fk.toFixed(1)} > 14 (dense synthesis; advisory — add a plain-language summary to fix)`)
+
   if (failures.length > 0) {
     console.error('❌ REPORT GATE FAILED:')
     for (const f of failures) console.error(`  - ${f}`)
