@@ -181,6 +181,27 @@ Do NOT touch runs/ until run 3 completes.
 | kami discipline | CSS | warm cards #FDFCFA, tabular-nums, orphans/widows 3 |
 | ATS reference bar | /home/p31/P31 Labs — ATS Accelerator 2026.pdf | running footer + hierarchy now matched |
 
+## Verified facts (added: escape hatch closed + template, 2026-09-29)
+
+| Fact | Verification command | Result |
+|---|---|---|
+| Readability gate HARD (no advisory) | NC-dense takeaway FK 21.3 | gate FAILS exit 1 (DRAFT) |
+| FK-aware takeaway selector | render-report execSummary | plain line lifted, gate passes |
+| Font delivery fixed | fc-list (no JetBrains/Lora/PJK) | DejaVu Serif/Sans/Mono named first |
+| Template extracted | booklet/report.css (4291 chars) | reusable, gate checks it exists + vocabulary |
+| Pipeline green | run-report session 04311260 | gate PASSED, PDF 109KB |
+
+## Open threads (NOT active — one at a time)
+
+- **report-vs-ats-side-by-side**: open /tmp/report/04311260.report.pdf next
+  to the ATS reference. The test: does a reader learn the finding in 10s,
+  with comparable hierarchy + running footer. This is the acceptance test.
+- **layout-defect-gate**: render pages to images, scan for orphan/widow
+  overflow (textestvis pattern). Chromium is present.
+- **live-jitterbug-wiring**: prompt-in-report-out (run jitterbug then report).
+- **second-document-type**: the extracted report.css enables a governance
+  memo or grant template sharing the same vocabulary.
+
 ## Open threads (NOT active — one at a time)
 
 - **plain-language-exec-summary**: the FK 18.8 finding — the exec summary
