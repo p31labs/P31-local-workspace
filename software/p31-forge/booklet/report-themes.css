@@ -1,0 +1,117 @@
+/* report-themes.css — multi-theme token system.
+   Pattern: :root for the default, [data-theme="X"] for alternates.
+   The switcher sets document.documentElement.dataset.theme and persists
+   to localStorage. All components consume only these tokens. */
+
+:root {
+  /* ── SCENE (default: P31 dark cover, warm content, cyan accent) ── */
+  --cover-bg: #0D0D12;
+  --cover-text: #E6F1FF;
+  --cover-muted: #8FA3B5;
+  --page-bg: #FAF7F2;
+  --page-surface: #FDFCFA;
+  --page-raised: #F2EDE6;
+  --text-primary: #1A1A1A;
+  --text-secondary: #57606A;
+  --text-muted: #8B949E;
+  --border: #E6E4DC;
+  --border-strong: #D4D0C5;
+  --accent: #2BB3D9;
+  --accent-soft: #E5F6FB;
+  --accent-text: #0E7FA8;
+  --ok: #1F9D55;
+  --ok-soft: #EAF2ED;
+  --warn: #B7791F;
+  --warn-soft: #FEF3CD;
+  --danger: #C0392B;
+  --danger-soft: #FDE8E8;
+  --font-display: 'DejaVu Serif', 'Lora', Georgia, serif;
+  --font-body: 'DejaVu Sans', 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-mono: 'DejaVu Sans Mono', 'JetBrains Mono', ui-monospace, monospace;
+}
+
+[data-theme="editorial"] {
+  /* ── EDITORIAL (warm parchment, ink blue, serif-forward) ── */
+  --cover-bg: #1B365D;
+  --cover-text: #F5F4ED;
+  --cover-muted: #A8B5C8;
+  --page-bg: #F5F4ED;
+  --page-surface: #FDFCF8;
+  --page-raised: #EBE8DE;
+  --text-primary: #141210;
+  --text-secondary: #5A544C;
+  --text-muted: #8A8278;
+  --border: #E2DDD0;
+  --border-strong: #CFC7B6;
+  --accent: #1B365D;
+  --accent-soft: #E8EDF4;
+  --accent-text: #1B365D;
+  --ok: #2E7D4F;
+  --ok-soft: #E7F1EB;
+  --warn: #A66A0F;
+  --warn-soft: #FBF1DE;
+  --danger: #A8322A;
+  --danger-soft: #F7E5E3;
+  --font-display: 'DejaVu Serif', 'Lora', Georgia, serif;
+  --font-body: 'DejaVu Sans', system-ui, sans-serif;
+  --font-mono: 'DejaVu Sans Mono', ui-monospace, monospace;
+}
+
+[data-theme="consulting"] {
+  /* ── CONSULTING (McKinsey-adjacent: navy, white, clean sans) ── */
+  --cover-bg: #1A365D;
+  --cover-text: #FFFFFF;
+  --cover-muted: #A0B4CC;
+  --page-bg: #FFFFFF;
+  --page-surface: #F7FAFC;
+  --page-raised: #EBF4FF;
+  --text-primary: #1A202C;
+  --text-secondary: #4A5568;
+  --text-muted: #718096;
+  --border: #E2E8F0;
+  --border-strong: #CBD5E0;
+  --accent: #3182CE;
+  --accent-soft: #EBF4FF;
+  --accent-text: #2C5282;
+  --ok: #2F855A;
+  --ok-soft: #F0FFF4;
+  --warn: #C05621;
+  --warn-soft: #FFFAF0;
+  --danger: #C53030;
+  --danger-soft: #FFF5F5;
+  --font-display: 'DejaVu Sans', system-ui, sans-serif;
+  --font-body: 'DejaVu Sans', system-ui, sans-serif;
+  --font-mono: 'DejaVu Sans Mono', ui-monospace, monospace;
+}
+
+[data-theme="midnight"] {
+  /* ── MIDNIGHT (full dark for screen reading) ── */
+  --cover-bg: #0A0A0F;
+  --cover-text: #E4E4EB;
+  --cover-muted: #6E7681;
+  --page-bg: #111118;
+  --page-surface: #1A1A22;
+  --page-raised: #22222C;
+  --text-primary: #E4E4EB;
+  --text-secondary: #A8A8B3;
+  --text-muted: #6E7681;
+  --border: #2A2A35;
+  --border-strong: #3A3A48;
+  --accent: #4CC9F0;
+  --accent-soft: #0F2A38;
+  --accent-text: #4CC9F0;
+  --ok: #4ADE80;
+  --ok-soft: #0F2A1A;
+  --warn: #FBBF24;
+  --warn-soft: #2A2010;
+  --danger: #F87171;
+  --danger-soft: #2A1010;
+  --font-display: 'DejaVu Serif', Georgia, serif;
+  --font-body: 'DejaVu Sans', system-ui, sans-serif;
+  --font-mono: 'DejaVu Sans Mono', monospace;
+}
+
+/* Auto-select midnight for dark-mode readers; scene otherwise. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) { color-scheme: dark; }
+}

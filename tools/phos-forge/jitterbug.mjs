@@ -85,6 +85,12 @@ Output in EXACTLY this structure, in this order:
 ## Summary
 A plain-language summary for a general reader (Flesch-Kincaid grade 6-8, 200-350 words). Define technical terms before using them. Use short sentences (12-18 words). Prefer common words. Structure: one-sentence framing, then 3-4 key findings as short paragraphs, then one closing sentence on why it matters. NO bullets, NO bold, NO citation markers, NO jargon without defining it. This summary is the reader-facing part of the report.
 
+## Key Metrics
+Output 3-5 key metrics as short lines, each on its own bullet, in EXACTLY this form:
+- **Metric name**: value (one-line context)
+- **Metric name**: value (one-line context)
+Each value must be a concrete number, percentage, or comparable — the single most decision-relevant figure from the research. No metric without a number. This section renders as KPI cards on the report's executive summary page.
+
 ## Consensus
 What all research outputs agree on. Common themes, shared conclusions, compatible recommendations.
 
@@ -172,10 +178,34 @@ async function runConvergence(researchTexts, privacy, session, level) {
     }
   }
 
+  // Key Metrics enforcement — same bounded one-retry pattern as Summary.
+  // The ## Key Metrics section feeds the KPI cards on the exec page; the
+  // model may skip it. Retry once for just the metrics block, prepend it.
+  let metricsSource = /^##\s+Key Metrics\b/m.test(synthesis) ? 'original' : 'missing';
+  if (metricsSource === 'missing') {
+    const retry = await callLLM(
+      'You are a metrics extractor. The synthesis below omitted its required ## Key Metrics section. Produce ONLY the ## Key Metrics section now — 3-5 bullets in EXACTLY this form: "- **Metric name**: value (one-line context)". Each value must be a concrete number/percentage/comparable. Output just the "## Key Metrics" heading and the bullets.',
+      synthesis.slice(0, 4000),
+      {
+        intent: { task: 'synthesis', tag: 'synthesis', privacy },
+        maxTokens: 600,
+        temperature: 0.2,
+        sessionId: session,
+      },
+    );
+    const retryMetrics = String(retry ?? '').trim();
+    if (/^##\s+Key Metrics\b/m.test(retryMetrics) && /-\s+\*\*/.test(retryMetrics)) {
+      // Insert Key Metrics right after the Summary section (or at the top).
+      const idx = synthesis.indexOf('\n## ');
+      const insertAt = idx > 0 ? idx : synthesis.length;
+      synthesis = synthesis.slice(0, insertAt) + '\n\n' + retryMetrics + synthesis.slice(insertAt);
+      metricsSource = 'retry';
+    }
+  }
+
   // Record the convergence decision in the audit chain — the convergence is
-  // itself a governed artifact. summarySource records which path produced the
-  // reader-facing summary (original | retry | missing) so the report's
-  // provenance is traceable.
+  // itself a governed artifact. summarySource + metricsSource record which
+  // path produced the reader-facing summary/metrics so provenance is total.
   busEmit('jitterbug.convergence_completed', {
     session, level,
     convergenceLevel: result.level,
@@ -183,6 +213,7 @@ async function runConvergence(researchTexts, privacy, session, level) {
     stageTrace: result.stageTrace,
     errors: result.errors,
     summarySource,
+    metricsSource,
   });
 
   return synthesis;

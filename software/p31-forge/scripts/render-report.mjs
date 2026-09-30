@@ -41,11 +41,23 @@ const SCENE = {
   border: 'rgba(255,255,255,0.08)',
 }
 
-// The report design vocabulary lives in booklet/report.css (the reusable
-// template). Loaded here so the report stays self-contained at render time
-// while the CSS is editable as a file, not a template literal.
-const REPORT_CSS = existsSync(resolve(HERE, '..', 'booklet', 'report.css'))
-  ? readFileSync(resolve(HERE, '..', 'booklet', 'report.css'), 'utf8')
+// The report design vocabulary lives in booklet/. report-themes.css (the
+// multi-theme token file) loads FIRST so report.css (the component library,
+// which consumes tokens only) can reference the theme variables. Loaded here
+// so the report stays self-contained at render time.
+const REPORT_CSS = [
+  existsSync(resolve(HERE, '..', 'booklet', 'report-themes.css'))
+    ? readFileSync(resolve(HERE, '..', 'booklet', 'report-themes.css'), 'utf8')
+    : '',
+  existsSync(resolve(HERE, '..', 'booklet', 'report.css'))
+    ? readFileSync(resolve(HERE, '..', 'booklet', 'report.css'), 'utf8')
+    : '',
+].join('\n')
+
+// Theme picker script — injected before </body> so the report has the
+// data-theme switcher (hidden in print).
+const THEME_PICKER_JS = existsSync(resolve(HERE, '..', 'booklet', 'theme-picker.js'))
+  ? readFileSync(resolve(HERE, '..', 'booklet', 'theme-picker.js'), 'utf8')
   : ''
 
 // Embedded fonts (base64 data URIs) — empty unless fonts/ has real font files.
@@ -166,19 +178,48 @@ function renderMarkdown({ session, sections, summary, claims }) {
 }
 
 // A Markdown-ish body section to HTML paragraphs + bold labels.
+// Lift marked output into the report's component vocabulary. The five
+// specific lifts (an allowlist, not a catch-all):
+//   <table>             -> .data-table
+//   <blockquote>        -> .pull-quote
+//   "**Label**: N (ctx)" bullet -> .kpi-card (from ## Key Metrics)
+//   "**Label**: text"   -> .callout
+//   1. **Bold:** item   -> .rec-card (numbered recommendations)
+function toComponents(html) {
+  let out = html
+  out = out.replace(/<table>/g, '<table class="data-table">')
+  out = out.replace(/<blockquote>/g, '<blockquote class="pull-quote">')
+  // KPI lift: bullet "**Metric**: value (detail)" -> KPI card
+  out = out.replace(
+    /<li>\*\*([^*]+)\*\*:\s*([^<]+)(?:\(([^<]+)\))?<\/li>/g,
+    (_, label, value, detail) =>
+      `<li class="kpi-card"><div class="kpi-label">${label.trim()}</div><div class="kpi-value">${value.trim()}</div>${detail ? `<div class="kpi-detail">${detail.trim()}</div>` : ''}</li>`,
+  )
+  // Callout lift: paragraph "**Label**: text" -> callout
+  out = out.replace(
+    /<p><strong>([^<]+)<\/strong>:\s*([\s\S]*?)<\/p>/g,
+    (_, label, body) =>
+      `<div class="callout"><div class="callout-label">${label.trim()}</div><p>${body.trim()}</p></div>`,
+  )
+  // Recommendation lift: ordered item "**Bold**: text" -> rec-card
+  out = out.replace(
+    /<li>\*\*([^*]+)\*\*:\s*([\s\S]*?)<\/li>/g,
+    (_, title, desc) =>
+      `<li class="rec-card"><div class="rec-num">•</div><div class="rec-body"><div class="rec-title">${title.trim()}</div><div class="rec-desc">${desc.trim()}</div></div></li>`,
+  )
+  return out
+}
+
 function mdToHtmlFrag(body) {
   // A real Markdown parser (marked) emits well-formed HTML: <ul><li>,
-  // <h2>, <table>, <blockquote>, nested lists, code. The hand-rolled
-  // regex loop produced BARE <li> with no <ul> wrapper — which is why
-  // bullets rendered as loose unstyled text and content pages collapsed
-  // to browser defaults. The CSS targets the well-formed structure marked
-  // produces, so the design vocabulary now applies.
+  // <h2>, <table>, <blockquote>, nested lists, code. Then toComponents()
+  // lifts structural patterns into the component vocabulary so content
+  // pages render as designed elements, not bare prose.
   const html = marked.parse(String(body ?? ''), { gfm: true })
-  return html
+  return toComponents(html)
 }
 
 function renderHtml({ session, sections, summary, claims, verifySummary }) {
-  const verifiedCount = claims.filter((c) => c.verdict === 'verified').length
   const total = claims.length
   // Fix 1 + 3: the cover thesis is the FIRST COMPLETE SENTENCE of the plain
   // summary, not a 120-char truncation (which cut mid-word). The title is
@@ -209,6 +250,15 @@ function renderHtml({ session, sections, summary, claims, verifySummary }) {
   }
   if (!title) title = 'P31 Research Report'
   const titleTag = title !== 'P31 Research Report' ? `${title} — P31 Research Report` : 'P31 Research Report'
+
+  // KPI grid from the ## Key Metrics section: '- **Metric**: value (detail)'
+  // lines become .kpi-card elements on the exec summary page.
+  const metricsBody = String(sections['Key Metrics']?.body ?? sections['Key Metrics'] ?? '')
+  const kpiCards = [...metricsBody.matchAll(/-\s+\*\*([^*]+)\*\*:\s*([^\n(]+)(?:\(([^\n)]+)\))?/g)]
+    .map((m) => `<div class="kpi-card"><div class="kpi-label">${m[1].trim()}</div><div class="kpi-value">${m[2].trim()}</div>${m[3] ? `<div class="kpi-detail">${m[3].trim()}</div>` : ''}</div>`)
+  const kpiGrid = kpiCards.length
+    ? `<section class="chapter"><h2>Key Metrics</h2><div class="kpi-grid">${kpiCards.join('\n')}</div></section>`
+    : ''
 
   // Evidence appendix as a TABLE, not a wall of blocks. Each row cites its
   // evidence-ledger ID [E#] (researchloop pattern) for traceability.
@@ -246,33 +296,35 @@ ${REPORT_CSS}
 </head>
 <body>
   <section class="cover">
-    <div class="kicker">P31 Labs · Sovereign Research</div>
+    <div class="cover-kicker">P31 Labs · Sovereign Research</div>
     <h1>${title}</h1>
-    <p class="thesis">${thesis || 'Synthesis of the researched material.'}</p>
-    <div class="meta">
+    <p class="cover-thesis">${thesis || 'Synthesis of the researched material.'}</p>
+    <div class="cover-meta">
       <div>Session ${session}</div>
       <div>${new Date().toISOString().slice(0, 10)}</div>
-      <div>scene palette · sovereign pipeline</div>
+      <div>sovereign pipeline · ${Object.keys(sections).length} sections synthesized</div>
     </div>
-    <div class="striking">${Object.keys(sections).length}</div>
-    <div class="meta" style="font-size:8pt;color:#8FA3B5">sections synthesized</div>
+    <div class="cover-stat">${Object.keys(sections).length}</div>
+    <div class="cover-stat-label">sections synthesized</div>
   </section>
 
   <main class="page">
     <section class="chapter">
       <h2>Executive Summary</h2>
-      <div class="summary-cards">
-        <div class="card"><div class="lbl">Question</div><div class="val">${summary.question}</div></div>
-        <div class="card"><div class="lbl">Takeaway</div><div class="val">${summary.takeaway}</div></div>
+      <div class="summary-grid">
+        <div class="summary-card"><div class="label">Question</div><div class="value">${summary.question}</div></div>
+        <div class="summary-card summary-card--wide"><div class="label">Takeaway</div><div class="value">${summary.takeaway}</div></div>
       </div>
       ${summary.keyFindings.length ? `<h3>Key findings</h3><ul>${summary.keyFindings.map((k) => `<li>${k.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')}</li>`).join('')}</ul>` : ''}
     </section>
+
+    ${kpiGrid}
 
     ${chapters}
 
     <section class="chapter">
       <h2>Evidence Appendix</h2>
-      <table>
+      <table class="data-table">
         <thead><tr><th>ID</th><th>Claim</th><th>Source</th><th>Verdict</th></tr></thead>
         <tbody>${evidenceRows}</tbody>
       </table>
@@ -281,9 +333,8 @@ ${REPORT_CSS}
     <div class="methodology">
       METHODOLOGY — jitterbug research (${verifySummary?.total ?? total} claims extracted by deterministic AST parser). Attribution: internal facet labels are synthesis prose; only external standards/works become evidence rows. Verification: claims checked against VERIFIED_FACTS.md + CITATION_LEDGER.md. Unverified = named source not in P31 grounding ledgers.
     </div>
-
-    <div class="footer">P31 Labs · CC BY-SA 4.0 · p31ca.org · github.com/p31labs</div>
   </main>
+  <script>${THEME_PICKER_JS}</script>
 </body>
 </html>`
 }

@@ -45,7 +45,7 @@ function main() {
   if (backslashEsc > 0) failures.push(`backslash-escape artifact: ${backslashEsc} found`)
 
   // 3. appendix must be a table, not blockquotes
-  const hasTable = /<table>/.test(html)
+  const hasTable = /<table[^>]*>/.test(html)
   const quoteBlocks = (html.match(/✓ EVIDENCE/g) ?? []).length
   if (!hasTable) failures.push('evidence appendix is not a table')
   if (quoteBlocks > 3) failures.push(`evidence wall: ${quoteBlocks} blockquote evidence blocks (should be a table)`)
@@ -53,7 +53,7 @@ function main() {
   if (!/<th>ID<\/th>/.test(html)) failures.push('evidence table missing ledger-ID column ([E#] traceability)')
 
   // 4. styled vocabulary present
-  for (const [name, token] of [['cover', 'class="cover"'], ['methodology', 'class="methodology"'], ['striking', 'class="striking"'], ['appendix', 'Evidence Appendix'], ['paged-footer', '@bottom-center'], ['chapter-kicker', 'chapter-kicker']]) {
+  for (const [name, token] of [['cover', 'class="cover"'], ['methodology', 'class="methodology"'], ['cover-stat', 'cover-stat'], ['appendix', 'Evidence Appendix'], ['paged-footer', '@bottom-center'], ['chapter-kicker', 'chapter-kicker'], ['theme-picker', 'theme-picker']]) {
     if (!html.includes(token)) failures.push(`missing styled element: ${name}`)
   }
 
@@ -69,7 +69,7 @@ function main() {
   // The `val`/`lbl` classes ARE styled via descendant selectors (.card .val,
   // .card .lbl) which the flat regex misses — they resolve through a parent
   // rule. Everything else used-but-unstyled is a genuine vocabulary gap.
-  const descendantOnly = ['val', 'lbl']
+  const descendantOnly = ['value', 'label', 'kpi-value', 'kpi-label', 'kpi-detail', 'rec-num', 'rec-body', 'rec-title', 'rec-desc', 'callout-label', 'banner-icon']
   const genuinelyUnstyled = unstyled.filter((c) => !descendantOnly.includes(c))
   if (genuinelyUnstyled.length > 0) {
     failures.push(`CSS-use: classes used in HTML but NOT styled in CSS: ${genuinelyUnstyled.join(', ')} (vocabulary presence, not use — DRAFT)`)
@@ -103,7 +103,7 @@ function main() {
   // plain-language ## Summary section verbatim when the session has one).
   // The research ceiling for a plain-language summary is grade 6-8 (JMIR 2026
   // community-engaged study); a general-audience report targets <= 8.
-  const tkMatch = /Takeaway<\/div><div class="val">([^<]+)/.exec(html)
+  const tkMatch = /Takeaway<\/div><div class="value">([^<]+)/.exec(html)
   const takeawayText = tkMatch ? tkMatch[1] : 'Synthesis of the researched material across facets.'
   const fk = fkGrade(takeawayText)
   // Ceiling: grade 10. Research (JMIR 2026 + iHE) — plain exec summaries land

@@ -1,89 +1,286 @@
-  :root {
-    --ink: #0D0D12; --surface: #15151C; --paper: #FAF7F2;
-    --text: #1A1A1A; --text-dim: #5A5A5A; --accent: #2BB3D9;
-    --verified: #1F9D55; --warn: #B7791F; --rule: #E6E4DC;
-    --mono: 'DejaVu Sans Mono', 'JetBrains Mono', ui-monospace, monospace;
-    --serif: 'DejaVu Serif', 'Lora', Georgia, serif;
-    --sans: 'DejaVu Sans', 'Plus Jakarta Sans', system-ui, sans-serif;
+/* report.css — enterprise research report component library.
+   Every element is a named component. Content pages look designed because
+   they CONTAIN designed elements (KPI grids, data tables, callouts),
+   not because the typography is better.
+   Consumes tokens from report-themes.css only. */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { color-scheme: light dark; }
+body {
+  font-family: var(--font-body);
+  font-size: 11pt;
+  line-height: 1.6;
+  color: var(--text-primary);
+  background: var(--page-bg);
+  orphans: 3; widows: 3;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── PAGE SYSTEM ── */
+.page { max-width: 20cm; margin: 0 auto; padding: 1.5cm 1.2cm; }
+
+/* ── COVER ── */
+.cover {
+  background: var(--cover-bg);
+  color: var(--cover-text);
+  padding: 3.5cm 2.5cm 2.5cm;
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  page-break-after: always;
+}
+.cover-kicker {
+  font-family: var(--font-mono); font-size: 10pt;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 0.8cm;
+}
+.cover h1 {
+  font-family: var(--font-display); font-size: 34pt;
+  font-weight: 400; line-height: 1.12;
+  letter-spacing: -0.015em; margin-bottom: 0.6cm;
+  max-width: 16cm;
+}
+.cover-thesis {
+  font-size: 13pt; line-height: 1.5;
+  color: var(--cover-muted); max-width: 14cm;
+  margin-bottom: auto;
+}
+.cover-meta {
+  font-family: var(--font-mono); font-size: 8.5pt;
+  color: var(--cover-muted); letter-spacing: 0.06em;
+  line-height: 1.9; margin-top: 1.2cm;
+}
+.cover-stat {
+  font-family: var(--font-mono); font-size: 44pt;
+  font-weight: 700; color: var(--accent);
+  line-height: 1; margin-top: 1cm;
+}
+.cover-stat-label {
+  font-family: var(--font-mono); font-size: 8.5pt;
+  text-transform: uppercase; letter-spacing: 0.12em;
+  color: var(--cover-muted);
+}
+
+/* ── CHAPTER ── */
+.chapter { margin: 0 0 1.4cm; break-before: page; }
+.chapter:first-of-type { break-before: auto; }
+.chapter-kicker {
+  font-family: var(--font-mono); font-size: 8pt;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 6px;
+}
+.chapter h2 {
+  font-family: var(--font-display); font-size: 20pt;
+  font-weight: 400; color: var(--text-primary);
+  letter-spacing: -0.01em; line-height: 1.2;
+  border-bottom: 2px solid var(--accent);
+  padding-bottom: 6px; margin-bottom: 0.5cm;
+  break-after: avoid;
+}
+.chapter h3 {
+  font-size: 13pt; font-weight: 600;
+  color: var(--text-primary);
+  margin: 0.6cm 0 0.2cm; break-after: avoid;
+}
+
+/* ── BODY PROSE ── */
+.body { max-width: 17cm; }
+.body p { margin: 0.25cm 0; }
+.body strong { color: var(--text-primary); font-weight: 600; }
+.body a { color: var(--accent-text); text-decoration: underline; text-underline-offset: 2px; }
+
+/* ── LISTS (accent markers, proper grouping) ── */
+.body ul, .body ol {
+  margin: 0.35cm 0 0.35cm 0.4cm;
+  padding-left: 0.6cm;
+}
+.body li { margin: 0.12cm 0; line-height: 1.55; }
+.body ul li::marker { color: var(--accent); }
+.body ol li::marker { color: var(--accent); font-family: var(--font-mono); font-size: 0.9em; }
+
+/* ── PULL QUOTE (the one visual anchor that breaks prose) ── */
+.body blockquote, .pull-quote {
+  border-left: 3px solid var(--accent);
+  background: var(--accent-soft);
+  margin: 0.5cm 0; padding: 0.4cm 0.7cm;
+  font-size: 12pt; font-style: italic;
+  color: var(--text-secondary);
+  break-inside: avoid;
+}
+
+/* ── KPI GRID (from ## Key Metrics) ── */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(4cm, 1fr));
+  gap: 0.35cm; margin: 0.5cm 0;
+}
+.kpi-card {
+  background: var(--page-surface);
+  border: 1px solid var(--border);
+  border-radius: 8px; padding: 0.4cm 0.5cm;
+  break-inside: avoid;
+}
+.kpi-label {
+  font-family: var(--font-mono); font-size: 7.5pt;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--text-muted); margin-bottom: 4px;
+}
+.kpi-value {
+  font-family: var(--font-mono); font-size: 20pt;
+  font-weight: 700; line-height: 1.1;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+.kpi-value--ok { color: var(--ok); }
+.kpi-value--warn { color: var(--warn); }
+.kpi-value--danger { color: var(--danger); }
+.kpi-detail { font-size: 9pt; color: var(--text-secondary); margin-top: 2px; }
+
+/* ── SUMMARY CARDS (exec summary) ── */
+.summary-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 0.4cm; margin: 0.5cm 0;
+}
+.summary-card {
+  background: var(--page-surface);
+  border: 1px solid var(--border);
+  border-radius: 8px; padding: 0.45cm 0.55cm;
+  break-inside: avoid;
+}
+.summary-card--wide { grid-column: 1 / -1; }
+.summary-card .label {
+  font-family: var(--font-mono); font-size: 7.5pt;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--text-muted); margin-bottom: 4px;
+}
+.summary-card .value { font-size: 10.5pt; line-height: 1.5; }
+
+/* ── DATA TABLE ── */
+.data-table {
+  width: 100%; border-collapse: collapse;
+  margin: 0.5cm 0; break-inside: avoid;
+  font-size: 9.5pt;
+}
+.data-table thead th {
+  font-family: var(--font-mono); font-size: 8pt;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  text-align: left; color: var(--text-muted);
+  border-bottom: 2px solid var(--border-strong);
+  padding: 8px 10px; font-weight: 400;
+}
+.data-table td {
+  border-bottom: 1px solid var(--border);
+  padding: 8px 10px; vertical-align: top;
+}
+.data-table tbody tr:last-child td { border-bottom: none; }
+.data-table .mono {
+  font-family: var(--font-mono); font-size: 8.5pt;
+  font-variant-numeric: tabular-nums;
+}
+.data-table .ok { color: var(--ok); font-weight: 600; }
+.data-table .warn { color: var(--warn); }
+.data-table .danger { color: var(--danger); }
+
+/* ── CALLOUT (from **Label**: value patterns) ── */
+.callout {
+  background: var(--page-surface);
+  border: 1px solid var(--border);
+  border-radius: 8px; padding: 0.4cm 0.6cm;
+  margin: 0.45cm 0; break-inside: avoid;
+}
+.callout--accent { background: var(--accent-soft); border-color: var(--accent); }
+.callout--ok { background: var(--ok-soft); border-color: var(--ok); }
+.callout--warn { background: var(--warn-soft); border-color: var(--warn); }
+.callout--danger { background: var(--danger-soft); border-color: var(--danger); }
+.callout .callout-label {
+  font-family: var(--font-mono); font-size: 7.5pt;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--text-muted); margin-bottom: 4px;
+}
+
+/* ── PRIORITY BANNER ── */
+.banner {
+  display: flex; align-items: center; gap: 0.3cm;
+  padding: 0.3cm 0.5cm; border-radius: 8px;
+  font-size: 10pt; font-weight: 500;
+  margin: 0.4cm 0; break-inside: avoid;
+}
+.banner--info { background: var(--accent-soft); color: var(--accent-text); border: 1px solid var(--accent); }
+.banner--warn { background: var(--warn-soft); color: var(--warn); border: 1px solid var(--warn); }
+.banner--danger { background: var(--danger-soft); color: var(--danger); border: 1px solid var(--danger); }
+.banner-icon { font-size: 12pt; flex-shrink: 0; }
+
+/* ── RECOMMENDATION CARD (from numbered Synthesis items) ── */
+.rec-list { display: flex; flex-direction: column; gap: 0.3cm; margin: 0.5cm 0; }
+.rec-card {
+  display: flex; gap: 0.4cm;
+  background: var(--page-surface);
+  border: 1px solid var(--border);
+  border-radius: 8px; padding: 0.4cm 0.55cm;
+  break-inside: avoid;
+}
+.rec-num {
+  font-family: var(--font-mono); font-size: 16pt;
+  font-weight: 700; color: var(--accent);
+  min-width: 0.8cm; line-height: 1.1;
+}
+.rec-body { flex: 1; }
+.rec-title { font-weight: 600; font-size: 11pt; margin-bottom: 2px; }
+.rec-desc { font-size: 9.5pt; color: var(--text-secondary); }
+
+/* ── METHODOLOGY ── */
+.methodology {
+  font-family: var(--font-mono); font-size: 8pt;
+  line-height: 1.7; color: var(--text-muted);
+  border-top: 1px solid var(--border);
+  padding-top: 0.6cm; margin-top: 1.2cm;
+}
+
+/* ── THEME PICKER (hidden in print) ── */
+.theme-picker {
+  position: fixed; top: 1rem; right: 1rem;
+  display: flex; gap: 0.3rem; z-index: 100;
+  background: var(--page-surface);
+  border: 1px solid var(--border);
+  border-radius: 999px; padding: 0.25rem;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+.theme-swatch {
+  width: 1.4rem; height: 1.4rem; border-radius: 999px;
+  border: 2px solid transparent; cursor: pointer;
+  padding: 0; transition: transform 0.12s ease;
+}
+.theme-swatch:hover { transform: scale(1.15); }
+.theme-swatch[aria-pressed="true"] { border-color: var(--text-primary); }
+
+/* ── PRINT ── */
+@media print {
+  * { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  body { background: var(--page-bg); }
+  .theme-picker { display: none; }
+  .cover { min-height: auto; height: 297mm; }
+  @page {
+    size: A4;
+    margin: 20mm 16mm 22mm;
+    @bottom-center {
+      content: 'P31 Labs · Sovereign Research · p31ca.org';
+      font-family: 'DejaVu Sans Mono', monospace;
+      font-size: 8pt; color: #8FA3B5;
+    }
+    @bottom-right {
+      content: counter(page);
+      font-family: 'DejaVu Sans Mono', monospace;
+      font-size: 9pt; color: #8FA3B5;
+    }
   }
-  * { box-sizing: border-box; }
-  html, body { margin: 0; padding: 0; }
-  body { font-family: var(--sans); color: var(--text); background: var(--paper); font-size: 11pt; line-height: 1.6; }
-  /* Baseline grid + typographic controls (kami + effective-print-design) */
-  body { orphans: 3; widows: 3; }
-  h1, h2, h3 { break-after: avoid; }
-  table, .card, blockquote { break-inside: avoid; }
-
-  /* ── COVER (dark, ATS bar: dark #0D0D12 only on the cover) ── */
-  .cover { background: var(--ink); color: #E6F1FF; padding: 3.5cm 2.5cm 2.5cm; min-height: 100vh; page-break-after: always; }
-  .cover .kicker { font-family: var(--mono); font-size: 10pt; color: var(--accent); letter-spacing: 0.12em; text-transform: uppercase; }
-  .cover h1 { font-family: var(--serif); font-size: 34pt; line-height: 1.15; margin: 0.6cm 0; font-weight: 400; }
-  .cover .thesis { font-size: 14pt; color: #C4D7E6; max-width: 13cm; margin: 0 0 1.2cm; }
-  .cover .meta { font-family: var(--mono); font-size: 9pt; color: #8FA3B5; line-height: 1.8; }
-  .cover .striking { font-size: 48pt; font-weight: 700; color: var(--accent); margin-top: 1.5cm; }
-
-  /* ── CONTENT (warm cream — NOT white, per kami) ── */
-  .page { max-width: 17cm; margin: 0 auto; padding: 1.5cm 1.2cm; }
-  .methodology { font-family: var(--mono); font-size: 8.5pt; color: var(--text-dim); border-top: 1px solid var(--rule); padding-top: 0.6cm; margin: 1.2cm 0; }
-  h2 { font-family: var(--serif); font-size: 18pt; color: var(--ink); border-bottom: 2px solid var(--accent); padding-bottom: 4px; margin-top: 1.2cm; page-break-before: always; }
-  h2:first-of-type { page-break-before: auto; }
-  /* CHAPTER — scopes each section and gives it a designed rhythm. This was
-     the missing rule: the HTML carried class="chapter" but the CSS had no
-     .chapter selector, so sections rendered with zero spacing/scope. */
-  .chapter { margin: 0 0 1.2cm; break-before: page; }
+  @page cover-page {
+    margin: 0;
+    @bottom-center { content: none; }
+    @bottom-right { content: none; }
+  }
+  .cover { page: cover-page; }
+  .chapter { break-before: page; }
   .chapter:first-of-type { break-before: auto; }
-  .chapter h2 { margin-top: 0; }
-  /* Chapter kicker — the mono uppercase label above the section title that
-     frames each chapter as a named section (the ATS page-opening pattern:
-     'SECTION 02 · CONSENSUS' above 'Consensus'). Without it, content pages
-     read as continuation prose. */
-  .chapter-kicker { font-family: var(--mono); font-size: 8.5pt; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin: 0 0 4px; }
-  /* Body lists — marked now emits <ul><li>; style the markers + spacing so
-     bullets render as designed list items, not loose text. */
-  .body ul { margin: 0.4cm 0 0.4cm 0.9cm; padding-left: 0.5cm; }
-  .body ul li::marker { color: var(--accent); }
-  .body li { margin: 0.15cm 0; line-height: 1.55; }
-  .body strong { color: var(--ink); }
-  .body blockquote { border-left: 3px solid var(--accent); margin: 0.4cm 0; padding-left: 0.6cm; color: var(--text-dim); font-style: italic; }
-  .summary-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.4cm; margin: 0.5cm 0; }
-  /* Warm card surface — the kami rule: warm cream, never pure #fff */
-  .card { background: #FDFCFA; border: 1px solid var(--rule); border-radius: 8px; padding: 0.4cm 0.5cm; page-break-inside: avoid; }
-  .card .lbl { font-family: var(--mono); font-size: 8pt; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-dim); }
-  .card .val { font-size: 11pt; }
-
-  /* ── EVIDENCE TABLE (tabular-nums — numbers stack consistently) ── */
-  table { width: 100%; border-collapse: collapse; margin: 0.5cm 0; page-break-inside: avoid; }
-  th { font-family: var(--mono); font-size: 8.5pt; text-transform: uppercase; letter-spacing: 0.08em; text-align: left; color: var(--text-dim); border-bottom: 1px solid var(--ink); padding: 6px 8px; }
-  td { border-bottom: 1px solid var(--rule); padding: 6px 8px; font-size: 9.5pt; vertical-align: top; }
-  .mono { font-family: var(--mono); font-size: 8.5pt; font-variant-numeric: tabular-nums; }
-  .ok { color: var(--verified); font-weight: 600; }
-  .warn { color: var(--warn); }
-
-  /* ── PAGED MEDIA (native Chrome 131+ margin boxes — the running footer
-        repeats on every content page; the cover is its own named page) ── */
-  @media print {
-    @page {
-      size: A4;
-      margin: 20mm 16mm 22mm;
-      @bottom-center {
-        content: 'P31 Labs · CC BY-SA 4.0 · p31ca.org · github.com/p31labs';
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 8pt;
-        color: #8FA3B5;
-      }
-      @bottom-right {
-        content: counter(page);
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 9pt;
-        color: #8FA3B5;
-      }
-    }
-    @page cover-page {
-      margin: 0;
-      @bottom-center { content: none; }
-      @bottom-right { content: none; }
-    }
-    .cover { page: cover-page; min-height: auto; height: 297mm; }
-    body { font-size: 10.5pt; }
-  }
-  .footer { display: none; } /* replaced by native @page margin boxes */
+  h2, h3 { break-after: avoid; }
+  .kpi-card, .callout, .banner, .rec-card, .data-table { break-inside: avoid; }
+}
