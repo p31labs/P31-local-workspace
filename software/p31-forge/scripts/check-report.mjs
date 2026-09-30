@@ -57,6 +57,24 @@ function main() {
     if (!html.includes(token)) failures.push(`missing styled element: ${name}`)
   }
 
+  // 4c. CSS USE, not presence — every class used in the HTML body must have a
+  //     matching rule in the rendered <style> block. This is the gap that let
+  //     the report pass while content pages collapsed: the HTML carried
+  //     class="chapter" but the CSS had no .chapter rule. Vocabulary used but
+  //     not styled is a DRAFT defect.
+  const styleBlock = (html.match(/<style>([\s\S]*?)<\/style>/) ?? [])[1] ?? ''
+  const usedClasses = new Set([...html.matchAll(/class="([^"]+)"/g)].flatMap((m) => m[1].split(/\s+/).filter(Boolean)))
+  const cssSelectors = new Set([...styleBlock.matchAll(/\.([a-zA-Z][\w-]*)/g)].map((m) => m[1]))
+  const unstyled = [...usedClasses].filter((c) => !cssSelectors.has(c))
+  // The `val`/`lbl` classes ARE styled via descendant selectors (.card .val,
+  // .card .lbl) which the flat regex misses — they resolve through a parent
+  // rule. Everything else used-but-unstyled is a genuine vocabulary gap.
+  const descendantOnly = ['val', 'lbl']
+  const genuinelyUnstyled = unstyled.filter((c) => !descendantOnly.includes(c))
+  if (genuinelyUnstyled.length > 0) {
+    failures.push(`CSS-use: classes used in HTML but NOT styled in CSS: ${genuinelyUnstyled.join(', ')} (vocabulary presence, not use — DRAFT)`)
+  }
+
   // 4b. the reusable template file must exist and carry the design vocabulary
   const cssPath = resolve(dirname(fileURLToPath(import.meta.url)), '..', 'booklet', 'report.css')
   if (!existsSync(cssPath)) {

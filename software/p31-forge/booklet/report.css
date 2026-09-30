@@ -27,8 +27,16 @@
   .methodology { font-family: var(--mono); font-size: 8.5pt; color: var(--text-dim); border-top: 1px solid var(--rule); padding-top: 0.6cm; margin: 1.2cm 0; }
   h2 { font-family: var(--serif); font-size: 18pt; color: var(--ink); border-bottom: 2px solid var(--accent); padding-bottom: 4px; margin-top: 1.2cm; page-break-before: always; }
   h2:first-of-type { page-break-before: auto; }
-  .body p { margin: 0.3cm 0; }
-  .body li { margin: 0.15cm 0; }
+  /* CHAPTER — scopes each section and gives it a designed rhythm. This was
+     the missing rule: the HTML carried class="chapter" but the CSS had no
+     .chapter selector, so sections rendered with zero spacing/scope. */
+  .chapter { margin: 0 0 1.2cm; }
+  .chapter h2 { margin-top: 0; }
+  /* Body lists — marked now emits <ul><li>; style the markers + spacing so
+     bullets render as designed list items, not loose text. */
+  .body ul { margin: 0.4cm 0 0.4cm 0.9cm; padding-left: 0.5cm; }
+  .body ul li::marker { color: var(--accent); }
+  .body li { margin: 0.15cm 0; line-height: 1.55; }
   .body strong { color: var(--ink); }
   .body blockquote { border-left: 3px solid var(--accent); margin: 0.4cm 0; padding-left: 0.6cm; color: var(--text-dim); font-style: italic; }
   .summary-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.4cm; margin: 0.5cm 0; }

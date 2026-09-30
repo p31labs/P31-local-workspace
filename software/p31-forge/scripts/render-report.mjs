@@ -22,6 +22,7 @@
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs'
 import { resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { marked } from 'marked'
 import { embedFontsAsCss } from './embed-fonts.mjs'
 
 const HERE = dirname(fileURLToPath(import.meta.url))
@@ -166,22 +167,14 @@ function renderMarkdown({ session, sections, summary, claims }) {
 
 // A Markdown-ish body section to HTML paragraphs + bold labels.
 function mdToHtmlFrag(body) {
-  const lines = String(body).split('\n')
-  const out = []
-  for (const line of lines) {
-    const t = line.trim()
-    if (!t) continue
-    if (t.startsWith('- ')) {
-      // bullet, preserving **Label** emphasis
-      const inner = t.replace(/^- /, '').replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
-      out.push(`<li>${inner}</li>`)
-    } else if (t.startsWith('> ')) {
-      out.push(`<blockquote>${t.replace(/^> /, '').replace(/\*\*/g, '')}</blockquote>`)
-    } else {
-      out.push(`<p>${t.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')}</p>`)
-    }
-  }
-  return out.join('\n')
+  // A real Markdown parser (marked) emits well-formed HTML: <ul><li>,
+  // <h2>, <table>, <blockquote>, nested lists, code. The hand-rolled
+  // regex loop produced BARE <li> with no <ul> wrapper — which is why
+  // bullets rendered as loose unstyled text and content pages collapsed
+  // to browser defaults. The CSS targets the well-formed structure marked
+  // produces, so the design vocabulary now applies.
+  const html = marked.parse(String(body ?? ''), { gfm: true })
+  return html
 }
 
 function renderHtml({ session, sections, summary, claims, verifySummary }) {

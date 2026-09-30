@@ -1,7 +1,7 @@
 {
   "name": "p31-forge",
   "version": "0.2.0",
-  "description": "P31 Labs document generation engine \u2014 single source of truth for every court filing, letter, grant, resolution, memo, and social post.",
+  "description": "P31 Labs document generation engine — single source of truth for every court filing, letter, grant, resolution, memo, and social post.",
   "main": "forge.js",
   "bin": {
     "forge": "./forge.js"
@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "docx": "^9.0.0",
+    "marked": "^18.0.14",
     "qrcode": "^1.5.4"
   },
   "devDependencies": {

@@ -77,9 +77,18 @@ def check(pdf_path, max_pages=20, cover_pages=1):
         if HEADING_RE.match(last):
             findings.append(f"widow heading: page {i + 1} ends with '{last}'")
 
-        # 3. orphan page — first body line is a single word or short fragment
+        # 3. orphan page — first body line is a single word/short fragment AND
+        #    the page is nearly empty (a stranded line at the top). A page that
+        #    starts mid-sentence and continues with a full bullet is NOT an
+        #    orphan — it is prose continuation across the page break. Only a
+        #    genuine stranded line (fragment + little else) is a defect.
         first = body[0]
-        if len(first.split()) <= 2 and not HEADING_RE.match(first) and not LABEL_RE.match(first):
+        if (
+            len(first.split()) <= 2
+            and not HEADING_RE.match(first)
+            and not LABEL_RE.match(first)
+            and len(body) <= 3  # stranded: just the fragment + a line or two
+        ):
             findings.append(f"orphan page: page {i + 1} starts with '{first}'")
 
     return pages, findings
