@@ -28,10 +28,11 @@ import { fileURLToPath } from 'node:url'
 const SESSION_DIR = '/tmp/phos-jitterbug'
 const JITTERBUG_DIR = '/home/p31/P31-local-workspace/tools/phos-forge'
 
-// Citation markers: Brief N (the convergence's facet attribution), standards
-// (FIPS/WCAG/NIST/ISO/OCGA...), author-year, [n], or parenthetical author.
+// Citation markers: standards (FIPS/WCAG/NIST/ISO/OCGA...), author-year, [n],
+// or parenthetical author. "Brief N" is the jitterbug's INTERNAL facet label —
+// NOT an external citation — so it is deliberately absent from this regex.
 const CITATION_RE =
-  /\b(Brief\s+\d+)\b|\b(FIPS[\s-]*[\d.\/-]+)\b|\b(WCAG[\s-]*[\d.]+)\b|\b(NIST\s*[A-Z]*[\s-]?[\d-]*)\b|\b(ISO[\s-]*\d+)\b|\b(?:\(([A-Z][A-Za-z][^()]*?\d{4}[^()]*?)\))\b|\[(\d+)\]/g
+  /\b(FIPS[\s-]*[\d.\/-]+)\b|\b(WCAG[\s-]*[\d.]+)\b|\b(NIST\s*[A-Z]*[\s-]?[\d-]*)\b|\b(ISO[\s-]*\d+)\b|\b(?:\(([A-Z][A-Za-z][^()]*?\d{4}[^()]*?)\))\b|\[(\d+)\]/g
 
 function sessionArtifacts(session) {
   const dir = resolve(SESSION_DIR, session)
@@ -73,8 +74,8 @@ function extractClaims(text) {
     CITATION_RE.lastIndex = 0
     let m
     while ((m = CITATION_RE.exec(sentence)) !== null) {
-      // groups: 1=Brief N, 2=FIPS, 3=WCAG, 4=NIST, 5=ISO, 6=parenthetical, 7=[n]
-      const candidate = (m[1] || m[2] || m[3] || m[4] || m[5] || m[6] || m[7] || '').trim()
+      // groups: 1=FIPS, 2=WCAG, 3=NIST, 4=ISO, 5=parenthetical, 6=[n]
+      const candidate = (m[1] || m[2] || m[3] || m[4] || m[5] || m[6] || '').trim()
       if (candidate && candidate.length > 1) sources.push(candidate)
     }
     if (sources.length > 0) {

@@ -65,19 +65,27 @@ function execSummary(sections) {
       .split('\n')
       .filter((l) => l.trim().startsWith('-') && l.trim().length > 30)
       .slice(0, 4)
-      .map((l) => l.replace(/^\s*-\s*\*\*([^*]+)\*\*/, '$1:').trim()),
+      .map((l) => l.replace(/^\s*-\s*\*\*([^*]+)\*\*\s*:\s*/, '**$1:** ').replace(/^\s*-\s*\*\*([^*]+)\*\*/, '**$1:**').trim()),
     takeaway: firstLine.replace(/^\s*[-*\d.]+\s*/, '').slice(0, 200),
   }
 }
 
 function evidenceBlocks(claims, sections) {
-  return claims.map((c, i) => {
-    const sources = c.sources ?? []
+  // Internal-label-only claims (Brief N / Facet N) are the synthesis's own
+  // attribution, NOT external citations — they become prose, not evidence.
+  const INTERNAL_LABEL_RE = /^briefs?\s+\d+$/i
+  const external = claims.filter(
+    (c) => (c.sources ?? []).length > 0 && !(c.sources ?? []).every((s) => INTERNAL_LABEL_RE.test(s)),
+  )
+  return external.map((c, i) => {
+    const sources = (c.sources ?? []).filter((s) => !INTERNAL_LABEL_RE.test(s))
     const verdict = c.verdict ?? 'no-source'
     const srcName = sources[0] || '(no source named)'
+    // Strip existing bold/emphasis markers so the wrapper does not double-wrap.
+    const clean = c.sentence.replace(/\*\*/g, '').replace(/\*/g, '').trim()
     return [
       '> ✓ EVIDENCE',
-      `> **${c.sentence.trim().slice(0, 140)}${c.sentence.length > 140 ? '…' : ''}**`,
+      `> **${clean.slice(0, 140)}${clean.length > 140 ? '…' : ''}**`,
       `> Source: ${srcName}`,
       `> Date: —`,
       `> Boundary: covers the facet research only`,
