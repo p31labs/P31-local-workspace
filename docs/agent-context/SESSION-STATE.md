@@ -251,6 +251,29 @@ parity is confirmed; the aesthetic call (does a reader learn the finding in
 | Both gates pass | run-report bc43d641 | report + layout, 9-page PDF |
 | Reviewer direction honored | no auto-pull-quote, no stat callouts | skipped (would produce garbage from prose) |
 
+## Verified facts (added: cover is a finding, 2026-09-29)
+
+| Fact | Verification command | Result |
+|---|---|---|
+| Title derived from synthesis | extract h1 from report.html | 'Memory-efficiency techniques for LLM/RAG systems' |
+| Thesis = first complete sentence | extract p.thesis | ends properly, no mid-word cut |
+| Striking = section count | extract .striking | '4' (replaces '0/0 externally-verified') |
+| Cover text | PyPDF2 page 1 | finding-led, no scorecard language |
+
+## Open threads (NOT active — one at a time)
+
+- **HUMAN-ACCEPTANCE-READ**: side-by-side re-opened with the finding-led
+  cover. Does page 1 now tell a reader what the report found? If yes, the
+  forge crosses the bar. If no, the fix is upstream (convergence prompt must
+  produce a cover-worthy claim).
+- **content-prose-rhythm**: the ATS has label->bullets->pull-quote rhythm;
+  the forge has one dense list. Second-order refinement, NOT the priority —
+  fix via convergence prompt (emit > KEY FINDING) not CSS. Parked.
+- **0-external-claims**: now invisible (striking shows section count); the
+  evidence appendix still shows 0 rows. Decide later if zero-grounding
+  reports are worth producing.
+- **fonts-to-ship**: drop real woff2 into software/p31-forge/fonts/.
+
 ## Open threads (NOT active — one at a time)
 
 - **HUMAN-ACCEPTANCE-READ**: side-by-side re-opened with 9 fresh pages.
