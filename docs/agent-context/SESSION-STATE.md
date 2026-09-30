@@ -231,6 +231,28 @@ ATS p1/2/3/14) — opened in the browser for the human judgment. Structural
 parity is confirmed; the aesthetic call (does a reader learn the finding in
 10s) is a human read.
 
+## Verified facts (added: content-page collapse fixed, 2026-09-29)
+
+| Fact | Verification command | Result |
+|---|---|---|
+| Root cause: bare <li>, no .chapter CSS | grep report.css + HTML | 12 li / 1 ul; .chapter rule absent |
+| marked parser swap | marked 18.0.14 | 4 <ul> wrap 13 <li> now |
+| .chapter rule added | report.css | content scoping + list styling |
+| Gate checks CSS USE | NC pull-quote injected | gate FAILS (unstyled class) |
+| Layout gate refined | prose-continuation false positive | passes, genuine stranded lines still caught |
+| Pipeline green | run-report bc43d641 | both gates + 7-page PDF pass |
+
+## Open threads (NOT active — one at a time)
+
+- **HUMAN-ACCEPTANCE-READ**: re-open /tmp/report/side-by-side.html (pages
+  re-rendered with styled content). Does the forge report now teach its
+  finding in 10s with styled content pages? Yes -> publish. No -> name gap.
+- **0-external-claims**: bc43d641 renders 0/0 verified. Decide: is a
+  zero-grounding report worth producing?
+- **fonts-to-ship**: drop real woff2 into software/p31-forge/fonts/.
+- **layout-vision-loop**: PaperFit image rendering (text subset + refinement
+  landed).
+
 ## Open threads (NOT active — one at a time)
 
 - **HUMAN-ACCEPTANCE-READ**: the side-by-side is open. Answer: does the forge
