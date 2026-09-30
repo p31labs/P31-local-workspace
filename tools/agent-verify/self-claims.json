@@ -117,6 +117,24 @@
       "type": "command-passes",
       "command": "python3 -c \"import ast; ast.parse(open(chr(115)+chr(111)+chr(102)+chr(116)+chr(119)+chr(97)+chr(114)+chr(101)+chr(47)+chr(112)+chr(51)+chr(49)+chr(45)+chr(102)+chr(111)+chr(114)+chr(103)+chr(101)+chr(47)+chr(115)+chr(99)+chr(114)+chr(105)+chr(112)+chr(116)+chr(115)+chr(47)+chr(99)+chr(104)+chr(101)+chr(99)+chr(107)+chr(45)+chr(108)+chr(97)+chr(121)+chr(111)+chr(117)+chr(116)+chr(46)+chr(112)+chr(121)).read())\"",
       "cwd": ""
+    },
+    {
+      "name": "render-report uses marked parser",
+      "type": "file-contains",
+      "path": "software/p31-forge/scripts/render-report.mjs",
+      "pattern": "import { marked } from 'marked'"
+    },
+    {
+      "name": "report.css has .chapter rule",
+      "type": "file-contains",
+      "path": "software/p31-forge/booklet/report.css",
+      "pattern": ".chapter {"
+    },
+    {
+      "name": "gate checks CSS use not presence",
+      "type": "file-contains",
+      "path": "software/p31-forge/scripts/check-report.mjs",
+      "pattern": "CSS-use"
     }
   ]
 }
