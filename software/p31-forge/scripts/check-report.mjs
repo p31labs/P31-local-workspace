@@ -81,19 +81,16 @@ function main() {
     const syllables = words.reduce((n, w) => n + countSyllables(w), 0)
     return 0.39 * (words.length / sentences) + 11.8 * (syllables / words.length) - 15.59
   }
-  // Measure the READER-FACING takeaway line (the single most important takeaway
-  // a reader learns in 10 seconds — the research's exec-summary spec). The
-  // takeaway card is the target; generic labels and technical key-findings
-  // bullets are not the summary.
+  // Measure the READER-FACING summary (the takeaway card, which now holds the
+  // plain-language ## Summary section verbatim when the session has one).
+  // The research ceiling for a plain-language summary is grade 6-8 (JMIR 2026
+  // community-engaged study); a general-audience report targets <= 8.
   const tkMatch = /Takeaway<\/div><div class="val">([^<]+)/.exec(html)
   const takeawayText = tkMatch ? tkMatch[1] : 'Synthesis of the researched material across facets.'
   const fk = fkGrade(takeawayText)
-  // HARD GATE: a reader-facing exec summary that reads above grade 14 is not
-  // a finished report. The dense jitterbug synthesis should NOT be quoted
-  // verbatim as the summary — the renderer must lift a plain-language line
-  // or the report is DRAFT. No advisory escape hatch.
-  if (fk > 14) failures.push(`readability: exec-summary Flesch-Kincaid ${fk.toFixed(1)} > 14 (DRAFT — lift a plain-language summary, don't quote the dense synthesis)`)
-  else if (fk > 11) console.log(`ℹ  readability: exec-summary FK ${fk.toFixed(1)} (≤14 OK)`)
+  const ceiling = 8.0
+  if (fk > ceiling) failures.push(`readability: summary Flesch-Kincaid ${fk.toFixed(1)} > ${ceiling} (DRAFT — the plain-language summary must read at grade 6-8)`)
+  else console.log(`ℹ  readability: summary FK ${fk.toFixed(1)} (≤${ceiling} OK)`)
 
   if (failures.length > 0) {
     console.error('❌ REPORT GATE FAILED:')

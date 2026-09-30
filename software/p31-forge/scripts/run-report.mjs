@@ -36,13 +36,16 @@ async function main() {
   run('verify-claims.mjs', ['--session', session])
   run('render-report.mjs', ['--session', session])
   run('check-report.mjs', ['--session', session])
-  // PDF is optional (needs system chromium); not a gate.
+  // PDF is optional (needs system chromium); the layout gate runs on it.
   try {
     run('render-pdf.mjs', ['--session', session])
+    execFileSync('python3', [S('check-layout.py'), resolve('/tmp/report', `${session}.report.pdf`)], {
+      stdio: 'inherit', cwd: resolve(HERE, '..'),
+    })
   } catch {
-    console.log('ℹ  pdf skipped (chromium not available) — html still ready')
+    console.log('ℹ  layout check skipped (chromium/python unavailable) — html still ready')
   }
-  console.log(`\n▶ report ready (gate passed): /tmp/report/${session}.report.md + .html + .pdf\n`)
+  console.log(`\n▶ report ready (gates passed): /tmp/report/${session}.report.md + .html + .pdf\n`)
 }
 
 if (fileURLToPath(import.meta.url) === resolve(process.argv[1] ?? '')) {

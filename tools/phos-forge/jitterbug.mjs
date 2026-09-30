@@ -80,7 +80,10 @@ Output 700-1200 words of substantial, nuanced research.`;
 
 const CONVERGE_SYSTEM = `You are a synthesis architect. Your task is to merge multiple research outputs into a unified analysis.
 
-Output in EXACTLY this structure:
+Output in EXACTLY this structure, in this order:
+
+## Summary
+A plain-language summary for a general reader (Flesch-Kincaid grade 6-8, 200-350 words). Define technical terms before using them. Use short sentences (12-18 words). Prefer common words. Structure: one-sentence framing, then 3-4 key findings as short paragraphs, then one closing sentence on why it matters. NO bullets, NO bold, NO citation markers, NO jargon without defining it. This summary is the reader-facing part of the report.
 
 ## Consensus
 What all research outputs agree on. Common themes, shared conclusions, compatible recommendations.

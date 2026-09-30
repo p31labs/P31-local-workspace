@@ -22,6 +22,7 @@
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs'
 import { resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { embedFontsAsCss } from './embed-fonts.mjs'
 
 const HERE = dirname(fileURLToPath(import.meta.url))
 const SESSION_DIR = '/tmp/phos-jitterbug'
@@ -46,6 +47,12 @@ const REPORT_CSS = existsSync(resolve(HERE, '..', 'booklet', 'report.css'))
   ? readFileSync(resolve(HERE, '..', 'booklet', 'report.css'), 'utf8')
   : ''
 
+// Embedded fonts (base64 data URIs) — empty unless fonts/ has real font files.
+// The CSS names DejaVu first (the fonts actually present on the render box),
+// so the report renders correctly even when no font files are shipped; when
+// fonts/ is populated, the real faces embed.
+const FONT_FACES = embedFontsAsCss()
+
 function sessionConvergence(session) {
   const dir = resolve(SESSION_DIR, session)
   if (!existsSync(dir)) return null
@@ -63,6 +70,12 @@ function execSummary(sections) {
   // One page: research question + key findings + single takeaway.
   const syn = (sections['Synthesis']?.body ?? sections['Synthesis']) ?? ''
   const consensus = (sections['Consensus']?.body ?? sections['Consensus']) ?? ''
+  // The plain-language ## Summary section is now REQUIRED by the convergence
+  // prompt. Prefer it verbatim — it is the reader-facing summary the pipeline
+  // was told to write. Fall back to the FK-aware selector only for sessions
+  // that predate the prompt change.
+  const rawSummary = (sections['Summary']?.body ?? sections['Summary']) ?? ''
+  const hasSummary = String(rawSummary).trim().length > 80
   const allText = String(consensus) + '\n' + String(syn)
   // Flesch-Kincaid (syllable-based) — used to lift a PLAIN takeaway, not the
   // densest synthesis line (the readability gate hard-fails above grade 14).
@@ -91,8 +104,9 @@ function execSummary(sections) {
       .filter((l) => l.trim().startsWith('-') && l.trim().length > 30)
       .slice(0, 4)
       .map((l) => l.replace(/^\s*-\s*\*\*([^*]+)\*\*\s*:\s*/, '**$1:** ').replace(/^\s*-\s*\*\*([^*]+)\*\*/, '**$1:**').trim()),
-    takeaway,
-    takeawayFk: plainest ? plainest.fk : null,
+    // The plain-language Summary section (verbatim) when the session has it.
+    takeaway: hasSummary ? String(rawSummary).trim().slice(0, 400) : takeaway,
+    takeawaySource: hasSummary ? 'summary-section' : 'fk-fallback',
   }
 }
 
@@ -201,6 +215,7 @@ function renderHtml({ session, sections, summary, claims, verifySummary }) {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>P31 Research Report — ${session}</title>
 <style>
+${FONT_FACES}
 ${REPORT_CSS}
 </style>
 </head>
