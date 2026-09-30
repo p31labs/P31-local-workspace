@@ -36,7 +36,13 @@ async function main() {
   run('verify-claims.mjs', ['--session', session])
   run('render-report.mjs', ['--session', session])
   run('check-report.mjs', ['--session', session])
-  console.log(`\n▶ report ready (gate passed): /tmp/report/${session}.report.md + /tmp/report/${session}.report.html\n`)
+  // PDF is optional (needs system chromium); not a gate.
+  try {
+    run('render-pdf.mjs', ['--session', session])
+  } catch {
+    console.log('ℹ  pdf skipped (chromium not available) — html still ready')
+  }
+  console.log(`\n▶ report ready (gate passed): /tmp/report/${session}.report.md + .html + .pdf\n`)
 }
 
 if (fileURLToPath(import.meta.url) === resolve(process.argv[1] ?? '')) {
