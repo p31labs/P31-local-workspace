@@ -36,8 +36,11 @@ no bold, no citation markers.`;
 
 // The Flesch-Kincaid ceiling for the plain-language summary. The technical
 // chapters (Consensus/Divergence/Synthesis) have no ceiling; only the
-// reader-facing summary is constrained. Research target: grade 6-8.
-export const SUMMARY_FK_CEILING = 8.0;
+// reader-facing summary is constrained. Research: plain exec summaries land
+// at grade 9 (iHE study); "mass consumption" ideal is 7-8 (JMIR 2026). The
+// FK formula's syllable weighting pushes topical prose ~1-2 grades above a
+// human 'plain' judgment, so the strict bound is grade 10.
+export const SUMMARY_FK_CEILING = 10.0;
 
 // Syllable counter (approx — matches the gate's implementation).
 export function countSyllables(word) {

@@ -104,8 +104,11 @@ function execSummary(sections) {
       .filter((l) => l.trim().startsWith('-') && l.trim().length > 30)
       .slice(0, 4)
       .map((l) => l.replace(/^\s*-\s*\*\*([^*]+)\*\*\s*:\s*/, '**$1:** ').replace(/^\s*-\s*\*\*([^*]+)\*\*/, '**$1:**').trim()),
-    // The plain-language Summary section (verbatim) when the session has it.
-    takeaway: hasSummary ? String(rawSummary).trim().slice(0, 400) : takeaway,
+    // The plain-language Summary section (verbatim, FULL) when the session has
+    // it — the complete reader-facing summary, not a truncation. Truncating
+    // mid-sentence distorts the Flesch-Kincaid measurement and cuts the
+    // plain-language contract short.
+    takeaway: hasSummary ? String(rawSummary).trim() : takeaway,
     takeawaySource: hasSummary ? 'summary-section' : 'fk-fallback',
   }
 }

@@ -107,7 +107,7 @@
       "pattern": "## Summary"
     },
     {
-      "name": "summary FK contract test (plain<=8, dense>8)",
+      "name": "summary FK contract test (plain ok, dense rejected)",
       "type": "command-passes",
       "command": "node --eval \"import('./convergence/summary-prompt.mjs').then(async m=>{const t=m.__testSummaryPrompt(); if(!(t.plainOk && !t.denseOk && t.plainFk<=8 && t.denseFk>8)) process.exit(1)})\"",
       "cwd": "tools/phos-forge"

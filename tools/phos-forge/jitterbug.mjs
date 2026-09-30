@@ -147,17 +147,45 @@ async function runConvergence(researchTexts, privacy, session, level) {
 
   const result = await gracefulConvergence(`${session}-l${level}`, researchTexts, callFn, {});
 
+  // Plain-language Summary enforcement (one bounded retry, not a loop).
+  // The convergence prompt REQUIRES a ## Summary section; the model sometimes
+  // skips it (observed: glm-5.3 on depth-1). When missing, re-prompt ONCE for
+  // only the Summary section and prepend it. If still missing, mark the
+  // synthesis summary-less and let the report gate flag DRAFT.
+  let synthesis = result.synthesis;
+  let summarySource = /^##\s+Summary\b/m.test(synthesis) ? 'original' : 'missing';
+  if (summarySource === 'missing') {
+    const retry = await callLLM(
+      'You are a plain-language summarizer. The synthesis below omitted its required ## Summary section. Produce ONLY the ## Summary section now — plain-language, grade 6-8, 200-350 words, short sentences, definitions before use, no bullets/bold/jargon. Output just the "## Summary" heading and the prose.',
+      synthesis.slice(0, 4000),
+      {
+        intent: { task: 'synthesis', tag: 'synthesis', privacy },
+        maxTokens: 800,
+        temperature: 0.2,
+        sessionId: session,
+      },
+    );
+    const retrySummary = String(retry ?? '').trim();
+    if (/^##\s+Summary\b/m.test(retrySummary)) {
+      synthesis = retrySummary + '\n\n' + synthesis;
+      summarySource = 'retry';
+    }
+  }
+
   // Record the convergence decision in the audit chain — the convergence is
-  // itself a governed artifact.
+  // itself a governed artifact. summarySource records which path produced the
+  // reader-facing summary (original | retry | missing) so the report's
+  // provenance is traceable.
   busEmit('jitterbug.convergence_completed', {
     session, level,
     convergenceLevel: result.level,
     degraded: result.degraded ?? false,
     stageTrace: result.stageTrace,
     errors: result.errors,
+    summarySource,
   });
 
-  return result.synthesis;
+  return synthesis;
 }
 
 function parseFacets(text) {
