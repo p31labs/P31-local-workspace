@@ -35,7 +35,8 @@ async function main() {
   run('extract-claims.mjs', ['--session', session, '--out', '/tmp/report/claims.json'])
   run('verify-claims.mjs', ['--session', session])
   run('render-report.mjs', ['--session', session])
-  console.log(`\n▶ report ready: /tmp/report/${session}.report.md + booklet/out/${session}.html\n`)
+  run('check-report.mjs', ['--session', session])
+  console.log(`\n▶ report ready (gate passed): /tmp/report/${session}.report.md + /tmp/report/${session}.report.html\n`)
 }
 
 if (fileURLToPath(import.meta.url) === resolve(process.argv[1] ?? '')) {

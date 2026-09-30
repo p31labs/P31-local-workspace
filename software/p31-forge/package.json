@@ -15,7 +15,8 @@
     "pdf": "python scripts/docx_to_pdf.py",
     "worker:dev": "wrangler dev worker/index.js",
     "worker:deploy": "wrangler deploy worker/index.js",
-    "report": "node scripts/run-report.mjs"
+    "report": "node scripts/run-report.mjs",
+    "report:check": "node scripts/check-report.mjs"
   },
   "dependencies": {
     "docx": "^9.0.0",
