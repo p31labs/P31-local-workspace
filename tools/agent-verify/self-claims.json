@@ -135,6 +135,30 @@
       "type": "file-contains",
       "path": "software/p31-forge/scripts/check-report.mjs",
       "pattern": "CSS-use"
+    },
+    {
+      "name": "theme system (4 themes)",
+      "type": "file-contains",
+      "path": "software/p31-forge/booklet/report-themes.css",
+      "pattern": "[data-theme=\"midnight\"]"
+    },
+    {
+      "name": "theme picker script",
+      "type": "file-contains",
+      "path": "software/p31-forge/booklet/theme-picker.js",
+      "pattern": "localStorage.setItem"
+    },
+    {
+      "name": "renderer loads themes + picker",
+      "type": "file-contains",
+      "path": "software/p31-forge/scripts/render-report.mjs",
+      "pattern": "THEME_PICKER_JS"
+    },
+    {
+      "name": "Key Metrics retry in jitterbug",
+      "type": "file-contains",
+      "path": "tools/phos-forge/jitterbug.mjs",
+      "pattern": "## Key Metrics"
     }
   ]
 }
