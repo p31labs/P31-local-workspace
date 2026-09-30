@@ -170,6 +170,28 @@ Do NOT touch runs/ until run 3 completes.
 | PDF render | render-pdf.mjs via chromium | 102KB PDF |
 | Reference bar | /home/p31/P31 Labs — ATS Accelerator 2026.pdf | 477KB, 14 pages |
 
+## Verified facts (added: paged-media + ledger + readability, 2026-09-29)
+
+| Fact | Verification command | Result |
+|---|---|---|
+| Chrome 150 native @page margin boxes | footer-test.html -> PDF | running footer + counter(page) render, no Paged.js |
+| Cover is named page, no footer | PDF pages 1 vs 2-5 | page 1 clean, pages 2-5 carry 'CC BY' footer |
+| Evidence ledger IDs | verify-claims + render | [E1] column in table, gate requires ID column |
+| Readability advisory | check-report.mjs | exec-summary FK 18.8 > 14 (dense synthesis) — advisory |
+| kami discipline | CSS | warm cards #FDFCFA, tabular-nums, orphans/widows 3 |
+| ATS reference bar | /home/p31/P31 Labs — ATS Accelerator 2026.pdf | running footer + hierarchy now matched |
+
+## Open threads (NOT active — one at a time)
+
+- **plain-language-exec-summary**: the FK 18.8 finding — the exec summary
+  quotes dense jitterbug synthesis verbatim. A plain-language summarizer
+  (LLM step) would bring it to <= 14. Currently advisory; fix to hard-gate.
+- **report-vs-ats-side-by-side**: open /tmp/report/04311260.report.pdf next
+  to the ATS reference. The test: does a reader learn the finding in 10s,
+  with comparable hierarchy + running footer.
+- **layout-defect-gate**: render pages to images, scan for orphan/widow
+  overflow (textestvis pattern). Chromium is present for the render.
+
 ## Open threads (NOT active — one at a time)
 
 - **report-vs-ats-comparison**: open /tmp/report/04311260.report.pdf next to
