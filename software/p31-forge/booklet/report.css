@@ -1,0 +1,75 @@
+  :root {
+    --ink: #0D0D12; --surface: #15151C; --paper: #FAF7F2;
+    --text: #1A1A1A; --text-dim: #5A5A5A; --accent: #2BB3D9;
+    --verified: #1F9D55; --warn: #B7791F; --rule: #E6E4DC;
+    --mono: 'DejaVu Sans Mono', 'JetBrains Mono', ui-monospace, monospace;
+    --serif: 'DejaVu Serif', 'Lora', Georgia, serif;
+    --sans: 'DejaVu Sans', 'Plus Jakarta Sans', system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body { font-family: var(--sans); color: var(--text); background: var(--paper); font-size: 11pt; line-height: 1.6; }
+  /* Baseline grid + typographic controls (kami + effective-print-design) */
+  body { orphans: 3; widows: 3; }
+  h1, h2, h3 { break-after: avoid; }
+  table, .card, blockquote { break-inside: avoid; }
+
+  /* ── COVER (dark, ATS bar: dark #0D0D12 only on the cover) ── */
+  .cover { background: var(--ink); color: #E6F1FF; padding: 3.5cm 2.5cm 2.5cm; min-height: 100vh; page-break-after: always; }
+  .cover .kicker { font-family: var(--mono); font-size: 10pt; color: var(--accent); letter-spacing: 0.12em; text-transform: uppercase; }
+  .cover h1 { font-family: var(--serif); font-size: 34pt; line-height: 1.15; margin: 0.6cm 0; font-weight: 400; }
+  .cover .thesis { font-size: 14pt; color: #C4D7E6; max-width: 13cm; margin: 0 0 1.2cm; }
+  .cover .meta { font-family: var(--mono); font-size: 9pt; color: #8FA3B5; line-height: 1.8; }
+  .cover .striking { font-size: 48pt; font-weight: 700; color: var(--accent); margin-top: 1.5cm; }
+
+  /* ── CONTENT (warm cream — NOT white, per kami) ── */
+  .page { max-width: 17cm; margin: 0 auto; padding: 1.5cm 1.2cm; }
+  .methodology { font-family: var(--mono); font-size: 8.5pt; color: var(--text-dim); border-top: 1px solid var(--rule); padding-top: 0.6cm; margin: 1.2cm 0; }
+  h2 { font-family: var(--serif); font-size: 18pt; color: var(--ink); border-bottom: 2px solid var(--accent); padding-bottom: 4px; margin-top: 1.2cm; page-break-before: always; }
+  h2:first-of-type { page-break-before: auto; }
+  .body p { margin: 0.3cm 0; }
+  .body li { margin: 0.15cm 0; }
+  .body strong { color: var(--ink); }
+  .body blockquote { border-left: 3px solid var(--accent); margin: 0.4cm 0; padding-left: 0.6cm; color: var(--text-dim); font-style: italic; }
+  .summary-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.4cm; margin: 0.5cm 0; }
+  /* Warm card surface — the kami rule: warm cream, never pure #fff */
+  .card { background: #FDFCFA; border: 1px solid var(--rule); border-radius: 8px; padding: 0.4cm 0.5cm; page-break-inside: avoid; }
+  .card .lbl { font-family: var(--mono); font-size: 8pt; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-dim); }
+  .card .val { font-size: 11pt; }
+
+  /* ── EVIDENCE TABLE (tabular-nums — numbers stack consistently) ── */
+  table { width: 100%; border-collapse: collapse; margin: 0.5cm 0; page-break-inside: avoid; }
+  th { font-family: var(--mono); font-size: 8.5pt; text-transform: uppercase; letter-spacing: 0.08em; text-align: left; color: var(--text-dim); border-bottom: 1px solid var(--ink); padding: 6px 8px; }
+  td { border-bottom: 1px solid var(--rule); padding: 6px 8px; font-size: 9.5pt; vertical-align: top; }
+  .mono { font-family: var(--mono); font-size: 8.5pt; font-variant-numeric: tabular-nums; }
+  .ok { color: var(--verified); font-weight: 600; }
+  .warn { color: var(--warn); }
+
+  /* ── PAGED MEDIA (native Chrome 131+ margin boxes — the running footer
+        repeats on every content page; the cover is its own named page) ── */
+  @media print {
+    @page {
+      size: A4;
+      margin: 20mm 16mm 22mm;
+      @bottom-center {
+        content: 'P31 Labs · CC BY-SA 4.0 · p31ca.org · github.com/p31labs';
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 8pt;
+        color: #8FA3B5;
+      }
+      @bottom-right {
+        content: counter(page);
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 9pt;
+        color: #8FA3B5;
+      }
+    }
+    @page cover-page {
+      margin: 0;
+      @bottom-center { content: none; }
+      @bottom-right { content: none; }
+    }
+    .cover { page: cover-page; min-height: auto; height: 297mm; }
+    body { font-size: 10.5pt; }
+  }
+  .footer { display: none; } /* replaced by native @page margin boxes */

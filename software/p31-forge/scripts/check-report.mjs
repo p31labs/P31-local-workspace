@@ -57,6 +57,17 @@ function main() {
     if (!html.includes(token)) failures.push(`missing styled element: ${name}`)
   }
 
+  // 4b. the reusable template file must exist and carry the design vocabulary
+  const cssPath = resolve(dirname(fileURLToPath(import.meta.url)), '..', 'booklet', 'report.css')
+  if (!existsSync(cssPath)) {
+    failures.push('missing reusable template: booklet/report.css')
+  } else {
+    const css = readFileSync(cssPath, 'utf8')
+    for (const [name, token] of [['cover-bg', '.cover'], ['paged-footer', '@bottom-center'], ['tabular-nums', 'tabular-nums'], ['widows-orphans', 'widows']]) {
+      if (!css.includes(token)) failures.push(`template report.css missing ${name}`)
+    }
+  }
+
   // 5. readability — Flesch-Kincaid on the report's takeaway (research +
   //     Human-Eye Test discipline). A reader-facing takeaway should be <= 14.
   function countSyllables(word) {
