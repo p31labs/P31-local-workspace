@@ -147,6 +147,29 @@ Do NOT touch runs/ until run 3 completes.
 | Parity (design-core drop-in) | `verify-token-parity.mjs` | 0 divergences |
 | Both token sources strict-valid | validate.mjs --only | design-core + canon PASSED |
 
+## Verified facts (added: forge bridge, 2026-09-29)
+
+| Fact | Verification command | Result |
+|---|---|---|
+| Forge bridge modules exist | `ls software/p31-forge/scripts/{extract,verify,render,run}-*.mjs` | 4 modules |
+| extract works on real session | `node run-report.mjs --session 04311260` | 16 synthesis + 8 facet claims |
+| verify renders honest verdicts | same | 1 verified (FIPS) / 15 unverified (Brief-N refs) |
+| render produces report | same | /tmp/report/04311260.report.md (12KB) + booklet HTML (18.9KB) |
+| Evidence appendix 7-field | report md tail | statement/source/date/boundary/pickle/verdict visible |
+| Ledgers used as filter | verify-claims.mjs | VERIFIED_FACTS.md + CITATION_LEDGER.md |
+
+## Open threads (NOT active — one at a time)
+
+- **report-style**: the HTML is the booklet default; scene-palette custom CSS
+  (dark cover, warm content, print stylesheet) is the polish that makes it
+  read like a paid product. The skill §6 print CSS is the spec.
+- **facet-retrieval**: PwC found more retrieval makes citations worse, not
+  better — so no retrieval. Facet sources are internal; the honest render
+  marks them unverified. If external URLs are added to facets later, the
+  verify stage can fetch them.
+- **forge-vs-jitterbug**: the bridge reads jitterbug artifacts; wiring it to
+  run a LIVE jitterbug run (prompt in, report out) is the full product.
+
 ## Open threads (NOT active — one at a time)
 
 
