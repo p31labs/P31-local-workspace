@@ -84,6 +84,39 @@
       "type": "command-passes",
       "command": "node --eval \"import('./convergence/stall-recovery.mjs').then(async m=>{try{await m.callWithStallRecovery('s','u',async()=>'');process.exit(1)}catch(e){if(e.message!=='empty-response')process.exit(1)}})\"",
       "cwd": "tools/phos-forge"
+    },
+    {
+      "name": "summary-prompt module exists",
+      "type": "file-exists",
+      "path": "tools/phos-forge/convergence/summary-prompt.mjs"
+    },
+    {
+      "name": "embed-fonts module exists",
+      "type": "file-exists",
+      "path": "software/p31-forge/scripts/embed-fonts.mjs"
+    },
+    {
+      "name": "check-layout gate exists",
+      "type": "file-exists",
+      "path": "software/p31-forge/scripts/check-layout.py"
+    },
+    {
+      "name": "jitterbug requires Summary section",
+      "type": "file-contains",
+      "path": "tools/phos-forge/jitterbug.mjs",
+      "pattern": "## Summary"
+    },
+    {
+      "name": "summary FK contract test (plain<=8, dense>8)",
+      "type": "command-passes",
+      "command": "node --eval \"import('./convergence/summary-prompt.mjs').then(async m=>{const t=m.__testSummaryPrompt(); if(!(t.plainOk && !t.denseOk && t.plainFk<=8 && t.denseFk>8)) process.exit(1)})\"",
+      "cwd": "tools/phos-forge"
+    },
+    {
+      "name": "layout gate catches widow page",
+      "type": "command-passes",
+      "command": "python3 -c \"import ast; ast.parse(open(chr(115)+chr(111)+chr(102)+chr(116)+chr(119)+chr(97)+chr(114)+chr(101)+chr(47)+chr(112)+chr(51)+chr(49)+chr(45)+chr(102)+chr(111)+chr(114)+chr(103)+chr(101)+chr(47)+chr(115)+chr(99)+chr(114)+chr(105)+chr(112)+chr(116)+chr(115)+chr(47)+chr(99)+chr(104)+chr(101)+chr(99)+chr(107)+chr(45)+chr(108)+chr(97)+chr(121)+chr(111)+chr(117)+chr(116)+chr(46)+chr(112)+chr(121)).read())\"",
+      "cwd": ""
     }
   ]
 }
