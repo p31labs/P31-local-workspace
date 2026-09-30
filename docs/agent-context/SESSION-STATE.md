@@ -217,6 +217,29 @@ cannot pass the plain-language gate; they need re-running with the new prompt.
 | Running footer on content, clean cover | PyPDF2 extract | pages 2-7 footer, page 1 clean |
 | FK ceiling corrected to grade 10 | research (JMIR/iHE) | plain summaries land at grade 9 |
 
+## Verified facts (added: acceptance test structural comparison, 2026-09-29)
+
+| Metric | FORGE bc43d641 | ATS reference | Read |
+|---|---|---|---|
+| Pages | 7 | 14 | forge more concise |
+| Words | ~1528 | ~1751 | comparable density |
+| Running footer on content | 6/6 | 1/13 | forge carries it consistently |
+| Cover clean (no footer) | yes | — | both |
+
+The side-by-side HTML is at /tmp/report/side-by-side.html (forge p1/2/3/7 vs
+ATS p1/2/3/14) — opened in the browser for the human judgment. Structural
+parity is confirmed; the aesthetic call (does a reader learn the finding in
+10s) is a human read.
+
+## Open threads (NOT active — one at a time)
+
+- **HUMAN-ACCEPTANCE-READ**: the side-by-side is open. Answer: does the forge
+  report teach its finding in 10 seconds? Yes -> publish. No -> name the gap.
+- **0-external-claims**: bc43d641 rendered 0/0 verified (plain summary has no
+  citation markers). Decide: is a zero-grounding report still worth producing?
+- **fonts-to-ship**: drop real woff2 into software/p31-forge/fonts/.
+- **layout-vision-loop**: PaperFit image rendering (text subset built).
+
 ## Open threads (NOT active — one at a time)
 
 - **side-by-side-ACCEPTANCE-TEST**: read /tmp/report/bc43d641.report.pdf
