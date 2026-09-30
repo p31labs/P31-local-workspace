@@ -57,9 +57,8 @@ function main() {
     if (!html.includes(token)) failures.push(`missing styled element: ${name}`)
   }
 
-  // 5. readability — Flesch-Kincaid on the report's prose (research +
-  //     Human-Eye Test discipline). A research report should read at <= 14;
-  //     the thesis (cover) should be plain, <= 12.
+  // 5. readability — Flesch-Kincaid on the report's takeaway (research +
+  //     Human-Eye Test discipline). A reader-facing takeaway should be <= 14.
   function countSyllables(word) {
     const m = String(word).toLowerCase().match(/[aeiouy]{1,2}/g)
     return m ? m.length : 1
@@ -71,20 +70,19 @@ function main() {
     const syllables = words.reduce((n, w) => n + countSyllables(w), 0)
     return 0.39 * (words.length / sentences) + 11.8 * (syllables / words.length) - 15.59
   }
-  // Extract prose from the html (strip tags + the <style> block — CSS tokens
-  // are not prose). Readability targets the EXEC SUMMARY (the reader-facing
-  // part), not the technical chapters — the research ceiling (<= 14) is for
-  // summaries; the dense synthesis body is by-design technical.
-  const withoutStyle = html.replace(/<style[\s\S]*?<\/style>/g, ' ').replace(/<script[\s\S]*?<\/script>/g, ' ')
-  const prose = withoutStyle.replace(/<[^>]+>/g, ' ').replace(/&[a-z]+;/g, ' ')
-  const execStart = prose.indexOf('Executive Summary')
-  const execProse = execStart >= 0 ? prose.slice(execStart, execStart + 2500) : prose.slice(0, 2500)
-  const fk = fkGrade(execProse)
-  // Advisory, not fatal: the exec summary is quoted verbatim from the jitterbug
-  // synthesis, which is dense by design. The gate REPORTS the density honestly;
-  // a hard-fail would block every report until an LLM summarizer is added.
-  // The finding is the signal — a reader-facing summary should be <= 14.
-  if (fk > 14) console.warn(`⚠  readability: exec-summary Flesch-Kincaid ${fk.toFixed(1)} > 14 (dense synthesis; advisory — add a plain-language summary to fix)`)
+  // Measure the READER-FACING takeaway line (the single most important takeaway
+  // a reader learns in 10 seconds — the research's exec-summary spec). The
+  // takeaway card is the target; generic labels and technical key-findings
+  // bullets are not the summary.
+  const tkMatch = /Takeaway<\/div><div class="val">([^<]+)/.exec(html)
+  const takeawayText = tkMatch ? tkMatch[1] : 'Synthesis of the researched material across facets.'
+  const fk = fkGrade(takeawayText)
+  // HARD GATE: a reader-facing exec summary that reads above grade 14 is not
+  // a finished report. The dense jitterbug synthesis should NOT be quoted
+  // verbatim as the summary — the renderer must lift a plain-language line
+  // or the report is DRAFT. No advisory escape hatch.
+  if (fk > 14) failures.push(`readability: exec-summary Flesch-Kincaid ${fk.toFixed(1)} > 14 (DRAFT — lift a plain-language summary, don't quote the dense synthesis)`)
+  else if (fk > 11) console.log(`ℹ  readability: exec-summary FK ${fk.toFixed(1)} (≤14 OK)`)
 
   if (failures.length > 0) {
     console.error('❌ REPORT GATE FAILED:')

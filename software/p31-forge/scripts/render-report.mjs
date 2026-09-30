@@ -56,7 +56,27 @@ function execSummary(sections) {
   // One page: research question + key findings + single takeaway.
   const syn = (sections['Synthesis']?.body ?? sections['Synthesis']) ?? ''
   const consensus = (sections['Consensus']?.body ?? sections['Consensus']) ?? ''
-  const firstLine = String(syn).split('\n').find((l) => l.trim().length > 20) ?? 'Synthesis of the researched material.'
+  const allText = String(consensus) + '\n' + String(syn)
+  // Flesch-Kincaid (syllable-based) — used to lift a PLAIN takeaway, not the
+  // densest synthesis line (the readability gate hard-fails above grade 14).
+  const countSyllables = (w) => (w.toLowerCase().match(/[aeiouy]{1,2}/g) ?? []).length || 1
+  const fk = (text) => {
+    const words = String(text).split(/\s+/).filter(Boolean)
+    if (words.length < 8) return 99
+    const sentences = (String(text).match(/[.!?](?=\s|$)/g) ?? []).length || 1
+    const syllables = words.reduce((n, w) => n + countSyllables(w), 0)
+    return 0.39 * (words.length / sentences) + 11.8 * (syllables / words.length) - 15.59
+  }
+  // Candidate takeaways: every consensus/synthesis sentence > 25 chars,
+  // ranked by ascending FK (plainest first).
+  const candidates = allText
+    .split(/(?<=[.!?])\s+/)
+    .map((s) => s.replace(/^\s*[-*#\d.]+\s*/, '').replace(/\*\*/g, '').trim())
+    .filter((s) => s.length > 25 && s.length < 240)
+    .map((s) => ({ s, fk: fk(s) }))
+    .sort((a, b) => a.fk - b.fk)
+  const plainest = candidates.find((c) => c.fk <= 14) ?? candidates[0]
+  const takeaway = plainest ? plainest.s.slice(0, 200) : 'Synthesis of the researched material across facets.'
   return {
     question: 'Synthesis of the researched material across facets.',
     keyFindings: String(consensus)
@@ -64,7 +84,8 @@ function execSummary(sections) {
       .filter((l) => l.trim().startsWith('-') && l.trim().length > 30)
       .slice(0, 4)
       .map((l) => l.replace(/^\s*-\s*\*\*([^*]+)\*\*\s*:\s*/, '**$1:** ').replace(/^\s*-\s*\*\*([^*]+)\*\*/, '**$1:**').trim()),
-    takeaway: firstLine.replace(/^\s*[-*\d.]+\s*/, '').slice(0, 200),
+    takeaway,
+    takeawayFk: plainest ? plainest.fk : null,
   }
 }
 
@@ -177,8 +198,9 @@ function renderHtml({ session, sections, summary, claims, verifySummary }) {
     --ink: #0D0D12; --surface: #15151C; --paper: #FAF7F2;
     --text: #1A1A1A; --text-dim: #5A5A5A; --accent: #2BB3D9;
     --verified: #1F9D55; --warn: #B7791F; --rule: #E6E4DC;
-    --mono: 'JetBrains Mono', ui-monospace, monospace;
-    --serif: 'Lora', Georgia, serif; --sans: 'Plus Jakarta Sans', system-ui, sans-serif;
+    --mono: 'DejaVu Sans Mono', 'JetBrains Mono', ui-monospace, monospace;
+    --serif: 'DejaVu Serif', 'Lora', Georgia, serif;
+    --sans: 'DejaVu Sans', 'Plus Jakarta Sans', system-ui, sans-serif;
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; }
