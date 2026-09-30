@@ -180,7 +180,35 @@ function mdToHtmlFrag(body) {
 function renderHtml({ session, sections, summary, claims, verifySummary }) {
   const verifiedCount = claims.filter((c) => c.verdict === 'verified').length
   const total = claims.length
-  const thesis = summary.takeaway.replace(/<[^>]*>/g, '').slice(0, 120)
+  // Fix 1 + 3: the cover thesis is the FIRST COMPLETE SENTENCE of the plain
+  // summary, not a 120-char truncation (which cut mid-word). The title is
+  // derived from the synthesis's own content — a strong claim — not the
+  // generic 'P31 Research Report' label.
+  const summaryText = String(summary.takeaway ?? '').replace(/<[^>]*>/g, '')
+  const firstSentence = (summaryText.match(/^.*?[.!?](?:\s|$)/) ?? [])[0] ?? summaryText
+  const thesis = firstSentence.trim().slice(0, 200)
+  // Title: the first bolded label from the consensus section (the strongest
+  // claim the briefs agree on), else the leading clause of the first
+  // consensus bullet (up to the first comma — a self-contained claim), else
+  // the generic label.
+  const consensusBody = String(sections['Consensus']?.body ?? sections['Consensus'] ?? '')
+  const boldMatch = /^\s*-\s*\*\*([^*]+)\*\*/.exec(consensusBody)
+  let title = boldMatch ? boldMatch[1].trim() : ''
+  if (!title) {
+    // leading clause of the first bullet: 'Both briefs analyze memory
+    // efficiency techniques...' -> strip the 'Both <nouns> <verb>' prefix
+    // to get the noun phrase, e.g. 'Memory efficiency techniques'.
+    const firstBullet = consensusBody.split('\n').find((l) => l.trim().startsWith('- '))
+    const clause = firstBullet ? firstBullet.replace(/^-\s*/, '').split(/[,:]/)[0].trim() : ''
+    title = clause
+      .replace(/^Both\s+(?:briefs|reports|papers|reviews)\s+\w+\s+/i, '')
+      .replace(/^[a-z]+\s+/, '') // strip a leading lowercase verb ('analyze')
+      .split(' ').slice(0, 5).join(' ')
+    title = title.replace(/\s+(under|for|with|about)$/i, '') // drop trailing prep
+    title = title.charAt(0).toUpperCase() + title.slice(1)
+  }
+  if (!title) title = 'P31 Research Report'
+  const titleTag = title !== 'P31 Research Report' ? `${title} — P31 Research Report` : 'P31 Research Report'
 
   // Evidence appendix as a TABLE, not a wall of blocks. Each row cites its
   // evidence-ledger ID [E#] (researchloop pattern) for traceability.
@@ -219,15 +247,15 @@ ${REPORT_CSS}
 <body>
   <section class="cover">
     <div class="kicker">P31 Labs · Sovereign Research</div>
-    <h1>P31 Research Report</h1>
+    <h1>${title}</h1>
     <p class="thesis">${thesis || 'Synthesis of the researched material.'}</p>
     <div class="meta">
       <div>Session ${session}</div>
       <div>${new Date().toISOString().slice(0, 10)}</div>
       <div>scene palette · sovereign pipeline</div>
     </div>
-    <div class="striking">${verifiedCount}/${total}</div>
-    <div class="meta" style="font-size:8pt;color:#8FA3B5">externally-verified claims</div>
+    <div class="striking">${Object.keys(sections).length}</div>
+    <div class="meta" style="font-size:8pt;color:#8FA3B5">sections synthesized</div>
   </section>
 
   <main class="page">
