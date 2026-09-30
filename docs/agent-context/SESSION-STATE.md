@@ -158,6 +158,29 @@ Do NOT touch runs/ until run 3 completes.
 | Evidence appendix 7-field | report md tail | statement/source/date/boundary/pickle/verdict visible |
 | Ledgers used as filter | verify-claims.mjs | VERIFIED_FACTS.md + CITATION_LEDGER.md |
 
+## Verified facts (added: report design system, 2026-09-29)
+
+| Fact | Verification command | Result |
+|---|---|---|
+| Double-wrap defect diagnosed (not backslash-escape) | grep '****' report.md | 0 after Layer-1 fix |
+| Brief-N category error | extract regex (Brief N removed) | 16 evidence blocks -> 1 (FIPS) |
+| Styled report vocabulary | render-report.mjs renderHtml() | cover/methodology/striking/table all present |
+| Report gate passes | check-report.mjs | exit 0 on session 04311260 |
+| Gate negative controls | NC-wall (16 blocks), NC2 (****) | both exit 1 |
+| PDF render | render-pdf.mjs via chromium | 102KB PDF |
+| Reference bar | /home/p31/P31 Labs — ATS Accelerator 2026.pdf | 477KB, 14 pages |
+
+## Open threads (NOT active — one at a time)
+
+- **report-vs-ats-comparison**: open /tmp/report/04311260.report.pdf next to
+  the ATS reference. The test: does a reader learn the finding (three layers
+  of defense-in-depth) in 10 seconds? Compare typographic hierarchy.
+- **live-jitterbug-wiring**: run-report reads existing sessions; wiring a
+  prompt-in-report-out flow (run jitterbug then report) is the full product.
+- **template-reuse**: the renderHtml design vocabulary (cover/methodology/
+  table) could be extracted to a reusable template for the p31-deliverable
+  skill's report type.
+
 ## Open threads (NOT active — one at a time)
 
 - **report-style**: the HTML is the booklet default; scene-palette custom CSS
