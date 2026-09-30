@@ -260,6 +260,31 @@ parity is confirmed; the aesthetic call (does a reader learn the finding in
 | Striking = section count | extract .striking | '4' (replaces '0/0 externally-verified') |
 | Cover text | PyPDF2 page 1 | finding-led, no scorecard language |
 
+## Verified facts (added: enterprise theme system, 2026-09-29)
+
+| Fact | Verification command | Result |
+|---|---|---|
+| 4 themes in HTML | grep data-theme report.html | scene/editorial/consulting/midnight |
+| KPI grid from Key Metrics | grep kpi-card | 5 cards (Proof size, Verification cost, ...) |
+| Summary + Key Metrics retries | bus event 8a6432b4 | both 'retry' — bounded one-retry works |
+| Theme picker injected | grep theme-swatch | present, localStorage, hidden in print |
+| Both gates pass | run-report 8a6432b4 | 10-page PDF |
+| Verify suite | verify.mjs | 29/29 PASS |
+
+## Open threads (NOT active — one at a time)
+
+- **HUMAN-ACCEPTANCE-READ**: open /tmp/report/8a6432b4.report.html — click
+  the theme swatches (top-right), then Print to PDF. Does the KPI grid +
+  theme switch meet the enterprise bar? This is the test.
+- **0-external-claims**: the striking number is now section count; evidence
+  appendix may still show 0 rows. Decide if zero-grounding reports are worth
+  producing.
+- **fonts-to-ship**: drop real woff2 into software/p31-forge/fonts/ (the
+  base64 embedding is waiting).
+- **content-shape-rhythm**: the ATS has label->bullets->pull-quote rhythm.
+  The convergence prompt now emits Key Metrics; if pages still need more
+  rhythm, add explicit pull-quotes to the prompt.
+
 ## Open threads (NOT active — one at a time)
 
 - **HUMAN-ACCEPTANCE-READ**: side-by-side re-opened with the finding-led
